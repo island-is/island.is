@@ -11,6 +11,8 @@ import {
   Icon,
   GridContainer,
   Option,
+  Divider,
+  Link as ILink,
 } from '@island.is/island-ui/core'
 import { Locale, User } from '@island.is/shared/types'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
@@ -20,6 +22,9 @@ import { UserDelegations } from './UserDelegations'
 import { UserProfileInfo } from './UserProfileInfo'
 import { ValueType } from 'react-select'
 import cn from 'classnames'
+import { ServicePortalPath, m } from '@island.is/service-portal/core'
+import { Link } from 'react-router-dom'
+import { UserDropdownItem } from './UserDropdownItem'
 
 interface UserDropdownProps {
   user: User
@@ -77,8 +82,13 @@ export const UserDropdown = ({
             flexDirection="column"
             className={cn(styles.dropdown, { [styles.fullScreen]: fullScreen })}
           >
-            <Stack space={2}>
-              <Box display="flex" flexWrap="nowrap" alignItems="center">
+            <Stack space={3}>
+              <Box
+                display="flex"
+                flexWrap="nowrap"
+                alignItems="center"
+                marginBottom={1}
+              >
                 <UserAvatar username={username} />
 
                 <Box marginLeft={1} marginRight={4}>
@@ -87,48 +97,44 @@ export const UserDropdown = ({
                   </Text>
                 </Box>
               </Box>
+              <Divider />
 
-              <Select
-                name="language-switcher"
-                size="sm"
-                value={
-                  lang === 'en'
-                    ? { label: 'English', value: 'en' }
-                    : { label: 'Íslenska', value: 'is' }
-                }
-                onChange={handleLanguageChange}
-                label={formatMessage(sharedMessages.language)}
-                options={[
-                  { label: 'Íslenska', value: 'is' },
-                  { label: 'English', value: 'en' },
-                ]}
-              />
-
-              {isDelegation && (
+              <UserDelegations user={user} onSwitchUser={onSwitchUser} />
+              {!isDelegation && (
                 <Box>
-                  <Button
-                    variant="ghost"
-                    onClick={() => onSwitchUser(user.profile.actor!.nationalId)}
-                    fluid
-                  >
-                    {formatMessage(userMessages.backToMyself)}
-                  </Button>
+                  <UserProfileInfo /> <Divider />
                 </Box>
               )}
-              {!isDelegation && <UserProfileInfo />}
               <Box>
-                <Button
+                <Box marginBottom={1}>
+                  <Text variant="small">{formatMessage(m.settings)}</Text>
+                </Box>
+
+                <Box>
+                  <UserDropdownItem
+                    text={formatMessage(m.personalInformation)}
+                    link={ServicePortalPath.SettingsPersonalInformation}
+                    icon={{ type: 'outline', icon: 'person' }}
+                  />
+                </Box>
+                <Box paddingTop={1}>
+                  <UserDropdownItem
+                    text={formatMessage(m.accessControl)}
+                    link={ServicePortalPath.SettingsAccessControl}
+                    icon={{ type: 'outline', icon: 'people' }}
+                  />
+                </Box>
+              </Box>
+
+              <Divider />
+              <Box paddingTop={1}>
+                <UserDropdownItem
+                  text={formatMessage(sharedMessages.logout)}
+                  icon={{ type: 'outline', icon: 'logOut' }}
                   onClick={onLogout}
-                  fluid
-                  icon="logOut"
-                  iconType="outline"
-                >
-                  {formatMessage(sharedMessages.logout)}
-                </Button>
+                />
               </Box>
             </Stack>
-
-            <UserDelegations user={user} onSwitchUser={onSwitchUser} />
 
             <button
               className={styles.closeButton}

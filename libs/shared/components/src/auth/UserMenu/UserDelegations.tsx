@@ -11,6 +11,7 @@ import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { userMessages } from '@island.is/shared/translations'
 import * as styles from './UserMenu.css'
 import { useActorDelegationsQuery } from '../../../gen/graphql'
+import { UserTopicCard } from './UserTopicCard'
 
 interface UserDelegationsProps {
   user: User
@@ -81,20 +82,14 @@ export const UserDelegations = ({
 
   return (
     <>
-      <hr className={styles.hr} />
-      <Text variant="h5" as="h5" marginBottom={2}>
+      <Text variant="small" marginBottom={1}>
         {formatMessage(userMessages.delegationList)}
       </Text>
-      <List>
+      <Stack space={1}>
         {delegations.map((delegation) => (
-          <TopicCard
+          <UserTopicCard
             key={delegation.nationalId}
-            size="small"
-            tag={
-              delegation.isCurrent
-                ? formatMessage(userMessages.selectedDelegation)
-                : undefined
-            }
+            colorScheme={delegation.isCurrent ? 'purple' : 'blue'}
             onClick={
               delegation.isCurrent
                 ? undefined
@@ -102,7 +97,7 @@ export const UserDelegations = ({
             }
           >
             {delegation.name || delegation.nationalId}
-          </TopicCard>
+          </UserTopicCard>
         ))}
         {loading ? (
           <SkeletonLoader display="block" height={59} borderRadius="large" />
@@ -111,7 +106,7 @@ export const UserDelegations = ({
             {formatMessage(userMessages.delegationError)}
           </Text>
         ) : null}
-      </List>
+      </Stack>
     </>
   )
 }

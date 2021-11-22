@@ -98,3 +98,14 @@ export const actorName = style({
 export const breakWord = style({
   wordBreak: 'break-word',
 })
+
+export const dropdownItem = style({
+  ':hover': {
+    textDecoration: 'underline',
+  },
+})
+
+export const accessAvatarSize = style({
+  width: 32,
+  height: 32,
+})

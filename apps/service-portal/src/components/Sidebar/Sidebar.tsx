@@ -90,18 +90,6 @@ export const Sidebar: FC<{}> = () => {
               )}
             </Stack>
           ))}
-        {/* {!collapsed && (
-          <Box paddingTop={3} marginTop="auto" background={'transparent'}>
-            <ModuleNavigation
-              nav={{
-                name: formatMessage(sharedMessages.logout),
-                icon: { icon: 'logOut', type: 'outline' },
-              }}
-              variant={'blue'}
-              onItemClick={signOut}
-            />
-          </Box>
-        )} */}
       </Box>
     </aside>
   )

@@ -11,10 +11,28 @@ export const avatarSize = styleVariants({
     width: 28,
     height: 28,
   },
+  medium: {
+    width: 32,
+    height: 32,
+  },
+})
+
+export const avatarColor = styleVariants({
+  default: {
+    backgroundColor: theme.color.blue100,
+    color: theme.color.blue400,
+  },
+  purple: {
+    backgroundColor: theme.color.purple100,
+    color: theme.color.purple400,
+  },
+})
+
+export const userMenu = style({
+  mixBlendMode: 'multiply',
 })
 
 export const initials = style({
-  color: theme.color.blue400,
   fontWeight: 600,
 })
 
@@ -27,6 +45,9 @@ export const initialsSize = styleVariants({
     fontSize: 18,
   },
   small: {
+    fontSize: 14,
+  },
+  medium: {
     fontSize: 14,
   },
 })
