@@ -329,6 +329,10 @@ export const m = defineMessages({
     id: 'service.portal:endorsements',
     defaultMessage: 'Meðmæli',
   },
+  endorsementsAdmin: {
+    id: 'service.portal:endorsements-admin',
+    defaultMessage: 'Meðmæli - Admin',
+  },
   educationLicense: {
     id: 'service.portal:educationLicense',
     defaultMessage: 'Starfsleyfi',
@@ -372,6 +376,10 @@ export const m = defineMessages({
   financeLocalTax: {
     id: 'service.portal:finance-local-tax',
     defaultMessage: 'Útsvar',
+  },
+  searchPlaceholder: {
+    id: 'service.portal:search-placeholder',
+    defaultMessage: 'Sláðu inn leitarorð',
   },
   actions: {
     id: 'service.portal:actions',
@@ -499,6 +507,14 @@ export const m = defineMessages({
     id: 'service.portal:tel',
     defaultMessage: 'Símanúmer',
   },
+  bankAccountInfo: {
+    id: 'service.portal:bank-account-info',
+    defaultMessage: 'Reikningsnúmer',
+  },
+  nudge: {
+    id: 'service.portal:nudge-info',
+    defaultMessage: 'Hnipp',
+  },
   nextStep: {
     id: 'service.portal:next-step',
     defaultMessage: 'Næsta skref',
@@ -556,5 +572,9 @@ export const m = defineMessages({
   endpoint: {
     id: 'service.portal:endpoint',
     defaultMessage: 'Endapunktur',
+  },
+  islykill: {
+    id: 'service.portal:islykill',
+    defaultMessage: 'Íslykill',
   },
 })

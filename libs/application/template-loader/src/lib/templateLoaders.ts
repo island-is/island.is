@@ -43,6 +43,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/complaints-to-althingi-ombudsman'),
   [ApplicationTypes.ACCIDENT_NOTIFICATION]: () =>
     import('@island.is/application/templates/accident-notification'),
+  [ApplicationTypes.GENERAL_PETITION]: () =>
+    import('@island.is/application/templates/general-petition'),
 }
 
 export default templates

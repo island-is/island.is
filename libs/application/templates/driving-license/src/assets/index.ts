@@ -1,0 +1,1 @@
+export { LogreglanLogo } from './LogreglanLogo'

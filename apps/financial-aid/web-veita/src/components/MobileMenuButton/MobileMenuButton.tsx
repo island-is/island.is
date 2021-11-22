@@ -1,6 +1,6 @@
 import React from 'react'
 
-import * as styles from './MobileMenuButton.treat'
+import * as styles from './MobileMenuButton.css'
 import cn from 'classnames'
 
 interface PageProps {

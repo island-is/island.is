@@ -22,7 +22,7 @@ import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
 import { webLoginButtonSelect } from '@island.is/plausible'
 import { GET_NAMESPACE_QUERY } from '../queries'
-import * as styles from './Login.treat'
+import * as styles from './Login.css'
 
 interface LoginProps {
   namespace: LoginPageTexts

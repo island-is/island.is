@@ -29,7 +29,10 @@ import {
   CaseState,
   CaseType,
   InstitutionType,
+  isRestrictionCase,
+  isInvestigationCase,
   UserRole,
+  isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -45,7 +48,7 @@ import AppealSection from './Components/AppealSection/AppealSection'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import { useIntl } from 'react-intl'
 import {
   UploadState,
@@ -53,6 +56,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import { UploadStateMessage } from './Components/UploadStateMessage'
 import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
+import { core } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -107,11 +111,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
       theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
       theCase.type === CaseType.TRAVEL_BAN
 
-    const isInvestigationCase =
-      theCase.type !== CaseType.CUSTODY && theCase.type !== CaseType.TRAVEL_BAN
-
     if (theCase.state === CaseState.REJECTED) {
-      if (isInvestigationCase) {
+      if (isInvestigationCase(theCase.type)) {
         return 'Kröfu um rannsóknarheimild hafnað'
       } else {
         return 'Kröfu hafnað'
@@ -119,7 +120,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     }
 
     if (theCase.state === CaseState.DISMISSED) {
-      return formatMessage(signedVerdictOverview.dismissedTitle)
+      return formatMessage(m.dismissedTitle)
     }
 
     if (theCase.isValidToDateInThePast) {
@@ -128,7 +129,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
 
     return isTravelBan
       ? 'Farbann virkt'
-      : isInvestigationCase
+      : isInvestigationCase(theCase.type)
       ? 'Krafa um rannsóknarheimild samþykkt'
       : 'Gæsluvarðhald virkt'
   }
@@ -141,8 +142,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     if (
       theCase.decision === CaseDecision.REJECTING ||
       theCase.decision === CaseDecision.DISMISSING ||
-      (theCase.type !== CaseType.CUSTODY &&
-        theCase.type !== CaseType.TRAVEL_BAN)
+      isInvestigationCase(theCase.type)
     ) {
       return `Úrskurðað ${formatDate(
         theCase.courtEndTime,
@@ -168,11 +168,11 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
   }
 
   const canCaseFilesBeOpened = () => {
-    const isAppealGracePeriodExpired = workingCase?.isAppealGracePeriodExpired
+    const isAppealGracePeriodExpired = workingCase.isAppealGracePeriodExpired
 
     const isProsecutorWithAccess =
       user?.role === UserRole.PROSECUTOR &&
-      user.institution?.id === workingCase.prosecutor?.institution?.id
+      user.institution?.id === workingCase.creatingProsecutor?.institution?.id
 
     const isCourtRoleWithAccess =
       user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
@@ -213,7 +213,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           <Box display="flex" flexDirection="column">
             {
               // Custody restrictions
-              workingCase.decision === CaseDecision.ACCEPTING &&
+              isAcceptingCaseDecision(workingCase.decision) &&
                 workingCase.type === CaseType.CUSTODY &&
                 workingCase.custodyRestrictions
                   ?.filter((restriction) =>
@@ -222,6 +222,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                       CaseCustodyRestrictions.VISITAION,
                       CaseCustodyRestrictions.COMMUNICATION,
                       CaseCustodyRestrictions.MEDIA,
+                      CaseCustodyRestrictions.WORKBAN,
+                      CaseCustodyRestrictions.NECESSITIES,
                     ].includes(restriction),
                   )
                   ?.map((custodyRestriction, index) => (
@@ -264,7 +266,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           </Box>
         </Box>
       </Box>
-      <Box marginBottom={6}>
+      <Box marginBottom={workingCase.isMasked ? 15 : 6}>
         <InfoCard
           data={[
             {
@@ -278,15 +280,16 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             {
               title: 'Embætti',
               value: `${
-                workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
+                workingCase.creatingProsecutor?.institution?.name ??
+                'Ekki skráð'
               }`,
             },
             { title: 'Dómstóll', value: workingCase.court?.name },
             { title: 'Ákærandi', value: workingCase.prosecutor?.name },
             { title: 'Dómari', value: workingCase.judge?.name },
+            { title: 'Dómritari', value: workingCase.registrar?.name },
             // Conditionally add this field based on case type
-            ...(workingCase.type !== CaseType.CUSTODY &&
-            workingCase.type !== CaseType.TRAVEL_BAN
+            ...(isInvestigationCase(workingCase.type)
               ? [
                   {
                     title: 'Tegund kröfu',
@@ -310,9 +313,9 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
         workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE ||
         workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) &&
-        workingCase.rulingDate &&
         (user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR) &&
-        user?.institution?.type !== InstitutionType.HIGH_COURT && (
+        user?.institution?.type !== InstitutionType.HIGH_COURT &&
+        !workingCase.isMasked && (
           <Box marginBottom={7}>
             <AppealSection
               workingCase={workingCase}
@@ -323,108 +326,161 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-      <Box marginBottom={5}>
-        <Accordion>
-          <PoliceRequestAccordionItem workingCase={workingCase} />
-          <CourtRecordAccordionItem workingCase={workingCase} />
-          <RulingAccordionItem workingCase={workingCase} />
-          <AccordionItem
-            id="id_4"
-            label={
-              <Box display="flex" alignItems="center" overflow="hidden">
-                {`Rannsóknargögn (${
-                  workingCase.files ? workingCase.files.length : 0
-                })`}
+      {user?.role !== UserRole.STAFF && !workingCase.isMasked && (
+        <>
+          <Box marginBottom={5} data-testid="accordionItems">
+            <Accordion>
+              <PoliceRequestAccordionItem workingCase={workingCase} />
+              <CourtRecordAccordionItem workingCase={workingCase} />
+              <RulingAccordionItem workingCase={workingCase} />
+              <AccordionItem
+                id="caseFilesAccordionItem"
+                label={
+                  <Box display="flex" alignItems="center" overflow="hidden">
+                    {`Rannsóknargögn (${
+                      workingCase.caseFiles ? workingCase.caseFiles.length : 0
+                    })`}
 
+                    {user &&
+                      [UserRole.JUDGE, UserRole.REGISTRAR].includes(
+                        user.role,
+                      ) && (
+                        <AnimatePresence>
+                          {uploadState === UploadState.UPLOAD_ERROR && (
+                            <UploadStateMessage
+                              icon="warning"
+                              iconColor="red600"
+                              message={formatMessage(
+                                m.someFilesUploadedToCourtText,
+                              )}
+                            />
+                          )}
+                          {uploadState === UploadState.ALL_UPLOADED && (
+                            <UploadStateMessage
+                              icon="checkmark"
+                              iconColor="blue400"
+                              message={formatMessage(
+                                m.allFilesUploadedToCourtText,
+                              )}
+                            />
+                          )}
+                        </AnimatePresence>
+                      )}
+                  </Box>
+                }
+                labelVariant="h3"
+              >
+                <CaseFileList
+                  caseId={workingCase.id}
+                  files={workingCase.caseFiles ?? []}
+                  canOpenFiles={canCaseFilesBeOpened()}
+                  hideIcons={user?.role === UserRole.PROSECUTOR}
+                  handleRetryClick={(id: string) =>
+                    workingCase.caseFiles &&
+                    uploadFilesToCourt([
+                      workingCase.caseFiles[
+                        workingCase.caseFiles.findIndex(
+                          (file) => file.id === id,
+                        )
+                      ],
+                    ])
+                  }
+                />
                 {user &&
-                  [UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role) && (
-                    <AnimatePresence>
-                      {uploadState === UploadState.UPLOAD_ERROR && (
-                        <UploadStateMessage
-                          icon="warning"
-                          iconColor="red600"
-                          message={formatMessage(
-                            signedVerdictOverview.someFilesUploadedToCourtText,
-                          )}
+                  [UserRole.JUDGE, UserRole.REGISTRAR].includes(user?.role) && (
+                    <Box display="flex" justifyContent="flexEnd">
+                      {(workingCase.caseFiles || []).length ===
+                      0 ? null : uploadState ===
+                        UploadState.NONE_CAN_BE_UPLOADED ? (
+                        <InfoBox
+                          text={formatMessage(m.uploadToCourtAllBrokenText)}
                         />
-                      )}
-                      {uploadState === UploadState.ALL_UPLOADED && (
-                        <UploadStateMessage
-                          icon="checkmark"
-                          iconColor="blue400"
-                          message={formatMessage(
-                            signedVerdictOverview.allFilesUploadedToCourtText,
+                      ) : (
+                        <Button
+                          size="small"
+                          onClick={() =>
+                            uploadFilesToCourt(workingCase.caseFiles)
+                          }
+                          loading={uploadState === UploadState.UPLOADING}
+                          disabled={
+                            uploadState === UploadState.UPLOADING ||
+                            uploadState === UploadState.ALL_UPLOADED
+                          }
+                        >
+                          {formatMessage(
+                            uploadState === UploadState.UPLOAD_ERROR
+                              ? m.retryUploadToCourtButtonText
+                              : m.uploadToCourtButtonText,
                           )}
-                        />
+                        </Button>
                       )}
-                    </AnimatePresence>
+                    </Box>
                   )}
+              </AccordionItem>
+            </Accordion>
+          </Box>
+          <Box marginBottom={7}>
+            <BlueBox>
+              <Box marginBottom={2} textAlign="center">
+                <Text as="h3" variant="h3">
+                  {formatMessage(m.conclusionTitle)}
+                </Text>
               </Box>
-            }
-            labelVariant="h3"
-          >
-            <CaseFileList
+              <Box marginBottom={3}>
+                <Box marginTop={1}>
+                  <Text variant="intro">{workingCase.conclusion}</Text>
+                </Box>
+              </Box>
+              <Box marginBottom={1} textAlign="center">
+                <Text variant="h4">
+                  {workingCase?.judge ? workingCase.judge.name : user?.name}
+                </Text>
+              </Box>
+            </BlueBox>
+          </Box>
+        </>
+      )}
+      {!workingCase.isMasked && (
+        <Box marginBottom={user?.role === UserRole.PROSECUTOR ? 7 : 15}>
+          {user?.role !== UserRole.STAFF && (
+            <>
+              <Box marginBottom={3}>
+                <PdfButton
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRequest)}
+                  pdfType="request"
+                />
+              </Box>
+              <Box marginBottom={3}>
+                <PdfButton
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRuling)}
+                  pdfType="ruling?shortVersion=false"
+                />
+              </Box>
+            </>
+          )}
+          <Box marginBottom={3}>
+            <PdfButton
               caseId={workingCase.id}
-              files={workingCase.files ?? []}
-              canOpenFiles={canCaseFilesBeOpened()}
-              hideIcons={user?.role === UserRole.PROSECUTOR}
-              handleRetryClick={(id: string) =>
-                workingCase.files &&
-                uploadFilesToCourt([
-                  workingCase.files[
-                    workingCase.files.findIndex((file) => file.id === id)
-                  ],
-                ])
-              }
+              title={formatMessage(core.pdfButtonRulingShortVersion)}
+              pdfType="ruling?shortVersion=true"
             />
-            {user && [UserRole.JUDGE, UserRole.REGISTRAR].includes(user?.role) && (
-              <Box display="flex" justifyContent="flexEnd">
-                {uploadState === UploadState.NONE_CAN_BE_UPLOADED ? (
-                  <InfoBox
-                    text={formatMessage(
-                      signedVerdictOverview.uploadToCourtAllBrokenText,
-                    )}
-                  />
-                ) : (
-                  <Button
-                    size="small"
-                    onClick={() => uploadFilesToCourt(workingCase.files)}
-                    loading={uploadState === UploadState.UPLOADING}
-                    disabled={
-                      uploadState === UploadState.UPLOADING ||
-                      uploadState === UploadState.ALL_UPLOADED
-                    }
-                  >
-                    {formatMessage(
-                      uploadState === UploadState.UPLOAD_ERROR
-                        ? signedVerdictOverview.retryUploadToCourtButtonText
-                        : signedVerdictOverview.uploadToCourtButtonText,
-                    )}
-                  </Button>
-                )}
-              </Box>
+          </Box>
+          {workingCase.type === CaseType.CUSTODY &&
+            workingCase.state === CaseState.ACCEPTED &&
+            isAcceptingCaseDecision(workingCase.decision) && (
+              <PdfButton
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonCustodyNotice)}
+                pdfType="custodyNotice"
+              />
             )}
-          </AccordionItem>
-        </Accordion>
-      </Box>
-      <Box marginBottom={user?.role === UserRole.PROSECUTOR ? 7 : 15}>
-        <Box marginBottom={3}>
-          <PdfButton
-            caseId={workingCase.id}
-            title="Opna PDF kröfu"
-            pdfType="request"
-          />
         </Box>
-        <PdfButton
-          caseId={workingCase.id}
-          title="Opna PDF þingbók og úrskurð"
-          pdfType="ruling"
-        />
-      </Box>
+      )}
       {user?.role === UserRole.PROSECUTOR &&
         user.institution?.id === workingCase.prosecutor?.institution?.id &&
-        (workingCase.type === CaseType.CUSTODY ||
-          workingCase.type === CaseType.TRAVEL_BAN) && (
+        isRestrictionCase(workingCase.type) && (
           <Box marginBottom={9}>
             <Box marginBottom={3}>
               <Text variant="h3">

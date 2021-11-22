@@ -1,4 +1,4 @@
-import { Hash, ReplicaCount, Service, ValueType } from './input-types'
+import { Hash, ReplicaCount, Service, RolloutStrategy } from './input-types'
 import { UberChartType } from './charts'
 import { FeatureNames } from '../features'
 
@@ -96,9 +96,10 @@ export interface ServiceHelm {
     repository: string
   }
   extra?: Hash
-  strategy?: {
-    type: 'RollingUpdate' | 'Recreate'
+  strategy: {
+    type: RolloutStrategy
   }
+  files?: string[]
 }
 
 export interface FeatureKubeJob {
@@ -137,4 +138,11 @@ export type SerializeMethod = (
   featuresOn?: FeatureNames[],
 ) => SerializeSuccess | SerializeErrors
 
-export type ValueFile = { [name: string]: ServiceHelm }
+export type Services = {
+  [name: string]: ServiceHelm
+}
+
+export type ValueFile = {
+  namespaces: string[]
+  services: Services
+}

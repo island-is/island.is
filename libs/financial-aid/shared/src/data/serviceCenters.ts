@@ -1,13 +1,4 @@
-export interface ServiceCenter {
-  name: string
-  number: number
-  phone: string
-  address: string
-  addressPostalCode: string
-  postalCodes: number[]
-  active?: boolean
-  link?: string
-}
+import { ServiceCenter } from '../lib'
 
 // Compiled from https://www.samband.is/sveitarfelogin/ list and
 // https://is.wikipedia.org/wiki/Íslensk_sveitarfélög_eftir_sveitarfélagsnúmerum

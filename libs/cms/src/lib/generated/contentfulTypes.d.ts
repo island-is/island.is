@@ -3,54 +3,6 @@
 import { Asset, Entry } from 'contentful'
 import { Document } from '@contentful/rich-text-types'
 
-export interface IAboutSubPageFields {
-  /** Title */
-  title: string
-
-  /** Slug (old) */
-  slug: string
-
-  /** Url */
-  url: string
-
-  /** Description */
-  description?: string | undefined
-
-  /** Intro */
-  intro?: Document | undefined
-
-  /** subDescription */
-  subDescription?: string | undefined
-
-  /** Content */
-  content: Document
-
-  /** belowContent */
-  belowContent?: ILocation[] | undefined
-
-  /** Parent */
-  parent?: Entry<{ [fieldId: string]: unknown }> | undefined
-}
-
-/** sub-page of the about-page */
-
-export interface IAboutSubPage extends Entry<IAboutSubPageFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'aboutSubPage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface IAccordionSliceFields {
   /** Title */
   title?: string | undefined
@@ -129,31 +81,6 @@ export interface IAlertBanner extends Entry<IAlertBannerFields> {
     contentType: {
       sys: {
         id: 'alertBanner'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IAnimationsJsonFields {
-  /** Title */
-  title: string
-
-  /** JSON */
-  json: Record<string, any>
-}
-
-export interface IAnimationsJson extends Entry<IAnimationsJsonFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'animationsJson'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -772,6 +699,12 @@ export interface IFrontpageFields {
   /** Title */
   title: string
 
+  /** Heading */
+  heading?: string | undefined
+
+  /** Image */
+  image?: Asset | undefined
+
   /** Featured */
   featured?: IFeatured[] | undefined
 
@@ -1148,6 +1081,9 @@ export interface ILifeEventPageFields {
   /** title */
   title: string
 
+  /** short title */
+  shortTitle?: string | undefined
+
   /** slug */
   slug: string
 
@@ -1159,6 +1095,9 @@ export interface ILifeEventPageFields {
 
   /** thumbnail */
   thumbnail?: Asset | undefined
+
+  /** tiny thumbnail */
+  tinyThumbnail?: Asset | undefined
 
   /** content */
   content: Document
@@ -1196,6 +1135,15 @@ export interface ILinkFields {
 
   /** Link reference */
   linkReference?: IArticle | IArticleCategory | ILinkUrl | INews | undefined
+
+  /** Searchable */
+  searchable?: boolean | undefined
+
+  /** Search Description */
+  intro?: string | undefined
+
+  /** Search Labels */
+  labels?: string[] | undefined
 }
 
 export interface ILink extends Entry<ILinkFields> {
@@ -1859,6 +1807,12 @@ export interface IOrganizationFields {
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
+
+  /** Phone */
+  phone?: string | undefined
+
+  /** Email */
+  email?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2382,37 +2336,6 @@ export interface ISidebarCard extends Entry<ISidebarCardFields> {
   }
 }
 
-export interface ISideMenuFields {
-  /** Internal links */
-  internalLinks: (
-    | IArticle
-    | IArticleCategory
-    | IGenericPage
-    | ILifeEventPage
-    | IOrganization
-  )[]
-
-  /** Title */
-  title?: string | undefined
-}
-
-export interface ISideMenu extends Entry<ISideMenuFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'sideMenu'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface ISliceConnectedComponentFields {
   /** Title */
   title: string
@@ -2440,39 +2363,6 @@ export interface ISliceConnectedComponent
     contentType: {
       sys: {
         id: 'sliceConnectedComponent'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IStaticLinkFields {
-  /** Title */
-  title?: string | undefined
-
-  /** Page */
-  page?:
-    | 'organizationServices'
-    | 'organizationNews'
-    | 'auctions'
-    | 'homestays'
-    | undefined
-
-  /** Slug */
-  slug?: string | undefined
-}
-
-export interface IStaticLink extends Entry<IStaticLinkFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'staticLink'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3278,7 +3168,7 @@ export interface IUrlFields {
   title?: string | undefined
 
   /** Page */
-  page:
+  page?:
     | IAboutSubPage
     | IArticle
     | IArticleCategory
@@ -3286,9 +3176,13 @@ export interface IUrlFields {
     | INews
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | undefined
 
   /** Urls list */
   urlsList: string[]
+
+  /** Explicit Redirect */
+  explicitRedirect?: string | undefined
 }
 
 export interface IUrl extends Entry<IUrlFields> {
@@ -3491,10 +3385,8 @@ export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
 }
 
 export type CONTENT_TYPE =
-  | 'aboutSubPage'
   | 'accordionSlice'
   | 'alertBanner'
-  | 'animationsJson'
   | 'article'
   | 'articleCategory'
   | 'articleGroup'
@@ -3555,9 +3447,7 @@ export type CONTENT_TYPE =
   | 'sectionHeading'
   | 'sectionWithImage'
   | 'sidebarCard'
-  | 'sideMenu'
   | 'sliceConnectedComponent'
-  | 'staticLink'
   | 'statistic'
   | 'statistics'
   | 'statisticsCard'

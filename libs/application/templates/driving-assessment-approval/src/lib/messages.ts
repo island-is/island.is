@@ -200,7 +200,7 @@ export const m = defineMessages({
   errorOrNoTemporaryLicense: {
     id: 'dla.application:error.noTempLicense',
     defaultMessage:
-      'Kennitala fannst ekki eða nemandi er ekki með bráðabyrgðaskírteini',
+      'Kennitala fannst ekki eða nemandi er ekki með bráðabirgðaskírteini',
     description:
       'The national ID was not found or the student does not have a valid temporary driving license.',
   },

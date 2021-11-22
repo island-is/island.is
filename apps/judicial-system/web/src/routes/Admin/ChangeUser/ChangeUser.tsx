@@ -36,6 +36,7 @@ export const ChangeUser: React.FC = () => {
   const {
     allCourts,
     prosecutorsOffices,
+    prisonInstitutions,
     loading: institutionLoading,
     loaded: institutionLoaded,
   } = useInstitution()
@@ -80,6 +81,7 @@ export const ChangeUser: React.FC = () => {
           user={userData?.user}
           allCourts={allCourts}
           prosecutorsOffices={prosecutorsOffices}
+          prisonInstitutions={prisonInstitutions}
           onSave={saveUser}
           loading={saveLoading}
         />

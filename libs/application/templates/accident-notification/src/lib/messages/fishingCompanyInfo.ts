@@ -37,6 +37,12 @@ export const fishingCompanyInfo = {
       defaultMessage: 'Upplýsingar um forsvarsmann útgerðar',
       description: `Information about the fishing company's representative`,
     },
+    subDescription: {
+      id: 'an.application:fishingCompanyInfo.labels.subDescription',
+      defaultMessage:
+        'Athugaðu að forsvarsmaður er sá aðili sem fer yfir tilkynninguna fyrir hönd útgerðar.',
+      description: `Sub description about the fishing company's representative`,
+    },
     nationalId: {
       id: 'an.application:fishingCompanyInfo.labels.nationalId',
       defaultMessage: 'Kennitala útgerðar',

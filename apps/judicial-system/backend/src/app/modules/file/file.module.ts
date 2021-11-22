@@ -1,16 +1,21 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { CaseModule } from '../case'
+import { AwsS3Module } from '../aws-s3'
 import { CourtModule } from '../court'
-import { FileController } from './file.controller'
-import { FileService } from './file.service'
-import { AwsS3Service } from './awsS3.service'
+import { CaseModule } from '../case'
 import { CaseFile } from './models'
+import { FileService } from './file.service'
+import { FileController } from './file.controller'
 
 @Module({
-  imports: [CaseModule, CourtModule, SequelizeModule.forFeature([CaseFile])],
+  imports: [
+    CaseModule,
+    CourtModule,
+    AwsS3Module,
+    SequelizeModule.forFeature([CaseFile]),
+  ],
   controllers: [FileController],
-  providers: [FileService, AwsS3Service],
+  providers: [FileService],
 })
 export class FileModule {}

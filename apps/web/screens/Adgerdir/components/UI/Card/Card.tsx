@@ -10,8 +10,8 @@ import { ColorSchemeContext } from '../ColorSchemeContext/ColorSchemeContext'
 import { Tag, TagProps } from '../Tag/Tag'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 
-import * as covidStyles from '../styles/styles.treat'
-import * as styles from './Card.treat'
+import * as covidStyles from '../styles/styles.css'
+import * as styles from './Card.css'
 
 export type CardTagsProps = {
   tagProps?: Omit<TagProps, 'children'>

@@ -3,7 +3,7 @@ import cn from 'classnames'
 
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 
-import * as styles from './UserAvatar.treat'
+import * as styles from './UserAvatar.css'
 
 interface UserAvatarProps {
   username?: string

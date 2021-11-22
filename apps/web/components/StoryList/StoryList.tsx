@@ -3,7 +3,7 @@ import { Button, Text, Stack, Link, Box } from '@island.is/island-ui/core'
 import IconBullet from '../IconBullet/IconBullet'
 import { ContentLink } from '@island.is/web/components'
 import { PROJECT_STORIES_TAG_ID } from '@island.is/web/constants'
-import * as styles from './StoryList.treat'
+import * as styles from './StoryList.css'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 export interface StoryProps {

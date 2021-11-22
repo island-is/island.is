@@ -1,3 +1,3 @@
-import ApplicationsOverview from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
+import RedirectPage from '@island.is/financial-aid-web/veita/src/routes/RedirectPage/redirectPage'
 
-export default ApplicationsOverview
+export default RedirectPage

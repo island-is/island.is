@@ -16,6 +16,7 @@ export enum CaseType {
   AUTOPSY = 'AUTOPSY',
   BODY_SEARCH = 'BODY_SEARCH',
   INTERNET_USAGE = 'INTERNET_USAGE',
+  RESTRAINING_ORDER = 'RESTRAINING_ORDER',
   OTHER = 'OTHER',
 }
 
@@ -41,7 +42,7 @@ export enum CaseTransition {
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
-export enum CaseCustodyProvisions {
+export enum CaseLegalProvisions {
   _95_1_A = '_95_1_A', // a-lið 1. mgr. 95. gr.
   _95_1_B = '_95_1_B', // b-lið 1. mgr. 95. gr.
   _95_1_C = '_95_1_C', // c-lið 1. mgr. 95. gr.
@@ -53,12 +54,14 @@ export enum CaseCustodyProvisions {
 /* eslint-enable @typescript-eslint/naming-convention */
 
 export enum CaseCustodyRestrictions {
+  NECESSITIES = 'NECESSITIES',
   ISOLATION = 'ISOLATION',
   VISITAION = 'VISITAION',
   COMMUNICATION = 'COMMUNICATION',
   MEDIA = 'MEDIA',
   ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION = 'ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
   ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT = 'ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT',
+  WORKBAN = 'WORKBAN',
 }
 
 export enum CaseAppealDecision {
@@ -80,12 +83,6 @@ export enum CaseDecision {
   ACCEPTING_ALTERNATIVE_TRAVEL_BAN = 'ACCEPTING_ALTERNATIVE_TRAVEL_BAN',
   ACCEPTING_PARTIALLY = 'ACCEPTING_PARTIALLY',
   DISMISSING = 'DISMISSING',
-}
-
-export enum AccusedPleaDecision {
-  ACCEPT = 'ACCEPT',
-  REJECT = 'REJECT',
-  NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
 
 export enum SessionArrangements {
@@ -112,6 +109,7 @@ export interface Case {
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   defenderIsSpokesperson?: boolean
+  isHeightenedSecurityLevel?: boolean
   court?: Institution
   leadInvestigator?: string
   arrestDate?: string
@@ -121,7 +119,7 @@ export interface Case {
   demands?: string
   lawsBroken?: string
   legalBasis?: string
-  custodyProvisions?: CaseCustodyProvisions[]
+  legalProvisions?: CaseLegalProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
   requestedOtherRestrictions?: string
   caseFacts?: string
@@ -130,6 +128,7 @@ export interface Case {
   prosecutorOnlySessionRequest?: string
   comments?: string
   caseFilesComments?: string
+  creatingProsecutor?: User
   prosecutor?: User
   sharedWithProsecutorsOffice?: Institution
   courtCaseNumber?: string
@@ -143,9 +142,7 @@ export interface Case {
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  isAccusedRightsHidden?: boolean
-  accusedPleaDecision?: AccusedPleaDecision
-  accusedPleaAnnouncement?: string
+  accusedBookings?: string
   litigationPresentations?: string
   courtCaseFacts?: string
   courtLegalArguments?: string
@@ -171,7 +168,8 @@ export interface Case {
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
-  files?: CaseFile[]
+  caseFiles?: CaseFile[]
+  isMasked?: boolean
 }
 
 export interface CreateCase {
@@ -203,6 +201,7 @@ export interface UpdateCase {
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   defenderIsSpokesperson?: boolean
+  isHeightenedSecurityLevel?: boolean
   courtId?: string
   leadInvestigator?: string
   arrestDate?: string
@@ -212,7 +211,7 @@ export interface UpdateCase {
   demands?: string
   lawsBroken?: string
   legalBasis?: string
-  custodyProvisions?: CaseCustodyProvisions[]
+  legalProvisions?: CaseLegalProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
   requestedOtherRestrictions?: string
   caseFacts?: string
@@ -233,9 +232,7 @@ export interface UpdateCase {
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  isAccusedAbsent?: boolean
-  accusedPleaDecision?: AccusedPleaDecision
-  accusedPleaAnnouncement?: string
+  accusedBookings?: string
   litigationPresentations?: string
   courtCaseFacts?: string
   courtLegalArguments?: string
@@ -278,10 +275,44 @@ export interface CreateCourtCase {
   isExtension: boolean
 }
 
+export const restrictionCases = [CaseType.CUSTODY, CaseType.TRAVEL_BAN]
+
+export const investigationCases = [
+  CaseType.SEARCH_WARRANT,
+  CaseType.BANKING_SECRECY_WAIVER,
+  CaseType.PHONE_TAPPING,
+  CaseType.TELECOMMUNICATIONS,
+  CaseType.TRACKING_EQUIPMENT,
+  CaseType.PSYCHIATRIC_EXAMINATION,
+  CaseType.SOUND_RECORDING_EQUIPMENT,
+  CaseType.AUTOPSY,
+  CaseType.BODY_SEARCH,
+  CaseType.INTERNET_USAGE,
+  CaseType.RESTRAINING_ORDER,
+  CaseType.OTHER,
+]
+
+export function isRestrictionCase(type?: CaseType): boolean {
+  return Boolean(type && restrictionCases.includes(type))
+}
+
+export function isInvestigationCase(type?: CaseType): boolean {
+  return Boolean(type && investigationCases.includes(type))
+}
+
+export function isAcceptingCaseDecision(decision?: CaseDecision): boolean {
+  return Boolean(decision && acceptedCaseDecisions.includes(decision))
+}
+
 export const completedCaseStates = [
   CaseState.ACCEPTED,
   CaseState.REJECTED,
   CaseState.DISMISSED,
+]
+
+export const acceptedCaseDecisions = [
+  CaseDecision.ACCEPTING,
+  CaseDecision.ACCEPTING_PARTIALLY,
 ]
 
 export function hasCaseBeenAppealed(theCase: Case): boolean {
@@ -292,13 +323,4 @@ export function hasCaseBeenAppealed(theCase: Case): boolean {
       Boolean(theCase.accusedPostponedAppealDate) ||
       Boolean(theCase.prosecutorPostponedAppealDate))
   )
-}
-
-export function isAccusedRightsHidden(theCase: Case): boolean {
-  console.log('isAccused', theCase.isAccusedRightsHidden)
-  return theCase.isAccusedRightsHidden == null
-    ? theCase.sessionArrangements
-      ? theCase.sessionArrangements !== SessionArrangements.ALL_PRESENT
-      : false
-    : theCase.isAccusedRightsHidden
 }

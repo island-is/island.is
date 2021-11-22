@@ -51,6 +51,7 @@ export const applicantInformationSection = buildSection({
           id: 'applicant.postalCode',
           title: applicantInformation.labels.postalCode,
           width: 'half',
+          format: '###',
           backgroundColor: 'white',
           disabled: true,
           required: true,
@@ -75,8 +76,7 @@ export const applicantInformationSection = buildSection({
           width: 'half',
           variant: 'email',
           required: true,
-          defaultValue: (application: AccidentNotification) =>
-            application.externalData?.userProfile?.data?.email,
+          defaultValue: '',
         }),
         buildTextField({
           id: 'applicant.phoneNumber',
@@ -84,8 +84,7 @@ export const applicantInformationSection = buildSection({
           format: '###-####',
           width: 'half',
           variant: 'tel',
-          defaultValue: (application: AccidentNotification) =>
-            application.externalData?.userProfile?.data?.mobilePhoneNumber,
+          defaultValue: '',
         }),
       ],
     }),

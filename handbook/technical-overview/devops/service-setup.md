@@ -60,7 +60,7 @@ The features are turned off by default and need to be turned on explicitly in th
 
 ### Using the features in the code
 
-The only usage of the features is to check whether a flag is "on". To do that, use the `ServerSideFeatureClient` object [exported in the feature flags library](../../../src/libs/feature-flags/src/lib/server-side-clients.ts).
+The only usage of the features is to check whether a flag is "on". To do that, use the `ServerSideFeatureClient` object [exported in the feature flags library](../../../libs/feature-flags/src/lib/server-side-client.ts).
 
 ### Cleaning up
 

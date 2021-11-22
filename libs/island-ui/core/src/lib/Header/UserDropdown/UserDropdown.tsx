@@ -9,7 +9,7 @@ import { ModalBase } from '../../ModalBase/ModalBase'
 import { UserAvatar } from '../../UserAvatar/UserAvatar'
 import { Icon } from '../../IconRC/Icon'
 import { GridContainer } from '../../Grid/GridContainer/GridContainer'
-import * as styles from './UserDropdown.treat'
+import * as styles from './UserDropdown.css'
 
 interface UserDropdownProps {
   username?: string

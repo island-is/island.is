@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -16,8 +17,10 @@ import {
   Employment,
   ApplicationState,
   Application,
+  FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 
+import { ApplicationEventModel } from '../../applicationEvent/models'
 import { ApplicationFileModel } from '../../file/models'
 import { StaffModel } from '../../staff'
 
@@ -59,7 +62,7 @@ export class ApplicationModel extends Model<Application> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   @ApiProperty()
   phoneNumber: string
@@ -172,8 +175,10 @@ export class ApplicationModel extends Model<Application> {
   @ApiProperty({ enum: ApplicationState })
   state: ApplicationState
 
-  @ApiProperty({ type: [ApplicationFileModel] })
+  @HasMany(() => ApplicationFileModel, 'applicationId')
+  @ApiProperty({ type: ApplicationFileModel, isArray: true })
   files: ApplicationFileModel[]
+
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
@@ -199,4 +204,72 @@ export class ApplicationModel extends Model<Application> {
   @BelongsTo(() => StaffModel, 'staffId')
   @ApiProperty({ type: StaffModel })
   staff?: StaffModel
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(FamilyStatus),
+  })
+  @ApiProperty({ enum: FamilyStatus })
+  familyStatus: FamilyStatus
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  spouseName?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  spouseNationalId?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  spousePhoneNumber?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  spouseEmail?: string
+
+  @HasMany(() => ApplicationEventModel, 'applicationId')
+  @ApiProperty({ type: ApplicationEventModel, isArray: true })
+  applicationEvents?: ApplicationEventModel[]
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  city: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  streetName: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  postalCode: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  municipalityCode: string
 }

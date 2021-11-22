@@ -1,12 +1,4 @@
 if (process.env.NODE_ENV === 'production') {
-  if (!process.env.AUTH_JWT_SECRET) {
-    throw new Error('Missing AUTH_JWT_SECRET environment.')
-  }
-
-  if (!process.env.SECRET_TOKEN) {
-    throw new Error('Missing SECRET_TOKEN environment.')
-  }
-
   if (!process.env.CLOUDFRONT_PUBLIC_KEY_ID) {
     throw new Error('Missing CLOUDFRONT_PUBLIC_KEY_ID environment.')
   }
@@ -18,10 +10,6 @@ if (process.env.NODE_ENV === 'production') {
 
 const prodConfig = {
   production: true,
-  auth: {
-    jwtSecret: process.env.AUTH_JWT_SECRET,
-    secretToken: process.env.SECRET_TOKEN,
-  },
   files: {
     cloudFrontPublicKeyId: process.env.CLOUDFRONT_PUBLIC_KEY_ID,
     cloudFrontPrivateKey: process.env.CLOUDFRONT_PRIVATE_KEY,
@@ -29,7 +17,15 @@ const prodConfig = {
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
   },
+  identityServerAuth: {
+    issuer: process.env.IDENTITY_SERVER_DOMAIN
+      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
+      : '',
+    audience: '@samband.is',
+  },
   emailOptions: {
+    fromEmail: process.env.SEND_FROM_EMAIL,
+    replyToEmail: process.env.SEND_FROM_EMAIL,
     useTestAccount: false,
     options: {
       region: process.env.EMAIL_REGION ?? '',
@@ -39,10 +35,6 @@ const prodConfig = {
 
 const devConfig = {
   production: false,
-  auth: {
-    jwtSecret: 'jwt-secret',
-    secretToken: 'secret-token',
-  },
   files: {
     cloudFrontPublicKeyId: process.env.CLOUDFRONT_PUBLIC_KEY_ID ?? '',
     cloudFrontPrivateKey: process.env.CLOUDFRONT_PRIVATE_KEY ?? '',
@@ -50,7 +42,13 @@ const devConfig = {
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
   },
+  identityServerAuth: {
+    issuer: 'https://identity-server.dev01.devland.is',
+    audience: '@samband.is',
+  },
   emailOptions: {
+    fromEmail: process.env.SEND_FROM_EMAIL,
+    replyToEmail: process.env.SEND_FROM_EMAIL,
     useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
     options: {
       region: process.env.EMAIL_REGION ?? '',

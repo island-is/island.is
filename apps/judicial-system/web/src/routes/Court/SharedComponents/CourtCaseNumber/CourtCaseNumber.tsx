@@ -11,7 +11,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { courtCaseNumber } from '@island.is/judicial-system-web/messages'
-import * as styles from './CourtCaseNumber.treat'
+import * as styles from './CourtCaseNumber.css'
 
 interface Props {
   workingCase: Case

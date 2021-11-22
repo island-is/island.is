@@ -1,7 +1,7 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { Box, Stack, Text, Button } from '@island.is/island-ui/core'
-import * as styles from './Authenticator.treat'
+import * as styles from './Authenticator.css'
 
 // This screen is unfortunately not translated because at this point we don't
 // have a user locale, nor an access token to fetch translations.

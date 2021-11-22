@@ -9,14 +9,12 @@ export const applicantInformation = {
     },
     title: {
       id: 'an.application:applicantInfo.general.title',
-      defaultMessage: 'Upplýsingar um þig',
-      description: 'Information about you',
+      defaultMessage: 'Upplýsingar um þann slasaða',
+      description: 'Title for applicant info regarding the injured',
     },
     description: {
       id: 'an.application:applicantInfo.general.description',
-      defaultMessage: `<p>Sjúkratryggingar Íslands þurfa þessar upplýsingar til þess að hægt
-       sé að hafa samband við þig á meðan málið er til meðferðar og upplýsa þig um niðurstöðu þess, 
-       og til þess að tryggja örugga persónugreiningu.</p><br/><p>Þær upplýsingar sem eru stjörnumerktar þarf alltaf að gefa upp. Annað er valkvætt.</p>`,
+      defaultMessage: `Sjúkratryggingar Íslands þurfa þessar upplýsingar til þess að hægt sé að hafa samband við þig á meðan málið er til meðferðar og upplýsa þig um niðurstöðu þess, og til þess að tryggja örugga persónugreiningu.<br/><br/>Fylla þarf út stjörnumerkt svæði,  annað er valkvætt.`,
       description: `Sjúkratryggingar Íslands needs this information in order to be able to contact you while the application is being processed and inform you of the institution's decision.`,
     },
   }),

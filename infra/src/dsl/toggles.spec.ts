@@ -146,4 +146,59 @@ describe('Server-side toggles', () => {
       expect(prodNoFeature.serviceDef).toBeDefined()
     })
   })
+  describe('Collision of feature config with main one', () => {
+    const sut = service('api')
+      .namespace('islandis')
+      .image('test')
+      .env({
+        B: 'A',
+      })
+      .features({
+        'do-not-remove-for-testing-only': {
+          env: {
+            B: {
+              dev: 'B1',
+              staging: 'B',
+              prod: MissingSetting,
+            },
+          },
+          secrets: { B: '/k8s/secret' },
+        },
+      })
+      .initContainer({
+        containers: [{ command: 'go' }],
+        features: {
+          'do-not-remove-for-testing-only': {
+            env: {
+              C: 'D',
+            },
+            secrets: {
+              C: '/a/b/c',
+            },
+          },
+        },
+      })
+    const prod = serializeService(
+      sut,
+      new UberChart({
+        ...Prod,
+        featuresOn: ['do-not-remove-for-testing-only'],
+      }),
+    ) as SerializeErrors
+    const prodNoFeature = serializeService(
+      sut,
+      new UberChart(Prod),
+    ) as SerializeSuccess
+
+    it('should result in serialization errors when feature is turned on', () => {
+      expect(prod.errors).toStrictEqual([
+        'Missing settings for service api in env prod. Keys of missing settings: B',
+        'Collisions for environment or secrets for key C',
+        'Collisions for environment or secrets for key B',
+      ])
+    })
+    it('should not affect serialization when feature is not turned on', () => {
+      expect(prodNoFeature.serviceDef).toBeDefined()
+    })
+  })
 })

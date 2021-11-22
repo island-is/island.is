@@ -2,7 +2,7 @@ import { DEFAULT_FULL_SCHEMA, dump, load } from 'js-yaml'
 import { postgresIdentifier, serializeService } from './map-to-values'
 import { PostgresInfo, Service } from './types/input-types'
 import { UberChart } from './uber-chart'
-import { ValueFile, FeatureKubeJob } from './types/output-types'
+import { ValueFile, FeatureKubeJob, Services } from './types/output-types'
 
 const MAX_LEVEL_DEPENDENCIES = 20
 const dumpOpts = {
@@ -16,11 +16,7 @@ const renderValueFile = (
   uberChart: UberChart,
   ...services: Service[]
 ): ValueFile => {
-  // const enabledGrantNamespaces = services
-  //   .filter((s) => s.serviceDef.grantNamespacesEnabled[uberChart.env.type])
-  //   .map((s) => s.serviceDef.namespace)
-  //   .forEach(ns => services.filter(s => s.serviceDef.namespace === ns).forEach(s => s.grantNamespacesEnabled))
-  const helmServices: ValueFile = services.reduce((acc, s) => {
+  const helmServices: Services = services.reduce((acc, s) => {
     const values = serializeService(s, uberChart)
     switch (values.type) {
       case 'error':
@@ -47,7 +43,16 @@ const renderValueFile = (
           s.grantNamespaces = grantNamespaces
         }),
     )
-  return helmServices
+  return {
+    namespaces: Array.from(
+      Object.values(helmServices)
+        .map((s) => s.namespace)
+        .filter((n) => n)
+        .reduce((prev, cur) => prev.add(cur), new Set<string>())
+        .values(),
+    ),
+    services: helmServices,
+  }
 }
 
 export const reformatYaml = (content: string): string => {
@@ -62,8 +67,12 @@ export const generateYamlForEnv = (
   return renderValueFile(uberChart, ...services)
 }
 
-export const dumpYaml = (valueFile: ValueFile | FeatureKubeJob) =>
-  dump(valueFile, dumpOpts)
+export const dumpYaml = (valueFile: ValueFile) => {
+  const { namespaces, services } = valueFile
+  return dump({ namespaces: { namespaces }, ...services }, dumpOpts)
+}
+
+export const dumpJobYaml = (job: FeatureKubeJob) => dump(job, dumpOpts)
 
 const findDependencies = (
   uberChart: UberChart,

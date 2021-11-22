@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
-import * as styles from './Loading.treat'
+import * as styles from './Loading.css'
 
 const Loading: React.FC = () => {
   return (

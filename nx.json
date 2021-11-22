@@ -121,6 +121,9 @@
     "api-domains-identity": {
       "tags": []
     },
+    "api-domains-islykill": {
+      "tags": []
+    },
     "api-domains-license-service": {
       "tags": []
     },
@@ -215,6 +218,9 @@
     "application-templates-funding-government-projects": {
       "tags": []
     },
+    "application-templates-general-petition": {
+      "tags": []
+    },
     "application-templates-health-insurance": {
       "tags": []
     },
@@ -283,8 +289,8 @@
       "tags": []
     },
     "clients-auth-public-api": {
-      "implicitDependencies": ["services-auth-public-api"],
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["services-auth-public-api"]
     },
     "clients-data-protection-complaint": {
       "tags": []
@@ -299,6 +305,12 @@
       "tags": []
     },
     "clients-finance": {
+      "tags": []
+    },
+    "clients-health-insurance-v2": {
+      "tags": []
+    },
+    "clients-islykill": {
       "tags": []
     },
     "clients-middlewares": {
@@ -382,9 +394,6 @@
     "financial-aid-api": {
       "tags": []
     },
-    "financial-aid-auth": {
-      "tags": []
-    },
     "financial-aid-backend": {
       "tags": []
     },
@@ -395,6 +404,9 @@
       "tags": []
     },
     "financial-aid-web-veita": {
+      "tags": []
+    },
+    "github-actions-cache": {
       "tags": []
     },
     "gjafakort-api": {
@@ -467,6 +479,9 @@
     "island-ui-utils": {
       "tags": []
     },
+    "island-ui-vanilla-extract-utils": {
+      "tags": []
+    },
     "judicial-system-api": {
       "tags": []
     },
@@ -513,13 +528,25 @@
     "nest-audit": {
       "tags": []
     },
+    "nest-pagination": {
+      "tags": []
+    },
+    "nest-problem": {
+      "tags": []
+    },
     "nest-validators": {
+      "tags": []
+    },
+    "next-ids-auth": {
       "tags": []
     },
     "nova-sms": {
       "tags": []
     },
     "plausible": {
+      "tags": []
+    },
+    "react-feature-flags": {
       "tags": []
     },
     "reference-backend": {
@@ -601,6 +628,9 @@
     "service-portal-settings-access-control": {
       "tags": []
     },
+    "service-portal-settings-islykill": {
+      "tags": []
+    },
     "service-portal-settings-personal-information": {
       "tags": []
     },
@@ -620,6 +650,9 @@
       "tags": []
     },
     "services-endorsements-api": {
+      "tags": []
+    },
+    "services-notifications": {
       "tags": []
     },
     "services-party-letter-registry-api": {
@@ -655,6 +688,9 @@
     "shared-mocking": {
       "tags": []
     },
+    "shared-problem": {
+      "tags": []
+    },
     "shared-translations": {
       "tags": []
     },
@@ -681,6 +717,12 @@
       "tags": []
     },
     "system-e2e": {
+      "tags": []
+    },
+    "testing-fixtures": {
+      "tags": []
+    },
+    "testing-nest": {
       "tags": []
     },
     "web": {

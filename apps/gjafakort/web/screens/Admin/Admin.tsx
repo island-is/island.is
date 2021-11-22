@@ -17,7 +17,7 @@ import { ContentLoader, Layout } from '@island.is/gjafakort-web/components'
 
 import { NoApplications, ReviewStatus, Info } from './components'
 
-import * as styles from './Admin.treat'
+import * as styles from './Admin.css'
 
 const CompanyApplicationsQuery = gql`
   query CompanyApplicationsQuery {

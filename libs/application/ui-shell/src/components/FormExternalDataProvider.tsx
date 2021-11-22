@@ -140,8 +140,7 @@ const FormExternalDataProvider: FC<{
           return [true, null]
         }
 
-        // TODO: translated
-        return [false, 'Failed to update application']
+        return [false, formatMessage(coreErrorMessages.failedDataProvider)]
       })
     } else {
       setBeforeSubmitCallback(null)

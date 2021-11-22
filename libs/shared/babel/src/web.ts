@@ -1,10 +1,12 @@
 import transformLib from './transformLib'
-import { TransformOptions, ConfigAPI } from '@babel/core'
+import { TransformOptions, ConfigAPI, PluginItem } from '@babel/core'
 
 export default function (api: ConfigAPI): TransformOptions {
-  const config = {
+  const config: TransformOptions = {
     plugins: [],
-  } as TransformOptions
+  }
+
+  config.plugins?.push('@vanilla-extract/babel-plugin')
 
   if (api.env('production') && config.plugins) {
     config.plugins.push([

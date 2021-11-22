@@ -4,7 +4,7 @@ import { Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 
-import * as styles from './AuthOverlay.treat'
+import * as styles from './AuthOverlay.css'
 
 const AuthOverlay = (): ReactElement | null => {
   const { authState } = useAuth()

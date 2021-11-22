@@ -16,17 +16,17 @@ export const prerequisitesFailed = (data: ExternalData) => {
 
   if (!prerequisites) return true
 
-  /*
-    TODO: Should be implemented before we go live
+  return (
+    prerequisites.maxDebt ||
     !prerequisites.taxReturns ||
     !prerequisites.vatReturns ||
     !prerequisites.citReturns ||
     !prerequisites.accommodationTaxReturns ||
     !prerequisites.withholdingTaxReturns ||
-    !prerequisites.wageReturns
-  */
-
-  return prerequisites.maxDebt
+    !prerequisites.wageReturns ||
+    prerequisites.collectionActions ||
+    !prerequisites.doNotOwe
+  )
 }
 
 export const formatIsk = (value: number): string =>

@@ -1,4 +1,4 @@
-import * as s from './RegulationsSidebarBox.treat'
+import * as s from './RegulationsSidebarBox.css'
 
 import React, { useEffect, useMemo, useState } from 'react'
 import cn from 'classnames'
@@ -221,7 +221,14 @@ export const RegulationChangelog = (props: RegulationChangelogProps) => {
       {renderFutureEffects()}
 
       {renderPastSplitter()}
-      {renderPastEffects(true)}
+      {/*
+        Disable collapsing before launch because of usability/visibility concerns.
+        Needs more user-testing and more advanced ui resolution when user is viewing
+        a hidden/collapsed version...
+      * /
+        renderPastEffects(true)
+      /**/}
+      {renderPastEffects()}
       {renderOriginalVersion()}
     </RegulationsSidebarBox>
   )

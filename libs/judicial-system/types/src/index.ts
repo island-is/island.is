@@ -32,16 +32,19 @@ export {
   CaseType,
   CaseState,
   CaseTransition,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseGender,
   CaseDecision,
-  AccusedPleaDecision,
   SessionArrangements,
+  restrictionCases,
+  investigationCases,
+  isRestrictionCase,
+  isInvestigationCase,
+  isAcceptingCaseDecision,
   completedCaseStates,
   hasCaseBeenAppealed,
-  isAccusedRightsHidden,
 } from './lib/case'
 export type {
   Case,
@@ -52,3 +55,9 @@ export type {
   SignatureConfirmationResponse,
   CreateCourtCase,
 } from './lib/case'
+
+export type {
+  PoliceCaseFile,
+  UploadPoliceCaseFile,
+  UploadPoliceCaseFileResponse,
+} from './lib/policeFile'

@@ -1,1 +1,1 @@
-export { PaymentCatalogProvider } from '@island.is/application/data-providers'
+export { FeeInfoProvider } from './FeeInfoProvider'

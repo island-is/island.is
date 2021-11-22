@@ -46,10 +46,24 @@ export const isPlural = (n: number) => n % 10 !== 1 || n % 100 === 11
 
 export function toISODate(date: Date): ISODate
 export function toISODate(date: null | undefined): null
-export function toISODate(date: Date | null | undefined): ISODate | null
+export function toISODate(
+  date: Date | string | null | undefined,
+): ISODate | null
 
-export function toISODate(date: Date | null | undefined): ISODate | null {
-  return date ? (date.toISOString().substr(0, 10) as ISODate) : null
+export function toISODate(
+  date: Date | string | null | undefined,
+): ISODate | null {
+  if (typeof date === 'string') {
+    date = new Date(date)
+    if (isNaN(date.getTime())) {
+      date = undefined
+    }
+  }
+  // TODO: Remove this silly `as Date` type coersion as soon as
+  // the "api" project turns on `strict: true`
+  // until then the `nx run api:schemas/build-graphql-schema` script
+  // explodes on this next line, unless we do this `as Date` faff.
+  return date ? ((date as Date).toISOString().substr(0, 10) as ISODate) : null
 }
 
 // ---------------------------------------------------------------------------
@@ -68,9 +82,9 @@ export function toISODateTime(
 
 /** Pretty-formats a Regulation `name` for human consumption
  *
- * Chops off leading zeros
+ * Chops off leading zeros.
  */
-export const prettyName = (regulationName: string): string =>
+export const prettyName = (regulationName: string) =>
   regulationName.replace(/^0+/, '')
 
 // ---------------------------------------------------------------------------
@@ -162,3 +176,5 @@ export const useShortState = <S>(
 }
 
 // ---------------------------------------------------------------------------
+
+export * from './buildRegulationApiPath'

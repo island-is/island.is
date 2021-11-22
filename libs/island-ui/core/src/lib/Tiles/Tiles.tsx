@@ -12,7 +12,7 @@ import {
   resolveResponsiveProp,
   ResponsiveProp,
 } from '../../utils/responsiveProp'
-import * as styleRefs from './Tiles.treat'
+import * as styleRefs from './Tiles.css'
 import { ReactNodeNoStrings } from '../private/ReactNodeNoStrings'
 
 export interface TilesProps {

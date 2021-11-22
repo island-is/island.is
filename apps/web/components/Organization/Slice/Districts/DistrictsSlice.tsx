@@ -8,7 +8,7 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './DistrictsSlice.treat'
+import * as styles from './DistrictsSlice.css'
 
 interface SliceProps {
   slice: Districts

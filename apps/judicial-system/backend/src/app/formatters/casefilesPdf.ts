@@ -3,7 +3,12 @@ import streamBuffers from 'stream-buffers'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
-import { setPageNumbers } from './pdfHelpers'
+import {
+  baseFontSize,
+  hugeFontSize,
+  largeFontSize,
+  setPageNumbers,
+} from './pdfHelpers'
 import { writeFile } from './writeFile'
 
 function constructCasefilesPdf(
@@ -28,18 +33,18 @@ function constructCasefilesPdf(
 
   doc
     .font('Helvetica-Bold')
-    .fontSize(26)
+    .fontSize(hugeFontSize)
     .lineGap(8)
     .text('Rannsóknargögn', { align: 'center' })
     .font('Helvetica')
-    .fontSize(18)
+    .fontSize(largeFontSize)
     .lineGap(40)
     .text(
       `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
       { align: 'center' },
     )
     .lineGap(8)
-    .fontSize(12)
+    .fontSize(baseFontSize)
     .list(existingCase.caseFiles?.map((file) => file.name) ?? [], {
       listType: 'numbered',
     })

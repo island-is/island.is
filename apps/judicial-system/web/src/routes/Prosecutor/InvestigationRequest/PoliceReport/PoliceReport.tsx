@@ -33,16 +33,13 @@ const PoliceReport = () => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_FOUR}
       isLoading={loading}
       notFound={data?.case === undefined}
-      decision={workingCase?.decision}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase && (
         <PoliceReportForm

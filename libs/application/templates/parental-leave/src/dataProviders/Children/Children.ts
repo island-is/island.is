@@ -141,10 +141,18 @@ export class Children extends BasicDataProvider {
       })
     ).filter((application) => {
       const { state } = application
-      const isCompleted =
-        state !== States.PREREQUISITES && state !== States.DRAFT
 
-      if (!isCompleted) {
+      const isInProgress =
+        state === States.PREREQUISITES ||
+        state === States.DRAFT ||
+        state === States.OTHER_PARENT_APPROVAL ||
+        state === States.OTHER_PARENT_ACTION ||
+        state === States.EMPLOYER_WAITING_TO_ASSIGN ||
+        state === States.EMPLOYER_APPROVAL ||
+        state === States.EMPLOYER_ACTION
+
+      if (isInProgress) {
+        // The application of the primary parent has to be completed
         return false
       }
 

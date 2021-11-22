@@ -5,7 +5,7 @@ import { kb } from '../../utils/stepHelper'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import isValid from 'date-fns/isValid'
 
-import * as styles from './CaseFile.treat'
+import * as styles from './CaseFile.css'
 
 interface Props {
   fileId: string

@@ -7,7 +7,7 @@ import {
   formatDate,
   NounCases,
 } from '@island.is/judicial-system/formatters'
-import { CaseType } from '@island.is/judicial-system/types'
+import { isInvestigationCase } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 
 interface Props {
@@ -17,10 +17,6 @@ interface Props {
 
 const AccusedAppealInfo: React.FC<Props> = (props) => {
   const { workingCase, withdrawAccusedAppealDate } = props
-
-  const isInvestigationCase =
-    workingCase.type !== CaseType.CUSTODY &&
-    workingCase.type !== CaseType.TRAVEL_BAN
 
   const animateInAndOut = {
     visible: { y: 0, opacity: 1, transition: { duration: 0.4, delay: 0.4 } },
@@ -40,7 +36,7 @@ const AccusedAppealInfo: React.FC<Props> = (props) => {
           formatAccusedByGender(
             workingCase.accusedGender,
             NounCases.NOMINATIVE,
-            isInvestigationCase,
+            isInvestigationCase(workingCase.type),
           ),
         )} hefur kært úrskurðinn ${formatDate(
           workingCase.accusedPostponedAppealDate,

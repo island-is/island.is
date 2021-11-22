@@ -2,7 +2,8 @@ import { Args, Resolver, Mutation } from '@nestjs/graphql'
 import { CommunicationsService } from './communications.service'
 import { ContactUsInput } from './dto/contactUs.input'
 import { TellUsAStoryInput } from './dto/tellUsAStory.input'
-import { SyslumennFormsInput } from './dto/syslumennForms.input'
+import { ServiceWebFormsInput } from './dto/serviceWebForms.input'
+
 import { CommunicationResponse } from './models/communicationResponse.model'
 
 @Resolver()
@@ -30,10 +31,13 @@ export class CommunicationsResolver {
   }
 
   @Mutation(() => CommunicationResponse)
-  async syslumennForms(
-    @Args('input') input: SyslumennFormsInput,
+  async serviceWebForms(
+    @Args('input') input: ServiceWebFormsInput,
   ): Promise<CommunicationResponse> {
-    await this.communicationsService.sendEmail(input)
+    const inputWithInstitutionEmail = await this.communicationsService.getInputWithInstitutionEmail(
+      input,
+    )
+    await this.communicationsService.sendEmail(inputWithInstitutionEmail)
     return {
       sent: true,
     }

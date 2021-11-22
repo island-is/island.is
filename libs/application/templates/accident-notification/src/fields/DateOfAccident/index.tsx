@@ -1,12 +1,13 @@
 import { IsHealthInsuredInput } from '@island.is/api/schema'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Input } from '@island.is/island-ui/core'
-import React, { useState, FC, useEffect, useCallback } from 'react'
-import { useLazyIsHealthInsured } from '../../hooks/useLazyIsHealthInsured'
-import { NO, YES } from '../../constants'
-import { AccidentNotification } from '../../lib/dataSchema'
-import { Controller, useFormContext } from 'react-hook-form'
+import { useLocale } from '@island.is/localization'
 import { DatePickerController } from '@island.is/shared/form-fields'
+import React, { FC, useCallback, useEffect, useState } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
+import { NO, YES } from '../../constants'
+import { useLazyIsHealthInsured } from '../../hooks/useLazyIsHealthInsured'
+import { AccidentNotification } from '../../lib/dataSchema'
 import { accidentDetails } from '../../lib/messages'
 
 export const DateOfAccident: FC<FieldBaseProps> = ({
@@ -16,6 +17,7 @@ export const DateOfAccident: FC<FieldBaseProps> = ({
   const { id } = field
   const answers = application.answers as AccidentNotification
   const { register, setValue } = useFormContext()
+  const { lang } = useLocale()
 
   const isHealthInsured = answers?.accidentDetails?.isHealthInsured
 
@@ -66,8 +68,11 @@ export const DateOfAccident: FC<FieldBaseProps> = ({
         label={accidentDetails.labels.date.defaultMessage}
         placeholder={accidentDetails.placeholder.date.defaultMessage}
         id={id}
+        locale={lang}
+        defaultValue={dateOfAccident}
         backgroundColor="blue"
         onChange={handleDateChange}
+        maxDate={new Date()}
       />
 
       <Box hidden>

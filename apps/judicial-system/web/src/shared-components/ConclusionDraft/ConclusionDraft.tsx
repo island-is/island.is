@@ -1,7 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   Decision,
@@ -37,29 +37,37 @@ const ConclusionDraft: React.FC<Props> = (props) => {
         <Decision
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
-          acceptedLabelText={`Krafa ${
-            workingCase.type === CaseType.CUSTODY
-              ? 'um gæsluvarðhald '
-              : workingCase.type === CaseType.TRAVEL_BAN
-              ? 'um farbann '
-              : ''
-          }samþykkt`}
-          rejectedLabelText={`Kröfu ${
-            workingCase.type === CaseType.CUSTODY
-              ? 'um gæsluvarðhald '
-              : workingCase.type === CaseType.TRAVEL_BAN
-              ? 'um farbann '
-              : ''
-          }hafnað`}
+          acceptedLabelText={
+            isRestrictionCase(workingCase.type)
+              ? formatMessage(rcRulingStepOne.sections.decision.acceptLabel, {
+                  caseType:
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhald'
+                      : 'farbann',
+                })
+              : formatMessage(icRulingStepOne.sections.decision.acceptLabel)
+          }
+          rejectedLabelText={
+            isRestrictionCase(workingCase.type)
+              ? formatMessage(rcRulingStepOne.sections.decision.rejectLabel, {
+                  caseType:
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhald'
+                      : 'farbann',
+                })
+              : formatMessage(icRulingStepOne.sections.decision.rejectLabel)
+          }
           partiallyAcceptedLabelText={`${
-            workingCase.type === CaseType.CUSTODY ||
-            workingCase.type === CaseType.TRAVEL_BAN
-              ? 'Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann'
-              : 'Krafa tekin til greina að hluta'
+            isRestrictionCase(workingCase.type)
+              ? formatMessage(
+                  rcRulingStepOne.sections.decision.partiallyAcceptLabel,
+                )
+              : formatMessage(
+                  icRulingStepOne.sections.decision.partiallyAcceptLabel,
+                )
           }`}
           dismissLabelText={
-            workingCase.type === CaseType.CUSTODY ||
-            workingCase.type === CaseType.TRAVEL_BAN
+            isRestrictionCase(workingCase.type)
               ? formatMessage(rcRulingStepOne.sections.decision.dismissLabel, {
                   caseType:
                     workingCase.type === CaseType.CUSTODY
@@ -68,6 +76,10 @@ const ConclusionDraft: React.FC<Props> = (props) => {
                 })
               : formatMessage(icRulingStepOne.sections.decision.dismissLabel)
           }
+          acceptingAlternativeTravelBanLabelText={formatMessage(
+            rcRulingStepOne.sections.decision
+              .acceptingAlternativeTravelBanLabel,
+          )}
         />
       </Box>
       <Box marginBottom={3}>

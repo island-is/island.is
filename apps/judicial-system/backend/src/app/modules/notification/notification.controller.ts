@@ -12,19 +12,11 @@ import {
   RulesType,
 } from '@island.is/judicial-system/auth'
 
+import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
 import { CaseService } from '../case'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
 import { NotificationService } from './notification.service'
-
-// Allows prosecutors to perform any action
-const prosecutorRule = UserRole.PROSECUTOR as RolesRule
-
-// Allows judges to perform any action
-const judgeRule = UserRole.JUDGE as RolesRule
-
-// Allows registrars to perform any action
-const registrarRule = UserRole.REGISTRAR as RolesRule
 
 // Allows prosecutors to send heads-up and ready-for-court notifications
 const prosecutorNotificationRule = {

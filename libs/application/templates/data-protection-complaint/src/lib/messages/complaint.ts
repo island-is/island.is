@@ -64,7 +64,7 @@ export const complaint = {
       id:
         'dpac.application:section.complaint.labels.complaineeOperatesWithinEurope',
       defaultMessage:
-        'Veistu hvort viðkomandi aðili er með starfsemi í öðru landi innan Evrópu? ',
+        'Er viðkomandi aðili með starfsemi í öðru landi innan Evrópska efnahagssvæðisins?',
       description:
         'Does the complainee operate within in another country within Europe?',
     },

@@ -6,7 +6,7 @@ import {
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
-import * as styles from './LogoList.treat'
+import * as styles from './LogoList.css'
 import cn from 'classnames'
 
 export interface LogoListProps {

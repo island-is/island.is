@@ -36,6 +36,7 @@ if (userMocked) {
       NationalRegistryScope.individuals,
       DocumentsScope.main,
       EndorsementsScope.main,
+      EndorsementsScope.admin,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'sp.',

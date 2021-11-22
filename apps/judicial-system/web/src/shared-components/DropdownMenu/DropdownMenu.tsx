@@ -7,7 +7,7 @@ import {
   useBoxStyles,
 } from '@island.is/island-ui/core'
 
-import * as styles from './DropdownMenu.treat'
+import * as styles from './DropdownMenu.css'
 
 export interface DropdownMenuProps {
   /**

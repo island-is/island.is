@@ -7,16 +7,21 @@ import {
   ValidationPipe,
   NestInterceptor,
 } from '@nestjs/common'
-import { ValidationError } from 'class-validator'
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
-import { logger, LoggingModule } from '@island.is/logging'
-import { startMetricServer } from '@island.is/infra-metrics'
-import { httpRequestDurationMiddleware } from './httpRequestDurationMiddleware'
-import { InfraModule } from './infra/infra.module'
 import yaml from 'js-yaml'
 import * as yargs from 'yargs'
 import * as fs from 'fs'
 import { NestExpressApplication } from '@nestjs/platform-express'
+
+import {
+  logger,
+  LoggingModule,
+  monkeyPatchServerLogging,
+} from '@island.is/logging'
+import { startMetricServer } from '@island.is/infra-metrics'
+import { httpRequestDurationMiddleware } from './httpRequestDurationMiddleware'
+import { InfraModule } from './infra/infra.module'
+import { swaggerRedirectMiddleware } from './swaggerMiddlewares'
 
 type RunServerOptions = {
   /**
@@ -60,10 +65,15 @@ type RunServerOptions = {
 
 export const createApp = async ({
   stripNonClassValidatorInputs = true,
+  appModule,
   ...options
 }: RunServerOptions) => {
+  monkeyPatchServerLogging()
+
   const app = await NestFactory.create<NestExpressApplication>(
-    InfraModule.forRoot(options.appModule),
+    InfraModule.forRoot({
+      appModule,
+    }),
     {
       logger: LoggingModule.createLogger(),
     },
@@ -108,10 +118,13 @@ const startServer = async (app: INestApplication, port = 3333) => {
 function setupOpenApi(
   app: INestApplication,
   openApi: Omit<OpenAPIObject, 'paths'>,
-  swaggerPath?: string,
+  swaggerPath = '/swagger',
 ) {
+  app.use(swaggerPath, swaggerRedirectMiddleware(swaggerPath))
+
   const document = SwaggerModule.createDocument(app, openApi)
-  SwaggerModule.setup(swaggerPath ?? 'swagger', app, document)
+  SwaggerModule.setup(swaggerPath, app, document)
+
   return document
 }
 

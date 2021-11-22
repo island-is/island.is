@@ -1,29 +1,35 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 
 import { useRouter } from 'next/router'
 
 import { Box, Input, Button } from '@island.is/island-ui/core'
 import cn from 'classnames'
 
-import * as styles from './CommentSection.treat'
+import * as styles from './CommentSection.css'
 import { useMutation } from '@apollo/client'
-import { CreateApplicationEventQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
-import { ApplicationEventType } from '@island.is/financial-aid/shared/lib'
+import { ApplicationEventMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
+import {
+  Application,
+  ApplicationEventType,
+} from '@island.is/financial-aid/shared/lib'
+import { AdminContext } from '../AdminProvider/AdminProvider'
 
 interface Props {
   className?: string
+  setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
 }
 
-const CommentSection = ({ className }: Props) => {
+const CommentSection = ({ className, setApplication }: Props) => {
   const router = useRouter()
 
+  const { admin } = useContext(AdminContext)
   const [showInput, setShowInput] = useState<boolean>(false)
   const [comment, setComment] = useState<string>()
 
   const [
     createApplicationEventMutation,
     { loading: isCreatingApplicationEvent },
-  ] = useMutation(CreateApplicationEventQuery)
+  ] = useMutation(ApplicationEventMutation)
 
   const saveStaffComment = async (staffComment: string | undefined) => {
     if (staffComment) {
@@ -33,12 +39,15 @@ const CommentSection = ({ className }: Props) => {
             applicationId: router.query.id,
             comment: staffComment,
             eventType: ApplicationEventType.STAFFCOMMENT,
+            staffNationalId: admin?.nationalId,
+            staffName: admin?.name,
           },
         },
       })
 
       if (data) {
-        setComment(undefined)
+        setApplication(data.createApplicationEvent)
+        setComment('')
         setShowInput(false)
       }
     }
@@ -67,6 +76,7 @@ const CommentSection = ({ className }: Props) => {
           backgroundColor="blue"
           label="Athugasemd"
           name="comment"
+          value={comment}
           rows={4}
           textarea
           onChange={(event) => {

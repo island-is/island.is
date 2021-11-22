@@ -45,10 +45,10 @@ describe('Postgres', () => {
 
     it('Env and secret variables already defined', () => {
       expect(result.errors).toEqual([
-        'You have already defined an environment variable DB_USER which is interfering with the Postgres definion',
-        'You have already defined an environment variable DB_NAME which is interfering with the Postgres definion',
-        'You have already defined an environment variable DB_HOST which is interfering with the Postgres definion',
-        'You have already defined a secret variable DB_PASS which is interfering with the Postgres definion',
+        'Collisions for environment or secrets for key DB_USER',
+        'Collisions for environment or secrets for key DB_NAME',
+        'Collisions for environment or secrets for key DB_HOST',
+        'Collisions for environment or secrets for key DB_PASS',
       ])
     })
   })

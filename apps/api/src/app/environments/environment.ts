@@ -1,3 +1,4 @@
+import { ServerSideFeatureClient } from '@island.is/feature-flags'
 const devConfig = {
   production: false,
   xroad: {
@@ -11,10 +12,17 @@ const devConfig = {
     baseApiUrl: process.env.AUTH_PUBLIC_API_URL ?? 'http://localhost:3370',
   },
   drivingLicense: {
-    secret: process.env.DRIVING_LICENSE_SECRET,
-    xroadPath:
-      process.env.DRIVING_LICENSE_XROAD_PATH ??
-      'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
+    secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
+    v1: {
+      xroadPath:
+        process.env.XROAD_DRIVING_LICENSE_PATH ??
+        'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
+    },
+    v2: {
+      xroadPath:
+        process.env.XROAD_DRIVING_LICENSE_V2_PATH ??
+        'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
+    },
   },
   education: {
     xroadLicenseServiceId: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
@@ -32,13 +40,23 @@ const devConfig = {
   },
   healthInsurance: {
     wsdlUrl:
-      process.env.HEALTH_INSURANCE_XROAD_WSDLURL ??
+      process.env.XROAD_HEALTH_INSURANCE_WSDLURL ??
       'https://test-huld.sjukra.is/islandrg?wsdl',
     baseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
-    username: process.env.HEALTH_INSURANCE_XROAD_USERNAME ?? '',
-    password: process.env.HEALTH_INSURANCE_XROAD_PASSWORD ?? '',
+    username: process.env.XROAD_HEALTH_INSURANCE_USERNAME ?? '',
+    password: process.env.XROAD_HEALTH_INSURANCE_PASSWORD ?? '',
     clientID: process.env.XROAD_CLIENT_ID ?? '',
     xroadID: process.env.XROAD_HEALTH_INSURANCE_ID ?? '',
+  },
+  healthInsuranceV2: {
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
+    xRoadClientId:
+      process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
+    xRoadProviderId:
+      process.env.XROAD_HEALTH_INSURANCE_ID ??
+      'IS-DEV/GOV/10007/SJUKRA-Protected',
+    username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME ?? '',
+    password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD ?? '',
   },
   userProfile: {
     userProfileServiceBasePath: 'http://localhost:3366',
@@ -113,12 +131,12 @@ const devConfig = {
   paymentDomain: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     xRoadProviderId:
-      process.env.PAYMENT_XROAD_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-Public',
+      process.env.XROAD_PAYMENT_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-Public',
     xRoadClientId: process.env.XROAD_CLIENT_ID,
-    username: process.env.PAYMENT_USER,
-    password: process.env.PAYMENT_PASSWORD,
-    callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
-    callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
+    username: process.env.XROAD_PAYMENT_USER,
+    password: process.env.XROAD_PAYMENT_PASSWORD,
+    callbackBaseUrl: process.env.XROAD_PAYMENT_BASE_CALLBACK_URL,
+    callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
   },
   temporaryVoterRegistry: {
@@ -140,13 +158,17 @@ const devConfig = {
     defaultNamespace: '@island.is/api',
   },
   paymentSchedule: {
-    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     xRoadProviderId:
-      process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID ??
-      'IS-DEV/GOV/10021/FJS-Public',
+      process.env.XROAD_PAYMENT_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-Public',
     xRoadClientId: process.env.XROAD_CLIENT_ID,
     username: process.env.PAYMENT_SCHEDULE_USER,
     password: process.env.PAYMENT_SCHEDULE_PASSWORD,
+  },
+  islykill: {
+    cert: process.env.ISLYKILL_CERT,
+    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
 }
 
@@ -163,8 +185,17 @@ const prodConfig = {
     baseApiUrl: process.env.AUTH_PUBLIC_API_URL,
   },
   drivingLicense: {
-    secret: process.env.DRIVING_LICENSE_SECRET,
-    xroadPath: process.env.DRIVING_LICENSE_XROAD_PATH,
+    secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
+    v1: {
+      xroadPath: process.env.XROAD_DRIVING_LICENSE_PATH,
+    },
+    v2: {
+      xroadPath: ServerSideFeatureClient.isOn(
+        'driving-license-use-v1-endpoint-for-v2-comms',
+      )
+        ? process.env.XROAD_DRIVING_LICENSE_PATH
+        : process.env.XROAD_DRIVING_LICENSE_V2_PATH,
+    },
   },
   education: {
     xroadLicenseServiceId: process.env.XROAD_MMS_LICENSE_SERVICE_ID,
@@ -181,12 +212,19 @@ const prodConfig = {
     host: process.env.SOFFIA_HOST_URL,
   },
   healthInsurance: {
-    wsdlUrl: process.env.HEALTH_INSURANCE_XROAD_WSDLURL,
+    wsdlUrl: process.env.XROAD_HEALTH_INSURANCE_WSDLURL,
     baseUrl: process.env.XROAD_BASE_PATH,
-    username: process.env.HEALTH_INSURANCE_XROAD_USERNAME,
-    password: process.env.HEALTH_INSURANCE_XROAD_PASSWORD,
+    username: process.env.XROAD_HEALTH_INSURANCE_USERNAME,
+    password: process.env.XROAD_HEALTH_INSURANCE_PASSWORD,
     clientID: process.env.XROAD_CLIENT_ID,
     xroadID: process.env.XROAD_HEALTH_INSURANCE_ID,
+  },
+  healthInsuranceV2: {
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadClientId: process.env.XROAD_CLIENT_ID,
+    xRoadProviderId: process.env.XROAD_HEALTH_INSURANCE_ID,
+    username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME,
+    password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD,
   },
   userProfile: {
     userProfileServiceBasePath: process.env.SERVICE_USER_PROFILE_URL,
@@ -247,12 +285,12 @@ const prodConfig = {
   },
   paymentDomain: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH,
-    xRoadProviderId: process.env.PAYMENT_XROAD_PROVIDER_ID,
+    xRoadProviderId: process.env.XROAD_PAYMENT_PROVIDER_ID,
     xRoadClientId: process.env.XROAD_CLIENT_ID,
-    username: process.env.PAYMENT_USER,
-    password: process.env.PAYMENT_PASSWORD,
-    callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
-    callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
+    username: process.env.XROAD_PAYMENT_USER,
+    password: process.env.XROAD_PAYMENT_PASSWORD,
+    callbackBaseUrl: process.env.XROAD_PAYMENT_BASE_CALLBACK_URL,
+    callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
   },
   temporaryVoterRegistry: {
@@ -280,10 +318,15 @@ const prodConfig = {
   },
   paymentSchedule: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH,
-    xRoadProviderId: process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID,
+    xRoadProviderId: process.env.XROAD_PAYMENT_PROVIDER_ID,
     xRoadClientId: process.env.XROAD_CLIENT_ID,
     username: process.env.PAYMENT_SCHEDULE_USER,
     password: process.env.PAYMENT_SCHEDULE_PASSWORD,
+  },
+  islykill: {
+    cert: process.env.ISLYKILL_CERT,
+    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
 }
 

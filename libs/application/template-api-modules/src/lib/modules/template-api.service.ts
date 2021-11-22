@@ -16,6 +16,7 @@ import {
   PayableDummyTemplateService,
   AccidentNotificationService,
   PublicDebtPaymentPlanTemplateService,
+  GeneralPetitionService,
 } from './templates'
 import { DataProtectionComplaintService } from './templates/data-protection-complaint/data-protection-complaint.service'
 
@@ -52,6 +53,7 @@ export class TemplateAPIService {
     private readonly payableDummyTemplateService: PayableDummyTemplateService,
     private readonly accidentNotificationService: AccidentNotificationService,
     private readonly publicDebtPaymentPlanService: PublicDebtPaymentPlanTemplateService,
+    private readonly generalPetitionService: GeneralPetitionService,
     private readonly dataProtectionComplaintService: DataProtectionComplaintService,
   ) {}
 
@@ -71,7 +73,8 @@ export class TemplateAPIService {
       | PayableDummyTemplateService
       | AccidentNotificationService
       | PublicDebtPaymentPlanTemplateService
-      | DataProtectionComplaintService,
+      | DataProtectionComplaintService
+      | GeneralPetitionService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -91,7 +94,7 @@ export class TemplateAPIService {
       } catch (e) {
         return {
           success: false,
-          error: e.message,
+          error: (e as Error).message,
         }
       }
     }
@@ -171,6 +174,11 @@ export class TemplateAPIService {
       case ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN:
         return this.tryRunningActionOnService(
           this.publicDebtPaymentPlanService,
+          action,
+        )
+      case ApplicationTypes.GENERAL_PETITION:
+        return this.tryRunningActionOnService(
+          this.generalPetitionService,
           action,
         )
       case ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT:

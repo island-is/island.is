@@ -1,3 +1,4 @@
+import addDays from 'date-fns/addDays'
 import type { FamilyMember } from '@island.is/api/domains/national-registry'
 import {
   Application,
@@ -16,6 +17,8 @@ import {
   getSelectedChild,
   getTransferredDays,
   getOtherParentId,
+  calculateEndDateForPeriodWithStartAndLength,
+  calculatePeriodLengthInMonths,
 } from './parentalLeaveUtils'
 
 function buildApplication(data?: {
@@ -291,5 +294,109 @@ describe('getOtherParentId', () => {
     application.answers.otherParent = 'spouse'
 
     expect(getOtherParentId(application)).toBe(expectedSpouse.nationalId)
+  })
+})
+
+describe('calculateEndDateForPeriodWithStartAndLength', () => {
+  it('should calculate month + n and day of month - 1 for whole months', () => {
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-01-01', 1),
+    ).toEqual(new Date(2021, 0, 31))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-01-01', 2),
+    ).toEqual(new Date(2021, 1, 28))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-01-01', 3),
+    ).toEqual(new Date(2021, 2, 31))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-06-15', 1),
+    ).toEqual(new Date(2021, 6, 14))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-01-31', 1),
+    ).toEqual(new Date(2021, 1, 27))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-03-31', 1),
+    ).toEqual(new Date(2021, 3, 29))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-02-28', 1),
+    ).toEqual(new Date(2021, 2, 27))
+  })
+
+  it('should calculate month + n and multiply remainder with 28', () => {
+    const addWholeMonthsPlusRemainder = (
+      startDate: string,
+      wholeMonths: number,
+      remainder: number,
+    ) => {
+      const whole = calculateEndDateForPeriodWithStartAndLength(
+        startDate,
+        wholeMonths,
+      )
+
+      return addDays(whole, remainder * 28)
+    }
+
+    expect(addWholeMonthsPlusRemainder('2021-01-01', 0, 0.5)).toEqual(
+      new Date(2021, 0, 0.5 * 28),
+    )
+
+    expect(addWholeMonthsPlusRemainder('2021-01-01', 1, 0.5)).toEqual(
+      new Date(2021, 1, 0.5 * 28),
+    )
+
+    expect(addWholeMonthsPlusRemainder('2021-01-01', 5, 0.5)).toEqual(
+      new Date(2021, 5, 0.5 * 28),
+    )
+
+    expect(addWholeMonthsPlusRemainder('2021-02-28', 0, 0.5)).toEqual(
+      new Date(2021, 2, 0.5 * 28 - 1),
+    )
+
+    expect(addWholeMonthsPlusRemainder('2021-03-01', 0, 0.5)).toEqual(
+      new Date(2021, 2, 0.5 * 28),
+    )
+  })
+})
+
+describe('calculatePeriodLengthInMonths', () => {
+  it('should calculate whole months correctly', () => {
+    expect(
+      calculatePeriodLengthInMonths(
+        '2021-01-01',
+        calculateEndDateForPeriodWithStartAndLength(
+          '2021-01-01',
+          1,
+        ).toISOString(),
+      ),
+    ).toBe(1)
+
+    expect(
+      calculatePeriodLengthInMonths(
+        '2021-01-31',
+        calculateEndDateForPeriodWithStartAndLength(
+          '2021-01-31',
+          1,
+        ).toISOString(),
+      ),
+    ).toBe(1)
+  })
+
+  it('should calculate half months correctly', () => {
+    expect(calculatePeriodLengthInMonths('2021-01-01', '2021-01-14')).toBe(0.5)
+    expect(calculatePeriodLengthInMonths('2021-01-14', '2021-01-28')).toBe(0.5)
+    expect(calculatePeriodLengthInMonths('2021-01-31', '2021-02-13')).toBe(0.5)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-03-13')).toBe(0.5)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-03-27')).toBe(1)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-04-13')).toBe(1.5)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-05-13')).toBe(2.5)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-07-13')).toBe(4.5)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2022-07-13')).toBe(16.5)
+    expect(calculatePeriodLengthInMonths('2021-03-27', '2021-04-11')).toBe(0.5)
   })
 })

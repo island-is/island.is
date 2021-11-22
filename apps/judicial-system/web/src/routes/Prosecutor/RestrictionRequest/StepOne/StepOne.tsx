@@ -36,13 +36,10 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
     skip: !id,
   })
 
-  const { defaultCourt, loading: institutionLoading } = useInstitution()
+  const { loading: institutionLoading } = useInstitution()
 
   const handleNextButtonClick = async (theCase: Case) => {
-    const caseId =
-      theCase.id === ''
-        ? await createCase({ ...theCase, court: defaultCourt })
-        : theCase.id
+    const caseId = theCase.id === '' ? await createCase(theCase) : theCase.id
 
     router.push(`${Constants.STEP_TWO_ROUTE}/${caseId}`)
   }
@@ -76,6 +73,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
@@ -83,10 +81,6 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
       isLoading={loading}
       notFound={id !== undefined && data?.case === undefined}
       isExtension={workingCase?.parentCase && true}
-      decision={workingCase?.decision}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase && !institutionLoading && (
         <StepOneForm

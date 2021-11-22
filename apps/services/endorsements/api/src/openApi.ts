@@ -5,7 +5,7 @@ import { environment } from './environments'
 export const openApi = new DocumentBuilder()
   .setTitle('EndorsementSystem')
   .setDescription(
-    'This API manages non-digital endorsements collected by systems within island.is.',
+    'This API manages endorsement lists and associated endorsements collected by systems within island.is.',
   )
   .setVersion('1.0')
   .addOAuth2({
@@ -15,7 +15,10 @@ export const openApi = new DocumentBuilder()
         authorizationUrl: `${environment.auth.issuer}/connect/authorize`,
         tokenUrl: `${environment.auth.issuer}/connect/token`,
         scopes: {
-          [`openid profile ${EndorsementsScope.main}`]: 'Fetches OpenId, Profile and claim needed for authenticated calls',
+          ['openid']: '',
+          ['profile']: '',
+          [EndorsementsScope.main]: '',
+          [EndorsementsScope.admin]: '',
         },
       },
     },

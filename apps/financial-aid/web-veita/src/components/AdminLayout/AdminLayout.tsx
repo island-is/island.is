@@ -3,10 +3,9 @@ import React, { ReactNode, useContext, useEffect, useState } from 'react'
 import {
   Nav,
   MobileMenuButton,
-  Login,
 } from '@island.is/financial-aid-web/veita/src/components'
 
-import * as styles from './AdminLayout.treat'
+import * as styles from './AdminLayout.css'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 
@@ -35,12 +34,10 @@ const AdminLayout = ({ children, className }: PageProps) => {
     }
   }, [showNavMobile])
 
-  if (!isAuthenticated) {
-    return <Login />
-  }
-  if (!admin) {
+  if (isAuthenticated === false || admin === undefined) {
     return null
   }
+
   return (
     <>
       <Nav showInMobile={showNavMobile} />

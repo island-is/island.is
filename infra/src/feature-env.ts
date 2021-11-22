@@ -1,6 +1,10 @@
 import yargs from 'yargs'
 import AWS from 'aws-sdk'
-import { generateYamlForFeature, dumpYaml } from './dsl/serialize-to-yaml'
+import {
+  generateYamlForFeature,
+  dumpYaml,
+  dumpJobYaml,
+} from './dsl/serialize-to-yaml'
 import { generateJobsForFeature } from './dsl/feature-jobs'
 import { UberChart } from './dsl/uber-chart'
 import { Envs } from './environments'
@@ -111,7 +115,7 @@ yargs(hideBin(process.argv))
         habitat,
         ...affectedServices,
       )
-      await writeToOutput(buildComment(featureYaml), argv.output)
+      await writeToOutput(buildComment(featureYaml.services), argv.output)
     },
   )
   .command(
@@ -132,7 +136,7 @@ yargs(hideBin(process.argv))
         argv.jobImage!,
         ...affectedServices,
       )
-      await writeToOutput(dumpYaml(featureYaml), argv.output)
+      await writeToOutput(dumpJobYaml(featureYaml), argv.output)
     },
   )
   .options({

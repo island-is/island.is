@@ -19,6 +19,18 @@ export const restrictionRequest = {
       description:
         'Notaður sem texti fyrir titill fyrir grunnupplýsingar í kröfu PDF',
     },
+    court: {
+      id: 'judicial.system.backend:pdf.restriction_request.base_info.court',
+      defaultMessage: 'Dómstóll:',
+      description: 'Notaður sem texti fyrir dómstól í kröfu PDF',
+    },
+    restrictions: {
+      id:
+        'judicial.system.backend:pdf.restriction_request.base_info.restrictions',
+      defaultMessage: 'Takmarkanir og tilhögun',
+      description:
+        'Notaður sem texti fyrir takmarkanir og tilhögun í kröfu PDF',
+    },
     nationalId: {
       id:
         'judicial.system.backend:pdf.restriction_request.base_info.national_id',
@@ -54,28 +66,80 @@ export const restrictionRequest = {
         'Notaður sem texti þegar enginn verjandi er skráður í kröfu PDF',
     },
   }),
+  description: defineMessages({
+    heading: {
+      id: 'judicial.system.backend:pdf.restriction_request.description.heading',
+      defaultMessage: 'Efni kröfu',
+      description: 'Notaður sem texti fyrir titil fyrir efni kröfu í kröfu PDF',
+    },
+    noDescription: {
+      id:
+        'judicial.system.backend:pdf.restriction_request.description.no_description',
+      defaultMessage: 'Efni kröfu ekki skráð',
+      description:
+        'Notaður sem texti þegar efni kröfu eru ekki skráðar í kröfu PDF',
+    },
+  }),
+  demands: defineMessages({
+    heading: {
+      id: 'judicial.system.backend:pdf.restriction_request.demands.heading',
+      defaultMessage: 'Dómkröfur',
+      description: 'Notaður sem texti fyrir titil fyrir dómkröfur í kröfu PDF',
+    },
+    noDemands: {
+      id: 'judicial.system.backend:pdf.restriction_request.demands.no_demands',
+      defaultMessage: 'Dómkröfur ekki skráðar',
+      description:
+        'Notaður sem texti þegar engar dómkröfur eru skráðar í kröfu PDF',
+    },
+  }),
+  lawsBroken: defineMessages({
+    heading: {
+      id: 'judicial.system.backend:pdf.restriction_request.laws_broken.heading',
+      defaultMessage: 'Lagaákvæði sem brot varða við',
+      description:
+        'Notaður sem texti fyrir titil fyrir lagaákvæði sem brot varða við í kröfu PDF',
+    },
+    noLawsBroken: {
+      id:
+        'judicial.system.backend:pdf.restriction_request.laws_broken.no_laws_broken',
+      defaultMessage: 'Lagaákvæði ekki skráð',
+      description:
+        'Notaður sem texti þegar engin lagaákvæði eru skráðar í kröfu PDF',
+    },
+  }),
+  legalBasis: defineMessage({
+    heading: {
+      id: 'judicial.system.backend:pdf.restriction_request.legal_basis.heading',
+      defaultMessage: 'Lagaákvæði sem krafan er byggð á',
+      description:
+        'Notaður sem texti fyrir lagaákvæði sem krafan er byggð á í kröfu PDF',
+    },
+    noLegalBasis: {
+      id:
+        'judicial.system.backend:pdf.restriction_request.legal_basis.no_legal_basis',
+      defaultMessage: 'Lagaákvæði ekki skráð',
+      description:
+        'Notaður sem texti þegar engin lagaákvæði eru skráðar í kröfu PDF',
+    },
+  }),
   courtClaim: defineMessage({
     id: 'judicial.system.backend:pdf.restriction_request.court_claim',
     defaultMessage: 'Dómkröfur',
     description: 'Notaður sem texti fyrir dómkröfur í kröfu PDF',
-  }),
-  lawsBroken: defineMessage({
-    id: 'judicial.system.backend:pdf.restriction_request.laws_broken',
-    defaultMessage: 'Lagaákvæði sem brot varða við',
-    description:
-      'Notaður sem texti fyrir lagaákvæði sem brot varða við í kröfu PDF',
-  }),
-  legalBasis: defineMessage({
-    id: 'judicial.system.backend:pdf.restriction_request.legal_basis',
-    defaultMessage: 'Lagaákvæði sem krafan er byggð á',
-    description:
-      'Notaður sem texti fyrir lagaákvæði sem krafan er byggð á í kröfu PDF',
   }),
   restrictions: defineMessage({
     id: 'judicial.system.backend:pdf.restriction_request.restrictions',
     defaultMessage: 'Takmarkanir og tilhögun {caseType}',
     description:
       'Notaður sem texti fyrir takmarkanir og tilhögun í kröfu PDF þar sem {caseType} mála týpan.',
+  }),
+  requestProsecutorOnlySession: defineMessage({
+    id:
+      'judicial.system.backend:pdf.restriction_request.request_prosecutor_only_session',
+    defaultMessage: 'Beiðni um dómþing að varnaraðila fjarstöddum',
+    description:
+      'Notaður sem texti fyrir beiðni um dómþing að varnaraðila fjarstöddum í kröfu PDF',
   }),
   factsAndArguments: defineMessages({
     heading: {
@@ -96,6 +160,29 @@ export const restrictionRequest = {
         'judicial.system.backend:pdf.restriction_request.facts_and_arguments.arguments',
       defaultMessage: 'Lagarök',
       description: 'Notaður sem texti fyrir titill fyrir lagarök í kröfu PDF',
+    },
+    noFacts: {
+      id:
+        'judicial.system.backend:pdf.restriction_request.facts_and_arguments.no_facts',
+      defaultMessage: 'Málsatvik ekki skráð',
+      description:
+        'Notaður sem texti þegar engin málsatvik eru skráða í kröfu PDF',
+    },
+    noArguments: {
+      id:
+        'judicial.system.backend:pdf.restriction_request.facts_and_arguments.no_arguments',
+      defaultMessage: 'Lagarök ekki skráð',
+      description:
+        'Notaður sem texti þegar engin lagarök eru skráða í kröfu PDF',
+    },
+  }),
+  prosecutor: defineMessage({
+    noProsecutor: {
+      id:
+        'judicial.system.backend:pdf.restriction_request.prosecutor.noProsecutor',
+      defaultMessage: 'Saksóknari ekki skráður',
+      description:
+        'Notaður sem texti þegar engin saksóknari er skráður í kröfu PDF',
     },
   }),
 }

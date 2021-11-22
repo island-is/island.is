@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import * as styles from './NotificationMenu.treat'
+import * as styles from './NotificationMenu.css'
 import { Box, Text, Stack } from '@island.is/island-ui/core'
 import { notifications } from './mockNotifications'
 import NotificationCard from './NotificationCard/NotificationCard'

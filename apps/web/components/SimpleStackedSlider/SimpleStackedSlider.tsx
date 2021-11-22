@@ -12,7 +12,7 @@ import {
   Inline,
 } from '@island.is/island-ui/core'
 
-import * as styles from './SimpleStackedSlider.treat'
+import * as styles from './SimpleStackedSlider.css'
 
 type Levels = number | 'auto'
 

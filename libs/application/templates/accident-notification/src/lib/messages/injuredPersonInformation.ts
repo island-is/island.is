@@ -15,7 +15,7 @@ export const injuredPersonInformation = {
     description: {
       id: 'an.application:injuredPersonInformation.general.description',
       defaultMessage:
-        'Ef tilkynning er sett fram fyrir hönd einhvers annars þarftu að skila inn skriflegu og undirrituðu umboði frá viðkomandi aðila og skila því inn sem fylgiskjali með tilkynningunni.',
+        'Stofnanir, samtök og félög sem eru virk á sviði persónuverndar geta sent inn tilkynningu án umboðs að uppfylltum skilyrðum 80. gr. reglugerðar (ESB) 2016/679 (almennu persónuverndarreglugerðarinnar).',
       description: 'Description label for injured person information section.',
     },
     juridicalDescription: {
@@ -50,7 +50,7 @@ export const injuredPersonInformation = {
   }),
   upload: defineMessages({
     uploadHeader: {
-      id: 'an.application:powerOfAttorney.upload.uploadHeader',
+      id: 'an.application:injuredPersonInformation.upload.uploadHeader',
       defaultMessage: 'Dragðu áverkavottorð hingað til að hlaða upp',
       description: 'Definition of upload header',
     },

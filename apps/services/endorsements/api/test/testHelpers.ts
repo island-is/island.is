@@ -12,6 +12,7 @@ export const metaDataResponse = {
     postalCode: expect.any(String),
   },
   bulkEndorsement: expect.any(Boolean),
+  showName: expect.any(Boolean),
   voterRegion: {
     voterRegionNumber: expect.any(Number),
     voterRegionName: expect.any(String),

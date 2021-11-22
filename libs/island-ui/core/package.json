@@ -1,6 +1,7 @@
 {
   "name": "@island.is/island-ui-core",
   "sideEffects": [
-    "src/index.ts"
+    "src/index.ts",
+    "src/utils/globalStyles.ts"
   ]
 }

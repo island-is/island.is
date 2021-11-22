@@ -5,9 +5,7 @@ import {
   CaseFile as TCaseFile,
   CaseFileState,
 } from '@island.is/judicial-system/types'
-import { NotFoundException } from '@nestjs/common'
 import { useEffect, useState } from 'react'
-import { ConsoleTransportOptions } from 'winston/lib/winston/transports'
 
 export type CaseFileStatus =
   | 'not-uploaded'
@@ -37,7 +35,7 @@ export const useCourtUpload = (
   const [uploadFileToCourtMutation] = useMutation(UploadFileToCourtMutation)
 
   useEffect(() => {
-    const files = workingCase.files as CaseFile[]
+    const files = workingCase.caseFiles as CaseFile[]
 
     files
       ?.filter((file) => file.status !== 'error' && file.status !== 'uploading')
@@ -89,7 +87,7 @@ export const useCourtUpload = (
     status: CaseFileStatus,
     state: CaseFileState,
   ) => {
-    const files = workingCase.files as CaseFile[]
+    const files = workingCase.caseFiles as CaseFile[]
 
     if (files) {
       const fileIndexToUpdate = files.findIndex((f) => f.id === file.id)

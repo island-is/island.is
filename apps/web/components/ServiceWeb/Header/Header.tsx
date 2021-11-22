@@ -15,16 +15,16 @@ import {
 } from '@island.is/island-ui/core'
 import { ServiceWebSearchInput } from '@island.is/web/components'
 
-import * as styles from './Header.treat'
+import * as styles from './Header.css'
 
 interface HeaderProps {
-  logoTitle?: string
+  title?: string
   hideSearch?: boolean
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 
-export const Header = ({ logoTitle = '', hideSearch }: HeaderProps) => {
+export const Header = ({ title = '', hideSearch }: HeaderProps) => {
   return (
     <Hidden print={true}>
       <header>
@@ -49,11 +49,11 @@ export const Header = ({ logoTitle = '', hideSearch }: HeaderProps) => {
                         </Hidden>
                       </Link>
                     </Box>
-                    {logoTitle && (
+                    {title && (
                       <Hidden below="lg">
                         <div className={styles.logoTitleContainer}>
                           <Text as="span" variant="h4" color="white">
-                            {logoTitle}
+                            {title}
                           </Text>
                         </div>
                       </Hidden>

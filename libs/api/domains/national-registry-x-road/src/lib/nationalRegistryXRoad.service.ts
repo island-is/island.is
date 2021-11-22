@@ -3,11 +3,16 @@ import { ApolloError } from 'apollo-server-express'
 import {
   Einstaklingsupplysingar,
   Fjolskylda,
+  Heimili,
+  Hjuskapur,
 } from '@island.is/clients/national-registry-v2'
 import type { NationalRegistryXRoadConfig } from './nationalRegistryXRoad.module'
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
+import { NationalRegistryAddress } from '../models/nationalRegistryAddress.model'
+import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 
 @Injectable()
 export class NationalRegistryXRoadService {
@@ -46,6 +51,36 @@ export class NationalRegistryXRoadService {
     }
   }
 
+  async getNationalRegistryResidenceHistory(
+    nationalId: string,
+    authToken: string,
+  ): Promise<NationalRegistryResidence[]> {
+    const historyList = await this.nationalRegistryFetch<Array<Heimili>>(
+      `/${nationalId}/buseta`,
+      authToken,
+    )
+
+    const history = historyList.map((heimili: Heimili) => {
+      if (!heimili.breytt) {
+        throw new Error('All history entries have a modified date')
+      }
+
+      const date = new Date((heimili.breytt as unknown) as string)
+
+      return {
+        address: {
+          city: heimili.stadur,
+          postalCode: heimili.postnumer,
+          streetName: heimili.heimilisfang,
+        } as NationalRegistryAddress,
+        country: heimili.landakodi,
+        dateOfChange: date,
+      } as NationalRegistryResidence
+    })
+
+    return history
+  }
+
   async getNationalRegistryPerson(
     nationalId: string,
     authToken: string,
@@ -54,6 +89,7 @@ export class NationalRegistryXRoadService {
       `/${nationalId}`,
       authToken,
     )
+
     return {
       nationalId: nationalId,
       fullName: person.nafn,
@@ -61,6 +97,7 @@ export class NationalRegistryXRoadService {
         streetName: person.logheimili?.heiti || undefined,
         postalCode: person.logheimili?.postnumer || undefined,
         city: person.logheimili?.stadur || undefined,
+        municipalityCode: person.logheimili?.sveitarfelagsnumer || undefined,
       },
     }
   }
@@ -147,6 +184,22 @@ export class NationalRegistryXRoadService {
       )
     } catch (e) {
       throw this.handleError(e)
+    }
+  }
+
+  async getSpouse(
+    nationalId: string,
+    authToken: string,
+  ): Promise<NationalRegistrySpouse> {
+    const spouse = await this.nationalRegistryFetch<Hjuskapur>(
+      `/${nationalId}/hjuskapur`,
+      authToken,
+    )
+
+    return {
+      nationalId: spouse.kennitalaMaka || undefined,
+      name: spouse.nafnMaka || undefined,
+      maritalStatus: spouse.hjuskaparkodi || undefined,
     }
   }
 

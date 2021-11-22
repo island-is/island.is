@@ -1,78 +1,11 @@
-import {
-  AppealDecisionRole,
-  RequiredField,
-} from '@island.is/judicial-system-web/src/types'
 import { TagVariant } from '@island.is/island-ui/core'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  capitalize,
-  formatAccusedByGender,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
-import {
-  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseGender,
-  CaseType,
 } from '@island.is/judicial-system/types'
-import { validate } from './validate'
 import parseISO from 'date-fns/parseISO'
 import addDays from 'date-fns/addDays'
-
-export const getAppealDecisionText = (
-  role: AppealDecisionRole,
-  appealDecision?: CaseAppealDecision,
-  accusedGender?: CaseGender,
-  caseType?: CaseType,
-) => {
-  switch (appealDecision) {
-    case CaseAppealDecision.APPEAL: {
-      return `${
-        role === AppealDecisionRole.ACCUSED
-          ? caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
-            ? capitalize(formatAccusedByGender(accusedGender))
-            : 'Varnaraðili'
-          : 'Sækjandi'
-      } lýsir því yfir að hann kæri úrskurðinn til Landsréttar.`
-    }
-    case CaseAppealDecision.ACCEPT: {
-      return `${
-        role === AppealDecisionRole.ACCUSED
-          ? caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
-            ? capitalize(formatAccusedByGender(accusedGender))
-            : 'Varnaraðili'
-          : 'Sækjandi'
-      } lýsir því yfir að hann unir úrskurðinum.`
-    }
-    case CaseAppealDecision.POSTPONE: {
-      return `${
-        role === AppealDecisionRole.ACCUSED
-          ? caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
-            ? capitalize(formatAccusedByGender(accusedGender))
-            : 'Varnaraðili'
-          : 'Sækjandi'
-      } lýsir því yfir að hann taki sér lögboðinn frest.`
-    }
-    default: {
-      return ''
-    }
-  }
-}
-
-export const isNextDisabled = (requiredFields: RequiredField[]) => {
-  // Loop through requiredFields
-  for (let i = 0; i < requiredFields.length; i++) {
-    // Loop through validations for each required field
-    for (let a = 0; a < requiredFields[i].validations.length; a++) {
-      if (
-        !validate(requiredFields[i].value, requiredFields[i].validations[a])
-          .isValid
-      ) {
-        return true
-      }
-    }
-  }
-  return false
-}
 
 /**
  * A value is considered dirty if it's a string, either an empty string or not.

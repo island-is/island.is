@@ -34,8 +34,10 @@ import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-voter-registry'
 import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
+import { IslykillModule } from '@island.is/api/domains/islykill'
 import { AuditModule } from '@island.is/nest/audit'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
+import { ProblemModule } from '@island.is/nest/problem'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 
@@ -84,10 +86,13 @@ const autoSchemaFile = environment.production
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({
-      xroadBaseUrl: environment.xroad.baseUrl,
-      xroadClientId: environment.xroad.clientId,
-      secret: environment.drivingLicense.secret,
-      xroadPath: environment.drivingLicense.xroadPath,
+      clientConfig: {
+        xroadBaseUrl: environment.xroad.baseUrl,
+        xroadClientId: environment.xroad.clientId,
+        secret: environment.drivingLicense.secret,
+        xroadPathV1: environment.drivingLicense.v1.xroadPath,
+        xroadPathV2: environment.drivingLicense.v2.xroadPath,
+      },
     }),
     EducationModule.register({
       xroad: {
@@ -151,16 +156,30 @@ const autoSchemaFile = environment.production
       },
     }),
     HealthInsuranceModule.register({
-      wsdlUrl: environment.healthInsurance.wsdlUrl,
-      baseUrl: environment.healthInsurance.baseUrl,
-      username: environment.healthInsurance.username,
-      password: environment.healthInsurance.password,
-      clientID: environment.healthInsurance.clientID,
-      xroadID: environment.healthInsurance.xroadID,
+      soapConfig: {
+        wsdlUrl: environment.healthInsurance.wsdlUrl,
+        baseUrl: environment.healthInsurance.baseUrl,
+        username: environment.healthInsurance.username,
+        password: environment.healthInsurance.password,
+        clientID: environment.healthInsurance.clientID,
+        xroadID: environment.healthInsurance.xroadID,
+      },
+      clientV2Config: {
+        xRoadBaseUrl: environment.healthInsuranceV2.xRoadBaseUrl,
+        xRoadProviderId: environment.healthInsuranceV2.xRoadProviderId,
+        xRoadClientId: environment.healthInsuranceV2.xRoadClientId,
+        username: environment.healthInsuranceV2.username,
+        password: environment.healthInsuranceV2.password,
+      },
     }),
     UserProfileModule.register({
       userProfileServiceBasePath:
         environment.userProfile.userProfileServiceBasePath,
+      islykill: {
+        cert: environment.islykill.cert,
+        passphrase: environment.islykill.passphrase,
+        basePath: environment.islykill.basePath,
+      },
     }),
     CommunicationsModule,
     ApiCatalogueModule,
@@ -225,7 +244,7 @@ const autoSchemaFile = environment.production
       xroad: {
         baseUrl: environment.xroad.baseUrl,
         clientId: environment.xroad.clientId,
-        path: environment.drivingLicense.xroadPath,
+        path: environment.drivingLicense.v1.xroadPath,
         secret: environment.drivingLicense.secret,
       },
       pkpass: {
@@ -244,6 +263,12 @@ const autoSchemaFile = environment.production
       password: environment.paymentSchedule.password,
       username: environment.paymentSchedule.username,
     }),
+    IslykillModule.register({
+      cert: environment.islykill.cert,
+      passphrase: environment.islykill.passphrase,
+      basePath: environment.islykill.basePath,
+    }),
+    ProblemModule,
   ],
 })
 export class AppModule {}

@@ -31,7 +31,7 @@ import {
 import { PaymentPlanTable } from '../components/PaymentPlanTable/PaymentPlanTable'
 import { PlanSlider } from '../components/PlanSlider/PlanSlider'
 import { PaymentPlanCard } from '../PaymentPlanList/PaymentPlanCard/PaymentPlanCard'
-import * as styles from './PaymentPlan.treat'
+import * as styles from './PaymentPlan.css'
 import { useDebouncedSliderValues } from './useDebouncedSliderValues'
 
 // An array might not work for this schema
@@ -220,6 +220,18 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
         value={payment.type}
         ref={register({ required: true })}
         name={`${entry}.id`}
+      />
+      <input
+        type="hidden"
+        value={payment.totalAmount}
+        ref={register({ required: true })}
+        name={`${entry}.totalAmount`}
+      />
+      <input
+        type="hidden"
+        value={JSON.stringify(distributionData?.payments || '')}
+        ref={register({ required: true })}
+        name={`${entry}.distribution`}
       />
       <Text marginBottom={5}>
         {formatMessage(paymentPlan.general.paymentPlanDescription)}

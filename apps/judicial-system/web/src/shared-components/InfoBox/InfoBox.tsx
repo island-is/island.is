@@ -1,7 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
 import { Box, Icon, Text } from '@island.is/island-ui/core'
-import * as styles from './InfoBox.treat'
+import * as styles from './InfoBox.css'
 
 interface Props {
   text: string
@@ -13,6 +13,7 @@ interface Props {
 const InfoBox: React.FC<Props> = (props) => {
   return (
     <div
+      data-testid="infobox"
       className={cn(styles.infoBoxContainer, {
         [styles.fluid]: props.fluid,
         [styles.light]: props.light,

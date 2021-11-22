@@ -8,7 +8,7 @@ import {
   TooltipProps,
   Legend,
 } from 'recharts'
-import * as styles from './SimplePieChart.treat'
+import * as styles from './SimplePieChart.css'
 import cn from 'classnames'
 import {
   COLORS,

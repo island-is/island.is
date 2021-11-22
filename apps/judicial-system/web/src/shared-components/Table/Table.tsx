@@ -3,7 +3,7 @@ import { Row, useSortBy, useTable } from 'react-table'
 import cn from 'classnames'
 
 import { Box, Icon, Text } from '@island.is/island-ui/core'
-import * as styles from './Table.treat'
+import * as styles from './Table.css'
 import { theme } from '@island.is/island-ui/theme'
 
 type column<T> = {

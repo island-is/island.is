@@ -94,6 +94,14 @@ localhost:3344/api/swagger
 
 Migrations need to be created by hand.
 
+#### Generate a empty migration file you can simply run:
+
+```
+npx sequelize-cli migration:generate --name update-case
+```
+
+this will generate a migration file with empty exports for up (Altering commands) and down (Reverting commands).
+
 ## Web
 
 A platform for the exchange of data, information, formal decisions and notifications between parties in the Icelandic judicial system.
@@ -137,11 +145,43 @@ This project uses two types of automated tests, unit tests and e2e tests. We use
 yarn test judicial-system-web
 ```
 
+##### Lib tests
+
+```bash
+yarn test judicial-system-formatters
+```
+
 ##### e2e tests
 
 ```bash
 yarn nx e2e judicial-system-web-e2e --watch
 ```
+
+### Message Extraction from Contentful
+
+Running yarn nx extract-strings judicial-system-{namespace} in the root folder /island.is will extract messages from the project and create or update a Namespace entry in Contentful.
+
+#### Example for namespaces in web:
+
+```
+yarn nx extract-strings judicial-system-web
+```
+
+will update namespaces:
+
+- judicial.system.core
+- judicial.system.restriction_cases
+- judicial.system.investigation_cases
+
+#### For backend:
+
+```
+yarn nx extract-strings judicial-system-backend
+```
+
+will update namespaces:
+
+- judicial.system.backend
 
 ## Code owners and maintainers
 

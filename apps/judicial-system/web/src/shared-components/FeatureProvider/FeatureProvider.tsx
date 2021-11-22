@@ -6,7 +6,7 @@ interface FeatureProvider {
   features: Feature[]
 }
 
-const availableFeatures: Feature[] = [Feature.R_CASES]
+const availableFeatures: Feature[] = []
 
 export const FeatureContext = createContext<FeatureProvider>({ features: [] })
 

@@ -1,5 +1,6 @@
 import React from 'react'
 import Head from 'next/head'
+import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { Screen } from '../../../types'
 import {
@@ -18,10 +19,14 @@ import {
   GridContainer,
   GridColumn,
   GridRow,
+  LinkContext,
+  Button,
 } from '@island.is/island-ui/core'
+import Footer from '../shared/Footer'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   GET_NAMESPACE_QUERY,
+  GET_SERVICE_WEB_ORGANIZATION,
   GET_SUPPORT_SEARCH_RESULTS_QUERY,
 } from '../../queries'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -34,31 +39,42 @@ import {
   SearchableContentTypes,
   SupportQna,
   GetSupportSearchResultsQuery,
+  Organization,
+  QueryGetOrganizationArgs,
+  Query,
 } from '../../../graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useLinkResolver } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
-import { ServiceWebSearchInput } from '@island.is/web/components/'
+import {
+  ServiceWebSearchInput,
+  ServiceWebModifySearchTerms,
+} from '@island.is/web/components'
+import { getSlugPart } from '../utils'
 
-import * as sharedStyles from '../shared/styles.treat'
+import * as sharedStyles from '../shared/styles.css'
 
 const PERPAGE = 10
 
-interface CategoryProps {
+interface ServiceSearchProps {
   q: string
   page: number
-  searchResults: GetSupportSearchResultsQuery['searchResults']
   namespace: GetNamespaceQuery['getNamespace']
+  organization?: Organization
+  searchResults: GetSupportSearchResultsQuery['searchResults']
 }
 
-const ServiceSearch: Screen<CategoryProps> = ({
+const ServiceSearch: Screen<ServiceSearchProps> = ({
   q,
   page,
-  searchResults,
   namespace,
+  organization,
+  searchResults,
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+
+  const institutionSlug = getSlugPart(Router.asPath, 2)
 
   const searchResultsItems = (searchResults.items as Array<SupportQna>).map(
     (item) => ({
@@ -81,12 +97,22 @@ const ServiceSearch: Screen<CategoryProps> = ({
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
+  const pageTitle = `${n('searchResults', 'Leitarniðurstöður')} | ${n(
+    'serviceWeb',
+    'Þjónustuvefur',
+  )}`
+
+  const headerTitle = `${n('serviceWeb', 'Þjónustuvefur')} - ${n(
+    'search',
+    'Leit',
+  )}`
+
   return (
     <>
       <Head>
-        <title>{n('searchResults', 'Leitarniðurstöður')} | Ísland.is</title>
+        <title>{pageTitle}</title>
       </Head>
-      <ServiceWebHeader logoTitle={'Þjónustuvefur - Leit'} hideSearch />
+      <ServiceWebHeader title={headerTitle} hideSearch />
       <div className={cn(sharedStyles.bg, sharedStyles.bgSmall)} />
       <Box marginY={[3, 3, 10]}>
         <GridContainer>
@@ -96,18 +122,60 @@ const ServiceSearch: Screen<CategoryProps> = ({
               span={['12/12', '12/12', '12/12', '10/12', '7/12']}
             >
               <Stack space={[3, 3, 4]}>
-                <Breadcrumbs
-                  items={[
-                    {
-                      title: 'Þjónustuvefur',
-                      href: linkResolver('helpdesk').href,
-                    },
-                    {
-                      title: 'Leit',
-                      href: linkResolver('helpdesksearch').href,
-                    },
-                  ]}
-                />
+                <Box display={['none', 'none', 'block']} printHidden>
+                  <Breadcrumbs
+                    items={[
+                      {
+                        title: n('serviceWeb', 'Þjónustuvefur'),
+                        href: linkResolver('helpdesk').href,
+                      },
+                      {
+                        title: n('search', 'Leit'),
+                        isTag: true,
+                      },
+                    ]}
+                    renderLink={(link, { href }) => {
+                      return (
+                        <NextLink href={href} passHref>
+                          {link}
+                        </NextLink>
+                      )
+                    }}
+                  />
+                </Box>
+                <Box
+                  paddingBottom={[2, 2, 4]}
+                  display={['flex', 'flex', 'none']}
+                  justifyContent="spaceBetween"
+                  alignItems="center"
+                  printHidden
+                >
+                  <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
+                    <LinkContext.Provider
+                      value={{
+                        linkRenderer: (href, children) => (
+                          <Link href={href} pureChildren skipTab>
+                            {children}
+                          </Link>
+                        ),
+                      }}
+                    >
+                      <Text truncate>
+                        <a href={linkResolver('helpdesk').href}>
+                          <Button
+                            preTextIcon="arrowBack"
+                            preTextIconType="filled"
+                            size="small"
+                            type="button"
+                            variant="text"
+                          >
+                            {n('serviceWeb', 'Þjónustuvefur')}
+                          </Button>
+                        </a>
+                      </Text>
+                    </LinkContext.Provider>
+                  </Box>
+                </Box>
 
                 <ServiceWebSearchInput
                   colored={true}
@@ -213,6 +281,7 @@ const ServiceSearch: Screen<CategoryProps> = ({
           </GridRow>
         </GridContainer>
       </Box>
+      <Footer institutionSlug={institutionSlug} organization={organization} />
     </>
   )
 }
@@ -220,17 +289,31 @@ const ServiceSearch: Screen<CategoryProps> = ({
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
 ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const queryString = single(query.q) || ''
+  const q = single(query.q) || ''
+  const slug = query.slug ? (query.slug as string) : 'stafraent-island'
   const page = Number(single(query.page)) || 1
 
   const types = ['webQNA' as SearchableContentTypes]
 
+  const queryString = ServiceWebModifySearchTerms(q)
+
   const [
+    organization,
     {
       data: { searchResults },
     },
     namespace,
   ] = await Promise.all([
+    !!slug &&
+      apolloClient.query<Query, QueryGetOrganizationArgs>({
+        query: GET_SERVICE_WEB_ORGANIZATION,
+        variables: {
+          input: {
+            slug,
+            lang: locale as ContentLanguage,
+          },
+        },
+      }),
     apolloClient.query<GetSupportSearchResultsQuery, QuerySearchResultsArgs>({
       query: GET_SUPPORT_SEARCH_RESULTS_QUERY,
       variables: {
@@ -264,12 +347,15 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 
   return {
-    q: queryString,
-    searchResults,
-    namespace,
-    showSearchInHeader: false,
+    q,
     page,
+    namespace,
+    organization: organization?.data?.getOrganization,
+    searchResults,
   }
 }
 
-export default withMainLayout(ServiceSearch, { showHeader: false })
+export default withMainLayout(ServiceSearch, {
+  showHeader: false,
+  showFooter: false,
+})

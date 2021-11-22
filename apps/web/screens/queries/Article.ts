@@ -104,7 +104,11 @@ export const GET_ARTICLE_QUERY = gql`
 export const GET_CONTENT_SLUG = gql`
   query GetContentSlug($input: GetContentSlugInput!) {
     getContentSlug(input: $input) {
-      slug
+      id
+      slug {
+        en
+        is
+      }
       type
     }
   }

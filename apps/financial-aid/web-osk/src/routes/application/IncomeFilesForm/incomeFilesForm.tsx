@@ -9,7 +9,7 @@ import { Text } from '@island.is/island-ui/core'
 
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
@@ -35,8 +35,8 @@ const IncomeFilesForm = () => {
           Tekjugögn
         </Text>
         <Text marginBottom={[3, 3, 5]}>
-          Við þurfum að sjá gögn um tekjur í þessum og síðasta mánuði. Þú getur
-          smellt mynd af launaseðlum eða öðrum tekjugögnum, nálgast gögn í
+          Við þurfum að sjá gögn um tekjur í þessum og síðustu tvo mánuði. Þú
+          getur smellt mynd af launaseðlum eða öðrum tekjugögnum, nálgast gögn í
           heimabankanum eða hjá þeirri stofnun sem þú fékkst tekjur frá.
         </Text>
         <Files

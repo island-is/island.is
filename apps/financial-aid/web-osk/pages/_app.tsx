@@ -1,29 +1,31 @@
+import React from 'react'
 import App, { AppProps } from 'next/app'
 import getConfig from 'next/config'
 import { ApolloProvider } from '@apollo/client'
-import React from 'react'
-import { Header } from '../src/components'
+
 import { client } from '../graphql'
 import {
   FormProvider,
-  UserProvider,
-  MunicipalityProvider,
-} from '../src/components'
+  AppProvider,
+  AppLayout,
+} from '@island.is/financial-aid-web/osk/src/components'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
-import { AppLayout } from '@island.is/financial-aid-web/osk/src/components'
+import { Provider } from 'next-auth/client'
 
-import '../src/styles.css'
+import '@island.is/financial-aid-web/osk/src/styles.css'
 
 class FinancialAidApplication extends App<AppProps> {
   render() {
     const { Component, pageProps } = this.props
 
     return (
-      <ApolloProvider client={client}>
-        <FormProvider>
-          <UserProvider>
-            <MunicipalityProvider>
-              <Header />
+      <Provider
+        session={pageProps.session}
+        options={{ clientMaxAge: 120, basePath: `/api/auth` }}
+      >
+        <ApolloProvider client={client}>
+          <FormProvider>
+            <AppProvider>
               <AppLayout>
                 <Component {...pageProps} />
               </AppLayout>
@@ -88,10 +90,10 @@ class FinancialAidApplication extends App<AppProps> {
                       format('woff');
                 }
               `}</style>
-            </MunicipalityProvider>
-          </UserProvider>
-        </FormProvider>
-      </ApolloProvider>
+            </AppProvider>
+          </FormProvider>
+        </ApolloProvider>
+      </Provider>
     )
   }
 }

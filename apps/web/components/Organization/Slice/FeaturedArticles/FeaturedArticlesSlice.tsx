@@ -11,7 +11,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './FeaturedArticlesSlice.treat'
+import * as styles from './FeaturedArticlesSlice.css'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useNamespace } from '@island.is/web/hooks'
 import { Namespace } from '@island.is/api/schema'

@@ -1,3 +1,4 @@
+import compareAsc from 'date-fns/compareAsc'
 import fetch, { Response } from 'node-fetch'
 
 import * as kennitala from 'kennitala'
@@ -14,6 +15,7 @@ import {
   CONFIG_PROVIDER,
   GenericLicenseClient,
   GenericLicenseUserdataExternal,
+  GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
   PkPassVerification,
   PkPassVerificationError,
@@ -24,6 +26,9 @@ import { PkPassPayload } from './pkpass.type'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'drivinglicense-service'
+
+/** Defined cut-off point for driving license images */
+const IMAGE_CUTOFF_DATE = '1997-08-15'
 
 // PkPass service wants dates in DD-MM-YYYY format
 const dateToPkpassDate = (date: string): string => {
@@ -195,6 +200,29 @@ export class GenericDrivingLicenseApi
     }
   }
 
+  static licenseIsValidForPkpass(
+    license: GenericDrivingLicenseResponse,
+  ): GenericUserLicensePkPassStatus {
+    if (!license || license.mynd === undefined) {
+      return GenericUserLicensePkPassStatus.Unknown
+    }
+
+    if (!license.mynd?.skrad || !license.mynd?.mynd) {
+      return GenericUserLicensePkPassStatus.NotAvailable
+    }
+
+    const cutoffDate = new Date(IMAGE_CUTOFF_DATE)
+    const imageDate = new Date(license.mynd?.skrad)
+
+    const comparison = compareAsc(imageDate, cutoffDate)
+
+    if (isNaN(comparison) || comparison < 0) {
+      return GenericUserLicensePkPassStatus.NotAvailable
+    }
+
+    return GenericUserLicensePkPassStatus.Available
+  }
+
   async getPkPassUrlByNationalId(nationalId: string): Promise<string | null> {
     const licenses = await this.requestFromXroadApi(nationalId)
 
@@ -213,6 +241,12 @@ export class GenericDrivingLicenseApi
         { category: LOG_CATEGORY },
       )
       return null
+    }
+
+    if (!GenericDrivingLicenseApi.licenseIsValidForPkpass(license)) {
+      this.logger.info('License is not valid for pkpass generation', {
+        category: LOG_CATEGORY,
+      })
     }
 
     const payload = this.drivingLicenseToPkpassPayload(license)
@@ -244,9 +278,19 @@ export class GenericDrivingLicenseApi
 
     const payload = parseDrivingLicensePayload(licenses)
 
+    let pkpassStatus: GenericUserLicensePkPassStatus =
+      GenericUserLicensePkPassStatus.Unknown
+
+    if (payload) {
+      pkpassStatus = GenericDrivingLicenseApi.licenseIsValidForPkpass(
+        licenses[0],
+      )
+    }
+
     return {
       payload,
       status: GenericUserLicenseStatus.HasLicense,
+      pkpassStatus,
     }
   }
 

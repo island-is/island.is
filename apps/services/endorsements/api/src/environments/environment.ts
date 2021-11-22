@@ -1,4 +1,5 @@
 const isProductionEnvironment = process.env.NODE_ENV === 'production'
+
 const devConfig = {
   production: isProductionEnvironment,
   metadataProvider: {
@@ -22,6 +23,18 @@ const devConfig = {
   },
   accessGroups: {
     DMR: process.env.ACCESS_GROUP_DMR ?? '',
+    Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
+  },
+  email: {
+    sender: 'devland.is',
+    address: 'development@island.is',
+  },
+  emailOptions: {
+    useTestAccount: false,
+    useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
+    options: {
+      region: 'eu-west-1',
+    },
   },
 }
 
@@ -50,7 +63,22 @@ const prodConfig = {
   },
   accessGroups: {
     DMR: process.env.ACCESS_GROUP_DMR ?? '',
+    Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
+  },
+  email: {
+    sender: process.env.EMAIL_FROM_NAME ?? '',
+    address: process.env.EMAIL_FROM_ADDRESS ?? '',
+  },
+  emailOptions: {
+    useTestAccount: false,
+    useNodemailerApp: false,
+    options: {
+      region: 'eu-west-1',
+    },
   },
 }
 
 export default isProductionEnvironment ? prodConfig : devConfig
+
+// global settings for endorsementsystem
+export const ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS = ['generalPetition']

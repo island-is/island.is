@@ -1,7 +1,14 @@
+import { makeCase } from '@island.is/judicial-system/formatters'
+import { intercept } from '../../utils'
+
 describe('/krafa/domkrofur-og-lagaakvaedi/:id', () => {
   beforeEach(() => {
+    const caseData = makeCase()
+
     cy.stubAPIResponses()
     cy.visit('/krafa/domkrofur-og-lagaakvaedi/test_id')
+
+    intercept(caseData)
   })
 
   it('should require a valid requested custody end time', () => {

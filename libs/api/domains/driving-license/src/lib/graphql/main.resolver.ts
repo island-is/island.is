@@ -10,16 +10,14 @@ import { DrivingLicenseService } from '../drivingLicense.service'
 export * from '@island.is/nest/audit'
 import {
   DrivingLicense,
-  DrivingLicenseType,
-  PenaltyPointStatus,
   HasTeachingRights,
   StudentInformationResult,
   ApplicationEligibility,
   Juristiction,
-  DrivingLicenseDeprevationType,
-  DrivingLicenseRemarkType,
   QualityPhoto,
   StudentAssessment,
+  ApplicationEligibilityInput,
+  Teacher,
 } from './models'
 import { AuditService } from '@island.is/nest/audit'
 
@@ -46,32 +44,9 @@ export class MainResolver {
     )
   }
 
-  @Query(() => [DrivingLicenseDeprevationType])
-  drivingLicenseDeprivationTypes() {
-    return this.drivingLicenseService.getDeprivationTypes()
-  }
-
-  @Query(() => [DrivingLicenseType])
-  drivingLicenseEntitlementTypes() {
-    return this.drivingLicenseService.getDrivingLicenseTypes()
-  }
-
-  @Query(() => [DrivingLicenseRemarkType])
-  drivingLicenseRemarkTypes() {
-    return this.drivingLicenseService.getRemarkTypes()
-  }
-
-  @Query(() => PenaltyPointStatus)
-  drivingLicensePenaltyPointStatus(@CurrentUser() user: User) {
-    return this.auditService.auditPromise(
-      {
-        user,
-        namespace,
-        action: 'drivingLicensePenaltyPointStatus',
-        resources: user.nationalId,
-      },
-      this.drivingLicenseService.getPenaltyPointStatus(user.nationalId),
-    )
+  @Query(() => [Teacher])
+  drivingLicenseTeachers() {
+    return this.drivingLicenseService.getTeachers()
   }
 
   @Query(() => HasTeachingRights)
@@ -111,11 +86,11 @@ export class MainResolver {
   @Query(() => ApplicationEligibility)
   drivingLicenseApplicationEligibility(
     @CurrentUser() user: User,
-    @Args('type') type: string,
+    @Args('input') input: ApplicationEligibilityInput,
   ) {
     return this.drivingLicenseService.getApplicationEligibility(
       user.nationalId,
-      type,
+      input.applicationFor,
     )
   }
 

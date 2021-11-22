@@ -1,4 +1,5 @@
 import {
+  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseGender,
   CaseType,
@@ -12,6 +13,7 @@ import {
   formatGender,
   formatCustodyRestrictions,
   formatAlternativeTravelBanRestrictions,
+  formatAppeal,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -147,10 +149,28 @@ describe('formatCustodyRestrictions', () => {
     const custodyRestrictions: Array<CaseCustodyRestrictions> = []
 
     // Act
-    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(
+      accusedGender,
+      custodyRestrictions,
+      true,
+    )
 
     // Assert
     expect(res).toBe('')
+  })
+
+  test('should return formatted restrictions for no restrictions in custody notice', () => {
+    // Arrange
+    const accusedGender = CaseGender.MALE
+    const custodyRestrictions: Array<CaseCustodyRestrictions> = []
+
+    // Act
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi tekur fram að gæsluvarðhaldið verði án takmarkana.',
+    )
   })
 
   test('should return formatted restrictions for isolation only', () => {
@@ -159,10 +179,28 @@ describe('formatCustodyRestrictions', () => {
     const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
 
     // Act
-    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(
+      accusedGender,
+      custodyRestrictions,
+      true,
+    )
 
     // Assert
     expect(res).toBe('')
+  })
+
+  test('should return formatted restrictions for isolation only in custody notice', () => {
+    // Arrange
+    const accusedGender = CaseGender.MALE
+    const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
+
+    // Act
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi tekur fram að gæsluvarðhaldið verði án annarra takmarkana.',
+    )
   })
 
   test('should return formatted restrictions for isolation and one other restriction', () => {
@@ -196,7 +234,7 @@ describe('formatCustodyRestrictions', () => {
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að gæsluvarðhaldið verði með bréfaskoðun og símabanni, fjölmiðlabanni og heimsóknarbanni skv. 99. gr. laga nr. 88/2008.',
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með heimsóknarbanni, bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
     )
   })
 
@@ -214,7 +252,7 @@ describe('formatCustodyRestrictions', () => {
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að gæsluvarðhaldið verði með bréfaskoðun og símabanni, fjölmiðlabanni og heimsóknarbanni skv. 99. gr. laga nr. 88/2008.',
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með heimsóknarbanni, bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
     )
   })
 })
@@ -358,5 +396,62 @@ describe('formatGender', () => {
 
     // Assert
     expect(r).toBe('Kynsegin/Annað')
+  })
+})
+
+describe('formatAppeal', () => {
+  test('should format appeal', () => {
+    // Arrange
+    const appealDecision = CaseAppealDecision.APPEAL
+    const stakeholder = 'Aðili'
+
+    // Act
+    const res = formatAppeal(appealDecision, stakeholder)
+
+    // Assert
+    expect(res).toBe(
+      'Aðili lýsir því yfir að hann kæri úrskurðinn til Landsréttar.',
+    )
+  })
+
+  test('should format acceptance', () => {
+    // Arrange
+    const appealDecision = CaseAppealDecision.ACCEPT
+    const stakeholder = 'Aðili'
+
+    // Act
+    const res = formatAppeal(appealDecision, stakeholder)
+
+    // Assert
+    expect(res).toBe('Aðili unir úrskurðinum.')
+  })
+
+  test('should format postponement', () => {
+    // Arrange
+    const appealDecision = CaseAppealDecision.POSTPONE
+    const stakeholder = 'Aðili'
+
+    // Act
+    const res = formatAppeal(appealDecision, stakeholder)
+
+    // Assert
+    expect(res).toBe(
+      'Aðili lýsir því yfir að hann taki sér lögbundinn kærufrest.',
+    )
+  })
+
+  test('should format gender pronouns if gender is set', () => {
+    // Arrange
+    const appealDecision = CaseAppealDecision.POSTPONE
+    const stakeholder = 'Kærða'
+    const stakeholderGender = CaseGender.FEMALE
+
+    // Act
+    const res = formatAppeal(appealDecision, stakeholder, stakeholderGender)
+
+    // Assert
+    expect(res).toBe(
+      'Kærða lýsir því yfir að hún taki sér lögbundinn kærufrest.',
+    )
   })
 })

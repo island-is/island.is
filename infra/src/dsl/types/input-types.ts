@@ -12,6 +12,8 @@ export type Hash = { [name: string]: Hash | string }
 export type ValueSource = string | ((e: Context) => string)
 export type ValueType = MissingSettingType | ValueSource
 
+export type RolloutStrategy = 'RollingUpdate' | 'Recreate'
+
 export type PostgresInfo = {
   host?: {
     [idx in OpsEnv]: ValueType
@@ -29,12 +31,27 @@ export type HealthProbe = {
 
 export type Secrets = { [name: string]: string }
 
+export type EnvironmentVariableValue =
+  | {
+      [idx in OpsEnv]: ValueType
+    }
+  | ValueType
+
+export type EnvironmentVariables = {
+  [name: string]: EnvironmentVariableValue
+}
+
+export interface XroadConfig {
+  getEnv(): EnvironmentVariables
+  getSecrets(): Secrets
+}
 export type Feature = {
   env: EnvironmentVariables
   secrets: Secrets
 }
 
 export type Features = { [name in FeatureNames]: Feature }
+export type MountedFile = { filename: string; env: string }
 
 export type ServiceDefinition = {
   liveness: HealthProbe
@@ -62,6 +79,9 @@ export type ServiceDefinition = {
     privileged: boolean
     allowPrivilegeEscalation: boolean
   }
+  xroadConfig: XroadConfig[]
+  files: MountedFile[]
+  rolloutStrategy?: RolloutStrategy
 }
 
 export interface Ingress {
@@ -91,7 +111,7 @@ export type ReplicaCount = {
 
 export type InitContainers = {
   envs?: EnvironmentVariables
-  secrets?: { [key: string]: SecretType }
+  secrets?: Secrets
   features?: Partial<Features>
   containers: {
     command: string
@@ -107,15 +127,5 @@ export interface Context {
   svc(dep: Service): string
   env: EnvironmentConfig
 }
-export type SecretType = string
 
-export type EnvironmentVariableValue =
-  | {
-      [idx in OpsEnv]: ValueType
-    }
-  | ValueType
-
-export type EnvironmentVariables = {
-  [name: string]: EnvironmentVariableValue
-}
 export type ExtraValues = { [idx in OpsEnv]: Hash | MissingSettingType }

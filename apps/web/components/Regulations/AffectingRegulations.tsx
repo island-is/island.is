@@ -1,4 +1,4 @@
-import * as s from './RegulationDisplay.treat'
+import * as s from './RegulationDisplay.css'
 
 import React, { Fragment, memo } from 'react'
 import { Link } from '@island.is/island-ui/core'

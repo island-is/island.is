@@ -73,6 +73,7 @@ const Defendant = () => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
@@ -80,10 +81,6 @@ const Defendant = () => {
       isLoading={loading || isCreatingCase}
       notFound={id !== undefined && data?.case === undefined}
       isExtension={workingCase?.parentCase && true}
-      decision={workingCase?.decision}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase && (
         <DefendantForm

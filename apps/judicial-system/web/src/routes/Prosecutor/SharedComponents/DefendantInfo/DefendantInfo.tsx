@@ -12,7 +12,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import * as styles from './DefendantInfo.treat'
+import * as styles from './DefendantInfo.css'
 
 interface Props {
   workingCase: Case

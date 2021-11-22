@@ -3,7 +3,6 @@ import { Inject, UseGuards } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { JwtGraphQlAuthGuard } from '@island.is/judicial-system/auth'
 
 import { BackendAPI } from '../../../services'
 import {
@@ -12,8 +11,9 @@ import {
   GetSignedUrlInput,
 } from './dto'
 import { SignedUrlModel, CreateFilesModel } from './models'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(IdsUserGuard)
 @Resolver()
 export class FileResolver {
   constructor(

@@ -7,6 +7,8 @@ import {
   Header,
   Inject,
   Param,
+  ParseBoolPipe,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -98,6 +100,7 @@ export class FileController {
   @Header('Content-Type', 'application/pdf')
   async getRulingPdf(
     @Param('id') id: string,
+    @Query('shortVersion', ParseBoolPipe) shortVersion: boolean,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
@@ -108,12 +111,43 @@ export class FileController {
       return this.auditTrailService.audit(
         user.id,
         AuditedAction.GET_RULING_PDF,
-        this.getPdf(id, 'ruling', req, res),
+        this.getPdf(id, `ruling?shortVersion=${shortVersion}`, req, res),
         id,
       )
     } catch (error) {
       this.logger.debug(
         `Failed to get the ruling for case ${id} as a pdf document`,
+        error,
+      )
+
+      if (error instanceof FileExeption) {
+        return res.status(error.status).json(error.message)
+      }
+
+      throw error
+    }
+  }
+
+  @Get('custodyNotice')
+  @Header('Content-Type', 'application/pdf')
+  async getCustodyNoticePdf(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(`Getting the ruling for case ${id} as a pdf document`)
+
+    try {
+      return this.auditTrailService.audit(
+        user.id,
+        AuditedAction.GET_RULING_PDF,
+        this.getPdf(id, 'custodyNotice', req, res),
+        id,
+      )
+    } catch (error) {
+      this.logger.debug(
+        `Failed to get the custody notice for case ${id} as a pdf document`,
         error,
       )
 

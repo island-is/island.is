@@ -17,6 +17,61 @@ const MAX_AGE_LIMIT = 18
 
 const TEST_USERS: NationalRegistryUser[] = [
   {
+    // Test User Ísabella
+    nationalId: '1902982649',
+    firstName: 'Ísabella',
+    address: 'Hrimblugrugg 2',
+    city: 'Vestmannaeyjar',
+    gender: 'kvk',
+    lastName: 'Developersdóttir',
+    middleName: 'EagleAir',
+    postalcode: 900,
+  },
+  {
+    // Gervibarn Ísabellu
+    nationalId: '1111990000',
+    firstName: 'Minnsti',
+    middleName: 'Drengur',
+    lastName: 'Ísabelluson',
+    gender: 'kk',
+    address: 'Hrimblugrugg 2',
+    postalcode: 900,
+    city: 'Vestmannaeyjar',
+  },
+  {
+    // Gervibarn Ísabellu
+    nationalId: '1111994500',
+    firstName: 'Stærri',
+    middleName: 'Drengur',
+    lastName: 'Ísabelluson',
+    gender: 'kk',
+    address: 'Hrimblugrugg 2',
+    postalcode: 900,
+    city: 'Vestmannaeyjar',
+  },
+  {
+    // Gervibarn Ísabellu
+    nationalId: '1111997600',
+    firstName: 'Lítil',
+    middleName: 'Stúlka',
+    lastName: 'Ísabelludóttir',
+    gender: 'kvk',
+    address: 'Hrimblugrugg 2',
+    postalcode: 900,
+    city: 'Vestmannaeyjar',
+  },
+  {
+    // Gervibarn Ísabellu
+    nationalId: '1111999300',
+    firstName: 'Stærsta',
+    middleName: 'Stúlka',
+    lastName: 'Ísabelludóttir',
+    gender: 'kvk',
+    address: 'Hrimblugrugg 2',
+    postalcode: 900,
+    city: 'Vestmannaeyjar',
+  },
+  {
     // Gervimadur Ameríka
     nationalId: '0101302989',
     firstName: 'Gervimaður',

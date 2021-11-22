@@ -12,8 +12,9 @@ import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useRouter } from 'next/router'
 import CourtRecordForm from './CourtRecordForm'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { icCourtRecord } from '@island.is/judicial-system-web/messages'
+import { icCourtRecord as m } from '@island.is/judicial-system-web/messages'
 import { useIntl } from 'react-intl'
+import formatISO from 'date-fns/formatISO'
 
 const CourtRecord = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -48,8 +49,9 @@ const CourtRecord = () => {
           attendees += `${wc.accusedName} varnaraðili`
         }
       } else {
-        attendees +=
-          'Varnaraðili var ekki viðstaddur sbr. 104. gr. laga 88/2008 um meðferð sakamála.'
+        attendees += formatMessage(
+          m.sections.courtAttendees.defendantNotPresentAutofill,
+        )
       }
 
       if (
@@ -74,7 +76,7 @@ const CourtRecord = () => {
     if (!workingCase && data?.case) {
       const theCase = data.case
 
-      autofill('courtStartDate', new Date().toString(), theCase)
+      autofill('courtStartDate', formatISO(new Date()), theCase)
 
       if (theCase.court) {
         autofill(
@@ -88,7 +90,9 @@ const CourtRecord = () => {
         )
       }
 
-      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      if (theCase.courtAttendees !== '') {
+        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      }
 
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)
@@ -97,27 +101,69 @@ const CourtRecord = () => {
       if (theCase.sessionArrangements === SessionArrangements.REMOTE_SESSION) {
         autofill(
           'litigationPresentations',
-          formatMessage(
-            icCourtRecord.sections.litigationPresentations.autofill,
-          ),
+          formatMessage(m.sections.litigationPresentations.autofill),
           theCase,
         )
       }
+
+      if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+        let autofillAccusedBookings = ''
+
+        if (theCase.defenderName) {
+          autofillAccusedBookings += `${formatMessage(
+            m.sections.accusedBookings.autofillDefender,
+            {
+              defender: theCase.defenderName,
+            },
+          )}\n\n`
+        }
+
+        if (theCase.translator) {
+          autofillAccusedBookings += `${formatMessage(
+            m.sections.accusedBookings.autofillTranslator,
+            {
+              translator: theCase.translator,
+            },
+          )}\n\n`
+        }
+
+        autofillAccusedBookings += `${formatMessage(
+          m.sections.accusedBookings.autofillRightToRemainSilent,
+        )}\n\n${formatMessage(
+          m.sections.accusedBookings.autofillCourtDocumentOne,
+        )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
+
+        autofill('accusedBookings', autofillAccusedBookings, theCase)
+      }
+
+      if (
+        theCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+        theCase.defenderIsSpokesperson &&
+        theCase.defenderName
+      ) {
+        autofill(
+          'accusedBookings',
+          formatMessage(m.sections.accusedBookings.autofillSpokeperson, {
+            spokesperson: theCase.defenderName,
+          }),
+          theCase,
+        )
+      }
+
       setWorkingCase(data.case)
     }
-  }, [workingCase, setWorkingCase, data, autofill])
+  }, [workingCase, setWorkingCase, data, autofill, formatMessage])
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.COURT_RECORD}
       isLoading={loading}
       notFound={data?.case === undefined}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase && (
         <CourtRecordForm
