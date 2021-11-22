@@ -7,22 +7,23 @@ export const sidebar = style({
   left: 0,
   zIndex: 10,
   height: '100%',
+  minHeight: '100vh',
   marginBottom: theme.spacing['10'],
-  transition: 'all 150ms ease-in-out',
+  transition: 'left 250ms ease-in-out',
   width: 252,
-  ...themeUtils.responsiveStyle({
-    lg: {},
-  }),
 })
 
 export const collapsed = style({
-  left: '-108px',
+  left: '-125px',
+})
+
+export const logoCollapsed = style({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  paddingTop: theme.spacing[3],
 })
 
 export const subnav = style({
-  width: 228,
-  transition: 'all 150ms ease-in-out',
-  marginLeft: 12,
   paddingLeft: 26,
   borderLeft: `1px solid ${theme.color.blue200}`,
 })
@@ -30,7 +31,7 @@ export const subnav = style({
 export const navIcon = style({
   position: 'absolute',
   right: '-28px',
-  top: '34px',
+  top: '88px',
   ':hover': {
     cursor: 'pointer',
   },

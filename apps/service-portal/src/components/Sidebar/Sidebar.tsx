@@ -38,10 +38,14 @@ export const Sidebar: FC<{}> = () => {
         padding={3}
         paddingRight={0}
       >
-        <Box paddingBottom={6} paddingTop={3}>
+        <Box
+          className={cn({ [styles.logoCollapsed]: collapsed })}
+          paddingBottom={6}
+          paddingTop={3}
+        >
           <Link to={ServicePortalPath.MinarSidurRoot}>
             <FocusableBox component="div">
-              <Logo width={collapsed ? 40 : 160} iconOnly={collapsed} />
+              <Logo width={collapsed ? 24 : 160} iconOnly={collapsed} />
               <BetaTag />
             </FocusableBox>
           </Link>
@@ -86,7 +90,7 @@ export const Sidebar: FC<{}> = () => {
               )}
             </Stack>
           ))}
-        {!collapsed && (
+        {/* {!collapsed && (
           <Box paddingTop={3} marginTop="auto" background={'transparent'}>
             <ModuleNavigation
               nav={{
@@ -97,7 +101,7 @@ export const Sidebar: FC<{}> = () => {
               onItemClick={signOut}
             />
           </Box>
-        )}
+        )} */}
       </Box>
     </aside>
   )
