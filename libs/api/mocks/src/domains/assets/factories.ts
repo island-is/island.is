@@ -47,8 +47,6 @@ export const stadfang = factory<Stadfang>({
   stadfanganumer: () => faker.random.number(999),
   sveitarfelagBirting: () => faker.random.arrayElement(townArray),
   postnumer: () => faker.random.number(800),
-  // stadvisir: () => faker.random.arrayElement(streetArray),
-  // stadgreinir: () => faker.random.number(99).toString(),
   landeignarnumer: () => faker.random.number(9999),
   birtingStutt: () =>
     `${faker.random.arrayElement(streetArray)} ${faker.random.number(99)}`,
@@ -64,7 +62,6 @@ export const fasteign = factory<Fasteign>({
 
 export const fasteignamat = factory<Fasteignamat>({
   fyrirhugadAr: new Date().getFullYear() + 1,
-  // gildandiAr: new Date().getFullYear(),
   gildandiAr: new Date().getFullYear(),
 
   gildandiFasteignamat: () =>
@@ -106,14 +103,11 @@ export const notkunareining = factory<Notkunareining>({
   stadfang: () => stadfang(),
   merking: () => faker.helpers.replaceSymbolWithNumber('Íbúð ?', '?'),
   notkunBirting: () => faker.helpers.replaceSymbolWithNumber('Notkun ?', '?'),
-  // starfsemi: () => faker.helpers.replaceSymbolWithNumber('Starfsemi ?', '?'),
-  // lysing: () => faker.helpers.replaceSymbolWithNumber('Lýsing ?', '?'),
   skyring: () => faker.helpers.replaceSymbolWithNumber('Skýring ?', '?'),
   byggingararBirting: '2008',
   birtStaerd: () => faker.random.number({ min: 100, max: 300 }),
   birtStaerdMaelieining: 'ME',
   fasteignamat: () => fasteignamat(),
-  // lodarmat: () => faker.random.number({ min: 1000000, max: 5000000 }),
   brunabotamat: faker.random.number({
     min: 20000000,
     max: 40000000,

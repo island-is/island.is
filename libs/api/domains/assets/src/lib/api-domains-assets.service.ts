@@ -13,8 +13,6 @@ const getAssetString = (str: string) =>
 @Injectable()
 export class AssetsXRoadService {
   constructor(
-    // @Inject('Config')
-    // private config: AssetsXRoadConfig,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private FasteignirApi: FasteignirApi,
@@ -45,7 +43,6 @@ export class AssetsXRoadService {
     ).fasteignirGetFasteignir({
       kennitala: auth.nationalId,
       cursor: cursor,
-      // limit: limit,
     })
 
     if (fasteignirResponse) {
