@@ -26,6 +26,11 @@ import {
   UploadFileToCourtResponse,
 } from './models'
 
+// Files are stored in AWS S3 under a key which has the following format:
+// uploads/<uuid>/<uuid>/<filename>
+// As uuid-s have length 36, the filename starts at position 82 in the key.
+const NAME_BEGINS_INDEX = 82
+
 @Injectable()
 export class FileService {
   private throttle = Promise.resolve('')
@@ -124,7 +129,7 @@ export class FileService {
     return this.fileModel.create({
       ...createFile,
       caseId,
-      name: createFile.key.slice(82), // see regexp above
+      name: createFile.key.slice(NAME_BEGINS_INDEX),
     })
   }
 
