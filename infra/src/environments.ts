@@ -66,7 +66,7 @@ export const Envs: EnvironmentConfigs = {
     auroraHost: 'postgres-applications.internal',
     domain: 'island.is',
     type: 'prod',
-    featuresOn: [],
+    featuresOn: ['driving-license-use-v1-endpoint-for-v2-comms'],
     defaultMaxReplicas: 10,
     releaseName: 'web',
     awsAccountId: '251502586493',
