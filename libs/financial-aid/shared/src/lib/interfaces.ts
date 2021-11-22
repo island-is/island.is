@@ -138,7 +138,7 @@ export interface Municipality {
   adminUsers?: Staff[]
 }
 
-export interface UpdateActivityMunicipality {
+export interface UpdateMunicipalityActivity {
   active: boolean
 }
 

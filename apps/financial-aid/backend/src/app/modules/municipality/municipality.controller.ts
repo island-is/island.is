@@ -84,14 +84,14 @@ export class MunicipalityController {
     )
   }
 
-  @Put('update/activity/:id')
+  @Put('activity/:id')
   @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.SUPERADMIN)
   @ApiOkResponse({
     type: MunicipalityModel,
     description: 'Updates activity for municipality',
   })
-  async updateActivityMunicipality(
+  async updateMunicipalityActivity(
     @Param('id') id: string,
     @Body() municipalityToUpdate: MunicipalityActivityDto,
   ): Promise<MunicipalityModel> {

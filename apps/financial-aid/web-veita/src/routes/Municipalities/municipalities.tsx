@@ -22,7 +22,7 @@ import cn from 'classnames'
 
 import { Municipality, Routes } from '@island.is/financial-aid/shared/lib'
 import {
-  ActivityMunicipalityMutation,
+  MunicipalityActivityMutation,
   MunicipalitiesQuery,
   UpdateMunicipalityMutation,
 } from '@island.is/financial-aid-web/veita/graphql'
@@ -56,10 +56,10 @@ export const Municipalities = () => {
     }
   }, [data])
 
-  const [activityMunicipality] = useMutation(ActivityMunicipalityMutation)
+  const [municipalityActivity] = useMutation(MunicipalityActivityMutation)
 
   const changeMunicipalityActivity = async (id: string, active: boolean) => {
-    await activityMunicipality({
+    await municipalityActivity({
       variables: {
         input: {
           id,

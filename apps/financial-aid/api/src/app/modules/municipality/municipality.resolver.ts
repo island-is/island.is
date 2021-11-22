@@ -46,7 +46,7 @@ export class MunicipalityResolver {
   }
 
   @Mutation(() => MunicipalityModel, { nullable: false })
-  activityMunicipality(
+  municipalityActivity(
     @Args('input', { type: () => MunicipalityActivityInput })
     input: MunicipalityActivityInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
@@ -55,7 +55,7 @@ export class MunicipalityResolver {
 
     this.logger.debug('Updating activity municipality')
 
-    return backendApi.updateActivityMunicipality(id, activityMunicipality)
+    return backendApi.updateMunicipalityActivity(id, activityMunicipality)
   }
 
   @Mutation(() => MunicipalityModel, { nullable: false })

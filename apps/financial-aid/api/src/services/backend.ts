@@ -16,7 +16,7 @@ import {
   ApplicationStateUrl,
   UpdateApplicationTableResponseType,
   UpdateStaff,
-  UpdateActivityMunicipality,
+  UpdateMunicipalityActivity,
   Staff,
 } from '@island.is/financial-aid/shared/lib'
 
@@ -70,11 +70,11 @@ class BackendAPI extends RESTDataSource {
     return this.put('municipality', updateMunicipality)
   }
 
-  updateActivityMunicipality(
+  updateMunicipalityActivity(
     id: string,
-    updateMunicipality: UpdateActivityMunicipality,
+    updateMunicipality: UpdateMunicipalityActivity,
   ): Promise<Municipality> {
-    return this.put(`municipality/update/activity/${id}`, updateMunicipality)
+    return this.put(`municipality/activity/${id}`, updateMunicipality)
   }
 
   createApplication(
