@@ -7,7 +7,7 @@ export const layoutWrapper = style({
 })
 
 export const layoutGrid = style({
-  transition: 'all 250ms ease-in-out',
+  transition: 'all 150ms ease-in-out',
 })
 export const mainWrapper = style({
   width: '100%',
