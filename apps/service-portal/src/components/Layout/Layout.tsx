@@ -79,7 +79,11 @@ const Layout: FC = ({ children }) => {
         <Box as="main">
           <GridContainer>
             <GridRow>
-              <GridColumn span={span} offset={offset}>
+              <GridColumn
+                span={span}
+                offset={offset}
+                className={styles.layoutGrid}
+              >
                 <ContentBreadcrumbs />
                 <div>{children}</div>
               </GridColumn>
