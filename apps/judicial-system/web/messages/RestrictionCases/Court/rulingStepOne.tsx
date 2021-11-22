@@ -8,6 +8,29 @@ export const rcRulingStepOne = {
       'Notaður sem titill á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
   }),
   sections: {
+    prosecutorDemands: defineMessages({
+      title: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.prosecutor_demands.title',
+        defaultMessage: 'Dómkröfur',
+        description:
+          'Notaður sem titill fyrir "dómkröfur" hlutann á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      label: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.prosecutor_demands.label',
+        defaultMessage: 'Krafa lögreglu',
+        description:
+          'Notaður sem titill fyrir í "Krafa lögreglu" textaboxi á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      placeholder: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.prosecutor_demands.placeholder',
+        defaultMessage: 'Hvað hafði ákæruvaldið að segja?',
+        description:
+          'Notaður sem skýritexti fyrir í "Hvað hafði ákæruvaldið að segja?" textabox á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+    }),
     courtCaseFacts: defineMessages({
       title: {
         id:

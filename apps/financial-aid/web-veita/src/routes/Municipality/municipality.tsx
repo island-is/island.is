@@ -29,7 +29,10 @@ export const Municipality = () => {
   return (
     <LoadingContainer isLoading={loading} loader={<ApplicationSkeleton />}>
       {data ? (
-        <MunicipalityProfile municipality={data.municipality} />
+        <MunicipalityProfile
+          municipality={data.municipality}
+          getMunicipality={getMunicipality}
+        />
       ) : (
         <ProfileNotFound backButtonHref="/sveitarfelog" />
       )}

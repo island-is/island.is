@@ -13,6 +13,8 @@ import { SharedTemplateApiService } from '../../shared'
 import { AttachmentProvider } from './accident-notification-attachments.provider'
 import {
   applictionAnswersToXml,
+  attachmentStatusToAttachmentRequests,
+  getApplicationAttachmentStatus,
   getApplicationDocumentId,
 } from './accident-notification.utils'
 import type { AccidentNotificationConfig } from './config'
@@ -39,15 +41,21 @@ export class AccidentNotificationService {
     const shouldRequestReview =
       !utils.isHomeActivitiesAccident(application.answers) &&
       !utils.isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
+
+    const requests = attachmentStatusToAttachmentRequests()
+
     const attachments = await this.attachmentProvider.gatherAllAttachments(
       application,
+      requests,
     )
+
     const answers = application.answers as AccidentNotificationAnswers
     const xml = applictionAnswersToXml(answers, attachments)
     try {
       const { ihiDocumentID } = await this.documentApi.documentPost({
         document: { doc: xml, documentType: 801 },
       })
+
       await this.sharedTemplateAPIService.sendEmail(
         (props) =>
           generateConfirmationEmail(
@@ -78,9 +86,14 @@ export class AccidentNotificationService {
 
   async addAdditionalAttachment({ application }: TemplateApiModuleActionProps) {
     try {
+      const attachmentStatus = getApplicationAttachmentStatus(application)
+      const requests = attachmentStatusToAttachmentRequests(attachmentStatus)
+
       const attachments = await this.attachmentProvider.gatherAllAttachments(
         application,
+        requests,
       )
+
       const documentId = getApplicationDocumentId(application)
 
       const promises = attachments.map((attachment) =>

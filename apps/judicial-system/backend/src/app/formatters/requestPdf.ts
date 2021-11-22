@@ -244,11 +244,10 @@ function constructInvestigationRequestPdf(
     .text(`${formatMessage(m.baseInfo.fullName)} ${existingCase.accusedName}`)
     .text(`${formatMessage(m.baseInfo.address)} ${existingCase.accusedAddress}`)
 
-  if (existingCase.defenderName) {
+  if (existingCase.defenderName && !existingCase.defenderIsSpokesperson) {
     doc.text(
       formatMessage(m.baseInfo.defender, {
-        defenderName:
-          !existingCase.defenderIsSpokesperson && existingCase.defenderName,
+        defenderName: existingCase.defenderName,
       }),
     )
   }

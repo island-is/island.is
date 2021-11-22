@@ -1,3 +1,4 @@
+import { ServerSideFeatureClient } from '@island.is/feature-flags'
 const devConfig = {
   production: false,
   xroad: {
@@ -164,6 +165,11 @@ const devConfig = {
     username: process.env.PAYMENT_SCHEDULE_USER,
     password: process.env.PAYMENT_SCHEDULE_PASSWORD,
   },
+  islykill: {
+    cert: process.env.ISLYKILL_CERT,
+    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+  },
 }
 
 const prodConfig = {
@@ -184,7 +190,11 @@ const prodConfig = {
       xroadPath: process.env.XROAD_DRIVING_LICENSE_PATH,
     },
     v2: {
-      xroadPath: process.env.XROAD_DRIVING_LICENSE_V2_PATH,
+      xroadPath: ServerSideFeatureClient.isOn(
+        'driving-license-use-v1-endpoint-for-v2-comms',
+      )
+        ? process.env.XROAD_DRIVING_LICENSE_PATH
+        : process.env.XROAD_DRIVING_LICENSE_V2_PATH,
     },
   },
   education: {
@@ -312,6 +322,11 @@ const prodConfig = {
     xRoadClientId: process.env.XROAD_CLIENT_ID,
     username: process.env.PAYMENT_SCHEDULE_USER,
     password: process.env.PAYMENT_SCHEDULE_PASSWORD,
+  },
+  islykill: {
+    cert: process.env.ISLYKILL_CERT,
+    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
 }
 

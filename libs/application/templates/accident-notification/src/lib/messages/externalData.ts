@@ -22,7 +22,7 @@ export const externalData = {
     bulletThree: {
       id: 'an.application:section.agreementDescription.BulletThree',
       defaultMessage:
-        'Tryggingastofnun ríkisins fær jafnframt upplýsingar um bótagreiðslur vegna ákvæðis um samspil og skörun bóta sbr. 14. gr. laga nr. lög nr 45/2015.',
+        'Eitthvað óvænt verður að hafa gerst sem veldur tjóni á líkama hins tryggða og áhorfandi getur áttað sig á að hafi gerst.',
       description: 'List item 3 on data gathering information',
     },
     bulletFour: {
@@ -146,6 +146,25 @@ export const externalData = {
       defaultMessage: 'Upplýsingar um stöðu meðlagsgreiðslna.',
       description:
         'Approval of gathering information from Approval of Municipal Collection Agency',
+    },
+  }),
+  extraInformation: defineMessages({
+    description: {
+      id:
+        'an.application:section.externalData.extraInformation.descriptionFirstPart',
+      defaultMessage:
+        'Nánari upplýsingar um vinnslu persónuupplýsinga hjá Sjúkratryggingum Íslands ',
+      description: 'Description for link in extrainformation',
+    },
+    linkText: {
+      id: 'an.application:section.externalData.extraInformation.linkText',
+      defaultMessage: 'Persónuverndarsíðu SÍ.',
+      description: 'Link text for link',
+    },
+    link: {
+      id: 'an.application:section.externalData.extraInformation.link',
+      defaultMessage: 'https://www.sjukra.is/personuvernd.',
+      description: 'The url the link text links to',
     },
   }),
 }

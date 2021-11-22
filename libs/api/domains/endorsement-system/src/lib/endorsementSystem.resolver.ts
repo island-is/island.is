@@ -270,7 +270,7 @@ export class EndorsementSystemResolver {
     @Args('input') input: sendPdfEmailInput,
     @CurrentUser() user: User,
   ): Promise<{ success: boolean }> {
-    return await this.endorsementSystemService.endorsementControllerSendPdfEmail(
+    return await this.endorsementSystemService.endorsementListControllerSendPdfEmail(
       input,
       user,
     )

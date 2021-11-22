@@ -14,10 +14,15 @@ import { Endorsement } from '../endorsement/models/endorsement.model'
 import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
 import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto'
 import { paginate } from '@island.is/nest/pagination'
-import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
+import environment, {
+  ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
+} from '../../../environments/environment'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import type { User } from '@island.is/auth-nest-tools'
 import { EndorsementsScope } from '@island.is/auth/scopes'
+import { EmailService } from '@island.is/email-service'
+import PDFDocument from 'pdfkit'
+import getStream from 'get-stream'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -33,6 +38,8 @@ export class EndorsementListService {
     private readonly nationalRegistryApi: NationalRegistryApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @Inject(EmailService)
+    private emailService: EmailService,
   ) {}
 
   async hasAdminScope(user: User): Promise<boolean> {
@@ -232,24 +239,180 @@ export class EndorsementListService {
     return result
   }
 
-  async getOwnerInfo(listId: string) {
+  async getOwnerInfo(listId: string, owner?: string) {
     // Is used by both unauthenticated users, authenticated users and admin
     // Admin needs to access locked lists and can not use the EndorsementListById pipe
     // Since the endpoint is not authenticated
     this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
+    if (!owner) {
+      const endorsementList = await this.endorsementListModel.findOne({
+        where: {
+          id: listId,
+        },
+      })
+      if (!endorsementList) {
+        throw new NotFoundException(['This endorsement list does not exist.'])
+      }
+      owner = endorsementList.owner
+    }
+
+    try {
+      return (await this.nationalRegistryApi.getUser(owner)).Fulltnafn
+    } catch (e) {
+      if (e instanceof Error) {
+        this.logger.warn(
+          `Occured when fetching owner name from NationalRegistryApi ${e.message} \n${e.stack}`,
+        )
+        return ''
+      } else {
+        throw e
+      }
+    }
+  }
+
+  async createDocumentBuffer(endorsementList: any, ownerName: string) {
+    // build pdf
+    const doc = new PDFDocument()
+    const locale = 'is-IS'
+    const big = 16
+    const regular = 8
+    const fontRegular = 'Helvetica'
+    const fontBold = 'Helvetica-Bold'
+
+    doc
+      .fontSize(big)
+      .text('Upplýsingar um meðmælendalista')
+      .moveDown()
+
+      .fontSize(regular)
+      .font(fontBold)
+      .text('Heiti meðmælendalista: ')
+      .font(fontRegular)
+      .text(endorsementList.title)
+      .moveDown()
+
+      .font(fontBold)
+      .text('Um meðmælendalista: ')
+      .font(fontRegular)
+      .text(endorsementList.description)
+      .moveDown()
+
+      .font(fontBold)
+      .text('Ábyrgðarmaður: ')
+      .font(fontRegular)
+      .text(ownerName)
+      .moveDown()
+
+      .font(fontBold)
+      .text('Tímabil lista: ')
+      .font(fontRegular)
+      .text(
+        endorsementList.openedDate.toLocaleDateString(locale) +
+          ' - ' +
+          endorsementList.closedDate.toLocaleDateString(locale),
+      )
+      .moveDown()
+
+      .font(fontBold)
+      .text('Fjöldi skráðir: ')
+      .font(fontRegular)
+      .text(endorsementList.endorsements.length)
+      .moveDown(2)
+
+    if (endorsementList.endorsements.length) {
+      doc.fontSize(big).text('Yfirlit meðmæla').fontSize(regular).moveDown()
+      for (const val of endorsementList.endorsements) {
+        doc.text(
+          val.created.toLocaleDateString(locale) +
+            ' ' +
+            (val.meta.fullName ? val.meta.fullName : 'Nafn ótilgreint'),
+        )
+      }
+    }
+    doc
+      .moveDown()
+
+      .fontSize(regular)
+      .text(
+        'Þetta skjal var framkallað sjálfvirkt þann: ' +
+          new Date().toLocaleDateString(locale),
+      )
+    doc.end()
+    return await getStream.buffer(doc)
+  }
+
+  async emailPDF(
+    listId: string,
+    recipientEmail: string,
+  ): Promise<{ success: boolean }> {
     const endorsementList = await this.endorsementListModel.findOne({
-      where: {
-        id: listId,
-      },
+      where: { id: listId },
+      include: [
+        {
+          model: Endorsement,
+        },
+      ],
     })
     if (!endorsementList) {
       throw new NotFoundException(['This endorsement list does not exist.'])
     }
+    const ownerName = await this.getOwnerInfo(
+      endorsementList?.id,
+      endorsementList.owner,
+    )
+    this.logger.info(
+      `sending list ${listId} to ${recipientEmail} from ${environment.email.sender}`,
+    )
     try {
-      return (await this.nationalRegistryApi.getUser(endorsementList.owner))
-        .Fulltnafn
-    } catch (e) {
-      return ''
+      await this.emailService.sendEmail({
+        from: {
+          name: environment.email.sender,
+          address: environment.email.address,
+        },
+        to: [
+          {
+            // message can be sent to any email so recipient name is unknown
+            name: recipientEmail,
+            address: recipientEmail,
+          },
+        ],
+        subject: `Meðmælendalisti "${endorsementList?.title}"`,
+        template: {
+          title: `Meðmælendalisti "${endorsementList?.title}"`,
+          body: [
+            {
+              component: 'Heading',
+              context: {
+                copy: `Meðmælendalisti "${endorsementList?.title}"`,
+              },
+            },
+            { component: 'Copy', context: { copy: 'Sæl/l/t' } },
+            {
+              component: 'Copy',
+              context: {
+                copy: `Meðfylgjandi er meðmælendalisti "${endorsementList?.title}", 
+                sem ${ownerName} er skráður ábyrgðarmaður fyrir. 
+                Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018.`,
+              },
+            },
+            { component: 'Copy', context: { copy: 'Kær kveðja,' } },
+            { component: 'Copy', context: { copy: 'Ísland.is' } },
+          ],
+        },
+        attachments: [
+          {
+            filename: 'Meðmælendalisti.pdf',
+            content: await this.createDocumentBuffer(
+              endorsementList,
+              ownerName,
+            ),
+          },
+        ],
+      })
+      return { success: true }
+    } catch (error) {
+      this.logger.error('Failed to send email', error)
+      return { success: false }
     }
   }
 }
