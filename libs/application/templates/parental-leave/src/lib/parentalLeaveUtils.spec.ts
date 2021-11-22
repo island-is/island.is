@@ -413,9 +413,9 @@ describe('applicantIsMale', () => {
     const application2 = buildApplication()
     const application3 = buildApplication()
 
-    set(application1.externalData, 'userProfile.data.genderCode', '0')
-    set(application2.externalData, 'userProfile.data.genderCode', 'invalid')
-    set(application3.externalData, 'userProfile.data.genderCode', '11')
+    set(application1.externalData, 'person.data.genderCode', '0')
+    set(application2.externalData, 'person.data.genderCode', 'invalid')
+    set(application3.externalData, 'person.data.genderCode', '11')
 
     expect(applicantIsMale(application1)).toBe(false)
     expect(applicantIsMale(application2)).toBe(false)
@@ -425,7 +425,7 @@ describe('applicantIsMale', () => {
   it('should return true if genderCode is === "1"', () => {
     const application = buildApplication()
 
-    set(application.externalData, 'userProfile.data.genderCode', '1')
+    set(application.externalData, 'person.data.genderCode', '1')
 
     expect(applicantIsMale(application)).toBe(true)
   })
