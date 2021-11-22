@@ -19,6 +19,7 @@ export const Routes = {
     conformation: `${formRoutes}stadfesting`,
   },
   settings: {
+    search: '/leit',
     municipality: '/sveitarfelagsstillingar',
     municipalities: '/sveitarfelog',
     supervisors: '/umsjonaradilar',

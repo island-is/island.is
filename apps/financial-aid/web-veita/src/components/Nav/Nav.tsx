@@ -26,7 +26,7 @@ import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/sr
 import { useLogOut } from '@island.is/financial-aid-web/veita/src/utils/useLogOut'
 
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
-import { StaffRole } from '@island.is/financial-aid/shared/lib'
+import { Routes, StaffRole } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   showInMobile: boolean
@@ -88,6 +88,18 @@ const Nav = ({ showInMobile }: Props) => {
 
       <Box display="block" marginBottom={2} marginTop={4}>
         <Box marginBottom={2}>
+          <button
+            className={`${sideNavButtonStyles.sideNavBarButton} navBarButtonHover`}
+            onClick={() => router.push(Routes.settings.search)}
+          >
+            <Icon
+              icon="search"
+              type="outline"
+              color="blue400"
+              className={sideNavButtonStyles.sideNavBarButtonIcon}
+            />
+            <Text> Leit</Text>
+          </button>
           <SuperAdminSideNavItems roles={admin?.staff?.roles} />
           <AdminSideNavItems roles={admin?.staff?.roles} />
           <button
