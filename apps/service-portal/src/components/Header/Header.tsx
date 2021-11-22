@@ -15,6 +15,7 @@ import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
 import { BetaTag } from '../Logo/BetaTag'
 import { m } from '@island.is/service-portal/core'
+import { Link } from 'react-router-dom'
 
 export const Header: FC<{}> = () => {
   const { formatMessage } = useLocale()
@@ -32,9 +33,24 @@ export const Header: FC<{}> = () => {
       <header className={styles.header}>
         <Box>
           <ContentBlock>
-            <Box height="full" background="white" paddingX={[2, 2, 4, 4, 6]}>
-              <Box className={styles.menuBox}>
-                <UserMenu fullScreen />
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              height="full"
+              background="white"
+              paddingX={[2, 2, 4, 4, 6]}
+            >
+              {/* <Hidden above="md">
+                <Link to={ServicePortalPath.MinarSidurRoot}>
+                  <FocusableBox component="div">
+                    <Logo width={40} iconOnly />
+                    <BetaTag />
+                  </FocusableBox>
+                </Link>
+              </Hidden> */}
+              <Box display="flex" alignItems="center" flexWrap="nowrap">
+                <UserMenu />
                 <Hidden above="md">
                   <Box marginLeft={2}>
                     <Button

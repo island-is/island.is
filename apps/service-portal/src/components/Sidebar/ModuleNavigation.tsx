@@ -91,7 +91,7 @@ const ModuleNavigation: FC<Props> = ({
           height={isModuleActive || alwaysExpanded ? 'auto' : 0}
         >
           <div>
-            <Box className={styles.subnav} marginTop={2}>
+            <Box className={styles.subnav} marginTop={2} marginLeft={'p2'}>
               <Stack space={1}>
                 {navChildren?.map((child, index) => (
                   <SubNavItem
