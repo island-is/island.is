@@ -31,7 +31,7 @@ export class PaymentScheduleResolver {
   async conditions(
     @CurrentUser() user: User,
   ): Promise<PaymentScheduleConditions> {
-    return await this.paymentScheduleService.getConditions(user.nationalId)
+    return await this.paymentScheduleService.getConditions(user)
   }
 
   @Query(() => [PaymentScheduleDebts], {
@@ -40,7 +40,7 @@ export class PaymentScheduleResolver {
   })
   @Audit()
   async debts(@CurrentUser() user: User): Promise<PaymentScheduleDebts[]> {
-    return await this.paymentScheduleService.getDebts(user.nationalId)
+    return await this.paymentScheduleService.getDebts(user)
   }
 
   @Query(() => PaymentScheduleEmployer, {
@@ -49,7 +49,7 @@ export class PaymentScheduleResolver {
   })
   @Audit()
   async employer(@CurrentUser() user: User): Promise<PaymentScheduleEmployer> {
-    return await this.paymentScheduleService.getCurrentEmployer(user.nationalId)
+    return await this.paymentScheduleService.getCurrentEmployer(user)
   }
 
   @Query(() => PaymentScheduleInitialSchedule, {
@@ -62,10 +62,7 @@ export class PaymentScheduleResolver {
     @Args('input', { type: () => GetInitialScheduleInput })
     input: GetInitialScheduleInput,
   ): Promise<PaymentScheduleInitialSchedule> {
-    return await this.paymentScheduleService.getInitalSchedule(
-      user.nationalId,
-      input,
-    )
+    return await this.paymentScheduleService.getInitalSchedule(user, input)
   }
 
   @Query(() => PaymentScheduleDistribution, {
@@ -78,9 +75,6 @@ export class PaymentScheduleResolver {
     @Args('input', { type: () => GetScheduleDistributionInput })
     input: GetScheduleDistributionInput,
   ): Promise<PaymentScheduleDistribution> {
-    return await this.paymentScheduleService.getPaymentDistribution(
-      user.nationalId,
-      input,
-    )
+    return await this.paymentScheduleService.getPaymentDistribution(user, input)
   }
 }
