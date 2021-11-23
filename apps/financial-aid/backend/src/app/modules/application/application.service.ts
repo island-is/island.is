@@ -93,6 +93,14 @@ export class ApplicationService {
         ],
       },
       order: [['modified', 'DESC']],
+      include: [
+        {
+          model: ApplicationFileModel,
+          as: 'files',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+      ],
     })
   }
 

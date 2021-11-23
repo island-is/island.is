@@ -13,6 +13,8 @@ import {
   GeneratedProfile,
   GenerateName,
   TextTableItem,
+  Name,
+  State,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   Application,
@@ -64,27 +66,6 @@ const ApplicationsTable = ({
         //TODO ERROR STATE
         setIsLoading(false)
       })
-  }
-
-  const name = (application: Application) => {
-    return (
-      <Box display="flex" alignItems="center">
-        <GeneratedProfile size={32} nationalId={application.nationalId} />
-        <Box marginLeft={2}>
-          <Text variant="h5">{GenerateName(application.nationalId)}</Text>
-        </Box>
-      </Box>
-    )
-  }
-
-  const state = (application: Application) => {
-    return (
-      <Box>
-        <div className={`tags ${getTagByState(application.state)}`}>
-          {getState[application.state]}
-        </div>
-      </Box>
-    )
   }
 
   const assignButton = (application: Application) => {
@@ -141,8 +122,8 @@ const ApplicationsTable = ({
                 {applications.map((item: Application, index) => (
                   <TableBody
                     items={[
-                      name(item),
-                      state(item),
+                      Name(item.nationalId),
+                      State(item.state),
                       TextTableItem(
                         'default',
                         calcDifferenceInDate(item.modified),

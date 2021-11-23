@@ -9,8 +9,10 @@ import {
   GeneratedProfile,
   GenerateName,
   TextTableItem,
+  Name,
+  State,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { Text, Box, AsyncSearch, Input } from '@island.is/island-ui/core'
+import { Text, Box, Input } from '@island.is/island-ui/core'
 
 import * as tableStyles from '../../sharedStyles/Table.css'
 import * as headerStyles from '../../sharedStyles/Header.css'
@@ -19,7 +21,12 @@ import cn from 'classnames'
 import { SearchApplicationQuery } from '@island.is/financial-aid-web/veita/graphql'
 import { useLazyQuery } from '@apollo/client'
 import { getTagByState } from '../../utils/formHelper'
-import { getMonth, getState, Routes , Application} from '@island.is/financial-aid/shared/lib'
+import {
+  getMonth,
+  getState,
+  Routes,
+  Application,
+} from '@island.is/financial-aid/shared/lib'
 import router from 'next/router'
 
 export const Search = () => {
@@ -28,7 +35,7 @@ export const Search = () => {
   const sanitizeNumber = (n: string) => n.replace(/[^\d]/g, '')
 
   const [getApplications, { data, error, loading }] = useLazyQuery<{
-    applications: Application[]
+    applicationsResults: Application[]
   }>(SearchApplicationQuery, {
     variables: { input: { nationalId: searchNationalId } },
     fetchPolicy: 'no-cache',
@@ -55,7 +62,6 @@ export const Search = () => {
       </Box>
     )
   }
-  console.log(data.applicationsResults)
 
   return (
     <LoadingContainer
@@ -109,27 +115,28 @@ export const Search = () => {
 
             <tbody className={tableStyles.tableBody}>
               {data &&
-                data.applicationsResults.map((item: Application, index) => (
+                data?.applicationsResults.map((item: Application, index) => (
                   <TableBody
-                  items={[
-                    name(item),
-                    state(item),
-                    TextTableItem(
-                      'default',
-                      getMonth(new Date(item.created).getMonth()),
-                    ),
-                    
-                  ]}
-                  identifier={item.id}
-                  index={index}
-                  key={item.id}
-                  onClick={() =>
-                    router.push(Routes.applicationProfile(item.id))
-                  }
-                />
-                )
-       
-                })}
+                    items={[
+                      Name(item.nationalId),
+                      State(item.state),
+                      TextTableItem(
+                        'default',
+                        getMonth(new Date(item.created).getMonth()),
+                      ),
+                      TextTableItem(
+                        'default',
+                        item.files ? item.files.length + ' gögn' : '0',
+                      ),
+                    ]}
+                    identifier={item.id}
+                    index={index}
+                    key={item.id}
+                    onClick={() =>
+                      router.push(Routes.applicationProfile(item.id))
+                    }
+                  />
+                ))}
             </tbody>
           </table>
           {loading && <SearchSkeleton />}
