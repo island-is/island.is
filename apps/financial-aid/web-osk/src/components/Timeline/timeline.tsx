@@ -39,7 +39,7 @@ const Timeline = ({ state, modified, created }: Props) => {
     },
   ]
 
-  const [activeState, setActiveState] = useState(
+  const [activeState] = useState(
     sections.findIndex((el) => el.state.includes(state)),
   )
 
@@ -56,6 +56,7 @@ const Timeline = ({ state, modified, created }: Props) => {
       {sections.map((item, index) => {
         return (
           <Box
+            key={`${index}--${item.text}`}
             className={cn({
               [`${styles.timelineContainer}`]: true,
               [`${styles.activeState}`]: activeState >= index,
