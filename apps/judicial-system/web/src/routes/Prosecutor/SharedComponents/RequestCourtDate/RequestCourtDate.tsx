@@ -3,7 +3,7 @@ import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import type { Case } from '@island.is/judicial-system/types'
 import { useIntl } from 'react-intl'
 import { requestCourtDate as m } from '@island.is/judicial-system-web/messages'
-import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
+import { DateTime } from '@island.is/judicial-system-web/src/components'
 
 interface Props {
   workingCase: Case
