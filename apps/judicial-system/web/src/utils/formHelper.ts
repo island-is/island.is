@@ -80,12 +80,11 @@ export const validateAndSetTime = (
     if (setTime) {
       setTime(time)
     }
-
-    const paddedTime = padTimeWithZero(time)
-
     const isValid = !validations.some(
       (validation) => validate(paddedTime, validation).isValid === false,
     )
+
+    const paddedTime = padTimeWithZero(time)
 
     const arrestDateMinutes = parseTime(currentValue, paddedTime)
 

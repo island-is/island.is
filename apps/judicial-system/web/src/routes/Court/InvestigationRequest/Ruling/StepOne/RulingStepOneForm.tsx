@@ -49,6 +49,9 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
 
   const validations: FormSettings = {
+    prosecutorDemands: {
+      validations: ['empty'],
+    },
     ruling: {
       validations: ['empty'],
     },

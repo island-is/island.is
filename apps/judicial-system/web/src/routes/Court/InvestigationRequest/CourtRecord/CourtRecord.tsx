@@ -89,10 +89,6 @@ const CourtRecord = () => {
       autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
     }
 
-    if (theCase.demands) {
-      autofill('prosecutorDemands', theCase.demands, theCase)
-    }
-
     if (theCase.sessionArrangements === SessionArrangements.REMOTE_SESSION) {
       autofill(
         'litigationPresentations',

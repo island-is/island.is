@@ -23,6 +23,7 @@ import {
 import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
 import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
@@ -61,6 +62,9 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
     prosecutor: {
       validations: ['empty'],
     },
+    court: {
+      validations: ['empty'],
+    },
   }
   const courtsAsOptions = courts.map((court) => ({
     label: court.name,
@@ -69,7 +73,6 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
   const [, setRequestedCourtDateIsValid] = useState<boolean>(
     workingCase.requestedCourtDate !== null,
   )
-  const [selectedCourt, setSelectedCourt] = useState<string>()
   const {
     isValid,
     setField,
@@ -167,7 +170,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.IC_DEFENDANT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={async () => await onNextButtonClick()}
-          nextIsDisabled={!isValid || (!workingCase.court && !selectedCourt)}
+          nextIsDisabled={!isHearingArrangementsStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />
       </FormContentContainer>

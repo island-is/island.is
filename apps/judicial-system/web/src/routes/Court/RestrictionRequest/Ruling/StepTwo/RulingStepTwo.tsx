@@ -18,6 +18,7 @@ import {
   CaseNumbers,
   FormContentContainer,
   DateTime,
+  TimeInputField,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
@@ -36,6 +37,8 @@ import {
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
   newSetAndSendDateToServer,
+  validateAndSetTime,
+  validateAndSendTimeToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import {
@@ -48,6 +51,7 @@ import {
   formatDate,
   formatNationalId,
   NounCases,
+  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingStepTwoValidRC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -66,6 +70,7 @@ export const RulingStepTwo: React.FC = () => {
   } = useContext(FormContext)
 
   const [, setIsCourtEndTimeValid] = useState<boolean>(true)
+  const [courtDocumentEndEM, setCourtDocumentEndEM] = useState<string>('')
 
   const { updateCase, autofill } = useCase()
   const { formatMessage } = useIntl()
@@ -718,37 +723,43 @@ export const RulingStepTwo: React.FC = () => {
           <GridContainer>
             <GridRow>
               <GridColumn>
-                <DateTime
-                  name="courtEndTime"
-                  timeLabel="Þinghaldi lauk (kk:mm)"
-                  selectedDate={
-                    workingCase.courtEndTime
-                      ? new Date(workingCase.courtEndTime)
-                      : undefined
+                <TimeInputField
+                  value={formatDate(workingCase.courtEndTime, TIME_FORMAT)}
+                  onChange={(evt) =>
+                    validateAndSetTime(
+                      'courtEndTime',
+                      workingCase.courtStartDate,
+                      evt.target.value,
+                      ['empty', 'time-format'],
+                      workingCase,
+                      setWorkingCase,
+                      courtDocumentEndEM,
+                      setCourtDocumentEndEM,
+                    )
                   }
-                  onChange={(date: Date | undefined, valid: boolean) => {
-                    if (date && workingCase.courtStartDate) {
-                      const courtStartDate = new Date(
-                        workingCase.courtStartDate,
-                      )
-
-                      courtStartDate.setHours(date.getHours())
-                      courtStartDate.setMinutes(date.getMinutes())
-
-                      newSetAndSendDateToServer(
-                        'courtEndTime',
-                        courtStartDate,
-                        valid,
-                        workingCase,
-                        setWorkingCase,
-                        setIsCourtEndTimeValid,
-                        updateCase,
-                      )
-                    }
-                  }}
-                  blueBox={false}
-                  onlyTime
-                />
+                  onBlur={(evt) =>
+                    validateAndSendTimeToServer(
+                      'courtEndTime',
+                      workingCase.courtStartDate,
+                      evt.target.value,
+                      ['empty', 'time-format'],
+                      workingCase,
+                      updateCase,
+                      setCourtDocumentEndEM,
+                    )
+                  }
+                >
+                  <Input
+                    data-testid="courtEndTime"
+                    name="courtEndTime"
+                    label="Þinghaldi lauk (kk:mm)"
+                    placeholder="Veldu tíma"
+                    autoComplete="off"
+                    errorMessage={courtDocumentEndEM}
+                    hasError={courtDocumentEndEM !== ''}
+                    required
+                  />
+                </TimeInputField>
               </GridColumn>
             </GridRow>
           </GridContainer>

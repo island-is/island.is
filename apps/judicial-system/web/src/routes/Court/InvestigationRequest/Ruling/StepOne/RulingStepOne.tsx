@@ -26,6 +26,10 @@ const RulingStepOne = () => {
   useEffect(() => {
     const theCase = workingCase
 
+    if (theCase.demands) {
+      autofill('prosecutorDemands', theCase.demands, theCase)
+    }
+
     if (theCase.caseFacts) {
       autofill('courtCaseFacts', theCase.caseFacts, theCase)
     }

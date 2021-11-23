@@ -68,7 +68,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             name="conclusion"
             label={formatMessage(m.sections.conclusion.label)}
             placeholder={formatMessage(m.sections.conclusion.placeholder)}
-            value={workingCase.conclusion}
+            defaultValue={workingCase.conclusion}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'conclusion',
@@ -251,7 +251,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                 label={formatMessage(
                   m.sections.appealDecision.accusedAnnouncementLabel,
                 )}
-                value={workingCase.accusedAppealAnnouncement}
+                defaultValue={workingCase.accusedAppealAnnouncement}
                 placeholder={formatMessage(
                   m.sections.appealDecision.accusedAnnouncementPlaceholder,
                 )}
@@ -428,7 +428,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   label={formatMessage(
                     m.sections.appealDecision.prosecutorAnnouncementLabel,
                   )}
-                  value={workingCase.prosecutorAppealAnnouncement}
+                  defaultValue={workingCase.prosecutorAppealAnnouncement}
                   placeholder={formatMessage(
                     m.sections.appealDecision.prosecutorAnnouncementPlaceholder,
                   )}
@@ -467,7 +467,6 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             <GridRow>
               <GridColumn>
                 <TimeInputField
-                  value={formatDate(workingCase.courtEndTime, TIME_FORMAT)}
                   onChange={(evt) =>
                     validateAndSetTime(
                       'courtEndTime',
@@ -498,6 +497,10 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                     label="Þinghaldi lauk (kk:mm)"
                     placeholder="Veldu tíma"
                     autoComplete="off"
+                    defaultValue={formatDate(
+                      workingCase.courtEndTime,
+                      TIME_FORMAT,
+                    )}
                     errorMessage={courtDocumentEndEM}
                     hasError={courtDocumentEndEM !== ''}
                     required
