@@ -495,7 +495,11 @@ function constructInvestigationRulingPdf(
     .font('Times-Roman')
     .text(
       formatMessage(ruling.courtDocuments.request, {
-        caseTypes: caseTypes[existingCase.type],
+        caseTypes:
+          existingCase.type === CaseType.RESTRAINING_ORDER ||
+          existingCase.type === CaseType.PSYCHIATRIC_EXAMINATION
+            ? caseTypes[existingCase.type]
+            : formatMessage(core.caseType.investigate),
       }),
       {
         align: 'justify',
