@@ -73,6 +73,7 @@ export const DateOfAccident: FC<FieldBaseProps> = ({
         backgroundColor="blue"
         onChange={handleDateChange}
         maxDate={new Date()}
+        required
       />
 
       <Box hidden>
