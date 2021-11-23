@@ -51,11 +51,11 @@ export class MunicipalityResolver {
     input: MunicipalityActivityInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Municipality> {
-    const { id, ...activityMunicipality } = input
+    const { id, ...municipalityActivity } = input
 
-    this.logger.debug('Updating activity municipality')
+    this.logger.debug('Updating municipality activity')
 
-    return backendApi.updateMunicipalityActivity(id, activityMunicipality)
+    return backendApi.updateMunicipalityActivity(id, municipalityActivity)
   }
 
   @Mutation(() => MunicipalityModel, { nullable: false })
