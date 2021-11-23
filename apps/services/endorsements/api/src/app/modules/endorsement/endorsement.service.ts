@@ -19,12 +19,7 @@ import { ValidationRuleDto } from '../endorsementList/dto/validationRule.dto'
 import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { paginate } from '@island.is/nest/pagination'
-import environment, {
-  ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
-} from '../../../environments/environment'
-import { EmailService } from '@island.is/email-service'
-import PDFDocument from 'pdfkit'
-import getStream from 'get-stream'
+import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 
 interface FindEndorsementInput {
   listId: string
@@ -87,8 +82,6 @@ export class EndorsementService {
     private logger: Logger,
     private readonly metadataService: EndorsementMetadataService,
     private readonly validatorService: EndorsementValidatorService,
-    @Inject(EmailService)
-    private emailService: EmailService,
   ) {}
 
   private getEndorsementMetadataForNationalId = async (
@@ -384,145 +377,6 @@ export class EndorsementService {
         { listId: endorsementList.id },
       )
       throw new NotFoundException(["This endorsement doesn't exist"])
-    }
-  }
-
-  async createDocumentBuffer(endorsementList: any) {
-    // build pdf
-    const doc = new PDFDocument()
-    const locale = 'is-IS'
-    const big = 16
-    const regular = 8
-    const fontRegular = 'Helvetica'
-    const fontBold = 'Helvetica-Bold'
-
-    doc
-      .fontSize(big)
-      .text('Upplýsingar um meðmælendalista')
-      .moveDown()
-
-      .fontSize(regular)
-      .font(fontBold)
-      .text('Heiti meðmælendalista: ')
-      .font(fontRegular)
-      .text(endorsementList.title)
-      .moveDown()
-
-      .font(fontBold)
-      .text('Um meðmælendalista: ')
-      .font(fontRegular)
-      .text(endorsementList.description)
-      .moveDown()
-
-      .font(fontBold)
-      .text('Ábyrgðarmaður: ')
-      .font(fontRegular)
-      .text(endorsementList.owner)
-      .moveDown()
-
-      .font(fontBold)
-      .text('Tímabil lista: ')
-      .font(fontRegular)
-      .text(
-        endorsementList.openedDate.toLocaleDateString(locale) +
-          ' - ' +
-          endorsementList.closedDate.toLocaleDateString(locale),
-      )
-      .moveDown()
-
-      .font(fontBold)
-      .text('Fjöldi skráðir: ')
-      .font(fontRegular)
-      .text(endorsementList.endorsements.length)
-      .moveDown(2)
-
-    if (endorsementList.endorsements.length) {
-      doc.fontSize(big).text('Yfirlit meðmæla').fontSize(regular).moveDown()
-      for (const val of endorsementList.endorsements) {
-        doc.text(
-          val.created.toLocaleDateString(locale) +
-            ' ' +
-            (val.meta.fullName ? val.meta.fullName : 'Nafn ótilgreint'),
-        )
-      }
-    }
-    doc
-      .moveDown()
-
-      .fontSize(regular)
-      .text(
-        'Þetta skjal var framkallað sjálfvirkt þann: ' +
-          new Date().toLocaleDateString(locale),
-      )
-    doc.end()
-    return await getStream.buffer(doc)
-  }
-
-  async emailPDF(
-    listId: string,
-    recipientEmail: string,
-  ): Promise<{ success: boolean }> {
-    const endorsementList = await this.endorsementListModel.findOne({
-      where: { id: listId },
-      include: [
-        {
-          model: Endorsement,
-        },
-      ],
-    })
-    try {
-      const result = await this.emailService.sendEmail({
-        from: {
-          name: environment.email.sender,
-          address: environment.email.address,
-        },
-        to: [
-          {
-            // message can be sent to any email so recipient name is unknown
-            name: recipientEmail,
-            address: recipientEmail,
-          },
-        ],
-        subject: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
-        template: {
-          title: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
-          body: [
-            {
-              component: 'Heading',
-              context: {
-                copy: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
-              },
-            },
-            { component: 'Copy', context: { copy: 'Sæl/l' } },
-            {
-              component: 'Copy',
-              context: {
-                copy:
-                  'Meðfylgjandi er meðmælendalisti ' +
-                  '"' +
-                  endorsementList?.title +
-                  '"' +
-                  ', sem ' +
-                  endorsementList?.owner +
-                  ' er skráður ábyrgðarmaður fyrir. Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018.',
-              },
-            },
-            { component: 'Copy', context: { copy: 'Kær kveðja,' } },
-            { component: 'Copy', context: { copy: 'Ísland.is' } },
-          ],
-        },
-        attachments: [
-          {
-            filename: 'Meðmælendalisti.pdf',
-            content: await this.createDocumentBuffer(endorsementList),
-          },
-        ],
-      })
-      this.logger.debug(`sending list ${listId} to ${recipientEmail}`)
-      return { success: true }
-    } catch (error) {
-      this.logger.error('Failed to send email', error)
-      return { success: false }
     }
   }
 }

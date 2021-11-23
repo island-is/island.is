@@ -4511,6 +4511,52 @@
         "docker-next": {}
       }
     },
+    "github-actions-cache": {
+      "root": "apps/github-actions-cache",
+      "sourceRoot": "apps/github-actions-cache/src",
+      "projectType": "application",
+      "prefix": "github-actions-cache",
+      "architect": {
+        "build": {
+          "builder": "@irdnis/esbuildnx:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/github-actions-cache",
+            "main": "apps/github-actions-cache/src/main.ts",
+            "tsConfig": "apps/github-actions-cache/tsconfig.app.json",
+            "assets": ["apps/github-actions-cache/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "github-actions-cache:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/github-actions-cache/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/github-actions-cache"],
+          "options": {
+            "jestConfig": "apps/github-actions-cache/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "docker-express": {}
+      }
+    },
     "gjafakort-api": {
       "root": "apps/gjafakort/api",
       "sourceRoot": "apps/gjafakort/api/src",

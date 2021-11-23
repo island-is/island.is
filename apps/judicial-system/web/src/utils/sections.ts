@@ -18,12 +18,26 @@ import {
   isRulingStepOneValidRC,
   isRulingStepTwoValidIC,
   isRulingStepTwoValidRC,
-} from '../../utils/validate'
+} from '../utils/validate'
+
+interface Section {
+  name: string
+  children: {
+    type: string
+    name: string
+    href: string | undefined
+  }[]
+}
+
+export const findLastValidStep = (section: Section) => {
+  const filterValidSteps = section.children.filter((c) => c.href)
+  return filterValidSteps[filterValidSteps.length - 1]
+}
 
 export const getCustodyAndTravelBanProsecutorSection = (
   workingCase: Case,
   activeSubSection?: number,
-) => {
+): Section => {
   const { type, id } = workingCase
 
   return {
@@ -95,7 +109,7 @@ export const getCustodyAndTravelBanProsecutorSection = (
 export const getInvestigationCaseProsecutorSection = (
   workingCase: Case,
   activeSubSection?: number,
-) => {
+): Section => {
   const { id } = workingCase
 
   return {
@@ -164,7 +178,7 @@ export const getInvestigationCaseProsecutorSection = (
 export const getInvestigationCaseCourtSections = (
   workingCase: Case,
   activeSubSection?: number,
-) => {
+): Section => {
   const { id } = workingCase
 
   return {
@@ -236,7 +250,7 @@ export const getInvestigationCaseCourtSections = (
 export const getCourtSections = (
   workingCase: Case,
   activeSubSection?: number,
-) => {
+): Section => {
   const { id } = workingCase
 
   return {
@@ -308,7 +322,7 @@ export const getCourtSections = (
 export const getExtenstionSections = (
   workingCase: Case,
   activeSubSection?: number,
-) => {
+): Section => {
   const { id } = workingCase
 
   return {

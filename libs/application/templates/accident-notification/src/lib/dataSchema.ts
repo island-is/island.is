@@ -204,17 +204,12 @@ export const AccidentNotificationSchema = z.object({
     community: z.string().min(1),
     moreDetails: z.string().optional(),
   }),
-  fishermanLocation: z.object({
+  shipLocation: z.object({
     answer: z.enum([
       FishermanWorkplaceAccidentShipLocationEnum.SAILINGORFISHING,
       FishermanWorkplaceAccidentShipLocationEnum.HARBOR,
       FishermanWorkplaceAccidentShipLocationEnum.OTHER,
     ]),
-    locationAndPurpose: z
-      .object({
-        location: z.string().min(1),
-      })
-      .optional(),
   }),
   workMachineRadio: z.enum([YES, NO]),
   workMachine: z.object({
@@ -230,23 +225,19 @@ export const AccidentNotificationSchema = z.object({
     ]),
   }),
   workAccident: z.object({
-    type: z
-      .enum([
-        WorkAccidentTypeEnum.AGRICULTURE,
-        WorkAccidentTypeEnum.FISHERMAN,
-        WorkAccidentTypeEnum.GENERAL,
-        WorkAccidentTypeEnum.PROFESSIONALATHLETE,
-      ])
-      .optional(),
+    type: z.enum([
+      WorkAccidentTypeEnum.AGRICULTURE,
+      WorkAccidentTypeEnum.FISHERMAN,
+      WorkAccidentTypeEnum.GENERAL,
+      WorkAccidentTypeEnum.PROFESSIONALATHLETE,
+    ]),
   }),
   studiesAccident: z.object({
-    type: z
-      .enum([
-        StudiesAccidentTypeEnum.APPRENTICESHIP,
-        StudiesAccidentTypeEnum.INTERNSHIP,
-        StudiesAccidentTypeEnum.VOCATIONALEDUCATION,
-      ])
-      .optional(),
+    type: z.enum([
+      StudiesAccidentTypeEnum.APPRENTICESHIP,
+      StudiesAccidentTypeEnum.INTERNSHIP,
+      StudiesAccidentTypeEnum.VOCATIONALEDUCATION,
+    ]),
   }),
   injuredPersonInformation: z.object({
     name: z.string().min(1, error.required.defaultMessage),
