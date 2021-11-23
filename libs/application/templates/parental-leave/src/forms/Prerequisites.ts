@@ -1,6 +1,7 @@
 import {
   buildCustomField,
   buildDataProviderItem,
+  buildDataProviderPermissionItem,
   buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
@@ -261,6 +262,15 @@ export const PrerequisitesForm: Form = buildForm({
                   subTitle:
                     parentalLeaveFormMessages.shared
                       .childrenInformationSubTitle,
+                }),
+              ],
+              otherPermissions: [
+                buildDataProviderPermissionItem({
+                  id: 'salary',
+                  title:
+                    parentalLeaveFormMessages.shared.salaryInformationTitle,
+                  subTitle:
+                    parentalLeaveFormMessages.shared.salaryInformationSubTitle,
                 }),
               ],
             }),
