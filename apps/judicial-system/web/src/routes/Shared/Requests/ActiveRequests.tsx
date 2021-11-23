@@ -9,7 +9,7 @@ import type { Case } from '@island.is/judicial-system/types'
 import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   directionType,
   SortConfig,
