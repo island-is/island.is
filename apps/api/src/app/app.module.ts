@@ -43,7 +43,7 @@ import { maskOutFieldsMiddleware } from './graphql.middleware'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
-const environment = getConfig()
+const environment = getConfig
 const autoSchemaFile = environment.production
   ? true
   : 'apps/api/src/api.graphql'
