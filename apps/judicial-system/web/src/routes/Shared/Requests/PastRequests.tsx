@@ -144,6 +144,7 @@ const PastRequests: React.FC<Props> = (props) => {
       Cell: (row: {
         row: {
           original: {
+            initialRulingDate: string
             rulingDate: string
             validToDate: string
             courtEndTime: string
@@ -151,6 +152,7 @@ const PastRequests: React.FC<Props> = (props) => {
           }
         }
       }) => {
+        const initialRulingDate = row.row.original.initialRulingDate
         const rulingDate = row.row.original.rulingDate
         const validToDate = row.row.original.validToDate
         const courtEndDate = row.row.original.courtEndTime
@@ -161,6 +163,11 @@ const PastRequests: React.FC<Props> = (props) => {
           !validToDate
         ) {
           return null
+        } else if (initialRulingDate) {
+          return `${formatDate(
+            parseISO(initialRulingDate),
+            'd.M.y',
+          )} - ${formatDate(parseISO(validToDate), 'd.M.y')}`
         } else if (rulingDate) {
           return `${formatDate(parseISO(rulingDate), 'd.M.y')} - ${formatDate(
             parseISO(validToDate),
