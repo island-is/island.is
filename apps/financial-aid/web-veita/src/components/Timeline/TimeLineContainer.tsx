@@ -16,10 +16,16 @@ interface Props {
   children: ReactNode
   [key: string]: any
   applicantName: string
+  spouseName: string
 }
 
-const TimeLineContainer = ({ event, applicantName, children }: Props) => {
-  const eventData = getEventData(event, applicantName)
+const TimeLineContainer = ({
+  event,
+  applicantName,
+  spouseName,
+  children,
+}: Props) => {
+  const eventData = getEventData(event, applicantName, spouseName)
   return (
     <Box
       className={cn({

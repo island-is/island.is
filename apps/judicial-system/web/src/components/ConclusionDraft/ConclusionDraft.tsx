@@ -6,7 +6,7 @@ import type { Case } from '@island.is/judicial-system/types'
 import {
   Decision,
   RulingInput,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   icRulingStepOne,
   rcRulingStepOne,
