@@ -31,6 +31,10 @@ const NationalRegistryUserQuery = gql`
       legalResidence
       birthPlace
       gender
+      citizenship {
+        code
+        name
+      }
     }
   }
 `
@@ -114,8 +118,11 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         <UserInfoLine
           label={m.citizenship}
           content={
-            userInfo.profile.nat === 'IS' ? 'Ísland' : userInfo.profile.nat
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : nationalRegistryUser?.citizenship?.name || ''
           }
+          loading={loading}
         />
         <UserInfoLine
           label={m.gender}
