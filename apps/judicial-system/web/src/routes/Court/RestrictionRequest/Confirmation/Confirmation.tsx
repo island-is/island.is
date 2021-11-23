@@ -11,7 +11,7 @@ import {
   FormContentContainer,
   RulingAccordionItem,
   BlueBox,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseData,
@@ -28,10 +28,10 @@ import type {
 } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useQuery } from '@apollo/client'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import SigningModal from '@island.is/judicial-system-web/src/shared-components/SigningModal/SigningModal'
+import SigningModal from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import {
   core,
   rcConfirmation as m,

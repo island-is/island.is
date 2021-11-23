@@ -11,7 +11,7 @@ import {
   mockProsecutorQuery,
   mockProsecutorWonderWomanQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
+import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { SignedVerdictOverview } from './SignedVerdictOverview'
 import { LocaleProvider } from '@island.is/localization'

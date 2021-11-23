@@ -171,6 +171,7 @@ const ApplicationProfile = ({
         <History
           applicantName={application.name}
           applicationEvents={application.applicationEvents}
+          spouseName={application.spouseName ?? ''}
         />
       </Box>
 
