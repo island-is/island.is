@@ -115,6 +115,7 @@ export const UserDropdown = ({
                     text={formatMessage(m.personalInformation)}
                     link={ServicePortalPath.SettingsPersonalInformation}
                     icon={{ type: 'outline', icon: 'person' }}
+                    onClick={() => onClose()}
                   />
                 </Box>
                 <Box paddingTop={1}>
@@ -122,6 +123,7 @@ export const UserDropdown = ({
                     text={formatMessage(m.accessControl)}
                     link={ServicePortalPath.SettingsAccessControl}
                     icon={{ type: 'outline', icon: 'people' }}
+                    onClick={() => onClose()}
                   />
                 </Box>
               </Box>
