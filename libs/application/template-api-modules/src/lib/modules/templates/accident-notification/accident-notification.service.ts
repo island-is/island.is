@@ -129,7 +129,7 @@ export class AccidentNotificationService {
         confirmationIN: {
           confirmationType:
             reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
-          confirmationParty: isRepresentativeOfCompanyOrInstitue ? 2 : 1,
+          confirmationParty: isRepresentativeOfCompanyOrInstitue ? 1 : 2,
           objection: reviewComment as string,
         },
       })

@@ -11,6 +11,7 @@ import {
   hasReceivedAllDocuments,
   getErrorMessageForMissingDocuments,
   shouldRequestReview,
+  isInjuredAndRepresentativeOfCompanyOrInstitute,
 } from '../../utils'
 import { inReview } from '../../lib/messages'
 import { StatusStep } from './StatusStep'
@@ -175,7 +176,7 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
     },
   }
 
-  const hasReviewerSubmitted = isAssignee && hasReceivedConfirmation(answers)
+  const hasReviewerSubmitted = hasReceivedConfirmation(answers)
 
   const steps = [
     {
@@ -223,21 +224,24 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
           ? inReview.representative.summaryDone
           : inReview.representative.summary,
       ),
-      hasActionMessage: !hasReviewerSubmitted,
-      action: hasReviewerSubmitted
-        ? undefined
-        : {
-            cta: () => changeScreens('inReviewOverviewScreen'),
-            title: formatMessage(inReview.action.representative.title),
-            description: formatMessage(
-              inReview.action.representative.description,
-            ),
-            actionButtonTitle: formatMessage(
-              inReview.action.representative.actionButtonTitle,
-            ),
-          },
-      visible: shouldRequestReview(
-        application.answers as AccidentNotificationAnswers,
+      hasActionMessage: isAssignee && !hasReviewerSubmitted,
+      action:
+        isAssignee && !hasReviewerSubmitted
+          ? {
+              cta: () => changeScreens('inReviewOverviewScreen'),
+              title: formatMessage(inReview.action.representative.title),
+              description: formatMessage(
+                inReview.action.representative.description,
+              ),
+              actionButtonTitle: formatMessage(
+                inReview.action.representative.actionButtonTitle,
+              ),
+            }
+          : undefined,
+      visible: !(
+        !shouldRequestReview(
+          application.answers as AccidentNotificationAnswers,
+        ) || isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
       ),
     },
     {
