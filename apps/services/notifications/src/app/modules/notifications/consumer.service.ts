@@ -11,7 +11,7 @@ import { SqsChannel } from '../../../types'
 import { MessageHandlerService } from './messageHandler.service'
 
 @Injectable()
-export class NotificationConsumerService implements OnModuleDestroy {
+export class ConsumerService implements OnModuleDestroy {
   private currentBatchProcessing: Promise<void> = Promise.resolve()
   private shutdown = false
 
@@ -24,6 +24,7 @@ export class NotificationConsumerService implements OnModuleDestroy {
   ) {}
 
   async onModuleDestroy() {
+    this.logger.info('Stopping consumer')
     this.shutdown = true
 
     this.logger.info('Waiting for workers to finish')

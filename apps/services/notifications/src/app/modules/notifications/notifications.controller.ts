@@ -8,9 +8,9 @@ import {
 import { ApiBody, ApiExtraModels, getSchemaPath } from '@nestjs/swagger'
 import { validate, ValidationError } from 'class-validator'
 import { Request } from 'express'
-import { NotificationProducerService } from './producer.service'
+import { ProducerService } from './producer.service'
 import {
-  NewPostholfMessage,
+  NewDocumentMessage,
   Message,
   TypeValidator,
   ValidatorTypeMap,
@@ -27,6 +27,10 @@ const throwIfError = (errors: ValidationError[]): void => {
   }
 }
 
+// Validates the message POST parameter. The top-level message object has a
+// `type` attribute that defines how the rest of the object is validated.
+// class-validator doesn't seem to support that and this is the best solution
+// I could find.
 const validateMessage = async (body: Request['body']): Promise<Message> => {
   const type = new TypeValidator()
   Object.assign(type, body)
@@ -41,22 +45,21 @@ const validateMessage = async (body: Request['body']): Promise<Message> => {
 }
 
 @Controller('notifications')
-@ApiExtraModels(NewPostholfMessage)
+@ApiExtraModels(NewDocumentMessage)
 export class NotificationsController {
-  constructor(
-    private readonly notificationProducer: NotificationProducerService,
-  ) {}
+  constructor(private readonly producer: ProducerService) {}
 
   @Post()
   @ApiBody({
     schema: {
       type: 'object',
-      oneOf: [{ $ref: getSchemaPath(NewPostholfMessage) }],
+      oneOf: [{ $ref: getSchemaPath(NewDocumentMessage) }],
     },
   })
-  @HttpCode(202)
-  async createNotification(@Req() req: Request): Promise<void> {
+  @HttpCode(201)
+  async createNotification(@Req() req: Request): Promise<{ id: string }> {
     const message = await validateMessage(req.body)
-    await this.notificationProducer.sendNotification(message)
+    const id = await this.producer.addToQueue(message)
+    return { id }
   }
 }

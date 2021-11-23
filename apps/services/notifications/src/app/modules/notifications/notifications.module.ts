@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common'
 import { LoggingModule } from '@island.is/logging'
 import { NotificationsController } from './notifications.controller'
 import { CONNECTION_PROVIDER, CONFIG_PROVIDER } from '../../../constants'
-import { NotificationConsumerService } from './consumer.service'
+import { ConsumerService } from './consumer.service'
 import { environment } from '../../../environments/environment'
-import { NotificationProducerService } from './producer.service'
+import { ProducerService } from './producer.service'
 import { MessageHandlerService } from './messageHandler.service'
-import { createQueue } from './connection.provider'
+import { createQueue } from './queueConnection.provider'
 
 @Module({
   imports: [LoggingModule],
@@ -20,8 +20,8 @@ import { createQueue } from './connection.provider'
       provide: CONNECTION_PROVIDER,
       useFactory: async () => await createQueue(environment),
     },
-    NotificationProducerService,
-    NotificationConsumerService,
+    ProducerService,
+    ConsumerService,
     MessageHandlerService,
   ],
 })

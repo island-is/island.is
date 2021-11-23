@@ -3,10 +3,10 @@ import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { NotificationsController } from '../notifications.controller'
 import { CONFIG_PROVIDER, CONNECTION_PROVIDER } from '../../../../constants'
-import { NotificationProducerService } from '../producer.service'
-import { NotificationConsumerService } from '../consumer.service'
+import { ProducerService } from '../producer.service'
+import { ConsumerService } from '../consumer.service'
 import { Message, MessageTypes } from '../dto/createNotification.dto'
-import { createQueue } from '../connection.provider'
+import { createQueue } from '../queueConnection.provider'
 import { MessageHandlerService } from '../messageHandler.service'
 import { LoggingModule } from '@island.is/logging'
 import { PurgeQueueCommand } from '@aws-sdk/client-sqs'
@@ -66,8 +66,8 @@ beforeEach(async () => {
         provide: CONNECTION_PROVIDER,
         useFactory: createClient,
       },
-      NotificationProducerService,
-      NotificationConsumerService,
+      ProducerService,
+      ConsumerService,
       MessageHandlerService,
     ],
   })
@@ -76,7 +76,7 @@ beforeEach(async () => {
     .compile()
 
   app = await module.createNestApplication().init()
-  app.get(NotificationConsumerService).run()
+  app.get(ConsumerService).run()
 })
 
 afterEach(async () => {
@@ -86,16 +86,16 @@ afterEach(async () => {
 describe('Notifications API', () => {
   it('Accepts a valid message input', async () => {
     const msg: Message = {
-      type: MessageTypes.NewPostholfMessage,
-      from: 'Skatturinn',
+      type: MessageTypes.NewDocumentMessage,
+      sender: 'Skatturinn',
       recipient: '0409084390',
-      postholfMessageId: '123',
+      documentId: '123',
     }
 
     await request(app.getHttpServer())
       .post('/notifications')
       .send(msg)
-      .expect(202)
+      .expect(201)
 
     const handler = app.get(MessageHandlerService) as MessageHandlerMock
     await handler.waitFor((msgs) => msgs.length > 0)
