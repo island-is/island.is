@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import {
   ApplicationOverviewSkeleton,
@@ -23,9 +23,24 @@ import {
   Application,
 } from '@island.is/financial-aid/shared/lib'
 import router from 'next/router'
+import { useRouter } from 'next/router'
 
 export const Search = () => {
-  const [searchNationalId, setSearchNationalId] = useState<string>('')
+  const router = useRouter()
+
+  const [searchNationalId, setSearchNationalId] = useState<string>(
+    router?.query?.search as string,
+  )
+
+  useEffect(() => {
+    if (sanitize(searchNationalId).length === 10) {
+      getApplications({
+        variables: {
+          input: { nationalId: sanitize(searchNationalId) },
+        },
+      })
+    }
+  }, [])
 
   const sanitize = (n: string) => n.replace(/[^0-9]/g, '')
 
@@ -44,6 +59,11 @@ export const Search = () => {
   })
 
   const applicationRes = useMemo(() => {
+    router.push({
+      query: {
+        search: sanitize(searchNationalId),
+      },
+    })
     if (data && sanitize(searchNationalId).length === 10) {
       return data.applicationsResults
     }
