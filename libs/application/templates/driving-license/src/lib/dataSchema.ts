@@ -19,7 +19,6 @@ export const dataSchema = z.object({
     isDisabled: z.enum([YES, NO]),
     hasOtherDiseases: z.enum([YES, NO]),
   }),
-  teacher: z.string().nonempty(),
   willBringQualityPhoto: z.union([
     z.array(z.enum([YES, NO])).nonempty(),
     z.enum([YES, NO]),

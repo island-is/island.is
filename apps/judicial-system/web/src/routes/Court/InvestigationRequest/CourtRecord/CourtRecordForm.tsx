@@ -9,7 +9,7 @@ import {
   FormContentContainer,
   FormFooter,
   HideableText,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import { Case, SessionArrangements } from '@island.is/judicial-system/types'
 import {
   newSetAndSendDateToServer,
