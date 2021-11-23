@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import React from 'react'
-import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
+import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 interface Props {
