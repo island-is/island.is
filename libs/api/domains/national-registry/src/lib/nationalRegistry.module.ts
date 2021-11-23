@@ -22,7 +22,7 @@ export class NationalRegistryModule {
         {
           provide: NationalRegistryApi,
           useFactory: async () =>
-            NationalRegistryApi.instanciateClass(config.nationalRegistry),
+            NationalRegistryApi.instantiateClass(config.nationalRegistry),
         },
       ],
       exports: [NationalRegistryService],
