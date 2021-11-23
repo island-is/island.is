@@ -21,7 +21,7 @@ const AdminSideNavItems = ({ roles }: Props) => {
     <>
       <button
         className={`${sideNavButtonStyles.sideNavBarButton} navBarButtonHover`}
-        onClick={() => router.push(Routes.users)}
+        onClick={() => router.push(Routes.settings.users)}
       >
         <Icon
           icon="people"
@@ -33,7 +33,7 @@ const AdminSideNavItems = ({ roles }: Props) => {
       </button>
       <button
         className={`${sideNavButtonStyles.sideNavBarButton} navBarButtonHover`}
-        onClick={() => router.push(Routes.municipalitySettings)}
+        onClick={() => router.push(Routes.settings.municipality)}
       >
         <Icon
           icon="settings"

@@ -144,6 +144,7 @@
 /.github/actions/                                                                             @island-is/devops
 /.github/workflows/                                                                           @island-is/devops
 /apps/reference-backend/                                                                      @island-is/devops
+/apps/github-actions-cache/                                                                   @island-is/devops
 /libs/infra*/                                                                                 @island-is/devops
 /libs/logging/                                                                                @island-is/devops
 /scripts/                                                                                     @island-is/devops

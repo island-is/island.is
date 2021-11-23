@@ -3,6 +3,7 @@ module.exports = {
     '<rootDir>/apps/api',
     '<rootDir>/apps/auth-admin-web',
     '<rootDir>/apps/download-service',
+    '<rootDir>/apps/github-actions-cache',
     '<rootDir>/apps/reference-backend',
     '<rootDir>/apps/reference-next-app',
     '<rootDir>/apps/service-portal',
