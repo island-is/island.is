@@ -4,12 +4,12 @@ export const shouldRequestReview = (
   answers: Partial<AccidentNotificationAnswers>,
 ): boolean => {
   const ishome = utils.isHomeActivitiesAccident(answers)
-  const isagrigculture = utils.isOfWorkAccidentType(
+  const isAgriculture = utils.isOfWorkAccidentType(
     answers,
     WorkAccidentTypeEnum.AGRICULTURE,
   )
 
-  const isEitherHomeOrAgriculture = ishome || isagrigculture
+  const isEitherHomeOrAgriculture = ishome || isAgriculture
 
   return !isEitherHomeOrAgriculture
 }
