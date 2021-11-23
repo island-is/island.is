@@ -14,6 +14,8 @@ import {
   PaymentScheduleInitialSchedule,
 } from './graphql/models'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { UpdateCurrentEmployerInput } from './graphql/dto/updateCurrentEmployerInput'
+import { UpdateCurrentEmployerResponse } from './graphql/models/updateCurrentEmployer.model'
 
 @Injectable()
 export class PaymentScheduleService {
@@ -150,5 +152,22 @@ export class PaymentScheduleService {
       name: wagesDeduction.employerName,
       nationalId: wagesDeduction.employerNationalId,
     }
+  }
+
+  async updateCurrentEmployer(
+    nationalId: string,
+    input: UpdateCurrentEmployerInput,
+  ): Promise<UpdateCurrentEmployerResponse> {
+    try {
+      await this.paymentScheduleApi.wagesdeductionnationalIdPUT1Raw({
+        input: { employer: { employerNationalId: input.employerNationalId } },
+        nationalId: nationalId,
+      })
+    } catch (error) {
+      this.logger.error('Error occurred when updating current employer', error)
+      throw new Error('Error occurred when updating current employer')
+    }
+
+    return { success: true }
   }
 }
