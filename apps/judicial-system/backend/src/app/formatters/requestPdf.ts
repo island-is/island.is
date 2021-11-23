@@ -261,7 +261,13 @@ function constructInvestigationRequestPdf(
     .font('Helvetica')
     .fontSize(baseFontSize)
     .lineGap(4)
-    .text(capitalize(caseTypes[existingCase.type]))
+    .text(
+      capitalize(
+        existingCase.type === CaseType.OTHER
+          ? formatMessage(core.caseType.investigate)
+          : caseTypes[existingCase.type],
+      ),
+    )
     .text(
       existingCase.description ?? formatMessage(m.description.noDescription),
       {
