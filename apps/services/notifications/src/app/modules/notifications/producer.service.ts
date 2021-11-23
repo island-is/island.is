@@ -7,7 +7,7 @@ import { CONNECTION_PROVIDER } from '../../../constants'
 import { SqsChannel } from '../../../types'
 
 @Injectable()
-export class NotificationProducerService {
+export class ProducerService {
   constructor(
     @Inject(CONNECTION_PROVIDER)
     private readonly queue: SqsChannel,
@@ -15,7 +15,7 @@ export class NotificationProducerService {
     private readonly logger: Logger,
   ) {}
 
-  async sendNotification(msg: Message): Promise<void> {
+  async addToQueue(msg: Message): Promise<string> {
     this.logger.debug('Queueing message', msg)
 
     const res = await this.queue.client.send(
@@ -27,5 +27,7 @@ export class NotificationProducerService {
     )
 
     this.logger.debug(`Message queued: ${res.MessageId}`)
+
+    return res.MessageId ?? ''
   }
 }

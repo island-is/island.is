@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsNationalId } from '@island.is/nest/validators'
 
 export enum MessageTypes {
-  NewPostholfMessage = 'newPostholfMessage',
+  NewDocumentMessage = 'newDocumentMessage',
 }
 
 export class TypeValidator {
@@ -12,12 +12,13 @@ export class TypeValidator {
   type!: MessageTypes
 }
 
-export class NewPostholfMessage {
-  @ApiProperty({ enum: [MessageTypes.NewPostholfMessage] })
-  type!: MessageTypes.NewPostholfMessage
+export class NewDocumentMessage {
+  @ApiProperty({ enum: [MessageTypes.NewDocumentMessage] })
+  type!: MessageTypes.NewDocumentMessage
 
   @IsString()
-  from!: string
+  @ApiProperty()
+  sender!: string
 
   @IsNationalId()
   @ApiProperty()
@@ -26,11 +27,11 @@ export class NewPostholfMessage {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  postholfMessageId!: string
+  documentId!: string
 }
 
-export type Message = NewPostholfMessage
+export type Message = NewDocumentMessage
 
 export const ValidatorTypeMap = {
-  newPostholfMessage: NewPostholfMessage,
+  [MessageTypes.NewDocumentMessage]: NewDocumentMessage,
 }
