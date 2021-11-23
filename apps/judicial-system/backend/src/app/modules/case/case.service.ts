@@ -493,6 +493,8 @@ export class CaseService {
       creatingProsecutorId: user.id,
       prosecutorId: user.id,
       parentCaseId: existingCase.id,
+      initialRulingDate:
+        existingCase.initialRulingDate ?? existingCase.rulingDate,
     })
   }
 
