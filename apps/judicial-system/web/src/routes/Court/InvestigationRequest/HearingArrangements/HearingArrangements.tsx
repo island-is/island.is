@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
+import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseData,
@@ -13,7 +13,7 @@ import { useRouter } from 'next/router'
 import HearingArrangementsForm from './HearingArrangementsForm'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 const HearingArrangements = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
