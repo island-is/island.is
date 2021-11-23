@@ -20,7 +20,7 @@ import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { HealthController } from './health.controller'
-import { environment } from './environments'
+import { getConfig } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
@@ -44,6 +44,7 @@ import { maskOutFieldsMiddleware } from './graphql.middleware'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
+const environment = getConfig
 const autoSchemaFile = environment.production
   ? true
   : 'apps/api/src/api.graphql'
