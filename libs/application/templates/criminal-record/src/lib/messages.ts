@@ -263,4 +263,14 @@ export const m = defineMessages({
     description:
       'Text that shows up when an error occurs while submitting the application',
   },
+  successTitle: {
+    id: 'cr.application:successTitle',
+    defaultMessage: 'Umsókn þín um sakavottorð hefur verið staðfest',
+    description: '',
+  },
+  successDescription: {
+    id: 'cr.application:successDescription',
+    defaultMessage: 'Þú getur nú nálgast umsóknina þína inni á mínum síðum',
+    description: '',
+  },
 })

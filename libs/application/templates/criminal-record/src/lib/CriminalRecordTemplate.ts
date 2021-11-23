@@ -112,7 +112,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: {
         meta: {
-          name: 'Payment state',
+          name: 'Greiðsla',
           actionCard: {
             description: m.actionCardPayment,
           },
@@ -142,7 +142,7 @@ const template: ApplicationTemplate<
       },
       [States.DONE]: {
         meta: {
-          name: 'Approved',
+          name: 'Samþykkt',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {

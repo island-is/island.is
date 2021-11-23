@@ -55,9 +55,9 @@ export const ExamplePaymentPendingField: FC<Props> = ({
 
   // automatically go to done state if payment has been fulfilled
   useEffect(() => {
-    // if (!paymentStatus.fulfilled) {
-    //   return
-    // }
+    if (!paymentStatus.fulfilled) {
+      return
+    }
 
     setContinuePolling(false)
 
@@ -71,8 +71,6 @@ export const ExamplePaymentPendingField: FC<Props> = ({
       },
     })
       .then(({ data, errors } = {}) => {
-        console.log('IN SUBMIT APPLICATION YEAAH')
-        console.log(errors)
         if (data && !errors?.length) {
           // Takes them to the next state (which loads the relevant form)
 
@@ -82,7 +80,6 @@ export const ExamplePaymentPendingField: FC<Props> = ({
         }
       })
       .catch(() => {
-        console.log('IN CATCH ERROR')
         setSubmitError(true)
       })
   }, [

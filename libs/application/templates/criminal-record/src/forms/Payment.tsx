@@ -20,14 +20,10 @@ export const Payment: Form = buildForm({
       title: m.externalDataSection,
       children: [],
     }),
-    buildSection({
-      id: 'payment',
-      title: m.payment,
-      children: [],
-    }),
+
     buildSection({
       id: 'awaitingPayment',
-      title: m.confirmation,
+      title: m.payment,
       children: [
         // TODO: ekki tókst að stofna til greiðslu skjár - condition
         buildDescriptionField({
@@ -70,6 +66,11 @@ export const Payment: Form = buildForm({
           ],
         }),
       ],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: m.confirmation,
+      children: [],
     }),
   ],
 })
