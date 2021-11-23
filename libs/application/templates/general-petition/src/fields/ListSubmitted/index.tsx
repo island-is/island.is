@@ -16,12 +16,12 @@ const ListSubmited: FC<FieldBaseProps> = ({ application }) => {
   const isStaging = window.location.origin.includes('beta.staging01.devland.is')
 
   const baseUrlForm = isLocalhost
-    ? 'http://localhost:4200/undirskriftalistar/'
+    ? 'http://localhost:4200/medmaelendalistar/'
     : isDev
-    ? 'https://beta.dev01.devland.is/undirskriftalistar/'
+    ? 'https://beta.dev01.devland.is/medmaelendalistar/'
     : isStaging
-    ? 'https://beta.staging01.devland.is/undirskriftalistar/'
-    : 'https://island.is/undirskriftalistar/'
+    ? 'https://beta.staging01.devland.is/medmaelendalistar/'
+    : 'https://island.is/medmaelendalistar/'
 
   return (
     <>
