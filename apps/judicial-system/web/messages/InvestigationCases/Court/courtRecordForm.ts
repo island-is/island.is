@@ -133,13 +133,6 @@ export const icCourtRecord = {
         description:
           'Notað sem fyrirsögn í "Dómskjöl" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
-      title: {
-        id:
-          'judicial.system.investigation_cases:court_record.court_documents.title',
-        defaultMessage: 'Krafa um {caseType}',
-        description:
-          'Notaður sem titill í "Dómskjöl" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
-      },
       tag: {
         id:
           'judicial.system.investigation_cases:court_record.court_documents.tag',

@@ -26,6 +26,7 @@ import {
 import {
   closedCourt,
   icCourtRecord as m,
+  core,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -193,7 +194,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <CourtDocuments
-            title={formatMessage(m.sections.courtDocuments.title, {
+            title={formatMessage(core.requestCaseType, {
               caseType: formatRequestCaseType(workingCase.type),
             })}
             tagText={formatMessage(m.sections.courtDocuments.tag)}
