@@ -250,7 +250,7 @@ export class ApplicationService {
       ApplicationEventType.APPROVED,
     ]
 
-    if (update.state === ApplicationState.NEW) {
+    if (update.state && update.state === ApplicationState.NEW) {
       update.staffId = null
     }
 
@@ -279,7 +279,7 @@ export class ApplicationService {
     const files = await this.fileService.getAllApplicationFiles(id)
     updatedApplication?.setDataValue('files', files)
 
-    if (shouldSendEmail.includes(update.event)) {
+    if (shouldSendEmail.includes(update.event) && update.state) {
       await this.sendEmail(
         {
           name: updatedApplication.name,

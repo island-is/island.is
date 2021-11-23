@@ -12,13 +12,13 @@ import {
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import parseISO from 'date-fns/parseISO'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   capitalize,
   caseTypes,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import { Table } from '@island.is/judicial-system-web/src/shared-components'
+import { Table } from '@island.is/judicial-system-web/src/components'
 import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as styles from './Requests.css'
 
