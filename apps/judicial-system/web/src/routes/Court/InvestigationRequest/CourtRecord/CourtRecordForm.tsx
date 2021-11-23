@@ -18,7 +18,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import {
   FormSettings,
   useCaseFormHelper,
@@ -26,6 +26,7 @@ import {
 import {
   closedCourt,
   icCourtRecord as m,
+  core,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -189,14 +190,16 @@ const CourtRecordForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Dómskjöl
+              {formatMessage(m.sections.courtDocuments.header)}
             </Text>
           </Box>
           <CourtDocuments
-            title={`Krafa - ${capitalize(caseTypes[workingCase.type])}`}
-            tagText="Þingmerkt nr. 1"
+            title={formatMessage(core.requestCaseType, {
+              caseType: formatRequestCaseType(workingCase.type),
+            })}
+            tagText={formatMessage(m.sections.courtDocuments.tag)}
             tagVariant="darkerBlue"
-            text="Rannsóknargögn málsins liggja frammi."
+            text={formatMessage(m.sections.courtDocuments.text)}
             caseId={workingCase.id}
             selectedCourtDocuments={workingCase.courtDocuments ?? []}
             onUpdateCase={updateCase}
