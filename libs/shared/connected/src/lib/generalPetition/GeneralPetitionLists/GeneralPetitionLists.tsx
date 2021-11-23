@@ -29,7 +29,7 @@ export const GeneralPetitionLists = () => {
               key={petition.id}
               onClick={() =>
                 router
-                  .push('/undirskriftalistar/' + petition.id)
+                  .push('/medmaelendalistar/' + petition.id)
                   .then(() => window.scrollTo(0, 0))
               }
             >
