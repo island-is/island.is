@@ -29,11 +29,7 @@ export class AssetsXRoadResolver {
     @Args('input') input: GetMultiPropertyInput,
     @CurrentUser() user: User,
   ) {
-    return this.assetsXRoadService.getRealEstates(
-      user,
-      input.cursor,
-      // input.limit,
-    )
+    return this.assetsXRoadService.getRealEstates(user, input.cursor)
   }
 
   @Query(() => graphqlTypeJson)

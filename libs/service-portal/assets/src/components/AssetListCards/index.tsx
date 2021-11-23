@@ -51,7 +51,7 @@ const AssetListCards: FC<Props> = ({ assets, paginateCallback }) => {
           display="flex"
         >
           <Button size="small" variant="text" onClick={getMoreItems}>
-            Sækja meira
+            {formatMessage(m.fetchMore)}
           </Button>
         </Box>
       )}

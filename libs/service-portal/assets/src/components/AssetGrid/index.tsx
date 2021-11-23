@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
 import { NotkunareiningWrapper, Stadfang } from '@island.is/clients/assets'
 import {
   Text,
@@ -124,7 +125,7 @@ const AssetGrid: FC<Props> = ({ title, units, assetId, locationData }) => {
           display="flex"
         >
           <Button size="small" variant="text" onClick={paginate}>
-            Sækja meira
+            {formatMessage(m.fetchMore)}
           </Button>
         </Box>
       )}

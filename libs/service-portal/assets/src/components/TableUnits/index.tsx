@@ -1,4 +1,6 @@
 import React, { FC } from 'react'
+import { m } from '@island.is/service-portal/core'
+import { useLocale } from '@island.is/localization'
 import { Text, Box, Button, Table as T } from '@island.is/island-ui/core'
 
 interface Props {
@@ -12,6 +14,7 @@ interface Props {
 }
 
 const TableUnits: FC<Props> = ({ tables, title, paginateCallback }) => {
+  const { formatMessage } = useLocale()
   const getMoreItems = () => {
     if (paginateCallback) {
       paginateCallback()
@@ -60,7 +63,7 @@ const TableUnits: FC<Props> = ({ tables, title, paginateCallback }) => {
                       variant="text"
                       onClick={() => getMoreItems()}
                     >
-                      Sækja meira
+                      {formatMessage(m.fetchMore)}
                     </Button>
                   </Box>
                 </T.Data>

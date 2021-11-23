@@ -113,7 +113,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
             defaultMessage:
               'Hér færðu upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert skráður eigandi að.',
           })}
-          img="./assets/images/educationGrades.svg"
+          img="./assets/images/sofa.svg"
           hideImgPrint
         />
       </Box>
