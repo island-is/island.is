@@ -15,8 +15,8 @@ export class UpdateApplicationInput implements UpdateApplication {
   readonly id!: string
 
   @Allow()
-  @Field(() => String)
-  readonly state!: ApplicationState
+  @Field(() => String, { nullable: true })
+  readonly state?: ApplicationState
 
   @Allow()
   @Field(() => String)

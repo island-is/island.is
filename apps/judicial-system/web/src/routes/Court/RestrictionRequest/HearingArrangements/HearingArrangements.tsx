@@ -17,7 +17,7 @@ import {
   BlueBox,
   FormContentContainer,
   Modal,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -45,7 +45,7 @@ import {
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { ValueType } from 'react-select/src/types'
 import { useRouter } from 'next/router'
-import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
+import DateTime from '@island.is/judicial-system-web/src/components/DateTime/DateTime'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 

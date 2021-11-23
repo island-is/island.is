@@ -110,6 +110,7 @@ export interface DateField extends BaseField {
   excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
   onChange?(date: string): void
+  required?: boolean
 }
 
 export interface DescriptionField extends BaseField {
