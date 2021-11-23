@@ -3,11 +3,11 @@ import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
 import { LocaleProvider } from '@island.is/localization'
 import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
-import { CurrentUserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { CurrentUserQuery } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   UserProvider,
   Header,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 
 const mockJudgeQuery = {
   request: {
