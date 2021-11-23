@@ -60,6 +60,12 @@ To enable writing to AWS S3 you need to be authenticated against AWS.
 
 Finally, you can enable communication with the court system via xRoad by providing appropriate values for the environment variables specified in the `xRoad` and `courtClientOptions` sections in `environment.ts`.
 
+### Unit tests
+
+```bash
+yarn test judicial-system-backend
+```
+
 ## API
 
 ### Running locally
@@ -182,6 +188,16 @@ yarn nx extract-strings judicial-system-backend
 will update namespaces:
 
 - judicial.system.backend
+
+## To test authentication locally
+
+Install <https://github.com/cameronhunter/local-ssl-proxy>:
+
+- `npm install -g local-ssl-proxy`
+
+- add .env to web project and change PORT to 4202
+- start project
+- `local-ssl-proxy --source 4200 --target 4202`
 
 ## Code owners and maintainers
 
