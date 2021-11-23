@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
 import {
   ApplicationOverviewSkeleton,
@@ -10,18 +10,15 @@ import {
   Name,
   State,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { Text, Box, Input } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 
 import * as tableStyles from '../../sharedStyles/Table.css'
-import * as headerStyles from '../../sharedStyles/Header.css'
 import * as styles from './search.css'
 import cn from 'classnames'
 import { SearchApplicationQuery } from '@island.is/financial-aid-web/veita/graphql'
 import { useLazyQuery } from '@apollo/client'
-import { getTagByState } from '../../utils/formHelper'
 import {
   getMonth,
-  getState,
   Routes,
   Application,
 } from '@island.is/financial-aid/shared/lib'
@@ -29,7 +26,6 @@ import router from 'next/router'
 
 export const Search = () => {
   const [searchNationalId, setSearchNationalId] = useState<string>('')
-  const [hasError, setHasError] = useState<boolean>(false)
 
   const sanitize = (n: string) => n.replace(/[^0-9]/g, '')
 
@@ -43,10 +39,16 @@ export const Search = () => {
   const [getApplications, { data, error, loading }] = useLazyQuery<{
     applicationsResults: Application[]
   }>(SearchApplicationQuery, {
-    variables: { input: { nationalId: searchNationalId.replace('-', '') } },
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
+
+  const applicationRes = useMemo(() => {
+    if (data && sanitize(searchNationalId).length === 10) {
+      return data.applicationsResults
+    }
+    return []
+  }, [data, searchNationalId])
 
   return (
     <LoadingContainer
@@ -58,21 +60,21 @@ export const Search = () => {
           placeholder="Sláðu inn kennitölu"
           value={searchNationalId}
           onChange={(e) => {
+            if (
+              sanitize(e.target.value).length === 10 &&
+              isValid(e.target.value)
+            ) {
+              getApplications({
+                variables: {
+                  input: { nationalId: sanitize(e.target.value) },
+                },
+              })
+            }
             setSearchNationalId(e.target.value)
           }}
           maxLength={11}
           className={`${styles.searchInput}`}
           autoFocus
-          onKeyDown={({ key }) => {
-            setHasError(false)
-            if (key === 'Enter' && sanitize(searchNationalId).length === 10) {
-              if (isValid(searchNationalId)) {
-                getApplications()
-              } else {
-                setHasError(true)
-              }
-            }
-          }}
         />
       </Box>
       <Box className={`contentUp delay-25`}>
@@ -99,8 +101,8 @@ export const Search = () => {
             </thead>
 
             <tbody className={`${tableStyles.tableBody} contentUp`}>
-              {data &&
-                data?.applicationsResults.map((item: Application, index) => (
+              {applicationRes &&
+                applicationRes.map((item: Application, index) => (
                   <TableBody
                     items={[
                       Name(item.nationalId),
@@ -126,12 +128,16 @@ export const Search = () => {
           </table>
 
           {loading && <SearchSkeleton />}
-          {(error || hasError) && (
-            <Box className={``}>
+          {error && (
+            <Box className={`contentUp`}>
               <Text color="red400">
-                {' '}
                 Obbobb eitthvað fór úrskeiðis, er kennitalan örugglega rétt?
               </Text>
+            </Box>
+          )}
+          {data?.applicationsResults.length === 0 && (
+            <Box className={`contentUp`}>
+              <Text>Enginn fundinn með þessari kennitölu</Text>
             </Box>
           )}
         </div>

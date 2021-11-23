@@ -61,7 +61,9 @@ export class ApplicationResolver {
     input: SearchApplicationInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Application[]> {
-    this.logger.debug(`Getting application ${input.nationalId}`)
+    this.logger.debug(
+      `searching for application with nationalId ${input.nationalId}`,
+    )
 
     return backendApi.searchForApplication(input.nationalId)
   }

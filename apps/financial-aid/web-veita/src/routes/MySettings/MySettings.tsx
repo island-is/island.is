@@ -10,10 +10,10 @@ import {
   Input,
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
-import { AdminContext } from '../../components/AdminProvider/AdminProvider'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
-import * as styles from '../../components/Profile/Profile.css'
-import { InputType } from '../../components/Profile/EmployeeProfile'
+import * as styles from '@island.is/financial-aid-web/veita/src/components/Profile/Profile.css'
+import { InputType } from '@island.is/financial-aid-web/veita/src/components/Profile/EmployeeProfile'
 import { isEmailValid } from '@island.is/financial-aid/shared/lib'
 
 interface mySettingsState {
@@ -109,7 +109,7 @@ export const MySettings = () => {
       isLoading={false}
       loader={<ApplicationOverviewSkeleton />}
     >
-      <Box marginTop={15} marginBottom={[4, 4, 7]} className={``}>
+      <Box marginTop={15} marginBottom={[4, 4, 7]} className={`contentUp`}>
         <Text as="h1" variant="h1">
           Mínar stillingar
         </Text>
@@ -137,7 +137,7 @@ export const MySettings = () => {
               </Box>
             )
           })}
-          <Box marginBottom={[4, 4, 7]}>
+          <Box marginBottom={[4, 4, 7]} className={`contentUp delay-75`}>
             <Text variant="small">
               Stutt nöfn eru birt á yfirlitsskjám yfir mál í vinnslu til að geta
               séð í fljótu bragði hver er með hvaða mál. Fornafn þitt er notað
@@ -146,26 +146,26 @@ export const MySettings = () => {
             </Text>
           </Box>
 
-          <Box marginBottom={[2, 2, 3]}>
+          <Box marginBottom={[2, 2, 3]} className={`contentUp delay-100`}>
             <Text as="h2" variant="h3" color="dark300">
               Dulnefni
             </Text>
           </Box>
 
-          <ToggleSwitchCheckbox
-            label={
-              <Text fontWeight="semiBold">
-                Nota dulnefni fyrir nöfn umsækjenda í yfirlitsskjám
-              </Text>
-            }
-            checked={pseudonyms}
-            onChange={(newChecked) => {
-              setPseudonyms(newChecked)
-            }}
-            className={``}
-          />
+          <Box marginBottom={[4, 4, 7]} className={`contentUp delay-100`}>
+            <ToggleSwitchCheckbox
+              label={
+                <Text fontWeight="semiBold">
+                  Nota dulnefni fyrir nöfn umsækjenda í yfirlitsskjám
+                </Text>
+              }
+              checked={pseudonyms}
+              onChange={(newChecked) => {
+                setPseudonyms(newChecked)
+              }}
+              className={``}
+            />
 
-          <Box marginBottom={[4, 4, 7]}>
             <Text variant="small">
               Í Veitu er sjálfgefið að nöfn umsækjenda birtast á yfirlitsskjám.
               Ef þú vilt ekki að nöfn umsækjenda birtist á yfirlitsskjám getur

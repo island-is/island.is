@@ -9,7 +9,7 @@ import {
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { ApplicationState, getState } from '@island.is/financial-aid/shared/lib'
-import { getTagByState } from '../../utils/formHelper'
+import { getTagByState } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
 type TextVariants =
   | 'default'
