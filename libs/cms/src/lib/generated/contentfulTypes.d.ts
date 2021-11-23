@@ -705,8 +705,14 @@ export interface IFrontpageFields {
   /** Image */
   image?: Asset | undefined
 
+  /** Video */
+  video?: Asset | undefined
+
   /** Image (mobile) */
   imageMobile?: Asset | undefined
+
+  /** Video (mobile) */
+  videoMobile?: Asset | undefined
 
   /** Featured */
   featured?: IFeatured[] | undefined

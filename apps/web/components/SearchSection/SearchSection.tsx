@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
 import {
   Text,
   GridContainer,
@@ -14,12 +15,11 @@ import { Locale } from '@island.is/shared/types'
 import { SearchInput } from '@island.is/web/components'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { GetFrontpageQuery } from '@island.is/web/graphql/schema'
-
-import * as styles from './SearchSection.css'
+import { theme } from '@island.is/island-ui/theme'
 
 type SearchSectionProps = Pick<
   GetFrontpageQuery['getFrontpage'],
-  'featured' | 'image' | 'imageMobile' | 'heading'
+  'featured' | 'image' | 'imageMobile' | 'video' | 'videoMobile' | 'heading'
 > & {
   headingId: string
   activeLocale: Locale
@@ -32,12 +32,20 @@ export const SearchSection = ({
   headingId,
   featured = [],
   image,
+  video,
   imageMobile,
+  videoMobile,
   activeLocale,
   quickContentLabel = '',
   placeholder = '',
 }: SearchSectionProps) => {
+  const { width } = useWindowSize()
+  const [isMobile, setIsMobile] = useState<boolean | null>(null)
   const { linkResolver } = useLinkResolver()
+
+  useEffect(() => {
+    setIsMobile(width < theme.breakpoints.md)
+  }, [width])
 
   return (
     <GridContainer>
@@ -93,38 +101,47 @@ export const SearchSection = ({
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '5/12', '4/12']}
         >
-          {image?.url && (
-            <Box
-              display={['none', 'none', 'flex']}
-              width="full"
-              height="full"
-              justifyContent="center"
-              alignItems="center"
-              aria-hidden="true"
-            >
-              <img
-                src={image?.url}
-                alt="front page"
-                className={styles.illustration}
-              />
-            </Box>
-          )}
-          {imageMobile?.url && (
-            <Box
-              display={['flex', 'flex', 'none']}
-              width="full"
-              height="full"
-              justifyContent="center"
-              alignItems="center"
-              aria-hidden="true"
-            >
-              <img
-                src={imageMobile?.url}
-                alt="front page"
-                className={styles.illustration}
-              />
-            </Box>
-          )}
+          <Box
+            display="flex"
+            width="full"
+            height="full"
+            justifyContent="center"
+            alignItems="center"
+            aria-hidden="true"
+          >
+            {isMobile !== null && (
+              <>
+                {!isMobile && !!video?.url && (
+                  <video
+                    id="front_page_video_desktop"
+                    width="100%"
+                    title={video?.title ?? ''}
+                    placeholder={image?.url ?? ''}
+                    autoPlay
+                    loop
+                    muted
+                  >
+                    <source src={video.url} type="video/webm" />
+                    Vafri þinn styður ekki HTML myndbönd.
+                  </video>
+                )}
+                {isMobile && !!videoMobile?.url && (
+                  <video
+                    id="front_page_video_desktop"
+                    width="100%"
+                    title={videoMobile?.title ?? ''}
+                    placeholder={imageMobile?.url ?? ''}
+                    autoPlay
+                    loop
+                    muted
+                  >
+                    <source src={videoMobile.url} type="video/webm" />
+                    Vafri þinn styður ekki HTML myndbönd.
+                  </video>
+                )}
+              </>
+            )}
+          </Box>
         </GridColumn>
       </GridRow>
     </GridContainer>

@@ -10,7 +10,15 @@ export const GET_FRONTPAGE_QUERY = gql`
         url
         title
       }
+      video {
+        url
+        title
+      }
       imageMobile {
+        url
+        title
+      }
+      videoMobile {
         url
         title
       }

@@ -65,6 +65,8 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
           activeLocale={activeLocale}
           image={page.image}
           imageMobile={page.imageMobile}
+          video={page.video}
+          videoMobile={page.videoMobile}
         />
       </Box>
       <Box
