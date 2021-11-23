@@ -1791,7 +1791,9 @@
             "styles": ["apps/application-system/form/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/application-system/form/webpack.config.js",
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "progress": true,
+            "verbose": true
           },
           "configurations": {
             "production": {
