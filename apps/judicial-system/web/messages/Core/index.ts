@@ -79,4 +79,9 @@ export const core = defineMessages({
     defaultMessage: 'rannsóknarheimild',
     description: 'Notað fyrir orðið rannsóknarheimild í öllum flæðum.',
   },
+  requestCaseType: {
+    id: 'judicial.system.core:request_case_type',
+    defaultMessage: 'Krafa um {caseType}',
+    description: 'Notað sem titill fyrir Krafa um í öllum flæðum',
+  },
 })
