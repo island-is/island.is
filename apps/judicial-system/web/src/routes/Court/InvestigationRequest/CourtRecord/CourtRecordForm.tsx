@@ -10,11 +10,7 @@ import {
   FormFooter,
   HideableText,
 } from '@island.is/judicial-system-web/src/shared-components'
-import {
-  Case,
-  CaseType,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
+import { Case, SessionArrangements } from '@island.is/judicial-system/types'
 import {
   newSetAndSendDateToServer,
   removeTabsValidateAndSet,
@@ -22,13 +18,12 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { caseTypes } from '@island.is/judicial-system/formatters'
+import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import {
-  core,
   closedCourt,
   icCourtRecord as m,
 } from '@island.is/judicial-system-web/messages'
@@ -199,11 +194,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           </Box>
           <CourtDocuments
             title={formatMessage(m.sections.courtDocuments.title, {
-              caseType:
-                workingCase.type === CaseType.RESTRAINING_ORDER ||
-                workingCase.type === CaseType.PSYCHIATRIC_EXAMINATION
-                  ? caseTypes[workingCase.type]
-                  : formatMessage(core.investigationCase),
+              caseType: formatRequestCaseType(workingCase.type),
             })}
             tagText={formatMessage(m.sections.courtDocuments.tag)}
             tagVariant="darkerBlue"

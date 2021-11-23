@@ -14,9 +14,9 @@ import {
   formatCustodyRestrictions,
   formatAlternativeTravelBanRestrictions,
   formatAccusedByGender,
-  caseTypes,
   lowercase,
   formatAppeal,
+  formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -138,7 +138,7 @@ function constructRestrictionRulingPdf(
     .font('Times-Roman')
     .text(
       formatMessage(ruling.courtDocuments.request, {
-        caseTypes: caseTypes[existingCase.type],
+        caseTypes: formatRequestCaseType(existingCase.type),
       }),
       {
         align: 'justify',
@@ -495,11 +495,7 @@ function constructInvestigationRulingPdf(
     .font('Times-Roman')
     .text(
       formatMessage(ruling.courtDocuments.request, {
-        caseTypes:
-          existingCase.type === CaseType.RESTRAINING_ORDER ||
-          existingCase.type === CaseType.PSYCHIATRIC_EXAMINATION
-            ? caseTypes[existingCase.type]
-            : formatMessage(core.caseType.investigate),
+        caseTypes: formatRequestCaseType(existingCase.type),
       }),
       {
         align: 'justify',
