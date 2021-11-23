@@ -11,7 +11,7 @@ import {
   BlueBox,
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
