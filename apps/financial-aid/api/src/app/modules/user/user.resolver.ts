@@ -3,7 +3,7 @@ import { Inject, UseGuards } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { User } from '@island.is/financial-aid/shared/lib'
+import type { Staff, User } from '@island.is/financial-aid/shared/lib'
 
 import { UserModel } from './user.model'
 
@@ -61,7 +61,7 @@ export class UserResolver {
   async staff(
     @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<StaffModel | undefined> {
+  ): Promise<Staff | undefined> {
     this.logger.debug('Getting staff for nationalId')
     return await backendApi.getStaff(user.nationalId)
   }

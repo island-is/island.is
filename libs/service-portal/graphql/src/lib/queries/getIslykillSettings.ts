@@ -5,6 +5,8 @@ export const GET_ISLYKILL_SETTINGS = gql`
     getIslykillSettings {
       email
       mobile
+      bankInfo
+      canNudge
     }
   }
 `

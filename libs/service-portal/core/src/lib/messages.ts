@@ -507,6 +507,14 @@ export const m = defineMessages({
     id: 'service.portal:tel',
     defaultMessage: 'Símanúmer',
   },
+  bankAccountInfo: {
+    id: 'service.portal:bank-account-info',
+    defaultMessage: 'Reikningsnúmer',
+  },
+  nudge: {
+    id: 'service.portal:nudge-info',
+    defaultMessage: 'Hnipp',
+  },
   nextStep: {
     id: 'service.portal:next-step',
     defaultMessage: 'Næsta skref',

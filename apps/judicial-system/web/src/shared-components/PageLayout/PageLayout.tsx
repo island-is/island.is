@@ -9,10 +9,10 @@ import {
   FormStepper,
   AlertBanner,
 } from '@island.is/island-ui/core'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { CaseType, UserRole, Case } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'

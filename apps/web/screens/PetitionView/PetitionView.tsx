@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { LoadingDots, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   Box,
@@ -15,6 +15,7 @@ import format from 'date-fns/format'
 import { useRouter } from 'next/router'
 import { useGetPetitionList, useGetPetitionListEndorsements } from './queries'
 import { useNamespace } from '@island.is/web/hooks'
+import Skeleton from './Skeleton'
 
 const formatDate = (date: string) => {
   try {
@@ -35,7 +36,7 @@ const PetitionView = (namespace) => {
 
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-  const [pagePetitions, setPetitions] = useState(listEndorsements.data)
+  const [pagePetitions, setPetitions] = useState(listEndorsements.data ?? [])
 
   const getBaseUrl = () => {
     const isLocalhost = window?.location.origin.includes('localhost')
@@ -62,16 +63,20 @@ const PetitionView = (namespace) => {
   }
 
   useEffect(() => {
-    handlePagination(1, listEndorsements.data)
-    setPetitions(listEndorsements.data)
-  }, [listEndorsements])
+    setPetitions(listEndorsements.data ?? [])
+    handlePagination(1, listEndorsements.data ?? [])
+  }, [listEndorsements.data])
 
   return (
     <Box marginTop={5} marginBottom={5}>
       {loading ? (
-        <Box display="flex" justifyContent="center" width="full" marginY={7}>
-          <LoadingDots />
-        </Box>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={'10/12'} offset="1/12">
+              <Skeleton />
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
       ) : (
         <GridContainer>
           <GridRow>
@@ -153,7 +158,7 @@ const PetitionView = (namespace) => {
                     </T.Table>
                   </GridColumn>
                 </GridRow>
-                {!!list.signedPetitions?.length && (
+                {pagePetitions && pagePetitions.length ? (
                   <Box marginY={3}>
                     <Pagination
                       page={page}
@@ -163,7 +168,7 @@ const PetitionView = (namespace) => {
                           cursor="pointer"
                           className={className}
                           onClick={() =>
-                            handlePagination(page, list.signedPetitions)
+                            handlePagination(page, listEndorsements.data)
                           }
                         >
                           {children}
@@ -171,6 +176,8 @@ const PetitionView = (namespace) => {
                       )}
                     />
                   </Box>
+                ) : (
+                  <Text>{n('noPetitions', 'Engin meðmæli komin')}</Text>
                 )}
               </GridColumn>
             ) : (

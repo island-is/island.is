@@ -7,6 +7,7 @@ export const footerContainer = style({
 })
 
 export const formContainer = style({
+  maxWidth: '100vw',
   position: 'relative',
   gridColumn: '1/-1',
   paddingLeft: theme.spacing[3],
