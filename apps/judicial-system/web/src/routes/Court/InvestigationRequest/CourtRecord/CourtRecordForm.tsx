@@ -10,7 +10,11 @@ import {
   FormFooter,
   HideableText,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Case, SessionArrangements } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseType,
+  SessionArrangements,
+} from '@island.is/judicial-system/types'
 import {
   newSetAndSendDateToServer,
   removeTabsValidateAndSet,
@@ -18,12 +22,13 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import { caseTypes } from '@island.is/judicial-system/formatters'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import {
+  core,
   closedCourt,
   icCourtRecord as m,
 } from '@island.is/judicial-system-web/messages'
@@ -189,14 +194,20 @@ const CourtRecordForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Dómskjöl
+              {formatMessage(m.sections.courtDocuments.header)}
             </Text>
           </Box>
           <CourtDocuments
-            title={`Krafa - ${capitalize(caseTypes[workingCase.type])}`}
-            tagText="Þingmerkt nr. 1"
+            title={formatMessage(m.sections.courtDocuments.title, {
+              caseType:
+                workingCase.type === CaseType.RESTRAINING_ORDER ||
+                workingCase.type === CaseType.PSYCHIATRIC_EXAMINATION
+                  ? caseTypes[workingCase.type]
+                  : formatMessage(core.investigationCase),
+            })}
+            tagText={formatMessage(m.sections.courtDocuments.tag)}
             tagVariant="darkerBlue"
-            text="Rannsóknargögn málsins liggja frammi."
+            text={formatMessage(m.sections.courtDocuments.text)}
             caseId={workingCase.id}
             selectedCourtDocuments={workingCase.courtDocuments ?? []}
             onUpdateCase={updateCase}

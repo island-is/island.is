@@ -74,4 +74,9 @@ export const core = defineMessages({
     defaultMessage: 'Varnaraðili',
     description: 'Notað fyrir orðið varnaraðili í öllum flæðum.',
   },
+  investigationCase: {
+    id: 'judicial.system.core:investigation_case',
+    defaultMessage: 'rannsóknarheimild',
+    description: 'Notað fyrir orðið rannsóknarheimild í öllum flæðum.',
+  },
 })
