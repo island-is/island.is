@@ -20,6 +20,8 @@ export {
   TableBody,
   TextTableItem,
   ActivationButtonTableItem,
+  Name,
+  State,
 } from './TableBody/TableBody'
 export { default as History } from './History/History'
 export { default as CommentSection } from './CommentSection/CommentSection'
@@ -45,4 +47,3 @@ export { default as MunicipalityAdminSettings } from './MunicipalityAdminSetting
 export { default as SuperAdminSideNavItems } from './SuperAdminSideNavItems/SuperAdminSideNavItems'
 export { default as NewMunicipalityModal } from './NewMunicipalityModal/NewMunicipalityModal'
 export { default as MunicipalityProfile } from './Profile/MunicipalityProfile'
-export { Name, State } from './TableComponents/TableComponents'

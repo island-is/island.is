@@ -35,7 +35,7 @@ interface EmployeeProfileInfo {
   roles: StaffRole[]
 }
 
-type InputType = 'text' | 'number' | 'email' | 'tel'
+export type InputType = 'text' | 'number' | 'email' | 'tel'
 
 const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
   const [state, setState] = useState<EmployeeProfileInfo>({

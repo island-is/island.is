@@ -99,7 +99,6 @@ export class ApplicationController {
   async findApplication(
     @Param('nationalId') nationalId: string,
   ): Promise<ApplicationModel[]> {
-    console.log('ferdu hingad?')
     this.logger.debug('Search for application')
 
     return await this.applicationService.findByNationalId(nationalId)
