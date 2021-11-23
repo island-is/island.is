@@ -308,7 +308,10 @@ export class CaseService {
     if (
       existingCase.defenderEmail &&
       (isRestrictionCase(existingCase.type) ||
-        existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT)
+        existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
+        (existingCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+          existingCase.defenderIsSpokesperson))
     ) {
       emailPromises.push(
         this.sendEmail(
@@ -549,6 +552,8 @@ export class CaseService {
       creatingProsecutorId: user.id,
       prosecutorId: user.id,
       parentCaseId: existingCase.id,
+      initialRulingDate:
+        existingCase.initialRulingDate ?? existingCase.rulingDate,
     })
   }
 
