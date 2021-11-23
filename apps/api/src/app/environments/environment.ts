@@ -279,12 +279,10 @@ const devConfig = () => ({
   },
   nationalRegistryXRoad: {
     url:
-      process.env.XROAD_BASE_PATH_WITH_ENV ??
-      'http://localhost:8081/r1/IS-DEV',
+      process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8081/r1/IS-DEV',
     memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE ?? '10001',
     apiPath:
-      process.env.XROAD_TJODSKRA_API_PATH ??
-      '/SKRA-Protected/Einstaklingar-v1',
+      process.env.XROAD_TJODSKRA_API_PATH ?? '/SKRA-Protected/Einstaklingar-v1',
     clientId:
       process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
   },
@@ -331,4 +329,5 @@ const devConfig = () => ({
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
 })
-export const getConfig = process.env.NODE_ENV === 'production' ? prodConfig() : devConfig()
+export const getConfig =
+  process.env.NODE_ENV === 'production' ? prodConfig() : devConfig()
