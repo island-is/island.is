@@ -14,7 +14,7 @@ describe('datadogTrace', () => {
 
   describe('shouldMask', () => {
     it('should always be on when magic environment variable is not set', () => {
-      const ddtrace = require('./datadog-tracer')
+      const ddtrace = require('./datadog-tracer') //eslint-disable-line
 
       expect(ddtrace.shouldMask()).toBeTruthy()
       expect(ddtrace.shouldMask(200)).toBeTruthy()
@@ -24,7 +24,7 @@ describe('datadogTrace', () => {
     })
     it('should be off for http >= 400 when magic environment variable is set', () => {
       process.env.DD_PII_MASKING_DISABLED_ON_FAILURE = 'true'
-      const ddtrace = require('./datadog-tracer')
+      const ddtrace = require('./datadog-tracer') //eslint-disable-line
 
       expect(ddtrace.shouldMask()).toBeTruthy()
       expect(ddtrace.shouldMask(200)).toBeTruthy()
@@ -36,7 +36,7 @@ describe('datadogTrace', () => {
 
   describe('rewriteUrl', () => {
     it('should remove valid nationalid from url', () => {
-      const ddtrace = require('./datadog-tracer')
+      const ddtrace = require('./datadog-tracer') //eslint-disable-line
 
       expect(
         ddtrace.rewriteUrl(
@@ -53,7 +53,7 @@ describe('datadogTrace', () => {
     })
     it('should not mask if not valid nationalid', () => {
       process.env.DD_PII_MASKING_DISABLED_ON_FAILURE = 'true'
-      const ddtrace = require('./datadog-tracer')
+      const ddtrace = require('./datadog-tracer') //eslint-disable-line
 
       ;[
         'http://island.is/path/to/0000000000',
