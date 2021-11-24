@@ -15,6 +15,7 @@ import {
   Application,
   ApplicationState,
   eventTypeFromApplicationState,
+  HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
 import { useApplicationState } from '../../utils/useApplicationState'
 import StateModalContainer from './StateModalContainer'
@@ -26,6 +27,9 @@ interface Props {
   currentState: ApplicationState
   setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  homeCircumstances: HomeCircumstances
+  spouseNationalId?: string
+  usePersonalTaxCredit: boolean
 }
 
 const StateModal = ({
@@ -35,6 +39,9 @@ const StateModal = ({
   currentState,
   setApplication,
   setIsLoading,
+  homeCircumstances,
+  spouseNationalId,
+  usePersonalTaxCredit,
 }: Props) => {
   const [selected, setSelected] = useState<ApplicationState | undefined>()
 
@@ -168,6 +175,9 @@ const StateModal = ({
               }
               saveStateApplication(applicationId, selected, amount)
             }}
+            homeCircumstances={homeCircumstances}
+            spouseNationalId={spouseNationalId}
+            usePersonalTaxCredit={usePersonalTaxCredit}
           />
 
           <RejectModal

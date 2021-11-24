@@ -1,29 +1,76 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 
 import {
   InputModal,
   NumberInput,
 } from '@island.is/financial-aid-web/veita/src/components'
-import cn from 'classnames'
-import { Text } from '@island.is/island-ui/core'
+
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+import {
+  aidCalculator,
+  calculateAidFinalAmount,
+  HomeCircumstances,
+} from '@island.is/financial-aid/shared/lib'
+import format from 'date-fns/format'
+import { Box, Input, Text } from '@island.is/island-ui/core'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
   onSaveApplication: (amount: number) => void
   isModalVisable: boolean
+  homeCircumstances: HomeCircumstances
+  spouseNationalId?: string
+  usePersonalTaxCredit: boolean
+}
+
+interface calculationsState {
+  amount: number
+  income: number
+  personalTaxCredit: number
+  tax: number
+  hasError: boolean
 }
 
 const AcceptModal = ({
   onCancel,
   onSaveApplication,
   isModalVisable,
+  homeCircumstances,
+  spouseNationalId,
+  usePersonalTaxCredit,
 }: Props) => {
   const maximumInputLength = 6
-  const [amount, setAmount] = useState<number>(0)
-  const [hasError, setHasError] = useState(false)
+
+  const currentYear = format(new Date(), 'yyyy')
 
   const { municipality } = useContext(AdminContext)
+
+  const aidAmount = useMemo(() => {
+    if (municipality && homeCircumstances) {
+      return aidCalculator(
+        homeCircumstances,
+        spouseNationalId
+          ? municipality.cohabitationAid
+          : municipality.individualAid,
+      )
+    }
+  }, [homeCircumstances, municipality])
+
+  const [amount, setAmount] = useState<number>(
+    aidAmount
+      ? calculateAidFinalAmount(aidAmount, usePersonalTaxCredit, currentYear)
+      : 0,
+  )
+
+  const [state, setState] = useState<calculationsState>({
+    amount: aidAmount
+      ? calculateAidFinalAmount(aidAmount, usePersonalTaxCredit, currentYear)
+      : 0,
+    income: 0,
+    personalTaxCredit: 0,
+    tax: 0,
+    hasError: false,
+  })
 
   return (
     <InputModal
@@ -31,28 +78,92 @@ const AcceptModal = ({
       onCancel={onCancel}
       onSubmit={() => {
         if (amount <= 0) {
-          setHasError(true)
+          setState({ ...state, hasError: true })
           return
         }
         onSaveApplication(amount)
       }}
       submitButtonText="Samþykkja"
       isModalVisable={isModalVisable}
-      hasError={hasError}
+      hasError={state.hasError}
       errorMessage="Þú þarft að setja inn upphæð"
     >
-      <NumberInput
-        label="Grunnupphæð"
-        placeholder="Skrifaðu upphæð útborgunar"
-        id="amountInput"
-        name="amountInput"
-        value={amount.toString()}
-        onUpdate={(input) => {
-          setHasError(false)
-          setAmount(input)
-        }}
-        maximumInputLength={maximumInputLength}
-      />
+      <Box marginBottom={3}>
+        <NumberInput
+          label="Grunnupphæð"
+          placeholder="Skrifaðu upphæð útborgunar"
+          id="amountInput"
+          name="amountInput"
+          value={state.amount.toString()}
+          onUpdate={(input) => {
+            setState({ ...state, hasError: false })
+            setState({ ...state, amount: input })
+          }}
+          maximumInputLength={maximumInputLength}
+        />
+      </Box>
+
+      <Box marginBottom={3}>
+        <NumberInput
+          label="Tekjur"
+          placeholder="Skrifaðu upphæð"
+          id="income"
+          name="income"
+          value={state.income.toString()}
+          onUpdate={(input) => {
+            setState({ ...state, hasError: false })
+            setState({ ...state, income: input })
+          }}
+          maximumInputLength={maximumInputLength}
+        />
+      </Box>
+
+      <Box marginBottom={3}>
+        <Input
+          label="Persónuafsláttur"
+          placeholder="Skrifaðu prósentuhlutfall"
+          id="personalTaxCredit"
+          name="personalTaxCredit"
+          value={state.personalTaxCredit}
+          type="number"
+          onChange={(e) => {
+            setState({ ...state, hasError: false })
+            if (e.target.value.length <= 3) {
+              setState({ ...state, personalTaxCredit: Number(e.target.value) })
+            }
+          }}
+          backgroundColor="blue"
+        />
+      </Box>
+
+      <Box marginBottom={[3, 3, 5]}>
+        <Input
+          label="Skattur "
+          id="tax"
+          name="tax"
+          value={state.tax}
+          type="number"
+        />
+      </Box>
+
+      <Text variant="h3" marginBottom={3}>
+        Útreikningur
+      </Text>
+
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        background="blue100"
+        borderTopWidth="standard"
+        borderBottomWidth="standard"
+        borderColor="blue200"
+        paddingY={2}
+        paddingX={3}
+        marginBottom={2}
+      >
+        <Text variant="small">Upphæð aðstoðar</Text>
+        <Text>bla</Text>
+      </Box>
     </InputModal>
   )
 }
