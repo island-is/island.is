@@ -16,6 +16,7 @@ import {
   ApplicationStateUrl,
   UpdateApplicationTableResponseType,
   UpdateStaff,
+  UpdateMunicipalityActivity,
   Staff,
   CreateStaff,
   CreateMunicipality,
@@ -73,6 +74,13 @@ class BackendAPI extends RESTDataSource {
     updateMunicipality: UpdateMunicipalityInput,
   ): Promise<Municipality> {
     return this.put('municipality', updateMunicipality)
+  }
+
+  updateMunicipalityActivity(
+    id: string,
+    updateMunicipality: UpdateMunicipalityActivity,
+  ): Promise<Municipality> {
+    return this.put(`municipality/activity/${id}`, updateMunicipality)
   }
 
   createApplication(

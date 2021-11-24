@@ -138,6 +138,10 @@ export interface Municipality {
   adminUsers?: Staff[]
 }
 
+export interface UpdateMunicipalityActivity {
+  active: boolean
+}
+
 export interface CreateMunicipality {
   name: string
   municipalityId: string
