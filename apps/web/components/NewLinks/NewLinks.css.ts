@@ -31,6 +31,7 @@ export const content = style({
   position: 'relative',
   whiteSpace: 'nowrap',
   flexWrap: 'nowrap',
+  flexGrow: 1,
   flexDirection: 'column',
   justifyContent: 'flex-end',
   overflow: 'hidden',

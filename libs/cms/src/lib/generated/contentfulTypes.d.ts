@@ -729,6 +729,9 @@ export interface IFrontpageFields {
   /** Namespace */
   namespace: IUiConfiguration
 
+  /** New links */
+  linkList?: ILinkList | undefined
+
   /** Page Identifier */
   pageIdentifier: string
 }
@@ -1139,11 +1142,11 @@ export interface ILinkFields {
   /** Text */
   text: string
 
+  /** date */
+  date?: string | undefined
+
   /** URL */
   url: string
-
-  /** Linked page (deprecated) */
-  linkedPage?: ILinkedPage | undefined
 
   /** Link reference */
   linkReference?: IArticle | IArticleCategory | ILinkUrl | INews | undefined

@@ -25,22 +25,24 @@ export const LifeEventsSection = ({
         </Text>
       </GridContainer>
       <GridItems paddingTop={3} paddingBottom={3} insideGridContainer>
-        {items.map(
-          (
-            { __typename: typename, title, shortTitle, slug, tinyThumbnail },
-            index,
-          ) => {
-            return (
-              <IconTitleCard
-                key={index}
-                heading={shortTitle || title}
-                src={tinyThumbnail?.url}
-                alt={tinyThumbnail?.title}
-                href={linkResolver(typename as LinkType, [slug]).href}
-              />
-            )
-          },
-        )}
+        {items
+          .filter((x) => x.slug && x.title)
+          .map(
+            (
+              { __typename: typename, title, shortTitle, slug, tinyThumbnail },
+              index,
+            ) => {
+              return (
+                <IconTitleCard
+                  key={index}
+                  heading={shortTitle || title}
+                  src={tinyThumbnail?.url}
+                  alt={tinyThumbnail?.title}
+                  href={linkResolver(typename as LinkType, [slug]).href}
+                />
+              )
+            },
+          )}
       </GridItems>
     </>
   )

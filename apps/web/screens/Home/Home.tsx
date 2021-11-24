@@ -19,14 +19,17 @@ import {
 import {
   SearchSection,
   CategoryItems,
-  NewsTicker,
+  NewLinks,
   NewsItems,
   LifeEventsSection,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+// import {
+//   LinkType,
+//   useLinkResolver,
+// } from '@island.is/web/hooks/useLinkResolver'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 
 interface HomeProps {
@@ -41,7 +44,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
   const gn = useNamespace(globalNamespace)
-  const { linkResolver } = useLinkResolver()
+  // const { linkResolver } = useLinkResolver()
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
@@ -113,15 +116,15 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
         aria-label={n('newsTickerHeading')}
       >
         <GridContainer>
-          <NewsTicker
+          <NewLinks
             heading={n('newsTickerHeading')}
             seeMoreText={n('newsTickerSeeMore')}
             showMoreButton
-            items={(news || []).map(({ title, date, slug, __typename: tn }) => {
+            items={(page.linkList?.links ?? []).map(({ date, text, url }) => {
               return {
-                date: new Date(date),
-                text: title,
-                href: linkResolver(tn as LinkType, [slug]).href,
+                text,
+                date: date ? new Date(date) : new Date(),
+                href: url,
               }
             })}
           />

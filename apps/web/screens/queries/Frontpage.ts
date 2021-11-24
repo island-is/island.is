@@ -46,6 +46,14 @@ export const GET_FRONTPAGE_QUERY = gql`
       namespace {
         fields
       }
+      linkList {
+        title
+        links {
+          date
+          text
+          url
+        }
+      }
     }
   }
 `

@@ -5,7 +5,7 @@ import NextLink from 'next/link'
 import { Box, Inline, Logo, Text, Button } from '@island.is/island-ui/core'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
-import * as styles from './NewsTicker.css'
+import * as styles from './NewLinks.css'
 
 type Item = {
   date: Date
@@ -13,19 +13,19 @@ type Item = {
   href: string
 }
 
-interface NewsTickerProps {
+interface NewLinksProps {
   heading?: string
   items?: Item[]
   showMoreButton?: boolean
   seeMoreText?: string
 }
 
-export const NewsTicker = ({
+export const NewLinks = ({
   items = [],
   heading = '',
   showMoreButton = false,
   seeMoreText = '',
-}: NewsTickerProps) => {
+}: NewLinksProps) => {
   const { format } = useDateUtils()
 
   return (
@@ -66,4 +66,4 @@ export const NewsTicker = ({
   )
 }
 
-export default NewsTicker
+export default NewLinks

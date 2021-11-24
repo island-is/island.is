@@ -3,6 +3,7 @@ import { IFrontpage } from '../generated/contentfulTypes'
 import { Featured, mapFeatured } from './featured.model'
 import { FrontpageSlider, mapFrontpageSlider } from './frontpageSlider.model'
 import { LifeEventPage, mapLifeEventPage } from './lifeEventPage.model'
+import { LinkList, mapLinkList } from './linkList.model'
 import { mapNamespace, Namespace } from './namespace.model'
 import { Image, mapImage } from './image.model'
 
@@ -10,6 +11,7 @@ import { Image, mapImage } from './image.model'
 export class Frontpage {
   @Field(() => ID)
   id!: string
+
   @Field({ nullable: true })
   title!: string
 
@@ -42,6 +44,9 @@ export class Frontpage {
 
   @Field(() => [LifeEventPage])
   lifeEvents?: Array<LifeEventPage>
+
+  @Field(() => LinkList, { nullable: true })
+  linkList?: LinkList | null
 }
 
 export const mapFrontpage = ({ fields, sys }: IFrontpage): Frontpage => ({
@@ -57,4 +62,5 @@ export const mapFrontpage = ({ fields, sys }: IFrontpage): Frontpage => ({
   slides: (fields.slides ?? []).map(mapFrontpageSlider),
   namespace: fields.namespace ? mapNamespace(fields.namespace) : null,
   lifeEvents: (fields.lifeEvents ?? []).map(mapLifeEventPage),
+  linkList: fields.linkList ? mapLinkList(fields.linkList) : null,
 })
