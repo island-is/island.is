@@ -57,6 +57,10 @@ export class AuthMiddleware implements Middleware {
 
     context.init.headers = Object.assign({}, context.init.headers, {
       authorization: bearerToken,
+      /*
+        This Authorization-Identity is needed along with the
+        Authorization header in rare cases with the Þjóðskrá API.
+      */
       ...(this.options.authID && {
         ['Authorization-Identity']: bearerToken,
       }),
