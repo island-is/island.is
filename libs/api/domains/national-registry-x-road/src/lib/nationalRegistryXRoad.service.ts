@@ -99,6 +99,7 @@ export class NationalRegistryXRoadService {
         city: person.logheimili?.stadur || undefined,
         municipalityCode: person.logheimili?.sveitarfelagsnumer || undefined,
       },
+      genderCode: person.kynkodi,
     }
   }
 
@@ -176,6 +177,7 @@ export class NationalRegistryXRoadService {
           return {
             nationalId: child.kennitala,
             fullName: child.nafn,
+            genderCode: child.kynkodi,
             livesWithApplicant,
             livesWithBothParents: livesWithParentB && livesWithApplicant,
             otherParent: parentBObject,
