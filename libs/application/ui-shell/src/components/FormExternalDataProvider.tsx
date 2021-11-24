@@ -153,7 +153,6 @@ const FormExternalDataProvider: FC<{
   const activateBeforeSubmitCallback = (checked: boolean) => {
     if (checked) {
       setBeforeSubmitCallback(async () => {
-        setSuppressProviderErrors(false)
         const response = await updateExternalData({
           variables: {
             input: {
@@ -166,6 +165,7 @@ const FormExternalDataProvider: FC<{
             locale,
           },
         })
+        setSuppressProviderErrors(false)
 
         if (
           response.data &&
