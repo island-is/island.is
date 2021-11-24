@@ -24,12 +24,12 @@ export class MainResolver {
   
   //Note: not being used
   @Query(() => CriminalRecord)
-  async getCriminalRecord(@Args('ssn') ssn: string) {
+  async getCriminalRecord(/*@Args('ssn') */ssn: string) {
     return await this.criminalRecordService.getCriminalRecord(ssn)
   }
 
   @Query(() => Boolean)
-  async checkCriminalRecord(@Args('ssn') ssn: string) {
+  async checkCriminalRecord(/*@Args('ssn') */ssn: string) {
     return await this.criminalRecordService.checkCriminalRecord(ssn)
   }
 }
