@@ -14,5 +14,11 @@ export const wipModule: ServicePortalModule = {
       path: ServicePortalPath.SettingsRoot,
       render: () => lazy(() => import('./screens/SettingsWIP/SettingsWIP')),
     },
+    {
+      name: m.vehicles,
+      path: ServicePortalPath.AssetsVehicles,
+      render: () =>
+        lazy(() => import('./screens/AssetsVehicles/AssetsVehicles')),
+    },
   ],
 }
