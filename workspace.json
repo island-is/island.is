@@ -1704,6 +1704,11 @@
                 "glob": "*",
                 "input": "libs/email-service/src/tools/design",
                 "output": "./email-service-assets"
+              },
+              {
+                "glob": "*",
+                "input": "libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission/emailGenerators/assets",
+                "output": "./driving-license-assets"
               }
             ],
             "webpackConfig": "apps/application-system/api/webpack.config.js",
