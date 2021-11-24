@@ -642,6 +642,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Símanúmer',
       description: 'Phone number',
     },
+    fullName: {
+      id: 'pl.application:applicant.fullName',
+      defaultMessage: 'Nafn',
+      description: 'Name',
+    },
+    nationalId: {
+      id: 'pl.application:applicant.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'National id',
+    },
   }),
 
   errors: defineMessages({
