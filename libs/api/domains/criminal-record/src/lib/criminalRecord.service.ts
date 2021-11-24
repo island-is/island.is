@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common'
-// import { 
-//   CheckCriminalRecordObj
-// } from './graphql/models/checkCriminalRecordObj.model';
 import {
   CriminalRecordApi,
   CriminalRecord,

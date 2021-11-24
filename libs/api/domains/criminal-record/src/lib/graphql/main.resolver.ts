@@ -7,9 +7,9 @@ import {
   //CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { CriminalRecordService } from '../criminalRecord.service'
-// import {
-//   CheckCriminalRecordObj,
-// } from './models'
+import {
+  CriminalRecord,
+} from './models'
 //export * from '@island.is/nest/audit'
 //import { AuditService } from '@island.is/nest/audit'
 
@@ -22,6 +22,11 @@ export class MainResolver {
     private readonly criminalRecordService: CriminalRecordService,
   ) {}
   
+  @Query(() => CriminalRecord)
+  async getCriminalRecord() {
+    return await this.criminalRecordService.getCriminalRecord()
+  }
+
   @Query(() => Boolean)
   async checkCriminalRecord() {
     return await this.criminalRecordService.checkCriminalRecord()

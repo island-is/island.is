@@ -8,24 +8,36 @@ export class CriminalRecordApi {
 
   public async getCriminalRecord(): Promise<CriminalRecord> {
     console.log('---------------- CriminalRecordApi.getCriminalRecord ----------------');
-    //TODO get criminal record from API or from some temp storage (if not older than 1 hour)
-    const record = <CriminalRecord>{
-      ssn: 'abc'
-    }
 
-    var result = await this.api.apiPdfCreatePersonIdGet({ personId: '0101051450' })
-    console.log('---------------- CriminalRecordApi.getCriminalRecord.result: ' + JSON.stringify(result) + '----------------')
+    const blob = await this.api.apiPdfCreatePersonIdGet({ personId: '0101051450' })
+    console.log('---------------- CriminalRecordApi.getCriminalRecord.blob.size: ' + blob.size + '----------------')
+    //console.log('---------------- CriminalRecordApi.getCriminalRecord.blob.text: ' + blob.text() + '----------------')
+
+    const record: CriminalRecord = {
+      pdfBase64: await this.blobToBase64(blob)
+      //pdfBlob: blob
+    }
 
     return record
   }
 
   public async checkCriminalRecord(): Promise<Boolean> {
     console.log('---------------- CriminalRecordApi.checkCriminalRecord ----------------');
-    const record = await this.getCriminalRecord()
     
+    const record = await this.getCriminalRecord()
+
     //TODO save criminalRecord in some storage
 
-    // return true if no error was caught
-    return true
+    return record.pdfBase64.length > 0
+    //return record.pdfBlob.size > 0
+  }
+
+  private async blobToBase64(blob: Blob): Promise<string> {
+    return new Promise((resolve, _) => {
+      //var FileReader = require('filereader');
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(<string>reader.result);
+      reader.readAsDataURL(blob);
+    })
   }
 }

@@ -1,1 +1,1 @@
-export * from './checkCriminalRecordObj.model'
+export * from './criminalRecord.model'
