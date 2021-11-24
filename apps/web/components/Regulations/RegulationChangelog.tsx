@@ -85,6 +85,7 @@ export const useRegulationEffectPrepper = (
       <RegulationsSidebarLink
         href={linkToRegulation(regulation.name, { original: true })}
         current={current}
+        rel="nofollow"
       >
         <strong>{formatDate(regulation.effectiveDate)}</strong>
         <br />
@@ -138,7 +139,12 @@ export const useRegulationEffectPrepper = (
           )
 
           return href ? (
-            <RegulationsSidebarLink key={i} href={href} current={current}>
+            <RegulationsSidebarLink
+              key={i}
+              href={href}
+              current={current}
+              rel="nofollow"
+            >
               {Content}
             </RegulationsSidebarLink>
           ) : (
