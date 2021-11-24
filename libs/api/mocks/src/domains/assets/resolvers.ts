@@ -9,29 +9,31 @@ export const resolvers: Resolvers = {
   },
 
   Query: {
-    getThinglystirEigendur: (_, { input }) => {
+    assetsPropertyOwners: (_, { input }) => {
       const cursor = input.cursor ? parseInt(input.cursor, 20) : 1
       return cursor && cursor > 1
-        ? store.pagedThinglystirEigendur(false)
-        : store.pagedThinglystirEigendur()
+        ? store.pagedConfirmedOwners(false)
+        : store.pagedConfirmedOwners()
     },
-    getNotkunareiningar: (_, { input }) => {
+    assetsUnitsOfUse: (_, { input }) => {
       const cursor = input.cursor ? parseInt(input.cursor, 20) : 1
       return cursor && cursor > 1
         ? store.pagedUnitsOfUse(false)
         : store.pagedUnitsOfUse()
     },
-    getRealEstateDetail: (_, { input }) => {
+    assetsDetail: (_, { input }) => {
+      console.log('store.detailRealEstateAssets', store.detailRealEstateAssets)
+      console.log('input.assetId', input.assetId)
       const match = store.detailRealEstateAssets.find(
-        (item) => item.fasteignanumer === input.assetId,
+        (item) => item.propertyNumber === input.assetId,
       )
       return match || null
     },
-    getRealEstates: (_, { input }) => {
+    assetsOverview: (_, { input }) => {
       const cursor = input.cursor ? parseInt(input.cursor, 20) : 1
       return cursor && cursor > 1
-        ? store.getFasteignir(false)
-        : store.getFasteignir()
+        ? store.getProperties(false)
+        : store.getProperties()
     },
   },
 }

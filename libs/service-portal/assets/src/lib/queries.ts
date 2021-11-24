@@ -2,13 +2,72 @@ import { gql } from '@apollo/client'
 
 export const GET_SINGLE_PROPERTY_QUERY = gql`
   query GetSingleRealEstateQuery($input: GetRealEstateInput!) {
-    getRealEstateDetail(input: $input)
+    assetsDetail(input: $input) {
+      propertyNumber
+      defaultAddress {
+        locationNumber
+        postNumber
+        municipality
+        propertyNumber
+        display
+        displayShort
+      }
+      appraisal {
+        activeAppraisal
+        plannedAppraisal
+        activeStructureAppraisal
+        plannedStructureAppraisal
+        activePlotAssessment
+        plannedPlotAssessment
+        activeYear
+        plannedYear
+      }
+      registeredOwners {
+        registeredOwners {
+          name
+          ssn
+          ownership
+          purchaseDate
+          grantDisplay
+        }
+      }
+      unitsOfUse {
+        unitsOfUse {
+          propertyNumber
+          unitOfUseNumber
+          marking
+          usageDisplay
+          displaySize
+          buildYearDisplay
+          fireAssessment
+          explanation
+          appraisal {
+            activeAppraisal
+            plannedAppraisal
+            activeStructureAppraisal
+            plannedStructureAppraisal
+            activePlotAssessment
+            plannedPlotAssessment
+            activeYear
+            plannedYear
+          }
+          address {
+            locationNumber
+            postNumber
+            municipality
+            propertyNumber
+            display
+            displayShort
+          }
+        }
+      }
+    }
   }
 `
 
 export const GET_UNITS_OF_USE_QUERY = gql`
-  query GetNotkunareiningar($input: GetPagingTypes!) {
-    getNotkunareiningar(input: $input) {
+  query GetAssetsUnitsOfUse($input: GetPagingTypes!) {
+    assetsUnitsOfUse(input: $input) {
       paging {
         page
         pageSize
@@ -18,38 +77,32 @@ export const GET_UNITS_OF_USE_QUERY = gql`
         hasPreviousPage
         hasNextPage
       }
-      data {
-        fasteignanumer
-        notkunareininganumer
-        merking
-        notkun
-        notkunBirting
-        starfsemi
-        lysing
-        byggingarAr
-        birtStaerd
-        byggingararBirting
-        lodarmat
-        brunabotamat
-        fasteignamat {
-          gildandiFasteignamat
-          fyrirhugadFasteignamat
-          gildandiMannvirkjamat
-          fyrirhugadMannvirkjamat
-          gildandiLodarhlutamat
-          fyrirhugadLodarhlutamat
-          gildandiAr
-          fyrirhugadAr
+      unitsOfUse {
+        propertyNumber
+        unitOfUseNumber
+        marking
+        usageDisplay
+        displaySize
+        buildYearDisplay
+        fireAssessment
+        explanation
+        appraisal {
+          activeAppraisal
+          plannedAppraisal
+          activeStructureAppraisal
+          plannedStructureAppraisal
+          activePlotAssessment
+          plannedPlotAssessment
+          activeYear
+          plannedYear
         }
-        stadfang {
-          stadfanganumer
-          stadvisir
-          stadgreinir
-          postnumer
-          sveitarfelag
-          landeignarnumer
-          birting
-          birtingStutt
+        address {
+          locationNumber
+          postNumber
+          municipality
+          propertyNumber
+          display
+          displayShort
         }
       }
     }
@@ -57,14 +110,14 @@ export const GET_UNITS_OF_USE_QUERY = gql`
 `
 
 export const GET_PROPERTY_OWNERS_QUERY = gql`
-  query GetThinglystirEigendurQuery($input: GetPagingTypes!) {
-    getThinglystirEigendur(input: $input) {
-      thinglystirEigendur {
-        nafn
-        kennitala
-        eignarhlutfall
-        kaupdagur
-        heimildBirting
+  query GetAssetsPropertyOwners($input: GetPagingTypes!) {
+    assetsPropertyOwners(input: $input) {
+      registeredOwners {
+        name
+        ssn
+        ownership
+        purchaseDate
+        grantDisplay
       }
       paging {
         page

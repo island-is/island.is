@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { NotkunareiningWrapper, Stadfang } from '@island.is/clients/assets'
+import { Query, UnitsOfUseModel, PropertyLocation } from '@island.is/api/schema'
 import {
   Text,
   Table as T,
@@ -16,23 +16,22 @@ import { GET_UNITS_OF_USE_QUERY } from '../../lib/queries'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
 interface Props {
-  units: NotkunareiningWrapper | undefined
-  locationData?: Stadfang | null
+  units: UnitsOfUseModel
+  locationData?: PropertyLocation | null
   title?: string
   assetId?: string | number | null
 }
 
 const AssetGrid: FC<Props> = ({ title, units, assetId, locationData }) => {
   const { formatMessage } = useLocale()
-  const [getUnitsOfUseQuery, { fetchMore, data }] = useLazyQuery(
+  const [getUnitsOfUseQuery, { fetchMore, data }] = useLazyQuery<Query>(
     GET_UNITS_OF_USE_QUERY,
   )
-  const eigendurPaginationData: NotkunareiningWrapper =
-    data?.getNotkunareiningar
+  const eigendurPaginationData = data?.assetsUnitsOfUse
 
-  const paginateData = eigendurPaginationData?.notkunareiningar || []
+  const paginateData = eigendurPaginationData?.unitsOfUse || []
   const paginate = () => {
-    const paginateData = eigendurPaginationData?.notkunareiningar || []
+    const paginateData = eigendurPaginationData?.unitsOfUse || []
     const variableObject = {
       variables: {
         input: {
@@ -48,10 +47,17 @@ const AssetGrid: FC<Props> = ({ title, units, assetId, locationData }) => {
       fetchMore({
         ...variableObject,
         updateQuery: (prevResult, { fetchMoreResult }) => {
-          fetchMoreResult.getNotkunareiningar.notkunareiningar = [
-            ...prevResult.getNotkunareiningar.notkunareiningar,
-            ...fetchMoreResult.getNotkunareiningar.notkunareiningar,
-          ]
+          if (!fetchMoreResult) return prevResult
+
+          if (
+            fetchMoreResult?.assetsUnitsOfUse?.unitsOfUse &&
+            prevResult?.assetsUnitsOfUse?.unitsOfUse
+          ) {
+            fetchMoreResult.assetsUnitsOfUse.unitsOfUse = [
+              ...prevResult.assetsUnitsOfUse?.unitsOfUse,
+              ...fetchMoreResult.assetsUnitsOfUse?.unitsOfUse,
+            ]
+          }
           return fetchMoreResult
         },
       })
@@ -60,13 +66,13 @@ const AssetGrid: FC<Props> = ({ title, units, assetId, locationData }) => {
     }
   }
 
-  const unitData = units?.notkunareiningar || []
+  const unitData = units?.unitsOfUse || []
   const tableArray = [...unitData, ...paginateData]
   const tables = unitsArray(tableArray, locationData, formatMessage)
 
   const loadMoreButton =
-    data?.getNotkunareiningar.paging?.hasNextPage ||
-    (units?.paging?.hasNextPage && !data?.getNotkunareiningar?.paging)
+    data?.assetsUnitsOfUse?.paging?.hasNextPage ||
+    (units?.paging?.hasNextPage && !data?.assetsUnitsOfUse?.paging)
   return (
     <>
       <Text variant="h3" as="h2" marginBottom={4}>

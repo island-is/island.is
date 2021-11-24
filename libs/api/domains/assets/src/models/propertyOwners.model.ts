@@ -27,19 +27,19 @@ export class PagingData {
 @ObjectType()
 export class PropertyOwner {
   @Field({ nullable: true })
-  nafn?: string | undefined
+  name?: string | undefined
 
   @Field({ nullable: true })
-  kennitala?: string | undefined
+  ssn?: string | undefined
 
   @Field({ nullable: true })
-  eignarhlutfall?: number
+  ownership?: number
 
   @Field({ nullable: true })
-  kaupdagur?: Date | undefined
+  purchaseDate?: Date | undefined
 
   @Field({ nullable: true })
-  heimildBirting?: string
+  grantDisplay?: string
 }
 
 @ObjectType()
@@ -48,5 +48,5 @@ export class PropertyOwnersModel {
   paging?: PagingData
 
   @Field(() => [PropertyOwner], { nullable: true })
-  thinglystirEigendur?: PropertyOwner[]
+  registeredOwners?: PropertyOwner[]
 }

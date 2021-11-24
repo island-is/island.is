@@ -2,102 +2,84 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { PagingData } from './propertyOwners.model'
 
 @ObjectType()
-export class Fasteignamat {
+export class Appraisal {
   @Field({ nullable: true })
-  gildandiFasteignamat?: number | undefined
+  activeAppraisal?: number | undefined
 
   @Field({ nullable: true })
-  fyrirhugadFasteignamat?: number
+  plannedAppraisal?: number
 
   @Field({ nullable: true })
-  gildandiMannvirkjamat?: number | undefined
+  activeStructureAppraisal?: number | undefined
 
   @Field({ nullable: true })
-  fyrirhugadMannvirkjamat?: number
+  plannedStructureAppraisal?: number
 
   @Field({ nullable: true })
-  gildandiLodarhlutamat?: number | undefined
+  activePlotAssessment?: number | undefined
 
   @Field({ nullable: true })
-  fyrirhugadLodarhlutamat?: number
+  plannedPlotAssessment?: number
 
   @Field({ nullable: true })
-  gildandiAr?: number | undefined
+  activeYear?: number | undefined
 
   @Field({ nullable: true })
-  fyrirhugadAr?: number | undefined
+  plannedYear?: number | undefined
 }
 
 @ObjectType()
-export class Stadfang {
+export class PropertyLocation {
   @Field({ nullable: true })
-  stadfanganumer?: number
+  locationNumber?: number
 
   @Field({ nullable: true })
-  stadvisir?: string
+  postNumber?: number
 
   @Field({ nullable: true })
-  stadgreinir?: string
+  municipality?: string
 
   @Field({ nullable: true })
-  postnumer?: number
+  propertyNumber?: number
 
   @Field({ nullable: true })
-  sveitarfelag?: string
+  display?: string
 
   @Field({ nullable: true })
-  landeignarnumer?: number
-
-  @Field({ nullable: true })
-  birting?: string
-
-  @Field({ nullable: true })
-  birtingStutt?: string
+  displayShort?: string
 }
 
 @ObjectType()
 export class UnitOfUse {
   @Field({ nullable: true })
-  fasteignanumer?: string
+  propertyNumber?: string
 
   @Field({ nullable: true })
-  notkunareininganumer?: string
+  unitOfUseNumber?: string
+
+  @Field(() => PropertyLocation, { nullable: true })
+  address?: PropertyLocation
 
   @Field({ nullable: true })
-  stadfang?: Stadfang
+  marking?: string
 
   @Field({ nullable: true })
-  merking?: string
+  usageDisplay?: string
 
   @Field({ nullable: true })
-  notkun?: string
+  displaySize?: number
 
   @Field({ nullable: true })
-  notkunBirting?: string
+  buildYearDisplay?: string
 
   @Field({ nullable: true })
-  starfsemi?: string
+  fireAssessment?: number
 
   @Field({ nullable: true })
-  lysing?: string
+  explanation?: string
 
-  @Field({ nullable: true })
-  byggingarAr?: string
-
-  @Field({ nullable: true })
-  birtStaerd?: number
-
-  @Field({ nullable: true })
-  byggingararBirting?: string
-
-  @Field({ nullable: true })
-  lodarmat?: number
-
-  @Field({ nullable: true })
-  brunabotamat?: number
-
-  @Field({ nullable: true })
-  fasteignamat?: Fasteignamat
+  @Field(() => Appraisal, { nullable: true })
+  appraisal?: Appraisal
 }
 
 @ObjectType()
@@ -106,5 +88,5 @@ export class UnitsOfUseModel {
   paging?: PagingData
 
   @Field(() => [UnitOfUse], { nullable: true })
-  notkunareiningar?: UnitOfUse[]
+  unitsOfUse?: UnitOfUse[]
 }

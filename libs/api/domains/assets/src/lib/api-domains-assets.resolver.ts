@@ -16,6 +16,8 @@ import {
 } from '../dto/getRealEstateInput.input'
 import { PropertyOwnersModel } from '../models/propertyOwners.model'
 import { UnitsOfUseModel } from '../models/propertyUnitsOfUse.model'
+import { PropertyDetail } from '../models/propertyDetail.model'
+import { PropertyOverview } from '../models/propertyOverview.model'
 import { AssetsXRoadService } from './api-domains-assets.service'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
@@ -23,18 +25,18 @@ import { AssetsXRoadService } from './api-domains-assets.service'
 export class AssetsXRoadResolver {
   constructor(private assetsXRoadService: AssetsXRoadService) {}
 
-  @Query(() => graphqlTypeJson)
+  @Query(() => PropertyOverview, { nullable: true })
   @Audit()
-  async getRealEstates(
+  async assetsOverview(
     @Args('input') input: GetMultiPropertyInput,
     @CurrentUser() user: User,
   ) {
     return this.assetsXRoadService.getRealEstates(user, input.cursor)
   }
 
-  @Query(() => graphqlTypeJson)
+  @Query(() => PropertyDetail, { nullable: true })
   @Audit()
-  async getRealEstateDetail(
+  async assetsDetail(
     @Args('input') input: GetRealEstateInput,
     @CurrentUser() user: User,
   ) {
@@ -43,11 +45,11 @@ export class AssetsXRoadResolver {
 
   @Query(() => PropertyOwnersModel, { nullable: true })
   @Audit()
-  async getThinglystirEigendur(
+  async assetsPropertyOwners(
     @Args('input') input: GetPagingTypes,
     @CurrentUser() user: User,
   ) {
-    return this.assetsXRoadService.getThinglystirEigendur(
+    return this.assetsXRoadService.getPropertyOwners(
       input.assetId,
       user,
       input.cursor,
@@ -57,7 +59,7 @@ export class AssetsXRoadResolver {
 
   @Query(() => UnitsOfUseModel, { nullable: true })
   @Audit()
-  async getNotkunareiningar(
+  async assetsUnitsOfUse(
     @Args('input') input: GetPagingTypes,
     @CurrentUser() user: User,
   ) {

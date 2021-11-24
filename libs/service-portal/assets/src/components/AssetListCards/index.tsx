@@ -3,10 +3,10 @@ import { useHistory } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { ServicePortalPath, m } from '@island.is/service-portal/core'
 import { Box, ActionCard, Button } from '@island.is/island-ui/core'
-import { FasteignSimpleWrapper } from '@island.is/clients/assets'
+import { PropertyOverview } from '@island.is/api/schema'
 
 interface Props {
-  assets?: FasteignSimpleWrapper
+  assets?: PropertyOverview
   paginate?: boolean
   paginateCallback?: () => void
 }
@@ -22,11 +22,11 @@ const AssetListCards: FC<Props> = ({ assets, paginateCallback }) => {
 
   return (
     <Box>
-      {assets?.fasteignir?.map((asset, i) => (
-        <Box key={asset.fasteignanumer} marginTop={i > 0 ? 4 : undefined}>
+      {assets?.properties?.map((asset, i) => (
+        <Box key={asset.propertyNumber} marginTop={i > 0 ? 4 : undefined}>
           <ActionCard
-            heading={asset?.sjalfgefidStadfang?.birting || ''}
-            text={asset.fasteignanumer as string}
+            heading={asset?.defaultAddress?.display || ''}
+            text={asset.propertyNumber as string}
             cta={{
               label: formatMessage(m.viewDetail),
               variant: 'ghost',
@@ -36,7 +36,7 @@ const AssetListCards: FC<Props> = ({ assets, paginateCallback }) => {
                 history.push(
                   ServicePortalPath.AssetsRealEstateDetail.replace(
                     ':id',
-                    asset.fasteignanumer as string,
+                    asset.propertyNumber as string,
                   ),
                 ),
             }}

@@ -6,24 +6,24 @@ import { messages } from '../lib/messages'
 import { FormatMessage } from '@island.is/application/core'
 
 import {
-  Notkunareining,
-  ThinglysturEigandi,
-  Stadfang,
-} from '@island.is/clients/assets'
+  PropertyOwner,
+  UnitOfUse,
+  PropertyLocation,
+} from '@island.is/api/schema'
 import is from 'date-fns/locale/is'
 import format from 'date-fns/format'
 
-const ownersArray = (data: ThinglysturEigandi[] | undefined) => {
+const ownersArray = (data: PropertyOwner[] | undefined) => {
   const ownerArray = data?.map((owner) => {
     return [
-      owner.nafn || '',
-      owner.kennitala ? formatKennitala(owner.kennitala) : '',
-      owner.heimildBirting || '',
-      isNumber(owner.eignarhlutfall)
-        ? `${parseFloat((owner.eignarhlutfall * 100).toFixed(2))}%`
+      owner.name || '',
+      owner.ssn ? formatKennitala(owner.ssn) : '',
+      owner.grantDisplay || '',
+      isNumber(owner.ownership)
+        ? `${parseFloat((owner.ownership * 100).toFixed(2))}%`
         : '',
-      owner.kaupdagur
-        ? format(new Date(owner.kaupdagur), 'dd.MM.yyyy', {
+      owner.purchaseDate
+        ? format(new Date(owner.purchaseDate), 'dd.MM.yyyy', {
             locale: is,
           })
         : '',
@@ -33,79 +33,71 @@ const ownersArray = (data: ThinglysturEigandi[] | undefined) => {
 }
 
 const unitsArray = (
-  data: Notkunareining[] | undefined,
-  stadfang: Stadfang | undefined | null,
+  data: UnitOfUse[] | undefined,
+  stadfang: PropertyLocation | undefined | null,
   formatMessage: FormatMessage,
 ) =>
-  data?.map((unit: Notkunareining) => {
-    const locationData = unit.stadfang || stadfang
+  data?.map((unit: UnitOfUse) => {
+    const locationData = unit.address || stadfang
     return {
       header: {
-        title: unit.notkunBirting || '',
-        value: locationData?.birting || '',
+        title: unit.usageDisplay || '',
+        value: locationData?.display || '',
       },
       rows: chunk(
         [
           {
             title: formatMessage(messages.unitsOfUseNr),
-            value: unit.notkunareininganumer || '',
+            value: unit.unitOfUseNumber || '',
           },
           {
             title: `${formatMessage(messages.appraisal)} ${
-              unit?.fasteignamat?.gildandiAr
+              unit?.appraisal?.activeYear
             }`,
-            value: unit.fasteignamat?.gildandiFasteignamat
-              ? amountFormat(unit.fasteignamat.gildandiFasteignamat)
+            value: unit.appraisal?.activeAppraisal
+              ? amountFormat(unit.appraisal?.activeAppraisal)
               : '',
           },
           {
             title: formatMessage(messages.location),
-            value: locationData?.birtingStutt || '',
-            detail: locationData?.stadfanganumer
+            value: locationData?.displayShort || '',
+            detail: locationData?.locationNumber
               ? `${formatMessage(messages.locationNumber)}: ${
-                  locationData?.stadfanganumer
+                  locationData?.locationNumber
                 }`
               : undefined,
           },
           {
             title: `${formatMessage(messages.appraisal)} ${
-              unit?.fasteignamat?.fyrirhugadAr
+              unit?.appraisal?.plannedYear
             }`,
-            value: unit?.fasteignamat?.fyrirhugadFasteignamat
-              ? amountFormat(unit.fasteignamat.fyrirhugadFasteignamat)
+            value: unit?.appraisal?.plannedAppraisal
+              ? amountFormat(unit.appraisal.plannedAppraisal)
               : '',
           },
           {
             title: formatMessage(messages.marking),
-            value: unit.merking || '',
+            value: unit.marking || '',
           },
           {
             title: formatMessage(messages.municipality),
-            value: locationData?.sveitarfelagBirting || '',
+            value: locationData?.municipality || '',
           },
-          // {
-          //   title: formatMessage(messages.siteAssessment),
-          //   value: unit.lodarmat ? amountFormat(unit.lodarmat) : '',
-          // },
           {
             title: formatMessage(messages.description),
-            value: unit.skyring || '',
+            value: unit.explanation || '',
           },
           {
             title: formatMessage(messages.fireCompAssessment),
-            value: unit.brunabotamat ? amountFormat(unit.brunabotamat) : '',
+            value: unit.fireAssessment ? amountFormat(unit.fireAssessment) : '',
           },
-          // {
-          //   title: formatMessage(messages.operation),
-          //   value: unit.starfsemi || '',
-          // },
           {
             title: 'Stærð',
-            value: `${unit.birtStaerd} m²` || '',
+            value: `${unit.displaySize} m²` || '',
           },
           {
             title: 'Byggingarár',
-            value: unit.byggingararBirting || '',
+            value: unit.buildYearDisplay || '',
           },
         ],
         2,

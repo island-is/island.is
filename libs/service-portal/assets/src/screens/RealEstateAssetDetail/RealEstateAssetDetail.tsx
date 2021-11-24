@@ -2,7 +2,7 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import { useQuery, useLazyQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
+import { Query, PropertyOwner } from '@island.is/api/schema'
 import { useNamespaces, useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -14,7 +14,6 @@ import TableUnits from '../../components/TableUnits'
 import AssetGrid from '../../components/AssetGrid'
 import AssetLoader from '../../components/AssetLoader'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
-import { Fasteign, ThinglysturEigandi } from '@island.is/clients/assets'
 import amountFormat from '../../utils/amountFormat'
 import { ownersArray } from '../../utils/createUnits'
 import { messages } from '../../lib/messages'
@@ -37,17 +36,16 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
       },
     },
   })
-  const assetData: Fasteign = data?.getRealEstateDetail || {}
+  const assetData = data?.assetsDetail || {}
 
   const [
-    getEigendurQuery,
-    { loading: ownerLoading, error: ownerError, fetchMore, ...eigendurQuery },
+    getOwnersQuery,
+    { loading: ownerLoading, error: ownerError, fetchMore, ...ownersQuery },
   ] = useLazyQuery(GET_PROPERTY_OWNERS_QUERY)
-  const eigendurPaginationData: ThinglysturEigandi[] =
-    eigendurQuery?.data?.getThinglystirEigendur.thinglystirEigendur || []
+  const eigendurPaginationData: PropertyOwner[] =
+    ownersQuery?.data?.assetsPropertyOwners?.registeredOwners || []
 
-  const assetOwners: ThinglysturEigandi[] =
-    assetData.thinglystirEigendur?.thinglystirEigendur || []
+  const assetOwners = assetData.registeredOwners?.registeredOwners || []
 
   const combinedOwnerArray = [...assetOwners, ...eigendurPaginationData]
 
@@ -57,7 +55,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     const variableObject = {
       variables: {
         input: {
-          assetId: assetData?.fasteignanumer,
+          assetId: assetData?.propertyNumber,
           cursor: Math.ceil(
             eigendurPaginationData.length / DEFAULT_PAGING_ITEMS + 1,
           ).toString(),
@@ -69,15 +67,15 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
       fetchMore({
         ...variableObject,
         updateQuery: (prevResult, { fetchMoreResult }) => {
-          fetchMoreResult.getThinglystirEigendur.thinglystirEigendur = [
-            ...prevResult.getThinglystirEigendur.thinglystirEigendur,
-            ...fetchMoreResult.getThinglystirEigendur.thinglystirEigendur,
+          fetchMoreResult.assetsPropertyOwners.thinglystirEigendur = [
+            ...prevResult.assetsPropertyOwners.thinglystirEigendur,
+            ...fetchMoreResult.assetsPropertyOwners.thinglystirEigendur,
           ]
           return fetchMoreResult
         },
       })
     } else {
-      getEigendurQuery(variableObject)
+      getOwnersQuery(variableObject)
     }
   }
 
@@ -97,9 +95,9 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
   }
 
   const paginateOwners =
-    eigendurQuery?.data?.getThinglystirEigendur.paging?.hasNextPage ||
-    (assetData.thinglystirEigendur?.paging?.hasNextPage &&
-      !eigendurQuery?.data?.getThinglystirEigendur?.paging)
+    ownersQuery?.data?.assetsPropertyOwners.paging?.hasNextPage ||
+    (assetData.registeredOwners?.paging?.hasNextPage &&
+      !ownersQuery?.data?.assetsPropertyOwners?.paging)
   return (
     <>
       <Box marginBottom={[3, 4, 5]}>
@@ -118,7 +116,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         />
       </Box>
       <DetailHeader
-        title={`${assetData?.sjalfgefidStadfang?.birtingStutt} - ${assetData?.fasteignanumer}`}
+        title={`${assetData?.defaultAddress?.displayShort} - ${assetData?.propertyNumber}`}
       />
       <Box>
         <TableUnits
@@ -138,21 +136,19 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
             {
               header: [
                 `${formatMessage(messages.appraisal)} ${
-                  assetData.fasteignamat?.gildandiAr
+                  assetData.appraisal?.activeYear
                 }`,
                 `${formatMessage(messages.appraisal)} ${
-                  assetData.fasteignamat?.fyrirhugadAr
+                  assetData.appraisal?.plannedYear
                 }`,
               ],
               rows: [
                 [
-                  assetData.fasteignamat?.gildandiFasteignamat
-                    ? amountFormat(assetData.fasteignamat?.gildandiFasteignamat)
+                  assetData.appraisal?.activeAppraisal
+                    ? amountFormat(assetData.appraisal?.activeAppraisal)
                     : '',
-                  assetData.fasteignamat?.fyrirhugadFasteignamat
-                    ? amountFormat(
-                        assetData.fasteignamat?.fyrirhugadFasteignamat,
-                      )
+                  assetData.appraisal?.plannedAppraisal
+                    ? amountFormat(assetData.appraisal?.plannedAppraisal)
                     : '',
                 ],
               ],
@@ -161,13 +157,13 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         />
       </Box>
       <Box marginTop={7}>
-        {assetData?.notkunareiningar?.notkunareiningar &&
-        assetData?.notkunareiningar?.notkunareiningar?.length > 0 ? (
+        {assetData?.unitsOfUse?.unitsOfUse &&
+        assetData?.unitsOfUse?.unitsOfUse?.length > 0 ? (
           <AssetGrid
             title={formatMessage(messages.unitsOfUse)}
-            locationData={assetData?.sjalfgefidStadfang}
-            units={assetData?.notkunareiningar}
-            assetId={assetData?.fasteignanumer}
+            locationData={assetData?.defaultAddress}
+            units={assetData?.unitsOfUse}
+            assetId={assetData?.propertyNumber}
           />
         ) : null}
       </Box>

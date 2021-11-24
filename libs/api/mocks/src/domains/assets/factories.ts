@@ -1,13 +1,14 @@
 import { factory, faker } from '@island.is/shared/mocking'
 import {
-  Stadfang,
-  Fasteign,
-  Fasteignamat,
-  ThinglysturEigandi,
-  Notkunareining,
-  ThinglysturEigandiWrapper,
-  NotkunareiningWrapper,
-} from '@island.is/clients/assets'
+  PropertyLocation,
+  SimpleProperties,
+  Appraisal,
+  PropertyOwner,
+  UnitOfUse,
+  PropertyDetail,
+  PropertyOwnersModel,
+  UnitsOfUseModel,
+} from '@island.is/api/schema'
 
 const townArray = [
   'Reykjavík',
@@ -43,98 +44,95 @@ export const pagingData = ({
   hasNextPage,
 })
 
-export const stadfang = factory<Stadfang>({
-  stadfanganumer: () => faker.random.number(999),
-  sveitarfelagBirting: () => faker.random.arrayElement(townArray),
-  postnumer: () => faker.random.number(800),
-  landeignarnumer: () => faker.random.number(9999),
-  birtingStutt: () =>
+export const stadfang = factory<PropertyLocation>({
+  propertyNumber: () => faker.random.number(999),
+  municipality: () => faker.random.arrayElement(townArray),
+  postNumber: () => faker.random.number(800),
+  locationNumber: () => faker.random.number(9999),
+  displayShort: () =>
     `${faker.random.arrayElement(streetArray)} ${faker.random.number(99)}`,
-  birting() {
-    return `${this.birtingStutt}, ${this.sveitarfelagBirting}`
+  display() {
+    return `${this.displayShort}, ${this.municipality}`
   },
 })
 
-export const fasteign = factory<Fasteign>({
-  fasteignanumer: () => faker.helpers.replaceSymbolWithNumber('F?????', '?'),
-  sjalfgefidStadfang: () => stadfang(),
+export const singleProperty = factory<SimpleProperties>({
+  propertyNumber: () => faker.helpers.replaceSymbolWithNumber('F?????', '?'),
+  defaultAddress: () => stadfang(),
 })
 
-export const fasteignamat = factory<Fasteignamat>({
-  fyrirhugadAr: new Date().getFullYear() + 1,
-  gildandiAr: new Date().getFullYear(),
+export const propertyAppraisal = factory<Appraisal>({
+  plannedYear: new Date().getFullYear() + 1,
+  activeYear: new Date().getFullYear(),
 
-  gildandiFasteignamat: () =>
+  activeAppraisal: () => faker.random.number({ min: 20000000, max: 50000000 }),
+  plannedAppraisal() {
+    return this.activeAppraisal ? this.activeAppraisal + 1500000 : null
+  },
+
+  activeStructureAppraisal: () =>
     faker.random.number({ min: 20000000, max: 50000000 }),
-  fyrirhugadFasteignamat() {
-    return this.gildandiFasteignamat
-      ? this.gildandiFasteignamat + 1500000
+  plannedStructureAppraisal() {
+    return this.activeStructureAppraisal
+      ? this.activeStructureAppraisal + 1500000
       : null
   },
 
-  gildandiMannvirkjamat: () =>
+  activePlotAssessment: () =>
     faker.random.number({ min: 20000000, max: 50000000 }),
-  fyrirhugadMannvirkjamat() {
-    return this.gildandiMannvirkjamat
-      ? this.gildandiMannvirkjamat + 1500000
-      : null
-  },
-
-  gildandiLodarhlutamat: () =>
-    faker.random.number({ min: 20000000, max: 50000000 }),
-  fyrirhugadLodarhlutamat() {
-    return this.gildandiLodarhlutamat
-      ? this.gildandiLodarhlutamat + 1500000
+  plannedPlotAssessment() {
+    return this.activePlotAssessment
+      ? this.activePlotAssessment + 1500000
       : null
   },
 })
 
-export const eigandi = factory<ThinglysturEigandi>({
-  nafn: () => faker.name.findName(),
-  kennitala: '0000000000',
-  eignarhlutfall: 0.5,
-  kaupdagur: () => faker.date.past(),
-  heimildBirting: 'A+',
+export const propertyOwnerFactory = factory<PropertyOwner>({
+  name: () => faker.name.findName(),
+  ssn: '0000000000',
+  ownership: 0.5,
+  purchaseDate: () => faker.date.past(),
+  grantDisplay: 'A+',
 })
 
-export const notkunareining = factory<Notkunareining>({
-  notkunareininganumer: () => faker.helpers.replaceSymbolWithNumber('N?', '?'),
-  fasteignanumer: () => faker.helpers.replaceSymbolWithNumber('F?????', '?'),
-  stadfang: () => stadfang(),
-  merking: () => faker.helpers.replaceSymbolWithNumber('Íbúð ?', '?'),
-  notkunBirting: () => faker.helpers.replaceSymbolWithNumber('Notkun ?', '?'),
-  skyring: () => faker.helpers.replaceSymbolWithNumber('Skýring ?', '?'),
-  byggingararBirting: '2008',
-  birtStaerd: () => faker.random.number({ min: 100, max: 300 }),
-  birtStaerdMaelieining: 'ME',
-  fasteignamat: () => fasteignamat(),
-  brunabotamat: faker.random.number({
+export const propertyUnitOnUse = factory<UnitOfUse>({
+  unitOfUseNumber: () => faker.helpers.replaceSymbolWithNumber('N?', '?'),
+  propertyNumber: () => faker.helpers.replaceSymbolWithNumber('F?????', '?'),
+  address: () => stadfang(),
+  marking: () => faker.helpers.replaceSymbolWithNumber('Íbúð ?', '?'),
+  usageDisplay: () => faker.helpers.replaceSymbolWithNumber('Notkun ?', '?'),
+  explanation: () => faker.helpers.replaceSymbolWithNumber('Skýring ?', '?'),
+  buildYearDisplay: '2008',
+  displaySize: () => faker.random.number({ min: 100, max: 300 }),
+  appraisal: () => propertyAppraisal(),
+  fireAssessment: faker.random.number({
     min: 20000000,
     max: 40000000,
   }),
 })
 
-export const assetDetail = factory<Fasteign>({
-  ...fasteign(),
-  fasteignamat: () => fasteignamat(),
-  thinglystirEigendur: {
-    thinglystirEigendur: eigandi.list(10),
+export const assetDetail = factory<PropertyDetail>({
+  defaultAddress: singleProperty().defaultAddress,
+  propertyNumber: singleProperty().propertyNumber,
+  appraisal: () => propertyAppraisal(),
+  registeredOwners: {
+    registeredOwners: propertyOwnerFactory.list(10),
     paging: pagingData({ hasNextPage: true }),
   },
-  notkunareiningar: {
-    notkunareiningar: notkunareining.list(2),
+  unitsOfUse: {
+    unitsOfUse: propertyUnitOnUse.list(2),
     paging: pagingData({ hasNextPage: true }),
   },
 })
 
-export const paginatedThinglystirEigendur = (hasNextPage = true) =>
-  factory<ThinglysturEigandiWrapper>({
-    thinglystirEigendur: eigandi.list(10),
+export const paginatedConfirmedOwners = (hasNextPage = true) =>
+  factory<PropertyOwnersModel>({
+    registeredOwners: propertyOwnerFactory.list(10),
     paging: pagingData({ hasNextPage }),
   })()
 
 export const paginatedUnitsOfUse = (hasNextPage = true) =>
-  factory<NotkunareiningWrapper>({
-    notkunareiningar: notkunareining.list(10),
+  factory<UnitsOfUseModel>({
+    unitsOfUse: propertyUnitOnUse.list(10),
     paging: pagingData({ hasNextPage }),
   })()

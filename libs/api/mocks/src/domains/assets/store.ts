@@ -1,35 +1,36 @@
 import { createStore } from '@island.is/shared/mocking'
 import {
-  fasteign,
+  singleProperty,
   assetDetail,
-  paginatedThinglystirEigendur,
+  paginatedConfirmedOwners,
   paginatedUnitsOfUse,
   pagingData,
 } from './factories'
+import { PropertyDetail } from '@island.is/api/schema'
 
 export const store = createStore(() => {
-  const fasteignir = fasteign.list(20)
+  const properties = singleProperty.list(20)
 
-  const getFasteignir = (hasNextPage = true) => ({
-    fasteignir: hasNextPage ? fasteignir : fasteign.list(20),
+  const getProperties = (hasNextPage = true) => ({
+    properties: hasNextPage ? properties : singleProperty.list(20),
     paging: pagingData({ hasNextPage }),
   })
 
-  const detailRealEstateAssets = fasteignir.map((eign) => ({
-    ...assetDetail({ fasteignanumer: eign.fasteignanumer }),
-    ...eign,
-  }))
+  const detailRealEstateAssets = properties.map((item) => ({
+    ...assetDetail({ propertyNumber: item.propertyNumber }),
+    ...item,
+  })) as PropertyDetail[]
 
-  const pagedThinglystirEigendur = (hasNextPage?: boolean) =>
-    paginatedThinglystirEigendur(hasNextPage)
+  const pagedConfirmedOwners = (hasNextPage?: boolean) =>
+    paginatedConfirmedOwners(hasNextPage)
 
   const pagedUnitsOfUse = (hasNextPage?: boolean) =>
     paginatedUnitsOfUse(hasNextPage)
 
   return {
-    getFasteignir,
+    getProperties,
     detailRealEstateAssets,
-    pagedThinglystirEigendur,
+    pagedConfirmedOwners,
     pagedUnitsOfUse,
   }
 })

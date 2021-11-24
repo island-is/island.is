@@ -4,7 +4,6 @@ import { useNamespaces, useLocale } from '@island.is/localization'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { Box, AlertBanner } from '@island.is/island-ui/core'
-import { FasteignSimpleWrapper } from '@island.is/clients/assets'
 import {
   ServicePortalModuleComponent,
   IntroHeader,
@@ -17,7 +16,28 @@ import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
 const GetRealEstateQuery = gql`
   query GetRealEstateQuery($input: GetMultiPropertyInput!) {
-    getRealEstates(input: $input)
+    assetsOverview(input: $input) {
+      properties {
+        propertyNumber
+        defaultAddress {
+          locationNumber
+          postNumber
+          municipality
+          propertyNumber
+          display
+          displayShort
+        }
+      }
+      paging {
+        page
+        pageSize
+        totalPages
+        offset
+        total
+        hasPreviousPage
+        hasNextPage
+      }
+    }
   }
 `
 
@@ -31,11 +51,11 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
       variables: { input: { cursor: '1' } },
     },
   )
-  const assetData: FasteignSimpleWrapper = data?.getRealEstates || {}
+  const assetData = data?.assetsOverview || {}
 
   const paginate = () => {
-    const fasteignirArray = assetData?.fasteignir || []
-    if (fetchMore) {
+    const fasteignirArray = assetData?.properties || []
+    if (fetchMore && fasteignirArray.length > 0) {
       fetchMore({
         variables: {
           input: {
@@ -45,13 +65,18 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
           },
         },
         updateQuery: (prevResult, { fetchMoreResult }) => {
-          if (fetchMoreResult) {
-            fetchMoreResult.getRealEstates.fasteignir = [
-              ...prevResult.getRealEstates.fasteignir,
-              ...fetchMoreResult.getRealEstates.fasteignir,
+          if (!fetchMoreResult) return prevResult
+
+          if (
+            fetchMoreResult?.assetsOverview?.properties &&
+            prevResult.assetsOverview?.properties
+          ) {
+            fetchMoreResult.assetsOverview.properties = [
+              ...prevResult.assetsOverview?.properties,
+              ...fetchMoreResult.assetsOverview?.properties,
             ]
           }
-          return fetchMoreResult || prevResult
+          return fetchMoreResult
         },
       })
     }
