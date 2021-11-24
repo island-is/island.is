@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system/types'
+import { Case, SessionArrangements } from '@island.is/judicial-system/types'
 import {
   CaseData,
   JudgeSubsections,
@@ -43,6 +43,14 @@ const HearingArrangements = () => {
 
       if (theCase.requestedCourtDate) {
         autofill('courtDate', theCase.requestedCourtDate, theCase)
+      }
+
+      if (theCase.defenderName) {
+        autofill(
+          'sessionArrangements',
+          SessionArrangements.ALL_PRESENT,
+          theCase,
+        )
       }
 
       setWorkingCase(theCase)
