@@ -58,15 +58,14 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
       >
         <SearchSection
           headingId="search-section-title"
-          featured={page.featured}
-          heading={page.heading}
           quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
           placeholder={n('heroSearchPlaceholder')}
           activeLocale={activeLocale}
-          image={page.image}
-          imageMobile={page.imageMobile}
-          video={page.video}
-          videoMobile={page.videoMobile}
+          page={page}
+          browserVideoUnsupported={n(
+            'browserVideoUnsupported',
+            'Vafrinn þinn getur ekki spilað HTML myndbönd.',
+          )}
         />
       </Box>
       <Box

@@ -16,17 +16,20 @@ export class Frontpage {
   @Field({ nullable: true })
   heading!: string
 
+  @Field({ nullable: true })
+  imageAlternativeText!: string
+
   @Field(() => Image, { nullable: true })
   image?: Image | null
 
-  @Field(() => Image, { nullable: true })
-  video?: Image | null
+  @Field(() => [Image], { nullable: true })
+  videos?: Array<Image>
 
   @Field(() => Image, { nullable: true })
   imageMobile?: Image | null
 
-  @Field(() => Image, { nullable: true })
-  videoMobile?: Image | null
+  @Field(() => [Image], { nullable: true })
+  videosMobile?: Array<Image>
 
   @Field(() => [Featured])
   featured?: Array<Featured>
@@ -45,10 +48,11 @@ export const mapFrontpage = ({ fields, sys }: IFrontpage): Frontpage => ({
   id: sys.id,
   title: fields.title ?? '',
   heading: fields.heading ?? '',
+  imageAlternativeText: fields.imageAlternativeText ?? '',
   image: fields.image ? mapImage(fields.image) : null,
-  video: fields.video ? mapImage(fields.video) : null,
+  videos: (fields.videos ?? []).map(mapImage),
   imageMobile: fields.imageMobile ? mapImage(fields.imageMobile) : null,
-  videoMobile: fields.videoMobile ? mapImage(fields.videoMobile) : null,
+  videosMobile: (fields.videosMobile ?? []).map(mapImage),
   featured: (fields.featured ?? []).map(mapFeatured),
   slides: (fields.slides ?? []).map(mapFrontpageSlider),
   namespace: fields.namespace ? mapNamespace(fields.namespace) : null,

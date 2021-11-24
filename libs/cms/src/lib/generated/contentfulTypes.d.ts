@@ -702,17 +702,20 @@ export interface IFrontpageFields {
   /** Heading */
   heading?: string | undefined
 
+  /** Alternative text for image/video */
+  imageAlternativeText?: string | undefined
+
+  /** Videos */
+  videos?: Asset[] | undefined
+
   /** Image */
   image?: Asset | undefined
 
-  /** Video */
-  video?: Asset | undefined
+  /** Videos (mobile) */
+  videosMobile?: Asset[] | undefined
 
   /** Image (mobile) */
   imageMobile?: Asset | undefined
-
-  /** Video (mobile) */
-  videoMobile?: Asset | undefined
 
   /** Featured */
   featured?: IFeatured[] | undefined

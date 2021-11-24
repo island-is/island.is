@@ -6,21 +6,24 @@ export const GET_FRONTPAGE_QUERY = gql`
       __typename
       id
       heading
+      imageAlternativeText
       image {
         url
         title
       }
-      video {
+      videos {
         url
         title
+        contentType
       }
       imageMobile {
         url
         title
       }
-      videoMobile {
+      videosMobile {
         url
         title
+        contentType
       }
       featured {
         title
