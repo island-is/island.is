@@ -14,9 +14,9 @@ import {
   formatCustodyRestrictions,
   formatAlternativeTravelBanRestrictions,
   formatAccusedByGender,
-  caseTypes,
   lowercase,
   formatAppeal,
+  formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -79,7 +79,9 @@ function constructRestrictionRulingPdf(
     .text(formatMessage(ruling.proceedingsHeading), { align: 'center' })
     .lineGap(30)
     .text(
-      `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
+      formatMessage(ruling.caseNumber, {
+        caseNumber: existingCase.courtCaseNumber,
+      }),
       { align: 'center' },
     )
     .fontSize(baseFontSize)
@@ -131,24 +133,12 @@ function constructRestrictionRulingPdf(
   doc
     .text(' ')
     .font('Times-Bold')
-    .text(formatMessage(ruling.demandsHeading))
-    .text(' ')
-    .font('Times-Roman')
-    .text(
-      existingCase.prosecutorDemands ?? formatMessage(core.missing.demands),
-      {
-        align: 'justify',
-        paragraphGap: 1,
-      },
-    )
-    .text(' ')
-    .font('Times-Bold')
     .text(formatMessage(ruling.courtDocuments.heading))
     .text(' ')
     .font('Times-Roman')
     .text(
       formatMessage(ruling.courtDocuments.request, {
-        caseTypes: caseTypes[existingCase.type],
+        caseTypes: formatRequestCaseType(existingCase.type),
       }),
       {
         align: 'justify',
@@ -212,10 +202,13 @@ function constructRestrictionRulingPdf(
       .text(formatMessage(ruling.courtDemandsHeading))
       .text(' ')
       .font('Times-Roman')
-      .text(existingCase.demands ?? formatMessage(core.missing.demands), {
-        align: 'justify',
-        paragraphGap: 1,
-      })
+      .text(
+        existingCase.prosecutorDemands ?? formatMessage(core.missing.demands),
+        {
+          align: 'justify',
+          paragraphGap: 1,
+        },
+      )
       .text(' ')
       .font('Times-Bold')
       .text(formatMessage(ruling.courtCaseFactsHeading))
@@ -443,7 +436,9 @@ function constructInvestigationRulingPdf(
     .text(formatMessage(ruling.proceedingsHeading), { align: 'center' })
     .lineGap(30)
     .text(
-      `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
+      formatMessage(ruling.caseNumber, {
+        caseNumber: existingCase.courtCaseNumber,
+      }),
       { align: 'center' },
     )
     .fontSize(baseFontSize)
@@ -495,25 +490,12 @@ function constructInvestigationRulingPdf(
   doc
     .text(' ')
     .font('Times-Bold')
-    .text(formatMessage(ruling.demandsHeading))
-    .text(' ')
-    .font('Times-Roman')
-    .fontSize(baseFontSize)
-    .text(
-      existingCase.prosecutorDemands ?? formatMessage(core.missing.demands),
-      {
-        align: 'justify',
-        paragraphGap: 1,
-      },
-    )
-    .text(' ')
-    .font('Times-Bold')
     .text(formatMessage(ruling.courtDocuments.heading))
     .text(' ')
     .font('Times-Roman')
     .text(
       formatMessage(ruling.courtDocuments.request, {
-        caseTypes: caseTypes[existingCase.type],
+        caseTypes: formatRequestCaseType(existingCase.type),
       }),
       {
         align: 'justify',
@@ -577,10 +559,13 @@ function constructInvestigationRulingPdf(
       .text(formatMessage(ruling.courtDemandsHeading))
       .text(' ')
       .font('Times-Roman')
-      .text(existingCase.demands ?? formatMessage(core.missing.demands), {
-        align: 'justify',
-        paragraphGap: 1,
-      })
+      .text(
+        existingCase.prosecutorDemands ?? formatMessage(core.missing.demands),
+        {
+          align: 'justify',
+          paragraphGap: 1,
+        },
+      )
       .text(' ')
       .font('Times-Bold')
       .text(formatMessage(ruling.courtCaseFactsHeading))

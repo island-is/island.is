@@ -8,7 +8,6 @@ import {
   toast,
   AlertMessage,
   DatePicker,
-  LoadingDots,
 } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import {
@@ -23,6 +22,7 @@ import { m } from '../../lib/messages'
 import PetitionsTable from '../PetitionsTable'
 import { EndorsementList } from '../../types/schema'
 import { useMutation } from '@apollo/client'
+import Skeleton from './Skeleton'
 
 const ViewPetitionAdmin = () => {
   const { formatMessage } = useLocale()
@@ -254,13 +254,11 @@ const ViewPetitionAdmin = () => {
           <PetitionsTable
             petitions={petitionEndorsements}
             listId={location.state?.listId}
-            isSendEmailVisible={true}
+            isViewTypeEdit={true}
           />
         </Stack>
       ) : (
-        <Box display="flex" justifyContent="center" marginY={5}>
-          <LoadingDots />
-        </Box>
+        <Skeleton />
       )}
     </Box>
   )

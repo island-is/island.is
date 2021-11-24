@@ -327,6 +327,16 @@ export const m: MessageDir = {
         'Ekki tókst að setja nafn þitt á lista. Vinsamlegast reyndu aftur síðar',
       description: 'Error message for error on endorse',
     },
+    openTil: {
+      id: 'sp.petitions:open-til',
+      defaultMessage: 'Meðmælendalistinn er opinn til:',
+      description: 'List is open til',
+    },
+    listOwner: {
+      id: 'sp.petitions:list-owner',
+      defaultMessage: 'Ábyrgðarmaður:',
+      description: 'List owner',
+    },
   }),
   endorsementDisclaimer: defineMessages({
     part1: {

@@ -243,7 +243,10 @@ export class CaseService {
     if (
       existingCase.defenderEmail &&
       (isRestrictionCase(existingCase.type) ||
-        existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT)
+        existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
+        (existingCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+          existingCase.defenderIsSpokesperson))
     ) {
       promises.push(
         this.sendEmail(
@@ -476,7 +479,12 @@ export class CaseService {
       accusedName: existingCase.accusedName,
       accusedAddress: existingCase.accusedAddress,
       accusedGender: existingCase.accusedGender,
+      defenderName: existingCase.defenderName,
+      defenderEmail: existingCase.defenderEmail,
+      defenderPhoneNumber: existingCase.defenderPhoneNumber,
+      leadInvestigator: existingCase.leadInvestigator,
       courtId: existingCase.courtId,
+      translator: existingCase.translator,
       lawsBroken: existingCase.lawsBroken,
       legalBasis: existingCase.legalBasis,
       legalProvisions: existingCase.legalProvisions,
@@ -488,6 +496,8 @@ export class CaseService {
       creatingProsecutorId: user.id,
       prosecutorId: user.id,
       parentCaseId: existingCase.id,
+      initialRulingDate:
+        existingCase.initialRulingDate ?? existingCase.rulingDate,
     })
   }
 

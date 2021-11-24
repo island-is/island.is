@@ -4,11 +4,13 @@ import { InjectModel } from '@nestjs/sequelize'
 import { MunicipalityModel } from './models'
 import { AidType } from '@island.is/financial-aid/shared/lib'
 import { AidModel, AidService } from '../aid'
-import { UpdateMunicipalityDto } from './dto'
+import { CreateMunicipalityDto, UpdateMunicipalityDto } from './dto'
 import { Sequelize } from 'sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { StaffService } from '../staff'
+import { CreateStaffDto } from '../staff/dto'
 
 @Injectable()
 export class MunicipalityService {
@@ -16,6 +18,7 @@ export class MunicipalityService {
     @InjectModel(MunicipalityModel)
     private readonly municipalityModel: typeof MunicipalityModel,
     private readonly aidService: AidService,
+    private readonly staffService: StaffService,
     private sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
@@ -44,6 +47,51 @@ export class MunicipalityService {
           },
         },
       ],
+    })
+  }
+
+  private findAidTypeId = (obj: AidModel[], type: AidType) => {
+    return obj.find((el) => el.type === type).id
+  }
+
+  async create(
+    municipality: CreateMunicipalityDto,
+    admin: CreateStaffDto,
+  ): Promise<MunicipalityModel> {
+    return await this.sequelize.transaction(async (t) => {
+      return await Promise.all(
+        Object.values(AidType).map((item) => {
+          return this.aidService.create(
+            {
+              municipalityId: municipality.municipalityId,
+              type: item,
+            },
+            t,
+          )
+        }),
+      )
+        .then((res) => {
+          municipality.individualAidId = this.findAidTypeId(
+            res,
+            AidType.INDIVIDUAL,
+          )
+          municipality.cohabitationAidId = this.findAidTypeId(
+            res,
+            AidType.COHABITATION,
+          )
+
+          this.staffService.createStaff(
+            admin,
+            {
+              id: municipality.municipalityId,
+              name: municipality.name,
+            },
+            t,
+          )
+
+          return this.municipalityModel.create(municipality, { transaction: t })
+        })
+        .catch((err) => err)
     })
   }
 

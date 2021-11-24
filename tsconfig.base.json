@@ -90,6 +90,9 @@
       "@island.is/api/domains/identity": [
         "libs/api/domains/identity/src/index.ts"
       ],
+      "@island.is/api/domains/islykill": [
+        "libs/api/domains/islykill/src/index.ts"
+      ],
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
       ],
@@ -237,6 +240,7 @@
       "@island.is/clients/health-insurance-v2": [
         "libs/clients/health-insurance-v2/src/index.ts"
       ],
+      "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
@@ -349,6 +353,9 @@
       "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
+      "@island.is/react/feature-flags": [
+        "libs/react/feature-flags/src/index.ts"
+      ],
       "@island.is/regulations": ["libs/regulations/src/index.ts"],
       "@island.is/regulations/*": ["libs/regulations/src/sub/*"],
       "@island.is/service-portal/applications": [
@@ -416,6 +423,9 @@
       ],
       "@island.is/service-portal/settings/access-control": [
         "libs/service-portal/settings/access-control/src/index.ts"
+      ],
+      "@island.is/service-portal/settings/islykill": [
+        "libs/service-portal/settings/islykill/src/index.ts"
       ],
       "@island.is/service-portal/settings/personal-information": [
         "libs/service-portal/settings/personal-information/src/index.ts"

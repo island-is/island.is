@@ -6,8 +6,11 @@ import {
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
 import { FormValue } from '@island.is/application/core'
+import {
+  generateDrivingLicenseSubmittedEmail,
+  generateDrivingAssessmentApprovalEmail,
+} from './emailGenerators'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -36,7 +39,10 @@ export class DrivingLicenseSubmissionService {
     )
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async submitApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     const { answers } = application
     const nationalId = application.applicant
 
@@ -45,7 +51,12 @@ export class DrivingLicenseSubmissionService {
       application.id,
     )
 
-    if (isPayment.fulfilled) {
+    await this.sharedTemplateAPIService.sendEmail(
+      generateDrivingLicenseSubmittedEmail,
+      application,
+    )
+
+    if (isPayment?.fulfilled) {
       const result = await this.createLicense(nationalId, answers).catch(
         (e) => {
           return {

@@ -16,10 +16,14 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BackendAPI } from '../../../services'
 
 import { MunicipalityModel } from './models'
-import { MunicipalityQueryInput, UpdateMunicipalityInput } from './dto'
+import {
+  CreateMunicipalityInput,
+  MunicipalityQueryInput,
+  UpdateMunicipalityInput,
+} from './dto'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { Municipality, Staff } from '@island.is/financial-aid/shared/lib'
 import { StaffModel } from '../staff/models'
-import { Municipality } from '@island.is/financial-aid/shared/lib'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => MunicipalityModel)
@@ -38,6 +42,17 @@ export class MunicipalityResolver {
     this.logger.debug(`Getting municipality ${input.id}`)
 
     return backendApi.getMunicipality(input.id)
+  }
+
+  @Mutation(() => MunicipalityModel, { nullable: false })
+  createMunicipality(
+    @Args('input', { type: () => CreateMunicipalityInput })
+    input: CreateMunicipalityInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<MunicipalityModel> {
+    const { admin, ...createMunicipality } = input
+    this.logger.debug('Creating municipality')
+    return backendApi.createMunicipality(createMunicipality, admin)
   }
 
   @Mutation(() => MunicipalityModel, { nullable: false })
@@ -61,8 +76,8 @@ export class MunicipalityResolver {
     return backendApi.getMunicipalities()
   }
 
-  @ResolveField('users', () => Number)
-  users(
+  @ResolveField('numberOfUsers', () => Number)
+  numberOfUsers(
     @Parent() municipality: MunicipalityModel,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<number> {
@@ -79,7 +94,7 @@ export class MunicipalityResolver {
   adminUsers(
     @Parent() municipality: MunicipalityModel,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<StaffModel[]> {
+  ): Promise<Staff[]> {
     this.logger.debug(`Getting admin users for ${municipality.municipalityId}`)
 
     return backendApi.getAdminUsers(municipality.municipalityId)

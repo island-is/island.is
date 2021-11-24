@@ -5,13 +5,7 @@ import {
   Stack,
   AlertMessage,
 } from '@island.is/island-ui/core'
-import {
-  Box,
-  Button,
-  toast,
-  DialogPrompt,
-  LoadingDots,
-} from '@island.is/island-ui/core'
+import { Box, Button, toast, DialogPrompt } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import {
   useGetSinglePetition,
@@ -30,6 +24,7 @@ import {
   EndorsementList,
 } from '../../types/schema'
 import format from 'date-fns/format'
+import Skeleton from './Skeleton'
 
 const isLocalhost = window.location.origin.includes('localhost')
 const isDev = window.location.origin.includes('beta.dev01.devland.is')
@@ -387,13 +382,11 @@ const ViewPetition = () => {
           <PetitionsTable
             petitions={petitionEndorsements}
             listId={location.state?.listId}
-            isSendEmailVisible={viewTypeEdit}
+            isViewTypeEdit={viewTypeEdit}
           />
         </>
       ) : (
-        <Box display="flex" justifyContent="center" marginY={5}>
-          <LoadingDots />
-        </Box>
+        <Skeleton />
       )}
     </Box>
   )

@@ -34,6 +34,7 @@ import {
   paymentPlanIndexKeyMapper,
   PublicDebtPaymentPlan,
 } from '../types'
+import { betaTestSection } from './BetaTestSection'
 
 // Builds a payment plan step that exists of two custom fields:
 // The overview step detailing a list of all payment plans and their status
@@ -70,6 +71,7 @@ export const PaymentPlanForm: Form = buildForm({
   mode: FormModes.APPLYING,
   logo: Logo,
   children: [
+    betaTestSection,
     buildSection({
       id: 'externalData',
       title: section.externalData,
@@ -121,6 +123,7 @@ export const PaymentPlanForm: Form = buildForm({
               id: 'prerequisitesErrorModal',
               component: 'PrerequisitesErrorModal',
               title: '',
+              doesNotRequireAnswer: true,
             }),
           ],
           condition: (_formValue, externalData) => {
@@ -283,6 +286,18 @@ export const PaymentPlanForm: Form = buildForm({
             }),
           ],
         }),
+      ],
+      condition: (_formValue, externalData) => {
+        const debts = (externalData as PaymentPlanExternalData)
+          ?.paymentPlanPrerequisites?.data?.debts
+
+        return debts?.find((x) => x.type === 'Wagedection') !== undefined
+      },
+    }),
+    buildSection({
+      id: 'disposableIncomeSection',
+      title: section.disposableIncome,
+      children: [
         buildCustomField({
           id: 'disposableIncome',
           title: employer.general.disposableIncomePageTitle,
@@ -292,16 +307,20 @@ export const PaymentPlanForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'paymentPlanSection',
-      title: section.paymentPlan,
+      id: 'deptOverview',
+      title: section.deptOverview,
       children: [
         buildCustomField({
           id: `payment-plan-list`,
           title: paymentPlan.general.pageTitle,
           component: 'PaymentPlanList',
         }),
-        ...buildPaymentPlanSteps(),
       ],
+    }),
+    buildSection({
+      id: 'paymentPlanSection',
+      title: section.paymentPlan,
+      children: [...buildPaymentPlanSteps()],
     }),
     buildSection({
       id: 'overview',

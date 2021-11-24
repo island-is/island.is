@@ -20,7 +20,7 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   CaseAppealDecision,
@@ -32,6 +32,7 @@ import {
   isRestrictionCase,
   isInvestigationCase,
   UserRole,
+  isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -42,7 +43,7 @@ import {
   getShortRestrictionByValue,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import AppealSection from './Components/AppealSection/AppealSection'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ValueType } from 'react-select/src/types'
@@ -54,7 +55,7 @@ import {
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import { UploadStateMessage } from './Components/UploadStateMessage'
-import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
+import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 import { core } from '@island.is/judicial-system-web/messages'
 
 interface Props {
@@ -212,7 +213,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           <Box display="flex" flexDirection="column">
             {
               // Custody restrictions
-              workingCase.decision === CaseDecision.ACCEPTING &&
+              isAcceptingCaseDecision(workingCase.decision) &&
                 workingCase.type === CaseType.CUSTODY &&
                 workingCase.custodyRestrictions
                   ?.filter((restriction) =>
@@ -468,7 +469,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           </Box>
           {workingCase.type === CaseType.CUSTODY &&
             workingCase.state === CaseState.ACCEPTED &&
-            workingCase.decision === CaseDecision.ACCEPTING && (
+            isAcceptingCaseDecision(workingCase.decision) && (
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonCustodyNotice)}
