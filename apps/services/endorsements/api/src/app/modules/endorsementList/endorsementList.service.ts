@@ -383,7 +383,8 @@ export class EndorsementListService {
             {
               component: 'Heading',
               context: {
-                copy: `Meðmælendalisti "${endorsementList?.title}"`, small: true
+                copy: `Meðmælendalisti "${endorsementList?.title}"`,
+                small: true,
               },
             },
             { component: 'Copy', context: { copy: 'Sæl/l/t', small: true } },
@@ -392,17 +393,20 @@ export class EndorsementListService {
               context: {
                 copy: `Meðfylgjandi er meðmælendalisti "${endorsementList?.title}", 
                 sem ${ownerName} er skráður ábyrgðarmaður fyrir.`,
-                small: true
+                small: true,
               },
             },
             {
               component: 'Copy',
               context: {
                 copy: `Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018.`,
-                small: true
+                small: true,
               },
             },
-            { component: 'Copy', context: { copy: 'Kær kveðja,', small: true } },
+            {
+              component: 'Copy',
+              context: { copy: 'Kær kveðja,', small: true },
+            },
             { component: 'Copy', context: { copy: 'Ísland.is', small: true } },
           ],
         },
