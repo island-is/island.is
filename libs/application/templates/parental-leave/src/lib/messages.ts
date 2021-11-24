@@ -148,6 +148,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Stéttarfélag (valfrjálst)',
       description: 'Union (optional)',
     },
+    asyncSelectSearchableHint: {
+      id: 'application.system:placeholder.searchable.hint',
+      defaultMessage: 'Skrifaðu hér til að leita',
+      description: 'Let user know they can search by typing',
+    },
     privatePensionFund: {
       id: 'pl.application:payment.information.privatePensionFund',
       defaultMessage: 'Séreignarsjóður',
