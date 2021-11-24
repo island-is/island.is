@@ -3,8 +3,13 @@ import { Box } from '@island.is/island-ui/core'
 import { useAuth } from '@island.is/auth/react'
 import { UserDropdown } from './UserDropdown'
 import { UserButton } from './UserButton'
+import { UserDropdown as ServicePortalUserDropdown } from './ServicePortal/UserDropdownSP'
 
-export const UserMenu = ({ fullScreen = false }: { fullScreen?: boolean }) => {
+export const UserMenu = ({
+  isServicePortal = false,
+}: {
+  isServicePortal?: boolean
+}) => {
   const [dropdownState, setDropdownState] = useState<'closed' | 'open'>(
     'closed',
   )
@@ -22,20 +27,35 @@ export const UserMenu = ({ fullScreen = false }: { fullScreen?: boolean }) => {
     <Box display="flex" position="relative" height="full">
       <UserButton user={user} onClick={handleClick} />
 
-      <UserDropdown
-        user={user}
-        dropdownState={dropdownState}
-        setDropdownState={setDropdownState}
-        onLogout={() => {
-          setDropdownState('closed')
-          signOut()
-        }}
-        onSwitchUser={(nationalId: string) => {
-          setDropdownState('closed')
-          switchUser(nationalId)
-        }}
-        fullScreen={fullScreen}
-      />
+      {isServicePortal ? (
+        <ServicePortalUserDropdown
+          user={user}
+          dropdownState={dropdownState}
+          setDropdownState={setDropdownState}
+          onLogout={() => {
+            setDropdownState('closed')
+            signOut()
+          }}
+          onSwitchUser={(nationalId: string) => {
+            setDropdownState('closed')
+            switchUser(nationalId)
+          }}
+        ></ServicePortalUserDropdown>
+      ) : (
+        <UserDropdown
+          user={user}
+          dropdownState={dropdownState}
+          setDropdownState={setDropdownState}
+          onLogout={() => {
+            setDropdownState('closed')
+            signOut()
+          }}
+          onSwitchUser={(nationalId: string) => {
+            setDropdownState('closed')
+            switchUser(nationalId)
+          }}
+        />
+      )}
     </Box>
   )
 }

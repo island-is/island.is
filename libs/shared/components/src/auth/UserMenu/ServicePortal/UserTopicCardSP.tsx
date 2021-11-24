@@ -6,7 +6,6 @@ import {
   FocusableBox,
   UserAvatar,
 } from '@island.is/island-ui/core'
-import * as styles from './UserMenu.css'
 
 type ColorScheme = 'blue' | 'purple'
 
