@@ -16,13 +16,19 @@ export const Payment: Form = buildForm({
   renderLastScreenButton: false,
   children: [
     buildSection({
+      id: 'externalData',
+      title: m.externalDataSection,
+      children: [],
+    }),
+
+    buildSection({
       id: 'awaitingPayment',
-      title: m.paymentCapital,
+      title: m.payment,
       children: [
         // TODO: ekki tókst að stofna til greiðslu skjár - condition
         buildDescriptionField({
           id: 'infoAwaitingPayment',
-          title: m.paymentCapital,
+          title: m.payment,
           condition: () => {
             return !window.document.location.href.match(/\?done$/)
           },
@@ -48,7 +54,7 @@ export const Payment: Form = buildForm({
             return !!window.document.location.href.match(/\?done$/)
           },
           id: 'overviewAwaitingPayment',
-          title: '',
+          title: m.confirmation,
           space: 1,
           description: '',
           children: [
@@ -60,6 +66,11 @@ export const Payment: Form = buildForm({
           ],
         }),
       ],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: m.confirmation,
+      children: [],
     }),
   ],
 })

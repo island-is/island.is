@@ -40,18 +40,18 @@ export const CriminalRecordForm: Form = buildForm({
           subTitle: m.externalDataSubTitle,
           checkboxLabel: m.externalDataAgreement,
           dataProviders: [
-            buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
-              title: m.nationalRegistryTitle,
-              subTitle: m.nationalRegistrySubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
-              title: m.userProfileInformationTitle,
-              subTitle: m.userProfileInformationSubTitle,
-            }),
+            // buildDataProviderItem({
+            //   id: 'nationalRegistry',
+            //   type: 'NationalRegistryProvider',
+            //   title: m.nationalRegistryTitle,
+            //   subTitle: m.nationalRegistrySubTitle,
+            // }),
+            // buildDataProviderItem({
+            //   id: 'userProfile',
+            //   type: 'UserProfileProvider',
+            //   title: m.userProfileInformationTitle,
+            //   subTitle: m.userProfileInformationSubTitle,
+            // }),
             buildDataProviderItem({
               id: 'payment',
               type: 'FeeInfoProvider',
@@ -89,44 +89,6 @@ export const CriminalRecordForm: Form = buildForm({
                 },
               ],
             }),
-            // buildKeyValueField({
-            //   label: 'Nafn',
-            //   value: ({ externalData: { nationalRegistry } }) =>
-            //     (nationalRegistry.data as NationalRegistryUser).fullName,
-            // }),
-            // buildKeyValueField({
-            //   label: m.overviewPaymentCharge,
-            //   value: ({ externalData }) => {
-            //     const item = externalData.payment.data as {
-            //       priceAmount: number
-            //       chargeItemName: string
-            //     }
-
-            //     return [
-            //       item?.chargeItemName,
-            //       (item?.priceAmount?.toLocaleString('de-DE') +
-            //         ' kr.') as StaticText,
-            //     ]
-            //   },
-            //   width: 'half',
-            // }),
-            // buildKeyValueField({
-            //   label: ' ',
-            //   value: ({ externalData }) => {
-            //     const item = externalData.payment.data as {
-            //       priceAmount: number
-            //       chargeItemCode: string
-            //     }
-
-            //     return (item?.priceAmount?.toLocaleString('de-DE') +
-            //       ' kr.') as StaticText
-            //   },
-            //   width: 'half',
-            // }),
-            // buildDividerField({
-            //   title: '',
-            //   color: 'dark400',
-            // }),
             buildCustomField({
               id: 'payment.over',
               title: '',
@@ -147,7 +109,6 @@ export const CriminalRecordForm: Form = buildForm({
               // @ts-ignore
               id = sendApplicationActionResult.data.id
             }
-
             return {
               ...m.outroMessage,
               values: {

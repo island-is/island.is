@@ -3,7 +3,7 @@ export enum ApiActions {
   //doStuffThatFails = 'doStuffThatFails',
   //completeApplication = 'completeApplication',
   //sendApplication = 'sendApplication',
-  //submitApplication = 'submitApplication',
+  submitApplication = 'submitApplication',
   createCharge = 'createCharge',
   getCriminalRecord = 'getCriminalRecord',
 }
