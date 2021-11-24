@@ -1,5 +1,4 @@
 import { lazy } from 'react'
-import { defineMessage } from 'react-intl'
 import {
   ServicePortalModule,
   ServicePortalRoute,
@@ -7,7 +6,7 @@ import {
   m,
 } from '@island.is/service-portal/core'
 
-export const assetsModule: ServicePortalModule = {
+const assetsModule: ServicePortalModule = {
   name: 'Eignir',
   widgets: () => [],
   routes: () => {
@@ -19,13 +18,17 @@ export const assetsModule: ServicePortalModule = {
           lazy(() => import('./screens/AssetsOverview/AssetsOverview')),
       },
       {
-        name: m.vehicles,
-        path: ServicePortalPath.AssetsVehicles,
+        name: m.detailInfo,
+        path: ServicePortalPath.AssetsRealEstateDetail,
         render: () =>
-          lazy(() => import('./screens/AssetsVehicles/AssetsVehicles')),
+          lazy(() =>
+            import('./screens/RealEstateAssetDetail/RealEstateAssetDetail'),
+          ),
       },
     ]
 
     return routes
   },
 }
+
+export { assetsModule }
