@@ -123,6 +123,7 @@ export const PaymentPlanForm: Form = buildForm({
               id: 'prerequisitesErrorModal',
               component: 'PrerequisitesErrorModal',
               title: '',
+              doesNotRequireAnswer: true,
             }),
           ],
           condition: (_formValue, externalData) => {

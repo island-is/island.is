@@ -113,8 +113,6 @@ export function extractAnswersToSubmitFromScreen(
         data,
         screen.children.map((c) => c.id),
       )
-
-    case FormItemTypes.EXTERNAL_DATA_PROVIDER:
     case FormItemTypes.REPEATER:
       return {}
     default:
