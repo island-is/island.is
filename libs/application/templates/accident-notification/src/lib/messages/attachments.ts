@@ -39,7 +39,8 @@ export const attachments = {
     },
     uploadDescription: {
       id: 'an.application:attachments.uploadDescription',
-      defaultMessage: 'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf',
+      defaultMessage:
+        'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf, .jpg, .jpeg, .png, .heic',
       description: 'Definition of upload description',
     },
     uploadHeader: {
