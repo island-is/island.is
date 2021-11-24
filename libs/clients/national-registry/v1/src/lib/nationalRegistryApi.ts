@@ -23,7 +23,7 @@ export class NationalRegistryApi {
   private readonly clientUser: string
   private readonly clientPassword: string
 
-  static async instanciateClass(config: NationalRegistryConfig) {
+  static async instantiateClass(config: NationalRegistryConfig) {
     return new NationalRegistryApi(
       await SoapClient.generateClient(config.baseSoapUrl, config.host),
       config.password,
