@@ -206,7 +206,7 @@ export const getSpouse = (
     application.externalData,
     'person.data',
     null,
-  ) as PersonInformation
+  ) as PersonInformation | null
 
   if (!person || !person.spouse || !person.spouse.nationalId) {
     return null
