@@ -1,29 +1,17 @@
 import React, { FC, useState } from 'react'
-import {
-  Box,
-  Stack,
-  Hidden,
-  Logo,
-  FocusableBox,
-  Icon,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Logo, FocusableBox, Icon } from '@island.is/island-ui/core'
 import { BetaTag } from '../Logo/BetaTag'
 import * as styles from './Sidebar.css'
 import ModuleNavigation from './ModuleNavigation'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
-import { useLocale } from '@island.is/localization'
-import { ServicePortalPath, m } from '@island.is/service-portal/core'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
-import { sharedMessages } from '@island.is/shared/translations'
-import { useAuth } from '@island.is/auth/react'
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
 import cn from 'classnames'
 
 export const Sidebar: FC<{}> = () => {
-  const { formatMessage } = useLocale()
   const navigation = useNavigation()
-  const { signOut } = useAuth()
   const [{ sidebarState }, dispatch] = useStore()
   const [collapsed, setCollapsed] = useState(sidebarState === 'closed')
 

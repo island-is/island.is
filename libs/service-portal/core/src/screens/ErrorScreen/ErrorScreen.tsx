@@ -25,8 +25,13 @@ export const ErrorScreen: FC<Props> = ({
 }) => {
   return (
     <GridRow>
-      <GridColumn span={['1/1', '10/12']} offset={['0', '1/12']} order={[2, 1]}>
-        <Box marginTop={12} marginBottom={6} textAlign="center">
+      <GridColumn span={['1/1', '10/12']} offset={['0', '0']} order={[2, 1]}>
+        <Box
+          marginTop={12}
+          marginBottom={6}
+          textAlign="center"
+          justifyContent="center"
+        >
           <Box marginBottom={4}>
             <Tag variant={tagVariant}>{tag}</Tag>
           </Box>
@@ -41,7 +46,7 @@ export const ErrorScreen: FC<Props> = ({
       {figure && (
         <GridColumn
           span={['12/12', '4/12']}
-          offset={['0', '4/12']}
+          offset={['0', '3/12']}
           order={[1, 2]}
         >
           <Box marginBottom={[3, 0]}>
