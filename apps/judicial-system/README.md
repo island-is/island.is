@@ -195,6 +195,12 @@ Install <https://github.com/cameronhunter/local-ssl-proxy>:
 
 - `npm install -g local-ssl-proxy`
 
+- change defaultcookie in apps/judicial-system/api/src/app/modules/auth/auth.controller.ts:
+
+  const defaultCookieOptions: CookieOptions = {
+  secure: true,
+  }
+
 - add .env to web project and change PORT to 4202
 - start project
 - `local-ssl-proxy --source 4200 --target 4202`
