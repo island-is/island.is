@@ -158,6 +158,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
+      // Fasteignir
+      {
+        name: m.realEstate,
+        path: ServicePortalPath.AssetsRoot,
+        icon: {
+          type: 'outline',
+          icon: 'home',
+        },
+      },
+
       // Fjarmal
       {
         name: m.finance,
@@ -206,20 +216,9 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
   {
     name: m.actions,
     children: [
-      // Fasteignir
-      {
-        heading: m.comingSoon,
-        name: m.realEstate,
-        path: ServicePortalPath.AssetsRoot,
-        systemRoute: true,
-        icon: {
-          type: 'outline',
-          icon: 'home',
-        },
-      },
-
       // Stillingar
       {
+        heading: m.comingSoon,
         name: m.settings,
         path: ServicePortalPath.SettingsRoot,
         systemRoute: true,

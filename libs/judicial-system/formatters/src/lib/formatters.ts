@@ -7,6 +7,7 @@ import {
   CaseCustodyRestrictions,
   CaseGender,
   CaseType,
+  isRestrictionCase,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -375,7 +376,8 @@ export function formatAppeal(
 }
 
 export function formatRequestCaseType(type: CaseType): string {
-  return type === CaseType.RESTRAINING_ORDER ||
+  return isRestrictionCase(type) ||
+    type === CaseType.RESTRAINING_ORDER ||
     type === CaseType.PSYCHIATRIC_EXAMINATION
     ? caseTypes[type]
     : 'rannsóknarheimild'
