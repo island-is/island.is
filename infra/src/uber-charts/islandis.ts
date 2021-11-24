@@ -26,6 +26,8 @@ import { serviceSetup as partyLetterServiceSetup } from '../../../apps/services/
 import { serviceSetup as temporaryVoterRegistryServiceSetup } from '../../../apps/services/temporary-voter-registry-api/infra/temporary-voter-registry-api'
 import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-actions-cache/infra/github-actions-cache'
 
+import { serviceSetup as notificationSetup } from '../../../apps/services/notifications/infra/notifications'
+
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
 import { serviceSetup as adsWebSetup } from '../../../apps/air-discount-scheme/web/infra/web'
 import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-scheme/backend/infra/backend'
@@ -74,6 +76,8 @@ const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 
 const downloadService = downloadServiceSetup()
 
+const notificationService = notificationSetup()
+
 const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })
 const adsWeb = adsWebSetup({ adsApi })
@@ -95,6 +99,7 @@ export const Services: EnvironmentServices = {
     contentfulTranslationExtension,
     xroadCollector,
     downloadService,
+    notificationService,
     nameRegistryBackend,
     endorsement,
     partyLetterRegistry,
@@ -119,6 +124,7 @@ export const Services: EnvironmentServices = {
     contentfulTranslationExtension,
     xroadCollector,
     downloadService,
+    notificationService,
     nameRegistryBackend,
     endorsement,
     partyLetterRegistry,
@@ -143,6 +149,7 @@ export const Services: EnvironmentServices = {
     storybook,
     contentfulTranslationExtension,
     downloadService,
+    notificationService,
     nameRegistryBackend,
     endorsement,
     partyLetterRegistry,
