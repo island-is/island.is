@@ -31,6 +31,7 @@ interface calculationsState {
   secondPersonalTaxCredit: number
   showSecondPersonalTaxCredit: boolean
   hasError: boolean
+  minusArry: Record<string, { input: string; inputdos: string }>
 }
 
 const AcceptModal = ({
@@ -58,12 +59,6 @@ const AcceptModal = ({
     }
   }, [homeCircumstances, municipality])
 
-  const [amount, setAmount] = useState<number>(
-    aidAmount
-      ? calculateAidFinalAmount(aidAmount, usePersonalTaxCredit, currentYear)
-      : 0,
-  )
-
   const [state, setState] = useState<calculationsState>({
     amount: aidAmount
       ? calculateAidFinalAmount(aidAmount, usePersonalTaxCredit, currentYear)
@@ -73,6 +68,7 @@ const AcceptModal = ({
     tax: 0,
     secondPersonalTaxCredit: 0,
     showSecondPersonalTaxCredit: false,
+    minusArry: {},
     hasError: false,
   })
 
@@ -132,6 +128,15 @@ const AcceptModal = ({
           Bættu við frádráttarlið
         </Button>
       </Box>
+
+      {/* {obj.notmeyt && (
+        {obj.map(
+          <input/>
+          <input/>
+        )}
+      )
+
+      } */}
 
       <Box marginBottom={3}>
         <Input
