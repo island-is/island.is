@@ -16,7 +16,7 @@ import {
   CaseNumbers,
   FormContentContainer,
   TimeInputField,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
@@ -40,7 +40,7 @@ import {
   validateAndSetTime,
   validateAndSendTimeToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
+import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import {
   alternativeTravelBanRestrictions,
   restrictions,
