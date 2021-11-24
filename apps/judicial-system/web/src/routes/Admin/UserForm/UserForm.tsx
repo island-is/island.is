@@ -12,7 +12,7 @@ import { ValueType } from 'react-select/src/types'
 import {
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
 import type { Institution, User } from '@island.is/judicial-system/types'
 import { FormSettings } from '@island.is/judicial-system-web/src/utils/useFormHelper'

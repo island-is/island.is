@@ -35,7 +35,7 @@ export const Header = ({ title = '', hideSearch }: HeaderProps) => {
                 <Column width="content">
                   <Box display="flex" height="full" alignItems="center">
                     <Box height="full">
-                      <Link href="/thjonustuvefur">
+                      <Link href="/">
                         <Hidden above="md">
                           <Logo
                             id="helpdesk-logo-1"

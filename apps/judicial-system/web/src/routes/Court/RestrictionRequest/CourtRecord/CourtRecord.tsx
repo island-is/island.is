@@ -12,7 +12,7 @@ import {
   FormContentContainer,
   DateTime,
   HideableText,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   caseTypes,

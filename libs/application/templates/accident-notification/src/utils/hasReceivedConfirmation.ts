@@ -7,11 +7,13 @@ export const hasReceivedConfirmation = (answers: FormValue) => {
     answers,
     'accidentStatus.receivedConfirmations',
   ) as AccidentNotificationConfirmation
-  if (!accidentConfirmations) return false
-  // assignee reporting for employee
+
+  // if juridical person then the injured or the power of attorney holder has to confirm
   if (isReportingOnBehalfOfEmployee(answers)) {
-    return !!accidentConfirmations.CompanyParty
+    return !!accidentConfirmations.InjuredOrRepresentativeParty
   }
-  // else must be injured or representative party thats assigned to application
-  return !!accidentConfirmations.InjuredOrRepresentativeParty
+
+  // as there isn't an juridical person reporting, this must be someone reporting for the injured
+  // or the injured himself and that requires the companies confirmation
+  return !!accidentConfirmations.CompanyParty
 }
