@@ -14,17 +14,11 @@ import { servicePortalOutboundLink } from '@island.is/plausible'
 
 interface Props {
   nav: ServicePortalNavigationItem
-  variant: 'blue' | 'blueberry'
   alwaysExpanded?: boolean
   onItemClick?: () => void
 }
 
-const ModuleNavigation: FC<Props> = ({
-  nav,
-  variant,
-  alwaysExpanded,
-  onItemClick,
-}) => {
+const ModuleNavigation: FC<Props> = ({ nav, alwaysExpanded, onItemClick }) => {
   const [expand, setExpand] = useState(false)
   // eslint-disable-next-line no-empty-pattern
   const { pathname } = useLocation()
