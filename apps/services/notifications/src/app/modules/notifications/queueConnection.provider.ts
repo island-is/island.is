@@ -6,12 +6,35 @@ import {
   GetQueueAttributesCommand,
 } from '@aws-sdk/client-sqs'
 import { SqsChannel } from '../../../types'
+import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common'
+import { CONFIG_PROVIDER } from '../../../constants'
 
 const minute = 60
 const hour = minute * 60
 const day = hour * 24
 
-export const createQueue = async ({
+@Injectable()
+export class ConnectionQueueProvider implements OnApplicationBootstrap {
+  channel?: SqsChannel
+  constructor(
+    @Inject(CONFIG_PROVIDER)
+    private readonly sqsConfig: any,
+  ) {}
+
+  public getQueue() {
+    if (!this.channel) {
+      throw new Error('calling getQueue on unready queue')
+    }
+  }
+
+  async onApplicationBootstrap() {
+    this.channel = await createQueue(this.sqsConfig)
+
+    throw new Error('should not bootstrap')
+  }
+}
+
+const createQueue = async ({
   mainQueueName,
   deadLetterQueueName,
   sqsConfig,

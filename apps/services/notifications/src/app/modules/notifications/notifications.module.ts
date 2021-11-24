@@ -6,7 +6,7 @@ import { ConsumerService } from './consumer.service'
 import { environment } from '../../../environments/environment'
 import { ProducerService } from './producer.service'
 import { MessageHandlerService } from './messageHandler.service'
-import { createQueue } from './queueConnection.provider'
+import { ConnectionQueueProvider } from './queueConnection.provider'
 
 @Module({
   imports: [LoggingModule],
@@ -18,7 +18,7 @@ import { createQueue } from './queueConnection.provider'
     },
     {
       provide: CONNECTION_PROVIDER,
-      useFactory: async () => await createQueue(environment),
+      useClass: ConnectionQueueProvider,
     },
     ProducerService,
     ConsumerService,
