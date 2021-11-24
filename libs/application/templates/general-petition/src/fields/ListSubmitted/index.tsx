@@ -10,18 +10,7 @@ import School from '../../assets/School'
 const ListSubmited: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const createdList = application.externalData.createEndorsementList.data as any
-
-  const isLocalhost = window.location.origin.includes('localhost')
-  const isDev = window.location.origin.includes('beta.dev01.devland.is')
-  const isStaging = window.location.origin.includes('beta.staging01.devland.is')
-
-  const baseUrlForm = isLocalhost
-    ? 'http://localhost:4200/undirskriftalistar/'
-    : isDev
-    ? 'https://beta.dev01.devland.is/undirskriftalistar/'
-    : isStaging
-    ? 'https://beta.staging01.devland.is/undirskriftalistar/'
-    : 'https://island.is/undirskriftalistar/'
+  const baseUrlForm = `${document.location.origin}/medmaelendalistar/`
 
   return (
     <>
