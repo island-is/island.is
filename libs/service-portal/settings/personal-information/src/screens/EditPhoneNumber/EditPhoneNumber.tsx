@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react'
 import {
   AlertMessage,
   Box,
@@ -10,14 +11,17 @@ import {
 import { Link, Redirect } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { gql, useMutation } from '@apollo/client'
-import { useUserProfile } from '@island.is/service-portal/graphql'
+import {
+  useUserProfile,
+  useCreateIslykillSettings,
+} from '@island.is/service-portal/graphql'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
-import React, { useEffect, useState } from 'react'
-import { SimplePhoneForm } from '../../components/UserOnboardingModal/Islykill/PhoneForm'
+
+import { PhoneForm } from '../../components/Forms/PhoneForm/PhoneForm'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 const UpdateIslykillSettings = gql`
@@ -32,7 +36,7 @@ interface PhoneFormData {
   tel: string
 }
 
-export const EditPhoneNumber: ServicePortalModuleComponent = () => {
+export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
   const [tel, setTel] = useState('')
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
@@ -40,6 +44,7 @@ export const EditPhoneNumber: ServicePortalModuleComponent = () => {
   )
 
   const { data: settings } = useUserProfile()
+  const { createIslykillSettings } = useCreateIslykillSettings()
   const [updateIslykill, { loading, error }] = useMutation(
     UpdateIslykillSettings,
   )
@@ -54,17 +59,23 @@ export const EditPhoneNumber: ServicePortalModuleComponent = () => {
 
     const parsePhoneNumber = parsePhoneNumberFromString(formData.tel, 'IS')
     try {
+      if (settings) {
+        await updateIslykill({
+          variables: {
+            input: {
+              mobile: `+${parsePhoneNumber?.countryCallingCode}-${parsePhoneNumber?.nationalNumber}`,
+              email: settings?.email,
+            },
+          },
+        })
+      } else {
+        await createIslykillSettings({
+          mobile: `+${parsePhoneNumber?.countryCallingCode}-${parsePhoneNumber?.nationalNumber}`,
+        })
+      }
       if (!parsePhoneNumber?.isValid()) {
         throw Error('Not valid phone number')
       }
-      await updateIslykill({
-        variables: {
-          input: {
-            mobile: `+${parsePhoneNumber?.countryCallingCode}-${parsePhoneNumber?.nationalNumber}`,
-            email: settings?.email,
-          },
-        },
-      })
       setStatus('success')
       toast.success(
         formatMessage({
@@ -104,21 +115,18 @@ export const EditPhoneNumber: ServicePortalModuleComponent = () => {
           </GridColumn>
         </GridRow>
       </Box>
-      <SimplePhoneForm
+      <PhoneForm
         tel={phoneNumber?.nationalNumber ? `${phoneNumber.nationalNumber}` : ''}
+        natReg={userInfo.profile.nationalId}
         renderBackButton={() => (
           <Link to={ServicePortalPath.SettingsPersonalInformation}>
             <Button variant="ghost">{formatMessage(m.goBack)}</Button>
           </Link>
         )}
-        renderSubmitButton={() => (
-          <Button type="submit" variant="primary" icon="arrowForward">
-            {formatMessage({
-              id: 'sp.settings:save-changes',
-              defaultMessage: 'Vista breytingar',
-            })}
-          </Button>
-        )}
+        submitButtonText={formatMessage({
+          id: 'sp.settings:save-changes',
+          defaultMessage: 'Vista breytingar',
+        })}
         onSubmit={submitFormData}
       />
       {status !== 'passive' && !loading && (

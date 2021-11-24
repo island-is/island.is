@@ -27,6 +27,11 @@ const devConfig = {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@island.is',
   },
+  islykill: {
+    cert: process.env.ISLYKILL_CERT,
+    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+  },
 }
 
 const prodConfig = {
@@ -59,6 +64,11 @@ const prodConfig = {
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '@island.is',
+  },
+  islykill: {
+    cert: process.env.ISLYKILL_CERT,
+    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
 }
 

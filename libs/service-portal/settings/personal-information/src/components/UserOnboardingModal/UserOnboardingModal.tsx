@@ -18,7 +18,7 @@ import { OnboardingStepper } from './OnboardingStepper'
 import { EmailStep } from './Steps/EmailStep'
 import { FormSubmittedStep } from './Steps/FormSubmittedStep'
 import { LanguageStep } from './Steps/LanguageStep'
-import { PhoneStep } from './Islykill/PhoneStep'
+import { PhoneStep } from './Steps/PhoneStep'
 import { SubmitFormStep } from './Steps/SubmitFormStep'
 import {
   servicePortalCloseOnBoardingModal,
@@ -81,9 +81,9 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
     try {
       await createUserProfile({
         locale,
+        email,
       })
       await createIslykillSettings({
-        email,
         mobile: mobilePhoneNumber,
       })
       gotoStep('form-submitted')

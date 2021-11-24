@@ -4,6 +4,8 @@ export const USER_PRFOLIE_AND_ISLYKILL = gql`
   fragment GetUserProfile on Query {
     getUserProfile {
       locale
+      emailVerified
+      mobilePhoneNumberVerified
     }
   }
 

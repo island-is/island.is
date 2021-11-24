@@ -11,6 +11,7 @@ import { UserProfileService } from '../user-profile/userProfile.service'
 import { SmsVerification } from './smsVerification.model'
 import { CreateUserProfileDto } from '../user-profile/dto/createUserProfileDto'
 import { SmsService } from '@island.is/nova-sms'
+import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
 import { EmailService } from '@island.is/email-service'
 import environment from '../../environments/environment'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
@@ -59,6 +60,7 @@ export class VerificationService {
     private readonly smsService: SmsService,
     @Inject(EmailService)
     private readonly emailService: EmailService,
+    private readonly islyklarApi: IslyklarApi,
   ) {}
 
   async createEmailVerification(
@@ -128,6 +130,43 @@ export class VerificationService {
     await this.userProfileService.update(nationalId, {
       emailVerified: true,
     })
+
+    /*
+      This is a special case for updating islyklar data
+      as we do not have a emailVerified option for islyklar
+      so we need to utilize both services for this.
+    */
+    const islyklarData = (await this.islyklarApi
+      .islyklarGet({
+        ssn: '1309863159',
+      })
+      .catch((e) => {
+        if (e.status === '404') {
+          return e.status
+        }
+      })) as PublicUser | '404'
+
+    try {
+      if (islyklarData === '404') {
+        await this.islyklarApi.islyklarPost({
+          user: {
+            ssn: nationalId,
+            email: verification.email,
+          },
+        })
+      } else {
+        await this.islyklarApi.islyklarPut({
+          user: {
+            ssn: nationalId,
+            email: verification.email,
+            mobile: islyklarData.mobile,
+          },
+        })
+      }
+    } catch (e) {
+      this.logger.error(e)
+    }
+    // Islyklar end
 
     await this.removeEmailVerification(nationalId)
 

@@ -1,6 +1,6 @@
 import { Box, Inline } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-import { defineMessage, MessageDescriptor } from 'react-intl'
+import { MessageDescriptor } from 'react-intl'
 import { m } from '@island.is/service-portal/core'
 import { OnboardingStep } from './UserOnboardingModal'
 import * as styles from './UserOnboardingModal.css'

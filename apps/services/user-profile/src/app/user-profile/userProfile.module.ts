@@ -13,6 +13,7 @@ import { UserProfileInfraController } from './userProfileInfra.controller'
 import { SequelizeConfigService } from '../sequelizeConfig.service'
 import { AuditModule } from '@island.is/nest/audit'
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { IslykillApiModule } from '@island.is/clients/islykill'
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
     ]),
     EmailModule.register(environment.emailOptions),
     SmsModule.register(environment.smsOptions),
+    IslykillApiModule.register(environment.islykill),
   ],
   controllers: [UserProfileController, UserProfileInfraController],
   providers: [UserProfileService, VerificationService, SequelizeConfigService],

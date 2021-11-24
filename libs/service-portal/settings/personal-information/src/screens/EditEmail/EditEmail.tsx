@@ -7,9 +7,13 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { gql, useMutation } from '@apollo/client'
-import { useUserProfile } from '@island.is/service-portal/graphql'
-import { Link, Redirect } from 'react-router-dom'
+import {
+  useUserProfile,
+  useResendEmailVerification,
+  useUpdateUserProfile,
+  useCreateUserProfile,
+} from '@island.is/service-portal/graphql'
+import { Link, Redirect, useHistory } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
@@ -19,14 +23,6 @@ import {
 import React, { useState, useEffect } from 'react'
 import { EmailForm, EmailFormData } from '../../components/Forms/EmailForm'
 
-const UpdateIslykillSettings = gql`
-  mutation updateIslykillSettings($input: UpdateIslykillSettingsInput!) {
-    updateIslykillSettings(input: $input) {
-      nationalId
-    }
-  }
-`
-
 export const EditEmail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.settings')
   const [email, setEmail] = useState('')
@@ -35,30 +31,62 @@ export const EditEmail: ServicePortalModuleComponent = () => {
     'passive',
   )
 
-  const [updateIslykill, { loading, error }] = useMutation(
-    UpdateIslykillSettings,
-  )
   const { formatMessage } = useLocale()
+  const history = useHistory()
+  const { resendEmailVerification } = useResendEmailVerification()
+  const { updateUserProfile } = useUpdateUserProfile()
+  const { createUserProfile } = useCreateUserProfile()
 
   useEffect(() => {
     if (settings?.email) setEmail(settings.email)
   }, [settings])
 
+  const handleResendEmail = async () => {
+    if (settings && settings.email) {
+      try {
+        await resendEmailVerification()
+        toast.info(
+          formatMessage({
+            id: 'sp.settings:email-confirmation-resent',
+            defaultMessage: 'Þú hefur fengið sendan nýjan staðfestingarpóst',
+          }),
+        )
+        history.push(ServicePortalPath.SettingsPersonalInformation)
+      } catch (err) {
+        toast.error(
+          formatMessage({
+            id: 'sp.settings:email-confirmation-resend-error',
+            defaultMessage:
+              'Ekki tókst að senda nýjan staðfestingarpóst, eitthvað fór úrskeiðis',
+          }),
+        )
+      }
+    }
+  }
+
   const submitFormData = async (formData: EmailFormData) => {
     if (status !== 'passive') setStatus('passive')
 
     try {
-      // Update the profile if it exists, otherwise create one
-      await updateIslykill({
-        variables: {
-          input: { email: formData.email, mobile: settings?.mobilePhoneNumber },
-        },
-      })
+      /*
+        The *temporary* email will be from user-profile.
+        Once it's confirmed it will be saved in the islykill service.
+      */
+      if (settings) {
+        await updateUserProfile({
+          email: formData.email,
+        })
+      } else {
+        await createUserProfile({
+          email: formData.email,
+        })
+      }
       setStatus('success')
       toast.success(
         formatMessage({
-          id: 'sp.settings:email-confirmed-saved',
-          defaultMessage: 'Tölvupóstfang vistað',
+          id: 'sp.settings:email-confirmed-sent-success-subtext',
+          defaultMessage:
+            'Vinsamlegast athugaðu netpóstinn þinn, staðfestingarpóstur hefur verið sendur á þig',
         }),
       )
     } catch (err) {
@@ -94,6 +122,7 @@ export const EditEmail: ServicePortalModuleComponent = () => {
       </Box>
       <EmailForm
         email={email}
+        onResendEmail={handleResendEmail}
         renderBackButton={() => (
           <Link to={ServicePortalPath.SettingsPersonalInformation}>
             <Button variant="ghost">{formatMessage(m.goBack)}</Button>
@@ -109,9 +138,9 @@ export const EditEmail: ServicePortalModuleComponent = () => {
         )}
         onSubmit={submitFormData}
       />
-      {status !== 'passive' && !loading && (
+      {status !== 'passive' && (
         <Box marginTop={[5, 7, 15]}>
-          {(status === 'error' || error) && (
+          {status === 'error' && (
             <AlertMessage
               type="error"
               title={formatMessage({
