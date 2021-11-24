@@ -20,7 +20,7 @@ import {
 import {
   Modal,
   PageLayout,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
@@ -30,7 +30,7 @@ import {
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import StepTwoForm from './StepTwoForm'
 
 export const StepTwo: React.FC = () => {
