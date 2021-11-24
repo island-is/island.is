@@ -9,6 +9,7 @@ import {
   Labor,
   NationalRegistry,
   Payment,
+  Properties,
   PaymentSchedule,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
@@ -160,6 +161,7 @@ export const serviceSetup = (services: {
       Finance,
       Education,
       NationalRegistry,
+      Properties,
       PaymentSchedule,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })

@@ -13,6 +13,9 @@ import {
   PaymentScheduleEmployer,
   PaymentScheduleInitialSchedule,
 } from './graphql/models'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { UpdateCurrentEmployerInput } from './graphql/dto/updateCurrentEmployerInput'
+import { UpdateCurrentEmployerResponse } from './graphql/models/updateCurrentEmployer.model'
 
 @Injectable()
 export class PaymentScheduleService {
@@ -22,12 +25,15 @@ export class PaymentScheduleService {
     private logger: Logger,
   ) {}
 
-  async getConditions(nationalId: string): Promise<PaymentScheduleConditions> {
-    const {
-      conditions,
-      error,
-    } = await this.paymentScheduleApi.conditionsnationalIdGET3({
-      nationalId,
+  paymentScheduleApiWithAuth(auth: Auth) {
+    return this.paymentScheduleApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getConditions(user: User): Promise<PaymentScheduleConditions> {
+    const { conditions, error } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).conditionsnationalIdGET3({
+      nationalId: user.nationalId,
     })
 
     if (error) {
@@ -42,21 +48,21 @@ export class PaymentScheduleService {
   }
 
   async getPaymentDistribution(
-    nationalId: string,
+    user: User,
     input: GetScheduleDistributionInput,
   ): Promise<PaymentScheduleDistribution> {
     const {
       paymentDistribution,
       error,
-    } = await this.paymentScheduleApi.paymentDistributionnationalIdscheduleTypeGET5(
-      {
-        nationalId: nationalId,
-        monthAmount: input.monthAmount ?? 0,
-        monthCount: input.monthCount ?? 0,
-        scheduleType: input.scheduleType,
-        totalAmount: input.totalAmount,
-      },
-    )
+    } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).paymentDistributionnationalIdscheduleTypeGET5({
+      nationalId: user.nationalId,
+      monthAmount: input.monthAmount ?? 0,
+      monthCount: input.monthCount ?? 0,
+      scheduleType: input.scheduleType,
+      totalAmount: input.totalAmount,
+    })
 
     if (error) {
       this.logger.error('Error getting payment distribution', error)
@@ -81,20 +87,20 @@ export class PaymentScheduleService {
   }
 
   async getInitalSchedule(
-    nationalId: string,
+    user: User,
     input: GetInitialScheduleInput,
   ): Promise<PaymentScheduleInitialSchedule> {
     const {
       distributionInitialPosition,
       error,
-    } = await this.paymentScheduleApi.distributionInitialPositionnationalIdscheduleTypeGET4(
-      {
-        disposableIncome: input.disposableIncome,
-        nationalId: nationalId,
-        scheduleType: input.type,
-        totalAmount: input.totalAmount,
-      },
-    )
+    } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).distributionInitialPositionnationalIdscheduleTypeGET4({
+      disposableIncome: input.disposableIncome,
+      nationalId: user.nationalId,
+      scheduleType: input.type,
+      totalAmount: input.totalAmount,
+    })
 
     if (error) {
       this.logger.error('Error getting initial schedule', error)
@@ -106,12 +112,11 @@ export class PaymentScheduleService {
     }
   }
 
-  async getDebts(nationalId: string): Promise<PaymentScheduleDebts[]> {
-    const {
-      deptAndSchedules,
-      error,
-    } = await this.paymentScheduleApi.debtsandschedulesnationalIdGET2({
-      nationalId,
+  async getDebts(user: User): Promise<PaymentScheduleDebts[]> {
+    const { deptAndSchedules, error } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).debtsandschedulesnationalIdGET2({
+      nationalId: user.nationalId,
     })
     if (error) {
       this.logger.error('Error getting debts', error)
@@ -128,14 +133,11 @@ export class PaymentScheduleService {
     })
   }
 
-  async getCurrentEmployer(
-    nationalId: string,
-  ): Promise<PaymentScheduleEmployer> {
-    const {
-      wagesDeduction,
-      error,
-    } = await this.paymentScheduleApi.wagesdeductionnationalIdGET1({
-      nationalId,
+  async getCurrentEmployer(user: User): Promise<PaymentScheduleEmployer> {
+    const { wagesDeduction, error } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).wagesdeductionnationalIdGET1({
+      nationalId: user.nationalId,
     })
     if (error) {
       this.logger.error('Error employer information for nationalId', error)
@@ -150,5 +152,22 @@ export class PaymentScheduleService {
       name: wagesDeduction.employerName,
       nationalId: wagesDeduction.employerNationalId,
     }
+  }
+
+  async updateCurrentEmployer(
+    nationalId: string,
+    input: UpdateCurrentEmployerInput,
+  ): Promise<UpdateCurrentEmployerResponse> {
+    try {
+      await this.paymentScheduleApi.wagesdeductionnationalIdPUT1Raw({
+        input: { employer: { employerNationalId: input.employerNationalId } },
+        nationalId: nationalId,
+      })
+    } catch (error) {
+      this.logger.error('Error occurred when updating current employer', error)
+      throw new Error('Error occurred when updating current employer')
+    }
+
+    return { success: true }
   }
 }
