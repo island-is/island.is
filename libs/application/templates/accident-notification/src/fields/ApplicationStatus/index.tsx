@@ -8,10 +8,10 @@ import {
 import { useLocale } from '@island.is/localization'
 import { SubmittedApplicationData } from '../../types'
 import {
-  isHomeActivitiesAccident,
-  isInjuredAndRepresentativeOfCompanyOrInstitute,
   hasReceivedAllDocuments,
   getErrorMessageForMissingDocuments,
+  shouldRequestReview,
+  isInjuredAndRepresentativeOfCompanyOrInstitute,
 } from '../../utils'
 import { inReview } from '../../lib/messages'
 import { StatusStep } from './StatusStep'
@@ -26,6 +26,7 @@ import {
   Steps,
 } from './StatusStep/types'
 import { AccidentNotificationStatus } from '@island.is/api/schema'
+import { AccidentNotificationAnswers } from '../..'
 
 export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
   goToScreen,
@@ -175,7 +176,7 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
     },
   }
 
-  const hasReviewerSubmitted = isAssignee && hasReceivedConfirmation(answers)
+  const hasReviewerSubmitted = hasReceivedConfirmation(answers)
 
   const steps = [
     {
@@ -223,22 +224,24 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
           ? inReview.representative.summaryDone
           : inReview.representative.summary,
       ),
-      hasActionMessage: !hasReviewerSubmitted,
-      action: hasReviewerSubmitted
-        ? undefined
-        : {
-            cta: () => changeScreens('inReviewOverviewScreen'),
-            title: formatMessage(inReview.action.representative.title),
-            description: formatMessage(
-              inReview.action.representative.description,
-            ),
-            actionButtonTitle: formatMessage(
-              inReview.action.representative.actionButtonTitle,
-            ),
-          },
+      hasActionMessage: isAssignee && !hasReviewerSubmitted,
+      action:
+        isAssignee && !hasReviewerSubmitted
+          ? {
+              cta: () => changeScreens('inReviewOverviewScreen'),
+              title: formatMessage(inReview.action.representative.title),
+              description: formatMessage(
+                inReview.action.representative.description,
+              ),
+              actionButtonTitle: formatMessage(
+                inReview.action.representative.actionButtonTitle,
+              ),
+            }
+          : undefined,
       visible: !(
-        isHomeActivitiesAccident(application.answers) ||
-        isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
+        !shouldRequestReview(
+          application.answers as AccidentNotificationAnswers,
+        ) || isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
       ),
     },
     {
@@ -280,6 +283,7 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
             action={step.action}
             tagText={step.tagText}
             tagVariant={step.tagVariant}
+            visible={step.visible}
           />
         ))}
       </Box>

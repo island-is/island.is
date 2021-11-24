@@ -373,3 +373,10 @@ export function formatAppeal(
       return ''
   }
 }
+
+export function formatRequestCaseType(type: CaseType): string {
+  return type === CaseType.RESTRAINING_ORDER ||
+    type === CaseType.PSYCHIATRIC_EXAMINATION
+    ? caseTypes[type]
+    : 'rannsóknarheimild'
+}

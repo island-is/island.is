@@ -8,14 +8,14 @@ import {
   formatDate,
   TIME_FORMAT,
   laws,
-  caseTypes,
+  formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 import type {
   Case,
   CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
-import { requestCourtDate } from '@island.is/judicial-system-web/messages'
+import { requestCourtDate, core } from '@island.is/judicial-system-web/messages'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'
@@ -31,11 +31,9 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
   return (
     <AccordionItem
       id="policeRequestAccordionItem"
-      label={`Krafa ${
-        isRestrictionCase(workingCase.type)
-          ? `um ${caseTypes[workingCase.type]}`
-          : `- ${capitalize(caseTypes[workingCase.type])}`
-      }`}
+      label={formatMessage(core.requestCaseType, {
+        caseType: formatRequestCaseType(workingCase.type),
+      })}
       labelVariant="h3"
     >
       <Box marginBottom={2}>

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { Checkbox, Text } from '@island.is/island-ui/core'
+import { Box, Checkbox, Text } from '@island.is/island-ui/core'
 
 import {
   ContentContainer,
@@ -55,19 +55,21 @@ const InRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
           Úrvinnsla umsóknarinnar hefst þegar öll gögn hafa borist.
         </Text>
 
-        <Checkbox
-          name={'accept'}
-          backgroundColor="blue"
-          label="Ég skil að maki minn þarf líka að skila inn umsókn áður en úrvinnsla hefst"
-          large
-          checked={acceptData}
-          onChange={(event) => {
-            setAcceptData(event.target.checked)
-            setHasError(false)
-          }}
-          hasError={hasError}
-          errorMessage={'Þú þarft að samþykkja'}
-        />
+        <Box marginBottom={[5, 5, 10]}>
+          <Checkbox
+            name={'accept'}
+            backgroundColor="blue"
+            label="Ég skil að maki minn þarf líka að skila inn umsókn áður en úrvinnsla hefst"
+            large
+            checked={acceptData}
+            onChange={(event) => {
+              setAcceptData(event.target.checked)
+              setHasError(false)
+            }}
+            hasError={hasError}
+            errorMessage={'Þú þarft að samþykkja'}
+          />
+        </Box>
       </ContentContainer>
       <Footer
         previousUrl={previousUrl}
