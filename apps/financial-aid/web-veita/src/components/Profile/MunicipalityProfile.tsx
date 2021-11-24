@@ -289,6 +289,17 @@ const MunicipalityProfile = ({
         onStaffCreated={refreshList}
         predefinedRoles={[StaffRole.ADMIN]}
       />
+
+      {/* <NewMunicipalityModal
+        isVisible={isModalVisible}
+        setIsVisible={(visible) => {
+          setIsModalVisible(visible)
+        }}
+        activeMunicipalitiesCodes={municipalities?.map((el) =>
+          parseInt(el.municipalityId),
+        )}
+        onMunicipalityCreated={refreshList}
+      /> */}
     </Box>
   )
 }
