@@ -21,6 +21,7 @@ import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import { CurrentStaff } from '../../decorators'
 import { CreateMunicipalityDto, UpdateMunicipalityDto } from './dto'
+import { CreateStaffDto } from '../staff/dto'
 
 @UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/municipality`)
@@ -43,13 +44,24 @@ export class MunicipalityController {
     return municipality
   }
 
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.SUPERADMIN)
   @Post('')
   @ApiCreatedResponse({
     type: MunicipalityModel,
     description: 'Creates a new municipality',
   })
-  create(@Body() input: CreateMunicipalityDto): Promise<MunicipalityModel> {
-    return this.municipalityService.create(input)
+  create(
+    @Body()
+    input: {
+      municipalityInput: CreateMunicipalityDto
+      adminInput: CreateStaffDto
+    },
+  ): Promise<MunicipalityModel> {
+    return this.municipalityService.create(
+      input.municipalityInput,
+      input.adminInput,
+    )
   }
 
   @UseGuards(StaffGuard)
