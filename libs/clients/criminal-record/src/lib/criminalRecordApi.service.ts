@@ -6,38 +6,25 @@ import { CrimeCertificateApi } from '../../gen/fetch'
 export class CriminalRecordApi {
   constructor(private readonly api: CrimeCertificateApi) {}
 
-  public async getCriminalRecord(): Promise<CriminalRecord> {
-    console.log('---------------- CriminalRecordApi.getCriminalRecord ----------------');
+  public async getCriminalRecord(ssn: string): Promise<CriminalRecord> {
+    console.log('---------------- CriminalRecordApi.getCriminalRecord ' + ssn + ' ----------------');
 
     const blob = await this.api.apiPdfCreatePersonIdGet({ personId: '0101051450' })
-    console.log('---------------- CriminalRecordApi.getCriminalRecord.blob.size: ' + blob.size + '----------------')
-    //console.log('---------------- CriminalRecordApi.getCriminalRecord.blob.text: ' + blob.text() + '----------------')
+    const blobText = await blob.arrayBuffer()
+    const blobTextBase64 = Buffer.from(blobText).toString('base64')
 
     const record: CriminalRecord = {
-      pdfBase64: await this.blobToBase64(blob)
-      //pdfBlob: blob
+      pdfBase64: blobTextBase64
     }
 
     return record
   }
 
-  public async checkCriminalRecord(): Promise<Boolean> {
+  public async checkCriminalRecord(ssn: string): Promise<Boolean> {
     console.log('---------------- CriminalRecordApi.checkCriminalRecord ----------------');
     
-    const record = await this.getCriminalRecord()
-
-    //TODO save criminalRecord in some storage
+    const record = await this.getCriminalRecord(ssn)
 
     return record.pdfBase64.length > 0
-    //return record.pdfBlob.size > 0
-  }
-
-  private async blobToBase64(blob: Blob): Promise<string> {
-    return new Promise((resolve, _) => {
-      //var FileReader = require('filereader');
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(<string>reader.result);
-      reader.readAsDataURL(blob);
-    })
   }
 }

@@ -22,13 +22,14 @@ export class MainResolver {
     private readonly criminalRecordService: CriminalRecordService,
   ) {}
   
+  //Note: not being used
   @Query(() => CriminalRecord)
-  async getCriminalRecord() {
-    return await this.criminalRecordService.getCriminalRecord()
+  async getCriminalRecord(@Args('ssn') ssn: string) {
+    return await this.criminalRecordService.getCriminalRecord(ssn)
   }
 
   @Query(() => Boolean)
-  async checkCriminalRecord() {
-    return await this.criminalRecordService.checkCriminalRecord()
+  async checkCriminalRecord(@Args('ssn') ssn: string) {
+    return await this.criminalRecordService.checkCriminalRecord(ssn)
   }
 }

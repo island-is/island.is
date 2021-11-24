@@ -1,5 +1,6 @@
 import {
   BasicDataProvider,
+  Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
   coreErrorMessages,
@@ -9,14 +10,19 @@ import {
 export class CriminalRecordProvider extends BasicDataProvider {
   type = 'CriminalRecordProvider'
 
-  async provide(): Promise<unknown> {
+  async provide(application: Application): Promise<unknown> {
+    //TODO sækja ssn og senda inn 
+    var ssn = 'TODOssn1'
+
     const query = `
     query CheckCriminalRecord {
         checkCriminalRecord
       }
     `
 
-    return this.useGraphqlGateway(query).then(async (res: Response) => {
+    return this.useGraphqlGateway(query, { 
+        input: { ssn: ssn }
+      }).then(async (res: Response) => {
       const response = await res.json()
 
       if (response.errors) {

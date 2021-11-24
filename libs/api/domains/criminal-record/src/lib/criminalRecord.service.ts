@@ -8,11 +8,11 @@ import {
 export class CriminalRecordService {
   constructor(private readonly criminalRecordApi: CriminalRecordApi) {}
 
-  async getCriminalRecord(): Promise<CriminalRecord> {
-    return await this.criminalRecordApi.getCriminalRecord()
+  async getCriminalRecord(ssn: string): Promise<CriminalRecord> {
+    return await this.criminalRecordApi.getCriminalRecord(ssn)
   }
 
-  async checkCriminalRecord(): Promise<Boolean> {
-    return await this.criminalRecordApi.checkCriminalRecord()
+  async checkCriminalRecord(ssn: string): Promise<Boolean> {
+    return await this.criminalRecordApi.checkCriminalRecord(ssn)
   }
 }

@@ -28,6 +28,7 @@ export class CriminalRecordSubmissionService {
   }
 
   async getCriminalRecord({ application }: TemplateApiModuleActionProps): Promise<CriminalRecord> {
-    return this.criminalRecordService.getCriminalRecord()
+    var ssn = 'TODOssn2'
+    return this.criminalRecordService.getCriminalRecord(ssn)
   }
 }
