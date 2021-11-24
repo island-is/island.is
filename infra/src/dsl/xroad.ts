@@ -155,6 +155,12 @@ export const Finance = new XroadConf({
   },
 })
 
+export const Properties = new XroadConf({
+  env: {
+    XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1',
+  },
+})
+
 export const Education = new XroadConf({
   env: {
     XROAD_MMS_LICENSE_SERVICE_ID: {
