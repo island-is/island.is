@@ -12,9 +12,8 @@ import {
 } from '@island.is/island-ui/core'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
-import * as styles from '@island.is/financial-aid-web/veita/src/components/Profile/Profile.css'
-import { InputType } from '@island.is/financial-aid-web/veita/src/components/Profile/EmployeeProfile'
-import { isEmailValid } from '@island.is/financial-aid/shared/lib'
+import * as profileStyles from '@island.is/financial-aid-web/veita/src/components/Profile/Profile.css'
+import { InputType, isEmailValid } from '@island.is/financial-aid/shared/lib'
 
 interface mySettingsState {
   nationalId?: string
@@ -45,7 +44,7 @@ export const MySettings = () => {
       value: state.name,
       bgIsBlue: true,
       type: 'text' as InputType,
-      onchange: (
+      onChange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => {
         if (event.currentTarget.value.length <= 10) {
@@ -62,7 +61,7 @@ export const MySettings = () => {
       label: 'Kennitala',
       value: state.nationalId,
       type: 'number' as InputType,
-      onchange: (
+      onChange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => {
         if (event.currentTarget.value.length <= 10) {
@@ -80,7 +79,7 @@ export const MySettings = () => {
       value: state.email,
       bgIsBlue: true,
       type: 'email' as InputType,
-      onchange: (
+      onChange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => {
         setState({ ...state, email: event.target.value, hasError: false })
@@ -92,7 +91,7 @@ export const MySettings = () => {
       value: state.nickname,
       bgIsBlue: true,
       type: 'text' as InputType,
-      onchange: (
+      onChange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => {
         setState({
@@ -115,8 +114,8 @@ export const MySettings = () => {
         </Text>
       </Box>
 
-      <Box className={`${styles.applicantWrapper}`}>
-        <Box className={`${styles.widthAlmostFull}`}>
+      <Box className={`${profileStyles.applicantWrapper}`}>
+        <Box className={`${profileStyles.widthAlmostFull}`}>
           {inputSettings.map((item, index) => {
             return (
               <Box
@@ -130,7 +129,7 @@ export const MySettings = () => {
                   name={`userInput-${index}`}
                   type={item.type}
                   value={item.value}
-                  onChange={item.onchange}
+                  onChange={item.onChange}
                   backgroundColor={item.bgIsBlue ? 'blue' : 'white'}
                   hasError={state.hasError && item.error}
                 />

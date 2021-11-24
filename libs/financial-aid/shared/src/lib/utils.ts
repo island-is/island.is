@@ -33,6 +33,13 @@ export const formatNationalId = (nationalId: string) =>
 export const sanitizeNationalId = (nationalId: string) =>
   nationalId.replace(/[^0-9]/g, '')
 
+export const isNationalIdValid = (nationalId: string): boolean => {
+  return (
+    sanitizeNationalId(nationalId).length === 10 &&
+    isNaN(Number(sanitizeNationalId(nationalId))) === false
+  )
+}
+
 export const isEmailValid = (emailAddress?: string) => {
   if (emailAddress) {
     const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i

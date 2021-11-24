@@ -80,15 +80,20 @@ export class ApplicationService {
     }
   }
 
-  async findByNationalId(nationalId: string): Promise<ApplicationModel[]> {
+  async findByNationalId(
+    nationalId: string,
+    municipalityCode: string,
+  ): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
       where: {
         [Op.or]: [
           {
             nationalId,
+            municipalityCode,
           },
           {
             spouseNationalId: nationalId,
+            municipalityCode,
           },
         ],
       },

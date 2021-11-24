@@ -1,13 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
 import {
-  ApplicationOverviewSkeleton,
-  LoadingContainer,
   TableHeaders,
   SearchSkeleton,
   TableBody,
   TextTableItem,
-  Name,
+  PseudoName,
   State,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { Text, Box } from '@island.is/island-ui/core'
@@ -15,14 +13,15 @@ import { Text, Box } from '@island.is/island-ui/core'
 import * as tableStyles from '../../sharedStyles/Table.css'
 import * as styles from './search.css'
 import cn from 'classnames'
-import { SearchApplicationQuery } from '@island.is/financial-aid-web/veita/graphql'
+import { ApplicationSearchQuery } from '@island.is/financial-aid-web/veita/graphql'
 import { useLazyQuery } from '@apollo/client'
 import {
   getMonth,
   Routes,
   Application,
+  sanitizeNationalId,
+  isNationalIdValid,
 } from '@island.is/financial-aid/shared/lib'
-import router from 'next/router'
 import { useRouter } from 'next/router'
 
 export const Search = () => {
@@ -33,27 +32,18 @@ export const Search = () => {
   )
 
   useEffect(() => {
-    if (sanitize(searchNationalId).length === 10) {
+    if (sanitizeNationalId(searchNationalId).length === 10) {
       getApplications({
         variables: {
-          input: { nationalId: sanitize(searchNationalId) },
+          input: { nationalId: sanitizeNationalId(searchNationalId) },
         },
       })
     }
   }, [])
 
-  const sanitize = (n: string) => n.replace(/[^0-9]/g, '')
-
-  const isValid = (nationalId: string): boolean => {
-    return (
-      sanitize(nationalId).length === 10 &&
-      isNaN(Number(sanitize(nationalId))) === false
-    )
-  }
-
   const [getApplications, { data, error, loading }] = useLazyQuery<{
-    applicationsResults: Application[]
-  }>(SearchApplicationQuery, {
+    applicationSearch: Application[]
+  }>(ApplicationSearchQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
@@ -61,32 +51,29 @@ export const Search = () => {
   const applicationRes = useMemo(() => {
     router.push({
       query: {
-        search: sanitize(searchNationalId),
+        search: sanitizeNationalId(searchNationalId),
       },
     })
-    if (data && sanitize(searchNationalId).length === 10) {
-      return data.applicationsResults
+    if (data && sanitizeNationalId(searchNationalId).length === 10) {
+      return data.applicationSearch
     }
     return []
   }, [data, searchNationalId])
 
   return (
-    <LoadingContainer
-      isLoading={false}
-      loader={<ApplicationOverviewSkeleton />}
-    >
+    <>
       <Box marginTop={15} marginBottom={1} className={`contentUp`}>
         <input
           placeholder="Sláðu inn kennitölu"
           value={searchNationalId}
           onChange={(e) => {
             if (
-              sanitize(e.target.value).length === 10 &&
-              isValid(e.target.value)
+              sanitizeNationalId(e.target.value).length === 10 &&
+              isNationalIdValid(e.target.value)
             ) {
               getApplications({
                 variables: {
-                  input: { nationalId: sanitize(e.target.value) },
+                  input: { nationalId: sanitizeNationalId(e.target.value) },
                 },
               })
             }
@@ -125,7 +112,7 @@ export const Search = () => {
                 applicationRes.map((item: Application, index) => (
                   <TableBody
                     items={[
-                      Name(item.nationalId),
+                      PseudoName(item.nationalId),
                       State(item.state),
                       TextTableItem(
                         'default',
@@ -155,14 +142,14 @@ export const Search = () => {
               </Text>
             </Box>
           )}
-          {data?.applicationsResults.length === 0 && (
+          {data?.applicationSearch.length === 0 && (
             <Box className={`contentUp`}>
               <Text>Enginn fundinn með þessari kennitölu</Text>
             </Box>
           )}
         </div>
       </div>
-    </LoadingContainer>
+    </>
   )
 }
 

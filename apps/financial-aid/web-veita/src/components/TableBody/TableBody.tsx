@@ -59,7 +59,7 @@ const ActivationButtonTableItem = (
   )
 }
 
-const Name = (nationalId: string) => {
+const PseudoName = (nationalId: string) => {
   return (
     <Box display="flex" alignItems="center">
       <GeneratedProfile size={32} nationalId={nationalId} />
@@ -127,4 +127,10 @@ const TableBody = ({
   )
 }
 
-export { TableBody, TextTableItem, ActivationButtonTableItem, Name, State }
+export {
+  TableBody,
+  TextTableItem,
+  ActivationButtonTableItem,
+  PseudoName,
+  State,
+}

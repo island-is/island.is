@@ -60,9 +60,9 @@ export const ApplicationQuery = gql`
   }
 `
 
-export const SearchApplicationQuery = gql`
-  query SearchApplicationQuery($input: SearchApplicationInput!) {
-    applicationsResults(input: $input) {
+export const ApplicationSearchQuery = gql`
+  query ApplicationSearchQuery($input: SearchApplicationInput!) {
+    applicationSearch(input: $input) {
       id
       nationalId
       created

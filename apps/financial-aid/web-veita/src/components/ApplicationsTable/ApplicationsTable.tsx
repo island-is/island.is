@@ -10,24 +10,21 @@ import {
   TableBody,
   LoadingContainer,
   TableSkeleton,
-  GeneratedProfile,
-  GenerateName,
   TextTableItem,
-  Name,
+  PseudoName,
   State,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   Application,
   ApplicationState,
   getMonth,
-  getState,
   getStateUrlFromRoute,
   Routes,
   TableHeadersProps,
 } from '@island.is/financial-aid/shared/lib'
 
 import { useAllApplications } from '@island.is/financial-aid-web/veita/src/utils/useAllApplications'
-import { calcDifferenceInDate, getTagByState } from '../../utils/formHelper'
+import { calcDifferenceInDate } from '../../utils/formHelper'
 
 interface PageProps {
   applications: Application[]
@@ -122,7 +119,7 @@ const ApplicationsTable = ({
                 {applications.map((item: Application, index) => (
                   <TableBody
                     items={[
-                      Name(item.nationalId),
+                      PseudoName(item.nationalId),
                       State(item.state),
                       TextTableItem(
                         'default',

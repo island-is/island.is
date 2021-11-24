@@ -14,6 +14,7 @@ import * as styles from './Profile.css'
 
 import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
 import {
+  InputType,
   isEmailValid,
   Staff,
   StaffRole,
@@ -34,8 +35,6 @@ interface EmployeeProfileInfo {
   hasError: boolean
   roles: StaffRole[]
 }
-
-export type InputType = 'text' | 'number' | 'email' | 'tel'
 
 const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
   const [state, setState] = useState<EmployeeProfileInfo>({
