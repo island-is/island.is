@@ -1,15 +1,27 @@
 import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { GridColumn, GridRow, Text, Box } from '@island.is/island-ui/core'
+import {
+  GridColumn,
+  GridRow,
+  Text,
+  Box,
+  Hidden,
+} from '@island.is/island-ui/core'
 
 interface Props {
   title: MessageDescriptor | string
   intro?: MessageDescriptor
   img?: string
+  hideImgPrint?: boolean
 }
 
-export const IntroHeader = ({ title, intro, img }: Props) => {
+export const IntroHeader = ({
+  title,
+  intro,
+  img,
+  hideImgPrint = false,
+}: Props) => {
   const { formatMessage } = useLocale()
   return (
     <GridRow marginBottom={7}>
@@ -25,9 +37,11 @@ export const IntroHeader = ({ title, intro, img }: Props) => {
           offset={['0', '0', '1/8']}
           order={[1, 2]}
         >
-          <Box textAlign={['center', 'right']} padding={[6, 0]}>
-            <img src={img} alt="" />
-          </Box>
+          <Hidden print={hideImgPrint}>
+            <Box textAlign={['center', 'right']} padding={[6, 0]}>
+              <img src={img} alt="" />
+            </Box>
+          </Hidden>
         </GridColumn>
       )}
     </GridRow>
