@@ -152,8 +152,8 @@ const FormExternalDataProvider: FC<{
 
   const activateBeforeSubmitCallback = (checked: boolean) => {
     if (checked) {
-      setSuppressProviderErrors(false)
       setBeforeSubmitCallback(async () => {
+        setSuppressProviderErrors(false)
         const response = await updateExternalData({
           variables: {
             input: {
@@ -209,7 +209,7 @@ const FormExternalDataProvider: FC<{
           <ProviderItem
             provider={provider}
             key={provider.id}
-            suppressProviderErrors={suppressProviderErrors}
+            suppressProviderError={suppressProviderErrors}
             dataProviderResult={externalData[provider.id]}
           />
         ))}
