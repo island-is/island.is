@@ -18,6 +18,8 @@ import {
   UpdateStaff,
   UpdateMunicipalityActivity,
   Staff,
+  CreateStaff,
+  CreateMunicipality,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -59,9 +61,13 @@ class BackendAPI extends RESTDataSource {
   }
 
   createMunicipality(
-    createMunicipality: CreateMunicipalityInput,
+    createMunicipality: CreateMunicipality,
+    createAdmin: CreateStaff,
   ): Promise<Municipality> {
-    return this.post('municipality', createMunicipality)
+    return this.post('municipality', {
+      municipalityInput: createMunicipality,
+      adminInput: createAdmin,
+    })
   }
 
   updateMunicipality(

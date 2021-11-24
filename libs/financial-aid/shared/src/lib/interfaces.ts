@@ -301,3 +301,9 @@ export interface CreateStaff {
   nationalId: string
   roles: StaffRole[]
 }
+
+export interface CreateStaffMuncipality {
+  id: string
+  name: string
+  homepage?: string
+}

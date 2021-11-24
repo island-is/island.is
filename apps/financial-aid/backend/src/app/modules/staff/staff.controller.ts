@@ -110,7 +110,11 @@ export class StaffController {
     @CurrentStaff() staff: Staff,
     @Body() createStaffInput: CreateStaffDto,
   ): Promise<StaffModel> {
-    return await this.staffService.createStaff(staff, createStaffInput)
+    return await this.staffService.createStaff(createStaffInput, {
+      id: staff.municipalityId,
+      name: staff.municipalityName,
+      homepage: staff.municipalityHomepage,
+    })
   }
 
   @UseGuards(StaffGuard)
