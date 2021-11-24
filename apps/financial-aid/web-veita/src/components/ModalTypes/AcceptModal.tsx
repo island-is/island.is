@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 
 import {
   InputModal,
@@ -6,6 +6,7 @@ import {
 } from '@island.is/financial-aid-web/veita/src/components'
 import cn from 'classnames'
 import { Text } from '@island.is/island-ui/core'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
@@ -21,6 +22,8 @@ const AcceptModal = ({
   const maximumInputLength = 6
   const [amount, setAmount] = useState<number>(0)
   const [hasError, setHasError] = useState(false)
+
+  const { municipality } = useContext(AdminContext)
 
   return (
     <InputModal
@@ -39,6 +42,7 @@ const AcceptModal = ({
       errorMessage="Þú þarft að setja inn upphæð"
     >
       <NumberInput
+        label="Grunnupphæð"
         placeholder="Skrifaðu upphæð útborgunar"
         id="amountInput"
         name="amountInput"
