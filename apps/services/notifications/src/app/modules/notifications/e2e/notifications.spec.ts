@@ -2,16 +2,29 @@ import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { NotificationsController } from '../notifications.controller'
-import { CONFIG_PROVIDER, CONNECTION_PROVIDER } from '../../../../constants'
+import { CONFIG_PROVIDER } from '../../../../constants'
 import { ProducerService } from '../producer.service'
 import { ConsumerService } from '../consumer.service'
 import { Message, MessageTypes } from '../dto/createNotification.dto'
-import { createQueue } from '../queueConnection.provider'
 import { MessageHandlerService } from '../messageHandler.service'
 import { LoggingModule } from '@island.is/logging'
 import { PurgeQueueCommand } from '@aws-sdk/client-sqs'
+import { QueueConnectionProvider } from '../queueConnection.provider'
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+const environment = {
+  mainQueueName: 'test-main',
+  deadLetterQueueName: 'test-failure',
+  sqsConfig: {
+    endpoint: 'http://localhost:4566',
+    region: 'eu-west-1',
+    credentials: {
+      accessKeyId: 'testing',
+      secretAccessKey: 'testing',
+    },
+  },
+}
 
 class MessageHandlerMock {
   public received: Message[] = []
@@ -30,27 +43,6 @@ class MessageHandlerMock {
   }
 }
 
-const createClient = async () => {
-  const conn = await createQueue({
-    mainQueueName: 'test-main',
-    deadLetterQueueName: 'test-failure',
-    sqsConfig: {
-      endpoint: 'http://localhost:4566',
-      region: 'eu-west-1',
-      credentials: {
-        accessKeyId: 'testing',
-        secretAccessKey: 'testing',
-      },
-    },
-  })
-  await conn.client.send(
-    new PurgeQueueCommand({
-      QueueUrl: conn.queueUrl,
-    }),
-  )
-  return conn
-}
-
 let app: INestApplication
 
 beforeEach(async () => {
@@ -60,12 +52,9 @@ beforeEach(async () => {
     providers: [
       {
         provide: CONFIG_PROVIDER,
-        useValue: {},
+        useValue: environment,
       },
-      {
-        provide: CONNECTION_PROVIDER,
-        useFactory: createClient,
-      },
+      QueueConnectionProvider,
       ProducerService,
       ConsumerService,
       MessageHandlerService,
@@ -76,6 +65,12 @@ beforeEach(async () => {
     .compile()
 
   app = await module.createNestApplication().init()
+  const queue = app.get(QueueConnectionProvider)
+  await queue.client.send(
+    new PurgeQueueCommand({
+      QueueUrl: queue.queueUrl,
+    }),
+  )
   app.get(ConsumerService).run()
 })
 

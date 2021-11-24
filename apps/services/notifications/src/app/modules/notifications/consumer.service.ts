@@ -6,9 +6,8 @@ import {
 } from '@aws-sdk/client-sqs'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { CONNECTION_PROVIDER } from '../../../constants'
-import { SqsChannel } from '../../../types'
 import { MessageHandlerService } from './messageHandler.service'
+import { QueueConnectionProvider } from './queueConnection.provider'
 
 @Injectable()
 export class ConsumerService implements OnModuleDestroy {
@@ -17,8 +16,8 @@ export class ConsumerService implements OnModuleDestroy {
 
   constructor(
     private readonly messageHandler: MessageHandlerService,
-    @Inject(CONNECTION_PROVIDER)
-    private readonly queue: SqsChannel,
+    @Inject(QueueConnectionProvider)
+    private readonly queue: QueueConnectionProvider,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}

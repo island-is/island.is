@@ -3,14 +3,13 @@ import { SendMessageCommand } from '@aws-sdk/client-sqs'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Message } from './dto/createNotification.dto'
-import { CONNECTION_PROVIDER } from '../../../constants'
-import { SqsChannel } from '../../../types'
+import { QueueConnectionProvider } from './queueConnection.provider'
 
 @Injectable()
 export class ProducerService {
   constructor(
-    @Inject(CONNECTION_PROVIDER)
-    private readonly queue: SqsChannel,
+    @Inject(QueueConnectionProvider)
+    private readonly queue: QueueConnectionProvider,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
