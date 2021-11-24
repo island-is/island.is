@@ -1,7 +1,6 @@
 module.exports = {
   displayName: 'icelandic-names-registry-backend',
   preset: '../../../jest.preset.js',
-  setupFiles: ['./test/environment.jest.ts'],
   setupFilesAfterEnv: ['./test/setup.ts'],
   globals: {
     'ts-jest': {

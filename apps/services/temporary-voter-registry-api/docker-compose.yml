@@ -1,9 +1,9 @@
 version: '3.3'
 
 services:
-  db_user_profile:
+  temporary_voter_registry:
     image: public.ecr.aws/bitnami/postgresql:11.12.0
-    container_name: db_user_profile
+    container_name: temporary_voter_registry
     networks:
       - local
     environment:
@@ -16,6 +16,8 @@ services:
       - DEV_DB_NAME=dev_db
     volumes:
       - ./bin/startup.sql:/docker-entrypoint-initdb.d/startup.sql
+    ports:
+      - 5432:5432
 
 networks:
   local:

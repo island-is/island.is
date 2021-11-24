@@ -209,7 +209,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/air-discount-scheme/backend"
           }
         },
@@ -1761,7 +1761,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/application-system/api"
           }
         },
@@ -4340,7 +4340,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/financial-aid/backend"
           }
         },
@@ -4774,7 +4774,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/gjafakort/application"
           }
         },
@@ -5119,7 +5119,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/icelandic-names-registry/backend"
           }
         },
@@ -5732,7 +5732,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/judicial-system/backend"
           }
         },
@@ -7681,7 +7681,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/services/auth-api"
           }
         },
@@ -7841,7 +7841,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/services/documents"
           }
         },
@@ -7936,7 +7936,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
+            "command": "docker-compose up -d --build",
             "cwd": "apps/services/endorsements/api"
           }
         },
@@ -8154,7 +8154,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
+            "command": "docker-compose up -d --build",
             "cwd": "apps/services/party-letter-registry-api"
           }
         },
@@ -8357,7 +8357,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
+            "command": "docker-compose up -d --build",
             "cwd": "apps/services/temporary-voter-registry-api"
           }
         },
@@ -8472,7 +8472,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/services/user-profile"
           }
         },
