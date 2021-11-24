@@ -61,7 +61,7 @@ export const ApplicationQuery = gql`
 `
 
 export const ApplicationSearchQuery = gql`
-  query ApplicationSearchQuery($input: SearchApplicationInput!) {
+  query ApplicationSearchQuery($input: ApplicationSearchInput!) {
     applicationSearch(input: $input) {
       id
       nationalId

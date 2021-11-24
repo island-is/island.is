@@ -19,8 +19,8 @@ import {
   getMonth,
   Routes,
   Application,
-  sanitizeNationalId,
   isNationalIdValid,
+  sanitizeNationalId,
 } from '@island.is/financial-aid/shared/lib'
 import { useRouter } from 'next/router'
 
@@ -30,9 +30,11 @@ export const Search = () => {
   const [searchNationalId, setSearchNationalId] = useState<string>(
     router?.query?.search as string,
   )
-
   useEffect(() => {
-    if (sanitizeNationalId(searchNationalId).length === 10) {
+    if (
+      searchNationalId &&
+      sanitizeNationalId(searchNationalId).length === 10
+    ) {
       getApplications({
         variables: {
           input: { nationalId: sanitizeNationalId(searchNationalId) },

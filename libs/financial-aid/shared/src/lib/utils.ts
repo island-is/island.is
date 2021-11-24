@@ -31,7 +31,7 @@ export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
 
 export const sanitizeNationalId = (nationalId: string) =>
-  nationalId.replace(/[^0-9]/g, '')
+  nationalId?.replace(/[^0-9]/g, '')
 
 export const isNationalIdValid = (nationalId: string): boolean => {
   return (
