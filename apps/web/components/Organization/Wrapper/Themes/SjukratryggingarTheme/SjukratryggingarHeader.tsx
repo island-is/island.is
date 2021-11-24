@@ -9,7 +9,7 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './SjukratryggingarHeader.treat'
+import * as styles from './SjukratryggingarHeader.css'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 

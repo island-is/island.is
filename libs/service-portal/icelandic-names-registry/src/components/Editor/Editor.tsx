@@ -36,7 +36,7 @@ import {
 import { GET_ICELANDIC_NAME_BY_SEARCH } from '../../queries'
 import { IcelandicNameType } from '../../types'
 
-import * as styles from './Editor.treat'
+import * as styles from './Editor.css'
 
 const Editor = () => {
   const { formatMessage } = useLocale()

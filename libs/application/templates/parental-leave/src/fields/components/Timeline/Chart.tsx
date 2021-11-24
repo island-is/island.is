@@ -13,7 +13,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
 import { useDrag } from '../utils'
-import * as styles from './Chart.treat'
+import * as styles from './Chart.css'
 import { TimelinePeriod } from './Timeline'
 
 const ChartMonths: FC<{

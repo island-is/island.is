@@ -5,6 +5,7 @@ export enum UserRole {
   REGISTRAR = 'REGISTRAR',
   JUDGE = 'JUDGE',
   ADMIN = 'ADMIN',
+  STAFF = 'STAFF',
 }
 
 export interface User {
@@ -41,3 +42,5 @@ export interface UpdateUser {
   institutionId?: string
   active?: boolean
 }
+
+export const courtRoles = [UserRole.JUDGE, UserRole.REGISTRAR]

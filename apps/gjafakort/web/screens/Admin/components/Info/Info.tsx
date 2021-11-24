@@ -13,7 +13,7 @@ import {
   Typography,
 } from '@island.is/island-ui/core'
 
-import * as styles from './Info.treat'
+import * as styles from './Info.css'
 
 interface PropTypes {
   application: CompanyApplication

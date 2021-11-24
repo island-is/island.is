@@ -1,25 +1,25 @@
 import {
+  buildCustomField,
   buildForm,
   buildSection,
   Form,
   FormModes,
-  buildDescriptionField,
 } from '@island.is/application/core'
-import { section, application } from '../lib/messages'
+import { application, conclusion, section } from '../lib/messages'
 
 export const PaymentPlanSubmittedForm: Form = buildForm({
   id: 'PaymentPlanSubmittedForm',
   title: application.name,
-  mode: FormModes.APPROVED,
+  mode: FormModes.PENDING,
   children: [
     buildSection({
       id: 'stepOne',
       title: section.confirmation,
       children: [
-        buildDescriptionField({
-          id: 'confirmationCustomField',
-          title: application.name,
-          description: 'In Review',
+        buildCustomField({
+          id: 'conclusion',
+          title: conclusion.general.title,
+          component: 'FormConclusion',
         }),
       ],
     }),

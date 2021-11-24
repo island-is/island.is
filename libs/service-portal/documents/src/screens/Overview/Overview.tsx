@@ -36,7 +36,7 @@ import { useLocation } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import AnimateHeight from 'react-animate-height'
 import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
-import * as styles from './Overview.treat'
+import * as styles from './Overview.css'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import getOrganizationLogoUrl from '../../utils/getOrganizationLogoUrl'
 

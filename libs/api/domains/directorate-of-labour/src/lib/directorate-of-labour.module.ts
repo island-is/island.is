@@ -13,7 +13,7 @@ import { DirectorateOfLabourService } from './directorate-of-labour.service'
 const XROAD_BASE_PATH_WITH_ENV = process.env.XROAD_BASE_PATH_WITH_ENV ?? ''
 const XROAD_VMST_MEMBER_CODE = process.env.XROAD_VMST_MEMBER_CODE ?? ''
 const XROAD_VMST_API_PATH = process.env.XROAD_VMST_API_PATH ?? ''
-const VMST_API_KEY = process.env.VMST_API_KEY ?? ''
+const XROAD_VMST_API_KEY = process.env.XROAD_VMST_API_KEY ?? ''
 const XROAD_CLIENT_ID = process.env.XROAD_CLIENT_ID ?? ''
 const XROAD_VMST_MEMBER_CLASS = XRoadMemberClass.GovernmentInstitution
 
@@ -36,7 +36,7 @@ export class DirectorateOfLabourModule {
             XROAD_VMST_API_PATH,
           ),
           xRoadClient: XROAD_CLIENT_ID,
-          apiKey: VMST_API_KEY,
+          apiKey: XROAD_VMST_API_KEY,
         }),
       ],
       exports: [],

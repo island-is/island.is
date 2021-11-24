@@ -3,7 +3,6 @@ import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
 import {
-  AlertMessage,
   Box,
   Input,
   Select,
@@ -17,11 +16,16 @@ import {
   CaseNumbers,
   BlueBox,
   FormContentContainer,
-} from '@island.is/judicial-system-web/src/shared-components'
-import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
+  Modal,
+} from '@island.is/judicial-system-web/src/components'
+import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseType,
+  NotificationType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
@@ -41,25 +45,29 @@ import {
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { ValueType } from 'react-select/src/types'
 import { useRouter } from 'next/router'
-import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
+import DateTime from '@island.is/judicial-system-web/src/components/DateTime/DateTime'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { rcHearingArrangements } from '@island.is/judicial-system-web/messages'
+import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 
 export const HearingArrangements: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [courtroomErrorMessage, setCourtroomErrorMessage] = useState('')
+  const [modalVisible, setModalVisible] = useState(false)
   const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState('')
   const [
     defenderPhoneNumberErrorMessage,
     setDefenderPhoneNumberErrorMessage,
   ] = useState('')
-  const [courtDateIsValid, setCourtDateIsValid] = useState(true)
+  const [, setCourtDateIsValid] = useState(true)
 
   const router = useRouter()
   const id = router.query.id
 
-  const { updateCase, autofill } = useCase()
+  const {
+    updateCase,
+    autofill,
+    sendNotification,
+    isSendingNotification,
+  } = useCase()
   const { formatMessage } = useIntl()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -119,31 +127,6 @@ export const HearingArrangements: React.FC = () => {
     }
   }, [setWorkingCase, workingCase, autofill, data])
 
-  useEffect(() => {
-    const requiredFields: { value: string; validations: Validation[] }[] = [
-      {
-        value: workingCase?.courtRoom ?? '',
-        validations: ['empty'],
-      },
-      {
-        value: workingCase?.defenderEmail ?? '',
-        validations: ['email-format'],
-      },
-      {
-        value: workingCase?.defenderPhoneNumber ?? '',
-        validations: ['phonenumber'],
-      },
-    ]
-
-    if (workingCase) {
-      setIsStepIllegal(
-        isNextDisabled(requiredFields) ||
-          !workingCase.judge ||
-          !workingCase.registrar,
-      )
-    }
-  }, [workingCase, isStepIllegal])
-
   const setJudge = (id: string) => {
     if (workingCase) {
       setAndSendToServer('judgeId', id, workingCase, setWorkingCase, updateCase)
@@ -170,48 +153,44 @@ export const HearingArrangements: React.FC = () => {
     }
   }
 
+  const handleNextButtonClick = () => {
+    if (
+      workingCase?.notifications?.find(
+        (notification) => notification.type === NotificationType.COURT_DATE,
+      )
+    ) {
+      router.push(`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
+    } else {
+      setModalVisible(true)
+    }
+  }
+
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
       isLoading={loading || userLoading}
       notFound={data?.case === undefined}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
           <FormContentContainer>
-            <Box marginBottom={10}>
+            <Box marginBottom={7}>
               <Text as="h1" variant="h1">
-                Fyrirtaka
+                {formatMessage(m.title)}
               </Text>
             </Box>
-            {workingCase.state === CaseState.DRAFT && (
-              <Box marginBottom={8}>
-                <AlertMessage
-                  type="info"
-                  title="Krafa hefur ekki verið staðfest af ákæranda"
-                  message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna."
-                />
-              </Box>
-            )}
             <Box component="section" marginBottom={7}>
-              <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
               <CaseNumbers workingCase={workingCase} />
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
-                  Dómari{' '}
-                  <Tooltip
-                    text={formatMessage(
-                      rcHearingArrangements.sections.setJudge.tooltip,
-                    )}
-                  />
+                  {`${formatMessage(m.sections.setJudge.title)} `}
+                  <Tooltip text={formatMessage(m.sections.setJudge.tooltip)} />
                 </Text>
               </Box>
               <Select
@@ -231,11 +210,9 @@ export const HearingArrangements: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
-                  Dómritari{' '}
+                  {`${formatMessage(m.sections.setRegistrar.title)} `}
                   <Tooltip
-                    text={formatMessage(
-                      rcHearingArrangements.sections.setRegistrar.tooltip,
-                    )}
+                    text={formatMessage(m.sections.setRegistrar.tooltip)}
                   />
                 </Text>
               </Box>
@@ -256,7 +233,7 @@ export const HearingArrangements: React.FC = () => {
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  Skrá fyrirtökutíma
+                  {formatMessage(m.sections.requestedCourtDate.title)}
                 </Text>
               </Box>
               <Box marginBottom={3}>
@@ -296,26 +273,20 @@ export const HearingArrangements: React.FC = () => {
                       removeTabsValidateAndSet(
                         'courtRoom',
                         event,
-                        ['empty'],
+                        [],
                         workingCase,
                         setWorkingCase,
-                        courtroomErrorMessage,
-                        setCourtroomErrorMessage,
                       )
                     }
                     onBlur={(event) =>
                       validateAndSendToServer(
                         'courtRoom',
                         event.target.value,
-                        ['empty'],
+                        [],
                         workingCase,
                         updateCase,
-                        setCourtroomErrorMessage,
                       )
                     }
-                    errorMessage={courtroomErrorMessage}
-                    hasError={courtroomErrorMessage !== ''}
-                    required
                   />
                 </BlueBox>
               </Box>
@@ -323,7 +294,7 @@ export const HearingArrangements: React.FC = () => {
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  Skipaður verjandi
+                  {formatMessage(m.sections.defender.title)}
                 </Text>
               </Box>
               <BlueBox>
@@ -426,15 +397,47 @@ export const HearingArrangements: React.FC = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              previousUrl={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
-              nextUrl={`${Constants.COURT_RECORD_ROUTE}/${id}`}
+              previousUrl={`${Constants.COURT_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
+              onNextButtonClick={handleNextButtonClick}
               nextIsDisabled={
-                workingCase.state === CaseState.DRAFT ||
-                isStepIllegal ||
-                !courtDateIsValid
+                !isCourtHearingArrangemenstStepValidRC(workingCase)
               }
             />
           </FormContentContainer>
+          {modalVisible && (
+            <Modal
+              title={formatMessage(
+                workingCase.type === CaseType.CUSTODY
+                  ? m.modal.custodyCases.heading
+                  : m.modal.travelBanCases.heading,
+              )}
+              text={formatMessage(
+                workingCase.type === CaseType.CUSTODY
+                  ? m.modal.custodyCases.text
+                  : m.modal.travelBanCases.text,
+              )}
+              isPrimaryButtonLoading={isSendingNotification}
+              handleSecondaryButtonClick={() => {
+                router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+              }}
+              handlePrimaryButtonClick={async () => {
+                const notificationSent = await sendNotification(
+                  workingCase.id,
+                  NotificationType.COURT_DATE,
+                )
+
+                if (notificationSent) {
+                  router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+                }
+              }}
+              primaryButtonText={formatMessage(
+                m.modal.shared.primaryButtonText,
+              )}
+              secondaryButtonText={formatMessage(
+                m.modal.shared.secondaryButtonText,
+              )}
+            />
+          )}
         </>
       ) : null}
     </PageLayout>

@@ -29,10 +29,10 @@ export class MinAgeByDateValidatorService implements ValidatorService {
     const eventYear = eventDate.getFullYear()
     const birthdayYear = birthdayDate.getFullYear()
 
-    // if my birthday in the event year is before the event date we subtract 1 year
+    // if my birthday in the event year is after the event date we subtract 1 year
     birthdayDate.setFullYear(eventYear)
     const birthdayEqualizer = Number(
-      birthdayDate.getTime() <= eventDate.getTime(),
+      birthdayDate.getTime() >= eventDate.getTime(),
     )
     let ageAtDate = eventYear - birthdayYear - birthdayEqualizer
 

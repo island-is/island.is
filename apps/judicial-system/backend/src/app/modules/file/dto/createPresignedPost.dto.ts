@@ -6,4 +6,8 @@ export class CreatePresignedPostDto {
   @IsString()
   @ApiProperty()
   readonly fileName!: string
+
+  @IsString()
+  @ApiProperty()
+  readonly type!: string
 }

@@ -1,5 +1,6 @@
+import * as s from './RegulationsSidebarBox.css'
+
 import React, { useEffect, useMemo, useState } from 'react'
-import * as s from './RegulationsSidebarBox.treat'
 import cn from 'classnames'
 import { Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
@@ -54,7 +55,7 @@ export const useRegulationEffectPrepper = (
       effects,
       isViewingCurrent,
     }
-  }, [regulation, today])
+  }, [regulation, today, opts.reverse])
 
   const [expanded, setExpanded] = useState(
     () => effects.past.length < CHANGELOG_COLLAPSE_LIMIT,
@@ -84,6 +85,7 @@ export const useRegulationEffectPrepper = (
       <RegulationsSidebarLink
         href={linkToRegulation(regulation.name, { original: true })}
         current={current}
+        rel="nofollow"
       >
         <strong>{formatDate(regulation.effectiveDate)}</strong>
         <br />
@@ -137,7 +139,12 @@ export const useRegulationEffectPrepper = (
           )
 
           return href ? (
-            <RegulationsSidebarLink key={i} href={href} current={current}>
+            <RegulationsSidebarLink
+              key={i}
+              href={href}
+              current={current}
+              rel="nofollow"
+            >
               {Content}
             </RegulationsSidebarLink>
           ) : (
@@ -220,7 +227,14 @@ export const RegulationChangelog = (props: RegulationChangelogProps) => {
       {renderFutureEffects()}
 
       {renderPastSplitter()}
-      {renderPastEffects(true)}
+      {/*
+        Disable collapsing before launch because of usability/visibility concerns.
+        Needs more user-testing and more advanced ui resolution when user is viewing
+        a hidden/collapsed version...
+      * /
+        renderPastEffects(true)
+      /**/}
+      {renderPastEffects()}
       {renderOriginalVersion()}
     </RegulationsSidebarBox>
   )

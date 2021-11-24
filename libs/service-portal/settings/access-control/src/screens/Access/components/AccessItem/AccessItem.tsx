@@ -11,7 +11,7 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import type { Scope } from '../../Access'
-import * as styles from './AccessItem.treat'
+import * as styles from './AccessItem.css'
 
 type TableDataProps = React.ComponentProps<typeof T.Data>
 
@@ -21,7 +21,7 @@ interface PropTypes {
 }
 
 function AccessItem({ apiScopes, authDelegation }: PropTypes) {
-  const { lang } = useLocale()
+  const { lang, formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
 
   const isApiScopeGroup = (item: Scope): boolean =>
@@ -142,7 +142,12 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
                 <DatePickerController
                   id={`${item.model}.validTo`}
                   size="sm"
-                  label=""
+                  label={formatMessage({
+                    id:
+                      'service.portal.settings.accessControl:access-item-datepicker-label',
+                    defaultMessage: 'Dagsetning til',
+                  })}
+                  backgroundColor="blue"
                   minDate={new Date()}
                   defaultValue={
                     existingScope?.name ? existingScope?.validTo : undefined

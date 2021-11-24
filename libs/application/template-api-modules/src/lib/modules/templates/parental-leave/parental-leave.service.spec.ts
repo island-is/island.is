@@ -1,4 +1,7 @@
 import { Test } from '@nestjs/testing'
+import { ConfigService } from '@nestjs/config'
+import get from 'lodash/get'
+import set from 'lodash/set'
 
 import {
   Application,
@@ -7,9 +10,15 @@ import {
 } from '@island.is/application/core'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { ParentalLeaveApi } from '@island.is/clients/vmst'
-import { StartDateOptions } from '@island.is/application/templates/parental-leave'
+import {
+  StartDateOptions,
+  YES,
+  NO,
+} from '@island.is/application/templates/parental-leave'
+import { EmailService } from '@island.is/email-service'
 
 import { SharedTemplateApiService } from '../../shared'
+import { TemplateApiModuleActionProps } from '../../../types'
 import {
   APPLICATION_ATTACHMENT_BUCKET,
   ParentalLeaveService,
@@ -19,16 +28,44 @@ import { apiConstants } from './constants'
 const nationalId = '1234564321'
 let id = 0
 
+const sendMail = () => ({
+  messageId: 'some id',
+})
+
+class MockEmailService {
+  getTransport() {
+    return { sendMail }
+  }
+
+  sendEmail() {
+    return sendMail()
+  }
+}
+
 const createApplication = (): Application => ({
   answers: {
+    applicant: {
+      email: 'applicant@applicant.test',
+      phoneNumber: '8888888',
+    },
+    employer: {
+      email: 'employer@employer.test',
+    },
+    payments: {
+      bank: '011126111111',
+      pensionFund: 'x',
+      union: 'y',
+    },
+    usePrivatePensionFund: 'no',
     periods: [
       {
         ratio: '100',
+        useLength: 'no',
         endDate: '2022-01-01',
-        duration: '7.5',
         startDate: '2021-05-17',
       },
     ],
+    employerNationalRegistryId: '1111111119',
     requestRights: {
       requestDays: '45',
       isRequestingRights: 'yes',
@@ -67,6 +104,7 @@ const createApplication = (): Application => ({
 
 describe('ParentalLeaveService', () => {
   let parentalLeaveService: ParentalLeaveService
+  let sharedService: SharedTemplateApiService
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -79,6 +117,10 @@ describe('ParentalLeaveService', () => {
         {
           provide: ParentalLeaveApi,
           useClass: jest.fn(() => ({
+            parentalLeaveSetParentalLeave: () =>
+              Promise.resolve({
+                id: '1337',
+              }),
             parentalLeaveGetPeriodLength: () =>
               Promise.resolve({
                 periodLength: 225,
@@ -93,9 +135,14 @@ describe('ParentalLeaveService', () => {
           })),
         },
         {
-          provide: SharedTemplateApiService,
-          useClass: jest.fn(),
+          provide: ConfigService,
+          useValue: {},
         },
+        {
+          provide: EmailService,
+          useClass: MockEmailService,
+        },
+        SharedTemplateApiService,
         {
           provide: APPLICATION_ATTACHMENT_BUCKET,
           useValue: 'attachmentBucket',
@@ -104,6 +151,7 @@ describe('ParentalLeaveService', () => {
     }).compile()
 
     parentalLeaveService = module.get(ParentalLeaveService)
+    sharedService = module.get(SharedTemplateApiService)
   })
 
   describe('createPeriodsDTO', () => {
@@ -137,16 +185,15 @@ describe('ParentalLeaveService', () => {
     it('should return 2 periods, one standard and mark it as ActualDateOfBirth and one using the right period code', async () => {
       const application = createApplication()
 
-      const extendedApplication = {
-        ...application,
-        answers: {
-          ...application.answers,
-          firstPeriodStart: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
-        },
-      }
+      const firstPeriod = get(application.answers, 'periods[0]') as object
+      set(
+        firstPeriod,
+        'firstPeriodStart',
+        StartDateOptions.ACTUAL_DATE_OF_BIRTH,
+      )
 
       const res = await parentalLeaveService.createPeriodsDTO(
-        extendedApplication,
+        application,
         nationalId,
       )
 
@@ -168,6 +215,54 @@ describe('ParentalLeaveService', () => {
           rightsCodePeriod: apiConstants.rights.receivingRightsId,
         },
       ])
+    })
+  })
+
+  describe('sendApplication', () => {
+    it('should send an email if applicant is employed by an employer', async () => {
+      const application = createApplication()
+      set(application.answers, 'employer.isSelfEmployed', NO)
+      const mockedSendEmail = jest.fn()
+
+      jest.spyOn(sharedService, 'sendEmail').mockImplementation(mockedSendEmail)
+
+      const auth: TemplateApiModuleActionProps['auth'] = {
+        authorization: '',
+        client: '',
+        nationalId,
+        scope: [''],
+      }
+
+      await parentalLeaveService.sendApplication({ application, auth })
+
+      // One email to the applicant and one to the employer
+      expect(mockedSendEmail.mock.calls.length).toBe(2)
+    })
+
+    it('should not send an email if applicant is self employed', async () => {
+      const application = createApplication()
+      set(application.answers, 'employer.isSelfEmployed', YES)
+
+      const mockedSendEmail = jest.fn()
+
+      jest.spyOn(sharedService, 'sendEmail').mockImplementation(mockedSendEmail)
+
+      // Also need to mock the pdf here
+      jest
+        .spyOn(parentalLeaveService, 'getSelfEmployedPdf')
+        .mockImplementation(jest.fn())
+
+      const auth: TemplateApiModuleActionProps['auth'] = {
+        authorization: '',
+        client: '',
+        nationalId,
+        scope: [''],
+      }
+
+      await parentalLeaveService.sendApplication({ application, auth })
+
+      // No email should be sent since applicant is aware of their own approval
+      expect(mockedSendEmail.mock.calls.length).toBe(0)
     })
   })
 })

@@ -1,20 +1,5 @@
-import { IDTokenClaims, User as OidcUser } from 'oidc-client'
 import { Dispatch } from 'react'
-
-interface IdsAuthClaims {
-  nationalId: string
-  name: string
-  nat: string
-  idp: string
-  actor?: {
-    nationalId: string
-    name: string
-  }
-}
-
-export type User = Omit<OidcUser, 'profile'> & {
-  profile: IDTokenClaims & IdsAuthClaims
-}
+import { User } from '@island.is/shared/types'
 
 export type AuthState =
   | 'logged-out'

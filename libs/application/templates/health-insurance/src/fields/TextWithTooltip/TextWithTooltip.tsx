@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { formatText, FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import * as styles from './TextWithTooltip.treat'
+import * as styles from './TextWithTooltip.css'
 
 export interface Props extends FieldBaseProps {
   title?: string

@@ -18,7 +18,7 @@ import { useLocale } from '@island.is/localization'
 import { showPdfDocument } from '@island.is/service-portal/graphql'
 import { m } from '@island.is/service-portal/core'
 import cn from 'classnames'
-import * as styles from './FinanceStatusDetailTable.treat'
+import * as styles from './FinanceStatusDetailTable.css'
 
 interface Props {
   organization: FinanceStatusOrganizationType

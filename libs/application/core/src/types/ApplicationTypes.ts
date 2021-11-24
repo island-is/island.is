@@ -20,6 +20,7 @@ export enum ApplicationTypes {
   PAYABLE_DUMMY_TEMPLATE = 'PayableDummyTemplate',
   COMPLAINTS_TO_ALTHINGI_OMBUDSMAN = 'ComplaintsToAlthingiOmbudsman',
   ACCIDENT_NOTIFICATION = 'AccidentNotification',
+  GENERAL_PETITION = 'GeneralPetitionService',
 }
 
 export const ApplicationConfigurations = {
@@ -106,5 +107,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.ACCIDENT_NOTIFICATION]: {
     slug: 'slysatilkynning',
     translation: 'an.application',
+  },
+  [ApplicationTypes.GENERAL_PETITION]: {
+    slug: 'medmaelendalisti',
+    translation: 'gpt.application',
   },
 }

@@ -28,6 +28,7 @@ TODO
 *.todo
 .env
 .nvmrc
+.node-version
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json
@@ -72,6 +73,7 @@ schema.ts
 possibleTypes.json
 fragmentTypes.json
 **/gen/fetch/**
+**/gen/graphql.ts
 
 # IDE - Visual Studio
 *.suo

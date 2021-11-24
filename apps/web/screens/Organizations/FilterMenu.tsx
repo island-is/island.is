@@ -17,7 +17,7 @@ interface FilterMenuProps {
   setFilter: Dispatch<SetStateAction<FilterOptions>>
   asDialog?: boolean
   resultCount: number
-  onBeforeUpdate: Function
+  onBeforeUpdate: () => void
 }
 
 export type FilterLabels = Pick<

@@ -7,7 +7,7 @@ import {
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
 
-import * as styles from './SidebarLayout.treat'
+import * as styles from './SidebarLayout.css'
 import cn from 'classnames'
 
 interface SidebarLayoutProps {

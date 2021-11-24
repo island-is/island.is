@@ -13,8 +13,8 @@ import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 
 const EducationExamResultQuery = gql`
-  query EducationExamResultQuery($nationalId: String!) {
-    educationExamResult(nationalId: $nationalId) {
+  query EducationExamResultQuery($familyIndex: Int!) {
+    educationExamResult(familyIndex: $familyIndex) {
       id
       fullName
       grades {
@@ -74,12 +74,12 @@ type DataField = Pick<
 >
 
 const StudentAssessmentTable = () => {
-  const { nationalId } = useParams<{ nationalId: string }>()
+  const { familyIndex } = useParams<{ familyIndex: string }>()
   const { data, loading: queryLoading, error } = useQuery<Query>(
     EducationExamResultQuery,
     {
       variables: {
-        nationalId,
+        familyIndex: parseInt(familyIndex, 10),
       },
     },
   )

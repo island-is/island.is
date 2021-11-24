@@ -1,7 +1,11 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import AppealSection from './AppealSection'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  CaseState,
+  CaseType,
+} from '@island.is/judicial-system/types'
 import { LocaleProvider } from '@island.is/localization'
 import { MockedProvider } from '@apollo/client/testing'
 
@@ -16,7 +20,7 @@ describe('Appeal section component', () => {
     accusedNationalId: '000000-0000',
   }
 
-  test('should say when a case is no longer appealable', async () => {
+  test('should say when a case is no longer appealable if either the prosecutors or judges appeal decision is to postpone', async () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
@@ -25,6 +29,7 @@ describe('Appeal section component', () => {
               ...baseWorkingCase,
               isAppealDeadlineExpired: true,
               rulingDate: '2020-09-16T19:50:00.000Z',
+              accusedAppealDecision: CaseAppealDecision.POSTPONE,
             }}
             setAccusedAppealDate={() => null}
             setProsecutorAppealDate={() => null}
@@ -38,6 +43,73 @@ describe('Appeal section component', () => {
         'Kærufrestur rann út 19. september 2020 kl. 19:50',
       ),
     ).toBeInTheDocument()
+  })
+
+  test('should say when the appeal deadline is if the appeal deadline has not expired and either the prosecutors or judges appeal decision is to postpone', async () => {
+    const d = new Date()
+    const dd = `${d.getFullYear()}-${('0' + (d.getMonth() + 1)).slice(-2)}-${(
+      '0' + d.getDate()
+    ).slice(-2)}`
+
+    render(
+      <MockedProvider>
+        <LocaleProvider locale="is" messages={{}}>
+          <AppealSection
+            workingCase={{
+              ...baseWorkingCase,
+              isAppealDeadlineExpired: false,
+              rulingDate: `${dd}T19:50:00.000Z`,
+              prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+            }}
+            setAccusedAppealDate={() => null}
+            setProsecutorAppealDate={() => null}
+          />
+        </LocaleProvider>
+      </MockedProvider>,
+    )
+
+    expect(
+      /**
+       * Only test substring because it's hard to test the exact date because
+       * it's three days in the future
+       */
+      await screen.findByText(`Kærufrestur rennur út`, {
+        exact: false,
+      }),
+    ).toBeInTheDocument()
+  })
+
+  test('should not say when the appeal deadline is if  neither the prosecutors or judges appeal decision is to postpone', () => {
+    const d = new Date()
+    const dd = `${d.getFullYear()}-${('0' + (d.getMonth() + 1)).slice(-2)}-${(
+      '0' + d.getDate()
+    ).slice(-2)}`
+
+    render(
+      <MockedProvider>
+        <LocaleProvider locale="is" messages={{}}>
+          <AppealSection
+            workingCase={{
+              ...baseWorkingCase,
+              isAppealDeadlineExpired: false,
+              rulingDate: `${dd}T19:50:00.000Z`,
+            }}
+            setAccusedAppealDate={() => null}
+            setProsecutorAppealDate={() => null}
+          />
+        </LocaleProvider>
+      </MockedProvider>,
+    )
+
+    expect(
+      /**
+       * Only test substring because it's hard to test the exact date because
+       * it's three days in the future
+       */
+      screen.queryByText(`Kærufrestur rennur út`, {
+        exact: false,
+      }),
+    ).not.toBeInTheDocument()
   })
 
   test('should not show the "Accused appeals" button if the accused cannot appeal', async () => {

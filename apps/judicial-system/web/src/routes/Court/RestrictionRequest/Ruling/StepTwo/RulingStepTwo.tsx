@@ -16,12 +16,13 @@ import {
   CaseNumbers,
   FormContentContainer,
   TimeInputField,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
+  isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -38,27 +39,24 @@ import {
   setCheckboxAndSendToServer,
   validateAndSetTime,
   validateAndSendTimeToServer,
-  getTimeFromDate,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
+import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import {
   alternativeTravelBanRestrictions,
-  judgeRestrictions,
+  restrictions,
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import {
   capitalize,
   formatAccusedByGender,
-  formatConclusion,
   formatDate,
+  formatNationalId,
   NounCases,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { useRouter } from 'next/router'
-import {
-  useCase,
-  useDateTime,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import { rcRulingStepTwo } from '@island.is/judicial-system-web/messages'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { rcRulingStepTwo as m } from '@island.is/judicial-system-web/messages'
+import { isRulingStepTwoValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const RulingStepTwo: React.FC = () => {
   const router = useRouter()
@@ -76,17 +74,17 @@ export const RulingStepTwo: React.FC = () => {
     fetchPolicy: 'no-cache',
   })
 
-  const { isValidTime: isValidCourtEndTime } = useDateTime({
-    time: getTimeFromDate(workingCase?.courtEndTime),
-  })
-
   useEffect(() => {
     document.title = 'Úrskurðarorð - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
     if (id && !workingCase && data?.case) {
-      const theCase = data.case
+      const theCase: Case = data.case
+      const isolationEndsBeforeValidToDate =
+        theCase.validToDate &&
+        theCase.isolationToDate &&
+        new Date(theCase.validToDate) > new Date(theCase.isolationToDate)
 
       // Normally we always autofill if the target has a "falsy" value.
       // However, if the target is optional, then it should not be autofilled after
@@ -104,65 +102,123 @@ export const RulingStepTwo: React.FC = () => {
 
       autofill(
         'conclusion',
-        formatConclusion(
-          theCase.type,
-          theCase.accusedNationalId,
-          theCase.accusedName,
-          theCase.accusedGender,
-          theCase.decision,
-          new Date(theCase.validToDate),
-          theCase.custodyRestrictions?.includes(
-            CaseCustodyRestrictions.ISOLATION,
-          ),
-          theCase.parentCase !== undefined,
-          theCase.parentCase?.decision,
-          theCase.isolationToDate
-            ? new Date(theCase.isolationToDate)
-            : undefined,
-        ),
+        theCase.decision === CaseDecision.DISMISSING
+          ? formatMessage(m.sections.conclusion.dismissingAutofill, {
+              genderedAccused: formatAccusedByGender(theCase.accusedGender),
+              accusedName: theCase.accusedName,
+              extensionSuffix:
+                theCase.parentCase &&
+                isAcceptingCaseDecision(theCase.parentCase.decision)
+                  ? ' áframhaldandi'
+                  : '',
+              caseType:
+                theCase.type === CaseType.CUSTODY
+                  ? 'gæsluvarðhaldi'
+                  : 'farbanni',
+            })
+          : theCase.decision === CaseDecision.REJECTING
+          ? formatMessage(m.sections.conclusion.rejectingAutofill, {
+              genderedAccused: formatAccusedByGender(theCase.accusedGender),
+              accusedName: theCase.accusedName,
+              accusedNationalId: formatNationalId(theCase.accusedNationalId),
+              extensionSuffix:
+                theCase.parentCase &&
+                isAcceptingCaseDecision(theCase.parentCase.decision)
+                  ? ' áframhaldandi'
+                  : '',
+              caseType:
+                theCase.type === CaseType.CUSTODY
+                  ? 'gæsluvarðhaldi'
+                  : 'farbanni',
+            })
+          : formatMessage(m.sections.conclusion.acceptingAutofill, {
+              genderedAccused: capitalize(
+                formatAccusedByGender(theCase.accusedGender),
+              ),
+              accusedName: theCase.accusedName,
+              accusedNationalId: formatNationalId(theCase.accusedNationalId),
+              caseTypeAndExtensionSuffix:
+                theCase.decision === CaseDecision.ACCEPTING
+                  ? `${
+                      theCase.parentCase &&
+                      isAcceptingCaseDecision(theCase.parentCase.decision)
+                        ? 'áframhaldandi '
+                        : ''
+                    }${
+                      theCase.type === CaseType.CUSTODY
+                        ? 'gæsluvarðhaldi'
+                        : 'farbanni'
+                    }`
+                  : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                    `${
+                      theCase.parentCase?.decision ===
+                      CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                        ? 'áframhaldandi '
+                        : ''
+                    }farbanni`,
+              validToDate: `${formatDate(theCase.validToDate, 'PPPPp')
+                ?.replace('dagur,', 'dagsins')
+                ?.replace(' kl.', ', kl.')}`,
+              isolationSuffix:
+                isAcceptingCaseDecision(theCase.decision) &&
+                theCase.custodyRestrictions?.includes(
+                  CaseCustodyRestrictions.ISOLATION,
+                )
+                  ? ` ${capitalize(
+                      formatAccusedByGender(theCase.accusedGender),
+                    )} skal sæta einangrun ${
+                      isolationEndsBeforeValidToDate
+                        ? `ekki lengur en til ${formatDate(
+                            theCase.isolationToDate,
+                            'PPPPp',
+                          )
+                            ?.replace('dagur,', 'dagsins')
+                            ?.replace(' kl.', ', kl.')}.`
+                        : 'á meðan á gæsluvarðhaldinu stendur.'
+                    }`
+                  : '',
+            }),
         theCase,
       )
 
       setWorkingCase(theCase)
     }
-  }, [id, workingCase, setWorkingCase, data, autofill])
+  }, [id, workingCase, setWorkingCase, data, autofill, formatMessage])
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.RULING_STEP_TWO}
       isLoading={loading}
       notFound={data?.case === undefined}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
           <FormContentContainer>
             <Box marginBottom={10}>
               <Text as="h1" variant="h1">
-                Úrskurður og kæra
+                {formatMessage(m.title)}
               </Text>
             </Box>
             <Box component="section" marginBottom={7}>
-              <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
               <CaseNumbers workingCase={workingCase} />
             </Box>
             <Box component="section" marginBottom={8}>
               <Box marginBottom={6}>
                 <Box marginBottom={2}>
                   <Text as="h3" variant="h3">
-                    Úrskurðarorð
+                    {formatMessage(m.sections.conclusion.title)}
                   </Text>
                 </Box>
                 <Input
                   name="conclusion"
                   data-testid="conclusion"
-                  label="Úrskurðarorð"
+                  label={formatMessage(m.sections.conclusion.label)}
                   defaultValue={workingCase.conclusion}
-                  placeholder="Hver eru úrskurðarorðin"
+                  placeholder={formatMessage(m.sections.conclusion.placeholder)}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'conclusion',
@@ -190,23 +246,24 @@ export const RulingStepTwo: React.FC = () => {
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  Ákvörðun um kæru
+                  {formatMessage(m.sections.appealDecision.title)}
                 </Text>
               </Box>
               <Box marginBottom={3}>
                 <Text variant="h4" fontWeight="light">
-                  {formatMessage(
-                    rcRulingStepTwo.sections.accusedAppealDecision.disclaimer,
-                  )}
+                  {formatMessage(m.sections.appealDecision.disclaimer)}
                 </Text>
               </Box>
               <Box marginBottom={3}>
                 <BlueBox>
                   <Box marginBottom={2}>
                     <Text as="h4" variant="h4">
-                      {capitalize(
-                        formatAccusedByGender(workingCase.accusedGender),
-                      )}{' '}
+                      {formatMessage(m.sections.appealDecision.accusedTitle, {
+                        accused: formatAccusedByGender(
+                          workingCase.accusedGender,
+                          NounCases.GENITIVE,
+                        ),
+                      })}{' '}
                       <Text as="span" color="red600" fontWeight="semiBold">
                         *
                       </Text>
@@ -218,9 +275,16 @@ export const RulingStepTwo: React.FC = () => {
                         <RadioButton
                           name="accused-appeal-decision"
                           id="accused-appeal"
-                          label={`${capitalize(
-                            formatAccusedByGender(workingCase.accusedGender),
-                          )} kærir úrskurðinn`}
+                          label={formatMessage(
+                            m.sections.appealDecision.accusedAppeal,
+                            {
+                              accused: capitalize(
+                                formatAccusedByGender(
+                                  workingCase.accusedGender,
+                                ),
+                              ),
+                            },
+                          )}
                           value={CaseAppealDecision.APPEAL}
                           checked={
                             workingCase.accusedAppealDecision ===
@@ -248,9 +312,16 @@ export const RulingStepTwo: React.FC = () => {
                         <RadioButton
                           name="accused-appeal-decision"
                           id="accused-accept"
-                          label={`${capitalize(
-                            formatAccusedByGender(workingCase.accusedGender),
-                          )} unir úrskurðinum`}
+                          label={formatMessage(
+                            m.sections.appealDecision.accusedAccept,
+                            {
+                              accused: capitalize(
+                                formatAccusedByGender(
+                                  workingCase.accusedGender,
+                                ),
+                              ),
+                            },
+                          )}
                           value={CaseAppealDecision.ACCEPT}
                           checked={
                             workingCase.accusedAppealDecision ===
@@ -282,9 +353,16 @@ export const RulingStepTwo: React.FC = () => {
                         <RadioButton
                           name="accused-appeal-decision"
                           id="accused-postpone"
-                          label={`${capitalize(
-                            formatAccusedByGender(workingCase.accusedGender),
-                          )}  tekur sér lögboðinn frest`}
+                          label={formatMessage(
+                            m.sections.appealDecision.accusedPostpone,
+                            {
+                              accused: capitalize(
+                                formatAccusedByGender(
+                                  workingCase.accusedGender,
+                                ),
+                              ),
+                            },
+                          )}
                           value={CaseAppealDecision.POSTPONE}
                           checked={
                             workingCase.accusedAppealDecision ===
@@ -309,21 +387,60 @@ export const RulingStepTwo: React.FC = () => {
                           backgroundColor="white"
                         />
                       </GridColumn>
+                      <GridColumn span="5/12">
+                        <RadioButton
+                          name="accused-appeal-decision"
+                          id="accused-not-applicable"
+                          label={formatMessage(
+                            m.sections.appealDecision.accusedNotApplicable,
+                          )}
+                          value={CaseAppealDecision.NOT_APPLICABLE}
+                          checked={
+                            workingCase.accusedAppealDecision ===
+                            CaseAppealDecision.NOT_APPLICABLE
+                          }
+                          onChange={() => {
+                            setWorkingCase({
+                              ...workingCase,
+                              accusedAppealDecision:
+                                CaseAppealDecision.NOT_APPLICABLE,
+                            })
+
+                            updateCase(
+                              workingCase.id,
+                              parseString(
+                                'accusedAppealDecision',
+                                CaseAppealDecision.NOT_APPLICABLE,
+                              ),
+                            )
+                          }}
+                          large
+                          backgroundColor="white"
+                        />
+                      </GridColumn>
                     </GridRow>
                   </Box>
                   <Input
                     name="accusedAppealAnnouncement"
                     data-testid="accusedAppealAnnouncement"
-                    label={`Yfirlýsing um kæru ${formatAccusedByGender(
-                      workingCase.accusedGender,
-                      NounCases.GENITIVE,
-                    )}`}
+                    label={formatMessage(
+                      m.sections.appealDecision.accusedAnnouncementLabel,
+                      {
+                        accused: formatAccusedByGender(
+                          workingCase.accusedGender,
+                          NounCases.GENITIVE,
+                        ),
+                      },
+                    )}
                     defaultValue={workingCase.accusedAppealAnnouncement}
-                    disabled={
-                      workingCase.accusedAppealDecision !==
-                      CaseAppealDecision.APPEAL
-                    }
-                    placeholder="Í hvaða skyni er kært?"
+                    placeholder={formatMessage(
+                      m.sections.appealDecision.accusedAnnouncementPlaceholder,
+                      {
+                        accused: formatAccusedByGender(
+                          workingCase.accusedGender,
+                        ),
+                      },
+                    )}
                     onChange={(event) =>
                       removeTabsValidateAndSet(
                         'accusedAppealAnnouncement',
@@ -351,7 +468,7 @@ export const RulingStepTwo: React.FC = () => {
                 <BlueBox>
                   <Box marginBottom={2}>
                     <Text as="h4" variant="h4">
-                      Sækjandi{' '}
+                      {formatMessage(m.sections.appealDecision.prosecutorTitle)}{' '}
                       <Text as="span" color="red400" fontWeight="semiBold">
                         *
                       </Text>
@@ -363,7 +480,9 @@ export const RulingStepTwo: React.FC = () => {
                         <RadioButton
                           name="prosecutor-appeal-decision"
                           id="prosecutor-appeal"
-                          label="Sækjandi kærir úrskurðinn"
+                          label={formatMessage(
+                            m.sections.appealDecision.prosecutorAppeal,
+                          )}
                           value={CaseAppealDecision.APPEAL}
                           checked={
                             workingCase.prosecutorAppealDecision ===
@@ -392,7 +511,9 @@ export const RulingStepTwo: React.FC = () => {
                         <RadioButton
                           name="prosecutor-appeal-decision"
                           id="prosecutor-accept"
-                          label="Sækjandi unir úrskurðinum"
+                          label={formatMessage(
+                            m.sections.appealDecision.prosecutorAccept,
+                          )}
                           value={CaseAppealDecision.ACCEPT}
                           checked={
                             workingCase.prosecutorAppealDecision ===
@@ -425,7 +546,9 @@ export const RulingStepTwo: React.FC = () => {
                         <RadioButton
                           name="prosecutor-appeal-decision"
                           id="prosecutor-postpone"
-                          label="Sækjandi tekur sér lögboðinn frest"
+                          label={formatMessage(
+                            m.sections.appealDecision.prosecutorPostpone,
+                          )}
                           value={CaseAppealDecision.POSTPONE}
                           checked={
                             workingCase.prosecutorAppealDecision ===
@@ -450,19 +573,51 @@ export const RulingStepTwo: React.FC = () => {
                           backgroundColor="white"
                         />
                       </GridColumn>
+                      <GridColumn span="5/12">
+                        <RadioButton
+                          name="prosecutor-appeal-decision"
+                          id="prosecutor-not-applicable"
+                          label={formatMessage(
+                            m.sections.appealDecision.prosecutorNotApplicable,
+                          )}
+                          value={CaseAppealDecision.NOT_APPLICABLE}
+                          checked={
+                            workingCase.prosecutorAppealDecision ===
+                            CaseAppealDecision.NOT_APPLICABLE
+                          }
+                          onChange={() => {
+                            setWorkingCase({
+                              ...workingCase,
+                              prosecutorAppealDecision:
+                                CaseAppealDecision.NOT_APPLICABLE,
+                            })
+
+                            updateCase(
+                              workingCase.id,
+                              parseString(
+                                'prosecutorAppealDecision',
+                                CaseAppealDecision.NOT_APPLICABLE,
+                              ),
+                            )
+                          }}
+                          large
+                          backgroundColor="white"
+                        />
+                      </GridColumn>
                     </GridRow>
                   </Box>
                   <Box>
                     <Input
                       name="prosecutorAppealAnnouncement"
                       data-testid="prosecutorAppealAnnouncement"
-                      label="Yfirlýsing um kæru sækjanda"
+                      label={formatMessage(
+                        m.sections.appealDecision.prosecutorAnnouncementLabel,
+                      )}
                       defaultValue={workingCase.prosecutorAppealAnnouncement}
-                      disabled={
-                        workingCase.prosecutorAppealDecision !==
-                        CaseAppealDecision.APPEAL
-                      }
-                      placeholder="Í hvaða skyni er kært?"
+                      placeholder={formatMessage(
+                        m.sections.appealDecision
+                          .prosecutorAnnouncementPlaceholder,
+                      )}
                       onChange={(event) =>
                         removeTabsValidateAndSet(
                           'prosecutorAppealAnnouncement',
@@ -487,7 +642,7 @@ export const RulingStepTwo: React.FC = () => {
                   </Box>
                 </BlueBox>
               </Box>
-              {workingCase.decision === CaseDecision.ACCEPTING &&
+              {isAcceptingCaseDecision(workingCase.decision) &&
                 workingCase.type === CaseType.CUSTODY && (
                   <Box component="section" marginBottom={3}>
                     <Box marginBottom={3}>
@@ -497,7 +652,7 @@ export const RulingStepTwo: React.FC = () => {
                     </Box>
                     <BlueBox>
                       <CheckboxList
-                        checkboxes={judgeRestrictions}
+                        checkboxes={restrictions}
                         selected={workingCase.custodyRestrictions}
                         onChange={(id) =>
                           setCheckboxAndSendToServer(
@@ -569,20 +724,17 @@ export const RulingStepTwo: React.FC = () => {
                 </Box>
               )}
               {(!workingCase.decision ||
-                workingCase.decision === CaseDecision.ACCEPTING ||
+                isAcceptingCaseDecision(workingCase.decision) ||
                 workingCase.decision ===
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
                 <Text variant="h4" fontWeight="light">
-                  {formatMessage(
-                    rcRulingStepTwo.sections.custodyRestrictions.disclaimer,
-                    {
-                      caseType:
-                        workingCase.type === CaseType.CUSTODY &&
-                        workingCase.decision === CaseDecision.ACCEPTING
-                          ? 'gæsluvarðhaldsins'
-                          : 'farbannsins',
-                    },
-                  )}
+                  {formatMessage(m.sections.custodyRestrictions.disclaimer, {
+                    caseType:
+                      workingCase.type === CaseType.CUSTODY &&
+                      isAcceptingCaseDecision(workingCase.decision)
+                        ? 'gæsluvarðhaldsins'
+                        : 'farbannsins',
+                  })}
                 </Text>
               )}
             </Box>
@@ -644,12 +796,7 @@ export const RulingStepTwo: React.FC = () => {
             <FormFooter
               previousUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
               nextUrl={`${Constants.CONFIRMATION_ROUTE}/${id}`}
-              nextIsDisabled={
-                !workingCase.accusedAppealDecision ||
-                !workingCase.prosecutorAppealDecision ||
-                !workingCase.conclusion ||
-                !isValidCourtEndTime?.isValid
-              }
+              nextIsDisabled={!isRulingStepTwoValidRC(workingCase)}
             />
           </FormContentContainer>
         </>

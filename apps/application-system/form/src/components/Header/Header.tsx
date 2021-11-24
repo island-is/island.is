@@ -6,22 +6,14 @@ import {
   GridContainer,
   Header as UIHeader,
 } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { useAuth } from '@island.is/auth/react'
 import { useHeaderInfo } from '@island.is/application/ui-shell'
+import { UserMenu } from '@island.is/shared/components'
 
 import { fixSvgUrls } from '../../utils'
 
 export const Header: FC = () => {
-  const { isAuthenticated, userInfo, signOut } = useAuth()
-  const { lang } = useLocale()
-  const { changeLanguage } = useNamespaces()
   const location = useLocation()
   const { info } = useHeaderInfo()
-
-  const handleSwitchLanguage = () => {
-    changeLanguage(lang === 'is' ? 'en' : 'is')
-  }
 
   useEffect(() => {
     // Fixes the island.is logo and other SVGs not appearing on
@@ -42,12 +34,7 @@ export const Header: FC = () => {
                 }
               : undefined
           }
-          authenticated={isAuthenticated}
-          userName={userInfo?.profile?.name}
-          userAsDropdown={true}
-          language={lang}
-          switchLanguage={handleSwitchLanguage}
-          onLogout={signOut}
+          headerItems={<UserMenu />}
         />
       </GridContainer>
     </Box>

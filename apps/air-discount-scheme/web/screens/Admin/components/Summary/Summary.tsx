@@ -6,7 +6,7 @@ import { FlightLeg } from '@island.is/air-discount-scheme-web/graphql/schema'
 
 import { KeyValues } from '../'
 import { TSummary } from '../../types'
-import * as styles from './Summary.treat'
+import * as styles from './Summary.css'
 import { getFilteredFlightLegs } from '../../utils'
 
 interface PropTypes {

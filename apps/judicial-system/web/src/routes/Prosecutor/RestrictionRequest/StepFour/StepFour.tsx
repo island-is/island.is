@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
-import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import {
+  CaseCustodyRestrictions,
+  CaseDecision,
+  CaseType,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
+import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   FormFooter,
   PageLayout,
   FormContentContainer,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
@@ -25,11 +29,13 @@ import {
 import { rcReportForm } from '@island.is/judicial-system-web/messages'
 import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatProsecutorDemands } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 
 export const StepFour: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
   const [
@@ -53,62 +59,51 @@ export const StepFour: React.FC = () => {
 
   useEffect(() => {
     if (id && !workingCase && data?.case) {
-      const theCase = data.case
+      const theCase: Case = data.case
 
       autofill(
         'demands',
-        formatProsecutorDemands(
-          theCase.type,
-          theCase.accusedNationalId,
-          theCase.accusedName,
-          theCase.court.name,
-          theCase.requestedValidToDate,
-          theCase.requestedCustodyRestrictions?.includes(
-            CaseCustodyRestrictions.ISOLATION,
-          ) ?? false,
-          theCase.parentCase !== undefined,
-          theCase.parentCase?.decision,
-        ),
+        `${formatMessage(rcReportForm.sections.demands.autofill, {
+          accusedName: theCase.accusedName,
+          accusedNationalId: formatNationalId(theCase.accusedNationalId),
+          extensionSuffix:
+            theCase.parentCase &&
+            isAcceptingCaseDecision(theCase.parentCase.decision)
+              ? ' áframhaldandi'
+              : '',
+          caseType:
+            theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
+          court: theCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
+          requestedValidToDate: formatDate(
+            theCase.requestedValidToDate,
+            'PPPPp',
+          )
+            ?.replace('dagur,', 'dagsins')
+            ?.replace(' kl.', ', kl.'),
+          isolationSuffix:
+            theCase.type === CaseType.CUSTODY &&
+            theCase.requestedCustodyRestrictions?.includes(
+              CaseCustodyRestrictions.ISOLATION,
+            )
+              ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
+              : '',
+        })}`,
         theCase,
       )
 
       setWorkingCase(theCase)
     }
-  }, [id, workingCase, setWorkingCase, data, autofill])
-
-  useEffect(() => {
-    const requiredFields: { value: string; validations: Validation[] }[] = [
-      {
-        value: workingCase?.demands ?? '',
-        validations: ['empty'],
-      },
-      {
-        value: workingCase?.caseFacts ?? '',
-        validations: ['empty'],
-      },
-      {
-        value: workingCase?.legalArguments ?? '',
-        validations: ['empty'],
-      },
-    ]
-
-    if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields))
-    }
-  }, [workingCase, setIsStepIllegal])
+  }, [id, workingCase, setWorkingCase, data, autofill, formatMessage])
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_FOUR}
       isLoading={loading}
       notFound={data?.case === undefined}
-      decision={workingCase?.decision}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -317,7 +312,7 @@ export const StepFour: React.FC = () => {
             <FormFooter
               previousUrl={`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`}
               nextUrl={`${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`}
-              nextIsDisabled={isStepIllegal}
+              nextIsDisabled={!isPoliceReportStepValidRC(workingCase)}
             />
           </FormContentContainer>
         </>

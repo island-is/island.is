@@ -1,4 +1,4 @@
-import * as ref from '../treat/global.treat'
+import * as ref from '../styles/global.css'
 
 // With [deep imports](/libs/shared/babel/README.md), the only way to load
 // `global.treat` styles is to import something that depends on it.

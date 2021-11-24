@@ -23,6 +23,7 @@ export const Basic = () => (
         <Tag variant="red">Færnimat</Tag>
         <Tag variant="white">Færnimat</Tag>
         <Tag variant="rose">Færnimat</Tag>
+        <Tag variant="dark">Færnimat</Tag>
         <Tag variant="red" attention>
           Mikilvægt
         </Tag>
@@ -49,6 +50,9 @@ export const outlined = () => (
           Færnimat
         </Tag>
         <Tag variant="rose" outlined>
+          Færnimat
+        </Tag>
+        <Tag variant="dark" outlined>
           Færnimat
         </Tag>
         <Tag variant="blueberry" outlined attention>

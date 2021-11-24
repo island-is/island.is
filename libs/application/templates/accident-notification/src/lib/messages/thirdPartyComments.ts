@@ -2,10 +2,16 @@ import { defineMessages } from 'react-intl'
 
 export const thirdPartyComment = {
   general: defineMessages({
-    name: {
-      id: 'an.application:thirdPartyComment.general.name',
-      defaultMessage: 'Lýsing á slysi frá tilkynnanda ',
-      description: 'Accident description from applicant',
+    title: {
+      id: 'an.application:thirdPartyComment.general.title',
+      defaultMessage: 'Bæta við athugasemd',
+      description: 'Third party comment title',
+    },
+    description: {
+      id: 'an.application:thirdPartyComment.general.description',
+      defaultMessage:
+        'Ef það eru einhverjar upplýsingar varðandi tilkynninguna sem þú vilt setja útá eða auka upplýsingar varðandi slysið sem þú vilt koma á framfæri þá er hægt að gera það hér að neðan.',
+      description: 'Third party comment description',
     },
   }),
   labels: defineMessages({
@@ -14,15 +20,10 @@ export const thirdPartyComment = {
       defaultMessage: 'Athugasemd',
       description: `Label for comment`,
     },
-    descriptionInput: {
-      id: 'an.application:thirdPartyComment.labels.descriptionInput',
-      defaultMessage: 'Lýsing á slysi',
-      description: `Label for description input field`,
-    },
-    descriptionInputPlaceholder: {
-      id: 'an.application:thirdPartyComment.labels.descriptionInputPlaceholder',
-      defaultMessage: 'Skrifaðu hér tildrög, orsök og aðstæður slyssins',
-      description: 'Label for description input placeholder',
+    commentPlaceholder: {
+      id: 'an.application:thirdPartyComment.labels.commentPlaceholder',
+      defaultMessage: 'Hér er hægt að setja inn athugasemd',
+      description: `Label for comment placeholder`,
     },
   }),
   buttons: defineMessages({

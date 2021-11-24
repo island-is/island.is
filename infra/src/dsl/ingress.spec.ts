@@ -9,6 +9,7 @@ const Staging: EnvironmentConfig = {
   auroraHost: 'a',
   domain: 'staging01.devland.is',
   type: 'staging',
+  featuresOn: [],
   defaultMaxReplicas: 3,
   releaseName: 'web',
   awsAccountId: '111111',

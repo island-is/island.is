@@ -88,6 +88,7 @@ const USER_VOTER_REGION = gql`
 `
 
 const endorsementListTagNameMap = {
+  [EndorsementListOpenTagsEnum.GeneralPetition]: 'General Petition',
   [EndorsementListOpenTagsEnum.PartyLetter2021]: 'Listabókstafur',
   [EndorsementListOpenTagsEnum.PartyApplicationNordausturkjordaemi2021]:
     'Alþingiskosningar 2021 - Norðausturkjördæmi',

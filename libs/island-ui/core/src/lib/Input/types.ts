@@ -1,6 +1,6 @@
 import React from 'react'
 
-import * as styles from './Input.treat'
+import * as styles from './Input.css'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
 import { ResponsiveProp } from '../../utils/responsiveProp'
 

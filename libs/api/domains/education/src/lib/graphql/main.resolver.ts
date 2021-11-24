@@ -1,4 +1,4 @@
-import { Args, Query, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Query, Mutation, Resolver, Int } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 
@@ -83,21 +83,21 @@ export class MainResolver {
   @Query(() => ExamResult)
   async educationExamResult(
     @CurrentUser() user: User,
-    @Args('nationalId') nationalId: string,
+    @Args('familyIndex', { type: () => Int }) familyIndex: number,
   ): Promise<ExamResult> {
     const family = await this.educationService.getFamily(user.nationalId)
-    const familyMember = family.find(
-      (familyMember) => familyMember.Kennitala === nationalId,
-    )
+    const familyMember = family[familyIndex]
+
     if (!familyMember) {
       throw new ApolloError('The requested nationalId is not a part of family')
     }
+
     return this.auditService.auditPromise(
       {
         user,
         namespace,
         action: 'educationExamResult',
-        resources: nationalId,
+        resources: familyMember.Kennitala,
       },
       this.educationService.getExamResult(familyMember),
     )

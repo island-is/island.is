@@ -3,7 +3,7 @@ set -e
 
 DIR="$(git rev-parse --show-toplevel)"
 marker=$(mktemp)
-touch "$marker" -r "${BASH_SOURCE[0]}"
+touch "$marker"
 
 CMD=$1
 shift

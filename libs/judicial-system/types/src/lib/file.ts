@@ -5,10 +5,12 @@ export interface PresignedPost {
 
 export interface CreatePresignedPost {
   fileName: string
+  type: string
 }
 
 export interface DeleteFile {
   id: string
+  caseId: string
 }
 
 export interface DeleteFileResponse {
@@ -16,12 +18,28 @@ export interface DeleteFileResponse {
 }
 
 export interface GetSignedUrl {
-  caseId: string
   id: string
+  caseId: string
 }
 
 export interface SignedUrl {
   url: string
+}
+
+export interface UploadFileToCourt {
+  id: string
+  caseId: string
+}
+
+export interface UploadFileToCourtResponse {
+  success: boolean
+}
+
+export enum CaseFileState {
+  STORED_IN_RVG = 'STORED_IN_RVG',
+  STORED_IN_COURT = 'STORED_IN_COURT',
+  BOKEN_LINK = 'BOKEN_LINK',
+  DELETED = 'DELETED',
 }
 
 export interface CaseFile {
@@ -30,11 +48,14 @@ export interface CaseFile {
   modified: string
   caseId: string
   name: string
+  type: string
+  state: CaseFileState
   key: string
   size: number
 }
 
 export interface CreateFile {
+  type: string
   key: string
   size: number
 }

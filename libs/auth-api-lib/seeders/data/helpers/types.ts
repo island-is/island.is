@@ -1,0 +1,63 @@
+export interface DbClient {
+  client_id: string
+  allow_offline_access?: boolean
+  identity_token_lifetime?: number
+  access_token_lifetime?: number
+  authorization_code_lifetime?: number
+  absolute_refresh_token_lifetime?: number
+  sliding_refresh_token_lifetime?: number
+  consent_lifetime: number
+  refresh_token_usage?: number
+  update_access_token_claims_on_refresh?: boolean
+  refresh_token_expiration?: number
+  access_token_type?: number
+  enable_local_login?: boolean
+  include_jwt_id?: boolean
+  always_send_client_claims?: boolean
+  pair_wise_subject_salt?: string
+  user_sso_lifetime?: number
+  user_code_type?: string
+  device_code_lifetime?: number
+  always_include_user_claims_in_id_token?: boolean
+  back_channel_logout_session_required?: boolean
+  enabled?: boolean
+  logo_uri?: string
+  require_consent?: boolean
+  require_pkce?: boolean
+  allow_plain_text_pkce?: boolean
+  require_request_object?: boolean
+  allow_access_token_via_browser?: boolean
+  front_channel_logout_uri?: string
+  front_channel_logout_session_required?: boolean
+  back_channel_logout_uri?: string
+  allow_remember_consent?: boolean
+  client_claims_prefix?: string
+  client_name?: string
+  client_uri?: string
+  description?: string
+  protocol_type?: string
+  require_client_secret?: boolean
+  national_id?: string
+  client_type?: string
+  contact_email?: string
+  supports_procuring_holders?: boolean
+  supports_delegation?: boolean
+  supports_legal_guardians?: boolean
+  prompt_delegations?: boolean
+}
+
+export interface DbScope {
+  enabled?: boolean
+  name: string
+  display_name: string
+  description: string
+  show_in_discovery_document: boolean
+  required?: boolean
+  emphasize?: boolean
+  allow_explicit_delegation_grant: boolean
+  grant_to_legal_guardians: boolean
+  grant_to_procuring_holders: boolean
+  automatic_delegation_grant: boolean
+  also_for_delegated_user: boolean
+  is_access_controlled: boolean
+}

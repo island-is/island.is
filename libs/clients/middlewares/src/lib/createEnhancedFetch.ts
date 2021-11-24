@@ -1,9 +1,12 @@
+import https from 'https'
+import { SecureContextOptions } from 'tls'
+
 import CircuitBreaker from 'opossum'
 import fetch from 'node-fetch'
 import { Logger } from 'winston'
 import { logger as defaultLogger } from '@island.is/logging'
 
-type FetchAPI = WindowOrWorkerGlobalScope['fetch']
+export type FetchAPI = WindowOrWorkerGlobalScope['fetch']
 
 interface FetchProblem {
   type: string
@@ -22,6 +25,12 @@ interface FetchError extends Error {
   response: Response
   body?: unknown
   problem?: FetchProblem
+}
+
+// Chrerry-pick the supported types of certs from TLS
+export interface FetchCertificate {
+  pfx: SecureContextOptions['pfx']
+  passphrase: SecureContextOptions['passphrase']
 }
 
 export interface EnhancedFetchOptions {
@@ -51,6 +60,9 @@ export interface EnhancedFetchOptions {
 
   // Override fetch function.
   fetch?: FetchAPI
+
+  // Certificate for auth
+  certificate?: FetchCertificate
 }
 
 const createResponseError = async (response: Response, includeBody = false) => {
@@ -61,9 +73,9 @@ const createResponseError = async (response: Response, includeBody = false) => {
   const { url, status, headers, statusText } = response
   Object.assign(error, { url, status, headers, statusText, response })
 
-  const contentType = response.headers.get('content-type')
-  const isJson = contentType === 'application/json'
-  const isProblem = contentType === 'application/problem+json'
+  const contentType = response.headers.get('content-type') || ''
+  const isJson = contentType.startsWith('application/json')
+  const isProblem = contentType.startsWith('application/problem+json')
   const shouldIncludeBody = includeBody && (isJson || isProblem)
   if (isProblem || shouldIncludeBody) {
     const body = await response.clone().json()
@@ -117,10 +129,23 @@ export const createEnhancedFetch = (
   const timeout = options.timeout ?? 10000
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
 
+  /**
+   * Create an https agent that manages the certificate.
+   * `agent` is an extension from node-fetch and is not a part of the fetch spec
+   * https://github.com/node-fetch/node-fetch#custom-agent
+   */
+  const agent = options.certificate
+    ? new https.Agent({
+        pfx: options.certificate.pfx,
+        passphrase: options.certificate.passphrase,
+      })
+    : undefined
+
   const enhancedFetch: FetchAPI = async (input, init) => {
     try {
       const response = await actualFetch(input, ({
         timeout,
+        agent,
         ...init,
       } as unknown) as RequestInit)
 

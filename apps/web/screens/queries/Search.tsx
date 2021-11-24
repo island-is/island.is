@@ -77,13 +77,6 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           slug
         }
 
-        ... on AboutPage {
-          id
-          title
-          seoDescription
-          slug
-        }
-
         ... on SubArticle {
           id
           title
@@ -220,13 +213,6 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           slug
         }
 
-        ... on AboutPage {
-          id
-          title
-          seoDescription
-          slug
-        }
-
         ... on AdgerdirPage {
           title
           description
@@ -258,6 +244,19 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           title
           url
           intro
+          organizationPage {
+            organization {
+              title
+            }
+          }
+        }
+
+        ... on Link {
+          id
+          title: text
+          slug: url
+          intro
+          labels
         }
       }
       tagCounts {

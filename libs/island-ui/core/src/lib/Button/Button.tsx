@@ -5,7 +5,7 @@ import { As } from 'reakit-utils/types'
 import cn from 'classnames'
 
 import { Box } from '../Box/Box'
-import * as styles from './Button.treat'
+import * as styles from './Button.css'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
 
@@ -56,7 +56,7 @@ export interface ButtonProps {
   children?: ReactNode
   size?: ButtonSizes
   disabled?: boolean
-  focusable?: boolean
+  unfocusable?: boolean
   fluid?: boolean
   icon?: IconType
   iconType?: Type
@@ -90,6 +90,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       nowrap,
       inline,
       as,
+      unfocusable,
       ...buttonProps
     },
     ref,
@@ -102,7 +103,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
         type={as === 'span' ? undefined : type}
         className={cn(
           styles.variants[variant],
-          styles.colors[variant][colorScheme],
+          (styles.colors[variant] as Record<string, string>)[colorScheme],
           {
             [styles.size[size]]:
               variant !== 'utility' &&
@@ -124,6 +125,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
         )}
         display={variant === 'text' ? 'inline' : inline ? 'inlineFlex' : 'flex'}
         disabled={disabled || loading}
+        {...(unfocusable && { tabIndex: -1 })}
         {...buttonProps}
       >
         {loading && variant !== 'text' ? (

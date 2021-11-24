@@ -13,11 +13,6 @@ import { Claim } from './claim.model'
 
 @Table({
   tableName: 'user_identity',
-  indexes: [
-    {
-      fields: ['subject_id'],
-    },
-  ],
 })
 export class UserIdentity extends Model<UserIdentity> {
   @PrimaryKey

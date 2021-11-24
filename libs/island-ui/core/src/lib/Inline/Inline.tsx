@@ -13,7 +13,7 @@ import {
 } from '../../utils/collapsibleAlignmentProps'
 
 export interface InlineProps extends CollapsibleAlignmentProps {
-  space: ResponsiveSpace
+  space?: ResponsiveSpace
   flexWrap?: 'wrap' | 'nowrap'
   children: ReactNodeNoStrings
 }

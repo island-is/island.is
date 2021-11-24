@@ -5,7 +5,7 @@ import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('translation')
-@Controller('public/v1/translations')
+@Controller('v1/translations')
 export class TranslationController {
   constructor(private readonly translationService: TranslationService) {}
 

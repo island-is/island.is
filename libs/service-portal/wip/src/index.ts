@@ -1,6 +1,7 @@
 import {
   ServicePortalModule,
   ServicePortalPath,
+  m,
 } from '@island.is/service-portal/core'
 import { lazy } from 'react'
 
@@ -12,11 +13,6 @@ export const wipModule: ServicePortalModule = {
       name: 'Stillingar',
       path: ServicePortalPath.SettingsRoot,
       render: () => lazy(() => import('./screens/SettingsWIP/SettingsWIP')),
-    },
-    {
-      name: 'Fjármál',
-      path: ServicePortalPath.FinanceRoot,
-      render: () => lazy(() => import('./screens/FinanceWIP/FinanceWIP')),
     },
   ],
 }

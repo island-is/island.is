@@ -24,7 +24,7 @@ import { Locale } from '@island.is/shared/types'
 
 import BackgroundImage from '../BackgroundImage/BackgroundImage'
 import { Slice as SliceType, richText } from '../..'
-import * as styles from './TellUsAStoryFrom.treat'
+import * as styles from './TellUsAStoryFrom.css'
 
 export const GET_ORGANIZATIONS_QUERY = gql`
   query GetOrganizations($input: GetOrganizationsInput!) {

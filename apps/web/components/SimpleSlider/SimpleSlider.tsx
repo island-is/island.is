@@ -17,7 +17,7 @@ import {
   Logo,
 } from '@island.is/island-ui/core'
 
-import * as styles from './SimpleSlider.treat'
+import * as styles from './SimpleSlider.css'
 
 type BreakpointOption = Partial<
   Pick<SlideState, 'slideWidthOffset' | 'gutterWidth' | 'slideCount'>
@@ -27,6 +27,7 @@ type Breakpoints = Record<number, BreakpointOption>
 
 interface SimpleSliderProps {
   title?: string
+  titleColor?: 'white' | 'dark400'
   gutterWidth?: SlideState['gutterWidth']
   slideCount?: SlideState['slideCount']
   breakpoints?: SlideState['breakpoints']
@@ -52,6 +53,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
   slideWidthOffset = 0,
   breakpoints = {},
   title,
+  titleColor,
   carouselController,
   logo,
 }) => {

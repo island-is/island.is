@@ -23,7 +23,9 @@ export const prerequisitesFailed = (data: ExternalData) => {
     !prerequisites.citReturns ||
     !prerequisites.accommodationTaxReturns ||
     !prerequisites.withholdingTaxReturns ||
-    !prerequisites.wageReturns
+    !prerequisites.wageReturns ||
+    prerequisites.collectionActions ||
+    !prerequisites.doNotOwe
   )
 }
 

@@ -6,17 +6,17 @@ const t = 'pdpp.application'
 export const application = defineMessages({
   institutionName: {
     id: `pdpp.application:application.institutionName`,
-    defaultMessage: 'Innheimtumaður ríkissjóðs',
+    defaultMessage: 'Innheimtumaður',
     description: 'Name of the Public Debt Payment Plan institution',
   },
   name: {
     id: `pdpp.application:application.name`,
-    defaultMessage: 'Umsókn um greiðsludreifingu skulda',
+    defaultMessage: 'Umsókn um greiðsluáætlun',
     description: 'Name of the Public Debt Payment Plan application',
   },
   description: {
     id: `pdpp.application:application.description`,
-    defaultMessage: 'Lýsing á umsókn um greiðsludreifingu skulda',
+    defaultMessage: 'Lýsing á umsókn um greiðsluáætlun',
     description: 'Description of the Public Debt Payment Plan application',
   },
 })
@@ -38,6 +38,16 @@ export const section = defineMessages({
     defaultMessage: 'Launagreiðandi',
     description: 'Employer section',
   },
+  disposableIncome: {
+    id: `pdpp.application:section.disposableIncome`,
+    defaultMessage: 'Ráðstöfunartekjur',
+    description: 'Disposable income section',
+  },
+  deptOverview: {
+    id: `pdpp.application:section.deptOverview`,
+    defaultMessage: 'Yfirlit yfir skuldir',
+    description: 'Debt overview section',
+  },
   paymentPlan: {
     id: `pdpp.application:section.paymentPlan`,
     defaultMessage: 'Greiðsludreifing',
@@ -45,8 +55,8 @@ export const section = defineMessages({
   },
   overview: {
     id: `pdpp.application:section.overview`,
-    defaultMessage: 'Yfirlit og rafræn undirskrift',
-    description: 'Overview and e-signature section',
+    defaultMessage: 'Yfirlit',
+    description: 'Overview section',
   },
   confirmation: {
     id: `pdpp.application:section.confirmation`,

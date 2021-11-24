@@ -1,7 +1,7 @@
 import { IsNumber, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
-import { FileType } from '@island.is/financial-aid/shared'
+import { FileType } from '@island.is/financial-aid/shared/lib'
 
 export class CreateFileDto {
   @IsString()

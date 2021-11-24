@@ -36,7 +36,7 @@ export class FinanceResolver {
     )
   }
 
-  @Query(() => graphqlTypeJson)
+  @Query(() => graphqlTypeJson, { nullable: true })
   @Audit()
   async getFinanceStatusDetails(
     @CurrentUser() user: User,

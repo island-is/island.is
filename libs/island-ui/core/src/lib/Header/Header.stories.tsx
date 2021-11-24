@@ -7,7 +7,7 @@ export default {
 }
 
 export const Default = () => (
-  <Header authenticated language="EN" logoutText="Logout" />
+  <Header authenticated language="EN" logoutText="Logout" userName="John Doe" />
 )
 
 export const Info = () => (

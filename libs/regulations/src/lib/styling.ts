@@ -1,4 +1,4 @@
-import { globalStyle } from 'treat'
+import { globalStyle } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 const { color, typography, border } = theme
 
@@ -34,20 +34,56 @@ export const diffStyling = (wrapper: string) => {
 
 // ---------------------------------------------------------------------------
 
+export const regulationTitleStyling = (wrapper: string) => {
+  const styleTitle = makeGlobal(wrapper)
+
+  styleTitle('', {
+    '@media': {
+      print: {
+        fontFamily: '"Times New Roman", "Times", serif',
+        fontSize: '1.667em',
+      },
+    },
+  })
+}
+
+// ---------------------------------------------------------------------------
+
 export const regulationContentStyling = (wrapper: string) => {
-  const global = makeGlobal(wrapper)
+  const styleRegulation = makeGlobal(wrapper)
 
-  global('', {
-    lineHeight: typography.baseLineHeight + 'rem',
+  styleRegulation('', {
+    lineHeight: typography.baseLineHeight + 'em',
+
+    '@media': {
+      // FIXME: Tweak styling of Appendixes and Comments accordions
+      print: {
+        lineHeight: '1.3em',
+        fontFamily: '"Times New Roman", "Times", serif',
+        fontSize: '11pt',
+      },
+    },
   })
 
-  global('p,ul,ol,table,blockquote', {
-    marginBottom: typography.baseLineHeight + 'rem',
+  styleRegulation(' *', {
+    position: 'relative', // Silly hack to enable page-break-* rules. See: https://stackoverflow.com/a/12386608
+    fontWeight: typography.light,
+
+    '@media': {
+      print: {
+        fontFamily: 'inherit',
+      },
+    },
   })
-  global('li', {
-    marginBottom: '1rem',
+
+  styleRegulation('p,ul,ol,pre,table,blockquote', {
+    fontFamily: 'inherit',
+    marginBottom: typography.baseLineHeight + 'em',
+
+    '@media': { print: { marginBottom: '.5em' } },
   })
-  global(
+
+  styleRegulation(
     `
     li,
     li > p,
@@ -58,49 +94,12 @@ export const regulationContentStyling = (wrapper: string) => {
     li > pre
     `,
     {
-      marginBottom: '1rem',
+      marginBottom: '1em',
+      '@media': { print: { marginBottom: '.5em' } },
     },
   )
-  global('ul,ol,blockquote', {
-    marginLeft: '3em',
-  })
-  global('ul', {
-    listStyle: 'disc',
-  })
-  global('ul[type="circle"]', {
-    listStyle: 'circle',
-  })
-  global('ul[type="square"]', {
-    listStyle: 'square',
-  })
 
-  global('strong, b', {
-    fontWeight: typography.semiBold,
-  })
-  global('em, i', {
-    fontStyle: 'italic',
-  })
-
-  global('sub, sup', {
-    verticalAlign: 'baseline',
-    fontSize: 14 / 18 + 'em',
-    position: 'relative',
-    lineHeight: 0,
-    top: '-0.333em',
-  })
-  global('sub', {
-    top: 'auto',
-    bottom: '-0.333em',
-  })
-
-  global('img', {
-    display: 'inline',
-    maxWidth: '100%',
-    width: 'auto',
-    height: 'auto',
-  })
-
-  global(
+  styleRegulation(
     `
     p:last-child,
     ul:last-child,
@@ -112,21 +111,87 @@ export const regulationContentStyling = (wrapper: string) => {
     },
   )
 
-  global('table', {
+  styleRegulation('hr', {
+    marginTop: 0,
+    marginBottom: typography.baseLineHeight + 'em',
+
+    '@media': { print: { margin: '0 0 .5em 0' } },
+  })
+
+  styleRegulation('ul,ol,blockquote', {
+    marginLeft: '2em',
+    // '@media': { print: { marginBottom: '2em' } },
+  })
+  styleRegulation('ul', {
+    listStyle: 'disc',
+  })
+  styleRegulation('ul[type="circle"]', {
+    listStyle: 'circle',
+  })
+  styleRegulation('ul[type="square"]', {
+    listStyle: 'square',
+  })
+  styleRegulation('ol:not([type])', {
+    listStyle: 'decimal',
+  })
+
+  styleRegulation('strong, b', {
+    fontWeight: typography.semiBold,
+  })
+  styleRegulation('em, i', {
+    fontStyle: 'italic',
+  })
+
+  styleRegulation('sub, sup', {
+    verticalAlign: 'baseline',
+    fontSize: 14 / 18 + 'em',
+    position: 'relative',
+    lineHeight: 0,
+    top: '-0.4em',
+  })
+  styleRegulation('sub', {
+    top: '0.333em',
+  })
+  styleRegulation('u', {
+    textDecoration: 'underline',
+  })
+  styleRegulation('s', {
+    textDecoration: 'overline',
+  })
+  styleRegulation('s u, u s', {
+    textDecoration: 'underline overline',
+  })
+
+  styleRegulation('img', {
+    display: 'inline',
+    maxWidth: '100%',
+    width: 'auto',
+    height: 'auto',
+  })
+
+  styleRegulation('table', {
     width: '100%',
     borderCollapse: 'separate',
     borderSpacing: 0,
+
+    '@media': { print: { marginBottom: '1em' } },
   })
 
-  global('th, td', {
-    padding: '0.25em 0.5em',
+  styleRegulation('th, td', {
+    padding: '0.25em 0.33em',
     minWidth: '1.5em',
     textAlign: 'left',
     verticalAlign: 'top',
     width: 'auto',
     border: `1px solid ${color.dark300}`,
+
+    '@media': {
+      print: {
+        pageBreakInside: 'avoid',
+      },
+    },
   })
-  global(
+  styleRegulation(
     `
     tr:not(:first-child) > th,
     tr:not(:first-child) > td
@@ -135,7 +200,7 @@ export const regulationContentStyling = (wrapper: string) => {
       borderTop: '0',
     },
   )
-  global(
+  styleRegulation(
     `
     tr > th:not(:first-child),
     tr > td:not(:first-child)
@@ -145,7 +210,7 @@ export const regulationContentStyling = (wrapper: string) => {
     },
   )
 
-  global(
+  styleRegulation(
     `
     .layout > * > * > th,
     .layout > * > * > td,
@@ -155,82 +220,90 @@ export const regulationContentStyling = (wrapper: string) => {
     },
   )
 
-  global(`th`, {
+  styleRegulation(`th`, {
     fontWeight: 'bold',
     backgroundColor: color.dark100,
   })
 
-  global('thead > tr:last-child > th', {
+  styleRegulation('thead > tr:last-child > th', {
     borderBottomWidth: border.width.large,
   })
-  global(
+  styleRegulation(
     `
     tfoot > tr:first-child> td,
     tfoot > tr:first-child> th
     `,
     {
-      borderTop: '1px solid',
-      borderTopColor: color.dark300,
+      borderTop: `1px solid ${color.dark300}`,
     },
   )
 
-  global('ol:not([type])', {
-    listStyle: 'decimal',
-  })
-
-  global('[align="right"]', {
+  styleRegulation('[align="right"]', {
     textAlign: 'right',
   })
-  global('[align="center"]', {
+  styleRegulation('[align="center"]', {
     textAlign: 'center',
   })
 
-  global('h1, h2,', {
+  styleRegulation('h1,h2,h3,h4,h5,h6', {
+    fontWeight: typography.headingsFontWeight,
+    '@media': {
+      print: {
+        pageBreakAfter: 'avoid',
+        pageBreakInside: 'avoid',
+        marginBottom: '.5rem',
+      },
+    },
+  })
+
+  styleRegulation('h1, h2,', {
     // color: 'red',
     marginTop: '2em',
     fontSize: '1.2em',
     fontWeight: typography.headingsFontWeight,
   })
-  global('h3', {
+  styleRegulation('h3', {
     marginTop: '1.5em',
     fontWeight: typography.headingsFontWeight,
     fontSize: '1.1em',
   })
-  global('h4', {
+  styleRegulation('h4', {
     // color: 'red',
     fontSize: '1em',
     fontWeight: typography.headingsFontWeight,
   })
-  global('h5, h6', {
+  styleRegulation('h5, h6', {
     // color: 'red',
     fontSize: '.9em',
     fontWeight: typography.headingsFontWeight,
   })
 
-  global('.section__title', {
+  styleRegulation('.section__title', {
     marginTop: '2em',
     textAlign: 'center',
     fontSize: '1em',
     fontWeight: typography.regular,
-    lineHeight: '2em',
     textTransform: 'uppercase',
+    lineHeight: '2em',
+    '@media': { print: { lineHeight: 'inherit' } },
   })
-  global('.section__title:first-child', {
+  styleRegulation('.section__title:first-child', {
     marginTop: '0',
   })
-  global('em.section__name', {
+  styleRegulation('.section__name', {
     display: 'block',
     fontStyle: 'inherit',
   })
 
-  global('.chapter__title', {
+  styleRegulation('.chapter__title', {
     marginTop: '2em',
     textAlign: 'center',
     fontSize: '1em',
     fontWeight: typography.regular,
     lineHeight: '2em',
+    '@media': { print: { lineHeight: 'inherit' } },
   })
-  global(
+  styleRegulation(
     `
     .chapter__title:first-child,
     .section__title + .chapter__title
@@ -239,34 +312,38 @@ export const regulationContentStyling = (wrapper: string) => {
       marginTop: '0',
     },
   )
-  global('em.chapter__name', {
+  styleRegulation('.chapter__name', {
     display: 'block',
     fontStyle: 'inherit',
     fontWeight: typography.headingsFontWeight,
   })
 
-  global('.article__title', {
+  styleRegulation('.article__title', {
     marginTop: '2em',
-    marginBottom: '1.5em',
     textAlign: 'center',
     fontSize: '1em',
     fontWeight: typography.regular,
+    marginBottom: '1.5em',
     lineHeight: '2em',
+    '@media': { print: { marginBottom: '.5em', lineHeight: 'inherit' } },
   })
-  global(
+  styleRegulation('.article__title--provisional', {
+    fontWeight: typography.headingsFontWeight,
+  })
+  styleRegulation(
     `
     .article__title:first-child,
-    .section__title + .chapter__title,
+    .section__title + .article__title,
     .chapter__title + .article__title
     `,
     {
       marginTop: '0',
     },
   )
-  global('em.article__name', {
+  styleRegulation('.article__name', {
     display: 'block',
     fontStyle: 'italic',
   })
 
-  return global
+  return styleRegulation
 }

@@ -1,6 +1,6 @@
 import React, { FC, MouseEvent } from 'react'
 import cn from 'classnames'
-import * as styles from './IconBullet.treat'
+import * as styles from './IconBullet.css'
 
 export interface IconBulletProps {
   variant?: 'red' | 'blue' | 'gradient'
@@ -10,7 +10,7 @@ export interface IconBulletProps {
   onClick?: (e: MouseEvent) => void
 }
 
-const IconBullet: FC<IconBulletProps> = ({
+export const IconBullet: FC<IconBulletProps> = ({
   variant = 'blue',
   size = 'large',
   image,

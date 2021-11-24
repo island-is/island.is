@@ -4,7 +4,7 @@ import uniq from 'lodash/uniq'
 import { Colors } from '@island.is/island-ui/theme'
 import { Icon, IconTypes } from '../Icon/Icon'
 import { Box } from '../Box/Box'
-import * as styles from './Pagination.treat'
+import * as styles from './Pagination.css'
 
 type ColorMap = Record<keyof typeof styles.variants, Colors>
 

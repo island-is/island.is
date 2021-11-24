@@ -3,7 +3,7 @@ import {
   resolveResponsiveProp,
   ResponsiveProp,
 } from '../../utils/responsiveProp'
-import * as styleRefs from './useNegativeMarginLeft.treat'
+import * as styleRefs from './useNegativeMarginLeft.css'
 
 export const useNegativeMarginLeft = (space: ResponsiveProp<any>) => {
   const styles = {

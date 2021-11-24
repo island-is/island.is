@@ -14,7 +14,6 @@ import { GetNewsInput } from './dto/getNews.input'
 import { GetArticlesInput } from './dto/getArticles.input'
 import { NewsList } from './models/newsList.model'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
-import { AboutPage } from './models/aboutPage.model'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { GetSingleMenuInput } from './dto/getSingleMenu.input'
@@ -226,15 +225,5 @@ export class CmsElasticsearchService {
     const menuResponse = await this.elasticService.findById(index, id)
     const response = menuResponse.body?._source?.response
     return response ? JSON.parse(response) : null
-  }
-
-  async getSingleAboutPage(
-    index: string,
-    id: string,
-  ): Promise<AboutPage | null> {
-    const aboutPageDocument = await this.elasticService.findById(index, id)
-    return aboutPageDocument.body?._source?.response
-      ? JSON.parse(aboutPageDocument.body?._source?.response)
-      : null
   }
 }

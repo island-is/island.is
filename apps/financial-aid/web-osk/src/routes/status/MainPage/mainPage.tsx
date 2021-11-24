@@ -1,10 +1,11 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
   Text,
   Box,
   BulletList,
   Bullet,
-  Button,
+  LoadingDots,
+  Link,
 } from '@island.is/island-ui/core'
 
 import {
@@ -13,49 +14,78 @@ import {
   Footer,
   InProgress,
   Rejected,
-  StatusLayout,
   Timeline,
 } from '@island.is/financial-aid-web/osk/src/components'
 
-import { getActiveTypeForStatus } from '@island.is/financial-aid/shared'
+import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 
-import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const MainPage = () => {
-  const { user } = useContext(UserContext)
   const logOut = useLogOut()
 
-  const currentApplication = useMemo(() => {
-    if (user?.currentApplication) {
-      return user.currentApplication
+  const {
+    myApplication,
+    loading,
+    error,
+    municipality,
+    setMunicipalityById,
+    user,
+  } = useContext(AppContext)
+
+  const isUserSpouse = user?.spouse?.hasPartnerApplied
+
+  useEffect(() => {
+    if (myApplication && myApplication.municipalityCode) {
+      setMunicipalityById(myApplication.municipalityCode)
     }
-  }, [user])
+  }, [myApplication])
 
   return (
-    <StatusLayout>
+    <>
       <ContentContainer>
-        <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
-          Aðstoðin þín
+        <Text as="h1" variant="h2" marginBottom={1}>
+          {isUserSpouse ? 'Aðstoð maka þíns' : 'Aðstoðin þín '}
         </Text>
 
-        {currentApplication && (
+        {myApplication && myApplication?.state && (
           <>
-            {getActiveTypeForStatus[currentApplication.state] ===
-              'InProgress' && (
-              <InProgress currentApplication={currentApplication} />
-            )}
+            <InProgress
+              application={myApplication}
+              isApplicant={!isUserSpouse}
+            />
 
-            {getActiveTypeForStatus[currentApplication.state] ===
-              'Approved' && <Approved state={currentApplication.state} />}
+            <Approved
+              isStateVisible={myApplication.state === ApplicationState.APPROVED}
+              state={myApplication.state}
+              amount={myApplication.amount}
+              isApplicant={!isUserSpouse}
+            />
 
-            {getActiveTypeForStatus[currentApplication.state] ===
-              'Rejected' && <Rejected state={currentApplication.state} />}
+            <Rejected
+              isStateVisible={myApplication.state === ApplicationState.REJECTED}
+              state={myApplication.state}
+              rejectionComment={myApplication?.rejection}
+              isApplicant={!isUserSpouse}
+            />
 
-            <Timeline state={currentApplication.state} />
+            <Timeline
+              state={myApplication.state}
+              created={myApplication.created}
+              modified={myApplication.modified}
+            />
           </>
         )}
+
+        {error && (
+          <Text>
+            Umsókn ekki fundin eða einhvað fór úrskeiðis <br />
+            vinsamlegast reyndu síðar
+          </Text>
+        )}
+        {loading && <LoadingDots />}
 
         <Text as="h4" variant="h3" marginBottom={2} marginTop={[3, 3, 7]}>
           Frekari aðgerðir í boði
@@ -63,34 +93,24 @@ const MainPage = () => {
         <Box marginBottom={[5, 5, 10]}>
           <BulletList type={'ul'} space={2}>
             <Bullet>
-              <Button
-                colorScheme="default"
-                iconType="filled"
-                onClick={() => {
-                  /*TODO on click event */
-                }}
-                preTextIconType="filled"
-                size="default"
-                type="button"
-                variant="text"
+              <Link
+                href={municipality?.homepage ?? ''}
+                color="blue400"
+                underline="normal"
+                underlineVisibility="always"
               >
-                Upplýsingar um fjárhagsaðstoð
-              </Button>
+                <b>Upplýsingar um fjárhagsaðstoð</b>
+              </Link>
             </Bullet>
             <Bullet>
-              <Button
-                colorScheme="default"
-                iconType="filled"
-                onClick={() => {
-                  /*TODO on click event */
-                }}
-                preTextIconType="filled"
-                size="default"
-                type="button"
-                variant="text"
+              <Link
+                href={`mailto: ${municipality?.email}`}
+                color="blue400"
+                underline="normal"
+                underlineVisibility="always"
               >
-                Hafa samband
-              </Button>
+                <b> Hafa samband</b>
+              </Link>
             </Bullet>
           </BulletList>
         </Box>
@@ -103,7 +123,7 @@ const MainPage = () => {
         previousIsDestructive={true}
         hideNextButton={true}
       />
-    </StatusLayout>
+    </>
   )
 }
 

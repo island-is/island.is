@@ -1,16 +1,12 @@
-import { useMutation } from '@apollo/client'
 import {
-  DefaultEvents,
   FieldBaseProps,
   formatText,
   FormValue,
 } from '@island.is/application/core'
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import {
   AlertMessage,
   Box,
-  Button,
   GridColumn,
   GridRow,
   Text,
@@ -25,18 +21,25 @@ import { States, YES } from '../../constants'
 import { AccidentNotification } from '../../lib/dataSchema'
 import {
   accidentDetails,
+  accidentLocation,
   accidentType,
   applicantInformation,
   application as applicationMessages,
   childInCustody,
+  fatalAccident,
+  fishingCompanyInfo,
   injuredPersonInformation,
   juridicalPerson,
   locationAndPurpose,
   overview,
   sportsClubInfo,
+  inReview,
 } from '../../lib/messages'
 import {
+  getAttachmentTitles,
   getWorkplaceData,
+  isFishermanAccident,
+  isHomeActivitiesAccident,
   isMachineRelatedAccident,
   isProfessionalAthleteAccident,
   isReportingOnBehalfOfChild,
@@ -44,62 +47,68 @@ import {
   isReportingOnBehalfOfInjured,
   returnMissingDocumentsList,
 } from '../../utils'
-import * as styles from './FormOverview.treat'
+import * as styles from './FormOverview.css'
 import { FileValueLine, ValueLine } from './ValueLine'
+
+interface SubmittedApplicationData {
+  data?: {
+    documentId: string
+  }
+}
 
 export const FormOverview: FC<FieldBaseProps> = ({
   application,
-  refetch,
   goToScreen,
 }) => {
   const answers = application.answers as AccidentNotification
   const { formatMessage } = useLocale()
 
-  const [submitApplication, { loading: loadingSubmit }] = useMutation(
-    SUBMIT_APPLICATION,
-    {
-      onError: (e) => console.error(e.message),
-    },
-  )
-
+  const files = getAttachmentTitles(answers)
   const missingDocuments = returnMissingDocumentsList(answers, formatMessage)
+  const workplaceData = getWorkplaceData(application.answers)
 
   const { timeOfAccident, dateOfAccident } = answers.accidentDetails
   const time = `${timeOfAccident.slice(0, 2)}:${timeOfAccident.slice(2, 4)}`
   const date = format(parseISO(dateOfAccident), 'dd.MM.yy', { locale: is })
 
-  const workplaceData = getWorkplaceData(application.answers)
-
-  const attachments = [
-    ...(answers.attachments.deathCertificateFile
-      ? answers.attachments.deathCertificateFile
-      : []),
-    ...(answers.attachments.injuryCertificateFile
-      ? answers.attachments.injuryCertificateFile
-      : []),
-    ...(answers.attachments.powerOfAttorneyFile
-      ? answers.attachments.powerOfAttorneyFile
-      : []),
-  ]
-
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)
   }
+
+  const subAppData = application.externalData
+    .submitApplication as SubmittedApplicationData
 
   return (
     <Box component="section" paddingTop={2}>
       <Text>
         {formatText(overview.general.description, application, formatMessage)}
       </Text>
-
-      <Text variant="h4" paddingTop={10} paddingBottom={3}>
+      {subAppData?.data?.documentId && (
+        <Box paddingTop={5}>
+          <AlertMessage
+            title={formatMessage(inReview.application.documentIdAlertTitle)}
+            type={'info'}
+            message={
+              <Text>
+                <span>
+                  {formatMessage(inReview.application.documentIdAlertMessage)}
+                </span>
+                <span className={styles.valueLabel}>
+                  {` ${subAppData.data?.documentId}`}
+                </span>
+              </Text>
+            }
+          />
+        </Box>
+      )}
+      <Text variant="h4" paddingTop={5} paddingBottom={3}>
         {formatText(
           applicantInformation.general.title,
           application,
           formatMessage,
         )}
       </Text>
-      <ReviewGroup isLast editAction={() => null}>
+      <ReviewGroup isLast>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
@@ -153,7 +162,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ReviewGroup isLast>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
@@ -173,12 +182,14 @@ export const FormOverview: FC<FieldBaseProps> = ({
                   value={answers.injuredPersonInformation.email}
                 />
               </GridColumn>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine
-                  label={injuredPersonInformation.labels.tel}
-                  value={answers.injuredPersonInformation.phoneNumber ?? ''}
-                />
-              </GridColumn>
+              {answers.injuredPersonInformation.phoneNumber && (
+                <GridColumn span={['12/12', '12/12', '6/12']}>
+                  <ValueLine
+                    label={injuredPersonInformation.labels.tel}
+                    value={answers.injuredPersonInformation.phoneNumber}
+                  />
+                </GridColumn>
+              )}
             </GridRow>
           </ReviewGroup>
         </>
@@ -193,7 +204,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ReviewGroup isLast>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
@@ -207,22 +218,6 @@ export const FormOverview: FC<FieldBaseProps> = ({
                   value={answers.childInCustody.nationalId}
                 />
               </GridColumn>
-              {answers.childInCustody.email && (
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <ValueLine
-                    label={childInCustody.labels.email}
-                    value={answers.childInCustody.email}
-                  />
-                </GridColumn>
-              )}
-              {answers.childInCustody.phoneNumber && (
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <ValueLine
-                    label={childInCustody.labels.tel}
-                    value={answers.childInCustody.phoneNumber}
-                  />
-                </GridColumn>
-              )}
             </GridRow>
           </ReviewGroup>
         </>
@@ -237,7 +232,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ReviewGroup isLast>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
@@ -265,18 +260,12 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ReviewGroup isLast>
             <GridRow>
               <GridColumn span="12/12">
                 <ValueLine
                   label={locationAndPurpose.labels.location}
                   value={answers.locationAndPurpose.location}
-                />
-              </GridColumn>
-              <GridColumn span="12/12">
-                <ValueLine
-                  label={locationAndPurpose.labels.purpose}
-                  value={answers.locationAndPurpose.purpose}
                 />
               </GridColumn>
             </GridRow>
@@ -288,32 +277,34 @@ export const FormOverview: FC<FieldBaseProps> = ({
         <>
           <Text variant="h4" paddingTop={6} paddingBottom={3}>
             {formatText(
-              workplaceData.general.title,
+              workplaceData.companyInfoMsg.general.title,
               application,
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ReviewGroup isLast>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
-                  label={workplaceData.labels.companyName}
-                  value={workplaceData.info.companyName}
+                  label={workplaceData.companyInfoMsg.labels.name}
+                  value={workplaceData.companyInfo.name}
                 />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
-                  label={workplaceData.labels.nationalId}
-                  value={workplaceData.info.nationalRegistrationId ?? ''}
+                  label={workplaceData.companyInfoMsg.labels.nationalId}
+                  value={
+                    workplaceData.companyInfo?.nationalRegistrationId ?? ''
+                  }
                 />
               </GridColumn>
               {isProfessionalAthleteAccident(answers as FormValue) &&
-                workplaceData.info.employee && (
+                workplaceData.companyInfo?.onPayRoll && (
                   <GridColumn span="12/12">
                     <ValueLine
                       label={sportsClubInfo.employee.sectionTitle}
                       value={
-                        workplaceData.info.employee.radioButton === YES
+                        workplaceData.companyInfo?.onPayRoll.answer === YES
                           ? applicationMessages.general.yesOptionLabel
                           : applicationMessages.general.noOptionLabel
                       }
@@ -322,36 +313,83 @@ export const FormOverview: FC<FieldBaseProps> = ({
                 )}
             </GridRow>
           </ReviewGroup>
+          {isFishermanAccident(answers as FormValue) && (
+            <>
+              <Text variant="h4" paddingTop={6} paddingBottom={3}>
+                {formatMessage(
+                  fishingCompanyInfo.general.informationAboutShipTitle,
+                )}
+              </Text>
+              <ReviewGroup isLast>
+                <GridRow>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={fishingCompanyInfo.labels.shipName}
+                      value={answers.fishingShipInfo.shipName}
+                    ></ValueLine>
+                  </GridColumn>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={fishingCompanyInfo.labels.shipCharacters}
+                      value={answers.fishingShipInfo.shipCharacters}
+                    ></ValueLine>
+                  </GridColumn>
+                </GridRow>
+                <GridRow>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={fishingCompanyInfo.labels.homePort}
+                      value={answers.fishingShipInfo.homePort}
+                    ></ValueLine>
+                  </GridColumn>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={fishingCompanyInfo.labels.shipRegisterNumber}
+                      value={answers.fishingShipInfo.shipRegisterNumber}
+                    ></ValueLine>
+                  </GridColumn>
+                </GridRow>
+              </ReviewGroup>
+            </>
+          )}
 
           {answers.isRepresentativeOfCompanyOrInstitue?.toString() !== YES && (
             <>
               <Text variant="h4" paddingTop={6} paddingBottom={3}>
                 {formatText(
-                  workplaceData.labels.descriptionField,
+                  workplaceData.companyInfoMsg.labels.descriptionField,
                   application,
                   formatMessage,
                 )}
               </Text>
-              <ReviewGroup isLast editAction={() => null}>
+              <ReviewGroup isLast>
                 <GridRow>
-                  <GridColumn span="12/12">
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
                     <ValueLine
-                      label={workplaceData.labels.name}
-                      value={workplaceData.info.name}
+                      label={workplaceData.representitiveMsg.labels.name}
+                      value={workplaceData.representitive.name}
                     />
                   </GridColumn>
                   <GridColumn span={['12/12', '12/12', '6/12']}>
                     <ValueLine
-                      label={workplaceData.labels.email}
-                      value={workplaceData.info.email}
+                      label={workplaceData.representitiveMsg.labels.nationalId}
+                      value={workplaceData.representitive.nationalId}
                     />
                   </GridColumn>
                   <GridColumn span={['12/12', '12/12', '6/12']}>
                     <ValueLine
-                      label={workplaceData.labels.tel}
-                      value={workplaceData.info.phoneNumber}
+                      label={workplaceData.representitiveMsg.labels.email}
+                      value={workplaceData.representitive.email}
                     />
                   </GridColumn>
+                  {workplaceData.representitive.phoneNumber && (
+                    <GridColumn span={['12/12', '12/12', '6/12']}>
+                      <ValueLine
+                        label={workplaceData.representitiveMsg.labels.tel}
+                        value={workplaceData.representitive.phoneNumber}
+                      />
+                    </GridColumn>
+                  )}
                 </GridRow>
               </ReviewGroup>
             </>
@@ -359,19 +397,62 @@ export const FormOverview: FC<FieldBaseProps> = ({
         </>
       )}
 
+      {isHomeActivitiesAccident(answers as FormValue) && (
+        <>
+          <Text variant="h4" paddingTop={6} paddingBottom={3}>
+            {formatMessage(accidentLocation.homeAccidentLocation.title)}
+          </Text>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens('accidentLocation.homeAccident')}
+          >
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={accidentLocation.homeAccidentLocation.address}
+                  value={answers.homeAccident.address}
+                ></ValueLine>
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={accidentLocation.homeAccidentLocation.postalCode}
+                  value={answers.homeAccident.postalCode}
+                ></ValueLine>
+              </GridColumn>
+            </GridRow>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={accidentLocation.homeAccidentLocation.community}
+                  value={answers.homeAccident.community}
+                ></ValueLine>
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={accidentLocation.homeAccidentLocation.moreDetails}
+                  value={answers.homeAccident.moreDetails || ''}
+                ></ValueLine>
+              </GridColumn>
+            </GridRow>
+          </ReviewGroup>
+        </>
+      )}
+
       <Text variant="h4" paddingTop={6} paddingBottom={3}>
-        {formatText(
-          accidentDetails.general.sectionTitle,
-          application,
-          formatMessage,
-        )}
+        {formatMessage(accidentDetails.general.sectionTitle)}
       </Text>
-      <ReviewGroup isLast editAction={() => null}>
+      <ReviewGroup isLast>
         <GridRow>
           <GridColumn span="12/12">
             <ValueLine
               label={overview.labels.accidentType}
-              value={accidentType.labels[answers.accidentType.radioButton]}
+              value={`${formatMessage(
+                accidentType.labels[answers.accidentType.radioButton],
+              )}${
+                answers.wasTheAccidentFatal === YES
+                  ? `, ${formatMessage(fatalAccident.labels.fatalAccident)}`
+                  : ''
+              }`}
             />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -395,12 +476,9 @@ export const FormOverview: FC<FieldBaseProps> = ({
             />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '12/12']}>
-            <FileValueLine
-              label={overview.labels.attachments}
-              files={attachments}
-            />
+            <FileValueLine label={overview.labels.attachments} files={files} />
             {missingDocuments.length !== 0 && (
-              <Box marginBottom={4}>
+              <Box marginBottom={2}>
                 <AlertMessage
                   type="warning"
                   title={formatMessage(overview.alertMessage.title)}
@@ -415,39 +493,6 @@ export const FormOverview: FC<FieldBaseProps> = ({
                 />
               </Box>
             )}
-            {States.OVERVIEW === application.state ||
-            States.ADD_DOCUMENTS === application.state ? (
-              <Box display="flex" justifyContent="flexEnd">
-                <Button
-                  icon="attach"
-                  variant="utility"
-                  loading={loadingSubmit}
-                  disabled={loadingSubmit}
-                  onClick={
-                    States.OVERVIEW === application.state
-                      ? async () => {
-                          const res = await submitApplication({
-                            variables: {
-                              input: {
-                                id: application.id,
-                                event: DefaultEvents.EDIT,
-                                answers: application.answers,
-                              },
-                            },
-                          })
-
-                          if (res?.data) {
-                            // Takes them to the next state (which loads the relevant form)
-                            refetch?.()
-                          }
-                        }
-                      : () => changeScreens('attachments.multifield')
-                  }
-                >
-                  {formatMessage(overview.labels.missingDocumentsButton)}
-                </Button>
-              </Box>
-            ) : null}
           </GridColumn>
         </GridRow>
       </ReviewGroup>

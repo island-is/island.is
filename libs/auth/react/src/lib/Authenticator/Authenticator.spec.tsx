@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { MemoryRouter } from 'react-router-dom'
-import { screen, render, waitFor } from '@testing-library/react'
+import { screen, render, waitFor, act } from '@testing-library/react'
 import { UserManagerEvents } from 'oidc-client'
 
 import { Authenticator } from './Authenticator'
@@ -40,7 +40,7 @@ type MinimalUser = {
 type MinimalUserManager = {
   events: {
     addUserLoaded: (cb: UserManagerEvents.UserLoadedCallback) => void
-    addUserSignedOut: (cb: UserManagerEvents.UserSignedOutCallback) => void
+    addUserSignedOut: jest.Mock
     removeUserLoaded: () => void
     removeUserSignedOut: () => void
   }
@@ -48,6 +48,7 @@ type MinimalUserManager = {
   signinRedirect: jest.Mock
   signinSilent: jest.Mock
   signinRedirectCallback: jest.Mock
+  removeUser: jest.Mock
 }
 
 describe('Authenticator', () => {
@@ -75,6 +76,7 @@ describe('Authenticator', () => {
       signinRedirect: jest.fn(),
       signinSilent: jest.fn(),
       signinRedirectCallback: jest.fn(),
+      removeUser: jest.fn(),
     }
     mockedGetUserManager.mockReturnValue(userManager)
     mockedGetAuthSettings.mockReturnValue({
@@ -114,6 +116,29 @@ describe('Authenticator', () => {
 
     // Assert
     await expectAuthenticated('John')
+  })
+
+  it('removes user and starts signin flow if user is logged out', async () => {
+    // Arrange
+    userManager.getUser.mockResolvedValue({
+      expired: false,
+      profile: {
+        name: 'John',
+      },
+    })
+    renderAuthenticator()
+    await expectAuthenticated('John')
+    expect(userManager.events.addUserSignedOut).toHaveBeenCalled()
+    const handler = userManager.events.addUserSignedOut.mock.calls[0][0]
+
+    // Act
+    await act(async () => {
+      await handler()
+    })
+
+    // Assert
+    await expectSignin()
+    expect(userManager.removeUser).toHaveBeenCalled()
   })
 
   it('performs silent signin with expired user', async () => {

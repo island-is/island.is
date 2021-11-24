@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { ApplicationFilters } from '@island.is/financial-aid/shared'
+import { ApplicationFilters } from '@island.is/financial-aid/shared/lib'
 
 @ObjectType()
 export class ApplicationFiltersModel implements ApplicationFilters {
@@ -18,4 +18,7 @@ export class ApplicationFiltersModel implements ApplicationFilters {
 
   @Field()
   readonly Approved!: number
+
+  @Field()
+  readonly MyCases!: number
 }

@@ -19,9 +19,11 @@ import {
   UseGuards,
   ForbiddenException,
   BadRequestException,
+  HttpCode,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiParam,
   ApiSecurity,
@@ -33,8 +35,6 @@ import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
-import { EmailVerification } from './emailVerification.model'
-import { SmsVerification } from './smsVerification.model'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
@@ -219,16 +219,15 @@ export class UserProfileController {
     description: 'The national id of the user for email verification.',
     allowEmptyValue: false,
   })
-  @ApiCreatedResponse({ type: EmailVerification })
-  @Audit<EmailVerification>({
-    resources: (emailVerification) => emailVerification?.nationalId ?? '',
-  })
+  @HttpCode(204)
+  @ApiNoContentResponse()
+  @Audit()
   async recreateVerification(
     @Param('nationalId')
     nationalId: string,
     @CurrentUser()
     user: User,
-  ): Promise<EmailVerification> {
+  ): Promise<void> {
     // findOneByNationalId must be first as it implictly checks if the
     // route param matches the authenticated user.
     const profile = await this.findOneByNationalId(nationalId, user)
@@ -238,7 +237,7 @@ export class UserProfileController {
       )
     }
 
-    return await this.verificationService.createEmailVerification(
+    await this.verificationService.createEmailVerification(
       profile.nationalId,
       profile.email,
     )
@@ -254,7 +253,8 @@ export class UserProfileController {
     description: 'The national id of the user for email verification.',
     allowEmptyValue: false,
   })
-  @ApiCreatedResponse({ type: ConfirmationDtoResponse })
+  @HttpCode(200)
+  @ApiOkResponse({ type: ConfirmationDtoResponse })
   async confirmEmail(
     @Param('nationalId')
     nationalId: string,
@@ -287,7 +287,8 @@ export class UserProfileController {
     description: 'The national id of the user for email verification.',
     allowEmptyValue: false,
   })
-  @ApiCreatedResponse({ type: ConfirmationDtoResponse })
+  @HttpCode(200)
+  @ApiOkResponse({ type: ConfirmationDtoResponse })
   async confirmSms(
     @Param('nationalId')
     nationalId: string,
@@ -313,21 +314,19 @@ export class UserProfileController {
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
   @Post('smsVerification/')
-  @Audit<SmsVerification>({
-    resources: (smsVerification) => smsVerification.nationalId,
-  })
+  @HttpCode(204)
+  @ApiNoContentResponse()
+  @Audit()
   async createSmsVerification(
     @Body()
     createSmsVerification: CreateSmsVerificationDto,
     @CurrentUser()
     user: User,
-  ): Promise<SmsVerification | null> {
+  ): Promise<void> {
     if (createSmsVerification.nationalId != user.nationalId) {
       throw new ForbiddenException()
     }
 
-    return await this.verificationService.createSmsVerification(
-      createSmsVerification,
-    )
+    await this.verificationService.createSmsVerification(createSmsVerification)
   }
 }

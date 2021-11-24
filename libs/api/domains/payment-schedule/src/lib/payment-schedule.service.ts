@@ -1,0 +1,173 @@
+import { DefaultApi, ScheduleType } from '@island.is/clients/payment-schedule'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
+import {
+  GetInitialScheduleInput,
+  GetScheduleDistributionInput,
+} from './graphql/dto'
+import {
+  PaymentScheduleConditions,
+  PaymentScheduleDebts,
+  PaymentScheduleDistribution,
+  PaymentScheduleEmployer,
+  PaymentScheduleInitialSchedule,
+} from './graphql/models'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { UpdateCurrentEmployerInput } from './graphql/dto/updateCurrentEmployerInput'
+import { UpdateCurrentEmployerResponse } from './graphql/models/updateCurrentEmployer.model'
+
+@Injectable()
+export class PaymentScheduleService {
+  constructor(
+    private paymentScheduleApi: DefaultApi,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
+  ) {}
+
+  paymentScheduleApiWithAuth(auth: Auth) {
+    return this.paymentScheduleApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getConditions(user: User): Promise<PaymentScheduleConditions> {
+    const { conditions, error } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).conditionsnationalIdGET3({
+      nationalId: user.nationalId,
+    })
+
+    if (error) {
+      this.logger.error('Error getting conditions', error)
+      throw new Error('Error getting conditions')
+    }
+
+    if (!conditions) {
+      throw new Error('No conditions found for nationalId')
+    }
+    return conditions
+  }
+
+  async getPaymentDistribution(
+    user: User,
+    input: GetScheduleDistributionInput,
+  ): Promise<PaymentScheduleDistribution> {
+    const {
+      paymentDistribution,
+      error,
+    } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).paymentDistributionnationalIdscheduleTypeGET5({
+      nationalId: user.nationalId,
+      monthAmount: input.monthAmount ?? 0,
+      monthCount: input.monthCount ?? 0,
+      scheduleType: input.scheduleType,
+      totalAmount: input.totalAmount,
+    })
+
+    if (error) {
+      this.logger.error('Error getting payment distribution', error)
+      throw new Error('Error getting payment distribution')
+    }
+
+    if (!paymentDistribution) {
+      throw new Error('No paymentDistribution not found for nationalId')
+    }
+
+    return {
+      payments: paymentDistribution.payments.map((payment) => {
+        return {
+          dueDate: new Date(payment.dueDate),
+          payment: payment.payment,
+          accumulated: payment.accumulated,
+        }
+      }),
+      scheduleType: paymentDistribution.scheduleType as ScheduleType,
+      nationalId: paymentDistribution.nationalId,
+    }
+  }
+
+  async getInitalSchedule(
+    user: User,
+    input: GetInitialScheduleInput,
+  ): Promise<PaymentScheduleInitialSchedule> {
+    const {
+      distributionInitialPosition,
+      error,
+    } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).distributionInitialPositionnationalIdscheduleTypeGET4({
+      disposableIncome: input.disposableIncome,
+      nationalId: user.nationalId,
+      scheduleType: input.type,
+      totalAmount: input.totalAmount,
+    })
+
+    if (error) {
+      this.logger.error('Error getting initial schedule', error)
+      throw new Error('Error getting initial schedule')
+    }
+    return {
+      ...distributionInitialPosition,
+      scheduleType: distributionInitialPosition.scheduleType as ScheduleType,
+    }
+  }
+
+  async getDebts(user: User): Promise<PaymentScheduleDebts[]> {
+    const { deptAndSchedules, error } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).debtsandschedulesnationalIdGET2({
+      nationalId: user.nationalId,
+    })
+    if (error) {
+      this.logger.error('Error getting debts', error)
+      throw new Error('Error getting debts')
+    }
+    if (!deptAndSchedules) {
+      throw new Error('No debts found for nationalId')
+    }
+    return deptAndSchedules.map((debt) => {
+      return {
+        ...debt,
+        type: debt.type as ScheduleType,
+      }
+    })
+  }
+
+  async getCurrentEmployer(user: User): Promise<PaymentScheduleEmployer> {
+    const { wagesDeduction, error } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).wagesdeductionnationalIdGET1({
+      nationalId: user.nationalId,
+    })
+    if (error) {
+      this.logger.error('Error employer information for nationalId', error)
+      throw new Error('Error employer information for nationalId')
+    }
+
+    if (!wagesDeduction) {
+      throw new Error('No employer found for nationalId')
+    }
+
+    return {
+      name: wagesDeduction.employerName,
+      nationalId: wagesDeduction.employerNationalId,
+    }
+  }
+
+  async updateCurrentEmployer(
+    nationalId: string,
+    input: UpdateCurrentEmployerInput,
+  ): Promise<UpdateCurrentEmployerResponse> {
+    try {
+      await this.paymentScheduleApi.wagesdeductionnationalIdPUT1Raw({
+        input: { employer: { employerNationalId: input.employerNationalId } },
+        nationalId: nationalId,
+      })
+    } catch (error) {
+      this.logger.error('Error occurred when updating current employer', error)
+      throw new Error('Error occurred when updating current employer')
+    }
+
+    return { success: true }
+  }
+}

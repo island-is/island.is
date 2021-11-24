@@ -31,8 +31,15 @@ export const delimitation = {
     concernsLibel: {
       id: 'dpac.application:section.delimitation.labels.concernsLibel',
       defaultMessage:
-        'Ertu að kvarta yfir einhverju sem var sagt eða skrifað um þig í fjölmiðlum, á netinu eða á öðrum opinberum vettvangi?',
+        'Ertu að kvarta yfir einhverju sem var sagt eða skrifað um þig á netinu eða á öðrum opinberum vettvangi?',
       description: 'Label for concernsLibel field',
+    },
+    concernsPersonalDataConflict: {
+      id:
+        'dpac.application:section.delimitation.labels.concernsPersonalDataConflict',
+      defaultMessage:
+        'Ertu að kvarta yfir því að hafa ekki fengið aðgang að persónuupplýsingum um þig, eða að þær hafi ekki verið leiðréttar eða þeim eytt?',
+      description: 'Label for concernsPersonalDataConflict field',
     },
     concernsPersonalLettersOrSocialMedia: {
       id:
@@ -44,55 +51,58 @@ export const delimitation = {
     agreementDescriptionBulletOne: {
       id:
         'dpac.application:section.delimitation.labels.agreementDescriptionBulletOne',
-      defaultMessage: `
-        Vinsamlegast athugið að þegar kvörtun er
-        tekin til meðferðar er gagnaðila tilkynnt
-        um að borist hafi kvörtun frá tilteknum
-        nafngreindum aðila og honum gefinn kostur
-        á að koma áframfæri andmælum sínum.
-        Kvartanda er einnig gefið færi á að koma
-        að athugasemdum við andmæli þess sem kvartað er yfir.
-        Svarfrestur málsaðila er að jafnaði þrjár vikur.
-        `,
+      defaultMessage:
+        'Þegar kvörtun er tekin til meðferðar er gagnaðila (þ.e. þeim sem kvartað er yfir) tilkynnt um kvörtunina og sent afrit af henni og fylgiskjölum með henni. Honum er gefinn kostur á að koma andmælum sínum á framfæri.',
       description: 'Agreement description bullet one',
     },
     agreementDescriptionBulletTwo: {
       id:
         'dpac.application:section.delimitation.labels.agreementDescriptionBulletTwo',
-      defaultMessage: `
-        Telji Persónuvernd að upplýsa þurfi málið betur getur stofnunin
-        óskað eftir frekari upplýsingumeða gögnum frá öllum aðilum.
-        Aðilum máls er sent afrit allra bréfa. Hafi allir þættir
-        málsins verið upplýstir og málið ekki til lykta leitt með
-        öðrum hætti úrskurðarPersónuvernd um lögmæti þeirrar
-        vinnslu sem kvartað er yfir.
-        `,
+      defaultMessage:
+        'Ef Persónuvernd telur nauðsynlegt að upplýsa málið betur getur stofnunin óskað eftir frekari gögnum eða upplýsingum frá öllum aðilum, eftir því sem við á hverju sinni.',
       description: 'Agreement description bullet Two',
     },
     agreementDescriptionBulletThree: {
       id:
         'dpac.application:section.delimitation.labels.agreementDescriptionBulletThree',
-      defaultMessage: `
-       Vakin er athygli á því að erindi sem berast stofnuninni og öll
-       gögn sem viðkomandi málvarða eru geymd í skjalageymslu
-       stofnunarinnar undir málsnúmeri uns þau verða afhent Þjóðskjalasafni
-       Íslands til varðveislu í samræmi við ákvæði laga nr. 77/2014, um opinberskjalasöfn.
-        `,
+      defaultMessage:
+        'Málsgögn eru almennt aðgengileg öllum málsaðilum á grundvelli ákvæða stjórnsýslulaga, nr. 37/1993, að teknu tilliti til undantekninga samkvæmt þeim lögum. Þá geta þau eftir atvikum verið aðgengileg öðrum á grundvelli annarra laga, svo sem upplýsingalaga nr. 140/2012 eða laga um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018.',
       description: 'Agreement description bullet Three',
     },
     agreementDescriptionBulletFour: {
       id:
         'dpac.application:section.delimitation.labels.agreementDescriptionBulletFour',
-      defaultMessage: `
-        Öll mál sem berast Persónuvernd eru sett í viðeigandi farveg
-        og er málsaðilum tilkynnt um það, þó svo að á því geti orðið
-        tafir í ljósi mikilla anna hjá Persónuvernd. Almennt má
-        áætlaað afgreiðsla kvartana geti tekið um 9-15  mánuði, en
-        afgreiðslutími getur þó lengst ennfrekar ef mál eru flókin
-        eða mikil að umfangi. Úrlausnir Persónuverndar eru  birtar
-        á vefsíðu stofnunarinnar, nöfn einstaklinga eru þó ávallt afmáð.
-        `,
+      defaultMessage:
+        'Öll mál sem berast Persónuvernd eru sett í viðeigandi farveg eins fljótt og unnt er og málsaðilum tilkynnt um það, þó svo að á því geti orðið tafir í ljósi mikilla anna hjá Persónuvernd.',
       description: 'Agreement description bullet Four',
+    },
+    agreementDescriptionBulletFive: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletFive',
+      defaultMessage:
+        'Almennt er áætlað að afgreiðsla kvartana geti tekið um 9-15 mánuði. Afgreiðslutími getur þó orðið lengri ef mál eru flókin eða mikil að umfangi, eða ef álag hjá Persónuvernd eykst.',
+      description: 'Agreement description bullet Five',
+    },
+    agreementDescriptionBulletSix: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletSix',
+      defaultMessage:
+        'Úrskurðir Persónuverndar í kvörtunarmálum eru almennt birtir á vefsíðu stofnunarinnar. Nöfn einstaklinga eru þó afmáð áður, sem og aðrar upplýsingar sem gera kleift að persónugreina kvartendur.',
+      description: 'Agreement description bullet Six',
+    },
+    agreementDescriptionBulletSeven: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletSeven',
+      defaultMessage:
+        'Ítarlegri upplýsingar um málsmeðferð hjá Persónuvernd má nálgast í málsmeðferðarreglum stofnunarinnar.',
+      description: 'Agreement description bullet Seven',
+    },
+    agreementDescriptionBulletEight: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletEight',
+      defaultMessage:
+        'Ítarlegri upplýsingar um vinnslu persónuupplýsinga hjá Persónuvernd má nálgast í persónuverndarstefnu stofnunarinnar.',
+      description: 'Agreement description bullet Eight',
     },
   }),
 }

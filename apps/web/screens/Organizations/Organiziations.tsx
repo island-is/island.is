@@ -99,7 +99,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const base = page === 1 ? 0 : (page - 1) * CARDS_PER_PAGE
   const visibleItems = filteredItems.slice(base, page * CARDS_PER_PAGE)
 
-  const goToPage = (page: number = 1) => {
+  const goToPage = (page = 1) => {
     setPage(page)
     window.scrollTo(0, 0)
   }

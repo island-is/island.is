@@ -8,8 +8,7 @@ import { LocaleContext } from './LocaleContext'
 
 export function useLocale() {
   const intl = useIntl()
-  const contextValue = useContext(LocaleContext)
-  const lang = contextValue === null ? undefined : contextValue.lang
+  const { lang, changeLanguage } = useContext(LocaleContext)
 
   function formatMessage(
     descriptor: MessageDescriptor | string,
@@ -37,6 +36,7 @@ export function useLocale() {
     formatMessage,
     formatDateFns,
     lang,
+    changeLanguage,
   }
 }
 

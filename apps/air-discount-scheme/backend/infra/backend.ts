@@ -16,6 +16,10 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
       NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY',
       NATIONAL_REGISTRY_PASSWORD:
         '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD',
+      NATIONAL_REGISTRY_USERNAME:
+        '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME',
+      NATIONAL_REGISTRY_URL:
+        '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL',
     })
     .env({
       ENVIRONMENT: {

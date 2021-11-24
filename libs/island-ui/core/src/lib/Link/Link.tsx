@@ -1,7 +1,7 @@
 import * as React from 'react'
 import NextLink, { LinkProps as NextLinkProps } from 'next/link'
 import cn from 'classnames'
-import * as styles from './Link.treat'
+import * as styles from './Link.css'
 
 const isLinkInternal = (href: string) => {
   if (typeof href === 'string' && href.indexOf('://') !== -1) return false

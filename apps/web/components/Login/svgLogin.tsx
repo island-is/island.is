@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-const SvgLogin = ({ ...props }: React.SVGProps<SVGSVGElement>) => {
+export const SvgLogin = ({ ...props }: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
       width={432}
@@ -85,5 +85,3 @@ const SvgLogin = ({ ...props }: React.SVGProps<SVGSVGElement>) => {
     </svg>
   )
 }
-
-export default SvgLogin

@@ -18,7 +18,7 @@ import ReactSelect, {
   GroupedOptionsType,
 } from 'react-select'
 import { formatGroupLabel } from 'react-select/src/builtins'
-import * as styles from './Select.treat'
+import * as styles from './Select.css'
 import { Icon } from '../IconRC/Icon'
 import { InputBackgroundColor } from '../Input/types'
 

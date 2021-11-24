@@ -1,19 +1,22 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Box, Text, Input } from '@island.is/island-ui/core'
+import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
 import {
   formatAccusedByGender,
   formatDate,
   NounCases,
 } from '@island.is/judicial-system/formatters'
-import { CaseType } from '@island.is/judicial-system/types'
+import {
+  CaseCustodyRestrictions,
+  CaseType,
+} from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   newSetAndSendDateToServer,
   removeTabsValidateAndSet,
@@ -21,16 +24,16 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
+import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import {
-  custodyProvisions,
+  legalProvisions,
   travelBanProvisions,
 } from '@island.is/judicial-system-web/src/utils/laws'
 import {
   alternativeTravelBanRestrictions,
   restrictions,
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
+import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
 
@@ -42,12 +45,7 @@ interface Props {
 }
 
 const StepThreeForm: React.FC<Props> = (props) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    requestedValidToDateIsValid,
-    setRequestedValidToDateIsValid,
-  } = props
+  const { workingCase, setWorkingCase, setRequestedValidToDateIsValid } = props
   const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
     '',
   )
@@ -86,32 +84,58 @@ const StepThreeForm: React.FC<Props> = (props) => {
               </Box>
             )}
           </Box>
-          <DateTime
-            name="reqValidToDate"
-            datepickerLabel={`${
-              workingCase.type === CaseType.CUSTODY
-                ? 'Gæsluvarðhald'
-                : 'Farbann'
-            } til`}
-            minDate={new Date()}
-            selectedDate={
-              workingCase.requestedValidToDate
-                ? new Date(workingCase.requestedValidToDate)
-                : undefined
-            }
-            onChange={(date: Date | undefined, valid: boolean) => {
-              newSetAndSendDateToServer(
-                'requestedValidToDate',
-                date,
-                valid,
-                workingCase,
-                setWorkingCase,
-                setRequestedValidToDateIsValid,
-                updateCase,
-              )
-            }}
-            required
-          />
+          <BlueBox>
+            <Box marginBottom={workingCase.type === CaseType.CUSTODY ? 3 : 0}>
+              <DateTime
+                name="reqValidToDate"
+                datepickerLabel={`${
+                  workingCase.type === CaseType.CUSTODY
+                    ? 'Gæsluvarðhald'
+                    : 'Farbann'
+                } til`}
+                minDate={new Date()}
+                selectedDate={
+                  workingCase.requestedValidToDate
+                    ? new Date(workingCase.requestedValidToDate)
+                    : undefined
+                }
+                onChange={(date: Date | undefined, valid: boolean) => {
+                  newSetAndSendDateToServer(
+                    'requestedValidToDate',
+                    date,
+                    valid,
+                    workingCase,
+                    setWorkingCase,
+                    setRequestedValidToDateIsValid,
+                    updateCase,
+                  )
+                }}
+                required
+                blueBox={false}
+              />
+            </Box>
+            {workingCase.type === CaseType.CUSTODY && (
+              <Checkbox
+                name="isIsolation"
+                label={formatMessage(rcDemands.sections.demands.isolation)}
+                tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
+                checked={workingCase.requestedCustodyRestrictions?.includes(
+                  CaseCustodyRestrictions.ISOLATION,
+                )}
+                onChange={() =>
+                  setCheckboxAndSendToServer(
+                    'requestedCustodyRestrictions',
+                    'ISOLATION',
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+                large
+                filled
+              />
+            )}
+          </BlueBox>
         </Box>
         <Box component="section" marginBottom={7}>
           <Box marginBottom={3}>
@@ -170,22 +194,55 @@ const StepThreeForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <BlueBox>
-            <CheckboxList
-              checkboxes={
-                workingCase.type === CaseType.CUSTODY
-                  ? custodyProvisions
-                  : travelBanProvisions
-              }
-              selected={workingCase.custodyProvisions}
-              onChange={(id) =>
-                setCheckboxAndSendToServer(
-                  'custodyProvisions',
-                  id,
+            <Box marginBottom={2}>
+              <CheckboxList
+                checkboxes={
+                  workingCase.type === CaseType.CUSTODY
+                    ? legalProvisions
+                    : travelBanProvisions
+                }
+                selected={workingCase.legalProvisions}
+                onChange={(id) =>
+                  setCheckboxAndSendToServer(
+                    'legalProvisions',
+                    id,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+              />
+            </Box>
+            <Input
+              data-testid="legalBasis"
+              name="legalBasis"
+              label={formatMessage(
+                rcDemands.sections.legalBasis.legalBasisLabel,
+              )}
+              placeholder={formatMessage(
+                rcDemands.sections.legalBasis.legalBasisPlaceholder,
+              )}
+              defaultValue={workingCase?.legalBasis}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'legalBasis',
+                  event,
+                  [],
                   workingCase,
                   setWorkingCase,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'legalBasis',
+                  event.target.value,
+                  [],
+                  workingCase,
                   updateCase,
                 )
               }
+              textarea
+              rows={7}
             />
           </BlueBox>
         </Box>
@@ -300,12 +357,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.STEP_TWO_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={
-            !validate(workingCase.lawsBroken ?? '', 'empty').isValid ||
-            !requestedValidToDateIsValid ||
-            !workingCase.custodyProvisions ||
-            workingCase.custodyProvisions?.length === 0
-          }
+          nextIsDisabled={!isPoliceDemandsStepValidRC(workingCase)}
         />
       </FormContentContainer>
     </>

@@ -11,22 +11,18 @@ import {
 } from '@nestjs/common'
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
 
-import { UserRole } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
-  RolesRule,
   RolesRules,
-  TokenGuaard,
+  TokenGuard,
 } from '@island.is/judicial-system/auth'
 
+import { adminRule } from '../../guards'
 import { CreateUserDto, UpdateUserDto } from './dto'
 import { User } from './user.model'
 import { UserService } from './user.service'
-
-// Allows admins to perform any action
-const adminRule = UserRole.ADMIN as RolesRule
 
 @Controller('api')
 @ApiTags('users')
@@ -91,7 +87,7 @@ export class UserController {
     return user
   }
 
-  @UseGuards(TokenGuaard)
+  @UseGuards(TokenGuard)
   @Get('user')
   @ApiOkResponse({
     type: User,

@@ -8,6 +8,7 @@ const Staging: EnvironmentConfig = {
   auroraHost: 'a',
   domain: 'staging01.devland.is',
   type: 'staging',
+  featuresOn: [],
   defaultMaxReplicas: 3,
   releaseName: 'web',
   awsAccountId: '111111',
@@ -94,6 +95,7 @@ describe('Basic serialization', () => {
       DB_NAME: 'api',
       DB_HOST: 'a',
       NODE_OPTIONS: '--max-old-space-size=464',
+      SERVERSIDE_FEATURES_ON: '',
     })
   })
 

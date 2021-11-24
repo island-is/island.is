@@ -12,6 +12,7 @@ export interface ExamFamilyOverview {
   organizationType: string
   organizationName: string
   yearInterval: string
+  familyIndex: number
 }
 
 interface Grade {

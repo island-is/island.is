@@ -3,7 +3,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 @ObjectType()
 export class Eligibility {
   @Field(() => ID)
-  id!: string
+  name!: string
 
   @Field(() => String)
   issued!: string

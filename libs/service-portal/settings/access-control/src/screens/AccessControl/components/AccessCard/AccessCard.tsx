@@ -55,9 +55,8 @@ function AccessCard({
             {validTo
               ? format(new Date(validTo), 'dd.MM.yyyy')
               : formatMessage({
-                  id:
-                    'service.portal.settings.accessControl:home-view-undetermined',
-                  defaultMessage: 'Óákveðið',
+                  id: 'service.portal.settings.accessControl:home-view-varies',
+                  defaultMessage: 'Breytilegur',
                 })}
           </Text>
         </Inline>

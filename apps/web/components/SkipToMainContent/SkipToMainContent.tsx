@@ -1,6 +1,6 @@
 import React from 'react'
 
-import * as styles from './SkipToMainContent.treat'
+import * as styles from './SkipToMainContent.css'
 
 type Props = {
   title?: string

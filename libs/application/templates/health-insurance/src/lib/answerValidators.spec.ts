@@ -7,7 +7,7 @@ describe('answerValidators', () => {
   const baseApplication: Application = {
     answers: {
       fieldId: 'some answer',
-      applicant: { citizenship: JSON.stringify({ regions: ['EU'] }) },
+      applicant: { citizenship: '{"code":"IS","name":"Ísland"}' },
     },
     assignees: [],
     applicant: '',
@@ -144,7 +144,7 @@ describe('answerValidators', () => {
 
     const newFormerInsuranceAnswers = {
       registration: YES,
-      country: JSON.stringify({ regions: ['EU'] }),
+      country: JSON.stringify({ name: 'Belgium', countryCode: 'BE' }),
     }
 
     expect(
@@ -162,7 +162,7 @@ describe('answerValidators', () => {
   it('should return error if personal id is undefined', () => {
     const newFormerInsuranceAnswers = {
       registration: YES,
-      country: JSON.stringify({ name: 'Greenland' }),
+      country: JSON.stringify({ name: 'Greenland', countryCode: 'GL' }),
     }
 
     expect(
@@ -180,7 +180,7 @@ describe('answerValidators', () => {
   it('should return error if personal id is greater than 20', () => {
     const newFormerInsuranceAnswers = {
       registration: YES,
-      country: JSON.stringify({ name: 'Greenland' }),
+      country: JSON.stringify({ name: 'Greenland', countryCode: 'GL' }),
       personalId: '012345678901234567890',
     }
 
@@ -199,7 +199,7 @@ describe('answerValidators', () => {
   it('should return error if personal id is less than 6', () => {
     const newFormerInsuranceAnswers = {
       registration: YES,
-      country: JSON.stringify({ name: 'Greenland' }),
+      country: JSON.stringify({ name: 'Greenland', countryCode: 'GL' }),
       personalId: '000',
     }
 
@@ -219,7 +219,7 @@ describe('answerValidators', () => {
     const newFormerInsuranceAnswers = {
       registration: YES,
       personalId: 'some id',
-      country: JSON.stringify({ name: 'Greenland' }),
+      country: JSON.stringify({ name: 'Greenland', countryCode: 'GL' }),
       confirmationOfResidencyDocument: [],
     }
 
@@ -239,7 +239,7 @@ describe('answerValidators', () => {
     const newFormerInsuranceAnswers = {
       registration: YES,
       personalId: 'some id',
-      country: JSON.stringify({ name: 'Greenland' }),
+      country: JSON.stringify({ name: 'Greenland', countryCode: 'GL' }),
       confirmationOfResidencyDocument: [
         { name: 'some filename', key: 'uuid', url: 'url to file' },
       ],
@@ -261,7 +261,7 @@ describe('answerValidators', () => {
     const newFormerInsuranceAnswers = {
       registration: YES,
       personalId: 'some id',
-      country: JSON.stringify({ name: 'Greenland' }),
+      country: JSON.stringify({ name: 'Greenland', countryCode: 'GL' }),
       confirmationOfResidencyDocument: [
         { name: 'some filename', key: 'uuid', url: 'url to file' },
       ],
@@ -284,7 +284,7 @@ describe('answerValidators', () => {
     const newFormerInsuranceAnswers = {
       registration: YES,
       personalId: 'some id',
-      country: JSON.stringify({ regions: ['EU'] }),
+      country: JSON.stringify({ name: 'Belgium', countryCode: 'BE' }),
       entitlement: YES,
     }
 
@@ -304,7 +304,7 @@ describe('answerValidators', () => {
     const newFormerInsuranceAnswers = {
       registration: YES,
       personalId: 'some id',
-      country: JSON.stringify({ regions: ['EU'] }),
+      country: JSON.stringify({ name: 'Belgium', countryCode: 'BE' }),
       entitlement: NO,
     }
 

@@ -11,11 +11,6 @@ import { ApiProperty } from '@nestjs/swagger'
 
 @Table({
   tableName: 'idp_providers',
-  indexes: [
-    {
-      fields: ['name'],
-    },
-  ],
 })
 export class IdpProvider extends Model<IdpProvider> {
   @PrimaryKey

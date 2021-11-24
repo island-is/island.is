@@ -10,7 +10,7 @@ import {
 } from '../'
 import { ExportCSVButton } from '@island.is/web/components'
 
-import * as styles from './ChartsCard.treat'
+import * as styles from './ChartsCard.css'
 
 interface GraphDataProps {
   title?: string

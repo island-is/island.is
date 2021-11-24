@@ -1,7 +1,8 @@
 import React, { FC, useEffect } from 'react'
-import { Box, Button, Input, Text, toast } from '@island.is/island-ui/core'
+import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { useForm, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
+import { sharedMessages } from '@island.is/shared/translations'
 
 export interface EmailFormData {
   email: string
@@ -59,14 +60,8 @@ export const EmailForm: FC<Props> = ({
             <>
               <Input
                 name={name}
-                label={formatMessage({
-                  id: 'global:email',
-                  defaultMessage: 'Netfang',
-                })}
-                placeholder={formatMessage({
-                  id: 'global:email',
-                  defaultMessage: 'Netfang',
-                })}
+                label={formatMessage(sharedMessages.email)}
+                placeholder={formatMessage(sharedMessages.email)}
                 value={value}
                 hasError={errors.email}
                 errorMessage={errors.email?.message}

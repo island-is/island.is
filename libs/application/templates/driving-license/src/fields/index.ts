@@ -1,5 +1,6 @@
-export { Congratulations } from './Congratulations'
+export { Declined, Congratulations } from './Done'
 export { default as HealthDeclaration } from './HealthDeclaration'
 export { EligibilitySummary } from './EligibilitySummary'
+export { SubmitAndDecline } from './SubmitAndDecline'
 export { ExamplePaymentPendingField } from './ExamplePaymentPendingField'
 export { QualityPhoto, Bullets } from './QualityPhoto/index'

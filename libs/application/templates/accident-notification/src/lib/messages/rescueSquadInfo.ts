@@ -25,15 +25,16 @@ export const rescueSquadInfo = {
       defaultMessage: 'Upplýsingar um forsvarsmann björgunarsveitar',
       description: `Information about the rescue squad's representative`,
     },
+    subDescription: {
+      id: 'an.application:rescueSquadInfo.labels.subDescription',
+      defaultMessage:
+        'Athugaðu að forsvarsmaður er sá aðili sem fer yfir tilkynninguna fyrir hönd björgunarsveitar.',
+      description: `Sub description about the rescue squad's representative`,
+    },
     nationalId: {
       id: 'an.application:rescueSquadInfo.labels.nationalId',
       defaultMessage: 'Kennitala björgunarsveitar',
       description: 'National ID of rescue squad',
-    },
-    companyName: {
-      id: 'an.application:rescueSquadInfo.labels.companyName',
-      defaultMessage: 'Nafn björgunarsveitar',
-      description: 'Name of rescue squad',
     },
     name: {
       id: 'an.application:rescueSquadInfo.labels.name',

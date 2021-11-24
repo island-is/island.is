@@ -15,7 +15,6 @@ export class HealthInsuranceService {
 
   async sendApplyHealthInsuranceApplication({
     application,
-    authorization,
   }: TemplateApiModuleActionProps) {
     try {
       logger.info(

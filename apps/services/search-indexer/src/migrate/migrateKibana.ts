@@ -40,3 +40,10 @@ export default async () => {
     throw error
   })
 }
+
+const argv = yargs(process.argv.slice(2)).argv
+if (argv['run-migrations']) {
+  migrateBootstrap().catch((error) => {
+    logger.error('ERROR: ', error)
+  })
+}

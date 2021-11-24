@@ -14,7 +14,7 @@ import format from 'date-fns/format'
 import { format as formatKennitala } from 'kennitala'
 import orderBy from 'lodash/orderBy'
 
-const mapToCSVFile = (endorsements: Endorsement[], constituency: string) => {
+const mapToCSVFile = (endorsements: Endorsement[], regionNumber: number) => {
   return endorsements.map((endorsement) => {
     return {
       Kennitala: formatKennitala(endorsement.endorser),
@@ -24,7 +24,9 @@ const mapToCSVFile = (endorsements: Endorsement[], constituency: string) => {
       Póstnúmer: endorsement.meta.address.postalCode ?? '',
       Borg: endorsement.meta.address.city ?? '',
       'Meðmæli í vafa':
-        constituency !== endorsement.meta.voterRegion ? 'X' : '',
+        regionNumber !== endorsement.meta.voterRegion?.voterRegionNumber
+          ? 'X'
+          : '',
       'Meðmæli á pappír': endorsement.meta.bulkEndorsement ? 'X' : '',
     }
   })
@@ -42,9 +44,17 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
   const partyLetterRegistry = externalData.partyLetterRegistry
     .data as PartyLetterRegistry
   const endorsementListId = (externalData?.createEndorsementList.data as any).id
-  const { endorsements } = useEndorsements(endorsementListId, false)
+  const { endorsements: unfilteredEndorsements = [] } = useEndorsements(
+    endorsementListId,
+    false,
+  )
   const constituency =
-    constituencyMapper[answers.constituency as EndorsementListTags].region_name
+    constituencyMapper[answers.constituency as EndorsementListTags]
+
+  // we want this screen to only use filtered endorsements
+  const endorsements = unfilteredEndorsements.filter((endorsement) =>
+    (answers.endorsements ?? []).includes(endorsement.id),
+  )
 
   return (
     <Box>
@@ -54,13 +64,13 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
           <Text variant="h5">
             {formatMessage(m.supremeCourt.partyNameLabel)}
           </Text>
-          <Text>{answers.partyName}</Text>
+          <Text>{partyLetterRegistry.partyName}</Text>
         </Box>
         <Box width="half">
           <Text variant="h5">
             {formatMessage(m.supremeCourt.partyLetterLabel)}
           </Text>
-          <Text>{answers.partyLetter}</Text>
+          <Text>{partyLetterRegistry.partyLetter}</Text>
         </Box>
       </Box>
       <Box display="flex" marginBottom={5}>
@@ -88,19 +98,19 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
           <Text variant="h5">
             {formatMessage(m.supremeCourt.numberOfEndorsementsLabel)}
           </Text>
-          <Text marginBottom={1}>{answers.endorsements?.length}</Text>
+          <Text marginBottom={1}>{endorsements?.length}</Text>
           <Box marginTop={3} marginBottom={5}>
             {endorsements?.length && (
               <ExportAsCSV
                 data={
                   mapToCSVFile(
                     orderBy(endorsements, 'created', 'desc'),
-                    constituency,
+                    constituency.region_number,
                   ) as object[]
                 }
                 filename={csvFileName(
-                  partyLetterRegistry?.partyLetter,
-                  partyLetterRegistry?.partyName,
+                  partyLetterRegistry.partyLetter,
+                  partyLetterRegistry.partyName,
                 )}
                 title={formatMessage(m.supremeCourt.csvButton)}
               />
@@ -111,7 +121,7 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
           <Text variant="h5">
             {formatMessage(m.supremeCourt.constituencyLabel)}
           </Text>
-          <Text>{constituency}</Text>
+          <Text>{constituency.region_name}</Text>
         </Box>
       </Box>
     </Box>

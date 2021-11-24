@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import IframeModal from '../IframeModal/IframeModal'
 
-import * as styles from './ProcessEntry.treat'
+import * as styles from './ProcessEntry.css'
 
 export const Titles: {
   [Digital: string]: { is: string; en: string }

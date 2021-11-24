@@ -11,7 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import Hyperlink from '../Hyperlink/Hyperlink'
 
-import * as styles from './RichText.treat'
+import * as styles from './RichText.css'
 
 const defaultHeaderMargins: {
   marginBottom: ResponsiveSpace

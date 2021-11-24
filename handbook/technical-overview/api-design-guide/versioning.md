@@ -36,17 +36,17 @@ https://my-service.island.is/v1.2.3/users
 https://my-service.island.is/v1/users
 ```
 
-### Considerations when planning to increment version numbers
+## Increment version numbers
 
 If an API introduces a breaking change, such as removing or renaming a field, its `major` version number must be incremented to ensure that existing user code does not suddenly break. Incrementing the `major` version should be avoided whenever possible to avoid increasing maintenance and cost of running many versions of the same service.
 
 For **GraphQL** APIs use the `@deprecated` directive on fields which are to be renamed or removed from schemas. Add a descriptive text in the `reason:` with information on what the client should use in the future. This will allow older clients to continue functioning while updated clients can get the new schema right away. See [here](https://www.netlify.com/blog/2020/01/21/advice-from-a-graphql-expert/#designing-a-schema-that-is-easy-to-evolve) for more details.
 
-### Deprecating API versions
+## Deprecating API versions
 
 When there are more than one running instances of an API, the old versions need to be decommissioned at some time to reduce maintenance costs.
 
-#### Notify clients when a specific API version will be discontinued
+### Notify clients when a specific API version will be discontinued
 
 You should notify clients, who use your service, that the old version will stop working at a specified date. You should give them a link to a new version of the service and provide them with information about all breaking changes between versions. To help with that, you should always provide release notes with every version bump.
 

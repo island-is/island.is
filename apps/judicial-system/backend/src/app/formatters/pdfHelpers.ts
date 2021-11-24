@@ -1,3 +1,9 @@
+export const baseFontSize = 11
+export const mediumFontSize = 14
+export const mediumPlusFontSize = 16
+export const largeFontSize = 18
+export const hugeFontSize = 26
+
 export function setPageNumbers(doc: PDFKit.PDFDocument) {
   const pages = doc.bufferedPageRange()
   for (let i = 0; i < pages.count; i++) {

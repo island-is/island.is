@@ -46,7 +46,10 @@ export const resolver: Resolver = ({ formValue, context, formatMessage }) => {
      *   message?: Message;
      * };
      **/
-    return { values: {}, errors: validationError } as ResolverError<FormValue>
+    return ({
+      values: {},
+      errors: validationError,
+    } as unknown) as ResolverError<FormValue>
   }
 
   return {

@@ -6,6 +6,8 @@ import {
   Button,
   Input,
   AlertBanner,
+  ToastContainer,
+  toast,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -50,6 +52,8 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
             .id,
         },
       },
+    }).catch((e) => {
+      toast.error(formatMessage(m.endorsementDisclaimer.toastMessage))
     })
     if (success) {
       setEndorsedNow(true)
@@ -171,6 +175,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
               {formatMessage(m.collectEndorsements.submitButton)}
             </Button>
           </Box>
+          <ToastContainer closeButton={true} useKeyframeStyles={false} />
         </Box>
       )}
     </Box>

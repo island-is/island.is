@@ -209,3 +209,20 @@ export const GET_SYSLUMENN_AUCTIONS_QUERY = gql`
     }
   }
 `
+
+export const GET_OPERATING_LICENSES_QUERY = gql`
+  query GetOperatingLicenses {
+    getOperatingLicenses {
+      location
+      name
+      street
+      postalCode
+      validUntil
+      type
+      category
+      issuedBy
+      licenseHolder
+      licenseNumber
+    }
+  }
+`

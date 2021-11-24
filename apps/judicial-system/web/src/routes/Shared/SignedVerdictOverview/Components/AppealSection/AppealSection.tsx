@@ -8,9 +8,9 @@ import {
   InstitutionType,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import * as styles from './AppealSection.treat'
-import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
-import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
+import * as styles from './AppealSection.css'
+import { BlueBox } from '@island.is/judicial-system-web/src/components'
+import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 import AccusedAppealInfo from '../Accused/AccusedAppealInfo'
 import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'
 import AccusedAppealDatePicker from '../Accused/AccusedAppealDatePicker'
@@ -22,7 +22,7 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 interface Props {
   workingCase: Case
@@ -58,29 +58,17 @@ const AppealSection: React.FC<Props> = (props) => {
         </Text>
       </Box>
 
-      {!workingCase.isAppealDeadlineExpired &&
+      {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+        workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) &&
         workingCase.rulingDate &&
         !isHighCourt && (
-          <Box marginBottom={2}>
-            <Text>{`Kærufrestur rennur út ${getAppealEndDate(
-              workingCase.rulingDate,
-            )}`}</Text>
+          <Box marginBottom={3}>
+            <Text>
+              {`Kærufrestur ${
+                workingCase.isAppealDeadlineExpired ? 'rann' : 'rennur'
+              } út ${getAppealEndDate(workingCase.rulingDate)}`}
+            </Text>
           </Box>
-        )}
-      {workingCase.isAppealDeadlineExpired &&
-        workingCase.rulingDate &&
-        !isHighCourt && (
-          <div className={styles.appealContainer}>
-            <BlueBox>
-              <InfoBox
-                text={`Kærufrestur rann út ${getAppealEndDate(
-                  workingCase.rulingDate,
-                )}`}
-                fluid
-                light
-              />
-            </BlueBox>
-          </div>
         )}
       {workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL && (
         <div className={styles.appealContainer}>

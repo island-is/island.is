@@ -1,9 +1,10 @@
 import React, { FC, useState, ReactNode } from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
-import IconBullet from '../IconBullet/IconBullet'
+import { IconBullet } from '@island.is/web/components'
 import { Stack, Box, Text, Icon, Button, Link } from '@island.is/island-ui/core'
-import * as styles from './BulletList.treat'
+
+import * as styles from './BulletList.css'
 
 type IconBullet = {
   type: 'IconBullet'

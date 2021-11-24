@@ -3,7 +3,7 @@ import { GridRow } from './GridRow/GridRow'
 import { GridColumn } from './GridColumn/GridColumn'
 import { GridContainer } from './GridContainer/GridContainer'
 import { Box } from '../Box/Box'
-import * as styles from './demostyles.treat'
+import * as styles from './demostyles.css'
 
 export default {
   title: 'Layout/Grid',

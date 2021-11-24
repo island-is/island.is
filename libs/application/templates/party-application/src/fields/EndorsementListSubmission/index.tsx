@@ -100,7 +100,7 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
     } else {
       setShowWarning(true)
     }
-  }, [])
+  }, [endorsementsHook])
 
   const updateSelectedEndorsements = async (
     updatedSelectedEndorsements: Endorsement[],

@@ -13,10 +13,10 @@ describe('isAgricultureAccident', () => {
 
   const emptyObject = {}
 
-  it('should return true for fisherman accidents', () => {
+  it('should return true for agriculture accidents', () => {
     expect(isAgricultureAccident(agricultureAccident)).toEqual(true)
   })
-  it('should return false for workplace accidents other than fisherman', () => {
+  it('should return false for workplace accidents other than agriculture', () => {
     expect(isAgricultureAccident(someOtherAccident)).toEqual(false)
   })
   it('should return false for empty object', () => {

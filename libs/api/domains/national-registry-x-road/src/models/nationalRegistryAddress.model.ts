@@ -5,9 +5,12 @@ export class NationalRegistryAddress {
   @Field(() => String)
   streetName?: string
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   postalCode?: string
 
   @Field(() => String)
   city?: string
+
+  @Field(() => String)
+  municipalityCode?: string
 }

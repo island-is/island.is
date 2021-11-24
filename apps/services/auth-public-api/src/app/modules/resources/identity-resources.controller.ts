@@ -11,7 +11,7 @@ import type { User } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('api-scope')
-@Controller('public/v1/identity-resources')
+@Controller('v1/identity-resources')
 export class IdentityResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 

@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Modal,
-  PageLayout,
-} from '@island.is/judicial-system-web/src/shared-components'
-import {
-  NotificationType,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
+import { PageLayout } from '@island.is/judicial-system-web/src/components'
+import { SessionArrangements } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseData,
@@ -18,13 +12,13 @@ import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useRouter } from 'next/router'
 import CourtRecordForm from './CourtRecordForm'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { icCourtRecord as m } from '@island.is/judicial-system-web/messages'
 import { useIntl } from 'react-intl'
-import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
+import formatISO from 'date-fns/formatISO'
 
 const CourtRecord = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [modalVisible, setModalVisible] = useState(false)
-  const { sendNotification, autofill } = useCase()
+  const { autofill } = useCase()
   const { formatMessage } = useIntl()
 
   const router = useRouter()
@@ -43,30 +37,37 @@ const CourtRecord = () => {
     const defaultCourtAttendees = (wc: Case): string => {
       let attendees = ''
 
-      if (wc.registrar) {
-        attendees += `${wc.registrar.name} ${wc.registrar.title}\n`
+      if (
+        wc.prosecutor &&
+        wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
+      ) {
+        attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n`
       }
 
-      if (wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION) {
-        if (wc.prosecutor) {
-          attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n`
+      if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+        if (wc.accusedName) {
+          attendees += `${wc.accusedName} varnaraðili`
         }
+      } else {
+        attendees += formatMessage(
+          m.sections.courtAttendees.defendantNotPresentAutofill,
+        )
+      }
 
-        if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-          if (wc.accusedName) {
-            attendees += `${wc.accusedName} varnaraðili`
-          }
+      if (
+        wc.defenderName &&
+        wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
+      ) {
+        attendees += `\n${wc.defenderName} skipaður ${
+          wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+        } varnaraðila`
+      }
 
-          if (wc.defenderName) {
-            attendees += `\n${wc.defenderName} skipaður ${
-              wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-            } varnaraðila`
-          }
-
-          if (wc.translator) {
-            attendees += `\n${wc.translator} túlkur`
-          }
-        }
+      if (
+        wc.translator &&
+        wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
+      ) {
+        attendees += `\n${wc.translator} túlkur`
       }
 
       return attendees
@@ -75,75 +76,101 @@ const CourtRecord = () => {
     if (!workingCase && data?.case) {
       const theCase = data.case
 
-      autofill('courtStartDate', new Date().toString(), theCase)
+      autofill('courtStartDate', formatISO(new Date()), theCase)
 
-      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      if (theCase.court) {
+        autofill(
+          'courtLocation',
+          `í ${
+            theCase.court.name.indexOf('dómur') > -1
+              ? theCase.court.name.replace('dómur', 'dómi')
+              : theCase.court.name
+          }`,
+          theCase,
+        )
+      }
+
+      if (theCase.courtAttendees !== '') {
+        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      }
 
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)
       }
+
+      if (theCase.sessionArrangements === SessionArrangements.REMOTE_SESSION) {
+        autofill(
+          'litigationPresentations',
+          formatMessage(m.sections.litigationPresentations.autofill),
+          theCase,
+        )
+      }
+
+      if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+        let autofillAccusedBookings = ''
+
+        if (theCase.defenderName) {
+          autofillAccusedBookings += `${formatMessage(
+            m.sections.accusedBookings.autofillDefender,
+            {
+              defender: theCase.defenderName,
+            },
+          )}\n\n`
+        }
+
+        if (theCase.translator) {
+          autofillAccusedBookings += `${formatMessage(
+            m.sections.accusedBookings.autofillTranslator,
+            {
+              translator: theCase.translator,
+            },
+          )}\n\n`
+        }
+
+        autofillAccusedBookings += `${formatMessage(
+          m.sections.accusedBookings.autofillRightToRemainSilent,
+        )}\n\n${formatMessage(
+          m.sections.accusedBookings.autofillCourtDocumentOne,
+        )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
+
+        autofill('accusedBookings', autofillAccusedBookings, theCase)
+      }
+
+      if (
+        theCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+        theCase.defenderIsSpokesperson &&
+        theCase.defenderName
+      ) {
+        autofill(
+          'accusedBookings',
+          formatMessage(m.sections.accusedBookings.autofillSpokeperson, {
+            spokesperson: theCase.defenderName,
+          }),
+          theCase,
+        )
+      }
+
       setWorkingCase(data.case)
     }
-  }, [workingCase, setWorkingCase, data, autofill])
-
-  useEffect(() => {
-    const notifyCourtDate = async (id: string) => {
-      const notificationSent = await sendNotification(
-        id,
-        NotificationType.COURT_DATE,
-      )
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (notificationSent && !window.Cypress) {
-        setModalVisible(true)
-      }
-    }
-
-    if (workingCase?.id) {
-      notifyCourtDate(workingCase.id)
-    }
-  }, [sendNotification, workingCase?.courtDate, workingCase?.id])
+  }, [workingCase, setWorkingCase, data, autofill, formatMessage])
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.COURT_RECORD}
       isLoading={loading}
       notFound={data?.case === undefined}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase && (
-        <>
-          <CourtRecordForm
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            isLoading={loading}
-          />
-          {modalVisible && (
-            <Modal
-              title={formatMessage(icHearingArrangements.modal.heading)}
-              text={formatMessage(icHearingArrangements.modal.text, {
-                announcementSuffix:
-                  workingCase.sessionArrangements !==
-                    SessionArrangements.ALL_PRESENT ||
-                  !workingCase.defenderEmail
-                    ? '.'
-                    : workingCase.defenderIsSpokesperson
-                    ? ` og talsmann.`
-                    : ` og verjanda.`,
-              })}
-              handlePrimaryButtonClick={() => {
-                setModalVisible(false)
-              }}
-              primaryButtonText="Loka glugga"
-            />
-          )}
-        </>
+        <CourtRecordForm
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+          isLoading={loading}
+        />
       )}
     </PageLayout>
   )

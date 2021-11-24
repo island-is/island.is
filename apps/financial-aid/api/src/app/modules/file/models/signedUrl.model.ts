@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { SignedUrl } from '@island.is/financial-aid/shared'
+import { SignedUrl } from '@island.is/financial-aid/shared/lib'
 
 @ObjectType()
 export class SignedUrlModel implements SignedUrl {

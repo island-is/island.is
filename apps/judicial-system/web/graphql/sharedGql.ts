@@ -19,6 +19,7 @@ export const CaseQuery = gql`
       defenderPhoneNumber
       sendRequestToDefender
       defenderIsSpokesperson
+      isHeightenedSecurityLevel
       court {
         id
         name
@@ -32,7 +33,7 @@ export const CaseQuery = gql`
       demands
       lawsBroken
       legalBasis
-      custodyProvisions
+      legalProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions
       caseFacts
@@ -41,6 +42,15 @@ export const CaseQuery = gql`
       prosecutorOnlySessionRequest
       comments
       caseFilesComments
+      creatingProsecutor {
+        id
+        name
+        title
+        institution {
+          id
+          name
+        }
+      }
       prosecutor {
         id
         name
@@ -58,15 +68,15 @@ export const CaseQuery = gql`
       courtCaseNumber
       sessionArrangements
       courtDate
+      courtLocation
       courtRoom
       courtStartDate
       courtEndTime
+      isClosedCourtHidden
       courtAttendees
       prosecutorDemands
       courtDocuments
-      isAccusedAbsent
-      accusedPleaDecision
-      accusedPleaAnnouncement
+      accusedBookings
       litigationPresentations
       courtCaseFacts
       courtLegalArguments
@@ -97,6 +107,7 @@ export const CaseQuery = gql`
       }
       parentCase {
         id
+        state
         validToDate
         decision
         courtCaseNumber
@@ -108,14 +119,16 @@ export const CaseQuery = gql`
       notifications {
         type
       }
-      files {
+      caseFiles {
         id
         name
         size
         created
+        state
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
+      isMasked
     }
   }
 `
@@ -154,6 +167,32 @@ export const GetSignedUrlQuery = gql`
   query GetSignedUrlQuery($input: GetSignedUrlInput!) {
     getSignedUrl(input: $input) {
       url
+    }
+  }
+`
+
+export const UploadFileToCourtMutation = gql`
+  mutation UploadFileToCourtMutation($input: UploadFileToCourtInput!) {
+    uploadFileToCourt(input: $input) {
+      success
+    }
+  }
+`
+
+export const PoliceCaseFilesQuery = gql`
+  query GetPoliceCaseFiles($input: PoliceCaseFilesQueryInput!) {
+    policeCaseFiles(input: $input) {
+      id
+      name
+    }
+  }
+`
+
+export const UploadPoliceCaseFileMutation = gql`
+  mutation UploadPoliceCaseFileMutation($input: UploadPoliceCaseFileInput!) {
+    uploadPoliceCaseFile(input: $input) {
+      key
+      size
     }
   }
 `

@@ -1,7 +1,7 @@
 export default {
   production: false,
   bypassCacheKey: process.env.BYPASS_CACHE_KEY,
-  cacheTime: process.env.CACHE_TIME || 5,
+  cacheTime: process.env.CACHE_TIME || 300,
   indexableTypes: [
     'article',
     'subArticle',
@@ -9,12 +9,13 @@ export default {
     'articleCategory',
     'news',
     'page',
-    'aboutSubPage',
     'vidspyrnaPage',
     'menu',
     'groupedMenu',
     'organizationPage',
     'organizationSubpage',
+    'supportQNA',
+    'link',
     'frontpage',
   ],
   nestedContentTypes: [

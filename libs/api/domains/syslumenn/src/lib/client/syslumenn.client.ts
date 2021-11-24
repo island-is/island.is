@@ -4,6 +4,7 @@ import { ISyslumennAuction } from './models/syslumennAuction'
 import { ILogin } from './models/login'
 import { Person, Attachment, DataUploadResponse } from '../models/dataUpload'
 import { constructUploadDataObject } from './models/dataUpload'
+import { IOperatingLicense } from './models/operatingLicense'
 
 export const SYSLUMENN_CLIENT_CONFIG = 'SYSLUMENN_CLIENT_CONFIG'
 
@@ -67,6 +68,16 @@ export class SyslumennClient {
     } = await this.httpService.get(url, { headers: headers }).toPromise()
 
     return response.data
+  }
+
+  async getOperatingLicenses(): Promise<IOperatingLicense[] | null> {
+    await this.login()
+
+    return (
+      await this.httpService
+        .get(`${this.clientConfig.url}/api/VirkLeyfi/${this.id}`)
+        .toPromise()
+    ).data
   }
 
   async uploadData(

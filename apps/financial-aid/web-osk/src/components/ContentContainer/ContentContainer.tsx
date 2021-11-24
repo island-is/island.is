@@ -1,5 +1,5 @@
 import React from 'react'
-import * as styles from './ContentContainer.treat'
+import * as styles from './ContentContainer.css'
 
 interface Props {
   children: React.ReactNode

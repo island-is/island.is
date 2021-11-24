@@ -3,7 +3,7 @@ import { useLifecycles } from 'react-use'
 import { useLottie } from '@island.is/web/libs'
 
 type Props = {
-  animationData: any
+  animationData: JSON
   isVisible: boolean
   onLoaded: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -27,7 +27,7 @@ const LottiePlayer = ({ animationData, isVisible, onLoaded }: Props) => {
     } else {
       stop()
     }
-  }, [isVisible])
+  }, [isVisible, play, stop])
 
   return <div style={{ display: isVisible ? 'block' : 'none' }}>{View}</div>
 }

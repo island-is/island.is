@@ -15,6 +15,7 @@ import {
 } from './gen/fetch'
 
 import type { Logger } from '@island.is/logging'
+import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 const ONE_DAY_IN_SECONDS_EXPIRES = 24 * 60 * 60
 
@@ -29,22 +30,13 @@ const CREATE_ENDORSEMENT_LIST_QUERY = `
   }
 `
 
-interface ErrorResponse {
-  errors: {
-    message: string
+export const DEFAULT_CLOSED_DATE = 'default closed date'
+
+interface EndorsementListData {
+  endorsementSystemCreateEndorsementList: {
+    id: string
   }
 }
-
-type EndorsementListResponse =
-  | {
-      data: {
-        endorsementSystemCreateEndorsementList: {
-          id: string
-        }
-      }
-    }
-  | ErrorResponse
-
 export interface PartyApplicationServiceOptions {
   adminEmails: GenerateAssignSupremeCourtApplicationEmailOptions
 }
@@ -52,31 +44,6 @@ export interface PartyApplicationServiceOptions {
 interface PartyLetterData {
   partyName: string
   partyLetter: string
-}
-
-/**
- * We proxy the auth header to the subsystem where it is resolved.
- */
-interface FetchParams {
-  url: string
-  init: RequestInit
-}
-
-interface RequestContext {
-  init: RequestInit
-}
-
-interface Middleware {
-  pre?(context: RequestContext): Promise<FetchParams | void>
-}
-class ForwardAuthHeaderMiddleware implements Middleware {
-  constructor(private bearerToken: string) {}
-
-  async pre(context: RequestContext) {
-    context.init.headers = Object.assign({}, context.init.headers, {
-      authorization: this.bearerToken,
-    })
-  }
 }
 
 @Injectable()
@@ -87,22 +54,21 @@ export class PartyApplicationService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     @Inject(PARTY_APPLICATION_SERVICE_OPTIONS)
     private options: PartyApplicationServiceOptions,
+    @Inject(DEFAULT_CLOSED_DATE) private dateConfig: Date,
   ) {}
 
-  endorsementListApiWithAuth(token: string) {
-    return this.endorsementListApi.withMiddleware(
-      new ForwardAuthHeaderMiddleware(token),
-    )
+  endorsementListApiWithAuth(auth: User) {
+    return this.endorsementListApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async assignSupremeCourt({
     application,
-    authorization,
+    auth,
   }: TemplateApiModuleActionProps) {
     const listId = (application.externalData?.createEndorsementList.data as any)
       .id
 
-    return this.endorsementListApiWithAuth(authorization)
+    return this.endorsementListApiWithAuth(auth)
       .endorsementListControllerClose({ listId })
       .then(async () => {
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(
@@ -119,13 +85,19 @@ export class PartyApplicationService {
 
   async applicationRejected({
     application,
-    authorization,
+    auth,
   }: TemplateApiModuleActionProps) {
     const listId = (application.externalData?.createEndorsementList.data as any)
       .id
+    // TODO: change this date when new election
 
-    return this.endorsementListApiWithAuth(authorization)
-      .endorsementListControllerOpen({ listId })
+    return this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerOpen({
+        listId,
+        changeEndorsmentListClosedDateDto: {
+          closedDate: this.dateConfig,
+        },
+      })
       .then(async () => {
         await this.sharedTemplateAPIService.sendEmail(
           generateApplicationRejectedEmail,
@@ -147,66 +119,71 @@ export class PartyApplicationService {
 
   async createEndorsementList({
     application,
-    authorization,
+    auth,
   }: TemplateApiModuleActionProps) {
     const partyLetter = application.externalData.partyLetterRegistry
       ?.data as PartyLetterData
-    const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
-        input: {
-          title: partyLetter.partyName,
-          description: partyLetter.partyLetter,
-          endorsementMetadata: [
-            { field: EndorsementMetadataDtoFieldEnum.fullName },
-            { field: EndorsementMetadataDtoFieldEnum.signedTags },
-            {
-              field: EndorsementMetadataDtoFieldEnum.address,
-              keepUpToDate: true,
-            },
-            {
-              field: EndorsementMetadataDtoFieldEnum.voterRegion,
-              keepUpToDate: true,
-            },
-          ],
-          tags: [application.answers.constituency as EndorsementListTagsEnum],
-          validationRules: [
-            {
-              type: 'minAgeAtDate',
-              value: {
-                date: '2021-09-25T00:00:00Z',
-                age: 18,
+    const endorsementListResponse = await this.sharedTemplateAPIService
+      .makeGraphqlQuery<EndorsementListData>(
+        auth.authorization,
+        CREATE_ENDORSEMENT_LIST_QUERY,
+        {
+          input: {
+            title: partyLetter.partyName,
+            description: partyLetter.partyLetter,
+            endorsementMetadata: [
+              { field: EndorsementMetadataDtoFieldEnum.fullName },
+              { field: EndorsementMetadataDtoFieldEnum.signedTags },
+              {
+                field: EndorsementMetadataDtoFieldEnum.address,
+                keepUpToDate: true,
               },
-            },
-            {
-              type: 'uniqueWithinTags',
-              value: {
-                tags: [
-                  EndorsementListTagsEnum.partyApplicationNordausturkjordaemi2021,
-                  EndorsementListTagsEnum.partyApplicationNordvesturkjordaemi2021,
-                  EndorsementListTagsEnum.partyApplicationReykjavikurkjordaemiNordur2021,
-                  EndorsementListTagsEnum.partyApplicationReykjavikurkjordaemiSudur2021,
-                  EndorsementListTagsEnum.partyApplicationSudurkjordaemi2021,
-                  EndorsementListTagsEnum.partyApplicationSudvesturkjordaemi2021,
-                ],
+              {
+                field: EndorsementMetadataDtoFieldEnum.voterRegion,
+                keepUpToDate: true,
               },
+            ],
+            tags: [application.answers.constituency as EndorsementListTagsEnum],
+            validationRules: [
+              {
+                type: 'minAgeAtDate',
+                value: {
+                  date: '2021-09-25T00:00:00Z',
+                  age: 18,
+                },
+              },
+              {
+                type: 'uniqueWithinTags',
+                value: {
+                  tags: [
+                    EndorsementListTagsEnum.partyApplicationNordausturkjordaemi2021,
+                    EndorsementListTagsEnum.partyApplicationNordvesturkjordaemi2021,
+                    EndorsementListTagsEnum.partyApplicationReykjavikurkjordaemiNordur2021,
+                    EndorsementListTagsEnum.partyApplicationReykjavikurkjordaemiSudur2021,
+                    EndorsementListTagsEnum.partyApplicationSudurkjordaemi2021,
+                    EndorsementListTagsEnum.partyApplicationSudvesturkjordaemi2021,
+                  ],
+                },
+              },
+            ],
+            meta: {
+              // to be able to link back to this application
+              applicationTypeId: application.typeId,
+              applicationId: application.id,
             },
-          ],
-          meta: {
-            // to be able to link back to this application
-            applicationTypeId: application.typeId,
-            applicationId: application.id,
           },
         },
-      })
+      )
       .then((response) => response.json())
 
-    if ('errors' in endorsementList) {
+    if ('errors' in endorsementListResponse) {
       throw new Error('Failed to create endorsement list')
     }
 
     // This gets written to externalData under the key createEndorsementList
     return {
-      id: endorsementList.data.endorsementSystemCreateEndorsementList.id,
+      id:
+        endorsementListResponse.data?.endorsementSystemCreateEndorsementList.id,
     }
   }
 }
