@@ -14,6 +14,7 @@ import {
   Secrets,
   XroadConfig,
   MountedFile,
+  RolloutStrategy,
 } from './types/input-types'
 
 export class ServiceBuilder<ServiceType> implements Service {
@@ -133,8 +134,21 @@ export class ServiceBuilder<ServiceType> implements Service {
     return this
   }
 
+  /**
+   * Files to be mounted inside the containers. Files must be in the helm repo.
+   * @param ...files: list of MountedFile
+   */
   files(...files: MountedFile[]) {
     this.serviceDef.files = [...this.serviceDef.files, ...files]
+    return this
+  }
+
+  /**
+   * Ability to override the default rollout strategy of the environment
+   * @param strategy: RollingUpdate or Recreate
+   */
+  rolloutStrategy(strategy: RolloutStrategy) {
+    this.serviceDef.rolloutStrategy = strategy
     return this
   }
 

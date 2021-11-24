@@ -279,6 +279,23 @@ export const StaffMutation = gql`
   }
 `
 
+export const MunicipalityActivityMutation = gql`
+  mutation MunicipalityActivityMutation($input: MunicipalityActivityInput!) {
+    municipalityActivity(input: $input) {
+      id
+      active
+    }
+  }
+`
+
+export const MunicipalityMutation = gql`
+  mutation MunicipalityMutation($input: CreateMunicipalityInput!) {
+    createMunicipality(input: $input) {
+      id
+    }
+  }
+`
+
 export const UpdateMunicipalityMutation = gql`
   mutation UpdateMunicipalityMutation($input: UpdateMunicipalityInput!) {
     updateMunicipality(input: $input) {
@@ -328,7 +345,7 @@ export const MunicipalitiesQuery = gql`
       id
       name
       active
-      users
+      numberOfUsers
       municipalityId
     }
   }
@@ -367,6 +384,18 @@ export const MunicipalityQuery = gql`
         withOthers
         type
       }
+    }
+  }
+`
+
+export const SupervisorsQuery = gql`
+  query supervisorsQuery {
+    supervisors {
+      id
+      nationalId
+      name
+      roles
+      active
     }
   }
 `

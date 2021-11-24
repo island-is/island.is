@@ -7,6 +7,29 @@ export const icRulingStepOne = {
     description: 'Notaður sem titill á úrskurðar skrefi í rannsóknarheimildum.',
   }),
   sections: {
+    prosecutorDemands: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.prosecutor_demands.title',
+        defaultMessage: 'Dómkröfur',
+        description:
+          'Notaður sem titill fyrir "dómkröfur" hlutann á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+      label: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.prosecutor_demands.label',
+        defaultMessage: 'Krafa lögreglu',
+        description:
+          'Notaður sem titill fyrir í "Krafa lögreglu" textaboxi á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+      placeholder: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.prosecutor_demands.placeholder',
+        defaultMessage: 'Hvað hafði ákæruvaldið að segja?',
+        description:
+          'Notaður sem skýritexti fyrir í "Hvað hafði ákæruvaldið að segja?" textabox á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+    }),
     courtCaseFacts: defineMessages({
       title: {
         id:

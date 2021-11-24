@@ -5,3 +5,5 @@
 .github/actions/dist
 /libs/api/domains/application/gen
 /tmp
+/cache
+/.cache

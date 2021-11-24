@@ -68,8 +68,8 @@ export const JudicialSystem = new XroadConf({
     },
     XROAD_POLICE_MEMBER_CODE: {
       dev: '10005',
-      staging: '5306972079',
-      prod: '5306972079',
+      staging: '5309672079',
+      prod: '5309672079',
     },
     XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1',
     XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1',
@@ -152,6 +152,12 @@ export const Finance = new XroadConf({
       staging: 'IS-DEV/GOV/10021/FJS-Public/financeIsland',
       prod: 'IS/GOV/5402697509/FJS-Public/financeIsland',
     },
+  },
+})
+
+export const Properties = new XroadConf({
+  env: {
+    XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1',
   },
 })
 

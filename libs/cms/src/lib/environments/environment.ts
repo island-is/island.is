@@ -15,6 +15,7 @@ export default {
     'organizationPage',
     'organizationSubpage',
     'supportQNA',
+    'link',
     'frontpage',
   ],
   nestedContentTypes: [

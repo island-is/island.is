@@ -11,6 +11,8 @@ export const USER_PRFOLIE_AND_ISLYKILL = gql`
     getIslykillSettings {
       email
       mobile
+      bankInfo
+      canNudge
       noUserFound
     }
   }

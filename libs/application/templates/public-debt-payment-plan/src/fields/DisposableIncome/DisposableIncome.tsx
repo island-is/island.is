@@ -1,5 +1,11 @@
 import { FieldBaseProps } from '@island.is/application/core'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Link,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React from 'react'
 import { employer } from '../../lib/messages'
@@ -30,11 +36,17 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
   const externalData = application.externalData as PaymentPlanExternalData
   const conditions =
     externalData.paymentPlanPrerequisites?.data?.conditions || null
+  const debts = externalData.paymentPlanPrerequisites?.data?.debts || null
 
   return (
     <Box>
       <Text marginBottom={3}>
-        {formatMessage(employer.general.pageDescription)}
+        {`${formatMessage(employer.general.pageDescription)} `}
+        <Link href={`${formatMessage(employer.general.taxHomePageUrl)}`} newTab>
+          <Button variant="text" icon="open" iconType="outline">
+            {formatMessage(employer.labels.taxHomePage)}
+          </Button>
+        </Link>
       </Text>
       <Box marginBottom={[3, 3, 5]}>
         {/* TODO: Handle null values? */}
@@ -58,17 +70,19 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
         title={`${conditions?.minPayment.toLocaleString('is-IS') || 0} kr.`}
         text={formatMessage(employer.labels.yourMinimumPayment)}
       />
-      {!!conditions?.minWagePayment && (
-        <Box marginTop={3}>
-          <AlertMessage
-            type="info"
-            title={formatMessage(employer.labels.alertTitle)}
-            message={formatMessage(employer.labels.alertMessage, {
-              minPayment: formatIsk(conditions?.minWagePayment),
-            })}
-          />
-        </Box>
-      )}
+      {!!conditions?.minWagePayment &&
+        conditions?.minPayment < conditions?.minWagePayment &&
+        debts?.find((x) => x.type === 'Wagedection') !== undefined && (
+          <Box marginTop={3}>
+            <AlertMessage
+              type="info"
+              title={formatMessage(employer.labels.alertTitle)}
+              message={formatMessage(employer.labels.alertMessage, {
+                minPayment: formatIsk(conditions?.minWagePayment),
+              })}
+            />
+          </Box>
+        )}
     </Box>
   )
 }
