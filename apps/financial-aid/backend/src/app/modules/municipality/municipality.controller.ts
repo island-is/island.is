@@ -20,7 +20,11 @@ import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import { CurrentStaff } from '../../decorators'
-import { CreateMunicipalityDto, UpdateMunicipalityDto } from './dto'
+import {
+  MunicipalityActivityDto,
+  UpdateMunicipalityDto,
+  CreateMunicipalityDto,
+} from './dto'
 import { CreateStaffDto } from '../staff/dto'
 
 @UseGuards(IdsUserGuard)
@@ -90,5 +94,28 @@ export class MunicipalityController {
       staff.municipalityId,
       input,
     )
+  }
+
+  @Put('activity/:id')
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.SUPERADMIN)
+  @ApiOkResponse({
+    type: MunicipalityModel,
+    description: 'Updates activity for municipality',
+  })
+  async updateMunicipalityActivity(
+    @Param('id') id: string,
+    @Body() municipalityToUpdate: MunicipalityActivityDto,
+  ): Promise<MunicipalityModel> {
+    const {
+      numberOfAffectedRows,
+      updatedMunicipality,
+    } = await this.municipalityService.update(id, municipalityToUpdate)
+
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`Municipality ${id} does not exist`)
+    }
+
+    return updatedMunicipality
   }
 }
