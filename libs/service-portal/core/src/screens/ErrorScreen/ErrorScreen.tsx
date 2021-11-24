@@ -27,7 +27,7 @@ export const ErrorScreen: FC<Props> = ({
     <GridRow>
       <GridColumn span={['1/1', '10/12']} offset={['0', '0']} order={[2, 1]}>
         <Box
-          marginTop={12}
+          marginTop={6}
           marginBottom={6}
           textAlign="center"
           justifyContent="center"

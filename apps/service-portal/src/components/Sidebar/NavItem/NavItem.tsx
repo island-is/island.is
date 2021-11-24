@@ -27,16 +27,17 @@ const NavItemContent: FC<Props> = ({
   alwaysExpanded = false,
 }) => {
   const chevron = active ? 'chevronUp' : 'chevronDown'
-  const showChevron = hasArray && !alwaysExpanded
+  const showLock = enabled === false
+  const showChevron = hasArray && !alwaysExpanded && !showLock
   return (
     <Box
       className={styles.navItemActive[`${active ? 'active' : 'inactive'}`]}
       display="flex"
       alignItems="center"
       justifyContent="spaceBetween"
-      cursor={enabled === false ? undefined : 'pointer'}
+      cursor={showLock ? undefined : 'pointer'}
       position="relative"
-      onClick={enabled === false ? (active ? onClick : undefined) : onClick}
+      onClick={showLock ? (active ? onClick : undefined) : onClick}
       paddingY={'p2'}
       paddingLeft={3}
       paddingRight={2}
@@ -48,30 +49,27 @@ const NavItemContent: FC<Props> = ({
               type={icon.type}
               icon={icon.icon}
               size="medium"
-              color={enabled === false ? 'dark200' : 'blue400'}
+              color={'blue400'}
             />
           </Box>
         ) : null}
         <Text
           fontWeight={'regular'}
           variant="sidebar"
-          color={
-            enabled === false
-              ? 'dark200'
-              : variant === 'blue'
-              ? 'blue400'
-              : 'blueberry600'
-          }
+          color={variant === 'blue' ? 'blue400' : 'blueberry600'}
         >
           {children}
         </Text>
       </Box>
       {showChevron && (
+        <Icon type={'filled'} icon={chevron} size="medium" color={'blue400'} />
+      )}
+      {showLock && (
         <Icon
           type={'filled'}
-          icon={chevron}
-          size="medium"
-          color={enabled === false ? 'dark200' : 'blue400'}
+          icon={'lockClosed'}
+          size="small"
+          color={'blue400'}
         />
       )}
     </Box>
@@ -79,13 +77,16 @@ const NavItemContent: FC<Props> = ({
 }
 
 const NavItem: FC<Props> = (props) => {
+  console.log(props.enabled, props.path)
   return props.external ? (
     <a href={props.path} target="_blank" rel="noreferrer noopener">
       <NavItemContent {...props} />
     </a>
   ) : props.path ? (
     props.enabled === false ? (
-      <NavItemContent {...props} />
+      <Link to={props.path}>
+        <NavItemContent {...props} />
+      </Link>
     ) : (
       <Link to={props.path}>
         <NavItemContent {...props} />
