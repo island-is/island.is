@@ -17,21 +17,21 @@ export const autocompleteTermQuery = ({
 })
 
 export const autocompleteSearchQuery = ({
-  searchQuery
+  searchQuery,
 }: AutocompleteSearchQueryInput) => ({
   suggest: {
     text: searchQuery,
     titleSuggest: {
-      term : {
-        suggest_mode: "always",
-        field: "title"
-      }
+      term: {
+        suggest_mode: 'always',
+        field: 'title',
+      },
     },
     contentSuggest: {
-      term : {
-        suggest_mode: "always",
-        field: "title"
-      }
-    }
-  }
+      term: {
+        suggest_mode: 'always',
+        field: 'title',
+      },
+    },
+  },
 })

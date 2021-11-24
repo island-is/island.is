@@ -97,19 +97,19 @@ export class ContentSearchService {
   }
 
   async fetchAutocompleteSuggestion(
-    input: WebSearchAutocompleteSuggestionsInput
+    input: WebSearchAutocompleteSuggestionsInput,
   ): Promise<WebSearchAutocompleteSuggestions> {
     const {
-      suggest: { contentSuggest, titleSuggest }
+      suggest: { contentSuggest, titleSuggest },
     } = await this.elasticService.fetchAutocompleteSuggestions(
       this.getIndex(input.language),
       {
-        ...input
-      }
+        ...input,
+      },
     )
     console.log(contentSuggest, titleSuggest)
     return {
-      completions: ["this is a test"]
+      completions: ['this is a test'],
     }
   }
 }

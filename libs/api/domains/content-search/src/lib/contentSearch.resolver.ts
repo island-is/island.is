@@ -25,7 +25,7 @@ export class ContentSearchResolver {
 
   @Query(() => WebSearchAutocompleteSuggestions)
   webSearchAutocompleteSuggestions(
-    @Args('input') input: WebSearchAutocompleteSuggestionsInput
+    @Args('input') input: WebSearchAutocompleteSuggestionsInput,
   ): Promise<WebSearchAutocompleteSuggestions> {
     return this.contentSearchService.fetchAutocompleteSuggestion(input)
   }

@@ -1,12 +1,10 @@
-import { double } from "aws-sdk/clients/lightsail";
-
- export interface SuggestResponse {
-  text: string,
+export interface SuggestResponse {
+  text: string
   options: [
     {
-      text: string,
-      score: double,
-    }
+      text: string
+      score: number
+    },
   ]
 }
 export interface AutocompleteTermInput {
@@ -20,15 +18,13 @@ export interface AutocompleteTermResponse {
   }
 }
 
-
-
 export interface AutocompleteSearchQueryInput {
   searchQuery: string
 }
 
 export interface AutocompleteSearchQueryResponse {
   suggest: {
-    titleSuggest: [SuggestResponse],
+    titleSuggest: [SuggestResponse]
     contentSuggest: [SuggestResponse]
   }
 }

@@ -4,7 +4,10 @@ import * as AWS from 'aws-sdk'
 import AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import { autocompleteSearchQuery, autocompleteTermQuery } from '../queries/autocomplete'
+import {
+  autocompleteSearchQuery,
+  autocompleteTermQuery,
+} from '../queries/autocomplete'
 import { searchQuery } from '../queries/search'
 import { documentByMetaDataQuery } from '../queries/documentByMetaData'
 import {
@@ -312,10 +315,10 @@ export class ElasticService {
 
   async fetchAutocompleteSuggestions(
     index: string,
-    input: AutocompleteSearchQueryInput
+    input: AutocompleteSearchQueryInput,
   ): Promise<AutocompleteSearchQueryResponse> {
     const { searchQuery } = input
-    const requestBody = autocompleteSearchQuery({searchQuery});
+    const requestBody = autocompleteSearchQuery({ searchQuery })
 
     const data = await this.findByQuery<
       AutocompleteSearchQueryResponse,
