@@ -28,7 +28,7 @@ import { TemporaryVoterRegistryApiMock } from './providers/temporaryVoterRegistr
     {
       provide: NationalRegistryApi,
       useFactory: async () =>
-        await NationalRegistryApi.instanciateClass(
+        await NationalRegistryApi.instantiateClass(
           environment.metadataProvider
             .nationalRegistry as NationalRegistryConfig,
         ),
