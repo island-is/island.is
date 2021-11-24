@@ -59,7 +59,10 @@ export class AccessGuard implements CanActivate {
               listId,
               request.auth,
             )
-            if (endorsementList?.owner === request.auth.nationalId) {
+            // admin has all the same rights as owner
+            const isAdmin = await this.endorsementListService.hasAdminScope(request.auth)
+            
+            if (endorsementList?.owner === request.auth.nationalId || isAdmin) {
               return true
             }
           }
