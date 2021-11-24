@@ -8,11 +8,10 @@ import {
 import { useLocale } from '@island.is/localization'
 import { SubmittedApplicationData } from '../../types'
 import {
-  isHomeActivitiesAccident,
-  isInjuredAndRepresentativeOfCompanyOrInstitute,
   hasReceivedAllDocuments,
   getErrorMessageForMissingDocuments,
-  isAgricultureAccident,
+  shouldRequestReview,
+  isInjuredAndRepresentativeOfCompanyOrInstitute,
 } from '../../utils'
 import { inReview } from '../../lib/messages'
 import { StatusStep } from './StatusStep'
@@ -27,6 +26,7 @@ import {
   Steps,
 } from './StatusStep/types'
 import { AccidentNotificationStatus } from '@island.is/api/schema'
+import { AccidentNotificationAnswers } from '../..'
 
 export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
   goToScreen,
@@ -239,9 +239,9 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
             }
           : undefined,
       visible: !(
-        isHomeActivitiesAccident(application.answers) ||
-        isAgricultureAccident(application.answers) ||
-        isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
+        !shouldRequestReview(
+          application.answers as AccidentNotificationAnswers,
+        ) || isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
       ),
     },
     {
