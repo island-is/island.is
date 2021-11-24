@@ -9,7 +9,7 @@ export class CriminalRecordApi {
   public async getCriminalRecord(ssn: string): Promise<CriminalRecord> {
     console.log('---------------- CriminalRecordApi.getCriminalRecord ' + ssn + ' ----------------');
 
-    const blob = await this.api.apiPdfCreatePersonIdGet({ personId: '0101051450' })
+    const blob = await this.api.apiPdfCreatePersonIdGet({ personId: ssn })
     const blobText = await blob.arrayBuffer()
     const blobTextBase64 = Buffer.from(blobText).toString('base64')
 

@@ -11,17 +11,16 @@ export class CriminalRecordProvider extends BasicDataProvider {
   type = 'CriminalRecordProvider'
 
   async provide(application: Application): Promise<unknown> {
-    //TODO sækja ssn og senda inn 
-    var ssn = 'TODOssn1'
+    var applicantSsn = application.applicant
 
     const query = `
-    query CheckCriminalRecord {
-        checkCriminalRecord
+    query CheckCriminalRecord($ssnInput: String!) {
+        checkCriminalRecord(ssn: $ssnInput)
       }
     `
 
     return this.useGraphqlGateway(query, { 
-        input: { ssn: ssn }
+      ssnInput: applicantSsn
       }).then(async (res: Response) => {
       const response = await res.json()
 
