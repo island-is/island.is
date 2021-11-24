@@ -16,11 +16,8 @@ export class PaymentCallbackController {
     @Body() callback: Callback,
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<void> {
-    // var id = '3b27ec27-84c5-4380-b49f-f97354f20951'
-    // // var applicationId = '681102302000016920211122999001'
-    // var applicationId = '5ddff222-565e-4545-990b-dac90f00e741'
-    console.log(callback)
-
+    // var applicationId = '235526dd-0433-44da-9945-4a2cb1a71587'
+    // var id = '373adb06-2186-4098-a678-e7ee3968e314'
     if (callback.status !== 'paid') {
       // TODO: no-op.. it would be nice eventually to update all statuses
       return

@@ -40,18 +40,18 @@ export const CriminalRecordForm: Form = buildForm({
           subTitle: m.externalDataSubTitle,
           checkboxLabel: m.externalDataAgreement,
           dataProviders: [
-            buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
-              title: m.nationalRegistryTitle,
-              subTitle: m.nationalRegistrySubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
-              title: m.userProfileInformationTitle,
-              subTitle: m.userProfileInformationSubTitle,
-            }),
+            // buildDataProviderItem({
+            //   id: 'nationalRegistry',
+            //   type: 'NationalRegistryProvider',
+            //   title: m.nationalRegistryTitle,
+            //   subTitle: m.nationalRegistrySubTitle,
+            // }),
+            // buildDataProviderItem({
+            //   id: 'userProfile',
+            //   type: 'UserProfileProvider',
+            //   title: m.userProfileInformationTitle,
+            //   subTitle: m.userProfileInformationSubTitle,
+            // }),
             buildDataProviderItem({
               id: 'payment',
               type: 'FeeInfoProvider',

@@ -19,7 +19,7 @@ import { m } from './messages'
 enum States {
   DRAFT = 'draft',
   PAYMENT = 'payment',
-  DONE = 'done',
+  COMPLETED = 'completed',
 }
 
 type CriminalRecordTemplateEvent =
@@ -33,35 +33,6 @@ enum Roles {
 
 const CriminalRecordSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  // person: z.object({
-  //   name: z.string().nonempty().max(256),
-  //   age: z.string().refine((x) => {
-  //     const asNumber = parseInt(x)
-  //     if (isNaN(asNumber)) {
-  //       return false
-  //     }
-  //     return asNumber > 15
-  //   }),
-  //   nationalId: z.string().refine((n) => n && kennitala.isValid(n), {
-  //     params: m.dataSchemeNationalId,
-  //   }),
-  //   phoneNumber: z.string().refine(
-  //     (p) => {
-  //       const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-  //       return phoneNumber && phoneNumber.isValid()
-  //     },
-  //     { params: m.dataSchemePhoneNumber },
-  //   ),
-  //   email: z.string().email(),
-  // }),
-  // careerHistory: z.enum(['yes', 'no']).optional(),
-  // careerHistoryCompanies: z
-  //   .array(
-  //     // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
-  //     z.union([z.enum(['government', 'aranja', 'advania']), z.undefined()]),
-  //   )
-  //   .nonempty(),
-  // dreamJob: z.string().optional(),
 })
 
 const template: ApplicationTemplate<
@@ -81,7 +52,11 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Umsókn um sakavottorð',
           actionCard: {
-            description: m.draftDescription,
+            //description: m.draftDescription,
+            tag: {
+              label: m.actionCardDraft,
+              variant: 'blue',
+            },
           },
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
@@ -114,9 +89,12 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Greiðsla',
           actionCard: {
-            description: m.actionCardPayment,
+            tag: {
+              label: m.actionCardPayment,
+              variant: 'red',
+            },
           },
-          progress: 0.9,
+          progress: 0.8,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
@@ -126,7 +104,7 @@ const template: ApplicationTemplate<
           },
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/Payment').then((val) => val.Payment),
               actions: [
@@ -137,14 +115,20 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
-      [States.DONE]: {
+      [States.COMPLETED]: {
         meta: {
-          name: 'Samþykkt',
+          name: 'Completed',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: m.actionCardDone,
+              variant: 'blueberry',
+            },
+          },
           onEntry: {
             apiModuleAction: ApiActions.getCriminalRecord,
           },

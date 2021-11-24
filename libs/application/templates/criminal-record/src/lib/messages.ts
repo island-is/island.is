@@ -57,6 +57,12 @@ export const m = defineMessages({
     description:
       'Description of application state/status when payment is pending',
   },
+  actionCardDone: {
+    id: 'cr.application:actionCardDone',
+    defaultMessage: 'Afgreidd',
+    description:
+      'Description of application state/status when application is processed',
+  },
   payment: {
     id: 'cr.application:payment',
     defaultMessage: 'Greiðsla',
