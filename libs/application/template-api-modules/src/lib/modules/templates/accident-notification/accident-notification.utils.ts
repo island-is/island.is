@@ -8,6 +8,7 @@ import {
   SubmittedApplicationData,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
+  utils,
 } from '@island.is/application/templates/accident-notification'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
