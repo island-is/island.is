@@ -35,7 +35,7 @@ const MobileMenu = (): ReactElement | null => {
       className={styles.wrapper}
       ref={ref}
     >
-      <Box paddingX={3}>
+      <Box paddingX={3} paddingBottom={2} background="white">
         <a href={ISLAND_IS_URL}>
           <Button variant="utility" fluid>
             {formatMessage(m.goToIslandIs)}
@@ -43,8 +43,8 @@ const MobileMenu = (): ReactElement | null => {
         </a>
       </Box>
       {navigation.map((rootItem, rootIndex) => (
-        <Box background={'white'} key={rootIndex} padding={4}>
-          <Stack space={3}>
+        <Box key={rootIndex} paddingX={4}>
+          <Stack space={0}>
             {rootItem.children?.map(
               (navRoot, index) =>
                 navRoot.path !== ServicePortalPath.MinarSidurRoot && (

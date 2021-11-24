@@ -9,12 +9,14 @@ export const sidebar = style({
   height: '100%',
   minHeight: '100vh',
   marginBottom: theme.spacing['10'],
-  transition: 'left 250ms ease-in-out',
+  transition: 'all 250ms ease-in-out',
   width: 252,
+  backgroundColor: `${theme.color.blue100}`,
 })
 
 export const collapsed = style({
   left: '-125px',
+  backgroundColor: `${theme.color.transparent}`,
 })
 
 export const logoCollapsed = style({

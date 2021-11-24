@@ -1,5 +1,5 @@
 import { style, styleVariants } from '@vanilla-extract/css'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const dotState = styleVariants({
   active: {},
@@ -15,6 +15,11 @@ export const navItemActive = styleVariants({
   },
   inactive: {
     backgroundColor: `${theme.color.blue100}`,
+    '@media': {
+      [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
+        backgroundColor: 'white',
+      },
+    },
   },
 })
 

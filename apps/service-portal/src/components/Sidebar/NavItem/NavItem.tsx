@@ -12,6 +12,7 @@ interface Props {
   external?: boolean
   variant?: 'blue' | 'blueberry'
   hasArray?: boolean
+  alwaysExpanded?: boolean
   onClick?: () => void
 }
 
@@ -23,8 +24,10 @@ const NavItemContent: FC<Props> = ({
   onClick,
   variant = 'blue',
   children,
+  alwaysExpanded = false,
 }) => {
   const chevron = active ? 'chevronUp' : 'chevronDown'
+  const showChevron = hasArray && !alwaysExpanded
   return (
     <Box
       className={styles.navItemActive[`${active ? 'active' : 'inactive'}`]}
@@ -63,7 +66,7 @@ const NavItemContent: FC<Props> = ({
           {children}
         </Text>
       </Box>
-      {hasArray && (
+      {showChevron && (
         <Icon
           type={'filled'}
           icon={chevron}

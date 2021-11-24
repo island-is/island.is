@@ -24,6 +24,14 @@ export const header = style({
   },
 })
 
+export const headerWrapper = style({
+  justifyContent: 'space-between',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      justifyContent: 'flex-end',
+    },
+  },
+})
 export const placeholder = style({
   height: SERVICE_PORTAL_HEADER_HEIGHT_SM,
   '@media': {

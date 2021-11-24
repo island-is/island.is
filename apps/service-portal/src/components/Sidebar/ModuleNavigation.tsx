@@ -58,7 +58,7 @@ const ModuleNavigation: FC<Props> = ({
       {nav.heading && (
         <Text
           variant="eyebrow"
-          color={variant === 'blue' ? 'blue400' : 'blueberry600'}
+          color="blue400"
           fontWeight="semiBold"
           marginBottom={2}
           marginTop={2}
@@ -81,7 +81,7 @@ const ModuleNavigation: FC<Props> = ({
         onClick={() => {
           handleRootItemClick(nav.external)
         }}
-        variant={variant}
+        alwaysExpanded={alwaysExpanded}
       >
         {formatMessage(nav.name)}
       </NavItem>
@@ -102,7 +102,6 @@ const ModuleNavigation: FC<Props> = ({
                       child.path && pathname.includes(child.path) ? true : false
                     }
                     external={child.external}
-                    variant={variant}
                     onClick={onItemClick}
                   >
                     {formatMessage(child.name)}
