@@ -3,7 +3,6 @@ import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 
 import {
   capitalize,
-  caseTypes,
   formatAccusedByGender,
   formatAlternativeTravelBanRestrictions,
   formatAppeal,
@@ -11,6 +10,7 @@ import {
   formatDate,
   NounCases,
   TIME_FORMAT,
+  formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseDecision,
@@ -21,7 +21,7 @@ import {
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
-import { closedCourt } from '@island.is/judicial-system-web/messages'
+import { closedCourt, core } from '@island.is/judicial-system-web/messages'
 import { useIntl } from 'react-intl'
 import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
 import { rcConfirmation } from '@island.is/judicial-system-web/messages'
@@ -98,11 +98,9 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </AccordionListItem>
       )}
       <AccordionListItem title={formatMessage(m.sections.courtDocuments.title)}>
-        <Text>{`Krafa ${
-          isRestrictionCase(workingCase.type)
-            ? `um ${caseTypes[workingCase.type]}`
-            : `- ${capitalize(caseTypes[workingCase.type])}`
-        } þingmerkt nr. 1.`}</Text>
+        <Text>{`${formatMessage(core.requestCaseType, {
+          caseType: formatRequestCaseType(workingCase.type),
+        })} þingmerkt nr. 1.`}</Text>
         <Text>
           Rannsóknargögn málsins liggja frammi.
           <br />
