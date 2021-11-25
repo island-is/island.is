@@ -45,3 +45,21 @@ export const wrapper = style({
     },
   },
 })
+
+export const half = style({
+  gridTemplateColumns: 'repeat(2, 1fr)',
+  ...themeUtils.responsiveStyle({
+    xs: {
+      width: theme.breakpoints.sm + 70,
+    },
+    sm: {
+      gridTemplateColumns: 'repeat(2, 1fr)',
+    },
+    lg: {
+      gridTemplateColumns: 'repeat(2, 1fr)',
+    },
+    xl: {
+      gridTemplateColumns: 'repeat(2, 1fr)',
+    },
+  }),
+})

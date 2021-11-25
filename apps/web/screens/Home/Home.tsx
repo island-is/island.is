@@ -115,13 +115,15 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
             heading={n('newsTickerHeading')}
             seeMoreText={n('newsTickerSeeMore')}
             showMoreButton
-            items={(page.linkList?.links ?? []).map(({ date, text, url }) => {
-              return {
-                text,
-                date: date ? new Date(date) : new Date(),
-                href: url,
-              }
-            })}
+            items={(page.linkList?.links ?? [])
+              .filter((x) => x.date)
+              .map(({ date, text, url }) => {
+                return {
+                  text,
+                  date: new Date(date),
+                  href: url,
+                }
+              })}
           />
         </GridContainer>
       </Box>

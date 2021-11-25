@@ -131,6 +131,7 @@ export const SearchSection = ({
         <GridColumn
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '5/12', '4/12']}
+          paddingTop={[4, 4, 0]}
         >
           {isMobile !== null && (
             <Box

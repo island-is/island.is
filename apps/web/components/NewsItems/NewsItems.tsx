@@ -58,6 +58,7 @@ export const NewsItems = ({
         paddingTop={3}
         paddingBottom={3}
         insideGridContainer
+        half
       >
         {items
           .slice(0, 2)

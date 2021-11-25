@@ -1,5 +1,6 @@
 import React, { FC, Children, useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
+import cx from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
 import { Box, BoxProps, GridContainer } from '@island.is/island-ui/core'
 
@@ -13,6 +14,7 @@ type GridItemsProps = {
   insideGridContainer?: boolean
   mobileItemWidth?: number
   mobileItemsRows?: number
+  half?: boolean
 }
 
 export const GridItems: FC<GridItemsProps> = ({
@@ -23,6 +25,7 @@ export const GridItems: FC<GridItemsProps> = ({
   insideGridContainer = false,
   mobileItemWidth = 400,
   mobileItemsRows = 3,
+  half = false,
   children,
 }) => {
   const { width } = useWindowSize()
@@ -58,7 +61,7 @@ export const GridItems: FC<GridItemsProps> = ({
         <Box
           paddingTop={paddingTop}
           paddingBottom={paddingBottom}
-          className={styles.wrapper}
+          className={cx(styles.wrapper, { [styles.half]: half })}
           {...(style && { style })}
         >
           {children}
