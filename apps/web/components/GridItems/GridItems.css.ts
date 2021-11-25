@@ -13,8 +13,6 @@ export const container = style({
 
 export const wrapper = style({
   display: 'grid',
-  overflowX: 'auto',
-  scrollbarWidth: 'none',
   ...themeUtils.responsiveStyle({
     xs: {
       columnGap: theme.spacing[2],
@@ -39,11 +37,6 @@ export const wrapper = style({
       gridTemplateColumns: 'repeat(4, 1fr)',
     },
   }),
-  selectors: {
-    [`&::-webkit-scrollbar`]: {
-      display: 'none',
-    },
-  },
 })
 
 export const half = style({
