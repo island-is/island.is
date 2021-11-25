@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import {
   Box,
   Button,
@@ -22,6 +22,7 @@ import {
 import { RegName } from '@island.is/regulations'
 
 import { mockRegulationOptions, useMockQuery } from '../_mockData'
+import { MessageDescriptor } from '@formatjs/intl'
 
 // const RegulationListQuery = gql`
 //   query RegulationListQuery {
@@ -51,8 +52,25 @@ export const EditImpacts: StepComponent = (props) => {
   )
   const mentionedRegs = mentionedQuery.data
 
+  const minEffectiveDate =
+    draft.effectiveDate.value || draft.idealPublishDate.value
+
   const [selReg, setSelReg] = useState<RegName>()
-  const [effectiveDate, setEffectiveDate] = useState<Date>()
+  const [effectiveDate, _setEffectiveDate] = useState<{
+    value?: Date | undefined
+    error?: string | MessageDescriptor
+  }>({})
+
+  const setEffectiveDate = useCallback(
+    (value: Date | undefined) => {
+      if (value && minEffectiveDate && value < minEffectiveDate) {
+        _setEffectiveDate({ value, error: msg.impactEffectiveDate_toosoon })
+        return
+      }
+      _setEffectiveDate({ value, error: undefined })
+    },
+    [minEffectiveDate],
+  )
 
   const mentionedOptions = useMemo(
     (): ReadonlyArray<Option> =>
@@ -88,11 +106,11 @@ export const EditImpacts: StepComponent = (props) => {
           size="sm"
           label={t(msg.impactEffectiveDate)}
           placeholderText={t(msg.impactEffectiveDate_default)}
-          minDate={draft.effectiveDate.value || draft.idealPublishDate.value}
-          selected={effectiveDate}
+          minDate={minEffectiveDate}
+          selected={effectiveDate.value}
           handleChange={setEffectiveDate}
-          hasError={!!draft.impactEffectiveDate.error}
-          errorMessage={t(draft.impactEffectiveDate.error)}
+          hasError={!!effectiveDate.error}
+          errorMessage={t(effectiveDate.error)}
         />
         {!!draft.effectiveDate.value && (
           <Button

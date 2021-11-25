@@ -223,6 +223,10 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-opts-impacteffectivedate-default',
     defaultMessage: 'Tekur þegar gildi', // 'Á útgáfudegi'
   },
+  impactEffectiveDate_toosoon: {
+    id: 'ap.regulations-admin:draft-opts-impacteffectivedate-toosoon',
+    defaultMessage: 'Breytingar geta ekki tekið gildi á undan reglugerðinni', // 'Á útgáfudegi'
+  },
 
   chooseImpactType: {
     id: 'ap.regulations-admin:draft-legend-impacttype',
