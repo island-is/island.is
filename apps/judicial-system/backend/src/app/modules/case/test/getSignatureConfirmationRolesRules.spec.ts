@@ -8,7 +8,7 @@ describe('CaseController - Get signature confirmation rules', () => {
   beforeEach(() => {
     rules = Reflect.getMetadata(
       'roles-rules',
-      CaseController.prototype.getSignatureConfirmation,
+      CaseController.prototype.getRulingSignatureConfirmation,
     )
   })
 

@@ -908,14 +908,14 @@ describe('Case', () => {
       })
   })
 
-  it('POST /api/case/:id/signature should request a signature for a case', async () => {
+  it('POST /api/case/:id/ruling/signature should request a signature for a case', async () => {
     await Case.create({
       ...getCaseData(true, true, true, true),
       state: CaseState.REJECTED,
     })
       .then(async (value) =>
         request(app.getHttpServer())
-          .post(`/api/case/${value.id}/signature`)
+          .post(`/api/case/${value.id}/ruling/signature`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
           .expect(201),
       )
@@ -926,7 +926,7 @@ describe('Case', () => {
       })
   })
 
-  it('GET /api/case/:id/signature should confirm a signature for a case', async () => {
+  it('GET /api/case/:id/ruling/signature should confirm a signature for a case', async () => {
     let dbCase: CCase
 
     await Case.create({
@@ -937,7 +937,7 @@ describe('Case', () => {
         dbCase = caseToCCase(value)
 
         return request(app.getHttpServer())
-          .get(`/api/case/${dbCase.id}/signature`)
+          .get(`/api/case/${dbCase.id}/ruling/signature`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
           .query({ documentToken: 'DEVELOPMENT' })
           .expect(200)

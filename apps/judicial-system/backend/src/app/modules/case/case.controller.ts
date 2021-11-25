@@ -502,12 +502,12 @@ export class CaseController {
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(judgeRule)
-  @Post('case/:caseId/signature')
+  @Post('case/:caseId/ruling/signature')
   @ApiCreatedResponse({
     type: SigningServiceResponse,
-    description: 'Requests a signature for an existing case',
+    description: 'Requests a ruling signature for an existing case',
   })
-  async requestSignature(
+  async requestRulingSignature(
     @Param('caseId') _0: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
@@ -520,7 +520,7 @@ export class CaseController {
     }
 
     try {
-      const response = await this.caseService.requestSignature(theCase)
+      const response = await this.caseService.requestRulingSignature(theCase)
       return res.status(201).send(response)
     } catch (error) {
       if (error instanceof DokobitError) {
@@ -536,13 +536,13 @@ export class CaseController {
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(judgeRule)
-  @Get('case/:caseId/signature')
+  @Get('case/:caseId/ruling/signature')
   @ApiOkResponse({
     type: SignatureConfirmationResponse,
     description:
-      'Confirms a previously requested signature for an existing case',
+      'Confirms a previously requested ruling signature for an existing case',
   })
-  async getSignatureConfirmation(
+  async getRulingSignatureConfirmation(
     @Param('caseId') _0: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
@@ -554,7 +554,10 @@ export class CaseController {
       )
     }
 
-    return this.caseService.getSignatureConfirmation(theCase, documentToken)
+    return this.caseService.getRulingSignatureConfirmation(
+      theCase,
+      documentToken,
+    )
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)

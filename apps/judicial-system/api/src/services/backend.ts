@@ -80,14 +80,16 @@ class BackendAPI extends RESTDataSource {
   }
 
   requestSignature(id: string): Promise<RequestSignatureResponse> {
-    return this.post(`case/${id}/signature`)
+    return this.post(`case/${id}/ruling/signature`)
   }
 
   getSignatureConfirmation(
     id: string,
     documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
-    return this.get(`case/${id}/signature?documentToken=${documentToken}`)
+    return this.get(
+      `case/${id}/ruling/signature?documentToken=${documentToken}`,
+    )
   }
 
   sendNotification(

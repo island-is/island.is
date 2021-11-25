@@ -451,7 +451,9 @@ export class CaseService {
     return getCustodyNoticePdfAsString(existingCase)
   }
 
-  async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
+  async requestRulingSignature(
+    existingCase: Case,
+  ): Promise<SigningServiceResponse> {
     this.logger.debug(
       `Requesting signature of ruling for case ${existingCase.id}`,
     )
@@ -482,7 +484,7 @@ export class CaseService {
     }
   }
 
-  async getSignatureConfirmation(
+  async getRulingSignatureConfirmation(
     existingCase: Case,
     documentToken: string,
   ): Promise<SignatureConfirmationResponse> {

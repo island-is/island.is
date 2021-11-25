@@ -34,7 +34,7 @@ describe('CaseController - Get signature confirmation', () => {
       const then = {} as Then
 
       try {
-        then.result = await caseController.getSignatureConfirmation(
+        then.result = await caseController.getRulingSignatureConfirmation(
           caseId,
           user,
           theCase,

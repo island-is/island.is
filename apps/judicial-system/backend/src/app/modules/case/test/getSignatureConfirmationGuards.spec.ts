@@ -12,7 +12,7 @@ describe('CaseController - Get signature confirmation guards', () => {
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      CaseController.prototype.getSignatureConfirmation,
+      CaseController.prototype.getRulingSignatureConfirmation,
     )
   })
 
