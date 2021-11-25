@@ -87,6 +87,35 @@ export class ApplicationService {
     }
   }
 
+  async findByNationalId(
+    nationalId: string,
+    municipalityCode: string,
+  ): Promise<ApplicationModel[]> {
+    return this.applicationModel.findAll({
+      where: {
+        [Op.or]: [
+          {
+            nationalId,
+            municipalityCode,
+          },
+          {
+            spouseNationalId: nationalId,
+            municipalityCode,
+          },
+        ],
+      },
+      order: [['modified', 'DESC']],
+      include: [
+        {
+          model: ApplicationFileModel,
+          as: 'files',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+      ],
+    })
+  }
+
   async getCurrentApplicationId(nationalId: string): Promise<string | null> {
     const currentApplication = await this.applicationModel.findOne({
       where: {
