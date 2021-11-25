@@ -425,6 +425,43 @@ export class CaseController {
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @Get('case/:caseId/courtRecord')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the court record for an existing case as a pdf document',
+  })
+  async getCourtRecordPdf(
+    @Param('caseId') _0: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ) {
+    if (
+      isInvestigationCase(theCase.type) &&
+      ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
+        (user.role === UserRole.REGISTRAR && user.id !== theCase.registrar?.id))
+    ) {
+      throw new ForbiddenException(
+        'Only the assigned judge and registrar can get the court record pdf for investigation cases',
+      )
+    }
+
+    const pdf = await this.caseService.getCourtRecordPdf(theCase)
+
+    const stream = new ReadableStreamBuffer({
+      frequency: 10,
+      chunkSize: 2048,
+    })
+    stream.put(pdf, 'binary')
+
+    res.header('Content-length', pdf.length.toString())
+
+    return stream.pipe(res)
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:caseId/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -433,7 +470,6 @@ export class CaseController {
   })
   async getRulingPdf(
     @Param('caseId') _0: string,
-    @Query('shortVersion', ParseBoolPipe) shortVersion: boolean,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
@@ -448,7 +484,7 @@ export class CaseController {
       )
     }
 
-    const pdf = await this.caseService.getRulingPdf(theCase, shortVersion)
+    const pdf = await this.caseService.getRulingPdf(theCase)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,

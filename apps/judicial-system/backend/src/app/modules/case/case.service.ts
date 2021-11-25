@@ -417,22 +417,31 @@ export class CaseService {
     return getRequestPdfAsString(existingCase, intl.formatMessage)
   }
 
-  async getRulingPdf(
-    existingCase: Case,
-    shortversion = false,
-  ): Promise<string> {
+  async getCourtRecordPdf(existingCase: Case): Promise<string> {
+    this.logger.debug(
+      `Getting the court record for case ${existingCase.id} as a pdf document`,
+    )
+
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    return getRulingPdfAsString(existingCase, intl.formatMessage, true)
+  }
+
+  async getRulingPdf(existingCase: Case): Promise<string> {
     this.logger.debug(
       `Getting the ruling for case ${existingCase.id} as a pdf document`,
     )
 
-    if (!shortversion) {
-      const pdf = await this.awsS3Service
-        .getObject(`generated/${existingCase.id}/ruling.pdf`)
-        .then((res) => res.toString('binary'))
-        .catch(() => undefined)
-      if (pdf) {
-        return pdf
-      }
+    const pdf = await this.awsS3Service
+      .getObject(`generated/${existingCase.id}/ruling.pdf`)
+      .then((res) => res.toString('binary'))
+      .catch(() => undefined)
+
+    if (pdf) {
+      return pdf
     }
 
     const intl = await this.intlService.useIntl(
@@ -440,7 +449,7 @@ export class CaseService {
       'is',
     )
 
-    return getRulingPdfAsString(existingCase, intl.formatMessage, shortversion)
+    return getRulingPdfAsString(existingCase, intl.formatMessage, false)
   }
 
   async getCustodyPdf(existingCase: Case): Promise<string> {
@@ -465,7 +474,11 @@ export class CaseService {
         'is',
       )
 
-      const pdf = await getRulingPdfAsString(existingCase, intl.formatMessage)
+      const pdf = await getRulingPdfAsString(
+        existingCase,
+        intl.formatMessage,
+        false,
+      )
 
       return this.signingService.requestSignature(
         existingCase.judge?.mobileNumber ?? '',

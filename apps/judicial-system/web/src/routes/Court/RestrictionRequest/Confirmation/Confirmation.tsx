@@ -154,14 +154,14 @@ export const Confirmation: React.FC = () => {
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRuling)}
-                pdfType="ruling?shortVersion=false"
+                pdfType="ruling"
               />
             </Box>
             <Box marginBottom={15}>
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRulingShortVersion)}
-                pdfType="ruling?shortVersion=true"
+                pdfType="courtRecord"
               />
             </Box>
           </FormContentContainer>
