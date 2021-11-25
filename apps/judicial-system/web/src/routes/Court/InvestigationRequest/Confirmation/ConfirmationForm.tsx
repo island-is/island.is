@@ -10,7 +10,7 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import { CaseDecision } from '@island.is/judicial-system/types'
 import type { Case, User } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'

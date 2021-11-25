@@ -32,12 +32,17 @@ const PetitionsAdmin = () => {
   const openLists = allPetitionLists?.filter((list) => {
     return (
       new Date(list.openedDate) <= new Date() &&
-      new Date() <= new Date(list.closedDate)
+      new Date() <= new Date(list.closedDate) &&
+      !list.adminLock
     )
   })
 
   const closedLists = allPetitionLists?.filter((list) => {
-    return new Date() >= new Date(list.closedDate)
+    return new Date() >= new Date(list.closedDate) && !list.adminLock
+  })
+
+  const lockedLists = allPetitionLists?.filter((list) => {
+    return list.adminLock === true
   })
 
   return (
@@ -55,6 +60,7 @@ const PetitionsAdmin = () => {
         <BulletList type="ul">
           <Bullet>{formatMessage(m.petition.bullet1Admin)}</Bullet>
           <Bullet>{formatMessage(m.petition.bullet2Admin)}</Bullet>
+          <Bullet>{formatMessage(m.petition.bullet3Admin)}</Bullet>
         </BulletList>
       </Box>
 
@@ -110,6 +116,49 @@ const PetitionsAdmin = () => {
 
             <Stack space={4}>
               {closedLists.map((list: any) => {
+                return (
+                  <Link
+                    style={{ textDecoration: 'none' }}
+                    key={list.id}
+                    to={{
+                      pathname: ServicePortalPath.PetitionListAdmin.replace(
+                        ':listId',
+                        list.id,
+                      ),
+                      state: { listId: list.id },
+                    }}
+                  >
+                    <ActionCard
+                      backgroundColor="blue"
+                      heading={list.title}
+                      text={
+                        formatMessage(m.petition.listPeriod) +
+                        ' ' +
+                        formatDate(list.openedDate) +
+                        ' - ' +
+                        formatDate(list.closedDate)
+                      }
+                      cta={{
+                        label: formatMessage(m.petition.editList),
+                        variant: 'text',
+                        icon: 'arrowForward',
+                      }}
+                    />
+                  </Link>
+                )
+              })}
+            </Stack>
+          </>
+        )}
+
+        {lockedLists && lockedLists.length > 0 && (
+          <>
+            <Text as="p" variant="h3" marginBottom={3} marginTop={7}>
+              {formatMessage(m.petition.petitionListsLocked)}
+            </Text>
+
+            <Stack space={4}>
+              {lockedLists.map((list: any) => {
                 return (
                   <Link
                     style={{ textDecoration: 'none' }}

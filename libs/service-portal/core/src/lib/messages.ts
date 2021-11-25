@@ -173,6 +173,10 @@ export const m = defineMessages({
     id: 'service.portal:phone',
     defaultMessage: 'Sími',
   },
+  fetchMore: {
+    id: 'service.portal:fetch-more',
+    defaultMessage: 'Sækja meira',
+  },
   errorFetch: {
     id: 'service.portal:could-not-fetch-data',
     defaultMessage: 'Ekki tókst að sækja gögn',

@@ -63,6 +63,7 @@ export class AuditService {
       this.auditLog = winston.createLogger({
         transports: [
           new WinstonCloudWatch({
+            name: 'CloudWatch',
             logGroupName: options.groupName,
             messageFormatter: (info: TransformableInfo) => {
               // Flatten message to avoid top level object with "level" and "message".

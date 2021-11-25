@@ -1,10 +1,10 @@
 import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
-import type { CreateMunicipality } from '@island.is/financial-aid/shared/lib'
+import { CreateStaffInput } from '../../staff'
 
 @InputType()
-export class CreateMunicipalityInput implements CreateMunicipality {
+export class CreateMunicipalityInput {
   @Allow()
   @Field()
   readonly name!: string
@@ -12,4 +12,8 @@ export class CreateMunicipalityInput implements CreateMunicipality {
   @Allow()
   @Field()
   readonly municipalityId!: string
+
+  @Allow()
+  @Field()
+  readonly admin!: CreateStaffInput
 }
