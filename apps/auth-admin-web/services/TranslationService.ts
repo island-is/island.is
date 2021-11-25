@@ -40,7 +40,7 @@ export class TranslationService extends BaseService {
 
   /** Gets language by it's isoKey */
   static async findLanguage(isoKey: string): Promise<Language | null> {
-    return BaseService.GET(`translation/language/${isoKey}`)
+    return BaseService.GET(`translation/language/${encodeURIComponent(isoKey)}`)
   }
 
   /** Adds a new Language */
@@ -55,7 +55,9 @@ export class TranslationService extends BaseService {
 
   /** Deletes a Language */
   static async deleteLanguage(isoKey: string): Promise<number | null> {
-    return BaseService.DELETE(`translation/language/${isoKey}`)
+    return BaseService.DELETE(
+      `translation/language/${encodeURIComponent(isoKey)}`,
+    )
   }
 
   /** Adds a new Translation */
