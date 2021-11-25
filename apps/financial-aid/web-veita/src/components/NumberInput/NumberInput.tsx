@@ -1,5 +1,5 @@
 import { Input } from '@island.is/island-ui/core'
-import React, { useState, useCallback, ChangeEvent, useEffect } from 'react'
+import React, { useState, useCallback, ChangeEvent } from 'react'
 
 interface Props {
   id: string

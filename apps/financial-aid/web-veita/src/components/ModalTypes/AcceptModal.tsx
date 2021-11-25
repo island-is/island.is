@@ -9,6 +9,8 @@ import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/
 import {
   aidCalculator,
   calculateAidFinalAmount,
+  calculateAidFinalAmountTEst,
+  calculateTaxOfAmount,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
 import format from 'date-fns/format'
@@ -28,7 +30,7 @@ interface Props {
 interface calculationsState {
   amount: number
   income: number
-  personalTaxCredit: number
+  personalTaxCreditPercentage: number
   tax: number
   secondPersonalTaxCredit: number
   showSecondPersonalTaxCredit: boolean
@@ -62,19 +64,30 @@ const AcceptModal = ({
   }, [homeCircumstances, municipality])
 
   const [state, setState] = useState<calculationsState>({
-    amount: aidAmount
-      ? calculateAidFinalAmount(aidAmount, usePersonalTaxCredit, currentYear)
-      : 0,
+    amount: aidAmount ? aidAmount : 0,
     income: 0,
-    personalTaxCredit: 0,
-    tax: 0,
+    personalTaxCreditPercentage: 0,
+    tax: calculateTaxOfAmount(aidAmount ? aidAmount : 0, currentYear),
     secondPersonalTaxCredit: 0,
     showSecondPersonalTaxCredit: false,
     deductionFactor: {},
     hasError: false,
   })
 
-  const isObjEmpty = (obj: any) =>
+  const sumValues = (
+    obj: Record<string, { description: string; amount: number }>,
+  ) =>
+    Object.values(obj)
+      .map((item) => {
+        return item.amount
+      })
+      .reduce((a, b) => {
+        return a + b
+      }, 0)
+
+  const isObjEmpty = (
+    obj: Record<string, { description: string; amount: number }>,
+  ) =>
     obj &&
     Object.keys(obj).length === 0 &&
     Object.getPrototypeOf(obj) === Object.prototype
@@ -127,7 +140,7 @@ const AcceptModal = ({
 
       {!isObjEmpty(state.deductionFactor) && (
         <>
-          {Object.keys(state.deductionFactor).map(function (key, index) {
+          {Object.keys(state.deductionFactor).map(function (key) {
             return (
               <Box className={modalStyles.deductionFactor}>
                 <Input
@@ -226,12 +239,15 @@ const AcceptModal = ({
           placeholder="Skrifaðu prósentuhlutfall"
           id="personalTaxCredit"
           name="personalTaxCredit"
-          value={state.personalTaxCredit}
+          value={state.personalTaxCreditPercentage}
           type="number"
           onChange={(e) => {
             setState({ ...state, hasError: false })
             if (e.target.value.length <= 3) {
-              setState({ ...state, personalTaxCredit: Number(e.target.value) })
+              setState({
+                ...state,
+                personalTaxCreditPercentage: Number(e.target.value),
+              })
             }
           }}
           backgroundColor="blue"
@@ -283,8 +299,16 @@ const AcceptModal = ({
           label="Skattur "
           id="tax"
           name="tax"
-          value={state.tax}
+          value={Number(
+            calculateTaxOfAmount(
+              (aidAmount || 0) -
+                state.income -
+                sumValues(state.deductionFactor),
+              currentYear,
+            ),
+          ).toLocaleString('de-DE')}
           type="number"
+          readOnly={true}
         />
       </Box>
 
@@ -304,7 +328,15 @@ const AcceptModal = ({
         marginBottom={2}
       >
         <Text variant="small">Upphæð aðstoðar</Text>
-        <Text>{state.amount.toLocaleString('de-DE')}</Text>
+        <Text>
+          {calculateAidFinalAmountTEst(
+            (aidAmount || 0) - state.income - sumValues(state.deductionFactor),
+            usePersonalTaxCredit,
+            currentYear,
+            state.personalTaxCreditPercentage,
+          ).toLocaleString('de-DE')}{' '}
+          kr.
+        </Text>
       </Box>
     </InputModal>
   )
