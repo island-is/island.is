@@ -14,6 +14,8 @@ import {
 import format from 'date-fns/format'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 
+import * as modalStyles from './ModalTypes.css'
+
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
   onSaveApplication: (amount: number) => void
@@ -31,7 +33,7 @@ interface calculationsState {
   secondPersonalTaxCredit: number
   showSecondPersonalTaxCredit: boolean
   hasError: boolean
-  minusArry: Record<string, { input: string; inputdos: string }>
+  deductionFactor: Record<string, { description: string; amount: number }>
 }
 
 const AcceptModal = ({
@@ -68,9 +70,14 @@ const AcceptModal = ({
     tax: 0,
     secondPersonalTaxCredit: 0,
     showSecondPersonalTaxCredit: false,
-    minusArry: {},
+    deductionFactor: {},
     hasError: false,
   })
+
+  const isObjEmpty = (obj: any) =>
+    obj &&
+    Object.keys(obj).length === 0 &&
+    Object.getPrototypeOf(obj) === Object.prototype
 
   return (
     <InputModal
@@ -117,26 +124,101 @@ const AcceptModal = ({
           maximumInputLength={maximumInputLength}
         />
       </Box>
+
+      {!isObjEmpty(state.deductionFactor) && (
+        <>
+          {Object.keys(state.deductionFactor).map(function (key, index) {
+            return (
+              <Box className={modalStyles.deductionFactor}>
+                <Input
+                  label="Lýsing"
+                  placeholder="Skrifaðu lýsingu"
+                  id={`description-${key}`}
+                  name={`description-${key}`}
+                  value={state.deductionFactor[key].description}
+                  onChange={(e) => {
+                    setState({ ...state, hasError: false })
+                    setState({
+                      ...state,
+                      deductionFactor: {
+                        ...state.deductionFactor,
+                        [key]: {
+                          ...state.deductionFactor[key],
+                          description: e.target.value,
+                        },
+                      },
+                    })
+                  }}
+                  backgroundColor="blue"
+                />
+
+                <NumberInput
+                  label="Upphæð frádráttar"
+                  placeholder="Skrifaðu upphæð"
+                  id={`amount-${key}`}
+                  name={`amount-${key}`}
+                  value={state.deductionFactor[key].amount.toString()}
+                  onUpdate={(input) => {
+                    setState({ ...state, hasError: false })
+                    setState({
+                      ...state,
+                      deductionFactor: {
+                        ...state.deductionFactor,
+                        [key]: { ...state.deductionFactor[key], amount: input },
+                      },
+                    })
+                  }}
+                  maximumInputLength={maximumInputLength}
+                />
+
+                <Button
+                  circle
+                  icon="remove"
+                  onClick={() => {
+                    const removeFactor = state.deductionFactor
+                    delete removeFactor[key]
+
+                    setState({
+                      ...state,
+                      deductionFactor: removeFactor,
+                    })
+                  }}
+                  size="small"
+                  variant="ghost"
+                />
+              </Box>
+            )
+          })}
+        </>
+      )}
+
       <Box marginBottom={3}>
         <Button
           icon="add"
           onClick={() => {
-            console.log('helo')
+            if (isObjEmpty(state.deductionFactor)) {
+              setState({
+                ...state,
+                deductionFactor: { factor1: { description: '', amount: 0 } },
+              })
+              return
+            }
+            setState({
+              ...state,
+              deductionFactor: {
+                ...state.deductionFactor,
+                [`factor${Object.keys(state.deductionFactor).length + 1}`]: {
+                  description: '',
+                  amount: 0,
+                },
+              },
+            })
           }}
           variant="text"
         >
           Bættu við frádráttarlið
         </Button>
       </Box>
-
-      {/* {obj.notmeyt && (
-        {obj.map(
-          <input/>
-          <input/>
-        )}
-      )
-
-      } */}
 
       <Box marginBottom={3}>
         <Input
