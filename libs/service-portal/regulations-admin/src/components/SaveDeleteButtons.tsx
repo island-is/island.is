@@ -1,4 +1,4 @@
-import * as s from './SaveDeleteButtons.treat'
+import * as s from './SaveDeleteButtons.css'
 import { Box, Button } from '@island.is/island-ui/core'
 import React from 'react'
 import { buttonsMsgs as msg } from '../messages'

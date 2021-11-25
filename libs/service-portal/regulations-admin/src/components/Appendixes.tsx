@@ -1,4 +1,4 @@
-import * as s from './Appendixes.treat'
+import * as s from './Appendixes.css'
 
 import { EditorInput } from './EditorInput'
 import React, { MutableRefObject, useMemo } from 'react'

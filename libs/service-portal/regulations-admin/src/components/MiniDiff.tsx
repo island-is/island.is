@@ -1,4 +1,4 @@
-import * as s from './MiniDiff.treat'
+import * as s from './MiniDiff.css'
 
 import React from 'react'
 import { PlainText, getTextContentDiff, HTMLDump } from '@island.is/regulations'

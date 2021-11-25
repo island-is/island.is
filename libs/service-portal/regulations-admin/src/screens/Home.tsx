@@ -1,4 +1,4 @@
-import * as s from './Home.treat'
+import * as s from './Home.css'
 
 import React from 'react'
 

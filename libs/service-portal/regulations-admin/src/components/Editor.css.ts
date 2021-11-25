@@ -1,5 +1,5 @@
 import type { EditorClasses } from '@hugsmidjan/regulations-editor/Editor'
-import { style, globalStyle, Style } from 'treat'
+import { style, globalStyle, keyframes, StyleRule } from '@vanilla-extract/css'
 import {
   SERVICE_PORTAL_HEADER_HEIGHT_SM,
   SERVICE_PORTAL_HEADER_HEIGHT_LG,
@@ -13,25 +13,13 @@ const { color, typography, border } = theme
 
 // ---------------------------------------------------------------------------
 
-const highlightAnimation = (): Style => ({
-  '@keyframes': {
-    from: { transform: 'scale(1)' },
-    to: { transform: 'scale(1.1)' },
-  },
-  animationDelay: '100ms',
-  animationDuration: '200ms',
-  animationTimingFunction: 'ease-in-out',
-  animationDirection: 'alternate',
-  animationIterationCount: 4,
-})
-
 // ---------------------------------------------------------------------------
 
 const addLegened = (
   $legend?: string | { value: string },
   $tiny?: boolean,
   $warning?: boolean,
-): Style => {
+): StyleRule => {
   let color = '#555'
   let backgroundColor = '#dde9cc'
 
@@ -225,14 +213,10 @@ export const classes: EditorClasses = {
         animationIterationCount: 'infinite',
         animationDirection: 'alternate',
         animationFillMode: 'both',
-        '@keyframes': {
-          from: {
-            opacity: 0.85,
-          },
-          to: {
-            opacity: 0.55,
-          },
-        },
+        animationName: keyframes({
+          from: { opacity: 0.85 },
+          to: { opacity: 0.55 },
+        }),
       },
       '&[data-needs-updating]::before': {
         pointerEvents: 'auto',
@@ -673,6 +657,16 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
 //   const editorGlobal = makeGlobal(classes.editor)
 // }
 
-globalStyle(`${classes.editor} [data-highighted]`, highlightAnimation())
+globalStyle(`${classes.editor} [data-highighted]`, {
+  animationName: keyframes({
+    from: { transform: 'scale(1)' },
+    to: { transform: 'scale(1.1)' },
+  }),
+  animationDelay: '100ms',
+  animationDuration: '200ms',
+  animationTimingFunction: 'ease-in-out',
+  animationDirection: 'alternate',
+  animationIterationCount: 4,
+})
 
 diffStyling(classes.result)

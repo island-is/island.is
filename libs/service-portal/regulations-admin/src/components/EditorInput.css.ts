@@ -1,5 +1,5 @@
 // Based on libs/island-ui/core/src/lib/Input/Input.treat.ts
-import { style } from 'treat'
+import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 import * as mixins from './EditorInput.mixins'
 import omit from 'lodash/omit'

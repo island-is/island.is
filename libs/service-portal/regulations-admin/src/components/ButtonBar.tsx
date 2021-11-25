@@ -1,4 +1,4 @@
-import * as s from './ButtonBar.treat'
+import * as s from './ButtonBar.css'
 
 import React from 'react'
 import { Box, Button } from '@island.is/island-ui/core'

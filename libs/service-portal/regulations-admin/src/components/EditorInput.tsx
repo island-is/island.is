@@ -1,5 +1,5 @@
-import * as s from './EditorInput.treat'
-import { classes } from './Editor.treat'
+import * as s from './EditorInput.css'
+import { classes } from './Editor.css'
 
 import React, { useState } from 'react'
 import { Box } from '@island.is/island-ui/core'
