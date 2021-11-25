@@ -195,6 +195,17 @@ export interface CreateApplication {
   municipalityCode?: string
 }
 
+export interface ApplicantEmailData {
+  header: string
+  content: string
+  applicationChange: string
+  applicationMonth: string
+  applicationYear: number
+  statusPageUrl: string
+  applicantEmail: string
+  municipality: Municipality
+}
+
 export interface ApplicationFilters {
   New: number
   InProgress: number
