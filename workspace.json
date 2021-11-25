@@ -4016,7 +4016,7 @@
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/external-contracts-tests",
-            "main": "apps/external-contracts-tests/src/national-registry.spec.ts",
+            "main": "apps/external-contracts-tests/main.spec.ts",
             "tsConfig": "apps/external-contracts-tests/tsconfig.json"
           },
           "configurations": {
@@ -4027,7 +4027,7 @@
             }
           }
         },
-        "test": {
+        "external-test": {
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "apps/external-contracts-tests/jest.config.js",
@@ -4035,7 +4035,7 @@
           },
           "outputs": ["coverage/apps/external-contracts-tests"]
         },
-        "docker-cypress": {}
+        "docker-jest": {}
       }
     },
     "feature-flags": {

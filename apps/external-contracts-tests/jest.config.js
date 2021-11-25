@@ -6,9 +6,10 @@ module.exports = {
   },
   globals: {
     'ts-jest': {
-      tsConfig: '<rootDir>/tsconfig.spec.json',
+      tsConfig: '<rootDir>/tsconfig.json',
     },
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
   displayName: 'external-contracts-tests',
+  modulePathIgnorePatterns: ['<rootDir>/main.spec.ts'],
 }
