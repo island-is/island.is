@@ -77,7 +77,7 @@ export class ApplicationModel implements Application {
   @Field(() => String)
   readonly state!: ApplicationState
 
-  @Field(() => [ApplicationFileModel])
+  @Field(() => [ApplicationFileModel], { nullable: true })
   readonly files?: ApplicationFileModel[]
 
   @Field({ nullable: true })
