@@ -198,6 +198,7 @@ export interface CreateApplication {
 export interface ApplicantEmailData {
   header: string
   content: string
+  title: string
   applicationChange: string
   applicationMonth: string
   applicationYear: number
