@@ -68,7 +68,7 @@ const Login = () => {
       </div>
       <div className={styles.buttonContainer}>
         <a
-          href={`${api.apiUrl}/api/auth/login?returnUrl=/krofur`}
+          href={`${api.apiUrl}/api/auth/login`}
           role="button"
           rel="noreferrer noopener"
           className={styles.btn}
