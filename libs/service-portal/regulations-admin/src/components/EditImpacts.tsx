@@ -86,13 +86,13 @@ export const EditImpacts: StepComponent = (props) => {
       <Box marginBottom={4} width="half">
         <DatePicker
           size="sm"
-          label={t(msg.effectiveDate)}
-          placeholderText={t(msg.effectiveDate_default)}
+          label={t(msg.impactEffectiveDate)}
+          placeholderText={t(msg.impactEffectiveDate_default)}
           minDate={draft.effectiveDate.value || draft.idealPublishDate.value}
           selected={effectiveDate}
           handleChange={setEffectiveDate}
-          hasError={!!draft.effectiveDate.error}
-          errorMessage={t(draft.effectiveDate.error)}
+          hasError={!!draft.impactEffectiveDate.error}
+          errorMessage={t(draft.impactEffectiveDate.error)}
         />
         {!!draft.effectiveDate.value && (
           <Button
