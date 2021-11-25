@@ -52,7 +52,13 @@ export const NewsItems = ({
           </Hidden>
         </Box>
       </GridContainer>
-      <GridItems paddingTop={3} paddingBottom={3} insideGridContainer half>
+      <GridItems
+        mobileItemsRows={1}
+        mobileItemWidth={270}
+        paddingTop={3}
+        paddingBottom={3}
+        insideGridContainer
+      >
         {items
           .slice(0, 2)
           .map(

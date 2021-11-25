@@ -27,11 +27,13 @@ export const iconContainer = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  paddingLeft: theme.spacing[3],
-  paddingRight: theme.spacing[3],
+  paddingLeft: theme.spacing[2],
+  paddingRight: theme.spacing[2],
   width: IMG_CONTAINER_WIDTH_SMALL,
   ...themeUtils.responsiveStyle({
     md: {
+      paddingLeft: theme.spacing[3],
+      paddingRight: theme.spacing[3],
       width: IMG_CONTAINER_WIDTH,
     },
   }),

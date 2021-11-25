@@ -26,10 +26,6 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
-// import {
-//   LinkType,
-//   useLinkResolver,
-// } from '@island.is/web/hooks/useLinkResolver'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 
 interface HomeProps {
@@ -44,7 +40,6 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
   const gn = useNamespace(globalNamespace)
-  // const { linkResolver } = useLinkResolver()
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale

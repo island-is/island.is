@@ -14,6 +14,7 @@ type Tag = {
 
 type CategoryCardProps = {
   heading: string
+  headingAs?: TextProps['as']
   text: string
   tags?: Tag[]
   href?: string
@@ -41,6 +42,7 @@ const colorSchemes = {
 
 export const CategoryCard = ({
   heading,
+  headingAs = 'h3',
   text,
   href = '/',
   tags = [],
@@ -65,7 +67,7 @@ export const CategoryCard = ({
       color={colorScheme}
     >
       <Text
-        as="h3"
+        as={headingAs}
         variant="h3"
         color={textColor}
         truncate={truncateHeading}

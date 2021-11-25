@@ -24,12 +24,19 @@ export const CategoryItems = ({
           {heading}
         </Text>
       </GridContainer>
-      <GridItems paddingTop={3} paddingBottom={3} insideGridContainer>
+      <GridItems
+        mobileItemWidth={270}
+        mobileItemsRows={3}
+        paddingTop={3}
+        paddingBottom={3}
+        insideGridContainer
+      >
         {items.map(
           ({ title, description, slug, __typename: typename }, index) => (
             <CategoryCard
               key={index}
               heading={title}
+              headingAs="h4"
               text={description}
               href={linkResolver(typename as LinkType, [slug]).href}
             />

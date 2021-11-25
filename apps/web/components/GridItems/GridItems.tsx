@@ -1,5 +1,6 @@
-import React, { FC } from 'react'
-import cx from 'classnames'
+import React, { FC, Children, useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 import { Box, BoxProps, GridContainer } from '@island.is/island-ui/core'
 
 import * as styles from './GridItems.css'
@@ -10,7 +11,8 @@ type GridItemsProps = {
   paddingTop?: BoxProps['paddingTop']
   paddingBottom?: BoxProps['paddingBottom']
   insideGridContainer?: boolean
-  half?: boolean
+  mobileItemWidth?: number
+  mobileItemsRows?: number
 }
 
 export const GridItems: FC<GridItemsProps> = ({
@@ -19,25 +21,52 @@ export const GridItems: FC<GridItemsProps> = ({
   paddingTop = 0,
   paddingBottom = 0,
   insideGridContainer = false,
-  half = false,
+  mobileItemWidth = 400,
+  mobileItemsRows = 3,
   children,
-}) => (
-  <Wrapper show={insideGridContainer}>
-    <Box
-      marginTop={marginTop}
-      marginBottom={marginBottom}
-      className={styles.container}
-    >
+}) => {
+  const { width } = useWindowSize()
+  const [isMobile, setIsMobile] = useState<boolean | null>(null)
+
+  const items = Children.toArray(children)
+
+  useEffect(() => {
+    setIsMobile(width < theme.breakpoints.sm)
+  }, [width])
+
+  let style = null
+
+  const count = items.length
+  const perRow = Math.ceil(count / mobileItemsRows)
+
+  if (isMobile) {
+    style = {
+      width: mobileItemWidth * perRow,
+      gridTemplateColumns: `repeat(${perRow}, minmax(${mobileItemWidth}px, 1fr))`,
+      minHeight: 0,
+      minWidth: 0,
+    }
+  }
+
+  return (
+    <Wrapper show={insideGridContainer}>
       <Box
-        paddingTop={paddingTop}
-        paddingBottom={paddingBottom}
-        className={cx(styles.wrapper, { [styles.half]: half })}
+        marginTop={marginTop}
+        marginBottom={marginBottom}
+        className={styles.container}
       >
-        {children}
+        <Box
+          paddingTop={paddingTop}
+          paddingBottom={paddingBottom}
+          className={styles.wrapper}
+          {...(style && { style })}
+        >
+          {children}
+        </Box>
       </Box>
-    </Box>
-  </Wrapper>
-)
+    </Wrapper>
+  )
+}
 
 type WrapperProps = {
   show: boolean

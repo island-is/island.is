@@ -24,7 +24,13 @@ export const LifeEventsSection = ({
           {heading}
         </Text>
       </GridContainer>
-      <GridItems paddingTop={3} paddingBottom={3} insideGridContainer>
+      <GridItems
+        mobileItemWidth={270}
+        mobileItemsRows={2}
+        paddingTop={3}
+        paddingBottom={3}
+        insideGridContainer
+      >
         {items
           .filter((x) => x.slug && x.title)
           .map(

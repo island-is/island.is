@@ -13,20 +13,18 @@ export const container = style({
 
 export const wrapper = style({
   display: 'grid',
-  gridTemplateColumns: 'repeat(4, 1fr)',
-  columnGap: theme.spacing[3],
-  rowGap: theme.spacing[3],
-  minHeight: 0,
-  minWidth: 0,
   overflowX: 'auto',
   scrollbarWidth: 'none',
   ...themeUtils.responsiveStyle({
     xs: {
-      width: theme.breakpoints.lg + 210,
+      columnGap: theme.spacing[2],
+      rowGap: theme.spacing[2],
       paddingLeft: theme.grid.gutter.mobile * 2,
       paddingRight: theme.grid.gutter.mobile * 2,
     },
     sm: {
+      columnGap: theme.spacing[3],
+      rowGap: theme.spacing[3],
       width: '100%',
       gridTemplateColumns: 'repeat(2, 1fr)',
     },
@@ -46,22 +44,4 @@ export const wrapper = style({
       display: 'none',
     },
   },
-})
-
-export const half = style({
-  gridTemplateColumns: 'repeat(2, 1fr)',
-  ...themeUtils.responsiveStyle({
-    xs: {
-      width: theme.breakpoints.sm + 70,
-    },
-    sm: {
-      gridTemplateColumns: 'repeat(2, 1fr)',
-    },
-    lg: {
-      gridTemplateColumns: 'repeat(2, 1fr)',
-    },
-    xl: {
-      gridTemplateColumns: 'repeat(2, 1fr)',
-    },
-  }),
 })
