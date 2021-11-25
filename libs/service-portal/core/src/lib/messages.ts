@@ -375,7 +375,7 @@ export const m = defineMessages({
   },
   regulationAdmin: {
     id: 'service.portal:regulations-admin',
-    defaultMessage: 'Reglugerðir - Admin',
+    defaultMessage: 'Reglugerðir - vinnslusvæði',
   },
   regulationAdminMinistries: {
     id: 'service.portal:regulations-ministries',

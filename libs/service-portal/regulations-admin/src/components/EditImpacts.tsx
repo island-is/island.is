@@ -114,12 +114,12 @@ export const EditImpacts: StepComponent = (props) => {
           {t(msg.chooseImpactType)}
         </Text>
         <Inline space={[2, 2, 3, 4]} align="center" alignY="center">
-          <Button variant="ghost" icon="fileTrayFull" iconType="outline">
-            {t(msg.chooseImpactType_cancel)}
-          </Button>
-          <span> {t(msg.chooseImpactType_or)} </span>
           <Button variant="ghost" icon="document" iconType="outline">
             {t(msg.chooseImpactType_change)}
+          </Button>
+          <span> {t(msg.chooseImpactType_or)} </span>
+          <Button variant="ghost" icon="fileTrayFull" iconType="outline">
+            {t(msg.chooseImpactType_cancel)}
           </Button>
         </Inline>
         <Box marginTop={[4, 4, 8]}>

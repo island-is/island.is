@@ -43,10 +43,12 @@ const stepData: Record<
   },
   impacts: {
     title: editorMsgs.step3Headline,
+    intro: editorMsgs.step3Intro,
     Component: EditImpacts,
   },
   review: {
     title: editorMsgs.step4Headline,
+    intro: editorMsgs.step4Intro,
     Component: EditReview,
   },
 }

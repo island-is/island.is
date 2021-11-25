@@ -12,7 +12,12 @@ export const editorMsgs = defineMessages({
   },
   step3Headline: {
     id: 'ap.regulations-admin:draft-step3-headline',
-    defaultMessage: 'Breytingar / brottfellingar',
+    defaultMessage: 'Áhrif á aðrar reglugerðir',
+  },
+  step3Intro: {
+    id: 'ap.regulations-admin:draft-step3-intro',
+    defaultMessage:
+      'Hér er skráð hvaða reglugerðir falla brott og hvaða stofnreglugerðir taka efnislegum breytingum og texti þeirra uppfærður.',
   },
   step4Headline: {
     id: 'ap.regulations-admin:draft-step4-headline',
@@ -210,6 +215,14 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-opts-impactedreg_placeholder',
     defaultMessage: 'Veldu reglugerð',
   },
+  impactEffectiveDate: {
+    id: 'ap.regulations-admin:draft-labels-impacteffectivedate',
+    defaultMessage: 'Gildistaka breytinga',
+  },
+  impactEffectiveDate_default: {
+    id: 'ap.regulations-admin:draft-opts-impacteffectivedate-default',
+    defaultMessage: 'Tekur þegar gildi', // 'Á útgáfudegi'
+  },
 
   chooseImpactType: {
     id: 'ap.regulations-admin:draft-legend-impacttype',
@@ -287,11 +300,12 @@ export const errorMsgs = defineMessages({
 export const homeMessages = defineMessages({
   title: {
     id: 'ap.regulations-admin:home-title',
-    defaultMessage: 'Skráning reglugerða',
+    defaultMessage: 'Vinnslusvæði reglugerða',
   },
   intro: {
     id: 'ap.regulations-admin:home-intro',
-    defaultMessage: 'Nýskráning og ritstjórn reglugerða er góð skemmtun.',
+    defaultMessage:
+      '…fyrir lögformlega útgáfu í Stjórnartíðindum og endurbirtingu í reglugerðasafni.',
   },
 
   taskListTitle: {
@@ -341,7 +355,7 @@ export const statusMsgs: Record<
 > = defineMessages({
   draft: {
     id: 'ap.regulations-admin:status-draft',
-    defaultMessage: 'Uppkast í vinnslu',
+    defaultMessage: 'Drög',
   },
   proposal: {
     id: 'ap.regulations-admin:status-proposal',

@@ -14,7 +14,7 @@ const creationScopes = {
 }
 
 export const regulationsAdminModule: ServicePortalModule = {
-  name: 'Reglugerðir — skráning',
+  name: 'Reglugerðir — vinnslusvæði',
   widgets: () => [],
   routes: ({ userInfo }) => {
     const mayCreate = !!userInfo.scopes.find((scope) => scope in creationScopes)
@@ -23,7 +23,7 @@ export const regulationsAdminModule: ServicePortalModule = {
     return [
       {
         // TODO: Figure out if (and then how) these names are ever used anywhere...
-        name: 'Reglugerðir — skráning',
+        name: 'Reglugerðir — vinnslusvæði',
         path: ServicePortalPath.RegulationsAdminRoot,
         enabled: mayCreate,
         render: () => lazy(() => import('./screens/Home')),
