@@ -3,7 +3,7 @@ import { Text, Box } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-import * as styles from './EmployeeSideNavItems.css'
+import * as styles from './ApplicationSideNavItems.css'
 import cn from 'classnames'
 
 import {
@@ -19,7 +19,7 @@ interface Props {
   applicationFilters: ApplicationFilters
 }
 
-const EmployeeSideNavItems = ({ roles, applicationFilters }: Props) => {
+const ApplicationSideNavItems = ({ roles, applicationFilters }: Props) => {
   const router = useRouter()
 
   if (roles === undefined || roles.includes(StaffRole.EMPLOYEE) === false) {
@@ -64,4 +64,4 @@ const EmployeeSideNavItems = ({ roles, applicationFilters }: Props) => {
   )
 }
 
-export default EmployeeSideNavItems
+export default ApplicationSideNavItems
