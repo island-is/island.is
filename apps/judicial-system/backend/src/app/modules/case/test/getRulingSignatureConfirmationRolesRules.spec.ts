@@ -1,7 +1,7 @@
 import { judgeRule } from '../../../guards'
 import { CaseController } from '../case.controller'
 
-describe('CaseController - Get signature confirmation rules', () => {
+describe('CaseController - Get ruling signature confirmation rules', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let rules: any[]
 
@@ -16,7 +16,7 @@ describe('CaseController - Get signature confirmation rules', () => {
     expect(rules).toHaveLength(1)
   })
 
-  it('should have permission to judges', () => {
+  it('should give permission to judges', () => {
     expect(rules).toContain(judgeRule)
   })
 })

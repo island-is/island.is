@@ -460,6 +460,44 @@ export class CaseService {
     return getCustodyNoticePdfAsString(existingCase)
   }
 
+  async requestCourtRecordSignature(
+    existingCase: Case,
+    user: TUser,
+  ): Promise<SigningServiceResponse> {
+    this.logger.debug(
+      `Requesting signature of court record for case ${existingCase.id}`,
+    )
+
+    // Production, or development with signing service access token
+    if (environment.production || environment.signingOptions.accessToken) {
+      const intl = await this.intlService.useIntl(
+        ['judicial.system.backend'],
+        'is',
+      )
+
+      const pdf = await getRulingPdfAsString(
+        existingCase,
+        intl.formatMessage,
+        true,
+      )
+
+      return this.signingService.requestSignature(
+        user.mobileNumber ?? '',
+        'Undirrita skjal - Öryggistala',
+        user.name ?? '',
+        'Ísland',
+        'courtRecord.pdf',
+        pdf,
+      )
+    }
+
+    // Development without signing service access token
+    return {
+      controlCode: '0000',
+      documentToken: 'DEVELOPMENT',
+    }
+  }
+
   async requestRulingSignature(
     existingCase: Case,
   ): Promise<SigningServiceResponse> {

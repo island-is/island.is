@@ -5,7 +5,7 @@ import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import { CaseExistsGuard, CaseWriteGuard } from '../guards'
 import { CaseController } from '../case.controller'
 
-describe('CaseController - Get signature confirmation guards', () => {
+describe('CaseController - Get ruling signature confirmation guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 

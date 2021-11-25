@@ -16,7 +16,6 @@ import {
   Header,
   UseGuards,
   BadRequestException,
-  ParseBoolPipe,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -537,6 +536,43 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(judgeRule, registrarRule)
+  @Post('case/:caseId/courtRecord/signature')
+  @ApiCreatedResponse({
+    type: SigningServiceResponse,
+    description: 'Requests a court record signature for an existing case',
+  })
+  async requestCourtRecordSignature(
+    @Param('caseId') _0: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ) {
+    if (user.id !== theCase.judgeId && user.id !== theCase.registrarId) {
+      throw new ForbiddenException(
+        'A court record must be signed by the assigned judge or registrar',
+      )
+    }
+
+    try {
+      const response = await this.caseService.requestCourtRecordSignature(
+        theCase,
+        user,
+      )
+      return res.status(201).send(response)
+    } catch (error) {
+      if (error instanceof DokobitError) {
+        return res.status(error.status).json({
+          code: error.code,
+          message: error.message,
+        })
+      }
+
+      throw error
+    }
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(judgeRule)
   @Post('case/:caseId/ruling/signature')
   @ApiCreatedResponse({
@@ -549,7 +585,7 @@ export class CaseController {
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ) {
-    if (user?.id !== theCase.judgeId) {
+    if (user.id !== theCase.judgeId) {
       throw new ForbiddenException(
         'A ruling must be signed by the assigned judge',
       )
@@ -584,7 +620,7 @@ export class CaseController {
     @CurrentCase() theCase: Case,
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
-    if (user?.id !== theCase.judgeId) {
+    if (user.id !== theCase.judgeId) {
       throw new ForbiddenException(
         'A ruling must be signed by the assigned judge',
       )

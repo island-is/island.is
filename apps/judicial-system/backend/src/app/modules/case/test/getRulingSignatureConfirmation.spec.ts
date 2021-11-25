@@ -19,7 +19,7 @@ type GivenWhenThen = (
   documentToken: string,
 ) => Promise<Then>
 
-describe('CaseController - Get signature confirmation', () => {
+describe('CaseController - Get ruling signature confirmation', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
