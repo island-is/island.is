@@ -148,6 +148,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Stéttarfélag (valfrjálst)',
       description: 'Union (optional)',
     },
+    asyncSelectSearchableHint: {
+      id: 'application.system:placeholder.searchable.hint',
+      defaultMessage: 'Skrifaðu hér til að leita',
+      description: 'Let user know they can search by typing',
+    },
     privatePensionFund: {
       id: 'pl.application:payment.information.privatePensionFund',
       defaultMessage: 'Séreignarsjóður',
@@ -443,6 +448,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Staðfesting á að það sé yfir höfuð barn á leiðinni',
       description: 'Confirmation on date of birth',
     },
+    salaryInformationTitle: {
+      id: 'pl.application:permission.salaryInformation.title',
+      defaultMessage: 'Upplýsingar um laun',
+      description: 'Salary information',
+    },
+    salaryInformationSubTitle: {
+      id: 'pl.application:permission.salaryInformation.subtitle',
+      defaultMessage: 'Sóttar til Skattsins.',
+      description: 'Salary information will be fetched from the tax office.',
+    },
     salaryTitle: {
       id: 'pl.application:salary.title',
       defaultMessage: 'Áætlaður fæðingardagur barns',
@@ -631,6 +646,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:applicant.phoneNumber',
       defaultMessage: 'Símanúmer',
       description: 'Phone number',
+    },
+    fullName: {
+      id: 'pl.application:applicant.fullName',
+      defaultMessage: 'Nafn',
+      description: 'Name',
+    },
+    nationalId: {
+      id: 'pl.application:applicant.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'National id',
     },
   }),
 
