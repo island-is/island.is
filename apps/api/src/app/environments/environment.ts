@@ -152,7 +152,7 @@ const prodConfig = () => ({
   },
   paymentSchedule: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH,
-    xRoadProviderId: process.env.XROAD_PAYMENT_PROVIDER_ID,
+    xRoadProviderId: process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID,
     xRoadClientId: process.env.XROAD_CLIENT_ID,
     username: process.env.PAYMENT_SCHEDULE_USER,
     password: process.env.PAYMENT_SCHEDULE_PASSWORD,
