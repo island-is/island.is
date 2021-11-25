@@ -140,6 +140,14 @@ export const GET_SEARCH_AUTOCOMPLETE_TERM_QUERY = gql`
   }
 `
 
+export const GET_SEARCH_SUGGESTIONS_QUERY = gql`
+  query GetWebSearchSuggestions($input: WebSearchSuggestionsInput!) {
+    webSearchSuggestions(input: $input) {
+      suggestion
+    }
+  }
+`
+
 export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
   query GetSearchResultsDetailed($query: SearcherInput!) {
     searchResults(query: $query) {

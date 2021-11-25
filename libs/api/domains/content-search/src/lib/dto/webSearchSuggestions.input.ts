@@ -3,7 +3,7 @@ import { IsEnum, IsString, IsOptional } from 'class-validator'
 import { ContentLanguage } from '../enums/contentLanguage.enum'
 
 @InputType()
-export class WebSearchAutocompleteSuggestionsInput {
+export class WebSearchSuggestionsInput {
   @Field()
   @IsString()
   searchQuery: string

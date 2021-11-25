@@ -1,4 +1,4 @@
-import { AutocompleteTermInput, AutocompleteSearchQueryInput } from '../types'
+import { AutocompleteTermInput, SuggestionsQueryInput } from '../types'
 
 export const autocompleteTermQuery = ({
   singleTerm,
@@ -16,9 +16,7 @@ export const autocompleteTermQuery = ({
   },
 })
 
-export const autocompleteSearchQuery = ({
-  searchQuery,
-}: AutocompleteSearchQueryInput) => ({
+export const suggestionsQuery = ({ searchQuery }: SuggestionsQueryInput) => ({
   suggest: {
     text: searchQuery,
     titleSuggest: {
@@ -30,7 +28,7 @@ export const autocompleteSearchQuery = ({
     contentSuggest: {
       term: {
         suggest_mode: 'always',
-        field: 'title',
+        field: 'content',
       },
     },
   },

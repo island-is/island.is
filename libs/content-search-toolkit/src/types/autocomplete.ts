@@ -18,11 +18,11 @@ export interface AutocompleteTermResponse {
   }
 }
 
-export interface AutocompleteSearchQueryInput {
+export interface SuggestionsQueryInput {
   searchQuery: string
 }
 
-export interface AutocompleteSearchQueryResponse {
+export interface SuggestionsQueryResponse {
   suggest: {
     titleSuggest: [SuggestResponse]
     contentSuggest: [SuggestResponse]

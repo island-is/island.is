@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import {
+  SuggestionsQueryResponse,
   ElasticService,
   TagAggregationResponse,
   TypeAggregationResponse,
@@ -7,11 +8,11 @@ import {
 import { logger } from '@island.is/logging'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
-import { WebSearchAutocompleteSuggestions } from './models/webSearchAutocompleteSuggestions.model'
+import { WebSearchSuggestions } from './models/webSearchSuggestions.model'
 import { TagCount } from './models/tagCount'
 import { SearcherInput } from './dto/searcher.input'
 import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
-import { WebSearchAutocompleteSuggestionsInput } from './dto/webSearchAutocompleteSuggestions.input'
+import { WebSearchSuggestionsInput } from './dto/webSearchSuggestions.input'
 import { TypeCount } from './models/typeCount'
 import {
   ElasticsearchIndexLocale,
@@ -47,6 +48,42 @@ export class ContentSearchService {
       key: tagObject.key,
       count: tagObject.doc_count.toString(),
     }))
+  }
+
+  mapCompletionsToSuggestion(
+    query: string,
+    completions: SuggestionsQueryResponse,
+    minscore = 0.75,
+  ): string {
+    const terms = query.split(' ')
+    const {
+      suggest: { contentSuggest, titleSuggest },
+    } = completions
+
+    for (const suggestion in terms) {
+      let termSuggestions = []
+      if (contentSuggest[`${suggestion}`]?.options?.length > 0) {
+        termSuggestions.push(...contentSuggest[`${suggestion}`].options)
+      }
+      if (titleSuggest[`${suggestion}`]?.options?.length > 0) {
+        termSuggestions.push(...titleSuggest[`${suggestion}`].options)
+      }
+      termSuggestions = termSuggestions
+        .filter((a) => a.score >= minscore)
+        .sort((a, b) => b.score - a.score)
+
+      if (termSuggestions.length > 0) {
+        terms[suggestion] = termSuggestions[0].text
+      } else {
+        terms[suggestion] = ''
+      }
+    }
+    const result = terms.join(' ').trim()
+
+    if (result !== query) {
+      return result
+    }
+    return ''
   }
 
   async find(query: SearcherInput): Promise<SearchResult> {
@@ -96,20 +133,23 @@ export class ContentSearchService {
     }
   }
 
-  async fetchAutocompleteSuggestion(
-    input: WebSearchAutocompleteSuggestionsInput,
-  ): Promise<WebSearchAutocompleteSuggestions> {
-    const {
-      suggest: { contentSuggest, titleSuggest },
-    } = await this.elasticService.fetchAutocompleteSuggestions(
+  async fetchSuggestions(
+    input: WebSearchSuggestionsInput,
+  ): Promise<WebSearchSuggestions> {
+    const completions = await this.elasticService.fetchSuggestions(
       this.getIndex(input.language),
       {
         ...input,
       },
     )
-    console.log(contentSuggest, titleSuggest)
+    const suggestion = this.mapCompletionsToSuggestion(
+      input.searchQuery,
+      completions,
+      0.81,
+    )
+
     return {
-      completions: ['this is a test'],
+      suggestion,
     }
   }
 }

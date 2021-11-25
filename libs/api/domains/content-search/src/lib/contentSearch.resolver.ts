@@ -2,10 +2,10 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { ContentSearchService } from './contentSearch.service'
 import { SearcherInput } from './dto/searcher.input'
 import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
-import { WebSearchAutocompleteSuggestionsInput } from './dto/webSearchAutocompleteSuggestions.input'
+import { WebSearchSuggestionsInput } from './dto/webSearchSuggestions.input'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
-import { WebSearchAutocompleteSuggestions } from './models/webSearchAutocompleteSuggestions.model'
+import { WebSearchSuggestions } from './models/webSearchSuggestions.model'
 
 @Resolver()
 export class ContentSearchResolver {
@@ -23,10 +23,10 @@ export class ContentSearchResolver {
     return this.contentSearchService.fetchAutocompleteTerm(input)
   }
 
-  @Query(() => WebSearchAutocompleteSuggestions)
-  webSearchAutocompleteSuggestions(
-    @Args('input') input: WebSearchAutocompleteSuggestionsInput,
-  ): Promise<WebSearchAutocompleteSuggestions> {
-    return this.contentSearchService.fetchAutocompleteSuggestion(input)
+  @Query(() => WebSearchSuggestions)
+  webSearchSuggestions(
+    @Args('input') input: WebSearchSuggestionsInput,
+  ): Promise<WebSearchSuggestions> {
+    return this.contentSearchService.fetchSuggestions(input)
   }
 }

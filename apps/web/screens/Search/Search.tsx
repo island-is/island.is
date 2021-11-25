@@ -23,6 +23,7 @@ import {
   GET_SEARCH_RESULTS_QUERY_DETAILED,
   GET_SEARCH_COUNT_QUERY,
   GET_SEARCH_RESULTS_TOTAL,
+  GET_SEARCH_SUGGESTIONS_QUERY,
 } from '../queries'
 import { SidebarLayout } from '../Layouts/SidebarLayout'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -45,6 +46,8 @@ import {
   GetSearchResultsTotalQuery,
   OrganizationSubpage,
   Link as LinkItem,
+  GetWebSearchSuggestionsQuery,
+  QueryWebSearchSuggestionsArgs,
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
@@ -63,6 +66,7 @@ interface CategoryProps {
   searchResults: GetSearchResultsDetailedQuery['searchResults']
   countResults: GetSearchCountTagsQuery['searchResults']
   namespace: GetNamespaceQuery['getNamespace']
+  suggestion: string
 }
 
 interface SidebarTagMap {
@@ -84,6 +88,7 @@ const Search: Screen<CategoryProps> = ({
   searchResults,
   countResults,
   namespace,
+  suggestion,
 }) => {
   const { activeLocale } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
@@ -330,6 +335,19 @@ const Search: Screen<CategoryProps> = ({
             activeLocale={activeLocale}
             initialInputValue={q}
           />
+          {suggestion.length > 0 && totalSearchResults === 0 && (
+            <>
+              <Text variant="intro" as="p">
+                Did you mean{' '}
+                <Link href={`/leit?q=${suggestion}`}>
+                  <Text variant="intro" as="span">
+                    {suggestion}
+                  </Text>
+                </Link>
+                ?
+              </Text>
+            </>
+          )}
           <Hidden above="sm">
             <Navigation
               title={n('filterResults', 'Sía niðurstöður')}
@@ -471,6 +489,9 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       data: { searchResults: countResults },
     },
     namespace,
+    {
+      data: { webSearchSuggestions: webSearchSuggestions },
+    },
   ] = await Promise.all([
     apolloClient.query<GetSearchResultsDetailedQuery, QuerySearchResultsArgs>({
       query: GET_SEARCH_RESULTS_QUERY_DETAILED,
@@ -511,6 +532,18 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         // map data here to reduce data processing in component
         return JSON.parse(variables.data.getNamespace.fields)
       }),
+    apolloClient.query<
+      GetWebSearchSuggestionsQuery,
+      QueryWebSearchSuggestionsArgs
+    >({
+      query: GET_SEARCH_SUGGESTIONS_QUERY,
+      variables: {
+        input: {
+          searchQuery: queryString,
+          language: locale as ContentLanguage,
+        },
+      },
+    }),
   ])
 
   if (searchResults.items.length === 0 && page > 1) {
@@ -524,6 +557,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     namespace,
     showSearchInHeader: false,
     page,
+    suggestion: webSearchSuggestions.suggestion,
   }
 }
 
