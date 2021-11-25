@@ -1,3 +1,4 @@
+import { getNextPeriod, months, nextMonth } from './const'
 import { ApplicationFiltersEnum } from './enums'
 import {
   HomeCircumstances,
@@ -10,7 +11,12 @@ import {
   FamilyStatus,
   MartialStatusType,
 } from './enums'
-import { Aid, ApplicationEvent } from './interfaces'
+import {
+  Aid,
+  ApplicantEmailData,
+  ApplicationEvent,
+  Municipality,
+} from './interfaces'
 import type { KeyMapping } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
@@ -194,12 +200,79 @@ export const getFileTypeName: KeyMapping<FileType, string> = {
   SpouseFiles: 'Gögn frá maka',
 }
 
-export const getEmailTextFromState: KeyMapping<ApplicationState, string> = {
-  New: 'Umsókn þín er móttekin',
-  DataNeeded: 'Okkur vantar gögn til að klára að vinna úr umsókninni',
-  InProgress: 'Umsókn þín er móttekin og er nú í vinnslu',
-  Rejected: 'Umsókn þinni um aðstoð hefur verið synjað',
-  Approved: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+export const getApplicantEmailDataFromState = (
+  state:
+    | ApplicationEventType.NEW
+    | ApplicationEventType.DATANEEDED
+    | ApplicationEventType.REJECTED
+    | ApplicationEventType.APPROVED,
+  linkToStatusPage: string,
+  applicantEmail: string,
+  municipality: Municipality,
+  typeOfDataNeeded?: string,
+): { subject: string; data: ApplicantEmailData } => {
+  switch (state) {
+    case ApplicationEventType.NEW:
+      return {
+        subject: 'Umsókn fyrir fjárhagsaðstoð móttekin',
+        data: {
+          header: `Umsókn þín fyrir ${months[nextMonth]} er móttekin og er nú í vinnslu`,
+          content:
+            'Umsóknin verður afgreidd eins fljótt og auðið er. Þú færð annan tölvupóst þegar vinnsla klárast eða ef við þurfum einhver gögn beint frá þér.<br><br>Þú getur fylgst með stöðu umsóknar, sent inn spurningar, o.fl. í þeim dúr á stöðusíðu umsóknarinnar. Kíktu á hana með því að smella á hnappinn fyrir neðan.',
+          applicationChange: 'Umsókn móttekin og í vinnslu',
+          applicationMonth: months[nextMonth],
+          applicationYear: getNextPeriod.year,
+          statusPageUrl: linkToStatusPage,
+          applicantEmail,
+          municipality,
+        },
+      }
+
+    case ApplicationEventType.DATANEEDED:
+      return {
+        subject: 'Okkur vantar gögn til að klára að vinna úr umsókninni',
+        data: {
+          header: `Okkur vantar gögn til að klára að vinna úr umsókninni`,
+          content: `Við þurfum að sjá <strong>${typeOfDataNeeded}</strong>. Smelltu á hnappinn til að heimsækja þína stöðusíðu þar sem þú getur sent okkur gögn.`,
+          applicationChange: 'Umsóknin bíður eftir gögnum',
+          applicationMonth: months[nextMonth],
+          applicationYear: getNextPeriod.year,
+          statusPageUrl: linkToStatusPage,
+          applicantEmail,
+          municipality,
+        },
+      }
+
+    case ApplicationEventType.REJECTED:
+      return {
+        subject: 'Umsókn þinni um aðstoð hefur verið synjað',
+        data: {
+          header: 'Umsókn þinni um aðstoð hefur verið synjað',
+          content: `Umsókn þinni um fjárhagsaðstoð í ${months[nextMonth]} hefur verið synjað á grundvelli 12. gr.: Tekjur og eignir umsækjanda. Smelltu á hlekkinn hér fyrir neðan til að kynna þér reglur um fjárhagsaðstoð.`,
+          applicationChange: 'Umsókn synjað',
+          applicationMonth: months[nextMonth],
+          applicationYear: getNextPeriod.year,
+          statusPageUrl: linkToStatusPage,
+          applicantEmail,
+          municipality,
+        },
+      }
+
+    case ApplicationEventType.APPROVED:
+      return {
+        subject: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+        data: {
+          header: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+          content: `Umsóknin þín um fjárhagsaðstoð í ${months[nextMonth]} er samþykkt en athugaðu að hún byggir á tekjum og öðrum þáttum sem kunna að koma upp í ${months[nextMonth]} og getur því tekið breytingum.`,
+          applicationChange: 'Umsóknin er samþykkt og áætlun liggur fyrir',
+          applicationMonth: months[nextMonth],
+          applicationYear: getNextPeriod.year,
+          statusPageUrl: linkToStatusPage,
+          applicantEmail,
+          municipality,
+        },
+      }
+  }
 }
 
 export const applicationStateToFilterEnum: KeyMapping<
