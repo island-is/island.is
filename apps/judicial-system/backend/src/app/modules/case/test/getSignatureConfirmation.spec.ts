@@ -23,7 +23,7 @@ describe('CaseController - Get signature confirmation', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const caseController = await createTestingCaseModule()
+    const { caseController } = await createTestingCaseModule()
 
     givenWhenThen = async (
       caseId: string,
