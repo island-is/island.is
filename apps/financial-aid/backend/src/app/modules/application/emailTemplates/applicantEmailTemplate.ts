@@ -9,7 +9,7 @@ export const ApplicantEmailTemplate = (emailData: ApplicantEmailData) => {
       <meta name="x-apple-disable-message-reformatting"> 
       <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
       <meta content="telephone=no" name="format-detection"> 
-      <title>Fjárhagsaðstoð Umsókn móttekin</title> 
+      <title>${emailData.header}</title> 
       <!--[if (mso 16)]>
         <style type="text/css">
         a {text-decoration: none;}
