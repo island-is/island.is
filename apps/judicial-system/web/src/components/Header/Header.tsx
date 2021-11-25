@@ -44,8 +44,8 @@ const Header: React.FC = () => {
           icon="logOut"
           iconType="outline"
           size="small"
-          onClick={() => {
-            api.logOut()
+          onClick={async () => {
+            await api.logout()
             window.location.assign('/')
           }}
           data-testid="logout-button"
