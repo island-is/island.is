@@ -42,6 +42,7 @@ export const Users = () => {
       errorPolicy: 'all',
     },
   )
+
   const [updateStaff, { loading: staffLoading }] = useMutation(
     UpdateStaffMutation,
   )

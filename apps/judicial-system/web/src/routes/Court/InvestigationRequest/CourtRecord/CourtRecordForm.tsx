@@ -54,9 +54,6 @@ const CourtRecordForm: React.FC<Props> = (props) => {
     courtLocation: {
       validations: ['empty'],
     },
-    prosecutorDemands: {
-      validations: ['empty'],
-    },
     litigationPresentations: {
       validations: ['empty'],
     },
