@@ -200,8 +200,8 @@ export const getFileTypeName: KeyMapping<FileType, string> = {
   SpouseFiles: 'Gögn frá maka',
 }
 
-export const getApplicantEmailDataFromState = (
-  state:
+export const getApplicantEmailDataFromEventType = (
+  event:
     | ApplicationEventType.NEW
     | ApplicationEventType.DATANEEDED
     | ApplicationEventType.REJECTED
@@ -211,7 +211,7 @@ export const getApplicantEmailDataFromState = (
   municipality: Municipality,
   typeOfDataNeeded?: string,
 ): { subject: string; data: ApplicantEmailData } => {
-  switch (state) {
+  switch (event) {
     case ApplicationEventType.NEW:
       return {
         subject: 'Umsókn fyrir fjárhagsaðstoð móttekin',

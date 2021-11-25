@@ -17,7 +17,7 @@ import {
   User,
   Staff,
   FileType,
-  getApplicantEmailDataFromState,
+  getApplicantEmailDataFromEventType,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -230,7 +230,7 @@ export class ApplicationService {
       application.municipalityCode,
     )
 
-    const emailData = getApplicantEmailDataFromState(
+    const emailData = getApplicantEmailDataFromEventType(
       ApplicationEventType.NEW,
       linkToStatusPage(appModel.id),
       application.email,
@@ -294,7 +294,7 @@ export class ApplicationService {
       const municipality = await this.municipalityService.findByMunicipalityId(
         updatedApplication.municipalityCode,
       )
-      const emailData = getApplicantEmailDataFromState(
+      const emailData = getApplicantEmailDataFromEventType(
         update.event,
         linkToStatusPage(updatedApplication.id),
         updatedApplication.email,
