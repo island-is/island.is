@@ -4,13 +4,12 @@ import { Text, LinkContext } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  FormLayout,
   Files,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
@@ -30,13 +29,15 @@ const TaxReturnForm = () => {
   }
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
-          Skattframtal
+          Skattagögn
+        </Text>
+
+        <Text marginBottom={2}>
+          Við þurfum að fá afrit af nýjasta <strong>skattframtali</strong> þínu
+          og staðfestingarskjal úr <strong>staðreiðsluskrá</strong> Skattsins.
         </Text>
 
         <Text marginBottom={[4, 4, 5]}>
@@ -45,6 +46,12 @@ const TaxReturnForm = () => {
           skattárinu sem leið og er nauðsynlegt fylgigagn fyrir úrvinnslu á
           fjárhagsaðstoð.
         </Text>
+
+        <Files
+          header="Dragðu gögn hingað"
+          fileKey="taxReturnFiles"
+          uploadFiles={form.taxReturnFiles}
+        />
 
         <Text as="h2" variant="h3" marginBottom={2}>
           Hvar finn ég staðfest afrit af mínu skattframtali?
@@ -74,19 +81,24 @@ const TaxReturnForm = () => {
             um hvernig sækja má staðfest afrit skattframtals.
           </Text>
         </LinkContext.Provider>
-        <Files
-          header="Dragðu skattframtalið hingað"
-          fileKey="taxReturnFiles"
-          uploadFiles={form.taxReturnFiles}
-        />
+
+        <Text as="h2" variant="h3" marginBottom={2}>
+          Hvar finn ég staðfestingarskjal úr staðgreiðsluskrá?
+        </Text>
+        <Text marginBottom={[3, 3, 10]}>
+          Eftir að þú hefur innskráð þig á Þjónustuvef Skattsins ferð þú í
+          Almennt → Staðgreiðsluskrá RSK → Sækja PDF.
+        </Text>
       </ContentContainer>
 
       <Footer
         previousUrl={navigation?.prevUrl}
-        nextButtonText="Halda áfram"
+        nextButtonText={
+          form.taxReturnFiles.length > 0 ? 'Halda áfram' : 'Skila gögnum seinna'
+        }
         onNextButtonClick={() => errorCheck()}
       />
-    </FormLayout>
+    </>
   )
 }
 

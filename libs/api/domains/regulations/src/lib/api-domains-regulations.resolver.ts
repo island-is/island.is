@@ -11,6 +11,7 @@ import {
   RegulationLawChapterTree,
   RegulationRedirect,
   RegulationListItem,
+  RegulationDiff,
 } from '@island.is/regulations/web'
 import { GetRegulationsInput } from './dto/getRegulations.input'
 import { GetRegulationInput } from './dto/getRegulation.input'
@@ -27,7 +28,7 @@ export class RegulationsResolver {
   @Query(() => graphqlTypeJson)
   getRegulation(
     @Args('input') input: GetRegulationInput,
-  ): Promise<Regulation | RegulationRedirect | null> {
+  ): Promise<Regulation | RegulationDiff | RegulationRedirect | null> {
     return this.regulationsService.getRegulation(
       input.viewType,
       input.name,

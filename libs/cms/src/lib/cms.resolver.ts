@@ -49,8 +49,6 @@ import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.inpu
 import { GetUrlInput } from './dto/getUrl.input'
 import { Url } from './models/url.model'
 import { GetSingleArticleInput } from './dto/getSingleArticle.input'
-import { GetAboutSubPageInput } from './dto/getAboutSubPage.input'
-import { AboutSubPage } from './models/aboutSubPage.model'
 import { LatestNewsSlice } from './models/latestNewsSlice.model'
 import { GetNewsInput } from './dto/getNews.input'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
@@ -109,14 +107,6 @@ export class CmsResolver {
       input?.namespace ?? '',
       input?.lang ?? 'is-IS',
     )
-  }
-
-  @Directive(cacheControlDirective())
-  @Query(() => AboutSubPage, { nullable: true })
-  getAboutSubPage(
-    @Args('input') input: GetAboutSubPageInput,
-  ): Promise<AboutSubPage | null> {
-    return this.cmsContentfulService.getAboutSubPage(input)
   }
 
   // TODO: Change this so this won't link to non existing entries e.g. articles

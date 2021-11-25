@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 import { Box, FormStepperSection, Icon, Text } from '@island.is/island-ui/core'
-import * as styles from './FormStepperMobile.treat'
+import * as styles from './FormStepperMobile.css'
 
 interface ProcessProps {
   sections: FormStepperSection[]

@@ -26,12 +26,29 @@ interface SearchInputProps {
   logoUrl?: string
   colored?: boolean
   initialInputValue?: string
+  placeholder?: string
 }
+
+const unused = ['.', '?', ':', ',', ';', '!', '-', '_', '#', '~', '|']
+
+export const ModifySearchTerms = (searchTerms: string) =>
+  searchTerms
+    .split(' ')
+    .filter((x) => x)
+    .reduce((sum, cur) => {
+      const s = unused.reduce((a, b) => {
+        return a.replace(b, '')
+      }, cur)
+      const f = s.length > 3 ? Math.floor(0.3 * s.length) : ''
+      const add = s ? `${s}~${f}|${s}` : ''
+      return sum ? `${sum}|${add}` : add
+    }, '')
 
 export const SearchInput = ({
   colored = false,
   size = 'large',
   initialInputValue = '',
+  placeholder = 'Leitaðu á þjónustuvefnum',
 }: SearchInputProps) => {
   const [searchTerms, setSearchTerms] = useState<string>('')
   const [activeItem, setActiveItem] = useState<SupportQna>()
@@ -53,13 +70,15 @@ export const SearchInput = ({
   useDebounce(
     () => {
       if (searchTerms) {
-        if (searchTerms === lastSearchTerms) {
+        const queryString = ModifySearchTerms(searchTerms)
+
+        if (searchTerms.trim() === lastSearchTerms.trim()) {
           updateOptions()
         } else {
           fetch({
             variables: {
               query: {
-                queryString: `${searchTerms.trim()}*`,
+                queryString,
                 types: [SearchableContentTypes['WebQna']],
               },
             },
@@ -99,32 +118,54 @@ export const SearchInput = ({
   }
 
   const updateOptions = () => {
-    setOptions(
-      ((data?.searchResults?.items as Array<SupportQna>) || []).map(
-        (item, index) => ({
-          label: item.title,
-          value: item.slug,
-          component: ({ active }) => {
-            if (active) {
-              setActiveItem(item)
-            }
+    const options = (
+      (data?.searchResults?.items as Array<SupportQna>) || []
+    ).map((item, index) => ({
+      label: item.title,
+      value: item.slug,
+      component: ({ active }) => {
+        if (active) {
+          setActiveItem(item)
+        }
 
-            return (
-              <Box
-                key={index}
-                cursor="pointer"
-                outline="none"
-                padding={2}
-                role="button"
-                background={active ? 'white' : 'blue100'}
-                onClick={() => onSelect(item)}
-              >
-                <Text as="span">{item.title}</Text>
-              </Box>
-            )
-          },
-        }),
-      ),
+        return (
+          <Box
+            key={index}
+            cursor="pointer"
+            outline="none"
+            padding={2}
+            role="button"
+            background={active ? 'white' : 'blue100'}
+            onClick={() => {
+              setOptions([])
+              onSelect(item)
+            }}
+          >
+            <Text as="span">{item.title}</Text>
+          </Box>
+        )
+      },
+    }))
+
+    setOptions(
+      options.length
+        ? options
+        : [
+            {
+              label: searchTerms,
+              value: searchTerms,
+              component: () => (
+                <Box
+                  padding={2}
+                  background="blue100"
+                  disabled
+                  onClick={() => null}
+                >
+                  <Text as="span">Ekkert fannst</Text>
+                </Box>
+              ),
+            },
+          ],
     )
     setIsLoading(false)
   }
@@ -136,7 +177,7 @@ export const SearchInput = ({
       size={size}
       colored={colored}
       key="island-helpdesk"
-      placeholder="Leitaðu á þjónustuvefnum"
+      placeholder={placeholder}
       options={options}
       loading={busy}
       initialInputValue={initialInputValue}
@@ -145,6 +186,7 @@ export const SearchInput = ({
         setIsLoading(true)
         setSearchTerms(value)
       }}
+      closeMenuOnSubmit
       onSubmit={(value, selectedOption) => {
         setOptions([])
 

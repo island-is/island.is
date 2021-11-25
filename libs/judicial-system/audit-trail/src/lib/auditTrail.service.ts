@@ -25,12 +25,15 @@ export enum AuditedAction {
   CREATE_COURT_CASE = 'CREATE_COURT_CASE',
   GET_REQUEST_PDF = 'GET_REQUEST_PDF',
   GET_RULING_PDF = 'GET_RULING_PDF',
+  GET_CUSTODY_NOTICE_PDF = 'GET_CUSTODY_NOTICE_PDF',
   GET_INSTITUTIONS = 'GET_INSTITUTIONS',
   CREATE_PRESIGNED_POST = 'CREATE_PRESIGNED_POST',
   CREATE_FILE = 'CREATE_FILE',
   GET_SIGNED_URL = 'GET_SIGNED_URL',
   DELETE_FILE = 'DELETE_FILE',
   UPLOAD_FILE_TO_COURT = 'UPLOAD_FILE_TO_COURT',
+  GET_POLICE_CASE_FILES = 'GET_POLICE_CASE_FILES',
+  UPLOAD_POLICE_CASE_FILE = 'UPLOAD_POLICE_CASE_FILE',
 }
 
 export const AUDIT_TRAIL_OPTIONS = 'AUDIT_TRAIL_OPTIONS'
@@ -92,6 +95,7 @@ export class AuditTrailService {
       this.trail = winston.createLogger({
         transports: [
           new WinstonCloudWatch({
+            name: 'CloudWatch',
             logGroupName: this.options.groupName,
             logStreamName: function () {
               // Spread log streams across dates

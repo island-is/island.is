@@ -30,6 +30,12 @@ export enum GenericLicenseDataFieldType {
   Value = 'Value',
 }
 
+export enum GenericUserLicensePkPassStatus {
+  Available = 'Available',
+  NotAvailable = 'NotAvailable',
+  Unknown = 'Unknown',
+}
+
 export type GenericLicenseProvider = {
   id: GenericLicenseProviderId
 
@@ -74,12 +80,14 @@ export type GenericUserLicensePayload = {
 
 export type GenericLicenseUserdata = {
   status: GenericUserLicenseStatus
+  pkpassStatus: GenericUserLicensePkPassStatus
 }
 
 // Bit of an awkward type, it contains data from any external API, but we don't know if it's
 // too narrow or not until we bring in more licenses
 export type GenericLicenseUserdataExternal = {
   status: GenericUserLicenseStatus
+  pkpassStatus: GenericUserLicensePkPassStatus
   payload?: GenericUserLicensePayload | null
 }
 
@@ -99,6 +107,11 @@ export type GenericUserLicense = {
   license: GenericLicenseMetadata & GenericLicenseUserdata
   fetch: GenericLicenseFetch
   payload?: GenericUserLicensePayload
+}
+
+export type GenericLicensePkPassResult = {
+  valid?: boolean
+  url?: string
 }
 
 export type PkPassVerificationError = {

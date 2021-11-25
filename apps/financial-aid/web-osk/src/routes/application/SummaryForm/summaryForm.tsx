@@ -4,41 +4,46 @@ import { Text, Divider, Box } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  FormLayout,
   CancelModal,
   Estimation,
   UserInfo,
   AllFiles,
   FormInfo,
   FormComment,
+  ContactInfo,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
 
-import * as styles from './summaryForm.treat'
+import * as styles from './summaryForm.css'
 import cn from 'classnames'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
-
-import { NavigationProps } from '@island.is/financial-aid/shared/lib'
-
-import useApplication from '@island.is/financial-aid-web/osk/src/utils/useApplication'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import {
   Employment,
+  FamilyStatus,
   getEmploymentStatus,
+  getFamilyStatus,
   getHomeCircumstances,
   HomeCircumstances,
+  NavigationProps,
+  Routes,
+  scrollToId,
 } from '@island.is/financial-aid/shared/lib'
+
+import useApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useApplication'
+
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const SummaryForm = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
 
-  const { user } = useContext(UserContext)
+  const { user } = useContext(AppContext)
 
   const [isVisible, setIsVisible] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const [formError, setFormError] = useState({
     status: false,
@@ -49,38 +54,53 @@ const SummaryForm = () => {
 
   const formInfoOverview = [
     {
+      id: 'familyStatus',
+      label: 'Hjúskaparstaða',
+      url: Routes.form.relationship,
+      info: getFamilyStatus[form.familyStatus as FamilyStatus],
+    },
+    {
       id: 'homeCircumstances',
       label: 'Búseta',
-      url: 'buseta',
+      url: Routes.form.homeCircumstances,
       info:
         form?.homeCircumstances === HomeCircumstances.OTHER
           ? form?.homeCircumstancesCustom
-          : getHomeCircumstances[form?.homeCircumstances as HomeCircumstances],
+          : getHomeCircumstances[form.homeCircumstances as HomeCircumstances],
     },
     {
       id: 'hasIncome',
       label: 'Tekjur',
-      url: 'tekjur',
+      url: Routes.form.hasIncome,
       info:
         form?.hasIncome === undefined
           ? undefined
           : 'Ég hef ' +
-            (form?.hasIncome ? '' : 'ekki') +
+            (form.hasIncome ? '' : 'ekki ') +
             'fengið tekjur í þessum mánuði eða síðasta',
     },
     {
       id: 'employmentCustom',
       label: 'Staða',
-      url: 'atvinna',
+      url: Routes.form.employment,
       info: form?.employmentCustom
-        ? form?.employmentCustom
-        : getEmploymentStatus[form?.employment as Employment],
+        ? form.employmentCustom
+        : getEmploymentStatus[form.employment as Employment],
     },
     {
-      id: 'emailAddress',
-      label: 'Netfang',
-      url: 'samskipti',
-      info: form?.emailAddress,
+      id: 'usePersonalTaxCredit',
+      label: 'Nýta persónuafslátt?',
+      url: Routes.form.usePersonalTaxCredit,
+      info: form?.usePersonalTaxCredit ? 'Já' : 'Nei',
+    },
+    {
+      id: 'bankInfo',
+      label: 'Bankaupplýsingar',
+      url: Routes.form.bankInfo,
+      info:
+        form.bankNumber && form.ledger && form.accountNumber
+          ? form.bankNumber + '-' + form.ledger + '-' + form.accountNumber
+          : '',
     },
   ]
 
@@ -88,30 +108,31 @@ const SummaryForm = () => {
     if (!form || !user) {
       return
     }
-
+    setIsLoading(true)
     await createApplication(form, user, updateForm)
-      .then((res) => {
+      .then(() => {
+        setIsLoading(false)
         if (navigation?.nextUrl) {
           router.push(navigation.nextUrl)
         }
       })
       .catch((e) => {
+        setIsLoading(false)
         setFormError({
           status: true,
           message: 'Obbobbob einhvað fór úrskeiðis',
         })
 
-        if (e.networkError.statusCode === 400) {
-          const findErrorInFormInfo = formInfoOverview.find(
-            (el) => el.info === undefined,
-          )
+        const findErrorInFormInfo = formInfoOverview.find(
+          (el) => el.info === undefined,
+        )
 
-          if (findErrorInFormInfo) {
-            var element = document.getElementById(findErrorInFormInfo.id)
-            element?.scrollIntoView({
-              behavior: 'smooth',
-            })
-          }
+        if (findErrorInFormInfo) {
+          scrollToId(findErrorInFormInfo.id)
+        }
+
+        if (form.emailAddress === undefined || form.phoneNumber === undefined) {
+          scrollToId('contactInfo')
         }
       })
   }
@@ -121,44 +142,44 @@ const SummaryForm = () => {
   ) as NavigationProps
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Yfirlit umsóknar
         </Text>
-
-        <Estimation
-          usePersonalTaxCredit={form.usePersonalTaxCredit}
-          homeCircumstances={form.homeCircumstances}
-          aboutText={
-            <Text marginBottom={[2, 2, 3]}>
-              Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og{' '}
-              <span className={styles.taxReturn}>
-                gerir ekki ráð fyrir tekjum eða gögnum úr skattframtali
-              </span>{' '}
-              sem geta haft áhrif á þína aðstoð. Þú færð skilaboð þegar frekari
-              útreikningur liggur fyrir.
-            </Text>
-          }
-        />
-
+        {form.homeCircumstances && (
+          <>
+            <Estimation
+              usePersonalTaxCredit={form.usePersonalTaxCredit}
+              homeCircumstances={form.homeCircumstances}
+              aboutText={
+                <Text marginBottom={[2, 2, 3]}>
+                  Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og{' '}
+                  <span className={styles.taxReturn}>
+                    gerir ekki ráð fyrir tekjum eða gögnum úr skattframtali
+                  </span>{' '}
+                  sem geta haft áhrif á þína aðstoð. Þú færð skilaboð þegar
+                  frekari útreikningur liggur fyrir.
+                </Text>
+              }
+            />
+          </>
+        )}
         <Box marginTop={[4, 4, 5]}>
           <Divider />
         </Box>
-
         <UserInfo />
-
         <FormInfo info={formInfoOverview} error={formError.status} />
 
+        <ContactInfo
+          phone={form.phoneNumber}
+          email={form.emailAddress}
+          error={formError.status}
+        />
+
         <Divider />
-
         <AllFiles />
-
         <FormComment />
-
         <div
           className={cn({
             [`errorMessage`]: true,
@@ -169,11 +190,10 @@ const SummaryForm = () => {
             {formError.message}
           </Text>
         </div>
-
         <CancelModal
           isVisible={isVisible}
-          setIsVisible={(isVisibleBoolean) => {
-            setIsVisible(isVisibleBoolean)
+          setIsVisible={(isModalVisible) => {
+            setIsVisible(isModalVisible)
           }}
         />
       </ContentContainer>
@@ -184,10 +204,11 @@ const SummaryForm = () => {
         }}
         previousIsDestructive={true}
         prevButtonText="Hætta við"
-        nextButtonText="Senda umsókn"
+        nextIsLoading={isLoading}
+        nextButtonText={'Senda umsókn'}
         onNextButtonClick={handleNextButtonClick}
       />
-    </FormLayout>
+    </>
   )
 }
 

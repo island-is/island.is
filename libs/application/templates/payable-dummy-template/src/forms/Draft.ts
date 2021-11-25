@@ -12,8 +12,8 @@ import {
   buildDataProviderItem,
   buildKeyValueField,
   DefaultEvents,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { m } from '../lib/messages'
 
 export const Draft: Form = buildForm({
   id: 'Draft',
@@ -30,7 +30,7 @@ export const Draft: Form = buildForm({
           dataProviders: [
             buildDataProviderItem({
               id: 'paymentCatalogProvider',
-              type: 'PaymentCatalogProvider',
+              type: 'FeeInfoProvider',
               title: 'Upplýsingar um kostnað',
               subTitle: 'Upplýsingar um kostnað hjá Fjársýslunni',
             }),
@@ -74,10 +74,9 @@ export const Draft: Form = buildForm({
               label: 'Upphæð',
               width: 'half',
               value: (application: Application) => {
-                const priceAmount = get(
+                const priceAmount = getValueViaPath(
                   application.externalData,
                   'paymentCatalogProvider.data.priceAmount',
-                  NaN,
                 ) as number
 
                 // todo: get price formatting function from utils somewhere

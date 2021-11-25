@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from 'react'
+import { GraphQLError } from 'graphql'
 import { ZodObject } from 'zod'
 import { MessageDescriptor } from 'react-intl'
 
@@ -57,16 +58,22 @@ export enum FormModes {
 }
 
 export interface Form {
-  id: string
-  title: StaticText
-  logo?: React.FC
-  type: FormItemTypes.FORM
-  mode?: FormModes
-  renderLastScreenButton?: boolean
-  renderLastScreenBackButton?: boolean
-  icon?: string
   children: FormChildren[]
+  icon?: string
+  id: string
+  logo?: React.FC
+  mode?: FormModes
+  renderLastScreenBackButton?: boolean
+  renderLastScreenButton?: boolean
+  title: StaticText
+  type: FormItemTypes.FORM
 }
+
+export interface FormLoaderArgs {
+  featureFlagClient: unknown
+}
+
+export type FormLoader = (args: FormLoaderArgs) => Promise<Form>
 
 export type FormLeaf = MultiField | Field | Repeater | ExternalDataProvider
 export type FormNode = Form | Section | SubSection | FormLeaf
@@ -112,6 +119,7 @@ export interface ExternalDataProvider extends FormItem {
   readonly children: undefined
   isPartOfRepeater?: boolean
   dataProviders: DataProviderItem[]
+  otherPermissions?: DataProviderPermissionItem[]
   checkboxLabel?: StaticText
   subTitle?: StaticText
   description?: StaticText
@@ -126,6 +134,10 @@ export interface DataProviderItem {
   readonly parameters?: any
 }
 
+export type DataProviderPermissionItem = Omit<
+  DataProviderItem,
+  'type' | 'source' | 'parameters'
+>
 export interface FieldBaseProps {
   autoFocus?: boolean
   error?: string
@@ -145,4 +157,11 @@ export type RepeaterProps = {
   error?: string
   repeater: Repeater
   removeRepeaterItem: (index: number) => void
+  setRepeaterItems: (
+    items: unknown[],
+  ) => Promise<{ errors?: ReadonlyArray<GraphQLError> }>
+  setBeforeSubmitCallback?: SetBeforeSubmitCallback
+  setFieldLoadingState?: SetFieldLoadingState
 }
+
+export type ValidationRecord = { [key: string]: string | ValidationRecord }

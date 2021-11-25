@@ -9,7 +9,7 @@ import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import { Link } from 'react-router-dom'
-import * as styles from './NavigationOverviewScreen.treat'
+import * as styles from './NavigationOverviewScreen.css'
 
 interface Props {
   title: MessageDescriptor

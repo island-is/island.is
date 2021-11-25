@@ -13,11 +13,6 @@ import { Client } from './client.model'
 
 @Table({
   tableName: 'client_post_logout_redirect_uri',
-  indexes: [
-    {
-      fields: ['client_id', 'redirect_uri'],
-    },
-  ],
 })
 export class ClientPostLogoutRedirectUri extends Model<ClientPostLogoutRedirectUri> {
   @PrimaryKey

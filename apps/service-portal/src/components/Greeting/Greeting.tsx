@@ -13,7 +13,7 @@ import { useQuery, gql } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { m } from '@island.is/service-portal/core'
 
-import * as styles from './Greeting.treat'
+import * as styles from './Greeting.css'
 
 const NationalRegistryUserQuery = gql`
   query NationalRegistryUserQuery {

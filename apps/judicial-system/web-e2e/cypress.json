@@ -10,5 +10,9 @@
   "screenshotsFolder": "../../../dist/cypress/apps/judicial-system/web-e2e/screenshots",
   "chromeWebSecurity": false,
   "viewportWidth": 1440,
-  "defaultCommandTimeout": 20000
+  "defaultCommandTimeout": 20000,
+  "retries": {
+    "runMode": 2,
+    "openMode": 0
+  }
 }

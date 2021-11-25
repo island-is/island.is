@@ -426,9 +426,9 @@ const Category: Screen<CategoryProps> = ({
                   label={title}
                   labelUse="h2"
                   labelVariant="h3"
-                  startExpanded={expanded}
+                  expanded={expanded}
                   visibleContent={description}
-                  onClick={() => {
+                  onToggle={() => {
                     handleAccordionClick(groupSlug)
                   }}
                 >

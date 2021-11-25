@@ -4,18 +4,13 @@ export const inReview = {
   general: defineMessages({
     formTitle: {
       id: 'an.application:inReview.general.formTitle',
-      defaultMessage: 'Staða umsóknar',
-      description: 'Parental Leave',
+      defaultMessage: 'Tilkynning um slys',
+      description: 'In review form title',
     },
-    titleInReview: {
+    title: {
       id: 'an.application:inReview.general.titleInReview',
-      defaultMessage: 'Umsókn þín er í skoðun',
+      defaultMessage: 'Staða tilkynningar',
       description: 'Your application is in review',
-    },
-    titleApproved: {
-      id: 'an.application:inReview.general.titleApproved',
-      defaultMessage: 'Umsókn þín er samþykkt',
-      description: 'Your application is in approved',
     },
     viewApplicationButton: {
       id: 'an.application:inReview.general.viewApplicationButton',
@@ -63,6 +58,17 @@ export const inReview = {
         'Slysatilkynning hefur verið send til Sjúkratryggingar Íslands',
       description: 'Summary for application section in review',
     },
+    documentIdAlertTitle: {
+      id: 'an.application:inReview.application.documentIdAlertTitle',
+      defaultMessage: 'Skjalanúmer',
+      description: 'Document Id',
+    },
+    documentIdAlertMessage: {
+      id: 'an.application:inReview.application.documentIdAlertMessage',
+      defaultMessage:
+        'Skjalanúmer fyrir tilkynninguna hjá Sjúkratryggingum Íslands:',
+      description: 'Document id description text',
+    },
   }),
   documents: defineMessages({
     title: {
@@ -93,6 +99,19 @@ export const inReview = {
       defaultMessage:
         'Ef slysið átti sér stað á vinnustað/skóla/stofnun/íþróttafélagi þá þarf forsvarsmaður þess að yfirfara og staðfesta upplýsingar í tilkynningu.',
       description: 'Summary for representative section in review',
+    },
+    titleDone: {
+      id: 'an.application:inReview.action.representative.titleDone',
+      defaultMessage: 'Forsvarsmaður fer yfir tilkynningu',
+      description:
+        'Title for action message in representative section when completed by reviewer',
+    },
+    summaryDone: {
+      id: 'an.application:inReview.action.representative.summaryDone',
+      defaultMessage:
+        'Svo hægt er að greiða út bætur fyrir slysið þarf þriðji aðilli að staðfesta að upplýsingar eru réttar.',
+      description:
+        'Description for action message in representative section when done',
     },
   }),
   sjukratrygging: defineMessages({
@@ -152,6 +171,68 @@ export const inReview = {
         defaultMessage: 'Skoða tilkynningu',
         description:
           'Action button title for action message in representative section',
+      },
+    }),
+  },
+  buttons: defineMessages({
+    backButton: {
+      id: 'an.application:inReview.buttons.backButton',
+      defaultMessage: 'Til baka',
+      description: 'Review back button',
+    },
+    forwardButton: {
+      id: 'an.application:inReview.buttons.forwardButton',
+      defaultMessage: 'Halda áfram',
+      description: 'Review forward button',
+    },
+    sendAttachmentsButton: {
+      id: 'an.application:inReview.buttons.sendAttachmentsButton',
+      defaultMessage: 'Senda fylgiskjöl',
+      description: 'Review send attachments button',
+    },
+  }),
+  confirmationModal: {
+    default: defineMessages({
+      cancelButton: {
+        id: 'an.application:inReview.confirmationModal.default.cancelButton',
+        defaultMessage: 'Hætta við',
+        description: 'Confirmation modal cancel button',
+      },
+    }),
+    reject: defineMessages({
+      title: {
+        id: 'an.application:inReview.confirmationModal.reject.title',
+        defaultMessage: 'Andmæla tilkynningu',
+        description: 'Confirmation modal reject title',
+      },
+      text: {
+        id: 'an.application:inReview.confirmationModal.reject.text',
+        defaultMessage:
+          'Þú ert að fara að andmæla tilkynningu. Athugaðu að það er ekki hægt að bæta við athugasemdum eftir að tilkynning hefur verið andmælt.',
+        description: 'Confirmation modal reject text',
+      },
+      buttonText: {
+        id: 'an.application:inReview.confirmationModal.reject.buttonText',
+        defaultMessage: 'Andmæla tilkynningu',
+        description: 'Confirmation modal reject button',
+      },
+    }),
+    approve: defineMessages({
+      title: {
+        id: 'an.application:inReview.confirmationModal.approve.title',
+        defaultMessage: 'Staðfesta tilkynningu',
+        description: 'Confirmation modal approve title',
+      },
+      text: {
+        id: 'an.application:inReview.confirmationModal.approve.text',
+        defaultMessage:
+          'Þú ert að fara að staðfesta tilkynningu. Athugaðu að það er ekki hægt að bæta við athugasemdum eftir að tilkynning hefur verið staðfest.',
+        description: 'Confirmation modal approve text',
+      },
+      buttonText: {
+        id: 'an.application:inReview.confirmationModal.approve.buttonText',
+        defaultMessage: 'Staðfesta tilkynningu',
+        description: 'Confirmation modal approve button',
       },
     }),
   },

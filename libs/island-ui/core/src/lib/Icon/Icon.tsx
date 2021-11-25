@@ -2,7 +2,7 @@ import React from 'react'
 import cn from 'classnames'
 import { Colors } from '@island.is/island-ui/theme'
 
-import * as styles from './Icon.treat'
+import * as styles from './Icon.css'
 import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 
 export type IconTypes =

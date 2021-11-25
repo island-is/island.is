@@ -69,10 +69,12 @@ export const PlanSlider = ({
               }}
               labelMultiplier={multiplier}
               onChange={(newValue: number) => {
-                clearErrors(id)
-                onChange(newValue * multiplier)
-                setStateValue(newValue * multiplier)
-                if (onChangeCb) onChangeCb(newValue * multiplier)
+                if (!isNaN(newValue)) {
+                  clearErrors(id)
+                  onChange(newValue * multiplier)
+                  setStateValue(newValue * multiplier)
+                  if (onChangeCb) onChangeCb(newValue * multiplier)
+                }
               }}
             />
           )}

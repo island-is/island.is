@@ -50,17 +50,13 @@ export const getAuthenticatedApp = ({
   nationalId = '1234567890',
 }: SetupAuthInput): Promise<INestApplication> =>
   setup({
-    override: (builder) => {
-      builder
-        .overrideProvider(IdsUserGuard)
-        .useValue(
-          new MockAuthGuard({
-            nationalId,
-            scope,
-          }),
-        )
-        .compile()
-    },
+    override: (builder) =>
+      builder.overrideProvider(IdsUserGuard).useValue(
+        new MockAuthGuard({
+          nationalId,
+          scope,
+        }),
+      ),
   })
 
 afterAll(async () => {

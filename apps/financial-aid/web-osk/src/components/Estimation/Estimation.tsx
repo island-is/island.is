@@ -1,23 +1,19 @@
-import React, { ReactNode, useMemo } from 'react'
-import { Text, Box, LoadingDots, Divider } from '@island.is/island-ui/core'
+import React, { ReactNode, useContext, useMemo } from 'react'
+import { Text, Box, Divider } from '@island.is/island-ui/core'
 
 import {
   aidCalculator,
   calculateAidFinalAmount,
-  calulatePersonalTaxAllowanceUsed,
-  calulateTaxOfAmount,
+  calculatePersonalTaxAllowanceUsed,
+  calculateTaxOfAmount,
   HomeCircumstances,
-  Municipality,
   getNextPeriod,
+  MartialStatusType,
+  martialStatusTypeFromMartialCode,
 } from '@island.is/financial-aid/shared/lib'
-import { useQuery } from '@apollo/client'
-import { GetMunicipalityQuery } from '@island.is/financial-aid-web/osk/graphql'
 
 import format from 'date-fns/format'
-
-interface MunicipalityData {
-  municipality: Municipality
-}
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 interface Props {
   aboutText: ReactNode
@@ -32,17 +28,20 @@ const Estimation = ({
 }: Props) => {
   const currentYear = format(new Date(), 'yyyy')
 
-  const { data, loading } = useQuery<MunicipalityData>(GetMunicipalityQuery, {
-    variables: { input: { id: 'hfj' } },
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+  const { municipality, nationalRegistryData } = useContext(AppContext)
 
   const aidAmount = useMemo(() => {
-    if (data && homeCircumstances) {
-      return aidCalculator(homeCircumstances, data?.municipality.settings.aid)
+    if (municipality && homeCircumstances) {
+      return aidCalculator(
+        homeCircumstances,
+        martialStatusTypeFromMartialCode(
+          nationalRegistryData?.spouse.maritalStatus,
+        ) === MartialStatusType.SINGLE
+          ? municipality.individualAid
+          : municipality.cohabitationAid,
+      )
     }
-  }, [data])
+  }, [municipality])
 
   const calculations = aidAmount
     ? [
@@ -53,14 +52,14 @@ const Estimation = ({
         {
           title: 'Skattur',
           calculation: `- 
-      ${calulateTaxOfAmount(aidAmount, currentYear).toLocaleString(
+      ${calculateTaxOfAmount(aidAmount, currentYear).toLocaleString(
         'de-DE',
       )} kr.`,
         },
         {
           title: 'Persónuafsláttur',
           calculation: `+  
-      ${calulatePersonalTaxAllowanceUsed(
+      ${calculatePersonalTaxAllowanceUsed(
         aidAmount,
         Boolean(usePersonalTaxCredit),
         currentYear,
@@ -95,7 +94,7 @@ const Estimation = ({
 
       {aboutText}
 
-      {data && (
+      {municipality && (
         <>
           {calculations.map((item, index) => {
             return (
@@ -118,16 +117,6 @@ const Estimation = ({
           })}
 
           <Divider />
-
-          {loading && (
-            <Box
-              marginBottom={[4, 4, 5]}
-              display="flex"
-              justifyContent="center"
-            >
-              <LoadingDots large />
-            </Box>
-          )}
         </>
       )}
     </>

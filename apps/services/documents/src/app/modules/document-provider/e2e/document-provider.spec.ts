@@ -48,16 +48,12 @@ const simpleOrg = {
 
 beforeAll(async () => {
   app = await setup({
-    override: (builder) => {
-      builder
-        .overrideGuard(IdsUserGuard)
-        .useValue(
-          new MockAuthGuard({
-            nationalId,
-          }),
-        )
-        .compile()
-    },
+    override: (builder) =>
+      builder.overrideGuard(IdsUserGuard).useValue(
+        new MockAuthGuard({
+          nationalId,
+        }),
+      ),
   })
 
   server = request(app.getHttpServer())

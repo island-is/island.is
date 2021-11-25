@@ -16,6 +16,9 @@ const States = {
   submitted: 'submitted',
   closed: 'closed',
 }
+export enum API_MODULE_ACTIONS {
+  sendApplication = 'sendApplication',
+}
 
 type PublicDebtPaymentPlanEvent =
   | { type: DefaultEvents.APPROVE }
@@ -34,6 +37,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
   type: ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN,
   name: application.name,
   institution: application.institutionName,
+  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations.PublicDebtPaymentPlan.translation,
   ],
@@ -73,6 +77,24 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
           SUBMIT: {
             target: States.submitted,
           },
+          [DefaultEvents.ABORT]: {
+            target: States.closed,
+          },
+        },
+      },
+      [States.closed]: {
+        meta: {
+          name: States.closed,
+          actionCard: {
+            title: application.name,
+            description: application.description,
+          },
+          progress: 1,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 0,
+          },
         },
       },
       [States.submitted]: {
@@ -81,6 +103,9 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
           actionCard: {
             title: application.name,
             description: application.description,
+          },
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.sendApplication,
           },
           progress: 1,
           lifecycle: {

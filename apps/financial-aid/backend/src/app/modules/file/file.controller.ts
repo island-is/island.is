@@ -1,41 +1,38 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
-import {
-  CurrentHttpUser,
-  JwtAuthGuard,
-  RolesGuard,
-  RolesRules,
-} from '@island.is/financial-aid/auth'
-import { RolesRule } from '@island.is/financial-aid/shared/lib'
+import { apiBasePath, RolesRule } from '@island.is/financial-aid/shared/lib'
 import type { User } from '@island.is/financial-aid/shared/lib'
 
 import { GetSignedUrlDto, CreateFilesDto } from './dto'
 import { CreateFilesModel, SignedUrlModel } from './models'
 import { FileService } from './file.service'
+import { RolesGuard } from '../../guards/roles.guard'
+import { CurrentUser, RolesRules } from '../../decorators'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-@UseGuards(JwtAuthGuard)
-@Controller('api/file')
+@UseGuards(IdsUserGuard)
+@Controller(`${apiBasePath}/file`)
 @ApiTags('files')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
   @Post('url')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @RolesRules(RolesRule.OSK)
   @ApiCreatedResponse({
     type: SignedUrlModel,
     description: 'Creates a new signed url',
   })
   createSignedUrl(
-    @CurrentHttpUser() user: User,
+    @CurrentUser() user: User,
     @Body() getSignedUrl: GetSignedUrlDto,
   ): SignedUrlModel {
     return this.fileService.createSignedUrl(user.folder, getSignedUrl.fileName)
   }
 
   @Get('url/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @RolesRules(RolesRule.VEITA)
   @ApiCreatedResponse({
     type: SignedUrlModel,
@@ -46,7 +43,7 @@ export class FileController {
   }
 
   @Post('')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @RolesRules(RolesRule.OSK)
   @ApiCreatedResponse({
     type: CreateFilesModel,

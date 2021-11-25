@@ -86,7 +86,10 @@ class ErrorPage extends React.Component<ErrorPageProps> {
 
         // Found an URL content type that contained this
         // path (which has a page assigned to it) so we redirect to that page
-        const url = linkResolver(type as LinkType, [slug], locale).href
+        const url =
+          type === 'explicitRedirect'
+            ? slug
+            : linkResolver(type as LinkType, [slug], locale).href
         if (!process.browser) {
           res.writeHead(302, { Location: url })
           res.end()
@@ -171,6 +174,13 @@ const getRedirectProps = async ({
       },
     })
     .then((response) => response.data)
+
+  if (!getUrl?.page && getUrl?.explicitRedirect) {
+    return {
+      slug: getUrl.explicitRedirect,
+      type: 'explicitRedirect',
+    }
+  }
 
   return getUrl?.page ?? null
 }

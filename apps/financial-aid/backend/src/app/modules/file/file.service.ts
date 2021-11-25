@@ -6,6 +6,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { CloudFrontService } from './cloudFront.service'
 
+import { FileType } from '@island.is/financial-aid/shared/lib'
+
 import {
   SignedUrlModel,
   ApplicationFileModel,
@@ -60,6 +62,19 @@ export class FileService {
     return this.fileModel.findAll({
       where: { applicationId },
       order: [['created', 'DESC']],
+    })
+  }
+
+  async getApplicationFilesByType(
+    applicationId: string,
+    fileType: FileType,
+  ): Promise<ApplicationFileModel> {
+    this.logger.debug(
+      `Checking if application-${applicationId} has certain file type `,
+    )
+
+    return this.fileModel.findOne({
+      where: { applicationId, type: fileType },
     })
   }
 

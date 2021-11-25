@@ -1,9 +1,8 @@
-import React, { CSSProperties, FC, useRef, useState, useEffect } from 'react'
-import useComponentSize from '@rehooks/component-size'
-import { useDrag } from '../utils'
-
-import * as styles from './Slider.treat'
 import { Box, Text } from '@island.is/island-ui/core'
+import useComponentSize from '@rehooks/component-size'
+import React, { CSSProperties, FC, useEffect, useRef, useState } from 'react'
+import { useDrag } from '../utils'
+import * as styles from './Slider.css'
 
 interface TooltipProps {
   style?: CSSProperties
@@ -36,6 +35,11 @@ const useLatest = <T extends number>(value: T) => {
 const roundByNum = (num: number, rounder: number) => {
   const multiplier = 1 / (rounder || 0.5)
   return Math.round(num * multiplier) / multiplier
+}
+
+const toFixedNumber = (num: number, digits: number, base: number) => {
+  const pow = Math.pow(base || 10, digits)
+  return Math.floor(num * pow) / pow
 }
 
 interface TrackProps {
@@ -119,8 +123,18 @@ const Slider = ({
   const dragBind = useDrag({
     onDragMove(deltaX) {
       const currentX = x + deltaX
+      const roundedMin = toFixedNumber(min, 1, 10)
       dragX.current = Math.max(0, Math.min(size.width, currentX))
-      const index = roundByNum(dragX.current / sizePerCell, step) + min
+      // Get value to display in slider.
+      // Get max if more or equal to max, get min if less or equal to min and then show rest with only one decimal point.
+      const index =
+        dragX.current / sizePerCell + min >= max
+          ? max
+          : dragX.current / sizePerCell + min <= min
+          ? min
+          : roundByNum(dragX.current / sizePerCell, step) === 0
+          ? min
+          : roundByNum(dragX.current / sizePerCell, step) + roundedMin
 
       if (onChange && index !== indexRef.current) {
         onChange(index)

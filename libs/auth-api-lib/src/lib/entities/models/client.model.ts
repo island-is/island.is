@@ -20,11 +20,6 @@ import { ClientClaim } from './client-claim.model'
 
 @Table({
   tableName: 'client',
-  indexes: [
-    {
-      fields: ['client_id'],
-    },
-  ],
 })
 export class Client extends Model<Client> {
   @PrimaryKey

@@ -4,7 +4,6 @@ import { ApolloError } from 'apollo-server-express'
 import {
   ConfirmationDtoResponse,
   CreateUserProfileDto,
-  EmailVerification,
   UpdateUserProfileDto,
   UserProfileApi,
   UserProfileControllerCreateRequest,
@@ -17,6 +16,7 @@ import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
 import { UserProfile } from './userProfile.model'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { IslyklarApi } from '@island.is/clients/islykill'
 
 // eslint-disable-next-line
 const handleError = (error: any) => {
@@ -26,10 +26,28 @@ const handleError = (error: any) => {
 
 @Injectable()
 export class UserProfileService {
-  constructor(private userProfileApi: UserProfileApi) {}
+  constructor(
+    private userProfileApi: UserProfileApi,
+    private readonly islyklarApi: IslyklarApi,
+  ) {}
 
   userProfileApiWithAuth(auth: Auth) {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getIslyklarData(ssn: User['nationalId']) {
+    try {
+      const islyklarData = await this.islyklarApi.islyklarGet({
+        ssn,
+      })
+
+      return {
+        mobilePhoneNumber: islyklarData?.mobile,
+        email: islyklarData?.email,
+      }
+    } catch (e) {
+      return null // Do nothing to prevent blocking of getUserProfile.
+    }
   }
 
   async getUserProfile(user: User) {
@@ -39,7 +57,20 @@ export class UserProfileService {
       ).userProfileControllerFindOneByNationalId({
         nationalId: user.nationalId,
       })
-      return profile
+
+      const islyklarData = await this.getIslyklarData(user.nationalId)
+
+      return {
+        ...profile,
+        // Temporary solution while we still run the old user profile service.
+        mobilePhoneNumber:
+          islyklarData?.mobilePhoneNumber ?? profile.mobilePhoneNumber,
+        email: islyklarData?.email ?? profile.email,
+        mobilePhoneNumberVerified: islyklarData?.mobilePhoneNumber
+          ? true
+          : profile.mobilePhoneNumberVerified,
+        emailVerified: islyklarData?.email ? true : profile.emailVerified,
+      }
     } catch (error) {
       if (error.status === 404) return null
       handleError(error)
@@ -94,8 +125,8 @@ export class UserProfileService {
       .catch(handleError)
   }
 
-  async resendEmailVerification(user: User): Promise<EmailVerification> {
-    return await this.userProfileApiWithAuth(user)
+  async resendEmailVerification(user: User): Promise<void> {
+    await this.userProfileApiWithAuth(user)
       .userProfileControllerRecreateVerification({
         nationalId: user.nationalId,
       })

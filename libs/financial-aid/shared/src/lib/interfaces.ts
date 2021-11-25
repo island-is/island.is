@@ -5,9 +5,11 @@ import {
   Employment,
   ApplicationEventType,
   RolesRule,
-  ReturnUrl,
+  StaffRole,
+  ApplicationStateUrl,
+  FamilyStatus,
+  AidType,
 } from './enums'
-import type { StaffRole } from './types'
 
 export interface GetSignedUrl {
   fileName: string
@@ -27,19 +29,33 @@ export interface Staff {
   nationalId: string
   name: string
   municipalityId: string
-  role: StaffRole
+  roles: StaffRole[]
   active: boolean
-  phoneNumber: string
+  municipalityName: string
+  phoneNumber?: string
+  municipalityHomepage?: string
+  nickname?: string
+  email?: string
 }
 
-export interface MunicipalitySettings {
-  aid: {
-    ownApartmentOrLease: number
-    withOthersOrUnknow: number
-    withParents: number
-  }
+export interface UpdateStaff {
+  nationalId?: string
+  roles?: StaffRole[]
+  active?: boolean
+  nickname?: string
+  email?: string
 }
 
+export interface Aid {
+  ownPlace: number
+  registeredRenting: number
+  unregisteredRenting: number
+  livesWithParents: number
+  unknown: number
+  withOthers: number
+  municipalityId: string
+  type: AidType
+}
 export interface NavigationProps {
   activeSectionIndex: number
   activeSubSectionIndex?: number
@@ -47,21 +63,49 @@ export interface NavigationProps {
   nextUrl: string | undefined
 }
 
+export interface FormSpouse {
+  nationalId?: string
+  name?: string
+  email?: string
+}
+
 export interface User {
   nationalId: string
   name: string
-  phoneNumber: string
+  phoneNumber?: string
   folder: string
   service: RolesRule
-  currentApplication?: CurrentApplication
-  returnUrl: ReturnUrl
+  currentApplicationId?: string
+  spouse?: Spouse
   staff?: Staff
+  formSpouse?: FormSpouse
+  address?: Address
+}
+
+export interface Address {
+  streetName: string
+  postalCode: string
+  city: string
+  municipalityCode: string
 }
 
 export interface UpdateApplication {
-  state: ApplicationState
+  state?: ApplicationState
+  event: ApplicationEventType
   amount?: number
   rejection?: string
+  comment?: string
+  staffId?: string
+  spousePhoneNumber?: string
+  spouseEmail?: string
+  spouseName?: string
+}
+
+export interface UpdateApplicationTable {
+  state: ApplicationState
+  staffId: string
+  stateUrl: ApplicationStateUrl
+  event: ApplicationEventType
 }
 
 export interface CreateApplicationEvent {
@@ -76,20 +120,31 @@ export interface ApplicationEvent {
   applicationId: string
   eventType: ApplicationEventType
   comment?: string
+  staffNationalId?: string
+  staffName?: string
 }
 
 export interface Municipality {
   id: string
   name: string
-  settings: MunicipalitySettings
+  active: boolean
+  municipalityId: string
+  individualAid: Aid
+  cohabitationAid: Aid
+  homepage?: string
+  email?: string
+  rulesHomepage?: string
+  numberOfUsers?: number
+  adminUsers?: Staff[]
 }
 
-export interface CurrentApplication {
-  id: string
-  homeCircumstances: HomeCircumstances
-  usePersonalTaxCredit: boolean
-  state: ApplicationState
-  created: string
+export interface UpdateMunicipalityActivity {
+  active: boolean
+}
+
+export interface CreateMunicipality {
+  name: string
+  municipalityId: string
 }
 
 export interface ApplicationFile {
@@ -112,7 +167,7 @@ export interface CreateApplicationFile {
 export interface CreateApplication {
   nationalId: string
   name: string
-  phoneNumber: string
+  phoneNumber?: string
   email: string
   homeCircumstances: HomeCircumstances
   student: boolean
@@ -130,6 +185,14 @@ export interface CreateApplication {
   state?: ApplicationState
   files: CreateApplicationFile[]
   amount?: number
+  spouseNationalId?: string
+  spouseEmail?: string
+  spouseName?: string
+  familyStatus: FamilyStatus
+  streetName?: string
+  postalCode?: string
+  city?: string
+  municipalityCode?: string
 }
 
 export interface ApplicationFilters {
@@ -138,6 +201,7 @@ export interface ApplicationFilters {
   DataNeeded: number
   Rejected: number
   Approved: number
+  MyCases: number
 }
 
 export interface Application {
@@ -146,7 +210,7 @@ export interface Application {
   modified: string
   nationalId: string
   name: string
-  phoneNumber: string
+  phoneNumber?: string
   email: string
   homeCircumstances: HomeCircumstances
   student: boolean
@@ -166,8 +230,80 @@ export interface Application {
   amount?: number
   comment?: string
   rejection?: string
+  staff?: Staff
+  applicationEvents?: ApplicationEvent[]
+  spouseNationalId?: string
+  spouseEmail?: string
+  spousePhoneNumber?: string
+  spouseName?: string
+  familyStatus: FamilyStatus
+  streetName?: string
+  postalCode?: string
+  city?: string
+  municipalityCode?: string
 }
 
 export interface GetSignedUrlForId {
   id: string
+}
+
+export interface Spouse {
+  hasPartnerApplied: boolean
+  hasFiles: boolean
+  spouseName?: string
+}
+
+export interface UpdateApplicationTableResponseType {
+  applications: Application[]
+  filters: ApplicationFilters
+}
+
+export interface UpdateApplicationResponseType {
+  application: Application
+  filters?: ApplicationFilters
+}
+
+export interface NationalRegistryData {
+  nationalId: string
+  fullName: string
+  address: {
+    streetName: string
+    postalCode: string
+    city: string
+    municipalityCode: string
+  }
+  spouse: {
+    nationalId?: string
+    maritalStatus?: string
+    name?: string
+  }
+}
+
+export interface ServiceCenter {
+  name: string
+  number: number
+  phone: string
+  address: string
+  addressPostalCode: string
+  postalCodes: number[]
+  active?: boolean
+  link?: string
+}
+
+export interface TableHeadersProps {
+  filterBy?: string
+  title: string
+}
+
+export interface CreateStaff {
+  name: string
+  email: string
+  nationalId: string
+  roles: StaffRole[]
+}
+
+export interface CreateStaffMuncipality {
+  id: string
+  name: string
+  homepage?: string
 }

@@ -19,7 +19,7 @@ import {
 } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import CompanyList from './components/CompanyList'
-import * as styles from './Handover.treat'
+import * as styles from './Handover.css'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
 import {
   Car,

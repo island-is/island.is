@@ -28,7 +28,7 @@ import { GlobalContext } from '@island.is/web/context'
 import { useNamespace } from '@island.is/web/hooks'
 import LottieLoader from './LottiePlayer/LottieLoader'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import * as styles from './FrontpageSlider.treat'
+import * as styles from './FrontpageSlider.css'
 import { FrontpageSlider as FrontpageSliderType } from '@island.is/web/graphql/schema'
 import fetch from 'isomorphic-fetch'
 

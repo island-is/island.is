@@ -136,7 +136,7 @@ export const accidentLocation = {
     },
     other: {
       id: 'an.application:accidentLocation.rescueWorkAccident.other',
-      defaultMessage: 'Annarsstaðar í vinnu fyrir björgunaraðgerðir',
+      defaultMessage: 'Annars staðar í vinnu vegna björgunaraðgerða',
       description: 'Label for the other in rescue work accident location',
     },
     description: {
@@ -197,7 +197,7 @@ export const accidentLocation = {
       id:
         'an.application:accidentLocation.fishermanAccidentLocation.description',
       defaultMessage:
-        'Vinsamlegast skráðu staðsetningu skips þegar slysið átti sér stað',
+        'Vinsamlegast tilgreindu staðsetningu skips þegar slysið átti sér stað',
       description: 'Fisherman accident location description',
     },
   }),
@@ -210,7 +210,7 @@ export const accidentLocation = {
     description: {
       id: 'an.application:accidentLocation.homeAccidentLocation.description',
       defaultMessage:
-        'Nauðsynlegt er að gefa upp staðsetningu á slysinu... blabla',
+        'Vinsamlegast fylltu inn upplýsingar um hvar slysið átti sér stað.',
       description: 'Home accident location description',
     },
     address: {
@@ -237,7 +237,7 @@ export const accidentLocation = {
     moreDetailsPlaceholder: {
       id:
         'an.application:accidentLocation.homeAccidentLocation.moreDetailsPlaceholder',
-      defaultMessage: 'T.d hæð 2, íbúð 101 eða sumarbústaður',
+      defaultMessage: 'T.d. inn á heimili, innan lóðamarka eða í sumarbústað',
       description:
         'Home accident location more details placeholder in textarea field',
     },

@@ -3,20 +3,19 @@ import {
   Logo,
   Text,
   Box,
-  Button,
   GridContainer,
   DropdownMenu,
 } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
-import * as styles from './Header.treat'
+import * as styles from './Header.css'
 
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
-import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { Routes } from '@island.is/financial-aid/shared/lib'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const Header = () => {
-  const { isAuthenticated, user } = useContext(UserContext)
+  const { isAuthenticated, user, municipality } = useContext(AppContext)
 
   const logOut = useLogOut()
 
@@ -26,8 +25,8 @@ const Header = () => {
         <Box display="flex" height="full" alignItems="center">
           <Link
             href={
-              user?.currentApplication
-                ? Routes.statusPage(user?.currentApplication?.id as string)
+              user?.currentApplicationId
+                ? Routes.statusPage(user?.currentApplicationId as string)
                 : Routes.application
             }
             data-testid="link-to-home"
@@ -49,7 +48,6 @@ const Header = () => {
           </Link>
 
           <Box
-            display="flex"
             height="full"
             flexDirection="column"
             justifyContent="center"
@@ -57,7 +55,7 @@ const Header = () => {
             paddingLeft={[2, 2, 4]}
           >
             <Text fontWeight="semiBold" variant="small">
-              Hafnarfjörður
+              {municipality?.name ?? 'Samband íslenskra sveitarfélaga'}
             </Text>
 
             <span className={styles.desktopText}>

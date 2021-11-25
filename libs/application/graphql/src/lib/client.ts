@@ -13,13 +13,12 @@ const retryLink = new RetryLink()
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors)
-    graphQLErrors.map(({ message, locations, path }) =>
+    graphQLErrors.map(({ message, locations, path, extensions }) => {
+      const problem = JSON.stringify(extensions?.problem, null, '  ')
       console.log(
-        `[GraphQL error]: Message: ${message}, Location: ${JSON.stringify(
-          locations,
-        )}, Path: ${path}`,
-      ),
-    )
+        `[GraphQL error]: Message: ${message}, Path: ${path}, Problem: ${problem}`,
+      )
+    })
 
   if (networkError) console.log(`[Network error]: ${networkError}`)
 })

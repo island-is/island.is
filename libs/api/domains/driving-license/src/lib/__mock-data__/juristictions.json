@@ -1,0 +1,152 @@
+[
+  {
+    "postnumer": 105,
+    "nr": 11,
+    "nafn": "Sýslumaðurinn á höfuðborgarsvæðinu - Reykjavík",
+    "heimilisfang": "Skógarhlíð 6"
+  },
+  {
+    "nr": 12,
+    "postnumer": 300,
+    "heimilisfang": "Stillholti 16-18",
+    "nafn": "Sýslumaðurinn á Vesturlandi - Akranesi"
+  },
+  {
+    "nafn": "Sýslumaðurinn á Vesturlandi - Borgarnesi",
+    "heimilisfang": "Bjarnarbraut 2",
+    "postnumer": 310,
+    "nr": 13
+  },
+  {
+    "nafn": "Sýslumaðurinn á Vesturlandi -Stykkishólmi",
+    "heimilisfang": "Borgarbraut 2",
+    "postnumer": 340,
+    "nr": 14
+  },
+  {
+    "nafn": "Sýslumaðurinn á Vesturlandi - Búðardal",
+    "heimilisfang": "Miðbraut 11",
+    "postnumer": 370,
+    "nr": 15
+  },
+  {
+    "nr": 16,
+    "postnumer": 450,
+    "heimilisfang": "Aðalstræti 92",
+    "nafn": "Sýslumaðurinn á Vestfjörðum - Patreksfirði"
+  },
+  {
+    "nafn": "Sýslumaðurinn á Vestfjörðum - Bolungarvík",
+    "heimilisfang": "Aðalstræti 12",
+    "postnumer": 415,
+    "nr": 17
+  },
+  {
+    "nafn": "Sýslumaðurinn á Vestfjörðum - Ísafirði",
+    "heimilisfang": "Hafnarstræti 1",
+    "postnumer": 400,
+    "nr": 18
+  },
+  {
+    "heimilisfang": "Hafnarbraut 25",
+    "nafn": "Sýslumaðurinn á Vestfjörðum - Hólmavík",
+    "nr": 19,
+    "postnumer": 510
+  },
+  {
+    "postnumer": 540,
+    "nr": 20,
+    "nafn": "Sýslumaðurinn á Norðurlandi vestra - Blönduósi",
+    "heimilisfang": "Hnjúkabyggð 33"
+  },
+  {
+    "postnumer": 550,
+    "nr": 21,
+    "nafn": "Sýslumaðurinn á Norðurlandi vestra - Sauðárkróki",
+    "heimilisfang": "Suðurgötu 1"
+  },
+  {
+    "nafn": "Sýslumaðurinn á Norðurlandi eystra - Siglufirði",
+    "heimilisfang": "Gránugötu 4 - 6",
+    "postnumer": 580,
+    "nr": 22
+  },
+  {
+    "postnumer": 600,
+    "nr": 24,
+    "nafn": "Sýslumaðurinn á Norðurlandi eystra - Akureyri",
+    "heimilisfang": "Hafnarstræti 107"
+  },
+  {
+    "postnumer": 641,
+    "nr": 25,
+    "nafn": "Sýslumaðurinn á Norðurlandi eystra - Húsavík",
+    "heimilisfang": "Útgarði 1"
+  },
+  {
+    "heimilisfang": "Bjólfsgötu 7",
+    "nafn": "Sýslumaðurinn á Austurlandi - Seyðisfirði",
+    "nr": 26,
+    "postnumer": 710
+  },
+  {
+    "nafn": "Sýslumaðurinn á Austurlandi - Eskifirði",
+    "heimilisfang": "Strandgötu 52",
+    "postnumer": 735,
+    "nr": 28
+  },
+  {
+    "nafn": "Sýslumaðurinn á Suðurlandi - Höfn",
+    "heimilisfang": "Hafnarbraut 36",
+    "postnumer": 780,
+    "nr": 29
+  },
+  {
+    "postnumer": 870,
+    "nr": 30,
+    "nafn": "Sýslumaðurinn á Suðurlandi - Vík",
+    "heimilisfang": "Ránarbraut 1"
+  },
+  {
+    "nafn": "Sýslumaðurinn á Suðurlandi - Hvolsvelli",
+    "heimilisfang": "Austurvegi 6",
+    "postnumer": 860,
+    "nr": 31
+  },
+  {
+    "nafn": "Sýslumaðurinn í Vestmannaeyjum",
+    "heimilisfang": "Heiðarvegi 15",
+    "postnumer": 900,
+    "nr": 32
+  },
+  {
+    "nafn": "Sýslumaðurinn á Suðurlandi - Selfossi",
+    "heimilisfang": "Hörðuvöllum 1",
+    "postnumer": 800,
+    "nr": 33
+  },
+  {
+    "postnumer": 230,
+    "nr": 34,
+    "nafn": "Sýslumaðurinn á Suðurnesjum",
+    "heimilisfang": "Vatnsnesvegi 33"
+  },
+  {
+    "nr": 35,
+    "postnumer": 235,
+    "heimilisfang": "Grænási",
+    "nafn": "Sýslumaðurinn á Keflavíkurflugv"
+  },
+  {
+    "heimilisfang": "Bæjarhrauni 18",
+    "nafn": "Sýslumaðurinn á höfuðborgarsvæðinu - Hafnarfirði",
+    "nr": 36,
+    "postnumer": 220
+  },
+  {
+    "heimilisfang": "Hlíðarsmára 1",
+    "nafn": "Sýslumaðurinn á höfuðborgarsvæðinu - Kópavogi",
+    "nr": 37,
+    "postnumer": 201
+  }
+]

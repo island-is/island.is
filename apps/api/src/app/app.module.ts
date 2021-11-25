@@ -20,7 +20,7 @@ import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { HealthController } from './health.controller'
-import { environment } from './environments'
+import { getConfig } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
@@ -29,19 +29,23 @@ import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-reg
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
 import { FinanceModule } from '@island.is/api/domains/finance'
+import { AssetsModule } from '@island.is/api/domains/assets'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-voter-registry'
 import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
+import { IslykillModule } from '@island.is/api/domains/islykill'
 import { AuditModule } from '@island.is/nest/audit'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
+import { ProblemModule } from '@island.is/nest/problem'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
+const environment = getConfig
 const autoSchemaFile = environment.production
   ? true
   : 'apps/api/src/api.graphql'
@@ -85,10 +89,13 @@ const autoSchemaFile = environment.production
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({
-      xroadBaseUrl: environment.xroad.baseUrl,
-      xroadClientId: environment.xroad.clientId,
-      secret: environment.drivingLicense.secret,
-      xroadPath: environment.drivingLicense.xroadPath,
+      clientConfig: {
+        xroadBaseUrl: environment.xroad.baseUrl,
+        xroadClientId: environment.xroad.clientId,
+        secret: environment.drivingLicense.secret,
+        xroadPathV1: environment.drivingLicense.v1.xroadPath,
+        xroadPathV2: environment.drivingLicense.v2.xroadPath,
+      },
     }),
     EducationModule.register({
       xroad: {
@@ -152,16 +159,30 @@ const autoSchemaFile = environment.production
       },
     }),
     HealthInsuranceModule.register({
-      wsdlUrl: environment.healthInsurance.wsdlUrl,
-      baseUrl: environment.healthInsurance.baseUrl,
-      username: environment.healthInsurance.username,
-      password: environment.healthInsurance.password,
-      clientID: environment.healthInsurance.clientID,
-      xroadID: environment.healthInsurance.xroadID,
+      soapConfig: {
+        wsdlUrl: environment.healthInsurance.wsdlUrl,
+        baseUrl: environment.healthInsurance.baseUrl,
+        username: environment.healthInsurance.username,
+        password: environment.healthInsurance.password,
+        clientID: environment.healthInsurance.clientID,
+        xroadID: environment.healthInsurance.xroadID,
+      },
+      clientV2Config: {
+        xRoadBaseUrl: environment.healthInsuranceV2.xRoadBaseUrl,
+        xRoadProviderId: environment.healthInsuranceV2.xRoadProviderId,
+        xRoadClientId: environment.healthInsuranceV2.xRoadClientId,
+        username: environment.healthInsuranceV2.username,
+        password: environment.healthInsuranceV2.password,
+      },
     }),
     UserProfileModule.register({
       userProfileServiceBasePath:
         environment.userProfile.userProfileServiceBasePath,
+      islykill: {
+        cert: environment.islykill.cert,
+        passphrase: environment.islykill.passphrase,
+        basePath: environment.islykill.basePath,
+      },
     }),
     CommunicationsModule,
     ApiCatalogueModule,
@@ -213,6 +234,12 @@ const autoSchemaFile = environment.production
       xroadBaseUrl: environment.xroad.baseUrl,
       xroadClientId: environment.xroad.clientId,
     }),
+    AssetsModule.register({
+      xRoadBasePathWithEnv: environment.propertiesXRoad.url,
+      xRoadAssetsMemberCode: environment.propertiesXRoad.memberCode,
+      xRoadAssetsApiPath: environment.propertiesXRoad.apiPath,
+      xRoadClientId: environment.propertiesXRoad.clientId,
+    }),
     NationalRegistryXRoadModule.register({
       xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
       xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
@@ -236,13 +263,16 @@ const autoSchemaFile = environment.production
       xroad: {
         baseUrl: environment.xroad.baseUrl,
         clientId: environment.xroad.clientId,
-        path: environment.drivingLicense.xroadPath,
+        path: environment.drivingLicense.v1.xroadPath,
         secret: environment.drivingLicense.secret,
       },
       pkpass: {
         apiKey: environment.pkpass.apiKey,
         apiUrl: environment.pkpass.apiUrl,
         secretKey: environment.pkpass.secretKey,
+        cacheKey: environment.pkpass.cacheKey,
+        cacheTokenExpiryDelta: environment.pkpass.cacheTokenExpiryDelta,
+        authRetries: environment.pkpass.authRetries,
       },
     }),
     PaymentScheduleModule.register({
@@ -252,6 +282,12 @@ const autoSchemaFile = environment.production
       password: environment.paymentSchedule.password,
       username: environment.paymentSchedule.username,
     }),
+    IslykillModule.register({
+      cert: environment.islykill.cert,
+      passphrase: environment.islykill.passphrase,
+      basePath: environment.islykill.basePath,
+    }),
+    ProblemModule,
   ],
 })
 export class AppModule {}

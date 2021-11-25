@@ -9,7 +9,7 @@ import {
   EducationCard,
   EmptyState,
 } from '@island.is/service-portal/core'
-import * as styles from './CareerCards.treat'
+import * as styles from './CareerCards.css'
 import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
 

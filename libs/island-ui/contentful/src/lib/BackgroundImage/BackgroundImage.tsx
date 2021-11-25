@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect } from 'react'
 import cn from 'classnames'
 import { BoxProps, Box } from '@island.is/island-ui/core'
 import { theme, Colors } from '@island.is/island-ui/theme'
-import * as styles from './BackgroundImage.treat'
+import * as styles from './BackgroundImage.css'
 
 export type BackgroundImageProps = {
   image: { url: string; title: string }

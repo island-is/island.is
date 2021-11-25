@@ -13,11 +13,6 @@ import { Client } from './client.model'
 
 @Table({
   tableName: 'client_allowed_cors_origin',
-  indexes: [
-    {
-      fields: ['client_id', 'origin'],
-    },
-  ],
 })
 export class ClientAllowedCorsOrigin extends Model<ClientAllowedCorsOrigin> {
   @PrimaryKey

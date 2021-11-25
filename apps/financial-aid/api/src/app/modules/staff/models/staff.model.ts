@@ -1,7 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import { Staff } from '@island.is/financial-aid/shared/lib'
-import type { StaffRole } from '@island.is/financial-aid/shared/lib'
+import { Staff, StaffRole } from '@island.is/financial-aid/shared/lib'
 
 @ObjectType()
 export class StaffModel implements Staff {
@@ -17,12 +16,24 @@ export class StaffModel implements Staff {
   @Field()
   readonly municipalityId!: string
 
-  @Field(() => String)
-  readonly role!: StaffRole
+  @Field()
+  readonly municipalityName!: string
+
+  @Field(() => [String])
+  readonly roles!: StaffRole[]
 
   @Field()
   readonly active!: boolean
 
+  @Field({ nullable: true })
+  readonly phoneNumber?: string
+
   @Field()
-  readonly phoneNumber!: string
+  readonly municipalityHomepage?: string
+
+  @Field({ nullable: true })
+  readonly nickname?: string
+
+  @Field({ nullable: true })
+  readonly email?: string
 }

@@ -20,7 +20,7 @@ import {
 } from './fileSignatureReducer'
 import SignatureModal from './SignatureModal'
 import { JCAFieldBaseProps } from '../../types'
-import * as style from '../Shared.treat'
+import * as style from '../Shared.css'
 
 const Overview = ({
   application,

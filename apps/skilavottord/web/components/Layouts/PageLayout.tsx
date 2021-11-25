@@ -15,7 +15,7 @@ import {
   FormStepperMobile,
   LinkProvider,
 } from '@island.is/skilavottord-web/components'
-import * as styles from './PageLayout.treat'
+import * as styles from './PageLayout.css'
 import { ProcessType } from '@island.is/skilavottord-web/types'
 
 interface PageProps {

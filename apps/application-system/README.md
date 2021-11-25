@@ -100,6 +100,12 @@ yarn start api
 
 After following the Reference Template, repeat the steps from [OpenAPI and Swagger](https://github.com/island-is/island.is/tree/main/apps/application-system#openapi-and-swagger) or run `yarn install` to update schemas.
 
+### Adding a payment step
+
+If your application requires that the user pay a fee as part of the application process,
+that can be implemented by following the
+[adding a payment step](../../handbook/misc/application-payment-guide.md) guide
+
 ### Testing
 
 It is as simple as:

@@ -11,15 +11,15 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 // Here you import your module service
 import { HealthInsuranceService } from './health-insurance.service'
 
-const HEALTH_INSURANCE_XROAD_WSDLURL =
-  process.env.HEALTH_INSURANCE_XROAD_WSDLURL ??
+const XROAD_HEALTH_INSURANCE_WSDLURL =
+  process.env.XROAD_HEALTH_INSURANCE_WSDLURL ??
   'https://test-huld.sjukra.is/islandrg?wsdl'
 const HEALTH_INSURANCE_XROAD_BASEURL =
   process.env.XROAD_BASE_PATH ?? 'http://localhost:8080'
-const HEALTH_INSURANCE_XROAD_USERNAME =
-  process.env.HEALTH_INSURANCE_XROAD_USERNAME ?? ''
-const HEALTH_INSURANCE_XROAD_PASSWORD =
-  process.env.HEALTH_INSURANCE_XROAD_PASSWORD ?? ''
+const XROAD_HEALTH_INSURANCE_USERNAME =
+  process.env.XROAD_HEALTH_INSURANCE_USERNAME ?? ''
+const XROAD_HEALTH_INSURANCE_PASSWORD =
+  process.env.XROAD_HEALTH_INSURANCE_PASSWORD ?? ''
 const HEALTH_INSURANCE_XROAD_CLIENT_ID = process.env.XROAD_CLIENT_ID ?? ''
 const HEALTH_INSURANCE_XROAD_ID = process.env.XROAD_HEALTH_INSURANCE_ID ?? ''
 
@@ -29,10 +29,10 @@ export class HealthInsuranceModule {
       module: HealthInsuranceModule,
       imports: [
         HealthInsuranceMod.register({
-          wsdlUrl: HEALTH_INSURANCE_XROAD_WSDLURL,
+          wsdlUrl: XROAD_HEALTH_INSURANCE_WSDLURL,
           baseUrl: HEALTH_INSURANCE_XROAD_BASEURL,
-          username: HEALTH_INSURANCE_XROAD_USERNAME,
-          password: HEALTH_INSURANCE_XROAD_PASSWORD,
+          username: XROAD_HEALTH_INSURANCE_USERNAME,
+          password: XROAD_HEALTH_INSURANCE_PASSWORD,
           clientID: HEALTH_INSURANCE_XROAD_CLIENT_ID,
           xroadID: HEALTH_INSURANCE_XROAD_ID,
         }),

@@ -10,5 +10,6 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../../coverage/libs/api/domains/driving-license',
+  testEnvironment: 'jest-environment-node',
   displayName: 'api-domains-driving-license',
 }

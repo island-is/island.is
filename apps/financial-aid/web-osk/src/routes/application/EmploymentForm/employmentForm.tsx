@@ -4,16 +4,15 @@ import { Text, Input, Box } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  FormLayout,
   RadioButtonContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 
-import * as styles from './employmentForm.treat'
+import * as styles from './employmentForm.css'
 import cn from 'classnames'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 import {
   NavigationProps,
   Employment,
@@ -65,10 +64,7 @@ const EmploymentForm = () => {
   }
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Hvað lýsir stöðu þinni best?
@@ -82,9 +78,8 @@ const EmploymentForm = () => {
           }}
           onChange={(value: Employment) => {
             updateForm({ ...form, employment: value })
-            if (hasError) {
-              setHasError(false)
-            }
+
+            setHasError(false)
           }}
         />
 
@@ -127,7 +122,7 @@ const EmploymentForm = () => {
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
-    </FormLayout>
+    </>
   )
 }
 

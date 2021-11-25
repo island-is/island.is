@@ -37,7 +37,7 @@ export const calculateAidFinalAmount = (
   return amount - finalTaxAmount
 }
 
-export const calulateTaxOfAmount = (
+export const calculateTaxOfAmount = (
   amount: number,
   currentYear: string,
 ): number => {
@@ -49,7 +49,7 @@ export const calulateTaxOfAmount = (
   return Math.floor(amount * taxPercentage)
 }
 
-export const calulatePersonalTaxAllowanceUsed = (
+export const calculatePersonalTaxAllowanceUsed = (
   amount: number,
   usePersonalTaxAllowance: boolean,
   currentYear: string,
@@ -63,7 +63,7 @@ export const calulatePersonalTaxAllowanceUsed = (
     ? personalTaxAllowance
     : 0
 
-  const tax = calulateTaxOfAmount(amount, currentYear)
+  const tax = calculateTaxOfAmount(amount, currentYear)
 
   // Only show the amount of used personal tax allowence, not the full tax allowence
   return Math.min(personalTaxAllowanceUsed, tax)

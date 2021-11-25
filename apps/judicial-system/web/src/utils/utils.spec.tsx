@@ -2,9 +2,8 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { RequiredField } from '@island.is/judicial-system-web/src/types'
 import { CaseTransition, CaseGender } from '@island.is/judicial-system/types'
-import { getShortGender, isDirty, isNextDisabled } from './stepHelper'
+import { getShortGender, isDirty } from './stepHelper'
 import { validate } from './validate'
 
 import * as formatters from './formatters'
@@ -180,7 +179,7 @@ describe('Validation', () => {
   })
 
   describe('Validate national id format', () => {
-    test('should fail if not in correct form', () => {
+    test('should be valid if all digits filled in', () => {
       // Arrange
       const nid = '999999-9999'
 
@@ -188,8 +187,7 @@ describe('Validation', () => {
       const r = validate(nid, 'national-id')
 
       // Assert
-      expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Dæmi: 000000-0000')
+      expect(r.isValid).toEqual(true)
     })
 
     test('should be valid given just the first six digits', () => {
@@ -204,9 +202,9 @@ describe('Validation', () => {
       expect(r.errorMessage).toEqual('')
     })
 
-    test('should not be valid given an invalid day', () => {
+    test('should not be valid given too few digits', () => {
       // Arrange
-      const nid = '991201'
+      const nid = '99120'
 
       // Act
       const r = validate(nid, 'national-id')
@@ -216,9 +214,9 @@ describe('Validation', () => {
       expect(r.errorMessage).toEqual('Dæmi: 000000-0000')
     })
 
-    test('should not be valid given an invalid month', () => {
+    test('should not be valid given invalid number of digits', () => {
       // Arrange
-      const nid = '019901'
+      const nid = '991201-22'
 
       // Act
       const r = validate(nid, 'national-id')
@@ -325,47 +323,6 @@ describe('Step helper', () => {
 
       // Assert
       expect(result).toEqual('Lorem lara ipsum dolum kara')
-    })
-  })
-
-  describe('isNextDisabled', () => {
-    test('should return true if the only validation does not pass', () => {
-      // Arrange
-      const rf: RequiredField[] = [{ value: '', validations: ['empty'] }]
-
-      // Act
-      const ind = isNextDisabled(rf)
-
-      // Assert
-      expect(ind).toEqual(true)
-    })
-
-    test('should return true if the one validation does not pass and another one does', () => {
-      // Arrange
-      const rf: RequiredField[] = [
-        { value: '', validations: ['empty'] },
-        { value: '13:37', validations: ['empty', 'time-format'] },
-      ]
-
-      // Act
-      const ind = isNextDisabled(rf)
-
-      // Assert
-      expect(ind).toEqual(true)
-    })
-
-    test('should return false if the all validations pass', () => {
-      // Arrange
-      const rf: RequiredField[] = [
-        { value: 'Lorem ipsum', validations: ['empty'] },
-        { value: '13:37', validations: ['empty', 'time-format'] },
-      ]
-
-      // Act
-      const ind = isNextDisabled(rf)
-
-      // Assert
-      expect(ind).toEqual(false)
     })
   })
 

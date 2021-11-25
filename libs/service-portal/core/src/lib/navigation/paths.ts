@@ -13,6 +13,7 @@ export enum ServicePortalPath {
 
   // Settings
   SettingsRoot = '/stillingar',
+
   SettingsAccessControl = '/stillingar/adgangsstyring',
   SettingsAccessControlGrant = '/stillingar/adgangsstyring/veita',
   SettingsAccessControlAccess = '/stillingar/adgangsstyring/:nationalId(\\d+)',
@@ -20,8 +21,10 @@ export enum ServicePortalPath {
   SettingsPersonalInformationEditPhoneNumber = '/stillingar/personuupplysingar/breyta-simanumeri',
   SettingsPersonalInformationEditEmail = '/stillingar/personuupplysingar/breyta-netfangi',
   SettingsPersonalInformationEditLanguage = '/stillingar/personuupplysingar/breyta-tungumali',
+  SettingsPersonalInformationEditNudge = '/stillingar/personuupplysingar/breyta-hnippi',
   SettingsPersonalInformationEmailConfirmation = '/stillingar/personuupplysingar/stadfesta-netfang/:hash',
   SettingsExternal = 'https://minarsidur.island.is/minar-sidur/minn-adgangur/stillingar/',
+  SettingsIslykill = '/stillingar/islykill',
 
   // Family
   FamilyRoot = '/min-gogn/fjolskyldan',
@@ -29,6 +32,12 @@ export enum ServicePortalPath {
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',
+
+  // General Petitions
+  Petitions = '/min-gogn/medmaeli',
+  PetitionsAdminView = '/min-gogn/medmaeli-admin',
+  PetitionList = '/min-gogn/medmaeli/:listId',
+  PetitionListAdmin = '/min-gogn/medmaeli-admin/:listId',
 
   RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
 
@@ -62,6 +71,7 @@ export enum ServicePortalPath {
 
   // Assets
   AssetsRoot = '/fasteignir',
+  AssetsRealEstateDetail = '/fasteignir/:id',
   AssetsVehicles = '/okutaeki',
 
   // Messages

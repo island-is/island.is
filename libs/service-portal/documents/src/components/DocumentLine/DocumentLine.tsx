@@ -11,7 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
-import * as styles from './DocumentLine.treat'
+import * as styles from './DocumentLine.css'
 import { User } from 'oidc-client'
 
 interface Props {

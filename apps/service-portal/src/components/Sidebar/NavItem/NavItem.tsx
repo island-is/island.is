@@ -1,7 +1,7 @@
 import { Box, IconProps, Text, Icon } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
-import * as styles from './NavItem.treat'
+import * as styles from './NavItem.css'
 import { Link } from 'react-router-dom'
 
 interface Props {

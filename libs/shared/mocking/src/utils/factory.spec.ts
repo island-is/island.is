@@ -25,7 +25,7 @@ describe('factory', () => {
     // Arrange
     const createObj = factory<Obj>({
       title: 'Hello',
-      age: () => faker.random.number(),
+      age: () => faker.datatype.number(),
     })
 
     // Act

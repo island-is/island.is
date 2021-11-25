@@ -1,4 +1,5 @@
 import {
+  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseGender,
   CaseType,
@@ -12,6 +13,7 @@ import {
   formatGender,
   formatCustodyRestrictions,
   formatAlternativeTravelBanRestrictions,
+  formatAppeal,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -145,37 +147,59 @@ describe('formatCustodyRestrictions', () => {
     // Arrange
     const accusedGender = CaseGender.MALE
     const custodyRestrictions: Array<CaseCustodyRestrictions> = []
-    const validToDate = new Date('2021-07-22T11:23')
 
     // Act
     const res = formatCustodyRestrictions(
       accusedGender,
       custodyRestrictions,
-      validToDate,
+      true,
     )
 
     // Assert
-    expect(res).toBe('Sækjandi tekur fram að gæsluvarðhaldið sé án takmarkana.')
+    expect(res).toBe('')
+  })
+
+  test('should return formatted restrictions for no restrictions in custody notice', () => {
+    // Arrange
+    const accusedGender = CaseGender.MALE
+    const custodyRestrictions: Array<CaseCustodyRestrictions> = []
+
+    // Act
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi tekur fram að gæsluvarðhaldið verði án takmarkana.',
+    )
   })
 
   test('should return formatted restrictions for isolation only', () => {
     // Arrange
     const accusedGender = CaseGender.MALE
     const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
-    const validToDate = new Date('2021-07-22T11:23')
-    const isolationToDate = new Date('2021-07-22T11:23')
 
     // Act
     const res = formatCustodyRestrictions(
       accusedGender,
       custodyRestrictions,
-      validToDate,
-      isolationToDate,
+      true,
     )
 
     // Assert
+    expect(res).toBe('')
+  })
+
+  test('should return formatted restrictions for isolation only in custody notice', () => {
+    // Arrange
+    const accusedGender = CaseGender.MALE
+    const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
+
+    // Act
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+
+    // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að kærði skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur.',
+      'Sækjandi tekur fram að gæsluvarðhaldið verði án annarra takmarkana.',
     )
   })
 
@@ -186,20 +210,13 @@ describe('formatCustodyRestrictions', () => {
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
     ]
-    const validToDate = new Date('2021-07-22T11:23')
-    const isolationToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-      isolationToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að kærði skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur og að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
     )
   })
 
@@ -211,18 +228,13 @@ describe('formatCustodyRestrictions', () => {
       CaseCustodyRestrictions.MEDIA,
       CaseCustodyRestrictions.VISITAION,
     ]
-    const validToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að gæsluvarðhaldið verði með bréfaskoðun og símabanni, fjölmiðlabanni og heimsóknarbanni skv. 99. gr. laga nr. 88/2008.',
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með heimsóknarbanni, bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
     )
   })
 
@@ -234,39 +246,13 @@ describe('formatCustodyRestrictions', () => {
       CaseCustodyRestrictions.VISITAION,
       CaseCustodyRestrictions.COMMUNICATION,
     ]
-    const validToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að gæsluvarðhaldið verði með bréfaskoðun og símabanni, fjölmiðlabanni og heimsóknarbanni skv. 99. gr. laga nr. 88/2008.',
-    )
-  })
-
-  test('should return formatted restrictions for isolation shorter than custody', () => {
-    // Arrange
-    const accusedGender = CaseGender.MALE
-    const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
-    const validToDate = new Date('2021-07-22T11:23')
-    const isolationToDate = new Date('2021-06-30T16:00')
-
-    // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-      isolationToDate,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Sækjandi tekur fram að kærði skuli sæta einangrun ekki lengur en til miðvikudagsins 30. júní 2021, kl. 16:00.',
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með heimsóknarbanni, bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
     )
   })
 })
@@ -284,7 +270,7 @@ describe('formatAlternativeTravelBanRestrictions', () => {
     )
 
     // Assert
-    expect(res).toBe('Sækjandi tekur fram að farbannið sé án takmarkana.')
+    expect(res).toBe('')
   })
 
   test('should return formatted restrictions for one restriction', () => {
@@ -410,5 +396,62 @@ describe('formatGender', () => {
 
     // Assert
     expect(r).toBe('Kynsegin/Annað')
+  })
+})
+
+describe('formatAppeal', () => {
+  test('should format appeal', () => {
+    // Arrange
+    const appealDecision = CaseAppealDecision.APPEAL
+    const stakeholder = 'Aðili'
+
+    // Act
+    const res = formatAppeal(appealDecision, stakeholder)
+
+    // Assert
+    expect(res).toBe(
+      'Aðili lýsir því yfir að hann kæri úrskurðinn til Landsréttar.',
+    )
+  })
+
+  test('should format acceptance', () => {
+    // Arrange
+    const appealDecision = CaseAppealDecision.ACCEPT
+    const stakeholder = 'Aðili'
+
+    // Act
+    const res = formatAppeal(appealDecision, stakeholder)
+
+    // Assert
+    expect(res).toBe('Aðili unir úrskurðinum.')
+  })
+
+  test('should format postponement', () => {
+    // Arrange
+    const appealDecision = CaseAppealDecision.POSTPONE
+    const stakeholder = 'Aðili'
+
+    // Act
+    const res = formatAppeal(appealDecision, stakeholder)
+
+    // Assert
+    expect(res).toBe(
+      'Aðili lýsir því yfir að hann taki sér lögbundinn kærufrest.',
+    )
+  })
+
+  test('should format gender pronouns if gender is set', () => {
+    // Arrange
+    const appealDecision = CaseAppealDecision.POSTPONE
+    const stakeholder = 'Kærða'
+    const stakeholderGender = CaseGender.FEMALE
+
+    // Act
+    const res = formatAppeal(appealDecision, stakeholder, stakeholderGender)
+
+    // Assert
+    expect(res).toBe(
+      'Kærða lýsir því yfir að hún taki sér lögbundinn kærufrest.',
+    )
   })
 })

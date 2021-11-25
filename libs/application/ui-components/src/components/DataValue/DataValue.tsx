@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 
 import { Label } from '../Label/Label'
-import * as styles from './DataValue.treat'
+import * as styles from './DataValue.css'
 
 interface DataValueProps {
   label: string

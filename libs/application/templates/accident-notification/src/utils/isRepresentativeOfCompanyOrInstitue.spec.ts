@@ -1,13 +1,18 @@
 import { FormValue } from '@island.is/application/core'
-import { YES } from '../constants'
+import { WhoIsTheNotificationForEnum } from '../types'
+
 import { isRepresentativeOfCompanyOrInstitute } from './isRepresentativeOfCompanyOrInstitue'
 describe('isRepresentativeOfCompanyOrInstitue', () => {
   const representative: FormValue = {
-    isRepresentativeOfCompanyOrInstitue: [YES],
+    whoIsTheNotificationFor: {
+      answer: WhoIsTheNotificationForEnum.JURIDICALPERSON,
+    },
   }
 
   const notRepresentative: FormValue = {
-    isRepresentativeOfCompanyOrInstitue: [],
+    whoIsTheNotificationFor: {
+      answer: WhoIsTheNotificationForEnum.ME,
+    },
   }
 
   const emptyObject = {}

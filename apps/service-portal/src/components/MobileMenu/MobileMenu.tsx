@@ -9,7 +9,7 @@ import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { ActionType } from '../../store/actions'
 import { useStore } from '../../store/stateProvider'
 import ModuleNavigation from '../Sidebar/ModuleNavigation'
-import * as styles from './MobileMenu.treat'
+import * as styles from './MobileMenu.css'
 
 const MobileMenu = (): ReactElement | null => {
   const ref = useRef(null)

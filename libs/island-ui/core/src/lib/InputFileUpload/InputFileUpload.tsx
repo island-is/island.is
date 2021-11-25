@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
 import cn from 'classnames'
 
-import * as styles from './InputFileUpload.treat'
+import * as styles from './InputFileUpload.css'
 
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
@@ -10,6 +10,7 @@ import { Button } from '../Button/Button'
 import { theme, Colors } from '@island.is/island-ui/theme'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconTypes } from '../IconRC/iconMap'
+import { useMeasure } from 'react-use'
 
 export type UploadFileStatus = 'error' | 'done' | 'uploading'
 
@@ -68,6 +69,7 @@ interface UploadedFileProps {
   onOpenFile?: (file: UploadFile) => void
   defaultBackgroundColor?: Colors
   doneIcon?: IconTypes
+  hideIcons?: boolean
 }
 
 export const UploadedFile = ({
@@ -78,7 +80,10 @@ export const UploadedFile = ({
   onRemoveClick,
   onRetryClick,
   onOpenFile,
+  hideIcons = false,
 }: UploadedFileProps) => {
+  const [ref, { width }] = useMeasure()
+
   const statusColor = (status?: UploadFileStatus): Colors => {
     switch (status) {
       case 'error':
@@ -105,11 +110,21 @@ export const UploadedFile = ({
     return bytes ? Math.ceil(bytes / 1024) : ''
   }
 
+  const truncateInMiddle = (str: string) => {
+    if (str.length > 70) {
+      const nrOfCharacters = width / 25
+      return `${str.slice(0, nrOfCharacters)}...${str.slice(-nrOfCharacters)}`
+    } else {
+      return str
+    }
+  }
+
   const isUploading =
     file.percent && file.percent < 100 && file.status === 'uploading'
 
   return (
     <Box
+      ref={ref}
       display="flex"
       flexDirection="row"
       alignItems="center"
@@ -122,7 +137,7 @@ export const UploadedFile = ({
       width="full"
       position="relative"
       title={file.name}
-      aria-labelledBy={onOpenFile ? `Opna ${file.name}` : undefined}
+      aria-label={onOpenFile ? `Opna ${file.name}` : undefined}
       className={cn(styles.uploadedFile, {
         [styles.canOpenFiles]: onOpenFile,
       })}
@@ -136,7 +151,7 @@ export const UploadedFile = ({
     >
       <Text truncate fontWeight="semiBold">
         <Box className={{ [styles.fileName]: onOpenFile }}>
-          {file.name}
+          {truncateInMiddle(file.name)}
           {showFileSize && file.size && (
             <Text as="span">{` (${kb(file.size)}KB)`}</Text>
           )}
@@ -147,43 +162,45 @@ export const UploadedFile = ({
           )}
         </Box>
       </Text>
-      <Box display="flex">
-        {isUploading ? (
-          <div
-            className={styles.progressIconAnimation}
-            aria-label="Hleð upp skrá"
-          >
-            <Icon color="blue400" icon={statusIcon(file.status)} />
-          </div>
-        ) : file.status === 'error' && onRetryClick ? (
-          <button
-            type={'button'}
-            onClick={(e) => {
-              e.stopPropagation()
-              if (!isUploading) {
-                onRetryClick(file)
-              }
-            }}
-            aria-label="Reyna aftur"
-          >
-            <Icon color="blue400" icon="reload" />
-          </button>
-        ) : (
-          <button
-            type={'button'}
-            onClick={(e) => {
-              e.stopPropagation()
-              if (!isUploading) {
-                onRemoveClick(file)
-              }
-            }}
-            aria-label="Fjarlægja skrá"
-          >
-            <Icon color="blue400" icon={statusIcon(file.status)} />
-          </button>
-        )}
-      </Box>
-      <UploadingIndicator percent={file.percent} />
+      {!hideIcons && (
+        <Box display="flex">
+          {isUploading ? (
+            <div
+              className={styles.progressIconAnimation}
+              aria-label="Hleð upp skrá"
+            >
+              <Icon color="blue400" icon={statusIcon(file.status)} />
+            </div>
+          ) : file.status === 'error' && onRetryClick ? (
+            <button
+              type={'button'}
+              onClick={(e) => {
+                e.stopPropagation()
+                if (!isUploading) {
+                  onRetryClick(file)
+                }
+              }}
+              aria-label="Reyna aftur"
+            >
+              <Icon color="blue400" icon="reload" />
+            </button>
+          ) : (
+            <button
+              type={'button'}
+              onClick={(e) => {
+                e.stopPropagation()
+                if (!isUploading) {
+                  onRemoveClick(file)
+                }
+              }}
+              aria-label="Fjarlægja skrá"
+            >
+              <Icon color="blue400" icon={statusIcon(file.status)} />
+            </button>
+          )}
+        </Box>
+      )}
+      {file.percent && <UploadingIndicator percent={file.percent} />}
     </Box>
   )
 }
@@ -206,6 +223,7 @@ export interface InputFileUploadProps {
   errorMessage?: string
   defaultFileBackgroundColor?: Colors
   doneIcon?: IconTypes
+  hideIcons?: boolean
 }
 
 export const InputFileUpload = ({
@@ -226,6 +244,7 @@ export const InputFileUpload = ({
   errorMessage,
   defaultFileBackgroundColor,
   doneIcon,
+  hideIcons = false,
 }: InputFileUploadProps) => {
   const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0 || !onChange) return
@@ -289,6 +308,7 @@ export const InputFileUpload = ({
             doneIcon={doneIcon}
             onRemoveClick={onRemove}
             onRetryClick={onRetry}
+            hideIcons={hideIcons}
           />
         ))}
       </Box>

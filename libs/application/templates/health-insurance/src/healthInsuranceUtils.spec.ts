@@ -24,7 +24,7 @@ describe('Health insurance utils', () => {
 
   const createApplication = (
     applicationState = 'draft',
-    id = faker.random.uuid(),
+    id = faker.datatype.uuid(),
     externalData?: any,
     createDate?: string,
   ) =>
@@ -76,7 +76,7 @@ describe('Health insurance utils', () => {
 
       const application = createApplication(
         'draft',
-        faker.random.uuid(),
+        faker.datatype.uuid(),
         externalData,
       )
 
@@ -86,7 +86,7 @@ describe('Health insurance utils', () => {
 
     it('should return false if there is only one draft in application list', () => {
       // assert
-      const currentApplicationId = faker.random.uuid()
+      const currentApplicationId = faker.datatype.uuid()
 
       const otherApplications = {
         data: [
@@ -115,7 +115,7 @@ describe('Health insurance utils', () => {
 
     it('should return true if there is more than one draft in application list', () => {
       // assert
-      const currentApplicationId = faker.random.uuid()
+      const currentApplicationId = faker.datatype.uuid()
 
       const clock = jest.useFakeTimers('modern')
       clock.setSystemTime(new Date('2020-06-14T12:00-00:00').getTime())
@@ -172,7 +172,7 @@ describe('Health insurance utils', () => {
 
     it('should return false if oldest draft is current application', () => {
       // assert
-      const currentApplicationId = faker.random.uuid()
+      const currentApplicationId = faker.datatype.uuid()
 
       const windowSpy = jest.spyOn(window, 'window', 'get')
 
@@ -193,7 +193,7 @@ describe('Health insurance utils', () => {
           createApplication(
             'draft',
             currentApplicationId,
-            faker.random.uuid(),
+            faker.datatype.uuid(),
             yesterday,
           ),
           createApplication('draft'),
@@ -231,7 +231,7 @@ describe('Health insurance utils', () => {
   describe('Getting oldest draft application id', () => {
     it('should return application that was created first', () => {
       // assert
-      const expectedApplicationId = faker.random.uuid()
+      const expectedApplicationId = faker.datatype.uuid()
 
       const yesterday = new Date()
       yesterday.setDate(yesterday.getDate() - 1)
@@ -241,9 +241,14 @@ describe('Health insurance utils', () => {
 
       const applications = [
         createApplication('draft', expectedApplicationId, undefined, lastYear),
-        createApplication('draft', faker.random.uuid(), undefined, yesterday),
+        createApplication('draft', faker.datatype.uuid(), undefined, yesterday),
         createApplication('draft'),
-        createApplication('inReview', faker.random.uuid(), undefined, lastYear),
+        createApplication(
+          'inReview',
+          faker.datatype.uuid(),
+          undefined,
+          lastYear,
+        ),
         createApplication('inReview'),
       ]
 

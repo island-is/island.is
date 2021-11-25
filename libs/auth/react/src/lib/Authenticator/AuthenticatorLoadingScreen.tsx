@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
-import * as styles from './Authenticator.treat'
+import * as styles from './Authenticator.css'
 
 const AuthenticatorLoadingScreen = () => {
   return (

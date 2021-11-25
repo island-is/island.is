@@ -1,4 +1,4 @@
-import * as s from './RegulationDisplay.treat'
+import * as s from './RegulationDisplay.css'
 
 import React, { useState } from 'react'
 import { ISODate, prettyName } from '@island.is/regulations'
@@ -13,12 +13,18 @@ import { RegulationStatus } from './RegulationStatus'
 import { Appendixes } from './Appendixes'
 import { HTMLBox } from '@island.is/regulations/react'
 import { CommentsBox } from './CommentsBox'
+import { Disclaimer } from './Disclaimer'
 import { RegulationInfoBox } from './RegulationInfoBox'
 import { RegulationEffectsBox } from './RegulationEffectsBox'
 import { RegulationChangelog } from './RegulationChangelog'
 import { AffectingRegulations } from './AffectingRegulations'
 import { RegulationTimeline } from './RegulationTimeline'
 import { DiffModeToggle } from './DiffModeToggle'
+import { HistoryStepper } from './HistoryStepper'
+import { useRegulationIndexer } from './useRegulationIndexer'
+import { RegulationIndex } from './RegulationIndex'
+
+// ---------------------------------------------------------------------------
 
 const getKey = (regulation: RegulationMaybeDiff): string => {
   const { name, timelineDate, showingDiff } = regulation
@@ -42,9 +48,11 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
 
   const name = prettyName(regulation.name)
 
-  const { timelineDate, lastAmendDate, repealedDate } = regulation
+  const { timelineDate, lastAmendDate, repealedDate, repealed } = regulation
 
   const isRepealed = !!repealedDate
+  const isOgildWAT = repealed && !repealedDate // Don't ask. Magic data!
+
   const isCurrent =
     (!isRepealed && !timelineDate) || timelineDate === lastAmendDate
   const isUpcoming =
@@ -56,6 +64,8 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
 
   const waterMarkClass = isRepealed
     ? s.repealedWarning
+    : isOgildWAT
+    ? s.ogildWatWarning
     : !isCurrent
     ? s.oudatedWarning + (isUpcoming ? ' ' + s.upcomingWarning : '')
     : undefined
@@ -64,8 +74,14 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
 
   const [showTimeline, setShowTimeline] = useState(false)
 
+  const { index, text, appendixes, comments } = useRegulationIndexer(
+    regulation,
+    txt,
+  )
+
   return (
     <RegulationLayout
+      key={key}
       name={regulation.name}
       texts={props.texts}
       main={
@@ -76,6 +92,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
               texts={texts}
               urlDate={urlDate}
             />
+            <HistoryStepper regulation={regulation} texts={texts} />
             <RegulationStatus
               regulation={regulation}
               urlDate={props.urlDate}
@@ -100,67 +117,65 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
               )}
             </Text>
 
-            <HTMLBox
-              className={s.bodyText + ' ' + s.diffText}
-              html={regulation.text}
-            />
+            {index && <RegulationIndex index={index} txt={txt} />}
 
+            <HTMLBox className={s.bodyText + ' ' + s.diffText} html={text} />
             <Appendixes
-              key={key}
               legend={txt('appendixesTitle')}
               genericTitle={txt('appendixGenericTitle')}
-              appendixes={regulation.appendixes}
+              appendixes={appendixes}
               diffing={!!regulation.showingDiff}
             />
-
-            <CommentsBox
-              title={txt('commentsTitle')}
-              content={regulation.comments}
-            />
+            <CommentsBox title={txt('commentsTitle')} content={comments} />
           </div>
+          <Disclaimer
+            title={txt('disclaimerTitle')}
+            content={txt('disclaimerMd')}
+          />
         </>
       }
       sidebar={
-        <Sticky>
-          <Stack space={3}>
-            <Hidden print={true}>
-              <Link href={linkResolver('regulationshome').href}>
+        <Sticky constantSticky>
+          <div className={s.sidebarScroller}>
+            <Stack space={3}>
+              <Hidden print={true}>
                 <Button
                   preTextIcon="arrowBack"
                   preTextIconType="filled"
                   size="small"
-                  type="button"
                   variant="text"
                 >
-                  {txt('goHome')}
+                  <Link href={linkResolver('regulationshome').href}>
+                    {txt('goHome')}
+                  </Link>
                 </Button>
-              </Link>
-            </Hidden>
+              </Hidden>
 
-            <RegulationInfoBox regulation={regulation} texts={texts} />
+              <RegulationInfoBox regulation={regulation} texts={texts} />
 
-            <Hidden print={true}>
-              {showTimeline ? (
-                <RegulationTimeline regulation={regulation} texts={texts} />
-              ) : (
-                <RegulationChangelog
-                  key={regulation.name}
-                  regulation={regulation}
-                  texts={texts}
+              <Hidden print={true}>
+                {showTimeline ? (
+                  <RegulationTimeline regulation={regulation} texts={texts} />
+                ) : (
+                  <RegulationChangelog
+                    key={regulation.name}
+                    regulation={regulation}
+                    texts={texts}
+                  />
+                )}
+                <button
+                  onClick={() => setShowTimeline(!showTimeline)}
+                  {...((v) => ({
+                    'aria-label': v,
+                    title: v,
+                  }))(showTimeline ? 'Birta tímalínu' : 'Birta breytinga logg')}
+                  style={{ width: '100%', padding: '1em', cursor: 'pointer' }}
                 />
-              )}
-              <button
-                onClick={() => setShowTimeline(!showTimeline)}
-                {...((v) => ({
-                  'aria-label': v,
-                  title: v,
-                }))(showTimeline ? 'Birta tímalínu' : 'Birta breytinga logg')}
-                style={{ width: '100%', padding: '1em', cursor: 'pointer' }}
-              />
 
-              <RegulationEffectsBox regulation={regulation} texts={texts} />
-            </Hidden>
-          </Stack>
+                <RegulationEffectsBox regulation={regulation} texts={texts} />
+              </Hidden>
+            </Stack>
+          </div>
         </Sticky>
       }
     />

@@ -1,9 +1,10 @@
-import { ISODate, RegQueryName } from '@island.is/regulations'
+import { ISODate, prettyName, RegQueryName } from '@island.is/regulations'
 import {
   Regulation,
   RegulationRedirect,
   RegulationDiff,
   RegulationOriginalDates,
+  RegulationViewTypes,
 } from '@island.is/regulations/web'
 import { RegulationPageTexts } from '../../components/Regulations/RegulationTexts.types'
 
@@ -17,29 +18,57 @@ import { getUiTexts } from '../../components/Regulations/getUiTexts'
 import {
   GetRegulationQuery,
   QueryGetRegulationArgs,
-  RegulationViewTypes,
+  RegulationViewTypes as Schema_RegulationViewTypes,
 } from '@island.is/web/graphql/schema'
 import { GET_REGULATION_QUERY } from '../queries'
+import { Text } from '@island.is/island-ui/core'
+import { HeadWithSocialSharing } from '@island.is/web/components'
 
 // ---------------------------------------------------------------------------
 
-type RegulationPageProps = {
-  regulation: Regulation | RegulationDiff | RegulationRedirect
-  texts: RegulationPageTexts
-  urlDate?: ISODate
-}
+type RegulationPageProps =
+  | {
+      regulation: Regulation | RegulationDiff | RegulationRedirect
+      texts: RegulationPageTexts
+      nonCurrent: boolean
+      urlDate?: ISODate
+    }
+  | { redirect: string }
 
 const RegulationPage: Screen<RegulationPageProps> = (props) => {
-  const { regulation, texts, urlDate } = props
+  if ('redirect' in props) {
+    return (
+      <div>
+        <meta httpEquiv="refresh" content={`0;url=${props.redirect}`} />
+        <Text as="p" marginY={6}>
+          <strong>Sæki PDF skrá</strong>
+        </Text>
+      </div>
+    )
+  }
 
-  return 'redirectUrl' in regulation ? (
-    <RegulationRedirectMessage texts={texts} regulation={regulation} />
-  ) : (
-    <RegulationDisplay
-      texts={texts}
-      regulation={regulation}
-      urlDate={urlDate}
-    />
+  const { regulation, texts, nonCurrent, urlDate } = props
+
+  const title = prettyName(regulation.name) + ' – ' + regulation.title
+  const robotsDirective =
+    'redirectUrl' in regulation ? 'noindex' : nonCurrent && 'noindex, nofollow'
+
+  return (
+    <>
+      <HeadWithSocialSharing title={title} description=" ">
+        {robotsDirective && <meta name="robots" content={robotsDirective} />}
+      </HeadWithSocialSharing>
+
+      {'redirectUrl' in regulation ? (
+        <RegulationRedirectMessage texts={texts} regulation={regulation} />
+      ) : (
+        <RegulationDisplay
+          texts={texts}
+          regulation={regulation}
+          urlDate={urlDate}
+        />
+      )}
+    </>
   )
 }
 
@@ -122,7 +151,7 @@ const assertEarlierDate = (
   date: ISODate | undefined,
 ): ISODate | RegulationOriginalDates.gqlHack | undefined => {
   if (date) {
-    if (maybeISODate === 'original') {
+    if (maybeISODate === RegulationOriginalDates.api) {
       return RegulationOriginalDates.gqlHack
     }
     const baseDate = maybeISODate ? assertDate(maybeISODate) : undefined
@@ -135,8 +164,18 @@ const assertEarlierDate = (
 
 // ---------------------------------------------------------------------------
 
-RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const params = query.params as Partial<ReadonlyArray<string>>
+RegulationPage.getInitialProps = async ({
+  apolloClient,
+  locale,
+  query,
+  res,
+  asPath,
+}) => {
+  const params = query.params as Partial<Array<string>>
+  const isPdf = params[params.length - 1] === 'pdf'
+  if (isPdf) {
+    params.pop()
+  }
   const p = {
     name: params[0] || '',
     viewType: params[1] || '',
@@ -149,28 +188,40 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const viewTypeParam = assertViewType(p.viewType)
   // FIXME: This assertion is technically unsafe but will do until we either stop using
   // an enum, or refactor it into a standalone, shared regulations-types library
-  const viewType = (viewTypeParam === 'on'
-    ? 'd'
-    : viewTypeParam) as RegulationViewTypes
+  const viewType = (viewTypeParam === 'on' ? 'd' : viewTypeParam) as
+    | RegulationViewTypes
+    | undefined // Ugh, enums are pain.
   const date = assertDate(p.date, viewType)
   const isCustomDiff = date ? assertDiff(p.diff) : undefined
   const earlierDate = isCustomDiff
     ? assertEarlierDate(p.earlierDate, date)
     : undefined
 
-  const [texts, regulation] = await Promise.all([
-    await getUiTexts<RegulationPageTexts>(
-      apolloClient,
-      locale,
-      'Regulations_Viewer',
-    ),
+  if (!name || !viewType) {
+    throw new CustomNextError(404)
+  }
 
+  if (name !== p.name) {
+    const nameRe = new RegExp(`/nr/${p.name}(?:/|$)`)
+    const currentUrl = asPath || '/reglugerdir'
+    const redirectUrl = currentUrl.replace(nameRe, `/nr/${name}/`)
+    if (res) {
+      res.writeHead(301, { Location: redirectUrl })
+      res.end()
+    }
+    return {
+      redirect: redirectUrl,
+    }
+  }
+
+  const [texts, regulation] = await Promise.all([
+    getUiTexts<RegulationPageTexts>(apolloClient, locale, 'Regulations_Viewer'),
     apolloClient
       .query<GetRegulationQuery, QueryGetRegulationArgs>({
         query: GET_REGULATION_QUERY,
         variables: {
           input: {
-            viewType,
+            viewType: (viewType as unknown) as Schema_RegulationViewTypes,
             name,
             date,
             isCustomDiff,
@@ -192,6 +243,34 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Þessi reglugerð finnst ekki!')
   }
 
+  const nonCurrent = viewType !== RegulationViewTypes.current
+
+  if (res && nonCurrent) {
+    //  !('redirectUrl' in regulation) && (regulation.timelineDate || regulation.showingDiff)
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow')
+  }
+
+  if (isPdf) {
+    const pdfUrl =
+      'redirectUrl' in regulation
+        ? regulation.originalDoc
+        : regulation.pdfVersion
+
+    if (!pdfUrl) {
+      throw new CustomNextError(
+        404,
+        'Þessi reglugerð á ekki PDF útgáfu (ennþá)',
+      )
+    }
+    if (res) {
+      res.writeHead(307, { Location: pdfUrl })
+      res.end()
+    }
+    return {
+      redirect: pdfUrl,
+    }
+  }
+
   // TODO: Consider then comparing `date` and `regulation.effectiveDate`
   // if `viewType === "d"` ... and if they differ then redirect
   // the browser to `/d/${regulation.effectiveDate}/etc...`
@@ -208,6 +287,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     regulation,
     texts,
     urlDate,
+    nonCurrent,
   }
 }
 

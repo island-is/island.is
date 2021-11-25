@@ -33,7 +33,7 @@ export interface DataProviderConfig {
 export interface GraphqlGatewayResponse<DataType> extends Response {
   json: () => Promise<{
     data?: DataType
-    errors?: GraphQLError
+    errors?: GraphQLError[]
   }>
 }
 

@@ -6,7 +6,7 @@ import {
   Stack,
   ArrowLink,
 } from '@island.is/island-ui/core'
-import * as styles from './ErrorModal.treat'
+import * as styles from './ErrorModal.css'
 
 interface LinkProp {
   href: string

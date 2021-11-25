@@ -14,12 +14,12 @@ export const financeModule: ServicePortalModule = {
   widgets: () => [],
   routes: () => {
     const routes: ServicePortalRoute[] = [
-      // {
-      //   name: m.finance,
-      //   path: ServicePortalPath.FinanceRoot,
-      //   render: () =>
-      //     lazy(() => import('./screens/FinanceOverview/FinanceOverview')),
-      // },
+      {
+        name: m.finance,
+        path: ServicePortalPath.FinanceRoot,
+        render: () =>
+          lazy(() => import('./screens/FinanceOverview/FinanceOverview')),
+      },
       {
         name: m.financeStatus,
         path: ServicePortalPath.FinanceStatus,

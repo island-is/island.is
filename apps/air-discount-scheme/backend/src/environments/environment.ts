@@ -7,8 +7,8 @@ const devConfig = {
     dsn: process.env.SENTRY_DSN,
   },
   nationalRegistry: {
-    url: 'https://skeyti.advania.is/ords/slrv/registry/v1.0',
-    username: 'si_flugfargjold',
+    url: process.env.NATIONAL_REGISTRY_URL,
+    username: process.env.NATIONAL_REGISTRY_USERNAME,
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
   },
   airlineApiKeys: {
@@ -41,8 +41,8 @@ const prodConfig = {
     dsn: process.env.SENTRY_DSN,
   },
   nationalRegistry: {
-    url: 'https://skeyti.advania.is/ords/slrv/registry/v1.0',
-    username: 'si_flugfargjold',
+    url: process.env.NATIONAL_REGISTRY_URL,
+    username: process.env.NATIONAL_REGISTRY_USERNAME,
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
   },
   airlineApiKeys: {

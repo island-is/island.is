@@ -60,4 +60,11 @@ export class SmsVerification extends Model<SmsVerification> {
   })
   @ApiProperty()
   mobilePhoneNumber!: string
+
+  @Column({
+    type: DataType.INTEGER,
+    defaultValue: 0,
+    allowNull: false,
+  })
+  tries!: number
 }

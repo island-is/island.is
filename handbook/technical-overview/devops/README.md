@@ -10,4 +10,5 @@ The home for all the infrastructure information you need to know regarding `isla
 - [Logging](logging.md)
 - [Metrics](metrics.md)
 - [Observability](observability.md)
+- [Services setup](service-setup.md)
 - [Operations base principles](operations-base-principles.md)

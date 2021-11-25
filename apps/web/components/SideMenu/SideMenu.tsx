@@ -27,7 +27,7 @@ import { MenuTabsContext } from '@island.is/web/context/MenuTabsContext/MenuTabs
 import { useI18n } from '@island.is/web/i18n'
 import { SearchInput } from '../SearchInput/SearchInput'
 import { LanguageToggler } from '../LanguageToggler'
-import * as styles from './SideMenu.treat'
+import * as styles from './SideMenu.css'
 
 interface TabLink {
   title: string

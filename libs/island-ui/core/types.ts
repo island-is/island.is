@@ -14,4 +14,4 @@ export type {
   DatePickerProps,
 } from './src/lib/DatePicker/types'
 export type { ResponsiveProp } from './src/utils/responsiveProp'
-export type { GridColumns } from './src/lib/Grid/GridColumn/GridColumn.treat'
+export type { GridColumns } from './src/lib/Grid/GridColumn/GridColumn.css'

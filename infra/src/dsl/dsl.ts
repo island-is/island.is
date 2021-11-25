@@ -1,7 +1,6 @@
 import {
   Ingress,
   InitContainers,
-  SecretType,
   EnvironmentVariables,
   Context,
   Service,
@@ -10,8 +9,12 @@ import {
   Resources,
   ReplicaCount,
   PostgresInfo,
-  OpsEnv,
   HealthProbe,
+  Features,
+  Secrets,
+  XroadConfig,
+  MountedFile,
+  RolloutStrategy,
 } from './types/input-types'
 
 export class ServiceBuilder<ServiceType> implements Service {
@@ -41,11 +44,17 @@ export class ServiceBuilder<ServiceType> implements Service {
     return this
   }
 
+  features(features: Partial<Features>) {
+    this.serviceDef.features = features
+    return this
+  }
+
   constructor(name: string) {
     this.serviceDef = {
       liveness: { path: '/', timeoutSeconds: 3, initialDelaySeconds: 3 },
       readiness: { path: '/', timeoutSeconds: 3, initialDelaySeconds: 3 },
       env: {},
+      features: {},
       name: name,
       grantNamespaces: [],
       grantNamespacesEnabled: false,
@@ -57,6 +66,8 @@ export class ServiceBuilder<ServiceType> implements Service {
         privileged: false,
         allowPrivilegeEscalation: false,
       },
+      xroadConfig: [],
+      files: [],
     }
   }
 
@@ -90,6 +101,18 @@ export class ServiceBuilder<ServiceType> implements Service {
   name() {
     return this.serviceDef.name
   }
+
+  private assertUnset<T>(current: T, envs: T) {
+    const intersection = Object.keys({
+      ...current,
+    }).filter({}.hasOwnProperty.bind(envs))
+    if (intersection.length) {
+      throw new Error(
+        `Trying to set same environment variable multiple times: ${intersection}`,
+      )
+    }
+  }
+
   /**
    * Environment variables are used for a configuration that is not a secret. It can be environment-specific or not. Mapped to [environment variables](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/).
    * Environment variables are only applied to the service. If you need those on an `initContainer` you need to specify them at that scope. That means you may need to extract and reuse or duplicate the variables if you need them both for `initContainer` and the service.
@@ -97,7 +120,35 @@ export class ServiceBuilder<ServiceType> implements Service {
    * @param value value of env variable. A single string sets the same value across all environment. A dictionary with keys the environments sets an individual value for each one
    */
   env(envs: EnvironmentVariables) {
+    this.assertUnset(this.serviceDef.env, envs)
     this.serviceDef.env = { ...this.serviceDef.env, ...envs }
+    return this
+  }
+
+  /**
+   * X-Road configuration blocks to inject to the container. Types of XroadConfig can contain environment variables and/or secrets that define how to contact an external service through X-Road
+   * @param ...configs: X-road configs
+   */
+  xroad(...configs: XroadConfig[]) {
+    this.serviceDef.xroadConfig = [...this.serviceDef.xroadConfig, ...configs]
+    return this
+  }
+
+  /**
+   * Files to be mounted inside the containers. Files must be in the helm repo.
+   * @param ...files: list of MountedFile
+   */
+  files(...files: MountedFile[]) {
+    this.serviceDef.files = [...this.serviceDef.files, ...files]
+    return this
+  }
+
+  /**
+   * Ability to override the default rollout strategy of the environment
+   * @param strategy: RollingUpdate or Recreate
+   */
+  rolloutStrategy(strategy: RolloutStrategy) {
+    this.serviceDef.rolloutStrategy = strategy
     return this
   }
 
@@ -126,7 +177,8 @@ export class ServiceBuilder<ServiceType> implements Service {
    * To provision secrets in the Parameter Store, you need to get in touch with the DevOps team.
    * @param secrets Maps of secret names and their corresponding paths
    */
-  secrets(secrets: { [key: string]: SecretType }) {
+  secrets(secrets: Secrets) {
+    this.assertUnset(this.serviceDef.secrets, secrets)
     this.serviceDef.secrets = { ...this.serviceDef.secrets, ...secrets }
     return this
   }
@@ -209,6 +261,7 @@ const postgresIdentifier = (id: string) => id.replace(/[\W\s]/gi, '_')
 export const ref = (renderer: (env: Context) => string) => {
   return renderer
 }
+
 export const service = <Service extends string>(
   name: Service,
 ): ServiceBuilder<Service> => {

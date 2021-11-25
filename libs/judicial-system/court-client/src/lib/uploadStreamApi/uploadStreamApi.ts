@@ -22,7 +22,7 @@ export interface UploadFile {
 }
 
 export class UploadStreamApi {
-  private readonly url
+  private readonly url: string
 
   constructor(
     basePath: string,

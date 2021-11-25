@@ -22,8 +22,7 @@ const useFileList = ({ caseId }: Parameters) => {
 
   useEffect(() => {
     const handleError = () => {
-      const status = error?.graphQLErrors[0].extensions?.response
-        .status as number
+      const status = error?.graphQLErrors[0].extensions?.response.status
 
       // If the file no longer exists or access in no longer permitted
       if (status === 404 || status === 403) {

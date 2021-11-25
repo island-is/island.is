@@ -23,6 +23,12 @@ export enum StartDateOptions {
   SPECIFIC_DATE = 'specificDate',
 }
 
+export enum TransferRightsOption {
+  NONE = 'NONE',
+  REQUEST = 'REQUEST',
+  GIVE = 'GIVE',
+}
+
 export enum States {
   PREREQUISITES = 'prerequisites',
 
@@ -51,3 +57,5 @@ export enum States {
   VINNUMALASTOFNUN_APPROVE_EDITS = 'vinnumalastofnunApproveEdits',
   VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 }
+
+export const DATE_FORMAT = 'yyyy-MM-dd'

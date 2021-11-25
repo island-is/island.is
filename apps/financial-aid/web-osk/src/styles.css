@@ -43,3 +43,14 @@ input::-webkit-inner-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
 }
+
+.linkInText {
+  color: #0061ff;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.linkInText:hover {
+  color: #4649d0;
+  text-decoration: underline;
+}

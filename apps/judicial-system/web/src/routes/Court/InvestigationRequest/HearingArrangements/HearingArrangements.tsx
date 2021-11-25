@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import type { Case } from '@island.is/judicial-system/types'
+import React, { useContext, useEffect, useState } from 'react'
+import { PageLayout } from '@island.is/judicial-system-web/src/components'
+import { Case, SessionArrangements } from '@island.is/judicial-system/types'
 import {
   CaseData,
   JudgeSubsections,
@@ -13,9 +13,11 @@ import { useRouter } from 'next/router'
 import HearingArrangementsForm from './HearingArrangementsForm'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 const HearingArrangements = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
+  const { user } = useContext(UserContext)
 
   const router = useRouter()
   const id = router.query.id
@@ -43,28 +45,35 @@ const HearingArrangements = () => {
         autofill('courtDate', theCase.requestedCourtDate, theCase)
       }
 
+      if (theCase.defenderName) {
+        autofill(
+          'sessionArrangements',
+          SessionArrangements.ALL_PRESENT,
+          theCase,
+        )
+      }
+
       setWorkingCase(theCase)
     }
   }, [workingCase, setWorkingCase, data, autofill])
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
       isLoading={loading}
       notFound={data?.case === undefined}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
-      {workingCase && users && (
+      {workingCase && user && users && (
         <HearingArrangementsForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
           isLoading={loading || userLoading}
           users={users}
+          user={user}
         />
       )}
     </PageLayout>

@@ -28,8 +28,8 @@ import {
   ADGERDIR_COMPANIES_TAG_ID,
 } from '@island.is/web/constants'
 
-import * as styles from './AdgerdirArticles.treat'
-import * as covidStyles from '../UI/styles/styles.treat'
+import * as styles from './AdgerdirArticles.css'
+import * as covidStyles from '../UI/styles/styles.css'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const FILTER_TIMER = 300

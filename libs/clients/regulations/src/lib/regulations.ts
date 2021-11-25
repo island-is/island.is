@@ -2,6 +2,7 @@ import { Inject } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import {
+  buildRegulationApiPath,
   ISODate,
   LawChapterSlug,
   MinistrySlug,
@@ -10,6 +11,7 @@ import {
 } from '@island.is/regulations'
 import {
   Regulation,
+  RegulationDiff,
   RegulationLawChapter,
   RegulationLawChapterTree,
   RegulationListItem,
@@ -57,34 +59,20 @@ export class RegulationsService extends RESTDataSource {
     name: RegQueryName,
     date?: ISODate,
     isCustomDiff?: boolean,
-    _earlierDate?: ISODate | RegulationOriginalDates.gqlHack,
-  ): Promise<Regulation | RegulationRedirect | null> {
-    const earlierDate =
-      _earlierDate === RegulationOriginalDates.gqlHack
-        ? RegulationOriginalDates.api
-        : _earlierDate
+    earlierDate?: ISODate | RegulationOriginalDates.gqlHack,
+  ): Promise<Regulation | RegulationDiff | RegulationRedirect | null> {
+    const url = buildRegulationApiPath({
+      name,
+      viewType,
+      date,
+      isCustomDiff,
+      earlierDate,
+    })
+    const ttl = this.options.ttl ?? 600 // defaults to 10 minutes
 
-    let params: string = viewType
-
-    if (viewType === 'd') {
-      if (date) {
-        params = 'd/' + date
-        if (isCustomDiff) {
-          params += '/diff' + (earlierDate ? '/' + earlierDate : '')
-        }
-      } else {
-        // Treat `viewType` 'd' with no `date` as 'current'
-        // ...either that or throwing an error...
-        // ...or tightening the type signature to prevent that happening.
-        params = 'current'
-      }
-    }
-    const response = await this.get<Regulation | RegulationRedirect | null>(
-      `/regulation/${name}/${params}`,
-      {
-        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-      },
-    )
+    const response = await this.get<
+      Regulation | RegulationDiff | RegulationRedirect | null
+    >(url, { cacheOptions: { ttl } })
     return response
   }
 
