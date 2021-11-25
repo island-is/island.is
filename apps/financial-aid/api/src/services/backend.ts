@@ -16,14 +16,20 @@ import {
   ApplicationStateUrl,
   UpdateApplicationTableResponseType,
   UpdateStaff,
+  UpdateMunicipalityActivity,
   Staff,
+  CreateStaff,
+  CreateMunicipality,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 import { CreateStaffInput } from '../app/modules/staff'
 import { SpouseModel } from '../app/modules/user'
-import { UpdateMunicipalityInput } from '../app/modules/municipality/dto'
+import {
+  CreateMunicipalityInput,
+  UpdateMunicipalityInput,
+} from '../app/modules/municipality/dto'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -54,10 +60,27 @@ class BackendAPI extends RESTDataSource {
     return this.get(`municipality`)
   }
 
+  createMunicipality(
+    createMunicipality: CreateMunicipality,
+    createAdmin: CreateStaff,
+  ): Promise<Municipality> {
+    return this.post('municipality', {
+      municipalityInput: createMunicipality,
+      adminInput: createAdmin,
+    })
+  }
+
   updateMunicipality(
     updateMunicipality: UpdateMunicipalityInput,
   ): Promise<Municipality> {
     return this.put('municipality', updateMunicipality)
+  }
+
+  updateMunicipalityActivity(
+    id: string,
+    updateMunicipality: UpdateMunicipalityActivity,
+  ): Promise<Municipality> {
+    return this.put(`municipality/activity/${id}`, updateMunicipality)
   }
 
   createApplication(

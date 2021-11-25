@@ -7,7 +7,7 @@ import * as tableStyles from '../../sharedStyles/Table.css'
 import cn from 'classnames'
 
 import {
-  AidType,
+  AidTypeHomeCircumstances,
   Municipality,
   Staff,
   StaffRole,
@@ -39,15 +39,15 @@ const MunicipalityProfile = ({
 
   const smallText = 'small'
   const headline = 'h5'
-  const aidTableBody = (value: AidType) => {
+  const aidTableBody = (value: AidTypeHomeCircumstances) => {
     switch (value) {
-      case AidType.OWNPLACE:
+      case AidTypeHomeCircumstances.OWNPLACE:
         return [
           TextTableItem(headline, 'Eigin húsnæði'),
           TextTableItem(smallText, municipality.individualAid.ownPlace),
           TextTableItem(smallText, municipality.cohabitationAid.ownPlace),
         ]
-      case AidType.REGISTEREDLEASE:
+      case AidTypeHomeCircumstances.REGISTEREDLEASE:
         return [
           TextTableItem(headline, 'Leiga með þinglýstum leigusamning'),
           TextTableItem(
@@ -59,7 +59,7 @@ const MunicipalityProfile = ({
             municipality.cohabitationAid.registeredRenting,
           ),
         ]
-      case AidType.UNREGISTEREDLEASE:
+      case AidTypeHomeCircumstances.UNREGISTEREDLEASE:
         return [
           TextTableItem(headline, 'Býr eða leigir án þinglýsts leigusamnings'),
           TextTableItem(
@@ -71,7 +71,7 @@ const MunicipalityProfile = ({
             municipality.cohabitationAid.unregisteredRenting,
           ),
         ]
-      case AidType.WITHPARENTS:
+      case AidTypeHomeCircumstances.WITHPARENTS:
         return [
           TextTableItem(headline, 'Býr hjá foreldrum'),
           TextTableItem(smallText, municipality.individualAid.livesWithParents),
@@ -80,7 +80,7 @@ const MunicipalityProfile = ({
             municipality.cohabitationAid.livesWithParents,
           ),
         ]
-      case AidType.UNKNOWN:
+      case AidTypeHomeCircumstances.UNKNOWN:
         return [
           TextTableItem(headline, 'Ekkert að ofantöldu'),
           TextTableItem(smallText, municipality.individualAid.unknown),
@@ -132,7 +132,7 @@ const MunicipalityProfile = ({
           </Box>
         </Box>
         <Box marginBottom={7}>
-          <Box marginBottom={3}>
+          <Box marginBottom={3} className={`contentUp delay-50`}>
             <Text as="h3" variant="h3" color="dark300">
               Stjórnendur
             </Text>
@@ -141,10 +141,10 @@ const MunicipalityProfile = ({
           <div className={`${tableStyles.smallTableWrapper} hideScrollBar`}>
             <table
               className={cn({
-                [`${tableStyles.tableContainer}`]: true,
+                [`${tableStyles.tableContainer} contentUp delay-75`]: true,
               })}
             >
-              <thead className={`contentUp delay-50`}>
+              <thead>
                 <tr>
                   {['Nafn', 'Kennitala', 'Netfang', 'Aðgerð'].map(
                     (item, index) => (
@@ -183,7 +183,7 @@ const MunicipalityProfile = ({
         </Box>
 
         <Box>
-          <Box marginBottom={3}>
+          <Box marginBottom={3} className={`contentUp delay-100`}>
             <Text as="h3" variant="h3" color="dark300">
               Grunnupphæðir
             </Text>
@@ -191,10 +191,10 @@ const MunicipalityProfile = ({
           <div className={`${tableStyles.smallTableWrapper} hideScrollBar`}>
             <table
               className={cn({
-                [`${tableStyles.tableContainer}`]: true,
+                [`${tableStyles.tableContainer} contentUp delay-125`]: true,
               })}
             >
-              <thead className={`contentUp delay-50`}>
+              <thead>
                 <tr>
                   {['Búsetskilyrði', 'Einstaklingar', 'Hjón/Sambúð'].map(
                     (item, index) => (
@@ -209,7 +209,7 @@ const MunicipalityProfile = ({
               </thead>
 
               <tbody>
-                {Object.values(AidType).map((value, index) => (
+                {Object.values(AidTypeHomeCircumstances).map((value, index) => (
                   <TableBody
                     items={aidTableBody(value)}
                     index={index}
@@ -224,7 +224,7 @@ const MunicipalityProfile = ({
           </div>
         </Box>
 
-        <Box marginBottom={3}>
+        <Box marginBottom={3} className={`contentUp delay-125`}>
           <Text as="h3" variant="h3" color="dark300">
             Aðrar stillingar
           </Text>

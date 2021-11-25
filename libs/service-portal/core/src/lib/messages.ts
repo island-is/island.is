@@ -173,6 +173,10 @@ export const m = defineMessages({
     id: 'service.portal:phone',
     defaultMessage: 'Sími',
   },
+  fetchMore: {
+    id: 'service.portal:fetch-more',
+    defaultMessage: 'Sækja meira',
+  },
   errorFetch: {
     id: 'service.portal:could-not-fetch-data',
     defaultMessage: 'Ekki tókst að sækja gögn',
@@ -506,6 +510,14 @@ export const m = defineMessages({
   telNumber: {
     id: 'service.portal:tel',
     defaultMessage: 'Símanúmer',
+  },
+  bankAccountInfo: {
+    id: 'service.portal:bank-account-info',
+    defaultMessage: 'Reikningsnúmer',
+  },
+  nudge: {
+    id: 'service.portal:nudge-info',
+    defaultMessage: 'Hnipp',
   },
   nextStep: {
     id: 'service.portal:next-step',

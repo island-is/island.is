@@ -81,12 +81,18 @@ const insertIds = (
   idPrefix = '',
 ): HTMLText =>
   html.replace(
-    / class="(section|chapter|article)__title"\s*>(([^<]+)[^]+?)<\/h\d/g,
-    (htmlSnippet: string, _type: string, title: string, shortTitle: string) => {
+    / class="(section|chapter|article)__title"\s*>(([^<]+)(?:.[^/][^]*?)?)<\/[hH]\d/g,
+    (
+      htmlSnippet: string,
+      _type: string,
+      longTitle: string,
+      shortTitle: string,
+    ) => {
       const type = _type as ItemType
-      const id = idPrefix + shortTitle.toLocaleLowerCase().replace(/\s/g, '')
+      const id = idPrefix + shortTitle.toLowerCase().replace(/\s/g, '')
+      const title = longTitle.replace(/<[^]+?>/g, '').trim()
       flatIndex.push({
-        title: title.replace(/<[^]+?>/g, '').trim(),
+        title,
         type,
         id,
       })

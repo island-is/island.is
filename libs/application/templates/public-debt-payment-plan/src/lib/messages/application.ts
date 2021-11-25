@@ -35,8 +35,18 @@ export const section = defineMessages({
   },
   employer: {
     id: `pdpp.application:section.employer`,
-    defaultMessage: 'Ráðstöfunartekjur',
+    defaultMessage: 'Launagreiðandi',
     description: 'Employer section',
+  },
+  disposableIncome: {
+    id: `pdpp.application:section.disposableIncome`,
+    defaultMessage: 'Ráðstöfunartekjur',
+    description: 'Disposable income section',
+  },
+  deptOverview: {
+    id: `pdpp.application:section.deptOverview`,
+    defaultMessage: 'Yfirlit yfir skuldir',
+    description: 'Debt overview section',
   },
   paymentPlan: {
     id: `pdpp.application:section.paymentPlan`,

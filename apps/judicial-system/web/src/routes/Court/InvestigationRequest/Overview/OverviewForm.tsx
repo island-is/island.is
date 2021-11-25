@@ -7,7 +7,7 @@ import {
   FormFooter,
   InfoCard,
   PdfButton,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
   CaseTransition,
@@ -21,7 +21,7 @@ import {
   formatDate,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './Overview.css'
 import {

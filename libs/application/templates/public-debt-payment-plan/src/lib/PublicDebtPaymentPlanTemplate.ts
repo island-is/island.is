@@ -37,6 +37,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
   type: ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN,
   name: application.name,
   institution: application.institutionName,
+  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations.PublicDebtPaymentPlan.translation,
   ],
