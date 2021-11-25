@@ -1,4 +1,3 @@
 export interface CriminalRecord {
-  pdfBase64: string
-  //pdfBlob: Blob
+  contentBase64: string
 }

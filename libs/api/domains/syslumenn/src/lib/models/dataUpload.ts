@@ -2,6 +2,7 @@ export enum PersonType {
   Plaintiff,
   CounterParty,
   Child,
+  CriminalRecord,
 }
 
 export type Person = {

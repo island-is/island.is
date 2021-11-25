@@ -7,12 +7,12 @@ export class CriminalRecordApi {
   constructor(private readonly api: CrimeCertificateApi) {}
 
   public async getCriminalRecord(ssn: string): Promise<CriminalRecord> {
-    const blob = await this.api.apiPdfCreatePersonIdGet({ personId: ssn })
-    const blobText = await blob.arrayBuffer()
-    const blobTextBase64 = Buffer.from(blobText).toString('base64')
+    const contentBlob = await this.api.apiPdfCreatePersonIdGet({ personId: ssn })
+    const contentArrayBuffer = await contentBlob.arrayBuffer()
+    const contentBase64 = Buffer.from(contentArrayBuffer).toString('base64')
 
     const record: CriminalRecord = {
-      pdfBase64: blobTextBase64
+      contentBase64: contentBase64
     }
 
     return record
@@ -21,6 +21,6 @@ export class CriminalRecordApi {
   public async checkCriminalRecord(ssn: string): Promise<Boolean> {    
     const record = await this.getCriminalRecord(ssn)
 
-    return record.pdfBase64.length > 0
+    return record.contentBase64.length > 0
   }
 }

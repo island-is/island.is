@@ -37,11 +37,13 @@ export class SyslumennService {
     persons: Person[],
     attachement: Attachment,
     extraData: { [key: string]: string },
+    uploadDataName: string,
   ): Promise<DataUploadResponse> {
     return await this.syslumennClient.uploadData(
       persons,
       attachement,
       extraData,
+      uploadDataName,
     )
   }
 }
