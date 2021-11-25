@@ -77,11 +77,11 @@ const AcceptModal = ({
       headline="Umsóknin þín er samþykkt og áætlun er tilbúin"
       onCancel={onCancel}
       onSubmit={() => {
-        if (amount <= 0) {
+        if (state.amount <= 0) {
           setState({ ...state, hasError: true })
           return
         }
-        onSaveApplication(amount)
+        onSaveApplication(state.amount)
       }}
       submitButtonText="Samþykkja"
       isModalVisable={isModalVisable}
