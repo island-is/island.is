@@ -5,6 +5,7 @@ import {
 import uniqBy from 'lodash/uniqBy'
 import { modules, ModuleKeys } from './modules'
 import { Action, ActionType, AsyncActionState, MenuState } from './actions'
+import { getUnreadDocumentsCount } from '@island.is/service-portal/graphql'
 
 export interface StoreState {
   modules: Record<ModuleKeys, ServicePortalModule>

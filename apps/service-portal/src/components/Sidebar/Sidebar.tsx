@@ -69,11 +69,7 @@ export const Sidebar: FC<{}> = () => {
               {rootItem.children?.map(
                 (navRoot, index) =>
                   navRoot.path !== ServicePortalPath.MinarSidurRoot && (
-                    <ModuleNavigation
-                      key={index}
-                      nav={navRoot}
-                      variant={'blue'}
-                    />
+                    <ModuleNavigation key={index} nav={navRoot} />
                   ),
               )}
             </Stack>

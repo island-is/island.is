@@ -77,7 +77,6 @@ const NavItemContent: FC<Props> = ({
 }
 
 const NavItem: FC<Props> = (props) => {
-  console.log(props.enabled, props.path)
   return props.external ? (
     <a href={props.path} target="_blank" rel="noreferrer noopener">
       <NavItemContent {...props} />

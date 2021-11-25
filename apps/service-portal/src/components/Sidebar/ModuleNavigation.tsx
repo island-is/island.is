@@ -11,6 +11,7 @@ import { useLocale } from '@island.is/localization'
 import NavItem from './NavItem/NavItem'
 import SubNavItem from './NavItem/SubNavItem'
 import { servicePortalOutboundLink } from '@island.is/plausible'
+import { getUnreadDocumentsCount } from '@island.is/service-portal/graphql'
 
 interface Props {
   nav: ServicePortalNavigationItem
@@ -44,9 +45,11 @@ const ModuleNavigation: FC<Props> = ({ nav, alwaysExpanded, onItemClick }) => {
     }
   }
 
+  // const unreadDocsCounter = getUnreadDocumentsCount()
+
   const navChildren = nav?.children?.filter((child) => !child.navHide)
   const navArray = Array.isArray(navChildren) && navChildren.length > 0
-
+  console.log('nav', nav)
   return (
     <Box>
       {nav.heading && (
