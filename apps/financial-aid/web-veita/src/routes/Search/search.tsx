@@ -50,7 +50,7 @@ export const Search = () => {
     errorPolicy: 'all',
   })
 
-  const applicationRes = useMemo(() => {
+  const applicationSearchResult = useMemo(() => {
     router.push({
       query: {
         search: sanitizeNationalId(searchNationalId),
@@ -110,8 +110,8 @@ export const Search = () => {
             </thead>
 
             <tbody className={`${tableStyles.tableBody} contentUp`}>
-              {applicationRes &&
-                applicationRes.map((item: Application, index) => (
+              {applicationSearchResult &&
+                applicationSearchResult.map((item: Application, index) => (
                   <TableBody
                     items={[
                       PseudoName(item.nationalId),

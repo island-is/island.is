@@ -104,10 +104,7 @@ export const MySettings = () => {
   ]
 
   return (
-    <LoadingContainer
-      isLoading={false}
-      loader={<ApplicationOverviewSkeleton />}
-    >
+    <>
       <Box marginTop={15} marginBottom={[4, 4, 7]} className={`contentUp`}>
         <Text as="h1" variant="h1">
           Mínar stillingar
@@ -174,7 +171,7 @@ export const MySettings = () => {
           </Box>
         </Box>
       </Box>
-    </LoadingContainer>
+    </>
   )
 }
 

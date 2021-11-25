@@ -24,7 +24,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 import { useAllApplications } from '@island.is/financial-aid-web/veita/src/utils/useAllApplications'
-import { calcDifferenceInDate } from '../../utils/formHelper'
+import { calcDifferenceInDate } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
 interface PageProps {
   applications: Application[]
