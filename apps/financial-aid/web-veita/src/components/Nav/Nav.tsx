@@ -11,7 +11,7 @@ import { useRouter } from 'next/router'
 
 import {
   AdminSideNavItems,
-  EmployeeSideNavItems,
+  ApplicationSideNavItems,
   LoadingContainer,
   LogoMunicipality,
   SuperAdminSideNavItems,
@@ -79,7 +79,7 @@ const Nav = ({ showInMobile }: Props) => {
           isLoading={loading}
           loader={<SkeletonLoader repeat={3} space={2} />}
         >
-          <EmployeeSideNavItems
+          <ApplicationSideNavItems
             roles={admin?.staff?.roles}
             applicationFilters={applicationFilters}
           />
