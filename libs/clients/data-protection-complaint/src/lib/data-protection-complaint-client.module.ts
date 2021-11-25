@@ -19,15 +19,21 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 const useXroad =
   isRunningOnEnvironment('production') || isRunningOnEnvironment('staging')
 
+const createProviderConfig = (
+  config: DataProtectionComplaintClientConfig,
+  middleware?: TokenMiddleware,
+): Configuration => {
+  return new Configuration({
+    fetchApi: createEnhancedFetch({
+      name: 'data-protection-complaint-client',
+    }),
+    basePath: useXroad ? config.xRoadPath : undefined,
+    middleware: middleware ? [middleware] : [],
+  })
+}
+
 export class ClientsDataProtectionComplaintModule {
   static register(config: DataProtectionComplaintClientConfig): DynamicModule {
-    const providerConfiguration = new Configuration({
-      fetchApi: createEnhancedFetch({
-        name: 'data-protection-complaint-client',
-      }),
-      basePath: useXroad ? config.xRoadPath : undefined,
-    })
-
     const exportedApis = [
       DocumentApi,
       CaseApi,
@@ -35,6 +41,7 @@ export class ClientsDataProtectionComplaintModule {
       MemoApi,
       ClientsApi,
     ]
+    console.log('hehehe123123')
     return {
       module: ClientsDataProtectionComplaintModule,
       providers: [
@@ -42,45 +49,22 @@ export class ClientsDataProtectionComplaintModule {
           provide: CLIENT_CONFIG,
           useFactory: () => config,
         },
+        TokenMiddleware,
         {
           provide: SecurityApi,
           useFactory: () => {
-            return new SecurityApi(providerConfiguration)
+            return new SecurityApi(createProviderConfig(config))
           },
         },
-        TokenMiddleware,
         ...exportedApis.map((Api) => ({
-          inject: [TokenMiddleware],
           provide: Api,
-          useFactory: () => new Api(providerConfiguration),
+          inject: [TokenMiddleware],
+          useFactory: (middleware: TokenMiddleware) => {
+            return new Api(createProviderConfig(config, middleware))
+          },
         })),
       ],
       exports: exportedApis,
     }
-    /* return {
-      module: ClientsDataProtectionComplaintModule,
-      providers: [
-        {
-          provide: CLIENT_CONFIG,
-          useFactory: () => dataProtectionComplaintClientConfig,
-        },
-        TokenMiddleware,
-        {
-          provide: SecurityApi,
-          useFactory: () => {
-            return new SecurityApi(
-              new Configuration({
-                fetchApi: fetch,
-              }),
-            )
-          },
-        },
-        apiWithMiddlewareFactory(CaseApi),
-        apiWithMiddlewareFactory(ClientsApi),
-        apiWithMiddlewareFactory(DocumentApi),
-        apiWithMiddlewareFactory(MemoApi),
-      ],
-      exports: [DocumentApi, CaseApi, SecurityApi, MemoApi, ClientsApi],
-    }*/
   }
 }
