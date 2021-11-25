@@ -32,7 +32,7 @@ export const SearchBox = ({
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
 
-  const { data, loading } = useQuery<Query, QueryGetArticlesArgs>(
+  const { data } = useQuery<Query, QueryGetArticlesArgs>(
     GET_ORGANIZATION_SERVICES_QUERY,
     {
       variables: {
@@ -106,7 +106,15 @@ export const SearchBox = ({
         menuProps={{
           comp: 'div',
         }}
-        buttonProps={{}}
+        buttonProps={{
+          onClick: () => {
+            value &&
+              Router.push({
+                pathname: linkResolver('search').href,
+                query: { q: value },
+              }).then(() => window.scrollTo(0, 0))
+          },
+        }}
         inputProps={{
           inputSize: 'medium',
           onFocus: () => setHasFocus(true),
@@ -117,46 +125,44 @@ export const SearchBox = ({
         }}
       >
         {!!value && (
-          <>
-            <Box padding={2} onClick={(e) => e.stopPropagation()}>
-              {options?.map((x) => (
-                <Box paddingY={1}>
-                  <Link
-                    key={x.value}
-                    href={
-                      x.type === 'url'
-                        ? x.value
-                        : linkResolver('Article' as LinkType, [x.value]).href
-                    }
-                    underline="normal"
-                  >
-                    <Text key={x.value} as="span">
-                      {x.label}
-                    </Text>
-                  </Link>
-                </Box>
-              ))}
-              {!options?.length && (
-                <Box paddingY={1}>
-                  <Text as="span">{noResultsText}</Text>
-                </Box>
-              )}
-              <Box paddingY={2}>
-                <Button
-                  type="button"
-                  variant="text"
-                  onClick={() =>
-                    Router.push({
-                      pathname: linkResolver('search').href,
-                      query: { q: value },
-                    })
+          <Box padding={2} onClick={(e) => e.stopPropagation()}>
+            {options?.map((x) => (
+              <Box paddingY={1}>
+                <Link
+                  key={x.value}
+                  href={
+                    x.type === 'url'
+                      ? x.value
+                      : linkResolver('Article' as LinkType, [x.value]).href
                   }
+                  underline="normal"
                 >
-                  {searchAllText}
-                </Button>
+                  <Text key={x.value} as="span">
+                    {x.label}
+                  </Text>
+                </Link>
               </Box>
+            ))}
+            {!options?.length && (
+              <Box paddingY={1}>
+                <Text as="span">{noResultsText}</Text>
+              </Box>
+            )}
+            <Box paddingY={2}>
+              <Button
+                type="button"
+                variant="text"
+                onClick={() =>
+                  Router.push({
+                    pathname: linkResolver('search').href,
+                    query: { q: value },
+                  })
+                }
+              >
+                {searchAllText}
+              </Button>
             </Box>
-          </>
+          </Box>
         )}
       </AsyncSearchInput>
     </Box>
