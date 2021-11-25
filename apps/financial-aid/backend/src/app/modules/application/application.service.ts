@@ -40,7 +40,7 @@ interface Recipient {
 }
 
 const linkToStatusPage = (applicationId: string) => {
-  return `https://fjarhagsadstod.dev.sveitarfelog.net/stada/${applicationId}"`
+  return `${environment.baseUrl}/stada/${applicationId}"`
 }
 
 const firstDateOfMonth = () => {
