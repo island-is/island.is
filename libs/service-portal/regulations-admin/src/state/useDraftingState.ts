@@ -7,7 +7,7 @@ import {
 import { useAuth } from '@island.is/auth/react'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { FC, Reducer, useEffect, useMemo, useReducer } from 'react'
-import { produce, setAutoFreeze } from 'immer'
+import { produce, setAutoFreeze, Draft } from 'immer'
 import { useHistory, generatePath } from 'react-router-dom'
 import { Step } from '../types'
 import {
@@ -222,7 +222,7 @@ const specialUpdates: {
 /* eslint-disable @typescript-eslint/naming-convention */
 const actionHandlers: {
   [Type in ActionName]: (
-    state: DraftingState,
+    state: Draft<DraftingState>,
     action: Omit<Extract<Action, { type: Type }>, 'type'>,
   ) => DraftingState | void
 } = {
@@ -328,13 +328,14 @@ const draftingStateReducer: Reducer<DraftingState, Action> = (
   action,
 ) => {
   setAutoFreeze(false)
-  const newState = produce(state, (draft) =>
-    actionHandlers[action.type](
+  const newState = produce(state, (draft) => {
+    const newDraft = actionHandlers[action.type](
       draft,
       // @ts-expect-error  (Can't get this to work. FML)
       action,
-    ),
-  )
+    )
+    return newDraft
+  })
   setAutoFreeze(true)
   return newState
 }

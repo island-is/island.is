@@ -53,7 +53,7 @@ export const useMinistriesQuery = () => {
 
   return {
     ministries: data
-      ? (data.getDraftRegulationsMinistries as ReadonlyArray<RegulationMinistry>)
+      ? (data.getDraftRegulationsMinistries as Array<RegulationMinistry>)
       : undefined,
     loading,
     error,

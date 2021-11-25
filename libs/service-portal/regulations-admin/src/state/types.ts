@@ -38,7 +38,7 @@ export type HtmlDraftField = DraftField<HTMLText>
 export type BodyDraftFields = {
   title: DraftField<PlainText>
   text: HtmlDraftField
-  appendixes: ReadonlyArray<{
+  appendixes: Array<{
     title: DraftField<PlainText>
     text: HtmlDraftField
   }>
@@ -59,15 +59,15 @@ export type RegDraftForm = BodyDraftFields & {
   idealPublishDate: DraftField<Date | undefined>
   signatureDate: DraftField<Date | undefined>
   effectiveDate: DraftField<Date | undefined>
-  lawChapters: DraftField<ReadonlyArray<LawChapterSlug>>
+  lawChapters: DraftField<Array<LawChapterSlug>>
   ministry: DraftField<MinistrySlug | undefined>
   type: DraftField<RegulationType | undefined>
 
-  impacts: ReadonlyArray<ChangeDraftFields | CancelDraftFields>
+  impacts: Array<ChangeDraftFields | CancelDraftFields>
 
   readonly draftingStatus: DraftingStatus // non-editable except via saveStatus or propose actions
   draftingNotes: HtmlDraftField
-  authors: DraftField<ReadonlyArray<Kennitala>>
+  authors: DraftField<Array<Kennitala>>
 
   id: RegulationDraft['id']
   fastTrack: DraftField<boolean>
@@ -80,7 +80,7 @@ export type DraftingState = {
   loading?: boolean
   error?: Error
   draft?: RegDraftForm
-  ministries: ReadonlyArray<RegulationMinistry>
+  ministries: Array<RegulationMinistry>
 }
 
 // -----------------------------
@@ -123,7 +123,7 @@ export type Action =
     }
   | {
       type: 'MINISTRIES_LOADED'
-      ministries: ReadonlyArray<RegulationMinistry>
+      ministries: Array<RegulationMinistry>
     }
   | {
       type: 'SAVING_STATUS'
