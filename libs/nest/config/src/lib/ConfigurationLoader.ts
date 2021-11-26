@@ -1,15 +1,15 @@
-import { ConfigDefinition, Configuration, EnvLoader } from './types'
+import { ZodError } from 'zod'
 import { ServerSideFeatureClient } from '@island.is/feature-flags'
 import { logger } from '@island.is/logging'
+
+import { ConfigDefinition, Configuration, EnvLoader } from './types'
 import { InvalidConfiguration } from './InvalidConfiguration'
 import { ConfigurationError } from './ConfigurationError'
-import { ZodError } from 'zod'
-
-type Issue = 'missing' | 'could not be parsed as JSON'
+import { Issues, IssueType } from './Issues'
 
 export class ConfigurationLoader<T> implements EnvLoader {
-  private isDev = process.env.NODE_ENV !== 'production'
-  private issues: Record<string, Issue> = {}
+  private allowDevFallback = process.env.NODE_ENV !== 'production'
+  private issues = new Issues()
 
   constructor(private definition: ConfigDefinition<T>) {}
 
@@ -39,21 +39,14 @@ export class ConfigurationLoader<T> implements EnvLoader {
   }
 
   private handleResult(result?: T, error?: Error) {
-    const issues = Object.entries(this.issues)
-    const errorMessage = this.formatIssues(issues)
-    const hasParseIssue = issues.find(
-      (issue) => issue[1] === 'could not be parsed as JSON',
-    )
-    const hasMissingIssue = !hasParseIssue && issues.length > 0
-
     // Always throw if there are any parse issues.
-    if (hasParseIssue) {
-      throw new ConfigurationError(errorMessage)
+    if (this.issues.hasParseIssue) {
+      throw new ConfigurationError(this.formatConfigurationError())
     }
 
     // Only throw missing issue in production
-    if (hasMissingIssue && !this.isDev) {
-      throw new ConfigurationError(errorMessage)
+    if (this.issues.hasMissingIssue && !this.allowDevFallback) {
+      throw new ConfigurationError(this.formatConfigurationError())
     }
 
     // Re-throw other unexpected errors from loader.
@@ -67,12 +60,14 @@ export class ConfigurationLoader<T> implements EnvLoader {
       )
     }
 
-    if (this.isDev && hasMissingIssue) {
+    if (this.allowDevFallback && this.issues.hasMissingIssue) {
       logger.warn({
-        message: `Could not load configuration for ${this.definition.name}. Missing ${issues.length} required environment variable(s).`,
+        message: `Could not load configuration for ${this.definition.name}. Missing ${this.issues.count} required environment variable(s).`,
         category: 'ConfigModule',
       })
-      return new InvalidConfiguration(errorMessage) as Configuration<T>
+      return new InvalidConfiguration(
+        this.formatConfigurationError(),
+      ) as Configuration<T>
     }
 
     this.validateSchema(result)
@@ -99,11 +94,10 @@ export class ConfigurationLoader<T> implements EnvLoader {
     }
   }
 
-  private formatIssues(issues: Array<[string, Issue]>) {
-    const formattedIssues = issues
-      .map((issue) => `- ${issue[0]} ${issue[1]}`)
-      .join('\n')
-    return `Failed loading configuration for ${this.definition.name}:\n${formattedIssues}`
+  private formatConfigurationError() {
+    return `Failed loading configuration for ${
+      this.definition.name
+    }:\n${this.issues.formatIssues()}`
   }
 
   private formatValidationErrors(error: ZodError) {
@@ -118,10 +112,10 @@ export class ConfigurationLoader<T> implements EnvLoader {
     if (value !== undefined) {
       return value
     }
-    if (this.isDev && devFallback !== undefined) {
+    if (this.allowDevFallback && devFallback !== undefined) {
       return devFallback
     }
-    this.issues[envVariable] = 'missing'
+    this.issues.add(envVariable, IssueType.MISSING)
     return (undefined as unknown) as string
   }
 
@@ -132,14 +126,14 @@ export class ConfigurationLoader<T> implements EnvLoader {
       try {
         return JSON.parse(value)
       } catch {
-        this.issues[envVariable] = 'could not be parsed as JSON'
+        this.issues.add(envVariable, IssueType.JSON_ERROR)
         return (undefined as unknown) as T
       }
     }
-    if (this.isDev && devFallback !== undefined) {
+    if (this.allowDevFallback && devFallback !== undefined) {
       return devFallback
     }
-    this.issues[envVariable] = 'missing'
+    this.issues.add(envVariable, IssueType.MISSING)
     return (undefined as unknown) as T
   }
 
@@ -157,7 +151,7 @@ export class ConfigurationLoader<T> implements EnvLoader {
     try {
       return JSON.parse(value)
     } catch (err) {
-      this.issues[envVariable] = 'could not be parsed as JSON'
+      this.issues.add(envVariable, IssueType.JSON_ERROR)
       return (undefined as unknown) as T
     }
   }

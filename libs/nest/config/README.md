@@ -64,7 +64,9 @@ export class SomeModuleService {
     private config: ConfigType<typeof someModuleConfig>,
   ) {
     config.isConfigured // boolean
-    config.data // {url: string, secret: string, ttl: any} | undefined
+    config.url // string
+    config.secret // string
+    config.ttl // number
   }
 }
 ```
