@@ -1,0 +1,41 @@
+import React, { ReactNode } from 'react'
+
+import { Box, Text } from '@island.is/island-ui/core'
+import { api } from '@island.is/judicial-system-web/src/services'
+
+import * as styles from './PdfRow.css'
+
+interface Props {
+  children?: ReactNode
+  caseId: string
+  title: string
+  pdfType:
+    | 'ruling?shortVersion=false'
+    | 'ruling?shortVersion=true'
+    | 'request'
+    | 'custodyNotice'
+}
+
+const PdfRow: React.FC<Props> = ({ children, caseId, title, pdfType }) => {
+  return (
+    <Box
+      className={styles.pdfRow}
+      width="full"
+      flexDirection="row"
+      display="flex"
+      justifyContent="spaceBetween"
+      alignItems="center"
+      cursor="pointer"
+      onClick={() =>
+        window.open(`${api.apiUrl}/api/case/${caseId}/${pdfType}`, '_blank')
+      }
+    >
+      <Text color="blue400" variant="h4">
+        {title}
+      </Text>
+      {children}
+    </Box>
+  )
+}
+
+export default PdfRow
