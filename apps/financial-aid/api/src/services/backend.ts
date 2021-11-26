@@ -16,6 +16,7 @@ import {
   ApplicationStateUrl,
   UpdateApplicationTableResponseType,
   UpdateStaff,
+  UpdateMunicipalityActivity,
   Staff,
   CreateStaff,
   CreateMunicipality,
@@ -47,6 +48,10 @@ class BackendAPI extends RESTDataSource {
     return this.get(`application/id/${id}`)
   }
 
+  searchForApplication(nationalId: string): Promise<Application[]> {
+    return this.get(`application/find/${nationalId}`)
+  }
+
   getApplicationFilters(): Promise<ApplicationFilters> {
     return this.get('application/filters')
   }
@@ -73,6 +78,13 @@ class BackendAPI extends RESTDataSource {
     updateMunicipality: UpdateMunicipalityInput,
   ): Promise<Municipality> {
     return this.put('municipality', updateMunicipality)
+  }
+
+  updateMunicipalityActivity(
+    id: string,
+    updateMunicipality: UpdateMunicipalityActivity,
+  ): Promise<Municipality> {
+    return this.put(`municipality/activity/${id}`, updateMunicipality)
   }
 
   createApplication(
