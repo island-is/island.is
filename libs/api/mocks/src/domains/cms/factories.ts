@@ -112,6 +112,7 @@ export const lifeEvent = factory<LifeEventPage>({
 
 export const link = factory<Link>({
   text: () => faker.lorem.words(),
+  date: () => faker.date.past().toISOString(),
   url: () => faker.internet.url(),
   id: () => faker.datatype.uuid(),
 })
