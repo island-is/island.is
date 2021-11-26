@@ -13,6 +13,7 @@ export const modalButtonWrapper = style({
 })
 
 export const line = style({
+  fontSize: theme.typography.baseFontSize,
   ...themeUtils.responsiveStyle({
     sm: {
       borderBottom: `1px solid ${theme.color.blue200}`,
@@ -22,14 +23,10 @@ export const line = style({
 
 export const button = style({
   color: theme.color.blue400,
-  fontWeight: theme.typography.semiBold,
-  lineHeight: theme.typography.baseLineHeight,
+  fontSize: 14,
+  fontWeight: theme.typography.regular,
+  lineHeight: 1.75,
   textAlign: 'left',
-  ...themeUtils.responsiveStyle({
-    sm: {
-      fontWeight: theme.typography.regular,
-    },
-  }),
   ':hover': {
     textDecoration: 'underline',
   },
@@ -38,20 +35,24 @@ export const button = style({
   },
 })
 
+export const unopened = style({
+  fontWeight: theme.typography.semiBold,
+})
+
 export const sender = style({
   fontWeight: theme.typography.regular,
-  fontSize: 12,
+  fontSize: 14,
   ...themeUtils.responsiveStyle({
     sm: {
       fontWeight: theme.typography.light,
-      fontSize: 18,
+      fontSize: 16,
     },
   }),
 })
 
 export const date = style({
   fontWeight: theme.typography.regular,
-  fontSize: 12,
+  fontSize: 14,
   color: theme.color.dark300,
   ...themeUtils.responsiveStyle({
     sm: {
@@ -59,9 +60,6 @@ export const date = style({
       color: theme.color.dark400,
       fontWeight: theme.typography.light,
       fontSize: 16,
-    },
-    md: {
-      fontSize: 18,
     },
   }),
 })

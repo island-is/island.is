@@ -13,7 +13,7 @@ import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 import * as styles from './DocumentLine.css'
 import { User } from 'oidc-client'
-
+import cn from 'classnames'
 interface Props {
   documentLine: Document
   userInfo: User
@@ -52,85 +52,82 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
   }
 
   return (
-    <>
-      <Box position="relative" className={styles.line} paddingY={2}>
-        <GridRow>
-          <GridColumn span={['1/2', '2/12']} order={[2, 1]}>
-            <Box
-              className={styles.date}
-              display="flex"
-              alignItems="center"
-              justifyContent={['flexEnd', 'flexStart']}
-              height="full"
-              paddingX={[0, 2]}
-              marginBottom={1}
-            >
-              <Hidden above="xs">
-                <Text variant="small" color="dark300">
-                  {format(new Date(documentLine.date), dateFormat.is)}
-                </Text>
-              </Hidden>
-              <Hidden below="sm">
-                <Text>
-                  {format(new Date(documentLine.date), dateFormat.is)}
-                </Text>
-              </Hidden>
-            </Box>
-          </GridColumn>
-          <GridColumn
-            span={['1/1', '6/12', '7/12', '6/12', '7/12']}
-            order={[2, 3]}
+    <Box position="relative" className={styles.line} paddingY={2}>
+      <GridRow>
+        <GridColumn span={['1/2', '2/12']} order={[2, 1]}>
+          <Box
+            className={styles.date}
+            display="flex"
+            alignItems="center"
+            justifyContent={['flexEnd', 'flexStart']}
+            height="full"
+            paddingX={[0, 2]}
+            marginBottom={1}
           >
-            <Box
-              display="flex"
-              alignItems="center"
-              height="full"
-              paddingX={[0, 2]}
-              paddingBottom={[1, 0]}
-              overflow="hidden"
-            >
-              {img && (
-                <img
-                  className={styles.image}
-                  src={img}
-                  alt={documentLine.subject}
-                />
-              )}
-              {documentLine.fileType === 'url' && documentLine.url ? (
-                <Link href={documentLine.url}>
-                  <button className={styles.button}>
-                    {documentLine.subject}
-                  </button>
-                </Link>
-              ) : (
-                <button className={styles.button} onClick={onClickHandler}>
+            <Text variant="small" lineHeight="lg">
+              {format(new Date(documentLine.date), dateFormat.is)}
+            </Text>
+          </Box>
+        </GridColumn>
+        <GridColumn
+          span={['1/1', '6/12', '7/12', '6/12', '7/12']}
+          order={[2, 3]}
+        >
+          <Box
+            display="flex"
+            alignItems="center"
+            height="full"
+            paddingX={[0, 2]}
+            paddingBottom={[1, 0]}
+            overflow="hidden"
+          >
+            {img && (
+              <img
+                className={styles.image}
+                src={img}
+                alt={documentLine.subject}
+              />
+            )}
+            {documentLine.fileType === 'url' && documentLine.url ? (
+              <Link href={documentLine.url}>
+                <button
+                  className={cn(styles.button, {
+                    [styles.unopened]: !documentLine.opened,
+                  })}
+                >
                   {documentLine.subject}
                 </button>
-              )}
-            </Box>
-          </GridColumn>
-          <GridColumn
-            span={['1/2', '4/12', '3/12', '4/12', '3/12']}
-            order={[1, 3]}
+              </Link>
+            ) : (
+              <button
+                className={cn(styles.button, {
+                  [styles.unopened]: !documentLine.opened,
+                })}
+                onClick={onClickHandler}
+              >
+                {documentLine.subject}
+              </button>
+            )}
+          </Box>
+        </GridColumn>
+        <GridColumn
+          span={['1/2', '4/12', '3/12', '4/12', '3/12']}
+          order={[1, 3]}
+        >
+          <Box
+            display="flex"
+            alignItems="center"
+            height="full"
+            paddingX={[0, 2]}
+            overflow="hidden"
           >
-            <Box
-              display="flex"
-              alignItems="center"
-              height="full"
-              paddingX={[0, 2]}
-              overflow="hidden"
-            >
-              <Hidden above="xs">
-                <Text variant="small">{documentLine.senderName}</Text>
-              </Hidden>
-              <Hidden below="sm">
-                <Text>{documentLine.senderName}</Text>
-              </Hidden>
-            </Box>
-          </GridColumn>
-        </GridRow>
-      </Box>
-    </>
+            <Text variant="small" lineHeight="lg">
+              {documentLine.senderName}
+            </Text>
+          </Box>
+        </GridColumn>
+      </GridRow>
+    </Box>
   )
 }
 
