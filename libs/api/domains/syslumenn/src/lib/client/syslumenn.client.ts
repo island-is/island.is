@@ -84,6 +84,7 @@ export class SyslumennClient {
     persons: Person[],
     attachment: Attachment,
     extraData: { [key: string]: string },
+    uploadDataName: string,
   ): Promise<DataUploadResponse> {
     await this.login()
 
@@ -95,7 +96,7 @@ export class SyslumennClient {
     }
 
     const request = JSON.stringify(
-      constructUploadDataObject(this.id, persons, attachment, extraData),
+      constructUploadDataObject(this.id, persons, attachment, extraData, uploadDataName),
     )
 
     const response: {

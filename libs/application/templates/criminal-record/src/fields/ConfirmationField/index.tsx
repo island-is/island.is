@@ -8,7 +8,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import React, { FC, useState } from 'react'
-import MyPDF from 'pdf-viewer-reactjs'
+// import MyPDF from 'pdf-viewer-reactjs'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
@@ -69,11 +69,11 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
           width="100%"
           height="100%"
         ></embed>
-        <MyPDF
+        {/* <MyPDF
           document={{
             base64: `data:application/pdf;base64,${externalData.getCriminalRecord.data?.pdfBase64}`,
           }}
-        />
+        /> */}
       </>
     )
   }

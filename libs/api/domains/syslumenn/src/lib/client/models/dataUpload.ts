@@ -40,14 +40,15 @@ export function constructUploadDataObject(
   persons: Person[],
   attachment: Attachment,
   extraData: { [key: string]: string },
+  uploadDataName: string,
 ): IDataUpload {
   return {
     audkenni: id,
     gognSkeytis: {
       audkenni: uuid(),
-      skeytaHeiti: 'Lögheimilisbreyting barns',
+      skeytaHeiti: uploadDataName,
       adilar: persons.map((p) => {
-        return {
+        return <ChildrenTransferPerson>{
           id: uuid(),
           nafn: p.name,
           kennitala: p.ssn,

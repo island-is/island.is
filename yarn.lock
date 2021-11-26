@@ -7183,6 +7183,13 @@
   dependencies:
     "@types/express" "*"
 
+"@types/pdf-viewer-reactjs@2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@types/pdf-viewer-reactjs/-/pdf-viewer-reactjs-2.2.2.tgz#4b333e6d5c6fff79dace62d310cf91d62e426f90"
+  integrity sha512-pqZURKFhlxU7aVJA0ugXgu5mmHjCI0ppp3nqN4rDFCH168JOZNwEB9uerf2u881dViyASLfwUWDIEd3wESOnWg==
+  dependencies:
+    "@types/react" "*"
+
 "@types/pdfkit@0.11.2":
   version "0.11.2"
   resolved "https://registry.yarnpkg.com/@types/pdfkit/-/pdfkit-0.11.2.tgz#32ac956ccf27349f66ab77fbb4e5be3399508814"
@@ -21988,6 +21995,19 @@ pbkdf2@^3.0.3:
     ripemd160 "^2.0.1"
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
+
+pdf-viewer-reactjs@2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/pdf-viewer-reactjs/-/pdf-viewer-reactjs-2.2.3.tgz#63e1c90d9575a87ba801b0564558138972733db7"
+  integrity sha512-HM6ngxxnbztd/N/3dB+of3jSZtzS8CjcAoIfSWe7OY9Aqwb6cXLHbluCWc//cySXDdj3hhe8Wj5Wjg7T1ktxUA==
+  dependencies:
+    pdfjs-dist "^2.6.347"
+    prop-types "^15.7.2"
+
+pdfjs-dist@^2.6.347:
+  version "2.10.377"
+  resolved "https://registry.yarnpkg.com/pdfjs-dist/-/pdfjs-dist-2.10.377.tgz#feadc9f31bf1790795994e54b18930974cf4970a"
+  integrity sha512-i0jRShtvgfsVQUNCoFYH4SVhPO3U0yhtiFLfZ0RR0B+68N+Vnwq+8B3cjWjLEwWGh8wg1XQ/sYMYKUlHn/Qpsw==
 
 pdfkit@0.11.0:
   version "0.11.0"
