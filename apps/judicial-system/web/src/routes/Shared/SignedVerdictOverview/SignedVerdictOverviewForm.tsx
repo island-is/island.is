@@ -1,6 +1,9 @@
 import React, { useContext } from 'react'
+import { ValueType } from 'react-select/src/types'
+import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
+
 import {
   Accordion,
   AccordionItem,
@@ -10,6 +13,8 @@ import {
   Tag,
   Text,
   Tooltip,
+  Stack,
+  Divider,
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -17,9 +22,10 @@ import {
   CourtRecordAccordionItem,
   FormContentContainer,
   InfoCard,
-  PdfButton,
+  PdfRow,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
+  InfoBox,
 } from '@island.is/judicial-system-web/src/components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -33,8 +39,8 @@ import {
   isInvestigationCase,
   UserRole,
   isAcceptingCaseDecision,
+  Case,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   capitalize,
@@ -44,19 +50,18 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import AppealSection from './Components/AppealSection/AppealSection'
-import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
-import { useIntl } from 'react-intl'
+import { core } from '@island.is/judicial-system-web/messages'
+import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   UploadState,
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
+
+import AppealSection from './Components/AppealSection/AppealSection'
 import { UploadStateMessage } from './Components/UploadStateMessage'
-import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
-import { core } from '@island.is/judicial-system-web/messages'
+import { SignedRuling } from './Components/SignedRuling'
 
 interface Props {
   workingCase: Case
@@ -441,41 +446,47 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         </>
       )}
       {!workingCase.isMasked && (
-        <Box marginBottom={user?.role === UserRole.PROSECUTOR ? 7 : 15}>
-          {user?.role !== UserRole.STAFF && (
-            <>
-              <Box marginBottom={3}>
-                <PdfButton
+        <Box marginBottom={10}>
+          <Text as="h3" variant="h3" marginBottom={5}>
+            Skjöl málsins
+          </Text>
+          <Box marginBottom={2}>
+            <Stack space={2} dividers>
+              {user?.role !== UserRole.STAFF && (
+                <PdfRow
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRequest)}
                   pdfType="request"
                 />
-              </Box>
-              <Box marginBottom={3}>
-                <PdfButton
+              )}
+              {workingCase.type === CaseType.CUSTODY &&
+                workingCase.state === CaseState.ACCEPTED &&
+                isAcceptingCaseDecision(workingCase.decision) && (
+                  <PdfRow
+                    caseId={workingCase.id}
+                    title={formatMessage(core.pdfButtonCustodyNotice)}
+                    pdfType="custodyNotice"
+                  />
+                )}
+              <PdfRow
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonRulingShortVersion)}
+                pdfType="ruling?shortVersion=true"
+              >
+                <Button>Undirrita</Button>
+              </PdfRow>
+              {user?.role !== UserRole.STAFF && (
+                <PdfRow
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRuling)}
                   pdfType="ruling?shortVersion=false"
-                />
-              </Box>
-            </>
-          )}
-          <Box marginBottom={3}>
-            <PdfButton
-              caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonRulingShortVersion)}
-              pdfType="ruling?shortVersion=true"
-            />
+                >
+                  <SignedRuling judge="Telma Guðbjörg" />
+                </PdfRow>
+              )}
+            </Stack>
           </Box>
-          {workingCase.type === CaseType.CUSTODY &&
-            workingCase.state === CaseState.ACCEPTED &&
-            isAcceptingCaseDecision(workingCase.decision) && (
-              <PdfButton
-                caseId={workingCase.id}
-                title={formatMessage(core.pdfButtonCustodyNotice)}
-                pdfType="custodyNotice"
-              />
-            )}
+          <Divider />
         </Box>
       )}
       {user?.role === UserRole.PROSECUTOR &&
