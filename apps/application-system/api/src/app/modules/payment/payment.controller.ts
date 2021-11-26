@@ -61,12 +61,8 @@ export class PaymentController {
     @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
     @Body() payload: CreateChargeInput,
   ): Promise<CreatePaymentResponseDto> {
-    const { item: items } = await this.paymentAPI.getCatalog()
-
-    // Sort through all catalogs to find the correct one.
-    const chargeItem = await this.paymentService.searchCorrectCatalog(
+    const chargeItem = await this.paymentService.findChargeItem(
       payload.chargeItemCode,
-      items,
     )
 
     const paymentDto: Pick<

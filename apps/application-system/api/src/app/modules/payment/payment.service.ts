@@ -100,7 +100,9 @@ export class PaymentService {
     }
   }
 
-  searchCorrectCatalog(targetChargeItemCode: string, items: Item[]): Item {
+  async findChargeItem(targetChargeItemCode: string): Promise<Item> {
+    const { item: items } = await this.paymentApi.getCatalog()
+
     const item = items.find(
       ({ chargeItemCode }) => chargeItemCode === targetChargeItemCode,
     )
