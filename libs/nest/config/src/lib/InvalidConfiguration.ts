@@ -1,7 +1,25 @@
 import { ConfigurationError } from './ConfigurationError'
 
 export class InvalidConfiguration {
-  static allowedMembers = ['then']
+  // These members are not likely to be used as configuration keys, but are
+  // likely to be accessed "accidentally" when passing the InvalidConfiguration
+  // around.
+  static allowedMembers = [
+    // async-await.
+    'then',
+
+    // NX.
+    'onModuleInit',
+    'onModuleDestroy',
+    'onApplicationBootstrap',
+    'onApplicationShutdown',
+    'beforeApplicationShutdown',
+
+    // Winston
+    'message',
+    'stack',
+  ]
+
   isConfigured = false
 
   constructor(errorMessage: string) {

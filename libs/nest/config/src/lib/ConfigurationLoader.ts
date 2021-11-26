@@ -92,7 +92,9 @@ export class ConfigurationLoader<T> implements EnvLoader {
 
     if (!parseResult.success) {
       throw new ConfigurationError(
-        this.formatValidationErrors(parseResult.error),
+        // Type casted to support strict: false projects.
+        // TODO: Remove when api and financial-aid-api are strict.
+        this.formatValidationErrors((parseResult as { error: ZodError }).error),
       )
     }
   }
