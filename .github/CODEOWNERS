@@ -62,6 +62,8 @@
 /libs/shared/connected/src/lib/generalPetition/GeneralPetitionLists                           @island-is/kosmos-kaos
 /libs/api/domains/communications/                                                             @island-is/kosmos-kaos
 /apps/services/notifications/                                                                 @island-is/kosmos-kaos
+/apps/air-discount-scheme/                                                                    @island-is/kosmos-kaos @island-is/core
+/libs/air-discount-scheme/                                                                    @island-is/kosmos-kaos
 
 /apps/reference-next-app/                                                                     @island-is/aranja-core
 /libs/cms-translations/                                                                       @island-is/aranja-core
