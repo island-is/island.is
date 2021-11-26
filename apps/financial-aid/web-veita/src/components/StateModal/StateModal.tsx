@@ -29,7 +29,6 @@ interface Props {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   homeCircumstances: HomeCircumstances
   spouseNationalId?: string
-  usePersonalTaxCredit: boolean
 }
 
 const StateModal = ({
@@ -41,7 +40,6 @@ const StateModal = ({
   setIsLoading,
   homeCircumstances,
   spouseNationalId,
-  usePersonalTaxCredit,
 }: Props) => {
   const [selected, setSelected] = useState<ApplicationState | undefined>()
 
@@ -177,7 +175,6 @@ const StateModal = ({
             }}
             homeCircumstances={homeCircumstances}
             spouseNationalId={spouseNationalId}
-            usePersonalTaxCredit={usePersonalTaxCredit}
           />
 
           <RejectModal

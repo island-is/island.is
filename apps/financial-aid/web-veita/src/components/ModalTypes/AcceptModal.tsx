@@ -23,7 +23,6 @@ interface Props {
   isModalVisable: boolean
   homeCircumstances: HomeCircumstances
   spouseNationalId?: string
-  usePersonalTaxCredit: boolean
 }
 
 interface calculationsState {
@@ -43,7 +42,6 @@ const AcceptModal = ({
   isModalVisable,
   homeCircumstances,
   spouseNationalId,
-  usePersonalTaxCredit,
 }: Props) => {
   const maximumInputLength = 6
 
