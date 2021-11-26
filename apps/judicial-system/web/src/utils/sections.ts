@@ -279,7 +279,8 @@ export const getCourtSections = (
         name: 'Fyrirtökutími',
         href:
           (activeSubSection && activeSubSection > 1) ||
-          isOverviewStepValidRC(workingCase)
+          (hasCourtPermission(workingCase, user) &&
+            isOverviewStepValidRC(workingCase))
             ? `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`
             : undefined,
       },
