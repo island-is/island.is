@@ -128,7 +128,8 @@ export const en: TranslatedMessages = {
   'home.onboardingModule.card3':
     'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at',
   'home.onboardingModule.card4':
-    'Users are advised to familiarize themselves with Stafrænt Ísland’s policy on handling personal information on',
+    'We encourage our users to read Digital Iceland’s privacy policy on',
+
 
   // inbox
   'inbox.screenTitle': 'Inbox',
