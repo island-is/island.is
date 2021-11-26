@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-target-blank */
 import React, { FC } from 'react'
 import {
   Box,
@@ -24,6 +25,7 @@ const NationalRegistryUserQuery = gql`
   }
 `
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 const Greeting: FC<{}> = () => {
   const { formatMessage } = useLocale()
   const { data } = useQuery<Query>(NationalRegistryUserQuery)

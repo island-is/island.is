@@ -1,4 +1,4 @@
-import React, { FC, ReactElement } from 'react'
+import React, { ReactElement } from 'react'
 import { useAuth } from '@island.is/auth/react'
 import { Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'

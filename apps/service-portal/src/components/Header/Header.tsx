@@ -17,6 +17,7 @@ import { BetaTag } from '../Logo/BetaTag'
 import { m } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export const Header: FC<{}> = () => {
   const { formatMessage } = useLocale()
   const [{ mobileMenuState }, dispatch] = useStore()

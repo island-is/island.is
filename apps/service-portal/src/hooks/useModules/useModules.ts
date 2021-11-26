@@ -1,6 +1,4 @@
 import { useEffect } from 'react'
-
-import { useAuth } from '@island.is/auth/react'
 import { ServicePortalModule } from '@island.is/service-portal/core'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
@@ -42,5 +40,6 @@ export const useModules = () => {
 
   useEffect(() => {
     filterModulesBasedOnFeatureFlags()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 }

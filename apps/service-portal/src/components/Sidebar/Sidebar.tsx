@@ -11,6 +11,7 @@ import { ActionType } from '../../store/actions'
 import cn from 'classnames'
 import { useUpdateUnreadDocuments } from '@island.is/service-portal/core'
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export const Sidebar: FC<{}> = () => {
   const navigation = useNavigation()
   const [{ sidebarState }, dispatch] = useStore()

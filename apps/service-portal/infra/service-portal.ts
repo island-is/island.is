@@ -1,5 +1,7 @@
-import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export const serviceSetup = (services: {}): ServiceBuilder<'service-portal'> =>
   service('service-portal')
     .namespace('service-portal')

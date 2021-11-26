@@ -4,6 +4,7 @@ import { MessageDescriptor } from 'react-intl'
 
 type FormatMessage = (
   descriptor: string | MessageDescriptor,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   values?: any,
 ) => string
 

@@ -1,4 +1,4 @@
-import React, { FC, Suspense, useCallback, useMemo } from 'react'
+import React, { FC, Suspense, useMemo } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useStore } from '../../store/stateProvider'
 import {
@@ -79,6 +79,7 @@ const WidgetLoader: FC<{
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export const Dashboard: FC<{}> = () => {
   const [{ modules, modulesPending }] = useStore()
   const { userInfo, client } = useModuleProps()

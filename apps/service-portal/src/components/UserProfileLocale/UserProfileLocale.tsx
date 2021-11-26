@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useLazyQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { useLocale, useNamespaces, isLocale } from '@island.is/localization'

@@ -60,6 +60,7 @@ const RouteLoader: FC<{
   </Switch>
 ))
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 const Modules: FC<{}> = () => {
   const [{ routes }] = useStore()
   const { userInfo, client } = useModuleProps()

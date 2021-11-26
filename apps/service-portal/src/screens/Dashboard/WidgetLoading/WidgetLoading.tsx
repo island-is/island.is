@@ -1,7 +1,7 @@
 import { Box, SkeletonLoader, Stack } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-import * as styles from './WidgetLoading.css'
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 const WidgetLoading: FC<{}> = () => {
   return (
     <Box paddingY={2} paddingX={3} border="standard">

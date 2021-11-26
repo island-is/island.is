@@ -11,7 +11,6 @@ import { useLocale } from '@island.is/localization'
 import NavItem from './NavItem/NavItem'
 import SubNavItem from './NavItem/SubNavItem'
 import { servicePortalOutboundLink } from '@island.is/plausible'
-import { getUnreadDocumentsCount } from '@island.is/service-portal/graphql'
 
 interface Props {
   nav: ServicePortalNavigationItem

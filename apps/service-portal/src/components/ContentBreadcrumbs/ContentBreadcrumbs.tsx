@@ -24,6 +24,7 @@ const reduce = (
   return children.reduce((iAcc, n) => reduce(f, n, iAcc), newAcc)
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 const ContentBreadcrumbs: FC<{}> = () => {
   const navigation = useNavigation()
   const location = useLocation()
