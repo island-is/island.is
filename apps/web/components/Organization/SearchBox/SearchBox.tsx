@@ -90,15 +90,8 @@ export const SearchBox = ({
         ? newOpts
         : [
             {
-              label: value,
-              value: value,
               component: () => (
-                <Box
-                  padding={2}
-                  background="blue100"
-                  disabled
-                  onClick={() => null}
-                >
+                <Box padding={2} background="blue100" disabled>
                   <Text as="span">{noResultsText}</Text>
                 </Box>
               ),
@@ -126,22 +119,25 @@ export const SearchBox = ({
         onSubmit={(value, selectedOption) => {
           setOptions([])
 
-          Router.push({
-            pathname: selectedOption
-              ? linkResolver('Article' as LinkType, [selectedOption.value]).href
-              : linkResolver('search').href,
-            query: { q: value },
-          })
+          value &&
+            Router.push({
+              pathname: selectedOption
+                ? linkResolver('Article' as LinkType, [selectedOption.value])
+                    .href
+                : linkResolver('search').href,
+              query: { q: value },
+            })
         }}
         onChange={(i, option) => {
           setOptions([])
 
-          Router.push({
-            pathname: linkResolver('Article' as LinkType, [
-              option.selectedItem.value,
-            ]).href,
-            query: { q: value.toLowerCase() },
-          })
+          value &&
+            Router.push({
+              pathname: linkResolver('Article' as LinkType, [
+                option.selectedItem.value,
+              ]).href,
+              query: { q: value.toLowerCase() },
+            })
         }}
       />
     </Box>
