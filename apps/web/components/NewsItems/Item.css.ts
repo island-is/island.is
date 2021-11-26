@@ -6,7 +6,6 @@ export const wrapper = style({
   flexDirection: 'column',
   width: '100%',
   height: '100%',
-  // outline: '1px solid purple',
   alignItems: 'center',
   ...themeUtils.responsiveStyle({
     xl: {
@@ -37,7 +36,6 @@ export const image = style({
   height: 'auto',
   justifyContent: 'center',
   alignItems: 'center',
-  // outline: '1px solid blue',
   order: 1,
   ...themeUtils.responsiveStyle({
     xl: {

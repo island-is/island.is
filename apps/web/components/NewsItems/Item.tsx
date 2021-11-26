@@ -38,7 +38,7 @@ export const Item = ({
   const hasTags = Array.isArray(tags) && tags.length > 0
   const { format } = useDateUtils()
 
-  const formattedDate = date && format(new Date(date), 'do MMMM yyyy')
+  const formattedDate = format(new Date(date), 'do MMMM yyyy')
 
   return (
     <FocusableBox
