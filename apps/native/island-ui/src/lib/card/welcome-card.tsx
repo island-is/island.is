@@ -59,7 +59,10 @@ interface CardProps {
   imgSrc?: ImageSourcePropType
   style?: any
   grid?: boolean
-  hasLink?: boolean
+  link?: {
+    url: string
+    title: string
+  }
 }
 
 export function WelcomeCard({
@@ -68,7 +71,7 @@ export function WelcomeCard({
   backgroundColor,
   style,
   grid,
-  hasLink,
+  link,
 }: CardProps) {
   const theme = useTheme()
   const color = backgroundColor
@@ -97,9 +100,9 @@ export function WelcomeCard({
       {imgSrc && <IllustrationImage source={imgSrc} resizeMode="cover" />}
       <Content>
         <Description>{description}</Description>
-        {hasLink && (
-          <Link url="mailto:island@island.is">
-            island@island.is
+        {link && (
+          <Link url={link.url}>
+            {link.title}
           </Link>
         )}
       </Content>

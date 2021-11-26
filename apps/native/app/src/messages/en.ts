@@ -127,6 +127,8 @@ export const en: TranslatedMessages = {
     'The app’s purpose is to provide faster access to your documents, applications, and other dealings with governmental institutions.',
   'home.onboardingModule.card3':
     'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at',
+  'home.onboardingModule.card4':
+    'Users are advised to familiarize themselves with Stafrænt Ísland’s policy on handling personal information on',
 
   // inbox
   'inbox.screenTitle': 'Inbox',

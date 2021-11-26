@@ -38,11 +38,12 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
         if (parsed?.TGLJZW) {
           setScanResult(ScanResult.DRIVER_LICENSE)
         }
-      } else if (type === Constants.BarCodeType.qr) {
-        if (data.startsWith('HC1')) {
-          setScanResult(ScanResult.COVID_CERTIFICATE)
-        }
       }
+      // else if (type === Constants.BarCodeType.qr) {
+      //   if (data.startsWith('HC1')) {
+      //     setScanResult(ScanResult.COVID_CERTIFICATE)
+      //   }
+      // }
     } catch (err) {
       console.log('unable to decode barcode', err)
     }
@@ -64,9 +65,9 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
           {scanResult === ScanResult.DRIVER_LICENSE && (
             <DriverLicenseScanResult data={data} onLoad={setLoaded} />
           )}
-          {scanResult === ScanResult.COVID_CERTIFICATE && (
+          {/* {scanResult === ScanResult.COVID_CERTIFICATE && (
             <CovidCertificateScanResult data={data} onLoad={setLoaded} />
-          )}
+          )} */}
         </>
       )}
     </View>

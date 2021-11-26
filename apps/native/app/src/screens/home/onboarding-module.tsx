@@ -10,6 +10,8 @@ import { useTheme } from 'styled-components/native'
 import illustration1 from '../../assets/illustrations/digital-services-m3.png'
 import illustration3 from '../../assets/illustrations/le-company-s2.png'
 import illustration2 from '../../assets/illustrations/le-retirement-s3.png'
+import illustration4 from '../../assets/illustrations/le_jobs_s5.png'
+
 import { useIntl } from 'react-intl'
 import { useAuthStore } from '../../stores/auth-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
@@ -71,7 +73,19 @@ export const OnboardingModule = React.memo(() => {
             dark: '#150920',
             light: theme.color.purple100,
           }}
-          hasLink
+          link={{ url: 'mailto:island@island.is', title: 'island@island.is'}}
+        />
+        <WelcomeCard
+          key="card-4"
+          description={intl.formatMessage({
+            id: 'home.onboardingModule.card4',
+          })}
+          imgSrc={illustration4}
+          backgroundColor={{
+            dark: '#150920',
+            light: theme.color.purple100,
+          }}
+          link={{ url: 'https://island.is/personuverndarstefna-stafraent-islands', title: 'Ísland.is'}}
         />
       </ViewPager>
     </SafeAreaView>
