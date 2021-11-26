@@ -1,11 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import {
-  AsyncSearchInput,
-  Box,
-  Button,
-  Text,
-  Link,
-} from '@island.is/island-ui/core'
+import React, { useEffect, useState } from 'react'
+import { Box, AsyncSearch, Text } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import {
   Query,
@@ -27,12 +21,11 @@ export const SearchBox = ({
   organizationPage,
   placeholder,
   noResultsText,
-  searchAllText,
 }: SearchBoxProps) => {
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
 
-  const { data } = useQuery<Query, QueryGetArticlesArgs>(
+  const { data, loading } = useQuery<Query, QueryGetArticlesArgs>(
     GET_ORGANIZATION_SERVICES_QUERY,
     {
       variables: {
@@ -46,125 +39,111 @@ export const SearchBox = ({
     },
   )
 
-  const items = useMemo(
-    () =>
-      data?.getArticles
-        .map((o) => ({
-          type: 'article',
-          label: o.title,
-          value: o.slug,
-        }))
-        .concat(
-          ...organizationPage.menuLinks.map((x) => [
-            {
-              type: 'url',
-              label: x.primaryLink.text,
-              value: x.primaryLink.url,
-            },
-            ...x.childrenLinks.map((y) => ({
-              type: 'url',
-              label: y.text,
-              value: y.url,
-            })),
-          ]),
-        ) ?? [],
-    [data],
-  )
+  const items = data?.getArticles?.map((item, index) => ({
+    label: item.title,
+    value: item.slug,
+    component: ({ active }) => {
+      return (
+        <Box
+          key={index}
+          cursor="pointer"
+          outline="none"
+          padding={2}
+          role="button"
+          background={active ? 'white' : 'blue100'}
+          onClick={() => {
+            setOptions([])
+          }}
+        >
+          <Text as="span">{item.title}</Text>
+        </Box>
+      )
+    },
+  }))
 
   const [value, setValue] = useState('')
   const [options, setOptions] = useState([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const busy = loading || isLoading
 
-  const [hasFocus, setHasFocus] = useState(false)
+  const clearAll = () => {
+    setIsLoading(false)
+    setOptions([])
+  }
 
   useEffect(() => {
     const newOpts = items
-      .filter(
-        (item) =>
-          value && item.label.toLowerCase().includes(value.toLowerCase()),
-      )
-      .slice(0, 5)
+      ? items
+          .filter(
+            (item) =>
+              value && item.label.toLowerCase().includes(value.toLowerCase()),
+          )
+          .slice(0, 5)
+      : []
 
     if (!value) {
-      setOptions([])
+      clearAll()
     }
 
-    setOptions(newOpts)
+    setOptions(
+      newOpts.length
+        ? newOpts
+        : [
+            {
+              label: value,
+              value: value,
+              component: () => (
+                <Box
+                  padding={2}
+                  background="blue100"
+                  disabled
+                  onClick={() => null}
+                >
+                  <Text as="span">{noResultsText}</Text>
+                </Box>
+              ),
+            },
+          ],
+    )
   }, [value])
 
-  const onBlur = () => {
-    setTimeout(() => {
-      setHasFocus(false)
-    }, 100)
-  }
   return (
     <Box marginTop={3}>
-      <AsyncSearchInput
-        rootProps={{
-          'aria-controls': '-menu',
+      <AsyncSearch
+        size={'medium'}
+        colored={false}
+        key="island-organization"
+        placeholder={placeholder}
+        options={options}
+        loading={busy}
+        initialInputValue={''}
+        inputValue={value}
+        onInputValueChange={(value) => {
+          setIsLoading(true)
+          setValue(value)
         }}
-        hasFocus={hasFocus}
-        menuProps={{
-          comp: 'div',
+        closeMenuOnSubmit
+        onSubmit={(value, selectedOption) => {
+          setOptions([])
+
+          Router.push({
+            pathname: selectedOption
+              ? linkResolver('Article' as LinkType, [selectedOption.value]).href
+              : linkResolver('search').href,
+            query: { q: value },
+          })
         }}
-        buttonProps={{
-          onClick: () => {
-            value &&
-              Router.push({
-                pathname: linkResolver('search').href,
-                query: { q: value },
-              }).then(() => window.scrollTo(0, 0))
-          },
+        onChange={(i, option) => {
+          setOptions([])
+
+          Router.push({
+            pathname: linkResolver('Article' as LinkType, [
+              option.selectedItem.value,
+            ]).href,
+            query: { q: value.toLowerCase() },
+          })
         }}
-        inputProps={{
-          inputSize: 'medium',
-          onFocus: () => setHasFocus(true),
-          onBlur,
-          placeholder,
-          value,
-          onChange: (e) => setValue(e.target.value),
-        }}
-      >
-        {!!value && (
-          <Box padding={2} onClick={(e) => e.stopPropagation()}>
-            {options?.map((x) => (
-              <Box paddingY={1}>
-                <Link
-                  key={x.value}
-                  href={
-                    x.type === 'url'
-                      ? x.value
-                      : linkResolver('Article' as LinkType, [x.value]).href
-                  }
-                  underline="normal"
-                >
-                  <Text key={x.value} as="span">
-                    {x.label}
-                  </Text>
-                </Link>
-              </Box>
-            ))}
-            {!options?.length && (
-              <Box paddingY={1}>
-                <Text as="span">{noResultsText}</Text>
-              </Box>
-            )}
-            <Box paddingY={2}>
-              <Button
-                type="button"
-                variant="text"
-                onClick={() =>
-                  Router.push({
-                    pathname: linkResolver('search').href,
-                    query: { q: value },
-                  })
-                }
-              >
-                {searchAllText}
-              </Button>
-            </Box>
-          </Box>
-        )}
-      </AsyncSearchInput>
+      />
     </Box>
   )
 }
