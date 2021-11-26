@@ -11,6 +11,7 @@ import {
   calculateAcceptedAidFinalAmount,
   calculateTaxOfAmount,
   HomeCircumstances,
+  isObjEmpty,
 } from '@island.is/financial-aid/shared/lib'
 import format from 'date-fns/format'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
@@ -60,11 +61,19 @@ const AcceptModal = ({
     }
   }, [homeCircumstances, municipality])
 
+  if (!aidAmount) {
+    return (
+      <Text color="red400">
+        Útreikingur fyrir aðstoð misstókst, vinsamlegast reyndu aftur
+      </Text>
+    )
+  }
+
   const [state, setState] = useState<calculationsState>({
-    amount: aidAmount ? aidAmount : 0,
+    amount: aidAmount,
     income: 0,
     personalTaxCreditPercentage: 0,
-    tax: calculateTaxOfAmount(aidAmount ? aidAmount : 0, currentYear),
+    tax: calculateTaxOfAmount(aidAmount, currentYear),
     secondPersonalTaxCredit: 0,
     showSecondPersonalTaxCredit: false,
     deductionFactor: {},
@@ -82,23 +91,23 @@ const AcceptModal = ({
         return a + b
       }, 0)
 
-  const isObjEmpty = (
-    obj: Record<string, { description: string; amount: number }>,
-  ) =>
-    obj &&
-    Object.keys(obj).length === 0 &&
-    Object.getPrototypeOf(obj) === Object.prototype
+  const finalAmount = calculateAcceptedAidFinalAmount(
+    aidAmount - state.income - sumValues(state.deductionFactor),
+    currentYear,
+    state.personalTaxCreditPercentage,
+    state.secondPersonalTaxCredit,
+  )
 
   return (
     <InputModal
       headline="Umsóknin þín er samþykkt og áætlun er tilbúin"
       onCancel={onCancel}
       onSubmit={() => {
-        if (state.amount <= 0) {
+        if (finalAmount && finalAmount <= 0) {
           setState({ ...state, hasError: true })
           return
         }
-        onSaveApplication(state.amount)
+        onSaveApplication(finalAmount)
       }}
       submitButtonText="Samþykkja"
       isModalVisable={isModalVisable}
@@ -113,8 +122,7 @@ const AcceptModal = ({
           name="amountInput"
           value={state.amount.toString()}
           onUpdate={(input) => {
-            setState({ ...state, hasError: false })
-            setState({ ...state, amount: input })
+            setState({ ...state, amount: input, hasError: false })
           }}
           maximumInputLength={maximumInputLength}
         />
@@ -128,8 +136,7 @@ const AcceptModal = ({
           name="income"
           value={state.income.toString()}
           onUpdate={(input) => {
-            setState({ ...state, hasError: false })
-            setState({ ...state, income: input })
+            setState({ ...state, income: input, hasError: false })
           }}
           maximumInputLength={maximumInputLength}
         />
@@ -147,9 +154,9 @@ const AcceptModal = ({
                   name={`description-${key}`}
                   value={state.deductionFactor[key].description}
                   onChange={(e) => {
-                    setState({ ...state, hasError: false })
                     setState({
                       ...state,
+                      hasError: false,
                       deductionFactor: {
                         ...state.deductionFactor,
                         [key]: {
@@ -169,9 +176,9 @@ const AcceptModal = ({
                   name={`amount-${key}`}
                   value={state.deductionFactor[key].amount.toString()}
                   onUpdate={(input) => {
-                    setState({ ...state, hasError: false })
                     setState({
                       ...state,
+                      hasError: false,
                       deductionFactor: {
                         ...state.deductionFactor,
                         [key]: { ...state.deductionFactor[key], amount: input },
@@ -190,6 +197,7 @@ const AcceptModal = ({
 
                     setState({
                       ...state,
+                      hasError: false,
                       deductionFactor: removeFactor,
                     })
                   }}
@@ -209,12 +217,14 @@ const AcceptModal = ({
             if (isObjEmpty(state.deductionFactor)) {
               setState({
                 ...state,
+                hasError: false,
                 deductionFactor: { factor1: { description: '', amount: 0 } },
               })
               return
             }
             setState({
               ...state,
+              hasError: false,
               deductionFactor: {
                 ...state.deductionFactor,
                 [`factor${Object.keys(state.deductionFactor).length + 1}`]: {
@@ -236,13 +246,13 @@ const AcceptModal = ({
           placeholder="Skrifaðu prósentuhlutfall"
           id="personalTaxCredit"
           name="personalTaxCredit"
-          value={Number(state.personalTaxCreditPercentage).toString() + '%'}
+          value={Number(state.personalTaxCreditPercentage).toString()}
           type="number"
           onChange={(e) => {
-            setState({ ...state, hasError: false })
             if (e.target.value.length <= 3 && Number(e.target.value) <= 100) {
               setState({
                 ...state,
+                hasError: false,
                 personalTaxCreditPercentage: Number(e.target.value),
               })
             }
@@ -261,10 +271,10 @@ const AcceptModal = ({
             value={Number(state.secondPersonalTaxCredit).toString()}
             type="number"
             onChange={(e) => {
-              setState({ ...state, hasError: false })
               if (e.target.value.length <= 3 && Number(e.target.value) <= 100) {
                 setState({
                   ...state,
+                  hasError: false,
                   secondPersonalTaxCredit: Number(e.target.value),
                 })
               }
@@ -286,7 +296,7 @@ const AcceptModal = ({
           variant="text"
         >
           {state.showSecondPersonalTaxCredit
-            ? 'Fjarlægðu skattkort'
+            ? 'Fjarlægðu skattkorti'
             : 'Bættu við skattkorti'}
         </Button>
       </Box>
@@ -296,15 +306,10 @@ const AcceptModal = ({
           label="Skattur "
           id="tax"
           name="tax"
-          value={Number(
-            calculateTaxOfAmount(
-              (aidAmount || 0) -
-                state.income -
-                sumValues(state.deductionFactor),
-              currentYear,
-            ),
+          value={calculateTaxOfAmount(
+            (aidAmount || 0) - state.income - sumValues(state.deductionFactor),
+            currentYear,
           ).toLocaleString('de-DE')}
-          type="number"
           readOnly={true}
         />
       </Box>
@@ -325,15 +330,7 @@ const AcceptModal = ({
         marginBottom={2}
       >
         <Text variant="small">Upphæð aðstoðar</Text>
-        <Text>
-          {calculateAcceptedAidFinalAmount(
-            (aidAmount || 0) - state.income - sumValues(state.deductionFactor),
-            currentYear,
-            state.personalTaxCreditPercentage,
-            state.secondPersonalTaxCredit,
-          ).toLocaleString('de-DE')}{' '}
-          kr.
-        </Text>
+        <Text>{finalAmount.toLocaleString('de-DE')} kr.</Text>
       </Box>
     </InputModal>
   )
