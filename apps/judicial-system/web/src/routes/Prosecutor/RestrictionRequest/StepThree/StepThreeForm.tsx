@@ -16,7 +16,7 @@ import {
   DateTime,
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   newSetAndSendDateToServer,
   removeTabsValidateAndSet,
@@ -24,7 +24,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
+import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import {
   legalProvisions,
   travelBanProvisions,
@@ -85,7 +85,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
             )}
           </Box>
           <BlueBox>
-            <Box marginBottom={3}>
+            <Box marginBottom={workingCase.type === CaseType.CUSTODY ? 3 : 0}>
               <DateTime
                 name="reqValidToDate"
                 datepickerLabel={`${
@@ -114,25 +114,27 @@ const StepThreeForm: React.FC<Props> = (props) => {
                 blueBox={false}
               />
             </Box>
-            <Checkbox
-              name="isIsolation"
-              label={formatMessage(rcDemands.sections.demands.isolation)}
-              tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
-              checked={workingCase.requestedCustodyRestrictions?.includes(
-                CaseCustodyRestrictions.ISOLATION,
-              )}
-              onChange={() =>
-                setCheckboxAndSendToServer(
-                  'requestedCustodyRestrictions',
-                  'ISOLATION',
-                  workingCase,
-                  setWorkingCase,
-                  updateCase,
-                )
-              }
-              large
-              filled
-            />
+            {workingCase.type === CaseType.CUSTODY && (
+              <Checkbox
+                name="isIsolation"
+                label={formatMessage(rcDemands.sections.demands.isolation)}
+                tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
+                checked={workingCase.requestedCustodyRestrictions?.includes(
+                  CaseCustodyRestrictions.ISOLATION,
+                )}
+                onChange={() =>
+                  setCheckboxAndSendToServer(
+                    'requestedCustodyRestrictions',
+                    'ISOLATION',
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+                large
+                filled
+              />
+            )}
           </BlueBox>
         </Box>
         <Box component="section" marginBottom={7}>

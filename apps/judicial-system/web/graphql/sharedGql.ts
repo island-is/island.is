@@ -107,6 +107,7 @@ export const CaseQuery = gql`
       }
       parentCase {
         id
+        state
         validToDate
         decision
         courtCaseNumber

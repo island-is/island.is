@@ -17,6 +17,7 @@ import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
 import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
+import { UserProfileInfo } from './UserProfileInfo'
 import { ValueType } from 'react-select'
 
 interface UserDropdownProps {
@@ -111,6 +112,7 @@ export const UserDropdown = ({
                   </Button>
                 </Box>
               )}
+              {!isDelegation && <UserProfileInfo />}
               <Box>
                 <Button
                   onClick={onLogout}

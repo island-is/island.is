@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
+import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import type {
   Case,
   RequestSignatureResponse,
@@ -13,9 +13,9 @@ import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useRouter } from 'next/router'
 import ConfirmationForm from './ConfirmationForm'
-import SigningModal from '@island.is/judicial-system-web/src/shared-components/SigningModal/SigningModal'
+import SigningModal from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 const Confirmation = () => {
   const [workingCase, setWorkingCase] = useState<Case>()

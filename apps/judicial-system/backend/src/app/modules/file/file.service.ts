@@ -26,6 +26,11 @@ import {
   UploadFileToCourtResponse,
 } from './models'
 
+// Files are stored in AWS S3 under a key which has the following format:
+// uploads/<uuid>/<uuid>/<filename>
+// As uuid-s have length 36, the filename starts at position 82 in the key.
+const NAME_BEGINS_INDEX = 82
+
 @Injectable()
 export class FileService {
   private throttle = Promise.resolve('')
@@ -65,17 +70,9 @@ export class FileService {
     file: CaseFile,
     courtId: string | undefined,
   ): Promise<string> {
-    this.logger.debug(
-      `Waiting to upload file ${file.id} of case ${file.caseId}`,
-    )
-
     await this.throttle.catch((reason) => {
-      this.logger.error('Previous upload failed', { reason })
+      this.logger.warn('Previous upload failed', { reason })
     })
-
-    this.logger.debug(
-      `Starting to upload file ${file.id} of case ${file.caseId}`,
-    )
 
     const content = await this.awsS3Service.getObject(file.key)
 
@@ -83,16 +80,12 @@ export class FileService {
       writeFile(`${file.name}`, content)
     }
 
-    const streamId = this.courtService.uploadStream(
+    return this.courtService.uploadStream(
       courtId,
       file.name,
       file.type,
       content,
     )
-
-    this.logger.debug(`Done uploading file ${file.id} of case ${file.caseId}`)
-
-    return streamId
   }
 
   async findById(id: string, caseId: string): Promise<CaseFile | null> {
@@ -114,7 +107,7 @@ export class FileService {
     const { fileName, type } = createPresignedPost
 
     return this.awsS3Service.createPresignedPost(
-      `${caseId}/${uuid()}/${fileName}`,
+      `uploads/${caseId}/${uuid()}/${fileName}`,
       type,
     )
   }
@@ -127,7 +120,7 @@ export class FileService {
 
     const { key } = createFile
 
-    const regExp = new RegExp(`^${caseId}/.{36}/(.*)$`)
+    const regExp = new RegExp(`^uploads/${caseId}/.{36}/(.*)$`)
 
     if (!regExp.test(key)) {
       throw new BadRequestException(`${key} is not a valid key`)
@@ -136,7 +129,7 @@ export class FileService {
     return this.fileModel.create({
       ...createFile,
       caseId,
-      name: createFile.key.slice(74), // prefixed by two uuids, a forward slash and an underscore
+      name: createFile.key.slice(NAME_BEGINS_INDEX),
     })
   }
 

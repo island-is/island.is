@@ -998,8 +998,13 @@ describe('Case', () => {
           accusedName: dbCase.accusedName,
           accusedAddress: dbCase.accusedAddress,
           accusedGender: dbCase.accusedGender,
+          defenderName: dbCase.defenderName,
+          defenderEmail: dbCase.defenderEmail,
+          defenderPhoneNumber: dbCase.defenderPhoneNumber,
+          leadInvestigator: dbCase.leadInvestigator,
           courtId: dbCase.courtId,
           court,
+          translator: dbCase.translator,
           lawsBroken: dbCase.lawsBroken,
           legalBasis: dbCase.legalBasis,
           legalProvisions: dbCase.legalProvisions,
@@ -1012,6 +1017,7 @@ describe('Case', () => {
           prosecutor,
           parentCaseId: dbCase.id,
           parentCase: dbCase,
+          initialRulingDate: dbCase.initialRulingDate ?? dbCase.rulingDate,
         } as CCase)
       })
   })

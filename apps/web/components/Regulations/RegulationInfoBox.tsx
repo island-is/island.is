@@ -44,6 +44,9 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
     })
   }
 
+  const nonCurrent: true | undefined =
+    !!regulation.timelineDate || !!regulation.showingDiff || undefined
+
   return (
     <RegulationsSidebarBox
       title={txt('infoboxTitle')}
@@ -123,7 +126,9 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
             size="small"
             variant="text"
           >
-            <Link href={regulation.pdfVersion}>{txt('downloadPdf')}</Link>
+            <Link href={regulation.pdfVersion}>
+              <a rel={nonCurrent && 'nofollow'}>{txt('downloadPdf')}</a>
+            </Link>
           </Button>
         </Text>
 

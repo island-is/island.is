@@ -5,6 +5,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
+  isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -12,7 +13,7 @@ import {
   FormFooter,
   PageLayout,
   FormContentContainer,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
@@ -66,8 +67,8 @@ export const StepFour: React.FC = () => {
           accusedName: theCase.accusedName,
           accusedNationalId: formatNationalId(theCase.accusedNationalId),
           extensionSuffix:
-            theCase.parentCase !== undefined &&
-            theCase.parentCase?.decision === CaseDecision.ACCEPTING
+            theCase.parentCase &&
+            isAcceptingCaseDecision(theCase.parentCase.decision)
               ? ' áframhaldandi'
               : '',
           caseType:

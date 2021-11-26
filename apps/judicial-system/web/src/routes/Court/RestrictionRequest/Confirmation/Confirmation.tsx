@@ -11,24 +11,27 @@ import {
   FormContentContainer,
   RulingAccordionItem,
   BlueBox,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { CaseDecision } from '@island.is/judicial-system/types'
+import {
+  CaseDecision,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
 import type {
   Case,
   RequestSignatureResponse,
 } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useQuery } from '@apollo/client'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import SigningModal from '@island.is/judicial-system-web/src/shared-components/SigningModal/SigningModal'
+import SigningModal from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import {
   core,
   rcConfirmation as m,
@@ -169,6 +172,8 @@ export const Confirmation: React.FC = () => {
               nextButtonText={formatMessage(
                 workingCase.decision === CaseDecision.ACCEPTING
                   ? m.footer.accepting.continueButtonText
+                  : workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY
+                  ? m.footer.acceptingPartially.continueButtonText
                   : workingCase.decision === CaseDecision.REJECTING
                   ? m.footer.rejecting.continueButtonText
                   : workingCase.decision === CaseDecision.DISMISSING
@@ -176,20 +181,16 @@ export const Confirmation: React.FC = () => {
                   : m.footer.acceptingAlternativeTravelBan.continueButtonText,
               )}
               nextButtonIcon={
-                workingCase.decision &&
-                [
-                  CaseDecision.ACCEPTING,
-                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-                ].includes(workingCase.decision)
+                isAcceptingCaseDecision(workingCase.decision) ||
+                workingCase.decision ===
+                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                   ? 'checkmark'
                   : 'close'
               }
               nextButtonColorScheme={
-                workingCase.decision &&
-                [
-                  CaseDecision.ACCEPTING,
-                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-                ].includes(workingCase.decision)
+                isAcceptingCaseDecision(workingCase.decision) ||
+                workingCase.decision ===
+                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                   ? 'default'
                   : 'destructive'
               }

@@ -25,6 +25,7 @@ interface Props {
   minDate?: DatePickerProps['minDate']
   excludeDates?: DatePickerProps['excludeDates']
   onChange?: (_: string) => void
+  required?: boolean
 }
 
 const df = 'yyyy-MM-dd'
@@ -43,6 +44,7 @@ export const DatePickerController: FC<Props> = ({
   maxDate,
   minDate,
   excludeDates,
+  required,
   onChange = () => undefined,
 }) => {
   const { clearErrors, setValue } = useFormContext()
@@ -58,6 +60,7 @@ export const DatePickerController: FC<Props> = ({
           size={size}
           id={id}
           errorMessage={error}
+          required={required}
           locale={locale}
           label={label}
           placeholderText={placeholder}

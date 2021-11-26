@@ -14,7 +14,7 @@ export const attachments = {
     },
     description: {
       id: 'an.application:attachments.description',
-      defaultMessage: `Sjúkratryggingar Íslands kunna að óska eftir frekari gögnum við afgreiðslu málsins, svo taka megi ákvörðun um bótarétt, fjárhæð og greiðslu bóta.`,
+      defaultMessage: `Svo hægt sé að klára afgreiðslu tilkynningar þurfa öll nauðsynleg fylgiskjöl að berast Sjúkratryggingum Íslands. Ef enn vantar fylgiskjöl, er samt sem áður hægt að senda inn tilkynninguna og skila fylgiskjölum síðar.`,
       description: 'Description for attachments',
     },
     additionalAttachmentDescription: {
@@ -39,7 +39,8 @@ export const attachments = {
     },
     uploadDescription: {
       id: 'an.application:attachments.uploadDescription',
-      defaultMessage: 'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf',
+      defaultMessage:
+        'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf, .jpg, .jpeg, .png, .heic',
       description: 'Definition of upload description',
     },
     uploadHeader: {

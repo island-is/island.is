@@ -10,22 +10,21 @@ import {
   TableBody,
   LoadingContainer,
   TableSkeleton,
-  GeneratedProfile,
-  GenerateName,
   TextTableItem,
+  PseudoName,
+  State,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   Application,
   ApplicationState,
   getMonth,
-  getState,
   getStateUrlFromRoute,
   Routes,
   TableHeadersProps,
 } from '@island.is/financial-aid/shared/lib'
 
 import { useAllApplications } from '@island.is/financial-aid-web/veita/src/utils/useAllApplications'
-import { calcDifferenceInDate, getTagByState } from '../../utils/formHelper'
+import { calcDifferenceInDate } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
 interface PageProps {
   applications: Application[]
@@ -66,27 +65,6 @@ const ApplicationsTable = ({
       })
   }
 
-  const name = (application: Application) => {
-    return (
-      <Box display="flex" alignItems="center">
-        <GeneratedProfile size={32} nationalId={application.nationalId} />
-        <Box marginLeft={2}>
-          <Text variant="h5">{GenerateName(application.nationalId)}</Text>
-        </Box>
-      </Box>
-    )
-  }
-
-  const state = (application: Application) => {
-    return (
-      <Box>
-        <div className={`tags ${getTagByState(application.state)}`}>
-          {getState[application.state]}
-        </div>
-      </Box>
-    )
-  }
-
   const assignButton = (application: Application) => {
     return (
       <>
@@ -95,18 +73,20 @@ const ApplicationsTable = ({
             <Text>{application.staff?.name}</Text>
           </Box>
         ) : (
-          <Button
-            variant="text"
-            onClick={(ev) => {
-              ev.stopPropagation()
-              updateApplicationAndTable(
-                application.id,
-                ApplicationState.INPROGRESS,
-              )
-            }}
-          >
-            Sjá um
-          </Button>
+          <Box>
+            <Button
+              variant="text"
+              onClick={(ev) => {
+                ev.stopPropagation()
+                updateApplicationAndTable(
+                  application.id,
+                  ApplicationState.INPROGRESS,
+                )
+              }}
+            >
+              Sjá um
+            </Button>
+          </Box>
         )}
       </>
     )
@@ -139,8 +119,8 @@ const ApplicationsTable = ({
                 {applications.map((item: Application, index) => (
                   <TableBody
                     items={[
-                      name(item),
-                      state(item),
+                      PseudoName(item.nationalId),
+                      State(item.state),
                       TextTableItem(
                         'default',
                         calcDifferenceInDate(item.modified),

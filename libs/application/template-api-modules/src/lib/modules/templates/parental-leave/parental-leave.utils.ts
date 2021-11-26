@@ -19,6 +19,7 @@ import {
   Period as AnswerPeriod,
   getApplicationExternalData,
   getOtherParentId,
+  applicantIsMale,
 } from '@island.is/application/templates/parental-leave'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -169,20 +170,22 @@ export const getRightsCode = (application: Application): string => {
   const parentsAreInRegisteredCohabitation =
     selectedChild.primaryParentNationalRegistryId === spouse?.nationalId
 
+  const parentPrefix = applicantIsMale(application) ? 'F' : 'FO'
+
   if (parentsAreInRegisteredCohabitation) {
     // If this secondary parent is in registered cohabitation with primary parent
     // then they will automatically be granted custody
     if (isSelfEmployed) {
-      return 'FO-S-GR'
+      return `${parentPrefix}-S-GR`
     } else {
-      return 'FO-L-GR'
+      return `${parentPrefix}-L-GR`
     }
   }
 
   if (isSelfEmployed) {
-    return 'FO-FL-S-GR'
+    return `${parentPrefix}-FL-S-GR`
   } else {
-    return 'FO-FL-L-GR'
+    return `${parentPrefix}-FL-L-GR`
   }
 }
 

@@ -187,6 +187,8 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'payments.pensionFund',
                   loadingError: parentalLeaveFormMessages.errors.loading,
                   isSearchable: true,
+                  placeholder:
+                    parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
                   loadOptions: async ({ apolloClient }) => {
                     const {
                       data,
@@ -207,6 +209,8 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'payments.union',
                   loadingError: parentalLeaveFormMessages.errors.loading,
                   isSearchable: true,
+                  placeholder:
+                    parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
                   loadOptions: async ({ apolloClient }) => {
                     const { data } = await apolloClient.query<GetUnionsQuery>({
                       query: GetUnions,
