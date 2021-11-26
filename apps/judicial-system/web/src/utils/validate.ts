@@ -180,7 +180,6 @@ export const isCourtRecordStepValidIC = (workingCase: Case) => {
   return (
     validate(workingCase.courtStartDate || '', 'date-format').isValid &&
     validate(workingCase.courtLocation || '', 'empty').isValid &&
-    validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
     validate(workingCase.litigationPresentations || '', 'empty').isValid
   )
 }
@@ -197,6 +196,7 @@ export const isRulingStepOneValidRC = (workingCase: Case) => {
 
 export const isRulingStepOneValidIC = (workingCase: Case) => {
   return (
+    validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
     validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
     validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
     validate(workingCase.decision || '', 'empty').isValid &&

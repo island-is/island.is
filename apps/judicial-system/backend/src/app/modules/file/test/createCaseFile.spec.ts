@@ -45,7 +45,7 @@ describe('FileController - Create case file', () => {
     const uuId = uuid()
     const createCaseFile: CreateFileDto = {
       type: 'text/plain',
-      key: `${caseId}/${uuId}/test.txt`,
+      key: `uploads/${caseId}/${uuId}/test.txt`,
       size: 99,
     }
     let mockCreate: jest.Mock
@@ -59,7 +59,7 @@ describe('FileController - Create case file', () => {
     it('should create a case file in the database', () => {
       expect(mockCreate).toHaveBeenCalledWith({
         type: 'text/plain',
-        key: `${caseId}/${uuId}/test.txt`,
+        key: `uploads/${caseId}/${uuId}/test.txt`,
         size: 99,
         caseId,
         name: 'test.txt',
@@ -72,14 +72,14 @@ describe('FileController - Create case file', () => {
     const uuId = uuid()
     const createCaseFile: CreateFileDto = {
       type: 'text/plain',
-      key: `${caseId}/${uuId}/test.txt`,
+      key: `uploads/${caseId}/${uuId}/test.txt`,
       size: 99,
     }
     const fileId = uuid()
     const timeStamp = new Date()
     const caseFile = {
       type: 'text/plain',
-      key: `${caseId}/${uuId}/test.txt`,
+      key: `uploads/${caseId}/${uuId}/test.txt`,
       size: 99,
       id: fileId,
       created: timeStamp,
@@ -104,7 +104,7 @@ describe('FileController - Create case file', () => {
     const uuId = `-${uuid()}`
     const createCaseFile: CreateFileDto = {
       type: 'text/plain',
-      key: `${caseId}/${uuId}/test.txt`,
+      key: `uploads/${caseId}/${uuId}/test.txt`,
       size: 99,
     }
     let then: Then
@@ -116,7 +116,7 @@ describe('FileController - Create case file', () => {
     it('should throw bad gateway exception', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(then.error.message).toBe(
-        `${caseId}/${uuId}/test.txt is not a valid key`,
+        `uploads/${caseId}/${uuId}/test.txt is not a valid key`,
       )
     })
   })
@@ -126,7 +126,7 @@ describe('FileController - Create case file', () => {
     const uuId = uuid()
     const createCaseFile: CreateFileDto = {
       type: 'text/plain',
-      key: `${caseId}/${uuId}/test.txt`,
+      key: `uploads/${caseId}/${uuId}/test.txt`,
       size: 99,
     }
     let then: Then

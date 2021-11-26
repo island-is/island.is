@@ -138,6 +138,10 @@ export interface Municipality {
   adminUsers?: Staff[]
 }
 
+export interface UpdateMunicipalityActivity {
+  active: boolean
+}
+
 export interface CreateMunicipality {
   name: string
   municipalityId: string
@@ -189,6 +193,17 @@ export interface CreateApplication {
   postalCode?: string
   city?: string
   municipalityCode?: string
+}
+
+export interface ApplicantEmailData {
+  header: string
+  content: string
+  applicationChange: string
+  applicationMonth: string
+  applicationYear: number
+  statusPageUrl: string
+  applicantEmail: string
+  municipality: Municipality
 }
 
 export interface ApplicationFilters {
