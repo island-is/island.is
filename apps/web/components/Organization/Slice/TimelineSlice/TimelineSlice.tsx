@@ -180,7 +180,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
       .map((x, idx) =>
         x.year >= today.getFullYear() && x.month >= today.getMonth() ? idx : 0,
       )
-      .filter((x) => x > 0)
+      .filter((x) => x >= 0)
 
     return Math.min(...futureMonths)
   })
