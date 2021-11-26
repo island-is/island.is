@@ -3,7 +3,8 @@ import {
   SequelizeModuleOptions,
   SequelizeOptionsFactory,
 } from '@nestjs/sequelize'
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import * as databaseConfig from './../../../sequelize.config.js'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'

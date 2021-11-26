@@ -63,7 +63,7 @@ const api_scope_user_claims = [
   },
 ]
 
-const client_id = 'island-is-1'
+const client_id = 'island.is_1'
 
 const client_allowed_scopes = [
   {
@@ -79,6 +79,7 @@ const client_allowed_scopes = [
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const transaction = await queryInterface.sequelize.transaction()
+
 
     try {
       await queryInterface.bulkInsert('api_resource', api_resources, {
