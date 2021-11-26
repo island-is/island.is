@@ -34,20 +34,22 @@ The `env` object has helpers to read values from the environment:
 ```tsx
 interface EnvLoader {
   required(envVariable: string, devFallback?: string): string
-  requiredJSON(envVariable: string, devFallback?: any): any
-  optional(envVariable: string): string | undefined
-  optionalJSON(envVariable: string): any | undefined
+  requiredJSON<T = any>(envVariable: string, devFallback?: T): T
+  optional(envVariable: string, devFallback?: string): string | undefined
+  optionalJSON<T = any>(envVariable: string, devFallback?: T): T | undefined
 }
 ```
 
 These helpers have the following behaviour:
 
-- The `optional` helpers return data straight from environment variables, or undefined if some variable is not set. This is useful for optional configuration which you might have good defaults for.
 - The `required` helpers are designed for everything that needs to be configured in production. If something is missing, its behaviour depends on NODE_ENV:
   - In production, it crashes the process after logging something like this:
     `SomeModule is not configured. Missing environment variables: SOME_MODULE_URL, SOME_MODULE_SECRET`
-  - In development, it returns the `devFallback` argument. If there is no `devFallback` specified, the process keeps running with a partial configuration and `isConfigured === false`. It also logs the above message as a warning.
-- The `*JSON` variants try to parse the environment variable as JSON. This is very handy for numerical environment variables or more complex configuration. If you ever use these helpers, you should specify the expected types using the Zod schema. Any parsing issues are logged as error before crashing the process (with `requiredJSON`).
+  - In development, it returns the `devFallback` argument. If there is no `devFallback` specified, it logs a warning and keeps running with a partial configuration (`isConfigured === false`).
+- The `optional` helpers are designed for optional configuration which you might have good defaults for.
+  - If you want the same default value in dev and production, just do this: `env.optional('EMAIL') ?? 'island@island.is'`.
+  - If you want different defaults or don't want any default value in production, you can use the devFallback argument: `env.optional('CACHE_URL', 'localhost:1122')`
+- The `*JSON` variants try to parse the environment variable as JSON. This is very handy for boolean/numerical environment variables or more complex configuration. If you ever use these helpers, you should specify the expected types using the Zod schema. Any JSON parsing issues are logged as error before crashing the process (with `requiredJSON`).
 
 ### Injecting module config
 

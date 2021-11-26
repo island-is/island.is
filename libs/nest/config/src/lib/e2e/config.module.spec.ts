@@ -308,12 +308,16 @@ describe('Config definitions', () => {
         process.env.NODE_ENV = 'development'
       })
 
-      it('should return devFallback and isConfigured = true when required variables are missing', () => {
+      it('should return devFallback when optional variables are missing', () => {
         // Arrange
-        delete process.env.CONFIG_TEST
+        delete process.env.CONFIG_TEST1
+        delete process.env.CONFIG_TEST2
         const config = defineConfig({
           name: 'test',
-          load: (env) => ({ test: env.required('CONFIG_TEST', 'asdf') }),
+          load: (env) => ({
+            test1: env.optional('CONFIG_TEST1', 'asdf'),
+            test2: env.optionalJSON('CONFIG_TEST2', 123),
+          }),
         })
 
         // Act
@@ -322,7 +326,31 @@ describe('Config definitions', () => {
         // Assert
         return expect(result).resolves.toEqual({
           isConfigured: true,
-          test: 'asdf',
+          test1: 'asdf',
+          test2: 123,
+        })
+      })
+
+      it('should return devFallback and isConfigured = true when required variables are missing', () => {
+        // Arrange
+        delete process.env.CONFIG_TEST1
+        delete process.env.CONFIG_TEST2
+        const config = defineConfig({
+          name: 'test',
+          load: (env) => ({
+            test1: env.required('CONFIG_TEST1', 'asdf'),
+            test2: env.requiredJSON('CONFIG_TEST2', 123),
+          }),
+        })
+
+        // Act
+        const result = testInjection(config)
+
+        // Assert
+        return expect(result).resolves.toEqual({
+          isConfigured: true,
+          test1: 'asdf',
+          test2: 123,
         })
       })
 

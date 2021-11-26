@@ -137,22 +137,30 @@ export class ConfigurationLoader<T> implements EnvLoader {
     return (undefined as unknown) as T
   }
 
-  optional(envVariable: string): string | undefined {
-    return process.env[envVariable]
+  optional(envVariable: string, devFallback?: string): string | undefined {
+    const value = process.env[envVariable]
+    if (value !== undefined) {
+      return value
+    }
+    if (this.allowDevFallback) {
+      return devFallback
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  optionalJSON<T = any>(envVariable: string): T | undefined {
+  optionalJSON<T = any>(envVariable: string, devFallback?: T): T | undefined {
     const value = process.env[envVariable]
-    if (value === undefined) {
-      return undefined
+    if (value !== undefined) {
+      try {
+        return JSON.parse(value)
+      } catch {
+        this.issues.add(envVariable, IssueType.JSON_ERROR)
+        return (undefined as unknown) as T
+      }
     }
 
-    try {
-      return JSON.parse(value)
-    } catch (err) {
-      this.issues.add(envVariable, IssueType.JSON_ERROR)
-      return (undefined as unknown) as T
+    if (this.allowDevFallback) {
+      return devFallback
     }
   }
 }

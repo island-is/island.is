@@ -6,9 +6,9 @@ export interface EnvLoader {
 
   requiredJSON<T = any>(envVariable: string, devFallback?: T): T
 
-  optional(envVariable: string): string | undefined
+  optional(envVariable: string, devFallback?: string): string | undefined
 
-  optionalJSON<T = any>(envVariable: string): T | undefined
+  optionalJSON<T = any>(envVariable: string, devFallback?: T): T | undefined
 }
 
 export type Configuration<T> = T & { isConfigured: boolean }
