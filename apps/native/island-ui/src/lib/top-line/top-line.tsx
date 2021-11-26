@@ -15,12 +15,12 @@ interface TopLineProps {
 }
 
 export function TopLine({ scrollY }: TopLineProps) {
-  const ref = useRef<SafeAreaView>();
+  const ref = useRef<SafeAreaView>(null);
   const offset = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
     if (Platform.OS === 'ios' && scrollY) {
-      scrollY.addListener(({ value }) => {
+      scrollY.addListener(() => {
         ref.current?.measureInWindow((x, y, w, h) => offset.setValue(h));
       });
     }
@@ -32,7 +32,7 @@ export function TopLine({ scrollY }: TopLineProps) {
         style={{
           flex: 1,
           height: StyleSheet.hairlineWidth,
-          opacity: Animated.add(scrollY, roffset.current).interpolate({
+          opacity: Animated.add(scrollY, offset).interpolate({
             inputRange: [0, 25, 50],
             outputRange: [0, 0, 1],
           }),

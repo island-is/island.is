@@ -3,17 +3,40 @@
   xmlns:tools="http://schemas.android.com/tools"
   package="is.island.app">
   <uses-permission android:name="android.permission.INTERNET"/>
-  <!-- OPTIONAL PERMISSIONS, REMOVE WHATEVER YOU DO NOT NEED -->
-  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
   <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
   <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-  <!-- These require runtime permissions on M -->
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-  <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
   <uses-permission android:name="android.permission.CAMERA"/>
+
+  <!-- permissions remove list (merged from sub modules)-->
+  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" tools:node="remove" />
+  <uses-permission android:name="android.permission.WAKE_LOCK" tools:node="remove"  />
+  <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" tools:node="remove" />
+  <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:node="remove" />
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="remove" />
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove" />
+  <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" tools:node="remove" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" tools:node="remove" />
+  <uses-permission android:name="com.sec.android.provider.badge.permission.READ" tools:node="remove"/>
+  <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" tools:node="remove" />
+  <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" tools:node="remove" />
+  <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" tools:node="remove" />
+  <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" tools:node="remove" />
+  <uses-permission android:name="com.sonymobile.home.permission.PROVIDER_INSERT_BADGE" tools:node="remove" />
+  <uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" tools:node="remove" />
+  <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" tools:node="remove" />
+  <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" tools:node="remove" />
+  <uses-permission android:name="com.huawei.android.launcher.permission.READ_SETTINGS" tools:node="remove" />
+  <uses-permission android:name="com.huawei.android.launcher.permission.WRITE_SETTINGS" tools:node="remove" />
+  <uses-permission android:name="android.permission.READ_APP_BADGE" tools:node="remove" />
+  <uses-permission android:name="com.oppo.launcher.permission.READ_SETTINGS" tools:node="remove" />
+  <uses-permission android:name="com.oppo.launcher.permission.WRITE_SETTINGS" tools:node="remove" />
+  <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_READ" tools:node="remove" />
+  <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_WRITE" tools:node="remove" />
+
   <queries>
     <intent>
       <action android:name="android.intent.action.VIEW" />
@@ -25,7 +48,7 @@
       <category android:name="android.intent.category.CATEGORY_OPENABLE" />
     </intent>
   </queries>
-  <!-- END OPTIONAL PERMISSIONS -->
+
   <application
     android:name=".MainApplication"
     android:label="@string/app_name"
