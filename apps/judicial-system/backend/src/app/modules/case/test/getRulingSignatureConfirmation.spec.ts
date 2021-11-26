@@ -20,10 +20,13 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Get ruling signature confirmation', () => {
+  let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseController } = await createTestingCaseModule()
+    const { caseModel, caseController } = await createTestingCaseModule()
+
+    mockCaseModel = caseModel
 
     givenWhenThen = async (
       caseId: string,
@@ -48,12 +51,53 @@ describe('CaseController - Get ruling signature confirmation', () => {
     }
   })
 
+  describe('database update', () => {
+    const userId = uuid()
+    const user = { id: userId } as User
+    const caseId = uuid()
+    const theCase = { id: caseId, judgeId: userId } as Case
+    const documentToken = uuid()
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, documentToken)
+    })
+
+    it('should set the ruling date', () => {
+      expect(mockCaseModel.update).toHaveBeenCalledWith(
+        { rulingDate: expect.any(Date) },
+        {
+          where: { id: caseId },
+          returning: true,
+        },
+      )
+    })
+  })
+
+  describe('successful completion', () => {
+    const userId = uuid()
+    const user = { id: userId } as User
+    const caseId = uuid()
+    const theCase = { id: caseId, judgeId: userId } as Case
+    const documentToken = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      const mockUpdate = mockCaseModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [theCase]])
+
+      then = await givenWhenThen(caseId, user, theCase, documentToken)
+    })
+
+    it('should return success', () => {
+      expect(then.result).toEqual({ documentSigned: true })
+    })
+  })
+
   describe('user is not the assigned judge', () => {
     const user = { id: uuid() } as User
     const caseId = uuid()
     const theCase = { id: caseId, judgeId: uuid() } as Case
     const documentToken = uuid()
-
     let then: Then
 
     beforeEach(async () => {
@@ -65,6 +109,27 @@ describe('CaseController - Get ruling signature confirmation', () => {
       expect(then.error.message).toBe(
         'A ruling must be signed by the assigned judge',
       )
+    })
+  })
+
+  describe('database update fails', () => {
+    const userId = uuid()
+    const user = { id: userId } as User
+    const caseId = uuid()
+    const theCase = { id: caseId, judgeId: userId } as Case
+    const documentToken = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      const mockUpdate = mockCaseModel.update as jest.Mock
+      mockUpdate.mockRejectedValueOnce(new Error('Some error'))
+
+      then = await givenWhenThen(caseId, user, theCase, documentToken)
+    })
+
+    it('should throw Error', () => {
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toBe('Some error')
     })
   })
 })

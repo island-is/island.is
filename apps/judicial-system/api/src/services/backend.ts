@@ -79,11 +79,24 @@ class BackendAPI extends RESTDataSource {
     return this.put(`case/${id}/state`, transitionCase)
   }
 
-  requestSignature(id: string): Promise<RequestSignatureResponse> {
+  requestCourtRecordSignature(id: string): Promise<RequestSignatureResponse> {
+    return this.post(`case/${id}/courtRecord/signature`)
+  }
+
+  getCourtRecordSignatureConfirmation(
+    id: string,
+    documentToken: string,
+  ): Promise<SignatureConfirmationResponse> {
+    return this.get(
+      `case/${id}/courtRecord/signature?documentToken=${documentToken}`,
+    )
+  }
+
+  requestRulingSignature(id: string): Promise<RequestSignatureResponse> {
     return this.post(`case/${id}/ruling/signature`)
   }
 
-  getSignatureConfirmation(
+  getRulingSignatureConfirmation(
     id: string,
     documentToken: string,
   ): Promise<SignatureConfirmationResponse> {

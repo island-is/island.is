@@ -573,6 +573,33 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(judgeRule, registrarRule)
+  @Get('case/:caseId/courtRecord/signature')
+  @ApiOkResponse({
+    type: SignatureConfirmationResponse,
+    description:
+      'Confirms a previously requested court record signature for an existing case',
+  })
+  async getCourtRecordSignatureConfirmation(
+    @Param('caseId') _0: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @Query('documentToken') documentToken: string,
+  ): Promise<SignatureConfirmationResponse> {
+    if (user.id !== theCase.judgeId && user.id !== theCase.registrarId) {
+      throw new ForbiddenException(
+        'A court record must be signed by the assigned judge or registrar',
+      )
+    }
+
+    return this.caseService.getCourtRecordSignatureConfirmation(
+      theCase,
+      user,
+      documentToken,
+    )
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(judgeRule)
   @Post('case/:caseId/ruling/signature')
   @ApiCreatedResponse({

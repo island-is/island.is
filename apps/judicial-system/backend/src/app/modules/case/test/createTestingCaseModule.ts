@@ -49,6 +49,7 @@ export const createTestingCaseModule = async () => {
         provide: getModelToken(Case),
         useValue: {
           findOne: jest.fn(),
+          update: jest.fn(),
         },
       },
       CaseService,

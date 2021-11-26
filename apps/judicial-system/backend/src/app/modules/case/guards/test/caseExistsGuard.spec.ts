@@ -83,6 +83,11 @@ describe('Case Exists Guard', () => {
             as: 'registrar',
             include: [{ model: Institution, as: 'institution' }],
           },
+          {
+            model: User,
+            as: 'courtRecordSignatory',
+            include: [{ model: Institution, as: 'institution' }],
+          },
           { model: Case, as: 'parentCase' },
           { model: Case, as: 'childCase' },
         ],

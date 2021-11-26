@@ -63,7 +63,6 @@ describe('CaseController - Request court record signature', () => {
     const user = { id: userId } as User
     const caseId = uuid()
     const theCase = { id: caseId, judgeId: userId, registrarId: uuid() } as Case
-
     let then: Then
 
     beforeEach(async () => {
@@ -87,7 +86,6 @@ describe('CaseController - Request court record signature', () => {
     const user = { id: userId } as User
     const caseId = uuid()
     const theCase = { id: caseId, judgeId: uuid(), registrarId: userId } as Case
-
     let then: Then
 
     beforeEach(async () => {
@@ -110,7 +108,6 @@ describe('CaseController - Request court record signature', () => {
     const user = { id: uuid() } as User
     const caseId = uuid()
     const theCase = { id: caseId, judgeId: uuid(), registrarId: uuid() } as Case
-
     let then: Then
 
     beforeEach(async () => {

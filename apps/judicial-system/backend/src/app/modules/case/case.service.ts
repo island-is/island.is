@@ -73,6 +73,11 @@ const standardIncludes: Includeable[] = [
     as: 'registrar',
     include: [{ model: Institution, as: 'institution' }],
   },
+  {
+    model: User,
+    as: 'courtRecordSignatory',
+    include: [{ model: Institution, as: 'institution' }],
+  },
   { model: Case, as: 'parentCase' },
   { model: Case, as: 'childCase' },
 ]
@@ -422,6 +427,15 @@ export class CaseService {
       `Getting the court record for case ${existingCase.id} as a pdf document`,
     )
 
+    const pdf = await this.awsS3Service
+      .getObject(`generated/${existingCase.id}/courtRecord.pdf`)
+      .then((res) => res.toString('binary'))
+      .catch(() => undefined)
+
+    if (pdf) {
+      return pdf
+    }
+
     const intl = await this.intlService.useIntl(
       ['judicial.system.backend'],
       'is',
@@ -498,6 +512,59 @@ export class CaseService {
     }
   }
 
+  async getCourtRecordSignatureConfirmation(
+    existingCase: Case,
+    user: TUser,
+    documentToken: string,
+  ): Promise<SignatureConfirmationResponse> {
+    this.logger.debug(
+      `Confirming signature of court record for case ${existingCase.id}`,
+    )
+
+    // This method should be called immediately after requestCourtRecordSignature
+
+    // Production, or development with signing service access token
+    if (environment.production || environment.signingOptions.accessToken) {
+      try {
+        const courtRecordPdf = await this.signingService.getSignedDocument(
+          'courtRecord.pdf',
+          documentToken,
+        )
+
+        this.awsS3Service
+          .putObject(
+            `generated/${existingCase.id}/courtRecord.pdf`,
+            courtRecordPdf,
+          )
+          .catch(() => {
+            // Tolerate failure
+            this.logger.error(
+              `Failed to upload signed court record pdf to AWS S3 for case ${existingCase.id}`,
+            )
+          })
+      } catch (error) {
+        if (error instanceof DokobitError) {
+          return {
+            documentSigned: false,
+            code: error.code,
+            message: error.message,
+          }
+        }
+
+        throw error
+      }
+    }
+
+    // TODO: UpdateCaseDto does not contain courtRecordSignatoryId - create a new type for CaseService.update
+    await this.update(existingCase.id, {
+      courtRecordSignatoryId: user.id,
+    } as UpdateCaseDto)
+
+    return {
+      documentSigned: true,
+    }
+  }
+
   async requestRulingSignature(
     existingCase: Case,
   ): Promise<SigningServiceResponse> {
@@ -543,7 +610,7 @@ export class CaseService {
       `Confirming signature of ruling for case ${existingCase.id}`,
     )
 
-    // This method should be called immediately after requestSignature
+    // This method should be called immediately after requestRulingSignature
 
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
