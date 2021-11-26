@@ -48,6 +48,10 @@ class BackendAPI extends RESTDataSource {
     return this.get(`application/id/${id}`)
   }
 
+  searchForApplication(nationalId: string): Promise<Application[]> {
+    return this.get(`application/find/${nationalId}`)
+  }
+
   getApplicationFilters(): Promise<ApplicationFilters> {
     return this.get('application/filters')
   }
