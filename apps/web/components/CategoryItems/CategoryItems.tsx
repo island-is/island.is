@@ -37,6 +37,7 @@ export const CategoryItems = ({
               key={index}
               heading={title}
               headingAs="h4"
+              headingVariant="h4"
               text={description}
               href={linkResolver(typename as LinkType, [slug]).href}
             />
