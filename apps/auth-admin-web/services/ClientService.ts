@@ -215,7 +215,7 @@ export class ClientService extends BaseService {
   ): Promise<number | null> {
     return BaseService.DELETE(
       `client-grant-type/${encodeURIComponent(clientId)}/${encodeURIComponent(
-        encodeURIComponent(grantType),
+        grantType,
       )}`,
     )
   }
