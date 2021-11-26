@@ -8,8 +8,7 @@ import {
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import {
   aidCalculator,
-  calculateAidFinalAmount,
-  calculateAidFinalAmountTEst,
+  calculateAcceptedAidFinalAmount,
   calculateTaxOfAmount,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
@@ -239,11 +238,11 @@ const AcceptModal = ({
           placeholder="Skrifaðu prósentuhlutfall"
           id="personalTaxCredit"
           name="personalTaxCredit"
-          value={state.personalTaxCreditPercentage}
+          value={Number(state.personalTaxCreditPercentage).toString() + '%'}
           type="number"
           onChange={(e) => {
             setState({ ...state, hasError: false })
-            if (e.target.value.length <= 3) {
+            if (e.target.value.length <= 3 && Number(e.target.value) <= 100) {
               setState({
                 ...state,
                 personalTaxCreditPercentage: Number(e.target.value),
@@ -261,11 +260,11 @@ const AcceptModal = ({
             placeholder="Skrifaðu prósentuhlutfall"
             id="secondPersonalTaxCredit"
             name="secondPersonalTaxCredit"
-            value={state.secondPersonalTaxCredit}
+            value={Number(state.secondPersonalTaxCredit).toString()}
             type="number"
             onChange={(e) => {
               setState({ ...state, hasError: false })
-              if (e.target.value.length <= 3) {
+              if (e.target.value.length <= 3 && Number(e.target.value) <= 100) {
                 setState({
                   ...state,
                   secondPersonalTaxCredit: Number(e.target.value),
@@ -329,11 +328,11 @@ const AcceptModal = ({
       >
         <Text variant="small">Upphæð aðstoðar</Text>
         <Text>
-          {calculateAidFinalAmountTEst(
+          {calculateAcceptedAidFinalAmount(
             (aidAmount || 0) - state.income - sumValues(state.deductionFactor),
-            usePersonalTaxCredit,
             currentYear,
             state.personalTaxCreditPercentage,
+            state.secondPersonalTaxCredit,
           ).toLocaleString('de-DE')}{' '}
           kr.
         </Text>

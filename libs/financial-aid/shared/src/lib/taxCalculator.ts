@@ -69,9 +69,8 @@ export const calculatePersonalTaxAllowanceUsed = (
   return Math.min(personalTaxAllowanceUsed, tax)
 }
 
-export const calculateAidFinalAmountTEst = (
+export const calculateAcceptedAidFinalAmount = (
   amount: number,
-  usePersonalTaxAllowance: boolean,
   currentYear: string,
   personalTaxCreditPercentage: number,
   spousedPersonalTaxCreditPercentage: number,
@@ -81,41 +80,20 @@ export const calculateAidFinalAmountTEst = (
 
   const taxPercentage = taxInfo.taxPercentage / 100
 
-  const personalTaxAllowance =
-    personalTaxCreditPercentage !== 0
-      ? Math.floor(
-          taxInfo.personalTaxAllowance * (personalTaxCreditPercentage / 100),
-        )
-      : taxInfo.personalTaxAllowance
+  const personalTaxAllowance = Math.floor(
+    taxInfo.personalTaxAllowance * (personalTaxCreditPercentage / 100),
+  )
 
-  console.log(personalTaxAllowance)
+  const spouseTaxAllowance = Math.floor(
+    taxInfo.personalTaxAllowance * (spousedPersonalTaxCreditPercentage / 100),
+  )
 
   const tax = Math.floor(amount * taxPercentage)
 
-  const personalTaxAllowanceUsed = usePersonalTaxAllowance
-    ? personalTaxAllowance
-    : 0
-
-  const finalTaxAmount = Math.max(tax - personalTaxAllowanceUsed, 0)
+  const finalTaxAmount = Math.max(
+    tax - personalTaxAllowance + spouseTaxAllowance,
+    0,
+  )
 
   return amount - finalTaxAmount
-}
-
-export const calculatePersonalTaxCreditPercentage = (
-  personalTaxCreditPercentage: number,
-  spousedPersonalTaxCreditPercentage: number,
-  currentYear: string,
-) => {
-  const taxInfoYear: TaxInfoYear = taxInfoNumbers
-  const taxInfo = taxInfoYear[currentYear]
-
-  if (spousedPersonalTaxCreditPercentage !== 0) {
-    const personalTaxAllowance =
-      taxInfo.personalTaxAllowance * (personalTaxCreditPercentage / 100)
-
-    const spouseTaxAllowance =
-      taxInfo.personalTaxAllowance * (personalTaxCreditPercentage / 100)
-
-    return personalTaxAllowance + spouseTaxAllowance
-  }
 }
