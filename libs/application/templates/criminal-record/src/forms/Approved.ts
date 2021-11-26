@@ -30,39 +30,45 @@ export const Approved: Form = buildForm({
       id: 'confirmation',
       title: m.confirmation,
       children: [
-        buildMultiField({
-          id: 'confirmation.info',
-          title: m.confirmation,
-          space: 1,
-          children: [
-            buildCustomField(
-              {
-                component: 'SuccessMessageField',
-                id: 'successMessage',
-                title: m.confirmation,
-                description: m.successDescription,
-              },
-              {
-                successTitle: m.successTitle,
-                marginTop: 0,
-              },
-            ),
-            buildCustomField(
-              {
-                component: 'InfoMessageField',
-                id: 'infoMessage',
-                title: '',
-                description: 'Nánari upplýsingar um sannreyningu má finna á',
-              },
-              {
-                link: {
-                  title: ' island.is/sannreyna',
-                  url: 'island.is/sannreyna',
-                },
-              },
-            ),
-          ],
+        buildCustomField({
+          component: 'ConfirmationField',
+          id: 'confirmationField',
+          title: '',
+          description: '',
         }),
+        // buildMultiField({
+        //   id: 'confirmation.info',
+        //   title: m.confirmation,
+        //   space: 1,
+        //   children: [
+        // buildCustomField(
+        //   {
+        //     component: 'SuccessMessageField',
+        //     id: 'successMessage',
+        //     title: m.confirmation,
+        //     description: m.successDescription,
+        //   },
+        //   {
+        //     successTitle: m.successTitle,
+        //     marginTop: 0,
+        //   },
+        // ),
+        // buildCustomField(
+        //   {
+        //     component: 'InfoMessageField',
+        //     id: 'infoMessage',
+        //     title: '',
+        //     description: 'Nánari upplýsingar um sannreyningu má finna á',
+        //   },
+        //   {
+        //     link: {
+        //       title: ' island.is/sannreyna',
+        //       url: 'island.is/sannreyna',
+        //     },
+        //   },
+        // ),
+        //   ],
+        // }),
       ],
     }),
   ],

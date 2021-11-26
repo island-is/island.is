@@ -172,10 +172,27 @@ export const m = defineMessages({
     defaultMessage: 'Þú getur nú nálgast umsóknina þína inni á mínum síðum',
     description: '',
   },
+  vertificationDescription: {
+    id: 'cr.application:vertificationDescription',
+    defaultMessage: 'Nánari upplýsingar um sannreyningu má finna á',
+    description: '',
+  },
+  vertificationLinkUrl: {
+    id: 'cr.application:vertificationLinkUrl',
+    defaultMessage: 'https://island.is/sannreyna',
+    description:
+      'The url for the link to further information about the verification',
+  },
+  vertificationLinkTitle: {
+    id: 'cr.application:vertificationLinkTitle',
+    defaultMessage: 'island.is/sannreyna',
+    description:
+      'The title for the link to further information about the verification',
+  },
   outroMessage: {
     id: 'cr.application:outro.message',
     defaultMessage:
       'Your application #{id} is now in review. The ID of the application is returned by the createApplication API action and read from application.externalData',
-    description: 'Some description',
+    description: '',
   },
 })
