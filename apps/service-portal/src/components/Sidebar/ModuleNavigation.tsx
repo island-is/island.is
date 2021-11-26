@@ -16,10 +16,16 @@ import { getUnreadDocumentsCount } from '@island.is/service-portal/graphql'
 interface Props {
   nav: ServicePortalNavigationItem
   alwaysExpanded?: boolean
+  badge?: boolean
   onItemClick?: () => void
 }
 
-const ModuleNavigation: FC<Props> = ({ nav, alwaysExpanded, onItemClick }) => {
+const ModuleNavigation: FC<Props> = ({
+  nav,
+  alwaysExpanded,
+  onItemClick,
+  badge,
+}) => {
   const [expand, setExpand] = useState(false)
   // eslint-disable-next-line no-empty-pattern
   const { pathname } = useLocation()
@@ -49,7 +55,6 @@ const ModuleNavigation: FC<Props> = ({ nav, alwaysExpanded, onItemClick }) => {
 
   const navChildren = nav?.children?.filter((child) => !child.navHide)
   const navArray = Array.isArray(navChildren) && navChildren.length > 0
-  console.log('nav', nav)
   return (
     <Box>
       {nav.heading && (
@@ -79,6 +84,7 @@ const ModuleNavigation: FC<Props> = ({ nav, alwaysExpanded, onItemClick }) => {
           handleRootItemClick(nav.external)
         }}
         alwaysExpanded={alwaysExpanded}
+        badge={badge}
       >
         {formatMessage(nav.name)}
       </NavItem>

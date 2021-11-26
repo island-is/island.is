@@ -34,6 +34,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'filled',
           icon: 'reader',
         },
+        subscribesTo: 'documents',
       },
 
       // Umsoknir

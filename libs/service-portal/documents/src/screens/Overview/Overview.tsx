@@ -40,6 +40,7 @@ import * as styles from './Overview.css'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import getOrganizationLogoUrl from '../../utils/getOrganizationLogoUrl'
 import { m } from '@island.is/service-portal/core'
+import { useUpdateUnreadDocuments } from '@island.is/service-portal/core'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 15
@@ -86,7 +87,6 @@ const getFilteredDocuments = (
       x.subject.toLowerCase().includes(searchQuery.toLowerCase()),
     )
   }
-
   return filteredDocuments
 }
 
@@ -99,6 +99,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   )
 
   const { formatMessage, lang } = useLocale()
+  const badgeContext = useUpdateUnreadDocuments()
   const [page, setPage] = useState(1)
   const [isDateRangeOpen, setIsDateRangeOpen] = useState(false)
   const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(
@@ -423,7 +424,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 renderLink={(page, className, children) => (
                   <button
                     className={className}
-                    onClick={handlePageChange.bind(null, page)}
+                    onClick={
+                      (handlePageChange.bind(null, page),
+                      badgeContext.updateUnreadDocumentsCounter())
+                    }
                   >
                     {children}
                   </button>

@@ -4,7 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { ISLAND_IS_URL } from '@island.is/service-portal/constants'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { m } from '@island.is/service-portal/core'
-
+import { useUpdateUnreadDocuments } from '@island.is/service-portal/core'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { ActionType } from '../../store/actions'
 import { useStore } from '../../store/stateProvider'
@@ -16,6 +16,7 @@ const MobileMenu = (): ReactElement | null => {
   const [{ mobileMenuState }, dispatch] = useStore()
   const { formatMessage } = useLocale()
   const navigation = useNavigation()
+  const badgeContext = useUpdateUnreadDocuments()
 
   const handleLinkClick = () =>
     dispatch({
@@ -51,9 +52,12 @@ const MobileMenu = (): ReactElement | null => {
                   <ModuleNavigation
                     key={index}
                     nav={navRoot}
-                    variant={rootIndex === 0 ? 'blue' : 'blueberry'}
                     alwaysExpanded
                     onItemClick={handleLinkClick}
+                    badge={
+                      navRoot.subscribesTo === 'documents' &&
+                      badgeContext.unreadDocumentsCounter > 0
+                    }
                   />
                 ),
             )}

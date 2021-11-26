@@ -9,11 +9,13 @@ import { Link } from 'react-router-dom'
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
 import cn from 'classnames'
+import { useUpdateUnreadDocuments } from '@island.is/service-portal/core'
 
 export const Sidebar: FC<{}> = () => {
   const navigation = useNavigation()
   const [{ sidebarState }, dispatch] = useStore()
   const [collapsed, setCollapsed] = useState(sidebarState === 'closed')
+  const badgeContext = useUpdateUnreadDocuments()
 
   return (
     <aside className={cn(styles.sidebar, { [styles.collapsed]: collapsed })}>
@@ -69,7 +71,14 @@ export const Sidebar: FC<{}> = () => {
               {rootItem.children?.map(
                 (navRoot, index) =>
                   navRoot.path !== ServicePortalPath.MinarSidurRoot && (
-                    <ModuleNavigation key={index} nav={navRoot} />
+                    <ModuleNavigation
+                      key={index}
+                      nav={navRoot}
+                      badge={
+                        navRoot.subscribesTo === 'documents' &&
+                        badgeContext.unreadDocumentsCounter > 0
+                      }
+                    />
                   ),
               )}
             </Stack>

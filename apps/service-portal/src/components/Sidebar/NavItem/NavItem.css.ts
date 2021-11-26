@@ -40,3 +40,17 @@ export const dot = style({
     },
   },
 })
+
+export const badge = styleVariants({
+  active: {
+    position: 'absolute',
+    top: 9,
+    height: theme.spacing[1],
+    width: theme.spacing[1],
+    borderRadius: '50%',
+    backgroundColor: theme.color.red400,
+  },
+  inactive: {
+    display: 'none',
+  },
+})

@@ -443,6 +443,10 @@ export const m = defineMessages({
     id: 'service.portal:accessControlAccess',
     defaultMessage: 'Aðgangur',
   },
+  accessDenied: {
+    id: 'service.portal:accessDenied',
+    defaultMessage: 'Ekki með aðgang',
+  },
   educationStudentAssessment: {
     id: 'service.portal:educationStudentAssessment',
     defaultMessage: 'Samræmd könnunarpróf',

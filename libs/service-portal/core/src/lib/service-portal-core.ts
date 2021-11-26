@@ -31,6 +31,10 @@ export interface ServicePortalNavigationItem {
    * Indicates if the user has access to the navigation item
    */
   enabled?: boolean
+  /**
+   * Subscribes to - get updates from state context if
+   */
+  subscribesTo?: 'documents'
 }
 
 /**

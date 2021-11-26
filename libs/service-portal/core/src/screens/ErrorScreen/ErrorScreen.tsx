@@ -45,11 +45,11 @@ export const ErrorScreen: FC<Props> = ({
       </GridColumn>
       {figure && (
         <GridColumn
-          span={['12/12', '4/12']}
+          span={['1/1', '4/12']}
           offset={['0', '3/12']}
           order={[1, 2]}
         >
-          <Box marginBottom={[3, 0]}>
+          <Box marginBottom={[3, 0]} display="flex" justifyContent="center">
             <img src={figure} alt={`skrautmynd fyrir ${title}`} />
           </Box>
         </GridColumn>

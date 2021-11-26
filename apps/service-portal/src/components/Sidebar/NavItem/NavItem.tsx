@@ -14,6 +14,7 @@ interface Props {
   hasArray?: boolean
   alwaysExpanded?: boolean
   onClick?: () => void
+  badge?: boolean
 }
 
 const NavItemContent: FC<Props> = ({
@@ -25,6 +26,7 @@ const NavItemContent: FC<Props> = ({
   variant = 'blue',
   children,
   alwaysExpanded = false,
+  badge = false,
 }) => {
   const chevron = active ? 'chevronUp' : 'chevronDown'
   const showLock = enabled === false
@@ -45,6 +47,10 @@ const NavItemContent: FC<Props> = ({
       <Box display="flex" height="full" alignItems="center">
         {icon ? (
           <Box display="flex" alignItems="center" marginRight={'p2'}>
+            <Box
+              borderRadius="circle"
+              className={styles.badge[`${badge ? 'active' : 'inactive'}`]}
+            ></Box>
             <Icon
               type={icon.type}
               icon={icon.icon}
