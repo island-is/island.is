@@ -178,4 +178,9 @@ export const m = defineMessages({
       'Your application #{id} is now in review. The ID of the application is returned by the createApplication API action and read from application.externalData',
     description: 'Some description',
   },
+  errorMinAgeNotFulfilled: {
+    id: 'cr.application:errorMinAgeNotFulfilled',
+    defaultMessage: 'Þú hefur ekki náð lágmarksaldri til að sækja um sakavottorð',
+    description: '',
+  },
 })

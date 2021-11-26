@@ -6,6 +6,9 @@ import {
   coreErrorMessages,
 } from '@island.is/application/core'
 //import { PaymentCatalogItem } from '@island.is/api/schema'
+import { getAge } from '../utils'
+import { m } from '../lib/messages'
+import { MessageDescriptor } from '@formatjs/intl';
 
 export class CriminalRecordProvider extends BasicDataProvider {
   type = 'CriminalRecordProvider'
@@ -13,13 +16,18 @@ export class CriminalRecordProvider extends BasicDataProvider {
   async provide(application: Application): Promise<unknown> {
     var applicantSsn = application.applicant
 
+    var errorMessage = this.validateApplicant(applicantSsn)
+    if (errorMessage) {
+      return Promise.reject(errorMessage)
+    }
+
     const query = `
     query CheckCriminalRecord($ssnInput: String!) {
         checkCriminalRecord(ssn: $ssnInput)
       }
     `
-
-    return this.useGraphqlGateway(query, { 
+    
+    return this.useGraphqlGateway(query, {
       ssnInput: applicantSsn
       }).then(async (res: Response) => {
       const response = await res.json()
@@ -35,10 +43,21 @@ export class CriminalRecordProvider extends BasicDataProvider {
     })
   }
 
-  onProvideError(): FailedDataProviderResult {
+  validateApplicant(ssn: string): MessageDescriptor | null {
+    // Validate applicants age
+    var minAge = 15
+    var age = getAge(ssn)
+    if (age < minAge) {
+      return m.errorMinAgeNotFulfilled
+    }
+
+    return null
+  }
+
+  onProvideError(errorMessage: MessageDescriptor): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason: coreErrorMessages.errorDataProvider,
+      reason: errorMessage?.id ? errorMessage : coreErrorMessages.errorDataProvider,
       status: 'failure',
       data: {},
     }
