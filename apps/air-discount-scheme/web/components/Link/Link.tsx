@@ -15,8 +15,14 @@ interface LinkProps {
   as?: TypographyProps['as']
 }
 
-const isLinkExternal = (href: string): boolean =>
-  typeof href === 'string' && href.indexOf('://') !== -1
+const isLinkExternal = (href: string): boolean => {
+  const externalCandidate =
+    typeof href === 'string' && href.indexOf('://') !== -1
+  const islandisRe = new RegExp(/https{0,1}:\/\/.*\.island\.is/)
+
+  console.log(externalCandidate, islandisRe)
+  return externalCandidate && Boolean(href.match(islandisRe))
+}
 
 export const Link: FC<LinkProps> = ({
   href,
