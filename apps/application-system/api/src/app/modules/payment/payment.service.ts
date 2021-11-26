@@ -13,7 +13,6 @@ import { CreateChargeResult } from './payment.type'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { Application as ApplicationModel } from '../application/application.model'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -45,7 +44,7 @@ export class PaymentService {
     return this.paymentModel
       .findOne({
         where: {
-          application_id: { [Op.eq]: applicationId },
+          [Op.and]: [{ application_id: applicationId }, { fulfilled: true }],
         },
       })
       .catch(handleError)
@@ -67,69 +66,50 @@ export class PaymentService {
       this.paymentConfig.callbackAdditionUrl +
       payment.id
 
-    try {
-      const parsedDefinition = JSON.parse(
-        (payment.definition as unknown) as string,
-      )
-      const charge: Charge = {
-        // TODO: this needs to be unique, but can only handle 22 or 23 chars
-        // should probably be an id or token from the DB charge once implemented
-        chargeItemSubject: payment.id.substring(0, 22),
-        systemID: 'ISL',
-        // The OR values can be removed later when the system will be more robust.
-        performingOrgID: parsedDefinition.performingOrganiationID,
-        payeeNationalID: user.nationalId,
-        chargeType: parsedDefinition.chargeType,
-        performerNationalID: user.nationalId,
-        charges: [
-          {
-            chargeItemCode: parsedDefinition.chargeItemCode,
-            quantity: 1,
-            priceAmount: payment.amount,
-            amount: payment.amount,
-            reference: '',
-          },
-        ],
-        immediateProcess: true,
-        returnUrl: callbackUrl,
-        requestID: payment.id,
-      }
-      const result = await this.paymentApi.createCharge(charge)
-      return {
-        ...result,
-        paymentUrl: this.makePaymentUrl(result.user4),
-      }
-    } catch (exception) {
-      return Promise.reject('Failed to post charge to API. ' + exception)
+    const parsedDefinition = JSON.parse(
+      (payment.definition as unknown) as string,
+    )
+    const charge: Charge = {
+      // TODO: this needs to be unique, but can only handle 22 or 23 chars
+      // should probably be an id or token from the DB charge once implemented
+      chargeItemSubject: payment.id.substring(0, 22),
+      systemID: 'ISL',
+      // The OR values can be removed later when the system will be more robust.
+      performingOrgID: parsedDefinition.performingOrganiationID,
+      payeeNationalID: user.nationalId,
+      chargeType: parsedDefinition.chargeType,
+      performerNationalID: user.nationalId,
+      charges: [
+        {
+          chargeItemCode: parsedDefinition.chargeItemCode,
+          quantity: 1,
+          priceAmount: payment.amount,
+          amount: payment.amount,
+          reference: '',
+        },
+      ],
+      immediateProcess: true,
+      returnUrl: callbackUrl,
+      requestID: payment.id,
+    }
+
+    const result = await this.paymentApi.createCharge(charge)
+    return {
+      ...result,
+      paymentUrl: this.makePaymentUrl(result.user4),
     }
   }
 
-  async searchCorrectCatalog(
-    chargeItemCode: string,
-    search: Item[],
-  ): Promise<Item> {
-    if (
-      chargeItemCode === '' ||
-      !Array.isArray(search) ||
-      search.length === 0
-    ) {
-      return Promise.reject(new Error('Bad search catalog parameters.')).catch(
-        handleError,
-      )
-    }
-    // TODO: temp - This is only while payment dummy is being used/tested. Should be deleted later.
-    if (!isRunningOnEnvironment('production') && chargeItemCode === 'AYXXX') {
-      chargeItemCode = 'AY110'
+  searchCorrectCatalog(targetChargeItemCode: string, items: Item[]): Item {
+    const item = items.find(
+      ({ chargeItemCode }) => chargeItemCode === targetChargeItemCode,
+    )
+
+    if (!item) {
+      throw new Error('bad chargeItemCode or empty catalog')
     }
 
-    for (const item in search) {
-      if (search[item].chargeItemCode === chargeItemCode) {
-        return Promise.resolve(search[item])
-      }
-    }
-    return Promise.reject(
-      new Error('No catalog found with ' + chargeItemCode),
-    ).catch(handleError)
+    return item
   }
 
   async findApplicationById(
