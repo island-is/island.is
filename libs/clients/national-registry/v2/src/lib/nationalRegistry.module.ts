@@ -1,8 +1,11 @@
-import * as z from 'zod'
+import { CACHE_MANAGER, CacheModule, Module } from '@nestjs/common'
+import { Cache } from 'cache-manager'
 
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import type { EnhancedFetchOptions } from '@island.is/clients/middlewares'
-import { ConfigType, defineConfig } from '@island.is/nest/config'
+import {
+  buildCacheControl,
+  createEnhancedFetch,
+} from '@island.is/clients/middlewares'
+import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 
 import {
   Configuration,
@@ -10,54 +13,17 @@ import {
   FasteignirApi,
   LyklarApi,
 } from '../../gen/fetch'
-import { CACHE_MANAGER, Module } from "@nestjs/common";
+import { NationalRegistryClientConfig } from './NationalRegistryClientConfig'
 
-const XRoadConfig = defineConfig({
-  name: 'XRoadConfig',
-  load: (env) => ({
-    xRoadBasePath: env.required('XROAD_BASE_PATH', 'http://localhost:8080'),
-    xRoadClient: env.required(
-      'XROAD_CLIENT_ID',
-      'IS-DEV/GOV/10000/island-is-client',
-    ),
-  }),
-})
-
-const schema = z.object({
-  xRoadServicePath: z.string(),
-  fetch: z.object({
-    timeout: z.number().int().optional(),
-  }),
-})
-
-const NationalRegistryConfig = defineConfig({
-  name: 'NationalRegistryClient',
-  schema,
-  load(env) {
-    return {
-      xRoadServicePath: env.required(
-        'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
-        'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
-      ),
-      fetch: {
-        timeout: env.optionalJSON('XROAD_NATIONAL_REGISTRY_TIMEOUT'),
-      },
-    }
-  },
-})
-
-export interface ModuleConfig {
-  xRoadPath: string
-  xRoadClient: string
-  fetch?: Partial<EnhancedFetchOptions>
-}
+const registryEndpoint = /\/einstaklingar\/\d{10}$/
+const custodyEndpoint = /\/einstaklingar\/\d{10}\/forsja$/
 
 const exportedApis = [EinstaklingarApi, FasteignirApi, LyklarApi].map(
   (Api) => ({
     provide: Api,
     useFactory: (
       xroadConfig: ConfigType<typeof XRoadConfig>,
-      config: ConfigType<typeof NationalRegistryConfig>,
+      config: ConfigType<typeof NationalRegistryClientConfig>,
       cacheManager: Cache,
     ) => {
       return new Api(
@@ -66,19 +32,45 @@ const exportedApis = [EinstaklingarApi, FasteignirApi, LyklarApi].map(
             name: 'clients-national-registry-v2',
             cache: {
               cacheManager,
+              shared: (request) => {
+                // Main registry is public, rest private.
+                return !!request.url.match(registryEndpoint)
+              },
+              overrideCacheControl: (request) => {
+                if (request.url.match(registryEndpoint)) {
+                  // Main registry lookup. Long cache with lazy revalidation.
+                  return buildCacheControl({
+                    public: true,
+                    maxAge: 60 * 60 * 24, // 1 day
+                    staleWhileRevalidate: 60 * 60 * 24 * 30, // 30 days
+                  })
+                } else if (request.url.match(custodyEndpoint)) {
+                  // Sensitive information used by delegation system. Short cache and long stale-if-error.
+                  return buildCacheControl({
+                    maxAge: 60 * 10, // 10 minutes
+                    staleIfError: 60 * 60 * 24 * 30, // 30 days
+                  })
+                }
+                // Short private cache for the rest?
+                return buildCacheControl({ maxAge: 60 * 10 })
+              },
             },
             ...config.fetch,
           }),
           basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+          headers: {
+            'X-Road-Client': xroadConfig.xRoadClient,
+          },
         }),
       )
     },
-    inject: [XRoadConfig.KEY, NationalRegistryConfig.KEY, CACHE_MANAGER],
+    inject: [XRoadConfig.KEY, NationalRegistryClientConfig.KEY, CACHE_MANAGER],
   }),
 )
 
 @Module({
   providers: exportedApis,
   exports: exportedApis,
+  imports: [CacheModule.register()],
 })
-export class NationalRegistryModule {}
+export class NationalRegistryClientModule {}

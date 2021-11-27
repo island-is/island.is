@@ -30,8 +30,8 @@ export class NationalRegistryXRoadResolver {
     @CurrentUser() user: User,
   ): Promise<NationalRegistryPerson | undefined> {
     return await this.nationalRegistryXRoadService.getNationalRegistryPerson(
+      user,
       user.nationalId,
-      user.authorization,
     )
   }
 
@@ -42,8 +42,8 @@ export class NationalRegistryXRoadResolver {
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistryPerson[] | undefined> {
     return await this.nationalRegistryXRoadService.getChildrenCustodyInformation(
+      user,
       person.nationalId,
-      user.authorization,
     )
   }
 
@@ -54,8 +54,8 @@ export class NationalRegistryXRoadResolver {
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistryResidence[] | undefined> {
     return await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
+      user,
       person.nationalId,
-      user.authorization,
     )
   }
 
@@ -66,8 +66,8 @@ export class NationalRegistryXRoadResolver {
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistrySpouse | undefined> {
     return await this.nationalRegistryXRoadService.getSpouse(
+      user,
       person.nationalId,
-      user.authorization,
     )
   }
 }

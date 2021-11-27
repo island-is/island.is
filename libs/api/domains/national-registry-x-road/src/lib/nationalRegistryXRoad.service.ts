@@ -1,15 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
-import {
-  Einstaklingsupplysingar,
-  Fjolskylda,
-  Heimili,
-  Hjuskapur,
-} from '@island.is/clients/national-registry-v2'
-import type { NationalRegistryXRoadConfig } from './nationalRegistryXRoad.module'
-import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
+import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistryAddress } from '../models/nationalRegistryAddress.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
@@ -17,50 +12,24 @@ import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 @Injectable()
 export class NationalRegistryXRoadService {
   constructor(
-    @Inject('Config')
-    private config: NationalRegistryXRoadConfig,
+    private _nationalRegistryApi: EinstaklingarApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
-  // This code is specifically set up for family-matter applications and might not suit everyone without changes
-  // Not using the generated code since it expects the 'Authorization' header to come from
-  // the NationalRegistryModule providers instead of a request parameter.
-  private async nationalRegistryFetch<T>(
-    query: string,
-    authToken: string,
-  ): Promise<T> {
-    try {
-      const {
-        xRoadBasePathWithEnv,
-        xRoadTjodskraMemberCode,
-        xRoadTjodskraApiPath,
-        xRoadClientId,
-      } = this.config
-      return fetch(
-        `${xRoadBasePathWithEnv}/GOV/${xRoadTjodskraMemberCode}${xRoadTjodskraApiPath}/api/v1/einstaklingar${query}`,
-        {
-          headers: {
-            Authorization: `${authToken}`,
-            'X-Road-Client': xRoadClientId,
-          },
-        },
-      ).then((res) => res.json())
-    } catch (error) {
-      throw this.handleError(error)
-    }
+  nationalRegistryApiWithAuth(auth: Auth) {
+    return this._nationalRegistryApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getNationalRegistryResidenceHistory(
+    user: User,
     nationalId: string,
-    authToken: string,
   ): Promise<NationalRegistryResidence[]> {
-    const historyList = await this.nationalRegistryFetch<Array<Heimili>>(
-      `/${nationalId}/buseta`,
-      authToken,
-    )
+    const historyList = await this.nationalRegistryApiWithAuth(
+      user,
+    ).einstaklingarGetBuseta({ id: nationalId })
 
-    const history = historyList.map((heimili: Heimili) => {
+    const history = historyList.map((heimili) => {
       if (!heimili.breytt) {
         throw new Error('All history entries have a modified date')
       }
@@ -82,13 +51,12 @@ export class NationalRegistryXRoadService {
   }
 
   async getNationalRegistryPerson(
+    user: User,
     nationalId: string,
-    authToken: string,
   ): Promise<NationalRegistryPerson> {
-    const person = await this.nationalRegistryFetch<Einstaklingsupplysingar>(
-      `/${nationalId}`,
-      authToken,
-    )
+    const person = await this.nationalRegistryApiWithAuth(
+      user,
+    ).einstaklingarGetEinstaklingur({ id: nationalId })
 
     return {
       nationalId: nationalId,
@@ -103,114 +71,89 @@ export class NationalRegistryXRoadService {
     }
   }
 
-  private async getCustody(
-    parentNationalId: string,
-    authToken: string,
-  ): Promise<string[]> {
-    return await this.nationalRegistryFetch<string[]>(
-      `/${parentNationalId}/forsja`,
-      authToken,
-    )
-  }
-
   async getChildrenCustodyInformation(
+    user: User,
     parentNationalId: string,
-    authToken: string,
   ): Promise<
     | NationalRegistryPerson[]
     | Omit<NationalRegistryPerson, 'otherParent'>[]
     | undefined
   > {
-    try {
-      const childrenNationalIds = await this.getCustody(
-        parentNationalId,
-        authToken,
-      )
-      if (!Array.isArray(childrenNationalIds)) {
-        return []
-      }
-
-      const children = await Promise.all(
-        childrenNationalIds.map(async (childNationalId) => {
-          return await this.nationalRegistryFetch<Einstaklingsupplysingar>(
-            `/${childNationalId}`,
-            authToken,
-          )
-        }),
-      )
-      const parentAFamily = await this.nationalRegistryFetch<Fjolskylda>(
-        `/${parentNationalId}/fjolskylda`,
-        authToken,
-      )
-
-      return await Promise.all(
-        children?.map(async (child) => {
-          const parents = await this.nationalRegistryFetch<string[]>(
-            `/${parentNationalId}/forsja/${child.kennitala}`,
-            authToken,
-          )
-
-          const parentB = await this.nationalRegistryFetch<Einstaklingsupplysingar>(
-            `/${parents.find((id) => id !== parentNationalId) || null}`,
-            authToken,
-          )
-
-          const livesWithApplicant = parentAFamily.einstaklingar?.some(
-            (person) => person.kennitala === child.kennitala,
-          )
-          const livesWithParentB = parentAFamily.einstaklingar?.some(
-            (person) => person.kennitala === parentB?.kennitala,
-          )
-
-          const parentBObject = parentB?.kennitala
-            ? {
-                nationalId: parentB.kennitala,
-                fullName: parentB.nafn,
-                address: {
-                  streetName: parentB.logheimili?.heiti || undefined,
-                  postalCode: parentB.logheimili?.postnumer || undefined,
-                  city: parentB.logheimili?.stadur || undefined,
-                },
-              }
-            : null
-
-          return {
-            nationalId: child.kennitala,
-            fullName: child.nafn,
-            genderCode: child.kynkodi,
-            livesWithApplicant,
-            livesWithBothParents: livesWithParentB && livesWithApplicant,
-            otherParent: parentBObject,
-          }
-        }),
-      )
-    } catch (e) {
-      throw this.handleError(e)
+    const nationalRegistryApi = this.nationalRegistryApiWithAuth(user)
+    const childrenNationalIds = nationalRegistryApi.einstaklingarGetForsja({
+      id: parentNationalId,
+    })
+    if (!Array.isArray(childrenNationalIds)) {
+      return []
     }
+
+    const children = await Promise.all(
+      childrenNationalIds.map(async (childNationalId) => {
+        return await nationalRegistryApi.einstaklingarGetEinstaklingur({
+          id: childNationalId,
+        })
+      }),
+    )
+    const parentAFamily = await nationalRegistryApi.einstaklingarGetFjolskylda({
+      id: parentNationalId,
+    })
+
+    return await Promise.all(
+      children?.map(async (child) => {
+        const parents = await nationalRegistryApi.einstaklingarGetForsjaForeldri(
+          { id: parentNationalId, barn: child.kennitala },
+        )
+
+        const parentBNationalId = parents.find((id) => id !== parentNationalId)
+        const parentB = parentBNationalId
+          ? await nationalRegistryApi.einstaklingarGetEinstaklingur({
+              id: parentBNationalId,
+            })
+          : undefined
+
+        const livesWithApplicant = parentAFamily.einstaklingar?.some(
+          (person) => person.kennitala === child.kennitala,
+        )
+        const livesWithParentB = parentAFamily.einstaklingar?.some(
+          (person) => person.kennitala === parentB?.kennitala,
+        )
+
+        const parentBObject = parentB?.kennitala
+          ? {
+              nationalId: parentB.kennitala,
+              fullName: parentB.nafn,
+              address: {
+                streetName: parentB.logheimili?.heiti || undefined,
+                postalCode: parentB.logheimili?.postnumer || undefined,
+                city: parentB.logheimili?.stadur || undefined,
+              },
+            }
+          : null
+
+        return {
+          nationalId: child.kennitala,
+          fullName: child.nafn,
+          genderCode: child.kynkodi,
+          livesWithApplicant,
+          livesWithBothParents: livesWithParentB && livesWithApplicant,
+          otherParent: parentBObject,
+        }
+      }),
+    )
   }
 
   async getSpouse(
+    user: User,
     nationalId: string,
-    authToken: string,
   ): Promise<NationalRegistrySpouse> {
-    const spouse = await this.nationalRegistryFetch<Hjuskapur>(
-      `/${nationalId}/hjuskapur`,
-      authToken,
-    )
+    const spouse = await this.nationalRegistryApiWithAuth(
+      user,
+    ).einstaklingarGetHjuskapur({ id: nationalId })
 
     return {
       nationalId: spouse.kennitalaMaka || undefined,
       name: spouse.nafnMaka || undefined,
       maritalStatus: spouse.hjuskaparkodi || undefined,
     }
-  }
-
-  private handleError(error: any) {
-    this.logger.error(error)
-
-    return new ApolloError(
-      'Failed to resolve request',
-      error?.message ?? error?.response?.message,
-    )
   }
 }
