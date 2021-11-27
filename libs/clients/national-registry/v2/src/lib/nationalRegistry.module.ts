@@ -10,7 +10,7 @@ import {
   FasteignirApi,
   LyklarApi,
 } from '../../gen/fetch'
-import { CACHE_MANAGER, CacheModule, Module } from "@nestjs/common";
+import { CACHE_MANAGER, Module } from "@nestjs/common";
 
 const XRoadConfig = defineConfig({
   name: 'XRoadConfig',

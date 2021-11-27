@@ -1,5 +1,6 @@
 import CircuitBreaker from 'opossum'
 import nodeFetch from 'node-fetch'
+import { Cache } from 'cache-manager'
 import { Logger } from 'winston'
 import { logger as defaultLogger } from '@island.is/logging'
 import { withTimeout } from './withTimeout'
@@ -11,10 +12,14 @@ import {
   ClientCertificateOptions,
   withClientCertificate,
 } from './withClientCertificate'
+import { withCache, CacheConfig } from './withCache'
 
 export interface EnhancedFetchOptions {
   // The name of this fetch function, used in logs and opossum stats.
   name: string
+
+  // Configure caching.
+  cache?: CacheConfig
 
   // Timeout for requests. Defaults to 10000ms. Can be disabled by passing false.
   timeout?: number | false
@@ -92,12 +97,21 @@ export const createEnhancedFetch = (
     timeout = 10000,
     logErrorResponseBody = false,
     clientCertificate,
+    cache,
   } = options
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
   const builder = buildFetch(options.fetch)
 
   if (clientCertificate) {
     builder.wrap(withClientCertificate, { clientCertificate })
+  }
+
+  if (cache) {
+    builder.wrap(withCache, {
+      ...cache,
+      name,
+      logger,
+    })
   }
 
   if (timeout !== false) {
