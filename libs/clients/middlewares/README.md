@@ -143,7 +143,7 @@ const enhancedFetch = createEnhancedFetch({
 ```
 
 {% hint style="info" %}
-Only responses with [specific status codes](https://developer.mozilla.org/en-US/docs/Glossary/cacheable) can be cached. Notably, that list excludes  "201 Created", "400 Bad Request", "401 Unauthorized", "403 Forbidden" as well as most 500 responses. Those responses won't be cached even if you override the cache-control value.
+Only responses with [specific status codes](https://developer.mozilla.org/en-US/docs/Glossary/cacheable) can be cached. Notably, that list excludes "201 Created", "400 Bad Request", "401 Unauthorized", "403 Forbidden" as well as most 500 responses. Those responses won't be cached even if you override the cache-control value.
 {% endhint %}
 
 ### Authorized APIs
