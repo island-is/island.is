@@ -21,7 +21,12 @@ const timeout = 500
 describe('EnhancedFetch', () => {
   let enhancedFetch: FetchAPI
   let fetch: jest.Mock<ReturnType<FetchAPI>>
-  let logger: { log: jest.Mock; info: jest.Mock, warn: jest.Mock; error: jest.Mock }
+  let logger: {
+    log: jest.Mock
+    info: jest.Mock
+    warn: jest.Mock
+    error: jest.Mock
+  }
 
   const createTestEnhancedFetch = (
     override?: SetOptional<EnhancedFetchOptions, 'name'>,
@@ -591,8 +596,8 @@ describe('EnhancedFetch', () => {
       const response2 = enhancedFetch('/test')
 
       // Assert
-      await expect(response1).rejects.toMatchObject({body: 'Response 1'})
-      await expect(response2).rejects.toMatchObject({body: 'Response 2'})
+      await expect(response1).rejects.toMatchObject({ body: 'Response 1' })
+      await expect(response2).rejects.toMatchObject({ body: 'Response 2' })
       expect(fetch).toHaveBeenCalledTimes(2)
     })
 
@@ -614,10 +619,10 @@ describe('EnhancedFetch', () => {
 
       // Act and Assert
       const response1 = enhancedFetch('/test')
-      await expect(response1).rejects.toMatchObject({body: 'Response 1'})
+      await expect(response1).rejects.toMatchObject({ body: 'Response 1' })
 
       const response2 = enhancedFetch('/test')
-      await expect(response2).rejects.toMatchObject({body: 'Response 1'})
+      await expect(response2).rejects.toMatchObject({ body: 'Response 1' })
       expect(fetch).toHaveBeenCalledTimes(1)
     })
 

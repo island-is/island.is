@@ -324,7 +324,6 @@ export function withCache({
       debugLog('Hit', cacheResponse)
     }
 
-
     return cacheResponse.getResponse()
   }
 }

@@ -232,11 +232,7 @@ export class DelegationsService {
 
     const [fromDisplayName, toName] = await Promise.all([
       this.getUserName(user),
-      this.getPersonName(
-        delegation.toNationalId,
-        user,
-        authMiddlewareOptions,
-      ),
+      this.getPersonName(delegation.toNationalId, user, authMiddlewareOptions),
     ])
 
     this.logger.debug('Creating a new delegation')

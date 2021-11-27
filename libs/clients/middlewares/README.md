@@ -119,11 +119,12 @@ const enhancedFetch = createEnhancedFetch({
   name: 'my-fetch',
   cache: {
     cacheManager,
-    overrideCacheControl: (request, response) => buildCacheControl({
-      maxAge: 60,
-      staleWhileRevalidate: ONE_DAY,
-      staleIfError: ONE_MONTH,
-    })
+    overrideCacheControl: (request, response) =>
+      buildCacheControl({
+        maxAge: 60,
+        staleWhileRevalidate: ONE_DAY,
+        staleIfError: ONE_MONTH,
+      }),
   },
 })
 ```

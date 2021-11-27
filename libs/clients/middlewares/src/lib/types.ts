@@ -10,9 +10,12 @@ interface NewRequest extends Request {
   timeout?: number
 }
 
-type NewRequestInfo = NewRequest | string;
+type NewRequestInfo = NewRequest | string
 
-type FetchAPI = (input: NewRequestInfo, init?: NewRequestInit) => Promise<Response>
+type FetchAPI = (
+  input: NewRequestInfo,
+  init?: NewRequestInit,
+) => Promise<Response>
 
 export {
   NewRequest as Request,

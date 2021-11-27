@@ -10,14 +10,8 @@
       "email": "skra@skra.is"
     },
     "version": "v1",
-    "x-category": [
-      "personal",
-      "official"
-    ],
-    "x-pricing": [
-      "free",
-      "paid"
-    ],
+    "x-category": ["personal", "official"],
+    "x-pricing": ["free", "paid"],
     "x-links": {
       "documentation": "https://www.skra.is/um-okkur/utgafur-og-skjol/taknmal-thjodskrar/",
       "responsibleParty": "https://www.skra.is/um-okkur"
@@ -31,9 +25,7 @@
   "paths": {
     "/api/v1/einstaklingar/{id}": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Get the basic information for an individual.",
         "operationId": "Einstaklingar_GetEinstaklingur",
         "parameters": [
@@ -100,9 +92,7 @@
     },
     "/api/v1/einstaklingar/{id}/faedingarstadur": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Get the registered birthplace for an individual.",
         "operationId": "Einstaklingar_GetFaedingarstadur",
         "parameters": [
@@ -169,9 +159,7 @@
     },
     "/api/v1/einstaklingar/{id}/rikisfang": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Get the citizenship for an individual.",
         "operationId": "Einstaklingar_GetRikisfang",
         "parameters": [
@@ -238,9 +226,7 @@
     },
     "/api/v1/einstaklingar/{id}/trufelag": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Get the religion registration for an individual.",
         "operationId": "Einstaklingar_GetTrufelag",
         "parameters": [
@@ -307,9 +293,7 @@
     },
     "/api/v1/einstaklingar/{id}/logheimili": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Get the legal domicile for an individual.",
         "operationId": "Einstaklingar_GetLogheimili",
         "parameters": [
@@ -376,9 +360,7 @@
     },
     "/api/v1/einstaklingar/{id}/adsetur": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Get the residence information for an individual.",
         "operationId": "Einstaklingar_GetAdsetur",
         "parameters": [
@@ -445,9 +427,7 @@
     },
     "/api/v1/einstaklingar/{id}/buseta": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Get the residence history for an individual.",
         "operationId": "Einstaklingar_GetBuseta",
         "parameters": [
@@ -517,9 +497,7 @@
     },
     "/api/v1/einstaklingar/{id}/lograda": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Is the individual of legal age.",
         "operationId": "Einstaklingar_GetLograda",
         "parameters": [
@@ -586,9 +564,7 @@
     },
     "/api/v1/einstaklingar/{id}/hjuskapur": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Get the cohabitation information for an individual.",
         "operationId": "Einstaklingar_GetHjuskapur",
         "parameters": [
@@ -655,9 +631,7 @@
     },
     "/api/v1/einstaklingar/{id}/fjolskylda": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Get a list of family members for an individual.",
         "operationId": "Einstaklingar_GetFjolskylda",
         "parameters": [
@@ -724,9 +698,7 @@
     },
     "/api/v1/einstaklingar/{id}/fjolskyldumedlimir": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Get a list of family members with detailed information for each family member.",
         "operationId": "Einstaklingar_GetFjolskyldumedlimir",
         "parameters": [
@@ -793,9 +765,7 @@
     },
     "/api/v1/einstaklingar/{id}/logborn": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Get all the children the individual is a legal parent of.",
         "operationId": "Einstaklingar_GetLogborn",
         "parameters": [
@@ -865,9 +835,7 @@
     },
     "/api/v1/einstaklingar/{id}/logforeldrar": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Get the legal parents of an individual.",
         "operationId": "Einstaklingar_GetLogforeldrar",
         "parameters": [
@@ -937,9 +905,7 @@
     },
     "/api/v1/einstaklingar/{id}/forsja": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Get the list of childrens the individual has custody of.",
         "operationId": "Einstaklingar_GetForsja",
         "parameters": [
@@ -1009,9 +975,7 @@
     },
     "/api/v1/einstaklingar/{id}/forsja/{barn}": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Get the parents that have custody of the child.",
         "operationId": "Einstaklingar_GetForsjaForeldri",
         "parameters": [
@@ -1092,9 +1056,7 @@
     },
     "/api/v1/einstaklingar/{barn}/logheimilisforeldri": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Get the list of legal domicile parents",
         "operationId": "Einstaklingar_GetLogheimilisForeldri",
         "parameters": [
@@ -1156,9 +1118,7 @@
     },
     "/api/v1/einstaklingar/{id}/samibuar": {
       "get": {
-        "tags": [
-          "Einstaklingar"
-        ],
+        "tags": ["Einstaklingar"],
         "summary": "Get the list of residents that live with the individual.",
         "operationId": "Einstaklingar_GetSamibuar",
         "parameters": [
@@ -1228,9 +1188,7 @@
     },
     "/api/v1/fasteignir/{id}/ibuar": {
       "get": {
-        "tags": [
-          "Fasteignir"
-        ],
+        "tags": ["Fasteignir"],
         "summary": "Get the list of residents living in the real estate with the specified real estate id.",
         "operationId": "Fasteignir_GetIbuar",
         "parameters": [
@@ -1300,9 +1258,7 @@
     },
     "/api/v1/lyklar": {
       "get": {
-        "tags": [
-          "Lyklar"
-        ],
+        "tags": ["Lyklar"],
         "summary": "Get all available gender and cohabition codes.",
         "operationId": "Lyklar_GetLyklar",
         "parameters": [
@@ -1358,9 +1314,7 @@
     },
     "/api/v1/lyklar/hjuskaparkodar/{id}/{kyn}": {
       "get": {
-        "tags": [
-          "Lyklar"
-        ],
+        "tags": ["Lyklar"],
         "summary": "Get details of cohabition code by id.",
         "operationId": "Lyklar_GetHjuskapar",
         "parameters": [
@@ -1448,9 +1402,7 @@
     },
     "/api/v1/lyklar/kyn/{id}": {
       "get": {
-        "tags": [
-          "Lyklar"
-        ],
+        "tags": ["Lyklar"],
         "summary": "Get details for gender code by id.",
         "operationId": "Lyklar_GetKyn",
         "parameters": [
@@ -1527,9 +1479,7 @@
     },
     "/api/v1/lyklar/trufelog": {
       "get": {
-        "tags": [
-          "Lyklar"
-        ],
+        "tags": ["Lyklar"],
         "summary": "Get all available religion codes.",
         "operationId": "Lyklar_GetTrufelog",
         "parameters": [],
@@ -1577,9 +1527,7 @@
     },
     "/api/v1/lyklar/trufelog/{id}": {
       "get": {
-        "tags": [
-          "Lyklar"
-        ],
+        "tags": ["Lyklar"],
         "summary": "Get details for religion code by id.",
         "operationId": "Lyklar_GetTrufelag",
         "parameters": [
@@ -1646,9 +1594,7 @@
     },
     "/api/v1/lyklar/sveitarfelog": {
       "get": {
-        "tags": [
-          "Lyklar"
-        ],
+        "tags": ["Lyklar"],
         "summary": "Get all available municipality codes.",
         "operationId": "Lyklar_GetSveitarfelog",
         "parameters": [],
@@ -1696,9 +1642,7 @@
     },
     "/api/v1/lyklar/sveitarfelog/{id}": {
       "get": {
-        "tags": [
-          "Lyklar"
-        ],
+        "tags": ["Lyklar"],
         "summary": "Get the details for municipality by id.",
         "operationId": "Lyklar_GetSveitarfelag",
         "parameters": [
@@ -1870,9 +1814,7 @@
           "sveitarfelagsnumer": "0000"
         },
         "additionalProperties": false,
-        "required": [
-          "heiti"
-        ],
+        "required": ["heiti"],
         "properties": {
           "heiti": {
             "type": "string",
@@ -1935,9 +1877,7 @@
           "faedingardagur": "33.11.0930"
         },
         "additionalProperties": false,
-        "required": [
-          "faedingardagur"
-        ],
+        "required": ["faedingardagur"],
         "properties": {
           "sveitarfelagsnumer": {
             "type": "string",
@@ -1960,10 +1900,7 @@
         "type": "object",
         "description": "Error response",
         "additionalProperties": false,
-        "required": [
-          "code",
-          "message"
-        ],
+        "required": ["code", "message"],
         "properties": {
           "code": {
             "type": "integer",
@@ -2023,9 +1960,7 @@
           "land": "Ísland"
         },
         "additionalProperties": false,
-        "required": [
-          "kodi"
-        ],
+        "required": ["kodi"],
         "properties": {
           "kodi": {
             "type": "string",
@@ -2045,9 +1980,7 @@
           "breytt": "2021-01-28T17:09:02.044Z"
         },
         "additionalProperties": false,
-        "required": [
-          "trufelagskodi"
-        ],
+        "required": ["trufelagskodi"],
         "properties": {
           "trufelagskodi": {
             "type": "string",
@@ -2074,10 +2007,7 @@
           "Breytt": ""
         },
         "additionalProperties": false,
-        "required": [
-          "huskodi",
-          "heimilisfang"
-        ],
+        "required": ["huskodi", "heimilisfang"],
         "properties": {
           "huskodi": {
             "type": "string",
@@ -2177,9 +2107,7 @@
           "erLograda": true
         },
         "additionalProperties": false,
-        "required": [
-          "erLograda"
-        ],
+        "required": ["erLograda"],
         "properties": {
           "erLograda": {
             "type": "boolean",
@@ -2262,11 +2190,7 @@
           "kennitala": "3311305959"
         },
         "additionalProperties": false,
-        "required": [
-          "nafn",
-          "kennitala",
-          "kynkodi"
-        ],
+        "required": ["nafn", "kennitala", "kynkodi"],
         "properties": {
           "nafn": {
             "type": "string",
@@ -2355,10 +2279,7 @@
           }
         },
         "additionalProperties": false,
-        "required": [
-          "kyn",
-          "hjuskapur"
-        ],
+        "required": ["kyn", "hjuskapur"],
         "properties": {
           "kyn": {
             "type": "object",
@@ -2400,9 +2321,7 @@
           "lysing": "Karl"
         },
         "additionalProperties": false,
-        "required": [
-          "kodi"
-        ],
+        "required": ["kodi"],
         "properties": {
           "kodi": {
             "type": "string",
@@ -2423,9 +2342,7 @@
           "postnumer": "101"
         },
         "additionalProperties": false,
-        "required": [
-          "nafn"
-        ],
+        "required": ["nafn"],
         "properties": {
           "nafn": {
             "type": "string",

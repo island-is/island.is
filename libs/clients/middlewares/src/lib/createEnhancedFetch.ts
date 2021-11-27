@@ -106,7 +106,7 @@ export const createEnhancedFetch = (
     cache,
   } = options
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
-  const builder = buildFetch(options.fetch as unknown as NodeFetchAPI)
+  const builder = buildFetch((options.fetch as unknown) as NodeFetchAPI)
 
   if (clientCertificate) {
     builder.wrap(withClientCertificate, { clientCertificate })
@@ -143,5 +143,5 @@ export const createEnhancedFetch = (
     })
   }
 
-  return builder.fetch as unknown as FetchAPI
+  return (builder.fetch as unknown) as FetchAPI
 }
