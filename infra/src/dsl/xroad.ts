@@ -178,6 +178,12 @@ export const Education = new XroadConf({
 
 export const NationalRegistry = new XroadConf({
   env: {
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
+      dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+      prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+    },
+    // Deprecated:
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
     XROAD_TJODSKRA_MEMBER_CODE: {
       prod: '6503760649',
