@@ -153,9 +153,9 @@ const enhancedFetch = createEnhancedFetch({
     cacheManager,
     overrideCacheControl: (request, response) =>
       buildCacheControl({
-        maxAge: 300,                     // 5 minutes
+        maxAge: 300, // 5 minutes
         staleWhileRevalidate: 3600 * 24, // 1 day
-        staleIfError: 3600 * 24 * 30,    // 1 month 
+        staleIfError: 3600 * 24 * 30, // 1 month
       }),
   },
 })
@@ -163,9 +163,9 @@ const enhancedFetch = createEnhancedFetch({
 
 In the above example, it will return a response from the cache:
 
-* If it's less than 5 minute old.
-* If it's less than 1 day old. In this case it will immediately update the cache in the background to get fresh data for future requests.
-* If it's less than 30 days old and the server is offline or returns an error response (eg "500 Internal Server Error").
+- If it's less than 5 minute old.
+- If it's less than 1 day old. In this case it will immediately update the cache in the background to get fresh data for future requests.
+- If it's less than 30 days old and the server is offline or returns an error response (eg "500 Internal Server Error").
 
 ### Authorized APIs
 
