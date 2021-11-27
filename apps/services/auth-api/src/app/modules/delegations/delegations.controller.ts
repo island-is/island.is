@@ -30,7 +30,6 @@ export class DelegationsController {
   async findAllTo(@CurrentUser() user: User): Promise<DelegationDTO[]> {
     return this.delegationsService.findAllTo(
       user,
-      environment.nationalRegistry.xroad.clientId ?? '',
       environment.nationalRegistry.authMiddlewareOptions,
     )
   }
