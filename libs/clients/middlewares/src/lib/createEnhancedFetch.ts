@@ -1,10 +1,10 @@
 import CircuitBreaker from 'opossum'
 import nodeFetch from 'node-fetch'
-import { Cache } from 'cache-manager'
 import { Logger } from 'winston'
 import { logger as defaultLogger } from '@island.is/logging'
 import { withTimeout } from './withTimeout'
-import { FetchAPI, Request, Response } from './types'
+import { FetchAPI as NodeFetchAPI } from './nodeFetch'
+import { FetchAPI } from './types'
 import { withAuth } from './withAuth'
 import { withErrors } from './withErrors'
 import { withCircuitBreaker } from './withCircuitBreaker'
@@ -46,11 +46,11 @@ export interface EnhancedFetchOptions {
   clientCertificate?: ClientCertificateOptions
 }
 
-function buildFetch(fetch = (nodeFetch as unknown) as FetchAPI) {
+function buildFetch(fetch: NodeFetchAPI = nodeFetch) {
   const result = {
     fetch,
-    wrap<T extends { fetch: FetchAPI }>(
-      createFetch: (options: T) => FetchAPI,
+    wrap<T extends { fetch: NodeFetchAPI }>(
+      createFetch: (options: T) => NodeFetchAPI,
       options: Omit<T, 'fetch'>,
     ) {
       result.fetch = createFetch({ ...options, fetch: result.fetch } as T)
@@ -68,6 +68,12 @@ function buildFetch(fetch = (nodeFetch as unknown) as FetchAPI) {
  *   All future requests will be stopped to lower pressure on the remote server.
  *   Every 30 seconds we'll allow one request through. If it's successful, we'll
  *   close the circuit and let requests through again.
+ *
+ * - Includes response cache logic built on top of standard cache-control
+ *   semantics. By default nothing is cached.
+ *
+ * - Supports our `User` and `Auth` objects. Adds authorization header to the
+ *   request.
  *
  * - Includes request timeout logic. By default, throws an error if there is no
  *   response in 10 seconds.
@@ -100,7 +106,7 @@ export const createEnhancedFetch = (
     cache,
   } = options
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
-  const builder = buildFetch(options.fetch)
+  const builder = buildFetch(options.fetch as unknown as NodeFetchAPI)
 
   if (clientCertificate) {
     builder.wrap(withClientCertificate, { clientCertificate })
@@ -137,5 +143,5 @@ export const createEnhancedFetch = (
     })
   }
 
-  return builder.fetch
+  return builder.fetch as unknown as FetchAPI
 }

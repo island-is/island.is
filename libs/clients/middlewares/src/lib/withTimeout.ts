@@ -1,4 +1,4 @@
-import { FetchAPI, FetchMiddlewareOptions } from './types'
+import { FetchAPI, FetchMiddlewareOptions } from './nodeFetch'
 
 export interface TimeoutOptions extends FetchMiddlewareOptions {
   timeout: number

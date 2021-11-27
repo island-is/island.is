@@ -1,45 +1,22 @@
-import {
-  Request as NodeFetchRequest,
-  Headers,
-  HeadersInit,
-  RequestInit as NodeFetchRequestInit,
-  Response,
-} from 'node-fetch'
 import { Auth } from '@island.is/auth-nest-tools'
 
-interface URLLike {
-  href: string
-}
-
-class Request extends NodeFetchRequest {
+interface NewRequestInit extends RequestInit {
   auth?: Auth
-
-  constructor(input: RequestInfo, init?: RequestInit) {
-    super(input, init)
-    this.auth =
-      init?.auth ?? (input instanceof Request ? input.auth : undefined)
-  }
+  timeout?: number
 }
 
-type RequestInfo = string | URLLike | Request
-
-interface RequestInit extends NodeFetchRequestInit {
+interface NewRequest extends Request {
   auth?: Auth
+  timeout?: number
 }
 
-type FetchAPI = (input: RequestInfo, init?: RequestInit) => Promise<Response>
+type NewRequestInfo = NewRequest | string;
 
-interface FetchMiddlewareOptions {
-  fetch: FetchAPI
-}
+type FetchAPI = (input: NewRequestInfo, init?: NewRequestInit) => Promise<Response>
 
 export {
-  Headers,
-  HeadersInit,
-  Request,
-  RequestInfo,
-  RequestInit,
-  Response,
+  NewRequest as Request,
+  NewRequestInfo as RequestInfo,
+  NewRequestInit as RequestInit,
   FetchAPI,
-  FetchMiddlewareOptions,
 }

@@ -1,7 +1,7 @@
 import { Logger } from 'winston'
 import CircuitBreaker from 'opossum'
 
-import { FetchAPI } from './types'
+import { FetchAPI } from './nodeFetch'
 import { FetchError } from './FetchError'
 
 export interface CircuitBreakerOptions {

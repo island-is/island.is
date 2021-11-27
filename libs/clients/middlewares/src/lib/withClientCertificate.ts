@@ -1,6 +1,6 @@
 import https from 'https'
 import { SecureContextOptions } from 'tls'
-import { FetchAPI, FetchMiddlewareOptions } from './types'
+import { FetchAPI, FetchMiddlewareOptions } from './nodeFetch'
 
 // Chrerry-pick the supported types of certs from TLS
 export interface ClientCertificateOptions {

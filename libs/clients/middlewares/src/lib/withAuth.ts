@@ -1,4 +1,4 @@
-import { FetchAPI, Request, Headers } from './types'
+import { FetchAPI, Request, Headers } from './nodeFetch'
 
 export interface AuthMiddlewareOptions {
   fetch: FetchAPI

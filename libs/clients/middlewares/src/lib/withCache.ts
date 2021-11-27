@@ -2,7 +2,7 @@ import CachePolicy from 'http-cache-semantics'
 import { Cache } from 'cache-manager'
 import { Logger } from '@island.is/logging'
 
-import { FetchAPI, Headers, HeadersInit, Request, Response } from './types'
+import { FetchAPI, Headers, HeadersInit, Request, Response } from './nodeFetch'
 
 const DEBUG_NAMES = (process.env.ENHANCED_FETCH_DEBUG_CACHE ?? '')
   .split(',')
