@@ -1,20 +1,18 @@
 import {
   createEnhancedFetch,
   EnhancedFetchOptions,
+
 } from './createEnhancedFetch'
 import { Logger } from 'winston'
-import { Response as FakeResponse } from 'node-fetch'
+import { Response } from 'node-fetch'
 import { SetOptional } from 'type-fest'
+import CircuitBreaker from 'opossum'
+import { FetchAPI } from './types';
 
-const fakeResponse = (
-  ...args: ConstructorParameters<typeof FakeResponse>
-): Response => (new FakeResponse(...args) as unknown) as Response
-
-type FetchAPI = WindowOrWorkerGlobalScope['fetch']
+const fakeResponse = (...args: ConstructorParameters<typeof Response>) =>
+  new Response(...args)
 
 const timeout = 500
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 describe('EnhancedFetch', () => {
   let enhancedFetch: FetchAPI
@@ -30,9 +28,9 @@ describe('EnhancedFetch', () => {
       timeout,
       logger: (logger as unknown) as Logger,
       ...override,
-      opossum: {
+      circuitBreaker: {
         volumeThreshold: 0,
-        ...override?.opossum,
+        ...(override?.circuitBreaker as CircuitBreaker.Options),
       },
     })
 
@@ -54,6 +52,19 @@ describe('EnhancedFetch', () => {
       '/test',
       expect.objectContaining({ timeout }),
     )
+  })
+
+  it('adds request timeout', async () => {
+    // Arrange
+    const mockUser = createCurrentUser()
+
+    // Act
+    await enhancedFetch('/test', { auth: mockUser })
+
+    // Assert
+    expect(fetch).toHaveBeenCalled()
+    const request = new Request(fetch.mock.calls[0][0], fetch.mock.calls[0][1])
+    expect(request.headers.get('authorization')).toEqual(mockUser.authorization)
   })
 
   it('logs arbitrary errors', async () => {
