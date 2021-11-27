@@ -120,11 +120,7 @@ const enhancedFetch = createEnhancedFetch({
   cache: {
     cacheManager,
     overrideCacheControl: (request, response) =>
-      buildCacheControl({
-        maxAge: 60,
-        staleWhileRevalidate: ONE_DAY,
-        staleIfError: ONE_MONTH,
-      }),
+      buildCacheControl({ maxAge: 60 }),
   },
 })
 ```
@@ -146,11 +142,36 @@ const enhancedFetch = createEnhancedFetch({
 Only responses with [specific status codes](https://developer.mozilla.org/en-US/docs/Glossary/cacheable) can be cached. Notably, that list excludes "201 Created", "400 Bad Request", "401 Unauthorized", "403 Forbidden" as well as most 500 responses. Those responses won't be cached even if you override the cache-control value.
 {% endhint %}
 
+### Stale responses
+
+You can configure the cache to return stale responses in specific circumstances:
+
+```ts
+const enhancedFetch = createEnhancedFetch({
+  name: 'my-fetch',
+  cache: {
+    cacheManager,
+    overrideCacheControl: (request, response) =>
+      buildCacheControl({
+        maxAge: 300,                     // 5 minutes
+        staleWhileRevalidate: 3600 * 24, // 1 day
+        staleIfError: 3600 * 24 * 30,    // 1 month 
+      }),
+  },
+})
+```
+
+In the above example, it will return a response from the cache:
+
+* If it's less than 5 minute old.
+* If it's less than 1 day old. In this case it will immediately update the cache in the background to get fresh data for future requests.
+* If it's less than 30 days old and the server is offline or returns an error response (eg "500 Internal Server Error").
+
 ### Authorized APIs
 
-The cache is shared by default. Requests that have an authorization headers need special consideration for caching.
+The cache is shared for all requests by default. Requests that have an authorization headers need special consideration since those won't get cached by default.
 
-If the API is not using `innskra.island.is` or serving data that is not specific to the authenticated user, then you may override the response for shared caching:
+If the API is not using `innskra.island.is` or serving data that is not specific to the authenticated user, then you may configure cache-control to support shared caching:
 
 ```ts
 const registryFetch = createEnhancedFetch({
@@ -192,11 +213,13 @@ const enhancedFetch = createEnhancedFetch({
   name: 'some-api',
   cache: {
     cacheManager,
-    shared: (request) => !request.url.contains('/pin'),
+    shared: (request) => !request.url.match(/\/pin$/),
     overrideCacheControl: buildCacheControl({ maxAge: 60, public: true }),
   },
 })
 ```
+
+In the above example, requests going to pin endpoints will never be shared between users, while other requests can be cached between users.
 
 ## Running unit tests
 
