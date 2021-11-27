@@ -79,23 +79,17 @@ export interface CacheConfig {
    * }
    * ```
    *
-   * By default, this override only applies to non-500 GET responses. You
-   * can change this behaviour by changing the `overrideForAllMethods` and
-   * `overrideForErrors` flags below.
+   * By default, this override only applies to GET responses. You can change
+   * override POST requests as well by setting `overrideForPost: true`.
    */
   overrideCacheControl?:
     | string
     | ((request: Request, response: Response) => string)
 
   /**
-   * Override cache control for all request methods. Defaults to false.
+   * Override cache control for post request methods. Defaults to false.
    */
-  overrideForAllMethods?: boolean
-
-  /**
-   * Override cache control for 500 error responses. Defaults to false.
-   */
-  overrideForErrors?: boolean
+  overrideForPost?: boolean
 }
 
 export interface CacheMiddlewareConfig extends CacheConfig {
@@ -111,8 +105,7 @@ export function withCache({
   cacheKey: userCacheKey = (request) => request.url,
   shared = true,
   overrideCacheControl,
-  overrideForAllMethods = false,
-  overrideForErrors = false,
+  overrideForPost = false,
   cacheManager,
 }: CacheMiddlewareConfig): FetchAPI {
   const sharedFor = typeof shared === 'function' ? shared : () => shared
@@ -183,11 +176,7 @@ export function withCache({
   function policyResponseFrom(response: Response, request: Request) {
     const headers = headersToObject(response.headers)
 
-    if (
-      overrideCacheControl &&
-      (request.method === 'GET' || overrideForAllMethods) &&
-      (response.status < 500 || overrideForErrors)
-    ) {
+    if (overrideCacheControl && (request.method === 'GET' || overrideForPost)) {
       const cacheControl =
         typeof overrideCacheControl !== 'function'
           ? overrideCacheControl

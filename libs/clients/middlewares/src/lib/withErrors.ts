@@ -4,12 +4,14 @@ import { FetchAPI, FetchMiddlewareOptions } from './nodeFetch'
 import { FetchError } from './FetchError'
 
 interface ErrorOptions extends FetchMiddlewareOptions {
+  name: string
+  logger: Logger
   logErrorResponseBody: boolean
   treat400ResponsesAsErrors: boolean
-  logger: Logger
 }
 
 export function withErrors({
+  name,
   fetch,
   logErrorResponseBody,
   treat400ResponsesAsErrors,

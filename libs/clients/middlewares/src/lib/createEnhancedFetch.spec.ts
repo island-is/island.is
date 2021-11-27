@@ -1,14 +1,17 @@
+import { caching } from 'cache-manager'
+import * as faker from 'faker'
+import CircuitBreaker from 'opossum'
+import { SetOptional } from 'type-fest'
+
+import { Auth } from '@island.is/auth-nest-tools'
+import { Logger } from '@island.is/logging'
+
 import {
   createEnhancedFetch,
   EnhancedFetchOptions,
 } from './createEnhancedFetch'
-import { Response } from 'node-fetch'
-import { SetOptional } from 'type-fest'
-import CircuitBreaker from 'opossum'
-import { FetchAPI, Request } from './types'
-import { caching } from 'cache-manager'
-import { createCurrentUser } from '@island.is/testing/fixtures'
-import { Auth } from '@island.is/auth-nest-tools'
+import { Request, Response, FetchAPI as NodeFetchAPI } from './nodeFetch'
+import { FetchAPI } from './types'
 import { buildCacheControl, CacheControlOptions } from './buildCacheControl'
 
 const fakeResponse = (...args: ConstructorParameters<typeof Response>) =>
@@ -20,7 +23,7 @@ const timeout = 500
 
 describe('EnhancedFetch', () => {
   let enhancedFetch: FetchAPI
-  let fetch: jest.Mock<ReturnType<FetchAPI>>
+  let fetch: jest.Mock<ReturnType<NodeFetchAPI>>
   let logger: {
     log: jest.Mock
     info: jest.Mock
@@ -35,7 +38,7 @@ describe('EnhancedFetch', () => {
       name: 'test',
       fetch,
       timeout,
-      // logger: (logger as unknown) as Logger,
+      logger: (logger as unknown) as Logger,
       ...override,
       circuitBreaker: override?.circuitBreaker !== false && {
         volumeThreshold: 0,
@@ -65,9 +68,14 @@ describe('EnhancedFetch', () => {
     )
   })
 
-  it('adds request timeout', async () => {
+  it('adds authentication header', async () => {
     // Arrange
-    const mockUser = createCurrentUser()
+    const mockUser = {
+      nationalId: faker.helpers.replaceSymbolWithNumber('##########'),
+      scope: [],
+      authorization: faker.random.word(),
+      client: faker.random.word(),
+    }
 
     // Act
     await enhancedFetch('/test', { auth: mockUser })
@@ -601,31 +609,6 @@ describe('EnhancedFetch', () => {
       expect(fetch).toHaveBeenCalledTimes(2)
     })
 
-    it('can override cache control for error responses', async () => {
-      // Arrange
-      const cacheManager = caching({ store: 'memory', ttl: 0 })
-      const enhancedFetch = createTestEnhancedFetch({
-        logErrorResponseBody: true,
-        circuitBreaker: false,
-        cache: {
-          cacheManager,
-          overrideCacheControl: buildCacheControl({ maxAge: 50 }),
-          overrideForErrors: true,
-        },
-      })
-      fetch
-        .mockResolvedValueOnce(fakeResponse('Response 1', { status: 500 }))
-        .mockResolvedValueOnce(fakeResponse('Response 2', { status: 500 }))
-
-      // Act and Assert
-      const response1 = enhancedFetch('/test')
-      await expect(response1).rejects.toMatchObject({ body: 'Response 1' })
-
-      const response2 = enhancedFetch('/test')
-      await expect(response2).rejects.toMatchObject({ body: 'Response 1' })
-      expect(fetch).toHaveBeenCalledTimes(1)
-    })
-
     it('does not override cache control for POST requests', async () => {
       // Arrange
       const cacheManager = caching({ store: 'memory', ttl: 0 })
@@ -654,7 +637,7 @@ describe('EnhancedFetch', () => {
         cache: {
           cacheManager,
           overrideCacheControl: buildCacheControl({ maxAge: 50 }),
-          overrideForAllMethods: true,
+          overrideForPost: true,
         },
       })
       mockResponse()

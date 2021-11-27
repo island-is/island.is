@@ -143,7 +143,14 @@ const autoSchemaFile = environment.production
     }),
     CmsTranslationsModule,
     TerminusModule,
-    NationalRegistryModule,
+    NationalRegistryModule.register({
+      nationalRegistry: {
+        baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
+        user: environment.nationalRegistry.user,
+        password: environment.nationalRegistry.password,
+        host: environment.nationalRegistry.host,
+      },
+    }),
     HealthInsuranceModule.register({
       soapConfig: {
         wsdlUrl: environment.healthInsurance.wsdlUrl,

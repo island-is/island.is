@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ApolloError } from 'apollo-server-express'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -12,13 +11,13 @@ import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 @Injectable()
 export class NationalRegistryXRoadService {
   constructor(
-    private _nationalRegistryApi: EinstaklingarApi,
+    private nationalRegistryApi: EinstaklingarApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
   nationalRegistryApiWithAuth(auth: Auth) {
-    return this._nationalRegistryApi.withMiddleware(new AuthMiddleware(auth))
+    return this.nationalRegistryApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getNationalRegistryResidenceHistory(

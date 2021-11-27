@@ -40,7 +40,7 @@ export interface EnhancedFetchOptions {
   logger?: Logger
 
   // Override fetch function.
-  fetch?: FetchAPI
+  fetch?: NodeFetchAPI
 
   // Certificate for auth
   clientCertificate?: ClientCertificateOptions
@@ -127,6 +127,7 @@ export const createEnhancedFetch = (
   builder.wrap(withAuth, {})
 
   builder.wrap(withErrors, {
+    name,
     logger,
     treat400ResponsesAsErrors,
     logErrorResponseBody,

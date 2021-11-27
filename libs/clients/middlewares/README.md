@@ -129,7 +129,7 @@ const enhancedFetch = createEnhancedFetch({
 })
 ```
 
-By default, `overrideCacheControl` only affects non-500 GET responses, since we rarely want to cache 500 responses or POST/PUT/DELETE requests. If you know what you're doing, then you can override these as well:
+By default, `overrideCacheControl` only affects GET responses, since we rarely want to cache POST requests. If you know what you're doing, then you can cache those as well:
 
 ```ts
 const enhancedFetch = createEnhancedFetch({
@@ -137,11 +137,14 @@ const enhancedFetch = createEnhancedFetch({
   cache: {
     cacheManager,
     overrideCacheControl: buildCacheControl({ maxAge: 60 }),
-    overrideForAllMethods: true,
-    overrideForErrors: true,
+    overrideForPost: true,
   },
 })
 ```
+
+{% hint style="info" %}
+Only responses with [specific status codes](https://developer.mozilla.org/en-US/docs/Glossary/cacheable) can be cached. Notably, that list excludes  "201 Created", "400 Bad Request", "401 Unauthorized", "403 Forbidden" as well as most 500 responses. Those responses won't be cached even if you override the cache-control value.
+{% endhint %}
 
 ### Authorized APIs
 
