@@ -6,6 +6,10 @@ const schema = z.object({
   fetch: z.object({
     timeout: z.number().int().optional(),
   }),
+  redis: z.object({
+    nodes: z.array(z.string()).optional(),
+    ssl: z.boolean(),
+  }),
 })
 
 export const NationalRegistryClientConfig = defineConfig({
@@ -19,6 +23,11 @@ export const NationalRegistryClientConfig = defineConfig({
       ),
       fetch: {
         timeout: env.optionalJSON('XROAD_NATIONAL_REGISTRY_TIMEOUT'),
+      },
+      redis: {
+        nodes: env.optionalJSON('XROAD_NATIONAL_REGISTRY_REDIS_NODES'),
+        ssl:
+          env.optionalJSON('XROAD_NATIONAL_REGISTRY_REDIS_SSL', false) ?? true,
       },
     }
   },

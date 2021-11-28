@@ -11,7 +11,7 @@ import {
   EnhancedFetchOptions,
 } from './createEnhancedFetch'
 import { Request, Response, FetchAPI as NodeFetchAPI } from './nodeFetch'
-import { FetchAPI } from './types'
+import { EnhancedFetchAPI } from './types'
 import { buildCacheControl, CacheControlOptions } from './buildCacheControl'
 
 const fakeResponse = (...args: ConstructorParameters<typeof Response>) =>
@@ -20,9 +20,10 @@ const fakeResponse = (...args: ConstructorParameters<typeof Response>) =>
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const timeout = 500
+const testUrl = 'http://localhost/test'
 
 describe('EnhancedFetch', () => {
-  let enhancedFetch: FetchAPI
+  let enhancedFetch: EnhancedFetchAPI
   let fetch: jest.Mock<ReturnType<NodeFetchAPI>>
   let logger: {
     log: jest.Mock
@@ -59,11 +60,11 @@ describe('EnhancedFetch', () => {
 
   it('adds request timeout', async () => {
     // Act
-    await enhancedFetch('/test')
+    await enhancedFetch(testUrl)
 
     // Assert
     expect(fetch).toHaveBeenCalledWith(
-      '/test',
+      testUrl,
       expect.objectContaining({ timeout }),
     )
   })
@@ -78,7 +79,7 @@ describe('EnhancedFetch', () => {
     }
 
     // Act
-    await enhancedFetch('/test', { auth: mockUser })
+    await enhancedFetch(testUrl, { auth: mockUser })
 
     // Assert
     expect(fetch).toHaveBeenCalled()
@@ -91,14 +92,14 @@ describe('EnhancedFetch', () => {
     fetch.mockRejectedValue(new Error('Test error'))
 
     // Act
-    await enhancedFetch('/test').catch(() => null)
+    await enhancedFetch(testUrl).catch(() => null)
 
     // Assert
     expect(logger.log).toHaveBeenCalledWith(
       'error',
       expect.objectContaining({
         message: expect.stringContaining('Test error'),
-        url: '/test',
+        url: testUrl,
       }),
     )
   })
@@ -113,14 +114,14 @@ describe('EnhancedFetch', () => {
     )
 
     // Act
-    await enhancedFetch('/test').catch(() => null)
+    await enhancedFetch(testUrl).catch(() => null)
 
     // Assert
     expect(logger.log).toHaveBeenCalledWith(
       'error',
       expect.objectContaining({
         message: expect.stringContaining('Request failed with status code 500'),
-        url: '/test',
+        url: testUrl,
         status: 500,
         statusText: 'Server Test Error',
       }),
@@ -141,7 +142,7 @@ describe('EnhancedFetch', () => {
     const problem = { title: 'Problem', type: 'my-problem' }
 
     // Act
-    const error = await enhancedFetch('/test').catch((error) => error)
+    const error = await enhancedFetch(testUrl).catch((error) => error)
 
     // Assert
     expect(error).toMatchObject({ problem })
@@ -162,7 +163,7 @@ describe('EnhancedFetch', () => {
     )
 
     // Act
-    const error = await enhancedFetch('/test').catch((error) => error)
+    const error = await enhancedFetch(testUrl).catch((error) => error)
 
     // Assert
     expect(error).toMatchObject({ body: { yo: 'error' } })
@@ -178,7 +179,7 @@ describe('EnhancedFetch', () => {
     fetch.mockResolvedValue(fakeResponse('My Error', { status: 500 }))
 
     // Act
-    const error = await enhancedFetch('/test').catch((error) => error)
+    const error = await enhancedFetch(testUrl).catch((error) => error)
 
     // Assert
     expect(error).toMatchObject({ body: 'My Error' })
@@ -191,10 +192,10 @@ describe('EnhancedFetch', () => {
   it('opens circuit after enough 500 errors', async () => {
     // Arrange
     fetch.mockResolvedValue(fakeResponse('Error', { status: 500 }))
-    await enhancedFetch('/test').catch(() => null)
+    await enhancedFetch(testUrl).catch(() => null)
 
     // Act
-    const promise = enhancedFetch('/test')
+    const promise = enhancedFetch(testUrl)
 
     // Assert
     await expect(promise).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -206,10 +207,10 @@ describe('EnhancedFetch', () => {
   it('does not open circuit for 400 responses', async () => {
     // Arrange
     fetch.mockResolvedValue(fakeResponse('Error', { status: 400 }))
-    await enhancedFetch('/test').catch(() => null)
+    await enhancedFetch(testUrl).catch(() => null)
 
     // Act
-    const promise = enhancedFetch('/test')
+    const promise = enhancedFetch(testUrl)
 
     // Assert
     await expect(promise).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -222,10 +223,10 @@ describe('EnhancedFetch', () => {
     // Arrange
     enhancedFetch = createTestEnhancedFetch({ treat400ResponsesAsErrors: true })
     fetch.mockResolvedValue(fakeResponse('Error', { status: 400 }))
-    await enhancedFetch('/test').catch(() => null)
+    await enhancedFetch(testUrl).catch(() => null)
 
     // Act
-    const promise = enhancedFetch('/test')
+    const promise = enhancedFetch(testUrl)
 
     // Assert
     await expect(promise).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -261,8 +262,8 @@ describe('EnhancedFetch', () => {
       mockResponse({ maxAge: 50 })
 
       // Act
-      const response1 = await enhancedFetch('/test')
-      const response2 = await enhancedFetch('/test')
+      const response1 = await enhancedFetch(testUrl)
+      const response2 = await enhancedFetch(testUrl)
 
       // Assert
       expect(fetch).toHaveBeenCalledTimes(1)
@@ -279,8 +280,8 @@ describe('EnhancedFetch', () => {
       mockResponse({ noStore: true })
 
       // Act
-      const response1 = await enhancedFetch('/test')
-      const response2 = await enhancedFetch('/test')
+      const response1 = await enhancedFetch(testUrl)
+      const response2 = await enhancedFetch(testUrl)
 
       // Assert
       expect(fetch).toHaveBeenCalledTimes(2)
@@ -298,9 +299,9 @@ describe('EnhancedFetch', () => {
       mockResponse({ maxAge: 50 })
 
       // Act
-      const response1 = await enhancedFetch('/test')
+      const response1 = await enhancedFetch(testUrl)
       jest.advanceTimersByTime(51 * 1000)
-      const response2 = await enhancedFetch('/test')
+      const response2 = await enhancedFetch(testUrl)
 
       // Assert
       expect(fetch).toHaveBeenCalledTimes(2)
@@ -317,10 +318,10 @@ describe('EnhancedFetch', () => {
       mockResponse({ maxAge: 50 })
 
       // Act
-      const response1 = await enhancedFetch('/test', {
+      const response1 = await enhancedFetch(testUrl, {
         headers: { Authorization: 'A' },
       })
-      const response2 = await enhancedFetch('/test', {
+      const response2 = await enhancedFetch(testUrl, {
         headers: { Authorization: 'B' },
       })
 
@@ -339,10 +340,10 @@ describe('EnhancedFetch', () => {
       mockResponse({ maxAge: 50, public: true })
 
       // Act
-      const response1 = await enhancedFetch('/test', {
+      const response1 = await enhancedFetch(testUrl, {
         headers: { Authorization: 'A' },
       })
-      const response2 = await enhancedFetch('/test', {
+      const response2 = await enhancedFetch(testUrl, {
         headers: { Authorization: 'B' },
       })
 
@@ -361,10 +362,10 @@ describe('EnhancedFetch', () => {
       mockResponse({ maxAge: 50 })
 
       // Act
-      const response1 = await enhancedFetch('/test', {
+      const response1 = await enhancedFetch(testUrl, {
         headers: { Authorization: 'A' },
       })
-      const response2 = await enhancedFetch('/test', {
+      const response2 = await enhancedFetch(testUrl, {
         headers: { Authorization: 'B' },
       })
 
@@ -391,10 +392,10 @@ describe('EnhancedFetch', () => {
       mockResponse({ maxAge: 50 })
 
       // Act
-      const response1 = await enhancedFetch('/test', {
+      const response1 = await enhancedFetch(testUrl, {
         auth: { ...auth, nationalId: 'A' },
       })
-      const response2 = await enhancedFetch('/test', {
+      const response2 = await enhancedFetch(testUrl, {
         auth: { ...auth, nationalId: 'B' },
       })
 
@@ -418,10 +419,10 @@ describe('EnhancedFetch', () => {
       mockResponse({ maxAge: 50 })
 
       // Act
-      const response1 = await enhancedFetch('/test', {
+      const response1 = await enhancedFetch(testUrl, {
         auth: { ...auth, nationalId: 'A' },
       })
-      const response2 = await enhancedFetch('/test', {
+      const response2 = await enhancedFetch(testUrl, {
         auth: { ...auth, nationalId: 'A', authorization: 'newtoken' },
       })
 
@@ -441,9 +442,9 @@ describe('EnhancedFetch', () => {
       mockResponse({ maxAge: 50, staleIfError: 100 })
 
       // Act
-      const response1 = await enhancedFetch('/test')
+      const response1 = await enhancedFetch(testUrl)
       jest.advanceTimersByTime(51 * 1000)
-      const response2 = await enhancedFetch('/test')
+      const response2 = await enhancedFetch(testUrl)
 
       // Assert
       expect(fetch).toHaveBeenCalledTimes(2)
@@ -472,9 +473,9 @@ describe('EnhancedFetch', () => {
         .mockResolvedValueOnce(fakeResponse('Response 2', { status: 500 }))
 
       // Act
-      const response1 = await enhancedFetch('/test')
+      const response1 = await enhancedFetch(testUrl)
       jest.advanceTimersByTime(51 * 1000)
-      const response2 = await enhancedFetch('/test')
+      const response2 = await enhancedFetch(testUrl)
 
       // Assert
       expect(fetch).toHaveBeenCalledTimes(2)
@@ -503,9 +504,9 @@ describe('EnhancedFetch', () => {
         .mockRejectedValue(new Error('Failed to fetch'))
 
       // Act
-      const response1 = await enhancedFetch('/test')
+      const response1 = await enhancedFetch(testUrl)
       jest.advanceTimersByTime(51 * 1000)
-      const response2 = await enhancedFetch('/test')
+      const response2 = await enhancedFetch(testUrl)
 
       // Assert
       expect(fetch).toHaveBeenCalledTimes(2)
@@ -523,15 +524,15 @@ describe('EnhancedFetch', () => {
       mockResponse({ maxAge: 1, staleWhileRevalidate: 100 })
 
       // Act. Unfortunately can't use fake timers since the revalidate runs in an un-awaited promise.
-      await enhancedFetch('/test')
+      await enhancedFetch(testUrl)
 
       // Wait until stale.
       await sleep(1000)
-      const response1 = await enhancedFetch('/test')
+      const response1 = await enhancedFetch(testUrl)
 
       // Wait until revalidated.
       await sleep(10)
-      const response2 = await enhancedFetch('/test')
+      const response2 = await enhancedFetch(testUrl)
 
       // Assert
       expect(fetch).toHaveBeenCalledTimes(2)
@@ -551,8 +552,8 @@ describe('EnhancedFetch', () => {
       mockResponse()
 
       // Act
-      const response1 = await enhancedFetch('/test')
-      const response2 = await enhancedFetch('/test')
+      const response1 = await enhancedFetch(testUrl)
+      const response2 = await enhancedFetch(testUrl)
 
       // Assert
       expect(fetch).toHaveBeenCalledTimes(1)
@@ -572,10 +573,10 @@ describe('EnhancedFetch', () => {
       mockResponse()
 
       // Act
-      const response1 = await enhancedFetch('/test', {
+      const response1 = await enhancedFetch(testUrl, {
         headers: { authorization: 'A' },
       })
-      const response2 = await enhancedFetch('/test', {
+      const response2 = await enhancedFetch(testUrl, {
         headers: { authorization: 'B' },
       })
 
@@ -600,8 +601,8 @@ describe('EnhancedFetch', () => {
         .mockResolvedValueOnce(fakeResponse('Response 2', { status: 500 }))
 
       // Act
-      const response1 = enhancedFetch('/test')
-      const response2 = enhancedFetch('/test')
+      const response1 = enhancedFetch(testUrl)
+      const response2 = enhancedFetch(testUrl)
 
       // Assert
       await expect(response1).rejects.toMatchObject({ body: 'Response 1' })
@@ -621,8 +622,8 @@ describe('EnhancedFetch', () => {
       mockResponse()
 
       // Act
-      const response1 = await enhancedFetch('/test', { method: 'POST' })
-      const response2 = await enhancedFetch('/test', { method: 'POST' })
+      const response1 = await enhancedFetch(testUrl, { method: 'POST' })
+      const response2 = await enhancedFetch(testUrl, { method: 'POST' })
 
       // Assert
       expect(fetch).toHaveBeenCalledTimes(2)
@@ -643,8 +644,8 @@ describe('EnhancedFetch', () => {
       mockResponse()
 
       // Act
-      const response1 = await enhancedFetch('/test', { method: 'POST' })
-      const response2 = await enhancedFetch('/test', { method: 'POST' })
+      const response1 = await enhancedFetch(testUrl, { method: 'POST' })
+      const response2 = await enhancedFetch(testUrl, { method: 'POST' })
 
       // Assert
       expect(fetch).toHaveBeenCalledTimes(1)
@@ -664,8 +665,8 @@ describe('EnhancedFetch', () => {
       mockResponse()
 
       // Act
-      const response1 = await enhancedFetch('/test', { method: 'GET' })
-      const response2 = await enhancedFetch('/test', { method: 'POST' })
+      const response1 = await enhancedFetch(testUrl, { method: 'GET' })
+      const response2 = await enhancedFetch(testUrl, { method: 'POST' })
 
       // Assert
       expect(fetch).toHaveBeenCalledTimes(2)

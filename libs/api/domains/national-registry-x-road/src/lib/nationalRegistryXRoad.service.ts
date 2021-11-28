@@ -78,9 +78,11 @@ export class NationalRegistryXRoadService {
     | undefined
   > {
     const nationalRegistryApi = this.nationalRegistryApiWithAuth(user)
-    const childrenNationalIds = await nationalRegistryApi.einstaklingarGetForsja({
-      id: parentNationalId,
-    })
+    const childrenNationalIds = await nationalRegistryApi.einstaklingarGetForsja(
+      {
+        id: parentNationalId,
+      },
+    )
     if (!Array.isArray(childrenNationalIds)) {
       return []
     }
@@ -124,7 +126,8 @@ export class NationalRegistryXRoadService {
                 streetName: parentB.logheimili?.heiti || undefined,
                 postalCode: parentB.logheimili?.postnumer || undefined,
                 city: parentB.logheimili?.stadur || undefined,
-                municipalityCode: parentB.logheimili?.sveitarfelagsnumer || undefined,
+                municipalityCode:
+                  parentB.logheimili?.sveitarfelagsnumer || undefined,
               },
               genderCode: parentB.kynkodi,
             }

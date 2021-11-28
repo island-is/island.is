@@ -1,4 +1,6 @@
 export * from './lib/createEnhancedFetch'
 export * from './lib/types'
+export { Request, Response } from './lib/nodeFetch'
 export { FetchError } from './lib/FetchError'
 export * from './lib/buildCacheControl'
+export { CacheConfig } from './lib/withCache'

@@ -1,25 +1,21 @@
 import { Auth } from '@island.is/auth-nest-tools'
 
-interface NewRequestInit extends RequestInit {
+/**
+ * DOM fetch compatible extensions.
+ */
+export interface EnhancedRequestInit extends RequestInit {
   auth?: Auth
   timeout?: number
 }
 
-interface NewRequest extends Request {
+export interface EnhancedRequest extends Request {
   auth?: Auth
   timeout?: number
 }
 
-type NewRequestInfo = NewRequest | string
+export type EnhancedRequestInfo = EnhancedRequest | string
 
-type FetchAPI = (
-  input: NewRequestInfo,
-  init?: NewRequestInit,
+export type EnhancedFetchAPI = (
+  input: EnhancedRequestInfo,
+  init?: EnhancedRequestInit,
 ) => Promise<Response>
-
-export {
-  NewRequest as Request,
-  NewRequestInfo as RequestInfo,
-  NewRequestInit as RequestInit,
-  FetchAPI,
-}

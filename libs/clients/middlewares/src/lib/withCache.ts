@@ -98,11 +98,16 @@ export interface CacheMiddlewareConfig extends CacheConfig {
   logger: Logger
 }
 
+interface CacheEntry {
+  body: string
+  policy: CachePolicy.CachePolicyObject
+}
+
 export function withCache({
   name,
   fetch,
   logger,
-  cacheKey: userCacheKey = (request) => request.url,
+  cacheKey: userCacheKey = defaultCacheKey,
   shared = true,
   overrideCacheControl,
   overrideForPost = false,
@@ -154,10 +159,10 @@ export function withCache({
     }
 
     const body = await cacheResponse.text()
-    const entry = JSON.stringify({
+    const entry = {
       policy: cacheResponse.policy.toObject(),
       body,
-    })
+    }
 
     debugLog('Storing', cacheResponse)
     await cacheManager.set(cacheKey, entry, {
@@ -224,6 +229,9 @@ export function withCache({
       policyRequestFrom(revalidationRequest),
       policyResponseFrom(revalidationResponse, revalidationRequest),
     )
+    // In some cases, the revalidated policy would not inherit the parent's
+    // _isShared value. Fixing here.
+    revalidatedPolicy._isShared = cacheResponse.policy._isShared
 
     // Is the response body different from what we already have in the cache?
     if (modified) {
@@ -266,7 +274,7 @@ export function withCache({
     }
 
     const cacheKey = cacheKeyFor(request, isShared)
-    const entry = await cacheManager.get<string>(cacheKey)
+    const entry = await cacheManager.get<CacheEntry>(cacheKey)
 
     if (!entry) {
       const response = await fetch(request)
@@ -285,7 +293,7 @@ export function withCache({
       return cacheResponse.getResponse()
     }
 
-    const { policy: policyRaw, body } = JSON.parse(entry)
+    const { policy: policyRaw, body } = entry
     let cacheResponse = CacheResponse.fromCache(
       body,
       CachePolicy.fromObject(policyRaw) as CachePolicyInternal,
@@ -315,6 +323,11 @@ export function withCache({
 
     return cacheResponse.getResponse()
   }
+}
+
+function defaultCacheKey(request: Request) {
+  const url = new URL(request.url)
+  return `${url.pathname}${url.search}`
 }
 
 function headersToObject(headers: Headers) {

@@ -4,7 +4,7 @@ import { Logger } from 'winston'
 import { logger as defaultLogger } from '@island.is/logging'
 import { withTimeout } from './withTimeout'
 import { FetchAPI as NodeFetchAPI } from './nodeFetch'
-import { FetchAPI } from './types'
+import { EnhancedFetchAPI } from './types'
 import { withAuth } from './withAuth'
 import { withErrors } from './withErrors'
 import { withCircuitBreaker } from './withCircuitBreaker'
@@ -96,7 +96,7 @@ function buildFetch(fetch: NodeFetchAPI = nodeFetch) {
  */
 export const createEnhancedFetch = (
   options: EnhancedFetchOptions,
-): FetchAPI => {
+): EnhancedFetchAPI => {
   const {
     name,
     logger = defaultLogger,
@@ -144,5 +144,5 @@ export const createEnhancedFetch = (
     })
   }
 
-  return (builder.fetch as unknown) as FetchAPI
+  return (builder.fetch as unknown) as EnhancedFetchAPI
 }

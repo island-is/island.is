@@ -4,7 +4,10 @@ import { logger } from '@island.is/logging'
 
 import { ConfigDefinition, Configuration, EnvLoader } from './types'
 import { InvalidConfiguration } from './InvalidConfiguration'
-import { ConfigurationError } from './ConfigurationError'
+import {
+  ConfigurationError,
+  ConfigurationValidationError,
+} from './ConfigurationError'
 import { Issues, IssueType } from './Issues'
 
 export class ConfigurationLoader<T> implements EnvLoader {
@@ -86,11 +89,18 @@ export class ConfigurationLoader<T> implements EnvLoader {
     const parseResult = this.definition.schema.safeParse(result)
 
     if (!parseResult.success) {
-      throw new ConfigurationError(
-        // Type casted to support strict: false projects.
-        // TODO: Remove when api and financial-aid-api are strict.
-        this.formatValidationErrors((parseResult as { error: ZodError }).error),
+      const error = new ConfigurationValidationError(
+        `Failed loading configuration for ${this.definition.name}. Validation failed:`,
+        (parseResult as { error: ZodError }).error,
       )
+
+      // Log error to get zod details.
+      logger.error({
+        message: error.message,
+        category: 'ConfigModule',
+        zodError: error.zodError,
+      })
+      throw error
     }
   }
 
@@ -98,13 +108,6 @@ export class ConfigurationLoader<T> implements EnvLoader {
     return `Failed loading configuration for ${
       this.definition.name
     }:\n${this.issues.formatIssues()}`
-  }
-
-  private formatValidationErrors(error: ZodError) {
-    const formattedErrors = error.errors
-      .map((error) => `- ${error.path.join('.') || '<ROOT>'}: ${error.message}`)
-      .join('\n')
-    return `Failed loading configuration for ${this.definition.name}. Validation failed:\n${formattedErrors}`
   }
 
   required(envVariable: string, devFallback?: string): string {

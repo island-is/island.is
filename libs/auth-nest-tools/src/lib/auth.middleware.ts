@@ -56,7 +56,7 @@ export class AuthMiddleware implements Middleware {
     }
 
     // Pass auth object for enhancedFetch.
-    (context.init as any).auth = this.auth
+    ;(context.init as any).auth = this.auth
 
     context.init.headers = Object.assign({}, context.init.headers, {
       authorization: bearerToken,
