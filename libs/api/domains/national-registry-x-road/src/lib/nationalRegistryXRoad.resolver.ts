@@ -35,7 +35,7 @@ export class NationalRegistryXRoadResolver {
     )
   }
 
-  @ResolveField('children', () => [NationalRegistryPerson])
+  @ResolveField('children', () => [NationalRegistryPerson], { nullable: true })
   @Audit()
   async resolveChildren(
     @Context('req') { user }: { user: User },
@@ -47,7 +47,9 @@ export class NationalRegistryXRoadResolver {
     )
   }
 
-  @ResolveField('residenceHistory', () => [NationalRegistryResidence])
+  @ResolveField('residenceHistory', () => [NationalRegistryResidence], {
+    nullable: true,
+  })
   @Audit()
   async resolveResidenceHistory(
     @Context('req') { user }: { user: User },
@@ -59,7 +61,7 @@ export class NationalRegistryXRoadResolver {
     )
   }
 
-  @ResolveField('spouse', () => NationalRegistrySpouse)
+  @ResolveField('spouse', () => NationalRegistrySpouse, { nullable: true })
   @Audit()
   async resolveSpouse(
     @Context('req') { user }: { user: User },

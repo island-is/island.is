@@ -20,7 +20,7 @@ export class IslykillApiModule {
       logger.error(errorMsg)
     }
 
-    let pfx = undefined as Buffer | undefined
+    let pfx: Buffer | undefined
     try {
       if (!config.cert) {
         throw Error('IslykillApiModule certificate not provided')
@@ -50,7 +50,7 @@ export class IslykillApiModule {
                 basePath: config.basePath,
                 fetchApi: createEnhancedFetch({
                   name: 'clients-islykill',
-                  clientCertificate: {
+                  clientCertificate: pfx && {
                     pfx,
                     passphrase,
                   },

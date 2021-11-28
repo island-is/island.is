@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
+import { FetchError } from '@island.is/clients/middlewares'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -23,30 +24,28 @@ export class NationalRegistryXRoadService {
   async getNationalRegistryResidenceHistory(
     user: User,
     nationalId: string,
-  ): Promise<NationalRegistryResidence[]> {
-    const historyList = await this.nationalRegistryApiWithAuth(
-      user,
-    ).einstaklingarGetBuseta({ id: nationalId })
+  ): Promise<NationalRegistryResidence[] | undefined> {
+    const historyList = await this.nationalRegistryApiWithAuth(user)
+      .einstaklingarGetBuseta({ id: nationalId })
+      .catch((err: FetchError) => {
+        if (err.status === 404) {
+          return undefined
+        }
+        throw err
+      })
 
-    const history = historyList.map((heimili) => {
-      if (!heimili.breytt) {
-        throw new Error('All history entries have a modified date')
-      }
-
-      const date = new Date((heimili.breytt as unknown) as string)
-
-      return {
-        address: {
-          city: heimili.stadur,
-          postalCode: heimili.postnumer,
-          streetName: heimili.heimilisfang,
-        } as NationalRegistryAddress,
-        country: heimili.landakodi,
-        dateOfChange: date,
-      } as NationalRegistryResidence
-    })
-
-    return history
+    return historyList?.map(
+      (heimili) =>
+        ({
+          address: {
+            city: heimili.stadur,
+            postalCode: heimili.postnumer,
+            streetName: heimili.heimilisfang,
+          } as NationalRegistryAddress,
+          country: heimili.landakodi,
+          dateOfChange: heimili.breytt,
+        } as NationalRegistryResidence),
+    )
   }
 
   async getNationalRegistryPerson(
@@ -79,7 +78,7 @@ export class NationalRegistryXRoadService {
     | undefined
   > {
     const nationalRegistryApi = this.nationalRegistryApiWithAuth(user)
-    const childrenNationalIds = nationalRegistryApi.einstaklingarGetForsja({
+    const childrenNationalIds = await nationalRegistryApi.einstaklingarGetForsja({
       id: parentNationalId,
     })
     if (!Array.isArray(childrenNationalIds)) {
@@ -125,7 +124,9 @@ export class NationalRegistryXRoadService {
                 streetName: parentB.logheimili?.heiti || undefined,
                 postalCode: parentB.logheimili?.postnumer || undefined,
                 city: parentB.logheimili?.stadur || undefined,
+                municipalityCode: parentB.logheimili?.sveitarfelagsnumer || undefined,
               },
+              genderCode: parentB.kynkodi,
             }
           : null
 
