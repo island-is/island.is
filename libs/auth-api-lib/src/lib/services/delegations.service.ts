@@ -24,7 +24,10 @@ import {
   ApiScope,
   IdentityResource,
 } from '@island.is/auth-api-lib'
-import { createEnhancedFetch, FetchAPI } from '@island.is/clients/middlewares'
+import {
+  createEnhancedFetch,
+  EnhancedFetchAPI,
+} from '@island.is/clients/middlewares'
 import type { Auth, AuthConfig, User } from '@island.is/auth-nest-tools'
 import {
   AuthMiddleware,
@@ -45,7 +48,7 @@ export const DELEGATIONS_AUTH_CONFIG = 'DELEGATIONS_AUTH_CONFIG'
 
 @Injectable()
 export class DelegationsService {
-  private readonly authFetch: FetchAPI
+  private readonly authFetch: EnhancedFetchAPI
 
   constructor(
     @Inject(RskApi)
