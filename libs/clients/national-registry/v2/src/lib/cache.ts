@@ -39,7 +39,7 @@ function overrideCacheControl(request: Request) {
 export const getCache = (
   config: ConfigType<typeof NationalRegistryClientConfig>,
 ): CacheConfig | undefined => {
-  if (!config.redis.nodes) {
+  if (config.redis.nodes.length === 0) {
     return undefined
   }
   const cacheManager = caching({

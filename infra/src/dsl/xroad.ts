@@ -1,4 +1,9 @@
-import { EnvironmentVariables, Secrets, XroadConfig } from './types/input-types'
+import {
+  EnvironmentVariables,
+  MissingSetting,
+  Secrets,
+  XroadConfig,
+} from './types/input-types'
 
 type XroadSectionConfig = {
   secrets?: Secrets
@@ -182,6 +187,13 @@ export const NationalRegistry = new XroadConf({
       dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
       staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
       prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+    },
+    // Only cache on dev for now.
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
+      dev:
+        '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]',
+      staging: '[]',
+      prod: '[]',
     },
     // Deprecated:
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
