@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional, OmitType } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
   IsString,
@@ -25,6 +25,7 @@ export enum DelegationProvider {
 }
 
 export class DelegationDTO {
+  @IsString()
   @ApiPropertyOptional()
   id?: string
 
@@ -61,7 +62,7 @@ export class DelegationDTO {
 }
 
 export class UpdateDelegationDTO {
-  @ApiPropertyOptional({ type: [UpdateDelegationScopeDTO] })
+  @ApiProperty({ type: [UpdateDelegationScopeDTO] })
   @Type(() => UpdateDelegationScopeDTO)
   @ValidateNested({ each: true })
   @IsArray()

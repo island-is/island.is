@@ -126,9 +126,9 @@ export class DelegationsController {
 
     return this.delegationsService.create(
       user,
+      delegation,
       environment.nationalRegistry
         .authMiddlewareOptions as AuthMiddlewareOptions,
-      delegation,
     )
   }
 

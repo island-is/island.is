@@ -39,7 +39,6 @@ export class DelegationScope extends Model<DelegationScope> {
   @ForeignKey(() => ApiScope)
   @Column({
     type: DataType.STRING,
-    primaryKey: true,
     allowNull: true,
     validate: {
       ddlConstraint(this: DelegationScope) {
@@ -50,7 +49,7 @@ export class DelegationScope extends Model<DelegationScope> {
   scopeName?: string
 
   @BelongsTo(() => ApiScope)
-  apiScope?: any
+  apiScope?: any //ApiScope
 
   @ForeignKey(() => IdentityResource)
   @Column({
@@ -65,7 +64,7 @@ export class DelegationScope extends Model<DelegationScope> {
   identityResourceName?: string
 
   @BelongsTo(() => IdentityResource)
-  identityResource?: any
+  identityResource?: any //IdentityResource
 
   @BelongsTo(() => Delegation)
   delegation!: Delegation
@@ -73,6 +72,7 @@ export class DelegationScope extends Model<DelegationScope> {
   @Column({
     type: DataType.DATE,
     allowNull: false,
+    defaultValue: DataType.NOW,
   })
   validFrom!: Date
 

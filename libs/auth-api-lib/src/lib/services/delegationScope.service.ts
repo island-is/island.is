@@ -1,10 +1,8 @@
 import { uuid } from 'uuidv4'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import {
-  DelegationScopeDTO,
+  ScopeType,
   UpdateDelegationScopeDTO,
 } from '../entities/dto/delegation-scope.dto'
 import { DelegationScope } from '../entities/models/delegation-scope.model'
@@ -23,28 +21,12 @@ export class DelegationScopeService {
     private apiScopeModel: typeof ApiScope,
     @InjectModel(IdentityResource)
     private identityResourceModel: typeof IdentityResource,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
   ) {}
-
-  async create(
-    delegationId: string,
-    delegationScope: DelegationScopeDTO,
-  ): Promise<DelegationScope | null> {
-    this.logger.debug('Creating new delegation scope')
-    const validFrom = startOfDay(new Date())
-    return this.delegationScopeModel.create({
-      id: uuid(),
-      ...delegationScope,
-      validFrom,
-      delegationId,
-    })
-  }
 
   async createMany(
     delegationId: string,
     scopes: UpdateDelegationScopeDTO[],
-  ): Promise<any> {
+  ): Promise<DelegationScope[]> {
     const validFrom = startOfDay(new Date())
     return this.delegationScopeModel.bulkCreate(
       scopes.map((delegationScope) => ({
@@ -54,30 +36,16 @@ export class DelegationScopeService {
           ? startOfDay(delegationScope.validTo)
           : undefined,
         scopeName:
-          delegationScope.type === 'apiScope'
+          delegationScope.type === ScopeType.ApiScope
             ? delegationScope.name
             : undefined,
         identityResourceName:
-          delegationScope.type === 'identityResource'
+          delegationScope.type === ScopeType.IdentityResource
             ? delegationScope.name
             : undefined,
         delegationId,
       })),
     )
-  }
-
-  async findAll(
-    delegationId: string,
-    scopeName: string | null = null,
-  ): Promise<DelegationScope[] | null> {
-    if (scopeName) {
-      return this.delegationScopeModel.findAll({
-        where: { delegationId: delegationId, scopeName: scopeName },
-      })
-    }
-    return this.delegationScopeModel.findAll({
-      where: { delegationId: delegationId },
-    })
   }
 
   async delete(

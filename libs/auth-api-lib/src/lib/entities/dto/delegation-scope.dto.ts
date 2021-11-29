@@ -12,8 +12,8 @@ import { ApiScopesDTO } from './api-scopes.dto'
 import { IdentityResourcesDTO } from './identity-resources.dto'
 
 export enum ScopeType {
-  API_SCOPE = 'apiScope',
-  Identity_Resource = 'identityResource',
+  ApiScope = 'apiScope',
+  IdentityResource = 'identityResource',
 }
 
 export class UpdateDelegationScopeDTO {
@@ -28,7 +28,10 @@ export class UpdateDelegationScopeDTO {
   @IsOptional()
   @Type(() => Date)
   @IsDate()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description:
+      'A date that the delegation is valid to. Must be in the future.',
+  })
   validTo?: Date
 }
 

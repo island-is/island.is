@@ -59,6 +59,7 @@ export * from './lib/entities/dto/user-claim.dto'
 export * from './lib/entities/dto/api-scope-user.dto'
 export * from './lib/entities/dto/api-scope-user-access.dto'
 export * from './lib/entities/dto/api-scope-user-update.dto'
+export * from './lib/entities/dto/delegation-scope.dto'
 export * from './lib/entities/dto/delegation.dto'
 export * from './lib/entities/dto/api-scope-group.dto'
 export * from './lib/entities/dto/paged-rows.dto'
@@ -77,8 +78,11 @@ export * from './lib/services/sequelizeConfig.service'
 export * from './lib/services/idp-provider.service'
 export * from './lib/services/translation.service'
 export * from './lib/services/delegations.service'
-export * from './lib/services/delegation-scope.service'
+export * from './lib/services/delegationScope.service'
 export * from './lib/services/user-profile.service'
+
+// Types
+export * from './lib/types/delegationDirection'
 
 // Config
 //export * as DbConfig from './lib/config/sequelize.config.js'
