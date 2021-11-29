@@ -40,7 +40,7 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
     ? 'red'
     : type === 'amending'
     ? 'yellow'
-    : !timelineDate || timelineDate === lastAmendDate
+    : !timelineDate || timelineDate === (lastAmendDate || effectiveDate)
     ? 'green'
     : 'yellow'
 
@@ -92,7 +92,7 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
       <div className={s.statusText}>
         <Ball type={color} />
 
-        {!timelineDate || timelineDate === lastAmendDate ? (
+        {!timelineDate || timelineDate === (lastAmendDate || effectiveDate) ? (
           repealedDate ? (
             <>
               {txt('statusRepealed') + ' '}
