@@ -728,7 +728,7 @@ function constructRulingPdf(
 export async function getRulingPdfAsString(
   existingCase: Case,
   formatMessage: FormatMessage,
-  shortVersion = false,
+  shortVersion: boolean,
 ): Promise<string> {
   const stream = constructRulingPdf(existingCase, formatMessage, shortVersion)
 
