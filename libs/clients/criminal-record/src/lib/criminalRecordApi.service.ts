@@ -18,9 +18,10 @@ export class CriminalRecordApi {
     return record
   }
 
-  public async checkCriminalRecord(ssn: string): Promise<Boolean> {    
+  public async checkCriminalRecord(ssn: string): Promise<Boolean> {
+    // Note: this function will throw an error if something goes wrong
     const record = await this.getCriminalRecord(ssn)
-
-    return record.contentBase64.length > 0
+    
+    return record.contentBase64.length !== 0
   }
 }

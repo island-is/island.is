@@ -39,7 +39,11 @@ export class CriminalRecordProvider extends BasicDataProvider {
         return Promise.reject({})
       }
 
-      return Promise.resolve(response.data.checkCriminalRecord)
+      if (response.data.checkCriminalRecord !== true) {
+        return Promise.reject({})
+      }
+
+      return Promise.resolve({ isValid: true })
     })
   }
 

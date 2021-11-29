@@ -9,27 +9,12 @@ import {
   DefaultStateLifeCycle,
   ApplicationConfigurations,
 } from '@island.is/application/core'
+import { Events, States, Roles } from './constants'
 import * as z from 'zod'
-import * as kennitala from 'kennitala'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
-
+// import * as kennitala from 'kennitala'
+// import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { ApiActions } from '../shared'
 import { m } from './messages'
-
-enum States {
-  DRAFT = 'draft',
-  PAYMENT = 'payment',
-  COMPLETED = 'completed',
-}
-
-type CriminalRecordTemplateEvent =
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.PAYMENT }
-
-enum Roles {
-  APPLICANT = 'applicant',
-}
 
 const CriminalRecordSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -37,8 +22,8 @@ const CriminalRecordSchema = z.object({
 
 const template: ApplicationTemplate<
   ApplicationContext,
-  ApplicationStateSchema<CriminalRecordTemplateEvent>,
-  CriminalRecordTemplateEvent
+  ApplicationStateSchema<Events>,
+  Events
 > = {
   type: ApplicationTypes.CRIMINAL_RECORD,
   name: m.name,
