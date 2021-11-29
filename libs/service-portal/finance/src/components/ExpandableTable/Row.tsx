@@ -7,7 +7,6 @@ import {
   Text,
   LoadingDots,
   Table as T,
-  Icon,
   Hidden,
   Button,
 } from '@island.is/island-ui/core'
