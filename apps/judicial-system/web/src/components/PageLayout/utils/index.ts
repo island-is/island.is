@@ -5,6 +5,7 @@ import {
   CaseType,
   isInvestigationCase,
   isRestrictionCase,
+  User,
 } from '@island.is/judicial-system/types'
 import {
   getCourtSections,
@@ -76,6 +77,7 @@ export const getSections = (
   translationStrings: TranslationStrings,
   workingCase?: Case,
   activeSubSection?: number,
+  user?: User,
 ) => {
   return [
     isRestrictionCase(workingCase?.type)
@@ -88,9 +90,10 @@ export const getSections = (
           activeSubSection,
         ),
     isRestrictionCase(workingCase?.type)
-      ? getCourtSections(workingCase || ({} as Case), activeSubSection)
+      ? getCourtSections(workingCase || ({} as Case), user, activeSubSection)
       : getInvestigationCaseCourtSections(
           workingCase || ({} as Case),
+          user,
           activeSubSection,
         ),
     {
@@ -100,6 +103,6 @@ export const getSections = (
       ),
     },
     getExtenstionSections(workingCase || ({} as Case), activeSubSection),
-    getCourtSections(workingCase || ({} as Case), activeSubSection),
+    getCourtSections(workingCase || ({} as Case), user, activeSubSection),
   ]
 }

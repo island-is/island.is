@@ -147,10 +147,10 @@ export const Requests: React.FC = () => {
       routeTo = `${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
       if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findLastValidStep(getCourtSections(caseToOpen)).href
+        routeTo = findLastValidStep(getCourtSections(caseToOpen, user)).href
       } else {
         routeTo = findLastValidStep(
-          getInvestigationCaseCourtSections(caseToOpen),
+          getInvestigationCaseCourtSections(caseToOpen, user),
         ).href
       }
     } else {
