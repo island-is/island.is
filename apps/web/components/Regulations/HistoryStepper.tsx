@@ -6,6 +6,7 @@ import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useRegulationLinkResolver } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
+import { toISODate } from '@island.is/regulations'
 
 const useStepperState = (regulation: RegulationMaybeDiff) =>
   useMemo(() => {
@@ -19,9 +20,11 @@ const useStepperState = (regulation: RegulationMaybeDiff) =>
       return { numChanges }
     }
 
+    const todayISO = toISODate(new Date())
+
     const currentPos = timelineDate
       ? changes.findIndex((change) => change.date === timelineDate)
-      : numChanges - 1
+      : changes.filter((change) => change.date <= todayISO).length - 1
 
     const nextDate = changes[currentPos + 1]?.date
     const previousDate =
