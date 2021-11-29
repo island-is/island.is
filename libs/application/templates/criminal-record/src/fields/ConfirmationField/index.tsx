@@ -6,14 +6,17 @@ import {
   ResponsiveSpace,
   LinkContext,
   Text,
+  Pagination,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import React, { FC, useState } from 'react'
 // import MyPDF from 'pdf-viewer-reactjs'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
-import { ApiActions } from '../../shared'
 import { m } from '../../lib/messages'
+import { Document, Page } from 'react-pdf/dist/esm/entry.webpack'
+import * as styles from './ConfirmationField.css'
 
 type ConfirmationFieldProps = {
   field: {
@@ -43,35 +46,74 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
   const { externalData } = application
   const { formatMessage } = useLocale()
   const [viewCriminalRecord, setViewCriminalRecord] = useState(false)
+  const [numPages, setNumPages] = useState(0)
+  const [pageNumber, setPageNumber] = useState(1)
+
+  interface PdfProps {
+    numPages: number
+  }
+
+  function onDocumentLoadSuccess({ numPages }: PdfProps) {
+    setNumPages(numPages)
+  }
 
   if (viewCriminalRecord) {
     return (
       <>
-        <Button
-          circle
-          icon="arrowBack"
-          onBlur={function noRefCheck() {}}
-          onClick={() => setViewCriminalRecord(false)}
-          onFocus={function noRefCheck() {}}
-          colorScheme="light"
-          title="Go back"
-        />
-        {/* <object
-          data={`data:application/pdf;base64,${externalData.getCriminalRecord.data?.pdfBase64}`}
-          type="application/pdf"
-          width="100%"
-        ></object> */}
-        <embed
-          type="application/pdf"
-          src={`data:application/pdf;base64,${externalData.getCriminalRecord.data.contentBase64}`}
-          width="100%"
-          height="100%"
-        ></embed>
-        {/* <MyPDF
-          document={{
-            base64: `data:application/pdf;base64,${externalData.getCriminalRecord.data?.pdfBase64}`,
-          }}
-        /> */}
+        <Box
+          display="flex"
+          marginBottom={2}
+          justifyContent="spaceBetween"
+          alignItems="center"
+        >
+          <Button
+            circle
+            icon="arrowBack"
+            onBlur={function noRefCheck() {}}
+            onClick={() => setViewCriminalRecord(false)}
+            onFocus={function noRefCheck() {}}
+            colorScheme="light"
+            title="Go back"
+          />
+          <a
+            href={`data:application/pdf;base64,${externalData.getCriminalRecord.data.contentBase64}`}
+            download="sakavottord.pdf"
+            className={styles.linkWithoutDecorations}
+          >
+            <Button icon="download" iconType="outline" variant="text">
+              Hlaða niður sakavottorði
+            </Button>
+          </a>
+        </Box>
+
+        <Document
+          file={`data:application/pdf;base64,${externalData.getCriminalRecord.data.contentBase64}`}
+          onLoadSuccess={onDocumentLoadSuccess}
+          className={styles.pdfViewer}
+          loading={
+            <Box height="full" display="flex" justifyContent="center">
+              <LoadingDots large />
+            </Box>
+          }
+        >
+          <Page pageNumber={pageNumber} />
+        </Document>
+
+        <Box marginBottom={4}>
+          <Pagination
+            page={pageNumber}
+            renderLink={(page, className, children) => (
+              <Box
+                cursor="pointer"
+                className={className}
+                onClick={() => setPageNumber(page)}
+              >
+                {children}
+              </Box>
+            )}
+            totalPages={numPages}
+          />
+        </Box>
       </>
     )
   }
@@ -138,6 +180,17 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         </LinkContext.Provider>
       </Box>
 
+      <Box marginBottom={4}>
+        <Button
+          icon="arrowForward"
+          iconType="outline"
+          onBlur={function noRefCheck() {}}
+          onClick={() => setViewCriminalRecord(true)}
+          onFocus={function noRefCheck() {}}
+        >
+          Opna sakavottorð
+        </Button>
+      </Box>
       <Button
         icon="open"
         iconType="outline"
