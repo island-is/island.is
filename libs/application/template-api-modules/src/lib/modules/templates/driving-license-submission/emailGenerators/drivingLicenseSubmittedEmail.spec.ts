@@ -77,7 +77,7 @@ describe('driving license submission', () => {
         answers: {
           ...application.answers,
           willBringQualityPhoto: 'no',
-          juristictionId: 1,
+          juristiction: 1,
           healthDeclaration: {
             a: 'yes',
             b: 'no',
