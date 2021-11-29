@@ -32,31 +32,20 @@ function buildApplication(
   }
 }
 
-describe('Driving License Application Template', () => {
+describe('P Mark Application Template', () => {
   describe('state transitions', () => {
-    //   it('should transition from application to payment', () => {
-    //     const helper = new ApplicationTemplateHelper(
-    //       buildApplication(),
-    //       PMarkTemplate,
-    //     )
-    //     const [hasChanged, newState] = helper.changeState({
-    //       type: DefaultEvents.DONE,
-    //     })
-    //     expect(hasChanged).toBe(true)
-    //     expect(newState).toBe(States.PAYMENT)
-    //   })
-    //   it('should transition from payment to done', () => {
-    //     const helper = new ApplicationTemplateHelper(
-    //       buildApplication({
-    //         state: States.PAYMENT,
-    //       }),
-    //       PMarkTemplate,
-    //     )
-    //     const [hasChanged, newState] = helper.changeState({
-    //       type: DefaultEvents.SUBMIT,
-    //     })
-    //     expect(hasChanged).toBe(true)
-    //     expect(newState).toBe(States.DONE)
-    //   })
+    it('should transition from payment to done', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: States.DRAFT,
+        }),
+        PMarkTemplate,
+      )
+      const [hasChanged, newState] = helper.changeState({
+        type: DefaultEvents.SUBMIT,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(States.DONE)
+    })
   })
 })
