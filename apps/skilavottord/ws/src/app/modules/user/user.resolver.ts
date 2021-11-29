@@ -4,7 +4,8 @@ import { Inject } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Authorize, AuthService, CurrentUser, AuthUser, Role } from '../auth'
+import { Authorize, AuthService, CurrentUser, Role } from '../auth'
+import type { AuthUser } from '../auth'
 import { User } from './user.model'
 
 @Resolver(() => User)
