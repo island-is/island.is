@@ -605,7 +605,8 @@ export class NotificationService {
 
     if (
       existingCase.type === CaseType.CUSTODY &&
-      existingCase.decision === CaseDecision.ACCEPTING
+      (existingCase.decision === CaseDecision.ACCEPTING ||
+        existingCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
     ) {
       recipients.concat(
         await this.sendRulingEmailNotificationToPrison(existingCase, rulingPdf),
