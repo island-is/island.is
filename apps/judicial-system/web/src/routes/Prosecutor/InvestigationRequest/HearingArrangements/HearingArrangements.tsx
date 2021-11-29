@@ -31,11 +31,17 @@ import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-
 import HearingArrangementsForms from './HearingArrangementsForm'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 const HearingArrangements = () => {
   const router = useRouter()
   const id = router.query.id
-  const [workingCase, setWorkingCase] = useState<Case>()
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const [prosecutors, setProsecutors] = useState<ReactSelectOption[]>()
   const [
     isNotificationModalVisible,
@@ -65,12 +71,6 @@ const HearingArrangements = () => {
   useEffect(() => {
     document.title = 'Óskir um fyrirtöku - Réttarvörslugátt'
   }, [])
-
-  useEffect(() => {
-    if (!workingCase && data) {
-      setWorkingCase(data.case)
-    }
-  }, [workingCase, setWorkingCase, data])
 
   useEffect(() => {
     if (userData && workingCase) {
@@ -163,11 +163,11 @@ const HearingArrangements = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_TWO}
-      isLoading={loading}
-      notFound={id !== undefined && data?.case === undefined}
+      isLoading={isLoadingWorkingCase}
+      notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
     >
-      {workingCase && user && prosecutors && courts && (
+      {user && prosecutors && courts && (
         <>
           <HearingArrangementsForms
             workingCase={workingCase}
@@ -175,7 +175,7 @@ const HearingArrangements = () => {
             user={user}
             prosecutors={prosecutors}
             courts={courts}
-            isLoading={loading || isTransitioningCase}
+            isLoading={isLoadingWorkingCase || isTransitioningCase}
             onNextButtonClick={handleNextButtonClick}
             onProsecutorChange={handleProsecutorChange}
             updateCase={updateCase}

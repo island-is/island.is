@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
@@ -10,21 +10,19 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import type { Case } from '@island.is/judicial-system/types'
 import PoliceReportForm from './PoliceReportForm'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 const PoliceReport = () => {
-  const router = useRouter()
-  const id = router.query.id
-  const [workingCase, setWorkingCase] = useState<Case>()
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
   useEffect(() => {
     document.title = 'Greinargerð - Réttarvörslugátt'
   }, [])
-
-  useEffect(() => {
-    if (id && !workingCase && data) {
-      setWorkingCase(data.case)
-    }
-  }, [id, workingCase, setWorkingCase, data])
 
   return (
     <PageLayout
@@ -33,16 +31,14 @@ const PoliceReport = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_FOUR}
-      isLoading={loading}
+      isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      {workingCase && (
-        <PoliceReportForm
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          isLoading={loading}
-        />
-      )}
+      <PoliceReportForm
+        workingCase={workingCase}
+        setWorkingCase={setWorkingCase}
+        isLoading={isLoadingWorkingCase}
+      />
     </PageLayout>
   )
 }

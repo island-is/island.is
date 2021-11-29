@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
@@ -21,6 +21,7 @@ import OverviewForm from './OverviewForm'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icOverview as m } from '@island.is/judicial-system-web/messages'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 export const Overview: React.FC = () => {
   const router = useRouter()
@@ -28,8 +29,12 @@ export const Overview: React.FC = () => {
 
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [modalText, setModalText] = useState('')
-  const [workingCase, setWorkingCase] = useState<Case>()
-
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const { transitionCase, sendNotification, isSendingNotification } = useCase()
 
   useEffect(() => {
@@ -81,34 +86,30 @@ export const Overview: React.FC = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
-      isLoading={loading}
+      isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      {workingCase ? (
-        <>
-          <OverviewForm
-            workingCase={workingCase}
-            handleNextButtonClick={handleNextButtonClick}
-            isLoading={loading || isSendingNotification}
-          />
-          {modalVisible && (
-            <Modal
-              title={formatMessage(m.sections.modal.heading)}
-              text={modalText}
-              handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
-              handlePrimaryButtonClick={() => {
-                window.open(Constants.FEEDBACK_FORM_URL, '_blank')
-                router.push(Constants.REQUEST_LIST_ROUTE)
-              }}
-              handleSecondaryButtonClick={() => {
-                router.push(Constants.REQUEST_LIST_ROUTE)
-              }}
-              primaryButtonText="Senda ábendingu"
-              secondaryButtonText="Loka glugga"
-            />
-          )}
-        </>
-      ) : null}
+      <OverviewForm
+        workingCase={workingCase}
+        handleNextButtonClick={handleNextButtonClick}
+        isLoading={isLoadingWorkingCase || isSendingNotification}
+      />
+      {modalVisible && (
+        <Modal
+          title={formatMessage(m.sections.modal.heading)}
+          text={modalText}
+          handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
+          handlePrimaryButtonClick={() => {
+            window.open(Constants.FEEDBACK_FORM_URL, '_blank')
+            router.push(Constants.REQUEST_LIST_ROUTE)
+          }}
+          handleSecondaryButtonClick={() => {
+            router.push(Constants.REQUEST_LIST_ROUTE)
+          }}
+          primaryButtonText="Senda ábendingu"
+          secondaryButtonText="Loka glugga"
+        />
+      )}
     </PageLayout>
   )
 }

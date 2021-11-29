@@ -79,7 +79,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_ONE}
       isLoading={loading}
-      notFound={id !== undefined && data?.case === undefined}
+      notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
     >
       {workingCase && !institutionLoading && (

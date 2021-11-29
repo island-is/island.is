@@ -65,12 +65,6 @@ export const StepTwo: React.FC = () => {
     document.title = 'Óskir um fyrirtöku - Réttarvörslugátt'
   }, [])
 
-  useEffect(() => {
-    if (!workingCase && data) {
-      setWorkingCase(data.case)
-    }
-  }, [workingCase, setWorkingCase, data])
-
   const prosecutors = userData?.users
     .filter(
       (aUser: User) =>
