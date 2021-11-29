@@ -22,7 +22,7 @@ export const SearchBox = ({
   organizationPage,
   placeholder,
   noResultsText,
-  searchAllText
+  searchAllText,
 }: SearchBoxProps) => {
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
@@ -32,7 +32,8 @@ export const SearchBox = ({
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const [fetch, { data }] = useLazyQuery<Query, QueryGetArticlesArgs>(
-    GET_ORGANIZATION_SERVICES_QUERY)
+    GET_ORGANIZATION_SERVICES_QUERY,
+  )
 
   useDebounce(
     () => {
@@ -97,12 +98,9 @@ export const SearchBox = ({
       clearAll()
     }
 
-
     setOptions(
       newOpts.length
-        ? newOpts
-        .concat(
-          {
+        ? newOpts.concat({
             label: 'searchAll',
             value: '',
             component: () => (
@@ -120,9 +118,8 @@ export const SearchBox = ({
                   {searchAllText}
                 </Button>
               </Box>
-            )
-          }
-        )
+            ),
+          })
         : [
             {
               component: () => (
