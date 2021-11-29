@@ -4,8 +4,6 @@ import cn from 'classnames'
 import * as styles from './Link.css'
 import { isLinkInternal } from '@island.is/shared/utils'
 
-const islandisRe = new RegExp(/https{0,1}:\/\/.*island\.is/) // Precompile regex for perfomance
-
 export type LinkColor = 'white' | 'blue400' | 'blue600'
 export type UnderlineVisibility = 'always' | 'hover'
 export type UnderlineVariants = 'normal' | 'small'
