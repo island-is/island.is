@@ -243,7 +243,9 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               (workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
                 (workingCase.type === CaseType.TRAVEL_BAN &&
-                  workingCase.decision === CaseDecision.ACCEPTING)) &&
+                  (workingCase.decision === CaseDecision.ACCEPTING ||
+                    workingCase.decision ===
+                      CaseDecision.ACCEPTING_PARTIALLY))) &&
                 workingCase.custodyRestrictions
                   ?.filter((restriction) =>
                     [

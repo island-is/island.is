@@ -437,8 +437,7 @@ export class NotificationService {
       ),
       existingCase.defenderName,
       existingCase.defenderIsSpokesperson,
-      existingCase.parentCase &&
-        existingCase.parentCase?.decision === CaseDecision.ACCEPTING,
+      Boolean(existingCase.parentCase),
     )
 
     return this.sendEmail(
@@ -654,8 +653,7 @@ export class NotificationService {
       existingCase.courtDate,
       existingCase.accusedName,
       existingCase.defenderName,
-      existingCase.parentCase &&
-        existingCase.parentCase?.decision === CaseDecision.ACCEPTING,
+      Boolean(existingCase.parentCase),
     )
 
     return this.sendEmail(
