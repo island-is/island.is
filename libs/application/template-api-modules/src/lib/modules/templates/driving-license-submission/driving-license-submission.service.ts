@@ -56,11 +56,6 @@ export class DrivingLicenseSubmissionService {
       application.id,
     )
 
-    await this.sharedTemplateAPIService.sendEmail(
-      generateDrivingLicenseSubmittedEmail,
-      application,
-    )
-
     if (isPayment?.fulfilled) {
       const result = await this.createLicense(nationalId, answers).catch(
         (e) => {
@@ -76,6 +71,11 @@ export class DrivingLicenseSubmissionService {
           `Application submission failed (${result.errorMessage})`,
         )
       }
+
+      await this.sharedTemplateAPIService.sendEmail(
+        generateDrivingLicenseSubmittedEmail,
+        application,
+      )
 
       return {
         success: result.success,
