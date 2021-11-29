@@ -9124,6 +9124,27 @@
         "docker-cypress": {}
       }
     },
+    "testing-containers": {
+      "root": "libs/testing/containers",
+      "sourceRoot": "libs/testing/containers/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/testing/containers/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/testing/containers"],
+          "options": {
+            "jestConfig": "libs/testing/containers/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "testing-fixtures": {
       "root": "libs/testing/fixtures",
       "sourceRoot": "libs/testing/fixtures/src",
