@@ -10,7 +10,7 @@ import { toISODate } from '@island.is/regulations'
 
 const useStepperState = (regulation: RegulationMaybeDiff) =>
   useMemo(() => {
-    const { timelineDate, history } = regulation
+    const { timelineDate, history, lastAmendDate } = regulation
 
     const changes = history.filter(({ effect }) => effect !== 'repeal')
 
@@ -32,8 +32,9 @@ const useStepperState = (regulation: RegulationMaybeDiff) =>
 
     return {
       numChanges,
-      nextDate,
-      previousDate,
+      nextDate: nextDate === lastAmendDate ? ('current' as const) : nextDate,
+      previousDate:
+        previousDate === lastAmendDate ? ('current' as const) : previousDate,
     }
   }, [regulation])
 
@@ -76,7 +77,7 @@ export const HistoryStepper = memo((props: HistoryStepperProps) => {
         <Link
           href={linkToRegulation(name, {
             diff: !!showingDiff,
-            d: nextDate,
+            d: nextDate !== 'current' ? nextDate : undefined,
           })}
           className={s.historyStepperLink}
           color="blue400"
@@ -96,7 +97,9 @@ export const HistoryStepper = memo((props: HistoryStepperProps) => {
             diff: !!showingDiff && previousDate !== 'original',
             ...(previousDate === 'original'
               ? { original: true }
-              : { d: previousDate }),
+              : previousDate !== 'current'
+              ? { d: previousDate }
+              : {}),
           })}
           color="blue400"
           className={s.historyStepperLink}
