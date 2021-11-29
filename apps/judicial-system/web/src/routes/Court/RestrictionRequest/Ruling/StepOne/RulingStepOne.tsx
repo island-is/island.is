@@ -48,13 +48,19 @@ import {
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import { useRouter } from 'next/router'
-import DateTime from '@island.is/judicial-system-web/src/components/DateTime/DateTime'
+import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { rcRulingStepOne as m } from '@island.is/judicial-system-web/messages'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 export const RulingStepOne: React.FC = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const [, setValidToDateIsValid] = useState<boolean>(true)
   const [, setIsolationToIsValid] = useState<boolean>(true)
   const [
@@ -81,47 +87,45 @@ export const RulingStepOne: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (!workingCase && data?.case) {
-      let theCase = data.case
+    let theCase = workingCase
 
-      if (!theCase.custodyRestrictions) {
-        theCase = {
-          ...theCase,
-          custodyRestrictions: theCase.requestedCustodyRestrictions,
-        }
-
-        updateCase(
-          theCase.id,
-          parseArray(
-            'custodyRestrictions',
-            theCase.requestedCustodyRestrictions ?? [],
-          ),
-        )
+    if (!theCase.custodyRestrictions) {
+      theCase = {
+        ...theCase,
+        custodyRestrictions: theCase.requestedCustodyRestrictions,
       }
 
-      if (theCase.demands) {
-        autofill('prosecutorDemands', theCase.demands, theCase)
-      }
-
-      if (theCase.requestedValidToDate) {
-        autofill('validToDate', theCase.requestedValidToDate, theCase)
-      }
-
-      if (theCase.validToDate) {
-        autofill('isolationToDate', theCase.validToDate, theCase)
-      }
-
-      if (theCase.caseFacts) {
-        autofill('courtCaseFacts', theCase.caseFacts, theCase)
-      }
-
-      if (theCase.legalArguments) {
-        autofill('courtLegalArguments', theCase.legalArguments, theCase)
-      }
-
-      setWorkingCase(theCase)
+      updateCase(
+        theCase.id,
+        parseArray(
+          'custodyRestrictions',
+          theCase.requestedCustodyRestrictions ?? [],
+        ),
+      )
     }
-  }, [workingCase, setWorkingCase, data, updateCase, autofill])
+
+    if (theCase.demands) {
+      autofill('prosecutorDemands', theCase.demands, theCase)
+    }
+
+    if (theCase.requestedValidToDate) {
+      autofill('validToDate', theCase.requestedValidToDate, theCase)
+    }
+
+    if (theCase.validToDate) {
+      autofill('isolationToDate', theCase.validToDate, theCase)
+    }
+
+    if (theCase.caseFacts) {
+      autofill('courtCaseFacts', theCase.caseFacts, theCase)
+    }
+
+    if (theCase.legalArguments) {
+      autofill('courtLegalArguments', theCase.legalArguments, theCase)
+    }
+
+    setWorkingCase(theCase)
+  }, [workingCase, setWorkingCase, updateCase, autofill])
 
   return (
     <PageLayout
@@ -130,7 +134,7 @@ export const RulingStepOne: React.FC = () => {
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.RULING_STEP_ONE}
-      isLoading={loading}
+      isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
       {workingCase ? (

@@ -188,7 +188,7 @@ const useCase = () => {
     () => async (
       workingCase: Case,
       transition: CaseTransition,
-      setWorkingCase?: React.Dispatch<React.SetStateAction<Case | undefined>>,
+      setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
     ): Promise<boolean> => {
       try {
         const transitionRequest = parseTransition(

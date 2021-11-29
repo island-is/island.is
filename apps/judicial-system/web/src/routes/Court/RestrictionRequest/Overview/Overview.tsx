@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   FormFooter,
   PageLayout,
@@ -23,9 +23,15 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import OverviewForm from './OverviewForm'
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 import { isOverviewStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 export const JudgeOverview: React.FC = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const [courtCaseNumberEM, setCourtCaseNumberEM] = useState('')
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
   const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
@@ -82,38 +88,34 @@ export const JudgeOverview: React.FC = () => {
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.JUDGE_OVERVIEW}
-      isLoading={loading}
+      isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      {workingCase ? (
-        <>
-          <OverviewForm
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            handleCreateCourtCase={handleCreateCourtCase}
-            createCourtCaseSuccess={createCourtCaseSuccess}
-            setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
-            courtCaseNumberEM={courtCaseNumberEM}
-            setCourtCaseNumberEM={setCourtCaseNumberEM}
-            setIsDraftingConclusion={setIsDraftingConclusion}
-            isCreatingCourtCase={isCreatingCourtCase}
-            receiveCase={receiveCase}
-          />
-          <FormContentContainer isFooter>
-            <FormFooter
-              previousUrl={Constants.REQUEST_LIST_ROUTE}
-              nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
-              nextIsDisabled={!isOverviewStepValidRC(workingCase)}
-            />
-          </FormContentContainer>
-          <DraftConclusionModal
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            isDraftingConclusion={isDraftingConclusion}
-            setIsDraftingConclusion={setIsDraftingConclusion}
-          />
-        </>
-      ) : null}
+      <OverviewForm
+        workingCase={workingCase}
+        setWorkingCase={setWorkingCase}
+        handleCreateCourtCase={handleCreateCourtCase}
+        createCourtCaseSuccess={createCourtCaseSuccess}
+        setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
+        courtCaseNumberEM={courtCaseNumberEM}
+        setCourtCaseNumberEM={setCourtCaseNumberEM}
+        setIsDraftingConclusion={setIsDraftingConclusion}
+        isCreatingCourtCase={isCreatingCourtCase}
+        receiveCase={receiveCase}
+      />
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={Constants.REQUEST_LIST_ROUTE}
+          nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
+          nextIsDisabled={!isOverviewStepValidRC(workingCase)}
+        />
+      </FormContentContainer>
+      <DraftConclusionModal
+        workingCase={workingCase}
+        setWorkingCase={setWorkingCase}
+        isDraftingConclusion={isDraftingConclusion}
+        setIsDraftingConclusion={setIsDraftingConclusion}
+      />
     </PageLayout>
   )
 }
