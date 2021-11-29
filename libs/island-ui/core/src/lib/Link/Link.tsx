@@ -3,12 +3,12 @@ import NextLink, { LinkProps as NextLinkProps } from 'next/link'
 import cn from 'classnames'
 import * as styles from './Link.css'
 
-const islandisRe = new RegExp(/https{0,1}:\/\/.*\.island\.is/) // Precompile regex for perfomance
+const islandisRe = new RegExp(/https{0,1}:\/\/.*island\.is/) // Precompile regex for perfomance
 const isLinkInternal = (href: string) => {
-  const externalCandidate =
-    typeof href === 'string' && href.indexOf('://') !== -1
+  const internalCandidate =
+    typeof href === 'string' && href.indexOf('://') === -1
 
-  return externalCandidate && !Boolean(href.match(islandisRe))
+  return internalCandidate || Boolean(href.match(islandisRe))
 }
 
 export type LinkColor = 'white' | 'blue400' | 'blue600'
