@@ -46,6 +46,7 @@ const PageLayout: React.FC<PageProps> = ({
     { dismissedTitle: formatMessage(signedVerdictOverview.dismissedTitle) },
     workingCase,
     activeSubSection,
+    user,
   )
 
   return children ? (
