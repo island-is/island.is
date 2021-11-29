@@ -30,12 +30,12 @@ const Confirmation = () => {
 
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [
-    requestSignatureResponse,
-    setRequestSignatureResponse,
+    requestRulingSignatureResponse,
+    setRequestRulingSignatureResponse,
   ] = useState<RequestSignatureResponse>()
 
   const { user } = useContext(UserContext)
-  const { requestSignature, isRequestingSignature } = useCase()
+  const { requestRulingSignature, isRequestingRulingSignature } = useCase()
 
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
@@ -49,20 +49,22 @@ const Confirmation = () => {
 
   useEffect(() => {
     if (!modalVisible) {
-      setRequestSignatureResponse(undefined)
+      setRequestRulingSignatureResponse(undefined)
     }
-  }, [modalVisible, setRequestSignatureResponse])
+  }, [modalVisible, setRequestRulingSignatureResponse])
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
       return
     }
 
-    // Request signature to get control code
+    // Request ruling signature to get control code
     try {
-      const requestSignatureResponse = await requestSignature(workingCase.id)
-      if (requestSignatureResponse) {
-        setRequestSignatureResponse(requestSignatureResponse)
+      const requestRulingSignatureResponse = await requestRulingSignature(
+        workingCase.id,
+      )
+      if (requestRulingSignatureResponse) {
+        setRequestRulingSignatureResponse(requestRulingSignatureResponse)
         setModalVisible(true)
       } else {
         // TODO: Handle error
@@ -87,14 +89,14 @@ const Confirmation = () => {
           <ConfirmationForm
             workingCase={workingCase}
             user={user}
-            isLoading={isRequestingSignature}
+            isLoading={isRequestingRulingSignature}
             handleNextButtonClick={handleNextButtonClick}
           />
           {modalVisible && (
             <SigningModal
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
-              requestSignatureResponse={requestSignatureResponse}
+              requestRulingSignatureResponse={requestRulingSignatureResponse}
               setModalVisible={setModalVisible}
             />
           )}
