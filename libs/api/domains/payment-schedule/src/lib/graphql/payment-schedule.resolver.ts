@@ -94,19 +94,4 @@ export class PaymentScheduleResolver {
       input,
     )
   }
-
-  @Mutation(() => UpdateCurrentEmployerResponse, {
-    name: 'updateCurrentEmployer',
-  })
-  @Audit()
-  async updateCurrentEmployer(
-    @CurrentUser() user: User,
-    @Args('input', { type: () => UpdateCurrentEmployerInput })
-    input: UpdateCurrentEmployerInput,
-  ): Promise<UpdateCurrentEmployerResponse> {
-    return await this.paymentScheduleService.updateCurrentEmployer(
-      user.nationalId,
-      input,
-    )
-  }
 }
