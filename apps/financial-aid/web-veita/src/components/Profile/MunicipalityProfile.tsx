@@ -29,6 +29,7 @@ import {
 } from '@island.is/financial-aid-web/veita/src/components'
 import { useMutation } from '@apollo/client'
 import { MunicipalityActivityMutation } from '@island.is/financial-aid-web/veita/graphql'
+import { useRouter } from 'next/router'
 
 interface MunicipalityProfileProps {
   municipality: Municipality
@@ -39,6 +40,8 @@ const MunicipalityProfile = ({
   municipality,
   getMunicipality,
 }: MunicipalityProfileProps) => {
+  const router = useRouter()
+
   const [isModalVisible, setIsModalVisible] = useState(false)
 
   const refreshList = () => {
@@ -323,6 +326,8 @@ const MunicipalityProfile = ({
         }}
         onStaffCreated={refreshList}
         predefinedRoles={[StaffRole.ADMIN]}
+        municipalityName={municipality.name}
+        municipalityId={router.query.id as string}
       />
 
       <ToastContainer />

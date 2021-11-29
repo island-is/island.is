@@ -11,6 +11,8 @@ interface Props {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
   onStaffCreated: () => void
   predefinedRoles?: StaffRole[]
+  municipalityName?: string
+  municipalityId?: string
 }
 
 interface newUsersModalState {
@@ -27,6 +29,8 @@ const NewUserModal = ({
   setIsVisible,
   onStaffCreated,
   predefinedRoles = [],
+  municipalityName,
+  municipalityId,
 }: Props) => {
   const [state, setState] = useState<newUsersModalState>({
     staffNationalId: '',
@@ -69,6 +73,8 @@ const NewUserModal = ({
             email: state.staffEmail,
             nationalId: state.staffNationalId,
             roles: state.roles,
+            municipalityName: municipalityName,
+            municipalityId: municipalityId,
           },
         },
       }).then(() => {

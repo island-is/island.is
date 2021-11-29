@@ -111,8 +111,8 @@ export class StaffController {
     @Body() createStaffInput: CreateStaffDto,
   ): Promise<StaffModel> {
     return await this.staffService.createStaff(createStaffInput, {
-      id: staff.municipalityId,
-      name: staff.municipalityName,
+      id: createStaffInput.municipalityId ?? staff.municipalityId,
+      name: createStaffInput.municipalityName ?? staff.municipalityName,
       homepage: staff.municipalityHomepage,
     })
   }
