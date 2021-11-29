@@ -44,16 +44,18 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
       graphqlRequest.alias = 'gqlUpdateCaseMutatation'
 
       return { fixture: 'updateCaseMutationResponse' }
-    } else if (graphqlRequest.body.query.includes('RequestSignatureMutation')) {
+    } else if (
+      graphqlRequest.body.query.includes('RequestRulingSignatureMutation')
+    ) {
       graphqlRequest.alias = 'gqlRequsestSignatureMutation'
 
-      return { fixture: 'requestSignatureMutationResponse' }
+      return { fixture: 'requestRulingSignatureMutationResponse' }
     } else if (
-      graphqlRequest.body.query.includes('SignatureConfirmationQuery')
+      graphqlRequest.body.query.includes('RulingSignatureConfirmationQuery')
     ) {
       graphqlRequest.alias = 'gqlSignatureConfirmationResponse'
 
-      return { fixture: 'signatureConfirmationResponse' }
+      return { fixture: 'rulingSignatureConfirmationResponse' }
     } else if (graphqlRequest.body.query.includes('InstitutionsQuery')) {
       graphqlRequest.alias = 'gqlInstitutionsQuery'
 

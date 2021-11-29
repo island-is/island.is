@@ -14,7 +14,7 @@ describe('CaseController - Get by id', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const caseController = await createTestingCaseModule()
+    const { caseController } = await createTestingCaseModule()
 
     givenWhenThen = (caseId: string, theCase: Case) => {
       const then = {} as Then
