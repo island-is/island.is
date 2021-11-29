@@ -31,9 +31,13 @@ const NavItemContent: FC<Props> = ({
   const chevron = active ? 'chevronUp' : 'chevronDown'
   const showLock = enabled === false
   const showChevron = hasArray && !alwaysExpanded && !showLock
+  const navItemActive: keyof typeof styles.navItemActive = active
+    ? 'active'
+    : 'inactive'
+  const badgeActive: keyof typeof styles.badge = badge ? 'active' : 'inactive'
   return (
     <Box
-      className={styles.navItemActive[`${active ? 'active' : 'inactive'}`]}
+      className={styles.navItemActive[navItemActive]}
       display="flex"
       alignItems="center"
       justifyContent="spaceBetween"
@@ -49,7 +53,7 @@ const NavItemContent: FC<Props> = ({
           <Box display="flex" alignItems="center" marginRight={'p2'}>
             <Box
               borderRadius="circle"
-              className={styles.badge[`${badge ? 'active' : 'inactive'}`]}
+              className={styles.badge[badgeActive]}
             ></Box>
             <Icon
               type={icon.type}
