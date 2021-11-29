@@ -38,6 +38,9 @@ export class NationalRegistryXRoadModule {
             config.xRoadTjodskraApiPath,
           ),
           xRoadClient: config.xRoadClientId,
+          fetch: {
+            timeout: 20000,
+          },
         }),
       ],
       exports: [NationalRegistryXRoadService],
