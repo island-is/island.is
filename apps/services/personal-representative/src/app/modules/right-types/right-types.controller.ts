@@ -1,8 +1,13 @@
-import { PersonalRepresentativeRightType, PersonalRepresentativeRightTypeDTO, PersonalRepresentativeRightTypeService } from '@island.is/auth-api-lib'
+import { 
+  PersonalRepresentativeRightType, 
+  PersonalRepresentativeRightTypeDTO, 
+  PersonalRepresentativeRightTypeService 
+} from '@island.is/auth-api-lib'
 import {
   BadRequestException,
   Body,
   Controller,
+  UseGuards,
   Delete,
   Get,
   NotFoundException,
@@ -10,12 +15,22 @@ import {
   Post,
   Put
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { 
+  ApiCreatedResponse, 
+  ApiOkResponse, 
+  ApiBearerAuth,
+  ApiTags 
+} from '@nestjs/swagger'
+import { AuthGuard } from '../common'
 
-@ApiTags('right-types')
+@ApiTags('Right Types')
 @Controller('right-types')
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class RightTypesController {
-  constructor(private readonly rightTypesService: PersonalRepresentativeRightTypeService) {}
+  constructor(
+    private readonly rightTypesService: PersonalRepresentativeRightTypeService
+  ) {}
 
   /** Gets all right types */
   @Get()
@@ -72,7 +87,7 @@ export class RightTypesController {
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
   ): Promise<PersonalRepresentativeRightType> {
     if (!code) {
-      throw new BadRequestException('Key must be provided')
+      throw new BadRequestException('Code must be provided')
     }
 
     const result = await this.rightTypesService.updateAsync(code, rightType)
