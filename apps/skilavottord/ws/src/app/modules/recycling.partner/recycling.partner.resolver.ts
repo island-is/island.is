@@ -1,4 +1,3 @@
-import { Inject } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import { logger } from '@island.is/logging'
@@ -22,7 +21,7 @@ export class RecyclingPartnerResolver {
     return await this.recyclingPartnerService.findActive()
   }
 
-  @Mutation((returns) => Boolean)
+  @Mutation((_) => Boolean)
   async createSkilavottordRecyclingPartner(
     @Args('companyId') nationalId: string,
     @Args('companyName') companyName: string,
@@ -47,7 +46,7 @@ export class RecyclingPartnerResolver {
     return true
   }
 
-  @Mutation((returns) => String)
+  @Mutation((_) => String)
   async skilavottordDeactivateRecycllingPartner(
     @Args('companyId') nationalId: string,
   ) {
@@ -61,7 +60,7 @@ export class RecyclingPartnerResolver {
     return nationalId
   }
 
-  @Mutation((returns) => String)
+  @Mutation((_) => String)
   async skilavottordActivateRecycllingPartner(
     @Args('companyId') nationalId: string,
   ) {

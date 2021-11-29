@@ -17,7 +17,7 @@ export class GdprResolver {
   ) {}
 
   @Authorize({ throwOnUnAuthorized: false })
-  @Mutation((returns) => Boolean)
+  @Mutation((_) => Boolean)
   async createSkilavottordGdpr(
     @Args('nationalId') nationalId: string,
     @Args('gdprStatus') gdprStatus: string,

@@ -1,4 +1,4 @@
-import { Inject, Injectable, HttpService } from '@nestjs/common'
+import { Inject, Injectable, HttpService, forwardRef } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import format from 'date-fns/format'
 
@@ -24,6 +24,7 @@ export class RecyclingRequestService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private httpService: HttpService,
     private fjarsyslaService: FjarsyslaService,
+    @Inject(forwardRef(() => RecyclingPartnerService))
     private recycllingPartnerService: RecyclingPartnerService,
     private vehicleService: VehicleService,
   ) {}

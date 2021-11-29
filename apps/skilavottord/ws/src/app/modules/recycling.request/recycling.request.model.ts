@@ -63,7 +63,7 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   vehicleId!: string
 
   @BelongsTo(() => VehicleModel)
-  vehicle: any
+  vehicle: VehicleModel
 
   @Field({ nullable: true })
   @ForeignKey(() => RecyclingPartnerModel)
@@ -73,8 +73,8 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   })
   recyclingPartnerId: string
 
-  @Field({ nullable: true })
-  @BelongsTo(() => RecyclingPartnerModel, { foreignKey: { allowNull: true } })
+  @Field(() => RecyclingPartnerModel, { nullable: true })
+  @BelongsTo(() => RecyclingPartnerModel)
   recyclingPartner: RecyclingPartnerModel
 
   @Field()

@@ -13,6 +13,6 @@ export class SamgongustofaResolver {
   async skilavottordVehicles(
     @Args('nationalId') nid: string,
   ): Promise<Array<VehicleInformation>> {
-    return this.samgongustofaService.getVehicleInformation('0101307789')
+    return this.samgongustofaService.getVehicleInformation(nid)
   }
 }

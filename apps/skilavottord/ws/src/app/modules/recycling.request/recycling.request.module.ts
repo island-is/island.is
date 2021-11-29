@@ -1,4 +1,4 @@
-import { Module, HttpModule } from '@nestjs/common'
+import { Module, HttpModule, forwardRef } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { VehicleModule } from '../vehicle'
@@ -14,7 +14,7 @@ import { RecyclingRequestResolver } from './recycling.request.resolver'
     VehicleModule,
     SequelizeModule.forFeature([RecyclingRequestModel]),
     FjarsyslaModule,
-    RecyclingPartnerModule,
+    forwardRef(() => RecyclingPartnerModule),
   ],
   providers: [RecyclingRequestResolver, RecyclingRequestService],
   exports: [RecyclingRequestService],

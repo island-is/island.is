@@ -9,7 +9,7 @@ import {
   HasMany,
 } from 'sequelize-typescript'
 
-// import { RecyclingRequestModel } from '../recycling.request/'
+import { RecyclingRequestModel } from '../recycling.request'
 
 @ObjectType()
 @Table({ tableName: 'recycling_partner' })
@@ -74,7 +74,7 @@ export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
   @Column
   updatedAt: Date
 
-  // @Field(() => [RecyclingRequestModel], { nullable: true })
-  // @HasMany(() => RecyclingRequestModel, { foreignKey: { allowNull: true } })
-  // recyclingRequests?: any[]
+  @Field(() => [RecyclingRequestModel])
+  @HasMany(() => RecyclingRequestModel)
+  recyclingRequests?: (typeof RecyclingRequestModel)[]
 }

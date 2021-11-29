@@ -3,7 +3,6 @@ import { of } from 'rxjs'
 import { Test } from '@nestjs/testing'
 import { HttpModule, HttpService } from '@nestjs/common'
 
-import type { Logger } from '@island.is/logging'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { SamgongustofaService } from '../samgongustofa.service'
