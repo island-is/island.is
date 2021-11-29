@@ -50,7 +50,7 @@ const ModuleNavigation: FC<Props> = ({
     }
   }
 
-  // const unreadDocsCounter = getUnreadDocumentsCount()
+  // const unreadDocsCounter = useUnreadDocumentsCounter()
 
   const navChildren = nav?.children?.filter((child) => !child.navHide)
   const navArray = Array.isArray(navChildren) && navChildren.length > 0
