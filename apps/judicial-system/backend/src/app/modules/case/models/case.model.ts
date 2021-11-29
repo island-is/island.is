@@ -762,6 +762,16 @@ export class Case extends Model<Case> {
   rulingDate?: Date
 
   /**********
+   * The date and time of the judge's inital ruling signature - used for extended cases
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  initialRulingDate?: Date
+
+  /**********
    * The surrogate key of the registrar assigned to the case
    **********/
   @ForeignKey(() => User)
@@ -798,6 +808,34 @@ export class Case extends Model<Case> {
   judge?: User
 
   /**********
+   * The surrogate key of the user that signed the court record of the case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtRecordSignatoryId?: string
+
+  /**********
+   * The user that signed the court record of the case
+   **********/
+  @BelongsTo(() => User, 'courtRecordSignatoryId')
+  @ApiProperty({ type: User })
+  courtRecordSignatory?: User
+
+  /**********
+   * The court record signature date
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtRecordSignatureDate?: Date
+
+  /**********
    * The surrogate key of the case's parent case - only used if the case is an extension
    **********/
   @ForeignKey(() => Case)
@@ -828,14 +866,4 @@ export class Case extends Model<Case> {
   @HasMany(() => CaseFile, 'caseId')
   @ApiProperty({ type: CaseFile, isArray: true })
   caseFiles?: CaseFile[]
-
-  /**********
-   * The date and time of the judge's inital ruling signature - used for extended cases
-   **********/
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiProperty()
-  initialRulingDate?: Date
 }
