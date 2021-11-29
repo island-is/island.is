@@ -532,13 +532,13 @@ export class NotificationService {
     rulingPdf: string,
   ): Promise<Recipient> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
-    const html = formatPrisonRulingEmailNotification(existingCase.courtEndTime)
-    const pdf = await getCustodyNoticePdfAsString(existingCase)
+    const html = formatPrisonRulingEmailNotification(existingCase.rulingDate)
+    const custodyNoticePdf = await getCustodyNoticePdfAsString(existingCase)
 
     const attachments = [
       {
         filename: `Vistunarseðill ${existingCase.courtCaseNumber}.pdf`,
-        content: pdf,
+        content: custodyNoticePdf,
         encoding: 'binary',
       },
       {
