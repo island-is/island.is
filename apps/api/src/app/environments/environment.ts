@@ -111,6 +111,12 @@ const prodConfig = () => ({
     apiPath: process.env.XROAD_TJODSKRA_API_PATH,
     clientId: process.env.XROAD_CLIENT_ID,
   },
+  propertiesXRoad: {
+    url: process.env.XROAD_BASE_PATH_WITH_ENV,
+    memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE,
+    apiPath: process.env.XROAD_PROPERTIES_API_PATH,
+    clientId: process.env.XROAD_CLIENT_ID,
+  },
   paymentDomain: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     xRoadProviderId: process.env.XROAD_PAYMENT_PROVIDER_ID,
@@ -146,7 +152,7 @@ const prodConfig = () => ({
   },
   paymentSchedule: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH,
-    xRoadProviderId: process.env.XROAD_PAYMENT_PROVIDER_ID,
+    xRoadProviderId: process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID,
     xRoadClientId: process.env.XROAD_CLIENT_ID,
     username: process.env.PAYMENT_SCHEDULE_USER,
     password: process.env.PAYMENT_SCHEDULE_PASSWORD,
@@ -286,6 +292,15 @@ const devConfig = () => ({
     clientId:
       process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
   },
+  propertiesXRoad: {
+    url:
+      process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8081/r1/IS-DEV',
+    memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE ?? '10001',
+    apiPath:
+      process.env.XROAD_PROPERTIES_API_PATH ?? '/SKRA-Protected/Fasteignir-v1',
+    clientId:
+      process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
+  },
   paymentDomain: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     xRoadProviderId:
@@ -318,8 +333,10 @@ const devConfig = () => ({
   paymentSchedule: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     xRoadProviderId:
-      process.env.XROAD_PAYMENT_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-Public',
-    xRoadClientId: process.env.XROAD_CLIENT_ID,
+      process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID ??
+      'IS-DEV/GOV/10021/FJS-Public',
+    xRoadClientId:
+      process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
     username: process.env.PAYMENT_SCHEDULE_USER,
     password: process.env.PAYMENT_SCHEDULE_PASSWORD,
   },

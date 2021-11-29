@@ -60,6 +60,21 @@ export const ApplicationQuery = gql`
   }
 `
 
+export const ApplicationSearchQuery = gql`
+  query ApplicationSearchQuery($input: ApplicationSearchInput!) {
+    applicationSearch(input: $input) {
+      id
+      nationalId
+      created
+      name
+      state
+      files {
+        id
+      }
+    }
+  }
+`
+
 export const UpdateApplicationTableMutation = gql`
   mutation UpdateApplicationTableMutation(
     $input: UpdateApplicationInputTable!
@@ -188,7 +203,9 @@ export const CurrentUserQuery = gql`
         phoneNumber
         roles
         active
+        nickname
         municipalityHomepage
+        email
       }
     }
   }
@@ -275,6 +292,15 @@ export const StaffMutation = gql`
   mutation StaffMutation($input: CreateStaffInput!) {
     createStaff(input: $input) {
       id
+    }
+  }
+`
+
+export const MunicipalityActivityMutation = gql`
+  mutation MunicipalityActivityMutation($input: MunicipalityActivityInput!) {
+    municipalityActivity(input: $input) {
+      id
+      active
     }
   }
 `

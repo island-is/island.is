@@ -26,6 +26,11 @@ import {
   UploadFileToCourtResponse,
 } from './models'
 
+// Files are stored in AWS S3 under a key which has the following format:
+// uploads/<uuid>/<uuid>/<filename>
+// As uuid-s have length 36, the filename starts at position 82 in the key.
+const NAME_BEGINS_INDEX = 82
+
 @Injectable()
 export class FileService {
   private throttle = Promise.resolve('')
@@ -102,7 +107,7 @@ export class FileService {
     const { fileName, type } = createPresignedPost
 
     return this.awsS3Service.createPresignedPost(
-      `${caseId}/${uuid()}/${fileName}`,
+      `uploads/${caseId}/${uuid()}/${fileName}`,
       type,
     )
   }
@@ -115,7 +120,7 @@ export class FileService {
 
     const { key } = createFile
 
-    const regExp = new RegExp(`^${caseId}/.{36}/(.*)$`)
+    const regExp = new RegExp(`^uploads/${caseId}/.{36}/(.*)$`)
 
     if (!regExp.test(key)) {
       throw new BadRequestException(`${key} is not a valid key`)
@@ -124,7 +129,7 @@ export class FileService {
     return this.fileModel.create({
       ...createFile,
       caseId,
-      name: createFile.key.slice(74), // prefixed by two uuids, a forward slash and an underscore
+      name: createFile.key.slice(NAME_BEGINS_INDEX),
     })
   }
 

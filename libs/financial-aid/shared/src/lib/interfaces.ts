@@ -90,7 +90,7 @@ export interface Address {
 }
 
 export interface UpdateApplication {
-  state: ApplicationState
+  state?: ApplicationState
   event: ApplicationEventType
   amount?: number
   rejection?: string
@@ -136,6 +136,10 @@ export interface Municipality {
   rulesHomepage?: string
   numberOfUsers?: number
   adminUsers?: Staff[]
+}
+
+export interface UpdateMunicipalityActivity {
+  active: boolean
 }
 
 export interface CreateMunicipality {
@@ -189,6 +193,17 @@ export interface CreateApplication {
   postalCode?: string
   city?: string
   municipalityCode?: string
+}
+
+export interface ApplicantEmailData {
+  header: string
+  content: string
+  applicationChange: string
+  applicationMonth: string
+  applicationYear: number
+  statusPageUrl: string
+  applicantEmail: string
+  municipality: Municipality
 }
 
 export interface ApplicationFilters {
@@ -296,4 +311,10 @@ export interface CreateStaff {
   email: string
   nationalId: string
   roles: StaffRole[]
+}
+
+export interface CreateStaffMuncipality {
+  id: string
+  name: string
+  homepage?: string
 }

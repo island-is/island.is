@@ -5,7 +5,7 @@ import {
   DropdownMenu,
   Loading,
   Logo,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
   CaseTransition,
@@ -25,7 +25,7 @@ import {
   findLastValidStep,
 } from '@island.is/judicial-system-web/src/utils/sections'
 import { useQuery, useLazyQuery } from '@apollo/client'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import ActiveRequests from './ActiveRequests'
@@ -147,10 +147,10 @@ export const Requests: React.FC = () => {
       routeTo = `${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
       if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findLastValidStep(getCourtSections(caseToOpen)).href
+        routeTo = findLastValidStep(getCourtSections(caseToOpen, user)).href
       } else {
         routeTo = findLastValidStep(
-          getInvestigationCaseCourtSections(caseToOpen),
+          getInvestigationCaseCourtSections(caseToOpen, user),
         ).href
       }
     } else {
