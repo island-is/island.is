@@ -45,11 +45,7 @@ export const useRegulationEffectPrepper = (
       effects.past.reverse()
       effects.future.reverse()
     }
-    const isViewingCurrentVersion =
-      (!regulation.timelineDate &&
-        (!regulation.showingDiff ||
-          regulation.showingDiff.from <= regulation.effectiveDate)) ||
-      undefined
+    const isViewingCurrentVersion = !regulation.timelineDate || undefined
 
     return {
       effects,
@@ -65,8 +61,7 @@ export const useRegulationEffectPrepper = (
   }, [effects])
 
   const isItemActive = (itemDate: ISODate) =>
-    (regulation.timelineDate ||
-      (!isViewingCurrentVersion && regulation.lastAmendDate)) === itemDate
+    itemDate === (regulation.timelineDate || regulation.lastAmendDate)
 
   const renderCurrentVersion = () => (
     <RegulationsSidebarLink
