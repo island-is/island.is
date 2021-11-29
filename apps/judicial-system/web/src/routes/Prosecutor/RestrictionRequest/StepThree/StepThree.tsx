@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import type { Case } from '@island.is/judicial-system/types'
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { useQuery } from '@apollo/client'
@@ -10,30 +10,28 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useRouter } from 'next/router'
 import StepThreeForm from './StepThreeForm'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 export const StepThree: React.FC = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
-  const router = useRouter()
-  const id = router.query.id
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
   const [
     requestedValidToDateIsValid,
     setRequestedValidToDateIsValid,
   ] = useState(false)
 
-  const resCase = data?.case
-
   useEffect(() => {
     document.title = 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    if (!workingCase && resCase) {
-      setRequestedValidToDateIsValid(resCase.requestedValidToDate != null)
-
-      setWorkingCase(resCase)
-    }
-  }, [workingCase, setWorkingCase, resCase])
+    setRequestedValidToDateIsValid(workingCase.requestedValidToDate != null)
+  }, [workingCase])
 
   return (
     <PageLayout
@@ -42,17 +40,15 @@ export const StepThree: React.FC = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_THREE}
-      isLoading={loading}
+      isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      {workingCase ? (
-        <StepThreeForm
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          requestedValidToDateIsValid={requestedValidToDateIsValid}
-          setRequestedValidToDateIsValid={setRequestedValidToDateIsValid}
-        />
-      ) : null}
+      <StepThreeForm
+        workingCase={workingCase}
+        setWorkingCase={setWorkingCase}
+        requestedValidToDateIsValid={requestedValidToDateIsValid}
+        setRequestedValidToDateIsValid={setRequestedValidToDateIsValid}
+      />
     </PageLayout>
   )
 }

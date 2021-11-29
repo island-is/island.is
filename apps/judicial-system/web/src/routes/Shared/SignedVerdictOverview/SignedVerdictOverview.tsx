@@ -33,9 +33,15 @@ import {
 import { ValueType } from 'react-select/src/types'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
 import { Text } from '@island.is/island-ui/core'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 export const SignedVerdictOverview: React.FC = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const [shareCaseModal, setSharedCaseModal] = useState<{
     open: boolean
     title: string
@@ -47,7 +53,6 @@ export const SignedVerdictOverview: React.FC = () => {
   ] = useState<ValueType<ReactSelectOption>>()
 
   const router = useRouter()
-  const id = router.query.id
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
 
@@ -263,56 +268,52 @@ export const SignedVerdictOverview: React.FC = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={2}
-      isLoading={loading}
+      isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      {workingCase ? (
-        <>
-          <SignedVerdictOverviewForm
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            setAccusedAppealDate={setAccusedAppealDate}
-            setProsecutorAppealDate={setProsecutorAppealDate}
-            withdrawAccusedAppealDate={withdrawAccusedAppealDate}
-            withdrawProsecutorAppealDate={withdrawProsecutorAppealDate}
-            shareCaseWithAnotherInstitution={shareCaseWithAnotherInstitution}
-            selectedSharingInstitutionId={selectedSharingInstitutionId}
-            setSelectedSharingInstitutionId={setSelectedSharingInstitutionId}
-          />
-          <FormContentContainer isFooter>
-            <FormFooter
-              previousUrl={Constants.REQUEST_LIST_ROUTE}
-              hideNextButton={
-                user?.role !== UserRole.PROSECUTOR ||
-                workingCase.decision ===
-                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-                workingCase.state === CaseState.REJECTED ||
-                workingCase.state === CaseState.DISMISSED ||
-                workingCase.isValidToDateInThePast ||
-                Boolean(workingCase.childCase)
-              }
-              nextButtonText={`Framlengja ${
-                workingCase.type === CaseType.CUSTODY
-                  ? 'gæslu'
-                  : workingCase.type === CaseType.TRAVEL_BAN
-                  ? 'farbann'
-                  : 'heimild'
-              }`}
-              onNextButtonClick={() => handleNextButtonClick()}
-              nextIsLoading={isCreatingExtension}
-              infoBoxText={getInfoText(workingCase)}
-            />
-          </FormContentContainer>
-          {shareCaseModal?.open && (
-            <Modal
-              title={shareCaseModal.title}
-              text={shareCaseModal.text}
-              primaryButtonText="Loka glugga"
-              handlePrimaryButtonClick={() => setSharedCaseModal(undefined)}
-            />
-          )}
-        </>
-      ) : null}
+      <SignedVerdictOverviewForm
+        workingCase={workingCase}
+        setWorkingCase={setWorkingCase}
+        setAccusedAppealDate={setAccusedAppealDate}
+        setProsecutorAppealDate={setProsecutorAppealDate}
+        withdrawAccusedAppealDate={withdrawAccusedAppealDate}
+        withdrawProsecutorAppealDate={withdrawProsecutorAppealDate}
+        shareCaseWithAnotherInstitution={shareCaseWithAnotherInstitution}
+        selectedSharingInstitutionId={selectedSharingInstitutionId}
+        setSelectedSharingInstitutionId={setSelectedSharingInstitutionId}
+      />
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={Constants.REQUEST_LIST_ROUTE}
+          hideNextButton={
+            user?.role !== UserRole.PROSECUTOR ||
+            workingCase.decision ===
+              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+            workingCase.state === CaseState.REJECTED ||
+            workingCase.state === CaseState.DISMISSED ||
+            workingCase.isValidToDateInThePast ||
+            Boolean(workingCase.childCase)
+          }
+          nextButtonText={`Framlengja ${
+            workingCase.type === CaseType.CUSTODY
+              ? 'gæslu'
+              : workingCase.type === CaseType.TRAVEL_BAN
+              ? 'farbann'
+              : 'heimild'
+          }`}
+          onNextButtonClick={() => handleNextButtonClick()}
+          nextIsLoading={isCreatingExtension}
+          infoBoxText={getInfoText(workingCase)}
+        />
+      </FormContentContainer>
+      {shareCaseModal?.open && (
+        <Modal
+          title={shareCaseModal.title}
+          text={shareCaseModal.text}
+          primaryButtonText="Loka glugga"
+          handlePrimaryButtonClick={() => setSharedCaseModal(undefined)}
+        />
+      )}
     </PageLayout>
   )
 }

@@ -32,12 +32,18 @@ import {
 import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import StepTwoForm from './StepTwoForm'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 export const StepTwo: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
   const { formatMessage } = useIntl()
-  const [workingCase, setWorkingCase] = useState<Case>()
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   const [substituteProsecutorId, setSubstituteProsecutorId] = useState<string>()
@@ -145,10 +151,10 @@ export const StepTwo: React.FC = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_TWO}
-      isLoading={loading || userLoading || institutionLoading}
+      isLoading={isLoadingWorkingCase || userLoading || institutionLoading}
       notFound={caseNotFound}
     >
-      {workingCase && prosecutors && !institutionLoading ? (
+      {prosecutors && !institutionLoading ? (
         <>
           <StepTwoForm
             workingCase={workingCase}

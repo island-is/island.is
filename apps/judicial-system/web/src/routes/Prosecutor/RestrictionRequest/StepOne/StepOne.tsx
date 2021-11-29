@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useRouter } from 'next/router'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
@@ -19,22 +19,18 @@ import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
-interface Props {
-  type?: CaseType
-}
-
-export const StepOne: React.FC<Props> = ({ type }: Props) => {
+export const StepOne: React.FC = () => {
   const router = useRouter()
-  const id = router.query.id
-  const [workingCase, setWorkingCase] = useState<Case>()
-  const { createCase, isCreatingCase } = useCase()
 
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-    skip: !id,
-  })
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
+  const { createCase, isCreatingCase } = useCase()
 
   const { loading: institutionLoading } = useInstitution()
 
@@ -48,29 +44,6 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
     document.title = 'Sakborningur - Réttarvörslugátt'
   }, [])
 
-  // Run this if id is in url, i.e. if user is opening an existing request.
-  useEffect(() => {
-    if (id && !workingCase && data?.case) {
-      setWorkingCase(data?.case)
-    } else if (!id && !workingCase && type !== undefined) {
-      setWorkingCase({
-        id: '',
-        created: '',
-        modified: '',
-        type,
-        state: CaseState.NEW,
-        policeCaseNumber: '',
-        accusedNationalId: '',
-        accusedName: '',
-        accusedAddress: '',
-        defenderName: '',
-        defenderEmail: '',
-        sendRequestToDefender: false,
-        accusedGender: undefined,
-      })
-    }
-  }, [id, workingCase, setWorkingCase, data, type])
-
   return (
     <PageLayout
       workingCase={workingCase}
@@ -78,11 +51,11 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_ONE}
-      isLoading={loading}
+      isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
     >
-      {workingCase && !institutionLoading && (
+      {!institutionLoading && (
         <StepOneForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
