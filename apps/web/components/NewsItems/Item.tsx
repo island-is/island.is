@@ -22,7 +22,7 @@ type ItemProps = {
   heading: string
   date: string
   text: string
-  href?: string
+  href: string
   image?: Partial<Image>
   tags?: Tag[]
 }
@@ -31,7 +31,7 @@ export const Item = ({
   heading,
   date,
   text,
-  href = '/',
+  href,
   image,
   tags = [],
 }: ItemProps) => {

@@ -62,18 +62,18 @@ export const SearchSection = ({
     <DefaultIllustration className={styles.defaultIllustration} />
   )
 
-  const mobileImage = image?.url ? (
-    <Image src={image?.url} alt={imageAlternativeText} spacing={isMobile} />
+  const mobileImage = imageMobile?.url ? (
+    <Image
+      src={imageMobile.url}
+      alt={imageAlternativeText}
+      spacing={isMobile}
+    />
   ) : (
     defaultIllustration
   )
 
-  const desktopImage = imageMobile?.url ? (
-    <Image
-      src={imageMobile?.url}
-      alt={imageAlternativeText}
-      spacing={isMobile}
-    />
+  const desktopImage = image?.url ? (
+    <Image src={image.url} alt={imageAlternativeText} />
   ) : (
     defaultIllustration
   )
@@ -153,10 +153,10 @@ export const SearchSection = ({
                         type: contentType,
                       }
                     })}
-                    fallback={desktopImage}
+                    fallback={mobileImage}
                   />
                 ) : (
-                  desktopImage
+                  mobileImage
                 ))}
 
               {!isMobile &&
@@ -170,10 +170,10 @@ export const SearchSection = ({
                         type: contentType,
                       }
                     })}
-                    fallback={mobileImage}
+                    fallback={desktopImage}
                   />
                 ) : (
-                  mobileImage
+                  desktopImage
                 ))}
             </Box>
           )}
@@ -209,7 +209,7 @@ const Video = ({ name, title, sources, fallback }: VideoProps) => {
 }
 
 type ImageProps = {
-  spacing: boolean
+  spacing?: boolean
   src: string
   alt: string
 }

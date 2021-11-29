@@ -42,7 +42,7 @@ export const LifeEventsSection = ({
                 <IconTitleCard
                   key={index}
                   heading={shortTitle || title}
-                  src={tinyThumbnail?.url}
+                  imgSrc={tinyThumbnail?.url}
                   alt={tinyThumbnail?.title}
                   href={linkResolver(typename as LinkType, [slug]).href}
                 />

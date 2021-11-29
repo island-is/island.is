@@ -5,16 +5,16 @@ import * as styles from './IconTitleCard.css'
 
 type IconTitleCardProps = {
   heading: string
-  src: string
+  imgSrc: string
   alt: string
-  href?: string
+  href: string
 }
 
 export const IconTitleCard = ({
   heading,
-  href = '/',
-  src = '#',
-  alt = '',
+  imgSrc,
+  alt,
+  href,
 }: IconTitleCardProps) => (
   <FocusableBox
     href={href}
@@ -30,7 +30,7 @@ export const IconTitleCard = ({
     color="purple"
   >
     <span className={styles.iconContainer}>
-      <img src={src} alt={alt} className={styles.icon} />
+      <img src={imgSrc} alt={alt} className={styles.icon} />
     </span>
     <span className={styles.titleContainer}>
       <Text variant="h5" color="purple600" truncate>
