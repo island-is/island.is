@@ -8,6 +8,8 @@ import {
   LoadingDots,
   Table as T,
   Icon,
+  Hidden,
+  Button,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import * as styles from './ExpandableTable.css'
@@ -90,22 +92,31 @@ const ExpandableLine: FC<Props> = ({
               onClick={onExpandButton}
               cursor="pointer"
             >
-              <Text
-                variant={last ? 'eyebrow' : 'small'}
-                as="span"
-                color="blue400"
-              >
-                {expanded
-                  ? formatMessage(m.closeFinanceDetail)
-                  : formatMessage(m.openFinanceDetail)}
-              </Text>
-              <Icon
-                className={styles.detailsIcon}
-                type={'filled'}
-                icon={expanded ? 'remove' : 'add'}
-                size="small"
-                color="blue400"
-              />
+              <Hidden below="xl" inline>
+                <Text
+                  variant={last ? 'eyebrow' : 'small'}
+                  as="span"
+                  color="blue400"
+                >
+                  {expanded
+                    ? formatMessage(m.closeFinanceDetail)
+                    : formatMessage(m.openFinanceDetail)}
+                </Text>
+              </Hidden>
+              <Box marginLeft={1}>
+                <Button
+                  circle
+                  colorScheme="light"
+                  icon={expanded ? 'remove' : 'add'}
+                  iconType="filled"
+                  onClick={onExpandButton}
+                  preTextIconType="filled"
+                  size="small"
+                  title="Sundurliðun"
+                  type="button"
+                  variant="primary"
+                />
+              </Box>
             </Box>
           )}
           {loading && (
