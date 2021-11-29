@@ -2850,13 +2850,6 @@
   dependencies:
     regenerator-runtime "^0.12.0"
 
-"@babel/runtime@^7.4.3", "@babel/runtime@^7.6.2":
-  version "7.16.3"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.3.tgz#b86f0db02a04187a3c17caa77de69840165d42d5"
-  integrity sha512-WBwekcqacdY2e9AF/Q7WLFUWmdJGJTkbjqTjoMDgXkVZ3ZRUvOPsLb5KdwISoQVsbP+DQzVZW4Zhci0DvpbNTQ==
-  dependencies:
-    regenerator-runtime "^0.13.4"
-
 "@babel/template@^7.0.0 <7.4.0":
   version "7.2.2"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.2.2.tgz#005b3fdf0ed96e88041330379e0da9a708eb2907"
@@ -5255,148 +5248,6 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
-"@react-pdf/font@^2.0.14":
-  version "2.0.14"
-  resolved "https://registry.yarnpkg.com/@react-pdf/font/-/font-2.0.14.tgz#ec59a7f19c9125510f7b0afa41982cd7a6b774aa"
-  integrity sha512-CYKAxQOvcPM+gh0npcmtj7JI23t4wHgam5o8nzCEFROdqvtQCkRwuYYpGwqz6Bko5ZZ8Qg3CMvqpngJDipkD6w==
-  dependencies:
-    "@react-pdf/fontkit" "^2.0.7"
-    "@react-pdf/types" "^2.0.7"
-    cross-fetch "^3.0.4"
-    is-url "^1.2.4"
-
-"@react-pdf/fontkit@^2.0.7":
-  version "2.0.7"
-  resolved "https://registry.yarnpkg.com/@react-pdf/fontkit/-/fontkit-2.0.7.tgz#f19c153f52978fc0652c69d27903fc2caa8239a8"
-  integrity sha512-EN/17xkCCx5KUydIjLAKtrH98cV1+O94J+c7rqGlkgo+Rqo3RFrwkdMq9sAvAravUY8Nk52FEAE2uxP1tBQt4g==
-  dependencies:
-    "@react-pdf/unicode-properties" "^2.4.2"
-    brotli "^1.2.0"
-    clone "^1.0.4"
-    deep-equal "^1.0.0"
-    dfa "1.1.0"
-    restructure "^0.5.3"
-    tiny-inflate "^1.0.2"
-    unicode-trie "^0.3.0"
-
-"@react-pdf/image@^2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@react-pdf/image/-/image-2.0.4.tgz#7dda797ab951e1a99b18690eb367ead19801316c"
-  integrity sha512-UQcp9KS+FAXZoI8WPML0pWF8kZv7MS1ubTKBV84qRCa5xpML+b87h3cPQcSZojPo0xhF0QwXvr1/8ocCEv/mjg==
-  dependencies:
-    "@react-pdf/png-js" "^2.0.3"
-    cross-fetch "^3.0.4"
-
-"@react-pdf/layout@^2.0.21":
-  version "2.0.21"
-  resolved "https://registry.yarnpkg.com/@react-pdf/layout/-/layout-2.0.21.tgz#9e9a88c73f7e6eb415fdbd35702fe2e6d071a35a"
-  integrity sha512-b4jaiOA3hSimPKgWnJeeuXmnrO4FB126b9gmlUJm9USajboXppIjWuZSSNQr6z1tqlY1Lt7YR5lBzOc0Pd9pcw==
-  dependencies:
-    "@babel/runtime" "^7.6.2"
-    "@react-pdf/image" "^2.0.4"
-    "@react-pdf/pdfkit" "^2.0.12"
-    "@react-pdf/primitives" "^2.0.1"
-    "@react-pdf/stylesheet" "^2.0.13"
-    "@react-pdf/textkit" "^2.0.7"
-    "@react-pdf/types" "^2.0.7"
-    "@react-pdf/yoga" "^2.0.3"
-    cross-fetch "^3.0.4"
-    emoji-regex "^8.0.0"
-    queue "^6.0.1"
-    ramda "^0.26.1"
-
-"@react-pdf/pdfkit@^2.0.12":
-  version "2.0.12"
-  resolved "https://registry.yarnpkg.com/@react-pdf/pdfkit/-/pdfkit-2.0.12.tgz#c57131455c82f8947075ce2388aff8e51f75cf55"
-  integrity sha512-prXDwblWbY8YFwFj5xopPKbx+mMAPikKRa/YLWQsQIbpjtt4kcwodUIYWIIsL3quoDqmjC831sQ8N87P3i7jSg==
-  dependencies:
-    "@react-pdf/fontkit" "^2.0.7"
-    "@react-pdf/png-js" "^2.0.3"
-    crypto-js "^4.0.0"
-
-"@react-pdf/png-js@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@react-pdf/png-js/-/png-js-2.0.3.tgz#8e4f6997a06272f4e3d63a28987c7bf6e019b27e"
-  integrity sha512-xCmk3Rnr5deCNdbDQZgEIrn3gXHGmt6oLuS7xS9akFTbHzj1yKeTGKfC/2NUyEUqlgljx/EjM8NkqZjTbjIGzg==
-
-"@react-pdf/primitives@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@react-pdf/primitives/-/primitives-2.0.1.tgz#1afd3630d9b97956bd8baf7ae220f47081a5e4bd"
-  integrity sha512-SdCmVLkJVfyUSvIPD5bAw6M2S4gDrzq02UOc0WAxj7LomH0PqfcsoY90p60EaswyMp3UmUaLsxnRK7/bQcaryQ==
-
-"@react-pdf/render@^2.0.15":
-  version "2.0.15"
-  resolved "https://registry.yarnpkg.com/@react-pdf/render/-/render-2.0.15.tgz#87dac1957799f139c231cffbc03d3ac8724da0e8"
-  integrity sha512-udUd8KuU+sQ+klbyjUEJhajtFB4YdMNJhPriJfwyPydJuQjPpY/87HItUp8fXtgwfkSS3ZY7G6Pq5jqP7GjtcA==
-  dependencies:
-    "@react-pdf/primitives" "^2.0.1"
-    "@react-pdf/textkit" "^2.0.7"
-    "@react-pdf/types" "^2.0.7"
-    abs-svg-path "^0.1.1"
-    color-string "^1.5.3"
-    normalize-svg-path "^1.1.0"
-    parse-svg-path "^0.1.2"
-    ramda "^0.26.1"
-    svg-arc-to-cubic-bezier "^3.2.0"
-
-"@react-pdf/renderer@2.0.21":
-  version "2.0.21"
-  resolved "https://registry.yarnpkg.com/@react-pdf/renderer/-/renderer-2.0.21.tgz#c6e48766355834272b5ea033bf85e67667d902f1"
-  integrity sha512-HDVQ49Dc3zEM5SNXejqM831eGvm2yMfpW0x8R1iDPpLScTuioZeMMT9NO33TofZC4jNbRP5w1Vz8ZZcB20mafw==
-  dependencies:
-    "@babel/runtime" "^7.6.2"
-    "@react-pdf/font" "^2.0.14"
-    "@react-pdf/layout" "^2.0.21"
-    "@react-pdf/pdfkit" "^2.0.12"
-    "@react-pdf/primitives" "^2.0.1"
-    "@react-pdf/render" "^2.0.15"
-    "@react-pdf/types" "^2.0.7"
-    blob-stream "^0.1.3"
-    queue "^6.0.1"
-    ramda "^0.26.1"
-    react-reconciler "^0.23.0"
-    scheduler "^0.15.0"
-
-"@react-pdf/stylesheet@^2.0.13":
-  version "2.0.13"
-  resolved "https://registry.yarnpkg.com/@react-pdf/stylesheet/-/stylesheet-2.0.13.tgz#5ef19a841293aaef5806b3a245cd71d2c6f6cc3e"
-  integrity sha512-qUHf1BPac3OXm1O7zSrL8N3273I/AYLPZeAKKvStEPbwFVU/QmRv2YCYj0ozG5x7tJfPCvYguGXJJ8YBw8Bznw==
-  dependencies:
-    "@react-pdf/types" "^2.0.7"
-    color-string "^1.5.3"
-    hsl-to-hex "^1.0.0"
-    media-engine "^1.0.3"
-    ramda "^0.26.1"
-
-"@react-pdf/textkit@^2.0.7":
-  version "2.0.7"
-  resolved "https://registry.yarnpkg.com/@react-pdf/textkit/-/textkit-2.0.7.tgz#1c5ffedfc2f04ca0989da3a7229b532eb4b32286"
-  integrity sha512-ycJbNDY26Tn1dLpRwkZV/OyLn59wOaY3G8/fplQPlRnlj3lviBwCeYsODS6aPK4+TwXbHxruqL1ACEh4wV2XiA==
-  dependencies:
-    "@babel/runtime" "^7.4.3"
-    "@react-pdf/unicode-properties" "^2.4.2"
-    hyphen "^1.6.4"
-    ramda "^0.26.1"
-
-"@react-pdf/types@^2.0.7":
-  version "2.0.7"
-  resolved "https://registry.yarnpkg.com/@react-pdf/types/-/types-2.0.7.tgz#b7568974674b37a79d4f8b74ff15346e498419f2"
-  integrity sha512-T3CyxAtRW82MTKXxTeUCUqP6ZHKQDU4IdjP24yCKeNYfeCOuK2AE+mtTDLjRKnzT5wIosVC78hrtRx+GoGoySw==
-
-"@react-pdf/unicode-properties@^2.4.2":
-  version "2.4.2"
-  resolved "https://registry.yarnpkg.com/@react-pdf/unicode-properties/-/unicode-properties-2.4.2.tgz#19f96cde0f391522db1afa83e004ca9ec4457025"
-  integrity sha512-ToQIbAl/PJkQOyejZucR/zTAj7ODBa9sTdv94YXUGw1VAnfyLQNQxVhZbp45ikEQWexsEEYTy9F+p/U5xMKbyA==
-  dependencies:
-    unicode-trie "^0.3.0"
-
-"@react-pdf/yoga@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@react-pdf/yoga/-/yoga-2.0.3.tgz#e0024295d8fbbdf686387b3f782e3852f9441096"
-  integrity sha512-EUFCKnk3fVFX64Q5yNtJ3LwsF1YvxMcf/xPBPg54ODOkS9SNuTmAcf4gMnTCpZrINby/D3zxE61YK2GJRDkHSA==
-  dependencies:
-    "@types/yoga-layout" "^1.9.3"
-
 "@redocly/react-dropdown-aria@^2.0.11":
   version "2.0.11"
   resolved "https://registry.yarnpkg.com/@redocly/react-dropdown-aria/-/react-dropdown-aria-2.0.11.tgz#532b864b329237e646abe45d0f8edc923e77370a"
@@ -7733,11 +7584,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/yoga-layout@^1.9.3":
-  version "1.9.4"
-  resolved "https://registry.yarnpkg.com/@types/yoga-layout/-/yoga-layout-1.9.4.tgz#fad54fef623464dacd9e765d854f0e76ff1184f7"
-  integrity sha512-RRHc1+8Hc5mf/2lZKnom6kCnqcNS07s8keahniWTOva0KELF6RgDJmaEcvGEKUUJgN4UgessmEsWuidaOycIOw==
-
 "@types/yup@0.29.6":
   version "0.29.6"
   resolved "https://registry.yarnpkg.com/@types/yup/-/yup-0.29.6.tgz#0920303c0298ac53945e9feb0b4dcad79cc755b2"
@@ -8205,11 +8051,6 @@ abort-controller@3.0.0, abort-controller@^3.0.0:
   integrity sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==
   dependencies:
     event-target-shim "^5.0.0"
-
-abs-svg-path@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/abs-svg-path/-/abs-svg-path-0.1.1.tgz#df601c8e8d2ba10d4a76d625e236a9a39c2723bf"
-  integrity sha1-32Acjo0roQ1KdtYl4japo5wnI78=
 
 accepts@^1.3.5, accepts@~1.3.4, accepts@~1.3.5, accepts@~1.3.7:
   version "1.3.7"
@@ -10089,22 +9930,10 @@ blessed@^0.1.81:
   resolved "https://registry.yarnpkg.com/blessed/-/blessed-0.1.81.tgz#f962d687ec2c369570ae71af843256e6d0ca1129"
   integrity sha1-+WLWh+wsNpVwrnGvhDJW5tDKESk=
 
-blob-stream@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/blob-stream/-/blob-stream-0.1.3.tgz#98d668af6996e0f32ef666d06e215ccc7d77686c"
-  integrity sha1-mNZor2mW4PMu9mbQbiFczH13aGw=
-  dependencies:
-    blob "0.0.4"
-
 blob-util@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/blob-util/-/blob-util-2.0.2.tgz#3b4e3c281111bb7f11128518006cdc60b403a1eb"
   integrity sha512-T7JQa+zsXXEa6/8ZhHcQEW1UFfVM49Ts65uBkFL6fz2QmrElqmbajIDJvuA0tEhRe5eIjpV9ZF+0RfZR9voJFQ==
-
-blob@0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/blob/-/blob-0.0.4.tgz#bcf13052ca54463f30f9fc7e95b9a47630a94921"
-  integrity sha1-vPEwUspURj8w+fx+lbmkdjCpSSE=
 
 bluebird@3.7.1:
   version "3.7.1"
@@ -11427,14 +11256,6 @@ color-string@^1.5.2, color-string@^1.5.4:
   version "1.5.5"
   resolved "https://registry.yarnpkg.com/color-string/-/color-string-1.5.5.tgz#65474a8f0e7439625f3d27a6a19d89fc45223014"
   integrity sha512-jgIoum0OfQfq9Whcfc2z/VhCNcmQjWbey6qBX0vqt7YICflUmBCh9E9CiQD5GSJ+Uehixm3NUwHVhqUAWRivZg==
-  dependencies:
-    color-name "^1.0.0"
-    simple-swizzle "^0.2.2"
-
-color-string@^1.5.3:
-  version "1.7.4"
-  resolved "https://registry.yarnpkg.com/color-string/-/color-string-1.7.4.tgz#79a7bf242610a8aa1b5e2681f3bf6bcfa666245f"
-  integrity sha512-nVdUvPVgZMpRQad5dcsCMOSB5BXLljklTiaxS6ehhKxDsAI5sD7k5VmFuBt1y3Rlym8uulc/ANUN/bMWtBu6Sg==
   dependencies:
     color-name "^1.0.0"
     simple-swizzle "^0.2.2"
@@ -13202,13 +13023,6 @@ dezalgo@^1.0.0:
   dependencies:
     asap "^2.0.0"
     wrappy "1"
-
-dfa@1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/dfa/-/dfa-1.1.0.tgz#d30218bd10d030fa421df3ebbc82285463a31781"
-  integrity sha1-0wIYvRDQMPpCHfPrvIIoVGOjF4E=
-  dependencies:
-    babel-runtime "^6.11.6"
 
 dfa@^1.2.0:
   version "1.2.0"
@@ -16435,18 +16249,6 @@ hsl-regex@^1.0.0:
   resolved "https://registry.yarnpkg.com/hsl-regex/-/hsl-regex-1.0.0.tgz#d49330c789ed819e276a4c0d272dffa30b18fe6e"
   integrity sha1-1JMwx4ntgZ4nakwNJy3/owsY/m4=
 
-hsl-to-hex@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/hsl-to-hex/-/hsl-to-hex-1.0.0.tgz#c58c826dc6d2f1e0a5ff1da5a7ecbf03faac1352"
-  integrity sha1-xYyCbcbS8eCl/x2lp+y/A/qsE1I=
-  dependencies:
-    hsl-to-rgb-for-reals "^1.1.0"
-
-hsl-to-rgb-for-reals@^1.1.0:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/hsl-to-rgb-for-reals/-/hsl-to-rgb-for-reals-1.1.1.tgz#e1eb23f6b78016e3722431df68197e6dcdc016d9"
-  integrity sha512-LgOWAkrN0rFaQpfdWBQlv/VhkOxb5AsBjk6NQVx4yEzWS923T07X0M1Y0VNko2H52HeSpZrZNNMJ0aFqsdVzQg==
-
 hsla-regex@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/hsla-regex/-/hsla-regex-1.0.0.tgz#c1ce7a3168c8c6614033a4b5f7877f3b225f9c38"
@@ -16775,11 +16577,6 @@ humanize-ms@^1.2.1:
   integrity sha1-xG4xWaKT9riW2ikxbYtv6Lt5u+0=
   dependencies:
     ms "^2.0.0"
-
-hyphen@^1.6.4:
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/hyphen/-/hyphen-1.6.4.tgz#9859678fe1af2793b49e7d466e85f85b5698917e"
-  integrity sha512-nWwvXceFMAFIjkiRzqZMZSOa1LVngieSolnYIVKWSwmDwMSmdutjzqImmdbxe2eUCfX693fgrCgtPjbllqx1lA==
 
 hyphenate-style-name@^1.0.2:
   version "1.0.4"
@@ -19918,11 +19715,6 @@ mdurl@^1.0.0:
   resolved "https://registry.yarnpkg.com/mdurl/-/mdurl-1.0.1.tgz#fe85b2ec75a59037f2adfec100fd6c601761152e"
   integrity sha1-/oWy7HWlkDfyrf7BAP1sYBdhFS4=
 
-media-engine@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/media-engine/-/media-engine-1.0.3.tgz#be3188f6cd243ea2a40804a35de5a5b032f58dad"
-  integrity sha1-vjGI9s0kPqKkCASjXeWlsDL1ja0=
-
 media-typer@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
@@ -21037,13 +20829,6 @@ normalize-range@^0.1.2:
   resolved "https://registry.yarnpkg.com/normalize-range/-/normalize-range-0.1.2.tgz#2d10c06bdfd312ea9777695a4d28439456b75942"
   integrity sha1-LRDAa9/TEuqXd2laTShDlFa3WUI=
 
-normalize-svg-path@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/normalize-svg-path/-/normalize-svg-path-1.1.0.tgz#0e614eca23c39f0cffe821d6be6cd17e569a766c"
-  integrity sha512-r9KHKG2UUeB5LoTouwDzBy2VxXlHsiM6fyLQvnJa0S5hrhzqElH/CH7TUGhT1fVvIYBIKf3OpY4YJ4CK+iaqHg==
-  dependencies:
-    svg-arc-to-cubic-bezier "^3.0.0"
-
 normalize-url@1.9.1, normalize-url@4.5.1, normalize-url@^3.0.0, normalize-url@^4.1.0:
   version "4.5.1"
   resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-4.5.1.tgz#0dd90cf1288ee1d1313b87081c9a5932ee48518a"
@@ -22011,11 +21796,6 @@ parse-json@^5.0.0:
     error-ex "^1.3.1"
     json-parse-even-better-errors "^2.3.0"
     lines-and-columns "^1.1.6"
-
-parse-svg-path@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/parse-svg-path/-/parse-svg-path-0.1.2.tgz#7a7ec0d1eb06fa5325c7d3e009b859a09b5d49eb"
-  integrity sha1-en7A0esG+lMlx9PgCbhZoJtdSes=
 
 parse5-htmlparser2-tree-adapter@^6.0.0, parse5-htmlparser2-tree-adapter@^6.0.1:
   version "6.0.1"
@@ -23465,13 +23245,6 @@ queue-microtask@^1.2.2:
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.2.tgz#abf64491e6ecf0f38a6502403d4cda04f372dfd3"
   integrity sha512-dB15eXv3p2jDlbOiNLyMabYg1/sXvppd8DP2J3EOCQ0AkuSXCW2tP7mnVouVLJKgUMY6yP0kcQDVpLCN13h4Xg==
 
-queue@^6.0.1:
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/queue/-/queue-6.0.2.tgz#b91525283e2315c7553d2efa18d83e76432fed65"
-  integrity sha512-iHZWu+q3IdFZFX36ro/lKBkSvfkztY5Y7HMiPlOUjhupPcG2JMfst2KKEpu5XndviX/3UhFbRngUPNKtgvtZiA==
-  dependencies:
-    inherits "~2.0.3"
-
 quicktype@15.0.258:
   version "15.0.258"
   resolved "https://registry.yarnpkg.com/quicktype/-/quicktype-15.0.258.tgz#5afebb7e3d26c2f3c43332d3a652fdd8141c6743"
@@ -23527,11 +23300,6 @@ ramda@^0.21.0:
   version "0.21.0"
   resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.21.0.tgz#a001abedb3ff61077d4ff1d577d44de77e8d0a35"
   integrity sha1-oAGr7bP/YQd9T/HVd9RN536NCjU=
-
-ramda@^0.26.1:
-  version "0.26.1"
-  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.26.1.tgz#8d41351eb8111c55353617fc3bbffad8e4d35d06"
-  integrity sha512-hLWjpy7EnsDBb0p+Z3B7rPi3GDeRG5ZtiI33kJhTt+ORCd38AbAIjB/9zRIUoeTbE/AVX5ZkU7m6bznsvrf8eQ==
 
 ramda@~0.27.1:
   version "0.27.1"
@@ -23955,16 +23723,6 @@ react-popper@^1.3.4:
     prop-types "^15.6.1"
     typed-styles "^0.0.7"
     warning "^4.0.2"
-
-react-reconciler@^0.23.0:
-  version "0.23.0"
-  resolved "https://registry.yarnpkg.com/react-reconciler/-/react-reconciler-0.23.0.tgz#5f0bfc35dda030b0220c07de11f93131c5d6db63"
-  integrity sha512-vV0KlLimP9a/NuRcM6GRVakkmT6MKSzhfo8K72fjHMnlXMOhz9GlPe+/tCp5CWBkg+lsMUt/CR1nypJBTPfwuw==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    prop-types "^15.6.2"
-    scheduler "^0.17.0"
 
 react-refresh@0.8.3, react-refresh@^0.8.3:
   version "0.8.3"
@@ -25375,22 +25133,6 @@ saxes@^5.0.1:
   integrity sha512-5LBh1Tls8c9xgGjw3QrMwETmTMVk0oFgvrFSvWx62llR2hcEInrKNZ2GZCCuuy2lvWrdl5jhbpeqc5hRYKFOcw==
   dependencies:
     xmlchars "^2.2.0"
-
-scheduler@^0.15.0:
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.15.0.tgz#6bfcf80ff850b280fed4aeecc6513bc0b4f17f8e"
-  integrity sha512-xAefmSfN6jqAa7Kuq7LIJY0bwAPG3xlCj0HMEBQk1lxYiDKZscY2xJ5U/61ZTrYbmNQbXa+gc7czPkVo11tnCg==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-
-scheduler@^0.17.0:
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.17.0.tgz#7c9c673e4ec781fac853927916d1c426b6f3ddfe"
-  integrity sha512-7rro8Io3tnCPuY4la/NuI5F2yfESpnfZyT6TtkXnSWVkcu0BCDJ+8gk5ozUaFaxpIyNuWAPXrH0yFcSi28fnDA==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
 
 scheduler@^0.18.0:
   version "0.18.0"
@@ -27039,11 +26781,6 @@ supports-hyperlinks@^2.0.0:
   dependencies:
     has-flag "^4.0.0"
     supports-color "^7.0.0"
-
-svg-arc-to-cubic-bezier@^3.0.0, svg-arc-to-cubic-bezier@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/svg-arc-to-cubic-bezier/-/svg-arc-to-cubic-bezier-3.2.0.tgz#390c450035ae1c4a0104d90650304c3bc814abe6"
-  integrity sha512-djbJ/vZKZO+gPoSDThGNpKDO+o+bAeA4XQKovvkNCqnIS2t+S4qnLAGQhyyrulhCFRl1WWzAp0wUDV8PpTVU3g==
 
 svg-parser@^2.0.2:
   version "2.0.4"
