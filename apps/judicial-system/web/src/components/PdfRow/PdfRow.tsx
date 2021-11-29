@@ -20,12 +20,6 @@ const PdfRow: React.FC<Props> = ({ children, caseId, title, pdfType }) => {
   return (
     <Box
       className={styles.pdfRow}
-      width="full"
-      flexDirection="row"
-      display="flex"
-      justifyContent="spaceBetween"
-      alignItems="center"
-      cursor="pointer"
       onClick={() =>
         window.open(`${api.apiUrl}/api/case/${caseId}/${pdfType}`, '_blank')
       }

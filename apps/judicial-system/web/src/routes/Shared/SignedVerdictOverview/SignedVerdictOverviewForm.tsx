@@ -448,7 +448,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
       {!workingCase.isMasked && (
         <Box marginBottom={10}>
           <Text as="h3" variant="h3" marginBottom={5}>
-            Skjöl málsins
+            {formatMessage(m.caseDocuments)}
           </Text>
           <Box marginBottom={2}>
             <Stack space={2} dividers>
@@ -481,7 +481,10 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   title={formatMessage(core.pdfButtonRuling)}
                   pdfType="ruling?shortVersion=false"
                 >
-                  <SignedRuling judge="Telma Guðbjörg" />
+                  <SignedRuling
+                    judge={workingCase.judge?.name}
+                    rulingDate={workingCase.rulingDate}
+                  />
                 </PdfRow>
               )}
             </Stack>
