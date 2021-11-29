@@ -74,4 +74,9 @@ export const core = defineMessages({
     defaultMessage: 'Varnaraðili',
     description: 'Notað fyrir orðið varnaraðili í öllum flæðum.',
   },
+  requestCaseType: {
+    id: 'judicial.system.core:request_case_type',
+    defaultMessage: 'Krafa um {caseType}',
+    description: 'Notað sem titill fyrir Krafa um í öllum flæðum',
+  },
 })

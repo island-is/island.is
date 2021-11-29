@@ -8,6 +8,7 @@ import {
   SubmittedApplicationData,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
+  utils,
 } from '@island.is/application/templates/accident-notification'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
@@ -202,7 +203,7 @@ const work = (
 }
 
 const shipLocation = (answers: AccidentNotificationAnswers): number => {
-  const location = answers.fishermanLocation
+  const location = answers.shipLocation
     .answer as FishermanWorkplaceAccidentShipLocationEnum
   switch (location) {
     case FishermanWorkplaceAccidentShipLocationEnum.SAILINGORFISHING:

@@ -16,10 +16,15 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BackendAPI } from '../../../services'
 
 import { MunicipalityModel } from './models'
-import { MunicipalityQueryInput, UpdateMunicipalityInput } from './dto'
+import {
+  MunicipalityActivityInput,
+  CreateMunicipalityInput,
+  MunicipalityQueryInput,
+  UpdateMunicipalityInput,
+} from './dto'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { Municipality, Staff } from '@island.is/financial-aid/shared/lib'
 import { StaffModel } from '../staff/models'
-import { Municipality } from '@island.is/financial-aid/shared/lib'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => MunicipalityModel)
@@ -41,6 +46,30 @@ export class MunicipalityResolver {
   }
 
   @Mutation(() => MunicipalityModel, { nullable: false })
+  municipalityActivity(
+    @Args('input', { type: () => MunicipalityActivityInput })
+    input: MunicipalityActivityInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Municipality> {
+    const { id, ...municipalityActivity } = input
+
+    this.logger.debug('Updating municipality activity')
+
+    return backendApi.updateMunicipalityActivity(id, municipalityActivity)
+  }
+
+  @Mutation(() => MunicipalityModel, { nullable: false })
+  createMunicipality(
+    @Args('input', { type: () => CreateMunicipalityInput })
+    input: CreateMunicipalityInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<MunicipalityModel> {
+    const { admin, ...createMunicipality } = input
+    this.logger.debug('Creating municipality')
+    return backendApi.createMunicipality(createMunicipality, admin)
+  }
+
+  @Mutation(() => MunicipalityModel, { nullable: false })
   updateMunicipality(
     @Args('input', { type: () => UpdateMunicipalityInput })
     input: UpdateMunicipalityInput,
@@ -53,7 +82,6 @@ export class MunicipalityResolver {
 
   @Query(() => [MunicipalityModel], { nullable: false })
   municipalities(
-    input: MunicipalityQueryInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Municipality[]> {
     this.logger.debug(`Getting municipalities`)
@@ -61,8 +89,8 @@ export class MunicipalityResolver {
     return backendApi.getMunicipalities()
   }
 
-  @ResolveField('users', () => Number)
-  users(
+  @ResolveField('numberOfUsers', () => Number)
+  numberOfUsers(
     @Parent() municipality: MunicipalityModel,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<number> {
@@ -79,7 +107,7 @@ export class MunicipalityResolver {
   adminUsers(
     @Parent() municipality: MunicipalityModel,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<StaffModel[]> {
+  ): Promise<Staff[]> {
     this.logger.debug(`Getting admin users for ${municipality.municipalityId}`)
 
     return backendApi.getAdminUsers(municipality.municipalityId)

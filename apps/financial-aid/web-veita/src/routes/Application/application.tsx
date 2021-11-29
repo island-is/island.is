@@ -28,6 +28,7 @@ const UserApplication = () => {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
+
   const [application, setApplication] = useState<Application>()
 
   useEffect(() => {

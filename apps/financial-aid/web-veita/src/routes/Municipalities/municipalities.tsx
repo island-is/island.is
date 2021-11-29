@@ -1,20 +1,31 @@
 import React, { useEffect, useState } from 'react'
-import { useLazyQuery } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import {
   ActivationButtonTableItem,
   ApplicationOverviewSkeleton,
   LoadingContainer,
+  NewMunicipalityModal,
   TableBody,
   TableHeaders,
   TextTableItem,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { Text, Box, Button } from '@island.is/island-ui/core'
+import {
+  Text,
+  Box,
+  Button,
+  ToastContainer,
+  toast,
+} from '@island.is/island-ui/core'
 import * as tableStyles from '../../sharedStyles/Table.css'
 import * as headerStyles from '../../sharedStyles/Header.css'
 import cn from 'classnames'
 
 import { Municipality, Routes } from '@island.is/financial-aid/shared/lib'
-import { MunicipalitiesQuery } from '@island.is/financial-aid-web/veita/graphql'
+import {
+  MunicipalityActivityMutation,
+  MunicipalitiesQuery,
+  UpdateMunicipalityMutation,
+} from '@island.is/financial-aid-web/veita/graphql'
 import { useRouter } from 'next/router'
 
 export const Municipalities = () => {
@@ -25,11 +36,17 @@ export const Municipalities = () => {
     errorPolicy: 'all',
   })
 
+  const [isModalVisible, setIsModalVisible] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
     getMunicipalities()
   }, [])
+
+  const refreshList = () => {
+    setIsModalVisible(false)
+    getMunicipalities()
+  }
 
   const [municipalities, setMunicipalities] = useState<Municipality[]>()
 
@@ -38,6 +55,27 @@ export const Municipalities = () => {
       setMunicipalities(data.municipalities)
     }
   }, [data])
+
+  const [municipalityActivity] = useMutation(MunicipalityActivityMutation)
+
+  const changeMunicipalityActivity = async (id: string, active: boolean) => {
+    await municipalityActivity({
+      variables: {
+        input: {
+          id,
+          active,
+        },
+      },
+    })
+      .then(() => {
+        getMunicipalities()
+      })
+      .catch(() => {
+        toast.error(
+          'Ekki tókst að uppfæra sveitarfélag, vinsamlega reynið aftur síðar',
+        )
+      })
+  }
 
   return (
     <LoadingContainer
@@ -52,7 +90,12 @@ export const Municipalities = () => {
         <Text as="h1" variant="h1">
           Sveitarfélög
         </Text>
-        <Button size="small" icon="add" variant="ghost">
+        <Button
+          size="small"
+          icon="add"
+          variant="ghost"
+          onClick={() => setIsModalVisible(true)}
+        >
           Nýtt sveitarfélag
         </Button>
       </Box>
@@ -88,13 +131,13 @@ export const Municipalities = () => {
                       ),
                       TextTableItem(
                         'default',
-                        item.users,
+                        item.numberOfUsers,
                         item.active ? 'dark400' : 'dark300',
                       ),
                       ActivationButtonTableItem(
                         item.active ? 'Óvirkja' : 'Virkja',
                         false,
-                        () => console.log('🔜'),
+                        () => changeMunicipalityActivity(item.id, !item.active),
                         item.active,
                       ),
                     ]}
@@ -121,6 +164,18 @@ export const Municipalities = () => {
           þessu upplýsingum?
         </div>
       )}
+      <ToastContainer />
+
+      <NewMunicipalityModal
+        isVisible={isModalVisible}
+        setIsVisible={(visible) => {
+          setIsModalVisible(visible)
+        }}
+        activeMunicipalitiesCodes={municipalities?.map((el) =>
+          parseInt(el.municipalityId),
+        )}
+        onMunicipalityCreated={refreshList}
+      />
     </LoadingContainer>
   )
 }

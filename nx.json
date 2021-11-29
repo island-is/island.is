@@ -79,6 +79,9 @@
     "api-domains-application": {
       "tags": []
     },
+    "api-domains-assets": {
+      "tags": []
+    },
     "api-domains-auth": {
       "tags": []
     },
@@ -288,6 +291,9 @@
     "cache": {
       "tags": []
     },
+    "clients-assets": {
+      "tags": []
+    },
     "clients-auth-public-api": {
       "tags": [],
       "implicitDependencies": ["services-auth-public-api"]
@@ -401,6 +407,9 @@
       "tags": []
     },
     "financial-aid-web-veita": {
+      "tags": []
+    },
+    "github-actions-cache": {
       "tags": []
     },
     "gjafakort-api": {
@@ -520,6 +529,9 @@
       "tags": []
     },
     "nest-audit": {
+      "tags": []
+    },
+    "nest-config": {
       "tags": []
     },
     "nest-pagination": {

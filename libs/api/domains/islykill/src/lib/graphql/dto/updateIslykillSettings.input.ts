@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsEmail, IsOptional } from 'class-validator'
+import { IsEmail, IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class UpdateIslykillSettingsInput {
@@ -7,7 +7,11 @@ export class UpdateIslykillSettingsInput {
   @IsEmail()
   email!: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
+  @IsString()
+  mobile!: string
+
+  @Field(() => Boolean, { nullable: true })
   @IsOptional()
-  mobile?: string
+  canNudge?: boolean
 }

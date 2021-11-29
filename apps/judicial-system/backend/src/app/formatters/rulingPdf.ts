@@ -14,9 +14,9 @@ import {
   formatCustodyRestrictions,
   formatAlternativeTravelBanRestrictions,
   formatAccusedByGender,
-  caseTypes,
   lowercase,
   formatAppeal,
+  formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -79,7 +79,9 @@ function constructRestrictionRulingPdf(
     .text(formatMessage(ruling.proceedingsHeading), { align: 'center' })
     .lineGap(30)
     .text(
-      `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
+      formatMessage(ruling.caseNumber, {
+        caseNumber: existingCase.courtCaseNumber,
+      }),
       { align: 'center' },
     )
     .fontSize(baseFontSize)
@@ -136,7 +138,7 @@ function constructRestrictionRulingPdf(
     .font('Times-Roman')
     .text(
       formatMessage(ruling.courtDocuments.request, {
-        caseTypes: caseTypes[existingCase.type],
+        caseTypes: formatRequestCaseType(existingCase.type),
       }),
       {
         align: 'justify',
@@ -434,7 +436,9 @@ function constructInvestigationRulingPdf(
     .text(formatMessage(ruling.proceedingsHeading), { align: 'center' })
     .lineGap(30)
     .text(
-      `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
+      formatMessage(ruling.caseNumber, {
+        caseNumber: existingCase.courtCaseNumber,
+      }),
       { align: 'center' },
     )
     .fontSize(baseFontSize)
@@ -491,7 +495,7 @@ function constructInvestigationRulingPdf(
     .font('Times-Roman')
     .text(
       formatMessage(ruling.courtDocuments.request, {
-        caseTypes: caseTypes[existingCase.type],
+        caseTypes: formatRequestCaseType(existingCase.type),
       }),
       {
         align: 'justify',

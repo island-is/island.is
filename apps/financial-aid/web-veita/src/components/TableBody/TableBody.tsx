@@ -4,6 +4,12 @@ import { Box, Text, Button } from '@island.is/island-ui/core'
 import * as tableStyles from '../../sharedStyles/Table.css'
 import cn from 'classnames'
 import { Colors } from '@island.is/island-ui/theme'
+import {
+  GeneratedProfile,
+  GenerateName,
+} from '@island.is/financial-aid-web/veita/src/components'
+import { ApplicationState, getState } from '@island.is/financial-aid/shared/lib'
+import { getTagByState } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
 type TextVariants =
   | 'default'
@@ -37,7 +43,7 @@ const ActivationButtonTableItem = (
   destructiveColorScheme: boolean,
 ) => {
   return (
-    <Box>
+    <Box className={tableStyles.paddingForButton}>
       <Button
         onClick={(event) => {
           event.stopPropagation()
@@ -49,6 +55,25 @@ const ActivationButtonTableItem = (
       >
         {title}
       </Button>
+    </Box>
+  )
+}
+
+const PseudoName = (nationalId: string) => {
+  return (
+    <Box display="flex" alignItems="center">
+      <GeneratedProfile size={32} nationalId={nationalId} />
+      <Box marginLeft={2}>
+        <Text variant="h5">{GenerateName(nationalId)}</Text>
+      </Box>
+    </Box>
+  )
+}
+
+const State = (state: ApplicationState) => {
+  return (
+    <Box>
+      <div className={`tags ${getTagByState(state)}`}>{getState[state]}</div>
     </Box>
   )
 }
@@ -102,4 +127,10 @@ const TableBody = ({
   )
 }
 
-export { TableBody, TextTableItem, ActivationButtonTableItem }
+export {
+  TableBody,
+  TextTableItem,
+  ActivationButtonTableItem,
+  PseudoName,
+  State,
+}

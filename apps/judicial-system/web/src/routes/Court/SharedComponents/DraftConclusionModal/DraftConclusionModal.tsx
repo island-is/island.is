@@ -4,7 +4,7 @@ import { AnimatePresence } from 'framer-motion'
 import {
   ConclusionDraft,
   Modal,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 
 interface Props {
   workingCase: Case

@@ -42,6 +42,7 @@ export const Users = () => {
       errorPolicy: 'all',
     },
   )
+
   const [updateStaff, { loading: staffLoading }] = useMutation(
     UpdateStaffMutation,
   )
@@ -126,7 +127,7 @@ export const Users = () => {
                       <TableHeaders
                         header={{ title: item }}
                         index={index}
-                        key={'tableHeaders-' + index}
+                        key={`tableHeaders-${index}`}
                       />
                     ),
                   )}
@@ -162,7 +163,7 @@ export const Users = () => {
                     ]}
                     index={index}
                     identifier={item.id}
-                    key={'tableBody-' + item.id}
+                    key={`tableBody-${item.id}`}
                     onClick={() => router.push(Routes.userProfile(item.id))}
                   />
                 ))}

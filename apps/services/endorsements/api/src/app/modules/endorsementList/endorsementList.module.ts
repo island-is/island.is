@@ -9,20 +9,24 @@ import {
   NationalRegistryConfig,
 } from '@island.is/clients/national-registry-v1'
 import { environment } from '../../../environments'
+import { EmailModule } from '@island.is/email-service'
 
 export interface Config {
   nationalRegistry: NationalRegistryConfig
 }
 
 @Module({
-  imports: [SequelizeModule.forFeature([EndorsementList, Endorsement])],
+  imports: [
+    SequelizeModule.forFeature([EndorsementList, Endorsement]),
+    EmailModule.register(environment.emailOptions),
+  ],
   controllers: [EndorsementListController],
   providers: [
     EndorsementListService,
     {
       provide: NationalRegistryApi,
       useFactory: async () =>
-        await NationalRegistryApi.instanciateClass(
+        await NationalRegistryApi.instantiateClass(
           environment.metadataProvider
             .nationalRegistry as NationalRegistryConfig,
         ),
