@@ -4,11 +4,8 @@ import {
   EndorsementSystemSignedListsResponse,
   EndorsementSystemSignedListsService,
 } from './providers/endorsementSystem/endorsementSystemSignedLists.service'
-import {
-  NationalRegistryUserResponse,
-  NationalRegistryUserService,
-} from './providers/nationalRegistry/nationalRegistry.service'
-
+import { NationalRegistryUserService } from './providers/nationalRegistry/nationalRegistry.service'
+import { NationalRegistryUserResponse } from './types'
 import {
   EndorsementMetaField,
   MetadataInput,

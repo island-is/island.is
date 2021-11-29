@@ -2,19 +2,7 @@ import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import { Inject, Injectable } from '@nestjs/common'
 import { environment } from '../../../../../environments'
-import { MetadataProvider } from '../../types'
-
-export interface NationalRegistryUserInput {
-  nationalId: string
-}
-export interface NationalRegistryUserResponse {
-  fullName: string
-  address: {
-    streetAddress: string
-    city: string
-    postalCode: string
-  }
-}
+import { MetadataProvider, NationalRegistryUserInput } from '../../types'
 
 @Injectable()
 export class NationalRegistryUserService implements MetadataProvider {

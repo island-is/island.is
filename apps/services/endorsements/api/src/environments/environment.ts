@@ -46,8 +46,6 @@ const devConfig = {
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@island.is',
-    clientId: '', // for updateMetadata script
-    clientSecret: '', // for updateMetadata script
   },
   apiMock: process.env.API_MOCKS === 'true',
   audit: {
@@ -105,8 +103,6 @@ const prodConfig = {
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '@island.is',
-    clientId: '', // for updateMetadata script
-    clientSecret: '', // for updateMetadata script
   },
   apiMock: false,
   audit: {
