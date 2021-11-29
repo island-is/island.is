@@ -1,6 +1,7 @@
 import React, { forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
 import { Text } from '@island.is/island-ui/core'
+import { isLinkExternal } from '@island.is/shared/utils'
 
 import * as styles from './Tag.css'
 
@@ -18,8 +19,6 @@ export interface TagProps {
   attention?: boolean // Renders a red dot driving attention to the tag.
   children: string | ReactNode
 }
-
-const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
 
 export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
   (

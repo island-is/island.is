@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
 import NextLink from 'next/link'
+import { isLinkExternal } from '@island.is/shared/utils'
 import {
   IconDeprecated as Icon,
   Typography,
@@ -13,14 +14,6 @@ interface LinkProps {
   slug?: string
   variant?: TypographyProps['variant']
   as?: TypographyProps['as']
-}
-
-const islandisRe = new RegExp(/https{0,1}:\/\/.*\.island\.is/) // Precompile regex for perfomance
-const isLinkExternal = (href: string): boolean => {
-  const externalCandidate =
-    typeof href === 'string' && href.indexOf('://') !== -1
-
-  return externalCandidate && !Boolean(href.match(islandisRe))
 }
 
 export const Link: FC<LinkProps> = ({

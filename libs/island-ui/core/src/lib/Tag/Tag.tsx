@@ -1,6 +1,7 @@
 import React, { FC, forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
 import { Text } from '../Text/Text'
+import { isLinkExternal } from '@island.is/shared/utils'
 
 import * as styles from './Tag.css'
 
@@ -28,8 +29,6 @@ export interface TagProps {
   truncate?: boolean
   CustomLink?: FC
 }
-
-const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
 
 export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
   (

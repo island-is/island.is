@@ -4,3 +4,4 @@
  */
 export { getStaticEnv } from './lib/getStaticEnv'
 export { isRunningOnEnvironment, getActiveEnvironment } from './lib/environment'
+export { isLinkExternal, isLinkInternal } from './lib/linkExternal'

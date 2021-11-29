@@ -2,14 +2,9 @@ import * as React from 'react'
 import NextLink, { LinkProps as NextLinkProps } from 'next/link'
 import cn from 'classnames'
 import * as styles from './Link.css'
+import { isLinkInternal } from '@island.is/shared/utils'
 
 const islandisRe = new RegExp(/https{0,1}:\/\/.*island\.is/) // Precompile regex for perfomance
-const isLinkInternal = (href: string) => {
-  const internalCandidate =
-    typeof href === 'string' && href.indexOf('://') === -1
-
-  return internalCandidate || Boolean(href.match(islandisRe))
-}
 
 export type LinkColor = 'white' | 'blue400' | 'blue600'
 export type UnderlineVisibility = 'always' | 'hover'
