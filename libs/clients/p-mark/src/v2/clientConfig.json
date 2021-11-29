@@ -1,0 +1,700 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "RLS driver licence Rest API",
+    "description": "RESTFul services for driver licences. Programmed in ASP.NET Core 3 API ",
+    "contact": {
+      "name": "TMD",
+      "email": "tmd@tmd.is"
+    },
+    "version": "2.0"
+  },
+  "paths": {
+    "/api/okuskirteini/svipting/{kennitala}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get for current licence revoke",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "description": "Person id number",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SviptingDto"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/SviptingDto"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/SviptingDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SviptingDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SviptingDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/okuskirteini/{kennitala}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get for person driver licence",
+        "operationId": "GetCurrentLicenseV2",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "description": "Person id number",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Okuskirteini"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Okuskirteini"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Okuskirteini"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Okuskirteini"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Okuskirteini"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/okuskirteini/{kennitala}/canapplyfor/{category}/full": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Check if person can apply for full drivers license for a specific category",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "description": "Person id number",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "in": "path",
+            "description": "Category to check for (B, C, and so on)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeturSottUmFullnadarSkirteiniDto"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeturSottUmFullnadarSkirteiniDto"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeturSottUmFullnadarSkirteiniDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeturSottUmFullnadarSkirteiniDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeturSottUmFullnadarSkirteiniDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/okuskirteini/applications/new/{category}": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Apply for drivers license for a category",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "path",
+            "description": "Category in license",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Model of application",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostNewFinalLicense"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AtsSkirteini": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Comment id",
+            "format": "int32"
+          },
+          "nr": {
+            "type": "string",
+            "description": "Comment code.",
+            "nullable": true
+          },
+          "athugasemd": {
+            "type": "string",
+            "description": "Comment on code",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Entity for comments on licence"
+      },
+      "GeturSottUmFullnadarSkirteiniDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "boolean",
+            "description": "Can person apply for full license"
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "Error code if can not apply",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for results for person applying for\r\nfull license"
+      },
+      "Myndir": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Picture id",
+            "format": "int32"
+          },
+          "kennitala": {
+            "type": "string",
+            "description": "Person id number",
+            "nullable": true
+          },
+          "skrad": {
+            "type": "string",
+            "description": "Date registered",
+            "format": "date-time"
+          },
+          "mynd": {
+            "type": "string",
+            "description": "Image",
+            "format": "byte",
+            "nullable": true
+          },
+          "gaedi": {
+            "type": "integer",
+            "description": "Quality",
+            "format": "int32"
+          },
+          "forrit": {
+            "type": "integer",
+            "description": "Belongs to what program",
+            "format": "int32"
+          },
+          "tegund": {
+            "type": "integer",
+            "description": "Type of image",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Entity for picture"
+      },
+      "Okuskirteini": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Id",
+            "format": "int32"
+          },
+          "nafn": {
+            "type": "string",
+            "description": "Name",
+            "nullable": true
+          },
+          "kennitala": {
+            "type": "string",
+            "description": "Persond id number",
+            "nullable": true
+          },
+          "faedingarstadur": {
+            "type": "string",
+            "description": "Birthplace",
+            "nullable": true
+          },
+          "faedingarStadurHeiti": {
+            "type": "string",
+            "description": "Birthplace name",
+            "nullable": true
+          },
+          "utgafuDagsetning": {
+            "type": "string",
+            "description": "Date registerd",
+            "format": "date-time",
+            "nullable": true
+          },
+          "gildirTil": {
+            "type": "string",
+            "description": "Expiry date",
+            "format": "date-time"
+          },
+          "nrUtgafustadur": {
+            "type": "integer",
+            "description": "Published where",
+            "format": "int32"
+          },
+          "nafnUtgafustadur": {
+            "type": "string",
+            "description": "Published where name",
+            "nullable": true
+          },
+          "rettindi": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Rettindi"
+            },
+            "description": "Category list",
+            "nullable": true
+          },
+          "athugasemdir": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AtsSkirteini"
+            },
+            "description": "Remark list",
+            "nullable": true
+          },
+          "myndId": {
+            "type": "integer",
+            "description": "Image id",
+            "format": "int32",
+            "nullable": true
+          },
+          "undirskriftId": {
+            "type": "integer",
+            "description": "Signature id",
+            "format": "int32",
+            "nullable": true
+          },
+          "mynd": {
+            "$ref": "#/components/schemas/Myndir"
+          },
+          "undirskrift": {
+            "$ref": "#/components/schemas/Myndir"
+          },
+          "svipting": {
+            "$ref": "#/components/schemas/Svipting"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Licence entity"
+      },
+      "PostNewFinalLicense": {
+        "type": "object",
+        "properties": {
+          "personIdNumber": {
+            "type": "string",
+            "description": "Person id number",
+            "nullable": true
+          },
+          "authorityNumber": {
+            "type": "integer",
+            "description": "Publishing authority",
+            "format": "int32"
+          },
+          "needsToPresentHealthCertificate": {
+            "type": "integer",
+            "description": "Does person need to present health certificate",
+            "format": "int32"
+          },
+          "bringsNewPhoto": {
+            "type": "integer",
+            "description": "Applicant will bring new photo for license",
+            "format": "int32"
+          },
+          "sendLicenseInMail": {
+            "type": "integer",
+            "description": "Applicant has asked to send license in mail",
+            "format": "int32"
+          },
+          "sendToAddress": {
+            "type": "string",
+            "description": "Address to send license to",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Model class to post new final license"
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Rettindi": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Category id",
+            "format": "int32"
+          },
+          "nr": {
+            "type": "string",
+            "description": "Category",
+            "nullable": true
+          },
+          "utgafuDags": {
+            "type": "string",
+            "description": "Date published",
+            "format": "date-time",
+            "nullable": true
+          },
+          "gildirTil": {
+            "type": "string",
+            "description": "Date of expiry",
+            "format": "date-time"
+          },
+          "aths": {
+            "type": "string",
+            "description": "Comments on category",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Entity for licence category"
+      },
+      "Svipting": {
+        "type": "object",
+        "properties": {
+          "dagsFra": {
+            "type": "string",
+            "description": "Date from",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dagsTil": {
+            "type": "string",
+            "description": "Date to",
+            "format": "date-time",
+            "nullable": true
+          },
+          "skirteiniGlatad": {
+            "type": "integer",
+            "description": "Licence lost",
+            "format": "int32",
+            "nullable": true
+          },
+          "tegundSviptingarHeiti": {
+            "type": "string",
+            "description": "Type name",
+            "nullable": true
+          },
+          "tegundSviptingar": {
+            "type": "integer",
+            "description": "Type id",
+            "format": "int32",
+            "nullable": true
+          },
+          "skirteiniUrGildi": {
+            "type": "integer",
+            "description": "Not valid",
+            "format": "int32",
+            "nullable": true
+          },
+          "endurupptakaSkirteinis": {
+            "type": "integer",
+            "description": "Retacke licence",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Revoke entity"
+      },
+      "SviptingDto": {
+        "type": "object",
+        "properties": {
+          "dagsFra": {
+            "type": "string",
+            "description": "Date from on deprivation",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dagsTil": {
+            "type": "string",
+            "description": "Date to on deprivation",
+            "format": "date-time",
+            "nullable": true
+          },
+          "skirteiniGlatad": {
+            "type": "boolean",
+            "description": "Licencs lost",
+            "nullable": true
+          },
+          "tegundSviptingarHeiti": {
+            "type": "string",
+            "description": "Type name of deprivation",
+            "nullable": true
+          },
+          "tegundSviptingar": {
+            "type": "integer",
+            "description": "Type id of deprivation",
+            "format": "int32",
+            "nullable": true
+          },
+          "skirteiniUrGildi": {
+            "type": "boolean",
+            "description": "Is the license invalid",
+            "nullable": true
+          },
+          "endurupptakaSkirteinis": {
+            "type": "boolean",
+            "description": "Does individual have to retake test to get license",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Revoke entity"
+      }
+    }
+  }
+}

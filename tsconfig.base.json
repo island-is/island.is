@@ -103,6 +103,7 @@
       "@island.is/api/domains/national-registry-x-road": [
         "libs/api/domains/national-registry-x-road/src/index.ts"
       ],
+      "@island.is/api/domains/p-mark": ["libs/api/domains/p-mark/src/index.ts"],
       "@island.is/api/domains/party-letter-registry": [
         "libs/api/domains/party-letter-registry/src/index.ts"
       ],
@@ -192,6 +193,9 @@
       "@island.is/application/templates/meta-application": [
         "libs/application/templates/meta-application/src/index.ts"
       ],
+      "@island.is/application/templates/p-mark": [
+        "libs/application/templates/p-mark/src/index.ts"
+      ],
       "@island.is/application/templates/parental-leave": [
         "libs/application/templates/parental-leave/src/index.ts"
       ],
@@ -253,6 +257,7 @@
       "@island.is/clients/national-registry-v2": [
         "libs/clients/national-registry/v2/src/index.ts"
       ],
+      "@island.is/clients/p-mark": ["libs/clients/p-mark/src/index.ts"],
       "@island.is/clients/payment": ["libs/clients/payment/src/index.ts"],
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"

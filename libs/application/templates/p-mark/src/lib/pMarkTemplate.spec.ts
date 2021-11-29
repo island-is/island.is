@@ -1,0 +1,62 @@
+import {
+  Application,
+  ApplicationTemplateHelper,
+  ApplicationTypes,
+  DefaultEvents,
+  ApplicationStatus,
+} from '@island.is/application/core'
+import { States } from './constants'
+import PMarkTemplate from './pMarkTemplate'
+
+const MOCK_APPLICANT_NATIONAL_ID = '1234567890'
+
+function buildApplication(
+  data: {
+    state?: string
+  } = {},
+): Application {
+  const { state = States.DRAFT } = data
+
+  return {
+    id: '12345',
+    assignees: [],
+    applicant: MOCK_APPLICANT_NATIONAL_ID,
+    typeId: ApplicationTypes.DRIVING_LICENSE,
+    created: new Date(),
+    modified: new Date(),
+    attachments: {},
+    answers: {},
+    state,
+    externalData: {},
+    status: ApplicationStatus.IN_PROGRESS,
+  }
+}
+
+describe('Driving License Application Template', () => {
+  describe('state transitions', () => {
+    //   it('should transition from application to payment', () => {
+    //     const helper = new ApplicationTemplateHelper(
+    //       buildApplication(),
+    //       PMarkTemplate,
+    //     )
+    //     const [hasChanged, newState] = helper.changeState({
+    //       type: DefaultEvents.DONE,
+    //     })
+    //     expect(hasChanged).toBe(true)
+    //     expect(newState).toBe(States.PAYMENT)
+    //   })
+    //   it('should transition from payment to done', () => {
+    //     const helper = new ApplicationTemplateHelper(
+    //       buildApplication({
+    //         state: States.PAYMENT,
+    //       }),
+    //       PMarkTemplate,
+    //     )
+    //     const [hasChanged, newState] = helper.changeState({
+    //       type: DefaultEvents.SUBMIT,
+    //     })
+    //     expect(hasChanged).toBe(true)
+    //     expect(newState).toBe(States.DONE)
+    //   })
+  })
+})
