@@ -163,14 +163,16 @@ export interface Case {
   isAppealDeadlineExpired?: boolean
   isAppealGracePeriodExpired?: boolean
   rulingDate?: string
+  initialRulingDate?: string
   registrar?: User
   judge?: User
+  courtRecordSignatory?: User
+  courtRecordSignatureDate?: string
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
   caseFiles?: CaseFile[]
   isMasked?: boolean
-  initialRulingDate?: string
 }
 
 export interface CreateCase {
