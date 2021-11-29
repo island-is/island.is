@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'party-letter-registry-api',
+  displayName: 'personal-representative',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
