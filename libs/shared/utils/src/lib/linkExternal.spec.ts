@@ -77,4 +77,16 @@ describe('isLinkExternal', () => {
     const external = isLinkExternal(url)
     expect(external).toBe(true)
   })
+
+  it('island.is, devland.is or localhost:nnnn should not matter', () => {
+    const iurl = 'https://island.is/syslumenn'
+    const durl = 'https://devland.is/syslumenn'
+    const lurl = 'https://localhost:4200/syslumenn'
+
+    const iexternal = isLinkExternal(iurl)
+    const dexternal = isLinkExternal(durl)
+    const lexternal = isLinkExternal(lurl)
+
+    expect(iexternal || dexternal || lexternal).toBe(false)
+  })
 })
