@@ -195,7 +195,9 @@ export class ClientService extends BaseService {
     scopeName: string,
   ): Promise<number | null> {
     return BaseService.DELETE(
-      `client-allowed-scope/${clientId}/${encodeURIComponent(scopeName)}`,
+      `client-allowed-scope/${encodeURIComponent(
+        clientId,
+      )}/${encodeURIComponent(scopeName)}`,
     )
   }
 
@@ -231,7 +233,9 @@ export class ClientService extends BaseService {
     redirectUri: string,
   ): Promise<number | null> {
     return BaseService.DELETE(
-      `redirect-uri/${clientId}/${encodeURIComponent(redirectUri)}`,
+      `redirect-uri/${encodeURIComponent(clientId)}/${encodeURIComponent(
+        redirectUri,
+      )}`,
     )
   }
 

@@ -40,6 +40,8 @@ export class DrivingLicenseSubmissionService {
     if (!response.paymentUrl) {
       throw new Error('paymentUrl missing in response')
     }
+
+    return response
   }
 
   async submitApplication({
