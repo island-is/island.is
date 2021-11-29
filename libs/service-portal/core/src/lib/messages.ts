@@ -447,6 +447,11 @@ export const m = defineMessages({
     id: 'service.portal:accessDenied',
     defaultMessage: 'Ekki með aðgang',
   },
+  accessDeniedText: {
+    id: 'service.portal:accessDeniedText',
+    defaultMessage:
+      'Þú hefur því miður ekki aðgang af þessu svæði. Það verður að óska eftir aðgangi hjá viðeigandi aðila. Það gæti verið einhver innan UT deildar fyrirtækis, eigandi eða annar aðili sem sér um þessi mál. ',
+  },
   educationStudentAssessment: {
     id: 'service.portal:educationStudentAssessment',
     defaultMessage: 'Samræmd könnunarpróf',

@@ -88,15 +88,9 @@ const NavItem: FC<Props> = (props) => {
       <NavItemContent {...props} />
     </a>
   ) : props.path ? (
-    props.enabled === false ? (
-      <Link to={props.path}>
-        <NavItemContent {...props} />
-      </Link>
-    ) : (
-      <Link to={props.path}>
-        <NavItemContent {...props} />
-      </Link>
-    )
+    <Link to={props.path}>
+      <NavItemContent {...props} />
+    </Link>
   ) : (
     <NavItemContent {...props} />
   )

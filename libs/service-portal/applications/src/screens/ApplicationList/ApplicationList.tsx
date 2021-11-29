@@ -60,7 +60,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
       {error && (
         <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-          <Text variant="h4" as="h3">
+          <Text variant="h4" as="h2">
             {formatMessage(m.error)}
           </Text>
         </Box>

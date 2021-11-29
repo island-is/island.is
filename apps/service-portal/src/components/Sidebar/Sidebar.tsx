@@ -1,22 +1,30 @@
 import React, { FC, useState } from 'react'
-import { Box, Stack, Logo, FocusableBox, Icon } from '@island.is/island-ui/core'
+import {
+  Box,
+  Stack,
+  Logo,
+  FocusableBox,
+  Icon,
+  Text,
+} from '@island.is/island-ui/core'
 import { BetaTag } from '../Logo/BetaTag'
 import * as styles from './Sidebar.css'
 import ModuleNavigation from './ModuleNavigation'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import { ServicePortalPath, m } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
 import cn from 'classnames'
 import { useUpdateUnreadDocuments } from '@island.is/service-portal/core'
-
+import { useLocale } from '@island.is/localization'
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const Sidebar: FC<{}> = () => {
   const navigation = useNavigation()
   const [{ sidebarState }, dispatch] = useStore()
   const [collapsed, setCollapsed] = useState(sidebarState === 'closed')
   const badgeContext = useUpdateUnreadDocuments()
+  const { formatMessage } = useLocale()
 
   return (
     <aside className={cn(styles.sidebar, { [styles.collapsed]: collapsed })}>
@@ -82,6 +90,11 @@ export const Sidebar: FC<{}> = () => {
                     />
                   ),
               )}
+              {/* {rootIndex === 1 && (
+                <Text variant="small" color="blueberry600" marginTop={3}>
+                  {formatMessage(m.incomingServicesFooterMobile)}
+                </Text>
+              )} */}
             </Stack>
           ))}
       </Box>

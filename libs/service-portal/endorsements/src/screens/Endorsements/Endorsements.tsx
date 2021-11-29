@@ -214,7 +214,7 @@ const Endorsements = () => {
       </Stack>
       {endorsements && endorsements.length > 0 && (
         <>
-          <Text variant="h4" as="h3" marginTop={4} marginBottom={2}>
+          <Text variant="h4" as="h2" marginTop={4} marginBottom={2}>
             {formatMessage(m.endorsement.myEndorsements)}
           </Text>
           <Stack space={4}>
