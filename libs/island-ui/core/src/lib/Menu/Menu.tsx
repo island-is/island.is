@@ -388,7 +388,7 @@ export const Menu = ({
                                 }),
                                 styles.asideLink,
                               ),
-                              text: text + "HOAHOHOHOHOH",
+                              text: text + 'HOAHOHOHOHOH',
                               href: href,
                             },
                             closeModal,
