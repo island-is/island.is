@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsString, IsDate, IsEnum, IsOptional, IsDateString } from 'class-validator'
+import {
+  IsString,
+  IsDate,
+  IsEnum,
+  IsOptional,
+  IsDateString,
+} from 'class-validator'
 import { Type } from 'class-transformer'
 
 import { ApiScopesDTO } from './api-scopes.dto'

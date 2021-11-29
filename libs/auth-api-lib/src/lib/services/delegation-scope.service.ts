@@ -50,7 +50,9 @@ export class DelegationScopeService {
       scopes.map((delegationScope) => ({
         id: uuid(),
         validFrom,
-        validTo: delegationScope.validTo ? startOfDay(delegationScope.validTo) : undefined,
+        validTo: delegationScope.validTo
+          ? startOfDay(delegationScope.validTo)
+          : undefined,
         scopeName:
           delegationScope.type === 'apiScope'
             ? delegationScope.name
