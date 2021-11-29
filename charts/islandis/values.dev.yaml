@@ -53,8 +53,6 @@ air-discount-scheme-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/air-discount-scheme-api'
     create: true
     name: 'air-discount-scheme-api'
-  strategy:
-    type: 'Recreate'
 air-discount-scheme-backend:
   enabled: true
   env:
@@ -123,8 +121,6 @@ air-discount-scheme-backend:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 air-discount-scheme-web:
   enabled: true
   env:
@@ -166,8 +162,6 @@ air-discount-scheme-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 api:
   args:
     - '--tls-min-v1.0'
@@ -314,8 +308,6 @@ api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/api'
     create: true
     name: 'api'
-  strategy:
-    type: 'Recreate'
 application-system-api:
   enabled: true
   env:
@@ -458,8 +450,6 @@ application-system-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/application-system-api'
     create: true
     name: 'application-system-api'
-  strategy:
-    type: 'Recreate'
 application-system-form:
   enabled: true
   env:
@@ -500,8 +490,6 @@ application-system-form:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 contentful-translation-extension:
   enabled: true
   env:
@@ -539,8 +527,6 @@ contentful-translation-extension:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 download-service:
   enabled: true
   env:
@@ -582,8 +568,6 @@ download-service:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 endorsement-system-api:
   args:
     - '--tls-min-v1.0'
@@ -653,8 +637,6 @@ endorsement-system-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/endorsement-system-api'
     create: true
     name: 'endorsement-system-api'
-  strategy:
-    type: 'Recreate'
 endorsement-system-scripts-update-metadata:
   args:
     - '--tls-min-v1.0'
@@ -699,8 +681,6 @@ endorsement-system-scripts-update-metadata:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 github-actions-cache:
   args:
     - '--tls-min-v1.0'
@@ -758,8 +738,6 @@ github-actions-cache:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/github-actions-cache'
     create: true
     name: 'github-actions-cache'
-  strategy:
-    type: 'RollingUpdate'
 global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
@@ -826,8 +804,6 @@ icelandic-names-registry-backend:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 island-ui-storybook:
   enabled: true
   env:
@@ -865,8 +841,6 @@ island-ui-storybook:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 namespaces:
   namespaces:
     - 'application-system'
@@ -933,8 +907,6 @@ party-letter-registry-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 search-indexer-service:
   enabled: true
   env:
@@ -1044,8 +1016,6 @@ search-indexer-service:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/search-indexer'
     create: true
     name: 'search-indexer'
-  strategy:
-    type: 'Recreate'
 service-portal:
   enabled: true
   env:
@@ -1086,8 +1056,6 @@ service-portal:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 service-portal-api:
   enabled: true
   env:
@@ -1160,8 +1128,6 @@ service-portal-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/service-portal-api'
     create: true
     name: 'service-portal-api'
-  strategy:
-    type: 'Recreate'
 services-documents:
   enabled: true
   env:
@@ -1209,8 +1175,6 @@ services-documents:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 skilavottord-web:
   enabled: true
   env:
@@ -1248,8 +1212,6 @@ skilavottord-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 skilavottord-ws:
   enabled: true
   env:
@@ -1319,8 +1281,6 @@ skilavottord-ws:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 temporary-voter-registry-api:
   enabled: true
   env:
@@ -1369,8 +1329,6 @@ temporary-voter-registry-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 web:
   enabled: true
   env:
@@ -1423,8 +1381,6 @@ web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 xroad-collector:
   args:
     - 'main.js'
@@ -1471,5 +1427,3 @@ xroad-collector:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/xroad-collector'
     create: true
     name: 'xroad-collector'
-  strategy:
-    type: 'Recreate'

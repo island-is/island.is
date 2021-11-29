@@ -12,7 +12,6 @@ export interface EnvironmentConfig {
   domain: string
   releaseName: string
   defaultMaxReplicas: number
-  rolloutStrategy?: 'RollingUpdate' | 'Recreate'
   type: OpsEnv
   featuresOn: FeatureNames[]
   awsAccountRegion: 'eu-west-1' | 'us-east-1'
