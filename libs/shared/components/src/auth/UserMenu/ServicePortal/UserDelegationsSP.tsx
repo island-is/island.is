@@ -1,10 +1,9 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { Stack, Text, SkeletonLoader } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { userMessages } from '@island.is/shared/translations'
-import * as styles from '../UserMenu.css'
 import { useActorDelegationsQuery } from '../../../../gen/graphql'
 import { UserTopicCard } from './UserTopicCardSP'
 

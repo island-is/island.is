@@ -109,3 +109,14 @@ export const accessAvatarSize = style({
   width: 32,
   height: 32,
 })
+
+export const userDelegationsText = style({
+  fontSize: 16,
+  lineHeight: '21px',
+  fontWeight: theme.typography.semiBold,
+  color: theme.color.dark400,
+})
+
+export const userTopicCardBox = style({
+  height: 64,
+})

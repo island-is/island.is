@@ -1,21 +1,8 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import React from 'react'
 
-import {
-  Box,
-  Button,
-  Select,
-  Stack,
-  Text,
-  ModalBase,
-  UserAvatar,
-  Icon,
-  GridContainer,
-  Option,
-  Divider,
-  Link as ILink,
-  IconProps,
-} from '@island.is/island-ui/core'
+import { Box, Icon, IconProps } from '@island.is/island-ui/core'
 
+import * as styles from '../UserMenu.css'
 import { Link } from 'react-router-dom'
 
 interface UserDropdownItemProps {
@@ -50,13 +37,11 @@ export const UserDropdownItem = ({
       </Box>
 
       {link ? (
-        <Link to={link}>
-          <Text variant="sidebar">{text}</Text>
+        <Link className={styles.delegationName} to={link}>
+          {text}
         </Link>
       ) : (
-        <Text variant="sidebar" fontWeight="regular">
-          {text}
-        </Text>
+        <span className={styles.delegationName}>{text}</span>
       )}
     </Box>
   )
