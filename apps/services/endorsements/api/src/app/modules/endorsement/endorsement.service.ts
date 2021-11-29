@@ -18,15 +18,8 @@ import { Op, UniqueConstraintError } from 'sequelize'
 import { ValidationRuleDto } from '../endorsementList/dto/validationRule.dto'
 import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
-
 import { paginate } from '@island.is/nest/pagination'
-import environment, {
-  ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
-} from '../../../environments/environment'
-
-import { EmailService } from '@island.is/email-service'
-import PDFDocument from 'pdfkit'
-import getStream from 'get-stream'
+import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 
 interface FindEndorsementInput {
   listId: string
@@ -89,8 +82,6 @@ export class EndorsementService {
     private logger: Logger,
     private readonly metadataService: EndorsementMetadataService,
     private readonly validatorService: EndorsementValidatorService,
-    @Inject(EmailService)
-    private emailService: EmailService,
   ) {}
 
   private getEndorsementMetadataForNationalId = async (
@@ -386,122 +377,6 @@ export class EndorsementService {
         { listId: endorsementList.id },
       )
       throw new NotFoundException(["This endorsement doesn't exist"])
-    }
-  }
-
-  async createDocumentBuffer(endorsementList: any) {
-    // build pdf
-    const doc = new PDFDocument()
-    const locale = 'is-IS'
-    const big = 16
-    const regular = 8
-    doc
-      .fontSize(big)
-      .text('ISLAND.IS - þetta skjal og kerfi er í vinnslu')
-      .fontSize(regular)
-      .text(
-        'þetta skjal var framkallað sjálfvirkt þann: ' +
-          new Date().toLocaleDateString(locale),
-      )
-      .moveDown()
-      .fontSize(big)
-      .text('Meðmælendalisti')
-      .fontSize(regular)
-      .text('id: ' + endorsementList.id)
-      .text('titill: ' + endorsementList.title)
-      .text('lýsing: ' + endorsementList.description)
-      .text('eigandi: ' + endorsementList.owner)
-      .text(
-        'listi opnaður: ' +
-          endorsementList.openedDate.toLocaleDateString(locale),
-      )
-      .text(
-        'listi lokaður: ' +
-          endorsementList.closedDate.toLocaleDateString(locale),
-      )
-      .text(`Alls undirskriftir: ${endorsementList.endorsements.length}`)
-      .moveDown()
-    if (endorsementList.endorsements.length) {
-      doc.fontSize(big).text('Meðmælendur').fontSize(regular)
-      for (const val of endorsementList.endorsements) {
-        doc.text(
-          val.created.toLocaleDateString(locale) + ' ' + val.meta.fullName,
-        )
-      }
-    }
-    doc.end()
-    return await getStream.buffer(doc)
-  }
-
-  async emailPDF(
-    listId: string,
-    recipientEmail: string,
-  ): Promise<{ success: boolean }> {
-    const endorsementList = await this.endorsementListModel.findOne({
-      where: { id: listId },
-      include: [
-        {
-          model: Endorsement,
-        },
-      ],
-    })
-    try {
-      const result = await this.emailService.sendEmail({
-        from: {
-          name: environment.email.sender,
-          address: environment.email.address,
-        },
-        to: [
-          {
-            // message can be sent to any email so recipient name is unknown
-            name: recipientEmail,
-            address: recipientEmail,
-          },
-        ],
-        subject: 'TEST:Afrit af meðmælendalista',
-        template: {
-          title: 'Afrit af meðmælendalista',
-          body: [
-            {
-              component: 'Heading',
-              context: { copy: 'Afrit af meðmælendalista' },
-            },
-            { component: 'Copy', context: { copy: 'Góðan dag.' } },
-            {
-              component: 'Copy',
-              context: {
-                copy: `... copy copy copy`,
-              },
-            },
-            {
-              component: 'Copy',
-              context: {
-                copy: `Þetta kjal er í þróun ...`,
-              },
-            },
-            {
-              component: 'Button',
-              context: {
-                copy: 'Takki',
-                href: 'http://www.island.is',
-              },
-            },
-            { component: 'Copy', context: { copy: 'Með kveðju,' } },
-            { component: 'Copy', context: { copy: 'TEST' } },
-          ],
-        },
-        attachments: [
-          // {
-          //   filename: 'Meðmælendalisti.pdf',
-          //   content: await this.createDocumentBuffer(endorsementList),
-          // },
-        ],
-      })
-      this.logger.debug(`sending list ${listId} to ${recipientEmail}`)
-      return { success: true }
-    } catch (error) {
-      this.logger.error('Failed to send email', error)
-      return { success: false }
     }
   }
 }

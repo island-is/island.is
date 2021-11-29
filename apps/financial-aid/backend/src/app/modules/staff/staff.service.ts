@@ -1,9 +1,13 @@
-import { Staff, StaffRole } from '@island.is/financial-aid/shared/lib'
+import {
+  CreateStaffMuncipality,
+  StaffRole,
+} from '@island.is/financial-aid/shared/lib'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { UpdateStaffDto, CreateStaffDto } from './dto'
 import { Op } from 'sequelize'
+import { Transaction } from 'sequelize/types'
 
 import { StaffModel } from './models'
 
@@ -59,17 +63,24 @@ export class StaffService {
     return { numberOfAffectedRows, updatedStaff }
   }
 
-  async createStaff(user: Staff, input: CreateStaffDto): Promise<StaffModel> {
-    return await this.staffModel.create({
-      nationalId: input.nationalId,
-      name: input.name,
-      municipalityId: user.municipalityId,
-      email: input.email,
-      roles: input.roles,
-      active: true,
-      municipalityName: user.municipalityName,
-      municipalityHomepage: user.municipalityHomepage,
-    })
+  async createStaff(
+    input: CreateStaffDto,
+    municipality: CreateStaffMuncipality,
+    t?: Transaction,
+  ): Promise<StaffModel> {
+    return await this.staffModel.create(
+      {
+        nationalId: input.nationalId,
+        name: input.name,
+        municipalityId: municipality.id,
+        email: input.email,
+        roles: input.roles,
+        active: true,
+        municipalityName: municipality.name,
+        municipalityHomepage: municipality.homepage,
+      },
+      { transaction: t },
+    )
   }
 
   async numberOfUsersForMunicipality(municipalityId: string): Promise<number> {
@@ -80,12 +91,20 @@ export class StaffService {
     })
   }
 
-  async getAdminUsers(municipalityId: string): Promise<StaffModel[]> {
+  async getUsers(municipalityId: string): Promise<StaffModel[]> {
     return await this.staffModel.findAll({
       where: {
         municipalityId,
         roles: { [Op.contains]: [StaffRole.ADMIN] },
         active: true,
+      },
+    })
+  }
+
+  async getSupervisors(): Promise<StaffModel[]> {
+    return await this.staffModel.findAll({
+      where: {
+        roles: { [Op.contains]: [StaffRole.SUPERADMIN] },
       },
     })
   }

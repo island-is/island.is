@@ -33,5 +33,5 @@ if [ -f "$PROJECT_ROOT"/"$APP_HOME"/docker-compose.ci.yml ]; then
 else
   # Standalone execution of tests when no external dependencies are needed (DBs, queues, etc.)
   exec yarn run \
-    test "${APP}" --runInBand --codeCoverage --testTimeout=10000
+    test "${APP}" --runInBand --codeCoverage
 fi

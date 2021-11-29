@@ -16,13 +16,20 @@ import {
   ApplicationStateUrl,
   UpdateApplicationTableResponseType,
   UpdateStaff,
+  UpdateMunicipalityActivity,
+  Staff,
+  CreateStaff,
+  CreateMunicipality,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
-import { CreateStaffInput, StaffModel } from '../app/modules/staff'
+import { CreateStaffInput } from '../app/modules/staff'
 import { SpouseModel } from '../app/modules/user'
-import { UpdateMunicipalityInput } from '../app/modules/municipality/dto'
+import {
+  CreateMunicipalityInput,
+  UpdateMunicipalityInput,
+} from '../app/modules/municipality/dto'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -41,6 +48,10 @@ class BackendAPI extends RESTDataSource {
     return this.get(`application/id/${id}`)
   }
 
+  searchForApplication(nationalId: string): Promise<Application[]> {
+    return this.get(`application/find/${nationalId}`)
+  }
+
   getApplicationFilters(): Promise<ApplicationFilters> {
     return this.get('application/filters')
   }
@@ -53,10 +64,27 @@ class BackendAPI extends RESTDataSource {
     return this.get(`municipality`)
   }
 
+  createMunicipality(
+    createMunicipality: CreateMunicipality,
+    createAdmin: CreateStaff,
+  ): Promise<Municipality> {
+    return this.post('municipality', {
+      municipalityInput: createMunicipality,
+      adminInput: createAdmin,
+    })
+  }
+
   updateMunicipality(
     updateMunicipality: UpdateMunicipalityInput,
   ): Promise<Municipality> {
     return this.put('municipality', updateMunicipality)
+  }
+
+  updateMunicipalityActivity(
+    id: string,
+    updateMunicipality: UpdateMunicipalityActivity,
+  ): Promise<Municipality> {
+    return this.put(`municipality/activity/${id}`, updateMunicipality)
   }
 
   createApplication(
@@ -108,27 +136,31 @@ class BackendAPI extends RESTDataSource {
     return this.get(`application/spouse/${spouseNationalId}`)
   }
 
-  getStaff(nationalId: string): Promise<StaffModel> {
+  getStaff(nationalId: string): Promise<Staff> {
     return this.get(`staff/nationalId/${nationalId}`)
   }
 
-  getStaffById(id: string): Promise<StaffModel> {
+  getStaffById(id: string): Promise<Staff> {
     return this.get(`staff/id/${id}`)
   }
 
-  getAdminUsers(municipalityId: string): Promise<StaffModel[]> {
-    return this.get(`staff/admin/${municipalityId}`)
+  getAdminUsers(municipalityId: string): Promise<Staff[]> {
+    return this.get(`staff/users/${municipalityId}`)
   }
 
-  updateStaff(id: string, updateStaff: UpdateStaff): Promise<StaffModel> {
+  getSupervisors(): Promise<Staff[]> {
+    return this.get('staff/supervisors')
+  }
+
+  updateStaff(id: string, updateStaff: UpdateStaff): Promise<Staff> {
     return this.put(`staff/id/${id}`, updateStaff)
   }
 
-  getStaffForMunicipality(): Promise<StaffModel[]> {
+  getStaffForMunicipality(): Promise<Staff[]> {
     return this.get('staff/municipality')
   }
 
-  createStaff(createStaff: CreateStaffInput): Promise<StaffModel> {
+  createStaff(createStaff: CreateStaffInput): Promise<Staff> {
     return this.post('staff', createStaff)
   }
 

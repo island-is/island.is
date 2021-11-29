@@ -117,6 +117,14 @@ FJS has an openAPI document for their API, however the definition is not yet in 
 
 Reference: https://island.is/s/stafraent-island/vefthjonustur/SVNfR09WXzU0MDI2OTc1MDlfRkpTLVB1YmxpY19jaGFyZ2VGSlNfdjE
 
+## Important note re: FJS & and charge item codes
+
+Each charge item code that is intended to be charged through island.is (atm AY110 / AY114 are
+the only ones available) need to have a corresponding "file type definition with the ARK".
+
+For us, what that means, is that we need to make sure the corresponding file type has been added
+by talking to the Advania FJS developers.
+
 ## FAQ / glossary
 
 - **FJR** = Fjársýsla Ríkisins - They handle all billing and accounting for most of the

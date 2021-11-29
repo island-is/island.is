@@ -18,7 +18,7 @@ import {
   CaseFileList,
   Decision,
   RulingInput,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
@@ -46,11 +46,11 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
-import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
+import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import { useRouter } from 'next/router'
-import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
+import DateTime from '@island.is/judicial-system-web/src/components/DateTime/DateTime'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { rcRulingStepOne as m } from '@island.is/judicial-system-web/messages'
 
 export const RulingStepOne: React.FC = () => {
@@ -65,6 +65,9 @@ export const RulingStepOne: React.FC = () => {
     courtLegalArgumentsErrorMessage,
     setCourtLegalArgumentsErrorMessage,
   ] = useState<string>('')
+  const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] = useState(
+    '',
+  )
 
   const router = useRouter()
   const id = router.query.id
@@ -98,6 +101,10 @@ export const RulingStepOne: React.FC = () => {
             theCase.requestedCustodyRestrictions ?? [],
           ),
         )
+      }
+
+      if (theCase.demands) {
+        autofill('prosecutorDemands', theCase.demands, theCase)
       }
 
       if (theCase.requestedValidToDate) {
@@ -161,6 +168,48 @@ export const RulingStepOne: React.FC = () => {
                   />
                 </AccordionItem>
               </Accordion>
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  {formatMessage(m.sections.prosecutorDemands.title)}
+                </Text>
+              </Box>
+              <Input
+                data-testid="prosecutorDemands"
+                name="prosecutorDemands"
+                label={formatMessage(m.sections.prosecutorDemands.label)}
+                defaultValue={workingCase.prosecutorDemands}
+                placeholder={formatMessage(
+                  m.sections.prosecutorDemands.placeholder,
+                )}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'prosecutorDemands',
+                    event,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    prosecutorDemandsErrorMessage,
+                    setProsecutorDemandsMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'prosecutorDemands',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setProsecutorDemandsMessage,
+                  )
+                }
+                errorMessage={prosecutorDemandsErrorMessage}
+                hasError={prosecutorDemandsErrorMessage !== ''}
+                textarea
+                rows={7}
+                required
+              />
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>

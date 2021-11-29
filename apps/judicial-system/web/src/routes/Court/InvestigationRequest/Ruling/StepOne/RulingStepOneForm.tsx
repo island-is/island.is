@@ -9,7 +9,7 @@ import {
   FormFooter,
   PoliceRequestAccordionItem,
   RulingInput,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   Accordion,
   AccordionItem,
@@ -18,7 +18,7 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,
@@ -46,8 +46,12 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
 
   const [courtCaseFactsEM, setCourtCaseFactsEM] = useState<string>('')
   const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
+  const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
 
   const validations: FormSettings = {
+    prosecutorDemands: {
+      validations: ['empty'],
+    },
     ruling: {
       validations: ['empty'],
     },
@@ -90,6 +94,46 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               />
             </AccordionItem>
           </Accordion>
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(m.sections.prosecutorDemands.title)}
+            </Text>
+          </Box>
+          <Input
+            data-testid="prosecutorDemands"
+            name="prosecutorDemands"
+            label={formatMessage(m.sections.prosecutorDemands.label)}
+            defaultValue={workingCase.prosecutorDemands}
+            placeholder={formatMessage(m.sections.prosecutorDemands.label)}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'prosecutorDemands',
+                event,
+                ['empty'],
+                workingCase,
+                setWorkingCase,
+                prosecutorDemandsEM,
+                setProsecutorDemandsEM,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'prosecutorDemands',
+                event.target.value,
+                ['empty'],
+                workingCase,
+                updateCase,
+                setProsecutorDemandsEM,
+              )
+            }
+            errorMessage={prosecutorDemandsEM}
+            hasError={prosecutorDemandsEM !== ''}
+            textarea
+            rows={7}
+            required
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>

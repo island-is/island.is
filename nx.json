@@ -79,6 +79,9 @@
     "api-domains-application": {
       "tags": []
     },
+    "api-domains-assets": {
+      "tags": []
+    },
     "api-domains-auth": {
       "tags": []
     },
@@ -119,6 +122,9 @@
       "tags": []
     },
     "api-domains-identity": {
+      "tags": []
+    },
+    "api-domains-islykill": {
       "tags": []
     },
     "api-domains-license-service": {
@@ -285,6 +291,9 @@
     "cache": {
       "tags": []
     },
+    "clients-assets": {
+      "tags": []
+    },
     "clients-auth-public-api": {
       "tags": [],
       "implicitDependencies": ["services-auth-public-api"]
@@ -302,6 +311,9 @@
       "tags": []
     },
     "clients-health-insurance-v2": {
+      "tags": []
+    },
+    "clients-islykill": {
       "tags": []
     },
     "clients-middlewares": {
@@ -395,6 +407,9 @@
       "tags": []
     },
     "financial-aid-web-veita": {
+      "tags": []
+    },
+    "github-actions-cache": {
       "tags": []
     },
     "gjafakort-api": {
@@ -516,6 +531,9 @@
     "nest-audit": {
       "tags": []
     },
+    "nest-config": {
+      "tags": []
+    },
     "nest-pagination": {
       "tags": []
     },
@@ -532,6 +550,9 @@
       "tags": []
     },
     "plausible": {
+      "tags": []
+    },
+    "react-feature-flags": {
       "tags": []
     },
     "reference-backend": {
@@ -611,6 +632,9 @@
       "tags": []
     },
     "service-portal-settings-access-control": {
+      "tags": []
+    },
+    "service-portal-settings-islykill": {
       "tags": []
     },
     "service-portal-settings-personal-information": {

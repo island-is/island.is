@@ -1,7 +1,13 @@
 export interface AccidentNotificationAttachment {
-  name: string
   content: string
   attachmentType: AttachmentTypeEnum
+  name: string
+}
+
+export interface AccidentNotificationAttachmentGatherRequest {
+  answerKey: string
+  attachmentType: AttachmentTypeEnum
+  filenamePrefix: string
 }
 
 export enum AttachmentTypeEnum {

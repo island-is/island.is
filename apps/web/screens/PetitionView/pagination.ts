@@ -1,4 +1,4 @@
-export const PAGE_SIZE = 3
+export const PAGE_SIZE = 10
 
 export function paginate(petitions, pageSize, pageNumber) {
   if (petitions === undefined) return

@@ -4,7 +4,7 @@ import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import { CaseState } from '@island.is/judicial-system/types'
 import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
-import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
+import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,

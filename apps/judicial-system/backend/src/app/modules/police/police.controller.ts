@@ -19,6 +19,7 @@ import { prosecutorRule } from '../../guards'
 import {
   Case,
   CaseExistsGuard,
+  CaseReadGuard,
   CaseNotCompletedGuard,
   CaseOriginalAncestorInterceptor,
   CurrentCase,
@@ -27,7 +28,13 @@ import { UploadPoliceCaseFileDto } from './dto'
 import { PoliceCaseFile, UploadPoliceCaseFileResponse } from './models'
 import { PoliceService } from './police.service'
 
-@UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseNotCompletedGuard)
+@UseGuards(
+  JwtAuthGuard,
+  RolesGuard,
+  CaseExistsGuard,
+  CaseReadGuard,
+  CaseNotCompletedGuard,
+)
 @Controller('api/case/:caseId')
 @ApiTags('police files')
 export class PoliceController {
