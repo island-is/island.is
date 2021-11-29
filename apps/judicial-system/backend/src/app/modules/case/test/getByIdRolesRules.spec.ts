@@ -22,15 +22,15 @@ describe('CaseController - Get by id rules', () => {
     expect(rules).toContain(prosecutorRule)
   })
 
-  it('should have permission to judges', () => {
+  it('should give permission to judges', () => {
     expect(rules).toContain(judgeRule)
   })
 
-  it('should have permission to registrars', () => {
+  it('should give permission to registrars', () => {
     expect(rules).toContain(registrarRule)
   })
 
-  it('should have permission to staff', () => {
+  it('should give permission to staff', () => {
     expect(rules).toContain(staffRule)
   })
 })
