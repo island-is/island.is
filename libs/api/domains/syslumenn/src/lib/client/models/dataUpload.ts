@@ -41,11 +41,12 @@ export function constructUploadDataObject(
   attachment: Attachment,
   extraData: { [key: string]: string },
   uploadDataName: string,
+  uploadDataId?: string,
 ): IDataUpload {
   return {
     audkenni: id,
     gognSkeytis: {
-      audkenni: uuid(),
+      audkenni: uploadDataId || uuid(),
       skeytaHeiti: uploadDataName,
       adilar: persons.map((p) => {
         return <ChildrenTransferPerson>{

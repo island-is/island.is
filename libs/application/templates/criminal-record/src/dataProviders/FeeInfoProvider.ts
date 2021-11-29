@@ -15,7 +15,6 @@ export class FeeInfoProvider extends PaymentCatalogProvider {
   async provide(): Promise<PaymentCatalogItem | undefined> {
     const items =
       (await this.getCatalogForOrganization(SYSLUMADUR_NATIONAL_ID)) || []
-    console.log(items)
     return items.find(
       ({ chargeItemCode }) => chargeItemCode === CHARGE_ITEM_CODE,
     )

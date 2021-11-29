@@ -28,7 +28,7 @@ type ConfirmationFieldProps = {
     externalData: {
       getCriminalRecord: {
         data: {
-          pdfBase64: string
+          contentBase64: string
         }
       }
     }
@@ -43,8 +43,6 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
   const { externalData } = application
   const { formatMessage } = useLocale()
   const [viewCriminalRecord, setViewCriminalRecord] = useState(false)
-
-  console.log(externalData)
 
   if (viewCriminalRecord) {
     return (
@@ -65,7 +63,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         ></object> */}
         <embed
           type="application/pdf"
-          src={`data:application/pdf;base64,${externalData.getCriminalRecord.data?.pdfBase64}`}
+          src={`data:application/pdf;base64,${externalData.getCriminalRecord.data.contentBase64}`}
           width="100%"
           height="100%"
         ></embed>
