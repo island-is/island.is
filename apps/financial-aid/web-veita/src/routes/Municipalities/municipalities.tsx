@@ -167,6 +167,8 @@ export const Municipalities = () => {
       <ToastContainer />
 
       <NewMunicipalityModal
+        header="Nýtt sveitarfélag"
+        submitButtonText="Stofna sveitarfélag"
         isVisible={isModalVisible}
         setIsVisible={(visible) => {
           setIsModalVisible(visible)

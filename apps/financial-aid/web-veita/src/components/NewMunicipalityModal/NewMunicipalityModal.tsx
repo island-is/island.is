@@ -8,11 +8,17 @@ import { serviceCenters } from '@island.is/financial-aid/shared/data'
 import cn from 'classnames'
 import { MunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
 
+import { useRouter } from 'next/router'
+
 interface Props {
   isVisible: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
   activeMunicipalitiesCodes?: number[]
   onMunicipalityCreated: () => void
+  header: string
+  submitButtonText: string
+  municipalityName?: string
+  municipalityId?: string
 }
 
 interface newMunicipalityModalState {
@@ -29,6 +35,10 @@ const NewMunicipalityModal = ({
   setIsVisible,
   activeMunicipalitiesCodes,
   onMunicipalityCreated,
+  header,
+  submitButtonText,
+  municipalityName = '',
+  municipalityId = '',
 }: Props) => {
   const selectServiceCenter = serviceCenters
     .filter(
@@ -42,7 +52,7 @@ const NewMunicipalityModal = ({
   const [createMunicipality] = useMutation(MunicipalityMutation)
 
   const [state, setState] = useState<newMunicipalityModalState>({
-    serviceCenter: { label: '', value: '' },
+    serviceCenter: { label: municipalityName, value: municipalityId },
     adminNationalId: '',
     adminName: '',
     adminEmail: '',
@@ -90,39 +100,44 @@ const NewMunicipalityModal = ({
     <ActionModal
       isVisible={isVisible}
       setIsVisible={setIsVisible}
-      header={'Nýtt sveitarfélag'}
+      header={header}
       hasError={state.hasSubmitError}
       errorMessage={'Eitthvað fór úrskeiðis, vinsamlega reynið aftur síðar'}
-      submitButtonText={'Stofna sveitarfélag'}
+      submitButtonText={submitButtonText}
       onSubmit={submit}
     >
-      <Box marginBottom={3}>
-        <Select
-          label="Sveitarfélag"
-          name="selectMunicipality"
-          noOptionsMessage="Enginn valmöguleiki"
-          options={selectServiceCenter}
-          placeholder="Veldu tegund"
-          hasError={
-            state.hasError &&
-            !state.serviceCenter.label &&
-            !state.serviceCenter.value
-          }
-          errorMessage="Þú þarft að velja sveitarfélag"
-          value={state.serviceCenter}
-          onChange={(option) => {
-            setState({
-              ...state,
-              serviceCenter: option as Option,
-              hasError: false,
-            })
-          }}
-        />
-      </Box>
+      {activeMunicipalitiesCodes && (
+        <>
+          <Box marginBottom={3}>
+            <Select
+              label="Sveitarfélag"
+              name="selectMunicipality"
+              noOptionsMessage="Enginn valmöguleiki"
+              options={selectServiceCenter}
+              placeholder="Veldu tegund"
+              hasError={
+                state.hasError &&
+                !state.serviceCenter.label &&
+                !state.serviceCenter.value
+              }
+              errorMessage="Þú þarft að velja sveitarfélag"
+              value={state.serviceCenter}
+              onChange={(option) => {
+                setState({
+                  ...state,
+                  serviceCenter: option as Option,
+                  hasError: false,
+                })
+              }}
+            />
+          </Box>
 
-      <Text marginBottom={2} variant="h4">
-        Stjórnandi
-      </Text>
+          <Text marginBottom={2} variant="h4">
+            Stjórnandi
+          </Text>
+        </>
+      )}
+
       <Box marginBottom={2}>
         <Input
           label="Kennitala"

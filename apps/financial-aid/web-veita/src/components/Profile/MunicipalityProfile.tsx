@@ -19,6 +19,7 @@ import {
   TextTableItem,
   ActivationButtonTableItem,
   NewUserModal,
+  NewMunicipalityModal,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 interface MunicipalityProfileProps {
@@ -281,13 +282,25 @@ const MunicipalityProfile = ({
           </Box>
         )}
       </Box>
-      <NewUserModal
+      {/* <NewUserModal
         isVisible={isModalVisible}
         setIsVisible={(visible) => {
           setIsModalVisible(visible)
         }}
         onStaffCreated={refreshList}
         predefinedRoles={[StaffRole.ADMIN]}
+      /> */}
+
+      <NewMunicipalityModal
+        header="Nýr stjórnandi"
+        submitButtonText="Stofna stjórnanda"
+        isVisible={isModalVisible}
+        setIsVisible={(visible) => {
+          setIsModalVisible(visible)
+        }}
+        onMunicipalityCreated={refreshList}
+        municipalityName={municipality.name}
+        municipalityId={municipality.municipalityId}
       />
     </Box>
   )
