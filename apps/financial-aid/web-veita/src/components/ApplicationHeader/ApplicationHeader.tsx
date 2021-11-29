@@ -4,7 +4,7 @@ import {
   getState,
 } from '@island.is/financial-aid/shared/lib'
 import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
-import React from 'react'
+import React, { useContext } from 'react'
 
 import * as styles from './ApplicationHeader.css'
 
@@ -19,6 +19,7 @@ import {
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { useApplicationState } from '@island.is/financial-aid-web/veita/src/utils/useApplicationState'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 interface ApplicantProps {
   application: Application
@@ -34,6 +35,8 @@ const ApplicationHeader = ({
   setApplication,
 }: ApplicantProps) => {
   const router = useRouter()
+
+  const { usePseudoName } = useContext(AdminContext)
 
   const changeApplicationState = useApplicationState()
 
@@ -99,7 +102,9 @@ const ApplicationHeader = ({
           </Box>
 
           <Text as="h2" variant="h1">
-            {GenerateName(application.nationalId)}
+            {usePseudoName
+              ? GenerateName(application.nationalId)
+              : application.name}
           </Text>
         </Box>
 

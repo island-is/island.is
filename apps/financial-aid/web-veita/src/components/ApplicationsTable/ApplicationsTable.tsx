@@ -119,7 +119,7 @@ const ApplicationsTable = ({
                 {applications.map((item: Application, index) => (
                   <TableBody
                     items={[
-                      PseudoName(item.nationalId),
+                      PseudoName(item.nationalId, item.name),
                       State(item.state),
                       TextTableItem(
                         'default',

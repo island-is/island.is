@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Box, Text, Button } from '@island.is/island-ui/core'
 
 import * as tableStyles from '../../sharedStyles/Table.css'
@@ -10,6 +10,7 @@ import {
 } from '@island.is/financial-aid-web/veita/src/components'
 import { ApplicationState, getState } from '@island.is/financial-aid/shared/lib'
 import { getTagByState } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 type TextVariants =
   | 'default'
@@ -59,12 +60,16 @@ const ActivationButtonTableItem = (
   )
 }
 
-const PseudoName = (nationalId: string) => {
+const PseudoName = (nationalId: string, name: string) => {
+  const { usePseudoName } = useContext(AdminContext)
+
   return (
     <Box display="flex" alignItems="center">
       <GeneratedProfile size={32} nationalId={nationalId} />
       <Box marginLeft={2}>
-        <Text variant="h5">{GenerateName(nationalId)}</Text>
+        <Text variant="h5">
+          {usePseudoName ? GenerateName(nationalId) : name}
+        </Text>
       </Box>
     </Box>
   )

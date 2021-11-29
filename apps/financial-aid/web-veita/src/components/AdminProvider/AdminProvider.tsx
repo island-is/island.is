@@ -13,13 +13,18 @@ interface AdminProvider {
   admin?: User
   setAdmin?: React.Dispatch<React.SetStateAction<User | undefined>>
   municipality?: Municipality
+  usePseudoName: boolean
+  setPseudonyms: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 interface PageProps {
   children: ReactNode
 }
 
-export const AdminContext = createContext<AdminProvider>({})
+export const AdminContext = createContext<AdminProvider>({
+  usePseudoName: false,
+  setPseudonyms: () => {},
+})
 
 const AdminProvider = ({ children }: PageProps) => {
   const [session] = useSession()
@@ -29,6 +34,8 @@ const AdminProvider = ({ children }: PageProps) => {
     Boolean(session?.user),
   )
   const [admin, setAdmin] = useState<User>()
+
+  const [usePseudoName, setPseudonyms] = useState<boolean>(false)
 
   const { data, error } = useQuery(CurrentUserQuery, {
     fetchPolicy: 'no-cache',
@@ -57,7 +64,14 @@ const AdminProvider = ({ children }: PageProps) => {
 
   return (
     <AdminContext.Provider
-      value={{ isAuthenticated, admin, setAdmin, municipality }}
+      value={{
+        isAuthenticated,
+        admin,
+        setAdmin,
+        municipality,
+        setPseudonyms,
+        usePseudoName,
+      }}
     >
       {children}
     </AdminContext.Provider>

@@ -1,14 +1,11 @@
 import React, { useContext, useState } from 'react'
 
 import {
-  ApplicationOverviewSkeleton,
-  LoadingContainer,
-} from '@island.is/financial-aid-web/veita/src/components'
-import {
   Text,
   Box,
   Input,
   ToggleSwitchCheckbox,
+  Button,
 } from '@island.is/island-ui/core'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
@@ -25,9 +22,7 @@ interface mySettingsState {
 }
 
 export const MySettings = () => {
-  const { admin } = useContext(AdminContext)
-
-  const [pseudonyms, setPseudonyms] = useState<boolean>(false)
+  const { admin, usePseudoName, setPseudonyms } = useContext(AdminContext)
 
   const [state, setState] = useState<mySettingsState>({
     nationalId: admin?.staff?.nationalId,
@@ -155,7 +150,7 @@ export const MySettings = () => {
                   Nota dulnefni fyrir nöfn umsækjenda í yfirlitsskjám
                 </Text>
               }
-              checked={pseudonyms}
+              checked={usePseudoName}
               onChange={(newChecked) => {
                 setPseudonyms(newChecked)
               }}
@@ -170,6 +165,15 @@ export const MySettings = () => {
             </Text>
           </Box>
         </Box>
+      </Box>
+      <Box
+        display="flex"
+        justifyContent="flexEnd"
+        className={`contentUp delay-125`}
+      >
+        <Button loading={false} onClick={() => {}} icon="checkmark">
+          Vista stillingar
+        </Button>
       </Box>
     </>
   )
