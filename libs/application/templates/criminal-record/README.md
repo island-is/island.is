@@ -42,6 +42,32 @@ AWS_PROFILE=<profile-name> yarn get-secrets service-portal
 
 AWS_PROFILE=<profile-name> yarn get-secrets k8s
 
+### Running locally
+
+You can serve this app locally by running:
+
+```bash
+yarn start api
+```
+
+and
+
+```bash
+yarn start application-system-api
+```
+
+and
+
+```bash
+yarn start application-system-form
+```
+
+and
+
+```bash
+yarn start services-user-profile
+```
+
 ## Running unit tests
 
 Run `nx test application-templates-criminal-record` to execute the unit tests via [Jest](https://jestjs.io).
