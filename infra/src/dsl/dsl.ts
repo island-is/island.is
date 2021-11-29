@@ -14,7 +14,6 @@ import {
   Secrets,
   XroadConfig,
   MountedFile,
-  RolloutStrategy,
 } from './types/input-types'
 
 export class ServiceBuilder<ServiceType> implements Service {
@@ -140,15 +139,6 @@ export class ServiceBuilder<ServiceType> implements Service {
    */
   files(...files: MountedFile[]) {
     this.serviceDef.files = [...this.serviceDef.files, ...files]
-    return this
-  }
-
-  /**
-   * Ability to override the default rollout strategy of the environment
-   * @param strategy: RollingUpdate or Recreate
-   */
-  rolloutStrategy(strategy: RolloutStrategy) {
-    this.serviceDef.rolloutStrategy = strategy
     return this
   }
 
