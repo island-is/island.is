@@ -14,8 +14,6 @@ import { useQuery, gql } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { m } from '@island.is/service-portal/core'
 
-import * as styles from './Greeting.css'
-
 const NationalRegistryUserQuery = gql`
   query NationalRegistryUserQuery {
     nationalRegistryUser {
@@ -90,7 +88,7 @@ const Greeting: FC<{}> = () => {
         </Box>
       </GridColumn>
       <GridColumn span={['12/12', '5/12']}>
-        <Box className={styles.figure} />
+        <img src={'./assets/images/school.svg'} alt="" />
       </GridColumn>
     </GridRow>
   )
