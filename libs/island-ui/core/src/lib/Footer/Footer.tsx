@@ -147,18 +147,18 @@ export const Footer = ({
                 </div>
               </Box>
             </GridColumn>
-            {showMiddleLinks ? (
+            {showMiddleLinks && (
               <GridColumn
                 span={['12/12', '12/12', '8/12', '9/12']}
                 paddingBottom={[4, 4, 0]}
                 paddingTop={[4, 4, 0]}
               >
                 <Box paddingX={[0, 0, 1]}>
-                  {middleLinksTitle ? (
+                  {!!middleLinksTitle && (
                     <Text variant="eyebrow" color="blue400" paddingBottom={3}>
                       {middleLinksTitle}
                     </Text>
-                  ) : null}
+                  )}
                   <LinkContext.Provider
                     value={{
                       linkRenderer: (href, children) => (
@@ -185,7 +185,7 @@ export const Footer = ({
                   </LinkContext.Provider>
                 </Box>
               </GridColumn>
-            ) : null}
+            )}
           </GridRow>
         </GridContainer>
       </Box>
