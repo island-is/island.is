@@ -167,6 +167,7 @@ export interface Case {
   registrar?: User
   judge?: User
   courtRecordSignatory?: User
+  courtRecordSignatureDate?: string
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]

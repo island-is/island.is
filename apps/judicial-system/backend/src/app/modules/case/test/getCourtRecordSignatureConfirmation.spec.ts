@@ -69,9 +69,12 @@ describe('CaseController - Get court record signature confirmation', () => {
         await givenWhenThen(caseId, user, theCase, documentToken)
       })
 
-      it('should set the ruling date', () => {
+      it('should set the court record signatory and signature date', () => {
         expect(mockCaseModel.update).toHaveBeenCalledWith(
-          { courtRecordSignatoryId: userId },
+          {
+            courtRecordSignatoryId: userId,
+            courtRecordSignatureDate: expect.any(Date),
+          },
           {
             where: { id: caseId },
             returning: true,

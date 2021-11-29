@@ -555,9 +555,10 @@ export class CaseService {
       }
     }
 
-    // TODO: UpdateCaseDto does not contain courtRecordSignatoryId - create a new type for CaseService.update
+    // TODO: UpdateCaseDto does not contain courtRecordSignatoryId and courtRecordSignatureDate - create a new type for CaseService.update
     await this.update(existingCase.id, {
       courtRecordSignatoryId: user.id,
+      courtRecordSignatureDate: new Date(),
     } as UpdateCaseDto)
 
     return {

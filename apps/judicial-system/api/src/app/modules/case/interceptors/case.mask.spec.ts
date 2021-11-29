@@ -89,6 +89,7 @@ function createCase(type: CaseType): Case {
     judge: undefined,
     registrar: undefined,
     courtRecordSignatory: undefined,
+    courtRecordSignatureDate: '-',
     parentCase: undefined,
     childCase: undefined,
     notifications: [],
@@ -202,6 +203,7 @@ function maskedCase(theCase: Case) {
     judge: theCase.judge,
     registrar: theCase.registrar,
     courtRecordSignatory: theCase.courtRecordSignatory,
+    courtRecordSignatureDate: theCase.courtRecordSignatureDate,
     parentCase: theCase.parentCase && {
       id: theCase.parentCase.id,
       created: theCase.parentCase.created,
@@ -237,6 +239,7 @@ function maskedCase(theCase: Case) {
       judge: theCase.parentCase.judge,
       registrar: theCase.parentCase.registrar,
       courtRecordSignatory: theCase.parentCase.courtRecordSignatory,
+      courtRecordSignatureDate: theCase.parentCase.courtRecordSignatureDate,
     },
     isMasked: true,
   }

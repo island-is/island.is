@@ -826,6 +826,16 @@ export class Case extends Model<Case> {
   courtRecordSignatory?: User
 
   /**********
+   * The court record signature date
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtRecordSignatureDate?: Date
+
+  /**********
    * The surrogate key of the case's parent case - only used if the case is an extension
    **********/
   @ForeignKey(() => Case)
