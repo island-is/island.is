@@ -1,15 +1,14 @@
-import { logger } from '@island.is/logging'
 import { Inject } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { RecyclingPartnerModel } from './model/recycling.partner.model'
+
+import { logger } from '@island.is/logging'
+
+import { RecyclingPartnerModel } from './recycling.partner.model'
 import { RecyclingPartnerService } from './recycling.partner.service'
 
 @Resolver(() => RecyclingPartnerModel)
 export class RecyclingPartnerResolver {
-  constructor(
-    @Inject(RecyclingPartnerService)
-    private recyclingPartnerService: RecyclingPartnerService,
-  ) {}
+  constructor(private recyclingPartnerService: RecyclingPartnerService) {}
 
   @Query(() => [RecyclingPartnerModel])
   async skilavottordAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {

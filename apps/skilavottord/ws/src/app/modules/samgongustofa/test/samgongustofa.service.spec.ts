@@ -1,14 +1,16 @@
-import type { Logger } from '@island.is/logging'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Test } from '@nestjs/testing'
-import { SamgongustofaService } from '../samgongustofa.service'
-import { HttpModule, HttpService } from '@nestjs/common'
-import { RecyclingRequestService } from '../../../recycling.request/recycling.request.service'
 import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
+import { Test } from '@nestjs/testing'
+import { HttpModule, HttpService } from '@nestjs/common'
+
+import type { Logger } from '@island.is/logging'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+
+import { SamgongustofaService } from '../samgongustofa.service'
+import { RecyclingRequestService } from '../../recycling.request'
 import { MockData } from './mock-data'
 
-/*global document, window, alert, console, require*/
+/* global document, window, alert, console, require */
 
 const recyclingRequestModel = {
   id: '1234',
@@ -50,14 +52,6 @@ describe('skilavottordApiTest', () => {
         imports: [HttpModule],
         providers: [
           SamgongustofaService,
-          // {
-          //   provide: LOGGER_PROVIDER,
-          //   useClass: jest.fn(() => ({
-          //     error: () => ({}),
-          //     info: () => ({}),
-          //     debug: () => ({}),
-          //   })),
-          // },
           {
             provide: LOGGER_PROVIDER,
             useValue: logger,

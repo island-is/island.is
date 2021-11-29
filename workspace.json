@@ -8968,7 +8968,6 @@
             "main": "apps/skilavottord/ws/src/main.ts",
             "tsConfig": "apps/skilavottord/ws/tsconfig.app.json",
             "assets": [
-              "apps/skilavottord/ws/src/assets",
               {
                 "glob": "*",
                 "input": "apps/skilavottord/ws/migrations",

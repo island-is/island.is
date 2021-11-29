@@ -1,16 +1,19 @@
 import { Inject } from '@nestjs/common'
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
-import { GdprService } from './gdpr.service'
-import { GdprModel } from './model/gdpr.model'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { Authorize } from '../auth'
+import { GdprService } from './gdpr.service'
+import { GdprModel } from './gdpr.model'
 
 @Resolver(() => GdprModel)
 export class GdprResolver {
   constructor(
-    @Inject(GdprService) private gdprService: GdprService,
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    private gdprService: GdprService,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
   @Authorize({ throwOnUnAuthorized: false })

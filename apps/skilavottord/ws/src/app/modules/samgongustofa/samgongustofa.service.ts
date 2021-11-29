@@ -1,18 +1,20 @@
-import { VehicleInformation } from './samgongustofa.model'
 import { Injectable, HttpService, Inject } from '@nestjs/common'
 import * as xml2js from 'xml2js'
-import { environment } from '../../../../environments'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { RecyclingRequestService } from '../../recycling.request/recycling.request.service'
+
+import { environment } from '../../../environments'
+import { RecyclingRequestService } from '../recycling.request'
+import { VehicleInformation } from './samgongustofa.model'
 
 @Injectable()
 export class SamgongustofaService {
   vehicleInformationList: VehicleInformation[]
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
     private httpService: HttpService,
-    @Inject(RecyclingRequestService)
     private recyclingRequestService: RecyclingRequestService,
   ) {}
 
@@ -324,10 +326,5 @@ export class SamgongustofaService {
       )
       throw new Error('Failed on getting vehicles information...')
     }
-  }
-
-  /* test */
-  static test(): any {
-    return 'test'
   }
 }
