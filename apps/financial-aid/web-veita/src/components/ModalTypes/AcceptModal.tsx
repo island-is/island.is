@@ -28,8 +28,8 @@ interface Props {
 
 interface calculationsState {
   amount: number
-  income: number
-  personalTaxCreditPercentage: number
+  income?: number
+  personalTaxCreditPercentage?: number
   tax: number
   secondPersonalTaxCredit: number
   showSecondPersonalTaxCredit: boolean
@@ -71,8 +71,8 @@ const AcceptModal = ({
 
   const [state, setState] = useState<calculationsState>({
     amount: aidAmount,
-    income: 0,
-    personalTaxCreditPercentage: 0,
+    income: undefined,
+    personalTaxCreditPercentage: undefined,
     tax: calculateTaxOfAmount(aidAmount, currentYear),
     secondPersonalTaxCredit: 0,
     showSecondPersonalTaxCredit: false,
@@ -91,19 +91,27 @@ const AcceptModal = ({
         return a + b
       }, 0)
 
+  const checkingValue = (element?: number) => (element ? element : 0)
+
   const finalAmount = calculateAcceptedAidFinalAmount(
-    aidAmount - state.income - sumValues(state.deductionFactor),
+    aidAmount - checkingValue(state.income) - sumValues(state.deductionFactor),
     currentYear,
-    state.personalTaxCreditPercentage,
+    checkingValue(state.personalTaxCreditPercentage),
     state.secondPersonalTaxCredit,
   )
+
+  const areRequiredFieldsFilled =
+    state.income === undefined ||
+    state.personalTaxCreditPercentage === undefined ||
+    !finalAmount ||
+    finalAmount === 0
 
   return (
     <InputModal
       headline="Umsóknin þín er samþykkt og áætlun er tilbúin"
       onCancel={onCancel}
       onSubmit={() => {
-        if (finalAmount && finalAmount <= 0) {
+        if (areRequiredFieldsFilled) {
           setState({ ...state, hasError: true })
           return
         }
@@ -117,7 +125,7 @@ const AcceptModal = ({
       <Box marginBottom={3}>
         <NumberInput
           label="Grunnupphæð"
-          placeholder="Skrifaðu upphæð útborgunar"
+          placeholder="Sláðu inn upphæð útborgunar"
           id="amountInput"
           name="amountInput"
           value={state.amount.toString()}
@@ -131,14 +139,15 @@ const AcceptModal = ({
       <Box marginBottom={3}>
         <NumberInput
           label="Tekjur"
-          placeholder="Skrifaðu upphæð"
+          placeholder="Sláðu inn upphæð"
           id="income"
           name="income"
-          value={state.income.toString()}
+          value={state?.income ? state?.income.toString() : ''}
           onUpdate={(input) => {
             setState({ ...state, income: input, hasError: false })
           }}
           maximumInputLength={maximumInputLength}
+          hasError={state.hasError && state.income === undefined}
         />
       </Box>
 
@@ -146,10 +155,13 @@ const AcceptModal = ({
         <>
           {Object.keys(state.deductionFactor).map(function (key) {
             return (
-              <Box className={modalStyles.deductionFactor}>
+              <Box
+                className={modalStyles.deductionFactor}
+                key={`deductionFactor-${key}`}
+              >
                 <Input
                   label="Lýsing"
-                  placeholder="Skrifaðu lýsingu"
+                  placeholder="Sláðu inn lýsingu"
                   id={`description-${key}`}
                   name={`description-${key}`}
                   value={state.deductionFactor[key].description}
@@ -171,7 +183,7 @@ const AcceptModal = ({
 
                 <NumberInput
                   label="Upphæð frádráttar"
-                  placeholder="Skrifaðu upphæð"
+                  placeholder="Sláðu inn upphæð"
                   id={`amount-${key}`}
                   name={`amount-${key}`}
                   value={state.deductionFactor[key].amount.toString()}
@@ -243,7 +255,7 @@ const AcceptModal = ({
       <Box marginBottom={3}>
         <Input
           label="Persónuafsláttur"
-          placeholder="Skrifaðu prósentuhlutfall"
+          placeholder="Sláðu inn prósentuhlutfall"
           id="personalTaxCredit"
           name="personalTaxCredit"
           value={Number(state.personalTaxCreditPercentage).toString()}
@@ -258,6 +270,9 @@ const AcceptModal = ({
             }
           }}
           backgroundColor="blue"
+          hasError={
+            state.hasError && state.personalTaxCreditPercentage === undefined
+          }
         />
       </Box>
 
@@ -265,7 +280,7 @@ const AcceptModal = ({
         <Box marginBottom={3}>
           <Input
             label="Persónuafsláttur"
-            placeholder="Skrifaðu prósentuhlutfall"
+            placeholder="Sláðu inn prósentuhlutfall"
             id="secondPersonalTaxCredit"
             name="secondPersonalTaxCredit"
             value={Number(state.secondPersonalTaxCredit).toString()}
@@ -307,7 +322,9 @@ const AcceptModal = ({
           id="tax"
           name="tax"
           value={calculateTaxOfAmount(
-            (aidAmount || 0) - state.income - sumValues(state.deductionFactor),
+            (aidAmount || 0) -
+              checkingValue(state.income) -
+              sumValues(state.deductionFactor),
             currentYear,
           ).toLocaleString('de-DE')}
           readOnly={true}

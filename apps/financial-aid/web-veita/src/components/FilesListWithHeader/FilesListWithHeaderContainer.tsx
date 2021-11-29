@@ -36,17 +36,16 @@ const FilesListWithHeaderContainer = ({ applicationFiles }: Props) => {
         {Object.values(FileType).map((file, index) => {
           const filterFiles = applicationFiles.filter((f) => f.type === file)
 
-          if (filterFiles.length === 0) {
-            return
+          if (filterFiles.length !== 0) {
+            return (
+              <span key={'fileList-' + index}>
+                <Text variant="eyebrow" marginBottom={2}>
+                  {getFileTypeName[file]}
+                </Text>
+                <FileList files={filterFiles} />
+              </span>
+            )
           }
-          return (
-            <span key={'fileList-' + index}>
-              <Text variant="eyebrow" marginBottom={2}>
-                {getFileTypeName[file]}
-              </Text>
-              <FileList files={filterFiles} />
-            </span>
-          )
         })}
       </Box>
     </>

@@ -32,7 +32,7 @@ const StateModalContainer = ({
           borderRadius="large"
           overflow="hidden"
           background="white"
-          className={`${styles.modal} `}
+          className={styles.modal}
         >
           {children}
         </Box>

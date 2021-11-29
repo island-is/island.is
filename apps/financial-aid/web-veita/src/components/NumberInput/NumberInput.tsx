@@ -8,7 +8,8 @@ interface Props {
   name: string
   label?: string
   placeholder?: string
-  value: string
+  value?: string
+  hasError?: boolean
 }
 
 export default function NumberInput({
@@ -19,9 +20,11 @@ export default function NumberInput({
   label,
   placeholder,
   value,
+  hasError = false,
 }: Props) {
   const sanitizeNumber = (n: string) => n.replace(/[^\d]/g, '')
-  const formatNumber = (n: string) => Number(n).toLocaleString('de-DE')
+  const formatNumber = (n?: string) =>
+    n ? Number(n).toLocaleString('de-DE') : ''
   const [text, setText] = useState<string>(formatNumber(value))
 
   const handleChange = useCallback(
@@ -47,6 +50,7 @@ export default function NumberInput({
       placeholder={placeholder}
       backgroundColor="blue"
       onChange={handleChange}
+      hasError={hasError}
     />
   )
 }
