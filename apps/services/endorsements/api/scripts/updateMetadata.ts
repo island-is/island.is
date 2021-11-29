@@ -256,16 +256,17 @@
 //   }
 // }
 
-// export default async () => {
-//   if (!environment.production) {
-//     // Lets make sure it is clear in logs if this is running in dev mode
-//     logger.warn('>>>RUNNING IN DEV MODE!!!<<<')
-//   }
-
-//   await getClientAuth() // pre fetch auth
-//   const app = await NestFactory.create(AppModule)
-//   endorsementMetadataService = app.get(EndorsementMetadataService)
-//   processEndorsementLists(() => {
-//     app.close()
-//   })
-// }
+export default async () => {
+  // This script is not in use and in need of review
+  // Commented out for the time being
+  //   if (!environment.production) {
+  //     // Lets make sure it is clear in logs if this is running in dev mode
+  //     logger.warn('>>>RUNNING IN DEV MODE!!!<<<')
+  //   }
+  //   await getClientAuth() // pre fetch auth
+  //   const app = await NestFactory.create(AppModule)
+  //   endorsementMetadataService = app.get(EndorsementMetadataService)
+  //   processEndorsementLists(() => {
+  //     app.close()
+  //   })
+}
