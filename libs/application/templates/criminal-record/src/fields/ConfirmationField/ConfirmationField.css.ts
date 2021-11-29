@@ -4,6 +4,7 @@ export const pdfViewer = style({})
 
 globalStyle(`${pdfViewer} canvas`, {
   maxWidth: '100%',
+  width: '100% !important',
   height: 'auto !important',
   border: '1px solid #CCDFFF',
 })
