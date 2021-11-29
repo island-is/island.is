@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Box, AsyncSearch, Text } from '@island.is/island-ui/core'
-import { useQuery } from '@apollo/client'
+import { Box, AsyncSearch, Text, Button } from '@island.is/island-ui/core'
+import { useLazyQuery } from '@apollo/client'
 import {
   Query,
   QueryGetArticlesArgs,
@@ -9,6 +9,7 @@ import {
 import { GET_ORGANIZATION_SERVICES_QUERY } from '@island.is/web/screens/queries'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useRouter } from 'next/router'
+import { useDebounce } from 'react-use'
 
 interface SearchBoxProps {
   organizationPage: Query['getOrganizationPage']
@@ -21,22 +22,37 @@ export const SearchBox = ({
   organizationPage,
   placeholder,
   noResultsText,
+  searchAllText
 }: SearchBoxProps) => {
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
 
-  const { data, loading } = useQuery<Query, QueryGetArticlesArgs>(
-    GET_ORGANIZATION_SERVICES_QUERY,
-    {
-      variables: {
-        input: {
-          lang: 'is',
-          organization: organizationPage.slug,
-          size: 500,
-          sort: SortField.Popular,
-        },
-      },
+  const [value, setValue] = useState('')
+  const [options, setOptions] = useState([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const [fetch, { data }] = useLazyQuery<Query, QueryGetArticlesArgs>(
+    GET_ORGANIZATION_SERVICES_QUERY)
+
+  useDebounce(
+    () => {
+      if (value) {
+        fetch({
+          variables: {
+            input: {
+              lang: 'is',
+              organization: organizationPage.slug,
+              size: 500,
+              sort: SortField.Popular,
+            },
+          },
+        })
+
+        setIsLoading(false)
+      }
     },
+    300,
+    [value],
   )
 
   const items = data?.getArticles?.map((item, index) => ({
@@ -48,7 +64,8 @@ export const SearchBox = ({
           key={index}
           cursor="pointer"
           outline="none"
-          padding={2}
+          paddingX={2}
+          paddingY={1}
           role="button"
           background={active ? 'white' : 'blue100'}
           onClick={() => {
@@ -60,11 +77,6 @@ export const SearchBox = ({
       )
     },
   }))
-
-  const [value, setValue] = useState('')
-  const [options, setOptions] = useState([])
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const busy = loading || isLoading
 
   const clearAll = () => {
     setIsLoading(false)
@@ -85,13 +97,36 @@ export const SearchBox = ({
       clearAll()
     }
 
+
     setOptions(
       newOpts.length
         ? newOpts
+        .concat(
+          {
+            label: 'searchAll',
+            value: '',
+            component: () => (
+              <Box padding={2}>
+                <Button
+                  type="button"
+                  variant="text"
+                  onClick={() =>
+                    Router.push({
+                      pathname: linkResolver('search').href,
+                      query: { q: value },
+                    })
+                  }
+                >
+                  {searchAllText}
+                </Button>
+              </Box>
+            )
+          }
+        )
         : [
             {
               component: () => (
-                <Box padding={2} background="blue100" disabled>
+                <Box padding={2} disabled>
                   <Text as="span">{noResultsText}</Text>
                 </Box>
               ),
@@ -108,7 +143,7 @@ export const SearchBox = ({
         key="island-organization"
         placeholder={placeholder}
         options={options}
-        loading={busy}
+        loading={isLoading}
         initialInputValue={''}
         inputValue={value}
         onInputValueChange={(value) => {
