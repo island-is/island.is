@@ -55,28 +55,12 @@ export const SearchSection = ({
   } = page
 
   useEffect(() => {
-    setIsMobile(width < theme.breakpoints.md)
-  }, [width])
+    const shouldBeMobile = width < theme.breakpoints.md
 
-  const defaultIllustration = (
-    <DefaultIllustration className={styles.defaultIllustration} />
-  )
-
-  const mobileImage = imageMobile?.url ? (
-    <Image
-      src={imageMobile.url}
-      alt={imageAlternativeText}
-      spacing={isMobile}
-    />
-  ) : (
-    defaultIllustration
-  )
-
-  const desktopImage = image?.url ? (
-    <Image src={image.url} alt={imageAlternativeText} />
-  ) : (
-    defaultIllustration
-  )
+    if (shouldBeMobile !== isMobile) {
+      setIsMobile(shouldBeMobile)
+    }
+  }, [width, isMobile])
 
   return (
     <GridContainer>
@@ -153,10 +137,20 @@ export const SearchSection = ({
                         type: contentType,
                       }
                     })}
-                    fallback={mobileImage}
+                    fallback={
+                      <ImageOrDefault
+                        url={imageMobile?.url}
+                        imageAlternativeText={imageAlternativeText}
+                        isMobile={isMobile}
+                      />
+                    }
                   />
                 ) : (
-                  mobileImage
+                  <ImageOrDefault
+                    url={imageMobile?.url}
+                    imageAlternativeText={imageAlternativeText}
+                    isMobile={isMobile}
+                  />
                 ))}
 
               {!isMobile &&
@@ -170,10 +164,18 @@ export const SearchSection = ({
                         type: contentType,
                       }
                     })}
-                    fallback={desktopImage}
+                    fallback={
+                      <ImageOrDefault
+                        url={image?.url}
+                        imageAlternativeText={imageAlternativeText}
+                      />
+                    }
                   />
                 ) : (
-                  desktopImage
+                  <ImageOrDefault
+                    url={image?.url}
+                    imageAlternativeText={imageAlternativeText}
+                  />
                 ))}
             </Box>
           )}
@@ -220,6 +222,24 @@ const Image = ({ spacing, src, alt }: ImageProps) => {
       <img src={src} alt={alt} className={styles.image} />
     </Box>
   )
+}
+
+type ImageOrDefaultProps = {
+  url?: string
+  imageAlternativeText: string
+  isMobile?: boolean | null
+}
+
+const ImageOrDefault = ({
+  url,
+  imageAlternativeText,
+  isMobile,
+}: ImageOrDefaultProps) => {
+  if (url) {
+    return <Image src={url} alt={imageAlternativeText} spacing={isMobile} />
+  }
+
+  return <DefaultIllustration className={styles.defaultIllustration} />
 }
 
 export default SearchSection

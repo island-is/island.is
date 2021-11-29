@@ -191,32 +191,30 @@ export const Footer = ({
       </Box>
       <Box paddingY={4}>
         <GridContainer>
-          <GridRow>
-            <GridColumn span="12/12" paddingBottom={2}>
-              <Text variant="eyebrow" color="blue400">
-                {bottomLinksTitle}
-              </Text>
-            </GridColumn>
-            <GridColumn span="12/12">
-              <LinkContext.Provider
-                value={{
-                  linkRenderer: (href, children) => (
-                    <Link href={href} underline="normal">
-                      {children}
-                    </Link>
-                  ),
-                }}
-              >
-                <Inline space={[2, 2, 4]}>
-                  {bottomLinks.map(({ title, href }, index) => (
-                    <Text key={index} variant="small" color="blue600">
-                      <a href={href}>{title}</a>
-                    </Text>
-                  ))}
-                </Inline>
-              </LinkContext.Provider>
-            </GridColumn>
-          </GridRow>
+          <Box paddingBottom={2}>
+            <Text variant="eyebrow" color="blue400">
+              {bottomLinksTitle}
+            </Text>
+          </Box>
+          <Box>
+            <LinkContext.Provider
+              value={{
+                linkRenderer: (href, children) => (
+                  <Link href={href} underline="normal">
+                    {children}
+                  </Link>
+                ),
+              }}
+            >
+              <Inline space={[2, 2, 4]}>
+                {bottomLinks.map(({ title, href }, index) => (
+                  <Text key={index} variant="small" color="blue600">
+                    <a href={href}>{title}</a>
+                  </Text>
+                ))}
+              </Inline>
+            </LinkContext.Provider>
+          </Box>
         </GridContainer>
       </Box>
     </footer>

@@ -31,25 +31,21 @@ export const NewsItems = ({
     <>
       <GridContainer>
         <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-          <Box>
-            <Text variant="h3" as="h2" id={headingTitle}>
-              {heading}
-            </Text>
+          <Text variant="h3" as="h2" id={headingTitle}>
+            {heading}
+          </Text>
+          <Box display={['none', 'none', 'block']}>
+            <Link {...linkResolver('newsoverview', [])} skipTab>
+              <Button
+                icon="arrowForward"
+                iconType="filled"
+                variant="text"
+                as="span"
+              >
+                {seeMoreText}
+              </Button>
+            </Link>
           </Box>
-          <Hidden below="lg">
-            <Box display={['none', 'none', 'block']}>
-              <Link {...linkResolver('newsoverview', [])} skipTab>
-                <Button
-                  icon="arrowForward"
-                  iconType="filled"
-                  variant="text"
-                  as="span"
-                >
-                  {seeMoreText}
-                </Button>
-              </Link>
-            </Box>
-          </Hidden>
         </Box>
       </GridContainer>
       <GridItems
