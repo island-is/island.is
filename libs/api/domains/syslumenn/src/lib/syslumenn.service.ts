@@ -38,12 +38,14 @@ export class SyslumennService {
     attachement: Attachment,
     extraData: { [key: string]: string },
     uploadDataName: string,
+    uploadDataId?: string,
   ): Promise<DataUploadResponse> {
     return await this.syslumennClient.uploadData(
       persons,
       attachement,
       extraData,
       uploadDataName,
+      uploadDataId,
     )
   }
 }
