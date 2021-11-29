@@ -102,12 +102,6 @@ export const Overview: React.FC = () => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
-  useEffect(() => {
-    if (!workingCase && data?.case) {
-      setWorkingCase(data.case)
-    }
-  }, [workingCase, setWorkingCase, data])
-
   return (
     <PageLayout
       workingCase={workingCase}

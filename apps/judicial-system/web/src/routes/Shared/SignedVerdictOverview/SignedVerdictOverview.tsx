@@ -59,12 +59,6 @@ export const SignedVerdictOverview: React.FC = () => {
     document.title = 'Yfirlit staðfestrar kröfu - Réttarvörslugátt'
   }, [])
 
-  useEffect(() => {
-    if (!workingCase && data?.case) {
-      setWorkingCase(data.case)
-    }
-  }, [workingCase, setWorkingCase, data])
-
   const handleNextButtonClick = async () => {
     if (workingCase) {
       if (workingCase.childCase) {

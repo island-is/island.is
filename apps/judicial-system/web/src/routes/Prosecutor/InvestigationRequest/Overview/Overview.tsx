@@ -38,12 +38,6 @@ export const Overview: React.FC = () => {
 
   const { formatMessage } = useIntl()
 
-  useEffect(() => {
-    if (!workingCase && data?.case) {
-      setWorkingCase(data.case)
-    }
-  }, [workingCase, setWorkingCase, data])
-
   const handleNextButtonClick = async () => {
     if (!workingCase) {
       return

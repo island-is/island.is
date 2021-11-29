@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
@@ -15,12 +15,16 @@ import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useRouter } from 'next/router'
 import RulingStepTwoForm from './RulingStepTwoForm'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 const RulingStepTwo = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
-  const router = useRouter()
-  const id = router.query.id
   const { autofill } = useCase()
 
   useEffect(() => {
@@ -28,13 +32,11 @@ const RulingStepTwo = () => {
   }, [])
 
   useEffect(() => {
-    if (!workingCase && data?.case) {
-      if (isAcceptingCaseDecision(data.case.decision) && data.case.demands) {
-        autofill('conclusion', data.case.demands, data.case)
-      }
-      setWorkingCase(data.case)
+    if (isAcceptingCaseDecision(workingCase.decision) && workingCase.demands) {
+      autofill('conclusion', workingCase.demands, workingCase)
     }
-  }, [workingCase, setWorkingCase, data, autofill])
+    setWorkingCase(workingCase)
+  }, [])
 
   return (
     <PageLayout
@@ -43,16 +45,14 @@ const RulingStepTwo = () => {
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.RULING_STEP_TWO}
-      isLoading={loading}
+      isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      {workingCase && (
-        <RulingStepTwoForm
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          isLoading={loading}
-        />
-      )}
+      <RulingStepTwoForm
+        workingCase={workingCase}
+        setWorkingCase={setWorkingCase}
+        isLoading={isLoadingWorkingCase}
+      />
     </PageLayout>
   )
 }

@@ -57,12 +57,6 @@ export const Confirmation: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (!workingCase && data?.case) {
-      setWorkingCase(data.case)
-    }
-  }, [workingCase, setWorkingCase, data])
-
-  useEffect(() => {
     if (!modalVisible) {
       setRequestSignatureResponse(undefined)
     }

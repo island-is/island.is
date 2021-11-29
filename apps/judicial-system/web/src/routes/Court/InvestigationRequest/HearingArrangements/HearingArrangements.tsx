@@ -14,13 +14,17 @@ import HearingArrangementsForm from './HearingArrangementsForm'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 const HearingArrangements = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const { user } = useContext(UserContext)
 
-  const router = useRouter()
-  const id = router.query.id
   const { autofill } = useCase()
 
   const { data: users, loading: userLoading } = useQuery<UserData>(UsersQuery, {
@@ -33,24 +37,18 @@ const HearingArrangements = () => {
   }, [])
 
   useEffect(() => {
-    if (!workingCase && data?.case) {
-      const theCase = data.case
+    const theCase = workingCase
 
-      if (theCase.requestedCourtDate) {
-        autofill('courtDate', theCase.requestedCourtDate, theCase)
-      }
-
-      if (theCase.defenderName) {
-        autofill(
-          'sessionArrangements',
-          SessionArrangements.ALL_PRESENT,
-          theCase,
-        )
-      }
-
-      setWorkingCase(theCase)
+    if (theCase.requestedCourtDate) {
+      autofill('courtDate', theCase.requestedCourtDate, theCase)
     }
-  }, [workingCase, setWorkingCase, data, autofill])
+
+    if (theCase.defenderName) {
+      autofill('sessionArrangements', SessionArrangements.ALL_PRESENT, theCase)
+    }
+
+    setWorkingCase(theCase)
+  }, [])
 
   return (
     <PageLayout
@@ -59,14 +57,14 @@ const HearingArrangements = () => {
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
-      isLoading={loading}
+      isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      {workingCase && user && users && (
+      {user && users && (
         <HearingArrangementsForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
-          isLoading={loading || userLoading}
+          isLoading={userLoading}
           users={users}
           user={user}
         />

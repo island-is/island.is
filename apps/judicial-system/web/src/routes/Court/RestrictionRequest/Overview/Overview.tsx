@@ -47,12 +47,6 @@ export const JudgeOverview: React.FC = () => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
-  useEffect(() => {
-    if (!workingCase && data?.case) {
-      setWorkingCase(data.case)
-    }
-  }, [workingCase, setWorkingCase, data])
-
   const receiveCase = async (workingCase: Case, courtCaseNumber: string) => {
     if (workingCase.state === CaseState.SUBMITTED && !isTransitioningCase) {
       // Transition case from SUBMITTED to RECEIVED when courtCaseNumber is set
