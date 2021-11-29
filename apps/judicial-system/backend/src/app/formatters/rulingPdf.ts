@@ -76,7 +76,14 @@ function constructRestrictionRulingPdf(
     })
     .fontSize(mediumFontSize)
     .lineGap(2)
-    .text(formatMessage(ruling.proceedingsHeading), { align: 'center' })
+    .text(
+      formatMessage(
+        shortVersion
+          ? ruling.proceedingsHeadingShortVersion
+          : ruling.proceedingsHeading,
+      ),
+      { align: 'center' },
+    )
     .lineGap(30)
     .text(
       formatMessage(ruling.caseNumber, {
@@ -433,7 +440,14 @@ function constructInvestigationRulingPdf(
     })
     .fontSize(mediumFontSize)
     .lineGap(2)
-    .text(formatMessage(ruling.proceedingsHeading), { align: 'center' })
+    .text(
+      formatMessage(
+        shortVersion
+          ? ruling.proceedingsHeadingShortVersion
+          : ruling.proceedingsHeading,
+      ),
+      { align: 'center' },
+    )
     .lineGap(30)
     .text(
       formatMessage(ruling.caseNumber, {
