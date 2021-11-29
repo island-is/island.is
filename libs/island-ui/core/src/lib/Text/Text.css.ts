@@ -14,7 +14,6 @@ export type TextVariants =
   | 'h5'
   | 'intro'
   | 'eyebrow'
-  | 'sidebar'
 
 type ResponsiveProps<T> = {
   xs?: T
@@ -70,7 +69,6 @@ const availableFontSizes = {
   lg: { xs: 20, md: 24 },
   xl: { xs: 26, md: 34 },
   xxl: { xs: 32, md: 42 },
-  sidebar: { xs: 16, md: 16 },
 }
 
 const lineHeightMap = {
@@ -91,7 +89,6 @@ const defaultFontWeightsMap: defaultFontWeights = {
   small: theme.typography.regular,
   intro: theme.typography.light,
   eyebrow: theme.typography.semiBold,
-  sidebar: theme.typography.regular,
 }
 
 const defaultLineHeightsMap: defaultFontWeights = {
@@ -104,7 +101,6 @@ const defaultLineHeightsMap: defaultFontWeights = {
   small: availableLineHeights.md,
   intro: availableLineHeights.md,
   eyebrow: availableLineHeights.md,
-  sidebar: availableLineHeights.md,
 }
 
 export const fontWeight = styleVariants(
@@ -150,9 +146,6 @@ export const variants: Variants = {
   },
   eyebrow: {
     fontSize: availableFontSizes.xs,
-  },
-  sidebar: {
-    fontSize: availableFontSizes.sidebar,
   },
 }
 

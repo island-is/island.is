@@ -1,4 +1,4 @@
-import { Box, IconProps, Text, Icon } from '@island.is/island-ui/core'
+import { Box, IconProps, Icon } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import * as styles from './NavItem.css'
@@ -23,7 +23,6 @@ const NavItemContent: FC<Props> = ({
   enabled,
   hasArray,
   onClick,
-  variant = 'blue',
   children,
   alwaysExpanded = false,
   badge = false,
@@ -63,13 +62,7 @@ const NavItemContent: FC<Props> = ({
             />
           </Box>
         ) : null}
-        <Text
-          fontWeight={'regular'}
-          variant="sidebar"
-          color={variant === 'blue' ? 'blue400' : 'blueberry600'}
-        >
-          {children}
-        </Text>
+        <Box className={styles.text}>{children}</Box>
       </Box>
       {showChevron && (
         <Icon type={'filled'} icon={chevron} size="medium" color={'blue400'} />
