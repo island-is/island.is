@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { SessionArrangements } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
@@ -15,19 +15,20 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icCourtRecord as m } from '@island.is/judicial-system-web/messages'
 import { useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 const CourtRecord = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
   const { autofill } = useCase()
   const { formatMessage } = useIntl()
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
   const router = useRouter()
   const id = router.query.id
-
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
 
   useEffect(() => {
     document.title = 'Þingbók - Réttarvörslugátt'
@@ -73,87 +74,85 @@ const CourtRecord = () => {
       return attendees
     }
 
-    if (!workingCase && data?.case) {
-      const theCase = data.case
+    const theCase = workingCase
 
-      autofill('courtStartDate', formatISO(new Date()), theCase)
+    autofill('courtStartDate', formatISO(new Date()), theCase)
 
-      if (theCase.court) {
-        autofill(
-          'courtLocation',
-          `í ${
-            theCase.court.name.indexOf('dómur') > -1
-              ? theCase.court.name.replace('dómur', 'dómi')
-              : theCase.court.name
-          }`,
-          theCase,
-        )
-      }
-
-      if (theCase.courtAttendees !== '') {
-        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
-      }
-
-      if (theCase.demands) {
-        autofill('prosecutorDemands', theCase.demands, theCase)
-      }
-
-      if (theCase.sessionArrangements === SessionArrangements.REMOTE_SESSION) {
-        autofill(
-          'litigationPresentations',
-          formatMessage(m.sections.litigationPresentations.autofill),
-          theCase,
-        )
-      }
-
-      if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-        let autofillAccusedBookings = ''
-
-        if (theCase.defenderName) {
-          autofillAccusedBookings += `${formatMessage(
-            m.sections.accusedBookings.autofillDefender,
-            {
-              defender: theCase.defenderName,
-            },
-          )}\n\n`
-        }
-
-        if (theCase.translator) {
-          autofillAccusedBookings += `${formatMessage(
-            m.sections.accusedBookings.autofillTranslator,
-            {
-              translator: theCase.translator,
-            },
-          )}\n\n`
-        }
-
-        autofillAccusedBookings += `${formatMessage(
-          m.sections.accusedBookings.autofillRightToRemainSilent,
-        )}\n\n${formatMessage(
-          m.sections.accusedBookings.autofillCourtDocumentOne,
-        )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
-
-        autofill('accusedBookings', autofillAccusedBookings, theCase)
-      }
-
-      if (
-        theCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
-        theCase.defenderIsSpokesperson &&
-        theCase.defenderName
-      ) {
-        autofill(
-          'accusedBookings',
-          formatMessage(m.sections.accusedBookings.autofillSpokeperson, {
-            spokesperson: theCase.defenderName,
-          }),
-          theCase,
-        )
-      }
-
-      setWorkingCase(data.case)
+    if (theCase.court) {
+      autofill(
+        'courtLocation',
+        `í ${
+          theCase.court.name.indexOf('dómur') > -1
+            ? theCase.court.name.replace('dómur', 'dómi')
+            : theCase.court.name
+        }`,
+        theCase,
+      )
     }
-  }, [workingCase, setWorkingCase, data, autofill, formatMessage])
+
+    if (theCase.courtAttendees !== '') {
+      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+    }
+
+    if (theCase.demands) {
+      autofill('prosecutorDemands', theCase.demands, theCase)
+    }
+
+    if (theCase.sessionArrangements === SessionArrangements.REMOTE_SESSION) {
+      autofill(
+        'litigationPresentations',
+        formatMessage(m.sections.litigationPresentations.autofill),
+        theCase,
+      )
+    }
+
+    if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+      let autofillAccusedBookings = ''
+
+      if (theCase.defenderName) {
+        autofillAccusedBookings += `${formatMessage(
+          m.sections.accusedBookings.autofillDefender,
+          {
+            defender: theCase.defenderName,
+          },
+        )}\n\n`
+      }
+
+      if (theCase.translator) {
+        autofillAccusedBookings += `${formatMessage(
+          m.sections.accusedBookings.autofillTranslator,
+          {
+            translator: theCase.translator,
+          },
+        )}\n\n`
+      }
+
+      autofillAccusedBookings += `${formatMessage(
+        m.sections.accusedBookings.autofillRightToRemainSilent,
+      )}\n\n${formatMessage(
+        m.sections.accusedBookings.autofillCourtDocumentOne,
+      )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
+
+      autofill('accusedBookings', autofillAccusedBookings, theCase)
+    }
+
+    if (
+      theCase.sessionArrangements ===
+        SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+      theCase.defenderIsSpokesperson &&
+      theCase.defenderName
+    ) {
+      autofill(
+        'accusedBookings',
+        formatMessage(m.sections.accusedBookings.autofillSpokeperson, {
+          spokesperson: theCase.defenderName,
+        }),
+        theCase,
+      )
+    }
+
+    setWorkingCase(workingCase)
+  }, [])
 
   return (
     <PageLayout
@@ -162,16 +161,14 @@ const CourtRecord = () => {
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.COURT_RECORD}
-      isLoading={loading}
-      notFound={data?.case === undefined}
+      isLoading={isLoadingWorkingCase}
+      notFound={caseNotFound}
     >
-      {workingCase && (
-        <CourtRecordForm
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          isLoading={loading}
-        />
-      )}
+      <CourtRecordForm
+        workingCase={workingCase}
+        setWorkingCase={setWorkingCase}
+        isLoading={isLoadingWorkingCase}
+      />
     </PageLayout>
   )
 }

@@ -19,6 +19,7 @@ import Logo from '../Logo/Logo'
 import Loading from '../Loading/Loading'
 import { getSections } from './utils'
 import * as styles from './PageLayout.css'
+import Skeleton from '../Skeleton/Skeleton'
 
 interface PageProps {
   children: ReactNode
@@ -49,7 +50,9 @@ const PageLayout: React.FC<PageProps> = ({
     user,
   )
 
-  return children ? (
+  return isLoading ? (
+    <Skeleton />
+  ) : children ? (
     <Box
       paddingY={[3, 3, 3, 6]}
       background="purple100"
@@ -98,10 +101,6 @@ const PageLayout: React.FC<PageProps> = ({
           )}
         </GridRow>
       </GridContainer>
-    </Box>
-  ) : isLoading ? (
-    <Box className={styles.loadingWrapper}>
-      <Loading />
     </Box>
   ) : notFound ? (
     <AlertBanner

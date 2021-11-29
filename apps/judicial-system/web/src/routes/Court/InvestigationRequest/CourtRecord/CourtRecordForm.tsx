@@ -34,7 +34,7 @@ import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/uti
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
 }
 
