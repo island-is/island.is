@@ -205,6 +205,10 @@ Install <https://github.com/cameronhunter/local-ssl-proxy>:
 - start project
 - `local-ssl-proxy --source 4200 --target 4202`
 
+## Lawyer directory
+
+We are using data from [lmfi](https://lmfi.is/logmannalisti) to search for lawyers to use as defenders for defendants in the system. We are currently scraping that data and the scraper can be found in a [private repo under Kolibri's GitHub org.](https://github.com/KolibriDev/lawyer-scraper). This is a temporary solution until we get access to an API from lmfi.
+
 ## Code owners and maintainers
 
 - [Kolibri](https://github.com/orgs/island-is/teams/kolibri/members)
