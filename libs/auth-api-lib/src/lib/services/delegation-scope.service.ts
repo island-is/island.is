@@ -12,6 +12,7 @@ import { Delegation } from '../entities/models/delegation.model'
 import { Op } from 'sequelize'
 import { ApiScope } from '../entities/models/api-scope.model'
 import { IdentityResource } from '../entities/models/identity-resource.model'
+import startOfDay from 'date-fns/startOfDay'
 
 @Injectable()
 export class DelegationScopeService {
@@ -31,9 +32,11 @@ export class DelegationScopeService {
     delegationScope: DelegationScopeDTO,
   ): Promise<DelegationScope | null> {
     this.logger.debug('Creating new delegation scope')
+    const validFrom = startOfDay(new Date())
     return this.delegationScopeModel.create({
       id: uuid(),
       ...delegationScope,
+      validFrom,
       delegationId,
     })
   }
@@ -42,10 +45,12 @@ export class DelegationScopeService {
     delegationId: string,
     scopes: UpdateDelegationScopeDTO[],
   ): Promise<any> {
+    const validFrom = startOfDay(new Date())
     return this.delegationScopeModel.bulkCreate(
       scopes.map((delegationScope) => ({
         id: uuid(),
-        validTo: delegationScope.validTo,
+        validFrom,
+        validTo: delegationScope.validTo ? startOfDay(delegationScope.validTo) : undefined,
         scopeName:
           delegationScope.type === 'apiScope'
             ? delegationScope.name
@@ -92,13 +97,13 @@ export class DelegationScopeService {
     toNationalId: string,
     fromNationalId: string,
   ): Promise<DelegationScope[]> {
-    const now = new Date()
+    const today = startOfDay(new Date())
 
     return this.delegationScopeModel.findAll({
       where: {
         [Op.and]: [
-          { validFrom: { [Op.lt]: now } },
-          { validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: now }] } },
+          { validFrom: { [Op.lte]: today } },
+          { validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gte]: today }] } },
         ],
       },
       include: [

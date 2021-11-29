@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsString, IsEnum, IsOptional, IsDateString } from 'class-validator'
+import { IsString, IsDate, IsEnum, IsOptional, IsDateString } from 'class-validator'
+import { Type } from 'class-transformer'
 
 import { ApiScopesDTO } from './api-scopes.dto'
 import { IdentityResourcesDTO } from './identity-resources.dto'
@@ -19,7 +20,8 @@ export class UpdateDelegationScopeDTO {
   type!: ScopeType
 
   @IsOptional()
-  @IsDateString()
+  @Type(() => Date)
+  @IsDate()
   @ApiPropertyOptional()
   validTo?: Date
 }
