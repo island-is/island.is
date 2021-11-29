@@ -57,11 +57,6 @@ const HearingArrangements = () => {
     updateCase,
   } = useCase()
 
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
   const { data: userData } = useQuery<{ users: User[] }>(UsersQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',

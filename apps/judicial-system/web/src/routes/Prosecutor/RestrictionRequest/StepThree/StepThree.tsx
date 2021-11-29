@@ -21,11 +21,6 @@ export const StepThree: React.FC = () => {
     setRequestedValidToDateIsValid,
   ] = useState(false)
 
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
   const resCase = data?.case
 
   useEffect(() => {
@@ -48,7 +43,7 @@ export const StepThree: React.FC = () => {
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_THREE}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase ? (
         <StepThreeForm

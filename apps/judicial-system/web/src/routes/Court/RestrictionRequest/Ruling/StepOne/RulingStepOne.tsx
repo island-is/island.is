@@ -75,10 +75,6 @@ export const RulingStepOne: React.FC = () => {
   const { user } = useContext(UserContext)
   const { updateCase, autofill } = useCase()
   const { formatMessage } = useIntl()
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
 
   useEffect(() => {
     document.title = 'Úrskurður - Réttarvörslugátt'
@@ -135,7 +131,7 @@ export const RulingStepOne: React.FC = () => {
       }
       activeSubSection={JudgeSubsections.RULING_STEP_ONE}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase ? (
         <>

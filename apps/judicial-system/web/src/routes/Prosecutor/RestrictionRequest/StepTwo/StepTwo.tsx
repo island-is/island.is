@@ -54,11 +54,6 @@ export const StepTwo: React.FC = () => {
     updateCase,
   } = useCase()
 
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
   const { data: userData, loading: userLoading } = useQuery(UsersQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
@@ -157,7 +152,7 @@ export const StepTwo: React.FC = () => {
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_TWO}
       isLoading={loading || userLoading || institutionLoading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase && prosecutors && !institutionLoading ? (
         <>

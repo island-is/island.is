@@ -11,7 +11,7 @@ import { ruling as m } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isRequired: boolean
   rows?: number
 }

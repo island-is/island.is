@@ -17,11 +17,6 @@ const Overview = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
@@ -40,7 +35,7 @@ const Overview = () => {
       }
       activeSubSection={JudgeSubsections.JUDGE_OVERVIEW}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase && (
         <OverviewForm

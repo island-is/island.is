@@ -70,11 +70,6 @@ export const HearingArrangements: React.FC = () => {
   } = useCase()
   const { formatMessage } = useIntl()
 
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
   const { data: userData, loading: userLoading } = useQuery<UserData>(
     UsersQuery,
     {
@@ -173,7 +168,7 @@ export const HearingArrangements: React.FC = () => {
       }
       activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
       isLoading={loading || userLoading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase ? (
         <>

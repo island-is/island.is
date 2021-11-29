@@ -31,7 +31,7 @@ import { isAccusedStepValidRC } from '@island.is/judicial-system-web/src/utils/v
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   loading: boolean
   handleNextButtonClick: (theCase: Case) => void
 }

@@ -26,10 +26,7 @@ export const CaseFiles: React.FC = () => {
   const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
+
   const {
     data: policeData,
     loading: policeDataLoading,
@@ -80,7 +77,7 @@ export const CaseFiles: React.FC = () => {
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_FIVE}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase ? (
         <CaseFilesForm

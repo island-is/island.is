@@ -22,7 +22,7 @@ import { ValueType } from 'react-select/src/types'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   prosecutors: ReactSelectOption[]
   courts: Institution[]
   handleNextButtonClick: () => Promise<void>

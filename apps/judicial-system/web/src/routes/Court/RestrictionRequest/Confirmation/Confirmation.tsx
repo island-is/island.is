@@ -51,10 +51,6 @@ export const Confirmation: React.FC = () => {
   const { requestSignature, isRequestingSignature } = useCase()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
 
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
@@ -99,7 +95,7 @@ export const Confirmation: React.FC = () => {
       }
       activeSubSection={JudgeSubsections.CONFIRMATION}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase ? (
         <>

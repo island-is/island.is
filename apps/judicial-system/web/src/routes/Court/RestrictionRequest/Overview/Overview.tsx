@@ -43,11 +43,6 @@ export const JudgeOverview: React.FC = () => {
     sendNotification,
   } = useCase()
 
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
@@ -94,7 +89,7 @@ export const JudgeOverview: React.FC = () => {
       }
       activeSubSection={JudgeSubsections.JUDGE_OVERVIEW}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase ? (
         <>

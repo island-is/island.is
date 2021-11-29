@@ -39,7 +39,7 @@ import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCa
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   requestedValidToDateIsValid: boolean
   setRequestedValidToDateIsValid: React.Dispatch<React.SetStateAction<boolean>>
 }

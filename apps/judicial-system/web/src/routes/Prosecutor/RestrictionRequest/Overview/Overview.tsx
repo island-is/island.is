@@ -59,10 +59,6 @@ export const Overview: React.FC = () => {
   const { transitionCase, sendNotification, isSendingNotification } = useCase()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const { data, loading } = useQuery(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
@@ -120,7 +116,7 @@ export const Overview: React.FC = () => {
       }
       activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase ? (
         <>

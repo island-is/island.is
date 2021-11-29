@@ -56,10 +56,6 @@ export const CourtRecord: React.FC = () => {
   const { formatMessage } = useIntl()
 
   const id = router.query.id
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
 
   useEffect(() => {
     document.title = 'Þingbók - Réttarvörslugátt'
@@ -169,7 +165,7 @@ export const CourtRecord: React.FC = () => {
       }
       activeSubSection={JudgeSubsections.COURT_RECORD}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase ? (
         <>

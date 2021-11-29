@@ -15,7 +15,7 @@ import * as styles from './CourtCaseNumber.css'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   courtCaseNumberEM: string
   setCourtCaseNumberEM: React.Dispatch<React.SetStateAction<string>>
   createCourtCaseSuccess: boolean

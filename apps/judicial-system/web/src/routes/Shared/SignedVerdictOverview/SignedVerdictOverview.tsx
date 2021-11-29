@@ -51,11 +51,6 @@ export const SignedVerdictOverview: React.FC = () => {
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
 
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
   const [extendCaseMutation, { loading: isCreatingExtension }] = useMutation(
     ExtendCaseMutation,
   )
@@ -275,7 +270,7 @@ export const SignedVerdictOverview: React.FC = () => {
       workingCase={workingCase}
       activeSection={2}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase ? (
         <>

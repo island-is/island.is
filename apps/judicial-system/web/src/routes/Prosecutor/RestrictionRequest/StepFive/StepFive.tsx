@@ -27,11 +27,6 @@ export const StepFive: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const { data, loading } = useQuery(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
   const {
     data: policeData,
     loading: policeDataLoading,
@@ -84,7 +79,7 @@ export const StepFive: React.FC = () => {
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_FIVE}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase ? (
         <StepFiveForm

@@ -48,10 +48,6 @@ export const StepFour: React.FC = () => {
   const id = router.query.id
 
   const { updateCase, autofill } = useCase()
-  const { data, loading } = useQuery(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
 
   useEffect(() => {
     document.title = 'Greinargerð - Réttarvörslugátt'
@@ -103,7 +99,7 @@ export const StepFour: React.FC = () => {
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_FOUR}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase ? (
         <>

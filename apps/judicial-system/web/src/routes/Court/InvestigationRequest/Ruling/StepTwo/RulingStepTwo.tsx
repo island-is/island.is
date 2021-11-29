@@ -23,11 +23,6 @@ const RulingStepTwo = () => {
   const id = router.query.id
   const { autofill } = useCase()
 
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
@@ -49,7 +44,7 @@ const RulingStepTwo = () => {
       }
       activeSubSection={JudgeSubsections.RULING_STEP_TWO}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase && (
         <RulingStepTwoForm

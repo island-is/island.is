@@ -23,11 +23,6 @@ const Confirmation = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [
     requestSignatureResponse,
@@ -80,7 +75,7 @@ const Confirmation = () => {
       }
       activeSubSection={JudgeSubsections.CONFIRMATION}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase && user && (
         <>

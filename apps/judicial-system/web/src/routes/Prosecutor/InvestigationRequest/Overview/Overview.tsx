@@ -31,10 +31,6 @@ export const Overview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
 
   const { transitionCase, sendNotification, isSendingNotification } = useCase()
-  const { data, loading } = useQuery(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
@@ -92,7 +88,7 @@ export const Overview: React.FC = () => {
       }
       activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase ? (
         <>

@@ -16,11 +16,6 @@ const PoliceReport = () => {
   const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
 
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
   useEffect(() => {
     document.title = 'Greinargerð - Réttarvörslugátt'
   }, [])
@@ -39,7 +34,7 @@ const PoliceReport = () => {
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_FOUR}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase && (
         <PoliceReportForm

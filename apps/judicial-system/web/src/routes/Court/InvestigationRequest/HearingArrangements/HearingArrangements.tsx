@@ -23,11 +23,6 @@ const HearingArrangements = () => {
   const id = router.query.id
   const { autofill } = useCase()
 
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
   const { data: users, loading: userLoading } = useQuery<UserData>(UsersQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
@@ -65,7 +60,7 @@ const HearingArrangements = () => {
       }
       activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase && user && users && (
         <HearingArrangementsForm

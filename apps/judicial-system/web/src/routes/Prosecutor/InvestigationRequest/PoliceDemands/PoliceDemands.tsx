@@ -17,11 +17,6 @@ const PoliceDemands: React.FC = () => {
 
   const [workingCase, setWorkingCase] = useState<Case>()
 
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
   useEffect(() => {
     document.title = 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt'
   }, [])
