@@ -1,5 +1,12 @@
 import React, { useState } from 'react'
-import { Box, Button, Link, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Link,
+  Text,
+  toast,
+  ToastContainer,
+} from '@island.is/island-ui/core'
 
 import * as styles from './Profile.css'
 import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
@@ -20,6 +27,8 @@ import {
   ActivationButtonTableItem,
   NewUserModal,
 } from '@island.is/financial-aid-web/veita/src/components'
+import { useMutation } from '@apollo/client'
+import { MunicipalityActivityMutation } from '@island.is/financial-aid-web/veita/graphql'
 
 interface MunicipalityProfileProps {
   municipality: Municipality
@@ -35,6 +44,27 @@ const MunicipalityProfile = ({
   const refreshList = () => {
     setIsModalVisible(false)
     getMunicipality()
+  }
+
+  const [municipalityActivity] = useMutation(MunicipalityActivityMutation)
+
+  const changeMunicipalityActivity = async (id: string, active: boolean) => {
+    await municipalityActivity({
+      variables: {
+        input: {
+          id,
+          active,
+        },
+      },
+    })
+      .then(() => {
+        getMunicipality()
+      })
+      .catch(() => {
+        toast.error(
+          'Ekki tókst að uppfæra sveitarfélag, vinsamlega reynið aftur síðar',
+        )
+      })
   }
 
   const smallText = 'small'
@@ -124,7 +154,12 @@ const MunicipalityProfile = ({
               </Text>
             </Box>
             <button
-              onClick={() => console.log('🔜')}
+              onClick={() =>
+                changeMunicipalityActivity(
+                  municipality.id,
+                  !municipality.active,
+                )
+              }
               className={headerStyles.button}
             >
               {municipality.active ? 'Óvirkja' : 'Virkja'}
@@ -289,6 +324,8 @@ const MunicipalityProfile = ({
         onStaffCreated={refreshList}
         predefinedRoles={[StaffRole.ADMIN]}
       />
+
+      <ToastContainer />
     </Box>
   )
 }
