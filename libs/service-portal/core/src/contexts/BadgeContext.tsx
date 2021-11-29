@@ -1,7 +1,6 @@
 import React, { createContext, useState } from 'react'
-import { getUnreadDocumentsCount } from '@island.is/service-portal/graphql'
+import { useUnreadDocumentsCounter } from '@island.is/service-portal/graphql'
 
-// TODO: Set default state!
 const defaultState = {
   unreadDocumentsCounter: -1,
 }
@@ -14,10 +13,12 @@ export const BadgeContext = createContext({
 })
 
 export const BadgeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [unreadDocumentsCounter, setUnreadDocCounter] = useState<number>(-1)
+  const counter = useUnreadDocumentsCounter()
+  const [unreadDocumentsCounter, setUnreadDocCounter] = useState<number>(
+    counter,
+  )
 
   function updateUnreadDocumentsCounter() {
-    const counter = getUnreadDocumentsCount()
     setUnreadDocCounter(counter)
     return void 0
   }
