@@ -1,4 +1,5 @@
 import { EnvironmentVariables, Secrets, XroadConfig } from './types/input-types'
+import { json } from './dsl'
 
 type XroadSectionConfig = {
   secrets?: Secrets
@@ -185,10 +186,15 @@ export const NationalRegistry = new XroadConf({
     },
     // Only cache on dev for now.
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
-      dev:
-        '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]',
-      staging: '[]',
-      prod: '[]',
+      dev: json([
+        'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+      ]),
+      staging: json([
+        'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+      ]),
+      prod: json([
+        'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+      ]),
     },
     // Deprecated:
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
