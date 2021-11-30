@@ -18,6 +18,7 @@ import { UpdateCaseMutation } from './updateCaseGql'
 import { SendNotificationMutation } from './sendNotificationGql'
 import { TransitionCaseMutation } from './transitionCaseGql'
 import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
+import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
 
 type autofillProperties = Pick<
   Case,
@@ -90,6 +91,12 @@ const useCase = () => {
     { loading: isRequestingRulingSignature },
   ] = useMutation<RequestRulingSignatureMutationResponse>(
     RequestRulingSignatureMutation,
+  )
+  const [
+    requestCourtRecordSignatureMutation,
+    { loading: isRequestingCourtRecordSignature },
+  ] = useMutation<RequestCourtRecordSignatureMutationResponse>(
+    RequestCourtRecordSignatureMutation,
   )
 
   const createCase = useMemo(
@@ -255,6 +262,17 @@ const useCase = () => {
     [requestRulingSignatureMutation],
   )
 
+  const requestCourtRecordSignature = useMemo(
+    () => async (id: string) => {
+      const { data } = await requestCourtRecordSignatureMutation({
+        variables: { input: { caseId: id } },
+      })
+
+      return data?.requestCourtRecordSignature
+    },
+    [requestCourtRecordSignatureMutation],
+  )
+
   // TODO: find a way for this to work where value is something other then string
   const autofill = useMemo(
     () => (key: keyof autofillProperties, value: string, workingCase: Case) => {
@@ -282,6 +300,8 @@ const useCase = () => {
     isSendingNotification,
     requestRulingSignature,
     isRequestingRulingSignature,
+    requestCourtRecordSignature,
+    isRequestingCourtRecordSignature,
     autofill,
   }
 }

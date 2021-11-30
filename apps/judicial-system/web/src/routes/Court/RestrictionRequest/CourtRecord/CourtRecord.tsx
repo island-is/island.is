@@ -40,7 +40,6 @@ import {
   closedCourt,
 } from '@island.is/judicial-system-web/messages'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import formatISO from 'date-fns/formatISO'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()

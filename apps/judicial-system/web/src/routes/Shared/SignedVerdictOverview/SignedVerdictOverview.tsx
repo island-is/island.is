@@ -1,10 +1,12 @@
-import { useMutation, useQuery } from '@apollo/client'
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
 import {
   CaseDecision,
   CaseState,
   CaseType,
   InstitutionType,
   isRestrictionCase,
+  RequestSignatureResponse,
+  SignatureConfirmationResponse,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
@@ -32,7 +34,8 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { ValueType } from 'react-select/src/types'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
-import { Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
+import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 
 export const SignedVerdictOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -45,11 +48,23 @@ export const SignedVerdictOverview: React.FC = () => {
     selectedSharingInstitutionId,
     setSelectedSharingInstitutionId,
   ] = useState<ValueType<ReactSelectOption>>()
+  const [
+    requestCourtRecordSignatureResponse,
+    setRequestCourtRecordSignatureResponse,
+  ] = useState<RequestSignatureResponse>()
+  const [
+    courtRecordSignatureConfirmationResponse,
+    setCourtRecordSignatureConfirmationResponse,
+  ] = useState<SignatureConfirmationResponse>()
 
   const router = useRouter()
   const id = router.query.id
   const { user } = useContext(UserContext)
-  const { updateCase } = useCase()
+  const {
+    updateCase,
+    requestCourtRecordSignature,
+    isRequestingCourtRecordSignature,
+  } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -60,6 +75,40 @@ export const SignedVerdictOverview: React.FC = () => {
     ExtendCaseMutation,
   )
 
+  const [getCourtRecordSignatureConfirmation] = useLazyQuery(
+    CourtRecordSignatureConfirmationQuery,
+    {
+      fetchPolicy: 'no-cache',
+      onCompleted: (courtRecordSignatureConfirmationData) => {
+        if (
+          courtRecordSignatureConfirmationData?.courtRecordSignatureConfirmation
+        ) {
+          setCourtRecordSignatureConfirmationResponse(
+            courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation,
+          )
+          if (workingCase) {
+            reloadCase({ variables: { input: { id: workingCase.id } } })
+          }
+        } else {
+          setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
+        }
+      },
+      onError: (reason) => {
+        console.log(reason)
+        setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
+      },
+    },
+  )
+
+  const [reloadCase] = useLazyQuery<CaseData>(CaseQuery, {
+    fetchPolicy: 'no-cache',
+    onCompleted: (caseData) => {
+      if (caseData?.case) {
+        setWorkingCase(caseData.case)
+      }
+    },
+  })
+
   useEffect(() => {
     document.title = 'Yfirlit staðfestrar kröfu - Réttarvörslugátt'
   }, [])
@@ -69,6 +118,32 @@ export const SignedVerdictOverview: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
+
+  const handleRequestCourtRecordSignature = async () => {
+    if (!workingCase) {
+      return
+    }
+
+    // Request court record signature to get control code
+    requestCourtRecordSignature(workingCase.id)
+      .then((requestCourtRecordSignatureResponse) => {
+        setRequestCourtRecordSignatureResponse(
+          requestCourtRecordSignatureResponse,
+        )
+        getCourtRecordSignatureConfirmation({
+          variables: {
+            input: {
+              caseId: workingCase.id,
+              documentToken: requestCourtRecordSignatureResponse.documentToken,
+            },
+          },
+        })
+      })
+      .catch((reason) => {
+        // TODO: Handle error
+        console.log(reason)
+      })
+  }
 
   const handleNextButtonClick = async () => {
     if (workingCase) {
@@ -263,11 +338,11 @@ export const SignedVerdictOverview: React.FC = () => {
    * 2. Alternative travel ban accepted and the travel ban end date is in the past
    *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and validToDate < today
    * 3. Accepted and the custody end date is in the past
-   *    - state === ACCEPTED and decision === ACCEPTING and validToDate < today
+   *    - state === ACCEPTED and decision === ACCEPTING/ACCEPTING_PARTIALLY and validToDate < today
    * 5. Alternative travel ban accepted and the travel ban end date is not in the past
    *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and validToDate > today
    * 3. Accepted and the custody end date is not in the past
-   *    - state === ACCEPTED and decision === ACCEPTING and validToDate > today
+   *    - state === ACCEPTED and decision === ACCEPTING/ACCEPTING_PARTIALLY and validToDate > today
    */
 
   return (
@@ -289,6 +364,10 @@ export const SignedVerdictOverview: React.FC = () => {
             shareCaseWithAnotherInstitution={shareCaseWithAnotherInstitution}
             selectedSharingInstitutionId={selectedSharingInstitutionId}
             setSelectedSharingInstitutionId={setSelectedSharingInstitutionId}
+            isRequestingCourtRecordSignature={isRequestingCourtRecordSignature}
+            handleRequestCourtRecordSignature={
+              handleRequestCourtRecordSignature
+            }
           />
           <FormContentContainer isFooter>
             <FormFooter
@@ -320,6 +399,45 @@ export const SignedVerdictOverview: React.FC = () => {
               text={shareCaseModal.text}
               primaryButtonText="Loka glugga"
               handlePrimaryButtonClick={() => setSharedCaseModal(undefined)}
+            />
+          )}
+          {requestCourtRecordSignatureResponse && (
+            <Modal
+              title={
+                !courtRecordSignatureConfirmationResponse
+                  ? 'Rafræn undirritun'
+                  : courtRecordSignatureConfirmationResponse.documentSigned
+                  ? 'Þingbók hefur verið undirrituð'
+                  : courtRecordSignatureConfirmationResponse.code === 7023 // User cancelled
+                  ? 'Notandi hætti við undirritun'
+                  : 'Undirritun tókst ekki'
+              }
+              text={
+                !courtRecordSignatureConfirmationResponse ? (
+                  <>
+                    <Box marginBottom={2}>
+                      <Text variant="h2" color="blue400">
+                        {`Öryggistala: ${requestCourtRecordSignatureResponse?.controlCode}`}
+                      </Text>
+                    </Box>
+                    <Text>
+                      Þetta er ekki pin-númerið. Staðfestu aðeins innskráningu
+                      ef sama öryggistala birtist í símanum þínum.
+                    </Text>
+                  </>
+                ) : courtRecordSignatureConfirmationResponse.documentSigned ? (
+                  'Undirrituð þingbók er aðgengileg undir "Skjöl málsins".'
+                ) : (
+                  'Vinsamlega reynið aftur.'
+                )
+              }
+              primaryButtonText={
+                courtRecordSignatureConfirmationResponse ? 'Loka glugga' : ''
+              }
+              handlePrimaryButtonClick={() => {
+                setRequestCourtRecordSignatureResponse(undefined)
+                setCourtRecordSignatureConfirmationResponse(undefined)
+              }}
             />
           )}
         </>

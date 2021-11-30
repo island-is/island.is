@@ -77,6 +77,8 @@ interface Props {
   setSelectedSharingInstitutionId: React.Dispatch<
     React.SetStateAction<ValueType<ReactSelectOption>>
   >
+  isRequestingCourtRecordSignature: boolean
+  handleRequestCourtRecordSignature: () => void
 }
 
 const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
@@ -90,6 +92,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     shareCaseWithAnotherInstitution,
     selectedSharingInstitutionId,
     setSelectedSharingInstitutionId,
+    isRequestingCourtRecordSignature,
+    handleRequestCourtRecordSignature,
   } = props
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -482,7 +486,15 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   />
                 ) : user?.role === UserRole.JUDGE ||
                   user?.role === UserRole.REGISTRAR ? (
-                  <Button>Undirrita</Button>
+                  <Button
+                    loading={isRequestingCourtRecordSignature}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      handleRequestCourtRecordSignature()
+                    }}
+                  >
+                    Undirrita
+                  </Button>
                 ) : (
                   <Text>Bíður undirritunar</Text>
                 )}
