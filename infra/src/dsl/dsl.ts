@@ -12,6 +12,7 @@ import {
   HealthProbe,
   Features,
   Secrets,
+  ValueType,
   XroadConfig,
   MountedFile,
 } from './types/input-types'
@@ -257,3 +258,5 @@ export const service = <Service extends string>(
 ): ServiceBuilder<Service> => {
   return new ServiceBuilder(name)
 }
+
+export const json = (value: unknown): ValueType => () => JSON.stringify(value)
