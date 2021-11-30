@@ -9,7 +9,7 @@ import {
   HasMany,
 } from 'sequelize-typescript'
 
-import { RecyclingRequestModel } from '../recycling.request'
+import { RecyclingRequestModel } from '../recyclingRequest'
 
 @ObjectType()
 @Table({ tableName: 'recycling_partner' })

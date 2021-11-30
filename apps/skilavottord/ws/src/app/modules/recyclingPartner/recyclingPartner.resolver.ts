@@ -2,8 +2,8 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import { logger } from '@island.is/logging'
 
-import { RecyclingPartnerModel } from './recycling.partner.model'
-import { RecyclingPartnerService } from './recycling.partner.service'
+import { RecyclingPartnerModel } from './recyclingPartner.model'
+import { RecyclingPartnerService } from './recyclingPartner.service'
 
 @Resolver(() => RecyclingPartnerModel)
 export class RecyclingPartnerResolver {
@@ -50,7 +50,7 @@ export class RecyclingPartnerResolver {
   async skilavottordDeactivateRecycllingPartner(
     @Args('companyId') nationalId: string,
   ) {
-    logger.info('deactivate recycling-partner:' + nationalId)
+    logger.info('deactivate recyclingPartner:' + nationalId)
     RecyclingPartnerModel.findOne({ where: { companyId: nationalId } }).then(
       (rp) => {
         rp.active = false
@@ -64,7 +64,7 @@ export class RecyclingPartnerResolver {
   async skilavottordActivateRecycllingPartner(
     @Args('companyId') nationalId: string,
   ) {
-    logger.info('activate recycling-partner:' + nationalId)
+    logger.info('activate recyclingPartner:' + nationalId)
     RecyclingPartnerModel.findOne({ where: { companyId: nationalId } }).then(
       (rp) => {
         rp.active = true

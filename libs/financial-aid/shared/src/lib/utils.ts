@@ -86,3 +86,10 @@ export const scrollToId = (id: string) => {
     behavior: 'smooth',
   })
 }
+
+export const isObjEmpty = (
+  obj: Record<string, { description: string; amount: number }>,
+) =>
+  obj &&
+  Object.keys(obj).length === 0 &&
+  Object.getPrototypeOf(obj) === Object.prototype

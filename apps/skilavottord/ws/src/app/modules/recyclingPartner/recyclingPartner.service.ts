@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { RecyclingPartnerModel } from './recycling.partner.model'
+import { RecyclingPartnerModel } from './recyclingPartner.model'
 
 @Injectable()
 export class RecyclingPartnerService {
@@ -16,7 +16,7 @@ export class RecyclingPartnerService {
   ) {}
 
   async findByPartnerId(companyId: string): Promise<RecyclingPartnerModel> {
-    this.logger.info(`Finding recycling partner by companyId - "${companyId}"`)
+    this.logger.info(`Finding recyclingPartner by companyId - "${companyId}"`)
     try {
       return await this.recyclingPartnerModel.findOne({
         where: { companyId },
@@ -27,7 +27,7 @@ export class RecyclingPartnerService {
   }
 
   async findAll(): Promise<RecyclingPartnerModel[]> {
-    this.logger.info('find all recycling-partners...')
+    this.logger.info('find all recyclingPartners...')
     try {
       const res = await this.recyclingPartnerModel.findAll()
       this.logger.info(
@@ -35,12 +35,12 @@ export class RecyclingPartnerService {
       )
       return res
     } catch (error) {
-      this.logger.error('error finding all recycling-partners:' + error)
+      this.logger.error('error finding all recyclingPartners:' + error)
     }
   }
 
   async findActive(): Promise<RecyclingPartnerModel[]> {
-    this.logger.info('findActive recycling partner...')
+    this.logger.info('findActive recyclingPartner...')
     try {
       const res = await this.recyclingPartnerModel.findAll({
         where: { active: true },
@@ -50,7 +50,7 @@ export class RecyclingPartnerService {
       )
       return res
     } catch (error) {
-      this.logger.error('error finding active recycling partner:' + error)
+      this.logger.error('error finding active recyclingPartner:' + error)
     }
   }
 
@@ -58,7 +58,7 @@ export class RecyclingPartnerService {
     recyclingPartner: RecyclingPartnerModel,
   ): Promise<boolean> {
     this.logger.info(
-      'Creating recycling partner:' + JSON.stringify(recyclingPartner, null, 2),
+      'Creating recyclingPartner:' + JSON.stringify(recyclingPartner, null, 2),
     )
     try {
       await recyclingPartner.save()
