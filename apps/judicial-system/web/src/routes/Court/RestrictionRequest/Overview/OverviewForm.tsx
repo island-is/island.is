@@ -1,10 +1,7 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
+
 import { CaseType } from '@island.is/judicial-system/types'
-import type {
-  Case,
-  CaseLegalProvisions,
-} from '@island.is/judicial-system/types'
 import {
   CaseFileList,
   FormContentContainer,
@@ -12,7 +9,6 @@ import {
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import * as styles from './Overview.css'
 import {
   capitalize,
   formatDate,
@@ -22,7 +18,13 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
+import type {
+  Case,
+  CaseLegalProvisions,
+} from '@island.is/judicial-system/types'
+
 import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
+import * as styles from './Overview.css'
 
 interface Props {
   workingCase: Case

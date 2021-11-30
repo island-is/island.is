@@ -1,6 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
+
 import { Box, Select, Text } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'

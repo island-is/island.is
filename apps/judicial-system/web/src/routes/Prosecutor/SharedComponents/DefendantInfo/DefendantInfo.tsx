@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
+
 import { CaseGender } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
@@ -12,6 +13,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+
 import * as styles from './DefendantInfo.css'
 
 interface Props {

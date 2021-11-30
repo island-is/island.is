@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
+
 import {
   Box,
   GridColumn,
@@ -24,11 +26,7 @@ import {
   CaseType,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   JudgeSubsections,
   Sections,
@@ -53,11 +51,11 @@ import {
   NounCases,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { rcRulingStepTwo as m } from '@island.is/judicial-system-web/messages'
 import { isRulingStepTwoValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { rcRulingStepTwo as m } from '@island.is/judicial-system-web/messages'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 export const RulingStepTwo: React.FC = () => {
   const router = useRouter()

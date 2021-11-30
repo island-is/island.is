@@ -1,31 +1,29 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
+
 import {
   NotificationType,
   CaseState,
   CaseTransition,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import {
   Modal,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import OverviewForm from './OverviewForm'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { icOverview as m } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { icOverview as m } from '@island.is/judicial-system-web/messages'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import OverviewForm from './OverviewForm'
 
 export const Overview: React.FC = () => {
   const router = useRouter()
-  const id = router.query.id
 
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [modalText, setModalText] = useState('')

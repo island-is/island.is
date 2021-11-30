@@ -3,13 +3,13 @@ import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
-import type { Case } from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { policeCaseNumber } from '@island.is/judicial-system-web/messages'
+import type { Case } from '@island.is/judicial-system/types'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>

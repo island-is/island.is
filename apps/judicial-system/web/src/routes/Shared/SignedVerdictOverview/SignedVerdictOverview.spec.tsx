@@ -13,8 +13,9 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import { SignedVerdictOverview } from './SignedVerdictOverview'
 import { LocaleProvider } from '@island.is/localization'
+
+import { SignedVerdictOverview } from './SignedVerdictOverview'
 
 describe('Signed Verdict Overview route', () => {
   describe('Rejected case', () => {

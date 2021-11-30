@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+
 import {
   CaseAppealDecision,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   FormContentContainer,
@@ -30,9 +30,10 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { icRulingStepTwo as m } from '@island.is/judicial-system-web/messages'
 import { isRulingStepTwoValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+
 import { Box, Checkbox, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -17,6 +17,7 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {

@@ -1,16 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
-import type { Case } from '@island.is/judicial-system/types'
+
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  CaseData,
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useRouter } from 'next/router'
-import StepThreeForm from './StepThreeForm'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+
+import StepThreeForm from './StepThreeForm'
 
 export const StepThree: React.FC = () => {
   const {

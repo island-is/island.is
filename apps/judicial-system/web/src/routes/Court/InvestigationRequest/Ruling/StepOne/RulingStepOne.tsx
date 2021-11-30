@@ -1,12 +1,14 @@
 import React, { useContext, useEffect } from 'react'
+
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import RulingStepOneForm from './RulingStepOneForm'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+
+import RulingStepOneForm from './RulingStepOneForm'
 
 const RulingStepOne = () => {
   const {

@@ -1,20 +1,19 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
+import { useQuery } from '@apollo/client'
+
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
-import { Case, SessionArrangements } from '@island.is/judicial-system/types'
+import { SessionArrangements } from '@island.is/judicial-system/types'
 import {
-  CaseData,
   JudgeSubsections,
   Sections,
   UserData,
 } from '@island.is/judicial-system-web/src/types'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { useRouter } from 'next/router'
-import HearingArrangementsForm from './HearingArrangementsForm'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+
+import HearingArrangementsForm from './HearingArrangementsForm'
 
 const HearingArrangements = () => {
   const {

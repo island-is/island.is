@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import {
   CaseFileList,
@@ -13,7 +14,6 @@ import {
   CaseTransition,
   NotificationType,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   capitalize,
@@ -22,16 +22,18 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './Overview.css'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
-import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 import { isOverviewStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
+import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
+import * as styles from './Overview.css'
 
 interface Props {
   workingCase: Case

@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
+
 import {
   Accordion,
   AccordionItem,
@@ -25,17 +27,10 @@ import {
   CaseType,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import {
-  parseArray,
-  parseString,
-} from '@island.is/judicial-system-web/src/utils/formatters'
+import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
 import { isRulingStepOneValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -47,7 +42,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
-import { useRouter } from 'next/router'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'

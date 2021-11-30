@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
+import { AnimatePresence, motion } from 'framer-motion'
+
 import { Box, Checkbox, Input, Select, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -17,14 +19,14 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
-import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import { setAndSendToServer as setSelectAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { defendant as m } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
-import { setAndSendToServer as setSelectAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { AnimatePresence, motion } from 'framer-motion'
+
+import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
+import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 
 interface Props {
   workingCase: Case

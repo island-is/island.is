@@ -1,4 +1,9 @@
+import React, { ReactNode, useContext, useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
+import { useRouter } from 'next/router'
+import formatISO from 'date-fns/formatISO'
+import { ValueType } from 'react-select/src/types'
+
 import {
   CaseDecision,
   CaseState,
@@ -7,29 +12,26 @@ import {
   isRestrictionCase,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
-import React, { ReactNode, useContext, useEffect, useState } from 'react'
 import {
   FormFooter,
   PageLayout,
   FormContentContainer,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
-import { useRouter } from 'next/router'
 import {
   parseNull,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import formatISO from 'date-fns/formatISO'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { ValueType } from 'react-select/src/types'
-import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
 import { Text } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
 
 export const SignedVerdictOverview: React.FC = () => {
   const {

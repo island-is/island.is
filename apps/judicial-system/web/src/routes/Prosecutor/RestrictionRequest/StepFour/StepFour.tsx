@@ -1,39 +1,36 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
+
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
 import {
   CaseCustodyRestrictions,
-  CaseDecision,
   CaseType,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   FormFooter,
   PageLayout,
   FormContentContainer,
 } from '@island.is/judicial-system-web/src/components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { rcReportForm } from '@island.is/judicial-system-web/messages'
-import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 export const StepFour: React.FC = () => {
   const {

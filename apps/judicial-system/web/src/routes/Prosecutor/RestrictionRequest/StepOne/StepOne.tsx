@@ -1,18 +1,13 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { useRouter } from 'next/router'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
-import { CaseState } from '@island.is/judicial-system/types'
-import type { Case, CaseType } from '@island.is/judicial-system/types'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  CaseData,
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
+import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import { StepOneForm } from './StepOneForm'
 import {

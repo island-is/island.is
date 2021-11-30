@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
+
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import {
   FormContentContainer,

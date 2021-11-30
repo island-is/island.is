@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
 
 import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
 import {
@@ -9,10 +8,6 @@ import {
   CaseState,
   CaseType,
   CaseTransition,
-} from '@island.is/judicial-system/types'
-import type {
-  Case,
-  CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
 import {
   formatDate,
@@ -28,12 +23,10 @@ import {
   FormContentContainer,
   CaseFileList,
 } from '@island.is/judicial-system-web/src/components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   TIME_FORMAT,
   formatRequestedCustodyRestrictions,
 } from '@island.is/judicial-system/formatters'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
@@ -45,9 +38,11 @@ import {
   rcOverview,
   requestCourtDate,
 } from '@island.is/judicial-system-web/messages'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import * as styles from './Overview.css'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)

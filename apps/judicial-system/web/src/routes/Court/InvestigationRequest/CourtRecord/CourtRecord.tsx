@@ -1,21 +1,19 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
+import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
+
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { SessionArrangements } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import {
-  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { useRouter } from 'next/router'
-import CourtRecordForm from './CourtRecordForm'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icCourtRecord as m } from '@island.is/judicial-system-web/messages'
-import { useIntl } from 'react-intl'
-import formatISO from 'date-fns/formatISO'
+import type { Case } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+
+import CourtRecordForm from './CourtRecordForm'
 
 const CourtRecord = () => {
   const { autofill } = useCase()

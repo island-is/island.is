@@ -1,10 +1,11 @@
 import React from 'react'
-import type { Case } from '@island.is/judicial-system/types'
 import { AnimatePresence } from 'framer-motion'
+
 import {
   ConclusionDraft,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
+import type { Case } from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case

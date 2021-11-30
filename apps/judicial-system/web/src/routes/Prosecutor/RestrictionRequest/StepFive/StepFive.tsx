@@ -1,18 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Case, PoliceCaseFile } from '@island.is/judicial-system/types'
-import { PageLayout } from '@island.is/judicial-system-web/src/components'
+import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
-import {
-  CaseQuery,
-  PoliceCaseFilesQuery,
-} from '@island.is/judicial-system-web/graphql'
+
+import { PoliceCaseFile } from '@island.is/judicial-system/types'
+import { PageLayout } from '@island.is/judicial-system-web/src/components'
+import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useRouter } from 'next/router'
-import { StepFiveForm } from './StepFiveForm'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+
+import { StepFiveForm } from './StepFiveForm'
 
 export interface PoliceCaseFilesData {
   files: PoliceCaseFile[]

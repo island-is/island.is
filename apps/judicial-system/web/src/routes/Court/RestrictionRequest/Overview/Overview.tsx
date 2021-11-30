@@ -1,29 +1,28 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+
 import {
   FormFooter,
   PageLayout,
   FormContentContainer,
 } from '@island.is/judicial-system-web/src/components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   CaseState,
   CaseTransition,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import OverviewForm from './OverviewForm'
-import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 import { isOverviewStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
+import OverviewForm from './OverviewForm'
 
 export const JudgeOverview: React.FC = () => {
   const {

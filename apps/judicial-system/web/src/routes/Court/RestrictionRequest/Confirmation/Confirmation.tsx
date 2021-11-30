@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import {
   FormFooter,
@@ -14,7 +15,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -22,26 +22,18 @@ import {
   CaseDecision,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import type {
-  Case,
-  RequestSignatureResponse,
-} from '@island.is/judicial-system/types'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { useQuery } from '@apollo/client'
+import type { RequestSignatureResponse } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import SigningModal from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   core,
   rcConfirmation as m,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 export const Confirmation: React.FC = () => {
-  const router = useRouter()
-  const id = router.query.id
   const {
     workingCase,
     setWorkingCase,
@@ -204,7 +196,7 @@ export const Confirmation: React.FC = () => {
         <SigningModal
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
-          requestSignatureResponse={requestRulingSignatureResponse}
+          requestRulingSignatureResponse={requestRulingSignatureResponse}
           setModalVisible={setModalVisible}
         />
       )}

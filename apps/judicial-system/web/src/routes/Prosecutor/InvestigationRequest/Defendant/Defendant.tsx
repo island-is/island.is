@@ -1,26 +1,20 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
+
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseData,
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { CaseState } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
-import {
-  useCase,
-  useInstitution,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import DefendantForm from './DefendantForm'
-import * as constants from '@island.is/judicial-system-web/src/utils/constants'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import type { Case } from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import DefendantForm from './DefendantForm'
 
 const Defendant = () => {
   const router = useRouter()
-  const id = router.query.id
 
   const {
     workingCase,

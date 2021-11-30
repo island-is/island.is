@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
+
 import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   FormFooter,
@@ -13,7 +13,6 @@ import {
   DateTime,
   HideableText,
 } from '@island.is/judicial-system-web/src/components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   caseTypes,
   formatAccusedByGender,
@@ -21,9 +20,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { CaseType } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -34,14 +31,15 @@ import {
   newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 import {
   rcCourtRecord as m,
   closedCourt,
 } from '@island.is/judicial-system-web/messages'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import formatISO from 'date-fns/formatISO'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 
 export const CourtRecord: React.FC = () => {
   const {

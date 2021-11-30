@@ -1,16 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
+import React, { useContext, useEffect } from 'react'
+
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseData,
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import type { Case } from '@island.is/judicial-system/types'
-import PoliceReportForm from './PoliceReportForm'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+
+import PoliceReportForm from './PoliceReportForm'
 
 const PoliceReport = () => {
   const {

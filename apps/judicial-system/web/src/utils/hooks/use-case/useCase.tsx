@@ -1,5 +1,10 @@
 import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
+
+import {
+  parseString,
+  parseTransition,
+} from '@island.is/judicial-system-web/src/utils/formatters'
 import type {
   NotificationType,
   SendNotificationResponse,
@@ -8,10 +13,7 @@ import type {
   RequestSignatureResponse,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import {
-  parseString,
-  parseTransition,
-} from '@island.is/judicial-system-web/src/utils/formatters'
+
 import { CreateCaseMutation } from './createCaseGql'
 import { CreateCourtCaseMutation } from './createCourtCaseGql'
 import { UpdateCaseMutation } from './updateCaseGql'

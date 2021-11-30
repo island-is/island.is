@@ -1,6 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
+import { useQuery } from '@apollo/client'
+import { useRouter } from 'next/router'
+import { ValueType } from 'react-select/src/types'
 
 import {
   Box,
@@ -19,18 +22,13 @@ import {
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
-  Case,
   CaseType,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  CaseData,
   JudgeSubsections,
   ReactSelectOption,
   Sections,
@@ -43,12 +41,11 @@ import {
   newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { ValueType } from 'react-select/src/types'
-import { useRouter } from 'next/router'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 export const HearingArrangements: React.FC = () => {
   const {

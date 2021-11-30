@@ -2,37 +2,36 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { ValueType } from 'react-select'
+import { useQuery } from '@apollo/client'
+
 import {
   Modal,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseData,
   ProsecutorSubsections,
   ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { format } from 'date-fns'
 import {
   CaseState,
   CaseTransition,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { Case, User } from '@island.is/judicial-system/types'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
-import HearingArrangementsForms from './HearingArrangementsForm'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import type { User } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import HearingArrangementsForms from './HearingArrangementsForm'
 
 const HearingArrangements = () => {
   const router = useRouter()
