@@ -87,19 +87,16 @@ export class NationalRegistryXRoadService {
       return []
     }
 
-    const children = await Promise.all(
-      childrenNationalIds.map(async (childNationalId) => {
-        return await nationalRegistryApi.einstaklingarGetEinstaklingur({
-          id: childNationalId,
-        })
-      }),
-    )
     const parentAFamily = await nationalRegistryApi.einstaklingarGetFjolskylda({
       id: parentNationalId,
     })
 
     return await Promise.all(
-      children?.map(async (child) => {
+      childrenNationalIds.map(async (childNationalId) => {
+        const child = await nationalRegistryApi.einstaklingarGetEinstaklingur({
+          id: childNationalId,
+        })
+
         const parents = await nationalRegistryApi.einstaklingarGetForsjaForeldri(
           { id: parentNationalId, barn: child.kennitala },
         )
