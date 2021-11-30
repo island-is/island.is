@@ -321,7 +321,8 @@ function constructRestrictionRulingPdf(
 
   if (
     existingCase.type === CaseType.CUSTODY &&
-    existingCase.decision === CaseDecision.ACCEPTING
+    (existingCase.decision === CaseDecision.ACCEPTING ||
+      existingCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
   ) {
     const custodyRestrictions = formatCustodyRestrictions(
       existingCase.accusedGender,
@@ -347,7 +348,8 @@ function constructRestrictionRulingPdf(
       existingCase.decision ===
         CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) ||
     (existingCase.type === CaseType.TRAVEL_BAN &&
-      existingCase.decision === CaseDecision.ACCEPTING)
+      (existingCase.decision === CaseDecision.ACCEPTING ||
+        existingCase.decision === CaseDecision.ACCEPTING_PARTIALLY))
   ) {
     const alternativeTravelBanRestrictions = formatAlternativeTravelBanRestrictions(
       existingCase.accusedGender,
