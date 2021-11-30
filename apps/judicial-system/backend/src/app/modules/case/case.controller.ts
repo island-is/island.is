@@ -16,7 +16,6 @@ import {
   Header,
   UseGuards,
   BadRequestException,
-  ParseBoolPipe,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -425,6 +424,43 @@ export class CaseController {
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @Get('case/:caseId/courtRecord')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the court record for an existing case as a pdf document',
+  })
+  async getCourtRecordPdf(
+    @Param('caseId') _0: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ) {
+    if (
+      isInvestigationCase(theCase.type) &&
+      ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
+        (user.role === UserRole.REGISTRAR && user.id !== theCase.registrar?.id))
+    ) {
+      throw new ForbiddenException(
+        'Only the assigned judge and registrar can get the court record pdf for investigation cases',
+      )
+    }
+
+    const pdf = await this.caseService.getCourtRecordPdf(theCase)
+
+    const stream = new ReadableStreamBuffer({
+      frequency: 10,
+      chunkSize: 2048,
+    })
+    stream.put(pdf, 'binary')
+
+    res.header('Content-length', pdf.length.toString())
+
+    return stream.pipe(res)
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:caseId/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -433,7 +469,6 @@ export class CaseController {
   })
   async getRulingPdf(
     @Param('caseId') _0: string,
-    @Query('shortVersion', ParseBoolPipe) shortVersion: boolean,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
@@ -448,7 +483,7 @@ export class CaseController {
       )
     }
 
-    const pdf = await this.caseService.getRulingPdf(theCase, shortVersion)
+    const pdf = await this.caseService.getRulingPdf(theCase)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,
@@ -501,26 +536,90 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(judgeRule)
-  @Post('case/:caseId/signature')
+  @RolesRules(judgeRule, registrarRule)
+  @Post('case/:caseId/courtRecord/signature')
   @ApiCreatedResponse({
     type: SigningServiceResponse,
-    description: 'Requests a signature for an existing case',
+    description: 'Requests a court record signature for an existing case',
   })
-  async requestSignature(
+  async requestCourtRecordSignature(
     @Param('caseId') _0: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ) {
-    if (user?.id !== theCase.judgeId) {
+    if (user.id !== theCase.judgeId && user.id !== theCase.registrarId) {
+      throw new ForbiddenException(
+        'A court record must be signed by the assigned judge or registrar',
+      )
+    }
+
+    try {
+      const response = await this.caseService.requestCourtRecordSignature(
+        theCase,
+        user,
+      )
+      return res.status(201).send(response)
+    } catch (error) {
+      if (error instanceof DokobitError) {
+        return res.status(error.status).json({
+          code: error.code,
+          message: error.message,
+        })
+      }
+
+      throw error
+    }
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(judgeRule, registrarRule)
+  @Get('case/:caseId/courtRecord/signature')
+  @ApiOkResponse({
+    type: SignatureConfirmationResponse,
+    description:
+      'Confirms a previously requested court record signature for an existing case',
+  })
+  async getCourtRecordSignatureConfirmation(
+    @Param('caseId') _0: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @Query('documentToken') documentToken: string,
+  ): Promise<SignatureConfirmationResponse> {
+    if (user.id !== theCase.judgeId && user.id !== theCase.registrarId) {
+      throw new ForbiddenException(
+        'A court record must be signed by the assigned judge or registrar',
+      )
+    }
+
+    return this.caseService.getCourtRecordSignatureConfirmation(
+      theCase,
+      user,
+      documentToken,
+    )
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(judgeRule)
+  @Post('case/:caseId/ruling/signature')
+  @ApiCreatedResponse({
+    type: SigningServiceResponse,
+    description: 'Requests a ruling signature for an existing case',
+  })
+  async requestRulingSignature(
+    @Param('caseId') _0: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ) {
+    if (user.id !== theCase.judgeId) {
       throw new ForbiddenException(
         'A ruling must be signed by the assigned judge',
       )
     }
 
     try {
-      const response = await this.caseService.requestSignature(theCase)
+      const response = await this.caseService.requestRulingSignature(theCase)
       return res.status(201).send(response)
     } catch (error) {
       if (error instanceof DokobitError) {
@@ -536,25 +635,28 @@ export class CaseController {
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(judgeRule)
-  @Get('case/:caseId/signature')
+  @Get('case/:caseId/ruling/signature')
   @ApiOkResponse({
     type: SignatureConfirmationResponse,
     description:
-      'Confirms a previously requested signature for an existing case',
+      'Confirms a previously requested ruling signature for an existing case',
   })
-  async getSignatureConfirmation(
+  async getRulingSignatureConfirmation(
     @Param('caseId') _0: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
-    if (user?.id !== theCase.judgeId) {
+    if (user.id !== theCase.judgeId) {
       throw new ForbiddenException(
         'A ruling must be signed by the assigned judge',
       )
     }
 
-    return this.caseService.getSignatureConfirmation(theCase, documentToken)
+    return this.caseService.getRulingSignatureConfirmation(
+      theCase,
+      documentToken,
+    )
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
