@@ -201,7 +201,12 @@ function getStaffCasesQueryFilter(
         [Op.and]: [
           { state: CaseState.ACCEPTED },
           { type: CaseType.CUSTODY },
-          { decision: CaseDecision.ACCEPTING },
+          {
+            decision: [
+              CaseDecision.ACCEPTING,
+              CaseDecision.ACCEPTING_PARTIALLY,
+            ],
+          },
           { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
         ],
       }
