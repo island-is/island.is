@@ -44,6 +44,10 @@ export const getApplicant = (application: Application) => {
       title: 'Nota persónuafslátt',
       content: application.usePersonalTaxCredit ? 'Já' : 'Nei',
     },
+    {
+      title: 'Athugasemd',
+      other: application.formComment,
+    },
   ]
 }
 
@@ -130,6 +134,10 @@ export const getApplicantSpouse = (application: Application) => {
       title: 'Netfang',
       content: application.spouseEmail,
       link: 'mailto:' + application.spouseEmail,
+    },
+    {
+      title: 'Athugasemd',
+      other: application.spouseFormComment,
     },
   ]
 }
