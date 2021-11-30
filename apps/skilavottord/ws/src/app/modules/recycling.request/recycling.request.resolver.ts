@@ -1,21 +1,23 @@
 import { Inject } from '@nestjs/common'
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
+
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { VehicleModel } from '../vehicle'
+import { Authorize } from '../auth'
 import {
   RecyclingRequestModel,
   RecyclingRequestUnion,
-} from './model/recycling.request.model'
+} from './recycling.request.model'
 import { RecyclingRequestService } from './recycling.request.service'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { VehicleModel } from '../vehicle/model/vehicle.model'
-import { Authorize } from '../auth'
 
 @Resolver(() => RecyclingRequestModel)
 export class RecyclingRequestResolver {
   constructor(
-    @Inject(RecyclingRequestService)
     private recyclingRequestService: RecyclingRequestService,
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
   @Authorize({ throwOnUnAuthorized: false })
