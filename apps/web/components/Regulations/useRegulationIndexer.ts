@@ -4,8 +4,8 @@ import { NamespaceGetter } from '@island.is/web/hooks'
 import { useMemo } from 'react'
 
 type ItemType =
-  | 'document'
-  | /* Regulation, appendix, comments  */ 'section'
+  | 'document' // Regulation, appendix, comments
+  | 'section'
   | 'chapter'
   | 'article'
 
