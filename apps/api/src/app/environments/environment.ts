@@ -166,7 +166,6 @@ const devConfig = () => ({
   },
   applicationSystem: {
     baseApiUrl: 'http://localhost:3333',
-    fetch: { timeout: 60000 },
   },
   authPublicApi: {
     baseApiUrl: process.env.AUTH_PUBLIC_API_URL ?? 'http://localhost:3370',
