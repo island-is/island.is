@@ -12,8 +12,8 @@ export class LifeEventPage {
   @Field()
   title!: string
 
-  @Field()
-  shortTitle!: string
+  @Field({ nullable: true })
+  shortTitle?: string | null
 
   @Field()
   slug!: string
