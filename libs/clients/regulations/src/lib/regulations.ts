@@ -26,7 +26,6 @@ export const REGULATIONS_OPTIONS = 'REGULATIONS_OPTIONS'
 
 export interface RegulationsServiceOptions {
   url: string
-  ttl?: number
 }
 
 export class RegulationsService extends RESTDataSource {
@@ -65,11 +64,9 @@ export class RegulationsService extends RESTDataSource {
       isCustomDiff,
       earlierDate,
     })
-    const ttl = this.options.ttl ?? 600 // defaults to 10 minutes
-
     const response = await this.get<
       Regulation | RegulationDiff | RegulationRedirect | null
-    >(url, { cacheOptions: { ttl } })
+    >(url)
     return response
   }
 
@@ -80,9 +77,6 @@ export class RegulationsService extends RESTDataSource {
     page = page && page > 1 ? page : undefined
     const response = await this.get<RegulationSearchResults | null>(
       `regulations/${type}${page ? '?page=' + page : ''}`,
-      {
-        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-      },
     )
     return response
   }
@@ -102,27 +96,17 @@ export class RegulationsService extends RESTDataSource {
       // Strip away empty params
       // Object.fromEntries(Object.entries({ q, rn, year, yearTo, ch, iA, iR, page }).filter((val) => val))
       pickBy({ q, rn, year, yearTo, ch, iA, iR, page }, identity),
-      {
-        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-      },
     )
     return response
   }
 
   async getRegulationsYears(): Promise<RegulationYears | null> {
-    const response = await this.get<RegulationYears | null>(`years`, {
-      cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-    })
+    const response = await this.get<RegulationYears | null>(`years`)
     return response
   }
 
   async getRegulationsMinistries(): Promise<RegulationMinistryList | null> {
-    const response = await this.get<RegulationMinistryList | null>(
-      `ministries`,
-      {
-        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-      },
-    )
+    const response = await this.get<RegulationMinistryList | null>(`ministries`)
     return response
   }
 
@@ -131,9 +115,6 @@ export class RegulationsService extends RESTDataSource {
   ): Promise<RegulationLawChapterTree | null> {
     const response = await this.get<RegulationLawChapterTree | null>(
       `lawchapters${tree ? '/tree' : ''}`,
-      {
-        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-      },
     )
     return response
   }
