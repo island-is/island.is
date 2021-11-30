@@ -18,7 +18,7 @@ export const generateSyslumennNotificationEmail: AttachmentEmailTemplateGenerato
   Undir venjulegum kringumstæðum er sakavottorðið sjálfkrafa sent í pósthólf einstaklings í gegnum vefþjónustu Sýslumanns en vegna tæknilegra vandamála tókst það ekki fyrir þetta vottorð.
 
   Það þarf að gera hitt og þetta við sakavottorðið. Búið er að annað og fleira við sakavottorðið.
-      ` //TODO-origo
+      `
 
   return {
     from: {

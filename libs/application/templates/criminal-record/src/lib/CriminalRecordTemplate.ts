@@ -41,7 +41,12 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            // Applications that stay in this state for 24 hours will be pruned automatically
+            whenToPrune: 24 * 3600 * 1000,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -78,6 +83,13 @@ const template: ApplicationTemplate<
           },
           progress: 0.8,
           lifecycle: DefaultStateLifeCycle,
+          //TODO-origo
+          // lifecycle: {
+          //   shouldBeListed: true,
+          //   shouldBePruned: true,
+          //   // Applications that stay in this state for 24 hours will be pruned automatically
+          //   whenToPrune: 24 * 3600 * 1000,
+          // },
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
@@ -105,6 +117,13 @@ const template: ApplicationTemplate<
           name: 'Completed',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          //TODO-origo
+          // lifecycle: {
+          //   shouldBeListed: true,
+          //   shouldBePruned: true,
+          //   // Applications that stay in this state for 24 hours will be pruned automatically
+          //   whenToPrune: 24 * 3600 * 1000,
+          // },
           actionCard: {
             tag: {
               label: m.actionCardDone,
