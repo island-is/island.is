@@ -1,17 +1,19 @@
 import { Inject } from '@nestjs/common'
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
-import { VehicleOwnerModel } from './model/vehicle.owner.model'
-import { VehicleOwnerService } from './vehicle.owner.service'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { Authorize } from '../auth'
+import { VehicleOwnerModel } from './vehicle.owner.model'
+import { VehicleOwnerService } from './vehicle.owner.service'
 
 @Resolver(() => VehicleOwnerModel)
 export class VehicleOwnerResolver {
   constructor(
-    @Inject(VehicleOwnerService)
     private vehicleOwnerService: VehicleOwnerService,
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
   @Authorize({ throwOnUnAuthorized: false })
