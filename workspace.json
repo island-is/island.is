@@ -1743,11 +1743,6 @@
                 "glob": "*",
                 "input": "libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission/emailGenerators/assets",
                 "output": "./driving-license-assets"
-              },
-              {
-                "glob": "*",
-                "input": "libs/application/template-api-modules/src/lib/modules/templates/p-mark-submission/emailGenerators/assets",
-                "output": "./p-mark-assets"
               }
             ],
             "webpackConfig": "apps/application-system/api/webpack.config.js",
