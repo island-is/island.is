@@ -33,6 +33,8 @@ export const modal = style({
   maxWidth: '752px',
   boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
   borderRadius: '12px',
+  maxHeight: 'calc(100vh - 64px)',
+  overflowY: 'scroll',
 })
 
 export const statusOptions = style({
