@@ -11,8 +11,6 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import * as z from 'zod'
-// import * as kennitala from 'kennitala'
-// import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 
@@ -37,7 +35,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Umsókn um sakavottorð',
           actionCard: {
-            //description: m.draftDescription,
             tag: {
               label: m.actionCardDraft,
               variant: 'blue',

@@ -25,7 +25,7 @@ export const Payment: Form = buildForm({
       id: 'awaitingPayment',
       title: m.payment,
       children: [
-        // TODO: ekki tókst að stofna til greiðslu skjár - condition
+        // TODO-origo: ekki tókst að stofna til greiðslu skjár - condition
         buildDescriptionField({
           id: 'infoAwaitingPayment',
           title: m.payment,

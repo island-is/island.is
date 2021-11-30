@@ -17,13 +17,3 @@ export interface UserProfile {
   email: string
   mobilePhoneNumber: string
 }
-
-// export interface ExternalData {
-//   nationalRegistry: {
-//     data: NationalRegistry
-//   }
-//   userProfile: {
-//     data: UserProfile
-//   }
-// }
-
