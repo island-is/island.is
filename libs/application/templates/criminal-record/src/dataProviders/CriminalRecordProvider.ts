@@ -5,7 +5,6 @@ import {
   FailedDataProviderResult,
   coreErrorMessages,
 } from '@island.is/application/core'
-//import { PaymentCatalogItem } from '@island.is/api/schema'
 import { getAge } from '../utils'
 import { m } from '../lib/messages'
 import { MessageDescriptor } from '@formatjs/intl'
