@@ -1,7 +1,6 @@
 import each from 'jest-each'
 
 import {
-  AccusedPleaDecision,
   CaseAppealDecision,
   CaseDecision,
   CaseGender,
@@ -43,7 +42,7 @@ function createCase(type: CaseType): Case {
     demands: '-',
     lawsBroken: '-',
     legalBasis: '-',
-    custodyProvisions: [],
+    legalProvisions: [],
     requestedCustodyRestrictions: [],
     requestedOtherRestrictions: '-',
     caseFacts: '-',
@@ -65,9 +64,7 @@ function createCase(type: CaseType): Case {
     courtAttendees: '-',
     prosecutorDemands: '-',
     courtDocuments: [],
-    isAccusedRightsHidden: true,
-    accusedPleaDecision: AccusedPleaDecision.ACCEPT,
-    accusedPleaAnnouncement: '-',
+    accusedBookings: '-',
     litigationPresentations: '-',
     courtCaseFacts: '-',
     courtLegalArguments: '-',
@@ -88,8 +85,11 @@ function createCase(type: CaseType): Case {
     isAppealDeadlineExpired: true,
     isAppealGracePeriodExpired: true,
     rulingDate: '-',
+    initialRulingDate: '-',
     judge: undefined,
     registrar: undefined,
+    courtRecordSignatory: undefined,
+    courtRecordSignatureDate: '-',
     parentCase: undefined,
     childCase: undefined,
     notifications: [],
@@ -148,6 +148,18 @@ function createCase(type: CaseType): Case {
       role: UserRole.REGISTRAR,
       active: true,
     },
+    courtRecordSignatory: {
+      id: '-',
+      created: '-',
+      modified: '-',
+      nationalId: '-',
+      name: '-',
+      title: '-',
+      email: '-',
+      mobileNumber: '-',
+      role: UserRole.REGISTRAR,
+      active: true,
+    },
     parentCase: baseCase,
     childCase: baseCase,
     notifications: [],
@@ -165,7 +177,7 @@ function maskedCase(theCase: Case) {
     state: theCase.state,
     policeCaseNumber: theCase.policeCaseNumber,
     accusedNationalId: '0000000000',
-    accusedName: 'X',
+    accusedName: 'T',
     defenderName: theCase.defenderName,
     defenderEmail: theCase.defenderEmail,
     defenderPhoneNumber: theCase.defenderPhoneNumber,
@@ -183,15 +195,51 @@ function maskedCase(theCase: Case) {
     creatingProsecutor: theCase.creatingProsecutor,
     prosecutor: theCase.prosecutor,
     rulingDate: theCase.rulingDate,
+    initialRulingDate: theCase.initialRulingDate,
     accusedAppealDecision: theCase.accusedAppealDecision,
     prosecutorAppealDecision: theCase.prosecutorAppealDecision,
     accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
     prosecutorPostponedAppealDate: theCase.prosecutorPostponedAppealDate,
     judge: theCase.judge,
     registrar: theCase.registrar,
+    courtRecordSignatory: theCase.courtRecordSignatory,
+    courtRecordSignatureDate: theCase.courtRecordSignatureDate,
     parentCase: theCase.parentCase && {
       id: theCase.parentCase.id,
+      created: theCase.parentCase.created,
+      modified: theCase.parentCase.modified,
+      type: theCase.parentCase.type,
+      state: theCase.parentCase.state,
+      policeCaseNumber: theCase.parentCase.policeCaseNumber,
+      accusedNationalId: '0000000000',
+      accusedName: 'T',
+      defenderName: theCase.parentCase.defenderName,
+      defenderEmail: theCase.parentCase.defenderEmail,
+      defenderPhoneNumber: theCase.parentCase.defenderPhoneNumber,
+      defenderIsSpokesperson: theCase.parentCase.defenderIsSpokesperson,
+      court: theCase.parentCase.court,
+      requestedCourtDate: theCase.parentCase.requestedCourtDate,
+      courtCaseNumber: theCase.parentCase.courtCaseNumber,
+      sessionArrangements: theCase.parentCase.sessionArrangements,
+      courtDate: theCase.parentCase.courtDate,
+      courtRoom: theCase.parentCase.courtRoom,
+      courtEndTime: theCase.parentCase.courtEndTime,
       decision: theCase.parentCase.decision,
+      validToDate: theCase.parentCase.validToDate,
+      isValidToDateInThePast: theCase.parentCase.isValidToDateInThePast,
+      creatingProsecutor: theCase.parentCase.creatingProsecutor,
+      prosecutor: theCase.parentCase.prosecutor,
+      rulingDate: theCase.parentCase.rulingDate,
+      initialRulingDate: theCase.parentCase.initialRulingDate,
+      accusedAppealDecision: theCase.parentCase.accusedAppealDecision,
+      prosecutorAppealDecision: theCase.parentCase.prosecutorAppealDecision,
+      accusedPostponedAppealDate: theCase.parentCase.accusedPostponedAppealDate,
+      prosecutorPostponedAppealDate:
+        theCase.parentCase.prosecutorPostponedAppealDate,
+      judge: theCase.parentCase.judge,
+      registrar: theCase.parentCase.registrar,
+      courtRecordSignatory: theCase.parentCase.courtRecordSignatory,
+      courtRecordSignatureDate: theCase.parentCase.courtRecordSignatureDate,
     },
     isMasked: true,
   }
@@ -222,6 +270,7 @@ describe('Mask Case', () => {
     ${CaseType.AUTOPSY}
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
+    ${CaseType.RESTRAINING_ORDER}
     ${CaseType.OTHER}
   `.it('should mask $type cases', ({ type }) => {
     const theCase = createCase(type)
@@ -264,6 +313,7 @@ describe('Mask Case by User', () => {
     ${CaseType.AUTOPSY}
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
+    ${CaseType.RESTRAINING_ORDER}
     ${CaseType.OTHER}
   `.describe('given a $type case', ({ type }) => {
     each`
@@ -308,5 +358,27 @@ describe('Mask Case by User', () => {
 
       expect(res).toStrictEqual(maskedCase(theCase))
     })
+  })
+})
+
+describe('Full name', () => {
+  each`
+    type
+    ${CaseType.SEARCH_WARRANT}
+    ${CaseType.BANKING_SECRECY_WAIVER}
+    ${CaseType.PHONE_TAPPING}
+    ${CaseType.TELECOMMUNICATIONS}
+    ${CaseType.TRACKING_EQUIPMENT}
+    ${CaseType.PSYCHIATRIC_EXAMINATION}
+    ${CaseType.SOUND_RECORDING_EQUIPMENT}
+    ${CaseType.AUTOPSY}
+    ${CaseType.BODY_SEARCH}
+    ${CaseType.INTERNET_USAGE}
+    ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.OTHER}
+  `.it('should mask the name', ({ type }) => {
+    const res = maskCase({ type, accusedName: 'Jón Jónsson' } as Case)
+
+    expect(res.accusedName).toBe('LU')
   })
 })

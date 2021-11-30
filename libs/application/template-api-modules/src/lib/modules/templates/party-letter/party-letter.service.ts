@@ -26,20 +26,14 @@ const CREATE_ENDORSEMENT_LIST_QUERY = `
   }
 `
 
-type ErrorResponse = {
-  errors: {
-    message: string
+export const DEFAULT_CLOSED_DATE = 'default closed date'
+
+type EndorsementListResponse = {
+  endorsementSystemCreateEndorsementList: {
+    id: string
   }
 }
-type EndorsementListResponse =
-  | {
-      data: {
-        endorsementSystemCreateEndorsementList: {
-          id: string
-        }
-      }
-    }
-  | ErrorResponse
+
 @Injectable()
 export class PartyLetterService {
   constructor(
@@ -47,6 +41,7 @@ export class PartyLetterService {
     private endorsementListApi: EndorsementListApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    @Inject(DEFAULT_CLOSED_DATE) private dateConfig: Date,
   ) {}
 
   partyLetterRegistryApiWithAuth(auth: User) {
@@ -83,11 +78,16 @@ export class PartyLetterService {
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    const listId = (application.externalData?.createEndorsementList.data as any)
-      .id
+    const listId: string = (application.externalData?.createEndorsementList
+      .data as any).id
 
     return this.endorsementListApiWithAuth(auth)
-      .endorsementListControllerOpen({ listId })
+      .endorsementListControllerOpen({
+        listId,
+        changeEndorsmentListClosedDateDto: {
+          closedDate: this.dateConfig,
+        },
+      })
       .then(async () => {
         // if we succeed in creating the party letter let the applicant know
         await this.sharedTemplateAPIService.sendEmail(
@@ -112,32 +112,36 @@ export class PartyLetterService {
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(auth.authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
-        input: {
-          title: application.answers.partyName,
-          description: application.answers.partyLetter,
-          endorsementMetadata: [
-            { field: EndorsementMetadataDtoFieldEnum.fullName },
-            { field: EndorsementMetadataDtoFieldEnum.signedTags },
-            { field: EndorsementMetadataDtoFieldEnum.address },
-          ],
-          tags: [EndorsementListTagsEnum.partyLetter2021],
-          validationRules: [
-            {
-              type: 'minAge',
-              value: {
-                age: 18,
+    const endorsementList = await this.sharedTemplateAPIService
+      .makeGraphqlQuery<EndorsementListResponse>(
+        auth.authorization,
+        CREATE_ENDORSEMENT_LIST_QUERY,
+        {
+          input: {
+            title: application.answers.partyName,
+            description: application.answers.partyLetter,
+            endorsementMetadata: [
+              { field: EndorsementMetadataDtoFieldEnum.fullName },
+              { field: EndorsementMetadataDtoFieldEnum.signedTags },
+              { field: EndorsementMetadataDtoFieldEnum.address },
+            ],
+            tags: [EndorsementListTagsEnum.partyLetter2021],
+            validationRules: [
+              {
+                type: 'minAge',
+                value: {
+                  age: 18,
+                },
               },
+            ],
+            meta: {
+              // to be able to link back to this application
+              applicationTypeId: application.typeId,
+              applicationId: application.id,
             },
-          ],
-          meta: {
-            // to be able to link back to this application
-            applicationTypeId: application.typeId,
-            applicationId: application.id,
           },
         },
-      })
+      )
       .then((response) => response.json())
 
     if ('errors' in endorsementList) {
@@ -147,7 +151,7 @@ export class PartyLetterService {
 
     // This gets written to externalData under the key createEndorsementList
     return {
-      id: endorsementList.data.endorsementSystemCreateEndorsementList.id,
+      id: endorsementList.data?.endorsementSystemCreateEndorsementList?.id,
     }
   }
 

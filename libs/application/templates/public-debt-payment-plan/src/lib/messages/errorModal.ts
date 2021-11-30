@@ -1,55 +1,113 @@
 import { defineMessages } from 'react-intl'
 
-export const errorModal = defineMessages({
-  maxDebtTitle: {
-    id: `pdpp.application:application.errorModal.maxDebtTitle`,
-    defaultMessage: 'Skuld yfir hámarki',
-    description: 'Owes to much title',
-  },
-  maxDebtDescription: {
-    id: `pdpp.application:application.errorModal.maxDebtDescription`,
-    defaultMessage:
-      'Ekki er hægt að gera greiðsluáætlun um þessa skuld með rafrænum hætti þar sem hún er hærri en {maxDebtAmount} Vinsamlegast hafðu samband við innheimtumann í þínu umdæmi.',
-    description: 'Owes to much description',
-  },
-  taxReturns: {
-    id: `pdpp.application:application.errorModal.taxReturns`,
-    defaultMessage: 'Ekki búinn að skila skattaskýrslu',
-    description: 'Tax return not submitted',
-  },
-  vatReturns: {
-    id: `pdpp.application:application.errorModal.vatReturns`,
-    defaultMessage: 'Ekki búinn að skila vat',
-    description: 'VAT not submitted',
-  },
-  citReturns: {
-    id: `pdpp.application:application.errorModal.citReturns`,
-    defaultMessage: 'Ekki búið að skila cit',
-    description: 'Cit not submitted',
-  },
-  accommodationTaxReturns: {
-    id: `pdpp.application:application.errorModal.accommodationTaxReturns`,
-    defaultMessage: 'Gisting skattframtal',
-    description: 'Accomodations tax returns',
-  },
-  withholdingTaxReturns: {
-    id: `pdpp.application:application.errorModal.withholdingTaxReturns`,
-    defaultMessage: 'Staðgreiðsluskil',
-    description: 'Witholding tax returns',
-  },
-  wageReturns: {
-    id: `pdpp.application:application.errorModal.wageReturns`,
-    defaultMessage: 'Laun skilar sér',
-    description: 'Wage returns',
-  },
-  closeModal: {
-    id: `pdpp.application:application.errorModal.closeModal`,
-    defaultMessage: 'Loka umsókn',
-    description: 'Close modal button',
-  },
-  moreInformation: {
-    id: `pdpp.application:application.errorModal.moreInformation`,
-    defaultMessage: 'Frekari upplýsingar',
-    description: 'More information button',
-  },
-})
+export const errorModal = {
+  labels: defineMessages({
+    closeModal: {
+      id: `pdpp.application:errorModal.labels.closeModal`,
+      defaultMessage: 'Loka umsókn',
+      description: 'Close modal button',
+    },
+  }),
+  maxDebtModal: defineMessages({
+    title: {
+      id: `pdpp.application:errorModal.maxDebtModal.title`,
+      defaultMessage: 'Skuld yfir hámarki',
+      description: 'Error Modal: Max debt modal title',
+    },
+    summary: {
+      id: `pdpp.application:errorModal.maxDebtModal.summary`,
+      defaultMessage:
+        'Ekki er hægt að gera greiðsluáætlun í sjálfsafgreiðslu þar sem staða gjalda er yfir hámarki. Vinsamlegast hafðu samband við innheimtumann til að fá frekari upplýsingar og úrlausn.',
+      description: 'Error Modal: Max debt modal summary',
+    },
+    linkOne: {
+      id: `pdpp.application:errorModal.maxDebtModal.linkOne`,
+      defaultMessage:
+        'https://www.skatturinn.is/innheimta/vanskil/greidsluaaetlanir/',
+      description: 'Error Modal: Max debt modal link one',
+    },
+    linkOneName: {
+      id: `pdpp.application:errorModal.maxDebtModal.linkOneName`,
+      defaultMessage: 'Skattar',
+      description: 'Error Modal: Max debt modal name of link one',
+    },
+    linkTwo: {
+      id: `pdpp.application:errorModal.maxDebtModal.linkTwo`,
+      defaultMessage: 'https://island.is/s/syslumenn/nordurland-vestra',
+      description: 'Error Modal: Max debt modal link two',
+    },
+    linkTwoName: {
+      id: `pdpp.application:errorModal.maxDebtModal.linkTwoName`,
+      defaultMessage: 'Sektir, sakarkostnaður og ofgreiddar bætur',
+      description: 'Error Modal: Max debt modal name of link two',
+    },
+  }),
+  estimationOfReturns: defineMessages({
+    title: {
+      id: `pdpp.application:errorModal.estimationOfReturns.title`,
+      defaultMessage: 'Áætlun á skilagreinum eða framtölum',
+      description: 'Error Modal: Estimation of returns title',
+    },
+    summary: {
+      id: `pdpp.application:errorModal.estimationOfReturns.summary`,
+      defaultMessage:
+        'Ekki er hægt að gera greiðsluáætlun í sjálfsafgreiðslu vegna áætlana á gjöldum. Vinsamlegast hafðu samband við innheimtumann til að frekari upplýsingar og úrlausn.',
+      description: 'Error Modal: Estimation of returns summary',
+    },
+    linkOne: {
+      id: `pdpp.application:errorModal.estimationOfReturns.linkOne`,
+      defaultMessage:
+        'https://www.skatturinn.is/innheimta/vanskil/greidsluaaetlanir/',
+      description: 'Error Modal: Estimation of returns link one',
+    },
+    linkOneName: {
+      id: `pdpp.application:errorModal.estimationOfReturns.linkOneName`,
+      defaultMessage: 'Skattar',
+      description: 'Error Modal: Estimation of returns name of link one',
+    },
+    linkTwo: {
+      id: `pdpp.application:errorModal.estimationOfReturns.linkTwo`,
+      defaultMessage: 'https://island.is/s/syslumenn/nordurland-vestra',
+      description: 'Error Modal: Estimation of returns link two',
+    },
+    linkTwoName: {
+      id: `pdpp.application:errorModal.estimationOfReturns.linkTwoName`,
+      defaultMessage: 'Sektir, sakarkostnaður og ofgreiddar bætur',
+      description: 'Error Modal: Estimation of returns name of link two',
+    },
+  }),
+  defaultPaymentCollection: defineMessages({
+    title: {
+      id: `pdpp.application:errorModal.defaultPaymentCollection.title`,
+      defaultMessage: 'Vanskil',
+      description: 'Error Modal: Default payment collection title',
+    },
+    summary: {
+      id: `pdpp.application:errorModal.defaultPaymentCollection.summary`,
+      defaultMessage:
+        'Ekki er hægt að gera greiðsluáætlun Í sjálfsafgreiðslu þar sem gjöld hafa farið í vanskilainnheimtu. Vinsamlegast hafðu samband við innheimtumann í þínu umdæmi til að fá frekari upplýsingar og úrlausn.',
+      description: 'Error Modal: Default payment collection summary',
+    },
+    linkOne: {
+      id: `pdpp.application:errorModal.defaultPaymentCollection.linkOne`,
+      defaultMessage:
+        'https://www.skatturinn.is/innheimta/vanskil/greidsluaaetlanir/',
+      description: 'Error Modal: Default payment collection link one',
+    },
+    linkOneName: {
+      id: `pdpp.application:errorModal.defaultPaymentCollection.linkOneName`,
+      defaultMessage: 'Skattar',
+      description: 'Error Modal: Default payment collection name of link one',
+    },
+    linkTwo: {
+      id: `pdpp.application:errorModal.defaultPaymentCollection.linkTwo`,
+      defaultMessage: 'https://island.is/s/syslumenn/nordurland-vestra',
+      description: 'Error Modal: Default payment collection link two',
+    },
+    linkTwoName: {
+      id: `pdpp.application:errorModal.defaultPaymentCollection.linkTwoName`,
+      defaultMessage: 'Sektir, sakarkostnaður og ofgreiddar bætur',
+      description: 'Error Modal: Default payment collection name of link two',
+    },
+  }),
+}

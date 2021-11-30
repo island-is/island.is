@@ -38,7 +38,7 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
 
-import * as covidStyles from './components/UI/styles/styles.treat'
+import * as covidStyles from './components/UI/styles/styles.css'
 
 interface AdgerdirArticleProps {
   article: Query['getAdgerdirPage']

@@ -1,4 +1,4 @@
-const withTreat = require('next-treat')()
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 
 const {
@@ -7,8 +7,9 @@ const {
 } = process.env
 
 const graphqlPath = '/api/graphql'
+const withVanillaExtract = createVanillaExtractPlugin()
 
-module.exports = withTreat(
+module.exports = withVanillaExtract(
   withHealthcheckConfig({
     webpack: (config, options) => {
       // if (!options.isServer) {

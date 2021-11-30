@@ -51,18 +51,22 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
   const [fromDate, setFromDate] = useState<Date>()
   const [toDate, setToDate] = useState<Date>()
   const [q, setQ] = useState<string>('')
+  const [chargeTypesEmpty, setChargeTypesEmpty] = useState(false)
   const [dropdownSelect, setDropdownSelect] = useState<string[] | undefined>()
 
-  const { data: customerChartypeData } = useQuery<Query>(
-    GET_CUSTOMER_CHARGETYPE,
-    {
-      onCompleted: () => {
-        if (customerChartypeData?.getCustomerChargeType?.chargeType) {
-          onDropdownSelect(allChargeTypes)
-        }
-      },
+  const {
+    data: customerChartypeData,
+    loading: chargeTypeDataLoading,
+    error: chargeTypeDataError,
+  } = useQuery<Query>(GET_CUSTOMER_CHARGETYPE, {
+    onCompleted: () => {
+      if (customerChartypeData?.getCustomerChargeType?.chargeType) {
+        onDropdownSelect(allChargeTypes)
+      } else {
+        setChargeTypesEmpty(true)
+      }
     },
-  )
+  })
   const chargeTypeData: CustomerChargeType =
     customerChartypeData?.getCustomerChargeType || {}
 
@@ -225,18 +229,22 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
           </Box>
         </Hidden>
         <Box marginTop={2}>
-          {error && (
+          {(error || chargeTypeDataError) && (
             <AlertBanner
               description={formatMessage(m.errorFetch)}
               variant="error"
             />
           )}
-          {(loading || !called) && (
-            <Box padding={3}>
-              <SkeletonLoader space={1} height={40} repeat={5} />
-            </Box>
-          )}
-          {recordsDataArray.length === 0 && called && !loading && !error && (
+          {(loading || chargeTypeDataLoading || !called) &&
+            !chargeTypesEmpty &&
+            !chargeTypeDataError &&
+            !error && (
+              <Box padding={3}>
+                <SkeletonLoader space={1} height={40} repeat={5} />
+              </Box>
+            )}
+          {((recordsDataArray.length === 0 && called && !loading && !error) ||
+            chargeTypesEmpty) && (
             <AlertBanner
               description={formatMessage(m.noResultsTryAgain)}
               variant="warning"

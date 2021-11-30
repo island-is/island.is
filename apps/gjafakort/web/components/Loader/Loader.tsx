@@ -1,6 +1,6 @@
 import React from 'react'
 
-import * as styles from './Loader.treat'
+import * as styles from './Loader.css'
 
 interface PropTypes {
   width?: number

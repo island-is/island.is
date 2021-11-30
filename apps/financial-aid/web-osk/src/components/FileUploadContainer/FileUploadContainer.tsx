@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
 
-import * as styles from './FileUploadContainer.treat'
+import * as styles from './FileUploadContainer.css'
 import cn from 'classnames'
 
 interface Props {

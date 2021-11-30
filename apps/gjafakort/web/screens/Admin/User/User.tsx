@@ -19,7 +19,7 @@ import { nFormatter } from '@island.is/gjafakort-web/utils'
 
 import { Value } from './components'
 
-import * as styles from './User.treat'
+import * as styles from './User.css'
 
 const UserApplicationCountQuery = gql`
   query UserApplicationCountQuery {

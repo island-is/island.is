@@ -56,7 +56,7 @@ const findTrait = <T>(
  *   // Traits
  *   $traits: {
  *     kid: {
- *       age: () => faker.random.number({min: 6, max: 16}),
+ *       age: () => faker.datatype.number({min: 6, max: 16}),
  *     },
  *     noSlug: {
  *       slug: null,

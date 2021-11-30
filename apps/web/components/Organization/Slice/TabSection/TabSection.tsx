@@ -1,7 +1,7 @@
 import React from 'react'
 import { TabSection } from '@island.is/web/graphql/schema'
 import { Box, GridColumn, GridRow, Tabs, Text } from '@island.is/island-ui/core'
-import * as styles from '@island.is/web/screens/Organization/Organization.treat'
+import * as styles from '@island.is/web/screens/Organization/Organization.css'
 import {
   renderSlices,
   Slice as SliceType,

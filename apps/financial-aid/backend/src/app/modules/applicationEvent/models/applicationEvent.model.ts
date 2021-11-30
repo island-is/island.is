@@ -59,4 +59,18 @@ export class ApplicationEventModel extends Model<ApplicationEvent> {
   })
   @ApiProperty()
   comment?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  staffName?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  staffNationalId?: string
 }

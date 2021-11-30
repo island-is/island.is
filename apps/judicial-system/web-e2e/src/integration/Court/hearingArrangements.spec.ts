@@ -1,5 +1,5 @@
 import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
-import { makeCase, makeCourt } from '../../fixtures/testDataFactory'
+import { makeCase, makeCourt } from '@island.is/judicial-system/formatters'
 import { intercept } from '../../utils'
 
 describe('/domur/krafa/fyrirtokutimi/:id', () => {
@@ -63,7 +63,7 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
     cy.url().should('include', '/domur/thingbok/test_id_stadfest')
   })
 
-  it('should hide the next button and show a info panel instead if the case is an investigation case and the current user does not have access to continue', () => {
+  it.skip('should hide the next button and show a info panel instead if the case is an investigation case and the current user does not have access to continue', () => {
     const caseData = makeCase()
     const caseDataAddition: Case = {
       ...caseData,

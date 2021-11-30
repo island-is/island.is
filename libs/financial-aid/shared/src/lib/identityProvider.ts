@@ -11,6 +11,7 @@ export const signOutUrl = (window: Window, idToken: string) =>
 export const identityServerConfig = {
   id: identityServerId,
   name: 'Iceland authentication service',
-  scope: 'openid profile @island.is/samband/userinfo offline_access',
-  clientId: '@samband_islenskra_sveitarfelaga/fjarhagur',
+  scope:
+    'openid profile @samband.is/internal offline_access @skra.is/individuals',
+  clientId: '@samband.is/financial-aid',
 }

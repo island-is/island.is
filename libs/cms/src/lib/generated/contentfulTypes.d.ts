@@ -3,54 +3,6 @@
 import { Asset, Entry } from 'contentful'
 import { Document } from '@contentful/rich-text-types'
 
-export interface IAboutSubPageFields {
-  /** Title */
-  title: string
-
-  /** Slug (old) */
-  slug: string
-
-  /** Url */
-  url: string
-
-  /** Description */
-  description?: string | undefined
-
-  /** Intro */
-  intro?: Document | undefined
-
-  /** subDescription */
-  subDescription?: string | undefined
-
-  /** Content */
-  content: Document
-
-  /** belowContent */
-  belowContent?: ILocation[] | undefined
-
-  /** Parent */
-  parent?: Entry<{ [fieldId: string]: unknown }> | undefined
-}
-
-/** sub-page of the about-page */
-
-export interface IAboutSubPage extends Entry<IAboutSubPageFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'aboutSubPage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface IAccordionSliceFields {
   /** Title */
   title?: string | undefined
@@ -747,6 +699,24 @@ export interface IFrontpageFields {
   /** Title */
   title: string
 
+  /** Heading */
+  heading?: string | undefined
+
+  /** Alternative text for image/video */
+  imageAlternativeText?: string | undefined
+
+  /** Videos */
+  videos?: Asset[] | undefined
+
+  /** Image */
+  image?: Asset | undefined
+
+  /** Videos (mobile) */
+  videosMobile?: Asset[] | undefined
+
+  /** Image (mobile) */
+  imageMobile?: Asset | undefined
+
   /** Featured */
   featured?: IFeatured[] | undefined
 
@@ -758,6 +728,9 @@ export interface IFrontpageFields {
 
   /** Namespace */
   namespace: IUiConfiguration
+
+  /** New links */
+  linkList?: ILinkList | undefined
 
   /** Page Identifier */
   pageIdentifier: string
@@ -1123,6 +1096,9 @@ export interface ILifeEventPageFields {
   /** title */
   title: string
 
+  /** short title */
+  shortTitle?: string | undefined
+
   /** slug */
   slug: string
 
@@ -1134,6 +1110,9 @@ export interface ILifeEventPageFields {
 
   /** thumbnail */
   thumbnail?: Asset | undefined
+
+  /** tiny thumbnail */
+  tinyThumbnail?: Asset | undefined
 
   /** content */
   content: Document
@@ -1163,14 +1142,23 @@ export interface ILinkFields {
   /** Text */
   text: string
 
+  /** date */
+  date?: string | undefined
+
   /** URL */
   url: string
 
-  /** Linked page (deprecated) */
-  linkedPage?: ILinkedPage | undefined
-
   /** Link reference */
   linkReference?: IArticle | IArticleCategory | ILinkUrl | INews | undefined
+
+  /** Searchable */
+  searchable?: boolean | undefined
+
+  /** Search Description */
+  intro?: string | undefined
+
+  /** Search Labels */
+  labels?: string[] | undefined
 }
 
 export interface ILink extends Entry<ILinkFields> {
@@ -1834,6 +1822,12 @@ export interface IOrganizationFields {
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
+
+  /** Phone */
+  phone?: string | undefined
+
+  /** Email */
+  email?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -3406,7 +3400,6 @@ export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
 }
 
 export type CONTENT_TYPE =
-  | 'aboutSubPage'
   | 'accordionSlice'
   | 'alertBanner'
   | 'article'

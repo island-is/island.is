@@ -13,7 +13,7 @@ export class CurrentLicenseProvider extends BasicDataProvider {
 
   async provide(
     application: Application,
-  ): Promise<{ currentLicense: Eligibility['id'] | null }> {
+  ): Promise<{ currentLicense: Eligibility['name'] | null }> {
     const fakeData = application.answers.fakeData as
       | DrivingLicenseFakeData
       | undefined
@@ -27,8 +27,8 @@ export class CurrentLicenseProvider extends BasicDataProvider {
     const query = `
       query LicenseQuery {
         drivingLicense {
-          eligibilities {
-            id
+          categories {
+            name
           }
         }
       }
@@ -50,7 +50,7 @@ export class CurrentLicenseProvider extends BasicDataProvider {
       return Promise.reject({ error: response.errors })
     }
 
-    const [currentLicense] = response.data.drivingLicense.eligibilities
+    const [currentLicense] = response.data.drivingLicense.categories
 
     return {
       currentLicense: currentLicense || null,

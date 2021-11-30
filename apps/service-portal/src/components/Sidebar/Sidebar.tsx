@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
-import * as styles from './Sidebar.treat'
+import * as styles from './Sidebar.css'
 import ModuleNavigation from './ModuleNavigation'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { useLocale } from '@island.is/localization'

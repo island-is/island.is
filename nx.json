@@ -79,6 +79,9 @@
     "api-domains-application": {
       "tags": []
     },
+    "api-domains-assets": {
+      "tags": []
+    },
     "api-domains-auth": {
       "tags": []
     },
@@ -119,6 +122,9 @@
       "tags": []
     },
     "api-domains-identity": {
+      "tags": []
+    },
+    "api-domains-islykill": {
       "tags": []
     },
     "api-domains-license-service": {
@@ -285,9 +291,12 @@
     "cache": {
       "tags": []
     },
-    "clients-auth-public-api": {
-      "implicitDependencies": ["services-auth-public-api"],
+    "clients-assets": {
       "tags": []
+    },
+    "clients-auth-public-api": {
+      "tags": [],
+      "implicitDependencies": ["services-auth-public-api"]
     },
     "clients-document-provider": {
       "tags": []
@@ -299,6 +308,12 @@
       "tags": []
     },
     "clients-finance": {
+      "tags": []
+    },
+    "clients-health-insurance-v2": {
+      "tags": []
+    },
+    "clients-islykill": {
       "tags": []
     },
     "clients-middlewares": {
@@ -394,6 +409,9 @@
     "financial-aid-web-veita": {
       "tags": []
     },
+    "github-actions-cache": {
+      "tags": []
+    },
     "gjafakort-api": {
       "tags": []
     },
@@ -464,6 +482,9 @@
     "island-ui-utils": {
       "tags": []
     },
+    "island-ui-vanilla-extract-utils": {
+      "tags": []
+    },
     "judicial-system-api": {
       "tags": []
     },
@@ -510,7 +531,13 @@
     "nest-audit": {
       "tags": []
     },
+    "nest-config": {
+      "tags": []
+    },
     "nest-pagination": {
+      "tags": []
+    },
+    "nest-problem": {
       "tags": []
     },
     "nest-validators": {
@@ -523,6 +550,9 @@
       "tags": []
     },
     "plausible": {
+      "tags": []
+    },
+    "react-feature-flags": {
       "tags": []
     },
     "reference-backend": {
@@ -604,6 +634,9 @@
     "service-portal-settings-access-control": {
       "tags": []
     },
+    "service-portal-settings-islykill": {
+      "tags": []
+    },
     "service-portal-settings-personal-information": {
       "tags": []
     },
@@ -623,6 +656,9 @@
       "tags": []
     },
     "services-endorsements-api": {
+      "tags": []
+    },
+    "services-notifications": {
       "tags": []
     },
     "services-party-letter-registry-api": {
@@ -656,6 +692,9 @@
       "tags": []
     },
     "shared-mocking": {
+      "tags": []
+    },
+    "shared-problem": {
       "tags": []
     },
     "shared-translations": {

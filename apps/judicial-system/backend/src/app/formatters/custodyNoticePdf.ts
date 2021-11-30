@@ -6,9 +6,11 @@ import {
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
+import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
+import { formatCustodyIsolation } from './formatters'
 import {
   baseFontSize,
   hugeFontSize,
@@ -133,7 +135,12 @@ export async function getCustodyNoticePdfAsString(
     existingCase.custodyRestrictions,
   )
 
-  if (custodyRestrictions) {
+  if (
+    existingCase.custodyRestrictions?.includes(
+      CaseCustodyRestrictions.ISOLATION,
+    ) ||
+    custodyRestrictions
+  ) {
     doc
       .text(' ')
       .text(' ')
@@ -143,10 +150,24 @@ export async function getCustodyNoticePdfAsString(
       .text('Tilhögun gæsluvarðhalds')
       .font('Helvetica')
       .fontSize(baseFontSize)
-      .text(custodyRestrictions, {
+    if (
+      existingCase.custodyRestrictions?.includes(
+        CaseCustodyRestrictions.ISOLATION,
+      )
+    ) {
+      doc.text(
+        formatCustodyIsolation(
+          existingCase.accusedGender,
+          existingCase.isolationToDate,
+        ),
+      )
+    }
+    if (custodyRestrictions) {
+      doc.text(custodyRestrictions, {
         lineGap: 6,
         paragraphGap: 0,
       })
+    }
   }
 
   setPageNumbers(doc)

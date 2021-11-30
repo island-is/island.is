@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from 'react'
 import { Stack, Text, Box, Link } from '@island.is/island-ui/core'
-import * as styles from './ListItem.treat'
+import * as styles from './ListItem.css'
 
 export interface CompanyProps {
   title: string

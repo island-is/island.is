@@ -17,7 +17,7 @@ render() {
     done
 }
 
-APPS=("islandis" "judicial-system" "air-discount-scheme")
+APPS=("islandis" "judicial-system")
 
 echo "$1"
 case "$1" in

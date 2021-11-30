@@ -4,7 +4,16 @@ export enum HomeCircumstances {
   WITHOTHERS = 'WithOthers',
   OWNPLACE = 'OwnPlace',
   REGISTEREDLEASE = 'RegisteredLease',
+  UNREGISTEREDLEASE = 'UnregisteredLease',
   OTHER = 'Other',
+}
+
+export enum AidTypeHomeCircumstances {
+  OWNPLACE = 'OwnPlace',
+  REGISTEREDLEASE = 'RegisteredLease',
+  UNREGISTEREDLEASE = 'UnregisteredLease',
+  WITHPARENTS = 'WithParents',
+  UNKNOWN = 'Unknown',
 }
 
 export enum Employment {
@@ -22,9 +31,19 @@ export enum ApplicationState {
   APPROVED = 'Approved',
 }
 
+export enum ApplicationFiltersEnum {
+  NEW = 'New',
+  INPROGRESS = 'InProgress',
+  DATANEEDED = 'DataNeeded',
+  REJECTED = 'Rejected',
+  APPROVED = 'Approved',
+  MYCASES = 'MyCases',
+}
+
 export enum ApplicationStateUrl {
   NEW = 'New',
   INPROGRESS = 'InProgress',
+  MYCASES = 'MyCases',
   PROCESSED = 'Processed',
 }
 
@@ -37,6 +56,8 @@ export enum ApplicationEventType {
   STAFFCOMMENT = 'StaffComment',
   USERCOMMENT = 'UserComment',
   FILEUPLOAD = 'FileUpload',
+  SPOUSEFILEUPLOAD = 'SpouseFileUpload',
+  ASSIGNCASE = 'AssignCase',
 }
 
 export enum RolesRule {
@@ -48,19 +69,29 @@ export enum FileType {
   TAXRETURN = 'TaxReturn',
   INCOME = 'Income',
   OTHER = 'Other',
+  SPOUSEFILES = 'SpouseFiles',
 }
 
 export enum StaffRole {
+  SUPERADMIN = 'SuperAdmin',
   ADMIN = 'Admin',
   EMPLOYEE = 'Employee',
 }
 
 export enum FamilyStatus {
-  UNKNOWN = 'Unknown',
-  SINGLE = 'Single',
   COHABITATION = 'Cohabitation',
   UNREGISTERED_COBAHITATION = 'UnregisteredCohabitation',
   MARRIED = 'Married',
   MARRIED_NOT_LIVING_TOGETHER = 'MarriedNotLivingTogether',
-  NOT_INFORMED = 'NotInformed',
+  NOT_COHABITATION = 'NotCohabitation',
+}
+
+export enum AidType {
+  INDIVIDUAL = 'Individual',
+  COHABITATION = 'Cohabitation',
+}
+
+export enum MartialStatusType {
+  MARRIED = 'Married',
+  SINGLE = 'Single',
 }

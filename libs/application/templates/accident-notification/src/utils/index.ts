@@ -22,12 +22,15 @@ const hasAttachment = (attachment: FileType[] | undefined) =>
   attachment && attachment.length > 0
 
 export const getAttachmentTitles = (answers: AccidentNotification) => {
-  const {
-    deathCertificateFile,
-    injuryCertificateFile,
-    powerOfAttorneyFile,
-    injuryCertificate,
-  } = answers.attachments
+  const deathCertificateFile =
+    answers.attachments?.deathCertificateFile?.file || undefined
+  const injuryCertificateFile =
+    answers.attachments?.injuryCertificateFile?.file || undefined
+  const powerOfAttorneyFile =
+    answers.attachments?.powerOfAttorneyFile?.file || undefined
+  const additionalFiles =
+    answers.attachments?.additionalFiles?.file || undefined
+
   const files = []
 
   if (hasAttachment(deathCertificateFile))
@@ -36,8 +39,13 @@ export const getAttachmentTitles = (answers: AccidentNotification) => {
     files.push(attachments.documentNames.injuryCertificate)
   if (hasAttachment(powerOfAttorneyFile))
     files.push(attachments.documentNames.powerOfAttorneyDocument)
-  if (injuryCertificate === AttachmentsEnum.HOSPITALSENDSCERTIFICATE)
+  if (
+    answers.injuryCertificate?.answer ===
+    AttachmentsEnum.HOSPITALSENDSCERTIFICATE
+  )
     files.push(overview.labels.hospitalSendsCertificate)
+  if (hasAttachment(additionalFiles))
+    files.push(attachments.documentNames.additionalDocuments)
 
   return files
 }
@@ -46,15 +54,14 @@ export const returnMissingDocumentsList = (
   answers: AccidentNotification,
   formatMessage: MessageFormatter,
 ) => {
-  const injuryCertificate = answers.attachments.injuryCertificate
+  const injuryCertificate = answers.injuryCertificate
   const whoIsTheNotificationFor = answers.whoIsTheNotificationFor.answer
   const wasTheAccidentFatal = answers.wasTheAccidentFatal
-  const powerOfAttorneyType = answers.powerOfAttorney?.type
   const missingDocuments = []
 
   if (
-    injuryCertificate === AttachmentsEnum.SENDCERTIFICATELATER &&
-    !hasAttachment(answers.attachments.injuryCertificateFile)
+    injuryCertificate?.answer === AttachmentsEnum.SENDCERTIFICATELATER &&
+    !hasAttachment(answers.attachments?.injuryCertificateFile?.file)
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.injuryCertificate),
@@ -63,8 +70,7 @@ export const returnMissingDocumentsList = (
 
   if (
     whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY &&
-    powerOfAttorneyType !== PowerOfAttorneyUploadEnum.FORCHILDINCUSTODY &&
-    !hasAttachment(answers.attachments.powerOfAttorneyFile)
+    !hasAttachment(answers.attachments?.powerOfAttorneyFile?.file)
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.powerOfAttorneyDocument),
@@ -73,7 +79,7 @@ export const returnMissingDocumentsList = (
 
   if (
     wasTheAccidentFatal === YES &&
-    !hasAttachment(answers.attachments.deathCertificateFile)
+    !hasAttachment(answers.attachments?.deathCertificateFile?.file)
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.deathCertificate),
@@ -85,12 +91,15 @@ export const returnMissingDocumentsList = (
 
 export * from './fishermanUtils'
 export * from './getAccidentTypeOptions'
+export * from './getInjuredPersonInformation'
 export * from './getWorkplaceData'
+export * from './hasMissingDocuments'
 export * from './hideLocationAndPurpose'
 export * from './isAgricultureAccident'
 export * from './isDateOlderThanAYear'
 export * from './isGeneralWorkplaceAccident'
 export * from './isHomeActivitiesAccident'
+export * from './isInternshipStudiesAccident'
 export * from './isMachineRelatedAccident'
 export * from './isProfessionalAthleteAccident'
 export * from './isReportingOnBehalfOfChild'
@@ -100,3 +109,9 @@ export * from './isRepresentativeOfCompanyOrInstitue'
 export * from './isRescueWorkAccident'
 export * from './isStudiesAccident'
 export * from './isWorkAccident'
+export * from './isPowerOfAttorney'
+export * from './isRepresentativeOfCompanyOrInstitue'
+export * from './isFatalAccident'
+export * from './isReportingBehalfOfSelf'
+export * from './isOfWorkTypeAccident'
+export * from './shouldRequestReview'

@@ -64,6 +64,7 @@ export const DataProtectionComplaintSchema = z.object({
   concernsLibel: z.enum([YES, NO]).refine((p) => p === NO, {
     message: error.concernsLibel.defaultMessage,
   }),
+  concernsPersonalDataConflict: z.enum([YES, NO]),
   info: z.object({
     onBehalf: z.enum([
       OnBehalf.MYSELF,

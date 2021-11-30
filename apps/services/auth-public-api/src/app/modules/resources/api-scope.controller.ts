@@ -10,7 +10,7 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('api-scope')
-@Controller('public/v1/api-scope')
+@Controller('v1/api-scope')
 export class ApiScopeController {
   constructor(private readonly resourcesService: ResourcesService) {}
 

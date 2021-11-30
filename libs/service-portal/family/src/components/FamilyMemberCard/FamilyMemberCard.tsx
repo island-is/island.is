@@ -8,7 +8,7 @@ import {
 } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
-import * as styles from './FamilyMemberCard.treat'
+import * as styles from './FamilyMemberCard.css'
 
 interface Props {
   title: string

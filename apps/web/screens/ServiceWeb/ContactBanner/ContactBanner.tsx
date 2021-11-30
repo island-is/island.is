@@ -11,15 +11,7 @@ import Link from 'next/link'
 import img from '../../../assets/images/educationLicense.svg'
 
 const ContactBanner = ({ slug }: { slug?: string }) => {
-  let link = '/s/stafraent-island/hafa-samband'
-
-  switch (slug) {
-    case 'syslumenn':
-      link = '/thjonustuvefur/syslumenn/hafa-samband'
-      break
-    default:
-      break
-  }
+  const link = `/thjonustuvefur/${slug || 'stafraent-island'}/hafa-samband`
 
   return (
     <Box background="purple100" padding={[7, 10, 10]} borderRadius="large">

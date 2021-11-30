@@ -4,7 +4,7 @@ import { Button as ReaButton } from 'reakit/Button'
 import cn from 'classnames'
 import { Box, Icon, IconMapIcon, IconMapType } from '@island.is/island-ui/core'
 
-import * as styles from './Button.treat'
+import * as styles from './Button.css'
 
 // TODO: refine types, ex. if circle is true there should be no children. and filter variants with conditional types
 

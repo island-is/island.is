@@ -1,14 +1,8 @@
 import type { Case, User } from '@island.is/judicial-system/types'
-import type { Validation } from '../utils/validate'
 
 export enum AppealDecisionRole {
   PROSECUTOR = 'PROSECUTOR',
   ACCUSED = 'ACCUSED',
-}
-
-export interface RequiredField {
-  value: string
-  validations: Validation[]
 }
 
 export enum Sections {

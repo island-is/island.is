@@ -86,7 +86,7 @@ export class ApiResource extends Model<ApiResource> {
   })
   contactEmail!: string
 
-  @HasMany(() => ApiResourceUserClaim, 'name')
+  @HasMany(() => ApiResourceUserClaim)
   @ApiProperty()
   userClaims?: ApiResourceUserClaim[]
 

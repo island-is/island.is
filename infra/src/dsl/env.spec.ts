@@ -70,4 +70,20 @@ describe('Env variable', () => {
       'Collisions for environment or secrets for key A',
     ])
   })
+
+  it('Should not allow to collision in multiple calls', () => {
+    const sut = service('api')
+      .env({
+        A: 'B',
+      })
+      .secrets({
+        B: 'somesecret',
+      })
+    expect(() => sut.env({ A: 'C' })).toThrow(
+      /Trying to set same environment variable multiple times/,
+    )
+    expect(() => sut.secrets({ B: 'C' })).toThrow(
+      /Trying to set same environment variable multiple times/,
+    )
+  })
 })

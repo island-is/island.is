@@ -1,8 +1,7 @@
-import * as s from './RegulationDisplay.treat'
+import * as s from './RegulationDisplay.css'
 
 import React, { memo, useMemo } from 'react'
 import { Icon, Link } from '@island.is/island-ui/core'
-import { toISODate } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useRegulationLinkResolver } from './regulationUtils'
@@ -10,11 +9,9 @@ import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 
 const useStepperState = (regulation: RegulationMaybeDiff) =>
   useMemo(() => {
-    const { showingDiff, timelineDate } = regulation
+    const { timelineDate, history } = regulation
 
-    const changes = regulation.history.filter(
-      ({ effect }) => effect !== 'repeal',
-    )
+    const changes = history.filter(({ effect }) => effect !== 'repeal')
 
     const numChanges = changes.length
 
@@ -23,7 +20,7 @@ const useStepperState = (regulation: RegulationMaybeDiff) =>
     }
 
     const currentPos = timelineDate
-      ? changes.findIndex(({ date }) => date === timelineDate)
+      ? changes.findIndex((change) => change.date === timelineDate)
       : numChanges - 1
 
     const nextDate = changes[currentPos + 1]?.date
@@ -57,9 +54,22 @@ export const HistoryStepper = memo((props: HistoryStepperProps) => {
     return null
   }
 
+  const nextContent = (
+    <>
+      <span className={s.historyStepperLinkText}>{txt('nextVersion')}</span>{' '}
+      <Icon icon="arrowForward" size="small" />
+    </>
+  )
+  const prevContent = (
+    <>
+      <Icon icon="arrowBack" size="small" />{' '}
+      <span className={s.historyStepperLinkText}>{txt('previousVersion')}</span>
+    </>
+  )
+
   return (
     <div className={s.historyStepper}>
-      {nextDate && (
+      {nextDate ? (
         <Link
           href={linkToRegulation(name, {
             diff: !!showingDiff,
@@ -69,15 +79,18 @@ export const HistoryStepper = memo((props: HistoryStepperProps) => {
           color="blue400"
           underline="small"
         >
-          <span className={s.historyStepperLinkText}>{txt('nextVersion')}</span>{' '}
-          <Icon icon="arrowForward" size="small" />
+          {nextContent}
         </Link>
+      ) : (
+        <span className={s.historyStepperLink} aria-hidden="true">
+          {nextContent}
+        </span>
       )}
       {'  '}
-      {previousDate && (
+      {previousDate ? (
         <Link
           href={linkToRegulation(name, {
-            diff: !!showingDiff,
+            diff: !!showingDiff && previousDate !== 'original',
             ...(previousDate === 'original'
               ? { original: true }
               : { d: previousDate }),
@@ -86,11 +99,12 @@ export const HistoryStepper = memo((props: HistoryStepperProps) => {
           className={s.historyStepperLink}
           underline="small"
         >
-          <Icon icon="arrowBack" size="small" />{' '}
-          <span className={s.historyStepperLinkText}>
-            {txt('previousVersion')}
-          </span>
+          {prevContent}
         </Link>
+      ) : (
+        <span className={s.historyStepperLink} aria-hidden="true">
+          {prevContent}
+        </span>
       )}
     </div>
   )

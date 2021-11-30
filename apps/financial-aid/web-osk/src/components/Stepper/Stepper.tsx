@@ -3,10 +3,10 @@ import { FormStepper } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
 
-import useNavigationTree from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
+import useNavigationTree from '@island.is/financial-aid-web/osk/src/utils/hooks/useNavigationTree'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
-import { findSectionIndex } from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import { findSectionIndex } from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 const Stepper = () => {
   const router = useRouter()

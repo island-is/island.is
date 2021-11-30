@@ -1,5 +1,4 @@
 import {
-  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildFileUploadField,
@@ -10,7 +9,6 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { WorkTypeIllustration } from '../../assets/WorkTypeIllustration'
 import { NO, UPLOAD_ACCEPT, YES } from '../../constants'
 import {
   accidentDetails,
@@ -21,7 +19,6 @@ import {
   fatalAccident,
   fatalAccidentAttachment,
   fishingCompanyInfo,
-  fishingLocationAndPurpose,
   hindrances,
   injuredPersonInformation,
   locationAndPurpose,
@@ -29,6 +26,8 @@ import {
   schoolInfo,
   sportsClubInfo,
   workMachine,
+  representativeInfo,
+  addDocuments,
 } from '../../lib/messages'
 import { attachments } from '../../lib/messages/attachments'
 import {
@@ -46,13 +45,13 @@ import {
 import {
   getAccidentTypeOptions,
   hideLocationAndPurpose,
-  isAboardShip,
   isAgricultureAccident,
+  isFatalAccident,
   isFishermanAccident,
   isGeneralWorkplaceAccident,
   isHomeActivitiesAccident,
   isInjuredAndRepresentativeOfCompanyOrInstitute,
-  isLocatedOnShipOther,
+  isInternshipStudiesAccident,
   isProfessionalAthleteAccident,
   isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
@@ -122,20 +121,21 @@ export const aboutTheAccidentSection = buildSection({
 
     buildSubSection({
       id: 'accidentType.section',
-      title: 'Aðstæður slyss',
+      title: accidentType.general.subsectionTitle,
       children: [
         buildRadioField({
           id: 'accidentType.radioButton',
           width: 'half',
           title: accidentType.general.heading,
           description: accidentType.general.description,
-          options: (app) => getAccidentTypeOptions(app.answers),
+          options: (formValue) => getAccidentTypeOptions(formValue.answers),
         }),
       ],
     }),
     buildSubSection({
       id: 'workAccident.subSection',
       title: accidentType.workAccidentType.subSectionTitle,
+      condition: (formValue) => isWorkAccident(formValue),
       children: [
         buildMultiField({
           id: 'workAccident.section',
@@ -150,22 +150,18 @@ export const aboutTheAccidentSection = buildSection({
                 {
                   value: WorkAccidentTypeEnum.GENERAL,
                   label: accidentType.workAccidentType.generalWorkAccident,
-                  illustration: WorkTypeIllustration,
                 },
                 {
                   value: WorkAccidentTypeEnum.FISHERMAN,
                   label: accidentType.workAccidentType.fishermanAccident,
-                  illustration: WorkTypeIllustration,
                 },
                 {
                   value: WorkAccidentTypeEnum.PROFESSIONALATHLETE,
                   label: accidentType.workAccidentType.professionalAthlete,
-                  illustration: WorkTypeIllustration,
                 },
                 {
                   value: WorkAccidentTypeEnum.AGRICULTURE,
                   label: accidentType.workAccidentType.agricultureAccident,
-                  illustration: WorkTypeIllustration,
                 },
               ],
             }),
@@ -182,11 +178,11 @@ export const aboutTheAccidentSection = buildSection({
           ],
         }),
       ],
-      condition: (formValue) => isWorkAccident(formValue),
     }),
     buildSubSection({
       id: 'studiesAccident.subSection',
       title: accidentType.workAccidentType.subSectionTitle,
+      condition: (formValue) => isStudiesAccident(formValue),
       children: [
         buildMultiField({
           id: 'studiesAccident.section',
@@ -214,10 +210,10 @@ export const aboutTheAccidentSection = buildSection({
           ],
         }),
       ],
-      condition: (formValue) => isStudiesAccident(formValue),
     }),
     // Location Subsection
     buildSubSection({
+      id: 'location.subSection',
       title: 'Staðsetning',
       children: [
         buildMultiField({
@@ -226,7 +222,7 @@ export const aboutTheAccidentSection = buildSection({
           condition: (formValue) => isProfessionalAthleteAccident(formValue),
           children: [
             buildRadioField({
-              id: 'sportsClubInfo.employee.radioButton',
+              id: 'onPayRoll.answer',
               width: 'half',
               title: '',
               options: [
@@ -262,6 +258,7 @@ export const aboutTheAccidentSection = buildSection({
               title: accidentLocation.homeAccidentLocation.postalCode,
               backgroundColor: 'blue',
               width: 'half',
+              format: '###',
               required: true,
             }),
             buildTextField({
@@ -345,7 +342,9 @@ export const aboutTheAccidentSection = buildSection({
           id: 'accidentLocation.studiesAccident',
           title: accidentLocation.studiesAccidentLocation.heading,
           description: accidentLocation.studiesAccidentLocation.description,
-          condition: (formValue) => isStudiesAccident(formValue),
+          condition: (formValue) =>
+            isStudiesAccident(formValue) &&
+            !isInternshipStudiesAccident(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
@@ -397,9 +396,7 @@ export const aboutTheAccidentSection = buildSection({
           id: 'accidentLocation.professionalAthleteAccident',
           title: accidentLocation.general.heading,
           description: accidentLocation.general.description,
-          condition: (formValue) =>
-            isProfessionalAthleteAccident(formValue) &&
-            !isHomeActivitiesAccident(formValue),
+          condition: (formValue) => isProfessionalAthleteAccident(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
@@ -432,6 +429,7 @@ export const aboutTheAccidentSection = buildSection({
           id: 'accidentLocation.agricultureAccident',
           title: accidentLocation.general.heading,
           description: accidentLocation.general.description,
+          condition: (formValue) => isAgricultureAccident(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
@@ -453,19 +451,16 @@ export const aboutTheAccidentSection = buildSection({
               ],
             }),
           ],
-          condition: (formValue) => isAgricultureAccident(formValue),
         }),
         // Fisherman information only applicable to fisherman workplace accidents
-        // that happen aboard a ship.
         buildMultiField({
-          id: 'fishermanLocation.multifield',
+          id: 'shipLocation.multifield',
           title: accidentLocation.fishermanAccidentLocation.heading,
-          condition: (formValue) => isAboardShip(formValue),
-
           description: accidentLocation.fishermanAccidentLocation.description,
+          condition: (formValue) => isFishermanAccident(formValue),
           children: [
             buildRadioField({
-              id: 'fishermanLocation.answer',
+              id: 'shipLocation.answer',
               title: '',
               backgroundColor: 'blue',
               options: [
@@ -488,29 +483,12 @@ export const aboutTheAccidentSection = buildSection({
           ],
         }),
         buildMultiField({
-          id: 'fishermanLocation.other',
-          title: fishingLocationAndPurpose.general.title,
-          description: fishingLocationAndPurpose.general.description,
-          condition: (formValue) => isLocatedOnShipOther(formValue),
-          children: [
-            buildTextField({
-              id: 'fishermanLocation.locationAndPurpose.location',
-              title: fishingLocationAndPurpose.labels.location,
-              backgroundColor: 'blue',
-              variant: 'textarea',
-              required: true,
-              rows: 4,
-            }),
-          ],
-        }),
-        buildMultiField({
           id: 'locationAndPurpose',
           title: locationAndPurpose.general.title,
           description: locationAndPurpose.general.description,
           condition: (formValue) =>
             !isFishermanAccident(formValue) &&
-            !hideLocationAndPurpose(formValue) &&
-            !isHomeActivitiesAccident(formValue),
+            !hideLocationAndPurpose(formValue),
           children: [
             buildTextField({
               id: 'locationAndPurpose.location',
@@ -528,7 +506,9 @@ export const aboutTheAccidentSection = buildSection({
     buildSubSection({
       id: 'workMachine.section',
       title: workMachine.general.sectionTitle,
-      condition: (formValue) => isGeneralWorkplaceAccident(formValue),
+      condition: (formValue) =>
+        isGeneralWorkplaceAccident(formValue) ||
+        isAgricultureAccident(formValue),
       children: [
         buildMultiField({
           id: 'workMachine',
@@ -614,7 +594,7 @@ export const aboutTheAccidentSection = buildSection({
       ],
     }),
 
-    // Attachments section files are optional at this point
+    // Injury Certificate and Fatal accident section
     buildSubSection({
       id: 'attachments.section',
       title: attachments.general.sectionTitle,
@@ -624,7 +604,7 @@ export const aboutTheAccidentSection = buildSection({
           title: attachments.general.heading,
           children: [
             buildRadioField({
-              id: 'attachments.injuryCertificate',
+              id: 'injuryCertificate.answer',
               title: '',
               description: attachments.general.description,
               options: (application) =>
@@ -633,14 +613,6 @@ export const aboutTheAccidentSection = buildSection({
                       {
                         value: AttachmentsEnum.INJURYCERTIFICATE,
                         label: attachments.labels.injuryCertificate,
-                      },
-                      {
-                        value: AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
-                        label: attachments.labels.hospitalSendsCertificate,
-                      },
-                      {
-                        value: AttachmentsEnum.INJUREDSENDSCERTIFICATE,
-                        label: attachments.labels.injuredSendsCertificate,
                       },
                       {
                         value: AttachmentsEnum.SENDCERTIFICATELATER,
@@ -669,41 +641,35 @@ export const aboutTheAccidentSection = buildSection({
                 description: attachments.general.alertMessage,
                 component: 'FieldAlertMessage',
                 condition: (formValue) =>
-                  (formValue as {
-                    attachments: { injuryCertificate: AttachmentsEnum }
-                  }).attachments?.injuryCertificate ===
+                  getValueViaPath(formValue, 'injuryCertificate.answer') ===
                   AttachmentsEnum.SENDCERTIFICATELATER,
               },
               { type: 'warning' },
             ),
           ],
         }),
-        buildFileUploadField({
-          id: 'attachments.injuryCertificateFile',
+        buildMultiField({
+          id: 'attachments.injuryCertificateFile.subSection',
           title: attachments.general.heading,
-          uploadAccept: UPLOAD_ACCEPT,
-          uploadHeader: injuredPersonInformation.upload.uploadHeader,
-          uploadDescription: attachments.general.uploadDescription,
-          uploadButtonLabel: attachments.general.uploadButtonLabel,
-          introduction: attachments.general.uploadIntroduction,
+          children: [
+            buildFileUploadField({
+              id: 'attachments.injuryCertificateFile.file',
+              title: attachments.general.heading,
+              uploadAccept: UPLOAD_ACCEPT,
+              uploadHeader: injuredPersonInformation.upload.uploadHeader,
+              uploadDescription: attachments.general.uploadDescription,
+              uploadButtonLabel: attachments.general.uploadButtonLabel,
+              introduction: attachments.general.uploadIntroduction,
+            }),
+          ],
           condition: (formValue) =>
-            (formValue as {
-              attachments: { injuryCertificate: AttachmentsEnum }
-            }).attachments?.injuryCertificate ===
+            getValueViaPath(formValue, 'injuryCertificate.answer') ===
             AttachmentsEnum.INJURYCERTIFICATE,
         }),
-      ],
-    }),
-
-    // Fatal accident section
-    buildSubSection({
-      id: 'fatalAccident.section',
-      title: fatalAccidentAttachment.general.sectionTitle,
-      condition: (formValue) => isReportingOnBehalfOfInjured(formValue),
-      children: [
         buildMultiField({
           id: 'fatalAccidentMulti.section',
           title: fatalAccident.general.sectionTitle,
+          condition: (formValue) => isReportingOnBehalfOfInjured(formValue),
           children: [
             buildRadioField({
               id: 'wasTheAccidentFatal',
@@ -721,7 +687,9 @@ export const aboutTheAccidentSection = buildSection({
           id: 'fatalAccidentUploadDeathCertificateNowMulti',
           title: fatalAccidentAttachment.labels.title,
           description: fatalAccidentAttachment.labels.description,
-          condition: (formValue) => formValue.wasTheAccidentFatal === YES,
+          condition: (formValue) =>
+            isReportingOnBehalfOfInjured(formValue) &&
+            formValue.wasTheAccidentFatal === YES,
           children: [
             buildRadioField({
               id: 'fatalAccidentUploadDeathCertificateNow',
@@ -758,9 +726,13 @@ export const aboutTheAccidentSection = buildSection({
         buildMultiField({
           id: 'attachments.deathCertificateFile.subSection',
           title: attachments.general.uploadTitle,
+          condition: (formValue) =>
+            isReportingOnBehalfOfInjured(formValue) &&
+            isFatalAccident(formValue) &&
+            formValue.fatalAccidentUploadDeathCertificateNow === YES,
           children: [
             buildFileUploadField({
-              id: 'attachments.deathCertificateFile',
+              id: 'attachments.deathCertificateFile.file',
               title: attachments.general.uploadHeader,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: attachments.general.uploadHeader,
@@ -769,19 +741,71 @@ export const aboutTheAccidentSection = buildSection({
               introduction: attachments.general.uploadIntroduction,
             }),
           ],
+        }),
+        buildMultiField({
+          id: 'attachments.additionalFilesMulti',
+          title: attachments.general.heading,
+          children: [
+            buildRadioField({
+              id: 'additionalAttachments.answer',
+              title: '',
+              description: attachments.general.additionalAttachmentDescription,
+              options: () => [
+                {
+                  value: AttachmentsEnum.ADDITIONALNOW,
+                  label: attachments.labels.additionalNow,
+                },
+                {
+                  value: AttachmentsEnum.ADDITIONALLATER,
+                  label: attachments.labels.additionalLater,
+                },
+              ],
+            }),
+            buildCustomField(
+              {
+                id: 'attachments.injuryCertificate.alert',
+                title: attachments.labels.alertMessage,
+                description: attachments.general.alertMessage,
+                component: 'FieldAlertMessage',
+                condition: (formValue) =>
+                  getValueViaPath(formValue, 'additionalAttachments.answer') ===
+                  AttachmentsEnum.ADDITIONALLATER,
+              },
+              { type: 'warning' },
+            ),
+          ],
+        }),
+        buildMultiField({
+          id: 'attachments.additionalAttachments.subSection',
+          title: attachments.general.heading,
           condition: (formValue) =>
-            formValue.wasTheAccidentFatal === YES &&
-            formValue.fatalAccidentUploadDeathCertificateNow === YES,
+            getValueViaPath(formValue, 'additionalAttachments.answer') ===
+            AttachmentsEnum.ADDITIONALNOW,
+          children: [
+            buildFileUploadField({
+              id: 'attachments.additionalFiles.file',
+              title: attachments.general.heading,
+              uploadAccept: UPLOAD_ACCEPT,
+              uploadHeader: addDocuments.general.uploadHeader,
+              uploadDescription: addDocuments.general.uploadDescription,
+              uploadButtonLabel: addDocuments.general.uploadButtonLabel,
+              introduction: addDocuments.general.additionalDocumentsDescription,
+            }),
+          ],
         }),
       ],
     }),
 
-    // Company information if work accident without the injured being a fisherman
+    // Company information if work accident without the injured being a fisherman or in agriculture
     buildSubSection({
+      id: 'companyInfo.subSection',
       title: companyInfo.general.title,
       condition: (formValue) =>
-        isGeneralWorkplaceAccident(formValue) &&
-        !isReportingOnBehalfOfEmployee(formValue),
+        !isAgricultureAccident(formValue) &&
+        !isReportingOnBehalfOfEmployee(formValue) &&
+        !isHomeActivitiesAccident(formValue) &&
+        (isGeneralWorkplaceAccident(formValue) ||
+          isInternshipStudiesAccident(formValue)),
       children: [
         buildMultiField({
           id: 'companyInfo',
@@ -789,47 +813,67 @@ export const aboutTheAccidentSection = buildSection({
           description: companyInfo.general.description,
           children: [
             buildTextField({
+              id: 'companyInfo.name',
+              title: companyInfo.labels.name,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+            }),
+            buildTextField({
               id: 'companyInfo.nationalRegistrationId',
               title: companyInfo.labels.nationalId,
               backgroundColor: 'blue',
+              width: 'half',
               format: '######-####',
               required: true,
             }),
-            buildCheckboxField({
-              id: 'isRepresentativeOfCompanyOrInstitue',
-              title: '',
-              defaultValue: [],
-              large: false,
-              backgroundColor: 'white',
-              options: [
-                {
-                  value: YES,
-                  label: companyInfo.labels.checkBox,
-                },
-              ],
-            }),
+            // buildCheckboxField({
+            //   id: 'isRepresentativeOfCompanyOrInstitue',
+            //   title: '',
+            //   defaultValue: [],
+            //   large: false,
+            //   backgroundColor: 'white',
+            //   options: [
+            //     {
+            //       value: YES,
+            //       label: companyInfo.labels.checkBox,
+            //     },
+            //   ],
+            // }),
             buildDescriptionField({
               id: 'companyInfo.descriptionField',
-              description: '',
+              description: companyInfo.labels.subDescription,
               space: 'containerGutter',
               titleVariant: 'h5',
               title: companyInfo.labels.descriptionField,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+
             // These should all be required if the user is not the representative of the company.
             // Should look into if we can require conditionally
             buildTextField({
-              id: 'companyInfo.name',
-              title: companyInfo.labels.name,
+              id: 'representative.name',
+              title: representativeInfo.labels.name,
               backgroundColor: 'blue',
               required: true,
+              width: 'half',
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
-              id: 'companyInfo.email',
-              title: companyInfo.labels.email,
+              id: 'representative.nationalId',
+              title: representativeInfo.labels.nationalId,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+              format: '######-####',
+              condition: (formValue) =>
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
+            }),
+            buildTextField({
+              id: 'representative.email',
+              title: representativeInfo.labels.email,
               backgroundColor: 'blue',
               variant: 'email',
               width: 'half',
@@ -838,8 +882,8 @@ export const aboutTheAccidentSection = buildSection({
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
-              id: 'companyInfo.phoneNumber',
-              title: companyInfo.labels.tel,
+              id: 'representative.phoneNumber',
+              title: representativeInfo.labels.tel,
               backgroundColor: 'blue',
               format: '###-####',
               variant: 'tel',
@@ -847,15 +891,27 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'representativeInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'representativeInfo',
+              },
+            ),
           ],
         }),
       ],
     }),
     // School information if school accident
     buildSubSection({
+      id: 'schoolInfo.subSection',
       title: schoolInfo.general.title,
       condition: (formValue) =>
         isStudiesAccident(formValue) &&
+        !isInternshipStudiesAccident(formValue) &&
         !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
@@ -864,28 +920,36 @@ export const aboutTheAccidentSection = buildSection({
           description: schoolInfo.general.description,
           children: [
             buildTextField({
-              id: 'schoolInfo.nationalRegistrationId',
+              id: 'companyInfo.name',
+              title: schoolInfo.labels.name,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'companyInfo.nationalRegistrationId',
               title: schoolInfo.labels.nationalId,
               backgroundColor: 'blue',
               format: '######-####',
               required: true,
+              width: 'half',
             }),
-            buildCheckboxField({
-              id: 'isRepresentativeOfCompanyOrInstitue',
-              title: '',
-              defaultValue: [],
-              large: false,
-              backgroundColor: 'white',
-              options: [
-                {
-                  value: YES,
-                  label: schoolInfo.labels.checkBox,
-                },
-              ],
-            }),
+            // buildCheckboxField({
+            //   id: 'isRepresentativeOfCompanyOrInstitue',
+            //   title: '',
+            //   defaultValue: [],
+            //   large: false,
+            //   backgroundColor: 'white',
+            //   options: [
+            //     {
+            //       value: YES,
+            //       label: schoolInfo.labels.checkBox,
+            //     },
+            //   ],
+            // }),
             buildDescriptionField({
               id: 'schoolInfo.descriptionField',
-              description: '',
+              description: schoolInfo.labels.subDescription,
               space: 'containerGutter',
               titleVariant: 'h5',
               title: schoolInfo.labels.descriptionField,
@@ -895,16 +959,27 @@ export const aboutTheAccidentSection = buildSection({
             // These should all be required if the user is not the representative of the company.
             // Should look into if we can require conditionally
             buildTextField({
-              id: 'schoolInfo.name',
-              title: schoolInfo.labels.name,
+              id: 'representative.name',
+              title: representativeInfo.labels.name,
               backgroundColor: 'blue',
               required: true,
+              width: 'half',
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
-              id: 'schoolInfo.email',
-              title: schoolInfo.labels.email,
+              id: 'representative.nationalId',
+              title: representativeInfo.labels.nationalId,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+              format: '######-####',
+              condition: (formValue) =>
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
+            }),
+            buildTextField({
+              id: 'representative.email',
+              title: representativeInfo.labels.email,
               backgroundColor: 'blue',
               variant: 'email',
               width: 'half',
@@ -913,8 +988,8 @@ export const aboutTheAccidentSection = buildSection({
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
-              id: 'schoolInfo.phoneNumber',
-              title: schoolInfo.labels.tel,
+              id: 'representative.phoneNumber',
+              title: representativeInfo.labels.tel,
               backgroundColor: 'blue',
               format: '###-####',
               variant: 'tel',
@@ -922,12 +997,23 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'schoolInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'representativeInfo',
+              },
+            ),
           ],
         }),
       ],
     }),
     // fishery information if fisherman
     buildSubSection({
+      id: 'fishingCompanyInfo.subSection',
       title: fishingCompanyInfo.general.title,
       condition: (formValue) => isFishermanAccident(formValue),
       children: [
@@ -956,14 +1042,12 @@ export const aboutTheAccidentSection = buildSection({
               title: fishingCompanyInfo.labels.homePort,
               backgroundColor: 'blue',
               width: 'half',
-              required: true,
             }),
             buildTextField({
               id: 'fishingShipInfo.shipRegisterNumber',
               title: fishingCompanyInfo.labels.shipRegisterNumber,
               backgroundColor: 'blue',
               width: 'half',
-              required: true,
             }),
           ],
         }),
@@ -974,28 +1058,36 @@ export const aboutTheAccidentSection = buildSection({
           condition: (formValue) => !isReportingOnBehalfOfEmployee(formValue),
           children: [
             buildTextField({
-              id: 'fishingCompanyInfo.nationalRegistrationId',
+              id: 'companyInfo.name',
+              title: fishingCompanyInfo.labels.name,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'companyInfo.nationalRegistrationId',
               title: fishingCompanyInfo.labels.nationalId,
               backgroundColor: 'blue',
               format: '######-####',
               required: true,
+              width: 'half',
             }),
-            buildCheckboxField({
-              id: 'isRepresentativeOfCompanyOrInstitue',
-              title: '',
-              defaultValue: [],
-              large: false,
-              backgroundColor: 'white',
-              options: [
-                {
-                  value: YES,
-                  label: fishingCompanyInfo.labels.checkBox,
-                },
-              ],
-            }),
+            // buildCheckboxField({
+            //   id: 'isRepresentativeOfCompanyOrInstitue',
+            //   title: '',
+            //   defaultValue: [],
+            //   large: false,
+            //   backgroundColor: 'white',
+            //   options: [
+            //     {
+            //       value: YES,
+            //       label: fishingCompanyInfo.labels.checkBox,
+            //     },
+            //   ],
+            // }),
             buildDescriptionField({
               id: 'fishingCompanyInfo.descriptionField',
-              description: '',
+              description: fishingCompanyInfo.labels.subDescription,
               space: 'containerGutter',
               titleVariant: 'h5',
               title: fishingCompanyInfo.labels.descriptionField,
@@ -1005,39 +1097,61 @@ export const aboutTheAccidentSection = buildSection({
             // These should all be required if the user is not the representative of the company.
             // Should look into if we can require conditionally
             buildTextField({
-              id: 'fishingCompanyInfo.name',
-              title: fishingCompanyInfo.labels.name,
+              id: 'representative.name',
+              title: representativeInfo.labels.name,
               backgroundColor: 'blue',
               required: true,
+              width: 'half',
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
-              id: 'fishingCompanyInfo.email',
-              title: fishingCompanyInfo.labels.email,
+              id: 'representative.nationalId',
+              title: representativeInfo.labels.nationalId,
               backgroundColor: 'blue',
+              required: true,
               width: 'half',
+              format: '######-####',
+              condition: (formValue) =>
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
+            }),
+            buildTextField({
+              id: 'representative.email',
+              title: representativeInfo.labels.email,
+              backgroundColor: 'blue',
               variant: 'email',
+              width: 'half',
               required: true,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
-              id: 'fishingCompanyInfo.phoneNumber',
-              title: fishingCompanyInfo.labels.tel,
+              id: 'representative.phoneNumber',
+              title: representativeInfo.labels.tel,
               backgroundColor: 'blue',
-              width: 'half',
               format: '###-####',
               variant: 'tel',
+              width: 'half',
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'representativeInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'representativeInfo',
+              },
+            ),
           ],
         }),
       ],
     }),
     // Sports club information when the injured has a sports related accident
     buildSubSection({
+      id: 'sportsClubInfo.subSection',
       title: sportsClubInfo.general.title,
       condition: (formValue) =>
         isProfessionalAthleteAccident(formValue) &&
@@ -1049,28 +1163,36 @@ export const aboutTheAccidentSection = buildSection({
           description: sportsClubInfo.general.description,
           children: [
             buildTextField({
-              id: 'sportsClubInfo.nationalRegistrationId',
+              id: 'companyInfo.name',
+              title: sportsClubInfo.labels.name,
+              backgroundColor: 'blue',
+              width: 'half',
+              required: true,
+            }),
+            buildTextField({
+              id: 'companyInfo.nationalRegistrationId',
               title: sportsClubInfo.labels.nationalId,
               backgroundColor: 'blue',
               format: '######-####',
               required: true,
+              width: 'half',
             }),
-            buildCheckboxField({
-              id: 'isRepresentativeOfCompanyOrInstitue',
-              title: '',
-              defaultValue: [],
-              large: false,
-              backgroundColor: 'white',
-              options: [
-                {
-                  value: YES,
-                  label: sportsClubInfo.labels.checkBox,
-                },
-              ],
-            }),
+            // buildCheckboxField({
+            //   id: 'isRepresentativeOfCompanyOrInstitue',
+            //   title: '',
+            //   defaultValue: [],
+            //   large: false,
+            //   backgroundColor: 'white',
+            //   options: [
+            //     {
+            //       value: YES,
+            //       label: sportsClubInfo.labels.checkBox,
+            //     },
+            //   ],
+            // }),
             buildDescriptionField({
               id: 'sportsClubInfo.descriptionField',
-              description: '',
+              description: sportsClubInfo.labels.subDescription,
               space: 'containerGutter',
               titleVariant: 'h5',
               title: sportsClubInfo.labels.descriptionField,
@@ -1080,39 +1202,61 @@ export const aboutTheAccidentSection = buildSection({
             // These should all be required if the user is not the representative of the company.
             // Should look into if we can require conditionally
             buildTextField({
-              id: 'sportsClubInfo.name',
-              title: sportsClubInfo.labels.name,
+              id: 'representative.name',
+              title: representativeInfo.labels.name,
               backgroundColor: 'blue',
               required: true,
+              width: 'half',
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
-              id: 'sportsClubInfo.email',
-              title: sportsClubInfo.labels.email,
+              id: 'representative.nationalId',
+              title: representativeInfo.labels.nationalId,
               backgroundColor: 'blue',
+              required: true,
               width: 'half',
+              format: '######-####',
+              condition: (formValue) =>
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
+            }),
+            buildTextField({
+              id: 'representative.email',
+              title: representativeInfo.labels.email,
+              backgroundColor: 'blue',
               variant: 'email',
+              width: 'half',
               required: true,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
-              id: 'sportsClubInfo.phoneNumber',
-              title: sportsClubInfo.labels.tel,
+              id: 'representative.phoneNumber',
+              title: representativeInfo.labels.tel,
               backgroundColor: 'blue',
-              width: 'half',
               format: '###-####',
               variant: 'tel',
+              width: 'half',
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'representativeInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'representativeInfo',
+              },
+            ),
           ],
         }),
       ],
     }),
     // Rescue squad information when accident is related to rescue squad
     buildSubSection({
+      id: 'rescueSquadInfo.subSection',
       title: rescueSquadInfo.general.title,
       condition: (formValue) =>
         isRescueWorkAccident(formValue) &&
@@ -1124,28 +1268,36 @@ export const aboutTheAccidentSection = buildSection({
           description: rescueSquadInfo.general.description,
           children: [
             buildTextField({
-              id: 'rescueSquadInfo.nationalRegistrationId',
+              id: 'companyInfo.name',
+              title: rescueSquadInfo.labels.name,
+              backgroundColor: 'blue',
+              width: 'half',
+              required: true,
+            }),
+            buildTextField({
+              id: 'companyInfo.nationalRegistrationId',
               title: rescueSquadInfo.labels.nationalId,
               backgroundColor: 'blue',
               format: '######-####',
               required: true,
+              width: 'half',
             }),
-            buildCheckboxField({
-              id: 'isRepresentativeOfCompanyOrInstitue',
-              title: '',
-              defaultValue: [],
-              large: false,
-              backgroundColor: 'white',
-              options: [
-                {
-                  value: YES,
-                  label: rescueSquadInfo.labels.checkBox,
-                },
-              ],
-            }),
+            // buildCheckboxField({
+            //   id: 'isRepresentativeOfCompanyOrInstitue',
+            //   title: '',
+            //   defaultValue: [],
+            //   large: false,
+            //   backgroundColor: 'white',
+            //   options: [
+            //     {
+            //       value: YES,
+            //       label: rescueSquadInfo.labels.checkBox,
+            //     },
+            //   ],
+            // }),
             buildDescriptionField({
               id: 'rescueSquadInfo.descriptionField',
-              description: '',
+              description: rescueSquadInfo.labels.subDescription,
               space: 'containerGutter',
               titleVariant: 'h5',
               title: rescueSquadInfo.labels.descriptionField,
@@ -1153,33 +1305,54 @@ export const aboutTheAccidentSection = buildSection({
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
-              id: 'rescueSquadInfo.name',
-              title: rescueSquadInfo.labels.name,
+              id: 'representative.name',
+              title: representativeInfo.labels.name,
               backgroundColor: 'blue',
               required: true,
+              width: 'half',
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
-              id: 'rescueSquadInfo.email',
-              title: rescueSquadInfo.labels.email,
+              id: 'representative.nationalId',
+              title: representativeInfo.labels.nationalId,
               backgroundColor: 'blue',
+              required: true,
               width: 'half',
+              format: '######-####',
+              condition: (formValue) =>
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
+            }),
+            buildTextField({
+              id: 'representative.email',
+              title: representativeInfo.labels.email,
+              backgroundColor: 'blue',
               variant: 'email',
+              width: 'half',
               required: true,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
-              id: 'rescueSquadInfo.phoneNumber',
-              title: rescueSquadInfo.labels.tel,
+              id: 'representative.phoneNumber',
+              title: representativeInfo.labels.tel,
               backgroundColor: 'blue',
-              width: 'half',
               format: '###-####',
               variant: 'tel',
+              width: 'half',
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'representativeInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'representativeInfo',
+              },
+            ),
           ],
         }),
       ],

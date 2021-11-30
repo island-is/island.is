@@ -7,7 +7,7 @@ import { Text } from '../Text/Text'
 import { SectionNumber } from './SectionNumber/SectionNumber'
 import { SubSections } from './SubSections/SubSections'
 import { theme as islandUITheme } from '@island.is/island-ui/theme'
-import * as styles from './FormStepperSection.treat'
+import * as styles from './FormStepperSection.css'
 import * as types from './types'
 import { useWindowSize } from 'react-use'
 

@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 
 import { UpdateApplicationTableResponseType } from '@island.is/financial-aid/shared/lib'
 import { ApplicationModel } from './application.model'

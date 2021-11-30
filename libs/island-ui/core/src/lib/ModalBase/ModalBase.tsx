@@ -15,7 +15,7 @@ import {
   DialogDisclosure,
   DialogProps,
 } from 'reakit/Dialog'
-import * as styles from './ModalBase.treat'
+import * as styles from './ModalBase.css'
 import { DisclosureProps } from 'reakit/ts'
 
 interface BackdropDivProps {

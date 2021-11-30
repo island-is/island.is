@@ -4,7 +4,7 @@ import { InputFileUpload, UploadFile } from '@island.is/island-ui/core'
 import { FileUploadContainer } from '@island.is/financial-aid-web/osk/src/components'
 
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/useFileUpload'
+import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/hooks/useFileUpload'
 
 import { UploadFileType } from '@island.is/financial-aid/shared/lib'
 

@@ -6,7 +6,7 @@ import {
   Stack,
   IconDeprecated as Icon,
 } from '@island.is/island-ui/core'
-import * as styles from './NoBenefits.treat'
+import * as styles from './NoBenefits.css'
 
 interface PropTypes {
   misc: string

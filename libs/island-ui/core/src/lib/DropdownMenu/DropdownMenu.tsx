@@ -11,7 +11,7 @@ import { useBoxStyles } from '../Box/useBoxStyles'
 import { Button, ButtonProps } from '../Button/Button'
 import { getTextStyles } from '../Text/Text'
 
-import * as styles from './DropdownMenu.treat'
+import * as styles from './DropdownMenu.css'
 
 export interface DropdownMenuProps {
   /**

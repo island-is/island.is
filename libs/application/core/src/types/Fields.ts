@@ -41,9 +41,9 @@ export interface Option {
   disabled?: boolean
 }
 
-interface SelectOption {
+export interface SelectOption<T = string | number> {
   label: string
-  value: string | number
+  value: T
 }
 
 export interface BaseField extends FormItem {
@@ -57,6 +57,7 @@ export interface BaseField extends FormItem {
   condition?: Condition
   isPartOfRepeater?: boolean
   defaultValue?: MaybeWithApplicationAndField<unknown>
+  doesNotRequireAnswer?: boolean
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
 }
@@ -109,6 +110,7 @@ export interface DateField extends BaseField {
   excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
   onChange?(date: string): void
+  required?: boolean
 }
 
 export interface DescriptionField extends BaseField {
@@ -201,7 +203,7 @@ export interface KeyValueField extends BaseField {
 export interface CustomField extends BaseField {
   readonly type: FieldTypes.CUSTOM
   readonly component: string
-  props?: object
+  props?: RecordObject
   childInputIds?: string[]
 }
 

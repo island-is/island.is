@@ -4,6 +4,7 @@ import {
   Einstaklingsupplysingar,
   Fjolskylda,
   Heimili,
+  Hjuskapur,
 } from '@island.is/clients/national-registry-v2'
 import type { NationalRegistryXRoadConfig } from './nationalRegistryXRoad.module'
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
@@ -11,6 +12,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistryAddress } from '../models/nationalRegistryAddress.model'
+import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 
 @Injectable()
 export class NationalRegistryXRoadService {
@@ -87,6 +89,7 @@ export class NationalRegistryXRoadService {
       `/${nationalId}`,
       authToken,
     )
+
     return {
       nationalId: nationalId,
       fullName: person.nafn,
@@ -94,7 +97,9 @@ export class NationalRegistryXRoadService {
         streetName: person.logheimili?.heiti || undefined,
         postalCode: person.logheimili?.postnumer || undefined,
         city: person.logheimili?.stadur || undefined,
+        municipalityCode: person.logheimili?.sveitarfelagsnumer || undefined,
       },
+      genderCode: person.kynkodi,
     }
   }
 
@@ -172,6 +177,7 @@ export class NationalRegistryXRoadService {
           return {
             nationalId: child.kennitala,
             fullName: child.nafn,
+            genderCode: child.kynkodi,
             livesWithApplicant,
             livesWithBothParents: livesWithParentB && livesWithApplicant,
             otherParent: parentBObject,
@@ -180,6 +186,22 @@ export class NationalRegistryXRoadService {
       )
     } catch (e) {
       throw this.handleError(e)
+    }
+  }
+
+  async getSpouse(
+    nationalId: string,
+    authToken: string,
+  ): Promise<NationalRegistrySpouse> {
+    const spouse = await this.nationalRegistryFetch<Hjuskapur>(
+      `/${nationalId}/hjuskapur`,
+      authToken,
+    )
+
+    return {
+      nationalId: spouse.kennitalaMaka || undefined,
+      name: spouse.nafnMaka || undefined,
+      maritalStatus: spouse.hjuskaparkodi || undefined,
     }
   }
 

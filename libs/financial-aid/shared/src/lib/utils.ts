@@ -1,5 +1,8 @@
 import { months } from './const'
+
 import React from 'react'
+import { NationalRegistryData } from './interfaces'
+import { StaffRole } from './enums'
 
 export const getFileType = (fileName: string) => {
   return fileName?.substring(fileName.lastIndexOf('.') + 1)
@@ -28,7 +31,14 @@ export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
 
 export const sanitizeNationalId = (nationalId: string) =>
-  nationalId.replace(/[^0-9]/g, '')
+  nationalId?.replace(/[^0-9]/g, '')
+
+export const isNationalIdValid = (nationalId: string): boolean => {
+  return (
+    sanitizeNationalId(nationalId).length === 10 &&
+    isNaN(Number(sanitizeNationalId(nationalId))) === false
+  )
+}
 
 export const isEmailValid = (emailAddress?: string) => {
   if (emailAddress) {
@@ -46,4 +56,33 @@ export const focusOnNextInput = (
     const el = document.getElementById(nextInputId)
     el?.focus()
   }
+}
+
+export const formatHomeAddress = (
+  nationalRegistryData?: NationalRegistryData,
+) =>
+  nationalRegistryData
+    ? `${nationalRegistryData.address.streetName}, ${nationalRegistryData.address.postalCode} ${nationalRegistryData.address.city}`
+    : undefined
+
+export const staffRoleDescription = (roles: StaffRole[]) => {
+  return roles.map((r) => getRoleName(r)).join(', ')
+}
+
+export const getRoleName = (role: StaffRole) => {
+  switch (role) {
+    case StaffRole.ADMIN:
+      return 'Stjórnandi'
+    case StaffRole.EMPLOYEE:
+      return 'Vinnsluaðili'
+    case StaffRole.SUPERADMIN:
+      return 'Umsjónaraðili'
+  }
+}
+
+export const scrollToId = (id: string) => {
+  const element = document.getElementById(id)
+  element?.scrollIntoView({
+    behavior: 'smooth',
+  })
 }

@@ -6,7 +6,7 @@ import {
   TypographyProps,
 } from '@island.is/island-ui/core'
 
-import * as styles from './Link.treat'
+import * as styles from './Link.css'
 
 interface LinkProps {
   href?: string

@@ -21,4 +21,10 @@ export class ApplicationEventModel implements ApplicationEvent {
 
   @Field(() => String)
   readonly eventType!: ApplicationEventType
+
+  @Field({ nullable: true })
+  readonly staffNationalId?: string
+
+  @Field({ nullable: true })
+  readonly staffName?: string
 }

@@ -14,10 +14,7 @@ export const whoIsTheNotificationFor = {
     },
     description: {
       id: 'an.application:whoIsTheNotificationFor.description',
-      defaultMessage: `<p>Hægt er að tilkynna slys  í eigin nafni, fyrir aðra einstaklinga sem þú ert með skriflegt umboð 
-				frá eða fyrir starfsmann sem þú hefur umsjá yfir. Foreldrar og forráðamenn geta líka sent inn tilkynningu fyrir hönd barna
-        sem þeir fara með forsjá yfir.</p><br/><p>Stofnanir, samtök og félög sem eru virk á sviði persónuverndar geta einnig sent inn
-				tilkynningu án umboðs að uppfylltum skilyrðum 80. gr. reglugerðar (ESB) 2016/679 (almennu persónuverndarreglugerðarinnar).</p>`,
+      defaultMessage: `Hægt er að tilkynna slys  í eigin nafni , fyrir aðra einstaklinga sem þú ert með skriflegt umboð frá eða fyrir starfsmann lögaðila. Foreldrar og forráðamenn geta líka sent inn tilkynningu fyrir hönd barna sem þeir fara með forsjá yfir. Stofnanir, samtök og félög sem eru virk á sviði persónuverndar geta sent inn tilkynningu án umboðs að uppfylltum skilyrðum 80. gr. reglugerðar (ESB) 2016/679 (almennu persónuverndarreglugerðarinnar).`,
       description: 'Description for who is the notifaction for',
     },
   }),
@@ -39,7 +36,7 @@ export const whoIsTheNotificationFor = {
     },
     childInCustody: {
       id: 'an.application:whoIsTheNotificationFor.labels.childInCustody',
-      defaultMessage: 'Fyrir barn sem ég hef forræði yfir',
+      defaultMessage: 'Fyrir barn í minni forsjá',
       description: 'Label for child in custody option',
     },
   }),

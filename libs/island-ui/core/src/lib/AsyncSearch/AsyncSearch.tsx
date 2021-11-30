@@ -19,7 +19,7 @@ import { Item } from './shared/Item/Item'
 import { Icon } from '../IconRC/Icon'
 import { ColorSchemeContext } from '../context'
 
-import * as styles from './AsyncSearch.treat'
+import * as styles from './AsyncSearch.css'
 
 export type AsyncSearchSizes = 'medium' | 'large'
 

@@ -9,18 +9,8 @@ import School from '../../assets/School'
 
 const ListSubmited: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-
-  const isLocalhost = window.location.origin.includes('localhost')
-  const isDev = window.location.origin.includes('beta.dev01.devland.is')
-  const isStaging = window.location.origin.includes('beta.staging01.devland.is')
-
-  const baseUrlForm = isLocalhost
-    ? 'http://localhost:4200/undirskriftalistar/'
-    : isDev
-    ? 'https://beta.dev01.devland.is/undirskriftalistar/'
-    : isStaging
-    ? 'https://beta.staging01.devland.is/undirskriftalistar/'
-    : 'https://island.is/undirskriftalistar/'
+  const createdList = application.externalData.createEndorsementList.data as any
+  const baseUrlForm = `${document.location.origin}/medmaelendalistar/`
 
   return (
     <>
@@ -33,7 +23,7 @@ const ListSubmited: FC<FieldBaseProps> = ({ application }) => {
       </Text>
       <Box marginBottom={2}>
         <CopyLink
-          linkUrl={baseUrlForm + application.id}
+          linkUrl={baseUrlForm + createdList?.id}
           buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
         />
       </Box>

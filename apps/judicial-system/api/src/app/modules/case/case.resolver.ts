@@ -15,7 +15,11 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import type { User } from '@island.is/judicial-system/types'
+import type {
+  User,
+  Notification as TNotification,
+  CaseFile as TCaseFile,
+} from '@island.is/judicial-system/types'
 import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
@@ -144,7 +148,45 @@ export class CaseResolver {
   }
 
   @Mutation(() => RequestSignatureResponse, { nullable: true })
-  requestSignature(
+  requestCourtRecordSignature(
+    @Args('input', { type: () => RequestSignatureInput })
+    input: RequestSignatureInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<RequestSignatureResponse> {
+    this.logger.debug(
+      `Requesting signature of court record for case ${input.caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.REQUEST_RULING_SIGNATURE,
+      backendApi.requestCourtRecordSignature(input.caseId),
+      input.caseId,
+    )
+  }
+
+  @Query(() => SignatureConfirmationResponse, { nullable: true })
+  courtRecordSignatureConfirmation(
+    @Args('input', { type: () => SignatureConfirmationQueryInput })
+    input: SignatureConfirmationQueryInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<SignatureConfirmationResponse> {
+    const { caseId, documentToken } = input
+
+    this.logger.debug(`Confirming signature of court record for case ${caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.CONFIRM_RULING_SIGNATURE,
+      backendApi.getCourtRecordSignatureConfirmation(caseId, documentToken),
+      caseId,
+    )
+  }
+
+  @Mutation(() => RequestSignatureResponse, { nullable: true })
+  requestRulingSignature(
     @Args('input', { type: () => RequestSignatureInput })
     input: RequestSignatureInput,
     @CurrentGraphQlUser() user: User,
@@ -154,14 +196,14 @@ export class CaseResolver {
 
     return this.auditTrailService.audit(
       user.id,
-      AuditedAction.REQUEST_SIGNATURE,
-      backendApi.requestSignature(input.caseId),
+      AuditedAction.REQUEST_RULING_SIGNATURE,
+      backendApi.requestRulingSignature(input.caseId),
       input.caseId,
     )
   }
 
   @Query(() => SignatureConfirmationResponse, { nullable: true })
-  signatureConfirmation(
+  rulingSignatureConfirmation(
     @Args('input', { type: () => SignatureConfirmationQueryInput })
     input: SignatureConfirmationQueryInput,
     @CurrentGraphQlUser() user: User,
@@ -173,8 +215,8 @@ export class CaseResolver {
 
     return this.auditTrailService.audit(
       user.id,
-      AuditedAction.CONFIRM_SIGNATURE,
-      backendApi.getSignatureConfirmation(caseId, documentToken),
+      AuditedAction.CONFIRM_RULING_SIGNATURE,
+      backendApi.getRulingSignatureConfirmation(caseId, documentToken),
       caseId,
     )
   }
@@ -223,7 +265,9 @@ export class CaseResolver {
   ): Promise<Notification[]> {
     const { id } = existingCase
 
-    return backendApi.getCaseNotifications(id)
+    return backendApi
+      .getCaseNotifications(id)
+      .catch(() => [] as TNotification[])
   }
 
   @ResolveField(() => [CaseFile])
@@ -233,6 +277,6 @@ export class CaseResolver {
   ): Promise<CaseFile[]> {
     const { id } = existingCase
 
-    return backendApi.getCaseFiles(id)
+    return backendApi.getCaseFiles(id).catch(() => [] as TCaseFile[])
   }
 }

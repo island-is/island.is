@@ -1,6 +1,6 @@
-import { Style } from 'treat'
+import type { StyleRule } from '@vanilla-extract/css'
 
-type SelectorMap = Style['selectors']
+type SelectorMap = StyleRule['selectors']
 
 export const debugTouchable = ({ after = false } = {}): SelectorMap =>
   process.env.NODE_ENV === 'production'

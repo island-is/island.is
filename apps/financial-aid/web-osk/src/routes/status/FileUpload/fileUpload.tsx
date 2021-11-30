@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -7,40 +7,52 @@ import {
   ContentContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/useFileUpload'
+import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/hooks/useFileUpload'
 import {
   Application,
   ApplicationEventType,
   ApplicationState,
   FileType,
+  getCommentFromLatestEvent,
 } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
 import {
-  CreateApplicationEventQuery,
-  UpdateApplicationMutation,
+  ApplicationEventMutation,
+  ApplicationMutation,
 } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import { AlertMessage, Box, Input, Text } from '@island.is/island-ui/core'
 
 import { Routes } from '@island.is/financial-aid/shared/lib'
-import cn from 'classnames'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)
+  const { myApplication, user } = useContext(AppContext)
+
+  const fileComment = useMemo(() => {
+    if (myApplication?.applicationEvents) {
+      return getCommentFromLatestEvent(
+        myApplication?.applicationEvents,
+        ApplicationEventType.DATANEEDED,
+      )
+    }
+  }, [myApplication])
+
   const router = useRouter()
-  const { uploadFiles } = useFileUpload(form.otherFiles)
+  const { uploadStateFiles } = useFileUpload(form.otherFiles)
 
   const [error, setError] = useState(false)
 
   const [isLoading, setIsLoading] = useState(false)
 
   const [updateApplicationMutation] = useMutation<{ application: Application }>(
-    UpdateApplicationMutation,
+    ApplicationMutation,
   )
 
-  const [createApplicationEventMutation] = useMutation(
-    CreateApplicationEventQuery,
-  )
+  const [createApplicationEventMutation] = useMutation(ApplicationEventMutation)
+
+  const isSpouse = user?.nationalId === myApplication?.spouseNationalId
 
   useEffect(() => {
     if (error) {
@@ -52,27 +64,31 @@ const FileUpload = () => {
     setIsLoading(true)
 
     try {
-      await uploadFiles(router.query.id as string, FileType.OTHER).then(
-        async () => {
-          await updateApplicationMutation({
-            variables: {
-              input: {
-                id: router.query.id,
-                state: ApplicationState.INPROGRESS,
-              },
+      await uploadStateFiles(
+        router.query.id as string,
+        isSpouse ? FileType.SPOUSEFILES : FileType.OTHER,
+      ).then(async () => {
+        await updateApplicationMutation({
+          variables: {
+            input: {
+              id: router.query.id,
+              state: ApplicationState.INPROGRESS,
+              event: isSpouse
+                ? ApplicationEventType.SPOUSEFILEUPLOAD
+                : ApplicationEventType.FILEUPLOAD,
             },
-          })
+          },
+        })
 
-          updateForm({
-            ...form,
-            status: ApplicationState.INPROGRESS,
-          })
+        updateForm({
+          ...form,
+          status: ApplicationState.INPROGRESS,
+        })
 
-          router.push(
-            `${Routes.statusFileUploadSuccess(router.query.id as string)}`,
-          )
-        },
-      )
+        router.push(
+          `${Routes.statusFileUploadSuccess(router.query.id as string)}`,
+        )
+      })
     } catch (e) {
       router.push(
         `${Routes.statusFileUploadFailure(router.query.id as string)}`,
@@ -112,14 +128,15 @@ const FileUpload = () => {
           umsókn.
         </Text>
 
-        <Box marginBottom={[3, 3, 5]}>
-          <AlertMessage
-            type="warning"
-            title="Athugasemd frá vinnsluaðila"
-            message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in."
-          />
-        </Box>
-
+        {fileComment?.comment && (
+          <Box marginBottom={[3, 3, 5]}>
+            <AlertMessage
+              type="warning"
+              title="Athugasemd frá vinnsluaðila"
+              message={fileComment.comment}
+            />
+          </Box>
+        )}
         <Files
           header="Senda inn gögn"
           fileKey="otherFiles"

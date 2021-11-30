@@ -20,4 +20,6 @@ export interface Conditions {
   withholdingTaxReturns: boolean
   wageReturns: boolean
   alimony: number
+  minWagePayment: number
+  percent: number
 }

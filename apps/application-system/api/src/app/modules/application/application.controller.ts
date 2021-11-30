@@ -420,7 +420,6 @@ export class ApplicationController {
     const { updatedApplication } = await this.applicationService.update(
       existingApplication.id,
       {
-        ...application,
         answers: mergedAnswers,
       },
     )

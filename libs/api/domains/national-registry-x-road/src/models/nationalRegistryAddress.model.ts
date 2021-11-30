@@ -10,4 +10,7 @@ export class NationalRegistryAddress {
 
   @Field(() => String)
   city?: string
+
+  @Field(() => String)
+  municipalityCode?: string
 }

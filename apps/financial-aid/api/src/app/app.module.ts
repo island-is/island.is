@@ -1,6 +1,7 @@
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
+import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 
 import { environment } from '../environments'
 import { BackendAPI } from '../services'
@@ -9,6 +10,7 @@ import {
   ApplicationModule,
   MunicipalityModule,
   FileModule,
+  StaffModule,
 } from './modules/'
 
 const debug = !environment.production
@@ -34,6 +36,8 @@ const autoSchemaFile = environment.production
     ApplicationModule,
     MunicipalityModule,
     FileModule,
+    NationalRegistryXRoadModule.register(environment.nationalRegistryXRoad),
+    StaffModule,
   ],
   providers: [BackendAPI],
 })

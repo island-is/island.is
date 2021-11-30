@@ -7,7 +7,7 @@ import type { User } from '@island.is/financial-aid/shared/lib'
 import { GetSignedUrlDto, CreateFilesDto } from './dto'
 import { CreateFilesModel, SignedUrlModel } from './models'
 import { FileService } from './file.service'
-import { RolesGuard } from '../../guards'
+import { RolesGuard } from '../../guards/roles.guard'
 import { CurrentUser, RolesRules } from '../../decorators'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 

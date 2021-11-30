@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
 
-import * as styles from './History.treat'
+import * as styles from './History.css'
 import cn from 'classnames'
 
 import {
@@ -19,9 +19,15 @@ interface Props {
   className?: string
   applicantName: string
   applicationEvents?: ApplicationEvent[]
+  spouseName: string
 }
 
-const History = ({ className, applicantName, applicationEvents }: Props) => {
+const History = ({
+  className,
+  applicantName,
+  spouseName,
+  applicationEvents,
+}: Props) => {
   return (
     <Box
       className={cn({
@@ -38,10 +44,10 @@ const History = ({ className, applicantName, applicationEvents }: Props) => {
           {applicationEvents.map((item, index) => {
             return (
               <TimeLineContainer
-                eventType={item.eventType}
+                event={item}
                 key={'timeline-' + index}
                 applicantName={applicantName}
-                created={item.created}
+                spouseName={spouseName}
               >
                 <StaffComment
                   isVisable={
@@ -53,6 +59,7 @@ const History = ({ className, applicantName, applicationEvents }: Props) => {
                 <ChatElement
                   isVisable={
                     item.eventType === ApplicationEventType.FILEUPLOAD ||
+                    item.eventType === ApplicationEventType.SPOUSEFILEUPLOAD ||
                     item.eventType === ApplicationEventType.DATANEEDED
                   }
                   comment={item.comment}

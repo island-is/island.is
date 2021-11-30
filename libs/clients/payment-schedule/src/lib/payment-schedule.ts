@@ -16,6 +16,7 @@ import {
   PaymentDistribution,
   PaymentDistributionRequest,
   PaymentDistributionResponse,
+  ConditionsResponse,
 } from './types'
 
 export class PaymentScheduleAPI extends RESTDataSource {
@@ -32,17 +33,13 @@ export class PaymentScheduleAPI extends RESTDataSource {
   willSendRequest(request: RequestOptions) {
     request.headers.set('Content-Type', 'application/json')
     request.headers.set('X-Road-Client', this.options.xRoadClientId)
-    request.headers.set(
-      'Authorization',
-      `Basic ${Base64.encode(
-        `${this.options.username}:${this.options.password}`,
-      )}`,
-    )
   }
 
   async getConditions(nationalId: string): Promise<Conditions> {
-    const response = await this.get<Conditions>(`conditions/${nationalId}`)
-    return response
+    const response = await this.get<ConditionsResponse>(
+      `conditions/${nationalId}`,
+    )
+    return response.conditions
   }
 
   async getDebts(nationalId: string): Promise<DebtSchedules[]> {
@@ -67,7 +64,8 @@ export class PaymentScheduleAPI extends RESTDataSource {
     const response = await this.get<DistributionInitialPositionResponse>(
       `distributionInitialPosition/${nationalId}/${type}?totalAmount=${totalAmount}&disposableIncome=${disposableIncome}`,
     )
-    return response.DistributionInitialPosition
+
+    return response.distributionInitialPosition
   }
 
   async getPaymentDistribtion(

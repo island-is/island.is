@@ -4,7 +4,7 @@ import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
 import { Stack } from '../Stack/Stack'
 import { Text } from '../Text/Text'
-import * as styles from './Filter.treat'
+import * as styles from './Filter.css'
 
 export interface FilterProps {
   /** Label for the clear button. Should be used for localization. */

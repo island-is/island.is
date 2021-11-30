@@ -124,7 +124,7 @@ export class DocumentProviderService {
     organisationNationalId: string,
     modifier: string,
   ): Promise<boolean> {
-    const org = this.organisationModel.findOne({
+    const org = await this.organisationModel.findOne({
       where: { nationalId: organisationNationalId, modifiedBy: modifier },
     })
 

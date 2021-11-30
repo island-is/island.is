@@ -16,7 +16,7 @@ import Logo from '../assets/Logo'
 
 export const PetitionApplicationForm: Form = buildForm({
   id: 'PetitionApplicationForm',
-  title: 'Undirskriftarlistar',
+  title: 'Meðmælendalistar',
   logo: Logo,
   mode: FormModes.APPLYING,
   children: [
@@ -103,7 +103,7 @@ export const PetitionApplicationForm: Form = buildForm({
               actions: [
                 {
                   event: 'SUBMIT',
-                  name: 'Submit',
+                  name: 'Stofna lista',
                   type: 'primary',
                 },
               ],

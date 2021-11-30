@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 
-import * as styles from './FileUploadComment.treat'
+import * as styles from './FileUploadComment.css'
 
 interface Props {
   comment?: string

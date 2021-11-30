@@ -5,25 +5,43 @@ import {
   ApplicationState,
   getState,
   getMonth,
+  months,
+  currentMonth,
 } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   state: ApplicationState
+  amount?: number
+  isStateVisible: boolean
+  isApplicant?: boolean
 }
 
-const Approved = ({ state }: Props) => {
-  const currentMonth = getMonth(new Date().getMonth())
+const Approved = ({
+  state,
+  amount,
+  isStateVisible,
+  isApplicant = true,
+}: Props) => {
+  if (!isStateVisible) {
+    return null
+  }
 
   return (
     <>
-      <Text as="h2" variant="h3" color="mint600" marginBottom={[4, 4, 7]}>
+      <Text as="h2" variant="h3" color="mint600" marginBottom={[4, 4, 5]}>
         Umsókn {getState[state].toLowerCase()}
       </Text>
-      <Text variant="intro">
-        Umsóknin þín um fjárhagsaðstoð í {currentMonth} er samþykkt en athugaðu
-        að hún byggir á tekjum og öðrum þáttum sem kunna að koma upp í{' '}
-        {currentMonth} og getur því tekið breytingum.
-      </Text>
+      {isApplicant ? (
+        <Text as="h3" variant="h3" marginBottom={2}>
+          Veitt aðstoð {amount?.toLocaleString('de-DE') + ' kr.'}
+        </Text>
+      ) : (
+        <Text variant="intro">
+          Umsóknin maka þíns um fjárhagsaðstoð í {currentMonth()} er samþykkt.
+          Maki þinn fær frekari upplýsingar um veitta aðstoð.
+        </Text>
+      )}
+
       {/* //TODO estimated aid, need approval */}
     </>
   )

@@ -11,7 +11,7 @@ import {
   AccordionSlice as AccordionSliceSchema,
   Html,
 } from '@island.is/web/graphql/schema'
-import * as styles from './AccordionSlice.treat'
+import * as styles from './AccordionSlice.css'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 interface SliceProps {

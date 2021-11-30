@@ -33,7 +33,7 @@ import { useLocale } from '@island.is/localization'
 import { AuthDelegationsQuery } from '../AccessControl'
 import { AccessItem } from './components'
 
-import * as styles from './Access.treat'
+import * as styles from './Access.css'
 
 const GROUP_PREFIX = 'group'
 const SCOPE_PREFIX = 'scope'

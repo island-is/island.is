@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import { CaseState } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
@@ -10,18 +10,22 @@ import {
   FormFooter,
   InfoCard,
   PdfButton,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   capitalize,
   caseTypes,
   formatDate,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import {
+  core,
+  requestCourtDate,
+  icOverview,
+} from '@island.is/judicial-system-web/messages'
 
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './Overview.treat'
+import * as styles from './Overview.css'
 
 interface Props {
   workingCase: Case
@@ -39,7 +43,7 @@ const OverviewForm: React.FC<Props> = (props) => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Yfirlit kröfu um rannsóknarheimild
+            {formatMessage(icOverview.heading)}
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
@@ -88,17 +92,19 @@ const OverviewForm: React.FC<Props> = (props) => {
               phoneNumber: workingCase.defenderPhoneNumber,
               defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
             }}
-            isRCase
+            isInvestigationCase
           />
         </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              Efni kröfu
-            </Text>
+        {workingCase.description && (
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={2}>
+              <Text as="h3" variant="h3">
+                Efni kröfu
+              </Text>
+            </Box>
+            <Text>{workingCase.description}</Text>
           </Box>
-          <Text>{workingCase.description}</Text>
-        </Box>
+        )}
         <Box component="section" marginBottom={5} data-testid="demands">
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
@@ -111,7 +117,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           <Accordion>
             <AccordionItem
               labelVariant="h3"
-              id="id_2"
+              id="id_1"
               label="Lagaákvæði sem brot varða við"
             >
               <Text>

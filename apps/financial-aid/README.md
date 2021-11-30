@@ -53,6 +53,16 @@ To test/develop file upload locally you will need to set the secrets: `process.e
 
 Then you need to turn off web safety, we use the following command: `open -n -a /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --user-data-dir="/tmp/chrome_dev_test" --disable-web-security`, to turn web safety back on you need to restart Chrome.
 
+## How to connect to X-Road
+
+To use national registry service you need to run:
+
+```bash
+  .api/scripts/run-xroad-proxy.sh
+```
+
+and make sure the environment variables `XROAD_BASE_PATH_WITH_ENV`, `XROAD_TJODSKRA_MEMBER_CODE`, `XROAD_TJODSKRA_API_PATH` and `XROAD_CLIENT_ID` are available.
+
 ## Code owners and maintainers
 
 - [Kolibri](https://github.com/orgs/island-is/teams/kolibri-robin-hood)

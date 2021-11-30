@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const EndorseList = gql`
-  mutation endorsementSystemEndorseList($input: FindEndorsementListInput!) {
+  mutation endorsementSystemEndorseList($input: CreateEndorsementInput!) {
     endorsementSystemEndorseList(input: $input) {
       id
       endorser

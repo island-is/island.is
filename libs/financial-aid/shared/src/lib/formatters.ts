@@ -1,10 +1,22 @@
+import { getNextPeriod, months, nextMonth } from './const'
+import { ApplicationFiltersEnum } from './enums'
 import {
   HomeCircumstances,
   ApplicationState,
   Employment,
   ApplicationEventType,
   ApplicationStateUrl,
+  FileType,
+  RolesRule,
+  FamilyStatus,
+  MartialStatusType,
 } from './enums'
+import {
+  Aid,
+  ApplicantEmailData,
+  ApplicationEvent,
+  Municipality,
+} from './interfaces'
 import type { KeyMapping } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
@@ -13,7 +25,8 @@ export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
   WithOthers: 'Ég bý eða leigi hjá öðrum án leigusamnings',
   OwnPlace: 'Ég bý í eigin húsnæði',
   RegisteredLease: 'Ég leigi með þinglýstan leigusamning',
-  Other: 'Ekkert að ofan lýsir mínum aðstæðum',
+  UnregisteredLease: 'Ég leigi með óþinglýstan leigusamning',
+  Other: 'Annað',
 }
 
 export const getEmploymentStatus: KeyMapping<Employment, string> = {
@@ -37,44 +50,104 @@ export const getStateFromUrl: KeyMapping<
 > = {
   New: [ApplicationState.NEW],
   InProgress: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
+  MyCases: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
   Processed: [ApplicationState.REJECTED, ApplicationState.APPROVED],
+}
+
+export const getEventTypesFromService: KeyMapping<
+  RolesRule,
+  ApplicationEventType[]
+> = {
+  osk: [ApplicationEventType.DATANEEDED],
+  veita: Object.values(ApplicationEventType),
 }
 
 export const getStateUrlFromRoute: KeyMapping<string, ApplicationStateUrl> = {
   '/': ApplicationStateUrl.NEW,
   '/nymal': ApplicationStateUrl.NEW,
-  '/vinnslu': ApplicationStateUrl.INPROGRESS,
+  '/vinnslu': ApplicationStateUrl.MYCASES,
+  '/teymid': ApplicationStateUrl.INPROGRESS,
   '/afgreidd': ApplicationStateUrl.PROCESSED,
 }
 
-export const getEventType: KeyMapping<
-  ApplicationEventType,
-  { header: string; text: string; isStaff: boolean }
+export const getEventData = (
+  event: ApplicationEvent,
+  applicantName: string,
+  spouseName: string,
+): { header: string; text: string; prefix: string } => {
+  switch (event.eventType) {
+    case ApplicationEventType.NEW:
+      return {
+        header: 'Ný umsókn',
+        text: 'sendi inn umsókn',
+        prefix: `Umsækjandi ${applicantName}`,
+      }
+    case ApplicationEventType.DATANEEDED:
+      return {
+        header: 'Vantar gögn',
+        text: 'óskaði eftir gögnum',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+    case ApplicationEventType.INPROGRESS:
+      return {
+        header: 'Í vinnslu',
+        text: 'breytti stöðu',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+    case ApplicationEventType.REJECTED:
+      return {
+        header: 'Synjað',
+        text: 'synjaði umsókn',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+    case ApplicationEventType.APPROVED:
+      return {
+        header: 'Samþykkt',
+        text: 'samþykkti umsókn',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+    case ApplicationEventType.STAFFCOMMENT:
+      return {
+        header: 'Athugasemd',
+        text: 'skrifaði athugasemd',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+    case ApplicationEventType.USERCOMMENT:
+      return {
+        header: 'Athugasemd',
+        text: 'skrifaði athugasemd',
+        prefix: `Umsækjandi ${applicantName}`,
+      }
+    case ApplicationEventType.SPOUSEFILEUPLOAD:
+      return {
+        header: 'Ný gögn',
+        text: 'sendi inn gögn',
+        prefix: `Maki ${spouseName}`,
+      }
+    case ApplicationEventType.FILEUPLOAD:
+      return {
+        header: 'Ný gögn',
+        text: 'sendi inn gögn',
+        prefix: `Umsækjandi ${applicantName}`,
+      }
+    case ApplicationEventType.ASSIGNCASE:
+      return {
+        header: 'Umsjá',
+        text: 'tók að sér málið',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+  }
+}
+
+export const eventTypeFromApplicationState: KeyMapping<
+  ApplicationState,
+  ApplicationEventType
 > = {
-  New: { header: 'Ný umsókn', text: 'sendi inn umsókn', isStaff: false },
-  DataNeeded: {
-    header: 'Vantar gögn',
-    text: 'óskaði eftir gögnum',
-    isStaff: true,
-  },
-  InProgress: { header: 'Í vinnslu', text: 'breytti stöðu', isStaff: true },
-  Rejected: { header: 'Synjað', text: 'synjaði umsókn', isStaff: true },
-  Approved: { header: 'Samþykkt', text: 'samþykkti umsókn', isStaff: true },
-  StaffComment: {
-    header: 'Athugasemd',
-    text: 'skrifaði athugasemd',
-    isStaff: true,
-  },
-  UserComment: {
-    header: 'Athugasemd',
-    text: 'skrifaði athugasemd',
-    isStaff: false,
-  },
-  FileUpload: {
-    header: 'Ný gögn',
-    text: 'sendi inn gögn',
-    isStaff: false,
-  },
+  New: ApplicationEventType.NEW,
+  DataNeeded: ApplicationEventType.DATANEEDED,
+  InProgress: ApplicationEventType.INPROGRESS,
+  Rejected: ApplicationEventType.REJECTED,
+  Approved: ApplicationEventType.APPROVED,
 }
 
 export const getActiveSectionForTimeline: KeyMapping<
@@ -96,27 +169,242 @@ export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
   Approved: 'Approved',
 }
 
+export const isSpouseDataNeeded: KeyMapping<FamilyStatus, boolean> = {
+  NotCohabitation: false,
+  Cohabitation: true,
+  UnregisteredCohabitation: false,
+  Married: true,
+  MarriedNotLivingTogether: true,
+}
+
+export const showSpouseData: KeyMapping<FamilyStatus, boolean> = {
+  Cohabitation: true,
+  UnregisteredCohabitation: true,
+  Married: true,
+  MarriedNotLivingTogether: true,
+  NotCohabitation: false,
+}
+
+export const getFamilyStatus: KeyMapping<FamilyStatus, string> = {
+  Cohabitation: 'Í sambúð',
+  Married: 'Gift',
+  MarriedNotLivingTogether: 'Hjón ekki í samvistum',
+  UnregisteredCohabitation: 'Óskráð sambúð',
+  NotCohabitation: 'Ekki í sambúð',
+}
+
+export const getFileTypeName: KeyMapping<FileType, string> = {
+  TaxReturn: 'Skattagögn',
+  Income: 'Tekjugögn',
+  Other: 'Innsend gögn',
+  SpouseFiles: 'Gögn frá maka',
+}
+
+export const getApplicantEmailDataFromEventType = (
+  event:
+    | ApplicationEventType.NEW
+    | ApplicationEventType.DATANEEDED
+    | ApplicationEventType.REJECTED
+    | ApplicationEventType.APPROVED,
+  linkToStatusPage: string,
+  applicantEmail: string,
+  municipality: Municipality,
+  typeOfDataNeeded?: string,
+): { subject: string; data: ApplicantEmailData } => {
+  switch (event) {
+    case ApplicationEventType.NEW:
+      return {
+        subject: 'Umsókn fyrir fjárhagsaðstoð móttekin',
+        data: {
+          header: `Umsókn þín fyrir ${months[nextMonth]} er móttekin og er nú í vinnslu`,
+          content:
+            'Umsóknin verður afgreidd eins fljótt og auðið er. Þú færð annan tölvupóst þegar vinnsla klárast eða ef við þurfum einhver gögn beint frá þér.<br><br>Þú getur fylgst með stöðu umsóknar, sent inn spurningar, o.fl. í þeim dúr á stöðusíðu umsóknarinnar. Kíktu á hana með því að smella á hnappinn fyrir neðan.',
+          applicationChange: 'Umsókn móttekin og í vinnslu',
+          applicationMonth: months[nextMonth],
+          applicationYear: getNextPeriod.year,
+          statusPageUrl: linkToStatusPage,
+          applicantEmail,
+          municipality,
+        },
+      }
+
+    case ApplicationEventType.DATANEEDED:
+      return {
+        subject: 'Okkur vantar gögn til að klára að vinna úr umsókninni',
+        data: {
+          header: `Okkur vantar gögn til að klára að vinna úr umsókninni`,
+          content: `Við þurfum að sjá <strong>${typeOfDataNeeded}</strong>. Smelltu á hnappinn til að heimsækja þína stöðusíðu þar sem þú getur sent okkur gögn.`,
+          applicationChange: 'Umsóknin bíður eftir gögnum',
+          applicationMonth: months[nextMonth],
+          applicationYear: getNextPeriod.year,
+          statusPageUrl: linkToStatusPage,
+          applicantEmail,
+          municipality,
+        },
+      }
+
+    case ApplicationEventType.REJECTED:
+      return {
+        subject: 'Umsókn þinni um aðstoð hefur verið synjað',
+        data: {
+          header: 'Umsókn þinni um aðstoð hefur verið synjað',
+          content: `Umsókn þinni um fjárhagsaðstoð í ${months[nextMonth]} hefur verið synjað á grundvelli 12. gr.: Tekjur og eignir umsækjanda. Smelltu á hlekkinn hér fyrir neðan til að kynna þér reglur um fjárhagsaðstoð.`,
+          applicationChange: 'Umsókn synjað',
+          applicationMonth: months[nextMonth],
+          applicationYear: getNextPeriod.year,
+          statusPageUrl: linkToStatusPage,
+          applicantEmail,
+          municipality,
+        },
+      }
+
+    case ApplicationEventType.APPROVED:
+      return {
+        subject: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+        data: {
+          header: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+          content: `Umsóknin þín um fjárhagsaðstoð í ${months[nextMonth]} er samþykkt en athugaðu að hún byggir á tekjum og öðrum þáttum sem kunna að koma upp í ${months[nextMonth]} og getur því tekið breytingum.`,
+          applicationChange: 'Umsóknin er samþykkt og áætlun liggur fyrir',
+          applicationMonth: months[nextMonth],
+          applicationYear: getNextPeriod.year,
+          statusPageUrl: linkToStatusPage,
+          applicantEmail,
+          municipality,
+        },
+      }
+  }
+}
+
+export const applicationStateToFilterEnum: KeyMapping<
+  ApplicationState,
+  ApplicationFiltersEnum
+> = {
+  New: ApplicationFiltersEnum.NEW,
+  DataNeeded: ApplicationFiltersEnum.INPROGRESS,
+  InProgress: ApplicationFiltersEnum.INPROGRESS,
+  Rejected: ApplicationFiltersEnum.REJECTED,
+  Approved: ApplicationFiltersEnum.APPROVED,
+}
+
 export const aidCalculator = (
   homeCircumstances: HomeCircumstances,
-  aid: {
-    ownApartmentOrLease: number
-    withOthersOrUnknow: number
-    withParents: number
-  },
+  aid: Aid,
 ): number => {
   switch (homeCircumstances) {
     case 'OwnPlace':
-      return aid.ownApartmentOrLease
+      return aid.ownPlace
     case 'RegisteredLease':
-      return aid.ownApartmentOrLease
+      return aid.registeredRenting
     case 'WithOthers':
-      return aid.ownApartmentOrLease
+      return aid.withOthers
+    case 'UnregisteredLease':
+      return aid.unregisteredRenting
     case 'Other':
     case 'Unknown':
-      return aid.withOthersOrUnknow
+      return aid.unknown
     case 'WithParents':
-      return aid.withParents
+      return aid.livesWithParents
     default:
-      return aid.withParents
+      return aid.unknown
+  }
+}
+
+export const getCommentFromLatestEvent = (
+  applicationEvents: ApplicationEvent[],
+  findState: ApplicationEventType,
+) => {
+  return applicationEvents.find((el) => el.eventType === findState)
+}
+
+export const logoKeyFromMunicipalityCode: KeyMapping<string, string> = {
+  '': 'sambandid.svg',
+  '5706': 'akrahreppur.svg',
+  '3000': 'akranes.svg',
+  '6000': 'akureyri.svg',
+  '8200': 'arborg.svg',
+  '4901': 'arneshreppur.svg',
+  '8610': 'asahreppur.svg',
+  '8721': 'blaskogabyggd.svg',
+  '5604': 'blonduosbaer.svg',
+  '4100': 'bolungarvik.svg',
+  '3609': 'borgarbyggd.svg',
+  '3811': 'dalabyggd.svg',
+  '6400': 'dalvikurbyggd.svg',
+  '3713': 'eyja-_og_miklaholtshreppur.svg',
+  '6513': 'eyjafjardarsveit.svg',
+  '6250': 'fjallabyggd.svg',
+  '7300': 'fjardabyggd.svg',
+  '7505': 'fljotsdalshreppur.svg',
+  '8722': 'floahreppur.svg',
+  '1300': 'gardabaer.svg',
+  '8719': 'grimsnes-_og_grafningshreppur.svg',
+  '2300': 'grindavikurbaer.svg',
+  '3709': 'grundarfjardarbaer.svg',
+  '6602': 'grytubakkahreppur.svg',
+  '1400': 'hafnarfjordur.svg',
+  '3710': 'helgafellssveit.svg',
+  '6515': 'horgarsveit.svg',
+  '8401': 'hornafjordur.svg',
+  '8710': 'hrunamannahreppur.svg',
+  '5508': 'hunathing_vestra.svg',
+  '5612': 'hunavatnshreppur.svg',
+  '3511': 'hvalfjardarsveit.svg',
+  '8716': 'hveragerdisbaer.svg',
+  '4200': 'isafjardarbaer.svg',
+  '4902': 'kaldrananeshreppur.svg',
+  '1606': 'kjosarhreppur.svg',
+  '1000': 'kopavogur.svg',
+  '6709': 'langanesbyggd.svg',
+  '1604': 'mosfellsbaer.svg',
+  '7400': 'mulathing.svg',
+  '8508': 'myrdalshreppur.svg',
+  '6100': 'nordurthing.svg',
+  '8717': 'olfus.svg',
+  '8613': 'rangarthing_eystra.svg',
+  '8614': 'rangarthing_ytra.svg',
+  '4502': 'reykholahreppur.svg',
+  '2000': 'reykjanesbaer.svg',
+  '1100': 'seltjarnarnes.svg',
+  '8509': 'skaftarhreppur.svg',
+  '5611': 'skagabyggd.svg',
+  '5200': 'skagafjordur.svg',
+  '5609': 'skagastrond.svg',
+  '8720': 'skeida-_og_gnupverjahreppur.svg',
+  '3506': 'skorradalur.svg',
+  '6607': 'skutustadahreppur.svg',
+  '3714': 'snaefellsbaer.svg',
+  '4911': 'strandabyggd.svg',
+  '3711': 'stykkisholmsbaer.svg',
+  '4803': 'sudavikurhreppur.svg',
+  '2510': 'sudurnesjabaer.svg',
+  '6706': 'svalbardshreppur.svg',
+  '6601': 'svalbardsstrandarhreppur.svg',
+  '4604': 'talknafjardarhreppur.svg',
+  '6612': 'thingeyjarsveit.svg',
+  '6611': 'tjorneshreppur.svg',
+  '8000': 'vestmannaeyjabaer.svg',
+  '4607': 'vesturbyggd.svg',
+  '2506': 'vogar.svg',
+  '7502': 'vopnafjardarhreppur.svg',
+}
+
+export const martialStatusTypeFromMartialCode = (
+  martialCode: string | undefined,
+): MartialStatusType => {
+  switch (martialCode) {
+    case 'L':
+    case 'G':
+    case '8':
+    case '7':
+    case '3':
+    case '0':
+      return MartialStatusType.MARRIED
+    case '9':
+    case '6':
+    case '5':
+    case '4':
+    case '1':
+    default:
+      return MartialStatusType.SINGLE
   }
 }

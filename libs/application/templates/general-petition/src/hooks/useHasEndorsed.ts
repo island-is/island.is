@@ -1,19 +1,23 @@
 import { useQuery } from '@apollo/client'
-import { GetUserEndorsements } from '../graphql/queries'
-import { Endorsement } from '../types/schema'
+import { GetSingleEndorsement } from '../graphql/queries'
+import { ExistsEndorsementResponse } from '../types/schema'
 
 interface EndorsementData {
-  endorsementSystemUserEndorsements?: Endorsement[]
+  endorsementSystemGetSingleEndorsement?: ExistsEndorsementResponse
 }
 
+//returns user endorsement if it exists
 export const useHasEndorsed = (endorsementListId: string) => {
-  const { data: endorsementsData } = useQuery<EndorsementData>(
-    GetUserEndorsements,
+  const { data: endorsement } = useQuery<EndorsementData>(
+    GetSingleEndorsement,
+    {
+      variables: {
+        input: {
+          listId: endorsementListId,
+        },
+      },
+    },
   )
 
-  const endorsements = endorsementsData?.endorsementSystemUserEndorsements
-  return (
-    endorsements?.some((x) => x.endorsementListId === endorsementListId) ??
-    false
-  )
+  return endorsement?.endorsementSystemGetSingleEndorsement?.hasEndorsed
 }

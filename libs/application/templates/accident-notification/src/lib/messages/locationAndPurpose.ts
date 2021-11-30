@@ -10,7 +10,7 @@ export const locationAndPurpose = {
     description: {
       id: 'an.application:locationAndPurpose.general.description',
       defaultMessage:
-        'Vinsamlegast skráðu eins nákvæma staðsetningu þar sem atvikið átti sér stað.',
+        'Vinsamlegast tilgreindu eins nákvæma staðsetningu og hægt er þar sem atvikið átti sér stað.',
       description: `Please list the location where the incident took place and give a brief description of why you were there.`,
     },
   }),

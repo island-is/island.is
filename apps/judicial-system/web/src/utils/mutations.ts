@@ -1,8 +1,10 @@
 import { gql } from '@apollo/client'
 
-export const SignatureConfirmationQuery = gql`
-  query SignatureConfirmationQuery($input: SignatureConfirmationQueryInput!) {
-    signatureConfirmation(input: $input) {
+export const RulingSignatureConfirmationQuery = gql`
+  query RulingSignatureConfirmationQuery(
+    $input: SignatureConfirmationQueryInput!
+  ) {
+    rulingSignatureConfirmation(input: $input) {
       documentSigned
       code
       message
@@ -33,6 +35,7 @@ export const CasesQuery = gql`
       parentCase {
         id
       }
+      initialRulingDate
     }
   }
 `
@@ -70,7 +73,7 @@ export const ExtendCaseMutation = gql`
       demands
       lawsBroken
       legalBasis
-      custodyProvisions
+      legalProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions
       caseFacts
@@ -103,9 +106,7 @@ export const ExtendCaseMutation = gql`
       courtAttendees
       prosecutorDemands
       courtDocuments
-      isAccusedRightsHidden
-      accusedPleaDecision
-      accusedPleaAnnouncement
+      accusedBookings
       litigationPresentations
       courtCaseFacts
       courtLegalArguments

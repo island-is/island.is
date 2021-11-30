@@ -24,7 +24,7 @@ export interface VMSTModuleConfig {
 export class VMSTModule {
   static register(config: VMSTModuleConfig): DynamicModule {
     if (!config.apiKey) {
-      logger.error('VMSTModule VMST_API_KEY not provided.')
+      logger.error('VMSTModule XROAD_VMST_API_KEY not provided.')
     }
 
     if (!config.xRoadClient) {

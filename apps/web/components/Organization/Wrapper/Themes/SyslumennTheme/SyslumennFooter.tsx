@@ -8,7 +8,7 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './SyslumennFooter.treat'
+import * as styles from './SyslumennFooter.css'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { BLOCKS } from '@contentful/rich-text-types'
 

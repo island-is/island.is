@@ -25,13 +25,13 @@ export const store = createStore(() => {
 
   // Create articles, groups and subgroups in every category.
   const articles = articleCategories.reduce<Article[]>((articles, category) => {
-    const groups = articleGroup.list(faker.random.number({ min: 2, max: 4 }))
+    const groups = articleGroup.list(faker.datatype.number({ min: 2, max: 4 }))
 
     for (const group of groups) {
       const subGroups =
-        faker.random.number(4) === 0
+        faker.datatype.number(4) === 0
           ? []
-          : articleSubgroup.list(faker.random.number({ min: 2, max: 4 }))
+          : articleSubgroup.list(faker.datatype.number({ min: 2, max: 4 }))
 
       const groupArticles = article.list(subGroups.length * 2 + 2, {
         group,

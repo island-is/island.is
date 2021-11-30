@@ -8,6 +8,7 @@ import { conclusionSection } from './conclusionSection'
 import { externalDataSection } from './externalDataSection'
 import { overviewSection } from './overviewSection'
 import { whoIsTheNotificationForSection } from './whoIsTheNotificationForSection'
+import { betaTestSection } from './betaTestSection'
 
 export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',
@@ -15,6 +16,7 @@ export const AccidentNotificationForm: Form = buildForm({
   logo: Logo,
   mode: FormModes.APPLYING,
   children: [
+    betaTestSection,
     externalDataSection,
     applicantInformationSection,
     whoIsTheNotificationForSection,

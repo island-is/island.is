@@ -7,7 +7,7 @@ import {
   FormFooter,
   InfoCard,
   PdfButton,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
   CaseTransition,
@@ -21,9 +21,9 @@ import {
   formatDate,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './Overview.treat'
+import * as styles from './Overview.css'
 import {
   FormSettings,
   useCaseFormHelper,
@@ -31,6 +31,7 @@ import {
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
+import { isOverviewStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   workingCase: Case
@@ -62,11 +63,7 @@ const OverviewForm: React.FC<Props> = (props) => {
     },
   }
 
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
+  useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   const receiveCase = async (workingCase: Case, courtCaseNumber: string) => {
     if (workingCase.state === CaseState.SUBMITTED && !isTransitioningCase) {
@@ -163,19 +160,21 @@ const OverviewForm: React.FC<Props> = (props) => {
               phoneNumber: workingCase.defenderPhoneNumber,
               defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
             }}
-            isRCase
+            isInvestigationCase
           />
         </Box>
         {!workingCase.isMasked && (
           <>
-            <Box marginBottom={5}>
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  Efni kröfu
-                </Text>
+            {workingCase.description && (
+              <Box marginBottom={5}>
+                <Box marginBottom={2}>
+                  <Text as="h3" variant="h3">
+                    Efni kröfu
+                  </Text>
+                </Box>
+                <Text>{workingCase.description}</Text>
               </Box>
-              <Text>{workingCase.description}</Text>
-            </Box>
+            )}
             <Box marginBottom={5} data-testid="demands">
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
@@ -324,7 +323,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           previousUrl={Constants.REQUEST_LIST_ROUTE}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isValid}
+          nextIsDisabled={!isOverviewStepValidIC(workingCase)}
         />
       </FormContentContainer>
     </>

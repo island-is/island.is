@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 import { defineMessage, MessageDescriptor } from 'react-intl'
 import { m } from '@island.is/service-portal/core'
 import { OnboardingStep } from './UserOnboardingModal'
-import * as styles from './UserOnboardingModal.treat'
+import * as styles from './UserOnboardingModal.css'
 import cn from 'classnames'
 
 interface Props {

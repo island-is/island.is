@@ -2,14 +2,14 @@ import React, { useContext, useMemo, useState } from 'react'
 import cn from 'classnames'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 
-import * as styles from './Requests.treat'
+import * as styles from './Requests.css'
 import { mapCaseStateToTagVariant } from './utils'
 import { CaseState, UserRole } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   directionType,
   SortConfig,
@@ -75,7 +75,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
 
   return (
     <table
-      className={styles.activeRequestsTable}
+      className={styles.table}
       data-testid="custody-request-table"
       aria-describedby="activeRequestsTableCaption"
     >
@@ -166,11 +166,22 @@ const ActiveRequests: React.FC<Props> = (props) => {
             }}
           >
             <td className={styles.td}>
-              <Text as="span">{c.policeCaseNumber || '-'}</Text>
+              {c.courtCaseNumber ? (
+                <>
+                  <Box component="span" className={styles.blockColumn}>
+                    <Text as="span">{c.courtCaseNumber}</Text>
+                  </Box>
+                  <Text as="span" variant="small" color="dark400">
+                    {c.policeCaseNumber}
+                  </Text>
+                </>
+              ) : (
+                <Text as="span">{c.policeCaseNumber || '-'}</Text>
+              )}
             </td>
             <td className={cn(styles.td, styles.largeColumn)}>
               <Text>
-                <Box component="span" className={styles.accusedName}>
+                <Box component="span" className={styles.blockColumn}>
                   {c.accusedName || '-'}
                 </Box>
               </Text>

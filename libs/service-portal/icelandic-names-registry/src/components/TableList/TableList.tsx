@@ -22,7 +22,7 @@ import {
 } from '../../graphql/schema'
 import { GET_ICELANDIC_NAME_BY_SEARCH } from '../../queries'
 
-import * as styles from './TableList.treat'
+import * as styles from './TableList.css'
 
 interface TableListProps {
   q: string

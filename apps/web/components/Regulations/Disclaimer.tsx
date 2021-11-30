@@ -1,4 +1,4 @@
-import * as s from './RegulationDisplay.treat'
+import * as s from './RegulationDisplay.css'
 
 import React, { memo } from 'react'
 import { AlertMessage, Box, Link, Text } from '@island.is/island-ui/core'
@@ -8,7 +8,7 @@ const parseSimpleMarkdown = (content: string) =>
     .trim()
     .split(/\n\n+/)
     .map((text, p) => (
-      <p className={s.disclaimerParagraph}>
+      <p key={p} className={s.disclaimerParagraph}>
         {text
           .trim()
           .split(/\n/)

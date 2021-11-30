@@ -9,7 +9,7 @@ import {
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
@@ -93,7 +93,9 @@ const TaxReturnForm = () => {
 
       <Footer
         previousUrl={navigation?.prevUrl}
-        nextButtonText="Halda áfram"
+        nextButtonText={
+          form.taxReturnFiles.length > 0 ? 'Halda áfram' : 'Skila gögnum seinna'
+        }
         onNextButtonClick={() => errorCheck()}
       />
     </>

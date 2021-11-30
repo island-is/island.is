@@ -1,13 +1,16 @@
 import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInCalendarMonths from 'date-fns/differenceInCalendarMonths'
+import differenceInDays from 'date-fns/differenceInDays'
 import isSameMonth from 'date-fns/isSameMonth'
 import getDaysInMonth from 'date-fns/getDaysInMonth'
+import addDays from 'date-fns/addDays'
 import isSameDay from 'date-fns/isSameDay'
 import {
   ParentalLeave,
   ParentalLeaveEntitlement,
   ParentalLeavePeriod,
 } from '@island.is/api/domains/directorate-of-labour'
+import { errorMessages } from './messages'
 
 // VMST rule for the number of days in each month of the year
 export const DAYS_IN_MONTH = 30
@@ -140,4 +143,90 @@ export const calculateRemainingNumberOfDays = (
   const existingDays = calculateExistingNumberOfDays(application.periods)
 
   return availableDays - existingDays
+}
+
+export const calculatePeriodLength = (
+  start: Date,
+  end: Date,
+  percentage = 1,
+) => {
+  if (end < start) {
+    throw errorMessages.periodsEndDateBeforeStartDate
+  }
+
+  if (start === end) {
+    throw errorMessages.periodsEndDateMinimumPeriod
+  }
+
+  let currentDate = start
+  let cost = 0
+
+  while (currentDate < end) {
+    const daysInMonth = getDaysInMonth(currentDate)
+    const dayOfMonth = currentDate.getDate()
+    const daysTillEndOfMonth = daysInMonth - dayOfMonth
+    const daysLeftToEnd = differenceInDays(end, currentDate)
+    const daysLeft = Math.min(daysTillEndOfMonth, daysLeftToEnd)
+    const dateAtEndOfIteration = addDays(currentDate, daysLeft)
+
+    let costOfMonth = 0
+
+    if (dateAtEndOfIteration.getDate() === daysInMonth) {
+      costOfMonth = 30 - dayOfMonth + 1
+    } else {
+      costOfMonth = end.getDate() - dayOfMonth + 1
+    }
+
+    cost += Math.round(costOfMonth * percentage)
+    currentDate = addDays(currentDate, daysTillEndOfMonth + 1)
+  }
+
+  return cost
+}
+
+export const calculateMaxPercentageForPeriod = (
+  start: Date,
+  end: Date,
+  rights: number,
+): number | null => {
+  const fullLength = calculatePeriodLength(start, end)
+
+  if (fullLength <= rights) {
+    return 1
+  }
+
+  let percentage = Math.round((rights / fullLength) * 100)
+  let lengthWithPercentage = calculatePeriodLength(start, end, percentage)
+
+  while (lengthWithPercentage > rights && percentage > 0) {
+    percentage -= 1
+
+    lengthWithPercentage = calculatePeriodLength(start, end, percentage / 100)
+  }
+
+  if (lengthWithPercentage > rights) {
+    return null
+  }
+
+  return percentage / 100
+}
+
+export const calculateMinPercentageForPeriod = (
+  start: Date,
+  end: Date,
+): number | null => {
+  let percentage = 1
+  let lengthWithPercentage = calculatePeriodLength(start, end, percentage / 100)
+
+  while (lengthWithPercentage <= 0 || percentage >= 100) {
+    percentage += 1
+
+    lengthWithPercentage = calculatePeriodLength(start, end, percentage / 100)
+  }
+
+  if (lengthWithPercentage === 0) {
+    return null
+  }
+
+  return percentage / 100
 }

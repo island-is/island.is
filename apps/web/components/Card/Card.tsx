@@ -17,7 +17,7 @@ import { ColorSchemeContext } from '@island.is/web/context'
 import { BackgroundImage } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
-import * as styles from './Card.treat'
+import * as styles from './Card.css'
 
 export type CardTagsProps = {
   tagProps?: Omit<TagProps, 'children'>

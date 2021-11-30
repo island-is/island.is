@@ -15,9 +15,9 @@ import {
   PageLayout,
   FormContentContainer,
   Modal,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useRouter } from 'next/router'
 import {
@@ -272,12 +272,10 @@ export const SignedVerdictOverview: React.FC = () => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={2}
       isLoading={loading}
       notFound={data?.case === undefined}
-      isValidToDateInThePast={workingCase?.isValidToDateInThePast}
-      decision={data?.case?.decision}
-      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>

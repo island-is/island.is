@@ -1,29 +1,11 @@
-import { RequiredField } from '@island.is/judicial-system-web/src/types'
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   CaseGender,
 } from '@island.is/judicial-system/types'
-import { validate } from './validate'
 import parseISO from 'date-fns/parseISO'
 import addDays from 'date-fns/addDays'
-
-export const isNextDisabled = (requiredFields: RequiredField[]) => {
-  // Loop through requiredFields
-  for (let i = 0; i < requiredFields.length; i++) {
-    // Loop through validations for each required field
-    for (let a = 0; a < requiredFields[i].validations.length; a++) {
-      if (
-        !validate(requiredFields[i].value, requiredFields[i].validations[a])
-          .isValid
-      ) {
-        return true
-      }
-    }
-  }
-  return false
-}
 
 /**
  * A value is considered dirty if it's a string, either an empty string or not.

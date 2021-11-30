@@ -11,7 +11,7 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import type { Scope } from '../../Access'
-import * as styles from './AccessItem.treat'
+import * as styles from './AccessItem.css'
 
 type TableDataProps = React.ComponentProps<typeof T.Data>
 

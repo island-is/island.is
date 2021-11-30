@@ -5,7 +5,6 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  AlertMessage,
   Box,
   Select,
   Text,
@@ -21,9 +20,8 @@ import {
   FormContentContainer,
   FormFooter,
   Modal,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
-  CaseState,
   NotificationType,
   SessionArrangements,
   UserRole,
@@ -46,21 +44,23 @@ import {
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './HearingArrangements.treat'
+import * as styles from './HearingArrangements.css'
+import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   isLoading: boolean
   users: UserData
+  user: User
 }
 
 const HearingArrangementsForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading, users } = props
+  const { workingCase, setWorkingCase, isLoading, users, user } = props
   const [modalVisible, setModalVisible] = useState(false)
   const [defenderEmailEM, setDefenderEmailEM] = useState('')
   const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
-  const [courtDateIsValid, setCourtDateIsValid] = useState(true)
+  const [, setCourtDateIsValid] = useState(true)
   const { updateCase, sendNotification, isSendingNotification } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -74,11 +74,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
     },
   }
 
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
+  useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   const setJudge = (id: string) => {
     if (workingCase) {
@@ -151,26 +147,16 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Fyrirtaka
+            {formatMessage(m.title)}
           </Text>
         </Box>
-        {workingCase.state === CaseState.DRAFT && (
-          <Box marginBottom={8}>
-            <AlertMessage
-              type="info"
-              title="Krafa hefur ekki verið staðfest af ákæranda"
-              message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna."
-            />
-          </Box>
-        )}
         <Box component="section" marginBottom={7}>
-          <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
           <CaseNumbers workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Dómari{' '}
+              {`${formatMessage(m.sections.setJudge.title)} `}
               <Tooltip text={formatMessage(m.sections.setJudge.tooltip)} />
             </Text>
           </Box>
@@ -189,7 +175,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Dómritari{' '}
+              {`${formatMessage(m.sections.setRegistrar.title)} `}
               <Tooltip text={formatMessage(m.sections.setRegistrar.tooltip)} />
             </Text>
           </Box>
@@ -211,6 +197,9 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
               {`${formatMessage(m.sections.sessionArrangements.heading)} `}
+              <Text as="span" color="red600" fontWeight="semiBold">
+                *
+              </Text>
               <Tooltip
                 text={formatMessage(m.sections.sessionArrangements.tooltip)}
               />
@@ -265,44 +254,20 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 backgroundColor="white"
               />
             </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                name="session-arrangements-prosecutor-present"
-                id="session-arrangements-prosecutor-present"
-                label={formatMessage(
-                  m.sections.sessionArrangements.options.prosecutorPresent,
-                )}
-                checked={
-                  workingCase.sessionArrangements ===
-                  SessionArrangements.PROSECUTOR_PRESENT
-                }
-                onChange={() => {
-                  setAndSendToServer(
-                    'sessionArrangements',
-                    SessionArrangements.PROSECUTOR_PRESENT,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }}
-                large
-                backgroundColor="white"
-              />
-            </Box>
             <RadioButton
-              name="session-arrangements-remote-session"
-              id="session-arrangements-remote-session"
+              name="session-arrangements-prosecutor-present"
+              id="session-arrangements-prosecutor-present"
               label={formatMessage(
-                m.sections.sessionArrangements.options.remoteSession,
+                m.sections.sessionArrangements.options.prosecutorPresent,
               )}
               checked={
                 workingCase.sessionArrangements ===
-                SessionArrangements.REMOTE_SESSION
+                SessionArrangements.PROSECUTOR_PRESENT
               }
               onChange={() => {
                 setAndSendToServer(
                   'sessionArrangements',
-                  SessionArrangements.REMOTE_SESSION,
+                  SessionArrangements.PROSECUTOR_PRESENT,
                   workingCase,
                   setWorkingCase,
                   updateCase,
@@ -316,7 +281,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Skrá fyrirtökutíma
+              {formatMessage(m.sections.requestedCourtDate.title)}
             </Text>
           </Box>
           <Box marginBottom={2}>
@@ -377,7 +342,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Skipaður verjandi/talsmaður
+              {formatMessage(m.sections.defender.title)}
             </Text>
           </Box>
           <BlueBox>
@@ -525,10 +490,14 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isLoading}
-          nextIsDisabled={!isValid || !courtDateIsValid}
-          hideNextButton={workingCase.isMasked}
+          nextIsDisabled={!isCourtHearingArrangementsStepValidIC(workingCase)}
+          hideNextButton={
+            user.id !== workingCase.judge?.id &&
+            user.id !== workingCase.registrar?.id
+          }
           infoBoxText={
-            workingCase.isMasked
+            user.id !== workingCase.judge?.id &&
+            user.id !== workingCase.registrar?.id
               ? formatMessage(m.footer.infoPanelForRestrictedAccess)
               : undefined
           }

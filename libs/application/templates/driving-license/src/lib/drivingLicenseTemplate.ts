@@ -7,9 +7,14 @@ import {
   DefaultStateLifeCycle,
   DefaultEvents,
 } from '@island.is/application/core'
+import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { Events, States } from './constants'
 import { dataSchema } from './dataSchema'
+import {
+  getApplicationFeatureFlags,
+  DrivingLicenseFeatureFlags,
+} from './getApplicationFeatureFlags'
 import { m } from './messages'
 
 const template: ApplicationTemplate<
@@ -36,8 +41,22 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: 'applicant',
-              formLoader: () =>
-                import('../forms/application').then((val) => val.application),
+              formLoader: async ({ featureFlagClient }) => {
+                const featureFlags = await getApplicationFeatureFlags(
+                  featureFlagClient as FeatureFlagClient,
+                )
+
+                const getApplication = await import(
+                  '../forms/application'
+                ).then((val) => val.getApplication)
+
+                return getApplication(
+                  featureFlags[DrivingLicenseFeatureFlags.ALLOW_FAKE],
+                  featureFlags[
+                    DrivingLicenseFeatureFlags.ALLOW_LICENSE_SELECTION
+                  ],
+                )
+              },
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,

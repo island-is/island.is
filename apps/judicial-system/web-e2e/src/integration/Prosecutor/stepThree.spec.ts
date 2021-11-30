@@ -1,4 +1,4 @@
-import { makeCase } from '../../fixtures/testDataFactory'
+import { makeCase } from '@island.is/judicial-system/formatters'
 import { intercept } from '../../utils'
 
 describe('/krafa/domkrofur-og-lagaakvaedi/:id', () => {

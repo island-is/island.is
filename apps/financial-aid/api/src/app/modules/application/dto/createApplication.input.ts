@@ -90,8 +90,13 @@ export class CreateApplicationInput implements CreateApplication {
   @Field(() => [CreateApplicationFileInput])
   readonly files!: CreateApplicationFileInput[]
 
+  @Allow()
   @Field({ nullable: true })
   readonly amount?: number
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spouseName?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -104,4 +109,20 @@ export class CreateApplicationInput implements CreateApplication {
   @Allow()
   @Field(() => String)
   readonly familyStatus!: FamilyStatus
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly city?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly streetName?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly municipalityCode?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly postalCode?: string
 }

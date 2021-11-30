@@ -1,6 +1,6 @@
 import React, { forwardRef, InputHTMLAttributes } from 'react'
 import cn from 'classnames'
-import * as styles from './Input.treat'
+import * as styles from './Input.css'
 
 import { AsyncSearchSizes } from '../../AsyncSearch'
 

@@ -1,0 +1,1 @@
+export { AidModel } from './models'

@@ -3,24 +3,18 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { Screen } from '../../types'
-import {
-  Sidebar,
-  SearchInput,
-  Card,
-  CardTagsProps,
-} from '@island.is/web/components'
+import { SearchInput, Card, CardTagsProps } from '@island.is/web/components'
 import {
   Box,
   Text,
   Stack,
   Breadcrumbs,
   Hidden,
-  Select,
-  Option,
-  SidebarAccordion,
   Pagination,
   Link,
   LinkContext,
+  Navigation,
+  NavigationItem,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
@@ -50,9 +44,9 @@ import {
   SubArticle,
   GetSearchResultsTotalQuery,
   OrganizationSubpage,
+  Link as LinkItem,
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
-import * as styles from './Search.treat'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useLazyQuery } from '@apollo/client'
 
@@ -150,6 +144,7 @@ const Search: Screen<CategoryProps> = ({
       tags: tagCountResults,
       types: typeCountResults,
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countResults])
 
   const getLabels = (item) => {
@@ -192,6 +187,10 @@ const Search: Screen<CategoryProps> = ({
       }
     }
 
+    if (item.organizationPage?.organization?.title) {
+      labels.push(item.organizationPage.organization.title)
+    }
+
     return labels
   }
 
@@ -201,7 +200,8 @@ const Search: Screen<CategoryProps> = ({
       News &
       AdgerdirPage &
       SubArticle &
-      OrganizationSubpage
+      OrganizationSubpage &
+      LinkItem
   >).map((item) => ({
     title: item.title,
     parentTitle: item.parent?.title,
@@ -214,20 +214,6 @@ const Search: Screen<CategoryProps> = ({
     ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
     labels: getLabels(item),
   }))
-
-  const onRemoveFilters = () => {
-    Router.replace({
-      pathname: linkResolver('search').href,
-      query: { q },
-    })
-  }
-
-  const onSelectSidebarTag = (type: 'category' | 'type', key: string) => {
-    Router.push({
-      pathname: linkResolver('search').href,
-      query: { q, [type]: key },
-    })
-  }
 
   const byCategory = (item) => {
     if (!item.category && filters.category === 'uncategorized') {
@@ -255,14 +241,45 @@ const Search: Screen<CategoryProps> = ({
     value: '',
   })
 
-  const defaultSelectedCategory = {
-    label:
-      sidebarData.tags[filters.category]?.title ??
-      n('allCategories', 'Allir flokkar'),
-    value: filters.category ?? '',
-  }
+  const items: NavigationItem[] = [
+    {
+      title: `${n('allCategories', 'Allir flokkar')} (${
+        sidebarData.totalTagCount
+      })`,
+      active: !filters.category && !filters.type,
+      href: `${linkResolver('search').href}?q=${q}`,
+      accordion: true,
+      items: sidebarDataTags.map(([key, { title, total }]) => {
+        const active = key === filters.category
+        const text = `${title} (${total})`
 
-  const isServer = typeof window === 'undefined'
+        if (key === 'uncategorized') {
+          return null
+        }
+
+        return {
+          title: text,
+          href: `${linkResolver('search').href}?q=${q}&category=${key}`,
+          active,
+        }
+      }),
+    },
+    ...(sidebarDataTypes ?? []).map(([key, { title, total }]) => {
+      const active = key === filters.type
+      const text = `${title} (${total})`
+
+      return {
+        title: text,
+        href: `${linkResolver('search').href}?q=${q}&type=${key}`,
+        active,
+      }
+    }),
+  ]
+
+  const selectedTitle =
+    sidebarData.tags[filters.category]?.title ??
+    sidebarData.types[filters.type]?.title ??
+    n('allCategories', 'Allir flokkar')
 
   return (
     <>
@@ -271,67 +288,21 @@ const Search: Screen<CategoryProps> = ({
       </Head>
       <SidebarLayout
         sidebarContent={
-          <Stack space={3}>
-            {!!sidebarDataTags.length && (
-              <Sidebar title={n('sidebarHeader')}>
-                <Box width="full" position="relative" paddingTop={2}>
-                  {totalSearchResults > 0 && (
-                    <>
-                      <Filter
-                        truncate
-                        selected={!filters.category && !filters.type}
-                        onClick={() => onRemoveFilters()}
-                        text={`${n('allCategories', 'Allir flokkar')} (${
-                          sidebarData.totalTagCount
-                        })`}
-                        className={styles.allCategoriesLink}
-                      />
-                      <SidebarAccordion
-                        id="sidebar_accordion_categories"
-                        label={''}
-                      >
-                        <Stack space={[1, 1, 2]}>
-                          {sidebarDataTags.map(([key, { title, total }]) => {
-                            const selected = key === filters.category
-                            const text = `${title} (${total})`
-
-                            if (key === 'uncategorized') {
-                              return null
-                            }
-
-                            return (
-                              <Filter
-                                key={key}
-                                selected={selected}
-                                onClick={() =>
-                                  onSelectSidebarTag('category', key)
-                                }
-                                text={text}
-                              />
-                            )
-                          })}
-                        </Stack>
-                      </SidebarAccordion>
-                    </>
-                  )}
-                </Box>
-              </Sidebar>
-            )}
-            {!!sidebarDataTypes.length && (
-              <Sidebar title={n('otherCategories')}>
-                <Stack space={[1, 1, 2]}>
-                  {sidebarDataTypes.map(([key, { title, total }]) => (
-                    <Filter
-                      key={key}
-                      selected={filters.type === key}
-                      onClick={() => onSelectSidebarTag('type', key)}
-                      text={`${title} (${total})`}
-                    />
-                  ))}
-                </Stack>
-              </Sidebar>
-            )}
-          </Stack>
+          <Navigation
+            title={n('filterResults', 'Sía niðurstöður')}
+            label={n('filterResults', 'Sía niðurstöður')}
+            baseId="search-navigation"
+            colorScheme="purple"
+            activeItemTitle={selectedTitle}
+            items={items}
+            renderLink={(link, item) => {
+              return item?.href ? (
+                <NextLink href={item?.href}>{link}</NextLink>
+              ) : (
+                link
+              )
+            }}
+          />
         }
       >
         <Stack space={[3, 3, 4]}>
@@ -360,19 +331,22 @@ const Search: Screen<CategoryProps> = ({
             initialInputValue={q}
           />
           <Hidden above="sm">
-            {totalSearchResults > 0 && (
-              <Select
-                label={n('sidebarHeader')}
-                placeholder={n('sidebarHeader', 'Flokkar')}
-                defaultValue={defaultSelectedCategory}
-                options={categorySelectOptions}
-                name="results-by-category"
-                isSearchable={false}
-                onChange={({ value }: Option) => {
-                  onSelectSidebarTag('category', value as string)
-                }}
-              />
-            )}
+            <Navigation
+              title={n('filterResults', 'Sía niðurstöður')}
+              label={n('filterResults', 'Sía niðurstöður')}
+              baseId="search-navigation-mobile"
+              colorScheme="purple"
+              activeItemTitle={selectedTitle}
+              items={items}
+              isMenuDialog
+              renderLink={(link, item) => {
+                return item?.href ? (
+                  <NextLink href={item?.href}>{link}</NextLink>
+                ) : (
+                  link
+                )
+              }}
+            />
           </Hidden>
 
           {filteredItems.length === 0 ? (
@@ -397,22 +371,14 @@ const Search: Screen<CategoryProps> = ({
               <Text variant="intro" as="p">
                 {totalSearchResults}{' '}
                 {totalSearchResults === 1
-                  ? n('searchResult', 'leitarniðurstaða')
-                  : n('searchResults', 'leitarniðurstöður')}{' '}
-                {(filters.category || filters.type) && (
-                  <>
-                    {n('inCategory', 'í flokki')}
-                    {
-                      <>
-                        {': '}
-                        <strong>
-                          {sidebarData.tags[filters.category]?.title ??
-                            sidebarData.types[filters.type]?.title}
-                        </strong>
-                      </>
-                    }
-                  </>
-                )}
+                  ? (n(
+                      'searchResult',
+                      'leitarniðurstaða',
+                    ) as string).toLowerCase()
+                  : (n(
+                      'searchResults',
+                      'leitarniðurstöður',
+                    ) as string).toLowerCase()}
               </Text>
             </Box>
           )}
@@ -460,25 +426,6 @@ const Search: Screen<CategoryProps> = ({
               />
             </Box>
           )}
-          <Hidden above="sm">
-            <Box paddingTop={4}>
-              <Sidebar title={n('otherCategories')}>
-                <Stack space={[1, 1, 2]}>
-                  {sidebarDataTypes.map(([key, { title, total }]) => (
-                    <Filter
-                      key={key}
-                      selected={filters.type === key}
-                      onClick={() => {
-                        onSelectSidebarTag('type', key)
-                        !isServer && window.scrollTo(0, 0)
-                      }}
-                      text={`${title} (${total})`}
-                    />
-                  ))}
-                </Stack>
-              </Sidebar>
-            </Box>
-          </Hidden>
         </Stack>
       </SidebarLayout>
     </>
@@ -510,6 +457,9 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       'webLifeEventPage' as SearchableContentTypes,
       'webAdgerdirPage' as SearchableContentTypes,
       'webSubArticle' as SearchableContentTypes,
+      'webLink' as SearchableContentTypes,
+      'webNews' as SearchableContentTypes,
+      'webOrganizationSubpage' as SearchableContentTypes,
     ]
   }
 
@@ -577,25 +527,6 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-const Filter = ({ selected, text, onClick, truncate = false, ...props }) => {
-  return (
-    <Box
-      display="inlineBlock"
-      component="button"
-      type="button"
-      textAlign="left"
-      outline="none"
-      width="full"
-      onClick={onClick}
-      {...props}
-    >
-      <Text as="div" truncate={truncate}>
-        {selected ? <strong>{text}</strong> : text}
-      </Text>
-    </Box>
-  )
-}
-
 interface EnglishResultsLinkProps {
   q: string
 }
@@ -616,6 +547,7 @@ const EnglishResultsLink: FC<EnglishResultsLinkProps> = ({ q }) => {
         },
       },
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q])
 
   const total = data?.searchResults?.total ?? 0

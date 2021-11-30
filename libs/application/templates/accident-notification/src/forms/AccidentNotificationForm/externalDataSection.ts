@@ -6,7 +6,6 @@ import {
   buildSection,
   buildSubSection,
 } from '@island.is/application/core'
-
 import { externalData } from '../../lib/messages'
 import { DataProviderTypes } from '../../types'
 
@@ -17,12 +16,28 @@ export const externalDataSection = buildSection({
     buildMultiField({
       title: externalData.agreementDescription.sectionTitle,
       id: 'agreementDescriptionMultiField',
+      space: 2,
       children: [
         buildCustomField({
           id: 'agreementDescriptionCustomField',
           title: '',
           component: 'AgreementDescription',
+          doesNotRequireAnswer: true,
         }),
+        buildCustomField(
+          {
+            id: 'extrainformationWithDataprovider',
+            title: '',
+            component: 'DescriptionWithLink',
+            doesNotRequireAnswer: true,
+          },
+          {
+            descriptionFirstPart: externalData.extraInformation.description,
+            descriptionSecondPart: '',
+            linkName: externalData.extraInformation.linkText,
+            url: externalData.extraInformation.link,
+          },
+        ),
       ],
     }),
     buildSubSection({
@@ -37,10 +52,10 @@ export const externalDataSection = buildSection({
           checkboxLabel: externalData.dataProvider.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: DataProviderTypes.NationalRegistry,
-              title: externalData.nationalRegistry.title,
-              subTitle: externalData.nationalRegistry.description,
+              id: 'directoryOfLabor',
+              type: '',
+              title: externalData.directoryOfLabor.title,
+              subTitle: externalData.directoryOfLabor.description,
             }),
             buildDataProviderItem({
               id: 'revAndCustoms',
@@ -49,10 +64,28 @@ export const externalDataSection = buildSection({
               subTitle: externalData.revAndCustoms.description,
             }),
             buildDataProviderItem({
-              id: 'notifications',
+              id: 'nationalInsurancy',
               type: '',
-              title: externalData.notifications.title,
-              subTitle: externalData.notifications.description,
+              title: externalData.nationalInsurancy.title,
+              subTitle: externalData.nationalInsurancy.description,
+            }),
+            buildDataProviderItem({
+              id: 'municipalCollectionAgency',
+              type: '',
+              title: externalData.municipalCollectionAgency.title,
+              subTitle: externalData.municipalCollectionAgency.description,
+            }),
+            buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: DataProviderTypes.NationalRegistry,
+              title: externalData.nationalRegistry.title,
+              subTitle: externalData.nationalRegistry.description,
+            }),
+            buildDataProviderItem({
+              id: 'accidentProvider',
+              type: '',
+              title: '',
+              subTitle: externalData.accidentProvider.description,
             }),
           ],
         }),

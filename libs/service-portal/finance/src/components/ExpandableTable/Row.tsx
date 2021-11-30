@@ -10,7 +10,7 @@ import {
   Table as T,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
-import * as styles from './ExpandableTable.treat'
+import * as styles from './ExpandableTable.css'
 
 interface Props {
   data: Array<{ value: string | number; align?: 'left' | 'right' }>

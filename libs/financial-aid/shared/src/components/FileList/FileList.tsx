@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text, Box, UploadFile } from '@island.is/island-ui/core'
-import * as styles from './FileList.treat'
+import * as styles from './FileList.css'
 import cn from 'classnames'
 import {
   ApplicationFile,

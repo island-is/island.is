@@ -1,5 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -12,7 +13,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_QUERY,
+  GET_SERVICE_WEB_ORGANIZATION,
   GET_SUPPORT_CATEGORIES,
   GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
 } from '../../queries'
@@ -31,12 +32,13 @@ import {
   ServiceWebSearchSection,
   ServiceWebHeader,
 } from '@island.is/web/components'
-import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
+import Footer from '../shared/Footer'
+import { useNamespace, LinkResolverResponse } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import { getSlugPart } from '../utils'
 
-import * as styles from './Home.treat'
-import * as sharedStyles from '../shared/styles.treat'
+import * as styles from './Home.css'
+import * as sharedStyles from '../shared/styles.css'
 
 interface HomeProps {
   organization?: Organization
@@ -46,27 +48,42 @@ interface HomeProps {
     | Query['getSupportCategoriesInOrganization']
 }
 
-const Home: Screen<HomeProps> = ({ organization, supportCategories }) => {
+const Home: Screen<HomeProps> = ({
+  organization,
+  supportCategories,
+  namespace,
+}) => {
   const Router = useRouter()
-
+  const n = useNamespace(namespace)
   const institutionSlug = getSlugPart(Router.asPath, 2)
 
-  const logoTitle =
-    organization?.shortTitle ?? organization?.title ?? 'Ísland.is'
+  const organizationTitle = organization ? organization.title : 'Ísland.is'
 
   const logoUrl =
     organization?.logo?.url ??
     '//images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
 
-  const searchTitle = 'Getum við aðstoðað?'
+  const searchTitle = n('canWeAssist', 'Getum við aðstoðað?')
+
+  const pageTitle = organizationTitle
+    ? `${organizationTitle} | ${n('serviceWeb', 'Þjónustuvefur')}`
+    : n('serviceWeb', 'Þjónustuvefur')
+
+  const headerTitle = `${n(
+    'serviceWeb',
+    'Þjónustuvefur',
+  )} - ${organizationTitle}`
 
   return (
     <>
-      <ServiceWebHeader hideSearch logoTitle={logoTitle} />
+      <Head>
+        <title>{pageTitle}</title>
+      </Head>
+      <ServiceWebHeader hideSearch title={headerTitle} />
       <div className={sharedStyles.bg} />
       <Box className={styles.searchSection}>
         <ServiceWebSearchSection
-          logoTitle={logoTitle}
+          logoTitle={organizationTitle}
           logoUrl={logoUrl}
           title={searchTitle}
         />
@@ -117,6 +134,7 @@ const Home: Screen<HomeProps> = ({ organization, supportCategories }) => {
           </GridRow>
         </GridContainer>
       </Box>
+      <Footer institutionSlug={institutionSlug} organization={organization} />
     </>
   )
 }
@@ -127,7 +145,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   const [organization, namespace, supportCategories] = await Promise.all([
     !!slug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
-        query: GET_ORGANIZATION_QUERY,
+        query: GET_SERVICE_WEB_ORGANIZATION,
         variables: {
           input: {
             slug,
@@ -188,4 +206,5 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
 
 export default withMainLayout(Home, {
   showHeader: false,
+  showFooter: false,
 })

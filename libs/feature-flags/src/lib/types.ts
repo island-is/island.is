@@ -1,5 +1,8 @@
 import { FeatureNames as ServerSideFeatureNames } from '../../../../infra/src/dsl/features'
-export interface User {
+
+export { ServerSideFeatureNames }
+
+export interface FeatureFlagUser {
   id: string
   attributes?: { [key: string]: string }
 }
@@ -8,7 +11,7 @@ export interface FeatureFlagClient {
   getValue(
     key: string,
     defaultValue: boolean | string,
-    user?: User,
+    user?: FeatureFlagUser,
   ): Promise<boolean | string>
 }
 

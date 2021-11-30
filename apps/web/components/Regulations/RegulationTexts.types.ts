@@ -36,7 +36,7 @@ export type RegulationPageTexts = Partial<
     | 'goBack' // 'Til baka'
     | 'goHome' // 'Yfirlit reglugerða'
     | 'originalDocLink' // 'Skjal í Stjórnartíðindum'
-    | 'printThisVersion' // 'Prenta þessa útgáfu'
+    | 'downloadPdf' // 'Þessi útgáfa á PDF formi'
     | 'copyPermaLink' // "Afrita hlekk á þessa útgáfu"
     | 'redirectText' // 'Þessi reglugerð er enn sem komið er hýst á eldri vefslóð:'
     | 'showDiff' // 'Sýna breytingar'
@@ -53,11 +53,17 @@ export type RegulationPageTexts = Partial<
     //   Reglugerðir eru birtar í B-deild Stjórnartíðinda skv. 3. gr. laga um Stjórnartíðindi og Lögbirtingablað, nr. 15/2005, sbr. reglugerð um útgáfu Stjórnartíðinda nr. 958/2005.\n\n
     //   Sé misræmi milli þess texta sem birtist hér í safninu og þess sem birtur er í útgáfu B-deildar Stjórnartíðinda skal sá síðarnefndi ráða.
     // '
+    | 'indexLegend' // 'Efnisyfirlit'
+    | 'indexToggler_open' // 'Birta efnisyfirlit'
+    | 'indexToggler_close' // 'Fela efnisyfirlit'
+    | 'indexItem_regulation' // 'Reglugerð'
+    | 'indexItem_comments' // 'Athugasemdir ritstjóra'
     | 'printedDate' // 'Prentað þann'
     | 'statusCurrentBase' // 'Stofnreglugerð'
     | 'statusCurrentAmending' // 'Breytingareglugerð'
     | 'statusCurrentUpdated' // 'Reglugerð með breytingum'
     | 'statusCurrent_amended' // 'síðast uppfærð ${date}'
+    | 'statusOgildWat' // 'Ógild reglugerð'
     | 'statusRepealed' // 'Brottfelld reglugerð'
     | 'statusRepealed_on' // 'féll úr gildi ${date}'
     | 'statusOriginal' // 'Upprunaleg útgáfa reglugerðar'
@@ -65,6 +71,7 @@ export type RegulationPageTexts = Partial<
     | 'statusHistoric_period' // 'gilti á tímabilinu ${dateFrom} – ${dateTo}'
     | 'statusUpcoming' // 'Væntanleg útgáfa reglugerðar'
     | 'statusUpcoming_on' // 'mun taka gildi ${date}'
+    | 'statusUpcoming_period' // 'mun gilda frá ${dateFrom} – ${dateTo}'
     | 'statusLinkToCurrent' // 'sjá núgildandi'
     | 'statusLinkToCurrent_long' // 'Sjá núgildandi útgfáfu reglugerðarinnar'
     | 'statusLinkToRepealed' // 'sjá lokaútgáfu'
@@ -91,6 +98,7 @@ export type RegulationPageTexts = Partial<
     | 'infoboxEffectiveDate' // 'Tók fyrst gildi'
     | 'infoboxLastAmended' // 'Síðast breytt'
     | 'infoboxRepealed' // 'Féll úr gildi'
+    | 'infoboxOgildWat' // 'Ógild reglugerð'
     | 'viewAffectingRegulation', // 'Skoða ${title}'
     string
   >

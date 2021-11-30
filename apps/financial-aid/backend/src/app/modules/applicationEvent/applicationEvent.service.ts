@@ -8,8 +8,6 @@ import { CreateApplicationEventDto } from '../application/dto'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { ApplicationService } from '../application'
-
 @Injectable()
 export class ApplicationEventService {
   constructor(

@@ -2,9 +2,8 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { RequiredField } from '@island.is/judicial-system-web/src/types'
 import { CaseTransition, CaseGender } from '@island.is/judicial-system/types'
-import { getShortGender, isDirty, isNextDisabled } from './stepHelper'
+import { getShortGender, isDirty } from './stepHelper'
 import { validate } from './validate'
 
 import * as formatters from './formatters'
@@ -324,47 +323,6 @@ describe('Step helper', () => {
 
       // Assert
       expect(result).toEqual('Lorem lara ipsum dolum kara')
-    })
-  })
-
-  describe('isNextDisabled', () => {
-    test('should return true if the only validation does not pass', () => {
-      // Arrange
-      const rf: RequiredField[] = [{ value: '', validations: ['empty'] }]
-
-      // Act
-      const ind = isNextDisabled(rf)
-
-      // Assert
-      expect(ind).toEqual(true)
-    })
-
-    test('should return true if the one validation does not pass and another one does', () => {
-      // Arrange
-      const rf: RequiredField[] = [
-        { value: '', validations: ['empty'] },
-        { value: '13:37', validations: ['empty', 'time-format'] },
-      ]
-
-      // Act
-      const ind = isNextDisabled(rf)
-
-      // Assert
-      expect(ind).toEqual(true)
-    })
-
-    test('should return false if the all validations pass', () => {
-      // Arrange
-      const rf: RequiredField[] = [
-        { value: 'Lorem ipsum', validations: ['empty'] },
-        { value: '13:37', validations: ['empty', 'time-format'] },
-      ]
-
-      // Act
-      const ind = isNextDisabled(rf)
-
-      // Assert
-      expect(ind).toEqual(false)
     })
   })
 

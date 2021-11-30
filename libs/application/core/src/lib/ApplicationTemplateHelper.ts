@@ -147,7 +147,13 @@ export class ApplicationTemplateHelper<
       this.template.stateMachineOptions,
     )
 
-    service.start()
+    const eventType = typeof event === 'object' ? event.type : event
+    const { initialState } = service.start()
+
+    if (!initialState.nextEvents.includes(eventType)) {
+      throw new Error(`${eventType} is invalid for state ${initialState.value}`)
+    }
+
     service.send(event)
 
     const state = service.state
@@ -230,11 +236,11 @@ export class ApplicationTemplateHelper<
     const validators = this.template.answerValidators
 
     if (!validators) {
-      return Promise.resolve(undefined)
+      return
     }
 
     let hasError = false
-    const errorMap: Record<string, StaticText | null> = {}
+    const errorMap: Record<string, string> = {}
     const validatorPaths = Object.keys(validators)
 
     for (const validatorPath of validatorPaths) {
@@ -257,9 +263,7 @@ export class ApplicationTemplateHelper<
     }
 
     if (hasError) {
-      return Promise.reject(errorMap)
+      return errorMap
     }
-
-    return Promise.resolve(undefined)
   }
 }

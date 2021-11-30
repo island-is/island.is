@@ -1,19 +1,18 @@
 import React, { useContext } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import {
+  formatHomeAddress,
   formatNationalId,
-  formatPhoneNumber,
 } from '@island.is/financial-aid/shared/lib'
 
-import * as styles from './summary.treat'
+import * as styles from './summary.css'
 import cn from 'classnames'
 
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const UserInfo = () => {
-  const { user } = useContext(UserContext)
+  const { user, nationalRegistryData } = useContext(AppContext)
 
-  // TODO when þjóðskrá is up and running
   return (
     <Box
       display="flex"
@@ -23,22 +22,27 @@ const UserInfo = () => {
         [`${styles.userInfoContainer}`]: true,
       })}
     >
-      <Box className={styles.mainInfo}>
-        <Text fontWeight="semiBold">Nafn</Text>
-        <Text marginBottom={3}>{user?.name}</Text>
+      {user && (
+        <Box className={styles.mainInfo}>
+          <Text fontWeight="semiBold">Nafn</Text>
+          <Text marginBottom={3}>{user.name}</Text>
 
-        <Text fontWeight="semiBold">Kennitala</Text>
-        {user?.nationalId && <Text>{formatNationalId(user.nationalId)}</Text>}
-      </Box>
+          {nationalRegistryData && (
+            <>
+              <Text fontWeight="semiBold">Heimili</Text>
+              <Text>{formatHomeAddress(nationalRegistryData)}</Text>
+            </>
+          )}
+        </Box>
+      )}
 
       <Box className={styles.contactInfo}>
-        <Text fontWeight="semiBold">Sími</Text>
-        {user?.phoneNumber && (
-          <Text marginBottom={3}>{formatPhoneNumber(user.phoneNumber)}</Text>
+        {user && (
+          <>
+            <Text fontWeight="semiBold">Kennitala</Text>
+            <Text>{formatNationalId(user.nationalId)}</Text>
+          </>
         )}
-
-        <Text fontWeight="semiBold">Heimili</Text>
-        <Text>Hafnargata 3, 220 Hafnarfjörður</Text>
       </Box>
     </Box>
   )

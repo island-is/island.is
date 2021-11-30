@@ -1,29 +1,33 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
-import { Controller, useFormContext } from 'react-hook-form'
-import { Box, Text } from '@island.is/island-ui/core'
+import { useFormContext } from 'react-hook-form'
+import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
+import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import Slider from '../components/Slider'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
-import { maxDaysToGiveOrReceive, defaultMonths, maxMonths } from '../../config'
+import {
+  maxDaysToGiveOrReceive,
+  defaultMonths,
+  maxMonths,
+  daysInMonth,
+} from '../../config'
+import { YES } from '../../constants'
 
 const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   const maxDays = maxDaysToGiveOrReceive
   const { id } = field
   const { formatMessage } = useLocale()
-  const currentAnswer = getValueViaPath(
-    application.answers,
-    field.id,
-    1,
-  ) as number
-
-  const { clearErrors } = useFormContext()
+  const { register } = useFormContext()
+  const { requestDays } = getApplicationAnswers(application.answers)
 
   const [chosenRequestDays, setChosenRequestDays] = useState<number>(
-    currentAnswer,
+    requestDays === 0 ? 1 : requestDays,
   )
+
+  const requestedMonths = defaultMonths + chosenRequestDays / daysInMonth
 
   const daysStringKey =
     chosenRequestDays > 1
@@ -45,53 +49,62 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   ]
 
   return (
-    <Box marginBottom={6}>
-      <Text marginBottom={4} variant="h3">
-        {formatMessage(parentalLeaveFormMessages.shared.requestRightsDaysTitle)}
-      </Text>
-      <Box marginBottom={12}>
-        <Controller
-          defaultValue={chosenRequestDays}
-          name={id}
-          render={({ onChange, value }) => (
-            <Slider
-              label={{
-                singular: formatMessage(parentalLeaveFormMessages.shared.day),
-                plural: formatMessage(parentalLeaveFormMessages.shared.days),
-              }}
-              min={1}
-              max={maxDays}
-              step={1}
-              currentIndex={value || chosenRequestDays}
-              showMinMaxLabels
-              showToolTip
-              trackStyle={{ gridTemplateRows: 8 }}
-              calculateCellStyle={() => {
-                return {
-                  background: theme.color.dark200,
-                }
-              }}
-              onChange={(newValue: number) => {
-                clearErrors(id)
-                onChange(newValue)
-                setChosenRequestDays(newValue)
-              }}
-            />
-          )}
+    <>
+      <Box marginBottom={6} marginTop={5}>
+        <Box marginBottom={12}>
+          <Slider
+            label={{
+              singular: formatMessage(parentalLeaveFormMessages.shared.day),
+              plural: formatMessage(parentalLeaveFormMessages.shared.days),
+            }}
+            min={1}
+            max={maxDays}
+            step={1}
+            currentIndex={chosenRequestDays}
+            showMinMaxLabels
+            showToolTip
+            trackStyle={{ gridTemplateRows: 8 }}
+            calculateCellStyle={() => {
+              return {
+                background: theme.color.dark200,
+              }
+            }}
+            onChange={(newValue: number) => {
+              setChosenRequestDays(newValue)
+            }}
+          />
+        </Box>
+        <BoxChart
+          application={application}
+          boxes={Math.ceil(maxMonths)}
+          calculateBoxStyle={(index) => {
+            if (index < defaultMonths) {
+              return 'blue'
+            }
+
+            if (index < requestedMonths) {
+              return 'greenWithLines'
+            }
+
+            return 'grayWithLines'
+          }}
+          keys={boxChartKeys as BoxChartKey[]}
         />
       </Box>
-      <BoxChart
-        application={application}
-        boxes={maxMonths}
-        calculateBoxStyle={(index) => {
-          if (index === defaultMonths) {
-            return 'greenWithLines'
-          }
-          return 'blue'
-        }}
-        keys={boxChartKeys as BoxChartKey[]}
+
+      <input
+        type="hidden"
+        ref={register}
+        name={id}
+        value={chosenRequestDays.toString()}
       />
-    </Box>
+      <input
+        type="hidden"
+        name="requestRights.isRequestingRights"
+        ref={register}
+        value={YES}
+      />
+    </>
   )
 }
 

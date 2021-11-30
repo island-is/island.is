@@ -2,7 +2,7 @@ import React, { forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
 import { Text } from '@island.is/island-ui/core'
 
-import * as styles from './Tag.treat'
+import * as styles from './Tag.css'
 
 export type TagVariant = 'green' | 'blue'
 

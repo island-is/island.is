@@ -16,6 +16,10 @@ export const GetSingleEndorsementList = gql`
       meta
       title
       description
+      ownerName
+      closedDate
+      openedDate
+      adminLock
     }
   }
 `
@@ -41,6 +45,15 @@ export const GetEndorsements = gql`
       }
       created
       modified
+    }
+  }
+`
+export const GetSingleEndorsement = gql`
+  query endorsementSystemGetSingleEndorsement(
+    $input: FindEndorsementListInput!
+  ) {
+    endorsementSystemGetSingleEndorsement(input: $input) {
+      hasEndorsed
     }
   }
 `

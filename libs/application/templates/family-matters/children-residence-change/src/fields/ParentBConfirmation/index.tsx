@@ -9,7 +9,7 @@ import {
 } from '@island.is/application/templates/family-matters-core/components'
 import { useGeneratePdfUrl } from '@island.is/application/templates/family-matters-core/hooks'
 import { parentBConfirmation, contract } from '../../lib/messages'
-import { confirmationIllustration } from '../Shared.treat'
+import { confirmationIllustration } from '../Shared.css'
 import { ContractOverview } from '../components'
 import { CRCFieldBaseProps } from '../..'
 import { Roles } from '../../lib/constants'

@@ -9,26 +9,18 @@ import {
   CaseNumbers,
   PageLayout,
   FormContentContainer,
-  CourtCaseFactsAndLegalArgumentsAccordionItem,
-} from '@island.is/judicial-system-web/src/shared-components'
-import {
-  formatDate,
-  formatCustodyRestrictions,
-  formatAlternativeTravelBanRestrictions,
-  formatAccusedByGender,
-  NounCases,
-  formatAppeal,
-  capitalize,
-} from '@island.is/judicial-system/formatters'
+  RulingAccordionItem,
+  BlueBox,
+} from '@island.is/judicial-system-web/src/components'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  CaseAppealDecision,
   CaseDecision,
-  CaseType,
+  isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import type {
   Case,
@@ -36,16 +28,15 @@ import type {
 } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useQuery } from '@apollo/client'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import SigningModal from '@island.is/judicial-system-web/src/shared-components/SigningModal/SigningModal'
+import SigningModal from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import {
   core,
   rcConfirmation as m,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as style from './Confirmation.treat'
 
 export const Confirmation: React.FC = () => {
   const router = useRouter()
@@ -53,11 +44,11 @@ export const Confirmation: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [
-    requestSignatureResponse,
-    setRequestSignatureResponse,
+    requestRulingSignatureResponse,
+    setRequestRulingSignatureResponse,
   ] = useState<RequestSignatureResponse>()
 
-  const { requestSignature, isRequestingSignature } = useCase()
+  const { requestRulingSignature, isRequestingRulingSignature } = useCase()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -77,20 +68,22 @@ export const Confirmation: React.FC = () => {
 
   useEffect(() => {
     if (!modalVisible) {
-      setRequestSignatureResponse(undefined)
+      setRequestRulingSignatureResponse(undefined)
     }
-  }, [modalVisible, setRequestSignatureResponse])
+  }, [modalVisible, setRequestRulingSignatureResponse])
 
   const handleNextButtonClick: () => Promise<void> = async () => {
     if (!workingCase) {
       return
     }
 
-    // Request signature to get control code
+    // Request ruling signature to get control code
     try {
-      const requestSignatureResponse = await requestSignature(workingCase.id)
-      if (requestSignatureResponse) {
-        setRequestSignatureResponse(requestSignatureResponse)
+      const requestRulingSignatureResponse = await requestRulingSignature(
+        workingCase.id,
+      )
+      if (requestRulingSignatureResponse) {
+        setRequestRulingSignatureResponse(requestRulingSignatureResponse)
         setModalVisible(true)
       } else {
         // TODO: Handle error
@@ -100,28 +93,15 @@ export const Confirmation: React.FC = () => {
     }
   }
 
-  const custodyRestrictions = formatCustodyRestrictions(
-    workingCase?.accusedGender,
-    workingCase?.custodyRestrictions,
-  )
-
-  const alternativeTravelBanRestrictions = formatAlternativeTravelBanRestrictions(
-    workingCase?.accusedGender,
-    workingCase?.custodyRestrictions,
-    workingCase?.otherRestrictions,
-  )
-
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.CONFIRMATION}
       isLoading={loading}
       notFound={data?.case === undefined}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -144,182 +124,46 @@ export const Confirmation: React.FC = () => {
               )}`}</Text>
             </Box>
             <Box component="section" marginBottom={7}>
-              <Text
-                variant="h2"
-                as="h2"
-              >{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
               <CaseNumbers workingCase={workingCase} />
             </Box>
             <Box marginBottom={9}>
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <CourtRecordAccordionItem workingCase={workingCase} />
-                <CourtCaseFactsAndLegalArgumentsAccordionItem
-                  workingCase={workingCase}
-                />
+                <RulingAccordionItem workingCase={workingCase} />
               </Accordion>
             </Box>
-            <Box component="section" marginBottom={8}>
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  Úrskurður Héraðsdóms
-                </Text>
-              </Box>
-              <Box marginBottom={7}>
-                <Text variant="eyebrow" color="blue400">
-                  Niðurstaða
-                </Text>
-                <Text>
-                  <span className={style.breakSpaces}>
-                    {workingCase.ruling}
-                  </span>
-                </Text>
-              </Box>
-            </Box>
-            <Box component="section" marginBottom={7}>
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  Úrskurðarorð
-                </Text>
-              </Box>
-              <Box marginBottom={3}>
-                <Box marginTop={1}>
-                  <Text variant="intro">{workingCase.conclusion}</Text>
-                </Box>
-              </Box>
-            </Box>
-            <Box component="section" marginBottom={7}>
-              <Box marginBottom={1}>
-                <Text variant="h3">
-                  {workingCase.judge
-                    ? `${workingCase.judge.name} ${workingCase.judge.title}`
-                    : `Enginn dómari skráður`}
-                </Text>
-              </Box>
-              <Text>
-                Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
-              </Text>
-            </Box>
-            <Box component="section" marginBottom={7}>
-              <Box marginBottom={1}>
-                <Text as="h3" variant="h3">
-                  Ákvörðun um kæru
-                </Text>
-              </Box>
-              <Box marginBottom={1}>
-                <Text>
-                  {formatMessage(m.sections.accusedAppealDecision.disclaimer)}
-                </Text>
-              </Box>
-              <Box marginBottom={1}>
-                <Text variant="h4">
-                  {formatAppeal(
-                    workingCase.prosecutorAppealDecision,
-                    'Sækjandi',
-                  )}
-                </Text>
-              </Box>
-              <Text variant="h4">
-                {formatAppeal(
-                  workingCase.accusedAppealDecision,
-                  capitalize(formatAccusedByGender(workingCase.accusedGender)),
-                  workingCase.accusedGender,
-                )}
-              </Text>
-              {(workingCase.accusedAppealAnnouncement ||
-                workingCase.prosecutorAppealAnnouncement) && (
-                <Box component="section" marginTop={3}>
-                  {workingCase.accusedAppealAnnouncement &&
-                    workingCase.accusedAppealDecision ===
-                      CaseAppealDecision.APPEAL && (
-                      <Box>
-                        <Text variant="eyebrow" color="blue400">
-                          {`Yfirlýsing um kæru ${formatAccusedByGender(
-                            workingCase.accusedGender,
-                            NounCases.GENITIVE,
-                          )}`}
-                        </Text>
-                        <Text>{workingCase.accusedAppealAnnouncement}</Text>
-                      </Box>
-                    )}
-                  {workingCase.prosecutorAppealAnnouncement &&
-                    workingCase.prosecutorAppealDecision ===
-                      CaseAppealDecision.APPEAL && (
-                      <Box marginTop={2}>
-                        <Text variant="eyebrow" color="blue400">
-                          Yfirlýsing um kæru sækjanda
-                        </Text>
-                        <Text>{workingCase.prosecutorAppealAnnouncement}</Text>
-                      </Box>
-                    )}
-                </Box>
-              )}
-            </Box>
-            {workingCase.type === CaseType.CUSTODY &&
-              workingCase.decision === CaseDecision.ACCEPTING && (
-                <Box marginBottom={7}>
-                  <Box marginBottom={1}>
-                    <Text as="h3" variant="h3">
-                      Tilhögun gæsluvarðhalds
-                    </Text>
-                  </Box>
-                  {custodyRestrictions && (
-                    <Box marginBottom={2}>
-                      <Text>{custodyRestrictions}</Text>
-                    </Box>
-                  )}
-                  <Text>
-                    {formatMessage(m.sections.custodyRestrictions.disclaimer, {
-                      caseType: 'gæsluvarðhaldsins',
-                    })}
-                  </Text>
-                </Box>
-              )}
-            {((workingCase.type === CaseType.CUSTODY &&
-              workingCase.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) ||
-              (workingCase.type === CaseType.TRAVEL_BAN &&
-                workingCase.decision === CaseDecision.ACCEPTING)) && (
-              <Box marginBottom={7}>
-                <Box marginBottom={1}>
+            <Box marginBottom={7}>
+              <BlueBox>
+                <Box marginBottom={2} textAlign="center">
                   <Text as="h3" variant="h3">
-                    Tilhögun farbanns
+                    {formatMessage(m.sections.conclusion.title)}
                   </Text>
                 </Box>
-                {alternativeTravelBanRestrictions && (
-                  <Box marginBottom={2}>
-                    <Text>
-                      {alternativeTravelBanRestrictions
-                        .split('\n')
-                        .map((str, index) => {
-                          return (
-                            <div key={index}>
-                              <Text>{str}</Text>
-                            </div>
-                          )
-                        })}
-                    </Text>
+                <Box marginBottom={3}>
+                  <Box marginTop={1}>
+                    <Text variant="intro">{workingCase.conclusion}</Text>
                   </Box>
-                )}
-                <Text>
-                  {formatMessage(m.sections.custodyRestrictions.disclaimer, {
-                    caseType: 'farbannsins',
-                  })}
-                </Text>
-              </Box>
-            )}
+                </Box>
+                <Box marginBottom={1} textAlign="center">
+                  <Text variant="h4">
+                    {workingCase?.judge ? workingCase.judge.name : user?.name}
+                  </Text>
+                </Box>
+              </BlueBox>
+            </Box>
             <Box marginBottom={3}>
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRuling)}
-                pdfType="ruling?shortVersion=false"
+                pdfType="ruling"
               />
             </Box>
             <Box marginBottom={15}>
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRulingShortVersion)}
-                pdfType="ruling?shortVersion=true"
+                pdfType="courtRecord"
               />
             </Box>
           </FormContentContainer>
@@ -330,6 +174,8 @@ export const Confirmation: React.FC = () => {
               nextButtonText={formatMessage(
                 workingCase.decision === CaseDecision.ACCEPTING
                   ? m.footer.accepting.continueButtonText
+                  : workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY
+                  ? m.footer.acceptingPartially.continueButtonText
                   : workingCase.decision === CaseDecision.REJECTING
                   ? m.footer.rejecting.continueButtonText
                   : workingCase.decision === CaseDecision.DISMISSING
@@ -337,25 +183,21 @@ export const Confirmation: React.FC = () => {
                   : m.footer.acceptingAlternativeTravelBan.continueButtonText,
               )}
               nextButtonIcon={
-                workingCase.decision &&
-                [
-                  CaseDecision.ACCEPTING,
-                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-                ].includes(workingCase.decision)
+                isAcceptingCaseDecision(workingCase.decision) ||
+                workingCase.decision ===
+                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                   ? 'checkmark'
                   : 'close'
               }
               nextButtonColorScheme={
-                workingCase.decision &&
-                [
-                  CaseDecision.ACCEPTING,
-                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-                ].includes(workingCase.decision)
+                isAcceptingCaseDecision(workingCase.decision) ||
+                workingCase.decision ===
+                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                   ? 'default'
                   : 'destructive'
               }
               onNextButtonClick={handleNextButtonClick}
-              nextIsLoading={isRequestingSignature}
+              nextIsLoading={isRequestingRulingSignature}
               hideNextButton={workingCase.judge?.id !== user?.id}
               infoBoxText={
                 workingCase.judge?.id !== user?.id
@@ -368,7 +210,7 @@ export const Confirmation: React.FC = () => {
             <SigningModal
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
-              requestSignatureResponse={requestSignatureResponse}
+              requestRulingSignatureResponse={requestRulingSignatureResponse}
               setModalVisible={setModalVisible}
             />
           )}

@@ -37,7 +37,7 @@ import {
   News,
 } from '@island.is/web/graphql/schema'
 
-import * as styles from './SearchInput.treat'
+import * as styles from './SearchInput.css'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const DEBOUNCE_TIMER = 150
@@ -116,8 +116,6 @@ const useSearch = (
               language: locale as ContentLanguage,
               types: [
                 SearchableContentTypes['WebArticle'],
-                SearchableContentTypes['WebLifeEventPage'],
-                SearchableContentTypes['WebNews'],
                 SearchableContentTypes['WebSubArticle'],
               ],
             },
@@ -242,106 +240,104 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     }, [setHasFocus])
 
     return (
-      <>
-        <Downshift<string>
-          id={id}
-          initialInputValue={initialInputValue}
-          onChange={(q) => {
-            return onSubmit(`${search.prefix} ${q}`.trim() || '')
-          }}
-          onInputValueChange={(q) => setSearchTerm(q)}
-          itemToString={(v) => {
-            const str = `${search.prefix ? search.prefix + ' ' : ''}${v}`.trim()
+      <Downshift<string>
+        id={id}
+        initialInputValue={initialInputValue}
+        onChange={(q) => {
+          return onSubmit(`${search.prefix} ${q}`.trim() || '')
+        }}
+        onInputValueChange={(q) => setSearchTerm(q)}
+        itemToString={(v) => {
+          const str = `${search.prefix ? search.prefix + ' ' : ''}${v}`.trim()
 
-            if (str === 'null') {
-              return ''
-            }
+          if (str === 'null') {
+            return ''
+          }
 
-            return str
-          }}
-          stateReducer={(state, changes) => {
-            // pressing tab when input is not empty should move focus to the
-            // search icon, so we need to prevent downshift from closing on blur
-            const shouldIgnore =
-              changes.type === Downshift.stateChangeTypes.mouseUp ||
-              (changes.type === Downshift.stateChangeTypes.blurInput &&
-                state.inputValue !== '')
+          return str
+        }}
+        stateReducer={(state, changes) => {
+          // pressing tab when input is not empty should move focus to the
+          // search icon, so we need to prevent downshift from closing on blur
+          const shouldIgnore =
+            changes.type === Downshift.stateChangeTypes.mouseUp ||
+            (changes.type === Downshift.stateChangeTypes.blurInput &&
+              state.inputValue !== '')
 
-            return shouldIgnore ? {} : changes
-          }}
-        >
-          {({
-            highlightedIndex,
-            isOpen,
-            getRootProps,
-            getInputProps,
-            getItemProps,
-            getMenuProps,
-            openMenu,
-            closeMenu,
-            inputValue,
-          }) => (
-            <AsyncSearchInput
-              ref={ref}
-              white={white}
-              hasFocus={hasFocus}
-              loading={search.isLoading}
-              skipContext={skipContext}
-              rootProps={{
-                'aria-controls': id + '-menu',
-                ...getRootProps(),
-              }}
-              menuProps={{
-                comp: 'div',
-                ...getMenuProps(),
-              }}
-              buttonProps={{
-                onClick: () => {
+          return shouldIgnore ? {} : changes
+        }}
+      >
+        {({
+          highlightedIndex,
+          isOpen,
+          getRootProps,
+          getInputProps,
+          getItemProps,
+          getMenuProps,
+          openMenu,
+          closeMenu,
+          inputValue,
+        }) => (
+          <AsyncSearchInput
+            ref={ref}
+            white={white}
+            hasFocus={hasFocus}
+            loading={search.isLoading}
+            skipContext={skipContext}
+            rootProps={{
+              'aria-controls': id + '-menu',
+              ...getRootProps(),
+            }}
+            menuProps={{
+              comp: 'div',
+              ...getMenuProps(),
+            }}
+            buttonProps={{
+              onClick: () => {
+                closeMenu()
+                onSubmit(inputValue)
+              },
+              onFocus,
+              onBlur,
+              'aria-label': locale === 'is' ? 'Leita' : 'Search',
+            }}
+            inputProps={getInputProps({
+              inputSize: size,
+              onFocus: () => {
+                onFocus()
+                if (openOnFocus) {
+                  openMenu()
+                }
+              },
+              onBlur,
+              placeholder,
+              colored,
+              onKeyDown: (e) => {
+                if (e.key === 'Enter' && highlightedIndex == null) {
+                  e.currentTarget.blur()
                   closeMenu()
-                  onSubmit(inputValue)
-                },
-                onFocus,
-                onBlur,
-                'aria-label': locale === 'is' ? 'Leita' : 'Search',
-              }}
-              inputProps={getInputProps({
-                inputSize: size,
-                onFocus: () => {
-                  onFocus()
-                  if (openOnFocus) {
-                    openMenu()
+                  onSubmit(e.currentTarget.value)
+                }
+              },
+            })}
+          >
+            {isOpen && !isEmpty(search) && (
+              <Results
+                quickContentLabel={quickContentLabel}
+                search={search}
+                highlightedIndex={highlightedIndex}
+                getItemProps={getItemProps}
+                autosuggest={autosuggest}
+                onRouting={() => {
+                  if (onRouting) {
+                    onRouting()
                   }
-                },
-                onBlur,
-                placeholder,
-                colored,
-                onKeyDown: (e) => {
-                  if (e.key === 'Enter' && highlightedIndex == null) {
-                    e.currentTarget.blur()
-                    closeMenu()
-                    onSubmit(e.currentTarget.value)
-                  }
-                },
-              })}
-            >
-              {isOpen && !isEmpty(search) && (
-                <Results
-                  quickContentLabel={quickContentLabel}
-                  search={search}
-                  highlightedIndex={highlightedIndex}
-                  getItemProps={getItemProps}
-                  autosuggest={autosuggest}
-                  onRouting={() => {
-                    if (onRouting) {
-                      onRouting()
-                    }
-                  }}
-                />
-              )}
-            </AsyncSearchInput>
-          )}
-        </Downshift>
-      </>
+                }}
+              />
+            )}
+          </AsyncSearchInput>
+        )}
+      </Downshift>
     )
   },
 )

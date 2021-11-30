@@ -6,10 +6,10 @@ import {
   formatAccusedByGender,
   NounCases,
 } from '@island.is/judicial-system/formatters'
-import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
+import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { isInvestigationCase } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import * as styles from '../AppealSection/AppealSection.treat'
+import * as styles from '../AppealSection/AppealSection.css'
 
 interface Props {
   workingCase: Case
