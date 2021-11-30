@@ -770,13 +770,6 @@ export const RulingStepTwo: React.FC = () => {
           nextIsDisabled={!isRulingStepTwoValidRC(workingCase)}
         />
       </FormContentContainer>
-      <FormContentContainer isFooter>
-        <FormFooter
-          previousUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.CONFIRMATION_ROUTE}/${id}`}
-          nextIsDisabled={!isRulingStepTwoValidRC(workingCase)}
-        />
-      </FormContentContainer>
     </PageLayout>
   )
 }
