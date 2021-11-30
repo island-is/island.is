@@ -248,7 +248,9 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               (workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
                 (workingCase.type === CaseType.TRAVEL_BAN &&
-                  workingCase.decision === CaseDecision.ACCEPTING)) &&
+                  (workingCase.decision === CaseDecision.ACCEPTING ||
+                    workingCase.decision ===
+                      CaseDecision.ACCEPTING_PARTIALLY))) &&
                 workingCase.custodyRestrictions
                   ?.filter((restriction) =>
                     [
@@ -471,7 +473,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               <PdfRow
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRulingShortVersion)}
-                pdfType="ruling?shortVersion=true"
+                pdfType="courtRecord"
               >
                 <Button>Undirrita</Button>
               </PdfRow>
@@ -479,7 +481,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                 <PdfRow
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRuling)}
-                  pdfType="ruling?shortVersion=false"
+                  pdfType="ruling"
                 >
                   <SignedRuling
                     judge={workingCase.judge?.name}

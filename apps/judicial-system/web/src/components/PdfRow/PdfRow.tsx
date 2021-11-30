@@ -9,11 +9,7 @@ interface Props {
   children?: ReactNode
   caseId: string
   title: string
-  pdfType:
-    | 'ruling?shortVersion=false'
-    | 'ruling?shortVersion=true'
-    | 'request'
-    | 'custodyNotice'
+  pdfType: 'ruling' | 'courtRecord' | 'request' | 'custodyNotice'
 }
 
 const PdfRow: React.FC<Props> = ({ children, caseId, title, pdfType }) => {

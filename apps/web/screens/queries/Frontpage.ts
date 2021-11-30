@@ -5,6 +5,26 @@ export const GET_FRONTPAGE_QUERY = gql`
     getFrontpage(input: $input) {
       __typename
       id
+      heading
+      imageAlternativeText
+      image {
+        url
+        title
+      }
+      videos {
+        url
+        title
+        contentType
+      }
+      imageMobile {
+        url
+        title
+      }
+      videosMobile {
+        url
+        title
+        contentType
+      }
       featured {
         title
         attention
@@ -16,42 +36,23 @@ export const GET_FRONTPAGE_QUERY = gql`
       lifeEvents {
         id
         title
+        shortTitle
         slug
-        intro
-        image {
-          __typename
-          id
-          title
-          url
-          contentType
-          width
-          height
-        }
-        thumbnail {
+        tinyThumbnail {
           url
           title
-        }
-      }
-      slides {
-        subtitle
-        intro {
-          ... on Html {
-            __typename
-            id
-            document
-          }
-        }
-        title
-        content
-        link
-        animationJsonAsset {
-          id
-          typename
-          url
         }
       }
       namespace {
         fields
+      }
+      linkList {
+        title
+        links {
+          date
+          text
+          url
+        }
       }
     }
   }
