@@ -61,7 +61,7 @@ import {
 
 import AppealSection from './Components/AppealSection/AppealSection'
 import { UploadStateMessage } from './Components/UploadStateMessage'
-import { SignedRuling } from './Components/SignedRuling'
+import { SignedDocument } from './Components/SignedDocument'
 
 interface Props {
   workingCase: Case
@@ -475,8 +475,13 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                 title={formatMessage(core.pdfButtonRulingShortVersion)}
                 pdfType="courtRecord"
               >
-                {user?.role === UserRole.JUDGE ||
-                user?.role === UserRole.REGISTRAR ? (
+                {workingCase.courtRecordSignatory ? (
+                  <SignedDocument
+                    signatory={workingCase.courtRecordSignatory.name}
+                    signingDate={workingCase.courtRecordSignatureDate}
+                  />
+                ) : user?.role === UserRole.JUDGE ||
+                  user?.role === UserRole.REGISTRAR ? (
                   <Button>Undirrita</Button>
                 ) : (
                   <Text>Bíður undirritunar</Text>
@@ -488,9 +493,9 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   title={formatMessage(core.pdfButtonRuling)}
                   pdfType="ruling"
                 >
-                  <SignedRuling
-                    judge={workingCase.judge?.name}
-                    rulingDate={workingCase.rulingDate}
+                  <SignedDocument
+                    signatory={workingCase.judge?.name}
+                    signingDate={workingCase.rulingDate}
                   />
                 </PdfRow>
               )}

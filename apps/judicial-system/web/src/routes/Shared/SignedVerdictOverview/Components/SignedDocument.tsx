@@ -6,19 +6,19 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 
 interface Props {
-  judge?: string
-  rulingDate?: string
+  signatory?: string
+  signingDate?: string
 }
 
-export const SignedRuling = (props: Props) => {
+export const SignedDocument = (props: Props) => {
   const { formatMessage } = useIntl()
-  const { judge, rulingDate } = props
+  const { signatory: judge, signingDate: rulingDate } = props
 
   return (
     <Box display="flex" alignItems="center">
       <Box textAlign="right" marginX="gutter">
         <Text>
-          {formatMessage(m.signedRuling, {
+          {formatMessage(m.signedDocument, {
             date: formatDate(rulingDate, 'dd.MM.yyyy'),
             time: formatDate(rulingDate, 'HH:mm'),
           })}
