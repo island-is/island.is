@@ -82,14 +82,9 @@ export const Requests: React.FC = () => {
 
       setActiveCases(
         casesWithoutDeleted.filter((c: Case) => {
-          return isProsecutor
-            ? !completedCaseStates.includes(c.state)
-            : // Judges and registrars should see all cases except cases with status code NEW.
-            isJudge || isRegistrar
-            ? ![...completedCaseStates, CaseState.NEW].includes(c.state)
-            : isPrisonAdminUser || isPrisonUser
+          return isPrisonAdminUser || isPrisonUser
             ? !c.isValidToDateInThePast
-            : null
+            : !completedCaseStates.includes(c.state)
         }),
       )
 

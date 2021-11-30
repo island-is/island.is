@@ -88,12 +88,6 @@ export const serializeService: SerializeMethod = (
       },
     },
     securityContext,
-    strategy: {
-      type:
-        serviceDef.rolloutStrategy ||
-        uberChart.env.rolloutStrategy ||
-        'RollingUpdate',
-    },
   }
 
   // command and args

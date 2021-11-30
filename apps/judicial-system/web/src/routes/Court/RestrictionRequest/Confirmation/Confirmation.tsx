@@ -50,11 +50,11 @@ export const Confirmation: React.FC = () => {
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [
-    requestSignatureResponse,
-    setRequestSignatureResponse,
+    requestRulingSignatureResponse,
+    setRequestRulingSignatureResponse,
   ] = useState<RequestSignatureResponse>()
 
-  const { requestSignature, isRequestingSignature } = useCase()
+  const { requestRulingSignature, isRequestingRulingSignature } = useCase()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
@@ -64,20 +64,22 @@ export const Confirmation: React.FC = () => {
 
   useEffect(() => {
     if (!modalVisible) {
-      setRequestSignatureResponse(undefined)
+      setRequestRulingSignatureResponse(undefined)
     }
-  }, [modalVisible, setRequestSignatureResponse])
+  }, [modalVisible, setRequestRulingSignatureResponse])
 
   const handleNextButtonClick: () => Promise<void> = async () => {
     if (!workingCase) {
       return
     }
 
-    // Request signature to get control code
+    // Request ruling signature to get control code
     try {
-      const requestSignatureResponse = await requestSignature(workingCase.id)
-      if (requestSignatureResponse) {
-        setRequestSignatureResponse(requestSignatureResponse)
+      const requestRulingSignatureResponse = await requestRulingSignature(
+        workingCase.id,
+      )
+      if (requestRulingSignatureResponse) {
+        setRequestRulingSignatureResponse(requestRulingSignatureResponse)
         setModalVisible(true)
       } else {
         // TODO: Handle error
@@ -148,14 +150,14 @@ export const Confirmation: React.FC = () => {
           <PdfButton
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
-            pdfType="ruling?shortVersion=false"
+            pdfType="ruling"
           />
         </Box>
         <Box marginBottom={15}>
           <PdfButton
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRulingShortVersion)}
-            pdfType="ruling?shortVersion=true"
+            pdfType="courtRecord"
           />
         </Box>
       </FormContentContainer>
@@ -189,7 +191,7 @@ export const Confirmation: React.FC = () => {
               : 'destructive'
           }
           onNextButtonClick={handleNextButtonClick}
-          nextIsLoading={isRequestingSignature}
+          nextIsLoading={isRequestingRulingSignature}
           hideNextButton={workingCase.judge?.id !== user?.id}
           infoBoxText={
             workingCase.judge?.id !== user?.id
@@ -202,7 +204,7 @@ export const Confirmation: React.FC = () => {
         <SigningModal
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
-          requestSignatureResponse={requestSignatureResponse}
+          requestSignatureResponse={requestRulingSignatureResponse}
           setModalVisible={setModalVisible}
         />
       )}

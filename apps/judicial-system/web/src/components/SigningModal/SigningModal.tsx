@@ -14,7 +14,7 @@ import type {
   SignatureConfirmationResponse,
 } from '@island.is/judicial-system/types'
 import { useCase } from '../../utils/hooks'
-import { SignatureConfirmationQuery } from '../../utils/mutations'
+import { RulingSignatureConfirmationQuery } from '../../utils/mutations'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import { Modal } from '..'
@@ -28,43 +28,44 @@ import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 interface SigningModalProps {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  requestSignatureResponse?: RequestSignatureResponse
+  requestRulingSignatureResponse?: RequestSignatureResponse
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const SigningModal: React.FC<SigningModalProps> = ({
   workingCase,
   setWorkingCase,
-  requestSignatureResponse,
+  requestRulingSignatureResponse,
   setModalVisible,
 }) => {
   const router = useRouter()
   const [
-    signatureConfirmationResponse,
-    setSignatureConfirmationResponse,
+    rulingSignatureConfirmationResponse,
+    setRulingSignatureConfirmationResponse,
   ] = useState<SignatureConfirmationResponse>()
 
   const { transitionCase, sendNotification } = useCase()
 
-  const { data } = useQuery(SignatureConfirmationQuery, {
+  const { data } = useQuery(RulingSignatureConfirmationQuery, {
     variables: {
       input: {
         caseId: workingCase.id,
-        documentToken: requestSignatureResponse?.documentToken,
+        documentToken: requestRulingSignatureResponse?.documentToken,
       },
     },
     fetchPolicy: 'no-cache',
   })
 
-  // TODO: Handle case when resSignatureConfirmationResponse is never set
-  const resSignatureConfirmationResponse = data?.signatureConfirmation
+  // TODO: Handle case when resRulingSignatureConfirmationResponse is never set
+  const resRulingSignatureConfirmationResponse =
+    data?.rulingSignatureConfirmation
 
   useEffect(() => {
     const completeSigning = async (
-      resSignatureConfirmationResponse: SignatureConfirmationResponse,
+      resRulingSignatureConfirmationResponse: SignatureConfirmationResponse,
     ) => {
       if (
-        resSignatureConfirmationResponse.documentSigned &&
+        resRulingSignatureConfirmationResponse.documentSigned &&
         workingCase.state === CaseState.RECEIVED
       ) {
         try {
@@ -88,15 +89,17 @@ const SigningModal: React.FC<SigningModalProps> = ({
         }
       }
 
-      setSignatureConfirmationResponse(resSignatureConfirmationResponse)
+      setRulingSignatureConfirmationResponse(
+        resRulingSignatureConfirmationResponse,
+      )
     }
 
-    if (resSignatureConfirmationResponse) {
-      completeSigning(resSignatureConfirmationResponse)
+    if (resRulingSignatureConfirmationResponse) {
+      completeSigning(resRulingSignatureConfirmationResponse)
     }
   }, [
-    resSignatureConfirmationResponse,
-    setSignatureConfirmationResponse,
+    resRulingSignatureConfirmationResponse,
+    setRulingSignatureConfirmationResponse,
     transitionCase,
     sendNotification,
     workingCase,
@@ -108,7 +111,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
       <>
         <Box marginBottom={2}>
           <Text variant="h2" color="blue400">
-            {`Öryggistala: ${requestSignatureResponse?.controlCode}`}
+            {`Öryggistala: ${requestRulingSignatureResponse?.controlCode}`}
           </Text>
         </Box>
         <Text>
@@ -130,37 +133,39 @@ const SigningModal: React.FC<SigningModalProps> = ({
   return (
     <Modal
       title={
-        !signatureConfirmationResponse
+        !rulingSignatureConfirmationResponse
           ? 'Rafræn undirritun'
-          : signatureConfirmationResponse.documentSigned
+          : rulingSignatureConfirmationResponse.documentSigned
           ? 'Úrskurður hefur verið staðfestur og undirritaður'
-          : signatureConfirmationResponse.code === 7023 // User cancelled
+          : rulingSignatureConfirmationResponse.code === 7023 // User cancelled
           ? 'Notandi hætti við undirritun'
           : 'Undirritun tókst ekki'
       }
       text={
-        !signatureConfirmationResponse ? (
+        !rulingSignatureConfirmationResponse ? (
           renderControlCode()
-        ) : signatureConfirmationResponse.documentSigned ? (
+        ) : rulingSignatureConfirmationResponse.documentSigned ? (
           <MarkdownWrapper text={renderSuccessText(workingCase.type)} />
         ) : (
           'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
         )
       }
       secondaryButtonText={
-        !signatureConfirmationResponse
+        !rulingSignatureConfirmationResponse
           ? undefined
-          : signatureConfirmationResponse.documentSigned
+          : rulingSignatureConfirmationResponse.documentSigned
           ? 'Loka glugga'
           : 'Loka og reyna aftur'
       }
-      primaryButtonText={signatureConfirmationResponse ? 'Senda ábendingu' : ''}
+      primaryButtonText={
+        rulingSignatureConfirmationResponse ? 'Senda ábendingu' : ''
+      }
       handlePrimaryButtonClick={() => {
         window.open(Constants.FEEDBACK_FORM_URL, '_blank')
         router.push(Constants.REQUEST_LIST_ROUTE)
       }}
       handleSecondaryButtonClick={async () => {
-        if (signatureConfirmationResponse?.documentSigned === true) {
+        if (rulingSignatureConfirmationResponse?.documentSigned === true) {
           router.push(Constants.REQUEST_LIST_ROUTE)
         } else {
           setModalVisible(false)

@@ -95,7 +95,9 @@ export const CourtRecord: React.FC = () => {
 
     const theCase = workingCase
 
-    autofill('courtStartDate', formatISO(new Date()), theCase)
+    if (theCase.courtDate) {
+      autofill('courtStartDate', theCase.courtDate, theCase)
+    }
 
     if (theCase.court) {
       autofill(
