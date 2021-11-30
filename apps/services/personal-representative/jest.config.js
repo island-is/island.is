@@ -12,8 +12,5 @@ module.exports = {
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   coverageDirectory:
     '../../../../coverage/apps/services/personal-representative',
-  setupFiles: ['./test/environment.jest.ts'],
-  setupFilesAfterEnv: ['./test/setup.ts'],
-  globalSetup: './test/globalSetup.ts',
-  globalTeardown: './test/globalTeardown.ts',
+  setupFiles: ['./test/environment.jest.ts']
 }
