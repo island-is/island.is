@@ -10,6 +10,7 @@ import {
   Field,
   InputType,
 } from '@nestjs/graphql'
+import { ApolloError } from 'apollo-server-express'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -107,6 +108,7 @@ export class NationalRegistryXRoadResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetNationalRegistryPersonLoadTestInput,
   ): Promise<NationalRegistryStatus | undefined> {
+    this.authorize(user.nationalId)
     const person = await this.nationalRegistryXRoadService.getNationalRegistryPerson(
       input.nationalId,
       user.authorization,
@@ -124,6 +126,7 @@ export class NationalRegistryXRoadResolver {
   async nationalRegistryCustodyLoadTest(
     @CurrentUser() user: User,
   ): Promise<NationalRegistryStatus | undefined> {
+    this.authorize(user.nationalId)
     const custody = await this.nationalRegistryXRoadService.getCustody(
       user.nationalId,
       user.authorization,
@@ -142,6 +145,7 @@ export class NationalRegistryXRoadResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetNationalRegistryPersonLoadTestInput,
   ): Promise<NationalRegistryStatus | undefined> {
+    this.authorize(user.nationalId)
     const parents = await this.nationalRegistryXRoadService.getCustodyParents(
       user.nationalId,
       input.nationalId,
@@ -160,6 +164,7 @@ export class NationalRegistryXRoadResolver {
   async nationalRegistryFamilyLoadTest(
     @CurrentUser() user: User,
   ): Promise<NationalRegistryStatus | undefined> {
+    this.authorize(user.nationalId)
     const family = await this.nationalRegistryXRoadService.getFamily(
       user.nationalId,
       user.authorization,
@@ -177,6 +182,7 @@ export class NationalRegistryXRoadResolver {
   async nationalRegistryFasteignirLoadTest(
     @CurrentUser() user: User,
   ): Promise<NationalRegistryStatus | undefined> {
+    this.authorize(user.nationalId)
     const fasteignir = await this.nationalRegistryXRoadService.getFasteignir(
       user.nationalId,
       user.authorization,
@@ -195,6 +201,7 @@ export class NationalRegistryXRoadResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetNationalRegistryFasteignLoadTestInput,
   ): Promise<NationalRegistryStatus | undefined> {
+    this.authorize(user.nationalId)
     const fasteign = await this.nationalRegistryXRoadService.getFasteign(
       input.propertyNumber,
       user.authorization,
@@ -213,6 +220,7 @@ export class NationalRegistryXRoadResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetNationalRegistryFasteignLoadTestInput,
   ): Promise<NationalRegistryStatus | undefined> {
+    this.authorize(user.nationalId)
     const eigendur = await this.nationalRegistryXRoadService.getFasteignEigendur(
       input.propertyNumber,
       user.authorization,
@@ -231,6 +239,7 @@ export class NationalRegistryXRoadResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetNationalRegistryFasteignLoadTestInput,
   ): Promise<NationalRegistryStatus | undefined> {
+    this.authorize(user.nationalId)
     const notkun = await this.nationalRegistryXRoadService.getFasteignNotkun(
       input.propertyNumber,
       user.authorization,
@@ -238,6 +247,13 @@ export class NationalRegistryXRoadResolver {
     return {
       status: '200',
       data: notkun || [],
+    }
+  }
+
+  private authorize(nationalId: string) {
+    const loadTestNationalId = process.env.LOAD_TEST_NATIONAL_ID
+    if (!loadTestNationalId || nationalId !== loadTestNationalId) {
+      throw new ApolloError('You are not authorized for this!', '401')
     }
   }
 }
