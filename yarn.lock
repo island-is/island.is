@@ -3962,10 +3962,10 @@
   resolved "https://registry.yarnpkg.com/@hugsmidjan/qj/-/qj-4.7.0.tgz#ef2793bf1f349bc01b2118dc2d20d6f22163fa84"
   integrity sha512-/kIAN1WvMTlzmtKXgIRl57KbTpAd9UmNgPfcO0NtZNllwhfKDRVOrN9c6ZeBxnrfWsYBP6/BFldYur1aBDBO2g==
 
-"@hugsmidjan/regulations-editor@0.4.7":
-  version "0.4.7"
-  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.4.7.tgz#b78fe3ae70535d6d54bdb56d0480d182b7bc7e21"
-  integrity sha512-9GJOqp2P5dMjks6kWgegWtwyExzR8nqw3iZhLRwh6Z+51BKSqbX1mX7mkPTaUacxI0U0WZRxBlStKy1aXJ+LnA==
+"@hugsmidjan/regulations-editor@0.4.8":
+  version "0.4.8"
+  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.4.8.tgz#aadf218dd8761d6c04a39dc4c4879d9d84b40588"
+  integrity sha512-+zfGUehMvgGqJAj++kcJu5V/MW9L8s5di96O6tBPMaufYX2wmNRIn9MkT+HmOS/z7LJQ47GWnSAYfdsZkhQW2w==
   dependencies:
     "@hugsmidjan/qj" "^4.7.0"
     "@tinymce/tinymce-react" "^3.8.4"
@@ -20124,10 +20124,10 @@ mobx-react@^7.0.5:
   dependencies:
     mobx-react-lite "^3.2.0"
 
-mobx@6.1.7:
-  version "6.1.7"
-  resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.1.7.tgz#009c65f6909ee89ab42dd4b058577739f0d899df"
-  integrity sha512-2iIgg2o0jd/bWAK/9KHJ1uwKHGowKyaTUM4qarJ0qGdLskYcB3sJevjjV7t7jW0WVjItz6BBlPNiZ14oHTpvMg==
+mobx@6.3.7:
+  version "6.3.7"
+  resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.3.7.tgz#9ed85561e86da45141134c8fa20cf5f9c7246c3d"
+  integrity sha512-X7yU7eOEyxIBk4gjIi2UIilwdw48gXh0kcZ5ex3Rc+COJsJmJ4SNpf42uYea3aUqb1hedTv5xzJrq5Q55p0P5g==
 
 mocha@^8.2.0:
   version "8.3.2"

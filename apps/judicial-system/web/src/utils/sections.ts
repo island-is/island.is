@@ -1,4 +1,4 @@
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseType, User } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   isAccusedStepValidRC,
@@ -27,6 +27,12 @@ interface Section {
     name: string
     href: string | undefined
   }[]
+}
+
+const hasCourtPermission = (workingCase: Case, user?: User) => {
+  return (
+    user?.id === workingCase.judge?.id || user?.id === workingCase.registrar?.id
+  )
 }
 
 export const findLastValidStep = (section: Section) => {
@@ -177,6 +183,7 @@ export const getInvestigationCaseProsecutorSection = (
 
 export const getInvestigationCaseCourtSections = (
   workingCase: Case,
+  user?: User,
   activeSubSection?: number,
 ): Section => {
   const { id } = workingCase
@@ -194,7 +201,8 @@ export const getInvestigationCaseCourtSections = (
         name: 'Fyrirtökutími',
         href:
           (activeSubSection && activeSubSection > 1) ||
-          isOverviewStepValidIC(workingCase)
+          (hasCourtPermission(workingCase, user) &&
+            isOverviewStepValidIC(workingCase))
             ? `${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`
             : undefined,
       },
@@ -203,7 +211,8 @@ export const getInvestigationCaseCourtSections = (
         name: 'Þingbók',
         href:
           (activeSubSection && activeSubSection > 2) ||
-          (isOverviewStepValidIC(workingCase) &&
+          (hasCourtPermission(workingCase, user) &&
+            isOverviewStepValidIC(workingCase) &&
             isCourtHearingArrangementsStepValidIC(workingCase))
             ? `${Constants.IC_COURT_RECORD_ROUTE}/${id}`
             : undefined,
@@ -213,7 +222,8 @@ export const getInvestigationCaseCourtSections = (
         name: 'Úrskurður',
         href:
           (activeSubSection && activeSubSection > 3) ||
-          (isOverviewStepValidIC(workingCase) &&
+          (hasCourtPermission(workingCase, user) &&
+            isOverviewStepValidIC(workingCase) &&
             isCourtHearingArrangementsStepValidIC(workingCase) &&
             isCourtRecordStepValidIC(workingCase))
             ? `${Constants.IC_RULING_STEP_ONE_ROUTE}/${id}`
@@ -224,7 +234,8 @@ export const getInvestigationCaseCourtSections = (
         name: 'Úrskurðarorð',
         href:
           (activeSubSection && activeSubSection > 4) ||
-          (isOverviewStepValidIC(workingCase) &&
+          (hasCourtPermission(workingCase, user) &&
+            isOverviewStepValidIC(workingCase) &&
             isCourtHearingArrangementsStepValidIC(workingCase) &&
             isCourtRecordStepValidIC(workingCase) &&
             isRulingStepOneValidIC(workingCase))
@@ -235,6 +246,7 @@ export const getInvestigationCaseCourtSections = (
         type: 'SUB_SECTION',
         name: 'Yfirlit úrskurðar',
         href:
+          hasCourtPermission(workingCase, user) &&
           isOverviewStepValidIC(workingCase) &&
           isCourtHearingArrangementsStepValidIC(workingCase) &&
           isCourtRecordStepValidIC(workingCase) &&
@@ -249,6 +261,7 @@ export const getInvestigationCaseCourtSections = (
 
 export const getCourtSections = (
   workingCase: Case,
+  user?: User,
   activeSubSection?: number,
 ): Section => {
   const { id } = workingCase
@@ -266,7 +279,8 @@ export const getCourtSections = (
         name: 'Fyrirtökutími',
         href:
           (activeSubSection && activeSubSection > 1) ||
-          isOverviewStepValidRC(workingCase)
+          (hasCourtPermission(workingCase, user) &&
+            isOverviewStepValidRC(workingCase))
             ? `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`
             : undefined,
       },
@@ -275,7 +289,8 @@ export const getCourtSections = (
         name: 'Þingbók',
         href:
           (activeSubSection && activeSubSection > 2) ||
-          (isOverviewStepValidRC(workingCase) &&
+          (hasCourtPermission(workingCase, user) &&
+            isOverviewStepValidRC(workingCase) &&
             isCourtHearingArrangemenstStepValidRC(workingCase))
             ? `${Constants.COURT_RECORD_ROUTE}/${id}`
             : undefined,
@@ -285,7 +300,8 @@ export const getCourtSections = (
         name: 'Úrskurður',
         href:
           (activeSubSection && activeSubSection > 3) ||
-          (isOverviewStepValidRC(workingCase) &&
+          (hasCourtPermission(workingCase, user) &&
+            isOverviewStepValidRC(workingCase) &&
             isCourtHearingArrangemenstStepValidRC(workingCase) &&
             isCourtRecordStepValidRC(workingCase))
             ? `${Constants.RULING_STEP_ONE_ROUTE}/${id}`
@@ -296,7 +312,8 @@ export const getCourtSections = (
         name: 'Úrskurðarorð',
         href:
           (activeSubSection && activeSubSection > 4) ||
-          (isOverviewStepValidRC(workingCase) &&
+          (hasCourtPermission(workingCase, user) &&
+            isOverviewStepValidRC(workingCase) &&
             isCourtHearingArrangemenstStepValidRC(workingCase) &&
             isCourtRecordStepValidRC(workingCase) &&
             isRulingStepOneValidRC(workingCase))
@@ -307,6 +324,7 @@ export const getCourtSections = (
         type: 'SUB_SECTION',
         name: 'Yfirlit úrskurðar',
         href:
+          hasCourtPermission(workingCase, user) &&
           isOverviewStepValidRC(workingCase) &&
           isCourtHearingArrangemenstStepValidRC(workingCase) &&
           isCourtRecordStepValidRC(workingCase) &&

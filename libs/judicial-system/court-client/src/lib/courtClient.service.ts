@@ -64,20 +64,20 @@ export class CourtClientService {
 
   // Detecting authentication token expiration is imperfect and brittle.
   // Therefore, relogin is forced after a certain number of consecutive unknown errors from the api.
-  private errorCount = 3
+  private errorCount = 0
 
-  private async login(clientId: string) {
+  private async login(clientId: string): Promise<void> {
     // Login is already in progress
     if (this.loginPromise) {
       return this.loginPromise
     }
 
-    // Reset the error counter
-    this.errorCount = 0
-
     this.loginPromise = this.authenticateApi
       .authenticate(this.options[clientId])
       .then((res) => {
+        // Reset the error counter
+        this.errorCount = 0
+
         // Strip the quotation marks from the result
         this.authenticationToken[clientId] = stripResult(res)
       })
@@ -123,7 +123,7 @@ export class CourtClientService {
     // Login if there is no authentication token or too many errors since last login
     if (
       !this.authenticationToken[clientId] ||
-      this.errorCount > MAX_ERRORS_BEFORE_RELOGIN
+      this.errorCount >= MAX_ERRORS_BEFORE_RELOGIN
     ) {
       await this.login(clientId)
     }
@@ -140,14 +140,15 @@ export class CourtClientService {
           statusText?: string
         }) => {
           // Error responses from the court system are a bit tricky.
-          // There are at least two types of possible error objects
-          // that are used for different types of errors.
-
+          // There are at least two types of possible error objects.
           // Start by checking for authentication token expiration.
           if (
-            reason.statusCode === 400 &&
-            reason.body ===
-              `authenticationToken is expired - ${currentAuthenticationToken}`
+            (reason.status === 400 &&
+              reason.statusText ===
+                `authenticationToken is expired - ${currentAuthenticationToken}`) ||
+            (reason.statusCode === 400 &&
+              reason.body ===
+                `authenticationToken is expired - ${currentAuthenticationToken}`)
           ) {
             this.logger.warn(
               'Error while calling the court service - attempting relogin',

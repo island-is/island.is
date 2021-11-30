@@ -76,7 +76,9 @@ const CourtRecord = () => {
     if (!workingCase && data?.case) {
       const theCase = data.case
 
-      autofill('courtStartDate', formatISO(new Date()), theCase)
+      if (theCase.courtDate) {
+        autofill('courtStartDate', theCase.courtDate, theCase)
+      }
 
       if (theCase.court) {
         autofill(
