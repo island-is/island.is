@@ -29,7 +29,7 @@ const ApplicationInfo = () => {
     user,
     setNationalRegistryData,
     setMunicipalityById,
-    loadingMuncipality,
+    loadingMunicipality,
   } = useContext(AppContext)
 
   const [accept, setAccept] = useState(false)
@@ -48,36 +48,17 @@ const ApplicationInfo = () => {
     router.pathname,
   ) as NavigationProps
 
-  // TODO: Add once national registry is connected to x-road
-  // const { data } = await nationalRegistryQuery({
-  //   input: { ssn: user?.nationalId },
-  // })
-
-  const data: { nationalRegistryUserV2: NationalRegistryData } = {
-    nationalRegistryUserV2: {
-      nationalId: user?.nationalId ?? '',
-      fullName: user?.name ?? '',
-      address: {
-        streetName: 'Hafnargata 7',
-        postalCode: '200',
-        city: 'Hafnarfjörður',
-        municipalityCode: '1400',
-      },
-      spouse: {
-        nationalId: undefined,
-        maritalStatus: undefined,
-        name: undefined,
-      },
-    },
-  }
-
-  if (!data || !data.nationalRegistryUserV2.address) {
-    return
-  }
-
   const errorCheck = async () => {
     if (!accept || !user) {
       setHasError(true)
+      return
+    }
+
+    const { data } = await nationalRegistryQuery({
+      input: { ssn: user?.nationalId },
+    })
+
+    if (!data || !data.nationalRegistryUserV2.address) {
       return
     }
 
@@ -169,7 +150,7 @@ const ApplicationInfo = () => {
         nextButtonText="Staðfesta"
         nextButtonIcon="checkmark"
         onNextButtonClick={errorCheck}
-        nextIsLoading={loadingMuncipality}
+        nextIsLoading={loadingMunicipality}
       />
     </>
   )
