@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useLazyQuery, useMutation } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import {
   ActivationButtonTableItem,
   ApplicationOverviewSkeleton,
@@ -9,13 +9,7 @@ import {
   TableHeaders,
   TextTableItem,
 } from '@island.is/financial-aid-web/veita/src/components'
-import {
-  Text,
-  Box,
-  Button,
-  toast,
-  ToastContainer,
-} from '@island.is/island-ui/core'
+import { Text, Box, Button, ToastContainer } from '@island.is/island-ui/core'
 
 import * as tableStyles from '../../sharedStyles/Table.css'
 import * as headerStyles from '../../sharedStyles/Header.css'
@@ -27,16 +21,15 @@ import {
   StaffRole,
   staffRoleDescription,
 } from '@island.is/financial-aid/shared/lib'
-import {
-  SupervisorsQuery,
-  UpdateStaffMutation,
-} from '@island.is/financial-aid-web/veita/graphql'
+import { SupervisorsQuery } from '@island.is/financial-aid-web/veita/graphql'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+import { useStaff } from '../../utils/useStaff'
 
 export const Supervisors = () => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [supervisors, setSupervisors] = useState<Staff[]>()
   const { admin } = useContext(AdminContext)
+  const { changeUserActivity, staffActivationLoading } = useStaff()
 
   const [getSupervisors, { data, error, loading }] = useLazyQuery<{
     supervisors: Staff[]
@@ -44,9 +37,6 @@ export const Supervisors = () => {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
-  const [updateStaff, { loading: staffLoading }] = useMutation(
-    UpdateStaffMutation,
-  )
 
   useEffect(() => {
     getSupervisors()
@@ -60,25 +50,6 @@ export const Supervisors = () => {
 
   const isLoggedInUser = (staff: Staff) =>
     admin?.nationalId === staff.nationalId
-
-  const changeUserActivity = async (staff: Staff) => {
-    return await updateStaff({
-      variables: {
-        input: {
-          id: staff.id,
-          active: !staff.active,
-        },
-      },
-    })
-      .then(() => {
-        getSupervisors()
-      })
-      .catch(() => {
-        toast.error(
-          'Það mistókst að breyta hlutverki notanda, vinasamlega reynið aftur síðar',
-        )
-      })
-  }
 
   const refreshList = () => {
     setIsModalVisible(false)
@@ -151,8 +122,13 @@ export const Supervisors = () => {
                       isLoggedInUser(item) === false &&
                         ActivationButtonTableItem(
                           item.active ? 'Óvirkja' : 'Virkja',
-                          staffLoading,
-                          () => changeUserActivity(item),
+                          staffActivationLoading,
+                          () =>
+                            changeUserActivity(!item.active, item.id).then(
+                              () => {
+                                getSupervisors()
+                              },
+                            ),
                           item.active,
                         ),
                     ]}
