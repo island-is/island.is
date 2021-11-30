@@ -21,3 +21,8 @@ export interface ValidationFailedProblem extends BaseProblem {
   type: ProblemType.VALIDATION_FAILED
   fields: ValidationFailedFields
 }
+
+// Should be avoided whenever possible in favour of typed problems.
+export interface UnknownProblem extends BaseProblem {
+  [key: string]: unknown
+}
