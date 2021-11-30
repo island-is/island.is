@@ -125,6 +125,8 @@ export const MySettings = () => {
   ]
 
   const areRequiredFieldsFilled =
+    !admin ||
+    !admin.staff ||
     !state.name ||
     !state.email ||
     !state.nationalId ||
@@ -132,10 +134,6 @@ export const MySettings = () => {
     state.nationalId.length !== 10
 
   const onSubmitUpdate = async () => {
-    if (!admin || !admin.staff) {
-      return
-    }
-
     if (areRequiredFieldsFilled) {
       setState({ ...state, hasError: true })
       return
@@ -145,7 +143,7 @@ export const MySettings = () => {
       await updateStaff({
         variables: {
           input: {
-            id: admin?.staff.id,
+            id: admin?.staff?.id,
             name: state.name,
             nationalId: state.nationalId,
             nickname: state.nickname,
