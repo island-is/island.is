@@ -12,6 +12,8 @@ import { appWithTranslation } from '../i18n'
 import { isAuthenticated } from '../auth/utils'
 import { withHealthchecks } from '../utils/Healthchecks/withHealthchecks'
 import { Authenticator } from '@island.is/auth/react'
+import { Router } from 'react-router-dom'
+
 
 const {
   publicRuntimeConfig: { SENTRY_DSN },
@@ -27,6 +29,7 @@ interface Props {
 }
 
 class SupportApplication extends App<Props> {
+  
   static async getInitialProps(appContext) {
     const { Component, ctx } = appContext
     const apolloClient = initApollo({})
@@ -95,7 +98,7 @@ class SupportApplication extends App<Props> {
 
     return (
       <ApolloProvider client={initApollo(pageProps.apolloState)}>
-        <BrowserRouter>
+        <Router>
           <Authenticator>
             <AppLayout isAuthenticated={isAuthenticated} {...layoutProps}>
               <ErrorBoundary>
@@ -104,7 +107,7 @@ class SupportApplication extends App<Props> {
               <Toast />
             </AppLayout>
           </Authenticator>
-        </BrowserRouter>
+        </Router>
       </ApolloProvider>
     )
   }
