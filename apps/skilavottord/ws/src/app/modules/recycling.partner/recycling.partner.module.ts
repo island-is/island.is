@@ -6,9 +6,7 @@ import { RecyclingPartnerResolver } from './recycling.partner.resolver'
 import { RecyclingPartnerService } from './recycling.partner.service'
 
 @Module({
-  imports: [
-    SequelizeModule.forFeature([RecyclingPartnerModel]),
-  ],
+  imports: [SequelizeModule.forFeature([RecyclingPartnerModel])],
   providers: [RecyclingPartnerResolver, RecyclingPartnerService],
   exports: [RecyclingPartnerService],
 })

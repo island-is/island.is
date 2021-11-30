@@ -38,9 +38,6 @@ const getBasicVehicleResp: AxiosResponse = {
 }
 
 describe('skilavottordApiTest', () => {
-  it('should work', () => {
-    expect(SamgongustofaService.test()).toEqual('test')
-  })
   describe('getVehicleInformationTest', () => {
     let recyclingRequestService: RecyclingRequestService
     let samgongustofaService: SamgongustofaService
