@@ -9,8 +9,8 @@ import { Authorize } from '../auth'
 import {
   RecyclingRequestModel,
   RecyclingRequestUnion,
-} from './recycling.request.model'
-import { RecyclingRequestService } from './recycling.request.service'
+} from './recyclingRequest.model'
+import { RecyclingRequestService } from './recyclingRequest.service'
 
 @Resolver(() => RecyclingRequestModel)
 export class RecyclingRequestResolver {
