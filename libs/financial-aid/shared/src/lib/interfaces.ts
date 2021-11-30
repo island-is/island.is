@@ -36,7 +36,7 @@ export interface Staff {
   municipalityHomepage?: string
   nickname?: string
   email?: string
-  pseudonymName?: boolean
+  usePseudoName?: boolean
 }
 
 export interface UpdateStaff {
@@ -46,7 +46,7 @@ export interface UpdateStaff {
   active?: boolean
   nickname?: string
   email?: string
-  pseudonymName?: boolean
+  usePseudoName?: boolean
 }
 
 export interface Aid {

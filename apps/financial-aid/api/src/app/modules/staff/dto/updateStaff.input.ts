@@ -36,5 +36,5 @@ export class UpdateStaffInput implements UpdateStaff {
 
   @Allow()
   @Field({ nullable: true })
-  readonly pseudonymName?: boolean
+  readonly usePseudoName?: boolean
 }

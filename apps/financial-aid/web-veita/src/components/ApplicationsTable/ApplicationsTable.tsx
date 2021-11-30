@@ -11,7 +11,7 @@ import {
   LoadingContainer,
   TableSkeleton,
   TextTableItem,
-  PseudoName,
+  usePseudoName,
   State,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
@@ -119,7 +119,7 @@ const ApplicationsTable = ({
                 {applications.map((item: Application, index) => (
                   <TableBody
                     items={[
-                      PseudoName(item.nationalId, item.name),
+                      usePseudoName(item.nationalId, item.name),
                       State(item.state),
                       TextTableItem(
                         'default',

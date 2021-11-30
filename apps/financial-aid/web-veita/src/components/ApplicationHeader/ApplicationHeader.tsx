@@ -102,9 +102,7 @@ const ApplicationHeader = ({
           </Box>
 
           <Text as="h2" variant="h1">
-            {admin?.staff?.pseudonymName
-              ? GenerateName(application.nationalId)
-              : application.name}
+            {GenerateName(application.nationalId, application.name)}
           </Text>
         </Box>
 

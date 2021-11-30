@@ -73,7 +73,7 @@ export class StaffModel extends Model<Staff> {
     allowNull: false,
   })
   @ApiProperty()
-  pseudonymName: boolean
+  usePseudoName: boolean
 
   @Column({
     type: DataType.STRING,

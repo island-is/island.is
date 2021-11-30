@@ -15,6 +15,8 @@ import * as profileStyles from '@island.is/financial-aid-web/veita/src/component
 import {
   InputType,
   isEmailValid,
+  Staff,
+  staffRoleDescription,
   User,
 } from '@island.is/financial-aid/shared/lib'
 import { useLazyQuery, useMutation } from '@apollo/client'
@@ -28,7 +30,7 @@ interface mySettingsState {
   name?: string
   email?: string
   nickname?: string
-  pseudonymName: boolean
+  usePseudoName: boolean
   hasError: boolean
   hasSubmitError: boolean
 }
@@ -36,65 +38,19 @@ interface mySettingsState {
 export const MySettings = () => {
   const { admin, setAdmin } = useContext(AdminContext)
 
-  const [updateStaff, { loading }] = useMutation(UpdateStaffMutation)
-
-  const [getCurrentUser, { data }] = useLazyQuery<{
-    currentUser: User
-  }>(CurrentUserQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
-
-  useEffect(() => {
-    if (data && setAdmin) {
-      setAdmin(data.currentUser)
-    }
-  }, [data])
+  const [updateStaff, { data, loading }] = useMutation<{ updateStaff: Staff }>(
+    UpdateStaffMutation,
+  )
 
   const [state, setState] = useState<mySettingsState>({
-    nationalId: admin?.staff?.nationalId,
-    name: admin?.staff?.name,
     email: admin?.staff?.email,
     nickname: admin?.staff?.nickname,
-    pseudonymName: admin?.staff?.pseudonymName ?? false,
+    usePseudoName: admin?.staff?.usePseudoName ?? false,
     hasError: false,
     hasSubmitError: false,
   })
 
   const inputSettings = [
-    {
-      label: 'Nafn',
-      value: state.name,
-      bgIsBlue: true,
-      type: 'text' as InputType,
-      onChange: (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-      ) => {
-        setState({
-          ...state,
-          name: event.target.value,
-          hasError: false,
-        })
-      },
-      error: !state.name,
-    },
-    {
-      label: 'Kennitala',
-      value: state.nationalId,
-      type: 'number' as InputType,
-      onChange: (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-      ) => {
-        if (event.target.value.length <= 10) {
-          setState({
-            ...state,
-            nationalId: event.target.value,
-            hasError: false,
-          })
-        }
-      },
-      error: !state.nationalId || state.nationalId.length !== 10,
-    },
     {
       label: 'Netfang',
       value: state.email,
@@ -125,13 +81,7 @@ export const MySettings = () => {
   ]
 
   const areRequiredFieldsFilled =
-    !admin ||
-    !admin.staff ||
-    !state.name ||
-    !state.email ||
-    !state.nationalId ||
-    !isEmailValid(state.email) ||
-    state.nationalId.length !== 10
+    !admin || !admin.staff || !state.email || !isEmailValid(state.email)
 
   const onSubmitUpdate = async () => {
     if (areRequiredFieldsFilled) {
@@ -144,17 +94,16 @@ export const MySettings = () => {
         variables: {
           input: {
             id: admin?.staff?.id,
-            name: state.name,
-            nationalId: state.nationalId,
             nickname: state.nickname,
             email: state.email,
-            pseudonymName: state.pseudonymName,
+            usePseudoName: state.usePseudoName,
           },
         },
       }).then((res) => {
-        getCurrentUser()
-
-        toast.success('Það tókst að uppfæra notanda')
+        if (res.data?.updateStaff && setAdmin && admin) {
+          setAdmin({ ...admin, staff: res.data?.updateStaff })
+          toast.success('Það tókst að uppfæra notanda')
+        }
       })
     } catch (e) {
       toast.error(
@@ -215,9 +164,9 @@ export const MySettings = () => {
                   Nota dulnefni fyrir nöfn umsækjenda í yfirlitsskjám
                 </Text>
               }
-              checked={state.pseudonymName}
+              checked={state.usePseudoName}
               onChange={(newChecked) => {
-                setState({ ...state, pseudonymName: newChecked })
+                setState({ ...state, usePseudoName: newChecked })
               }}
               className={``}
             />

@@ -6,7 +6,7 @@ module.exports = {
       Promise.all([
         queryInterface.addColumn(
           'staff',
-          'pseudonym_name',
+          'use_pseudo_name',
           {
             type: Sequelize.BOOLEAN,
             allowNull: false,
@@ -21,7 +21,7 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
-        queryInterface.removeColumn('staff', 'pseudonym_name', {
+        queryInterface.removeColumn('staff', 'use_pseudo_name', {
           transaction: t,
         }),
       ]),

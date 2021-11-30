@@ -37,5 +37,5 @@ export class UpdateStaffDto {
   @IsOptional()
   @IsBoolean()
   @ApiProperty()
-  readonly pseudonymName: boolean
+  readonly usePseudoName: boolean
 }
