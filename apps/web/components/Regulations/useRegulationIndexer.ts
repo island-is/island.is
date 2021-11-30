@@ -85,6 +85,17 @@ const insertIds = (
   const DIVIDER = '__'
   const foundIds: Record<string, number> = {}
   return html.replace(
+    // NOTE:
+    // HTML parsing of HTML with Regexp is only tenable because
+    // the regulation texts coming from the API are guaranteed to be
+    // prettier-formatted and passed through a strict cleanup filter
+    // which only passes through
+    //  * explicitly allowed elements
+    //  + with eplicitly allowed (and sorted!) atttributes
+    //  * with explicitly allowed values.
+    //
+    // Do not try this at home.
+    //
     / class="(section|chapter|subchapter|article)__title"\s*>(([^<]+)(?:.[^/][^]*?)?)<\/[hH]\d/g,
     (
       htmlSnippet: string,
@@ -98,6 +109,9 @@ const insertIds = (
         foundIds[id] = 1
       } else {
         let count = foundIds[id] + 1
+        // Re-increment the count in the astronomically unlikely caase
+        // that an actual, "naturally occurring" header text
+        // actually ended with the characters " __${count}"
         while (foundIds[id + DIVIDER + count]) count++
 
         const newId = id + DIVIDER + count
@@ -106,8 +120,17 @@ const insertIds = (
         foundIds[newId] = 1
         id = newId
       }
-
       const title = longTitle.replace(/<[^]+?>/g, '').trim()
+
+      // FWIW: The following HTML snippet
+      //   <h3 class="article__title">1. gr. <em class="article__name">Helstu hugtök</em></h3>
+      //
+      // results in these variable values:
+      //
+      //   type: 'article',
+      //   title: '1. gr. Helstu hugtök',
+      //   id: '1.gr.',
+      //
       flatIndex.push({
         title,
         type,
