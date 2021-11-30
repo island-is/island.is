@@ -50,7 +50,10 @@ const PageLayout: React.FC<PageProps> = ({
   )
 
   useEffect(() => {
-    window.scrollTo(0, 0)
+    // window is not defined when running tests
+    if (window) {
+      window.scrollTo(0, 0)
+    }
   }, [])
 
   return isLoading ? (
