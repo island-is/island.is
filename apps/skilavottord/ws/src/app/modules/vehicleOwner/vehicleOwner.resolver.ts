@@ -5,8 +5,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { Authorize } from '../auth'
-import { VehicleOwnerModel } from './vehicle.owner.model'
-import { VehicleOwnerService } from './vehicle.owner.service'
+import { VehicleOwnerModel } from './vehicleOwner.model'
+import { VehicleOwnerService } from './vehicleOwner.service'
 
 @Resolver(() => VehicleOwnerModel)
 export class VehicleOwnerResolver {
