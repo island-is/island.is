@@ -6,8 +6,10 @@ import {
     Table,
     UpdatedAt,
     PrimaryKey,
+    HasMany
   } from 'sequelize-typescript'
-  import { ApiProperty } from '@nestjs/swagger'
+  import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+  import { PersonalRepresentativeRight } from './personal-representative-right.model'
   
   @Table({
     tableName: 'personal_representative_right_type',
@@ -16,6 +18,7 @@ import {
     @PrimaryKey
     @Column({
       type: DataType.STRING,
+      primaryKey: true,
       allowNull: false,
     })
     @ApiProperty()
@@ -49,5 +52,9 @@ import {
     @UpdatedAt
     @ApiProperty()
     readonly modified?: Date
+
+    @HasMany(() => PersonalRepresentativeRight)
+    @ApiPropertyOptional()
+    rights?: PersonalRepresentativeRight[]  
   }
   
