@@ -7,6 +7,7 @@ type ItemType =
   | 'document' // Regulation, appendix, comments
   | 'section'
   | 'chapter'
+  | 'subchapter'
   | 'article'
 
 type IndexItem = {
@@ -33,7 +34,8 @@ const levels: Record<ItemType, number> = {
   document: 1,
   section: 2,
   chapter: 3,
-  article: 4,
+  subchapter: 4,
+  article: 5,
 } as const
 
 const flatIndexToTree = (flatIndex: FlatIndex): IndexTree => {
@@ -81,7 +83,7 @@ const insertIds = (
   idPrefix = '',
 ): HTMLText =>
   html.replace(
-    / class="(section|chapter|article)__title"\s*>(([^<]+)(?:.[^/][^]*?)?)<\/[hH]\d/g,
+    / class="(section|chapter|subchapter|article)__title"\s*>(([^<]+)(?:.[^/][^]*?)?)<\/[hH]\d/g,
     (
       htmlSnippet: string,
       _type: string,
