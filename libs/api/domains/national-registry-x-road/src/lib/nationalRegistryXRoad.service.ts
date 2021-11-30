@@ -20,18 +20,20 @@ export class NationalRegistryXRoadService {
     return this.nationalRegistryApi.withMiddleware(new AuthMiddleware(auth))
   }
 
+  private handle404(error: FetchError) {
+    if (error.status === 404) {
+      return undefined
+    }
+    throw error
+  }
+
   async getNationalRegistryResidenceHistory(
     user: User,
     nationalId: string,
   ): Promise<NationalRegistryResidence[] | undefined> {
     const historyList = await this.nationalRegistryApiWithAuth(user)
       .einstaklingarGetBuseta({ id: nationalId })
-      .catch((err: FetchError) => {
-        if (err.status === 404) {
-          return undefined
-        }
-        throw err
-      })
+      .catch(this.handle404)
 
     return historyList?.map((heimili) => ({
       address: {
@@ -50,39 +52,38 @@ export class NationalRegistryXRoadService {
   async getNationalRegistryPerson(
     user: User,
     nationalId: string,
-  ): Promise<NationalRegistryPerson> {
-    const person = await this.nationalRegistryApiWithAuth(
-      user,
-    ).einstaklingarGetEinstaklingur({ id: nationalId })
+  ): Promise<NationalRegistryPerson | undefined> {
+    const person = await this.nationalRegistryApiWithAuth(user)
+      .einstaklingarGetEinstaklingur({ id: nationalId })
+      .catch(this.handle404)
 
-    return {
-      nationalId: person.kennitala,
-      fullName: person.nafn,
-      address: person.logheimili && {
-        streetName: person.logheimili.heiti,
-        postalCode: person.logheimili.postnumer,
-        city: person.logheimili.stadur,
-        municipalityCode: person.logheimili.sveitarfelagsnumer,
-      },
-      genderCode: person.kynkodi,
-    }
+    return (
+      person && {
+        nationalId: person.kennitala,
+        fullName: person.nafn,
+        address: person.logheimili && {
+          streetName: person.logheimili.heiti,
+          postalCode: person.logheimili.postnumer,
+          city: person.logheimili.stadur,
+          municipalityCode: person.logheimili.sveitarfelagsnumer,
+        },
+        genderCode: person.kynkodi,
+      }
+    )
   }
 
   async getChildrenCustodyInformation(
     user: User,
     parentNationalId: string,
-  ): Promise<
-    | NationalRegistryPerson[]
-    | Omit<NationalRegistryPerson, 'otherParent'>[]
-    | undefined
-  > {
+  ): Promise<NationalRegistryPerson[]> {
     const nationalRegistryApi = this.nationalRegistryApiWithAuth(user)
-    const childrenNationalIds = await nationalRegistryApi.einstaklingarGetForsja(
-      {
+    const childrenNationalIds = await nationalRegistryApi
+      .einstaklingarGetForsja({
         id: parentNationalId,
-      },
-    )
-    if (!Array.isArray(childrenNationalIds)) {
+      })
+      .catch(this.handle404)
+
+    if (!childrenNationalIds) {
       return []
     }
 
@@ -132,15 +133,17 @@ export class NationalRegistryXRoadService {
   async getSpouse(
     user: User,
     nationalId: string,
-  ): Promise<NationalRegistrySpouse> {
-    const spouse = await this.nationalRegistryApiWithAuth(
-      user,
-    ).einstaklingarGetHjuskapur({ id: nationalId })
+  ): Promise<NationalRegistrySpouse | undefined> {
+    const spouse = await this.nationalRegistryApiWithAuth(user)
+      .einstaklingarGetHjuskapur({ id: nationalId })
+      .catch(this.handle404)
 
-    return {
-      nationalId: spouse.kennitalaMaka || undefined,
-      name: spouse.nafnMaka || undefined,
-      maritalStatus: spouse.hjuskaparkodi || undefined,
-    }
+    return (
+      spouse && {
+        nationalId: spouse.kennitalaMaka,
+        name: spouse.nafnMaka,
+        maritalStatus: spouse.hjuskaparkodi,
+      }
+    )
   }
 }

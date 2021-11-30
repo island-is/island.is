@@ -24,12 +24,13 @@ export class NationalRegistryXRoadResolver {
 
   @Query(() => NationalRegistryPerson, {
     name: 'nationalRegistryUserV2',
+    nullable: true,
   })
   @Audit()
   async nationalRegistryPersons(
     @CurrentUser() user: User,
   ): Promise<NationalRegistryPerson | undefined> {
-    return await this.nationalRegistryXRoadService.getNationalRegistryPerson(
+    return this.nationalRegistryXRoadService.getNationalRegistryPerson(
       user,
       user.nationalId,
     )
