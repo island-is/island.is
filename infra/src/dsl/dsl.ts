@@ -259,4 +259,4 @@ export const service = <Service extends string>(
   return new ServiceBuilder(name)
 }
 
-export const json = (value: unknown): ValueType => () => JSON.stringify(value)
+export const json = (value: unknown): ValueType => JSON.stringify(value)
