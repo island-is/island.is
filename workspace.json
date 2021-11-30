@@ -8977,6 +8977,7 @@
           "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/skilavottord/ws",
+            "showCircularDependencies": false,
             "main": "apps/skilavottord/ws/src/main.ts",
             "tsConfig": "apps/skilavottord/ws/tsconfig.app.json",
             "assets": [

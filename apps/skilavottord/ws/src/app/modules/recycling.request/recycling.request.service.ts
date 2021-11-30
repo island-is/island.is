@@ -1,19 +1,20 @@
-import { Inject, Injectable, HttpService } from '@nestjs/common'
+import { Inject, Injectable, HttpService, forwardRef } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import format from 'date-fns/format'
+
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { environment } from '../../../environments'
+import { FjarsyslaService } from '../fjarsysla'
+import { RecyclingPartnerService } from '../recycling.partner'
 import {
   RecyclingRequestModel,
   RecyclingRequestUnion,
   RequestErrors,
   RequestStatus,
-} from './model/recycling.request.model'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { FjarsyslaService } from '../fjarsysla/models/fjarsysla.service'
-import { RecyclingPartnerService } from '../recycling.partner/recycling.partner.service'
-import { VehicleService } from '../vehicle/vehicle.service'
-import { environment } from '../../../environments'
-import { VehicleModel } from '../vehicle/model/vehicle.model'
+} from './recycling.request.model'
+import { VehicleService, VehicleModel } from '../vehicle'
 
 @Injectable()
 export class RecyclingRequestService {
@@ -22,11 +23,9 @@ export class RecyclingRequestService {
     private recyclingRequestModel: typeof RecyclingRequestModel,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private httpService: HttpService,
-    @Inject(FjarsyslaService)
     private fjarsyslaService: FjarsyslaService,
-    @Inject(RecyclingPartnerService)
+    @Inject(forwardRef(() => RecyclingPartnerService))
     private recycllingPartnerService: RecyclingPartnerService,
-    @Inject(VehicleService)
     private vehicleService: VehicleService,
   ) {}
 

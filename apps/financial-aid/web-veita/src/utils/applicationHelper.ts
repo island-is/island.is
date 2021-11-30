@@ -7,6 +7,7 @@ import {
   insertAt,
   formatPhoneNumber,
   formatNationalId,
+  sanitizeNationalId,
 } from '@island.is/financial-aid/shared/lib'
 import { calcAge } from './formHelper'
 
@@ -19,6 +20,7 @@ export const getApplicant = (application: Application) => {
     {
       title: 'Kennitala',
       content: formatNationalId(application.nationalId),
+      link: '/leit?search=' + sanitizeNationalId(application.nationalId),
     },
     {
       title: 'Sími',
