@@ -26,10 +26,10 @@ import {
   ActivationButtonTableItem,
   NewUserModal,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { useStaff } from '../../utils/useStaff'
+import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 import { useLazyQuery } from '@apollo/client'
 import { AdminUsersQuery } from '@island.is/financial-aid-web/veita/graphql'
-import { AdminContext } from '../AdminProvider/AdminProvider'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 interface MunicipalityProfileProps {
   municipality: Municipality
@@ -269,7 +269,7 @@ const MunicipalityProfile = ({
                     identifier={value}
                     key={`aidTableBody-${value}`}
                     hasMaxWidth={false}
-                    animationDelay={55 * (adminUsers?.length ?? 1)}
+                    animationDelay={55 * index}
                   />
                 ))}
               </tbody>

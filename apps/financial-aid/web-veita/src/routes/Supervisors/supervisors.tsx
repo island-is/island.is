@@ -23,7 +23,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { SupervisorsQuery } from '@island.is/financial-aid-web/veita/graphql'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
-import { useStaff } from '../../utils/useStaff'
+import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 
 export const Supervisors = () => {
   const [isModalVisible, setIsModalVisible] = useState(false)

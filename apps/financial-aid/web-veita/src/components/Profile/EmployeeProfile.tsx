@@ -20,7 +20,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 import cn from 'classnames'
-import { useStaff } from '../../utils/useStaff'
+import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 
 interface EmployeeProfileProps {
   user: Staff
