@@ -105,6 +105,7 @@ export const serviceSetup = (services: {
       PARTY_LETTER_REGISTRY_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesPartyLetterRegistryApi)}`,
       ),
+      XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
     })
 
     .secrets({

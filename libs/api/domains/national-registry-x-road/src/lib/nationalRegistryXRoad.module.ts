@@ -1,49 +1,13 @@
-import { DynamicModule, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 
-import { NationalRegistryModule } from '@island.is/clients/national-registry-v2'
-import {
-  createXRoadAPIPath,
-  XRoadMemberClass,
-} from '@island.is/shared/utils/server'
+import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 
 import { NationalRegistryXRoadResolver } from './nationalRegistryXRoad.resolver'
 import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 
-export interface NationalRegistryXRoadConfig {
-  xRoadBasePathWithEnv: string
-  xRoadTjodskraMemberCode: string
-  xRoadTjodskraApiPath: string
-  xRoadClientId: string
-}
-
-@Module({})
-export class NationalRegistryXRoadModule {
-  static register(config: NationalRegistryXRoadConfig): DynamicModule {
-    return {
-      module: NationalRegistryXRoadModule,
-      providers: [
-        NationalRegistryXRoadResolver,
-        NationalRegistryXRoadService,
-        {
-          provide: 'Config',
-          useFactory: async () => config as NationalRegistryXRoadConfig,
-        },
-      ],
-      imports: [
-        NationalRegistryModule.register({
-          xRoadPath: createXRoadAPIPath(
-            config.xRoadBasePathWithEnv,
-            XRoadMemberClass.GovernmentInstitution,
-            config.xRoadTjodskraMemberCode,
-            config.xRoadTjodskraApiPath,
-          ),
-          xRoadClient: config.xRoadClientId,
-          fetch: {
-            timeout: 20000,
-          },
-        }),
-      ],
-      exports: [NationalRegistryXRoadService],
-    }
-  }
-}
+@Module({
+  providers: [NationalRegistryXRoadResolver, NationalRegistryXRoadService],
+  imports: [NationalRegistryClientModule],
+  exports: [NationalRegistryXRoadService],
+})
+export class NationalRegistryXRoadModule {}
