@@ -12,6 +12,7 @@ import {
   ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
+import { format } from 'date-fns'
 import {
   CaseState,
   CaseTransition,

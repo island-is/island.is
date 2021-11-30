@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext } from 'react'
+import React, { ReactNode, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -16,7 +16,6 @@ import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/C
 
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
-import Loading from '../Loading/Loading'
 import { getSections } from './utils'
 import * as styles from './PageLayout.css'
 import Skeleton from '../Skeleton/Skeleton'
@@ -49,6 +48,10 @@ const PageLayout: React.FC<PageProps> = ({
     activeSubSection,
     user,
   )
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   return isLoading ? (
     <Skeleton />

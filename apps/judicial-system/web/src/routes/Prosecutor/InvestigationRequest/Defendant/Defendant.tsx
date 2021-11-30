@@ -51,7 +51,7 @@ const Defendant = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_ONE}
-      isLoading={isLoadingWorkingCase || isCreatingCase}
+      isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
     >
@@ -59,7 +59,7 @@ const Defendant = () => {
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         handleNextButtonClick={handleNextButtonClick}
-        isLoading={isCreatingCase || isLoadingWorkingCase}
+        isLoading={isCreatingCase}
       />
     </PageLayout>
   )

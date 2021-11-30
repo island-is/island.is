@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import {
   CaseDecision,
   CaseState,
@@ -9,7 +9,6 @@ import {
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import React, { ReactNode, useContext, useEffect, useState } from 'react'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   FormFooter,
   PageLayout,
@@ -26,10 +25,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import formatISO from 'date-fns/formatISO'
-import {
-  CaseData,
-  ReactSelectOption,
-} from '@island.is/judicial-system-web/src/types'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { ValueType } from 'react-select/src/types'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
 import { Text } from '@island.is/island-ui/core'
