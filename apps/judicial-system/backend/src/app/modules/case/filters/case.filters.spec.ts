@@ -578,6 +578,27 @@ describe('isCaseBlockedFromUser', () => {
     expect(isReadBlocked).toBe(false)
   })
 
+  it('should not read block a partially accepted custody case from prison staff', () => {
+    // Arrange
+    const theCase = {
+      type: CaseType.CUSTODY,
+      state: CaseState.ACCEPTED,
+      decision: CaseDecision.ACCEPTING_PARTIALLY,
+    } as Case
+    const user = {
+      role: UserRole.STAFF,
+      institution: { type: InstitutionType.PRISON },
+    } as User
+
+    // Act
+    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(isWriteBlocked).toBe(true)
+    expect(isReadBlocked).toBe(false)
+  })
+
   it('should not read block an accepted custody case from prison admin staff', () => {
     // Arrange
     const theCase = {
@@ -845,7 +866,9 @@ describe('getCasesQueryFilter', () => {
       [Op.and]: [
         { state: CaseState.ACCEPTED },
         { type: CaseType.CUSTODY },
-        { decision: CaseDecision.ACCEPTING },
+        {
+          decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
+        },
         { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
       ],
     })

@@ -8,7 +8,8 @@ import {
   UpdatedAt,
   HasMany,
 } from 'sequelize-typescript'
-import { RecyclingRequestModel } from '../../recycling.request/model/recycling.request.model'
+
+import { RecyclingRequestModel } from '../recycling.request'
 
 @ObjectType()
 @Table({ tableName: 'recycling_partner' })
@@ -73,8 +74,7 @@ export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
   @Column
   updatedAt: Date
 
-  //TODO
-  @Field(() => [RecyclingRequestModel], { nullable: true })
-  @HasMany(() => RecyclingRequestModel, { foreignKey: { allowNull: true } })
-  recyclingRequests?: RecyclingRequestModel[]
+  @Field(() => [RecyclingRequestModel])
+  @HasMany(() => RecyclingRequestModel)
+  recyclingRequests?: typeof RecyclingRequestModel[]
 }

@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { RecyclingPartnerModel } from './model/recycling.partner.model'
-import { RecyclingRequestModel } from '../recycling.request/model/recycling.request.model'
+
+import { RecyclingPartnerModel } from './recycling.partner.model'
 
 @Injectable()
 export class RecyclingPartnerService {
@@ -12,8 +13,6 @@ export class RecyclingPartnerService {
     private recyclingPartnerModel: typeof RecyclingPartnerModel,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    @InjectModel(RecyclingRequestModel)
-    private recyclingRequestModel: typeof RecyclingRequestModel,
   ) {}
 
   async findByPartnerId(companyId: string): Promise<RecyclingPartnerModel> {

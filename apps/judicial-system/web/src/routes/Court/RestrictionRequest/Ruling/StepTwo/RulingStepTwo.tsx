@@ -129,7 +129,8 @@ export const RulingStepTwo: React.FC = () => {
             accusedName: theCase.accusedName,
             accusedNationalId: formatNationalId(theCase.accusedNationalId),
             caseTypeAndExtensionSuffix:
-              theCase.decision === CaseDecision.ACCEPTING
+              theCase.decision === CaseDecision.ACCEPTING ||
+              theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
                 ? `${
                     theCase.parentCase &&
                     isAcceptingCaseDecision(theCase.parentCase.decision)
@@ -141,12 +142,7 @@ export const RulingStepTwo: React.FC = () => {
                       : 'farbanni'
                   }`
                 : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                  `${
-                    theCase.parentCase?.decision ===
-                    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                      ? 'áframhaldandi '
-                      : ''
-                  }farbanni`,
+                  'farbanni',
             validToDate: `${formatDate(theCase.validToDate, 'PPPPp')
               ?.replace('dagur,', 'dagsins')
               ?.replace(' kl.', ', kl.')}`,
@@ -766,6 +762,13 @@ export const RulingStepTwo: React.FC = () => {
             </GridRow>
           </GridContainer>
         </Box>
+      </FormContentContainer>
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
+          nextUrl={`${Constants.CONFIRMATION_ROUTE}/${id}`}
+          nextIsDisabled={!isRulingStepTwoValidRC(workingCase)}
+        />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
