@@ -1,5 +1,11 @@
 import React, { MouseEventHandler } from 'react'
-import { Box, Link, UserAvatar } from '@island.is/island-ui/core'
+import {
+  Box,
+  Icon,
+  IconProps,
+  Link,
+  UserAvatar,
+} from '@island.is/island-ui/core'
 import * as styles from '../UserMenu.css'
 
 type ColorScheme = 'blue' | 'purple'
@@ -8,6 +14,7 @@ interface UserTopicCardProps {
   colorScheme?: ColorScheme
   href?: string
   onClick?: MouseEventHandler
+  icon?: Pick<IconProps, 'icon' | 'type' | 'color'>
 }
 
 const colorSchemes = {
@@ -27,6 +34,7 @@ export const UserTopicCard: React.FC<UserTopicCardProps> = ({
   children,
   colorScheme = 'blue',
   href,
+  icon,
   onClick,
 }) => {
   return (
@@ -45,12 +53,17 @@ export const UserTopicCard: React.FC<UserTopicCardProps> = ({
       height={'touchable'}
       cursor={'pointer'}
     >
-      <UserAvatar
-        isUserMenu
-        color={colorScheme === 'blue' ? 'default' : 'purple'}
-        size="medium"
-        username={children?.toString()}
-      />
+      {!icon ? (
+        <UserAvatar
+          isUserMenu
+          color={colorScheme === 'blue' ? 'default' : 'purple'}
+          size="medium"
+          username={children?.toString()}
+        />
+      ) : (
+        <Icon icon={icon.icon} type={icon.type} color={icon.color} />
+      )}
+
       <Box marginLeft={2} className={styles.userDelegationsText}>
         {children}
       </Box>

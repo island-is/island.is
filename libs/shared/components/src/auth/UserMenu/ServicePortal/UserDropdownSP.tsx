@@ -8,6 +8,7 @@ import {
   Icon,
   GridContainer,
   Divider,
+  Button,
 } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
@@ -18,6 +19,7 @@ import cn from 'classnames'
 import { ServicePortalPath, m } from '@island.is/service-portal/core'
 import { UserDropdownItem } from './UserDropdownItemSP'
 import { UserProfileInfo } from '../UserProfileInfo'
+import { UserTopicCard } from './UserTopicCardSP'
 
 interface UserDropdownProps {
   user: User
@@ -88,7 +90,21 @@ export const UserDropdown = ({
                 </Box>
               </Box>
               <Divider />
-
+              {isDelegation && (
+                <Box>
+                  <UserTopicCard
+                    colorScheme="blue"
+                    icon={{
+                      type: 'outline',
+                      icon: 'arrowBack',
+                      color: 'blue400',
+                    }}
+                    onClick={() => onSwitchUser(user.profile.actor!.nationalId)}
+                  >
+                    {formatMessage(userMessages.backToMyself)}
+                  </UserTopicCard>
+                </Box>
+              )}
               <UserDelegations user={user} onSwitchUser={onSwitchUser} />
               {!isDelegation && (
                 <Box>
