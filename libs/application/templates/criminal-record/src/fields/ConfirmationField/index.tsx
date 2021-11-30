@@ -2,11 +2,13 @@ import {
   AlertMessage,
   AlertMessageType,
   Button,
+  TopicCard,
   Link,
   ResponsiveSpace,
   LinkContext,
   Text,
   Pagination,
+  Divider,
   LoadingDots,
 } from '@island.is/island-ui/core'
 import React, { FC, useState } from 'react'
@@ -123,7 +125,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
       <Text variant="h2" marginBottom={4}>
         {formatText(m.confirmation, application, formatMessage)}
       </Text>
-      <Box marginBottom={2} paddingTop={0}>
+      <Box marginBottom={3} paddingTop={0}>
         <AlertMessage
           type="success"
           title={formatText(m.successTitle, application, formatMessage)}
@@ -137,7 +139,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         />
       </Box>
       <Box
-        marginBottom={4}
+        marginBottom={3}
         marginTop={0}
         background="blue100"
         padding={4}
@@ -180,16 +182,15 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         </LinkContext.Provider>
       </Box>
 
-      <Box marginBottom={4}>
-        <Button
-          icon="arrowForward"
-          iconType="outline"
-          onBlur={function noRefCheck() {}}
+      <Box marginBottom={3}>
+        <TopicCard
+          href="/"
           onClick={() => setViewCriminalRecord(true)}
-          onFocus={function noRefCheck() {}}
+          tag="Pdf"
+          colorScheme="blue"
         >
-          Opna sakavottorð
-        </Button>
+          Sakavottorð
+        </TopicCard>
       </Box>
       <Button
         icon="open"
@@ -202,12 +203,34 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         Sakavottorðið geturðu einnig fundið í pósthólfinu þínu
       </Button>
 
-      <Box display="flex" justifyContent="center" marginTop={2}>
+      <Box
+        display="flex"
+        justifyContent="center"
+        marginTop={2}
+        marginBottom={4}
+      >
         <img
           src="/assets/images/bus.svg"
           alt={formatText(m.paymentImage, application, formatMessage)}
           style={{ maxWidth: 220 }}
         />
+      </Box>
+      <Divider />
+      <Box
+        display="flex"
+        justifyContent="flexEnd"
+        paddingTop={4}
+        marginBottom={4}
+      >
+        <Button
+          icon="arrowForward"
+          iconType="outline"
+          onBlur={function noRefCheck() {}}
+          onClick={() => setViewCriminalRecord(true)}
+          onFocus={function noRefCheck() {}}
+        >
+          Opna mínar síður
+        </Button>
       </Box>
     </>
   )
