@@ -10,7 +10,7 @@ export const isLinkExternal = (href: string): boolean => {
   const externalCandidate =
     typeof href === 'string' && href.indexOf('://') !== -1
 
-  return externalCandidate && !Boolean(href.match(islandisRe))
+  return externalCandidate && !href.match(islandisRe)
 }
 
 export const isLinkInternal = (href: string): boolean => {
