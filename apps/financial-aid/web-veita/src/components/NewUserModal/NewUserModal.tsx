@@ -75,7 +75,7 @@ const NewUserModal = ({
             email: state.staffEmail,
             nationalId: state.staffNationalId,
             roles: state.roles,
-            municipalityName: municipalityName,
+            municipalityName,
             municipalityId: router.query.id as string,
           },
         },
