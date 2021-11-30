@@ -82,6 +82,7 @@ const insertIds = (
   html: HTMLText,
   idPrefix = '',
 ): HTMLText => {
+  const DIVIDER = '__'
   const foundIds: Record<string, number> = {}
   return html.replace(
     / class="(section|chapter|subchapter|article)__title"\s*>(([^<]+)(?:.[^/][^]*?)?)<\/[hH]\d/g,
@@ -97,9 +98,13 @@ const insertIds = (
         foundIds[id] = 1
       } else {
         let count = foundIds[id] + 1
-        while (foundIds[id + '_' + count]) count++
+        while (foundIds[id + DIVIDER + count]) count++
+
+        const newId = id + DIVIDER + count
         foundIds[id] = count
-        id += '_' + count
+        // prevent later collisions with the new ("avoided") id
+        foundIds[newId] = 1
+        id = newId
       }
 
       const title = longTitle.replace(/<[^]+?>/g, '').trim()
