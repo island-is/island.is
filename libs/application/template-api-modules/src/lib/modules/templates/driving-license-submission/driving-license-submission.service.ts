@@ -40,6 +40,8 @@ export class DrivingLicenseSubmissionService {
     if (!response.paymentUrl) {
       throw new Error('paymentUrl missing in response')
     }
+
+    return response
   }
 
   async submitApplication({
@@ -52,11 +54,6 @@ export class DrivingLicenseSubmissionService {
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,
-    )
-
-    await this.sharedTemplateAPIService.sendEmail(
-      generateDrivingLicenseSubmittedEmail,
-      application,
     )
 
     if (isPayment?.fulfilled) {
@@ -74,6 +71,11 @@ export class DrivingLicenseSubmissionService {
           `Application submission failed (${result.errorMessage})`,
         )
       }
+
+      await this.sharedTemplateAPIService.sendEmail(
+        generateDrivingLicenseSubmittedEmail,
+        application,
+      )
 
       return {
         success: result.success,
