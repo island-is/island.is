@@ -12,7 +12,10 @@ import {
 } from './createEnhancedFetch'
 import { Request, Response, FetchAPI as NodeFetchAPI } from './nodeFetch'
 import { EnhancedFetchAPI } from './types'
-import { buildCacheControl, CacheControlOptions } from './buildCacheControl'
+import {
+  buildCacheControl,
+  CacheControlOptions,
+} from './withCache/buildCacheControl'
 
 const fakeResponse = (...args: ConstructorParameters<typeof Response>) =>
   new Response(...args)

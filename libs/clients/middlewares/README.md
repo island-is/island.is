@@ -76,7 +76,7 @@ function callApiWithEnhancedFetch() {
 
 ### Caching
 
-Enhanced Fetch ships with elaborate caching functionality based on standard cache-control semantics. To get started, you need to call createEnhancedFetch with a [cache-manager](https://www.npmjs.com/package/cache-manager) Cache instance:
+Enhanced Fetch includes built-in response cache functionality based on standard cache-control semantics. To enable caching, you need to call createEnhancedFetch with a [cache-manager](https://www.npmjs.com/package/cache-manager) Cache instance:
 
 ```ts
 import { caching } from 'cache-manager'
@@ -90,17 +90,17 @@ const enhancedFetch = createEnhancedFetch({
 })
 ```
 
-The above example uses an in-memory cache, but you should generally use [Nest's CacheModule](https://docs.nestjs.com/techniques/caching) to initialize cache-manager with a shared redis backend. The default cache-manager `ttl` does not matter since it is always overridden.
+The above example uses an in-memory cache, but you should generally configure a redis backend.
 
 {% hint style="info" %}
-You should discuss with Digital Iceland, the DevOps team and the API owner on what cache configuration is appropriate for each API.
+You should discuss with Digital Iceland and the API owner on which cache configuration is appropriate for the API you're integrating.
 {% endhint %}
 
 #### Overriding cache-control
 
-With the above configuration, Enhanced Fetch will only cache server responses if they have a cache-control header supporting a shared cache.
+With the above configuration, Enhanced Fetch will only cache server responses if they have a cache-control header configured to allow storage in shared caches.
 
-Since many APIs don't configure caching headers properly, you can override the cache-control value either with a static or a dynamic value.
+Since many APIs don't configure caching headers properly, you can override the cache-control value, either with a static or a dynamic value.
 
 ```ts
 const enhancedFetch = createEnhancedFetch({
@@ -112,7 +112,7 @@ const enhancedFetch = createEnhancedFetch({
 })
 ```
 
-You should generally use `buildCacheControl` to configure it in a type-safe way:
+You should generally use `buildCacheControl` to configure cache control in a type-safe way:
 
 ```ts
 const enhancedFetch = createEnhancedFetch({
@@ -125,7 +125,7 @@ const enhancedFetch = createEnhancedFetch({
 })
 ```
 
-By default, `overrideCacheControl` only affects GET responses, since we rarely want to cache POST requests. If you know what you're doing, then you can cache those as well:
+By default, `overrideCacheControl` only affects GET responses, since you rarely want to cache POST requests. If you know what you're doing, then you can cache those as well:
 
 ```ts
 const enhancedFetch = createEnhancedFetch({
@@ -164,14 +164,14 @@ const enhancedFetch = createEnhancedFetch({
 In the above example, it will return a response from the cache:
 
 - If it's less than 5 minute old.
-- If it's less than 1 day old. In this case it will immediately update the cache in the background to get fresh data for future requests.
+- If it's less than 1 day old. In this case it will immediately update the cache in the background to return fresher data in future requests.
 - If it's less than 30 days old and the server is offline or returns an error response (eg "500 Internal Server Error").
 
 ### Authorized APIs
 
-The cache is shared for all requests by default. Requests that have an authorization headers need special consideration since those won't get cached by default.
+The cache is shared for all requests by default. Requests that have an authorization headers need special consideration since those won't be stored by default.
 
-If the API is not using `innskra.island.is` or serving data that is not specific to the authenticated user, then you may configure cache-control to support shared caching:
+If the API is not using `innskra.island.is` or serving data that is not specific to the authenticated user, then you may configure cache-control to support shared caching for authorized requests:
 
 ```ts
 const registryFetch = createEnhancedFetch({
@@ -187,7 +187,7 @@ const registryFetch = createEnhancedFetch({
 })
 ```
 
-If the API is serving data specific to the authenticated user from `innskra.island.is`, you can configure a private cache for each authenticated user. In this case, you need to pass a `User` object (eg from [@CurrentUser](../../auth-nest-tools/README.md#using-in-rest-controller)) to the fetch function:
+If the API is serving data specific to an authenticated user from `innskra.island.is`, you can configure a private cache for that user. In this case, you need to pass a `User` object (eg from [@CurrentUser](../../auth-nest-tools/README.md#using-in-rest-controller)) to the fetch function:
 
 ```ts
 const privateApiFetch = createEnhancedFetch({
@@ -203,7 +203,7 @@ registryFetch('/applications', { auth: currentUser })
 ```
 
 {% hint style="info" %}
-The private cache is currently only designed for APIs that consume `innskra.island.is` access tokens and create private responses based on the user's nationalId claim. If this claim is missing, or you forget to pass the `auth` argument, then a warning is logged and the cache is disabled.
+The private cache is currently only designed for APIs that consume `innskra.island.is` access tokens and create private responses based on the user's `nationalId` claim. If the `nationalId` claim is missing, or you forget to pass the `auth` argument, then a warning is logged and the cache is disabled.
 {% endhint %}
 
 It's possible to have a shared cache for some requests and private for others:
@@ -219,7 +219,7 @@ const enhancedFetch = createEnhancedFetch({
 })
 ```
 
-In the above example, requests going to pin endpoints will never be shared between users, while other requests can be cached between users.
+In the above example, requests going to the pin endpoint will never be shared between users, while other requests can be cached between users.
 
 ## Running unit tests
 

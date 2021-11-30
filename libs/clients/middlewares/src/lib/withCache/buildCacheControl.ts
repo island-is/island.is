@@ -1,17 +1,44 @@
 export interface CacheControlOptions {
   /**
-   * How long a resource can be cached and reused without revalidation.
+   * How long (in seconds) a resource can be cached and reused without
+   * revalidation (making a request to the server).
    */
   maxAge?: number
 
   /**
-   * How long a resource can be cached and reused without revalidation.
+   * How long (in seconds) an authenticated resource can be cached and reused
+   * without revalidation.
    */
   sharedMaxAge?: number
+
+  /**
+   * How long (in seconds) a stale resource (one who's maxAge has expired) can
+   * be reused in case the origin server is down and a fresh resource is
+   * unavailable.
+   */
   staleIfError?: number
+
+  /**
+   * How long (in seconds) a stale resource can be reused while updating the
+   * cache in the background.
+   */
   staleWhileRevalidate?: number
+
+  /**
+   * Configures the resource to be public, meaning it can be shared even if
+   * the request carries an authentication header.
+   */
   public?: boolean
+
+  /**
+   * Resources can be stored, but they won't be served without revalidating
+   * with the server.
+   */
   noCache?: boolean
+
+  /**
+   * Completely disables storing of the resource.
+   */
   noStore?: boolean
 }
 

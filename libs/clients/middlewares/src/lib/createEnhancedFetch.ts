@@ -12,7 +12,8 @@ import {
   ClientCertificateOptions,
   withClientCertificate,
 } from './withClientCertificate'
-import { withCache, CacheConfig } from './withCache'
+import { withCache } from './withCache/withCache'
+import { CacheConfig } from './withCache/types'
 
 export interface EnhancedFetchOptions {
   // The name of this fetch function, used in logs and opossum stats.
@@ -108,16 +109,16 @@ export const createEnhancedFetch = (
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
   const builder = buildFetch((options.fetch as unknown) as NodeFetchAPI)
 
-  if (clientCertificate) {
-    builder.wrap(withClientCertificate, { clientCertificate })
-  }
-
   if (cache) {
     builder.wrap(withCache, {
       ...cache,
       name,
       logger,
     })
+  }
+
+  if (clientCertificate) {
+    builder.wrap(withClientCertificate, { clientCertificate })
   }
 
   if (timeout !== false) {

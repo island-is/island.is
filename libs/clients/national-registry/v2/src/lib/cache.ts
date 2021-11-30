@@ -11,7 +11,6 @@ import {
 import { NationalRegistryClientConfig } from './nationalRegistryClient.config'
 
 const registryEndpoint = /\/einstaklingar\/\d{10}$/
-const custodyEndpoint = /\/einstaklingar\/\d{10}\/forsja$/
 
 function shared(request: Request) {
   return !!request.url.match(registryEndpoint)
@@ -25,14 +24,8 @@ function overrideCacheControl(request: Request) {
       maxAge: 60 * 60 * 24, // 1 day
       staleWhileRevalidate: 60 * 60 * 24 * 30, // 30 days
     })
-  } else if (request.url.match(custodyEndpoint)) {
-    // Sensitive information used by delegation system. Short cache and long stale-if-error.
-    return buildCacheControl({
-      maxAge: 60 * 10, // 10 minutes
-      staleIfError: 60 * 60 * 24 * 30, // 30 days
-    })
   }
-  // Short private cache for the rest?
+  // Short private cache for the rest.
   return buildCacheControl({ maxAge: 60 * 10 })
 }
 

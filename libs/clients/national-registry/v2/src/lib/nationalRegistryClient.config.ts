@@ -4,7 +4,7 @@ import * as z from 'zod'
 const schema = z.object({
   xRoadServicePath: z.string(),
   fetch: z.object({
-    timeout: z.number().int().optional(),
+    timeout: z.number().int(),
   }),
   redis: z.object({
     nodes: z.array(z.string()),
@@ -22,7 +22,7 @@ export const NationalRegistryClientConfig = defineConfig({
         'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
       ),
       fetch: {
-        timeout: env.optionalJSON('XROAD_NATIONAL_REGISTRY_TIMEOUT'),
+        timeout: env.optionalJSON('XROAD_NATIONAL_REGISTRY_TIMEOUT') ?? 10000,
       },
       redis: {
         nodes: env.optionalJSON('XROAD_NATIONAL_REGISTRY_REDIS_NODES') ?? [],

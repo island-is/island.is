@@ -6,7 +6,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
-import { NationalRegistryAddress } from '../models/nationalRegistryAddress.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 
 @Injectable()
@@ -34,18 +33,18 @@ export class NationalRegistryXRoadService {
         throw err
       })
 
-    return historyList?.map(
-      (heimili) =>
-        ({
-          address: {
-            city: heimili.stadur,
-            postalCode: heimili.postnumer,
-            streetName: heimili.heimilisfang,
-          } as NationalRegistryAddress,
-          country: heimili.landakodi,
-          dateOfChange: heimili.breytt,
-        } as NationalRegistryResidence),
-    )
+    return historyList?.map((heimili) => ({
+      address: {
+        city: heimili.stadur,
+        postalCode: heimili.postnumer,
+        streetName: heimili.heimilisfang,
+        municipalityCode: heimili.sveitarfelagsnumer,
+      },
+      houseIdentificationCode: heimili.huskodi,
+      realEstateNumber: heimili.fasteignanumer,
+      country: heimili.landakodi,
+      dateOfChange: heimili.breytt,
+    }))
   }
 
   async getNationalRegistryPerson(
@@ -57,13 +56,13 @@ export class NationalRegistryXRoadService {
     ).einstaklingarGetEinstaklingur({ id: nationalId })
 
     return {
-      nationalId: nationalId,
+      nationalId: person.kennitala,
       fullName: person.nafn,
-      address: {
-        streetName: person.logheimili?.heiti || undefined,
-        postalCode: person.logheimili?.postnumer || undefined,
-        city: person.logheimili?.stadur || undefined,
-        municipalityCode: person.logheimili?.sveitarfelagsnumer || undefined,
+      address: person.logheimili && {
+        streetName: person.logheimili.heiti,
+        postalCode: person.logheimili.postnumer,
+        city: person.logheimili.stadur,
+        municipalityCode: person.logheimili.sveitarfelagsnumer,
       },
       genderCode: person.kynkodi,
     }
@@ -106,32 +105,17 @@ export class NationalRegistryXRoadService {
 
         const parentBNationalId = parents.find((id) => id !== parentNationalId)
         const parentB = parentBNationalId
-          ? await nationalRegistryApi.einstaklingarGetEinstaklingur({
-              id: parentBNationalId,
-            })
+          ? await this.getNationalRegistryPerson(user, parentBNationalId)
           : undefined
 
         const livesWithApplicant = parentAFamily.einstaklingar?.some(
           (person) => person.kennitala === child.kennitala,
         )
-        const livesWithParentB = parentAFamily.einstaklingar?.some(
-          (person) => person.kennitala === parentB?.kennitala,
-        )
-
-        const parentBObject = parentB?.kennitala
-          ? {
-              nationalId: parentB.kennitala,
-              fullName: parentB.nafn,
-              address: {
-                streetName: parentB.logheimili?.heiti || undefined,
-                postalCode: parentB.logheimili?.postnumer || undefined,
-                city: parentB.logheimili?.stadur || undefined,
-                municipalityCode:
-                  parentB.logheimili?.sveitarfelagsnumer || undefined,
-              },
-              genderCode: parentB.kynkodi,
-            }
-          : null
+        const livesWithParentB =
+          parentB &&
+          parentAFamily.einstaklingar?.some(
+            (person) => person.kennitala === parentB.nationalId,
+          )
 
         return {
           nationalId: child.kennitala,
@@ -139,7 +123,7 @@ export class NationalRegistryXRoadService {
           genderCode: child.kynkodi,
           livesWithApplicant,
           livesWithBothParents: livesWithParentB && livesWithApplicant,
-          otherParent: parentBObject,
+          otherParent: parentB,
         }
       }),
     )
