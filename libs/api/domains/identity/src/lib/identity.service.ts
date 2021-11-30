@@ -19,8 +19,8 @@ export class IdentityService {
     }
 
     const person = await this.nationalRegistryXRoadService.getNationalRegistryPerson(
+      user,
       nationalId,
-      user.authorization,
     )
     return {
       nationalId: person.nationalId,

@@ -84,6 +84,11 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           parent {
             id
             title
+            category {
+              id
+              slug
+              title
+            }
           }
         }
       }
@@ -236,6 +241,11 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
               title
               description
               slug
+            }
+            category {
+              id
+              slug
+              title
             }
           }
         }

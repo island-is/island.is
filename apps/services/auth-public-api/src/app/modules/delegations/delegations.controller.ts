@@ -97,7 +97,6 @@ export class DelegationsController {
   async findAllTo(@CurrentActor() user: User): Promise<DelegationDTO[]> {
     return this.delegationsService.findAllTo(
       user,
-      environment.nationalRegistry.xroad.clientId ?? '',
       environment.nationalRegistry
         .authMiddlewareOptions as AuthMiddlewareOptions,
     )
@@ -121,7 +120,6 @@ export class DelegationsController {
 
     return this.delegationsService.create(
       user,
-      environment.nationalRegistry.xroad.clientId ?? '',
       environment.nationalRegistry
         .authMiddlewareOptions as AuthMiddlewareOptions,
       delegation,
