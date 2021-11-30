@@ -1,4 +1,4 @@
-# Personal Representative 
+# Personal Representative
 
 ## About
 
@@ -30,7 +30,9 @@ Api open api specs will now be accessible at
 ```bash
 http://localhost:3333/swagger/#/default
 ```
+
 ## Testing
+
 You can run tests for this service locally by running:
 
 ```bash

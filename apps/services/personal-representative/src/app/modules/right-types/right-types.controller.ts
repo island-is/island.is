@@ -1,7 +1,7 @@
-import { 
-  PersonalRepresentativeRightType, 
-  PersonalRepresentativeRightTypeDTO, 
-  PersonalRepresentativeRightTypeService 
+import {
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeRightTypeDTO,
+  PersonalRepresentativeRightTypeService,
 } from '@island.is/auth-api-lib/personal-representative'
 import {
   BadRequestException,
@@ -14,13 +14,13 @@ import {
   Param,
   Post,
   Put,
-  Inject
+  Inject,
 } from '@nestjs/common'
-import { 
-  ApiCreatedResponse, 
-  ApiOkResponse, 
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
   ApiBearerAuth,
-  ApiTags 
+  ApiTags,
 } from '@nestjs/swagger'
 import { AuthGuard } from '../common'
 
@@ -31,7 +31,7 @@ import { AuthGuard } from '../common'
 export class RightTypesController {
   constructor(
     @Inject(PersonalRepresentativeRightTypeService)
-    private readonly rightTypesService: PersonalRepresentativeRightTypeService
+    private readonly rightTypesService: PersonalRepresentativeRightTypeService,
   ) {}
 
   /** Gets all right types */
@@ -50,12 +50,16 @@ export class RightTypesController {
   /** Gets a right type by it's key */
   @Get(':code')
   @ApiOkResponse({ type: PersonalRepresentativeRightType })
-  async getAsync(@Param('code') code: string): Promise<PersonalRepresentativeRightType> {
+  async getAsync(
+    @Param('code') code: string,
+  ): Promise<PersonalRepresentativeRightType> {
     if (!code) {
       throw new BadRequestException('Code needs to be provided')
     }
 
-    const rightType = await this.rightTypesService.getPersonalRepresentativeRightTypeAsync(code)
+    const rightType = await this.rightTypesService.getPersonalRepresentativeRightTypeAsync(
+      code,
+    )
 
     if (!rightType) {
       throw new NotFoundException("This particular right type doesn't exist")
@@ -77,7 +81,9 @@ export class RightTypesController {
   /** Creates a right type */
   @Post()
   @ApiCreatedResponse({ type: PersonalRepresentativeRightType })
-  async create(@Body() rightType: PersonalRepresentativeRightTypeDTO): Promise<PersonalRepresentativeRightType> {
+  async create(
+    @Body() rightType: PersonalRepresentativeRightTypeDTO,
+  ): Promise<PersonalRepresentativeRightType> {
     return await this.rightTypesService.createAsync(rightType)
   }
 

@@ -8,7 +8,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
-    RightTypesModule
+    RightTypesModule,
   ],
 })
 export class AppModule {}

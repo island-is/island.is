@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -23,5 +23,5 @@ module.exports = {
         DROP TABLE personal_representative_right_type;
       COMMIT;
     `)
-  }
-};
+  },
+}

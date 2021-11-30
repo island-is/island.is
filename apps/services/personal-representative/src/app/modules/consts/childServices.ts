@@ -1,3 +1,3 @@
 export const ChildServiceApiKeys = {
-  felagsmalaraduneytid: 'felagsmalaraduneytid'
+  felagsmalaraduneytid: 'felagsmalaraduneytid',
 }
