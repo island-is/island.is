@@ -8,7 +8,6 @@ const prodConfig = () => ({
   },
   applicationSystem: {
     baseApiUrl: process.env.APPLICATION_SYSTEM_API_URL,
-    fetch: { timeout: parseInt(process.env.APPLICATION_SYSTEM_TIMEOUT) },
   },
   authPublicApi: {
     baseApiUrl: process.env.AUTH_PUBLIC_API_URL,
