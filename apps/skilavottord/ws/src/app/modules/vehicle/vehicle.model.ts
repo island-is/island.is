@@ -11,8 +11,10 @@ import {
   HasMany,
   AllowNull,
 } from 'sequelize-typescript'
-import { RecyclingRequestModel } from '../../recycling.request/model/recycling.request.model'
-import { VehicleOwnerModel } from '../../vehicle.owner/model/vehicle.owner.model'
+
+import { RecyclingRequestModel } from '../recycling.request'
+import { VehicleOwnerModel } from '../vehicle.owner'
+
 @ObjectType()
 @Table({ tableName: 'vehicle' })
 export class VehicleModel extends Model<VehicleModel> {
