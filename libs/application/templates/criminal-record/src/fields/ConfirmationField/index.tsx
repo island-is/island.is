@@ -24,7 +24,8 @@ type ConfirmationFieldProps = {
       link?: {
         title: string
         url: string
-      }
+      },
+      isExpired?: Boolean
     }
   }
   application: {
@@ -69,9 +70,9 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
           <Button
             circle
             icon="arrowBack"
-            onBlur={function noRefCheck() {}}
+            onBlur={function noRefCheck() { }}
             onClick={() => setViewCriminalRecord(false)}
-            onFocus={function noRefCheck() {}}
+            onFocus={function noRefCheck() { }}
             colorScheme="light"
             title="Go back"
           />
@@ -181,22 +182,24 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
       </Box>
 
       <Box marginBottom={4}>
-        <Button
-          icon="arrowForward"
-          iconType="outline"
-          onBlur={function noRefCheck() {}}
-          onClick={() => setViewCriminalRecord(true)}
-          onFocus={function noRefCheck() {}}
-        >
-          Opna sakavottorð
-        </Button>
+        {props.isExpired ? null :
+          <Button
+            icon="arrowForward"
+            iconType="outline"
+            onBlur={function noRefCheck() { }}
+            onClick={() => setViewCriminalRecord(true)}
+            onFocus={function noRefCheck() { }}
+          >
+            Opna sakavottorð
+          </Button>
+        }
       </Box>
       <Button
         icon="open"
         iconType="outline"
-        onBlur={function noRefCheck() {}}
+        onBlur={function noRefCheck() { }}
         onClick={() => setViewCriminalRecord(true)}
-        onFocus={function noRefCheck() {}}
+        onFocus={function noRefCheck() { }}
         variant="text"
       >
         Sakavottorðið geturðu einnig fundið í pósthólfinu þínu
