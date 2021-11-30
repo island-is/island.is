@@ -17,18 +17,20 @@ interface mySettingsState {
   name?: string
   email?: string
   nickname?: string
+  pseudonymName: boolean
   hasError: boolean
   hasSubmitError: boolean
 }
 
 export const MySettings = () => {
-  const { admin, usePseudoName, setPseudonyms } = useContext(AdminContext)
+  const { admin } = useContext(AdminContext)
 
   const [state, setState] = useState<mySettingsState>({
     nationalId: admin?.staff?.nationalId,
     name: admin?.staff?.name,
     email: admin?.staff?.email,
     nickname: admin?.staff?.nickname,
+    pseudonymName: admin?.staff?.pseudonymName ?? false,
     hasError: false,
     hasSubmitError: false,
   })
@@ -150,9 +152,9 @@ export const MySettings = () => {
                   Nota dulnefni fyrir nöfn umsækjenda í yfirlitsskjám
                 </Text>
               }
-              checked={usePseudoName}
+              checked={state.pseudonymName}
               onChange={(newChecked) => {
-                setPseudonyms(newChecked)
+                setState({ ...state, pseudonymName: newChecked })
               }}
               className={``}
             />

@@ -206,6 +206,7 @@ export const CurrentUserQuery = gql`
         nickname
         municipalityHomepage
         email
+        pseudonymName
       }
     }
   }

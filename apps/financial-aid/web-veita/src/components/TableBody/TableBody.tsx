@@ -61,14 +61,14 @@ const ActivationButtonTableItem = (
 }
 
 const PseudoName = (nationalId: string, name: string) => {
-  const { usePseudoName } = useContext(AdminContext)
+  const { admin } = useContext(AdminContext)
 
   return (
     <Box display="flex" alignItems="center">
       <GeneratedProfile size={32} nationalId={nationalId} />
       <Box marginLeft={2}>
         <Text variant="h5">
-          {usePseudoName ? GenerateName(nationalId) : name}
+          {admin?.staff?.pseudonymName ? GenerateName(nationalId) : name}
         </Text>
       </Box>
     </Box>

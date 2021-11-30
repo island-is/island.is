@@ -36,6 +36,7 @@ export interface Staff {
   municipalityHomepage?: string
   nickname?: string
   email?: string
+  pseudonymName?: boolean
 }
 
 export interface UpdateStaff {

@@ -36,7 +36,7 @@ const ApplicationHeader = ({
 }: ApplicantProps) => {
   const router = useRouter()
 
-  const { usePseudoName } = useContext(AdminContext)
+  const { admin } = useContext(AdminContext)
 
   const changeApplicationState = useApplicationState()
 
@@ -102,7 +102,7 @@ const ApplicationHeader = ({
           </Box>
 
           <Text as="h2" variant="h1">
-            {usePseudoName
+            {admin?.staff?.pseudonymName
               ? GenerateName(application.nationalId)
               : application.name}
           </Text>
