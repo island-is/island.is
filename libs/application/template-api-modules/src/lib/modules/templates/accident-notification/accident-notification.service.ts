@@ -49,9 +49,13 @@ export class AccidentNotificationService {
       const answers = application.answers as AccidentNotificationAnswers
       const xml = applictionAnswersToXml(answers, attachments)
 
-      const { ihiDocumentID } = await this.documentApi.documentPost({
+      const { success, ihiDocumentID } = await this.documentApi.documentPost({
         document: { doc: xml, documentType: 801 },
       })
+
+      if (success === 0) {
+        throw new Error(`Villa kom upp við vistun á umsókn`)
+      }
 
       await this.sharedTemplateAPIService.sendEmail(
         (props) =>
@@ -78,6 +82,14 @@ export class AccidentNotificationService {
       }
     } catch (e) {
       this.logger.error('Error submitting application to SÍ', e)
+      // In the case we get a precondition error we present it to the user
+      if (e.body && e.body.errorList && e.body.errorList.length > 0) {
+        throw new Error(
+          `Villa kom upp við vistun á umsókn. ${e.body.errorList
+            .map((e: any) => e.errorDesc)
+            .join('\n')}`,
+        )
+      }
       throw new Error('Villa kom upp við vistun á umsókn.')
     }
   }
