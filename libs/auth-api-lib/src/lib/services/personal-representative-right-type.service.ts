@@ -30,7 +30,7 @@ export class PersonalRepresentativeRightTypeService {
   } | null> {
     page--
     const offset = page * count
-    return this.personalRepresentativeRightTypeModel.findAndCountAll({
+    return await this.personalRepresentativeRightTypeModel.findAndCountAll({
       limit: count,
       offset: offset,
     })
@@ -47,7 +47,7 @@ export class PersonalRepresentativeRightTypeService {
   } | null> {
     page--
     const offset = page * count
-    return this.personalRepresentativeRightTypeModel.findAndCountAll({
+    return await this.personalRepresentativeRightTypeModel.findAndCountAll({
       limit: count,
       offset: offset,
       where: { 
