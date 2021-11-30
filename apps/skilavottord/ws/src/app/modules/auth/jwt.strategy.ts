@@ -5,6 +5,7 @@ import { Strategy } from 'passport-jwt'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/skilavottord/consts'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { environment } from '../../../environments'
 import { Credentials } from './auth.types'
 

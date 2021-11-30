@@ -12,8 +12,9 @@ import {
   PrimaryKey,
   Default,
 } from 'sequelize-typescript'
-import { RecyclingPartnerModel } from '../../recycling.partner/model/recycling.partner.model'
-import { VehicleModel } from '../../vehicle/model/vehicle.model'
+
+import { RecyclingPartnerModel } from '../recycling.partner'
+import { VehicleModel } from '../vehicle'
 
 @ObjectType()
 export class RequestErrors {
@@ -62,9 +63,9 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   vehicleId!: string
 
   @BelongsTo(() => VehicleModel)
-  vehicle: any
+  vehicle: VehicleModel
 
-  @Field({ nullable: true })
+  @Field()
   @ForeignKey(() => RecyclingPartnerModel)
   @Column({
     type: DataType.STRING,
@@ -72,9 +73,9 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   })
   recyclingPartnerId: string
 
-  @Field({ nullable: true })
-  @BelongsTo(() => RecyclingPartnerModel, { foreignKey: { allowNull: true } })
-  recyclingParter: RecyclingPartnerModel
+  @Field(() => RecyclingPartnerModel)
+  @BelongsTo(() => RecyclingPartnerModel)
+  recyclingPartner: RecyclingPartnerModel
 
   @Field()
   @Column({

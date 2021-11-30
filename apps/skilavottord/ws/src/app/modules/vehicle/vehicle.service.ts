@@ -1,9 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { VehicleModel } from './model/vehicle.model'
-import { RecyclingRequestModel } from '../recycling.request/model/recycling.request.model'
-import { RecyclingPartnerModel } from '../recycling.partner/model/recycling.partner.model'
+
+import { RecyclingRequestModel } from '../recycling.request'
+import { RecyclingPartnerModel } from '../recycling.partner'
+import { VehicleModel } from './vehicle.model'
 
 @Injectable()
 export class VehicleService {
