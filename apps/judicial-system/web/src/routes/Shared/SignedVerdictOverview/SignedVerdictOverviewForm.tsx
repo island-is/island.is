@@ -475,7 +475,12 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                 title={formatMessage(core.pdfButtonRulingShortVersion)}
                 pdfType="courtRecord"
               >
-                <Button>Undirrita</Button>
+                {user?.role === UserRole.JUDGE ||
+                user?.role === UserRole.REGISTRAR ? (
+                  <Button>Undirrita</Button>
+                ) : (
+                  <Text>Bíður undirritunar</Text>
+                )}
               </PdfRow>
               {user?.role !== UserRole.STAFF && (
                 <PdfRow
