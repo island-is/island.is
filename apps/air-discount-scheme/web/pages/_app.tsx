@@ -6,6 +6,12 @@ import getConfig from 'next/config'
 import { ApolloProvider } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 
+import {
+  getActiveEnvironment,
+  isRunningOnEnvironment,
+} from '@island.is/shared/utils'
+import '../auth'
+
 import { Toast, ErrorBoundary, AppLayout } from '../components'
 import { client as initApollo } from '../graphql'
 import { appWithTranslation } from '../i18n'
@@ -13,7 +19,9 @@ import { isAuthenticated } from '../auth/utils'
 import { withHealthchecks } from '../utils/Healthchecks/withHealthchecks'
 import { Authenticator } from '@island.is/auth/react'
 import { Router } from 'react-router-dom'
+import { createMemoryHistory } from 'history';
 
+const activeEnvironment = getActiveEnvironment()
 
 const {
   publicRuntimeConfig: { SENTRY_DSN },
@@ -21,6 +29,9 @@ const {
 
 Sentry.init({
   dsn: SENTRY_DSN,
+  environment: activeEnvironment,
+  enabled: !isRunningOnEnvironment('local'),
+  tracesSampleRate: 0.01,
 })
 
 interface Props {
@@ -76,29 +87,30 @@ class SupportApplication extends App<Props> {
       layoutProps,
     } = this.props
 
-    Sentry.configureScope((scope) => {
-      scope.setExtra('lang', this.getLanguage(router.pathname))
-      scope.setContext('router', {
-        route: router.route,
-        pathname: router.pathname,
-        query: router.query,
-        asPath: router.asPath,
-      })
-    })
+    // Sentry.configureScope((scope) => {
+    //   scope.setExtra('lang', this.getLanguage(router.pathname))
+    //   scope.setContext('router', {
+    //     route: router.route,
+    //     pathname: router.pathname,
+    //     query: router.query,
+    //     asPath: router.asPath,
+    //   })
+    // })
 
-    Sentry.addBreadcrumb({
-      category: 'pages/_app',
-      message: `Rendering app for Component "${get(
-        Component,
-        'name',
-        'unknown',
-      )}" (${process.browser ? 'browser' : 'server'})`,
-      level: Sentry.Severity.Debug,
-    })
+    // Sentry.addBreadcrumb({
+    //   category: 'pages/_app',
+    //   message: `Rendering app for Component "${get(
+    //     Component,
+    //     'name',
+    //     'unknown',
+    //   )}" (${process.browser ? 'browser' : 'server'})`,
+    //   level: Sentry.Severity.Debug,
+    // })
+    let history = createMemoryHistory()
 
     return (
       <ApolloProvider client={initApollo(pageProps.apolloState)}>
-        <Router>
+        <Router history={history}>
           <Authenticator>
             <AppLayout isAuthenticated={isAuthenticated} {...layoutProps}>
               <ErrorBoundary>

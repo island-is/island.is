@@ -1,6 +1,6 @@
 import { configure, configureMock } from '@island.is/auth/react'
-import { LoftbruScope } from '@island.is/auth/scopes'
-import { environment } from './environments'
+import { LoftbruScope, UserProfileScope, AuthScope } from '@island.is/auth/scopes'
+//import environment from './environments/environment'
 
 const userMocked = process.env.API_MOCKS === 'true'
 
@@ -9,8 +9,10 @@ if (userMocked) {
     profile: { name: 'Mock', locale: 'is', nationalId: '0000000000' },
   })
 } else {
+
   configure({
-    baseUrl: `${window.location.origin}/min-rettindi`,
+    //baseUrl: `${window.location.origin}/min-rettindi`,
+    baseUrl: `http://localhost:4200/min-rettindi`,
     redirectPath: '/signin-oidc',
     redirectPathSilent: '/silent/signin-oidc',
     authority: 'https://identity-server.dev01.devland.is',
@@ -19,10 +21,16 @@ if (userMocked) {
       'openid',
       'profile',
       'api_resource.scope',
+      UserProfileScope.read,
+      UserProfileScope.write,
+      AuthScope.actorDelegations,
+      AuthScope.readDelegations,
+      AuthScope.writeDelegations,
       LoftbruScope.main,
       LoftbruScope.admin,
     ],
-    post_logout_redirect_uri: `${window.location.origin}`,
+    //post_logout_redirect_uri: `${window.location.origin}`,
+    post_logout_redirect_uri: `http://localhost:4200`,
     userStorePrefix: 'sp.',
   })
 }
