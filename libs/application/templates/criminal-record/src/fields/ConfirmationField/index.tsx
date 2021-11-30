@@ -1,15 +1,14 @@
 import {
   AlertMessage,
-  AlertMessageType,
   Button,
   TopicCard,
   Link,
-  ResponsiveSpace,
   LinkContext,
   Text,
   Pagination,
   Divider,
   LoadingDots,
+  PdfViewer,
 } from '@island.is/island-ui/core'
 import React, { FC, useState } from 'react'
 // import MyPDF from 'pdf-viewer-reactjs'
@@ -48,15 +47,31 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
   const { externalData } = application
   const { formatMessage } = useLocale()
   const [viewCriminalRecord, setViewCriminalRecord] = useState(false)
-  const [numPages, setNumPages] = useState(0)
-  const [pageNumber, setPageNumber] = useState(1)
 
-  interface PdfProps {
-    numPages: number
-  }
-
-  function onDocumentLoadSuccess({ numPages }: PdfProps) {
-    setNumPages(numPages)
+  function renderFooter() {
+    return (
+      <>
+        <Divider />
+        <Box
+          display="flex"
+          justifyContent="flexEnd"
+          paddingTop={4}
+          marginBottom={4}
+        >
+          <Button
+            icon="arrowForward"
+            iconType="outline"
+            onBlur={function noRefCheck() {}}
+            onClick={() => {
+              window.open('https://island.is/minarsidur/', '_blank')
+            }}
+            onFocus={function noRefCheck() {}}
+          >
+            Opna mínar síður
+          </Button>
+        </Box>
+      </>
+    )
   }
 
   if (viewCriminalRecord) {
@@ -88,34 +103,10 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
           </a>
         </Box>
 
-        <Document
+        <PdfViewer
           file={`data:application/pdf;base64,${externalData.getCriminalRecord.data.contentBase64}`}
-          onLoadSuccess={onDocumentLoadSuccess}
-          className={styles.pdfViewer}
-          loading={
-            <Box height="full" display="flex" justifyContent="center">
-              <LoadingDots large />
-            </Box>
-          }
-        >
-          <Page pageNumber={pageNumber} />
-        </Document>
-
-        <Box marginBottom={4}>
-          <Pagination
-            page={pageNumber}
-            renderLink={(page, className, children) => (
-              <Box
-                cursor="pointer"
-                className={className}
-                onClick={() => setPageNumber(page)}
-              >
-                {children}
-              </Box>
-            )}
-            totalPages={numPages}
-          />
-        </Box>
+        />
+        {renderFooter()}
       </>
     )
   }
@@ -196,7 +187,9 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         icon="open"
         iconType="outline"
         onBlur={function noRefCheck() {}}
-        onClick={() => setViewCriminalRecord(true)}
+        onClick={() => {
+          window.open('https://island.is/minarsidur/postholf', '_blank')
+        }}
         onFocus={function noRefCheck() {}}
         variant="text"
       >
@@ -215,23 +208,8 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
           style={{ maxWidth: 220 }}
         />
       </Box>
-      <Divider />
-      <Box
-        display="flex"
-        justifyContent="flexEnd"
-        paddingTop={4}
-        marginBottom={4}
-      >
-        <Button
-          icon="arrowForward"
-          iconType="outline"
-          onBlur={function noRefCheck() {}}
-          onClick={() => setViewCriminalRecord(true)}
-          onFocus={function noRefCheck() {}}
-        >
-          Opna mínar síður
-        </Button>
-      </Box>
+
+      {renderFooter()}
     </>
   )
 }
