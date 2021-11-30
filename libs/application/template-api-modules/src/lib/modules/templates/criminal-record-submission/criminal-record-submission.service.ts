@@ -97,7 +97,7 @@ export class CriminalRecordSubmissionService {
         Date.now(),
       )
         .toISOString()
-        .substring(0, 10)}`,
+        .substring(0, 10)}.pdf`,
       content: record.contentBase64,
     }
 
