@@ -81,8 +81,9 @@ const insertIds = (
   flatIndex: FlatIndex,
   html: HTMLText,
   idPrefix = '',
-): HTMLText =>
-  html.replace(
+): HTMLText => {
+  const foundIds: Record<string, number> = {}
+  return html.replace(
     / class="(section|chapter|subchapter|article)__title"\s*>(([^<]+)(?:.[^/][^]*?)?)<\/[hH]\d/g,
     (
       htmlSnippet: string,
@@ -91,7 +92,16 @@ const insertIds = (
       shortTitle: string,
     ) => {
       const type = _type as ItemType
-      const id = idPrefix + shortTitle.toLowerCase().replace(/\s/g, '')
+      let id = idPrefix + shortTitle.toLowerCase().replace(/\s/g, '')
+      if (!foundIds[id]) {
+        foundIds[id] = 1
+      } else {
+        let count = foundIds[id] + 1
+        while (foundIds[id + '_' + count]) count++
+        foundIds[id] = count
+        id += '_' + count
+      }
+
       const title = longTitle.replace(/<[^]+?>/g, '').trim()
       flatIndex.push({
         title,
@@ -102,6 +112,7 @@ const insertIds = (
       return ` id="${id}" ${htmlSnippet}`
     },
   ) as HTMLText
+}
 
 // ===========================================================================
 
