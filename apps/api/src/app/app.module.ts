@@ -109,6 +109,9 @@ const autoSchemaFile = environment.production
     }),
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl,
+      fetch: {
+        timeout: 60000,
+      },
     }),
     DirectorateOfLabourModule.register(),
     FileUploadModule.register({ fileStorage: environment.fileStorage }),

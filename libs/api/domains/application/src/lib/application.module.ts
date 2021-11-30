@@ -1,12 +1,15 @@
 import { Module, DynamicModule } from '@nestjs/common'
-import fetch from 'isomorphic-fetch'
 import { ApplicationResolver } from './application.resolver'
 import { ApplicationService } from './application.service'
 import { ApplicationsApi, PaymentsApi, Configuration } from '../../gen/fetch'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import {
+  createEnhancedFetch,
+  EnhancedFetchOptions,
+} from '@island.is/clients/middlewares'
 
 export interface Config {
   baseApiUrl: string
+  fetch?: Partial<EnhancedFetchOptions>
 }
 
 @Module({})
@@ -24,6 +27,7 @@ export class ApplicationModule {
               new Configuration({
                 fetchApi: createEnhancedFetch({
                   name: 'ApplicationModule.applicationsApi',
+                  ...config.fetch,
                 }),
                 basePath: config.baseApiUrl,
               }),
