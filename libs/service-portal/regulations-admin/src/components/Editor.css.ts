@@ -447,6 +447,15 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     textAlign: 'center',
     backgroundColor: 'rgba(51,0,255, 0.07)',
   })
+  global('.subchapter__title', {
+    marginTop: '3rem',
+    marginBottom: '.333rem',
+    fontSize: '1.1em',
+    fontWeight: typography.headingsFontWeight,
+    fontStyle: 'normal',
+    textAlign: 'center',
+    backgroundColor: 'rgba(51,0,255, 0.07)',
+  })
   global('.article__title', {
     marginTop: '0',
     marginBottom: '.75rem',
@@ -461,6 +470,9 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
   })
   global('.chapter__title::before', {
     content: '"Kafli"',
+  })
+  global('.subchapter__title::before', {
+    content: '"Undirkafli"',
   })
   global('.article__title::before', {
     content: '"Grein"',
