@@ -1,24 +1,20 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import chunk from 'lodash/chunk'
 
-import { Divider } from '../Divider/Divider'
 import { Box } from '../Box/Box'
 import { Logo } from '../Logo/Logo'
 import { Tiles } from '../Tiles/Tiles'
 import { Text } from '../Text/Text'
 import { Inline } from '../Inline/Inline'
-import { Tag } from '../Tag/Tag'
 import { Icon } from '../Icon/Icon'
 import { GridContainer } from '../Grid/GridContainer/GridContainer'
 import { GridRow } from '../Grid/GridRow/GridRow'
 import { GridColumn } from '../Grid/GridColumn/GridColumn'
 import { Link } from '../Link/Link'
-
-import * as styles from './Footer.css'
 import { Button } from '../Button/Button'
 import Hyphen from '../Hyphen/Hyphen'
 import { LinkContext } from '../context/LinkContext/LinkContext'
+
+import * as styles from './Footer.css'
 
 export interface FooterLinkProps {
   title: string
@@ -31,14 +27,11 @@ interface FooterProps {
   topLinksContact?: FooterLinkProps[]
   bottomLinks?: FooterLinkProps[]
   middleLinks?: FooterLinkProps[]
-  tagLinks?: FooterLinkProps[]
   middleLinksTitle?: string
-  tagLinksTitle?: string
   bottomLinksTitle?: string
   languageSwitchLink?: FooterLinkProps
   hideLanguageSwith?: boolean
   showMiddleLinks?: boolean
-  showTagLinks?: boolean
   languageSwitchOnClick?: () => void
 }
 
@@ -47,12 +40,9 @@ export const Footer = ({
   topLinksContact = defaultTopLinksContact,
   bottomLinks = defaultBottomLinks,
   middleLinks = defaultBottomLinks,
-  tagLinks = defaultBottomLinks,
   middleLinksTitle = 'Tenglar',
-  tagLinksTitle = 'Flýtileiðir',
   bottomLinksTitle = 'Aðrir opinberir vefir',
   showMiddleLinks = false,
-  showTagLinks = false,
   languageSwitchLink = defaultLanguageSwitchLink,
   hideLanguageSwith = false,
   languageSwitchOnClick,
@@ -68,8 +58,8 @@ export const Footer = ({
               </Box>
             </GridColumn>
             <GridColumn
-              span={['12/12', '12/12', '3/12']}
-              paddingBottom={[4, 2, 0, 0]}
+              span={['12/12', '12/12', '4/12', '3/12']}
+              paddingBottom={[4, 4, 0]}
               className={styles.withDecorator}
             >
               <Box paddingRight={[0, 0, 1]}>
@@ -120,15 +110,9 @@ export const Footer = ({
                     )
                   })}
                 </Box>
-                <Divider />
-                <Box
-                  paddingTop={4}
-                  display="flex"
-                  flexDirection="row"
-                  flexWrap="wrap"
-                >
-                  {!hideLanguageSwith && (
-                    <Box marginRight={3}>
+                <div>
+                  <Inline space={3}>
+                    {!hideLanguageSwith && (
                       <Inline space={1} alignY="center">
                         <Icon
                           height="15"
@@ -145,9 +129,7 @@ export const Footer = ({
                           </Link>
                         </Text>
                       </Inline>
-                    </Box>
-                  )}
-                  <Box>
+                    )}
                     <Inline space={1} alignY="center">
                       <Icon
                         height="15"
@@ -161,23 +143,22 @@ export const Footer = ({
                         </Link>
                       </Text>
                     </Inline>
-                  </Box>
-                </Box>
+                  </Inline>
+                </div>
               </Box>
             </GridColumn>
-            {showMiddleLinks ? (
+            {showMiddleLinks && (
               <GridColumn
-                span={['12/12', '12/12', '6/12']}
+                span={['12/12', '12/12', '8/12', '9/12']}
                 paddingBottom={[4, 4, 0]}
-                paddingTop={[6, 6, 0]}
-                className={styles.withDecorator}
+                paddingTop={[4, 4, 0]}
               >
                 <Box paddingX={[0, 0, 1]}>
-                  {middleLinksTitle ? (
+                  {!!middleLinksTitle && (
                     <Text variant="eyebrow" color="blue400" paddingBottom={3}>
                       {middleLinksTitle}
                     </Text>
-                  ) : null}
+                  )}
                   <LinkContext.Provider
                     value={{
                       linkRenderer: (href, children) => (
@@ -187,7 +168,7 @@ export const Footer = ({
                       ),
                     }}
                   >
-                    <Tiles space={2} columns={[1, 2, 2, 2, 2]}>
+                    <Tiles space={2} columns={[1, 2, 2, 2, 3]}>
                       {middleLinks.map(({ title, href }, index) => {
                         return (
                           <Text
@@ -204,56 +185,18 @@ export const Footer = ({
                   </LinkContext.Provider>
                 </Box>
               </GridColumn>
-            ) : null}
-            {showTagLinks ? (
-              <GridColumn
-                span={['12/12', '12/12', '3/12']}
-                paddingTop={[6, 6, 0]}
-              >
-                <Box paddingX={[0, 0, 1]}>
-                  {tagLinksTitle ? (
-                    <Text variant="eyebrow" color="blue400" paddingBottom={3}>
-                      {tagLinksTitle}
-                    </Text>
-                  ) : null}
-                  <Inline space={2}>
-                    {tagLinks.map(({ title, href }, index) => {
-                      return (
-                        <Tag
-                          key={index}
-                          variant="white"
-                          {...(href && href.startsWith('/')
-                            ? {
-                                CustomLink: ({ children, ...props }) => (
-                                  <Link key={title} {...props} href={href}>
-                                    {children}
-                                  </Link>
-                                ),
-                              }
-                            : { href })}
-                        >
-                          {title}
-                        </Tag>
-                      )
-                    })}
-                  </Inline>
-                </Box>
-              </GridColumn>
-            ) : null}
+            )}
           </GridRow>
         </GridContainer>
       </Box>
-      {}
       <Box paddingY={4}>
         <GridContainer>
-          <GridRow>
-            <GridColumn span="12/12">
-              <Text variant="eyebrow" color="blue400" paddingBottom={3}>
-                {bottomLinksTitle}
-              </Text>
-            </GridColumn>
-          </GridRow>
-          <GridRow>
+          <Box paddingBottom={2}>
+            <Text variant="eyebrow" color="blue400">
+              {bottomLinksTitle}
+            </Text>
+          </Box>
+          <Box>
             <LinkContext.Provider
               value={{
                 linkRenderer: (href, children) => (
@@ -263,28 +206,15 @@ export const Footer = ({
                 ),
               }}
             >
-              {chunk(bottomLinks, Math.ceil(bottomLinks.length / 4)).map(
-                (group) =>
-                  group.map(({ title, href }) => {
-                    return (
-                      <GridColumn
-                        key={href}
-                        span={['12/12', '6/12', '4/12', '3/12']}
-                      >
-                        <Text
-                          variant="h5"
-                          fontWeight="light"
-                          color="blue600"
-                          paddingBottom={2}
-                        >
-                          <a href={href}>{title}</a>
-                        </Text>
-                      </GridColumn>
-                    )
-                  }),
-              )}
+              <Inline space={[2, 2, 4]}>
+                {bottomLinks.map(({ title, href }, index) => (
+                  <Text key={index} variant="small" color="blue600">
+                    <a href={href}>{title}</a>
+                  </Text>
+                ))}
+              </Inline>
             </LinkContext.Provider>
-          </GridRow>
+          </Box>
         </GridContainer>
       </Box>
     </footer>

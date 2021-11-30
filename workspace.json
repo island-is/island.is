@@ -3563,10 +3563,22 @@
             "passWithNoTests": true
           }
         },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10001/SKRA-Protected/getOpenAPI?serviceCode=Einstaklingar-v1 -H 'Accept: application/json' > src/clientConfig.json",
+              "jq '.components.schemas.ProblemDetails |= (.additionalProperties = false | .properties.extensions.additionalProperties = false)' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json",
+              "jq '.paths[][].parameters |= map(select(.name != \"X-Road-Client\"))' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/national-registry/v2"
+          }
+        },
         "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn openapi-generator -o libs/clients/national-registry/v2/gen/fetch -i libs/clients/national-registry/v2/src/clientConfig.yaml"
+            "command": "yarn openapi-generator -o libs/clients/national-registry/v2/gen/fetch -i libs/clients/national-registry/v2/src/clientConfig.json"
           }
         }
       }
@@ -6174,6 +6186,27 @@
           "outputs": ["coverage/libs/nest/audit"],
           "options": {
             "jestConfig": "libs/nest/audit/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "nest-config": {
+      "root": "libs/nest/config",
+      "sourceRoot": "libs/nest/config/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/config/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/config"],
+          "options": {
+            "jestConfig": "libs/nest/config/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -8944,6 +8977,7 @@
           "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/skilavottord/ws",
+            "showCircularDependencies": false,
             "main": "apps/skilavottord/ws/src/main.ts",
             "tsConfig": "apps/skilavottord/ws/tsconfig.app.json",
             "assets": [

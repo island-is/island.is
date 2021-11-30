@@ -138,7 +138,8 @@ export const RulingStepTwo: React.FC = () => {
               accusedName: theCase.accusedName,
               accusedNationalId: formatNationalId(theCase.accusedNationalId),
               caseTypeAndExtensionSuffix:
-                theCase.decision === CaseDecision.ACCEPTING
+                theCase.decision === CaseDecision.ACCEPTING ||
+                theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
                   ? `${
                       theCase.parentCase &&
                       isAcceptingCaseDecision(theCase.parentCase.decision)
@@ -150,12 +151,7 @@ export const RulingStepTwo: React.FC = () => {
                         : 'farbanni'
                     }`
                   : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                    `${
-                      theCase.parentCase?.decision ===
-                      CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                        ? 'áframhaldandi '
-                        : ''
-                    }farbanni`,
+                    'farbanni',
               validToDate: `${formatDate(theCase.validToDate, 'PPPPp')
                 ?.replace('dagur,', 'dagsins')
                 ?.replace(' kl.', ', kl.')}`,
@@ -669,7 +665,8 @@ export const RulingStepTwo: React.FC = () => {
                 )}
               {(workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-                (workingCase.decision === CaseDecision.ACCEPTING &&
+                ((workingCase.decision === CaseDecision.ACCEPTING ||
+                  workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
                   workingCase.type === CaseType.TRAVEL_BAN)) && (
                 <Box component="section" marginBottom={4}>
                   <Box marginBottom={3}>
