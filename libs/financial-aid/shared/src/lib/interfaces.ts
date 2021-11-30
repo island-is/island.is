@@ -316,7 +316,7 @@ export interface CreateStaff {
 }
 
 export interface CreateStaffMuncipality {
-  id: string
-  name: string
-  homepage?: string
+  municipalityId: string
+  municipalityName: string
+  municipalityHomepage?: string
 }
