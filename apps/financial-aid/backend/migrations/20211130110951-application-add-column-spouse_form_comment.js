@@ -8,7 +8,7 @@ module.exports = {
           'applications',
           'spouse_form_comment',
           {
-            type: Sequelize.STRING,
+            type: Sequelize.TEXT,
             allowNull: true,
           },
           { transaction: t },
