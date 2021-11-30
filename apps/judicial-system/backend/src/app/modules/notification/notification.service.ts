@@ -528,29 +528,21 @@ export class NotificationService {
 
   private async sendRulingEmailNotificationToPrison(
     existingCase: Case,
+    rulingPdf: string,
   ): Promise<Recipient> {
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
-    const html = formatPrisonRulingEmailNotification(existingCase.courtEndTime)
-    const pdf = await getCustodyNoticePdfAsString(existingCase)
-    const rulingPDF = await getRulingPdfAsString(
-      existingCase,
-      intl.formatMessage,
-      true,
-    )
+    const html = formatPrisonRulingEmailNotification(existingCase.rulingDate)
+    const custodyNoticePdf = await getCustodyNoticePdfAsString(existingCase)
 
     const attachments = [
       {
         filename: `Vistunarseðill ${existingCase.courtCaseNumber}.pdf`,
-        content: pdf,
+        content: custodyNoticePdf,
         encoding: 'binary',
       },
       {
         filename: `Þingbók án úrskurðar ${existingCase.courtCaseNumber}.pdf`,
-        content: rulingPDF,
+        content: rulingPdf,
         encoding: 'binary',
       },
     ]
@@ -566,18 +558,8 @@ export class NotificationService {
 
   private async sendRulingEmailNotificationToPrisonAdministration(
     existingCase: Case,
+    rulingPdf: string,
   ): Promise<Recipient> {
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
-    const pdf = await getRulingPdfAsString(
-      existingCase,
-      intl.formatMessage,
-      true,
-    )
-
     return this.sendEmail(
       'Fangelsismálastofnun',
       environment.notifications.prisonAdminEmail,
@@ -586,7 +568,7 @@ export class NotificationService {
       [
         {
           filename: `Þingbók án úrskurðar ${existingCase.courtCaseNumber}.pdf`,
-          content: pdf,
+          content: rulingPdf,
           encoding: 'binary',
         },
       ],
@@ -602,9 +584,21 @@ export class NotificationService {
       }
     }
 
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    const rulingPdf = await getRulingPdfAsString(
+      existingCase,
+      intl.formatMessage,
+      true,
+    )
+
     const recipients = [
       await this.sendRulingEmailNotificationToPrisonAdministration(
         existingCase,
+        rulingPdf,
       ),
     ]
 
@@ -614,7 +608,7 @@ export class NotificationService {
         existingCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
     ) {
       recipients.concat(
-        await this.sendRulingEmailNotificationToPrison(existingCase),
+        await this.sendRulingEmailNotificationToPrison(existingCase, rulingPdf),
       )
     }
 

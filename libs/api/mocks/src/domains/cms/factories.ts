@@ -100,6 +100,8 @@ export const article = factory<SystemMetadata<Article>>({
 
 export const lifeEvent = factory<LifeEventPage>({
   id: () => faker.datatype.uuid(),
+  shortTitle: () => '',
+  tinyThumbnail: image(),
   title: () => title(),
   slug: slugify('title'),
   intro: () => faker.lorem.paragraph(),
@@ -110,6 +112,7 @@ export const lifeEvent = factory<LifeEventPage>({
 
 export const link = factory<Link>({
   text: () => faker.lorem.words(),
+  date: () => faker.date.past().toISOString(),
   url: () => faker.internet.url(),
   id: () => faker.datatype.uuid(),
 })

@@ -457,7 +457,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                 <PdfButton
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRuling)}
-                  pdfType="ruling?shortVersion=false"
+                  pdfType="ruling"
                 />
               </Box>
             </>
@@ -466,7 +466,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             <PdfButton
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonRulingShortVersion)}
-              pdfType="ruling?shortVersion=true"
+              pdfType="courtRecord"
             />
           </Box>
           {workingCase.type === CaseType.CUSTODY &&
