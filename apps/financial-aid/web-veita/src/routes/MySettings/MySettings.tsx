@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import {
   Text,
@@ -6,11 +6,22 @@ import {
   Input,
   ToggleSwitchCheckbox,
   Button,
+  toast,
+  ToastContainer,
 } from '@island.is/island-ui/core'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 import * as profileStyles from '@island.is/financial-aid-web/veita/src/components/Profile/Profile.css'
-import { InputType, isEmailValid } from '@island.is/financial-aid/shared/lib'
+import {
+  InputType,
+  isEmailValid,
+  User,
+} from '@island.is/financial-aid/shared/lib'
+import { useLazyQuery, useMutation } from '@apollo/client'
+import {
+  CurrentUserQuery,
+  UpdateStaffMutation,
+} from '@island.is/financial-aid-web/veita/graphql'
 
 interface mySettingsState {
   nationalId?: string
@@ -23,7 +34,22 @@ interface mySettingsState {
 }
 
 export const MySettings = () => {
-  const { admin } = useContext(AdminContext)
+  const { admin, setAdmin } = useContext(AdminContext)
+
+  const [updateStaff, { loading }] = useMutation(UpdateStaffMutation)
+
+  const [getCurrentUser, { data }] = useLazyQuery<{
+    currentUser: User
+  }>(CurrentUserQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
+
+  useEffect(() => {
+    if (data && setAdmin) {
+      setAdmin(data.currentUser)
+    }
+  }, [data])
 
   const [state, setState] = useState<mySettingsState>({
     nationalId: admin?.staff?.nationalId,
@@ -44,13 +70,11 @@ export const MySettings = () => {
       onChange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => {
-        if (event.currentTarget.value.length <= 10) {
-          setState({
-            ...state,
-            name: event.target.value,
-            hasError: false,
-          })
-        }
+        setState({
+          ...state,
+          name: event.target.value,
+          hasError: false,
+        })
       },
       error: !state.name,
     },
@@ -61,7 +85,7 @@ export const MySettings = () => {
       onChange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => {
-        if (event.currentTarget.value.length <= 10) {
+        if (event.target.value.length <= 10) {
           setState({
             ...state,
             nationalId: event.target.value,
@@ -93,12 +117,53 @@ export const MySettings = () => {
       ) => {
         setState({
           ...state,
-          nickname: event.currentTarget.value,
+          nickname: event.target.value,
           hasError: false,
         })
       },
     },
   ]
+
+  const areRequiredFieldsFilled =
+    !state.name ||
+    !state.email ||
+    !state.nationalId ||
+    !isEmailValid(state.email) ||
+    state.nationalId.length !== 10
+
+  const onSubmitUpdate = async () => {
+    if (!admin || !admin.staff) {
+      return
+    }
+
+    if (areRequiredFieldsFilled) {
+      setState({ ...state, hasError: true })
+      return
+    }
+
+    try {
+      await updateStaff({
+        variables: {
+          input: {
+            id: admin?.staff.id,
+            name: state.name,
+            nationalId: state.nationalId,
+            nickname: state.nickname,
+            email: state.email,
+            pseudonymName: state.pseudonymName,
+          },
+        },
+      }).then((res) => {
+        getCurrentUser()
+
+        toast.success('Það tókst að uppfæra notanda')
+      })
+    } catch (e) {
+      toast.error(
+        'Ekki tókst að uppfæra notanda, vinsamlega reynið aftur síðar',
+      )
+    }
+  }
 
   return (
     <>
@@ -173,10 +238,11 @@ export const MySettings = () => {
         justifyContent="flexEnd"
         className={`contentUp delay-125`}
       >
-        <Button loading={false} onClick={() => {}} icon="checkmark">
+        <Button loading={loading} onClick={onSubmitUpdate} icon="checkmark">
           Vista stillingar
         </Button>
       </Box>
+      <ToastContainer />
     </>
   )
 }

@@ -40,11 +40,13 @@ export interface Staff {
 }
 
 export interface UpdateStaff {
+  name?: string
   nationalId?: string
   roles?: StaffRole[]
   active?: boolean
   nickname?: string
   email?: string
+  pseudonymName?: boolean
 }
 
 export interface Aid {

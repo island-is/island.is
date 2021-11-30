@@ -12,6 +12,11 @@ export class UpdateStaffDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
+  readonly name: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
   readonly nationalId: string
 
   @IsOptional()
@@ -28,4 +33,9 @@ export class UpdateStaffDto {
   @IsString()
   @ApiProperty()
   readonly email: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty()
+  readonly pseudonymName: boolean
 }
