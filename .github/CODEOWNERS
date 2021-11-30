@@ -164,8 +164,8 @@ infra/                                                                          
 /libs/service-portal/document-provider/                                                       @island-is/advania
 /libs/clients/document-provider/                                                              @island-is/advania @island-is/core
 
-/apps/skilavottord/                                                                           @island-is/deloitte island-is/vice-versa
-/libs/skilavottord/                                                                           @island-is/deloitte island-is/vice-versa
+/apps/skilavottord/                                                                           @island-is/deloitte @island-is/vice-versa
+/libs/skilavottord/                                                                           @island-is/deloitte @island-is/vice-versa
 
 /apps/services/auth-api/                                                                      @island-is/fuglar
 /apps/services/auth-admin-api/                                                                @island-is/fuglar
