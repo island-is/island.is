@@ -1,13 +1,10 @@
 import {
   AlertMessage,
-  AlertMessageType,
   Button,
   Link,
-  ResponsiveSpace,
   LinkContext,
   Text,
-  Pagination,
-  LoadingDots,
+  PdfViewer,
 } from '@island.is/island-ui/core'
 import React, { FC, useState } from 'react'
 // import MyPDF from 'pdf-viewer-reactjs'
@@ -87,7 +84,11 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
           </a>
         </Box>
 
-        <Document
+        <PdfViewer
+          file={`data:application/pdf;base64,${externalData.getCriminalRecord.data.contentBase64}`}
+        />
+
+        {/* <Document
           file={`data:application/pdf;base64,${externalData.getCriminalRecord.data.contentBase64}`}
           onLoadSuccess={onDocumentLoadSuccess}
           className={styles.pdfViewer}
@@ -114,7 +115,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
             )}
             totalPages={numPages}
           />
-        </Box>
+        </Box> */}
       </>
     )
   }
