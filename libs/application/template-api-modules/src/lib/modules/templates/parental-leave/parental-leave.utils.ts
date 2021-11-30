@@ -193,7 +193,7 @@ export const answerToPeriodsDTO = (answers: AnswerPeriod[]) => {
     periods = answers.map((period) => ({
       from: period.startDate,
       to: period.endDate,
-      ratio: Number(period.ratio),
+      ratio: period.ratio,
       approved: false,
       paid: false,
       rightsCodePeriod: null,

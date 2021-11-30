@@ -675,7 +675,9 @@ export const calculateDaysUsedByPeriods = (periods: Period[]) =>
       const end = parseISO(period.endDate)
       const percentage = Number(period.ratio) / 100
 
-      const calculatedLength = calculatePeriodLength(start, end, percentage)
+      const calculatedLength = period.daysToUse
+        ? Number(period.daysToUse)
+        : calculatePeriodLength(start, end, percentage)
 
       return total + calculatedLength
     }, 0),

@@ -18,6 +18,7 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import { Box } from '@island.is/island-ui/core'
 
 import {
+  calculatePeriodLength,
   calculateMaxPercentageForPeriod,
   calculateMinPercentageForPeriod,
 } from '../../lib/directorateOfLabour.utils'
@@ -44,6 +45,9 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
   const [options, setOptions] = useState<SelectOption<string>[]>([])
+  const [selectedValue, setSelectedValue] = useState(currentPeriod.ratio)
+  const [canChooseRemainingDays, setCanChooseRemainingDays] = useState(false)
+  const [maxPercentageValue, setMaxPercentageValue] = useState<string>()
 
   const remainingRights = useRemainingRights(application)
 
@@ -94,12 +98,38 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
         label: `${maxPercentage - index}%`,
       }))
 
+    const periodLengthWithMaxPercentage = calculatePeriodLength(
+      start,
+      end,
+      maxPercentage / 100,
+    )
+
+    if (periodLengthWithMaxPercentage < remainingRights) {
+      setCanChooseRemainingDays(true)
+      const max = `${maxPercentage + 1}`
+      setMaxPercentageValue(max)
+
+      options.splice(0, 0, {
+        value: max,
+        label: `Full nýting (tæp ${maxPercentage}%)`,
+      })
+    }
+
     setOptions(options)
   }, [])
+
+  const onSelect = (option: SelectOption) => {
+    const value = option.value as string
+
+    setSelectedValue(value)
+  }
 
   if (currentIndex < 0) {
     return null
   }
+
+  const isUsingAllRemainingDays =
+    canChooseRemainingDays && selectedValue === maxPercentageValue
 
   return (
     <>
@@ -123,14 +153,25 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
           options,
           backgroundColor: 'blue',
           defaultValue: null,
+          onSelect,
         }}
       />
+
       {currentPeriod.firstPeriodStart === undefined && (
         <input
           type="hidden"
           ref={register}
           name={`periods[${currentIndex}].firstPeriodStart`}
           value={StartDateOptions.SPECIFIC_DATE}
+        />
+      )}
+
+      {isUsingAllRemainingDays && (
+        <input
+          type="hidden"
+          ref={register}
+          name={`periods[${currentIndex}].daysToUse`}
+          value={remainingRights}
         />
       )}
     </>
