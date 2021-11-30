@@ -2,7 +2,7 @@ import {
   PersonalRepresentativeRightType, 
   PersonalRepresentativeRightTypeDTO, 
   PersonalRepresentativeRightTypeService 
-} from '@island.is/auth-api-lib'
+} from '@island.is/auth-api-lib/personal-representative'
 import {
   BadRequestException,
   Body,
@@ -13,7 +13,8 @@ import {
   NotFoundException,
   Param,
   Post,
-  Put
+  Put,
+  Inject
 } from '@nestjs/common'
 import { 
   ApiCreatedResponse, 
@@ -29,6 +30,7 @@ import { AuthGuard } from '../common'
 @ApiBearerAuth()
 export class RightTypesController {
   constructor(
+    @Inject(PersonalRepresentativeRightTypeService)
     private readonly rightTypesService: PersonalRepresentativeRightTypeService
   ) {}
 

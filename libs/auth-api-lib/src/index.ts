@@ -30,7 +30,6 @@ export * from './lib/entities/models/delegation.model'
 export * from './lib/entities/models/delegation-scope.model'
 export * from './lib/entities/models/api-scope-group.model'
 export * from './lib/entities/models/domain.model'
-export * from './lib/entities/models/personal-representative-right-type.model'
 
 // DTO's
 export * from './lib/entities/dto/api-scopes.dto'
@@ -65,7 +64,6 @@ export * from './lib/entities/dto/api-scope-group.dto'
 export * from './lib/entities/dto/paged-rows.dto'
 export * from './lib/entities/dto/domain.dto'
 export * from './lib/entities/dto/individual-info.dto'
-export * from './lib/entities/dto/personal-representative-right-type.dto'
 
 // Services
 export * from './lib/services/clients.service'
@@ -81,7 +79,6 @@ export * from './lib/services/translation.service'
 export * from './lib/services/delegations.service'
 export * from './lib/services/delegation-scope.service'
 export * from './lib/services/user-profile.service'
-export * from './lib/services/personal-representative-right-type.service'
 
 // Config
 //export * as DbConfig from './lib/config/sequelize.config.js'
