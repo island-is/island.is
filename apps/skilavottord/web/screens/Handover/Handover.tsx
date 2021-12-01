@@ -22,7 +22,7 @@ import {
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
 import {
-  Car,
+  VehicleInformation,
   Mutation,
   RecyclingRequestTypes,
   Query,
@@ -83,7 +83,9 @@ const Handover: FC = () => {
   })
 
   const cars = data?.skilavottordVehicles || []
-  const activeCar = cars.filter((car: Car) => car.permno === id)[0]
+  const activeCar = cars.filter(
+    (car: VehicleInformation) => car.permno === id,
+  )[0]
 
   const [
     setRecyclingRequest,

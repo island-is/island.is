@@ -24,7 +24,6 @@ import { theme } from '@island.is/island-ui/theme'
 import {
   RecyclingRequest,
   RecyclingRequestTypes,
-  WithApolloProps,
   Query,
 } from '@island.is/skilavottord-web/graphql/schema'
 import { getTime, getDate, formatYear } from '@island.is/skilavottord-web/utils'
@@ -42,7 +41,11 @@ export const SkilavottordRecyclingRequestQuery = gql`
   }
 `
 
-const Completed = ({ apolloState }: WithApolloProps) => {
+interface PropTypes {
+  apolloState: any
+}
+
+const Completed = ({ apolloState }: PropTypes) => {
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
   const {
