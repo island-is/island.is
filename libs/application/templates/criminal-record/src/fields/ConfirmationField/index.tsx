@@ -67,7 +67,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
             }}
             onFocus={function noRefCheck() {}}
           >
-            Opna mínar síður
+            {formatText(m.openMySites, application, formatMessage)}
           </Button>
         </Box>
       </>
@@ -98,7 +98,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
             className={styles.linkWithoutDecorations}
           >
             <Button icon="download" iconType="outline" variant="text">
-              Hlaða niður sakavottorði
+              {formatText(m.downloadCriminalRecord, application, formatMessage)}
             </Button>
           </a>
         </Box>
@@ -180,7 +180,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
           tag="Pdf"
           colorScheme="blue"
         >
-          Sakavottorð
+          {formatText(m.criminalRecord, application, formatMessage)}
         </TopicCard>
       </Box>
       <Button
@@ -188,12 +188,15 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         iconType="outline"
         onBlur={function noRefCheck() {}}
         onClick={() => {
-          window.open('https://island.is/minarsidur/postholf', '_blank')
+          window.open(
+            formatText(m.criminalRecordInboxLink, application, formatMessage),
+            '_blank',
+          )
         }}
         onFocus={function noRefCheck() {}}
         variant="text"
       >
-        Sakavottorðið geturðu einnig fundið í pósthólfinu þínu
+        {formatText(m.criminalRecordInboxText, application, formatMessage)}
       </Button>
 
       <Box
