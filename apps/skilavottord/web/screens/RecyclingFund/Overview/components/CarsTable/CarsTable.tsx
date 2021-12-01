@@ -1,13 +1,5 @@
 import React, { FC } from 'react'
-import { Stack } from '@island.is/island-ui/core'
-import {
-  Table,
-  Head,
-  Row,
-  HeadData,
-  Data,
-  Body,
-} from '@island.is/skilavottord-web/components'
+import { Stack, Table as T, Text } from '@island.is/island-ui/core'
 import { getDate, getYear } from '@island.is/skilavottord-web/utils'
 import { Vehicle } from '@island.is/skilavottord-web/graphql/schema'
 
@@ -17,39 +9,40 @@ interface TableProps {
 }
 
 export const CarsTable: FC<TableProps> = ({ titles, vehicles }) => {
+  const { Table, Head, Row, HeadData, Body, Data } = T
   return (
-    <Stack space={5}>
-      <Table>
-        <Head>
-          <Row>
-            {titles.map((title, index) => (
-              <HeadData key={index} textVariant="small">
-                {title}
-              </HeadData>
-            ))}
-          </Row>
-        </Head>
-        <Body>
-          {vehicles.map(
-            ({ vehicleId, vehicleType, newregDate, recyclingRequests }) => {
-              return recyclingRequests.map(({ createdAt, nameOfRequestor }) => {
-                const modelYear = getYear(newregDate)
-                const deregistrationDate = getDate(createdAt)
-                return (
-                  <Row key={vehicleId}>
-                    <Data textVariant="h5">{vehicleId}</Data>
-                    <Data>{vehicleType}</Data>
-                    <Data>{modelYear}</Data>
-                    <Data>{nameOfRequestor}</Data>
-                    <Data>{deregistrationDate}</Data>
-                  </Row>
-                )
-              })
-            },
-          )}
-        </Body>
-      </Table>
-    </Stack>
+    <Table>
+      <Head>
+        <Row>
+          {titles.map((title, index) => (
+            <HeadData key={index}>
+              <Text variant="eyebrow">{title}</Text>
+            </HeadData>
+          ))}
+        </Row>
+      </Head>
+      <Body>
+        {vehicles.map(
+          ({ vehicleId, vehicleType, newregDate, recyclingRequests }) => {
+            return recyclingRequests.map(({ createdAt, nameOfRequestor }) => {
+              const modelYear = getYear(newregDate)
+              const deregistrationDate = getDate(createdAt)
+              return (
+                <Row key={vehicleId}>
+                  <Data>
+                    <Text variant="eyebrow">{vehicleId}</Text>
+                  </Data>
+                  <Data>{vehicleType}</Data>
+                  <Data>{modelYear}</Data>
+                  <Data>{nameOfRequestor}</Data>
+                  <Data>{deregistrationDate}</Data>
+                </Row>
+              )
+            })
+          },
+        )}
+      </Body>
+    </Table>
   )
 }
 

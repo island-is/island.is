@@ -1,9 +1,16 @@
 import React, { FC, useContext } from 'react'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
-
-import { Box, GridColumn, Stack, Text } from '@island.is/island-ui/core'
-
+import {
+  ActionCard,
+  Box,
+  BreadcrumbsDeprecated as Breadcrumbs,
+  GridColumn,
+  Link,
+  Stack,
+  Text,
+  TopicCard,
+} from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
@@ -62,42 +69,58 @@ const RecyclingCompanies: FC = () => {
               title: `${sidenavText.companies}`,
               link: `${routes.recyclingCompanies.baseRoute}`,
             },
+            {
+              icon: 'lockClosed',
+              title: `${sidenavText.accessControl}`,
+              link: `${routes.accessControl}`,
+            },
           ]}
           activeSection={1}
         />
       }
     >
-      <GridColumn span={['8/8', '8/8', '7/8', '7/8']}>
-        <Stack space={4}>
-          <Stack space={2}>
-            <Text variant="h1">{t.title}</Text>
-            <Text variant="intro">{t.info}</Text>
-          </Stack>
-          <Text variant="h3">{t.subtitles.companies}</Text>
-          {error || (loading && !data) ? (
-            <Text>{t.empty}</Text>
-          ) : (
-            <Box>
-              {recyclingPartners.map((partner: RecyclingPartner, index) => (
-                <ListItem
-                  key={index}
-                  title={partner.companyName}
-                  content={[
-                    {
-                      text: `${partner.companyId}`,
-                    },
-                    {
-                      text: partner.active
-                        ? t.status.active
-                        : t.status.inactive,
-                    },
-                  ]}
-                />
-              ))}
-            </Box>
-          )}
+      <Stack space={4}>
+        <Breadcrumbs>
+          <Link href={routes.home['recyclingCompany']}>Ísland.is</Link>
+          <span>{t.title}</span>
+        </Breadcrumbs>
+        <Stack space={2}>
+          <Text variant="h1">{t.title}</Text>
+          <Text variant="intro">{t.info}</Text>
         </Stack>
-      </GridColumn>
+        <Text variant="h3">{t.subtitles.companies}</Text>
+        {error || (loading && !data) ? (
+          <Text>{t.empty}</Text>
+        ) : (
+          <Stack space={3}>
+            {recyclingPartners.map((partner: RecyclingPartner, index) => (
+              <ActionCard
+                cta={{ label: '' }}
+                heading={partner.companyName}
+                text={partner.companyId}
+                tag={{
+                  label: partner.active ? t.status.active : t.status.inactive,
+                  variant: partner.active ? 'blue' : 'red',
+                }}
+              />
+              // <ListItem
+              //   key={index}
+              //   title={partner.companyName}
+              //   content={[
+              //     {
+              //       text: `${partner.companyId}`,
+              //     },
+              //     {
+              //       text: partner.active
+              //         ? t.status.active
+              //         : t.status.inactive,
+              //     },
+              //   ]}
+              // />
+            ))}
+          </Stack>
+        )}
+      </Stack>
     </PartnerPageLayout>
   )
 }

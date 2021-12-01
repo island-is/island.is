@@ -334,9 +334,10 @@
     "table": ["Reg nr", "Model", "Year", "Company", "Deregistered"]
   },
   "recyclingFundSidenav": {
-    "title": "Icelandic Recycling Fund",
+    "title": "Service",
     "recycled": "Recycled cars",
-    "companies": "Reycling companies"
+    "companies": "Recycling companies",
+    "accessControl": "Access Control"
   },
   "recyclingCompanies": {
     "title": "Recycling companies",
@@ -352,6 +353,60 @@
     "buttons": {
       "add": "Add recycling company",
       "edit": "Edit"
+    }
+  },
+  "accessControl": {
+    "title": "Access control",
+    "empty": "There is no recycling comapany added yet",
+    "tableHeaders": {
+      "nationalId": "National Id",
+      "name": "Name",
+      "role": "Role",
+      "partnerId": "Partner Id"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "buttons": {
+      "add": "Add recycling company",
+      "edit": "Edit"
+    },
+    "modal": {
+      "titles": {
+        "add": "Add recycling company",
+        "edit": "Edit recycling company"
+      },
+      "subtitles": {
+        "add": "Add recycling company Add recycling company Add recycling company Add recycling company",
+        "edit": "Edit recycling company Edit recycling company Edit recycling company Edit recycling company"
+      },
+      "inputs": {
+        "nationalId": {
+          "label": "National Id",
+          "placeholder": "National Id",
+          "rules": {
+            "required": "National Id is required",
+            "validate": "National Id is incorrect"
+          }
+        },
+        "name": {
+          "label": "Name",
+          "placeholder": "Name"
+        },
+        "role": {
+          "label": "Role",
+          "placeholder": "Role"
+        },
+        "partnerId": {
+          "label": "Partner Id",
+          "placeholder": "Partner Id"
+        }
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "continue": "Submit"
+      }
     }
   },
   "notFound": {
@@ -385,6 +440,7 @@
       "deregister": "/en/deregister-vehicle/[id]"
     },
     "recycledVehicles": "/en/recycled-vehicles",
+    "accessControl": "/en/access-control",
     "recyclingCompanies": {
       "baseRoute": "/en/recycling-companies",
       "add": "/en/recycling-companies/add",

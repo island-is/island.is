@@ -14,4 +14,5 @@ export {
 
 /* Fund screens */
 export { Overview as RecyclingFundOverview } from './RecyclingFund'
-export * from './ReclingCompanies'
+export * from './AccessControl'
+export * from './RecyclingCompanies'

@@ -25,6 +25,7 @@ export interface Translation {
   recyclingFundOverview: RecyclingFundOverview
   recyclingFundSidenav: RecyclingFundSidenav
   recyclingCompanies: RecyclingCompanies
+  accessControl: AccessControl
   notFound: NotFound
   errorBoundary: ErrorBoundary
   routes: Routes
@@ -285,6 +286,48 @@ export interface RecyclingCompanies {
   buttons: CompanyInfoButtons
 }
 
+export interface PartnerModalInput {
+  label: string
+  placeholder: string
+  rules: {
+    required: string
+    validate: string
+  }
+}
+
+export interface PartnerModalTitle {
+  add: string
+  edit: string
+}
+
+export interface AccessControlTableHeaders {
+  nationalId: string
+  name: string
+  role: string
+  partnerId: string
+}
+
+export interface AccessControlModal {
+  titles: ModalTitle
+  subtitles: ModalTitle
+  inputs: {
+    nationalId: PartnerInput
+    name: PartnerInput
+    role: PartnerInput
+    partnerId: PartnerInput
+  }
+  buttons: ProcessButtons
+}
+
+export interface AccessControl {
+  title: string
+  empty: string
+  tableHeaders: AccessControlTableHeaders
+  status: CompanyStatus
+  buttons: CompanyInfoButtons
+  modal: AccessControlModal
+}
+
 export interface CompanyStatus {
   active: string
   inactive: string
@@ -365,6 +408,7 @@ export interface RecyclingFundSidenav {
   title: string
   recycled: string
   companies: string
+  accessControl: string
 }
 
 export interface InputField {
@@ -381,6 +425,7 @@ export interface Routes {
   recycledVehicles: string
   recyclingCompanies: RecyclingCompaniesRoutes
   companyInfo: CompanyInfoRoutes
+  accessControl: string
 }
 
 export interface HomeRoutes {
