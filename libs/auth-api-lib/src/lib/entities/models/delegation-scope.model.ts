@@ -94,10 +94,10 @@ export class DelegationScope extends Model<DelegationScope> {
     return {
       id: this.id,
       delegationId: this.delegationId,
-      scopeName: this.scopeName,
-      apiScope: (this.apiScope as ApiScope)?.toDTO(),
-      identityResourceName: this.identityResourceName,
-      identityResource: (this.identityResource as IdentityResource)?.toDTO(),
+      scopeName: this.scopeName ?? this.identityResourceName ?? '',
+      displayName:
+        (this.apiScope as ApiScope)?.displayName ??
+        (this.identityResource as IdentityResource)?.displayName,
       validFrom: this.validFrom,
       validTo: this.validTo,
     }

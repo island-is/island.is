@@ -45,19 +45,11 @@ export class DelegationScopeDTO {
 
   @IsString()
   @ApiProperty()
-  scopeName?: string
-
-  @IsOptional()
-  @ApiPropertyOptional({ type: ApiScopesDTO })
-  apiScope?: ApiScopesDTO
+  scopeName!: string
 
   @IsString()
   @ApiProperty()
-  identityResourceName?: string
-
-  @IsOptional()
-  @ApiPropertyOptional({ type: IdentityResourcesDTO })
-  identityResource?: IdentityResourcesDTO
+  displayName!: string
 
   @IsDateString()
   @ApiProperty()

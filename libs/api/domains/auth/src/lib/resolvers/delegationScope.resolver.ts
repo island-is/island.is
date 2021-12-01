@@ -19,19 +19,11 @@ export class DelegationScopeResolver {
 
   @ResolveField('type')
   resolveType(@Parent() delegationScope: DelegationScopeDTO): string {
-    return delegationScope.scopeName
-      ? ScopeType.ApiScope
-      : delegationScope.identityResourceName
-      ? ScopeType.IdentityResource
-      : ''
+    return delegationScope.scopeName ? ScopeType.ApiScope : ''
   }
 
   @ResolveField('displayName')
   resolveDisplayName(@Parent() delegationScope: DelegationScopeDTO): string {
-    return (
-      delegationScope.apiScope?.displayName ??
-      delegationScope.identityResource?.displayName ??
-      ''
-    )
+    return delegationScope.displayName
   }
 }
