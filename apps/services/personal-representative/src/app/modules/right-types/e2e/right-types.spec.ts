@@ -5,6 +5,7 @@ describe('Temporary test while testing against auth-api is resolved', () => {
 })
 
 /*
+This is removed until testing against auth-api is resolved
 import { setup } from '../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../test/testHelpers'
 import request from 'supertest'
