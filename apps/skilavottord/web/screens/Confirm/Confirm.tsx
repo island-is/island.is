@@ -14,8 +14,10 @@ import {
 } from '@island.is/skilavottord-web/components'
 import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
 import { formatDate, formatYear } from '@island.is/skilavottord-web/utils'
-import { WithApolloProps } from '@island.is/skilavottord-web/types'
-import { Car, Mutation } from '@island.is/skilavottord-web/graphql/schema'
+import {
+  VehicleInformation,
+  Mutation,
+} from '@island.is/skilavottord-web/graphql/schema'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
@@ -50,26 +52,11 @@ const SkilavottordVehicleMutation = gql`
   }
 `
 
-export interface VehicleMutation {
-  createSkilavottordVehicle: VehicleMutationData
+interface PropTypes {
+  apolloState: any
 }
 
-export interface VehicleOwnerMutation {
-  createSkilavottordVehicleOwner: VehicleOwnerMutationData
-}
-
-export interface VehicleOwnerMutationData {
-  name: string
-  nationalId: string
-}
-
-export interface VehicleMutationData {
-  car: Car
-  newRegDate: string
-  nationalId: string
-}
-
-const Confirm = ({ apolloState }: WithApolloProps) => {
+const Confirm = ({ apolloState }: PropTypes) => {
   const { user } = useContext(UserContext)
   const [checkbox, setCheckbox] = useState(false)
   const [isTablet, setIsTablet] = useState(false)
@@ -167,7 +154,7 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
         <ProcessPageLayout
           processType={'citizen'}
           activeSection={0}
-          activeCar={id.toString()}
+          activeCar={id?.toString()}
         >
           <Stack space={4}>
             <Text variant="h1">{t.title}</Text>

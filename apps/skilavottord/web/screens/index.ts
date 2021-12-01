@@ -6,7 +6,6 @@ export * from './Completed'
 
 /* Company screens */
 export * from './CompanyInfo'
-export * from './CompanyInfoForm'
 export {
   Overview as DeregisterOverview,
   Select as DeregisterSelect,
