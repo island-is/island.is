@@ -117,9 +117,10 @@ export const RulingStepOne: React.FC = () => {
     if (theCase.legalArguments) {
       autofill('courtLegalArguments', theCase.legalArguments, theCase)
     }
-
-    setWorkingCase(theCase)
-  }, [workingCase, setWorkingCase, updateCase, autofill])
+    if (workingCase.id !== '') {
+      setWorkingCase(theCase)
+    }
+  }, [workingCase.id])
 
   return (
     <PageLayout
