@@ -21,7 +21,6 @@ export class UserProfileService {
 
   async findIndividual(
     auth: Auth,
-    xRoadClient: string,
     authMiddlewareOptions: AuthMiddlewareOptions,
   ): Promise<IndividuaInfoDTO> {
     try {
@@ -29,7 +28,6 @@ export class UserProfileService {
         .withMiddleware(new AuthMiddleware(auth, authMiddlewareOptions))
         .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
           id: auth.nationalId,
-          xRoadClient: xRoadClient,
         })
 
       return { name: result.nafn }

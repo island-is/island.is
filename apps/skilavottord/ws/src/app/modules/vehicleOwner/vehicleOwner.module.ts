@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { VehicleOwnerModel } from './vehicle.owner.model'
-import { VehicleOwnerResolver } from './vehicle.owner.resolver'
-import { VehicleOwnerService } from './vehicle.owner.service'
+import { VehicleOwnerModel } from './vehicleOwner.model'
+import { VehicleOwnerResolver } from './vehicleOwner.resolver'
+import { VehicleOwnerService } from './vehicleOwner.service'
 
 @Module({
   imports: [SequelizeModule.forFeature([VehicleOwnerModel])],
