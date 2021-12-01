@@ -31,6 +31,8 @@ import {
   DelegationsService,
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
+import { HttpProblemResponse } from '@island.is/nest/problem'
+
 import { environment } from '../../../environments'
 
 const namespace = '@island.is/auth-public-api/actor/delegations'
@@ -45,9 +47,9 @@ export class ActorDelegationsController {
   @ActorScopes(AuthScope.actorDelegations)
   @Get()
   @ApiOkResponse({ type: [DelegationDTO] })
-  @ApiBadRequestResponse()
-  @ApiForbiddenResponse()
-  @ApiUnauthorizedResponse()
+  @ApiBadRequestResponse({ type: HttpProblemResponse })
+  @ApiForbiddenResponse({ type: HttpProblemResponse })
+  @ApiUnauthorizedResponse({ type: HttpProblemResponse })
   @ApiInternalServerErrorResponse()
   @ApiOperation({
     description: `Finds all incoming delegations for the signed in user or actor.
