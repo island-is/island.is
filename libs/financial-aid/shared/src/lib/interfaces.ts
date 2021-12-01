@@ -56,6 +56,13 @@ export interface Aid {
   municipalityId: string
   type: AidType
 }
+
+export interface DeductionFactors {
+  amount: number
+  applicationId: string
+  description: string
+}
+
 export interface NavigationProps {
   activeSectionIndex: number
   activeSubSectionIndex?: number
