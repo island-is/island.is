@@ -158,8 +158,10 @@ export const CourtRecord: React.FC = () => {
 
     autofill('accusedBookings', autofillAccusedBookings, theCase)
 
-    setWorkingCase(theCase)
-  }, [workingCase, updateCase, setWorkingCase, autofill, formatMessage])
+    if (workingCase.id !== '') {
+      setWorkingCase(theCase)
+    }
+  }, [workingCase.id])
 
   return (
     <PageLayout

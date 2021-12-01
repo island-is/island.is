@@ -168,8 +168,10 @@ export const RulingStepTwo: React.FC = () => {
       theCase,
     )
 
-    setWorkingCase(theCase)
-  }, [id, workingCase, setWorkingCase, autofill, formatMessage])
+    if (workingCase.id) {
+      setWorkingCase(theCase)
+    }
+  }, [workingCase.id])
 
   return (
     <PageLayout
