@@ -16,12 +16,16 @@ import * as styles from './Layout.css'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
 import useRoutes from '../../hooks/useRoutes/useRoutes'
 import { useModules } from '../../hooks/useModules/useModules'
-import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
+import {
+  ServicePortalPath,
+  useScrollTopOnUpdate,
+} from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import MobileMenu from '../MobileMenu/MobileMenu'
 import { useNamespaces } from '@island.is/localization'
 import { useStore } from '../../store/stateProvider'
 import { RemoveScroll } from 'react-remove-scroll'
+import { gridlayout, wideScreens } from './constants'
 
 const Layout: FC = ({ children }) => {
   useRoutes()
@@ -30,36 +34,33 @@ const Layout: FC = ({ children }) => {
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
   const [{ mobileMenuState, sidebarState }] = useStore()
-  const [span, setSpan] = useState<ResponsiveProp<GridColumns>>([
-    '12/12',
-    '12/12',
-    '12/12',
-    '8/12',
-    '9/12',
-  ])
-  const [offset, setOffset] = useState<ResponsiveProp<GridColumns>>([
-    '0',
-    '0',
-    '0',
-    '4/12',
-    '3/12',
-  ])
+
+  const [span, setSpan] = useState<ResponsiveProp<GridColumns>>(
+    gridlayout.default.span,
+  )
+  const [offset, setOffset] = useState<ResponsiveProp<GridColumns>>(
+    gridlayout.default.offset,
+  )
+  const hasWideLayout = wideScreens.includes(pathname as ServicePortalPath)
+  const isDefaultClosed = sidebarState === 'closed' && !hasWideLayout
+  const isWideClosed = sidebarState === 'closed' && hasWideLayout
+  const isWide = sidebarState === 'open' && hasWideLayout
 
   useEffect(() => {
-    if (sidebarState === 'closed' && pathname.includes('fjarmal')) {
-      setSpan(['12/12', '12/12', '12/12', '11/12', '11/12'])
-      setOffset(['0', '0', '0', '1/12', '1/12'])
-    } else if (sidebarState === 'closed' && !pathname.includes('fjarmal')) {
-      setSpan(['12/12', '12/12', '12/12', '10/12', '10/12'])
-      setOffset(['0', '0', '0', '2/12', '2/12'])
-    } else if (sidebarState === 'open' && pathname.includes('fjarmal')) {
-      setSpan(['12/12', '12/12', '12/12', '9/12', '10/12'])
-      setOffset(['0', '0', '0', '3/12', '2/12'])
+    if (isWideClosed) {
+      setSpan(gridlayout.wideClosed.span)
+      setOffset(gridlayout.wideClosed.offset)
+    } else if (isDefaultClosed) {
+      setSpan(gridlayout.defaultClosed.span)
+      setOffset(gridlayout.defaultClosed.offset)
+    } else if (isWide) {
+      setSpan(gridlayout.wide.span)
+      setOffset(gridlayout.wide.offset)
     } else {
-      setSpan(['12/12', '12/12', '12/12', '9/12', '9/12'])
-      setOffset(['0', '0', '0', '3/12', '3/12'])
+      setSpan(gridlayout.default.span)
+      setOffset(gridlayout.default.offset)
     }
-  }, [sidebarState, pathname])
+  }, [isDefaultClosed, isWide, isWideClosed])
 
   return (
     <>
