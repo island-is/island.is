@@ -16,7 +16,6 @@ import {
   LinkProvider,
 } from '@island.is/skilavottord-web/components'
 import * as styles from './PageLayout.css'
-import { ProcessType } from '@island.is/skilavottord-web/types'
 
 interface PageProps {
   children: ReactNode
@@ -44,7 +43,7 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
 
 interface ProcessPageProps extends PageProps {
   activeSection: number
-  processType: ProcessType
+  processType: 'citizen' | 'company'
   activeCar?: string
 }
 
