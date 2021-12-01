@@ -5,8 +5,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
 import { transformApplicationToComplaintDto } from './data-protection-utils'
-import { DataProtectionAttachment } from './models/attachments'
-import { generateApplicationPdf } from './pdfGenerators'
+import { Attachment } from './models/attachments'
+import { generateComplaintPdf } from './pdfGenerators/templates/complaintPdf'
 
 @Injectable()
 export class DataProtectionComplaintAttachmentProvider {
@@ -15,9 +15,7 @@ export class DataProtectionComplaintAttachmentProvider {
     this.s3 = new S3()
   }
 
-  async gatherAllAttachments(
-    application: Application,
-  ): Promise<DataProtectionAttachment[]> {
+  async gatherAllAttachments(application: Application): Promise<Attachment[]> {
     try {
       const pdf = await this.preparePdfFromApplication(application)
       const complaintDocuments = await this.prepareApplicationAttachments(
@@ -39,20 +37,20 @@ export class DataProtectionComplaintAttachmentProvider {
 
   private async preparePdfFromApplication(
     application: Application,
-  ): Promise<DataProtectionAttachment[]> {
+  ): Promise<Attachment[]> {
     const dto = transformApplicationToComplaintDto(application)
-    const buffer = await generateApplicationPdf(dto)
+    const buffer = await generateComplaintPdf(dto)
     const doc = {
       content: buffer.toString('base64'),
       name: 'application.pdf',
-    } as DataProtectionAttachment
+    } as Attachment
     return [doc]
   }
 
   private async prepareApplicationAttachments(
     application: Application,
     answerKey: string,
-  ): Promise<DataProtectionAttachment[]> {
+  ): Promise<Attachment[]> {
     const attachments = getValueViaPath(
       application.answers,
       answerKey,
@@ -65,8 +63,6 @@ export class DataProtectionComplaintAttachmentProvider {
 
     return await Promise.all(
       attachments.map(async ({ key, name }) => {
-        console.log('mapping key ', key)
-        console.log(application.attachments)
         const url = (application.attachments as {
           [key: string]: string
         })[key]

@@ -118,8 +118,8 @@ const devConfig = {
     },
     dataProtectionComplaintApplication: {
       clientConfig: {
-        password: process.env.COMPLAINT_API_CLIENT_PASSWORD,
-        username: process.env.COMPLAINT_API_CLIENT_USERNAME,
+        password: process.env.DATA_PROTECTION_COMPLAINT_API_PASSWORD,
+        username: process.env.DATA_PROTECTION_COMPLAINT_API_USERNAME,
       },
     },
   },

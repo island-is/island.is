@@ -19,8 +19,7 @@ import {
   LinkedContact,
   Metadata,
 } from '@island.is/clients/data-protection-complaint'
-import { generateApplicationPdf } from './pdfGenerators'
-import { DataProtectionAttachment } from './models/attachments'
+import { Attachment } from './models/attachments'
 
 type YesOrNo = typeof YES | typeof NO
 
@@ -84,7 +83,7 @@ export const gatherContacts = (
     idnumber: contact.nationalId,
     postalCode: contact.postalCode,
     role: 'Kvartandi',
-    primary: 'true',
+    primary: 'false',
   }
 
   //Ábyrgðaraðili - subject of complaint
@@ -101,12 +100,12 @@ export const gatherContacts = (
       }
     },
   )
-
+  //TODO: Add contact //role Umbjóðandi
   return [complaintant, ...complainees]
 }
 
 export const getContactType = (nationalId: string): string => {
-  return kennitala.isCompany(nationalId) ? 'Company' : 'Individal'
+  return kennitala.isCompany(nationalId) ? 'Company' : 'Individual'
 }
 
 export const applicationToQuickCaseRequest = (
@@ -125,7 +124,7 @@ export const applicationToQuickCaseRequest = (
 
 export const applicationToCaseRequest = async (
   application: Application,
-  attachments: DataProtectionAttachment[],
+  attachments: DocumentInfo[],
 ): Promise<CreateCaseRequest> => {
   const answers = application.answers as DataProtectionComplaint
 
@@ -136,19 +135,17 @@ export const applicationToCaseRequest = async (
     metadata: toRequestMetadata(answers),
     template: 'Kvörtun',
     contacts: gatherContacts(answers),
-    documents: gatherDocuments(attachments),
+    documents: attachments,
   }
 }
-
-const gatherDocuments = (
-  attachments: DataProtectionAttachment[],
-): DocumentInfo[] => {
+//TODO use DocumentInfo as type
+const gatherDocuments = (attachments: Attachment[]): DocumentInfo[] => {
   return attachments.map((attachment) => {
     return {
       content: attachment.content,
       subject: 'Kvörtun',
       fileName: attachment.name,
-      type: 'Other',
+      type: attachment.type ?? 'document',
     } as DocumentInfo
   })
 }

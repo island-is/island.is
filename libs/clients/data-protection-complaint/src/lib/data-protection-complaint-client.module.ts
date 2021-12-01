@@ -1,4 +1,4 @@
-import { DynamicModule } from '@nestjs/common'
+import { DynamicModule, Provider } from '@nestjs/common'
 import {
   BaseAPI,
   CaseApi,
@@ -12,6 +12,7 @@ import {
   CLIENT_CONFIG,
   DataProtectionComplaintClientConfig,
 } from './data-protection-complaint-client.config'
+import { logger } from '@island.is/logging'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { TokenMiddleware } from './data-protection-complaint-client.middleware'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
@@ -23,6 +24,7 @@ const createProviderConfig = (
   config: DataProtectionComplaintClientConfig,
   middleware?: TokenMiddleware,
 ): Configuration => {
+  console.log('configure ')
   return new Configuration({
     fetchApi: createEnhancedFetch({
       name: 'data-protection-complaint-client',
@@ -34,6 +36,16 @@ const createProviderConfig = (
 
 export class ClientsDataProtectionComplaintModule {
   static register(config: DataProtectionComplaintClientConfig): DynamicModule {
+    if (!config.xRoadPath) {
+      logger.error('DataProtectionClient xRoadPath not provided.')
+    }
+    if (!config.password) {
+      logger.error('DataProtectionClient password not provided.')
+    }
+    if (!config.username) {
+      logger.error('DataProtectionClient username not provided.')
+    }
+
     const exportedApis = [
       DocumentApi,
       CaseApi,
@@ -41,7 +53,7 @@ export class ClientsDataProtectionComplaintModule {
       MemoApi,
       ClientsApi,
     ]
-    console.log('hehehe123123')
+
     return {
       module: ClientsDataProtectionComplaintModule,
       providers: [
@@ -58,13 +70,19 @@ export class ClientsDataProtectionComplaintModule {
         },
         ...exportedApis.map((Api) => ({
           provide: Api,
-          inject: [TokenMiddleware],
-          useFactory: (middleware: TokenMiddleware) => {
-            return new Api(createProviderConfig(config, middleware))
+          useFactory: () => {
+            return new Api(
+              new Configuration({
+                fetchApi: createEnhancedFetch({
+                  name: 'data-protection-complaint-client',
+                }),
+                basePath: useXroad ? config.xRoadPath : undefined,
+              }),
+            )
           },
         })),
       ],
-      exports: exportedApis,
+      exports: [...exportedApis, TokenMiddleware],
     }
   }
 }
