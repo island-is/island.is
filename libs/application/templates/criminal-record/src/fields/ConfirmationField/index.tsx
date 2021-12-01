@@ -5,18 +5,14 @@ import {
   Link,
   LinkContext,
   Text,
-  Pagination,
   Divider,
-  LoadingDots,
   PdfViewer,
 } from '@island.is/island-ui/core'
 import React, { FC, useState } from 'react'
-// import MyPDF from 'pdf-viewer-reactjs'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { Document, Page } from 'react-pdf/dist/esm/entry.webpack'
 import * as styles from './ConfirmationField.css'
 
 type ConfirmationFieldProps = {
@@ -26,6 +22,7 @@ type ConfirmationFieldProps = {
         title: string
         url: string
       }
+      isExpired?: Boolean
     }
   }
   application: {
@@ -43,7 +40,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
   application,
   field,
 }) => {
-  const { title, description, props } = field
+  const { props } = field
   const { externalData } = application
   const { formatMessage } = useLocale()
   const [viewCriminalRecord, setViewCriminalRecord] = useState(false)
@@ -173,16 +170,19 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         </LinkContext.Provider>
       </Box>
 
-      <Box marginBottom={3}>
-        <TopicCard
-          href="/"
-          onClick={() => setViewCriminalRecord(true)}
-          tag="Pdf"
-          colorScheme="blue"
-        >
-          {formatText(m.criminalRecord, application, formatMessage)}
-        </TopicCard>
-      </Box>
+      {props.isExpired ? null : (
+        <Box marginBottom={3}>
+          <TopicCard
+            href="/"
+            onClick={() => setViewCriminalRecord(true)}
+            tag="Pdf"
+            colorScheme="blue"
+          >
+            {formatText(m.criminalRecord, application, formatMessage)}
+          </TopicCard>
+        </Box>
+      )}
+
       <Button
         icon="open"
         iconType="outline"

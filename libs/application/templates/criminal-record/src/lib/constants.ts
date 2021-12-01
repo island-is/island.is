@@ -13,4 +13,5 @@ export enum States {
 
 export enum Roles {
   APPLICANT = 'applicant',
+  APPLICANT_EXPIRED = 'applicantExpired',
 }

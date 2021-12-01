@@ -204,6 +204,16 @@ export const m = defineMessages({
     defaultMessage: 'https://island.is/minarsidur/postholf',
     description: 'Link to the island.is inbox',
   },
+  downloadCriminalRecord: {
+    id: 'cr.application:downloadCriminalRecord',
+    defaultMessage: 'Hlaða niður sakavottorði',
+    description: 'Download criminal record',
+  },
+  openMySites: {
+    id: 'cr.application:openMySites',
+    defaultMessage: 'Opna mínar síður',
+    description: 'Open my sites',
+  },
   outroMessage: {
     id: 'cr.application:outro.message',
     defaultMessage:
