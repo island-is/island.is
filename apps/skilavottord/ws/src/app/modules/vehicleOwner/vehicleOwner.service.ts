@@ -4,8 +4,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { VehicleModel } from '../vehicle'
-import { RecyclingRequestModel } from '../recycling.request'
-import { VehicleOwnerModel } from './vehicle.owner.model'
+import { RecyclingRequestModel } from '../recyclingRequest'
+import { VehicleOwnerModel } from './vehicleOwner.model'
 
 @Injectable()
 export class VehicleOwnerService {
@@ -33,7 +33,7 @@ export class VehicleOwnerService {
   async findRecyclingPartnerVehicles(
     partnerId: string,
   ): Promise<VehicleOwnerModel[]> {
-    this.logger.info('finding recycling partner vehicles...')
+    this.logger.info('finding recyclingPartner vehicles...')
     try {
       const res = await VehicleOwnerModel.findAll({
         include: [
@@ -54,12 +54,12 @@ export class VehicleOwnerService {
       })
       return res
     } catch (error) {
-      this.logger.error('error finding recycling partner vehicles:' + error)
+      this.logger.error('error finding recyclingPartner vehicles:' + error)
     }
   }
 
   async findByNationalId(nationalId: string): Promise<VehicleOwnerModel> {
-    this.logger.info(`finding vehicle owner by vehicleId - "${nationalId}"...`)
+    this.logger.info(`finding vehicleOwner by vehicleId - "${nationalId}"...`)
     try {
       return await VehicleOwnerModel.findOne({
         where: { nationalId },
@@ -70,7 +70,7 @@ export class VehicleOwnerService {
         ],
       })
     } catch (error) {
-      this.logger.error('error finding vehicle owner by vehicleid:' + error)
+      this.logger.error('error finding vehicleOwner by vehicleid:' + error)
     }
   }
 

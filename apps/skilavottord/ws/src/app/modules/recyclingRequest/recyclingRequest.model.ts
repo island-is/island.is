@@ -13,7 +13,7 @@ import {
   Default,
 } from 'sequelize-typescript'
 
-import { RecyclingPartnerModel } from '../recycling.partner'
+import { RecyclingPartnerModel } from '../recyclingPartner'
 import { VehicleModel } from '../vehicle'
 
 @ObjectType()
