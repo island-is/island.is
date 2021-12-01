@@ -12,9 +12,9 @@ import {
   HealthProbe,
   Features,
   Secrets,
+  ValueType,
   XroadConfig,
   MountedFile,
-  RolloutStrategy,
 } from './types/input-types'
 
 export class ServiceBuilder<ServiceType> implements Service {
@@ -144,15 +144,6 @@ export class ServiceBuilder<ServiceType> implements Service {
   }
 
   /**
-   * Ability to override the default rollout strategy of the environment
-   * @param strategy: RollingUpdate or Recreate
-   */
-  rolloutStrategy(strategy: RolloutStrategy) {
-    this.serviceDef.rolloutStrategy = strategy
-    return this
-  }
-
-  /**
    * To perform maintenance before deploying the main service(database migrations, etc.), create an `initContainer` (optional). It maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
    * @param ic initContainer definitions
    */
@@ -267,3 +258,5 @@ export const service = <Service extends string>(
 ): ServiceBuilder<Service> => {
   return new ServiceBuilder(name)
 }
+
+export const json = (value: unknown): ValueType => JSON.stringify(value)

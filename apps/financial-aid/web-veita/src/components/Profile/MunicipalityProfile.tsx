@@ -4,6 +4,7 @@ import {
   Button,
   Link,
   Text,
+  toast,
   ToastContainer,
 } from '@island.is/island-ui/core'
 
@@ -30,6 +31,8 @@ import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 import { useLazyQuery } from '@apollo/client'
 import { AdminUsersQuery } from '@island.is/financial-aid-web/veita/graphql'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+import { useMutation } from '@apollo/client'
+import { MunicipalityActivityMutation } from '@island.is/financial-aid-web/veita/graphql'
 
 interface MunicipalityProfileProps {
   municipality: Municipality
@@ -62,6 +65,27 @@ const MunicipalityProfile = ({
   const refreshList = () => {
     setIsModalVisible(false)
     getMunicipality()
+  }
+
+  const [municipalityActivity] = useMutation(MunicipalityActivityMutation)
+
+  const changeMunicipalityActivity = async (id: string, active: boolean) => {
+    await municipalityActivity({
+      variables: {
+        input: {
+          id,
+          active,
+        },
+      },
+    })
+      .then(() => {
+        getMunicipality()
+      })
+      .catch(() => {
+        toast.error(
+          'Ekki tókst að uppfæra sveitarfélag, vinsamlega reynið aftur síðar',
+        )
+      })
   }
 
   const smallText = 'small'
@@ -155,7 +179,12 @@ const MunicipalityProfile = ({
               </Text>
             </Box>
             <button
-              onClick={() => console.log('🔜')}
+              onClick={() =>
+                changeMunicipalityActivity(
+                  municipality.id,
+                  !municipality.active,
+                )
+              }
               className={headerStyles.button}
             >
               {municipality.active ? 'Óvirkja' : 'Virkja'}
