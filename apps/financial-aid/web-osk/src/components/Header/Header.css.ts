@@ -16,7 +16,11 @@ export const header = style({
 
 export const headerTextWrapper = style({
   marginTop: '5px',
+  display: 'none',
   '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      display: 'flex',
+    },
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       borderLeft: `2px solid ${theme.color.purple100}`,
     },

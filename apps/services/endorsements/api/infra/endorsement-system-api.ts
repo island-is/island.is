@@ -13,6 +13,7 @@ export const serviceSetup = (services: {
   service('endorsement-system-api')
     .image('services-endorsements-api')
     .namespace('endorsement-system')
+    .serviceAccount('endorsement-system-api')
     .command('node')
     .args('--tls-min-v1.0', 'main.js')
     .postgres(postgresInfo)
@@ -31,6 +32,16 @@ export const serviceSetup = (services: {
       TEMPORARY_VOTER_REGISTRY_API_URL: ref(
         (h) => `http://${h.svc(services.servicesTemporaryVoterRegistryApi)}`,
       ),
+      EMAIL_FROM_NAME: {
+        dev: 'devland.is',
+        staging: 'devland.is',
+        prod: 'island.is',
+      },
+      EMAIL_FROM_ADDRESS: {
+        dev: 'development@island.is',
+        staging: 'development@island.is',
+        prod: 'noreply@island.is',
+      },
     })
     .secrets({
       ACCESS_GROUP_DMR:

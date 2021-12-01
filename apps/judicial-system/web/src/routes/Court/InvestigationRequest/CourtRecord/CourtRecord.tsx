@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
+import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { SessionArrangements } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
@@ -14,6 +14,7 @@ import CourtRecordForm from './CourtRecordForm'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icCourtRecord as m } from '@island.is/judicial-system-web/messages'
 import { useIntl } from 'react-intl'
+import formatISO from 'date-fns/formatISO'
 
 const CourtRecord = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -75,7 +76,9 @@ const CourtRecord = () => {
     if (!workingCase && data?.case) {
       const theCase = data.case
 
-      autofill('courtStartDate', new Date().toString(), theCase)
+      if (theCase.courtDate) {
+        autofill('courtStartDate', theCase.courtDate, theCase)
+      }
 
       if (theCase.court) {
         autofill(
@@ -106,15 +109,46 @@ const CourtRecord = () => {
       }
 
       if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+        let autofillAccusedBookings = ''
+
+        if (theCase.defenderName) {
+          autofillAccusedBookings += `${formatMessage(
+            m.sections.accusedBookings.autofillDefender,
+            {
+              defender: theCase.defenderName,
+            },
+          )}\n\n`
+        }
+
+        if (theCase.translator) {
+          autofillAccusedBookings += `${formatMessage(
+            m.sections.accusedBookings.autofillTranslator,
+            {
+              translator: theCase.translator,
+            },
+          )}\n\n`
+        }
+
+        autofillAccusedBookings += `${formatMessage(
+          m.sections.accusedBookings.autofillRightToRemainSilent,
+        )}\n\n${formatMessage(
+          m.sections.accusedBookings.autofillCourtDocumentOne,
+        )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
+
+        autofill('accusedBookings', autofillAccusedBookings, theCase)
+      }
+
+      if (
+        theCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+        theCase.defenderIsSpokesperson &&
+        theCase.defenderName
+      ) {
         autofill(
           'accusedBookings',
-          `${formatMessage(
-            m.sections.accusedBookings.autofillRightToRemainSilent,
-          )}\n\n${formatMessage(
-            m.sections.accusedBookings.autofillCourtDocumentOne,
-          )}\n\n${formatMessage(
-            m.sections.accusedBookings.autofillAccusedPlea,
-          )}`,
+          formatMessage(m.sections.accusedBookings.autofillSpokeperson, {
+            spokesperson: theCase.defenderName,
+          }),
           theCase,
         )
       }

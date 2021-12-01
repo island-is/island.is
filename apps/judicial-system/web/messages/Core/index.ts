@@ -59,4 +59,24 @@ export const core = defineMessages({
     description:
       'Notað fyrir texta á hnappi til að sækja vistunarseðil sem pdf skjal.',
   },
+  caseNumber: {
+    id: 'judicial.system.core:case_number',
+    defaultMessage: 'Mál nr. {caseNumber}',
+    description: 'Notað fyrir texta fyrir númer á máli',
+  },
+  prosecutor: {
+    id: 'judicial.system.core:prosecutor',
+    defaultMessage: 'Sóknaraðili',
+    description: 'Notað fyrir orðið sóknaraðili í öllum flæðum.',
+  },
+  accused: {
+    id: 'judicial.system.core:accused',
+    defaultMessage: 'Varnaraðili',
+    description: 'Notað fyrir orðið varnaraðili í öllum flæðum.',
+  },
+  requestCaseType: {
+    id: 'judicial.system.core:request_case_type',
+    defaultMessage: 'Krafa um {caseType}',
+    description: 'Notað sem titill fyrir Krafa um í öllum flæðum',
+  },
 })

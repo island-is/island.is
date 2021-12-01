@@ -14,7 +14,12 @@ export const attachments = {
     },
     description: {
       id: 'an.application:attachments.description',
-      defaultMessage: `Sjúkratryggingar Íslands kunna að óska eftir frekari gögnum við afgreiðslu málsins, svo taka megi ákvörðun um bótarétt, fjárhæð og greiðslu bóta.`,
+      defaultMessage: `Svo hægt sé að klára afgreiðslu tilkynningar þurfa öll nauðsynleg fylgiskjöl að berast Sjúkratryggingum Íslands. Ef enn vantar fylgiskjöl, er samt sem áður hægt að senda inn tilkynninguna og skila fylgiskjölum síðar.`,
+      description: 'Description for attachments',
+    },
+    additionalAttachmentDescription: {
+      id: 'an.application:attachments.additionalAttachmentDescription',
+      defaultMessage: `Hér getur þú bætt við fleiri fylgiskjölum sem kunna að gefa skýrari sýn á slysið og geta hjálpað til við úrvinnslu tilkynningarinnar. Athugið að einnig er hægt að bæta við fylgiskjölum eftir að tilkynning hefur verið send.`,
       description: 'Description for attachments',
     },
     alertMessage: {
@@ -34,7 +39,8 @@ export const attachments = {
     },
     uploadDescription: {
       id: 'an.application:attachments.uploadDescription',
-      defaultMessage: 'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf',
+      defaultMessage:
+        'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf, .jpg, .jpeg, .png, .heic',
       description: 'Definition of upload description',
     },
     uploadHeader: {
@@ -73,6 +79,16 @@ export const attachments = {
         'Ég vil klára að tilkynna slys en áverkavottorð verður skilað síðar',
       description: 'Label for send certificate later',
     },
+    additionalNow: {
+      id: 'an.application:attachments.additionalNow',
+      defaultMessage: 'Ég vil bæta við fylgiskjölum núna',
+      description: 'Label for adding additional attachments now',
+    },
+    additionalLater: {
+      id: 'an.application:attachments.additionalLater',
+      defaultMessage: 'Ég vil klára að tilkynna slys',
+      description: 'Label for adding additional attachments later',
+    },
     alertMessage: {
       id: 'an.application:attachments.labels.alertMessage',
       defaultMessage: 'Athugið',
@@ -100,6 +116,11 @@ export const attachments = {
       id: 'an.application:attachments.documentNames.powerOfAttorney',
       defaultMessage: 'Umboð',
       description: 'Name of power of attorney document for in review',
+    },
+    additionalDocuments: {
+      id: 'an.application:attachments.documentNames.additionalDocuments',
+      defaultMessage: 'Auka fylgiskjöl',
+      description: 'Name of additional attachments for in review',
     },
   }),
 }

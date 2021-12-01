@@ -1,8 +1,8 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType, GraphQLISODateTime } from '@nestjs/graphql'
 
 @ObjectType()
 export class PaymentSchedulePayment {
-  @Field(() => ID)
+  @Field(() => GraphQLISODateTime)
   dueDate!: Date
 
   @Field(() => Number)

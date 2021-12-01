@@ -20,4 +20,7 @@ export class EndorsementListOpen {
 
   @Field(() => Date)
   openedDate!: Date
+
+  @Field(() => Boolean)
+  adminLock!: boolean
 }

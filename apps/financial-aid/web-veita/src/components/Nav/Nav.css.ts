@@ -35,6 +35,10 @@ export const container = style({
   },
 })
 
+export const adminStyles = style({
+  backgroundColor: theme.color.dark100,
+})
+
 export const showNavInMobile = style({
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
@@ -59,17 +63,6 @@ export const logoMunicipalityContainer = style({
 export const logoMunicipality = style({
   width: theme.spacing[4],
   height: theme.spacing[6],
-})
-
-export const sideNavBarButton = style({
-  display: 'flex',
-  alignItems: 'center',
-  marginBottom: '8px',
-})
-
-export const sideNavBarButtonIcon = style({
-  marginRight: theme.spacing[2],
-  transition: 'transform 250ms ease',
 })
 
 export const personIcon = style({

@@ -24,7 +24,10 @@ import {
   ApiScope,
   IdentityResource,
 } from '@island.is/auth-api-lib'
-import { createEnhancedFetch, FetchAPI } from '@island.is/clients/middlewares'
+import {
+  createEnhancedFetch,
+  EnhancedFetchAPI,
+} from '@island.is/clients/middlewares'
 import type { Auth, AuthConfig, User } from '@island.is/auth-nest-tools'
 import {
   AuthMiddleware,
@@ -45,7 +48,7 @@ export const DELEGATIONS_AUTH_CONFIG = 'DELEGATIONS_AUTH_CONFIG'
 
 @Injectable()
 export class DelegationsService {
-  private readonly authFetch: FetchAPI
+  private readonly authFetch: EnhancedFetchAPI
 
   constructor(
     @Inject(RskApi)
@@ -66,11 +69,10 @@ export class DelegationsService {
 
   async findAllTo(
     user: User,
-    xRoadClient: string,
     authMiddlewareOptions: AuthMiddlewareOptions,
   ): Promise<DelegationDTO[]> {
     const [wards, companies, custom] = await Promise.all([
-      this.findAllWardsTo(user, xRoadClient, authMiddlewareOptions),
+      this.findAllWardsTo(user, authMiddlewareOptions),
       this.findAllCompaniesTo(user.nationalId),
       this.findAllValidCustomTo(user.nationalId),
     ])
@@ -82,7 +84,6 @@ export class DelegationsService {
 
   private async findAllWardsTo(
     auth: Auth,
-    xRoadClient: string,
     authMiddlewareOptions: AuthMiddlewareOptions,
   ): Promise<DelegationDTO[]> {
     try {
@@ -91,7 +92,6 @@ export class DelegationsService {
         .withMiddleware(new AuthMiddleware(auth, authMiddlewareOptions))
         .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
           id: auth.nationalId,
-          xRoadClient: xRoadClient,
         })
 
       const distinct = response.filter(
@@ -103,7 +103,6 @@ export class DelegationsService {
           .withMiddleware(new AuthMiddleware(auth, authMiddlewareOptions))
           .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
             id: nationalId,
-            xRoadClient: xRoadClient,
           }),
       )
 
@@ -206,7 +205,6 @@ export class DelegationsService {
   private async getPersonName(
     nationalId: string,
     user: User,
-    xRoadClient: string,
     authMiddlewareOptions: AuthMiddlewareOptions,
   ) {
     const person = await this.personApi
@@ -217,7 +215,6 @@ export class DelegationsService {
       )
       .einstaklingarGetEinstaklingur({
         id: nationalId,
-        xRoadClient: xRoadClient,
       })
     if (!person) {
       throw new BadRequestException(
@@ -229,7 +226,6 @@ export class DelegationsService {
 
   async create(
     user: User,
-    xRoadClient: string,
     authMiddlewareOptions: AuthMiddlewareOptions,
     delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
@@ -239,12 +235,7 @@ export class DelegationsService {
 
     const [fromDisplayName, toName] = await Promise.all([
       this.getUserName(user),
-      this.getPersonName(
-        delegation.toNationalId,
-        user,
-        xRoadClient,
-        authMiddlewareOptions,
-      ),
+      this.getPersonName(delegation.toNationalId, user, authMiddlewareOptions),
     ])
 
     this.logger.debug('Creating a new delegation')

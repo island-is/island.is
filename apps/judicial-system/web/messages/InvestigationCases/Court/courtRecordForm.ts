@@ -46,14 +46,14 @@ export const icCourtRecord = {
         id:
           'judicial.system.investigation_cases:court_record.accused_bookings.autofill_right_to_remain_silent',
         defaultMessage:
-          'Sakborningi er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.',
+          'Varnaraðila er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.',
         description:
           'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
       autofillCourtDocumentOne: {
         id:
           'judicial.system.investigation_cases:court_record.accused_bookings.autofill_court_document_one',
-        defaultMessage: 'Sakborningi er kynnt krafa á dómskjali nr. 1.',
+        defaultMessage: 'Varnaraðila er kynnt krafa á dómskjali nr. 1.',
         description:
           'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
@@ -61,9 +61,33 @@ export const icCourtRecord = {
         id:
           'judicial.system.investigation_cases:court_record.accused_bookings.autofill_accused_plea',
         defaultMessage:
-          'Sakborningur mótmælir kröfunni / Sakborningur samþykkir kröfuna',
+          'Varnaraðili mótmælir kröfunni / Varnaraðili samþykkir kröfuna',
         description:
           'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      autofillDefender: {
+        id:
+          'judicial.system.investigation_cases:court_record.accused_bookings.autofill_defender',
+        defaultMessage:
+          '{defender} lögmaður er skipaður verjandi varnaraðila að hans ósk.',
+        description:
+          'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      autofillTranslator: {
+        id:
+          'judicial.system.investigation_cases:court_record.accused_bookings.autofill_translator',
+        defaultMessage:
+          '{translator} túlkar fyrir varnaraðila það sem fram fer í þinghaldinu.',
+        description:
+          'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      autofillSpokeperson: {
+        id:
+          'judicial.system.investigation_cases:court_record.accused_bookings.autofill_spokeperson',
+        defaultMessage:
+          'Í dóminn er mætt/ur {spokesperson} lögmaður sem dómari skipar nú til að gæta hagsmuna þess aðila sem krafan beinist að. Hann/hún hefur undirritað heit skv. 2. mgr. 84. gr. laga númer 88/2008 um meðferð sakamála.',
+        description:
+          'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
     litigationPresentations: defineMessages({
@@ -99,6 +123,29 @@ export const icCourtRecord = {
           'Sláðu inn staðsetningu dómþings í þágufalli með forskeyti sem hefst á litlum staf. Dæmi "í Héraðsdómi Reykjavíkur". Staðsetning mun birtast með þeim hætti í upphafi þingbókar.',
         description:
           'Notaður sem upplýsingatexti í "Hvar var dómþing haldið?" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+      },
+    }),
+    courtDocuments: defineMessages({
+      header: {
+        id:
+          'judicial.system.investigation_cases:court_record.court_documents.header',
+        defaultMessage: 'Dómskjöl',
+        description:
+          'Notað sem fyrirsögn í "Dómskjöl" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      tag: {
+        id:
+          'judicial.system.investigation_cases:court_record.court_documents.tag',
+        defaultMessage: 'Þingmerkt nr. 1',
+        description:
+          'Notað sem tagg í "Dómskjöl" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      text: {
+        id:
+          'judicial.system.investigation_cases:court_record.court_documents.text',
+        defaultMessage: 'Rannsóknargögn málsins liggja frammi.',
+        description:
+          'Notað sem útskýringar texti í "Dómskjöl" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
     }),
   },

@@ -8,16 +8,16 @@ inputs:
   codecov-token:
     required: true
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Cache for NodeJS dependencies - host OS
-      uses: actions/cache@v2
+      uses: island-is/cache@v0.1
       with:
         path: node_modules
         key: ${{ inputs.node-modules-hash }}-yarn
 
     - name: Cache for generated files
-      uses: actions/cache@v2
+      uses: island-is/cache@v0.1
       with:
         path: generated_files.tar.gz
         key: ${{ inputs.generated-files-cache-key }}

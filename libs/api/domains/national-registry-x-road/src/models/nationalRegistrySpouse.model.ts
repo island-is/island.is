@@ -2,11 +2,11 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 @ObjectType()
 export class NationalRegistrySpouse {
   @Field(() => ID, { nullable: true })
-  nationalId?: string
+  nationalId?: string | null
 
   @Field(() => String, { nullable: true })
-  maritalStatus?: string
+  maritalStatus?: string | null
 
   @Field(() => String, { nullable: true })
-  name?: string
+  name?: string | null
 }

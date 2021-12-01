@@ -4,7 +4,7 @@ import {
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system/types'
-import { makeCase } from '../../fixtures/testDataFactory'
+import { makeCase } from '@island.is/judicial-system/formatters'
 import { intercept } from '../../utils'
 
 describe('/domur/urskurdarord/:id', () => {
@@ -219,30 +219,6 @@ describe('/domur/urskurdarord/:id', () => {
     cy.getByTestid('conclusion').should(
       'have.value',
       'Kærði, Donald Duck, kt. 000000-0000, skal sæta farbanni, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23.',
-    )
-  })
-
-  it('should format conclusion for rejected extension when alternative travel ban accepted and previous ruling was travel ban', () => {
-    const caseData = makeCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-      parentCase: {
-        ...makeCase(),
-        decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-      },
-      validToDate: '2020-12-22T11:23:00.000Z',
-    }
-
-    cy.visit(
-      '/domur/urskurdarord/conclusion_rejected_extension_accepted_alternative_travel_ban_previous_decision_travel_ban',
-    )
-
-    intercept(caseDataAddition)
-
-    cy.getByTestid('conclusion').should(
-      'have.value',
-      'Kærði, Donald Duck, kt. 000000-0000, skal sæta áframhaldandi farbanni, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23.',
     )
   })
 

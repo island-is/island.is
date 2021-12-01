@@ -10,7 +10,7 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import { CaseDecision } from '@island.is/judicial-system/types'
 import type { Case, User } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -19,6 +19,7 @@ import {
   icConfirmation as m,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case
@@ -62,9 +63,9 @@ const Confirmation: React.FC<Props> = (props) => {
           </Accordion>
         </Box>
         <Box marginBottom={7}>
-          <BlueBox justifyContent="center">
-            <Box marginBottom={2}>
-              <Text as="h4" variant="h4">
+          <BlueBox>
+            <Box marginBottom={2} textAlign="center">
+              <Text as="h3" variant="h3">
                 {formatMessage(m.sections.conclusion.title)}
               </Text>
             </Box>
@@ -73,8 +74,8 @@ const Confirmation: React.FC<Props> = (props) => {
                 <Text variant="intro">{workingCase.conclusion}</Text>
               </Box>
             </Box>
-            <Box marginBottom={1}>
-              <Text variant="h5">
+            <Box marginBottom={1} textAlign="center">
+              <Text variant="h4">
                 {workingCase?.judge ? workingCase.judge.name : user?.name}
               </Text>
             </Box>
@@ -84,14 +85,14 @@ const Confirmation: React.FC<Props> = (props) => {
           <PdfButton
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
-            pdfType="ruling?shortVersion=false"
+            pdfType="ruling"
           />
         </Box>
         <Box marginBottom={15}>
           <PdfButton
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRulingShortVersion)}
-            pdfType="ruling?shortVersion=true"
+            pdfType="courtRecord"
           />
         </Box>
       </FormContentContainer>
@@ -110,18 +111,12 @@ const Confirmation: React.FC<Props> = (props) => {
               : m.footer.acceptingPartially.continueButtonText,
           )}
           nextButtonIcon={
-            workingCase.decision &&
-            [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY].includes(
-              workingCase.decision,
-            )
+            isAcceptingCaseDecision(workingCase.decision)
               ? 'checkmark'
               : 'close'
           }
           nextButtonColorScheme={
-            workingCase.decision &&
-            [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY].includes(
-              workingCase.decision,
-            )
+            isAcceptingCaseDecision(workingCase.decision)
               ? 'default'
               : 'destructive'
           }

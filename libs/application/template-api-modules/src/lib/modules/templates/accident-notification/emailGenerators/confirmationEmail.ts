@@ -52,7 +52,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
         {
           component: 'Image',
           context: {
-            src: pathToAsset('manWithBabyIllustration.jpg'),
+            src: pathToAsset('computerIllustration.jpg'),
             alt: 'Maður með barn myndskreyting',
           },
         },
@@ -71,7 +71,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
           component: 'Copy',
           context: {
             copy:
-              'Sjúkratryggingar Íslands verður í sambandi við þig ef frekari upplýsingar vantar. Hægt er að skoða tilkynninguna á island.is eða með því að smella á hlekkinn hér að neðan.',
+              'Sjúkratryggingar Íslands verða í sambandi við þig ef frekari upplýsingar vantar. Hægt er að skoða tilkynninguna á island.is eða með því að smella á hlekkinn hér að neðan.',
           },
         },
         {

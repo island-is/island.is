@@ -5,56 +5,28 @@ import {
   FormValue,
   getValueViaPath,
 } from '@island.is/application/core'
-import { States } from '../../constants'
 import { useLocale } from '@island.is/localization'
-import { ReviewSectionState } from '../../types'
+import { SubmittedApplicationData } from '../../types'
 import {
-  isHomeActivitiesAccident,
-  isInjuredAndRepresentativeOfCompanyOrInstitute,
   hasReceivedAllDocuments,
   getErrorMessageForMissingDocuments,
+  shouldRequestReview,
+  isInjuredAndRepresentativeOfCompanyOrInstitute,
 } from '../../utils'
 import { inReview } from '../../lib/messages'
 import { StatusStep } from './StatusStep'
 import { getAccidentStatusQuery } from '../../hooks/useLazyStatusOfNotification'
 import { useFormContext } from 'react-hook-form'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { useQuery } from '@apollo/client'
-import { AccidentNotificationStatus } from '@island.is/api/schema'
 import { hasReceivedConfirmation } from '../../utils/hasReceivedConfirmation'
-
-type StateMapEntry = { [key: string]: ReviewSectionState }
-
-type StatesMap = {
-  representative: StateMapEntry
-  sjukratrygging: StateMapEntry
-}
-
-const statesMap: StatesMap = {
-  representative: {
-    [States.REVIEW]: ReviewSectionState.missing,
-    [States.IN_FINAL_REVIEW]: ReviewSectionState.received,
-  },
-  sjukratrygging: {
-    [States.REVIEW]: ReviewSectionState.pending,
-    [States.IN_FINAL_REVIEW]: ReviewSectionState.inProgress,
-  },
-}
-
-interface SubmittedApplicationData {
-  data?: {
-    documentId: string
-  }
-}
-
-interface ApplicationStatusProps {
-  field: {
-    props: {
-      isAssignee: boolean
-    }
-  }
-}
+import {
+  AccidentNotificationStatusEnum,
+  ApplicationStatusProps,
+  Steps,
+} from './StatusStep/types'
+import { AccidentNotificationStatus } from '@island.is/api/schema'
+import { AccidentNotificationAnswers } from '../..'
 
 export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
   goToScreen,
@@ -70,7 +42,6 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
   const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION)
   const { locale, formatMessage } = useLocale()
 
-  // Todo error state when service doesnt reply
   const { loading: loadingData, error, data } = useQuery(
     getAccidentStatusQuery,
     {
@@ -84,48 +55,52 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
     if (goToScreen) goToScreen(screen)
   }
 
-  const oldAccidentStatus = getValueViaPath(
-    application.answers,
+  const currentAccidentStatus = getValueViaPath(
+    answers,
     'accidentStatus',
   ) as AccidentNotificationStatus
 
   const hasAccidentStatusChanged = useCallback(
     (
       newAccidentStatus: AccidentNotificationStatus,
-      oldAccidentStatus: AccidentNotificationStatus,
+      currentAccidentStatus: AccidentNotificationStatus,
     ) => {
+      if (!currentAccidentStatus) {
+        return true
+      }
       if (
         newAccidentStatus.receivedAttachments?.InjuryCertificate !==
-        oldAccidentStatus.receivedAttachments?.InjuryCertificate
+        currentAccidentStatus.receivedAttachments?.InjuryCertificate
       ) {
         return true
       }
       if (
         newAccidentStatus.receivedAttachments?.PoliceReport !==
-        oldAccidentStatus.receivedAttachments?.PoliceReport
+        currentAccidentStatus.receivedAttachments?.PoliceReport
       ) {
         return true
       }
       if (
         newAccidentStatus.receivedAttachments?.ProxyDocument !==
-        oldAccidentStatus.receivedAttachments?.ProxyDocument
+        currentAccidentStatus.receivedAttachments?.ProxyDocument
       ) {
         return true
       }
       if (
         newAccidentStatus.receivedConfirmations?.CompanyParty !==
-        oldAccidentStatus.receivedConfirmations?.CompanyParty
+        currentAccidentStatus.receivedConfirmations?.CompanyParty
       ) {
         return true
       }
       if (
         newAccidentStatus.receivedConfirmations
           ?.InjuredOrRepresentativeParty !==
-        oldAccidentStatus.receivedConfirmations?.InjuredOrRepresentativeParty
+        currentAccidentStatus.receivedConfirmations
+          ?.InjuredOrRepresentativeParty
       ) {
         return true
       }
-      if (newAccidentStatus.status !== oldAccidentStatus.status) {
+      if (newAccidentStatus.status !== currentAccidentStatus.status) {
         return true
       }
       return false
@@ -152,7 +127,7 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
       if (
         res.data &&
         refetch &&
-        hasAccidentStatusChanged(accidentStatus, oldAccidentStatus)
+        hasAccidentStatusChanged(accidentStatus, currentAccidentStatus)
       ) {
         refetch()
       }
@@ -166,7 +141,7 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
     }
   }, [data, assignValueToAnswersAndRefetch])
 
-  if (loadingData || loading) {
+  if (loadingData || loading || !currentAccidentStatus) {
     return (
       <>
         <SkeletonLoader height={120} />
@@ -182,21 +157,43 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
     )
   }
 
-  const hasReviewerSubmitted = isAssignee && hasReceivedConfirmation(answers)
+  const tagMapperApplicationStatus = {
+    [AccidentNotificationStatusEnum.ACCEPTED]: {
+      variant: 'blue',
+      text: inReview.tags.received,
+    },
+    [AccidentNotificationStatusEnum.REFUSED]: {
+      variant: 'blue',
+      text: inReview.tags.received,
+    },
+    [AccidentNotificationStatusEnum.INPROGRESS]: {
+      variant: 'purple',
+      text: inReview.tags.pending,
+    },
+    [AccidentNotificationStatusEnum.INPROGRESSWAITINGFORDOCUMENT]: {
+      variant: 'purple',
+      text: inReview.tags.pending,
+    },
+  }
+
+  const hasReviewerSubmitted = hasReceivedConfirmation(answers)
+
   const steps = [
     {
-      state: ReviewSectionState.received,
+      tagText: formatMessage(inReview.tags.received),
+      tagVariant: 'blue',
       title: formatMessage(inReview.application.title),
       description: formatMessage(inReview.application.summary),
       hasActionMessage: false,
     },
     {
-      state: hasReceivedAllDocuments(application.answers)
-        ? ReviewSectionState.received
-        : ReviewSectionState.missing,
+      tagText: hasReceivedAllDocuments(answers)
+        ? formatMessage(inReview.tags.received)
+        : formatMessage(inReview.tags.missing),
+      tagVariant: hasReceivedAllDocuments(answers) ? 'blue' : 'rose',
       title: formatMessage(inReview.documents.title),
       description: formatMessage(inReview.documents.summary),
-      hasActionMessage: !hasReceivedAllDocuments(application.answers),
+      hasActionMessage: !hasReceivedAllDocuments(answers),
       action: {
         cta: () => {
           changeScreens('addAttachmentScreen')
@@ -213,9 +210,10 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
     },
     // If this was a home activity accident than we don't want the user to see this step
     {
-      state: hasReviewerSubmitted
-        ? ReviewSectionState.received
-        : ReviewSectionState.missing,
+      tagText: hasReviewerSubmitted
+        ? formatMessage(inReview.tags.received)
+        : formatMessage(inReview.tags.missing),
+      tagVariant: hasReviewerSubmitted ? 'blue' : 'rose',
       title: formatMessage(
         hasReviewerSubmitted
           ? inReview.representative.titleDone
@@ -226,30 +224,37 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
           ? inReview.representative.summaryDone
           : inReview.representative.summary,
       ),
-      hasActionMessage: !hasReviewerSubmitted,
-      action: hasReviewerSubmitted
-        ? undefined
-        : {
-            cta: () => changeScreens('inReviewOverviewScreen'),
-            title: formatMessage(inReview.action.representative.title),
-            description: formatMessage(
-              inReview.action.representative.description,
-            ),
-            actionButtonTitle: formatMessage(
-              inReview.action.representative.actionButtonTitle,
-            ),
-          },
-      visible:
-        !isHomeActivitiesAccident(application.answers) ||
-        !isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers),
+      hasActionMessage: isAssignee && !hasReviewerSubmitted,
+      action:
+        isAssignee && !hasReviewerSubmitted
+          ? {
+              cta: () => changeScreens('inReviewOverviewScreen'),
+              title: formatMessage(inReview.action.representative.title),
+              description: formatMessage(
+                inReview.action.representative.description,
+              ),
+              actionButtonTitle: formatMessage(
+                inReview.action.representative.actionButtonTitle,
+              ),
+            }
+          : undefined,
+      visible: !(
+        !shouldRequestReview(
+          application.answers as AccidentNotificationAnswers,
+        ) || isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
+      ),
     },
     {
-      state: statesMap['sjukratrygging'][application.state],
+      tagText: formatMessage(
+        tagMapperApplicationStatus[currentAccidentStatus.status].text,
+      ),
+      tagVariant:
+        tagMapperApplicationStatus[currentAccidentStatus.status].variant,
       title: formatMessage(inReview.sjukratrygging.title),
       description: formatMessage(inReview.sjukratrygging.summary),
       hasActionMessage: false,
     },
-  ]
+  ] as Steps[]
 
   return (
     <Box marginBottom={10}>
@@ -270,7 +275,16 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
       </Box>
       <Box marginTop={4} marginBottom={8}>
         {steps.map((step, index) => (
-          <StatusStep key={index} application={application} {...step} />
+          <StatusStep
+            key={index}
+            title={step.title}
+            description={step.description}
+            hasActionMessage={step.hasActionMessage}
+            action={step.action}
+            tagText={step.tagText}
+            tagVariant={step.tagVariant}
+            visible={step.visible}
+          />
         ))}
       </Box>
     </Box>

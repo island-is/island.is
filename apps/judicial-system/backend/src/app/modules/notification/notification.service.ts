@@ -10,7 +10,6 @@ import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseState,
   CaseType,
   NotificationType,
   isRestrictionCase,
@@ -42,6 +41,7 @@ import { CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
+import { notificationMessages, core } from '../../messages'
 
 interface Recipient {
   address?: string
@@ -292,30 +292,32 @@ export class NotificationService {
       ['judicial.system.backend'],
       'is',
     )
-    const pdf = await getRequestPdfAsString(existingCase, intl.formatMessage)
 
-    const subject = `Krafa í máli ${existingCase.policeCaseNumber}`
-    const html = 'Sjá viðhengi'
-    const attachments = [
+    const { type, court, policeCaseNumber } = existingCase
+
+    const subject = `Krafa í máli ${policeCaseNumber}`
+
+    const caseType =
+      type === CaseType.CUSTODY
+        ? intl.formatMessage(core.caseType.custody)
+        : type === CaseType.TRAVEL_BAN
+        ? intl.formatMessage(core.caseType.travelBan)
+        : intl.formatMessage(core.caseType.investigate)
+
+    const html = intl.formatMessage(
+      notificationMessages.readyForCourt.prosecutorHtml,
       {
-        filename: `Krafa um ${
-          existingCase.type === CaseType.CUSTODY
-            ? 'gæsluvarðhald'
-            : existingCase.type === CaseType.TRAVEL_BAN
-            ? 'farbann'
-            : 'rannsóknarheimild'
-        } ${existingCase.policeCaseNumber}.pdf`,
-        content: pdf,
-        encoding: 'binary',
+        caseType,
+        courtName: court?.name,
+        policeCaseNumber,
       },
-    ]
+    )
 
     return this.sendEmail(
       existingCase.prosecutor?.name,
       existingCase.prosecutor?.email,
       subject,
       html,
-      attachments,
     )
   }
 
@@ -435,8 +437,7 @@ export class NotificationService {
       ),
       existingCase.defenderName,
       existingCase.defenderIsSpokesperson,
-      existingCase.parentCase &&
-        existingCase.parentCase?.decision === CaseDecision.ACCEPTING,
+      Boolean(existingCase.parentCase),
     )
 
     return this.sendEmail(
@@ -495,7 +496,10 @@ export class NotificationService {
 
     if (
       (isRestrictionCase(existingCase.type) ||
-        existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) &&
+        existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
+        (existingCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+          existingCase.defenderIsSpokesperson)) &&
       existingCase.defenderEmail
     ) {
       promises.push(this.sendCourtDateEmailNotificationToDefender(existingCase))
@@ -524,22 +528,24 @@ export class NotificationService {
 
   private async sendRulingEmailNotificationToPrison(
     existingCase: Case,
+    rulingPdf: string,
   ): Promise<Recipient> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
-    const html = formatPrisonRulingEmailNotification(existingCase.courtEndTime)
+    const html = formatPrisonRulingEmailNotification(existingCase.rulingDate)
+    const custodyNoticePdf = await getCustodyNoticePdfAsString(existingCase)
 
-    let attachments: Attachment[] | undefined
-
-    if (existingCase.state === CaseState.ACCEPTED) {
-      const pdf = await getCustodyNoticePdfAsString(existingCase)
-      attachments = [
-        {
-          filename: `Vistunarseðill ${existingCase.courtCaseNumber}.pdf`,
-          content: pdf,
-          encoding: 'binary',
-        },
-      ]
-    }
+    const attachments = [
+      {
+        filename: `Vistunarseðill ${existingCase.courtCaseNumber}.pdf`,
+        content: custodyNoticePdf,
+        encoding: 'binary',
+      },
+      {
+        filename: `Þingbók án úrskurðar ${existingCase.courtCaseNumber}.pdf`,
+        content: rulingPdf,
+        encoding: 'binary',
+      },
+    ]
 
     return this.sendEmail(
       'Gæsluvarðhaldsfangelsi',
@@ -552,18 +558,8 @@ export class NotificationService {
 
   private async sendRulingEmailNotificationToPrisonAdministration(
     existingCase: Case,
+    rulingPdf: string,
   ): Promise<Recipient> {
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
-    const pdf = await getRulingPdfAsString(
-      existingCase,
-      intl.formatMessage,
-      true,
-    )
-
     return this.sendEmail(
       'Fangelsismálastofnun',
       environment.notifications.prisonAdminEmail,
@@ -572,7 +568,7 @@ export class NotificationService {
       [
         {
           filename: `Þingbók án úrskurðar ${existingCase.courtCaseNumber}.pdf`,
-          content: pdf,
+          content: rulingPdf,
           encoding: 'binary',
         },
       ],
@@ -588,18 +584,31 @@ export class NotificationService {
       }
     }
 
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    const rulingPdf = await getRulingPdfAsString(
+      existingCase,
+      intl.formatMessage,
+      true,
+    )
+
     const recipients = [
       await this.sendRulingEmailNotificationToPrisonAdministration(
         existingCase,
+        rulingPdf,
       ),
     ]
 
     if (
       existingCase.type === CaseType.CUSTODY &&
-      existingCase.decision === CaseDecision.ACCEPTING
+      (existingCase.decision === CaseDecision.ACCEPTING ||
+        existingCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
     ) {
       recipients.concat(
-        await this.sendRulingEmailNotificationToPrison(existingCase),
+        await this.sendRulingEmailNotificationToPrison(existingCase, rulingPdf),
       )
     }
 
@@ -638,8 +647,7 @@ export class NotificationService {
       existingCase.courtDate,
       existingCase.accusedName,
       existingCase.defenderName,
-      existingCase.parentCase &&
-        existingCase.parentCase?.decision === CaseDecision.ACCEPTING,
+      Boolean(existingCase.parentCase),
     )
 
     return this.sendEmail(

@@ -60,6 +60,12 @@ To enable writing to AWS S3 you need to be authenticated against AWS.
 
 Finally, you can enable communication with the court system via xRoad by providing appropriate values for the environment variables specified in the `xRoad` and `courtClientOptions` sections in `environment.ts`.
 
+### Unit tests
+
+```bash
+yarn test judicial-system-backend
+```
+
 ## API
 
 ### Running locally
@@ -93,6 +99,14 @@ localhost:3344/api/swagger
 ### Database changes
 
 Migrations need to be created by hand.
+
+#### Generate a empty migration file you can simply run:
+
+```
+npx sequelize-cli migration:generate --name update-case
+```
+
+this will generate a migration file with empty exports for up (Altering commands) and down (Reverting commands).
 
 ## Web
 
@@ -137,11 +151,63 @@ This project uses two types of automated tests, unit tests and e2e tests. We use
 yarn test judicial-system-web
 ```
 
+##### Lib tests
+
+```bash
+yarn test judicial-system-formatters
+```
+
 ##### e2e tests
 
 ```bash
 yarn nx e2e judicial-system-web-e2e --watch
 ```
+
+### Message Extraction from Contentful
+
+Running yarn nx extract-strings judicial-system-{namespace} in the root folder /island.is will extract messages from the project and create or update a Namespace entry in Contentful.
+
+#### Example for namespaces in web:
+
+```
+yarn nx extract-strings judicial-system-web
+```
+
+will update namespaces:
+
+- judicial.system.core
+- judicial.system.restriction_cases
+- judicial.system.investigation_cases
+
+#### For backend:
+
+```
+yarn nx extract-strings judicial-system-backend
+```
+
+will update namespaces:
+
+- judicial.system.backend
+
+## To test authentication locally
+
+Install <https://github.com/cameronhunter/local-ssl-proxy>:
+
+- `npm install -g local-ssl-proxy`
+
+- change defaultcookie in apps/judicial-system/api/src/app/modules/auth/auth.controller.ts:
+
+  const defaultCookieOptions: CookieOptions = {
+  secure: true,
+  }
+
+- add .env to web project and change PORT to 4202
+- start project
+- `local-ssl-proxy --source 4200 --target 4202`
+
+## Lawyer directory
+
+We are using data from [lmfi](https://lmfi.is/logmannalisti) to search for lawyers to use as defenders for defendants in the system. We are currently scraping that data and the scraper can be found in a [private repo under Kolibri's GitHub org.](https://github.com/KolibriDev/lawyer-scraper). This is a temporary solution until we get access to an API from lmfi.
 
 ## Code owners and maintainers
 

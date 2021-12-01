@@ -9,6 +9,8 @@ import {
   Labor,
   NationalRegistry,
   Payment,
+  Properties,
+  PaymentSchedule,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 
@@ -103,6 +105,7 @@ export const serviceSetup = (services: {
       PARTY_LETTER_REGISTRY_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesPartyLetterRegistryApi)}`,
       ),
+      XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
     })
 
     .secrets({
@@ -147,8 +150,7 @@ export const serviceSetup = (services: {
       RSK_API_USERNAME: '/k8s/shared/api/RSK_API_USERNAME',
       RSK_API_PASSWORD: '/k8s/shared/api/RSK_API_PASSWORD',
       RSK_API_URL: '/k8s/shared/api/RSK_API_URL',
-      PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER',
-      PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD',
+      ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
     })
     .xroad(
       Base,
@@ -160,6 +162,8 @@ export const serviceSetup = (services: {
       Finance,
       Education,
       NationalRegistry,
+      Properties,
+      PaymentSchedule,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

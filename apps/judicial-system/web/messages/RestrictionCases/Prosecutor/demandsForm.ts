@@ -28,6 +28,20 @@ export const rcDemands = {
         description:
           'Notaður sem skýritexti í "dómkröfur" textaboxi á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
       }),
+      isolation: defineMessage({
+        id:
+          'judicial.system.restriction_cases:police_demands.demands.isolation',
+        defaultMessage: 'Krafa um einangrun',
+        description:
+          'Notaður sem titill fyrir kröfu um einangrun fyrir "dómkröfur" hlutann á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
+      }),
+      tooltip: defineMessage({
+        id: 'judicial.system.restriction_cases:police_demands.demands.tooltip',
+        defaultMessage:
+          'Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum.',
+        description:
+          'Notaður sem skýritexti í "krafa um einangrun" valmöguleika í "dómkröfu" textaboxi á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
+      }),
     },
     lawsBroken: defineMessages({
       heading: {

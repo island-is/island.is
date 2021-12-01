@@ -12,6 +12,7 @@ import {
   HealthProbe,
   Features,
   Secrets,
+  ValueType,
   XroadConfig,
   MountedFile,
 } from './types/input-types'
@@ -133,6 +134,10 @@ export class ServiceBuilder<ServiceType> implements Service {
     return this
   }
 
+  /**
+   * Files to be mounted inside the containers. Files must be in the helm repo.
+   * @param ...files: list of MountedFile
+   */
   files(...files: MountedFile[]) {
     this.serviceDef.files = [...this.serviceDef.files, ...files]
     return this
@@ -253,3 +258,5 @@ export const service = <Service extends string>(
 ): ServiceBuilder<Service> => {
   return new ServiceBuilder(name)
 }
+
+export const json = (value: unknown): ValueType => JSON.stringify(value)

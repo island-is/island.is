@@ -149,10 +149,28 @@ describe('formatCustodyRestrictions', () => {
     const custodyRestrictions: Array<CaseCustodyRestrictions> = []
 
     // Act
-    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(
+      accusedGender,
+      custodyRestrictions,
+      true,
+    )
 
     // Assert
     expect(res).toBe('')
+  })
+
+  test('should return formatted restrictions for no restrictions in custody notice', () => {
+    // Arrange
+    const accusedGender = CaseGender.MALE
+    const custodyRestrictions: Array<CaseCustodyRestrictions> = []
+
+    // Act
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi tekur fram að gæsluvarðhaldið verði án takmarkana.',
+    )
   })
 
   test('should return formatted restrictions for isolation only', () => {
@@ -161,10 +179,28 @@ describe('formatCustodyRestrictions', () => {
     const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
 
     // Act
-    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(
+      accusedGender,
+      custodyRestrictions,
+      true,
+    )
 
     // Assert
     expect(res).toBe('')
+  })
+
+  test('should return formatted restrictions for isolation only in custody notice', () => {
+    // Arrange
+    const accusedGender = CaseGender.MALE
+    const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
+
+    // Act
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi tekur fram að gæsluvarðhaldið verði án annarra takmarkana.',
+    )
   })
 
   test('should return formatted restrictions for isolation and one other restriction', () => {
@@ -198,7 +234,7 @@ describe('formatCustodyRestrictions', () => {
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að gæsluvarðhaldið verði með bréfaskoðun og símabanni, fjölmiðlabanni og heimsóknarbanni skv. 99. gr. laga nr. 88/2008.',
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með heimsóknarbanni, bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
     )
   })
 
@@ -216,7 +252,7 @@ describe('formatCustodyRestrictions', () => {
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að gæsluvarðhaldið verði með bréfaskoðun og símabanni, fjölmiðlabanni og heimsóknarbanni skv. 99. gr. laga nr. 88/2008.',
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með heimsóknarbanni, bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
     )
   })
 })

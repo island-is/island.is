@@ -27,7 +27,7 @@ import {
   PdfButton,
   FormContentContainer,
   CaseFileList,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   TIME_FORMAT,
@@ -38,7 +38,7 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   core,
@@ -222,7 +222,7 @@ export const Overview: React.FC = () => {
               <Accordion>
                 <AccordionItem
                   labelVariant="h3"
-                  id="id_2"
+                  id="id_1"
                   label="Lagaákvæði sem brot varða við"
                 >
                   <Text>

@@ -6,11 +6,16 @@ import {
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import React from 'react'
+import React, { useState } from 'react'
 import { employer, error } from '../../lib/messages'
+import { PublicDebtPaymentPlan } from '../../types'
 
 export const EmployerIdField = ({ application, errors }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
+  const answers = application.answers as PublicDebtPaymentPlan
+  const [nationalId, setNationalId] = useState<string>(
+    answers.employer?.correctedNationalId?.id || '',
+  )
 
   return (
     <Box marginTop={5}>
@@ -35,6 +40,8 @@ export const EmployerIdField = ({ application, errors }: FieldBaseProps) => {
         backgroundColor="blue"
         required
         format="######-####"
+        defaultValue={nationalId}
+        onChange={(value) => setNationalId(value.target.value)}
       />
     </Box>
   )

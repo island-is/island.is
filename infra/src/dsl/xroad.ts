@@ -1,4 +1,5 @@
 import { EnvironmentVariables, Secrets, XroadConfig } from './types/input-types'
+import { json } from './dsl'
 
 type XroadSectionConfig = {
   secrets?: Secrets
@@ -68,8 +69,8 @@ export const JudicialSystem = new XroadConf({
     },
     XROAD_POLICE_MEMBER_CODE: {
       dev: '10005',
-      staging: '5306972079',
-      prod: '5306972079',
+      staging: '5309672079',
+      prod: '5309672079',
     },
     XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1',
     XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1',
@@ -155,6 +156,12 @@ export const Finance = new XroadConf({
   },
 })
 
+export const Properties = new XroadConf({
+  env: {
+    XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1',
+  },
+})
+
 export const Education = new XroadConf({
   env: {
     XROAD_MMS_LICENSE_SERVICE_ID: {
@@ -172,6 +179,24 @@ export const Education = new XroadConf({
 
 export const NationalRegistry = new XroadConf({
   env: {
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
+      dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+      prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+    },
+    // Only cache on dev for now.
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
+      dev: json([
+        'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+      ]),
+      staging: json([
+        'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+      ]),
+      prod: json([
+        'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+      ]),
+    },
+    // Deprecated:
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
     XROAD_TJODSKRA_MEMBER_CODE: {
       prod: '6503760649',
@@ -196,5 +221,19 @@ export const Labor = new XroadConf({
   },
   secrets: {
     XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY',
+  },
+})
+
+export const PaymentSchedule = new XroadConf({
+  env: {
+    PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public',
+      staging: 'IS-DEV/GOV/10021/FJS-Public',
+      prod: 'IS/GOV/5402697509/FJS-Public',
+    },
+  },
+  secrets: {
+    PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER',
+    PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD',
   },
 })

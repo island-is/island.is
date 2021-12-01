@@ -191,14 +191,13 @@ describe('Parental Leave Application Template', () => {
               externalData: {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
-                family: {
-                  data: [
-                    {
+                person: {
+                  data: {
+                    spouse: {
                       nationalId: otherParentId,
-                      fullName: 'Tester Testerson',
-                      familyRelation: SPOUSE,
+                      name: 'Tester Testerson',
                     },
-                  ],
+                  },
                 },
               },
               answers: {

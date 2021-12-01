@@ -1,0 +1,5 @@
+{
+  "platform": "node",
+  "external": ["express", "http-errors", "logform"],
+  "keepNames": true
+}

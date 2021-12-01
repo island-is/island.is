@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+
 import { environment } from '../../../environments'
 import { User } from '../user'
 import { Role, AuthUser } from './auth.types'
@@ -11,18 +12,10 @@ export class AuthService {
   static RECYCLINGFUND = []
   static userListEnv: [User] = JSON.parse(environment.skilavottord.userList)
   constructor() {
-    // console.log(
-    //   '-userListEnv---->' + JSON.stringify(AuthService.userListEnv, null, 2),
-    // )
     if (!AuthService.instance) {
       AuthService.instance++
       AuthService.loadArray()
     }
-    // console.log('-DEVELOPERS' + JSON.stringify(AuthService.DEVELOPERS))
-    // console.log('-RECYCLINGFUND' + JSON.stringify(AuthService.RECYCLINGFUND))
-    // console.log(
-    //   '-RECYCLINGCOMPANY' + JSON.stringify(AuthService.RECYCLINGCOMPANY),
-    // )
   }
   getRole(user: AuthUser): Role {
     if (AuthService.RECYCLINGCOMPANY.includes(user.nationalId)) {
@@ -63,11 +56,6 @@ export class AuthService {
         AuthService.RECYCLINGCOMPANY.push(user.nationalId)
       }
     })
-    // console.log('-DEVELOPERS' + JSON.stringify(AuthService.DEVELOPERS))
-    // console.log('-RECYCLINGFUND' + JSON.stringify(AuthService.RECYCLINGFUND))
-    // console.log(
-    //   '-RECYCLINGCOMPANY' + JSON.stringify(AuthService.RECYCLINGCOMPANY),
-    // )
   }
 
   // TODO test
@@ -76,38 +64,9 @@ export class AuthService {
       (user) => nationalId === user.nationalId,
     )
     if (userFound) {
-      // console.log(
-      //   'getPatnerId:user found,partnerId(' + userFound.partnerId + ')',
-      // )
       return userFound.partnerId
     } else {
-      // console.log('getPatnerId: user.partnerId not found return null')
       return null
     }
   }
 }
-
-// TODO implement in getPartnerId
-// if (
-//   currUser.nationalId === '1111111111' ||
-//   currUser.nationalId === '1111111111' ||
-//   currUser.nationalId === '1111111111'
-// ) {
-//   currUser.partnerId = '104' // This is partner Id for Hringras, to be fixed later
-// } else if (
-//   currUser.nationalId === '1111111111' ||
-//   currUser.nationalId === '1111111111' ||
-//   currUser.nationalId === '1111111111' ||
-//   currUser.nationalId === '1111111111' ||
-//   currUser.nationalId === '1111111111' ||
-//   currUser.nationalId === '1111111111'
-// ) {
-//   currUser.partnerId = '221' // This is partner Id for Fura, to be fixed later
-// } else if (
-//   currUser.role === 'recyclingCompany' ||
-//   currUser.role === 'developer'
-// ) {
-//   currUser.partnerId = '110' // This is partner Id for Vaka, to be fixed later (no need list vaka users)
-// } else {
-//   currUser.partnerId = null // Normal citizen user
-// }

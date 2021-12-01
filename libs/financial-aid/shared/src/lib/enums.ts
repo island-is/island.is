@@ -8,6 +8,14 @@ export enum HomeCircumstances {
   OTHER = 'Other',
 }
 
+export enum AidTypeHomeCircumstances {
+  OWNPLACE = 'OwnPlace',
+  REGISTEREDLEASE = 'RegisteredLease',
+  UNREGISTEREDLEASE = 'UnregisteredLease',
+  WITHPARENTS = 'WithParents',
+  UNKNOWN = 'Unknown',
+}
+
 export enum Employment {
   WORKING = 'Working',
   UNEMPLOYED = 'Unemployed',
@@ -48,6 +56,7 @@ export enum ApplicationEventType {
   STAFFCOMMENT = 'StaffComment',
   USERCOMMENT = 'UserComment',
   FILEUPLOAD = 'FileUpload',
+  SPOUSEFILEUPLOAD = 'SpouseFileUpload',
   ASSIGNCASE = 'AssignCase',
 }
 
@@ -70,13 +79,11 @@ export enum StaffRole {
 }
 
 export enum FamilyStatus {
-  UNKNOWN = 'Unknown',
-  SINGLE = 'Single',
   COHABITATION = 'Cohabitation',
   UNREGISTERED_COBAHITATION = 'UnregisteredCohabitation',
   MARRIED = 'Married',
   MARRIED_NOT_LIVING_TOGETHER = 'MarriedNotLivingTogether',
-  NOT_INFORMED = 'NotInformed',
+  NOT_COHABITATION = 'NotCohabitation',
 }
 
 export enum AidType {
