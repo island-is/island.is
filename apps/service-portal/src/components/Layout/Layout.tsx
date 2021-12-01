@@ -75,7 +75,7 @@ const Layout: FC = ({ children }) => {
       <Hidden below="lg">
         <Sidebar />
       </Hidden>
-      <Box overflow="hidden" className={styles.layoutWrapper}>
+      <Box overflow="hidden" className={styles.layoutWrapper} paddingBottom={7}>
         <Box as="main">
           <GridContainer>
             <GridRow>
