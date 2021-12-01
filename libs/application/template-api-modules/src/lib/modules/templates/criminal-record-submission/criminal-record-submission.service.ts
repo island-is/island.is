@@ -44,8 +44,6 @@ export class CriminalRecordSubmissionService {
     )
 
     if (isPayment.fulfilled) {
-      //TODO-origo
-      // ná í sakavottorð?
       return {
         success: true,
       }
