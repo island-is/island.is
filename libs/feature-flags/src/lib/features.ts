@@ -3,7 +3,7 @@ export enum Features {
   delegationsEnabled = 'identityserverDelegationsEnabled',
 
   // Toggles the different kinds of delegations.
-  customDelegations = 'identityserverCustomDelegations',
+  customDelegations = 'isServicePortalAccessControlModuleEnabled',
   companyDelegations = 'identityserverCompanyDelegations',
   legalGuardianDelegations = 'identityserverLegalGuardianDelegations',
 }
