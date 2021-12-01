@@ -1,7 +1,9 @@
 import React, { FC, useContext } from 'react'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
+
 import { Box, GridColumn, Stack, Text } from '@island.is/island-ui/core'
+
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
@@ -9,10 +11,13 @@ import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { ListItem } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
-import { RecyclingPartner } from '@island.is/skilavottord-web/types'
+import {
+  RecyclingPartner,
+  Query,
+} from '@island.is/skilavottord-web/graphql/types'
 import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
 
-const skilavottordAllRecyclingPartnersQuery = gql`
+const SkilavottordAllRecyclingPartnersQuery = gql`
   query skilavottordAllRecyclingPartnersQuery {
     skilavottordAllRecyclingPartners {
       companyId
@@ -24,8 +29,8 @@ const skilavottordAllRecyclingPartnersQuery = gql`
 
 const RecyclingCompanies: FC = () => {
   const { user } = useContext(UserContext)
-  const { data, error, loading } = useQuery(
-    skilavottordAllRecyclingPartnersQuery,
+  const { data, error, loading } = useQuery<Query>(
+    SkilavottordAllRecyclingPartnersQuery,
   )
 
   const {

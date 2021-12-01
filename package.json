@@ -18,6 +18,7 @@
     "deploy": "nx deploy",
     "test": "nx test",
     "lint": "nx workspace-lint && nx lint",
+    "tsc": "nx tsc --noEmit",
     "dev-services": "nx dev-services",
     "analyze": "cross-env ANALYZE=true nx build",
     "e2e": "nx e2e",

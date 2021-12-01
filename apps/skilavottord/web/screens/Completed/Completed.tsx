@@ -3,6 +3,7 @@ import { useWindowSize } from 'react-use'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
+
 import {
   Stack,
   GridContainer,
@@ -24,12 +25,13 @@ import {
   RecyclingRequest,
   RecyclingRequestTypes,
   WithApolloProps,
-} from '@island.is/skilavottord-web/types'
+  Query,
+} from '@island.is/skilavottord-web/graphql/schema'
 import { getTime, getDate, formatYear } from '@island.is/skilavottord-web/utils'
 import compareDesc from 'date-fns/compareDesc'
 import { dateFormat } from '@island.is/shared/constants'
 
-export const skilavottordRecyclingRequestQuery = gql`
+export const SkilavottordRecyclingRequestQuery = gql`
   query skilavottordRecyclingRequestQuery($permno: String!) {
     skilavottordRecyclingRequest(permno: $permno) {
       id
@@ -50,9 +52,12 @@ const Completed = ({ apolloState }: WithApolloProps) => {
   const router = useRouter()
   const { id } = router.query
 
-  const { data, error, loading } = useQuery(skilavottordRecyclingRequestQuery, {
-    variables: { permno: id },
-  })
+  const { data, error, loading } = useQuery<Query>(
+    SkilavottordRecyclingRequestQuery,
+    {
+      variables: { permno: id },
+    },
+  )
 
   const recyclingRequests = data?.skilavottordRecyclingRequest || []
   const car = apolloState[`VehicleInformation:${id}`]

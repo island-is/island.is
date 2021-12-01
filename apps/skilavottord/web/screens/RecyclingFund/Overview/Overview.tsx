@@ -1,15 +1,18 @@
 import React, { FC, useContext } from 'react'
 import gql from 'graphql-tag'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { useQuery } from '@apollo/client'
+
 import { Stack, Text } from '@island.is/island-ui/core'
+
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { Sidenav, NotFound } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { useQuery } from '@apollo/client'
+import { Query } from '@island.is/skilavottord-web/graphql/schema'
 import { CarsTable } from './components/CarsTable'
 
-export const skilavottordVehiclesQuery = gql`
+export const SkilavottordVehiclesQuery = gql`
   query skilavottordVehiclesQuery {
     skilavottordAllDeregisteredVehicles {
       vehicleId
@@ -31,7 +34,7 @@ const Overview: FC = () => {
     t: { recyclingFundOverview: t, recyclingFundSidenav: sidenavText, routes },
   } = useI18n()
 
-  const { data } = useQuery(skilavottordVehiclesQuery)
+  const { data } = useQuery<Query>(SkilavottordVehiclesQuery)
   const vehicles = data?.skilavottordAllDeregisteredVehicles ?? []
 
   if (!user) {
