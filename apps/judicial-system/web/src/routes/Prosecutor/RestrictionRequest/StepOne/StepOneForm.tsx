@@ -9,6 +9,7 @@ import {
   Checkbox,
   Tooltip,
   AlertMessage,
+  Select,
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -28,6 +29,11 @@ import { accused as m } from '@island.is/judicial-system-web/messages'
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 import { isAccusedStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import lawyers from '@island.is/judicial-system-web/src/utils/lawyerScraper/db.json'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { setAndSendToServer as setSelectAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { ValueType } from 'react-select/src/types'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   workingCase: Case
@@ -40,6 +46,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, loading, handleNextButtonClick } = props
 
   const { formatMessage } = useIntl()
+  const { updateCase } = useCase()
 
   const [
     defenderEmailErrorMessage,
@@ -143,17 +150,45 @@ export const StepOneForm: React.FC<Props> = (props) => {
           </Box>
           <BlueBox>
             <Box marginBottom={2}>
-              <Input
-                data-testid="defenderName"
+              <Select
                 name="defenderName"
-                autoComplete="off"
+                icon="search"
+                options={lawyers.lawyers.map((l) => {
+                  return { label: `${l.name} (${l.practice})`, value: l.email }
+                })}
                 label={formatMessage(m.sections.defenderInfo.name.label)}
                 placeholder={formatMessage(
                   m.sections.defenderInfo.name.placeholder,
                 )}
-                defaultValue={workingCase.defenderName}
-                onChange={(event) => setField(event.target)}
-                onBlur={(event) => validateAndSendToServer(event.target)}
+                defaultValue={
+                  workingCase.defenderName
+                    ? {
+                        label: workingCase.defenderName ?? '',
+                        value: workingCase.defenderEmail ?? '',
+                      }
+                    : undefined
+                }
+                onChange={async (
+                  selectedOption: ValueType<ReactSelectOption>,
+                ) => {
+                  const lawyer = lawyers.lawyers.find(
+                    (l) =>
+                      l.email ===
+                      ((selectedOption as ReactSelectOption).value as string),
+                  )
+
+                  if (lawyer) {
+                    const updatedLawyer = {
+                      defenderName: lawyer.name,
+                      defenderEmail: lawyer.email,
+                      defenderPhoneNumber: lawyer.phoneNr,
+                    }
+
+                    await updateCase(workingCase.id, updatedLawyer)
+
+                    setWorkingCase({ ...workingCase, ...updatedLawyer })
+                  }
+                }}
               />
             </Box>
             <Box marginBottom={2}>
@@ -165,7 +200,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 placeholder={formatMessage(
                   m.sections.defenderInfo.email.placeholder,
                 )}
-                defaultValue={workingCase.defenderEmail}
+                value={workingCase.defenderEmail}
                 errorMessage={defenderEmailErrorMessage}
                 hasError={defenderEmailErrorMessage !== ''}
                 onChange={(event) => setField(event.target)}
@@ -176,6 +211,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
               <InputMask
                 mask="999-9999"
                 maskPlaceholder={null}
+                value={workingCase.defenderPhoneNumber}
                 onChange={(event) => setField(event.target)}
                 onBlur={(event) => validateAndSendToServer(event.target)}
               >
@@ -189,7 +225,6 @@ export const StepOneForm: React.FC<Props> = (props) => {
                   placeholder={formatMessage(
                     m.sections.defenderInfo.phoneNumber.placeholder,
                   )}
-                  defaultValue={workingCase.defenderPhoneNumber}
                   errorMessage={defenderPhoneNumberErrorMessage}
                   hasError={defenderPhoneNumberErrorMessage !== ''}
                 />

@@ -152,12 +152,18 @@ const Option = (props: OptionProps<Option>) => {
   )
 }
 
-const IndicatorsContainer = (props: IndicatorContainerProps<Option>) => (
-  <components.IndicatorsContainer
-    className={styles.indicatorsContainer}
-    {...props}
-  />
-)
+const IndicatorsContainer = (props: IndicatorContainerProps<Option>) => {
+  const { icon } = props.selectProps
+
+  return (
+    <components.IndicatorsContainer
+      className={cn(styles.indicatorsContainer, {
+        [styles.dontRotateIconOnOpen]: icon !== 'chevronDown',
+      })}
+      {...props}
+    />
+  )
+}
 
 const DropdownIndicator = (props: IndicatorProps<Option>) => {
   const { icon, hasError } = props.selectProps
