@@ -1,5 +1,10 @@
-import { Module } from '@nestjs/common'
-import { FeatureFlagClientProvider } from './feature-flag.client'
+import { Inject, Module } from '@nestjs/common'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+
+import {
+  FEATURE_FLAG_CLIENT,
+  FeatureFlagClientProvider,
+} from './feature-flag.client'
 import { FeatureFlagService } from './feature-flag.service'
 
 @Module({
@@ -7,4 +12,13 @@ import { FeatureFlagService } from './feature-flag.service'
   providers: [FeatureFlagClientProvider, FeatureFlagService],
   exports: [FeatureFlagClientProvider, FeatureFlagService],
 })
-export class FeatureFlagModule {}
+export class FeatureFlagModule {
+  constructor(
+    @Inject(FEATURE_FLAG_CLIENT)
+    private readonly client: FeatureFlagClient,
+  ) {}
+
+  onApplicationShutdown() {
+    this.client.dispose()
+  }
+}
