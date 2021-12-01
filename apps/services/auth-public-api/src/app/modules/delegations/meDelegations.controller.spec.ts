@@ -20,7 +20,7 @@ import {
   setupWithoutPermission,
 } from '../../../../test/setup'
 import { createDelegation } from '../../../../test/fixtures'
-import { getRequestMethod } from '../../../../test/utils'
+import { expectMathcingObject, getRequestMethod } from '../../../../test/utils'
 import { TestEndpointOptions } from '../../../../test/types'
 
 // The currentUser has access to 'scope0' but not to 'scope1'
@@ -125,9 +125,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(2)
-        expect(res.body).toMatchObject(
-          JSON.parse(JSON.stringify(expectedModels)),
-        )
+        expectMathcingObject(res.body, expectedModels)
       })
 
       it('should return all valid delegations with direction=outgoing&isValid=true', async () => {
@@ -146,9 +144,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expect(res.body).toMatchObject(
-          JSON.parse(JSON.stringify(expectedModel)),
-        )
+        expectMathcingObject(res.body, expectedModel)
       })
 
       it('should return an array with single delegation when filtered to specific otherUser', async () => {
@@ -169,9 +165,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expect(res.body).toMatchObject(
-          JSON.parse(JSON.stringify(expectedModel)),
-        )
+        expectMathcingObject(res.body, expectedModel)
       })
 
       it('should return an empty array when filtered to specific otherUser and no delegation exists', async () => {
@@ -261,9 +255,7 @@ describe('MeDelegationsController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
-        expect(res.body).toMatchObject(
-          JSON.parse(JSON.stringify(expectedModel)),
-        )
+        expectMathcingObject(res.body, expectedModel)
       })
 
       it('should return 404 not found if delegation does not exist or not connected to the user', async () => {
@@ -311,8 +303,8 @@ describe('MeDelegationsController', () => {
           })
           expect(res.status).toEqual(201)
           expect(count).toEqual(1)
-          expect(res.body).toMatchObject<DelegationDTO>({
-            ...JSON.parse(JSON.stringify(rows[0].toDTO())),
+          expectMathcingObject(res.body, {
+            ...rows[0].toDTO(),
             toNationalId: model.toNationalId,
             scopes: model.scopes?.map((scope) => ({
               scopeName: scope.name,

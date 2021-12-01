@@ -17,3 +17,14 @@ export const getRequestMethod = (
       throw new Error('Unsupported HTTP method')
   }
 }
+
+/**
+ * Helper to match complete object when the received object has gone over the "wire"
+ * and was JSON stringified.
+ * @param received The SUT object recevied
+ * @param expected The expected object to be matched against the received object
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const expectMathcingObject = (received: any, expected: any) => {
+  expect(received).toMatchObject(JSON.parse(JSON.stringify(expected)))
+}

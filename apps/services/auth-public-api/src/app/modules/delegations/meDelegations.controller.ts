@@ -48,13 +48,18 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
+import {
+  FeatureFlagGuard,
+  Features,
+  FeatureFlag,
+} from '@island.is/nest/feature-flags'
 
 import { environment } from '../../../environments'
 import startOfDay from 'date-fns/startOfDay'
 
 const namespace = '@island.is/auth-public-api/delegations'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @ApiTags('me-delegations')
 @Controller('v1/me/delegations')
 @Audit({ namespace })
@@ -66,6 +71,7 @@ export class MeDelegationsController {
   ) {}
 
   @Scopes(AuthScope.readDelegations)
+  @FeatureFlag(Features.customDelegations)
   @Get()
   @ApiQuery({
     name: 'direction',
@@ -106,6 +112,7 @@ export class MeDelegationsController {
   }
 
   @Scopes(AuthScope.readDelegations)
+  @FeatureFlag(Features.customDelegations)
   @Get(':delegationId')
   @ApiOperation({
     description: `Finds a single delegation by ID where the authenticated user is either giving or receiving.
@@ -141,6 +148,7 @@ export class MeDelegationsController {
   }
 
   @Scopes(AuthScope.writeDelegations)
+  @FeatureFlag(Features.customDelegations)
   @Post()
   @ApiCreatedResponse({ type: DelegationDTO })
   @ApiBadRequestResponse()
@@ -185,6 +193,7 @@ export class MeDelegationsController {
   }
 
   @Scopes(AuthScope.writeDelegations)
+  @FeatureFlag(Features.customDelegations)
   @Put(':delegationId')
   @ApiOkResponse({ type: DelegationDTO })
   @ApiBadRequestResponse()
@@ -221,6 +230,7 @@ export class MeDelegationsController {
   }
 
   @Scopes(AuthScope.writeDelegations)
+  @FeatureFlag(Features.customDelegations)
   @Delete(':delegationId')
   @HttpCode(204)
   @ApiNoContentResponse()

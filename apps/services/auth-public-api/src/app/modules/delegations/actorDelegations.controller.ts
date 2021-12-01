@@ -77,7 +77,6 @@ export class ActorDelegationsController {
 
     return this.delegationsService.findAllIncoming(
       actor,
-      environment.nationalRegistry.xroad.clientId ?? '',
       environment.nationalRegistry
         .authMiddlewareOptions as AuthMiddlewareOptions,
     )
