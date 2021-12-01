@@ -36,7 +36,7 @@ export const PdfViewer: FC<PdfViewerProps> = ({ file }) => {
       >
         <Page pageNumber={pageNumber} />
       </Document>
-      <Box marginTop={4}>
+      <Box marginTop={2} marginBottom={4}>
         <Pagination
           page={pageNumber}
           renderLink={(page, className, children) => (

@@ -1,9 +1,13 @@
 import {
   AlertMessage,
   Button,
+  TopicCard,
   Link,
   LinkContext,
   Text,
+  Pagination,
+  Divider,
+  LoadingDots,
   PdfViewer,
 } from '@island.is/island-ui/core'
 import React, { FC, useState } from 'react'
@@ -44,15 +48,31 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
   const { externalData } = application
   const { formatMessage } = useLocale()
   const [viewCriminalRecord, setViewCriminalRecord] = useState(false)
-  const [numPages, setNumPages] = useState(0)
-  const [pageNumber, setPageNumber] = useState(1)
 
-  interface PdfProps {
-    numPages: number
-  }
-
-  function onDocumentLoadSuccess({ numPages }: PdfProps) {
-    setNumPages(numPages)
+  function renderFooter() {
+    return (
+      <>
+        <Divider />
+        <Box
+          display="flex"
+          justifyContent="flexEnd"
+          paddingTop={4}
+          marginBottom={4}
+        >
+          <Button
+            icon="arrowForward"
+            iconType="outline"
+            onBlur={function noRefCheck() { }}
+            onClick={() => {
+              window.open('https://island.is/minarsidur/', '_blank')
+            }}
+            onFocus={function noRefCheck() { }}
+          >
+            Opna mínar síður
+          </Button>
+        </Box>
+      </>
+    )
   }
 
   if (viewCriminalRecord) {
@@ -87,35 +107,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         <PdfViewer
           file={`data:application/pdf;base64,${externalData.getCriminalRecord.data.contentBase64}`}
         />
-
-        {/* <Document
-          file={`data:application/pdf;base64,${externalData.getCriminalRecord.data.contentBase64}`}
-          onLoadSuccess={onDocumentLoadSuccess}
-          className={styles.pdfViewer}
-          loading={
-            <Box height="full" display="flex" justifyContent="center">
-              <LoadingDots large />
-            </Box>
-          }
-        >
-          <Page pageNumber={pageNumber} />
-        </Document>
-
-        <Box marginBottom={4}>
-          <Pagination
-            page={pageNumber}
-            renderLink={(page, className, children) => (
-              <Box
-                cursor="pointer"
-                className={className}
-                onClick={() => setPageNumber(page)}
-              >
-                {children}
-              </Box>
-            )}
-            totalPages={numPages}
-          />
-        </Box> */}
+        {renderFooter()}
       </>
     )
   }
@@ -125,7 +117,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
       <Text variant="h2" marginBottom={4}>
         {formatText(m.confirmation, application, formatMessage)}
       </Text>
-      <Box marginBottom={2} paddingTop={0}>
+      <Box marginBottom={3} paddingTop={0}>
         <AlertMessage
           type="success"
           title={formatText(m.successTitle, application, formatMessage)}
@@ -139,7 +131,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         />
       </Box>
       <Box
-        marginBottom={4}
+        marginBottom={3}
         marginTop={0}
         background="blue100"
         padding={4}
@@ -182,37 +174,46 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         </LinkContext.Provider>
       </Box>
 
-      <Box marginBottom={4}>
-        {props.isExpired ? null :
-          <Button
-            icon="arrowForward"
-            iconType="outline"
-            onBlur={function noRefCheck() { }}
+      {props.isExpired ? null :
+        <Box marginBottom={3}>
+          <TopicCard
+            href="/"
             onClick={() => setViewCriminalRecord(true)}
-            onFocus={function noRefCheck() { }}
+            tag="Pdf"
+            colorScheme="blue"
           >
-            Opna sakavottorð
-          </Button>
-        }
-      </Box>
+            Sakavottorð
+          </TopicCard>
+        </Box>
+      }
+
       <Button
         icon="open"
         iconType="outline"
         onBlur={function noRefCheck() { }}
-        onClick={() => setViewCriminalRecord(true)}
+        onClick={() => {
+          window.open('https://island.is/minarsidur/postholf', '_blank')
+        }}
         onFocus={function noRefCheck() { }}
         variant="text"
       >
         Sakavottorðið geturðu einnig fundið í pósthólfinu þínu
       </Button>
 
-      <Box display="flex" justifyContent="center" marginTop={2}>
+      <Box
+        display="flex"
+        justifyContent="center"
+        marginTop={2}
+        marginBottom={4}
+      >
         <img
           src="/assets/images/bus.svg"
           alt={formatText(m.paymentImage, application, formatMessage)}
           style={{ maxWidth: 220 }}
         />
       </Box>
+
+      {renderFooter()}
     </>
   )
 }
