@@ -41,16 +41,10 @@ const ModuleNavigation: FC<Props> = ({
     setExpand(!expand)
   }
   const handleRootItemClick = (external?: boolean) => {
-    if (nav.path === undefined) {
-      handleExpand()
-    }
+    if (nav.path === undefined) handleExpand()
     if (onItemClick) onItemClick()
-    if (external) {
-      servicePortalOutboundLink()
-    }
+    if (external) servicePortalOutboundLink()
   }
-
-  // const unreadDocsCounter = useUnreadDocumentsCounter()
 
   const navChildren = nav?.children?.filter((child) => !child.navHide)
   const navArray = Array.isArray(navChildren) && navChildren.length > 0

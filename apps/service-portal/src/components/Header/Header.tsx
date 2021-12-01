@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import {
   Box,
   Hidden,
-  ContentBlock,
   Button,
   Logo,
   FocusableBox,
