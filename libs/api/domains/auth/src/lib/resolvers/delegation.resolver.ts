@@ -21,13 +21,9 @@ import {
   CreateDelegationInput,
   DelegationInput,
 } from '../dto'
-import {
-  Delegation,
-  CustomDelegation,
-  LegalGuardianDelegation,
-  ProcuringHolderDelegation,
-} from '../models'
-import { AuthService } from '../auth.service'
+import { Delegation } from '../models'
+import { MeDelegationsService } from '../meDelegations.service'
+import { ActorDelegationsService } from '../actorDelegations.service'
 
 const ignore404 = (e: Response) => {
   if (e.status !== 404) {
@@ -39,18 +35,19 @@ const ignore404 = (e: Response) => {
 @Resolver(() => Delegation)
 export class DelegationResolver {
   constructor(
-    private authService: AuthService,
+    private meDelegationsService: MeDelegationsService,
+    private actorDelegationsService: ActorDelegationsService,
     private identityService: IdentityService,
   ) {}
 
   @Query(() => [Delegation], { name: 'authActorDelegations' })
   getActorDelegations(@CurrentUser() user: User): Promise<DelegationDTO[]> {
-    return this.authService.getActorDelegations(user)
+    return this.actorDelegationsService.getActorDelegations(user)
   }
 
   @Query(() => [Delegation], { name: 'authDelegations' })
   getDelegations(@CurrentUser() user: User): Promise<DelegationDTO[]> {
-    return this.authService.getDelegations(user)
+    return this.meDelegationsService.getDelegations(user)
   }
 
   @Query(() => Delegation, { name: 'authDelegation', nullable: true })
@@ -58,8 +55,8 @@ export class DelegationResolver {
     @CurrentUser() user: User,
     @Args('input', { type: () => DelegationInput }) input: DelegationInput,
   ): Promise<DelegationDTO | null> {
-    const delegation = await this.authService
-      .getDelegationFromNationalId(user, input)
+    const delegation = await this.meDelegationsService
+      .getDelegationById(user, input)
       .catch(ignore404)
     if (!delegation) {
       return null
@@ -74,13 +71,16 @@ export class DelegationResolver {
     @Args('input', { type: () => CreateDelegationInput })
     input: CreateDelegationInput,
   ): Promise<DelegationDTO | null> {
-    let delegation = await this.authService
-      .getDelegationFromNationalId(user, input)
+    let delegation = await this.meDelegationsService
+      .getDelegationByOtherUser(user, input)
       .catch(ignore404)
     if (!delegation) {
-      delegation = await this.authService.createDelegation(user, input)
-    } else if (input.scopes) {
-      delegation = await this.authService.updateDelegation(user, input)
+      delegation = await this.meDelegationsService.createDelegation(user, input)
+    } else if (input.scopes && delegation.id) {
+      delegation = await this.meDelegationsService.updateDelegation(user, {
+        delegationId: delegation.id,
+        scopes: input.scopes,
+      })
     }
 
     return delegation
@@ -92,7 +92,7 @@ export class DelegationResolver {
     @Args('input', { type: () => UpdateDelegationInput })
     input: UpdateDelegationInput,
   ): Promise<DelegationDTO> {
-    return this.authService.updateDelegation(user, input)
+    return this.meDelegationsService.updateDelegation(user, input)
   }
 
   @Mutation(() => Boolean, { name: 'deleteAuthDelegation' })
@@ -101,12 +101,7 @@ export class DelegationResolver {
     @Args('input', { type: () => DeleteDelegationInput })
     input: DeleteDelegationInput,
   ): Promise<boolean> {
-    return this.authService.deleteDelegation(user, input)
-  }
-
-  @ResolveField('id', () => ID)
-  resolveId(@Parent() delegation: DelegationDTO): string {
-    return `${delegation.fromNationalId}-${delegation.toNationalId}`
+    return this.meDelegationsService.deleteDelegation(user, input)
   }
 
   @ResolveField('to', () => Identity)

@@ -1,5 +1,12 @@
 import { DynamicModule } from '@nestjs/common'
-import { Configuration, DelegationsApi, ApiScopeApi } from '../../gen/fetch'
+
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import {
+  Configuration,
+  MeDelegationsApi,
+  ScopesApi,
+  ActorDelegationsApi,
+} from '../../gen/fetch'
 
 export interface AuthPublicApiClientModuleConfig {
   baseApiUrl: string
@@ -7,13 +14,17 @@ export interface AuthPublicApiClientModuleConfig {
 
 export class AuthPublicApiClientModule {
   static register(config: AuthPublicApiClientModuleConfig): DynamicModule {
+    const fetch = createEnhancedFetch({
+      name: 'auth-public-api-client',
+    })
+
     return {
       module: AuthPublicApiClientModule,
       providers: [
         {
-          provide: DelegationsApi,
+          provide: MeDelegationsApi,
           useFactory: () =>
-            new DelegationsApi(
+            new MeDelegationsApi(
               new Configuration({
                 fetchApi: fetch,
                 basePath: config.baseApiUrl,
@@ -21,9 +32,19 @@ export class AuthPublicApiClientModule {
             ),
         },
         {
-          provide: ApiScopeApi,
+          provide: ActorDelegationsApi,
           useFactory: () =>
-            new ApiScopeApi(
+            new ActorDelegationsApi(
+              new Configuration({
+                fetchApi: fetch,
+                basePath: config.baseApiUrl,
+              }),
+            ),
+        },
+        {
+          provide: ScopesApi,
+          useFactory: () =>
+            new ScopesApi(
               new Configuration({
                 fetchApi: fetch,
                 basePath: config.baseApiUrl,
@@ -31,7 +52,7 @@ export class AuthPublicApiClientModule {
             ),
         },
       ],
-      exports: [DelegationsApi, ApiScopeApi],
+      exports: [MeDelegationsApi, ActorDelegationsApi, ScopesApi],
     }
   }
 }

@@ -6,10 +6,7 @@ import {
   useAuth,
   TestApp,
 } from '@island.is/testing/nest'
-import {
-  createCurrentUser,
-  createNationalRegistryUser,
-} from '@island.is/testing/fixtures'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 import {
   EinstaklingarApi,
   Einstaklingsupplysingar,
@@ -22,8 +19,9 @@ import {
 
 import { AppModule } from '../src/app/app.module'
 import { User } from '@island.is/auth-nest-tools'
-import { createMockEinstaklingurApi } from './mocks'
+import { createMockEinstaklingurApi, createMockRskApi } from './mocks'
 import { createApiScope } from './fixtures'
+import { RskApi } from '@island.is/clients/rsk/v2'
 
 interface SetupOptions {
   user: User
@@ -44,7 +42,9 @@ export const setupWithAuth = async ({
     override: (builder: TestingModuleBuilder) =>
       builder
         .overrideProvider(EinstaklingarApi)
-        .useValue(createMockEinstaklingurApi(nationalRegistryUser)),
+        .useValue(createMockEinstaklingurApi(nationalRegistryUser))
+        .overrideProvider(RskApi)
+        .useValue(createMockRskApi()),
     hooks: [
       useAuth({ auth: user }),
       useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
@@ -73,16 +73,20 @@ export const setupWithAuth = async ({
 export const setupWithoutAuth = async (): Promise<TestApp> => {
   const app = await testServer<AppModule>({
     appModule: AppModule,
+    hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
   })
 
   return app
 }
 
 export const setupWithoutPermission = async (): Promise<TestApp> => {
-  const currentUser = createCurrentUser()
+  const user = createCurrentUser()
   const app = await testServer<AppModule>({
     appModule: AppModule,
-    hooks: [useAuth({ currentUser })],
+    hooks: [
+      useAuth({ auth: user }),
+      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+    ],
   })
 
   return app

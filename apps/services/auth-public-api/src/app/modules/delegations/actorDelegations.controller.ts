@@ -36,7 +36,7 @@ import { environment } from '../../../environments'
 const namespace = '@island.is/auth-public-api/actor/delegations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@ApiTags('actor', 'delegations')
+@ApiTags('actor-delegations')
 @Controller('v1/actor/delegations')
 @Audit({ namespace })
 export class ActorDelegationsController {

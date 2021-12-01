@@ -11,7 +11,9 @@ import {
   DelegationScopeResolver,
   DelegationResolver,
 } from './resolvers'
-import { AuthService } from './auth.service'
+import { MeDelegationsService } from './meDelegations.service'
+import { ActorDelegationsService } from './actorDelegations.service'
+import { ApiScopeService } from './apiScope.service'
 
 export type Config = {
   authPublicApi: AuthPublicApiClientModuleConfig
@@ -22,7 +24,9 @@ export type Config = {
     DelegationResolver,
     DelegationScopeResolver,
     ApiScopeResolver,
-    AuthService,
+    MeDelegationsService,
+    ActorDelegationsService,
+    ApiScopeService,
   ],
 })
 export class AuthModule {

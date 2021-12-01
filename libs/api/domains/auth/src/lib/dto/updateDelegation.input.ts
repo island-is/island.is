@@ -5,7 +5,7 @@ import { DelegationScopeInput } from './delegationScope.input'
 @InputType('UpdateAuthDelegationInput')
 export class UpdateDelegationInput {
   @Field((_) => String)
-  toNationalId!: string
+  delegationId!: string
 
   @Field((_) => [DelegationScopeInput])
   scopes?: DelegationScopeInput[]

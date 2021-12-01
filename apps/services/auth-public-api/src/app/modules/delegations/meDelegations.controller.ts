@@ -48,14 +48,13 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { HttpProblem } from '@island.is/shared/problem'
 
 import { environment } from '../../../environments'
 
 const namespace = '@island.is/auth-public-api/delegations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@ApiTags('me', 'delegations')
+@ApiTags('me-delegations')
 @Controller('v1/me/delegations')
 @Audit({ namespace })
 export class MeDelegationsController {
@@ -64,6 +63,81 @@ export class MeDelegationsController {
     private readonly auditService: AuditService,
     private readonly resourcesService: ResourcesService,
   ) {}
+
+  @Scopes(AuthScope.readDelegations)
+  @Get()
+  @ApiQuery({
+    name: 'direction',
+    required: true,
+    schema: {
+      enum: ['outgoing'],
+      default: 'outgoing',
+    },
+  })
+  @ApiQuery({ name: 'isValid', required: false, type: 'boolean' })
+  @ApiQuery({ name: 'otherUser', required: false, type: 'string' })
+  @ApiOkResponse({ type: [DelegationDTO] })
+  @ApiBadRequestResponse()
+  @ApiForbiddenResponse()
+  @ApiUnauthorizedResponse()
+  @ApiInternalServerErrorResponse()
+  @Audit<DelegationDTO[]>({
+    resources: (delegations) =>
+      delegations.map((delegation) => delegation?.id ?? ''),
+  })
+  async findAll(
+    @CurrentUser() user: User,
+    @Query('direction') direction: DelegationDirection,
+    @Query('isValid') isValid?: boolean,
+    @Query('otherUser') otherUser?: string,
+  ): Promise<DelegationDTO[]> {
+    if (direction !== DelegationDirection.OUTGOING) {
+      throw new BadRequestException(
+        'direction=outgoing is currently the only supported value',
+      )
+    }
+
+    return this.delegationsService.findAllOutgoing(
+      user.nationalId,
+      isValid,
+      otherUser,
+    )
+  }
+
+  @Scopes(AuthScope.readDelegations)
+  @Get(':delegationId')
+  @ApiOperation({
+    description: `Finds a single delegation by ID where the authenticated user is either giving or receiving.
+       Does not include delegations from NationalRegistry or CompanyRegistry.`,
+  })
+  @ApiParam({
+    name: 'delegationId',
+    type: 'string',
+    description: 'Delegation ID.',
+  })
+  @ApiOkResponse({ type: DelegationDTO })
+  @ApiNotFoundResponse()
+  @ApiForbiddenResponse()
+  @ApiUnauthorizedResponse()
+  @ApiInternalServerErrorResponse()
+  @Audit<DelegationDTO>({
+    resources: (delegation) => delegation?.id ?? '',
+  })
+  async findOne(
+    @CurrentUser() user: User,
+    @Param('delegationId') delegationId: string,
+  ): Promise<DelegationDTO | null> {
+    const delegation = await this.delegationsService.findById(
+      user.nationalId,
+      delegationId,
+    )
+
+    if (!delegation) {
+      throw new NotFoundException()
+    }
+
+    return delegation
+  }
 
   @Scopes(AuthScope.writeDelegations)
   @Post()
@@ -137,7 +211,7 @@ export class MeDelegationsController {
   @Delete(':delegationId')
   @HttpCode(204)
   @ApiNoContentResponse()
-  async deleteFrom(
+  async delete(
     @CurrentUser() user: User,
     @Param('delegationId') delegationId: string,
   ): Promise<void> {
@@ -150,75 +224,6 @@ export class MeDelegationsController {
       },
       this.delegationsService.delete(user.nationalId, delegationId),
     )
-  }
-
-  @Scopes(AuthScope.readDelegations)
-  @Get(':id')
-  @ApiOperation({
-    description: `Finds a single delegation by ID where the authenticated user is either giving or receiving.
-       Does not include delegations from NationalRegistry or CompanyRegistry.`,
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    description: 'Delegation ID.',
-  })
-  @ApiOkResponse({ type: DelegationDTO })
-  @ApiNotFoundResponse()
-  @ApiForbiddenResponse()
-  @ApiUnauthorizedResponse()
-  @ApiInternalServerErrorResponse()
-  @Audit<DelegationDTO>({
-    resources: (delegation) => delegation?.id ?? '',
-  })
-  async findOne(
-    @CurrentUser() user: User,
-    @Param('id') id: string,
-  ): Promise<DelegationDTO | null> {
-    const delegation = await this.delegationsService.findById(
-      user.nationalId,
-      id,
-    )
-
-    if (!delegation) {
-      throw new NotFoundException()
-    }
-
-    return delegation
-  }
-
-  @Scopes(AuthScope.readDelegations)
-  @Get()
-  @ApiQuery({
-    name: 'direction',
-    required: true,
-    schema: {
-      enum: ['outgoing'],
-      default: 'outgoing',
-    },
-  })
-  @ApiQuery({ name: 'isValid', required: false, type: 'boolean' })
-  @ApiOkResponse({ type: [DelegationDTO] })
-  @ApiBadRequestResponse()
-  @ApiForbiddenResponse()
-  @ApiUnauthorizedResponse()
-  @ApiInternalServerErrorResponse()
-  @Audit<DelegationDTO[]>({
-    resources: (delegations) =>
-      delegations.map((delegation) => delegation?.id ?? ''),
-  })
-  async findAll(
-    @CurrentUser() user: User,
-    @Query('direction') direction: DelegationDirection,
-    @Query('isValid') isValid?: boolean,
-  ): Promise<DelegationDTO[]> {
-    if (direction !== DelegationDirection.OUTGOING) {
-      throw new BadRequestException(
-        'direction=outgoing is currently the only supported value',
-      )
-    }
-
-    return this.delegationsService.findAllOutgoing(user.nationalId, isValid)
   }
 
   /**

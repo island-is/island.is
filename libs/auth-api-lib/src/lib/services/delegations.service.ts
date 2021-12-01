@@ -3,11 +3,12 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import startOfDay from 'date-fns/startOfDay'
 import uniqBy from 'lodash/uniqBy'
-import { Op } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
 import { uuid } from 'uuidv4'
 
 import {
@@ -187,16 +188,23 @@ export class DelegationsService {
   async findAllOutgoing(
     nationalId: string,
     isValid: boolean,
+    otherUser: string,
   ): Promise<DelegationDTO[]> {
-    const validWhere = {
+    const delegationWhere: { fromNationalId: string; toNationalId?: string } = {
+      fromNationalId: nationalId,
+    }
+
+    if (otherUser) {
+      delegationWhere.toNationalId = otherUser
+    }
+
+    const validWhere: { validTo: WhereOptions } = {
       validTo: {
         [Op.or]: [{ [Op.eq]: null }, { [Op.gte]: startOfDay(new Date()) }],
       },
     }
     const delegations = await this.delegationModel.findAll({
-      where: {
-        fromNationalId: nationalId,
-      },
+      where: delegationWhere,
       include: [
         {
           model: DelegationScope,
@@ -206,6 +214,21 @@ export class DelegationsService {
         },
       ],
     })
+
+    // Make sure when using the otherUser filter that we only find one delegation
+    if (otherUser && delegations && delegations.length > 1) {
+      this.logger.error(
+        `Invalid state of delegation. Found ${
+          delegations.length
+        } delegations for otherUser. Delegations: ${delegations.map(
+          (d) => d.id,
+        )}`,
+      )
+      throw new InternalServerErrorException(
+        'Invalid state of delegation. User has two or more delegations with an other user.',
+      )
+    }
+
     return delegations.map((delegation) => delegation.toDTO())
   }
 

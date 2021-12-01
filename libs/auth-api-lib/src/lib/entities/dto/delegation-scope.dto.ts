@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { Type } from 'class-transformer'
 import {
   IsString,
   IsDate,
@@ -17,6 +18,10 @@ export enum ScopeType {
 }
 
 export class UpdateDelegationScopeDTO {
+  constructor() {
+    console.log('***** Constructing UpdateDelegationScopeDTO *****')
+  }
+
   @IsString()
   @ApiProperty()
   name!: string

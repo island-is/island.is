@@ -1,14 +1,13 @@
 import request from 'supertest'
 
-import { Delegation, DelegationScope } from '@island.is/auth-api-lib'
+import { ApiScope } from '@island.is/auth-api-lib'
+import { AuthScope } from '@island.is/auth/scopes'
 import { TestApp } from '@island.is/testing/nest'
 import {
   createCurrentUser,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
-import { AuthScope } from '@island.is/auth/scopes'
 
-import { createDelegation } from '../../../../test/fixtures'
 import {
   setupWithAuth,
   setupWithoutAuth,
@@ -17,26 +16,21 @@ import {
 import { getRequestMethod } from '../../../../test/utils'
 import { TestEndpointOptions } from '../../../../test/types'
 
-const today = new Date('2021-11-12')
 const scopes = ['@island.is/scope0', '@island.is/scope1']
 const user = createCurrentUser({
   nationalId: '1122334455',
-  scope: [AuthScope.actorDelegations, scopes[0]],
+  scope: [AuthScope.readDelegations, scopes[0]],
 })
 const userName = 'Tester Tests'
 const nationalRegistryUser = createNationalRegistryUser({
   kennitala: '6677889900',
 })
 
-beforeAll(() => {
-  jest.useFakeTimers('modern').setSystemTime(today.getTime())
-})
-
-describe('ActorDelegationsController', () => {
-  describe('with auth', () => {
+describe('ScopesController', () => {
+  describe('withAuth', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
-    let delegationModel: typeof Delegation
+    let apiScopeModel: typeof ApiScope
 
     beforeAll(async () => {
       // TestApp setup with auth and database
@@ -49,82 +43,59 @@ describe('ActorDelegationsController', () => {
       server = request(app.getHttpServer())
 
       // Get reference on delegation and delegationScope models to seed DB
-      delegationModel = app.get<typeof Delegation>('DelegationRepository')
+      apiScopeModel = app.get<typeof ApiScope>('ApiScopeRepository')
     })
 
     afterAll(async () => {
       await app.cleanUp()
     })
 
-    beforeEach(async () => {
-      await delegationModel.destroy({
-        where: {},
-        cascade: true,
-        truncate: true,
-        force: true,
-      })
-    })
-
-    describe('GET /actor/delegations', () => {
-      const path = '/v1/actor/delegations'
-      const query = '?direction=incoming'
-
-      it('returns only valid delegations', async () => {
+    describe('GET /scopes', () => {
+      it('should return all allowed scopes for user', async () => {
         // Arrange
-        const models = await delegationModel.bulkCreate(
-          [
-            createDelegation(
-              nationalRegistryUser.kennitala,
-              user.nationalId,
-              [scopes[0]],
-              today,
-            ),
-            createDelegation(
-              nationalRegistryUser.kennitala,
-              user.nationalId,
-              [scopes[1]],
-              today,
-              true,
-            ),
-          ],
-          {
-            include: [{ model: DelegationScope, as: 'delegationScopes' }],
+        const expectedScopes = await apiScopeModel.findAll({
+          where: {
+            name: scopes[0],
           },
-        )
-        const expectedModel = models[0].toDTO()
+        })
 
         // Act
-        const res = await server.get(`${path}${query}`)
+        const res = await server.get('/v1/scopes')
 
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expect(res.body[0]).toMatchObject(
-          JSON.parse(JSON.stringify(expectedModel)),
+        expect(res.body).toMatchObject(
+          expectedScopes.map((scope) => scope.toDTO()),
         )
       })
+    })
 
-      it('returns 400 BadRequest if required query paramter is missing', async () => {
-        // Act
-        const res = await server.get(path)
-
-        // Assert
-        expect(res.status).toEqual(400)
-        expect(res.body).toMatchObject({
-          status: 400,
-          type: 'https://httpstatuses.com/400',
-          title: 'Bad Request',
-          detail:
-            "'direction' can only be set to incoming for the /actor alias",
-        })
+    it('should return an empty array when user does not have any allowed scopes', async () => {
+      // Arrange
+      const app = await setupWithAuth({
+        user: {
+          ...user,
+          scope: [AuthScope.readDelegations],
+        },
+        userName,
+        nationalRegistryUser,
+        scopes,
       })
+
+      // Act
+      const res = await request(app.getHttpServer()).get('/v1/scopes')
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toHaveLength(0)
     })
   })
 
-  describe('without auth and permission', () => {
+  describe('withoutAuth and permissions', () => {
     it.each`
       method   | endpoint
-      ${'GET'} | ${'/v1/actor/delegations'}
+      ${'GET'} | ${'/v1/scopes'}
     `(
       '$method $endpoint should return 401 when user is not authenticated',
       async ({ method, endpoint }: TestEndpointOptions) => {
@@ -150,7 +121,7 @@ describe('ActorDelegationsController', () => {
 
     it.each`
       method   | endpoint
-      ${'GET'} | ${'/v1/actor/delegations'}
+      ${'GET'} | ${'/v1/scopes'}
     `(
       '$method $endpoint should return 403 Forbidden when user does not have the correct scope',
       async ({ method, endpoint }: TestEndpointOptions) => {

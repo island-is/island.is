@@ -21,7 +21,7 @@ import {
 } from '../../../../test/setup'
 import { createDelegation } from '../../../../test/fixtures'
 import { getRequestMethod } from '../../../../test/utils'
-import type { CreateDelegation } from '../../../../test/fixtures'
+import { TestEndpointOptions } from '../../../../test/types'
 
 // The currentUser has access to 'scope0' but not to 'scope1'
 const scopes = ['@island.is/scope0', '@island.is/scope1']
@@ -34,32 +34,32 @@ const nationalRegistryUser = createNationalRegistryUser({
   kennitala: '6677889900',
 })
 const today = new Date('2021-11-12')
-const mockDelegations: Record<string, CreateDelegation> = {
+const mockDelegations = {
   // Valid Outgoing Delegation
   validOutgoing: createDelegation(
     user.nationalId,
-    nationalRegistryUser.kennitala,
+    '1234567890',
     [scopes[0]],
     today,
   ),
   // Expired Outgoing Delegation
   expiredOutgoing: createDelegation(
     user.nationalId,
-    nationalRegistryUser.kennitala,
+    '2234567890',
     [scopes[0]],
     today,
     true,
   ),
   // Valid Incoming direction
-  validIncomgin: createDelegation(
-    nationalRegistryUser.kennitala,
+  validIncoming: createDelegation(
+    '1234567890',
     user.nationalId,
     [scopes[0]],
     today,
   ),
   // Expired Incoming direction
   expireIncoming: createDelegation(
-    nationalRegistryUser.kennitala,
+    '2234567890',
     user.nationalId,
     [scopes[0]],
     today,
@@ -109,10 +109,7 @@ describe('MeDelegationsController', () => {
     })
 
     describe('GET /me/delegations', () => {
-      // If we are going to support both directions on this endpoint we need
-      // to parameterize this string for testing.
-      const query = '?direction=outgoing'
-      it('should return all delegations for auth user with direction=outgoing', async () => {
+      it('should return all delegations with direction=outgoing', async () => {
         // Arrange
         const models = await delegationModel.bulkCreate(
           Object.values(mockDelegations),
@@ -123,7 +120,7 @@ describe('MeDelegationsController', () => {
         const expectedModels = [models[0].toDTO(), models[1].toDTO()]
 
         // Act
-        const res = await server.get(`${path}${query}`)
+        const res = await server.get(`${path}?direction=outgoing`)
 
         // Assert
         expect(res.status).toEqual(200)
@@ -133,7 +130,7 @@ describe('MeDelegationsController', () => {
         )
       })
 
-      it('should return valid delegations for auth user with direction=outgoing&isValid=true', async () => {
+      it('should return all valid delegations with direction=outgoing&isValid=true', async () => {
         // Arrange
         const models = await delegationModel.bulkCreate(
           Object.values(mockDelegations),
@@ -144,7 +141,7 @@ describe('MeDelegationsController', () => {
         const expectedModel = [models[0].toDTO()]
 
         // Act
-        const res = await server.get(`${path}${query}&isValid=true`)
+        const res = await server.get(`${path}?direction=outgoing&isValid=true`)
 
         // Assert
         expect(res.status).toEqual(200)
@@ -152,6 +149,71 @@ describe('MeDelegationsController', () => {
         expect(res.body).toMatchObject(
           JSON.parse(JSON.stringify(expectedModel)),
         )
+      })
+
+      it('should return an array with single delegation when filtered to specific otherUser', async () => {
+        // Arrange
+        const models = await delegationModel.bulkCreate(
+          Object.values(mockDelegations),
+          {
+            include: [{ model: DelegationScope, as: 'delegationScopes' }],
+          },
+        )
+        const expectedModel = [models[0].toDTO()]
+
+        // Act
+        const res = await server.get(
+          `${path}?direction=outgoing&otherUser=${mockDelegations.validOutgoing.toNationalId}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(1)
+        expect(res.body).toMatchObject(
+          JSON.parse(JSON.stringify(expectedModel)),
+        )
+      })
+
+      it('should return an empty array when filtered to specific otherUser and no delegation exists', async () => {
+        // Act
+        const res = await server.get(
+          `${path}?direction=outgoing&otherUser=${mockDelegations.validOutgoing.toNationalId}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(0)
+      })
+
+      it('should return a 500 Internal Server Error when filtered to specific otherUser has two or more delegations', async () => {
+        // Arrange
+        await delegationModel.bulkCreate(
+          [
+            mockDelegations.validOutgoing,
+            {
+              ...mockDelegations.expiredOutgoing,
+              toNationalId: mockDelegations.validOutgoing.toNationalId,
+            },
+          ],
+          {
+            include: [{ model: DelegationScope, as: 'delegationScopes' }],
+          },
+        )
+
+        // Act
+        const res = await server.get(
+          `${path}?direction=outgoing&otherUser=${mockDelegations.validOutgoing.toNationalId}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(500)
+        expect(res.body).toMatchObject({
+          status: 500,
+          type: 'https://httpstatuses.com/500',
+          title: 'Internal Server Error',
+          detail:
+            'Invalid state of delegation. User has two or more delegations with an other user.',
+        })
       })
 
       it('should return 400 Bad Request when direction is missing', async () => {
@@ -592,11 +654,6 @@ describe('MeDelegationsController', () => {
   })
 
   describe('without auth and permissions', () => {
-    interface TestOptions {
-      method: string
-      endpoint: string
-    }
-
     it.each`
       method      | endpoint
       ${'GET'}    | ${'/v1/me/delegations'}
@@ -606,7 +663,7 @@ describe('MeDelegationsController', () => {
       ${'DELETE'} | ${'/v1/me/delegations/1337'}
     `(
       '$method $endpoint should return 401 when user is not authenticated',
-      async ({ method, endpoint }: TestOptions) => {
+      async ({ method, endpoint }: TestEndpointOptions) => {
         // Arrange
         const app = await setupWithoutAuth()
         const server = request(app.getHttpServer())
@@ -636,7 +693,7 @@ describe('MeDelegationsController', () => {
       ${'DELETE'} | ${'/v1/me/delegations/1337'}
     `(
       '$method $endpoint should return 403 Forbidden when user does not have the correct scope',
-      async ({ method, endpoint }: TestOptions) => {
+      async ({ method, endpoint }: TestEndpointOptions) => {
         // Arrange
         const app = await setupWithoutPermission()
         const server = request(app.getHttpServer())
