@@ -161,6 +161,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             justifyContent={['flexStart', 'flexEnd']}
             alignItems="center"
             flexDirection="row"
+            paddingLeft={2}
           >
             {hasSecondaryCTA && (
               <Box paddingRight={4} paddingLeft={2}>
