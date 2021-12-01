@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Op } from 'sequelize'
+import { PersonalRepresentativeRightType } from '../entities/models/personal-representative-right-type.model'
 import { PersonalRepresentativeRight } from '../entities/models/personal-representative-right.model'
 import { PersonalRepresentative } from '../entities/models/personal-representative.model'
 import { PersonalRepresentativeDTO } from '../entities/dto/personal-representative.dto'
@@ -12,6 +13,8 @@ export class PersonalRepresentativeService {
   constructor(
     @InjectModel(PersonalRepresentative)
     private personalRepresentativeModel: typeof PersonalRepresentative,
+    @InjectModel(PersonalRepresentativeRightType)
+    private personalRepresentativeRightType: typeof PersonalRepresentativeRightType,
     @InjectModel(PersonalRepresentativeRight)
     private personalRepresentativeRightModel: typeof PersonalRepresentativeRight,
     @Inject(LOGGER_PROVIDER)

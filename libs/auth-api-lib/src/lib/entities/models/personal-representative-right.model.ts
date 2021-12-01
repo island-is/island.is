@@ -5,7 +5,7 @@ import {
   Table,
   PrimaryKey,
   ForeignKey,
-  BelongsTo
+  BelongsTo,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { PersonalRepresentative } from './personal-representative.model'
@@ -30,7 +30,6 @@ export class PersonalRepresentativeRight extends Model<PersonalRepresentativeRig
   })
   @ApiProperty()
   personalRepresentativeId!: string
-
   @ForeignKey(() => PersonalRepresentativeRightType)
   @Column({
     type: DataType.STRING,
@@ -41,9 +40,9 @@ export class PersonalRepresentativeRight extends Model<PersonalRepresentativeRig
 
   @BelongsTo(() => PersonalRepresentative)
   @ApiProperty()
-  personalRepresentative?: PersonalRepresentative  
+  personalRepresentative?: PersonalRepresentative
 
   @BelongsTo(() => PersonalRepresentativeRightType)
   @ApiProperty()
-  rightType?: PersonalRepresentativeRightType  
+  rightType?: PersonalRepresentativeRightType
 }
