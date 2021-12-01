@@ -9,7 +9,7 @@ import {
   Body,
 } from '@island.is/skilavottord-web/components'
 import { getDate, getYear } from '@island.is/skilavottord-web/utils'
-import { Vehicle } from '@island.is/skilavottord-web/types'
+import { Vehicle } from '@island.is/skilavottord-web/graphql/schema'
 
 interface TableProps {
   titles: string[]
