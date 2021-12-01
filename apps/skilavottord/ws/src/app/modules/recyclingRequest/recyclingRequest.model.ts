@@ -31,8 +31,8 @@ export class RequestStatus {
   status: boolean
 }
 
-export const RecyclingRequestUnion = createUnionType({
-  name: 'RecyclingRequest',
+export const RecyclingRequestResponse = createUnionType({
+  name: 'RecyclingRequestResponse',
   types: () => [RequestErrors, RequestStatus],
   resolveType(res) {
     if (res.status) {
@@ -45,7 +45,7 @@ export const RecyclingRequestUnion = createUnionType({
   },
 })
 
-@ObjectType()
+@ObjectType('RecyclingRequest')
 @Table({ tableName: 'recycling_request' })
 export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @Field()

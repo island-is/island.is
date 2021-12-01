@@ -8,7 +8,7 @@ import { VehicleModel } from '../vehicle'
 import { Authorize } from '../auth'
 import {
   RecyclingRequestModel,
-  RecyclingRequestUnion,
+  RecyclingRequestResponse,
 } from './recyclingRequest.model'
 import { RecyclingRequestService } from './recyclingRequest.service'
 
@@ -57,14 +57,14 @@ export class RecyclingRequestResolver {
     return this.recyclingRequestService.getVehicleInfoToDeregistered(permno)
   }
 
-  @Mutation(() => RecyclingRequestUnion)
+  @Mutation(() => RecyclingRequestResponse)
   async createSkilavottordRecyclingRequest(
     @Args('requestType') requestType: string,
     @Args('permno') permno: string,
     @Args('nameOfRequestor', { nullable: true }) name: string,
     @Args('partnerId', { nullable: true }) partnerId: string,
-  ) {
-    return await this.recyclingRequestService.createRecyclingRequest(
+  ): Promise<typeof RecyclingRequestResponse> {
+    return this.recyclingRequestService.createRecyclingRequest(
       requestType,
       permno,
       name,
