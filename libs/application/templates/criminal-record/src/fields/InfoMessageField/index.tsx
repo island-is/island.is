@@ -44,7 +44,6 @@ export const InfoMessageField: FC<FieldBaseProps & InfoMessageFieldProps> = ({
   const { formatMessage } = useLocale()
   const { link, marginBottom = 2, marginTop = 0 } = props
 
-  console.log(externalData)
   return (
     <>
       <Box

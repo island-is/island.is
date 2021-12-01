@@ -86,7 +86,7 @@ export class CriminalRecordSubmissionService {
       postalCode: nationalRegistryData?.address.postalCode,
       city: nationalRegistryData?.address.city,
       signed: true,
-      type: PersonType.CriminalRecord,
+      type: PersonType.CriminalRecordApplicant,
     }
     const persons: Person[] = [person]
 
