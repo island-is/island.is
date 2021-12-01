@@ -14,6 +14,7 @@ import { Icon } from '../IconRC/Icon'
 type ActionCardProps = {
   date?: string
   heading?: string
+  headingVariant?: 'h3' | 'h4'
   text?: string
   eyebrow?: string
   backgroundColor?: 'white' | 'blue' | 'red'
@@ -74,6 +75,7 @@ const defaultUnavailable = {
 export const ActionCard: React.FC<ActionCardProps> = ({
   date,
   heading,
+  headingVariant = 'h3',
   text,
   eyebrow,
   backgroundColor = 'white',
@@ -246,7 +248,9 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           <Text variant="eyebrow" color="purple400">
             {eyebrow}
           </Text>
-          <Text variant="h3">{heading}</Text>
+          <Text variant={headingVariant} as="h3">
+            {heading}
+          </Text>
           <Text paddingTop={heading ? 1 : 0}>{text}</Text>
         </Box>
 
