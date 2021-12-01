@@ -25,7 +25,7 @@ interface AppProvider {
   user?: User
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>
   loadingUser: boolean
-  loadingMuncipality: boolean
+  loadingMunicipality: boolean
   nationalRegistryData?: NationalRegistryData
   setNationalRegistryData: (data: NationalRegistryData) => void
 }
@@ -40,14 +40,14 @@ export const AppContext = createContext<AppProvider>({
   setNationalRegistryData: () => {},
   loading: false,
   loadingUser: false,
-  loadingMuncipality: false,
+  loadingMunicipality: false,
 })
 
 const AppProvider = ({ children }: Props) => {
   const {
     municipality,
     setMunicipalityById,
-    loading: loadingMuncipality,
+    loading: loadingMunicipality,
   } = useMunicipality()
 
   const { isAuthenticated, user, setUser, loadingUser } = useUser()
@@ -67,7 +67,7 @@ const AppProvider = ({ children }: Props) => {
         loading,
         municipality,
         setMunicipalityById,
-        loadingMuncipality,
+        loadingMunicipality,
         isAuthenticated,
         user,
         loadingUser,

@@ -23,3 +23,11 @@ export const statusOptions = style({
     },
   },
 })
+
+export const deductionFactor = style({
+  display: 'grid',
+  gridTemplateColumns: 'auto auto max-content',
+  columnGap: theme.spacing[3],
+  alignItems: 'center',
+  marginBottom: theme.spacing[2],
+})

@@ -216,6 +216,7 @@ export const getApplicantEmailDataFromEventType = (
       return {
         subject: 'Umsókn fyrir fjárhagsaðstoð móttekin',
         data: {
+          title: 'Fjárhagsaðstoð Umsókn móttekin',
           header: `Umsókn þín fyrir ${months[nextMonth]} er móttekin og er nú í vinnslu`,
           content:
             'Umsóknin verður afgreidd eins fljótt og auðið er. Þú færð annan tölvupóst þegar vinnsla klárast eða ef við þurfum einhver gögn beint frá þér.<br><br>Þú getur fylgst með stöðu umsóknar, sent inn spurningar, o.fl. í þeim dúr á stöðusíðu umsóknarinnar. Kíktu á hana með því að smella á hnappinn fyrir neðan.',
@@ -232,6 +233,7 @@ export const getApplicantEmailDataFromEventType = (
       return {
         subject: 'Okkur vantar gögn til að klára að vinna úr umsókninni',
         data: {
+          title: 'Fjárhagsaðstoð Umsókn vantar gögn',
           header: `Okkur vantar gögn til að klára að vinna úr umsókninni`,
           content: `Við þurfum að sjá <strong>${typeOfDataNeeded}</strong>. Smelltu á hnappinn til að heimsækja þína stöðusíðu þar sem þú getur sent okkur gögn.`,
           applicationChange: 'Umsóknin bíður eftir gögnum',
@@ -247,6 +249,7 @@ export const getApplicantEmailDataFromEventType = (
       return {
         subject: 'Umsókn þinni um aðstoð hefur verið synjað',
         data: {
+          title: 'Fjárhagsaðstoð Umsókn synjað',
           header: 'Umsókn þinni um aðstoð hefur verið synjað',
           content: `Umsókn þinni um fjárhagsaðstoð í ${months[nextMonth]} hefur verið synjað á grundvelli 12. gr.: Tekjur og eignir umsækjanda. Smelltu á hlekkinn hér fyrir neðan til að kynna þér reglur um fjárhagsaðstoð.`,
           applicationChange: 'Umsókn synjað',
@@ -262,6 +265,7 @@ export const getApplicantEmailDataFromEventType = (
       return {
         subject: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
         data: {
+          title: 'Fjárhagsaðstoð Umsókn samþykkt',
           header: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
           content: `Umsóknin þín um fjárhagsaðstoð í ${months[nextMonth]} er samþykkt en athugaðu að hún byggir á tekjum og öðrum þáttum sem kunna að koma upp í ${months[nextMonth]} og getur því tekið breytingum.`,
           applicationChange: 'Umsóknin er samþykkt og áætlun liggur fyrir',
