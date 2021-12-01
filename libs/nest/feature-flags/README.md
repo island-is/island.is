@@ -45,8 +45,8 @@ import { User } from '@island.is/auth-nest-tools'
 export class YourService {
   constructor(private readonly featureFlagService: FeatureFlagService) {}
 
-  maybeDoSomething(user: User) {
-    const canDoSomething = this.featureFlagService.getValue(
+  async maybeDoSomething(user: User) {
+    const canDoSomething = await this.featureFlagService.getValue(
       Features.someFeature,
       false,
       user,
