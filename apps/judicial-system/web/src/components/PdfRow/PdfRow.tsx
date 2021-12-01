@@ -15,6 +15,7 @@ interface Props {
 const PdfRow: React.FC<Props> = ({ children, caseId, title, pdfType }) => {
   return (
     <Box
+      data-testid={`${pdfType}PDFButton`}
       className={styles.pdfRow}
       onClick={() =>
         window.open(`${api.apiUrl}/api/case/${caseId}/${pdfType}`, '_blank')

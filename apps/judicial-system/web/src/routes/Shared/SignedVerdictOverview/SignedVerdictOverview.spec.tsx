@@ -713,7 +713,7 @@ describe('Signed Verdict Overview route', () => {
         expect(screen.queryByTestId('requestPDFButton')).not.toBeInTheDocument()
         expect(screen.queryByTestId('rulingPDFButton')).not.toBeInTheDocument()
         expect(
-          await screen.findByTestId('rulingSVPDFButton'),
+          await screen.findByTestId('courtRecordPDFButton'),
         ).toBeInTheDocument()
         expect(
           await screen.findByTestId('custodyNoticePDFButton'),
