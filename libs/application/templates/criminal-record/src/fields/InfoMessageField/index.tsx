@@ -88,7 +88,7 @@ export const InfoMessageField: FC<FieldBaseProps & InfoMessageFieldProps> = ({
       </Box>
       <object
         data={`data:application/pdf;base64,${externalData.getCriminalRecord.data?.pdfBase64}`}
-        // type="application/pdf"
+      // type="application/pdf"
       ></object>
       <iframe
         src={`data:application/pdf;base64,${externalData.getCriminalRecord.data?.pdfBase64}`}

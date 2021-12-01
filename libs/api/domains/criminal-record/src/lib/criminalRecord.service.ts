@@ -6,7 +6,7 @@ import {
 
 @Injectable()
 export class CriminalRecordService {
-  constructor(private readonly criminalRecordApi: CriminalRecordApi) {}
+  constructor(private readonly criminalRecordApi: CriminalRecordApi) { }
 
   async getCriminalRecord(ssn: string): Promise<CriminalRecord> {
     return await this.criminalRecordApi.getCriminalRecord(ssn)

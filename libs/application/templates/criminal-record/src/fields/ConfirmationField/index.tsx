@@ -58,11 +58,11 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
           <Button
             icon="arrowForward"
             iconType="outline"
-            onBlur={function noRefCheck() {}}
+            onBlur={function noRefCheck() { }}
             onClick={() => {
               window.open('https://island.is/minarsidur/', '_blank')
             }}
-            onFocus={function noRefCheck() {}}
+            onFocus={function noRefCheck() { }}
           >
             {formatText(m.openMySites, application, formatMessage)}
           </Button>
@@ -83,9 +83,9 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
           <Button
             circle
             icon="arrowBack"
-            onBlur={function noRefCheck() {}}
+            onBlur={function noRefCheck() { }}
             onClick={() => setViewCriminalRecord(false)}
-            onFocus={function noRefCheck() {}}
+            onFocus={function noRefCheck() { }}
             colorScheme="light"
             title="Go back"
           />
@@ -186,14 +186,14 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
       <Button
         icon="open"
         iconType="outline"
-        onBlur={function noRefCheck() {}}
+        onBlur={function noRefCheck() { }}
         onClick={() => {
           window.open(
             formatText(m.criminalRecordInboxLink, application, formatMessage),
             '_blank',
           )
         }}
-        onFocus={function noRefCheck() {}}
+        onFocus={function noRefCheck() { }}
         variant="text"
       >
         {formatText(m.criminalRecordInboxText, application, formatMessage)}

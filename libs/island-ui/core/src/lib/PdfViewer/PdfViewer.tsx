@@ -1,5 +1,4 @@
 import React, { FC, useState } from 'react'
-// import MyPDF from 'pdf-viewer-reactjs'
 import { Box } from '../Box/Box'
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack'
 import * as styles from './PdfViewer.css'

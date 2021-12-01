@@ -30,17 +30,7 @@ Then:
 
 `kubectl port-forward svc/socat-soffia 8443:443 -n socat`
 
-Fetch secrets:
-
-AWS_PROFILE=<profile-name> yarn get-secrets application-system-form
-
-AWS_PROFILE=<profile-name> yarn get-secrets application-system-api
-
-AWS_PROFILE=<profile-name> yarn get-secrets api
-
-AWS_PROFILE=<profile-name> yarn get-secrets service-portal
-
-AWS_PROFILE=<profile-name> yarn get-secrets k8s
+Fetch all necessary secrets
 
 ### Running locally
 

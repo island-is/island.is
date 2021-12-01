@@ -90,12 +90,9 @@ export class CriminalRecordSubmissionService {
     }
     const persons: Person[] = [person]
 
+    const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
     const attachment: Attachment = {
-      name: `sakavottord_${nationalRegistryData?.nationalId}_${new Date(
-        Date.now(),
-      )
-        .toISOString()
-        .substring(0, 10)}.pdf`,
+      name: `sakavottord_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
       content: record.contentBase64,
     }
 
