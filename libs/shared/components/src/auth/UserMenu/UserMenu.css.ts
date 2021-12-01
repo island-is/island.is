@@ -20,9 +20,19 @@ export const dropdown = style({
 })
 
 export const fullScreen = style({
+  position: 'fixed',
+  top: spacing[4],
+  right: spacing[4],
+  maxHeight: `calc(100vh - ${spacing[6]}px)`,
+  filter: 'drop-shadow(0px 4px 70px rgba(0, 97, 255, 0.1))',
+
   ...themeUtils.responsiveStyle({
     md: {
       top: spacing[4],
+      right: spacing[4],
+      width: 358,
+    },
+    xl: {
       right: spacing[6],
     },
   }),

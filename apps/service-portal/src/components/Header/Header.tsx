@@ -33,39 +33,37 @@ export const Header: FC<{}> = () => {
       <div className={styles.placeholder} />
       <header className={styles.header}>
         <Box width="full">
-          <ContentBlock>
-            <Box
-              className={styles.headerWrapper}
-              display="flex"
-              alignItems="center"
-              height="full"
-              background="white"
-              paddingX={[2, 2, 4, 4, 6]}
-            >
+          <Box
+            className={styles.headerWrapper}
+            display="flex"
+            alignItems="center"
+            width="full"
+            background="white"
+            paddingX={[2, 4, 4, 4, 6]}
+          >
+            <Hidden above="md">
+              <Link to={ServicePortalPath.MinarSidurRoot}>
+                <FocusableBox component="div">
+                  <Logo width={40} iconOnly />
+                  <BetaTag />
+                </FocusableBox>
+              </Link>
+            </Hidden>
+            <Box display="flex" alignItems="center" flexWrap="nowrap">
+              <UserMenu isServicePortal />
               <Hidden above="md">
-                <Link to={ServicePortalPath.MinarSidurRoot}>
-                  <FocusableBox component="div">
-                    <Logo width={40} iconOnly />
-                    <BetaTag />
-                  </FocusableBox>
-                </Link>
+                <Box marginLeft={2}>
+                  <Button
+                    variant="utility"
+                    icon={mobileMenuState === 'open' ? 'close' : 'menu'}
+                    onClick={handleMobileMenuTriggerClick}
+                  >
+                    {formatMessage(m.menu)}
+                  </Button>
+                </Box>
               </Hidden>
-              <Box display="flex" alignItems="center" flexWrap="nowrap">
-                <UserMenu isServicePortal />
-                <Hidden above="md">
-                  <Box marginLeft={2}>
-                    <Button
-                      variant="utility"
-                      icon={mobileMenuState === 'open' ? 'close' : 'menu'}
-                      onClick={handleMobileMenuTriggerClick}
-                    >
-                      {formatMessage(m.menu)}
-                    </Button>
-                  </Box>
-                </Hidden>
-              </Box>
             </Box>
-          </ContentBlock>
+          </Box>
         </Box>
       </header>
     </>

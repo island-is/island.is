@@ -72,7 +72,7 @@ export const UserDropdown = ({
             borderRadius="large"
             display="flex"
             flexDirection="column"
-            className={cn(styles.dropdown, styles.fullScreen)}
+            className={styles.fullScreen}
           >
             <Stack space={3}>
               <Box
