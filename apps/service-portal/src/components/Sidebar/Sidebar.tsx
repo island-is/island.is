@@ -1,15 +1,16 @@
 import React, { FC, useState } from 'react'
 import { Box, Stack, Logo, FocusableBox, Icon } from '@island.is/island-ui/core'
 import { BetaTag } from '../Logo/BetaTag'
-import * as styles from './Sidebar.css'
-import ModuleNavigation from './ModuleNavigation'
-import useNavigation from '../../hooks/useNavigation/useNavigation'
+import { ActionType } from '../../store/actions'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 import { useStore } from '../../store/stateProvider'
-import { ActionType } from '../../store/actions'
-import cn from 'classnames'
+import ModuleNavigation from './ModuleNavigation'
+import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { useUpdateUnreadDocuments } from '@island.is/service-portal/core'
+import * as styles from './Sidebar.css'
+import cn from 'classnames'
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const Sidebar: FC<{}> = () => {
   const navigation = useNavigation()
@@ -35,7 +36,11 @@ export const Sidebar: FC<{}> = () => {
         >
           <Link to={ServicePortalPath.MinarSidurRoot}>
             <FocusableBox component="div">
-              <Logo width={collapsed ? 24 : 160} iconOnly={collapsed} />
+              <Logo
+                width={collapsed ? 24 : 160}
+                iconOnly={collapsed}
+                id="sidebar"
+              />
               <BetaTag />
             </FocusableBox>
           </Link>
