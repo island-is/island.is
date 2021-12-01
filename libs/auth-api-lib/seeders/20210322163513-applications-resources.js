@@ -80,7 +80,6 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     const transaction = await queryInterface.sequelize.transaction()
 
-
     try {
       await queryInterface.bulkInsert('api_resource', api_resources, {
         transaction,

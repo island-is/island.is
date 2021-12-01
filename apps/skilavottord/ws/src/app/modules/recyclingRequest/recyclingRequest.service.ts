@@ -7,13 +7,13 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { environment } from '../../../environments'
 import { FjarsyslaService } from '../fjarsysla'
-import { RecyclingPartnerService } from '../recycling.partner'
+import { RecyclingPartnerService } from '../recyclingPartner'
 import {
   RecyclingRequestModel,
   RecyclingRequestUnion,
   RequestErrors,
   RequestStatus,
-} from './recycling.request.model'
+} from './recyclingRequest.model'
 import { VehicleService, VehicleModel } from '../vehicle'
 
 @Injectable()
@@ -185,7 +185,7 @@ export class RecyclingRequestService {
     }
   }
 
-  // Create new RecyclingRequest for citizen and recycling partner.
+  // Create new RecyclingRequest for citizen and recyclingPartner.
   // partnerId could be null, when it's the request is for citizen
   async createRecyclingRequest(
     requestType: string,
@@ -209,7 +209,7 @@ export class RecyclingRequestService {
         return errors
       }
       // If requestType is 'deregistered'
-      // partnerId could not be null when create requestType for recycling partner.
+      // partnerId could not be null when create requestType for recyclingPartner.
       if (requestType == 'deregistered' && !partnerId) {
         this.logger.error(
           `partnerId could not be null when create requestType 'deregistered' for recylcing partner`,

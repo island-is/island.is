@@ -174,3 +174,5 @@ infra/                                                                          
 /apps/auth-admin-web-e2e/                                                                     @island-is/fuglar
 /libs/auth-api-lib/                                                                           @island-is/fuglar
 /libs/auth-nest-tools/                                                                        @island-is/fuglar
+
+/apps/services/personal-representative/                                                       @island-is/programm

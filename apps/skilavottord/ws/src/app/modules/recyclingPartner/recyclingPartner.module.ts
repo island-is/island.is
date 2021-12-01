@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { RecyclingPartnerModel } from './recycling.partner.model'
-import { RecyclingPartnerResolver } from './recycling.partner.resolver'
-import { RecyclingPartnerService } from './recycling.partner.service'
+import { RecyclingPartnerModel } from './recyclingPartner.model'
+import { RecyclingPartnerResolver } from './recyclingPartner.resolver'
+import { RecyclingPartnerService } from './recyclingPartner.service'
 
 @Module({
   imports: [SequelizeModule.forFeature([RecyclingPartnerModel])],

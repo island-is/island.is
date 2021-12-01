@@ -12,5 +12,5 @@ module.exports = {
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   coverageDirectory:
     '../../../../coverage/apps/services/personal-representative',
-  setupFiles: ['./test/environment.jest.ts']
+  setupFiles: ['./test/environment.jest.ts'],
 }

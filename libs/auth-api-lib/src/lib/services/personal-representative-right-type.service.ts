@@ -50,21 +50,26 @@ export class PersonalRepresentativeRightTypeService {
     return await this.personalRepresentativeRightTypeModel.findAndCountAll({
       limit: count,
       offset: offset,
-      where: { 
-        $or: [{
-            name: {[Op.like]:searchString} 
+      where: {
+        $or: [
+          {
+            name: { [Op.like]: searchString },
           },
           {
-            code: {[Op.like]:searchString},
-          }
-        ]
+            code: { [Op.like]: searchString },
+          },
+        ],
       },
     })
   }
 
   /** Get's a personal repreasentative right type by code */
-  async getPersonalRepresentativeRightTypeAsync(code: string): Promise<PersonalRepresentativeRightType | null> {
-    this.logger.debug(`Finding personal representative right type for code - "${code}"`)
+  async getPersonalRepresentativeRightTypeAsync(
+    code: string,
+  ): Promise<PersonalRepresentativeRightType | null> {
+    this.logger.debug(
+      `Finding personal representative right type for code - "${code}"`,
+    )
 
     if (!code) {
       throw new BadRequestException('Code must be provided')
@@ -74,10 +79,16 @@ export class PersonalRepresentativeRightTypeService {
   }
 
   /** Create a new personal repreasentative right type */
-  async createAsync(personalRepresentativeRightType: PersonalRepresentativeRightTypeDTO): Promise<PersonalRepresentativeRightType> {
-    this.logger.debug(`Creating personal representative right type with code - "${personalRepresentativeRightType.code}"`)
+  async createAsync(
+    personalRepresentativeRightType: PersonalRepresentativeRightTypeDTO,
+  ): Promise<PersonalRepresentativeRightType> {
+    this.logger.debug(
+      `Creating personal representative right type with code - "${personalRepresentativeRightType.code}"`,
+    )
 
-    return this.personalRepresentativeRightTypeModel.create({ ...personalRepresentativeRightType })
+    return this.personalRepresentativeRightTypeModel.create({
+      ...personalRepresentativeRightType,
+    })
   }
 
   /** Updates an existing personal repreasentative right type */
@@ -85,7 +96,10 @@ export class PersonalRepresentativeRightTypeService {
     code: string,
     personalRepresentativeRightType: PersonalRepresentativeRightTypeDTO,
   ): Promise<PersonalRepresentativeRightType | null> {
-    this.logger.debug('Updating personalRepresentativeRightType with code ', code)
+    this.logger.debug(
+      'Updating personalRepresentativeRightType with code ',
+      code,
+    )
 
     if (!code) {
       throw new BadRequestException('name must be provided')
@@ -98,7 +112,9 @@ export class PersonalRepresentativeRightTypeService {
       },
     )
 
-    return await this.personalRepresentativeRightTypeModel.findByPk(personalRepresentativeRightType.code)
+    return await this.personalRepresentativeRightTypeModel.findByPk(
+      personalRepresentativeRightType.code,
+    )
   }
 
   /** Soft delete on a personal repreasentative right type by code */

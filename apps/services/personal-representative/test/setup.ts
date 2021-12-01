@@ -65,12 +65,9 @@ export const setup = async (options?: Partial<TestServerOptions>) => {
   return app
 }
 
-export const getApp = (): Promise<INestApplication> =>
-  setup({ 
-})
+export const getApp = (): Promise<INestApplication> => setup({})
 
-
-beforeEach(truncate)  
+beforeEach(truncate)
 
 afterAll(async () => {
   if (app && sequelize) {

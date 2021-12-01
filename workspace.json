@@ -3563,10 +3563,22 @@
             "passWithNoTests": true
           }
         },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10001/SKRA-Protected/getOpenAPI?serviceCode=Einstaklingar-v1 -H 'Accept: application/json' > src/clientConfig.json",
+              "jq '.components.schemas.ProblemDetails |= (.additionalProperties = false | .properties.extensions.additionalProperties = false)' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json",
+              "jq '.paths[][].parameters |= map(select(.name != \"X-Road-Client\"))' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/national-registry/v2"
+          }
+        },
         "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn openapi-generator -o libs/clients/national-registry/v2/gen/fetch -i libs/clients/national-registry/v2/src/clientConfig.yaml"
+            "command": "yarn openapi-generator -o libs/clients/national-registry/v2/gen/fetch -i libs/clients/national-registry/v2/src/clientConfig.json"
           }
         }
       }
@@ -8173,6 +8185,66 @@
         "docker-express": {}
       }
     },
+    "services-personal-representative": {
+      "root": "apps/services/personal-representative",
+      "sourceRoot": "apps/services/personal-representative/src",
+      "projectType": "application",
+      "prefix": "services-personal-representative",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/services/personal-representative",
+            "main": "apps/services/personal-representative/src/main.ts",
+            "tsConfig": "apps/services/personal-representative/tsconfig.app.json",
+            "assets": ["apps/services/personal-representative/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/personal-representative/src/environments/environment.ts",
+                  "with": "apps/services/personal-representative/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-personal-representative:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/services/personal-representative/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/services/personal-representative"],
+          "options": {
+            "jestConfig": "apps/services/personal-representative/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/services/personal-representative/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/services/personal-representative/tsconfig.app.json apps/services/personal-representative/src/buildOpenApi.ts"
+          }
+        }
+      }
+    },
     "services-search-indexer": {
       "root": "apps/services/search-indexer",
       "sourceRoot": "apps/services/search-indexer/src",
@@ -9242,66 +9314,6 @@
             "linter": "eslint",
             "tsConfig": ["apps/web-e2e/tsconfig.e2e.json"],
             "exclude": ["**/node_modules/**", "!apps/web-e2e/**/*"]
-          }
-        }
-      }
-    },
-    "services-personal-representative": {
-      "root": "apps/services/personal-representative",
-      "sourceRoot": "apps/services/personal-representative/src",
-      "projectType": "application",
-      "prefix": "services-personal-representative",
-      "architect": {
-        "build": {
-          "builder": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/apps/services/personal-representative",
-            "main": "apps/services/personal-representative/src/main.ts",
-            "tsConfig": "apps/services/personal-representative/tsconfig.app.json",
-            "assets": ["apps/services/personal-representative/src/assets"]
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/personal-representative/src/environments/environment.ts",
-                  "with": "apps/services/personal-representative/src/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "services-personal-representative:build"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "apps/services/personal-representative/**/*.ts"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/services/personal-representative"],
-          "options": {
-            "jestConfig": "apps/services/personal-representative/jest.config.js",
-            "passWithNoTests": true
-          }
-        },
-        "schemas/build-openapi": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "apps/services/personal-representative/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/services/personal-representative/tsconfig.app.json apps/services/personal-representative/src/buildOpenApi.ts"
           }
         }
       }

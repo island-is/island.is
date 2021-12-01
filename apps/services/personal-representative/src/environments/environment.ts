@@ -1,4 +1,4 @@
-import { ChildServiceApiKeys } from "../app/modules/consts/childServices"
+import { ChildServiceApiKeys } from '../app/modules/consts/childServices'
 
 const devConfig = {
   production: false,
@@ -6,7 +6,8 @@ const devConfig = {
     defaultNamespace: '@island.is/personal-representative',
   },
   childServiceApiKeys: {
-    [ChildServiceApiKeys.felagsmalaraduneytid]: ChildServiceApiKeys.felagsmalaraduneytid
+    [ChildServiceApiKeys.felagsmalaraduneytid]:
+      ChildServiceApiKeys.felagsmalaraduneytid,
   },
 }
 
@@ -18,7 +19,8 @@ const prodConfig = {
     serviceName: 'services-personal-representative',
   },
   childServiceApiKeys: {
-    [ChildServiceApiKeys.felagsmalaraduneytid]: process.env.FELAGSMALARADUNEYTI_API_KEY
+    [ChildServiceApiKeys.felagsmalaraduneytid]:
+      process.env.FELAGSMALARADUNEYTI_API_KEY,
   },
 }
 
