@@ -7,6 +7,17 @@ export const image = style({
   width: '100%',
 })
 
+export const container = style({
+  maxHeight: 'auto',
+  minHeight: 'auto',
+  ...themeUtils.responsiveStyle({
+    md: {
+      maxHeight: 446,
+      minHeight: 446,
+    },
+  }),
+})
+
 export const defaultIllustration = style({
   position: 'relative',
   bottom: '-10%',
