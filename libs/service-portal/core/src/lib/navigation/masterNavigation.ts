@@ -15,10 +15,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'home',
         },
-        activeIcon: {
-          type: 'filled',
-          icon: 'home',
-        },
       },
 
       // Rafraen skjol
@@ -28,10 +24,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         path: ServicePortalPath.ElectronicDocumentsRoot,
         icon: {
           type: 'outline',
-          icon: 'reader',
-        },
-        activeIcon: {
-          type: 'filled',
           icon: 'reader',
         },
         subscribesTo: 'documents',
@@ -45,10 +37,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'fileTrayFull',
         },
-        activeIcon: {
-          type: 'filled',
-          icon: 'fileTrayFull',
-        },
       },
 
       // Min Gogn
@@ -57,10 +45,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         path: ServicePortalPath.MyInfoRoot,
         icon: {
           type: 'outline',
-          icon: 'person',
-        },
-        activeIcon: {
-          type: 'filled',
           icon: 'person',
         },
         children: [
@@ -95,10 +79,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'receipt',
         },
-        activeIcon: {
-          type: 'filled',
-          icon: 'receipt',
-        },
       },
 
       // Menntun
@@ -109,10 +89,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'school',
         },
-        activeIcon: {
-          type: 'filled',
-          icon: 'school',
-        },
       },
 
       {
@@ -120,10 +96,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         path: ServicePortalPath.DocumentProviderRoot,
         icon: {
           type: 'outline',
-          icon: 'receipt',
-        },
-        activeIcon: {
-          type: 'filled',
           icon: 'receipt',
         },
         // The first release will only contain "Skjalaveitur" and only for the project owners.
@@ -175,10 +147,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'fileTrayFull',
         },
-        activeIcon: {
-          type: 'filled',
-          icon: 'fileTrayFull',
-        },
       },
 
       {
@@ -186,10 +154,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         path: ServicePortalPath.LicensesRoot,
         icon: {
           type: 'outline',
-          icon: 'business',
-        },
-        activeIcon: {
-          type: 'filled',
           icon: 'business',
         },
       },
@@ -200,10 +164,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         path: ServicePortalPath.AssetsRoot,
         icon: {
           type: 'outline',
-          icon: 'home',
-        },
-        activeIcon: {
-          type: 'filled',
           icon: 'home',
         },
       },
@@ -238,10 +198,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'cellular',
         },
-        activeIcon: {
-          type: 'filled',
-          icon: 'cellular',
-        },
       },
 
       // Ökutæki
@@ -251,10 +207,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         systemRoute: true,
         icon: {
           type: 'outline',
-          icon: 'car',
-        },
-        activeIcon: {
-          type: 'filled',
           icon: 'car',
         },
       },
@@ -272,10 +224,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         systemRoute: true,
         icon: {
           type: 'outline',
-          icon: 'settings',
-        },
-        activeIcon: {
-          type: 'filled',
           icon: 'settings',
         },
         children: [
@@ -310,10 +258,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         path: ServicePortalPath.MyLicensesRoot,
         icon: {
           type: 'outline',
-          icon: 'receipt',
-        },
-        activeIcon: {
-          type: 'filled',
           icon: 'receipt',
         },
         children: [

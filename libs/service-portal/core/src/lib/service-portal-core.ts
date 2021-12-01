@@ -15,7 +15,6 @@ export interface ServicePortalNavigationItem {
   // System routes are always rendered in the navigation
   systemRoute?: boolean
   icon?: Pick<IconProps, 'icon' | 'type'>
-  activeIcon?: Pick<IconProps, 'icon' | 'type'>
   children?: ServicePortalNavigationItem[]
 
   // Hides the child item from the navigation bar, displays the breadcrumb.
@@ -32,7 +31,7 @@ export interface ServicePortalNavigationItem {
    */
   enabled?: boolean
   /**
-   * Subscribes to - get updates from state context if
+   * Subscribes to - get updates from badge context
    */
   subscribesTo?: 'documents'
 }

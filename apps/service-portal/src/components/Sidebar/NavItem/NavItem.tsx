@@ -55,7 +55,7 @@ const NavItemContent: FC<Props> = ({
               className={styles.badge[badgeActive]}
             ></Box>
             <Icon
-              type={icon.type}
+              type={active ? 'filled' : icon.type}
               icon={icon.icon}
               size="medium"
               color={'blue400'}

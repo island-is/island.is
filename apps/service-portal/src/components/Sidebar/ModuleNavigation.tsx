@@ -68,7 +68,7 @@ const ModuleNavigation: FC<Props> = ({
       )}
       <NavItem
         path={nav.path}
-        icon={isModuleActive ? nav.activeIcon : nav.icon}
+        icon={nav.icon}
         active={isModuleActive}
         hasArray={navArray}
         enabled={nav.enabled}
