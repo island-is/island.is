@@ -5,18 +5,14 @@ import {
   Link,
   LinkContext,
   Text,
-  Pagination,
   Divider,
-  LoadingDots,
   PdfViewer,
 } from '@island.is/island-ui/core'
 import React, { FC, useState } from 'react'
-// import MyPDF from 'pdf-viewer-reactjs'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { Document, Page } from 'react-pdf/dist/esm/entry.webpack'
 import * as styles from './ConfirmationField.css'
 
 type ConfirmationFieldProps = {
@@ -25,7 +21,7 @@ type ConfirmationFieldProps = {
       link?: {
         title: string
         url: string
-      },
+      }
       isExpired?: Boolean
     }
   }
@@ -44,7 +40,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
   application,
   field,
 }) => {
-  const { title, description, props } = field
+  const { props } = field
   const { externalData } = application
   const { formatMessage } = useLocale()
   const [viewCriminalRecord, setViewCriminalRecord] = useState(false)
@@ -62,13 +58,13 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
           <Button
             icon="arrowForward"
             iconType="outline"
-            onBlur={function noRefCheck() { }}
+            onBlur={function noRefCheck() {}}
             onClick={() => {
               window.open('https://island.is/minarsidur/', '_blank')
             }}
-            onFocus={function noRefCheck() { }}
+            onFocus={function noRefCheck() {}}
           >
-            Opna mínar síður
+            {formatText(m.openMySites, application, formatMessage)}
           </Button>
         </Box>
       </>
@@ -87,9 +83,9 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
           <Button
             circle
             icon="arrowBack"
-            onBlur={function noRefCheck() { }}
+            onBlur={function noRefCheck() {}}
             onClick={() => setViewCriminalRecord(false)}
-            onFocus={function noRefCheck() { }}
+            onFocus={function noRefCheck() {}}
             colorScheme="light"
             title="Go back"
           />
@@ -99,7 +95,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
             className={styles.linkWithoutDecorations}
           >
             <Button icon="download" iconType="outline" variant="text">
-              Hlaða niður sakavottorði
+              {formatText(m.downloadCriminalRecord, application, formatMessage)}
             </Button>
           </a>
         </Box>
@@ -174,7 +170,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         </LinkContext.Provider>
       </Box>
 
-      {props.isExpired ? null :
+      {props.isExpired ? null : (
         <Box marginBottom={3}>
           <TopicCard
             href="/"
@@ -182,22 +178,25 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
             tag="Pdf"
             colorScheme="blue"
           >
-            Sakavottorð
+            {formatText(m.criminalRecord, application, formatMessage)}
           </TopicCard>
         </Box>
-      }
+      )}
 
       <Button
         icon="open"
         iconType="outline"
-        onBlur={function noRefCheck() { }}
+        onBlur={function noRefCheck() {}}
         onClick={() => {
-          window.open('https://island.is/minarsidur/postholf', '_blank')
+          window.open(
+            formatText(m.criminalRecordInboxLink, application, formatMessage),
+            '_blank',
+          )
         }}
-        onFocus={function noRefCheck() { }}
+        onFocus={function noRefCheck() {}}
         variant="text"
       >
-        Sakavottorðið geturðu einnig fundið í pósthólfinu þínu
+        {formatText(m.criminalRecordInboxText, application, formatMessage)}
       </Button>
 
       <Box

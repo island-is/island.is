@@ -1,6 +1,16 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  name: {
+    id: 'cr.application:name',
+    defaultMessage: 'Umsókn um sakavottorð',
+    description: `Application's name`,
+  },
+  criminalRecord: {
+    id: 'cr.application:criminalRecord',
+    defaultMessage: 'Sakavottorð',
+    description: `CriminalRecord`,
+  },
   externalDataSection: {
     id: 'cr.application:externalData.section',
     defaultMessage: 'Gagnaöflun',
@@ -82,11 +92,6 @@ export const m = defineMessages({
     id: 'cr.application:confirmation',
     defaultMessage: 'Staðfesting',
     description: 'payment',
-  },
-  name: {
-    id: 'cr.application:name',
-    defaultMessage: 'Umsókn um sakavottorð',
-    description: `Application's name`,
   },
   institutionName: {
     id: 'cr.application:institution',
@@ -189,6 +194,26 @@ export const m = defineMessages({
     description:
       'The title for the link to further information about the verification',
   },
+  criminalRecordInboxText: {
+    id: 'cr.application:criminalRecordInboxText',
+    defaultMessage: 'Sakavottorðið geturðu einnig fundið í pósthólfinu þínu',
+    description: 'You can also find the criminal record in your inbox',
+  },
+  criminalRecordInboxLink: {
+    id: 'cr.application:criminalRecordInboxLink',
+    defaultMessage: 'https://island.is/minarsidur/postholf',
+    description: 'Link to the island.is inbox',
+  },
+  downloadCriminalRecord: {
+    id: 'cr.application:downloadCriminalRecord',
+    defaultMessage: 'Hlaða niður sakavottorði',
+    description: 'Download criminal record',
+  },
+  openMySites: {
+    id: 'cr.application:openMySites',
+    defaultMessage: 'Opna mínar síður',
+    description: 'Open my sites',
+  },
   outroMessage: {
     id: 'cr.application:outro.message',
     defaultMessage:
@@ -197,7 +222,8 @@ export const m = defineMessages({
   },
   errorMinAgeNotFulfilled: {
     id: 'cr.application:errorMinAgeNotFulfilled',
-    defaultMessage: 'Þú hefur ekki náð lágmarksaldri til að sækja um sakavottorð',
+    defaultMessage:
+      'Þú hefur ekki náð lágmarksaldri til að sækja um sakavottorð',
     description: '',
   },
 })
