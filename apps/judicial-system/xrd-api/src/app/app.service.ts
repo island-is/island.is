@@ -23,7 +23,7 @@ export class AppService {
   ) {}
 
   private async createCase(caseToCreate: CreateCaseDto): Promise<Case> {
-    const res = await fetch(`${environment.backend.url}/api/internal/case/`, {
+    return fetch(`${environment.backend.url}/api/internal/case/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -31,16 +31,24 @@ export class AppService {
       },
       body: JSON.stringify(caseToCreate),
     })
+      .then(async (res) => {
+        if (!res.ok) {
+          this.logger.error('Could not create a new case', res)
 
-    if (!res.ok) {
-      this.logger.error('Could not create a new case', res)
+          throw new BadGatewayException('Could not create a new case')
+        }
 
-      throw new BadGatewayException('Could not create a new case')
-    }
+        return res.json().then((newCase: TCase) => ({ id: newCase.id }))
+      })
+      .catch((reason) => {
+        if (reason instanceof BadGatewayException) {
+          throw reason
+        }
 
-    const newCase: TCase = await res.json()
+        this.logger.error('Could not create a new case', reason)
 
-    return { id: newCase.id }
+        throw new BadGatewayException('Could not create a new case')
+      })
   }
 
   async create(caseToCreate: CreateCaseDto): Promise<Case> {
