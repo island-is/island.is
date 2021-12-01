@@ -62,10 +62,6 @@ export class DelegationDTO {
 }
 
 export class UpdateDelegationDTO {
-  constructor() {
-    console.log('***** Constructing UpdateDelegationDTO *****')
-  }
-
   @ApiProperty({ type: [UpdateDelegationScopeDTO] })
   @Type(() => UpdateDelegationScopeDTO)
   @ValidateNested({ each: true })

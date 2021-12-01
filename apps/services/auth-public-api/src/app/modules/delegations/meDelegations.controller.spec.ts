@@ -380,7 +380,7 @@ describe('MeDelegationsController', () => {
         })
       })
 
-      it.skip('should return 400 Bad Request when scopes have a validTo before the current datetime', async () => {
+      it('should return 400 Bad Request when scopes have a validTo before the current datetime', async () => {
         // Arrange
         const model = {
           toNationalId: nationalRegistryUser.kennitala,
@@ -402,7 +402,8 @@ describe('MeDelegationsController', () => {
           status: 400,
           type: 'https://httpstatuses.com/400',
           title: 'Bad Request',
-          detail: '',
+          detail:
+            'If scope validTo property is provided it must be in the future',
         })
       })
 
@@ -511,7 +512,7 @@ describe('MeDelegationsController', () => {
         })
       })
 
-      it.skip('should return 400 Bad Request when scopes have a validTo before the current datetime', async () => {
+      it('should return 400 Bad Request when scopes have a validTo before the current datetime', async () => {
         // Arrange
         const createModel = {
           toNationalId: nationalRegistryUser.kennitala,
@@ -544,7 +545,8 @@ describe('MeDelegationsController', () => {
           status: 400,
           type: 'https://httpstatuses.com/400',
           title: 'Bad Request',
-          detail: '',
+          detail:
+            'If scope validTo property is provided it must be in the future',
         })
       })
 

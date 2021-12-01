@@ -7,7 +7,6 @@ import {
   IsOptional,
   IsDateString,
 } from 'class-validator'
-import { Type } from 'class-transformer'
 
 import { ApiScopesDTO } from './api-scopes.dto'
 import { IdentityResourcesDTO } from './identity-resources.dto'
@@ -18,10 +17,6 @@ export enum ScopeType {
 }
 
 export class UpdateDelegationScopeDTO {
-  constructor() {
-    console.log('***** Constructing UpdateDelegationScopeDTO *****')
-  }
-
   @IsString()
   @ApiProperty()
   name!: string

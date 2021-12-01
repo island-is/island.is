@@ -50,6 +50,7 @@ import { AuthScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { environment } from '../../../environments'
+import startOfDay from 'date-fns/startOfDay'
 
 const namespace = '@island.is/auth-public-api/delegations'
 
@@ -152,9 +153,15 @@ export class MeDelegationsController {
     @CurrentUser() user: User,
     @Body() delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
-    if (!(await this.validateScopes(user.scope, delegation.scopes))) {
+    if (!(await this.validateScopesAccess(user.scope, delegation.scopes))) {
       throw new BadRequestException(
         'User does not have access to the requested scopes.',
+      )
+    }
+
+    if (!this.validateScopesPeriod(delegation.scopes)) {
+      throw new BadRequestException(
+        'If scope validTo property is provided it must be in the future',
       )
     }
 
@@ -189,9 +196,15 @@ export class MeDelegationsController {
     @Body() delegation: UpdateDelegationDTO,
     @Param('delegationId') delegationId: string,
   ): Promise<DelegationDTO | null> {
-    if (!(await this.validateScopes(user.scope, delegation.scopes))) {
+    if (!(await this.validateScopesAccess(user.scope, delegation.scopes))) {
       throw new BadRequestException(
         'User does not have access to the requested scopes.',
+      )
+    }
+
+    if (!this.validateScopesPeriod(delegation.scopes)) {
+      throw new BadRequestException(
+        'If scope validTo property is provided it must be in the future',
       )
     }
 
@@ -232,7 +245,7 @@ export class MeDelegationsController {
    * @param requestedScopes requested scopes from a delegation
    * @returns
    */
-  private async validateScopes(
+  private async validateScopesAccess(
     userScopes: string[],
     requestedScopes: UpdateDelegationScopeDTO[],
   ): Promise<boolean> {
@@ -258,6 +271,18 @@ export class MeDelegationsController {
     return (
       requestedScopes.length ===
       allowedIdentityResources.length + allowedApiScopes.length
+    )
+  }
+
+  /**
+   * Validates the valid period of the scopes requested in a delegation.
+   * @param scopes requested scopes on a delegation
+   */
+  private validateScopesPeriod(scopes: UpdateDelegationScopeDTO[]): boolean {
+    const startOfToday = startOfDay(new Date())
+    // validTo can be null or undefined or it needs to be the current day or in the future
+    return scopes.every(
+      (scope) => !scope.validTo || new Date(scope.validTo) >= startOfToday,
     )
   }
 }
