@@ -9,7 +9,7 @@ import { SamgongustofaService } from '../samgongustofa.service'
 import {
   RecyclingRequestService,
   RecyclingRequestModel,
-} from '../../recycling.request'
+} from '../../recyclingRequest'
 import { MockData } from './mock-data'
 
 const recyclingRequestModel = {

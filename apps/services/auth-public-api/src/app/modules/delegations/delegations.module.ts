@@ -25,8 +25,7 @@ import { environment } from '../../../environments'
 import { DelegationsController } from './delegations.controller'
 import { RskModule } from '@island.is/clients/rsk/v2'
 import { RskConfig } from './rsk.config'
-import { NationalRegistryModule } from '@island.is/clients/national-registry-v2'
-import { NationalRegistryConfig } from './national-registry.config'
+import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 
 const delegationAuthConfig: AuthConfig = environment.auth
 
@@ -51,7 +50,7 @@ const delegationAuthConfig: AuthConfig = environment.auth
       Domain,
     ]),
     RskModule.register(RskConfig),
-    NationalRegistryModule.register(NationalRegistryConfig),
+    NationalRegistryClientModule,
   ],
   controllers: [DelegationsController],
   providers: [
