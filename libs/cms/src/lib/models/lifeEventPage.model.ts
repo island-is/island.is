@@ -12,7 +12,7 @@ export class LifeEventPage {
   @Field()
   title!: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   shortTitle?: string | null
 
   @Field()
