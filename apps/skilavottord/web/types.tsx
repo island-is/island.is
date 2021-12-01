@@ -1,89 +1,25 @@
-import { ApolloClient } from 'apollo-client'
-import { NormalizedCacheObject } from 'apollo-cache-inmemory'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { NextComponentType } from 'next'
 import { NextPageContext } from 'next/dist/next-server/lib/utils'
+import { Locale } from '@island.is/shared/types'
 
-export interface Car {
-  permno: string
-  vinNumber: string
-  type: string
-  color: string
-  firstRegDate: string
-  isRecyclable: boolean
-  hasCoOwner: boolean
-  status: string
-}
-
-export interface RecyclingPartner {
-  companyId: string
-  companyName: string
-  address: string
-  postnumber: string
-  city: string
-  website: string
-  phone: string
-  active: boolean
-}
-
-export interface VehicleOwner {
-  nationalId: string
-  personname: string
-  vehicles: Vehicle[]
-}
-
-export interface Vehicle {
-  vehicleId: string
-  vehicleType: string
-  vehicleColor: string
-  newregDate: string
-  recyclingRequests: RecyclingRequest[]
-}
-
-export interface RecyclingRequest {
-  id: string
-  vehicleId: string
-  recyclingPartnerId: string
-  requestType: RecyclingRequestTypes
-  nameOfRequestor: string
-  createdAt: string
-  updatedAt: string
-}
-
-export interface RecyclingRequestMutation {
-  createSkilavottordRecyclingRequest: RecyclingRequestMutationData
-}
-
-export interface RecyclingRequestMutationData {
-  permno: string
-  partnerId: string
-  requestType: RecyclingRequestTypes
-  status: string
-  message: string
-}
-
-export type RecycleActionTypes = 'confirm' | 'handover' | 'completed'
-
-export type RecyclingRequestTypes =
-  | 'pendingRecycle'
-  | 'handOver'
-  | 'deregistered'
-  | 'cancelled'
-  | 'paymentInitiated'
-  | 'paymentFailed'
-
-export type ProcessType = 'citizen' | 'company'
-
-export interface User {
-  name: string
-  nationalId: string
-  partnerId: string
-  mobile: string
-  role: string
+export interface Routes {
+  admin: string
+  auth: string
+  error: string
+  home: string
+  myBenefits: string
+  notFound: string
+  personalInfoUsage: string
+  termsOfUse: string
 }
 
 export type GetInitialPropsContext<Context> = Context & {
   apolloClient: ApolloClient<NormalizedCacheObject>
-  locale: string
+  locale: Locale
+  localeKey: Locale
+  routeKey?: keyof Routes
+  route?: keyof Routes
 }
 
 export type Screen<Props = {}> = NextComponentType<
@@ -91,9 +27,3 @@ export type Screen<Props = {}> = NextComponentType<
   Props,
   Props
 >
-
-export type WithApolloProps = NextComponentType<
-  GetInitialPropsContext<NextPageContext>
-> & {
-  apolloState: any
-}
