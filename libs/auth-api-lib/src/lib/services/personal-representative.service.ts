@@ -20,8 +20,8 @@ export class PersonalRepresentativeService {
 
   /** Get's all personal repreasentatives  */
   async getAllAsync(): Promise<PersonalRepresentativeDTO[]> {
-    const personalRepresentatives = await this.personalRepresentativeModel.findAll();
-    return personalRepresentatives.map(pr => pr.toDTO());
+    const personalRepresentatives = await this.personalRepresentativeModel.findAll()
+    return personalRepresentatives.map((pr) => pr.toDTO())
   }
 
   /** Get's all personal repreasentatives and count */
@@ -34,18 +34,20 @@ export class PersonalRepresentativeService {
   }> {
     page--
     const offset = page * count
-    const personalRepresentatives = await this.personalRepresentativeModel.findAndCountAll({
-      limit: count,
-      offset: offset,
-    })
-    
-    return { 
-      rows: personalRepresentatives.rows.map(pr => pr.toDTO()), 
-      count: personalRepresentatives.count
+    const personalRepresentatives = await this.personalRepresentativeModel.findAndCountAll(
+      {
+        limit: count,
+        offset: offset,
+      },
+    )
+
+    return {
+      rows: personalRepresentatives.rows.map((pr) => pr.toDTO()),
+      count: personalRepresentatives.count,
     }
   }
 
-  /** Get's all personal repreasentative right types and count by searchstring */
+  /** Get's all personal repreasentatives and count by searchstring */
   async findAsync(
     searchString: string,
     page: number,
@@ -56,35 +58,43 @@ export class PersonalRepresentativeService {
   }> {
     page--
     const offset = page * count
-    const personalRepresentatives = await this.personalRepresentativeModel.findAndCountAll({
-      limit: count,
-      offset: offset,
-      where: { 
-        $or: [{
-            name: {[Op.like]:searchString} 
-          },
-          {
-            code: {[Op.like]:searchString},
-          }
-        ]
+    const personalRepresentatives = await this.personalRepresentativeModel.findAndCountAll(
+      {
+        limit: count,
+        offset: offset,
+        where: {
+          $or: [
+            {
+              name: { [Op.like]: searchString },
+            },
+            {
+              code: { [Op.like]: searchString },
+            },
+          ],
+        },
       },
-    })
-    
-    return { 
-      rows: personalRepresentatives.rows.map(pr => pr.toDTO()), 
-      count: personalRepresentatives.count
+    )
+
+    return {
+      rows: personalRepresentatives.rows.map((pr) => pr.toDTO()),
+      count: personalRepresentatives.count,
     }
   }
 
-  /** Get's a personal repreasentative right type by id */
-  async getPersonalRepresentativeAsync(id: string): Promise<PersonalRepresentativeDTO | null> {
-    this.logger.debug(`Finding personal representative right type for code - "${id}"`)
+  /** Get's a personal repreasentatives by id */
+  async getPersonalRepresentativeAsync(
+    id: string,
+  ): Promise<PersonalRepresentativeDTO | null> {
+    this.logger.debug(
+      `Finding personal representative right type for id - "${id}"`,
+    )
 
     if (!id) {
-      throw new BadRequestException('Code must be provided')
+      throw new BadRequestException('Id must be provided')
     }
-    const personalRepresentative = await this.personalRepresentativeModel.findByPk(id)
+    const personalRepresentative = await this.personalRepresentativeModel.findByPk(
+      id,
+    )
     return personalRepresentative ? personalRepresentative.toDTO() : null
   }
-
 }
