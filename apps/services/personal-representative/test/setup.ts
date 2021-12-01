@@ -65,8 +65,6 @@ export const setup = async (options?: Partial<TestServerOptions>) => {
   return app
 }
 
-export const getApp = (): Promise<INestApplication> => setup({})
-
 beforeEach(truncate)
 
 afterAll(async () => {
