@@ -13,6 +13,7 @@ import {
   MunicipalityModule,
   FileModule,
   StaffModule,
+  AmountModule,
 } from './modules/'
 
 const debug = !environment.production
@@ -40,6 +41,7 @@ const autoSchemaFile = environment.production
     FileModule,
     NationalRegistryXRoadModule,
     StaffModule,
+    AmountModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [XRoadConfig, NationalRegistryClientConfig],

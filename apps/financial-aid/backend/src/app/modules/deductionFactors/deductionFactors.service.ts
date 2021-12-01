@@ -5,6 +5,8 @@ import { DeductionFactorsModel } from './models'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { CreateDeductionFactorsDto } from './dto/createDeductionFactors.dto'
+import { Transaction } from 'sequelize/types'
 
 @Injectable()
 export class DeductionFactorsService {
@@ -15,8 +17,11 @@ export class DeductionFactorsService {
     private readonly deductionFactorsModel: typeof DeductionFactorsModel,
   ) {}
 
-  // async create(aid: CreateAidDto, t: Transaction): Promise<AidModel> {
-  //   this.logger.debug(`Create deduction factors`)
-  //   return this.aidModel.create(aid, { transaction: t })
-  // }
+  async create(
+    aid: CreateDeductionFactorsDto,
+    t: Transaction,
+  ): Promise<DeductionFactorsModel> {
+    this.logger.debug(`Create deduction factors`)
+    return this.deductionFactorsModel.create(aid, { transaction: t })
+  }
 }

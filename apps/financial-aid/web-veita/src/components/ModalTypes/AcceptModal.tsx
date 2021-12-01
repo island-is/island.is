@@ -15,8 +15,11 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import format from 'date-fns/format'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
+import cn from 'classnames'
 
 import * as modalStyles from './ModalTypes.css'
+import { useMutation } from '@apollo/client'
+import { AmountMutation } from '@island.is/financial-aid-web/veita/graphql'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
@@ -34,6 +37,7 @@ interface calculationsState {
   secondPersonalTaxCredit: number
   showSecondPersonalTaxCredit: boolean
   hasError: boolean
+  hasSubmitError: boolean
   deductionFactor: Record<string, { description: string; amount: number }>
 }
 
@@ -44,6 +48,8 @@ const AcceptModal = ({
   homeCircumstances,
   spouseNationalId,
 }: Props) => {
+  const [createAmount] = useMutation(AmountMutation)
+
   const maximumInputLength = 6
 
   const currentYear = format(new Date(), 'yyyy')
@@ -78,6 +84,7 @@ const AcceptModal = ({
     showSecondPersonalTaxCredit: false,
     deductionFactor: {},
     hasError: false,
+    hasSubmitError: false,
   })
 
   const sumValues = (
@@ -106,21 +113,41 @@ const AcceptModal = ({
     !finalAmount ||
     finalAmount === 0
 
+  const submit = async () => {
+    if (areRequiredFieldsFilled) {
+      setState({ ...state, hasError: true })
+      return
+    }
+
+    try {
+      return await createAmount({
+        variables: {
+          input: {
+            aidAmount: state.amount,
+            income: state.income,
+            personalTaxCredit: state.personalTaxCreditPercentage,
+            spousePersonalTaxCredit: state.secondPersonalTaxCredit,
+            tax: state.tax,
+            finalAmount: finalAmount,
+          },
+        },
+      }).then((res) => {
+        console.log(res)
+      })
+    } catch (e) {
+      setState({ ...state, hasSubmitError: true })
+    }
+  }
+
   return (
     <InputModal
       headline="Umsóknin þín er samþykkt og áætlun er tilbúin"
       onCancel={onCancel}
-      onSubmit={() => {
-        if (areRequiredFieldsFilled) {
-          setState({ ...state, hasError: true })
-          return
-        }
-        onSaveApplication(finalAmount)
-      }}
+      onSubmit={submit}
       submitButtonText="Samþykkja"
       isModalVisable={isModalVisable}
-      hasError={state.hasError}
-      errorMessage="Þú þarft að fylla út alla reiti"
+      hasError={state.hasSubmitError}
+      errorMessage={'Eitthvað fór úrskeiðis, vinsamlega reynið aftur síðar'}
     >
       <Box marginBottom={3}>
         <NumberInput
@@ -330,6 +357,17 @@ const AcceptModal = ({
           readOnly={true}
         />
       </Box>
+
+      <div
+        className={cn({
+          [`errorMessage`]: true,
+          [`showErrorMessage`]: state.hasError,
+        })}
+      >
+        <Text color="red600" fontWeight="semiBold" variant="small">
+          Það þarf að velja réttindi
+        </Text>
+      </div>
 
       <Text variant="h3" marginBottom={3}>
         Útreikningur

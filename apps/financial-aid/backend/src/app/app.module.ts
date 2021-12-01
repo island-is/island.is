@@ -10,6 +10,7 @@ import {
   FileModule,
   StaffModule,
   AidModule,
+  AmountModule,
 } from './modules'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
@@ -26,6 +27,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     FileModule,
     ApplicationEventModule,
     AidModule,
+    AmountModule,
   ],
 })
 export class AppModule {}

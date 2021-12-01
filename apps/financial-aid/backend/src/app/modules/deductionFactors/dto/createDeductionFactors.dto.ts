@@ -1,7 +1,6 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
-import { AidType } from '@island.is/financial-aid/shared/lib'
 
 export class CreateDeductionFactorsDto {
   @IsNotEmpty()

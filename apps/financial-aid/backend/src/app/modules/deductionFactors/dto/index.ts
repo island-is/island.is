@@ -1,1 +1,1 @@
-export { CreateAidDto } from './createAid.dto'
+export { CreateDeductionFactorsDto } from './createDeductionFactors.dto'
