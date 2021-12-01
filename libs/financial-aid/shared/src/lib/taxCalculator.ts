@@ -68,3 +68,32 @@ export const calculatePersonalTaxAllowanceUsed = (
   // Only show the amount of used personal tax allowence, not the full tax allowence
   return Math.min(personalTaxAllowanceUsed, tax)
 }
+
+export const calculateAcceptedAidFinalAmount = (
+  amount: number,
+  currentYear: string,
+  personalTaxCreditPercentage: number,
+  spousedPersonalTaxCreditPercentage: number,
+): number => {
+  const taxInfoYear: TaxInfoYear = taxInfoNumbers
+  const taxInfo = taxInfoYear[currentYear]
+
+  const taxPercentage = taxInfo.taxPercentage / 100
+
+  const personalTaxAllowance = Math.floor(
+    taxInfo.personalTaxAllowance * (personalTaxCreditPercentage / 100),
+  )
+
+  const spouseTaxAllowance = Math.floor(
+    taxInfo.personalTaxAllowance * (spousedPersonalTaxCreditPercentage / 100),
+  )
+
+  const tax = Math.floor(amount * taxPercentage)
+
+  const finalTaxAmount = Math.max(
+    tax - personalTaxAllowance + spouseTaxAllowance,
+    0,
+  )
+
+  return amount - finalTaxAmount
+}
