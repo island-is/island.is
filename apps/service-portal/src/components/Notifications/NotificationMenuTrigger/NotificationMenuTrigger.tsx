@@ -5,7 +5,6 @@ import { ActionType, MenuState } from '../../../store/actions'
 import NotificationMenu from '../NotificationMenu/NotificationMenu'
 import { useClickAway } from 'react-use'
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 const NotificationMenuTrigger: FC<{}> = () => {
   const ref = useRef<HTMLElement>(null)
   const [{ notificationMenuState }, dispatch] = useStore()

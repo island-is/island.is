@@ -1,4 +1,3 @@
-/* eslint-disable local-rules/disallow-kennitalas */
 export const mockSubjects = [
   {
     id: 1,

@@ -38,7 +38,6 @@ export const useRoutes = () => {
   useEffect(() => {
     if (userInfo === null || modulesPending) return
     arrangeRoutes(userInfo, dispatch, Object.values(modules), client)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userInfo, dispatch, modules, client])
 
   useEffect(() => {
@@ -46,7 +45,6 @@ export const useRoutes = () => {
       Promise.all(
         Object.values(modules)
           .filter((module) => module.dynamicRoutes)
-          // eslint-disable-next-line array-callback-return
           .map((module) => {
             if (module.dynamicRoutes) {
               return module.dynamicRoutes({
@@ -64,7 +62,6 @@ export const useRoutes = () => {
         }
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modulesPending])
 }
 

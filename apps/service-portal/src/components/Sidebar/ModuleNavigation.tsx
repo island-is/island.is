@@ -26,7 +26,6 @@ const ModuleNavigation: FC<Props> = ({
   badge,
 }) => {
   const [expand, setExpand] = useState(false)
-  // eslint-disable-next-line no-empty-pattern
   const { pathname } = useLocation()
   const isModuleActive =
     (nav.path &&
@@ -48,6 +47,7 @@ const ModuleNavigation: FC<Props> = ({
 
   const navChildren = nav?.children?.filter((child) => !child.navHide)
   const navArray = Array.isArray(navChildren) && navChildren.length > 0
+
   return (
     <Box>
       {nav.heading && (

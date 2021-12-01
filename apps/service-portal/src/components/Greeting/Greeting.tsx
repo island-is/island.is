@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-target-blank */
 import React, { FC } from 'react'
 import {
   Box,
@@ -23,7 +22,6 @@ const NationalRegistryUserQuery = gql`
   }
 `
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 const Greeting: FC<{}> = () => {
   const { formatMessage } = useLocale()
   const { data } = useQuery<Query>(NationalRegistryUserQuery)
@@ -74,7 +72,11 @@ const Greeting: FC<{}> = () => {
           </Text>
           <Text marginBottom={2}>{formatMessage(m.greetingIntro)}</Text>
           <div>
-            <a href={LEGACY_MY_PAGES_URL} target="_blank">
+            <a
+              href={LEGACY_MY_PAGES_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Button
                 variant="text"
                 icon="open"
