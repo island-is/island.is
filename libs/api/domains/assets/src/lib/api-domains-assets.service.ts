@@ -43,10 +43,6 @@ export class AssetsXRoadService {
       cursor: cursor,
     })
 
-    console.log(
-      'fasteignirResponsefasteignirResponsefasteignirResponse',
-      fasteignirResponse,
-    )
     if (fasteignirResponse) {
       return {
         paging: fasteignirResponse.paging,
@@ -72,10 +68,6 @@ export class AssetsXRoadService {
       auth,
     ).fasteignirGetFasteign({ fasteignanumer: getAssetString(assetId) })
 
-    console.log(
-      'singleFasteignResponsesingleFasteignResponsesingleFasteignResponse__ DETAIL__',
-      singleFasteignResponse,
-    )
     if (singleFasteignResponse) {
       return {
         propertyNumber: singleFasteignResponse.fasteignanumer,
