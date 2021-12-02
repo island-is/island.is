@@ -223,7 +223,7 @@ export const getSpouse = (
     null,
   ) as PersonInformation | null
 
-  if (person?.spouse) {
+  if (person?.spouse?.nationalId) {
     return person.spouse
   }
 
