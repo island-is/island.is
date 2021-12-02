@@ -1,5 +1,11 @@
 import { rest } from 'msw'
-import { VHSUCCESS, VHFAIL, SYSLUMENN_AUCTION, OPERATING_LICENSE, DATA_UPLOAD } from './responses'
+import {
+  VHSUCCESS,
+  VHFAIL,
+  SYSLUMENN_AUCTION,
+  OPERATING_LICENSE,
+  DATA_UPLOAD,
+} from './responses'
 
 const url = (path: string) => {
   return new URL(path, 'http://localhost').toString()
@@ -46,9 +52,6 @@ export const requestHandlers = [
   }),
   rest.post(url('/api/v1/SyslMottakaGogn'), (req, res, ctx) => {
     console.log(typeof req.body)
-    return res(
-      ctx.status(200),
-      ctx.json(DATA_UPLOAD),
-    )
+    return res(ctx.status(200), ctx.json(DATA_UPLOAD))
   }),
 ]

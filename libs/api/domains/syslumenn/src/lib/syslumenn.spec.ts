@@ -9,7 +9,12 @@ import {
 import { startMocking } from '@island.is/shared/mocking'
 import { createLogger } from 'winston'
 import { requestHandlers } from './__mock-data__/requestHandlers'
-import { VHSUCCESS, VHFAIL, OPERATING_LICENSE, DATA_UPLOAD } from './__mock-data__/responses'
+import {
+  VHSUCCESS,
+  VHFAIL,
+  OPERATING_LICENSE,
+  DATA_UPLOAD,
+} from './__mock-data__/responses'
 import { HttpModule } from '@nestjs/common'
 import { Homestay, mapHomestay } from './models/homestay'
 import { IHomestay } from './client/models/homestay'
@@ -19,17 +24,19 @@ import { mapOperatingLicense } from './models/operatingLicense'
 import { PersonType } from './models/dataUpload'
 
 const YEAR = 2021
-const PERSON = [{
-  name: 'string',
-  ssn: 'string',
-  phoneNumber: 'string',
-  email: 'test@test.is',
-  homeAddress: 'string',
-  postalCode: 'string',
-  city: 'string',
-  signed: true,
-  type: PersonType.Plaintiff,
-}]
+const PERSON = [
+  {
+    name: 'string',
+    ssn: 'string',
+    phoneNumber: 'string',
+    email: 'test@test.is',
+    homeAddress: 'string',
+    postalCode: 'string',
+    city: 'string',
+    signed: true,
+    type: PersonType.Plaintiff,
+  },
+]
 const ATTACHMENT = {
   name: 'attachment',
   content: 'content',
@@ -93,7 +100,7 @@ describe('SyslumennService', () => {
   })
 
   describe('getOperatingLicenses', () => {
-    it('should return syslumenn auction', async () => {
+    it('should return operating license', async () => {
       const response = await service.getOperatingLicenses()
       expect(response).toStrictEqual(
         (OPERATING_LICENSE ?? []).map(mapOperatingLicense),
@@ -101,12 +108,12 @@ describe('SyslumennService', () => {
     })
   })
 
-  describe('getOperatingLicenses', () => {
-    it('should return syslumenn auction', async () => {
-      const response = await service.uploadData(PERSON, ATTACHMENT, { "key": "string" })
-      expect(response).toStrictEqual(
-        DATA_UPLOAD
-      )
+  describe('uploadData', () => {
+    it('should return data upload response', async () => {
+      const response = await service.uploadData(PERSON, ATTACHMENT, {
+        key: 'string',
+      })
+      expect(response).toStrictEqual(DATA_UPLOAD)
     })
   })
 })

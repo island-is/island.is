@@ -45,26 +45,26 @@ export const SYSLUMENN_AUCTION = [
 export const OPERATING_LICENSE = [
   {
     rowNum: 0,
-    utgefidAf:"string",
-    leyfisnumer:"string",
-    stadur:"string",
-    kallast:"string",
-    gata:"string",
-    postnumer:"string",
-    tegund:"string",
-    gildirTil:"string",
-    leyfishafi:"string",
-    flokkur:"string",
-    leyfi_Til_Utiveitinga:"string",
-    afgr_Afgengis_Virkirdagar:"string",
-    afgr_Afgengis_Adfaranott_Fridaga:"string",
-    afgr_Afgengis_Virkirdagar_Utiveitingar:"string",
-    afgr_Afgengis_Adfaranott_Fridaga_Utiveitingar:"string"
-  }
+    utgefidAf: 'string',
+    leyfisnumer: 'string',
+    stadur: 'string',
+    kallast: 'string',
+    gata: 'string',
+    postnumer: 'string',
+    tegund: 'string',
+    gildirTil: 'string',
+    leyfishafi: 'string',
+    flokkur: 'string',
+    leyfi_Til_Utiveitinga: 'string',
+    afgr_Afgengis_Virkirdagar: 'string',
+    afgr_Afgengis_Adfaranott_Fridaga: 'string',
+    afgr_Afgengis_Virkirdagar_Utiveitingar: 'string',
+    afgr_Afgengis_Adfaranott_Fridaga_Utiveitingar: 'string',
+  },
 ] as IOperatingLicense[]
 
 export const DATA_UPLOAD = {
-  skilabod: "string",
-  audkenni: "string",
-  malsnumer: "string"
+  skilabod: 'string',
+  audkenni: 'string',
+  malsnumer: 'string',
 } as DataUploadResponse
