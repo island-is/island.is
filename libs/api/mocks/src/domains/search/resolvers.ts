@@ -1,4 +1,4 @@
-import { Items, Resolvers } from '../../types'
+import { Article, LifeEventPage, News, Resolvers } from '../../types'
 import { filterItem, getTagCounts } from './utils'
 import { store } from '../cms'
 
@@ -26,7 +26,7 @@ export const resolvers: Resolvers = {
     searchResults: (parent, { query }) => {
       const types = query.types || ['webArticle', 'webLifeEventPage', 'webNews']
 
-      const allItems = ([] as Array<Items>).concat(
+      const allItems = ([] as Array<Article | LifeEventPage | News>).concat(
         ...types.map((type) => {
           switch (type) {
             case 'webArticle':

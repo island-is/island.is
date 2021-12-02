@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
+import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseData,

@@ -89,7 +89,7 @@ const PetitionsTable = (data: any) => {
         </Text>
         {data.isViewTypeEdit && (
           <ExportAsCSV
-            data={mapToCSVFile(listOfPetitions) as object[]}
+            data={mapToCSVFile(data.petitions?.data) as object[]}
             filename="Meðmælalisti"
             title="Sækja lista"
             variant="text"
