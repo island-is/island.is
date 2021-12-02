@@ -38,7 +38,8 @@ export const PublicDebtPaymentPlanSchema = z.object({
               x &&
               x.length !== 0 &&
               kennitala.isValid(x) &&
-              kennitala.isCompany(x),
+              kennitala.isCompany(x) &&
+              kennitala.isPerson(x)
           ),
       })
       .optional(),
