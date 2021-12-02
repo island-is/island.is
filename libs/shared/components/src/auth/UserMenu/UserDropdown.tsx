@@ -50,13 +50,17 @@ export const UserDropdown = ({
     changeLanguage(locale as Locale)
 
     if (user && !isDelegation) {
-      await updateProfileMutation({
-        variables: {
-          input: {
-            locale: locale,
+      try {
+        await updateProfileMutation({
+          variables: {
+            input: {
+              locale: locale,
+            },
           },
-        },
-      })
+        })
+      } catch (e) {
+        return null
+      }
     }
   }
 
