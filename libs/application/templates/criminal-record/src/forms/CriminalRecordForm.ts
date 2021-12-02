@@ -1,27 +1,16 @@
 import {
-  buildCheckboxField,
   buildForm,
   buildDescriptionField,
   buildMultiField,
-  buildRadioField,
   buildSection,
   buildSubmitField,
-  buildSubSection,
-  buildTextField,
-  Comparators,
   Form,
   FormModes,
-  FormValue,
-  buildFileUploadField,
   buildExternalDataProvider,
   buildDataProviderItem,
   buildCustomField,
   DefaultEvents,
-  StaticText,
-  buildDividerField,
-  buildKeyValueField,
 } from '@island.is/application/core'
-import { NationalRegistryUser, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
 import { ApiActions } from '../shared'
 

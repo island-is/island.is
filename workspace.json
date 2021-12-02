@@ -2102,12 +2102,12 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/application/templates/${template-directory-name}/tsconfig.lib.json",
-              "libs/application/templates/${template-directory-name}/tsconfig.spec.json"
+              "libs/application/templates/criminal-record/tsconfig.lib.json",
+              "libs/application/templates/criminal-record/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/application/templates/${template-directory-name}/**/*"
+              "!libs/application/templates/criminal-record/**/*"
             ]
           }
         },
