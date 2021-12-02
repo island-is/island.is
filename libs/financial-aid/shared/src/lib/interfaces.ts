@@ -99,6 +99,7 @@ export interface UpdateApplication {
   spousePhoneNumber?: string
   spouseEmail?: string
   spouseName?: string
+  spouseFormComment?: string
 }
 
 export interface UpdateApplicationTable {
@@ -237,6 +238,7 @@ export interface Application {
   homeCircumstancesCustom?: string
   studentCustom?: string
   formComment?: string
+  spouseFormComment?: string
   state: ApplicationState
   files?: ApplicationFile[]
   amount?: number
