@@ -264,6 +264,7 @@ export class ApplicationService {
       linkToStatusPage(appModel.id),
       application.email,
       municipality,
+      appModel.created,
     )
 
     await this.sendEmail(
