@@ -22,7 +22,6 @@ export class AmountController {
 
   @Post('')
   @ApiCreatedResponse({
-    type: AmountModel,
     description: 'Creates a new amount',
   })
   create(@Body() input: CreateAmountDto): Promise<AmountModel> {

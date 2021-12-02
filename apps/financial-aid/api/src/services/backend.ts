@@ -171,7 +171,6 @@ class BackendAPI extends RESTDataSource {
   }
 
   createAmount(createAmount: CreateAmountInput): Promise<Amount> {
-    console.log('ferdu hingad?')
     return this.post('amount', createAmount)
   }
 }

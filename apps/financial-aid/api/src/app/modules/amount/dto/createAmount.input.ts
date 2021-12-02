@@ -1,9 +1,14 @@
 import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
+import { CreateDeductionFactorsInput } from './createDeductionFactors.input'
 
 @InputType()
 export class CreateAmountInput {
+  @Allow()
+  @Field()
+  readonly applicationId!: string
+
   @Allow()
   @Field()
   readonly aidAmount!: number
@@ -13,8 +18,8 @@ export class CreateAmountInput {
   readonly income?: number
 
   @Allow()
-  @Field({ nullable: true })
-  readonly deductionFactors?: string
+  @Field(() => [CreateDeductionFactorsInput], { nullable: true })
+  readonly deductionFactors?: CreateDeductionFactorsInput[]
 
   @Allow()
   @Field()

@@ -20,14 +20,6 @@ module.exports = {
             type: Sequelize.INTEGER,
             allowNull: false,
           },
-          application_id: {
-            type: Sequelize.UUID,
-            references: {
-              model: 'applications',
-              key: 'id',
-            },
-            allowNull: false,
-          },
           created: {
             type: 'TIMESTAMP WITH TIME ZONE',
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),

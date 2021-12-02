@@ -23,7 +23,7 @@ export class AmountResolver {
     input: CreateAmountInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Amount> {
-    this.logger.debug('Creating amount', input)
+    this.logger.debug('Creating amount')
 
     return backendApi.createAmount(input)
   }

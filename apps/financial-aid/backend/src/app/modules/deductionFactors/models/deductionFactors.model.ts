@@ -10,7 +10,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 import { DeductionFactors } from '@island.is/financial-aid/shared/lib'
-import { ApplicationModel } from '../../application'
+import { AmountModel } from '../../amount'
 
 @Table({
   tableName: 'deductionFactors',
@@ -26,13 +26,13 @@ export class DeductionFactorsModel extends Model<DeductionFactors> {
   @ApiProperty()
   id: string
 
-  @ForeignKey(() => ApplicationModel)
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  @ApiProperty()
-  applicationId: string
+  // @ForeignKey(() => AmountModel)
+  // @Column({
+  //   type: DataType.UUID,
+  //   allowNull: false,
+  // })
+  // @ApiProperty()
+  // amountId: string
 
   @Column({
     type: DataType.STRING,

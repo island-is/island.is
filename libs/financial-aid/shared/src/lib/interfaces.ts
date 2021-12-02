@@ -70,8 +70,12 @@ export interface Amount {
 
 export interface DeductionFactors {
   amount: number
-  applicationId: string
+  amountId: string
   description: string
+}
+export interface CreateDeductionFactors {
+  amount?: number
+  description?: string
 }
 
 export interface NavigationProps {

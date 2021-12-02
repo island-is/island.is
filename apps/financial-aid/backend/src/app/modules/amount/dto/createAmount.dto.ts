@@ -1,6 +1,13 @@
-import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator'
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
+import { CreateDeductionFactors } from '@island.is/financial-aid/shared/lib'
 
 export class CreateAmountDto {
   @IsNotEmpty()
@@ -32,4 +39,14 @@ export class CreateAmountDto {
   @IsNumber()
   @ApiProperty()
   readonly finalAmount: number
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty()
+  readonly deductionFactors: CreateDeductionFactors[]
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  readonly applicationId: string
 }

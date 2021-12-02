@@ -3,6 +3,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -11,6 +12,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 import { Amount } from '@island.is/financial-aid/shared/lib'
 import { DeductionFactorsModel } from '../../deductionFactors'
+import { ApplicationModel } from '../../application'
 
 @Table({
   tableName: 'amount',
@@ -26,6 +28,14 @@ export class AmountModel extends Model<Amount> {
   @ApiProperty()
   id: string
 
+  @ForeignKey(() => ApplicationModel)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  @ApiProperty()
+  applicationId: string
+
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
@@ -40,13 +50,9 @@ export class AmountModel extends Model<Amount> {
   @ApiProperty()
   income: number
 
-  @ForeignKey(() => DeductionFactorsModel)
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  @ApiProperty()
-  deductionFactorsId: string
+  @HasMany(() => DeductionFactorsModel, 'amountId')
+  @ApiProperty({ type: DeductionFactorsModel, isArray: true })
+  deductionFactors?: DeductionFactorsModel[]
 
   @Column({
     type: DataType.INTEGER,

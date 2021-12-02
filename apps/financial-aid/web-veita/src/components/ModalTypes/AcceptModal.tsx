@@ -11,7 +11,6 @@ import {
   calculateAcceptedAidFinalAmount,
   calculateTaxOfAmount,
   HomeCircumstances,
-  isObjEmpty,
 } from '@island.is/financial-aid/shared/lib'
 import format from 'date-fns/format'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
@@ -20,6 +19,7 @@ import cn from 'classnames'
 import * as modalStyles from './ModalTypes.css'
 import { useMutation } from '@apollo/client'
 import { AmountMutation } from '@island.is/financial-aid-web/veita/graphql'
+import { useRouter } from 'next/router'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
@@ -48,6 +48,8 @@ const AcceptModal = ({
   homeCircumstances,
   spouseNationalId,
 }: Props) => {
+  const router = useRouter()
+
   const [createAmount] = useMutation(AmountMutation)
 
   const maximumInputLength = 6
@@ -123,12 +125,14 @@ const AcceptModal = ({
       return await createAmount({
         variables: {
           input: {
+            applicationId: router.query.id as string,
             aidAmount: state.amount,
             income: state.income,
             personalTaxCredit: state.personalTaxCreditPercentage,
             spousePersonalTaxCredit: state.secondPersonalTaxCredit,
             tax: state.tax,
             finalAmount: finalAmount,
+            deductionFactors: state.deductionFactor,
           },
         },
       }).then((res) => {

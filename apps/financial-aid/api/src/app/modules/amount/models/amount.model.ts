@@ -14,9 +14,6 @@ export class AmountModel implements Amount {
   readonly income?: number
 
   @Field()
-  readonly deductionFactors_id?: string
-
-  @Field()
   readonly personalTaxCredit!: number
 
   @Field()

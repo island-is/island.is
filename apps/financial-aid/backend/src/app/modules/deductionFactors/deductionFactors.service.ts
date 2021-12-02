@@ -18,10 +18,12 @@ export class DeductionFactorsService {
   ) {}
 
   async create(
-    aid: CreateDeductionFactorsDto,
+    deductionFactors: CreateDeductionFactorsDto,
     t: Transaction,
   ): Promise<DeductionFactorsModel> {
     this.logger.debug(`Create deduction factors`)
-    return this.deductionFactorsModel.create(aid, { transaction: t })
+    return this.deductionFactorsModel.create(deductionFactors, {
+      transaction: t,
+    })
   }
 }

@@ -12,6 +12,14 @@ module.exports = {
             allowNull: false,
             defaultValue: Sequelize.UUIDV4,
           },
+          application_id: {
+            type: Sequelize.UUID,
+            references: {
+              model: 'applications',
+              key: 'id',
+            },
+            allowNull: false,
+          },
           aid_amount: {
             type: Sequelize.INTEGER,
             allowNull: false,
@@ -20,19 +28,11 @@ module.exports = {
             type: Sequelize.INTEGER,
             allowNull: true,
           },
-          deductionFactors_id: {
-            type: Sequelize.UUID,
-            references: {
-              model: 'deductionFactors',
-              key: 'id',
-            },
-            allowNull: true,
-          },
-          personalTaxCredit: {
+          personal_tax_credit: {
             type: Sequelize.INTEGER,
             allowNull: false,
           },
-          spouse_personalTaxCredit: {
+          spouse_personal_tax_credit: {
             type: Sequelize.INTEGER,
             allowNull: true,
           },

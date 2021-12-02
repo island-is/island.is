@@ -6,12 +6,12 @@ export class CreateDeductionFactorsDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly applicationId!: string
+  readonly amountId: string
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly description!: string
+  readonly description: string
 
   @IsNotEmpty()
   @IsNumber()
