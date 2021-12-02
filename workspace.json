@@ -8066,10 +8066,11 @@
             "buildTarget": "services-notifications:build"
           }
         },
-        "dev/worker": {
-          "builder": "@nrwl/workspace:run-commands",
+        "worker": {
+          "builder": "@nrwl/node:execute",
           "options": {
-            "command": "yarn ts-node -P apps/services/notifications/tsconfig.app.json apps/services/notifications/src/worker.ts"
+            "buildTarget": "services-notifications:build",
+            "args": ["--job", "worker"]
           }
         },
         "lint": {
