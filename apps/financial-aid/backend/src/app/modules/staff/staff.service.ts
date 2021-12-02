@@ -72,12 +72,12 @@ export class StaffService {
       {
         nationalId: input.nationalId,
         name: input.name,
-        municipalityId: municipality.id,
+        municipalityId: municipality.municipalityId,
         email: input.email,
         roles: input.roles,
         active: true,
-        municipalityName: municipality.name,
-        municipalityHomepage: municipality.homepage,
+        municipalityName: municipality.municipalityName,
+        municipalityHomepage: municipality.municipalityHomepage,
       },
       { transaction: t },
     )
