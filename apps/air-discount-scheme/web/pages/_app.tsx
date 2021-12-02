@@ -5,6 +5,7 @@ import NextCookies from 'next-cookies'
 import getConfig from 'next/config'
 import { ApolloProvider } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { Provider } from 'next-auth/client'
 
 import {
   getActiveEnvironment,
@@ -17,9 +18,6 @@ import { client as initApollo } from '../graphql'
 import { appWithTranslation } from '../i18n'
 import { isAuthenticated } from '../auth/utils'
 import { withHealthchecks } from '../utils/Healthchecks/withHealthchecks'
-import { Authenticator } from '@island.is/auth/react'
-import { Router } from 'react-router-dom'
-import { createMemoryHistory } from 'history';
 
 const activeEnvironment = getActiveEnvironment()
 
@@ -106,21 +104,24 @@ class SupportApplication extends App<Props> {
     //   )}" (${process.browser ? 'browser' : 'server'})`,
     //   level: Sentry.Severity.Debug,
     // })
-    let history = createMemoryHistory()
+
 
     return (
-      <ApolloProvider client={initApollo(pageProps.apolloState)}>
-        <Router history={history}>
-          <Authenticator>
-            <AppLayout isAuthenticated={isAuthenticated} {...layoutProps}>
-              <ErrorBoundary>
-                <Component {...pageProps} />
-              </ErrorBoundary>
-              <Toast />
-            </AppLayout>
-          </Authenticator>
-        </Router>
-      </ApolloProvider>
+      <Provider 
+        session={pageProps.session} 
+        options={{ clientMaxAge: 120, basePath: '/api/auth'}} 
+      >
+        <ApolloProvider client={initApollo(pageProps.apolloState)}>
+
+          <AppLayout isAuthenticated={isAuthenticated} {...layoutProps}>
+            <ErrorBoundary>
+              <Component {...pageProps} />
+            </ErrorBoundary>
+            <Toast />
+          </AppLayout>
+
+        </ApolloProvider>
+      </Provider>
     )
   }
 }

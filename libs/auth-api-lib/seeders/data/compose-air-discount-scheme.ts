@@ -22,13 +22,13 @@ export const up = compose(
       },
   }),
   createScope({
-    name: '@vegagerdin.is/air-discount-scheme',
+    name: '@vegagerdin.is/air-discount-scheme-scope',
     displayName: 'Air Discount Scheme',
     description: 'Loftbrú',
     addToClients: ['@vegagerdin.is/air-discount-scheme'],
   }),
   createScope({
-    name: '@vegagerdin.is/air-discount-scheme:admin',
+    name: '@vegagerdin.is/air-discount-scheme-scope:admin',
     displayName: 'Air Discount Scheme - Admin',
     description: 'Loftbrú admin',
     addToClients: ['@vegagerdin.is/air-discount-scheme'],

@@ -11,14 +11,12 @@ import {
 } from './modules'
 import { BackendAPI } from '../services'
 import { environment } from '../environments'
-import { AuthPublicApiClientModule, AuthPublicApiClientModuleConfig } from '@island.is/clients/auth-public-api'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const autoSchemaFile = environment.production
   ? true
   : 'apps/air-discount-scheme/api.graphql'
-  const auth_config = {baseApiUrl: process.env.AUTH_PUBLIC_API_URL ?? 'http://localhost:4242',} as AuthPublicApiClientModuleConfig
 
 @Module({
   imports: [
@@ -36,9 +34,6 @@ const autoSchemaFile = environment.production
     FlightModule,
     FlightLegModule,
     CmsModule,
-    AuthPublicApiClientModule.register(
-      auth_config
-    )
   ],
   providers: [BackendAPI],
 })

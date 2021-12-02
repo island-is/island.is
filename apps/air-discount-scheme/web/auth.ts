@@ -1,6 +1,8 @@
 import { configure, configureMock } from '@island.is/auth/react'
 import { LoftbruScope, UserProfileScope, AuthScope } from '@island.is/auth/scopes'
 //import environment from './environments/environment'
+import { createMemoryHistory, createLocation } from 'history';
+
 
 const userMocked = process.env.API_MOCKS === 'true'
 
@@ -9,10 +11,11 @@ if (userMocked) {
     profile: { name: 'Mock', locale: 'is', nationalId: '0000000000' },
   })
 } else {
-
+  let location = createLocation
   configure({
     //baseUrl: `${window.location.origin}/min-rettindi`,
-    baseUrl: `http://localhost:4200/min-rettindi`,
+    //baseUrl: `http://localhost:4200/min-rettindi`,
+    baseUrl: `${location}/min-rettindi`,
     redirectPath: '/signin-oidc',
     redirectPathSilent: '/silent/signin-oidc',
     authority: 'https://identity-server.dev01.devland.is',
