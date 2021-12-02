@@ -329,6 +329,7 @@ export class ApplicationService {
         linkToStatusPage(updatedApplication.id),
         updatedApplication.email,
         municipality,
+        updatedApplication.created,
         update.event === ApplicationEventType.DATANEEDED
           ? update?.comment
           : undefined,
