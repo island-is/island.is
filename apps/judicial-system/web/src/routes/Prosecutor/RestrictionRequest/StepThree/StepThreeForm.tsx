@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
 import {
   formatAccusedByGender,
@@ -10,7 +11,6 @@ import {
   CaseCustodyRestrictions,
   CaseType,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
@@ -34,12 +34,13 @@ import {
   restrictions,
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
+import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   requestedValidToDateIsValid: boolean
   setRequestedValidToDateIsValid: React.Dispatch<React.SetStateAction<boolean>>
 }

@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
+
 import { Text, Button, Box, AlertMessage } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
 import { login } from '@island.is/judicial-system-web/messages'
-import { useRouter } from 'next/router'
+
 import * as styles from './Login.css'
 
 const Login = () => {
