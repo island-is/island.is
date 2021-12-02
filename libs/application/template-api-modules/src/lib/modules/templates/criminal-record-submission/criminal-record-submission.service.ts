@@ -35,15 +35,12 @@ export class CriminalRecordSubmissionService {
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    const { answers } = application
-    const nationalId = application.applicant
-
-    const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+    const isPayment: { fulfilled: boolean } | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,
     )
 
-    if (isPayment.fulfilled) {
+    if (isPayment?.fulfilled) {
       return {
         success: true,
       }
