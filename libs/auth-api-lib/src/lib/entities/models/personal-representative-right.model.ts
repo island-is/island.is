@@ -1,6 +1,8 @@
 import {
   Column,
   DataType,
+  CreatedAt,
+  UpdatedAt,
   Model,
   Table,
   PrimaryKey,
@@ -12,7 +14,7 @@ import { PersonalRepresentative } from './personal-representative.model'
 import { PersonalRepresentativeRightType } from './personal-representative-right-type.model'
 
 @Table({
-  tableName: 'personal_representative_right_type',
+  tableName: 'personal_representative_right',
 })
 export class PersonalRepresentativeRight extends Model<PersonalRepresentativeRight> {
   @PrimaryKey
@@ -23,6 +25,14 @@ export class PersonalRepresentativeRight extends Model<PersonalRepresentativeRig
   })
   id!: string
 
+  @CreatedAt
+  @ApiProperty()
+  readonly created!: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  readonly modified?: Date
+
   @ForeignKey(() => PersonalRepresentative)
   @Column({
     type: DataType.STRING,
@@ -30,6 +40,7 @@ export class PersonalRepresentativeRight extends Model<PersonalRepresentativeRig
   })
   @ApiProperty()
   personalRepresentativeId!: string
+
   @ForeignKey(() => PersonalRepresentativeRightType)
   @Column({
     type: DataType.STRING,
@@ -38,11 +49,17 @@ export class PersonalRepresentativeRight extends Model<PersonalRepresentativeRig
   @ApiProperty()
   rightTypeCode!: string
 
+  @ApiProperty({
+    type: () => [PersonalRepresentative],
+    required: true,
+  })
   @BelongsTo(() => PersonalRepresentative)
-  @ApiProperty()
-  personalRepresentative?: PersonalRepresentative
+  personalRepresentative?: unknown
 
+  @ApiProperty({
+    type: () => [PersonalRepresentativeRightType],
+    required: true,
+  })
   @BelongsTo(() => PersonalRepresentativeRightType)
-  @ApiProperty()
-  rightType?: PersonalRepresentativeRightType
+  rightType?: unknown
 }

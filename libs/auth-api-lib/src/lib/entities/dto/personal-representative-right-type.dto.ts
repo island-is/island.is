@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsDate, IsOptional } from 'class-validator'
+import { IsNotEmpty, IsString, IsDateString, IsOptional } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class PersonalRepresentativeRightTypeDTO {
@@ -16,7 +16,7 @@ export class PersonalRepresentativeRightTypeDTO {
   })
   readonly description!: string
 
-  @IsDate()
+  @IsDateString()
   @IsOptional()
   @ApiProperty({
     // add one day as validTo example
@@ -24,7 +24,7 @@ export class PersonalRepresentativeRightTypeDTO {
   })
   readonly validFrom?: Date
 
-  @IsDate()
+  @IsDateString()
   @IsOptional()
   @ApiProperty({
     // add one day as validTo example

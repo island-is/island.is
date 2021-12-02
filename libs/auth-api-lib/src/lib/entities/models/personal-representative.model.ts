@@ -1,6 +1,7 @@
 import {
   Column,
   CreatedAt,
+  UpdatedAt,
   DataType,
   Model,
   Table,
@@ -12,7 +13,7 @@ import { PersonalRepresentativeRight } from './personal-representative-right.mod
 import { PersonalRepresentativeDTO } from '../dto/personal-representative.dto'
 
 @Table({
-  tableName: 'personal_representative_right_type',
+  tableName: 'personal_representative',
 })
 export class PersonalRepresentative extends Model<PersonalRepresentative> {
   @PrimaryKey
@@ -43,14 +44,19 @@ export class PersonalRepresentative extends Model<PersonalRepresentative> {
   })
   @ApiProperty()
   validTo?: Date
-    
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date
 
+  @UpdatedAt
+  @ApiProperty()
+  readonly modified?: Date
+
+  @ApiProperty({ type: () => [PersonalRepresentativeRight], required: false })
   @HasMany(() => PersonalRepresentativeRight)
   @ApiProperty()
-  rights!: PersonalRepresentativeRight[]  
+  rights!: PersonalRepresentativeRight[]
 
   toDTO(): PersonalRepresentativeDTO {
     return {
@@ -58,7 +64,15 @@ export class PersonalRepresentative extends Model<PersonalRepresentative> {
       nationalIdPersonalRepresentative: this.nationalIdPersonalRepresentative,
       nationalIdRepresentedPerson: this.nationalIdRepresentedPerson,
       validTo: this.validTo,
-      rightCodes: this.rights.map((r) =>  r.rightTypeCode)
+      rightCodes: this.rights?.map((r) => r.rightTypeCode),
     }
+  }
+
+  fromDTO(id: string, dto: PersonalRepresentativeDTO): PersonalRepresentative {
+    this.id = id
+    this.nationalIdPersonalRepresentative = dto.nationalIdPersonalRepresentative
+    this.nationalIdRepresentedPerson = dto.nationalIdRepresentedPerson
+    this.validTo = dto.validTo
+    return this
   }
 }

@@ -1,13 +1,20 @@
-import { IsNotEmpty, IsString, IsDate, IsOptional, IsArray, ArrayNotEmpty} from 'class-validator'
+import {
+  IsNotEmpty,
+  IsString,
+  IsDateString,
+  IsOptional,
+  IsArray,
+  ArrayNotEmpty,
+} from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class PersonalRepresentativeDTO {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
     example: 'guid',
   })
-  readonly id!: string
+  readonly id?: string
 
   @IsString()
   @IsNotEmpty()
@@ -23,7 +30,7 @@ export class PersonalRepresentativeDTO {
   })
   readonly nationalIdRepresentedPerson!: string
 
-  @IsDate()
+  @IsDateString()
   @IsOptional()
   @ApiProperty({
     // add one day as validTo example
@@ -37,5 +44,4 @@ export class PersonalRepresentativeDTO {
     example: '["health", "finance"]',
   })
   readonly rightCodes!: string[]
-
 }

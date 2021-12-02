@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -10,6 +10,7 @@ module.exports = {
           national_id_represented_person VARCHAR NOT NULL,
           valid_to TIMESTAMP WITH TIME ZONE NULL,
           created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+          modified TIMESTAMP WITH TIME ZONE,
           PRIMARY KEY (id)
         );
 
@@ -17,6 +18,8 @@ module.exports = {
           id VARCHAR NOT NULL,
           personal_representative_id VARCHAR NOT NULL,
           right_type_code VARCHAR NOT NULL,
+          created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+          modified TIMESTAMP WITH TIME ZONE,
           PRIMARY KEY (id)
         );
 
@@ -39,5 +42,5 @@ module.exports = {
         DROP TABLE personal_representative;
       COMMIT;
     `)
-  }
-};
+  },
+}
