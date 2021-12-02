@@ -43,6 +43,10 @@ export class AssetsXRoadService {
       cursor: cursor,
     })
 
+    console.log(
+      'fasteignirResponsefasteignirResponsefasteignirResponse',
+      fasteignirResponse,
+    )
     if (fasteignirResponse) {
       return {
         paging: fasteignirResponse.paging,
@@ -68,6 +72,10 @@ export class AssetsXRoadService {
       auth,
     ).fasteignirGetFasteign({ fasteignanumer: getAssetString(assetId) })
 
+    console.log(
+      'singleFasteignResponsesingleFasteignResponsesingleFasteignResponse__ DETAIL__',
+      singleFasteignResponse,
+    )
     if (singleFasteignResponse) {
       return {
         propertyNumber: singleFasteignResponse.fasteignanumer,
@@ -117,12 +125,19 @@ export class AssetsXRoadService {
               propertyNumber: unit.fasteignanumer,
               unitOfUseNumber: unit.notkunareininganumer,
               address: {
-                displayShort: unit.stadfang?.birtingStutt,
-                display: unit.stadfang?.birting,
-                propertyNumber: unit.stadfang?.landeignarnumer,
-                municipality: unit.stadfang?.sveitarfelagBirting,
-                postNumber: unit.stadfang?.postnumer,
-                locationNumber: unit.stadfang?.stadfanganumer,
+                // This does not come from the service as the service is set up today. Needs to come from parent as things stand.
+                displayShort:
+                  singleFasteignResponse.sjalfgefidStadfang?.birtingStutt,
+                display: singleFasteignResponse.sjalfgefidStadfang?.birting,
+                propertyNumber:
+                  singleFasteignResponse.sjalfgefidStadfang?.landeignarnumer,
+                municipality:
+                  singleFasteignResponse.sjalfgefidStadfang
+                    ?.sveitarfelagBirting,
+                postNumber:
+                  singleFasteignResponse.sjalfgefidStadfang?.postnumer,
+                locationNumber:
+                  singleFasteignResponse.sjalfgefidStadfang?.stadfanganumer,
               },
               marking: unit.merking,
               usageDisplay: unit.notkunBirting,

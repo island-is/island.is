@@ -94,6 +94,63 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     )
   }
 
+  console.log('assetData', assetData)
+  const test = {
+    fasteignanumer: 'F2084803',
+    sjalfgefidStadfang: {
+      stadfanganumer: 1033382,
+      landeignarnumer: 125400,
+      postnumer: 270,
+      sveitarfelagBirting: 'Mosfellsbær',
+      birting: 'Reykjalundur, 270 Mosfellsbær',
+      birtingStutt: 'Reykjalundur',
+    },
+    fasteignamat: {
+      gildandiFasteignamat: 1,
+      fyrirhugadFasteignamat: 1,
+      gildandiMannvirkjamat: 1,
+      fyrirhugadMannvirkjamat: 1,
+      gildandiLodarhlutamat: 147450000,
+      fyrirhugadLodarhlutamat: 151150000,
+      gildandiAr: 2021,
+      fyrirhugadAr: 2022,
+    },
+    thinglystirEigendur: {
+      thinglystirEigendur: [
+        {
+          nafn: 'Gervimaður Bandaríkin          ',
+          kennitala: '1',
+          eignarhlutfall: 1,
+          kaupdagur: '1944-05-30T00:00:00.000Z',
+          heimildBirting: 'Fleiri en ein eignarheimild',
+        },
+      ],
+    },
+    notkunareiningar: {
+      notkunareiningar: [
+        {
+          notkunareininganumer: '2084803',
+          fasteignanumer: '2084803',
+          merking: '010101',
+          notkunBirting: 'Vistheimili',
+          skyring: 'Vistheimili',
+          byggingararBirting: '1944-2000',
+          birtStaerd: 20613.6,
+          fasteignamat: {
+            gildandiFasteignamat: 1,
+            fyrirhugadFasteignamat: 1,
+            gildandiMannvirkjamat: 1,
+            fyrirhugadMannvirkjamat: 1,
+            gildandiLodarhlutamat: 147450000,
+            fyrirhugadLodarhlutamat: 151150000,
+            gildandiAr: 2021,
+            fyrirhugadAr: 2022,
+          },
+          brunabotamat: 1,
+        },
+      ],
+    },
+  }
   const paginateOwners =
     ownersQuery?.data?.assetsPropertyOwners.paging?.hasNextPage ||
     (assetData.registeredOwners?.paging?.hasNextPage &&
