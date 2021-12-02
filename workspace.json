@@ -1758,6 +1758,13 @@
           },
           "outputs": ["coverage/apps/application-system/api"]
         },
+        "application-lifecycle": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "application-system-api:build",
+            "args": ["--applicationLifecycle"]
+          }
+        },
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {

@@ -84,6 +84,26 @@ export class ApplicationService {
     })
   }
 
+  async getAll(): Promise<Application[]> {
+    return this.applicationModel.findAll({
+      where: {
+        [Op.or]: [
+          {
+            pruneAt: {
+              [Op.not]: null,
+            },
+          },
+          {
+            pruneAt: {
+              [Op.lt]: new Date(),
+            },
+          },
+        ],
+      },
+      order: [['modified', 'DESC']],
+    })
+  }
+
   /**
    * A function to pass to data providers / template api modules to be able to
    * query applications of their respective type in order to infer some data to
