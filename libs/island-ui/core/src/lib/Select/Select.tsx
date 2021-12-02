@@ -1,11 +1,16 @@
 import React from 'react'
 import cn from 'classnames'
-import ReactSelect from 'react-select'
+import ReactSelect, {
+  OptionsType,
+  GroupedOptionsType,
+  ActionMeta,
+  ValueType,
+} from 'react-select'
 import CreatableReactSelect from 'react-select/creatable'
+import { formatGroupLabel } from 'react-select/src/builtins'
 import {
   Option,
   Menu,
-  SelectProps,
   IndicatorsContainer,
   Control,
   DropdownIndicator,
@@ -15,11 +20,45 @@ import {
   ValueContainer,
   customStyles,
 } from './Components'
+import { InputBackgroundColor } from '../Input/types'
 import * as styles from './Select.css'
 
 interface AriaError {
   'aria-invalid': boolean
   'aria-describedby': string
+}
+
+export type Option = {
+  label: string
+  value: string | number
+  disabled?: boolean
+}
+
+export interface SelectProps {
+  name: string
+  options: OptionsType<Option> | GroupedOptionsType<Option>
+  id?: string
+  disabled?: boolean
+  hasError?: boolean
+  errorMessage?: string
+  noOptionsMessage?: string
+  onChange?: ((
+    value: ValueType<Option>,
+    actionMeta: ActionMeta<Option>,
+  ) => void) &
+    ((value: ValueType<Option>, action: ActionMeta<Option>) => void)
+  label?: string
+  value?: ValueType<Option>
+  placeholder?: string
+  defaultValue?: Option
+  icon?: string
+  isSearchable?: boolean
+  isCreatable?: boolean
+  size?: 'sm' | 'md'
+  backgroundColor?: InputBackgroundColor
+  required?: boolean
+  ariaError?: AriaError
+  formatGroupLabel?: formatGroupLabel<Option>
 }
 
 export const Select = ({

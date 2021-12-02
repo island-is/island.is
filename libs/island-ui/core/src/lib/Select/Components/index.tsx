@@ -4,10 +4,6 @@ import {
   components,
   MenuProps,
   OptionProps,
-  OptionsType,
-  GroupedOptionsType,
-  ActionMeta,
-  ValueType,
   IndicatorContainerProps,
   ControlProps,
   InputProps,
@@ -17,48 +13,9 @@ import {
   IndicatorProps,
   Props,
 } from 'react-select'
-import { formatGroupLabel } from 'react-select/src/builtins'
-import { AriaError, InputBackgroundColor } from '../../Input/types'
 import { Icon } from '../../IconRC/Icon'
 import * as styles from '../Select.css'
-
-export type ReactSelectOption = {
-  label: string
-  value: string | number
-  disabled?: boolean
-}
-
-export interface SelectProps {
-  name: string
-  options:
-    | OptionsType<ReactSelectOption>
-    | GroupedOptionsType<ReactSelectOption>
-  id?: string
-  disabled?: boolean
-  hasError?: boolean
-  errorMessage?: string
-  noOptionsMessage?: string
-  onChange?: ((
-    value: ValueType<ReactSelectOption>,
-    actionMeta: ActionMeta<ReactSelectOption>,
-  ) => void) &
-    ((
-      value: ValueType<ReactSelectOption>,
-      action: ActionMeta<ReactSelectOption>,
-    ) => void)
-  label?: string
-  value?: ValueType<ReactSelectOption>
-  placeholder?: string
-  defaultValue?: ReactSelectOption
-  icon?: string
-  isSearchable?: boolean
-  isCreatable?: boolean
-  size?: 'sm' | 'md'
-  backgroundColor?: InputBackgroundColor
-  required?: boolean
-  ariaError?: AriaError
-  formatGroupLabel?: formatGroupLabel<ReactSelectOption>
-}
+import { SelectProps, Option as ReactSelectOption } from '../Select'
 
 export const Menu = (props: MenuProps<ReactSelectOption>) => (
   <components.Menu className={styles.menu} {...props} />
