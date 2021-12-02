@@ -39,6 +39,7 @@ export const ApplicationQuery = gql`
       }
       state
       formComment
+      spouseFormComment
       studentCustom
       amount
       rejection
