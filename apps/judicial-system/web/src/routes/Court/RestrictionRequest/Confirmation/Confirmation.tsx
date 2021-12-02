@@ -11,24 +11,27 @@ import {
   FormContentContainer,
   RulingAccordionItem,
   BlueBox,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { CaseDecision } from '@island.is/judicial-system/types'
+import {
+  CaseDecision,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
 import type {
   Case,
   RequestSignatureResponse,
 } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useQuery } from '@apollo/client'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import SigningModal from '@island.is/judicial-system-web/src/shared-components/SigningModal/SigningModal'
+import SigningModal from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import {
   core,
   rcConfirmation as m,
@@ -41,11 +44,11 @@ export const Confirmation: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [
-    requestSignatureResponse,
-    setRequestSignatureResponse,
+    requestRulingSignatureResponse,
+    setRequestRulingSignatureResponse,
   ] = useState<RequestSignatureResponse>()
 
-  const { requestSignature, isRequestingSignature } = useCase()
+  const { requestRulingSignature, isRequestingRulingSignature } = useCase()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -65,20 +68,22 @@ export const Confirmation: React.FC = () => {
 
   useEffect(() => {
     if (!modalVisible) {
-      setRequestSignatureResponse(undefined)
+      setRequestRulingSignatureResponse(undefined)
     }
-  }, [modalVisible, setRequestSignatureResponse])
+  }, [modalVisible, setRequestRulingSignatureResponse])
 
   const handleNextButtonClick: () => Promise<void> = async () => {
     if (!workingCase) {
       return
     }
 
-    // Request signature to get control code
+    // Request ruling signature to get control code
     try {
-      const requestSignatureResponse = await requestSignature(workingCase.id)
-      if (requestSignatureResponse) {
-        setRequestSignatureResponse(requestSignatureResponse)
+      const requestRulingSignatureResponse = await requestRulingSignature(
+        workingCase.id,
+      )
+      if (requestRulingSignatureResponse) {
+        setRequestRulingSignatureResponse(requestRulingSignatureResponse)
         setModalVisible(true)
       } else {
         // TODO: Handle error
@@ -151,14 +156,14 @@ export const Confirmation: React.FC = () => {
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRuling)}
-                pdfType="ruling?shortVersion=false"
+                pdfType="ruling"
               />
             </Box>
             <Box marginBottom={15}>
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRulingShortVersion)}
-                pdfType="ruling?shortVersion=true"
+                pdfType="courtRecord"
               />
             </Box>
           </FormContentContainer>
@@ -169,6 +174,8 @@ export const Confirmation: React.FC = () => {
               nextButtonText={formatMessage(
                 workingCase.decision === CaseDecision.ACCEPTING
                   ? m.footer.accepting.continueButtonText
+                  : workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY
+                  ? m.footer.acceptingPartially.continueButtonText
                   : workingCase.decision === CaseDecision.REJECTING
                   ? m.footer.rejecting.continueButtonText
                   : workingCase.decision === CaseDecision.DISMISSING
@@ -176,25 +183,21 @@ export const Confirmation: React.FC = () => {
                   : m.footer.acceptingAlternativeTravelBan.continueButtonText,
               )}
               nextButtonIcon={
-                workingCase.decision &&
-                [
-                  CaseDecision.ACCEPTING,
-                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-                ].includes(workingCase.decision)
+                isAcceptingCaseDecision(workingCase.decision) ||
+                workingCase.decision ===
+                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                   ? 'checkmark'
                   : 'close'
               }
               nextButtonColorScheme={
-                workingCase.decision &&
-                [
-                  CaseDecision.ACCEPTING,
-                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-                ].includes(workingCase.decision)
+                isAcceptingCaseDecision(workingCase.decision) ||
+                workingCase.decision ===
+                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                   ? 'default'
                   : 'destructive'
               }
               onNextButtonClick={handleNextButtonClick}
-              nextIsLoading={isRequestingSignature}
+              nextIsLoading={isRequestingRulingSignature}
               hideNextButton={workingCase.judge?.id !== user?.id}
               infoBoxText={
                 workingCase.judge?.id !== user?.id
@@ -207,7 +210,7 @@ export const Confirmation: React.FC = () => {
             <SigningModal
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
-              requestSignatureResponse={requestSignatureResponse}
+              requestRulingSignatureResponse={requestRulingSignatureResponse}
               setModalVisible={setModalVisible}
             />
           )}

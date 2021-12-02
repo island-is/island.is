@@ -7,14 +7,13 @@ import {
 } from '@nestjs/common'
 
 import { completedCaseStates } from '@island.is/judicial-system/types'
-import { Case } from '../models'
 
 @Injectable()
 export class CaseNotCompletedGuard implements CanActivate {
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
-    const theCase: Case = request.case
+    const theCase = request.case
 
     if (!theCase) {
       throw new InternalServerErrorException('Missing case')

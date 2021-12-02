@@ -20,7 +20,7 @@ export class CriminalRecordSubmissionService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly criminalRecordService: CriminalRecordService,
     private readonly syslumennService: SyslumennService,
-  ) {}
+  ) { }
 
   async createCharge({
     application: { id },
@@ -44,8 +44,6 @@ export class CriminalRecordSubmissionService {
     )
 
     if (isPayment.fulfilled) {
-      //TODO-origo
-      // ná í sakavottorð?
       return {
         success: true,
       }
@@ -80,24 +78,21 @@ export class CriminalRecordSubmissionService {
       ?.data as UserProfile
 
     const person: Person = {
-      name: nationalRegistryData.fullName,
-      ssn: nationalRegistryData.nationalId,
+      name: nationalRegistryData?.fullName,
+      ssn: nationalRegistryData?.nationalId,
       phoneNumber: userProfileData?.mobilePhoneNumber,
       email: userProfileData?.email,
-      homeAddress: nationalRegistryData.address.streetAddress,
-      postalCode: nationalRegistryData.address.postalCode,
-      city: nationalRegistryData.address.city,
+      homeAddress: nationalRegistryData?.address.streetAddress,
+      postalCode: nationalRegistryData?.address.postalCode,
+      city: nationalRegistryData?.address.city,
       signed: true,
-      type: PersonType.CriminalRecord,
+      type: PersonType.CriminalRecordApplicant,
     }
     const persons: Person[] = [person]
 
+    const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
     const attachment: Attachment = {
-      name: `sakavottord_${nationalRegistryData.nationalId}_${new Date(
-        Date.now(),
-      )
-        .toISOString()
-        .substring(0, 10)}.pdf`,
+      name: `sakavottord_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
       content: record.contentBase64,
     }
 

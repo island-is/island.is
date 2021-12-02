@@ -140,6 +140,7 @@ export const whoIsTheNotificationForSection = buildSection({
               title: '',
               large: false,
               backgroundColor: 'white',
+              defaultValue: [],
               options: [
                 {
                   value: YES,

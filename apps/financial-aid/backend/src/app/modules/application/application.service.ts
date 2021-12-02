@@ -15,9 +15,9 @@ import {
   getStateFromUrl,
   RolesRule,
   User,
-  getEmailTextFromState,
   Staff,
   FileType,
+  getApplicantEmailDataFromEventType,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -30,6 +30,9 @@ import { EmailService } from '@island.is/email-service'
 
 import { ApplicationFileModel } from '../file/models'
 import { environment } from '../../../environments'
+import { ApplicantEmailTemplate } from './emailTemplates/applicantEmailTemplate'
+import { MunicipalityService } from '../municipality'
+import { logger } from '@island.is/logging'
 
 interface Recipient {
   name: string
@@ -37,7 +40,7 @@ interface Recipient {
 }
 
 const linkToStatusPage = (applicationId: string) => {
-  return `<a href="https://fjarhagsadstod.dev.sveitarfelog.net/stada/${applicationId}" target="_blank"> Getur kíkt á stöðusíðuna þína hér</a>`
+  return `${environment.baseUrl}/stada/${applicationId}"`
 }
 
 const firstDateOfMonth = () => {
@@ -54,6 +57,7 @@ export class ApplicationService {
     private readonly fileService: FileService,
     private readonly applicationEventService: ApplicationEventService,
     private readonly emailService: EmailService,
+    private readonly municipalityService: MunicipalityService,
   ) {}
 
   async getSpouseInfo(spouseNationalId: string): Promise<SpouseResponse> {
@@ -78,6 +82,35 @@ export class ApplicationService {
       hasFiles: Boolean(files),
       spouseName: spouseName,
     }
+  }
+
+  async findByNationalId(
+    nationalId: string,
+    municipalityCode: string,
+  ): Promise<ApplicationModel[]> {
+    return this.applicationModel.findAll({
+      where: {
+        [Op.or]: [
+          {
+            nationalId,
+            municipalityCode,
+          },
+          {
+            spouseNationalId: nationalId,
+            municipalityCode,
+          },
+        ],
+      },
+      order: [['modified', 'DESC']],
+      include: [
+        {
+          model: ApplicationFileModel,
+          as: 'files',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+      ],
+    })
   }
 
   async getCurrentApplicationId(nationalId: string): Promise<string | null> {
@@ -222,13 +255,24 @@ export class ApplicationService {
       await Promise.all(promises)
     }
 
+    const municipality = await this.municipalityService.findByMunicipalityId(
+      application.municipalityCode,
+    )
+
+    const emailData = getApplicantEmailDataFromEventType(
+      ApplicationEventType.NEW,
+      linkToStatusPage(appModel.id),
+      application.email,
+      municipality,
+    )
+
     await this.sendEmail(
       {
         name: user.name,
         address: appModel.email,
       },
-      appModel.id,
-      `Umsókn þín er móttekin og er nú í vinnslu.`,
+      emailData.subject,
+      ApplicantEmailTemplate(emailData.data),
     )
 
     return appModel
@@ -242,15 +286,7 @@ export class ApplicationService {
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
   }> {
-    const shouldSendEmail = [
-      ApplicationEventType.NEW,
-      ApplicationEventType.DATANEEDED,
-      ApplicationEventType.REJECTED,
-      ApplicationEventType.INPROGRESS,
-      ApplicationEventType.APPROVED,
-    ]
-
-    if (update.state === ApplicationState.NEW) {
+    if (update.state && update.state === ApplicationState.NEW) {
       update.staffId = null
     }
 
@@ -279,14 +315,31 @@ export class ApplicationService {
     const files = await this.fileService.getAllApplicationFiles(id)
     updatedApplication?.setDataValue('files', files)
 
-    if (shouldSendEmail.includes(update.event)) {
+    if (
+      update.event === ApplicationEventType.DATANEEDED ||
+      update.event === ApplicationEventType.REJECTED ||
+      update.event === ApplicationEventType.APPROVED
+    ) {
+      const municipality = await this.municipalityService.findByMunicipalityId(
+        updatedApplication.municipalityCode,
+      )
+      const emailData = getApplicantEmailDataFromEventType(
+        update.event,
+        linkToStatusPage(updatedApplication.id),
+        updatedApplication.email,
+        municipality,
+        update.event === ApplicationEventType.DATANEEDED
+          ? update?.comment
+          : undefined,
+      )
+
       await this.sendEmail(
         {
           name: updatedApplication.name,
           address: updatedApplication.email,
         },
-        updatedApplication.id,
-        getEmailTextFromState[update.state],
+        emailData.subject,
+        ApplicantEmailTemplate(emailData.data),
       )
     }
 
@@ -295,10 +348,9 @@ export class ApplicationService {
 
   private async sendEmail(
     to: Recipient | Recipient[],
-    applicationId: string | undefined,
-    body: string,
+    subject: string,
+    html: string,
   ) {
-    const bodyWithLink = body + '<br/>' + linkToStatusPage(applicationId)
     try {
       await this.emailService.sendEmail({
         from: {
@@ -310,12 +362,11 @@ export class ApplicationService {
           address: environment.emailOptions.replyToEmail,
         },
         to,
-        subject: `Umsókn fyrir fjárhagsaðstoð móttekin ~ ${applicationId}`,
-        text: bodyWithLink,
-        html: bodyWithLink,
+        subject,
+        html,
       })
     } catch (error) {
-      console.log('failed to send email', error)
+      logger.warn('failed to send email', error)
     }
   }
 }

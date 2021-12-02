@@ -98,17 +98,21 @@ export const isDefendantStepValidIC = (workingCase: Case) => {
 
 export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
   return (
-    workingCase.prosecutor &&
-    workingCase.court &&
+    (workingCase.prosecutor ||
+      ((workingCase as unknown) as { prosecutorId: string }).prosecutorId) &&
+    (workingCase.court ||
+      ((workingCase as unknown) as { courtId: string }).courtId) &&
     validate(workingCase.requestedCourtDate || '', 'date-format').isValid
   )
 }
 
 export const isHearingArrangementsStepValidIC = (workingCase: Case) => {
   return (
-    validate(workingCase.requestedCourtDate || '', 'date-format').isValid &&
-    workingCase.prosecutor &&
-    workingCase.court
+    (workingCase.prosecutor ||
+      ((workingCase as unknown) as { prosecutorId: string }).prosecutorId) &&
+    (workingCase.court ||
+      ((workingCase as unknown) as { courtId: string }).courtId) &&
+    validate(workingCase.requestedCourtDate || '', 'date-format').isValid
   )
 }
 
@@ -159,6 +163,7 @@ export const isCourtHearingArrangementsStepValidIC = (workingCase: Case) => {
   return (
     workingCase.judge &&
     workingCase.registrar &&
+    workingCase.sessionArrangements &&
     validate(workingCase.courtDate || '', 'date-format').isValid
   )
 }
@@ -167,7 +172,6 @@ export const isCourtRecordStepValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.courtStartDate || '', 'date-format').isValid &&
     validate(workingCase.courtLocation || '', 'empty').isValid &&
-    validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
     validate(workingCase.litigationPresentations || '', 'empty').isValid
   )
 }
@@ -176,26 +180,27 @@ export const isCourtRecordStepValidIC = (workingCase: Case) => {
   return (
     validate(workingCase.courtStartDate || '', 'date-format').isValid &&
     validate(workingCase.courtLocation || '', 'empty').isValid &&
-    validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
     validate(workingCase.litigationPresentations || '', 'empty').isValid
   )
 }
 
 export const isRulingStepOneValidRC = (workingCase: Case) => {
   return (
+    validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
     validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
     validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
     validate(workingCase.decision || '', 'empty').isValid &&
-    validate(workingCase.courtCaseFacts || '', 'empty').isValid
+    validate(workingCase.ruling || '', 'empty').isValid
   )
 }
 
 export const isRulingStepOneValidIC = (workingCase: Case) => {
   return (
-    validate(workingCase.ruling || '', 'empty').isValid &&
+    validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
+    validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
     validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
     validate(workingCase.decision || '', 'empty').isValid &&
-    validate(workingCase.courtCaseFacts || '', 'empty').isValid
+    validate(workingCase.ruling || '', 'empty').isValid
   )
 }
 

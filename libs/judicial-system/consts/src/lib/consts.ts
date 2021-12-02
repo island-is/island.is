@@ -53,6 +53,10 @@ export const ICaseTypes = [
         value: CaseType.BODY_SEARCH,
       },
       {
+        label: 'Nálgunarbann',
+        value: CaseType.RESTRAINING_ORDER,
+      },
+      {
         label: 'Upplýsingar um vefnotkun',
         value: CaseType.INTERNET_USAGE,
       },

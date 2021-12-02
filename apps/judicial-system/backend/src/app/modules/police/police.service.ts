@@ -84,6 +84,11 @@ export class PoliceService {
     }
 
     if (!res.ok) {
+      this.logger.warn(
+        `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+        res,
+      )
+
       throw new NotFoundException(
         `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
       )
@@ -128,6 +133,11 @@ export class PoliceService {
     }
 
     if (!res.ok) {
+      this.logger.warn(
+        `Could not get police case files for case ${caseId}`,
+        res,
+      )
+
       throw new NotFoundException(
         `No police case files found for case ${caseId}`,
       )

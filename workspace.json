@@ -241,6 +241,13 @@
             "cwd": "apps/air-discount-scheme/backend"
           }
         },
+        "seed": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "sequelize-cli db:seed:all",
+            "cwd": "apps/air-discount-scheme/backend"
+          }
+        },
         "docker-express": {}
       }
     },
@@ -705,6 +712,27 @@
         }
       }
     },
+    "api-domains-assets": {
+      "root": "libs/api/domains/assets",
+      "sourceRoot": "libs/api/domains/assets/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/assets/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/assets"],
+          "options": {
+            "jestConfig": "libs/api/domains/assets/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-auth": {
       "root": "libs/api/domains/auth",
       "sourceRoot": "libs/api/domains/auth/src",
@@ -1153,6 +1181,27 @@
           "outputs": ["coverage/libs/api/domains/identity"],
           "options": {
             "jestConfig": "libs/api/domains/identity/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "api-domains-islykill": {
+      "root": "libs/api/domains/islykill",
+      "sourceRoot": "libs/api/domains/islykill/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/islykill/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/islykill"],
+          "options": {
+            "jestConfig": "libs/api/domains/islykill/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -1683,6 +1732,11 @@
                 "glob": "*",
                 "input": "libs/email-service/src/tools/design",
                 "output": "./email-service-assets"
+              },
+              {
+                "glob": "*",
+                "input": "libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission/emailGenerators/assets",
+                "output": "./driving-license-assets"
               }
             ],
             "webpackConfig": "apps/application-system/api/webpack.config.js",
@@ -1801,7 +1855,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumError": "6mb"
                 }
               ]
             }
@@ -3263,6 +3317,33 @@
         }
       }
     },
+    "clients-assets": {
+      "root": "libs/clients/assets",
+      "sourceRoot": "libs/clients/assets/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/assets/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/assets"],
+          "options": {
+            "jestConfig": "libs/clients/assets/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/assets/gen/fetch -i libs/clients/assets/src/clientConfig.yaml"
+          }
+        }
+      }
+    },
     "clients-auth-public-api": {
       "root": "libs/clients/auth-public-api",
       "sourceRoot": "libs/clients/auth-public-api/src",
@@ -3469,6 +3550,39 @@
         }
       }
     },
+    "clients-islykill": {
+      "root": "libs/clients/islykill",
+      "sourceRoot": "libs/clients/islykill/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/clients/islykill/tsconfig.lib.json",
+              "libs/clients/islykill/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/clients/islykill/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/clients/islykill/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/clients/islykill"]
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/islykill/gen/fetch -i libs/clients/islykill/src/clientConfig.yaml"
+          }
+        }
+      }
+    },
     "clients-middlewares": {
       "root": "libs/clients/middlewares",
       "sourceRoot": "libs/clients/middlewares/src",
@@ -3551,10 +3665,22 @@
             "passWithNoTests": true
           }
         },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10001/SKRA-Protected/getOpenAPI?serviceCode=Einstaklingar-v1 -H 'Accept: application/json' > src/clientConfig.json",
+              "jq '.components.schemas.ProblemDetails |= (.additionalProperties = false | .properties.extensions.additionalProperties = false)' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json",
+              "jq '.paths[][].parameters |= map(select(.name != \"X-Road-Client\"))' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/national-registry/v2"
+          }
+        },
         "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn openapi-generator -o libs/clients/national-registry/v2/gen/fetch -i libs/clients/national-registry/v2/src/clientConfig.yaml"
+            "command": "yarn openapi-generator -o libs/clients/national-registry/v2/gen/fetch -i libs/clients/national-registry/v2/src/clientConfig.json"
           }
         }
       }
@@ -3603,6 +3729,12 @@
               "**/node_modules/**",
               "!libs/clients/payment-schedule/**/*"
             ]
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/payment-schedule/src/gen/fetch/ -i libs/clients/payment-schedule/src/openapi.yml"
           }
         },
         "test": {
@@ -4551,6 +4683,52 @@
           "outputs": ["coverage/apps/financial-aid/web-veita"]
         },
         "docker-next": {}
+      }
+    },
+    "github-actions-cache": {
+      "root": "apps/github-actions-cache",
+      "sourceRoot": "apps/github-actions-cache/src",
+      "projectType": "application",
+      "prefix": "github-actions-cache",
+      "architect": {
+        "build": {
+          "builder": "@irdnis/esbuildnx:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/github-actions-cache",
+            "main": "apps/github-actions-cache/src/main.ts",
+            "tsConfig": "apps/github-actions-cache/tsconfig.app.json",
+            "assets": ["apps/github-actions-cache/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "github-actions-cache:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/github-actions-cache/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/github-actions-cache"],
+          "options": {
+            "jestConfig": "apps/github-actions-cache/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "docker-express": {}
       }
     },
     "gjafakort-api": {
@@ -6115,6 +6293,27 @@
         }
       }
     },
+    "nest-config": {
+      "root": "libs/nest/config",
+      "sourceRoot": "libs/nest/config/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/config/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/config"],
+          "options": {
+            "jestConfig": "libs/nest/config/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nest-pagination": {
       "root": "libs/nest/pagination",
       "sourceRoot": "libs/nest/pagination/src",
@@ -6256,6 +6455,29 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/plausible"]
+        }
+      }
+    },
+    "react-feature-flags": {
+      "root": "libs/react/feature-flags",
+      "sourceRoot": "libs/react/feature-flags/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/react/feature-flags/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/react/feature-flags"],
+          "options": {
+            "jestConfig": "libs/react/feature-flags/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },
@@ -7305,6 +7527,29 @@
         }
       }
     },
+    "service-portal-settings-islykill": {
+      "root": "libs/service-portal/settings/islykill",
+      "sourceRoot": "libs/service-portal/settings/islykill/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/settings/islykill/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/settings/islykill"],
+          "options": {
+            "jestConfig": "libs/service-portal/settings/islykill/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "service-portal-settings-personal-information": {
       "root": "libs/service-portal/settings/personal-information",
       "sourceRoot": "libs/service-portal/settings/personal-information/src",
@@ -7429,6 +7674,25 @@
       "schematics": {},
       "architect": {
         "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "dist/apps/services/auth-api",
+            "commands": [
+              "nx esbuild services-auth-api",
+              "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
+            ],
+            "parallel": false
+          },
+          "configurations": {
+            "production": {
+              "commands": [
+                "nx esbuild services-auth-api --prod",
+                "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
+              ]
+            }
+          }
+        },
+        "esbuild": {
           "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/services/auth-api",
@@ -7471,7 +7735,7 @@
         "serve": {
           "builder": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "services-auth-api:build"
+            "buildTarget": "services-auth-api:esbuild"
           }
         },
         "lint": {
@@ -7526,7 +7790,10 @@
         "seed": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["sequelize-cli db:seed:all"],
+            "commands": [
+              "sequelize-cli db:seed:all --seeders-path ./seeders/local",
+              "sequelize-cli db:seed:all"
+            ],
             "cwd": "libs/auth-api-lib"
           }
         }
@@ -7716,6 +7983,11 @@
                 "glob": "sequelize.config.js",
                 "input": "apps/services/endorsements/api",
                 "output": "./"
+              },
+              {
+                "glob": "*",
+                "input": "libs/email-service/src/tools/design",
+                "output": "./email-service-assets"
               }
             ]
           },
@@ -8807,6 +9079,7 @@
           "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/skilavottord/ws",
+            "showCircularDependencies": false,
             "main": "apps/skilavottord/ws/src/main.ts",
             "tsConfig": "apps/skilavottord/ws/tsconfig.app.json",
             "assets": [

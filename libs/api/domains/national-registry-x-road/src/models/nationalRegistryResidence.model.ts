@@ -6,9 +6,15 @@ export class NationalRegistryResidence {
   @Field(() => NationalRegistryAddress)
   address!: NationalRegistryAddress
 
-  @Field()
-  country!: string
+  @Field(() => String)
+  houseIdentificationCode!: string | null
 
-  @Field(() => Date)
-  dateOfChange!: Date
+  @Field(() => String, { nullable: true })
+  realEstateNumber?: string | null
+
+  @Field(() => String, { nullable: true })
+  country?: string | null
+
+  @Field(() => Date, { nullable: true })
+  dateOfChange?: Date | null
 }

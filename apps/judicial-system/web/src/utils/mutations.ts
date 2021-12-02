@@ -1,8 +1,10 @@
 import { gql } from '@apollo/client'
 
-export const SignatureConfirmationQuery = gql`
-  query SignatureConfirmationQuery($input: SignatureConfirmationQueryInput!) {
-    signatureConfirmation(input: $input) {
+export const RulingSignatureConfirmationQuery = gql`
+  query RulingSignatureConfirmationQuery(
+    $input: SignatureConfirmationQueryInput!
+  ) {
+    rulingSignatureConfirmation(input: $input) {
       documentSigned
       code
       message
@@ -33,6 +35,7 @@ export const CasesQuery = gql`
       parentCase {
         id
       }
+      initialRulingDate
     }
   }
 `

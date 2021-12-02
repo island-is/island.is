@@ -15,7 +15,7 @@ const Index = () => {
       return `${Routes.statusPage(user.currentApplicationId as string)}`
     }
     if (user?.spouse?.hasPartnerApplied) {
-      return `${Routes.spouseApplication}`
+      return `${Routes.form.info}`
     }
 
     if (user?.currentApplicationId) {

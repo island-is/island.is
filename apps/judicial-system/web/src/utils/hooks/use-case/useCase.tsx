@@ -17,7 +17,7 @@ import { CreateCourtCaseMutation } from './createCourtCaseGql'
 import { UpdateCaseMutation } from './updateCaseGql'
 import { SendNotificationMutation } from './sendNotificationGql'
 import { TransitionCaseMutation } from './transitionCaseGql'
-import { RequestSignatureMutation } from './requestSignatureGql'
+import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
 
 type autofillProperties = Pick<
   Case,
@@ -36,6 +36,8 @@ type autofillProperties = Pick<
   | 'courtDate'
   | 'courtLocation'
   | 'accusedBookings'
+  | 'ruling'
+  | 'sessionArrangements'
 >
 
 interface CreateCaseMutationResponse {
@@ -58,8 +60,8 @@ interface SendNotificationMutationResponse {
   sendNotification: SendNotificationResponse
 }
 
-interface RequestSignatureMutationResponse {
-  requestSignature: RequestSignatureResponse
+interface RequestRulingSignatureMutationResponse {
+  requestRulingSignature: RequestSignatureResponse
 }
 
 const useCase = () => {
@@ -84,9 +86,11 @@ const useCase = () => {
     { loading: isSendingNotification },
   ] = useMutation<SendNotificationMutationResponse>(SendNotificationMutation)
   const [
-    requestSignatureMutation,
-    { loading: isRequestingSignature },
-  ] = useMutation<RequestSignatureMutationResponse>(RequestSignatureMutation)
+    requestRulingSignatureMutation,
+    { loading: isRequestingRulingSignature },
+  ] = useMutation<RequestRulingSignatureMutationResponse>(
+    RequestRulingSignatureMutation,
+  )
 
   const createCase = useMemo(
     () => async (theCase: Case): Promise<string | undefined> => {
@@ -240,15 +244,15 @@ const useCase = () => {
     [sendNotificationMutation],
   )
 
-  const requestSignature = useMemo(
+  const requestRulingSignature = useMemo(
     () => async (id: string) => {
-      const { data } = await requestSignatureMutation({
+      const { data } = await requestRulingSignatureMutation({
         variables: { input: { caseId: id } },
       })
 
-      return data?.requestSignature
+      return data?.requestRulingSignature
     },
-    [requestSignatureMutation],
+    [requestRulingSignatureMutation],
   )
 
   // TODO: find a way for this to work where value is something other then string
@@ -276,8 +280,8 @@ const useCase = () => {
     isTransitioningCase,
     sendNotification,
     isSendingNotification,
-    requestSignature,
-    isRequestingSignature,
+    requestRulingSignature,
+    isRequestingRulingSignature,
     autofill,
   }
 }

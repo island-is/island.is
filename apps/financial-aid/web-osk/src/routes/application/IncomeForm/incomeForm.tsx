@@ -27,11 +27,11 @@ const IncomeForm = () => {
   const incomeOptions = [
     {
       label: 'Já, ég hef fengið tekjur',
-      value: 0,
+      value: 1,
     },
     {
       label: 'Nei, engar tekjur',
-      value: 1,
+      value: 0,
     },
   ]
   const errorCheck = () => {

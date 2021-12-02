@@ -54,7 +54,7 @@ export class PaymentController {
     private readonly paymentAPI: PaymentAPI,
     @InjectModel(Payment)
     private paymentModel: typeof Payment,
-  ) {}
+  ) { }
   @Scopes(ApplicationScope.write)
   @Post('applications/:applicationId/payment')
   @ApiCreatedResponse({ type: CreatePaymentResponseDto })
@@ -68,11 +68,6 @@ export class PaymentController {
     }
     const DISTRICT_COMMISSIONER_OF_REYKJAVIK = '6509142520'
     const inputApplicationType = findItemType(payload.chargeItemCode)
-    //const inputApplicationType = 'DrivingLicence'
-
-    console.log('application id: ' + applicationId)
-    console.log('user national id: ' + user.nationalId)
-    console.log('application type: ' + inputApplicationType)
 
     // Finding application to confirm correct catalog & price
     const thisApplication = await this.paymentService
@@ -83,10 +78,7 @@ export class PaymentController {
         )
       })
 
-    console.log(thisApplication)
-    console.log(thisApplication.typeId.toString())
     if (thisApplication.typeId.toString() !== inputApplicationType) {
-      console.log('THROWING ERROR')
       throw new BadRequestException(
         new Error(
           'Mismatch between create charge input and application payment.',
@@ -97,12 +89,9 @@ export class PaymentController {
     const allCatalogs =
       payload.chargeItemCode.slice(0, 2) === 'AY'
         ? await this.paymentAPI.getCatalogByPerformingOrg(
-            DISTRICT_COMMISSIONER_OF_REYKJAVIK,
-          )
+          DISTRICT_COMMISSIONER_OF_REYKJAVIK,
+        )
         : await this.paymentAPI.getCatalog()
-
-    console.log(allCatalogs)
-    console.log(payload)
 
     // Sort through all catalogs to find the correct one.
     const catalog = await this.paymentService
@@ -112,8 +101,6 @@ export class PaymentController {
           'Catalog request failed or bad input ' + error,
         )
       })
-
-    console.log(catalog)
 
     const paymentDto: Pick<
       BasePayment,
@@ -131,15 +118,10 @@ export class PaymentController {
       },
       expires_at: new Date(),
     }
-    console.log({ paymentDto })
 
     const payment = await this.paymentModel.create(paymentDto)
 
-    console.log({ payment })
-
     const chargeResult = await this.paymentService.createCharge(payment, user)
-
-    console.log({ chargeResult })
 
     this.auditService.audit({
       user,

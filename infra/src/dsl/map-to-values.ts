@@ -89,9 +89,6 @@ export const serializeService: SerializeMethod = (
     },
     securityContext,
   }
-  if (uberChart.env.rolloutStrategy) {
-    result.strategy = { type: uberChart.env.rolloutStrategy }
-  }
 
   // command and args
   if (serviceDef.cmds) {

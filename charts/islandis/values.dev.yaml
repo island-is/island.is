@@ -53,8 +53,6 @@ air-discount-scheme-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/air-discount-scheme-api'
     create: true
     name: 'air-discount-scheme-api'
-  strategy:
-    type: 'Recreate'
 air-discount-scheme-backend:
   enabled: true
   env:
@@ -123,8 +121,6 @@ air-discount-scheme-backend:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 air-discount-scheme-web:
   enabled: true
   env:
@@ -166,8 +162,6 @@ air-discount-scheme-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 api:
   args:
     - '--tls-min-v1.0'
@@ -189,6 +183,7 @@ api:
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     NODE_OPTIONS: '--max-old-space-size=464'
     PARTY_LETTER_REGISTRY_BASE_API_URL: 'http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local'
+    PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     SEND_FROM_EMAIL: 'development@island.is'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
@@ -205,9 +200,13 @@ api:
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-DEV/EDU/10020/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
+    XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000'
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
     XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/application-payment-v1/'
     XROAD_PAYMENT_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
+    XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
@@ -270,6 +269,7 @@ api:
     DOCUMENT_PROVIDER_CLIENT_SECRET_TEST: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST'
     DOCUMENT_PROVIDER_TOKEN_URL: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL'
     DOCUMENT_PROVIDER_TOKEN_URL_TEST: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST'
+    ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
     PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD'
     PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER'
     PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY'
@@ -311,8 +311,6 @@ api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/api'
     create: true
     name: 'api'
-  strategy:
-    type: 'Recreate'
 application-system-api:
   enabled: true
   env:
@@ -337,6 +335,7 @@ application-system-api:
     NOVA_USERNAME: 'IslandIs_User_Development'
     PARTY_LETTER_REGISTRY_API_BASE_PATH: 'http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local'
     PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: 'thorhildur@parallelradgjof.is'
+    PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
@@ -433,6 +432,8 @@ application-system-api:
     PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL: '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL'
     PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS'
     PARTY_LETTER_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS'
+    PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD'
+    PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER'
     SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
@@ -452,8 +453,6 @@ application-system-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/application-system-api'
     create: true
     name: 'application-system-api'
-  strategy:
-    type: 'Recreate'
 application-system-form:
   enabled: true
   env:
@@ -494,8 +493,6 @@ application-system-form:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 contentful-translation-extension:
   enabled: true
   env:
@@ -533,8 +530,6 @@ contentful-translation-extension:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 download-service:
   enabled: true
   env:
@@ -576,8 +571,6 @@ download-service:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 endorsement-system-api:
   args:
     - '--tls-min-v1.0'
@@ -589,6 +582,8 @@ endorsement-system-api:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_endorsements_api'
     DB_USER: 'services_endorsements_api'
+    EMAIL_FROM_ADDRESS: 'development@island.is'
+    EMAIL_FROM_NAME: 'devland.is'
     EMAIL_REGION: 'eu-west-1'
     SERVERSIDE_FEATURES_ON: ''
     TEMPORARY_VOTER_REGISTRY_API_URL: 'http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local'
@@ -623,6 +618,8 @@ endorsement-system-api:
     secrets:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
+  podSecurityContext:
+    fsGroup: 65534
   replicaCount:
     default: 2
     max: 3
@@ -638,8 +635,11 @@ endorsement-system-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/endorsement-system-api'
+    create: true
+    name: 'endorsement-system-api'
 endorsement-system-scripts-update-metadata:
   args:
     - '--tls-min-v1.0'
@@ -684,8 +684,63 @@ endorsement-system-scripts-update-metadata:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
+github-actions-cache:
+  args:
+    - '--tls-min-v1.0'
+    - 'main.js'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    NODE_OPTIONS: '--max-old-space-size=464'
+    REDIS_NODES: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/health'
+      timeoutSeconds: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/github-actions-cache'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+      hosts:
+        - host: 'cache.dev01.devland.is'
+          paths:
+            - '/'
+  namespace: 'github-actions-cache'
+  podSecurityContext:
+    fsGroup: 65534
+  replicaCount:
+    default: 5
+    max: 8
+    min: 3
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '100m'
+      memory: '256Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/github-actions-cache'
+    create: true
+    name: 'github-actions-cache'
 global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
@@ -752,8 +807,6 @@ icelandic-names-registry-backend:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 island-ui-storybook:
   enabled: true
   env:
@@ -791,8 +844,6 @@ island-ui-storybook:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 namespaces:
   namespaces:
     - 'application-system'
@@ -810,6 +861,7 @@ namespaces:
     - 'party-letter-registry'
     - 'temporary-voter-registry'
     - 'air-discount-scheme'
+    - 'github-actions-cache'
 party-letter-registry-api:
   enabled: true
   env:
@@ -858,8 +910,6 @@ party-letter-registry-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 search-indexer-service:
   enabled: true
   env:
@@ -969,8 +1019,6 @@ search-indexer-service:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/search-indexer'
     create: true
     name: 'search-indexer'
-  strategy:
-    type: 'Recreate'
 service-portal:
   enabled: true
   env:
@@ -1011,8 +1059,6 @@ service-portal:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 service-portal-api:
   enabled: true
   env:
@@ -1085,8 +1131,6 @@ service-portal-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/service-portal-api'
     create: true
     name: 'service-portal-api'
-  strategy:
-    type: 'Recreate'
 services-documents:
   enabled: true
   env:
@@ -1134,8 +1178,6 @@ services-documents:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 skilavottord-web:
   enabled: true
   env:
@@ -1173,8 +1215,6 @@ skilavottord-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 skilavottord-ws:
   enabled: true
   env:
@@ -1244,8 +1284,6 @@ skilavottord-ws:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 temporary-voter-registry-api:
   enabled: true
   env:
@@ -1294,8 +1332,6 @@ temporary-voter-registry-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 web:
   enabled: true
   env:
@@ -1348,8 +1384,6 @@ web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'Recreate'
 xroad-collector:
   args:
     - 'main.js'
@@ -1396,5 +1430,3 @@ xroad-collector:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/xroad-collector'
     create: true
     name: 'xroad-collector'
-  strategy:
-    type: 'Recreate'

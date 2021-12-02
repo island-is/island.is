@@ -37,7 +37,7 @@ export class PaymentService {
     @Inject(PAYMENT_OPTIONS)
     private paymentConfig: PaymentServiceOptions,
     private paymentApi: PaymentAPI,
-  ) {}
+  ) { }
 
   async findPaymentByApplicationId(
     applicationId: string,
@@ -147,7 +147,6 @@ export class PaymentService {
         ],
       },
     })
-    console.log(application)
     if (!application) {
       Promise.reject('Failed to find application').catch()
     }

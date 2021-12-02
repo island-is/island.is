@@ -74,7 +74,7 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
               color="blue400"
               underline="small"
             >
-              {txt('showDiff_fromLast')}
+              <a rel="nofollow">{txt('showDiff_fromLast')}</a>
             </Link>
           ) : (
             <Link
@@ -89,7 +89,7 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
               color="blue400"
               underline="small"
             >
-              {txt('showDiff_fromOriginal')}
+              <a rel="nofollow">{txt('showDiff_fromOriginal')}</a>
             </Link>
           )}
         </div>

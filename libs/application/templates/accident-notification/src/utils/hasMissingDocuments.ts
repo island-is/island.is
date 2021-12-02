@@ -4,9 +4,11 @@ import {
   MessageFormatter,
 } from '@island.is/application/core'
 import { AttachmentsEnum, FileType, WhoIsTheNotificationForEnum } from '..'
-import { YES } from '../constants'
+import { YES, NO } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import { attachments } from '../lib/messages'
+import { isFatalAccident } from './isFatalAccident'
+import { isReportingOnBehalfSelf } from './isReportingBehalfOfSelf'
 
 const hasAttachment = (attachment: FileType[] | undefined) =>
   attachment && attachment.length > 0
@@ -15,7 +17,7 @@ const includesAttachment = (answers: any, attachmentType: string): boolean => {
   return answers?.accidentStatus?.receivedAttachments?.[attachmentType]
 }
 
-export const hasReceivedInjuryCertifcate = (answers: FormValue) => {
+export const hasReceivedInjuryCertificate = (answers: FormValue) => {
   return includesAttachment(answers, 'InjuryCertificate')
 }
 
@@ -28,11 +30,22 @@ export const hasReceivedPoliceReport = (answers: FormValue) => {
 }
 
 export const hasReceivedAllDocuments = (answers: FormValue) => {
-  return (
-    hasReceivedPoliceReport(answers) &&
-    hasReceivedProxyDocument(answers) &&
-    hasReceivedInjuryCertifcate(answers)
-  )
+  // Reporting for self only injury certificate relevent
+  if (isReportingOnBehalfSelf(answers)) {
+    return hasReceivedInjuryCertificate(answers)
+  } else {
+    // If fatal and not on behalf of self all documents are relevant
+    if (isFatalAccident(answers)) {
+      return (
+        hasReceivedPoliceReport(answers) &&
+        hasReceivedProxyDocument(answers) &&
+        hasReceivedInjuryCertificate(answers)
+      )
+    } else {
+      // Not fatal so injury and proxy document are relevant
+      hasReceivedProxyDocument(answers) && hasReceivedInjuryCertificate(answers)
+    }
+  }
 }
 
 export const getErrorMessageForMissingDocuments = (
@@ -46,7 +59,7 @@ export const getErrorMessageForMissingDocuments = (
   const wasTheAccidentFatal = answers.wasTheAccidentFatal
   const missingDocuments = []
 
-  if (!hasReceivedInjuryCertifcate(answers)) {
+  if (!hasReceivedInjuryCertificate(answers)) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.injuryCertificate),
     )
@@ -85,8 +98,6 @@ export const hasMissingDeathCertificate = (answers: FormValue) => {
 export const hasMissingPowerOfAttorneyFile = (answers: FormValue): boolean => {
   const whoIsTheNotificationFor = (answers as AccidentNotification)
     .whoIsTheNotificationFor.answer
-  const powerOfAttorneyType = (answers as AccidentNotification).powerOfAttorney
-    ?.type
   return whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY
 }
 

@@ -10,7 +10,7 @@ import {
   FormContentContainer,
   FormFooter,
   BlueBox,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
@@ -18,6 +18,7 @@ import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
 import { useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { ValueType } from 'react-select/src/types'
 
 interface Props {
   workingCase: Case

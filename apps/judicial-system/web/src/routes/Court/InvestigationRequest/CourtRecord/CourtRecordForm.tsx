@@ -9,7 +9,7 @@ import {
   FormContentContainer,
   FormFooter,
   HideableText,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import { Case, SessionArrangements } from '@island.is/judicial-system/types'
 import {
   newSetAndSendDateToServer,
@@ -18,7 +18,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import {
   FormSettings,
   useCaseFormHelper,
@@ -26,6 +26,7 @@ import {
 import {
   closedCourt,
   icCourtRecord as m,
+  core,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -41,7 +42,6 @@ const CourtRecordForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
   const [, setCourtRecordStartDateIsValid] = useState(true)
   const [courtLocationEM, setCourtLocationEM] = useState('')
-  const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
   const [
     litigationPresentationsErrorMessage,
     setLitigationPresentationsMessage,
@@ -54,15 +54,19 @@ const CourtRecordForm: React.FC<Props> = (props) => {
     courtLocation: {
       validations: ['empty'],
     },
-    prosecutorDemands: {
-      validations: ['empty'],
-    },
     litigationPresentations: {
       validations: ['empty'],
     },
   }
 
   useCaseFormHelper(workingCase, setWorkingCase, validations)
+
+  const displayAccusedBookings =
+    workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
+    (workingCase.sessionArrangements ===
+      SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+      workingCase.defenderIsSpokesperson &&
+      workingCase.defenderName)
 
   return (
     <>
@@ -155,77 +159,44 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               tooltip={formatMessage(closedCourt.tooltip)}
             />
           </Box>
-          <Box marginBottom={3}>
-            <Input
-              data-testid="courtAttendees"
-              name="courtAttendees"
-              label="Mættir eru"
-              defaultValue={workingCase.courtAttendees}
-              placeholder="Skrifa hér..."
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'courtAttendees',
-                  event,
-                  [],
-                  workingCase,
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                updateCase(
-                  workingCase.id,
-                  parseString('courtAttendees', event.target.value),
-                )
-              }
-              textarea
-              rows={7}
-            />
-          </Box>
           <Input
-            data-testid="prosecutorDemands"
-            name="prosecutorDemands"
-            label="Krafa"
-            defaultValue={workingCase.prosecutorDemands}
-            placeholder="Hvað hafði ákæruvaldið að segja?"
+            data-testid="courtAttendees"
+            name="courtAttendees"
+            label="Mættir eru"
+            defaultValue={workingCase.courtAttendees}
+            placeholder="Skrifa hér..."
             onChange={(event) =>
               removeTabsValidateAndSet(
-                'prosecutorDemands',
+                'courtAttendees',
                 event,
-                ['empty'],
+                [],
                 workingCase,
                 setWorkingCase,
-                prosecutorDemandsEM,
-                setProsecutorDemandsEM,
               )
             }
             onBlur={(event) =>
-              validateAndSendToServer(
-                'prosecutorDemands',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setProsecutorDemandsEM,
+              updateCase(
+                workingCase.id,
+                parseString('courtAttendees', event.target.value),
               )
             }
-            errorMessage={prosecutorDemandsEM}
-            hasError={prosecutorDemandsEM !== ''}
             textarea
             rows={7}
-            required
           />
         </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Dómskjöl
+              {formatMessage(m.sections.courtDocuments.header)}
             </Text>
           </Box>
           <CourtDocuments
-            title={`Krafa - ${capitalize(caseTypes[workingCase.type])}`}
-            tagText="Þingmerkt nr. 1"
+            title={formatMessage(core.requestCaseType, {
+              caseType: formatRequestCaseType(workingCase.type),
+            })}
+            tagText={formatMessage(m.sections.courtDocuments.tag)}
             tagVariant="darkerBlue"
-            text="Rannsóknargögn málsins liggja frammi."
+            text={formatMessage(m.sections.courtDocuments.text)}
             caseId={workingCase.id}
             selectedCourtDocuments={workingCase.courtDocuments ?? []}
             onUpdateCase={updateCase}
@@ -233,8 +204,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             workingCase={workingCase}
           />
         </Box>
-        {workingCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT && (
+        {displayAccusedBookings && (
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">

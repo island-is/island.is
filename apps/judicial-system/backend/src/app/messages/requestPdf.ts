@@ -1,27 +1,6 @@
 import { defineMessage, defineMessages } from '@formatjs/intl'
 
 export const restrictionRequest = {
-  caseType: defineMessages({
-    custody: {
-      id: 'judicial.system.backend:pdf.restriction_request.case_type.custody',
-      defaultMessage: 'gæsluvarðhald',
-      description:
-        'Notaður sem texti fyrir týpu gæsluvarðhald á kröfu í kröfu PDF',
-    },
-    travelBan: {
-      id:
-        'judicial.system.backend:pdf.restriction_request.case_type.travel_ban',
-      defaultMessage: 'farbann',
-      description: 'Notaður sem texti fyrir týpu farbann á kröfu í kröfu PDF',
-    },
-    investigate: {
-      id:
-        'judicial.system.backend:pdf.restriction_request.case_type.investigate',
-      defaultMessage: 'rannsóknarheimild',
-      description:
-        'Notaður sem texti fyrir týpu rannsóknarheimild á kröfu í kröfu PDF',
-    },
-  }),
   heading: defineMessage({
     id: 'judicial.system.backend:pdf.restriction_request.heading',
     defaultMessage: 'Krafa um {caseType}',

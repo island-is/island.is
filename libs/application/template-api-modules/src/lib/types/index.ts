@@ -5,6 +5,11 @@ import { PaymentServiceOptions } from '@island.is/clients/payment'
 import { Message } from '@island.is/email-service'
 import { PartyApplicationServiceOptions } from '../modules/templates/party-application/party-application.service'
 import { User } from '@island.is/auth-nest-tools'
+import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedule'
+import {
+  PaymentScheduleCharge,
+  PaymentScheduleType,
+} from '@island.is/api/schema'
 import { HealthInsuranceV2Options } from '@island.is/clients/health-insurance-v2'
 
 export interface BaseTemplateAPIModuleConfig {
@@ -51,6 +56,7 @@ export interface BaseTemplateAPIModuleConfig {
   generalPetition: {
     endorsementsApiBasePath: string
   }
+  paymentScheduleConfig: PaymentScheduleServiceOptions
   healthInsuranceV2: HealthInsuranceV2Options
 }
 
@@ -82,3 +88,37 @@ export type AttachmentEmailTemplateGenerator = (
   fileContent: string,
   email: string,
 ) => Message
+
+export type PublicDebtPaymentPlanPayment = {
+  id: PublicDebtPaymentScheduleType
+  totalAmount: number
+  distribution: string
+  amountPerMonth: number
+  numberOfMonths: number
+  organization: string
+  chargetypes: PaymentScheduleCharge[]
+}
+
+export type PublicDebtPaymentPlanPaymentCollection = {
+  [key: string]: PublicDebtPaymentPlanPayment
+}
+
+export type PublicDebtPaymentPlanPrerequisites = {
+  type: PublicDebtPaymentScheduleType
+  organizationId: string
+  chargetypes: {
+    id: string
+    name: string
+    total: number
+    intrest: number
+    expenses: number
+    principal: number
+  }[]
+}
+
+export enum PublicDebtPaymentScheduleType {
+  FinesAndLegalCost = 'FinesAndLegalCost',
+  OverpaidBenefits = 'OverpaidBenefits',
+  Wagedection = 'Wagedection',
+  OtherFees = 'OtherFees',
+}

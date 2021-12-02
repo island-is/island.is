@@ -5,6 +5,7 @@ import {
   HealthInsurance,
   Labor,
   Payment,
+  PaymentSchedule,
 } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
@@ -105,7 +106,15 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.servicesPartyLetterRegistryApi)}`,
       ),
     })
-    .xroad(Base, Client, Labor, HealthInsurance, Payment, DrivingLicense)
+    .xroad(
+      Base,
+      Client,
+      Labor,
+      HealthInsurance,
+      Payment,
+      DrivingLicense,
+      PaymentSchedule,
+    )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
       DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',

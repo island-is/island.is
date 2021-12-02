@@ -9,6 +9,7 @@ import {
 } from '@island.is/regulations'
 import {
   Regulation,
+  RegulationDiff,
   RegulationLawChapterTree,
   RegulationListItem,
   RegulationMinistryList,
@@ -56,7 +57,7 @@ export class RegulationsService extends RESTDataSource {
     date?: ISODate,
     isCustomDiff?: boolean,
     earlierDate?: ISODate | RegulationOriginalDates.gqlHack,
-  ): Promise<Regulation | RegulationRedirect | null> {
+  ): Promise<Regulation | RegulationDiff | RegulationRedirect | null> {
     const url = buildRegulationApiPath({
       name,
       viewType,
@@ -66,10 +67,9 @@ export class RegulationsService extends RESTDataSource {
     })
     const ttl = this.options.ttl ?? 600 // defaults to 10 minutes
 
-    const response = await this.get<Regulation | RegulationRedirect | null>(
-      url,
-      { cacheOptions: { ttl } },
-    )
+    const response = await this.get<
+      Regulation | RegulationDiff | RegulationRedirect | null
+    >(url, { cacheOptions: { ttl } })
     return response
   }
 

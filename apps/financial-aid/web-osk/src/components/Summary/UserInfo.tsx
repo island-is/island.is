@@ -3,7 +3,6 @@ import { Box, Text } from '@island.is/island-ui/core'
 import {
   formatHomeAddress,
   formatNationalId,
-  formatPhoneNumber,
 } from '@island.is/financial-aid/shared/lib'
 
 import * as styles from './summary.css'
@@ -11,11 +10,7 @@ import cn from 'classnames'
 
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
-interface Props {
-  phoneNumber?: string
-}
-
-const UserInfo = ({ phoneNumber }: Props) => {
+const UserInfo = () => {
   const { user, nationalRegistryData } = useContext(AppContext)
 
   return (
@@ -32,22 +27,20 @@ const UserInfo = ({ phoneNumber }: Props) => {
           <Text fontWeight="semiBold">Nafn</Text>
           <Text marginBottom={3}>{user.name}</Text>
 
-          <Text fontWeight="semiBold">Kennitala</Text>
-          <Text>{formatNationalId(user.nationalId)}</Text>
+          {nationalRegistryData && (
+            <>
+              <Text fontWeight="semiBold">Heimili</Text>
+              <Text>{formatHomeAddress(nationalRegistryData)}</Text>
+            </>
+          )}
         </Box>
       )}
 
       <Box className={styles.contactInfo}>
-        {phoneNumber && (
+        {user && (
           <>
-            <Text fontWeight="semiBold">Sími</Text>
-            <Text marginBottom={3}>{formatPhoneNumber(phoneNumber)}</Text>
-          </>
-        )}
-        {nationalRegistryData && (
-          <>
-            <Text fontWeight="semiBold">Heimili</Text>
-            <Text>{formatHomeAddress(nationalRegistryData)}</Text>
+            <Text fontWeight="semiBold">Kennitala</Text>
+            <Text>{formatNationalId(user.nationalId)}</Text>
           </>
         )}
       </Box>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Text } from '@island.is/island-ui/core'
-import * as styles from './ApplicationsTable.css'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import * as tableStyles from '../../sharedStyles/Table.css'
 import { useRouter } from 'next/router'
 
 import cn from 'classnames'
@@ -10,15 +10,21 @@ import {
   TableBody,
   LoadingContainer,
   TableSkeleton,
+  TextTableItem,
+  PseudoName,
+  State,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   Application,
   ApplicationState,
+  getMonth,
   getStateUrlFromRoute,
+  Routes,
   TableHeadersProps,
 } from '@island.is/financial-aid/shared/lib'
 
 import { useAllApplications } from '@island.is/financial-aid-web/veita/src/utils/useAllApplications'
+import { calcDifferenceInDate } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
 interface PageProps {
   applications: Application[]
@@ -59,39 +65,83 @@ const ApplicationsTable = ({
       })
   }
 
+  const assignButton = (application: Application) => {
+    return (
+      <>
+        {application.staff?.name ? (
+          <Box className={tableStyles.rowContent}>
+            <Text>{application.staff?.name}</Text>
+          </Box>
+        ) : (
+          <Box>
+            <Button
+              variant="text"
+              onClick={(ev) => {
+                ev.stopPropagation()
+                updateApplicationAndTable(
+                  application.id,
+                  ApplicationState.INPROGRESS,
+                )
+              }}
+            >
+              Sjá um
+            </Button>
+          </Box>
+        )}
+      </>
+    )
+  }
+
   if (applications && applications.length > 0) {
     return (
       <LoadingContainer isLoading={isLoading} loader={<TableSkeleton />}>
-        <div className={`${styles.wrapper} hideScrollBar`}>
-          <table
-            className={cn({
-              [`${styles.tableContainer}`]: true,
-            })}
-            key={router.pathname}
-          >
-            <thead className={`contentUp delay-50`}>
-              <tr>
-                {headers.map((item, index) => (
-                  <TableHeaders
-                    header={item}
+        <div className={`${tableStyles.wrapper} hideScrollBar`}>
+          <div className={tableStyles.bigTableWrapper}>
+            <table
+              className={cn({
+                [`${tableStyles.tableContainer}`]: true,
+              })}
+              key={router.pathname}
+            >
+              <thead className={`contentUp delay-50`}>
+                <tr>
+                  {headers.map((item, index) => (
+                    <TableHeaders
+                      header={item}
+                      index={index}
+                      key={`tableHeaders-${index}`}
+                    />
+                  ))}
+                </tr>
+              </thead>
+
+              <tbody className={tableStyles.tableBody}>
+                {applications.map((item: Application, index) => (
+                  <TableBody
+                    items={[
+                      PseudoName(item.nationalId),
+                      State(item.state),
+                      TextTableItem(
+                        'default',
+                        calcDifferenceInDate(item.modified),
+                      ),
+                      TextTableItem(
+                        'default',
+                        getMonth(new Date(item.created).getMonth()),
+                      ),
+                      assignButton(item),
+                    ]}
+                    identifier={item.id}
                     index={index}
-                    key={'tableHeaders-' + index}
+                    key={item.id}
+                    onClick={() =>
+                      router.push(Routes.applicationProfile(item.id))
+                    }
                   />
                 ))}
-              </tr>
-            </thead>
-
-            <tbody className={styles.tableBody}>
-              {applications.map((item: Application, index) => (
-                <TableBody
-                  application={item}
-                  index={index}
-                  key={'tableBody-' + item.id}
-                  onApplicationUpdate={updateApplicationAndTable}
-                />
-              ))}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
         </div>
       </LoadingContainer>
     )

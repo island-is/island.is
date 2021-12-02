@@ -52,12 +52,34 @@ export const rcCaseFiles = {
         description:
           'Notaður sem titill fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      tooltip: {
+        id:
+          'judicial.system.restriction_cases:case_files.police_case_files.tooltip',
+        defaultMessage:
+          'Ef krafan var stofnuð í gegnum LÖKE er hægt að sjá öll skjöl úr málinu sem hafa verið merkt sem rannsóknargögn í LÖKE í listanum hér fyrir neðan, og velja þau beint inn með takkanum Hlaða upp.',
+        description:
+          'Notaður sem upplýsingatexti í upplýsingasvæði við "gögn úr LÖKE-máli ..." titil á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
       selectAllLabel: {
         id:
           'judicial.system.restriction_cases:case_files.police_case_files.select_all_label',
         defaultMessage: 'Velja allt',
         description:
           'Notaður sem texti fyrir "Velja allt" valmöguleikann í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      caseNotFoundInLOKEMessage: {
+        id:
+          'judicial.system.restriction_cases:case_files.police_case_files.case_not_found_in_loke_message',
+        defaultMessage: 'Þessi krafa var ekki stofnuð í gegnum LÖKE',
+        description:
+          'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      noFilesFoundInLOKEMessage: {
+        id:
+          'judicial.system.restriction_cases:case_files.police_case_files.no_files_found_in_loke_message',
+        defaultMessage: 'Engin skjöl fundust fyrir kröfuna í LÖKE',
+        description:
+          'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       errorMessage: {
         id:

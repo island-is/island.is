@@ -13,7 +13,7 @@ import { Applications } from '../routes/Applications'
 import { AssignApplication } from '../routes/AssignApplication'
 import { Layout } from '../components/Layout/Layout'
 import { environment } from '../environments'
-import { FeatureFlagProvider } from '@island.is/feature-flags'
+import { FeatureFlagProvider } from '@island.is/react/feature-flags'
 
 export const App = () => (
   <ApolloProvider client={initializeClient(environment.baseApiUrl)}>

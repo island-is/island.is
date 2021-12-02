@@ -80,6 +80,11 @@ export const m: MessageDir = {
       defaultMessage: 'Lokaða meðmælendalista',
       description: 'Petitions intro text bullet',
     },
+    bullet3Admin: {
+      id: 'sp.petitions:intro-bullet2-admin',
+      defaultMessage: 'Læsta meðmælendalista',
+      description: 'Petitions intro text bullet',
+    },
     petitionListsIown: {
       id: 'sp.petitions:petition-lists-i-own',
       defaultMessage: 'Listar stofnaðir af mér',
@@ -94,6 +99,11 @@ export const m: MessageDir = {
       id: 'sp.petitions:petition-lists-closed',
       defaultMessage: 'Lokaðir listar',
       description: 'Section title for closed petition lists',
+    },
+    petitionListsLocked: {
+      id: 'sp.petitions:petition-lists-locked',
+      defaultMessage: 'Læstir listar',
+      description: 'Section title for locked petition lists',
     },
     petitionListsSignedByMe: {
       id: 'sp.petitions:petition-lists-signed-by-me',
@@ -124,12 +134,12 @@ export const m: MessageDir = {
   viewPetition: defineMessages({
     numberSigned: {
       id: 'sp.petitions:number-signed',
-      defaultMessage: 'Fjöldi skráðir',
+      defaultMessage: 'Fjöldi skráðir:',
       description: 'Number of petitions signed',
     },
     openTil: {
       id: 'sp.petitions:open-til',
-      defaultMessage: 'Meðmælendalistinn er opinn:',
+      defaultMessage: 'Meðmælendalistinn er opinn til:',
       description: 'List is open til',
     },
     listOwner: {
@@ -305,6 +315,11 @@ export const m: MessageDir = {
       id: 'sp.petitions:send-list-placeholder',
       defaultMessage: 'Sláðu inn netfang',
       description: 'Input placeholder',
+    },
+    noPetitionsText: {
+      id: 'sp.petitions:no-petitions',
+      defaultMessage: 'Engin meðmæli komin enn',
+      description: 'No petitions text',
     },
   }),
 }

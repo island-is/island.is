@@ -84,6 +84,11 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           parent {
             id
             title
+            category {
+              id
+              slug
+              title
+            }
           }
         }
       }
@@ -237,6 +242,11 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
               description
               slug
             }
+            category {
+              id
+              slug
+              title
+            }
           }
         }
         ... on OrganizationSubpage {
@@ -244,6 +254,19 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           title
           url
           intro
+          organizationPage {
+            organization {
+              title
+            }
+          }
+        }
+
+        ... on Link {
+          id
+          title: text
+          slug: url
+          intro
+          labels
         }
       }
       tagCounts {

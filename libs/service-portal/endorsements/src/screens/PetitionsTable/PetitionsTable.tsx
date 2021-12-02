@@ -30,7 +30,7 @@ const PetitionsTable = (data: any) => {
   const [sendEmailPdf] = useMutation(SendEmailPdf)
 
   const onSendEmail = async () => {
-    const success = await sendEmailPdf({
+    const response = await sendEmailPdf({
       variables: {
         input: {
           listId: data.listId,
@@ -41,9 +41,16 @@ const PetitionsTable = (data: any) => {
       toast.error(formatMessage(m.viewPetition.toastErrorSendList))
     })
 
-    if (success) {
+    if (response) {
+      const isSuccess = response.data?.endorsementSystemsendPdfEmail.success
+      if (isSuccess) {
+        toast.success(
+          formatMessage(m.viewPetition.toastSuccessSendList) + email,
+        )
+      } else {
+        toast.error(formatMessage(m.viewPetition.toastErrorSendList))
+      }
       setEmail('')
-      toast.success(formatMessage(m.viewPetition.toastSuccessSendList) + email)
     }
   }
 
@@ -51,7 +58,9 @@ const PetitionsTable = (data: any) => {
     return petitions.map((pet: any) => {
       return {
         Dagsetning: formatDate(pet.created),
-        Nafn: pet.name ? pet.name : formatMessage(m.viewPetition.noNameLabel),
+        Nafn: pet.meta.fullName
+          ? pet.meta.fullName
+          : formatMessage(m.viewPetition.noNameLabel),
       }
     })
   }
@@ -68,6 +77,7 @@ const PetitionsTable = (data: any) => {
   }
 
   useEffect(() => {
+    setPetitions(data.petitions?.data ?? [])
     handlePagination(1, data.petitions?.data ?? [])
   }, [data])
 
@@ -77,12 +87,14 @@ const PetitionsTable = (data: any) => {
         <Text variant="h3" marginBottom={2}>
           {formatMessage(m.viewPetition.enorsementsTableTitle)}
         </Text>
-        <ExportAsCSV
-          data={mapToCSVFile(listOfPetitions) as object[]}
-          filename="Meðmælalisti"
-          title="Sækja lista"
-          variant="text"
-        />
+        {data.isViewTypeEdit && (
+          <ExportAsCSV
+            data={mapToCSVFile(data.petitions?.data) as object[]}
+            filename="Meðmælalisti"
+            title="Sækja lista"
+            variant="text"
+          />
+        )}
       </Box>
       <Stack space={3}>
         <T.Table>
@@ -110,7 +122,7 @@ const PetitionsTable = (data: any) => {
           </T.Body>
         </T.Table>
 
-        {listOfPetitions && !!listOfPetitions.length && (
+        {listOfPetitions && !!listOfPetitions.length ? (
           <>
             <Pagination
               page={page}
@@ -119,14 +131,14 @@ const PetitionsTable = (data: any) => {
                 <Box
                   cursor="pointer"
                   className={className}
-                  onClick={() => handlePagination(page, listOfPetitions)}
+                  onClick={() => handlePagination(page, data.petitions?.data)}
                 >
                   {children}
                 </Box>
               )}
             />
 
-            {data.isSendEmailVisible && (
+            {data.isViewTypeEdit && (
               <Box marginTop={5}>
                 <Text variant="h3" marginBottom={2}>
                   {formatMessage(m.viewPetition.sendListTitle)}
@@ -163,6 +175,8 @@ const PetitionsTable = (data: any) => {
               </Box>
             )}
           </>
+        ) : (
+          <Text>{formatMessage(m.viewPetition.noPetitionsText)}</Text>
         )}
       </Stack>
     </Box>
