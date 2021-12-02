@@ -1,25 +1,9 @@
-import { Column, Columns, Divider, Link, Text } from '@island.is/island-ui/core'
+import { Column, Columns, Divider, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-import { useLocale } from '@island.is/localization'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
-import { m } from '../../lib/messages'
-// import * as styles from './descriptionWithLink.css'
 
-type OverviewPaymentChargeProps = {
-  field: {
-    props: {
-      chargeName: string
-      chargePrice: string
-    }
-  }
-}
-
-export const OverviewPaymentCharge: FC<FieldBaseProps> = ({
-  application,
-  field,
-}) => {
-  const { formatMessage } = useLocale()
+export const OverviewPaymentCharge: FC<FieldBaseProps> = ({ application }) => {
   const { externalData } = application
   const item = externalData.payment.data as {
     priceAmount: number

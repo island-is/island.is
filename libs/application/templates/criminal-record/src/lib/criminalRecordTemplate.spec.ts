@@ -8,7 +8,7 @@ import {
 import { States } from './constants'
 import CriminalRecordTemplate from './CriminalRecordTemplate'
 
-const MOCK_APPLICANT_NATIONAL_ID = '0101304929'
+const MOCK_APPLICANT_NATIONAL_ID = '0101010101'
 
 function buildApplication(
   data: {
