@@ -28,6 +28,7 @@ import { RSKModule } from '@island.is/api/domains/rsk'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { FinanceModule } from '@island.is/api/domains/finance'
+import { AssetsModule } from '@island.is/api/domains/assets'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
@@ -35,8 +36,10 @@ import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-v
 import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { IslykillModule } from '@island.is/api/domains/islykill'
-import { AuditModule } from '@island.is/nest/audit'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
+import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { AuditModule } from '@island.is/nest/audit'
+import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { ProblemModule } from '@island.is/nest/problem'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
@@ -73,14 +76,6 @@ const autoSchemaFile = environment.production
       ],
     }),
     AuthDomainModule.register({
-      identity: {
-        nationalRegistryXRoad: {
-          xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
-          xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
-          xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
-          xRoadClientId: environment.nationalRegistryXRoad.clientId,
-        },
-      },
       authPublicApi: environment.authPublicApi,
     }),
     AuditModule.forRoot(environment.audit),
@@ -184,14 +179,7 @@ const autoSchemaFile = environment.production
     }),
     CommunicationsModule,
     ApiCatalogueModule,
-    IdentityModule.register({
-      nationalRegistryXRoad: {
-        xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
-        xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
-        xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
-        xRoadClientId: environment.nationalRegistryXRoad.clientId,
-      },
-    }),
+    IdentityModule,
     AuthModule.register(environment.auth),
     SyslumennModule.register({
       url: environment.syslumennService.url,
@@ -222,12 +210,13 @@ const autoSchemaFile = environment.production
       xroadBaseUrl: environment.xroad.baseUrl,
       xroadClientId: environment.xroad.clientId,
     }),
-    NationalRegistryXRoadModule.register({
-      xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
-      xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
-      xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
-      xRoadClientId: environment.nationalRegistryXRoad.clientId,
+    AssetsModule.register({
+      xRoadBasePathWithEnv: environment.propertiesXRoad.url,
+      xRoadAssetsMemberCode: environment.propertiesXRoad.memberCode,
+      xRoadAssetsApiPath: environment.propertiesXRoad.apiPath,
+      xRoadClientId: environment.propertiesXRoad.clientId,
     }),
+    NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({
       xRoadProviderId: environment.paymentDomain.xRoadProviderId,
       xRoadBaseUrl: environment.paymentDomain.xRoadBaseUrl,
@@ -270,6 +259,10 @@ const autoSchemaFile = environment.production
       basePath: environment.islykill.basePath,
     }),
     ProblemModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [XRoadConfig, NationalRegistryClientConfig],
+    }),
   ],
 })
 export class AppModule {}

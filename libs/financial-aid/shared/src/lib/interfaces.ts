@@ -99,6 +99,7 @@ export interface UpdateApplication {
   spousePhoneNumber?: string
   spouseEmail?: string
   spouseName?: string
+  spouseFormComment?: string
 }
 
 export interface UpdateApplicationTable {
@@ -136,6 +137,10 @@ export interface Municipality {
   rulesHomepage?: string
   numberOfUsers?: number
   adminUsers?: Staff[]
+}
+
+export interface UpdateMunicipalityActivity {
+  active: boolean
 }
 
 export interface CreateMunicipality {
@@ -191,6 +196,18 @@ export interface CreateApplication {
   municipalityCode?: string
 }
 
+export interface ApplicantEmailData {
+  header: string
+  content: string
+  title: string
+  applicationChange: string
+  applicationMonth: string
+  applicationYear: number
+  statusPageUrl: string
+  applicantEmail: string
+  municipality: Municipality
+}
+
 export interface ApplicationFilters {
   New: number
   InProgress: number
@@ -221,6 +238,7 @@ export interface Application {
   homeCircumstancesCustom?: string
   studentCustom?: string
   formComment?: string
+  spouseFormComment?: string
   state: ApplicationState
   files?: ApplicationFile[]
   amount?: number
@@ -268,7 +286,7 @@ export interface NationalRegistryData {
     city: string
     municipalityCode: string
   }
-  spouse: {
+  spouse?: {
     nationalId?: string
     maritalStatus?: string
     name?: string
@@ -296,4 +314,12 @@ export interface CreateStaff {
   email: string
   nationalId: string
   roles: StaffRole[]
+  municipalityName?: string
+  municipalityId?: string
+}
+
+export interface CreateStaffMuncipality {
+  municipalityId: string
+  municipalityName: string
+  municipalityHomepage?: string
 }

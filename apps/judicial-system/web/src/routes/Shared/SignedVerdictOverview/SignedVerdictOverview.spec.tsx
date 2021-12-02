@@ -13,8 +13,12 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import { SignedVerdictOverview } from './SignedVerdictOverview'
 import { LocaleProvider } from '@island.is/localization'
+
+import { SignedVerdictOverview } from './SignedVerdictOverview'
+import FormProvider from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+
+window.scrollTo = jest.fn()
 
 describe('Signed Verdict Overview route', () => {
   describe('Rejected case', () => {
@@ -22,6 +26,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_2' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -35,7 +40,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -50,6 +57,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_4' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -63,7 +71,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -78,6 +88,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_2' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -91,7 +102,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -108,6 +121,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_2' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -121,7 +135,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -146,6 +162,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_12' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -159,7 +176,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -174,6 +193,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_12' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -187,7 +207,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -202,6 +224,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_12' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -215,7 +238,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -232,6 +257,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_12' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -245,7 +271,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -270,6 +298,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_5' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -283,7 +312,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -299,6 +330,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_5' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -312,7 +344,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -332,6 +366,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -345,7 +380,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -360,6 +397,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -373,7 +411,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -390,6 +430,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -403,7 +444,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -418,6 +461,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -431,7 +475,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -452,6 +498,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -465,7 +512,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -480,6 +529,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -493,7 +543,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -511,6 +563,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id_6' },
+          pathname: '/gaesluvardhald/test_id_2',
         }))
 
         render(
@@ -524,7 +577,9 @@ describe('Signed Verdict Overview route', () => {
           >
             <UserProvider authenticated>
               <LocaleProvider locale="is" messages={{}}>
-                <SignedVerdictOverview />
+                <FormProvider>
+                  <SignedVerdictOverview />
+                </FormProvider>
               </LocaleProvider>
             </UserProvider>
           </MockedProvider>,
@@ -540,6 +595,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id_6' },
+          pathname: '/gaesluvardhald/test_id_2',
         }))
 
         render(
@@ -553,7 +609,9 @@ describe('Signed Verdict Overview route', () => {
           >
             <UserProvider authenticated>
               <LocaleProvider locale="is" messages={{}}>
-                <SignedVerdictOverview />
+                <FormProvider>
+                  <SignedVerdictOverview />
+                </FormProvider>
               </LocaleProvider>
             </UserProvider>
           </MockedProvider>,
@@ -573,6 +631,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id_6' },
+          pathname: '/gaesluvardhald/test_id_2',
         }))
 
         render(
@@ -586,7 +645,9 @@ describe('Signed Verdict Overview route', () => {
           >
             <UserProvider authenticated>
               <LocaleProvider locale="is" messages={{}}>
-                <SignedVerdictOverview />
+                <FormProvider>
+                  <SignedVerdictOverview />
+                </FormProvider>
               </LocaleProvider>
             </UserProvider>
           </MockedProvider>,
@@ -601,6 +662,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id' },
+          pathname: '/gaesluvardhald/test_id_2',
         }))
 
         render(
@@ -614,7 +676,9 @@ describe('Signed Verdict Overview route', () => {
           >
             <UserProvider authenticated>
               <LocaleProvider locale="is" messages={{}}>
-                <SignedVerdictOverview />
+                <FormProvider>
+                  <SignedVerdictOverview />
+                </FormProvider>
               </LocaleProvider>
             </UserProvider>
           </MockedProvider>,
@@ -633,6 +697,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id_8' },
+          pathname: '/gaesluvardhald/test_id_2',
         }))
 
         render(
@@ -646,7 +711,9 @@ describe('Signed Verdict Overview route', () => {
           >
             <UserProvider authenticated>
               <LocaleProvider locale="is" messages={{}}>
-                <SignedVerdictOverview />
+                <FormProvider>
+                  <SignedVerdictOverview />
+                </FormProvider>
               </LocaleProvider>
             </UserProvider>
           </MockedProvider>,
@@ -665,6 +732,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id_7' },
+          pathname: '/gaesluvardhald/test_id_2',
         }))
 
         render(
@@ -678,7 +746,9 @@ describe('Signed Verdict Overview route', () => {
           >
             <UserProvider authenticated>
               <LocaleProvider locale="is" messages={{}}>
-                <SignedVerdictOverview />
+                <FormProvider>
+                  <SignedVerdictOverview />
+                </FormProvider>
               </LocaleProvider>
             </UserProvider>
           </MockedProvider>,
@@ -691,6 +761,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id' },
+          pathname: '/gaesluvardhald/test_id_2',
         }))
 
         render(
@@ -704,7 +775,9 @@ describe('Signed Verdict Overview route', () => {
           >
             <UserProvider authenticated>
               <LocaleProvider locale="is" messages={{}}>
-                <SignedVerdictOverview />
+                <FormProvider>
+                  <SignedVerdictOverview />
+                </FormProvider>
               </LocaleProvider>
             </UserProvider>
           </MockedProvider>,
@@ -727,6 +800,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_7' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -740,7 +814,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -755,6 +831,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_7' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
       const date = '2020-09-25T19:50:08.033Z'
 
@@ -769,7 +846,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -789,6 +868,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -802,7 +882,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -819,6 +901,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_7' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -832,7 +915,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -851,6 +936,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_8' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -864,7 +950,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -880,6 +968,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_8' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -893,7 +982,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -913,6 +1004,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
+        pathname: '/gaesluvardhald/test_id_2',
       }))
 
       render(
@@ -926,7 +1018,9 @@ describe('Signed Verdict Overview route', () => {
         >
           <UserProvider authenticated>
             <LocaleProvider locale="is" messages={{}}>
-              <SignedVerdictOverview />
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,

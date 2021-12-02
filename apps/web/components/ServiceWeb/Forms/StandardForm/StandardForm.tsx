@@ -36,6 +36,7 @@ import {
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import { ModifySearchTerms } from '../../SearchInput/SearchInput'
+import orderBy from 'lodash/orderBy'
 
 type FormState = {
   message: string
@@ -390,7 +391,7 @@ export const StandardForm = ({
                 setCategoryLabel(label as string)
                 setCategoryId(value as string)
               }}
-              options={supportCategories.map((x) => ({
+              options={orderBy(supportCategories, 'title', 'asc').map((x) => ({
                 label: x.title,
                 value: x.id,
               }))}

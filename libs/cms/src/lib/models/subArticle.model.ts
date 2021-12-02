@@ -2,6 +2,7 @@ import { SystemMetadata } from '@island.is/shared/types'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { ISubArticle } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
+import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { ArticleReference, mapArticleReference } from './articleReference'
 
 @ObjectType()

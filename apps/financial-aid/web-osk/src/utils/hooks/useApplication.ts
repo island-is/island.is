@@ -65,10 +65,10 @@ const useApplication = () => {
               state: ApplicationState.NEW,
               files: files,
               spouseNationalId:
-                nationalRegistryData?.spouse.nationalId ??
+                nationalRegistryData?.spouse?.nationalId ??
                 form?.spouse?.nationalId,
               spouseEmail: form?.spouse?.email,
-              spouseName: nationalRegistryData?.spouse.name,
+              spouseName: nationalRegistryData?.spouse?.name,
               familyStatus: form?.familyStatus,
               streetName: nationalRegistryData?.address.streetName,
               postalCode: nationalRegistryData?.address.postalCode,

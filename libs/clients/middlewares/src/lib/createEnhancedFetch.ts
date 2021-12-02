@@ -1,47 +1,32 @@
-import https from 'https'
-import { SecureContextOptions } from 'tls'
-
 import CircuitBreaker from 'opossum'
-import fetch from 'node-fetch'
+import nodeFetch from 'node-fetch'
 import { Logger } from 'winston'
 import { logger as defaultLogger } from '@island.is/logging'
-
-export type FetchAPI = WindowOrWorkerGlobalScope['fetch']
-
-interface FetchProblem {
-  type: string
-  title: string
-  status?: number
-  detail?: string
-  instance?: string
-  [key: string]: unknown
-}
-
-interface FetchError extends Error {
-  url: string
-  status: number
-  headers: Headers
-  statusText: string
-  response: Response
-  body?: unknown
-  problem?: FetchProblem
-}
-
-// Chrerry-pick the supported types of certs from TLS
-export interface FetchCertificate {
-  pfx: SecureContextOptions['pfx']
-  passphrase: SecureContextOptions['passphrase']
-}
+import { withTimeout } from './withTimeout'
+import { FetchAPI as NodeFetchAPI } from './nodeFetch'
+import { EnhancedFetchAPI } from './types'
+import { withAuth } from './withAuth'
+import { withErrors } from './withErrors'
+import { withCircuitBreaker } from './withCircuitBreaker'
+import {
+  ClientCertificateOptions,
+  withClientCertificate,
+} from './withClientCertificate'
+import { withCache } from './withCache/withCache'
+import { CacheConfig } from './withCache/types'
 
 export interface EnhancedFetchOptions {
   // The name of this fetch function, used in logs and opossum stats.
   name: string
 
+  // Configure caching.
+  cache?: CacheConfig
+
   // Timeout for requests. Defaults to 10000ms. Can be disabled by passing false.
   timeout?: number | false
 
-  // Shortcut to disable circuit breaker. Keeps timeout and logging.
-  enableCircuitBreaker?: boolean
+  // Disable or configure circuit breaker.
+  circuitBreaker?: boolean | CircuitBreaker.Options
 
   // By default 400 responses are considered warnings and will not open the circuit.
   // This can be changed by passing `treat400ResponsesAsErrors: true`.
@@ -52,44 +37,28 @@ export interface EnhancedFetchOptions {
   // Should only be used if error objects do not have sensitive information or PII.
   logErrorResponseBody?: boolean
 
-  // Configure circuit breaker logic.
-  opossum?: CircuitBreaker.Options
-
   // Override logger.
   logger?: Logger
 
   // Override fetch function.
-  fetch?: FetchAPI
+  fetch?: NodeFetchAPI
 
   // Certificate for auth
-  certificate?: FetchCertificate
+  clientCertificate?: ClientCertificateOptions
 }
 
-const createResponseError = async (response: Response, includeBody = false) => {
-  const error = new Error(
-    `Request failed with status code ${response.status}`,
-  ) as FetchError
-  error.name = 'FetchError'
-  const { url, status, headers, statusText } = response
-  Object.assign(error, { url, status, headers, statusText, response })
-
-  const contentType = response.headers.get('content-type') || ''
-  const isJson = contentType.startsWith('application/json')
-  const isProblem = contentType.startsWith('application/problem+json')
-  const shouldIncludeBody = includeBody && (isJson || isProblem)
-  if (isProblem || shouldIncludeBody) {
-    const body = await response.clone().json()
-    if (shouldIncludeBody) {
-      error.body = body
-    }
-    if (isProblem) {
-      error.problem = body
-    }
-  } else if (includeBody) {
-    error.body = await response.clone().text()
+function buildFetch(fetch: NodeFetchAPI = nodeFetch) {
+  const result = {
+    fetch,
+    wrap<T extends { fetch: NodeFetchAPI }>(
+      createFetch: (options: T) => NodeFetchAPI,
+      options: Omit<T, 'fetch'>,
+    ) {
+      result.fetch = createFetch({ ...options, fetch: result.fetch } as T)
+      return result
+    },
   }
-
-  return error
+  return result
 }
 
 /**
@@ -100,6 +69,12 @@ const createResponseError = async (response: Response, includeBody = false) => {
  *   All future requests will be stopped to lower pressure on the remote server.
  *   Every 30 seconds we'll allow one request through. If it's successful, we'll
  *   close the circuit and let requests through again.
+ *
+ * - Includes response cache logic built on top of standard cache-control
+ *   semantics. By default nothing is cached.
+ *
+ * - Supports our `User` and `Auth` objects. Adds authorization header to the
+ *   request.
  *
  * - Includes request timeout logic. By default, throws an error if there is no
  *   response in 10 seconds.
@@ -122,88 +97,53 @@ const createResponseError = async (response: Response, includeBody = false) => {
  */
 export const createEnhancedFetch = (
   options: EnhancedFetchOptions,
-): FetchAPI => {
-  const name = options.name
-  const actualFetch = options.fetch ?? ((fetch as unknown) as FetchAPI)
-  const logger = options.logger ?? defaultLogger
-  const timeout = options.timeout ?? 10000
+): EnhancedFetchAPI => {
+  const {
+    name,
+    logger = defaultLogger,
+    timeout = 10000,
+    logErrorResponseBody = false,
+    clientCertificate,
+    cache,
+  } = options
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
+  const builder = buildFetch((options.fetch as unknown) as NodeFetchAPI)
 
-  /**
-   * Create an https agent that manages the certificate.
-   * `agent` is an extension from node-fetch and is not a part of the fetch spec
-   * https://github.com/node-fetch/node-fetch#custom-agent
-   */
-  const agent = options.certificate
-    ? new https.Agent({
-        pfx: options.certificate.pfx,
-        passphrase: options.certificate.passphrase,
-      })
-    : undefined
-
-  const enhancedFetch: FetchAPI = async (input, init) => {
-    try {
-      const response = await actualFetch(input, ({
-        timeout,
-        agent,
-        ...init,
-      } as unknown) as RequestInit)
-
-      if (!response.ok) {
-        throw await createResponseError(response, options.logErrorResponseBody)
-      }
-
-      return response
-    } catch (error) {
-      const logLevel =
-        error.name === 'FetchError' &&
-        error.status < 500 &&
-        !treat400ResponsesAsErrors
-          ? 'warn'
-          : 'error'
-      logger.log(logLevel, {
-        ...error,
-        stack: error.stack,
-        url: input,
-        message: `Fetch failure (${name}): ${error.message}`,
-        // Do not log large response objects.
-        response: undefined,
-      })
-      throw error
-    }
+  if (cache) {
+    builder.wrap(withCache, {
+      ...cache,
+      name,
+      logger,
+    })
   }
 
-  const errorFilter = treat400ResponsesAsErrors
-    ? options.opossum?.errorFilter
-    : (error: FetchError) => {
-        if (error.name === 'FetchError' && error.status < 500) {
-          return true
-        }
-        return options.opossum?.errorFilter?.(error) ?? false
-      }
+  if (clientCertificate) {
+    builder.wrap(withClientCertificate, { clientCertificate })
+  }
 
-  const breaker = new CircuitBreaker(enhancedFetch, {
+  if (timeout !== false) {
+    builder.wrap(withTimeout, { timeout })
+  }
+
+  builder.wrap(withAuth, {})
+
+  builder.wrap(withErrors, {
     name,
-    volumeThreshold: 10,
-    // False disables timeout logic, the types are incorrect.
-    // We want to use our own timeout logic so we can disable the circuit
-    // breaker while still supporting timeouts.
-    timeout: (false as unknown) as number,
-    enabled: options.enableCircuitBreaker !== false,
-
-    ...options.opossum,
-    errorFilter,
+    logger,
+    treat400ResponsesAsErrors,
+    logErrorResponseBody,
   })
 
-  breaker.on('open', () =>
-    logger.error(`Fetch (${name}): Too many errors, circuit breaker opened`),
-  )
-  breaker.on('halfOpen', () =>
-    logger.error(`Fetch (${name}): Circuit breaker half-open`),
-  )
-  breaker.on('close', () =>
-    logger.error(`Fetch (${name}): Circuit breaker closed`),
-  )
+  if (options.circuitBreaker !== false) {
+    const opossum =
+      options.circuitBreaker === true ? {} : options.circuitBreaker ?? {}
+    builder.wrap(withCircuitBreaker, {
+      name,
+      logger,
+      treat400ResponsesAsErrors,
+      opossum,
+    })
+  }
 
-  return (input, init) => breaker.fire(input, init)
+  return (builder.fetch as unknown) as EnhancedFetchAPI
 }

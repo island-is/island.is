@@ -21,6 +21,7 @@ interface Middleware {
 export interface AuthMiddlewareOptions {
   forwardUserInfo: boolean
   tokenExchangeOptions?: TokenExchangeOptions
+  authID?: boolean
 }
 
 export interface TokenExchangeOptions {
@@ -54,8 +55,18 @@ export class AuthMiddleware implements Middleware {
       bearerToken = `Bearer ${accessToken}`
     }
 
+    // Pass auth object for enhancedFetch.
+    ;(context.init as any).auth = this.auth
+
     context.init.headers = Object.assign({}, context.init.headers, {
       authorization: bearerToken,
+      /*
+        This Authorization-Identity is needed along with the
+        Authorization header in rare cases with the Þjóðskrá API.
+      */
+      ...(this.options.authID && {
+        ['Authorization-Identity']: bearerToken,
+      }),
     })
 
     if (this.options.forwardUserInfo) {

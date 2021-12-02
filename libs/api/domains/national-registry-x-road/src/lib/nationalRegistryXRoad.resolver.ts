@@ -24,50 +24,53 @@ export class NationalRegistryXRoadResolver {
 
   @Query(() => NationalRegistryPerson, {
     name: 'nationalRegistryUserV2',
+    nullable: true,
   })
   @Audit()
   async nationalRegistryPersons(
     @CurrentUser() user: User,
   ): Promise<NationalRegistryPerson | undefined> {
-    return await this.nationalRegistryXRoadService.getNationalRegistryPerson(
+    return this.nationalRegistryXRoadService.getNationalRegistryPerson(
+      user,
       user.nationalId,
-      user.authorization,
     )
   }
 
-  @ResolveField('children', () => [NationalRegistryPerson])
+  @ResolveField('children', () => [NationalRegistryPerson], { nullable: true })
   @Audit()
   async resolveChildren(
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistryPerson[] | undefined> {
     return await this.nationalRegistryXRoadService.getChildrenCustodyInformation(
+      user,
       person.nationalId,
-      user.authorization,
     )
   }
 
-  @ResolveField('residenceHistory', () => [NationalRegistryResidence])
+  @ResolveField('residenceHistory', () => [NationalRegistryResidence], {
+    nullable: true,
+  })
   @Audit()
   async resolveResidenceHistory(
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistryResidence[] | undefined> {
     return await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
+      user,
       person.nationalId,
-      user.authorization,
     )
   }
 
-  @ResolveField('spouse', () => NationalRegistrySpouse)
+  @ResolveField('spouse', () => NationalRegistrySpouse, { nullable: true })
   @Audit()
   async resolveSpouse(
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistrySpouse | undefined> {
     return await this.nationalRegistryXRoadService.getSpouse(
+      user,
       person.nationalId,
-      user.authorization,
     )
   }
 }
