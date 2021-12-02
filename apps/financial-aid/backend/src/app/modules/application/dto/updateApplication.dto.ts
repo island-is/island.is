@@ -41,6 +41,11 @@ export class UpdateApplicationDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
+  readonly spouseFormComment: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
   readonly spouseEmail: string
 
   @IsOptional()

@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
+import { useIntl } from 'react-intl'
+import { ValueType } from 'react-select'
+
 import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { Case } from '@island.is/judicial-system/types'
-import { ValueType } from 'react-select'
 import { Option } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
 import { selectProsecutor as m } from '@island.is/judicial-system-web/messages/Core/selectProsecutor'
 
 interface Props {

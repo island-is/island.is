@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
-import { ValueType } from 'react-select/src/types'
-import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
+import { useIntl } from 'react-intl'
+import { ValueType } from 'react-select/src/types'
 
 import {
   Accordion,
@@ -27,7 +27,6 @@ import {
   RulingAccordionItem,
   InfoBox,
 } from '@island.is/judicial-system-web/src/components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
@@ -50,22 +49,23 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import { core } from '@island.is/judicial-system-web/messages'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import {
   UploadState,
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import AppealSection from './Components/AppealSection/AppealSection'
-import { UploadStateMessage } from './Components/UploadStateMessage'
 import { SignedDocument } from './Components/SignedDocument'
+import { UploadStateMessage } from './Components/UploadStateMessage'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   setAccusedAppealDate: () => void
   setProsecutorAppealDate: () => void
   withdrawAccusedAppealDate: () => void
