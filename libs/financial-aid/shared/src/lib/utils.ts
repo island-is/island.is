@@ -87,9 +87,6 @@ export const scrollToId = (id: string) => {
   })
 }
 
-export const isObjEmpty = (
-  obj: Record<string, { description: string; amount: number }>,
-) =>
-  obj &&
-  Object.keys(obj).length === 0 &&
-  Object.getPrototypeOf(obj) === Object.prototype
+export const removeItemFromArray = (fileName: string) => {
+  return fileName?.substring(fileName.lastIndexOf('.') + 1)
+}
