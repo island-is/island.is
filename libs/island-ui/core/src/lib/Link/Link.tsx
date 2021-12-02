@@ -2,7 +2,7 @@ import * as React from 'react'
 import NextLink, { LinkProps as NextLinkProps } from 'next/link'
 import cn from 'classnames'
 import * as styles from './Link.css'
-import { isLinkInternal } from '@island.is/shared/utils'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
 export type LinkColor = 'white' | 'blue400' | 'blue600'
 export type UnderlineVisibility = 'always' | 'hover'
@@ -37,7 +37,7 @@ export const Link: React.FC<LinkProps> = ({
   newTab = false,
   ...linkProps
 }) => {
-  const isInternal = isLinkInternal(href as string)
+  const isInternal = !shouldLinkOpenInNewWindow(href as string)
   const classNames = cn(
     styles.link,
     color ? styles.colors[color] : undefined,

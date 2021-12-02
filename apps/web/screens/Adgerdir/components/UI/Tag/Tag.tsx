@@ -1,7 +1,7 @@
 import React, { forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
 import { Text } from '@island.is/island-ui/core'
-import { isLinkExternal } from '@island.is/shared/utils'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
 import * as styles from './Tag.css'
 
@@ -43,7 +43,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       [styles.attention]: attention,
     })
 
-    const isExternal = href && isLinkExternal(href)
+    const isExternal = href && shouldLinkOpenInNewWindow(href)
 
     const anchorProps = {
       ...(isExternal && { rel: 'noreferrer noopener' }),
