@@ -101,6 +101,30 @@ export const StepOneForm: React.FC<Props> = (props) => {
     setAndSendToServer,
   } = useCaseFormHelper(workingCase, setWorkingCase, validations)
 
+  const handleDefenderChange = async (
+    selectedOption: ValueType<ReactSelectOption>,
+  ) => {
+    let updatedLawyer = {
+      defenderName: '',
+      defenderEmail: '',
+      defenderPhoneNumber: '',
+    }
+
+    if (selectedOption) {
+      const { label, value } = selectedOption as ReactSelectOption
+      const lawyer = lawyers.lawyers.find((l) => l.email === (value as string))
+
+      updatedLawyer = {
+        defenderName: lawyer ? lawyer.name : label,
+        defenderEmail: lawyer ? lawyer.email : '',
+        defenderPhoneNumber: lawyer ? lawyer.phoneNr : '',
+      }
+    }
+
+    await updateCase(workingCase.id, updatedLawyer)
+    setWorkingCase({ ...workingCase, ...updatedLawyer })
+  }
+
   return (
     <>
       <FormContentContainer>
@@ -166,27 +190,8 @@ export const StepOneForm: React.FC<Props> = (props) => {
                       }
                     : undefined
                 }
-                onChange={async (
-                  selectedOption: ValueType<ReactSelectOption>,
-                ) => {
-                  const lawyer = lawyers.lawyers.find(
-                    (l) =>
-                      l.email ===
-                      ((selectedOption as ReactSelectOption).value as string),
-                  )
-
-                  if (lawyer) {
-                    const updatedLawyer = {
-                      defenderName: lawyer.name,
-                      defenderEmail: lawyer.email,
-                      defenderPhoneNumber: lawyer.phoneNr,
-                    }
-
-                    await updateCase(workingCase.id, updatedLawyer)
-
-                    setWorkingCase({ ...workingCase, ...updatedLawyer })
-                  }
-                }}
+                onChange={handleDefenderChange}
+                isCreatable
               />
             </Box>
             <Box marginBottom={2}>
