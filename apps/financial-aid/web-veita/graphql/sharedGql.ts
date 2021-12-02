@@ -39,6 +39,7 @@ export const ApplicationQuery = gql`
       }
       state
       formComment
+      spouseFormComment
       studentCustom
       amount
       rejection
@@ -384,11 +385,13 @@ export const MunicipalityQuery = gql`
       active
       rulesHomepage
       homepage
+      municipalityId
       email
       adminUsers {
         name
         nationalId
         email
+        active
         id
       }
       individualAid {
@@ -408,6 +411,21 @@ export const MunicipalityQuery = gql`
         unknown
         withOthers
         type
+      }
+    }
+  }
+`
+
+export const AdminUsersQuery = gql`
+  query getAdminUsers($input: MunicipalityQueryInput!) {
+    municipality(input: $input) {
+      municipalityId
+      adminUsers {
+        name
+        nationalId
+        email
+        active
+        id
       }
     }
   }

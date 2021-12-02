@@ -117,6 +117,7 @@ export interface UpdateApplication {
   spousePhoneNumber?: string
   spouseEmail?: string
   spouseName?: string
+  spouseFormComment?: string
 }
 
 export interface UpdateApplicationTable {
@@ -255,6 +256,7 @@ export interface Application {
   homeCircumstancesCustom?: string
   studentCustom?: string
   formComment?: string
+  spouseFormComment?: string
   state: ApplicationState
   files?: ApplicationFile[]
   amount?: number
@@ -330,10 +332,12 @@ export interface CreateStaff {
   email: string
   nationalId: string
   roles: StaffRole[]
+  municipalityName?: string
+  municipalityId?: string
 }
 
 export interface CreateStaffMuncipality {
-  id: string
-  name: string
-  homepage?: string
+  municipalityId: string
+  municipalityName: string
+  municipalityHomepage?: string
 }
