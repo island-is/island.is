@@ -83,13 +83,6 @@ const template: ApplicationTemplate<
           },
           progress: 0.8,
           lifecycle: DefaultStateLifeCycle,
-          //TODO-origo
-          // lifecycle: {
-          //   shouldBeListed: true,
-          //   shouldBePruned: true,
-          //   // Applications that stay in this state for 24 hours will be pruned automatically
-          //   whenToPrune: 24 * 3600 * 1000,
-          // },
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
@@ -117,13 +110,6 @@ const template: ApplicationTemplate<
           name: 'Completed',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          //TODO-origo
-          // lifecycle: {
-          //   shouldBeListed: true,
-          //   shouldBePruned: true,
-          //   // Applications that stay in this state for 24 hours will be pruned automatically
-          //   whenToPrune: 24 * 3600 * 1000,
-          // },
           actionCard: {
             tag: {
               label: m.actionCardDone,
@@ -142,14 +128,6 @@ const template: ApplicationTemplate<
                 ),
               read: 'all',
             },
-            {
-              id: Roles.APPLICANT_EXPIRED,
-              formLoader: () =>
-                import('../forms/ApprovedExpired').then((val) =>
-                  Promise.resolve(val.ApprovedExpired),
-                ),
-              read: 'all',
-            },
           ],
         },
         type: 'final' as const,
@@ -160,17 +138,7 @@ const template: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    // Check is application is expired (happens after 24 hours), in which case
-    // we will hide the 'View PDF' button
-    const oneDayAgo = new Date()
-    oneDayAgo.setHours(oneDayAgo.getHours() - 24)
-    const isExpired = new Date(application.modified) < oneDayAgo
-
-    if (application.state === States.COMPLETED && isExpired) {
-      return Roles.APPLICANT_EXPIRED
-    } else {
-      return Roles.APPLICANT
-    }
+    return Roles.APPLICANT
   },
 }
 

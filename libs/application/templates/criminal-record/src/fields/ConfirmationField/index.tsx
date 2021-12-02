@@ -22,7 +22,6 @@ type ConfirmationFieldProps = {
         title: string
         url: string
       }
-      isExpired?: Boolean
     }
   }
   application: {
@@ -170,18 +169,16 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         </LinkContext.Provider>
       </Box>
 
-      {props.isExpired ? null : (
-        <Box marginBottom={3}>
-          <TopicCard
-            href="/"
-            onClick={() => setViewCriminalRecord(true)}
-            tag="Pdf"
-            colorScheme="blue"
-          >
-            {formatText(m.criminalRecord, application, formatMessage)}
-          </TopicCard>
-        </Box>
-      )}
+      <Box marginBottom={3}>
+        <TopicCard
+          href="/"
+          onClick={() => setViewCriminalRecord(true)}
+          tag="Pdf"
+          colorScheme="blue"
+        >
+          {formatText(m.criminalRecord, application, formatMessage)}
+        </TopicCard>
+      </Box>
 
       <Button
         icon="open"

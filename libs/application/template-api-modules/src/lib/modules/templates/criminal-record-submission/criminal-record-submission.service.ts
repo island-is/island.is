@@ -11,7 +11,6 @@ import {
 } from '@island.is/api/domains/syslumenn'
 import { generateSyslumennNotificationEmail } from './emailGenerators/syslumennNotification'
 import { Application } from '@island.is/application/core'
-import { syslumennDataFromPostalCode } from './utils'
 import { NationalRegistry, UserProfile } from './types'
 
 @Injectable()
