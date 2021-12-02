@@ -11,11 +11,13 @@ import { createLogger } from 'winston'
 import { requestHandlers } from './__mock-data__/requestHandlers'
 import {VHSUCCESS, VHFAIL }from './__mock-data__/virkarHeimagistingar'
 import { HttpModule } from '@nestjs/common'
+import { Homestay, mapHomestay } from './models/homestay'
+import { IHomestay } from './client/models/homestay'
 
-export const YEAR = 0
+const YEAR = 2021
 
 const config = {
-    url: 'https://localhost',
+    url: 'http://localhost',
     username: '',
     password: ''
   } as SyslumennClientConfig
@@ -46,7 +48,6 @@ describe('SyslumennService', () => {
 
   describe('Module', () => {
     it('should be defined', () => {
-        console.log(service)
       expect(service).toBeTruthy()
     })
   })
@@ -54,8 +55,7 @@ describe('SyslumennService', () => {
   describe('getHomestays', () => {
     it('should return false for a normal license', async () => {
       const response = await service.getHomestays(YEAR)
-
-      expect(response).toStrictEqual(VHSUCCESS)
+      expect(response).toStrictEqual((VHSUCCESS ?? []).map(mapHomestay))
     })
 
     // it('should return true for a teacher', async () => {

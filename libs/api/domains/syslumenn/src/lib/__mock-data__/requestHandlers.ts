@@ -1,7 +1,7 @@
 import { rest } from 'msw'
 import {VHSUCCESS, VHFAIL }from './virkarHeimagistingar'
 
-export const YEAR = 0
+export const YEAR = '2021'
 
 
 const url = (path: string) => {
@@ -9,13 +9,13 @@ const url = (path: string) => {
 }
 
 export const requestHandlers = [
-  rest.get(url('/v1/VirkarHeimagistingar/:audkenni'), (req, res, ctx) => {
-    const success =
-        req.params.audkenni === YEAR
-    return res(ctx.status(200), ctx.json(success ? VHSUCCESS : VHFAIL))
+  rest.post(url('/v1/Innskraning'), (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json({ accessToken: '123', audkenni: '123'}))
   }),
-  rest.get(url('/v1/api/okuskirteini/okukennarar'), (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(true))
+  rest.get(url('/v1/VirkarHeimagistingar/:id/:year'), (req, res, ctx) => {
+    const success =
+        req.params.year === YEAR
+    return res(ctx.status(200), ctx.json(success ? VHSUCCESS : VHFAIL))
   }),
 
 ]
