@@ -78,6 +78,7 @@ export const FormStep: FC<Props> = ({
               hasError={errors.tel}
               errorMessage={errors.tel?.message}
               onChange={onChange}
+              maxLength={7}
             />
           )}
         />
