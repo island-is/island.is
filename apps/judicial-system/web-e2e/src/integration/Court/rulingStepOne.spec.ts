@@ -10,6 +10,10 @@ import { intercept } from '../../utils'
 
 describe('/domur/urskurdur/:id', () => {
   beforeEach(() => {
+    cy.stubAPIResponses()
+  })
+
+  it('should autofill prosecutor demands', () => {
     const caseData = makeCase()
     const caseDataAddition: Case = {
       ...caseData,
@@ -18,20 +22,28 @@ describe('/domur/urskurdur/:id', () => {
       demands:
         'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     }
+    cy.visit('/domur/urskurdur/test_id_stadfest')
 
-    cy.stubAPIResponses()
     intercept(caseDataAddition)
 
-    cy.visit('/domur/urskurdur/test_id_stadfest')
-  })
-
-  it('should autofill prosecutor demands', () => {
     cy.getByTestid('prosecutorDemands').contains(
       'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     )
   })
 
   it('should require a valid ruling', () => {
+    const caseData = makeCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      caseFacts: 'lorem ipsum',
+      legalArguments: 'lorem ipsum',
+      demands:
+        'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+    }
+    cy.visit('/domur/urskurdur/test_id_stadfest')
+
+    intercept(caseDataAddition)
+
     cy.getByTestid('ruling').clear()
     cy.clickOutside()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
@@ -40,6 +52,18 @@ describe('/domur/urskurdur/:id', () => {
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
+    const caseData = makeCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      caseFacts: 'lorem ipsum',
+      legalArguments: 'lorem ipsum',
+      demands:
+        'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+    }
+    cy.visit('/domur/urskurdur/test_id_stadfest')
+
+    intercept(caseDataAddition)
+
     cy.getByTestid('ruling').type('lorem')
     cy.get('#case-decision-accepting').check()
     cy.getByTestid('continueButton').click()
@@ -47,6 +71,18 @@ describe('/domur/urskurdur/:id', () => {
   })
 
   it('should show appropriate valid to dates based on decision', () => {
+    const caseData = makeCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      caseFacts: 'lorem ipsum',
+      legalArguments: 'lorem ipsum',
+      demands:
+        'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+    }
+    cy.visit('/domur/urskurdur/test_id_stadfest')
+
+    intercept(caseDataAddition)
+
     cy.getByTestid('caseDecisionSection').should('not.exist')
     cy.get('#case-decision-accepting').check()
     cy.getByTestid('caseDecisionSection').should('exist')
@@ -63,6 +99,7 @@ describe('/domur/urskurdur/:id', () => {
       decision: CaseDecision.ACCEPTING,
       custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
     }
+    cy.visit('/domur/urskurdur/test_id_stadfest')
 
     intercept(caseDataAddition)
 
