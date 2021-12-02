@@ -16,7 +16,7 @@ module.exports = {
           unique: false,
         },
         device_token: {
-          // https://stackoverflow.com/questions/39959417/what-is-the-maximum-length-of-an-fcm-registration-id-token
+          // the devicetoken can be huge - max 4096 bytes
           type: Sequelize.STRING(4096),
           allowNull: false,
           unique: true,
