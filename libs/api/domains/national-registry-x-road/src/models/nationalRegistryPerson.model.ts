@@ -11,8 +11,11 @@ export class NationalRegistryPerson {
   @Field(() => String)
   fullName!: string
 
+  @Field(() => String)
+  genderCode!: string
+
   @Field(() => NationalRegistryAddress, { nullable: true })
-  address?: NationalRegistryAddress
+  address?: NationalRegistryAddress | null
 
   @Field(() => Boolean, { nullable: true })
   livesWithApplicant?: boolean

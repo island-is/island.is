@@ -1,12 +1,20 @@
-import React, { useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { gql, useQuery, useMutation } from '@apollo/client'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 
 import { Query, Mutation, EducationLicense } from '@island.is/api/schema'
-import { Box, Button, SkeletonLoader } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  SkeletonLoader,
+  ModalBase,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { EducationCard, EmptyState, m } from '@island.is/service-portal/core'
-import { defineMessage } from 'react-intl'
+
+import * as styles from './LicenseCards.css'
 
 const EducationLicenseQuery = gql`
   query EducationLicenseQuery {
@@ -31,13 +39,21 @@ const FetchEducationSignedLicenseUrlMutation = gql`
 
 const LicenseCards = () => {
   const { data, loading: queryLoading } = useQuery<Query>(EducationLicenseQuery)
+  const [href, setHref] = useState('')
+  const [expiry, setExpiry] = useState(0)
   const [
     fetchEducationSignedLicenseUrl,
     { loading: mutationLoading },
   ] = useMutation<Mutation>(FetchEducationSignedLicenseUrlMutation)
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setExpiry((expiry) => expiry - 1)
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
   const { educationLicense = [] } = data || {}
-  const anchorRef = useRef<HTMLAnchorElement>(null)
 
   const handleDownload = async (license: EducationLicense) => {
     const { data } = await fetchEducationSignedLicenseUrl({
@@ -46,17 +62,8 @@ const LicenseCards = () => {
     if (!data?.fetchEducationSignedLicenseUrl) {
       return
     }
-
-    fetch(data?.fetchEducationSignedLicenseUrl.url)
-      .then((res) => res.blob())
-      .then((blob) => {
-        const href = window.URL.createObjectURL(blob)
-        anchorRef.current!.href = href
-        anchorRef.current!.download = `leyfisbref-${license.programme}.pdf`
-        anchorRef.current!.click()
-        anchorRef.current!.href = ''
-      })
-      .catch((err) => console.error(err))
+    setHref(data?.fetchEducationSignedLicenseUrl.url)
+    setExpiry(60)
   }
 
   if (queryLoading) {
@@ -88,18 +95,72 @@ const LicenseCards = () => {
               >
                 {mutationLoading
                   ? 'Innsiglun skjals í vinnslu…'
-                  : 'Sækja skjal'}
+                  : 'Senda skjal í undirritun'}
               </Button>
             }
           />
         </Box>
       ))}
-      <a target="__blank" style={{ display: 'none' }} ref={anchorRef} />
       {educationLicense.length === 0 && (
         <Box marginTop={8}>
           <EmptyState title={m.noDataFound} />
         </Box>
       )}
+      <ModalBase
+        baseId="downloadDocumentAfterESeal"
+        className={styles.modal}
+        isVisible={Boolean(href)}
+        onVisibilityChange={(isOpen) => {
+          if (!isOpen) {
+            setHref('')
+          }
+        }}
+      >
+        {({ closeModal }: { closeModal: () => void }) => (
+          <Box
+            background="white"
+            paddingY={[3, 6, 12]}
+            paddingX={[3, 6, 12, 15]}
+          >
+            <Stack space={4}>
+              <Stack space={2}>
+                <Text variant="h1">Skjal tilbúið í niðurhal</Text>
+                <Box marginTop={2}>
+                  <Text variant="intro">
+                    Leyfisbréfið þitt hefur verið innsiglað og er tilbúið til
+                    niðurhals.
+                  </Text>
+                </Box>
+                {expiry > 0 ? (
+                  <Text>
+                    Athugið að niðurhalslinkurinn rennur út eftir{' '}
+                    <Text as="span" variant="intro" color="red400">
+                      {expiry}
+                    </Text>{' '}
+                    sekúndur.
+                  </Text>
+                ) : (
+                  <Text color="red400">Niðurhalslinkurinn er útrunninn</Text>
+                )}
+              </Stack>
+              <Box
+                width="full"
+                display="inlineFlex"
+                justifyContent="spaceBetween"
+              >
+                <Button variant="ghost" onClick={closeModal}>
+                  Hætta við
+                </Button>
+                <Button disabled={expiry <= 0}>
+                  <a download href={href} target="_blank" rel="noreferrer">
+                    Hlaða niður
+                  </a>
+                </Button>
+              </Box>
+            </Stack>
+          </Box>
+        )}
+      </ModalBase>
     </>
   )
 }

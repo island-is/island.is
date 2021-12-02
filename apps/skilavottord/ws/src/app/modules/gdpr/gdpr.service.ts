@@ -1,15 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { GdprModel } from './model/gdpr.model'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { GdprModel } from './gdpr.model'
 
 @Injectable()
 export class GdprService {
   constructor(
     @InjectModel(GdprModel)
     private gdprModel: typeof GdprModel,
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
   async findByNationalId(nationalId: string): Promise<GdprModel> {
