@@ -94,6 +94,19 @@ export const applictionAnswersToXml = (
   return xml
 }
 
+export const whitelistedErrorMessages = [
+  'Villa við móttöku og vistun fylgiskjals.',
+  'Kennitala hjá fyrirtæki finnst ekki í viðskiptamannaskrá Sjúkratrygginga.',
+  'Undirtegund finnst ekki í stoðgögnum hjá Sjúkratryggingum Íslands.',
+  'Kennitala hjá tilkynnanda finnst ekki í þjóðskrá.',
+  'Tegund tilkynnanda finnst ekki í stoðgögnum hjá Sjúkratryggingum Íslands.',
+  'Tegund staðsetningar á skipi finnst ekki í stoðgögnum hjá Sjúkratryggingum Íslands.',
+  'Það á eftir að skrá hvaða tíma dags slysið átti sér stað.',
+  'Slysategund finnst ekki í stoðgögnum hjá Sjúkratryggingum Íslands.',
+  'Ekki er búið að fylla út í dagsetningu slys.',
+  'Kennitala hjá þeim slasaða finnst ekki í þjóðskrá.',
+]
+
 const whoIsTheNotificationForToId = (
   value: WhoIsTheNotificationForEnum,
 ): number => {
@@ -222,7 +235,11 @@ const employer = (
   const representative = answers.representative
 
   // If the juridical person is reporting the company info is the juridical persons information
-  if (utils.isRepresentativeOfCompanyOrInstitute(answers)) {
+  if (
+    answers.juridicalPerson &&
+    answers.applicant &&
+    utils.isRepresentativeOfCompanyOrInstitute(answers)
+  ) {
     return {
       fyrirtaekikennitala: answers.juridicalPerson.companyNationalId,
       fyrirtaekinafn: answers.juridicalPerson.companyName,

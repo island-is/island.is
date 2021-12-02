@@ -16,6 +16,7 @@ import {
   attachmentStatusToAttachmentRequests,
   getApplicationAttachmentStatus,
   getApplicationDocumentId,
+  whitelistedErrorMessages,
 } from './accident-notification.utils'
 import type { AccidentNotificationConfig } from './config'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
@@ -86,7 +87,14 @@ export class AccidentNotificationService {
       if (e.body && e.body.errorList && e.body.errorList.length > 0) {
         throw new Error(
           `Villa kom upp við vistun á umsókn. ${e.body.errorList
-            .map((e: any) => e.errorDesc)
+            .map((e: any) => {
+              if (
+                e.errorDesc &&
+                whitelistedErrorMessages.includes(e.errorDesc)
+              ) {
+                return e.errorDesc
+              }
+            })
             .join('\n')}`,
         )
       }
