@@ -54,7 +54,6 @@ const devConfig = {
     },
     criminalRecord: {
       clientConfig: {
-        secret: process.env.XROAD_CRIMINAL_RECORD_SECRET,
         xroadClientId:
           process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
         xroadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
@@ -202,7 +201,6 @@ const prodConfig = {
     },
     criminalRecord: {
       clientConfig: {
-        secret: process.env.XROAD_CRIMINAL_RECORD_SECRET,
         xroadClientId: process.env.XROAD_CLIENT_ID,
         xroadBaseUrl: process.env.XROAD_BASE_PATH,
         xroadPath: process.env.XROAD_CRIMINAL_RECORD_PATH,
