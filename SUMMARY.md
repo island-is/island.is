@@ -115,8 +115,8 @@
 
 - [API](libs/api/README.md)
   - [Domains](libs/api/domains/README.md)
-    - [API Domains Criminal Record](libs/api/domains/criminal-record/README.md)
     - [API Domains Assets](libs/api/domains/assets/README.md)
+    - [API Domains Criminal Record](libs/api/domains/criminal-record/README.md)
     - [Document Provider API](libs/api/domains/document-provider/README.md)
     - [API Domains Driving License](libs/api/domains/driving-license/README.md)
     - [API Domains Education](libs/api/domains/education/README.md)
