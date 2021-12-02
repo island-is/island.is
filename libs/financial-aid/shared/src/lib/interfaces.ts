@@ -314,10 +314,12 @@ export interface CreateStaff {
   email: string
   nationalId: string
   roles: StaffRole[]
+  municipalityName?: string
+  municipalityId?: string
 }
 
 export interface CreateStaffMuncipality {
-  id: string
-  name: string
-  homepage?: string
+  municipalityId: string
+  municipalityName: string
+  municipalityHomepage?: string
 }
