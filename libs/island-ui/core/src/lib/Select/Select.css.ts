@@ -292,16 +292,9 @@ export const optionSizes = styleVariants({
 export const dontRotateIconOnOpen = style({})
 
 globalStyle(
-  `${wrapper} .island-select__control${container}.island-select__control--menu-is-open ${indicatorsContainer}`,
+  `${wrapper} .island-select__control${container}.island-select__control--menu-is-open ${indicatorsContainer}:not(${dontRotateIconOnOpen})`,
   {
     transform: 'rotateX(180deg)',
-  },
-)
-
-globalStyle(
-  `${wrapper} .island-select__control${container}.island-select__control--menu-is-open ${indicatorsContainer}${dontRotateIconOnOpen}`,
-  {
-    transform: 'rotateX(0)',
   },
 )
 
