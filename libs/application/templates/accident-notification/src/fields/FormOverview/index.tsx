@@ -108,7 +108,11 @@ export const FormOverview: FC<FieldBaseProps> = ({
           formatMessage,
         )}
       </Text>
-      <ReviewGroup isLast>
+      <ReviewGroup
+        isLast
+        editAction={() => changeScreens('applicant')}
+        isEditable={States.DRAFT === application.state}
+      >
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
@@ -162,7 +166,11 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens('injuredPersonInformation')}
+            isEditable={States.DRAFT === application.state}
+          >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
@@ -204,7 +212,11 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens('childInCustody.fields')}
+            isEditable={States.DRAFT === application.state}
+          >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
@@ -232,7 +244,11 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens('juridicalPerson.company')}
+            isEditable={States.DRAFT === application.state}
+          >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
@@ -260,7 +276,11 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens('locationAndPurpose')}
+            isEditable={States.DRAFT === application.state}
+          >
             <GridRow>
               <GridColumn span="12/12">
                 <ValueLine
@@ -282,7 +302,11 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens(workplaceData.screenId)}
+            isEditable={States.DRAFT === application.state}
+          >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
@@ -320,7 +344,10 @@ export const FormOverview: FC<FieldBaseProps> = ({
                   fishingCompanyInfo.general.informationAboutShipTitle,
                 )}
               </Text>
-              <ReviewGroup isLast>
+              <ReviewGroup
+                isLast
+                editAction={() => changeScreens('fishingShipInfo')}
+              >
                 <GridRow>
                   <GridColumn span={['12/12', '12/12', '6/12']}>
                     <ValueLine
@@ -362,7 +389,11 @@ export const FormOverview: FC<FieldBaseProps> = ({
                   formatMessage,
                 )}
               </Text>
-              <ReviewGroup isLast>
+              <ReviewGroup
+                isLast
+                editAction={() => changeScreens(workplaceData.screenId)}
+                isEditable={States.DRAFT === application.state}
+              >
                 <GridRow>
                   <GridColumn span={['12/12', '12/12', '6/12']}>
                     <ValueLine
@@ -441,7 +472,11 @@ export const FormOverview: FC<FieldBaseProps> = ({
       <Text variant="h4" paddingTop={6} paddingBottom={3}>
         {formatMessage(accidentDetails.general.sectionTitle)}
       </Text>
-      <ReviewGroup isLast>
+      <ReviewGroup
+        isLast
+        editAction={() => changeScreens('accidentDetails')}
+        isEditable={States.DRAFT === application.state}
+      >
         <GridRow>
           <GridColumn span="12/12">
             <ValueLine
