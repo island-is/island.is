@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
+import { ValueType } from 'react-select/src/types'
 
 import {
   Text,
@@ -16,28 +17,25 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
-
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
-
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { accused as m } from '@island.is/judicial-system-web/messages'
-import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
-import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 import { isAccusedStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import lawyers from '@island.is/judicial-system-web/src/utils/lawyerScraper/db.json'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { setAndSendToServer as setSelectAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { ValueType } from 'react-select/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { accused as m } from '@island.is/judicial-system-web/messages'
+import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
+import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   loading: boolean
   handleNextButtonClick: (theCase: Case) => void
 }

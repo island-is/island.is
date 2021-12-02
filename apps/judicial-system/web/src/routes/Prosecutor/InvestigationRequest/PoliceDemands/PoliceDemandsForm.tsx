@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
+
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import {
   FormContentContainer,
@@ -54,7 +55,7 @@ const courtClaimPrefill: Partial<
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
 }
 
