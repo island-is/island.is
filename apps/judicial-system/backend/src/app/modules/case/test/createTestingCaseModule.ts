@@ -11,6 +11,8 @@ import { environment } from '../../../../environments'
 import { CourtService } from '../../court'
 import { EventService } from '../../event'
 import { UserService } from '../../user'
+import { FileService } from '../../file'
+import { AwsS3Service } from '../../aws-s3'
 import { Case } from '../models'
 import { CaseService } from '../case.service'
 import { CaseController } from '../case.controller'
@@ -21,8 +23,10 @@ jest.mock('@island.is/cms-translations')
 jest.mock('../../court/court.service.ts')
 jest.mock('../../event/event.service.ts')
 jest.mock('../../user/user.service.ts')
+jest.mock('../../file/file.service.ts')
+jest.mock('../../aws-s3/awsS3.service.ts')
 
-export const createTestingCaseModule = async (): Promise<CaseController> => {
+export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
     imports: [
       LoggingModule,
@@ -35,17 +39,28 @@ export const createTestingCaseModule = async (): Promise<CaseController> => {
     providers: [
       CourtService,
       UserService,
+      FileService,
+      AwsS3Service,
       EventService,
       SigningService,
       EmailService,
       IntlService,
       {
         provide: getModelToken(Case),
-        useValue: jest.fn(() => ({})),
+        useValue: {
+          findOne: jest.fn(),
+          update: jest.fn(),
+        },
       },
       CaseService,
     ],
   }).compile()
 
-  return caseModule.get<CaseController>(CaseController)
+  const caseModel = await caseModule.resolve<typeof Case>(getModelToken(Case))
+
+  const caseService = caseModule.get<CaseService>(CaseService)
+
+  const caseController = caseModule.get<CaseController>(CaseController)
+
+  return { caseModel, caseService, caseController }
 }

@@ -1,15 +1,12 @@
-import { Inject } from '@nestjs/common'
 import { Query, Resolver, Args } from '@nestjs/graphql'
-import { VehicleInformation } from './models'
-import { SamgongustofaService } from './models/samgongustofa.service'
+
+import { VehicleInformation } from './samgongustofa.model'
+import { SamgongustofaService } from './samgongustofa.service'
 import { Authorize } from '../auth'
 
 @Resolver(() => VehicleInformation)
 export class SamgongustofaResolver {
-  constructor(
-    @Inject(SamgongustofaService)
-    private samgongustofaService: SamgongustofaService,
-  ) {}
+  constructor(private samgongustofaService: SamgongustofaService) {}
 
   @Authorize({ throwOnUnAuthorized: false })
   @Query(() => [VehicleInformation])

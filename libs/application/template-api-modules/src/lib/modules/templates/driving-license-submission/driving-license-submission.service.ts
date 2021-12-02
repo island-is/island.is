@@ -27,16 +27,21 @@ export class DrivingLicenseSubmissionService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    // TODO: this logic should really be shared between the application and
-    // this function right here, one way or another...
     const applicationFor = answers.applicationFor || 'B-full'
     const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
 
-    return this.sharedTemplateAPIService.createCharge(
+    const response = await this.sharedTemplateAPIService.createCharge(
       auth.authorization,
       id,
       chargeItemCode,
     )
+
+    // last chance to validate before the user receives a dummy
+    if (!response.paymentUrl) {
+      throw new Error('paymentUrl missing in response')
+    }
+
+    return response
   }
 
   async submitApplication({
@@ -49,11 +54,6 @@ export class DrivingLicenseSubmissionService {
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,
-    )
-
-    await this.sharedTemplateAPIService.sendEmail(
-      generateDrivingLicenseSubmittedEmail,
-      application,
     )
 
     if (isPayment?.fulfilled) {
@@ -71,6 +71,11 @@ export class DrivingLicenseSubmissionService {
           `Application submission failed (${result.errorMessage})`,
         )
       }
+
+      await this.sharedTemplateAPIService.sendEmail(
+        generateDrivingLicenseSubmittedEmail,
+        application,
+      )
 
       return {
         success: result.success,

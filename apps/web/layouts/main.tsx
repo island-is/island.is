@@ -56,6 +56,9 @@ import {
 } from '../hooks/useLinkResolver'
 import { stringHash } from '@island.is/web/utils/stringHash'
 
+import Illustration from './Illustration'
+import * as styles from './main.css'
+
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
 
@@ -82,6 +85,7 @@ export interface LayoutProps {
   headerColorScheme?: ColorSchemes
   headerButtonColorScheme?: ButtonTypes['colorScheme']
   showFooter?: boolean
+  showFooterIllustration?: boolean
   categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
   footerUpperInfo?: FooterLinkProps[]
@@ -121,13 +125,13 @@ const Layout: NextComponentType<
   headerColorScheme,
   headerButtonColorScheme,
   showFooter = true,
+  showFooterIllustration = false,
   categories,
   topMenuCustomLinks,
   footerUpperInfo,
   footerUpperContact,
   footerLowerMenu,
   footerMiddleMenu,
-  footerTagsMenu,
   namespace,
   alertBannerContent,
   respOrigin,
@@ -318,21 +322,21 @@ const Layout: NextComponentType<
         </MenuTabsContext.Provider>
         {showFooter && (
           <Hidden print={true}>
+            {showFooterIllustration && (
+              <Illustration className={styles.illustration} />
+            )}
             <Footer
               topLinks={footerUpperInfo}
               topLinksContact={footerUpperContact}
               bottomLinks={footerLowerMenu}
               middleLinks={footerMiddleMenu}
               bottomLinksTitle={t.siteExternalTitle}
-              tagLinks={footerTagsMenu}
               middleLinksTitle={String(namespace.footerMiddleLabel)}
-              tagLinksTitle={String(namespace.footerRightLabel)}
               languageSwitchLink={{
                 title: activeLocale === 'en' ? 'Íslenska' : 'English',
                 href: activeLocale === 'en' ? '/' : '/en',
               }}
               showMiddleLinks
-              showTagLinks
             />
           </Hidden>
         )}

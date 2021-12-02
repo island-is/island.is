@@ -7,7 +7,6 @@ export const Envs: EnvironmentConfigs = {
     type: 'dev',
     featuresOn: [],
     defaultMaxReplicas: 3,
-    rolloutStrategy: 'Recreate',
     releaseName: 'web',
     awsAccountId: '013313053092',
     awsAccountRegion: 'eu-west-1',
