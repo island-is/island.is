@@ -1,19 +1,27 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
+import { Authorize } from '../auth'
 import { logger } from '@island.is/logging'
 
 import { RecyclingPartnerModel } from './recyclingPartner.model'
 import { RecyclingPartnerService } from './recyclingPartner.service'
 
+@Authorize({ throwOnUnAuthorized: false })
 @Resolver(() => RecyclingPartnerModel)
 export class RecyclingPartnerResolver {
   constructor(private recyclingPartnerService: RecyclingPartnerService) {}
 
+  /*
+    All recycling companies
+  */
   @Query(() => [RecyclingPartnerModel])
   async skilavottordAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
     return await this.recyclingPartnerService.findAll()
   }
 
+  /*
+    Recycling company
+  */
   @Query(() => [RecyclingPartnerModel])
   async skilavottordAllActiveRecyclingPartners(): Promise<
     RecyclingPartnerModel[]
@@ -21,6 +29,10 @@ export class RecyclingPartnerResolver {
     return await this.recyclingPartnerService.findActive()
   }
 
+  /*
+    Add recycling company to database
+  */
+  @Authorize({ roles: ['developer', 'recyclingFund'] })
   @Mutation((_) => Boolean)
   async createSkilavottordRecyclingPartner(
     @Args('companyId') nationalId: string,
@@ -45,7 +57,10 @@ export class RecyclingPartnerResolver {
     await this.recyclingPartnerService.createRecyclingPartner(rp)
     return true
   }
-
+  /*
+    Deactivate recycling company to database
+  */
+  @Authorize({ roles: ['developer', 'recyclingFund'] })
   @Mutation((_) => String)
   async skilavottordDeactivateRecycllingPartner(
     @Args('companyId') nationalId: string,
@@ -59,7 +74,10 @@ export class RecyclingPartnerResolver {
     )
     return nationalId
   }
-
+  /*
+    Activate recycling company to database
+  */
+  @Authorize({ roles: ['developer', 'recyclingFund'] })
   @Mutation((_) => String)
   async skilavottordActivateRecycllingPartner(
     @Args('companyId') nationalId: string,

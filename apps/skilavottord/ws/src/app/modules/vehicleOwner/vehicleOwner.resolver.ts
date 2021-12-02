@@ -8,6 +8,7 @@ import { Authorize } from '../auth'
 import { VehicleOwnerModel } from './vehicleOwner.model'
 import { VehicleOwnerService } from './vehicleOwner.service'
 
+@Authorize({ throwOnUnAuthorized: false })
 @Resolver(() => VehicleOwnerModel)
 export class VehicleOwnerResolver {
   constructor(
@@ -16,7 +17,9 @@ export class VehicleOwnerResolver {
     private logger: Logger,
   ) {}
 
-  @Authorize({ throwOnUnAuthorized: false })
+  /*
+    All owners' vehicle
+  */
   @Query(() => [VehicleOwnerModel])
   async skilavottordAllVehicleOwners(): Promise<VehicleOwnerModel[]> {
     const res = await this.vehicleOwnerService.findAll()
@@ -27,6 +30,9 @@ export class VehicleOwnerResolver {
   }
 
   //TODO find right name
+  /*
+    All deregistered owner's vehicles
+  */
   @Query(() => VehicleOwnerModel)
   async skilavottordVehiclesFromLocal(
     @Args('nationalId') nationalId: string,
@@ -38,6 +44,10 @@ export class VehicleOwnerResolver {
     return res
   }
 
+  /*
+
+  */
+  @Authorize({ roles: ['developer', 'recyclingCompany', 'recyclingFund'] })
   @Query(() => [VehicleOwnerModel])
   async skilavottordRecyclingPartnerVehicles(
     @Args('partnerId') partnerId: string,
@@ -49,6 +59,9 @@ export class VehicleOwnerResolver {
     return res
   }
 
+  /*
+    Create owner vehicle
+  */
   @Mutation(() => Boolean)
   async createSkilavottordVehicleOwner(
     @Args('nationalId') nationalId: string,

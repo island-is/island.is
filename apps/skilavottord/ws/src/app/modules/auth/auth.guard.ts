@@ -9,7 +9,7 @@ import { AuthService } from './auth.service'
 
 type AuthorizeOptions = {
   throwOnUnAuthorized?: boolean
-  role?: Role
+  roles?: Role[]
 }
 
 // Can't use the Dependency Injection since GraphQLAuthGuard needs to
@@ -27,22 +27,23 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
   }
 
   handleRequest<TUser extends AuthUser>(err: Error, user: TUser): TUser {
-    const { throwOnUnAuthorized, role } = this.options
+    const { throwOnUnAuthorized, roles } = this.options
     if (throwOnUnAuthorized && (err || !user)) {
       throw new AuthenticationError((err && err.message) || 'Unauthorized')
     }
-    if (!authService.checkRole(user, role)) {
+    if (!roles.find((role) => authService.checkRole(user, role))) {
       throw new ForbiddenError('Forbidden')
     }
+
     return user
   }
 }
 
 export const Authorize = (
-  { throwOnUnAuthorized = true, role }: AuthorizeOptions = {
+  { throwOnUnAuthorized = true, roles }: AuthorizeOptions = {
     throwOnUnAuthorized: true,
-    role: undefined,
+    roles: [],
   },
 ): MethodDecorator & ClassDecorator => {
-  return UseGuards(new GraphQLAuthGuard({ throwOnUnAuthorized, role }))
+  return UseGuards(new GraphQLAuthGuard({ throwOnUnAuthorized, roles }))
 }
