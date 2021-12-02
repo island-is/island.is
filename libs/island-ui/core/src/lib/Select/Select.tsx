@@ -1,6 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
 import ReactSelect from 'react-select'
+import CreatableReactSelect from 'react-select/creatable'
 import {
   Option,
   Menu,
@@ -36,6 +37,7 @@ export const Select = ({
   defaultValue,
   icon = 'chevronDown',
   isSearchable = true,
+  isCreatable = false,
   size = 'md',
   backgroundColor = 'white',
   required,
@@ -48,8 +50,59 @@ export const Select = ({
         'aria-describedby': errorId,
       }
     : {}
+  const [currentValue, setCurrentValue] = React.useState('')
 
-  return (
+  return isCreatable ? (
+    <div
+      className={cn(styles.wrapper, styles.wrapperColor[backgroundColor])}
+      data-testid={`creatable-select-${name}`}
+    >
+      <CreatableReactSelect
+        instanceId={id}
+        noOptionsMessage={() => noOptionsMessage || null}
+        id={id}
+        name={name}
+        isDisabled={disabled}
+        options={options}
+        styles={customStyles}
+        classNamePrefix="island-select"
+        onChange={onChange}
+        label={label}
+        value={value}
+        icon={icon}
+        placeholder={placeholder}
+        defaultValue={defaultValue}
+        isOptionDisabled={(option) => !!option.disabled}
+        hasError={hasError}
+        isSearchable={isSearchable}
+        size={size}
+        required={required}
+        ariaError={ariaError as AriaError}
+        formatGroupLabel={formatGroupLabel}
+        formatCreateLabel={() => currentValue}
+        createOptionPosition="first"
+        onInputChange={(inputValue) => setCurrentValue(inputValue)}
+        components={{
+          Control,
+          Input,
+          Placeholder,
+          ValueContainer,
+          SingleValue,
+          DropdownIndicator,
+          IndicatorsContainer,
+          Menu,
+          Option,
+        }}
+        isClearable
+        backspaceRemovesValue
+      />
+      {hasError && errorMessage && (
+        <div id={errorId} className={styles.errorMessage} aria-live="assertive">
+          {errorMessage}
+        </div>
+      )}
+    </div>
+  ) : (
     <div
       className={cn(styles.wrapper, styles.wrapperColor[backgroundColor])}
       data-testid={`select-${name}`}

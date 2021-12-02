@@ -217,6 +217,7 @@ export const singleValueSizes = styleVariants(
 )
 export const indicatorsContainer = style(
   {
+    cursor: 'pointer',
     selectors: {
       [`${wrapper} &`]: {
         height: '100%',

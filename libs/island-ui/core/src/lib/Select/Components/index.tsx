@@ -52,6 +52,7 @@ export interface SelectProps {
   defaultValue?: ReactSelectOption
   icon?: string
   isSearchable?: boolean
+  isCreatable?: boolean
   size?: 'sm' | 'md'
   backgroundColor?: InputBackgroundColor
   required?: boolean
