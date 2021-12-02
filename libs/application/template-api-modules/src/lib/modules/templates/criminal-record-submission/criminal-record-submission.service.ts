@@ -20,7 +20,7 @@ export class CriminalRecordSubmissionService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly criminalRecordService: CriminalRecordService,
     private readonly syslumennService: SyslumennService,
-  ) { }
+  ) {}
 
   async createCharge({
     application: { id },
@@ -35,7 +35,9 @@ export class CriminalRecordSubmissionService {
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    const isPayment: { fulfilled: boolean } | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
+    const isPayment:
+      | { fulfilled: boolean }
+      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,
     )

@@ -48,25 +48,27 @@ describe('CriminalRecordService', () => {
       expect(response.contentBase64).toBeTruthy()
     })
 
-    it("should throw an error", async () => {
+    it('should throw an error', async () => {
       expect.assertions(1)
 
-      return await service.getCriminalRecord(MOCK_NATIONAL_ID_NOT_EXISTS)
+      return await service
+        .getCriminalRecord(MOCK_NATIONAL_ID_NOT_EXISTS)
         .catch((e) => expect(e).toBeTruthy())
     })
   })
 
   describe('checkCriminalRecord', () => {
-    it("should not throw an error", async () => {
+    it('should not throw an error', async () => {
       expect(async () => {
         await service.checkCriminalRecord(MOCK_NATIONAL_ID)
       }).not.toThrowError()
     })
 
-    it("should throw an error", async () => {
+    it('should throw an error', async () => {
       expect.assertions(1)
 
-      return await service.checkCriminalRecord(MOCK_NATIONAL_ID_NOT_EXISTS)
+      return await service
+        .checkCriminalRecord(MOCK_NATIONAL_ID_NOT_EXISTS)
         .catch((e) => expect(e).toBeTruthy())
     })
   })

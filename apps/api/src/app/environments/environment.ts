@@ -27,7 +27,9 @@ const prodConfig = () => ({
   },
   criminalRecord: {
     secret: process.env.XROAD_CRIMINAL_RECORD_SECRET,
-    xroadPath: process.env.XROAD_CRIMINAL_RECORD_PATH ?? 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2'
+    xroadPath:
+      process.env.XROAD_CRIMINAL_RECORD_PATH ??
+      'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
   },
   education: {
     xroadLicenseServiceId: process.env.XROAD_MMS_LICENSE_SERVICE_ID,

@@ -37,7 +37,7 @@ export class PaymentService {
     @Inject(PAYMENT_OPTIONS)
     private paymentConfig: PaymentServiceOptions,
     private paymentApi: PaymentAPI,
-  ) { }
+  ) {}
 
   async findPaymentByApplicationId(
     applicationId: string,

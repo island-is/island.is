@@ -8,17 +8,13 @@ const url = (path: string) => {
 }
 
 export const requestHandlers = [
-  rest.get(
-    url('/v2/api/pdf/Create/:personId'), (req, res, ctx) => {
-      if (req.params.personId === MOCK_NATIONAL_ID) {
-        return res(ctx.status(200), ctx.text('ok'))
-      }
-      else if (req.params.personId === MOCK_NATIONAL_ID_NOT_EXISTS) {
-        return res(ctx.status(500), ctx.text('Internal Server Error'))
-      }
-      else {
-        return res(ctx.status(200), ctx.text(''))
-      }
-    },
-  ),
+  rest.get(url('/v2/api/pdf/Create/:personId'), (req, res, ctx) => {
+    if (req.params.personId === MOCK_NATIONAL_ID) {
+      return res(ctx.status(200), ctx.text('ok'))
+    } else if (req.params.personId === MOCK_NATIONAL_ID_NOT_EXISTS) {
+      return res(ctx.status(500), ctx.text('Internal Server Error'))
+    } else {
+      return res(ctx.status(200), ctx.text(''))
+    }
+  }),
 ]

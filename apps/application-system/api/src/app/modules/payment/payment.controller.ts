@@ -54,7 +54,7 @@ export class PaymentController {
     private readonly paymentAPI: PaymentAPI,
     @InjectModel(Payment)
     private paymentModel: typeof Payment,
-  ) { }
+  ) {}
   @Scopes(ApplicationScope.write)
   @Post('applications/:applicationId/payment')
   @ApiCreatedResponse({ type: CreatePaymentResponseDto })
@@ -89,8 +89,8 @@ export class PaymentController {
     const allCatalogs =
       payload.chargeItemCode.slice(0, 2) === 'AY'
         ? await this.paymentAPI.getCatalogByPerformingOrg(
-          DISTRICT_COMMISSIONER_OF_REYKJAVIK,
-        )
+            DISTRICT_COMMISSIONER_OF_REYKJAVIK,
+          )
         : await this.paymentAPI.getCatalog()
 
     // Sort through all catalogs to find the correct one.

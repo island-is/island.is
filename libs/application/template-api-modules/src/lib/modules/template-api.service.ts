@@ -28,13 +28,13 @@ interface ApplicationApiAction {
 
 type PerformActionResult =
   | {
-    success: true
-    response: unknown
-  }
+      success: true
+      response: unknown
+    }
   | {
-    success: false
-    error: string
-  }
+      success: false
+      error: string
+    }
 
 @Injectable()
 export class TemplateAPIService {
@@ -55,7 +55,7 @@ export class TemplateAPIService {
     private readonly publicDebtPaymentPlanService: PublicDebtPaymentPlanTemplateService,
     private readonly generalPetitionService: GeneralPetitionService,
     private readonly criminalRecordSubmissionService: CriminalRecordSubmissionService,
-  ) { }
+  ) {}
 
   private async tryRunningActionOnService(
     service:

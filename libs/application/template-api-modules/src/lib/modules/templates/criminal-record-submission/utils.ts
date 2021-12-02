@@ -50,7 +50,9 @@ const syslumennOffices = {
 export function syslumennDataFromPostalCode(postalCode: string) {
   for (const [, value] of Object.entries(syslumennOffices)) {
     if (
-      value.postalCodePrefixes.some((prefix) => (postalCode || '').startsWith(prefix))
+      value.postalCodePrefixes.some((prefix) =>
+        (postalCode || '').startsWith(prefix),
+      )
     ) {
       return value
     }

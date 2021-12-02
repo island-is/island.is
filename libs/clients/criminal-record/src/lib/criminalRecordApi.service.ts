@@ -4,15 +4,17 @@ import { CrimeCertificateApi } from '../../gen/fetch'
 
 @Injectable()
 export class CriminalRecordApi {
-  constructor(private readonly api: CrimeCertificateApi) { }
+  constructor(private readonly api: CrimeCertificateApi) {}
 
   public async getCriminalRecord(ssn: string): Promise<CriminalRecord> {
-    const contentBlob = await this.api.apiPdfCreatePersonIdGet({ personId: ssn })
+    const contentBlob = await this.api.apiPdfCreatePersonIdGet({
+      personId: ssn,
+    })
     const contentArrayBuffer = await contentBlob.arrayBuffer()
     const contentBase64 = Buffer.from(contentArrayBuffer).toString('base64')
 
     const record: CriminalRecord = {
-      contentBase64: contentBase64
+      contentBase64: contentBase64,
     }
 
     return record

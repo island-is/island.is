@@ -8,7 +8,7 @@ export class PaymentCallbackController {
   constructor(
     @InjectModel(Payment)
     private paymentModel: typeof Payment,
-  ) { }
+  ) {}
 
   @Post('application-payment/:applicationId/:id')
   async paymentApproved(

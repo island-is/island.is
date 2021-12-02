@@ -10,8 +10,7 @@ export interface Person {
   address: Address
 }
 
-export interface NationalRegistry extends Person {
-}
+export interface NationalRegistry extends Person {}
 
 export interface UserProfile {
   email: string

@@ -30,14 +30,17 @@ export const ApprovedExpired: Form = buildForm({
       id: 'confirmation',
       title: m.confirmation,
       children: [
-        buildCustomField({
-          component: 'ConfirmationField',
-          id: 'confirmationField',
-          title: '',
-          description: '',
-        }, {
-          isExpired: true
-        }),
+        buildCustomField(
+          {
+            component: 'ConfirmationField',
+            id: 'confirmationField',
+            title: '',
+            description: '',
+          },
+          {
+            isExpired: true,
+          },
+        ),
       ],
     }),
   ],
