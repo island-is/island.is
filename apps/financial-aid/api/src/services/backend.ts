@@ -16,7 +16,10 @@ import {
   ApplicationStateUrl,
   UpdateApplicationTableResponseType,
   UpdateStaff,
+  UpdateMunicipalityActivity,
   Staff,
+  CreateStaff,
+  CreateMunicipality,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -45,6 +48,10 @@ class BackendAPI extends RESTDataSource {
     return this.get(`application/id/${id}`)
   }
 
+  searchForApplication(nationalId: string): Promise<Application[]> {
+    return this.get(`application/find/${nationalId}`)
+  }
+
   getApplicationFilters(): Promise<ApplicationFilters> {
     return this.get('application/filters')
   }
@@ -58,15 +65,26 @@ class BackendAPI extends RESTDataSource {
   }
 
   createMunicipality(
-    createMunicipality: CreateMunicipalityInput,
+    createMunicipality: CreateMunicipality,
+    createAdmin: CreateStaff,
   ): Promise<Municipality> {
-    return this.post('municipality', createMunicipality)
+    return this.post('municipality', {
+      municipalityInput: createMunicipality,
+      adminInput: createAdmin,
+    })
   }
 
   updateMunicipality(
     updateMunicipality: UpdateMunicipalityInput,
   ): Promise<Municipality> {
     return this.put('municipality', updateMunicipality)
+  }
+
+  updateMunicipalityActivity(
+    id: string,
+    updateMunicipality: UpdateMunicipalityActivity,
+  ): Promise<Municipality> {
+    return this.put(`municipality/activity/${id}`, updateMunicipality)
   }
 
   createApplication(

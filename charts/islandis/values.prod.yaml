@@ -51,8 +51,6 @@ air-discount-scheme-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/air-discount-scheme-api'
     create: true
     name: 'air-discount-scheme-api'
-  strategy:
-    type: 'RollingUpdate'
 air-discount-scheme-backend:
   enabled: true
   env:
@@ -117,8 +115,6 @@ air-discount-scheme-backend:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'RollingUpdate'
 air-discount-scheme-web:
   enabled: true
   env:
@@ -158,8 +154,6 @@ air-discount-scheme-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'RollingUpdate'
 api:
   args:
     - '--tls-min-v1.0'
@@ -198,9 +192,13 @@ api:
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS/EDU/5708150320/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS/EDU/5708150320/MMS-Protected/license-api-v1'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+    XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000'
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
     XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS/GOV/5501692829/island-is/application-payment-v1/'
     XROAD_PAYMENT_PROVIDER_ID: 'IS/GOV/5402697509/FJS-Public'
+    XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
@@ -305,8 +303,6 @@ api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/api'
     create: true
     name: 'api'
-  strategy:
-    type: 'RollingUpdate'
 application-system-api:
   enabled: true
   env:
@@ -449,8 +445,6 @@ application-system-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/application-system-api'
     create: true
     name: 'application-system-api'
-  strategy:
-    type: 'RollingUpdate'
 application-system-form:
   enabled: true
   env:
@@ -494,8 +488,6 @@ application-system-form:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'RollingUpdate'
 contentful-translation-extension:
   enabled: true
   env:
@@ -532,8 +524,6 @@ contentful-translation-extension:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'RollingUpdate'
 download-service:
   enabled: true
   env:
@@ -581,8 +571,6 @@ download-service:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'RollingUpdate'
 endorsement-system-api:
   args:
     - '--tls-min-v1.0'
@@ -652,8 +640,6 @@ endorsement-system-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/endorsement-system-api'
     create: true
     name: 'endorsement-system-api'
-  strategy:
-    type: 'RollingUpdate'
 endorsement-system-scripts-update-metadata:
   args:
     - '--tls-min-v1.0'
@@ -698,8 +684,6 @@ endorsement-system-scripts-update-metadata:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'RollingUpdate'
 global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
@@ -766,8 +750,6 @@ icelandic-names-registry-backend:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'RollingUpdate'
 island-ui-storybook:
   enabled: true
   env:
@@ -804,8 +786,6 @@ island-ui-storybook:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'RollingUpdate'
 namespaces:
   namespaces:
     - 'application-system'
@@ -871,8 +851,6 @@ party-letter-registry-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'RollingUpdate'
 search-indexer-service:
   enabled: true
   env:
@@ -982,8 +960,6 @@ search-indexer-service:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/search-indexer'
     create: true
     name: 'search-indexer'
-  strategy:
-    type: 'RollingUpdate'
 service-portal:
   enabled: true
   env:
@@ -1027,8 +1003,6 @@ service-portal:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'RollingUpdate'
 service-portal-api:
   enabled: true
   env:
@@ -1101,8 +1075,6 @@ service-portal-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/service-portal-api'
     create: true
     name: 'service-portal-api'
-  strategy:
-    type: 'RollingUpdate'
 services-documents:
   enabled: true
   env:
@@ -1150,8 +1122,6 @@ services-documents:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'RollingUpdate'
 skilavottord-web:
   enabled: true
   env:
@@ -1192,8 +1162,6 @@ skilavottord-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'RollingUpdate'
 skilavottord-ws:
   enabled: true
   env:
@@ -1266,8 +1234,6 @@ skilavottord-ws:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'RollingUpdate'
 temporary-voter-registry-api:
   enabled: true
   env:
@@ -1316,8 +1282,6 @@ temporary-voter-registry-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'RollingUpdate'
 web:
   enabled: true
   env:
@@ -1374,8 +1338,6 @@ web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  strategy:
-    type: 'RollingUpdate'
 xroad-collector:
   args:
     - 'main.js'
@@ -1422,5 +1384,3 @@ xroad-collector:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/xroad-collector'
     create: true
     name: 'xroad-collector'
-  strategy:
-    type: 'RollingUpdate'

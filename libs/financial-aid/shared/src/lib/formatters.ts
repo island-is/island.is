@@ -1,3 +1,4 @@
+import { months } from './const'
 import { ApplicationFiltersEnum } from './enums'
 import {
   HomeCircumstances,
@@ -10,7 +11,12 @@ import {
   FamilyStatus,
   MartialStatusType,
 } from './enums'
-import { Aid, ApplicationEvent } from './interfaces'
+import {
+  Aid,
+  ApplicantEmailData,
+  ApplicationEvent,
+  Municipality,
+} from './interfaces'
 import type { KeyMapping } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
@@ -194,12 +200,88 @@ export const getFileTypeName: KeyMapping<FileType, string> = {
   SpouseFiles: 'Gögn frá maka',
 }
 
-export const getEmailTextFromState: KeyMapping<ApplicationState, string> = {
-  New: 'Umsókn þín er móttekin',
-  DataNeeded: 'Okkur vantar gögn til að klára að vinna úr umsókninni',
-  InProgress: 'Umsókn þín er móttekin og er nú í vinnslu',
-  Rejected: 'Umsókn þinni um aðstoð hefur verið synjað',
-  Approved: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+export const getApplicantEmailDataFromEventType = (
+  event:
+    | ApplicationEventType.NEW
+    | ApplicationEventType.DATANEEDED
+    | ApplicationEventType.REJECTED
+    | ApplicationEventType.APPROVED,
+  linkToStatusPage: string,
+  applicantEmail: string,
+  municipality: Municipality,
+  createdDate: Date,
+  typeOfDataNeeded?: string,
+): { subject: string; data: ApplicantEmailData } => {
+  const getPeriod = {
+    month: months[createdDate.getMonth()],
+    year: createdDate.getFullYear(),
+  }
+  switch (event) {
+    case ApplicationEventType.NEW:
+      return {
+        subject: 'Umsókn fyrir fjárhagsaðstoð móttekin',
+        data: {
+          title: 'Fjárhagsaðstoð Umsókn móttekin',
+          header: `Umsókn þín fyrir ${getPeriod.month} er móttekin og er nú í vinnslu`,
+          content:
+            'Umsóknin verður afgreidd eins fljótt og auðið er. Þú færð annan tölvupóst þegar vinnsla klárast eða ef við þurfum einhver gögn beint frá þér.<br><br>Þú getur fylgst með stöðu umsóknar, sent inn spurningar, o.fl. í þeim dúr á stöðusíðu umsóknarinnar. Kíktu á hana með því að smella á hnappinn fyrir neðan.',
+          applicationChange: 'Umsókn móttekin og í vinnslu',
+          applicationMonth: getPeriod.month,
+          applicationYear: getPeriod.year,
+          statusPageUrl: linkToStatusPage,
+          applicantEmail,
+          municipality,
+        },
+      }
+
+    case ApplicationEventType.DATANEEDED:
+      return {
+        subject: 'Okkur vantar gögn til að klára að vinna úr umsókninni',
+        data: {
+          title: 'Fjárhagsaðstoð Umsókn vantar gögn',
+          header: `Okkur vantar gögn til að klára að vinna úr umsókninni`,
+          content: `Við þurfum að sjá <strong>${typeOfDataNeeded}</strong>. Smelltu á hnappinn til að heimsækja þína stöðusíðu þar sem þú getur sent okkur gögn.`,
+          applicationChange: 'Umsóknin bíður eftir gögnum',
+          applicationMonth: getPeriod.month,
+          applicationYear: getPeriod.year,
+          statusPageUrl: linkToStatusPage,
+          applicantEmail,
+          municipality,
+        },
+      }
+
+    case ApplicationEventType.REJECTED:
+      return {
+        subject: 'Umsókn þinni um aðstoð hefur verið synjað',
+        data: {
+          title: 'Fjárhagsaðstoð Umsókn synjað',
+          header: 'Umsókn þinni um aðstoð hefur verið synjað',
+          content: `Umsókn þinni um fjárhagsaðstoð í ${getPeriod.month} hefur verið synjað á grundvelli 12. gr.: Tekjur og eignir umsækjanda. Smelltu á hlekkinn hér fyrir neðan til að kynna þér reglur um fjárhagsaðstoð.`,
+          applicationChange: 'Umsókn synjað',
+          applicationMonth: getPeriod.month,
+          applicationYear: getPeriod.year,
+          statusPageUrl: linkToStatusPage,
+          applicantEmail,
+          municipality,
+        },
+      }
+
+    case ApplicationEventType.APPROVED:
+      return {
+        subject: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+        data: {
+          title: 'Fjárhagsaðstoð Umsókn samþykkt',
+          header: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+          content: `Umsóknin þín um fjárhagsaðstoð í ${getPeriod.month} er samþykkt en athugaðu að hún byggir á tekjum og öðrum þáttum sem kunna að koma upp í ${getPeriod.month} og getur því tekið breytingum.`,
+          applicationChange: 'Umsóknin er samþykkt og áætlun liggur fyrir',
+          applicationMonth: getPeriod.month,
+          applicationYear: getPeriod.year,
+          statusPageUrl: linkToStatusPage,
+          applicantEmail,
+          municipality,
+        },
+      }
+  }
 }
 
 export const applicationStateToFilterEnum: KeyMapping<

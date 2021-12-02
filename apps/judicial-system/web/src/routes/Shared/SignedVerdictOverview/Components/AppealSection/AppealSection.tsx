@@ -1,21 +1,16 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
+import { useEffectOnce } from 'react-use'
+
 import { Box, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   CaseAppealDecision,
   InstitutionType,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
-import * as styles from './AppealSection.css'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
-import AccusedAppealInfo from '../Accused/AccusedAppealInfo'
-import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'
-import AccusedAppealDatePicker from '../Accused/AccusedAppealDatePicker'
-import { useEffectOnce } from 'react-use'
-import ProsecutorAppealDatePicker from '../Prosecutor/ProsecutorAppealDatePicker'
 import {
   capitalize,
   formatAccusedByGender,
@@ -23,6 +18,13 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type { Case } from '@island.is/judicial-system/types'
+
+import AccusedAppealInfo from '../Accused/AccusedAppealInfo'
+import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'
+import AccusedAppealDatePicker from '../Accused/AccusedAppealDatePicker'
+import ProsecutorAppealDatePicker from '../Prosecutor/ProsecutorAppealDatePicker'
+import * as styles from './AppealSection.css'
 
 interface Props {
   workingCase: Case
