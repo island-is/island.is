@@ -538,6 +538,12 @@ download-service:
   enabled: true
   env:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    XROAD_BASE_PATH: 'http://securityserver.island.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
+    XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+    XROAD_FINANCES_PATH: 'IS/GOV/5402697509/FJS-Public/financeIsland'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-external'
