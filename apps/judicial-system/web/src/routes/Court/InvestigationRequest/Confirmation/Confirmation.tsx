@@ -1,32 +1,24 @@
 import React, { useContext, useEffect, useState } from 'react'
+
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
-import type {
-  Case,
-  RequestSignatureResponse,
-} from '@island.is/judicial-system/types'
 import {
-  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { useRouter } from 'next/router'
 import ConfirmationForm from './ConfirmationForm'
 import SigningModal from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import type { RequestSignatureResponse } from '@island.is/judicial-system/types'
 
 const Confirmation = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
-
-  const router = useRouter()
-  const id = router.query.id
-
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [
@@ -40,12 +32,6 @@ const Confirmation = () => {
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
   }, [])
-
-  useEffect(() => {
-    if (!workingCase && data?.case) {
-      setWorkingCase(data.case)
-    }
-  }, [workingCase, setWorkingCase, data])
 
   useEffect(() => {
     if (!modalVisible) {
@@ -81,10 +67,10 @@ const Confirmation = () => {
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.CONFIRMATION}
-      isLoading={loading}
-      notFound={data?.case === undefined}
+      isLoading={isLoadingWorkingCase}
+      notFound={caseNotFound}
     >
-      {workingCase && user && (
+      {user && (
         <>
           <ConfirmationForm
             workingCase={workingCase}

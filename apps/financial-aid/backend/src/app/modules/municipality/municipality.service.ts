@@ -87,8 +87,8 @@ export class MunicipalityService {
           this.staffService.createStaff(
             admin,
             {
-              id: municipality.municipalityId,
-              name: municipality.name,
+              municipalityId: municipality.municipalityId,
+              municipalityName: municipality.name,
             },
             t,
           )

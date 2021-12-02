@@ -35,7 +35,7 @@ const Estimation = ({
       return aidCalculator(
         homeCircumstances,
         martialStatusTypeFromMartialCode(
-          nationalRegistryData?.spouse.maritalStatus,
+          nationalRegistryData?.spouse?.maritalStatus,
         ) === MartialStatusType.SINGLE
           ? municipality.individualAid
           : municipality.cohabitationAid,
