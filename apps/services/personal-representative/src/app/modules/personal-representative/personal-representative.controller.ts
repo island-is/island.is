@@ -181,7 +181,7 @@ export class PersonalRepresentativeController {
   })
   async create(
     @Body() personalRepresentatives: PersonalRepresentativeDTO,
-  ): Promise<PersonalRepresentativeDTO> {
+  ): Promise<PersonalRepresentativeDTO | null> {
     return await this.prService.createAsync(personalRepresentatives)
   }
 }

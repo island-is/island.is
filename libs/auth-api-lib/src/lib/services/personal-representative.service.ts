@@ -5,7 +5,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Op } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
 import { PersonalRepresentative } from '../entities/models/personal-representative.model'
 import { PersonalRepresentativeRight } from '../entities/models/personal-representative-right.model'
 import { PersonalRepresentativeRightType } from '../entities/models/personal-representative-right-type.model'
@@ -30,7 +30,7 @@ export class PersonalRepresentativeService {
   async getAllAsync(
     includeInvalid: boolean,
   ): Promise<PersonalRepresentativeDTO[]> {
-    const whereClause: any = includeInvalid
+    const whereClause: WhereOptions = includeInvalid
       ? {}
       : { validTo: this.validToClause }
     const personalRepresentatives = await this.personalRepresentativeModel.findAll(
@@ -59,10 +59,10 @@ export class PersonalRepresentativeService {
     nationalIdPersonalRepresentative: string,
     includeInvalid: boolean,
   ): Promise<PersonalRepresentativeDTO[]> {
-    let whereClause: any = {
+    const whereClause: WhereOptions = {
       nationalIdPersonalRepresentative: nationalIdPersonalRepresentative,
     }
-    let whereClauseRights: any = {}
+    const whereClauseRights: WhereOptions = {}
     if (!includeInvalid) {
       whereClause['validTo'] = this.validToClause
       whereClauseRights['validTo'] = this.validToClause
@@ -93,10 +93,10 @@ export class PersonalRepresentativeService {
     nationalIdRepresentedPerson: string,
     includeInvalid: boolean,
   ): Promise<PersonalRepresentativeDTO | null> {
-    let whereClause: any = {
+    const whereClause: WhereOptions = {
       nationalIdRepresentedPerson: nationalIdRepresentedPerson,
     }
-    let whereClauseRights: any = {}
+    const whereClauseRights: WhereOptions = {}
     if (!includeInvalid) {
       whereClause['validTo'] = this.validToClause
       whereClauseRights['validTo'] = this.validToClause
@@ -144,7 +144,10 @@ export class PersonalRepresentativeService {
   }> {
     page--
     const offset = page * count
-    let whereClause: any = includeInvalid ? {} : { validTo: this.validToClause }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const whereClause: any = includeInvalid
+      ? {}
+      : { validTo: this.validToClause }
     const personalRepresentatives = await this.personalRepresentativeModel.findAndCountAll(
       {
         limit: count,
@@ -232,7 +235,7 @@ export class PersonalRepresentativeService {
   /** Create a new personal repreasentative */
   async createAsync(
     personalRepresentative: PersonalRepresentativeDTO,
-  ): Promise<PersonalRepresentativeDTO> {
+  ): Promise<PersonalRepresentativeDTO | null> {
     if (personalRepresentative.rightCodes.length === 0) {
       throw new BadRequestException('RightCodes list must be providec')
     }
@@ -241,12 +244,12 @@ export class PersonalRepresentativeService {
         personalRepresentative.nationalIdPersonalRepresentative,
       )
     ) {
-      throw new BadRequestException('Invaldi national Id of representative')
+      throw new BadRequestException('Invalid national Id of representative')
     }
     if (
       !isNationalIdValid(personalRepresentative.nationalIdRepresentedPerson)
     ) {
-      throw new BadRequestException('Invaldi national Id of Represented')
+      throw new BadRequestException('Invalid national Id of Represented')
     }
 
     // Find current personal representative connection between nationalIds and remove since only one should be active
@@ -301,7 +304,7 @@ export class PersonalRepresentativeService {
           },
         ],
       })
-      return result!.toDTO()
+      return result ? result.toDTO() : null
     } catch (err) {
       throw new BadRequestException(
         `Error creating personal representative: ${err}`,
