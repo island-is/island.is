@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common'
+import { Inject, Injectable, Scope } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import {
@@ -28,6 +28,7 @@ export interface RegulationsServiceOptions {
   url: string
 }
 
+@Injectable(/*{ scope: Scope.REQUEST }*/)
 export class RegulationsService extends RESTDataSource {
   constructor(
     @Inject(REGULATIONS_OPTIONS)
@@ -39,6 +40,9 @@ export class RegulationsService extends RESTDataSource {
   }
 
   willSendRequest(request: RequestOptions) {
+    // We need to clear the memoized cache for every request to make sure
+    // updates are live when editing and viewing
+    this.memoizedResults.clear()
     request.headers.set('Content-Type', 'application/json')
   }
   /*
