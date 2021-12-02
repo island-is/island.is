@@ -4,13 +4,11 @@ export interface Address {
   city: string
 }
 
-export interface Person {
+export interface NationalRegistry {
   nationalId: string
   fullName: string
   address: Address
 }
-
-export interface NationalRegistry extends Person {}
 
 export interface UserProfile {
   email: string
