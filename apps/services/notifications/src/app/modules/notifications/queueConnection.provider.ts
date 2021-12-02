@@ -5,6 +5,7 @@ import {
   CreateQueueCommand,
   GetQueueAttributesCommand,
 } from '@aws-sdk/client-sqs'
+import type { Config } from '../../../environments/environment'
 import { CONFIG_PROVIDER } from '../../../constants'
 
 const minute = 60
@@ -18,7 +19,7 @@ export class QueueConnectionProvider implements OnApplicationBootstrap {
 
   constructor(
     @Inject(CONFIG_PROVIDER)
-    private readonly config: any,
+    private readonly config: Config,
   ) {}
 
   async onApplicationBootstrap() {
