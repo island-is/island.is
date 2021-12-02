@@ -308,7 +308,7 @@ export interface NationalRegistryData {
     city: string
     municipalityCode: string
   }
-  spouse: {
+  spouse?: {
     nationalId?: string
     maritalStatus?: string
     name?: string
