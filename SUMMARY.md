@@ -115,6 +115,7 @@
 
 - [API](libs/api/README.md)
   - [Domains](libs/api/domains/README.md)
+    - [API Domains Criminal Record](libs/api/domains/criminal-record/README.md)
     - [Document Provider API](libs/api/domains/document-provider/README.md)
     - [API Domains Driving License](libs/api/domains/driving-license/README.md)
     - [API Domains Education](libs/api/domains/education/README.md)
@@ -141,6 +142,7 @@
   - [Templates](libs/application/templates/README.md)
     - [Application Templates Accident Notification](libs/application/templates/accident-notification/README.md)
     - [Application Templates Complaints to Althingi Ombudsman](libs/application/templates/complaints-to-althingi-ombudsman/README.md)
+    - [Criminal Record Application](libs/application/templates/criminal-record/README.md)
     - [Application Templates Data Protection Complaint](libs/application/templates/data-protection-complaint/README.md)
     - [Document Provider Onboarding](libs/application/templates/document-provider-onboarding/README.md)
     - [Driver's License Approval](libs/application/templates/driving-assessment-approval/README.md)
@@ -170,6 +172,7 @@
 - [Auth Nest Tools](libs/auth-nest-tools/README.md)
 - [Clients](libs/clients/README.md)
   - [Auth Public API Client](libs/clients/auth-public-api/README.md)
+  - [Clients Criminal Record](libs/clients/criminal-record/README.md)
   - [Clients Document Provider](libs/clients/document-provider/README.md)
   - [Documents (Pósthólf)](libs/clients/documents/README.md)
   - [Clients Driving License V1 / V2](libs/clients/driving-license/README.md)

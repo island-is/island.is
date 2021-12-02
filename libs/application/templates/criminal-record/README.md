@@ -1,4 +1,4 @@
-# Criminal record application
+# Criminal Record Application
 
 This library was generated with [Nx](https://nx.dev).
 

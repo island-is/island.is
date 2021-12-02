@@ -1,4 +1,4 @@
-# clients-criminal-record
+# Clients Criminal Record
 
 This library was generated with [Nx](https://nx.dev). (yarn generate @nrwl/node:lib clients/criminal-record)
 
