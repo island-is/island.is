@@ -13,7 +13,7 @@ const devConfig = {
     ttl: 600,
   },
   xroad: {
-    baseUrl: 'http://localhost:8081',
+    baseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
     clientId:
       process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
   },

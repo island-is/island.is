@@ -69,6 +69,7 @@ export class FinanceService extends RESTDataSource {
       response = {
         ...dataResponse,
         downloadServiceURL: `https://service-portalfinance-pdf-dl-api.dev01.devland.is/download/v1/finance/`,
+        // downloadServiceURL: `${this.options.downloadServiceBaseUrl}/download/v1/finance/`,
       } as FinanceStatus | null
     } catch (e) {
       return this.handleError('Failed to get finance status', e)
@@ -174,6 +175,7 @@ export class FinanceService extends RESTDataSource {
       response = {
         ...dataResponse,
         downloadServiceURL: `https://service-portalfinance-pdf-dl-api.dev01.devland.is/download/v1/finance/`,
+        // downloadServiceURL: `${this.options.downloadServiceBaseUrl}/download/v1/finance/`,
       }
     } catch (e) {
       return this.handleError('Failed to get finance document list', e)
