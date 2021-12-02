@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-fetch'
 import { uuid } from 'uuidv4'
 
-import { BadGatewayException } from '@nestjs/common'
+import { BadGatewayException, BadRequestException } from '@nestjs/common'
 
 import { Case as TCase } from '@island.is/judicial-system/types'
 
@@ -81,6 +81,27 @@ describe('AppController - Greate', () => {
     })
   })
 
+  describe('bad request', () => {
+    const caseToCreate = {} as CreateCaseDto
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = fetch as jest.Mock
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        message: 'Some message',
+      })
+
+      then = await givenWhenThen(caseToCreate)
+    })
+
+    it('should throw BadRequestException', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe('Some message')
+    })
+  })
+
   describe('creation fails', () => {
     const caseToCreate = {} as CreateCaseDto
     let then: Then
@@ -94,7 +115,7 @@ describe('AppController - Greate', () => {
       then = await givenWhenThen(caseToCreate)
     })
 
-    it('should throw a bad gateway exception', () => {
+    it('should throw BadGatewayException', () => {
       expect(then.error).toBeInstanceOf(BadGatewayException)
       expect(then.error.message).toBe('Could not create a new case')
     })
@@ -114,7 +135,7 @@ describe('AppController - Greate', () => {
       then = await givenWhenThen(caseToCreate)
     })
 
-    it('should throw a bad gateway exception', () => {
+    it('should throw a BadGatewayException', () => {
       expect(then.error).toBeInstanceOf(BadGatewayException)
       expect(then.error.message).toBe('Could not create a new case')
     })
@@ -131,7 +152,7 @@ describe('AppController - Greate', () => {
       then = await givenWhenThen(caseToCreate)
     })
 
-    it('should throw a bad gateway exception', () => {
+    it('should throw a BadGatewayException', () => {
       expect(then.error).toBeInstanceOf(BadGatewayException)
       expect(then.error.message).toBe('Could not create a new case')
     })
