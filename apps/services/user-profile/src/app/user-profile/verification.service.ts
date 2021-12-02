@@ -138,7 +138,7 @@ export class VerificationService {
     */
     const islyklarData = (await this.islyklarApi
       .islyklarGet({
-        ssn: '1309863159',
+        ssn: nationalId,
       })
       .catch((e) => {
         if (e.status === '404') {
