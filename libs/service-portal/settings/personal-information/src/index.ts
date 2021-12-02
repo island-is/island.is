@@ -14,10 +14,12 @@ import * as Sentry from '@sentry/react'
 export const personalInformationModule: ServicePortalModule = {
   name: 'Persónuupplýsingar',
   widgets: () => [],
-  routes: () => {
+  routes: ({ userInfo }) => {
+    const isDelegation = Boolean(userInfo.profile.actor)
     const routes: ServicePortalRoute[] = [
       {
         name: m.personalInformation,
+        enabled: !isDelegation,
         path: ServicePortalPath.SettingsPersonalInformation,
         render: () => lazy(() => import('./screens/UserProfile/UserProfile')),
       },
@@ -26,6 +28,7 @@ export const personalInformationModule: ServicePortalModule = {
           id: 'sp.settings:edit-phone-number',
           defaultMessage: 'Breyta símanúmeri',
         }),
+        enabled: !isDelegation,
         path: ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
         render: () =>
           lazy(() => import('./screens/EditPhoneNumber/EditPhoneNumber')),
@@ -35,6 +38,7 @@ export const personalInformationModule: ServicePortalModule = {
           id: 'sp.settings:edit-email',
           defaultMessage: 'Breyta netfangi',
         }),
+        enabled: !isDelegation,
         path: ServicePortalPath.SettingsPersonalInformationEditEmail,
         render: () => lazy(() => import('./screens/EditEmail/EditEmail')),
       },
@@ -43,11 +47,13 @@ export const personalInformationModule: ServicePortalModule = {
           id: 'sp.settings:edit-language',
           defaultMessage: 'Breyta tungumáli',
         }),
+        enabled: !isDelegation,
         path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
         render: () => lazy(() => import('./screens/EditLanguage/EditLanguage')),
       },
       {
         name: m.messages,
+        enabled: !isDelegation,
         path: ServicePortalPath.MessagesRoot,
         render: () => lazy(() => import('./screens/Messages/Messages')),
       },
@@ -56,6 +62,7 @@ export const personalInformationModule: ServicePortalModule = {
           id: 'sp.settings:edit-nudge',
           defaultMessage: 'Breyta Hnippi',
         }),
+        enabled: !isDelegation,
         path: ServicePortalPath.SettingsPersonalInformationEditNudge,
         render: () => lazy(() => import('./screens/EditNudge/EditNudge')),
       },
@@ -64,6 +71,7 @@ export const personalInformationModule: ServicePortalModule = {
           id: 'sp.settings:email-confirmation',
           defaultMessage: 'Staðfesta netfang',
         }),
+        enabled: !isDelegation,
         path: ServicePortalPath.SettingsPersonalInformationEmailConfirmation,
         render: () =>
           lazy(() => import('./screens/EmailConfirmation/EmailConfirmation')),
@@ -72,7 +80,7 @@ export const personalInformationModule: ServicePortalModule = {
 
     return routes
   },
-  global: async ({ client }) => {
+  global: async ({ client, userInfo }) => {
     const routes: ServicePortalGlobalComponent[] = []
 
     /**
@@ -84,9 +92,11 @@ export const personalInformationModule: ServicePortalModule = {
       })
 
       // If the user profile is empty, we render the onboarding modal
+      const isDelegation = Boolean(userInfo.profile.actor)
       if (
         process.env.NODE_ENV !== 'development' &&
-        res.data?.getUserProfile === null
+        res.data?.getUserProfile === null &&
+        !isDelegation
       )
         routes.push({
           render: () =>
