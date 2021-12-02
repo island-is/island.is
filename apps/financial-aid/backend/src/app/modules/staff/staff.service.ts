@@ -96,7 +96,6 @@ export class StaffService {
       where: {
         municipalityId,
         roles: { [Op.contains]: [StaffRole.ADMIN] },
-        active: true,
       },
     })
   }
