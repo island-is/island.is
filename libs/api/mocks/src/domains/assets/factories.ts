@@ -45,12 +45,12 @@ export const pagingData = ({
 })
 
 export const stadfang = factory<PropertyLocation>({
-  propertyNumber: () => faker.random.number(999),
+  propertyNumber: () => faker.datatype.number(999),
   municipality: () => faker.random.arrayElement(townArray),
-  postNumber: () => faker.random.number(800),
-  locationNumber: () => faker.random.number(9999),
+  postNumber: () => faker.datatype.number(800),
+  locationNumber: () => faker.datatype.number(9999),
   displayShort: () =>
-    `${faker.random.arrayElement(streetArray)} ${faker.random.number(99)}`,
+    `${faker.random.arrayElement(streetArray)} ${faker.datatype.number(99)}`,
   display() {
     return `${this.displayShort}, ${this.municipality}`
   },
@@ -65,13 +65,14 @@ export const propertyAppraisal = factory<Appraisal>({
   plannedYear: new Date().getFullYear() + 1,
   activeYear: new Date().getFullYear(),
 
-  activeAppraisal: () => faker.random.number({ min: 20000000, max: 50000000 }),
+  activeAppraisal: () =>
+    faker.datatype.number({ min: 20000000, max: 50000000 }),
   plannedAppraisal() {
     return this.activeAppraisal ? this.activeAppraisal + 1500000 : null
   },
 
   activeStructureAppraisal: () =>
-    faker.random.number({ min: 20000000, max: 50000000 }),
+    faker.datatype.number({ min: 20000000, max: 50000000 }),
   plannedStructureAppraisal() {
     return this.activeStructureAppraisal
       ? this.activeStructureAppraisal + 1500000
@@ -79,7 +80,7 @@ export const propertyAppraisal = factory<Appraisal>({
   },
 
   activePlotAssessment: () =>
-    faker.random.number({ min: 20000000, max: 50000000 }),
+    faker.datatype.number({ min: 20000000, max: 50000000 }),
   plannedPlotAssessment() {
     return this.activePlotAssessment
       ? this.activePlotAssessment + 1500000
@@ -103,9 +104,9 @@ export const propertyUnitOnUse = factory<UnitOfUse>({
   usageDisplay: () => faker.helpers.replaceSymbolWithNumber('Notkun ?', '?'),
   explanation: () => faker.helpers.replaceSymbolWithNumber('Skýring ?', '?'),
   buildYearDisplay: '2008',
-  displaySize: () => faker.random.number({ min: 100, max: 300 }),
+  displaySize: () => faker.datatype.number({ min: 100, max: 300 }),
   appraisal: () => propertyAppraisal(),
-  fireAssessment: faker.random.number({
+  fireAssessment: faker.datatype.number({
     min: 20000000,
     max: 40000000,
   }),

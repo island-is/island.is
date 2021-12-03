@@ -6,11 +6,14 @@ import { useMutation } from '@apollo/client'
 import { isEmailValid, StaffRole } from '@island.is/financial-aid/shared/lib'
 import cn from 'classnames'
 
+import { useRouter } from 'next/router'
+
 interface Props {
   isVisible: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
   onStaffCreated: () => void
   predefinedRoles?: StaffRole[]
+  municipalityName?: string
 }
 
 interface newUsersModalState {
@@ -27,7 +30,10 @@ const NewUserModal = ({
   setIsVisible,
   onStaffCreated,
   predefinedRoles = [],
+  municipalityName,
 }: Props) => {
+  const router = useRouter()
+
   const [state, setState] = useState<newUsersModalState>({
     staffNationalId: '',
     staffName: '',
@@ -69,6 +75,8 @@ const NewUserModal = ({
             email: state.staffEmail,
             nationalId: state.staffNationalId,
             roles: state.roles,
+            municipalityName,
+            municipalityId: router.query.id as string,
           },
         },
       }).then(() => {

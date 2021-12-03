@@ -66,7 +66,12 @@ export const SearchSection = ({
     <GridContainer>
       <GridRow marginTop={4} marginBottom={[0, 0, 4]}>
         <GridColumn span={['12/12', '12/12', '7/12', '6/12']}>
-          <Box display="flex" height="full" alignItems="center">
+          <Box
+            display="flex"
+            height="full"
+            alignItems="center"
+            className={styles.container}
+          >
             <Stack space={[3, 3, 5]}>
               <Text variant="h1" id={headingId}>
                 {heading ?? ''}
