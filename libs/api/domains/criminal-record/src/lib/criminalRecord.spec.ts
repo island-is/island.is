@@ -20,7 +20,6 @@ describe('CriminalRecordService', () => {
         CriminalRecordApiModule.register({
           xroadBaseUrl: 'http://localhost',
           xroadClientId: '',
-          secret: '',
           xroadPath: 'v2',
           fetchOptions: {
             logger: createLogger({

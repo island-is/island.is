@@ -9,7 +9,6 @@ import { CrimeCertificateApi, Configuration } from '../../gen/fetch'
 export interface CriminalRecordApiConfig {
   xroadBaseUrl: string
   xroadClientId: string
-  secret: string
   xroadPath: string
   fetchOptions?: Partial<EnhancedFetchOptions>
 }
@@ -21,7 +20,6 @@ const configFactory = (config: CriminalRecordApiConfig, basePath: string) => ({
   }),
   headers: {
     'X-Road-Client': config.xroadClientId,
-    SECRET: config.secret,
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
