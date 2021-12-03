@@ -16,8 +16,13 @@ import '../auth'
 import { Toast, ErrorBoundary, AppLayout } from '../components'
 import { client as initApollo } from '../graphql'
 import { appWithTranslation } from '../i18n'
-import { isAuthenticated } from '../auth/utils'
+//import { isAuthenticated } from '../auth/utils'
 import { withHealthchecks } from '../utils/Healthchecks/withHealthchecks'
+
+import { User } from './auth/interfaces'
+import { useRouter } from 'next/router'
+import { useContext, useEffect } from 'react'
+import { AuthContext } from '../components'
 
 const activeEnvironment = getActiveEnvironment()
 
@@ -35,11 +40,15 @@ Sentry.init({
 interface Props {
   isAuthenticated: boolean
   layoutProps: any
+  user: User
 }
 
 class SupportApplication extends App<Props> {
   
   static async getInitialProps(appContext) {
+    const router = useRouter()
+    const { isAuthenticated, user } = useContext(AuthContext)
+
     const { Component, ctx } = appContext
     const apolloClient = initApollo({})
     const customContext = {
@@ -65,7 +74,8 @@ class SupportApplication extends App<Props> {
       layoutProps: { ...layoutProps, ...pageProps.layoutConfig },
       pageProps,
       apolloState,
-      isAuthenticated: isAuthenticated(appContext.ctx),
+      isAuthenticated: isAuthenticated,
+      user: user,
     }
   }
 
@@ -83,6 +93,7 @@ class SupportApplication extends App<Props> {
       isAuthenticated,
       router,
       layoutProps,
+      user,
     } = this.props
 
     // Sentry.configureScope((scope) => {
@@ -105,6 +116,42 @@ class SupportApplication extends App<Props> {
     //   level: Sentry.Severity.Debug,
     // })
 
+
+/*
+const Index = () => {
+  const { isAuthenticated, user } = useContext(AuthContext)
+  const router = useRouter()
+  useEffect(() => {
+    document.title = 'Loftbrú þjónustusíða'
+  }, [])
+
+  const returnUrl = (user: User) => {
+    return `/min-rettindi`
+  }
+
+  if (isAuthenticated && user) {
+    router.push(returnUrl(user))
+  }
+
+  return null
+}
+export default Index */
+
+  
+    useEffect(() => {
+      document.title = 'Loftbrú þjónustusíða'
+    }, [])
+
+    const returnUrl = (user: User) => {
+      console.log(user)
+      return `/min-rettindi`
+    }
+
+    if (isAuthenticated && user) {
+      router.push(returnUrl(user))
+    } else {
+      return null
+    }
 
     return (
       <Provider 
