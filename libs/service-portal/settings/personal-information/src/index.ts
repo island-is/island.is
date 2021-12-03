@@ -15,7 +15,7 @@ export const personalInformationModule: ServicePortalModule = {
   name: 'Persónuupplýsingar',
   widgets: () => [],
   routes: ({ userInfo }) => {
-    const isDelegation = Boolean(userInfo.profile.actor)
+    const isDelegation = Boolean(userInfo?.profile?.actor)
     const routes: ServicePortalRoute[] = [
       {
         name: m.personalInformation,
@@ -92,7 +92,7 @@ export const personalInformationModule: ServicePortalModule = {
       })
 
       // If the user profile is empty, we render the onboarding modal
-      const isDelegation = Boolean(userInfo.profile.actor)
+      const isDelegation = Boolean(userInfo?.profile?.actor)
       if (
         process.env.NODE_ENV !== 'development' &&
         res.data?.getUserProfile === null &&
