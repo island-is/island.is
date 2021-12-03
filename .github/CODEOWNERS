@@ -102,6 +102,7 @@
 /apps/web/components/Regulations/                                                             @island-is/hugsmidjan
 /libs/api/domains/documents/                                                                  @island-is/hugsmidjan
 /libs/api/domains/finance/                                                                    @island-is/hugsmidjan
+/libs/api/domains/assets/                                                                     @island-is/hugsmidjan
 /libs/api/domains/license-service/                                                            @island-is/hugsmidjan
 /libs/api/domains/national-registry/                                                          @island-is/hugsmidjan
 /libs/clients/finance/                                                                        @island-is/hugsmidjan
