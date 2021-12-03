@@ -1,5 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+
 import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import { CaseState } from '@island.is/judicial-system/types'
 import type { Case, UpdateCase } from '@island.is/judicial-system/types'
@@ -11,11 +12,12 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { courtCaseNumber } from '@island.is/judicial-system-web/messages'
+
 import * as styles from './CourtCaseNumber.css'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   courtCaseNumberEM: string
   setCourtCaseNumberEM: React.Dispatch<React.SetStateAction<string>>
   createCourtCaseSuccess: boolean
