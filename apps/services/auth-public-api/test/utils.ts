@@ -1,3 +1,4 @@
+import { DelegationDTO } from '@island.is/auth-api-lib'
 import request, { CallbackHandler } from 'supertest'
 
 export const getRequestMethod = (
@@ -27,4 +28,18 @@ export const getRequestMethod = (
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const expectMathcingObject = (received: any, expected: any) => {
   expect(received).toMatchObject(JSON.parse(JSON.stringify(expected)))
+}
+
+/**
+ * Sorts the delegation by id parameter to use for consistent expecting
+ * @param delegations
+ */
+export const sortDelegations = (delegations: DelegationDTO[]) => {
+  delegations.sort((a, b) => {
+    if (!a.id || !b.id) {
+      throw new Error('Sort needs id to be provided for delegations')
+    }
+
+    return a.id === b.id ? 0 : a.id < b.id ? -1 : 1
+  })
 }

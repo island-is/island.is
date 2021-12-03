@@ -73,19 +73,19 @@ describe('ActorDelegationsController', () => {
         // Arrange
         const models = await delegationModel.bulkCreate(
           [
-            createDelegation(
-              nationalRegistryUser.kennitala,
-              user.nationalId,
-              [scopes[0]],
+            createDelegation({
+              fromNationalId: nationalRegistryUser.kennitala,
+              toNationalId: user.nationalId,
+              scopes: [scopes[0]],
               today,
-            ),
-            createDelegation(
-              nationalRegistryUser.kennitala,
-              user.nationalId,
-              [scopes[1]],
+            }),
+            createDelegation({
+              fromNationalId: nationalRegistryUser.kennitala,
+              toNationalId: user.nationalId,
+              scopes: [scopes[1]],
               today,
-              true,
-            ),
+              expired: true,
+            }),
           ],
           {
             include: [{ model: DelegationScope, as: 'delegationScopes' }],

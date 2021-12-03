@@ -4,6 +4,15 @@ import startOfDay from 'date-fns/startOfDay'
 
 import { Delegation, DelegationScope } from '@island.is/auth-api-lib'
 
+export interface CreateDelegationOptions {
+  fromNationalId: string
+  toNationalId: string
+  scopes: string[]
+  today?: Date
+  expired?: boolean
+  future?: boolean
+}
+
 export type CreateDelegationScope = Pick<
   DelegationScope,
   | 'id'
@@ -77,14 +86,15 @@ export const createDelegationScope = (
   scopeName: string,
   today: Date,
   expired: boolean,
+  future: boolean,
 ): CreateDelegationScope => {
   const fallback = createRandomDelegationScope(delegationId)
 
   return {
     ...fallback,
     scopeName,
-    validFrom: startOfDay(expired ? addDays(today, -2) : today),
-    validTo: startOfDay(addDays(today, expired ? -1 : 1)),
+    validFrom: startOfDay(addDays(today, expired ? -2 : future ? 1 : 0)),
+    validTo: startOfDay(addDays(today, expired ? -1 : future ? 2 : 1)),
   }
 }
 
@@ -99,20 +109,21 @@ export const createDelegationScope = (
  * @param expired Flag to indicate if the delgation should be expired. Defaults to false.
  * @returns
  */
-export const createDelegation = (
-  fromNationalId: string,
-  toNationalId: string,
-  scopes: string[],
-  today: Date = new Date(),
+export const createDelegation = ({
+  fromNationalId,
+  toNationalId,
+  scopes,
+  today = new Date(),
   expired = false,
-): CreateDelegation => {
+  future = false,
+}: CreateDelegationOptions): CreateDelegation => {
   const delegation = createRandomDelegation()
   return {
     ...delegation,
     fromNationalId,
     toNationalId,
     delegationScopes: scopes.map((scope) =>
-      createDelegationScope(delegation.id, scope, today, expired),
+      createDelegationScope(delegation.id, scope, today, expired, future),
     ),
   }
 }

@@ -38,6 +38,7 @@ import {
   ResourcesService,
   DelegationDirection,
   UpdateDelegationScopeDTO,
+  DelegationValidity,
 } from '@island.is/auth-api-lib'
 import {
   IdsUserGuard,
@@ -78,11 +79,18 @@ export class MeDelegationsController {
     name: 'direction',
     required: true,
     schema: {
-      enum: ['outgoing'],
-      default: 'outgoing',
+      enum: [DelegationDirection.OUTGOING],
+      default: DelegationDirection.OUTGOING,
     },
   })
-  @ApiQuery({ name: 'isValid', required: false, type: 'boolean' })
+  @ApiQuery({
+    name: 'valid',
+    required: false,
+    schema: {
+      enum: Object.values(DelegationValidity),
+      default: DelegationValidity.ALL,
+    },
+  })
   @ApiQuery({ name: 'otherUser', required: false, type: 'string' })
   @ApiOkResponse({ type: [DelegationDTO] })
   @ApiBadRequestResponse({ type: HttpProblemResponse })
@@ -96,7 +104,7 @@ export class MeDelegationsController {
   async findAll(
     @CurrentUser() user: User,
     @Query('direction') direction: DelegationDirection,
-    @Query('isValid') isValid?: boolean,
+    @Query('valid') valid: DelegationValidity = DelegationValidity.ALL,
     @Query('otherUser') otherUser?: string,
   ): Promise<DelegationDTO[]> {
     if (direction !== DelegationDirection.OUTGOING) {
@@ -107,7 +115,7 @@ export class MeDelegationsController {
 
     return this.delegationsService.findAllOutgoing(
       user.nationalId,
-      isValid,
+      valid,
       otherUser,
     )
   }

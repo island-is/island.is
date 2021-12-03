@@ -83,6 +83,7 @@ export * from './lib/services/user-profile.service'
 
 // Types
 export * from './lib/types/delegationDirection'
+export * from './lib/types/delegationValidity'
 
 // Config
 //export * as DbConfig from './lib/config/sequelize.config.js'

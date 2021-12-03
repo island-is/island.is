@@ -6,6 +6,7 @@ import {
   UpdateDelegationScopeDTO,
   MeDelegationsControllerFindAllDirectionEnum,
   MeDelegationsApi,
+  MeDelegationsControllerFindAllValidEnum,
 } from '@island.is/clients/auth-public-api'
 
 import {
@@ -27,7 +28,7 @@ export class MeDelegationsService {
   getDelegations(user: User): Promise<DelegationDTO[]> {
     return this.delegationsApiWithAuth(user).meDelegationsControllerFindAll({
       direction: MeDelegationsControllerFindAllDirectionEnum.Outgoing,
-      isValid: true,
+      valid: MeDelegationsControllerFindAllValidEnum.IncludeFuture,
     })
   }
 
@@ -86,7 +87,6 @@ export class MeDelegationsService {
         })) as UpdateDelegationScopeDTO[],
       },
     }
-    console.log(payload)
     return this.delegationsApiWithAuth(user).meDelegationsControllerUpdate(
       payload,
     )

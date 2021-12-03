@@ -15,6 +15,7 @@ import {
   ApiScope,
   DelegationScope,
   IdentityResource,
+  DelegationValidity,
 } from '@island.is/auth-api-lib'
 import {
   AuthMiddleware,
@@ -174,7 +175,13 @@ export class DelegationsService {
         id: id,
         [Op.or]: [{ fromNationalId: nationalId }, { toNationalId: nationalId }],
       },
-      include: [DelegationScope],
+      include: [
+        {
+          model: DelegationScope,
+          as: 'delegationScopes',
+          include: [{ model: ApiScope, as: 'apiScope' }],
+        },
+      ],
     })
     return delegation ? delegation.toDTO() : null
   }
@@ -187,7 +194,7 @@ export class DelegationsService {
    */
   async findAllOutgoing(
     nationalId: string,
-    isValid: boolean,
+    valid: DelegationValidity,
     otherUser: string,
   ): Promise<DelegationDTO[]> {
     const delegationWhere: { fromNationalId: string; toNationalId?: string } = {
@@ -198,19 +205,14 @@ export class DelegationsService {
       delegationWhere.toNationalId = otherUser
     }
 
-    const validWhere: { validTo: WhereOptions } = {
-      validTo: {
-        [Op.or]: [{ [Op.eq]: null }, { [Op.gte]: startOfDay(new Date()) }],
-      },
-    }
     const delegations = await this.delegationModel.findAll({
       where: delegationWhere,
       include: [
         {
           model: DelegationScope,
           include: [ApiScope, IdentityResource],
-          required: isValid,
-          where: isValid ? validWhere : undefined,
+          required: valid !== DelegationValidity.ALL,
+          where: this.getScopeValidWhereClause(valid),
         },
       ],
     })
@@ -411,8 +413,6 @@ export class DelegationsService {
       return []
     }
 
-    const today = startOfDay(new Date())
-
     const result = await this.delegationModel.findAll({
       where: {
         toNationalId: user.nationalId,
@@ -420,14 +420,8 @@ export class DelegationsService {
       include: [
         {
           model: DelegationScope,
-          where: {
-            [Op.and]: [
-              { validFrom: { [Op.lte]: today } },
-              {
-                validTo: { [Op.or]: [{ [Op.is]: null }, { [Op.gte]: today }] },
-              },
-            ],
-          },
+          required: true,
+          where: this.getScopeValidWhereClause(DelegationValidity.NOW),
         },
       ],
     })
@@ -437,6 +431,45 @@ export class DelegationsService {
     )
 
     return filtered.map((d) => d.toDTO())
+  }
+
+  /**
+   * Constructs a where clause to use for DelegationScopes to filter
+   * by a validity on the validFrom and validTo properties.
+   * @param valid Controls the validFrom and validTo where clauses
+   * @returns
+   */
+  private getScopeValidWhereClause = (
+    valid: DelegationValidity,
+  ): WhereOptions | undefined => {
+    let scopesWhere: WhereOptions | undefined
+    const startOfToday = startOfDay(new Date())
+    const futureValidToWhere: WhereOptions = {
+      // validTo > startOfToday OR validTo IS NULL
+      validTo: {
+        [Op.or]: {
+          [Op.gte]: startOfToday,
+          [Op.is]: null,
+        },
+      },
+    }
+
+    if (valid === DelegationValidity.NOW) {
+      scopesWhere = {
+        validFrom: { [Op.lte]: startOfToday },
+        ...futureValidToWhere,
+      }
+    } else if (valid === DelegationValidity.INCLUDE_FUTURE) {
+      scopesWhere = futureValidToWhere
+    } else if (valid === DelegationValidity.PAST) {
+      scopesWhere = {
+        validTo: {
+          [Op.lt]: startOfToday,
+        },
+      }
+    }
+
+    return scopesWhere
   }
 
   private async getUserName(user: User) {
