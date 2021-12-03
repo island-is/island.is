@@ -34,6 +34,7 @@ const ApplicationInfo = () => {
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
+  const [error, setError] = useState(false)
 
   const nationalRegistryQuery = useAsyncLazyQuery<
     {
@@ -54,11 +55,16 @@ const ApplicationInfo = () => {
       return
     }
 
+    setError(false)
+
     const { data } = await nationalRegistryQuery({
       input: { ssn: user?.nationalId },
+    }).catch(() => {
+      return { data: undefined }
     })
 
     if (!data || !data.nationalRegistryUserV2.address) {
+      setError(true)
       return
     }
 
@@ -132,6 +138,12 @@ const ApplicationInfo = () => {
             hasError={hasError}
             errorMessage={'Þú þarft að samþykkja gagnaöflun'}
           />
+
+          {error && (
+            <Text color="red600" fontWeight="semiBold" variant="small">
+              Eitthvað fór úrskeiðis, vinsamlegast reynið aftur síðar
+            </Text>
+          )}
         </Box>
 
         <Box
