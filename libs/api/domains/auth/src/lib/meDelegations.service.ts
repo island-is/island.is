@@ -17,6 +17,12 @@ import {
 } from './dto'
 import { DelegationByOtherUserInput } from './dto/delegationByOtherUser.input'
 
+const ignore404 = (e: Response) => {
+  if (e.status !== 404) {
+    throw e
+  }
+}
+
 @Injectable()
 export class MeDelegationsService {
   constructor(private delegationsApi: MeDelegationsApi) {}
@@ -32,19 +38,27 @@ export class MeDelegationsService {
     })
   }
 
-  getDelegationById(
+  async getDelegationById(
     user: User,
     { delegationId }: DelegationInput,
-  ): Promise<DelegationDTO> {
-    return this.delegationsApiWithAuth(user).meDelegationsControllerFindOne({
-      delegationId,
-    })
+  ): Promise<DelegationDTO | null> {
+    const delegation = await this.delegationsApiWithAuth(user)
+      .meDelegationsControllerFindOne({
+        delegationId,
+      })
+      .catch(ignore404)
+
+    if (!delegation) {
+      return null
+    }
+
+    return delegation
   }
 
   async getDelegationByOtherUser(
     user: User,
     { toNationalId }: DelegationByOtherUserInput,
-  ): Promise<DelegationDTO> {
+  ): Promise<DelegationDTO | null> {
     const delegations = await this.delegationsApiWithAuth(
       user,
     ).meDelegationsControllerFindAll({
@@ -52,7 +66,7 @@ export class MeDelegationsService {
       otherUser: toNationalId,
     })
 
-    return delegations[0]
+    return delegations[0] ?? null
   }
 
   createDelegation(

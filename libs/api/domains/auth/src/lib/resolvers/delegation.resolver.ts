@@ -25,12 +25,6 @@ import { Delegation } from '../models'
 import { MeDelegationsService } from '../meDelegations.service'
 import { ActorDelegationsService } from '../actorDelegations.service'
 
-const ignore404 = (e: Response) => {
-  if (e.status !== 404) {
-    throw e
-  }
-}
-
 @UseGuards(IdsUserGuard)
 @Resolver(() => Delegation)
 export class DelegationResolver {
@@ -55,14 +49,7 @@ export class DelegationResolver {
     @CurrentUser() user: User,
     @Args('input', { type: () => DelegationInput }) input: DelegationInput,
   ): Promise<DelegationDTO | null> {
-    const delegation = await this.meDelegationsService
-      .getDelegationById(user, input)
-      .catch(ignore404)
-    if (!delegation) {
-      return null
-    }
-
-    return delegation
+    return this.meDelegationsService.getDelegationById(user, input)
   }
 
   @Mutation(() => Delegation, { name: 'createAuthDelegation' })
@@ -71,9 +58,10 @@ export class DelegationResolver {
     @Args('input', { type: () => CreateDelegationInput })
     input: CreateDelegationInput,
   ): Promise<DelegationDTO | null> {
-    let delegation = await this.meDelegationsService
-      .getDelegationByOtherUser(user, input)
-      .catch(ignore404)
+    let delegation = await this.meDelegationsService.getDelegationByOtherUser(
+      user,
+      input,
+    )
     if (!delegation) {
       delegation = await this.meDelegationsService.createDelegation(user, input)
     } else if (input.scopes && delegation.id) {
