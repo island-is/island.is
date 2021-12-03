@@ -12,6 +12,7 @@ import {
 } from './recyclingRequest.model'
 import { RecyclingRequestService } from './recyclingRequest.service'
 
+@Authorize({ throwOnUnAuthorized: false })
 @Resolver(() => RecyclingRequestModel)
 export class RecyclingRequestResolver {
   constructor(
@@ -20,7 +21,7 @@ export class RecyclingRequestResolver {
     private logger: Logger,
   ) {}
 
-  @Authorize({ throwOnUnAuthorized: false })
+  @Authorize({ roles: ['developer', 'recyclingFund'] })
   @Query(() => [RecyclingRequestModel])
   async skilavottordAllRecyclingRequests(): Promise<RecyclingRequestModel[]> {
     const res = await this.recyclingRequestService.findAll()
@@ -31,6 +32,7 @@ export class RecyclingRequestResolver {
     return res
   }
 
+  @Authorize({ roles: ['developer', 'recyclingFund'] })
   @Query(() => [RecyclingRequestModel])
   async skilavottordRecyclingRequest(
     @Args('permno') perm: string,
@@ -42,6 +44,7 @@ export class RecyclingRequestResolver {
     return res
   }
 
+  @Authorize({ roles: ['developer', 'recyclingCompany'] })
   @Query(() => Boolean)
   async skilavottordDeRegisterVehicle(
     @Args('vehiclePermno') nid: string,
@@ -50,6 +53,7 @@ export class RecyclingRequestResolver {
     return this.recyclingRequestService.deRegisterVehicle(nid, station)
   }
 
+  @Authorize({ roles: ['developer', 'recyclingCompany'] })
   @Query(() => VehicleModel)
   async skilavottordVehicleReadyToDeregistered(
     @Args('permno') permno: string,
