@@ -57,7 +57,6 @@ export const featureFlaggedModules: ModuleKeys[] = [
   'documentProvider',
   'endorsements',
   'icelandicNamesRegistry',
-  'finance',
   'assets',
   'personalInformation',
   'licenses',
