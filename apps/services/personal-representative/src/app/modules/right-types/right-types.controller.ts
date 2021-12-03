@@ -25,7 +25,7 @@ import {
 import { AuthGuard } from '../common'
 
 @ApiTags('Right Types')
-@Controller('right-types')
+@Controller('v1/right-types')
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
 export class RightTypesController {
