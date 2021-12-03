@@ -13,6 +13,8 @@ export interface FeatureFlagClient {
     defaultValue: boolean | string,
     user?: FeatureFlagUser,
   ): Promise<boolean | string>
+
+  dispose(): void
 }
 
 export interface FeatureFlagClientProps {
