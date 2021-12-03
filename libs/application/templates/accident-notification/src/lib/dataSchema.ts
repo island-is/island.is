@@ -160,10 +160,10 @@ export const AccidentNotificationSchema = z.object({
   }),
   isRepresentativeOfCompanyOrInstitue: z.array(z.string()).optional(),
   fishingShipInfo: z.object({
-    shipName: z.string().min(1).max(500),
-    shipCharacters: z.string().min(1).max(500),
-    homePort: z.string().max(500),
-    shipRegisterNumber: z.string().max(500),
+    shipName: z.string().min(1).max(100),
+    shipCharacters: z.string().min(1).max(100),
+    homePort: z.string().max(100),
+    shipRegisterNumber: z.string().max(100),
   }),
 
   onPayRoll: z.object({
@@ -194,11 +194,11 @@ export const AccidentNotificationSchema = z.object({
     ]),
   }),
   homeAccident: z.object({
-    address: z.string().min(1).max(500),
+    address: z.string().min(1).max(100),
     postalCode: z
       .string()
       .refine((x) => +x >= 100 && +x <= 999, error.required.defaultMessage),
-    community: z.string().min(1).max(500),
+    community: z.string().min(1).max(100),
     moreDetails: z.string().max(2000).optional(),
   }),
   shipLocation: z.object({
