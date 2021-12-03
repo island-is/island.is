@@ -17,7 +17,7 @@ const paymentPlanSchema = z
   .optional()
 
 export const PublicDebtPaymentPlanSchema = z.object({
-  // TODO: Applicant schema
+  approveExternalData: z.boolean().refine((v) => v),
   applicant: z.object({
     address: z.string(),
     city: z.string(),
