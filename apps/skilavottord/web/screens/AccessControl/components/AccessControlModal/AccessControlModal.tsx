@@ -1,67 +1,44 @@
-import React, { FC } from 'react'
-import { Controller, useForm, ValidationRules } from 'react-hook-form'
+import React, { BaseSyntheticEvent, FC } from 'react'
+import { Control, Controller, ValidationRules } from 'react-hook-form'
+import { FieldError, FieldValues } from 'react-hook-form/dist/types/form'
+import { DeepMap } from 'react-hook-form/dist/types/utils'
 import * as kennitala from 'kennitala'
 
 import { Box, Button, Select, Option, Stack } from '@island.is/island-ui/core'
-
 import { InputController } from '@island.is/shared/form-fields'
-
 import { Modal, ModalProps } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 
-interface PartnerModalFormProps extends ModalProps {
-  onSubmit: (partner: any, callback: any) => void
+interface AccessControlModalProps
+  extends Omit<
+    ModalProps,
+    'onContinue' | 'continueButtonText' | 'cancelButtonText'
+  > {
+  onSubmit: (
+    e?: BaseSyntheticEvent<object, any, any> | undefined,
+  ) => Promise<void>
   recyclingPartners: Option[]
   roles: Option[]
-  partner?: any
+  errors: DeepMap<FieldValues, FieldError>
+  control: Control<FieldValues>
+  isNationalIdDisabled?: boolean
 }
 
-export const PartnerModalForm: FC<PartnerModalFormProps> = ({
+export const AccessControlModal: FC<AccessControlModalProps> = ({
   title,
   text,
   show,
   onCancel,
-  onContinue,
   onSubmit,
-  continueButtonText,
-  cancelButtonText,
   recyclingPartners,
   roles,
-  partner,
+  isNationalIdDisabled = false,
+  errors,
+  control,
 }) => {
-  const { control, errors, setValue, handleSubmit } = useForm({
-    mode: 'onChange',
-  })
-
   const {
     t: { accessControl: t },
   } = useI18n()
-
-  React.useEffect(() => {
-    if (partner) {
-      Object.entries(partner).forEach(([key, value]) => {
-        if (key === 'partnerId') {
-          return setValue(
-            key,
-            recyclingPartners.find(
-              (option) => option.value === partner?.partnerId,
-            ),
-          )
-        }
-        if (key === 'role') {
-          return setValue(
-            key,
-            roles.find((option) => option.value === partner?.role),
-          )
-        }
-        setValue(key, value)
-      })
-    }
-  }, [partner])
-
-  const handleOnSubmit = handleSubmit((partner) => {
-    return onSubmit(partner, () => console.log('test callback'))
-  })
 
   return (
     <Modal
@@ -69,11 +46,11 @@ export const PartnerModalForm: FC<PartnerModalFormProps> = ({
       text={text}
       show={show}
       onCancel={onCancel}
-      onContinue={onContinue}
-      continueButtonText={continueButtonText}
-      cancelButtonText={cancelButtonText}
+      onContinue={() => {}}
+      continueButtonText={t.modal.buttons.continue}
+      cancelButtonText={t.modal.buttons.cancel}
     >
-      <form onSubmit={handleOnSubmit}>
+      <form onSubmit={onSubmit}>
         <Stack space={3}>
           <InputController
             id="nationalId"
@@ -103,7 +80,7 @@ export const PartnerModalForm: FC<PartnerModalFormProps> = ({
             format="######-####"
             error={errors?.nationalId?.message}
             backgroundColor="blue"
-            disabled={!!partner}
+            disabled={!!isNationalIdDisabled}
           />
           <InputController
             id="name"
@@ -141,6 +118,7 @@ export const PartnerModalForm: FC<PartnerModalFormProps> = ({
                   label={t.modal.inputs.role.label}
                   placeholder={t.modal.inputs.role.placeholder}
                   size="md"
+                  value={value}
                   hasError={!!errors?.role?.message}
                   errorMessage={errors?.role?.message}
                   backgroundColor="blue"
@@ -157,7 +135,7 @@ export const PartnerModalForm: FC<PartnerModalFormProps> = ({
               {
                 required: {
                   value: true,
-                  message: t.modal.inputs.partnerId.rules?.required,
+                  message: t.modal.inputs.partner.rules?.required,
                 },
               } as ValidationRules
             }
@@ -166,9 +144,10 @@ export const PartnerModalForm: FC<PartnerModalFormProps> = ({
                 <Select
                   required
                   name={name}
-                  label={t.modal.inputs.partnerId.label}
-                  placeholder={t.modal.inputs.partnerId.placeholder}
+                  label={t.modal.inputs.partner.label}
+                  placeholder={t.modal.inputs.partner.placeholder}
                   size="md"
+                  value={value}
                   hasError={!!errors?.partnerId?.message}
                   errorMessage={errors?.partnerId?.message}
                   backgroundColor="blue"
@@ -181,11 +160,11 @@ export const PartnerModalForm: FC<PartnerModalFormProps> = ({
         </Stack>
         <Box display="flex" justifyContent="spaceBetween" marginTop={7}>
           <Button variant="ghost" onClick={onCancel} fluid>
-            {cancelButtonText}
+            {t.modal.buttons.cancel}
           </Button>
           <Box paddingX={[3, 3, 3, 15]}></Box>
           <Button type="submit" fluid>
-            {continueButtonText}
+            {t.modal.buttons.continue}
           </Button>
         </Box>
       </form>

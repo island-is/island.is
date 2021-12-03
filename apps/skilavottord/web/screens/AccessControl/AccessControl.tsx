@@ -13,6 +13,7 @@ import {
   Table as T,
   GridColumn,
   GridRow,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -22,9 +23,18 @@ import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
 import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { Query } from '@island.is/skilavottord-web/graphql/schema'
+import {
+  AccessControl as AccessControlType,
+  CreateAccessControlInput,
+  Query,
+  UpdateAccessControlInput,
+} from '@island.is/skilavottord-web/graphql/schema'
 
-import { PartnerModalForm, AccessControlImage } from './components'
+import {
+  AccessControlImage,
+  AccessControlCreate,
+  AccessControlUpdate,
+} from './components'
 
 const SkilavottordAllRecyclingPartnersQuery = gql`
   query skilavottordAllRecyclingPartnersQuery {
@@ -84,7 +94,7 @@ const AccessControl: FC = () => {
     data: recyclingPartnerData,
     error: recyclingPartnerError,
     loading: recyclingPartnerLoading,
-  } = useQuery<Query>(SkilavottordAllRecyclingPartnersQuery)
+  } = useQuery<Query>(SkilavottordAllRecyclingPartnersQuery, { ssr: false })
   const {
     data: accessControlsData,
     error: accessControlsError,
@@ -98,8 +108,11 @@ const AccessControl: FC = () => {
     UpdateSkilavottordAccessControlMutation,
   )
 
-  const [isAddModalVisible, setIsAddModalVisible] = useState(false)
-  const [partner, setPartner] = useState<any>(null)
+  const [
+    isCreateAccessControlModalVisible,
+    setIsCreateAccessControlModalVisible,
+  ] = useState(false)
+  const [partner, setPartner] = useState<AccessControlType>()
 
   const error = recyclingPartnerError || accessControlsError
   const loading = recyclingPartnerLoading || accessControlsLoading
@@ -111,7 +124,7 @@ const AccessControl: FC = () => {
 
   if (!user) {
     return null
-  } else if (!hasPermission('recyclingCompanies', user?.role as Role)) {
+  } else if (!hasPermission('accessControl', user?.role as Role)) {
     return <NotFound />
   }
 
@@ -128,28 +141,30 @@ const AccessControl: FC = () => {
     value: role,
   }))
 
-  const handleCreateAccessControl = async (partner: any) => {
-    await createSkilavottordAccessControl({
-      variables: {
-        input: {
-          ...partner,
-          role: partner.role.value,
-          partnerId: partner.partnerId.value,
-        },
-      },
+  const handleCreateAccessControlCloseModal = () =>
+    setIsCreateAccessControlModalVisible(false)
+
+  const handleCreateAccessControlOpenModal = () =>
+    setIsCreateAccessControlModalVisible(true)
+
+  const handleUpdateAccessControlCloseModal = () => setPartner(undefined)
+
+  const handleCreateAccessControl = async (input: CreateAccessControlInput) => {
+    const { errors } = await createSkilavottordAccessControl({
+      variables: { input },
     })
+    if (!errors) {
+      handleCreateAccessControlCloseModal()
+    }
   }
 
-  const handleUpdateAccessControl = async (partner: any) => {
-    await updateSkilavottordAccessControl({
-      variables: {
-        input: {
-          ...partner,
-          role: partner.role.value,
-          partnerId: partner.partnerId.value,
-        },
-      },
+  const handleUpdateAccessControl = async (input: UpdateAccessControlInput) => {
+    const { errors } = await updateSkilavottordAccessControl({
+      variables: { input },
     })
+    if (!errors) {
+      handleUpdateAccessControlCloseModal()
+    }
   }
 
   return (
@@ -206,31 +221,23 @@ const AccessControl: FC = () => {
               <Text variant="h1" as="h1" marginBottom={4}>
                 {t.title}
               </Text>
-              <Text variant="intro">
-                Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú
-                getur eytt umboðum eða bætt við nýjum.
-              </Text>
+              <Text variant="intro">{t.info}</Text>
             </GridColumn>
-            {true && (
-              <GridColumn
-                span={['8/8', '2/8']}
-                offset={['0', '0', '1/8']}
-                order={[1, 2]}
-              >
-                <Box textAlign={['center', 'right']} padding={[6, 0]}>
-                  <AccessControlImage />
-                </Box>
-              </GridColumn>
-            )}
+            <GridColumn
+              span={['8/8', '2/8']}
+              offset={['0', '0', '1/8']}
+              order={[1, 2]}
+            >
+              <Box textAlign={['center', 'right']} padding={[6, 0]}>
+                <AccessControlImage />
+              </Box>
+            </GridColumn>
           </GridRow>
-          <PartnerModalForm
+          <AccessControlCreate
             title={t.modal.titles.add}
             text={t.modal.subtitles.add}
-            continueButtonText={t.modal.buttons.continue}
-            cancelButtonText={t.modal.buttons.cancel}
-            show={isAddModalVisible}
-            onCancel={() => setIsAddModalVisible(false)}
-            onContinue={() => {}}
+            show={isCreateAccessControlModalVisible}
+            onCancel={handleCreateAccessControlCloseModal}
             onSubmit={handleCreateAccessControl}
             recyclingPartners={recyclingPartners}
             roles={roles}
@@ -238,12 +245,16 @@ const AccessControl: FC = () => {
         </Box>
         <Stack space={3}>
           <Box display="flex" justifyContent="flexEnd">
-            <Button onClick={() => setIsAddModalVisible(true)}>
+            <Button onClick={handleCreateAccessControlOpenModal}>
               {t.buttons.add}
             </Button>
           </Box>
-          {error || (loading && !isData) ? (
-            <Text>{t.empty}</Text>
+          {loading ? (
+            <SkeletonLoader width="100%" height={206} />
+          ) : !isData || error ? (
+            <Box marginTop={4}>
+              <Text>{t.empty}</Text>
+            </Box>
           ) : (
             <Table>
               <Head>
@@ -258,7 +269,7 @@ const AccessControl: FC = () => {
                     <Text variant="eyebrow">{t.tableHeaders.role}</Text>
                   </HeadData>
                   <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.partnerId}</Text>
+                    <Text variant="eyebrow">{t.tableHeaders.partner}</Text>
                   </HeadData>
                   <HeadData></HeadData>
                 </Row>
@@ -270,7 +281,13 @@ const AccessControl: FC = () => {
                       <Data>{formatNationalId(item.nationalId)}</Data>
                       <Data>{item.name}</Data>
                       <Data>{startCase(item.role)}</Data>
-                      <Data>{item.partnerId}</Data>
+                      <Data>
+                        {
+                          partners.find(
+                            (partner) => partner.companyId === item.partnerId,
+                          )?.companyName
+                        }
+                      </Data>
                       <Data>
                         <Button
                           onClick={() => setPartner(item)}
@@ -281,19 +298,18 @@ const AccessControl: FC = () => {
                         >
                           {t.buttons.edit}
                         </Button>
-                        <PartnerModalForm
-                          title={t.modal.titles.edit}
-                          text={t.modal.subtitles.edit}
-                          continueButtonText={t.modal.buttons.continue}
-                          cancelButtonText={t.modal.buttons.cancel}
-                          show={!!partner}
-                          onCancel={() => setPartner(null)}
-                          onContinue={() => setPartner(null)}
-                          onSubmit={handleUpdateAccessControl}
-                          recyclingPartners={recyclingPartners}
-                          roles={roles}
-                          partner={partner}
-                        />
+                        {partner && (
+                          <AccessControlUpdate
+                            title={t.modal.titles.add}
+                            text={t.modal.subtitles.add}
+                            show={!!partner}
+                            onCancel={handleUpdateAccessControlCloseModal}
+                            onSubmit={handleUpdateAccessControl}
+                            recyclingPartners={recyclingPartners}
+                            roles={roles}
+                            currentPartner={partner}
+                          />
+                        )}
                       </Data>
                     </Row>
                   )

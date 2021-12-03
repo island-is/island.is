@@ -19,19 +19,19 @@ export class AccessControlService {
     // TODO replace mock data with actual db query
     const res = await Promise.resolve([
       {
-        nationalId: '1234567890',
+        nationalId: '1234567777',
         name: 'Gervimaður',
         role: 'recyclingCompany',
         partnerId: '8888888888',
       },
       {
-        nationalId: '1234567890',
+        nationalId: '1234567888',
         name: 'Gervimaður2',
         role: 'recyclingCompany',
         partnerId: '9999999999',
       },
       {
-        nationalId: '1234567890',
+        nationalId: '1234567899',
         name: 'Gervimaður3',
         role: 'recyclingCompany',
         partnerId: '9999999999',

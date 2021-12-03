@@ -1,2 +1,3 @@
 export { AccessControlImage } from './AccessControlImage/AccessControlImage'
-export { PartnerModalForm } from './PartnerModalForm/PartnerModalForm'
+export { AccessControlCreate } from './AccessControlCreate/AccessControlCreate'
+export { AccessControlUpdate } from './AccessControlUpdate/AccessControlUpdate'

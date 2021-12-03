@@ -360,12 +360,13 @@
   },
   "accessControl": {
     "title": "Access control",
+    "info": "Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þúgetur eytt umboðum eða bætt við nýjum.",
     "empty": "There is no recycling comapany added yet",
     "tableHeaders": {
       "nationalId": "National Id",
       "name": "Name",
       "role": "Role",
-      "partnerId": "Partner Id"
+      "partner": "Partner"
     },
     "status": {
       "active": "Active",
@@ -407,11 +408,11 @@
             "required": "Role is required"
           }
         },
-        "partnerId": {
-          "label": "Partner Id",
-          "placeholder": "Partner Id",
+        "partner": {
+          "label": "Partner",
+          "placeholder": "Partner",
           "rules": {
-            "required": "Partner Id is required"
+            "required": "Partner is required"
           }
         }
       },
