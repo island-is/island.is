@@ -264,6 +264,7 @@ export class ApplicationService {
       linkToStatusPage(appModel.id),
       application.email,
       municipality,
+      appModel.created,
     )
 
     await this.sendEmail(
@@ -328,6 +329,7 @@ export class ApplicationService {
         linkToStatusPage(updatedApplication.id),
         updatedApplication.email,
         municipality,
+        updatedApplication.created,
         update.event === ApplicationEventType.DATANEEDED
           ? update?.comment
           : undefined,
