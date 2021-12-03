@@ -92,7 +92,7 @@ describe('Update Right Type', () => {
 })
 
 describe('Get Right Type/s', () => {
-  it('Get /v1/right-types should fail and return 403 error if bearer is missing', async () => {
+  it('Get /v1/right-types should return a list of right types', async () => {
     await request(app.getHttpServer())
       .post('/v1/right-types')
       .send(simpleRequestData)
@@ -115,7 +115,7 @@ describe('Get Right Type/s', () => {
 })
 
 describe('Delete/Remove Right Type', () => {
-  it('Delete /v1/right-types should fail and return 403 error if bearer is missing', async () => {
+  it('Delete /v1/right-types mark right type as invalid', async () => {
     await request(app.getHttpServer())
       .post('/v1/right-types')
       .send(simpleRequestData)
