@@ -812,6 +812,9 @@ notifications:
     - 'node'
   enabled: true
   env:
+    AWS_REGION: 'eu-west-1'
+    DEAD_LETTER_QUEUE_NAME: 'notifications-failure'
+    MAIN_QUEUE_NAME: 'notifications'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'islandis'
@@ -837,7 +840,8 @@ notifications:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    XXXX: '/k8s/notifications/XXXX'
+    SQS_ACCESS_KEY: '/k8s/notifications/SQS_ACCESS_KEY'
+    SQS_SECRET_ACCESS_KEY: '/k8s/notifications/SQS_SECRET_ACCESS_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -846,8 +850,6 @@ notifications:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/notifications'
     create: true
     name: 'notifications'
-  strategy:
-    type: 'RollingUpdate'
 party-letter-registry-api:
   enabled: true
   env:
