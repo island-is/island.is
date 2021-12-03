@@ -64,7 +64,7 @@ const ExpandableLine: FC<Props> = ({
             {!fullClose && i === 0 && !loading ? (
               <div className={styles.line} />
             ) : null}
-            <Text variant={last ? 'eyebrow' : 'small'} as="span">
+            <Text variant={last ? 'eyebrow' : 'default'} as="span">
               <div
                 className={
                   item.align === 'right' ? styles.financeTd : undefined

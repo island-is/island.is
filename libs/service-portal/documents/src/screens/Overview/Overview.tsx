@@ -340,7 +340,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 <GridRow>
                   <GridColumn span={['1/1', '2/12']}>
                     <Box paddingX={2}>
-                      <Text variant="eyebrow" fontWeight="semiBold">
+                      <Text fontWeight="semiBold">
                         {formatMessage({
                           id: 'sp.documents:table-header-date',
                           defaultMessage: 'Dagsetning',
@@ -350,7 +350,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   </GridColumn>
                   <GridColumn span={['1/1', '6/12', '7/12', '6/12', '7/12']}>
                     <Box paddingX={2}>
-                      <Text variant="eyebrow" fontWeight="semiBold">
+                      <Text fontWeight="semiBold">
                         {formatMessage({
                           id: 'sp.documents:table-header-information',
                           defaultMessage: 'Upplýsingar',
@@ -360,7 +360,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   </GridColumn>
                   <GridColumn span={['1/1', '4/12', '3/12', '4/12', '3/12']}>
                     <Box paddingX={2}>
-                      <Text variant="eyebrow" fontWeight="semiBold">
+                      <Text fontWeight="semiBold">
                         {formatMessage({
                           id: 'sp.documents:table-header-institution',
                           defaultMessage: 'Stofnun',

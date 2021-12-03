@@ -17,9 +17,7 @@ const ExpandableLine: FC<Props> = ({ data }) => {
             scope="col"
             key={i}
           >
-            <Text variant="eyebrow" fontWeight="semiBold">
-              {item.value}
-            </Text>
+            <Text fontWeight="semiBold">{item.value}</Text>
           </T.HeadData>
         ))}
         <T.HeadData box={{ printHidden: true }}></T.HeadData>

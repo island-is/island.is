@@ -59,9 +59,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
                 key={i}
                 text={{ truncate: true }}
               >
-                <Text fontWeight="semiBold" variant="small">
-                  {item.value}
-                </Text>
+                <Text fontWeight="semiBold">{item.value}</Text>
               </T.HeadData>
             ))}
           </T.Row>
@@ -90,7 +88,6 @@ const FinanceStatusDetailTable: FC<Props> = ({
                     key={ii}
                   >
                     <Button
-                      size="small"
                       variant="text"
                       onClick={() => showPdf(row.documentID as string)}
                       disabled={loadingPDF && fetchingPdfId === row.documentID}
@@ -110,7 +107,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
                         [styles.alignTd]: item.align,
                       })}
                     >
-                      <Text variant="small">{item.value}</Text>
+                      <Text>{item.value}</Text>
                     </div>
                   </T.Data>
                 ),
@@ -122,23 +119,19 @@ const FinanceStatusDetailTable: FC<Props> = ({
       <Box paddingX={2} paddingTop={2} background="blue100">
         <Columns>
           <Column width="content">
-            <Text fontWeight="semiBold" variant="small">
-              {formatMessage(m.contactInfo)}
-            </Text>
+            <Text fontWeight="semiBold">{formatMessage(m.contactInfo)}</Text>
           </Column>
         </Columns>
         <Box>
           {organization.homepage && (
             <Box display="inlineBlock" marginRight={2}>
-              <Text variant="small" as="span">
-                {formatMessage(m.website)}:
-              </Text>{' '}
+              <Text as="span">{formatMessage(m.website)}:</Text>{' '}
               <a
                 href={`//${organization.homepage}`}
                 rel="noreferrer noopener"
                 target="_blank"
               >
-                <Text color="blue400" variant="small" as="span">
+                <Text color="blue400" as="span">
                   {organization.homepage}
                 </Text>
               </a>
@@ -146,15 +139,13 @@ const FinanceStatusDetailTable: FC<Props> = ({
           )}
           {organization.email && (
             <Box display="inlineBlock" marginRight={2}>
-              <Text variant="small" as="span">
-                {formatMessage(m.email)}:
-              </Text>{' '}
+              <Text as="span">{formatMessage(m.email)}:</Text>{' '}
               <a
                 href={`mailto:${organization.email}`}
                 rel="noreferrer noopener"
                 target="_blank"
               >
-                <Text color="blue400" variant="small" as="span">
+                <Text color="blue400" as="span">
                   {organization.email}
                 </Text>
               </a>
@@ -162,15 +153,13 @@ const FinanceStatusDetailTable: FC<Props> = ({
           )}
           {organization.phone && (
             <Box display="inlineBlock">
-              <Text variant="small" as="span">
-                {formatMessage(m.phone)}:
-              </Text>{' '}
+              <Text as="span">{formatMessage(m.phone)}:</Text>{' '}
               <a
                 href={`tel:+354${organization.phone}`}
                 rel="noreferrer noopener"
                 target="_blank"
               >
-                <Text color="blue400" variant="small" as="span">
+                <Text color="blue400" as="span">
                   {organization.phone}
                 </Text>
               </a>

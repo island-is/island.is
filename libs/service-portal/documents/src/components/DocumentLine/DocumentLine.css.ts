@@ -23,7 +23,7 @@ export const line = style({
 
 export const button = style({
   color: theme.color.blue400,
-  fontSize: 14,
+  fontSize: theme.typography.baseFontSize,
   fontWeight: theme.typography.regular,
   lineHeight: 1.75,
   textAlign: 'left',
@@ -41,7 +41,7 @@ export const unopened = style({
 
 export const sender = style({
   fontWeight: theme.typography.regular,
-  fontSize: 14,
+  fontSize: theme.typography.baseFontSize,
   ...themeUtils.responsiveStyle({
     sm: {
       fontWeight: theme.typography.light,
@@ -52,7 +52,7 @@ export const sender = style({
 
 export const date = style({
   fontWeight: theme.typography.regular,
-  fontSize: 14,
+  fontSize: theme.typography.baseFontSize,
   color: theme.color.dark300,
   ...themeUtils.responsiveStyle({
     sm: {
