@@ -98,7 +98,7 @@ describe('AppController - Greate', () => {
 
     it('should throw BadRequestException', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toBe('Some message')
+      expect(then.error.message).toBe('Could not create a new case')
     })
   })
 

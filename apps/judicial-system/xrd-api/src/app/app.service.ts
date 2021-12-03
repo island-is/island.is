@@ -28,28 +28,35 @@ export class AppService {
   ) {}
 
   private async createCase(caseToCreate: CreateCaseDto): Promise<Case> {
-    return fetch(`${environment.backend.url}/api/internal/case/`, {
+    const res = await fetch(`${environment.backend.url}/api/internal/case/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         authorization: `Bearer ${environment.auth.secretToken}`,
       },
       body: JSON.stringify(caseToCreate),
+    }).catch((reason) => {
+      this.logger.error('Could not create a new case', reason)
+
+      throw new BadGatewayException('Could not create a new case')
     })
-      .then(async (res) => {
-        if (!res.ok) {
-          this.logger.error('Could not create a new case', res)
 
-          throw new BadGatewayException('Could not create a new case')
-        }
+    if (!res.ok) {
+      this.logger.error('Could not create a new case', res)
 
-        return res.json().then((newCase: TCase) => ({ id: newCase.id }))
-      })
+      console.log(res)
+      if (res.status === 400) {
+        // TODO: Get message from res when exception handling has been improved in the backend
+        throw new BadRequestException('Could not create a new case')
+      }
+
+      throw new BadGatewayException('Could not create a new case')
+    }
+
+    return res
+      .json()
+      .then((newCase: TCase) => ({ id: newCase.id }))
       .catch((reason) => {
-        if (reason instanceof BadGatewayException) {
-          throw reason
-        }
-
         this.logger.error('Could not create a new case', reason)
 
         throw new BadGatewayException('Could not create a new case')
