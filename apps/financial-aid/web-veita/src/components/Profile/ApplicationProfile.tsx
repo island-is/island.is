@@ -171,6 +171,7 @@ const ApplicationProfile = ({
         <History
           applicantName={application.name}
           applicationEvents={application.applicationEvents}
+          spouseName={application.spouseName ?? ''}
         />
       </Box>
 
@@ -183,6 +184,8 @@ const ApplicationProfile = ({
           setApplication={setApplication}
           applicationId={application.id}
           currentState={application.state}
+          homeCircumstances={application.homeCircumstances}
+          spouseNationalId={application.spouseNationalId}
           setIsLoading={setIsLoading}
         />
       )}

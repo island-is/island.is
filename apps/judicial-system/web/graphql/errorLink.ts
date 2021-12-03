@@ -12,11 +12,13 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   }
 
   if (graphQLErrors) {
-    graphQLErrors.forEach((err) => {
+    graphQLErrors.forEach(async (err) => {
       switch (err.extensions?.code) {
         case 'UNAUTHENTICATED':
-          api.logOut()
-          window.location.assign('/?villa=innskraning-utrunnin')
+          await api.logout()
+          window.location.assign(
+            `${api.apiUrl}/api/auth/login?redirectRoute=${window.location.pathname}`,
+          )
           return
         case 'FORBIDDEN':
           return

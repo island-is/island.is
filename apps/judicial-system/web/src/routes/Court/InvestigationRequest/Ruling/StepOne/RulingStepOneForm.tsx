@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import type { Case } from '@island.is/judicial-system/types'
+
 import {
   CaseFileList,
   CaseNumbers,
@@ -9,7 +9,7 @@ import {
   FormFooter,
   PoliceRequestAccordionItem,
   RulingInput,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   Accordion,
   AccordionItem,
@@ -18,7 +18,7 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,
@@ -29,12 +29,13 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { icRulingStepOne as m } from '@island.is/judicial-system-web/messages'
 import { isRulingStepOneValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import { icRulingStepOne as m } from '@island.is/judicial-system-web/messages'
+import type { Case } from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
 }
 
@@ -49,6 +50,9 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
 
   const validations: FormSettings = {
+    prosecutorDemands: {
+      validations: ['empty'],
+    },
     ruling: {
       validations: ['empty'],
     },

@@ -14,9 +14,9 @@ import {
   formatCustodyRestrictions,
   formatAlternativeTravelBanRestrictions,
   formatAccusedByGender,
-  caseTypes,
   lowercase,
   formatAppeal,
+  formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -76,7 +76,14 @@ function constructRestrictionRulingPdf(
     })
     .fontSize(mediumFontSize)
     .lineGap(2)
-    .text(formatMessage(ruling.proceedingsHeading), { align: 'center' })
+    .text(
+      formatMessage(
+        shortVersion
+          ? ruling.proceedingsHeadingShortVersion
+          : ruling.proceedingsHeading,
+      ),
+      { align: 'center' },
+    )
     .lineGap(30)
     .text(
       formatMessage(ruling.caseNumber, {
@@ -138,7 +145,7 @@ function constructRestrictionRulingPdf(
     .font('Times-Roman')
     .text(
       formatMessage(ruling.courtDocuments.request, {
-        caseTypes: caseTypes[existingCase.type],
+        caseTypes: formatRequestCaseType(existingCase.type),
       }),
       {
         align: 'justify',
@@ -314,7 +321,8 @@ function constructRestrictionRulingPdf(
 
   if (
     existingCase.type === CaseType.CUSTODY &&
-    existingCase.decision === CaseDecision.ACCEPTING
+    (existingCase.decision === CaseDecision.ACCEPTING ||
+      existingCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
   ) {
     const custodyRestrictions = formatCustodyRestrictions(
       existingCase.accusedGender,
@@ -340,7 +348,8 @@ function constructRestrictionRulingPdf(
       existingCase.decision ===
         CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) ||
     (existingCase.type === CaseType.TRAVEL_BAN &&
-      existingCase.decision === CaseDecision.ACCEPTING)
+      (existingCase.decision === CaseDecision.ACCEPTING ||
+        existingCase.decision === CaseDecision.ACCEPTING_PARTIALLY))
   ) {
     const alternativeTravelBanRestrictions = formatAlternativeTravelBanRestrictions(
       existingCase.accusedGender,
@@ -433,7 +442,14 @@ function constructInvestigationRulingPdf(
     })
     .fontSize(mediumFontSize)
     .lineGap(2)
-    .text(formatMessage(ruling.proceedingsHeading), { align: 'center' })
+    .text(
+      formatMessage(
+        shortVersion
+          ? ruling.proceedingsHeadingShortVersion
+          : ruling.proceedingsHeading,
+      ),
+      { align: 'center' },
+    )
     .lineGap(30)
     .text(
       formatMessage(ruling.caseNumber, {
@@ -495,7 +511,7 @@ function constructInvestigationRulingPdf(
     .font('Times-Roman')
     .text(
       formatMessage(ruling.courtDocuments.request, {
-        caseTypes: caseTypes[existingCase.type],
+        caseTypes: formatRequestCaseType(existingCase.type),
       }),
       {
         align: 'justify',
@@ -714,7 +730,7 @@ function constructRulingPdf(
 export async function getRulingPdfAsString(
   existingCase: Case,
   formatMessage: FormatMessage,
-  shortVersion = false,
+  shortVersion: boolean,
 ): Promise<string> {
   const stream = constructRulingPdf(existingCase, formatMessage, shortVersion)
 

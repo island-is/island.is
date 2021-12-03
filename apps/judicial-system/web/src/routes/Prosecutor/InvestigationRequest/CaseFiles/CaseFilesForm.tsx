@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
+
 import {
   Text,
   Box,
@@ -14,7 +16,6 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import { Case, CaseFile, CaseFileState } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   useCase,
   useS3Upload,
@@ -22,19 +23,20 @@ import {
 import {
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
-import { icCaseFiles as m } from '@island.is/judicial-system-web/messages'
+} from '@island.is/judicial-system-web/src/components'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import MarkdownWrapper from '@island.is/judicial-system-web/src/shared-components/MarkdownWrapper/MarkdownWrapper'
-import { PoliceCaseFilesData } from './CaseFiles'
-import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
-import * as styles from './CaseFiles.css'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import { icCaseFiles as m } from '@island.is/judicial-system-web/messages'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 import { PoliceCaseFilesMessageBox } from '../../SharedComponents/PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
+import { PoliceCaseFilesData } from './CaseFiles'
+import * as styles from './CaseFiles.css'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
   policeCaseFiles?: PoliceCaseFilesData
 }

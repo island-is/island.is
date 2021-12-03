@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
+
 import { Box, Button } from '@island.is/island-ui/core'
 import {
   capitalize,
   formatAccusedByGender,
   NounCases,
 } from '@island.is/judicial-system/formatters'
-import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
+import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { isInvestigationCase } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
+
 import * as styles from '../AppealSection/AppealSection.css'
 
 interface Props {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
 import {
   formatAccusedByGender,
@@ -10,13 +11,12 @@ import {
   CaseCustodyRestrictions,
   CaseType,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   newSetAndSendDateToServer,
   removeTabsValidateAndSet,
@@ -24,7 +24,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
+import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import {
   legalProvisions,
   travelBanProvisions,
@@ -34,12 +34,13 @@ import {
   restrictions,
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
+import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   requestedValidToDateIsValid: boolean
   setRequestedValidToDateIsValid: React.Dispatch<React.SetStateAction<boolean>>
 }

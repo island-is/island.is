@@ -1,5 +1,6 @@
 import { Module, HttpModule } from '@nestjs/common'
-import { FjarsyslaService } from './models/fjarsysla.service'
+
+import { FjarsyslaService } from './fjarsysla.service'
 import { FjarsyslaResolver } from './fjarsysla.resolver'
 
 @Module({

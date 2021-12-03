@@ -56,7 +56,7 @@ describe('FileController - Create presigned post', () => {
 
     it('should request a presigned post from AWS S3', () => {
       expect(mockCreatePresignedPost).toHaveBeenCalledWith(
-        expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
+        expect.stringMatching(new RegExp(`^uploads/${caseId}/.{36}/test.txt$`)),
         'text/plain',
       )
     })
@@ -108,7 +108,7 @@ describe('FileController - Create presigned post', () => {
       })
 
       expect(then.result.fields.key).toMatch(
-        new RegExp(`^${caseId}/.{36}/test.txt$`),
+        new RegExp(`^uploads/${caseId}/.{36}/test.txt$`),
       )
     })
   })

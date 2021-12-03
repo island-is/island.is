@@ -1,6 +1,9 @@
 import React, { useContext } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
+import { useIntl } from 'react-intl'
+import { ValueType } from 'react-select/src/types'
+
 import {
   Accordion,
   AccordionItem,
@@ -20,8 +23,7 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
-} from '@island.is/judicial-system-web/src/shared-components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
@@ -43,24 +45,24 @@ import {
   getShortRestrictionByValue,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import AppealSection from './Components/AppealSection/AppealSection'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
-import { useIntl } from 'react-intl'
 import {
   UploadState,
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
-import { UploadStateMessage } from './Components/UploadStateMessage'
-import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
+import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 import { core } from '@island.is/judicial-system-web/messages'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import AppealSection from './Components/AppealSection/AppealSection'
+import { UploadStateMessage } from './Components/UploadStateMessage'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   setAccusedAppealDate: () => void
   setProsecutorAppealDate: () => void
   withdrawAccusedAppealDate: () => void
@@ -243,7 +245,9 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               (workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
                 (workingCase.type === CaseType.TRAVEL_BAN &&
-                  workingCase.decision === CaseDecision.ACCEPTING)) &&
+                  (workingCase.decision === CaseDecision.ACCEPTING ||
+                    workingCase.decision ===
+                      CaseDecision.ACCEPTING_PARTIALLY))) &&
                 workingCase.custodyRestrictions
                   ?.filter((restriction) =>
                     [
@@ -455,7 +459,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                 <PdfButton
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRuling)}
-                  pdfType="ruling?shortVersion=false"
+                  pdfType="ruling"
                 />
               </Box>
             </>
@@ -464,7 +468,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             <PdfButton
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonRulingShortVersion)}
-              pdfType="ruling?shortVersion=true"
+              pdfType="courtRecord"
             />
           </Box>
           {workingCase.type === CaseType.CUSTODY &&

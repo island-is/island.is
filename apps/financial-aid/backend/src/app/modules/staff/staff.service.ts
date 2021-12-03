@@ -1,9 +1,13 @@
-import { Staff, StaffRole } from '@island.is/financial-aid/shared/lib'
+import {
+  CreateStaffMuncipality,
+  StaffRole,
+} from '@island.is/financial-aid/shared/lib'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { UpdateStaffDto, CreateStaffDto } from './dto'
 import { Op } from 'sequelize'
+import { Transaction } from 'sequelize/types'
 
 import { StaffModel } from './models'
 
@@ -59,17 +63,24 @@ export class StaffService {
     return { numberOfAffectedRows, updatedStaff }
   }
 
-  async createStaff(user: Staff, input: CreateStaffDto): Promise<StaffModel> {
-    return await this.staffModel.create({
-      nationalId: input.nationalId,
-      name: input.name,
-      municipalityId: user.municipalityId,
-      email: input.email,
-      roles: input.roles,
-      active: true,
-      municipalityName: user.municipalityName,
-      municipalityHomepage: user.municipalityHomepage,
-    })
+  async createStaff(
+    input: CreateStaffDto,
+    municipality: CreateStaffMuncipality,
+    t?: Transaction,
+  ): Promise<StaffModel> {
+    return await this.staffModel.create(
+      {
+        nationalId: input.nationalId,
+        name: input.name,
+        municipalityId: municipality.municipalityId,
+        email: input.email,
+        roles: input.roles,
+        active: true,
+        municipalityName: municipality.municipalityName,
+        municipalityHomepage: municipality.municipalityHomepage,
+      },
+      { transaction: t },
+    )
   }
 
   async numberOfUsersForMunicipality(municipalityId: string): Promise<number> {
@@ -85,7 +96,6 @@ export class StaffService {
       where: {
         municipalityId,
         roles: { [Op.contains]: [StaffRole.ADMIN] },
-        active: true,
       },
     })
   }

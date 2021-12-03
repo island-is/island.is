@@ -15,8 +15,8 @@ export class UpdateApplicationInput implements UpdateApplication {
   readonly id!: string
 
   @Allow()
-  @Field(() => String)
-  readonly state!: ApplicationState
+  @Field(() => String, { nullable: true })
+  readonly state?: ApplicationState
 
   @Allow()
   @Field(() => String)
@@ -49,4 +49,8 @@ export class UpdateApplicationInput implements UpdateApplication {
   @Allow()
   @Field({ nullable: true })
   readonly spouseName?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spouseFormComment?: string
 }

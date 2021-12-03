@@ -21,7 +21,8 @@ export const injuredPersonInformation = {
     juridicalDescription: {
       id:
         'an.application:injuredPersonInformation.general.juridicalDescription',
-      defaultMessage: 'Hér vantar texta.',
+      defaultMessage:
+        'Stofnanir, samtök og félög sem eru virk á sviði persónuverndar geta sent inn tilkynningu án umboðs að uppfylltum skilyrðum 80. gr. reglugerðar (ESB) 2016/679 (almennu persónuverndarreglugerðarinnar).',
       description:
         'Description label for injured person information section when submitting for juridical person.',
     },

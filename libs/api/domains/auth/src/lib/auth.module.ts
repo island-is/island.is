@@ -4,10 +4,7 @@ import {
   AuthPublicApiClientModule,
   AuthPublicApiClientModuleConfig,
 } from '@island.is/clients/auth-public-api'
-import {
-  IdentityModule,
-  Config as IdentityConfig,
-} from '@island.is/api/domains/identity'
+import { IdentityModule } from '@island.is/api/domains/identity'
 
 import {
   ApiScopeResolver,
@@ -18,7 +15,6 @@ import { AuthService } from './auth.service'
 
 export type Config = {
   authPublicApi: AuthPublicApiClientModuleConfig
-  identity: IdentityConfig
 }
 
 @Module({
@@ -35,7 +31,7 @@ export class AuthModule {
       module: AuthModule,
       imports: [
         AuthPublicApiClientModule.register(config.authPublicApi),
-        IdentityModule.register(config.identity),
+        IdentityModule,
       ],
     }
   }

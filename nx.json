@@ -79,6 +79,9 @@
     "api-domains-application": {
       "tags": []
     },
+    "api-domains-assets": {
+      "tags": []
+    },
     "api-domains-auth": {
       "tags": []
     },
@@ -286,6 +289,9 @@
       "tags": []
     },
     "cache": {
+      "tags": []
+    },
+    "clients-assets": {
       "tags": []
     },
     "clients-auth-public-api": {
@@ -523,6 +529,12 @@
       "tags": []
     },
     "nest-audit": {
+      "tags": []
+    },
+    "nest-config": {
+      "tags": []
+    },
+    "nest-feature-flags": {
       "tags": []
     },
     "nest-pagination": {

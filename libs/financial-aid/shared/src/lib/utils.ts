@@ -31,7 +31,14 @@ export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
 
 export const sanitizeNationalId = (nationalId: string) =>
-  nationalId.replace(/[^0-9]/g, '')
+  nationalId?.replace(/[^0-9]/g, '')
+
+export const isNationalIdValid = (nationalId: string): boolean => {
+  return (
+    sanitizeNationalId(nationalId).length === 10 &&
+    isNaN(Number(sanitizeNationalId(nationalId))) === false
+  )
+}
 
 export const isEmailValid = (emailAddress?: string) => {
   if (emailAddress) {
@@ -79,3 +86,10 @@ export const scrollToId = (id: string) => {
     behavior: 'smooth',
   })
 }
+
+export const isObjEmpty = (
+  obj: Record<string, { description: string; amount: number }>,
+) =>
+  obj &&
+  Object.keys(obj).length === 0 &&
+  Object.getPrototypeOf(obj) === Object.prototype

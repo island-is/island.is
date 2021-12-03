@@ -241,6 +241,13 @@
             "cwd": "apps/air-discount-scheme/backend"
           }
         },
+        "seed": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "sequelize-cli db:seed:all",
+            "cwd": "apps/air-discount-scheme/backend"
+          }
+        },
         "docker-express": {}
       }
     },
@@ -701,6 +708,27 @@
           "options": {
             "outputPath": "libs/api/domains/application/gen/fetch",
             "command": "yarn openapi-generator -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+          }
+        }
+      }
+    },
+    "api-domains-assets": {
+      "root": "libs/api/domains/assets",
+      "sourceRoot": "libs/api/domains/assets/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/assets/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/assets"],
+          "options": {
+            "jestConfig": "libs/api/domains/assets/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
@@ -1683,6 +1711,11 @@
                 "glob": "*",
                 "input": "libs/email-service/src/tools/design",
                 "output": "./email-service-assets"
+              },
+              {
+                "glob": "*",
+                "input": "libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission/emailGenerators/assets",
+                "output": "./driving-license-assets"
               }
             ],
             "webpackConfig": "apps/application-system/api/webpack.config.js",
@@ -1870,7 +1903,7 @@
             }
           }
         },
-        "e2e-ci": {
+        "e2e-ci-skip": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn e2e-ci -n application-system-form-e2e -t react -p 4242 -d dist/apps/application-system/form -c"
@@ -3221,6 +3254,33 @@
         }
       }
     },
+    "clients-assets": {
+      "root": "libs/clients/assets",
+      "sourceRoot": "libs/clients/assets/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/assets/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/assets"],
+          "options": {
+            "jestConfig": "libs/clients/assets/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/assets/gen/fetch -i libs/clients/assets/src/clientConfig.yaml"
+          }
+        }
+      }
+    },
     "clients-auth-public-api": {
       "root": "libs/clients/auth-public-api",
       "sourceRoot": "libs/clients/auth-public-api/src",
@@ -3503,10 +3563,22 @@
             "passWithNoTests": true
           }
         },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10001/SKRA-Protected/getOpenAPI?serviceCode=Einstaklingar-v1 -H 'Accept: application/json' > src/clientConfig.json",
+              "jq '.components.schemas.ProblemDetails |= (.additionalProperties = false | .properties.extensions.additionalProperties = false)' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json",
+              "jq '.paths[][].parameters |= map(select(.name != \"X-Road-Client\"))' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/national-registry/v2"
+          }
+        },
         "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn openapi-generator -o libs/clients/national-registry/v2/gen/fetch -i libs/clients/national-registry/v2/src/clientConfig.yaml"
+            "command": "yarn openapi-generator -o libs/clients/national-registry/v2/gen/fetch -i libs/clients/national-registry/v2/src/clientConfig.json"
           }
         }
       }
@@ -6119,6 +6191,48 @@
         }
       }
     },
+    "nest-config": {
+      "root": "libs/nest/config",
+      "sourceRoot": "libs/nest/config/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/config/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/config"],
+          "options": {
+            "jestConfig": "libs/nest/config/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "nest-feature-flags": {
+      "root": "libs/nest/feature-flags",
+      "sourceRoot": "libs/nest/feature-flags/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/feature-flags/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/feature-flags"],
+          "options": {
+            "jestConfig": "libs/nest/feature-flags/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nest-pagination": {
       "root": "libs/nest/pagination",
       "sourceRoot": "libs/nest/pagination/src",
@@ -7479,6 +7593,25 @@
       "schematics": {},
       "architect": {
         "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "dist/apps/services/auth-api",
+            "commands": [
+              "nx esbuild services-auth-api",
+              "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
+            ],
+            "parallel": false
+          },
+          "configurations": {
+            "production": {
+              "commands": [
+                "nx esbuild services-auth-api --prod",
+                "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
+              ]
+            }
+          }
+        },
+        "esbuild": {
           "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/services/auth-api",
@@ -7521,7 +7654,7 @@
         "serve": {
           "builder": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "services-auth-api:build"
+            "buildTarget": "services-auth-api:esbuild"
           }
         },
         "lint": {
@@ -7576,7 +7709,10 @@
         "seed": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["sequelize-cli db:seed:all"],
+            "commands": [
+              "sequelize-cli db:seed:all --seeders-path ./seeders/local",
+              "sequelize-cli db:seed:all"
+            ],
             "cwd": "libs/auth-api-lib"
           }
         }
@@ -8862,6 +8998,7 @@
           "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/skilavottord/ws",
+            "showCircularDependencies": false,
             "main": "apps/skilavottord/ws/src/main.ts",
             "tsConfig": "apps/skilavottord/ws/tsconfig.app.json",
             "assets": [
