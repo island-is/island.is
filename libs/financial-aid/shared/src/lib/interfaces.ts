@@ -61,11 +61,11 @@ export interface Amount {
   id: string
   aidAmount: number
   income?: number
-  deductionFactors_id?: string
   personalTaxCredit: number
   spousePersonalTaxCredit?: number
   tax: number
   finalAmount: number
+  deductionFactors?: DeductionFactors[]
 }
 
 export interface DeductionFactors {
@@ -268,6 +268,7 @@ export interface Application {
   rejection?: string
   staff?: Staff
   applicationEvents?: ApplicationEvent[]
+  amounts?: Amount
   spouseNationalId?: string
   spouseEmail?: string
   spousePhoneNumber?: string

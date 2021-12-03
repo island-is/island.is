@@ -57,6 +57,19 @@ export const ApplicationQuery = gql`
         staffName
         staffNationalId
       }
+      amounts {
+        id
+        aidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
+      }
     }
   }
 `

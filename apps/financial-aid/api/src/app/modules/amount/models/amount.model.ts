@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { Amount } from '@island.is/financial-aid/shared/lib'
+import { DeductionFactorsModel } from '../../deductionFactors'
 
 @ObjectType()
 export class AmountModel implements Amount {
@@ -24,4 +25,7 @@ export class AmountModel implements Amount {
 
   @Field()
   readonly finalAmount!: number
+
+  @Field(() => [DeductionFactorsModel], { nullable: true })
+  readonly deductionFactors?: DeductionFactorsModel[]
 }

@@ -6,7 +6,10 @@ import { AmountModel } from './models'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CreateAmountDto } from './dto'
-import { DeductionFactorsService } from '../deductionFactors'
+import {
+  DeductionFactorsModel,
+  DeductionFactorsService,
+} from '../deductionFactors'
 
 import { Sequelize } from 'sequelize'
 

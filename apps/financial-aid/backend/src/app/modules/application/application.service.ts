@@ -33,6 +33,8 @@ import { environment } from '../../../environments'
 import { ApplicantEmailTemplate } from './emailTemplates/applicantEmailTemplate'
 import { MunicipalityService } from '../municipality'
 import { logger } from '@island.is/logging'
+import { AmountModel } from '../amount'
+import { DeductionFactorsModel } from '../deductionFactors'
 
 interface Recipient {
   name: string
@@ -181,6 +183,11 @@ export class ApplicationService {
           as: 'files',
           separate: true,
           order: [['created', 'DESC']],
+        },
+        {
+          model: AmountModel,
+          as: 'amounts',
+          include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
         },
       ],
     })

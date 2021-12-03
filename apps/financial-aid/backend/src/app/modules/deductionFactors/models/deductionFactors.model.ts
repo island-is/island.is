@@ -26,13 +26,13 @@ export class DeductionFactorsModel extends Model<DeductionFactors> {
   @ApiProperty()
   id: string
 
-  // @ForeignKey(() => AmountModel)
-  // @Column({
-  //   type: DataType.UUID,
-  //   allowNull: false,
-  // })
-  // @ApiProperty()
-  // amountId: string
+  @ForeignKey(() => AmountModel)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  @ApiProperty()
+  amountId: string
 
   @Column({
     type: DataType.STRING,
