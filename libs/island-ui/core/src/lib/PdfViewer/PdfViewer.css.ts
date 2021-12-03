@@ -9,6 +9,10 @@ globalStyle(`${pdfViewer} svg`, {
   border: '1px solid #CCDFFF',
 })
 
+globalStyle(`${pdfViewer} .react-pdf__Page__svg`, {
+  width: 'auto !important',
+})
+
 export const linkWithoutDecorations = style({
   ':hover': {
     textDecoration: 'none',
