@@ -1,3 +1,7 @@
+export * from '../entities/models/personal-representative.model'
+export * from '../entities/dto/personal-representative.dto'
+export * from '../services/personal-representative.service'
+export * from '../entities/models/personal-representative-right.model'
 export * from '../entities/models/personal-representative-right-type.model'
 export * from '../entities/dto/personal-representative-right-type.dto'
 export * from '../services/personal-representative-right-type.service'

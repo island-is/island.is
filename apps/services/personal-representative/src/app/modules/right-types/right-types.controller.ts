@@ -17,6 +17,7 @@ import {
   Inject,
 } from '@nestjs/common'
 import {
+  ApiOperation,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiBearerAuth,
@@ -35,6 +36,9 @@ export class RightTypesController {
   ) {}
 
   /** Gets all right types */
+  @ApiOperation({
+    summary: 'Get a list of all right types for personal representatives',
+  })
   @Get()
   @ApiOkResponse({ type: PersonalRepresentativeRightType })
   async getAll(): Promise<PersonalRepresentativeRightType[]> {
@@ -48,6 +52,9 @@ export class RightTypesController {
   }
 
   /** Gets a right type by it's key */
+  @ApiOperation({
+    summary: 'Get a single right type by code',
+  })
   @Get(':code')
   @ApiOkResponse({ type: PersonalRepresentativeRightType })
   async getAsync(
@@ -68,6 +75,9 @@ export class RightTypesController {
     return rightType
   }
   /** Removes a right type by it's code, by making it invalid */
+  @ApiOperation({
+    summary: 'Delete a single right type by code',
+  })
   @Delete(':code')
   @ApiOkResponse()
   async removeAsync(@Param('code') code: string): Promise<number> {
@@ -79,6 +89,9 @@ export class RightTypesController {
   }
 
   /** Creates a right type */
+  @ApiOperation({
+    summary: 'Create a right type',
+  })
   @Post()
   @ApiCreatedResponse({ type: PersonalRepresentativeRightType })
   async create(
@@ -88,6 +101,9 @@ export class RightTypesController {
   }
 
   /** Updates a right type */
+  @ApiOperation({
+    summary: 'Update a right type by code',
+  })
   @Put(':code')
   @ApiCreatedResponse({ type: PersonalRepresentativeRightType })
   async update(
