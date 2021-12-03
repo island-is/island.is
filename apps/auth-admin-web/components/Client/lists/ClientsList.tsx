@@ -32,12 +32,7 @@ const ClientsList: React.FC = () => {
       count,
     )
     if (response) {
-      const clientsArr = response.rows.sort((c1, c2) => {
-        if (!c1.archived && !c2.archived) return 0
-        if (!c1.archived && c2.archived) return 1
-        if (c1.archived && !c2.archived) return -1
-        return 0
-      })
+      const clientsArr = response.rows.filter((r) => !r.archived)
 
       setClients(clientsArr.reverse())
       setLastPage(Math.ceil(response.count / count))
