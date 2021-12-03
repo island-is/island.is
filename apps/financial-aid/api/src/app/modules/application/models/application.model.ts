@@ -74,6 +74,9 @@ export class ApplicationModel implements Application {
   @Field({ nullable: true })
   readonly formComment?: string
 
+  @Field({ nullable: true })
+  readonly spouseFormComment?: string
+
   @Field(() => String)
   readonly state!: ApplicationState
 

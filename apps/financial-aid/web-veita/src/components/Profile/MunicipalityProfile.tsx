@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   Box,
   Button,
@@ -27,6 +27,10 @@ import {
   ActivationButtonTableItem,
   NewUserModal,
 } from '@island.is/financial-aid-web/veita/src/components'
+import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
+import { useLazyQuery } from '@apollo/client'
+import { AdminUsersQuery } from '@island.is/financial-aid-web/veita/graphql'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import { useMutation } from '@apollo/client'
 import { MunicipalityActivityMutation } from '@island.is/financial-aid-web/veita/graphql'
 
@@ -40,6 +44,23 @@ const MunicipalityProfile = ({
   getMunicipality,
 }: MunicipalityProfileProps) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const { changeUserActivity, staffActivationLoading } = useStaff()
+  const [adminUsers, setAdminUsers] = useState(municipality.adminUsers)
+  const { admin } = useContext(AdminContext)
+
+  const [
+    getAdminUsers,
+    { data: adminUsersData, loading: AdminUsersLoading },
+  ] = useLazyQuery<{ municipality: Municipality }, { input: { id: string } }>(
+    AdminUsersQuery,
+    { fetchPolicy: 'no-cache' },
+  )
+
+  useEffect(() => {
+    if (adminUsersData?.municipality.adminUsers) {
+      setAdminUsers(adminUsersData.municipality.adminUsers)
+    }
+  }, [adminUsersData])
 
   const refreshList = () => {
     setIsModalVisible(false)
@@ -69,6 +90,10 @@ const MunicipalityProfile = ({
 
   const smallText = 'small'
   const headline = 'h5'
+
+  const isLoggedInUser = (staff: Staff) =>
+    admin?.nationalId === staff.nationalId
+
   const aidTableBody = (value: AidTypeHomeCircumstances) => {
     switch (value) {
       case AidTypeHomeCircumstances.OWNPLACE:
@@ -194,18 +219,40 @@ const MunicipalityProfile = ({
               </thead>
 
               <tbody>
-                {municipality.adminUsers?.map((item: Staff, index) => (
+                {adminUsers?.map((item: Staff, index) => (
                   <TableBody
                     items={[
-                      TextTableItem(headline, item.name),
-                      TextTableItem(smallText, item.nationalId),
-                      TextTableItem(smallText, item.email),
-                      ActivationButtonTableItem(
-                        'Óvirkja',
-                        false,
-                        () => console.log('🔜'),
-                        true,
+                      TextTableItem(
+                        headline,
+                        `${item.name} ${isLoggedInUser(item) ? '(Þú)' : ''}`,
+                        item.active ? 'dark400' : 'dark300',
                       ),
+                      TextTableItem(
+                        smallText,
+                        item.nationalId,
+                        item.active ? 'dark400' : 'dark300',
+                      ),
+                      TextTableItem(
+                        smallText,
+                        item.email,
+                        item.active ? 'dark400' : 'dark300',
+                      ),
+                      isLoggedInUser(item) === false &&
+                        ActivationButtonTableItem(
+                          item.active ? 'Óvirkja' : 'Virkja',
+                          staffActivationLoading || AdminUsersLoading,
+                          () =>
+                            changeUserActivity(!item.active, item.id).then(
+                              () => {
+                                getAdminUsers({
+                                  variables: {
+                                    input: { id: municipality.municipalityId },
+                                  },
+                                })
+                              },
+                            ),
+                          item.active,
+                        ),
                     ]}
                     index={index}
                     identifier={item.id}
@@ -251,7 +298,7 @@ const MunicipalityProfile = ({
                     identifier={value}
                     key={`aidTableBody-${value}`}
                     hasMaxWidth={false}
-                    animationDelay={55 * (municipality.adminUsers?.length ?? 1)}
+                    animationDelay={55 * index}
                   />
                 ))}
               </tbody>
@@ -323,8 +370,8 @@ const MunicipalityProfile = ({
         }}
         onStaffCreated={refreshList}
         predefinedRoles={[StaffRole.ADMIN]}
+        municipalityName={municipality.name}
       />
-
       <ToastContainer />
     </Box>
   )
