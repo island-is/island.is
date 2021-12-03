@@ -275,6 +275,7 @@
     "success": "Staðsetning var uppfærð."
   },
   "deregisterSidenav": {
+    "title": "Aðgerðir",
     "deregister": "Afskrá ökutæki",
     "companyInfo": "Upplýsingar fyrirtækis"
   },

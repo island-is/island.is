@@ -13,7 +13,7 @@ import { NotFound } from '@island.is/skilavottord-web/components'
 import {
   RecyclingPartner,
   Query,
-} from '@island.is/skilavottord-web/graphql/types'
+} from '@island.is/skilavottord-web/graphql/schema'
 import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
