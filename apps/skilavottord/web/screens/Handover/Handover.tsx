@@ -9,7 +9,7 @@ import {
   Stack,
   Text,
   Button,
-  LoadingIcon,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
@@ -184,7 +184,7 @@ const Handover: FC = () => {
           <Box textAlign="center">
             <Stack space={4}>
               <Text variant="h1">{t.titles.loading}</Text>
-              <LoadingIcon size={50} />
+              <LoadingDots large />
             </Stack>
           </Box>
         ) : (

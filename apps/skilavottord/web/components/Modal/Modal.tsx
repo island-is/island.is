@@ -8,7 +8,7 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
-  LoadingIcon,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import * as styles from './Modal.css'
 import { OutlinedError } from '@island.is/skilavottord-web/components'
@@ -40,89 +40,86 @@ export const Modal: FC<ModalProps> = ({
   errorText,
 }: ModalProps) => {
   useEffect(() => {
-    document.body.style.overflowY = 'auto'
-    if (show) {
-      document.body.style.overflowY = 'hidden'
-    }
+    document.body.style.overflowY = show ? 'hidden' : 'auto'
   }, [show])
 
+  if (!show) {
+    return null
+  }
+
   return (
-    <>
-      {show && (
-        <Box className={styles.container}>
-          <Box className={styles.overlay} />
-          <GridContainer>
-            <GridRow>
+    <Box className={styles.container}>
+      <Box className={styles.overlay} />
+      <GridContainer>
+        <GridRow>
+          <GridColumn
+            span={['12/12', '8/12', '8/12', '8/12']}
+            offset={['0', '2/12', '2/12', '2/12']}
+          >
+            <Box
+              paddingY={[12, 10, 10, 10]}
+              paddingX={[3, 0, 0, 0]}
+              className={styles.modalContainer}
+              background="white"
+              borderRadius="large"
+            >
+              <Box className={styles.modalClose}>
+                <Button
+                  colorScheme="negative"
+                  circle
+                  icon="close"
+                  size="large"
+                  onClick={onCancel}
+                />
+              </Box>
               <GridColumn
-                span={['12/12', '8/12', '8/12', '8/12']}
-                offset={['0', '2/12', '2/12', '2/12']}
+                span={['8/8', '6/8', '6/8', '6/8']}
+                offset={['0', '1/8', '1/8', '1/8']}
               >
-                <Box
-                  paddingY={[12, 10, 10, 10]}
-                  paddingX={[3, 0, 0, 0]}
-                  className={styles.modalContainer}
-                  background="white"
-                  borderRadius="large"
-                >
-                  <Box className={styles.modalClose}>
-                    <Button
-                      colorScheme="negative"
-                      circle
-                      icon="close"
-                      size="large"
-                      onClick={onCancel}
+                {error && errorText ? (
+                  <Stack space={2}>
+                    <Text variant="h1">{title}</Text>
+                    <OutlinedError
+                      title={errorText?.title}
+                      message={errorText?.message}
+                      primaryButton={{
+                        text: `${errorText?.primaryButton}`,
+                        action: onContinue,
+                      }}
+                      secondaryButton={{
+                        text: `${errorText?.secondaryButton}`,
+                        action: onCancel,
+                      }}
                     />
-                  </Box>
-                  <GridColumn
-                    span={['8/8', '6/8', '6/8', '6/8']}
-                    offset={['0', '1/8', '1/8', '1/8']}
-                  >
-                    {error && errorText ? (
-                      <Stack space={2}>
-                        <Text variant="h1">{title}</Text>
-                        <OutlinedError
-                          title={errorText?.title}
-                          message={errorText?.message}
-                          primaryButton={{
-                            text: `${errorText?.primaryButton}`,
-                            action: onContinue,
-                          }}
-                          secondaryButton={{
-                            text: `${errorText?.secondaryButton}`,
-                            action: onCancel,
-                          }}
-                        />
-                      </Stack>
-                    ) : (
-                      <Stack space={[6, 4, 4, 4]}>
-                        <Stack space={2}>
-                          <Text variant="h1">{title}</Text>
-                          {loading ? (
-                            <Box textAlign="center">
-                              <LoadingIcon size={50} />
-                            </Box>
-                          ) : (
-                            <Text variant="intro">{text}</Text>
-                          )}
-                        </Stack>
-                        <Box display="flex" justifyContent="spaceBetween">
-                          <Button variant="ghost" onClick={onCancel} fluid>
-                            {cancelButtonText}
-                          </Button>
-                          <Box paddingX={[3, 3, 3, 15]}></Box>
-                          <Button onClick={onContinue} fluid>
-                            {continueButtonText}
-                          </Button>
+                  </Stack>
+                ) : (
+                  <Stack space={[6, 4, 4, 4]}>
+                    <Stack space={2}>
+                      <Text variant="h1">{title}</Text>
+                      {loading ? (
+                        <Box textAlign="center">
+                          <LoadingDots large />
                         </Box>
-                      </Stack>
-                    )}
-                  </GridColumn>
-                </Box>
+                      ) : (
+                        <Text variant="intro">{text}</Text>
+                      )}
+                    </Stack>
+                    <Box display="flex" justifyContent="spaceBetween">
+                      <Button variant="ghost" onClick={onCancel} fluid>
+                        {cancelButtonText}
+                      </Button>
+                      <Box paddingX={[3, 3, 3, 15]}></Box>
+                      <Button onClick={onContinue} fluid>
+                        {continueButtonText}
+                      </Button>
+                    </Box>
+                  </Stack>
+                )}
               </GridColumn>
-            </GridRow>
-          </GridContainer>
-        </Box>
-      )}
-    </>
+            </Box>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    </Box>
   )
 }
