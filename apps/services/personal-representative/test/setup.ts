@@ -1,11 +1,11 @@
-import { testServer, useDatabase, TestApp } from '@island.is/testing/nest'
+import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
+import { getConnectionToken } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
-import type { Type } from '@nestjs/common'
+import type { INestApplication, Type } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import { SequelizeConfigService } from '@island.is/auth-api-lib/personal-representative'
 
-export let app: TestApp
+export let app: INestApplication
 let sequelize: Sequelize
 
 export const truncate = async () => {
@@ -50,11 +50,12 @@ expect.extend({
   },
 })
 
-export const setup = async () => {
-  app = await testServer<AppModule>({
+export const setup = async (options?: Partial<TestServerOptions>) => {
+  app = await testServer({
     appModule: AppModule,
-    hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
+    ...options,
   })
+  sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
   try {
     await sequelize.sync()
