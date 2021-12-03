@@ -72,11 +72,12 @@ export const FamilyMemberCard: FC<Props> = ({
           flexDirection="column"
           marginLeft="auto"
         >
-          {familyRelation && (
+          {/* Commented out because familyRelations tags are buggy */}
+          {/* {familyRelation && (
             <Tag variant="purple">
               {formatMessage(spmm.family[familyRelation as FamilyMemberEnum])}
             </Tag>
-          )}
+          )} */}
           <Box marginTop="p2">
             <Link
               to={
