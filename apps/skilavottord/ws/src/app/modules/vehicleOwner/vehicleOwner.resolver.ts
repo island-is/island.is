@@ -8,6 +8,7 @@ import { Authorize } from '../auth'
 import { VehicleOwnerModel } from './vehicleOwner.model'
 import { VehicleOwnerService } from './vehicleOwner.service'
 
+@Authorize({ throwOnUnAuthorized: false })
 @Resolver(() => VehicleOwnerModel)
 export class VehicleOwnerResolver {
   constructor(
@@ -16,7 +17,6 @@ export class VehicleOwnerResolver {
     private logger: Logger,
   ) {}
 
-  @Authorize({ throwOnUnAuthorized: false })
   @Query(() => [VehicleOwnerModel])
   async skilavottordAllVehicleOwners(): Promise<VehicleOwnerModel[]> {
     const res = await this.vehicleOwnerService.findAll()
@@ -38,6 +38,7 @@ export class VehicleOwnerResolver {
     return res
   }
 
+  @Authorize({ roles: ['developer', 'recyclingCompany', 'recyclingFund'] })
   @Query(() => [VehicleOwnerModel])
   async skilavottordRecyclingPartnerVehicles(
     @Args('partnerId') partnerId: string,
