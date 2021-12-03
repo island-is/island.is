@@ -48,6 +48,7 @@ export const createTestingCaseModule = async () => {
       {
         provide: getModelToken(Case),
         useValue: {
+          create: jest.fn(),
           findOne: jest.fn(),
           update: jest.fn(),
         },
@@ -56,11 +57,13 @@ export const createTestingCaseModule = async () => {
     ],
   }).compile()
 
+  const userService = await caseModule.resolve<UserService>(UserService)
+
   const caseModel = await caseModule.resolve<typeof Case>(getModelToken(Case))
 
   const caseService = caseModule.get<CaseService>(CaseService)
 
   const caseController = caseModule.get<CaseController>(CaseController)
 
-  return { caseModel, caseService, caseController }
+  return { userService, caseModel, caseService, caseController }
 }
