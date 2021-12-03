@@ -57,7 +57,6 @@ export const PartnerModalForm: FC<PartnerModalFormProps> = ({
         setValue(key, value)
       })
     }
-    return () => {}
   }, [partner])
 
   const handleOnSubmit = handleSubmit((partner) => {
@@ -86,18 +85,15 @@ export const PartnerModalForm: FC<PartnerModalFormProps> = ({
               {
                 required: {
                   value: true,
-                  message: 't.modal.inputs.nationalId.rules.required',
+                  message: t.modal.inputs.nationalId.rules?.required,
                 },
                 validate: {
                   value: (value: number) => {
-                    console.log(value)
-                    console.log(kennitala.isPerson(value))
-
                     if (
                       value.toString().length === 10 &&
                       !kennitala.isPerson(value)
                     ) {
-                      return 't.modal.inputs.nationalId.rules.validate'
+                      return t.modal.inputs.nationalId.rules?.validate
                     }
                   },
                 },
@@ -107,6 +103,7 @@ export const PartnerModalForm: FC<PartnerModalFormProps> = ({
             format="######-####"
             error={errors?.nationalId?.message}
             backgroundColor="blue"
+            disabled={!!partner}
           />
           <InputController
             id="name"
@@ -118,7 +115,7 @@ export const PartnerModalForm: FC<PartnerModalFormProps> = ({
               {
                 required: {
                   value: true,
-                  message: 'Skylda er að fylla út kennitölu', // put into translations, make them for english
+                  message: t.modal.inputs.name.rules?.required,
                 },
               } as ValidationRules
             }
@@ -128,6 +125,14 @@ export const PartnerModalForm: FC<PartnerModalFormProps> = ({
           <Controller
             name="role"
             control={control}
+            rules={
+              {
+                required: {
+                  value: true,
+                  message: t.modal.inputs.role.rules?.required,
+                },
+              } as ValidationRules
+            }
             render={({ onChange, value, name }) => {
               return (
                 <Select
@@ -136,12 +141,11 @@ export const PartnerModalForm: FC<PartnerModalFormProps> = ({
                   label={t.modal.inputs.role.label}
                   placeholder={t.modal.inputs.role.placeholder}
                   size="md"
-                  value={value ?? ''}
+                  hasError={!!errors?.role?.message}
                   errorMessage={errors?.role?.message}
                   backgroundColor="blue"
                   options={roles}
                   onChange={onChange}
-                  disabled={false}
                 />
               )
             }}
@@ -149,6 +153,14 @@ export const PartnerModalForm: FC<PartnerModalFormProps> = ({
           <Controller
             name="partnerId"
             control={control}
+            rules={
+              {
+                required: {
+                  value: true,
+                  message: t.modal.inputs.partnerId.rules?.required,
+                },
+              } as ValidationRules
+            }
             render={({ onChange, value, name }) => {
               return (
                 <Select
@@ -157,12 +169,11 @@ export const PartnerModalForm: FC<PartnerModalFormProps> = ({
                   label={t.modal.inputs.partnerId.label}
                   placeholder={t.modal.inputs.partnerId.placeholder}
                   size="md"
-                  value={value ?? ''}
+                  hasError={!!errors?.partnerId?.message}
                   errorMessage={errors?.partnerId?.message}
                   backgroundColor="blue"
                   options={recyclingPartners}
                   onChange={onChange}
-                  disabled={false}
                 />
               )
             }}

@@ -117,3 +117,7 @@ export const icon = style({
 export const iconError = style({
   color: theme.color.red600,
 })
+
+export const disabled = style({
+  opacity: 0.5,
+})

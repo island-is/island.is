@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { ForbiddenError } from 'apollo-server-express'
 
 import { environment } from '../../../environments'
 import { User } from '../user'
@@ -43,6 +44,12 @@ export class AuthService {
         }
         return true
       }
+    }
+  }
+
+  verifyPermission(user: AuthUser, role: Role) {
+    if (!this.checkRole(user, role)) {
+      throw new ForbiddenError('Forbidden')
     }
   }
 

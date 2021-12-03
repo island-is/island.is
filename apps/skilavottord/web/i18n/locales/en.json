@@ -323,7 +323,7 @@
     "subtitles": {
       "deregistered": "Deregistered"
     },
-    "info": "There are no recycled cars yet",
+    "info": "Here is the list of all deregistered vehicles, along with date of the registration.",
     "buttons": {
       "export": "Export"
     },
@@ -392,15 +392,24 @@
         },
         "name": {
           "label": "Name",
-          "placeholder": "Name"
+          "placeholder": "Name",
+          "rules": {
+            "required": "Name is required"
+          }
         },
         "role": {
           "label": "Role",
-          "placeholder": "Role"
+          "placeholder": "Role",
+          "rules": {
+            "required": "Role is required"
+          }
         },
         "partnerId": {
           "label": "Partner Id",
-          "placeholder": "Partner Id"
+          "placeholder": "Partner Id",
+          "rules": {
+            "required": "Partner Id is required"
+          }
         }
       },
       "buttons": {

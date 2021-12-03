@@ -1,12 +1,14 @@
-import { ApolloError, ServerError } from '@apollo/client'
 import { onError, ErrorResponse } from '@apollo/client/link/error'
 import Router from 'next/router'
 
-import { NotificationService, api } from '../services'
+import { toast } from '@island.is/island-ui/core'
+
+import { api } from '../services'
 
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (networkError) {
-    return NotificationService.onNetworkError(networkError as ServerError)
+    toast.error(networkError.message)
+    return
   }
 
   if (graphQLErrors) {
@@ -15,11 +17,9 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
         case 'UNAUTHENTICATED':
           return api.logout().then(() => Router.reload())
         case 'FORBIDDEN':
-          return Router.push('/404')
+          return
         default:
-          return NotificationService.onGraphQLError({
-            graphQLErrors,
-          } as ApolloError)
+          return toast.error(graphQLErrors.join('\n'))
       }
     })
   }

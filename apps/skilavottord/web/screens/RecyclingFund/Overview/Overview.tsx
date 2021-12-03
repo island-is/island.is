@@ -1,19 +1,17 @@
 import React, { FC, useContext } from 'react'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
+import NextLink from 'next/link'
 
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import {
-  BreadcrumbsDeprecated as Breadcrumbs,
-  Link,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Breadcrumbs, Stack, Text } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { Sidenav, NotFound } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { Query } from '@island.is/skilavottord-web/graphql/schema'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+
 import { CarsTable } from './components/CarsTable'
 
 export const SkilavottordVehiclesQuery = gql`
@@ -33,6 +31,7 @@ export const SkilavottordVehiclesQuery = gql`
 `
 
 const Overview: FC = () => {
+  const { linkResolver } = useLinkResolver()
   const { user } = useContext(UserContext)
   const {
     t: { recyclingFundOverview: t, recyclingFundSidenav: sidenavText, routes },
@@ -74,15 +73,23 @@ const Overview: FC = () => {
       }
     >
       <Stack space={4}>
-        <Breadcrumbs>
-          <Link href={routes.home['recyclingCompany']}>Ísland.is</Link>
-          <span>{t.title}</span>
-        </Breadcrumbs>
+        <Breadcrumbs
+          items={[
+            { title: 'Ísland.is', href: routes.home['recyclingCompany'] },
+            {
+              title: t.title,
+            },
+          ]}
+          renderLink={(link) => {
+            return (
+              <NextLink {...linkResolver('homepage')} passHref>
+                {link}
+              </NextLink>
+            )
+          }}
+        />
         <Text variant="h1">{t.title}</Text>
-        <Text variant="intro">
-          Here is the list of all deregistered vehicles, along with date of the
-          registration.
-        </Text>
+        <Text variant="intro">{t.info}</Text>
         <Stack space={3}>
           <Text variant="h3">{t.subtitles.deregistered}</Text>
           {vehicles.length > 0 ? (

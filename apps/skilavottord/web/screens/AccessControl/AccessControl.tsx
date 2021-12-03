@@ -1,5 +1,5 @@
 import React, { FC, useContext, useState } from 'react'
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import startCase from 'lodash/startCase'
 import NextLink from 'next/link'
@@ -10,7 +10,9 @@ import {
   Button,
   Stack,
   Text,
-  Table,
+  Table as T,
+  GridColumn,
+  GridRow,
 } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -20,10 +22,11 @@ import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
 import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { Query } from '@island.is/skilavottord-web/graphql/schema'
 
-import { PartnerModalForm } from './components'
+import { PartnerModalForm, AccessControlImage } from './components'
 
-const skilavottordAllRecyclingPartnersQuery = gql`
+const SkilavottordAllRecyclingPartnersQuery = gql`
   query skilavottordAllRecyclingPartnersQuery {
     skilavottordAllRecyclingPartners {
       companyId
@@ -33,66 +36,74 @@ const skilavottordAllRecyclingPartnersQuery = gql`
   }
 `
 
-const createSkilavottordRecyclingPartnerMutation = gql`
-  mutation createSkilavottordRecyclingPartnerMutation(
-    $nationalId: String!
-    $companyName: String!
-    $address: String!
-    $postnumber: String!
-    $city: String!
-    $website: String!
-    $phone: String!
-    $active: Boolean!
-  ) {
-    createSkilavottordRecyclingRequest(
-      partnerId: $partnerId
-      permno: $permno
-      requestType: $requestType
-    ) {
-      ... on RequestErrors {
-        message
-        operation
-      }
-      ... on RequestStatus {
-        status
-      }
+const SkilavottordAccessControlsQuery = gql`
+  query skilavottordAccessControlsQuery {
+    skilavottordAccessControls {
+      nationalId
+      name
+      role
+      partnerId
     }
   }
 `
 
-const mock = [
-  {
-    nationalId: '1111116789',
-    name: 'Gervimaður',
-    role: 'recyclingCompany',
-    partnerId: '8888888888',
-  },
-  {
-    nationalId: '2222222222',
-    name: 'Gervimaður2',
-    role: 'recyclingCompany',
-    partnerId: '9999999999',
-  },
-  {
-    nationalId: '3333333333',
-    name: 'Gervimaður3',
-    role: 'recyclingCompany',
-    partnerId: '9999999999',
-  },
-]
+export const CreateSkilavottordAccessControlMutation = gql`
+  mutation createSkilavottordAccessControlMutation(
+    $input: CreateAccessControlInput!
+  ) {
+    createSkilavottordAccessControl(input: $input) {
+      nationalId
+      name
+      role
+      partnerId
+    }
+  }
+`
+
+export const UpdateSkilavottordAccessControlMutation = gql`
+  mutation updateSkilavottordAccessControlMutation(
+    $input: UpdateAccessControlInput!
+  ) {
+    updateSkilavottordAccessControl(input: $input) {
+      nationalId
+      name
+      role
+      partnerId
+    }
+  }
+`
 
 const formatNationalId = (nationalId: string) =>
   `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
 
 const AccessControl: FC = () => {
-  const { user } = useContext(UserContext)
-  const { data, error, loading } = useQuery(
-    skilavottordAllRecyclingPartnersQuery,
-  )
+  const { Table, Head, Row, HeadData, Body, Data } = T
   const { linkResolver } = useLinkResolver()
+  const { user } = useContext(UserContext)
+  const {
+    data: recyclingPartnerData,
+    error: recyclingPartnerError,
+    loading: recyclingPartnerLoading,
+  } = useQuery<Query>(SkilavottordAllRecyclingPartnersQuery)
+  const {
+    data: accessControlsData,
+    error: accessControlsError,
+    loading: accessControlsLoading,
+  } = useQuery<Query>(SkilavottordAccessControlsQuery, { ssr: false })
+
+  const [createSkilavottordAccessControl] = useMutation(
+    CreateSkilavottordAccessControlMutation,
+  )
+  const [updateSkilavottordAccessControl] = useMutation(
+    UpdateSkilavottordAccessControlMutation,
+  )
 
   const [isAddModalVisible, setIsAddModalVisible] = useState(false)
   const [partner, setPartner] = useState<any>(null)
+
+  const error = recyclingPartnerError || accessControlsError
+  const loading = recyclingPartnerLoading || accessControlsLoading
+  const isData = !!recyclingPartnerData && !!accessControlsData
 
   const {
     t: { accessControl: t, recyclingFundSidenav: sidenavText, routes },
@@ -104,9 +115,9 @@ const AccessControl: FC = () => {
     return <NotFound />
   }
 
-  console.log('partner', partner)
+  const accessControls = accessControlsData?.skilavottordAccessControls || []
 
-  const partners = data?.skilavottordAllRecyclingPartners || []
+  const partners = recyclingPartnerData?.skilavottordAllRecyclingPartners || []
   const recyclingPartners = filterInternalPartners(partners).map((partner) => ({
     label: partner.companyName,
     value: partner.companyId,
@@ -117,9 +128,28 @@ const AccessControl: FC = () => {
     value: role,
   }))
 
-  const handleOnSubmit = async (partner: any, callback: () => void) => {
-    console.log(partner)
-    callback()
+  const handleCreateAccessControl = async (partner: any) => {
+    await createSkilavottordAccessControl({
+      variables: {
+        input: {
+          ...partner,
+          role: partner.role.value,
+          partnerId: partner.partnerId.value,
+        },
+      },
+    })
+  }
+
+  const handleUpdateAccessControl = async (partner: any) => {
+    await updateSkilavottordAccessControl({
+      variables: {
+        input: {
+          ...partner,
+          role: partner.role.value,
+          partnerId: partner.partnerId.value,
+        },
+      },
+    })
   }
 
   return (
@@ -165,22 +195,34 @@ const AccessControl: FC = () => {
               )
             }}
           />
-          {/* <Breadcrumbs>
-            <Link href={routes.home['recyclingCompany']}>Ísland.is</Link>
-            <span>{t.title}</span>
-          </Breadcrumbs> */}
         </Box>
         <Box
           display="flex"
           alignItems="flexStart"
           justifyContent="spaceBetween"
         >
-          <Text variant="h1" marginBottom={0}>
-            {t.title}
-          </Text>
-          <Button onClick={() => setIsAddModalVisible(true)} size="small">
-            {t.buttons.add}
-          </Button>
+          <GridRow marginBottom={7}>
+            <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
+              <Text variant="h1" as="h1" marginBottom={4}>
+                {t.title}
+              </Text>
+              <Text variant="intro">
+                Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú
+                getur eytt umboðum eða bætt við nýjum.
+              </Text>
+            </GridColumn>
+            {true && (
+              <GridColumn
+                span={['8/8', '2/8']}
+                offset={['0', '0', '1/8']}
+                order={[1, 2]}
+              >
+                <Box textAlign={['center', 'right']} padding={[6, 0]}>
+                  <AccessControlImage />
+                </Box>
+              </GridColumn>
+            )}
+          </GridRow>
           <PartnerModalForm
             title={t.modal.titles.add}
             text={t.modal.subtitles.add}
@@ -189,71 +231,77 @@ const AccessControl: FC = () => {
             show={isAddModalVisible}
             onCancel={() => setIsAddModalVisible(false)}
             onContinue={() => {}}
-            onSubmit={handleOnSubmit}
+            onSubmit={handleCreateAccessControl}
             recyclingPartners={recyclingPartners}
             roles={roles}
           />
         </Box>
-
-        {error || (loading && !data) ? (
-          <Text>{t.empty}</Text>
-        ) : (
-          <Table.Table>
-            <Table.Head>
-              <Table.Row>
-                <Table.HeadData>
-                  <Text variant="eyebrow">{t.tableHeaders.nationalId}</Text>
-                </Table.HeadData>
-                <Table.HeadData>
-                  <Text variant="eyebrow">{t.tableHeaders.name}</Text>
-                </Table.HeadData>
-                <Table.HeadData>
-                  <Text variant="eyebrow">{t.tableHeaders.role}</Text>
-                </Table.HeadData>
-                <Table.HeadData>
-                  <Text variant="eyebrow">{t.tableHeaders.partnerId}</Text>
-                </Table.HeadData>
-                <Table.HeadData></Table.HeadData>
-              </Table.Row>
-            </Table.Head>
-            <Table.Body>
-              {mock.map((item) => {
-                return (
-                  <Table.Row key={item.nationalId}>
-                    <Table.Data>{formatNationalId(item.nationalId)}</Table.Data>
-                    <Table.Data>{item.name}</Table.Data>
-                    <Table.Data>{startCase(item.role)}</Table.Data>
-                    <Table.Data>{item.partnerId}</Table.Data>
-                    <Table.Data>
-                      <Button
-                        onClick={() => setPartner(item)}
-                        variant="text"
-                        icon="pencil"
-                        size="small"
-                        nowrap
-                      >
-                        {t.buttons.edit}
-                      </Button>
-                      <PartnerModalForm
-                        title={t.modal.titles.edit}
-                        text={t.modal.subtitles.edit}
-                        continueButtonText={t.modal.buttons.continue}
-                        cancelButtonText={t.modal.buttons.cancel}
-                        show={partner}
-                        onCancel={() => setPartner(null)}
-                        onContinue={() => setPartner(null)}
-                        onSubmit={handleOnSubmit}
-                        recyclingPartners={recyclingPartners}
-                        roles={roles}
-                        partner={partner}
-                      />
-                    </Table.Data>
-                  </Table.Row>
-                )
-              })}
-            </Table.Body>
-          </Table.Table>
-        )}
+        <Stack space={3}>
+          <Box display="flex" justifyContent="flexEnd">
+            <Button onClick={() => setIsAddModalVisible(true)}>
+              {t.buttons.add}
+            </Button>
+          </Box>
+          {error || (loading && !isData) ? (
+            <Text>{t.empty}</Text>
+          ) : (
+            <Table>
+              <Head>
+                <Row>
+                  <HeadData>
+                    <Text variant="eyebrow">{t.tableHeaders.nationalId}</Text>
+                  </HeadData>
+                  <HeadData>
+                    <Text variant="eyebrow">{t.tableHeaders.name}</Text>
+                  </HeadData>
+                  <HeadData>
+                    <Text variant="eyebrow">{t.tableHeaders.role}</Text>
+                  </HeadData>
+                  <HeadData>
+                    <Text variant="eyebrow">{t.tableHeaders.partnerId}</Text>
+                  </HeadData>
+                  <HeadData></HeadData>
+                </Row>
+              </Head>
+              <Body>
+                {accessControls.map((item) => {
+                  return (
+                    <Row key={item.nationalId}>
+                      <Data>{formatNationalId(item.nationalId)}</Data>
+                      <Data>{item.name}</Data>
+                      <Data>{startCase(item.role)}</Data>
+                      <Data>{item.partnerId}</Data>
+                      <Data>
+                        <Button
+                          onClick={() => setPartner(item)}
+                          variant="text"
+                          icon="pencil"
+                          size="small"
+                          nowrap
+                        >
+                          {t.buttons.edit}
+                        </Button>
+                        <PartnerModalForm
+                          title={t.modal.titles.edit}
+                          text={t.modal.subtitles.edit}
+                          continueButtonText={t.modal.buttons.continue}
+                          cancelButtonText={t.modal.buttons.cancel}
+                          show={!!partner}
+                          onCancel={() => setPartner(null)}
+                          onContinue={() => setPartner(null)}
+                          onSubmit={handleUpdateAccessControl}
+                          recyclingPartners={recyclingPartners}
+                          roles={roles}
+                          partner={partner}
+                        />
+                      </Data>
+                    </Row>
+                  )
+                })}
+              </Body>
+            </Table>
+          )}
+        </Stack>
       </Stack>
     </PartnerPageLayout>
   )

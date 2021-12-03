@@ -17,6 +17,7 @@ type Page =
   | 'deregisterVehicle'
   | 'recycledVehicles'
   | 'recyclingCompanies'
+  | 'accessControl'
 
 export const getCsrfToken = (ctx: CookieContext) => {
   return cookies(ctx || {})[CSRF_COOKIE_NAME]
@@ -35,6 +36,7 @@ export const hasPermission = (page: Page, role: Role) => {
     recyclingCompany: ['deregisterVehicle', 'companyInfo'],
     citizen: ['myCars', 'recycleVehicle'],
     recyclingFund: ['recycledVehicles', 'recyclingCompanies'],
+    accessControl: ['accessControl'],
   }
 
   return permittedRoutes[role].includes(page)

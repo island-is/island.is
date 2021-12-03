@@ -1,44 +1,47 @@
-import { Inject } from '@nestjs/common'
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Authorize, AuthService, AuthUser, CurrentUser } from '../auth'
 
-import { Authorize } from '../auth'
 import { AccessControlModel } from './accessControl.model'
 import { AccessControlService } from './accessControl.service'
+import {
+  UpdateAccessControlInput,
+  CreateAccessControlInput,
+} from './accessControl.input'
 
+@Authorize({ throwOnUnAuthorized: false })
 @Resolver(() => AccessControlModel)
 export class AccessControlResolver {
   constructor(
     private accessControlService: AccessControlService,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
+    private authService: AuthService,
   ) {}
 
-  @Authorize({ throwOnUnAuthorized: false })
   @Query(() => [AccessControlModel])
-  async skilavottordAccessControls(): Promise<AccessControlModel[]> {
-    const res = await this.accessControlService.findAll()
-    this.logger.info(
-      'skilavottordAllAccessControl response:' + JSON.stringify(res, null, 2),
-    )
-    return res
+  async skilavottordAccessControls(
+    @CurrentUser() user: AuthUser,
+  ): Promise<AccessControlModel[]> {
+    this.authService.verifyPermission(user, 'developer')
+    return this.accessControlService.findAll()
   }
 
   @Mutation(() => AccessControlModel)
   async createSkilavottordAccessControl(
-    // TODO: change to inputs
-    @Args('partnerId', { nullable: true }) partnerId: string,
-  ): Promise<typeof AccessControlModel> {
-    return this.accessControlService.createAccess(partnerId)
+    @CurrentUser() user: AuthUser,
+    @Args('input', { type: () => CreateAccessControlInput })
+    input: CreateAccessControlInput,
+  ): Promise<AccessControlModel> {
+    this.authService.verifyPermission(user, 'developer')
+    return this.accessControlService.createAccess(input)
   }
 
   @Mutation(() => AccessControlModel)
   async updateSkilavottordAccessControl(
-    // TODO: change to inputs
-    @Args('partnerId', { nullable: true }) partnerId: string,
-  ): Promise<typeof AccessControlModel> {
-    return this.accessControlService.updateAccess(partnerId)
+    @CurrentUser() user: AuthUser,
+    @Args('input', { type: () => UpdateAccessControlInput })
+    input: UpdateAccessControlInput,
+  ): Promise<AccessControlModel> {
+    this.authService.verifyPermission(user, 'developer')
+    return this.accessControlService.updateAccess(input)
   }
 }

@@ -1,32 +1,66 @@
-import { Inject, Injectable, HttpService, forwardRef } from '@nestjs/common'
-import format from 'date-fns/format'
+import { Inject, Injectable } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { AccessControlModel } from './accessControl.model'
+import {
+  CreateAccessControlInput,
+  UpdateAccessControlInput,
+} from './accessControl.input'
 
 @Injectable()
 export class AccessControlService {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
   async findAll(): Promise<AccessControlModel[]> {
-    this.logger.info('---- Starting findAll Recycling request ----')
-    return Promise.resolve([
+    this.logger.info('---- Starting findAll Access Controls ----')
+
+    // TODO replace mock data with actual db query
+    const res = await Promise.resolve([
       {
         nationalId: '1234567890',
-        name: 'foo bar',
-        partnerId: '123',
-        role: 'developer',
+        name: 'Gervimaður',
+        role: 'recyclingCompany',
+        partnerId: '8888888888',
+      },
+      {
+        nationalId: '1234567890',
+        name: 'Gervimaður2',
+        role: 'recyclingCompany',
+        partnerId: '9999999999',
+      },
+      {
+        nationalId: '1234567890',
+        name: 'Gervimaður3',
+        role: 'recyclingCompany',
+        partnerId: '9999999999',
       },
     ] as AccessControlModel[])
+    return res
   }
 
-  createAccess(partnerId) {
-    return null
+  async createAccess(
+    input: CreateAccessControlInput,
+  ): Promise<AccessControlModel> {
+    // TODO replace mock data with actual db query
+    return Promise.resolve({
+      nationalId: '1234567890',
+      name: 'Gervimaður3',
+      role: 'recyclingCompany',
+      partnerId: '9999999999',
+    })
   }
 
-  updateAccess(partnerId) {
-    return null
+  async updateAccess(
+    input: UpdateAccessControlInput,
+  ): Promise<AccessControlModel> {
+    // TODO replace mock data with actual db query
+    return Promise.resolve({
+      nationalId: '1234567890',
+      name: 'Gervimaður3',
+      role: 'recyclingCompany',
+      partnerId: '9999999999',
+    })
   }
 }

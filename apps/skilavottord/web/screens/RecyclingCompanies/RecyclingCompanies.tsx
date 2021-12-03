@@ -1,21 +1,13 @@
 import React, { FC, useContext } from 'react'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
-import {
-  ActionCard,
-  Box,
-  BreadcrumbsDeprecated as Breadcrumbs,
-  GridColumn,
-  Link,
-  Stack,
-  Text,
-  TopicCard,
-} from '@island.is/island-ui/core'
+import NextLink from 'next/link'
+
+import { ActionCard, Breadcrumbs, Stack, Text } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { ListItem } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
 import {
@@ -23,6 +15,7 @@ import {
   Query,
 } from '@island.is/skilavottord-web/graphql/types'
 import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const SkilavottordAllRecyclingPartnersQuery = gql`
   query skilavottordAllRecyclingPartnersQuery {
@@ -35,6 +28,7 @@ const SkilavottordAllRecyclingPartnersQuery = gql`
 `
 
 const RecyclingCompanies: FC = () => {
+  const { linkResolver } = useLinkResolver()
   const { user } = useContext(UserContext)
   const { data, error, loading } = useQuery<Query>(
     SkilavottordAllRecyclingPartnersQuery,
@@ -80,15 +74,23 @@ const RecyclingCompanies: FC = () => {
       }
     >
       <Stack space={4}>
-        <Breadcrumbs>
-          <Link href={routes.home['recyclingCompany']}>Ísland.is</Link>
-          <span>{t.title}</span>
-        </Breadcrumbs>
-        <Stack space={2}>
-          <Text variant="h1">{t.title}</Text>
-          <Text variant="intro">{t.info}</Text>
-        </Stack>
-        <Text variant="h3">{t.subtitles.companies}</Text>
+        <Breadcrumbs
+          items={[
+            { title: 'Ísland.is', href: routes.home['recyclingCompany'] },
+            {
+              title: t.title,
+            },
+          ]}
+          renderLink={(link) => {
+            return (
+              <NextLink {...linkResolver('homepage')} passHref>
+                {link}
+              </NextLink>
+            )
+          }}
+        />
+        <Text variant="h1">{t.title}</Text>
+        <Text variant="intro">{t.info}</Text>
         {error || (loading && !data) ? (
           <Text>{t.empty}</Text>
         ) : (
@@ -103,20 +105,6 @@ const RecyclingCompanies: FC = () => {
                   variant: partner.active ? 'blue' : 'red',
                 }}
               />
-              // <ListItem
-              //   key={index}
-              //   title={partner.companyName}
-              //   content={[
-              //     {
-              //       text: `${partner.companyId}`,
-              //     },
-              //     {
-              //       text: partner.active
-              //         ? t.status.active
-              //         : t.status.inactive,
-              //     },
-              //   ]}
-              // />
             ))}
           </Stack>
         )}

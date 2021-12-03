@@ -15,6 +15,7 @@ export type Cookie = {
   options: CookieOptions
 }
 
+// TODO: replace with enum and compare to enum values instead of strings when this is used
 export type Role =
   | 'developer'
   | 'citizen'
