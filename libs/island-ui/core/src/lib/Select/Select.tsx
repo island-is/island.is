@@ -1,36 +1,37 @@
-import React, { ComponentType } from 'react'
+import React from 'react'
 import cn from 'classnames'
 import ReactSelect, {
-  components,
-  ValueType,
-  ActionMeta,
-  MenuProps,
-  OptionProps,
-  IndicatorContainerProps,
-  IndicatorProps,
-  SingleValueProps,
-  ValueContainerProps,
-  PlaceholderProps,
-  InputProps,
-  ControlProps,
-  Props,
   OptionsType,
   GroupedOptionsType,
+  ActionMeta,
+  ValueType,
 } from 'react-select'
+import CreatableReactSelect from 'react-select/creatable'
 import { formatGroupLabel } from 'react-select/src/builtins'
-import * as styles from './Select.css'
-import { Icon } from '../IconRC/Icon'
+import {
+  Option,
+  Menu,
+  IndicatorsContainer,
+  Control,
+  DropdownIndicator,
+  Input,
+  Placeholder,
+  SingleValue,
+  ValueContainer,
+  customStyles,
+} from './Components'
 import { InputBackgroundColor } from '../Input/types'
+import * as styles from './Select.css'
+
+interface AriaError {
+  'aria-invalid': boolean
+  'aria-describedby': string
+}
 
 export type Option = {
   label: string
   value: string | number
   disabled?: boolean
-}
-
-interface AriaError {
-  'aria-invalid': boolean
-  'aria-describedby': string
 }
 
 export interface SelectProps {
@@ -52,6 +53,7 @@ export interface SelectProps {
   defaultValue?: Option
   icon?: string
   isSearchable?: boolean
+  isCreatable?: boolean
   size?: 'sm' | 'md'
   backgroundColor?: InputBackgroundColor
   required?: boolean
@@ -74,6 +76,7 @@ export const Select = ({
   defaultValue,
   icon = 'chevronDown',
   isSearchable = true,
+  isCreatable = false,
   size = 'md',
   backgroundColor = 'white',
   required,
@@ -86,8 +89,59 @@ export const Select = ({
         'aria-describedby': errorId,
       }
     : {}
+  const [currentValue, setCurrentValue] = React.useState('')
 
-  return (
+  return isCreatable ? (
+    <div
+      className={cn(styles.wrapper, styles.wrapperColor[backgroundColor])}
+      data-testid={`creatable-select-${name}`}
+    >
+      <CreatableReactSelect
+        instanceId={id}
+        noOptionsMessage={() => noOptionsMessage || null}
+        id={id}
+        name={name}
+        isDisabled={disabled}
+        options={options}
+        styles={customStyles}
+        classNamePrefix="island-select"
+        onChange={onChange}
+        label={label}
+        value={value}
+        icon={icon}
+        placeholder={placeholder}
+        defaultValue={defaultValue}
+        isOptionDisabled={(option) => !!option.disabled}
+        hasError={hasError}
+        isSearchable={isSearchable}
+        size={size}
+        required={required}
+        ariaError={ariaError as AriaError}
+        formatGroupLabel={formatGroupLabel}
+        formatCreateLabel={() => currentValue}
+        createOptionPosition="first"
+        onInputChange={(inputValue) => setCurrentValue(inputValue)}
+        components={{
+          Control,
+          Input,
+          Placeholder,
+          ValueContainer,
+          SingleValue,
+          DropdownIndicator,
+          IndicatorsContainer,
+          Menu,
+          Option,
+        }}
+        isClearable
+        backspaceRemovesValue
+      />
+      {hasError && errorMessage && (
+        <div id={errorId} className={styles.errorMessage} aria-live="assertive">
+          {errorMessage}
+        </div>
+      )}
+    </div>
+  ) : (
     <div
       className={cn(styles.wrapper, styles.wrapperColor[backgroundColor])}
       data-testid={`select-${name}`}
@@ -132,115 +186,5 @@ export const Select = ({
         </div>
       )}
     </div>
-  )
-}
-
-const customStyles = {
-  indicatorSeparator: () => ({}),
-}
-
-const Menu = (props: MenuProps<Option>) => (
-  <components.Menu className={styles.menu} {...props} />
-)
-const Option = (props: OptionProps<Option>) => {
-  const size: SelectProps['size'] = props.selectProps.size || 'md'
-  return (
-    <components.Option
-      className={cn(styles.option, styles.optionSizes[size!])}
-      {...props}
-    />
-  )
-}
-
-const IndicatorsContainer = (props: IndicatorContainerProps<Option>) => (
-  <components.IndicatorsContainer
-    className={styles.indicatorsContainer}
-    {...props}
-  />
-)
-
-const DropdownIndicator = (props: IndicatorProps<Option>) => {
-  const { icon, hasError } = props.selectProps
-
-  return (
-    <components.DropdownIndicator
-      className={styles.dropdownIndicator}
-      {...props}
-    >
-      <Icon
-        icon={icon}
-        size="large"
-        color={hasError ? 'red600' : 'blue400'}
-        className={styles.icon}
-      />
-    </components.DropdownIndicator>
-  )
-}
-
-const SingleValue = (props: SingleValueProps<Option>) => {
-  const size: SelectProps['size'] = props.selectProps.size || 'md'
-  return (
-    <components.SingleValue
-      className={cn(styles.singleValue, styles.singleValueSizes[size!])}
-      {...props}
-    />
-  )
-}
-
-const ValueContainer = (props: ValueContainerProps<Option>) => (
-  <components.ValueContainer className={styles.valueContainer} {...props} />
-)
-
-const Placeholder = (props: PlaceholderProps<Option>) => {
-  const size: SelectProps['size'] = props.selectProps.size || 'md'
-  return (
-    <components.Placeholder
-      className={cn(
-        styles.placeholder,
-        styles.placeholderPadding,
-        styles.placeholderSizes[size!],
-      )}
-      {...props}
-    />
-  )
-}
-
-const Input: ComponentType<InputProps> = (
-  props: InputProps & { selectProps?: Props<Option> },
-) => {
-  const ariaError = props?.selectProps?.ariaError
-  const size = (props?.selectProps?.size || 'md') as SelectProps['size']
-  return (
-    <components.Input
-      className={cn(styles.input, styles.inputSize[size!])}
-      {...props}
-      {...ariaError}
-    />
-  )
-}
-
-const Control = (props: ControlProps<Option>) => {
-  const size: SelectProps['size'] = props.selectProps.size || 'md'
-  return (
-    <components.Control
-      className={cn(styles.container, styles.containerSizes[size!], {
-        [styles.hasError]: props.selectProps.hasError,
-      })}
-      {...props}
-    >
-      <label
-        htmlFor={props.selectProps.name}
-        className={cn(styles.label, styles.labelSizes[size!])}
-      >
-        {props.selectProps.label}
-        {props.selectProps.required && (
-          <span aria-hidden="true" className={styles.isRequiredStar}>
-            {' '}
-            *
-          </span>
-        )}
-      </label>
-      {props.children}
-    </components.Control>
   )
 }
