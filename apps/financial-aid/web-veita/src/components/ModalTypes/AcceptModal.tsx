@@ -136,9 +136,9 @@ const AcceptModal = ({
           },
         },
       }).then((res) => {
-        console.log(res)
-
-        // onSaveApplication(finalAmount)
+        if (res.data.createAmount.id) {
+          onSaveApplication(finalAmount)
+        }
       })
     } catch (e) {
       setState({ ...state, hasSubmitError: true })

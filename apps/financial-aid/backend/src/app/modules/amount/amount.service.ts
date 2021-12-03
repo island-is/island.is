@@ -9,12 +9,6 @@ import { CreateAmountDto } from './dto'
 import { DeductionFactorsService } from '../deductionFactors'
 
 import { Sequelize } from 'sequelize'
-import { ApplicationService } from '../application'
-import {
-  ApplicationEventType,
-  ApplicationState,
-  Staff,
-} from '@island.is/financial-aid/shared/lib'
 
 @Injectable()
 export class AmountService {
@@ -22,13 +16,12 @@ export class AmountService {
     @InjectModel(AmountModel)
     private readonly amountModel: typeof AmountModel,
     private readonly deductionFactorsService: DeductionFactorsService,
-    // private readonly applicationService: ApplicationService,
     private sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
-  async create(amount: CreateAmountDto, staff?: Staff): Promise<AmountModel> {
+  async create(amount: CreateAmountDto): Promise<AmountModel> {
     return await this.sequelize.transaction(async (t) => {
       return this.amountModel
         .create(amount, { transaction: t })
@@ -43,15 +36,6 @@ export class AmountService {
               t,
             )
           })
-          // await this.applicationService.update(
-          //   res.getDataValue('id'),
-          //   {
-          //     state: ApplicationState.APPROVED,
-          //     event: ApplicationEventType.APPROVED,
-          //   },
-          //   staff,
-          // )
-
           return res
         })
     })
