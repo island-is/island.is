@@ -18,7 +18,7 @@ export const avatarSize = styleVariants({
 })
 
 export const avatarColor = styleVariants({
-  default: {
+  blue: {
     backgroundColor: theme.color.blue100,
     color: theme.color.blue400,
   },
@@ -26,10 +26,6 @@ export const avatarColor = styleVariants({
     backgroundColor: theme.color.purple100,
     color: theme.color.purple400,
   },
-})
-
-export const userMenu = style({
-  mixBlendMode: 'multiply',
 })
 
 export const initials = style({

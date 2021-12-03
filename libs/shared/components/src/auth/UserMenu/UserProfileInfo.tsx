@@ -1,22 +1,37 @@
 import React from 'react'
-import { Button, Box, Icon, Text } from '@island.is/island-ui/core'
-import { useFeatureFlag } from '@island.is/react/feature-flags'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { sharedMessages } from '@island.is/shared/translations'
-import { useGetUserProfileQuery } from '../../../gen/graphql'
-import * as styles from './UserMenu.css'
+import { UserDropdownItem } from './UserDropdownItem'
+import { ServicePortalPath, m } from '@island.is/service-portal/core'
 
-export const UserProfileInfo = () => {
-  const { value: showPersonalInfo } = useFeatureFlag(
-    'isServicePortalPersonalInformationModuleEnabled',
-    false,
-  )
-  const { data } = useGetUserProfileQuery({ skip: !showPersonalInfo })
+export const UserProfileInfo = ({ onClick }: { onClick: () => void }) => {
   const { formatMessage } = useLocale()
-  if (showPersonalInfo) {
-    const settings = data?.getUserProfile
-    return (
-      <>
+
+  return (
+    <>
+      <Box>
+        <Box marginBottom={1}>
+          <Text variant="small">{formatMessage(m.settings)}</Text>
+        </Box>
+
+        <Box>
+          <UserDropdownItem
+            text={formatMessage(m.personalInformation)}
+            link={ServicePortalPath.SettingsPersonalInformation}
+            icon={{ type: 'outline', icon: 'person' }}
+            onClick={() => onClick()}
+          />
+        </Box>
+        <Box paddingTop={1}>
+          <UserDropdownItem
+            text={formatMessage(m.accessControl)}
+            link={ServicePortalPath.SettingsAccessControl}
+            icon={{ type: 'outline', icon: 'people' }}
+            onClick={() => onClick()}
+          />
+        </Box>
+      </Box>
+      {/* 
         {settings?.email && (
           <Box
             display="flex"
@@ -49,9 +64,7 @@ export const UserProfileInfo = () => {
               {formatMessage(sharedMessages.edit)}
             </Button>
           </a>
-        )}
-      </>
-    )
-  }
-  return null
+        )} */}
+    </>
+  )
 }

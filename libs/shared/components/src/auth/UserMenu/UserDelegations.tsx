@@ -1,16 +1,17 @@
-import React, { FC } from 'react'
+import React from 'react'
 import {
   Stack,
   Text,
-  TopicCard,
   SkeletonLoader,
+  Divider,
+  Box,
 } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { userMessages } from '@island.is/shared/translations'
-import * as styles from './UserMenu.css'
 import { useActorDelegationsQuery } from '../../../gen/graphql'
+import { UserTopicCard } from './UserTopicCard'
 
 interface UserDelegationsProps {
   user: User
@@ -21,14 +22,6 @@ interface Delegation {
   nationalId: string
   name: string
   isCurrent: boolean
-}
-
-const List: FC = ({ children }) => {
-  return (
-    <div className={styles.delegationsList}>
-      <Stack space={2}>{children}</Stack>
-    </div>
-  )
 }
 
 const getInitialDelegations = (user: User): Delegation[] => {
@@ -70,31 +63,33 @@ export const UserDelegations = ({
     )
   }
 
+  const dataReady = !loading && !error
   // No data.
-  if (delegations.length === 0 && !loading && !error) {
+  if (delegations.length === 0 && dataReady) {
     return null
   }
-
   const onClickDelegation = (delegation: Delegation) => {
     onSwitchUser(delegation.nationalId)
   }
 
   return (
-    <>
-      <hr className={styles.hr} />
-      <Text variant="h5" as="h5" marginBottom={2}>
+    <Box>
+      <Text variant="small" marginBottom={1}>
         {formatMessage(userMessages.delegationList)}
       </Text>
-      <List>
+      <Stack space={1}>
+        {dataReady && delegations.length > 0 && (
+          <UserTopicCard
+            colorScheme={'purple'}
+            onClick={() => onSwitchUser(user.profile.nationalId)}
+          >
+            {user.profile.name}
+          </UserTopicCard>
+        )}
         {delegations.map((delegation) => (
-          <TopicCard
+          <UserTopicCard
             key={delegation.nationalId}
-            size="small"
-            tag={
-              delegation.isCurrent
-                ? formatMessage(userMessages.selectedDelegation)
-                : undefined
-            }
+            colorScheme={delegation.isCurrent ? 'purple' : 'blue'}
             onClick={
               delegation.isCurrent
                 ? undefined
@@ -102,7 +97,7 @@ export const UserDelegations = ({
             }
           >
             {delegation.name || delegation.nationalId}
-          </TopicCard>
+          </UserTopicCard>
         ))}
         {loading ? (
           <SkeletonLoader display="block" height={59} borderRadius="large" />
@@ -111,7 +106,10 @@ export const UserDelegations = ({
             {formatMessage(userMessages.delegationError)}
           </Text>
         ) : null}
-      </List>
-    </>
+      </Stack>
+      <Box paddingTop={3}>
+        <Divider />
+      </Box>
+    </Box>
   )
 }

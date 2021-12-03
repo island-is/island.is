@@ -11,8 +11,7 @@ interface UserAvatarProps {
   size?: keyof typeof styles.avatarSize
   isDelegation?: boolean
   ariaLabel?: string
-  color?: 'purple' | 'default'
-  isUserMenu?: boolean
+  color?: 'purple' | 'blue'
 }
 
 const getInitials = (username?: string) => {
@@ -36,8 +35,7 @@ export const UserAvatar = ({
   isDelegation,
   size = 'default',
   ariaLabel,
-  color = 'default',
-  isUserMenu = false,
+  color = 'blue',
 }: UserAvatarProps) => (
   <FocusableBox
     component={onClick ? 'button' : 'div'}
@@ -48,19 +46,15 @@ export const UserAvatar = ({
     flexGrow={0}
     background={
       isDelegation
-        ? color === 'default'
+        ? color === 'blue'
           ? 'blue400'
           : 'purple400'
-        : color === 'default'
+        : color === 'blue'
         ? 'blue100'
         : 'purple100'
     }
     borderRadius="circle"
-    className={[
-      styles.avatarSize[size],
-      styles.avatarColor[color],
-      isUserMenu && styles.userMenu,
-    ]}
+    className={[styles.avatarSize[size], styles.avatarColor[color]]}
     onClick={onClick}
     aria-label={ariaLabel}
   >

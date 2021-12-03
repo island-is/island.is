@@ -6,7 +6,7 @@ import {
   Link,
   UserAvatar,
 } from '@island.is/island-ui/core'
-import * as styles from '../UserMenu.css'
+import * as styles from './UserMenu.css'
 
 type ColorScheme = 'blue' | 'purple'
 
@@ -55,8 +55,7 @@ export const UserTopicCard: React.FC<UserTopicCardProps> = ({
     >
       {!icon ? (
         <UserAvatar
-          isUserMenu
-          color={colorScheme === 'blue' ? 'default' : 'purple'}
+          color={colorScheme}
           size="medium"
           username={children?.toString()}
         />

@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Box, Icon, IconProps } from '@island.is/island-ui/core'
 
-import * as styles from '../UserMenu.css'
+import * as styles from './UserMenu.css'
 import { Link } from 'react-router-dom'
 
 interface UserDropdownItemProps {
@@ -23,7 +23,7 @@ export const UserDropdownItem = ({
       display="flex"
       height="full"
       alignItems="center"
-      onClick={onClick && onClick}
+      onClick={onClick}
       cursor="pointer"
       padding={1}
     >
