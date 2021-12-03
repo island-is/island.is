@@ -1,14 +1,15 @@
 import React from 'react'
-import type { Case } from '@island.is/judicial-system/types'
 import { AnimatePresence } from 'framer-motion'
+
 import {
   ConclusionDraft,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
+import type { Case } from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isDraftingConclusion: boolean | undefined
   setIsDraftingConclusion: React.Dispatch<
     React.SetStateAction<boolean | undefined>
