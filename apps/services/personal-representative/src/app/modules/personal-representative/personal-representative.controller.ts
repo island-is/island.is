@@ -50,7 +50,6 @@ export class PersonalRepresentativeController {
   async getAll(
     @Param('includeInvalid') includeInvalid?: boolean,
   ): Promise<PersonalRepresentativeDTO[]> {
-    console.log(typeof includeInvalid)
     const personalRepresentatives = await this.prService.getAllAsync(
       includeInvalid ? (includeInvalid as boolean) : false,
     )
