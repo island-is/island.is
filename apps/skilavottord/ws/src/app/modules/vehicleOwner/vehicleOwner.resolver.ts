@@ -17,9 +17,6 @@ export class VehicleOwnerResolver {
     private logger: Logger,
   ) {}
 
-  /*
-    All owners' vehicle
-  */
   @Query(() => [VehicleOwnerModel])
   async skilavottordAllVehicleOwners(): Promise<VehicleOwnerModel[]> {
     const res = await this.vehicleOwnerService.findAll()
@@ -30,9 +27,6 @@ export class VehicleOwnerResolver {
   }
 
   //TODO find right name
-  /*
-    All deregistered owner's vehicles
-  */
   @Query(() => VehicleOwnerModel)
   async skilavottordVehiclesFromLocal(
     @Args('nationalId') nationalId: string,
@@ -44,9 +38,6 @@ export class VehicleOwnerResolver {
     return res
   }
 
-  /*
-
-  */
   @Authorize({ roles: ['developer', 'recyclingCompany', 'recyclingFund'] })
   @Query(() => [VehicleOwnerModel])
   async skilavottordRecyclingPartnerVehicles(
@@ -59,9 +50,6 @@ export class VehicleOwnerResolver {
     return res
   }
 
-  /*
-    Create owner vehicle
-  */
   @Mutation(() => Boolean)
   async createSkilavottordVehicleOwner(
     @Args('nationalId') nationalId: string,

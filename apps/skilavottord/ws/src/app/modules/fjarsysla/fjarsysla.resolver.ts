@@ -9,9 +9,6 @@ import { FjarsyslaService } from './fjarsysla.service'
 export class FjarsyslaResolver {
   constructor(private fjarsyslaService: FjarsyslaService) {}
 
-  /*
-    Use by recyclingCompany to pay customer when they get vehicle
-  */
   @Authorize({ roles: ['developer', 'recyclingCompany'] })
   @Query(() => Boolean)
   async skilavottordFjarsyslaSkilagjald(

@@ -9,9 +9,6 @@ import { Authorize } from '../auth'
 export class SamgongustofaResolver {
   constructor(private samgongustofaService: SamgongustofaService) {}
 
-  /*
-    Get all citizen's vehicles
-  */
   @Query(() => [VehicleInformation])
   async skilavottordVehicles(
     @Args('nationalId') nid: string,

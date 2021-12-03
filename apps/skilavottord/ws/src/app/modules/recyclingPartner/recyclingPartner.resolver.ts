@@ -11,17 +11,11 @@ import { RecyclingPartnerService } from './recyclingPartner.service'
 export class RecyclingPartnerResolver {
   constructor(private recyclingPartnerService: RecyclingPartnerService) {}
 
-  /*
-    All recycling companies
-  */
   @Query(() => [RecyclingPartnerModel])
   async skilavottordAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
     return await this.recyclingPartnerService.findAll()
   }
 
-  /*
-    Recycling company
-  */
   @Query(() => [RecyclingPartnerModel])
   async skilavottordAllActiveRecyclingPartners(): Promise<
     RecyclingPartnerModel[]
@@ -29,9 +23,6 @@ export class RecyclingPartnerResolver {
     return await this.recyclingPartnerService.findActive()
   }
 
-  /*
-    Add recycling company to database
-  */
   @Authorize({ roles: ['developer', 'recyclingFund'] })
   @Mutation((_) => Boolean)
   async createSkilavottordRecyclingPartner(
@@ -57,9 +48,7 @@ export class RecyclingPartnerResolver {
     await this.recyclingPartnerService.createRecyclingPartner(rp)
     return true
   }
-  /*
-    Deactivate recycling company to database
-  */
+
   @Authorize({ roles: ['developer', 'recyclingFund'] })
   @Mutation((_) => String)
   async skilavottordDeactivateRecycllingPartner(
@@ -74,9 +63,7 @@ export class RecyclingPartnerResolver {
     )
     return nationalId
   }
-  /*
-    Activate recycling company to database
-  */
+
   @Authorize({ roles: ['developer', 'recyclingFund'] })
   @Mutation((_) => String)
   async skilavottordActivateRecycllingPartner(

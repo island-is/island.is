@@ -21,9 +21,6 @@ export class RecyclingRequestResolver {
     private logger: Logger,
   ) {}
 
-  /*
-    List for all recycled vehicles
-  */
   @Authorize({ roles: ['developer', 'recyclingFund'] })
   @Query(() => [RecyclingRequestModel])
   async skilavottordAllRecyclingRequests(): Promise<RecyclingRequestModel[]> {
@@ -35,9 +32,6 @@ export class RecyclingRequestResolver {
     return res
   }
 
-  /*
-    All recycled requested on the vehicle
-  */
   @Authorize({ roles: ['developer', 'recyclingFund'] })
   @Query(() => [RecyclingRequestModel])
   async skilavottordRecyclingRequest(
@@ -50,9 +44,6 @@ export class RecyclingRequestResolver {
     return res
   }
 
-  /*
-    Deregistered the vehicle at station
-  */
   @Authorize({ roles: ['developer', 'recyclingCompany'] })
   @Query(() => Boolean)
   async skilavottordDeRegisterVehicle(
@@ -62,9 +53,7 @@ export class RecyclingRequestResolver {
     return this.recyclingRequestService.deRegisterVehicle(nid, station)
   }
 
-  /*
-    Is vehicle ready to dispose?
-  */
+  @Authorize({ roles: ['developer', 'recyclingCompany'] })
   @Query(() => VehicleModel)
   async skilavottordVehicleReadyToDeregistered(
     @Args('permno') permno: string,
@@ -72,9 +61,6 @@ export class RecyclingRequestResolver {
     return this.recyclingRequestService.getVehicleInfoToDeregistered(permno)
   }
 
-  /*
-    Create recycling request log
-  */
   @Mutation(() => RecyclingRequestUnion)
   async createSkilavottordRecyclingRequest(
     @Args('requestType') requestType: string,
