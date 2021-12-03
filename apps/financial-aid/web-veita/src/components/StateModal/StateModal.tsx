@@ -167,7 +167,12 @@ const StateModal = ({
           <AcceptModal
             isModalVisable={selected === ApplicationState.APPROVED}
             onCancel={onClickCancel}
-            onSaveApplication={closeModal}
+            onSaveApplication={(amount: number) => {
+              if (!selected) {
+                return
+              }
+              saveStateApplication(applicationId, selected, amount)
+            }}
             homeCircumstances={homeCircumstances}
             spouseNationalId={spouseNationalId}
           />

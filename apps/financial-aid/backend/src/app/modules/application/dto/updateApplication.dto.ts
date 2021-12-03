@@ -21,40 +21,40 @@ export class UpdateApplicationDto {
   @IsOptional()
   @IsNumber()
   @ApiProperty()
-  readonly amount: number
+  readonly amount?: number
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly rejection: string
+  readonly rejection?: string
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly comment: string
+  readonly comment?: string
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  staffId: string
+  staffId?: string
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly spouseFormComment: string
+  readonly spouseFormComment?: string
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly spouseEmail: string
+  readonly spouseEmail?: string
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly spousePhoneNumber: string
+  readonly spousePhoneNumber?: string
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly spouseName: string
+  readonly spouseName?: string
 }

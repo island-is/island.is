@@ -11,6 +11,7 @@ import {
   StaffModule,
   AidModule,
   AmountModule,
+  DeductionFactorsModule,
 } from './modules'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
@@ -21,13 +22,14 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
       useClass: SequelizeConfigService,
     }),
     AuthModule.register(environment.identityServerAuth),
+    AmountModule,
+    DeductionFactorsModule,
     StaffModule,
     ApplicationModule,
     MunicipalityModule,
     FileModule,
     ApplicationEventModule,
     AidModule,
-    AmountModule,
   ],
 })
 export class AppModule {}

@@ -10,14 +10,12 @@ import { FileModule } from '../file'
 import { environment } from '../../../environments'
 import { StaffModule } from '../staff'
 import { MunicipalityModule } from '../municipality'
-import { AmountModule } from '../amount'
 
 @Module({
   imports: [
     FileModule,
     EmailModule.register(environment.emailOptions),
     ApplicationEventModule,
-    AmountModule,
     SequelizeModule.forFeature([ApplicationModel]),
     StaffModule,
     MunicipalityModule,

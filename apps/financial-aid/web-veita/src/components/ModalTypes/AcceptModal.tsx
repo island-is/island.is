@@ -23,7 +23,7 @@ import { useRouter } from 'next/router'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
-  onSaveApplication: () => void
+  onSaveApplication: (num: number) => void
   isModalVisable: boolean
   homeCircumstances: HomeCircumstances
   spouseNationalId?: string
@@ -136,7 +136,9 @@ const AcceptModal = ({
           },
         },
       }).then((res) => {
-        onSaveApplication()
+        console.log(res)
+
+        // onSaveApplication(finalAmount)
       })
     } catch (e) {
       setState({ ...state, hasSubmitError: true })
