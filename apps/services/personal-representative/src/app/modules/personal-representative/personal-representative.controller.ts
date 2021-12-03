@@ -25,7 +25,7 @@ import {
 import { AuthGuard } from '../common'
 
 @ApiTags('Personal Representative')
-@Controller('personal-representative')
+@Controller('v1/personal-representative')
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
 export class PersonalRepresentativeController {

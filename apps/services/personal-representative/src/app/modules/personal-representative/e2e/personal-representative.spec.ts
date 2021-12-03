@@ -22,9 +22,9 @@ beforeAll(async () => {
 })
 
 describe('Create Right Type', () => {
-  it('POST /personal-representative should fail and return 403 error if bearer is missing', async () => {
+  it('POST /v1/personal-representative should fail and return 403 error if bearer is missing', async () => {
     const response = await request(app.getHttpServer())
-      .post('/personal-representative')
+      .post('/v1/personal-representative')
       .send(simpleRequestData)
       .expect(403)
 
@@ -34,14 +34,14 @@ describe('Create Right Type', () => {
     })
   })
 
-  it('POST /personal-representative should return error when data is invalid', async () => {
+  it('POST /v1/personal-representative should return error when data is invalid', async () => {
     const requestData = {
       code: 'Code',
       description: 'Description',
       validFrom: '10-11-2021',
     }
     const response = await request(app.getHttpServer())
-      .post('/personal-representative')
+      .post('/v1/personal-representative')
       .set(
         'Authorization',
         `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
@@ -54,16 +54,16 @@ describe('Create Right Type', () => {
     })
   })
 
-  it('POST /personal-representative should create a new entry', async () => {
+  it('POST /v1/personal-representative should create a new entry', async () => {
     await request(app.getHttpServer())
-      .post('/right-types')
+      .post('/v1/right-types')
       .set(
         'Authorization',
         `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
       )
       .send({ code: 'health', description: 'descr health' })
     await request(app.getHttpServer())
-      .post('/right-types')
+      .post('/v1/right-types')
       .set(
         'Authorization',
         `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
@@ -73,7 +73,7 @@ describe('Create Right Type', () => {
     console.group('Post success')
     console.log(simpleRequestData)
     const response = await request(app.getHttpServer())
-      .post('/personal-representative')
+      .post('/v1/personal-representative')
       .send(simpleRequestData)
       .set(
         'Authorization',
