@@ -15,6 +15,7 @@ import {
   getValueViaPath,
   Option,
 } from '@island.is/application/core'
+import type { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
@@ -199,6 +200,20 @@ export const getAvailablePersonalRightsInMonths = (application: Application) =>
 export const getAvailableRightsInMonths = (application: Application) =>
   daysToMonths(getAvailableRightsInDays(application))
 
+export const getSpouseDeprecated = (application: Application) => {
+  const family = getValueViaPath(
+    application.externalData,
+    'family.data',
+    [],
+  ) as FamilyMember[]
+
+  if (!family) {
+    return null
+  }
+
+  return family.find((member) => member.familyRelation === SPOUSE)
+}
+
 export const getSpouse = (
   application: Application,
 ): PersonInformation['spouse'] | null => {
@@ -208,11 +223,20 @@ export const getSpouse = (
     null,
   ) as PersonInformation | null
 
-  if (!person || !person.spouse || !person.spouse.nationalId) {
-    return null
+  if (person?.spouse?.nationalId) {
+    return person.spouse
   }
 
-  return person.spouse
+  const spouse = getSpouseDeprecated(application)
+
+  if (spouse) {
+    return {
+      name: spouse.fullName,
+      nationalId: spouse.nationalId,
+    }
+  }
+
+  return null
 }
 
 export const getOtherParentOptions = (application: Application) => {
@@ -599,7 +623,7 @@ export const getOtherParentId = (
     const spouse = getSpouse(application)
 
     if (!spouse || !spouse.nationalId) {
-      throw new Error('Cannot find spouse national id.')
+      return undefined
     }
 
     return spouse.nationalId
@@ -619,7 +643,7 @@ export const getOtherParentName = (
     const spouse = getSpouse(application)
 
     if (!spouse || !spouse.name) {
-      throw new Error('Cannot find spouse name.')
+      return undefined
     }
 
     return spouse.name
