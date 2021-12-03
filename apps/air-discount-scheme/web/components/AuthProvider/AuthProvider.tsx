@@ -1,6 +1,6 @@
 import React, { createContext, ReactNode } from 'react'
-import { User } from '@island.is/air-discount-scheme-web/graphql/schema'
-import useUser from '@island.is/financial-aid-web/osk/src/utils/hooks/useUser'
+import { AuthenticateUser as User } from '@island.is/air-discount-scheme-web/pages/auth/interfaces'
+import useUser from '@island.is/air-discount-scheme-web/auth/useUser'
 
 interface AuthProvider {
   isAuthenticated?: boolean
@@ -23,7 +23,7 @@ const AuthProvider = ({ children }: Props) => {
 
   return (
     <AuthContext.Provider
-      value={{
+    value={{
         isAuthenticated,
         user,
         loadingUser,
