@@ -1,11 +1,12 @@
 import { setup } from '../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../test/testHelpers'
 import request from 'supertest'
-import { INestApplication } from '@nestjs/common'
+import { TestApp } from '@island.is/testing/nest'
 import { environment } from '../../../../environments'
+
 const { childServiceApiKeys } = environment
 
-let app: INestApplication
+let app: TestApp
 
 const simpleRequestData = {
   code: 'Code',
