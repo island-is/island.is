@@ -104,7 +104,10 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
       maxPercentage / 100,
     )
 
-    if (periodLengthWithMaxPercentage < remainingRights) {
+    if (
+      periodLengthWithMaxPercentage < remainingRights &&
+      maxPercentage < 100
+    ) {
       setCanChooseRemainingDays(true)
       const max = `${maxPercentage + 1}`
       setMaxPercentageValue(max)
