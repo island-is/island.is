@@ -111,7 +111,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
       <ReviewGroup
         isLast
         editAction={() => changeScreens('applicant')}
-        isEditable={States.DRAFT === application.state}
+        isEditable={application.state === States.DRAFT}
       >
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -169,7 +169,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
           <ReviewGroup
             isLast
             editAction={() => changeScreens('injuredPersonInformation')}
-            isEditable={States.DRAFT === application.state}
+            isEditable={application.state === States.DRAFT}
           >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -215,7 +215,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
           <ReviewGroup
             isLast
             editAction={() => changeScreens('childInCustody.fields')}
-            isEditable={States.DRAFT === application.state}
+            isEditable={application.state === States.DRAFT}
           >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -247,7 +247,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
           <ReviewGroup
             isLast
             editAction={() => changeScreens('juridicalPerson.company')}
-            isEditable={States.DRAFT === application.state}
+            isEditable={application.state === States.DRAFT}
           >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -279,7 +279,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
           <ReviewGroup
             isLast
             editAction={() => changeScreens('locationAndPurpose')}
-            isEditable={States.DRAFT === application.state}
+            isEditable={application.state === States.DRAFT}
           >
             <GridRow>
               <GridColumn span="12/12">
@@ -305,7 +305,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
           <ReviewGroup
             isLast
             editAction={() => changeScreens(workplaceData.screenId)}
-            isEditable={States.DRAFT === application.state}
+            isEditable={application.state === States.DRAFT}
           >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -347,6 +347,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
               <ReviewGroup
                 isLast
                 editAction={() => changeScreens('fishingShipInfo')}
+                isEditable={application.state === States.DRAFT}
               >
                 <GridRow>
                   <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -392,7 +393,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
               <ReviewGroup
                 isLast
                 editAction={() => changeScreens(workplaceData.screenId)}
-                isEditable={States.DRAFT === application.state}
+                isEditable={application.state === States.DRAFT}
               >
                 <GridRow>
                   <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -436,7 +437,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
           <ReviewGroup
             isLast
             editAction={() => changeScreens('accidentLocation.homeAccident')}
-            isEditable={States.DRAFT === application.state}
+            isEditable={application.state === States.DRAFT}
           >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -476,7 +477,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
       <ReviewGroup
         isLast
         editAction={() => changeScreens('accidentDetails')}
-        isEditable={States.DRAFT === application.state}
+        isEditable={application.state === States.DRAFT}
       >
         <GridRow>
           <GridColumn span="12/12">
