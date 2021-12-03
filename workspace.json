@@ -6212,6 +6212,27 @@
         }
       }
     },
+    "nest-feature-flags": {
+      "root": "libs/nest/feature-flags",
+      "sourceRoot": "libs/nest/feature-flags/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/feature-flags/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/feature-flags"],
+          "options": {
+            "jestConfig": "libs/nest/feature-flags/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nest-pagination": {
       "root": "libs/nest/pagination",
       "sourceRoot": "libs/nest/pagination/src",
