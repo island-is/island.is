@@ -4,7 +4,6 @@ import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
 import type { INestApplication, Type } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import { PersonalRepresentativeRightTypeService } from '@island.is/auth-api-lib/personal-representative'
 
 export let app: INestApplication
 let sequelize: Sequelize
