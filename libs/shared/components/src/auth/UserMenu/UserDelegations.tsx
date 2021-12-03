@@ -50,6 +50,7 @@ export const UserDelegations = ({
   })
   const currentNationalId = user.profile.nationalId as string
   const delegations = getInitialDelegations(user)
+  const isDelegation = Boolean(actor)
 
   if (data) {
     delegations.push(
@@ -78,7 +79,7 @@ export const UserDelegations = ({
         {formatMessage(userMessages.delegationList)}
       </Text>
       <Stack space={1}>
-        {dataReady && delegations.length > 0 && (
+        {isDelegation && (
           <UserTopicCard
             colorScheme={'purple'}
             onClick={() => onSwitchUser(user.profile.nationalId)}
@@ -89,7 +90,7 @@ export const UserDelegations = ({
         {delegations.map((delegation) => (
           <UserTopicCard
             key={delegation.nationalId}
-            colorScheme={delegation.isCurrent ? 'purple' : 'blue'}
+            colorScheme="blue"
             onClick={
               delegation.isCurrent
                 ? undefined

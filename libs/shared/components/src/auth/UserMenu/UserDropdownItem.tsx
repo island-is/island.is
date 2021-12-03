@@ -41,7 +41,7 @@ export const UserDropdownItem = ({
           {text}
         </Link>
       ) : (
-        <span className={styles.delegationName}>{text}</span>
+        <button className={styles.delegationName}>{text}</button>
       )}
     </Box>
   )
