@@ -21,9 +21,11 @@ const FilesListWithHeaderContainer = ({ applicationFiles }: Props) => {
     <>
       <Box
         marginBottom={[2, 2, 3]}
-        className={`contentUp delay-125 ${styles.widthAlmostFull}`}
+        className={`contentUp delay-125 ${styles.widthFull}`}
+        borderBottomWidth="standard"
+        borderColor="dark200"
       >
-        <Text as="h2" variant="h3" color="dark300">
+        <Text as="h2" variant="h3" color="dark300" marginBottom={1}>
           Gögn frá umsækjanda
         </Text>
       </Box>
@@ -33,20 +35,19 @@ const FilesListWithHeaderContainer = ({ applicationFiles }: Props) => {
         })}
         marginBottom={[5, 5, 7]}
       >
-        {Object.values(FileType).map((file) => {
+        {Object.values(FileType).map((file, index) => {
           const filterFiles = applicationFiles.filter((f) => f.type === file)
 
-          if (filterFiles.length === 0) {
-            return
+          if (filterFiles.length !== 0) {
+            return (
+              <span key={'fileList-' + index}>
+                <Text variant="eyebrow" marginBottom={2}>
+                  {getFileTypeName[file]}
+                </Text>
+                <FileList files={filterFiles} />
+              </span>
+            )
           }
-          return (
-            <>
-              <Text variant="eyebrow" marginBottom={2}>
-                {getFileTypeName[file]}
-              </Text>
-              <FileList files={filterFiles} />
-            </>
-          )
         })}
       </Box>
     </>

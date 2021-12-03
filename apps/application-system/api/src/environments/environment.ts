@@ -186,7 +186,7 @@ const prodConfig = {
         xroadClientId: process.env.XROAD_CLIENT_ID,
         xroadBaseUrl: process.env.XROAD_BASE_PATH,
         xroadPathV1: process.env.XROAD_DRIVING_LICENSE_PATH,
-        xroadPathV2: process.env.XROAD_DRIVING_LICENSE_V2_PATH,
+        xroadPathV2: process.env.XROAD_DRIVING_LICENSE_PATH,
       },
     },
     paymentOptions: {

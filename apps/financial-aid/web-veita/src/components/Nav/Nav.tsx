@@ -11,7 +11,7 @@ import { useRouter } from 'next/router'
 
 import {
   AdminSideNavItems,
-  EmployeeSideNavItems,
+  ApplicationSideNavItems,
   LoadingContainer,
   LogoMunicipality,
   SuperAdminSideNavItems,
@@ -26,7 +26,7 @@ import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/sr
 import { useLogOut } from '@island.is/financial-aid-web/veita/src/utils/useLogOut'
 
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
-import { StaffRole } from '@island.is/financial-aid/shared/lib'
+import { Routes, StaffRole } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   showInMobile: boolean
@@ -79,7 +79,7 @@ const Nav = ({ showInMobile }: Props) => {
           isLoading={loading}
           loader={<SkeletonLoader repeat={3} space={2} />}
         >
-          <EmployeeSideNavItems
+          <ApplicationSideNavItems
             roles={admin?.staff?.roles}
             applicationFilters={applicationFilters}
           />
@@ -88,6 +88,38 @@ const Nav = ({ showInMobile }: Props) => {
 
       <Box display="block" marginBottom={2} marginTop={4}>
         <Box marginBottom={2}>
+          <button
+            className={cn({
+              [`${sideNavButtonStyles.sideNavBarButton} navBarButtonHover`]: true,
+              [`${sideNavButtonStyles.activeNavButton}`]:
+                router.pathname === Routes.settings.search,
+            })}
+            onClick={() => router.push(Routes.settings.search)}
+          >
+            <Icon
+              icon="search"
+              type="outline"
+              color="blue400"
+              className={sideNavButtonStyles.sideNavBarButtonIcon}
+            />
+            <Text> Leit</Text>
+          </button>
+          <button
+            className={cn({
+              [`${sideNavButtonStyles.sideNavBarButton} navBarButtonHover`]: true,
+              [`${sideNavButtonStyles.activeNavButton}`]:
+                router.pathname === Routes.settings.settings,
+            })}
+            onClick={() => router.push(Routes.settings.settings)}
+          >
+            <Icon
+              icon="person"
+              type="outline"
+              color="blue400"
+              className={sideNavButtonStyles.sideNavBarButtonIcon}
+            />
+            <Text> Mínar stillingar</Text>
+          </button>
           <SuperAdminSideNavItems roles={admin?.staff?.roles} />
           <AdminSideNavItems roles={admin?.staff?.roles} />
           <button
@@ -104,7 +136,7 @@ const Nav = ({ showInMobile }: Props) => {
           </button>
         </Box>
         <Divider weight="purple200" />
-        {isSuperAdmin && (
+        {admin && (
           <>
             <Box display="flex" alignItems="center" paddingTop={3}>
               <Icon

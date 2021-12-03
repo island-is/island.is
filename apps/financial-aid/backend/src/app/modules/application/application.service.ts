@@ -15,12 +15,9 @@ import {
   getStateFromUrl,
   RolesRule,
   User,
-  getEmailTextFromState,
   Staff,
   FileType,
-  months,
-  nextMonth,
-  getNextPeriod,
+  getApplicantEmailDataFromEventType,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -33,7 +30,7 @@ import { EmailService } from '@island.is/email-service'
 
 import { ApplicationFileModel } from '../file/models'
 import { environment } from '../../../environments'
-import { ApplicationReceivedTemplate } from './emailTemplates/applicationRecievedTemplate'
+import { ApplicantEmailTemplate } from './emailTemplates/applicantEmailTemplate'
 import { MunicipalityService } from '../municipality'
 import { logger } from '@island.is/logging'
 
@@ -43,7 +40,7 @@ interface Recipient {
 }
 
 const linkToStatusPage = (applicationId: string) => {
-  return `https://fjarhagsadstod.dev.sveitarfelog.net/stada/${applicationId}"`
+  return `${environment.baseUrl}/stada/${applicationId}"`
 }
 
 const firstDateOfMonth = () => {
@@ -85,6 +82,35 @@ export class ApplicationService {
       hasFiles: Boolean(files),
       spouseName: spouseName,
     }
+  }
+
+  async findByNationalId(
+    nationalId: string,
+    municipalityCode: string,
+  ): Promise<ApplicationModel[]> {
+    return this.applicationModel.findAll({
+      where: {
+        [Op.or]: [
+          {
+            nationalId,
+            municipalityCode,
+          },
+          {
+            spouseNationalId: nationalId,
+            municipalityCode,
+          },
+        ],
+      },
+      order: [['modified', 'DESC']],
+      include: [
+        {
+          model: ApplicationFileModel,
+          as: 'files',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+      ],
+    })
   }
 
   async getCurrentApplicationId(nationalId: string): Promise<string | null> {
@@ -233,21 +259,21 @@ export class ApplicationService {
       application.municipalityCode,
     )
 
+    const emailData = getApplicantEmailDataFromEventType(
+      ApplicationEventType.NEW,
+      linkToStatusPage(appModel.id),
+      application.email,
+      municipality,
+      appModel.created,
+    )
+
     await this.sendEmail(
       {
         name: user.name,
         address: appModel.email,
       },
-      `Umsókn fyrir fjárhagsaðstoð móttekin ~ ${appModel.id}`,
-      ApplicationReceivedTemplate(
-        months[nextMonth],
-        getNextPeriod.year,
-        linkToStatusPage(appModel.id),
-        application.email,
-        municipality.name,
-        municipality.homepage,
-        municipality.rulesHomepage,
-      ),
+      emailData.subject,
+      ApplicantEmailTemplate(emailData.data),
     )
 
     return appModel
@@ -261,14 +287,6 @@ export class ApplicationService {
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
   }> {
-    const shouldSendEmail = [
-      ApplicationEventType.NEW,
-      ApplicationEventType.DATANEEDED,
-      ApplicationEventType.REJECTED,
-      ApplicationEventType.INPROGRESS,
-      ApplicationEventType.APPROVED,
-    ]
-
     if (update.state && update.state === ApplicationState.NEW) {
       update.staffId = null
     }
@@ -298,14 +316,32 @@ export class ApplicationService {
     const files = await this.fileService.getAllApplicationFiles(id)
     updatedApplication?.setDataValue('files', files)
 
-    if (shouldSendEmail.includes(update.event) && update.state) {
+    if (
+      update.event === ApplicationEventType.DATANEEDED ||
+      update.event === ApplicationEventType.REJECTED ||
+      update.event === ApplicationEventType.APPROVED
+    ) {
+      const municipality = await this.municipalityService.findByMunicipalityId(
+        updatedApplication.municipalityCode,
+      )
+      const emailData = getApplicantEmailDataFromEventType(
+        update.event,
+        linkToStatusPage(updatedApplication.id),
+        updatedApplication.email,
+        municipality,
+        updatedApplication.created,
+        update.event === ApplicationEventType.DATANEEDED
+          ? update?.comment
+          : undefined,
+      )
+
       await this.sendEmail(
         {
           name: updatedApplication.name,
           address: updatedApplication.email,
         },
-        updatedApplication.id,
-        getEmailTextFromState[update.state],
+        emailData.subject,
+        ApplicantEmailTemplate(emailData.data),
       )
     }
 

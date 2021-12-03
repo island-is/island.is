@@ -10,7 +10,9 @@ export class GrantTypeService extends BaseService {
     count: number,
   ): Promise<{ rows: GrantType[]; count: number } | null> {
     return BaseService.GET(
-      `grants/search/?searchString=${searchString}&page=${page}&count=${count}`,
+      `grants/search/?searchString=${encodeURIComponent(
+        searchString,
+      )}&page=${page}&count=${count}`,
     )
   }
 
@@ -21,7 +23,7 @@ export class GrantTypeService extends BaseService {
 
   /** Get by name */
   static async findByName(name: string): Promise<GrantType | null> {
-    return BaseService.GET(`grants/type/${name}`)
+    return BaseService.GET(`grants/type/${encodeURIComponent(name)}`)
   }
 
   /** Create a Grant Type  */
