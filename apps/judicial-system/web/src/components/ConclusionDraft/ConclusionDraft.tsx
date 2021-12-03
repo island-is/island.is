@@ -14,7 +14,7 @@ import {
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
 }
 
 const ConclusionDraft: React.FC<Props> = (props) => {
