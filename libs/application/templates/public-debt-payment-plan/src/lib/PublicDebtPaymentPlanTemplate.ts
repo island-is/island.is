@@ -113,6 +113,15 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 3600 * 1000,
           },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/PaymentPlanSubmittedForm').then((module) =>
+                  Promise.resolve(module.PaymentPlanSubmittedForm),
+                ),
+            },
+          ],
         },
       },
     },
