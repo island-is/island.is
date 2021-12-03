@@ -48,14 +48,14 @@ import {
       type: DataType.STRING(4096),
     })
     @ApiProperty()
-    device_token!: string
+    deviceToken!: string
   
     @Column({
       type: DataType.BOOLEAN,
       defaultValue: true
     })
     @ApiProperty()
-    is_enabled!: boolean
+    isEnabled!: boolean
   
   }
   

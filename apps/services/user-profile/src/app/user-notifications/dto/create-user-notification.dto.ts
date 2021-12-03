@@ -1,17 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsString } from 'class-validator'
+import { IsBoolean, IsOptional, IsString } from 'class-validator'
+import { IsNationalId } from '@island.is/nest/validators'
+
+const big_example = "dnmjvfcbzymtghawuchhopxzopkhwckzrbzvnhaotdchubjmgogvxkyztgmatzrcvargnobtkkghxyhlnjppyvsolmkjzujwhtgmcarvdltqhzcqumrjuwokqztccpcnguvtopbegmvnukqimyultcjznpdxdtrwplnavczwdldpmcewwlwygqxskiwuijegplwheamelhhipbyfkmqsjcoegitvoqupyeodqeaksrsnrpvzxerpgdymiwijihshifzoeaeqquioxsjttbcnhgnmegkjzkjobdbbopsdebneubakusbqwbpyzdxrhvgjzekctrmzvtcvsovfzceqxovusprfkjpzmnpakatcilmnklarjlvpktvwyaifvwqkqlafmnrtunhrpjfxcjkxwzgahywvkitkygxxkaatxtigewsnwkmxxjruojqgmccrpwxnmtfhmhgnzbmxwjgxuvfrfdxbtgowenlzqtrshlskqkdfhyubnkczadwnqhcqhlzeyarsilmxmdjahvepzzbeuoqoemngqdsphkymrakhwkzvcdsfybqutvyumdihedyiebkkjvkayskgcvmrbuocwzwiiyykmgdpeqcdewwfvidzyosrxzcuuirlmhmkeapexbpxjdzjsjzjqitfnlknbzgscokxeovkfdoiecsgpbozgqbgskwojonufkactxfqziijrlicrabgsoplzxflwkylxejufwcfyagdxzdyonyirckoxxnacogidlveepkztauxejsdlalrifecfgepafhbemxobjffmcclniscjaaxovipzkhzziuqnbaxadiaambezyoogrcopijlclqzxaxuvfejcotxzfqlrnctizktkkqcsjhillldwoujsjgnfshyzuvpuddverrhbseufyzttgzjfwmhfifgvneyreeczgkjnwelamqucekzetmygrbcksngaqunfvcwbekkiqzyogltnzjyfzsojydltqpbasxnoiydrlxefzklcgbtqnvimotvjckuiuocztqudjzrhmnwvavyjgvcelcftzwtgleksxwxmlycihzjslhamfmtgdlwfbhezfkinohrwwuegisyrjzqbfwokwgjobvnflocmzaefxovvwjvvrbmttvxfgahcvjtodwfvwutibqlvuojvgdkqikutoxnkqjrzjafbmnfskdapxvzxvkmhsyibcnvcvvjwfxgbszwookxlsoczprhayafipbgwgznbxnukuldzvylxyjtkjnthjekhuclburrmwyigatlmxqnftrjrpylwytnxwzdljsbiydfzptbvcjnzhtkissfxonwzxunukivalemurihidfwgjbpkdvbkeafbkqqkkeguiinqfwunsienfajpvmeqqmymyvnbfrirzgvunofwsuyoiuwchmnmdhgsklekyfhxsghlxrcuaqkktsfrptjeoyyykfhufxlhritwkeqxvcbhwmajuxknetyvqxygxkvrxyicigjpmerljwbdhdhcnrceihqjbfthzislpuqvwbbnfugpuhmdvdfwdflzspbyegnmmrepkkgyresbpghzdnyhxcvsfgvlvgqsfaxxkgeuemeqobjijxjwlexznkwyaeeapksjhuacdqelyxhebsohapksyrphhoahbvbxhtogtdtkeyqyfwpcqlellfjxfxjrmrqdtbmownaldbqqhcodpcbyzlepyhvgbxdxadtfanyqwujqekabwwtznaminqzcjcyhwfkgrchhmsiguml"
+const unique_generated_token = new Date().toISOString() // just using timestamp for unique value
 
 export class CreateUserNotificationDto {
-    @ApiProperty({ required: true })
+    @ApiProperty({ required: true, example: "1305775399" })
     @IsString()
+    @IsNationalId()
     nationalId!: string
 
-    @ApiProperty({ required: true })
+    @ApiProperty({ required: true, example: unique_generated_token })
     @IsString()
-    device_token!: string
+    deviceToken!: string
 
     @ApiProperty({ required: false })
     @IsBoolean()
-    is_enabled?: boolean
+    @IsOptional()
+    isEnabled?: boolean
 
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { CreateUserNotificationDto } from './dto/create-user-notification.dto'
 import { UpdateUserNotificationDto } from './dto/update-user-notification.dto'
@@ -11,47 +11,49 @@ export class UserNotificationsService {
     private readonly UserNotificationsModel: typeof UserNotifications,
   ) {}
 
-  create(createUserNotificationDto: CreateUserNotificationDto) {
-    const obj = {
-      nationalId: '1305775399',
-      // device_token: new Date().toISOString(),
-      // ex big one 4096
-      //  index row size 2728 exceeds maximum 2712 for index "user_notifications_device_token_key"
-      device_token: "dnmjvfcbzymtghawuchhopxzopkhwckzrbzvnhaotdchubjmgogvxkyztgmatzrcvargnobtkkghxyhlnjppyvsolmkjzujwhtgmcarvdltqhzcqumrjuwokqztccpcnguvtopbegmvnukqimyultcjznpdxdtrwplnavczwdldpmcewwlwygqxskiwuijegplwheamelhhipbyfkmqsjcoegitvoqupyeodqeaksrsnrpvzxerpgdymiwijihshifzoeaeqquioxsjttbcnhgnmegkjzkjobdbbopsdebneubakusbqwbpyzdxrhvgjzekctrmzvtcvsovfzceqxovusprfkjpzmnpakatcilmnklarjlvpktvwyaifvwqkqlafmnrtunhrpjfxcjkxwzgahywvkitkygxxkaatxtigewsnwkmxxjruojqgmccrpwxnmtfhmhgnzbmxwjgxuvfrfdxbtgowenlzqtrshlskqkdfhyubnkczadwnqhcqhlzeyarsilmxmdjahvepzzbeuoqoemngqdsphkymrakhwkzvcdsfybqutvyumdihedyiebkkjvkayskgcvmrbuocwzwiiyykmgdpeqcdewwfvidzyosrxzcuuirlmhmkeapexbpxjdzjsjzjqitfnlknbzgscokxeovkfdoiecsgpbozgqbgskwojonufkactxfqziijrlicrabgsoplzxflwkylxejufwcfyagdxzdyonyirckoxxnacogidlveepkztauxejsdlalrifecfgepafhbemxobjffmcclniscjaaxovipzkhzziuqnbaxadiaambezyoogrcopijlclqzxaxuvfejcotxzfqlrnctizktkkqcsjhillldwoujsjgnfshyzuvpuddverrhbseufyzttgzjfwmhfifgvneyreeczgkjnwelamqucekzetmygrbcksngaqunfvcwbekkiqzyogltnzjyfzsojydltqpbasxnoiydrlxefzklcgbtqnvimotvjckuiuocztqudjzrhmnwvavyjgvcelcftzwtgleksxwxmlycihzjslhamfmtgdlwfbhezfkinohrwwuegisyrjzqbfwokwgjobvnflocmzaefxovvwjvvrbmttvxfgahcvjtodwfvwutibqlvuojvgdkqikutoxnkqjrzjafbmnfskdapxvzxvkmhsyibcnvcvvjwfxgbszwookxlsoczprhayafipbgwgznbxnukuldzvylxyjtkjnthjekhuclburrmwyigatlmxqnftrjrpylwytnxwzdljsbiydfzptbvcjnzhtkissfxonwzxunukivalemurihidfwgjbpkdvbkeafbkqqkkeguiinqfwunsienfajpvmeqqmymyvnbfrirzgvunofwsuyoiuwchmnmdhgsklekyfhxsghlxrcuaqkktsfrptjeoyyykfhufxlhritwkeqxvcbhwmajuxknetyvqxygxkvrxyicigjpmerljwbdhdhcnrceihqjbfthzislpuqvwbbnfugpuhmdvdfwdflzspbyegnmmrepkkgyresbpghzdnyhxcvsfgvlvgqsfaxxkgeuemeqobjijxjwlexznkwyaeeapksjhuacdqelyxhebsohapksyrphhoahbvbxhtogtdtkeyqyfwpcqlellfjxfxjrmrqdtbmownaldbqqhcodpcbyzlepyhvgbxdxadtfanyqwujqekabwwtznaminqzcjcyhwfkgrchhmsiguml"
-    }
-    console.log(obj)
+  // CREATE
+  async create(createUserNotificationDto: CreateUserNotificationDto) {
     try {
-      console.log("############",CreateUserNotificationDto)
-      return this.UserNotificationsModel.create(obj)
-    } catch (error) {
-      console.error(error);
-      return error
-      // expected output: ReferenceError: nonExistentFunction is not defined
-      // Note - error messages will vary depending on browser
+      return await this.UserNotificationsModel.create(createUserNotificationDto)
+    } catch (e) {
+      throw new BadRequestException(e.errors);
     }
-    
   }
 
-  findAll() {
+  // FIND ALL
+  async findAll() {
     const obj = {
       nationalId: '1305775399',
       device_token: new Date().toISOString(),
     }
-    return this.UserNotificationsModel.findAll({
-      where: { nationalId: obj.nationalId },
-    })
+
+    try {
+      return await this.UserNotificationsModel.findAll({
+        where: { nationalId: obj.nationalId },
+      })
+    } catch (error) {
+      throw new NotFoundException();
+    }
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} userNotification`;
-  // }
 
-  update(updateUserNotificationDto: UpdateUserNotificationDto) {
-    
-    return this.UserNotificationsModel.update({is_enabled:false},{where:{id:"a1d2c2d7-1221-4394-b5fc-c4d675e8b1f2"}})
+  // UPDATE
+  async update(id: string, updateUserNotificationDto: UpdateUserNotificationDto) {
+    try{
+      const res = await this.UserNotificationsModel.update(updateUserNotificationDto,{where:{id}})
+      if(res.length > 0) {
+        return this.UserNotificationsModel.findOne({where:{id}})
+      }
+    } catch(e){
+      throw new BadRequestException(e.errors);
+    }
   }
 
-  remove(id: string) {
-    return this.UserNotificationsModel.destroy({where:{id:"a1d2c2d7-1221-4394-b5fc-c4d675e8b1f2"}})
+  // DELETE
+  async remove(id: string): Promise<void> {
+    const res = await this.UserNotificationsModel.destroy({where:{id}})
+    if(res != 1) {
+      throw new NotFoundException();
+    }
   }
 }

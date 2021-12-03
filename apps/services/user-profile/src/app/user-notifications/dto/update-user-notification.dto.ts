@@ -4,7 +4,7 @@ import { IsBoolean } from 'class-validator';
 import { CreateUserNotificationDto } from './create-user-notification.dto';
 
 export class UpdateUserNotificationDto extends PartialType(CreateUserNotificationDto) {
-    @ApiProperty({ required: true })
+    @ApiProperty({ required: true, example: false })
     @IsBoolean()
-    is_enabled!: boolean
+    isEnabled!: boolean
 }
