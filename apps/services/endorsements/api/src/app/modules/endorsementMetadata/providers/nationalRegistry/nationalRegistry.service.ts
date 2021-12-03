@@ -26,7 +26,6 @@ export class NationalRegistryUserService implements MetadataProvider {
       auth,
     ).einstaklingarGetEinstaklingur({
       id: input.nationalId,
-      xRoadClient: environment.metadataProvider.nationalRegistry.xRoadClient,
     })
 
     return {
