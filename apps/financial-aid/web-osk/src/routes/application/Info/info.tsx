@@ -34,6 +34,7 @@ const ApplicationInfo = () => {
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const nationalRegistryQuery = useAsyncLazyQuery<
     {
@@ -54,11 +55,14 @@ const ApplicationInfo = () => {
       return
     }
 
+    setLoading(true)
+
     const { data } = await nationalRegistryQuery({
       input: { ssn: user?.nationalId },
     })
 
     if (!data || !data.nationalRegistryUserV2.address) {
+      setLoading(false)
       return
     }
 
@@ -67,15 +71,13 @@ const ApplicationInfo = () => {
     await setMunicipalityById(
       data.nationalRegistryUserV2.address.municipalityCode,
     ).then((municipality) => {
-      if (navigation.nextUrl && municipality && municipality.active) {
-        router.push(navigation?.nextUrl)
-      } else {
-        router.push(
-          Routes.serviceCenter(
-            data.nationalRegistryUserV2.address.municipalityCode,
-          ),
-        )
-      }
+      navigation.nextUrl && municipality && municipality.active
+        ? router.push(navigation?.nextUrl)
+        : router.push(
+            Routes.serviceCenter(
+              data.nationalRegistryUserV2.address.municipalityCode,
+            ),
+          )
     })
   }
 
@@ -150,7 +152,7 @@ const ApplicationInfo = () => {
         nextButtonText="Staðfesta"
         nextButtonIcon="checkmark"
         onNextButtonClick={errorCheck}
-        nextIsLoading={loadingMunicipality}
+        nextIsLoading={loadingMunicipality || loading}
       />
     </>
   )
