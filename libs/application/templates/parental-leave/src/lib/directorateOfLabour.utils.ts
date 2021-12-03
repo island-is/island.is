@@ -95,10 +95,15 @@ export const calculateExistingNumberOfDays = (periods: ParentalLeavePeriod[]) =>
     .reduce((acc, cur) => {
       const from = new Date(cur.from)
       const to = new Date(cur.to)
-      const days = calculateNumberOfDaysForOnePeriod(from, to)
-      const daysWithRatio = Math.round((days * cur.ratio) / 100)
 
-      return acc + daysWithRatio
+      if (cur.ratio.toString().startsWith('D')) {
+        const [, rawDays] = cur.ratio.toString().split('D')[1]
+
+        return acc + Number(rawDays)
+      }
+      const ratio = Number(cur.ratio)
+
+      return acc + calculatePeriodLength(from, to, ratio / 100)
     }, 0)
 
 /**
