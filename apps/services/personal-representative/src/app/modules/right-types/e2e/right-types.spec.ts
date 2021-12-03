@@ -17,9 +17,9 @@ beforeAll(async () => {
 })
 
 describe('Create Right Type', () => {
-  it('POST /right-types should fail and return 403 error if bearer is missing', async () => {
+  it('POST /v1/right-types should fail and return 403 error if bearer is missing', async () => {
     const response = await request(app.getHttpServer())
-      .post('/right-types')
+      .post('/v1/right-types')
       .send(simpleRequestData)
       .expect(403)
 
@@ -29,14 +29,14 @@ describe('Create Right Type', () => {
     })
   })
 
-  it('POST /right-types should return error when data is invalid', async () => {
+  it('POST /v1/right-types should return error when data is invalid', async () => {
     const requestData = {
       code: 'Code',
       description: 'Description',
       validFrom: '10-11-2021',
     }
     const response = await request(app.getHttpServer())
-      .post('/right-types')
+      .post('/v1/right-types')
       .set(
         'Authorization',
         `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
@@ -50,9 +50,9 @@ describe('Create Right Type', () => {
     })
   })
 
-  it('POST /right-types should create a new entry', async () => {
+  it('POST /v1/right-types should create a new entry', async () => {
     const response = await request(app.getHttpServer())
-      .post('/right-types')
+      .post('/v1/right-types')
       .send(simpleRequestData)
       .set(
         'Authorization',
@@ -64,9 +64,9 @@ describe('Create Right Type', () => {
 })
 
 describe('Update Right Type', () => {
-  it('Put /right-types should fail and return 403 error if bearer is missing', async () => {
+  it('Put /v1/right-types should fail and return 403 error if bearer is missing', async () => {
     await request(app.getHttpServer())
-      .post('/right-types')
+      .post('/v1/right-types')
       .send(simpleRequestData)
       .set(
         'Authorization',
@@ -79,7 +79,7 @@ describe('Update Right Type', () => {
     }
 
     const response = await request(app.getHttpServer())
-      .put(`/right-types/${requestData.code}`)
+      .put(`/v1/right-types/${requestData.code}`)
       .send(requestData)
       .set(
         'Authorization',
@@ -92,9 +92,9 @@ describe('Update Right Type', () => {
 })
 
 describe('Get Right Type/s', () => {
-  it('Get /right-types should fail and return 403 error if bearer is missing', async () => {
+  it('Get /v1/right-types should fail and return 403 error if bearer is missing', async () => {
     await request(app.getHttpServer())
-      .post('/right-types')
+      .post('/v1/right-types')
       .send(simpleRequestData)
       .set(
         'Authorization',
@@ -102,7 +102,7 @@ describe('Get Right Type/s', () => {
       )
 
     const response = await request(app.getHttpServer())
-      .get(`/right-types/${simpleRequestData.code}`)
+      .get(`/v1/right-types/${simpleRequestData.code}`)
       .set(
         'Authorization',
         `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
@@ -115,9 +115,9 @@ describe('Get Right Type/s', () => {
 })
 
 describe('Delete/Remove Right Type', () => {
-  it('Delete /right-types should fail and return 403 error if bearer is missing', async () => {
+  it('Delete /v1/right-types should fail and return 403 error if bearer is missing', async () => {
     await request(app.getHttpServer())
-      .post('/right-types')
+      .post('/v1/right-types')
       .send(simpleRequestData)
       .set(
         'Authorization',
@@ -129,7 +129,7 @@ describe('Delete/Remove Right Type', () => {
     }
 
     await request(app.getHttpServer())
-      .delete(`/right-types/${requestData.code}`)
+      .delete(`/v1/right-types/${requestData.code}`)
       .send(requestData)
       .set(
         'Authorization',
@@ -138,7 +138,7 @@ describe('Delete/Remove Right Type', () => {
       .expect(200)
 
     const response = await request(app.getHttpServer())
-      .get(`/right-types/${simpleRequestData.code}`)
+      .get(`/v1/right-types/${simpleRequestData.code}`)
       .set(
         'Authorization',
         `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
