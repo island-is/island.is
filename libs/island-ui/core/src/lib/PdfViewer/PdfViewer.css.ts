@@ -2,7 +2,7 @@ import { style, globalStyle } from '@vanilla-extract/css'
 
 export const pdfViewer = style({})
 
-globalStyle(`${pdfViewer} canvas`, {
+globalStyle(`${pdfViewer} svg`, {
   maxWidth: '100%',
   width: '100% !important',
   height: 'auto !important',

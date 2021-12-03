@@ -26,6 +26,7 @@ export const PdfViewer: FC<PdfViewerProps> = ({ file }) => {
       <Document
         file={file}
         onLoadSuccess={onDocumentLoadSuccess}
+        renderMode="svg"
         className={styles.pdfViewer}
         loading={
           <Box height="full" display="flex" justifyContent="center">
