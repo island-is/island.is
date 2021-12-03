@@ -300,8 +300,8 @@ const AccessControl: FC = () => {
                         </Button>
                         {partner && (
                           <AccessControlUpdate
-                            title={t.modal.titles.add}
-                            text={t.modal.subtitles.add}
+                            title={t.modal.titles.edit}
+                            text={t.modal.subtitles.edit}
                             show={!!partner}
                             onCancel={handleUpdateAccessControlCloseModal}
                             onSubmit={handleUpdateAccessControl}
