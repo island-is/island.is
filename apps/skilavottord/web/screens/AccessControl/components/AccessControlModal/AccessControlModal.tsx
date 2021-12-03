@@ -80,7 +80,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             format="######-####"
             error={errors?.nationalId?.message}
             backgroundColor="blue"
-            disabled={!!isNationalIdDisabled}
+            disabled={isNationalIdDisabled}
           />
           <InputController
             id="name"

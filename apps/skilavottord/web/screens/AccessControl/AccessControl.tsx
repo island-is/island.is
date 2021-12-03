@@ -298,18 +298,6 @@ const AccessControl: FC = () => {
                         >
                           {t.buttons.edit}
                         </Button>
-                        {partner && (
-                          <AccessControlUpdate
-                            title={t.modal.titles.edit}
-                            text={t.modal.subtitles.edit}
-                            show={!!partner}
-                            onCancel={handleUpdateAccessControlCloseModal}
-                            onSubmit={handleUpdateAccessControl}
-                            recyclingPartners={recyclingPartners}
-                            roles={roles}
-                            currentPartner={partner}
-                          />
-                        )}
                       </Data>
                     </Row>
                   )
@@ -319,6 +307,18 @@ const AccessControl: FC = () => {
           )}
         </Stack>
       </Stack>
+      {partner && (
+        <AccessControlUpdate
+          title={t.modal.titles.edit}
+          text={t.modal.subtitles.edit}
+          show={!!partner}
+          onCancel={handleUpdateAccessControlCloseModal}
+          onSubmit={handleUpdateAccessControl}
+          recyclingPartners={recyclingPartners}
+          roles={roles}
+          currentPartner={partner}
+        />
+      )}
     </PartnerPageLayout>
   )
 }
