@@ -1,9 +1,11 @@
 import React, { FC, useState } from 'react'
 import { Box } from '../Box/Box'
-import { Document, Page } from 'react-pdf/dist/esm/entry.webpack'
+import { pdfjs, Document, Page } from 'react-pdf'
 import * as styles from './PdfViewer.css'
 import { Pagination } from '../Pagination/Pagination'
 import { LoadingDots } from '../LoadingDots/LoadingDots'
+// Loading worker for react-pdf
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
 
 export interface PdfViewerProps {
   file: string
