@@ -15,7 +15,7 @@ import { UserInfoLine, m } from '@island.is/service-portal/core'
 import { FamilyMemberCard } from '@island.is/service-portal/family'
 import { useUserProfileAndIslykill } from '@island.is/service-portal/graphql'
 
-const UserProfile: ServicePortalModuleComponent = ({ userInfo, client }) => {
+const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
 
@@ -75,8 +75,8 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo, client }) => {
             }}
             renderContent={() => (
               <Box display="flex" alignItems="center">
-                <Box marginRight={2}>{settings?.mobile || ''}</Box>
-                {settings?.mobile &&
+                <Box marginRight={2}>{settings?.mobilePhoneNumber || ''}</Box>
+                {settings?.mobilePhoneNumber &&
                 settings?.mobilePhoneNumberVerified === true ? (
                   <Tag variant="blueberry" outlined disabled>
                     {formatMessage({

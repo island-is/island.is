@@ -14,6 +14,8 @@ import { gql, useMutation } from '@apollo/client'
 import {
   useUserProfile,
   useCreateIslykillSettings,
+  useCreateUserProfile,
+  useUpdateUserProfile,
 } from '@island.is/service-portal/graphql'
 import {
   ServicePortalModuleComponent,
@@ -48,6 +50,8 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
   const [updateIslykill, { loading, error }] = useMutation(
     UpdateIslykillSettings,
   )
+  const { createUserProfile } = useCreateUserProfile()
+  const { updateUserProfile } = useUpdateUserProfile()
   const { formatMessage } = useLocale()
 
   useEffect(() => {
@@ -68,9 +72,15 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
             },
           },
         })
+        await updateUserProfile({
+          mobilePhoneNumber: formData.tel,
+        })
       } else {
         await createIslykillSettings({
           mobile: `+${parsePhoneNumber?.countryCallingCode}-${parsePhoneNumber?.nationalNumber}`,
+        })
+        await createUserProfile({
+          mobilePhoneNumber: formData.tel,
         })
       }
       if (!parsePhoneNumber?.isValid()) {

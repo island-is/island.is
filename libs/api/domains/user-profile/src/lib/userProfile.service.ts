@@ -62,10 +62,17 @@ export class UserProfileService {
 
       return {
         ...profile,
-        // Temporary solution while we still run the old user profile service.
+        /*
+          Temporary solution while we still run the old user profile service.
+          The Islyklar db will only be updated with a verified email. (See verification service)
+          When in the state of an unverified email: Display the userprofile mail.
+        */
         mobilePhoneNumber:
           islyklarData?.mobilePhoneNumber ?? profile.mobilePhoneNumber,
-        email: islyklarData?.email ?? profile.email,
+        email:
+          profile.emailVerified === false
+            ? profile.email
+            : islyklarData?.email ?? profile.email,
       }
     } catch (error) {
       if (error.status === 404) return null

@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/client'
 import { IslykillSettings, Query, UserProfile } from '@island.is/api/schema'
 import isEmpty from 'lodash/isEmpty'
-import { USER_PRFOLIE_AND_ISLYKILL } from '../../lib/queries/getCombinedIslykillAndUserprofile'
+import { USER_PROFILE_AND_ISLYKILL } from '../../lib/queries/getCombinedIslykillAndUserprofile'
 
 export const useUserProfileAndIslykill = () => {
-  const { data, loading, error } = useQuery<Query>(USER_PRFOLIE_AND_ISLYKILL, {
+  const { data, loading, error } = useQuery<Query>(USER_PROFILE_AND_ISLYKILL, {
     fetchPolicy: 'no-cache',
   })
 

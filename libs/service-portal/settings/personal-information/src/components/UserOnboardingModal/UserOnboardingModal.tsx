@@ -82,6 +82,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       await createUserProfile({
         locale,
         email,
+        mobilePhoneNumber,
       })
       await createIslykillSettings({
         mobile: mobilePhoneNumber,
