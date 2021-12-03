@@ -201,7 +201,7 @@ export class AuthController {
       name: user.fullname,
     }
 
-    let RoleForUser: Role = 'citizen'
+    let RoleForUser: Role = Role.citizen
     RoleForUser = authService.getRole(RoleUser)
 
     //this.logger.info(`  - Role for ${user.fullname} is ${RoleForUser}`)

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import { ForbiddenError } from 'apollo-server-express'
 
 import { environment } from '../../../environments'
 import { User } from '../user'
@@ -20,23 +19,23 @@ export class AuthService {
   }
   getRole(user: AuthUser): Role {
     if (AuthService.RECYCLINGCOMPANY.includes(user.nationalId)) {
-      return 'recyclingCompany'
+      return Role.recyclingCompany
     } else if (AuthService.RECYCLINGFUND.includes(user.nationalId)) {
-      return 'recyclingFund'
+      return Role.recyclingFund
     } else if (AuthService.DEVELOPERS.includes(user.nationalId)) {
-      return 'developer'
+      return Role.developer
     } else {
-      return 'citizen'
+      return Role.citizen
     }
   }
 
   checkRole(user: AuthUser, role: Role): boolean {
     switch (role) {
-      case 'recyclingCompany':
+      case Role.recyclingCompany:
         return AuthService.RECYCLINGCOMPANY.includes(user.nationalId)
-      case 'recyclingFund':
+      case Role.recyclingFund:
         return AuthService.RECYCLINGFUND.includes(user.nationalId)
-      case 'developer':
+      case Role.developer:
         return AuthService.DEVELOPERS.includes(user.nationalId)
       default: {
         if (role) {
@@ -47,19 +46,13 @@ export class AuthService {
     }
   }
 
-  verifyPermission(user: AuthUser, role: Role) {
-    if (!this.checkRole(user, role)) {
-      throw new ForbiddenError('Forbidden')
-    }
-  }
-
   static loadArray() {
     AuthService.userListEnv.forEach((user) => {
-      if (user.role == 'developer') {
+      if (user.role == Role.developer) {
         AuthService.DEVELOPERS.push(user.nationalId)
-      } else if (user.role == 'recyclingFund') {
+      } else if (user.role == Role.recyclingFund) {
         AuthService.RECYCLINGFUND.push(user.nationalId)
-      } else if (user.role == 'recyclingCompany') {
+      } else if (user.role == Role.recyclingCompany) {
         AuthService.RECYCLINGCOMPANY.push(user.nationalId)
       }
     })

@@ -222,6 +222,7 @@ export interface DeregisterOverviewSubtitles {
 }
 
 export interface DeregisterSidenav {
+  title: string
   deregister: string
   companyInfo: string
 }
@@ -934,6 +935,7 @@ const typeMap: any = {
   ),
   DeregisterSidenav: o(
     [
+      { json: 'title', js: 'title', typ: '' },
       { json: 'deregister', js: 'deregister', typ: '' },
       { json: 'companyInfo', js: 'companyInfo', typ: '' },
     ],

@@ -7,12 +7,13 @@ import { ActionCard, Breadcrumbs, Stack, Text } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
-import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
 import {
   RecyclingPartner,
   Query,
+  Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
@@ -64,11 +65,15 @@ const RecyclingCompanies: FC = () => {
               link: `${routes.recyclingCompanies.baseRoute}`,
             },
             {
-              icon: 'lockClosed',
-              title: `${sidenavText.accessControl}`,
-              link: `${routes.accessControl}`,
-            },
-          ]}
+              ...(hasPermission('accessControl', user?.role)
+                ? {
+                    icon: 'lockClosed',
+                    title: `${sidenavText.accessControl}`,
+                    link: `${routes.accessControl}`,
+                  }
+                : null),
+            } as React.ComponentProps<typeof Sidenav>['sections'][0],
+          ].filter(Boolean)}
           activeSection={1}
         />
       }

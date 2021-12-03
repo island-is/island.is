@@ -18,7 +18,10 @@ import {
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
-import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import {
+  hasPermission,
+  isDeveloper,
+} from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
 import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
@@ -27,6 +30,7 @@ import {
   AccessControl as AccessControlType,
   CreateAccessControlInput,
   Query,
+  Role,
   UpdateAccessControlInput,
 } from '@island.is/skilavottord-web/graphql/schema'
 
@@ -136,10 +140,14 @@ const AccessControl: FC = () => {
     value: partner.companyId,
   }))
 
-  const roles = Object.keys(Role).map((role) => ({
-    label: startCase(role),
-    value: role,
-  }))
+  const roles = Object.keys(Role)
+    .filter((role) =>
+      !isDeveloper(user.role) ? role !== Role.Developer : role,
+    )
+    .map((role) => ({
+      label: startCase(role),
+      value: role,
+    }))
 
   const handleCreateAccessControlCloseModal = () =>
     setIsCreateAccessControlModalVisible(false)

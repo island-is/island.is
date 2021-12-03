@@ -39,7 +39,7 @@ export class UserResolver {
       name: user.name,
     }
 
-    let RoleForUser: Role = 'citizen' // citizen is the deault role
+    let RoleForUser: Role = Role.citizen // citizen is the deault role
     RoleForUser = authService.getRole(RoleUser)
 
     //TODO: test

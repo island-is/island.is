@@ -8,8 +8,8 @@ import { Breadcrumbs, Stack, Text } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { Sidenav, NotFound } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { Query } from '@island.is/skilavottord-web/graphql/schema'
+import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
+import { Query, Role } from '@island.is/skilavottord-web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 import { CarsTable } from './components/CarsTable'
@@ -63,11 +63,15 @@ const Overview: FC = () => {
               link: `${routes.recyclingCompanies.baseRoute}`,
             },
             {
-              icon: 'lockClosed',
-              title: `${sidenavText.accessControl}`,
-              link: `${routes.accessControl}`,
-            },
-          ]}
+              ...(hasPermission('accessControl', user?.role)
+                ? {
+                    icon: 'lockClosed',
+                    title: `${sidenavText.accessControl}`,
+                    link: `${routes.accessControl}`,
+                  }
+                : null),
+            } as React.ComponentProps<typeof Sidenav>['sections'][0],
+          ].filter(Boolean)}
           activeSection={0}
         />
       }
