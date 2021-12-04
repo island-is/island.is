@@ -13,4 +13,15 @@ module.exports = {
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   coverageDirectory: '../../../coverage/apps/services/auth-public-api',
   setupFilesAfterEnv: ['./test/setup.ts'],
+  collectCoverageFrom: [
+    '**/*.{js,jsx,ts,tsx}',
+    '!**/*.css.*',
+    '!**/*.config.*',
+    '!**/infra/*',
+    '!**/seeders/*',
+    '!**/migration/*',
+    '!**/main.ts',
+    '!**/buildOpenApi.ts',
+    '!**/openApi.ts',
+  ],
 }

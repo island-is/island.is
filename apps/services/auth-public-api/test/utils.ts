@@ -14,9 +14,8 @@ export const getRequestMethod = (
       return server.put
     case 'DELETE':
       return server.delete
-    default:
-      throw new Error('Unsupported HTTP method')
   }
+  throw new Error('Unsupported HTTP method')
 }
 
 /**
@@ -36,10 +35,7 @@ export const expectMathcingObject = (received: any, expected: any) => {
  */
 export const sortDelegations = (delegations: DelegationDTO[]) => {
   delegations.sort((a, b) => {
-    if (!a.id || !b.id) {
-      throw new Error('Sort needs id to be provided for delegations')
-    }
-
-    return a.id === b.id ? 0 : a.id < b.id ? -1 : 1
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return a.id === b.id ? 0 : a.id! < b.id! ? -1 : 1
   })
 }
