@@ -75,9 +75,7 @@ const autoSchemaFile = environment.production
         }),
       ],
     }),
-    AuthDomainModule.register({
-      authPublicApi: environment.authPublicApi,
-    }),
+    AuthDomainModule,
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
     CmsModule,

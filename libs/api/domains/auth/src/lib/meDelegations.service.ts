@@ -92,17 +92,11 @@ export class MeDelegationsService {
     user: User,
     { delegationId, scopes }: UpdateDelegationInput,
   ): Promise<DelegationDTO> {
-    const payload = {
+    return this.delegationsApiWithAuth(user).meDelegationsControllerUpdate({
       delegationId,
       updateDelegationDTO: {
-        scopes: scopes?.map((scope) => ({
-          ...scope,
-          validTo: scope.validTo ? scope.validTo : undefined,
-        })) as UpdateDelegationScopeDTO[],
+        scopes,
       },
-    }
-    return this.delegationsApiWithAuth(user).meDelegationsControllerUpdate(
-      payload,
-    )
+    })
   }
 }

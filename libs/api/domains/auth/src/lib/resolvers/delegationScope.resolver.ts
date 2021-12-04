@@ -18,7 +18,9 @@ export class DelegationScopeResolver {
   }
 
   @ResolveField('type')
-  resolveType(@Parent() delegationScope: DelegationScopeDTO): string {
-    return delegationScope.scopeName ? ScopeType.ApiScope : ''
+  resolveType(): string {
+    // We are only granting delegations for ApiScope.
+    // If or when we allow IdentityResources we need to udpate this
+    return ScopeType.ApiScope
   }
 }

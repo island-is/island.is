@@ -1,17 +1,17 @@
 import {
+  BadRequestException,
   Body,
+  ConflictException,
   Controller,
   Delete,
   Get,
+  HttpCode,
+  NotFoundException,
   Param,
   Post,
   Put,
-  UseGuards,
-  BadRequestException,
   Query,
-  NotFoundException,
-  ConflictException,
-  HttpCode,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiBadRequestResponse,
@@ -31,24 +31,24 @@ import {
 import startOfDay from 'date-fns/startOfDay'
 
 import {
-  DelegationsService,
-  DelegationDTO,
-  UpdateDelegationDTO,
   CreateDelegationDTO,
-  ResourcesService,
   DelegationDirection,
-  UpdateDelegationScopeDTO,
+  DelegationDTO,
+  DelegationsService,
   DelegationValidity,
+  ResourcesService,
+  UpdateDelegationDTO,
+  UpdateDelegationScopeDTO,
 } from '@island.is/auth-api-lib'
 import {
+  AuthMiddlewareOptions,
+  CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  CurrentUser,
-  AuthMiddlewareOptions,
 } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   FeatureFlagGuard,

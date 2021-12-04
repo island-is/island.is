@@ -26,8 +26,8 @@ export enum DelegationProvider {
 
 export class DelegationDTO {
   @IsString()
-  @ApiPropertyOptional()
-  id?: string
+  @ApiPropertyOptional({ nullable: true })
+  id?: string | null
 
   @IsString()
   @ApiProperty()
@@ -42,12 +42,12 @@ export class DelegationDTO {
   toNationalId!: string
 
   @IsString()
-  @ApiPropertyOptional()
-  toName?: string
+  @ApiPropertyOptional({ nullable: true })
+  toName?: string | null
 
   @IsDateString()
-  @ApiPropertyOptional()
-  validTo?: Date | null | undefined
+  @ApiPropertyOptional({ nullable: true })
+  validTo?: Date | null
 
   @ApiProperty({ enum: DelegationType, enumName: 'DelegationType' })
   type!: DelegationType
@@ -62,11 +62,11 @@ export class DelegationDTO {
 }
 
 export class UpdateDelegationDTO {
-  @ApiProperty({ type: [UpdateDelegationScopeDTO] })
+  @ApiPropertyOptional({ type: [UpdateDelegationScopeDTO] })
   @Type(() => UpdateDelegationScopeDTO)
   @ValidateNested({ each: true })
   @IsArray()
-  scopes!: UpdateDelegationScopeDTO[]
+  scopes?: UpdateDelegationScopeDTO[]
 }
 
 export class CreateDelegationDTO {

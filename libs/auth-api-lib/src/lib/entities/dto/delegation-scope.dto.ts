@@ -8,9 +8,6 @@ import {
   IsDateString,
 } from 'class-validator'
 
-import { ApiScopesDTO } from './api-scopes.dto'
-import { IdentityResourcesDTO } from './identity-resources.dto'
-
 export enum ScopeType {
   ApiScope = 'apiScope',
   IdentityResource = 'identityResource',
@@ -31,13 +28,14 @@ export class UpdateDelegationScopeDTO {
   @ApiPropertyOptional({
     description:
       'A date that the delegation is valid to. Must be in the future.',
+    nullable: true,
   })
-  validTo?: Date
+  validTo?: Date | null
 }
 
 export class DelegationScopeDTO {
-  @ApiPropertyOptional()
-  id?: string
+  @ApiPropertyOptional({ nullable: true })
+  id?: string | null
 
   @IsString()
   @ApiProperty()
@@ -57,6 +55,6 @@ export class DelegationScopeDTO {
 
   @IsOptional()
   @IsDateString()
-  @ApiPropertyOptional()
-  validTo?: Date
+  @ApiPropertyOptional({ nullable: true })
+  validTo?: Date | null
 }

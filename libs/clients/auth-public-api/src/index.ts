@@ -1,2 +1,2 @@
-export * from './lib/auth-public-api-client.module'
+export * from './lib/authPublicApiClient.module'
 export * from '../gen/fetch'
