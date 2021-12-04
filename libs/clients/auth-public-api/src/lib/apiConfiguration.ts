@@ -14,4 +14,5 @@ export const ApiConfiguration = {
       basePath: config.basePath,
     })
   },
+  inject: [AuthPublicApiClientConfig.KEY],
 }
