@@ -13,11 +13,12 @@ import { DocumentsListModel } from './models/documentsList.model'
 import { CustomerRecords } from './models/customerRecords.model'
 
 import { ApiScope } from '@island.is/auth/scopes'
-import { Scopes, User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
+  Scopes,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { FinanceService } from '@island.is/clients/finance'

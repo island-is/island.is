@@ -3,11 +3,12 @@ import { Resolver, Query, ResolveField, Parent } from '@nestjs/graphql'
 import * as kennitala from 'kennitala'
 
 import { ApiScope } from '@island.is/auth/scopes'
-import { Scopes, User as AuthUser } from '@island.is/auth-nest-tools'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
+  Scopes,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 
