@@ -54,18 +54,15 @@ export class DelegationsService {
   private readonly authFetch: EnhancedFetchAPI
 
   constructor(
-    @Inject(RskApi)
-    private rskApi: RskApi,
-    @Inject(EinstaklingarApi)
-    private personApi: EinstaklingarApi,
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
-    @Inject(DelegationScopeService)
-    private delegationScopeService: DelegationScopeService,
     @Inject(DELEGATIONS_AUTH_CONFIG)
     private authConfig: AuthConfig,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    private rskApi: RskApi,
+    private personApi: EinstaklingarApi,
+    private delegationScopeService: DelegationScopeService,
     private featureFlagService: FeatureFlagService,
   ) {
     this.authFetch = createEnhancedFetch({ name: 'delegation-auth-client' })

@@ -19,9 +19,14 @@ import {
 
 import { AppModule } from '../src/app/app.module'
 import { User } from '@island.is/auth-nest-tools'
-import { createMockEinstaklingurApi, createMockRskApi } from './mocks'
+import {
+  createMockEinstaklingurApi,
+  RskApiMock,
+  FeatureFlagServiceMock,
+} from './mocks'
 import { createApiScope } from './fixtures'
 import { RskApi } from '@island.is/clients/rsk/v2'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 interface SetupOptions {
   user: User
@@ -44,7 +49,9 @@ export const setupWithAuth = async ({
         .overrideProvider(EinstaklingarApi)
         .useValue(createMockEinstaklingurApi(nationalRegistryUser))
         .overrideProvider(RskApi)
-        .useValue(createMockRskApi()),
+        .useValue(RskApiMock)
+        .overrideProvider(FeatureFlagService)
+        .useValue(FeatureFlagServiceMock),
     hooks: [
       useAuth({ auth: user }),
       useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
