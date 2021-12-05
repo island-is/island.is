@@ -59,7 +59,7 @@ const prodConfig = () => ({
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-    audience: '',
+    audience: '@island.is',
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,
@@ -221,7 +221,7 @@ const devConfig = () => ({
   },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
-    audience: '',
+    audience: '@island.is',
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,
