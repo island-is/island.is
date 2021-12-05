@@ -15,7 +15,7 @@ import {
 import { Locale, User } from '@island.is/shared/types'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
-// import { useUpdateProfileMutation } from '../../../gen/graphql'
+import { useUpdateProfileMutation } from '../../../gen/graphql'
 import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
 import { UserProfileInfo } from './UserProfileInfo'
@@ -44,28 +44,25 @@ export const UserDropdown = ({
 
   const isDelegation = Boolean(user.profile.actor)
 
-  const handleLanguageChange = (option: ValueType<Option>) =>
-    changeLanguage((option as Option).value.toString() as Locale)
+  const [updateProfileMutation] = useUpdateProfileMutation()
+  const handleLanguageChange = async (option: ValueType<Option>) => {
+    const locale = (option as Option).value.toString()
+    changeLanguage(locale as Locale)
 
-  // const [updateProfileMutation] = useUpdateProfileMutation()
-  // const handleLanguageChange = async (option: ValueType<Option>) => {
-  //   const locale = (option as Option).value.toString()
-  //   changeLanguage(locale as Locale)
-
-  //   if (user && !isDelegation) {
-  //     try {
-  //       await updateProfileMutation({
-  //         variables: {
-  //           input: {
-  //             locale: locale,
-  //           },
-  //         },
-  //       })
-  //     } catch (e) {
-  //       return null
-  //     }
-  //   }
-  // }
+    if (user && !isDelegation) {
+      try {
+        await updateProfileMutation({
+          variables: {
+            input: {
+              locale: locale,
+            },
+          },
+        })
+      } catch (e) {
+        return null
+      }
+    }
+  }
 
   const username = user.profile.actor
     ? user.profile.actor.name
