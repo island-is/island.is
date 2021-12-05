@@ -19,7 +19,7 @@ import { appWithTranslation } from '../i18n'
 //import { isAuthenticated } from '../auth/utils'
 import { withHealthchecks } from '../utils/Healthchecks/withHealthchecks'
 
-import { User } from './auth/interfaces'
+import type { AuthenticateUser as User } from './auth/interfaces'
 import { useRouter } from 'next/router'
 import { useContext, useEffect } from 'react'
 import { AuthContext } from '../components'
