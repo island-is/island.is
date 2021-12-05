@@ -19,8 +19,8 @@ export const personalInformationModule: ServicePortalModule = {
     const routes: ServicePortalRoute[] = [
       {
         name: m.personalInformation,
-        enabled: userInfo.scopes.includes(UserProfileScope.write),
         path: ServicePortalPath.SettingsPersonalInformation,
+        enabled: userInfo.scopes.includes(UserProfileScope.write),
         render: () => lazy(() => import('./screens/UserProfile/UserProfile')),
       },
       {
