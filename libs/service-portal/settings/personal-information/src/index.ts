@@ -91,7 +91,7 @@ export const personalInformationModule: ServicePortalModule = {
         query: USER_PROFILE,
       })
 
-      // If the user profile is empty, we render the onboarding modal
+      // If the user profile is empty + no delegation, we render the onboarding modal
       const isDelegation = Boolean(userInfo?.profile?.actor)
       if (
         process.env.NODE_ENV !== 'development' &&
