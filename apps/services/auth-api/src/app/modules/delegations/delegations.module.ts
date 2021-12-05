@@ -1,20 +1,23 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
+
 import {
-  DelegationsService,
+  ApiScope,
   Delegation,
+  DELEGATIONS_AUTH_CONFIG,
   DelegationScope,
   DelegationScopeService,
+  DelegationsService,
   IdentityResource,
-  ApiScope,
-  DELEGATIONS_AUTH_CONFIG,
 } from '@island.is/auth-api-lib'
 import { AuthConfig } from '@island.is/auth-nest-tools'
+import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
+import { RskModule } from '@island.is/clients/rsk/v2'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+
 import { environment } from '../../../environments'
 import { DelegationsController } from './delegations.controller'
-import { RskModule } from '@island.is/clients/rsk/v2'
 import { RskConfig } from './rsk.config'
-import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 
 const delegationAuthConfig: AuthConfig = environment.auth
 
@@ -28,6 +31,7 @@ const delegationAuthConfig: AuthConfig = environment.auth
     ]),
     RskModule.register(RskConfig),
     NationalRegistryClientModule,
+    FeatureFlagModule,
   ],
   controllers: [DelegationsController],
   providers: [
