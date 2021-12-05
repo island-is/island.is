@@ -58,6 +58,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const [language, setLanguage] = useState<LanguageFormOption | null>(
     defaultLanguageOption,
   )
+
   const { createUserProfile } = useCreateUserProfile()
   const { updateUserProfile } = useUpdateUserProfile()
 
