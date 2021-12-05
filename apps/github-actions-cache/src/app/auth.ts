@@ -54,6 +54,12 @@ export const authMiddleware = async (
       return error(res, 'Unauthorized', 401)
     }
   } catch (e) {
+    try {
+      logger.error(`Authorization error: ${e}, trying to give you the json dump now.`)
+      logger.error(JSON.stringify(e))
+    } catch(ie){
+      logger.error(`Authorization error logging for: ${e} failed with: ${ie}`)
+    }
     next(e)
   }
 }
