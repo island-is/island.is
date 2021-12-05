@@ -18,6 +18,11 @@ export class CreateCaseDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
+  readonly prosecutorNationalId!: string
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
   readonly accusedNationalId!: string
 
   @IsOptional()
@@ -34,4 +39,9 @@ export class CreateCaseDto {
   @IsString()
   @ApiPropertyOptional({ enum: CaseGender })
   readonly accusedGender?: CaseGender
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly leadInvestigator?: string
 }
