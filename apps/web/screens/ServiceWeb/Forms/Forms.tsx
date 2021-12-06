@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react'
 import NextLink from 'next/link'
-import Head from 'next/head'
-import cn from 'classnames'
 import { useMutation } from '@apollo/client'
 
 import {
@@ -20,8 +18,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useNamespace, useLinkResolver } from '@island.is/web/hooks'
 import {
-  ServiceWebHeader,
   ServiceWebStandardForm,
+  ServiceWebWrapper,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -45,9 +43,6 @@ import {
   SERVICE_WEB_FORMS_MUTATION,
 } from '../../queries'
 import { Screen } from '../../../types'
-import Footer from '../shared/Footer'
-
-import * as sharedStyles from '../shared/styles.css'
 
 interface ServiceWebFormsPageProps {
   syslumenn?: Organizations['items']
@@ -71,7 +66,6 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     ServiceWebFormsMutationVariables
   >(SERVICE_WEB_FORMS_MUTATION)
 
-  const organizationTitle = organization ? organization.title : 'Ísland.is'
   const errorMessage = 'Villa kom upp við að senda fyrirspurn.'
 
   const successfullySent = data?.serviceWebForms?.sent
@@ -94,20 +88,21 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     }
   }, [error])
 
-  const pageTitle = `${organizationTitle} | ${n('serviceWeb', 'Þjónustuvefur')}`
-
-  const headerTitle = `${n(
-    'serviceWeb',
-    'Þjónustuvefur',
-  )} - ${organizationTitle}`
+  const organizationTitle = (organization && organization.title) || 'Ísland.is'
+  const pageTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
+  const headerTitle = institutionSlug
+    ? organization.serviceWebTitle ?? pageTitle
+    : pageTitle
 
   return (
-    <>
-      <Head>
-        <title>{pageTitle}</title>
-      </Head>
-      <ServiceWebHeader title={headerTitle} />
-      <div className={cn(sharedStyles.bg, sharedStyles.bgSmall)} />
+    <ServiceWebWrapper
+      pageTitle={pageTitle}
+      headerTitle={headerTitle}
+      institutionSlug={institutionSlug}
+      organization={organization}
+      organizationTitle={organizationTitle}
+      smallBackground
+    >
       <Box marginY={[3, 3, 10]} marginBottom={10}>
         <GridContainer>
           <GridRow>
@@ -125,6 +120,13 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                             title: n('serviceWeb', 'Þjónustuvefur'),
                             typename: 'helpdesk',
                             href: linkResolver('helpdesk').href,
+                          },
+                          {
+                            title: organization.title,
+                            typename: 'helpdesk',
+                            href: `${
+                              linkResolver('helpdesk').href
+                            }/${institutionSlug}`,
                           },
                           {
                             title: 'Hafðu samband',
@@ -214,9 +216,8 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
           </GridRow>
         </GridContainer>
       </Box>
-      <Footer institutionSlug={institutionSlug} organization={organization} />
       <ToastContainer closeButton={true} useKeyframeStyles={false} />
-    </>
+    </ServiceWebWrapper>
   )
 }
 
