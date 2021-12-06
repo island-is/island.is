@@ -4,18 +4,38 @@ import {
   SyslumennAuction,
   mapSyslumennAuction,
 } from './models/syslumennAuction'
-import { Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { Person, Attachment, DataUploadResponse } from './models/dataUpload'
 import {
   OperatingLicense,
   mapOperatingLicense,
 } from './models/operatingLicense'
+import { SyslumennApi, SyslumennApiConfig } from '@island.is/clients/syslumenn'
 
+const SYSLUMENN_CLIENT_CONFIG = 'SYSLUMENN_CLIENT_CONFIG'
 @Injectable()
 export class SyslumennService {
-  constructor(private syslumennClient: SyslumennClient) {}
+  constructor(
+    private syslumennClient: SyslumennClient,
+    private syslumennApi: SyslumennApi,
+    @Inject(SYSLUMENN_CLIENT_CONFIG)
+    private clientConfig: SyslumennApiConfig,
+  ) {}
+
+  private async login() {
+    const config = {
+      notandi: this.clientConfig.username,
+      lykilord: this.clientConfig.password,
+    }
+
+    const response = await this.syslumennApi.innskraningPost({notandi: config})
+
+
+  }
 
   async getHomestays(year?: number): Promise<Homestay[]> {
+    await this.login()
+    
     const homestays = await this.syslumennClient.getHomestays(year)
 
     return (homestays ?? []).map(mapHomestay)

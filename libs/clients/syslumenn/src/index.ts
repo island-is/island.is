@@ -1,3 +1,4 @@
 export * from '../gen/fetch'
-import { SyslumennApi, Configuration } from '../gen/fetch'
+export * from './lib/syslumenn.module'
+
 

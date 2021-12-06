@@ -11,10 +11,10 @@ export interface SyslumennApiConfig {
 }
 
 
-export class SyslumennModule {
+export class SyslumennApiModule {
   static register(config: SyslumennApiConfig): DynamicModule {
     return {
-      module: SyslumennModule,
+      module: SyslumennApiModule,
       providers: [
         {
           provide: SyslumennApi,
@@ -23,12 +23,10 @@ export class SyslumennModule {
               new Configuration({
                 fetchApi: createEnhancedFetch({
                   name: 'clients-syslumenn',
-                  timeout: 20000,
+                  timeout: 5000,
                 }),
                 basePath: config.url,
                 headers: {
-                  userName: `${config.username}`,
-                  password: `${config.password}`,
                   Accept: 'application/json',
                   'Content-Type': 'application/json',
                 },
