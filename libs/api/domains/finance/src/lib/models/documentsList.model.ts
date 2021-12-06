@@ -4,6 +4,9 @@ import { Field, ObjectType } from '@nestjs/graphql'
 export class DocumentsListModel {
   @Field(() => [DocumentsListItem])
   documentsList!: DocumentsListItem[]
+
+  @Field(() => String, { nullable: true })
+  downloadServiceURL?: string
 }
 
 @ObjectType()
