@@ -67,7 +67,7 @@ export type RegulationHistoryItem = {
 // ---------------------------------------------------------------------------
 
 export type RegulationEffect = {
-  /** effectiveDate for this impact */
+  /** Effective/publlishing date for this impact */
   date: ISODate
   /** Publication name of the affected Regulation */
   name: RegName
@@ -133,7 +133,7 @@ export type Regulation = {
   signatureDate: ISODate
   /** Date officially published in Stjórnartíðindi */
   publishedDate: ISODate
-  /** Date when the regulation took effect for the first time */
+  /** NOTE: This date is for informational purposes only */
   effectiveDate: ISODate
   /** Date of the last effective amendment of this regulation
    *
@@ -185,7 +185,7 @@ export type Regulation = {
    */
   effects: ReadonlyArray<RegulationEffect>
 
-  /** Present if a NON-CURRENT version of the regulation is being served
+  /** Present if a specifically dated version of the regulation is being served
    *
    * Is undefined by default (when the "current" version is served).
    */
