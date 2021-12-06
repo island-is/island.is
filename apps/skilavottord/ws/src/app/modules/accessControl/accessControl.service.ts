@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { Role } from '../auth'
 import { AccessControlModel } from './accessControl.model'
 import {
   CreateAccessControlInput,
@@ -21,19 +22,19 @@ export class AccessControlService {
       {
         nationalId: '1234567777',
         name: 'Gervimaður',
-        role: 'recyclingCompany',
+        role: Role.recyclingCompany,
         partnerId: '8888888888',
       },
       {
         nationalId: '1234567888',
         name: 'Gervimaður2',
-        role: 'recyclingCompany',
+        role: Role.recyclingCompany,
         partnerId: '9999999999',
       },
       {
         nationalId: '1234567899',
         name: 'Gervimaður3',
-        role: 'recyclingCompany',
+        role: Role.recyclingCompany,
         partnerId: '9999999999',
       },
     ] as AccessControlModel[])
@@ -47,7 +48,7 @@ export class AccessControlService {
     return Promise.resolve({
       nationalId: '1234567890',
       name: 'Gervimaður3',
-      role: 'recyclingCompany',
+      role: Role.recyclingCompany,
       partnerId: '9999999999',
     })
   }
@@ -59,7 +60,7 @@ export class AccessControlService {
     return Promise.resolve({
       nationalId: '1234567890',
       name: 'Gervimaður3',
-      role: 'recyclingCompany',
+      role: Role.recyclingCompany,
       partnerId: '9999999999',
     })
   }

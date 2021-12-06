@@ -201,17 +201,16 @@ export class AuthController {
       name: user.fullname,
     }
 
-    let RoleForUser: Role = Role.citizen
-    RoleForUser = authService.getRole(RoleUser)
+    const roleForUser = authService.getRole(RoleUser)
 
-    //this.logger.info(`  - Role for ${user.fullname} is ${RoleForUser}`)
-    this.logger.info(`  - Role for user is ${RoleForUser}`)
+    //this.logger.info(`  - Role for ${user.fullname} is ${roleForUser}`)
+    this.logger.info(`  - Role for user is ${roleForUser}`)
     let returnUrlComp: string
-    if (RoleForUser.includes('recyclingCompany')) {
+    if (roleForUser === Role.recyclingCompany) {
       returnUrlComp = `${BASE_PATH}/deregister-vehicle`
-    } else if (RoleForUser.includes('recyclingFund')) {
+    } else if (roleForUser === Role.recyclingFund) {
       returnUrlComp = `${BASE_PATH}/recycled-vehicles`
-    } else if (RoleForUser.includes('developer')) {
+    } else if (roleForUser === Role.developer) {
       returnUrlComp = `${BASE_PATH}/recycled-vehicles`
     } else {
       return '/error'
@@ -258,7 +257,7 @@ export class AuthController {
       .redirect(samlEntryPoint2)
   }
 
-  @Get('/citizen/logout')
+  @Get('/logout')
   logout(@Res() res) {
     res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
     res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)

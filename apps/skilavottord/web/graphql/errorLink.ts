@@ -1,5 +1,4 @@
 import { onError, ErrorResponse } from '@apollo/client/link/error'
-import Router from 'next/router'
 
 import { toast } from '@island.is/island-ui/core'
 
@@ -12,15 +11,14 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   }
 
   if (graphQLErrors) {
-    graphQLErrors.forEach((err) => {
-      switch (err.extensions?.code) {
-        case 'UNAUTHENTICATED':
-          return api.logout().then(() => Router.reload())
-        case 'FORBIDDEN':
-          return
-        default:
-          return toast.error(graphQLErrors.join('\n'))
-      }
-    })
+    const errorCodes = graphQLErrors.map((err) => err.extensions?.code)
+    if (errorCodes.includes('UNAUTHENTICATED')) {
+      api.logout().then(() => window.location.reload())
+      return
+    } else if (errorCodes.includes('FORBIDDEN')) {
+      return
+    }
+
+    toast.error(graphQLErrors.join('\n'))
   }
 })

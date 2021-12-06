@@ -1,6 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
-import { Authorize } from '../auth'
+import { Authorize, Role } from '../auth'
 import { logger } from '@island.is/logging'
 
 import { RecyclingPartnerModel } from './recyclingPartner.model'
@@ -23,7 +23,7 @@ export class RecyclingPartnerResolver {
     return await this.recyclingPartnerService.findActive()
   }
 
-  @Authorize({ roles: ['developer', 'recyclingFund'] })
+  @Authorize({ roles: [Role.developer, Role.recyclingFund] })
   @Mutation((_) => Boolean)
   async createSkilavottordRecyclingPartner(
     @Args('companyId') nationalId: string,
@@ -49,7 +49,7 @@ export class RecyclingPartnerResolver {
     return true
   }
 
-  @Authorize({ roles: ['developer', 'recyclingFund'] })
+  @Authorize({ roles: [Role.developer, Role.recyclingFund] })
   @Mutation((_) => String)
   async skilavottordDeactivateRecycllingPartner(
     @Args('companyId') nationalId: string,
@@ -64,7 +64,7 @@ export class RecyclingPartnerResolver {
     return nationalId
   }
 
-  @Authorize({ roles: ['developer', 'recyclingFund'] })
+  @Authorize({ roles: [Role.developer, Role.recyclingFund] })
   @Mutation((_) => String)
   async skilavottordActivateRecycllingPartner(
     @Args('companyId') nationalId: string,

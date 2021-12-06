@@ -1,5 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
+import { Role } from '../auth'
+
 @ObjectType('AccessControl')
 export class AccessControlModel {
   @Field((_) => ID)
@@ -8,9 +10,8 @@ export class AccessControlModel {
   @Field()
   name!: string
 
-  // TODO: use the Role enum and create GraphQL Enum for it as well
-  @Field()
-  role!: string
+  @Field(() => Role)
+  role!: Role
 
   // TODO: get from samgongustofa
   @Field()

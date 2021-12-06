@@ -13,8 +13,7 @@ import {
   getBaseUrl,
   getRoutefromLocale,
 } from '@island.is/skilavottord-web/utils/routesMapper'
-import { Role } from '@island.is/skilavottord-web/auth/utils'
-import { Query } from '@island.is/skilavottord-web/graphql/schema'
+import { Query, Role } from '@island.is/skilavottord-web/graphql/schema'
 
 export const SkilavottordUserQuery = gql`
   query skilavottordUserQuery {

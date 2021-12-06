@@ -9,7 +9,7 @@ describe('AuthService', () => {
     nationalId: '1234567890',
     name: 'tester',
     mobile: '',
-    role: 'developer',
+    role: Role.developer,
   }
 
   beforeEach(async () => {
@@ -26,7 +26,7 @@ describe('AuthService', () => {
       const role = authService.getRole(user)
 
       // Assert
-      //expect(role).toBe('developer')
+      //expect(role).toBe(Role.developer)
       expect(role).toBe('citizen')
     })
   })
