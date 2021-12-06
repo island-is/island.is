@@ -1,8 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
-import Head from 'next/head'
-import cn from 'classnames'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -33,12 +31,10 @@ import {
   LinkContext,
   Button,
 } from '@island.is/island-ui/core'
-import Footer from '../shared/Footer'
-import { ServiceWebHeader } from '@island.is/web/components'
+import { ServiceWebWrapper } from '@island.is/web/components'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { getSlugPart } from '../utils'
 
-import * as sharedStyles from '../shared/styles.css'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import groupBy from 'lodash/groupBy'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
@@ -59,7 +55,6 @@ const SubPage: Screen<SubPageProps> = ({
   const Router = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const organizationTitle = organization ? organization.title : 'Ísland.is'
   const organizationSlug = organization.slug
   const question = supportQNAs.find(
     (supportQNA) => supportQNA.slug === questionSlug,
@@ -76,15 +71,11 @@ const SubPage: Screen<SubPageProps> = ({
     (supportQNA) => supportQNA.subCategory.title,
   )
 
-  const pageTitle = `${question?.title ?? organizationTitle} | ${n(
-    'serviceWeb',
-    'Þjónustuvefur',
-  )}`
-
-  const headerTitle = `${n(
-    'serviceWeb',
-    'Þjónustuvefur',
-  )} - ${organizationTitle}`
+  const organizationTitle = (organization && organization.title) || 'Ísland.is'
+  const pageTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
+  const headerTitle = institutionSlug
+    ? organization.serviceWebTitle ?? pageTitle
+    : pageTitle
 
   const mobileBackButtonText = questionSlug
     ? `${organizationTitle}: ${categoryTitle}`
@@ -95,12 +86,14 @@ const SubPage: Screen<SubPageProps> = ({
   }/${organizationSlug}${questionSlug ? `/${categorySlug}` : ''}`
 
   return (
-    <>
-      <Head>
-        <title>{pageTitle}</title>
-      </Head>
-      <ServiceWebHeader title={headerTitle} />
-      <div className={cn(sharedStyles.bg, sharedStyles.bgSmall)} />
+    <ServiceWebWrapper
+      pageTitle={pageTitle}
+      headerTitle={headerTitle}
+      institutionSlug={institutionSlug}
+      organization={organization}
+      organizationTitle={organizationTitle}
+      smallBackground
+    >
       <Box marginY={[3, 3, 10]}>
         <GridContainer>
           <GridRow>
@@ -256,8 +249,7 @@ const SubPage: Screen<SubPageProps> = ({
           </GridRow>
         </GridContainer>
       </Box>
-      <Footer institutionSlug={institutionSlug} organization={organization} />
-    </>
+    </ServiceWebWrapper>
   )
 }
 
