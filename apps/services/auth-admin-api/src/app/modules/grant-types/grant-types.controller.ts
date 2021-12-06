@@ -89,7 +89,7 @@ export class GrantTypeController {
     @Query('searchString') searchString: string,
     @Query('page') page: number,
     @Query('count') count: number,
-    @Query('includeArchived') includeArchived: boolean = false,
+    @Query('includeArchived') includeArchived = false,
   ): Promise<PagedRowsDto<GrantType>> {
     if (searchString) {
       return this.grantTypeService.find(

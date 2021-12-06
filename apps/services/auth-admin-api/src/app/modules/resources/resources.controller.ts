@@ -92,7 +92,7 @@ export class ResourcesController {
   async findAndCountAllIdentityResources(
     @Query('page') page: number,
     @Query('count') count: number,
-    @Query('includeArchived') includeArchived: boolean = false,
+    @Query('includeArchived') includeArchived = false,
   ): Promise<PagedRowsDto<IdentityResource>> {
     return this.resourcesService.findAndCountAllIdentityResources(
       page,
@@ -131,7 +131,7 @@ export class ResourcesController {
   async findAndCountAllApiScopes(
     @Query('page') page: number,
     @Query('count') count: number,
-    @Query('includeArchived') includeArchived: boolean = false,
+    @Query('includeArchived') includeArchived = false,
   ): Promise<PagedRowsDto<ApiScope>> {
     return this.resourcesService.findAndCountAllApiScopes(
       page,
@@ -183,7 +183,7 @@ export class ResourcesController {
     @Query('searchString') searchString: string,
     @Query('page') page: number,
     @Query('count') count: number,
-    @Query('includeArchived') includeArchived: boolean = false,
+    @Query('includeArchived') includeArchived = false,
   ): Promise<PagedRowsDto<ApiResource>> {
     if (searchString) {
       return this.resourcesService.findApiResources(
