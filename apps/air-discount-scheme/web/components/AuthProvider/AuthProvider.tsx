@@ -1,6 +1,7 @@
 import React, { createContext, ReactNode } from 'react'
 import { AuthenticateUser as User } from '@island.is/air-discount-scheme-web/pages/api/auth/interfaces'
 import useUser from '@island.is/air-discount-scheme-web/auth/useUser'
+import { useSession } from 'next-auth/client'
 
 interface AuthProvider {
   isAuthenticated?: boolean

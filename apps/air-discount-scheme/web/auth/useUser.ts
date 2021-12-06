@@ -7,7 +7,6 @@ import { useSession } from 'next-auth/client'
 const useUser = () => {
   const [user, setUser] = useState<User>()
   const [session] = useSession()
-
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(session?.user),
   )
@@ -34,7 +33,6 @@ const useUser = () => {
       setIsAuthenticated(true)
     }
   }, [setUser, loggedInUser, user])
-
   return {
     isAuthenticated,
     user,
