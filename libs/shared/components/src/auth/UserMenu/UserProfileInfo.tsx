@@ -2,6 +2,7 @@ import React from 'react'
 import { Button, Box, Icon, Text } from '@island.is/island-ui/core'
 import { useFeatureFlag } from '@island.is/react/feature-flags'
 import { useLocale } from '@island.is/localization'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { sharedMessages } from '@island.is/shared/translations'
 import { useGetUserProfileQuery } from '../../../gen/graphql'
 import * as styles from './UserMenu.css'
@@ -18,6 +19,11 @@ export const UserProfileInfo = () => {
   const { formatMessage } = useLocale()
   if (showPersonalInfo) {
     const settings = data?.getUserProfile
+
+    const phoneNumber = parsePhoneNumberFromString(
+      settings?.mobilePhoneNumber || '',
+      'IS',
+    )
     return (
       <>
         {settings?.email && (
@@ -33,7 +39,7 @@ export const UserProfileInfo = () => {
             <Text>{settings.email}</Text>
           </Box>
         )}
-        {settings?.mobilePhoneNumber && (
+        {phoneNumber?.isValid() && (
           <Box
             display="flex"
             alignItems="center"
@@ -43,7 +49,7 @@ export const UserProfileInfo = () => {
             <Box display="flex" alignItems="center" marginRight={2}>
               <Icon type="outline" icon="call" color="blue300" />
             </Box>
-            <Text>{settings?.mobilePhoneNumber?.split('-')[1]}</Text>
+            <Text>{phoneNumber}</Text>
           </Box>
         )}
         {(settings?.email || settings?.mobilePhoneNumber) && (
