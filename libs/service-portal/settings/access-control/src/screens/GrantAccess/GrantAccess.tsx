@@ -108,7 +108,7 @@ function GrantAccess() {
       })
       if (data) {
         history.push(
-          `${ServicePortalPath.SettingsAccessControl}/${data.createAuthDelegation.to.nationalId}`,
+          `${ServicePortalPath.SettingsAccessControl}/${data.createAuthDelegation.id}`,
         )
       }
     } catch (error) {

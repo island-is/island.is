@@ -6,17 +6,26 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Controller, Get, UseGuards } from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiForbiddenResponse,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
 @UseGuards(IdsUserGuard, ScopesGuard)
-@ApiTags('api-scope')
-@Controller('v1/api-scope')
-export class ApiScopeController {
+@ApiTags('scopes')
+@Controller('v1/scopes')
+export class ScopesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 
   @Scopes('@island.is/auth/delegations:read')
   @Get()
   @ApiOkResponse({ type: [ApiScope] })
+  @ApiUnauthorizedResponse()
+  @ApiForbiddenResponse()
+  @ApiInternalServerErrorResponse()
   async findAllWithExplicitDelegationGrant(
     @CurrentUser() user: User,
   ): Promise<ApiScope[]> {
