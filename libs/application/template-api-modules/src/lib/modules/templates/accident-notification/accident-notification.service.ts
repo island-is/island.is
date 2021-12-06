@@ -50,13 +50,9 @@ export class AccidentNotificationService {
       const answers = application.answers as AccidentNotificationAnswers
       const xml = applictionAnswersToXml(answers, attachments)
 
-      const { success, ihiDocumentID } = await this.documentApi.documentPost({
+      const { ihiDocumentID } = await this.documentApi.documentPost({
         document: { doc: xml, documentType: 801 },
       })
-
-      if (success === 0) {
-        throw new Error(`Villa kom upp við vistun á umsókn`)
-      }
 
       await this.sharedTemplateAPIService.sendEmail(
         (props) =>
