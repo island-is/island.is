@@ -11,6 +11,7 @@ import {
   extractStringsFromObject,
   numberOfProcessEntries,
   numberOfLinks,
+  removeEntryHyperlinkFields,
 } from './utils'
 
 @Injectable()
@@ -77,6 +78,12 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
               ? subArticles
               : undefined) as IArticleFields['subArticles'],
           },
+        }
+        // An entry hyperlink does not need the extra content present in
+        // the entry hyperlink associated fields
+        // We remove them from the reference itself on nodeType `entry-hyperlink`
+        if (processedEntry.fields?.content) {
+          removeEntryHyperlinkFields(processedEntry.fields.content)
         }
         if (!isCircular(processedEntry)) {
           processedEntries.push(processedEntry)
