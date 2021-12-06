@@ -321,7 +321,7 @@ export interface CreateStaff {
   municipalityId?: string
 }
 
-export interface CreateStaffMuncipality {
+export interface CreateStaffMunicipality {
   municipalityId: string
   municipalityName: string
   municipalityHomepage?: string
