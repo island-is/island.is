@@ -75,14 +75,14 @@ export const useRegulationEffectPrepper = (
   )
 
   const renderOriginalVersion = () => {
-    const active = isItemActive(regulation.effectiveDate)
+    const active = isItemActive(regulation.publishedDate)
     return (
       <RegulationsSidebarLink
         href={linkToRegulation(regulation.name, { original: true })}
         current={active}
         rel="nofollow"
       >
-        <strong>{formatDate(regulation.effectiveDate)}</strong>
+        <strong>{formatDate(regulation.publishedDate)}</strong>
         <br />
         <span className={cn(s.smallText, active && s.changelogActive)}>
           {txt(

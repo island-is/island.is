@@ -133,7 +133,7 @@ export type Regulation = {
   signatureDate: ISODate
   /** Date officially published in Stjórnartíðindi */
   publishedDate: ISODate
-  /** Date when the regulation took effect for the first time */
+  /** NOTE: This date is for informational purposes only */
   effectiveDate: ISODate
   /** Date of the last effective amendment of this regulation
    *
