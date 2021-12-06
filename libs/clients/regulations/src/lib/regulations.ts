@@ -28,7 +28,7 @@ export interface RegulationsServiceOptions {
   url: string
 }
 
-@Injectable(/*{ scope: Scope.REQUEST }*/)
+@Injectable()
 export class RegulationsService extends RESTDataSource {
   constructor(
     @Inject(REGULATIONS_OPTIONS)
