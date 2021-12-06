@@ -26,6 +26,7 @@ interface Props {
   rows?: number
   format?: string | FormatInputValueFunction
   required?: boolean
+  maxLength?: number
 }
 
 interface ChildParams {
@@ -56,6 +57,7 @@ export const InputController: FC<Props> = ({
   suffix,
   rows,
   required,
+  maxLength,
 }) => {
   function renderChildInput(c: ChildParams) {
     const { value, onChange, ...props } = c
@@ -75,6 +77,7 @@ export const InputController: FC<Props> = ({
           suffix=" kr."
           value={value}
           format={format}
+          maxLength={maxLength}
           onChange={(e) => {
             if (onInputChange) {
               onInputChange(e)
@@ -102,6 +105,7 @@ export const InputController: FC<Props> = ({
           suffix={suffix}
           value={value}
           format={format}
+          maxLength={maxLength}
           onChange={(e) => {
             if (onInputChange) {
               onInputChange(e)
@@ -129,6 +133,7 @@ export const InputController: FC<Props> = ({
           type={type as 'text' | 'tel'}
           value={value}
           format={format}
+          maxLength={maxLength}
           onChange={(e) => {
             if (onInputChange) {
               onInputChange(e)
@@ -159,6 +164,7 @@ export const InputController: FC<Props> = ({
           required={required}
           textarea={textarea}
           type={type}
+          maxLength={maxLength}
           onChange={(e) => {
             onChange(e.target.value)
             if (onInputChange) {

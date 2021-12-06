@@ -8,6 +8,7 @@ import { Authorize, AuthService, CurrentUser, Role } from '../auth'
 import type { AuthUser } from '../auth'
 import { User } from './user.model'
 
+@Authorize({ throwOnUnAuthorized: false })
 @Resolver(() => User)
 export class UserResolver {
   constructor(
@@ -16,7 +17,6 @@ export class UserResolver {
     private logger: Logger,
   ) {}
 
-  @Authorize({ throwOnUnAuthorized: false })
   @Query(() => User, { nullable: true })
   skilavottordUser(@CurrentUser() user: AuthUser): User {
     this.logger.info(`--- skilavottordUser starting ---`)
@@ -39,7 +39,7 @@ export class UserResolver {
       name: user.name,
     }
 
-    let RoleForUser: Role = 'citizen' // citizen is the deault role
+    let RoleForUser: Role = Role.citizen // citizen is the deault role
     RoleForUser = authService.getRole(RoleUser)
 
     //TODO: test

@@ -1,14 +1,12 @@
 import React from 'react'
-import Head from 'next/head'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { Screen } from '../../../types'
 import {
   Card,
   CardTagsProps,
-  ServiceWebHeader,
+  ServiceWebWrapper,
 } from '@island.is/web/components'
-import cn from 'classnames'
 import {
   Box,
   Text,
@@ -22,7 +20,6 @@ import {
   LinkContext,
   Button,
 } from '@island.is/island-ui/core'
-import Footer from '../shared/Footer'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   GET_NAMESPACE_QUERY,
@@ -50,8 +47,6 @@ import {
   ServiceWebModifySearchTerms,
 } from '@island.is/web/components'
 import { getSlugPart } from '../utils'
-
-import * as sharedStyles from '../shared/styles.css'
 
 const PERPAGE = 10
 
@@ -97,23 +92,22 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
-  const pageTitle = `${n('searchResults', 'Leitarniðurstöður')} | ${n(
+  const pageTitle = `${n('search', 'Leit')} | ${n(
     'serviceWeb',
     'Þjónustuvefur',
-  )}`
-
-  const headerTitle = `${n('serviceWeb', 'Þjónustuvefur')} - ${n(
-    'search',
-    'Leit',
-  )}`
+  )} Ísland.is`
+  const headerTitle = institutionSlug
+    ? organization.serviceWebTitle ?? pageTitle
+    : pageTitle
 
   return (
-    <>
-      <Head>
-        <title>{pageTitle}</title>
-      </Head>
-      <ServiceWebHeader title={headerTitle} hideSearch />
-      <div className={cn(sharedStyles.bg, sharedStyles.bgSmall)} />
+    <ServiceWebWrapper
+      pageTitle={pageTitle}
+      headerTitle={headerTitle}
+      institutionSlug={institutionSlug}
+      organization={organization}
+      smallBackground
+    >
       <Box marginY={[3, 3, 10]}>
         <GridContainer>
           <GridRow marginBottom={3}>
@@ -281,8 +275,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
           </GridRow>
         </GridContainer>
       </Box>
-      <Footer institutionSlug={institutionSlug} organization={organization} />
-    </>
+    </ServiceWebWrapper>
   )
 }
 
