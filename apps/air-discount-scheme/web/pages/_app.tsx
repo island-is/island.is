@@ -16,7 +16,7 @@ import '../auth'
 import { Toast, ErrorBoundary, AppLayout } from '../components'
 import { client as initApollo } from '../graphql'
 import { appWithTranslation } from '../i18n'
-//import { isAuthenticated } from '../auth/utils'
+// import { isAuthenticated } from '../auth/utils'
 import { withHealthchecks } from '../utils/Healthchecks/withHealthchecks'
 
 import type { AuthenticateUser as User } from './auth/interfaces'
@@ -46,9 +46,9 @@ interface Props {
 class SupportApplication extends App<Props> {
   
   static async getInitialProps(appContext) {
-    const router = useRouter()
-    const { isAuthenticated, user } = useContext(AuthContext)
-
+    //const router = useRouter()
+    //const { isAuthenticated, user } = useContext(AuthContext)
+    
     const { Component, ctx } = appContext
     const apolloClient = initApollo({})
     const customContext = {
@@ -56,6 +56,7 @@ class SupportApplication extends App<Props> {
       apolloClient,
     }
     const pageProps = (await Component.getInitialProps(customContext)) as any
+    //const authProps = (await Component.getInitialProps(AuthContext)) as any
     const layoutProps = await AppLayout.getInitialProps({
       ...customContext,
       locale: pageProps.locale,
@@ -74,8 +75,8 @@ class SupportApplication extends App<Props> {
       layoutProps: { ...layoutProps, ...pageProps.layoutConfig },
       pageProps,
       apolloState,
-      isAuthenticated: isAuthenticated,
-      user: user,
+      isAuthenticated: false,//authProps.isAuthenticated,
+      user: undefined as User//authProps.user,
     }
   }
 
@@ -138,9 +139,9 @@ const Index = () => {
 export default Index */
 
   
-    useEffect(() => {
-      document.title = 'Loftbrú þjónustusíða'
-    }, [])
+    // useEffect(() => {
+      // }, [])
+    //document.title = 'Loftbrú þjónustusíða'
 
     const returnUrl = (user: User) => {
       console.log(user)

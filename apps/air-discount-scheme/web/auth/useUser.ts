@@ -13,6 +13,7 @@ const useUser = () => {
     Boolean(session?.user),
   )
 
+  /// TODO: new CurrentUserQuery
   const { data, loading: loadingUser } = useQuery(CurrentUserQuery, {
     fetchPolicy: 'no-cache',
   })
