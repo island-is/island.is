@@ -7,6 +7,8 @@ import { AuthService } from './auth.service'
 import { AuthController } from './auth.controller'
 import { JwtStrategy } from './jwt.strategy'
 
+import { AuthModule as AuthNestModule } from '@island.is/auth-nest-tools'
+
 const ONE_HOUR = 3600
 @Module({
   imports: [
@@ -20,6 +22,7 @@ const ONE_HOUR = 3600
         expiresIn: ONE_HOUR,
       },
     }),
+    AuthNestModule.register(environment.auth.identityServerAuth),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

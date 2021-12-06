@@ -5,7 +5,8 @@ import NextCookies from 'next-cookies'
 import getConfig from 'next/config'
 import { ApolloProvider } from '@apollo/client'
 import * as Sentry from '@sentry/node'
-import { Provider } from 'next-auth/client'
+import { getSession, Provider } from 'next-auth/client'
+import { Session } from 'next-auth'
 
 import {
   getActiveEnvironment,
@@ -13,7 +14,7 @@ import {
 } from '@island.is/shared/utils'
 //import '../auth'
 
-import { Toast, ErrorBoundary, AppLayout, AuthProvider } from '../components'
+import { Toast, ErrorBoundary, AppLayout, AuthProvider, AuthContext } from '../components'
 import { client as initApollo } from '../graphql'
 import { appWithTranslation } from '../i18n'
 // import { isAuthenticated } from '../auth/utils'
@@ -38,16 +39,18 @@ interface Props {
   isAuthenticated: boolean
   layoutProps: any
   user: User
+  session: any
 }
 
 class SupportApplication extends App<Props> {
-  
   static async getInitialProps(appContext) { 
+    console.log('!X! Support application getinitialprops !X!')
     const { Component, ctx } = appContext
     const apolloClient = initApollo({})
     const customContext = {
       ...ctx,
       apolloClient,
+      AuthContext,
     }
     const pageProps = (await Component.getInitialProps(customContext)) as any
 
@@ -64,11 +67,16 @@ class SupportApplication extends App<Props> {
     })
 
     const apolloState = apolloClient.cache.extract()
-
+    //console.log(customContext)
+    console.log('!X! BEFORE GETSESSION !X!')
+    const session = await getSession(customContext)
+    console.log('!X! AFTER GETSESSION !X!')
+    console.log(session)
     return {
       layoutProps: { ...layoutProps, ...pageProps.layoutConfig },
       pageProps,
       apolloState,
+      session,
     }
   }
 
@@ -87,6 +95,7 @@ class SupportApplication extends App<Props> {
       router,
       layoutProps,
       user,
+      session,
     } = this.props
 
     // Sentry.configureScope((scope) => {
@@ -146,10 +155,10 @@ export default Index */
     } else {
       return null
     }
-
+    console.log('before return _app')
     return (
       <Provider 
-        session={pageProps.session} 
+        session={session} 
         options={{ clientMaxAge: 120, baseUrl: 'http://localhost:4200', basePath: '/api/auth'}} 
       >
         <ApolloProvider client={initApollo(pageProps.apolloState)}>

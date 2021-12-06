@@ -8,8 +8,16 @@ const devConfig = {
     admins: process.env.ADMINS,
   },
   auth: {
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? 'https://identity-server.dev01.devland.is',
+    identityServerAuth: {
+      issuer: 'https://identity-server.dev01.devland.is',
+      audience: '@vegagerdin.is',
+    },
+    domain: process.env.IDENTITY_SERVER_DOMAIN ?? '@vegagerdin.is',
+    clientSecret: process.env.AUTH_CLIENT_SECRET,
+    nextAuthUrl: process.env.NEXTAUTH_URL ?? 'http://localhost:4200',
     samlEntryPoint: 'https://innskraning.island.is/?id=ads.local',
-    audience: 'localhost:4200',
+    audience: '@vegagerdin.is',
     jwtSecret: 'securesecret',
   },
   backendUrl: 'http://localhost:4248',
@@ -28,6 +36,10 @@ const prodConfig = {
     samlEntryPoint: process.env.SAML_ENTRY_POINT,
     audience: process.env.AUTH_AUDIENCE,
     jwtSecret: process.env.AUTH_JWT_SECRET,
+    identityServerAuth: {
+      issuer: 'https://identity-server.dev01.devland.is',
+      audience: '@vegagerdin.is',
+    },
   },
   backendUrl: process.env.BACKEND_URL,
 }

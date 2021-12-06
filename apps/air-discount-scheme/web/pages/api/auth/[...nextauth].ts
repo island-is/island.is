@@ -18,8 +18,8 @@ const providers = [
     name: identityServerConfig.name,
     scope: identityServerConfig.scope,
     clientId: identityServerConfig.clientId,
-    domain: process.env.IDENTITY_SERVER_DOMAIN ?? '',
-    clientSecret: process.env.IDENTITY_SERVER_SECRET ?? '',
+    domain: process.env.IDENTITY_SERVER_DOMAIN ?? '@vegagerdin.is',
+    clientSecret: process.env.IDENTITY_SERVER_SECRET ?? 'yDbxy1g2NcXusrae29BenaMCc',
     protection: 'pkce',
   }),
 ]
@@ -35,6 +35,7 @@ async function signIn(
   account: Record<string, unknown>,
   profile: Record<string, unknown>,
 ): Promise<boolean> {
+  console.log('pre sign in')
   return handleSignIn(user, account, profile, identityServerConfig.id)
 }
 
@@ -55,13 +56,14 @@ async function jwt(token: JWT, user: AuthUser) {
   return await handleJwt(
     token,
     identityServerConfig.clientId,
-    process.env.IDENTITY_SERVER_SECRET,
-    process.env.NEXTAUTH_URL,
-    process.env.IDENTITY_SERVER_DOMAIN,
+    process.env.IDENTITY_SERVER_SECRET ?? 'yDbxy1g2NcXusrae29BenaMCc',
+    process.env.NEXTAUTH_URL ?? 'http://localhost:4200',
+    process.env.IDENTITY_SERVER_DOMAIN ?? '@vegagerdin.is',
   )
 }
 
 async function session(session: AuthSession, user: AuthUser) {
+  console.log(session)
   return handleSession(session, user)
 }
 
