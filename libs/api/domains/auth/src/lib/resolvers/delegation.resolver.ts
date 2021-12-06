@@ -126,6 +126,10 @@ export class DelegationResolver {
 
   @ResolveField('validTo', () => Date, { nullable: true })
   resolveValidTo(@Parent() delegation: DelegationDTO): Date | undefined {
+    if (!delegation.validTo) {
+      return undefined
+    }
+
     return delegation.scopes?.every(
       (scope) => scope.validTo?.toString() === delegation.validTo?.toString(),
     )
