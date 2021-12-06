@@ -10,9 +10,11 @@ import {
   PaymentScheduleInitialSchedule,
 } from './models'
 import { Audit } from '@island.is/nest/audit'
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   CurrentUser,
   IdsUserGuard,
+  Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
@@ -21,6 +23,7 @@ import { UpdateCurrentEmployerInput } from './dto/updateCurrentEmployerInput'
 import { UpdateCurrentEmployerResponse } from './models/updateCurrentEmployer.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.internal)
 @Resolver()
 export class PaymentScheduleResolver {
   constructor(private paymentScheduleService: PaymentScheduleService) {}
