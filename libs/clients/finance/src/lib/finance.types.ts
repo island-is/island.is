@@ -1,5 +1,12 @@
 export type FinanceStatus = {
-  foo: string
+  message?: string
+  timestamp: string
+  principalTotals: number
+  interestTotals: number
+  costTotals: number
+  statusTotals: number
+  organizations: Array<any>
+  downloadServiceURL?: string
 }
 
 export type FinanceStatusDetails = {
@@ -60,6 +67,7 @@ export type DocumentTypes = {
 
 export type DocumentsListTypes = {
   documentsList: DocumentsListItemTypes[]
+  downloadServiceURL: string
 }
 
 export type DocumentsListItemTypes = {
