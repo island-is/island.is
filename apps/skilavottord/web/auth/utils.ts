@@ -22,12 +22,12 @@ export const isAuthenticated = (ctx: CookieContext) => {
   return Boolean(getCsrfToken(ctx))
 }
 
-export const isDeveloper = (role: Role) => role === Role.Developer
+export const isDeveloper = (role: Role) => role === Role.developer
 
 export const hasPermission = (page: Page, role: Role) => {
   if (!role) return false
 
-  if (role === Role.Developer) return true
+  if (role === Role.developer) return true
 
   const permittedRoutes = {
     recyclingCompany: ['deregisterVehicle', 'companyInfo'],

@@ -16,7 +16,6 @@ import {
   Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const SkilavottordAllRecyclingPartnersQuery = gql`
   query skilavottordAllRecyclingPartnersQuery {
@@ -29,7 +28,6 @@ const SkilavottordAllRecyclingPartnersQuery = gql`
 `
 
 const RecyclingCompanies: FC = () => {
-  const { linkResolver } = useLinkResolver()
   const { user } = useContext(UserContext)
   const { data, error, loading } = useQuery<Query>(
     SkilavottordAllRecyclingPartnersQuery,
@@ -86,11 +84,11 @@ const RecyclingCompanies: FC = () => {
               title: t.title,
             },
           ]}
-          renderLink={(link) => {
-            return (
-              <NextLink {...linkResolver('homepage')} passHref>
-                {link}
-              </NextLink>
+          renderLink={(link, item) => {
+            return item?.href ? (
+              <NextLink href={item?.href}>{link}</NextLink>
+            ) : (
+              link
             )
           }}
         />

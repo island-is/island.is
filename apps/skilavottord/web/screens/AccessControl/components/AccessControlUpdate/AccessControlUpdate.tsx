@@ -18,7 +18,7 @@ interface AccessControlUpdateProps
   onSubmit: (partner: UpdateAccessControlInput) => Promise<void>
   recyclingPartners: Option[]
   roles: Option[]
-  currentPartner: AccessControl
+  currentPartner?: AccessControl
 }
 
 export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
@@ -31,40 +31,30 @@ export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
   roles,
   currentPartner,
 }) => {
-  const { control, errors, setValue, handleSubmit } = useForm({
+  const { control, errors, reset, handleSubmit } = useForm({
     mode: 'onChange',
   })
 
   useEffect(() => {
-    console.log(currentPartner)
-    if (currentPartner) {
-      Object.entries(currentPartner).forEach(([key, value]) => {
-        if (key === 'partnerId') {
-          return setValue(
-            key,
-            recyclingPartners.find(
-              (option) => option.value === currentPartner?.partnerId,
-            ),
-          )
-        }
-        if (key === 'role') {
-          return setValue(
-            key,
-            roles.find((option) => option.value === currentPartner?.role),
-          )
-        }
-        setValue(key, value)
-      })
-    }
+    reset({
+      ...currentPartner,
+      role: roles.find((option) => option.value === currentPartner?.role),
+      partnerId: recyclingPartners.find(
+        (option) => option.value === currentPartner?.partnerId,
+      ),
+    })
   }, [currentPartner])
 
-  const handleOnSubmit = handleSubmit(({ name, role, partnerId }) => {
-    return onSubmit({
-      name,
-      role: role.value,
-      partnerId: partnerId.value,
-    })
-  })
+  const handleOnSubmit = handleSubmit(
+    ({ nationalId, name, role, partnerId }) => {
+      return onSubmit({
+        nationalId,
+        name,
+        role: role.value,
+        partnerId: partnerId.value,
+      })
+    },
+  )
 
   return (
     <AccessControlModal

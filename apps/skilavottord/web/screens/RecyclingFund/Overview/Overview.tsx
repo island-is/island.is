@@ -10,7 +10,6 @@ import { Sidenav, NotFound } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import { Query, Role } from '@island.is/skilavottord-web/graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 import { CarsTable } from './components/CarsTable'
 
@@ -31,7 +30,6 @@ export const SkilavottordVehiclesQuery = gql`
 `
 
 const Overview: FC = () => {
-  const { linkResolver } = useLinkResolver()
   const { user } = useContext(UserContext)
   const {
     t: { recyclingFundOverview: t, recyclingFundSidenav: sidenavText, routes },
@@ -84,11 +82,11 @@ const Overview: FC = () => {
               title: t.title,
             },
           ]}
-          renderLink={(link) => {
-            return (
-              <NextLink {...linkResolver('homepage')} passHref>
-                {link}
-              </NextLink>
+          renderLink={(link, item) => {
+            return item?.href ? (
+              <NextLink href={item?.href}>{link}</NextLink>
+            ) : (
+              link
             )
           }}
         />

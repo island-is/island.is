@@ -3,6 +3,7 @@ import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import startCase from 'lodash/startCase'
 import NextLink from 'next/link'
+import * as kennitala from 'kennitala'
 
 import {
   Box,
@@ -25,7 +26,6 @@ import {
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
 import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   AccessControl as AccessControlType,
   CreateAccessControlInput,
@@ -87,12 +87,8 @@ export const UpdateSkilavottordAccessControlMutation = gql`
   }
 `
 
-const formatNationalId = (nationalId: string) =>
-  `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
-
 const AccessControl: FC = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
-  const { linkResolver } = useLinkResolver()
   const { user } = useContext(UserContext)
   const {
     data: recyclingPartnerData,
@@ -142,7 +138,7 @@ const AccessControl: FC = () => {
 
   const roles = Object.keys(Role)
     .filter((role) =>
-      !isDeveloper(user.role) ? role !== Role.Developer : role,
+      !isDeveloper(user.role) ? role !== Role.developer : role,
     )
     .map((role) => ({
       label: startCase(role),
@@ -210,11 +206,11 @@ const AccessControl: FC = () => {
                 title: t.title,
               },
             ]}
-            renderLink={(link) => {
-              return (
-                <NextLink {...linkResolver('homepage')} passHref>
-                  {link}
-                </NextLink>
+            renderLink={(link, item) => {
+              return item?.href ? (
+                <NextLink href={item?.href}>{link}</NextLink>
+              ) : (
+                link
               )
             }}
           />
@@ -286,7 +282,7 @@ const AccessControl: FC = () => {
                 {accessControls.map((item) => {
                   return (
                     <Row key={item.nationalId}>
-                      <Data>{formatNationalId(item.nationalId)}</Data>
+                      <Data>{kennitala.format(item.nationalId)}</Data>
                       <Data>{item.name}</Data>
                       <Data>{startCase(item.role)}</Data>
                       <Data>
@@ -315,18 +311,16 @@ const AccessControl: FC = () => {
           )}
         </Stack>
       </Stack>
-      {partner && (
-        <AccessControlUpdate
-          title={t.modal.titles.edit}
-          text={t.modal.subtitles.edit}
-          show={!!partner}
-          onCancel={handleUpdateAccessControlCloseModal}
-          onSubmit={handleUpdateAccessControl}
-          recyclingPartners={recyclingPartners}
-          roles={roles}
-          currentPartner={partner}
-        />
-      )}
+      <AccessControlUpdate
+        title={t.modal.titles.edit}
+        text={t.modal.subtitles.edit}
+        show={!!partner}
+        onCancel={handleUpdateAccessControlCloseModal}
+        onSubmit={handleUpdateAccessControl}
+        recyclingPartners={recyclingPartners}
+        roles={roles}
+        currentPartner={partner}
+      />
     </PartnerPageLayout>
   )
 }
