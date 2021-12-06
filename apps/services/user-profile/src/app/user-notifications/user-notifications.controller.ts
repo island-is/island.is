@@ -80,7 +80,7 @@ export class UserNotificationsController {
   @ApiOkResponse({ type: [CreateUserNotificationDto] })
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
-  @Put('/update/:id')
+  @Put('/updateDeviceToken/:id')
   async update(
     @CurrentUser() user: User,
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,

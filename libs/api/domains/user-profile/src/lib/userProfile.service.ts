@@ -5,6 +5,8 @@ import {
   ConfirmationDtoResponse,
   CreateUserProfileDto,
   UpdateUserProfileDto,
+  UserNotificationDto,
+  UserNotificationsApi,
   UserProfileApi,
   UserProfileControllerCreateRequest,
   UserProfileControllerUpdateRequest,
@@ -28,11 +30,16 @@ const handleError = (error: any) => {
 export class UserProfileService {
   constructor(
     private userProfileApi: UserProfileApi,
+    private userNotificationsApi: UserNotificationsApi,
     private readonly islyklarApi: IslyklarApi,
   ) {}
 
   userProfileApiWithAuth(auth: Auth) {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  userNotificationsApiWithAuth(auth: Auth) {
+    return this.userNotificationsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getIslyklarData(ssn: User['nationalId']) {
@@ -156,6 +163,15 @@ export class UserProfileService {
         nationalId: user.nationalId,
         confirmEmailDto,
       })
+      .catch(handleError)
+  }
+
+  // notifications
+  async getDeviceTokens(
+    user: User,
+  ): Promise<UserNotificationDto[]> {
+    return await this.userNotificationsApiWithAuth(user)
+      .userNotificationsControllerFindAll()
       .catch(handleError)
   }
 }

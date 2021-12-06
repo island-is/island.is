@@ -14,11 +14,12 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
+import { UserNotificationDto } from '../../gen/fetch/models/UserNotificationDto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class UserProfileResolver {
-  constructor(private readonly userUserProfileService: UserProfileService) {}
+  constructor(private readonly userUserProfileService: UserProfileService) {}  
   @Query(() => UserProfile, { nullable: true })
   getUserProfile(
     @CurrentUser() user: User,
@@ -71,5 +72,14 @@ export class UserProfileResolver {
     @CurrentUser() user: User,
   ): Promise<ConfirmResponse | null> {
     return await this.userUserProfileService.confirmEmail(input, user)
+  }
+  
+  // user notifications queries 
+  
+  @Query(() => UserProfile, { nullable: true })
+  getDeviceTokens(
+    @CurrentUser() user: User,
+  ): Promise<UserNotificationDto[]> {
+    return this.userUserProfileService.getDeviceTokens(user)
   }
 }

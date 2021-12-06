@@ -1,5 +1,5 @@
 import { DynamicModule } from '@nestjs/common'
-import { Configuration, UserProfileApi } from '../../gen/fetch'
+import { Configuration, UserNotificationsApi, UserProfileApi } from '../../gen/fetch'
 import { UserProfileResolver } from './userProfile.resolver'
 import { UserProfileService } from './userProfile.service'
 import {
@@ -9,6 +9,7 @@ import {
 
 export interface Config {
   userProfileServiceBasePath: string
+  userNotificationsApiServiceBasePath: string
   islykill: IslykillApiModuleConfig
 }
 
@@ -26,6 +27,16 @@ export class UserProfileModule {
               new Configuration({
                 fetchApi: fetch,
                 basePath: config.userProfileServiceBasePath,
+              }),
+            ),
+        },
+        {
+          provide: UserNotificationsApi,
+          useFactory: () =>
+            new UserNotificationsApi(
+              new Configuration({
+                fetchApi: fetch,
+                basePath: config.userNotificationsApiServiceBasePath,
               }),
             ),
         },
