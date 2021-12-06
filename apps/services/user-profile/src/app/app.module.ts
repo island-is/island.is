@@ -4,7 +4,6 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 import { UserNotificationsModule } from './user-notifications/user-notifications.module'
 import { UserProfileModule } from './user-profile/userProfile.module'
 
-
 @Module({
   imports: [
     SequelizeModule.forRootAsync({
