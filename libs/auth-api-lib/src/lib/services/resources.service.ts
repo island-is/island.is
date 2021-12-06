@@ -54,8 +54,6 @@ export class ResourcesService {
     private apiResourceScope: typeof ApiResourceScope,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    @Inject(Sequelize)
-    private sequelize: Sequelize,
   ) {}
 
   /** Get's all identity resources and total count of rows */
@@ -388,34 +386,15 @@ export class ResourcesService {
     })
   }
 
-  /** Filters out Identity Resources that don't have delegation grant and are access controlled */
-  async findAllowedDelegationIdentityResourceListForUser(
-    identityResources: string[],
-  ) {
-    this.logger.debug(
-      `Finding allowed Identity Resources for identity resources: ${identityResources}`,
-    )
-    return this.identityResourceModel.findAll({
+  /** Returns the count of scopes that are allowed for delegations */
+  async countAllowedDelegationApiScopesForUser(scopes: string[]) {
+    return this.apiScopeModel.count({
       where: {
         name: {
-          [Op.in]: identityResources,
+          [Op.in]: scopes,
         },
         allowExplicitDelegationGrant: true,
-        alsoForDelegatedUser: false,
       },
-    })
-  }
-
-  /** Gets Api scopes with Explicit Delegation Grant */
-  async findIdentityResourcesWithExplicitDelegationGrant(): Promise<
-    IdentityResource[]
-  > {
-    this.logger.debug(
-      `Finding identity resources with Explicit Delegation Grant`,
-    )
-
-    return this.identityResourceModel.findAll({
-      where: { allowExplicitDelegationGrant: true },
     })
   }
 
