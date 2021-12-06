@@ -54,4 +54,3 @@ export const serviceSetup = (services: {
     .grantNamespaces('islandis', 'application-system')
     .liveness('/liveness')
     .readiness('/liveness')
-    
