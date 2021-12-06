@@ -28,7 +28,7 @@ import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-ac
 
 import {
   userNotificationServiceSetup,
-  userNotificationsWorkerSetup,
+  userNotificationWorkerSetup,
 } from '../../../apps/services/notifications/infra/notifications'
 
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
@@ -80,7 +80,7 @@ const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 const downloadService = downloadServiceSetup()
 
 const userNotificationService = userNotificationServiceSetup()
-const userNotificationWorkerService = userNotificationsWorkerSetup()
+const userNotificationWorkerService = userNotificationWorkerSetup()
 
 const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })

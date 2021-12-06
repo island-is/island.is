@@ -868,7 +868,7 @@ namespaces:
     - 'temporary-voter-registry'
     - 'air-discount-scheme'
     - 'github-actions-cache'
-    - 'user-notifications'
+    - 'user-notification'
 party-letter-registry-api:
   enabled: true
   env:
@@ -1339,15 +1339,15 @@ temporary-voter-registry-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-user-notifications:
+user-notification:
   args:
     - 'main.js'
   command:
     - 'node'
   enabled: true
   env:
-    DEAD_LETTER_QUEUE_NAME: 'notifications-failure'
-    MAIN_QUEUE_NAME: 'notifications'
+    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    MAIN_QUEUE_NAME: 'user-notification'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -1361,8 +1361,8 @@ user-notifications:
       path: '/liveness'
       timeoutSeconds: 3
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/user-notifications'
-  namespace: 'user-notifications'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/user-notification'
+  namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
@@ -1376,10 +1376,10 @@ user-notifications:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/user-notifications'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/user-notification'
     create: true
-    name: 'user-notifications'
-user-notifications-worker:
+    name: 'user-notification'
+user-notification-worker:
   args:
     - 'main.js'
     - '--job'
@@ -1387,8 +1387,8 @@ user-notifications-worker:
     - 'node'
   enabled: true
   env:
-    DEAD_LETTER_QUEUE_NAME: 'notifications-failure'
-    MAIN_QUEUE_NAME: 'notifications'
+    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    MAIN_QUEUE_NAME: 'user-notification'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -1402,8 +1402,8 @@ user-notifications-worker:
       path: '/liveness'
       timeoutSeconds: 3
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/user-notifications-worker'
-  namespace: 'user-notifications'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/user-notification-worker'
+  namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
@@ -1417,9 +1417,9 @@ user-notifications-worker:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/user-notifications-worker'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/user-notification-worker'
     create: true
-    name: 'user-notifications-worker'
+    name: 'user-notification-worker'
 web:
   enabled: true
   env:

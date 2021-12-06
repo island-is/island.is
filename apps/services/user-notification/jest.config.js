@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'services-notifications',
+  displayName: 'services-user-notification',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -10,6 +10,6 @@ module.exports = {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../coverage/apps/services/notifications',
+  coverageDirectory: '../../../coverage/apps/services/user-notification',
   setupFiles: ['./test/environment.ts'],
 }

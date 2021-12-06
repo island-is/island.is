@@ -1,4 +1,4 @@
-# Notifications
+# user-notification
 
 ## About
 
@@ -9,12 +9,12 @@ This service manages queueing up messages to send push notifications / sms / ema
 ### Dev setup & running:
 
 ```sh
-yarn dev-services services-notifications
-yarn start services-notifications
+yarn dev-services services-user-notification
+yarn start services-user-notification
 ```
 
 ### Starting a worker
 
 ```sh
-yarn nx run services-notifications:worker
+yarn nx run services-user-notification:worker
 ```
