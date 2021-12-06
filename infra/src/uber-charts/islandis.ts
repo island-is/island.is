@@ -29,7 +29,7 @@ import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-ac
 import {
   userNotificationServiceSetup,
   userNotificationWorkerSetup,
-} from '../../../apps/services/notifications/infra/notifications'
+} from '../../../apps/services/user-notification/infra/user-notification'
 
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
 import { serviceSetup as adsWebSetup } from '../../../apps/air-discount-scheme/web/infra/web'
