@@ -148,9 +148,6 @@ export const AccidentNotificationSchema = z.object({
       })
       .optional(),
   }),
-  ReviewFormDerp: z.object({
-    derp: z.string().min(1),
-  }),
   wasTheAccidentFatal: z.enum([YES, NO]),
   fatalAccidentUploadDeathCertificateNow: z.enum([YES, NO]),
   accidentDetails: z.object({
@@ -265,14 +262,6 @@ export const AccidentNotificationSchema = z.object({
       PowerOfAttorneyUploadEnum.UPLOADNOW,
     ]),
   }),
-  comment: z.object({
-    description: z.string().optional(),
-  }),
-  overview: z.object({
-    custom: z.string().optional(),
-  }),
-
-  assigneeComment: z.string().optional(),
   reviewApproval: z
     .enum([
       ReviewApprovalEnum.APPROVED,

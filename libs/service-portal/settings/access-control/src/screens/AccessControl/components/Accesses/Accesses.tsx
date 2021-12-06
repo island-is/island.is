@@ -77,7 +77,7 @@ function Accesses(): JSX.Element {
                   validTo={delegation.validTo}
                   description={kennitala.format(delegation.to.nationalId)}
                   tags={delegation.scopes.map((scope) => scope.displayName)}
-                  href={`${pathname}/${delegation.to.nationalId}`}
+                  href={`${pathname}/${delegation.id}`}
                   group="Ísland.is"
                 />
               ))
