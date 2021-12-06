@@ -11,10 +11,7 @@ export const UserProfileInfo = () => {
     'isServicePortalPersonalInformationModuleEnabled',
     false,
   )
-  const { data } = useGetUserProfileQuery({
-    skip: !showPersonalInfo,
-    fetchPolicy: 'cache-and-network',
-  })
+  const { data } = useGetUserProfileQuery({ skip: !showPersonalInfo })
   const { formatMessage } = useLocale()
   if (showPersonalInfo) {
     const settings = data?.getUserProfile
@@ -43,13 +40,13 @@ export const UserProfileInfo = () => {
             <Box display="flex" alignItems="center" marginRight={2}>
               <Icon type="outline" icon="call" color="blue300" />
             </Box>
-            <Text>{settings?.mobilePhoneNumber?.split('-')[1]}</Text>
+            <Text>{settings?.mobilePhoneNumber}</Text>
           </Box>
         )}
         {(settings?.email || settings?.mobilePhoneNumber) && (
           <a href="/minarsidur/stillingar/personuupplysingar">
             <Button variant="text" icon="arrowForward" size="small">
-              {formatMessage(sharedMessages.settings)}
+              {formatMessage(sharedMessages.edit)}
             </Button>
           </a>
         )}

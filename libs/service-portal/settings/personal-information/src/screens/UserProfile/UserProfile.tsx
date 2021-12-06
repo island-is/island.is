@@ -48,7 +48,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                 labelColumnSpan={['8/12', '3/12']}
                 editColumnSpan={['1/1', '2/12']}
                 valueColumnSpan={['1/1', '7/12']}
-                content={settings?.mobile?.split('-')[1] ?? ''}
+                content={settings?.mobile ?? ''}
                 editLink={{
                   url:
                     ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
