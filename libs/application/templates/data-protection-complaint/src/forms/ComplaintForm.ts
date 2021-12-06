@@ -176,12 +176,13 @@ export const ComplaintForm: Form = buildForm({
                   {
                     links: [
                       {
-                        title: 'Póst- og fjarskiptastofnun',
-                        url: 'https://www.pfs.is/',
+                        title: 'Fjarskiptastofa',
+                        url: 'https://fjarskiptastofa.is/',
                       },
                       {
                         title: 'Þjóðskrá Íslands',
-                        url: 'https://www.skra.is/',
+                        url:
+                          'https://island.is/kvortun-vegna-skraningar-i-bannskra',
                       },
                     ],
                   },
