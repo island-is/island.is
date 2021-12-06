@@ -37,12 +37,17 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
+import {
+  FeatureFlagGuard,
+  Features,
+  FeatureFlag,
+} from '@island.is/nest/feature-flags'
 
 import { environment } from '../../../environments'
 
 const namespace = '@island.is/auth-public-api/delegations'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @ApiTags('delegations')
 @Controller('v1/delegations')
 @Audit({ namespace })
@@ -103,6 +108,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.writeDelegations)
+  @FeatureFlag(Features.customDelegations)
   @Post()
   @ApiCreatedResponse({ type: DelegationDTO })
   @Audit<DelegationDTO>({
@@ -127,6 +133,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.writeDelegations)
+  @FeatureFlag(Features.customDelegations)
   @Put(':toNationalId')
   @ApiCreatedResponse({ type: DelegationDTO })
   update(
@@ -153,6 +160,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.writeDelegations)
+  @FeatureFlag(Features.customDelegations)
   @Delete('custom/delete/from/:id')
   @ApiCreatedResponse()
   deleteFrom(
@@ -171,6 +179,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.writeDelegations)
+  @FeatureFlag(Features.customDelegations)
   @Delete('custom/delete/to/:toNationalId')
   @ApiCreatedResponse()
   deleteTo(
@@ -189,6 +198,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.readDelegations)
+  @FeatureFlag(Features.customDelegations)
   @Get('custom/findone/:id')
   @ApiOkResponse({ type: DelegationDTO })
   @Audit<DelegationDTO>({
@@ -202,6 +212,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.readDelegations)
+  @FeatureFlag(Features.customDelegations)
   @Get('custom/findone/to/:nationalId')
   @ApiOkResponse({ type: DelegationDTO })
   @Audit<DelegationDTO>({
@@ -225,6 +236,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.readDelegations)
+  @FeatureFlag(Features.customDelegations)
   @Get('custom/to')
   @ApiOkResponse({ type: [DelegationDTO] })
   @Audit<DelegationDTO[]>({
@@ -238,6 +250,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.readDelegations)
+  @FeatureFlag(Features.customDelegations)
   @Get('custom/from')
   @ApiQuery({ name: 'is-valid', required: false })
   @ApiOkResponse({ type: [DelegationDTO] })

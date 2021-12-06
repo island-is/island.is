@@ -1,6 +1,7 @@
 import { Includeable } from 'sequelize/types'
 
 import {
+  BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -20,6 +21,7 @@ import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
   isRestrictionCase,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
@@ -35,10 +37,10 @@ import {
 import { notificationMessages as m } from '../../messages'
 import { FileService } from '../file/file.service'
 import { Institution } from '../institution'
-import { User } from '../user'
+import { User, UserService } from '../user'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { CreateCaseDto, UpdateCaseDto } from './dto'
+import { CreateCaseDto, InternalCreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
 
@@ -87,6 +89,7 @@ export class CaseService {
   constructor(
     @InjectModel(Case)
     private readonly caseModel: typeof Case,
+    private readonly userService: UserService,
     private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
@@ -382,13 +385,36 @@ export class CaseService {
     })
   }
 
-  async create(caseToCreate: CreateCaseDto, user?: TUser): Promise<Case> {
+  async internalCreate(caseToCreate: InternalCreateCaseDto): Promise<Case> {
+    this.logger.debug('Creating a new case')
+
+    if (!caseToCreate.prosecutorNationalId) {
+      return this.create(caseToCreate)
+    }
+
+    const prosecutor = await this.userService.findByNationalId(
+      caseToCreate.prosecutorNationalId,
+    )
+
+    if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
+      throw new BadRequestException(
+        `Person with national id ${caseToCreate.prosecutorNationalId} is not registered as a prosecutor`,
+      )
+    }
+
+    return this.create(caseToCreate, prosecutor.id)
+  }
+
+  async create(
+    caseToCreate: CreateCaseDto,
+    prosecutorId?: string,
+  ): Promise<Case> {
     this.logger.debug('Creating a new case')
 
     return this.caseModel.create({
       ...caseToCreate,
-      creatingProsecutorId: user?.id,
-      prosecutorId: user?.id,
+      creatingProsecutorId: prosecutorId,
+      prosecutorId,
     })
   }
 
