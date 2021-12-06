@@ -1,43 +1,46 @@
 import {
+  ApiScope,
+  DelegationScope,
+  IdentityResource,
+} from '@island.is/auth-api-lib'
+import type { AuthConfig, User } from '@island.is/auth-nest-tools'
+import {
+  BadRequestException,
   Inject,
   Injectable,
   UnauthorizedException,
-  BadRequestException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
-import uniqBy from 'lodash/uniqBy'
-import { uuid } from 'uuidv4'
 import startOfDay from 'date-fns/startOfDay'
+import uniqBy from 'lodash/uniqBy'
+import { Op } from 'sequelize'
+import { uuid } from 'uuidv4'
 
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { RskApi } from '@island.is/clients/rsk/v2'
-import type { CompaniesResponse } from '@island.is/clients/rsk/v2'
-import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
-import type {
-  EinstaklingarGetForsjaRequest,
-  EinstaklingarGetEinstaklingurRequest,
-} from '@island.is/clients/national-registry-v2'
-import { DelegationScope } from '../entities/models/delegation-scope.model'
-import { ApiScope } from '../entities/models/api-scope.model'
-import { IdentityResource } from '../entities/models/identity-resource.model'
-import {
-  createEnhancedFetch,
-  EnhancedFetchAPI,
-} from '@island.is/clients/middlewares'
-import type { Auth, AuthConfig, User } from '@island.is/auth-nest-tools'
 import {
   AuthMiddleware,
   AuthMiddlewareOptions,
 } from '@island.is/auth-nest-tools'
+import {
+  createEnhancedFetch,
+  EnhancedFetchAPI,
+} from '@island.is/clients/middlewares'
+import type {
+  EinstaklingarGetEinstaklingurRequest,
+  EinstaklingarGetForsjaRequest,
+} from '@island.is/clients/national-registry-v2'
+import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
+import type { CompaniesResponse } from '@island.is/clients/rsk/v2'
+import { RskApi } from '@island.is/clients/rsk/v2'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 import {
+  CreateDelegationDTO,
   DelegationDTO,
   DelegationProvider,
   DelegationType,
   UpdateDelegationDTO,
-  CreateDelegationDTO,
 } from '../entities/dto/delegation.dto'
 import { Delegation } from '../entities/models/delegation.model'
 import { DelegationScopeService } from './delegation-scope.service'
@@ -61,6 +64,7 @@ export class DelegationsService {
     private authConfig: AuthConfig,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    private featureFlagService: FeatureFlagService,
   ) {
     this.authFetch = createEnhancedFetch({ name: 'delegation-auth-client' })
   }
@@ -71,8 +75,8 @@ export class DelegationsService {
   ): Promise<DelegationDTO[]> {
     const [wards, companies, custom] = await Promise.all([
       this.findAllWardsTo(user, authMiddlewareOptions),
-      this.findAllCompaniesTo(user.nationalId),
-      this.findAllValidCustomTo(user.nationalId),
+      this.findAllCompaniesTo(user),
+      this.findAllValidCustomTo(user),
     ])
 
     return uniqBy([...wards, ...companies, ...custom], 'fromNationalId').filter(
@@ -81,15 +85,24 @@ export class DelegationsService {
   }
 
   private async findAllWardsTo(
-    auth: Auth,
+    user: User,
     authMiddlewareOptions: AuthMiddlewareOptions,
   ): Promise<DelegationDTO[]> {
     try {
-      this.logger.info(`findAllWardsTo: -${auth.nationalId?.substring(6, 10)}`)
+      const supported = await this.featureFlagService.getValue(
+        Features.legalGuardianDelegations,
+        false,
+        user,
+      )
+      if (!supported) {
+        return []
+      }
+
+      this.logger.info(`findAllWardsTo: -${user.nationalId?.substring(6, 10)}`)
       const response = await this.personApi
-        .withMiddleware(new AuthMiddleware(auth, authMiddlewareOptions))
+        .withMiddleware(new AuthMiddleware(user, authMiddlewareOptions))
         .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
-          id: auth.nationalId,
+          id: user.nationalId,
         })
 
       const distinct = response.filter(
@@ -98,7 +111,7 @@ export class DelegationsService {
 
       const resultPromises = distinct.map(async (nationalId) =>
         this.personApi
-          .withMiddleware(new AuthMiddleware(auth, authMiddlewareOptions))
+          .withMiddleware(new AuthMiddleware(user, authMiddlewareOptions))
           .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
             id: nationalId,
           }),
@@ -109,7 +122,7 @@ export class DelegationsService {
       return result.map(
         (p) =>
           <DelegationDTO>{
-            toNationalId: auth.nationalId,
+            toNationalId: user.nationalId,
             fromNationalId: p.kennitala,
             fromName: p.nafn,
             type: DelegationType.LegalGuardian,
@@ -123,12 +136,19 @@ export class DelegationsService {
     return []
   }
 
-  private async findAllCompaniesTo(
-    toNationalId: string,
-  ): Promise<DelegationDTO[]> {
+  private async findAllCompaniesTo(user: User): Promise<DelegationDTO[]> {
     try {
+      const feature = await this.featureFlagService.getValue(
+        Features.companyDelegations,
+        false,
+        user,
+      )
+      if (!feature) {
+        return []
+      }
+
       const response: CompaniesResponse = await this.rskApi.apicompanyregistrymembersKennitalacompaniesGET1(
-        { kennitala: toNationalId },
+        { kennitala: user.nationalId },
       )
 
       if (response?.memberCompanies) {
@@ -140,7 +160,7 @@ export class DelegationsService {
           return companies.map(
             (p) =>
               <DelegationDTO>{
-                toNationalId: toNationalId,
+                toNationalId: user.nationalId,
                 fromNationalId: p.kennitala,
                 fromName: p.nafn,
                 type: DelegationType.ProcurationHolder,
@@ -156,14 +176,21 @@ export class DelegationsService {
     return []
   }
 
-  private async findAllValidCustomTo(
-    toNationalId: string,
-  ): Promise<DelegationDTO[]> {
+  private async findAllValidCustomTo(user: User): Promise<DelegationDTO[]> {
+    const feature = await this.featureFlagService.getValue(
+      Features.customDelegations,
+      false,
+      user,
+    )
+    if (!feature) {
+      return []
+    }
+
     const today = startOfDay(new Date())
 
     const result = await this.delegationModel.findAll({
       where: {
-        toNationalId: toNationalId,
+        toNationalId: user.nationalId,
       },
       include: [
         {
