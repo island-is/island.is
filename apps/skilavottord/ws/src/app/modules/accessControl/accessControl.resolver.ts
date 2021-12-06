@@ -9,7 +9,7 @@ import {
   CreateAccessControlInput,
 } from './accessControl.input'
 
-@Authorize({ throwOnUnAuthorized: false, role: Role.developer })
+@Authorize({ throwOnUnAuthorized: false, roles: [Role.developer] })
 @Resolver(() => AccessControlModel)
 export class AccessControlResolver {
   constructor(private accessControlService: AccessControlService) {}
