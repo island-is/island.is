@@ -1,6 +1,6 @@
 // To parse this data:
 //
-//   import { Convert, Translation } from ./file;
+//   import { Convert, Translation } from "./file";
 //
 //   const translation = Convert.toTranslation(json);
 //
@@ -8,10 +8,10 @@
 // match the expected interface, even if the JSON is valid.
 
 export interface Translation {
-  home: Home
+  home: TranslationHome
   header: Header
   footer: Footer
-  gdpr: GDPR
+  gdpr: Gdpr
   myCars: MyCars
   confirm: Confirm
   handover: Handover
@@ -19,182 +19,161 @@ export interface Translation {
   processes: Processes
   deregisterOverview: DeregisterOverview
   companyInfo: CompanyInfo
-  companyInfoForm: CompanyInfoFormPage
+  companyInfoForm: CompanyInfoForm
   deregisterSidenav: DeregisterSidenav
-  deregisterVehicle: DeregisterVehicle
+  deregisterVehicle: TranslationDeregisterVehicle
   recyclingFundOverview: RecyclingFundOverview
   recyclingFundSidenav: RecyclingFundSidenav
   recyclingCompanies: RecyclingCompanies
+  accessControl: AccessControl
   notFound: NotFound
   errorBoundary: ErrorBoundary
   routes: Routes
 }
 
-export interface Home {
+export interface AccessControl {
   title: string
-}
-
-export interface Header {
-  logoutText: string
-}
-
-export interface Footer {
-  topLinksInfo: FooterLinks[]
-  topLinksContact: FooterLinks[]
-  bottomLinks: FooterLinks[]
-  bottomLinksTitle: string
-}
-
-export interface FooterLinks {
-  title: string
-  href: string
-}
-
-export interface GDPR {
-  title: string
-  subTitles: DataSubtitles
   info: string
-  buttons: DataButtons
-  checkbox: string
-  error: Errors
+  empty: string
+  tableHeaders: TableHeaders
+  status: AccessControlStatus
+  buttons: SubtitlesClass
+  modal: Modal
 }
 
-export interface MyCars {
+export interface SubtitlesClass {
+  add: string
+  edit: string
+}
+
+export interface Modal {
+  titles: SubtitlesClass
+  subtitles: SubtitlesClass
+  inputs: Inputs
+  buttons: ConfirmButtons
+}
+
+export interface ConfirmButtons {
+  cancel: string
+  continue: string
+}
+
+export interface Inputs {
+  nationalId: NationalID
+  name: Name
+  role: Name
+  partner: Name
+}
+
+export interface Name {
+  label: string
+  placeholder: string
+  rules: NameRules
+}
+
+export interface NameRules {
+  required: string
+}
+
+export interface NationalID {
+  label: string
+  placeholder: string
+  rules: NationalIDRules
+}
+
+export interface NationalIDRules {
+  required: string
+  validate: string
+}
+
+export interface AccessControlStatus {
+  active: string
+  inactive: string
+}
+
+export interface TableHeaders {
+  nationalId: string
+  name: string
+  role: string
+  partner: string
+}
+
+export interface CompanyInfo {
   title: string
-  subTitles: MyCarsSubtitles
-  info: MyCarsInfo
-  actions: CarActions
-  status: CarStatus
-  buttons: CarsButtons
-  tooltip: ToolTip
-  error: Errors
+  info: string
+  empty: string
+  subtitles: CompanyInfoSubtitles
+  buttons: CompanyInfoButtons
 }
 
-export interface Confirm {
+export interface CompanyInfoButtons {
+  add: string
+  edit: string
+  delete: string
+}
+
+export interface CompanyInfoSubtitles {
+  location: string
+}
+
+export interface CompanyInfoForm {
+  addTitle: string
+  editTitle: string
+  form: Form
+  buttons: CompanyInfoFormButtons
+  success: string
+}
+
+export interface CompanyInfoFormButtons {
+  add: string
+  save: string
+  cancel: string
+}
+
+export interface Form {
   title: string
-  subTitles: ConfirmSubTitles
-  info: string
-  buttons: ProcessButtons
-  checkbox: CheckBox
+  company: FormCompany
+  visitingAddress: Search
+  postNumber: Search
+  city: Search
+  website: Search
+  phoneNumber: Search
 }
 
-export interface Handover {
-  titles: ProcessTitles
-  subTitles: HandoverSubTitles
-  info: string
-  subInfo: string
-  buttons: HandoverButtons
-  error: Errors
-  cancelModal: CancelModal
+export interface Search {
+  label: string
+  placeholder: string
+}
+
+export interface FormCompany {
+  label: string
 }
 
 export interface Completed {
   title: string
   subTitles: CompletedSubTitles
   info: CompletedInfo
-  confirmedBy: CompletedConfirmation
-  error: Errors
+  confirmedBy: ConfirmedBy
+  error: CompletedError
   buttons: CompletedButtons
 }
 
-export interface Processes {
-  step: string
-  outOf: string
-  citizen: ProcessSections
-  company: ProcessSections
-}
-
-export interface ProcessSections {
-  title: string
-  sections: string[]
-  completed: string
-}
-
-export interface CancelModal {
-  titles: CancelModalTitles
-  info: string
-  buttons: ProcessButtons
-  error: Errors
-}
-
-export interface CancelModalTitles {
-  info: string
-  error: string
-}
-
-export interface DataSubtitles {
-  info: string
-}
-
-export interface DataButtons {
-  continue: string
-}
-
-export interface MyCarsSubtitles {
-  pending: string
-  active: string
-  done: string
-}
-
-export interface MyCarsInfo {
-  noCarsAvailable: string
-}
-
-export interface CarActions {
-  valid: string
-  invalid: string
-}
-
-export interface CarStatus {
-  coOwned: string
-  recycle: string
-  done: string
-}
-
-export interface CarsButtons {
-  openProcess: string
-  seeDetails: string
-  reload: string
-}
-
-export interface ToolTip {
-  text: string
-  link: string
-}
-
-export interface ConfirmSubTitles {
-  confirm: string
-}
-
-export interface ProcessButtons {
-  cancel: string
-  continue: string
-}
-
-export interface CheckBox {
-  label: string
-  linkLabel: string
-}
-
-export interface ProcessTitles {
-  success: string
-  error: string
-  loading: string
-  notfound: string
-}
-
-export interface HandoverSubTitles {
-  nextStep: string
-  companies: string
-}
-
-export interface HandoverButtons extends ProcessButtons {
+export interface CompletedButtons {
   close: string
 }
 
-export interface CompletedSubTitles {
-  summary: string
-  payment: string
+export interface ConfirmedBy {
+  user: string
+  company: string
+  authority: string
+  fund: string
+}
+
+export interface CompletedError {
+  title: string
+  message: string
+  primaryButton: string
+  secondaryButton?: string
 }
 
 export interface CompletedInfo {
@@ -203,91 +182,214 @@ export interface CompletedInfo {
   paymentLinkText: string
 }
 
-export interface CompletedConfirmation {
-  user: string
-  company: string
-  authority: string
-  fund: string
+export interface CompletedSubTitles {
+  summary: string
+  payment: string
 }
 
-export interface CompletedButtons extends ProcessButtons {
-  close: string
-}
-
-export interface Errors {
+export interface Confirm {
   title: string
-  message: string
-  primaryButton: string
-  secondaryButton: string
+  subTitles: ConfirmSubTitles
+  info: string
+  buttons: ConfirmButtons
+  checkbox: Checkbox
+}
+
+export interface Checkbox {
+  label: string
+  linkLabel: string
+}
+
+export interface ConfirmSubTitles {
+  confirm: string
 }
 
 export interface DeregisterOverview {
   title: string
   info: string
-  subtitles: DeregisterOverviewSubTitles
+  subtitles: DeregisterOverviewSubtitles
   buttons: DeregisterOverviewButtons
-  search: InputField
+  search: Search
   table: string[]
-  success: string
 }
 
-export interface CompanyInfo {
+export interface DeregisterOverviewButtons {
+  deregister: string
+}
+
+export interface DeregisterOverviewSubtitles {
+  history: string
+}
+
+export interface DeregisterSidenav {
   title: string
-  info: string
-  empty: string
-  subtitles: CompanyInfoSubTitles
-  buttons: CompanyInfoButtons
-}
-
-export interface CompanyInfoFormPage {
-  addTitle: string
-  editTitle: string
-  form: CompanyInfoForm
-  buttons: CompanyInfoFormButtons
-  success: string
-}
-
-export interface CompanyInfoForm {
-  title: string
-  company: InputField
-  visitingAddress: InputField
-  postNumber: InputField
-  city: InputField
-  website: InputField
-  phoneNumber: InputField
-}
-
-export interface deregisterSidenav {
   deregister: string
   companyInfo: string
 }
 
-export interface DeregisterVehicle {
-  select: DeregisterSelect
+export interface TranslationDeregisterVehicle {
+  select: Select
   deregister: Deregister
 }
 
-export interface RecyclingFundOverview {
-  title: string
-  subtitles: ReyclingFundOverviewSubTitles
-  info: string
-  buttons: ReyclingFundOverviewButtons
-  search: InputField
-  table: string[]
+export interface Deregister {
+  titles: InfoClass
+  info: InfoClass
+  buttons: DeregisterButtons
+  success: string
+  error: CompletedError
 }
 
-export interface RecyclingCompanies {
+export interface DeregisterButtons {
+  back: string
+  confirm: string
+}
+
+export interface InfoClass {
+  success: string
+  error: string
+  notfound?: string
+  loading?: string
+}
+
+export interface Select {
   title: string
   info: string
+  input: Input
+  buttons: ConfirmButtons
+}
+
+export interface Input {
+  label: string
+  placeholder: string
+  errors: Errors
+}
+
+export interface Errors {
   empty: string
-  subtitles: RecyclingCompaniesSubTitles
-  status: CompanyStatus
-  buttons: CompanyInfoButtons
+  length: string
+  invalidRegNumber: string
 }
 
-export interface CompanyStatus {
+export interface ErrorBoundary {
+  title: string
+  contents: string[]
+}
+
+export interface Footer {
+  topLinksInfo: BottomLink[]
+  topLinksContact: BottomLink[]
+  bottomLinksTitle: string
+  bottomLinks: BottomLink[]
+}
+
+export interface BottomLink {
+  title: string
+  href: string
+}
+
+export interface Gdpr {
+  title: string
+  subTitles: GdprSubTitles
+  info: string
+  checkbox: string
+  buttons: GdprButtons
+  error: GdprError
+}
+
+export interface GdprButtons {
+  continue: string
+}
+
+export interface GdprError {
+  message: string
+  primaryButton: string
+}
+
+export interface GdprSubTitles {
+  info: string
+}
+
+export interface Handover {
+  titles: InfoClass
+  info: string
+  subTitles: HandoverSubTitles
+  subInfo: string
+  buttons: HandoverButtons
+  error: CompletedError
+  cancelModal: CancelModal
+}
+
+export interface HandoverButtons {
+  cancel: string
+  close: string
+}
+
+export interface CancelModal {
+  titles: CancelModalTitles
+  info: string
+  buttons: ConfirmButtons
+  error: CompletedError
+}
+
+export interface CancelModalTitles {
+  info: string
+  error: string
+}
+
+export interface HandoverSubTitles {
+  nextStep: string
+  companies: string
+}
+
+export interface Header {
+  logoutText: string
+}
+
+export interface TranslationHome {
+  title: string
+}
+
+export interface MyCars {
+  title: string
+  subTitles: MyCarsSubTitles
+  info: MyCarsInfo
+  actions: Actions
+  status: MyCarsStatus
+  buttons: MyCarsButtons
+  tooltip: Tooltip
+  error: GdprError
+}
+
+export interface Actions {
+  valid: string
+  invalid: string
+}
+
+export interface MyCarsButtons {
+  openProcess: string
+  seeDetails: string
+}
+
+export interface MyCarsInfo {
+  noCarsAvailable: string
+}
+
+export interface MyCarsStatus {
+  coOwned: string
+  recycle: string
+  done: string
+}
+
+export interface MyCarsSubTitles {
+  pending: string
   active: string
-  inactive: string
+  done: string
+}
+
+export interface Tooltip {
+  text: string
+  link: string
 }
 
 export interface NotFound {
@@ -296,123 +398,95 @@ export interface NotFound {
   button: string
 }
 
-export interface ErrorBoundary {
-  title: string
-  contents: string[]
+export interface Processes {
+  step: string
+  outOf: string
+  citizen: Citizen
+  company: ProcessesCompany
 }
 
-export interface DeregisterSelect {
+export interface Citizen {
+  title: string
+  sections: string[]
+  completed: string
+}
+
+export interface ProcessesCompany {
+  title: string
+  sections: string[]
+}
+
+export interface RecyclingCompanies {
   title: string
   info: string
-  input: InputField
-  buttons: DeregisterSelectButtons
+  empty: string
+  subtitles: RecyclingCompaniesSubtitles
+  status: AccessControlStatus
+  buttons: SubtitlesClass
 }
 
-export interface Deregister {
-  titles: ProcessTitles
-  info: ProcessTitles
-  buttons: DeregisterButtons
-  success: string
-  error: Errors
-}
-
-export interface DeregisterOverviewSubTitles {
-  history: string
-}
-
-export interface DeregisterOverviewButtons {
-  deregister: string
-}
-
-export interface ReyclingFundOverviewSubTitles {
-  deregistered: string
-}
-
-export interface ReyclingFundOverviewButtons {
-  export: string
-}
-
-export interface CompanyInfoSubTitles {
-  location: string
-}
-
-export interface RecyclingCompaniesSubTitles {
+export interface RecyclingCompaniesSubtitles {
   companies: string
 }
 
-export interface DeregisterOverviewButtons {
-  add: string
-  delete: string
-  edit: string
+export interface RecyclingFundOverview {
+  title: string
+  subtitles: RecyclingFundOverviewSubtitles
+  info: string
+  buttons: RecyclingFundOverviewButtons
+  search: Search
+  table: string[]
 }
 
-export interface DeregisterSelectButtons {
-  cancel: string
-  continue: string
+export interface RecyclingFundOverviewButtons {
+  export: string
 }
 
-export interface DeregisterButtons {
-  back: string
-  confirm: string
-}
-
-export interface DeregisterSidenav {
-  deregister: string
-  companyInfo: string
+export interface RecyclingFundOverviewSubtitles {
+  deregistered: string
 }
 
 export interface RecyclingFundSidenav {
   title: string
   recycled: string
   companies: string
-}
-
-export interface InputField {
-  label: string
-  placeholder: string
-  errors: InputErrors
+  accessControl: string
 }
 
 export interface Routes {
-  home: HomeRoutes
+  home: RoutesHome
   myCars: string
-  recycleVehicle: RecycleVehicleRoutes
-  deregisterVehicle: DeregisterVehicleRoutes
+  recycleVehicle: RecycleVehicle
+  deregisterVehicle: RoutesDeregisterVehicle
   recycledVehicles: string
-  recyclingCompanies: RecyclingCompaniesRoutes
-  companyInfo: CompanyInfoRoutes
+  accessControl: string
+  recyclingCompanies: RecyclingCompaniesClass
+  companyInfo: RecyclingCompaniesClass
 }
 
-export interface HomeRoutes {
-  citizen: string
-  recyclingCompany: string
-  recyclingFund: string
-  developer: string
-}
-
-export interface RecycleVehicleRoutes {
+export interface RecyclingCompaniesClass {
   baseRoute: string
-  confirm: string
-  handover: string
-  completed: string
+  add: string
+  edit: string
 }
 
-export interface DeregisterVehicleRoutes {
+export interface RoutesDeregisterVehicle {
   baseRoute: string
   select: string
   deregister: string
 }
 
-export interface CompanyInfoRoutes {
-  baseRoute: string
-  add: string
-  edit: string
+export interface RoutesHome {
+  citizen: string
+  recyclingCompany: string
+  recyclingFund: string
 }
 
-export interface RecyclingCompaniesRoutes {
+export interface RecycleVehicle {
   baseRoute: string
-  add: string
-  edit: string
+  confirm: string
+  handover: string
+  completed: string
 }
 
 // Converts JSON strings to/from your types
@@ -427,7 +501,14 @@ export class Convert {
   }
 }
 
-function invalidValue(typ: any, val: any): never {
+function invalidValue(typ: any, val: any, key: any = ''): never {
+  if (key) {
+    throw Error(
+      `Invalid value for key "${key}". Expected type ${JSON.stringify(
+        typ,
+      )} but got ${JSON.stringify(val)}`,
+    )
+  }
   throw Error(
     `Invalid value ${JSON.stringify(val)} for type ${JSON.stringify(typ)}`,
   )
@@ -451,10 +532,10 @@ function jsToJSONProps(typ: any): any {
   return typ.jsToJSON
 }
 
-function transform(val: any, typ: any, getProps: any): any {
+function transform(val: any, typ: any, getProps: any, key: any = ''): any {
   function transformPrimitive(typ: string, val: any): any {
     if (typeof typ === typeof val) return val
-    return invalidValue(typ, val)
+    return invalidValue(typ, val, key)
   }
 
   function transformUnion(typs: any[], val: any): any {
@@ -505,11 +586,11 @@ function transform(val: any, typ: any, getProps: any): any {
       const v = Object.prototype.hasOwnProperty.call(val, key)
         ? val[key]
         : undefined
-      result[prop.key] = transform(v, prop.typ, getProps)
+      result[prop.key] = transform(v, prop.typ, getProps, prop.key)
     })
     Object.getOwnPropertyNames(val).forEach((key) => {
       if (!Object.prototype.hasOwnProperty.call(props, key)) {
-        result[key] = transform(val[key], additional, getProps)
+        result[key] = transform(val[key], additional, getProps, key)
       }
     })
     return result
@@ -565,4 +646,651 @@ function m(additional: any) {
 
 function r(name: string) {
   return { ref: name }
+}
+
+const typeMap: any = {
+  Translation: o(
+    [
+      { json: 'home', js: 'home', typ: r('TranslationHome') },
+      { json: 'header', js: 'header', typ: r('Header') },
+      { json: 'footer', js: 'footer', typ: r('Footer') },
+      { json: 'gdpr', js: 'gdpr', typ: r('Gdpr') },
+      { json: 'myCars', js: 'myCars', typ: r('MyCars') },
+      { json: 'confirm', js: 'confirm', typ: r('Confirm') },
+      { json: 'handover', js: 'handover', typ: r('Handover') },
+      { json: 'completed', js: 'completed', typ: r('Completed') },
+      { json: 'processes', js: 'processes', typ: r('Processes') },
+      {
+        json: 'deregisterOverview',
+        js: 'deregisterOverview',
+        typ: r('DeregisterOverview'),
+      },
+      { json: 'companyInfo', js: 'companyInfo', typ: r('CompanyInfo') },
+      {
+        json: 'companyInfoForm',
+        js: 'companyInfoForm',
+        typ: r('CompanyInfoForm'),
+      },
+      {
+        json: 'deregisterSidenav',
+        js: 'deregisterSidenav',
+        typ: r('DeregisterSidenav'),
+      },
+      {
+        json: 'deregisterVehicle',
+        js: 'deregisterVehicle',
+        typ: r('TranslationDeregisterVehicle'),
+      },
+      {
+        json: 'recyclingFundOverview',
+        js: 'recyclingFundOverview',
+        typ: r('RecyclingFundOverview'),
+      },
+      {
+        json: 'recyclingFundSidenav',
+        js: 'recyclingFundSidenav',
+        typ: r('RecyclingFundSidenav'),
+      },
+      {
+        json: 'recyclingCompanies',
+        js: 'recyclingCompanies',
+        typ: r('RecyclingCompanies'),
+      },
+      { json: 'accessControl', js: 'accessControl', typ: r('AccessControl') },
+      { json: 'notFound', js: 'notFound', typ: r('NotFound') },
+      { json: 'errorBoundary', js: 'errorBoundary', typ: r('ErrorBoundary') },
+      { json: 'routes', js: 'routes', typ: r('Routes') },
+    ],
+    false,
+  ),
+  AccessControl: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'info', js: 'info', typ: '' },
+      { json: 'empty', js: 'empty', typ: '' },
+      { json: 'tableHeaders', js: 'tableHeaders', typ: r('TableHeaders') },
+      { json: 'status', js: 'status', typ: r('AccessControlStatus') },
+      { json: 'buttons', js: 'buttons', typ: r('SubtitlesClass') },
+      { json: 'modal', js: 'modal', typ: r('Modal') },
+    ],
+    false,
+  ),
+  SubtitlesClass: o(
+    [
+      { json: 'add', js: 'add', typ: '' },
+      { json: 'edit', js: 'edit', typ: '' },
+    ],
+    false,
+  ),
+  Modal: o(
+    [
+      { json: 'titles', js: 'titles', typ: r('SubtitlesClass') },
+      { json: 'subtitles', js: 'subtitles', typ: r('SubtitlesClass') },
+      { json: 'inputs', js: 'inputs', typ: r('Inputs') },
+      { json: 'buttons', js: 'buttons', typ: r('ConfirmButtons') },
+    ],
+    false,
+  ),
+  ConfirmButtons: o(
+    [
+      { json: 'cancel', js: 'cancel', typ: '' },
+      { json: 'continue', js: 'continue', typ: '' },
+    ],
+    false,
+  ),
+  Inputs: o(
+    [
+      { json: 'nationalId', js: 'nationalId', typ: r('NationalID') },
+      { json: 'name', js: 'name', typ: r('Name') },
+      { json: 'role', js: 'role', typ: r('Name') },
+      { json: 'partner', js: 'partner', typ: r('Name') },
+    ],
+    false,
+  ),
+  Name: o(
+    [
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'placeholder', js: 'placeholder', typ: '' },
+      { json: 'rules', js: 'rules', typ: r('NameRules') },
+    ],
+    false,
+  ),
+  NameRules: o([{ json: 'required', js: 'required', typ: '' }], false),
+  NationalID: o(
+    [
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'placeholder', js: 'placeholder', typ: '' },
+      { json: 'rules', js: 'rules', typ: r('NationalIDRules') },
+    ],
+    false,
+  ),
+  NationalIDRules: o(
+    [
+      { json: 'required', js: 'required', typ: '' },
+      { json: 'validate', js: 'validate', typ: '' },
+    ],
+    false,
+  ),
+  AccessControlStatus: o(
+    [
+      { json: 'active', js: 'active', typ: '' },
+      { json: 'inactive', js: 'inactive', typ: '' },
+    ],
+    false,
+  ),
+  TableHeaders: o(
+    [
+      { json: 'nationalId', js: 'nationalId', typ: '' },
+      { json: 'name', js: 'name', typ: '' },
+      { json: 'role', js: 'role', typ: '' },
+      { json: 'partner', js: 'partner', typ: '' },
+    ],
+    false,
+  ),
+  CompanyInfo: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'info', js: 'info', typ: '' },
+      { json: 'empty', js: 'empty', typ: '' },
+      { json: 'subtitles', js: 'subtitles', typ: r('CompanyInfoSubtitles') },
+      { json: 'buttons', js: 'buttons', typ: r('CompanyInfoButtons') },
+    ],
+    false,
+  ),
+  CompanyInfoButtons: o(
+    [
+      { json: 'add', js: 'add', typ: '' },
+      { json: 'edit', js: 'edit', typ: '' },
+      { json: 'delete', js: 'delete', typ: '' },
+    ],
+    false,
+  ),
+  CompanyInfoSubtitles: o(
+    [{ json: 'location', js: 'location', typ: '' }],
+    false,
+  ),
+  CompanyInfoForm: o(
+    [
+      { json: 'addTitle', js: 'addTitle', typ: '' },
+      { json: 'editTitle', js: 'editTitle', typ: '' },
+      { json: 'form', js: 'form', typ: r('Form') },
+      { json: 'buttons', js: 'buttons', typ: r('CompanyInfoFormButtons') },
+      { json: 'success', js: 'success', typ: '' },
+    ],
+    false,
+  ),
+  CompanyInfoFormButtons: o(
+    [
+      { json: 'add', js: 'add', typ: '' },
+      { json: 'save', js: 'save', typ: '' },
+      { json: 'cancel', js: 'cancel', typ: '' },
+    ],
+    false,
+  ),
+  Form: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'company', js: 'company', typ: r('FormCompany') },
+      { json: 'visitingAddress', js: 'visitingAddress', typ: r('Search') },
+      { json: 'postNumber', js: 'postNumber', typ: r('Search') },
+      { json: 'city', js: 'city', typ: r('Search') },
+      { json: 'website', js: 'website', typ: r('Search') },
+      { json: 'phoneNumber', js: 'phoneNumber', typ: r('Search') },
+    ],
+    false,
+  ),
+  Search: o(
+    [
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'placeholder', js: 'placeholder', typ: '' },
+    ],
+    false,
+  ),
+  FormCompany: o([{ json: 'label', js: 'label', typ: '' }], false),
+  Completed: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'subTitles', js: 'subTitles', typ: r('CompletedSubTitles') },
+      { json: 'info', js: 'info', typ: r('CompletedInfo') },
+      { json: 'confirmedBy', js: 'confirmedBy', typ: r('ConfirmedBy') },
+      { json: 'error', js: 'error', typ: r('CompletedError') },
+      { json: 'buttons', js: 'buttons', typ: r('CompletedButtons') },
+    ],
+    false,
+  ),
+  CompletedButtons: o([{ json: 'close', js: 'close', typ: '' }], false),
+  ConfirmedBy: o(
+    [
+      { json: 'user', js: 'user', typ: '' },
+      { json: 'company', js: 'company', typ: '' },
+      { json: 'authority', js: 'authority', typ: '' },
+      { json: 'fund', js: 'fund', typ: '' },
+    ],
+    false,
+  ),
+  CompletedError: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'message', js: 'message', typ: '' },
+      { json: 'primaryButton', js: 'primaryButton', typ: '' },
+      { json: 'secondaryButton', js: 'secondaryButton', typ: u(undefined, '') },
+    ],
+    false,
+  ),
+  CompletedInfo: o(
+    [
+      { json: 'oldDeregistration', js: 'oldDeregistration', typ: '' },
+      { json: 'payment', js: 'payment', typ: '' },
+      { json: 'paymentLinkText', js: 'paymentLinkText', typ: '' },
+    ],
+    false,
+  ),
+  CompletedSubTitles: o(
+    [
+      { json: 'summary', js: 'summary', typ: '' },
+      { json: 'payment', js: 'payment', typ: '' },
+    ],
+    false,
+  ),
+  Confirm: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'subTitles', js: 'subTitles', typ: r('ConfirmSubTitles') },
+      { json: 'info', js: 'info', typ: '' },
+      { json: 'buttons', js: 'buttons', typ: r('ConfirmButtons') },
+      { json: 'checkbox', js: 'checkbox', typ: r('Checkbox') },
+    ],
+    false,
+  ),
+  Checkbox: o(
+    [
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'linkLabel', js: 'linkLabel', typ: '' },
+    ],
+    false,
+  ),
+  ConfirmSubTitles: o([{ json: 'confirm', js: 'confirm', typ: '' }], false),
+  DeregisterOverview: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'info', js: 'info', typ: '' },
+      {
+        json: 'subtitles',
+        js: 'subtitles',
+        typ: r('DeregisterOverviewSubtitles'),
+      },
+      { json: 'buttons', js: 'buttons', typ: r('DeregisterOverviewButtons') },
+      { json: 'search', js: 'search', typ: r('Search') },
+      { json: 'table', js: 'table', typ: a('') },
+    ],
+    false,
+  ),
+  DeregisterOverviewButtons: o(
+    [{ json: 'deregister', js: 'deregister', typ: '' }],
+    false,
+  ),
+  DeregisterOverviewSubtitles: o(
+    [{ json: 'history', js: 'history', typ: '' }],
+    false,
+  ),
+  DeregisterSidenav: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'deregister', js: 'deregister', typ: '' },
+      { json: 'companyInfo', js: 'companyInfo', typ: '' },
+    ],
+    false,
+  ),
+  TranslationDeregisterVehicle: o(
+    [
+      { json: 'select', js: 'select', typ: r('Select') },
+      { json: 'deregister', js: 'deregister', typ: r('Deregister') },
+    ],
+    false,
+  ),
+  Deregister: o(
+    [
+      { json: 'titles', js: 'titles', typ: r('InfoClass') },
+      { json: 'info', js: 'info', typ: r('InfoClass') },
+      { json: 'buttons', js: 'buttons', typ: r('DeregisterButtons') },
+      { json: 'success', js: 'success', typ: '' },
+      { json: 'error', js: 'error', typ: r('CompletedError') },
+    ],
+    false,
+  ),
+  DeregisterButtons: o(
+    [
+      { json: 'back', js: 'back', typ: '' },
+      { json: 'confirm', js: 'confirm', typ: '' },
+    ],
+    false,
+  ),
+  InfoClass: o(
+    [
+      { json: 'success', js: 'success', typ: '' },
+      { json: 'error', js: 'error', typ: '' },
+      { json: 'notfound', js: 'notfound', typ: u(undefined, '') },
+      { json: 'loading', js: 'loading', typ: u(undefined, '') },
+    ],
+    false,
+  ),
+  Select: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'info', js: 'info', typ: '' },
+      { json: 'input', js: 'input', typ: r('Input') },
+      { json: 'buttons', js: 'buttons', typ: r('ConfirmButtons') },
+    ],
+    false,
+  ),
+  Input: o(
+    [
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'placeholder', js: 'placeholder', typ: '' },
+      { json: 'errors', js: 'errors', typ: r('Errors') },
+    ],
+    false,
+  ),
+  Errors: o(
+    [
+      { json: 'empty', js: 'empty', typ: '' },
+      { json: 'length', js: 'length', typ: '' },
+      { json: 'invalidRegNumber', js: 'invalidRegNumber', typ: '' },
+    ],
+    false,
+  ),
+  ErrorBoundary: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'contents', js: 'contents', typ: a('') },
+    ],
+    false,
+  ),
+  Footer: o(
+    [
+      { json: 'topLinksInfo', js: 'topLinksInfo', typ: a(r('BottomLink')) },
+      {
+        json: 'topLinksContact',
+        js: 'topLinksContact',
+        typ: a(r('BottomLink')),
+      },
+      { json: 'bottomLinksTitle', js: 'bottomLinksTitle', typ: '' },
+      { json: 'bottomLinks', js: 'bottomLinks', typ: a(r('BottomLink')) },
+    ],
+    false,
+  ),
+  BottomLink: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'href', js: 'href', typ: '' },
+    ],
+    false,
+  ),
+  Gdpr: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'subTitles', js: 'subTitles', typ: r('GdprSubTitles') },
+      { json: 'info', js: 'info', typ: '' },
+      { json: 'checkbox', js: 'checkbox', typ: '' },
+      { json: 'buttons', js: 'buttons', typ: r('GdprButtons') },
+      { json: 'error', js: 'error', typ: r('GdprError') },
+    ],
+    false,
+  ),
+  GdprButtons: o([{ json: 'continue', js: 'continue', typ: '' }], false),
+  GdprError: o(
+    [
+      { json: 'message', js: 'message', typ: '' },
+      { json: 'primaryButton', js: 'primaryButton', typ: '' },
+    ],
+    false,
+  ),
+  GdprSubTitles: o([{ json: 'info', js: 'info', typ: '' }], false),
+  Handover: o(
+    [
+      { json: 'titles', js: 'titles', typ: r('InfoClass') },
+      { json: 'info', js: 'info', typ: '' },
+      { json: 'subTitles', js: 'subTitles', typ: r('HandoverSubTitles') },
+      { json: 'subInfo', js: 'subInfo', typ: '' },
+      { json: 'buttons', js: 'buttons', typ: r('HandoverButtons') },
+      { json: 'error', js: 'error', typ: r('CompletedError') },
+      { json: 'cancelModal', js: 'cancelModal', typ: r('CancelModal') },
+    ],
+    false,
+  ),
+  HandoverButtons: o(
+    [
+      { json: 'cancel', js: 'cancel', typ: '' },
+      { json: 'close', js: 'close', typ: '' },
+    ],
+    false,
+  ),
+  CancelModal: o(
+    [
+      { json: 'titles', js: 'titles', typ: r('CancelModalTitles') },
+      { json: 'info', js: 'info', typ: '' },
+      { json: 'buttons', js: 'buttons', typ: r('ConfirmButtons') },
+      { json: 'error', js: 'error', typ: r('CompletedError') },
+    ],
+    false,
+  ),
+  CancelModalTitles: o(
+    [
+      { json: 'info', js: 'info', typ: '' },
+      { json: 'error', js: 'error', typ: '' },
+    ],
+    false,
+  ),
+  HandoverSubTitles: o(
+    [
+      { json: 'nextStep', js: 'nextStep', typ: '' },
+      { json: 'companies', js: 'companies', typ: '' },
+    ],
+    false,
+  ),
+  Header: o([{ json: 'logoutText', js: 'logoutText', typ: '' }], false),
+  TranslationHome: o([{ json: 'title', js: 'title', typ: '' }], false),
+  MyCars: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'subTitles', js: 'subTitles', typ: r('MyCarsSubTitles') },
+      { json: 'info', js: 'info', typ: r('MyCarsInfo') },
+      { json: 'actions', js: 'actions', typ: r('Actions') },
+      { json: 'status', js: 'status', typ: r('MyCarsStatus') },
+      { json: 'buttons', js: 'buttons', typ: r('MyCarsButtons') },
+      { json: 'tooltip', js: 'tooltip', typ: r('Tooltip') },
+      { json: 'error', js: 'error', typ: r('GdprError') },
+    ],
+    false,
+  ),
+  Actions: o(
+    [
+      { json: 'valid', js: 'valid', typ: '' },
+      { json: 'invalid', js: 'invalid', typ: '' },
+    ],
+    false,
+  ),
+  MyCarsButtons: o(
+    [
+      { json: 'openProcess', js: 'openProcess', typ: '' },
+      { json: 'seeDetails', js: 'seeDetails', typ: '' },
+    ],
+    false,
+  ),
+  MyCarsInfo: o(
+    [{ json: 'noCarsAvailable', js: 'noCarsAvailable', typ: '' }],
+    false,
+  ),
+  MyCarsStatus: o(
+    [
+      { json: 'coOwned', js: 'coOwned', typ: '' },
+      { json: 'recycle', js: 'recycle', typ: '' },
+      { json: 'done', js: 'done', typ: '' },
+    ],
+    false,
+  ),
+  MyCarsSubTitles: o(
+    [
+      { json: 'pending', js: 'pending', typ: '' },
+      { json: 'active', js: 'active', typ: '' },
+      { json: 'done', js: 'done', typ: '' },
+    ],
+    false,
+  ),
+  Tooltip: o(
+    [
+      { json: 'text', js: 'text', typ: '' },
+      { json: 'link', js: 'link', typ: '' },
+    ],
+    false,
+  ),
+  NotFound: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'content', js: 'content', typ: '' },
+      { json: 'button', js: 'button', typ: '' },
+    ],
+    false,
+  ),
+  Processes: o(
+    [
+      { json: 'step', js: 'step', typ: '' },
+      { json: 'outOf', js: 'outOf', typ: '' },
+      { json: 'citizen', js: 'citizen', typ: r('Citizen') },
+      { json: 'company', js: 'company', typ: r('ProcessesCompany') },
+    ],
+    false,
+  ),
+  Citizen: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'sections', js: 'sections', typ: a('') },
+      { json: 'completed', js: 'completed', typ: '' },
+    ],
+    false,
+  ),
+  ProcessesCompany: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'sections', js: 'sections', typ: a('') },
+    ],
+    false,
+  ),
+  RecyclingCompanies: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'info', js: 'info', typ: '' },
+      { json: 'empty', js: 'empty', typ: '' },
+      {
+        json: 'subtitles',
+        js: 'subtitles',
+        typ: r('RecyclingCompaniesSubtitles'),
+      },
+      { json: 'status', js: 'status', typ: r('AccessControlStatus') },
+      { json: 'buttons', js: 'buttons', typ: r('SubtitlesClass') },
+    ],
+    false,
+  ),
+  RecyclingCompaniesSubtitles: o(
+    [{ json: 'companies', js: 'companies', typ: '' }],
+    false,
+  ),
+  RecyclingFundOverview: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      {
+        json: 'subtitles',
+        js: 'subtitles',
+        typ: r('RecyclingFundOverviewSubtitles'),
+      },
+      { json: 'info', js: 'info', typ: '' },
+      {
+        json: 'buttons',
+        js: 'buttons',
+        typ: r('RecyclingFundOverviewButtons'),
+      },
+      { json: 'search', js: 'search', typ: r('Search') },
+      { json: 'table', js: 'table', typ: a('') },
+    ],
+    false,
+  ),
+  RecyclingFundOverviewButtons: o(
+    [{ json: 'export', js: 'export', typ: '' }],
+    false,
+  ),
+  RecyclingFundOverviewSubtitles: o(
+    [{ json: 'deregistered', js: 'deregistered', typ: '' }],
+    false,
+  ),
+  RecyclingFundSidenav: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'recycled', js: 'recycled', typ: '' },
+      { json: 'companies', js: 'companies', typ: '' },
+      { json: 'accessControl', js: 'accessControl', typ: '' },
+    ],
+    false,
+  ),
+  Routes: o(
+    [
+      { json: 'home', js: 'home', typ: r('RoutesHome') },
+      { json: 'myCars', js: 'myCars', typ: '' },
+      {
+        json: 'recycleVehicle',
+        js: 'recycleVehicle',
+        typ: r('RecycleVehicle'),
+      },
+      {
+        json: 'deregisterVehicle',
+        js: 'deregisterVehicle',
+        typ: r('RoutesDeregisterVehicle'),
+      },
+      { json: 'recycledVehicles', js: 'recycledVehicles', typ: '' },
+      { json: 'accessControl', js: 'accessControl', typ: '' },
+      {
+        json: 'recyclingCompanies',
+        js: 'recyclingCompanies',
+        typ: r('RecyclingCompaniesClass'),
+      },
+      {
+        json: 'companyInfo',
+        js: 'companyInfo',
+        typ: r('RecyclingCompaniesClass'),
+      },
+    ],
+    false,
+  ),
+  RecyclingCompaniesClass: o(
+    [
+      { json: 'baseRoute', js: 'baseRoute', typ: '' },
+      { json: 'add', js: 'add', typ: '' },
+      { json: 'edit', js: 'edit', typ: '' },
+    ],
+    false,
+  ),
+  RoutesDeregisterVehicle: o(
+    [
+      { json: 'baseRoute', js: 'baseRoute', typ: '' },
+      { json: 'select', js: 'select', typ: '' },
+      { json: 'deregister', js: 'deregister', typ: '' },
+    ],
+    false,
+  ),
+  RoutesHome: o(
+    [
+      { json: 'citizen', js: 'citizen', typ: '' },
+      { json: 'recyclingCompany', js: 'recyclingCompany', typ: '' },
+      { json: 'recyclingFund', js: 'recyclingFund', typ: '' },
+    ],
+    false,
+  ),
+  RecycleVehicle: o(
+    [
+      { json: 'baseRoute', js: 'baseRoute', typ: '' },
+      { json: 'confirm', js: 'confirm', typ: '' },
+      { json: 'handover', js: 'handover', typ: '' },
+      { json: 'completed', js: 'completed', typ: '' },
+    ],
+    false,
+  ),
 }
