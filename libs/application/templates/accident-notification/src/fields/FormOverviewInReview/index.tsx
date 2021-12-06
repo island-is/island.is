@@ -82,6 +82,7 @@ export const FormOverviewInReview: FC<
             textarea
             backgroundColor="blue"
             rows={10}
+            maxLength={2000}
             label={formatMessage(thirdPartyComment.labels.comment)}
             placeholder={formatMessage(
               thirdPartyComment.labels.commentPlaceholder,
