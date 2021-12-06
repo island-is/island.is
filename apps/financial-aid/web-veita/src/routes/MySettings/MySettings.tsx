@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 
 import {
   Text,
@@ -6,24 +6,14 @@ import {
   Input,
   ToggleSwitchCheckbox,
   Button,
-  toast,
   ToastContainer,
 } from '@island.is/island-ui/core'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 import * as profileStyles from '@island.is/financial-aid-web/veita/src/components/Profile/Profile.css'
-import {
-  InputType,
-  isEmailValid,
-  Staff,
-  staffRoleDescription,
-  User,
-} from '@island.is/financial-aid/shared/lib'
-import { useLazyQuery, useMutation } from '@apollo/client'
-import {
-  CurrentUserQuery,
-  UpdateStaffMutation,
-} from '@island.is/financial-aid-web/veita/graphql'
+import { InputType, isEmailValid } from '@island.is/financial-aid/shared/lib'
+
+import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 
 interface mySettingsState {
   nationalId?: string
@@ -36,11 +26,9 @@ interface mySettingsState {
 }
 
 export const MySettings = () => {
-  const { admin, setAdmin } = useContext(AdminContext)
+  const { admin } = useContext(AdminContext)
 
-  const [updateStaff, { data, loading }] = useMutation<{ updateStaff: Staff }>(
-    UpdateStaffMutation,
-  )
+  const { updateInfo, staffActivationLoading } = useStaff()
 
   const [state, setState] = useState<mySettingsState>({
     email: admin?.staff?.email,
@@ -89,27 +77,15 @@ export const MySettings = () => {
       return
     }
 
-    try {
-      await updateStaff({
-        variables: {
-          input: {
-            id: admin?.staff?.id,
-            nickname: state.nickname,
-            email: state.email,
-            usePseudoName: state.usePseudoName,
-          },
-        },
-      }).then((res) => {
-        if (res.data?.updateStaff && setAdmin && admin) {
-          setAdmin({ ...admin, staff: res.data?.updateStaff })
-          toast.success('Það tókst að uppfæra notanda')
-        }
-      })
-    } catch (e) {
-      toast.error(
-        'Ekki tókst að uppfæra notanda, vinsamlega reynið aftur síðar',
-      )
-    }
+    await updateInfo(
+      admin?.staff?.id,
+      admin?.staff?.nationalId,
+      admin?.staff?.roles,
+      state.nickname,
+      state.email,
+      state.usePseudoName,
+      true,
+    )
   }
 
   return (
@@ -165,8 +141,8 @@ export const MySettings = () => {
                 </Text>
               }
               checked={state.usePseudoName}
-              onChange={(newChecked) => {
-                setState({ ...state, usePseudoName: newChecked })
+              onChange={(isChecked) => {
+                setState({ ...state, usePseudoName: isChecked })
               }}
               className={``}
             />
@@ -185,7 +161,11 @@ export const MySettings = () => {
         justifyContent="flexEnd"
         className={`contentUp delay-125`}
       >
-        <Button loading={loading} onClick={onSubmitUpdate} icon="checkmark">
+        <Button
+          loading={staffActivationLoading}
+          onClick={onSubmitUpdate}
+          icon="checkmark"
+        >
           Vista stillingar
         </Button>
       </Box>
