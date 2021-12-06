@@ -35,7 +35,11 @@ export const getAttachmentTitles = (answers: AccidentNotification) => {
 
   if (hasAttachment(deathCertificateFile))
     files.push(attachments.documentNames.deathCertificate)
-  if (hasAttachment(injuryCertificateFile))
+  if (
+    hasAttachment(injuryCertificateFile) &&
+    answers.injuryCertificate?.answer !==
+      AttachmentsEnum.HOSPITALSENDSCERTIFICATE
+  )
     files.push(attachments.documentNames.injuryCertificate)
   if (hasAttachment(powerOfAttorneyFile))
     files.push(attachments.documentNames.powerOfAttorneyDocument)
