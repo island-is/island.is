@@ -2,7 +2,7 @@ import { toast } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { defaultLanguage } from '@island.is/shared/constants'
-import { gql, useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import {
   Modal,
   ServicePortalModuleComponent,
@@ -13,6 +13,7 @@ import {
   useCreateIslykillSettings,
   useUserProfile,
   useUserProfileAndIslykill,
+  UPDATE_ISLYKILL_SETTINGS,
 } from '@island.is/service-portal/graphql'
 import React, { useState } from 'react'
 import { EmailFormData } from '../Forms/EmailForm'
@@ -42,14 +43,6 @@ const defaultLanguageOption: LanguageFormOption = {
   label: 'Íslenska',
 }
 
-const UpdateIslykillSettings = gql`
-  mutation updateIslykillSettings($input: UpdateIslykillSettingsInput!) {
-    updateIslykillSettings(input: $input) {
-      nationalId
-    }
-  }
-`
-
 const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const [toggleCloseModal, setToggleCloseModal] = useState(false)
   const [step, setStep] = useState<OnboardingStep>('language-form')
@@ -63,7 +56,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const { updateUserProfile } = useUpdateUserProfile()
 
   const { createIslykillSettings } = useCreateIslykillSettings()
-  const [updateIslykill] = useMutation(UpdateIslykillSettings)
+  const [updateIslykill] = useMutation(UPDATE_ISLYKILL_SETTINGS)
 
   const { data: userProfile } = useUserProfile()
   const { data: settings } = useUserProfileAndIslykill()
