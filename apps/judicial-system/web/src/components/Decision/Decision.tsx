@@ -8,7 +8,7 @@ import { useCase } from '../../utils/hooks'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   acceptedLabelText: string
   rejectedLabelText: string
   partiallyAcceptedLabelText: string
