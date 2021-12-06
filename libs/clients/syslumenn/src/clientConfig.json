@@ -19,9 +19,7 @@
   "paths": {
     "/v1/Innskraning": {
       "post": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "Innskraning_Post",
         "consumes": [
           "application/json-patch+json",
@@ -68,9 +66,7 @@
     },
     "/v1/Postnumer": {
       "get": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "Postnumer_GetPostnumerAll",
         "responses": {
           "200": {
@@ -93,9 +89,7 @@
     },
     "/v1/Postnumer/{id}": {
       "get": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "Postnumer_GetPostnumer",
         "parameters": [
           {
@@ -139,9 +133,7 @@
     },
     "/v1/AdfarabeidnirHeimildaflokkur": {
       "get": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "AdfarabeidnirHeimildaflokkur_GetAdfarabeidnirHeimildaflokkurAll",
         "responses": {
           "200": {
@@ -164,9 +156,7 @@
     },
     "/v1/AdfarabeidnirHeimildaflokkur/{id}": {
       "get": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "AdfarabeidnirHeimildaflokkur_GetAdfarabeidnirHeimildaflokkur",
         "parameters": [
           {
@@ -210,9 +200,7 @@
     },
     "/v1/Embaetti": {
       "get": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "Embaetti_GetEmbaettiAll",
         "responses": {
           "200": {
@@ -235,9 +223,7 @@
     },
     "/v1/Embaetti/{id}": {
       "get": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "Embaetti_GetEmbaetti",
         "parameters": [
           {
@@ -280,9 +266,7 @@
     },
     "/api/Uppbod/{audkenni}": {
       "get": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "Uppbod_Get",
         "parameters": [
           {
@@ -328,9 +312,7 @@
     },
     "/v1/IdngreinarMeistara": {
       "get": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "IdngreinarMeistara_Get",
         "responses": {
           "200": {
@@ -356,9 +338,7 @@
     },
     "/api/VirkLeyfi/{audkenni}": {
       "get": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "VirkLeyfi_Get",
         "parameters": [
           {
@@ -424,9 +404,7 @@
     },
     "/v1/VirkarHeimagistingar/{audkenni}": {
       "get": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "VirkarHeimagistingar_GetAll",
         "parameters": [
           {
@@ -472,9 +450,7 @@
     },
     "/v1/VirkarHeimagistingar/{audkenni}/{ar}": {
       "get": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "VirkarHeimagistingar_Get",
         "parameters": [
           {
@@ -527,9 +503,7 @@
     },
     "/v1/ArangurslausFraDags": {
       "post": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "ArangurslausFraDags_Post",
         "consumes": [
           "application/json-patch+json",
@@ -573,9 +547,7 @@
     },
     "/v1/Fullnustusvid/Naudungarsala/UppbodFaFasteignir": {
       "get": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "UppbodFaFasteignir_Get",
         "responses": {
           "200": {
@@ -598,9 +570,7 @@
     },
     "/v1/ArangurslausFraTilDags": {
       "post": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "ArangurslausFraTilDags_Post",
         "consumes": [
           "application/json-patch+json",
@@ -644,9 +614,7 @@
     },
     "/v1/Danarbu/YfirlitUmFramvinduSkipta": {
       "post": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "YfirlitUmFramvinduSkipta_Post",
         "consumes": [
           "application/json-patch+json",
@@ -693,9 +661,7 @@
     },
     "/api/AlmennFyrirspurn/{audkenni}/{eining}/{adgerd}": {
       "get": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "AlmennFyrirspurn_Get",
         "parameters": [
           {
@@ -752,9 +718,7 @@
     },
     "/api/FaVottordUpplysingar/{audkenni}/{kennitala}": {
       "get": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "FaVottordUpplysingar_Get",
         "parameters": [
           {
@@ -814,9 +778,7 @@
     },
     "/v1/Almennt/MottakaRafraentSkjal": {
       "post": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "summary": "Aðgerðin móttekur rafræn undirrituð sköl sem færast sjálfkrafa inn í starfskerfi sýslumanna á þann málaflokk sem við á. ",
         "operationId": "MottakaRafraentSkjal_Post",
         "consumes": [
@@ -864,9 +826,7 @@
     },
     "/v1/Ping": {
       "get": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "summary": "Þessi aðgerð skila \"OK\" ef allar þjónustur eru í lagi, ef ekki skilar þjónustan \"ERR={ErrorCode}",
         "operationId": "Ping_Get",
         "responses": {
@@ -888,9 +848,7 @@
         ]
       },
       "post": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "summary": "Þessi aðgerð tekur við POST með auðkenningu og skilar til baka stöðu og hvort auðkenning sé í lagi.",
         "operationId": "Ping_Post",
         "consumes": [
@@ -938,9 +896,7 @@
     },
     "/api/v1/SyslMottakaGogn": {
       "post": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "SyslMottakaGogn_Post",
         "consumes": [
           "application/json-patch+json",
@@ -987,9 +943,7 @@
     },
     "/api/SyslSaekjaSkra": {
       "post": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "operationId": "SyslSaekjaSkra_Post",
         "consumes": [
           "application/json-patch+json",
@@ -1036,9 +990,7 @@
     },
     "/Version": {
       "get": {
-        "tags": [
-        "Syslumenn"
-        ],
+        "tags": "Syslumenn",
         "summary": "Þetta er einföld aðgerð án auðkenningar sem skilar útgáfunúmeri þjónustu ",
         "operationId": "Version_Get",
         "responses": {
