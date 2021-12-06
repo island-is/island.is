@@ -8,3 +8,11 @@ export const USER_PROFILE = gql`
     }
   }
 `
+
+export const UPDATE_USER_PROFILE = gql`
+  mutation updateProfile($input: UpdateUserProfileInput!) {
+    updateProfile(input: $input) {
+      locale
+    }
+  }
+`
