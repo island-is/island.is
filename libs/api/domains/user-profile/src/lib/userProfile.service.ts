@@ -64,7 +64,7 @@ export class UserProfileService {
         ...profile,
         /*
           Temporary solution while we still run the old user profile service.
-          The Islyklar db will only be updated with a verified email. (See verification service)
+          The Islyklar db will only be updated with a verified email. (See user-profile/verification.service.ts)
           When in the state of an unverified email: Display the userprofile mail.
         */
         mobilePhoneNumber:
