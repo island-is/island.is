@@ -206,7 +206,10 @@ const Index: React.FC = () => {
         <ContentWrapper>
           <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
             <ClientSecretForm
-              secrets={client.clientSecrets}
+              secrets={client.clientSecrets.sort(
+                (a, b) =>
+                  new Date(b.created).getTime() - new Date(a.created).getTime(),
+              )}
               clientId={client.clientId}
               clientType={client.clientType}
               handleBack={handleBack}
