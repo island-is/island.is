@@ -31,6 +31,7 @@ export type FinanceStatusDataType = {
   costTotals: number
   statusTotals: number
   organizations: Array<FinanceStatusOrganizationType>
+  downloadServiceURL: string
 }
 
 export type FinanceStatusDetailsChangeItem = {

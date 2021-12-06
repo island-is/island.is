@@ -1903,7 +1903,7 @@
             }
           }
         },
-        "e2e-ci": {
+        "e2e-ci-skip": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn e2e-ci -n application-system-form-e2e -t react -p 4242 -d dist/apps/application-system/form -c"
@@ -6229,6 +6229,27 @@
           "outputs": ["coverage/libs/nest/config"],
           "options": {
             "jestConfig": "libs/nest/config/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "nest-feature-flags": {
+      "root": "libs/nest/feature-flags",
+      "sourceRoot": "libs/nest/feature-flags/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/feature-flags/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/feature-flags"],
+          "options": {
+            "jestConfig": "libs/nest/feature-flags/jest.config.js",
             "passWithNoTests": true
           }
         }

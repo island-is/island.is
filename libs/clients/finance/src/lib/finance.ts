@@ -56,7 +56,7 @@ export class FinanceService extends RESTDataSource {
   ): Promise<FinanceStatus | null> {
     let response
     try {
-      response = await this.get<FinanceStatus | null>(
+      const dataResponse = await this.get<FinanceStatus | null>(
         `/customerStatusByOrganization?nationalID=${nationalID}`,
         {},
         {
@@ -66,6 +66,10 @@ export class FinanceService extends RESTDataSource {
           },
         },
       )
+      response = {
+        ...dataResponse,
+        downloadServiceURL: `${this.options.downloadServiceBaseUrl}/download/v1/finance/`,
+      } as FinanceStatus | null
     } catch (e) {
       return this.handleError('Failed to get finance status', e)
     }
@@ -157,7 +161,7 @@ export class FinanceService extends RESTDataSource {
   ): Promise<DocumentsListTypes> {
     let response
     try {
-      response = await this.get<DocumentsListTypes>(
+      const dataResponse = await this.get<DocumentsListTypes>(
         `/documentsList/${listPath}?nationalID=${nationalID}&dateFrom=${dayFrom}&dateTo=${dayTo}`,
         {},
         {
@@ -167,6 +171,10 @@ export class FinanceService extends RESTDataSource {
           },
         },
       )
+      response = {
+        ...dataResponse,
+        downloadServiceURL: `${this.options.downloadServiceBaseUrl}/download/v1/finance/`,
+      }
     } catch (e) {
       return this.handleError('Failed to get finance document list', e)
     }
@@ -200,10 +208,10 @@ export class FinanceService extends RESTDataSource {
     nationalID: string,
     year: string,
     authToken: string,
-  ): Promise<AnnualStatusTypes> {
+  ): Promise<DocumentTypes> {
     let response
     try {
-      response = await this.get<AnnualStatusTypes>(
+      response = await this.get<DocumentTypes>(
         `/annualStatusDocument?nationalID=${nationalID}&year=${year}`,
         {},
         {
