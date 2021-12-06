@@ -29,11 +29,13 @@ const ApplicationInfo = () => {
     user,
     setNationalRegistryData,
     setMunicipalityById,
-    loadingMuncipality,
+    loadingMunicipality,
   } = useContext(AppContext)
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
+  const [error, setError] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const nationalRegistryQuery = useAsyncLazyQuery<
     {
@@ -48,36 +50,24 @@ const ApplicationInfo = () => {
     router.pathname,
   ) as NavigationProps
 
-  // TODO: Add once national registry is connected to x-road
-  // const { data } = await nationalRegistryQuery({
-  //   input: { ssn: user?.nationalId },
-  // })
-
-  const data: { nationalRegistryUserV2: NationalRegistryData } = {
-    nationalRegistryUserV2: {
-      nationalId: user?.nationalId ?? '',
-      fullName: user?.name ?? '',
-      address: {
-        streetName: 'Hafnargata 7',
-        postalCode: '200',
-        city: 'Hafnarfjörður',
-        municipalityCode: '1400',
-      },
-      spouse: {
-        nationalId: undefined,
-        maritalStatus: undefined,
-        name: undefined,
-      },
-    },
-  }
-
-  if (!data || !data.nationalRegistryUserV2.address) {
-    return
-  }
-
   const errorCheck = async () => {
     if (!accept || !user) {
       setHasError(true)
+      return
+    }
+
+    setError(false)
+    setLoading(true)
+
+    const { data } = await nationalRegistryQuery({
+      input: { ssn: user?.nationalId },
+    }).catch(() => {
+      return { data: undefined }
+    })
+
+    if (!data || !data.nationalRegistryUserV2.address) {
+      setError(true)
+      setLoading(false)
       return
     }
 
@@ -86,15 +76,13 @@ const ApplicationInfo = () => {
     await setMunicipalityById(
       data.nationalRegistryUserV2.address.municipalityCode,
     ).then((municipality) => {
-      if (navigation.nextUrl && municipality && municipality.active) {
-        router.push(navigation?.nextUrl)
-      } else {
-        router.push(
-          Routes.serviceCenter(
-            data.nationalRegistryUserV2.address.municipalityCode,
-          ),
-        )
-      }
+      navigation.nextUrl && municipality && municipality.active
+        ? router.push(navigation?.nextUrl)
+        : router.push(
+            Routes.serviceCenter(
+              data.nationalRegistryUserV2.address.municipalityCode,
+            ),
+          )
     })
   }
 
@@ -151,6 +139,12 @@ const ApplicationInfo = () => {
             hasError={hasError}
             errorMessage={'Þú þarft að samþykkja gagnaöflun'}
           />
+
+          {error && (
+            <Text color="red600" fontWeight="semiBold" variant="small">
+              Eitthvað fór úrskeiðis, vinsamlegast reynið aftur síðar
+            </Text>
+          )}
         </Box>
 
         <Box
@@ -169,7 +163,7 @@ const ApplicationInfo = () => {
         nextButtonText="Staðfesta"
         nextButtonIcon="checkmark"
         onNextButtonClick={errorCheck}
-        nextIsLoading={loadingMuncipality}
+        nextIsLoading={loadingMunicipality || loading}
       />
     </>
   )

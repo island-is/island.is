@@ -126,10 +126,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          repository: 'island-is/cache'
-          path: 'cache/'
+          node-version: '14'
 
       - name: Cleanup disk space
         run: |
@@ -216,14 +215,14 @@ jobs:
 
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps
-        uses: ./cache/
+        uses: island-is/cache@v0.1
         with:
           path: cache
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-deps
 
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps-base
-        uses: ./cache/
+        uses: island-is/cache@v0.1
         with:
           path: cache_output
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-output-base
@@ -234,7 +233,7 @@ jobs:
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
-        uses: ./cache/
+        uses: island-is/cache@v0.1
         with:
           path: node_modules
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
@@ -248,7 +247,7 @@ jobs:
 
       - name: Cache for generated files
         id: generated-files-cache
-        uses: ./cache/
+        uses: island-is/cache@v0.1
         with:
           path: generated_files.tar.gz
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
@@ -308,10 +307,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: actions/checkout@v2
-        with:
-          repository: 'island-is/cache'
-          path: 'cache/'
 
       - uses: ./.github/actions/unit-test
         with:
@@ -344,16 +339,15 @@ jobs:
           echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
           echo "DOCKER_TYPE=$DOCKER_TYPE" >> $GITHUB_ENV
         continue-on-error: true
-      - uses: actions/checkout@v2
-        if: steps.gather.outcome == 'success'
-      - uses: actions/checkout@v2
-        if: steps.gather.outcome == 'success'
+      - uses: actions/setup-node@v2
         with:
-          repository: 'island-is/cache'
-          path: 'cache/'
+          node-version: '14'
+        if: steps.gather.outcome == 'success'
+      - uses: actions/checkout@v2
+        if: steps.gather.outcome == 'success'
       - name: Cache for generated files
         if: steps.gather.outcome == 'success'
-        uses: ./cache/
+        uses: island-is/cache@v0.1
         with:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
@@ -365,14 +359,14 @@ jobs:
       - name: Cache for dependencies Docker layer
         if: steps.gather.outcome == 'success'
         id: cache-deps
-        uses: ./cache/
+        uses: island-is/cache@v0.1
         with:
           path: cache_output
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-output-base
 
       - name: Cache for NodeJS dependencies - Docker layer
         if: steps.gather.outcome == 'success'
-        uses: ./cache/
+        uses: island-is/cache@v0.1
         with:
           path: cache
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps

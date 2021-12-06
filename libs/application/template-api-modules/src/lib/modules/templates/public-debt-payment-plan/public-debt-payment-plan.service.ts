@@ -1,4 +1,5 @@
 import { Application, getValueViaPath } from '@island.is/application/core'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   DefaultApi,
   PaymentsDT,
@@ -21,6 +22,10 @@ export class PublicDebtPaymentPlanTemplateService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
+
+  paymentScheduleApiWithAuth(auth: Auth) {
+    return this.paymentScheduleApi.withMiddleware(new AuthMiddleware(auth))
+  }
 
   private getValuesFromApplication(
     application: Application,
@@ -63,7 +68,7 @@ export class PublicDebtPaymentPlanTemplateService {
     return { email, phoneNumber, paymentPlans }
   }
 
-  async sendApplication({ application }: TemplateApiModuleActionProps) {
+  async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
     try {
       const {
         email,
@@ -87,7 +92,7 @@ export class PublicDebtPaymentPlanTemplateService {
         }
       })
 
-      await this.paymentScheduleApi.schedulesPOST6({
+      await this.paymentScheduleApiWithAuth(auth).schedulesPOST6({
         inputSchedules: {
           serviceInput: {
             email: email,

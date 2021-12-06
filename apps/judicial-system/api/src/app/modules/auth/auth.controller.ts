@@ -93,7 +93,8 @@ export class AuthController {
       return res.redirect('/?villa=innskraning-ogild')
     }
 
-    const { authId } = req.cookies[REDIRECT_COOKIE_NAME] ?? {}
+    const { authId, redirectRoute } = req.cookies[REDIRECT_COOKIE_NAME] ?? {}
+
     const { user } = verifyResult
     if (!user || (authId && user.authId !== authId)) {
       this.logger.error('Could not verify user authenticity', {
@@ -113,12 +114,17 @@ export class AuthController {
         mobile: user.mobile,
       },
       res,
+      redirectRoute,
       new Entropy({ bits: 128 }).string(),
     )
   }
 
   @Get('login')
-  login(@Res() res: Response, @Query('nationalId') nationalId: string) {
+  login(
+    @Res() res: Response,
+    @Query('redirectRoute') redirectRoute: string,
+    @Query('nationalId') nationalId: string,
+  ) {
     this.logger.debug('Received login request')
 
     const { name, options } = REDIRECT_COOKIE
@@ -136,6 +142,7 @@ export class AuthController {
           mobile: '',
         },
         res,
+        redirectRoute,
       )
     }
 
@@ -143,7 +150,7 @@ export class AuthController {
     const electronicIdOnly = '&qaa=4'
 
     return res
-      .cookie(name, { authId }, { ...options, maxAge: EXPIRES_IN_MILLISECONDS })
+      .cookie(name, { authId, redirectRoute }, options)
       .redirect(`${samlEntryPoint}&authId=${authId}${electronicIdOnly}`)
   }
 
@@ -160,6 +167,7 @@ export class AuthController {
   private async redirectAuthenticatedUser(
     authUser: AuthUser,
     res: Response,
+    redirectRoute: string,
     csrfToken?: string,
   ) {
     const user = await this.authService.findUser(authUser.nationalId)
@@ -193,7 +201,13 @@ export class AuthController {
           ...ACCESS_TOKEN_COOKIE.options,
           maxAge: EXPIRES_IN_MILLISECONDS,
         })
-        .redirect(user?.role === UserRole.ADMIN ? '/notendur' : '/krofur'),
+        .redirect(
+          redirectRoute
+            ? redirectRoute
+            : user.role === UserRole.ADMIN
+            ? '/notendur'
+            : '/krofur',
+        ),
       user.id,
     )
   }

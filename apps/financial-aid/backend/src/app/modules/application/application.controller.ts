@@ -88,6 +88,27 @@ export class ApplicationController {
     return currentApplication
   }
 
+  @UseGuards(RolesGuard, StaffGuard)
+  @RolesRules(RolesRule.VEITA)
+  @StaffRolesRules(StaffRole.EMPLOYEE)
+  @Get('find/:nationalId')
+  @ApiOkResponse({
+    type: ApplicationModel,
+    isArray: true,
+    description: 'Searches for application by nationalId',
+  })
+  async findApplication(
+    @Param('nationalId') nationalId: string,
+    @CurrentStaff() staff: Staff,
+  ): Promise<ApplicationModel[]> {
+    this.logger.debug('Search for application')
+
+    return await this.applicationService.findByNationalId(
+      nationalId,
+      staff.municipalityId,
+    )
+  }
+
   @UseGuards(RolesGuard)
   @RolesRules(RolesRule.OSK)
   @Get('spouse/:spouseNationalId')
