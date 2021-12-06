@@ -62,6 +62,7 @@ export class ResourcesService {
   async findAndCountAllIdentityResources(
     page: number,
     count: number,
+    includeArchived: boolean,
   ): Promise<{
     rows: IdentityResource[]
     count: number
@@ -73,11 +74,17 @@ export class ResourcesService {
       offset: offset,
       include: [IdentityResourceUserClaim],
       distinct: true,
+      where: includeArchived ? {} : { archived: null },
     })
   }
 
   /** Finds Api resources with searchString and returns with paging */
-  async findApiResources(searchString: string, page: number, count: number) {
+  async findApiResources(
+    searchString: string,
+    page: number,
+    count: number,
+    includeArchived: boolean,
+  ) {
     if (!searchString) {
       throw new BadRequestException('Search String must be provided')
     }
@@ -85,9 +92,19 @@ export class ResourcesService {
     searchString = searchString.trim()
 
     if (isNaN(+searchString)) {
-      return this.findApiResourcesByName(searchString, page, count)
+      return this.findApiResourcesByName(
+        searchString,
+        page,
+        count,
+        includeArchived,
+      )
     } else {
-      return this.findApiResourcesByNationalId(searchString, page, count)
+      return this.findApiResourcesByNationalId(
+        searchString,
+        page,
+        count,
+        includeArchived,
+      )
     }
   }
 
@@ -101,6 +118,7 @@ export class ResourcesService {
     searchString: string,
     page: number,
     count: number,
+    includeArchived: boolean,
   ) {
     if (!searchString) {
       throw new BadRequestException('Search String must be provided')
@@ -108,7 +126,9 @@ export class ResourcesService {
     page--
     const offset = page * count
     return this.apiResourceModel.findAndCountAll({
-      where: { nationalId: searchString },
+      where: includeArchived
+        ? { nationalId: searchString }
+        : { nationalId: searchString, archived: null },
       limit: count,
       offset: offset,
       include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
@@ -121,6 +141,7 @@ export class ResourcesService {
     searchString: string,
     page: number,
     count: number,
+    includeArchived: boolean,
   ) {
     if (!searchString) {
       throw new BadRequestException('Search String must be provided')
@@ -128,7 +149,9 @@ export class ResourcesService {
     page--
     const offset = page * count
     return this.apiResourceModel.findAndCountAll({
-      where: { name: searchString },
+      where: includeArchived
+        ? { name: searchString }
+        : { name: searchString, archived: null },
       limit: count,
       offset: offset,
       include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
@@ -140,6 +163,7 @@ export class ResourcesService {
   async findAndCountAllApiResources(
     page: number,
     count: number,
+    includeArchived: boolean,
   ): Promise<{
     rows: ApiResource[]
     count: number
@@ -151,6 +175,7 @@ export class ResourcesService {
       offset: offset,
       include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
       distinct: true,
+      where: includeArchived ? {} : { archived: null },
     })
   }
 
@@ -158,6 +183,7 @@ export class ResourcesService {
   async findAndCountAllApiScopes(
     page: number,
     count: number,
+    includeArchived: boolean,
   ): Promise<{
     rows: ApiScope[]
     count: number
@@ -169,6 +195,7 @@ export class ResourcesService {
       offset: offset,
       include: [ApiScopeUserClaim, ApiScopeGroup],
       distinct: true,
+      where: includeArchived ? {} : { archived: null },
     })
   }
 
@@ -180,6 +207,7 @@ export class ResourcesService {
         name: {
           [Op.not]: '@island.is/auth/admin:root',
         },
+        archived: null,
       },
       include: [ApiScopeGroup],
     })
