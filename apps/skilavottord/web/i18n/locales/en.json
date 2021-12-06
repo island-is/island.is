@@ -357,8 +357,8 @@
   },
   "accessControl": {
     "title": "Access control",
-    "info": "Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þúgetur eytt umboðum eða bætt við nýjum.",
-    "empty": "There is no recycling comapany added yet",
+    "info": "Here's a list of all accesses you've given. You can give, edit, and/or remove access.",
+    "empty": "There accesses to display",
     "tableHeaders": {
       "nationalId": "National Id",
       "name": "Name",
@@ -370,17 +370,17 @@
       "inactive": "Inactive"
     },
     "buttons": {
-      "add": "Add recycling company",
+      "add": "Give access",
       "edit": "Edit"
     },
     "modal": {
       "titles": {
-        "add": "Add recycling company",
-        "edit": "Edit recycling company"
+        "add": "Give access",
+        "edit": "Edit access"
       },
       "subtitles": {
-        "add": "Add recycling company Add recycling company Add recycling company Add recycling company",
-        "edit": "Edit recycling company Edit recycling company Edit recycling company Edit recycling company"
+        "add": "An access holder will get access to perform actions based on his/her role. Please be certain that the national id matches the person you want to give access to",
+        "edit": "An access holder will get access to perform actions based on his/her role. Please be certain that the role applies to this person."
       },
       "inputs": {
         "nationalId": {

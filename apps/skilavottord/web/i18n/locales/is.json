@@ -327,9 +327,9 @@
     "subtitles": {
       "deregistered": "Afskráð ökutæki"
     },
-    "info": "Here is the list of all deregistered vehicles, along with date of the registration.",
+    "info": "Hér má sjá lista af afskráðum ökutækjum, ásamt dagsetningu afskráningarinnar.",
     "buttons": {
-      "export": "Export"
+      "export": "Senda"
     },
     "search": {
       "label": "Leita að skráningarnúmeri",
@@ -341,7 +341,7 @@
     "title": "Úrvinnslusjóður",
     "recycled": "Meðhöndluð ökutæki",
     "companies": "Móttökuaðilar",
-    "accessControl": "Access Control"
+    "accessControl": "Aðgangsstýring"
   },
   "recyclingCompanies": {
     "title": "Móttökuaðilar",
@@ -360,66 +360,66 @@
     }
   },
   "accessControl": {
-    "title": "Access control",
-    "info": "Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þúgetur eytt umboðum eða bætt við nýjum.",
-    "empty": "There is no recycling comapany added yet",
+    "title": "Aðgangsstýring",
+    "info": "Hérna kemur listi yfir þá aðganga sem þú hefur gefið öðrum. Þú getur eytt aðgangi eða bætt við nýjum.",
+    "empty": "Enginn aðgangur hefur verið veittur",
     "tableHeaders": {
-      "nationalId": "National Id",
-      "name": "Name",
-      "role": "Role",
-      "partner": "Partner"
+      "nationalId": "Kennitala",
+      "name": "Nafn",
+      "role": "Hlutverk",
+      "partner": "Móttökuaðili"
     },
     "status": {
-      "active": "Active",
-      "inactive": "Inactive"
+      "active": "Virkt",
+      "inactive": "Óvirkt"
     },
     "buttons": {
-      "add": "Add recycling company",
-      "edit": "Edit"
+      "add": "Bæta við aðgangi",
+      "edit": "Breyta"
     },
     "modal": {
       "titles": {
-        "add": "Add recycling company",
-        "edit": "Edit recycling company"
+        "add": "Bæta við aðgangi",
+        "edit": "Breyta aðgangi"
       },
       "subtitles": {
-        "add": "Add recycling company Add recycling company Add recycling company Add recycling company",
-        "edit": "Edit recycling company Edit recycling company Edit recycling company Edit recycling company"
+        "add": "Aðgangshafi mun fá aðgang til að framkvæma aðgerðir í því hlutverki sem er sett. Vinsamlegast verið viss um að kennitalan eigi við réttan einstakling.",
+        "edit": "Aðgangshafi mun fá aðgang til að framkvæma aðgerðir í því hlutverki sem er sett. Vinsamlegast verið viss um að hlutverkið eigi við réttan einstakling."
       },
       "inputs": {
         "nationalId": {
-          "label": "National Id",
-          "placeholder": "National Id",
+          "label": "Kennitala",
+          "placeholder": "Kennitala",
           "rules": {
             "required": "Skylda er að fylla út kennitölu",
             "validate": "Kennitalan er ekki gild kennitala"
           }
         },
         "name": {
-          "label": "Name",
-          "placeholder": "Name",
+          "label": "Nafn",
+          "placeholder": "Nafn",
           "rules": {
-            "required": "Name is required"
+            "required": "Skylda er að fylla út nafn"
           }
         },
         "role": {
-          "label": "Role",
-          "placeholder": "Role",
+          "label": "Hlutverk",
+          "placeholder": "Hlutverk",
           "rules": {
-            "required": "Role is required"
+            "required": "Skylda er að fylla út hlutverk"
           }
         },
         "partner": {
-          "label": "Partner",
-          "placeholder": "Partner",
+          "label": "Móttökuaðili",
+          "placeholder": "Móttökuaðili",
           "rules": {
-            "required": "Partner is required"
+            "required": "Skylda er að fylla út móttökuaðila"
           }
         }
       },
       "buttons": {
-        "cancel": "Cancel",
-        "continue": "Submit"
+        "cancel": "Hætta við",
+        "continue": "Staðfesta"
       }
     }
   },
@@ -454,7 +454,7 @@
       "deregister": "/deregister-vehicle/[id]"
     },
     "recycledVehicles": "/recycled-vehicles",
-    "accessControl": "/en/access-control",
+    "accessControl": "/access-control",
     "recyclingCompanies": {
       "baseRoute": "/recycling-companies",
       "add": "/recycling-companies/add",
