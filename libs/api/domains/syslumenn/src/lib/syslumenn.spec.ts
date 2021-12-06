@@ -112,7 +112,7 @@ describe('SyslumennService', () => {
     it('should return data upload response', async () => {
       const response = await service.uploadData(PERSON, ATTACHMENT, {
         key: 'string',
-      })
+      }, 'Lögheimilisbreyting barns')
       expect(response).toStrictEqual(DATA_UPLOAD)
     })
   })
