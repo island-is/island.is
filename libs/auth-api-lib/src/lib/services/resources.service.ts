@@ -358,20 +358,14 @@ export class ResourcesService {
     })
   }
 
-  /** Filters out Identity Resources that don't have delegation grant and are access controlled */
-  async findAllowedDelegationIdentityResourceListForUser(
-    identityResources: string[],
-  ) {
-    this.logger.debug(
-      `Finding allowed Identity Resources for identity resources: ${identityResources}`,
-    )
-    return this.identityResourceModel.findAll({
+  /** Returns the count of scopes that are allowed for delegations */
+  async countAllowedDelegationApiScopesForUser(scopes: string[]) {
+    return this.apiScopeModel.count({
       where: {
         name: {
-          [Op.in]: identityResources,
+          [Op.in]: scopes,
         },
         allowExplicitDelegationGrant: true,
-        alsoForDelegatedUser: false,
       },
     })
   }

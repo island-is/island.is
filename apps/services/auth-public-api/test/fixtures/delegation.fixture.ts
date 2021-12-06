@@ -76,8 +76,6 @@ const createRandomDelegation = (): CreateDelegation => {
  * @param delegationId Id of the delegation that the scope belongs to.
  * @param scopeName Name of the scope.
  * @param today A date the fixture uses as the current day to set valid or expired scopes.
- *              The test suite should use useFakeTimers and provide this value for consistent testing.
- *              Defaults to current datetime, but note that it could lead to undesired test results.
  * @param expired Flag to indicate if the delgation should be expired. Defaults to false.
  * @returns
  */
@@ -104,8 +102,6 @@ export const createDelegationScope = (
  * @param toNationalId NationalId of the user receiving the delegation
  * @param scopes Scopes the delegation grants access to
  * @param today A date the fixture uses as the current day to set valid or expired scopes.
- *              The test suite should use useFakeTimers and provide this value for consistent testing.
- *              Defaults to current datetime, but note that it could lead to undesired test results.
  * @param expired Flag to indicate if the delgation should be expired. Defaults to false.
  * @returns
  */

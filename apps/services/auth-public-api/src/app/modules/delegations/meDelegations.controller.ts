@@ -287,16 +287,10 @@ export class MeDelegationsController {
 
     // Check if the requested scopes are valid
     const scopes = requestedScopes.map((scope) => scope.name)
-    const allowedIdentityResources = await this.resourcesService.findAllowedDelegationIdentityResourceListForUser(
+    const allowedApiScopesCount = await this.resourcesService.countAllowedDelegationApiScopesForUser(
       scopes,
     )
-    const allowedApiScopes = await this.resourcesService.findAllowedDelegationApiScopeListForUser(
-      scopes,
-    )
-    return (
-      requestedScopes.length ===
-      allowedIdentityResources.length + allowedApiScopes.length
-    )
+    return requestedScopes.length === allowedApiScopesCount
   }
 
   /**
