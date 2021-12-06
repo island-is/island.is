@@ -49,7 +49,7 @@ export const UserProfileInfo = () => {
             <Box display="flex" alignItems="center" marginRight={2}>
               <Icon type="outline" icon="call" color="blue300" />
             </Box>
-            <Text>{phoneNumber}</Text>
+            <Text>{phoneNumber.nationalNumber}</Text>
           </Box>
         )}
         {(settings?.email || settings?.mobilePhoneNumber) && (
