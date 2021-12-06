@@ -1,5 +1,5 @@
 import { Inject, Module } from '@nestjs/common'
-import { FeatureFlagClient } from '@island.is/feature-flags'
+import type { FeatureFlagClient } from '@island.is/feature-flags'
 
 import {
   FEATURE_FLAG_CLIENT,

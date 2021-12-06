@@ -8,12 +8,15 @@ import {
   ServiceWebFooter,
 } from '@island.is/web/components'
 
-interface FooterProps {
+interface DynamicFooterProps {
   organization: Organization
   institutionSlug: string
 }
 
-const Footer = ({ organization, institutionSlug }: FooterProps) => {
+export const DynamicFooter = ({
+  organization,
+  institutionSlug,
+}: DynamicFooterProps) => {
   const { linkResolver } = useLinkResolver()
 
   const slug = organization?.slug || institutionSlug
@@ -36,4 +39,4 @@ const Footer = ({ organization, institutionSlug }: FooterProps) => {
   )
 }
 
-export default Footer
+export default DynamicFooter
