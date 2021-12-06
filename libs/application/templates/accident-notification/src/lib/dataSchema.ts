@@ -32,15 +32,15 @@ const FileSchema = z.object({
 })
 
 const RepresentativeInfo = z.object({
-  name: z.string().min(1).max(100),
+  name: z.string().min(1),
   nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-  email: z.string().email().max(100),
+  email: z.string().email(),
   phoneNumber: z.string().optional(),
 })
 
 const CompanyInfo = z
   .object({
-    name: z.string().min(1).max(100),
+    name: z.string().min(1),
     nationalRegistrationId: z
       .string()
       .refine((x) => (x ? kennitala.isCompany(x) : false)),
@@ -97,7 +97,7 @@ export const AccidentNotificationSchema = z.object({
       .string()
       .refine((x) => +x >= 100 && +x <= 999, error.required.defaultMessage),
     city: z.string().min(1, error.required.defaultMessage),
-    email: z.string().email().max(100),
+    email: z.string().email(),
     phoneNumber: z.string().optional(),
   }),
   whoIsTheNotificationFor: z.object({
@@ -156,21 +156,21 @@ export const AccidentNotificationSchema = z.object({
     timeOfAccident: z
       .string()
       .refine((x) => (x ? isValid24HFormatTime(x) : false)),
-    descriptionOfAccident: z.string().min(1).max(2000),
+    descriptionOfAccident: z.string().min(1),
   }),
   isRepresentativeOfCompanyOrInstitue: z.array(z.string()).optional(),
   fishingShipInfo: z.object({
-    shipName: z.string().min(1).max(100),
-    shipCharacters: z.string().min(1).max(100),
-    homePort: z.string().max(100),
-    shipRegisterNumber: z.string().max(100),
+    shipName: z.string().min(1),
+    shipCharacters: z.string().min(1),
+    homePort: z.string(),
+    shipRegisterNumber: z.string(),
   }),
 
   onPayRoll: z.object({
     answer: z.enum([YES, NO]),
   }),
   locationAndPurpose: z.object({
-    location: z.string().min(1).max(2000),
+    location: z.string().min(1),
   }),
   accidentLocation: z.object({
     answer: z.enum([
@@ -194,12 +194,12 @@ export const AccidentNotificationSchema = z.object({
     ]),
   }),
   homeAccident: z.object({
-    address: z.string().min(1).max(100),
+    address: z.string().min(1),
     postalCode: z
       .string()
       .refine((x) => +x >= 100 && +x <= 999, error.required.defaultMessage),
-    community: z.string().min(1).max(100),
-    moreDetails: z.string().max(2000).optional(),
+    community: z.string().min(1),
+    moreDetails: z.string().optional(),
   }),
   shipLocation: z.object({
     answer: z.enum([
@@ -210,7 +210,7 @@ export const AccidentNotificationSchema = z.object({
   }),
   workMachineRadio: z.enum([YES, NO]),
   workMachine: z.object({
-    desriptionOfMachine: z.string().min(1).max(2000),
+    desriptionOfMachine: z.string().min(1),
   }),
   accidentType: z.object({
     radioButton: z.enum([
@@ -237,13 +237,13 @@ export const AccidentNotificationSchema = z.object({
     ]),
   }),
   injuredPersonInformation: z.object({
-    name: z.string().min(1, error.required.defaultMessage).max(100),
+    name: z.string().min(1, error.required.defaultMessage),
     nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    email: z.string().email().min(1, error.required.defaultMessage).max(100),
+    email: z.string().email().min(1, error.required.defaultMessage),
     phoneNumber: z.string().optional(),
   }),
   juridicalPerson: z.object({
-    companyName: z.string().min(1, error.required.defaultMessage).max(100),
+    companyName: z.string().min(1, error.required.defaultMessage),
     companyNationalId: z
       .string()
       .refine((x) => (x ? kennitala.isCompany(x) : false)),
@@ -252,7 +252,7 @@ export const AccidentNotificationSchema = z.object({
     }),
   }),
   childInCustody: z.object({
-    name: z.string().min(1, error.required.defaultMessage).max(100),
+    name: z.string().min(1, error.required.defaultMessage),
     nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
   }),
   powerOfAttorney: z.object({
@@ -269,7 +269,7 @@ export const AccidentNotificationSchema = z.object({
       ReviewApprovalEnum.NOTREVIEWED,
     ])
     .refine((x) => (x ? x : ReviewApprovalEnum.NOTREVIEWED)),
-  reviewComment: z.string().max(2000).optional(),
+  reviewComment: z.string().optional(),
 })
 
 export type AccidentNotification = z.TypeOf<typeof AccidentNotificationSchema>
