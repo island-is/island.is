@@ -1,4 +1,4 @@
-import { AutocompleteTermInput, SuggestionsQueryInput } from '../types'
+import { AutocompleteTermInput } from '../types'
 
 export const autocompleteTermQuery = ({
   singleTerm,
@@ -11,24 +11,6 @@ export const autocompleteTermQuery = ({
         field: 'termPool',
         size,
         skip_duplicates: true,
-      },
-    },
-  },
-})
-
-export const suggestionsQuery = ({ searchQuery }: SuggestionsQueryInput) => ({
-  suggest: {
-    text: searchQuery,
-    titleSuggest: {
-      term: {
-        suggest_mode: 'always',
-        field: 'title',
-      },
-    },
-    contentSuggest: {
-      term: {
-        suggest_mode: 'always',
-        field: 'content',
       },
     },
   },

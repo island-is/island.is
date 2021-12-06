@@ -96,7 +96,6 @@ export const template = {
       },
       content: {
         type: 'text',
-        fielddata: true,
         fields: {
           stemmed: {
             type: 'text',

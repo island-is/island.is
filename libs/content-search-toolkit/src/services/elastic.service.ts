@@ -4,10 +4,7 @@ import * as AWS from 'aws-sdk'
 import AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import {
-  suggestionsQuery,
-  autocompleteTermQuery,
-} from '../queries/autocomplete'
+import { autocompleteTermQuery } from '../queries/autocomplete'
 import { searchQuery } from '../queries/search'
 import { documentByMetaDataQuery } from '../queries/documentByMetaData'
 import {
@@ -25,8 +22,6 @@ import {
   RankEvaluationInput,
   GroupedRankEvaluationResponse,
   rankEvaluationMetrics,
-  SuggestionsQueryInput,
-  SuggestionsQueryResponse,
 } from '../types'
 import {
   DeleteByQueryResponse,
@@ -307,21 +302,6 @@ export class ElasticService {
 
     const data = await this.findByQuery<
       AutocompleteTermResponse,
-      typeof requestBody
-    >(index, requestBody)
-
-    return data.body
-  }
-
-  async fetchSuggestions(
-    index: string,
-    input: SuggestionsQueryInput,
-  ): Promise<SuggestionsQueryResponse> {
-    const { searchQuery } = input
-    const requestBody = suggestionsQuery({ searchQuery })
-
-    const data = await this.findByQuery<
-      SuggestionsQueryResponse,
       typeof requestBody
     >(index, requestBody)
 
