@@ -12,8 +12,8 @@ import {
   AllowNull,
 } from 'sequelize-typescript'
 
-import { RecyclingRequestModel } from '../recycling.request'
-import { VehicleOwnerModel } from '../vehicle.owner'
+import { RecyclingRequestModel } from '../recyclingRequest'
+import { VehicleOwnerModel } from '../vehicleOwner'
 
 @ObjectType()
 @Table({ tableName: 'vehicle' })

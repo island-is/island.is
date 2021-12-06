@@ -5,7 +5,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { environment } from '../../../environments'
-import { RecyclingRequestService } from '../recycling.request'
+import { RecyclingRequestService } from '../recyclingRequest'
 import { VehicleInformation } from './samgongustofa.model'
 
 @Injectable()

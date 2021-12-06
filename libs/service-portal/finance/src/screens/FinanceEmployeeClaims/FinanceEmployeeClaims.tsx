@@ -1,9 +1,14 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
+import { User } from 'oidc-client'
 
-const EmployeeClaims = () => {
+interface Props {
+  userInfo: User
+}
+
+const EmployeeClaims: FC<Props> = ({ userInfo }) => {
   useNamespaces('sp.employee-claims')
   const { formatMessage } = useLocale()
   return (
@@ -16,6 +21,7 @@ const EmployeeClaims = () => {
       })}
       listPath="employeeClaims"
       defaultDateRangeMonths={12}
+      userInfo={userInfo}
     />
   )
 }
