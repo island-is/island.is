@@ -21,14 +21,12 @@ export class CriminalRecordProvider extends BasicDataProvider {
     }
 
     const query = `
-    query CheckCriminalRecord($ssnInput: String!) {
-        checkCriminalRecord(ssn: $ssnInput)
+    query CriminalRecordValidation {
+        criminalRecordValidation
       }
     `
 
-    return this.useGraphqlGateway(query, {
-      ssnInput: applicantSsn,
-    }).then(async (res: Response) => {
+    return this.useGraphqlGateway(query).then(async (res: Response) => {
       const response = await res.json()
 
       if (response.errors) {
@@ -38,7 +36,7 @@ export class CriminalRecordProvider extends BasicDataProvider {
         return Promise.reject({})
       }
 
-      if (response.data.checkCriminalRecord !== true) {
+      if (response.data.criminalRecordValidation !== true) {
         return Promise.reject({})
       }
 

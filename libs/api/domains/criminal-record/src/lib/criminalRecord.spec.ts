@@ -56,10 +56,10 @@ describe('CriminalRecordService', () => {
     })
   })
 
-  describe('checkCriminalRecord', () => {
+  describe('validateCriminalRecord', () => {
     it('should not throw an error', async () => {
       expect(async () => {
-        await service.checkCriminalRecord(MOCK_NATIONAL_ID)
+        await service.validateCriminalRecord(MOCK_NATIONAL_ID)
       }).not.toThrowError()
     })
 
@@ -67,7 +67,7 @@ describe('CriminalRecordService', () => {
       expect.assertions(1)
 
       return await service
-        .checkCriminalRecord(MOCK_NATIONAL_ID_NOT_EXISTS)
+        .validateCriminalRecord(MOCK_NATIONAL_ID_NOT_EXISTS)
         .catch((e) => expect(e).toBeTruthy())
     })
   })
