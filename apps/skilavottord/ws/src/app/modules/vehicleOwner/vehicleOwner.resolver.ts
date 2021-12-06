@@ -4,7 +4,7 @@ import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Authorize } from '../auth'
+import { Authorize, Role } from '../auth'
 import { VehicleOwnerModel } from './vehicleOwner.model'
 import { VehicleOwnerService } from './vehicleOwner.service'
 
@@ -38,7 +38,9 @@ export class VehicleOwnerResolver {
     return res
   }
 
-  @Authorize({ roles: ['developer', 'recyclingCompany', 'recyclingFund'] })
+  @Authorize({
+    roles: [Role.developer, Role.recyclingCompany, Role.recyclingFund],
+  })
   @Query(() => [VehicleOwnerModel])
   async skilavottordRecyclingPartnerVehicles(
     @Args('partnerId') partnerId: string,
