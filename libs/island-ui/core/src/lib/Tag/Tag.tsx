@@ -1,6 +1,7 @@
 import React, { FC, forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
 import { Text } from '../Text/Text'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
 import * as styles from './Tag.css'
 
@@ -29,8 +30,6 @@ export interface TagProps {
   CustomLink?: FC
 }
 
-const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
-
 export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
   (
     {
@@ -55,7 +54,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       [styles.focusable]: !disabled,
     })
 
-    const isExternal = href && isLinkExternal(href)
+    const isExternal = href && shouldLinkOpenInNewWindow(href)
 
     const anchorProps = {
       ...(isExternal && { rel: 'noreferrer noopener' }),

@@ -3,8 +3,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { RecyclingRequestModel } from '../recycling.request'
-import { RecyclingPartnerModel } from '../recycling.partner'
+import { RecyclingRequestModel } from '../recyclingRequest'
+import { RecyclingPartnerModel } from '../recyclingPartner'
 import { VehicleModel } from './vehicle.model'
 
 @Injectable()

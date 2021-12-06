@@ -200,6 +200,9 @@ api:
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-TEST/EDU/5708150320/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS-TEST/EDU/5708150320/MMS-Protected/license-api-v1'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+    XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000'
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
     XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:'
     XROAD_PAYMENT_PROVIDER_ID: 'IS-TEST/GOV/10021/FJS-DEV-Public'
@@ -530,6 +533,12 @@ download-service:
   enabled: true
   env:
     SERVERSIDE_FEATURES_ON: ''
+    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-external'

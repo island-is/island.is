@@ -168,6 +168,13 @@ export class ApplicationModel extends Model<Application> {
   formComment: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  spouseFormComment: string
+
+  @Column({
     type: DataType.ENUM,
     allowNull: false,
     values: Object.values(ApplicationState),
