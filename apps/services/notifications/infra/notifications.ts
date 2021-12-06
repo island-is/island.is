@@ -1,17 +1,32 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (): ServiceBuilder<'notifications'> =>
-  service('notifications')
-    .image('services-notifications')
-    .namespace('notifications')
-    .serviceAccount('notifications')
+const MAIN_QUEUE_NAME = 'notifications'
+const DEAD_LETTER_QUEUE_NAME = 'notifications-failure'
+
+export const userNotificationServiceSetup = (): ServiceBuilder<'user-notifications'> =>
+  service('user-notifications')
+    .image('user-notifications')
+    .namespace('user-notifications')
+    .serviceAccount('user-notifications')
     .command('node')
-    .args('--tls-min-v1.0', 'main.js')
+    .args('main.js')
     .env({
-      MAIN_QUEUE_NAME: 'notifications',
-      DEAD_LETTER_QUEUE_NAME: 'notifications-failure',
-      AWS_REGION: 'eu-west-1',
+      MAIN_QUEUE_NAME,
+      DEAD_LETTER_QUEUE_NAME,
     })
-    .grantNamespaces('islandis', 'notfications')
+    .liveness('/liveness')
+    .readiness('/liveness')
+
+export const userNotificationsWorkerSetup = (): ServiceBuilder<'user-notifications'> =>
+  service('user-notifications-worker')
+    .image('user-notifications-worker')
+    .namespace('user-notifications')
+    .serviceAccount('user-notifications-worker')
+    .command('node')
+    .args('main.js', '--job')
+    .env({
+      MAIN_QUEUE_NAME,
+      DEAD_LETTER_QUEUE_NAME,
+    })
     .liveness('/liveness')
     .readiness('/liveness')

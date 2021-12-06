@@ -26,7 +26,10 @@ import { serviceSetup as partyLetterServiceSetup } from '../../../apps/services/
 import { serviceSetup as temporaryVoterRegistryServiceSetup } from '../../../apps/services/temporary-voter-registry-api/infra/temporary-voter-registry-api'
 import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-actions-cache/infra/github-actions-cache'
 
-import { serviceSetup as notificationSetup } from '../../../apps/services/notifications/infra/notifications'
+import {
+  userNotificationServiceSetup,
+  userNotificationsWorkerSetup,
+} from '../../../apps/services/notifications/infra/notifications'
 
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
 import { serviceSetup as adsWebSetup } from '../../../apps/air-discount-scheme/web/infra/web'
@@ -76,7 +79,8 @@ const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 
 const downloadService = downloadServiceSetup()
 
-const notificationService = notificationSetup()
+const userNotificationService = userNotificationServiceSetup()
+const userNotificationWorkerService = userNotificationsWorkerSetup()
 
 const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })
@@ -99,7 +103,6 @@ export const Services: EnvironmentServices = {
     contentfulTranslationExtension,
     xroadCollector,
     downloadService,
-    notificationService,
     nameRegistryBackend,
     endorsement,
     partyLetterRegistry,
@@ -124,7 +127,6 @@ export const Services: EnvironmentServices = {
     contentfulTranslationExtension,
     xroadCollector,
     downloadService,
-    notificationService,
     nameRegistryBackend,
     endorsement,
     partyLetterRegistry,
@@ -133,6 +135,8 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
+    userNotificationService,
+    userNotificationWorkerService,
   ],
   dev: [
     appSystemApi,
@@ -149,7 +153,6 @@ export const Services: EnvironmentServices = {
     storybook,
     contentfulTranslationExtension,
     downloadService,
-    notificationService,
     nameRegistryBackend,
     endorsement,
     partyLetterRegistry,
@@ -159,6 +162,8 @@ export const Services: EnvironmentServices = {
     adsBackend,
     adsApi,
     githubActionsCache,
+    userNotificationService,
+    userNotificationWorkerService,
   ],
 }
 
