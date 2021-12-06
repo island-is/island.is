@@ -1,10 +1,12 @@
 import { UseGuards } from '@nestjs/common'
 import { Resolver, Query, ResolveField, Parent, Context } from '@nestjs/graphql'
+import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsAuthGuard,
   IdsUserGuard,
+  Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
@@ -15,6 +17,7 @@ import { NationalRegistryResidence } from '../models/nationalRegistryResidence.m
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.meDetails)
 @Resolver(() => NationalRegistryPerson)
 @Audit({ namespace: '@island.is/api/national-registry-x-road' })
 export class NationalRegistryXRoadResolver {

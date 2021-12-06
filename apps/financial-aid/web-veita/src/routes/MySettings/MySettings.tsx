@@ -1,25 +1,26 @@
 import React, { useContext, useState } from 'react'
 
 import {
-  ApplicationOverviewSkeleton,
-  LoadingContainer,
-} from '@island.is/financial-aid-web/veita/src/components'
-import {
   Text,
   Box,
   Input,
   ToggleSwitchCheckbox,
+  Button,
+  ToastContainer,
 } from '@island.is/island-ui/core'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 import * as profileStyles from '@island.is/financial-aid-web/veita/src/components/Profile/Profile.css'
 import { InputType, isEmailValid } from '@island.is/financial-aid/shared/lib'
 
+import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
+
 interface mySettingsState {
   nationalId?: string
   name?: string
   email?: string
   nickname?: string
+  usePseudoName: boolean
   hasError: boolean
   hasSubmitError: boolean
 }
@@ -27,53 +28,17 @@ interface mySettingsState {
 export const MySettings = () => {
   const { admin } = useContext(AdminContext)
 
-  const [pseudonyms, setPseudonyms] = useState<boolean>(false)
+  const { updateInfo, staffActivationLoading } = useStaff()
 
   const [state, setState] = useState<mySettingsState>({
-    nationalId: admin?.staff?.nationalId,
-    name: admin?.staff?.name,
     email: admin?.staff?.email,
     nickname: admin?.staff?.nickname,
+    usePseudoName: admin?.staff?.usePseudoName ?? false,
     hasError: false,
     hasSubmitError: false,
   })
 
   const inputSettings = [
-    {
-      label: 'Nafn',
-      value: state.name,
-      bgIsBlue: true,
-      type: 'text' as InputType,
-      onChange: (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-      ) => {
-        if (event.currentTarget.value.length <= 10) {
-          setState({
-            ...state,
-            name: event.target.value,
-            hasError: false,
-          })
-        }
-      },
-      error: !state.name,
-    },
-    {
-      label: 'Kennitala',
-      value: state.nationalId,
-      type: 'number' as InputType,
-      onChange: (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-      ) => {
-        if (event.currentTarget.value.length <= 10) {
-          setState({
-            ...state,
-            nationalId: event.target.value,
-            hasError: false,
-          })
-        }
-      },
-      error: !state.nationalId || state.nationalId.length !== 10,
-    },
     {
       label: 'Netfang',
       value: state.email,
@@ -96,12 +61,32 @@ export const MySettings = () => {
       ) => {
         setState({
           ...state,
-          nickname: event.currentTarget.value,
+          nickname: event.target.value,
           hasError: false,
         })
       },
     },
   ]
+
+  const areRequiredFieldsFilled =
+    !admin || !admin.staff || !state.email || !isEmailValid(state.email)
+
+  const onSubmitUpdate = async () => {
+    if (areRequiredFieldsFilled) {
+      setState({ ...state, hasError: true })
+      return
+    }
+
+    await updateInfo(
+      admin?.staff?.id,
+      admin?.staff?.nationalId,
+      admin?.staff?.roles,
+      state.nickname,
+      state.email,
+      state.usePseudoName,
+      true,
+    )
+  }
 
   return (
     <>
@@ -155,9 +140,9 @@ export const MySettings = () => {
                   Nota dulnefni fyrir nöfn umsækjenda í yfirlitsskjám
                 </Text>
               }
-              checked={pseudonyms}
-              onChange={(newChecked) => {
-                setPseudonyms(newChecked)
+              checked={state.usePseudoName}
+              onChange={(isChecked) => {
+                setState({ ...state, usePseudoName: isChecked })
               }}
               className={``}
             />
@@ -171,6 +156,20 @@ export const MySettings = () => {
           </Box>
         </Box>
       </Box>
+      <Box
+        display="flex"
+        justifyContent="flexEnd"
+        className={`contentUp delay-125`}
+      >
+        <Button
+          loading={staffActivationLoading}
+          onClick={onSubmitUpdate}
+          icon="checkmark"
+        >
+          Vista stillingar
+        </Button>
+      </Box>
+      <ToastContainer />
     </>
   )
 }

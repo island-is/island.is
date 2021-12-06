@@ -11,7 +11,7 @@ import {
 
 import { RecyclingRequestModel } from '../recyclingRequest'
 
-@ObjectType()
+@ObjectType('RecyclingPartner')
 @Table({ tableName: 'recycling_partner' })
 export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
   @Field()

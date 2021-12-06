@@ -1,6 +1,7 @@
 import { lazy } from 'react'
 import { defineMessage } from 'react-intl'
 
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   ServicePortalModule,
   ServicePortalPath,
@@ -10,7 +11,7 @@ import {
 export const islykillModule: ServicePortalModule = {
   name: 'Íslykill',
   widgets: () => [],
-  routes: () => {
+  routes: ({ userInfo }) => {
     const routes: ServicePortalRoute[] = [
       {
         name: defineMessage({
@@ -18,6 +19,7 @@ export const islykillModule: ServicePortalModule = {
           defaultMessage: 'Íslykill',
         }),
         path: ServicePortalPath.SettingsIslykill,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
         render: () => lazy(() => import('./screens/Islykill')),
       },
     ]

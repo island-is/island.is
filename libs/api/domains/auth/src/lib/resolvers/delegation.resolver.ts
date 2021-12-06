@@ -21,36 +21,27 @@ import {
   CreateDelegationInput,
   DelegationInput,
 } from '../dto'
-import {
-  Delegation,
-  CustomDelegation,
-  LegalGuardianDelegation,
-  ProcuringHolderDelegation,
-} from '../models'
-import { AuthService } from '../auth.service'
-
-const ignore404 = (e: Response) => {
-  if (e.status !== 404) {
-    throw e
-  }
-}
+import { Delegation } from '../models'
+import { MeDelegationsService } from '../meDelegations.service'
+import { ActorDelegationsService } from '../actorDelegations.service'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Delegation)
 export class DelegationResolver {
   constructor(
-    private authService: AuthService,
+    private meDelegationsService: MeDelegationsService,
+    private actorDelegationsService: ActorDelegationsService,
     private identityService: IdentityService,
   ) {}
 
   @Query(() => [Delegation], { name: 'authActorDelegations' })
   getActorDelegations(@CurrentUser() user: User): Promise<DelegationDTO[]> {
-    return this.authService.getActorDelegations(user)
+    return this.actorDelegationsService.getActorDelegations(user)
   }
 
   @Query(() => [Delegation], { name: 'authDelegations' })
   getDelegations(@CurrentUser() user: User): Promise<DelegationDTO[]> {
-    return this.authService.getDelegations(user)
+    return this.meDelegationsService.getDelegations(user)
   }
 
   @Query(() => Delegation, { name: 'authDelegation', nullable: true })
@@ -58,14 +49,7 @@ export class DelegationResolver {
     @CurrentUser() user: User,
     @Args('input', { type: () => DelegationInput }) input: DelegationInput,
   ): Promise<DelegationDTO | null> {
-    const delegation = await this.authService
-      .getDelegationFromNationalId(user, input)
-      .catch(ignore404)
-    if (!delegation) {
-      return null
-    }
-
-    return delegation
+    return this.meDelegationsService.getDelegationById(user, input)
   }
 
   @Mutation(() => Delegation, { name: 'createAuthDelegation' })
@@ -74,13 +58,17 @@ export class DelegationResolver {
     @Args('input', { type: () => CreateDelegationInput })
     input: CreateDelegationInput,
   ): Promise<DelegationDTO | null> {
-    let delegation = await this.authService
-      .getDelegationFromNationalId(user, input)
-      .catch(ignore404)
+    let delegation = await this.meDelegationsService.getDelegationByOtherUser(
+      user,
+      input,
+    )
     if (!delegation) {
-      delegation = await this.authService.createDelegation(user, input)
-    } else if (input.scopes) {
-      delegation = await this.authService.updateDelegation(user, input)
+      delegation = await this.meDelegationsService.createDelegation(user, input)
+    } else if (input.scopes && delegation.id) {
+      delegation = await this.meDelegationsService.updateDelegation(user, {
+        delegationId: delegation.id,
+        scopes: input.scopes,
+      })
     }
 
     return delegation
@@ -92,7 +80,7 @@ export class DelegationResolver {
     @Args('input', { type: () => UpdateDelegationInput })
     input: UpdateDelegationInput,
   ): Promise<DelegationDTO> {
-    return this.authService.updateDelegation(user, input)
+    return this.meDelegationsService.updateDelegation(user, input)
   }
 
   @Mutation(() => Boolean, { name: 'deleteAuthDelegation' })
@@ -101,12 +89,7 @@ export class DelegationResolver {
     @Args('input', { type: () => DeleteDelegationInput })
     input: DeleteDelegationInput,
   ): Promise<boolean> {
-    return this.authService.deleteDelegation(user, input)
-  }
-
-  @ResolveField('id', () => ID)
-  resolveId(@Parent() delegation: DelegationDTO): string {
-    return `${delegation.fromNationalId}-${delegation.toNationalId}`
+    return this.meDelegationsService.deleteDelegation(user, input)
   }
 
   @ResolveField('to', () => Identity)
@@ -143,6 +126,10 @@ export class DelegationResolver {
 
   @ResolveField('validTo', () => Date, { nullable: true })
   resolveValidTo(@Parent() delegation: DelegationDTO): Date | undefined {
+    if (!delegation.validTo) {
+      return undefined
+    }
+
     return delegation.scopes?.every(
       (scope) => scope.validTo?.toString() === delegation.validTo?.toString(),
     )

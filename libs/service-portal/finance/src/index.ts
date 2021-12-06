@@ -1,4 +1,5 @@
 import { Query } from '@island.is/api/schema'
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   ServicePortalModule,
   ServicePortalPath,
@@ -12,29 +13,32 @@ import { lazy } from 'react'
 export const financeModule: ServicePortalModule = {
   name: 'Fjármál',
   widgets: () => [],
-  routes: () => {
+  routes: ({ userInfo }) => {
     const routes: ServicePortalRoute[] = [
       {
         name: m.finance,
         path: ServicePortalPath.FinanceRoot,
+        enabled: userInfo.scopes.includes(ApiScope.financeOverview),
         render: () =>
           lazy(() => import('./screens/FinanceOverview/FinanceOverview')),
       },
       {
         name: m.financeStatus,
         path: ServicePortalPath.FinanceStatus,
+        enabled: userInfo.scopes.includes(ApiScope.financeOverview),
         render: () => lazy(() => import('./screens/FinanceStatus')),
       },
       {
         name: m.financeBills,
         path: ServicePortalPath.FinanceBills,
+        enabled: userInfo.scopes.includes(ApiScope.financeOverview),
         render: () => lazy(() => import('./screens/FinanceBills')),
       },
     ]
     return routes
   },
 
-  dynamicRoutes: async ({ client }) => {
+  dynamicRoutes: async ({ userInfo, client }) => {
     const routes: ServicePortalRoute[] = []
     try {
       const res = await client.query<Query>({
@@ -47,6 +51,7 @@ export const financeModule: ServicePortalModule = {
         routes.push({
           name: m.financeTransactions,
           path: ServicePortalPath.FinanceTransactions,
+          enabled: userInfo.scopes.includes(ApiScope.financeOverview),
           render: () => lazy(() => import('./screens/FinanceTransactions')),
         })
       }
@@ -55,6 +60,7 @@ export const financeModule: ServicePortalModule = {
         routes.push({
           name: m.financeEmployeeClaims,
           path: ServicePortalPath.FinanceEmployeeClaims,
+          enabled: userInfo.scopes.includes(ApiScope.financeSalary),
           render: () => lazy(() => import('./screens/FinanceEmployeeClaims')),
         })
       }
@@ -63,6 +69,7 @@ export const financeModule: ServicePortalModule = {
         routes.push({
           name: m.financeLocalTax,
           path: ServicePortalPath.FinanceLocalTax,
+          enabled: userInfo.scopes.includes(ApiScope.financeOverview),
           render: () => lazy(() => import('./screens/FinanceLocalTax')),
         })
       }
