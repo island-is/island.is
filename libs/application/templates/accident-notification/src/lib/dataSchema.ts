@@ -32,15 +32,15 @@ const FileSchema = z.object({
 })
 
 const RepresentativeInfo = z.object({
-  name: z.string().min(1).max(2000),
+  name: z.string().min(1).max(100),
   nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-  email: z.string().email().max(2000),
+  email: z.string().email().max(100),
   phoneNumber: z.string().optional(),
 })
 
 const CompanyInfo = z
   .object({
-    name: z.string().min(1).max(2000),
+    name: z.string().min(1).max(100),
     nationalRegistrationId: z
       .string()
       .refine((x) => (x ? kennitala.isCompany(x) : false)),
@@ -97,7 +97,7 @@ export const AccidentNotificationSchema = z.object({
       .string()
       .refine((x) => +x >= 100 && +x <= 999, error.required.defaultMessage),
     city: z.string().min(1, error.required.defaultMessage),
-    email: z.string().email().max(2000),
+    email: z.string().email().max(100),
     phoneNumber: z.string().optional(),
   }),
   whoIsTheNotificationFor: z.object({
@@ -160,10 +160,10 @@ export const AccidentNotificationSchema = z.object({
   }),
   isRepresentativeOfCompanyOrInstitue: z.array(z.string()).optional(),
   fishingShipInfo: z.object({
-    shipName: z.string().min(1).max(2000),
-    shipCharacters: z.string().min(1).max(2000),
-    homePort: z.string().max(2000),
-    shipRegisterNumber: z.string().max(2000),
+    shipName: z.string().min(1).max(100),
+    shipCharacters: z.string().min(1).max(100),
+    homePort: z.string().max(100),
+    shipRegisterNumber: z.string().max(100),
   }),
 
   onPayRoll: z.object({
@@ -194,11 +194,11 @@ export const AccidentNotificationSchema = z.object({
     ]),
   }),
   homeAccident: z.object({
-    address: z.string().min(1).max(2000),
+    address: z.string().min(1).max(100),
     postalCode: z
       .string()
       .refine((x) => +x >= 100 && +x <= 999, error.required.defaultMessage),
-    community: z.string().min(1).max(2000),
+    community: z.string().min(1).max(100),
     moreDetails: z.string().max(2000).optional(),
   }),
   shipLocation: z.object({
@@ -237,13 +237,13 @@ export const AccidentNotificationSchema = z.object({
     ]),
   }),
   injuredPersonInformation: z.object({
-    name: z.string().min(1, error.required.defaultMessage).max(2000),
+    name: z.string().min(1, error.required.defaultMessage).max(100),
     nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    email: z.string().email().min(1, error.required.defaultMessage).max(2000),
+    email: z.string().email().min(1, error.required.defaultMessage).max(100),
     phoneNumber: z.string().optional(),
   }),
   juridicalPerson: z.object({
-    companyName: z.string().min(1, error.required.defaultMessage).max(2000),
+    companyName: z.string().min(1, error.required.defaultMessage).max(100),
     companyNationalId: z
       .string()
       .refine((x) => (x ? kennitala.isCompany(x) : false)),
@@ -252,7 +252,7 @@ export const AccidentNotificationSchema = z.object({
     }),
   }),
   childInCustody: z.object({
-    name: z.string().min(1, error.required.defaultMessage),
+    name: z.string().min(1, error.required.defaultMessage).max(100),
     nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
   }),
   powerOfAttorney: z.object({
