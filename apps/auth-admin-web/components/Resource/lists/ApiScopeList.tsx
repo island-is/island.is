@@ -30,7 +30,12 @@ const ApiScopeList: React.FC = () => {
       count,
     )
     if (response) {
-      const resourceArr = response.rows.filter((r) => !r.archived)
+      const resourceArr = response.rows.sort((c1, c2) => {
+        if (!c1.archived && !c2.archived) return 0
+        if (!c1.archived && c2.archived) return 1
+        if (c1.archived && !c2.archived) return -1
+        return 0
+      })
       setApiScopes(resourceArr.reverse())
       setLastPage(Math.ceil(response.count / count))
     }

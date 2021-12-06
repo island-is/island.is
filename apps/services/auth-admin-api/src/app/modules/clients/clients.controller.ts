@@ -53,6 +53,7 @@ export class ClientsController {
   @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
+  @ApiQuery({ name: 'includeArchived', required: false })
   @ApiOkResponse({
     schema: {
       allOf: [
@@ -78,12 +79,18 @@ export class ClientsController {
     @Query('searchString') searchString: string,
     @Query('page') page: number,
     @Query('count') count: number,
+    @Query('includeArchived') includeArchived: boolean = false,
   ): Promise<PagedRowsDto<Client>> {
     if (searchString) {
-      return this.clientsService.findClients(searchString, page, count)
+      return this.clientsService.findClients(
+        searchString,
+        page,
+        count,
+        includeArchived,
+      )
     }
 
-    return this.clientsService.findAndCountAll(page, count)
+    return this.clientsService.findAndCountAll(page, count, includeArchived)
   }
 
   /** Gets client by id */

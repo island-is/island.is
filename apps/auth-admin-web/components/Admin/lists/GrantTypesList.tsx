@@ -31,7 +31,7 @@ const GrantTypesList: React.FC = () => {
       count,
     )
     if (response) {
-      setGrantTypes(response.rows.filter((r) => !r.archived))
+      setGrantTypes(response.rows)
       setLastPage(Math.ceil(response.count / count))
     }
   }
