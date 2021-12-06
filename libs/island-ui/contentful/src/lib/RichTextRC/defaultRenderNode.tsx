@@ -10,12 +10,7 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import Hyperlink from '../Hyperlink/Hyperlink'
-import {
-  useLinkResolver
-} from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './RichText.css'
-
-const { linkResolver } = useLinkResolver()
 
 const defaultHeaderMargins: {
   marginBottom: ResponsiveSpace
@@ -157,14 +152,19 @@ export const defaultRenderNode: RenderNode = {
     ) : null
   },
   [INLINES.ENTRY_HYPERLINK]: (node, children) => {
-    const entry = (node.data.target)
-    const type = entry.sys.contentType.sys.id
-
-    console.log(type)
-
-
-
-    console.log(children)
-    return JSON.stringify(type)
-  }
+    const entry = node.data.target
+    const type = entry?.sys?.contentType?.sys?.id
+    switch (type) {
+      case 'article':
+        return entry.fields.slug ? (
+          <Hyperlink href={`/${entry.fields.slug}`}>{children}</Hyperlink>
+        ) : null
+      case 'subArticle':
+        return entry.fields.url ? (
+          <Hyperlink href={entry.fields.url}>{children}</Hyperlink>
+        ) : null
+      default:
+        return null
+    }
+  },
 }
