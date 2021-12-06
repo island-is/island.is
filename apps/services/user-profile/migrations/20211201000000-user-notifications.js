@@ -36,7 +36,9 @@ module.exports = {
           allowNull: false,
         },
       })
-      .then(() => queryInterface.addIndex('user_notifications', ['national_id']))
+      .then(() =>
+        queryInterface.addIndex('user_notifications', ['national_id']),
+      )
   },
 
   down: (queryInterface, Sequelize) => {
