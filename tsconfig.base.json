@@ -192,6 +192,9 @@
       "@island.is/application/templates/meta-application": [
         "libs/application/templates/meta-application/src/index.ts"
       ],
+      "@island.is/application/templates/p-sign": [
+        "libs/application/templates/p-sign/src/index.ts"
+      ],
       "@island.is/application/templates/parental-leave": [
         "libs/application/templates/parental-leave/src/index.ts"
       ],

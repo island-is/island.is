@@ -2563,6 +2563,28 @@
         }
       }
     },
+    "application-templates-p-sign": {
+      "root": "libs/application/templates/p-sign",
+      "sourceRoot": "libs/application/templates/p-sign/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/p-sign/tsconfig.lib.json",
+              "libs/application/templates/p-sign/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/p-sign/**/*"
+            ]
+          }
+        }
+      }
+    },
     "application-templates-parental-leave": {
       "root": "libs/application/templates/parental-leave",
       "sourceRoot": "libs/application/templates/parental-leave/src",
