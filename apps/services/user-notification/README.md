@@ -1,4 +1,4 @@
-# user-notification
+# User Notification
 
 ## About
 
