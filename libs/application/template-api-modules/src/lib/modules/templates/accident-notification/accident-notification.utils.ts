@@ -94,17 +94,17 @@ export const applictionAnswersToXml = (
   return xml
 }
 
-export const whitelistedErrorMessages = [
-  'Villa við móttöku og vistun fylgiskjals.',
-  'Kennitala hjá fyrirtæki finnst ekki í viðskiptamannaskrá Sjúkratrygginga.',
-  'Undirtegund finnst ekki í stoðgögnum hjá Sjúkratryggingum Íslands.',
-  'Kennitala hjá tilkynnanda finnst ekki í þjóðskrá.',
-  'Tegund tilkynnanda finnst ekki í stoðgögnum hjá Sjúkratryggingum Íslands.',
-  'Tegund staðsetningar á skipi finnst ekki í stoðgögnum hjá Sjúkratryggingum Íslands.',
-  'Það á eftir að skrá hvaða tíma dags slysið átti sér stað.',
-  'Slysategund finnst ekki í stoðgögnum hjá Sjúkratryggingum Íslands.',
-  'Ekki er búið að fylla út í dagsetningu slys.',
-  'Kennitala hjá þeim slasaða finnst ekki í þjóðskrá.',
+export const whiteListedErrorCodes = [
+  's801_fyrirt_kennit',
+  's801_undirtegund',
+  's801_tilkynnandi',
+  's801_teg_tilk',
+  's801_stads_skipa',
+  's801_sly_timislys',
+  's801_sly_tegund',
+  's801_sly_dags',
+  's801_fylgiskjal',
+  's801_slasadi',
 ]
 
 const whoIsTheNotificationForToId = (

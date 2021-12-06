@@ -16,7 +16,7 @@ import {
   attachmentStatusToAttachmentRequests,
   getApplicationAttachmentStatus,
   getApplicationDocumentId,
-  whitelistedErrorMessages,
+  whiteListedErrorCodes,
 } from './accident-notification.utils'
 import type { AccidentNotificationConfig } from './config'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
@@ -89,8 +89,9 @@ export class AccidentNotificationService {
           `Villa kom upp við vistun á umsókn. ${e.body.errorList
             .map((e: any) => {
               if (
+                e.errorType &&
                 e.errorDesc &&
-                whitelistedErrorMessages.includes(e.errorDesc)
+                whiteListedErrorCodes.includes(e.errorType)
               ) {
                 return e.errorDesc
               }
