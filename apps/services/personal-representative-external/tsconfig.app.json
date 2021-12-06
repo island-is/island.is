@@ -2,10 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
-    "types": ["node"],
-    "emitDecoratorMetadata": true,
-    "target": "es2015"
+    "types": ["node"]
   },
-  "exclude": ["**/*.spec.ts"],
+  "exclude": ["**/*.spec.ts", "test/**", "**/e2e/**"],
   "include": ["**/*.ts"]
 }
