@@ -40,6 +40,7 @@ const useUpdateApplication = () => {
             spouseEmail: form.emailAddress,
             spousePhoneNumber: form.phoneNumber,
             spouseName: user?.name,
+            spouseFormComment: form.formComment,
           },
         },
       })

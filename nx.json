@@ -543,6 +543,9 @@
     "nest-config": {
       "tags": []
     },
+    "nest-feature-flags": {
+      "tags": []
+    },
     "nest-pagination": {
       "tags": []
     },
