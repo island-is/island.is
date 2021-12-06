@@ -11,18 +11,15 @@ import {
   getActiveEnvironment,
   isRunningOnEnvironment,
 } from '@island.is/shared/utils'
-import '../auth'
+//import '../auth'
 
-import { Toast, ErrorBoundary, AppLayout } from '../components'
+import { Toast, ErrorBoundary, AppLayout, AuthProvider } from '../components'
 import { client as initApollo } from '../graphql'
 import { appWithTranslation } from '../i18n'
 // import { isAuthenticated } from '../auth/utils'
 import { withHealthchecks } from '../utils/Healthchecks/withHealthchecks'
 
-import type { AuthenticateUser as User } from './auth/interfaces'
-import { useRouter } from 'next/router'
-import { useContext, useEffect } from 'react'
-import { AuthContext } from '../components'
+import type { AuthenticateUser as User } from './api/auth/interfaces'
 
 const activeEnvironment = getActiveEnvironment()
 
@@ -45,10 +42,7 @@ interface Props {
 
 class SupportApplication extends App<Props> {
   
-  static async getInitialProps(appContext) {
-    //const router = useRouter()
-    //const { isAuthenticated, user } = useContext(AuthContext)
-    
+  static async getInitialProps(appContext) { 
     const { Component, ctx } = appContext
     const apolloClient = initApollo({})
     const customContext = {
@@ -56,7 +50,7 @@ class SupportApplication extends App<Props> {
       apolloClient,
     }
     const pageProps = (await Component.getInitialProps(customContext)) as any
-    //const authProps = (await Component.getInitialProps(AuthContext)) as any
+
     const layoutProps = await AppLayout.getInitialProps({
       ...customContext,
       locale: pageProps.locale,
@@ -75,8 +69,6 @@ class SupportApplication extends App<Props> {
       layoutProps: { ...layoutProps, ...pageProps.layoutConfig },
       pageProps,
       apolloState,
-      isAuthenticated: false,//authProps.isAuthenticated,
-      user: undefined as User//authProps.user,
     }
   }
 
@@ -144,11 +136,12 @@ export default Index */
     //document.title = 'Loftbrú þjónustusíða'
 
     const returnUrl = (user: User) => {
-      console.log(user)
+      console.log('_app returnUrl, user: ' + user)
       return `/min-rettindi`
     }
 
     if (isAuthenticated && user) {
+      console.log('_app isAuthenticated - hello')
       router.push(returnUrl(user))
     } else {
       return null
@@ -157,17 +150,17 @@ export default Index */
     return (
       <Provider 
         session={pageProps.session} 
-        options={{ clientMaxAge: 120, basePath: '/api/auth'}} 
+        options={{ clientMaxAge: 120, baseUrl: 'http://localhost:4200', basePath: '/api/auth'}} 
       >
         <ApolloProvider client={initApollo(pageProps.apolloState)}>
-
-          <AppLayout isAuthenticated={isAuthenticated} {...layoutProps}>
-            <ErrorBoundary>
-              <Component {...pageProps} />
-            </ErrorBoundary>
-            <Toast />
-          </AppLayout>
-
+          <AuthProvider>
+            <AppLayout isAuthenticated={isAuthenticated} {...layoutProps}>
+              <ErrorBoundary>
+                <Component {...pageProps} />
+              </ErrorBoundary>
+              <Toast />
+            </AppLayout>
+          </AuthProvider>
         </ApolloProvider>
       </Provider>
     )

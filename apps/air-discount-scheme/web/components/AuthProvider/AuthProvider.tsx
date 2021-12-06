@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode } from 'react'
-import { AuthenticateUser as User } from '@island.is/air-discount-scheme-web/pages/auth/interfaces'
+import { AuthenticateUser as User } from '@island.is/air-discount-scheme-web/pages/api/auth/interfaces'
 import useUser from '@island.is/air-discount-scheme-web/auth/useUser'
 
 interface AuthProvider {

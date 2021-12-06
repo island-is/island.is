@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 
-import { AuthenticateUser as User } from '@island.is/air-discount-scheme-web/pages/auth/interfaces'
-import { CurrentUserQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import { AuthenticateUser as User } from '@island.is/air-discount-scheme-web/pages/api/auth/interfaces'
 import { useSession } from 'next-auth/client'
 
 const useUser = () => {
@@ -13,8 +12,17 @@ const useUser = () => {
     Boolean(session?.user),
   )
 
-  /// TODO: new CurrentUserQuery
-  const { data, loading: loadingUser } = useQuery(CurrentUserQuery, {
+  const tempGqlQuery = gql`
+  query CurrentUserQuery {
+    currentUser {
+      nationalId
+      name
+      phoneNumber
+    }
+  }
+`
+
+  const { data, loading: loadingUser } = useQuery(tempGqlQuery, {
     fetchPolicy: 'no-cache',
   })
 
