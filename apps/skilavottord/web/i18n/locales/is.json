@@ -275,6 +275,7 @@
     "success": "Staðsetning var uppfærð."
   },
   "deregisterSidenav": {
+    "title": "Aðgerðir",
     "deregister": "Afskrá ökutæki",
     "companyInfo": "Upplýsingar fyrirtækis"
   },
@@ -326,7 +327,7 @@
     "subtitles": {
       "deregistered": "Afskráð ökutæki"
     },
-    "info": "Engin meðhöndluð ökutæki",
+    "info": "Here is the list of all deregistered vehicles, along with date of the registration.",
     "buttons": {
       "export": "Export"
     },
@@ -339,7 +340,8 @@
   "recyclingFundSidenav": {
     "title": "Úrvinnslusjóður",
     "recycled": "Meðhöndluð ökutæki",
-    "companies": "Móttökuaðilar"
+    "companies": "Móttökuaðilar",
+    "accessControl": "Access Control"
   },
   "recyclingCompanies": {
     "title": "Móttökuaðilar",
@@ -355,6 +357,70 @@
     "buttons": {
       "add": "Bæta við móttökuaðila",
       "edit": "Breyta"
+    }
+  },
+  "accessControl": {
+    "title": "Access control",
+    "info": "Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þúgetur eytt umboðum eða bætt við nýjum.",
+    "empty": "There is no recycling comapany added yet",
+    "tableHeaders": {
+      "nationalId": "National Id",
+      "name": "Name",
+      "role": "Role",
+      "partner": "Partner"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "buttons": {
+      "add": "Add recycling company",
+      "edit": "Edit"
+    },
+    "modal": {
+      "titles": {
+        "add": "Add recycling company",
+        "edit": "Edit recycling company"
+      },
+      "subtitles": {
+        "add": "Add recycling company Add recycling company Add recycling company Add recycling company",
+        "edit": "Edit recycling company Edit recycling company Edit recycling company Edit recycling company"
+      },
+      "inputs": {
+        "nationalId": {
+          "label": "National Id",
+          "placeholder": "National Id",
+          "rules": {
+            "required": "Skylda er að fylla út kennitölu",
+            "validate": "Kennitalan er ekki gild kennitala"
+          }
+        },
+        "name": {
+          "label": "Name",
+          "placeholder": "Name",
+          "rules": {
+            "required": "Name is required"
+          }
+        },
+        "role": {
+          "label": "Role",
+          "placeholder": "Role",
+          "rules": {
+            "required": "Role is required"
+          }
+        },
+        "partner": {
+          "label": "Partner",
+          "placeholder": "Partner",
+          "rules": {
+            "required": "Partner is required"
+          }
+        }
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "continue": "Submit"
+      }
     }
   },
   "notFound": {
@@ -388,6 +454,7 @@
       "deregister": "/deregister-vehicle/[id]"
     },
     "recycledVehicles": "/recycled-vehicles",
+    "accessControl": "/en/access-control",
     "recyclingCompanies": {
       "baseRoute": "/recycling-companies",
       "add": "/recycling-companies/add",

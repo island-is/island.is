@@ -143,7 +143,7 @@ const Overview: FC = () => {
     <PartnerPageLayout
       side={
         <Sidenav
-          title={activePartner?.companyName || user.name}
+          title={activePartner?.companyName || sidenavText.title}
           sections={[
             {
               icon: 'car',

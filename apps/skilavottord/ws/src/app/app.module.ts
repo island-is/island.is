@@ -14,6 +14,7 @@ import {
   VehicleOwnerModule,
   SamgongustofaModule,
   FjarsyslaModule,
+  AccessControlModule,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { environment } from '../environments'
@@ -35,6 +36,7 @@ const autoSchemaFile = environment.production
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+    AccessControlModule,
     RecyclingRequestModule,
     AuthModule,
     UserModule,

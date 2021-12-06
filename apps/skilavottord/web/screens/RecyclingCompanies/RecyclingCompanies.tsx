@@ -1,20 +1,20 @@
 import React, { FC, useContext } from 'react'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
+import NextLink from 'next/link'
 
-import { Box, GridColumn, Stack, Text } from '@island.is/island-ui/core'
-
+import { ActionCard, Breadcrumbs, Stack, Text } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
-import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { ListItem } from '@island.is/skilavottord-web/components'
+import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
 import {
   RecyclingPartner,
   Query,
-} from '@island.is/skilavottord-web/graphql/types'
+  Role,
+} from '@island.is/skilavottord-web/graphql/schema'
 import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
 
 const SkilavottordAllRecyclingPartnersQuery = gql`
@@ -62,42 +62,56 @@ const RecyclingCompanies: FC = () => {
               title: `${sidenavText.companies}`,
               link: `${routes.recyclingCompanies.baseRoute}`,
             },
-          ]}
+            {
+              ...(hasPermission('accessControl', user?.role)
+                ? {
+                    icon: 'lockClosed',
+                    title: `${sidenavText.accessControl}`,
+                    link: `${routes.accessControl}`,
+                  }
+                : null),
+            } as React.ComponentProps<typeof Sidenav>['sections'][0],
+          ].filter(Boolean)}
           activeSection={1}
         />
       }
     >
-      <GridColumn span={['8/8', '8/8', '7/8', '7/8']}>
-        <Stack space={4}>
-          <Stack space={2}>
-            <Text variant="h1">{t.title}</Text>
-            <Text variant="intro">{t.info}</Text>
+      <Stack space={4}>
+        <Breadcrumbs
+          items={[
+            { title: 'Ísland.is', href: routes.home['recyclingCompany'] },
+            {
+              title: t.title,
+            },
+          ]}
+          renderLink={(link, item) => {
+            return item?.href ? (
+              <NextLink href={item?.href}>{link}</NextLink>
+            ) : (
+              link
+            )
+          }}
+        />
+        <Text variant="h1">{t.title}</Text>
+        <Text variant="intro">{t.info}</Text>
+        {error || (loading && !data) ? (
+          <Text>{t.empty}</Text>
+        ) : (
+          <Stack space={3}>
+            {recyclingPartners.map((partner: RecyclingPartner, index) => (
+              <ActionCard
+                cta={{ label: '' }}
+                heading={partner.companyName}
+                text={partner.companyId}
+                tag={{
+                  label: partner.active ? t.status.active : t.status.inactive,
+                  variant: partner.active ? 'blue' : 'red',
+                }}
+              />
+            ))}
           </Stack>
-          <Text variant="h3">{t.subtitles.companies}</Text>
-          {error || (loading && !data) ? (
-            <Text>{t.empty}</Text>
-          ) : (
-            <Box>
-              {recyclingPartners.map((partner: RecyclingPartner, index) => (
-                <ListItem
-                  key={index}
-                  title={partner.companyName}
-                  content={[
-                    {
-                      text: `${partner.companyId}`,
-                    },
-                    {
-                      text: partner.active
-                        ? t.status.active
-                        : t.status.inactive,
-                    },
-                  ]}
-                />
-              ))}
-            </Box>
-          )}
-        </Stack>
-      </GridColumn>
+        )}
+      </Stack>
     </PartnerPageLayout>
   )
 }

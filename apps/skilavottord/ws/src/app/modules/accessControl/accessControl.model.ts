@@ -10,9 +10,9 @@ export class AccessControlModel {
 
   // TODO: use the Role enum and create GraphQL Enum for it as well
   @Field()
-  role: string
+  role!: string
 
   // TODO: get from samgongustofa
   @Field()
-  partnerId: string
+  partnerId!: string
 }

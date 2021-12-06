@@ -62,7 +62,7 @@ const CompanyInfo: FC = () => {
     <PartnerPageLayout
       side={
         <Sidenav
-          title={partnerName || user?.name}
+          title={partnerName || sidenavText.title}
           sections={[
             {
               icon: 'car',
