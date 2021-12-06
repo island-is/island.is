@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing'
 
+import { Role } from './auth.types'
 import { AuthService } from './auth.service'
 
 describe('AuthService', () => {
@@ -27,14 +28,14 @@ describe('AuthService', () => {
 
       // Assert
       //expect(role).toBe(Role.developer)
-      expect(role).toBe('citizen')
+      expect(role).toBe(Role.citizen)
     })
   })
 
   describe('checkRole', () => {
     it('should return true for valid permission', () => {
       // Arrange & Act
-      const hasPermission = authService.checkRole(user, 'citizen')
+      const hasPermission = authService.checkRole(user, Role.citizen)
 
       // Assert
       //expect(hasPermission).toBeTruthy()
