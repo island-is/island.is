@@ -73,7 +73,7 @@ interface RequestCourtRecordSignatureMutationResponse {
 }
 
 interface ExtendCaseMutationResponse {
-  extendSignature: Case
+  extendCase: Case
 }
 
 const useCase = () => {
