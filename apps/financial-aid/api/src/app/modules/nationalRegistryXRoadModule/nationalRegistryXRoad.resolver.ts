@@ -14,7 +14,7 @@ import { Person } from './models/person.model'
 import { UserSpouse } from './models/userSpouse.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
-@Scopes('@skra.is/individuals')
+@Scopes('@samband.is/internal')
 @Resolver(() => Person)
 @Audit({ namespace: '@island.is/api/national-registry-x-road' })
 export class NationalRegistryXRoadResolver {
@@ -30,7 +30,6 @@ export class NationalRegistryXRoadResolver {
   async nationalRegistryPersons(
     @CurrentUser() user: User,
   ): Promise<Person | undefined> {
-    console.log('heeeer')
     return this.nationalRegistryXRoadService.getNationalRegistryPerson(
       user,
       user.nationalId,
