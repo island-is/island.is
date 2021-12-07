@@ -5,8 +5,8 @@ import { DeductionFactorsModel } from '../../deductionFactors'
 
 @ObjectType()
 export class AmountModel implements Amount {
-  @Field(() => ID)
-  readonly id!: string
+  @Field()
+  readonly applicationId!: string
 
   @Field()
   readonly aidAmount!: number

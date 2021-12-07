@@ -61,7 +61,7 @@ export interface Aid {
 }
 
 export interface Amount {
-  id: string
+  applicationId: string
   aidAmount: number
   income?: number
   personalTaxCredit: number
@@ -71,23 +71,7 @@ export interface Amount {
   deductionFactors?: DeductionFactors[]
 }
 
-export interface CreateAmount {
-  applicationId: string
-  aidAmount: number
-  income?: number
-  personalTaxCredit: number
-  spousePersonalTaxCredit?: number
-  tax: number
-  finalAmount: number
-  deductionFactors?: CreateDeductionFactors[]
-}
-
 export interface DeductionFactors {
-  amount?: number
-  amountId?: string
-  description?: string
-}
-export interface CreateDeductionFactors {
   amount?: number
   description?: string
 }

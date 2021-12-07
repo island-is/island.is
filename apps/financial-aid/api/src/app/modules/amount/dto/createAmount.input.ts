@@ -2,10 +2,10 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 import { CreateDeductionFactorsInput } from './createDeductionFactors.input'
-import { CreateAmount } from '@island.is/financial-aid/shared/lib'
+import { Amount } from '@island.is/financial-aid/shared/lib'
 
 @InputType()
-export class CreateAmountInput implements CreateAmount {
+export class CreateAmountInput implements Amount {
   @Allow()
   @Field()
   readonly applicationId!: string
