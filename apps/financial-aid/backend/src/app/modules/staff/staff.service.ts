@@ -73,9 +73,10 @@ export class StaffService {
     input: CreateStaffDto,
     municipalityName: string,
     user: Staff,
+    isFirstStaffForMunicipality: boolean,
   ) {
-    if (input.roles.includes(StaffRole.EMPLOYEE)) {
-      try {
+    try {
+      if (input.roles.includes(StaffRole.EMPLOYEE)) {
         await this.emailService.sendEmail({
           from: {
             name: user.name,
@@ -93,9 +94,28 @@ export class StaffService {
             input.email,
           ),
         })
-      } catch (error) {
-        logger.warn('failed to send email', error)
       }
+      if (input.roles.includes(StaffRole.ADMIN)) {
+        await this.emailService.sendEmail({
+          from: {
+            name: user.name,
+            address: user.email,
+          },
+          replyTo: {
+            name: user.name,
+            address: user.email,
+          },
+          to: input.email,
+          subject: 'Aðgangur fyrir vinnslukerfi fjárhagsaðstoðar veittur',
+          html: EmployeeEmailTemplate(
+            municipalityName,
+            environment.veitaUrl,
+            input.email,
+          ),
+        })
+      }
+    } catch (error) {
+      logger.warn('failed to send email', error)
     }
   }
 
@@ -104,8 +124,14 @@ export class StaffService {
     municipality: CreateStaffMunicipality,
     user?: Staff,
     t?: Transaction,
+    isFirstStaffForMunicipality?: false,
   ): Promise<StaffModel> {
-    await this.sendEmail(input, municipality.municipalityName, user)
+    await this.sendEmail(
+      input,
+      municipality.municipalityName,
+      user,
+      isFirstStaffForMunicipality,
+    )
     return await this.staffModel.create(
       {
         nationalId: input.nationalId,

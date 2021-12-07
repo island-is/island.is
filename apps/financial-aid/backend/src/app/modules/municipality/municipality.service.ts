@@ -92,6 +92,7 @@ export class MunicipalityService {
             },
             undefined,
             t,
+            true,
           )
 
           return this.municipalityModel.create(municipality, { transaction: t })
