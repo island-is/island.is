@@ -134,3 +134,11 @@ export const trianglesTop = style({
     },
   })
 })
+
+export const titleImage = style({
+  height: 90,
+  marginTop: -16,
+  background: 'url("/assets/sjukratryggingar_title.svg")',
+  backgroundRepeat: 'no-repeat',
+  backgroundPositionX: 'center'
+})

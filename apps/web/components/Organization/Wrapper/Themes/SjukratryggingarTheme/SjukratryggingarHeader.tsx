@@ -72,7 +72,7 @@ export const SjukratryggingarHeader: React.FC<HeaderProps> = ({
               >
                 <Hidden below="md">
                   <div className={styles.trianglesTop}></div>
-                  <img src='/assets/sjukratryggingar_title.svg' style={{width: 431, marginTop: -16}}/>
+                  <div className={styles.titleImage}></div>
                 </Hidden>
                 <Hidden above='sm'>
                   <Text variant="h1" color="white">
