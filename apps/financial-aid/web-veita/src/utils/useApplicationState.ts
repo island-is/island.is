@@ -1,11 +1,11 @@
 import { useContext } from 'react'
 import { useMutation } from '@apollo/client'
 import {
+  Amount,
   Application,
   ApplicationEventType,
   ApplicationFilters,
   ApplicationState,
-  CreateAmount,
 } from '@island.is/financial-aid/shared/lib'
 import { ApplicationFiltersContext } from '../components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 import { AdminContext } from '../components/AdminProvider/AdminProvider'
@@ -40,7 +40,7 @@ export const useApplicationState = () => {
     event: ApplicationEventType,
     rejection?: string,
     comment?: string,
-    amount?: CreateAmount,
+    amount?: Amount,
   ) => {
     if (saveLoading === false && loadingFilters === false && applicationId) {
       const { data } = await updateApplicationMutation({

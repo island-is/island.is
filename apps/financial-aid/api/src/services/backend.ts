@@ -169,10 +169,6 @@ class BackendAPI extends RESTDataSource {
   getNumberOfStaffForMunicipality(municipalityId: string): Promise<number> {
     return this.get(`staff/municipality/${municipalityId}`)
   }
-
-  createAmount(createAmount: CreateAmountInput): Promise<Amount> {
-    return this.post('amount', createAmount)
-  }
 }
 
 export default BackendAPI

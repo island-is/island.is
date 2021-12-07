@@ -26,7 +26,7 @@ module.exports = {
       Promise.all([
         queryInterface.removeColumn('deductionFactors', 'amount_id', {
           transaction: t,
-        })
+        }),
       ]),
     )
   },
