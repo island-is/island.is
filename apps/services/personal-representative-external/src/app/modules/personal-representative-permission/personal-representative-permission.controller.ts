@@ -56,6 +56,7 @@ export class PersonalRepresentativePermissionController {
     if (!nationalId) {
       throw new BadRequestException('NationalId needs to be provided')
     }
+    // Since we do not have an island.is user login we need to create a user object
     const user: User = {
       nationalId: nationalId,
       scope: [],
