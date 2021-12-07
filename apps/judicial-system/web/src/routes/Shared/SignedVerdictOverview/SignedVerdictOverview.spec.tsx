@@ -326,8 +326,7 @@ describe('Signed Verdict Overview route', () => {
     })
 
     test('should have the correct subtitle', async () => {
-      const validToDate = '2020-09-25T19:50:08.033Z'
-      const rulingDate = '2020-09-20T17:50:08.033Z'
+      const date = '2020-09-25T19:50:08.033Z'
 
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
@@ -356,17 +355,8 @@ describe('Signed Verdict Overview route', () => {
 
       expect(
         await screen.findByText(
-          `Úrskurðað ${formatDate(rulingDate, 'PPP')} kl. ${formatDate(
-            rulingDate,
-            TIME_FORMAT,
-          )}`,
-        ),
-      ).toBeInTheDocument()
-
-      expect(
-        await screen.findByText(
-          `Gæsla til ${formatDate(validToDate, 'PPP')} kl. ${formatDate(
-            validToDate,
+          `Gæsla til ${formatDate(date, 'PPP')} kl. ${formatDate(
+            date,
             TIME_FORMAT,
           )}`,
         ),
@@ -603,7 +593,6 @@ describe('Signed Verdict Overview route', () => {
 
       test('should have the correct subtitle', async () => {
         const dateInPast = '2020-09-24T19:50:08.033Z'
-        const rulingDate = '2020-09-20T17:50:08.033Z'
 
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
@@ -629,15 +618,6 @@ describe('Signed Verdict Overview route', () => {
             </UserProvider>
           </MockedProvider>,
         )
-
-        expect(
-          await screen.findByText(
-            `Úrskurðað ${formatDate(rulingDate, 'PPP')} kl. ${formatDate(
-              rulingDate,
-              TIME_FORMAT,
-            )}`,
-          ),
-        ).toBeInTheDocument()
 
         expect(
           await screen.findByText(
@@ -856,7 +836,6 @@ describe('Signed Verdict Overview route', () => {
         pathname: '/gaesluvardhald/test_id_2',
       }))
       const date = '2020-09-25T19:50:08.033Z'
-      const rulingDate = '2020-09-20T17:50:08.033Z'
 
       render(
         <MockedProvider
@@ -876,15 +855,6 @@ describe('Signed Verdict Overview route', () => {
           </UserProvider>
         </MockedProvider>,
       )
-
-      expect(
-        await screen.findByText(
-          `Úrskurðað ${formatDate(rulingDate, 'PPP')} kl. ${formatDate(
-            rulingDate,
-            TIME_FORMAT,
-          )}`,
-        ),
-      ).toBeInTheDocument()
 
       expect(
         await screen.findByText(
@@ -997,7 +967,6 @@ describe('Signed Verdict Overview route', () => {
 
     test('should have the correct subtitle', async () => {
       const dateInPast = '2020-09-24T19:50:08.033Z'
-      const rulingDate = '2020-09-20T17:50:08.033Z'
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_8' },
@@ -1022,15 +991,6 @@ describe('Signed Verdict Overview route', () => {
           </UserProvider>
         </MockedProvider>,
       )
-
-      expect(
-        await screen.findByText(
-          `Úrskurðað ${formatDate(rulingDate, 'PPP')} kl. ${formatDate(
-            rulingDate,
-            TIME_FORMAT,
-          )}`,
-        ),
-      ).toBeInTheDocument()
 
       expect(
         await screen.findByText(
