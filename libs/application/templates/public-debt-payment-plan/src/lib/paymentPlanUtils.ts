@@ -30,7 +30,7 @@ export const prerequisitesFailed = (data: ExternalData) => {
     !prerequisites.wageReturns ||
     prerequisites.collectionActions ||
     !prerequisites.doNotOwe ||
-    debts.length === 0
+    debts?.length === 0
   )
 }
 
