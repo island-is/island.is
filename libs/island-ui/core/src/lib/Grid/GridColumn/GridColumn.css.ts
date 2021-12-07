@@ -120,6 +120,7 @@ export const spanSm = makeSpan('sm')
 export const spanMd = makeSpan('md')
 export const spanLg = makeSpan('lg')
 export const spanXl = makeSpan('xl')
+export const spanXxl = makeSpan('xxl')
 
 const makeOffset = (breakpoint: Breakpoint) =>
   styleVariants(
@@ -134,6 +135,7 @@ export const offsetSm = makeOffset('sm')
 export const offsetMd = makeOffset('md')
 export const offsetLg = makeOffset('lg')
 export const offsetXl = makeOffset('xl')
+export const offsetXxl = makeOffset('xxl')
 
 const makeOrder = (breakpoint: Breakpoint) =>
   styleVariants(
@@ -148,6 +150,7 @@ export const orderSm = makeOrder('sm')
 export const orderMd = makeOrder('md')
 export const orderLg = makeOrder('lg')
 export const orderXl = makeOrder('xl')
+export const orderXxl = makeOrder('xxl')
 
 // Treat gotcha:
 // The style order matters.

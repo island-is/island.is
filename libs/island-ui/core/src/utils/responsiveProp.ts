@@ -6,12 +6,13 @@ export type ResponsiveProp<AtomName> =
   | Readonly<[AtomName, AtomName, AtomName]>
   | Readonly<[AtomName, AtomName, AtomName, AtomName]>
   | Readonly<[AtomName, AtomName, AtomName, AtomName, AtomName]>
+  | Readonly<[AtomName, AtomName, AtomName, AtomName, AtomName, AtomName]>
 
 export const normaliseResponsiveProp = <Keys extends string | number>(
   value: ResponsiveProp<Keys>,
-): Readonly<[Keys, Keys, Keys, Keys, Keys]> => {
+): Readonly<[Keys, Keys, Keys, Keys, Keys, Keys]> => {
   if (typeof value === 'string' || typeof value === 'number') {
-    return [value, value, value, value, value]
+    return [value, value, value, value, value, value]
   }
 
   if (Array.isArray(value)) {
@@ -19,7 +20,7 @@ export const normaliseResponsiveProp = <Keys extends string | number>(
 
     if (length === 2) {
       const [xsValue, smValue] = value
-      return [xsValue, smValue, smValue, smValue, smValue]
+      return [xsValue, smValue, smValue, smValue, smValue, smValue]
     }
 
     if (length === 3) {
@@ -27,6 +28,7 @@ export const normaliseResponsiveProp = <Keys extends string | number>(
       return [
         xsValue,
         smValue,
+        mdValue as Keys,
         mdValue as Keys,
         mdValue as Keys,
         mdValue as Keys,
@@ -41,16 +43,29 @@ export const normaliseResponsiveProp = <Keys extends string | number>(
         mdValue as Keys,
         lgValue as Keys,
         lgValue as Keys,
+        lgValue as Keys,
       ]
     }
 
     if (length === 5) {
-      return value as Readonly<[Keys, Keys, Keys, Keys, Keys]>
+      const [xsValue, smValue, mdValue, lgValue, xlValue] = value
+      return [
+        xsValue,
+        smValue,
+        mdValue as Keys,
+        lgValue as Keys,
+        xlValue as Keys,
+        xlValue as Keys,
+      ]
+    }
+
+    if (length === 6) {
+      return value as Readonly<[Keys, Keys, Keys, Keys, Keys, Keys]>
     }
 
     if (length === 1) {
       const [xsValue] = value
-      return [xsValue, xsValue, xsValue, xsValue, xsValue]
+      return [xsValue, xsValue, xsValue, xsValue, xsValue, xsValue]
     }
 
     throw new Error(`Invalid responsive prop length: ${JSON.stringify(value)}`)
@@ -75,9 +90,14 @@ export const mapResponsiveProp = <
     return valueMap[value]
   }
 
-  const [xsValue, smValue, mdValue, lgValue, xlValue] = normaliseResponsiveProp(
-    value,
-  )
+  const [
+    xsValue,
+    smValue,
+    mdValue,
+    lgValue,
+    xlValue,
+    xxlValue,
+  ] = normaliseResponsiveProp(value)
 
   return [
     valueMap[xsValue],
@@ -85,6 +105,7 @@ export const mapResponsiveProp = <
     valueMap[mdValue],
     valueMap[lgValue],
     valueMap[xlValue],
+    valueMap[xxlValue],
   ]
 }
 
@@ -95,18 +116,26 @@ export const resolveResponsiveProp = <Keys extends string | number>(
   mdAtoms: Record<Keys, string>,
   lgAtoms: Record<Keys, string>,
   xlAtoms: Record<Keys, string>,
+  xxlAtoms: Record<Keys, string>,
 ) => {
   if (typeof value === 'string' || typeof value === 'number') {
     return xsAtoms[value!]
   }
 
-  const [xsValue, smValue, mdValue, lgValue, xlValue] = normaliseResponsiveProp(
-    value,
-  )
+  const [
+    xsValue,
+    smValue,
+    mdValue,
+    lgValue,
+    xlValue,
+    xxlValue,
+  ] = normaliseResponsiveProp(value)
 
   return `${xsAtoms[xsValue!]}${
     smValue !== xsValue ? ` ${smAtoms[smValue!]}` : ''
   }${mdValue !== smValue ? ` ${mdAtoms[mdValue!]}` : ''}${
     lgValue !== mdValue ? ` ${lgAtoms[lgValue!]}` : ''
-  }${xlValue !== lgValue ? ` ${xlAtoms[xlValue!]}` : ''}`
+  }${xlValue !== lgValue ? ` ${xlAtoms[xlValue!]}` : ''}${
+    xxlValue !== xlValue ? ` ${xxlAtoms[xxlValue!]}` : ''
+  }`
 }

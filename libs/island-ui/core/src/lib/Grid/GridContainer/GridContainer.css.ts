@@ -5,7 +5,7 @@ import { theme } from '@island.is/island-ui/theme'
 export const root = style({
   boxSizing: 'border-box',
   margin: '0 auto',
-  maxWidth: theme.breakpoints.xl,
+  maxWidth: theme.breakpoints.xxl,
   paddingLeft: theme.grid.gutter.mobile * 2,
   paddingRight: theme.grid.gutter.mobile * 2,
   width: '100%',

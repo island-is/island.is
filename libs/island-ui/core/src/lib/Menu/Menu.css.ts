@@ -46,7 +46,7 @@ export const mainContainer = style({
   width: '100%',
   ...themeUtils.responsiveStyle({
     lg: {
-      maxWidth: 829,
+      maxWidth: theme.breakpoints.xl,
     },
   }),
 })

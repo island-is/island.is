@@ -4,17 +4,17 @@ type Breakpoint = keyof typeof theme['breakpoints']
 const breakpoints = Object.keys(theme.breakpoints)
 
 export interface ResponsiveRangeProps {
-  above?: Exclude<Breakpoint, 'xl'>
+  above?: Exclude<Breakpoint, 'xxl'>
   below?: Exclude<Breakpoint, 'xs'>
 }
 
 export const resolveResponsiveRangeProps = (
   props: ResponsiveRangeProps,
-): [boolean, boolean, boolean, boolean, boolean] => {
+): [boolean, boolean, boolean, boolean, boolean, boolean] => {
   const { above, below } = props
 
   if (!above && !below) {
-    return [false, false, false, false, false]
+    return [false, false, false, false, false, false]
   }
 
   const startIndex = above ? breakpoints.indexOf(above) + 1 : 0
@@ -28,6 +28,7 @@ export const resolveResponsiveRangeProps = (
   const includeMd = range.indexOf('md') >= 0
   const includeLg = range.indexOf('lg') >= 0
   const includeXl = range.indexOf('xl') >= 0
+  const includeXxl = range.indexOf('xxl') >= 0
 
-  return [includeXs, includeSm, includeMd, includeLg, includeXl]
+  return [includeXs, includeSm, includeMd, includeLg, includeXl, includeXxl]
 }

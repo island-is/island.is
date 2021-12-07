@@ -49,6 +49,7 @@ export const theme = {
     md: 768,
     lg: 992,
     xl: 1440,
+    xxl: 1920,
   },
   contentWidth: {
     small: 774,

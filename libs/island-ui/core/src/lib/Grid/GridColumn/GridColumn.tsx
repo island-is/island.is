@@ -22,7 +22,7 @@ export interface GridColumnProps {
   paddingBottom?: ResponsiveSpace
   paddingTop?: ResponsiveSpace
   className?: string
-  hiddenAbove?: Exclude<Breakpoint, 'xl'>
+  hiddenAbove?: Exclude<Breakpoint, 'xxl'>
   hiddenBelow?: Exclude<Breakpoint, 'xs'>
   position?: position | 'none'
 }
@@ -51,6 +51,7 @@ export const GridColumn: FC<GridColumnProps> = ({
     hiddenOnMd,
     hiddenOnLg,
     hiddenOnXl,
+    hiddenOnXxl,
   ] = resolveResponsiveRangeProps({ above, below })
 
   return (
@@ -64,6 +65,7 @@ export const GridColumn: FC<GridColumnProps> = ({
         hiddenOnMd ? 'none' : 'block',
         hiddenOnLg ? 'none' : 'block',
         hiddenOnXl ? 'none' : 'block',
+        hiddenOnXxl ? 'none' : 'block',
       ]}
       className={cn(
         className,
@@ -76,6 +78,7 @@ export const GridColumn: FC<GridColumnProps> = ({
             styles.spanMd,
             styles.spanLg,
             styles.spanXl,
+            styles.spanXxl,
           ),
         offset !== undefined &&
           resolveResponsiveProp(
@@ -85,6 +88,7 @@ export const GridColumn: FC<GridColumnProps> = ({
             styles.offsetMd,
             styles.offsetLg,
             styles.offsetXl,
+            styles.offsetXxl,
           ),
         order !== undefined &&
           resolveResponsiveProp(
@@ -94,6 +98,7 @@ export const GridColumn: FC<GridColumnProps> = ({
             styles.orderMd,
             styles.orderLg,
             styles.orderXl,
+            styles.orderXxl,
           ),
       )}
     >
