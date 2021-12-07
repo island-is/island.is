@@ -1,10 +1,9 @@
 import NextAuth, { CallbacksOptions } from 'next-auth'
 import Providers from 'next-auth/providers'
+import { JWT } from 'next-auth/jwt'
+import { NextApiRequest, NextApiResponse } from 'next-auth/internals/utils'
 import { uuid } from 'uuidv4'
-import {
-  identityServerConfig,
-  RolesRule,
-} from '@island.is/financial-aid/shared/lib'
+
 import {
   AuthUser,
   signIn as handleSignIn,
@@ -12,15 +11,13 @@ import {
   session as handleSession,
   AuthSession,
 } from '@island.is/next-ids-auth'
-import { NextApiRequest, NextApiResponse } from 'next-auth/internals/utils'
-import { JWT } from 'next-auth/jwt'
 
 const providers = [
   Providers.IdentityServer4({
-    id: identityServerConfig.id,
-    name: identityServerConfig.name,
-    scope: identityServerConfig.scope,
-    clientId: identityServerConfig.clientId,
+    id: 'identity-server',
+    name: 'Skilavottord',
+    scope: 'openid profile offline_access',
+    clientId: '', // TODO
     domain: process.env.IDENTITY_SERVER_DOMAIN ?? '',
     clientSecret: process.env.IDENTITY_SERVER_SECRET ?? '',
     protection: 'pkce',
@@ -38,7 +35,7 @@ async function signIn(
   account: Record<string, unknown>,
   profile: Record<string, unknown>,
 ): Promise<boolean> {
-  return handleSignIn(user, account, profile, identityServerConfig.id)
+  return handleSignIn(user, account, profile, 'identity-server')
 }
 
 async function jwt(token: JWT, user: AuthUser) {
@@ -51,12 +48,12 @@ async function jwt(token: JWT, user: AuthUser) {
       idToken: user.idToken,
       isRefreshTokenExpired: false,
       folder: token.folder ?? uuid(),
-      service: RolesRule.OSK,
+      // TODO: service: RolesRule.OSK,
     }
   }
   return await handleJwt(
     token,
-    identityServerConfig.clientId,
+    'identity-server',
     process.env.IDENTITY_SERVER_SECRET,
     process.env.NEXTAUTH_URL,
     process.env.IDENTITY_SERVER_DOMAIN,
