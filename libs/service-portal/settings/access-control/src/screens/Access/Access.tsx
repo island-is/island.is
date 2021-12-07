@@ -207,7 +207,7 @@ function Access() {
   return (
     <Box>
       <IntroHeader
-        title={authDelegation?.to.name || ''}
+        title={authDelegation?.to?.name || ''}
         intro={defineMessage({
           id: 'service.portal.settings.accessControl:access-intro',
           defaultMessage:
