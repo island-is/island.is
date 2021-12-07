@@ -34,6 +34,7 @@ import {
 } from '@island.is/financial-aid-web/veita/src/utils/applicationHelper'
 import {
   aidCalculation,
+  aidFinalAmount,
   amountCalculation,
 } from '@island.is/financial-aid-web/veita/src/utils/aidHelper'
 
@@ -210,6 +211,7 @@ const ApplicationProfile = ({
         <AidAmountModal
           headline="Áætluð aðstoð"
           calculations={aidCalculations}
+          finalAmount={aidFinalAmount(aidAmount)}
           isVisible={isAidModalVisible}
           onVisibilityChange={(isVisibleBoolean) => {
             setAidModalVisible(isVisibleBoolean)
@@ -220,6 +222,9 @@ const ApplicationProfile = ({
       {application.amount && (
         <AidAmountModal
           headline="Veitt aðstoð"
+          finalAmount={`${application.amount.finalAmount.toLocaleString(
+            'de-DE',
+          )} kr.`}
           calculations={amountCalculations}
           isVisible={isAmountModalVisible}
           onVisibilityChange={(isVisibleBoolean) => {

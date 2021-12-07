@@ -17,6 +17,7 @@ interface Props {
   isVisible: boolean
   onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
   calculations: Calculations[]
+  finalAmount: string
 }
 
 const AidAmountModal = ({
@@ -24,14 +25,9 @@ const AidAmountModal = ({
   isVisible,
   onVisibilityChange,
   calculations,
+  finalAmount,
 }: Props) => {
   const currentYear = format(new Date(), 'yyyy')
-
-  const estimatedCalc = `${calculateAidFinalAmount(
-    0,
-    false,
-    currentYear,
-  ).toLocaleString('de-DE')} kr.`
 
   const closeModal = (): void => {
     onVisibilityChange(false)
@@ -87,8 +83,8 @@ const AidAmountModal = ({
             paddingX={3}
             marginBottom={4}
           >
-            <Text variant="small">Áætluð aðstoð (hámark)</Text>
-            <Text>{estimatedCalc}</Text>
+            <Text variant="small"> {headline} (hámark)</Text>
+            <Text>{finalAmount}</Text>
           </Box>
 
           <Box display="flex" justifyContent="flexEnd" onClick={closeModal}>

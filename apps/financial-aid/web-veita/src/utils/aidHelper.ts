@@ -2,12 +2,20 @@ import {
   calculateTaxOfAmount,
   calculatePersonalTaxAllowanceUsed,
   Amount,
+  calculateAidFinalAmount,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
-import { title } from 'process'
 
 const currentYear = format(new Date(), 'yyyy')
+
+export const aidFinalAmount = (aidAmount: number) => {
+  return `${calculateAidFinalAmount(
+    aidAmount,
+    false,
+    currentYear,
+  ).toLocaleString('de-DE')} kr.`
+}
 
 export const aidCalculation = (
   aidAmount: number,
