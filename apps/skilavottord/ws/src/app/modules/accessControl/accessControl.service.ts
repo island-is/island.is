@@ -66,8 +66,8 @@ export class AccessControlService {
     })
   }
 
-  async deleteAccess(input: DeleteAccessControlInput): Promise<string> {
+  async deleteAccess(input: DeleteAccessControlInput): Promise<Boolean> {
     // TODO do actual delete
-    return 'deleted'
+    return true
   }
 }

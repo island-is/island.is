@@ -36,11 +36,11 @@ export class AccessControlResolver {
     return this.accessControlService.updateAccess(input)
   }
 
-  @Mutation(() => String)
+  @Mutation(() => Boolean)
   async deleteSkilavottordAccessControl(
     @Args('input', { type: () => DeleteAccessControlInput })
     input: DeleteAccessControlInput,
-  ): Promise<String> {
+  ): Promise<Boolean> {
     return this.accessControlService.deleteAccess(input)
   }
 }

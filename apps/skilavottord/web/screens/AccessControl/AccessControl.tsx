@@ -119,6 +119,14 @@ const AccessControl: FC = () => {
   )
   const [deleteSkilavottordAccessControl] = useMutation(
     DeleteSkilavottordAccessControlMutation,
+    {
+      // TODO for now just to easily work with API, it may be optimized(optimistic UI/update cache)
+      refetchQueries: [
+        {
+          query: SkilavottordAccessControlsQuery,
+        },
+      ],
+    },
   )
 
   const [

@@ -382,12 +382,12 @@
       "titles": {
         "add": "Bæta við aðgangi",
         "edit": "Breyta aðgangi",
-        "delete": "Fjarlæga aðgangi"
+        "delete": "Eyða aðgangi"
       },
       "subtitles": {
         "add": "Aðgangshafi mun fá aðgang til að framkvæma aðgerðir í því hlutverki sem er sett. Vinsamlegast verið viss um að kennitalan eigi við réttan einstakling.",
         "edit": "Aðgangshafi mun fá aðgang til að framkvæma aðgerðir í því hlutverki sem er sett. Vinsamlegast verið viss um að hlutverkið eigi við réttan einstakling.",
-        "delete": "Are you sure you want to delete this access?"
+        "delete": "Ertu viss um að þú viljir eyða þessum aðgangi?"
       },
       "inputs": {
         "nationalId": {
