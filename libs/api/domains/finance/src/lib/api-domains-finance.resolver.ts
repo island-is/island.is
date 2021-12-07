@@ -4,7 +4,7 @@ import { GetCustomerRecordsInput } from './dto/getCustomerRecords.input'
 import { GetDocumentsListInput } from './dto/getDocumentsList.input'
 import { GetFinanceDocumentInput } from './dto/getFinanceDocument.input'
 import { GetAnnualStatusDocumentInput } from './dto/getAnnualStatusDocument.input'
-import { UseGuards } from '@nestjs/common'
+import { ForbiddenException, UseGuards } from '@nestjs/common'
 import graphqlTypeJson from 'graphql-type-json'
 import { CustomerChargeType } from './models/customerChargeType.model'
 import { FinanceDocumentModel } from './models/financeDocument.model'
@@ -12,16 +12,19 @@ import { CustomerTapsControlModel } from './models/customerTapsControl.model'
 import { DocumentsListModel } from './models/documentsList.model'
 import { CustomerRecords } from './models/customerRecords.model'
 
+import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
+  Scopes,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { FinanceService } from '@island.is/clients/finance'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.financeOverview)
 @Resolver()
 @Audit({ namespace: '@island.is/api/finance' })
 export class FinanceResolver {
@@ -75,11 +78,19 @@ export class FinanceResolver {
   }
 
   @Query(() => DocumentsListModel)
+  @Scopes(ApiScope.financeOverview, ApiScope.financeSalary)
   @Audit()
   async getDocumentsList(
     @CurrentUser() user: User,
     @Args('input') input: GetDocumentsListInput,
   ) {
+    if (
+      input.listPath === 'employeeClaims' &&
+      !user.scope.includes(ApiScope.financeSalary)
+    ) {
+      throw new ForbiddenException()
+    }
+
     return this.FinanceService.getDocumentsList(
       user.nationalId,
       input.dayFrom,

@@ -1,10 +1,13 @@
 import React, { FC } from 'react'
 import { Stack } from '@island.is/island-ui/core'
-import { Car, RecycleActionTypes } from '@island.is/skilavottord-web/types'
+import {
+  VehicleInformation,
+  RecycleActionTypes,
+} from '@island.is/skilavottord-web/types'
 import { ActionCard } from '../ActionCard/ActionCard'
 
 interface Props {
-  cars: Car[]
+  cars: VehicleInformation[]
   actionType: RecycleActionTypes
   onContinue: (permno: string, actionType: RecycleActionTypes) => void
 }
@@ -16,7 +19,7 @@ export const ActionCardContainer: FC<Props> = ({
 }) => {
   return (
     <Stack space={2}>
-      {cars.map((car: Car) => (
+      {cars.map((car: VehicleInformation) => (
         <ActionCard
           key={car.permno}
           car={car}
