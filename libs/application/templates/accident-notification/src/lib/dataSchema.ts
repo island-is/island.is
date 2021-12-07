@@ -65,12 +65,9 @@ export const AccidentNotificationSchema = z.object({
         address: z.object({
           city: z.string(),
           code: z.string(),
-          postalCode: z
-            .string()
-            .refine(
-              (x) => +x >= 100 && +x <= 999,
-              error.required.defaultMessage,
-            ),
+          postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
+            params: error.invalidValue,
+          }),
           streetAddress: z.string(),
         }),
         age: z.number(),
@@ -101,9 +98,9 @@ export const AccidentNotificationSchema = z.object({
     name: z.string().refine((x) => x.trim().length > 0),
     nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
     address: z.string().refine((x) => x.trim().length > 0),
-    postalCode: z
-      .string()
-      .refine((x) => +x >= 100 && +x <= 999, error.required.defaultMessage),
+    postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
+      params: error.invalidValue,
+    }),
     city: z.string().refine((x) => x.trim().length > 0, {
       params: error.invalidValue,
     }),
@@ -217,9 +214,9 @@ export const AccidentNotificationSchema = z.object({
     address: z.string().refine((x) => x.trim().length > 0, {
       params: error.invalidValue,
     }),
-    postalCode: z
-      .string()
-      .refine((x) => +x >= 100 && +x <= 999, error.required.defaultMessage),
+    postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
+      params: error.invalidValue,
+    }),
     community: z.string().refine((x) => x.trim().length > 0, {
       params: error.invalidValue,
     }),
