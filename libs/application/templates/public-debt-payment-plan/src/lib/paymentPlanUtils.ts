@@ -18,7 +18,6 @@ export const prerequisitesFailed = (data: ExternalData) => {
     const debts = (data as PaymentPlanExternalData)
     .paymentPlanPrerequisites?.data?.debts as PaymentScheduleDebts[]
 
-    console.log('debts', debts)
 
   if (!prerequisites) return true
 
