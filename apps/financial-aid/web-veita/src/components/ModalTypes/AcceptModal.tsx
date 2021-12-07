@@ -8,9 +8,9 @@ import {
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import {
   aidCalculator,
+  Amount,
   calculateAcceptedAidFinalAmount,
   calculateTaxOfAmount,
-  CreateAmount,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
 import format from 'date-fns/format'
@@ -18,13 +18,11 @@ import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 
 import * as modalStyles from './ModalTypes.css'
-import { useMutation } from '@apollo/client'
-import { AmountMutation } from '@island.is/financial-aid-web/veita/graphql'
 import { useRouter } from 'next/router'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
-  onSaveApplication: (amount: CreateAmount) => void
+  onSaveApplication: (amount: Amount) => void
   isModalVisable: boolean
   homeCircumstances: HomeCircumstances
   spouseNationalId?: string
@@ -50,8 +48,6 @@ const AcceptModal = ({
   spouseNationalId,
 }: Props) => {
   const router = useRouter()
-
-  const [createAmount] = useMutation(AmountMutation)
 
   const maximumInputLength = 6
 

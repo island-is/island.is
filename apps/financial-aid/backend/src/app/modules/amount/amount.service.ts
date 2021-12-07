@@ -5,10 +5,10 @@ import { AmountModel } from './models'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { CreateAmountDto } from './dto'
 import { DeductionFactorsService } from '../deductionFactors'
 
 import { Sequelize } from 'sequelize'
+import { Amount } from '@island.is/financial-aid/shared/lib'
 
 @Injectable()
 export class AmountService {
@@ -21,7 +21,7 @@ export class AmountService {
     private readonly logger: Logger,
   ) {}
 
-  async create(amount: CreateAmountDto): Promise<AmountModel> {
+  async create(amount: Amount): Promise<AmountModel> {
     return await this.sequelize.transaction(async (t) => {
       return this.amountModel
         .create(amount, { transaction: t })

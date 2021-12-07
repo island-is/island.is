@@ -6,7 +6,7 @@ import {
   UpdateApplication,
   ApplicationState,
   ApplicationEventType,
-  CreateAmount,
+  Amount,
 } from '@island.is/financial-aid/shared/lib'
 import { CreateAmountInput } from '../../amount'
 
