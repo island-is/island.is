@@ -1,4 +1,5 @@
 import { lazy } from 'react'
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   ServicePortalModule,
   ServicePortalRoute,
@@ -9,17 +10,19 @@ import {
 const assetsModule: ServicePortalModule = {
   name: 'Eignir',
   widgets: () => [],
-  routes: () => {
+  routes: ({ userInfo }) => {
     const routes: ServicePortalRoute[] = [
       {
         name: m.realEstate,
         path: ServicePortalPath.AssetsRoot,
+        enabled: userInfo.scopes.includes(ApiScope.assets),
         render: () =>
           lazy(() => import('./screens/AssetsOverview/AssetsOverview')),
       },
       {
         name: m.detailInfo,
         path: ServicePortalPath.AssetsRealEstateDetail,
+        enabled: userInfo.scopes.includes(ApiScope.assets),
         render: () =>
           lazy(() =>
             import('./screens/RealEstateAssetDetail/RealEstateAssetDetail'),
