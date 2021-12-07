@@ -1,4 +1,4 @@
-import { RightsController } from './rights.controller'
+import { PersonalRepresentativePermissionController } from './personal-representative-permission.controller'
 import { Module } from '@nestjs/common'
 import {
   PersonalRepresentative,
@@ -14,7 +14,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
       PersonalRepresentative,
     ]),
   ],
-  controllers: [RightsController],
+  controllers: [PersonalRepresentativePermissionController],
   providers: [PersonalRepresentativeService],
 })
-export class RightsModule {}
+export class PersonalRepresentativePermissionModule {}

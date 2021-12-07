@@ -1,5 +1,5 @@
-import { RightTypesModule } from './modules/right-types/right-types.module'
-import { RightsModule } from './modules/rights/rights.module'
+import { PermissionTypeModule } from './modules/permission-type/permission-type.module'
+import { PersonalRepresentativePermissionModule } from './modules/personal-representative-permission/personal-representative-permission.module'
 import { SequelizeConfigService } from '@island.is/auth-api-lib/personal-representative'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
@@ -12,8 +12,8 @@ import { AuditModule } from '@island.is/nest/audit'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
-    RightTypesModule,
-    RightsModule,
+    PermissionTypeModule,
+    PersonalRepresentativePermissionModule,
   ],
 })
 export class AppModule {}

@@ -9,6 +9,7 @@ import {
   Get,
   Inject,
   Param,
+  Req,
 } from '@nestjs/common'
 import {
   ApiOperation,
@@ -18,15 +19,22 @@ import {
   ApiParam,
 } from '@nestjs/swagger'
 import { AuthGuard } from '../common'
+import { Audit, AuditService } from '@island.is/nest/audit'
+import { environment } from '../../../environments/'
+import type { HttpRequest } from '../../app.types'
+import { User } from '@island.is/auth-nest-tools'
 
-@ApiTags('Personal Representative Rights')
-@Controller('v1/rights')
+const namespace = `${environment.audit.defaultNamespace}/personal-representative-permission`
+
+@ApiTags('Personal Representative Permission')
+@Controller('v1/personal-representative-permission')
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
-export class RightsController {
+export class PersonalRepresentativePermissionController {
   constructor(
     @Inject(PersonalRepresentativeService)
     private readonly prService: PersonalRepresentativeService,
+    private readonly auditService: AuditService,
   ) {}
 
   /** Gets a personal representative rights by nationalId of personal representative */
@@ -35,7 +43,7 @@ export class RightsController {
       'Gets personal representative rights by nationalId of personal representative',
     description: 'A personal representative can represent more than one person',
   })
-  @Get('byPersonalRepresentative/:nationalId')
+  @Get(':nationalId')
   @ApiOkResponse({
     description: 'Personal representative connections with rights',
     type: PersonalRepresentativeDTO,
@@ -43,38 +51,26 @@ export class RightsController {
   @ApiParam({ name: 'nationalId', required: true, type: String })
   async getByPersonalRepresentativeAsync(
     @Param('nationalId') nationalId: string,
+    @Req() request: HttpRequest,
   ): Promise<PersonalRepresentativeDTO[]> {
     if (!nationalId) {
       throw new BadRequestException('NationalId needs to be provided')
     }
-
-    return await this.prService.getByPersonalRepresentativeAsync(
-      nationalId,
-      false,
-    )
-  }
-
-  /** Gets a personal representative rights by nationalId of represented person */
-  @ApiOperation({
-    summary:
-      'Gets a personal representative rights by nationalId of represented person',
-  })
-  @Get('byRepresentedPerson/:nationalId')
-  @ApiOkResponse({
-    description: 'Personal representative connection with rights',
-    type: PersonalRepresentativeDTO,
-  })
-  @ApiParam({ name: 'nationalId', required: true, type: String })
-  async getByRepresentedPersonAsync(
-    @Param('nationalId') nationalId: string,
-  ): Promise<PersonalRepresentativeDTO | null> {
-    if (!nationalId) {
-      throw new BadRequestException('NationalId needs to be provided')
+    const user: User = {
+      nationalId: nationalId,
+      scope: [],
+      authorization: '',
+      client: request.serviceProvider,
     }
 
-    return await this.prService.getPersonalRepresentativeByRepresentedPersonAsync(
-      nationalId,
-      false,
+    return await this.auditService.auditPromise(
+      {
+        user,
+        action: 'Get',
+        namespace,
+        resources: nationalId,
+      },
+      this.prService.getByPersonalRepresentativeAsync(nationalId, false),
     )
   }
 }

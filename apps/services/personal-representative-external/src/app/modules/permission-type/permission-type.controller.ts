@@ -19,11 +19,11 @@ import {
 } from '@nestjs/swagger'
 import { AuthGuard } from '../common'
 
-@ApiTags('Personal Representative External - Right Types')
-@Controller('v1/right-types')
+@ApiTags('Personal Representative External - Permission Types')
+@Controller('v1/permission-type')
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
-export class RightTypesController {
+export class PermissionTypeController {
   constructor(
     @Inject(PersonalRepresentativeRightTypeService)
     private readonly rightTypesService: PersonalRepresentativeRightTypeService,
@@ -33,7 +33,7 @@ export class RightTypesController {
   @ApiOperation({
     summary: 'Get a list of all right types for personal representatives',
   })
-  @Get('/right-types')
+  @Get()
   @ApiOkResponse({ type: PersonalRepresentativeRightType })
   async getAll(): Promise<PersonalRepresentativeRightType[]> {
     const rightTypes = await this.rightTypesService.getAllAsync()
@@ -49,7 +49,7 @@ export class RightTypesController {
   @ApiOperation({
     summary: 'Get a single right type by code',
   })
-  @Get('/right-types/:code')
+  @Get(':code')
   @ApiOkResponse({ type: PersonalRepresentativeRightType })
   async getAsync(
     @Param('code') code: string,

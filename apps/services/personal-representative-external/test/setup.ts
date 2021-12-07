@@ -2,10 +2,11 @@ import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
 import { getConnectionToken } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
-import type { INestApplication, Type } from '@nestjs/common'
+import type { INestApplication, Type, Inject } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 
 export let app: INestApplication
+
 let sequelize: Sequelize
 
 export const truncate = async () => {
