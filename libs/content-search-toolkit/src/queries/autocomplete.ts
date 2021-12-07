@@ -20,11 +20,42 @@ export const autocompleteTermQuery = ({
 export const suggestionsQuery = ({ searchQuery }: SuggestionsQueryInput) => ({
   suggest: {
     text: searchQuery,
-    content_phrase: {
+    titleSuggest: {
+      phrase: {
+        field: 'title.trigram',
+        gram_size: 1,
+        max_errors: 2,
+        size: 15,
+        direct_generator: [
+          {
+            field: 'title.trigram',
+            suggest_mode: 'always',
+          },
+        ],
+        collate: {
+          query: {
+            source: {
+              match: {
+                '{{field_name}}': {
+                  query: '{{suggestion}}',
+                  operator: 'and',
+                },
+              },
+            },
+          },
+          params: {
+            field_name: 'title',
+          },
+          prune: true,
+        },
+      },
+    },
+    contentSuggest: {
       phrase: {
         field: 'content.trigram',
-        size: 1,
-        gram_size: 3,
+        gram_size: 1,
+        max_errors: 2,
+        size: 15,
         direct_generator: [
           {
             field: 'content.trigram',
@@ -33,11 +64,14 @@ export const suggestionsQuery = ({ searchQuery }: SuggestionsQueryInput) => ({
         ],
         collate: {
           query: {
-            source:{
+            source: {
               match: {
-                '{{field_name}}': '{{suggestion}}',
+                '{{field_name}}': {
+                  query: '{{suggestion}}',
+                  operator: 'and',
+                },
               },
-            }
+            },
           },
           params: {
             field_name: 'content',

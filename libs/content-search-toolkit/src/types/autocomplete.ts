@@ -4,6 +4,7 @@ export interface SuggestResponse {
     {
       text: string
       score: number
+      collate_match: boolean
     },
   ]
 }

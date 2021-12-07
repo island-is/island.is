@@ -142,14 +142,24 @@ export class ContentSearchService {
         ...input,
       },
     )
-    //const suggestion = this.mapCompletionsToSuggestion(
-    //  input.searchQuery,
-    //  completions,
-    //  0.81,
-    //)
+
+    let options = [
+      ...completions.suggest.contentSuggest[0].options,
+      ...completions.suggest.titleSuggest[0].options,
+    ]
+
+    // Prune collate_matches
+    if (options.length > 0) {
+      options = options.filter((a) => a.collate_match)
+    }
+
+    const suggestion =
+      options.length > 0
+        ? options.sort((a, b) => b.score - a.score)[0].text
+        : ''
 
     return {
-      suggestion: "BLINGO"
+      suggestion,
     }
   }
 }

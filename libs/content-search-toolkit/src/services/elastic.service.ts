@@ -325,8 +325,6 @@ export class ElasticService {
       typeof requestBody
     >(index, requestBody)
 
-    console.log(data)
-
     return data.body
   }
 
