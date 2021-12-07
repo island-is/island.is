@@ -1,4 +1,5 @@
 import { EndorsementSystemSignedListsResponse } from '../providers/endorsementSystem/endorsementSystemSignedLists.service'
+import { NationalRegistryUserResponse } from '../providers/nationalRegistry.service'
 import { TemporaryVoterRegistryResponse } from '../providers/temporaryVoterRegistry/temporaryVoterRegistry.service'
 import type { Auth } from '@island.is/auth-nest-tools'
 
@@ -30,7 +31,7 @@ export interface MetadataProvider {
   metadataKey: string
   getData: (
     input: MetadataInput,
-    auth: Auth,
+    auth?: Auth,
   ) => Promise<MetadataProviderResponse[keyof MetadataProviderResponse]>
 }
 
@@ -40,16 +41,4 @@ export enum EndorsementMetaField {
   ADDRESS = 'address',
   SIGNED_TAGS = 'signedTags',
   VOTER_REGION = 'voterRegion',
-}
-
-export interface NationalRegistryUserInput {
-  nationalId: string
-}
-export interface NationalRegistryUserResponse {
-  fullName: string
-  address: {
-    streetAddress: string
-    city: string
-    postalCode: string
-  }
 }

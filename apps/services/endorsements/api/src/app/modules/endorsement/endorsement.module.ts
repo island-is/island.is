@@ -33,7 +33,8 @@ export interface Config {
       provide: NationalRegistryApi,
       useFactory: async () =>
         await NationalRegistryApi.instantiateClass(
-          environment.nationalRegistry,
+          environment.metadataProvider
+            .nationalRegistry as NationalRegistryConfig,
         ),
     },
   ],

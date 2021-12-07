@@ -10,7 +10,6 @@ module.exports = {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
-  testEnvironment: 'jest-environment-node',
   coverageDirectory: '../../../../coverage/apps/services/endorsements/api',
   setupFiles: ['./test/environment.jest.ts'],
   setupFilesAfterEnv: ['./test/setup.ts'],
