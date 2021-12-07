@@ -94,15 +94,28 @@ export const applictionAnswersToXml = (
   return xml
 }
 
+export const whiteListedErrorCodes = [
+  's801_fyrirt_kennit',
+  's801_undirtegund',
+  's801_tilkynnandi',
+  's801_teg_tilk',
+  's801_stads_skipa',
+  's801_sly_timislys',
+  's801_sly_tegund',
+  's801_sly_dags',
+  's801_fylgiskjal',
+  's801_slasadi',
+]
+
 const whoIsTheNotificationForToId = (
   value: WhoIsTheNotificationForEnum,
 ): number => {
   switch (value) {
     case WhoIsTheNotificationForEnum.ME:
       return 1
-    case WhoIsTheNotificationForEnum.JURIDICALPERSON:
-      return 2
     case WhoIsTheNotificationForEnum.POWEROFATTORNEY:
+      return 2
+    case WhoIsTheNotificationForEnum.JURIDICALPERSON:
       return 3
     case WhoIsTheNotificationForEnum.CHILDINCUSTODY:
       return 4
@@ -220,6 +233,21 @@ const employer = (
 ): Atvinnurekandi | undefined => {
   const companyInfo = answers.companyInfo
   const representative = answers.representative
+
+  // If the juridical person is reporting the company info is the juridical persons information
+  if (
+    answers.juridicalPerson &&
+    answers.applicant &&
+    utils.isRepresentativeOfCompanyOrInstitute(answers)
+  ) {
+    return {
+      fyrirtaekikennitala: answers.juridicalPerson.companyNationalId,
+      fyrirtaekinafn: answers.juridicalPerson.companyName,
+      forsjaradilinafn: answers.applicant.name,
+      forsjaradilinetfang: answers.applicant.email,
+      forsjaradilisimi: answers.applicant.phoneNumber || '',
+    }
+  }
 
   if (
     answers.accidentType.radioButton === AccidentTypeEnum.HOMEACTIVITIES ||
