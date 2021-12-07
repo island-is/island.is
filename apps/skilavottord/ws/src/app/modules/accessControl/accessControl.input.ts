@@ -1,6 +1,6 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 
-import { Role } from '../auth'
+import { Role } from '../user'
 
 export const { citizen, ...AccessControlRole } = Role
 type excludeOptions = typeof Role.citizen
