@@ -62,11 +62,13 @@ export const UserDelegations = ({
     delegations.push(
       ...data.authActorDelegations
         .map((delegation) => ({
-          nationalId: delegation.from.nationalId,
-          name: delegation.from.name,
+          nationalId: delegation.from?.nationalId ?? '',
+          name: delegation.from?.name ?? '',
           isCurrent: false,
         }))
-        .filter(({ nationalId }) => nationalId !== currentNationalId),
+        .filter(
+          ({ nationalId }) => nationalId && nationalId !== currentNationalId,
+        ),
     )
   }
 
