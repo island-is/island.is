@@ -220,6 +220,7 @@ export const CurrentUserQuery = gql`
         nickname
         municipalityHomepage
         email
+        usePseudoName
       }
     }
   }
@@ -371,9 +372,15 @@ export const UpdateStaffMutation = gql`
     updateStaff(input: $input) {
       id
       nationalId
+      name
+      municipalityId
+      phoneNumber
       roles
+      active
       nickname
+      municipalityHomepage
       email
+      usePseudoName
     }
   }
 `

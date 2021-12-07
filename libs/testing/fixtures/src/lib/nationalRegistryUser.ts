@@ -36,7 +36,7 @@ const createRandomNationalRegistryUser = (): Einstaklingsupplysingar => {
 }
 
 export const createNationalRegistryUser = (
-  user: Einstaklingsupplysingar = createRandomNationalRegistryUser(),
+  user: Partial<Einstaklingsupplysingar> = createRandomNationalRegistryUser(),
 ): Einstaklingsupplysingar => {
   const fallback = createRandomNationalRegistryUser()
 

@@ -1,38 +1,26 @@
-import { DynamicModule, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 
-import {
-  AuthPublicApiClientModule,
-  AuthPublicApiClientModuleConfig,
-} from '@island.is/clients/auth-public-api'
 import { IdentityModule } from '@island.is/api/domains/identity'
+import { AuthPublicApiClientModule } from '@island.is/clients/auth-public-api'
 
+import { ActorDelegationsService } from './actorDelegations.service'
+import { ApiScopeService } from './apiScope.service'
+import { MeDelegationsService } from './meDelegations.service'
 import {
   ApiScopeResolver,
-  DelegationScopeResolver,
   DelegationResolver,
+  DelegationScopeResolver,
 } from './resolvers'
-import { AuthService } from './auth.service'
-
-export type Config = {
-  authPublicApi: AuthPublicApiClientModuleConfig
-}
 
 @Module({
   providers: [
     DelegationResolver,
     DelegationScopeResolver,
     ApiScopeResolver,
-    AuthService,
+    MeDelegationsService,
+    ActorDelegationsService,
+    ApiScopeService,
   ],
+  imports: [AuthPublicApiClientModule, IdentityModule],
 })
-export class AuthModule {
-  static register(config: Config): DynamicModule {
-    return {
-      module: AuthModule,
-      imports: [
-        AuthPublicApiClientModule.register(config.authPublicApi),
-        IdentityModule,
-      ],
-    }
-  }
-}
+export class AuthModule {}

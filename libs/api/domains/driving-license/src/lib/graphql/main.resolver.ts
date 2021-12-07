@@ -1,10 +1,12 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
+  Scopes,
 } from '@island.is/auth-nest-tools'
 import { DrivingLicenseService } from '../drivingLicense.service'
 export * from '@island.is/nest/audit'
@@ -24,6 +26,7 @@ import { AuditService } from '@island.is/nest/audit'
 const namespace = '@island.is/api/driving-license'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.internal)
 @Resolver()
 export class MainResolver {
   constructor(

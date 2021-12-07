@@ -22,7 +22,7 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
   const { regulation } = props
   const {
     timelineDate,
-    effectiveDate,
+    publishedDate,
     lastAmendDate,
     showingDiff,
     history,
@@ -33,7 +33,7 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
   if (!firstEvent || firstEvent.effect !== 'amend') {
     return null
   }
-  const isDiffable = timelineDate !== effectiveDate
+  const isDiffable = timelineDate !== publishedDate
 
   const diffView = !!showingDiff
   const showSecondaryButton =

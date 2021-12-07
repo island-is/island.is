@@ -5,7 +5,7 @@ import {
   SearchSkeleton,
   TableBody,
   TextTableItem,
-  PseudoName,
+  usePseudoName,
   State,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { Text, Box } from '@island.is/island-ui/core'
@@ -114,7 +114,7 @@ export const Search = () => {
                 applicationSearchResult.map((item: Application, index) => (
                   <TableBody
                     items={[
-                      PseudoName(item.nationalId),
+                      usePseudoName(item.nationalId, item.name),
                       State(item.state),
                       TextTableItem(
                         'default',
