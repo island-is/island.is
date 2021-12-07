@@ -1,5 +1,5 @@
 import React, { ReactNode, useContext, useEffect, useState } from 'react'
-import { useLazyQuery, useMutation } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import formatISO from 'date-fns/formatISO'
 import { ValueType } from 'react-select/src/types'
@@ -22,7 +22,6 @@ import {
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import {
   parseNull,
   parseString,
@@ -71,11 +70,9 @@ export const SignedVerdictOverview: React.FC = () => {
     updateCase,
     requestCourtRecordSignature,
     isRequestingCourtRecordSignature,
+    extendCase,
+    isExtendingCase,
   } = useCase()
-
-  const [extendCaseMutation, { loading: isCreatingExtension }] = useMutation(
-    ExtendCaseMutation,
-  )
 
   const [getCourtRecordSignatureConfirmation] = useLazyQuery(
     CourtRecordSignatureConfirmationQuery,
@@ -126,7 +123,7 @@ export const SignedVerdictOverview: React.FC = () => {
           variables: {
             input: {
               caseId: workingCase.id,
-              documentToken: requestCourtRecordSignatureResponse.documentToken,
+              documentToken: requestCourtRecordSignatureResponse?.documentToken,
             },
           },
         })
@@ -152,21 +149,18 @@ export const SignedVerdictOverview: React.FC = () => {
           )
         }
       } else {
-        const { data } = await extendCaseMutation({
-          variables: {
-            input: {
-              id: workingCase.id,
-            },
-          },
-        })
-
-        if (data) {
-          if (isRestrictionCase(workingCase.type)) {
-            router.push(`${Constants.STEP_ONE_ROUTE}/${data.extendCase.id}`)
-          } else {
-            router.push(`${Constants.IC_DEFENDANT_ROUTE}/${data.extendCase.id}`)
-          }
-        }
+        await extendCase(workingCase.id)
+          .then((extendedCase: Case) => {
+            if (isRestrictionCase(extendedCase.type)) {
+              router.push(`${Constants.STEP_ONE_ROUTE}/${extendedCase.id}`)
+            } else {
+              router.push(`${Constants.IC_DEFENDANT_ROUTE}/${extendedCase.id}`)
+            }
+          })
+          .catch((reason) => {
+            // TODO: Handle error
+            console.log(reason)
+          })
       }
     }
   }
@@ -381,7 +375,7 @@ export const SignedVerdictOverview: React.FC = () => {
               : 'heimild'
           }`}
           onNextButtonClick={() => handleNextButtonClick()}
-          nextIsLoading={isCreatingExtension}
+          nextIsLoading={isExtendingCase}
           infoBoxText={getInfoText(workingCase)}
         />
       </FormContentContainer>
