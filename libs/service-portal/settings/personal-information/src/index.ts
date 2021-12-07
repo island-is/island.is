@@ -8,6 +8,7 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { USER_PROFILE } from '@island.is/service-portal/graphql'
+
 import { lazy } from 'react'
 import { defineMessage } from 'react-intl'
 import * as Sentry from '@sentry/react'
@@ -30,6 +31,7 @@ export const personalInformationModule: ServicePortalModule = {
         }),
         enabled: userInfo.scopes.includes(UserProfileScope.write),
         path: ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
+        enabled: userInfo.scopes.includes(UserProfileScope.write),
         render: () =>
           lazy(() => import('./screens/EditPhoneNumber/EditPhoneNumber')),
       },
@@ -40,6 +42,7 @@ export const personalInformationModule: ServicePortalModule = {
         }),
         enabled: userInfo.scopes.includes(UserProfileScope.write),
         path: ServicePortalPath.SettingsPersonalInformationEditEmail,
+        enabled: userInfo.scopes.includes(UserProfileScope.write),
         render: () => lazy(() => import('./screens/EditEmail/EditEmail')),
       },
       {
@@ -49,12 +52,14 @@ export const personalInformationModule: ServicePortalModule = {
         }),
         enabled: userInfo.scopes.includes(UserProfileScope.write),
         path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
+        enabled: userInfo.scopes.includes(UserProfileScope.write),
         render: () => lazy(() => import('./screens/EditLanguage/EditLanguage')),
       },
       {
         name: m.messages,
         enabled: userInfo.scopes.includes(UserProfileScope.write),
         path: ServicePortalPath.MessagesRoot,
+        enabled: userInfo.scopes.includes(UserProfileScope.write),
         render: () => lazy(() => import('./screens/Messages/Messages')),
       },
       {
@@ -64,6 +69,7 @@ export const personalInformationModule: ServicePortalModule = {
         }),
         enabled: userInfo.scopes.includes(UserProfileScope.write),
         path: ServicePortalPath.SettingsPersonalInformationEditNudge,
+        enabled: userInfo.scopes.includes(UserProfileScope.write),
         render: () => lazy(() => import('./screens/EditNudge/EditNudge')),
       },
       {
@@ -73,6 +79,7 @@ export const personalInformationModule: ServicePortalModule = {
         }),
         enabled: userInfo.scopes.includes(UserProfileScope.write),
         path: ServicePortalPath.SettingsPersonalInformationEmailConfirmation,
+        enabled: userInfo.scopes.includes(UserProfileScope.write),
         render: () =>
           lazy(() => import('./screens/EmailConfirmation/EmailConfirmation')),
       },

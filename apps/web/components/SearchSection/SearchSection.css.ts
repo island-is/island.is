@@ -1,19 +1,26 @@
 import { style } from '@vanilla-extract/css'
 import { themeUtils } from '@island.is/island-ui/theme'
 
-export const image = style({
+export const mediaItem = style({
   display: 'inline-block',
   height: 'auto',
   width: '100%',
-})
-
-export const container = style({
-  maxHeight: 'auto',
-  minHeight: 'auto',
   ...themeUtils.responsiveStyle({
     md: {
-      maxHeight: 446,
-      minHeight: 446,
+      height: '100%',
+      maxHeight: 500,
+      objectFit: 'contain',
+    },
+  }),
+})
+
+export const minHeight = style({
+  display: 'flex',
+  position: 'relative',
+  minHeight: 'initial',
+  ...themeUtils.responsiveStyle({
+    md: {
+      minHeight: 500,
     },
   }),
 })

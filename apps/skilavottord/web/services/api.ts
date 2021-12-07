@@ -1,8 +1,10 @@
-import { AUTH_URL } from '../auth/utils'
-import { BASE_PATH } from '@island.is/skilavottord/consts'
+import getConfig from 'next/config'
+
+const { serverRuntimeConfig } = getConfig()
+const { apiUrl } = serverRuntimeConfig
 
 export const logout = () =>
-  fetch(`${BASE_PATH}${AUTH_URL['citizen']}/logout`, {
+  fetch(`${apiUrl}/auth/logout`, {
     method: 'GET',
     headers: {
       Accept: 'application/json',

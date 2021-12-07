@@ -5,6 +5,8 @@ import {
   PowerOfAttorneyUploadEnum,
   WhoIsTheNotificationForEnum,
 } from '..'
+
+import { getValueViaPath } from '@island.is/application/core'
 import { YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import { attachments, overview } from '../lib/messages'
@@ -35,7 +37,11 @@ export const getAttachmentTitles = (answers: AccidentNotification) => {
 
   if (hasAttachment(deathCertificateFile))
     files.push(attachments.documentNames.deathCertificate)
-  if (hasAttachment(injuryCertificateFile))
+  if (
+    hasAttachment(injuryCertificateFile) &&
+    getValueViaPath(answers, 'injuryCertificate.answer') !==
+      AttachmentsEnum.HOSPITALSENDSCERTIFICATE
+  )
     files.push(attachments.documentNames.injuryCertificate)
   if (hasAttachment(powerOfAttorneyFile))
     files.push(attachments.documentNames.powerOfAttorneyDocument)
