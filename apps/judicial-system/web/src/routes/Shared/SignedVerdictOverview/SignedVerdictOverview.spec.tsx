@@ -327,7 +327,6 @@ describe('Signed Verdict Overview route', () => {
 
     test('should have the correct subtitle', async () => {
       const date = '2020-09-25T19:50:08.033Z'
-
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_5' },
