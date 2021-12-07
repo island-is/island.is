@@ -4,7 +4,6 @@ import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
 import type { INestApplication, Type } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import { PersonalRepresentativeRightTypeService } from '@island.is/auth-api-lib/personal-representative'
 
 export let app: INestApplication
 let sequelize: Sequelize
@@ -32,6 +31,7 @@ export const truncate = async () => {
 
 // needed for generic error validation
 expect.extend({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   anyOf(value: any, classTypes: any[]) {
     const types = classTypes.map((type) => type.name).join(', ')
     const message = `expected to be any of type: ${types}`

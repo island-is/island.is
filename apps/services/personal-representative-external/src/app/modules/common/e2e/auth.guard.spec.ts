@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AuthGuard } from '../auth.guard'
 import { environment } from '../../../../environments'
 

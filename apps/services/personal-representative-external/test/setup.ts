@@ -2,7 +2,7 @@ import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
 import { getConnectionToken } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
-import type { INestApplication, Type, Inject } from '@nestjs/common'
+import type { INestApplication, Type } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 
 export let app: INestApplication
@@ -32,6 +32,7 @@ export const truncate = async () => {
 
 // needed for generic error validation
 expect.extend({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   anyOf(value: any, classTypes: any[]) {
     const types = classTypes.map((type) => type.name).join(', ')
     const message = `expected to be any of type: ${types}`

@@ -19,7 +19,7 @@ import {
   ApiParam,
 } from '@nestjs/swagger'
 import { AuthGuard } from '../common'
-import { Audit, AuditService } from '@island.is/nest/audit'
+import { AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/'
 import type { HttpRequest } from '../../app.types'
 import { User } from '@island.is/auth-nest-tools'
