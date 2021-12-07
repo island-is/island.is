@@ -67,6 +67,7 @@ export class ResourcesController {
   @Get('identity-resources')
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
+  @ApiQuery({ name: 'includeArchived', required: false })
   @ApiOkResponse({
     schema: {
       allOf: [
@@ -91,8 +92,13 @@ export class ResourcesController {
   async findAndCountAllIdentityResources(
     @Query('page') page: number,
     @Query('count') count: number,
+    @Query('includeArchived') includeArchived = false,
   ): Promise<PagedRowsDto<IdentityResource>> {
-    return this.resourcesService.findAndCountAllIdentityResources(page, count)
+    return this.resourcesService.findAndCountAllIdentityResources(
+      page,
+      count,
+      includeArchived,
+    )
   }
 
   /** Gets all Api Scopes and count of rows */
@@ -100,6 +106,7 @@ export class ResourcesController {
   @Get('api-scopes')
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
+  @ApiQuery({ name: 'includeArchived', required: false })
   @ApiOkResponse({
     schema: {
       allOf: [
@@ -124,8 +131,13 @@ export class ResourcesController {
   async findAndCountAllApiScopes(
     @Query('page') page: number,
     @Query('count') count: number,
+    @Query('includeArchived') includeArchived = false,
   ): Promise<PagedRowsDto<ApiScope>> {
-    return this.resourcesService.findAndCountAllApiScopes(page, count)
+    return this.resourcesService.findAndCountAllApiScopes(
+      page,
+      count,
+      includeArchived,
+    )
   }
 
   /** Finds all access controlled scopes */
@@ -145,6 +157,7 @@ export class ResourcesController {
   @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
+  @ApiQuery({ name: 'includeArchived', required: false })
   @ApiOkResponse({
     schema: {
       allOf: [
@@ -170,12 +183,22 @@ export class ResourcesController {
     @Query('searchString') searchString: string,
     @Query('page') page: number,
     @Query('count') count: number,
+    @Query('includeArchived') includeArchived = false,
   ): Promise<PagedRowsDto<ApiResource>> {
     if (searchString) {
-      return this.resourcesService.findApiResources(searchString, page, count)
+      return this.resourcesService.findApiResources(
+        searchString,
+        page,
+        count,
+        includeArchived,
+      )
     }
 
-    return this.resourcesService.findAndCountAllApiResources(page, count)
+    return this.resourcesService.findAndCountAllApiResources(
+      page,
+      count,
+      includeArchived,
+    )
   }
 
   /** Get's all Api resources and total count of rows */

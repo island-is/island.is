@@ -1828,6 +1828,12 @@ export interface IOrganizationFields {
 
   /** Email */
   email?: string | undefined
+
+  /** Titill á þjónustuvef */
+  serviceWebTitle?: string | undefined
+
+  /** Birta á þjónustuvef */
+  serviceWebEnabled?: boolean | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
