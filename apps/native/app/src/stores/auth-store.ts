@@ -69,6 +69,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         },
       },
     ).then(async (res) => {
+      console.log('STATUS', res.status);
       if (res.status === 401) {
         // Attempt to refresh the access token
         if (!_refresh && (await get().refresh())) {
@@ -78,6 +79,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         throw new Error('Unauthorized')
       } else if (res.status === 200) {
         const userInfo = await res.json()
+        console.log('UI', userInfo);
         set({ userInfo })
         return userInfo
       }

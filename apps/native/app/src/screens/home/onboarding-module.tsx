@@ -37,7 +37,7 @@ export const OnboardingModule = React.memo(() => {
         }
       >
         {intl.formatMessage({ id: 'home.welcomeText' })}{' '}
-        {userInfo?.name.split(' ').shift()}
+        {userInfo?.name?.split(' ').shift()}
       </Heading>
       <ViewPager>
         <WelcomeCard

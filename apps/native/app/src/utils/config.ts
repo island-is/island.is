@@ -23,13 +23,14 @@ const defaults = {
     scopes: [
       'openid',
       'profile',
-      'api_resource.scope',
       'offline_access',
       '@island.is/applications:read',
       '@island.is/documents',
-      // '@island.is/user-profile:read'
+      '@island.is/user-profile:read',
+      '@island.is/internal',
+      '@island.is/me:details'
     ],
-    clientId: '@island.is-app',
+    clientId: '@island.is/app',
   },
   apiEndpoint: 'https://island.is/api',
 }
