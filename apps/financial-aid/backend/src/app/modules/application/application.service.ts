@@ -40,7 +40,7 @@ interface Recipient {
 }
 
 const linkToStatusPage = (applicationId: string) => {
-  return `${environment.baseUrl}/stada/${applicationId}"`
+  return `${environment.oskBaseUrl}/stada/${applicationId}"`
 }
 
 const firstDateOfMonth = () => {
