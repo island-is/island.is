@@ -5,6 +5,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
+import { title } from 'process'
 
 const currentYear = format(new Date(), 'yyyy')
 
@@ -37,16 +38,25 @@ export const aidCalculation = (
   ]
 }
 
-export const amountCalculation = (amount: Amount) => {
+export const amountCalculation = (amount?: Amount) => {
   if (!amount) {
     return []
   }
 
-  return [
+  const deductionFactors =
+    amount?.deductionFactors?.map((deductionFactor) => {
+      return {
+        title: deductionFactor.description ?? '',
+        calculation: `${deductionFactor?.amount?.toLocaleString('de-DE')} kr.`,
+      }
+    }) ?? []
+
+  const basicCalc = [
     {
       title: 'Grunnupphæð',
       calculation: `+ ${amount?.aidAmount.toLocaleString('de-DE')} kr.`,
     },
+    ...deductionFactors,
     {
       title: 'Skattur',
       calculation: `- ${amount?.tax.toLocaleString('de-DE')} kr.`,
@@ -56,4 +66,6 @@ export const amountCalculation = (amount: Amount) => {
       calculation: `${amount?.personalTaxCredit.toLocaleString('de-DE')} kr. `,
     },
   ]
+
+  return basicCalc
 }

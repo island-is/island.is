@@ -127,7 +127,7 @@ const ApplicationProfile = ({
     ? aidCalculation(aidAmount, application.usePersonalTaxCredit)
     : []
 
-  const amountCalculations = amountCalculation(application.amount)
+  const amountCalculations = amountCalculation(application?.amount)
 
   return (
     <>
