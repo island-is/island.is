@@ -87,7 +87,7 @@ describe('Create Right Type', () => {
 })
 
 describe('Update Right Type', () => {
-  it('Put /v1/right-types should fail and return 403 error if bearer is missing', async () => {
+  it('Put /v1/right-types should update right type with new description', async () => {
     await server
       .post('/v1/right-types')
       .send(simpleRequestData)
@@ -101,7 +101,7 @@ describe('Update Right Type', () => {
       description: 'DescriptionUpdated',
     }
 
-    const response = server
+    const response = await server
       .put(`/v1/right-types/${requestData.code}`)
       .send(requestData)
       .set(
