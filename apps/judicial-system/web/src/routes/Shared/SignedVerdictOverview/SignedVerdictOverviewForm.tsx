@@ -493,10 +493,10 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                       handleRequestCourtRecordSignature()
                     }}
                   >
-                    Undirrita
+                    {formatMessage(m.signButton)}
                   </Button>
                 ) : (
-                  <Text>Bíður undirritunar</Text>
+                  <Text>{formatMessage(m.unsignedDocument)}</Text>
                 )}
               </PdfRow>
               {user?.role !== UserRole.STAFF && (

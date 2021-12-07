@@ -3,6 +3,7 @@ import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import formatISO from 'date-fns/formatISO'
 import { ValueType } from 'react-select/src/types'
+import { useIntl } from 'react-intl'
 
 import {
   CaseDecision,
@@ -35,6 +36,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
@@ -66,6 +68,7 @@ export const SignedVerdictOverview: React.FC = () => {
 
   const router = useRouter()
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
   const {
     updateCase,
     requestCourtRecordSignature,
@@ -150,11 +153,15 @@ export const SignedVerdictOverview: React.FC = () => {
         }
       } else {
         await extendCase(workingCase.id)
-          .then((extendedCase: Case) => {
-            if (isRestrictionCase(extendedCase.type)) {
-              router.push(`${Constants.STEP_ONE_ROUTE}/${extendedCase.id}`)
-            } else {
-              router.push(`${Constants.IC_DEFENDANT_ROUTE}/${extendedCase.id}`)
+          .then((extendedCase) => {
+            if (extendedCase) {
+              if (isRestrictionCase(extendedCase.type)) {
+                router.push(`${Constants.STEP_ONE_ROUTE}/${extendedCase.id}`)
+              } else {
+                router.push(
+                  `${Constants.IC_DEFENDANT_ROUTE}/${extendedCase.id}`,
+                )
+              }
             }
           })
           .catch((reason) => {
@@ -391,34 +398,45 @@ export const SignedVerdictOverview: React.FC = () => {
         <Modal
           title={
             !courtRecordSignatureConfirmationResponse
-              ? 'Rafræn undirritun'
+              ? formatMessage(m.sections.courtRecordSignatureModal.titleSigning)
               : courtRecordSignatureConfirmationResponse.documentSigned
-              ? 'Þingbók hefur verið undirrituð'
+              ? formatMessage(m.sections.courtRecordSignatureModal.titleSuccess)
               : courtRecordSignatureConfirmationResponse.code === 7023 // User cancelled
-              ? 'Notandi hætti við undirritun'
-              : 'Undirritun tókst ekki'
+              ? formatMessage(
+                  m.sections.courtRecordSignatureModal.titleCanceled,
+                )
+              : formatMessage(m.sections.courtRecordSignatureModal.titleFailure)
           }
           text={
             !courtRecordSignatureConfirmationResponse ? (
               <>
                 <Box marginBottom={2}>
                   <Text variant="h2" color="blue400">
-                    {`Öryggistala: ${requestCourtRecordSignatureResponse?.controlCode}`}
+                    {formatMessage(
+                      m.sections.courtRecordSignatureModal.controlCode,
+                      {
+                        controlCode:
+                          requestCourtRecordSignatureResponse?.controlCode,
+                      },
+                    )}
                   </Text>
                 </Box>
                 <Text>
-                  Þetta er ekki pin-númerið. Staðfestu aðeins innskráningu ef
-                  sama öryggistala birtist í símanum þínum.
+                  {formatMessage(
+                    m.sections.courtRecordSignatureModal.controlCodeDisclaimer,
+                  )}
                 </Text>
               </>
             ) : courtRecordSignatureConfirmationResponse.documentSigned ? (
-              'Undirrituð þingbók er aðgengileg undir "Skjöl málsins".'
+              formatMessage(m.sections.courtRecordSignatureModal.completed)
             ) : (
-              'Vinsamlega reynið aftur.'
+              formatMessage(m.sections.courtRecordSignatureModal.notCompleted)
             )
           }
           primaryButtonText={
-            courtRecordSignatureConfirmationResponse ? 'Loka glugga' : ''
+            courtRecordSignatureConfirmationResponse
+              ? formatMessage(m.sections.courtRecordSignatureModal.closeButon)
+              : ''
           }
           handlePrimaryButtonClick={() => {
             setRequestCourtRecordSignatureResponse(undefined)
