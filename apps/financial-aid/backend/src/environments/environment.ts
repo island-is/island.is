@@ -32,6 +32,7 @@ const prodConfig = {
     },
   },
   baseUrl: process.env.BASE_URL,
+  veitaUrl: process.env.VEITA_BASE_URL,
 }
 
 const devConfig = {
@@ -58,6 +59,7 @@ const devConfig = {
     },
   },
   baseUrl: process.env.BASE_URL ?? 'http://localhost:4200',
+  veitaUrl: process.env.VEITA_BASE_URL ?? 'http://localhost:4200',
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

@@ -15,17 +15,17 @@
     "staging": {
       "title": "Staging",
       "description": "You are on Staging environment",
-      "helpText": "If you need to add changes to production, please contact Fuglar"
+      "helpText": "If you need to add changes to production, please contact Stafrænt Ísland."
     },
     "development": {
       "title": "Development",
       "description": "You are on Development environment",
-      "helpText": "If you need to add changes to production, please contact Fuglar"
+      "helpText": "If you need to add changes to production, please contact Stafrænt Ísland."
     },
     "local": {
       "title": "Localhost",
       "description": "You are on Local environment",
-      "helpText": "If you need to add changes to production, please contact Fuglar"
+      "helpText": "If you need to add changes to production, please contact Stafrænt Ísland."
     }
   },
   "pages": {

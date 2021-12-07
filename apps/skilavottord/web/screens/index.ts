@@ -6,7 +6,6 @@ export * from './Completed'
 
 /* Company screens */
 export * from './CompanyInfo'
-export * from './CompanyInfoForm'
 export {
   Overview as DeregisterOverview,
   Select as DeregisterSelect,
@@ -15,4 +14,5 @@ export {
 
 /* Fund screens */
 export { Overview as RecyclingFundOverview } from './RecyclingFund'
-export * from './ReclingCompanies'
+export * from './AccessControl'
+export * from './RecyclingCompanies'

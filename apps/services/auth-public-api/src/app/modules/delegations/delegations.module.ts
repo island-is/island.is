@@ -25,9 +25,11 @@ import { AuthConfig } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { RskModule } from '@island.is/clients/rsk/v2'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import { ProblemModule } from '@island.is/nest/problem'
 
 import { environment } from '../../../environments'
-import { DelegationsController } from './delegations.controller'
+import { ActorDelegationsController } from './actorDelegations.controller'
+import { MeDelegationsController } from './meDelegations.controller'
 import { RskConfig } from './rsk.config'
 
 const delegationAuthConfig: AuthConfig = environment.auth
@@ -35,10 +37,6 @@ const delegationAuthConfig: AuthConfig = environment.auth
 @Module({
   imports: [
     SequelizeModule.forFeature([
-      Delegation,
-      DelegationScope,
-      ApiScope,
-      IdentityResource,
       IdentityResource,
       IdentityResourceUserClaim,
       ApiScope,
@@ -51,12 +49,15 @@ const delegationAuthConfig: AuthConfig = environment.auth
       ApiScopeUser,
       ApiScopeGroup,
       Domain,
+      Delegation,
+      DelegationScope,
     ]),
     RskModule.register(RskConfig),
     NationalRegistryClientModule,
     FeatureFlagModule,
+    ProblemModule,
   ],
-  controllers: [DelegationsController],
+  controllers: [ActorDelegationsController, MeDelegationsController],
   providers: [
     DelegationsService,
     DelegationScopeService,

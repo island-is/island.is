@@ -59,12 +59,12 @@ const ActivationButtonTableItem = (
   )
 }
 
-const PseudoName = (nationalId: string) => {
+const usePseudoName = (nationalId: string, name: string) => {
   return (
     <Box display="flex" alignItems="center">
       <GeneratedProfile size={32} nationalId={nationalId} />
       <Box marginLeft={2}>
-        <Text variant="h5">{GenerateName(nationalId)}</Text>
+        <Text variant="h5">{GenerateName(nationalId, name)}</Text>
       </Box>
     </Box>
   )
@@ -131,6 +131,6 @@ export {
   TableBody,
   TextTableItem,
   ActivationButtonTableItem,
-  PseudoName,
+  usePseudoName,
   State,
 }
