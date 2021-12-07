@@ -6,6 +6,7 @@ import {
   ApplicationEventType,
   ApplicationState,
 } from '@island.is/financial-aid/shared/lib'
+import { CreateAmountDto } from '../../amount/dto'
 
 export class UpdateApplicationDto {
   @IsOptional()
@@ -57,4 +58,8 @@ export class UpdateApplicationDto {
   @IsString()
   @ApiProperty()
   readonly spouseName?: string
+
+  @IsOptional()
+  @ApiProperty()
+  readonly amounts?: CreateAmountDto
 }

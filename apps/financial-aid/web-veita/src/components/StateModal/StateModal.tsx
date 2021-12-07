@@ -14,6 +14,7 @@ import {
 import {
   Application,
   ApplicationState,
+  CreateAmount,
   eventTypeFromApplicationState,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
@@ -51,6 +52,7 @@ const StateModal = ({
     amount?: number,
     rejection?: string,
     comment?: string,
+    amounts?: CreateAmount,
   ) => {
     setIsLoading(true)
 
@@ -167,11 +169,18 @@ const StateModal = ({
           <AcceptModal
             isModalVisable={selected === ApplicationState.APPROVED}
             onCancel={onClickCancel}
-            onSaveApplication={(amount: number) => {
+            onSaveApplication={(amount: number, amounts: CreateAmount) => {
               if (!selected) {
                 return
               }
-              saveStateApplication(applicationId, selected, amount)
+              saveStateApplication(
+                applicationId,
+                selected,
+                amount,
+                undefined,
+                undefined,
+                amounts,
+              )
             }}
             homeCircumstances={homeCircumstances}
             spouseNationalId={spouseNationalId}

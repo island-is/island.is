@@ -1,2 +1,2 @@
 export { AmountModel } from './models'
-export { AmountModule } from './amount.module'
+export { CreateAmountInput } from './dto'

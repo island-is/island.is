@@ -5,6 +5,7 @@ import {
   ApplicationEventType,
   ApplicationFilters,
   ApplicationState,
+  CreateAmount,
 } from '@island.is/financial-aid/shared/lib'
 import { ApplicationFiltersContext } from '../components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 import { AdminContext } from '../components/AdminProvider/AdminProvider'
@@ -40,6 +41,7 @@ export const useApplicationState = () => {
     amount?: number,
     rejection?: string,
     comment?: string,
+    amounts?: CreateAmount,
   ) => {
     if (saveLoading === false && loadingFilters === false && applicationId) {
       const { data } = await updateApplicationMutation({
@@ -52,6 +54,7 @@ export const useApplicationState = () => {
             comment,
             staffId: admin?.staff?.id,
             event,
+            amounts,
           },
         },
       })

@@ -33,7 +33,7 @@ import { environment } from '../../../environments'
 import { ApplicantEmailTemplate } from './emailTemplates/applicantEmailTemplate'
 import { MunicipalityService } from '../municipality'
 import { logger } from '@island.is/logging'
-import { AmountModel } from '../amount'
+import { AmountModel, AmountService } from '../amount'
 import { DeductionFactorsModel } from '../deductionFactors'
 
 interface Recipient {
@@ -57,6 +57,7 @@ export class ApplicationService {
     @InjectModel(ApplicationModel)
     private readonly applicationModel: typeof ApplicationModel,
     private readonly fileService: FileService,
+    private readonly amountService: AmountService,
     private readonly applicationEventService: ApplicationEventService,
     private readonly emailService: EmailService,
     private readonly municipalityService: MunicipalityService,

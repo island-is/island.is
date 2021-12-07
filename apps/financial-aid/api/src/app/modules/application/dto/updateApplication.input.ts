@@ -6,7 +6,9 @@ import {
   UpdateApplication,
   ApplicationState,
   ApplicationEventType,
+  CreateAmount,
 } from '@island.is/financial-aid/shared/lib'
+import { CreateAmountInput } from '../../amount'
 
 @InputType()
 export class UpdateApplicationInput implements UpdateApplication {
@@ -53,4 +55,8 @@ export class UpdateApplicationInput implements UpdateApplication {
   @Allow()
   @Field({ nullable: true })
   readonly spouseFormComment?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly amounts?: CreateAmountInput
 }

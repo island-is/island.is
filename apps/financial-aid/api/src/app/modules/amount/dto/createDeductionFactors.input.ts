@@ -5,10 +5,14 @@ import { Field, InputType } from '@nestjs/graphql'
 @InputType()
 export class CreateDeductionFactorsInput {
   @Allow()
-  @Field({ nullable: true })
+  @Field()
+  readonly amountId?: string
+
+  @Allow()
+  @Field()
   readonly amount?: number
 
   @Allow()
-  @Field({ nullable: true })
+  @Field()
   readonly description?: string
 }

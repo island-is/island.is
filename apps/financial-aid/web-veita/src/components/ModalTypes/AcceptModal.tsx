@@ -10,6 +10,7 @@ import {
   aidCalculator,
   calculateAcceptedAidFinalAmount,
   calculateTaxOfAmount,
+  CreateAmount,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
 import format from 'date-fns/format'
@@ -23,7 +24,7 @@ import { useRouter } from 'next/router'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
-  onSaveApplication: (num: number) => void
+  onSaveApplication: (amount: number, amounts: CreateAmount) => void
   isModalVisable: boolean
   homeCircumstances: HomeCircumstances
   spouseNationalId?: string
@@ -121,28 +122,16 @@ const AcceptModal = ({
       return
     }
 
-    try {
-      return await createAmount({
-        variables: {
-          input: {
-            applicationId: router.query.id as string,
-            aidAmount: state.amount,
-            income: state.income,
-            personalTaxCredit: state.personalTaxCreditPercentage,
-            spousePersonalTaxCredit: state.secondPersonalTaxCredit,
-            tax: state.tax,
-            finalAmount: finalAmount,
-            deductionFactors: state.deductionFactor,
-          },
-        },
-      }).then((res) => {
-        if (res.data.createAmount.id) {
-          onSaveApplication(finalAmount)
-        }
-      })
-    } catch (e) {
-      setState({ ...state, hasSubmitError: true })
-    }
+    onSaveApplication(finalAmount, {
+      applicationId: router.query.id as string,
+      aidAmount: state.amount,
+      income: state.income,
+      personalTaxCredit: state.personalTaxCreditPercentage ?? 0,
+      spousePersonalTaxCredit: state.secondPersonalTaxCredit,
+      tax: state.tax,
+      finalAmount: finalAmount,
+      deductionFactors: state.deductionFactor,
+    })
   }
 
   return (
