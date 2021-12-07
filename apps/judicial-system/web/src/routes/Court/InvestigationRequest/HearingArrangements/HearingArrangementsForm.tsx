@@ -315,7 +315,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 data-testid="courtroom"
                 name="courtroom"
                 label="Dómsalur"
-                defaultValue={workingCase.courtRoom}
+                value={workingCase.courtRoom || ''}
                 placeholder="Skráðu inn dómsal"
                 autoComplete="off"
                 onChange={(event) =>
@@ -389,7 +389,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 label={`Nafn ${
                   workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
                 }`}
-                defaultValue={workingCase.defenderName}
+                value={workingCase.defenderName || ''}
                 placeholder="Fullt nafn"
                 autoComplete="off"
                 onChange={(event) =>
@@ -418,7 +418,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 label={`Netfang ${
                   workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
                 }`}
-                defaultValue={workingCase.defenderEmail}
+                value={workingCase.defenderEmail || ''}
                 placeholder="Netfang"
                 autoComplete="off"
                 errorMessage={defenderEmailEM}
@@ -449,6 +449,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             <InputMask
               mask="999-9999"
               maskPlaceholder={null}
+              value={workingCase.defenderPhoneNumber}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'defenderPhoneNumber',
@@ -476,7 +477,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 label={`Símanúmer ${
                   workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
                 }`}
-                defaultValue={workingCase.defenderPhoneNumber}
                 placeholder="Símanúmer"
                 autoComplete="off"
                 errorMessage={defenderPhoneNumberEM}

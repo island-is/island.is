@@ -332,7 +332,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
               name="caseFilesComments"
               label={formatMessage(m.sections.comments.label)}
               placeholder={formatMessage(m.sections.comments.placeholder)}
-              defaultValue={workingCase?.caseFilesComments}
+              value={workingCase.caseFilesComments || ''}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'caseFilesComments',

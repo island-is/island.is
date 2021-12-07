@@ -150,7 +150,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 placeholder={formatMessage(
                   m.sections.defenderInfo.name.placeholder,
                 )}
-                defaultValue={workingCase.defenderName}
+                value={workingCase.defenderName || ''}
                 onChange={(event) => setField(event.target)}
                 onBlur={(event) => validateAndSendToServer(event.target)}
               />
@@ -164,7 +164,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 placeholder={formatMessage(
                   m.sections.defenderInfo.email.placeholder,
                 )}
-                defaultValue={workingCase.defenderEmail}
+                value={workingCase.defenderEmail || ''}
                 errorMessage={defenderEmailErrorMessage}
                 hasError={defenderEmailErrorMessage !== ''}
                 onChange={(event) => setField(event.target)}
@@ -175,6 +175,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
               <InputMask
                 mask="999-9999"
                 maskPlaceholder={null}
+                value={workingCase.defenderPhoneNumber || ''}
                 onChange={(event) => setField(event.target)}
                 onBlur={(event) => validateAndSendToServer(event.target)}
               >
@@ -188,7 +189,6 @@ export const StepOneForm: React.FC<Props> = (props) => {
                   placeholder={formatMessage(
                     m.sections.defenderInfo.phoneNumber.placeholder,
                   )}
-                  defaultValue={workingCase.defenderPhoneNumber}
                   errorMessage={defenderPhoneNumberErrorMessage}
                   hasError={defenderPhoneNumberErrorMessage !== ''}
                 />
@@ -237,7 +237,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 placeholder={formatMessage(
                   m.sections.leadInvestigator.placeholder,
                 )}
-                defaultValue={workingCase.leadInvestigator}
+                value={workingCase.leadInvestigator || ''}
                 errorMessage={leadInvestigatorErrorMessage}
                 hasError={leadInvestigatorErrorMessage !== ''}
                 onChange={(event) => setField(event.target)}

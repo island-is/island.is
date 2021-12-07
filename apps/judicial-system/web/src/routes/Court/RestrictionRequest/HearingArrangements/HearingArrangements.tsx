@@ -257,7 +257,7 @@ export const HearingArrangements: React.FC = () => {
                 name="courtroom"
                 label="Dómsalur"
                 autoComplete="off"
-                defaultValue={workingCase.courtRoom}
+                value={workingCase.courtRoom || ''}
                 placeholder="Skráðu inn dómsal"
                 onChange={(event) =>
                   removeTabsValidateAndSet(
@@ -293,7 +293,7 @@ export const HearingArrangements: React.FC = () => {
                 name="defenderName"
                 label="Nafn verjanda"
                 autoComplete="off"
-                defaultValue={workingCase.defenderName}
+                value={workingCase.defenderName || ''}
                 placeholder="Fullt nafn"
                 onChange={(event) =>
                   removeTabsValidateAndSet(
@@ -320,7 +320,7 @@ export const HearingArrangements: React.FC = () => {
                 name="defenderEmail"
                 label="Netfang verjanda"
                 autoComplete="off"
-                defaultValue={workingCase.defenderEmail}
+                value={workingCase.defenderEmail || ''}
                 placeholder="Netfang"
                 errorMessage={defenderEmailErrorMessage}
                 hasError={defenderEmailErrorMessage !== ''}
@@ -350,6 +350,7 @@ export const HearingArrangements: React.FC = () => {
             <InputMask
               mask="999-9999"
               maskPlaceholder={null}
+              value={workingCase.defenderPhoneNumber || ''}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'defenderPhoneNumber',
@@ -376,7 +377,6 @@ export const HearingArrangements: React.FC = () => {
                 name="defenderPhoneNumber"
                 label="Símanúmer verjanda"
                 autoComplete="off"
-                defaultValue={workingCase.defenderPhoneNumber}
                 placeholder="Símanúmer"
                 errorMessage={defenderPhoneNumberErrorMessage}
                 hasError={defenderPhoneNumberErrorMessage !== ''}

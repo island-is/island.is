@@ -163,7 +163,7 @@ export const UserForm: React.FC<Props> = (props) => {
             label="Nafn"
             placeholder="Fullt nafn"
             autoComplete="off"
-            defaultValue={user.name}
+            value={user.name || ''}
             onChange={(event) =>
               storeAndRemoveErrorIfValid('name', event.target.value)
             }
@@ -177,6 +177,7 @@ export const UserForm: React.FC<Props> = (props) => {
           <InputMask
             mask="999999-9999"
             maskPlaceholder={null}
+            value={user.nationalId || ''}
             onChange={(event) =>
               storeAndRemoveErrorIfValid(
                 'nationalId',
@@ -194,7 +195,6 @@ export const UserForm: React.FC<Props> = (props) => {
               label="Kennitala"
               placeholder="Kennitala"
               autoComplete="off"
-              defaultValue={user.nationalId}
               required
               hasError={nationalIdErrorMessage !== undefined}
               errorMessage={nationalIdErrorMessage}
@@ -267,7 +267,7 @@ export const UserForm: React.FC<Props> = (props) => {
             name="title"
             label="Titill"
             autoComplete="off"
-            defaultValue={user.title}
+            value={user.title || ''}
             onChange={(event) =>
               storeAndRemoveErrorIfValid('title', event.target.value)
             }
@@ -281,6 +281,7 @@ export const UserForm: React.FC<Props> = (props) => {
           <InputMask
             mask="999-9999"
             maskPlaceholder={null}
+            value={user.mobileNumber || ''}
             onChange={(event) =>
               storeAndRemoveErrorIfValid(
                 'mobileNumber',
@@ -297,7 +298,6 @@ export const UserForm: React.FC<Props> = (props) => {
               label="Símanúmer"
               placeholder="Símanúmer"
               autoComplete="off"
-              defaultValue={user.mobileNumber}
               required
               hasError={mobileNumberErrorMessage !== undefined}
               errorMessage={mobileNumberErrorMessage}
@@ -310,7 +310,7 @@ export const UserForm: React.FC<Props> = (props) => {
             label="Netfang"
             placeholder=""
             autoComplete="off"
-            defaultValue={user.email}
+            value={user.email || ''}
             onChange={(event) =>
               storeAndRemoveErrorIfValid('email', event.target.value)
             }

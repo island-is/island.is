@@ -152,7 +152,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                 placeholder={formatMessage(
                   m.sections.investigationType.description.placeholder,
                 )}
-                defaultValue={workingCase.description}
+                value={workingCase.description || ''}
                 autoComplete="off"
                 onChange={(event) => {
                   setField(event.target)
@@ -203,7 +203,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                       placeholder={formatMessage(
                         m.sections.defenderInfo.name.placeholder,
                       )}
-                      defaultValue={workingCase.defenderName}
+                      value={workingCase.defenderName || ''}
                       onChange={(event) => setField(event.target)}
                       onBlur={(event) => validateAndSendToServer(event.target)}
                     />
@@ -217,7 +217,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                       placeholder={formatMessage(
                         m.sections.defenderInfo.email.placeholder,
                       )}
-                      defaultValue={workingCase.defenderEmail}
+                      value={workingCase.defenderEmail || ''}
                       errorMessage={defenderEmailErrorMessage}
                       hasError={defenderEmailErrorMessage !== ''}
                       onChange={(event) => setField(event.target)}
@@ -227,6 +227,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                   <Box marginBottom={2}>
                     <InputMask
                       mask="999-9999"
+                      value={workingCase.defenderPhoneNumber || ''}
                       maskPlaceholder={null}
                       onChange={(event) => setField(event.target)}
                       onBlur={(event) => validateAndSendToServer(event.target)}
@@ -241,7 +242,6 @@ const DefendantForm: React.FC<Props> = (props) => {
                         placeholder={formatMessage(
                           m.sections.defenderInfo.phoneNumber.placeholder,
                         )}
-                        defaultValue={workingCase.defenderPhoneNumber}
                         errorMessage={defenderPhoneNumberErrorMessage}
                         hasError={defenderPhoneNumberErrorMessage !== ''}
                       />
