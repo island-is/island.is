@@ -32,18 +32,26 @@ const FileSchema = z.object({
 })
 
 const RepresentativeInfo = z.object({
-  name: z.string().refine((x) => x.trim().length > 0),
-  nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
+  name: z.string().refine((x) => x.trim().length > 0, {
+    params: error.invalidValue,
+  }),
+  nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false), {
+    params: error.invalidValue,
+  }),
   email: z.string().email(),
   phoneNumber: z.string().optional(),
 })
 
 const CompanyInfo = z
   .object({
-    name: z.string().refine((x) => x.trim().length > 0),
+    name: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
     nationalRegistrationId: z
       .string()
-      .refine((x) => (x ? kennitala.isCompany(x) : false)),
+      .refine((x) => (x ? kennitala.isCompany(x) : false), {
+        params: error.invalidValue,
+      }),
   })
   .optional()
 
@@ -96,7 +104,9 @@ export const AccidentNotificationSchema = z.object({
     postalCode: z
       .string()
       .refine((x) => +x >= 100 && +x <= 999, error.required.defaultMessage),
-    city: z.string().refine((x) => x.trim().length > 0),
+    city: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
     email: z.string().email(),
     phoneNumber: z.string().optional(),
   }),
@@ -155,13 +165,21 @@ export const AccidentNotificationSchema = z.object({
     isHealthInsured: z.enum([YES, NO]).optional(),
     timeOfAccident: z
       .string()
-      .refine((x) => (x ? isValid24HFormatTime(x) : false)),
-    descriptionOfAccident: z.string().refine((x) => x.trim().length > 0),
+      .refine((x) => (x ? isValid24HFormatTime(x) : false), {
+        params: error.invalidValue,
+      }),
+    descriptionOfAccident: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
   }),
   isRepresentativeOfCompanyOrInstitue: z.array(z.string()).optional(),
   fishingShipInfo: z.object({
-    shipName: z.string().refine((x) => x.trim().length > 0),
-    shipCharacters: z.string().refine((x) => x.trim().length > 0),
+    shipName: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
+    shipCharacters: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
     homePort: z.string(),
     shipRegisterNumber: z.string(),
   }),
@@ -170,7 +188,9 @@ export const AccidentNotificationSchema = z.object({
     answer: z.enum([YES, NO]),
   }),
   locationAndPurpose: z.object({
-    location: z.string().refine((x) => x.trim().length > 0),
+    location: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
   }),
   accidentLocation: z.object({
     answer: z.enum([
@@ -194,11 +214,15 @@ export const AccidentNotificationSchema = z.object({
     ]),
   }),
   homeAccident: z.object({
-    address: z.string().refine((x) => x.trim().length > 0),
+    address: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
     postalCode: z
       .string()
       .refine((x) => +x >= 100 && +x <= 999, error.required.defaultMessage),
-    community: z.string().refine((x) => x.trim().length > 0),
+    community: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
     moreDetails: z.string().optional(),
   }),
   shipLocation: z.object({
@@ -210,7 +234,9 @@ export const AccidentNotificationSchema = z.object({
   }),
   workMachineRadio: z.enum([YES, NO]),
   workMachine: z.object({
-    desriptionOfMachine: z.string().refine((x) => x.trim().length > 0),
+    desriptionOfMachine: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
   }),
   accidentType: z.object({
     radioButton: z.enum([
@@ -237,26 +263,40 @@ export const AccidentNotificationSchema = z.object({
     ]),
   }),
   injuredPersonInformation: z.object({
-    name: z.string().refine((x) => x.trim().length > 0),
-    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
+    name: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
+    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false), {
+      params: error.invalidValue,
+    }),
     email: z
       .string()
       .email()
-      .refine((x) => x.trim().length > 0),
+      .refine((x) => x.trim().length > 0, {
+        params: error.invalidValue,
+      }),
     phoneNumber: z.string().optional(),
   }),
   juridicalPerson: z.object({
-    companyName: z.string().refine((x) => x.trim().length > 0),
+    companyName: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
     companyNationalId: z
       .string()
-      .refine((x) => (x ? kennitala.isCompany(x) : false)),
+      .refine((x) => (x ? kennitala.isCompany(x) : false), {
+        params: error.invalidValue,
+      }),
     companyConfirmation: z.array(z.string()).refine((v) => v.includes(YES), {
       params: error.requiredCheckmark,
     }),
   }),
   childInCustody: z.object({
-    name: z.string().refine((x) => x.trim().length > 0),
-    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
+    name: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
+    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false), {
+      params: error.invalidValue,
+    }),
   }),
   powerOfAttorney: z.object({
     type: z.enum([
