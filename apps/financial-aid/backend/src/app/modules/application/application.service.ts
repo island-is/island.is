@@ -255,6 +255,16 @@ export class ApplicationService {
       await Promise.all(promises)
     }
 
+    await this.createApplicationEmails(application, appModel, user)
+
+    return appModel
+  }
+
+  private async createApplicationEmails(
+    application: CreateApplicationDto,
+    appModel: ApplicationModel,
+    user: User,
+  ) {
     const municipality = await this.municipalityService.findByMunicipalityId(
       application.municipalityCode,
     )
@@ -267,16 +277,40 @@ export class ApplicationService {
       appModel.created,
     )
 
-    await this.sendEmail(
-      {
-        name: user.name,
-        address: appModel.email,
-      },
-      emailData.subject,
-      ApplicantEmailTemplate(emailData.data),
+    const emailPromises: Promise<void>[] = []
+
+    emailPromises.push(
+      this.sendEmail(
+        {
+          name: user.name,
+          address: appModel.email,
+        },
+        emailData.subject,
+        ApplicantEmailTemplate(emailData.data),
+      ),
     )
 
-    return appModel
+    if (application.spouseNationalId) {
+      const emailData = getApplicantEmailDataFromEventType(
+        'SPOUSE',
+        environment.baseUrl,
+        appModel.spouseEmail,
+        municipality,
+        appModel.created,
+      )
+      emailPromises.push(
+        this.sendEmail(
+          {
+            name: appModel.spouseName,
+            address: appModel.spouseEmail,
+          },
+          emailData.subject,
+          ApplicantEmailTemplate(emailData.data),
+        ),
+      )
+    }
+
+    await Promise.all(emailPromises)
   }
 
   async update(
