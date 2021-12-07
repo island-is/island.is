@@ -14,4 +14,5 @@ import { AuditModule } from '@island.is/nest/audit'
     RightTypesModule,
   ],
 })
-export class AppModule {}
+
+export class AppModule {} 
