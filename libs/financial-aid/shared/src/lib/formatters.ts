@@ -1,4 +1,4 @@
-import { months } from './const'
+import { months, nextMonth } from './const'
 import { ApplicationFiltersEnum } from './enums'
 import {
   HomeCircumstances,
@@ -205,8 +205,9 @@ export const getApplicantEmailDataFromEventType = (
     | ApplicationEventType.NEW
     | ApplicationEventType.DATANEEDED
     | ApplicationEventType.REJECTED
-    | ApplicationEventType.APPROVED,
-  linkToStatusPage: string,
+    | ApplicationEventType.APPROVED
+    | 'SPOUSE',
+  applicationLink: string,
   applicantEmail: string,
   municipality: Municipality,
   createdDate: Date,
@@ -228,7 +229,7 @@ export const getApplicantEmailDataFromEventType = (
           applicationChange: 'Umsókn móttekin og í vinnslu',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
-          statusPageUrl: linkToStatusPage,
+          applicationLink,
           applicantEmail,
           municipality,
         },
@@ -244,7 +245,7 @@ export const getApplicantEmailDataFromEventType = (
           applicationChange: 'Umsóknin bíður eftir gögnum',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
-          statusPageUrl: linkToStatusPage,
+          applicationLink,
           applicantEmail,
           municipality,
         },
@@ -260,7 +261,7 @@ export const getApplicantEmailDataFromEventType = (
           applicationChange: 'Umsókn synjað',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
-          statusPageUrl: linkToStatusPage,
+          applicationLink,
           applicantEmail,
           municipality,
         },
@@ -276,7 +277,27 @@ export const getApplicantEmailDataFromEventType = (
           applicationChange: 'Umsóknin er samþykkt og áætlun liggur fyrir',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
-          statusPageUrl: linkToStatusPage,
+          applicationLink,
+          applicantEmail,
+          municipality,
+        },
+      }
+
+    case 'SPOUSE':
+      return {
+        subject: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð hjá ${municipality.name}`,
+        data: {
+          title: 'Fjárhagsaðstoð Umsókn móttekin',
+          header: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð hjá ${municipality.name}`,
+          content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${
+            getPeriod.month
+          } mánuð. Svo hægt sé að klára umsóknina þurfum við að fá þig til að hlaða upp tekju- og skattagögnum til að reikna út fjárhagsaðstoð til útgreiðslu í byrjun ${nextMonth(
+            createdDate.getMonth(),
+          )}.`,
+          applicationChange: 'Umsókn bíður eftir gögnum frá maka',
+          applicationMonth: getPeriod.month,
+          applicationYear: getPeriod.year,
+          applicationLink,
           applicantEmail,
           municipality,
         },
