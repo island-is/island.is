@@ -13,6 +13,7 @@ import {
   Param,
   Post,
   Inject,
+  Req,
 } from '@nestjs/common'
 import {
   ApiOperation,
@@ -22,7 +23,17 @@ import {
   ApiTags,
   ApiParam,
 } from '@nestjs/swagger'
+import {
+  isNationalIdValid,
+} from '@island.is/financial-aid/shared/lib'
 import { AuthGuard } from '../common'
+import type { HttpRequest } from '../../app.types'
+import { User } from '@island.is/auth-nest-tools'
+import { environment } from '../../../environments/'
+import { AuditService } from '@island.is/nest/audit'
+
+
+const namespace = `${environment.audit.defaultNamespace}/personal-representative`
 
 @ApiTags('Personal Representative')
 @Controller('v1/personal-representative')
@@ -32,6 +43,7 @@ export class PersonalRepresentativeController {
   constructor(
     @Inject(PersonalRepresentativeService)
     private readonly prService: PersonalRepresentativeService,
+    private readonly auditService: AuditService,
   ) {}
 
   /** Gets all persoanal representatives */
@@ -159,12 +171,30 @@ export class PersonalRepresentativeController {
   })
   @Delete(':id')
   @ApiOkResponse()
-  async removeAsync(@Param('id') id: string): Promise<number> {
+  async removeAsync(
+    @Param('id') id: string,
+    @Req() request: HttpRequest,
+  ): Promise<number> {
     if (!id) {
       throw new BadRequestException('Id needs to be provided')
     }
 
-    return await this.prService.deleteAsync(id)
+    // Since we do not have an island.is user login we need to create a user object
+    const user: User = {
+      nationalId: '',
+      scope: [],
+      authorization: '',
+      client: request.childService,
+    }
+    return await this.auditService.auditPromise(
+      {
+        user,
+        action: 'deletePersonalRepresentative',
+        namespace,
+        resources: id,
+      },
+      this.prService.deleteAsync(id),
+    )
   }
 
   /** Creates a right type */
@@ -179,8 +209,59 @@ export class PersonalRepresentativeController {
     type: PersonalRepresentativeDTO,
   })
   async create(
-    @Body() personalRepresentatives: PersonalRepresentativeDTO,
+    @Body() personalRepresentative: PersonalRepresentativeDTO,
+    @Req() request: HttpRequest,
   ): Promise<PersonalRepresentativeDTO | null> {
-    return await this.prService.createAsync(personalRepresentatives)
+    
+    if (personalRepresentative.rightCodes.length === 0) {
+      throw new BadRequestException('RightCodes list must be providec')
+    }
+    if (
+      !isNationalIdValid(
+        personalRepresentative.nationalIdPersonalRepresentative,
+      )
+    ) {
+      throw new BadRequestException('Invalid national Id of representative')
+    }
+    if (
+      !isNationalIdValid(personalRepresentative.nationalIdRepresentedPerson)
+    ) {
+      throw new BadRequestException('Invalid national Id of Represented')
+    }
+
+    // Since we do not have an island.is user login we need to create a user object
+    const user: User = {
+      nationalId: personalRepresentative.nationalIdPersonalRepresentative,
+      scope: [],
+      authorization: '',
+      client: request.childService,
+    }
+
+    // Find current personal representative connection between nationalIds and remove since only one should be active
+    const currentContract = await this.prService.getPersonalRepresentativeByRepresentedPersonAsync(personalRepresentative.nationalIdRepresentedPerson, true)
+
+    if (currentContract && currentContract.id) {
+      await this.auditService.auditPromise(
+        {
+          user,
+          action: 'deleteExistingPersonalRepresentative',
+          namespace,
+          resources: personalRepresentative.nationalIdRepresentedPerson,
+          meta: { fields: Object.keys(currentContract) },
+        },
+        this.prService.deleteAsync(currentContract.id)
+      )
+    }
+    // Create a new personal representative
+    return await this.auditService.auditPromise(
+      {
+        user,
+        action: 'createPersonalRepresentative',
+        namespace,
+        resources: personalRepresentative.nationalIdRepresentedPerson,
+        meta: { fields: Object.keys(personalRepresentative) },
+      },
+      this.prService.createAsync(personalRepresentative),
+    )
   }
 }

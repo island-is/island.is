@@ -2,6 +2,7 @@ import React, { FC, useContext, useEffect } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import gql from 'graphql-tag'
+
 import {
   Box,
   Bullet,
@@ -14,6 +15,7 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
+
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { getYear } from '@island.is/skilavottord-web/utils/dateUtils'
@@ -24,9 +26,9 @@ import {
   OutlinedError,
   CarDetailsBox,
 } from '@island.is/skilavottord-web/components'
-import { RecyclingRequestMutation } from '@island.is/skilavottord-web/types'
+import { Mutation, Query } from '@island.is/skilavottord-web/graphql/schema'
 
-const skilavottordVehicleReadyToDeregisteredQuery = gql`
+const SkilavottordVehicleReadyToDeregisteredQuery = gql`
   query skilavottordVehicleReadyToDeregisteredQuery($permno: String!) {
     skilavottordVehicleReadyToDeregistered(permno: $permno) {
       vehicleId
@@ -39,7 +41,7 @@ const skilavottordVehicleReadyToDeregisteredQuery = gql`
   }
 `
 
-const skilavottordRecyclingRequestMutation = gql`
+const SkilavottordRecyclingRequestMutation = gql`
   mutation skilavottordRecyclingRequestMutation(
     $partnerId: String
     $permno: String!
@@ -72,8 +74,8 @@ const Confirm: FC = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const { data, loading } = useQuery(
-    skilavottordVehicleReadyToDeregisteredQuery,
+  const { data, loading } = useQuery<Query>(
+    SkilavottordVehicleReadyToDeregisteredQuery,
     {
       variables: { permno: id },
     },
@@ -84,14 +86,11 @@ const Confirm: FC = () => {
   const [
     setRecyclingRequest,
     { data: mutationData, error: mutationError, loading: mutationLoading },
-  ] = useMutation<RecyclingRequestMutation>(
-    skilavottordRecyclingRequestMutation,
-    {
-      onError() {
-        return mutationError
-      },
+  ] = useMutation<Mutation>(SkilavottordRecyclingRequestMutation, {
+    onError() {
+      return mutationError
     },
-  )
+  })
 
   const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
 

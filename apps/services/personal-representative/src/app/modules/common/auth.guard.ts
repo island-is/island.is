@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
 
 import { environment } from '../../../environments'
-import { Request } from 'express'
+import { HttpRequest } from '../../app.types'
 
 const { childServiceApiKeys } = environment
 
@@ -10,11 +10,11 @@ const AUTH_TYPE = 'bearer'
 @Injectable()
 export class AuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest<Request>()
+    const request = context.switchToHttp().getRequest<HttpRequest>()
     return this.hasValidApiKey(request)
   }
 
-  getAuthorization(headers: Request['headers']): string | null {
+  getAuthorization(headers: HttpRequest['headers']): string | null {
     const { authorization } = headers
     if (!authorization) {
       return null
@@ -26,7 +26,7 @@ export class AuthGuard implements CanActivate {
     return authorization[0]
   }
 
-  hasValidApiKey(request: Request): boolean {
+  hasValidApiKey(request: HttpRequest): boolean {
     const authorization = this.getAuthorization(request.headers)
     if (!authorization) {
       return false
@@ -47,6 +47,8 @@ export class AuthGuard implements CanActivate {
     if (!childservice) {
       return false
     }
+
+    request.childService = childservice
     return true
   }
 }

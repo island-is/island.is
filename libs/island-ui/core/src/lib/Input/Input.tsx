@@ -152,6 +152,7 @@ export const Input = forwardRef(
                 styles.inputSize[size],
                 {
                   [styles.textarea]: textarea,
+                  [styles.disabled]: disabled,
                 },
               )}
               id={id}

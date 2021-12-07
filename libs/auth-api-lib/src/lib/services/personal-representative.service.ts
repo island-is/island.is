@@ -1,4 +1,4 @@
-import { isNationalIdValid } from './../../../../financial-aid/shared/src/lib/utils'
+import { NationalID } from './../../../../../apps/skilavottord/web/i18n/locales/translation.d';
 import { Sequelize } from 'sequelize-typescript'
 import { uuid } from 'uuidv4'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
@@ -214,10 +214,6 @@ export class PersonalRepresentativeService {
     this.logger.debug(
       `Finding personal representative right type for id - "${id}"`,
     )
-
-    if (!id) {
-      throw new BadRequestException('Id must be provided')
-    }
     const personalRepresentative = await this.personalRepresentativeModel.findByPk(
       id,
       {
@@ -236,40 +232,6 @@ export class PersonalRepresentativeService {
   async createAsync(
     personalRepresentative: PersonalRepresentativeDTO,
   ): Promise<PersonalRepresentativeDTO | null> {
-    if (personalRepresentative.rightCodes.length === 0) {
-      throw new BadRequestException('RightCodes list must be providec')
-    }
-    if (
-      !isNationalIdValid(
-        personalRepresentative.nationalIdPersonalRepresentative,
-      )
-    ) {
-      throw new BadRequestException('Invalid national Id of representative')
-    }
-    if (
-      !isNationalIdValid(personalRepresentative.nationalIdRepresentedPerson)
-    ) {
-      throw new BadRequestException('Invalid national Id of Represented')
-    }
-
-    // Find current personal representative connection between nationalIds and remove since only one should be active
-    const currentContracts = await this.personalRepresentativeModel.findAll({
-      where: {
-        [Op.and]: [
-          {
-            nationalIdPersonalRepresentative:
-              personalRepresentative.nationalIdPersonalRepresentative,
-          },
-          {
-            nationalIdRepresentedPerson:
-              personalRepresentative.nationalIdRepresentedPerson,
-          },
-        ],
-      },
-    })
-    currentContracts.forEach(async (c) => {
-      await this.deleteAsync(c.id)
-    })
 
     // Create new personal representative connection
     let prId = ''
@@ -315,9 +277,6 @@ export class PersonalRepresentativeService {
   /** Delete a personal repreasentative */
   async deleteAsync(id: string): Promise<number> {
     this.logger.debug('Deleting a personal representative with id: ', id)
-    if (!id) {
-      throw new BadRequestException('Id must be provided')
-    }
     await this.personalRepresentativeRightModel.destroy({
       where: { personalRepresentativeId: id },
     })
