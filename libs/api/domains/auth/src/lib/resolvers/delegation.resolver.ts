@@ -92,7 +92,7 @@ export class DelegationResolver {
     return this.meDelegationsService.deleteDelegation(user, input)
   }
 
-  @ResolveField('to', () => Identity)
+  @ResolveField('to', () => Identity, { nullable: true })
   resolveTo(
     @Parent() delegation: DelegationDTO,
     @CurrentUser() user: User,
@@ -108,7 +108,7 @@ export class DelegationResolver {
     return this.identityService.getIdentity(delegation.toNationalId, user)
   }
 
-  @ResolveField('from', () => Identity)
+  @ResolveField('from', () => Identity, { nullable: true })
   resolveFrom(
     @Parent() delegation: DelegationDTO,
     @CurrentUser() user: User,
@@ -126,6 +126,10 @@ export class DelegationResolver {
 
   @ResolveField('validTo', () => Date, { nullable: true })
   resolveValidTo(@Parent() delegation: DelegationDTO): Date | undefined {
+    if (!delegation.validTo) {
+      return undefined
+    }
+
     return delegation.scopes?.every(
       (scope) => scope.validTo?.toString() === delegation.validTo?.toString(),
     )

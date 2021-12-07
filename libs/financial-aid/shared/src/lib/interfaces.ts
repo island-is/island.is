@@ -36,14 +36,17 @@ export interface Staff {
   municipalityHomepage?: string
   nickname?: string
   email?: string
+  usePseudoName?: boolean
 }
 
 export interface UpdateStaff {
+  name?: string
   nationalId?: string
   roles?: StaffRole[]
   active?: boolean
   nickname?: string
   email?: string
+  usePseudoName?: boolean
 }
 
 export interface Aid {
