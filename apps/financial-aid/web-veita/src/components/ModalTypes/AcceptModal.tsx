@@ -122,7 +122,7 @@ const AcceptModal = ({
       return
     }
 
-    onSaveApplication({
+    const bla = onSaveApplication({
       applicationId: router.query.id as string,
       aidAmount: state.amount,
       income: state.income,
@@ -132,6 +132,7 @@ const AcceptModal = ({
       finalAmount: finalAmount,
       deductionFactors: state.deductionFactor,
     })
+    console.log(bla)
   }
 
   return (
@@ -348,7 +349,7 @@ const AcceptModal = ({
         })}
       >
         <Text color="red600" fontWeight="semiBold" variant="small">
-          Það þarf að velja réttindi
+          Þú þarft að fylla út alla reiti
         </Text>
       </div>
 

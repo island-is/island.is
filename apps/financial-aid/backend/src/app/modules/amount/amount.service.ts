@@ -25,18 +25,18 @@ export class AmountService {
     return await this.sequelize.transaction(async (t) => {
       return this.amountModel
         .create(amount, { transaction: t })
-        .then(async (res) => {
+        .then(async (amountResponse) => {
           amount.deductionFactors.map((item) => {
             return this.deductionFactorsService.create(
               {
-                amountId: res.getDataValue('id'),
+                amountId: amountResponse.getDataValue('id'),
                 description: item.description,
                 amount: item.amount,
               },
               t,
             )
           })
-          return res
+          return amountResponse
         })
     })
   }

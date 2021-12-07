@@ -86,7 +86,3 @@ export const scrollToId = (id: string) => {
     behavior: 'smooth',
   })
 }
-
-export const removeItemFromArray = (fileName: string) => {
-  return fileName?.substring(fileName.lastIndexOf('.') + 1)
-}

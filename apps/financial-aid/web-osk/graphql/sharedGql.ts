@@ -57,7 +57,19 @@ export const ApplicationQuery = gql`
       homeCircumstances
       usePersonalTaxCredit
       state
-      amount
+      amount {
+        id
+        aidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
+      }
       rejection
       created
       modified
