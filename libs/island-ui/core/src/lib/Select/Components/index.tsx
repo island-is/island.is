@@ -24,7 +24,9 @@ export const Menu = (props: MenuProps<ReactSelectOption>) => (
 export const Option = (props: OptionProps<ReactSelectOption>) => {
   const size: SelectProps['size'] = props.selectProps.size || 'md'
   const description = props.data?.description
-  const descriptionTruncated = props.data?.descriptionTruncated
+  // Truncate description by default
+  const descriptionTruncated =
+    !!description && props.data?.descriptionTruncate !== false
 
   return (
     <components.Option
