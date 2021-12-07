@@ -25,12 +25,17 @@ export class CriminalRecordSubmissionService {
     application: { id },
     auth,
   }: TemplateApiModuleActionProps) {
-    const result = this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
-      id,
-      'AY101',
-    )
-    return result
+    try {
+      const result = this.sharedTemplateAPIService.createCharge(
+        auth.authorization,
+        id,
+        'AY101',
+      )
+      ;(await result).paymentUrl = ''
+      return result
+    } catch (exeption) {
+      return { id: '', paymentUrl: '' }
+    }
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {

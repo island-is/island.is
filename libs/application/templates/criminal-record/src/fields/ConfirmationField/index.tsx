@@ -56,7 +56,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
             icon="arrowForward"
             iconType="outline"
             onClick={() => {
-              window.open('https://island.is/minarsidur/', '_blank')
+              window.open(`${window.location.origin}/minarsidur`, '_blank')
             }}
           >
             {formatText(m.openMySites, application, formatMessage)}

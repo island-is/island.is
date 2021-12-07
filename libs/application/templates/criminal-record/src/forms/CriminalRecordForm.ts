@@ -68,12 +68,12 @@ export const CriminalRecordForm: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: 'Staðfesta',
+              title: m.confirm,
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
+                  name: m.confirm,
                   type: 'primary',
                 },
               ],

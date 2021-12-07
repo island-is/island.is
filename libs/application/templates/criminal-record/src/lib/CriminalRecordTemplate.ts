@@ -4,6 +4,7 @@ import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
+  Application,
   DefaultEvents,
   DefaultStateLifeCycle,
   ApplicationConfigurations,
@@ -133,8 +134,14 @@ const template: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(): ApplicationRole | undefined {
-    return Roles.APPLICANT
+  mapUserToRole(
+    id: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (id === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

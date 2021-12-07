@@ -93,6 +93,11 @@ export const m = defineMessages({
     defaultMessage: 'Staðfesting',
     description: 'payment',
   },
+  confirm: {
+    id: 'cr.application:confirm',
+    defaultMessage: 'Staðfesta',
+    description: 'payment',
+  },
   institutionName: {
     id: 'cr.application:institution',
     defaultMessage: 'Sýslumenn',

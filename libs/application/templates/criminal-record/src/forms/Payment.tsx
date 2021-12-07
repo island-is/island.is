@@ -9,6 +9,12 @@ import {
   buildMultiField,
 } from '@island.is/application/core'
 
+type CreateChargeData = {
+  data: {
+    paymentUrl: string
+  }
+}
+
 export const Payment: Form = buildForm({
   id: 'DrivingLicenseApplicationPaymentForm',
   title: '',
@@ -28,16 +34,16 @@ export const Payment: Form = buildForm({
         buildDescriptionField({
           id: 'infoAwaitingPayment',
           title: m.payment,
-          condition: () => {
-            return !window.document.location.href.match(/\?done$/)
+          condition: (_, externalData) => {
+            return (
+              !window.document.location.href.match(/\?done$/) &&
+              (externalData.createCharge as CreateChargeData)?.data.paymentUrl
+                .length > 0
+            )
           },
           description: (application) => {
             const { paymentUrl } = application.externalData.createCharge
               .data as { paymentUrl: string }
-
-            if (!paymentUrl) {
-              throw new Error()
-            }
 
             const returnUrl = window.document.location.href
             const redirectUrl = `${paymentUrl}&returnURL=${encodeURIComponent(
@@ -48,12 +54,23 @@ export const Payment: Form = buildForm({
             return m.forwardingToPayment
           },
         }),
+        buildCustomField({
+          component: 'PaymentUrlNotFoundField',
+          id: 'infoPaymentUrlNotFound',
+          title: m.payment,
+          condition: (_, externalData) => {
+            return (
+              !window.document.location.href.match(/\?done$/) &&
+              !(externalData.createCharge as CreateChargeData)?.data?.paymentUrl
+            )
+          },
+        }),
         buildMultiField({
+          id: 'overviewAwaitingPayment',
+          title: m.confirmation,
           condition: () => {
             return !!window.document.location.href.match(/\?done$/)
           },
-          id: 'overviewAwaitingPayment',
-          title: m.confirmation,
           space: 1,
           description: '',
           children: [
