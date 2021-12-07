@@ -198,7 +198,10 @@ export const AccidentNotificationSchema = z.object({
     postalCode: z
       .string()
       .refine((x) => +x >= 100 && +x <= 999, error.required.defaultMessage),
-    community: z.string().min(1),
+    community: z
+      .string()
+      .regex(/^([^0-9]*)$/)
+      .min(1),
     moreDetails: z.string().optional(),
   }),
   shipLocation: z.object({
