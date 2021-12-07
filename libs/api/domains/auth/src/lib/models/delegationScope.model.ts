@@ -12,12 +12,12 @@ export class DelegationScope {
   @Field(() => String)
   name!: string
 
-  @Field((_) => ScopeType)
+  @Field(() => ScopeType)
   type!: ScopeType
 
   @Field(() => String)
   displayName!: string
 
   @Field(() => Date, { nullable: true })
-  validTo?: Date
+  validTo?: Date | null
 }

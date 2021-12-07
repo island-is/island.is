@@ -20,7 +20,7 @@ export {
   TableBody,
   TextTableItem,
   ActivationButtonTableItem,
-  PseudoName,
+  usePseudoName,
   State,
 } from './TableBody/TableBody'
 export { default as History } from './History/History'

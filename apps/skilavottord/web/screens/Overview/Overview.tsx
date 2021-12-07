@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
+
 import {
   Box,
   Stack,
@@ -10,15 +11,19 @@ import {
   BreadcrumbsDeprecated as Breadcrumbs,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
+
 import { PageLayout, InlineError } from '@island.is/skilavottord-web/components'
-import { ActionCardContainer, ProgressCardContainer } from './components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { RecycleActionTypes } from '@island.is/skilavottord-web/types'
+import {
+  RecycleActionTypes,
+  Query,
+} from '@island.is/skilavottord-web/graphql/schema'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { filterCarsByStatus } from '@island.is/skilavottord-web/utils'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
+import { ActionCardContainer, ProgressCardContainer } from './components'
 
-const skilavottordVehiclesQuery = gql`
+const SkilavottordVehiclesQuery = gql`
   query skilavottordVehiclesQuery($nationalId: String!) {
     skilavottordVehicles(nationalId: $nationalId) {
       permno
@@ -47,7 +52,7 @@ const Overview: FC = () => {
   const router = useRouter()
 
   const nationalId = user?.nationalId
-  const { data, loading, error } = useQuery(skilavottordVehiclesQuery, {
+  const { data, loading, error } = useQuery<Query>(SkilavottordVehiclesQuery, {
     variables: { nationalId },
     fetchPolicy: 'cache-and-network',
     skip: !nationalId,
