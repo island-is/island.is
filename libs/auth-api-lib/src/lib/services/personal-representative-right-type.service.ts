@@ -3,8 +3,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Op } from 'sequelize'
-import { PersonalRepresentative } from '../entities/models/personal-representative.model'
-import { PersonalRepresentativeRight } from '../entities/models/personal-representative-right.model'
 import { PersonalRepresentativeRightType } from '../entities/models/personal-representative-right-type.model'
 import { PersonalRepresentativeRightTypeDTO } from '../entities/dto/personal-representative-right-type.dto'
 
@@ -104,7 +102,7 @@ export class PersonalRepresentativeRightTypeService {
     )
 
     if (!code) {
-      throw new BadRequestException('name must be provided')
+      throw new BadRequestException('code must be provided')
     }
 
     await this.personalRepresentativeRightTypeModel.update(
