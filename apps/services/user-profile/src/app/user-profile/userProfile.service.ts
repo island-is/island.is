@@ -82,7 +82,6 @@ export class UserProfileService {
 
   // UPDATE
   async updateDeviceToken(body: UpdateUserNotificationDto, user: User) {
-    console.log(body)
     try {
       const res = await this.UserNotificationsModel.findOne({
         where: { id: body.id, nationalId: user.nationalId },

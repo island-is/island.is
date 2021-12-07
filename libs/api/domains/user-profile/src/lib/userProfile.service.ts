@@ -189,8 +189,8 @@ export class UserProfileService {
   ) {
     return await this.userProfileApiWithAuth(user)
       .userProfileControllerUpdateDeviceToken({
-        id:"adsf", 
-        updateUserNotificationDto:input})
+        updateUserNotificationDto:input
+      })
       .catch(handleError)
   }
 }
