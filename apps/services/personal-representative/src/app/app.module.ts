@@ -1,5 +1,5 @@
-import { RightTypesModule } from './modules/right-types/right-types.module'
-import { PersonalRepresentativeModule } from './modules/personal-representative/personal-representative.module'
+import { RightTypesModule } from './modules/rightTypes/rightTypes.module'
+import { PersonalRepresentativeModule } from './modules/personalRepresentative/personalRepresentative.module'
 import { SequelizeConfigService } from '@island.is/auth-api-lib/personal-representative'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'

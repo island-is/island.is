@@ -27,7 +27,7 @@ import {
 import { AuthGuard } from '../common'
 import type { HttpRequest } from '../../app.types'
 import { User } from '@island.is/auth-nest-tools'
-import { environment } from '../../../environments/'
+import { environment } from '../../../environments'
 import { AuditService } from '@island.is/nest/audit'
 
 const namespace = `${environment.audit.defaultNamespace}/right-types`
