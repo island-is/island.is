@@ -119,7 +119,7 @@ export interface UpdateApplication {
   spouseEmail?: string
   spouseName?: string
   spouseFormComment?: string
-  amount?: CreateAmount
+  amount?: Amount
 }
 
 export interface UpdateApplicationTable {
