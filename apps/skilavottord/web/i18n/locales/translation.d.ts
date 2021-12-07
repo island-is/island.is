@@ -45,6 +45,7 @@ export interface SubtitlesClass {
   add: string
   edit: string
   delete: string
+  actions?: string
 }
 
 export interface Modal {
@@ -726,6 +727,7 @@ const typeMap: any = {
       { json: 'add', js: 'add', typ: '' },
       { json: 'edit', js: 'edit', typ: '' },
       { json: 'delete', js: 'delete', typ: '' },
+      { json: 'actions', js: 'actions', typ: u(undefined, '') },
     ],
     false,
   ),

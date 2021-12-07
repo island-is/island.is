@@ -376,7 +376,8 @@
     "buttons": {
       "add": "Bæta við aðgangi",
       "edit": "Breyta",
-      "delete": "Fjarlægja"
+      "delete": "Fjarlægja",
+      "actions": "aðgerðir"
     },
     "modal": {
       "titles": {

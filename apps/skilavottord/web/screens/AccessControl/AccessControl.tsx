@@ -16,6 +16,7 @@ import {
   GridRow,
   SkeletonLoader,
   DialogPrompt,
+  DropdownMenu,
 } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -41,6 +42,8 @@ import {
   AccessControlCreate,
   AccessControlUpdate,
 } from './components'
+
+import * as styles from './AccessControl.css'
 
 const SkilavottordAllRecyclingPartnersQuery = gql`
   query skilavottordAllRecyclingPartnersQuery {
@@ -303,7 +306,6 @@ const AccessControl: FC = () => {
                     <Text variant="eyebrow">{t.tableHeaders.partner}</Text>
                   </HeadData>
                   <HeadData></HeadData>
-                  <HeadData></HeadData>
                 </Row>
               </Head>
               <Body>
@@ -321,39 +323,56 @@ const AccessControl: FC = () => {
                         }
                       </Data>
                       <Data>
-                        <Button
-                          onClick={() => setPartner(item)}
-                          variant="text"
-                          icon="pencil"
-                          size="small"
-                          nowrap
-                        >
-                          {t.buttons.edit}
-                        </Button>
-                      </Data>
-                      <Data>
-                        <DialogPrompt
-                          title={t.modal.titles.delete}
-                          description={t.modal.subtitles.delete}
-                          baseId={`delete-${item.nationalId}-dialog`}
-                          ariaLabel={`delete-${item.nationalId}-dialog`}
-                          disclosureElement={
+                        <DropdownMenu
+                          disclosure={
                             <Button
-                              colorScheme="destructive"
                               variant="text"
+                              icon="chevronDown"
                               size="small"
                               nowrap
                             >
-                              {t.buttons.delete}
+                              {t.buttons.actions}
                             </Button>
                           }
-                          buttonTextCancel={t.modal.buttons.cancel}
-                          buttonTextConfirm={t.modal.buttons.confirm}
-                          onConfirm={() =>
-                            handleDeleteAccessControl({
-                              nationalId: item.nationalId,
-                            })
-                          }
+                          items={[
+                            {
+                              title: t.buttons.edit,
+                              onClick: () => setPartner(item),
+                            },
+                            {
+                              title: t.buttons.delete,
+                              render: () => (
+                                <DialogPrompt
+                                  title={t.modal.titles.delete}
+                                  description={t.modal.subtitles.delete}
+                                  baseId={`delete-${item.nationalId}-dialog`}
+                                  ariaLabel={`delete-${item.nationalId}-dialog`}
+                                  disclosureElement={
+                                    <Box
+                                      display="flex"
+                                      alignItems="center"
+                                      justifyContent="center"
+                                      paddingY={2}
+                                      cursor="pointer"
+                                      className={styles.deleteMenuItem}
+                                    >
+                                      <Text variant="eyebrow" color="red600">
+                                        {t.buttons.delete}
+                                      </Text>
+                                    </Box>
+                                  }
+                                  buttonTextCancel={t.modal.buttons.cancel}
+                                  buttonTextConfirm={t.modal.buttons.confirm}
+                                  onConfirm={() =>
+                                    handleDeleteAccessControl({
+                                      nationalId: item.nationalId,
+                                    })
+                                  }
+                                />
+                              ),
+                            },
+                          ]}
+                          menuLabel={t.buttons.actions}
                         />
                       </Data>
                     </Row>

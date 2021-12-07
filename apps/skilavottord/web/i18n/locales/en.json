@@ -373,7 +373,8 @@
     "buttons": {
       "add": "Give access",
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "actions": "actions"
     },
     "modal": {
       "titles": {
