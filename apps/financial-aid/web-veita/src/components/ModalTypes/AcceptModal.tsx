@@ -86,9 +86,7 @@ const AcceptModal = ({
     hasSubmitError: false,
   })
 
-  const sumValues = (
-    deductionFactor: Array<{ description: string; amount: number }>,
-  ) =>
+  const sumValues = (deductionFactor: calculationsState['deductionFactor']) =>
     deductionFactor
       .map((item) => {
         return item.amount
@@ -118,7 +116,7 @@ const AcceptModal = ({
       return
     }
 
-    const bla = onSaveApplication({
+    onSaveApplication({
       applicationId: router.query.id as string,
       aidAmount: state.amount,
       income: state.income,
@@ -128,7 +126,6 @@ const AcceptModal = ({
       finalAmount: finalAmount,
       deductionFactors: state.deductionFactor,
     })
-    console.log(bla)
   }
 
   return (
