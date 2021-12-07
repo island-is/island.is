@@ -1,5 +1,8 @@
 import { useMutation } from '@apollo/client'
-import { PaymentScheduleConditions, PaymentScheduleDebts } from '@island.is/api/schema'
+import {
+  PaymentScheduleConditions,
+  PaymentScheduleDebts,
+} from '@island.is/api/schema'
 import {
   ApplicationConfigurations,
   DefaultEvents,

@@ -15,9 +15,8 @@ export const prerequisitesFailed = (data: ExternalData) => {
     | PaymentScheduleConditions
     | undefined
 
-    const debts = (data as PaymentPlanExternalData)
-    .paymentPlanPrerequisites?.data?.debts as PaymentScheduleDebts[]
-
+  const debts = (data as PaymentPlanExternalData).paymentPlanPrerequisites?.data
+    ?.debts as PaymentScheduleDebts[]
 
   if (!prerequisites) return true
 
