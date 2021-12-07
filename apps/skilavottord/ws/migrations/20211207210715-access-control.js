@@ -2,7 +2,7 @@
 
 module.exports.up = (queryInterface, DataTypes) => {
   return queryInterface.createTable(
-    'recycling_user',
+    'access_control',
     {
       national_id: {
         allowNull: false,
@@ -27,11 +27,9 @@ module.exports.up = (queryInterface, DataTypes) => {
       },
       created_at: {
         type: DataTypes.DATE,
-        //defaultValue: DataTypes.fn('now'),
       },
       updated_at: {
         type: DataTypes.DATE,
-        //defaultValue: DataTypes.fn('now'),
       },
     },
     {
@@ -41,4 +39,4 @@ module.exports.up = (queryInterface, DataTypes) => {
 }
 
 module.exports.down = (queryInterface) =>
-  queryInterface.dropTable('recycling_user')
+  queryInterface.dropTable('access_control')

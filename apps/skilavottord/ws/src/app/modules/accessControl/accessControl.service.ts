@@ -1,8 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
-
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-
 import { Role } from '../auth'
 import { AccessControlModel } from './accessControl.model'
 import {

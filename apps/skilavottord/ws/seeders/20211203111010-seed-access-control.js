@@ -3,7 +3,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert(
-      'recycling_user',
+      'access_control',
       [
         {
           national_id: '8888888888',
@@ -29,6 +29,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('recycling_user', null, {})
+    return queryInterface.bulkDelete('access_control', null, {})
   },
 }
