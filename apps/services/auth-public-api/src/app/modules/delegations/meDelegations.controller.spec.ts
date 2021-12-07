@@ -690,7 +690,6 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(200)
         expect(res.body).toMatchObject({
           scopes: [],
-          validTo: expectedValidTo.toISOString(),
         })
       })
 
