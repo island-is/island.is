@@ -57,7 +57,6 @@ export const ApplicationQuery = gql`
         staffNationalId
       }
       amount {
-        id
         aidAmount
         income
         personalTaxCredit
@@ -271,7 +270,6 @@ export const UpdateApplicationMutation = gql`
         municipalityId
       }
       amount {
-        id
         aidAmount
         income
         personalTaxCredit
