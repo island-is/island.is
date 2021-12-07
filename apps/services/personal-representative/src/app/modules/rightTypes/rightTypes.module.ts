@@ -1,4 +1,4 @@
-import { RightTypesController } from './right-types.controller'
+import { RightTypesController } from './rightTypes.controller'
 import { Module } from '@nestjs/common'
 import {
   PersonalRepresentativeRightType,
