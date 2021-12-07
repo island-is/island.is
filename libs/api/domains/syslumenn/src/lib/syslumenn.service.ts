@@ -10,7 +10,7 @@ import {
   OperatingLicense,
   mapOperatingLicense,
 } from './models/operatingLicense'
-import { SyslumennApi, SyslumennApiConfig, VirkarHeimagistingar, Uppbod  } from '@island.is/clients/syslumenn'
+import { SyslumennApi, SyslumennApiConfig, VirkarHeimagistingar, Uppbod, VirkLeyfi  } from '@island.is/clients/syslumenn'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools';
 
 const SYSLUMENN_CLIENT_CONFIG = 'SYSLUMENN_CLIENT_CONFIG'
@@ -41,20 +41,14 @@ export class SyslumennService {
     }
   }
   private async syslumennApiWithAuth() {
-    const config = {
-      notandi: this.clientConfig.username,
-      lykilord: this.clientConfig.password,
-    }
-
-    const response = await this.syslumennApi.innskraningPost({
-      notandi: config,
-    })
+    await this.login()
 
     const auth = {
       scope: [],
       authorization: `Bearer ${this.accessToken}`,
       client: 'client-syslumenn'
     } as Auth
+
     return this.syslumennApi.withMiddleware(new AuthMiddleware(auth))
   }
 
@@ -74,7 +68,6 @@ export class SyslumennService {
   }
 
   async getSyslumennAuctions(): Promise<SyslumennAuction[]> {
-    await this.login()
     const api = await this.syslumennApiWithAuth()
     const syslumennAuctions = await api.uppbodGet({
       audkenni: this.id,
@@ -84,9 +77,10 @@ export class SyslumennService {
   }
 
   async getOperatingLicenses(): Promise<OperatingLicense[]> {
-    const operatingLicenses = await this.syslumennClient.getOperatingLicenses()
+    await this.login()
+    const operatingLicenses = await this.syslumennApi.virkLeyfiGet({audkenni: this.id})
 
-    return (operatingLicenses ?? []).map(mapOperatingLicense)
+    return (operatingLicenses as VirkLeyfi[] ?? []).map(mapOperatingLicense)
   }
 
   async uploadData(
@@ -94,6 +88,7 @@ export class SyslumennService {
     attachement: Attachment,
     extraData: { [key: string]: string },
   ): Promise<DataUploadResponse> {
+    const api = await this.syslumennApiWithAuth()
     return await this.syslumennClient.uploadData(
       persons,
       attachement,

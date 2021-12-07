@@ -1,24 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-export interface IOperatingLicense {
-  rowNum: number
-  utgefidAf: string
-  leyfisnumer: string
-  stadur: string
-  kallast: string
-  gata: string
-  postnumer: string
-  tegund: string
-  gildirTil: string
-  leyfishafi: string
-  flokkur: string
-  leyfi_Til_Utiveitinga: string
-  afgr_Afgengis_Virkirdagar: string
-  afgr_Afgengis_Adfaranott_Fridaga: string
-  afgr_Afgengis_Virkirdagar_Utiveitingar: string
-  afgr_Afgengis_Adfaranott_Fridaga_Utiveitingar: string
-}
-
-
+import { VirkLeyfi } from '@island.is/clients/syslumenn'
 @ObjectType()
 export class OperatingLicense {
   @Field({ nullable: true })
@@ -71,7 +52,7 @@ export class OperatingLicense {
 }
 
 export const mapOperatingLicense = (
-  operatingLicense: IOperatingLicense,
+  operatingLicense: VirkLeyfi,
 ): OperatingLicense => ({
   id: operatingLicense.rowNum,
   issuedBy: operatingLicense.utgefidAf,
@@ -81,14 +62,14 @@ export const mapOperatingLicense = (
   street: operatingLicense.gata,
   postalCode: operatingLicense.postnumer,
   type: operatingLicense.tegund,
-  validUntil: operatingLicense.gildirTil,
+  validUntil: operatingLicense.gildirTil ? operatingLicense.gildirTil.toLocaleString() : '',
   licenseHolder: operatingLicense.leyfishafi,
   category: operatingLicense.flokkur,
-  outdoorLicense: operatingLicense.leyfi_Til_Utiveitinga,
-  alcoholWeekdayLicense: operatingLicense.afgr_Afgengis_Virkirdagar,
-  alcoholWeekendLicense: operatingLicense.afgr_Afgengis_Adfaranott_Fridaga,
+  outdoorLicense: operatingLicense.leyfiTilUtiveitinga,
+  alcoholWeekdayLicense: operatingLicense.afgrAfgengisVirkirdagar,
+  alcoholWeekendLicense: operatingLicense.afgrAfgengisAdfaranottFridaga,
   alcoholWeekdayOutdoorLicense:
-    operatingLicense.afgr_Afgengis_Virkirdagar_Utiveitingar,
+    operatingLicense.afgrAfgengisVirkirdagarUtiveitingar,
   alcoholWeekendOutdoorLicense:
-    operatingLicense.afgr_Afgengis_Adfaranott_Fridaga_Utiveitingar,
+    operatingLicense.afgrAfgengisAdfaranottFridagaUtiveitingar,
 })
