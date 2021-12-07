@@ -23,11 +23,29 @@ export const Menu = (props: MenuProps<ReactSelectOption>) => (
 
 export const Option = (props: OptionProps<ReactSelectOption>) => {
   const size: SelectProps['size'] = props.selectProps.size || 'md'
+  const description = props.data?.description
+  const descriptionTruncated = props.data?.descriptionTruncated
+
   return (
     <components.Option
       className={cn(styles.option, styles.optionSizes[size!])}
       {...props}
-    />
+    >
+      <>
+        {props.children}
+        {!!description && (
+          <div
+            className={cn(
+              styles.optionDescription,
+              styles.optionDescriptionSizes[size!],
+              { [styles.optionDescriptionTruncated]: descriptionTruncated },
+            )}
+          >
+            {description}
+          </div>
+        )}
+      </>
+    </components.Option>
   )
 }
 
