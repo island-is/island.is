@@ -1,13 +1,12 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
 import { CriminalRecordService } from '../criminalRecord.service'
-import { CriminalRecord } from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
