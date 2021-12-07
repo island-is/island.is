@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { ValueType } from 'react-select'
-import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -45,8 +44,7 @@ import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-syste
 import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import type { Case, User } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
-import * as styles from './HearingArrangements.css'
+import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 
 interface Props {
   workingCase: Case
@@ -59,8 +57,6 @@ interface Props {
 const HearingArrangementsForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, users, user } = props
   const [modalVisible, setModalVisible] = useState(false)
-  const [defenderEmailEM, setDefenderEmailEM] = useState('')
-  const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
   const [, setCourtDateIsValid] = useState(true)
   const { updateCase, sendNotification, isSendingNotification } = useCase()
   const { formatMessage } = useIntl()
@@ -341,149 +337,10 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           </Box>
         </Box>
         <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.defender.title)}
-            </Text>
-          </Box>
-          <BlueBox>
-            <div className={styles.defenderOptions}>
-              <RadioButton
-                name="defender-type-defender"
-                id="defender-type-defender"
-                label="Verjandi"
-                checked={workingCase.defenderIsSpokesperson === false}
-                onChange={() => {
-                  setAndSendToServer(
-                    'defenderIsSpokesperson',
-                    false,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }}
-                large
-                backgroundColor="white"
-              />
-              <RadioButton
-                name="defender-type-spokesperson"
-                id="defender-type-spokesperson"
-                label="Talsmaður"
-                checked={workingCase.defenderIsSpokesperson === true}
-                onChange={() => {
-                  setAndSendToServer(
-                    'defenderIsSpokesperson',
-                    true,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }}
-                large
-                backgroundColor="white"
-              />
-            </div>
-            <Box marginBottom={2}>
-              <Input
-                name="defenderName"
-                label={`Nafn ${
-                  workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
-                }`}
-                value={workingCase.defenderName || ''}
-                placeholder="Fullt nafn"
-                autoComplete="off"
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'defenderName',
-                    event,
-                    [],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'defenderName',
-                    event.target.value,
-                    [],
-                    workingCase,
-                    updateCase,
-                  )
-                }
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <Input
-                name="defenderEmail"
-                label={`Netfang ${
-                  workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
-                }`}
-                value={workingCase.defenderEmail || ''}
-                placeholder="Netfang"
-                autoComplete="off"
-                errorMessage={defenderEmailEM}
-                hasError={defenderEmailEM !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'defenderEmail',
-                    event,
-                    ['email-format'],
-                    workingCase,
-                    setWorkingCase,
-                    defenderEmailEM,
-                    setDefenderEmailEM,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'defenderEmail',
-                    event.target.value,
-                    ['email-format'],
-                    workingCase,
-                    updateCase,
-                    setDefenderEmailEM,
-                  )
-                }
-              />
-            </Box>
-            <InputMask
-              mask="999-9999"
-              maskPlaceholder={null}
-              value={workingCase.defenderPhoneNumber}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'defenderPhoneNumber',
-                  event,
-                  ['phonenumber'],
-                  workingCase,
-                  setWorkingCase,
-                  defenderPhoneNumberEM,
-                  setDefenderPhoneNumberEM,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'defenderPhoneNumber',
-                  event.target.value,
-                  ['phonenumber'],
-                  workingCase,
-                  updateCase,
-                  setDefenderPhoneNumberEM,
-                )
-              }
-            >
-              <Input
-                name="defenderPhoneNumber"
-                label={`Símanúmer ${
-                  workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
-                }`}
-                placeholder="Símanúmer"
-                autoComplete="off"
-                errorMessage={defenderPhoneNumberEM}
-                hasError={defenderPhoneNumberEM !== ''}
-              />
-            </InputMask>
-          </BlueBox>
+          <DefenderInfo
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+          />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
