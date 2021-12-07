@@ -115,14 +115,15 @@ const Handover: FC = () => {
         case 'inUse':
         case 'cancelled':
           if (
-            localStorage.getItem(ACCEPTED_TERMS_AND_CONDITION) === id.toString()
+            localStorage.getItem(ACCEPTED_TERMS_AND_CONDITION) ===
+            id?.toString()
           ) {
-            setRequestType('pendingRecycle')
+            setRequestType(RecyclingRequestTypes.pendingRecycle)
             setRecyclingRequest({
               variables: {
                 permno: id,
                 nameOfRequestor: user?.name,
-                requestType: 'pendingRecycle',
+                requestType: RecyclingRequestTypes.pendingRecycle,
               },
             })
           } else {
@@ -147,18 +148,19 @@ const Handover: FC = () => {
   }
 
   const onConfirmCancellation = () => {
-    setRequestType('cancelled')
+    setRequestType(RecyclingRequestTypes.cancelled)
     setRecyclingRequest({
       variables: {
         permno: id,
         nameOfRequestor: user?.name,
-        requestType: 'cancelled',
+        requestType: RecyclingRequestTypes.cancelled,
       },
     }).then(({ data }) => {
       // setRecyclingRequest is completed with no mutationErrors
       // errors are returned in mutationResponse.message,
       // we must therefore double check for errors in this way before closing modal and routing home
-      if (!data?.createSkilavottordRecyclingRequest?.message) {
+
+      if (!data?.createSkilavottordRecyclingRequest) {
         setModal(false)
         routeHome()
       }
@@ -170,8 +172,8 @@ const Handover: FC = () => {
   }
 
   if (
-    (requestType !== 'cancelled' &&
-      (mutationError || mutationLoading || mutationResponse?.message)) ||
+    (requestType !== RecyclingRequestTypes.cancelled &&
+      (mutationError || mutationLoading || mutationResponse)) ||
     error ||
     isInvalidCar ||
     (loading && !data)
@@ -180,7 +182,7 @@ const Handover: FC = () => {
       <ProcessPageLayout
         processType={'citizen'}
         activeSection={1}
-        activeCar={id.toString()}
+        activeCar={id?.toString()}
       >
         {mutationLoading || loading ? (
           <Box textAlign="center">
@@ -214,7 +216,7 @@ const Handover: FC = () => {
     <ProcessPageLayout
       processType={'citizen'}
       activeSection={1}
-      activeCar={id.toString()}
+      activeCar={id?.toString()}
     >
       <Stack space={6}>
         <Stack space={2}>
@@ -265,7 +267,7 @@ const Handover: FC = () => {
         continueButtonText={t.cancelModal.buttons.continue}
         cancelButtonText={t.cancelModal.buttons.cancel}
         loading={mutationLoading}
-        error={mutationResponse?.message || mutationError}
+        error={mutationError}
         errorText={t.cancelModal.error}
       />
     </ProcessPageLayout>

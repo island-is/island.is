@@ -1,15 +1,12 @@
 import React, { FC } from 'react'
 import { Stack } from '@island.is/island-ui/core'
-import {
-  VehicleInformation,
-  RecycleActionTypes,
-} from '@island.is/skilavottord-web/graphql/schema'
+import { VehicleInformation } from '@island.is/skilavottord-web/graphql/schema'
 import { ActionCard } from '../ActionCard/ActionCard'
 
 interface Props {
   cars: VehicleInformation[]
-  actionType: RecycleActionTypes
-  onContinue: (permno: string, actionType: RecycleActionTypes) => void
+  actionType: any // not good but RecycleActionTypes doesn't exist
+  onContinue: (permno: string, actionType: any) => void
 }
 
 export const ActionCardContainer: FC<Props> = ({

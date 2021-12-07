@@ -14,10 +14,7 @@ import {
 
 import { PageLayout, InlineError } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import {
-  RecycleActionTypes,
-  Query,
-} from '@island.is/skilavottord-web/graphql/schema'
+import { Query } from '@island.is/skilavottord-web/graphql/schema'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { filterCarsByStatus } from '@island.is/skilavottord-web/utils'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
@@ -64,7 +61,10 @@ const Overview: FC = () => {
   const inUseCars = filterCarsByStatus('inUse', cars)
   const recycledCars = filterCarsByStatus('deregistered', cars)
 
-  const onContinue = (id: string, actionType: RecycleActionTypes) => {
+  const onContinue = (
+    id: string,
+    actionType: 'baseRoute' | 'confirm' | 'handover' | 'completed',
+  ) => {
     router
       .push(`${routes[actionType]}`, `${routes.baseRoute}/${id}/${actionType}`)
       .then(() => window.scrollTo(0, 0))
