@@ -67,7 +67,7 @@ export class PersonalRepresentativePermissionController {
     return await this.auditService.auditPromise(
       {
         user,
-        action: 'Get',
+        action: 'getPersonalRepresentativePermissions',
         namespace,
         resources: nationalId,
       },
