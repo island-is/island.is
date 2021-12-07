@@ -61,7 +61,7 @@ export interface Aid {
 }
 
 export interface Amount {
-  applicationId: string
+  applicationId?: string
   aidAmount: number
   income?: number
   personalTaxCredit: number

@@ -313,14 +313,6 @@ export const StaffQuery = gql`
   }
 `
 
-export const AmountMutation = gql`
-  mutation AmountMutation($input: CreateAmountInput!) {
-    createAmount(input: $input) {
-      id
-    }
-  }
-`
-
 export const StaffMutation = gql`
   mutation StaffMutation($input: CreateStaffInput!) {
     createStaff(input: $input) {
