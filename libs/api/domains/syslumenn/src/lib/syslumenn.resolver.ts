@@ -1,9 +1,11 @@
-import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
+import { Args, Directive, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { GetHomestaysInput } from './dto/getHomestays.input'
 import { Homestay } from './models/homestay'
 import { SyslumennAuction } from './models/syslumennAuction'
 import { SyslumennService } from './syslumenn.service'
 import { OperatingLicense } from './models/operatingLicense'
+import { DataUploadResponse } from './models/dataUpload';
+import { UploadDataInput } from './dto/uploadData.input'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -29,5 +31,10 @@ export class SyslumennResolver {
   @Query(() => [OperatingLicense])
   getOperatingLicenses(): Promise<OperatingLicense[]> {
     return this.syslumennService.getOperatingLicenses()
+  }
+
+  @Mutation(() => DataUploadResponse)
+  postSyslumennUploadData(@Args('input') {persons, attachment, applicationType}: UploadDataInput): Promise<DataUploadResponse> {
+    return this.syslumennService.uploadData(persons, attachment,  {}, applicationType)
   }
 }

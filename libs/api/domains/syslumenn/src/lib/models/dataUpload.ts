@@ -1,50 +1,21 @@
+import { Adili, AdiliTegund, SyslMottakaGognPostRequest } from '@island.is/clients/syslumenn'
+import { Field, ObjectType } from '@nestjs/graphql'
 import { uuid } from 'uuidv4'
-export interface IDataUpload {
-  audkenni: string
-  gognSkeytis: {
-    audkenni: string
-    skeytaHeiti: string
-    adilar: ChildrenTransferPerson[]
-    attachments: File[]
-    gagnaMengi: object
-  }
-}
+import { Attachment, Person, PersonType } from '../dto/uploadData.input'
 
-interface ChildrenTransferPerson {
-  id: string
-  nafn: string
-  kennitala: string
-  simi?: string
-  heimilisfang: string
-  tolvupostur?: string
-  postaritun: string
-  sveitafelag: string
-  undirritad: boolean
-  tegund: ChildrenTransferPersonType
-}
-
-interface File {
-  nafnSkraar: string
-  innihaldSkraar: string
-}
-
-enum ChildrenTransferPersonType {
-  Malshefjandi,
-  Gagnadili,
-  Barn,
-}
 
 export function constructUploadDataObject(
   id: string,
   persons: Person[],
   attachment: Attachment,
   extraData: { [key: string]: string },
-): IDataUpload {
-  return {
+  applicationType: string,
+): SyslMottakaGognPostRequest {
+  return {payload: {
     audkenni: id,
     gognSkeytis: {
-      audkenni: uuid(),
-      skeytaHeiti: 'Lögheimilisbreyting barns',
+      audkenni: applicationType,
+      skeytaHeiti: applicationType,
       adilar: persons.map((p) => {
         return {
           id: uuid(),
@@ -64,45 +35,30 @@ export function constructUploadDataObject(
       ],
       gagnaMengi: extraData,
     },
-  }
+  }}
 }
 
 function mapPersonEnum(e: PersonType) {
   switch (e) {
     case PersonType.Plaintiff:
-      return ChildrenTransferPersonType.Malshefjandi
+      return AdiliTegund.NUMBER_0
     case PersonType.CounterParty:
-      return ChildrenTransferPersonType.Gagnadili
+      return AdiliTegund.NUMBER_1
     case PersonType.Child:
-      return ChildrenTransferPersonType.Barn
+      return AdiliTegund.NUMBER_2
   }
 }
 
-export enum PersonType {
-  Plaintiff,
-  CounterParty,
-  Child,
+
+@ObjectType()
+export class DataUploadResponse {
+  @Field()
+  skilabod?: string
+
+  @Field()
+  audkenni?: string
+
+  @Field()
+  malsnumer?: string
 }
 
-export type Person = {
-  name: string
-  ssn: string
-  phoneNumber?: string
-  email?: string
-  homeAddress: string
-  postalCode: string
-  city: string
-  signed: boolean
-  type: PersonType
-}
-
-export type Attachment = {
-  name: string
-  content: string
-}
-
-export interface DataUploadResponse {
-  skilabod: string
-  audkenni: string
-  malsnumer: string
-}
