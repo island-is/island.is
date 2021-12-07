@@ -1,18 +1,17 @@
 import { style, globalStyle } from '@vanilla-extract/css'
-import { dark400, theme } from "@island.is/island-ui/theme";
+import { dark400, theme } from '@island.is/island-ui/theme'
 
 export const footerBg = style({
   background: '#D8D9DA',
-  color: '#000'
+  color: '#000',
 })
 
-export const logoStyle = style({
-})
+export const logoStyle = style({})
 
 export const footerSecondRow = style({
   display: 'flex',
   minHeight: 72,
-  alignItems: 'center'
+  alignItems: 'center',
 })
 
 export const footerItemFirst = style({
@@ -23,7 +22,6 @@ export const footerItemFirst = style({
     },
   },
 })
-
 
 globalStyle(`${footerBg} a, ${footerBg} a:hover`, {
   color: `${dark400} !important`,

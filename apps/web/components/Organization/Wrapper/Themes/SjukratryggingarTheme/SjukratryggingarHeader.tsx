@@ -2,9 +2,7 @@ import { OrganizationPage } from '@island.is/web/graphql/schema'
 import React from 'react'
 import {
   Box,
-  GridColumn,
   GridContainer,
-  GridRow,
   Hidden,
   Link,
   Text,
@@ -74,7 +72,7 @@ export const SjukratryggingarHeader: React.FC<HeaderProps> = ({
                   <div className={styles.trianglesTop}></div>
                   <div className={styles.titleImage}></div>
                 </Hidden>
-                <Hidden above='sm'>
+                <Hidden above="sm">
                   <Text variant="h1" color="white">
                     {organizationPage.title}
                   </Text>
