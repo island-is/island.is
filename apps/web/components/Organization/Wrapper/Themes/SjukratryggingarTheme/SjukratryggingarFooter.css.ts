@@ -1,5 +1,5 @@
-import { style } from '@vanilla-extract/css'
-import { theme } from '@island.is/island-ui/theme'
+import { style, globalStyle } from '@vanilla-extract/css'
+import { dark400, theme } from "@island.is/island-ui/theme";
 
 export const footerBg = style({
   background: '#D8D9DA',
@@ -9,6 +9,12 @@ export const footerBg = style({
 export const logoStyle = style({
 })
 
+export const footerSecondRow = style({
+  display: 'flex',
+  minHeight: 72,
+  alignItems: 'center'
+})
+
 export const footerItemFirst = style({
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
@@ -16,4 +22,14 @@ export const footerItemFirst = style({
       flexBasis: '100%',
     },
   },
+})
+
+
+globalStyle(`${footerBg} a, ${footerBg} a:hover`, {
+  color: `${dark400} !important`,
+  boxShadow: 'none !important',
+})
+
+globalStyle(`${footerSecondRow} a, ${footerSecondRow} a:hover`, {
+  boxShadow: `inset 0 -1px 0 0 ${dark400} !important`,
 })

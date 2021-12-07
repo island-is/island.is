@@ -4,11 +4,15 @@ import { blueberry100, themeUtils } from '@island.is/island-ui/theme'
 export const headerBg = style({
   height: 385,
   marginTop: -130,
-  background: `linear-gradient(184.95deg, #40C5E5 8.38%, rgba(64, 197, 227, 0.1) 39.64%, rgba(244, 247, 247, 0) 49.64%),
+  ...themeUtils.responsiveStyle({
+    xs: {
+      background: '#40C5E5',
+    },
+    md: {
+      background: `linear-gradient(184.95deg, #40C5E5 8.38%, rgba(64, 197, 227, 0.1) 39.64%, rgba(244, 247, 247, 0) 49.64%),
     linear-gradient(273.41deg, #F4F7F7 -9.24%, #40C5E5 66.78%, #A4DEF1 105.51%);`,
-  backgroundRepeat: 'no-repeat !important',
-  backgroundPosition: '25% 0% !important',
-  backgroundSize: '100%, 100% !important',
+    }
+  })
 })
 
 export const headerContainer = style({

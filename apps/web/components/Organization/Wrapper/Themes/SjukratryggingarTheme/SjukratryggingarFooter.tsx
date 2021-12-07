@@ -42,53 +42,15 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
               </Box>
             </Box>
             <GridRow>
-              <GridColumn span={['12/12', '12/12', '3/12']}>
+              {footerItems.slice(0, 4).map(item =>
+              <GridColumn span={['12/12', '12/12', '6/12', '3/12']}>
                 <Box>
                   <Box marginBottom={2}>
-                    <Text color='dark400' variant='h4' paddingBottom={2}>Heilbrigðisþjónusta</Text>
-                    <Text color='dark400' variant='h4' paddingBottom={2}>Lyf og hjálpartæki</Text>
-                    <Text color='dark400' variant='h4' paddingBottom={2}>Heilbrigðisstarfsfólk</Text>
-                    <Text color='dark400' variant='h4' paddingBottom={2}>Slysatryggingar og réttindi</Text>
-                    <Text color='dark400' variant='h4' paddingBottom={2}>Réttindi milli landa</Text>
-                    <Text color='dark400' variant='h4'>Um okkur</Text>
+                    {richText(item.content as SliceType[])}
                   </Box>
                 </Box>
               </GridColumn>
-              <GridColumn span={['12/12', '12/12', '3/12']}>
-                <Box>
-                  <Box marginBottom={2}>
-                    <Text color='dark400' variant='h4'>Algengar fyrirspurnir</Text>
-                    <Text color='dark400' marginY={1}>Evrópska sjúkratryggingakortið</Text>
-                    <Text color='dark400' marginY={1}>Greiðsluþáttaka</Text>
-                    <Text color='dark400' marginY={1}>Heilsugæsla</Text>
-                    <Text color='dark400' marginY={1}>Ferðakostnaður</Text>
-                    <Text color='dark400' marginY={1}>Þjónusta í heimahúsum</Text>
-                    <Text color='dark400' marginY={1}>Sjúkrahótel</Text>
-                  </Box>
-                </Box>
-              </GridColumn>
-              <GridColumn span={['12/12', '12/12', '3/12']}>
-                <Box>
-                  <Box marginBottom={2}>
-                    <Text color='dark400' variant='h5'>Sjúkratryggingar Íslands</Text>
-                    <Text color='dark400' marginY={1}>kt. 480408-0550</Text>
-                    <Text color='dark400' marginY={1}>Vínlandsleið 16, 113 Reykjavík</Text>
-                  </Box>
-                </Box>
-              </GridColumn>
-              <GridColumn span={['12/12', '12/12', '3/12']}>
-                <Box>
-                  <Box marginBottom={2}>
-                    <Text color='dark400' variant='h5'>Þjónustuver og hjálpartækjamiðstöð</Text>
-                    <Text color='dark400' marginY={1}>Mán - fim: 10:00 - 15:00</Text>
-                    <Text color='dark400' marginY={1}>Fös: 08:00 - 13:00</Text>
-                    <Text color='dark400' marginTop={3} variant='h5'>Sími: 515 0000</Text>
-                    <Text color='dark400' marginY={1} variant='h5'>Tölvupóstur: sjukra@sjukra.is</Text>
-                    <Text color='dark400' marginTop={3} variant='h5'>Símatími iðjuþjálfara</Text>
-                    <Text color='dark400' marginY={1}>Mán - fös: 10:00 - 12:00</Text>
-                  </Box>
-                </Box>
-              </GridColumn>
+              )}
             </GridRow>
           </Box>
           <Box
@@ -96,41 +58,33 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
             flexDirection="row"
             alignItems="center"
             paddingTop={4}
+            paddingBottom={4}
             borderColor="dark400"
             borderTopWidth="standard"
           >
             <GridContainer>
             <GridRow>
-              <GridColumn span={['12/12', '12/12', '3/12']}>
-                <Box marginBottom={5}>
-                  <Box marginBottom={2}>
+              <GridColumn span={['12/12', '12/12', '6/12', '3/12']} className={styles.footerSecondRow}>
                     <img src="/assets/sjukratryggingar_norraent_samstarf.png"/>
-                  </Box>
-                </Box>
               </GridColumn>
-              <GridColumn span={['12/12', '12/12', '3/12']}>
-                <Box marginBottom={5}>
-                  <Box marginBottom={2}>
+              <GridColumn span={['12/12', '12/12', '6/12', '3/12']} className={styles.footerSecondRow}>
                     <img src="/assets/sjukratryggingar_heilbrigdisraduneytid.png"/>
-                  </Box>
-                </Box>
               </GridColumn>
-              <GridColumn span={['12/12', '12/12', '3/12']}>
-                <Box marginBottom={5}>
-                  <Box marginBottom={2}>
-                    <Text color='dark400' variant='small'  marginY={1}>Sjá staðsetningu á korti</Text>
-                    <Text color='dark400' variant='small'  marginY={1}>Sjúkratryggingar á facebook</Text>
-                  </Box>
-                </Box>
-              </GridColumn>
-              <GridColumn span={['12/12', '12/12', '3/12']}>
-                <Box marginBottom={5}>
-                  <Box marginBottom={2}>
-                    <Text color='dark400' variant='small'  marginY={1}>Þjónusta á landsbyggðinni</Text>
-                    <Text color='dark400' variant='small' marginY={1}>Viðgerðarþjónusta á höfuðborgarsvæðinu</Text>
-                  </Box>
-                </Box>
-              </GridColumn>
+              {footerItems.slice(4, 6).map(item =>
+                <GridColumn span={['12/12', '12/12', '6/12', '3/12']} className={styles.footerSecondRow}>
+                  <Box>
+                      {richText(item.content as SliceType[], {
+                        renderNode: {
+                          [BLOCKS.PARAGRAPH]: (_node, children) => (
+                            <Text variant="small" color="dark400" marginY={1}>
+                              {children}
+                            </Text>
+                          ),
+                        },
+                      })}
+                    </Box>
+                </GridColumn>
+              )}
             </GridRow>
             </GridContainer>
           </Box>
