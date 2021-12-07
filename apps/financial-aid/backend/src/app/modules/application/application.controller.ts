@@ -37,7 +37,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 import type {
-  User,
+  User as FinancialAidUser,
   Staff,
   Application,
 } from '@island.is/financial-aid/shared/lib'
@@ -46,7 +46,7 @@ import {
   ApplicationFilters,
   RolesRule,
 } from '@island.is/financial-aid/shared/lib'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, User } from '@island.is/auth-nest-tools'
 import { RolesGuard } from '../../guards/roles.guard'
 import { CurrentStaff, CurrentUser, RolesRules } from '../../decorators'
 import { ApplicationGuard } from '../../guards/application.guard'
@@ -54,6 +54,8 @@ import { StaffService } from '../staff'
 import { StaffGuard } from '../../guards/staff.guard'
 import { CurrentApplication } from '../../decorators/application.decorator'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
+import { AuditService } from '@island.is/nest/audit'
+import { isError } from 'util'
 
 @UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/application`)
@@ -65,6 +67,7 @@ export class ApplicationController {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private readonly staffService: StaffService,
+    private readonly auditService: AuditService,
   ) {}
 
   @UseGuards(RolesGuard)
@@ -100,13 +103,22 @@ export class ApplicationController {
   async findApplication(
     @Param('nationalId') nationalId: string,
     @CurrentStaff() staff: Staff,
+    @CurrentUser() user: User,
   ): Promise<ApplicationModel[]> {
     this.logger.debug('Search for application')
 
-    return await this.applicationService.findByNationalId(
+    const applications = await this.applicationService.findByNationalId(
       nationalId,
       staff.municipalityId,
     )
+
+    this.auditService.audit({
+      user,
+      action: 'findByNationalId',
+      resources: applications.map((application) => application.id),
+    })
+
+    return applications
   }
 
   @UseGuards(RolesGuard)
@@ -154,8 +166,16 @@ export class ApplicationController {
   async getById(
     @Param('id') id: string,
     @CurrentApplication() application: Application,
+    @CurrentUser() user: User,
   ) {
     this.logger.debug(`Application controller: Getting application by id ${id}`)
+
+    this.auditService.audit({
+      user,
+      action: 'getApplication',
+      resources: application.id,
+    })
+
     return application
   }
 
@@ -181,7 +201,7 @@ export class ApplicationController {
   async update(
     @Param('id') id: string,
     @Body() applicationToUpdate: UpdateApplicationDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: FinancialAidUser,
   ): Promise<ApplicationModel> {
     this.logger.debug(
       `Application controller: Updating application with id ${id}`,
@@ -244,7 +264,7 @@ export class ApplicationController {
     description: 'Creates a new application',
   })
   create(
-    @CurrentUser() user: User,
+    @CurrentUser() user: FinancialAidUser,
     @Body() application: CreateApplicationDto,
   ): Promise<ApplicationModel> {
     this.logger.debug('Application controller: Creating application')
@@ -258,7 +278,7 @@ export class ApplicationController {
   })
   async createEvent(
     @Body() applicationEvent: CreateApplicationEventDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: FinancialAidUser,
   ): Promise<ApplicationModel> {
     await this.applicationEventService.create(applicationEvent)
 

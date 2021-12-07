@@ -2,6 +2,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments'
+import { AuditModule } from '@island.is/nest/audit'
 
 import {
   ApplicationModule,
@@ -26,6 +27,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     FileModule,
     ApplicationEventModule,
     AidModule,
+    AuditModule.forRoot(environment.audit),
   ],
 })
 export class AppModule {}
