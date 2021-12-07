@@ -10,9 +10,8 @@ import {
   OperatingLicense,
   mapOperatingLicense,
 } from './models/operatingLicense'
-import { SyslumennApi, SyslumennApiConfig } from '@island.is/clients/syslumenn'
-import { VirkarHeimagistingar } from '@island.is/clients/syslumenn'
-import add from 'date-fns/add'
+import { SyslumennApi, SyslumennApiConfig, VirkarHeimagistingar, Uppbod  } from '@island.is/clients/syslumenn'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools';
 
 const SYSLUMENN_CLIENT_CONFIG = 'SYSLUMENN_CLIENT_CONFIG'
 @Injectable()
@@ -41,6 +40,23 @@ export class SyslumennService {
       this.accessToken = response.accessToken
     }
   }
+  private async syslumennApiWithAuth() {
+    const config = {
+      notandi: this.clientConfig.username,
+      lykilord: this.clientConfig.password,
+    }
+
+    const response = await this.syslumennApi.innskraningPost({
+      notandi: config,
+    })
+
+    const auth = {
+      scope: [],
+      authorization: `Bearer ${this.accessToken}`,
+      client: 'client-syslumenn'
+    } as Auth
+    return this.syslumennApi.withMiddleware(new AuthMiddleware(auth))
+  }
 
   async getHomestays(year?: number): Promise<Homestay[]> {
     await this.login()
@@ -54,13 +70,17 @@ export class SyslumennService {
           audkenni: this.id,
         })
 
-    return (homestays.slice(0, 5) as VirkarHeimagistingar[] ?? []).map(mapHomestay)
+    return (homestays as VirkarHeimagistingar[] ?? []).map(mapHomestay)
   }
 
   async getSyslumennAuctions(): Promise<SyslumennAuction[]> {
-    const syslumennAuctions = await this.syslumennClient.getSyslumennAuctions()
+    await this.login()
+    const api = await this.syslumennApiWithAuth()
+    const syslumennAuctions = await api.uppbodGet({
+      audkenni: this.id,
+    })
 
-    return (syslumennAuctions ?? []).map(mapSyslumennAuction)
+    return (syslumennAuctions as Uppbod[] ?? []).map(mapSyslumennAuction)
   }
 
   async getOperatingLicenses(): Promise<OperatingLicense[]> {

@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { Uppbod } from '@island.is/clients/syslumenn';
 export interface ISyslumennAuction {
   embaetti?: string
   starfsstod?: string
@@ -51,7 +52,7 @@ export class SyslumennAuction {
 }
 
 export const mapSyslumennAuction = (
-  auction: ISyslumennAuction,
+  auction: Uppbod,
 ): SyslumennAuction => ({
   office: auction.embaetti ?? '',
   location: auction.starfsstod ?? '',
@@ -60,7 +61,7 @@ export const mapSyslumennAuction = (
   lotName: auction.andlagHeiti ?? '',
   lotId: auction.fastanumer ?? '',
   lotItems: auction.lausafjarmunir ?? '',
-  auctionDate: auction.dagsetning ?? '',
+  auctionDate: auction.dagsetning?  auction.dagsetning.toLocaleString() : '',
   auctionTime: auction.klukkan ?? '',
   petitioners: auction.gerdarbeidendur ?? '',
   respondent: auction.gerdartholar ?? '',
