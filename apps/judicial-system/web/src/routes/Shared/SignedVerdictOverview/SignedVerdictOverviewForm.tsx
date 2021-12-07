@@ -153,20 +153,44 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     }
 
     if (theCase.isValidToDateInThePast) {
-      return `${
-        isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
-      } rann út ${formatDate(theCase.validToDate, 'PPP')} kl. ${formatDate(
-        theCase.validToDate,
-        TIME_FORMAT,
-      )}`
+      return (
+        <>
+          <Box component="span" display="block">
+            {`Úrskurðað ${formatDate(
+              theCase.rulingDate,
+              'PPP',
+            )} kl. ${formatDate(theCase.rulingDate, TIME_FORMAT)}`}
+          </Box>
+          <Box component="span">
+            {`${
+              isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
+            } rann út ${formatDate(
+              theCase.validToDate,
+              'PPP',
+            )} kl. ${formatDate(theCase.validToDate, TIME_FORMAT)}`}
+          </Box>
+        </>
+      )
     }
 
-    return `${
-      isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
-    } til ${formatDate(theCase.validToDate, 'PPP')} kl. ${formatDate(
-      theCase.validToDate,
-      TIME_FORMAT,
-    )}`
+    return (
+      <>
+        <Box component="span" display="block">
+          {`Úrskurðað ${formatDate(theCase.rulingDate, 'PPP')} kl. ${formatDate(
+            theCase.rulingDate,
+            TIME_FORMAT,
+          )}`}
+        </Box>
+        <Box component="span">
+          {`${
+            isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
+          } til ${formatDate(theCase.validToDate, 'PPP')} kl. ${formatDate(
+            theCase.validToDate,
+            TIME_FORMAT,
+          )}`}
+        </Box>
+      </>
+    )
   }
 
   const canCaseFilesBeOpened = () => {
