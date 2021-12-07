@@ -10,7 +10,7 @@ interface RequestContext {
 interface Middleware {
   pre?(context: RequestContext): Promise<FetchParams | void>
 }
-export class AutorizationIdentityMiddleware implements Middleware {
+export class AuthorizationIdentityMiddleware implements Middleware {
   constructor(private bearerToken: string) {}
 
   async pre(context: RequestContext) {
