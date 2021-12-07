@@ -40,13 +40,14 @@ import type {
   User as FinancialAidUser,
   Staff,
   Application,
+  User as IdsAuthUser,
 } from '@island.is/financial-aid/shared/lib'
 
 import {
   ApplicationFilters,
   RolesRule,
 } from '@island.is/financial-aid/shared/lib'
-import { IdsUserGuard, User } from '@island.is/auth-nest-tools'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { RolesGuard } from '../../guards/roles.guard'
 import { CurrentStaff, CurrentUser, RolesRules } from '../../decorators'
 import { ApplicationGuard } from '../../guards/application.guard'
@@ -55,7 +56,6 @@ import { StaffGuard } from '../../guards/staff.guard'
 import { CurrentApplication } from '../../decorators/application.decorator'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import { AuditService } from '@island.is/nest/audit'
-import { isError } from 'util'
 
 @UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/application`)
@@ -103,7 +103,7 @@ export class ApplicationController {
   async findApplication(
     @Param('nationalId') nationalId: string,
     @CurrentStaff() staff: Staff,
-    @CurrentUser() user: User,
+    @CurrentUser() user: IdsAuthUser,
   ): Promise<ApplicationModel[]> {
     this.logger.debug('Search for application')
 
@@ -166,7 +166,7 @@ export class ApplicationController {
   async getById(
     @Param('id') id: string,
     @CurrentApplication() application: Application,
-    @CurrentUser() user: User,
+    @CurrentUser() user: IdsAuthUser,
   ) {
     this.logger.debug(`Application controller: Getting application by id ${id}`)
 
