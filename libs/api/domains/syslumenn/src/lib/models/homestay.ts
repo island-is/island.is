@@ -1,5 +1,5 @@
+import { VirkarHeimagistingar } from '@island.is/clients/syslumenn'
 import { Field, ObjectType } from '@nestjs/graphql'
-import { IHomestay } from '../client/models/homestay'
 
 @ObjectType()
 export class Homestay {
@@ -34,15 +34,18 @@ export class Homestay {
   apartmentId?: string
 }
 
-export const mapHomestay = (homestay: IHomestay): Homestay => ({
+export const mapHomestay = (homestay: VirkarHeimagistingar): Homestay => {
+  console.log(homestay)
+  return {
   registrationNumber: homestay.skraningarnumer,
   name: homestay.heitiHeimagistingar,
   address: homestay.heimilisfang,
   manager: homestay.abyrgdarmadur,
-  year: homestay.umsoknarAr,
+  year: parseFloat(homestay.umsoknarAr || ''),
   city: homestay.sveitarfelag,
   guests: homestay.gestafjoldi,
   rooms: homestay.fjoldiHerbergja,
   propertyId: homestay.fastanumer,
   apartmentId: homestay.ibudanumer,
-})
+}
+}

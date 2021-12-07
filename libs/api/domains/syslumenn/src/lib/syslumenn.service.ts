@@ -1,5 +1,5 @@
 import { SyslumennClient } from './client/syslumenn.client'
-import { Homestay, mapHomestay } from './models/homestay'
+import { Homestay, mapHomestay } from './models/homestay';
 import {
   SyslumennAuction,
   mapSyslumennAuction,
@@ -11,10 +11,15 @@ import {
   mapOperatingLicense,
 } from './models/operatingLicense'
 import { SyslumennApi, SyslumennApiConfig } from '@island.is/clients/syslumenn'
+import { VirkarHeimagistingar } from '@island.is/clients/syslumenn'
+import add from 'date-fns/add'
 
 const SYSLUMENN_CLIENT_CONFIG = 'SYSLUMENN_CLIENT_CONFIG'
 @Injectable()
 export class SyslumennService {
+  private id = ''
+  private accessToken = ''
+
   constructor(
     private syslumennClient: SyslumennClient,
     private syslumennApi: SyslumennApi,
@@ -28,17 +33,28 @@ export class SyslumennService {
       lykilord: this.clientConfig.password,
     }
 
-    const response = await this.syslumennApi.innskraningPost({notandi: config})
-
-
+    const response = await this.syslumennApi.innskraningPost({
+      notandi: config,
+    })
+    if (response.audkenni && response.accessToken) {
+      this.id = response.audkenni
+      this.accessToken = response.accessToken
+    }
   }
 
   async getHomestays(year?: number): Promise<Homestay[]> {
     await this.login()
-    
-    const homestays = await this.syslumennClient.getHomestays(year)
 
-    return (homestays ?? []).map(mapHomestay)
+    const homestays = year
+      ? await this.syslumennApi.virkarHeimagistingarGet({
+          audkenni: this.id,
+          ar: year ? JSON.stringify(year) : null,
+        })
+      : await this.syslumennApi.virkarHeimagistingarGetAll({
+          audkenni: this.id,
+        })
+
+    return (homestays.slice(0, 5) as VirkarHeimagistingar[] ?? []).map(mapHomestay)
   }
 
   async getSyslumennAuctions(): Promise<SyslumennAuction[]> {

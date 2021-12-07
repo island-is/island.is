@@ -3,7 +3,7 @@ import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
 export class GetHomestaysInput {
-  @Field({ nullable: true })
+  @Field({nullable: true})
   @IsNumber()
   @IsOptional()
   year?: number
