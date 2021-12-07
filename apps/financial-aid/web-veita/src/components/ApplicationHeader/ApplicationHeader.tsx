@@ -4,7 +4,7 @@ import {
   getState,
 } from '@island.is/financial-aid/shared/lib'
 import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
-import React from 'react'
+import React, { useContext } from 'react'
 
 import * as styles from './ApplicationHeader.css'
 
@@ -19,6 +19,7 @@ import {
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { useApplicationState } from '@island.is/financial-aid-web/veita/src/utils/useApplicationState'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 interface ApplicantProps {
   application: Application
@@ -34,6 +35,8 @@ const ApplicationHeader = ({
   setApplication,
 }: ApplicantProps) => {
   const router = useRouter()
+
+  const { admin } = useContext(AdminContext)
 
   const changeApplicationState = useApplicationState()
 
@@ -99,7 +102,7 @@ const ApplicationHeader = ({
           </Box>
 
           <Text as="h2" variant="h1">
-            {GenerateName(application.nationalId)}
+            {GenerateName(application.nationalId, application.name)}
           </Text>
         </Box>
 
@@ -120,22 +123,25 @@ const ApplicationHeader = ({
       <Divider />
 
       <Box display="flex" marginBottom={8} marginTop={4}>
-        {application.staff?.name && (
-          <Box display="flex" marginRight={1}>
-            <Box marginRight={1}>
-              <Text variant="small" fontWeight="semiBold" color="dark300">
-                Umsjá
-              </Text>
-            </Box>
-            <Box marginRight={1}>
-              <Text variant="small">{application.staff.name}</Text>
-            </Box>
-            <button onClick={assignEmployee} className={styles.button}>
-              Sjá um
-            </button>
-            <Text variant="small">·</Text>
-          </Box>
-        )}
+        <Box display="flex" marginRight={1}>
+          {application.staff?.name && (
+            <>
+              <Box marginRight={1}>
+                <Text variant="small" fontWeight="semiBold" color="dark300">
+                  Umsjá
+                </Text>
+              </Box>
+              <Box marginRight={1}>
+                <Text variant="small">{application.staff.name}</Text>
+              </Box>
+            </>
+          )}
+          <button onClick={assignEmployee} className={styles.button}>
+            Sjá um
+          </button>
+          <Text variant="small">·</Text>
+        </Box>
+
         <Box marginRight={1}>
           <Text variant="small" fontWeight="semiBold" color="dark300">
             Aldur umsóknar

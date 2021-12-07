@@ -1,19 +1,23 @@
 import { Inject } from '@nestjs/common'
 import { Query, Resolver, Mutation, Args } from '@nestjs/graphql'
-import { VehicleModel } from './model/vehicle.model'
-import { VehicleService } from './vehicle.service'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Authorize } from '../auth'
 
+import { Authorize, Role } from '../auth'
+import { VehicleModel } from './vehicle.model'
+import { VehicleService } from './vehicle.service'
+
+@Authorize({ throwOnUnAuthorized: false })
 @Resolver(() => VehicleModel)
 export class VehicleResolver {
   constructor(
-    @Inject(VehicleService) private vehicleService: VehicleService,
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    private vehicleService: VehicleService,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
-  @Authorize({ throwOnUnAuthorized: false })
+  @Authorize({ roles: [Role.developer, Role.recyclingCompany] })
   @Query(() => [VehicleModel])
   async skilavottordAllVehicles(): Promise<VehicleModel[]> {
     const res = await this.vehicleService.findAll()
@@ -21,6 +25,7 @@ export class VehicleResolver {
     return res
   }
 
+  @Authorize({ roles: [Role.developer, Role.recyclingFund] })
   @Query(() => [VehicleModel])
   async skilavottordAllDeregisteredVehicles(): Promise<VehicleModel[]> {
     const res = await this.vehicleService.findAllDeregistered()

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+
 import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -28,13 +29,13 @@ import {
   icCourtRecord as m,
   core,
 } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
 }
 
@@ -52,9 +53,6 @@ const CourtRecordForm: React.FC<Props> = (props) => {
 
   const validations: FormSettings = {
     courtLocation: {
-      validations: ['empty'],
-    },
-    prosecutorDemands: {
       validations: ['empty'],
     },
     litigationPresentations: {

@@ -352,7 +352,7 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           }
         />
       </Box>
-      <Box display="flex" flexDirection="column" alignItems="flexEnd">
+      <Box display="flex" justifyContent="flexEnd">
         <Button loading={loading} onClick={updateMunicipality} icon="checkmark">
           Vista stillingar
         </Button>

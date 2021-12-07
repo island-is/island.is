@@ -184,6 +184,8 @@ const ApplicationProfile = ({
           setApplication={setApplication}
           applicationId={application.id}
           currentState={application.state}
+          homeCircumstances={application.homeCircumstances}
+          spouseNationalId={application.spouseNationalId}
           setIsLoading={setIsLoading}
         />
       )}

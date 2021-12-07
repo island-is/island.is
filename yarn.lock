@@ -3962,10 +3962,10 @@
   resolved "https://registry.yarnpkg.com/@hugsmidjan/qj/-/qj-4.7.0.tgz#ef2793bf1f349bc01b2118dc2d20d6f22163fa84"
   integrity sha512-/kIAN1WvMTlzmtKXgIRl57KbTpAd9UmNgPfcO0NtZNllwhfKDRVOrN9c6ZeBxnrfWsYBP6/BFldYur1aBDBO2g==
 
-"@hugsmidjan/regulations-editor@0.4.7":
-  version "0.4.7"
-  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.4.7.tgz#b78fe3ae70535d6d54bdb56d0480d182b7bc7e21"
-  integrity sha512-9GJOqp2P5dMjks6kWgegWtwyExzR8nqw3iZhLRwh6Z+51BKSqbX1mX7mkPTaUacxI0U0WZRxBlStKy1aXJ+LnA==
+"@hugsmidjan/regulations-editor@0.4.8":
+  version "0.4.8"
+  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.4.8.tgz#aadf218dd8761d6c04a39dc4c4879d9d84b40588"
+  integrity sha512-+zfGUehMvgGqJAj++kcJu5V/MW9L8s5di96O6tBPMaufYX2wmNRIn9MkT+HmOS/z7LJQ47GWnSAYfdsZkhQW2w==
   dependencies:
     "@hugsmidjan/qj" "^4.7.0"
     "@tinymce/tinymce-react" "^3.8.4"
@@ -6830,6 +6830,11 @@
   resolved "https://registry.yarnpkg.com/@types/http-assert/-/http-assert-1.5.1.tgz#d775e93630c2469c2f980fc27e3143240335db3b"
   integrity sha512-PGAK759pxyfXE78NbKxyfRcWYA/KwW17X290cNev/qAsn9eQIxkH4shoNBafH37wewhDG/0p1cHPbK6+SzZjWQ==
 
+"@types/http-cache-semantics@4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@types/http-cache-semantics/-/http-cache-semantics-4.0.1.tgz#0ea7b61496902b95890dc4c3a116b60cb8dae812"
+  integrity sha512-SZs7ekbP8CN0txVG2xVRH6EgKmEm31BOxA07vkFaETzZz1xh+cbt8BcI0slpymvwhx5dlFnQG2rTlPVQn+iRPQ==
+
 "@types/http-errors@*":
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/@types/http-errors/-/http-errors-1.8.0.tgz#682477dbbbd07cd032731cb3b0e7eaee3d026b69"
@@ -9301,12 +9306,12 @@ aws-sdk@*, aws-sdk@^2.443.0:
     uuid "3.3.2"
     xml2js "0.4.19"
 
-aws-sdk@2.678.0:
-  version "2.678.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.678.0.tgz#b16230f4894d40ead50f9e23805c874f4ca62549"
-  integrity sha512-i8t7+1/C6maQzUYUFRQXPAsUPT0YdpNsf/oHZKmmZrsOX+epnn2jmAGIBTZgUakY8jRrZxCJka+QokUIadUVQg==
+aws-sdk@2.814.0:
+  version "2.814.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.814.0.tgz#7a1c36006e0b5826f14bd2511b1d229ef6814bb0"
+  integrity sha512-empd1m/J/MAkL6d9OeRpmg9thobULu0wk4v8W3JToaxGi2TD7PIdvE6yliZKyOVAdJINhBWEBhxR4OUIHhcGbQ==
   dependencies:
-    buffer "4.9.1"
+    buffer "4.9.2"
     events "1.1.1"
     ieee754 "1.1.13"
     jmespath "0.15.0"
@@ -10254,15 +10259,6 @@ buffer-xor@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/buffer-xor/-/buffer-xor-1.0.3.tgz#26e61ed1422fb70dd42e6e36729ed51d855fe8d9"
   integrity sha1-JuYe0UIvtw3ULm42cp7VHYVf6Nk=
-
-buffer@4.9.1:
-  version "4.9.1"
-  resolved "https://registry.yarnpkg.com/buffer/-/buffer-4.9.1.tgz#6d1bb601b07a4efced97094132093027c95bc298"
-  integrity sha1-bRu2AbB6TvztlwlBMgkwJ8lbwpg=
-  dependencies:
-    base64-js "^1.0.2"
-    ieee754 "^1.1.4"
-    isarray "^1.0.0"
 
 buffer@4.9.2, buffer@^4.3.0:
   version "4.9.2"
@@ -16427,7 +16423,7 @@ htmlparser2@^6.1.0:
     domutils "^2.5.2"
     entities "^2.0.0"
 
-http-cache-semantics@^4.0.0, http-cache-semantics@^4.1.0:
+http-cache-semantics@4.1.0, http-cache-semantics@^4.0.0, http-cache-semantics@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/http-cache-semantics/-/http-cache-semantics-4.1.0.tgz#49e91c5cbf36c9b94bcfcd71c23d5249ec74e390"
   integrity sha512-carPklcUh7ROWRK7Cv27RPtdhYhUsela/ue5/jKzjegVvXDqM2ILE9Q2BGn9JZJh1g87cp56su/FgQSzcWS8cQ==
@@ -20128,10 +20124,10 @@ mobx-react@^7.0.5:
   dependencies:
     mobx-react-lite "^3.2.0"
 
-mobx@6.1.7:
-  version "6.1.7"
-  resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.1.7.tgz#009c65f6909ee89ab42dd4b058577739f0d899df"
-  integrity sha512-2iIgg2o0jd/bWAK/9KHJ1uwKHGowKyaTUM4qarJ0qGdLskYcB3sJevjjV7t7jW0WVjItz6BBlPNiZ14oHTpvMg==
+mobx@6.3.7:
+  version "6.3.7"
+  resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.3.7.tgz#9ed85561e86da45141134c8fa20cf5f9c7246c3d"
+  integrity sha512-X7yU7eOEyxIBk4gjIi2UIilwdw48gXh0kcZ5ex3Rc+COJsJmJ4SNpf42uYea3aUqb1hedTv5xzJrq5Q55p0P5g==
 
 mocha@^8.2.0:
   version "8.3.2"

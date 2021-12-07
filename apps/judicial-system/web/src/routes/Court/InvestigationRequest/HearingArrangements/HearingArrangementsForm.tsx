@@ -26,7 +26,6 @@ import {
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { Case, User } from '@island.is/judicial-system/types'
 import {
   ReactSelectOption,
   UserData,
@@ -42,14 +41,16 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './HearingArrangements.css'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import type { Case, User } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import * as styles from './HearingArrangements.css'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
   users: UserData
   user: User

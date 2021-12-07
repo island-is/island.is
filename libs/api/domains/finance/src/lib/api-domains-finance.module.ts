@@ -19,6 +19,9 @@ export class FinanceModule {
         },
         FinanceService,
       ],
+      exports: [FinanceService],
     }
   }
 }
+
+export { FinanceService }

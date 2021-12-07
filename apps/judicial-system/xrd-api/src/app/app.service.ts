@@ -1,6 +1,11 @@
 import fetch from 'isomorphic-fetch'
 
-import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadGatewayException,
+  BadRequestException,
+  Inject,
+  Injectable,
+} from '@nestjs/common'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -30,17 +35,32 @@ export class AppService {
         authorization: `Bearer ${environment.auth.secretToken}`,
       },
       body: JSON.stringify(caseToCreate),
+    }).catch((reason) => {
+      this.logger.error('Could not create a new case', reason)
+
+      throw new BadGatewayException('Could not create a new case')
     })
 
     if (!res.ok) {
       this.logger.error('Could not create a new case', res)
 
+      console.log(res)
+      if (res.status === 400) {
+        // TODO: Get message from res when exception handling has been improved in the backend
+        throw new BadRequestException('Could not create a new case')
+      }
+
       throw new BadGatewayException('Could not create a new case')
     }
 
-    const newCase: TCase = await res.json()
+    return res
+      .json()
+      .then((newCase: TCase) => ({ id: newCase.id }))
+      .catch((reason) => {
+        this.logger.error('Could not create a new case', reason)
 
-    return { id: newCase.id }
+        throw new BadGatewayException('Could not create a new case')
+      })
   }
 
   async create(caseToCreate: CreateCaseDto): Promise<Case> {

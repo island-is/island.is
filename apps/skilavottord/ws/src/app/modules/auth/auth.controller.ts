@@ -11,6 +11,7 @@ import {
 import jwt from 'jsonwebtoken'
 import { Entropy } from 'entropy-string'
 import * as kennitala from 'kennitala'
+
 import IslandisLogin, { VerifyResult } from '@island.is/login'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -20,6 +21,7 @@ import {
   SSN_IS_NOT_A_PERSON,
   BASE_PATH,
 } from '@island.is/skilavottord/consts'
+
 import { environment } from '../../../environments'
 import { Cookie, CookieOptions, Credentials } from './auth.types'
 import { Role, AuthUser } from './auth.types'
@@ -69,7 +71,10 @@ const loginIS = new IslandisLogin({
 
 @Controller(`${BASE_PATH}/api/auth`)
 export class AuthController {
-  constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
+  ) {}
 
   @Post('/citizen/callback')
   async callback1(@Body('token') token, @Res() res, @Req() req) {
@@ -196,17 +201,16 @@ export class AuthController {
       name: user.fullname,
     }
 
-    let RoleForUser: Role = 'citizen'
-    RoleForUser = authService.getRole(RoleUser)
+    const roleForUser = authService.getRole(RoleUser)
 
-    //this.logger.info(`  - Role for ${user.fullname} is ${RoleForUser}`)
-    this.logger.info(`  - Role for user is ${RoleForUser}`)
+    //this.logger.info(`  - Role for ${user.fullname} is ${roleForUser}`)
+    this.logger.info(`  - Role for user is ${roleForUser}`)
     let returnUrlComp: string
-    if (RoleForUser.includes('recyclingCompany')) {
+    if (roleForUser === Role.recyclingCompany) {
       returnUrlComp = `${BASE_PATH}/deregister-vehicle`
-    } else if (RoleForUser.includes('recyclingFund')) {
+    } else if (roleForUser === Role.recyclingFund) {
       returnUrlComp = `${BASE_PATH}/recycled-vehicles`
-    } else if (RoleForUser.includes('developer')) {
+    } else if (roleForUser === Role.developer) {
       returnUrlComp = `${BASE_PATH}/recycled-vehicles`
     } else {
       return '/error'
@@ -253,7 +257,7 @@ export class AuthController {
       .redirect(samlEntryPoint2)
   }
 
-  @Get('/citizen/logout')
+  @Get('/logout')
   logout(@Res() res) {
     res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
     res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)

@@ -13,7 +13,7 @@ const prodConfig = {
   files: {
     cloudFrontPublicKeyId: process.env.CLOUDFRONT_PUBLIC_KEY_ID,
     cloudFrontPrivateKey: process.env.CLOUDFRONT_PRIVATE_KEY,
-    fileBaseUrl: 'https://fjarhagsadstod.dev.sveitarfelog.net/files',
+    fileBaseUrl: `${process.env.BASE_URL}/files`,
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
   },
@@ -31,6 +31,8 @@ const prodConfig = {
       region: process.env.EMAIL_REGION ?? '',
     },
   },
+  baseUrl: process.env.BASE_URL,
+  veitaUrl: process.env.VEITA_BASE_URL,
 }
 
 const devConfig = {
@@ -38,7 +40,9 @@ const devConfig = {
   files: {
     cloudFrontPublicKeyId: process.env.CLOUDFRONT_PUBLIC_KEY_ID ?? '',
     cloudFrontPrivateKey: process.env.CLOUDFRONT_PRIVATE_KEY ?? '',
-    fileBaseUrl: 'https://fjarhagsadstod.dev.sveitarfelog.net/files',
+    fileBaseUrl: process.env.BASE_URL
+      ? `${process.env.BASE_URL}/files`
+      : 'https://fjarhagsadstod.dev.sveitarfelog.net/files',
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
   },
@@ -54,6 +58,8 @@ const devConfig = {
       region: process.env.EMAIL_REGION ?? '',
     },
   },
+  baseUrl: process.env.BASE_URL ?? 'http://localhost:4200',
+  veitaUrl: process.env.VEITA_BASE_URL ?? 'http://localhost:4200',
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

@@ -1,19 +1,22 @@
 import { Query, Resolver } from '@nestjs/graphql'
-import { User } from './models'
-import { Authorize, AuthService, CurrentUser, AuthUser } from '../auth'
-import { Role } from '../auth/auth.types'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject } from '@nestjs/common'
 
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { Authorize, AuthService, CurrentUser, Role } from '../auth'
+import type { AuthUser } from '../auth'
+import { User } from './user.model'
+
+@Authorize({ throwOnUnAuthorized: false })
 @Resolver(() => User)
 export class UserResolver {
   constructor(
     private authService: AuthService,
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
-  @Authorize({ throwOnUnAuthorized: false })
   @Query(() => User, { nullable: true })
   skilavottordUser(@CurrentUser() user: AuthUser): User {
     this.logger.info(`--- skilavottordUser starting ---`)
@@ -36,16 +39,13 @@ export class UserResolver {
       name: user.name,
     }
 
-    let RoleForUser: Role = 'citizen' // citizen is the deault role
+    let RoleForUser: Role = Role.citizen // citizen is the deault role
     RoleForUser = authService.getRole(RoleUser)
 
     //TODO: test
     currUser.partnerId = authService.getPartnerId(currUser.nationalId)
     currUser.role = RoleForUser
 
-    /* this.logger.info(
-      `  - skilavottordUser returning  ${currUser.name} - ${currUser.nationalId} - ${currUser.mobile} - ${currUser.role} - ${currUser.partnerId}`,
-    )*/
     this.logger.info(`--- skilavottordUser ending ---`)
 
     return currUser

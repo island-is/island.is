@@ -39,6 +39,12 @@ export class Organization {
 
   @Field()
   email?: string
+
+  @Field(() => String, { nullable: true })
+  serviceWebTitle?: string | null
+
+  @Field(() => Boolean, { nullable: true })
+  serviceWebEnabled?: boolean
 }
 
 export const mapOrganization = ({
@@ -56,4 +62,6 @@ export const mapOrganization = ({
   footerItems: (fields.footerItems ?? []).map(mapFooterItem),
   phone: fields.phone ?? '',
   email: fields.email ?? '',
+  serviceWebTitle: fields.serviceWebTitle ?? '',
+  serviceWebEnabled: Boolean(fields.serviceWebEnabled),
 })

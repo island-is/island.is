@@ -1,3 +1,4 @@
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   ServicePortalModule,
   ServicePortalPath,
@@ -8,16 +9,18 @@ import { m } from './lib/messages'
 export const documentProviderModule: ServicePortalModule = {
   name: m.rootName,
   widgets: () => [],
-  routes: () => [
+  routes: ({ userInfo }) => [
     {
       name: m.rootName,
       path: ServicePortalPath.DocumentProviderRoot,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
       render: () =>
         lazy(() => import('./screens/DocumentProviders/DocumentProviders')),
     },
     {
       name: m.documentProviderSingle,
       path: ServicePortalPath.DocumentProviderDocumentProvidersSingle,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
       render: () =>
         lazy(() =>
           import('./screens/SingleDocumentProvider/SingleDocumentProvider'),
@@ -28,27 +31,32 @@ export const documentProviderModule: ServicePortalModule = {
     // {
     //   name: m.rootName,
     //   path: ServicePortalPath.DocumentProviderRoot,
+    //   enabled: userInfo.scopes.includes(ApiScope.internal),
     //   render: () => lazy(() => import('./screens/Dashboard/Dashboard')),
     // },
     // {
     //   name: m.documentProviders,
     //   path: ServicePortalPath.DocumentProviderDocumentProviders,
+    //   enabled: userInfo.scopes.includes(ApiScope.internal),
     //   render: () =>
     //     lazy(() => import('./screens/DocumentProviders/DocumentProviders')),
     // },
     // {
     //   name: m.MyCategories,
     //   path: ServicePortalPath.DocumentProviderMyCategories,
+    //   enabled: userInfo.scopes.includes(ApiScope.internal),
     //   render: () => lazy(() => import('./screens/MyCategories/MyCategories')),
     // },
     // {
     //   name: m.Settings,
     //   path: ServicePortalPath.DocumentProviderSettingsRoot,
+    //   enabled: userInfo.scopes.includes(ApiScope.internal),
     //   render: () => lazy(() => import('./screens/Settings/Settings')),
     // },
     // {
     //   name: m.EditInstitution,
     //   path: ServicePortalPath.DocumentProviderSettingsEditInstituion,
+    //   enabled: userInfo.scopes.includes(ApiScope.internal),
     //   render: () =>
     //     lazy(() =>
     //       import('./screens/Settings/EditOrganisation/EditOrganisation'),
@@ -57,6 +65,7 @@ export const documentProviderModule: ServicePortalModule = {
     // {
     //   name: m.EditResponsibleContact,
     //   path: ServicePortalPath.DocumentProviderSettingsEditResponsibleContact,
+    //   enabled: userInfo.scopes.includes(ApiScope.internal),
     //   render: () =>
     //     lazy(() =>
     //       import(
@@ -67,6 +76,7 @@ export const documentProviderModule: ServicePortalModule = {
     // {
     //   name: m.EditTechnicalContact,
     //   path: ServicePortalPath.DocumentProviderSettingsEditTechnicalContact,
+    //   enabled: userInfo.scopes.includes(ApiScope.internal),
     //   render: () =>
     //     lazy(() =>
     //       import(
@@ -77,6 +87,7 @@ export const documentProviderModule: ServicePortalModule = {
     // {
     //   name: m.EditUserHelpContact,
     //   path: ServicePortalPath.DocumentProviderSettingsEditUserHelpContact,
+    //   enabled: userInfo.scopes.includes(ApiScope.internal),
     //   render: () =>
     //     lazy(() =>
     //       import('./screens/Settings/EditUserHelpContact/EditUserHelpContact'),
@@ -85,12 +96,14 @@ export const documentProviderModule: ServicePortalModule = {
     // {
     //   name: m.EditEndPoints,
     //   path: ServicePortalPath.DocumentProviderSettingsEditEndpoints,
+    //   enabled: userInfo.scopes.includes(ApiScope.internal),
     //   render: () =>
     //     lazy(() => import('./screens/Settings/EditEndpoints/EditEndpoints')),
     // },
     // {
     //   name: m.TechnicalInformation,
     //   path: ServicePortalPath.DocumentProviderTechnicalInfo,
+    //   enabled: userInfo.scopes.includes(ApiScope.internal),
     //   render: () =>
     //     lazy(() =>
     //       import('./screens/TechnicalInformation/TechnicalInformation'),
@@ -99,6 +112,7 @@ export const documentProviderModule: ServicePortalModule = {
     // {
     //   name: m.Statistics,
     //   path: ServicePortalPath.DocumentProviderStatistics,
+    //   enabled: userInfo.scopes.includes(ApiScope.internal),
     //   render: () => lazy(() => import('./screens/Statistics/Statistics')),
     // },
   ],
