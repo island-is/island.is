@@ -118,7 +118,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                       updateCase,
                     )
                   }
-                  defaultValue={
+                  value={
                     workingCase?.id
                       ? {
                           value: CaseType[workingCase.type],

@@ -251,7 +251,7 @@ export const UserForm: React.FC<Props> = (props) => {
           <Select
             name="institution"
             label="Veldu stofnun"
-            defaultValue={usersInstitution}
+            value={usersInstitution}
             options={selectInstitutions}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setUser({

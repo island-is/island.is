@@ -161,7 +161,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             name="judge"
             label="Veldu dómara"
             placeholder="Velja héraðsdómara"
-            defaultValue={defaultJudge}
+            value={defaultJudge}
             options={judges}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setJudge((selectedOption as ReactSelectOption).value.toString())
@@ -180,7 +180,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             name="registrar"
             label="Veldu dómritara"
             placeholder="Velja dómritara"
-            defaultValue={defaultRegistrar}
+            value={defaultRegistrar}
             options={registrars}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setRegistrar(

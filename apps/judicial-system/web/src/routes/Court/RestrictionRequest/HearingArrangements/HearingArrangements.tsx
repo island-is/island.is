@@ -187,7 +187,7 @@ export const HearingArrangements: React.FC = () => {
             name="judge"
             label="Veldu dómara"
             placeholder="Velja héraðsdómara"
-            defaultValue={defaultJudge}
+            value={defaultJudge}
             options={judges}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setJudge((selectedOption as ReactSelectOption).value.toString())
@@ -206,7 +206,7 @@ export const HearingArrangements: React.FC = () => {
             name="registrar"
             label="Veldu dómritara"
             placeholder="Velja dómritara"
-            defaultValue={defaultRegistrar}
+            value={defaultRegistrar}
             options={registrars}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setRegistrar(
