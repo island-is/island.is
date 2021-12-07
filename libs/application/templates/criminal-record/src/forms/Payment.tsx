@@ -3,10 +3,12 @@ import {
   buildForm,
   buildDescriptionField,
   buildSection,
+  DefaultEvents,
   Form,
   FormModes,
   buildCustomField,
   buildMultiField,
+  buildSubmitField,
 } from '@island.is/application/core'
 
 type CreateChargeData = {
@@ -26,18 +28,51 @@ export const Payment: Form = buildForm({
       title: m.externalDataSection,
       children: [],
     }),
-
     buildSection({
       id: 'awaitingPayment',
       title: m.payment,
       children: [
+        buildMultiField({
+          id: 'infoPaymentUrlNotFound',
+          title: m.payment,
+          condition: (_, externalData) => {
+            return (
+              !window.document.location.href.match(/\?done$/) &&
+              !(externalData.createCharge as CreateChargeData).data.paymentUrl
+            )
+          },
+          space: 1,
+          description: '',
+          children: [
+            buildCustomField({
+              id: 'paymentUrlNotFound',
+              component: 'PaymentUrlNotFoundField',
+              disabled: true,
+              title: m.payment,
+            }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: 'Reyna aftur',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Reyna aftur',
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
+        }),
+
         buildDescriptionField({
           id: 'infoAwaitingPayment',
           title: m.payment,
           condition: (_, externalData) => {
             return (
               !window.document.location.href.match(/\?done$/) &&
-              (externalData.createCharge as CreateChargeData)?.data.paymentUrl
+              (externalData.createCharge as CreateChargeData).data.paymentUrl
                 .length > 0
             )
           },
@@ -55,31 +90,13 @@ export const Payment: Form = buildForm({
           },
         }),
         buildCustomField({
-          component: 'PaymentUrlNotFoundField',
-          id: 'infoPaymentUrlNotFound',
-          title: m.payment,
-          condition: (_, externalData) => {
-            return (
-              !window.document.location.href.match(/\?done$/) &&
-              !(externalData.createCharge as CreateChargeData)?.data?.paymentUrl
-            )
-          },
-        }),
-        buildMultiField({
-          id: 'overviewAwaitingPayment',
+          id: 'paymentPendingField',
+          component: 'ExamplePaymentPendingField',
           title: m.confirmation,
           condition: () => {
+            console.log(!!window.document.location.href.match(/\?done$/))
             return !!window.document.location.href.match(/\?done$/)
           },
-          space: 1,
-          description: '',
-          children: [
-            buildCustomField({
-              component: 'ExamplePaymentPendingField',
-              id: 'paymentPendingField',
-              title: '',
-            }),
-          ],
         }),
       ],
     }),
