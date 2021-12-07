@@ -1,9 +1,5 @@
 import { AppModule } from '../src/app/app.module'
-import {
-  testServer,
-  useDatabase,
-  TestApp,
-} from '@island.is/testing/nest'
+import { testServer, useDatabase, TestApp } from '@island.is/testing/nest'
 import { SequelizeConfigService } from '@island.is/auth-api-lib/personal-representative'
 
 // needed for generic error validation
