@@ -1,3 +1,4 @@
+export { AccessControlModule } from './accessControl'
 export { AuthModule } from './auth'
 export { GdprModule } from './gdpr'
 export { UserModule } from './user'
