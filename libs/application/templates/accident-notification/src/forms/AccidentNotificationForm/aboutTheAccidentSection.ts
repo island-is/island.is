@@ -1026,7 +1026,10 @@ export const aboutTheAccidentSection = buildSection({
     // fishery information if fisherman
     buildSubSection({
       id: 'fishingCompanyInfo.subSection',
-      title: fishingCompanyInfo.general.title,
+      title: (application) =>
+        isReportingOnBehalfOfEmployee(application.answers)
+          ? fishingCompanyInfo.general.informationAboutShipTitle
+          : fishingCompanyInfo.general.title,
       condition: (formValue) => isFishermanAccident(formValue),
       children: [
         buildMultiField({

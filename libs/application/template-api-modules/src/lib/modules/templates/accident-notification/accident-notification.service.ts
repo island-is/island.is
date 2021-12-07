@@ -16,6 +16,7 @@ import {
   attachmentStatusToAttachmentRequests,
   getApplicationAttachmentStatus,
   getApplicationDocumentId,
+  whiteListedErrorCodes,
 } from './accident-notification.utils'
 import type { AccidentNotificationConfig } from './config'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
@@ -78,6 +79,22 @@ export class AccidentNotificationService {
       }
     } catch (e) {
       this.logger.error('Error submitting application to SÍ', e)
+      // In the case we get a precondition error we present it to the user
+      if (e.body && e.body.errorList && e.body.errorList.length > 0) {
+        throw new Error(
+          `Villa kom upp við vistun á umsókn. ${e.body.errorList
+            .map((e: any) => {
+              if (
+                e.errorType &&
+                e.errorDesc &&
+                whiteListedErrorCodes.includes(e.errorType)
+              ) {
+                return e.errorDesc
+              }
+            })
+            .join('\n')}`,
+        )
+      }
       throw new Error('Villa kom upp við vistun á umsókn.')
     }
   }
