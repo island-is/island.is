@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
+
 import {
   Box,
   Stack,
@@ -12,22 +12,25 @@ import {
   LoadingIcon,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 import {
   ProcessPageLayout,
   Modal,
   OutlinedError,
 } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import CompanyList from './components/CompanyList'
-import * as styles from './Handover.css'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
 import {
-  Car,
-  RecyclingRequestMutation,
+  VehicleInformation,
+  Mutation,
   RecyclingRequestTypes,
-} from '@island.is/skilavottord-web/types'
+  Query,
+} from '@island.is/skilavottord-web/graphql/schema'
+import CompanyList from './components/CompanyList'
+import * as styles from './Handover.css'
 
-const skilavottordVehiclesQuery = gql`
+const SkilavottordVehiclesQuery = gql`
   query skilavottordVehiclesQuery($nationalId: String!) {
     skilavottordVehicles(nationalId: $nationalId) {
       permno
@@ -36,7 +39,7 @@ const skilavottordVehiclesQuery = gql`
   }
 `
 
-const skilavottordRecyclingRequestMutation = gql`
+const SkilavottordRecyclingRequestMutation = gql`
   mutation skilavottordRecyclingRequestMutation(
     $nameOfRequestor: String
     $permno: String!
@@ -74,25 +77,24 @@ const Handover: FC = () => {
   const { id } = router.query
 
   const nationalId = user?.nationalId
-  const { data, loading, error } = useQuery(skilavottordVehiclesQuery, {
+  const { data, loading, error } = useQuery<Query>(SkilavottordVehiclesQuery, {
     variables: { nationalId },
     skip: !nationalId,
   })
 
   const cars = data?.skilavottordVehicles || []
-  const activeCar = cars.filter((car: Car) => car.permno === id)[0]
+  const activeCar = cars.filter(
+    (car: VehicleInformation) => car.permno === id,
+  )[0]
 
   const [
     setRecyclingRequest,
     { data: mutationData, error: mutationError, loading: mutationLoading },
-  ] = useMutation<RecyclingRequestMutation>(
-    skilavottordRecyclingRequestMutation,
-    {
-      onError() {
-        return mutationError
-      },
+  ] = useMutation<Mutation>(SkilavottordRecyclingRequestMutation, {
+    onError() {
+      return mutationError
     },
-  )
+  })
 
   const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
 

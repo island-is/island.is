@@ -1,6 +1,5 @@
 import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { SessionArrangements } from '@island.is/judicial-system/types'
@@ -24,9 +23,6 @@ const CourtRecord = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-
-  const router = useRouter()
-  const id = router.query.id
 
   useEffect(() => {
     document.title = 'Þingbók - Réttarvörslugátt'

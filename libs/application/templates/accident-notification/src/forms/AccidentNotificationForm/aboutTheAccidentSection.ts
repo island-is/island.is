@@ -252,6 +252,7 @@ export const aboutTheAccidentSection = buildSection({
               title: accidentLocation.homeAccidentLocation.address,
               backgroundColor: 'blue',
               required: true,
+              maxLength: 100,
             }),
             buildTextField({
               id: 'homeAccident.postalCode',
@@ -267,6 +268,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               width: 'half',
               required: true,
+              maxLength: 100,
             }),
             buildTextField({
               id: 'homeAccident.moreDetails',
@@ -277,6 +279,7 @@ export const aboutTheAccidentSection = buildSection({
               rows: 4,
               maxLength: 2000,
               variant: 'textarea',
+              maxLength: 2000,
             }),
           ],
         }),
@@ -499,6 +502,7 @@ export const aboutTheAccidentSection = buildSection({
               variant: 'textarea',
               required: true,
               rows: 4,
+              maxLength: 2000,
             }),
           ],
         }),
@@ -542,6 +546,7 @@ export const aboutTheAccidentSection = buildSection({
               maxLength: 2000,
               variant: 'textarea',
               required: true,
+              maxLength: 2000,
             }),
           ],
         }),
@@ -592,6 +597,7 @@ export const aboutTheAccidentSection = buildSection({
               rows: 10,
               maxLength: 2000,
               variant: 'textarea',
+              maxLength: 2000,
             }),
           ],
         }),
@@ -822,6 +828,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               width: 'half',
+              maxLength: 100,
             }),
             buildTextField({
               id: 'companyInfo.nationalRegistrationId',
@@ -862,6 +869,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               width: 'half',
+              maxLength: 100,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -882,6 +890,7 @@ export const aboutTheAccidentSection = buildSection({
               variant: 'email',
               width: 'half',
               required: true,
+              maxLength: 100,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -929,6 +938,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               width: 'half',
+              maxLength: 100,
             }),
             buildTextField({
               id: 'companyInfo.nationalRegistrationId',
@@ -968,6 +978,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               width: 'half',
+              maxLength: 100,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -987,6 +998,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               variant: 'email',
               width: 'half',
+              maxLength: 100,
               required: true,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
@@ -1036,6 +1048,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               width: 'half',
               required: true,
+              maxLength: 100,
             }),
             buildTextField({
               id: 'fishingShipInfo.shipCharacters',
@@ -1043,18 +1056,21 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               width: 'half',
               required: true,
+              maxLength: 100,
             }),
             buildTextField({
               id: 'fishingShipInfo.homePort',
               title: fishingCompanyInfo.labels.homePort,
               backgroundColor: 'blue',
               width: 'half',
+              maxLength: 100,
             }),
             buildTextField({
               id: 'fishingShipInfo.shipRegisterNumber',
               title: fishingCompanyInfo.labels.shipRegisterNumber,
               backgroundColor: 'blue',
               width: 'half',
+              maxLength: 100,
             }),
           ],
         }),
@@ -1070,6 +1086,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               width: 'half',
+              maxLength: 100,
             }),
             buildTextField({
               id: 'companyInfo.nationalRegistrationId',
@@ -1109,6 +1126,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               width: 'half',
+              maxLength: 100,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1128,6 +1146,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               variant: 'email',
               width: 'half',
+              maxLength: 100,
               required: true,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
@@ -1175,6 +1194,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               width: 'half',
               required: true,
+              maxLength: 100,
             }),
             buildTextField({
               id: 'companyInfo.nationalRegistrationId',
@@ -1214,6 +1234,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               width: 'half',
+              maxLength: 100,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1233,6 +1254,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               variant: 'email',
               width: 'half',
+              maxLength: 100,
               required: true,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
@@ -1280,6 +1302,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               width: 'half',
               required: true,
+              maxLength: 100,
             }),
             buildTextField({
               id: 'companyInfo.nationalRegistrationId',
@@ -1317,6 +1340,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               width: 'half',
+              maxLength: 100,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1336,6 +1360,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               variant: 'email',
               width: 'half',
+              maxLength: 100,
               required: true,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
