@@ -15,6 +15,7 @@ import {
   GridColumn,
   GridRow,
   SkeletonLoader,
+  DialogPrompt,
 } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -29,6 +30,7 @@ import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
 import {
   AccessControl as AccessControlType,
   CreateAccessControlInput,
+  DeleteAccessControlInput,
   Query,
   Role,
   UpdateAccessControlInput,
@@ -87,6 +89,14 @@ export const UpdateSkilavottordAccessControlMutation = gql`
   }
 `
 
+export const DeleteSkilavottordAccessControlMutation = gql`
+  mutation deleteSkilavottordAccessControlMutation(
+    $input: DeleteAccessControlInput!
+  ) {
+    deleteSkilavottordAccessControl(input: $input)
+  }
+`
+
 const AccessControl: FC = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
   const { user } = useContext(UserContext)
@@ -106,6 +116,9 @@ const AccessControl: FC = () => {
   )
   const [updateSkilavottordAccessControl] = useMutation(
     UpdateSkilavottordAccessControlMutation,
+  )
+  const [deleteSkilavottordAccessControl] = useMutation(
+    DeleteSkilavottordAccessControlMutation,
   )
 
   const [
@@ -169,6 +182,12 @@ const AccessControl: FC = () => {
     if (!errors) {
       handleUpdateAccessControlCloseModal()
     }
+  }
+
+  const handleDeleteAccessControl = async (input: DeleteAccessControlInput) => {
+    await deleteSkilavottordAccessControl({
+      variables: { input },
+    })
   }
 
   return (
@@ -276,6 +295,7 @@ const AccessControl: FC = () => {
                     <Text variant="eyebrow">{t.tableHeaders.partner}</Text>
                   </HeadData>
                   <HeadData></HeadData>
+                  <HeadData></HeadData>
                 </Row>
               </Head>
               <Body>
@@ -302,6 +322,31 @@ const AccessControl: FC = () => {
                         >
                           {t.buttons.edit}
                         </Button>
+                      </Data>
+                      <Data>
+                        <DialogPrompt
+                          title={t.modal.titles.delete}
+                          description={t.modal.subtitles.delete}
+                          baseId={`delete-${item.nationalId}-dialog`}
+                          ariaLabel={`delete-${item.nationalId}-dialog`}
+                          disclosureElement={
+                            <Button
+                              colorScheme="destructive"
+                              variant="text"
+                              size="small"
+                              nowrap
+                            >
+                              {t.buttons.delete}
+                            </Button>
+                          }
+                          buttonTextCancel={t.modal.buttons.cancel}
+                          buttonTextConfirm={t.modal.buttons.confirm}
+                          onConfirm={() =>
+                            handleDeleteAccessControl({
+                              nationalId: item.nationalId,
+                            })
+                          }
+                        />
                       </Data>
                     </Row>
                   )

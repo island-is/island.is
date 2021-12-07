@@ -7,6 +7,7 @@ import { Role } from '../auth'
 import { AccessControlModel } from './accessControl.model'
 import {
   CreateAccessControlInput,
+  DeleteAccessControlInput,
   UpdateAccessControlInput,
 } from './accessControl.input'
 
@@ -63,5 +64,10 @@ export class AccessControlService {
       role: Role.recyclingCompany,
       partnerId: '9999999999',
     })
+  }
+
+  async deleteAccess(input: DeleteAccessControlInput): Promise<string> {
+    // TODO do actual delete
+    return 'deleted'
   }
 }

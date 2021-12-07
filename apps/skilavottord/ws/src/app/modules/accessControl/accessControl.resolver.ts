@@ -7,6 +7,7 @@ import { AccessControlService } from './accessControl.service'
 import {
   UpdateAccessControlInput,
   CreateAccessControlInput,
+  DeleteAccessControlInput,
 } from './accessControl.input'
 
 @Authorize({ throwOnUnAuthorized: false, roles: [Role.developer] })
@@ -33,5 +34,13 @@ export class AccessControlResolver {
     input: UpdateAccessControlInput,
   ): Promise<AccessControlModel> {
     return this.accessControlService.updateAccess(input)
+  }
+
+  @Mutation(() => String)
+  async deleteSkilavottordAccessControl(
+    @Args('input', { type: () => DeleteAccessControlInput })
+    input: DeleteAccessControlInput,
+  ): Promise<String> {
+    return this.accessControlService.deleteAccess(input)
   }
 }
