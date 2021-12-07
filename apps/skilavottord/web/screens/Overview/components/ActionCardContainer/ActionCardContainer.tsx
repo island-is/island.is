@@ -3,7 +3,7 @@ import { Stack } from '@island.is/island-ui/core'
 import {
   VehicleInformation,
   RecycleActionTypes,
-} from '@island.is/skilavottord-web/types'
+} from '@island.is/skilavottord-web/graphql/schema'
 import { ActionCard } from '../ActionCard/ActionCard'
 
 interface Props {

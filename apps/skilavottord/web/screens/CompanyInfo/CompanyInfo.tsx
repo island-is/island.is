@@ -16,11 +16,12 @@ import {
   Sidenav,
 } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import {
   RecyclingPartner,
   Query,
+  Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 
 const SkilavottordAllActiveRecyclingPartnersQuery = gql`
