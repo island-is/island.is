@@ -7,7 +7,6 @@ import { UserNotificationDto } from './user-notification.dto'
 export class UpdateUserNotificationDto extends PartialType(
   UserNotificationDto,
 ) {
-
   @ApiProperty({
     required: true,
     example: 'b3f99e48-57e6-4d30-a933-1304dad40c62',
@@ -15,8 +14,7 @@ export class UpdateUserNotificationDto extends PartialType(
   @IsString()
   id!: string
 
-  
-  @ApiProperty({ required: true, example:false })
+  @ApiProperty({ required: true, example: false })
   @IsBoolean()
   @Type(() => Boolean)
   isEnabled!: boolean

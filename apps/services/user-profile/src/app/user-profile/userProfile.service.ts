@@ -1,5 +1,11 @@
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { UserNotifications } from './user-notifications.model'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
@@ -62,7 +68,7 @@ export class UserProfileService {
   // FIND ALL by NationalId
   async getDeviceTokens(user: User) {
     try {
-      return  await this.UserNotificationsModel.findAll({
+      return await this.UserNotificationsModel.findAll({
         where: { nationalId: user.nationalId },
         order: [['created', 'DESC']],
       })

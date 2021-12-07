@@ -336,7 +336,6 @@ export class UserProfileController {
     await this.verificationService.createSmsVerification(createSmsVerification)
   }
 
-
   // FINDALL
   @ApiOperation({
     summary: 'Return a list of all user devices with token and settings',
@@ -345,7 +344,9 @@ export class UserProfileController {
   @Scopes(UserProfileScope.read)
   @ApiSecurity('oauth2', [UserProfileScope.read])
   @Get('userNotifications/getDeviceTokens')
-  async getDeviceTokens(@CurrentUser() user: User): Promise<UserNotificationDto[]> {
+  async getDeviceTokens(
+    @CurrentUser() user: User,
+  ): Promise<UserNotificationDto[]> {
     return await this.userProfileService.getDeviceTokens(user)
   }
 

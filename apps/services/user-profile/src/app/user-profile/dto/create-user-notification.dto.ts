@@ -10,7 +10,10 @@ const unique_generated_token = new Date().toISOString() // just using timestamp 
 export class CreateUserNotificationDto extends PartialType(
   UserNotificationDto,
 ) {
-  @ApiProperty({ required: true, example: unique_generated_token + big_example })
+  @ApiProperty({
+    required: true,
+    example: unique_generated_token + big_example,
+  })
   @IsString()
   deviceToken!: string
 }

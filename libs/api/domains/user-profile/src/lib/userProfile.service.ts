@@ -15,7 +15,12 @@ import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
 import { UserProfile } from './userProfile.model'
-import { Auth, AuthMiddleware, CurrentUser, User } from '@island.is/auth-nest-tools'
+import {
+  Auth,
+  AuthMiddleware,
+  CurrentUser,
+  User,
+} from '@island.is/auth-nest-tools'
 import { IslyklarApi } from '@island.is/clients/islykill'
 import { CreateUserNotificationsInput } from './dto/createUserNotificationsInput'
 import { UpdateUserNotificationsInput } from './dto/updateUserNotificationsInput'
@@ -37,7 +42,6 @@ export class UserProfileService {
   userProfileApiWithAuth(auth: Auth) {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
   }
-
 
   async getIslyklarData(ssn: User['nationalId']) {
     try {
@@ -164,32 +168,24 @@ export class UserProfileService {
   }
 
   // notifications
-  async getDeviceTokens(
-    user: User
-  ) {
+  async getDeviceTokens(user: User) {
     return await this.userProfileApiWithAuth(user)
       .userProfileControllerGetDeviceTokens()
       .catch(handleError)
   }
 
-  async addDeviceToken(
-    input: CreateUserNotificationsInput,
-    user: User,
-  ) {
+  async addDeviceToken(input: CreateUserNotificationsInput, user: User) {
     return await this.userProfileApiWithAuth(user)
       .userProfileControllerAddDeviceToken({
-        createUserNotificationDto: input
+        createUserNotificationDto: input,
       })
       .catch(handleError)
   }
 
-  async updateDeviceToken(
-    input: UpdateUserNotificationsInput,
-    user: User,
-  ) {
+  async updateDeviceToken(input: UpdateUserNotificationsInput, user: User) {
     return await this.userProfileApiWithAuth(user)
       .userProfileControllerUpdateDeviceToken({
-        updateUserNotificationDto:input
+        updateUserNotificationDto: input,
       })
       .catch(handleError)
   }

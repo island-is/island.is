@@ -21,7 +21,6 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 //   modified!: Date
 // }
 
-
 @ObjectType()
 export class UserNotifications {
   @Field(() => ID, { nullable: true })

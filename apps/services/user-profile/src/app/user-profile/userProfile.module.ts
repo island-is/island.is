@@ -23,7 +23,7 @@ import { UserNotifications } from './user-notifications.model'
       EmailVerification,
       SmsVerification,
       UserProfile,
-      UserNotifications
+      UserNotifications,
     ]),
     EmailModule.register(environment.emailOptions),
     SmsModule.register(environment.smsOptions),

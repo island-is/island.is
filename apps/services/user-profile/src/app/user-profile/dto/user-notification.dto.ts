@@ -25,7 +25,7 @@ export class UserNotificationDto {
   @IsString()
   deviceToken!: string
 
-  @ApiProperty({ required: true, example:true })
+  @ApiProperty({ required: true, example: true })
   @IsBoolean()
   @Type(() => Boolean)
   isEnabled!: boolean
