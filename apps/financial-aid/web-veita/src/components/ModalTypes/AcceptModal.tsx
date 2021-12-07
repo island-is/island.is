@@ -24,7 +24,7 @@ import { useRouter } from 'next/router'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
-  onSaveApplication: (amount: number, amounts: CreateAmount) => void
+  onSaveApplication: (amount: CreateAmount) => void
   isModalVisable: boolean
   homeCircumstances: HomeCircumstances
   spouseNationalId?: string
@@ -122,7 +122,7 @@ const AcceptModal = ({
       return
     }
 
-    onSaveApplication(finalAmount, {
+    onSaveApplication({
       applicationId: router.query.id as string,
       aidAmount: state.amount,
       income: state.income,

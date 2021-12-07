@@ -20,11 +20,6 @@ export class UpdateApplicationDto {
   readonly event: ApplicationEventType
 
   @IsOptional()
-  @IsNumber()
-  @ApiProperty()
-  readonly amount?: number
-
-  @IsOptional()
   @IsString()
   @ApiProperty()
   readonly rejection?: string
@@ -61,5 +56,5 @@ export class UpdateApplicationDto {
 
   @IsOptional()
   @ApiProperty()
-  readonly amounts?: CreateAmountDto
+  readonly amount?: CreateAmountDto
 }

@@ -26,10 +26,6 @@ export class UpdateApplicationInput implements UpdateApplication {
 
   @Allow()
   @Field({ nullable: true })
-  readonly amount?: number
-
-  @Allow()
-  @Field({ nullable: true })
   readonly rejection?: string
 
   @Allow()
@@ -58,5 +54,5 @@ export class UpdateApplicationInput implements UpdateApplication {
 
   @Allow()
   @Field({ nullable: true })
-  readonly amounts?: CreateAmountInput
+  readonly amount?: CreateAmountInput
 }

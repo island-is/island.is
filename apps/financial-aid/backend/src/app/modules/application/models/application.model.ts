@@ -189,13 +189,6 @@ export class ApplicationModel extends Model<Application> {
   files: ApplicationFileModel[]
 
   @Column({
-    type: DataType.INTEGER,
-    allowNull: true,
-  })
-  @ApiProperty()
-  amount: number
-
-  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
@@ -256,7 +249,7 @@ export class ApplicationModel extends Model<Application> {
 
   @HasOne(() => AmountModel, 'applicationId')
   @ApiProperty({ type: AmountModel })
-  amounts?: AmountModel
+  amount?: AmountModel
 
   @Column({
     type: DataType.STRING,

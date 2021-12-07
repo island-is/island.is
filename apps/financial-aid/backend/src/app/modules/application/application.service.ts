@@ -187,7 +187,7 @@ export class ApplicationService {
         },
         {
           model: AmountModel,
-          as: 'amounts',
+          as: 'amount',
           include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
         },
       ],
@@ -304,7 +304,7 @@ export class ApplicationService {
       eventType: update.event,
       comment:
         update?.rejection ||
-        update?.amount?.toLocaleString('de-DE') ||
+        update?.amount?.finalAmount.toLocaleString('de-DE') ||
         update?.comment,
       staffName: staff?.name,
       staffNationalId: staff?.nationalId,
@@ -317,6 +317,11 @@ export class ApplicationService {
       where: { id },
       returning: true,
     })
+
+    if (update.amount) {
+      const amount = await this.amountService.create(update.amount)
+      updatedApplication?.setDataValue('amount', amount)
+    }
 
     const events = await this.applicationEventService.findById(id)
     updatedApplication?.setDataValue('applicationEvents', events)

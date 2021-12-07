@@ -85,9 +85,6 @@ export class ApplicationModel implements Application {
   readonly files?: ApplicationFileModel[]
 
   @Field({ nullable: true })
-  readonly amount?: number
-
-  @Field({ nullable: true })
   readonly rejection?: string
 
   @Field({ nullable: true })
@@ -97,7 +94,7 @@ export class ApplicationModel implements Application {
   readonly applicationEvents?: ApplicationEventModel[]
 
   @Field({ nullable: true })
-  readonly amounts?: AmountModel
+  readonly amount?: AmountModel
 
   @Field(() => ApplicationFiltersModel, { nullable: true })
   readonly filters?: ApplicationFiltersModel

@@ -6,10 +6,6 @@ import { Field, InputType } from '@nestjs/graphql'
 export class CreateDeductionFactorsInput {
   @Allow()
   @Field()
-  readonly amountId?: string
-
-  @Allow()
-  @Field()
   readonly amount?: number
 
   @Allow()

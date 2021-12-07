@@ -79,7 +79,7 @@ export interface CreateAmount {
   spousePersonalTaxCredit?: number
   tax: number
   finalAmount: number
-  deductionFactors?: DeductionFactors[]
+  deductionFactors?: CreateDeductionFactors[]
 }
 
 export interface DeductionFactors {
@@ -128,7 +128,6 @@ export interface Address {
 export interface UpdateApplication {
   state?: ApplicationState
   event: ApplicationEventType
-  amount?: number
   rejection?: string
   comment?: string
   staffId?: string
@@ -136,7 +135,7 @@ export interface UpdateApplication {
   spouseEmail?: string
   spouseName?: string
   spouseFormComment?: string
-  amounts?: CreateAmount
+  amount?: CreateAmount
 }
 
 export interface UpdateApplicationTable {
@@ -278,12 +277,11 @@ export interface Application {
   spouseFormComment?: string
   state: ApplicationState
   files?: ApplicationFile[]
-  amount?: number
   comment?: string
   rejection?: string
   staff?: Staff
   applicationEvents?: ApplicationEvent[]
-  amounts?: Amount
+  amount?: Amount
   spouseNationalId?: string
   spouseEmail?: string
   spousePhoneNumber?: string

@@ -49,10 +49,9 @@ const StateModal = ({
   const saveStateApplication = async (
     applicationId: string,
     state: ApplicationState,
-    amount?: number,
     rejection?: string,
     comment?: string,
-    amounts?: CreateAmount,
+    amount?: CreateAmount,
   ) => {
     setIsLoading(true)
 
@@ -62,9 +61,9 @@ const StateModal = ({
       applicationId,
       state,
       eventTypeFromApplicationState[state],
-      amount,
       rejection,
       comment,
+      amount,
     )
       .then((updatedApplication) => {
         setIsLoading(false)
@@ -156,30 +155,23 @@ const StateModal = ({
               if (!selected) {
                 return
               }
-              saveStateApplication(
-                applicationId,
-                selected,
-                undefined,
-                undefined,
-                comment,
-              )
+              saveStateApplication(applicationId, selected, undefined, comment)
             }}
           />
 
           <AcceptModal
             isModalVisable={selected === ApplicationState.APPROVED}
             onCancel={onClickCancel}
-            onSaveApplication={(amount: number, amounts: CreateAmount) => {
+            onSaveApplication={(amount: CreateAmount) => {
               if (!selected) {
                 return
               }
               saveStateApplication(
                 applicationId,
                 selected,
+                undefined,
+                undefined,
                 amount,
-                undefined,
-                undefined,
-                amounts,
               )
             }}
             homeCircumstances={homeCircumstances}
@@ -193,12 +185,7 @@ const StateModal = ({
               if (!selected) {
                 return
               }
-              saveStateApplication(
-                applicationId,
-                selected,
-                undefined,
-                reasonForRejection,
-              )
+              saveStateApplication(applicationId, selected, reasonForRejection)
             }}
           />
         </AnimateSharedLayout>

@@ -38,10 +38,9 @@ export const useApplicationState = () => {
     applicationId: string,
     state: ApplicationState,
     event: ApplicationEventType,
-    amount?: number,
     rejection?: string,
     comment?: string,
-    amounts?: CreateAmount,
+    amount?: CreateAmount,
   ) => {
     if (saveLoading === false && loadingFilters === false && applicationId) {
       const { data } = await updateApplicationMutation({
@@ -49,12 +48,11 @@ export const useApplicationState = () => {
           input: {
             id: applicationId,
             state,
-            amount,
             rejection,
             comment,
             staffId: admin?.staff?.id,
             event,
-            amounts,
+            amount,
           },
         },
       })
