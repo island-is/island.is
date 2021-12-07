@@ -10,6 +10,8 @@ import {
   getMonth,
   calculateAidFinalAmount,
   showSpouseData,
+  calculateTaxOfAmount,
+  calculatePersonalTaxAllowanceUsed,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -30,6 +32,10 @@ import {
   getApplicantSpouse,
   getNationalRegistryInfo,
 } from '@island.is/financial-aid-web/veita/src/utils/applicationHelper'
+import {
+  aidCalculation,
+  amountCalculation,
+} from '@island.is/financial-aid-web/veita/src/utils/aidHelper'
 
 interface ApplicationProps {
   application: Application
@@ -45,6 +51,7 @@ const ApplicationProfile = ({
   const [isStateModalVisible, setStateModalVisible] = useState(false)
 
   const [isAidModalVisible, setAidModalVisible] = useState(false)
+  const [isAmountModalVisible, setAmountModalVisible] = useState(false)
 
   const { municipality } = useContext(AdminContext)
 
@@ -94,6 +101,9 @@ const ApplicationProfile = ({
     applicationInfo.push({
       title: 'Veitt',
       content: `${application.amount?.finalAmount.toLocaleString('de-DE')} kr.`,
+      onclick: () => {
+        setAmountModalVisible(!isAmountModalVisible)
+      },
     })
   }
   if (application.state === ApplicationState.REJECTED) {
@@ -112,6 +122,12 @@ const ApplicationProfile = ({
   const applicantMoreInfo = getApplicantMoreInfo(application)
 
   const nationalRegistryInfo = getNationalRegistryInfo(application)
+
+  const aidCalculations = aidAmount
+    ? aidCalculation(aidAmount, application.usePersonalTaxCredit)
+    : []
+
+  const amountCalculations = amountCalculation(application.amount)
 
   return (
     <>
@@ -192,11 +208,22 @@ const ApplicationProfile = ({
 
       {aidAmount && (
         <AidAmountModal
-          aidAmount={aidAmount}
-          usePersonalTaxCredit={application.usePersonalTaxCredit}
+          headline="Áætluð aðstoð"
+          calculations={aidCalculations}
           isVisible={isAidModalVisible}
           onVisibilityChange={(isVisibleBoolean) => {
             setAidModalVisible(isVisibleBoolean)
+          }}
+        />
+      )}
+
+      {application.amount && (
+        <AidAmountModal
+          headline="Veitt aðstoð"
+          calculations={amountCalculations}
+          isVisible={isAmountModalVisible}
+          onVisibilityChange={(isVisibleBoolean) => {
+            setAmountModalVisible(isVisibleBoolean)
           }}
         />
       )}

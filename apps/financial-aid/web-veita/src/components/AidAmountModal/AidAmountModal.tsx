@@ -5,54 +5,31 @@ import * as styles from './AidAmountModal.css'
 
 import format from 'date-fns/format'
 
-import {
-  calculateAidFinalAmount,
-  calculatePersonalTaxAllowanceUsed,
-  calculateTaxOfAmount,
-} from '@island.is/financial-aid/shared/lib'
+import { calculateAidFinalAmount } from '@island.is/financial-aid/shared/lib'
+
+interface Calculations {
+  title: string
+  calculation: string
+}
 
 interface Props {
-  aidAmount: number
-  usePersonalTaxCredit: boolean
+  headline: string
   isVisible: boolean
   onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
+  calculations: Calculations[]
 }
 
 const AidAmountModal = ({
-  aidAmount,
-  usePersonalTaxCredit,
+  headline,
   isVisible,
   onVisibilityChange,
+  calculations,
 }: Props) => {
   const currentYear = format(new Date(), 'yyyy')
 
-  const calculation = [
-    {
-      title: 'Grunnupphæð',
-      calculation: `+ ${aidAmount?.toLocaleString('de-DE')} kr.`,
-    },
-    {
-      title: 'Skattur',
-      calculation: `- ${calculateTaxOfAmount(
-        aidAmount,
-        currentYear,
-      ).toLocaleString('de-DE')} kr.`,
-    },
-    {
-      title: 'Persónuafsláttur',
-      calculation: `${
-        usePersonalTaxCredit ? '+ ' : ''
-      }${calculatePersonalTaxAllowanceUsed(
-        aidAmount,
-        usePersonalTaxCredit,
-        currentYear,
-      ).toLocaleString('de-DE')} kr. `,
-    },
-  ]
-
   const estimatedCalc = `${calculateAidFinalAmount(
-    aidAmount,
-    Boolean(usePersonalTaxCredit),
+    0,
+    false,
     currentYear,
   ).toLocaleString('de-DE')} kr.`
 
@@ -80,10 +57,10 @@ const AidAmountModal = ({
           className={styles.modal}
         >
           <Text variant="h3" marginBottom={4}>
-            Áætluð aðstoð
+            {headline}
           </Text>
 
-          {calculation.map((item, index) => (
+          {calculations.map((item, index) => (
             <span key={'calculation-' + index}>
               <Box
                 display="flex"
