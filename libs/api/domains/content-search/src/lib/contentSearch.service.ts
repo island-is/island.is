@@ -142,14 +142,14 @@ export class ContentSearchService {
         ...input,
       },
     )
-    const suggestion = this.mapCompletionsToSuggestion(
-      input.searchQuery,
-      completions,
-      0.81,
-    )
+    //const suggestion = this.mapCompletionsToSuggestion(
+    //  input.searchQuery,
+    //  completions,
+    //  0.81,
+    //)
 
     return {
-      suggestion,
+      suggestion: "BLINGO"
     }
   }
 }

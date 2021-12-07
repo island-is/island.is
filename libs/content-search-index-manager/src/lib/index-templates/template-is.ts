@@ -32,6 +32,11 @@ export const template = {
           max_subword_size: 18,
           min_subword_size: 4,
         },
+        shingle: {
+          type: 'shingle',
+          min_shingle_size: 2,
+          max_shingle_size: 3,
+        },
       },
       analyzer: {
         baseIcelandic: {
@@ -67,6 +72,11 @@ export const template = {
             'icelandicAutocompleteStop',
           ],
         },
+        trigram: {
+          type: 'custom',
+          tokenizer: 'standard',
+          filter: ['lowercase', 'shingle', 'icelandicStop'],
+        },
       },
     },
   },
@@ -92,6 +102,10 @@ export const template = {
           keyword: {
             type: 'keyword',
           },
+          trigram: {
+            type: 'text',
+            analyzer: 'trigram',
+          },
         },
       },
       content: {
@@ -101,6 +115,10 @@ export const template = {
           stemmed: {
             type: 'text',
             analyzer: 'baseIcelandic',
+          },
+          trigram: {
+            type: 'text',
+            analyzer: 'trigram',
           },
         },
       },
