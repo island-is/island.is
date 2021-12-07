@@ -3,22 +3,27 @@ import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useMutation } from '@apollo/client'
 import gql from 'graphql-tag'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
+
 import { Box, Stack, Button, Checkbox, Text } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
+
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 import {
   ProcessPageLayout,
   CarDetailsBox,
 } from '@island.is/skilavottord-web/components'
-import { theme } from '@island.is/island-ui/theme'
 import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
 import { formatDate, formatYear } from '@island.is/skilavottord-web/utils'
-import { Car, WithApolloProps } from '@island.is/skilavottord-web/types'
+import {
+  VehicleInformation,
+  Mutation,
+} from '@island.is/skilavottord-web/graphql/schema'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 import { dateFormat } from '@island.is/shared/constants'
 
-const skilavottordVehicleOwnerMutation = gql`
+const SkilavottordVehicleOwnerMutation = gql`
   mutation skilavottordVehicleOwnerMutation(
     $name: String!
     $nationalId: String!
@@ -27,7 +32,7 @@ const skilavottordVehicleOwnerMutation = gql`
   }
 `
 
-const skilavottordVehicleMutation = gql`
+const SkilavottordVehicleMutation = gql`
   mutation skilavottordVehicleMutation(
     $vinNumber: String!
     $newRegDate: DateTime!
@@ -47,26 +52,11 @@ const skilavottordVehicleMutation = gql`
   }
 `
 
-export interface VehicleMutation {
-  createSkilavottordVehicle: VehicleMutationData
+interface PropTypes {
+  apolloState: any
 }
 
-export interface VehicleOwnerMutation {
-  createSkilavottordVehicleOwner: VehicleOwnerMutationData
-}
-
-export interface VehicleOwnerMutationData {
-  name: string
-  nationalId: string
-}
-
-export interface VehicleMutationData {
-  car: Car
-  newRegDate: string
-  nationalId: string
-}
-
-const Confirm = ({ apolloState }: WithApolloProps) => {
+const Confirm = ({ apolloState }: PropTypes) => {
   const { user } = useContext(UserContext)
   const [checkbox, setCheckbox] = useState(false)
   const [isTablet, setIsTablet] = useState(false)
@@ -96,21 +86,18 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
     setIsTablet(false)
   }, [width])
 
-  const [setVehicle] = useMutation<VehicleMutationData>(
-    skilavottordVehicleMutation,
-    {
-      onCompleted() {
-        routeToAuthCheck()
-      },
-      onError() {
-        // Because we want to show error after checking authenication
-        routeToAuthCheck()
-      },
+  const [setVehicle] = useMutation<Mutation>(SkilavottordVehicleMutation, {
+    onCompleted() {
+      routeToAuthCheck()
     },
-  )
+    onError() {
+      // Because we want to show error after checking authenication
+      routeToAuthCheck()
+    },
+  })
 
-  const [setVehicleOwner] = useMutation<VehicleOwnerMutation>(
-    skilavottordVehicleOwnerMutation,
+  const [setVehicleOwner] = useMutation<Mutation>(
+    SkilavottordVehicleOwnerMutation,
     {
       onCompleted() {
         setVehicle({
@@ -167,7 +154,7 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
         <ProcessPageLayout
           processType={'citizen'}
           activeSection={0}
-          activeCar={id.toString()}
+          activeCar={id?.toString()}
         >
           <Stack space={4}>
             <Text variant="h1">{t.title}</Text>

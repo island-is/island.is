@@ -9,9 +9,6 @@ const prodConfig = () => ({
   applicationSystem: {
     baseApiUrl: process.env.APPLICATION_SYSTEM_API_URL,
   },
-  authPublicApi: {
-    baseApiUrl: process.env.AUTH_PUBLIC_API_URL,
-  },
   drivingLicense: {
     secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
     v1: {
@@ -59,7 +56,7 @@ const prodConfig = () => ({
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-    audience: '',
+    audience: '@island.is',
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,
@@ -166,9 +163,6 @@ const devConfig = () => ({
   applicationSystem: {
     baseApiUrl: 'http://localhost:3333',
   },
-  authPublicApi: {
-    baseApiUrl: process.env.AUTH_PUBLIC_API_URL ?? 'http://localhost:3370',
-  },
   drivingLicense: {
     secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
     v1: {
@@ -221,7 +215,7 @@ const devConfig = () => ({
   },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
-    audience: '',
+    audience: '@island.is',
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,

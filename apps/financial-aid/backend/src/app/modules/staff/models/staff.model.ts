@@ -69,6 +69,13 @@ export class StaffModel extends Model<Staff> {
   active: boolean
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  usePseudoName: boolean
+
+  @Column({
     type: DataType.STRING,
     allowNull: true,
   })

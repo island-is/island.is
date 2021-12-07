@@ -4,7 +4,7 @@ import { Header } from '../../components'
 
 import { Page, GridContainer } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { User } from '@island.is/skilavottord-web/types'
+import { User } from '@island.is/skilavottord-web/graphql/schema'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 interface LayoutProps {
