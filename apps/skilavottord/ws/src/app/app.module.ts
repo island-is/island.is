@@ -14,6 +14,7 @@ import {
   VehicleOwnerModule,
   SamgongustofaModule,
   FjarsyslaModule,
+  AccessControlModule,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { environment } from '../environments'
@@ -22,7 +23,7 @@ const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const autoSchemaFile = environment.production
   ? true
-  : 'apps/skilavottord/ws/src/app/api.graphql'
+  : 'apps/skilavottord/api.graphql'
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ const autoSchemaFile = environment.production
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+    AccessControlModule,
     RecyclingRequestModule,
     AuthModule,
     UserModule,

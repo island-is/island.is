@@ -2,10 +2,12 @@ import React from 'react'
 import { Box } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
+
 import { ListItem } from '@island.is/skilavottord-web/components'
 import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
+import { Query } from '@island.is/skilavottord-web/graphql/schema'
 
-const skilavottordAllActiveRecyclingPartnersQuery = gql`
+const SkilavottordAllActiveRecyclingPartnersQuery = gql`
   query skilavottordAllActiveRecyclingPartnersQuery {
     skilavottordAllActiveRecyclingPartners {
       companyId
@@ -20,8 +22,8 @@ const skilavottordAllActiveRecyclingPartnersQuery = gql`
 `
 
 const CompanyList = () => {
-  const { data, error, loading } = useQuery(
-    skilavottordAllActiveRecyclingPartnersQuery,
+  const { data, error, loading } = useQuery<Query>(
+    SkilavottordAllActiveRecyclingPartnersQuery,
   )
 
   if (error || (loading && !data)) {
