@@ -5,8 +5,6 @@ import {
   ConfirmationDtoResponse,
   CreateUserProfileDto,
   UpdateUserProfileDto,
-  UserNotificationDto,
-  UserNotificationsApi,
   UserProfileApi,
   UserProfileControllerCreateRequest,
   UserProfileControllerUpdateRequest,
@@ -17,8 +15,11 @@ import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
 import { UserProfile } from './userProfile.model'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware, CurrentUser, User } from '@island.is/auth-nest-tools'
 import { IslyklarApi } from '@island.is/clients/islykill'
+import { CreateUserNotificationsInput } from './dto/createUserNotificationsInput'
+import { UpdateUserNotificationsInput } from './dto/updateUserNotificationsInput'
+import { Args } from '@nestjs/graphql'
 
 // eslint-disable-next-line
 const handleError = (error: any) => {
@@ -30,7 +31,6 @@ const handleError = (error: any) => {
 export class UserProfileService {
   constructor(
     private userProfileApi: UserProfileApi,
-    private userNotificationsApi: UserNotificationsApi,
     private readonly islyklarApi: IslyklarApi,
   ) {}
 
@@ -38,9 +38,6 @@ export class UserProfileService {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  userNotificationsApiWithAuth(auth: Auth) {
-    return this.userNotificationsApi.withMiddleware(new AuthMiddleware(auth))
-  }
 
   async getIslyklarData(ssn: User['nationalId']) {
     try {
@@ -168,10 +165,32 @@ export class UserProfileService {
 
   // notifications
   async getDeviceTokens(
+    user: User
+  ) {
+    return await this.userProfileApiWithAuth(user)
+      .userProfileControllerGetDeviceTokens()
+      .catch(handleError)
+  }
+
+  async addDeviceToken(
+    input: CreateUserNotificationsInput,
     user: User,
-  ): Promise<UserNotificationDto[]> {
-    return await this.userNotificationsApiWithAuth(user)
-      .userNotificationsControllerFindAll()
+  ) {
+    return await this.userProfileApiWithAuth(user)
+      .userProfileControllerAddDeviceToken({
+        createUserNotificationDto: input
+      })
+      .catch(handleError)
+  }
+
+  async updateDeviceToken(
+    input: UpdateUserNotificationsInput,
+    user: User,
+  ) {
+    return await this.userProfileApiWithAuth(user)
+      .userProfileControllerUpdateDeviceToken({
+        id:"adsf", 
+        updateUserNotificationDto:input})
       .catch(handleError)
   }
 }

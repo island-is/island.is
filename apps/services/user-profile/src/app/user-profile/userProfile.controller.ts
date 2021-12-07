@@ -20,11 +20,14 @@ import {
   ForbiddenException,
   BadRequestException,
   HttpCode,
+  ParseUUIDPipe,
 } from '@nestjs/common'
 import {
+  ApiBody,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiSecurity,
   ApiTags,
@@ -32,9 +35,12 @@ import {
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
+import { CreateUserNotificationDto } from './dto/create-user-notification.dto'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
+import { UpdateUserNotificationDto } from './dto/update-user-notification.dto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
+import { UserNotificationDto } from './dto/user-notification.dto'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
@@ -328,5 +334,49 @@ export class UserProfileController {
     }
 
     await this.verificationService.createSmsVerification(createSmsVerification)
+  }
+
+
+  // FINDALL
+  @ApiOperation({
+    summary: 'Return a list of all user devices with token and settings',
+  })
+  @ApiOkResponse({ type: [UserNotificationDto] })
+  @Scopes(UserProfileScope.read)
+  @ApiSecurity('oauth2', [UserProfileScope.read])
+  @Get('userNotifications/getDeviceTokens')
+  async getDeviceTokens(@CurrentUser() user: User): Promise<UserNotificationDto[]> {
+    return await this.userProfileService.getDeviceTokens(user)
+  }
+
+  // CREATE
+  @ApiOperation({
+    summary: 'Adds a token and notification settings for a user device',
+  })
+  @ApiOkResponse({ type: UserNotificationDto })
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
+  @Post('userNotifications/addDeviceToken')
+  async addDeviceToken(
+    @CurrentUser() user: User,
+    @Body() body: CreateUserNotificationDto,
+  ): Promise<UserNotificationDto> {
+    body.nationalId = user.nationalId
+    return await this.userProfileService.addDeviceToken(body)
+  }
+
+  // UPDATE
+  @ApiOperation({
+    summary: 'Updates notification settings for a user device',
+  })
+  @ApiOkResponse({ type: UserNotificationDto })
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
+  @Put('userNotifications/updateDeviceToken')
+  async updateDeviceToken(
+    @CurrentUser() user: User,
+    @Body() body: UpdateUserNotificationDto,
+  ): Promise<UserNotificationDto> {
+    return await this.userProfileService.updateDeviceToken(body, user)
   }
 }

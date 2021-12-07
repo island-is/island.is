@@ -13,6 +13,7 @@ import { UserProfileInfraController } from './userProfileInfra.controller'
 import { SequelizeConfigService } from '../sequelizeConfig.service'
 import { AuditModule } from '@island.is/nest/audit'
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { UserNotifications } from './user-notifications.model'
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
       EmailVerification,
       SmsVerification,
       UserProfile,
+      UserNotifications
     ]),
     EmailModule.register(environment.emailOptions),
     SmsModule.register(environment.smsOptions),
