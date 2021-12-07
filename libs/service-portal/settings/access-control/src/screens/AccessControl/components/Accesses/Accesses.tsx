@@ -70,17 +70,19 @@ function Accesses(): JSX.Element {
                 <EmptyImage width="100%" />
               </Box>
             ) : (
-              authDelegations.map((delegation) => (
-                <AccessCard
-                  key={delegation.id}
-                  title={delegation.to.name}
-                  validTo={delegation.validTo}
-                  description={kennitala.format(delegation.to.nationalId)}
-                  tags={delegation.scopes.map((scope) => scope.displayName)}
-                  href={`${pathname}/${delegation.id}`}
-                  group="Ísland.is"
-                />
-              ))
+              authDelegations.map((delegation) =>
+                delegation.to ? (
+                  <AccessCard
+                    key={delegation.id}
+                    title={delegation.to.name}
+                    validTo={delegation.validTo}
+                    description={kennitala.format(delegation.to.nationalId)}
+                    tags={delegation.scopes.map((scope) => scope.displayName)}
+                    href={`${pathname}/${delegation.id}`}
+                    group="Ísland.is"
+                  />
+                ) : undefined,
+              )
             )}
           </Stack>
         </GridColumn>
