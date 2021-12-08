@@ -9,12 +9,10 @@ import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { SMS_VERIFICATION_MAX_TRIES } from '../verification.service'
 
-
 // TESTS TO ADD
 // CHECK ENABLE NOTIFICATIONS
 // GET POST DELETE SEE HNIPP GIST STUFF
 // kennitöluflakk
-
 
 jest.useFakeTimers('modern')
 

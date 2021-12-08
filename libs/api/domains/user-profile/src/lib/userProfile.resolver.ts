@@ -17,8 +17,6 @@ import { UseGuards } from '@nestjs/common'
 import { UserDeviceToken } from './userDeviceToken.model'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 
-
-
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class UserProfileResolver {
@@ -80,9 +78,7 @@ export class UserProfileResolver {
   // user notifications queries
 
   @Query(() => [UserDeviceToken])
-  async getDeviceTokens(
-    @CurrentUser() user: User,
-  ): Promise<UserDeviceToken[]> {
+  async getDeviceTokens(@CurrentUser() user: User): Promise<UserDeviceToken[]> {
     return await this.userUserProfileService.getDeviceTokens(user)
   }
 

@@ -43,7 +43,6 @@ import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
 
-
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('User Profile')
 @Controller()

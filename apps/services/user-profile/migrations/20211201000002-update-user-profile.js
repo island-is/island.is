@@ -12,7 +12,7 @@ module.exports = {
             defaultValue: true,
           },
           { transaction: t },
-        )
+        ),
       ]),
     )
   },
@@ -23,13 +23,9 @@ module.exports = {
         queryInterface.removeColumn('user_profile', 'document_notifications', {
           transaction: t,
         }),
-        queryInterface.removeColumn(
-          'user_profile',
-          'document_notifications',
-          {
-            transaction: t,
-          },
-        ),
+        queryInterface.removeColumn('user_profile', 'document_notifications', {
+          transaction: t,
+        }),
       ]),
     )
   },

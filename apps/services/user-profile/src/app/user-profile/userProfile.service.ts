@@ -14,7 +14,6 @@ import { User } from '@island.is/auth-nest-tools'
 import { UserDeviceTokens } from './userDeviceTokens.model'
 import { DeviceTokenDto } from './dto/DeviceToken.dto'
 
-
 @Injectable()
 export class UserProfileService {
   constructor(
@@ -103,7 +102,7 @@ export class UserProfileService {
   //     throw new BadRequestException(e.errors)
   //   }
   // }
-  
+
   // DELETE
   async deleteDeviceToken(body: DeviceTokenDto, user: User) {
     const res = await this.UserDeviceTokensModel.destroy({

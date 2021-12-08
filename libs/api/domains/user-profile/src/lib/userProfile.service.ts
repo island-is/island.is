@@ -15,16 +15,9 @@ import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
 import { UserProfile } from './userProfile.model'
-import {
-  Auth,
-  AuthMiddleware,
-  User,
-} from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslyklarApi } from '@island.is/clients/islykill'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
-
-
-
 
 // eslint-disable-next-line
 const handleError = (error: any) => {
@@ -184,7 +177,7 @@ export class UserProfileService {
   }
 
   deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
-    const result =  this.userProfileApiWithAuth(user)
+    const result = this.userProfileApiWithAuth(user)
       .userProfileControllerDeleteDeviceToken({
         nationalId: user.nationalId,
         deviceTokenDto: input,
