@@ -44,18 +44,21 @@ export interface AccessControl {
 export interface SubtitlesClass {
   add: string
   edit: string
+  delete: string
+  actions?: string
 }
 
 export interface Modal {
   titles: SubtitlesClass
   subtitles: SubtitlesClass
   inputs: Inputs
-  buttons: ConfirmButtons
+  buttons: PurpleButtons
 }
 
-export interface ConfirmButtons {
+export interface PurpleButtons {
   cancel: string
   continue: string
+  confirm: string
 }
 
 export interface Inputs {
@@ -103,13 +106,7 @@ export interface CompanyInfo {
   info: string
   empty: string
   subtitles: CompanyInfoSubtitles
-  buttons: CompanyInfoButtons
-}
-
-export interface CompanyInfoButtons {
-  add: string
-  edit: string
-  delete: string
+  buttons: SubtitlesClass
 }
 
 export interface CompanyInfoSubtitles {
@@ -193,6 +190,11 @@ export interface Confirm {
   info: string
   buttons: ConfirmButtons
   checkbox: Checkbox
+}
+
+export interface ConfirmButtons {
+  cancel: string
+  continue: string
 }
 
 export interface Checkbox {
@@ -422,7 +424,12 @@ export interface RecyclingCompanies {
   empty: string
   subtitles: RecyclingCompaniesSubtitles
   status: AccessControlStatus
-  buttons: SubtitlesClass
+  buttons: RecyclingCompaniesButtons
+}
+
+export interface RecyclingCompaniesButtons {
+  add: string
+  edit: string
 }
 
 export interface RecyclingCompaniesSubtitles {
@@ -719,6 +726,8 @@ const typeMap: any = {
     [
       { json: 'add', js: 'add', typ: '' },
       { json: 'edit', js: 'edit', typ: '' },
+      { json: 'delete', js: 'delete', typ: '' },
+      { json: 'actions', js: 'actions', typ: u(undefined, '') },
     ],
     false,
   ),
@@ -727,14 +736,15 @@ const typeMap: any = {
       { json: 'titles', js: 'titles', typ: r('SubtitlesClass') },
       { json: 'subtitles', js: 'subtitles', typ: r('SubtitlesClass') },
       { json: 'inputs', js: 'inputs', typ: r('Inputs') },
-      { json: 'buttons', js: 'buttons', typ: r('ConfirmButtons') },
+      { json: 'buttons', js: 'buttons', typ: r('PurpleButtons') },
     ],
     false,
   ),
-  ConfirmButtons: o(
+  PurpleButtons: o(
     [
       { json: 'cancel', js: 'cancel', typ: '' },
       { json: 'continue', js: 'continue', typ: '' },
+      { json: 'confirm', js: 'confirm', typ: '' },
     ],
     false,
   ),
@@ -793,15 +803,7 @@ const typeMap: any = {
       { json: 'info', js: 'info', typ: '' },
       { json: 'empty', js: 'empty', typ: '' },
       { json: 'subtitles', js: 'subtitles', typ: r('CompanyInfoSubtitles') },
-      { json: 'buttons', js: 'buttons', typ: r('CompanyInfoButtons') },
-    ],
-    false,
-  ),
-  CompanyInfoButtons: o(
-    [
-      { json: 'add', js: 'add', typ: '' },
-      { json: 'edit', js: 'edit', typ: '' },
-      { json: 'delete', js: 'delete', typ: '' },
+      { json: 'buttons', js: 'buttons', typ: r('SubtitlesClass') },
     ],
     false,
   ),
@@ -899,6 +901,13 @@ const typeMap: any = {
       { json: 'info', js: 'info', typ: '' },
       { json: 'buttons', js: 'buttons', typ: r('ConfirmButtons') },
       { json: 'checkbox', js: 'checkbox', typ: r('Checkbox') },
+    ],
+    false,
+  ),
+  ConfirmButtons: o(
+    [
+      { json: 'cancel', js: 'cancel', typ: '' },
+      { json: 'continue', js: 'continue', typ: '' },
     ],
     false,
   ),
@@ -1187,7 +1196,14 @@ const typeMap: any = {
         typ: r('RecyclingCompaniesSubtitles'),
       },
       { json: 'status', js: 'status', typ: r('AccessControlStatus') },
-      { json: 'buttons', js: 'buttons', typ: r('SubtitlesClass') },
+      { json: 'buttons', js: 'buttons', typ: r('RecyclingCompaniesButtons') },
+    ],
+    false,
+  ),
+  RecyclingCompaniesButtons: o(
+    [
+      { json: 'add', js: 'add', typ: '' },
+      { json: 'edit', js: 'edit', typ: '' },
     ],
     false,
   ),
