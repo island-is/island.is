@@ -92,9 +92,6 @@ export class PaymentScheduleResolver {
     @Args('input', { type: () => UpdateCurrentEmployerInput })
     input: UpdateCurrentEmployerInput,
   ): Promise<UpdateCurrentEmployerResponse> {
-    return await this.paymentScheduleService.updateCurrentEmployer(
-      user.nationalId,
-      input,
-    )
+    return await this.paymentScheduleService.updateCurrentEmployer(user, input)
   }
 }
