@@ -111,7 +111,7 @@ export class RightTypesController {
         namespace,
         resources: code,
       },
-      this.rightTypesService.deleteAsync(code)
+      this.rightTypesService.deleteAsync(code),
     )
   }
 
@@ -141,7 +141,7 @@ export class RightTypesController {
         resources: rightType.code,
         meta: { fields: Object.keys(rightType) },
       },
-      this.rightTypesService.createAsync(rightType)
+      this.rightTypesService.createAsync(rightType),
     )
   }
 
@@ -177,7 +177,7 @@ export class RightTypesController {
         resources: rightType.code,
         meta: { fields: Object.keys(rightType) },
       },
-      this.rightTypesService.updateAsync(code, rightType)
+      this.rightTypesService.updateAsync(code, rightType),
     )
 
     if (result == null) {
