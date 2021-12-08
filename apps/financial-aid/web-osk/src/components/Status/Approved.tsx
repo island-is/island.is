@@ -7,11 +7,12 @@ import {
   getMonth,
   months,
   currentMonth,
+  Amount,
 } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   state: ApplicationState
-  amount?: number
+  amount?: Amount
   isStateVisible: boolean
   isApplicant?: boolean
 }
@@ -33,7 +34,7 @@ const Approved = ({
       </Text>
       {isApplicant ? (
         <Text as="h3" variant="h3" marginBottom={2}>
-          Veitt aðstoð {amount?.toLocaleString('de-DE') + ' kr.'}
+          Veitt aðstoð {amount?.finalAmount.toLocaleString('de-DE') + ' kr.'}
         </Text>
       ) : (
         <Text variant="intro">

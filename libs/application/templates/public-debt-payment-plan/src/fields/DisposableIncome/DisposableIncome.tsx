@@ -68,11 +68,7 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
   }
 
   useEffect(() => {
-    if (
-      correctedNationalId &&
-      kennitala.isValid(correctedNationalId) &&
-      kennitala.isCompany(correctedNationalId)
-    ) {
+    if (correctedNationalId && kennitala.isValid(correctedNationalId)) {
       updateEmployer()
     }
   }, [correctedNationalId])
