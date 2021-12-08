@@ -41,7 +41,6 @@ export const ApplicationQuery = gql`
       formComment
       spouseFormComment
       studentCustom
-      amount
       rejection
       staff {
         name
@@ -56,6 +55,18 @@ export const ApplicationQuery = gql`
         created
         staffName
         staffNationalId
+      }
+      amount {
+        aidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
       }
     }
   }
@@ -171,7 +182,6 @@ export const ApplicationEventMutation = gql`
       state
       formComment
       studentCustom
-      amount
       rejection
       staff {
         name
@@ -245,7 +255,6 @@ export const UpdateApplicationMutation = gql`
       state
       formComment
       studentCustom
-      amount
       rejection
       applicationEvents {
         id
@@ -259,6 +268,18 @@ export const UpdateApplicationMutation = gql`
       staff {
         name
         municipalityId
+      }
+      amount {
+        aidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
       }
     }
   }
