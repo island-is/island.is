@@ -26,13 +26,14 @@ import {
   Mutation,
   RecyclingRequestTypes,
   Query,
+  RequestErrors,
 } from '@island.is/skilavottord-web/graphql/schema'
 import CompanyList from './components/CompanyList'
 import * as styles from './Handover.css'
 
 const SkilavottordVehiclesQuery = gql`
-  query skilavottordVehiclesQuery($nationalId: String!) {
-    skilavottordVehicles(nationalId: $nationalId) {
+  query skilavottordVehiclesQuery {
+    skilavottordVehicles {
       permno
       status
     }
@@ -76,11 +77,7 @@ const Handover: FC = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const nationalId = user?.nationalId
-  const { data, loading, error } = useQuery<Query>(SkilavottordVehiclesQuery, {
-    variables: { nationalId },
-    skip: !nationalId,
-  })
+  const { data, loading, error } = useQuery<Query>(SkilavottordVehiclesQuery)
 
   const cars = data?.skilavottordVehicles || []
   const activeCar = cars.filter(
@@ -96,7 +93,7 @@ const Handover: FC = () => {
     },
   })
 
-  const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
+  const mutationResponse = mutationData?.createSkilavottordRecyclingRequest as RequestErrors
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -115,14 +112,15 @@ const Handover: FC = () => {
         case 'inUse':
         case 'cancelled':
           if (
-            localStorage.getItem(ACCEPTED_TERMS_AND_CONDITION) === id.toString()
+            localStorage.getItem(ACCEPTED_TERMS_AND_CONDITION) ===
+            id?.toString()
           ) {
-            setRequestType('pendingRecycle')
+            setRequestType(RecyclingRequestTypes.pendingRecycle)
             setRecyclingRequest({
               variables: {
                 permno: id,
                 nameOfRequestor: user?.name,
-                requestType: 'pendingRecycle',
+                requestType: RecyclingRequestTypes.pendingRecycle,
               },
             })
           } else {
@@ -147,18 +145,21 @@ const Handover: FC = () => {
   }
 
   const onConfirmCancellation = () => {
-    setRequestType('cancelled')
+    setRequestType(RecyclingRequestTypes.cancelled)
     setRecyclingRequest({
       variables: {
         permno: id,
         nameOfRequestor: user?.name,
-        requestType: 'cancelled',
+        requestType: RecyclingRequestTypes.cancelled,
       },
     }).then(({ data }) => {
       // setRecyclingRequest is completed with no mutationErrors
       // errors are returned in mutationResponse.message,
       // we must therefore double check for errors in this way before closing modal and routing home
-      if (!data?.createSkilavottordRecyclingRequest?.message) {
+      // current implementation assumes that request can be either RequestErrors or RequestStatus and only
+      // RequestErrors has message property and because of that we are asserting it below
+      const request = data?.createSkilavottordRecyclingRequest as RequestErrors
+      if (!request.message) {
         setModal(false)
         routeHome()
       }
@@ -170,7 +171,7 @@ const Handover: FC = () => {
   }
 
   if (
-    (requestType !== 'cancelled' &&
+    (requestType !== RecyclingRequestTypes.cancelled &&
       (mutationError || mutationLoading || mutationResponse?.message)) ||
     error ||
     isInvalidCar ||
@@ -180,7 +181,7 @@ const Handover: FC = () => {
       <ProcessPageLayout
         processType={'citizen'}
         activeSection={1}
-        activeCar={id.toString()}
+        activeCar={id?.toString()}
       >
         {mutationLoading || loading ? (
           <Box textAlign="center">
@@ -214,7 +215,7 @@ const Handover: FC = () => {
     <ProcessPageLayout
       processType={'citizen'}
       activeSection={1}
-      activeCar={id.toString()}
+      activeCar={id?.toString()}
     >
       <Stack space={6}>
         <Stack space={2}>
