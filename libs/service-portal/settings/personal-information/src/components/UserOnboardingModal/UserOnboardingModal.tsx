@@ -88,7 +88,6 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   ) => {
     gotoStep('submit-form')
 
-    console.log('mobilePhoneNumber', mobilePhoneNumber)
     try {
       if (userProfile) {
         await updateUserProfile({
