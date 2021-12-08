@@ -104,7 +104,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       if (settings?.noUserFound) {
         await createIslykillSettings({
           email,
-          mobile: mobilePhoneNumber,
+          mobile: `+354-${mobilePhoneNumber}`,
         })
       } else {
         await updateIslykill({
