@@ -14,7 +14,10 @@ import { environment } from '../../../environments'
 import { StaffModel } from './models'
 import { EmailService } from '@island.is/email-service'
 import { logger } from '@island.is/logging'
-import { EmployeeEmailTemplate } from '../application/emailTemplates'
+import {
+  EmployeeEmailTemplate,
+  AdminEmailTemplate,
+} from '../application/emailTemplates'
 
 @Injectable()
 export class StaffService {
@@ -87,7 +90,7 @@ export class StaffService {
             address: user.email,
           },
           to: input.email,
-          subject: 'Aðgangur fyrir vinnslukerfi fjárhagsaðstoðar veittur',
+          subject: 'Vinnsluaðili í vinnslukerfi fjárhagsaðstoðar',
           html: EmployeeEmailTemplate(
             municipalityName,
             environment.veitaUrl,
@@ -106,12 +109,8 @@ export class StaffService {
             address: user.email,
           },
           to: input.email,
-          subject: 'Aðgangur fyrir vinnslukerfi fjárhagsaðstoðar veittur',
-          html: EmployeeEmailTemplate(
-            municipalityName,
-            environment.veitaUrl,
-            input.email,
-          ),
+          subject: 'Stjórnandi í vinnslukerfi fjárhagsaðstoðar',
+          html: AdminEmailTemplate(environment.veitaUrl, input.email),
         })
       }
     } catch (error) {
