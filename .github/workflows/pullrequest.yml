@@ -38,7 +38,7 @@ jobs:
       - name: Check node version
         run: |
           node -v 
-          ll `which node`
+          ls -l `which node`
 
       - run: |
           echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
@@ -65,7 +65,7 @@ jobs:
       - name: Check node version
         run: |
           node -v 
-          ll `which node`
+          ls -l `which node`
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -104,7 +104,7 @@ jobs:
         # if: steps.generated-files-cache.outputs.cache-hit != 'true'
         run: |
           node --version
-          ll `which node`
+          ls -l `which node`
           tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --skip-cache | xargs realpath --relative-to $(pwd))
 
       # - name: Security audit Node modules
