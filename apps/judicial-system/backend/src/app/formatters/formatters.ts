@@ -12,7 +12,6 @@ import {
   CaseType,
   isRestrictionCase,
   SessionArrangements,
-  User,
 } from '@island.is/judicial-system/types'
 import type { CaseGender } from '@island.is/judicial-system/types'
 
