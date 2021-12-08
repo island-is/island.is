@@ -69,7 +69,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             name="conclusion"
             label={formatMessage(m.sections.conclusion.label)}
             placeholder={formatMessage(m.sections.conclusion.placeholder)}
-            defaultValue={workingCase.conclusion}
+            value={workingCase.conclusion || ''}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'conclusion',
@@ -252,7 +252,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                 label={formatMessage(
                   m.sections.appealDecision.accusedAnnouncementLabel,
                 )}
-                defaultValue={workingCase.accusedAppealAnnouncement}
+                value={workingCase.accusedAppealAnnouncement || ''}
                 placeholder={formatMessage(
                   m.sections.appealDecision.accusedAnnouncementPlaceholder,
                 )}
@@ -429,7 +429,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   label={formatMessage(
                     m.sections.appealDecision.prosecutorAnnouncementLabel,
                   )}
-                  defaultValue={workingCase.prosecutorAppealAnnouncement}
+                  value={workingCase.prosecutorAppealAnnouncement || ''}
                   placeholder={formatMessage(
                     m.sections.appealDecision.prosecutorAnnouncementPlaceholder,
                   )}

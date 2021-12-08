@@ -5,6 +5,7 @@ import {
   DataType,
   ForeignKey,
   HasMany,
+  HasOne,
   Model,
   Table,
   UpdatedAt,
@@ -23,6 +24,7 @@ import {
 import { ApplicationEventModel } from '../../applicationEvent/models'
 import { ApplicationFileModel } from '../../file/models'
 import { StaffModel } from '../../staff'
+import { AmountModel } from '../../amount'
 
 @Table({
   tableName: 'applications',
@@ -187,13 +189,6 @@ export class ApplicationModel extends Model<Application> {
   files: ApplicationFileModel[]
 
   @Column({
-    type: DataType.INTEGER,
-    allowNull: true,
-  })
-  @ApiProperty()
-  amount: number
-
-  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
@@ -251,6 +246,10 @@ export class ApplicationModel extends Model<Application> {
   @HasMany(() => ApplicationEventModel, 'applicationId')
   @ApiProperty({ type: ApplicationEventModel, isArray: true })
   applicationEvents?: ApplicationEventModel[]
+
+  @HasOne(() => AmountModel, 'applicationId')
+  @ApiProperty({ type: AmountModel })
+  amount?: AmountModel
 
   @Column({
     type: DataType.STRING,
