@@ -2,6 +2,15 @@ import { defineMessage, defineMessages } from 'react-intl'
 
 // Strings for court officials
 export const icHearingArrangements = {
+  comments: {
+    title: defineMessage({
+      id:
+        'judicial.system.investigation_cases:hearing_arrangements.comments.title',
+      defaultMessage: 'Athugasemdir vegna málsmeðferðar',
+      description:
+        'Notaður sem titill í viðvörunarboxi með athugasemdum vegna málsmeðferðar á fyrirtöku skrefi í rannsóknarheimildum.',
+    }),
+  },
   title: defineMessage({
     id: 'judicial.system.investigation_cases:hearing_arrangements.title',
     defaultMessage: 'Fyrirtaka',
