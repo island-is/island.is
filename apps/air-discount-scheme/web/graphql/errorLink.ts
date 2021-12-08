@@ -13,11 +13,9 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
 
   if (graphQLErrors) {
     graphQLErrors.forEach((err) => {
-      console.log('hi')
-      console.log(err.message)
       if (err.message === 'Unauthorized') {
-        return signIn(identityServerId, {
-          callbackUrl: `localhost:4200/min-rettindi`,
+        return signIn(process.env.IDENTITY_SERVER_ISSUER_URL, {
+          callbackUrl: `${window.location.href}`,
         })
       }
       switch (err.extensions?.code) {

@@ -24,7 +24,7 @@ const ONE_HOUR = 3600
     // }),
     AuthNestModule.register(environment.auth.identityServerAuth),
   ],
-  //controllers: [AuthController],
+  controllers: [AuthController],
   providers: [AuthService],// JwtStrategy],
   exports: [AuthService],
 })

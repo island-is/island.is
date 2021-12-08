@@ -10,7 +10,7 @@ const useUser = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(session?.user),
   )
-
+  // TODO finish grpql
   const tempGqlQuery = gql`
   query CurrentUserQuery {
     currentUser {

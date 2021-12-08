@@ -63,7 +63,7 @@ const loginIS = new IslandisLogin({
 @Controller('/api/auth')
 export class AuthController {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
-
+  /*
   @Post('/callback')
   async callback(@Body('token') token, @Res() res, @Req() req) {
     let verifyResult: VerifyResult
@@ -117,7 +117,7 @@ export class AuthController {
       })
       .redirect(returnUrl ?? '/_')
   }
-
+*/
   @Get('/login')
   login(@Res() res, @Query() query) {
     const { returnUrl } = query

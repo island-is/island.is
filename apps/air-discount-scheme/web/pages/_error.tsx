@@ -28,7 +28,7 @@ CustomError.getInitialProps = async (
   ctx: NextPageContext,
 ): Promise<ErrorProps> => {
   const errorInitialProps = await NextError.getInitialProps(ctx)
-
+  console.log('custom error _error')
   if (ctx.res) {
     if (ctx.res.statusCode === 404) {
       return { statusCode: 404, isSSRReadyToRender: true }

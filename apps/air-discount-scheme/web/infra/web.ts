@@ -13,6 +13,12 @@ export const serviceSetup = (services: {
         prod: '',
       },
       IDENTITY_SERVER_DOMAIN: '@vegagerdin.is',
+      IDS_COOKIE_NAME: 'next-auth.session-token',
+      AUTH_PUBLIC_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
     })
     .secrets({
       SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN',
