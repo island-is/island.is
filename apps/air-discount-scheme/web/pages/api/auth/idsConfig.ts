@@ -1,7 +1,4 @@
-import { environment } from '../../environments/environment'
-
-export const IDENTITY_SERVER_SESSION_TOKEN_COOKIE_NAME =
-  environment.idsCookieName
+export const IDENTITY_SERVER_SESSION_TOKEN_COOKIE_NAME = process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token'
 
 export const identityServerId = 'identity-server'
 

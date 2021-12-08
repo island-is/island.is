@@ -36,6 +36,11 @@ export const serviceSetup = (services: {
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
+      NEXTAUTH_URL: {
+        dev: 'http://localhost:4200/api/auth',
+        staging: '',
+        prod: '',
+      },
     })
     .secrets({
       SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN',

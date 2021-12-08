@@ -6,6 +6,7 @@ import { AuthGuard } from '@nestjs/passport'
 
 import { Role, AuthUser } from './auth.types'
 import { AuthService } from './auth.service'
+import { signIn } from 'next-auth/client'
 
 type AuthorizeOptions = {
   throwOnUnAuthorized?: boolean
@@ -30,7 +31,11 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
   handleRequest<TUser extends AuthUser>(err: Error, user: TUser): TUser {
     const { throwOnUnAuthorized, role } = this.options
     if (throwOnUnAuthorized && (err || !user)) {
-      throw new AuthenticationError((err && err.message) || 'Unauthorized')
+      console.log('inside handlerequest auth.guard')
+      signIn('identity-server', {
+        callbackUrl: `localhost:4200/min-rettindi`
+      })
+      //throw new AuthenticationError((err && err.message) || 'Unauthorized')
     }
 
     if (!authService.checkRole(user, role)) {

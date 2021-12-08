@@ -7,6 +7,11 @@ export const serviceSetup = (services: {
     .namespace('air-discount-scheme')
     .env({
       API_URL: ref((h) => `http://${h.svc(services.adsApi)}`),
+      NEXTAUTH_URL: {
+        dev: 'http://localhost:4200/api/auth',
+        staging: '',
+        prod: '',
+      },
     })
     .secrets({
       SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN',

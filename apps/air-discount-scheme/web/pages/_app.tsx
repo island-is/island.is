@@ -38,7 +38,6 @@ interface Props {
   isAuthenticated: boolean
   layoutProps: any
   user: User
-  //session: any
 }
 
 class SupportApplication extends App<Props> {
@@ -49,8 +48,7 @@ class SupportApplication extends App<Props> {
       ...ctx,
       apolloClient,
     }
-    //console.log('all fine here')
-    //let session = getSession()
+
     const pageProps = (await Component.getInitialProps(customContext)) as any
 
     const layoutProps = await AppLayout.getInitialProps({
@@ -71,7 +69,6 @@ class SupportApplication extends App<Props> {
       layoutProps: { ...layoutProps, ...pageProps.layoutConfig },
       pageProps,
       apolloState,
-      //session
     }
   }
 
@@ -126,11 +123,12 @@ class SupportApplication extends App<Props> {
     //   console.log('return null')
     //   return
     // }
-    console.log('before return _app')
+    console.log('before return _app with session: ' + pageProps.session)
+    console.log(process.env.NEXTAUTH_URL)
     return (
       <Provider 
         session={pageProps.session}
-        options={{ clientMaxAge: 120, baseUrl: 'http://localhost:4200', basePath: '/api/auth'}} 
+        options={{ clientMaxAge: 120, basePath: '/api/auth'}} 
       >
         <ApolloProvider client={initApollo(pageProps.apolloState)}>
           <AuthProvider>

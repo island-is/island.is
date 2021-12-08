@@ -21,7 +21,7 @@ const devConfig = {
     },
     domain: process.env.IDENTITY_SERVER_DOMAIN ?? '@vegagerdin.is',
     clientSecret: process.env.AUTH_CLIENT_SECRET,
-    nextAuthUrl: process.env.NEXTAUTH_URL ?? 'http://localhost:4200',
+    nextAuthUrl: process.env.NEXTAUTH_URL ?? 'http://localhost:4200/api/auth',
     samlEntryPoint: 'https://innskraning.island.is/?id=ads.local',
     audience: '@vegagerdin.is',
     jwtSecret: 'securesecret',
