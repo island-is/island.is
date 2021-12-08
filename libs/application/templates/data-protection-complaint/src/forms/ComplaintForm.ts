@@ -648,19 +648,6 @@ export const ComplaintForm: Form = buildForm({
             }),
           ],
         }),
-        buildSubmitField({
-          id: 'submit',
-          placement: 'footer',
-          title: 'Klára stuff',
-
-          actions: [
-            {
-              event: 'SUBMIT',
-              name: 'Klára stuff',
-              type: 'primary',
-            },
-          ],
-        }),
       ],
     }),
     buildSection({

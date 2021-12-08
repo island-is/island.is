@@ -44,3 +44,9 @@ export interface Agency {
   name: string
   nationalId: string
 }
+
+export enum ContactRole {
+  COMPLAINTANT = 'Kvartandi',
+  RESPONSIBLE = 'Ábyrgðaraðili',
+  CLIENT = 'Umbjóðandi',
+}

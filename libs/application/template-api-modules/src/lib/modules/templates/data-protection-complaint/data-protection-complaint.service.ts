@@ -8,20 +8,18 @@ import {
   TokenMiddleware,
 } from '@island.is/clients/data-protection-complaint'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-
-import { DataProtectionComplaintAttachmentProvider } from './data-protection-attachments.provider'
+import type { Logger } from '@island.is/logging'
 import { PdfFileProvider } from './attachments/providers/pdfFileProvider'
-import { S3UploadFileProvider } from './attachments/providers/applicationFileProvider'
-import { Attachment } from './models/attachments'
+import { ApplicationAttachmentProvider } from './attachments/providers/applicationAttachmentProvider'
 
 @Injectable()
 export class DataProtectionComplaintService {
   constructor(
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly caseApi: CaseApi,
-    private readonly dataProtectionComplaintAttachmentProvider: DataProtectionComplaintAttachmentProvider,
     private readonly tokenMiddleware: TokenMiddleware,
+    private readonly applicationAttachmentProvider: ApplicationAttachmentProvider,
+    private readonly pdfFileProvider: PdfFileProvider,
   ) {}
 
   get caseApiWithAuth() {
@@ -29,30 +27,28 @@ export class DataProtectionComplaintService {
   }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    const pdfFileProvider = new PdfFileProvider(application, 'application')
-    const s3FileProvider = new S3UploadFileProvider(application, [
-      'complaint.documents',
-      'commissions.documents',
-    ])
-    console.log('here 1')
-    const attachments = [
-      ...(await pdfFileProvider.getFiles()),
-      // ...(await s3FileProvider.getFiles()),
-    ]
-    console.log('here 2')
-    const caseRequest = await applicationToCaseRequest(application, attachments)
-    console.log('here 3')
-    console.log(caseRequest)
-    const newCase = await this.caseApiWithAuth.createCase({
-      requestData: caseRequest,
-    })
+    try {
+      const attachments = [
+        ...(await this.pdfFileProvider.getFiles(application, 'kvörtun')),
+        ...(await this.applicationAttachmentProvider.getFiles(
+          ['complaint.documents', 'commissions.documents'],
+          application,
+        )),
+      ]
 
-    console.log('new case : ', newCase)
+      const caseRequest = await applicationToCaseRequest(
+        application,
+        attachments,
+      )
 
-    const getnewCase = await this.caseApiWithAuth.getCase({
-      requestData: { caseNumber: newCase.identifier },
-    })
-    console.log('new case : ', getnewCase)
-    throw new Error('STOP APPLICATION FROM SUBMITTING ')
+      const newCase = await this.caseApiWithAuth.createCase({
+        requestData: caseRequest,
+      })
+    } catch (error) {
+      console.log({ error })
+      this.logger.error('Error submitting', error)
+
+      throw new Error('Villa kom kom upp við að senda umsókn')
+    }
   }
 }

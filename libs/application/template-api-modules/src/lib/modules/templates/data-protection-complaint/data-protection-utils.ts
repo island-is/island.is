@@ -1,14 +1,17 @@
 import get from 'lodash/get'
-import { Agency, ComplaintDto, ContactInfo, TargetOfComplaint } from './models'
+import {
+  Agency,
+  ComplaintDto,
+  ContactInfo,
+  ContactRole,
+  TargetOfComplaint,
+} from './models'
 import {
   OnBehalf,
-  subjectOfComplaintValueLabelMapper,
   onBehalfValueLabelMapper,
   SubjectOfComplaint,
   DataProtectionComplaint,
   yesNoValueLabelMapper,
-  YES,
-  NO,
 } from '@island.is/application/templates/data-protection-complaint'
 import { Application } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
@@ -19,9 +22,7 @@ import {
   LinkedContact,
   Metadata,
 } from '@island.is/clients/data-protection-complaint'
-import { Attachment } from './models/attachments'
-
-type YesOrNo = typeof YES | typeof NO
+import { subjectOfComplaintToGoProValues } from './mappers/complaintCategoryMapper'
 
 const extractAnswer = <T>(
   object: unknown,
@@ -43,8 +44,8 @@ export const getComplaintTargets = (
   return targets
 }
 
-export const getAgencies = (application: Application): Agency[] => {
-  return extractAnswer<Agency[]>(application.answers, 'commissions.persons', [])
+export const getAgencies = (answers: DataProtectionComplaint): Agency[] => {
+  return extractAnswer<Agency[]>(answers, 'commissions.persons', [])
 }
 
 export const getAndFormatOnBehalf = (application: Application): string => {
@@ -61,11 +62,16 @@ export const getAndFormatSubjectsOfComplaint = (
     'subjectOfComplaint.values',
   )
 
-  return [
-    ...values.map((subject) => {
-      return subjectOfComplaintValueLabelMapper[subject].defaultMessage
-    }),
-  ]
+  const categories = values.reduce((acc: string[], value) => {
+    const val = subjectOfComplaintToGoProValues(value)
+
+    if (Array.isArray(val)) return [...acc, ...val]
+
+    acc.push(val)
+    return acc
+  }, [])
+
+  return [...new Set(categories)]
 }
 
 export const gatherContacts = (
@@ -82,8 +88,9 @@ export const gatherContacts = (
     city: contact.city,
     idnumber: contact.nationalId,
     postalCode: contact.postalCode,
-    role: 'Kvartandi',
+    role: ContactRole.COMPLAINTANT,
     primary: 'false',
+    webPage: '',
   }
 
   //Ábyrgðaraðili - subject of complaint
@@ -94,14 +101,26 @@ export const gatherContacts = (
         name: target.name,
         address: target.address,
         idnumber: target.nationalId,
-        role: 'Ábyrgðaraðili',
+        role: ContactRole.RESPONSIBLE,
         primary: index === 0 ? 'true' : 'false',
         webPage: '',
       }
     },
   )
-  //TODO: Add contact //role Umbjóðandi
-  return [complaintant, ...complainees]
+
+  const agencies = getAgencies(answers).map((agency: Agency) => {
+    return {
+      type: getContactType(agency.nationalId),
+      name: agency.name,
+      address: '',
+      idnumber: agency.nationalId,
+      role: ContactRole.CLIENT,
+      primary: 'false',
+      webPage: '',
+    }
+  })
+
+  return [complaintant, ...complainees, ...agencies]
 }
 
 export const getContactType = (nationalId: string): string => {
@@ -137,17 +156,6 @@ export const applicationToCaseRequest = async (
     contacts: gatherContacts(answers),
     documents: attachments,
   }
-}
-//TODO use DocumentInfo as type
-const gatherDocuments = (attachments: Attachment[]): DocumentInfo[] => {
-  return attachments.map((attachment) => {
-    return {
-      content: attachment.content,
-      subject: 'Kvörtun',
-      fileName: attachment.name,
-      type: attachment.type ?? 'document',
-    } as DocumentInfo
-  })
 }
 
 export const toRequestMetadata = (
@@ -190,7 +198,7 @@ export const transformApplicationToComplaintDto = (
     onBehalf: getAndFormatOnBehalf(application),
     agency: {
       files: [],
-      persons: getAgencies(application),
+      persons: getAgencies(answers),
     },
     contactInfo: getContactInfo(answers),
     targetsOfComplaint: getComplaintTargets(answers),
@@ -200,17 +208,26 @@ export const transformApplicationToComplaintDto = (
     applicationPdf: '',
   }
 }
+
 export const getContactInfo = (
   answers: DataProtectionComplaint,
 ): ContactInfo => {
+  console.log({ answers })
+
+  const onBehalf = extractAnswer<OnBehalf>(answers, 'info.onBehalf')
+  const contact =
+    onBehalf === OnBehalf.ORGANIZATION_OR_INSTITUTION
+      ? answers.organizationOrInstitution
+      : answers.applicant
+
   return {
-    name: extractAnswer(answers, 'applicant.name'),
-    nationalId: extractAnswer(answers, 'applicant.nationalId'),
-    type: extractAnswer(answers, 'applicant.email'), //person | felag/samtok,
-    address: extractAnswer(answers, 'applicant.address'),
-    email: extractAnswer(answers, 'applicant.email'),
-    phone: extractAnswer(answers, 'applicant.phoneNumber'),
-    postalCode: extractAnswer(answers, 'applicant.postalCode'),
-    city: extractAnswer(answers, 'applicant.city'),
+    name: contact.name,
+    nationalId: contact.nationalId,
+    type: '', //person | felag/samt
+    address: contact.address,
+    email: contact.email ?? '',
+    phone: contact.phoneNumber ?? '',
+    postalCode: contact.postalCode,
+    city: contact.city,
   }
 }

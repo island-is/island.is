@@ -1,1 +1,1 @@
-export * from './complaintDto'
+export * from './complaint'
