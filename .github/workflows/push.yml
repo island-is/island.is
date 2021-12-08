@@ -258,7 +258,7 @@ jobs:
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
 
       - name: Generate schemas
-        if: steps.generated-files-cache.outputs.cache-hit != 'true'
+        # if: steps.generated-files-cache.outputs.cache-hit != 'true'
         run: |
           node --version
           ll `which node`
