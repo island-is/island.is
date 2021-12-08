@@ -14,13 +14,13 @@ import {
 
 import { PageLayout, InlineError } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import {
-  RecycleActionTypes,
-  Query,
-} from '@island.is/skilavottord-web/graphql/schema'
+import { Query } from '@island.is/skilavottord-web/graphql/schema'
+
 import { filterCarsByStatus } from '@island.is/skilavottord-web/utils'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
+
 import { ActionCardContainer, ProgressCardContainer } from './components'
+import { RecycleActionTypes } from './types'
 
 const SkilavottordVehiclesQuery = gql`
   query skilavottordVehiclesQuery {

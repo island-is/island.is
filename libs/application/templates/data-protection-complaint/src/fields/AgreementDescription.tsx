@@ -22,18 +22,6 @@ export const AgreementDescription: FC<FieldBaseProps> = () => {
         <Bullet>
           {formatMessage(delimitation.labels.agreementDescriptionBulletFour)}
         </Bullet>
-        <Bullet>
-          {formatMessage(delimitation.labels.agreementDescriptionBulletFive)}
-        </Bullet>
-        <Bullet>
-          {formatMessage(delimitation.labels.agreementDescriptionBulletSix)}
-        </Bullet>
-        <Bullet>
-          {formatMessage(delimitation.labels.agreementDescriptionBulletSeven)}
-        </Bullet>
-        <Bullet>
-          {formatMessage(delimitation.labels.agreementDescriptionBulletEight)}
-        </Bullet>
       </Stack>
     </Box>
   )

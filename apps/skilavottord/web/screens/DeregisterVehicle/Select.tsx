@@ -12,7 +12,8 @@ import {
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { Controller, useForm } from 'react-hook-form'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import { Role } from '@island.is/skilavottord-web/graphql/schema'
+import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import { NotFound } from '@island.is/skilavottord-web/components'
 
 type FormData = {
