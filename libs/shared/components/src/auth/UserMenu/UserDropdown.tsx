@@ -18,9 +18,12 @@ import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
 import { UserDropdownItem } from './UserDropdownItem'
 import { UserProfileInfo } from './UserProfileInfo'
-import { useFeatureFlag } from '@island.is/react/feature-flags'
 import * as kennitala from 'kennitala'
 import { ValueType } from 'react-select'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
+import { useActorDelegationsQuery } from '../../../gen/graphql'
+import { QueryResult } from '@apollo/client'
+
 interface UserDropdownProps {
   user: User
   dropdownState: 'open' | 'closed'
@@ -45,35 +48,44 @@ export const UserDropdown = ({
   const isDelegation = Boolean(user.profile.actor)
 
   const [updateUserProfileMutation] = useUpdateUserProfileMutation()
-  const handleLanguageChange = async (option: ValueType<Option>) => {
-    const locale = (option as Option).value.toString()
-    changeLanguage(locale as Locale)
 
-    if (user && !isDelegation) {
-      try {
-        await updateUserProfileMutation({
-          variables: {
-            input: {
-              locale: locale,
-            },
-          },
-        })
-      } catch (e) {
-        return null
-      }
-    }
-  }
+  // const handleLanguageChange = async (option: ValueType<Option>) => {
+  //   const locale = (option as Option).value.toString()
+  //   changeLanguage(locale as Locale)
 
-  const username = user.profile.actor
-    ? user.profile.actor.name
-    : user.profile.name
+  //   if (user && !isDelegation) {
+  //     try {
+  //       await updateUserProfileMutation({
+  //         variables: {
+  //           input: {
+  //             locale: locale,
+  //           },
+  //         },
+  //       })
+  //     } catch (e) {
+  //       return null
+  //     }
+  //   }
+  // }
+
+  const actor = user.profile.actor
+  const userName = user.profile.name
+  const actorName = actor?.name
   const isDelegationCompany =
-    isDelegation && kennitala.isCompany(user.profile.actor!.nationalId)
+    isDelegation && kennitala.isCompany(actor!.nationalId)
 
   const { value: showPersonalInfo } = useFeatureFlag(
     'isServicePortalPersonalInformationModuleEnabled',
     false,
   )
+
+  const showDelegations =
+    useFeatureFlag(Features.delegationsEnabled, false).value || Boolean(actor)
+  const { data, error, loading } = useActorDelegationsQuery({
+    skip: !showDelegations,
+  })
+  const hasDelegationsData = data && data.authActorDelegations?.length > 0
+
   return (
     <ModalBase
       baseId="island-ui-header-user-dropdown"
@@ -101,7 +113,7 @@ export const UserDropdown = ({
             className={styles.fullScreen}
           >
             <Stack space={3}>
-              {/* Current User  - Check if in another user role and change*/}
+              {/* Current User */}
               <Box display="flex" flexWrap="nowrap" alignItems="center">
                 {isDelegationCompany ? (
                   <Box
@@ -115,39 +127,41 @@ export const UserDropdown = ({
                     <Icon icon="business" type="filled" color="blue400" />
                   </Box>
                 ) : (
-                  <UserAvatar
-                    username={
-                      isDelegation
-                        ? user.profile.actor!.name
-                        : user.profile.name
-                    }
-                  />
+                  <UserAvatar username={isDelegation ? actorName : userName} />
                 )}
 
                 <Box marginLeft={1} marginRight={4}>
                   {isDelegation ? (
                     <>
-                      <Text variant="h4">{user.profile.actor!.name}</Text>
-                      <Text variant="small">{user.profile.name}</Text>
+                      <Text variant="h4">{actorName}</Text>
+                      <Text variant="small">{userName}</Text>
                     </>
                   ) : (
                     <Text variant="h4" as="h4">
-                      {username}
+                      {userName}
                     </Text>
                   )}
                 </Box>
               </Box>
               <Divider />
               {/* End of current User */}
-
-              <UserDelegations user={user} onSwitchUser={onSwitchUser} />
+              {/* User delegations */}
+              {hasDelegationsData && (
+                <UserDelegations
+                  user={user}
+                  onSwitchUser={onSwitchUser}
+                  data={{ data, error, loading } as QueryResult}
+                />
+              )}
+              {/* End of user delegations */}
+              {/* User settings */}
               {!isDelegation && showPersonalInfo && (
                 <>
                   <UserProfileInfo onClick={() => onClose()} />
-
                   <Divider />
                 </>
               )}
+              {/* End of user settings */}
               {/* Logout */}
               <UserDropdownItem
                 text={formatMessage(sharedMessages.logout)}

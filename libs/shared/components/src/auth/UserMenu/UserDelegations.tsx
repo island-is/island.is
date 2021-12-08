@@ -8,14 +8,15 @@ import {
 } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
-import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { userMessages } from '@island.is/shared/translations'
-import { useActorDelegationsQuery } from '../../../gen/graphql'
+import { ActorDelegationsQuery } from '../../../gen/graphql'
 import { UserTopicCard } from './UserTopicCard'
+import { QueryResult } from '@apollo/client'
 
 interface UserDelegationsProps {
   user: User
   onSwitchUser: (nationalId: string) => void
+  data: QueryResult<ActorDelegationsQuery>
 }
 
 interface Delegation {
@@ -39,22 +40,18 @@ const getInitialDelegations = (user: User): Delegation[] => {
 
 export const UserDelegations = ({
   user,
+  data,
   onSwitchUser,
 }: UserDelegationsProps) => {
   const { formatMessage } = useLocale()
   const actor = user.profile.actor
-  const showDelegations =
-    useFeatureFlag(Features.delegationsEnabled, false).value || Boolean(actor)
-  const { data, error, loading } = useActorDelegationsQuery({
-    skip: !showDelegations,
-  })
   const currentNationalId = user.profile.nationalId as string
   const delegations = getInitialDelegations(user)
   const isDelegation = Boolean(actor)
 
-  if (data) {
+  if (data.data) {
     delegations.push(
-      ...data.authActorDelegations
+      ...data.data.authActorDelegations
         .map((delegation) => ({
           nationalId: delegation.from?.nationalId ?? '',
           name: delegation.from?.name ?? '',
@@ -66,11 +63,6 @@ export const UserDelegations = ({
     )
   }
 
-  const dataReady = !loading && !error
-  // No data.
-  if (delegations.length === 0 && dataReady) {
-    return null
-  }
   const onClickDelegation = (delegation: Delegation) => {
     onSwitchUser(delegation.nationalId)
   }
@@ -102,9 +94,9 @@ export const UserDelegations = ({
             {delegation.name || delegation.nationalId}
           </UserTopicCard>
         ))}
-        {loading ? (
+        {data.loading ? (
           <SkeletonLoader display="block" height={59} borderRadius="large" />
-        ) : error ? (
+        ) : data.error ? (
           <Text color="red400">
             {formatMessage(userMessages.delegationError)}
           </Text>
