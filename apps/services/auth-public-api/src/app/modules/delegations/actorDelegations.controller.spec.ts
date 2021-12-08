@@ -14,7 +14,7 @@ import {
   setupWithoutAuth,
   setupWithoutPermission,
 } from '../../../../test/setup'
-import { expectMathcingObject, getRequestMethod } from '../../../../test/utils'
+import { expectMatchingObject, getRequestMethod } from '../../../../test/utils'
 import { TestEndpointOptions } from '../../../../test/types'
 
 const today = new Date('2021-11-12')
@@ -99,7 +99,7 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMathcingObject(res.body[0], expectedModel)
+        expectMatchingObject(res.body[0], expectedModel)
       })
 
       it('returns 400 BadRequest if required query paramter is missing', async () => {
