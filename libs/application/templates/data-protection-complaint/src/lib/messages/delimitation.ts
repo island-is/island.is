@@ -105,4 +105,76 @@ export const delimitation = {
       description: 'Agreement description bullet Eight',
     },
   }),
+  links: defineMessages({
+    inCourtProceedingsTitle: {
+      id: 'dpac.application:section.delimitation.links.inCourtProceedingsTitle',
+      defaultMessage: 'Frekari upplýsingar',
+      description: 'In court proceedings url title',
+    },
+    inCourtProceedingsUrl: {
+      id: 'dpac.application:section.delimitation.links.inCourtProceedingsUrl',
+      defaultMessage:
+        'https://www.personuvernd.is/einstaklingar/spurt-og-svarad/allar-spurningar-og-svor/hvad-getur-personuvernd-ekki-gert',
+      description: 'In court proceedings url',
+    },
+    concernsMediaCoverageFirstTitle: {
+      id:
+        'dpac.application:section.delimitation.links.concernsMediaCoverageFirstTitle',
+      defaultMessage: 'Fjölmiðlanefnd',
+      description: 'Concerns media coverage first url title',
+    },
+    concernsMediaCoverageFirstUrl: {
+      id:
+        'dpac.application:section.delimitation.links.concernsMediaCoverageFirstUrl',
+      defaultMessage: 'https://fjolmidlanefnd.is/',
+      description: 'Concerns media coverage first url',
+    },
+    concernsMediaCoverageSecondTitle: {
+      id:
+        'dpac.application:section.delimitation.links.concernsMediaCoverageSecondTitle',
+      defaultMessage: 'Siðanefnd Blaðamannafélags Íslands',
+      description: 'Concerns media coverage second url title',
+    },
+    concernsMediaCoverageSecondUrl: {
+      id:
+        'dpac.application:section.delimitation.links.concernsMediaCoverageSecondUrl',
+      defaultMessage: 'https://www.press.is/is/faglegt/sidavefur/sidanefnd',
+      description: 'Concerns media coverage second url',
+    },
+    concernsBanMarkingFirstTitle: {
+      id:
+        'dpac.application:section.delimitation.links.concernsBanMarkingFirstTitle',
+      defaultMessage: 'Fjarskiptastofa',
+      description: 'Concerns ban marking first url title',
+    },
+    concernsBanMarkingFirstUrl: {
+      id:
+        'dpac.application:section.delimitation.links.concernsBanMarkingFirstUrl',
+      defaultMessage: 'https://fjarskiptastofa.is/',
+      description: 'Concerns ban marking first url',
+    },
+    concernsBanMarkingSecondTitle: {
+      id:
+        'dpac.application:section.delimitation.links.concernsBanMarkingSecondTitle',
+      defaultMessage: 'Þjóðskrá Íslands',
+      description: 'Concerns ban marking second url title',
+    },
+    concernsBanMarkingSecondUrl: {
+      id:
+        'dpac.application:section.delimitation.links.concernsBanMarkingSecondUrl',
+      defaultMessage: 'https://island.is/kvortun-vegna-skraningar-i-bannskra',
+      description: 'Concerns ban marking second url',
+    },
+    concernsLibelTitle: {
+      id: 'dpac.application:section.delimitation.links.concernsLibelTitle',
+      defaultMessage: 'Nánari uppýsingar',
+      description: 'Concerns libel url title',
+    },
+    concernsLibelUrl: {
+      id: 'dpac.application:section.delimitation.links.iconcernsLibelUrl',
+      defaultMessage:
+        'https://www.personuvernd.is/einstaklingar/spurt-og-svarad/allar-spurningar-og-svor/hvad-getur-personuvernd-ekki-gert',
+      description: 'Concerns libel url',
+    },
+  }),
 }
