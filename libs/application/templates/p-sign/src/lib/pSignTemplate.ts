@@ -5,6 +5,7 @@ import {
   ApplicationTypes,
   ApplicationRole,
   DefaultStateLifeCycle,
+  Application,
 } from '@island.is/application/core'
 import { ApiModuleActions, Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -15,7 +16,7 @@ const PSignTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.P_SIGN,
-  name: '',
+  name: 'P-Merki',
   dataSchema: dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -24,7 +25,7 @@ const PSignTemplate: ApplicationTemplate<
         meta: {
           name: 'Draft',
           actionCard: {
-            description: 'Umsókn um P-Merki',
+            title: 'Umsókn um P-Merki',
           },
           progress: 0.33,
           lifecycle: DefaultStateLifeCycle,
@@ -70,8 +71,13 @@ const PSignTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(): ApplicationRole {
-    return 'applicant'
+  mapUserToRole(
+    nationalId: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (application.applicant === nationalId) {
+      return Roles.APPLICANT
+    }
   },
 }
 

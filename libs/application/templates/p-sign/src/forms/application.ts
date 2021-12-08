@@ -12,7 +12,6 @@ import {
   buildCustomField,
   buildRadioField,
   buildDescriptionField,
-  buildFileUploadField,
   FormValue,
   buildSelectField,
   buildDividerField,
@@ -24,6 +23,7 @@ import { format } from 'kennitala'
 import { syslumenn } from './mocks'
 import { QualityPhotoData } from '../types'
 import { NationalRegistryUser, UserProfile } from '../types/schema'
+import { m } from '../lib/messages'
 
 export const getApplication = (): Form => {
   return buildForm({
@@ -35,21 +35,20 @@ export const getApplication = (): Form => {
     children: [
       buildSection({
         id: 'conditions',
-        title: 'Gagnaöflun',
+        title: m.dataCollectionTitle,
         children: [
           buildExternalDataProvider({
             id: 'approveExternalData',
-            title: 'Gagnaöflun',
-            subTitle: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
-            description:
-              'Til þess að athuga hvort þú sért með gilt P-merki þá verða upplýsingar verða sóttar  úr kerfi sýslumanna.',
-            checkboxLabel: 'Ég skil að persónuuplýsinga verði aflað ',
+            title: m.dataCollectionTitle,
+            subTitle: m.dataCollectionSubtitle,
+            description: m.dataCollectionDescription,
+            checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
                 id: 'nationalRegistry',
                 type: 'NationalRegistryProvider',
-                title: 'Læknisvottorð',
-                subTitle: 'Nisi at fermentum adipiscing montes, mi.',
+                title: m.dataCollectionDoctorsNoteTitle,
+                subTitle: m.dataCollectionDoctorsNoteSubtitle,
               }),
               buildDataProviderItem({
                 id: 'userProfile',
@@ -69,15 +68,15 @@ export const getApplication = (): Form => {
       }),
       buildSection({
         id: 'information',
-        title: 'Upplýsingar',
+        title: m.informationSectionTitle,
         children: [
           buildMultiField({
             id: 'list',
-            title: 'Upplýsingar um stæðiskort',
+            title: m.informationTitle,
             children: [
               buildTextField({
                 id: 'name',
-                title: 'Nafn',
+                title: m.applicantsName,
                 width: 'half',
                 backgroundColor: 'white',
                 defaultValue: (application: Application) => {
@@ -88,7 +87,7 @@ export const getApplication = (): Form => {
               }),
               buildTextField({
                 id: 'id',
-                title: 'Kennitala',
+                title: m.applicantsNationalId,
                 width: 'half',
                 backgroundColor: 'white',
                 defaultValue: (application: Application) =>
@@ -96,7 +95,7 @@ export const getApplication = (): Form => {
               }),
               buildTextField({
                 id: 'address',
-                title: 'Heimilisfang',
+                title: m.applicantsAddress,
                 width: 'half',
                 backgroundColor: 'white',
                 defaultValue: (application: Application) => {
@@ -107,7 +106,7 @@ export const getApplication = (): Form => {
               }),
               buildTextField({
                 id: 'city',
-                title: 'Staður',
+                title: m.applicantsCity,
                 width: 'half',
                 backgroundColor: 'white',
                 defaultValue: (application: Application) => {
@@ -122,7 +121,7 @@ export const getApplication = (): Form => {
               }),
               buildTextField({
                 id: 'email',
-                title: 'Netfang',
+                title: m.applicantsEmail,
                 variant: 'email',
                 width: 'half',
                 backgroundColor: 'blue',
@@ -134,7 +133,7 @@ export const getApplication = (): Form => {
               }),
               buildTextField({
                 id: 'phone',
-                title: 'Símanúmer',
+                title: m.applicantsPhoneNumber,
                 variant: 'number',
                 width: 'half',
                 backgroundColor: 'blue',
@@ -146,7 +145,7 @@ export const getApplication = (): Form => {
               }),
               buildDateField({
                 id: 'date',
-                title: 'Gildistími',
+                title: m.cardValidityPeriod,
                 width: 'half',
                 backgroundColor: 'white',
                 defaultValue: () => new Date().toISOString(),
@@ -157,11 +156,11 @@ export const getApplication = (): Form => {
       }),
       buildSection({
         id: 'photo',
-        title: 'Mynd',
+        title: m.qualityPhotoSectionTitle,
         children: [
           buildMultiField({
             id: 'info',
-            title: 'Mynd í stæðiskort',
+            title: m.qualityPhotoTitle,
             condition: (_, externalData) => {
               return (
                 (externalData.qualityPhoto as QualityPhotoData)?.data
@@ -172,13 +171,12 @@ export const getApplication = (): Form => {
               buildDescriptionField({
                 id: 'descriptionPhoto',
                 title: '',
-                description:
-                  'Hér er núverandi ljósmynd. Óskir þú eftir að nota nýja mynd þá þarf að hlaða henni hér inn að neðan.',
+                description: m.qualityPhotoExistingPhotoText,
               }),
               buildCustomField({
-                title: 'ok',
-                component: 'QualityPhoto',
+                title: '',
                 id: 'qphoto',
+                component: 'QualityPhoto',
               }),
               buildRadioField({
                 id: 'qualityPhoto',
@@ -186,8 +184,8 @@ export const getApplication = (): Form => {
                 width: 'half',
                 disabled: false,
                 options: [
-                  { value: 'yes', label: 'Nota núverandi mynd' },
-                  { value: 'no', label: 'Hlaða inn mynd' },
+                  { value: 'yes', label: m.qualityPhotoUseExistingPhoto },
+                  { value: 'no', label: m.qualityPhotoUploadNewPhoto },
                 ],
               }),
               buildCustomField({
@@ -196,22 +194,18 @@ export const getApplication = (): Form => {
                 component: 'Bullets',
                 condition: (answers) => answers.qualityPhoto === 'no',
               }),
-              buildFileUploadField({
+              buildCustomField({
                 id: 'photoAttachment',
-                title: 'Dragðu mynd hingað til að hlaða upp',
-                uploadAccept: '.jpg, .png',
-                uploadHeader: 'Dragðu mynd hingað til að hlaða upp',
-                uploadDescription: 'Tekið er við mynd með endingu: .jpg, .png',
-                uploadButtonLabel: 'Velja mynd til að hlaða upp',
-                introduction: '',
+                title: '',
+                component: 'PhotoUpload',
                 condition: (answers: FormValue) =>
-                  answers.qualityPhoto === 'uploadNew',
+                  answers.qualityPhoto === 'no',
               }),
             ],
           }),
           buildMultiField({
             id: 'photoUpload',
-            title: 'Mynd í stæðiskort',
+            title: m.qualityPhotoTitle,
             condition: (_, externalData) => {
               return (
                 (externalData.qualityPhoto as QualityPhotoData)?.data
@@ -222,22 +216,18 @@ export const getApplication = (): Form => {
               buildDescriptionField({
                 id: 'descriptionNoPhoto',
                 title: '',
-                description:
-                  'Texti sem útskýrir að það þarf að hlaða inn mynd fyrir stæðiskort.',
+                description: m.qualityPhotoNoPhotoDescription,
               }),
               buildCustomField({
-                title: 'ok',
-                component: 'QualityPhoto',
-                id: 'qphoto',
+                id: 'photdesc',
+                title: '',
+                component: 'Bullets',
+                condition: (answers: FormValue) => !answers.photoAttachment,
               }),
-              buildFileUploadField({
+              buildCustomField({
                 id: 'photoAttachment',
-                title: 'Dragðu mynd hingað til að hlaða upp',
-                uploadAccept: '.jpg, .png',
-                uploadHeader: 'Dragðu mynd hingað til að hlaða upp',
-                uploadDescription: 'Tekið er við mynd með endingu: .jpg, .png',
-                uploadButtonLabel: 'Velja mynd til að hlaða upp',
-                introduction: '',
+                title: '',
+                component: 'PhotoUpload',
               }),
             ],
           }),
@@ -245,17 +235,16 @@ export const getApplication = (): Form => {
       }),
       buildSection({
         id: 'delivery',
-        title: 'Afhending',
+        title: m.deliveryMethodTitle,
         children: [
           buildMultiField({
-            id: 'deliveryView',
-            title: 'Afhending',
+            id: 'deliverySection',
+            title: m.deliveryMethodTitle,
             children: [
               buildDescriptionField({
                 id: 'deliveryDescription',
                 title: '',
-                description:
-                  'Stæðiskort er sjálfkrafa sent með pósti á uppgefið heimilisfang eftir 3-5 virka daga. Óskir þú eftir að fá stæðiskortið afhent fyrr þá getur þú valið um að sækja það sjálfur á valda staðsetningu hér að neðan.',
+                description: m.deliveryMethodDescription,
               }),
               buildRadioField({
                 id: 'deliveryMethod',
@@ -263,14 +252,14 @@ export const getApplication = (): Form => {
                 width: 'half',
                 disabled: false,
                 options: [
-                  { value: 'sendHome', label: 'Fá sent heim í pósti' },
-                  { value: 'pickUp', label: 'Sækja til Sýslumanns' },
+                  { value: 'sendHome', label: m.deliveryMethodHomeDelivery },
+                  { value: 'pickUp', label: m.deliveryMethodPickUp },
                 ],
               }),
               buildSelectField({
                 id: 'districtCommitioners',
-                title: 'Embætti',
-                placeholder: 'Veldu embætti',
+                title: m.deliveryMethodOfficeLabel,
+                placeholder: m.deliveryMethodOfficeSelectPlaceholder,
                 options: syslumenn,
                 condition: (answers: FormValue) =>
                   answers.deliveryMethod === 'pickUp',
@@ -281,81 +270,78 @@ export const getApplication = (): Form => {
       }),
       buildSection({
         id: 'overview',
-        title: 'Yfirlit',
+        title: m.overviewSectionTitle,
         children: [
           buildMultiField({
             id: 'overview',
-            title: 'Yfirlit umsóknar',
+            title: m.overviewTitle,
             space: 1,
-            description:
-              'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp.',
+            description: m.overviewSectionDescription,
             children: [
               buildDividerField({}),
               buildKeyValueField({
-                label: 'Nafn',
+                label: m.applicantsName,
                 width: 'half',
                 value: ({ externalData: { nationalRegistry } }) =>
                   (nationalRegistry.data as NationalRegistryUser).fullName,
               }),
               buildKeyValueField({
-                label: 'Kennitala',
+                label: m.applicantsNationalId,
                 width: 'half',
                 value: (application: Application) =>
                   format(application.applicant),
               }),
               buildKeyValueField({
-                label: 'Heimilisfang',
+                label: m.applicantsAddress,
                 width: 'half',
                 value: ({ externalData: { nationalRegistry } }) =>
                   (nationalRegistry.data as NationalRegistryUser).address
                     ?.streetAddress,
               }),
               buildKeyValueField({
-                label: 'Staður',
+                label: m.applicantsCity,
                 width: 'half',
                 value: ({ externalData: { nationalRegistry } }) =>
                   (nationalRegistry.data as NationalRegistryUser).address
                     ?.postalCode,
               }),
               buildKeyValueField({
-                label: 'Netfang',
+                label: m.applicantsEmail,
                 width: 'half',
                 value: ({ externalData: { userProfile } }) =>
                   (userProfile.data as UserProfile).email as string,
               }),
               buildKeyValueField({
-                label: 'Símanúmer',
+                label: m.applicantsPhoneNumber,
                 width: 'half',
                 value: ({ externalData: { userProfile } }) =>
                   (userProfile.data as UserProfile).mobilePhoneNumber as string,
               }),
               buildDividerField({}),
               buildKeyValueField({
-                label: 'Gildistími',
+                label: m.cardValidityPeriod,
                 width: 'half',
                 value: () => '19/10/24',
               }),
               buildDividerField({}),
               buildKeyValueField({
-                label: 'Mynd í stæðiskort',
+                label: m.qualityPhotoTitle,
                 width: 'half',
                 value: '',
               }),
               buildCustomField({
-                title: 'Mynd í stæðiskort',
-                component: 'QualityPhoto',
-                id: 'qphoto',
+                id: 'userPhoto',
+                title: '',
+                component: 'Photo',
               }),
               buildDividerField({}),
               buildKeyValueField({
-                label: 'Afhending',
+                label: m.deliveryMethodTitle,
                 width: 'half',
                 value: (application) =>
                   application.answers.deliveryMethod === 'pickUp'
-                    ? 'Þú hefur valið að sækja P-merkið sjálf/ur/t á: ' +
-                      application.answers.districtCommitioners +
-                      ' Hlíðasmári 1, Kópavogur'
-                    : 'Þú hefur valið að fá P-merkið sent heim í pósti',
+                    ? m.overviewSelfPickupText
+                    : m.overviewDeliveryText,
               }),
               buildSubmitField({
                 id: 'submit',
