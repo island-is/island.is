@@ -103,6 +103,7 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.PAYMENT]: { target: States.DRAFT },
         },
       },
       [States.COMPLETED]: {

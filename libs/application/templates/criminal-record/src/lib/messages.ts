@@ -231,4 +231,9 @@ export const m = defineMessages({
       'Þú hefur ekki náð lágmarksaldri til að sækja um sakavottorð',
     description: '',
   },
+  tryAgain: {
+    id: 'cr.application:tryAgain',
+    defaultMessage: 'Reyna aftur',
+    description: '',
+  },
 })

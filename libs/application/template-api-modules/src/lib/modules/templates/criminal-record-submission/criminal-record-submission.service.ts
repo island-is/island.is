@@ -31,7 +31,6 @@ export class CriminalRecordSubmissionService {
         id,
         'AY101',
       )
-      ;(await result).paymentUrl = ''
       return result
     } catch (exeption) {
       return { id: '', paymentUrl: '' }
@@ -39,12 +38,22 @@ export class CriminalRecordSubmissionService {
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+    const { paymentUrl } = application.externalData.createCharge.data as {
+      paymentUrl: string
+    }
+    if (!paymentUrl) {
+      return {
+        success: false,
+      }
+    }
+
     const isPayment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,
     )
+    console.log(application)
 
     if (isPayment?.fulfilled) {
       return {

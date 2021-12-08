@@ -51,15 +51,15 @@ export const Payment: Form = buildForm({
               title: m.payment,
             }),
             buildSubmitField({
-              id: 'submit',
+              id: 'goBack',
               placement: 'footer',
-              title: 'Reyna aftur',
+              title: m.tryAgain,
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Reyna aftur',
-                  type: 'primary',
+                  event: DefaultEvents.PAYMENT,
+                  name: m.tryAgain,
+                  type: 'subtle',
                 },
               ],
             }),
