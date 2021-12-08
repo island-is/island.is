@@ -10,8 +10,8 @@ import {
   getMonth,
   calculateAidFinalAmount,
   showSpouseData,
-  calculateTaxOfAmount,
-  calculatePersonalTaxAllowanceUsed,
+  estimatedBreakDown,
+  acceptedAmountBreakDown,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -32,11 +32,6 @@ import {
   getApplicantSpouse,
   getNationalRegistryInfo,
 } from '@island.is/financial-aid-web/veita/src/utils/applicationHelper'
-import {
-  aidCalculation,
-  aidFinalAmount,
-  amountCalculation,
-} from '@island.is/financial-aid-web/veita/src/utils/aidHelper'
 
 interface ApplicationProps {
   application: Application
@@ -67,8 +62,6 @@ const ApplicationProfile = ({
     }
   }, [application, municipality])
 
-  const currentYear = format(new Date(), 'yyyy')
-
   const applicationInfo = [
     {
       title: 'Tímabil',
@@ -86,7 +79,6 @@ const ApplicationProfile = ({
           content: `${calculateAidFinalAmount(
             aidAmount,
             application.usePersonalTaxCredit,
-            currentYear,
           ).toLocaleString('de-DE')} kr.`,
           onclick: () => {
             setAidModalVisible(!isAidModalVisible)
@@ -123,12 +115,6 @@ const ApplicationProfile = ({
   const applicantMoreInfo = getApplicantMoreInfo(application)
 
   const nationalRegistryInfo = getNationalRegistryInfo(application)
-
-  const aidCalculations = aidAmount
-    ? aidCalculation(aidAmount, application.usePersonalTaxCredit)
-    : []
-
-  const amountCalculations = amountCalculation(application?.amount)
 
   return (
     <>
@@ -210,7 +196,10 @@ const ApplicationProfile = ({
       {aidAmount && (
         <AidAmountModal
           headline="Áætluð aðstoð"
-          calculations={aidCalculations}
+          calculations={estimatedBreakDown(
+            aidAmount,
+            application.usePersonalTaxCredit,
+          )}
           isVisible={isAidModalVisible}
           onVisibilityChange={(isVisibleBoolean) => {
             setAidModalVisible(isVisibleBoolean)
@@ -221,10 +210,7 @@ const ApplicationProfile = ({
       {application.amount && (
         <AidAmountModal
           headline="Veitt aðstoð"
-          // finalAmount={`${application.amount.finalAmount.toLocaleString(
-          //   'de-DE',
-          // )} kr.`}
-          calculations={amountCalculations}
+          calculations={acceptedAmountBreakDown(application.amount)}
           isVisible={isAmountModalVisible}
           onVisibilityChange={(isVisibleBoolean) => {
             setAmountModalVisible(isVisibleBoolean)
