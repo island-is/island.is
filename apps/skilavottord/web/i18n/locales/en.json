@@ -372,16 +372,20 @@
     },
     "buttons": {
       "add": "Give access",
-      "edit": "Edit"
+      "edit": "Edit",
+      "delete": "Delete",
+      "actions": "actions"
     },
     "modal": {
       "titles": {
         "add": "Give access",
-        "edit": "Edit access"
+        "edit": "Edit access",
+        "delete": "Delete access"
       },
       "subtitles": {
         "add": "An access holder will get access to perform actions based on his/her role. Please be certain that the national id matches the person you want to give access to",
-        "edit": "An access holder will get access to perform actions based on his/her role. Please be certain that the role applies to this person."
+        "edit": "An access holder will get access to perform actions based on his/her role. Please be certain that the role applies to this person.",
+        "delete": "Are you sure you want to delete this access?"
       },
       "inputs": {
         "nationalId": {
@@ -416,7 +420,8 @@
       },
       "buttons": {
         "cancel": "Cancel",
-        "continue": "Submit"
+        "continue": "Submit",
+        "confirm": "Confirm"
       }
     }
   },

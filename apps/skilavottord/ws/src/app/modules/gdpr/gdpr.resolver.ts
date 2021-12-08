@@ -4,10 +4,12 @@ import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Authorize } from '../auth'
+import { Authorize, CurrentUser } from '../auth'
+import type { AuthUser } from '../auth'
 import { GdprService } from './gdpr.service'
 import { GdprModel } from './gdpr.model'
 
+@Authorize({ throwOnUnAuthorized: false })
 @Resolver(() => GdprModel)
 export class GdprResolver {
   constructor(
@@ -16,19 +18,18 @@ export class GdprResolver {
     private logger: Logger,
   ) {}
 
-  @Authorize({ throwOnUnAuthorized: false })
   @Mutation((_) => Boolean)
   async createSkilavottordGdpr(
-    @Args('nationalId') nationalId: string,
+    @CurrentUser() user: AuthUser,
     @Args('gdprStatus') gdprStatus: string,
   ): Promise<boolean> {
-    await this.gdprService.createGdpr(nationalId, gdprStatus)
+    await this.gdprService.createGdpr(user.nationalId, gdprStatus)
     return true
   }
 
   @Query(() => GdprModel)
-  async skilavottordGdpr(@Args('nationalId') nid: string): Promise<GdprModel> {
-    return await this.gdprService.findByNationalId(nid)
+  async skilavottordGdpr(@CurrentUser() user: AuthUser): Promise<GdprModel> {
+    return await this.gdprService.findByNationalId(user.nationalId)
   }
 
   @Query(() => [GdprModel])
