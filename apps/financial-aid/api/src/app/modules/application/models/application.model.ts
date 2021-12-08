@@ -11,6 +11,7 @@ import {
 import { ApplicationFileModel } from '../../file'
 import { StaffModel } from '../../staff'
 import { ApplicationEventModel, ApplicationFiltersModel } from './index'
+import { AmountModel } from '../../amount'
 
 @ObjectType()
 export class ApplicationModel implements Application {
@@ -84,9 +85,6 @@ export class ApplicationModel implements Application {
   readonly files?: ApplicationFileModel[]
 
   @Field({ nullable: true })
-  readonly amount?: number
-
-  @Field({ nullable: true })
   readonly rejection?: string
 
   @Field({ nullable: true })
@@ -94,6 +92,9 @@ export class ApplicationModel implements Application {
 
   @Field(() => [ApplicationEventModel], { nullable: true })
   readonly applicationEvents?: ApplicationEventModel[]
+
+  @Field({ nullable: true })
+  readonly amount?: AmountModel
 
   @Field(() => ApplicationFiltersModel, { nullable: true })
   readonly filters?: ApplicationFiltersModel
