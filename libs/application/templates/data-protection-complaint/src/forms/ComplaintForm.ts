@@ -96,9 +96,8 @@ export const ComplaintForm: Form = buildForm({
                   {
                     links: [
                       {
-                        title: 'Frekari upplýsingar',
-                        url:
-                          'https://www.personuvernd.is/einstaklingar/spurt-og-svarad/allar-spurningar-og-svor/hvad-getur-personuvernd-ekki-gert',
+                        title: delimitation.links.inCourtProceedingsTitle,
+                        url: delimitation.links.inCourtProceedingsUrl,
                       },
                     ],
                   },
@@ -134,13 +133,14 @@ export const ComplaintForm: Form = buildForm({
                   {
                     links: [
                       {
-                        title: 'Fjölmiðlanefnd',
-                        url: 'https://fjolmidlanefnd.is/',
+                        title:
+                          delimitation.links.concernsMediaCoverageFirstTitle,
+                        url: delimitation.links.concernsMediaCoverageFirstUrl,
                       },
                       {
-                        title: 'Siðanefnd Blaðamannafélags Íslands',
-                        url:
-                          'https://www.press.is/is/faglegt/sidavefur/sidanefnd',
+                        title:
+                          delimitation.links.concernsMediaCoverageSecondTitle,
+                        url: delimitation.links.concernsMediaCoverageSecondUrl,
                       },
                     ],
                   },
@@ -176,13 +176,12 @@ export const ComplaintForm: Form = buildForm({
                   {
                     links: [
                       {
-                        title: 'Fjarskiptastofa',
-                        url: 'https://fjarskiptastofa.is/',
+                        title: delimitation.links.concernsBanMarkingFirstTitle,
+                        url: delimitation.links.concernsBanMarkingFirstUrl,
                       },
                       {
-                        title: 'Þjóðskrá Íslands',
-                        url:
-                          'https://island.is/kvortun-vegna-skraningar-i-bannskra',
+                        title: delimitation.links.concernsBanMarkingSecondTitle,
+                        url: delimitation.links.concernsBanMarkingSecondUrl,
                       },
                     ],
                   },
@@ -217,9 +216,8 @@ export const ComplaintForm: Form = buildForm({
                   {
                     links: [
                       {
-                        title: 'Nánari uppýsingar',
-                        url:
-                          'https://www.personuvernd.is/einstaklingar/spurt-og-svarad/allar-spurningar-og-svor/hvad-getur-personuvernd-ekki-gert',
+                        title: delimitation.links.concernsLibelTitle,
+                        url: delimitation.links.concernsLibelUrl,
                       },
                     ],
                   },
