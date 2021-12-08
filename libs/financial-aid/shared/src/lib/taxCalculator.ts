@@ -158,7 +158,7 @@ export const acceptedAmountBreakDown = (amount: Amount): Calculations[] => {
       calculation: `${amount?.personalTaxCredit.toLocaleString('de-DE')} kr. `,
     },
     {
-      title: 'Veitt aðstoð',
+      title: 'Aðstoð',
       calculation: `${amount.finalAmount.toLocaleString('de-DE')} kr.`,
     },
   ]
