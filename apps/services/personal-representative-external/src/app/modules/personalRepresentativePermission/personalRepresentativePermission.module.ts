@@ -1,4 +1,4 @@
-import { PersonalRepresentativePermissionController } from './personal-representative-permission.controller'
+import { PersonalRepresentativePermissionController } from './personalRepresentativePermission.controller'
 import { Module } from '@nestjs/common'
 import {
   PersonalRepresentative,

@@ -1,4 +1,4 @@
-import { PermissionTypeController } from './permission-type.controller'
+import { PermissionTypeController } from './permissionType.controller'
 import { Module } from '@nestjs/common'
 import {
   PersonalRepresentativeRightType,

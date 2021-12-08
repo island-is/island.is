@@ -1,5 +1,5 @@
-import { PermissionTypeModule } from './modules/permission-type/permission-type.module'
-import { PersonalRepresentativePermissionModule } from './modules/personal-representative-permission/personal-representative-permission.module'
+import { PermissionTypeModule } from './modules/permissionType/permissionType.module'
+import { PersonalRepresentativePermissionModule } from './modules/personalRepresentativePermission/personalRepresentativePermission.module'
 import { SequelizeConfigService } from '@island.is/auth-api-lib/personal-representative'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
