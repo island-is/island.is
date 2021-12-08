@@ -1,3 +1,4 @@
+import { makeProsecutor } from '@island.is/judicial-system/formatters'
 import {
   CaseLegalProvisions,
   CaseGender,
@@ -801,6 +802,9 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     const courtCaseNumber = 'R-77/2021'
     const courtDate = new Date('2020-12-19T10:19')
     const courtRoom = '101'
+    const judgeName = 'Judy'
+    const registrarName = 'Robin'
+    const prosecutor = makeProsecutor()
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
@@ -808,11 +812,16 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       courtCaseNumber,
       courtDate,
       courtRoom,
+      false,
+      judgeName,
+      registrarName,
+      prosecutor.name,
+      prosecutor.institution?.name,
     )
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
     )
   })
 
@@ -823,6 +832,9 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     const courtDate = new Date('2020-12-19T10:19')
     const courtRoom = '101'
     const defenderIsSpokesperson = true
+    const judgeName = 'Judy'
+    const registrarName = 'Robin'
+    const prosecutor = makeProsecutor()
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
@@ -831,11 +843,15 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       courtDate,
       courtRoom,
       defenderIsSpokesperson,
+      judgeName,
+      registrarName,
+      prosecutor.name,
+      prosecutor.institution?.name,
     )
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem talsmann sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem talsmann sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
     )
   })
 
@@ -845,6 +861,9 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     const courtCaseNumber = 'R-77/2021'
     const courtDate = new Date('2020-12-19T10:19')
     const courtRoom = undefined
+    const judgeName = 'Judy'
+    const registrarName = 'Robin'
+    const prosecutor = makeProsecutor()
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
@@ -852,11 +871,16 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       courtCaseNumber,
       courtDate,
       courtRoom,
+      false,
+      judgeName,
+      registrarName,
+      prosecutor.name,
+      prosecutor.institution?.name,
     )
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur hefur ekki verið skráður.',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
     )
   })
 })
