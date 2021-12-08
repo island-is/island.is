@@ -106,7 +106,7 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
               {!isMobile && (
                 <FormStepper
                   title={t[processType].title}
-                  completedText={t[processType].completed}
+                  completedText={t.citizen.completed}
                   sections={sections}
                   activeSection={activeSection}
                   activeCar={activeCar}

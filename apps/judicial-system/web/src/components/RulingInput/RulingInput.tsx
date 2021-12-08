@@ -45,7 +45,7 @@ const RulingInput: React.FC<Props> = (props) => {
       name="ruling"
       label={formatMessage(m.label)}
       placeholder={formatMessage(m.placeholder)}
-      defaultValue={workingCase.ruling}
+      value={workingCase.ruling || ''}
       rows={rows ?? 16}
       errorMessage={rulingErrorMessage}
       hasError={rulingErrorMessage !== ''}

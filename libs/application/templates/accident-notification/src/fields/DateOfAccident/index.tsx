@@ -13,6 +13,7 @@ import { accidentDetails } from '../../lib/messages'
 export const DateOfAccident: FC<FieldBaseProps> = ({
   application,
   field,
+  error,
 }: FieldBaseProps) => {
   const { id } = field
   const answers = application.answers as AccidentNotification
@@ -73,6 +74,8 @@ export const DateOfAccident: FC<FieldBaseProps> = ({
         backgroundColor="blue"
         onChange={handleDateChange}
         maxDate={new Date()}
+        minDate={new Date(1970, 0)}
+        error={error}
         required
       />
 
