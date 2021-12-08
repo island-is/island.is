@@ -73,9 +73,6 @@ export class CriminalRecordSubmissionService {
       applicantSsn,
     )
 
-    // Notify Sýslumaður that person has received the criminal record
-    await this.notifySyslumenn(application, record)
-
     // Call sýslumaður to get the document sealed before handing it over to the user
     const sealedRecordResponse = await this.syslumennService.sealCriminalRecord(
       record.contentBase64,
@@ -84,6 +81,9 @@ export class CriminalRecordSubmissionService {
     const sealedRecord: CriminalRecord = {
       contentBase64: sealedRecordResponse.skjal,
     }
+
+    // Notify Sýslumaður that person has received the criminal record
+    await this.notifySyslumenn(application, sealedRecord)
 
     return sealedRecord
   }
