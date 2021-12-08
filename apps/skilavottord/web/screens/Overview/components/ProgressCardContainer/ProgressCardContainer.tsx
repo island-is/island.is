@@ -1,9 +1,8 @@
 import React, { FC } from 'react'
 import { Stack, Text } from '@island.is/island-ui/core'
-import {
-  VehicleInformation,
-  RecycleActionTypes,
-} from '@island.is/skilavottord-web/graphql/schema'
+import { VehicleInformation } from '@island.is/skilavottord-web/graphql/schema'
+
+import { RecycleActionTypes } from '../../types'
 import { ProgressCard } from '../ProgressCard/ProgressCard'
 
 interface Props {
