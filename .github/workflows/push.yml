@@ -143,6 +143,11 @@ jobs:
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
           df -h
 
+      - name: Check node version
+        run: |
+          node -v 
+          ls -l `which node`
+
       - name: Git refs
         id: git_refs
         run: |
@@ -158,6 +163,11 @@ jobs:
           echo "GIT_BASE_BRANCH=$GIT_BASE_BRANCH" >> $GITHUB_ENV
           echo "Base branch is '${GIT_BASE_BRANCH}'"
           echo "Branch is '${GIT_BRANCH}'"
+
+      - name: Check node version
+        run: |
+          node -v 
+          ls -l `which node`
 
       - name: Generate docker image tag
         id: docker_tags
@@ -175,6 +185,11 @@ jobs:
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
 
+      - name: Check node version
+        run: |
+          node -v 
+          ls -l `which node`
+
       - run: |
           if [[ "$GITHUB_HEAD_REF" == "" ]]; then
             echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
@@ -186,6 +201,11 @@ jobs:
           fi
         id: git_nx_head
         name: Preparing HEAD tag
+
+      - name: Check node version
+        run: |
+          node -v 
+          ls -l `which node`
 
       - run: |
           source ./scripts/ci/00_prepare-base-tags.sh
