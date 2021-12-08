@@ -132,7 +132,7 @@ jobs:
 
       - name: Check node version
         run: |
-          node -v
+          node -v 
           ls -l `which node`
 
       - name: Cleanup disk space
