@@ -158,7 +158,9 @@ export const AccidentNotificationSchema = z.object({
   wasTheAccidentFatal: z.enum([YES, NO]),
   fatalAccidentUploadDeathCertificateNow: z.enum([YES, NO]),
   accidentDetails: z.object({
-    dateOfAccident: z.string(),
+    dateOfAccident: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
     isHealthInsured: z.enum([YES, NO]).optional(),
     timeOfAccident: z
       .string()
