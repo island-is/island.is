@@ -133,7 +133,7 @@ jobs:
       - name: Check node version
         run: |
           node -v 
-          ll `which node`
+          ls -l `which node`
 
       - name: Cleanup disk space
         run: |
@@ -261,7 +261,7 @@ jobs:
         # if: steps.generated-files-cache.outputs.cache-hit != 'true'
         run: |
           node --version
-          ll `which node`
+          ls -l `which node`
           tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --skip-cache | xargs realpath --relative-to $(pwd))
 
       - name: Prepare test targets
