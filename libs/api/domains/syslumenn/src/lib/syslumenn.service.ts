@@ -22,6 +22,7 @@ import {
   VirkLeyfi,
 } from '@island.is/clients/syslumenn'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { CertificateInfoRepsonse } from './models/certificateInfo'
 
 const SYSLUMENN_CLIENT_CONFIG = 'SYSLUMENN_CLIENT_CONFIG'
 @Injectable()
@@ -41,12 +42,12 @@ export class SyslumennService {
       lykilord: this.clientConfig.password,
     }
 
-    const response = await this.syslumennApi.innskraningPost({
+    const {audkenni, accessToken} = await this.syslumennApi.innskraningPost({
       notandi: config,
     })
-    if (response.audkenni && response.accessToken) {
-      this.id = response.audkenni
-      this.accessToken = response.accessToken
+    if (audkenni && accessToken) {
+      this.id = audkenni
+      this.accessToken = accessToken
     }
   }
   private async syslumennApiWithAuth() {
@@ -97,8 +98,8 @@ export class SyslumennService {
   async uploadData(
     persons: Person[],
     attachment: Attachment,
-    extraData: { [key: string]: string },
-    applicationType: string = 'Lögheimilisbreyting barns',
+    applicationType: string,
+    extraData?: { [key: string]: string },
   ): Promise<DataUploadResponse> {
     const api = await this.syslumennApiWithAuth()
 
@@ -106,16 +107,20 @@ export class SyslumennService {
       this.id,
       persons,
       attachment,
-      extraData,
       applicationType,
+      extraData,
     )
 
-    await api.syslMottakaGognPost(payload)
-    return {
-      "skilabod": "Gögn móttekin",
-      "audkenni": "95dce120-2bf0-4443-94f8-928b93d45776",
-      "malsnumer": "2021001234"
+    return await api.syslMottakaGognPost(payload)
   }
 
+  async getCertificateInfo(nationalId: string): Promise<void> {//Promise<CertificateInfoRepsonse> {
+    const api = await this.syslumennApiWithAuth()
+    const data =  await api.faVottordUpplysingarGet({
+      audkenni: this.id,
+      kennitala: nationalId
+    })
+    console.log(data)
+    // Object.values(data).map(a => console.log(a))
   }
 }

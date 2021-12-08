@@ -1,4 +1,4 @@
-import { Adili, AdiliTegund, SyslMottakaGognPostRequest } from '@island.is/clients/syslumenn'
+import { AdiliTegund, SyslMottakaGognPostRequest } from '@island.is/clients/syslumenn'
 import { Field, ObjectType } from '@nestjs/graphql'
 import { uuid } from 'uuidv4'
 import { Attachment, Person, PersonType } from '../dto/uploadData.input'
@@ -8,8 +8,8 @@ export function constructUploadDataObject(
   id: string,
   persons: Person[],
   attachment: Attachment,
-  extraData: { [key: string]: string },
   applicationType: string,
+  extraData?: { [key: string]: string },
 ): SyslMottakaGognPostRequest {
   return {payload: {
     audkenni: id,
@@ -33,7 +33,7 @@ export function constructUploadDataObject(
       attachments: [
         { nafnSkraar: attachment.name, innihaldSkraar: attachment.content },
       ],
-      gagnaMengi: extraData,
+      gagnaMengi: extraData ?? {},
     },
   }}
 }

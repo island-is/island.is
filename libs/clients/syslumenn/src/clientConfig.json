@@ -43,26 +43,9 @@
         "responses": {
           "200": {
             "x-nullable": false,
-            "description": "",
+            "description": "Success",
             "schema": {
-              "$ref": "#/definitions/Innskraning"
-            }
-          },
-          "201": {
-            "description": ""
-          },
-          "400": {
-            "x-nullable": false,
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/ProblemDetails"
-            }
-          },
-          "default": {
-            "x-nullable": false,
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/ProblemDetails"
+              "$ref": "#/definitions/InnskraningSvarSkeyti"
             }
           }
         },
@@ -782,22 +765,50 @@
         "responses": {
           "200": {
             "x-nullable": false,
-            "description": "",
+            "description": "Success",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
             }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/Innsiglun": {
+      "post": {
+        "tags": [
+          "Syslumenn"
+        ],
+        "operationId": "Innsiglun_Post",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "skeyti",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InnsiglaSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
           },
           "401": {
-            "x-nullable": false,
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/ProblemDetails"
-            }
-          },
-          "404": {
             "x-nullable": false,
             "description": "",
             "schema": {
@@ -968,20 +979,10 @@
         ],
         "responses": {
           "200": {
-            "description": ""
-          },
-          "401": {
             "x-nullable": false,
-            "description": "",
+            "description": "Success",
             "schema": {
-              "$ref": "#/definitions/ProblemDetails"
-            }
-          },
-          "default": {
-            "x-nullable": false,
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/ProblemDetails"
+                "$ref": "#/definitions/Skilabod"
             }
           }
         },
@@ -1069,24 +1070,16 @@
     }
   },
   "definitions": {
-    "ProblemDetails": {
+    "InnskraningSvarSkeyti": {
       "type": "object",
-      "additionalProperties": {},
       "properties": {
-        "type": {
+        "skilabod": {
           "type": "string"
         },
-        "title": {
+        "audkenni": {
           "type": "string"
         },
-        "status": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "detail": {
-          "type": "string"
-        },
-        "instance": {
+        "accessToken": {
           "type": "string"
         }
       }
@@ -1101,20 +1094,6 @@
         "lykilord": {
           "type": "string",
           "minLength": 9
-        }
-      }
-    },
-    "Innskraning": {
-      "type": "object",
-      "properties": {
-        "skilabod": {
-          "type": "string"
-        },
-        "audkenni": {
-          "type": "string"
-        },
-        "accessToken": {
-          "type": "string"
         }
       }
     },
@@ -1144,6 +1123,28 @@
         "gcrecord": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "ProblemDetails": {
+      "type": "object",
+      "additionalProperties": {},
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "instance": {
+          "type": "string"
         }
       }
     },
@@ -1472,6 +1473,20 @@
           "type": "string"
         },
         "kennitala": {
+          "type": "string"
+        }
+      }
+    },
+    "InnsiglaSkeyti": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "skyring": {
+          "type": "string"
+        },
+        "skjal": {
           "type": "string"
         }
       }

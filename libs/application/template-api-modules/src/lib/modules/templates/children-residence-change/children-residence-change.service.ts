@@ -129,8 +129,10 @@ export class ChildrenResidenceChangeService {
       childResidenceInfo.future.address.postalCode,
     )
 
+    const applicationType = 'Lögheimilisbreyting barns'
+
     const response = await this.syslumennService
-      .uploadData(participants, attachment, extraData)
+      .uploadData(participants, attachment, applicationType, extraData)
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmailWithAttachment(
           generateSyslumennNotificationEmail,

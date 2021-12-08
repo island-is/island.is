@@ -4,12 +4,17 @@ import { Homestay } from './models/homestay'
 import { SyslumennAuction } from './models/syslumennAuction'
 import { SyslumennService } from './syslumenn.service'
 import { OperatingLicense } from './models/operatingLicense'
-import { DataUploadResponse } from './models/dataUpload';
+import { DataUploadResponse } from './models/dataUpload'
 import { UploadDataInput } from './dto/uploadData.input'
+import { CertificateInfoInput } from './dto/certificateInfo.input'
+import { CertificateInfoRepsonse } from './models/certificateInfo';
 
 const cacheTime = process.env.CACHE_TIME || 300
 
 const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
+interface data {
+  data: string[]
+}
 
 @Resolver()
 export class SyslumennResolver {
@@ -34,7 +39,22 @@ export class SyslumennResolver {
   }
 
   @Mutation(() => DataUploadResponse)
-  postSyslumennUploadData(@Args('input') {persons, attachment, applicationType}: UploadDataInput): Promise<DataUploadResponse> {
-    return this.syslumennService.uploadData(persons, attachment,  {}, applicationType)
+  postSyslumennUploadData(
+    @Args('input')
+    { persons, attachment, applicationType }: UploadDataInput,
+  ): Promise<DataUploadResponse> {
+    return this.syslumennService.uploadData(
+      persons,
+      attachment,
+      applicationType,
+    )
+  }
+  
+
+  @Query(() => [String])
+  getSyslumennCertificateInfo(@Args('input') input: CertificateInfoInput): Promise<void> {
+    
+    return this.syslumennService.getCertificateInfo(input.nationalId)
+    
   }
 }
