@@ -76,7 +76,7 @@ export class IslykillService {
 
   async createIslykillSettings(
     nationalId: User['nationalId'],
-    { email, mobile }: { email: string; mobile?: string },
+    { email, mobile }: { email?: string; mobile?: string },
   ) {
     const inputUserData: PublicUser = {
       ssn: nationalId,
