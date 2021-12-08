@@ -1,3 +1,9 @@
+if (process.env.NODE_ENV === 'production') {
+  if (!process.env.BACKEND_URL) {
+    throw new Error('Missing BACKEND_URL environment.')
+  }
+}
+
 const devConfig = {
   production: false,
   sentry: {

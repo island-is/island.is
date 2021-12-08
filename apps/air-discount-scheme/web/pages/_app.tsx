@@ -6,7 +6,6 @@ import getConfig from 'next/config'
 import { ApolloProvider } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { getSession, Provider, useSession } from 'next-auth/client'
-import { Session } from 'next-auth'
 
 import {
   getActiveEnvironment,
@@ -44,14 +43,14 @@ interface Props {
 
 class SupportApplication extends App<Props> {
   static async getInitialProps(appContext) { 
-    
     const { Component, ctx } = appContext
     const apolloClient = initApollo({})
     const customContext = {
       ...ctx,
       apolloClient,
-      AuthContext
     }
+    //console.log('all fine here')
+    //let session = getSession()
     const pageProps = (await Component.getInitialProps(customContext)) as any
 
     const layoutProps = await AppLayout.getInitialProps({
@@ -72,6 +71,7 @@ class SupportApplication extends App<Props> {
       layoutProps: { ...layoutProps, ...pageProps.layoutConfig },
       pageProps,
       apolloState,
+      //session
     }
   }
 
@@ -121,13 +121,15 @@ class SupportApplication extends App<Props> {
     if (isAuthenticated && user) {
       console.log('_app isAuthenticated - hello')
       router.push(returnUrl(user))
-    } else {
-      return null
-    }
+    } 
+    // else {
+    //   console.log('return null')
+    //   return
+    // }
     console.log('before return _app')
     return (
       <Provider 
-        session={getSession() as any} 
+        session={pageProps.session}
         options={{ clientMaxAge: 120, baseUrl: 'http://localhost:4200', basePath: '/api/auth'}} 
       >
         <ApolloProvider client={initApollo(pageProps.apolloState)}>

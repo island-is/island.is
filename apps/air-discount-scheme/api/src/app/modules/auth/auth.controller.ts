@@ -23,7 +23,7 @@ import {
 import { environment } from '../../../environments'
 import { Cookie, CookieOptions, Credentials } from './auth.types'
 
-const { samlEntryPoint, audience: audienceUrl, jwtSecret } = environment.auth
+const { samlEntryPoint, audience: audienceUrl, jwtSecret, identityServerAuth } = environment.auth
 
 const JWT_EXPIRES_IN_SECONDS = 1800
 const ONE_HOUR = 60 * 60 * 1000
@@ -126,7 +126,7 @@ export class AuthController {
 
     return res
       .cookie(name, { returnUrl }, { ...options, maxAge: ONE_HOUR })
-      .redirect(samlEntryPoint)
+      .redirect(identityServerAuth.issuer)
   }
 
   @Get('/logout')

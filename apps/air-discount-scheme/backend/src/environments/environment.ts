@@ -26,6 +26,11 @@ const devConfig = {
       'localhost:7005',
     ],
   },
+  baseUrl: process.env.BASE_URL ?? 'http://localhost:4200',
+  identityServerAuth: {
+    issuer: 'https://identity-server.dev01.devland.is',
+    audience: '@vegagerdin.is',
+  },
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -52,6 +57,11 @@ const prodConfig = {
   },
   redis: {
     urls: [process.env.REDIS_URL_NODE_01!],
+  },
+  baseUrl: process.env.BASE_URL,
+  identityServerAuth: {
+    issuer: 'https://identity-server.dev01.devland.is',
+    audience: '@vegagerdin.is',
   },
 }
 

@@ -56,14 +56,14 @@ async function jwt(token: JWT, user: AuthUser) {
   return await handleJwt(
     token,
     identityServerConfig.clientId,
-    process.env.IDENTITY_SERVER_SECRET ?? 'yDbxy1g2NcXusrae29BenaMCc',
-    process.env.NEXTAUTH_URL ?? 'http://localhost:4200',
+    process.env.IDENTITY_SERVER_SECRET ?? 'yDbxy1g2NcXusrae29BenaMCc', //This is compromised.
+    process.env.NEXTAUTH_URL ?? 'http://localhost:4200/api/auth',
     process.env.IDENTITY_SERVER_DOMAIN ?? '@vegagerdin.is',
   )
 }
 
 async function session(session: AuthSession, user: AuthUser) {
-  console.log(session)
+  console.log('[nextauth] session ' + session)
   return handleSession(session, user)
 }
 
