@@ -293,7 +293,7 @@ export class ApplicationService {
     if (application.spouseNationalId) {
       const emailData = getApplicantEmailDataFromEventType(
         'SPOUSE',
-        environment.baseUrl,
+        environment.oskBaseUrl,
         appModel.spouseEmail,
         municipality,
         appModel.created,
