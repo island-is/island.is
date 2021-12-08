@@ -12,6 +12,7 @@ export const serviceSetup = (services: {
         staging: '',
         prod: '',
       },
+      IDENTITY_SERVER_DOMAIN: '@vegagerdin.is',
     })
     .secrets({
       SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN',

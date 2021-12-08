@@ -19,7 +19,7 @@ const providers = [
     scope: identityServerConfig.scope,
     clientId: identityServerConfig.clientId,
     domain: process.env.IDENTITY_SERVER_DOMAIN ?? '@vegagerdin.is',
-    clientSecret: process.env.IDENTITY_SERVER_SECRET ?? 'yDbxy1g2NcXusrae29BenaMCc',
+    clientSecret: process.env.IDENTITY_SERVER_SECRET,
     protection: 'pkce',
   }),
 ]
@@ -56,7 +56,7 @@ async function jwt(token: JWT, user: AuthUser) {
   return await handleJwt(
     token,
     identityServerConfig.clientId,
-    process.env.IDENTITY_SERVER_SECRET ?? 'yDbxy1g2NcXusrae29BenaMCc', //This is compromised.
+    process.env.IDENTITY_SERVER_SECRET,
     process.env.NEXTAUTH_URL ?? 'http://localhost:4200/api/auth',
     process.env.IDENTITY_SERVER_DOMAIN ?? '@vegagerdin.is',
   )
