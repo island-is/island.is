@@ -3,13 +3,15 @@ import { IsEmail, IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class UpdateIslykillSettingsInput {
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   @IsEmail()
-  email!: string
+  @IsOptional()
+  email?: string
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   @IsString()
-  mobile!: string
+  @IsOptional()
+  mobile?: string
 
   @Field(() => Boolean, { nullable: true })
   @IsOptional()

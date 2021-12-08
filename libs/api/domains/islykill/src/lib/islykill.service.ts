@@ -15,7 +15,7 @@ export class IslykillService {
       email,
       mobile,
       canNudge,
-    }: { email: string; mobile: string; canNudge?: boolean },
+    }: { email?: string; mobile?: string; canNudge?: boolean },
   ): Promise<UpdateIslykillSettings> {
     const inputUserData: PublicUser = {
       ssn: nationalId,
