@@ -77,7 +77,7 @@ export const UserInfoLine: FC<Props> = ({
             ) : renderContent ? (
               renderContent()
             ) : (
-              content
+              <Text variant="default">{content}</Text>
             )}
           </Box>
         </GridColumn>
