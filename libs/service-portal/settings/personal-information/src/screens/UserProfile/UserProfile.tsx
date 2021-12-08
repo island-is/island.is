@@ -14,6 +14,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { UserInfoLine, m } from '@island.is/service-portal/core'
 import { FamilyMemberCard } from '@island.is/service-portal/family'
 import { useUserProfileAndIslykill } from '@island.is/service-portal/graphql'
+import { parseNumber } from '../../utils/phoneHelper'
 
 const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
@@ -75,7 +76,11 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
             }}
             renderContent={() => (
               <Box display="flex" alignItems="center">
-                <Box marginRight={2}>{settings?.mobilePhoneNumber || ''}</Box>
+                <Box marginRight={2}>
+                  {settings?.mobilePhoneNumber
+                    ? parseNumber(settings.mobilePhoneNumber)
+                    : ''}
+                </Box>
                 {settings?.mobilePhoneNumber &&
                 settings?.mobilePhoneNumberVerified === true ? (
                   <Tag variant="blueberry" outlined disabled>

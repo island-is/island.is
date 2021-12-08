@@ -8,7 +8,10 @@ import {
 } from '@island.is/service-portal/core'
 import {
   useCreateUserProfile,
+  useUpdateUserProfile,
   useCreateIslykillSettings,
+  useUserProfile,
+  useUserProfileAndIslykill,
 } from '@island.is/service-portal/graphql'
 import React, { useState } from 'react'
 import { EmailFormData } from '../Forms/EmailForm'
@@ -46,8 +49,15 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const [language, setLanguage] = useState<LanguageFormOption | null>(
     defaultLanguageOption,
   )
+
   const { createUserProfile } = useCreateUserProfile()
+  const { updateUserProfile } = useUpdateUserProfile()
+
   const { createIslykillSettings } = useCreateIslykillSettings()
+
+  const { data: userProfile } = useUserProfile()
+  const { data: settings } = useUserProfileAndIslykill()
+
   const { changeLanguage } = useNamespaces()
   const { pathname } = useLocation()
 
@@ -78,15 +88,26 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   ) => {
     gotoStep('submit-form')
 
+    console.log('mobilePhoneNumber', mobilePhoneNumber)
     try {
-      await createUserProfile({
-        locale,
-        email,
-        mobilePhoneNumber,
-      })
-      await createIslykillSettings({
-        mobile: mobilePhoneNumber,
-      })
+      if (userProfile) {
+        await updateUserProfile({
+          locale,
+          email,
+          mobilePhoneNumber,
+        })
+      } else {
+        await createUserProfile({
+          locale,
+          email,
+          mobilePhoneNumber,
+        })
+      }
+      if (settings?.noUserFound) {
+        await createIslykillSettings({
+          mobile: `+354-${mobilePhoneNumber}`,
+        })
+      }
       gotoStep('form-submitted')
       if (pathname) {
         servicePortalSubmitOnBoardingModal(pathname)

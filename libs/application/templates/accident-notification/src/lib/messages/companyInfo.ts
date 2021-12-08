@@ -38,8 +38,8 @@ export const companyInfo = {
     },
     name: {
       id: 'an.application:companyInfo.labels.name',
-      defaultMessage: 'Fullt nafn',
-      description: 'Full name',
+      defaultMessage: 'Heiti vinnuveitanda',
+      description: 'Label of field for name of employeer',
     },
     email: {
       id: 'an.application:companyInfo.labels.email',
