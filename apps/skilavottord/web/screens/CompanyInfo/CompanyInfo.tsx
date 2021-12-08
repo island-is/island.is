@@ -18,9 +18,12 @@ import {
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { RecyclingPartner } from '@island.is/skilavottord-web/types'
+import {
+  RecyclingPartner,
+  Query,
+} from '@island.is/skilavottord-web/graphql/schema'
 
-const skilavottordAllActiveRecyclingPartnersQuery = gql`
+const SkilavottordAllActiveRecyclingPartnersQuery = gql`
   query skilavottordAllActiveRecyclingPartnersQuery {
     skilavottordAllActiveRecyclingPartners {
       companyId
@@ -35,7 +38,7 @@ const skilavottordAllActiveRecyclingPartnersQuery = gql`
 
 const CompanyInfo: FC = () => {
   const { user } = useContext(UserContext)
-  const { data } = useQuery(skilavottordAllActiveRecyclingPartnersQuery)
+  const { data } = useQuery<Query>(SkilavottordAllActiveRecyclingPartnersQuery)
 
   const {
     t: { companyInfo: t, deregisterSidenav: sidenavText, routes },
@@ -59,7 +62,7 @@ const CompanyInfo: FC = () => {
     <PartnerPageLayout
       side={
         <Sidenav
-          title={partnerName || user?.name}
+          title={partnerName || sidenavText.title}
           sections={[
             {
               icon: 'car',

@@ -130,3 +130,7 @@ export const iconExtraSmall = style({
     },
   }),
 })
+
+export const disabled = style({
+  opacity: 0.5,
+})

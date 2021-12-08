@@ -16,7 +16,6 @@ import {
   LinkProvider,
 } from '@island.is/skilavottord-web/components'
 import * as styles from './PageLayout.css'
-import { ProcessType } from '@island.is/skilavottord-web/types'
 
 interface PageProps {
   children: ReactNode
@@ -29,7 +28,7 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
         <GridContainer>
           <GridRow>
             <GridColumn
-              span={['12/12', '12/12', '8/12', '7/12']}
+              span={['12/12', '12/12', '12/12', '10/12']}
               offset={['0', '0', '1/12', '1/12']}
             >
               <Box paddingBottom={10}>{children}</Box>
@@ -44,7 +43,7 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
 
 interface ProcessPageProps extends PageProps {
   activeSection: number
-  processType: ProcessType
+  processType: 'citizen' | 'company'
   activeCar?: string
 }
 
@@ -136,8 +135,8 @@ export const PartnerPageLayout: FC<PartnerPageProps> = ({ children, side }) => (
             <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
               {side}
             </GridColumn>
-            <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
-              <Box paddingY={[5, 5, 0, 0]}>{children}</Box>
+            <GridColumn span={['12/12', '12/12', '8/12', '9/12']}>
+              <Box paddingY={[5, 5, 3, 3]}>{children}</Box>
             </GridColumn>
           </GridRow>
         </GridContainer>

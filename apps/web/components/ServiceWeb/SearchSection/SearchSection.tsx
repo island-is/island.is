@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Text, Hidden } from '@island.is/island-ui/core'
 import { ServiceWebSearchInput } from '@island.is/web/components'
+import { TextModes } from '../types'
 
 import * as styles from './SearchSection.css'
 
@@ -8,13 +9,17 @@ interface SearchSectionProps {
   title?: string
   logoTitle?: string
   logoUrl?: string
+  textMode?: TextModes
 }
 
 export const SearchSection = ({
   title = '',
   logoTitle = '',
   logoUrl,
+  textMode,
 }: SearchSectionProps) => {
+  const dark = textMode === 'dark'
+
   return (
     <Box
       paddingX={[3, 3, 6]}
@@ -31,19 +36,23 @@ export const SearchSection = ({
           </Box>
         </Hidden>
       )}
-      {title && (
+      {!!title && (
         <>
           {logoTitle && (
             <Hidden above="md">
               <Box marginBottom={3}>
-                <Text as="span" variant="eyebrow" color="white">
+                <Text
+                  as="span"
+                  variant="eyebrow"
+                  {...(dark ? {} : { color: 'white' })}
+                >
                   {logoTitle}
                 </Text>
               </Box>
             </Hidden>
           )}
           <Box marginBottom={[4, 4, 4, 6]}>
-            <Text variant="h1" as="h1" color="white">
+            <Text variant="h1" as="h1" {...(dark ? {} : { color: 'white' })}>
               {title}
             </Text>
           </Box>

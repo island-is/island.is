@@ -9,5 +9,5 @@ export class ApiScopeGroup {
   displayName!: string
 
   @Field(() => String, { nullable: true })
-  description?: string
+  description?: string | null
 }

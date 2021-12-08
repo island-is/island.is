@@ -37,7 +37,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 
 const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
 
-const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
+const FinanceTransactions: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
 

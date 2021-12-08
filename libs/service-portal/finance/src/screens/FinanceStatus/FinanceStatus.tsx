@@ -2,7 +2,7 @@ import React from 'react'
 import flatten from 'lodash/flatten'
 import { gql, useQuery } from '@apollo/client'
 import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
-import { GridColumn, GridRow, Table as T } from '@island.is/island-ui/core'
+import { Table as T } from '@island.is/island-ui/core'
 import subYears from 'date-fns/subYears'
 import { Query } from '@island.is/api/schema'
 import { defineMessage } from 'react-intl'
@@ -10,11 +10,15 @@ import {
   Box,
   Text,
   Stack,
+  Columns,
+  Column,
   Button,
   SkeletonLoader,
   AlertBanner,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { formSubmit } from '../../utils/documentFormSubmission'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
@@ -22,9 +26,7 @@ import {
 import { ExpandHeader, ExpandRow } from '../../components/ExpandableTable'
 import amountFormat from '../../utils/amountFormat'
 import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
-import { showAnnualStatusDocument } from '@island.is/service-portal/graphql'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import DisabledItem from '../../components/DropdownExport/DisabledItem'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
 
 const GetFinanceStatusQuery = gql`
@@ -33,14 +35,9 @@ const GetFinanceStatusQuery = gql`
   }
 `
 
-const FinanceStatus: ServicePortalModuleComponent = () => {
+const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
-  const {
-    showAnnualStatusPdf,
-    loadingAnnualPDF,
-    fetchingYearPDF,
-  } = showAnnualStatusDocument()
 
   const { loading, error, ...statusQuery } = useQuery<Query>(
     GetFinanceStatusQuery,
@@ -73,87 +70,23 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
-        <Text variant="h3" as="h1">
+        <Text variant="h1" as="h1">
           {formatMessage({
             id: 'sp.finance-status:title',
             defaultMessage: 'Staða við ríkissjóð og stofnanir',
           })}
         </Text>
-        <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
-            <Text variant="default">
+        <Columns collapseBelow="sm">
+          <Column width="8/12">
+            <Text variant="intro">
               {formatMessage({
                 id: 'sp.finance-status:intro',
                 defaultMessage:
                   'Hér er að finna sundurliðun skulda og inneigna við ríkissjóð og stofnanir á þeim degi sem skoðað er.',
               })}
             </Text>
-          </GridColumn>
-          <Box display="flex" marginLeft="auto" marginTop={1}>
-            <GridColumn>
-              <Button
-                colorScheme="default"
-                icon="print"
-                iconType="filled"
-                onClick={() => window.print()}
-                preTextIconType="filled"
-                size="default"
-                type="button"
-                variant="utility"
-              >
-                {formatMessage(m.print)}
-              </Button>
-            </GridColumn>
-            <GridColumn>
-              <DropdownExport
-                onGetCSV={() =>
-                  exportGreidslustadaFile(financeStatusData, 'csv')
-                }
-                onGetExcel={() =>
-                  exportGreidslustadaFile(financeStatusData, 'xlsx')
-                }
-                dropdownItems={[
-                  {
-                    title: formatMessage(endOfYearMessage, {
-                      year: previousYear,
-                    }),
-                    onClick: () => showAnnualStatusPdf(previousYear),
-                    render:
-                      loadingAnnualPDF && fetchingYearPDF === previousYear
-                        ? () => (
-                            <DisabledItem
-                              title={formatMessage(endOfYearMessage, {
-                                year: previousYear,
-                              })}
-                              loading
-                              key={previousYear}
-                            />
-                          )
-                        : undefined,
-                  },
-                  {
-                    title: formatMessage(endOfYearMessage, {
-                      year: twoYearsAgo,
-                    }),
-                    onClick: () => showAnnualStatusPdf(twoYearsAgo),
-                    render:
-                      loadingAnnualPDF && fetchingYearPDF === twoYearsAgo
-                        ? () => (
-                            <DisabledItem
-                              title={formatMessage(endOfYearMessage, {
-                                year: twoYearsAgo,
-                              })}
-                              loading
-                              key={twoYearsAgo}
-                            />
-                          )
-                        : undefined,
-                  },
-                ]}
-              />
-            </GridColumn>
-          </Box>
-        </GridRow>
+          </Column>
+        </Columns>
         <Box marginTop={[3, 4, 4, 4, 5]}>
           {loading && (
             <Box padding={3}>
@@ -177,37 +110,93 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
             </Box>
           )}
           {financeStatusData?.organizations?.length > 0 || financeStatusZero ? (
-            <Box marginTop={2}>
-              <T.Table>
-                <ExpandHeader
-                  data={[
-                    { value: formatMessage(m.feeCategory) },
-                    { value: formatMessage(m.guardian) },
-                    { value: formatMessage(m.status), align: 'right' },
-                  ]}
-                />
-                <T.Body>
-                  {financeStatusData?.organizations?.map(
-                    (org: FinanceStatusOrganizationType, i) =>
-                      org.chargeTypes.map((chargeType, ii) => (
-                        <FinanceStatusTableRow
-                          chargeType={chargeType}
-                          organization={org}
-                          key={`${org.id}-${chargeType.id}-${i}-${ii}`}
-                        />
-                      )),
-                  )}
-                  <ExpandRow
-                    last
+            <>
+              <Hidden print={true}>
+                <Columns space="p2" align="right">
+                  <Column width="content">
+                    <Button
+                      colorScheme="default"
+                      icon="print"
+                      iconType="filled"
+                      onClick={() => window.print()}
+                      preTextIconType="filled"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                    >
+                      {formatMessage(m.print)}
+                    </Button>
+                  </Column>
+                  <Column width="content">
+                    <DropdownExport
+                      onGetCSV={() =>
+                        exportGreidslustadaFile(financeStatusData, 'csv')
+                      }
+                      onGetExcel={() =>
+                        exportGreidslustadaFile(financeStatusData, 'xlsx')
+                      }
+                      dropdownItems={[
+                        {
+                          title: formatMessage(endOfYearMessage, {
+                            year: previousYear,
+                          }),
+                          onClick: () =>
+                            formSubmit(
+                              `${financeStatusData.downloadServiceURL}${previousYear}`,
+                              userInfo.access_token,
+                              true,
+                            ),
+                        },
+                        {
+                          title: formatMessage(endOfYearMessage, {
+                            year: twoYearsAgo,
+                          }),
+                          onClick: () =>
+                            formSubmit(
+                              `${financeStatusData.downloadServiceURL}${twoYearsAgo}`,
+                              userInfo.access_token,
+                              true,
+                            ),
+                        },
+                      ]}
+                    />
+                  </Column>
+                </Columns>
+              </Hidden>
+              <Box marginTop={2}>
+                <T.Table>
+                  <ExpandHeader
                     data={[
-                      { value: formatMessage(m.total) },
-                      { value: '' },
-                      { value: getChargeTypeTotal(), align: 'right' },
+                      { value: formatMessage(m.feeCategory) },
+                      { value: formatMessage(m.guardian) },
+                      { value: formatMessage(m.status), align: 'right' },
                     ]}
                   />
-                </T.Body>
-              </T.Table>
-            </Box>
+                  <T.Body>
+                    {financeStatusData?.organizations?.map(
+                      (org: FinanceStatusOrganizationType, i) =>
+                        org.chargeTypes.map((chargeType, ii) => (
+                          <FinanceStatusTableRow
+                            chargeType={chargeType}
+                            organization={org}
+                            downloadURL={financeStatusData.downloadServiceURL}
+                            userInfo={userInfo}
+                            key={`${org.id}-${chargeType.id}-${i}-${ii}`}
+                          />
+                        )),
+                    )}
+                    <ExpandRow
+                      last
+                      data={[
+                        { value: formatMessage(m.total) },
+                        { value: '' },
+                        { value: getChargeTypeTotal(), align: 'right' },
+                      ]}
+                    />
+                  </T.Body>
+                </T.Table>
+              </Box>
+            </>
           ) : null}
         </Box>
       </Stack>
