@@ -45,7 +45,6 @@ export class DataProtectionComplaintService {
         requestData: caseRequest,
       })
     } catch (error) {
-      console.log({ error })
       this.logger.error('Error submitting', error)
 
       throw new Error('Villa kom kom upp við að senda umsókn')

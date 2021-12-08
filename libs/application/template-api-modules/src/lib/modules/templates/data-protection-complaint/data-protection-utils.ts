@@ -212,8 +212,6 @@ export const transformApplicationToComplaintDto = (
 export const getContactInfo = (
   answers: DataProtectionComplaint,
 ): ContactInfo => {
-  console.log({ answers })
-
   const onBehalf = extractAnswer<OnBehalf>(answers, 'info.onBehalf')
   const contact =
     onBehalf === OnBehalf.ORGANIZATION_OR_INSTITUTION

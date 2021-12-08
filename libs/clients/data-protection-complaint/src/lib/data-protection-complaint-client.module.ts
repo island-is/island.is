@@ -24,7 +24,6 @@ const createProviderConfig = (
   config: DataProtectionComplaintClientConfig,
   middleware?: TokenMiddleware,
 ): Configuration => {
-  console.log('configure ')
   return new Configuration({
     fetchApi: createEnhancedFetch({
       name: 'data-protection-complaint-client',
