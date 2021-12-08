@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Box, Stack, Text, SkeletonLoader } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
@@ -9,6 +9,7 @@ import { UserInfoLine, m } from '@island.is/service-portal/core'
 import { FamilyMemberCard } from '@island.is/service-portal/family'
 import { useUserProfileAndIslykill } from '@island.is/service-portal/graphql'
 import CreateWithEmail from '../../components/UserOnboardingModal/Islykill/CreateWithEmail'
+import { parseNumber } from '../../utils/phoneHelper'
 
 const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
@@ -48,7 +49,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                 labelColumnSpan={['8/12', '3/12']}
                 editColumnSpan={['1/1', '2/12']}
                 valueColumnSpan={['1/1', '7/12']}
-                content={settings?.mobile ?? ''}
+                content={settings?.mobile ? parseNumber(settings.mobile) : ''}
                 editLink={{
                   url:
                     ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,

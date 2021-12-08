@@ -23,7 +23,7 @@ import {
 } from '../../../../test/setup'
 import { createDelegation } from '../../../../test/fixtures'
 import {
-  expectMathcingObject,
+  expectMatchingObject,
   getRequestMethod,
   sortDelegations,
 } from '../../../../test/utils'
@@ -177,7 +177,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(3)
-        expectMathcingObject(res.body, expectedModels)
+        expectMatchingObject(res.body, expectedModels)
       })
 
       it('should return all valid delegations with direction=outgoing&valid=now', async () => {
@@ -212,7 +212,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMathcingObject(res.body, expectedModel)
+        expectMatchingObject(res.body, expectedModel)
       })
 
       it('should return all valid delegations with direction=outgoing&valid=includeFuture', async () => {
@@ -255,7 +255,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(2)
-        expectMathcingObject(res.body, expectedModels)
+        expectMatchingObject(res.body, expectedModels)
       })
 
       it('should return all expired delegations with direction=outgoing&valid=past', async () => {
@@ -290,7 +290,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMathcingObject(res.body, expectedModel)
+        expectMatchingObject(res.body, expectedModel)
       })
 
       it('should return an array with single delegation when filtered to specific otherUser', async () => {
@@ -325,7 +325,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMathcingObject(res.body, expectedModel)
+        expectMatchingObject(res.body, expectedModel)
       })
 
       it('should return an empty array when filtered to specific otherUser and no delegation exists', async () => {
@@ -434,7 +434,7 @@ describe('MeDelegationsController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
-        expectMathcingObject(res.body, expectedModel)
+        expectMatchingObject(res.body, expectedModel)
       })
 
       it('should return 404 not found if delegation does not exist or not connected to the user', async () => {
@@ -472,7 +472,7 @@ describe('MeDelegationsController', () => {
     }],
 }}
       `(
-        'should return 201 Created for valid delgation with $model.scopes.length scopes',
+        'should return 201 Created for valid delegation with $model.scopes.length scopes',
         async ({ model }: { model: CreateDelegationDTO }) => {
           // Act
           const res = await server.post(path).send(model)
@@ -483,7 +483,7 @@ describe('MeDelegationsController', () => {
           })
           expect(res.status).toEqual(201)
           expect(count).toEqual(1)
-          expectMathcingObject(res.body, {
+          expectMatchingObject(res.body, {
             ...rows[0].toDTO(),
             toNationalId: model.toNationalId,
             scopes: model.scopes?.map((scope) => ({
@@ -493,6 +493,25 @@ describe('MeDelegationsController', () => {
           })
         },
       )
+
+      it('should return 201 Created for valid delegation with no scopes', async () => {
+        // Act
+        const res = await server
+          .post(path)
+          .send({ toNationalId: nationalRegistryUser.kennitala })
+
+        // Assert
+        const { rows, count } = await delegationModel.findAndCountAll({
+          include: [DelegationScope],
+        })
+        expect(res.status).toEqual(201)
+        expect(count).toEqual(1)
+        expectMatchingObject(res.body, {
+          ...rows[0].toDTO(),
+          toNationalId: nationalRegistryUser.kennitala,
+          scopes: [],
+        })
+      })
 
       it('should return 409 Conflict when existing delegation relationship exists', async () => {
         // Arrange
@@ -644,6 +663,33 @@ describe('MeDelegationsController', () => {
             },
           ],
           validTo: expectedValidTo.toISOString(),
+        })
+      })
+
+      it('should return 200 OK for update with no scopes', async () => {
+        // Arrange
+        const expectedValidTo = addDays(today, 2)
+        const createModel = {
+          toNationalId: nationalRegistryUser.kennitala,
+          scopes: [
+            {
+              name: scopes[0],
+              type: ScopeType.ApiScope,
+              validTo: addDays(today, 1),
+            },
+          ],
+        }
+        const model = {}
+        const delegation = (await server.post(path).send(createModel))
+          .body as DelegationDTO
+
+        // Act
+        const res = await server.put(`${path}/${delegation.id}`).send(model)
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toMatchObject({
+          scopes: [],
         })
       })
 
