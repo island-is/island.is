@@ -143,19 +143,6 @@ jobs:
           sudo apt clean
           df -h
 
-      # - name: Cleanup disk space
-      #   run: |
-      #     df -h
-      #     # https://github.com/actions/virtual-environments/issues/709#issuecomment-612569242
-      #     sudo rm -rf "/usr/local/share/boost"
-      #     sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-      #     df -h
-
-      - name: Check node version
-        run: |
-          node -v 
-          ls -l `which node`
-
       - name: Git refs
         id: git_refs
         run: |
@@ -171,11 +158,6 @@ jobs:
           echo "GIT_BASE_BRANCH=$GIT_BASE_BRANCH" >> $GITHUB_ENV
           echo "Base branch is '${GIT_BASE_BRANCH}'"
           echo "Branch is '${GIT_BRANCH}'"
-
-      - name: Check node version
-        run: |
-          node -v 
-          ls -l `which node`
 
       - name: Generate docker image tag
         id: docker_tags
@@ -193,11 +175,6 @@ jobs:
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
 
-      - name: Check node version
-        run: |
-          node -v 
-          ls -l `which node`
-
       - run: |
           if [[ "$GITHUB_HEAD_REF" == "" ]]; then
             echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
@@ -210,11 +187,6 @@ jobs:
         id: git_nx_head
         name: Preparing HEAD tag
 
-      - name: Check node version
-        run: |
-          node -v 
-          ls -l `which node`
-
       - run: |
           source ./scripts/ci/00_prepare-base-tags.sh
           echo "BASE=$BASE" >> $GITHUB_ENV
@@ -223,11 +195,6 @@ jobs:
         name: Preparing BASE tags
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Check node version
-        run: |
-          node -v 
-          ls -l `which node`
 
       - name: Calculate cache key for node_modules
         id: calculate_node_modules_hash
@@ -245,11 +212,6 @@ jobs:
           export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
-
-      - name: Check node version
-        run: |
-          node -v 
-          ls -l `which node`
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -274,11 +236,6 @@ jobs:
         if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-docker-deps.sh
 
-      - name: Check node version
-        run: |
-          node -v 
-          ls -l `which node`
-
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         uses: island-is/cache@v0.1
@@ -286,19 +243,9 @@ jobs:
           path: node_modules
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
 
-      - name: Check node version
-        run: |
-          node -v 
-          ls -l `which node`
-
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
-
-      - name: Check node version
-        run: |
-          node -v 
-          ls -l `which node`
 
       - name: set BRANCH env var
         run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
