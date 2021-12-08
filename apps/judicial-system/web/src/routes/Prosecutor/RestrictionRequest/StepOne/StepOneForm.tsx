@@ -1,17 +1,14 @@
 import React, { useState } from 'react'
-import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
 import {
   Text,
   Input,
   Box,
-  Checkbox,
   Tooltip,
   AlertMessage,
 } from '@island.is/island-ui/core'
 import {
-  BlueBox,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
@@ -21,6 +18,7 @@ import {
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { isAccusedStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { accused as m } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -39,16 +37,6 @@ export const StepOneForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, loading, handleNextButtonClick } = props
 
   const { formatMessage } = useIntl()
-
-  const [
-    defenderEmailErrorMessage,
-    setDefenderEmailErrorMessage,
-  ] = useState<string>('')
-
-  const [
-    defenderPhoneNumberErrorMessage,
-    setDefenderPhoneNumberErrorMessage,
-  ] = useState<string>('')
 
   const [
     leadInvestigatorErrorMessage,
@@ -73,13 +61,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
     },
     defenderEmail: {
       validations: ['email-format'],
-      errorMessage: defenderEmailErrorMessage,
-      setErrorMessage: setDefenderEmailErrorMessage,
     },
     defenderPhoneNumber: {
       validations: ['phonenumber'],
-      errorMessage: defenderPhoneNumberErrorMessage,
-      setErrorMessage: setDefenderPhoneNumberErrorMessage,
     },
     sendRequestToDefender: {},
     leadInvestigator: {
@@ -130,88 +114,11 @@ export const StepOneForm: React.FC<Props> = (props) => {
           />
         </Box>
         <Box component="section" marginBottom={7}>
-          <Box
-            display="flex"
-            justifyContent="spaceBetween"
-            alignItems="baseline"
-            marginBottom={2}
-          >
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.defenderInfo.heading)}
-            </Text>
-          </Box>
-          <BlueBox>
-            <Box marginBottom={2}>
-              <Input
-                data-testid="defenderName"
-                name="defenderName"
-                autoComplete="off"
-                label={formatMessage(m.sections.defenderInfo.name.label)}
-                placeholder={formatMessage(
-                  m.sections.defenderInfo.name.placeholder,
-                )}
-                defaultValue={workingCase.defenderName}
-                onChange={(event) => setField(event.target)}
-                onBlur={(event) => validateAndSendToServer(event.target)}
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <Input
-                data-testid="defenderEmail"
-                name="defenderEmail"
-                autoComplete="off"
-                label={formatMessage(m.sections.defenderInfo.email.label)}
-                placeholder={formatMessage(
-                  m.sections.defenderInfo.email.placeholder,
-                )}
-                defaultValue={workingCase.defenderEmail}
-                errorMessage={defenderEmailErrorMessage}
-                hasError={defenderEmailErrorMessage !== ''}
-                onChange={(event) => setField(event.target)}
-                onBlur={(event) => validateAndSendToServer(event.target)}
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <InputMask
-                mask="999-9999"
-                maskPlaceholder={null}
-                onChange={(event) => setField(event.target)}
-                onBlur={(event) => validateAndSendToServer(event.target)}
-              >
-                <Input
-                  data-testid="defenderPhoneNumber"
-                  name="defenderPhoneNumber"
-                  autoComplete="off"
-                  label={formatMessage(
-                    m.sections.defenderInfo.phoneNumber.label,
-                  )}
-                  placeholder={formatMessage(
-                    m.sections.defenderInfo.phoneNumber.placeholder,
-                  )}
-                  defaultValue={workingCase.defenderPhoneNumber}
-                  errorMessage={defenderPhoneNumberErrorMessage}
-                  hasError={defenderPhoneNumberErrorMessage !== ''}
-                />
-              </InputMask>
-            </Box>
-            <Checkbox
-              name="sendRequestToDefender"
-              label={formatMessage(m.sections.defenderInfo.sendRequest.label)}
-              tooltip={formatMessage(
-                m.sections.defenderInfo.sendRequest.tooltip,
-                {
-                  caseType:
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhaldskröfuna'
-                      : 'farbannskröfuna',
-                },
-              )}
-              checked={workingCase.sendRequestToDefender}
-              onChange={(event) => setAndSendToServer(event.target)}
-              large
-              filled
-            />
-          </BlueBox>
+          <DefenderInfo
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            setAndSendToServer={setAndSendToServer}
+          />
         </Box>
         {workingCase.type === CaseType.CUSTODY && (
           <Box component="section" marginBottom={10}>

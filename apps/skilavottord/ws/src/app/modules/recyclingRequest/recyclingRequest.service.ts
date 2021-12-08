@@ -10,7 +10,7 @@ import { FjarsyslaService } from '../fjarsysla'
 import { RecyclingPartnerService } from '../recyclingPartner'
 import {
   RecyclingRequestModel,
-  RecyclingRequestUnion,
+  RecyclingRequestResponse,
   RequestErrors,
   RequestStatus,
 } from './recyclingRequest.model'
@@ -192,7 +192,7 @@ export class RecyclingRequestService {
     permno: string,
     nameOfRequestor: string,
     partnerId: string,
-  ): Promise<typeof RecyclingRequestUnion> {
+  ): Promise<typeof RecyclingRequestResponse> {
     const errors = new RequestErrors()
     try {
       this.logger.info(
