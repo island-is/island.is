@@ -53,7 +53,6 @@ export class CriminalRecordSubmissionService {
       auth.authorization,
       application.id,
     )
-    console.log(application)
 
     if (isPayment?.fulfilled) {
       return {
@@ -78,7 +77,6 @@ export class CriminalRecordSubmissionService {
     await this.notifySyslumenn(application, record)
 
     // Call sýslumaður to get the document sealed before handing it over to the user
-    console.log('BEFORE SEALING THE DOCUMENT')
     const sealedRecordResponse = await this.syslumennService.sealCriminalRecord(
       record.contentBase64,
     )
