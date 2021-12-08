@@ -27,6 +27,7 @@ module.exports = {
     '<rootDir>/apps/services/auth-public-api',
     '<rootDir>/apps/services/documents',
     '<rootDir>/apps/services/notifications',
+    '<rootDir>/apps/services/personal-representative',
     '<rootDir>/apps/services/search-indexer',
     '<rootDir>/apps/services/user-profile',
     '<rootDir>/apps/services/xroad-collector',
@@ -188,5 +189,6 @@ module.exports = {
     '<rootDir>/libs/skilavottord/types',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
+    '<rootDir>/apps/services/personal-representative-external',
   ],
 }

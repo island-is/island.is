@@ -667,6 +667,12 @@
     "services-party-letter-registry-api": {
       "tags": []
     },
+    "services-personal-representative": {
+      "tags": []
+    },
+    "services-personal-representative-external": {
+      "tags": []
+    },
     "services-search-indexer": {
       "tags": []
     },
