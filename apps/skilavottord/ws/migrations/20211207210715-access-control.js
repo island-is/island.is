@@ -17,23 +17,20 @@ module.exports.up = (queryInterface, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      partnerid: {
+      partner_id: {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      active: {
-        allowNull: false,
-        type: DataTypes.BOOLEAN,
-      },
-      created_at: {
-        type: DataTypes.DATE,
-      },
-      updated_at: {
-        type: DataTypes.DATE,
-      },
+      // created_at: {
+      //   type: DataTypes.DATE,
+      // },
+      // updated_at: {
+      //   type: DataTypes.DATE,
+      // },
     },
     {
       charset: 'utf8',
+      timestamps: false,
     },
   )
 }
