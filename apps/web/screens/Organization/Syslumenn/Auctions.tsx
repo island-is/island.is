@@ -23,7 +23,7 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
-  QueryGetSyslumennAuctionsArgs,
+  QueryGetAuctionArgs,
   SyslumennAuction,
 } from '@island.is/web/graphql/schema'
 import {
@@ -455,7 +455,7 @@ const Auctions: Screen<AuctionsProps> = ({
 
   const { loading, error, data } = useQuery<
     Query,
-    QueryGetSyslumennAuctionsArgs
+    QueryGetAuctionArgs
   >(GET_SYSLUMENN_AUCTIONS_QUERY, {
     variables: {
       input: {},
