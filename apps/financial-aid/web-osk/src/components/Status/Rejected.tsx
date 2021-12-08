@@ -23,7 +23,8 @@ const Rejected = ({
   return (
     <>
       <Text as="h2" variant="h3" color="red400" marginBottom={[4, 4, 5]}>
-        Umsókn {getState[state].toLowerCase()}
+        Umsókn þinni um fjárhagsaðstoð hefur verið{' '}
+        {getState[state].toLowerCase()}
       </Text>
 
       {isApplicant && (
