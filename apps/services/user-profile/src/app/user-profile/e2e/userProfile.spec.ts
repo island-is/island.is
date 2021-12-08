@@ -13,6 +13,8 @@ import { SMS_VERIFICATION_MAX_TRIES } from '../verification.service'
 // TESTS TO ADD
 // CHECK ENABLE NOTIFICATIONS
 // GET POST DELETE SEE HNIPP GIST STUFF
+// kennitöluflakk
+
 
 jest.useFakeTimers('modern')
 

@@ -21,8 +21,9 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { IslyklarApi } from '@island.is/clients/islykill'
-import { CreateUserDeviceTokenInput } from './dto/createUserDeviceTokenInput'
-import { UpdateUserDeviceTokenInput } from './dto/updateUserDeviceTokenInput'
+import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
+
+
 
 
 // eslint-disable-next-line
@@ -173,21 +174,22 @@ export class UserProfileService {
       .catch(handleError)
   }
 
-  async addDeviceToken(input: CreateUserDeviceTokenInput, user: User) {
+  async addDeviceToken(input: UserDeviceTokenInput, user: User) {
     return await this.userProfileApiWithAuth(user)
       .userProfileControllerAddDeviceToken({
         nationalId: user.nationalId,
-        createUserDeviceTokenDto: input,
+        deviceTokenDto: input,
       })
       .catch(handleError)
   }
 
-  async updateDeviceToken(input: UpdateUserDeviceTokenInput, user: User) {
-    return await this.userProfileApiWithAuth(user)
-      .userProfileControllerUpdateDeviceToken({
+  deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
+    const result =  this.userProfileApiWithAuth(user)
+      .userProfileControllerDeleteDeviceToken({
         nationalId: user.nationalId,
-        updateUserDeviceTokenDto: input,
+        deviceTokenDto: input,
       })
       .catch(handleError)
+    return Boolean(result)
   }
 }

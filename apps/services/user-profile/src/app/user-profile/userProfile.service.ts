@@ -106,22 +106,9 @@ export class UserProfileService {
   
   // DELETE
   async deleteDeviceToken(body: DeviceTokenDto, user: User) {
-    
     const res = await this.UserDeviceTokensModel.destroy({
       where: { nationalId: user.nationalId, deviceToken: body.deviceToken },
     })
-    
-    // try {
-    //   const result = await this.UserDeviceTokensModel.findOne({
-    //     where: { nationalId: user.nationalId, deviceToken: body.deviceToken },
-    //   })
-    //   if(result){
-    //     result.destroy()
-    //   } else {
-    //     throw new NotFoundException()
-    //   }
-    // } catch (e) {
-    //   throw new NotFoundException()
-    // }
+    // return
   }
 }
