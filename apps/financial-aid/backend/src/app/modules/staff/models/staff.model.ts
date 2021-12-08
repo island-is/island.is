@@ -70,7 +70,7 @@ export class StaffModel extends Model<Staff> {
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: false,
+    allowNull: true,
   })
   @ApiProperty()
   usePseudoName: boolean
