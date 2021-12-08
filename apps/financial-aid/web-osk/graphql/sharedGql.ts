@@ -58,7 +58,6 @@ export const ApplicationQuery = gql`
       usePersonalTaxCredit
       state
       amount {
-        id
         aidAmount
         income
         personalTaxCredit
@@ -96,7 +95,7 @@ export const ApplicationMutation = gql`
 
 export const NationalRegistryUserQuery = gql`
   query getNationalRegistryUserQuery {
-    nationalRegistryUserV2 {
+    municipalityNationalRegistryUserV2 {
       nationalId
       fullName
       address {

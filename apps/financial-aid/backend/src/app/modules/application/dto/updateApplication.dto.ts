@@ -3,10 +3,10 @@ import { IsNotEmpty, IsString, IsOptional } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 import {
-  Amount,
   ApplicationEventType,
   ApplicationState,
 } from '@island.is/financial-aid/shared/lib'
+import { CreateAmountDto } from '../../amount'
 
 export class UpdateApplicationDto {
   @IsOptional()
@@ -56,5 +56,5 @@ export class UpdateApplicationDto {
 
   @IsOptional()
   @ApiProperty()
-  readonly amount?: Amount
+  readonly amount?: CreateAmountDto
 }

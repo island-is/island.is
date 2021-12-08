@@ -263,6 +263,16 @@ export class ApplicationService {
       await Promise.all(promises)
     }
 
+    await this.createApplicationEmails(application, appModel, user)
+
+    return appModel
+  }
+
+  private async createApplicationEmails(
+    application: CreateApplicationDto,
+    appModel: ApplicationModel,
+    user: User,
+  ) {
     const municipality = await this.municipalityService.findByMunicipalityId(
       application.municipalityCode,
     )
@@ -275,16 +285,40 @@ export class ApplicationService {
       appModel.created,
     )
 
-    await this.sendEmail(
-      {
-        name: user.name,
-        address: appModel.email,
-      },
-      emailData.subject,
-      ApplicantEmailTemplate(emailData.data),
+    const emailPromises: Promise<void>[] = []
+
+    emailPromises.push(
+      this.sendEmail(
+        {
+          name: user.name,
+          address: appModel.email,
+        },
+        emailData.subject,
+        ApplicantEmailTemplate(emailData.data),
+      ),
     )
 
-    return appModel
+    if (application.spouseNationalId) {
+      const emailData = getApplicantEmailDataFromEventType(
+        'SPOUSE',
+        environment.baseUrl,
+        appModel.spouseEmail,
+        municipality,
+        appModel.created,
+      )
+      emailPromises.push(
+        this.sendEmail(
+          {
+            name: appModel.spouseName,
+            address: appModel.spouseEmail,
+          },
+          emailData.subject,
+          ApplicantEmailTemplate(emailData.data),
+        ),
+      )
+    }
+
+    await Promise.all(emailPromises)
   }
 
   async update(
@@ -299,6 +333,14 @@ export class ApplicationService {
       update.staffId = null
     }
 
+    const [
+      numberOfAffectedRows,
+      [updatedApplication],
+    ] = await this.applicationModel.update(update, {
+      where: { id },
+      returning: true,
+    })
+
     await this.applicationEventService.create({
       applicationId: id,
       eventType: update.event,
@@ -310,25 +352,36 @@ export class ApplicationService {
       staffNationalId: staff?.nationalId,
     })
 
-    const [
-      numberOfAffectedRows,
-      [updatedApplication],
-    ] = await this.applicationModel.update(update, {
-      where: { id },
-      returning: true,
-    })
-
     if (update.amount) {
       const amount = await this.amountService.create(update.amount)
       updatedApplication?.setDataValue('amount', amount)
     }
 
-    const events = await this.applicationEventService.findById(id)
-    updatedApplication?.setDataValue('applicationEvents', events)
+    const events = this.applicationEventService
+      .findById(id)
+      .then((eventsResolved) => {
+        updatedApplication?.setDataValue('applicationEvents', eventsResolved)
+      })
 
-    const files = await this.fileService.getAllApplicationFiles(id)
-    updatedApplication?.setDataValue('files', files)
+    const files = this.fileService
+      .getAllApplicationFiles(id)
+      .then((filesResolved) => {
+        updatedApplication?.setDataValue('files', filesResolved)
+      })
 
+    await Promise.all([
+      events,
+      files,
+      this.sendApplicationUpdateEmail(update, updatedApplication),
+    ])
+
+    return { numberOfAffectedRows, updatedApplication }
+  }
+
+  private async sendApplicationUpdateEmail(
+    update: UpdateApplicationDto,
+    updatedApplication: ApplicationModel,
+  ) {
     if (
       update.event === ApplicationEventType.DATANEEDED ||
       update.event === ApplicationEventType.REJECTED ||
@@ -357,8 +410,6 @@ export class ApplicationService {
         ApplicantEmailTemplate(emailData.data),
       )
     }
-
-    return { numberOfAffectedRows, updatedApplication }
   }
 
   private async sendEmail(
