@@ -31,8 +31,8 @@ import CompanyList from './components/CompanyList'
 import * as styles from './Handover.css'
 
 const SkilavottordVehiclesQuery = gql`
-  query skilavottordVehiclesQuery($nationalId: String!) {
-    skilavottordVehicles(nationalId: $nationalId) {
+  query skilavottordVehiclesQuery {
+    skilavottordVehicles {
       permno
       status
     }
@@ -76,11 +76,7 @@ const Handover: FC = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const nationalId = user?.nationalId
-  const { data, loading, error } = useQuery<Query>(SkilavottordVehiclesQuery, {
-    variables: { nationalId },
-    skip: !nationalId,
-  })
+  const { data, loading, error } = useQuery<Query>(SkilavottordVehiclesQuery)
 
   const cars = data?.skilavottordVehicles || []
   const activeCar = cars.filter(
