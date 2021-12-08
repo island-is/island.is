@@ -103,6 +103,7 @@ export class StaffService {
             municipalityName,
             environment.veitaUrl,
             input.email,
+            isFirstStaffForMunicipality,
           ),
         })
       } else if (input.roles.includes(StaffRole.EMPLOYEE)) {
