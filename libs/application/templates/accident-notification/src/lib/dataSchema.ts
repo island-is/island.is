@@ -158,7 +158,9 @@ export const AccidentNotificationSchema = z.object({
   wasTheAccidentFatal: z.enum([YES, NO]),
   fatalAccidentUploadDeathCertificateNow: z.enum([YES, NO]),
   accidentDetails: z.object({
-    dateOfAccident: z.string(),
+    dateOfAccident: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
     isHealthInsured: z.enum([YES, NO]).optional(),
     timeOfAccident: z
       .string()
@@ -217,9 +219,12 @@ export const AccidentNotificationSchema = z.object({
     postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
       params: error.invalidValue,
     }),
-    community: z.string().refine((x) => x.trim().length > 0, {
-      params: error.invalidValue,
-    }),
+    community: z
+      .string()
+      .regex(/^([^0-9]*)$/)
+      .refine((x) => x.trim().length > 0, {
+        params: error.invalidValue,
+      }),
     moreDetails: z.string().optional(),
   }),
   shipLocation: z.object({
