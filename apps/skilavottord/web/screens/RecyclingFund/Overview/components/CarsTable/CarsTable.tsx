@@ -24,7 +24,7 @@ export const CarsTable: FC<TableProps> = ({ titles, vehicles }) => {
       <Body>
         {vehicles.map(
           ({ vehicleId, vehicleType, newregDate, recyclingRequests }) => {
-            return recyclingRequests.map(({ createdAt, nameOfRequestor }) => {
+            return recyclingRequests?.map(({ createdAt, nameOfRequestor }) => {
               const modelYear = getYear(newregDate)
               const deregistrationDate = getDate(createdAt)
               return (
