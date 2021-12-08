@@ -139,7 +139,9 @@ export const acceptedAmountBreakDown = (amount: Amount): Calculations[] => {
     amount?.deductionFactors?.map((deductionFactor) => {
       return {
         title: deductionFactor.description ?? '',
-        calculation: `${deductionFactor?.amount?.toLocaleString('de-DE')} kr.`,
+        calculation: `- ${deductionFactor?.amount?.toLocaleString(
+          'de-DE',
+        )} kr.`,
       }
     }) ?? []
 
@@ -147,6 +149,12 @@ export const acceptedAmountBreakDown = (amount: Amount): Calculations[] => {
     {
       title: 'Grunnupphæð',
       calculation: `+ ${amount?.aidAmount.toLocaleString('de-DE')} kr.`,
+    },
+    {
+      title: 'Tekjur',
+      calculation: amount?.income
+        ? `- ${amount?.income.toLocaleString('de-DE')} kr.`
+        : '0',
     },
     ...deductionFactors,
     {
