@@ -343,3 +343,8 @@ export interface CreateStaffMunicipality {
   municipalityName: string
   municipalityHomepage?: string
 }
+
+export interface Calculations {
+  title: string
+  calculation: string
+}

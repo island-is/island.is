@@ -9,14 +9,6 @@ import format from 'date-fns/format'
 
 const currentYear = format(new Date(), 'yyyy')
 
-export const aidFinalAmount = (aidAmount: number) => {
-  return `${calculateAidFinalAmount(
-    aidAmount,
-    false,
-    currentYear,
-  ).toLocaleString('de-DE')} kr.`
-}
-
 export const aidCalculation = (
   aidAmount: number,
   usePersonalTaxCredit: boolean,
@@ -42,6 +34,14 @@ export const aidCalculation = (
         usePersonalTaxCredit,
         currentYear,
       ).toLocaleString('de-DE')} kr. `,
+    },
+    {
+      title: 'Áætluð aðstoð (hámark)',
+      calculation: `${calculateAidFinalAmount(
+        aidAmount,
+        usePersonalTaxCredit,
+        currentYear,
+      ).toLocaleString('de-DE')} kr.`,
     },
   ]
 }

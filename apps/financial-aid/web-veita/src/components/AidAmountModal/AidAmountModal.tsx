@@ -3,21 +3,15 @@ import { ModalBase, Text, Box, Button } from '@island.is/island-ui/core'
 
 import * as styles from './AidAmountModal.css'
 
-import format from 'date-fns/format'
+import { Calculations } from '@island.is/financial-aid/shared/lib'
 
-import { calculateAidFinalAmount } from '@island.is/financial-aid/shared/lib'
-
-interface Calculations {
-  title: string
-  calculation: string
-}
+import { Breakdown } from '@island.is/financial-aid/shared/components'
 
 interface Props {
   headline: string
   isVisible: boolean
   onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
   calculations: Calculations[]
-  finalAmount: string
 }
 
 const AidAmountModal = ({
@@ -25,10 +19,7 @@ const AidAmountModal = ({
   isVisible,
   onVisibilityChange,
   calculations,
-  finalAmount,
 }: Props) => {
-  const currentYear = format(new Date(), 'yyyy')
-
   const closeModal = (): void => {
     onVisibilityChange(false)
   }
@@ -56,38 +47,14 @@ const AidAmountModal = ({
             {headline}
           </Text>
 
-          {calculations.map((item, index) => (
-            <span key={'calculation-' + index}>
-              <Box
-                display="flex"
-                justifyContent="spaceBetween"
-                paddingY={2}
-                paddingX={3}
-                borderTopWidth="standard"
-                borderColor="blue200"
-              >
-                <Text variant="small">{item.title}</Text>
-                <Text>{item.calculation}</Text>
-              </Box>
-            </span>
-          ))}
+          <Breakdown calculations={calculations} />
 
           <Box
             display="flex"
-            justifyContent="spaceBetween"
-            background="blue100"
-            borderTopWidth="standard"
-            borderBottomWidth="standard"
-            borderColor="blue200"
-            paddingY={2}
-            paddingX={3}
-            marginBottom={4}
+            justifyContent="flexEnd"
+            onClick={closeModal}
+            marginTop={4}
           >
-            <Text variant="small"> {headline} (hámark)</Text>
-            <Text>{finalAmount}</Text>
-          </Box>
-
-          <Box display="flex" justifyContent="flexEnd" onClick={closeModal}>
             <Button>Loka</Button>
           </Box>
         </Box>
