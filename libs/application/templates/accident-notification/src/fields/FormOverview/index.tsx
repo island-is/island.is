@@ -522,7 +522,12 @@ export const FormOverview: FC<FieldBaseProps> = ({
                   message={
                     <Text variant="small">
                       {formatMessage(overview.alertMessage.description)}
-                      <span className={cn(styles.boldFileNames)}>
+                      <span
+                        className={cn(
+                          styles.boldFileNames,
+                          styles.paddingLeftForFileNames,
+                        )}
+                      >
                         {missingDocuments}
                       </span>
                     </Text>
