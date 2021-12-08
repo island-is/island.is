@@ -12,6 +12,7 @@ import {
   CaseType,
   isRestrictionCase,
   SessionArrangements,
+  User,
 } from '@island.is/judicial-system/types'
 import type { CaseGender } from '@island.is/judicial-system/types'
 
@@ -228,6 +229,10 @@ export function formatDefenderCourtDateEmailNotification(
   courtDate?: Date,
   courtRoom?: string,
   defenderIsSpokesperson = false,
+  judgeName?: string,
+  registrarName?: string,
+  prosecutorName?: string,
+  prosecutorInstitution?: string,
 ): string {
   return `${court} hefur boðað þig í fyrirtöku sem ${
     defenderIsSpokesperson ? 'talsmann' : 'verjanda'
@@ -241,7 +246,7 @@ export function formatDefenderCourtDateEmailNotification(
       ', kl.',
     )}.<br /><br />Málsnúmer: ${courtCaseNumber}.<br /><br />${
     courtRoom ? `Dómsalur: ${courtRoom}` : 'Dómsalur hefur ekki verið skráður'
-  }.`
+  }.<br /><br />Dómari: ${judgeName}.<br /><br />Dómritari: ${registrarName}.<br /><br />Sækjandi: ${prosecutorName} (${prosecutorInstitution}).`
 }
 
 // This function is only intended for case type CUSTODY
