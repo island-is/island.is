@@ -23,8 +23,8 @@ import {
   customStyles,
 } from './Components'
 import { InputBackgroundColor } from '../Input/types'
-
 import * as styles from './Select.css'
+
 interface AriaError {
   'aria-invalid': boolean
   'aria-describedby': string
@@ -33,6 +33,8 @@ interface AriaError {
 export type Option = {
   label: string
   value: string | number
+  description?: string
+  descriptionTruncated?: boolean
   disabled?: boolean
 }
 
