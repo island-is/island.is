@@ -6,8 +6,7 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "strict": true
+    "isolatedModules": true
   },
   "include": [],
   "exclude": ["node_modules"],
