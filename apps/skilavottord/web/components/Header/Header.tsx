@@ -50,7 +50,8 @@ export const Header: FC = () => {
     )
     const queryKeys = Object.keys(router.query)
     const path = queryKeys.reduce(
-      (acc, key) => acc.replace(`[${key}]`, router.query[key].toString()),
+      (acc, key) =>
+        acc.replace(`[${key}]`, (router.query[key] || '').toString()),
       route,
     )
     if (route) {
@@ -70,7 +71,14 @@ export const Header: FC = () => {
     setBaseUrl(baseUrl)
   }, [])
 
-  const homeRoute = routes.home[user?.role as Role] ?? routes.home['citizen']
+  const mapUserRoleToRoute = (userRole?: Role | null) => {
+    if (!userRole || userRole === Role.developer) {
+      return Role.citizen
+    }
+    return userRole
+  }
+
+  const homeRoute = routes.home[mapUserRoleToRoute(user?.role)]
 
   return (
     <IslandUIHeader
