@@ -65,6 +65,7 @@ export class UpdateDelegationDTO {
   @ApiPropertyOptional({ type: [UpdateDelegationScopeDTO] })
   @Type(() => UpdateDelegationScopeDTO)
   @ValidateNested({ each: true })
+  @IsOptional()
   @IsArray()
   scopes?: UpdateDelegationScopeDTO[]
 }
