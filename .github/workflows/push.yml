@@ -258,10 +258,9 @@ jobs:
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
 
       - name: Generate schemas
-        # if: steps.generated-files-cache.outputs.cache-hit != 'true'
+        if: steps.generated-files-cache.outputs.cache-hit != 'true'
         run: |
           node --version
-          ls -l `which node`
           tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --skip-cache | xargs realpath --relative-to $(pwd))
 
       - name: Prepare test targets

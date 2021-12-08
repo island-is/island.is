@@ -62,11 +62,6 @@ jobs:
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
 
-      - name: Check node version
-        run: |
-          node -v 
-          ls -l `which node`
-
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         uses: island-is/cache@v0.1
@@ -101,10 +96,9 @@ jobs:
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
 
       - name: Generate schemas
-        # if: steps.generated-files-cache.outputs.cache-hit != 'true'
+        if: steps.generated-files-cache.outputs.cache-hit != 'true'
         run: |
           node --version
-          ls -l `which node`
           tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --skip-cache | xargs realpath --relative-to $(pwd))
 
       # - name: Security audit Node modules
