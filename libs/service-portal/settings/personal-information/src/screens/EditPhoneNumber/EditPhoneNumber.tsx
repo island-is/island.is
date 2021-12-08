@@ -63,6 +63,10 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
 
     const parsePhoneNumber = parsePhoneNumberFromString(formData.tel, 'IS')
     try {
+      if (!parsePhoneNumber?.isValid()) {
+        throw Error('Not valid phone number')
+      }
+
       if (settings) {
         await updateIslykill({
           variables: {
@@ -82,9 +86,6 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
         await createUserProfile({
           mobilePhoneNumber: formData.tel,
         })
-      }
-      if (!parsePhoneNumber?.isValid()) {
-        throw Error('Not valid phone number')
       }
       setStatus('success')
       toast.success(
