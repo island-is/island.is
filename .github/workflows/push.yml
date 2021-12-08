@@ -132,15 +132,15 @@ jobs:
 
       - name: Check node version
         run: |
-          node -v 
-          ll `which node`
+          node -v
+          ls -l `which node`
 
       - name: Cleanup disk space
         run: |
           df -h
           # https://github.com/actions/virtual-environments/issues/709#issuecomment-612569242
           sudo rm -rf "/usr/local/share/boost"
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo apt clean
           df -h
 
       - name: Git refs
@@ -261,7 +261,6 @@ jobs:
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
         run: |
           node --version
-          ll `which node`
           tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --skip-cache | xargs realpath --relative-to $(pwd))
 
       - name: Prepare test targets

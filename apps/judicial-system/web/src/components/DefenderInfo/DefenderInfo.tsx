@@ -228,7 +228,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
             placeholder={formatMessage(
               getTranslations().defenderName.placeholder,
             )}
-            defaultValue={
+            value={
               workingCase.defenderName
                 ? {
                     label: workingCase.defenderName ?? '',

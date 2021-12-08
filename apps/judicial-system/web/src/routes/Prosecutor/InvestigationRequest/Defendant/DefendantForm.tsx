@@ -118,7 +118,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                       updateCase,
                     )
                   }
-                  defaultValue={
+                  value={
                     workingCase?.id
                       ? {
                           value: CaseType[workingCase.type],
@@ -148,7 +148,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                 placeholder={formatMessage(
                   m.sections.investigationType.description.placeholder,
                 )}
-                defaultValue={workingCase.description}
+                value={workingCase.description || ''}
                 autoComplete="off"
                 onChange={(event) => {
                   setField(event.target)
