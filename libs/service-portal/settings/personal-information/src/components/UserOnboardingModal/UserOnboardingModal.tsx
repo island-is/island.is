@@ -2,6 +2,7 @@ import { toast } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { defaultLanguage } from '@island.is/shared/constants'
+import { useMutation } from '@apollo/client'
 import {
   Modal,
   ServicePortalModuleComponent,
@@ -12,6 +13,7 @@ import {
   useCreateIslykillSettings,
   useUserProfile,
   useUserProfileAndIslykill,
+  UPDATE_ISLYKILL_SETTINGS,
 } from '@island.is/service-portal/graphql'
 import React, { useState } from 'react'
 import { EmailFormData } from '../Forms/EmailForm'
@@ -54,6 +56,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const { updateUserProfile } = useUpdateUserProfile()
 
   const { createIslykillSettings } = useCreateIslykillSettings()
+  const [updateIslykill] = useMutation(UPDATE_ISLYKILL_SETTINGS)
 
   const { data: userProfile } = useUserProfile()
   const { data: settings } = useUserProfileAndIslykill()
@@ -105,6 +108,14 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       if (settings?.noUserFound) {
         await createIslykillSettings({
           mobile: `+354-${mobilePhoneNumber}`,
+        })
+      } else {
+        await updateIslykill({
+          variables: {
+            input: {
+              mobile: `+354-${mobilePhoneNumber}`,
+            },
+          },
         })
       }
       gotoStep('form-submitted')
