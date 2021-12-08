@@ -17,6 +17,7 @@ import { logger } from '@island.is/logging'
 import {
   EmployeeEmailTemplate,
   AdminEmailTemplate,
+  AdminAndEmployeeEmailTemplate,
 } from '../application/emailTemplates'
 
 @Injectable()
@@ -78,18 +79,35 @@ export class StaffService {
     user: Staff,
     isFirstStaffForMunicipality: boolean,
   ) {
+    const contact = {
+      from: {
+        name: user.name,
+        address: user.email,
+      },
+      replyTo: {
+        name: user.name,
+        address: user.email,
+      },
+      to: input.email,
+    }
+
     try {
-      if (input.roles.includes(StaffRole.EMPLOYEE)) {
+      if (
+        input.roles.includes(StaffRole.EMPLOYEE) &&
+        input.roles.includes(StaffRole.ADMIN)
+      ) {
         await this.emailService.sendEmail({
-          from: {
-            name: user.name,
-            address: user.email,
-          },
-          replyTo: {
-            name: user.name,
-            address: user.email,
-          },
-          to: input.email,
+          ...contact,
+          subject: 'Vinnsluaðili og stjórnandi í vinnslukerfi fjárhagsaðstoðar',
+          html: AdminAndEmployeeEmailTemplate(
+            municipalityName,
+            environment.veitaUrl,
+            input.email,
+          ),
+        })
+      } else if (input.roles.includes(StaffRole.EMPLOYEE)) {
+        await this.emailService.sendEmail({
+          ...contact,
           subject: 'Vinnsluaðili í vinnslukerfi fjárhagsaðstoðar',
           html: EmployeeEmailTemplate(
             municipalityName,
@@ -97,20 +115,15 @@ export class StaffService {
             input.email,
           ),
         })
-      }
-      if (input.roles.includes(StaffRole.ADMIN)) {
+      } else if (input.roles.includes(StaffRole.ADMIN)) {
         await this.emailService.sendEmail({
-          from: {
-            name: user.name,
-            address: user.email,
-          },
-          replyTo: {
-            name: user.name,
-            address: user.email,
-          },
-          to: input.email,
+          ...contact,
           subject: 'Stjórnandi í vinnslukerfi fjárhagsaðstoðar',
-          html: AdminEmailTemplate(environment.veitaUrl, input.email),
+          html: AdminEmailTemplate(
+            environment.veitaUrl,
+            input.email,
+            isFirstStaffForMunicipality,
+          ),
         })
       }
     } catch (error) {
@@ -121,9 +134,9 @@ export class StaffService {
   async createStaff(
     input: CreateStaffDto,
     municipality: CreateStaffMunicipality,
-    user?: Staff,
+    user: Staff,
     t?: Transaction,
-    isFirstStaffForMunicipality?: false,
+    isFirstStaffForMunicipality: boolean = false,
   ): Promise<StaffModel> {
     await this.sendEmail(
       input,

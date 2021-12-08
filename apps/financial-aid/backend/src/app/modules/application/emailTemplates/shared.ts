@@ -49,3 +49,25 @@ export const veitaFooter = (email: string) => `<tr>
    </tr> 
  </table></td> 
 </tr>  `
+
+export const municipalitySettings = (isFirstAdmin: boolean) => {
+  return isFirstAdmin
+    ? `<tr> 
+  <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#00003c;font-size:18px"><strong>Að virkja Veitu svo hægt sé að taka við umsóknum</strong></p></td> 
+ </tr> 
+ <tr> 
+  <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#00003c;font-size:18px">Svo hægt sé að taka við umsóknum í gegnum Ósk umsóknarferli þarf að fylla út alla reiti undir Sveitarfélagsstillingar sem þú finnur vinstra megin í viðmótinu:</p></td> 
+ </tr> 
+ <tr> 
+  <td align="left" style="padding:0;Margin:0;font-size:0px"><img class="adapt-img" src="https://orohoy.stripocdn.email/content/guids/CABINET_2da6ab5ca1b75ded0e14919f1227b425/images/virkjaveituexample.png" alt style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic" height="44"></td> 
+ </tr> `
+    : `<tr> 
+ <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#00003c;font-size:18px"><strong>Stillingar fyrir sveitarfélagið</strong></p></td> 
+</tr> 
+<tr> 
+ <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#00003c;font-size:18px">Undir Sveitarfélagsstillingar eru meðal annars skilgreindar upphæðir fjárhagsaðstoðar sem og vefslóðir og netföng sem notendum er bent á sér til upplýsinga í sjálfvirkum tölvupóstum og á stöðusíðum umsókna.</p></td> 
+</tr> 
+<tr> 
+ <td align="left" style="padding:0;Margin:0;font-size:0px"><img class="adapt-img" src="https://orohoy.stripocdn.email/content/guids/CABINET_2da6ab5ca1b75ded0e14919f1227b425/images/virkjaveituexample.png" alt style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic" height="44"></td> 
+</tr> `
+}

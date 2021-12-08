@@ -1,6 +1,16 @@
-import { fonts, header, sambandIcon, veitaFooter } from './shared'
+import {
+  fonts,
+  header,
+  municipalitySettings,
+  sambandIcon,
+  veitaFooter,
+} from './shared'
 
-export const AdminEmailTemplate = (veitaUrl: string, to: string) => {
+export const AdminEmailTemplate = (
+  veitaUrl: string,
+  to: string,
+  isFirstAdmin: boolean,
+) => {
   return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" style="font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif">
  <head> 
@@ -124,15 +134,7 @@ a[x-apple-data-detectors] {
                  <tr> 
                   <td align="center" valign="top" style="padding:0;Margin:0;width:540px"> 
                    <table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> 
-                     <tr> 
-                      <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#00003c;font-size:18px"><strong>Að virkja Veitu svo hægt sé að taka við umsóknum</strong></p></td> 
-                     </tr> 
-                     <tr> 
-                      <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#00003c;font-size:18px">Svo hægt sé að taka við umsóknum í gegnum Ósk umsóknarferli þarf að fylla út alla reiti undir Sveitarfélagsstillingar sem þú finnur vinstra megin í viðmótinu:</p></td> 
-                     </tr> 
-                     <tr> 
-                      <td align="left" style="padding:0;Margin:0;font-size:0px"><img class="adapt-img" src="https://orohoy.stripocdn.email/content/guids/CABINET_2da6ab5ca1b75ded0e14919f1227b425/images/virkjaveituexample.png" alt style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic" height="44"></td> 
-                     </tr> 
+                    ${municipalitySettings(isFirstAdmin)}
                      <tr> 
                       <td align="center" style="padding:0;Margin:0;padding-top:40px;padding-bottom:40px;font-size:0"> 
                        <table border="0" width="100%" height="100%" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> 
