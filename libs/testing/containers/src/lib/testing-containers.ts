@@ -1,17 +1,10 @@
 import { GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace NodeJS {
-    interface Global {
-      __CONTAINER_POSTGRES__: StartedTestContainer
-    }
-  }
-}
+let postgresContainer: StartedTestContainer
 
 export const startPostgres = async () => {
   const name = 'test_db'
-  const container = await new GenericContainer(
+  postgresContainer = await new GenericContainer(
     'public.ecr.aws/bitnami/postgresql:11.12.0',
   )
     .withEnv('POSTGRES_DB', name)
@@ -28,12 +21,10 @@ export const startPostgres = async () => {
     .withExposedPorts(5432)
     .start()
 
-  const port = container.getMappedPort(5432)
+  const port = postgresContainer.getMappedPort(5432)
   process.env.DB_PORT = `${port}`
-
-  global.__CONTAINER_POSTGRES__ = container
 }
 
 export const stopPostgres = () => {
-  global.__CONTAINER_POSTGRES__.stop()
+  postgresContainer.stop()
 }
