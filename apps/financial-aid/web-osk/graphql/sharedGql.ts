@@ -58,7 +58,6 @@ export const ApplicationQuery = gql`
       usePersonalTaxCredit
       state
       amount {
-        id
         aidAmount
         income
         personalTaxCredit
