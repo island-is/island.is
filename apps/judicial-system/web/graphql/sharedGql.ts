@@ -100,6 +100,12 @@ export const CaseQuery = gql`
         name
         title
       }
+      courtRecordSignatory {
+        id
+        name
+        title
+      }
+      courtRecordSignatureDate
       registrar {
         id
         name
