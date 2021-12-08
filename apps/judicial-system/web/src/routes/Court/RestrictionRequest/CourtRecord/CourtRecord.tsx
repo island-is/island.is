@@ -215,7 +215,7 @@ export const CourtRecord: React.FC = () => {
               name="courtLocation"
               tooltip={formatMessage(m.sections.courtLocation.tooltip)}
               label={formatMessage(m.sections.courtLocation.label)}
-              defaultValue={workingCase.courtLocation}
+              value={workingCase.courtLocation || ''}
               placeholder={formatMessage(m.sections.courtLocation.placeholder)}
               onChange={(event) =>
                 removeTabsValidateAndSet(
@@ -266,7 +266,7 @@ export const CourtRecord: React.FC = () => {
             data-testid="courtAttendees"
             name="courtAttendees"
             label="Mættir eru"
-            defaultValue={workingCase.courtAttendees}
+            value={workingCase.courtAttendees || ''}
             placeholder="Skrifa hér..."
             onChange={(event) =>
               removeTabsValidateAndSet(
@@ -328,7 +328,7 @@ export const CourtRecord: React.FC = () => {
                 NounCases.GENITIVE,
               ),
             })}
-            defaultValue={workingCase.accusedBookings}
+            value={workingCase.accusedBookings || ''}
             placeholder={formatMessage(m.sections.accusedBookings.placeholder)}
             onChange={(event) =>
               removeTabsValidateAndSet(
@@ -363,7 +363,7 @@ export const CourtRecord: React.FC = () => {
               data-testid="litigationPresentations"
               name="litigationPresentations"
               label="Málflutningur og aðrar bókanir"
-              defaultValue={workingCase.litigationPresentations}
+              value={workingCase.litigationPresentations || ''}
               placeholder="Málflutningsræður og annað sem fram kom í þinghaldi er skráð hér..."
               onChange={(event) =>
                 removeTabsValidateAndSet(
