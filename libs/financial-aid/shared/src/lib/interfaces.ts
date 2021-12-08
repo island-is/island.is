@@ -206,7 +206,7 @@ export interface ApplicantEmailData {
   applicationChange: string
   applicationMonth: string
   applicationYear: number
-  statusPageUrl: string
+  applicationLink: string
   applicantEmail: string
   municipality: Municipality
 }
