@@ -1,4 +1,8 @@
-import { Base, NationalRegistry } from '../../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  NationalRegistry,
+  Client,
+} from '../../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 import { settings } from '../../../../../infra/src/dsl/settings'
 import { PostgresInfo } from '../../../../../infra/src/dsl/types/input-types'
@@ -44,7 +48,7 @@ export const serviceSetup = (services: {
         prod: 'noreply@island.is',
       },
     })
-    .xroad(Base, NationalRegistry)
+    .xroad(Base, Client, NationalRegistry)
     .secrets({
       ACCESS_GROUP_DMR:
         '/k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS',

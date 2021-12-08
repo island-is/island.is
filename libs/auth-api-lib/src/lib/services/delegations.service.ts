@@ -127,8 +127,8 @@ export class DelegationsService {
 
     this.logger.debug(`Updating delegation ${delegation.id}`)
 
-    if (input.scopes) {
-      await this.delegationScopeService.delete(delegationId)
+    await this.delegationScopeService.delete(delegationId)
+    if (input.scopes && input.scopes.length > 0) {
       await this.delegationScopeService.createMany(delegationId, input.scopes)
     }
     return this.findById(fromNationalId, delegationId)
