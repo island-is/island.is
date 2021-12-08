@@ -155,13 +155,15 @@ export class PaymentScheduleService {
   }
 
   async updateCurrentEmployer(
-    nationalId: string,
+    user: User,
     input: UpdateCurrentEmployerInput,
   ): Promise<UpdateCurrentEmployerResponse> {
     try {
-      await this.paymentScheduleApi.wagesdeductionnationalIdPUT1Raw({
+      await this.paymentScheduleApiWithAuth(
+        user,
+      ).wagesdeductionnationalIdPUT1Raw({
         input: { employer: { employerNationalId: input.employerNationalId } },
-        nationalId: nationalId,
+        nationalId: user.nationalId,
       })
     } catch (error) {
       this.logger.error('Error occurred when updating current employer', error)
