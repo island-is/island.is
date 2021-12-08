@@ -36,14 +36,17 @@ export interface Staff {
   municipalityHomepage?: string
   nickname?: string
   email?: string
+  usePseudoName?: boolean
 }
 
 export interface UpdateStaff {
+  name?: string
   nationalId?: string
   roles?: StaffRole[]
   active?: boolean
   nickname?: string
   email?: string
+  usePseudoName?: boolean
 }
 
 export interface Aid {
@@ -203,7 +206,7 @@ export interface ApplicantEmailData {
   applicationChange: string
   applicationMonth: string
   applicationYear: number
-  statusPageUrl: string
+  applicationLink: string
   applicantEmail: string
   municipality: Municipality
 }
@@ -318,7 +321,7 @@ export interface CreateStaff {
   municipalityId?: string
 }
 
-export interface CreateStaffMuncipality {
+export interface CreateStaffMunicipality {
   municipalityId: string
   municipalityName: string
   municipalityHomepage?: string

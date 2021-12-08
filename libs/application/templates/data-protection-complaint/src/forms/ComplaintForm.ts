@@ -630,13 +630,12 @@ export const ComplaintForm: Form = buildForm({
               component: 'ComplaintOverview',
             }),
             buildSubmitField({
-              id: 'overview.termsAgreement',
+              id: 'overview.sendApplication',
               title: '',
-              placement: 'screen',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: overview.labels.termsAgreement,
+                  name: overview.labels.sendApplication,
                   type: 'primary',
                 },
               ],

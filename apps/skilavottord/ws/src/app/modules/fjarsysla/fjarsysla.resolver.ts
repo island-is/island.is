@@ -1,6 +1,6 @@
 import { Query, Resolver, Args } from '@nestjs/graphql'
 
-import { Authorize } from '../auth'
+import { Authorize, Role } from '../auth'
 import { Fjarsysla } from './fjarsysla.model'
 import { FjarsyslaService } from './fjarsysla.service'
 
@@ -9,7 +9,7 @@ import { FjarsyslaService } from './fjarsysla.service'
 export class FjarsyslaResolver {
   constructor(private fjarsyslaService: FjarsyslaService) {}
 
-  @Authorize({ roles: ['developer', 'recyclingCompany'] })
+  @Authorize({ roles: [Role.developer, Role.recyclingCompany] })
   @Query(() => Boolean)
   async skilavottordFjarsyslaSkilagjald(
     @Args('nationalId') nid: string,

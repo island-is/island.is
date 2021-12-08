@@ -1,5 +1,8 @@
 import { useMutation } from '@apollo/client'
-import { PaymentScheduleConditions } from '@island.is/api/schema'
+import {
+  PaymentScheduleConditions,
+  PaymentScheduleDebts,
+} from '@island.is/api/schema'
 import {
   ApplicationConfigurations,
   DefaultEvents,
@@ -28,8 +31,8 @@ interface ErrorMessageProps {
   summary: string
   linkOne: string
   linkOneName: string
-  linkTwo: string
-  linkTwoName: string
+  linkTwo?: string
+  linkTwoName?: string
 }
 
 const ErrorMessage = ({
@@ -54,11 +57,13 @@ const ErrorMessage = ({
             {linkOneName}
           </Button>
         </Link>
-        <Link href={linkTwo} newTab={true}>
-          <Button variant="text" icon="open" iconType="outline">
-            {linkTwoName}
-          </Button>
-        </Link>
+        {linkTwo && (
+          <Link href={linkTwo} newTab={true}>
+            <Button variant="text" icon="open" iconType="outline">
+              {linkTwoName}
+            </Button>
+          </Link>
+        )}
       </Stack>
     </Box>
   )
@@ -95,6 +100,9 @@ export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
   const prerequisites = (application.externalData as PaymentPlanExternalData)
     .paymentPlanPrerequisites?.data?.conditions as PaymentScheduleConditions
 
+  const debts = (application.externalData as PaymentPlanExternalData)
+    .paymentPlanPrerequisites?.data?.debts as PaymentScheduleDebts[]
+
   const ShowErrorMessage = () => {
     if (prerequisites.maxDebt)
       return (
@@ -127,6 +135,16 @@ export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
           linkTwoName={formatMessage(
             errorModal.estimationOfReturns.linkTwoName,
           )}
+        />
+      )
+
+    if (debts?.length === 0)
+      return (
+        <ErrorMessage
+          title={formatMessage(errorModal.noDebts.title)}
+          summary={formatMessage(errorModal.noDebts.summary)}
+          linkOne={formatMessage(errorModal.noDebts.linkOne)}
+          linkOneName={formatMessage(errorModal.noDebts.linkOneName)}
         />
       )
     // This happens if prerequisites.collectionActions || !prerequisites.doNotOwe
