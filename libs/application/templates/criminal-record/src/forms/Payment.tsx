@@ -22,6 +22,7 @@ export const Payment: Form = buildForm({
   title: '',
   mode: FormModes.APPLYING,
   renderLastScreenButton: false,
+  renderLastScreenBackButton: false,
   children: [
     buildSection({
       id: 'externalData',

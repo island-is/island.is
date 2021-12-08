@@ -12,7 +12,7 @@ export class CriminalRecordService {
     return await this.criminalRecordApi.getCriminalRecord(ssn)
   }
 
-  async checkCriminalRecord(ssn: string): Promise<Boolean> {
-    return await this.criminalRecordApi.checkCriminalRecord(ssn)
+  async validateCriminalRecord(ssn: string): Promise<Boolean> {
+    return await this.criminalRecordApi.validateCriminalRecord(ssn)
   }
 }

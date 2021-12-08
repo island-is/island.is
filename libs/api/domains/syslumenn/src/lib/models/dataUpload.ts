@@ -27,3 +27,9 @@ export interface DataUploadResponse {
   audkenni: string
   malsnumer: string
 }
+
+export interface SealedCriminalRecordResponse {
+  audkenni: string
+  skilabod: string
+  skjal: string
+}
