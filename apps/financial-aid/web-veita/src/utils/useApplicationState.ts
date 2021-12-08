@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import { useMutation } from '@apollo/client'
 import {
+  Amount,
   Application,
   ApplicationEventType,
   ApplicationFilters,
@@ -37,9 +38,9 @@ export const useApplicationState = () => {
     applicationId: string,
     state: ApplicationState,
     event: ApplicationEventType,
-    amount?: number,
     rejection?: string,
     comment?: string,
+    amount?: Amount,
   ) => {
     if (saveLoading === false && loadingFilters === false && applicationId) {
       const { data } = await updateApplicationMutation({
@@ -47,11 +48,11 @@ export const useApplicationState = () => {
           input: {
             id: applicationId,
             state,
-            amount,
             rejection,
             comment,
             staffId: admin?.staff?.id,
             event,
+            amount,
           },
         },
       })

@@ -97,6 +97,12 @@
       "phoneNr": "5121220"
     },
     {
+      "name": "Aníta Auðunsdóttir",
+      "practice": "MAGNA lögmenn",
+      "email": "anita@magna.is",
+      "phoneNr": "5715400"
+    },
+    {
       "name": "Aníta Óðinsdóttir",
       "practice": "A. Lögmenn ehf.",
       "email": "anita@alogmenn.is",
@@ -191,12 +197,6 @@
       "practice": "Kennarasamband Íslands",
       "email": "annaros@ki.is",
       "phoneNr": "5951111"
-    },
-    {
-      "name": "Anna Svava Þórðardóttir",
-      "practice": "Gjaldheimtan ehf.",
-      "email": "annas@gjaldheimtan.is",
-      "phoneNr": "5705500"
     },
     {
       "name": "Anna Þórdís Rafnsdóttir",
@@ -1317,7 +1317,7 @@
     {
       "name": "Dögg Pálsdóttir",
       "practice": "Málsefni Lögmannsþjónusta I Legal Iceland Law Services",
-      "email": "dogg@ilegaliceland.com",
+      "email": "dogg@legaliceland.com",
       "phoneNr": "8976627"
     },
     {
@@ -1499,6 +1499,12 @@
       "practice": "Ius lögmannsstofa ehf.",
       "email": "eleonora@iuslaw.is",
       "phoneNr": "8629763"
+    },
+    {
+      "name": "Elías Karl Guðmundsson",
+      "practice": "Lögmenn Laugavegi 3",
+      "email": "Ekki skráð",
+      "phoneNr": "5201050"
     },
     {
       "name": "Elías Kristjánsson",
@@ -5330,8 +5336,8 @@
     },
     {
       "name": "Sigurður Valgeir Guðjónsson",
-      "practice": "Advel lögmenn slf.",
-      "email": "svg@advel.is",
+      "practice": "Arta lögmenn ehf.",
+      "email": "sigurdur@arta.is",
       "phoneNr": "5202050"
     },
     {
@@ -6081,7 +6087,7 @@
     {
       "name": "Víðir Smári Petersen",
       "practice": "Lex lögmannsstofa ehf.",
-      "email": "vidir@lex.is",
+      "email": "vidir@hi.is",
       "phoneNr": "5902600"
     },
     {

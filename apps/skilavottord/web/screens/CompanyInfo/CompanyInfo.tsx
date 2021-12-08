@@ -16,11 +16,12 @@ import {
   Sidenav,
 } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import {
   RecyclingPartner,
   Query,
+  Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 
 const SkilavottordAllActiveRecyclingPartnersQuery = gql`
@@ -92,25 +93,27 @@ const CompanyInfo: FC = () => {
           <Text variant="h3">{t.subtitles.location}</Text>
           <Box>
             {activePartner.length > 0 ? (
-              activePartner.map((partner: RecyclingPartner, index: string) => (
-                <ListItem
-                  key={index}
-                  title={partner.companyName}
-                  content={[
-                    {
-                      text: `${partner.address}, ${partner.postnumber}`,
-                    },
-                    {
-                      text: `${partner.phone}`,
-                      isHighlighted: true,
-                    },
-                    {
-                      text: `${partner.website}`,
-                      href: partner.website,
-                    },
-                  ]}
-                />
-              ))
+              activePartner.map(
+                (partner: RecyclingPartner, index: string | number) => (
+                  <ListItem
+                    key={index}
+                    title={partner.companyName}
+                    content={[
+                      {
+                        text: `${partner.address}, ${partner.postnumber}`,
+                      },
+                      {
+                        text: `${partner.phone}`,
+                        isHighlighted: true,
+                      },
+                      {
+                        text: `${partner.website}`,
+                        href: partner.website,
+                      },
+                    ]}
+                  />
+                ),
+              )
             ) : (
               <Text>{t.empty}</Text>
             )}

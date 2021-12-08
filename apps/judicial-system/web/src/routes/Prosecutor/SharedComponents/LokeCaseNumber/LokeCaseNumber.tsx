@@ -35,6 +35,7 @@ const LokeCaseNumber: React.FC<Props> = (props) => {
         // This is temporary until we start reading LÖKE case numbers from LÖKE
         mask="999-9999-9999999"
         maskPlaceholder={null}
+        value={workingCase.policeCaseNumber || ''}
         onChange={(event) =>
           removeTabsValidateAndSet(
             'policeCaseNumber',
@@ -63,7 +64,6 @@ const LokeCaseNumber: React.FC<Props> = (props) => {
           autoComplete="off"
           label={formatMessage(policeCaseNumber.label)}
           placeholder={formatMessage(policeCaseNumber.placeholder)}
-          defaultValue={workingCase.policeCaseNumber}
           errorMessage={policeCaseNumberErrorMessage}
           hasError={policeCaseNumberErrorMessage !== ''}
           required
