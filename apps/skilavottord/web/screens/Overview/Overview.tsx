@@ -18,7 +18,9 @@ import { Query } from '@island.is/skilavottord-web/graphql/schema'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { filterCarsByStatus } from '@island.is/skilavottord-web/utils'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
+
 import { ActionCardContainer, ProgressCardContainer } from './components'
+import { RecycleActionTypes } from './types'
 
 const SkilavottordVehiclesQuery = gql`
   query skilavottordVehiclesQuery($nationalId: String!) {
@@ -61,10 +63,7 @@ const Overview: FC = () => {
   const inUseCars = filterCarsByStatus('inUse', cars)
   const recycledCars = filterCarsByStatus('deregistered', cars)
 
-  const onContinue = (
-    id: string,
-    actionType: 'baseRoute' | 'confirm' | 'handover' | 'completed',
-  ) => {
+  const onContinue = (id: string, actionType: RecycleActionTypes) => {
     router
       .push(`${routes[actionType]}`, `${routes.baseRoute}/${id}/${actionType}`)
       .then(() => window.scrollTo(0, 0))

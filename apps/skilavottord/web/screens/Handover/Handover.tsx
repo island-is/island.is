@@ -26,6 +26,7 @@ import {
   Mutation,
   RecyclingRequestTypes,
   Query,
+  RequestErrors,
 } from '@island.is/skilavottord-web/graphql/schema'
 import CompanyList from './components/CompanyList'
 import * as styles from './Handover.css'
@@ -96,7 +97,7 @@ const Handover: FC = () => {
     },
   })
 
-  const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
+  const mutationResponse = mutationData?.createSkilavottordRecyclingRequest as RequestErrors
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -159,8 +160,10 @@ const Handover: FC = () => {
       // setRecyclingRequest is completed with no mutationErrors
       // errors are returned in mutationResponse.message,
       // we must therefore double check for errors in this way before closing modal and routing home
-
-      if (!data?.createSkilavottordRecyclingRequest) {
+      // current implementation assumes that request can be either RequestErrors or RequestStatus and only
+      // RequestErrors has message property and because of that we are asserting it below
+      const request = data?.createSkilavottordRecyclingRequest as RequestErrors
+      if (!request.message) {
         setModal(false)
         routeHome()
       }
@@ -173,7 +176,7 @@ const Handover: FC = () => {
 
   if (
     (requestType !== RecyclingRequestTypes.cancelled &&
-      (mutationError || mutationLoading || mutationResponse)) ||
+      (mutationError || mutationLoading || mutationResponse?.message)) ||
     error ||
     isInvalidCar ||
     (loading && !data)
@@ -267,7 +270,7 @@ const Handover: FC = () => {
         continueButtonText={t.cancelModal.buttons.continue}
         cancelButtonText={t.cancelModal.buttons.cancel}
         loading={mutationLoading}
-        error={mutationError}
+        error={mutationResponse?.message || mutationError}
         errorText={t.cancelModal.error}
       />
     </ProcessPageLayout>

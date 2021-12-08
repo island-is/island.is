@@ -72,16 +72,10 @@ export const Header: FC = () => {
   }, [])
 
   const mapUserRoleToRoute = (userRole?: Role | null) => {
-    switch (userRole) {
-      case Role.citizen:
-        return 'citizen'
-      case Role.recyclingCompany:
-        return 'recyclingCompany'
-      case Role.recyclingFund:
-        return 'recyclingFund'
-      default:
-        return 'citizen'
+    if (!userRole || userRole === Role.developer) {
+      return Role.citizen
     }
+    return userRole
   }
 
   const homeRoute = routes.home[mapUserRoleToRoute(user?.role)]
