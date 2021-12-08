@@ -1,10 +1,8 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { AmountModel } from './models'
 
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { DeductionFactorsService } from '../deductionFactors'
 
 import { Sequelize } from 'sequelize'
@@ -17,8 +15,6 @@ export class AmountService {
     private readonly amountModel: typeof AmountModel,
     private readonly deductionFactorsService: DeductionFactorsService,
     private sequelize: Sequelize,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
   ) {}
 
   async create(amount: Amount): Promise<AmountModel> {
