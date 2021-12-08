@@ -1,4 +1,4 @@
-import { fonts, sambandIcon } from './shared'
+import { fonts, header, sambandIcon } from './shared'
 
 export const EmployeeEmailTemplate = (
   municipalityName: string,
@@ -77,27 +77,27 @@ export const EmployeeEmailTemplate = (
      <table class="es-wrapper" width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;padding:0;Margin:0;width:100%;height:100%;background-repeat:repeat;background-position:center top"> 
        <tr> 
         <td valign="top" style="padding:0;Margin:0"> 
-        ${sambandIcon}
-         <table class="es-content" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%"> 
-           <tr> 
-            <td align="center" style="padding:0;Margin:0"> 
-             <table class="es-content-body" cellspacing="0" cellpadding="0" bgcolor="#ffffff" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#FFFFFF;width:600px"> 
-               <tr> 
-                <td align="left" style="padding:0;Margin:0;padding-bottom:30px;padding-left:30px;padding-right:30px"> 
-                 <table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> 
-                   <tr> 
-                    <td valign="top" align="center" style="padding:0;Margin:0;width:540px"> 
-                     <table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> 
-                       <tr> 
-                        <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:41px;color:#0061ff;font-size:34px"><strong>Þú ert nú notandi í Veitu – vinnslukerfi umsókna um fjárhagsaðstoð hjá ${municipalityName}</strong></p></td> 
-                       </tr> 
-                     </table></td> 
-                   </tr> 
-                 </table></td> 
-               </tr> 
-             </table></td> 
-           </tr> 
-         </table> 
+          ${sambandIcon}
+          <table class="es-content" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%"> 
+            <tr> 
+              <td align="center" style="padding:0;Margin:0"> 
+              <table class="es-content-body" cellspacing="0" cellpadding="0" bgcolor="#ffffff" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#FFFFFF;width:600px"> 
+                <tr> 
+                  <td align="left" style="padding:0;Margin:0;padding-bottom:30px;padding-left:30px;padding-right:30px"> 
+                  <table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> 
+                    <tr> 
+                      <td valign="top" align="center" style="padding:0;Margin:0;width:540px"> 
+                      <table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> 
+                      ${header(
+                        `Þú ert nú notandi í Veitu – vinnslukerfi umsókna um fjárhagsaðstoð hjá ${municipalityName}`,
+                      )}
+                      </table></td> 
+                    </tr> 
+                  </table></td> 
+                </tr> 
+              </table></td> 
+            </tr> 
+          </table> 
          <table class="es-footer" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%;background-color:transparent;background-repeat:repeat;background-position:center top"> 
            <tr> 
             <td align="center" style="padding:0;Margin:0"> 
@@ -244,7 +244,8 @@ export const EmployeeEmailTemplate = (
                </tr> 
              </table></td> 
            </tr> 
-         </table></td> 
+         </table>
+         </td> 
        </tr> 
      </table> 
     </div>  

@@ -31,3 +31,7 @@ export const sambandIcon = `<table class="es-header" cellspacing="0" cellpadding
     </table></td> 
   </tr> 
 </table> `
+
+export const header = (content: string) => `<tr> 
+<td align="left" style="padding:0;Margin:0;padding-bottom:20px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:41px;color:#0061ff;font-size:34px"><strong>${content}</strong></p></td> 
+</tr> `
