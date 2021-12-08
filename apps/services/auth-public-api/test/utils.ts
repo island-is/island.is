@@ -25,7 +25,7 @@ export const getRequestMethod = (
  * @param expected The expected object to be matched against the received object
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const expectMathcingObject = (received: any, expected: any) => {
+export const expectMatchingObject = (received: any, expected: any) => {
   expect(received).toMatchObject(JSON.parse(JSON.stringify(expected)))
 }
 
