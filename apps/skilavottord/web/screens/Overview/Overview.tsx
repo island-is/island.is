@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { FC } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
@@ -15,7 +15,7 @@ import {
 import { PageLayout, InlineError } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { Query } from '@island.is/skilavottord-web/graphql/schema'
-import { UserContext } from '@island.is/skilavottord-web/context'
+
 import { filterCarsByStatus } from '@island.is/skilavottord-web/utils'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 
@@ -23,8 +23,8 @@ import { ActionCardContainer, ProgressCardContainer } from './components'
 import { RecycleActionTypes } from './types'
 
 const SkilavottordVehiclesQuery = gql`
-  query skilavottordVehiclesQuery($nationalId: String!) {
-    skilavottordVehicles(nationalId: $nationalId) {
+  query skilavottordVehiclesQuery {
+    skilavottordVehicles {
       permno
       vinNumber
       type
@@ -38,7 +38,6 @@ const SkilavottordVehiclesQuery = gql`
 `
 
 const Overview: FC = () => {
-  const { user } = useContext(UserContext)
   const {
     t: {
       myCars: t,
@@ -50,11 +49,8 @@ const Overview: FC = () => {
   } = useI18n()
   const router = useRouter()
 
-  const nationalId = user?.nationalId
   const { data, loading, error } = useQuery<Query>(SkilavottordVehiclesQuery, {
-    variables: { nationalId },
     fetchPolicy: 'cache-and-network',
-    skip: !nationalId,
   })
 
   const cars = data?.skilavottordVehicles || []

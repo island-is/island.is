@@ -14,21 +14,15 @@ import {
 } from '@island.is/skilavottord-web/components'
 import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
 import { formatDate, formatYear } from '@island.is/skilavottord-web/utils'
-import {
-  VehicleInformation,
-  Mutation,
-} from '@island.is/skilavottord-web/graphql/schema'
+import { Mutation } from '@island.is/skilavottord-web/graphql/schema'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 import { dateFormat } from '@island.is/shared/constants'
 
 const SkilavottordVehicleOwnerMutation = gql`
-  mutation skilavottordVehicleOwnerMutation(
-    $name: String!
-    $nationalId: String!
-  ) {
-    createSkilavottordVehicleOwner(name: $name, nationalId: $nationalId)
+  mutation skilavottordVehicleOwnerMutation($name: String!) {
+    createSkilavottordVehicleOwner(name: $name)
   }
 `
 
@@ -38,7 +32,6 @@ const SkilavottordVehicleMutation = gql`
     $newRegDate: DateTime!
     $color: String!
     $type: String!
-    $nationalId: String!
     $permno: String!
   ) {
     createSkilavottordVehicle(
@@ -46,7 +39,6 @@ const SkilavottordVehicleMutation = gql`
       newRegDate: $newRegDate
       color: $color
       type: $type
-      nationalId: $nationalId
       permno: $permno
     )
   }
@@ -104,7 +96,6 @@ const Confirm = ({ apolloState }: PropTypes) => {
           variables: {
             ...car,
             newRegDate: formatDate(car.firstRegDate, dateFormat.is),
-            nationalId: user?.nationalId,
           },
         })
       },
@@ -125,7 +116,6 @@ const Confirm = ({ apolloState }: PropTypes) => {
     setVehicleOwner({
       variables: {
         name: user?.name,
-        nationalId: user?.nationalId,
       },
     })
   }
