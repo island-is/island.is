@@ -89,7 +89,7 @@ export class StaffService {
           subject: 'Aðgangur fyrir vinnslukerfi fjárhagsaðstoðar veittur',
           html: EmployeeEmailTemplate(
             municipalityName,
-            environment.veitaUrl,
+            environment.veitaBaseUrl,
             input.email,
           ),
         })
