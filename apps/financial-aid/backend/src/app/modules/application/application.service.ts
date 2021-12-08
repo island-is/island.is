@@ -386,6 +386,9 @@ export class ApplicationService {
         update.event === ApplicationEventType.DATANEEDED
           ? update?.comment
           : undefined,
+        update.event === ApplicationEventType.REJECTED
+          ? update?.rejection
+          : undefined,
       )
 
       await this.sendEmail(
