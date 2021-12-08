@@ -37,7 +37,7 @@ export const icHearingArrangements = {
         id:
           'judicial.system.investigation_cases:hearing_arrangements.set_registrar.tooltip',
         defaultMessage:
-          'Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti.',
+          'Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti. Ef enginn dómritari er valinn endurspeglar þingbókin að enginn dómritari hafi verið vottur að þinghaldi.',
         description:
           'Notaður sem upplýsingatexti í upplýsingasvæði við "dómritari" titlinn á fyrirtöku skrefi í rannsóknarheimildum.',
       },

@@ -66,9 +66,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
     judge: {
       validations: ['empty'],
     },
-    registrar: {
-      validations: ['empty'],
-    },
   }
 
   useCaseFormHelper(workingCase, setWorkingCase, validations)
@@ -85,9 +82,11 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
 
   const setRegistrar = (id: string) => {
     if (workingCase) {
+      const registrarId = id ? id : null
+
       setAndSendToServer(
         'registrarId',
-        id,
+        registrarId,
         workingCase,
         setWorkingCase,
         updateCase,
@@ -95,7 +94,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
 
       const registrar = users?.users.find((r) => r.id === id)
 
-      setWorkingCase({ ...workingCase, registrar: registrar })
+      setWorkingCase({ ...workingCase, registrar })
     }
   }
 
@@ -118,6 +117,9 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
     .map((registrar: User) => {
       return { label: registrar.name, value: registrar.id }
     })
+  if (workingCase.registrar) {
+    registrars.push({ label: 'Dómritari ekki skráður', value: '' })
+  }
 
   const defaultJudge = judges?.find(
     (judge: Option) => judge.value === workingCase?.judge?.id,

@@ -154,15 +154,13 @@ export const isCourtHearingArrangemenstStepValidRC = (workingCase: Case) => {
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid &&
     validate(workingCase.courtDate || '', 'date-format').isValid &&
-    workingCase.judge &&
-    workingCase.registrar
+    workingCase.judge
   )
 }
 
 export const isCourtHearingArrangementsStepValidIC = (workingCase: Case) => {
   return (
     workingCase.judge &&
-    workingCase.registrar &&
     workingCase.sessionArrangements &&
     validate(workingCase.courtDate || '', 'date-format').isValid
   )

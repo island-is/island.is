@@ -54,8 +54,6 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
     cy.getByTestid('select-judge').click()
     cy.get('#react-select-judge-option-0').click()
     cy.getByTestid('continueButton').should('be.disabled')
-    cy.getByTestid('select-registrar').click()
-    cy.get('#react-select-registrar-option-0').click()
     cy.getByTestid('courtroom').type('1337')
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()

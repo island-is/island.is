@@ -370,17 +370,19 @@ function constructRestrictionRulingPdf(
     })
   }
 
-  doc.text(' ').text(
-    formatMessage(ruling.registratWitness, {
-      registrarNameAndTitle: `${existingCase.registrar?.name ?? '?'} ${
-        existingCase.registrar?.title ?? ''
-      }`,
-    }),
-    {
-      align: 'justify',
-      paragraphGap: 1,
-    },
-  )
+  if (existingCase.registrar) {
+    doc.text(' ').text(
+      formatMessage(ruling.registrarWitness, {
+        registrarNameAndTitle: `${existingCase.registrar?.name ?? '?'} ${
+          existingCase.registrar?.title ?? ''
+        }`,
+      }),
+      {
+        align: 'justify',
+        paragraphGap: 1,
+      },
+    )
+  }
 
   doc.text(' ').text(
     existingCase.courtEndTime
@@ -688,9 +690,12 @@ function constructInvestigationRulingPdf(
     doc.text(' ').text(accusedAppeal, { align: 'justify', paragraphGap: 1 })
   }
 
-  if (existingCase.sessionArrangements !== SessionArrangements.REMOTE_SESSION) {
+  if (
+    existingCase.registrar &&
+    existingCase.sessionArrangements !== SessionArrangements.REMOTE_SESSION
+  ) {
     doc.text(' ').text(
-      formatMessage(ruling.registratWitness, {
+      formatMessage(ruling.registrarWitness, {
         registrarNameAndTitle: `${existingCase.registrar?.name ?? '?'} ${
           existingCase.registrar?.title ?? ''
         }`,

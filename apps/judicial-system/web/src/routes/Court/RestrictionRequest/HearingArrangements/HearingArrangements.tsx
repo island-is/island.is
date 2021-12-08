@@ -96,6 +96,9 @@ export const HearingArrangements: React.FC = () => {
     .map((registrar: User) => {
       return { label: registrar.name, value: registrar.id }
     })
+  if (workingCase.registrar) {
+    registrars.push({ label: 'Dómritari ekki skráður', value: '' })
+  }
 
   const defaultJudge = judges?.find(
     (judge: Option) => judge.value === workingCase?.judge?.id,
@@ -130,10 +133,12 @@ export const HearingArrangements: React.FC = () => {
   }
 
   const setRegistrar = (id: string) => {
+    const registrarId = id ? id : null
+
     if (workingCase) {
       setAndSendToServer(
         'registrarId',
-        id,
+        registrarId,
         workingCase,
         setWorkingCase,
         updateCase,
@@ -141,7 +146,7 @@ export const HearingArrangements: React.FC = () => {
 
       const registrar = userData?.users.find((r) => r.id === id)
 
-      setWorkingCase({ ...workingCase, registrar: registrar })
+      setWorkingCase({ ...workingCase, registrar })
     }
   }
 
