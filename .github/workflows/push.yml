@@ -196,6 +196,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Check node version
+        run: |
+          node -v 
+          ls -l `which node`
+
       - name: Calculate cache key for node_modules
         id: calculate_node_modules_hash
         run: |
@@ -212,6 +217,11 @@ jobs:
           export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
+
+      - name: Check node version
+        run: |
+          node -v 
+          ls -l `which node`
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -236,6 +246,11 @@ jobs:
         if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-docker-deps.sh
 
+      - name: Check node version
+        run: |
+          node -v 
+          ls -l `which node`
+
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         uses: island-is/cache@v0.1
@@ -243,9 +258,19 @@ jobs:
           path: node_modules
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
 
+      - name: Check node version
+        run: |
+          node -v 
+          ls -l `which node`
+
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
+
+      - name: Check node version
+        run: |
+          node -v 
+          ls -l `which node`
 
       - name: set BRANCH env var
         run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
