@@ -348,8 +348,8 @@ const Search: Screen<CategoryProps> = ({
           {suggestion.length > 0 && totalSearchResults === 0 && (
             <>
               <Text variant="intro" as="p">
-                Did you mean{' '}
-                <Link href={`/leit?q=${suggestion}`}>
+                {n('didYouMean', 'Áttir þú við')}{' '}
+                <Link href={`${linkResolver('search').href}?q=${suggestion}`}>
                   <Text variant="intro" as="span">
                     {suggestion}
                   </Text>

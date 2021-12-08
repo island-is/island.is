@@ -3,11 +3,23 @@ export const template = {
   index_patterns: ['island-en-*'],
   settings: {
     analysis: {
+      filter: {
+        shingle: {
+          type: 'shingle',
+          min_shingle_size: 2,
+          max_shingle_size: 3,
+        },
+      },
       analyzer: {
         termEnglish: {
           type: 'custom',
           tokenizer: 'standard',
           filter: ['lowercase'],
+        },
+        trigram: {
+          type: 'custom',
+          tokenizer: 'standard',
+          filter: ['lowercase', 'shingle'],
         },
       },
     },
@@ -26,6 +38,10 @@ export const template = {
           keyword: {
             type: 'keyword',
           },
+          trigram: {
+            type: 'text',
+            analyzer: 'trigram',
+          },
         },
       },
       content: {
@@ -33,6 +49,10 @@ export const template = {
         fields: {
           stemmed: {
             type: 'text',
+          },
+          trigram: {
+            type: 'text',
+            analyzer: 'trigram',
           },
         },
       },
