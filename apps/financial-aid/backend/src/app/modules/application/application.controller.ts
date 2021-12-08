@@ -40,8 +40,9 @@ import type {
   User as FinancialAidUser,
   Staff,
   Application,
-  User as IdsAuthUser,
 } from '@island.is/financial-aid/shared/lib'
+
+import type { User as IdsAuthUser } from '@island.is/auth-nest-tools'
 
 import {
   ApplicationFilters,
