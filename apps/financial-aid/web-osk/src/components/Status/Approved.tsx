@@ -4,8 +4,6 @@ import { Text } from '@island.is/island-ui/core'
 import {
   ApplicationState,
   getState,
-  getMonth,
-  months,
   currentMonth,
   Amount,
   acceptedAmountBreakDown,

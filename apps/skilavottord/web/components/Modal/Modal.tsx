@@ -12,7 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './Modal.css'
 import { OutlinedError } from '@island.is/skilavottord-web/components'
-import { Errors } from '@island.is/skilavottord-web/i18n/locales/translation'
+import { CompletedError } from '@island.is/skilavottord-web/i18n/locales/translation'
 
 export interface ModalProps {
   show: boolean
@@ -24,7 +24,7 @@ export interface ModalProps {
   cancelButtonText: string
   loading?: boolean
   error?: ApolloError | string
-  errorText?: Errors
+  errorText?: CompletedError
   children?: React.ReactNode
 }
 
