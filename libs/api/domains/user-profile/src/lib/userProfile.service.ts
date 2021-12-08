@@ -18,13 +18,12 @@ import { UserProfile } from './userProfile.model'
 import {
   Auth,
   AuthMiddleware,
-  CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
 import { IslyklarApi } from '@island.is/clients/islykill'
-import { CreateUserNotificationsInput } from './dto/createUserNotificationsInput'
-import { UpdateUserNotificationsInput } from './dto/updateUserNotificationsInput'
-import { Args } from '@nestjs/graphql'
+import { CreateUserDeviceTokenInput } from './dto/createUserDeviceTokenInput'
+import { UpdateUserDeviceTokenInput } from './dto/updateUserDeviceTokenInput'
+
 
 // eslint-disable-next-line
 const handleError = (error: any) => {
@@ -167,25 +166,27 @@ export class UserProfileService {
       .catch(handleError)
   }
 
-  // notifications
+  // NOTIFICATIONS DEVICE TOKENS
   async getDeviceTokens(user: User) {
     return await this.userProfileApiWithAuth(user)
-      .userProfileControllerGetDeviceTokens()
+      .userProfileControllerGetDeviceTokens(user)
       .catch(handleError)
   }
 
-  async addDeviceToken(input: CreateUserNotificationsInput, user: User) {
+  async addDeviceToken(input: CreateUserDeviceTokenInput, user: User) {
     return await this.userProfileApiWithAuth(user)
       .userProfileControllerAddDeviceToken({
-        createUserNotificationDto: input,
+        nationalId: user.nationalId,
+        createUserDeviceTokenDto: input,
       })
       .catch(handleError)
   }
 
-  async updateDeviceToken(input: UpdateUserNotificationsInput, user: User) {
+  async updateDeviceToken(input: UpdateUserDeviceTokenInput, user: User) {
     return await this.userProfileApiWithAuth(user)
       .userProfileControllerUpdateDeviceToken({
-        updateUserNotificationDto: input,
+        nationalId: user.nationalId,
+        updateUserDeviceTokenDto: input,
       })
       .catch(handleError)
   }

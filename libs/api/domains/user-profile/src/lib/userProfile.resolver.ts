@@ -14,10 +14,10 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import { UserNotificationDto } from '../../gen/fetch/models/UserNotificationDto'
-import { UserNotifications } from './userNotifcations.model'
-import { CreateUserNotificationsInput } from './dto/createUserNotificationsInput'
-import { UpdateUserNotificationsInput } from './dto/updateUserNotificationsInput'
+import { UserDeviceToken } from './userDeviceToken.model'
+import { CreateUserDeviceTokenInput } from './dto/createUserDeviceTokenInput'
+import { UpdateUserDeviceTokenInput } from './dto/updateUserDeviceTokenInput'
+
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -79,26 +79,26 @@ export class UserProfileResolver {
 
   // user notifications queries
 
-  @Query(() => [UserNotifications])
+  @Query(() => [UserDeviceToken])
   async getDeviceTokens(
     @CurrentUser() user: User,
-  ): Promise<UserNotifications[]> {
+  ): Promise<UserDeviceToken[]> {
     return await this.userUserProfileService.getDeviceTokens(user)
   }
 
-  @Mutation(() => UserNotifications)
+  @Mutation(() => UserDeviceToken)
   async addDeviceToken(
-    @Args('input') input: CreateUserNotificationsInput,
+    @Args('input') input: CreateUserDeviceTokenInput,
     @CurrentUser() user: User,
-  ): Promise<UserNotifications> {
+  ): Promise<UserDeviceToken> {
     return await this.userUserProfileService.addDeviceToken(input, user)
   }
 
-  @Mutation(() => UserNotifications)
+  @Mutation(() => UserDeviceToken)
   async updateDeviceToken(
-    @Args('input') input: UpdateUserNotificationsInput,
+    @Args('input') input: UpdateUserDeviceTokenInput,
     @CurrentUser() user: User,
-  ): Promise<UserNotifications> {
+  ): Promise<UserDeviceToken> {
     return await this.userUserProfileService.updateDeviceToken(input, user)
   }
 }

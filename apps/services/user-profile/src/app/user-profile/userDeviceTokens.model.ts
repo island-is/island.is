@@ -9,7 +9,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 
 @Table({
-  tableName: 'user_notifications',
+  tableName: 'user_device_tokens',
   timestamps: true,
   indexes: [
     {
@@ -17,7 +17,7 @@ import { ApiProperty } from '@nestjs/swagger'
     },
   ],
 })
-export class UserNotifications extends Model<UserNotifications> {
+export class UserDeviceTokens extends Model<UserDeviceTokens> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -48,11 +48,4 @@ export class UserNotifications extends Model<UserNotifications> {
   })
   @ApiProperty()
   deviceToken!: string
-
-  @Column({
-    type: DataType.BOOLEAN,
-    defaultValue: true,
-  })
-  @ApiProperty()
-  isEnabled!: boolean
 }

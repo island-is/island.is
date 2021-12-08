@@ -7,13 +7,13 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { UserNotifications } from './user-notifications.model'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
 import { UserProfile } from './userProfile.model'
 import { User } from '@island.is/auth-nest-tools'
-import { CreateUserNotificationDto } from './dto/create-user-notification.dto'
-import { UpdateUserNotificationDto } from './dto/update-user-notification.dto'
+import { UserDeviceTokens } from './userDeviceTokens.model'
+import { DeviceTokenDto } from './dto/DeviceToken.dto'
+
 
 @Injectable()
 export class UserProfileService {
@@ -22,8 +22,8 @@ export class UserProfileService {
     private userProfileModel: typeof UserProfile,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    @InjectModel(UserNotifications)
-    private readonly UserNotificationsModel: typeof UserNotifications,
+    @InjectModel(UserDeviceTokens)
+    private readonly UserDeviceTokensModel: typeof UserDeviceTokens,
   ) {}
 
   async findById(id: string): Promise<UserProfile | null> {
@@ -68,7 +68,7 @@ export class UserProfileService {
   // FIND ALL by NationalId
   async getDeviceTokens(user: User) {
     try {
-      return await this.UserNotificationsModel.findAll({
+      return await this.UserDeviceTokensModel.findAll({
         where: { nationalId: user.nationalId },
         order: [['created', 'DESC']],
       })
@@ -78,29 +78,50 @@ export class UserProfileService {
   }
 
   // CREATE
-  async addDeviceToken(body: CreateUserNotificationDto) {
+  async addDeviceToken(body: DeviceTokenDto) {
     try {
-      return await this.UserNotificationsModel.create(body)
+      return await this.UserDeviceTokensModel.create(body)
     } catch (e) {
       throw new BadRequestException(e.errors)
     }
   }
 
-  // UPDATE
-  async updateDeviceToken(body: UpdateUserNotificationDto, user: User) {
-    try {
-      const res = await this.UserNotificationsModel.findOne({
-        where: { id: body.id, nationalId: user.nationalId },
-      })
-      if (res) {
-        res.isEnabled = body.isEnabled
-        res.save()
-        return res
-      } else {
-        throw new BadRequestException()
-      }
-    } catch (e) {
-      throw new BadRequestException(e.errors)
-    }
+  // // UPDATE
+  // async updateDeviceToken(body: UpdateUserDeviceTokenDto, user: User) {
+  //   try {
+  //     const res = await this.UserDeviceTokensModel.findOne({
+  //       where: { id: body.id, nationalId: user.nationalId },
+  //     })
+  //     if (res) {
+  //       // res.isEnabled = body.isEnabled
+  //       res.save()
+  //       return res
+  //     } else {
+  //       throw new BadRequestException()
+  //     }
+  //   } catch (e) {
+  //     throw new BadRequestException(e.errors)
+  //   }
+  // }
+  
+  // DELETE
+  async deleteDeviceToken(body: DeviceTokenDto, user: User) {
+    
+    const res = await this.UserDeviceTokensModel.destroy({
+      where: { nationalId: user.nationalId, deviceToken: body.deviceToken },
+    })
+    
+    // try {
+    //   const result = await this.UserDeviceTokensModel.findOne({
+    //     where: { nationalId: user.nationalId, deviceToken: body.deviceToken },
+    //   })
+    //   if(result){
+    //     result.destroy()
+    //   } else {
+    //     throw new NotFoundException()
+    //   }
+    // } catch (e) {
+    //   throw new NotFoundException()
+    // }
   }
 }

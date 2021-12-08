@@ -2,10 +2,11 @@ import { PartialType } from '@nestjs/mapped-types'
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import { IsBoolean, IsString } from 'class-validator'
-import { UserNotificationDto } from './user-notification.dto'
+import { UserDeviceTokens } from '../userDeviceTokens.model'
 
-export class UpdateUserNotificationDto extends PartialType(
-  UserNotificationDto,
+
+export class UpdateUserDeviceTokenDto extends PartialType(
+  UserDeviceTokens,
 ) {
   @ApiProperty({
     required: true,

@@ -2,7 +2,7 @@ import { Field, ID, InputType } from '@nestjs/graphql'
 import { IsBoolean, IsString } from 'class-validator'
 
 @InputType()
-export class UpdateUserNotificationsInput {
+export class UpdateUserDeviceTokenInput {
   @Field(() => ID)
   @IsString()
   id!: string
