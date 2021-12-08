@@ -1,157 +1,190 @@
-import { setup } from '../../../../../test/setup'
+import { setupWithoutAuth } from '../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../test/testHelpers'
 import request from 'supertest'
-import { INestApplication } from '@nestjs/common'
-import { environment } from '../../../../environments'
+import { TestApp } from '@island.is/testing/nest'
 import {
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
   PersonalRepresentativeDTO,
   PersonalRepresentativeRightType,
 } from '@island.is/auth-api-lib/personal-representative'
+import { environment } from '../../../../environments'
 
-const { childServiceApiKeys } = environment
+describe('PersonalRepresentativeController', () => {
+  const { childServiceApiKeys } = environment
 
-let app: INestApplication
+  const rightTypeList = [
+    { code: 'code1', description: 'code1 description' },
+    { code: 'code2', description: 'code2 description' },
+  ]
 
-const rightTypeList = [
-  { code: 'code1', description: 'code1 description' },
-  { code: 'code2', description: 'code2 description' },
-]
-
-const simpleRequestData: PersonalRepresentativeDTO = {
-  nationalIdPersonalRepresentative: '1234567890',
-  nationalIdRepresentedPerson: '1234567891',
-  rightCodes: [],
-}
-
-beforeAll(async () => {
-  app = await setup()
-})
-
-describe('Create Right Type', () => {
-  it('POST /v1/personal-representative should fail and return 403 error if bearer is missing', async () => {
-    const response = await request(app.getHttpServer())
-      .post('/v1/personal-representative')
-      .send(simpleRequestData)
-      .expect(403)
-
-    expect(response.body).toMatchObject({
-      ...errorExpectedStructure,
-      statusCode: 403,
-    })
-  })
-
-  it('POST /v1/personal-representative should return error when data is invalid', async () => {
-    const requestData = {
-      code: 'Code',
-      description: 'Description',
-      validFrom: '10-11-2021',
-    }
-    const response = await request(app.getHttpServer())
-      .post('/v1/personal-representative')
-      .set(
-        'Authorization',
-        `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
-      )
-      .send(requestData)
-      .expect(400)
-    expect(response.body).toMatchObject({
-      ...errorExpectedStructure,
-      statusCode: 400,
-    })
-  })
-
-  it('POST /v1/personal-representative should create a new entry', async () => {
-    // Create right types
-    const rightTypes = await setupRights()
-
-    // Test creating personal rep
-    const requestData = {
-      ...simpleRequestData,
-      rightCodes: rightTypes.map((rt) => rt.code),
-    }
-
-    const response = await request(app.getHttpServer())
-      .post('/v1/personal-representative')
-      .send(requestData)
-      .set(
-        'Authorization',
-        `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
-      )
-      .expect(201)
-
-    expect(response.body).toMatchObject(requestData)
-  })
-})
-
-describe('DELETE /v1/personal-representative should delete personal rep', () => {
-  it('DELETE /v1/personal-representative should delete personal rep', async () => {
-    // Create right types
-    const rightTypes = await setupRights()
-
-    // Creating personal rep
-    const personalRep = await setupBasePersonalRep({
-      ...simpleRequestData,
-      rightCodes: rightTypes.map((rt) => rt.code),
-    })
-
-    // Test delete personal rep
-    await request(app.getHttpServer())
-      .delete(`/v1/personal-representative/${personalRep.id}`)
-      .set(
-        'Authorization',
-        `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
-      )
-      .expect(200)
-  })
-})
-
-describe('GET /v1/personal-representative should find personal reps', () => {
-  it('Get v1/personal-representative/all should get personal rep', async () => {
-    // Create right types
-    const rightTypes = await setupRights()
-
-    // Creating personal rep
-    const personalRep = await setupBasePersonalRep({
-      ...simpleRequestData,
-      rightCodes: rightTypes.map((rt) => rt.code),
-    })
-
-    // Test get personal rep
-    const response = await request(app.getHttpServer())
-      .get(`/v1/personal-representative/all/`)
-      .set(
-        'Authorization',
-        `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
-      )
-      .expect(200)
-
-    const responseData: PersonalRepresentativeDTO[] = response.body
-    expect(responseData[0]).toMatchObject(personalRep)
-  })
-})
-
-async function setupRights(): Promise<PersonalRepresentativeRightType[]> {
-  // Create right types
-  const rightTypes: PersonalRepresentativeRightType[] = []
-  for (const rightType of rightTypeList) {
-    const resp = await request(app.getHttpServer())
-      .post('/v1/right-types')
-      .set(
-        'Authorization',
-        `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
-      )
-      .send({ code: rightType.code, description: rightType.description })
-    rightTypes.push(resp.body)
+  const simpleRequestData: PersonalRepresentativeDTO = {
+    nationalIdPersonalRepresentative: '1234567890',
+    nationalIdRepresentedPerson: '1234567891',
+    rightCodes: [],
   }
-  return rightTypes
-}
 
-async function setupBasePersonalRep(
-  data: PersonalRepresentativeDTO,
-): Promise<PersonalRepresentativeDTO> {
-  const responseCreate = await request(app.getHttpServer())
-    .post('/v1/personal-representative')
-    .set('Authorization', `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`)
-    .send(data)
-  return responseCreate.body
-}
+  let app: TestApp
+  let server: request.SuperTest<request.Test>
+  let prRightTypeModel: typeof PersonalRepresentativeRightType
+  let prModel: typeof PersonalRepresentative
+  let prPermissionsModel: typeof PersonalRepresentativeRight
+
+  beforeAll(async () => {
+    // TestApp setup with auth and database
+    app = await setupWithoutAuth()
+    server = request(app.getHttpServer())
+    // Get reference on rightType models to seed DB
+    prRightTypeModel = app.get<typeof PersonalRepresentativeRightType>(
+      'PersonalRepresentativeRightTypeRepository',
+    )
+    // Get reference on personal representative models to seed DB
+    prModel = app.get<typeof PersonalRepresentative>(
+      'PersonalRepresentativeRepository',
+    )
+    // Get reference on personal representative right models to seed DB
+    prPermissionsModel = app.get<typeof PersonalRepresentativeRight>(
+      'PersonalRepresentativeRightRepository',
+    )
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
+  })
+
+  beforeEach(async () => {
+    await prPermissionsModel.destroy({
+      where: {},
+      cascade: true,
+      truncate: true,
+      force: true,
+    })
+    await prModel.destroy({
+      where: {},
+      cascade: true,
+      truncate: true,
+      force: true,
+    })
+    await prRightTypeModel.destroy({
+      where: {},
+      cascade: true,
+      truncate: true,
+      force: true,
+    })
+  })
+
+  describe('Create', () => {
+    it('POST /v1/personal-representative should fail and return 403 error if bearer is missing', async () => {
+      const response = await server
+        .post('/v1/personal-representative')
+        .send(simpleRequestData)
+        .expect(403)
+
+      expect(response.body).toMatchObject({
+        ...errorExpectedStructure,
+        statusCode: 403,
+      })
+    })
+
+    it('POST /v1/personal-representative should return error when data is invalid', async () => {
+      const requestData = {
+        code: 'Code',
+        description: 'Description',
+        validFrom: '10-11-2021',
+      }
+      const response = await server
+        .post('/v1/personal-representative')
+        .set(
+          'Authorization',
+          `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
+        )
+        .send(requestData)
+        .expect(400)
+      expect(response.body).toMatchObject({
+        ...errorExpectedStructure,
+        statusCode: 400,
+      })
+    })
+
+    it('POST /v1/personal-representative should create a new entry', async () => {
+      // Create right types
+      await prRightTypeModel.bulkCreate(rightTypeList)
+
+      // Test creating personal rep
+      const requestData = {
+        ...simpleRequestData,
+        rightCodes: rightTypeList.map((rt) => rt.code),
+      }
+
+      const response = await server
+        .post('/v1/personal-representative')
+        .send(requestData)
+        .set(
+          'Authorization',
+          `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
+        )
+        .expect(201)
+
+      expect(response.body).toMatchObject(requestData)
+    })
+  })
+
+  describe('Delete', () => {
+    it('DELETE /v1/personal-representative should delete personal rep', async () => {
+      // Create right types
+      await prRightTypeModel.bulkCreate(rightTypeList)
+
+      // Creating personal rep
+      const personalRep = await setupBasePersonalRep({
+        ...simpleRequestData,
+        rightCodes: rightTypeList.map((rt) => rt.code),
+      })
+      // Test delete personal rep
+      await server
+        .delete(`/v1/personal-representative/${personalRep.id}`)
+        .set(
+          'Authorization',
+          `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
+        )
+        .expect(200)
+    })
+  })
+
+  describe('Get', () => {
+    it('Get v1/personal-representative/all should get personal rep', async () => {
+      // Create right types
+      await prRightTypeModel.bulkCreate(rightTypeList)
+
+      // Creating personal rep
+      const personalRep = await setupBasePersonalRep({
+        ...simpleRequestData,
+        rightCodes: rightTypeList.map((rt) => rt.code),
+      })
+
+      // Test get personal rep
+      const response = await server
+        .get(`/v1/personal-representative/all/`)
+        .set(
+          'Authorization',
+          `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
+        )
+        .expect(200)
+
+      const responseData: PersonalRepresentativeDTO[] = response.body
+      expect(responseData[0]).toMatchObject(personalRep)
+    })
+  })
+
+  async function setupBasePersonalRep(
+    data: PersonalRepresentativeDTO,
+  ): Promise<PersonalRepresentativeDTO> {
+    const responseCreate = await server
+      .post('/v1/personal-representative')
+      .set(
+        'Authorization',
+        `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
+      )
+      .send(data)
+    return responseCreate.body
+  }
+})
