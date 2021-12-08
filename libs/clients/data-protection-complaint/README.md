@@ -1,4 +1,4 @@
-# clients-data-protection-complaint
+# Clients Data Protection Complaint
 
 This library was generated with [Nx](https://nx.dev).
 

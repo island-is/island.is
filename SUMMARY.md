@@ -172,6 +172,7 @@
 - [Clients](libs/clients/README.md)
   - [Clients Assets](libs/clients/assets/README.md)
   - [Auth Public API Client](libs/clients/auth-public-api/README.md)
+  - [Clients Data Protection Complaint](libs/clients/data-protection-complaint/README.md)
   - [Clients Document Provider](libs/clients/document-provider/README.md)
   - [Documents (Pósthólf)](libs/clients/documents/README.md)
   - [Clients Driving License V1 / V2](libs/clients/driving-license/README.md)
