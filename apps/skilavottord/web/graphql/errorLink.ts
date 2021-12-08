@@ -13,7 +13,7 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (graphQLErrors) {
     const errorCodes = graphQLErrors.map((err) => err.extensions?.code)
     if (errorCodes.includes('UNAUTHENTICATED')) {
-      api.logout().then(() => window.location.reload())
+      api.logout().then(() => window?.location.reload())
       return
     } else if (errorCodes.includes('FORBIDDEN')) {
       return
