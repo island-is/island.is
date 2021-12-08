@@ -272,7 +272,7 @@ export class MeDelegationsController {
    */
   private async validateScopesAccess(
     userScopes: string[],
-    requestedScopes: UpdateDelegationScopeDTO[],
+    requestedScopes?: UpdateDelegationScopeDTO[],
   ): Promise<boolean> {
     if (!requestedScopes || requestedScopes.length === 0) {
       return true
@@ -297,7 +297,11 @@ export class MeDelegationsController {
    * Validates the valid period of the scopes requested in a delegation.
    * @param scopes requested scopes on a delegation
    */
-  private validateScopesPeriod(scopes: UpdateDelegationScopeDTO[]): boolean {
+  private validateScopesPeriod(scopes?: UpdateDelegationScopeDTO[]): boolean {
+    if (!scopes || scopes.length === 0) {
+      return true
+    }
+
     const startOfToday = startOfDay(new Date())
     // validTo can be null or undefined or it needs to be the current day or in the future
     return scopes.every(
