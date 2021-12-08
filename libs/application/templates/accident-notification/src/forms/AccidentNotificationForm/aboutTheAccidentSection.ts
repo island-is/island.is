@@ -652,6 +652,25 @@ export const aboutTheAccidentSection = buildSection({
               },
               { type: 'warning' },
             ),
+            buildCustomField(
+              {
+                id: 'attachments.injuryCertificate.hidden',
+                title: '',
+                component: 'HiddenInput',
+                condition: (formValue) => {
+                  console.log(getValueViaPath(formValue, 'attachments'))
+                  return (
+                    getValueViaPath(formValue, 'injuryCertificate.answer') ===
+                      AttachmentsEnum.SENDCERTIFICATELATER ||
+                    getValueViaPath(formValue, 'injuryCertificate.answer') ===
+                      AttachmentsEnum.HOSPITALSENDSCERTIFICATE
+                  )
+                },
+              },
+              {
+                id: 'attachments.injuryCertificateFile.file',
+              },
+            ),
           ],
         }),
         buildMultiField({
