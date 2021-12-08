@@ -11,13 +11,13 @@ export class AmountModel implements Amount {
   @Field()
   readonly aidAmount!: number
 
-  @Field()
+  @Field({ nullable: true })
   readonly income?: number
 
   @Field()
   readonly personalTaxCredit!: number
 
-  @Field()
+  @Field({ nullable: true })
   readonly spousePersonalTaxCredit?: number
 
   @Field()
