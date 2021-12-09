@@ -23,7 +23,6 @@ export const NationalRegistryClientConfig = defineConfig({
       ),
       fetch: {
         timeout: env.optionalJSON('XROAD_NATIONAL_REGISTRY_TIMEOUT') ?? 10000,
-        circuitBreaker: false,
       },
       redis: {
         nodes: env.optionalJSON('XROAD_NATIONAL_REGISTRY_REDIS_NODES') ?? [],

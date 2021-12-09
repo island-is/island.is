@@ -14,6 +14,7 @@ export const ApiConfiguration = {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-national-registry-v2',
+        circuitBreaker: false,
         //cache: getCache(config),
         ...config.fetch,
       }),
