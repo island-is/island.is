@@ -53,6 +53,7 @@ export * from './lib/ModalBase/ModalBase'
 export * from './lib/Filter/Filter'
 export * from './lib/Filter/FilterMultiChoice/FilterMultiChoice'
 export * from './lib/Filter/FilterInput/FilterInput'
+export * from './lib/PdfViewer/PdfViewer'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'

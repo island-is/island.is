@@ -41,6 +41,7 @@ import { NationalRegistryClientConfig } from '@island.is/clients/national-regist
 import { AuditModule } from '@island.is/nest/audit'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { ProblemModule } from '@island.is/nest/problem'
+import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
@@ -258,6 +259,13 @@ const autoSchemaFile = environment.production
       basePath: environment.islykill.basePath,
     }),
     ProblemModule,
+    CriminalRecordModule.register({
+      clientConfig: {
+        xroadBaseUrl: environment.xroad.baseUrl,
+        xroadClientId: environment.xroad.clientId,
+        xroadPath: environment.criminalRecord.xroadPath,
+      },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
