@@ -1,0 +1,1 @@
+export { getAge } from './getAge'
