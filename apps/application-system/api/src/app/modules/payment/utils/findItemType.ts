@@ -4,7 +4,7 @@ export const findItemType = (itemCode: string) => {
     case 'AYXXX':
       return 'PayableDummyTemplate'
     case 'AY101':
-      return 'CriminalRecord'
+      return 'Sakarvottorð'
     case 'AY102':
       return 'Veðbókarvottorð'
     case 'AY110':
