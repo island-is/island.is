@@ -11,6 +11,7 @@ import {
   Option,
   Input,
   RadioButton,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -139,6 +140,15 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   return (
     <>
       <FormContentContainer>
+        {workingCase.comments && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.comments.title)}
+              message={workingCase.comments}
+            />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}

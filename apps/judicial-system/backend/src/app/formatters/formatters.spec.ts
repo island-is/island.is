@@ -60,7 +60,7 @@ describe('formatLegalProvisions', () => {
 
     // Assert
     expect(res).toBe(
-      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.',
+      'a-lið 1. mgr. 95. gr. sml.\nb-lið 1. mgr. 95. gr. sml.\nc-lið 1. mgr. 95. gr. sml.\nd-lið 1. mgr. 95. gr. sml.\n2. mgr. 95. gr. sml.\nb-lið 1. mgr. 99. gr. sml.\n1. mgr. 100. gr. sml.',
     )
   })
 
@@ -81,7 +81,7 @@ describe('formatLegalProvisions', () => {
 
     // Assert
     expect(res).toBe(
-      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.',
+      'a-lið 1. mgr. 95. gr. sml.\nb-lið 1. mgr. 95. gr. sml.\nc-lið 1. mgr. 95. gr. sml.\nd-lið 1. mgr. 95. gr. sml.\n2. mgr. 95. gr. sml.\nb-lið 1. mgr. 99. gr. sml.\n1. mgr. 100. gr. sml.',
     )
   })
 
@@ -96,26 +96,26 @@ describe('formatLegalProvisions', () => {
       CaseLegalProvisions._99_1_B,
       CaseLegalProvisions._100_1,
     ]
-    const legalBasis = 'some lið mgr. gr.'
+    const legalBasis = 'some lið mgr. gr. sml.'
 
     // Act
     const res = formatLegalProvisions(legalProvisions, legalBasis)
 
     // Assert
     expect(res).toBe(
-      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.\nsome lið mgr. gr.',
+      'a-lið 1. mgr. 95. gr. sml.\nb-lið 1. mgr. 95. gr. sml.\nc-lið 1. mgr. 95. gr. sml.\nd-lið 1. mgr. 95. gr. sml.\n2. mgr. 95. gr. sml.\nb-lið 1. mgr. 99. gr. sml.\n1. mgr. 100. gr. sml.\nsome lið mgr. gr. sml.',
     )
   })
 
   test('should format legal provisions only freetext provided', () => {
     // Arrange
-    const legalBasis = 'some lið mgr. gr.'
+    const legalBasis = 'some lið mgr. gr. sml.'
 
     // Act
     const res = formatLegalProvisions(undefined, legalBasis)
 
     // Assert
-    expect(res).toBe('some lið mgr. gr.')
+    expect(res).toBe('some lið mgr. gr. sml.')
   })
 })
 
@@ -600,7 +600,38 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Úrskurðað verður um kröfuna án mætingar af hálfu málsaðila.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Talsmaður sakbornings: Tinni Talsmaður.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Úrskurðað verður um kröfuna án mætingar af hálfu málsaðila.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.',
+    )
+  })
+
+  test('should format court date notification when defender will not attend', () => {
+    // Arrange
+    const type = CaseType.OTHER
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtDate = new Date('2021-12-24T10:00')
+    const courtRoom = '999'
+    const judgeName = 'Dóra Dómari'
+    const registrarName = 'Dalli Dómritari'
+    const defenderName = 'Tinni Talsmaður'
+    const defenderIsSpokesperson = true
+    const sessionArrangements = SessionArrangements.PROSECUTOR_PRESENT
+
+    // Act
+    const res = formatProsecutorCourtDateEmailNotification(
+      type,
+      court,
+      courtDate,
+      courtRoom,
+      judgeName,
+      registrarName,
+      defenderName,
+      defenderIsSpokesperson,
+      sessionArrangements,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.',
     )
   })
 

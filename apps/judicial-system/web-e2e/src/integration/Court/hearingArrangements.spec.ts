@@ -1,5 +1,6 @@
 import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 import { makeCase, makeCourt } from '@island.is/judicial-system/formatters'
+import * as faker from 'faker'
 import { intercept } from '../../utils'
 
 describe('/domur/krafa/fyrirtokutimi/:id', () => {
@@ -15,6 +16,20 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
     cy.stubAPIResponses()
 
     intercept(caseDataAddition)
+  })
+
+  it('should display case comments', () => {
+    const caseData = makeCase()
+    const comment = faker.lorem.sentence(1)
+    const caseDataAddition: Case = {
+      ...caseData,
+      comments: comment,
+    }
+
+    cy.visit('/domur/fyrirtokutimi/test_id_stadfest')
+    intercept(caseDataAddition)
+
+    cy.contains(comment)
   })
 
   it('should allow users to choose if they send COURT_DATE notification', () => {

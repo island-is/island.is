@@ -12,7 +12,6 @@ import {
   CaseType,
   isRestrictionCase,
   SessionArrangements,
-  User,
 } from '@island.is/judicial-system/types'
 import type { CaseGender } from '@island.is/judicial-system/types'
 
@@ -151,7 +150,7 @@ export function formatProsecutorCourtDateEmailNotification(
   registrarName?: string,
   defenderName?: string,
   defenderIsSpokesperson?: boolean,
-  sessionArrangements = SessionArrangements.ALL_PRESENT, // Defaults to ALL_PRESENT when not specified
+  sessionArrangements?: SessionArrangements,
 ): string {
   const scheduledCaseText =
     type === CaseType.CUSTODY
@@ -174,15 +173,19 @@ export function formatProsecutorCourtDateEmailNotification(
   const registrarText = registrarName
     ? `<br /><br />Dómritari: ${registrarName}.`
     : ''
-  const defenderText = defenderName
-    ? `${
-        defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
-      } sakbornings: ${defenderName}`
-    : `${
-        defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
-      } sakbornings hefur ekki verið skráður`
+  const defenderText =
+    sessionArrangements === SessionArrangements.PROSECUTOR_PRESENT ||
+    sessionArrangements === SessionArrangements.REMOTE_SESSION
+      ? ''
+      : defenderName
+      ? `<br /><br />${
+          defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
+        } sakbornings: ${defenderName}.`
+      : `<br /><br />${
+          defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
+        } sakbornings hefur ekki verið skráður.`
 
-  return `${court} hefur staðfest fyrirtökutíma fyrir ${scheduledCaseText}.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />${courtRoomText}.<br /><br />${judgeText}.${registrarText}<br /><br />${defenderText}.`
+  return `${court} hefur staðfest fyrirtökutíma fyrir ${scheduledCaseText}.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />${courtRoomText}.<br /><br />${judgeText}.${registrarText}${defenderText}`
 }
 
 export function formatPrisonCourtDateEmailNotification(
