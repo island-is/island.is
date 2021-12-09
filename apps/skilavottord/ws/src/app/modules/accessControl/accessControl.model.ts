@@ -5,8 +5,8 @@ import { Role } from '../auth'
 @ObjectType('AccessControl')
 @Table({ tableName: 'access_control', timestamps: false })
 export class AccessControlModel extends Model<AccessControlModel> {
-  // @Field((_) => ID)
-  @Field()
+  // @Field()
+  @Field((_) => ID)
   @Column({
     type: DataType.STRING,
     primaryKey: true,
