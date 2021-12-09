@@ -59,6 +59,23 @@ export interface Aid {
   municipalityId: string
   type: AidType
 }
+
+export interface Amount {
+  applicationId?: string
+  aidAmount: number
+  income?: number
+  personalTaxCredit: number
+  spousePersonalTaxCredit?: number
+  tax: number
+  finalAmount: number
+  deductionFactors?: DeductionFactors[]
+}
+
+export interface DeductionFactors {
+  amount?: number
+  description?: string
+}
+
 export interface NavigationProps {
   activeSectionIndex: number
   activeSubSectionIndex?: number
@@ -95,7 +112,6 @@ export interface Address {
 export interface UpdateApplication {
   state?: ApplicationState
   event: ApplicationEventType
-  amount?: number
   rejection?: string
   comment?: string
   staffId?: string
@@ -103,6 +119,7 @@ export interface UpdateApplication {
   spouseEmail?: string
   spouseName?: string
   spouseFormComment?: string
+  amount?: Amount
 }
 
 export interface UpdateApplicationTable {
@@ -206,7 +223,7 @@ export interface ApplicantEmailData {
   applicationChange: string
   applicationMonth: string
   applicationYear: number
-  statusPageUrl: string
+  applicationLink: string
   applicantEmail: string
   municipality: Municipality
 }
@@ -244,11 +261,11 @@ export interface Application {
   spouseFormComment?: string
   state: ApplicationState
   files?: ApplicationFile[]
-  amount?: number
   comment?: string
   rejection?: string
   staff?: Staff
   applicationEvents?: ApplicationEvent[]
+  amount?: Amount
   spouseNationalId?: string
   spouseEmail?: string
   spousePhoneNumber?: string

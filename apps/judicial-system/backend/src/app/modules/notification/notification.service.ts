@@ -458,6 +458,10 @@ export class NotificationService {
       existingCase.courtDate,
       existingCase.courtRoom,
       existingCase.defenderIsSpokesperson,
+      existingCase.judge?.name,
+      existingCase.registrar?.name,
+      existingCase.prosecutor?.name,
+      existingCase.prosecutor?.institution?.name,
     )
 
     let attachments: Attachment[] | undefined
