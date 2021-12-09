@@ -222,13 +222,19 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
     },
   },
   mapUserToRole(
-    id: string,
+    nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.state === 'inReview') {
+    if (application.applicant === nationalId) {
+      return Roles.APPLICANT
+    }
+
+    if (application.assignees.includes(nationalId)) {
       return Roles.ASSIGNEE
     }
-    return Roles.APPLICANT
+
+    // Undefined means that the currently logged in user can not see the data in the application
+    return undefined
   },
 }
 
