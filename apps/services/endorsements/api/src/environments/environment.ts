@@ -95,10 +95,10 @@ const prodConfig = {
     },
   },
   nationalRegistry: {
-    baseSoapUrl: 'https://localhost:8443',
+    baseSoapUrl: process.env.SOFFIA_SOAP_URL ?? '',
     user: process.env.SOFFIA_USER ?? '',
     password: process.env.SOFFIA_PASS ?? '',
-    host: 'soffiaprufa.skra.is',
+    host: process.env.SOFFIA_HOST_URL ?? '',
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
