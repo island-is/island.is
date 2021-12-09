@@ -59,5 +59,6 @@ export const Authorize = (
     role: undefined,
   },
 ): MethodDecorator & ClassDecorator => {
+  console.log('auth guard authorize')
   return UseGuards(new GraphQLAuthGuard({ throwOnUnAuthorized, role }))
 }

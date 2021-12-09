@@ -19,7 +19,7 @@ import { appWithTranslation } from '../i18n'
 // import { isAuthenticated } from '../auth/utils'
 import { withHealthchecks } from '../utils/Healthchecks/withHealthchecks'
 
-import type { AuthenticateUser as User } from './api/auth/interfaces'
+import type { AuthenticateUser as User } from '@island.is/air-discount-scheme-web/lib'
 
 const activeEnvironment = getActiveEnvironment()
 

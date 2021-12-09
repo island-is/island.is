@@ -2,7 +2,7 @@ import { ApolloError, ServerError } from '@apollo/client'
 import { onError, ErrorResponse } from '@apollo/client/link/error'
 import { signIn } from 'next-auth/client'
 import Router from 'next/router'
-import { identityServerId } from '../pages/api/auth/idsConfig'
+import { identityServerId } from '@island.is/air-discount-scheme-web/lib'
 
 import { NotificationService, api } from '../services'
 
@@ -14,7 +14,7 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (graphQLErrors) {
     graphQLErrors.forEach((err) => {
       if (err.message === 'Unauthorized') {
-        return signIn(process.env.IDENTITY_SERVER_ISSUER_URL, {
+        return signIn('identity-server', {
           callbackUrl: `${window.location.href}`,
         })
       }

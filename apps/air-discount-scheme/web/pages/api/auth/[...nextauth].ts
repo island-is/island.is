@@ -1,7 +1,7 @@
 import NextAuth, { CallbacksOptions } from 'next-auth'
 import Providers from 'next-auth/providers'
 import { uuid } from 'uuidv4'
-import { identityServerConfig } from './idsConfig'
+import { identityServerConfig } from '@island.is/air-discount-scheme-web/lib'
 import {
   AuthUser,
   signIn as handleSignIn,
@@ -69,5 +69,8 @@ async function session(session: AuthSession, user: AuthUser) {
 
 const options = { providers, callbacks }
 
-export default (req: NextApiRequest, res: NextApiResponse) =>
+export default (req: NextApiRequest, res: NextApiResponse) => {
+  console.log('look at me')
+  console.log('next auth req, ', { req })
   NextAuth(req, res, options)
+}
