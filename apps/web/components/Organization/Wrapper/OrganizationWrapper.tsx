@@ -100,6 +100,10 @@ export const OrganizationAlert: React.FC<AlertProps> = ({
   organizationPage,
   namespace,
 }) => {
+  /**
+   * The following code was added as a quick fix in order to get the message out to
+   * users ASAP. After December 14th 2021, the PR that added this code can be reverted.
+   */
   const n = useNamespace(namespace)
   const alertEndDate = new Date(2021, 11, 14) // Dec. 14th 2021
   const withinAlertTimeframe = new Date() < alertEndDate
