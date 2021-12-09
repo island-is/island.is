@@ -15,6 +15,8 @@ import {
   LinkContext,
   Navigation,
   NavigationItem,
+  Inline,
+  Tag,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
@@ -99,6 +101,17 @@ const Search: Screen<CategoryProps> = ({
   const filters: SearchQueryFilters = {
     category: Router.query.category as string,
     type: Router.query.type as string,
+  }
+
+  const typeNames: Record<SearchableContentTypes, string> = {
+    webArticle: 'Greinar',
+    webSubArticle: 'Undirgreinar',
+    webAdgerdirPage: 'Covid',
+    webLifeEventPage: 'Lífsviðburðir',
+    webLink: 'Tenglar',
+    webNews: 'Fréttir og tilkynningar',
+    webQNA: 'Spurt og svarað',
+    webOrganizationSubpage: 'Stofnun',
   }
 
   useEffect(() => {
@@ -340,6 +353,44 @@ const Search: Screen<CategoryProps> = ({
             activeLocale={activeLocale}
             initialInputValue={q}
           />
+          <Box width="full">
+            <Inline space={1}>
+              {countResults.total > 0 && (
+                <Tag
+                  variant="blue"
+                  CustomLink={({ children, ...props }) => (
+                    <Link
+                      {...props}
+                      href={`${linkResolver('search').href}?q=${q}`}
+                    >
+                      {children}
+                    </Link>
+                  )}
+                >
+                  Sjá allt ({countResults.total})
+                </Tag>
+              )}
+              {countResults.typesCount.map((x) => (
+                <Tag
+                  key={x.key}
+                  variant="blue"
+                  active={activeSearchTypes.includes(x.key)}
+                  CustomLink={({ children, ...props }) => (
+                    <Link
+                      {...props}
+                      href={`${linkResolver('search').href}?q=${q}&type=${
+                        x.key
+                      }`}
+                    >
+                      {children}
+                    </Link>
+                  )}
+                >
+                  {typeNames[x.key]} ({x.count})
+                </Tag>
+              ))}
+            </Inline>
+          </Box>
           <Hidden above="sm">
             <Navigation
               title={n('filterResults', 'Sía niðurstöður')}
