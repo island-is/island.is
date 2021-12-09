@@ -71,6 +71,7 @@ export const StatusStep: FC<ReviewSectionProps> = ({
           justifyContent="spaceBetween"
           background="roseTinted100"
           padding={4}
+          className={cn(styles.bottomBorderRadius)}
         >
           <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
             <Text variant="h5">{action.title}</Text>

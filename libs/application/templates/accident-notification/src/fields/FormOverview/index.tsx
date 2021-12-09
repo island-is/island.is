@@ -66,10 +66,20 @@ interface SubmittedApplicationData {
   }
 }
 
-export const FormOverview: FC<FieldBaseProps> = ({
+interface FormOverviewProps {
+  field: {
+    props: {
+      isAssignee: boolean
+    }
+  }
+}
+
+export const FormOverview: FC<FieldBaseProps & FormOverviewProps> = ({
   application,
   goToScreen,
+  field,
 }) => {
+  const isAssignee = field?.props?.isAssignee || false
   const answers = application.answers as AccidentNotification
   const { formatMessage } = useLocale()
 
@@ -113,7 +123,9 @@ export const FormOverview: FC<FieldBaseProps> = ({
       )}
       <Text variant="h4" paddingTop={5} paddingBottom={3}>
         {formatText(
-          applicantInformation.general.title,
+          isAssignee
+            ? applicantInformation.general.titleForReviewer
+            : applicantInformation.general.title,
           application,
           formatMessage,
         )}
