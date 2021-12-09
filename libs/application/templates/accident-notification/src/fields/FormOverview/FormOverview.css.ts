@@ -1,6 +1,10 @@
 import { theme } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
+export const formValueBreakWord = style({
+  wordBreak: 'break-word',
+})
+
 export const paddingLeftForFileNames = style({
   paddingLeft: 4,
 })
