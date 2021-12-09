@@ -25,6 +25,7 @@ const mockProfile = {
   locale: 'en',
   email: 'email@example.com',
   mobilePhoneNumber: '9876543',
+  documentNotifications: true,
 }
 
 beforeAll(async () => {
