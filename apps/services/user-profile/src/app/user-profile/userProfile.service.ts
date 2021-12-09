@@ -64,11 +64,12 @@ export class UserProfileService {
   }
 
   // User Notifications
-  // FIND ALL by NationalId
-  async getDeviceTokens(user: User) {
+  // FIND ALL by NationalId - used by notifications workers
+  async getDeviceTokens(nationalId: string) {
+    
     try {
       return await this.UserDeviceTokensModel.findAll({
-        where: { nationalId: user.nationalId },
+        where: { nationalId },
         order: [['created', 'DESC']],
       })
     } catch (error) {
@@ -85,29 +86,10 @@ export class UserProfileService {
     }
   }
 
-  // // UPDATE
-  // async updateDeviceToken(body: UpdateUserDeviceTokenDto, user: User) {
-  //   try {
-  //     const res = await this.UserDeviceTokensModel.findOne({
-  //       where: { id: body.id, nationalId: user.nationalId },
-  //     })
-  //     if (res) {
-  //       // res.isEnabled = body.isEnabled
-  //       res.save()
-  //       return res
-  //     } else {
-  //       throw new BadRequestException()
-  //     }
-  //   } catch (e) {
-  //     throw new BadRequestException(e.errors)
-  //   }
-  // }
-
   // DELETE
   async deleteDeviceToken(body: DeviceTokenDto, user: User) {
     const res = await this.UserDeviceTokensModel.destroy({
       where: { nationalId: user.nationalId, deviceToken: body.deviceToken },
     })
-    // return
   }
 }

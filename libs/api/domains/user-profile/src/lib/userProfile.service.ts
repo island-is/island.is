@@ -160,13 +160,6 @@ export class UserProfileService {
       .catch(handleError)
   }
 
-  // NOTIFICATIONS DEVICE TOKENS
-  async getDeviceTokens(user: User) {
-    return await this.userProfileApiWithAuth(user)
-      .userProfileControllerGetDeviceTokens(user)
-      .catch(handleError)
-  }
-
   async addDeviceToken(input: UserDeviceTokenInput, user: User) {
     return await this.userProfileApiWithAuth(user)
       .userProfileControllerAddDeviceToken({

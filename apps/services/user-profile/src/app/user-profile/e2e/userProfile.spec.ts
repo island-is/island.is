@@ -651,14 +651,14 @@ describe('User profile API', () => {
       expect(response.body[0].deviceToken).toBe(mockDeviceToken.deviceToken)
     })
 
-    it('GET /userProfile/{nationalId}/deviceToken should fail with nationalId mismatch', async () => {
+    it('GET /userProfile/{nationalId}/deviceToken should work with different nationalId', async () => {
       // create one first
       await request(app.getHttpServer())
-        .get(`/userProfile/0000001122/deviceToken`)
+        .get(`/userProfile/0101302989/deviceToken`) // GERVIMAÐUR KT
         .send({
           deviceToken: mockDeviceToken.deviceToken,
         })
-        .expect(400)
+        .expect(200)
     })
 
     it('POST /userProfile/{nationalId}/deviceToken should return 201 created', async () => {
@@ -678,7 +678,7 @@ describe('User profile API', () => {
       )
     })
 
-    it('POST /userProfile/{nationalId}/deviceToken with missing payload should 400 ', async () => {
+    it('POST /userProfile/{nationalId}/deviceToken with missing payload should 400 bad request', async () => {
       // create it
       await request(app.getHttpServer())
         .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
@@ -686,7 +686,7 @@ describe('User profile API', () => {
         .expect(400)
     })
 
-    it('DELETE /userProfile/{nationalId}/deviceToken should remove row', async () => {
+    it('DELETE /userProfile/{nationalId}/deviceToken should remove row with 204 no content', async () => {
       // create one first ...
       await request(app.getHttpServer())
         .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)

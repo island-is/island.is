@@ -337,7 +337,7 @@ export class UserProfileController {
   // FINDALL
   @Audit()
   @ApiOperation({
-    summary: 'Return a list of all user device tokens for notifications',
+    summary: 'NOTE: Return a list of any user´s device tokens - Used by Notification workers - not exposed via GraphQL',
   })
   @ApiOkResponse({ type: [UserDeviceTokensDto] })
   @Scopes(UserProfileScope.read)
@@ -346,10 +346,8 @@ export class UserProfileController {
   async getDeviceTokens(
     @Param('nationalId')
     nationalId: string,
-    @CurrentUser() user: User,
   ): Promise<UserDeviceTokensDto[]> {
-    if (nationalId != user.nationalId) throw new BadRequestException()
-    return await this.userProfileService.getDeviceTokens(user)
+    return await this.userProfileService.getDeviceTokens(nationalId)
   }
 
   // CREATE
@@ -367,9 +365,12 @@ export class UserProfileController {
     @CurrentUser() user: User,
     @Body() body: DeviceTokenDto,
   ): Promise<UserDeviceTokensDto> {
-    if (nationalId != user.nationalId) throw new BadRequestException()
-    body.nationalId = user.nationalId
-    return await this.userProfileService.addDeviceToken(body)
+    if (nationalId != user.nationalId){
+      throw new BadRequestException()
+    } else {
+      body.nationalId = user.nationalId
+      return await this.userProfileService.addDeviceToken(body)
+    }
   }
 
   // DELETE
@@ -388,7 +389,10 @@ export class UserProfileController {
     @CurrentUser() user: User,
     @Body() body: DeviceTokenDto,
   ): Promise<void> {
-    if (nationalId != user.nationalId) throw new BadRequestException()
-    return await this.userProfileService.deleteDeviceToken(body, user)
+    if (nationalId != user.nationalId){
+      throw new BadRequestException()
+    } else {
+      return await this.userProfileService.deleteDeviceToken(body, user)
+    }
   }
 }

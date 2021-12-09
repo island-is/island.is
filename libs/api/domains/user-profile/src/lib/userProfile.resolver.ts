@@ -75,12 +75,6 @@ export class UserProfileResolver {
     return await this.userUserProfileService.confirmEmail(input, user)
   }
 
-  // user notifications queries
-
-  @Query(() => [UserDeviceToken])
-  async getDeviceTokens(@CurrentUser() user: User): Promise<UserDeviceToken[]> {
-    return await this.userUserProfileService.getDeviceTokens(user)
-  }
 
   @Mutation(() => UserDeviceToken)
   async addDeviceToken(
