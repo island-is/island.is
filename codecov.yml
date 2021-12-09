@@ -1,5 +1,6 @@
 comment:
-  layout: "reach, diff, flags"
+  layout: "flags"
+  behavior: new
 coverage:
   status:
     project: false
