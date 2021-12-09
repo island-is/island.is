@@ -8,7 +8,7 @@ import {
   PrimaryKey,
   HasMany,
 } from 'sequelize-typescript'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 import { PersonalRepresentativeRight } from './personal-representative-right.model'
 
 @Table({

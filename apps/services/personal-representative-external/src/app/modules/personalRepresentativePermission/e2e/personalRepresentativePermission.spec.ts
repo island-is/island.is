@@ -8,6 +8,7 @@ import {
   PersonalRepresentativeDTO,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
+  PersonalRepresentativeType,
 } from '@island.is/auth-api-lib/personal-representative'
 import { PersonalRepresentativeRightTypeService } from '@island.is/auth-api-lib/personal-representative'
 import { PersonalRepresentativeService } from '@island.is/auth-api-lib/personal-representative'
@@ -19,6 +20,7 @@ describe('PersonalRepresentativePermissionController', () => {
   let server: request.SuperTest<request.Test>
   let rightService: PersonalRepresentativeRightTypeService
   let prService: PersonalRepresentativeService
+  let prTypeModel: typeof PersonalRepresentativeType
   let prRightTypeModel: typeof PersonalRepresentativeRightType
   let prModel: typeof PersonalRepresentative
   let prPermissionsModel: typeof PersonalRepresentativeRight
@@ -29,7 +31,14 @@ describe('PersonalRepresentativePermissionController', () => {
     { code: 'code2', description: 'code2 description' },
   ]
 
+  const personalRepresentativeType = {
+    code: 'prTypeCode',
+    name: 'prTypeName',
+    description: 'prTypeDescription',
+  }
+
   const simpleRequestData: PersonalRepresentativeDTO = {
+    contractId: '123456',
     nationalIdPersonalRepresentative: '1234567890',
     nationalIdRepresentedPerson: '1234567891',
     rightCodes: [],
@@ -47,6 +56,10 @@ describe('PersonalRepresentativePermissionController', () => {
     // Get reference on rightType models to seed DB
     prRightTypeModel = app.get<typeof PersonalRepresentativeRightType>(
       'PersonalRepresentativeRightTypeRepository',
+    )
+    // Get reference on rightType models to seed DB
+    prTypeModel = app.get<typeof PersonalRepresentativeType>(
+      'PersonalRepresentativeTypeRepository',
     )
     // Get reference on personal representative models to seed DB
     prModel = app.get<typeof PersonalRepresentative>(
@@ -71,12 +84,20 @@ describe('PersonalRepresentativePermissionController', () => {
       truncate: true,
       force: true,
     })
+    await prTypeModel.destroy({
+      where: {},
+      cascade: true,
+      truncate: true,
+      force: true,
+    })
     await prRightTypeModel.destroy({
       where: {},
       cascade: true,
       truncate: true,
       force: true,
     })
+    // Create personal representastive type
+    await prTypeModel.create(personalRepresentativeType)
     // Create right types
     for (const rightType of rightTypeList) {
       await rightService.createAsync({
@@ -88,6 +109,7 @@ describe('PersonalRepresentativePermissionController', () => {
     personalRep = await prService.createAsync({
       ...simpleRequestData,
       rightCodes: rightTypeList.map((rt) => rt.code),
+      personalRepresentativeTypeCode: personalRepresentativeType.code,
     })
   })
 

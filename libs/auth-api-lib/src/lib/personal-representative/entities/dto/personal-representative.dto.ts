@@ -17,6 +17,20 @@ export class PersonalRepresentativeDTO {
   readonly id?: string
 
   @IsString()
+  @IsOptional()
+  @ApiProperty({
+    example: 'personal_representative_for_disabled_person',
+  })
+  readonly personalRepresentativeTypeCode?: string
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: 'contractId from personar representative contract system',
+  })
+  readonly contractId!: string
+
+  @IsString()
   @IsNotEmpty()
   @ApiProperty({
     example: 'nationalId of Personal Representative',

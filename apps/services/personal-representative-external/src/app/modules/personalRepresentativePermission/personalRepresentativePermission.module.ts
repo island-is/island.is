@@ -4,6 +4,7 @@ import {
   PersonalRepresentative,
   PersonalRepresentativeRight,
   PersonalRepresentativeService,
+  PersonalRepresentativeType,
 } from '@island.is/auth-api-lib/personal-representative'
 import { SequelizeModule } from '@nestjs/sequelize'
 
@@ -11,6 +12,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
   imports: [
     SequelizeModule.forFeature([
       PersonalRepresentativeRight,
+      PersonalRepresentativeType,
       PersonalRepresentative,
     ]),
   ],

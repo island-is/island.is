@@ -5,6 +5,7 @@
 
 module.exports = {
   up: (queryInterface) => {
+    /*
     const grantTypes = [
       {
         name: 'authorization_code',
@@ -23,11 +24,16 @@ module.exports = {
     ]
 
     return queryInterface.bulkInsert('grant_type', grantTypes, {})
+    */
+    return queryInterface.sequelize.query('')
   },
 
   down: (queryInterface) => {
+    /*
     const grantTypes = queryInterface.bulkDelete('grant_type', null, {})
 
     return Promise.all([grantTypes])
+    */
+    return queryInterface.sequelize.query('')
   },
 }

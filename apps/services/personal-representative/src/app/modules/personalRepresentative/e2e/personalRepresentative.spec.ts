@@ -7,6 +7,7 @@ import {
   PersonalRepresentativeRight,
   PersonalRepresentativeDTO,
   PersonalRepresentativeRightType,
+  PersonalRepresentativeType,
 } from '@island.is/auth-api-lib/personal-representative'
 import { environment } from '../../../../environments'
 
@@ -18,7 +19,14 @@ describe('PersonalRepresentativeController', () => {
     { code: 'code2', description: 'code2 description' },
   ]
 
+  const personalRepresentativeType = {
+    code: 'prTypeCode',
+    name: 'prTypeName',
+    description: 'prTypeDescription',
+  }
+
   const simpleRequestData: PersonalRepresentativeDTO = {
+    contractId: '12345',
     nationalIdPersonalRepresentative: '1234567890',
     nationalIdRepresentedPerson: '1234567891',
     rightCodes: [],
@@ -27,6 +35,7 @@ describe('PersonalRepresentativeController', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
   let prRightTypeModel: typeof PersonalRepresentativeRightType
+  let prTypeModel: typeof PersonalRepresentativeType
   let prModel: typeof PersonalRepresentative
   let prPermissionsModel: typeof PersonalRepresentativeRight
 
@@ -37,6 +46,10 @@ describe('PersonalRepresentativeController', () => {
     // Get reference on rightType models to seed DB
     prRightTypeModel = app.get<typeof PersonalRepresentativeRightType>(
       'PersonalRepresentativeRightTypeRepository',
+    )
+    // Get reference on rightType models to seed DB
+    prTypeModel = app.get<typeof PersonalRepresentativeType>(
+      'PersonalRepresentativeTypeRepository',
     )
     // Get reference on personal representative models to seed DB
     prModel = app.get<typeof PersonalRepresentative>(
@@ -66,6 +79,12 @@ describe('PersonalRepresentativeController', () => {
       force: true,
     })
     await prRightTypeModel.destroy({
+      where: {},
+      cascade: true,
+      truncate: true,
+      force: true,
+    })
+    await prTypeModel.destroy({
       where: {},
       cascade: true,
       truncate: true,
@@ -107,6 +126,8 @@ describe('PersonalRepresentativeController', () => {
     })
 
     it('POST /v1/personal-representative should create a new entry', async () => {
+      // Create personal representastive type
+      await prTypeModel.create(personalRepresentativeType)
       // Create right types
       await prRightTypeModel.bulkCreate(rightTypeList)
 
@@ -114,6 +135,7 @@ describe('PersonalRepresentativeController', () => {
       const requestData = {
         ...simpleRequestData,
         rightCodes: rightTypeList.map((rt) => rt.code),
+        personalRepresentativeTypeCode: personalRepresentativeType.code,
       }
 
       const response = await server
@@ -131,6 +153,8 @@ describe('PersonalRepresentativeController', () => {
 
   describe('Delete', () => {
     it('DELETE /v1/personal-representative should delete personal rep', async () => {
+      // Create personal representastive type
+      await prTypeModel.create(personalRepresentativeType)
       // Create right types
       await prRightTypeModel.bulkCreate(rightTypeList)
 
@@ -138,6 +162,7 @@ describe('PersonalRepresentativeController', () => {
       const personalRep = await setupBasePersonalRep({
         ...simpleRequestData,
         rightCodes: rightTypeList.map((rt) => rt.code),
+        personalRepresentativeTypeCode: personalRepresentativeType.code,
       })
       // Test delete personal rep
       await server
@@ -152,6 +177,8 @@ describe('PersonalRepresentativeController', () => {
 
   describe('Get', () => {
     it('Get v1/personal-representative/all should get personal rep', async () => {
+      // Create personal representastive type
+      await prTypeModel.create(personalRepresentativeType)
       // Create right types
       await prRightTypeModel.bulkCreate(rightTypeList)
 
@@ -159,6 +186,7 @@ describe('PersonalRepresentativeController', () => {
       const personalRep = await setupBasePersonalRep({
         ...simpleRequestData,
         rightCodes: rightTypeList.map((rt) => rt.code),
+        personalRepresentativeTypeCode: personalRepresentativeType.code,
       })
 
       // Test get personal rep

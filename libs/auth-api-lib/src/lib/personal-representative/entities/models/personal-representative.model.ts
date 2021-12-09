@@ -6,9 +6,11 @@ import {
   Model,
   Table,
   PrimaryKey,
+  ForeignKey,
   HasMany,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+import { PersonalRepresentativeType } from './personal-representative-type.model'
 import { PersonalRepresentativeRight } from './personal-representative-right.model'
 import { PersonalRepresentativeDTO } from '../dto/personal-representative.dto'
 
@@ -23,6 +25,22 @@ export class PersonalRepresentative extends Model<PersonalRepresentative> {
     allowNull: false,
   })
   id!: string
+
+  @ForeignKey(() => PersonalRepresentativeType)
+  @Column({
+    type: DataType.STRING,
+    primaryKey: true,
+    allowNull: false,
+  })
+  @ApiProperty()
+  personalRepresentativeTypeCode?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  contractId!: string
 
   @Column({
     type: DataType.STRING,
@@ -58,9 +76,15 @@ export class PersonalRepresentative extends Model<PersonalRepresentative> {
   @ApiProperty()
   rights!: PersonalRepresentativeRight[]
 
+  @ApiProperty({ type: () => PersonalRepresentativeType, required: false })
+  @ApiProperty()
+  type!: PersonalRepresentativeType
+
   toDTO(): PersonalRepresentativeDTO {
     return {
       id: this.id,
+      contractId: this.contractId,
+      personalRepresentativeTypeCode: this.personalRepresentativeTypeCode,
       nationalIdPersonalRepresentative: this.nationalIdPersonalRepresentative,
       nationalIdRepresentedPerson: this.nationalIdRepresentedPerson,
       validTo: this.validTo,
@@ -70,6 +94,8 @@ export class PersonalRepresentative extends Model<PersonalRepresentative> {
 
   fromDTO(id: string, dto: PersonalRepresentativeDTO): PersonalRepresentative {
     this.id = id
+    this.contractId = dto.contractId
+    this.personalRepresentativeTypeCode = dto.personalRepresentativeTypeCode
     this.nationalIdPersonalRepresentative = dto.nationalIdPersonalRepresentative
     this.nationalIdRepresentedPerson = dto.nationalIdRepresentedPerson
     this.validTo = dto.validTo
