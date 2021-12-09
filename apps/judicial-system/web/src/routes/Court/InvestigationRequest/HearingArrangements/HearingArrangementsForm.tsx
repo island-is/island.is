@@ -185,7 +185,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   (selectedOption as ReactSelectOption).value.toString(),
               )
             }
-            required
             isClearable
           />
         </Box>

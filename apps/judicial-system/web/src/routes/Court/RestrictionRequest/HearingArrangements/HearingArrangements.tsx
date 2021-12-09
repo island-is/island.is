@@ -214,7 +214,6 @@ export const HearingArrangements: React.FC = () => {
                   (selectedOption as ReactSelectOption).value.toString(),
               )
             }
-            required
             isClearable
           />
         </Box>
