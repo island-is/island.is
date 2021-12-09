@@ -1,11 +1,11 @@
 import React, { FC, useState } from 'react'
 import { Box } from '../Box/Box'
-import { pdfjs, Document, Page } from 'react-pdf'
+// import { pdfjs, Document, Page } from 'react-pdf'
 import * as styles from './PdfViewer.css'
 import { Pagination } from '../Pagination/Pagination'
 import { LoadingDots } from '../LoadingDots/LoadingDots'
 // Loading worker for react-pdf
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
+// pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
 
 export interface PdfViewerProps {
   file: string
@@ -25,7 +25,7 @@ export const PdfViewer: FC<PdfViewerProps> = ({ file }) => {
 
   return (
     <>
-      <Document
+      {/* <Document
         file={file}
         onLoadSuccess={onDocumentLoadSuccess}
         renderMode="svg"
@@ -52,7 +52,7 @@ export const PdfViewer: FC<PdfViewerProps> = ({ file }) => {
           )}
           totalPages={numPages}
         />
-      </Box>
+      </Box> */}
     </>
   )
 }
