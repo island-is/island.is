@@ -218,7 +218,10 @@ const DefenderInfo: React.FC<Props> = (props) => {
             name="defenderName"
             icon="search"
             options={lawyers.lawyers.map((l) => {
-              return { label: `${l.name} (${l.practice})`, value: l.email }
+              return {
+                label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
+                value: l.email,
+              }
             })}
             label={formatMessage(getTranslations().defenderName.label, {
               defenderType: workingCase.defenderIsSpokesperson
@@ -237,6 +240,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
                 : undefined
             }
             onChange={handleDefenderChange}
+            filterConfig={{ matchFrom: 'start' }}
             isCreatable
           />
         </Box>

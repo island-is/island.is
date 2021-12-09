@@ -51,7 +51,8 @@ const CourtRecord = () => {
 
       if (
         wc.defenderName &&
-        wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
+        wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION &&
+        wc.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
       ) {
         attendees += `\n${wc.defenderName} skipaður ${
           wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'

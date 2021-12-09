@@ -13,6 +13,7 @@ import { PayableDummyTemplateModule } from './payable-dummy-template/payable-dum
 import { AccidentNotificationModule } from './accident-notification/accident-notification.module'
 import { PublicDebtPaymentPlanTemplateModule } from './public-debt-payment-plan/public-debt-payment-plan.module'
 import { GeneralPetitionModule } from './general-petition/general-petition.module'
+import { CriminalRecordSubmissionModule } from './criminal-record-submission/criminal-record-submission.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -30,6 +31,7 @@ export const modules = [
   AccidentNotificationModule,
   PublicDebtPaymentPlanTemplateModule,
   GeneralPetitionModule,
+  CriminalRecordSubmissionModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -47,3 +49,4 @@ export { PayableDummyTemplateService } from './payable-dummy-template/payable-du
 export { AccidentNotificationService } from './accident-notification/accident-notification.service'
 export { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
 export { GeneralPetitionService } from './general-petition/general-petition.service'
+export { CriminalRecordSubmissionService } from './criminal-record-submission/criminal-record-submission.service'
