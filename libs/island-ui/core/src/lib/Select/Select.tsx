@@ -62,6 +62,7 @@ export interface SelectProps {
   required?: boolean
   ariaError?: AriaError
   formatGroupLabel?: formatGroupLabel<Option>
+  isClearable?: boolean
 }
 
 export const Select = ({
@@ -84,6 +85,7 @@ export const Select = ({
   backgroundColor = 'white',
   required,
   formatGroupLabel,
+  isClearable,
 }: SelectProps) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -182,6 +184,8 @@ export const Select = ({
           Menu,
           Option,
         }}
+        isClearable={isClearable}
+        backspaceRemovesValue={isClearable}
       />
       {hasError && errorMessage && (
         <div id={errorId} className={styles.errorMessage} aria-live="assertive">

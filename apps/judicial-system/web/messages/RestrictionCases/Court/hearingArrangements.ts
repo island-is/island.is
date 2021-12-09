@@ -38,7 +38,7 @@ export const rcHearingArrangements = {
         id:
           'judicial.system.restriction_cases:hearing_arrangements.set_registrar.tooltip',
         defaultMessage:
-          'Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti. Ef enginn dómritari er valinn endurspeglar þingbókin að enginn dómritari hafi verið vottur að þinghaldi.',
+          'Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti.',
         description:
           'Notaður sem upplýsingatexti í upplýsingasvæði við "dómritari" titlinn á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
       },

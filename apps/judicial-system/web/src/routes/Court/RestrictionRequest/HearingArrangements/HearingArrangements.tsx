@@ -96,9 +96,6 @@ export const HearingArrangements: React.FC = () => {
     .map((registrar: User) => {
       return { label: registrar.name, value: registrar.id }
     })
-  if (workingCase.registrar) {
-    registrars.push({ label: 'Dómritari ekki skráður', value: '' })
-  }
 
   const defaultJudge = judges?.find(
     (judge: Option) => judge.value === workingCase?.judge?.id,
@@ -132,13 +129,11 @@ export const HearingArrangements: React.FC = () => {
     }
   }
 
-  const setRegistrar = (id: string) => {
-    const registrarId = id ? id : null
-
+  const setRegistrar = (id?: string) => {
     if (workingCase) {
       setAndSendToServer(
         'registrarId',
-        registrarId,
+        id,
         workingCase,
         setWorkingCase,
         updateCase,
@@ -215,10 +210,12 @@ export const HearingArrangements: React.FC = () => {
             options={registrars}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setRegistrar(
-                (selectedOption as ReactSelectOption).value.toString(),
+                (selectedOption ?? undefined) &&
+                  (selectedOption as ReactSelectOption).value.toString(),
               )
             }
             required
+            isClearable
           />
         </Box>
         <Box component="section" marginBottom={8}>

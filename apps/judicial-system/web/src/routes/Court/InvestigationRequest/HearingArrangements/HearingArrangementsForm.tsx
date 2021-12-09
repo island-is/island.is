@@ -80,13 +80,11 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
     }
   }
 
-  const setRegistrar = (id: string) => {
+  const setRegistrar = (id?: string) => {
     if (workingCase) {
-      const registrarId = id ? id : null
-
       setAndSendToServer(
         'registrarId',
-        registrarId,
+        id,
         workingCase,
         setWorkingCase,
         updateCase,
@@ -117,9 +115,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
     .map((registrar: User) => {
       return { label: registrar.name, value: registrar.id }
     })
-  if (workingCase.registrar) {
-    registrars.push({ label: 'Dómritari ekki skráður', value: '' })
-  }
 
   const defaultJudge = judges?.find(
     (judge: Option) => judge.value === workingCase?.judge?.id,
@@ -186,10 +181,12 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             options={registrars}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setRegistrar(
-                (selectedOption as ReactSelectOption).value.toString(),
+                (selectedOption ?? undefined) &&
+                  (selectedOption as ReactSelectOption).value.toString(),
               )
             }
             required
+            isClearable
           />
         </Box>
         <Box component="section" marginBottom={8}>
