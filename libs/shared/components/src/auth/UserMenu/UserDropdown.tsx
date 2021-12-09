@@ -45,8 +45,6 @@ export const UserDropdown = ({
     setDropdownState('closed')
   }
 
-  const isDelegation = Boolean(user.profile.actor)
-
   const [updateUserProfileMutation] = useUpdateUserProfileMutation()
 
   // const handleLanguageChange = async (option: ValueType<Option>) => {
@@ -69,10 +67,11 @@ export const UserDropdown = ({
   // }
 
   const actor = user.profile.actor
+  const isDelegation = Boolean(actor)
   const userName = user.profile.name
   const actorName = actor?.name
   const isDelegationCompany =
-    isDelegation && kennitala.isCompany(actor!.nationalId)
+    isDelegation && kennitala.isCompany(actor?.nationalId ?? '')
 
   const { value: showPersonalInfo } = useFeatureFlag(
     'isServicePortalPersonalInformationModuleEnabled',
