@@ -61,7 +61,7 @@ function Eligibility(): JSX.Element {
             <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
               <Stack space={2}>
                 <Inline space={1}>
-                  <Text variant="h1" as="h1">
+                  <Text variant="h3" as="h1">
                     {formatMessage({
                       id: 'sp.eligibility:title',
                       defaultMessage: 'Mín réttindi',
@@ -93,7 +93,7 @@ function Eligibility(): JSX.Element {
                 marginTop={[3, 3, 0]}
               >
                 <Box marginBottom={2}>
-                  <Text variant="h2" as="h2">
+                  <Text variant="h4" as="h2">
                     {formatMessage(item.heading)}
                   </Text>
                 </Box>

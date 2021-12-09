@@ -81,7 +81,7 @@ export const EditPhoneNumber: ServicePortalModuleComponent = () => {
   return (
     <>
       <Box marginBottom={4}>
-        <Text variant="h1" as="h1">
+        <Text variant="h3" as="h1">
           {formatMessage({
             id: 'sp.settings:edit-phone-number',
             defaultMessage: 'Breyta símanúmeri',

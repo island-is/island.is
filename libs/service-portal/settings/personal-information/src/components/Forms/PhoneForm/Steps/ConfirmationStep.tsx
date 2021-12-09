@@ -57,6 +57,7 @@ export const ConfirmationStep: FC<Props> = ({
               hasError={errors.code}
               errorMessage={errors.code?.message}
               onChange={onChange}
+              size="xs"
             />
           )}
         />

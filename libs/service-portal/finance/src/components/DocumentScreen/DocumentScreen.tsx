@@ -216,23 +216,27 @@ const DocumentScreen: FC<Props> = ({
               <T.Head>
                 <T.Row>
                   <T.HeadData>
-                    <Text variant="eyebrow">{formatMessage(m.date)}</Text>
+                    <Text variant="default" fontWeight="semiBold">
+                      {formatMessage(m.date)}
+                    </Text>
                   </T.HeadData>
                   <T.HeadData>
-                    <Text variant="eyebrow">
+                    <Text variant="default" fontWeight="semiBold">
                       {formatMessage(m.transactionType)}
                     </Text>
                   </T.HeadData>
                   <T.HeadData>
-                    <Text variant="eyebrow">
+                    <Text variant="default" fontWeight="semiBold">
                       {formatMessage(m.performingOrganization)}
                     </Text>
                   </T.HeadData>
                   <T.HeadData box={{ textAlign: 'right' }}>
-                    <Text variant="eyebrow">{formatMessage(m.amount)}</Text>
+                    <Text variant="default" fontWeight="semiBold">
+                      {formatMessage(m.amount)}
+                    </Text>
                   </T.HeadData>
                   <T.HeadData>
-                    <Text variant="eyebrow">
+                    <Text variant="default" fontWeight="semiBold">
                       {formatMessage(m.explanationNote)}
                     </Text>
                   </T.HeadData>
@@ -244,11 +248,12 @@ const DocumentScreen: FC<Props> = ({
                   .map((listItem) => (
                     <T.Row key={listItem.id}>
                       <T.Data>
-                        {format(new Date(listItem.date), dateFormat.is)}
+                        <Text variant="default">
+                          {format(new Date(listItem.date), dateFormat.is)}
+                        </Text>
                       </T.Data>
                       <T.Data box={{ position: 'relative' }}>
                         <Button
-                          size="small"
                           variant="text"
                           onClick={() =>
                             formSubmit(
@@ -260,11 +265,16 @@ const DocumentScreen: FC<Props> = ({
                           {listItem.type}
                         </Button>
                       </T.Data>
-                      <T.Data>{listItem.sender}</T.Data>
-                      <T.Data box={{ textAlign: 'right' }}>
-                        {amountFormat(listItem.amount)}
+                      <T.Data>
+                        {' '}
+                        <Text variant="default">{listItem.sender}</Text>
                       </T.Data>
-                      <T.Data>{listItem.note}</T.Data>
+                      <T.Data box={{ textAlign: 'right' }}>
+                        <Text>{amountFormat(listItem.amount)}</Text>
+                      </T.Data>
+                      <T.Data>
+                        <Text>{listItem.note}</Text>
+                      </T.Data>
                     </T.Row>
                   ))}
               </T.Body>

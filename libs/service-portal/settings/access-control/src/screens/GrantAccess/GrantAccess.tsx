@@ -168,6 +168,7 @@ function GrantAccess() {
                     defaultMessage: 'Aðgangshafi',
                   })}
                   disabled
+                  size="xs"
                 />
               )}
               <Box display={name ? 'none' : 'block'} aria-live="assertive">
@@ -211,6 +212,7 @@ function GrantAccess() {
                   onChange={(value) => {
                     requestDelegation(value)
                   }}
+                  size="xs"
                 />
               </Box>
               {queryLoading ? (

@@ -139,6 +139,7 @@ const ViewPetitionAdmin = () => {
             label={formatMessage(m.viewPetition.listTitleHeader)}
           />
           <Input
+            size="xs"
             name={description as string}
             value={description ?? ''}
             onChange={(e) => {
@@ -172,6 +173,7 @@ const ViewPetitionAdmin = () => {
           )}
 
           <Input
+            size="xs"
             backgroundColor="blue"
             disabled
             name={petition?.ownerName ?? ''}

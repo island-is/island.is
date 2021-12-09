@@ -48,6 +48,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
               defaultValue=""
               render={({ onChange, value, name }) => (
                 <Input
+                  size="xs"
                   name={name}
                   value={value}
                   onChange={onChange}
