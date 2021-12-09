@@ -11,6 +11,7 @@ import {
   Text,
   Option,
   Tooltip,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import {
   FormFooter,
@@ -167,6 +168,15 @@ export const HearingArrangements: React.FC = () => {
       notFound={caseNotFound}
     >
       <FormContentContainer>
+        {workingCase.comments && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.comments.title)}
+              message={workingCase.comments}
+            />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
