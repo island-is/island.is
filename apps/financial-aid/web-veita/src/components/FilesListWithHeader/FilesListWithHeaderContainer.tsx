@@ -21,9 +21,11 @@ const FilesListWithHeaderContainer = ({ applicationFiles }: Props) => {
     <>
       <Box
         marginBottom={[2, 2, 3]}
-        className={`contentUp delay-125 ${styles.widthAlmostFull}`}
+        className={`contentUp delay-125 ${styles.widthFull}`}
+        borderBottomWidth="standard"
+        borderColor="dark200"
       >
-        <Text as="h2" variant="h3" color="dark300">
+        <Text as="h2" variant="h3" color="dark300" marginBottom={1}>
           Gögn frá umsækjanda
         </Text>
       </Box>

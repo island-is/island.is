@@ -3,6 +3,7 @@ import { useWindowSize } from 'react-use'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
+
 import {
   Stack,
   GridContainer,
@@ -23,13 +24,13 @@ import { theme } from '@island.is/island-ui/theme'
 import {
   RecyclingRequest,
   RecyclingRequestTypes,
-  WithApolloProps,
-} from '@island.is/skilavottord-web/types'
+  Query,
+} from '@island.is/skilavottord-web/graphql/schema'
 import { getTime, getDate, formatYear } from '@island.is/skilavottord-web/utils'
 import compareDesc from 'date-fns/compareDesc'
 import { dateFormat } from '@island.is/shared/constants'
 
-export const skilavottordRecyclingRequestQuery = gql`
+export const SkilavottordRecyclingRequestQuery = gql`
   query skilavottordRecyclingRequestQuery($permno: String!) {
     skilavottordRecyclingRequest(permno: $permno) {
       id
@@ -40,7 +41,11 @@ export const skilavottordRecyclingRequestQuery = gql`
   }
 `
 
-const Completed = ({ apolloState }: WithApolloProps) => {
+interface PropTypes {
+  apolloState: any
+}
+
+const Completed = ({ apolloState }: PropTypes) => {
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
   const {
@@ -50,9 +55,12 @@ const Completed = ({ apolloState }: WithApolloProps) => {
   const router = useRouter()
   const { id } = router.query
 
-  const { data, error, loading } = useQuery(skilavottordRecyclingRequestQuery, {
-    variables: { permno: id },
-  })
+  const { data, error, loading } = useQuery<Query>(
+    SkilavottordRecyclingRequestQuery,
+    {
+      variables: { permno: id },
+    },
+  )
 
   const recyclingRequests = data?.skilavottordRecyclingRequest || []
   const car = apolloState[`VehicleInformation:${id}`]
@@ -121,7 +129,7 @@ const Completed = ({ apolloState }: WithApolloProps) => {
       <ProcessPageLayout
         processType={'citizen'}
         activeSection={2}
-        activeCar={id.toString()}
+        activeCar={id?.toString()}
       >
         <Stack space={3}>
           <Text variant="h1">{t.title}</Text>
@@ -153,7 +161,7 @@ const Completed = ({ apolloState }: WithApolloProps) => {
         <ProcessPageLayout
           processType={'citizen'}
           activeSection={2}
-          activeCar={id.toString()}
+          activeCar={id?.toString()}
         >
           <Stack space={3}>
             <Text variant="h1">{t.title}</Text>

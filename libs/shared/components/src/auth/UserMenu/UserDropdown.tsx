@@ -15,6 +15,7 @@ import {
 import { Locale, User } from '@island.is/shared/types'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
+import { useUpdateUserProfileMutation } from '../../../gen/graphql'
 import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
 import { UserProfileInfo } from './UserProfileInfo'
@@ -36,14 +37,33 @@ export const UserDropdown = ({
   onLogout,
 }: UserDropdownProps) => {
   const { lang, formatMessage, changeLanguage } = useLocale()
-  const handleLanguageChange = (option: ValueType<Option>) =>
-    changeLanguage((option as Option).value.toString() as Locale)
   const isVisible = dropdownState === 'open'
   const onClose = () => {
     setDropdownState('closed')
   }
 
   const isDelegation = Boolean(user.profile.actor)
+
+  const [updateUserProfileMutation] = useUpdateUserProfileMutation()
+  const handleLanguageChange = async (option: ValueType<Option>) => {
+    const locale = (option as Option).value.toString()
+    changeLanguage(locale as Locale)
+
+    if (user && !isDelegation) {
+      try {
+        await updateUserProfileMutation({
+          variables: {
+            input: {
+              locale: locale,
+            },
+          },
+        })
+      } catch (e) {
+        return null
+      }
+    }
+  }
+
   const username = user.profile.actor
     ? user.profile.actor.name
     : user.profile.name

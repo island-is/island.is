@@ -14,7 +14,7 @@ const PdfButton: React.FC<Props> = ({ caseId, title, pdfType, disabled }) => {
     <Button
       data-testid={
         pdfType === 'courtRecord'
-          ? 'rulingSVPDFButton'
+          ? 'courtRecordPDFButton'
           : pdfType === 'ruling'
           ? 'rulingPDFButton'
           : `${pdfType}PDFButton`

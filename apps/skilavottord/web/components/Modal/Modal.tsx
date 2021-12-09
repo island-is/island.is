@@ -12,19 +12,20 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './Modal.css'
 import { OutlinedError } from '@island.is/skilavottord-web/components'
-import { Errors } from '@island.is/skilavottord-web/i18n/locales/translation'
+import { CompletedError } from '@island.is/skilavottord-web/i18n/locales/translation'
 
 export interface ModalProps {
   show: boolean
   onCancel: () => void
   onContinue: () => void
   title: string
-  text: string
+  text?: string
   continueButtonText: string
   cancelButtonText: string
   loading?: boolean
   error?: ApolloError | string
-  errorText?: Errors
+  errorText?: CompletedError
+  children?: React.ReactNode
 }
 
 export const Modal: FC<ModalProps> = ({
@@ -38,6 +39,7 @@ export const Modal: FC<ModalProps> = ({
   loading = false,
   error,
   errorText,
+  children,
 }: ModalProps) => {
   useEffect(() => {
     document.body.style.overflowY = 'auto'
@@ -94,7 +96,7 @@ export const Modal: FC<ModalProps> = ({
                         />
                       </Stack>
                     ) : (
-                      <Stack space={[6, 4, 4, 4]}>
+                      <Stack space={[6, 4, 4, 5]}>
                         <Stack space={2}>
                           <Text variant="h1">{title}</Text>
                           {loading ? (
@@ -105,15 +107,19 @@ export const Modal: FC<ModalProps> = ({
                             <Text variant="intro">{text}</Text>
                           )}
                         </Stack>
-                        <Box display="flex" justifyContent="spaceBetween">
-                          <Button variant="ghost" onClick={onCancel} fluid>
-                            {cancelButtonText}
-                          </Button>
-                          <Box paddingX={[3, 3, 3, 15]}></Box>
-                          <Button onClick={onContinue} fluid>
-                            {continueButtonText}
-                          </Button>
-                        </Box>
+                        {children ? (
+                          children
+                        ) : (
+                          <Box display="flex" justifyContent="spaceBetween">
+                            <Button variant="ghost" onClick={onCancel} fluid>
+                              {cancelButtonText}
+                            </Button>
+                            <Box paddingX={[3, 3, 3, 15]}></Box>
+                            <Button onClick={onContinue} fluid>
+                              {continueButtonText}
+                            </Button>
+                          </Box>
+                        )}
                       </Stack>
                     )}
                   </GridColumn>

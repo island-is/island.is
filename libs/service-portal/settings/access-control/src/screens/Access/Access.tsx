@@ -119,7 +119,7 @@ const DeleteAuthDelegationMutation = gql`
 
 function Access() {
   const { formatMessage } = useLocale()
-  const { nationalId }: { nationalId: string } = useParams()
+  const { delegationId }: { delegationId: string } = useParams()
   const history = useHistory()
   const [updateDelegation, { loading: updateLoading }] = useMutation<Mutation>(
     UpdateAuthDelegationMutation,
@@ -138,7 +138,7 @@ function Access() {
       fetchPolicy: 'network-only',
       variables: {
         input: {
-          toNationalId: nationalId,
+          delegationId,
         },
       },
     },
@@ -161,7 +161,7 @@ function Access() {
       name: scope.name[0],
     }))
     const { data, errors } = await updateDelegation({
-      variables: { input: { toNationalId: nationalId, scopes } },
+      variables: { input: { delegationId, scopes } },
     })
     if (data && !errors) {
       toast.success(
@@ -175,7 +175,7 @@ function Access() {
 
   const onDelete = async (closeModal: () => void) => {
     const { data, errors } = await deleteDelegation({
-      variables: { input: { toNationalId: nationalId } },
+      variables: { input: { delegationId } },
     })
     if (data && !errors) {
       closeModal()
@@ -207,7 +207,7 @@ function Access() {
   return (
     <Box>
       <IntroHeader
-        title={authDelegation?.to.name || ''}
+        title={authDelegation?.to?.name || ''}
         intro={defineMessage({
           id: 'service.portal.settings.accessControl:access-intro',
           defaultMessage:

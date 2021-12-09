@@ -1,6 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
+
 import { Box, Select, Text } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -10,7 +11,7 @@ import { selectCourt as m } from '@island.is/judicial-system-web/messages/Core/s
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   setSelectedCourt: React.Dispatch<React.SetStateAction<string | undefined>>
   courts: Institution[]
 }
@@ -40,7 +41,7 @@ const SelectCourt: React.FC<Props> = (props) => {
         name="court"
         label={formatMessage(m.label)}
         placeholder={formatMessage(m.placeholder)}
-        defaultValue={defaultCourt}
+        value={defaultCourt}
         options={selectCourts}
         onChange={(selectedOption: ValueType<ReactSelectOption>) => {
           setAndSendToServer(

@@ -97,7 +97,7 @@ export const errorCards = defineMessages({
   concernsBanMarkingTitle: {
     id: 'dpac.application:error.concernsBanMarking.card.title',
     defaultMessage:
-      'Persónuvernd getur ekki fjallað um kvartanir yfir því að x-merking í símaskrá eða bannmerking í þjóðskrá hafi ekki verið virt. ',
+      'Persónuvernd bendir á að kvörtunum vegna þess að x-merking í símaskrá hefur ekki verið virt ber að beina til Fjarskiptastofu. Kvörtunum yfir því að reglum um bannmerkingu í þjóðskrá hafi ekki verið fylgt má beina til Þjóðskrár Íslands. ',
     description:
       'Shown in a card when concernsBanMarking has been answered as yes',
   },

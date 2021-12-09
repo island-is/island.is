@@ -1,20 +1,20 @@
 import { lazy } from 'react'
-import { defineMessage } from 'react-intl'
 
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   ServicePortalModule,
   ServicePortalPath,
-  ServicePortalRoute,
   m,
 } from '@island.is/service-portal/core'
 
 export const drivingLicenseModule: ServicePortalModule = {
   name: 'Ökuréttindi',
   widgets: () => [],
-  routes: () => [
+  routes: ({ userInfo }) => [
     {
       name: m.drivingLicense,
       path: ServicePortalPath.DrivingLicense,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
       render: () => lazy(() => import('./screens/DrivingLicense')),
     },
   ],

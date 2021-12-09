@@ -43,6 +43,7 @@ import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { ProblemModule } from '@island.is/nest/problem'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
+import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -75,9 +76,7 @@ const autoSchemaFile = environment.production
         }),
       ],
     }),
-    AuthDomainModule.register({
-      authPublicApi: environment.authPublicApi,
-    }),
+    AuthDomainModule,
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
     CmsModule,
@@ -261,7 +260,11 @@ const autoSchemaFile = environment.production
     ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [XRoadConfig, NationalRegistryClientConfig],
+      load: [
+        XRoadConfig,
+        NationalRegistryClientConfig,
+        AuthPublicApiClientConfig,
+      ],
     }),
   ],
 })

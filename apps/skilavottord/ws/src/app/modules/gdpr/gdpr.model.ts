@@ -8,7 +8,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-@ObjectType()
+@ObjectType('Gdpr')
 @Table({ tableName: 'gdpr' })
 export class GdprModel extends Model<GdprModel> {
   @Field()
