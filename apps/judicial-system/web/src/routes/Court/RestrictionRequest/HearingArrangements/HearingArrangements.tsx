@@ -44,7 +44,6 @@ import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
-import { useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
