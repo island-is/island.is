@@ -12,11 +12,11 @@ import { format } from 'date-fns'
 
 interface Props {
   event: ApplicationEvent
-  comment?: string
   children: ReactNode
   [key: string]: any
   applicantName: string
   spouseName: string
+  automaticChange: boolean
 }
 
 const TimeLineContainer = ({
@@ -24,8 +24,15 @@ const TimeLineContainer = ({
   applicantName,
   spouseName,
   children,
+  automaticChange,
 }: Props) => {
-  const eventData = getEventData(event, applicantName, spouseName)
+  const eventData = getEventData(
+    event,
+    applicantName,
+    spouseName,
+    automaticChange,
+  )
+
   return (
     <Box
       className={cn({

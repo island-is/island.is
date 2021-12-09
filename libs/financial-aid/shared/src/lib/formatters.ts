@@ -74,6 +74,7 @@ export const getEventData = (
   event: ApplicationEvent,
   applicantName: string,
   spouseName: string,
+  automaticChange: boolean,
 ): { header: string; text: string; prefix: string } => {
   switch (event.eventType) {
     case ApplicationEventType.NEW:
@@ -91,8 +92,10 @@ export const getEventData = (
     case ApplicationEventType.INPROGRESS:
       return {
         header: 'Í vinnslu',
-        text: 'breytti stöðu',
-        prefix: event.staffName ?? 'Starfsmaður',
+        text: automaticChange
+          ? 'breytt vegna innsendingu gagna'
+          : 'breytti stöðu',
+        prefix: automaticChange ? 'Stöðu' : event.staffName ?? 'Starfsmaður',
       }
     case ApplicationEventType.REJECTED:
       return {
