@@ -147,6 +147,16 @@ export const inputSizes = {
 }
 
 export const optionDescriptionSizes = {
+  xs: {
+    fontSize: mobileLabelFontSize,
+    lineHeight: 1.25,
+    ...themeUtils.responsiveStyle({
+      md: {
+        fontSize: labelFontSize,
+        lineHeight: 1.555556,
+      },
+    }),
+  },
   sm: {
     fontSize: mobileLabelFontSize,
     lineHeight: 1.25,

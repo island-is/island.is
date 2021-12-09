@@ -324,6 +324,7 @@ export const optionSizes = styleVariants({
 })
 
 export const optionDescriptionSizes = styleVariants({
+  xs: wrapMedia(inputMixins.optionDescriptionSizes.xs, `${wrapper} &`),
   sm: wrapMedia(inputMixins.optionDescriptionSizes.sm, `${wrapper} &`),
   md: wrapMedia(inputMixins.optionDescriptionSizes.md, `${wrapper} &`),
 })
