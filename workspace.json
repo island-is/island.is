@@ -1758,11 +1758,11 @@
           },
           "outputs": ["coverage/apps/application-system/api"]
         },
-        "application-lifecycle": {
+        "worker": {
           "builder": "@nrwl/node:execute",
           "options": {
             "buildTarget": "application-system-api:build",
-            "args": ["--applicationLifecycle"]
+            "args": ["--job", "worker"]
           }
         },
         "dev-services": {

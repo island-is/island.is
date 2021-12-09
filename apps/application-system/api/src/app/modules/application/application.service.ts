@@ -30,6 +30,7 @@ const applicationIsNotSetToBePruned = () => ({
 
 @Injectable()
 export class ApplicationService {
+  public stuff = 'stuffApplications'
   constructor(
     @InjectModel(Application)
     private applicationModel: typeof Application,
@@ -84,7 +85,7 @@ export class ApplicationService {
     })
   }
 
-  async getAll(): Promise<Application[]> {
+  async findAllDueToBePruned(): Promise<Application[]> {
     return this.applicationModel.findAll({
       where: {
         [Op.or]: [

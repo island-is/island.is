@@ -22,7 +22,7 @@ import {
 } from './application.configuration'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { PaymentModule } from '../payment/payment.module'
-import { LifeCycleService } from './application-lifecycle.service'
+import { ApplicationLifeCycleService } from './application-lifecycle.service'
 
 let BullModule: DynamicModule
 
@@ -70,7 +70,7 @@ if (process.env.INIT_SCHEMA === 'true') {
     },
     AwsService,
     ApplicationAccessService,
-    LifeCycleService,
+    ApplicationLifeCycleService,
   ],
 })
 export class ApplicationModule {}
