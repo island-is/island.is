@@ -64,7 +64,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
     onChange,
     onRemove,
     onRetry,
-  } = useS3Upload(workingCase)
+  } = useS3Upload(workingCase, setWorkingCase)
   const { updateCase } = useCase()
 
   useEffect(() => {

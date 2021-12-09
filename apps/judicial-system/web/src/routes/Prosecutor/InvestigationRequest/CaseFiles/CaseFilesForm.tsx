@@ -63,7 +63,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
     onChange,
     onRemove,
     onRetry,
-  } = useS3Upload(workingCase)
+  } = useS3Upload(workingCase, setWorkingCase)
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
 
