@@ -200,7 +200,11 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
         },
         title: formatMessage(inReview.action.documents.title),
         description: formatMessage(inReview.action.documents.description),
-        fileNames: getErrorMessageForMissingDocuments(answers, formatMessage), // We need to get this from first form
+        fileNames: getErrorMessageForMissingDocuments(
+          answers,
+          formatMessage,
+          isAssignee,
+        ), // We need to get this from first form
         actionButtonTitle: formatMessage(
           inReview.action.documents.actionButtonTitle,
         ),
