@@ -212,6 +212,7 @@ export const getApplicantEmailDataFromEventType = (
   municipality: Municipality,
   createdDate: Date,
   typeOfDataNeeded?: string,
+  rejectionComment?: string,
 ): { subject: string; data: ApplicantEmailData } => {
   const getPeriod = {
     month: months[createdDate.getMonth()],
@@ -257,7 +258,7 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn synjað',
           header: 'Umsókn þinni um aðstoð hefur verið synjað',
-          content: `Umsókn þinni um fjárhagsaðstoð í ${getPeriod.month} hefur verið synjað á grundvelli 12. gr.: Tekjur og eignir umsækjanda. Smelltu á hlekkinn hér fyrir neðan til að kynna þér reglur um fjárhagsaðstoð.`,
+          content: `${rejectionComment}`,
           applicationChange: 'Umsókn synjað',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,

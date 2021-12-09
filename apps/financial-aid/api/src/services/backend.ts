@@ -20,6 +20,7 @@ import {
   Staff,
   CreateStaff,
   CreateMunicipality,
+  Amount,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -30,6 +31,7 @@ import {
   CreateMunicipalityInput,
   UpdateMunicipalityInput,
 } from '../app/modules/municipality/dto'
+import { CreateAmountInput } from '../app/modules/amount/dto'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
