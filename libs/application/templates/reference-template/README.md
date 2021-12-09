@@ -7,10 +7,10 @@ This library is a reference how all application template libraries can be.
 There are multiple requirements needed for a new template to be usable by the application system:
 
 1. Add a unique application type to `application/core/src/types/ApplicationTypes.ts`
-2. Build a new library similar to this one under the folder `application/templates/`
+2. Build a new library similar to this one under the folder `application/templates/` (yarn generate @nrwl/react:library application/templates/NAME_OF_APPLICATION)
 3. The default export of this library has to be an object that extends the `ApplicationTemplate` interface
 4. Add to `application/template-loader/src/lib/templateLoaders.ts` so that library knows how to import this new application template.
-5. Add a project reference to the `nx.json` [NX](https://github.com/island-is/island.is/blob/main/nx.json)
+5. Add a project reference to the `nx.json` [NX](https://github.com/island-is/island.is/blob/main/nx.json) (skip if you used yarn to generate application)
 
 ```json
 "application-templates-${template-directory-name}": {
@@ -18,7 +18,7 @@ There are multiple requirements needed for a new template to be usable by the ap
 },
 ```
 
-6. Add a path to the new directory to `tsconfig.base.json` [TSConfig](https://github.com/island-is/island.is/blob/main/tsconfig.base.json)
+6. Add a path to the new directory to `tsconfig.base.json` [TSConfig](https://github.com/island-is/island.is/blob/main/tsconfig.base.json) (skip if you used yarn to generate application)
 
 ```json
 "@island.is/application/templates/${template-directory-name}": [
