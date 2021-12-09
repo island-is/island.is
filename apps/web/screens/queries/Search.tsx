@@ -31,6 +31,10 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
             title
             slug
           }
+          processEntry {
+            id
+            processTitle
+          }
           subArticles {
             title
             slug
@@ -180,6 +184,10 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           subArticles {
             title
             slug
+          }
+          processEntry {
+            id
+            processTitle
           }
         }
 

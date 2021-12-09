@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, FC, useMemo } from 'react'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
+import { NextRouter, useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { Screen } from '../../types'
 import { SearchInput, Card, CardTagsProps } from '@island.is/web/components'
@@ -16,6 +16,8 @@ import {
   Navigation,
   NavigationItem,
   ColorSchemeContext,
+  Inline,
+  Tag,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
@@ -80,6 +82,26 @@ interface SidebarData {
   types: SidebarTagMap
 }
 
+type TagsList = {
+  title: string
+  count: number
+  key: string
+}
+
+const visibleTags: Partial<
+  Record<
+    SearchableContentTypes | string,
+    Array<keyof typeof SearchableContentTypes | string>
+  >
+> = {
+  webArticle: ['WebArticle', 'WebSubArticle'],
+  webAdgerdirPage: ['WebAdgerdirPage'],
+  webNews: ['WebNews'],
+  webQNA: ['WebQna'],
+  webLifeEventPage: ['WebLifeEventPage'],
+  webProcessEntry: ['WebArticle'],
+}
+
 const Search: Screen<CategoryProps> = ({
   q,
   page,
@@ -89,9 +111,11 @@ const Search: Screen<CategoryProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
-  const Router = useRouter()
+  const replace = useReplace()
+  const { query } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+  const [activeSearchTypes, setActiveSearchTypes] = useState<Array<string>>([])
   const [sidebarData, setSidebarData] = useState<SidebarData>({
     totalTagCount: 0,
     tags: {},
@@ -106,10 +130,91 @@ const Search: Screen<CategoryProps> = ({
     })
   }
 
+  console.log(searchResults, countResults)
+
   const filters: SearchQueryFilters = {
-    category: Router.query.category as string,
-    type: Router.query.type as string,
+    category: query.category as string,
+    type: query.type as string,
   }
+
+  const tagTitles:
+    | Partial<Record<SearchableContentTypes, string>>
+    | Record<string, string> = useMemo(
+    () => ({
+      webArticle: n('webArticle', 'Greinar'),
+      webSubArticle: n('webSubArticle', 'Undirgreinar'),
+      webAdgerdirPage: n('webAdgerdirPage', 'Viðspyrna'),
+      webLink: n('webLink', 'Tenglar'),
+      webNews: n('webNews', 'Fréttir og tilkynningar'),
+      webQNA: n('webQNA', 'Spurt og svarað'),
+      webLifeEventPage: n('webLifeEventPage', 'Lífsviðburðir'),
+      webProcessEntry: n('webProcessEntry', 'Umsókn'),
+    }),
+    [n],
+  )
+
+  const onToggleSearchType = (
+    type: SearchableContentTypes,
+    single?: boolean,
+  ) => {
+    if (single) {
+      setActiveSearchTypes([type])
+    } else {
+      const a = [...activeSearchTypes]
+      a.includes(type) ? a.splice(a.indexOf(type), 1) : a.push(type)
+      setActiveSearchTypes(a)
+    }
+  }
+
+  const pathname = linkResolver('search').href
+
+  useEffect(() => {
+    const searchTypes = activeSearchTypes
+      .map((x) => {
+        if (Object.keys(visibleTags).includes(x)) {
+          return visibleTags[x].map(firstLower).join()
+        }
+
+        return x
+      })
+      .join()
+
+    replace({
+      pathname,
+      query: {
+        q,
+        ...(searchTypes && { type: searchTypes }),
+      },
+    }).then(() => {
+      window.scrollTo(0, 0)
+    })
+  }, [activeSearchTypes, pathname, q, replace])
+
+  const tagsList = useMemo((): TagsList[] => {
+    const processEntryArticles = (searchResults.items as Array<Article>)
+      .filter((x) => x.__typename === 'Article')
+      .filter((x) => x.processEntry?.id && x.processEntry?.processTitle)
+
+    return [
+      ...countResults.typesCount
+        .filter((x) => x.key in tagTitles)
+        .filter((x) => Object.keys(visibleTags).some((y) => y.includes(x.key)))
+        .map((x) => ({
+          title: tagTitles[x.key] as string,
+          count: x.count,
+          key: x.key,
+        })),
+      ...[
+        {
+          title: (n('processEntry', 'Umsókn') + 'bla') as string,
+          count: processEntryArticles.length,
+          key: 'webProcessEntry',
+        } as TagsList,
+      ],
+    ]
+  }, [searchResults.items, countResults.typesCount, n, tagTitles])
+
+  console.log('tagsList', tagsList)
 
   useEffect(() => {
     // we get the tag count manually since the total includes uncategorised data and the type count
@@ -134,7 +239,7 @@ const Search: Screen<CategoryProps> = ({
 
     // create a map of sidebar type data for easier lookup later
     const typeNames = {
-      webNews: n('newsTitle'),
+      // webNews: n('newsTitle'),
       webOrganizationSubpage: n('organizationsTitle', 'Opinberir aðilar'),
     }
     const typeCountResults = countResults.typesCount.reduce(
@@ -298,6 +403,11 @@ const Search: Screen<CategoryProps> = ({
     sidebarData.types[filters.type]?.title ??
     n('allCategories', 'Allir flokkar')
 
+  const searchResultsText =
+    totalSearchResults === 1
+      ? (n('searchResult', 'leitarniðurstaða') as string).toLowerCase()
+      : (n('searchResults', 'leitarniðurstöður') as string).toLowerCase()
+
   return (
     <>
       <Head>
@@ -350,6 +460,33 @@ const Search: Screen<CategoryProps> = ({
             activeLocale={activeLocale}
             initialInputValue={q}
           />
+          <Box width="full">
+            <Inline space={1}>
+              {countResults.total > 0 && (
+                <Tag
+                  variant="blue"
+                  active={activeSearchTypes.length === 0}
+                  onClick={() => setActiveSearchTypes([])}
+                >
+                  Allar tegundir ({countResults.total})
+                </Tag>
+              )}
+              {tagsList
+                .filter((x) => x.count > 0)
+                .map(({ title, count, key }, index) => (
+                  <Tag
+                    key={index}
+                    variant="blue"
+                    active={activeSearchTypes.includes(key)}
+                    onClick={() =>
+                      onToggleSearchType(key as SearchableContentTypes, true)
+                    }
+                  >
+                    {title} ({count})
+                  </Tag>
+                ))}
+            </Inline>
+          </Box>
           <Hidden above="sm">
             <Navigation
               title={n('filterResults', 'Sía niðurstöður')}
@@ -394,16 +531,7 @@ const Search: Screen<CategoryProps> = ({
           ) : (
             <Box marginBottom={2}>
               <Text variant="intro" as="p">
-                {filteredItems.length}{' '}
-                {filteredItems.length === 1
-                  ? (n(
-                      'searchResult',
-                      'leitarniðurstaða',
-                    ) as string).toLowerCase()
-                  : (n(
-                      'searchResults',
-                      'leitarniðurstöður',
-                    ) as string).toLowerCase()}
+                {totalSearchResults} {searchResultsText}
               </Text>
             </Box>
           )}
@@ -443,7 +571,7 @@ const Search: Screen<CategoryProps> = ({
                     <Link
                       href={{
                         pathname: linkResolver('search').href,
-                        query: { ...Router.query, page },
+                        query: { ...query, page },
                       }}
                     >
                       <span className={className}>{children}</span>
@@ -470,9 +598,9 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   let tags = {}
   let countTag = {}
   if (category) {
-    tags = { tags: [{ key: category, type: 'category' as SearchableTags }] }
+    tags = { tags: [{ key: category, type: 'processentry' as SearchableTags }] }
   } else {
-    countTag = { countTag: 'category' as SearchableTags }
+    countTag = { countTag: 'processentry' as SearchableTags }
   }
 
   const allTypes = [
@@ -560,6 +688,21 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     showSearchInHeader: false,
     page,
   }
+}
+
+const firstLower = (t: string) => t.charAt(0).toLowerCase() + t.slice(1)
+
+const useReplace = (): NextRouter['replace'] => {
+  const Router = useRouter()
+  const routerRef = useRef(Router)
+
+  routerRef.current = Router
+
+  const [{ replace }] = useState<Pick<NextRouter, 'replace'>>({
+    replace: (path) => routerRef.current.replace(path),
+  })
+
+  return replace
 }
 
 interface EnglishResultsLinkProps {
