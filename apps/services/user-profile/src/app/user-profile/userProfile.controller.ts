@@ -348,6 +348,7 @@ export class UserProfileController {
     nationalId: string,
     @CurrentUser() user: User,
   ): Promise<UserDeviceTokensDto[]> {
+    if(nationalId != user.nationalId) throw new BadRequestException()
     return await this.userProfileService.getDeviceTokens(user)
   }
 
@@ -366,6 +367,7 @@ export class UserProfileController {
     @CurrentUser() user: User,
     @Body() body: DeviceTokenDto,
   ): Promise<UserDeviceTokensDto> {
+    if(nationalId != user.nationalId) throw new BadRequestException()
     body.nationalId = user.nationalId
     return await this.userProfileService.addDeviceToken(body)
   }
@@ -386,6 +388,7 @@ export class UserProfileController {
     @CurrentUser() user: User,
     @Body() body: DeviceTokenDto,
   ): Promise<void> {
+    if(nationalId != user.nationalId) throw new BadRequestException()
     return await this.userProfileService.deleteDeviceToken(body, user)
   }
 }

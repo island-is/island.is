@@ -3,4 +3,5 @@ version: '3.3'
 services:
   db_user_profile:
     ports:
+      - 5437:5432
       - 5432:5432
