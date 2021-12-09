@@ -2,6 +2,7 @@ export enum PersonType {
   Plaintiff,
   CounterParty,
   Child,
+  CriminalRecordApplicant,
 }
 
 export type Person = {
@@ -25,4 +26,10 @@ export interface DataUploadResponse {
   skilabod: string
   audkenni: string
   malsnumer: string
+}
+
+export interface SealedCriminalRecordResponse {
+  audkenni: string
+  skilabod: string
+  skjal: string
 }
