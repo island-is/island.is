@@ -4,11 +4,17 @@ import { InjectModel } from '@nestjs/sequelize'
 import { MunicipalityModel } from './models'
 import { AidType } from '@island.is/financial-aid/shared/lib'
 import { AidModel, AidService } from '../aid'
-import { CreateMunicipalityDto, UpdateMunicipalityDto } from './dto'
+import {
+  MunicipalityActivityDto,
+  UpdateMunicipalityDto,
+  CreateMunicipalityDto,
+} from './dto'
 import { Sequelize } from 'sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { StaffService } from '../staff'
+import { CreateStaffDto } from '../staff/dto'
 
 @Injectable()
 export class MunicipalityService {
@@ -16,6 +22,7 @@ export class MunicipalityService {
     @InjectModel(MunicipalityModel)
     private readonly municipalityModel: typeof MunicipalityModel,
     private readonly aidService: AidService,
+    private readonly staffService: StaffService,
     private sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
@@ -53,6 +60,7 @@ export class MunicipalityService {
 
   async create(
     municipality: CreateMunicipalityDto,
+    admin: CreateStaffDto,
   ): Promise<MunicipalityModel> {
     return await this.sequelize.transaction(async (t) => {
       return await Promise.all(
@@ -75,6 +83,17 @@ export class MunicipalityService {
             res,
             AidType.COHABITATION,
           )
+
+          this.staffService.createStaff(
+            admin,
+            {
+              municipalityId: municipality.municipalityId,
+              municipalityName: municipality.name,
+            },
+            undefined,
+            t,
+          )
+
           return this.municipalityModel.create(municipality, { transaction: t })
         })
         .catch((err) => err)
@@ -114,5 +133,23 @@ export class MunicipalityService {
 
   async getAll(): Promise<MunicipalityModel[]> {
     return await this.municipalityModel.findAll()
+  }
+
+  async update(
+    id: string,
+    update: MunicipalityActivityDto,
+  ): Promise<{
+    numberOfAffectedRows: number
+    updatedMunicipality: MunicipalityModel
+  }> {
+    const [
+      numberOfAffectedRows,
+      [updatedMunicipality],
+    ] = await this.municipalityModel.update(update, {
+      where: { id },
+      returning: true,
+    })
+
+    return { numberOfAffectedRows, updatedMunicipality }
   }
 }

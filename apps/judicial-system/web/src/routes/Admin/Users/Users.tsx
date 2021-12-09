@@ -7,7 +7,7 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import { Loading } from '@island.is/judicial-system-web/src/shared-components'
+import { Loading } from '@island.is/judicial-system-web/src/components'
 import { Institution, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'

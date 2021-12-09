@@ -275,6 +275,7 @@
     "success": "Staðsetning var uppfærð."
   },
   "deregisterSidenav": {
+    "title": "Aðgerðir",
     "deregister": "Afskrá ökutæki",
     "companyInfo": "Upplýsingar fyrirtækis"
   },
@@ -326,9 +327,9 @@
     "subtitles": {
       "deregistered": "Afskráð ökutæki"
     },
-    "info": "Engin meðhöndluð ökutæki",
+    "info": "Hér má sjá lista af afskráðum ökutækjum, ásamt dagsetningu afskráningarinnar.",
     "buttons": {
-      "export": "Export"
+      "export": "Senda"
     },
     "search": {
       "label": "Leita að skráningarnúmeri",
@@ -339,7 +340,8 @@
   "recyclingFundSidenav": {
     "title": "Úrvinnslusjóður",
     "recycled": "Meðhöndluð ökutæki",
-    "companies": "Móttökuaðilar"
+    "companies": "Móttökuaðilar",
+    "accessControl": "Aðgangsstýring"
   },
   "recyclingCompanies": {
     "title": "Móttökuaðilar",
@@ -355,6 +357,75 @@
     "buttons": {
       "add": "Bæta við móttökuaðila",
       "edit": "Breyta"
+    }
+  },
+  "accessControl": {
+    "title": "Aðgangsstýring",
+    "info": "Hérna kemur listi yfir þá aðganga sem þú hefur gefið öðrum. Þú getur eytt aðgangi eða bætt við nýjum.",
+    "empty": "Enginn aðgangur hefur verið veittur",
+    "tableHeaders": {
+      "nationalId": "Kennitala",
+      "name": "Nafn",
+      "role": "Hlutverk",
+      "partner": "Móttökuaðili"
+    },
+    "status": {
+      "active": "Virkt",
+      "inactive": "Óvirkt"
+    },
+    "buttons": {
+      "add": "Bæta við aðgangi",
+      "edit": "Breyta",
+      "delete": "Fjarlægja",
+      "actions": "aðgerðir"
+    },
+    "modal": {
+      "titles": {
+        "add": "Bæta við aðgangi",
+        "edit": "Breyta aðgangi",
+        "delete": "Eyða aðgangi"
+      },
+      "subtitles": {
+        "add": "Aðgangshafi mun fá aðgang til að framkvæma aðgerðir í því hlutverki sem er sett. Vinsamlegast verið viss um að kennitalan eigi við réttan einstakling.",
+        "edit": "Aðgangshafi mun fá aðgang til að framkvæma aðgerðir í því hlutverki sem er sett. Vinsamlegast verið viss um að hlutverkið eigi við réttan einstakling.",
+        "delete": "Ertu viss um að þú viljir eyða þessum aðgangi?"
+      },
+      "inputs": {
+        "nationalId": {
+          "label": "Kennitala",
+          "placeholder": "Kennitala",
+          "rules": {
+            "required": "Skylda er að fylla út kennitölu",
+            "validate": "Kennitalan er ekki gild kennitala"
+          }
+        },
+        "name": {
+          "label": "Nafn",
+          "placeholder": "Nafn",
+          "rules": {
+            "required": "Skylda er að fylla út nafn"
+          }
+        },
+        "role": {
+          "label": "Hlutverk",
+          "placeholder": "Hlutverk",
+          "rules": {
+            "required": "Skylda er að fylla út hlutverk"
+          }
+        },
+        "partner": {
+          "label": "Móttökuaðili",
+          "placeholder": "Móttökuaðili",
+          "rules": {
+            "required": "Skylda er að fylla út móttökuaðila"
+          }
+        }
+      },
+      "buttons": {
+        "cancel": "Hætta við",
+        "continue": "Staðfesta",
+        "confirm": "Staðfesta"
+      }
     }
   },
   "notFound": {
@@ -388,6 +459,7 @@
       "deregister": "/deregister-vehicle/[id]"
     },
     "recycledVehicles": "/recycled-vehicles",
+    "accessControl": "/access-control",
     "recyclingCompanies": {
       "baseRoute": "/recycling-companies",
       "add": "/recycling-companies/add",

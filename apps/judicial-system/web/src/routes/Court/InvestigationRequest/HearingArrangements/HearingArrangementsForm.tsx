@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { ValueType } from 'react-select'
-import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -12,6 +11,7 @@ import {
   Option,
   Input,
   RadioButton,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -20,13 +20,12 @@ import {
   FormContentContainer,
   FormFooter,
   Modal,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   NotificationType,
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { Case, User } from '@island.is/judicial-system/types'
 import {
   ReactSelectOption,
   UserData,
@@ -42,14 +41,15 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './HearingArrangements.css'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import type { Case, User } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
   users: UserData
   user: User
@@ -58,8 +58,6 @@ interface Props {
 const HearingArrangementsForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, users, user } = props
   const [modalVisible, setModalVisible] = useState(false)
-  const [defenderEmailEM, setDefenderEmailEM] = useState('')
-  const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
   const [, setCourtDateIsValid] = useState(true)
   const { updateCase, sendNotification, isSendingNotification } = useCase()
   const { formatMessage } = useIntl()
@@ -145,6 +143,15 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   return (
     <>
       <FormContentContainer>
+        {workingCase.comments && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.comments.title)}
+              message={workingCase.comments}
+            />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
@@ -164,7 +171,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             name="judge"
             label="Veldu dómara"
             placeholder="Velja héraðsdómara"
-            defaultValue={defaultJudge}
+            value={defaultJudge}
             options={judges}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setJudge((selectedOption as ReactSelectOption).value.toString())
@@ -183,7 +190,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             name="registrar"
             label="Veldu dómritara"
             placeholder="Velja dómritara"
-            defaultValue={defaultRegistrar}
+            value={defaultRegistrar}
             options={registrars}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setRegistrar(
@@ -314,7 +321,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 data-testid="courtroom"
                 name="courtroom"
                 label="Dómsalur"
-                defaultValue={workingCase.courtRoom}
+                value={workingCase.courtRoom || ''}
                 placeholder="Skráðu inn dómsal"
                 autoComplete="off"
                 onChange={(event) =>
@@ -340,149 +347,10 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           </Box>
         </Box>
         <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.defender.title)}
-            </Text>
-          </Box>
-          <BlueBox>
-            <div className={styles.defenderOptions}>
-              <RadioButton
-                name="defender-type-defender"
-                id="defender-type-defender"
-                label="Verjandi"
-                checked={workingCase.defenderIsSpokesperson === false}
-                onChange={() => {
-                  setAndSendToServer(
-                    'defenderIsSpokesperson',
-                    false,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }}
-                large
-                backgroundColor="white"
-              />
-              <RadioButton
-                name="defender-type-spokesperson"
-                id="defender-type-spokesperson"
-                label="Talsmaður"
-                checked={workingCase.defenderIsSpokesperson === true}
-                onChange={() => {
-                  setAndSendToServer(
-                    'defenderIsSpokesperson',
-                    true,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }}
-                large
-                backgroundColor="white"
-              />
-            </div>
-            <Box marginBottom={2}>
-              <Input
-                name="defenderName"
-                label={`Nafn ${
-                  workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
-                }`}
-                defaultValue={workingCase.defenderName}
-                placeholder="Fullt nafn"
-                autoComplete="off"
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'defenderName',
-                    event,
-                    [],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'defenderName',
-                    event.target.value,
-                    [],
-                    workingCase,
-                    updateCase,
-                  )
-                }
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <Input
-                name="defenderEmail"
-                label={`Netfang ${
-                  workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
-                }`}
-                defaultValue={workingCase.defenderEmail}
-                placeholder="Netfang"
-                autoComplete="off"
-                errorMessage={defenderEmailEM}
-                hasError={defenderEmailEM !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'defenderEmail',
-                    event,
-                    ['email-format'],
-                    workingCase,
-                    setWorkingCase,
-                    defenderEmailEM,
-                    setDefenderEmailEM,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'defenderEmail',
-                    event.target.value,
-                    ['email-format'],
-                    workingCase,
-                    updateCase,
-                    setDefenderEmailEM,
-                  )
-                }
-              />
-            </Box>
-            <InputMask
-              mask="999-9999"
-              maskPlaceholder={null}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'defenderPhoneNumber',
-                  event,
-                  ['phonenumber'],
-                  workingCase,
-                  setWorkingCase,
-                  defenderPhoneNumberEM,
-                  setDefenderPhoneNumberEM,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'defenderPhoneNumber',
-                  event.target.value,
-                  ['phonenumber'],
-                  workingCase,
-                  updateCase,
-                  setDefenderPhoneNumberEM,
-                )
-              }
-            >
-              <Input
-                name="defenderPhoneNumber"
-                label={`Símanúmer ${
-                  workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
-                }`}
-                defaultValue={workingCase.defenderPhoneNumber}
-                placeholder="Símanúmer"
-                autoComplete="off"
-                errorMessage={defenderPhoneNumberEM}
-                hasError={defenderPhoneNumberEM !== ''}
-              />
-            </InputMask>
-          </BlueBox>
+          <DefenderInfo
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+          />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

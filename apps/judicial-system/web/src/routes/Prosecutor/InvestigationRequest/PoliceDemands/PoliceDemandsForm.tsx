@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
+
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import {
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import { CaseType } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
@@ -54,7 +55,7 @@ const courtClaimPrefill: Partial<
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
 }
 
@@ -119,7 +120,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             name="demands"
             label={formatMessage(icDemands.sections.demands.label)}
             placeholder={formatMessage(icDemands.sections.demands.placeholder)}
-            defaultValue={workingCase.demands}
+            value={workingCase.demands || ''}
             errorMessage={demandsEM}
             hasError={demandsEM !== ''}
             onChange={(event) =>
@@ -163,7 +164,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             placeholder={formatMessage(
               icDemands.sections.lawsBroken.placeholder,
             )}
-            defaultValue={workingCase.lawsBroken}
+            value={workingCase.lawsBroken || ''}
             errorMessage={lawsBrokenEM}
             hasError={lawsBrokenEM !== ''}
             onChange={(event) =>
@@ -205,7 +206,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             placeholder={formatMessage(
               icDemands.sections.legalBasis.placeholder,
             )}
-            defaultValue={workingCase.legalBasis}
+            value={workingCase.legalBasis || ''}
             errorMessage={legalBasisEM}
             hasError={legalBasisEM !== ''}
             onChange={(event) =>

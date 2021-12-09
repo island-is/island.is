@@ -4,9 +4,10 @@ import { NamespaceGetter } from '@island.is/web/hooks'
 import { useMemo } from 'react'
 
 type ItemType =
-  | 'document'
-  | /* Regulation, appendix, comments  */ 'section'
+  | 'document' // Regulation, appendix, comments
+  | 'section'
   | 'chapter'
+  | 'subchapter'
   | 'article'
 
 type IndexItem = {
@@ -33,7 +34,8 @@ const levels: Record<ItemType, number> = {
   document: 1,
   section: 2,
   chapter: 3,
-  article: 4,
+  subchapter: 4,
+  article: 5,
 } as const
 
 const flatIndexToTree = (flatIndex: FlatIndex): IndexTree => {
@@ -79,14 +81,58 @@ const insertIds = (
   flatIndex: FlatIndex,
   html: HTMLText,
   idPrefix = '',
-): HTMLText =>
-  html.replace(
-    / class="(section|chapter|article)__title"\s*>(([^<]+)[^]+?)<\/h\d/g,
-    (htmlSnippet: string, _type: string, title: string, shortTitle: string) => {
+): HTMLText => {
+  const DIVIDER = '__'
+  const foundIds: Record<string, number> = {}
+  return html.replace(
+    // NOTE:
+    // HTML parsing of HTML with Regexp is only tenable because
+    // the regulation texts coming from the API are guaranteed to be
+    // prettier-formatted and passed through a strict cleanup filter
+    // which only passes through
+    //  * explicitly allowed elements
+    //  + with eplicitly allowed (and sorted!) atttributes
+    //  * with explicitly allowed values.
+    //
+    // Do not try this at home.
+    //
+    / class="(section|chapter|subchapter|article)__title"\s*>(([^<]+)(?:.[^/][^]*?)?)<\/[hH]\d/g,
+    (
+      htmlSnippet: string,
+      _type: string,
+      longTitle: string,
+      shortTitle: string,
+    ) => {
       const type = _type as ItemType
-      const id = idPrefix + shortTitle.toLocaleLowerCase().replace(/\s/g, '')
+      let id = idPrefix + shortTitle.toLowerCase().replace(/\s/g, '')
+      if (!foundIds[id]) {
+        foundIds[id] = 1
+      } else {
+        let count = foundIds[id] + 1
+        // Re-increment the count in the astronomically unlikely caase
+        // that an actual, "naturally occurring" header text
+        // actually ended with the characters " __${count}"
+        while (foundIds[id + DIVIDER + count]) count++
+
+        const newId = id + DIVIDER + count
+        foundIds[id] = count
+        // prevent later collisions with the new ("avoided") id
+        foundIds[newId] = 1
+        id = newId
+      }
+      const title = longTitle.replace(/<[^]+?>/g, '').trim()
+
+      // FWIW: The following HTML snippet
+      //   <h3 class="article__title">1. gr. <em class="article__name">Helstu hugtök</em></h3>
+      //
+      // results in these variable values:
+      //
+      //   type: 'article',
+      //   title: '1. gr. Helstu hugtök',
+      //   id: '1.gr.',
+      //
       flatIndex.push({
-        title: title.replace(/<[^]+?>/g, '').trim(),
+        title,
         type,
         id,
       })
@@ -94,6 +140,7 @@ const insertIds = (
       return ` id="${id}" ${htmlSnippet}`
     },
   ) as HTMLText
+}
 
 // ===========================================================================
 

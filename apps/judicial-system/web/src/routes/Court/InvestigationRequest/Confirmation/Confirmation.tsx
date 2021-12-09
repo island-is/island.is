@@ -1,68 +1,56 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import type {
-  Case,
-  RequestSignatureResponse,
-} from '@island.is/judicial-system/types'
+
+import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { useRouter } from 'next/router'
 import ConfirmationForm from './ConfirmationForm'
-import SigningModal from '@island.is/judicial-system-web/src/shared-components/SigningModal/SigningModal'
+import SigningModal from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import type { RequestSignatureResponse } from '@island.is/judicial-system/types'
 
 const Confirmation = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
-
-  const router = useRouter()
-  const id = router.query.id
-
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [
-    requestSignatureResponse,
-    setRequestSignatureResponse,
+    requestRulingSignatureResponse,
+    setRequestRulingSignatureResponse,
   ] = useState<RequestSignatureResponse>()
 
   const { user } = useContext(UserContext)
-  const { requestSignature, isRequestingSignature } = useCase()
+  const { requestRulingSignature, isRequestingRulingSignature } = useCase()
 
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    if (!workingCase && data?.case) {
-      setWorkingCase(data.case)
-    }
-  }, [workingCase, setWorkingCase, data])
-
-  useEffect(() => {
     if (!modalVisible) {
-      setRequestSignatureResponse(undefined)
+      setRequestRulingSignatureResponse(undefined)
     }
-  }, [modalVisible, setRequestSignatureResponse])
+  }, [modalVisible, setRequestRulingSignatureResponse])
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
       return
     }
 
-    // Request signature to get control code
+    // Request ruling signature to get control code
     try {
-      const requestSignatureResponse = await requestSignature(workingCase.id)
-      if (requestSignatureResponse) {
-        setRequestSignatureResponse(requestSignatureResponse)
+      const requestRulingSignatureResponse = await requestRulingSignature(
+        workingCase.id,
+      )
+      if (requestRulingSignatureResponse) {
+        setRequestRulingSignatureResponse(requestRulingSignatureResponse)
         setModalVisible(true)
       } else {
         // TODO: Handle error
@@ -79,22 +67,22 @@ const Confirmation = () => {
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.CONFIRMATION}
-      isLoading={loading}
-      notFound={data?.case === undefined}
+      isLoading={isLoadingWorkingCase}
+      notFound={caseNotFound}
     >
-      {workingCase && user && (
+      {user && (
         <>
           <ConfirmationForm
             workingCase={workingCase}
             user={user}
-            isLoading={isRequestingSignature}
+            isLoading={isRequestingRulingSignature}
             handleNextButtonClick={handleNextButtonClick}
           />
           {modalVisible && (
             <SigningModal
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
-              requestSignatureResponse={requestSignatureResponse}
+              requestRulingSignatureResponse={requestRulingSignatureResponse}
               setModalVisible={setModalVisible}
             />
           )}

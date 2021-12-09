@@ -47,12 +47,16 @@
       "@island.is/api/domains/application": [
         "libs/api/domains/application/src/index.ts"
       ],
+      "@island.is/api/domains/assets": ["libs/api/domains/assets/src/index.ts"],
       "@island.is/api/domains/auth": ["libs/api/domains/auth/src/index.ts"],
       "@island.is/api/domains/communications": [
         "libs/api/domains/communications/src/index.ts"
       ],
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
+      ],
+      "@island.is/api/domains/criminal-record": [
+        "libs/api/domains/criminal-record/src/index.ts"
       ],
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
@@ -152,6 +156,9 @@
       "@island.is/application/templates/complaints-to-althingi-ombudsman": [
         "libs/application/templates/complaints-to-althingi-ombudsman/src/index.ts"
       ],
+      "@island.is/application/templates/criminal-record": [
+        "libs/application/templates/criminal-record/src/index.ts"
+      ],
       "@island.is/application/templates/data-protection-complaint": [
         "libs/application/templates/data-protection-complaint/src/index.ts"
       ],
@@ -226,8 +233,12 @@
       "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
+      "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
       "@island.is/clients/auth-public-api": [
         "libs/clients/auth-public-api/src/index.ts"
+      ],
+      "@island.is/clients/criminal-record": [
+        "libs/clients/criminal-record/src/index.ts"
       ],
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"
@@ -347,6 +358,8 @@
       "@island.is/logging": ["libs/logging/src/index.ts"],
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
+      "@island.is/nest/config": ["libs/nest/config/src/index.ts"],
+      "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
       "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],

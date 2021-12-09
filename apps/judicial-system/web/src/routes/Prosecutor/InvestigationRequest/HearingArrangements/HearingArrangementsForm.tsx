@@ -1,33 +1,35 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
+
+import {
+  BlueBox,
+  FormContentContainer,
+  FormFooter,
+} from '@island.is/judicial-system-web/src/components'
+import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import {
+  FormSettings,
+  useCaseFormHelper,
+} from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import type {
   Case,
   Institution,
   UpdateCase,
   User,
 } from '@island.is/judicial-system/types'
-import {
-  BlueBox,
-  FormContentContainer,
-  FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
-import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
-import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
-import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
-import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
+import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
+import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   user: User
   prosecutors: ReactSelectOption[]
   courts: Institution[]
@@ -152,7 +154,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
             autoComplete="off"
             label={formatMessage(m.sections.translator.label)}
             placeholder={formatMessage(m.sections.translator.placeholder)}
-            defaultValue={workingCase.translator}
+            value={workingCase.translator || ''}
             onChange={(event) => setField(event.target)}
             onBlur={(event) => validateAndSendToServer(event.target)}
           />

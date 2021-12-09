@@ -1,10 +1,27 @@
+import { gql, useMutation } from '@apollo/client'
 import { FieldBaseProps } from '@island.is/application/core'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Link,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React from 'react'
+import * as Sentry from '@sentry/react'
+import kennitala from 'kennitala'
+import React, { useEffect } from 'react'
 import { employer } from '../../lib/messages'
 import { formatIsk } from '../../lib/paymentPlanUtils'
-import { PaymentPlanExternalData } from '../../types'
+import { PaymentPlanExternalData, PublicDebtPaymentPlan } from '../../types'
+
+const updateCurrentEmployerMutation = gql`
+  mutation UpdateCurrentEmployer($input: UpdateCurrentEmployerInput!) {
+    updateCurrentEmployer(input: $input) {
+      success
+    }
+  }
+`
 
 const InfoBox = ({ title, text }: { title: string | number; text: string }) => (
   <Box
@@ -27,15 +44,44 @@ const InfoBox = ({ title, text }: { title: string | number; text: string }) => (
 
 export const DisposableIncome = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
+  const [updateCurrentEmployer] = useMutation(updateCurrentEmployerMutation)
   const externalData = application.externalData as PaymentPlanExternalData
+  const correctedNationalId =
+    (application.answers as PublicDebtPaymentPlan)?.employer
+      ?.correctedNationalId?.id || ''
   const conditions =
     externalData.paymentPlanPrerequisites?.data?.conditions || null
   const debts = externalData.paymentPlanPrerequisites?.data?.debts || null
 
+  const updateEmployer = async () => {
+    const results = await updateCurrentEmployer({
+      variables: {
+        input: {
+          employerNationalId: kennitala.clean(correctedNationalId),
+        },
+      },
+    })
+
+    if (!results.data) {
+      Sentry.captureException(results.errors)
+    }
+  }
+
+  useEffect(() => {
+    if (correctedNationalId && kennitala.isValid(correctedNationalId)) {
+      updateEmployer()
+    }
+  }, [correctedNationalId])
+
   return (
     <Box>
       <Text marginBottom={3}>
-        {formatMessage(employer.general.pageDescription)}
+        {`${formatMessage(employer.general.pageDescription)} `}
+        <Link href={`${formatMessage(employer.general.taxHomePageUrl)}`} newTab>
+          <Button variant="text" icon="open" iconType="outline">
+            {formatMessage(employer.labels.taxHomePage)}
+          </Button>
+        </Link>
       </Text>
       <Box marginBottom={[3, 3, 5]}>
         {/* TODO: Handle null values? */}
@@ -60,6 +106,7 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
         text={formatMessage(employer.labels.yourMinimumPayment)}
       />
       {!!conditions?.minWagePayment &&
+        conditions?.minPayment < conditions?.minWagePayment &&
         debts?.find((x) => x.type === 'Wagedection') !== undefined && (
           <Box marginTop={3}>
             <AlertMessage

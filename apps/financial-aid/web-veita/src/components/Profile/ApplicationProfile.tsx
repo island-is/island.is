@@ -93,7 +93,7 @@ const ApplicationProfile = ({
   if (application.state === ApplicationState.APPROVED) {
     applicationInfo.push({
       title: 'Veitt',
-      content: `${application.amount?.toLocaleString('de-DE')} kr.`,
+      content: `${application.amount?.finalAmount.toLocaleString('de-DE')} kr.`,
     })
   }
   if (application.state === ApplicationState.REJECTED) {
@@ -171,6 +171,7 @@ const ApplicationProfile = ({
         <History
           applicantName={application.name}
           applicationEvents={application.applicationEvents}
+          spouseName={application.spouseName ?? ''}
         />
       </Box>
 
@@ -183,6 +184,8 @@ const ApplicationProfile = ({
           setApplication={setApplication}
           applicationId={application.id}
           currentState={application.state}
+          homeCircumstances={application.homeCircumstances}
+          spouseNationalId={application.spouseNationalId}
           setIsLoading={setIsLoading}
         />
       )}

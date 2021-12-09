@@ -3,16 +3,16 @@ import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
-import type { Case } from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { policeCaseNumber } from '@island.is/judicial-system-web/messages'
+import type { Case } from '@island.is/judicial-system/types'
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
 }
 
 const LokeCaseNumber: React.FC<Props> = (props) => {
@@ -35,6 +35,7 @@ const LokeCaseNumber: React.FC<Props> = (props) => {
         // This is temporary until we start reading LÖKE case numbers from LÖKE
         mask="999-9999-9999999"
         maskPlaceholder={null}
+        value={workingCase.policeCaseNumber || ''}
         onChange={(event) =>
           removeTabsValidateAndSet(
             'policeCaseNumber',
@@ -63,7 +64,6 @@ const LokeCaseNumber: React.FC<Props> = (props) => {
           autoComplete="off"
           label={formatMessage(policeCaseNumber.label)}
           placeholder={formatMessage(policeCaseNumber.placeholder)}
-          defaultValue={workingCase.policeCaseNumber}
           errorMessage={policeCaseNumberErrorMessage}
           hasError={policeCaseNumberErrorMessage !== ''}
           required

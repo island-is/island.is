@@ -699,6 +699,24 @@ export interface IFrontpageFields {
   /** Title */
   title: string
 
+  /** Heading */
+  heading?: string | undefined
+
+  /** Alternative text for image/video */
+  imageAlternativeText?: string | undefined
+
+  /** Videos */
+  videos?: Asset[] | undefined
+
+  /** Image */
+  image?: Asset | undefined
+
+  /** Videos (mobile) */
+  videosMobile?: Asset[] | undefined
+
+  /** Image (mobile) */
+  imageMobile?: Asset | undefined
+
   /** Featured */
   featured?: IFeatured[] | undefined
 
@@ -710,6 +728,9 @@ export interface IFrontpageFields {
 
   /** Namespace */
   namespace: IUiConfiguration
+
+  /** New links */
+  linkList?: ILinkList | undefined
 
   /** Page Identifier */
   pageIdentifier: string
@@ -1075,6 +1096,9 @@ export interface ILifeEventPageFields {
   /** title */
   title: string
 
+  /** short title */
+  shortTitle?: string | undefined
+
   /** slug */
   slug: string
 
@@ -1086,6 +1110,9 @@ export interface ILifeEventPageFields {
 
   /** thumbnail */
   thumbnail?: Asset | undefined
+
+  /** tiny thumbnail */
+  tinyThumbnail?: Asset | undefined
 
   /** content */
   content: Document
@@ -1115,14 +1142,23 @@ export interface ILinkFields {
   /** Text */
   text: string
 
+  /** date */
+  date?: string | undefined
+
   /** URL */
   url: string
 
-  /** Linked page (deprecated) */
-  linkedPage?: ILinkedPage | undefined
-
   /** Link reference */
   linkReference?: IArticle | IArticleCategory | ILinkUrl | INews | undefined
+
+  /** Searchable */
+  searchable?: boolean | undefined
+
+  /** Search Description */
+  intro?: string | undefined
+
+  /** Search Labels */
+  labels?: string[] | undefined
 }
 
 export interface ILink extends Entry<ILinkFields> {
@@ -1792,6 +1828,12 @@ export interface IOrganizationFields {
 
   /** Email */
   email?: string | undefined
+
+  /** Titill á þjónustuvef */
+  serviceWebTitle?: string | undefined
+
+  /** Birta á þjónustuvef */
+  serviceWebEnabled?: boolean | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {

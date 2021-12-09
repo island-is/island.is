@@ -1,6 +1,9 @@
 import React, { useContext } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
+import { useIntl } from 'react-intl'
+import { ValueType } from 'react-select/src/types'
+
 import {
   Accordion,
   AccordionItem,
@@ -10,6 +13,8 @@ import {
   Tag,
   Text,
   Tooltip,
+  Stack,
+  Divider,
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -17,11 +22,11 @@ import {
   CourtRecordAccordionItem,
   FormContentContainer,
   InfoCard,
-  PdfButton,
+  PdfRow,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
-} from '@island.is/judicial-system-web/src/shared-components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+  InfoBox,
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
@@ -33,8 +38,8 @@ import {
   isInvestigationCase,
   UserRole,
   isAcceptingCaseDecision,
+  Case,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   capitalize,
@@ -43,24 +48,24 @@ import {
   getShortRestrictionByValue,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import AppealSection from './Components/AppealSection/AppealSection'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { core } from '@island.is/judicial-system-web/messages'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
-import { useIntl } from 'react-intl'
 import {
   UploadState,
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import AppealSection from './Components/AppealSection/AppealSection'
+import { SignedDocument } from './Components/SignedDocument'
 import { UploadStateMessage } from './Components/UploadStateMessage'
-import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
-import { core } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   setAccusedAppealDate: () => void
   setProsecutorAppealDate: () => void
   withdrawAccusedAppealDate: () => void
@@ -72,6 +77,8 @@ interface Props {
   setSelectedSharingInstitutionId: React.Dispatch<
     React.SetStateAction<ValueType<ReactSelectOption>>
   >
+  isRequestingCourtRecordSignature: boolean
+  handleRequestCourtRecordSignature: () => void
 }
 
 const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
@@ -85,6 +92,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     shareCaseWithAnotherInstitution,
     selectedSharingInstitutionId,
     setSelectedSharingInstitutionId,
+    isRequestingCourtRecordSignature,
+    handleRequestCourtRecordSignature,
   } = props
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -151,20 +160,44 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     }
 
     if (theCase.isValidToDateInThePast) {
-      return `${
-        isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
-      } rann út ${formatDate(theCase.validToDate, 'PPP')} kl. ${formatDate(
-        theCase.validToDate,
-        TIME_FORMAT,
-      )}`
+      return (
+        <>
+          <Box component="span" display="block">
+            {`Úrskurðað ${formatDate(
+              theCase.rulingDate,
+              'PPP',
+            )} kl. ${formatDate(theCase.rulingDate, TIME_FORMAT)}`}
+          </Box>
+          <Box component="span">
+            {`${
+              isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
+            } rann út ${formatDate(
+              theCase.validToDate,
+              'PPP',
+            )} kl. ${formatDate(theCase.validToDate, TIME_FORMAT)}`}
+          </Box>
+        </>
+      )
     }
 
-    return `${
-      isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
-    } til ${formatDate(theCase.validToDate, 'PPP')} kl. ${formatDate(
-      theCase.validToDate,
-      TIME_FORMAT,
-    )}`
+    return (
+      <>
+        <Box component="span" display="block">
+          {`Úrskurðað ${formatDate(theCase.rulingDate, 'PPP')} kl. ${formatDate(
+            theCase.rulingDate,
+            TIME_FORMAT,
+          )}`}
+        </Box>
+        <Box component="span">
+          {`${
+            isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
+          } til ${formatDate(theCase.validToDate, 'PPP')} kl. ${formatDate(
+            theCase.validToDate,
+            TIME_FORMAT,
+          )}`}
+        </Box>
+      </>
+    )
   }
 
   const canCaseFilesBeOpened = () => {
@@ -243,7 +276,9 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               (workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
                 (workingCase.type === CaseType.TRAVEL_BAN &&
-                  workingCase.decision === CaseDecision.ACCEPTING)) &&
+                  (workingCase.decision === CaseDecision.ACCEPTING ||
+                    workingCase.decision ===
+                      CaseDecision.ACCEPTING_PARTIALLY))) &&
                 workingCase.custodyRestrictions
                   ?.filter((restriction) =>
                     [
@@ -441,41 +476,68 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         </>
       )}
       {!workingCase.isMasked && (
-        <Box marginBottom={user?.role === UserRole.PROSECUTOR ? 7 : 15}>
-          {user?.role !== UserRole.STAFF && (
-            <>
-              <Box marginBottom={3}>
-                <PdfButton
+        <Box marginBottom={10}>
+          <Text as="h3" variant="h3" marginBottom={5}>
+            {formatMessage(m.caseDocuments)}
+          </Text>
+          <Box marginBottom={2}>
+            <Stack space={2} dividers>
+              {user?.role !== UserRole.STAFF && (
+                <PdfRow
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRequest)}
                   pdfType="request"
                 />
-              </Box>
-              <Box marginBottom={3}>
-                <PdfButton
+              )}
+              {workingCase.type === CaseType.CUSTODY &&
+                workingCase.state === CaseState.ACCEPTED &&
+                isAcceptingCaseDecision(workingCase.decision) && (
+                  <PdfRow
+                    caseId={workingCase.id}
+                    title={formatMessage(core.pdfButtonCustodyNotice)}
+                    pdfType="custodyNotice"
+                  />
+                )}
+              <PdfRow
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonRulingShortVersion)}
+                pdfType="courtRecord"
+              >
+                {workingCase.courtRecordSignatory ? (
+                  <SignedDocument
+                    signatory={workingCase.courtRecordSignatory.name}
+                    signingDate={workingCase.courtRecordSignatureDate}
+                  />
+                ) : user?.role === UserRole.JUDGE ||
+                  user?.role === UserRole.REGISTRAR ? (
+                  <Button
+                    loading={isRequestingCourtRecordSignature}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      handleRequestCourtRecordSignature()
+                    }}
+                  >
+                    {formatMessage(m.signButton)}
+                  </Button>
+                ) : (
+                  <Text>{formatMessage(m.unsignedDocument)}</Text>
+                )}
+              </PdfRow>
+              {user?.role !== UserRole.STAFF && (
+                <PdfRow
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRuling)}
-                  pdfType="ruling?shortVersion=false"
-                />
-              </Box>
-            </>
-          )}
-          <Box marginBottom={3}>
-            <PdfButton
-              caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonRulingShortVersion)}
-              pdfType="ruling?shortVersion=true"
-            />
+                  pdfType="ruling"
+                >
+                  <SignedDocument
+                    signatory={workingCase.judge?.name}
+                    signingDate={workingCase.rulingDate}
+                  />
+                </PdfRow>
+              )}
+            </Stack>
           </Box>
-          {workingCase.type === CaseType.CUSTODY &&
-            workingCase.state === CaseState.ACCEPTED &&
-            isAcceptingCaseDecision(workingCase.decision) && (
-              <PdfButton
-                caseId={workingCase.id}
-                title={formatMessage(core.pdfButtonCustodyNotice)}
-                pdfType="custodyNotice"
-              />
-            )}
+          <Divider />
         </Box>
       )}
       {user?.role === UserRole.PROSECUTOR &&

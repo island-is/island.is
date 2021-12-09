@@ -62,6 +62,8 @@
 /libs/shared/connected/src/lib/generalPetition/GeneralPetitionLists                           @island-is/kosmos-kaos
 /libs/api/domains/communications/                                                             @island-is/kosmos-kaos
 /apps/services/notifications/                                                                 @island-is/kosmos-kaos
+/apps/air-discount-scheme/                                                                    @island-is/kosmos-kaos
+/libs/air-discount-scheme/                                                                    @island-is/kosmos-kaos
 
 /apps/reference-next-app/                                                                     @island-is/aranja-core
 /libs/cms-translations/                                                                       @island-is/aranja-core
@@ -100,6 +102,7 @@
 /apps/web/components/Regulations/                                                             @island-is/hugsmidjan
 /libs/api/domains/documents/                                                                  @island-is/hugsmidjan
 /libs/api/domains/finance/                                                                    @island-is/hugsmidjan
+/libs/api/domains/assets/                                                                     @island-is/hugsmidjan
 /libs/api/domains/license-service/                                                            @island-is/hugsmidjan
 /libs/api/domains/national-registry/                                                          @island-is/hugsmidjan
 /libs/clients/finance/                                                                        @island-is/hugsmidjan
@@ -162,13 +165,13 @@ infra/                                                                          
 /libs/service-portal/document-provider/                                                       @island-is/advania
 /libs/clients/document-provider/                                                              @island-is/advania @island-is/core
 
-/apps/skilavottord/                                                                           @island-is/deloitte
-/libs/skilavottord/                                                                           @island-is/deloitte
+/apps/skilavottord/                                                                           @island-is/deloitte @island-is/vice-versa
+/libs/skilavottord/                                                                           @island-is/deloitte @island-is/vice-versa
 
 /apps/services/auth-api/                                                                      @island-is/fuglar
 /apps/services/auth-admin-api/                                                                @island-is/fuglar
-/apps/services/auth-public-api/                                                               @island-is/fuglar
+/apps/services/auth-public-api/                                                               @island-is/fuglar @island-is/aranja-core
 /apps/auth-admin-web/                                                                         @island-is/fuglar
 /apps/auth-admin-web-e2e/                                                                     @island-is/fuglar
-/libs/auth-api-lib/                                                                           @island-is/fuglar
-/libs/auth-nest-tools/                                                                        @island-is/fuglar
+/libs/auth-api-lib/                                                                           @island-is/fuglar @island-is/aranja-core
+/libs/auth-nest-tools/                                                                        @island-is/fuglar @island-is/aranja-core

@@ -9,6 +9,8 @@ import { ApplicationService } from './application.service'
 import { FileModule } from '../file'
 import { environment } from '../../../environments'
 import { StaffModule } from '../staff'
+import { MunicipalityModule } from '../municipality'
+import { AmountModule } from '../amount'
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { StaffModule } from '../staff'
     ApplicationEventModule,
     SequelizeModule.forFeature([ApplicationModel]),
     StaffModule,
+    MunicipalityModule,
+    AmountModule,
   ],
   providers: [ApplicationService],
   controllers: [ApplicationController],

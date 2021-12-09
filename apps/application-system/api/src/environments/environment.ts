@@ -52,6 +52,16 @@ const devConfig = {
           'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
       },
     },
+    criminalRecord: {
+      clientConfig: {
+        xroadClientId:
+          process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
+        xroadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
+        xroadPath:
+          process.env.XROAD_CRIMINAL_RECORD_PATH ??
+          'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
+      },
+    },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     paymentOptions: {
@@ -186,7 +196,14 @@ const prodConfig = {
         xroadClientId: process.env.XROAD_CLIENT_ID,
         xroadBaseUrl: process.env.XROAD_BASE_PATH,
         xroadPathV1: process.env.XROAD_DRIVING_LICENSE_PATH,
-        xroadPathV2: process.env.XROAD_DRIVING_LICENSE_V2_PATH,
+        xroadPathV2: process.env.XROAD_DRIVING_LICENSE_PATH,
+      },
+    },
+    criminalRecord: {
+      clientConfig: {
+        xroadClientId: process.env.XROAD_CLIENT_ID,
+        xroadBaseUrl: process.env.XROAD_BASE_PATH,
+        xroadPath: process.env.XROAD_CRIMINAL_RECORD_PATH,
       },
     },
     paymentOptions: {

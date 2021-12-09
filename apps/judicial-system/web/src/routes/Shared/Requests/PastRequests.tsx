@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react'
-import { Box, Text, Tag } from '@island.is/island-ui/core'
+import parseISO from 'date-fns/parseISO'
 
-import { getAppealDate, mapCaseStateToTagVariant } from './utils'
+import { Box, Text, Tag } from '@island.is/island-ui/core'
 import {
   CaseAppealDecision,
   CaseDecision,
@@ -11,15 +11,16 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import parseISO from 'date-fns/parseISO'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   capitalize,
   caseTypes,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import { Table } from '@island.is/judicial-system-web/src/shared-components'
+import { Table } from '@island.is/judicial-system-web/src/components'
 import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
+
+import { getAppealDate, mapCaseStateToTagVariant } from './utils'
 import * as styles from './Requests.css'
 
 interface Props {
@@ -144,6 +145,7 @@ const PastRequests: React.FC<Props> = (props) => {
       Cell: (row: {
         row: {
           original: {
+            initialRulingDate: string
             rulingDate: string
             validToDate: string
             courtEndTime: string
@@ -151,6 +153,7 @@ const PastRequests: React.FC<Props> = (props) => {
           }
         }
       }) => {
+        const initialRulingDate = row.row.original.initialRulingDate
         const rulingDate = row.row.original.rulingDate
         const validToDate = row.row.original.validToDate
         const courtEndDate = row.row.original.courtEndTime
@@ -161,6 +164,11 @@ const PastRequests: React.FC<Props> = (props) => {
           !validToDate
         ) {
           return null
+        } else if (initialRulingDate) {
+          return `${formatDate(
+            parseISO(initialRulingDate),
+            'd.M.y',
+          )} - ${formatDate(parseISO(validToDate), 'd.M.y')}`
         } else if (rulingDate) {
           return `${formatDate(parseISO(rulingDate), 'd.M.y')} - ${formatDate(
             parseISO(validToDate),

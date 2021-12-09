@@ -16,6 +16,7 @@ import {
   attachmentStatusToAttachmentRequests,
   getApplicationAttachmentStatus,
   getApplicationDocumentId,
+  whiteListedErrorCodes,
 } from './accident-notification.utils'
 import type { AccidentNotificationConfig } from './config'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
@@ -38,20 +39,17 @@ export class AccidentNotificationService {
   ) {}
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
-    const shouldRequestReview =
-      !utils.isHomeActivitiesAccident(application.answers) &&
-      !utils.isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
-
-    const requests = attachmentStatusToAttachmentRequests()
-
-    const attachments = await this.attachmentProvider.gatherAllAttachments(
-      application,
-      requests,
-    )
-
-    const answers = application.answers as AccidentNotificationAnswers
-    const xml = applictionAnswersToXml(answers, attachments)
     try {
+      const requests = attachmentStatusToAttachmentRequests()
+
+      const attachments = await this.attachmentProvider.gatherAllAttachments(
+        application,
+        requests,
+      )
+
+      const answers = application.answers as AccidentNotificationAnswers
+      const xml = applictionAnswersToXml(answers, attachments)
+
       const { ihiDocumentID } = await this.documentApi.documentPost({
         document: { doc: xml, documentType: 801 },
       })
@@ -66,8 +64,9 @@ export class AccidentNotificationService {
           ),
         application,
       )
+
       // Request representative review when applicable
-      if (shouldRequestReview) {
+      if (utils.shouldRequestReview(answers)) {
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(
           (props, assignLink) =>
             generateAssignReviewerEmail(props, assignLink, ihiDocumentID),
@@ -79,7 +78,23 @@ export class AccidentNotificationService {
         documentId: ihiDocumentID,
       }
     } catch (e) {
-      this.logger.error('Error submitting application to SÍ', { e })
+      this.logger.error('Error submitting application to SÍ', e)
+      // In the case we get a precondition error we present it to the user
+      if (e.body && e.body.errorList && e.body.errorList.length > 0) {
+        throw new Error(
+          `Villa kom upp við vistun á umsókn. ${e.body.errorList
+            .map((e: any) => {
+              if (
+                e.errorType &&
+                e.errorDesc &&
+                whiteListedErrorCodes.includes(e.errorType)
+              ) {
+                return e.errorDesc
+              }
+            })
+            .join('\n')}`,
+        )
+      }
       throw new Error('Villa kom upp við vistun á umsókn.')
     }
   }
@@ -109,7 +124,7 @@ export class AccidentNotificationService {
 
       await Promise.all(promises)
     } catch (e) {
-      this.logger.error('Error adding attachment to SÍ', { e })
+      this.logger.error('Error adding attachment to SÍ', e)
       throw new Error('Villa kom upp við að bæta við viðhengi.')
     }
   }
@@ -131,12 +146,12 @@ export class AccidentNotificationService {
         confirmationIN: {
           confirmationType:
             reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
-          confirmationParty: isRepresentativeOfCompanyOrInstitue ? 2 : 1,
+          confirmationParty: isRepresentativeOfCompanyOrInstitue ? 1 : 2,
           objection: reviewComment as string,
         },
       })
     } catch (e) {
-      this.logger.error('Error reviewing application to SÍ', { e })
+      this.logger.error('Error reviewing application to SÍ', e)
       throw new Error('Villa kom upp við samþykki á umsókn.')
     }
   }

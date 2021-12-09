@@ -79,6 +79,9 @@
     "api-domains-application": {
       "tags": []
     },
+    "api-domains-assets": {
+      "tags": []
+    },
     "api-domains-auth": {
       "tags": []
     },
@@ -86,6 +89,9 @@
       "tags": []
     },
     "api-domains-content-search": {
+      "tags": []
+    },
+    "api-domains-criminal-record": {
       "tags": []
     },
     "api-domains-directorate-of-labour": {
@@ -197,6 +203,9 @@
     "application-templates-complaints-to-althingi-ombudsman": {
       "tags": []
     },
+    "application-templates-criminal-record": {
+      "tags": []
+    },
     "application-templates-data-protection-complaint": {
       "tags": []
     },
@@ -288,9 +297,15 @@
     "cache": {
       "tags": []
     },
+    "clients-assets": {
+      "tags": []
+    },
     "clients-auth-public-api": {
       "tags": [],
       "implicitDependencies": ["services-auth-public-api"]
+    },
+    "clients-criminal-record": {
+      "tags": []
     },
     "clients-document-provider": {
       "tags": []
@@ -523,6 +538,12 @@
       "tags": []
     },
     "nest-audit": {
+      "tags": []
+    },
+    "nest-config": {
+      "tags": []
+    },
+    "nest-feature-flags": {
       "tags": []
     },
     "nest-pagination": {

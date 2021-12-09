@@ -1,5 +1,4 @@
 import '@testing-library/jest-dom'
-
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -16,10 +15,11 @@ import {
   mockPrisonUserQuery,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
+import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import Requests from './Requests'
 import { LocaleProvider } from '@island.is/localization'
+
+import Requests from './Requests'
 
 const mockCasesQuery = [
   {
@@ -73,6 +73,85 @@ const mockCasesQuery = [
             accusedNationalId: '012345-6789',
             accusedName: 'Erlingur L Kristinsson',
             validToDate: '2020-11-11T12:31:00.000Z',
+          },
+          {
+            id: 'test_id_5',
+            created: '2020-08-16T19:50:08.033Z',
+            modified: '2020-09-16T19:51:39.466Z',
+            state: CaseState.DELETED,
+            policeCaseNumber: '008-2020-X',
+            accusedNationalId: '012345-6789',
+            accusedName: 'Erlingur L Kristinsson',
+            validToDate: '2020-11-11T12:31:00.000Z',
+          },
+          {
+            id: 'test_id_6',
+            created: '2021-01-16T19:50:08.033Z',
+            modified: '2021-01-16T19:51:39.466Z',
+            state: CaseState.RECEIVED,
+            policeCaseNumber: '008-2020-X',
+            accusedNationalId: '012345-6789',
+            accusedName: 'D. M. Kil',
+            validToDate: '2020-11-11T12:31:00.000Z',
+          },
+          {
+            id: 'test_id_7',
+            created: '2021-02-16T19:50:08.033Z',
+            modified: '2021-02-16T19:51:39.466Z',
+            state: CaseState.SUBMITTED,
+            policeCaseNumber: '008-2020-X',
+            accusedNationalId: '012345-6789',
+            accusedName: 'Moe',
+            validToDate: '2020-11-11T12:31:00.000Z',
+          },
+        ],
+      },
+    },
+  },
+]
+
+const mockCourtCasesQuery = [
+  {
+    request: {
+      query: CasesQuery,
+    },
+    result: {
+      data: {
+        cases: [
+          {
+            id: 'test_id_1',
+            modified: '2020-09-16T19:51:39.466Z',
+            created: '2020-09-16T19:50:08.033Z',
+            state: CaseState.DRAFT,
+            policeCaseNumber: 'string',
+            accusedNationalId: 'string',
+            accusedName: 'Jon Harring Sr.',
+            validToDate: null,
+            parentCase: {
+              id: '1337',
+            },
+          },
+          {
+            id: 'test_id_2',
+            created: '2020-12-16T19:50:08.033Z',
+            modified: '2020-12-16T19:51:39.466Z',
+            state: CaseState.DRAFT,
+            policeCaseNumber: 'string',
+            accusedNationalId: 'string',
+            accusedName: 'Jon Harring',
+            validToDate: null,
+          },
+          {
+            id: 'test_id_3',
+            created: '2020-05-16T19:50:08.033Z',
+            modified: '2020-09-16T19:51:39.466Z',
+            state: CaseState.ACCEPTED,
+            policeCaseNumber: '008-2020-X',
+            accusedNationalId: '012345-6789',
+            accusedName: 'Mikki Refur',
+            validToDate: '2020-11-11T12:31:00.000Z',
+            accusedAppealDecision: CaseAppealDecision.APPEAL,
+            rulingDate: '2020-09-16T19:51:39.466Z',
           },
           {
             id: 'test_id_5',
@@ -230,10 +309,10 @@ describe('Requests', () => {
   })
 
   describe('Court users', () => {
-    test('should list all cases that do not have status NEW, DELETED, ACCEPTED or REJECTED in a active cases table', async () => {
+    test('should list all cases that do not have status NEW (never returned from the server), DELETED, ACCEPTED or REJECTED in a active cases table', async () => {
       render(
         <MockedProvider
-          mocks={[...mockCasesQuery, ...mockJudgeQuery]}
+          mocks={[...mockCourtCasesQuery, ...mockJudgeQuery]}
           addTypename={false}
         >
           <UserProvider authenticated={true}>
@@ -254,7 +333,7 @@ describe('Requests', () => {
     test('should display the judge logo', async () => {
       render(
         <MockedProvider
-          mocks={[...mockCasesQuery, ...mockJudgeQuery]}
+          mocks={[...mockCourtCasesQuery, ...mockJudgeQuery]}
           addTypename={false}
         >
           <UserProvider authenticated={true}>
@@ -273,7 +352,7 @@ describe('Requests', () => {
     test('should not display a button to create a request', async () => {
       render(
         <MockedProvider
-          mocks={[...mockCasesQuery, ...mockJudgeQuery]}
+          mocks={[...mockCourtCasesQuery, ...mockJudgeQuery]}
           addTypename={false}
         >
           <UserProvider>
@@ -294,7 +373,7 @@ describe('Requests', () => {
     test('should not display a button to delete a request', async () => {
       render(
         <MockedProvider
-          mocks={[...mockCasesQuery, ...mockJudgeQuery]}
+          mocks={[...mockCourtCasesQuery, ...mockJudgeQuery]}
           addTypename={false}
         >
           <UserProvider>

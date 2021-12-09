@@ -1,45 +1,36 @@
-import React, { useEffect, useState } from 'react'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
+import React, { useContext, useEffect } from 'react'
+
+import { PageLayout } from '@island.is/judicial-system-web/src/components'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
-  CaseDecision,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
-import {
-  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { useRouter } from 'next/router'
-import RulingStepTwoForm from './RulingStepTwoForm'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+
+import RulingStepTwoForm from './RulingStepTwoForm'
 
 const RulingStepTwo = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
-  const router = useRouter()
-  const id = router.query.id
   const { autofill } = useCase()
-
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    if (!workingCase && data?.case) {
-      if (isAcceptingCaseDecision(data.case.decision) && data.case.demands) {
-        autofill('conclusion', data.case.demands, data.case)
-      }
-      setWorkingCase(data.case)
+    if (isAcceptingCaseDecision(workingCase.decision) && workingCase.demands) {
+      autofill('conclusion', workingCase.demands, workingCase)
     }
-  }, [workingCase, setWorkingCase, data, autofill])
+    setWorkingCase(workingCase)
+  }, [])
 
   return (
     <PageLayout
@@ -48,16 +39,14 @@ const RulingStepTwo = () => {
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.RULING_STEP_TWO}
-      isLoading={loading}
-      notFound={data?.case === undefined}
+      isLoading={isLoadingWorkingCase}
+      notFound={caseNotFound}
     >
-      {workingCase && (
-        <RulingStepTwoForm
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          isLoading={loading}
-        />
-      )}
+      <RulingStepTwoForm
+        workingCase={workingCase}
+        setWorkingCase={setWorkingCase}
+        isLoading={isLoadingWorkingCase}
+      />
     </PageLayout>
   )
 }

@@ -6,7 +6,9 @@ import {
   UpdateApplication,
   ApplicationState,
   ApplicationEventType,
+  Amount,
 } from '@island.is/financial-aid/shared/lib'
+import { CreateAmountInput } from '../../amount'
 
 @InputType()
 export class UpdateApplicationInput implements UpdateApplication {
@@ -15,16 +17,12 @@ export class UpdateApplicationInput implements UpdateApplication {
   readonly id!: string
 
   @Allow()
-  @Field(() => String)
-  readonly state!: ApplicationState
+  @Field(() => String, { nullable: true })
+  readonly state?: ApplicationState
 
   @Allow()
   @Field(() => String)
   readonly event!: ApplicationEventType
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly amount?: number
 
   @Allow()
   @Field({ nullable: true })
@@ -49,4 +47,12 @@ export class UpdateApplicationInput implements UpdateApplication {
   @Allow()
   @Field({ nullable: true })
   readonly spouseName?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spouseFormComment?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly amount?: CreateAmountInput
 }

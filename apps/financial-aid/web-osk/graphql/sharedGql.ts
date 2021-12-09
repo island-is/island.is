@@ -57,10 +57,23 @@ export const ApplicationQuery = gql`
       homeCircumstances
       usePersonalTaxCredit
       state
-      amount
+      amount {
+        aidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
+      }
       rejection
       created
+      modified
       municipalityCode
+      spouseNationalId
       applicationEvents {
         id
         applicationId
@@ -82,7 +95,7 @@ export const ApplicationMutation = gql`
 
 export const NationalRegistryUserQuery = gql`
   query getNationalRegistryUserQuery {
-    nationalRegistryUserV2 {
+    municipalityNationalRegistryUserV2 {
       nationalId
       fullName
       address {

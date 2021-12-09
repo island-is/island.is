@@ -26,9 +26,8 @@ export interface Config {
     {
       provide: NationalRegistryApi,
       useFactory: async () =>
-        await NationalRegistryApi.instanciateClass(
-          environment.metadataProvider
-            .nationalRegistry as NationalRegistryConfig,
+        await NationalRegistryApi.instantiateClass(
+          environment.nationalRegistry,
         ),
     },
   ],

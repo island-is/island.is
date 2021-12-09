@@ -89,6 +89,7 @@ export const aboutTheAccidentSection = buildSection({
               id: 'timePassedHindranceFielAlertMessage',
               title: hindrances.timePassedHindrance.errorTitle,
               description: hindrances.timePassedHindrance.errorDescription,
+              doesNotRequireAnswer: true,
               condition: (formValue) => formValue.timePassedHindrance === YES,
             }),
           ],
@@ -112,6 +113,7 @@ export const aboutTheAccidentSection = buildSection({
               id: 'carAccidentHindranceFielAlertMessage',
               title: hindrances.carAccident.errorTitle,
               description: hindrances.carAccident.errorDescription,
+              doesNotRequireAnswer: true,
               condition: (formValue) => formValue.carAccidentHindrance === YES,
             }),
           ],
@@ -121,20 +123,21 @@ export const aboutTheAccidentSection = buildSection({
 
     buildSubSection({
       id: 'accidentType.section',
-      title: 'Aðstæður slyss',
+      title: accidentType.general.subsectionTitle,
       children: [
         buildRadioField({
           id: 'accidentType.radioButton',
           width: 'half',
           title: accidentType.general.heading,
           description: accidentType.general.description,
-          options: (app) => getAccidentTypeOptions(app.answers),
+          options: (formValue) => getAccidentTypeOptions(formValue.answers),
         }),
       ],
     }),
     buildSubSection({
       id: 'workAccident.subSection',
       title: accidentType.workAccidentType.subSectionTitle,
+      condition: (formValue) => isWorkAccident(formValue),
       children: [
         buildMultiField({
           id: 'workAccident.section',
@@ -170,6 +173,7 @@ export const aboutTheAccidentSection = buildSection({
                 title: attachments.labels.alertMessage,
                 description: accidentType.warning.agricultureAccidentWarning,
                 component: 'FieldAlertMessage',
+                doesNotRequireAnswer: true,
                 condition: (formValue) => isAgricultureAccident(formValue),
               },
               { type: 'warning' },
@@ -177,17 +181,16 @@ export const aboutTheAccidentSection = buildSection({
           ],
         }),
       ],
-      condition: (formValue) => isWorkAccident(formValue),
     }),
     buildSubSection({
       id: 'studiesAccident.subSection',
       title: accidentType.workAccidentType.subSectionTitle,
+      condition: (formValue) => isStudiesAccident(formValue),
       children: [
         buildMultiField({
           id: 'studiesAccident.section',
           title: accidentType.studiesAccidentType.heading,
           description: accidentType.studiesAccidentType.description,
-          condition: (formValue) => isStudiesAccident(formValue),
           children: [
             buildRadioField({
               id: 'studiesAccident.type',
@@ -252,6 +255,7 @@ export const aboutTheAccidentSection = buildSection({
               title: accidentLocation.homeAccidentLocation.address,
               backgroundColor: 'blue',
               required: true,
+              maxLength: 100,
             }),
             buildTextField({
               id: 'homeAccident.postalCode',
@@ -267,6 +271,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               width: 'half',
               required: true,
+              maxLength: 100,
             }),
             buildTextField({
               id: 'homeAccident.moreDetails',
@@ -276,6 +281,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               rows: 4,
               variant: 'textarea',
+              maxLength: 2000,
             }),
           ],
         }),
@@ -497,6 +503,7 @@ export const aboutTheAccidentSection = buildSection({
               variant: 'textarea',
               required: true,
               rows: 4,
+              maxLength: 2000,
             }),
           ],
         }),
@@ -528,6 +535,7 @@ export const aboutTheAccidentSection = buildSection({
           ],
         }),
         buildMultiField({
+          id: 'workMachine.description',
           title: workMachine.general.subSectionTitle,
           condition: (formValue) => formValue.workMachineRadio === YES,
           children: [
@@ -539,6 +547,7 @@ export const aboutTheAccidentSection = buildSection({
               rows: 4,
               variant: 'textarea',
               required: true,
+              maxLength: 2000,
             }),
           ],
         }),
@@ -588,6 +597,7 @@ export const aboutTheAccidentSection = buildSection({
               required: true,
               rows: 10,
               variant: 'textarea',
+              maxLength: 2000,
             }),
           ],
         }),
@@ -640,6 +650,7 @@ export const aboutTheAccidentSection = buildSection({
                 title: attachments.labels.alertMessage,
                 description: attachments.general.alertMessage,
                 component: 'FieldAlertMessage',
+                doesNotRequireAnswer: true,
                 condition: (formValue) =>
                   getValueViaPath(formValue, 'injuryCertificate.answer') ===
                   AttachmentsEnum.SENDCERTIFICATELATER,
@@ -712,6 +723,7 @@ export const aboutTheAccidentSection = buildSection({
                 title: fatalAccident.alertMessage.title,
                 description: fatalAccident.alertMessage.description,
                 component: 'FieldAlertMessage',
+                doesNotRequireAnswer: true,
                 condition: (formValue) =>
                   getValueViaPath(
                     formValue,
@@ -767,6 +779,7 @@ export const aboutTheAccidentSection = buildSection({
                 title: attachments.labels.alertMessage,
                 description: attachments.general.alertMessage,
                 component: 'FieldAlertMessage',
+                doesNotRequireAnswer: true,
                 condition: (formValue) =>
                   getValueViaPath(formValue, 'additionalAttachments.answer') ===
                   AttachmentsEnum.ADDITIONALLATER,
@@ -818,6 +831,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               width: 'half',
+              maxLength: 100,
             }),
             buildTextField({
               id: 'companyInfo.nationalRegistrationId',
@@ -858,6 +872,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               width: 'half',
+              maxLength: 100,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -878,6 +893,7 @@ export const aboutTheAccidentSection = buildSection({
               variant: 'email',
               width: 'half',
               required: true,
+              maxLength: 100,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -895,6 +911,7 @@ export const aboutTheAccidentSection = buildSection({
               {
                 id: 'representativeInfo.custom',
                 title: '',
+                doesNotRequireAnswer: true,
                 component: 'HiddenInformation',
               },
               {
@@ -925,6 +942,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               width: 'half',
+              maxLength: 100,
             }),
             buildTextField({
               id: 'companyInfo.nationalRegistrationId',
@@ -964,6 +982,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               width: 'half',
+              maxLength: 100,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -983,6 +1002,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               variant: 'email',
               width: 'half',
+              maxLength: 100,
               required: true,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
@@ -1001,6 +1021,7 @@ export const aboutTheAccidentSection = buildSection({
               {
                 id: 'schoolInfo.custom',
                 title: '',
+                doesNotRequireAnswer: true,
                 component: 'HiddenInformation',
               },
               {
@@ -1014,7 +1035,10 @@ export const aboutTheAccidentSection = buildSection({
     // fishery information if fisherman
     buildSubSection({
       id: 'fishingCompanyInfo.subSection',
-      title: fishingCompanyInfo.general.title,
+      title: (application) =>
+        isReportingOnBehalfOfEmployee(application.answers)
+          ? fishingCompanyInfo.general.informationAboutShipTitle
+          : fishingCompanyInfo.general.title,
       condition: (formValue) => isFishermanAccident(formValue),
       children: [
         buildMultiField({
@@ -1029,6 +1053,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               width: 'half',
               required: true,
+              maxLength: 100,
             }),
             buildTextField({
               id: 'fishingShipInfo.shipCharacters',
@@ -1036,18 +1061,21 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               width: 'half',
               required: true,
+              maxLength: 100,
             }),
             buildTextField({
               id: 'fishingShipInfo.homePort',
               title: fishingCompanyInfo.labels.homePort,
               backgroundColor: 'blue',
               width: 'half',
+              maxLength: 100,
             }),
             buildTextField({
               id: 'fishingShipInfo.shipRegisterNumber',
               title: fishingCompanyInfo.labels.shipRegisterNumber,
               backgroundColor: 'blue',
               width: 'half',
+              maxLength: 100,
             }),
           ],
         }),
@@ -1063,6 +1091,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               width: 'half',
+              maxLength: 100,
             }),
             buildTextField({
               id: 'companyInfo.nationalRegistrationId',
@@ -1102,6 +1131,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               width: 'half',
+              maxLength: 100,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1121,6 +1151,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               variant: 'email',
               width: 'half',
+              maxLength: 100,
               required: true,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
@@ -1139,6 +1170,7 @@ export const aboutTheAccidentSection = buildSection({
               {
                 id: 'representativeInfo.custom',
                 title: '',
+                doesNotRequireAnswer: true,
                 component: 'HiddenInformation',
               },
               {
@@ -1168,6 +1200,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               width: 'half',
               required: true,
+              maxLength: 100,
             }),
             buildTextField({
               id: 'companyInfo.nationalRegistrationId',
@@ -1207,6 +1240,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               width: 'half',
+              maxLength: 100,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1226,6 +1260,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               variant: 'email',
               width: 'half',
+              maxLength: 100,
               required: true,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
@@ -1244,6 +1279,7 @@ export const aboutTheAccidentSection = buildSection({
               {
                 id: 'representativeInfo.custom',
                 title: '',
+                doesNotRequireAnswer: true,
                 component: 'HiddenInformation',
               },
               {
@@ -1273,6 +1309,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               width: 'half',
               required: true,
+              maxLength: 100,
             }),
             buildTextField({
               id: 'companyInfo.nationalRegistrationId',
@@ -1310,6 +1347,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               width: 'half',
+              maxLength: 100,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1329,6 +1367,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               variant: 'email',
               width: 'half',
+              maxLength: 100,
               required: true,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
@@ -1340,6 +1379,7 @@ export const aboutTheAccidentSection = buildSection({
               format: '###-####',
               variant: 'tel',
               width: 'half',
+              doesNotRequireAnswer: true,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1347,6 +1387,7 @@ export const aboutTheAccidentSection = buildSection({
               {
                 id: 'representativeInfo.custom',
                 title: '',
+                doesNotRequireAnswer: true,
                 component: 'HiddenInformation',
               },
               {

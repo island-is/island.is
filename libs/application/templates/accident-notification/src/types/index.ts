@@ -105,10 +105,10 @@ export enum AgricultureAccidentLocationEnum {
 }
 
 export enum WorkAccidentTypeEnum {
-  GENERAL = 'general',
-  FISHERMAN = 'fisherman',
+  GENERAL = 'generalWorkAccident',
+  FISHERMAN = 'fishermanAccident',
   PROFESSIONALATHLETE = 'professionalAthlete',
-  AGRICULTURE = 'agriculture',
+  AGRICULTURE = 'agricultureAccident',
 }
 
 export enum RescueWorkAccidentLocationEnum {

@@ -1,5 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
+import NextLink from 'next/link'
+import cn from 'classnames'
 import {
   Box,
   Column,
@@ -9,78 +11,114 @@ import {
   GridRow,
   Hidden,
   Logo,
-  Text,
   ResponsiveSpace,
   Link,
+  getTextStyles,
 } from '@island.is/island-ui/core'
-import { ServiceWebSearchInput } from '@island.is/web/components'
+import {
+  ServiceWebContext,
+  ServiceWebSearchInput,
+} from '@island.is/web/components'
+import { TextModes } from '../types'
+import { linkResolver } from '@island.is/web/hooks'
 
 import * as styles from './Header.css'
 
 interface HeaderProps {
   title?: string
   hideSearch?: boolean
+  textMode?: TextModes
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 
-export const Header = ({ title = '', hideSearch }: HeaderProps) => {
+export const Header = ({ title = '', hideSearch, textMode }: HeaderProps) => {
+  const dark = textMode === 'dark'
+
   return (
-    <Hidden print={true}>
-      <header>
-        <GridContainer>
-          <GridRow>
-            <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
-              <Columns alignY="center" space={2}>
-                <Column width="content">
-                  <Box display="flex" height="full" alignItems="center">
-                    <Box height="full">
-                      <Link href="/thjonustuvefur">
-                        <Hidden above="md">
-                          <Logo
-                            id="helpdesk-logo-1"
-                            width={40}
-                            iconOnly
-                            solid={true}
-                          />
-                        </Hidden>
-                        <Hidden below="lg">
-                          <Logo id="header-logo-2" width={160} solid={true} />
-                        </Hidden>
-                      </Link>
-                    </Box>
-                    {title && (
-                      <Hidden below="lg">
-                        <div className={styles.logoTitleContainer}>
-                          <Text as="span" variant="h4" color="white">
-                            {title}
-                          </Text>
-                        </div>
-                      </Hidden>
-                    )}
-                  </Box>
-                </Column>
-                <Column>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="flexEnd"
-                    width="full"
-                    className={styles.headerActions}
-                  >
-                    {!hideSearch && (
-                      <Box marginLeft={marginLeft}>
-                        <ServiceWebSearchInput size="medium" />
+    <ServiceWebContext.Consumer>
+      {({ institutionSlug }) => (
+        <Hidden print={true}>
+          <header>
+            <GridContainer>
+              <GridRow>
+                <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
+                  <Columns alignY="center" space={2}>
+                    <Column width="content">
+                      <Box display="flex" height="full" alignItems="center">
+                        <Box height="full">
+                          <Link href="/">
+                            <Hidden above="md">
+                              <Logo
+                                id="helpdesk-logo-1"
+                                width={40}
+                                iconOnly
+                                solid={!dark}
+                                solidColor={dark ? 'dark400' : 'white'}
+                              />
+                            </Hidden>
+                            <Hidden below="lg">
+                              <Logo
+                                id="header-logo-2"
+                                width={160}
+                                solid={!dark}
+                                solidColor={dark ? 'dark400' : 'white'}
+                              />
+                            </Hidden>
+                          </Link>
+                        </Box>
+                        {!!title && (
+                          <Hidden below="lg">
+                            <div
+                              className={cn(styles.logoTitleContainer, {
+                                [styles.logoTitleContainerDark]: dark,
+                              })}
+                            >
+                              <NextLink
+                                href={`${linkResolver('helpdesk').href}${
+                                  institutionSlug ? '/' + institutionSlug : ''
+                                }`}
+                              >
+                                <a
+                                  className={cn(
+                                    getTextStyles({
+                                      variant: 'h4',
+                                      color: dark ? 'dark400' : 'white',
+                                    }),
+                                    styles.headingLink,
+                                  )}
+                                >
+                                  {title}
+                                </a>
+                              </NextLink>
+                            </div>
+                          </Hidden>
+                        )}
                       </Box>
-                    )}
-                  </Box>
-                </Column>
-              </Columns>
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
-      </header>
-    </Hidden>
+                    </Column>
+                    <Column>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="flexEnd"
+                        width="full"
+                        className={styles.headerActions}
+                      >
+                        {!hideSearch && (
+                          <Box marginLeft={marginLeft}>
+                            <ServiceWebSearchInput size="medium" />
+                          </Box>
+                        )}
+                      </Box>
+                    </Column>
+                  </Columns>
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
+          </header>
+        </Hidden>
+      )}
+    </ServiceWebContext.Consumer>
   )
 }
 

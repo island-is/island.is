@@ -39,12 +39,13 @@ export const attachments = {
     },
     uploadDescription: {
       id: 'an.application:attachments.uploadDescription',
-      defaultMessage: 'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf',
+      defaultMessage:
+        'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf, .jpg, .jpeg, .png, .heic',
       description: 'Definition of upload description',
     },
     uploadHeader: {
       id: 'an.application:attachments.uploadHeader',
-      defaultMessage: 'Dragðu viðhengi hingað til að hlaða upp',
+      defaultMessage: 'Dragðu viðhengi hingað til að hlaða því upp',
       description: 'Definition of upload header',
     },
     uploadButtonLabel: {

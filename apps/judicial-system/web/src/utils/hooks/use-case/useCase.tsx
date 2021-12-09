@@ -1,5 +1,10 @@
 import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
+
+import {
+  parseString,
+  parseTransition,
+} from '@island.is/judicial-system-web/src/utils/formatters'
 import type {
   NotificationType,
   SendNotificationResponse,
@@ -8,16 +13,15 @@ import type {
   RequestSignatureResponse,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import {
-  parseString,
-  parseTransition,
-} from '@island.is/judicial-system-web/src/utils/formatters'
+
 import { CreateCaseMutation } from './createCaseGql'
 import { CreateCourtCaseMutation } from './createCourtCaseGql'
 import { UpdateCaseMutation } from './updateCaseGql'
 import { SendNotificationMutation } from './sendNotificationGql'
 import { TransitionCaseMutation } from './transitionCaseGql'
-import { RequestSignatureMutation } from './requestSignatureGql'
+import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
+import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
+import { ExtendCaseMutation } from './extendCaseGql'
 
 type autofillProperties = Pick<
   Case,
@@ -37,6 +41,7 @@ type autofillProperties = Pick<
   | 'courtLocation'
   | 'accusedBookings'
   | 'ruling'
+  | 'sessionArrangements'
 >
 
 interface CreateCaseMutationResponse {
@@ -59,8 +64,16 @@ interface SendNotificationMutationResponse {
   sendNotification: SendNotificationResponse
 }
 
-interface RequestSignatureMutationResponse {
-  requestSignature: RequestSignatureResponse
+interface RequestRulingSignatureMutationResponse {
+  requestRulingSignature: RequestSignatureResponse
+}
+
+interface RequestCourtRecordSignatureMutationResponse {
+  requestCourtRecordSignature: RequestSignatureResponse
+}
+
+interface ExtendCaseMutationResponse {
+  extendCase: Case
 }
 
 const useCase = () => {
@@ -85,9 +98,21 @@ const useCase = () => {
     { loading: isSendingNotification },
   ] = useMutation<SendNotificationMutationResponse>(SendNotificationMutation)
   const [
-    requestSignatureMutation,
-    { loading: isRequestingSignature },
-  ] = useMutation<RequestSignatureMutationResponse>(RequestSignatureMutation)
+    requestRulingSignatureMutation,
+    { loading: isRequestingRulingSignature },
+  ] = useMutation<RequestRulingSignatureMutationResponse>(
+    RequestRulingSignatureMutation,
+  )
+  const [
+    requestCourtRecordSignatureMutation,
+    { loading: isRequestingCourtRecordSignature },
+  ] = useMutation<RequestCourtRecordSignatureMutationResponse>(
+    RequestCourtRecordSignatureMutation,
+  )
+  const [
+    extendCaseMutation,
+    { loading: isExtendingCase },
+  ] = useMutation<ExtendCaseMutationResponse>(ExtendCaseMutation)
 
   const createCase = useMemo(
     () => async (theCase: Case): Promise<string | undefined> => {
@@ -123,7 +148,7 @@ const useCase = () => {
   const createCourtCase = useMemo(
     () => async (
       workingCase: Case,
-      setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
+      setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
       setCourtCaseNumberErrorMessage: React.Dispatch<
         React.SetStateAction<string>
       >,
@@ -187,7 +212,7 @@ const useCase = () => {
     () => async (
       workingCase: Case,
       transition: CaseTransition,
-      setWorkingCase?: React.Dispatch<React.SetStateAction<Case | undefined>>,
+      setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
     ): Promise<boolean> => {
       try {
         const transitionRequest = parseTransition(
@@ -241,15 +266,37 @@ const useCase = () => {
     [sendNotificationMutation],
   )
 
-  const requestSignature = useMemo(
+  const requestRulingSignature = useMemo(
     () => async (id: string) => {
-      const { data } = await requestSignatureMutation({
+      const { data } = await requestRulingSignatureMutation({
         variables: { input: { caseId: id } },
       })
 
-      return data?.requestSignature
+      return data?.requestRulingSignature
     },
-    [requestSignatureMutation],
+    [requestRulingSignatureMutation],
+  )
+
+  const requestCourtRecordSignature = useMemo(
+    () => async (id: string) => {
+      const { data } = await requestCourtRecordSignatureMutation({
+        variables: { input: { caseId: id } },
+      })
+
+      return data?.requestCourtRecordSignature
+    },
+    [requestCourtRecordSignatureMutation],
+  )
+
+  const extendCase = useMemo(
+    () => async (id: string) => {
+      const { data } = await extendCaseMutation({
+        variables: { input: { id } },
+      })
+
+      return data?.extendCase
+    },
+    [extendCaseMutation],
   )
 
   // TODO: find a way for this to work where value is something other then string
@@ -277,8 +324,12 @@ const useCase = () => {
     isTransitioningCase,
     sendNotification,
     isSendingNotification,
-    requestSignature,
-    isRequestingSignature,
+    requestRulingSignature,
+    isRequestingRulingSignature,
+    requestCourtRecordSignature,
+    isRequestingCourtRecordSignature,
+    extendCase,
+    isExtendingCase,
     autofill,
   }
 }

@@ -1,5 +1,11 @@
 import { MessageFormatter } from '@island.is/application/core'
-import { AttachmentsEnum, FileType, WhoIsTheNotificationForEnum } from '..'
+import {
+  AttachmentsEnum,
+  FileType,
+  PowerOfAttorneyUploadEnum,
+  WhoIsTheNotificationForEnum,
+} from '..'
+import { getValueViaPath } from '@island.is/application/core'
 import { YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import { attachments, overview } from '../lib/messages'
@@ -11,6 +17,15 @@ export const isValid24HFormatTime = (value: string) => {
   if (hours > 23) return false
   if (minutes > 59) return false
   return true
+}
+
+export const formatPhonenumber = (value: string) => {
+  const splitAt = (index: number) => (x: string) => [
+    x.slice(0, index),
+    x.slice(index),
+  ]
+  if (value.length > 3) return splitAt(3)(value).join('-')
+  return value
 }
 
 const hasAttachment = (attachment: FileType[] | undefined) =>
@@ -30,7 +45,11 @@ export const getAttachmentTitles = (answers: AccidentNotification) => {
 
   if (hasAttachment(deathCertificateFile))
     files.push(attachments.documentNames.deathCertificate)
-  if (hasAttachment(injuryCertificateFile))
+  if (
+    hasAttachment(injuryCertificateFile) &&
+    getValueViaPath(answers, 'injuryCertificate.answer') !==
+      AttachmentsEnum.HOSPITALSENDSCERTIFICATE
+  )
     files.push(attachments.documentNames.injuryCertificate)
   if (hasAttachment(powerOfAttorneyFile))
     files.push(attachments.documentNames.powerOfAttorneyDocument)
@@ -108,3 +127,5 @@ export * from './isPowerOfAttorney'
 export * from './isRepresentativeOfCompanyOrInstitue'
 export * from './isFatalAccident'
 export * from './isReportingBehalfOfSelf'
+export * from './isOfWorkTypeAccident'
+export * from './shouldRequestReview'

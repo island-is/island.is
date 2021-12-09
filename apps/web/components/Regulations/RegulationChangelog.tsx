@@ -30,7 +30,7 @@ export const useRegulationEffectPrepper = (
   const { linkToRegulation } = useRegulationLinkResolver()
   const today = new Date().toISOString().substr(0, 10) as ISODate
 
-  const { effects, isViewingCurrent } = useMemo(() => {
+  const { effects, isViewingCurrentVersion } = useMemo(() => {
     const effects = regulation.history.reduce<
       Record<'past' | 'future', Effects>
     >(
@@ -45,15 +45,11 @@ export const useRegulationEffectPrepper = (
       effects.past.reverse()
       effects.future.reverse()
     }
-    const isViewingCurrent =
-      (!regulation.timelineDate &&
-        (!regulation.showingDiff ||
-          regulation.showingDiff.from <= regulation.effectiveDate)) ||
-      undefined
+    const isViewingCurrentVersion = !regulation.timelineDate || undefined
 
     return {
       effects,
-      isViewingCurrent,
+      isViewingCurrentVersion,
     }
   }, [regulation, today, opts.reverse])
 
@@ -64,31 +60,31 @@ export const useRegulationEffectPrepper = (
     setExpanded(effects.past.length < CHANGELOG_COLLAPSE_LIMIT)
   }, [effects])
 
-  const isItemCurrent = (itemDate: ISODate) =>
-    (regulation.timelineDate ||
-      (!isViewingCurrent && regulation.lastAmendDate)) === itemDate
+  const isItemActive = (itemDate: ISODate) =>
+    itemDate === (regulation.timelineDate || regulation.lastAmendDate)
 
   const renderCurrentVersion = () => (
     <RegulationsSidebarLink
       href={linkToRegulation(regulation.name)}
-      current={isViewingCurrent}
+      current={isViewingCurrentVersion}
     >
-      <span className={isViewingCurrent && s.changelogCurrent}>
+      <span className={isViewingCurrentVersion && s.changelogActive}>
         {txt('historyCurrentVersion')}
       </span>
     </RegulationsSidebarLink>
   )
 
   const renderOriginalVersion = () => {
-    const current = isItemCurrent(regulation.effectiveDate)
+    const active = isItemActive(regulation.publishedDate)
     return (
       <RegulationsSidebarLink
         href={linkToRegulation(regulation.name, { original: true })}
-        current={current}
+        current={active}
+        rel="nofollow"
       >
-        <strong>{formatDate(regulation.effectiveDate)}</strong>
+        <strong>{formatDate(regulation.publishedDate)}</strong>
         <br />
-        <span className={cn(s.smallText, current && s.changelogCurrent)}>
+        <span className={cn(s.smallText, active && s.changelogActive)}>
           {txt(
             regulation.type === 'base'
               ? 'historyStart'
@@ -124,8 +120,8 @@ export const useRegulationEffectPrepper = (
                 })
               : undefined
 
-          const current = isItemCurrent(item.date)
-          const className = cn(s.smallText, current && s.changelogCurrent)
+          const active = isItemActive(item.date)
+          const className = cn(s.smallText, active && s.changelogActive)
 
           const Content = (
             <>
@@ -138,7 +134,12 @@ export const useRegulationEffectPrepper = (
           )
 
           return href ? (
-            <RegulationsSidebarLink key={i} href={href} current={current}>
+            <RegulationsSidebarLink
+              key={i}
+              href={href}
+              current={active}
+              rel="nofollow"
+            >
               {Content}
             </RegulationsSidebarLink>
           ) : (
@@ -175,8 +176,8 @@ export const useRegulationEffectPrepper = (
     }),
     hasPastEffects: effects.past.length > 0,
     hasFutureEffects: effects.future.length > 0,
-    isViewingCurrent,
-    isItemCurrent,
+    isViewingCurrentVersion,
+    isItemActive,
     renderOriginalVersion,
     renderPastSplitter,
     renderPastEffects: (collapse?: boolean) =>

@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 
 import { RolesRule } from '@island.is/financial-aid/shared/lib'
@@ -23,7 +28,7 @@ export class RolesGuard implements CanActivate {
 
     // Deny if no user
     if (!user) {
-      return false
+      throw new UnauthorizedException()
     }
 
     // Pick the first matching rule
@@ -31,6 +36,10 @@ export class RolesGuard implements CanActivate {
       return rule === user.service
     })
 
-    return Boolean(rule)
+    if (!rule) {
+      throw new UnauthorizedException()
+    }
+
+    return true
   }
 }

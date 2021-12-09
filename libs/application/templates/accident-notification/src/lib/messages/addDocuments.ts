@@ -34,7 +34,8 @@ export const addDocuments = {
     },
     uploadDescription: {
       id: 'an.application:addDocuments.general.uploadDescription',
-      defaultMessage: 'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf',
+      defaultMessage:
+        'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf, .jpg, .jpeg, .png, .heic',
       description: 'Definition of upload description',
     },
     uploadButtonLabel: {
@@ -45,7 +46,7 @@ export const addDocuments = {
     additionalDocumentsDescription: {
       id: 'an.application:addDocuments.general.additionalDocumentsDescription',
       defaultMessage:
-        'Ef þú hefur auka skjöl sem þú vilt koma til skila eins og ljósmyndir af slysstað, skýrsla til vinnueftirlitsins eða önnnur gögn teng slysinu, þá vinsamlegast bættu þeim við hér að neðan.',
+        'Ef þú hefur auka skjöl sem þú vilt koma til skila eins og ljósmyndir af slysstað, skýrsla til vinnueftirlitsins eða önnur gögn tengd slysinu, þá vinsamlegast bættu þeim við hér að neðan.',
       description: 'Additional documents description',
     },
     submitButtonLabel: {

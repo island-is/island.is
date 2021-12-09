@@ -1,4 +1,4 @@
-import { DynamicModule } from '@nestjs/common'
+import { DynamicModule, HttpModule } from '@nestjs/common'
 
 import { FamilyMemberResolver, UserResolver } from './graphql'
 import { NationalRegistryService } from './nationalRegistry.service'
@@ -15,6 +15,11 @@ export class NationalRegistryModule {
   static register(config: Config): DynamicModule {
     return {
       module: NationalRegistryModule,
+      imports: [
+        HttpModule.register({
+          timeout: 15000,
+        }),
+      ],
       providers: [
         NationalRegistryService,
         UserResolver,
@@ -22,7 +27,7 @@ export class NationalRegistryModule {
         {
           provide: NationalRegistryApi,
           useFactory: async () =>
-            NationalRegistryApi.instanciateClass(config.nationalRegistry),
+            NationalRegistryApi.instantiateClass(config.nationalRegistry),
         },
       ],
       exports: [NationalRegistryService],

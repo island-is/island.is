@@ -96,11 +96,43 @@ export class FileController {
     }
   }
 
+  @Get('courtRecord')
+  @Header('Content-Type', 'application/pdf')
+  async getCourtRecordPdf(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting the court record for case ${id} as a pdf document`,
+    )
+
+    try {
+      return this.auditTrailService.audit(
+        user.id,
+        AuditedAction.GET_COURT_RECORD,
+        this.getPdf(id, 'courtRecord', req, res),
+        id,
+      )
+    } catch (error) {
+      this.logger.debug(
+        `Failed to get the court record for case ${id} as a pdf document`,
+        error,
+      )
+
+      if (error instanceof FileExeption) {
+        return res.status(error.status).json(error.message)
+      }
+
+      throw error
+    }
+  }
+
   @Get('ruling')
   @Header('Content-Type', 'application/pdf')
   async getRulingPdf(
     @Param('id') id: string,
-    @Query('shortVersion', ParseBoolPipe) shortVersion: boolean,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
@@ -111,7 +143,7 @@ export class FileController {
       return this.auditTrailService.audit(
         user.id,
         AuditedAction.GET_RULING_PDF,
-        this.getPdf(id, `ruling?shortVersion=${shortVersion}`, req, res),
+        this.getPdf(id, 'ruling', req, res),
         id,
       )
     } catch (error) {
