@@ -11,7 +11,7 @@ module.exports = {
           mobilePhoneNumber: '555-5555',
           locale: 'en',
           email: 'email@email.com',
-          documentNotifications: true
+          documentNotifications: true,
         },
       ],
       {},
