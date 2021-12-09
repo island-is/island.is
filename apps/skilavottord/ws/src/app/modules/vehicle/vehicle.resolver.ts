@@ -4,7 +4,8 @@ import { Query, Resolver, Mutation, Args } from '@nestjs/graphql'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Authorize, Role } from '../auth'
+import { Authorize, Role, CurrentUser } from '../auth'
+import type { AuthUser } from '../auth'
 import { VehicleModel } from './vehicle.model'
 import { VehicleService } from './vehicle.service'
 
@@ -46,8 +47,8 @@ export class VehicleResolver {
 
   @Mutation(() => Boolean)
   async createSkilavottordVehicle(
+    @CurrentUser() user: AuthUser,
     @Args('permno') permno: string,
-    @Args('nationalId') nid: string,
     @Args('type') type: string,
     @Args('color') color: string,
     @Args('newRegDate') newReg: Date,
@@ -58,7 +59,7 @@ export class VehicleResolver {
     newVehicle.newregDate = newReg
     newVehicle.vehicleColor = color
     newVehicle.vehicleType = type
-    newVehicle.ownerNationalId = nid
+    newVehicle.ownerNationalId = user.nationalId
     newVehicle.vehicleId = permno
     return await this.vehicleService.create(newVehicle)
   }

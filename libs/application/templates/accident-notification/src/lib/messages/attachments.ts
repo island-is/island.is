@@ -45,7 +45,7 @@ export const attachments = {
     },
     uploadHeader: {
       id: 'an.application:attachments.uploadHeader',
-      defaultMessage: 'Dragðu viðhengi hingað til að hlaða upp',
+      defaultMessage: 'Dragðu viðhengi hingað til að hlaða því upp',
       description: 'Definition of upload header',
     },
     uploadButtonLabel: {

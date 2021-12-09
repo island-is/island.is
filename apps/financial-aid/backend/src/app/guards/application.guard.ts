@@ -1,10 +1,5 @@
 import { RolesRule } from '@island.is/financial-aid/shared/lib'
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  UnauthorizedException,
-} from '@nestjs/common'
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
 import { getUserFromContext } from '../lib'
 import { ApplicationService } from '../modules/application'
 import { StaffService } from '../modules/staff'
@@ -21,7 +16,7 @@ export class ApplicationGuard implements CanActivate {
     const request = context.switchToHttp().getRequest()
 
     if (!user) {
-      throw new UnauthorizedException()
+      return false
     }
 
     const application = await this.applicationService.findById(
@@ -33,17 +28,17 @@ export class ApplicationGuard implements CanActivate {
       const staff = await this.staffService.findByNationalId(user.nationalId)
 
       if (application.municipalityCode !== staff.municipalityId) {
-        throw new UnauthorizedException()
+        return false
       }
     } else if (user.service === RolesRule.OSK) {
       if (
         application.nationalId !== user.nationalId &&
         user.nationalId !== application.spouseNationalId
       ) {
-        throw new UnauthorizedException()
+        return false
       }
     } else {
-      throw new UnauthorizedException()
+      return false
     }
 
     request.application = application

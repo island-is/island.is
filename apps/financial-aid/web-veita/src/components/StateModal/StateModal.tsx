@@ -14,6 +14,7 @@ import {
 import {
   Application,
   ApplicationState,
+  CreateAmount,
   eventTypeFromApplicationState,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
@@ -48,9 +49,9 @@ const StateModal = ({
   const saveStateApplication = async (
     applicationId: string,
     state: ApplicationState,
-    amount?: number,
     rejection?: string,
     comment?: string,
+    amount?: CreateAmount,
   ) => {
     setIsLoading(true)
 
@@ -60,9 +61,9 @@ const StateModal = ({
       applicationId,
       state,
       eventTypeFromApplicationState[state],
-      amount,
       rejection,
       comment,
+      amount,
     )
       .then((updatedApplication) => {
         setIsLoading(false)
@@ -154,24 +155,24 @@ const StateModal = ({
               if (!selected) {
                 return
               }
-              saveStateApplication(
-                applicationId,
-                selected,
-                undefined,
-                undefined,
-                comment,
-              )
+              saveStateApplication(applicationId, selected, undefined, comment)
             }}
           />
 
           <AcceptModal
             isModalVisable={selected === ApplicationState.APPROVED}
             onCancel={onClickCancel}
-            onSaveApplication={(amount: number) => {
+            onSaveApplication={(amount: CreateAmount) => {
               if (!selected) {
                 return
               }
-              saveStateApplication(applicationId, selected, amount)
+              saveStateApplication(
+                applicationId,
+                selected,
+                undefined,
+                undefined,
+                amount,
+              )
             }}
             homeCircumstances={homeCircumstances}
             spouseNationalId={spouseNationalId}
@@ -184,12 +185,7 @@ const StateModal = ({
               if (!selected) {
                 return
               }
-              saveStateApplication(
-                applicationId,
-                selected,
-                undefined,
-                reasonForRejection,
-              )
+              saveStateApplication(applicationId, selected, reasonForRejection)
             }}
           />
         </AnimateSharedLayout>
