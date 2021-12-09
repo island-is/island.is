@@ -9,11 +9,15 @@ import {
 } from '@island.is/judicial-system-web/graphql'
 import {
   Case,
+  CaseFile,
   PresignedPost,
   UploadPoliceCaseFileResponse,
 } from '@island.is/judicial-system/types'
 
-export const useS3Upload = (workingCase?: Case) => {
+export const useS3Upload = (
+  workingCase?: Case,
+  setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
+) => {
   const [files, setFiles] = useState<UploadFile[]>([])
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [allFilesUploaded, setAllFilesUploaded] = useState<boolean>(true)
@@ -197,6 +201,13 @@ export const useS3Upload = (workingCase?: Case) => {
           file.id = res.data.createFile.id
           file.status = 'done'
           updateFile(file)
+        })
+        .then(() => {
+          setWorkingCase &&
+            setWorkingCase({
+              ...workingCase,
+              caseFiles: [...(workingCase.caseFiles || []), file as CaseFile],
+            })
         })
         .catch((reason) => {
           // TODO: Log to sentry
