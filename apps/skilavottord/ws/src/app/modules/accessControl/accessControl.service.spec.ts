@@ -4,6 +4,8 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { AccessControlService } from './accessControl.service'
 import { AccessControlModel } from './accessControl.model'
 import { Role } from '../auth'
+import { RecyclingPartnerModel } from '../recyclingPartner/recyclingPartner.model'
+import { RecyclingRequestModel } from '../recyclingRequest'
 
 describe('accessControlService', () => {
   let accessControlService: AccessControlService
@@ -12,7 +14,7 @@ describe('accessControlService', () => {
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
       imports: [
-        SequelizeModule.forFeature([AccessControlModel]),
+        SequelizeModule.forFeature([AccessControlModel, RecyclingPartnerModel, RecyclingRequestModel]),
         SequelizeModule.forRoot({
           dialect: 'postgres',
           host: 'localhost',
@@ -54,7 +56,7 @@ describe('accessControlService', () => {
       user.nationalId = '1111111111'
       user.name = 'Jónas Jónsson'
       user.role = Role.recyclingCompany
-      user.partnerId = '123'
+      user.partnerId = '8888888888'
       const res = await accessControlService.createAccess(user)
       logger.debug('created access success:' + JSON.stringify(res, null, 2))
       expect(true).toEqual(true)
@@ -78,5 +80,3 @@ describe('accessControlService', () => {
     })
   })
 })
-
-// [App] Info      12/8/2021, 4:48:30 PM ------res------->:[] - {}

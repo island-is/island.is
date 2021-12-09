@@ -1,6 +1,14 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { Column, DataType, Model, Table } from 'sequelize-typescript'
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  ForeignKey,
+  Model,
+  Table,
+} from 'sequelize-typescript'
 import { Role } from '../auth'
+import { RecyclingPartnerModel } from '../recyclingPartner'
 
 @ObjectType('AccessControl')
 @Table({ tableName: 'access_control', timestamps: false })
@@ -33,5 +41,13 @@ export class AccessControlModel extends Model<AccessControlModel> {
     type: DataType.STRING,
     field: 'partner_id',
   })
+  @Field()
+  @ForeignKey(() => RecyclingPartnerModel)
+  @Column({
+    type: DataType.STRING,
+  })
   partnerId!: string
+
+  @BelongsTo(() => RecyclingPartnerModel)
+  recyclingPartner: RecyclingPartnerModel
 }

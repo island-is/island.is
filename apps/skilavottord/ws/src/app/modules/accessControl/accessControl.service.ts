@@ -8,6 +8,7 @@ import {
   DeleteAccessControlInput,
   UpdateAccessControlInput,
 } from './accessControl.input'
+import { RecyclingPartnerModel } from '../recyclingPartner/recyclingPartner.model'
 
 @Injectable()
 export class AccessControlService {
@@ -20,7 +21,13 @@ export class AccessControlService {
   async findAll(): Promise<AccessControlModel[]> {
     this.logger.info('---- Starting findAll Access Controls ----')
     try {
-      const res = await this.accessControlModel.findAll()
+      const res = await AccessControlModel.findAll({
+        include: [
+          {
+            model: RecyclingPartnerModel,
+          },
+        ],
+      })
       this.logger.info(
         'findAll-recyclingUsers result:' + JSON.stringify(res, null, 2),
       )
@@ -35,6 +42,11 @@ export class AccessControlService {
     try {
       const res = await this.accessControlModel.findOne({
         where: { nationalId: nationalId },
+        include: [
+          {
+            model: RecyclingPartnerModel,
+          },
+        ],
       })
       this.logger.info(
         'findOne-accessControl result:' + JSON.stringify(res, null, 2),
