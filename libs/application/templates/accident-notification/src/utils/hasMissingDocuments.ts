@@ -4,11 +4,12 @@ import {
   MessageFormatter,
 } from '@island.is/application/core'
 import { AttachmentsEnum, FileType, WhoIsTheNotificationForEnum } from '..'
-import { YES, NO } from '../constants'
+import { YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import { attachments } from '../lib/messages'
 import { isFatalAccident } from './isFatalAccident'
 import { isReportingOnBehalfSelf } from './isReportingBehalfOfSelf'
+import { isReportingOnBehalfOfEmployee } from './isReportingOnBehalfOfEmployee'
 
 const hasAttachment = (attachment: FileType[] | undefined) =>
   attachment && attachment.length > 0
@@ -30,11 +31,14 @@ export const hasReceivedPoliceReport = (answers: FormValue) => {
 }
 
 export const hasReceivedAllDocuments = (answers: FormValue) => {
-  // Reporting for self only injury certificate relevent
-  if (isReportingOnBehalfSelf(answers)) {
+  // Reporting for self or as juridicial person only injury certificate relevent
+  if (
+    isReportingOnBehalfSelf(answers) ||
+    isReportingOnBehalfOfEmployee(answers)
+  ) {
     return hasReceivedInjuryCertificate(answers)
   } else {
-    // If fatal and not on behalf of self all documents are relevant
+    // If fatal and not report for self or as juridicial all documents are relevant
     if (isFatalAccident(answers)) {
       return (
         hasReceivedPoliceReport(answers) &&
@@ -42,7 +46,6 @@ export const hasReceivedAllDocuments = (answers: FormValue) => {
         hasReceivedInjuryCertificate(answers)
       )
     } else {
-      // Not fatal so injury and proxy document are relevant
       hasReceivedProxyDocument(answers) && hasReceivedInjuryCertificate(answers)
     }
   }
@@ -51,6 +54,7 @@ export const hasReceivedAllDocuments = (answers: FormValue) => {
 export const getErrorMessageForMissingDocuments = (
   answers: FormValue,
   formatMessage: MessageFormatter,
+  isAssigne = false,
 ) => {
   const whoIsTheNotificationFor = getValueViaPath(
     answers,
@@ -65,8 +69,10 @@ export const getErrorMessageForMissingDocuments = (
     )
   }
 
+  // Need to make sure the assignee isnt getting the option of uploading the proxy document
   if (
     whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY &&
+    !isAssigne &&
     !hasReceivedProxyDocument(answers)
   ) {
     missingDocuments.push(
