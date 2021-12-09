@@ -24,7 +24,7 @@ networks:
 ```
 
 Import the queue module in your nest module
-```
+```typescript
 import { QueueModule } from '@island.is/message-queue'
 
 // Register the queue in your nest module.
@@ -59,7 +59,7 @@ export class MyModule {}
 ```
 
 Push messages to the queue
-```
+```typescript
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 
 @Injectable()
@@ -76,7 +76,7 @@ export class SomeService {
 ```
 
 Consume messages from the queue
-```
+```typescript
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
 
 @Injectable()
@@ -92,7 +92,7 @@ export class SomeWorkerService {
 ```
 
 Run the worker from your application main.ts
-```
+```typescript
 const worker = async () => {
   const app = await NestFactory.createApplicationContext(AppModule)
   app.enableShutdownHooks()
