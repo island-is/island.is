@@ -5,13 +5,13 @@ export interface IDataUpload {
   gognSkeytis: {
     audkenni: string
     skeytaHeiti: string
-    adilar: ChildrenTransferPerson[]
+    adilar: DataUploadPerson[]
     attachments: File[]
     gagnaMengi: object
   }
 }
 
-interface ChildrenTransferPerson {
+interface DataUploadPerson {
   id: string
   nafn: string
   kennitala: string
@@ -21,7 +21,7 @@ interface ChildrenTransferPerson {
   postaritun: string
   sveitafelag: string
   undirritad: boolean
-  tegund: ChildrenTransferPersonType
+  tegund?: number
 }
 
 interface File {
@@ -30,9 +30,13 @@ interface File {
 }
 
 enum ChildrenTransferPersonType {
-  Malshefjandi,
-  Gagnadili,
-  Barn,
+  Malshefjandi = 0,
+  Gagnadili = 1,
+  Barn = 2,
+}
+
+enum CriminalRecordPersonType {
+  Applicant = 0,
 }
 
 export function constructUploadDataObject(
@@ -40,12 +44,14 @@ export function constructUploadDataObject(
   persons: Person[],
   attachment: Attachment,
   extraData: { [key: string]: string },
+  uploadDataName: string,
+  uploadDataId?: string,
 ): IDataUpload {
   return {
     audkenni: id,
     gognSkeytis: {
-      audkenni: uuid(),
-      skeytaHeiti: 'Lögheimilisbreyting barns',
+      audkenni: uploadDataId || uuid(),
+      skeytaHeiti: uploadDataName,
       adilar: persons.map((p) => {
         return {
           id: uuid(),
@@ -68,13 +74,15 @@ export function constructUploadDataObject(
   }
 }
 
-function mapPersonEnum(e: PersonType) {
-  switch (e) {
+function mapPersonEnum(type: PersonType): number | undefined {
+  switch (type) {
     case PersonType.Plaintiff:
       return ChildrenTransferPersonType.Malshefjandi
     case PersonType.CounterParty:
       return ChildrenTransferPersonType.Gagnadili
     case PersonType.Child:
       return ChildrenTransferPersonType.Barn
+    case PersonType.CriminalRecordApplicant:
+      return CriminalRecordPersonType.Applicant
   }
 }

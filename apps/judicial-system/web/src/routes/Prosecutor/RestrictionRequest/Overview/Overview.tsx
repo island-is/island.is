@@ -9,11 +9,7 @@ import {
   CaseType,
   CaseTransition,
 } from '@island.is/judicial-system/types'
-import {
-  formatDate,
-  capitalize,
-  laws,
-} from '@island.is/judicial-system/formatters'
+import { formatDate, capitalize } from '@island.is/judicial-system/formatters'
 import {
   FormFooter,
   Modal,
@@ -35,6 +31,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   core,
+  laws,
   rcOverview,
   requestCourtDate,
 } from '@island.is/judicial-system-web/messages'
@@ -220,7 +217,7 @@ export const Overview: React.FC = () => {
                   (legalProvision: CaseLegalProvisions, index: number) => {
                     return (
                       <div key={index}>
-                        <Text>{laws[legalProvision]}</Text>
+                        <Text>{formatMessage(laws[legalProvision].title)}</Text>
                       </div>
                     )
                   },
