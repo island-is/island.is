@@ -29,7 +29,7 @@ const History = ({
   applicationEvents,
 }: Props) => {
   if (!applicationEvents || applicationEvents.length <= 0) {
-    return
+    return <></>
   }
 
   return (

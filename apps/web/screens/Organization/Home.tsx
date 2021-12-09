@@ -58,6 +58,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
       organizationPage={organizationPage}
       pageFeaturedImage={organizationPage.featuredImage}
       fullWidthContent={true}
+      namespace={namespace}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,

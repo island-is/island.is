@@ -1,5 +1,6 @@
 import { createContext } from 'react'
-import { User } from '../types'
+
+import { User } from '@island.is/skilavottord-web/graphql/schema'
 
 export interface UserProvider {
   isAuthenticated?: boolean
