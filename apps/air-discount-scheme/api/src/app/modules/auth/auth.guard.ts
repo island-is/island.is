@@ -31,6 +31,7 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
   
   session = getSession()
   canActivate(session) {
+    console.log('auth guard session is authenticated: ' + session.isAuthenticated)
     return session.isAuthenticated
   }
   
