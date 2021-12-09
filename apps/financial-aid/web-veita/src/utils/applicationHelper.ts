@@ -77,10 +77,6 @@ export const getApplicantMoreInfo = (application: Application) => {
       title: 'Hefur haft tekjur',
       content: application.hasIncome ? 'Já' : 'Nei',
     },
-    {
-      title: 'Athugasemd',
-      other: application.formComment,
-    },
   ]
 }
 

@@ -144,7 +144,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 placeholder={formatMessage(
                   m.sections.leadInvestigator.placeholder,
                 )}
-                defaultValue={workingCase.leadInvestigator}
+                value={workingCase.leadInvestigator || ''}
                 errorMessage={leadInvestigatorErrorMessage}
                 hasError={leadInvestigatorErrorMessage !== ''}
                 onChange={(event) => setField(event.target)}
