@@ -8,6 +8,7 @@ To use this module locally in dev/testing it's probably easiest to use a SQS
 compatible server that can run in docker, like [Localstack](https://github.com/localstack/localstack)
 
 Simple docker-compose.yml might look something like
+
 ```
 services:
   localstack:
@@ -24,6 +25,7 @@ networks:
 ```
 
 Import the queue module in your nest module
+
 ```typescript
 import { QueueModule } from '@island.is/message-queue'
 
@@ -59,32 +61,36 @@ export class MyModule {}
 ```
 
 Push messages to the queue
+
 ```typescript
 import { InjectQueue, QueueService } from '@island.is/message-queue'
+import { SomeMessageType } from './types'
 
 @Injectable()
 export class SomeService {
   constructor(@InjectQueue('name-of-queue') private queue: QueueService) {}
 
   async addToQueue() {
-    const uuid = await this.queue.add({
-      key: 'any json-serializable object',
-    })
+    // msg can be any json-serializable object
+    const msg: SomeMessageType = { some: 'data' }
+    const uuid = await this.queue.add(msg)
     // Up to you if or what you use the uuid for
   }
 }
 ```
 
 Consume messages from the queue
+
 ```typescript
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
+import { SomeMessageType } from './types'
 
 @Injectable()
 export class SomeWorkerService {
   constructor(@InjectWorker('name-of-queue') private worker: WorkerService) {}
 
   async run() {
-    await this.worker.run(async (message) => {
+    await this.worker.run(async (message: SomeMessageType) => {
       console.log('Yay, got message', message)
     })
   }
@@ -92,6 +98,7 @@ export class SomeWorkerService {
 ```
 
 Run the worker from your application main.ts
+
 ```typescript
 const worker = async () => {
   const app = await NestFactory.createApplicationContext(AppModule)
