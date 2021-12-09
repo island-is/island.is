@@ -179,12 +179,15 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             placeholder="Velja dómritara"
             value={defaultRegistrar}
             options={registrars}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-              setRegistrar(
-                (selectedOption ?? undefined) &&
+            onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+              if (selectedOption) {
+                setRegistrar(
                   (selectedOption as ReactSelectOption).value.toString(),
-              )
-            }
+                )
+              } else {
+                setRegistrar(undefined)
+              }
+            }}
             isClearable
           />
         </Box>

@@ -373,9 +373,7 @@ function constructRestrictionRulingPdf(
   if (existingCase.registrar) {
     doc.text(' ').text(
       formatMessage(ruling.registrarWitness, {
-        registrarNameAndTitle: `${existingCase.registrar?.name ?? '?'} ${
-          existingCase.registrar?.title ?? ''
-        }`,
+        registrarNameAndTitle: `${existingCase.registrar.name} ${existingCase.registrar.title}`,
       }),
       {
         align: 'justify',
@@ -696,9 +694,7 @@ function constructInvestigationRulingPdf(
   ) {
     doc.text(' ').text(
       formatMessage(ruling.registrarWitness, {
-        registrarNameAndTitle: `${existingCase.registrar?.name ?? '?'} ${
-          existingCase.registrar?.title ?? ''
-        }`,
+        registrarNameAndTitle: `${existingCase.registrar.name} ${existingCase.registrar.title}`,
       }),
       {
         align: 'justify',
