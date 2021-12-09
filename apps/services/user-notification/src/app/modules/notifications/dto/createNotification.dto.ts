@@ -18,7 +18,7 @@ export class NewDocumentMessage {
 
   @IsString()
   @ApiProperty()
-  sender!: string
+  organization!: string
 
   @IsNationalId()
   @ApiProperty()

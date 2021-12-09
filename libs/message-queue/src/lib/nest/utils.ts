@@ -1,9 +1,13 @@
-import { TOKEN_PREFIX } from './constants'
+const TOKEN_PREFIX = 'IslandIsMessageQueue'
 
-const tokenGenerator = (type: string): ((name: string) => string) => (
-  name: string,
-): string => `${TOKEN_PREFIX}${type}${name}`
+export const getQueueServiceToken = (name: string): string =>
+  `${TOKEN_PREFIX}/QueueService/${name}`
 
-export const getQueueConfigToken = tokenGenerator('QueueConfig')
-export const getQueueProviderToken = tokenGenerator('QueueService')
-export const getWorkerToken = tokenGenerator('QueueWorker')
+export const getWorkerServiceToken = (name: string): string =>
+  `${TOKEN_PREFIX}/WorkerService/${name}`
+
+export const getClientServiceToken = (name: string): string =>
+  `${TOKEN_PREFIX}/ClientService/${name}`
+
+export const clamp = (v: number, min: number, max: number): number =>
+  Math.min(max, Math.max(min, v))

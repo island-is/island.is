@@ -14,8 +14,14 @@ if (!env.NODE_ENV || env.NODE_ENV === 'development') {
   }
 }
 
-const environment = {
-  mainQueueName: env.MAIN_QUEUE_NAME,
+const required = (name: string): string => {
+  const v = env[name]
+  assert(v, `missing required environment variable: ${name}`)
+  return v
+}
+
+export const environment = {
+  mainQueueName: required('MAIN_QUEUE_NAME'),
   deadLetterQueueName: env.DEAD_LETTER_QUEUE_NAME,
 
   sqsConfig: {
@@ -31,8 +37,4 @@ const environment = {
   },
 }
 
-assert(environment.mainQueueName)
-assert(environment.deadLetterQueueName)
-
-export { environment }
 export type Config = typeof environment

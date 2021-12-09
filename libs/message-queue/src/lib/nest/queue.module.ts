@@ -1,67 +1,60 @@
-import { SQSClientConfig } from '@aws-sdk/client-sqs'
 import { DynamicModule, Module } from '@nestjs/common'
-import { LOGGER_PROVIDER, LoggingModule } from '@island.is/logging'
+import { Logger, LOGGER_PROVIDER, LoggingModule } from '@island.is/logging'
+import { Config } from './types'
+import { ClientService } from './client.service'
 import { QueueService } from './queue.service'
 import { WorkerService } from './worker.service'
-import { CLIENT_CONFIG } from './constants'
-import { Queue } from './types'
 import {
-  getQueueConfigToken,
-  getQueueProviderToken,
-  getWorkerToken,
+  getClientServiceToken,
+  getQueueServiceToken,
+  getWorkerServiceToken,
 } from './utils'
 
-@Module({
-  providers: [QueueService, WorkerService],
-  exports: [QueueService],
-})
+@Module({})
 export class QueueModule {
-  static register(config: SQSClientConfig): DynamicModule {
-    const providers = [
-      {
-        provide: CLIENT_CONFIG,
-        useValue: config,
-      },
-    ]
+  static register(config: Config): DynamicModule {
+    const clientToken = getClientServiceToken(config.queue.name)
+    const queueToken = getQueueServiceToken(config.queue.name)
+    const workerToken = getWorkerServiceToken(config.queue.name)
 
-    return {
-      module: QueueModule,
-      providers,
-      exports: providers,
+    const client = {
+      provide: clientToken,
+      useFactory: (logger: Logger) => {
+        return new ClientService(config.client, logger)
+      },
+      inject: [LOGGER_PROVIDER],
     }
-  }
 
-  static registerQueue(config: Queue): DynamicModule {
-    const providers = [
-      {
-        provide: getQueueConfigToken(config.name),
-        useValue: config,
+    const queue = {
+      provide: queueToken,
+      useFactory: (clientService: ClientService, logger: Logger) => {
+        return new QueueService(clientService, config.queue, logger)
       },
-      {
-        provide: getQueueProviderToken(config.name),
-        useClass: QueueService,
-        inject: [
-          CLIENT_CONFIG,
-          getQueueConfigToken(config.name),
-          LOGGER_PROVIDER,
-        ],
+      inject: [clientToken, LOGGER_PROVIDER],
+    }
+
+    const worker = {
+      provide: workerToken,
+      useFactory: (
+        clientService: ClientService,
+        queueService: QueueService,
+        logger: Logger,
+      ) => {
+        return new WorkerService(
+          config.queue,
+          clientService,
+          queueService,
+          logger,
+        )
       },
-      {
-        provide: getWorkerToken(config.name),
-        useClass: WorkerService,
-        inject: [
-          CLIENT_CONFIG,
-          getQueueConfigToken(config.name),
-          LOGGER_PROVIDER,
-        ],
-      },
-    ]
+      inject: [clientToken, queueToken, LOGGER_PROVIDER],
+    }
 
     return {
       module: QueueModule,
       imports: [LoggingModule],
-      providers,
-      exports: providers,
+      providers: [client, queue, worker],
+      exports: [queue, worker],
     }
   }
 }

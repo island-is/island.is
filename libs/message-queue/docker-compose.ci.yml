@@ -1,0 +1,13 @@
+version: '3.3'
+
+services:
+  sut:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.test
+    networks:
+      - local
+    depends_on:
+      - localstack
+    volumes:
+      - ../../..:/code

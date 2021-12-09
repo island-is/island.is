@@ -1,15 +1,17 @@
 import request from 'supertest'
-import { INestApplication } from '@nestjs/common'
+import { INestApplication, Injectable } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { NotificationsController } from '../notifications.controller'
 import { CONFIG_PROVIDER } from '../../../../constants'
-import { ProducerService } from '../producer.service'
-import { ConsumerService } from '../consumer.service'
+import { NotificationsWorkerService } from '../notificationsWorker.service'
 import { Message, MessageTypes } from '../dto/createNotification.dto'
-import { MessageHandlerService } from '../messageHandler.service'
 import { LoggingModule } from '@island.is/logging'
-import { PurgeQueueCommand } from '@aws-sdk/client-sqs'
-import { QueueConnectionProvider } from '../queueConnection.provider'
+import {
+  getQueueServiceToken,
+  QueueModule,
+  QueueService,
+} from '@island.is/message-queue'
+import { InjectWorker, WorkerService } from '@island.is/message-queue'
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
@@ -26,63 +28,71 @@ const environment = {
   },
 }
 
-class MessageHandlerMock {
-  public received: Message[] = []
-
-  async process(message: Message): Promise<void> {
-    this.received.push(message)
-  }
-
-  async waitFor(cond: (messages: Message[]) => boolean, max = 1000) {
-    const start = Date.now()
-    while (Date.now() - start < max) {
-      if (!cond(this.received)) {
-        await sleep(10)
-      }
-    }
+const waitForDelivery = async (
+  worker: WorkerMock,
+  cond: (messages: Message[]) => boolean,
+  max = 1000,
+): Promise<void> => {
+  const start = Date.now()
+  while (Date.now() <= start + max && !cond(worker.received)) {
+    await sleep(10)
   }
 }
 
-let app: INestApplication
+@Injectable()
+class WorkerMock {
+  public received: Message[] = []
 
-beforeEach(async () => {
-  const module = await Test.createTestingModule({
-    imports: [LoggingModule],
-    controllers: [NotificationsController],
-    providers: [
-      {
-        provide: CONFIG_PROVIDER,
-        useValue: environment,
-      },
-      QueueConnectionProvider,
-      ProducerService,
-      ConsumerService,
-      MessageHandlerService,
-    ],
-  })
-    .overrideProvider(MessageHandlerService)
-    .useClass(MessageHandlerMock)
-    .compile()
+  constructor(@InjectWorker('notifications') private worker: WorkerService) {}
 
-  app = await module.createNestApplication().init()
-  const queue = app.get(QueueConnectionProvider)
-  await queue.client.send(
-    new PurgeQueueCommand({
-      QueueUrl: queue.queueUrl,
-    }),
-  )
-  app.get(ConsumerService).run()
-})
-
-afterEach(async () => {
-  await app.close()
-})
+  async run() {
+    this.worker.run(async (msg: Message) => {
+      this.received.push(msg)
+    })
+  }
+}
 
 describe('Notifications API', () => {
+  let app: INestApplication
+
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      imports: [
+        LoggingModule,
+        QueueModule.register({
+          client: environment.sqsConfig,
+          queue: {
+            name: 'notifications',
+            queueName: environment.mainQueueName,
+          },
+        }),
+      ],
+      controllers: [NotificationsController],
+      providers: [
+        {
+          provide: CONFIG_PROVIDER,
+          useValue: environment,
+        },
+        NotificationsWorkerService,
+      ],
+    })
+      .overrideProvider(NotificationsWorkerService)
+      .useClass(WorkerMock)
+      .compile()
+
+    app = await module.createNestApplication().init()
+    await app.get<QueueService>(getQueueServiceToken('notifications')).purge()
+    app.get(NotificationsWorkerService).run()
+  })
+
+  afterEach(async () => {
+    await app.close()
+  })
+
   it('Accepts a valid message input', async () => {
     const msg: Message = {
       type: MessageTypes.NewDocumentMessage,
-      sender: 'Skatturinn',
+      organization: 'Skatturinn',
       recipient: '0409084390',
       documentId: '123',
     }
@@ -92,8 +102,8 @@ describe('Notifications API', () => {
       .send(msg)
       .expect(201)
 
-    const handler = app.get(MessageHandlerService) as MessageHandlerMock
-    await handler.waitFor((msgs) => msgs.length > 0)
-    expect(handler.received).toEqual([msg])
+    const worker = app.get(NotificationsWorkerService) as WorkerMock
+    await waitForDelivery(worker, (msgs) => msgs.length > 0)
+    expect(worker.received).toEqual([msg])
   })
 })

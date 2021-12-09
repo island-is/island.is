@@ -1,0 +1,11 @@
+FROM public.ecr.aws/bitnami/node:14.17.0
+
+RUN apt-get update && apt-get install netcat -y
+
+RUN addgroup runners && useradd -m runner -G runners
+USER runner
+
+WORKDIR "/code"
+VOLUME ["/code"]
+
+ENTRYPOINT /code/scripts/ci/_wait-for.sh localstack:4566 -t 60 -- yarn test message-queue --runner=docker-test --codeCoverage

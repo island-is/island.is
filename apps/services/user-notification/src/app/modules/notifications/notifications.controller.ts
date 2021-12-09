@@ -8,13 +8,13 @@ import {
 import { ApiBody, ApiExtraModels, getSchemaPath } from '@nestjs/swagger'
 import { validate, ValidationError } from 'class-validator'
 import { Request } from 'express'
-import { ProducerService } from './producer.service'
 import {
   NewDocumentMessage,
   Message,
   TypeValidator,
   ValidatorTypeMap,
 } from './dto/createNotification.dto'
+import { InjectQueue, QueueService } from '@island.is/message-queue'
 
 const throwIfError = (errors: ValidationError[]): void => {
   if (errors.length > 0) {
@@ -47,7 +47,9 @@ const validateMessage = async (body: Request['body']): Promise<Message> => {
 @Controller('notifications')
 @ApiExtraModels(NewDocumentMessage)
 export class NotificationsController {
-  constructor(private readonly producer: ProducerService) {}
+  constructor(
+    @InjectQueue('notifications') private queue: QueueService,
+  ) {}
 
   @Post()
   @ApiBody({
@@ -59,7 +61,7 @@ export class NotificationsController {
   @HttpCode(201)
   async createNotification(@Req() req: Request): Promise<{ id: string }> {
     const message = await validateMessage(req.body)
-    const id = await this.producer.addToQueue(message)
+    const id = await this.queue.add(message)
     return { id }
   }
 }

@@ -1,14 +1,19 @@
 import assert from 'assert'
 import { Injectable, OnModuleDestroy } from '@nestjs/common'
-import {
-  SQSClient,
-  SQSClientConfig,
-  Message,
-  ReceiveMessageCommand,
-  DeleteMessageBatchCommand,
-} from '@aws-sdk/client-sqs'
+import { Message } from '@aws-sdk/client-sqs'
 import { Logger } from '@island.is/logging'
 import { QueueService } from './queue.service'
+import { Queue } from './types'
+import { clamp } from './utils'
+import { ClientService } from './client.service'
+
+type MessageHandler<T> = (handler: T) => Promise<void>
+
+// These limits are enforced by AWS, although we could possibly work around the
+// max limit by running multiple listeners simultaneously
+const MIN_BATCH_SIZE = 1
+const MAX_BATCH_SIZE = 10
+const DEFAULT_BATCH_SIZE = 10
 
 enum Status {
   Idle,
@@ -17,39 +22,34 @@ enum Status {
   Stopped,
 }
 
-type MessageHandler = (hander: unknown) => Promise<void>
-
 @Injectable()
 export class WorkerService implements OnModuleDestroy {
-  private client: SQSClient
   private activeJobs: Promise<void> | null = null
   private status = Status.Idle
 
   constructor(
-    clientConfig: SQSClientConfig,
-    private readonly queue: QueueService,
-    private readonly logger: Logger,
-  ) {
-    this.client = new SQSClient(clientConfig)
-  }
+    private config: Queue,
+    private client: ClientService,
+    private queue: QueueService,
+    private logger: Logger,
+  ) {}
 
-  async run(messageHandler: MessageHandler): Promise<void> {
+  async run<T>(messageHandler: MessageHandler<T>): Promise<void> {
     assert(
       this.status === Status.Idle,
       `Can not run worker with status: ${this.status}`,
     )
 
-    this.logger.info('Starting worker')
+    const concurrency = this.getConcurrency()
+    this.logger.info(
+      `Starting worker "${this.config.name}" with concurrency=${concurrency}`,
+    )
 
     this.status = Status.Running
     while (this.status === Status.Running) {
-      const { Messages: messages = [] } = await this.client.send(
-        new ReceiveMessageCommand({
-          QueueUrl: this.queue.url,
-          MaxNumberOfMessages: 10,
-          WaitTimeSeconds: 20,
-        }),
-      )
+      const messages = await this.client.receiveMessages(this.queue.url, {
+        maxNumMessages: this.config.maxConcurrentJobs,
+      })
 
       this.activeJobs = this.handleMessageBatch(messages, messageHandler)
       await this.activeJobs
@@ -57,9 +57,21 @@ export class WorkerService implements OnModuleDestroy {
     }
   }
 
-  private async handleMessageBatch(
+  private getConcurrency(): number {
+    const concurrency = this.config.maxConcurrentJobs ?? DEFAULT_BATCH_SIZE
+
+    if (concurrency < MIN_BATCH_SIZE || concurrency > MAX_BATCH_SIZE) {
+      this.logger.warn(
+        `Queue config "maxConcurrentJobs" should be between ${MIN_BATCH_SIZE} and ${MAX_BATCH_SIZE} - Got ${concurrency}`,
+      )
+    }
+
+    return clamp(concurrency, MIN_BATCH_SIZE, MAX_BATCH_SIZE)
+  }
+
+  private async handleMessageBatch<T>(
     messages: Message[],
-    messageHandler: MessageHandler,
+    messageHandler: MessageHandler<T>,
   ) {
     this.logger.debug(`Processing ${messages.length} message(s)`)
 
@@ -83,31 +95,20 @@ export class WorkerService implements OnModuleDestroy {
     if (messages.length === 0) return
 
     this.logger.debug(`Confirming delivery of ${messages.length} message(s)`)
-
-    await this.client.send(
-      new DeleteMessageBatchCommand({
-        QueueUrl: this.queue.url,
-        Entries: messages.map((msg) => ({
-          Id: msg.MessageId,
-          ReceiptHandle: msg.ReceiptHandle,
-        })),
-      }),
-    )
+    await this.client.deleteMessages(this.queue.url, messages)
   }
 
   async onModuleDestroy() {
     if (this.status === Status.Running) {
-      this.logger.info('Stopping worker')
+      this.logger.info(`Stopping worker "${this.config.name}"`)
 
       if (this.activeJobs !== null) {
-        this.logger.info('Waiting for workers to finish')
+        this.logger.info('Waiting for active jobs to finish')
         this.status = Status.Stopping
         await this.activeJobs
       }
 
       this.status = Status.Stopped
     }
-
-    this.client.destroy()
   }
 }
