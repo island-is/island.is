@@ -60,7 +60,7 @@ describe('formatLegalProvisions', () => {
 
     // Assert
     expect(res).toBe(
-      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.',
+      'a-lið 1. mgr. 95. gr. sml.\nb-lið 1. mgr. 95. gr. sml.\nc-lið 1. mgr. 95. gr. sml.\nd-lið 1. mgr. 95. gr. sml.\n2. mgr. 95. gr. sml.\nb-lið 1. mgr. 99. gr. sml.\n1. mgr. 100. gr. sml.',
     )
   })
 
@@ -81,7 +81,7 @@ describe('formatLegalProvisions', () => {
 
     // Assert
     expect(res).toBe(
-      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.',
+      'a-lið 1. mgr. 95. gr. sml.\nb-lið 1. mgr. 95. gr. sml.\nc-lið 1. mgr. 95. gr. sml.\nd-lið 1. mgr. 95. gr. sml.\n2. mgr. 95. gr. sml.\nb-lið 1. mgr. 99. gr. sml.\n1. mgr. 100. gr. sml.',
     )
   })
 
@@ -96,26 +96,26 @@ describe('formatLegalProvisions', () => {
       CaseLegalProvisions._99_1_B,
       CaseLegalProvisions._100_1,
     ]
-    const legalBasis = 'some lið mgr. gr.'
+    const legalBasis = 'some lið mgr. gr. sml.'
 
     // Act
     const res = formatLegalProvisions(legalProvisions, legalBasis)
 
     // Assert
     expect(res).toBe(
-      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.\nsome lið mgr. gr.',
+      'a-lið 1. mgr. 95. gr. sml.\nb-lið 1. mgr. 95. gr. sml.\nc-lið 1. mgr. 95. gr. sml.\nd-lið 1. mgr. 95. gr. sml.\n2. mgr. 95. gr. sml.\nb-lið 1. mgr. 99. gr. sml.\n1. mgr. 100. gr. sml.\nsome lið mgr. gr. sml.',
     )
   })
 
   test('should format legal provisions only freetext provided', () => {
     // Arrange
-    const legalBasis = 'some lið mgr. gr.'
+    const legalBasis = 'some lið mgr. gr. sml.'
 
     // Act
     const res = formatLegalProvisions(undefined, legalBasis)
 
     // Assert
-    expect(res).toBe('some lið mgr. gr.')
+    expect(res).toBe('some lið mgr. gr. sml.')
   })
 })
 
