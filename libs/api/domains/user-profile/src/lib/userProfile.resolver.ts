@@ -75,7 +75,6 @@ export class UserProfileResolver {
     return await this.userUserProfileService.confirmEmail(input, user)
   }
 
-
   @Mutation(() => UserDeviceToken)
   async addDeviceToken(
     @Args('input') input: UserDeviceTokenInput,

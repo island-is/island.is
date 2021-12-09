@@ -66,7 +66,6 @@ export class UserProfileService {
   // User Notifications
   // FIND ALL by NationalId - used by notifications workers
   async getDeviceTokens(nationalId: string) {
-    
     try {
       return await this.UserDeviceTokensModel.findAll({
         where: { nationalId },

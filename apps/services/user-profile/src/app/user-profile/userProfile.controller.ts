@@ -337,7 +337,8 @@ export class UserProfileController {
   // FINDALL
   @Audit()
   @ApiOperation({
-    summary: 'NOTE: Return a list of any user´s device tokens - Used by Notification workers - not exposed via GraphQL',
+    summary:
+      'NOTE: Return a list of any user´s device tokens - Used by Notification workers - not exposed via GraphQL',
   })
   @ApiOkResponse({ type: [UserDeviceTokensDto] })
   @Scopes(UserProfileScope.read)
@@ -365,7 +366,7 @@ export class UserProfileController {
     @CurrentUser() user: User,
     @Body() body: DeviceTokenDto,
   ): Promise<UserDeviceTokensDto> {
-    if (nationalId != user.nationalId){
+    if (nationalId != user.nationalId) {
       throw new BadRequestException()
     } else {
       body.nationalId = user.nationalId
@@ -389,7 +390,7 @@ export class UserProfileController {
     @CurrentUser() user: User,
     @Body() body: DeviceTokenDto,
   ): Promise<void> {
-    if (nationalId != user.nationalId){
+    if (nationalId != user.nationalId) {
       throw new BadRequestException()
     } else {
       return await this.userProfileService.deleteDeviceToken(body, user)
