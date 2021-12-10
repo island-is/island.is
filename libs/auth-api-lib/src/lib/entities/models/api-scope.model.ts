@@ -90,6 +90,14 @@ export class ApiScope extends Model<ApiScope> {
     defaultValue: false,
   })
   @ApiProperty()
+  grantToPersonalRepresentatives!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
   allowExplicitDelegationGrant!: boolean
 
   @Column({
@@ -168,6 +176,7 @@ export class ApiScope extends Model<ApiScope> {
       showInDiscoveryDocument: this.showInDiscoveryDocument,
       grantToLegalGuardians: this.grantToLegalGuardians,
       grantToProcuringHolders: this.grantToProcuringHolders,
+      grantToPersonalRepresentatives: this.grantToPersonalRepresentatives,
       allowExplicitDelegationGrant: this.allowExplicitDelegationGrant,
       automaticDelegationGrant: this.automaticDelegationGrant,
       alsoForDelegatedUser: this.alsoForDelegatedUser,
