@@ -60,7 +60,7 @@ export class CriminalRecordProvider extends BasicDataProvider {
       date: new Date(),
       reason: errorMessage?.id
         ? errorMessage
-        : coreErrorMessages.errorDataProvider,
+        : m.errorDataProviderCriminalRecord,
       status: 'failure',
       data: {},
     }

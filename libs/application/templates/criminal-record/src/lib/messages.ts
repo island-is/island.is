@@ -118,10 +118,15 @@ export const m = defineMessages({
     defaultMessage: 'Á eftir að samþykkja gagnaöflun',
     description: 'Description of the state',
   },
+  errorDataProviderCriminalRecord: {
+    id: 'cr.application:error.errorDataProviderCriminalRecord',
+    defaultMessage: 'Reyndu aftur síðar eða leitaðu til næsta sýslumanns',
+    description: 'Unhandled error in criminal record data provider',
+  },
   errorDataProvider: {
     id: 'cr.application:error.dataProvider',
     defaultMessage: 'Reyndu aftur síðar',
-    description: 'Unhandled error in criminal record data provider',
+    description: 'Unhandled error in data provider',
   },
   criminalRecordInformationTitle: {
     id: 'cr.application:criminalrecord.title',
@@ -227,6 +232,12 @@ export const m = defineMessages({
   },
   errorMinAgeNotFulfilled: {
     id: 'cr.application:errorMinAgeNotFulfilled',
+    defaultMessage:
+      'Þú hefur ekki náð lágmarksaldri til að sækja um sakavottorð',
+    description: '',
+  },
+  errorCriminalRecordDataProvider: {
+    id: 'cr.application:errorCriminalRecordDataProvider',
     defaultMessage:
       'Þú hefur ekki náð lágmarksaldri til að sækja um sakavottorð',
     description: '',

@@ -42,15 +42,15 @@ export const CriminalRecordForm: Form = buildForm({
               subTitle: m.userProfileInformationSubTitle,
             }),
             buildDataProviderItem({
-              id: 'payment',
-              type: 'FeeInfoProvider',
-              title: '',
-            }),
-            buildDataProviderItem({
               id: 'criminalRecord',
               type: 'CriminalRecordProvider',
               title: m.criminalRecordInformationTitle,
               subTitle: m.criminalRecordInformationSubTitle,
+            }),
+            buildDataProviderItem({
+              id: 'payment',
+              type: 'FeeInfoProvider',
+              title: '',
             }),
           ],
         }),
