@@ -70,8 +70,7 @@ export const UserDropdown = ({
   const isDelegation = Boolean(actor)
   const userName = user.profile.name
   const actorName = actor?.name
-  const isDelegationCompany =
-    isDelegation && kennitala.isCompany(actor?.nationalId ?? '')
+  const isDelegationCompany = false
 
   const { value: showPersonalInfo } = useFeatureFlag(
     'isServicePortalPersonalInformationModuleEnabled',
