@@ -27,7 +27,7 @@ expect.extend({
 export const setupWithoutAuth = async (): Promise<TestApp> => {
   const app = await testServer<AppModule>({
     appModule: AppModule,
-    hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
+    hooks: [useDatabase({ type: 'postgres', provider: SequelizeConfigService })],
   })
 
   return app
