@@ -2,12 +2,7 @@ import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { IHomestay } from './models/homestay'
 import { ISyslumennAuction } from './models/syslumennAuction'
 import { ILogin } from './models/login'
-import {
-  Person,
-  Attachment,
-  DataUploadResponse,
-  SealedCriminalRecordResponse,
-} from '../models/dataUpload'
+import { Person, Attachment, DataUploadResponse } from '../models/dataUpload'
 import { constructUploadDataObject } from './models/dataUpload'
 import { IOperatingLicense } from './models/operatingLicense'
 
@@ -89,8 +84,6 @@ export class SyslumennClient {
     persons: Person[],
     attachment: Attachment,
     extraData: { [key: string]: string },
-    uploadDataName: string,
-    uploadDataId?: string,
   ): Promise<DataUploadResponse> {
     await this.login()
 
@@ -102,49 +95,11 @@ export class SyslumennClient {
     }
 
     const request = JSON.stringify(
-      constructUploadDataObject(
-        this.id,
-        persons,
-        attachment,
-        extraData,
-        uploadDataName,
-        uploadDataId,
-      ),
+      constructUploadDataObject(this.id, persons, attachment, extraData),
     )
 
     const response: {
       data: DataUploadResponse
-    } = await this.httpService
-      .post(url, request, { headers: headers })
-      .toPromise()
-      .catch((err) => {
-        throw err
-      })
-
-    return response.data
-  }
-
-  async sealCriminalRecord(
-    criminalRecord: string,
-  ): Promise<SealedCriminalRecordResponse> {
-    await this.login()
-
-    const headers = {
-      'Content-type': 'application/json',
-      Authorization: `Bearer ${this.accessToken}`,
-    }
-
-    const explination = 'Undirritað af sýslumanni'
-    const url = `${this.clientConfig.url}/api/Innsiglun`
-
-    const request = JSON.stringify({
-      audkenni: this.id,
-      skyring: explination,
-      skjal: criminalRecord,
-    })
-
-    const response: {
-      data: SealedCriminalRecordResponse
     } = await this.httpService
       .post(url, request, { headers: headers })
       .toPromise()

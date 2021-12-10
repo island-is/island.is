@@ -90,6 +90,7 @@ export const ComplaintForm: Form = buildForm({
                     id: 'inCourtProceedingsAlert',
                     title: errorCards.inCourtProceedingsTitle,
                     description: errorCards.inCourtProceedingsDescription,
+                    doesNotRequireAnswer: true,
                     condition: (formValue) =>
                       formValue.inCourtProceedings === YES,
                   },
@@ -127,6 +128,7 @@ export const ComplaintForm: Form = buildForm({
                     id: 'concernsMediaCoverageAlert',
                     title: errorCards.concernsMediaCoverageTitle,
                     description: errorCards.concernsMediaCoverageDescription,
+                    doesNotRequireAnswer: true,
                     condition: (formValue) =>
                       formValue.concernsMediaCoverage === YES,
                   },
@@ -170,6 +172,7 @@ export const ComplaintForm: Form = buildForm({
                     id: 'concernsBanMarkingAlert',
                     title: errorCards.concernsBanMarkingTitle,
                     description: errorCards.concernsBanMarkingDescription,
+                    doesNotRequireAnswer: true,
                     condition: (formValue) =>
                       formValue.concernsBanMarking === YES,
                   },
@@ -211,6 +214,7 @@ export const ComplaintForm: Form = buildForm({
                     id: 'concernsLibelAlert',
                     title: errorCards.concernsLibelTitle,
                     description: errorCards.concernsLibelDescription,
+                    doesNotRequireAnswer: true,
                     condition: (formValue) => formValue.concernsLibel === YES,
                   },
                   {
@@ -233,6 +237,7 @@ export const ComplaintForm: Form = buildForm({
             buildCustomField({
               id: 'agreementSectionDescription',
               title: section.agreement,
+              doesNotRequireAnswer: true,
               component: 'AgreementDescription',
             }),
           ],
@@ -273,6 +278,7 @@ export const ComplaintForm: Form = buildForm({
                 buildCustomField({
                   id: 'onBehalfDescription',
                   title: '',
+                  doesNotRequireAnswer: true,
                   component: 'CompanyDisclaimer',
                 }),
               ],
@@ -456,6 +462,7 @@ export const ComplaintForm: Form = buildForm({
                 buildCustomField({
                   id: 'commissions.commissionDocument',
                   title: info.labels.commissionsPerson,
+                  doesNotRequireAnswer: true,
                   component: 'CommissionDocument',
                 }),
                 buildFileUploadField({
@@ -582,11 +589,13 @@ export const ComplaintForm: Form = buildForm({
                 buildCustomField({
                   id: 'complaint.description',
                   title: complaint.labels.complaintDescription,
+                  doesNotRequireAnswer: true,
                   component: 'ComplaintDescription',
                 }),
                 buildCustomField({
                   id: 'complaint.documentHeading',
                   title: complaint.labels.complaintDescription,
+                  doesNotRequireAnswer: true,
                   component: 'ComplaintDocumentHeading',
                   defaultValue: '',
                 }),
@@ -604,6 +613,7 @@ export const ComplaintForm: Form = buildForm({
                 buildCustomField({
                   component: 'FieldAlertMessage',
                   id: 'complaintDocumentsInfo',
+                  doesNotRequireAnswer: true,
                   title:
                     complaint.labels.complaintDocumentsInfoAlertMessageTitle,
                   description: complaint.labels.complaintDocumentsInfoLabel,
@@ -625,6 +635,7 @@ export const ComplaintForm: Form = buildForm({
             buildCustomField({
               id: 'overviewComplaintOverview',
               title: overview.general.pageTitle,
+              doesNotRequireAnswer: true,
               component: 'ComplaintOverview',
             }),
             buildSubmitField({
