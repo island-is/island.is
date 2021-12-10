@@ -1,7 +1,9 @@
+import { faker } from '@island.is/shared/mocking'
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 
 import { setup } from '../../../../../test/setup'
 import { PaymentAPI } from '@island.is/clients/payment'
@@ -10,40 +12,27 @@ import { PaymentService } from '../payment.service'
 
 let app: INestApplication
 
+const TARGET_CHARGE_ITEM_CODE = 'asdf'
+
 class MockPaymentApi {
   async createCharge() {
     return {
-      user4: 'user4',
-      receptionID: 'receptionid',
+      user4: faker.datatype.number(),
+      receptionID: faker.datatype.number(),
     }
   }
-  async getCatalogByPerformingOrg() {
-    const json = {
-      item: [
-        {
-          performingOrgID: '6509142520',
-          chargeType: 'AY1',
-          chargeItemCode: 'AY101',
-          chargeItemName: 'Sakarvottorð',
-          priceAmount: 2500,
-        },
-        {
-          performingOrgID: '6509142520',
-          chargeType: 'AY1',
-          chargeItemCode: 'AY102',
-          chargeItemName: 'Veðbókarvottorð',
-          priceAmount: 2000,
-        },
-        {
-          performingOrgID: '6509142520',
-          chargeType: 'AY1',
-          chargeItemCode: 'AY110',
-          chargeItemName: 'Ökuskírteini',
-          priceAmount: 8000,
-        },
-      ],
+
+  async getCatalog() {
+    return {
+      item: [...Array.from({ length: 10 })].map((_, i) => ({
+        performingOrgID: faker.datatype.number(),
+        chargeType: faker.random.word(),
+        chargeItemCode:
+          i === 1 ? TARGET_CHARGE_ITEM_CODE : faker.random.words(),
+        chargeItemName: faker.random.word(),
+        priceAmount: faker.datatype.number(),
+      })),
     }
-    return json
   }
 }
 
@@ -54,13 +43,13 @@ class MockPaymentService {
     }
   }
 
-  async searchCorrectCatalog() {
+  async findChargeItem() {
     return {
-      performingOrgID: '6509142520',
-      chargeType: 'AY1',
-      chargeItemCode: 'AY110',
-      chargeItemName: 'Ökuskírteini',
-      priceAmount: 8000,
+      performingOrgID: faker.datatype.number(),
+      chargeType: faker.random.word(),
+      chargeItemCode: TARGET_CHARGE_ITEM_CODE,
+      chargeItemName: faker.random.word(),
+      priceAmount: faker.datatype.number(),
     }
   }
 
@@ -79,8 +68,8 @@ class MockPaymentService {
   }
 }
 
-const nationalId = '1234564321'
 let server: request.SuperTest<request.Test>
+const nationalId = createCurrentUser().nationalId
 
 beforeAll(async () => {
   app = await setup({
@@ -109,7 +98,7 @@ describe('Application system payments API', () => {
     const response = await server
       .post('/applications/96b5237b-6896-4154-898d-d8feb01d3dcd/payment')
       .send({
-        chargeItemCode: 'AY110',
+        chargeItemCode: TARGET_CHARGE_ITEM_CODE,
       } as CreateChargeInput)
       .expect(201)
 

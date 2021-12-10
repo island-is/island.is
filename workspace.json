@@ -209,7 +209,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/air-discount-scheme/backend"
           }
         },
@@ -811,27 +811,6 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/api/domains/content-search"]
-        }
-      }
-    },
-    "api-domains-criminal-record": {
-      "root": "libs/api/domains/criminal-record",
-      "sourceRoot": "libs/api/domains/criminal-record/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/api/domains/criminal-record/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/api/domains/criminal-record"],
-          "options": {
-            "jestConfig": "libs/api/domains/criminal-record/jest.config.js",
-            "passWithNoTests": true
-          }
         }
       }
     },
@@ -1782,7 +1761,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/application-system/api"
           }
         },
@@ -2087,48 +2066,6 @@
               "**/node_modules/**",
               "!libs/application/templates/complaints-to-althingi-ombudsman/**/*"
             ]
-          }
-        }
-      }
-    },
-    "application-templates-criminal-record": {
-      "root": "libs/application/templates/criminal-record",
-      "sourceRoot": "libs/application/templates/criminal-record/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/application/templates/criminal-record/tsconfig.lib.json",
-              "libs/application/templates/criminal-record/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/application/templates/criminal-record/**/*"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/application/templates/criminal-record"],
-          "options": {
-            "jestConfig": "libs/application/templates/criminal-record/jest.config.js",
-            "passWithNoTests": true
-          }
-        },
-        "schemas/codegen": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "graphql-codegen --config libs/application/templates/criminal-record/codegen.yml"
-          }
-        },
-        "extract-strings": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/criminal-record/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -3372,45 +3309,6 @@
         }
       }
     },
-    "clients-criminal-record": {
-      "root": "libs/clients/criminal-record",
-      "sourceRoot": "libs/clients/criminal-record/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/clients/criminal-record/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/clients/criminal-record"],
-          "options": {
-            "jestConfig": "libs/clients/criminal-record/jest.config.js",
-            "passWithNoTests": true
-          }
-        },
-        "update-openapi-document": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10005/Logreglan-Protected/getOpenAPI?serviceCode=Sakavottord-PDF-v2 -H 'Accept: application/json' > src/clientConfig.json"
-            ],
-            "parallel": false,
-            "cwd": "libs/clients/criminal-record"
-          }
-        },
-        "schemas/external-openapi-generator": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              "yarn openapi-generator -o libs/clients/criminal-record/gen/fetch -i libs/clients/criminal-record/src/clientConfig.json"
-            ]
-          }
-        }
-      }
-    },
     "clients-document-provider": {
       "root": "libs/clients/document-provider",
       "sourceRoot": "libs/clients/document-provider/src",
@@ -4442,7 +4340,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/financial-aid/backend"
           }
         },
@@ -4876,7 +4774,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/gjafakort/application"
           }
         },
@@ -5221,7 +5119,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/icelandic-names-registry/backend"
           }
         },
@@ -5834,7 +5732,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/judicial-system/backend"
           }
         },
@@ -6572,7 +6470,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/reference-backend"
           }
         },
@@ -7783,7 +7681,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/services/auth-api"
           }
         },
@@ -7943,7 +7841,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/services/documents"
           }
         },
@@ -8038,7 +7936,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
+            "command": "docker-compose up -d --build",
             "cwd": "apps/services/endorsements/api"
           }
         },
@@ -8256,7 +8154,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
+            "command": "docker-compose up -d --build",
             "cwd": "apps/services/party-letter-registry-api"
           }
         },
@@ -8519,7 +8417,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
+            "command": "docker-compose up -d --build",
             "cwd": "apps/services/temporary-voter-registry-api"
           }
         },
@@ -8634,7 +8532,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/services/user-profile"
           }
         },
@@ -9284,6 +9182,27 @@
           }
         },
         "docker-cypress": {}
+      }
+    },
+    "testing-containers": {
+      "root": "libs/testing/containers",
+      "sourceRoot": "libs/testing/containers/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/testing/containers/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/testing/containers"],
+          "options": {
+            "jestConfig": "libs/testing/containers/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
       }
     },
     "testing-fixtures": {
