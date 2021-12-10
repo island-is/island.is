@@ -8,7 +8,7 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
-  LoadingIcon,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import * as styles from './Modal.css'
 import { OutlinedError } from '@island.is/skilavottord-web/components'
@@ -101,7 +101,7 @@ export const Modal: FC<ModalProps> = ({
                           <Text variant="h1">{title}</Text>
                           {loading ? (
                             <Box textAlign="center">
-                              <LoadingIcon size={50} />
+                              <LoadingDots size={50} />
                             </Box>
                           ) : (
                             <Text variant="intro">{text}</Text>
