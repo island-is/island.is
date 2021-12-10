@@ -113,7 +113,10 @@ export const UserDropdown = ({
             <Stack space={3}>
               {/* Current User */}
               <Box display="flex" flexWrap="nowrap" alignItems="center">
-                {isDelegationCompany ? (
+                {/* Check if actor is company - display company icon
+                 * kennitala function is buggy - temp removal
+                 */}
+                {/* {isDelegationCompany ? (
                   <Box
                     borderRadius="circle"
                     background="blue100"
@@ -126,7 +129,8 @@ export const UserDropdown = ({
                   </Box>
                 ) : (
                   <UserAvatar username={isDelegation ? actorName : userName} />
-                )}
+                )} */}
+                <UserAvatar username={isDelegation ? actorName : userName} />
 
                 <Box marginLeft={1} marginRight={4}>
                   {isDelegation ? (
