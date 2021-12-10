@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react'
 import {
   Box,
-  LoadingIcon,
   NavigationItem,
   Option,
   Select,
@@ -16,6 +15,7 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -714,7 +714,7 @@ const Auctions: Screen<AuctionsProps> = ({
       >
         {loading && (
           <Box display="flex" marginTop={4} justifyContent="center">
-            <LoadingIcon size={48} />
+            <LoadingDots />
           </Box>
         )}
         {(error || !filteredAuctions.length) && !loading && (
