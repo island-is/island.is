@@ -45,6 +45,7 @@ export class UserDeviceTokens extends Model<UserDeviceTokens> {
 
   @Column({
     type: DataType.STRING(4096),
+    unique: true,
   })
   @ApiProperty()
   deviceToken!: string

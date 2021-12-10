@@ -678,6 +678,23 @@ describe('User profile API', () => {
       )
     })
 
+    it('POST /userProfile/{nationalId}/deviceToken duplicate token should return 400 bad request', async () => {
+      // create it
+      await request(app.getHttpServer())
+        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .send({
+          deviceToken: mockDeviceToken.deviceToken,
+        })
+        .expect(201)
+      // try to create same again
+      await request(app.getHttpServer())
+        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .send({
+          deviceToken: mockDeviceToken.deviceToken,
+        })
+        .expect(400)
+    })
+
     it('POST /userProfile/{nationalId}/deviceToken with missing payload should 400 bad request', async () => {
       // create it
       await request(app.getHttpServer())
@@ -696,12 +713,17 @@ describe('User profile API', () => {
         .expect(201)
 
       // ... so we can delete it
-      await request(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .delete(`/userProfile/${mockProfile.nationalId}/deviceToken`)
         .send({
           deviceToken: mockDeviceToken.deviceToken,
         })
-        .expect(204)
+        .expect(200)
+      expect(response.body).toEqual(
+        expect.objectContaining({
+          success: true
+        }),
+      )
     })
   })
 })

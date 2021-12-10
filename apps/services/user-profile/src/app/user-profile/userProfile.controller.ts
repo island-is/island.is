@@ -36,6 +36,7 @@ import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
+import { DeleteTokenResponseDto } from './dto/deleteTokenResponseDto'
 import { DeviceTokenDto } from './dto/DeviceToken.dto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
 import { UserDeviceTokensDto } from './dto/UserDeviceTokens.dto'
@@ -334,11 +335,11 @@ export class UserProfileController {
     await this.verificationService.createSmsVerification(createSmsVerification)
   }
 
-  // FINDALL
+  // FINDALL token
   @Audit()
   @ApiOperation({
     summary:
-      'NOTE: Return a list of any user´s device tokens - Used by Notification workers - not exposed via GraphQL',
+      'NOTE: Returns a list of any user´s device tokens - Used by Notification workers - not exposed via GraphQL',
   })
   @ApiOkResponse({ type: [UserDeviceTokensDto] })
   @Scopes(UserProfileScope.read)
@@ -351,7 +352,7 @@ export class UserProfileController {
     return await this.userProfileService.getDeviceTokens(nationalId)
   }
 
-  // CREATE
+  // CREATE token
   @Audit()
   @ApiOperation({
     summary: 'Adds a device token for notifications for a user device ',
@@ -374,26 +375,25 @@ export class UserProfileController {
     }
   }
 
-  // DELETE
+  // DELETE token
   @Audit()
   @ApiOperation({
     summary: 'Deletes a device token for a user device',
   })
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
-  @HttpCode(204)
-  @ApiNoContentResponse()
+  @ApiOkResponse({ type: DeleteTokenResponseDto })
   @Delete('userProfile/:nationalId/deviceToken')
   async deleteDeviceToken(
     @Param('nationalId')
     nationalId: string,
     @CurrentUser() user: User,
     @Body() body: DeviceTokenDto,
-  ): Promise<void> {
+  ): Promise<DeleteTokenResponseDto> {
     if (nationalId != user.nationalId) {
       throw new BadRequestException()
     } else {
-      return await this.userProfileService.deleteDeviceToken(body, user)
+      return  await this.userProfileService.deleteDeviceToken(body, user)
     }
   }
 }

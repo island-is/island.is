@@ -63,20 +63,15 @@ export class UserProfileService {
     return { numberOfAffectedRows, updatedUserProfile }
   }
 
-  // User Notifications
-  // FIND ALL by NationalId - used by notifications workers
+  // FIND ALL TOKENS by NationalId - used by notifications workers
   async getDeviceTokens(nationalId: string) {
-    try {
-      return await this.UserDeviceTokensModel.findAll({
-        where: { nationalId },
-        order: [['created', 'DESC']],
-      })
-    } catch (error) {
-      throw new NotFoundException()
-    }
+    return await this.UserDeviceTokensModel.findAll({
+      where: { nationalId },
+      order: [['created', 'DESC']],
+    })
   }
 
-  // CREATE
+  // CREATE TOKEN
   async addDeviceToken(body: DeviceTokenDto) {
     try {
       return await this.UserDeviceTokensModel.create(body)
@@ -85,10 +80,16 @@ export class UserProfileService {
     }
   }
 
-  // DELETE
+  // DELETE TOKEN
   async deleteDeviceToken(body: DeviceTokenDto, user: User) {
-    const res = await this.UserDeviceTokensModel.destroy({
+    const token = await this.UserDeviceTokensModel.findOne({
       where: { nationalId: user.nationalId, deviceToken: body.deviceToken },
     })
+    if(token){
+      const destroy = await token.destroy()
+      return {success:Boolean(destroy)}
+    } else {
+      throw new NotFoundException()
+    }
   }
 }

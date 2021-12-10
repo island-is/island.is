@@ -169,13 +169,12 @@ export class UserProfileService {
       .catch(handleError)
   }
 
-  deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
-    const result = this.userProfileApiWithAuth(user)
+  async deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
+    return await this.userProfileApiWithAuth(user)
       .userProfileControllerDeleteDeviceToken({
         nationalId: user.nationalId,
         deviceTokenDto: input,
       })
       .catch(handleError)
-    return Boolean(result)
   }
 }

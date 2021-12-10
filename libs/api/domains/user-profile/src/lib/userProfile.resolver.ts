@@ -16,6 +16,7 @@ import {
 import { UseGuards } from '@nestjs/common'
 import { UserDeviceToken } from './userDeviceToken.model'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
+import { DeleteTokenResponse } from './dto/deleteTokenResponse'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -83,11 +84,11 @@ export class UserProfileResolver {
     return await this.userUserProfileService.addDeviceToken(input, user)
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => DeleteTokenResponse)
   async deleteDeviceToken(
     @Args('input') input: UserDeviceTokenInput,
     @CurrentUser() user: User,
-  ): Promise<boolean> {
+  ): Promise<DeleteTokenResponse> {
     return await this.userUserProfileService.deleteDeviceToken(input, user)
   }
 }
