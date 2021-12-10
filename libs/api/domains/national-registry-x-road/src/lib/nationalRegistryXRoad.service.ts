@@ -73,10 +73,9 @@ export class NationalRegistryXRoadService {
   }
 
   async getCustody(user: User, parentNationalId: string): Promise<string[]> {
-    return await this.nationalRegistryApiWithAuth(user)
-      .einstaklingarGetForsja({
-        id: parentNationalId,
-      })
+    return await this.nationalRegistryApiWithAuth(user).einstaklingarGetForsja({
+      id: parentNationalId,
+    })
   }
 
   async getCustodyParents(
@@ -84,16 +83,18 @@ export class NationalRegistryXRoadService {
     parentNationalId: string,
     nationalId: string,
   ): Promise<string[]> {
-    return await this.nationalRegistryApiWithAuth(user)
-      .einstaklingarGetForsjaForeldri({
-        id: parentNationalId,
-        barn: nationalId,
-      })
+    return await this.nationalRegistryApiWithAuth(
+      user,
+    ).einstaklingarGetForsjaForeldri({
+      id: parentNationalId,
+      barn: nationalId,
+    })
   }
 
   async getFamily(user: User, nationalId: string): Promise<string[]> {
-    const family = await this.nationalRegistryApiWithAuth(user)
-      .einstaklingarGetFjolskylda({ id: nationalId })
+    const family = await this.nationalRegistryApiWithAuth(
+      user,
+    ).einstaklingarGetFjolskylda({ id: nationalId })
     if (!family) {
       this.logger.warn('Fjolskylda is null')
       return []

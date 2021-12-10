@@ -1,5 +1,4 @@
 import { UseGuards } from '@nestjs/common'
-import { ApiScope } from '@island.is/auth/scopes'
 import {
   Args,
   Resolver,
@@ -16,7 +15,6 @@ import {
   CurrentUser,
   IdsAuthGuard,
   IdsUserGuard,
-  Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
@@ -34,7 +32,6 @@ export class GetNationalRegistryPersonLoadTestInput {
 }
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.meDetails)
 @Resolver(() => NationalRegistryPerson)
 @Audit({ namespace: '@island.is/api/national-registry-x-road' })
 export class NationalRegistryXRoadResolver {
