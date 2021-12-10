@@ -1,5 +1,4 @@
 import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
-import cn from 'classnames'
 import React, { FC } from 'react'
 import * as styles from './ReviewSection.css'
 import { ReviewSectionProps } from './types'
@@ -44,7 +43,7 @@ export const StatusStep: FC<ReviewSectionProps> = ({
               {description}
             </Text>
             {!hasActionMessage && action && action.showAlways && (
-              <Box className={cn(styles.flexNone)}>
+              <Box className={styles.flexNone}>
                 <Button
                   colorScheme="default"
                   icon={action.hasActionButtonIcon ? 'attach' : undefined}
@@ -71,16 +70,14 @@ export const StatusStep: FC<ReviewSectionProps> = ({
           justifyContent="spaceBetween"
           background="roseTinted100"
           padding={4}
-          className={cn(styles.bottomBorderRadius)}
+          className={styles.bottomBorderRadius}
         >
           <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
             <Text variant="h5">{action.title}</Text>
             <Text marginTop={1} variant="default">
               {action.description}{' '}
               {action.fileNames && (
-                <span className={cn(styles.boldFileNames)}>
-                  {action.fileNames}
-                </span>
+                <span className={styles.boldFileNames}>{action.fileNames}</span>
               )}
             </Text>
             <Box marginTop={1}>
