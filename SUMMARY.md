@@ -207,6 +207,7 @@
 - [Island UI](libs/island-ui/README.md)
   - [Vanilla Extract Utils](libs/island-ui/vanilla-extract-utils/README.md)
 - [Localization](libs/localization/README.md)
+- [Message Queue](libs/message-queue/README.md)
 - [Nest Modules](libs/nest/README.md)
   - [Audit Module](libs/nest/audit/README.md)
   - [Nest Config](libs/nest/config/README.md)

@@ -1,4 +1,4 @@
-# message-queue
+# Message Queue
 
 This is a nest library for using [SQS](https://aws.amazon.com/sqs/)
 
