@@ -77,7 +77,7 @@ export class UserProfileResolver {
   }
 
   @Mutation(() => UserDeviceToken)
-  async addDeviceToken(
+  async userProfileaddDeviceToken(
     @Args('input') input: UserDeviceTokenInput,
     @CurrentUser() user: User,
   ): Promise<UserDeviceToken> {
@@ -85,7 +85,7 @@ export class UserProfileResolver {
   }
 
   @Mutation(() => DeleteTokenResponse)
-  async deleteDeviceToken(
+  async userProfiledeleteDeviceToken(
     @Args('input') input: UserDeviceTokenInput,
     @CurrentUser() user: User,
   ): Promise<DeleteTokenResponse> {
