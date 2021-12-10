@@ -5,12 +5,7 @@ import {
   mapSyslumennAuction,
 } from './models/syslumennAuction'
 import { Injectable } from '@nestjs/common'
-import {
-  Person,
-  Attachment,
-  DataUploadResponse,
-  SealedCriminalRecordResponse,
-} from './models/dataUpload'
+import { Person, Attachment, DataUploadResponse } from './models/dataUpload'
 import {
   OperatingLicense,
   mapOperatingLicense,
@@ -38,25 +33,15 @@ export class SyslumennService {
     return (operatingLicenses ?? []).map(mapOperatingLicense)
   }
 
-  async sealCriminalRecord(
-    criminalRecord: string,
-  ): Promise<SealedCriminalRecordResponse> {
-    return await this.syslumennClient.sealCriminalRecord(criminalRecord)
-  }
-
   async uploadData(
     persons: Person[],
     attachement: Attachment,
     extraData: { [key: string]: string },
-    uploadDataName: string,
-    uploadDataId?: string,
   ): Promise<DataUploadResponse> {
     return await this.syslumennClient.uploadData(
       persons,
       attachement,
       extraData,
-      uploadDataName,
-      uploadDataId,
     )
   }
 }

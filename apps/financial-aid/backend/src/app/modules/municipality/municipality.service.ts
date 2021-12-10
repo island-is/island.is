@@ -2,7 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { MunicipalityModel } from './models'
-import { AidType } from '@island.is/financial-aid/shared/lib'
+import { AidType, Staff } from '@island.is/financial-aid/shared/lib'
 import { AidModel, AidService } from '../aid'
 import {
   MunicipalityActivityDto,
@@ -61,6 +61,7 @@ export class MunicipalityService {
   async create(
     municipality: CreateMunicipalityDto,
     admin: CreateStaffDto,
+    currentUser: Staff,
   ): Promise<MunicipalityModel> {
     return await this.sequelize.transaction(async (t) => {
       return await Promise.all(
@@ -74,7 +75,7 @@ export class MunicipalityService {
           )
         }),
       )
-        .then((res) => {
+        .then(async (res) => {
           municipality.individualAidId = this.findAidTypeId(
             res,
             AidType.INDIVIDUAL,
@@ -84,17 +85,22 @@ export class MunicipalityService {
             AidType.COHABITATION,
           )
 
-          this.staffService.createStaff(
-            admin,
-            {
-              municipalityId: municipality.municipalityId,
-              municipalityName: municipality.name,
-            },
-            undefined,
-            t,
-          )
-
-          return this.municipalityModel.create(municipality, { transaction: t })
+          return await this.staffService
+            .createStaff(
+              admin,
+              {
+                municipalityId: municipality.municipalityId,
+                municipalityName: municipality.name,
+              },
+              currentUser,
+              t,
+              true,
+            )
+            .then(() => {
+              return this.municipalityModel.create(municipality, {
+                transaction: t,
+              })
+            })
         })
         .catch((err) => err)
     })
