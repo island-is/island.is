@@ -33,6 +33,11 @@ const prodConfig = {
   },
   baseUrl: process.env.BASE_URL,
   veitaUrl: process.env.VEITA_BASE_URL,
+  audit: {
+    defaultNamespace: '@samband.is/financial-aid',
+    groupName: process.env.AUDIT_GROUP_NAME,
+    serviceName: 'financial-aid-backend',
+  },
 }
 
 const devConfig = {
@@ -60,6 +65,9 @@ const devConfig = {
   },
   baseUrl: process.env.BASE_URL ?? 'http://localhost:4200',
   veitaUrl: process.env.VEITA_BASE_URL ?? 'http://localhost:4200',
+  audit: {
+    defaultNamespace: '@samband.is/financial-backend',
+  },
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

@@ -33,3 +33,9 @@ export class UpdateAccessControlInput {
   @Field()
   partnerId!: string
 }
+
+@InputType()
+export class DeleteAccessControlInput {
+  @Field()
+  nationalId!: string
+}

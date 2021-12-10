@@ -10,7 +10,7 @@ export class CacheResponse {
   private constructor() {}
 
   async text(): Promise<string> {
-    if (!this.cachedBody) {
+    if (this.cachedBody === undefined) {
       if (!this.innerResponse) {
         throw new Error('Illegal CacheResponse')
       }
@@ -22,7 +22,7 @@ export class CacheResponse {
 
   async getResponse(): Promise<Response> {
     if (this.innerResponse) {
-      if (this.cachedBody) {
+      if (this.cachedBody !== undefined) {
         // We have to clone the response before returning it because the body
         // can only be used once.
         // To avoid https://github.com/bitinn/node-fetch/issues/151, we don't use
@@ -38,7 +38,7 @@ export class CacheResponse {
       }
     }
 
-    if (this.policy && this.cachedBody) {
+    if (this.policy && this.cachedBody !== undefined) {
       // Create response based on cache policy.
       return new Response(this.cachedBody, {
         url: this.policy._url,

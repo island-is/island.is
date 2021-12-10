@@ -41,7 +41,7 @@ const SelectCourt: React.FC<Props> = (props) => {
         name="court"
         label={formatMessage(m.label)}
         placeholder={formatMessage(m.placeholder)}
-        defaultValue={defaultCourt}
+        value={defaultCourt}
         options={selectCourts}
         onChange={(selectedOption: ValueType<ReactSelectOption>) => {
           setAndSendToServer(
