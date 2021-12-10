@@ -20,7 +20,7 @@ const providers = [
     name: identityServerConfig.name,
     scope: identityServerConfig.scope,
     clientId: identityServerConfig.clientId,
-    domain: process.env.IDENTITY_SERVER_DOMAIN ?? '@island.is',
+    domain: '@island.is',
     clientSecret: process.env.IDENTITY_SERVER_SECRET,
     protection: 'pkce',
   }),
@@ -29,7 +29,7 @@ const providers = [
 const callbacks: CallbacksOptions = {
   signIn: signIn,
   jwt: jwt,
-  session: sessionFunc,
+  session: session,
 }
 
 
@@ -65,7 +65,7 @@ async function jwt(token: JWT, user: AuthUser) {
   )
 }
 
-async function sessionFunc(session: AuthSession, user: AuthUser) {
+async function session(session: AuthSession, user: AuthUser) {
   // if(session=undefined) {
   //   session = useSession()
   // }
@@ -84,7 +84,7 @@ async function sessionFunc(session: AuthSession, user: AuthUser) {
     session.expires = JSON.stringify(new Date(decoded.exp * 1000))
     session.scope = decoded.scope
   }
-
+  console.log(session)
   return session
 }
 

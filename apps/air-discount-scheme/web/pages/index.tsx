@@ -10,8 +10,8 @@ import { AuthContext } from '@island.is/air-discount-scheme-web/components'
 import { signIn, useSession } from 'next-auth/client'
 
 const Index = () => {
-  const { isAuthenticated, user } = useContext(AuthContext)
   const [session, loading] = useSession()
+  const { isAuthenticated, user } = useContext(AuthContext)
   const router = useRouter()
   useEffect(() => {
     document.title = 'Umsókn um fjárhagsaðstoð'

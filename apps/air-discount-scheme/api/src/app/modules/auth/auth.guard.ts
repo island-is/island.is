@@ -8,6 +8,7 @@ import { Role, AuthUser } from './auth.types'
 import { AuthService } from './auth.service'
 import { getSession, signIn } from 'next-auth/client'
 import { AuthContext, AuthProvider } from '@island.is/air-discount-scheme-web/components/AuthProvider'
+import { useContext } from 'react'
 
 type AuthorizeOptions = {
   throwOnUnAuthorized?: boolean
@@ -29,12 +30,13 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
   //   return super.canActivate(new ExecutionContextHost([req]))
   // return getSession()
   // }
-
-  session = getSession(AuthContext)
+  //ctx = useContext(AuthContext)
+  session = getSession()
+  //session = getSession(AuthProvider)
   canActivate(session) {
     console.log('auth guard session is authenticated: ' + session)
     console.dir(session)
-    return session.isAuthenticated
+    return true//(session !== undefined ? true : false)
   }
   
   handleRequest<TUser extends AuthUser>(err: Error, user: TUser): TUser {
