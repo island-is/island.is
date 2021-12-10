@@ -375,16 +375,20 @@
     },
     "buttons": {
       "add": "Bæta við aðgangi",
-      "edit": "Breyta"
+      "edit": "Breyta",
+      "delete": "Fjarlægja",
+      "actions": "aðgerðir"
     },
     "modal": {
       "titles": {
         "add": "Bæta við aðgangi",
-        "edit": "Breyta aðgangi"
+        "edit": "Breyta aðgangi",
+        "delete": "Eyða aðgangi"
       },
       "subtitles": {
         "add": "Aðgangshafi mun fá aðgang til að framkvæma aðgerðir í því hlutverki sem er sett. Vinsamlegast verið viss um að kennitalan eigi við réttan einstakling.",
-        "edit": "Aðgangshafi mun fá aðgang til að framkvæma aðgerðir í því hlutverki sem er sett. Vinsamlegast verið viss um að hlutverkið eigi við réttan einstakling."
+        "edit": "Aðgangshafi mun fá aðgang til að framkvæma aðgerðir í því hlutverki sem er sett. Vinsamlegast verið viss um að hlutverkið eigi við réttan einstakling.",
+        "delete": "Ertu viss um að þú viljir eyða þessum aðgangi?"
       },
       "inputs": {
         "nationalId": {
@@ -419,7 +423,8 @@
       },
       "buttons": {
         "cancel": "Hætta við",
-        "continue": "Staðfesta"
+        "continue": "Staðfesta",
+        "confirm": "Staðfesta"
       }
     }
   },
