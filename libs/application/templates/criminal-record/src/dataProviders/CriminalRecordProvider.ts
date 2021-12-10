@@ -3,7 +3,6 @@ import {
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-  coreErrorMessages,
 } from '@island.is/application/core'
 import { getAge } from '../utils'
 import { m } from '../lib/messages'

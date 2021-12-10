@@ -1,58 +1,95 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Box } from '../Box/Box'
-import { pdfjs, Document, Page } from 'react-pdf'
+import type { Document, Page, Outline, pdfjs } from 'react-pdf'
 import * as styles from './PdfViewer.css'
 import { Pagination } from '../Pagination/Pagination'
 import { LoadingDots } from '../LoadingDots/LoadingDots'
-// Loading worker for react-pdf
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
+import { AlertMessage } from '../AlertMessage/AlertMessage'
+import { coreErrorMessages } from '@island.is/application/core'
 
 export interface PdfViewerProps {
   file: string
 }
-
 interface PdfProps {
   numPages: number
+}
+
+interface IPdfLib {
+  default: typeof import('/Users/ori.unnuri/Git/island.is/node_modules/@types/react-pdf/index')
+  pdfjs: typeof pdfjs
+  Document: typeof Document
+  Page: typeof Page
+  Outline: typeof Outline
 }
 
 export const PdfViewer: FC<PdfViewerProps> = ({ file }) => {
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
+  const [pdfLib, setPdfLib] = useState<IPdfLib>()
+  const [pdfLibError, setPdfLibError] = useState<any>()
 
-  function onDocumentLoadSuccess({ numPages }: PdfProps) {
+  useEffect(() => {
+    import('react-pdf')
+      .then((pdf) => {
+        pdf.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdf.pdfjs.version}/pdf.worker.min.js`
+        setPdfLib(pdf)
+      })
+      .catch((e) => {
+        setPdfLibError(e)
+      })
+  }, [])
+
+  const onDocumentLoadSuccess = ({ numPages }: PdfProps) => {
     setNumPages(numPages)
   }
 
-  return (
-    <>
-      <Document
-        file={file}
-        onLoadSuccess={onDocumentLoadSuccess}
-        renderMode="svg"
-        className={styles.pdfViewer}
-        loading={
-          <Box height="full" display="flex" justifyContent="center">
-            <LoadingDots large />
-          </Box>
-        }
-      >
-        <Page pageNumber={pageNumber} />
-      </Document>
-      <Box marginTop={2} marginBottom={4}>
-        <Pagination
-          page={pageNumber}
-          renderLink={(page, className, children) => (
-            <Box
-              cursor="pointer"
-              className={className}
-              onClick={() => setPageNumber(page)}
-            >
-              {children}
-            </Box>
-          )}
-          totalPages={numPages}
-        />
+  const loadingView = () => {
+    return (
+      <Box height="full" display="flex" justifyContent="center">
+        <LoadingDots large />
       </Box>
-    </>
-  )
+    )
+  }
+
+  if (pdfLibError) {
+    return (
+      <AlertMessage
+        type="error"
+        title="Villa kom upp við að birta skjal, reyndu aftur síðar."
+      />
+    )
+  }
+
+  if (pdfLib) {
+    return (
+      <>
+        <pdfLib.Document
+          file={file}
+          onLoadSuccess={onDocumentLoadSuccess}
+          renderMode="svg"
+          className={styles.pdfViewer}
+          loading={() => loadingView()}
+        >
+          <pdfLib.Page pageNumber={pageNumber} />
+        </pdfLib.Document>
+        <Box marginTop={2} marginBottom={4}>
+          <Pagination
+            page={pageNumber}
+            renderLink={(page, className, children) => (
+              <Box
+                cursor="pointer"
+                className={className}
+                onClick={() => setPageNumber(page)}
+              >
+                {children}
+              </Box>
+            )}
+            totalPages={numPages}
+          />
+        </Box>
+      </>
+    )
+  }
+
+  return loadingView()
 }

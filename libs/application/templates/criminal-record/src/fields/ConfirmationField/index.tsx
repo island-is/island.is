@@ -8,7 +8,8 @@ import {
   Divider,
   PdfViewer,
 } from '@island.is/island-ui/core'
-import React, { FC, useState } from 'react'
+
+import React, { FC, useState, lazy } from 'react'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
