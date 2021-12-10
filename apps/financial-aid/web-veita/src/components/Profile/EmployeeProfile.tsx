@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import {
   Box,
   Divider,
@@ -21,6 +21,7 @@ import {
 
 import cn from 'classnames'
 import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 interface EmployeeProfileProps {
   user: Staff
@@ -35,6 +36,11 @@ interface EmployeeProfileInfo {
 }
 
 const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
+  const { admin } = useContext(AdminContext)
+
+  const isLoggedInUser = (staff: Staff) =>
+    admin?.nationalId === staff.nationalId
+
   const [state, setState] = useState<EmployeeProfileInfo>({
     nationalId: user.nationalId,
     nickname: user?.nickname ?? '',
@@ -152,13 +158,15 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
                   Notandi er {user.active ? 'virkur' : 'óvirkur'}
                 </Text>
               </Box>
-              <button
-                onClick={() => changeUserActivity(!user.active, user.id)}
-                disabled={staffActivationLoading}
-                className={headerStyles.button}
-              >
-                {user.active ? 'Óvirkja' : 'Virkja'}
-              </button>
+              {isLoggedInUser(user) === false && (
+                <button
+                  onClick={() => changeUserActivity(!user.active, user.id)}
+                  disabled={staffActivationLoading}
+                  className={headerStyles.button}
+                >
+                  {user.active ? 'Óvirkja' : 'Virkja'}
+                </button>
+              )}
             </Box>
           </Box>
 

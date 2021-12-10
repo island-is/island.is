@@ -33,6 +33,8 @@ import { environment } from '../../../environments'
 import { ApplicantEmailTemplate } from './emailTemplates/applicantEmailTemplate'
 import { MunicipalityService } from '../municipality'
 import { logger } from '@island.is/logging'
+import { AmountModel, AmountService } from '../amount'
+import { DeductionFactorsModel } from '../deductionFactors'
 
 interface Recipient {
   name: string
@@ -55,6 +57,7 @@ export class ApplicationService {
     @InjectModel(ApplicationModel)
     private readonly applicationModel: typeof ApplicationModel,
     private readonly fileService: FileService,
+    private readonly amountService: AmountService,
     private readonly applicationEventService: ApplicationEventService,
     private readonly emailService: EmailService,
     private readonly municipalityService: MunicipalityService,
@@ -181,6 +184,11 @@ export class ApplicationService {
           as: 'files',
           separate: true,
           order: [['created', 'DESC']],
+        },
+        {
+          model: AmountModel,
+          as: 'amount',
+          include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
         },
       ],
     })
@@ -338,11 +346,16 @@ export class ApplicationService {
       eventType: update.event,
       comment:
         update?.rejection ||
-        update?.amount?.toLocaleString('de-DE') ||
+        update?.amount?.finalAmount.toLocaleString('de-DE') ||
         update?.comment,
       staffName: staff?.name,
       staffNationalId: staff?.nationalId,
     })
+
+    if (update.amount) {
+      const amount = await this.amountService.create(update.amount)
+      updatedApplication?.setDataValue('amount', amount)
+    }
 
     const events = this.applicationEventService
       .findById(id)
@@ -385,6 +398,9 @@ export class ApplicationService {
         updatedApplication.created,
         update.event === ApplicationEventType.DATANEEDED
           ? update?.comment
+          : undefined,
+        update.event === ApplicationEventType.REJECTED
+          ? update?.rejection
           : undefined,
       )
 
