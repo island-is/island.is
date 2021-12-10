@@ -85,9 +85,9 @@ export class UserProfileService {
     const token = await this.UserDeviceTokensModel.findOne({
       where: { nationalId: user.nationalId, deviceToken: body.deviceToken },
     })
-    if(token){
+    if (token) {
       const destroy = await token.destroy()
-      return {success:Boolean(destroy)}
+      return { success: Boolean(destroy) }
     } else {
       throw new NotFoundException()
     }

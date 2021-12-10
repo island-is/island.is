@@ -393,7 +393,7 @@ export class UserProfileController {
     if (nationalId != user.nationalId) {
       throw new BadRequestException()
     } else {
-      return  await this.userProfileService.deleteDeviceToken(body, user)
+      return await this.userProfileService.deleteDeviceToken(body, user)
     }
   }
 }

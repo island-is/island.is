@@ -721,7 +721,7 @@ describe('User profile API', () => {
         .expect(200)
       expect(response.body).toEqual(
         expect.objectContaining({
-          success: true
+          success: true,
         }),
       )
     })
