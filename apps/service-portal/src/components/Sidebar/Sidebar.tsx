@@ -30,13 +30,13 @@ export const Sidebar: FC<{}> = () => {
       >
         <Box
           className={cn({ [styles.logoCollapsed]: collapsed })}
-          paddingBottom={6}
+          paddingBottom={8}
           paddingTop={3}
         >
           <Link to={ServicePortalPath.MinarSidurRoot}>
             <FocusableBox component="div">
               <Logo
-                width={collapsed ? 24 : 160}
+                width={collapsed ? 24 : 136}
                 iconOnly={collapsed}
                 id="sidebar"
               />
@@ -71,7 +71,7 @@ export const Sidebar: FC<{}> = () => {
         </Box>
         {!collapsed &&
           navigation.map((rootItem, rootIndex) => (
-            <Stack space={0} key={rootIndex}>
+            <Stack space={1} key={rootIndex}>
               {rootItem.children?.map(
                 (navRoot, index) =>
                   navRoot.path !== ServicePortalPath.MinarSidurRoot && (
@@ -85,11 +85,6 @@ export const Sidebar: FC<{}> = () => {
                     />
                   ),
               )}
-              {/* {rootIndex === 1 && (
-                <Text variant="small" color="blueberry600" marginTop={3}>
-                  {formatMessage(m.incomingServicesFooterMobile)}
-                </Text>
-              )} */}
             </Stack>
           ))}
       </Box>

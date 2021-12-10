@@ -10,14 +10,17 @@ export const navItem = style({})
 export const navItemActive = styleVariants({
   active: {
     backgroundColor: '#E0ECFF',
+    border: '1px solid #E0ECFF',
     borderTopLeftRadius: '8px',
     borderBottomLeftRadius: '8px',
   },
   inactive: {
+    border: `1px solid ${theme.color.blue100}`,
     backgroundColor: theme.color.blue100,
     '@media': {
       [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
         backgroundColor: 'white',
+        border: 'none',
       },
     },
   },
@@ -25,6 +28,7 @@ export const navItemActive = styleVariants({
 
 export const text = style({
   fontSize: 16,
+  lineHeight: '26px',
   color: theme.color.blue400,
 })
 

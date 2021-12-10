@@ -43,13 +43,13 @@ const NavItemContent: FC<Props> = ({
       cursor={showLock ? undefined : 'pointer'}
       position="relative"
       onClick={showLock ? (active ? onClick : undefined) : onClick}
-      paddingY={'p2'}
+      paddingY={1}
       paddingLeft={3}
       paddingRight={2}
     >
       <Box display="flex" height="full" alignItems="center">
         {icon ? (
-          <Box display="flex" alignItems="center" marginRight={'p2'}>
+          <Box display="flex" alignItems="center" marginRight={1}>
             <Box
               borderRadius="circle"
               className={styles.badge[badgeActive]}

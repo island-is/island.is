@@ -56,7 +56,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
       <Box marginBottom={5}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            <Stack space={0}>
+            <Stack space={1}>
               <Text variant="h3" as="h1" paddingTop={0}>
                 {userInfo.profile.name}
               </Text>

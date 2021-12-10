@@ -62,11 +62,6 @@ const MobileMenu = (): ReactElement | null => {
                 ),
             )}
           </Stack>
-          {rootIndex === 1 && (
-            <Text variant="small" color="blueberry600" marginTop={3}>
-              {formatMessage(m.incomingServicesFooterMobile)}
-            </Text>
-          )}
         </Box>
       ))}
     </Box>
