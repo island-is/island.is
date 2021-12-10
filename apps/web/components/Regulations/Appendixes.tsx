@@ -40,7 +40,7 @@ export const Appendixes = memo((props: AppendixesProps) => {
                     diffing ? (
                       <HTMLBox
                         component="span"
-                        className={s.bodyText}
+                        className={s.bodyText + ' ' + s.diffText}
                         html={appendix.title as HTMLText}
                       />
                     ) : (
@@ -49,7 +49,10 @@ export const Appendixes = memo((props: AppendixesProps) => {
                   }
                   startExpanded={hasDiff(appendix.text)}
                 >
-                  <HTMLBox className={s.bodyText} html={appendix.text} />
+                  <HTMLBox
+                    className={s.bodyText + ' ' + s.diffText}
+                    html={appendix.text}
+                  />
                 </AccordionItem>
               </div>
             )
