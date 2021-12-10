@@ -73,12 +73,12 @@ export const UserDelegations = ({
         {formatMessage(userMessages.delegationList)}
       </Text>
       <Stack space={1}>
-        {isDelegation && (
+        {!!actor && (
           <UserTopicCard
             colorScheme={'purple'}
-            onClick={() => onSwitchUser(user.profile.nationalId)}
+            onClick={() => onSwitchUser(actor?.nationalId)}
           >
-            {user.profile.name}
+            {actor?.name}
           </UserTopicCard>
         )}
         {delegations.map((delegation) => (

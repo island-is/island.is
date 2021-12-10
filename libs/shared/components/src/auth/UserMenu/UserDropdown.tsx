@@ -133,16 +133,10 @@ export const UserDropdown = ({
                 <UserAvatar username={isDelegation ? actorName : userName} />
 
                 <Box marginLeft={1} marginRight={4}>
-                  {isDelegation ? (
-                    <>
-                      <Text variant="h4">{actorName}</Text>
-                      <Text variant="small">{userName}</Text>
-                    </>
-                  ) : (
-                    <Text variant="h4" as="h4">
-                      {userName}
-                    </Text>
-                  )}
+                  <Text variant="h4" as="h4">
+                    {userName}
+                  </Text>
+                  {isDelegation && <Text variant="small">{actorName}</Text>}
                 </Box>
               </Box>
               <Divider />
