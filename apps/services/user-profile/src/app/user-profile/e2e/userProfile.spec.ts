@@ -703,7 +703,7 @@ describe('User profile API', () => {
         .expect(400)
     })
 
-    it('DELETE /userProfile/{nationalId}/deviceToken should remove row with 204 no content', async () => {
+    it('DELETE /userProfile/{nationalId}/deviceToken should remove row with 200', async () => {
       // create one first ...
       await request(app.getHttpServer())
         .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
