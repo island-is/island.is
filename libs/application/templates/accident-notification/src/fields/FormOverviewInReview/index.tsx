@@ -30,6 +30,11 @@ export const FormOverviewInReview: FC<
     'reviewApproval',
     ReviewApprovalEnum.NOTREVIEWED,
   )
+  const reviewComment = getValueViaPath(
+    application.answers,
+    'reviewComment',
+    '',
+  ) as string
 
   const [rejectModalVisibility, setRejectModalVisibility] = useState<boolean>(
     false,
@@ -37,6 +42,7 @@ export const FormOverviewInReview: FC<
   const [approveModalVisibility, setApproveModalVisibility] = useState<boolean>(
     false,
   )
+  const [comment, setComment] = useState<string>('')
 
   const shouldReview =
     isAssignee && reviewApproval === ReviewApprovalEnum.NOTREVIEWED
@@ -87,7 +93,16 @@ export const FormOverviewInReview: FC<
             placeholder={formatMessage(
               thirdPartyComment.labels.commentPlaceholder,
             )}
+            onChange={(value) => setComment(value.target.value)}
           />
+        </Box>
+      )}
+      {!shouldReview && isAssignee && reviewComment.length > 0 && (
+        <Box marginBottom={6}>
+          <Text variant="h5">
+            {formatMessage(thirdPartyComment.labels.comment)}
+          </Text>
+          <Text>{reviewComment}</Text>
         </Box>
       )}
       <Divider />
@@ -121,6 +136,7 @@ export const FormOverviewInReview: FC<
         buttonColorScheme="destructive"
         defaultEvent={DefaultEvents.REJECT}
         application={application}
+        comment={comment}
         refetch={refetch}
       />
       <ConfirmationModal
@@ -134,6 +150,7 @@ export const FormOverviewInReview: FC<
         buttonColorScheme="default"
         defaultEvent={DefaultEvents.APPROVE}
         application={application}
+        comment={comment}
         refetch={refetch}
       />
     </>
