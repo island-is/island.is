@@ -28,7 +28,7 @@ import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppP
 
 const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)
-  const { myApplication, user } = useContext(AppContext)
+  const { myApplication, user, updateApplication } = useContext(AppContext)
 
   const fileComment = useMemo(() => {
     if (myApplication?.applicationEvents) {
@@ -76,6 +76,8 @@ const FileUpload = () => {
               event: ApplicationState.INPROGRESS,
             },
           },
+        }).then((results) => {
+          updateApplication(results.data?.application)
         })
 
         updateForm({
