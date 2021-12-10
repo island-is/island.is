@@ -1,10 +1,15 @@
 import React, { useState } from 'react'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { useAuth } from '@island.is/auth/react'
 import { UserButton } from './UserButton'
 import { UserDropdown } from './UserDropdown'
+import { UserLanguageSwitcher } from './UserLanguageSwitcher'
 
-export const UserMenu = () => {
+export const UserMenu = ({
+  showLanguageButton = false,
+}: {
+  showLanguageButton?: boolean
+}) => {
   const [dropdownState, setDropdownState] = useState<'closed' | 'open'>(
     'closed',
   )
@@ -20,6 +25,7 @@ export const UserMenu = () => {
 
   return (
     <Box display="flex" position="relative" height="full">
+      {showLanguageButton && <UserLanguageSwitcher user={user} />}
       <UserButton user={user} onClick={handleClick} />
       <UserDropdown
         user={user}
