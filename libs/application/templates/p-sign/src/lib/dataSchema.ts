@@ -1,12 +1,20 @@
 import * as z from 'zod'
-import { YES, NO } from './constants'
 
 export const dataSchema = z.object({
-  type: z.array(z.enum(['car', 'trailer', 'motorcycle'])).nonempty(),
-  subType: z.array(z.string()).nonempty(),
   approveExternalData: z.boolean().refine((v) => v),
-  juristiction: z.string(),
-  healthDeclaration: z.object({
+  address: z.string(),
+  city: z.string(),
+  email: z.string().email().nonempty(),
+  phone: z.string().nonempty(),
+  name: z.string(),
+  validityPeriod: z.string(),
+  deliveryMethod: z.string().nonempty(),
+  photoAttachment: z.string(),
+  attachmentFileName: z.string(),
+  jurisdiction: z.string(),
+  nationalId: z.string(),
+  qualityPhoto: z.enum(['yes', 'no']),
+  /*healthDeclaration: z.object({
     usesContactGlasses: z.enum([YES, NO]),
     hasReducedPeripheralVision: z.enum([YES, NO]),
     hasEpilepsy: z.enum([YES, NO]),
@@ -17,12 +25,5 @@ export const dataSchema = z.object({
     hasDiabetes: z.enum([YES, NO]),
     isDisabled: z.enum([YES, NO]),
     hasOtherDiseases: z.enum([YES, NO]),
-  }),
-  qualityPhoto: z.union([
-    z.array(z.enum([YES, NO])).nonempty(),
-    z.enum([YES, NO]),
-  ]),
-  requirementsMet: z.boolean().refine((v) => v),
-  certificate: z.array(z.enum([YES, NO])).nonempty(),
-  email: z.string().email(),
+  }),*/
 })

@@ -75,7 +75,7 @@ const PhotoUpload = ({ application }: PhotoUploadProps & FieldBaseProps) => {
         onRemove={() => {
           setFileName([])
           setImage('')
-          updateApp('', '')
+          updateApp(null, '')
         }}
       />
     </Box>

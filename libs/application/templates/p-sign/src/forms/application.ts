@@ -94,7 +94,7 @@ export const getApplication = (): Form => {
                 },
               }),
               buildTextField({
-                id: 'id',
+                id: 'nationalId',
                 title: m.applicantsNationalId,
                 width: 'half',
                 backgroundColor: 'white',
@@ -152,7 +152,7 @@ export const getApplication = (): Form => {
                 },
               }),
               buildDateField({
-                id: 'date',
+                id: 'validityPeriod',
                 title: m.cardValidityPeriod,
                 width: 'half',
                 backgroundColor: 'white',
@@ -265,7 +265,7 @@ export const getApplication = (): Form => {
                 ],
               }),
               buildSelectField({
-                id: 'districtCommitioners',
+                id: 'jurisdiction',
                 title: m.deliveryMethodOfficeLabel,
                 placeholder: m.deliveryMethodOfficeSelectPlaceholder,
                 options: ({
@@ -357,7 +357,7 @@ export const getApplication = (): Form => {
                 label: m.deliveryMethodTitle,
                 value: (application: Application) =>
                   application.answers.deliveryMethod === 'pickUp'
-                    ? `Þú hefur valið að sækja P-merkið sjálf/ur/t á: ${application.answers.districtCommitioners}`
+                    ? `Þú hefur valið að sækja P-merkið sjálf/ur/t á: ${application.answers.jurisdiction}`
                     : m.overviewDeliveryText,
               }),
               buildSubmitField({
