@@ -20,9 +20,12 @@ import {
 } from '@island.is/application/core'
 import { User } from '@island.is/api/domains/national-registry'
 import { format } from 'kennitala'
-import { syslumenn } from './mocks'
 import { QualityPhotoData } from '../types'
-import { NationalRegistryUser, UserProfile } from '../types/schema'
+import {
+  NationalRegistryUser,
+  UserProfile,
+  Jurisdiction,
+} from '../types/schema'
 import { m } from '../lib/messages'
 
 export const getApplication = (): Form => {
@@ -61,6 +64,11 @@ export const getApplication = (): Form => {
                 type: 'QualityPhotoProvider',
                 title: '',
                 subTitle: '',
+              }),
+              buildDataProviderItem({
+                id: 'jurisdictions',
+                type: 'JurisdictionProvider',
+                title: '',
               }),
             ],
           }),
@@ -260,7 +268,17 @@ export const getApplication = (): Form => {
                 id: 'districtCommitioners',
                 title: m.deliveryMethodOfficeLabel,
                 placeholder: m.deliveryMethodOfficeSelectPlaceholder,
-                options: syslumenn,
+                options: ({
+                  externalData: {
+                    jurisdictions: { data },
+                  },
+                }) => {
+                  return (data as Jurisdiction[]).map(({ id, name, zip }) => ({
+                    value: name,
+                    label: name,
+                    tooltip: `Póstnúmer ${zip}`,
+                  }))
+                },
                 condition: (answers: FormValue) =>
                   answers.deliveryMethod === 'pickUp',
               }),
@@ -337,10 +355,9 @@ export const getApplication = (): Form => {
               buildDividerField({}),
               buildKeyValueField({
                 label: m.deliveryMethodTitle,
-                width: 'half',
-                value: (application) =>
+                value: (application: Application) =>
                   application.answers.deliveryMethod === 'pickUp'
-                    ? m.overviewSelfPickupText
+                    ? `Þú hefur valið að sækja P-merkið sjálf/ur/t á: ${application.answers.districtCommitioners}`
                     : m.overviewDeliveryText,
               }),
               buildSubmitField({
