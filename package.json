@@ -187,7 +187,7 @@
     "next": "10.0.1",
     "next-auth": "3.29.0",
     "next-cookies": "2.0.3",
-    "nodemailer": "6.4.16",
+    "nodemailer": "6.6.1",
     "oidc-client": "1.10.1",
     "openapi3-ts": "2.0.0",
     "opossum": "6.1.0",
