@@ -189,6 +189,7 @@ module.exports = {
     '<rootDir>/libs/shared/types',
     '<rootDir>/libs/skilavottord/consts',
     '<rootDir>/libs/skilavottord/types',
+    '<rootDir>/libs/testing/containers',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
   ],

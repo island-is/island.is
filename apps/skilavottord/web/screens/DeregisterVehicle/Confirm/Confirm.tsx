@@ -10,7 +10,7 @@ import {
   Button,
   Hidden,
   Inline,
-  LoadingIcon,
+  LoadingDots,
   Stack,
   Text,
   toast,
@@ -133,7 +133,7 @@ const Confirm: FC = () => {
           <Box textAlign="center">
             <Stack space={4}>
               <Text variant="h1">{t.titles.loading}</Text>
-              <LoadingIcon size={50} />
+              <LoadingDots large />
             </Stack>
           </Box>
         ) : (
@@ -178,7 +178,7 @@ const Confirm: FC = () => {
           <Box>
             {loading ? (
               <Box textAlign="center">
-                <LoadingIcon size={50} />
+                <LoadingDots large />
               </Box>
             ) : (
               <Stack space={4}>
