@@ -1,5 +1,3 @@
-export const IDENTITY_SERVER_SESSION_TOKEN_COOKIE_NAME = process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token'
-
 export const identityServerId = 'identity-server'
 
 export const signOutUrl = (window: Window, idToken: string) =>

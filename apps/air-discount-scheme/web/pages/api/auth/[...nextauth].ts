@@ -11,6 +11,7 @@ import {
 } from '@island.is/next-ids-auth'
 import { NextApiRequest, NextApiResponse } from 'next-auth/internals/utils'
 import { JWT } from 'next-auth/jwt'
+import { useSession } from 'next-auth/client'
 
 const providers = [
   Providers.IdentityServer4({
@@ -18,7 +19,7 @@ const providers = [
     name: identityServerConfig.name,
     scope: identityServerConfig.scope,
     clientId: identityServerConfig.clientId,
-    domain: process.env.IDENTITY_SERVER_DOMAIN ?? '@vegagerdin.is',
+    domain: process.env.IDENTITY_SERVER_DOMAIN ?? '@island.is',
     clientSecret: process.env.IDENTITY_SERVER_SECRET,
     protection: 'pkce',
   }),
@@ -29,6 +30,7 @@ const callbacks: CallbacksOptions = {
   jwt: jwt,
   session: session,
 }
+
 
 async function signIn(
   user: AuthUser,
@@ -63,6 +65,9 @@ async function jwt(token: JWT, user: AuthUser) {
 }
 
 async function session(session: AuthSession, user: AuthUser) {
+  // if(session=undefined) {
+  //   session = useSession()
+  // }
   console.log('[nextauth] session ' + session)
   return handleSession(session, user)
 }

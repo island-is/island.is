@@ -31,7 +31,7 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
   
   session = getSession()
   canActivate(session) {
-    console.log('auth guard session is authenticated: ' + session.isAuthenticated)
+    console.log('auth guard session is authenticated: ' + session)
     return session.isAuthenticated
   }
   
@@ -39,9 +39,8 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
     const { throwOnUnAuthorized, role } = this.options
     if (throwOnUnAuthorized && (err || !user)) {
       console.log('inside handlerequest auth.guard')
-      signIn('identity-server', {
-        callbackUrl: `${window.location.href}`
-      })
+      
+      //signIn('identity-server')
       //throw new AuthenticationError((err && err.message) || 'Unauthorized')
     }
 

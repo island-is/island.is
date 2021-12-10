@@ -14,9 +14,7 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (graphQLErrors) {
     graphQLErrors.forEach((err) => {
       if (err.message === 'Unauthorized') {
-        return signIn('identity-server', {
-          callbackUrl: `${window.location.href}`,
-        })
+        return signIn(identityServerId)
       }
       switch (err.extensions?.code) {
         case 'UNAUTHENTICATED':

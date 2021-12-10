@@ -11,19 +11,18 @@ const useUser = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(session?.user),
   )
-  if(!isAuthenticated) {
-    return signIn(process.env.IDENTITY_SERVER_ISSUER_URL, {
-      callbackUrl: `min-rettindi`,
-    })
-  }
+  // if(!isAuthenticated) {
+  //   return signIn('identity-server')
+  // }
   console.log('inside useUser before gqpl')
   // TODO finish grpql
   const tempGqlQuery = gql`
-  query CurrentUserQuery {
-    currentUser {
-      nationalId
+  query UserQuery {
+    user {
       name
-      phoneNumber
+      nationalId
+      mobile
+      role
     }
   }
 `
@@ -31,7 +30,7 @@ const useUser = () => {
   const { data, loading: loadingUser } = useQuery(tempGqlQuery, {
     fetchPolicy: 'no-cache',
   })
-
+  console.log(data)
   const loggedInUser = data?.currentUser
 
   useEffect(() => {

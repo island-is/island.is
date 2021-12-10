@@ -31,6 +31,7 @@ const devConfig = {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@vegagerdin.is',
   },
+  idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -63,6 +64,7 @@ const prodConfig = {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@vegagerdin.is',
   },
+  idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

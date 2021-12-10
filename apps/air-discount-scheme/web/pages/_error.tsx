@@ -27,16 +27,11 @@ function CustomError({ isSSRReadyToRender, err }: PropTypes) {
 CustomError.getInitialProps = async (
   ctx: NextPageContext,
 ): Promise<ErrorProps> => {
-  const errorInitialProps = await NextError.getInitialProps(ctx)
+  const errorInitialProps = undefined//await NextError.getInitialProps(ctx)
   console.log('custom error _error')
   if (ctx.res) {
     if (ctx.res.statusCode === 404) {
       return { statusCode: 404, isSSRReadyToRender: true }
-    }
-
-    if (ctx.err) {
-      Sentry.captureException(ctx.err)
-      return { ...errorInitialProps, isSSRReadyToRender: true }
     }
   } else {
     if (ctx.err) {

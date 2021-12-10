@@ -23,13 +23,12 @@ export const AuthContext = createContext<AuthProvider>({
 const AuthProvider = ({ children }: Props) => {
   const [session] = useSession()
   //const logOut = useLogOut()
+  //const use = useUser()
   const { isAuthenticated, user, setUser, loadingUser } = useUser()
   console.log('inside auth provider - isauth: ' + isAuthenticated + ' -user: ' + user)
   return (
     <AuthContext.Provider
     value={{
-        isAuthenticated,
-        user,
         loadingUser,
         setUser,
       }}

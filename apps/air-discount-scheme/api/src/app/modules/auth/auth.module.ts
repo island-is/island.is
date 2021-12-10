@@ -22,7 +22,7 @@ const ONE_HOUR = 3600
     //     expiresIn: ONE_HOUR,
     //   },
     // }),
-    AuthNestModule.register(environment.auth.identityServerAuth),
+    AuthNestModule.register(environment.identityServerAuth),
   ],
   controllers: [AuthController],
   providers: [AuthService],// JwtStrategy],

@@ -6,3 +6,10 @@ export interface AuthenticateUser {
     mobile?: string
   }
 }
+
+export interface User {
+  name: string
+  nationalId: string
+  mobile?: string
+  token?: string
+}

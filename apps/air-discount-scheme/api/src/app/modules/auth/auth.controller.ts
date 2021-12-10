@@ -22,8 +22,10 @@ import {
 } from '@island.is/air-discount-scheme/consts'
 import { environment } from '../../../environments'
 import { Cookie, CookieOptions, Credentials } from './auth.types'
+import { getSession, signIn, useSession } from 'next-auth/client'
 
-const { samlEntryPoint, audience: audienceUrl, jwtSecret, identityServerAuth } = environment.auth
+const { samlEntryPoint, audience: audienceUrl, jwtSecret,  } = environment.auth
+const { identityServerAuth } = environment
 
 const JWT_EXPIRES_IN_SECONDS = 1800
 const ONE_HOUR = 60 * 60 * 1000
@@ -118,16 +120,26 @@ export class AuthController {
       .redirect(returnUrl ?? '/_')
   }
 */
-  @Get('/login')
-  login(@Res() res, @Query() query) {
-    const { returnUrl } = query
-    const { name, options } = REDIRECT_COOKIE
-    res.clearCookie(name, options)
 
-    return res
-      .cookie(name, { returnUrl }, { ...options, maxAge: ONE_HOUR })
-      .redirect(identityServerAuth.issuer)
+  @Get('/session')
+  async session(@Res() res): Promise<any | null> {
+    //ApiStatusStore.getInstance().clearStatus()
+    
+    res.session = await getSession()
+
+    return JSON.stringify(identityServerAuth.issuer)
   }
+
+  // @Get('/login')
+  // login(@Res() res, @Query() query) {
+  //   const { returnUrl } = query
+  //   const { name, options } = REDIRECT_COOKIE
+  //   res.clearCookie(name, options)
+
+  //   return res
+  //     .cookie(name, { returnUrl }, { ...options, maxAge: ONE_HOUR })
+  //     .redirect(identityServerAuth.issuer)
+  // }
 
   @Get('/logout')
   logout(@Res() res) {

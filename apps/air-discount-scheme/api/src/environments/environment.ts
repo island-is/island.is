@@ -13,19 +13,20 @@ const devConfig = {
     developers: process.env.DEVELOPERS,
     admins: process.env.ADMINS,
   },
+  identityServerAuth: {
+    issuer: 'https://identity-server.dev01.devland.is',
+    audience: '@vegagerdin.is',
+  },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? 'https://identity-server.dev01.devland.is',
-    identityServerAuth: {
-      issuer: 'https://identity-server.dev01.devland.is',
-      audience: '@vegagerdin.is',
-    },
     domain: process.env.IDENTITY_SERVER_DOMAIN ?? '@vegagerdin.is',
     clientSecret: process.env.AUTH_CLIENT_SECRET,
-    nextAuthUrl: process.env.NEXTAUTH_URL ?? 'http://localhost:4200/api/auth',
     samlEntryPoint: 'https://innskraning.island.is/?id=ads.local',
     audience: '@vegagerdin.is',
     jwtSecret: 'securesecret',
   },
+  idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
+
   backendUrl: 'http://localhost:4248',
 }
 
@@ -38,16 +39,17 @@ const prodConfig = {
     developers: process.env.DEVELOPERS,
     admins: process.env.ADMINS,
   },
+  identityServerAuth: {
+    issuer: 'https://identity-server.dev01.devland.is',
+    audience: '@vegagerdin.is',
+  },
   auth: {
     samlEntryPoint: process.env.SAML_ENTRY_POINT,
     audience: process.env.AUTH_AUDIENCE,
     jwtSecret: process.env.AUTH_JWT_SECRET,
-    identityServerAuth: {
-      issuer: 'https://identity-server.dev01.devland.is',
-      audience: '@vegagerdin.is',
-    },
   },
-  backendUrl: process.env.BACKEND_URL,
+  idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
+  backendUrl: process.env.BACKEND_URL ?? 'http://localhost:4200',
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

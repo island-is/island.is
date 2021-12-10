@@ -47,16 +47,17 @@ class SupportApplication extends App<Props> {
     const customContext = {
       ...ctx,
       apolloClient,
+      ...AuthContext,
     }
 
-    const pageProps = (await Component.getInitialProps(customContext)) as any
+    const pageProps = getSession()//(await Component.getInitialProps(customContext)) as any
 
-    const layoutProps = await AppLayout.getInitialProps({
-      ...customContext,
-      locale: pageProps.locale,
-      localeKey: pageProps.localeKey,
-      routeKey: pageProps.route,
-    } as any)
+    // const layoutProps = await AppLayout.getInitialProps({
+    //   ...customContext,
+    //   locale: pageProps.locale,
+    //   localeKey: pageProps.localeKey,
+    //   routeKey: pageProps.route,
+    // } as any)
 
     const readonlyCookies = NextCookies(appContext)
     Sentry.configureScope((scope) => {
@@ -66,7 +67,7 @@ class SupportApplication extends App<Props> {
     const apolloState = apolloClient.cache.extract()
     
     return {
-      layoutProps: { ...layoutProps, ...pageProps.layoutConfig },
+      //layoutProps: { ...layoutProps, ...pageProps.layoutConfig },
       pageProps,
       apolloState,
     }
@@ -123,8 +124,9 @@ class SupportApplication extends App<Props> {
     //   console.log('return null')
     //   return
     // }
-    console.log('before return _app with session: ' + pageProps.session)
+    //console.log('before return _app with session: ' + pageProps.session)
     console.log(process.env.NEXTAUTH_URL)
+    //const { data: session } = getSession()
     return (
       <Provider 
         session={pageProps.session}
@@ -132,12 +134,12 @@ class SupportApplication extends App<Props> {
       >
         <ApolloProvider client={initApollo(pageProps.apolloState)}>
           <AuthProvider>
-            <AppLayout isAuthenticated={isAuthenticated} {...layoutProps}>
+            {/* <AppLayout isAuthenticated={isAuthenticated} {...layoutProps}>
               <ErrorBoundary>
                 <Component {...pageProps} />
               </ErrorBoundary>
               <Toast />
-            </AppLayout>
+            </AppLayout> */}
           </AuthProvider>
         </ApolloProvider>
       </Provider>
