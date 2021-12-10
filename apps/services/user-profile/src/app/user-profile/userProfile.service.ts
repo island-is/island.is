@@ -12,7 +12,7 @@ import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
 import { UserProfile } from './userProfile.model'
 import { User } from '@island.is/auth-nest-tools'
 import { UserDeviceTokens } from './userDeviceTokens.model'
-import { DeviceTokenDto } from './dto/DeviceToken.dto'
+import { DeviceTokenDto } from './dto/deviceToken.dto'
 
 @Injectable()
 export class UserProfileService {
