@@ -12,6 +12,7 @@ import {
 import { generateSyslumennNotificationEmail } from './emailGenerators/syslumennNotification'
 import { Application } from '@island.is/application/core'
 import { NationalRegistry, UserProfile } from './types'
+import { ChargeItemCode } from '@island.is/shared/constants'
 
 @Injectable()
 export class CriminalRecordSubmissionService {
@@ -29,7 +30,7 @@ export class CriminalRecordSubmissionService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         id,
-        'AY101',
+        ChargeItemCode.CRIMINAL_RECORD,
       )
       return result
     } catch (exeption) {

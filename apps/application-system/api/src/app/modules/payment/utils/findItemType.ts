@@ -1,9 +1,11 @@
+import { ChargeItemCode } from '@island.is/shared/constants'
+
 export const findItemType = (itemCode: string) => {
   // TODO: AYXXX PayableDummyTemplate should be deleted when Dummy testing has finished.
   switch (itemCode) {
     case 'AYXXX':
       return 'PayableDummyTemplate'
-    case 'AY101':
+    case ChargeItemCode.CRIMINAL_RECORD:
       return 'CriminalRecord'
     case 'AY102':
       return 'Veðbókarvottorð'

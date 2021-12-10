@@ -5,8 +5,9 @@ import {
 } from '@island.is/application/core'
 import { PaymentCatalogProvider } from '@island.is/application/data-providers'
 import { m } from '../lib/messages'
+import { ChargeItemCode } from '@island.is/shared/constants'
 
-const CHARGE_ITEM_CODE = 'AY101'
+const CHARGE_ITEM_CODE = ChargeItemCode.CRIMINAL_RECORD
 const SYSLUMADUR_NATIONAL_ID = '6509142520'
 
 export class FeeInfoProvider extends PaymentCatalogProvider {

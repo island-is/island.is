@@ -7,6 +7,7 @@ import { setup } from '../../../../../test/setup'
 import { PaymentAPI } from '@island.is/clients/payment'
 import { CreateChargeInput } from '../dto/createChargeInput.dto'
 import { PaymentService } from '../payment.service'
+import { ChargeItemCode } from '@island.is/shared/constants'
 
 let app: INestApplication
 
@@ -23,7 +24,7 @@ class MockPaymentApi {
         {
           performingOrgID: '6509142520',
           chargeType: 'AY1',
-          chargeItemCode: 'AY101',
+          chargeItemCode: ChargeItemCode.CRIMINAL_RECORD,
           chargeItemName: 'Sakarvottorð',
           priceAmount: 2500,
         },
