@@ -5,19 +5,20 @@ import {
   DataType,
   ForeignKey,
   Model,
+  PrimaryKey,
   Table,
 } from 'sequelize-typescript'
+
 import { Role } from '../auth'
 import { RecyclingPartnerModel } from '../recyclingPartner'
 
 @ObjectType('AccessControl')
 @Table({ tableName: 'access_control', timestamps: false })
 export class AccessControlModel extends Model<AccessControlModel> {
-  // @Field()
   @Field((_) => ID)
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
-    primaryKey: true,
     field: 'national_id',
   })
   nationalId!: string
@@ -35,19 +36,15 @@ export class AccessControlModel extends Model<AccessControlModel> {
   })
   role!: Role
 
-  // TODO: get from samgongustofa
-  @Field()
-  @Column({
-    type: DataType.STRING,
-    field: 'partner_id',
-  })
-  @Field()
   @ForeignKey(() => RecyclingPartnerModel)
   @Column({
     type: DataType.STRING,
+    field: 'partner_id',
+    allowNull: true,
   })
-  partnerId!: string
+  partnerId?: string
 
+  @Field(() => RecyclingPartnerModel, { nullable: true })
   @BelongsTo(() => RecyclingPartnerModel)
-  recyclingPartner: RecyclingPartnerModel
+  recyclingPartner?: RecyclingPartnerModel
 }

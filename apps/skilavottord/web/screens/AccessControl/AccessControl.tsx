@@ -45,23 +45,16 @@ import {
 
 import * as styles from './AccessControl.css'
 
-const SkilavottordAllRecyclingPartnersQuery = gql`
-  query skilavottordAllRecyclingPartnersQuery {
-    skilavottordAllRecyclingPartners {
-      companyId
-      companyName
-      active
-    }
-  }
-`
-
 const SkilavottordAccessControlsQuery = gql`
   query skilavottordAccessControlsQuery {
     skilavottordAccessControls {
       nationalId
       name
       role
-      partnerId
+      recyclingPartner {
+        companyId
+        companyName
+      }
     }
   }
 `
@@ -74,7 +67,10 @@ export const CreateSkilavottordAccessControlMutation = gql`
       nationalId
       name
       role
-      partnerId
+      recyclingPartner {
+        companyId
+        companyName
+      }
     }
   }
 `
@@ -87,7 +83,10 @@ export const UpdateSkilavottordAccessControlMutation = gql`
       nationalId
       name
       role
-      partnerId
+      recyclingPartner {
+        companyId
+        companyName
+      }
     }
   }
 `
@@ -103,11 +102,6 @@ export const DeleteSkilavottordAccessControlMutation = gql`
 const AccessControl: FC = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
   const { user } = useContext(UserContext)
-  const {
-    data: recyclingPartnerData,
-    error: recyclingPartnerError,
-    loading: recyclingPartnerLoading,
-  } = useQuery<Query>(SkilavottordAllRecyclingPartnersQuery, { ssr: false })
   const {
     data: accessControlsData,
     error: accessControlsError,
@@ -138,9 +132,9 @@ const AccessControl: FC = () => {
   ] = useState(false)
   const [partner, setPartner] = useState<AccessControlType>()
 
-  const error = recyclingPartnerError || accessControlsError
-  const loading = recyclingPartnerLoading || accessControlsLoading
-  const isData = !!recyclingPartnerData && !!accessControlsData
+  const error = accessControlsError
+  const loading = accessControlsLoading
+  const isData = !!accessControlsData
 
   const {
     t: { accessControl: t, recyclingFundSidenav: sidenavText, routes },
@@ -154,15 +148,15 @@ const AccessControl: FC = () => {
 
   const accessControls = accessControlsData?.skilavottordAccessControls || []
 
-  const partners = recyclingPartnerData?.skilavottordAllRecyclingPartners || []
-  const recyclingPartners = filterInternalPartners(partners).map((partner) => ({
-    label: partner.companyName,
-    value: partner.companyId,
-  }))
+  // const recyclingPartners = filterInternalPartners(partners).map((partner) => ({
+  //   label: partner.companyName,
+  //   value: partner.companyId,
+  // }))
+  // const recyclingPartners = []
 
   const roles = Object.keys(Role)
     .filter((role) =>
-      !isDeveloper(user.role) ? role !== Role.developer : role,
+      !isDeveloper(user!.role) ? role !== Role.developer : role,
     )
     .map((role) => ({
       label: startCase(role),
@@ -273,7 +267,7 @@ const AccessControl: FC = () => {
             show={isCreateAccessControlModalVisible}
             onCancel={handleCreateAccessControlCloseModal}
             onSubmit={handleCreateAccessControl}
-            recyclingPartners={recyclingPartners}
+            recyclingPartners={[]}
             roles={roles}
           />
         </Box>
@@ -316,11 +310,11 @@ const AccessControl: FC = () => {
                       <Data>{item.name}</Data>
                       <Data>{startCase(item.role)}</Data>
                       <Data>
-                        {
+                        {/* {
                           partners.find(
                             (partner) => partner.companyId === item.partnerId,
                           )?.companyName
-                        }
+                        } */}
                       </Data>
                       <Data>
                         <DropdownMenu
@@ -389,7 +383,7 @@ const AccessControl: FC = () => {
         show={!!partner}
         onCancel={handleUpdateAccessControlCloseModal}
         onSubmit={handleUpdateAccessControl}
-        recyclingPartners={recyclingPartners}
+        recyclingPartners={[]}
         roles={roles}
         currentPartner={partner}
       />

@@ -6,7 +6,7 @@ registerEnumType(Role, { name: 'Role' })
 
 @ObjectType()
 export class User {
-  @Field((_1) => ID)
+  @Field(() => ID)
   nationalId: string
 
   @Field()
@@ -15,6 +15,7 @@ export class User {
   @Field({ nullable: true })
   mobile?: string
 
+  // TODO change to non nullable
   @Field(() => Role, { nullable: true })
   role?: Role
 
