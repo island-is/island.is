@@ -1,4 +1,9 @@
-import { EnvironmentVariables, Secrets, XroadConfig } from './types/input-types'
+import {
+  EnvironmentVariables,
+  Secrets,
+  XroadConfig,
+  MissingSetting,
+} from './types/input-types'
 import { json } from './dsl'
 
 type XroadSectionConfig = {
@@ -242,8 +247,8 @@ export const CriminalRecord = new XroadConf({
   env: {
     XROAD_CRIMINAL_RECORD_PATH: {
       dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
-      staging: '',
-      prod: '',
+      staging: MissingSetting,
+      prod: MissingSetting,
     },
   },
 })
