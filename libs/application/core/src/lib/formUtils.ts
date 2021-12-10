@@ -3,7 +3,6 @@
 // So disabling the check for now
 
 import deepmerge from 'deepmerge'
-import isArray from 'lodash/isArray'
 import get from 'lodash/get'
 import HtmlParser from 'react-html-parser'
 
@@ -23,51 +22,8 @@ import {
   SubSection,
 } from '../types/Form'
 
-const containsArray = (obj: RecordObject) => {
-  let contains = false
-
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key) && isArray(obj[key])) {
-      contains = true
-    }
-  }
-
-  return contains
-}
-
 export function getErrorViaPath(obj: RecordObject, path: string): string {
   return get(obj, path) as string
-}
-
-export function getValueViaPath<T = unknown>(
-  obj: RecordObject,
-  path: string,
-  defaultValue?: T,
-): T | undefined {
-  // Errors from dataSchema with array of object looks like e.g. `{ 'periods[1].startDate': 'error message' }`
-  if (path.match(/.\[\d\]\../g) && !containsArray(obj)) {
-    return (obj?.[path] ?? defaultValue) as T
-  }
-
-  // For the rest of the case, we are into e.g. `personalAllowance.usePersonalAllowance`
-  try {
-    const travel = (regexp: RegExp) =>
-      String.prototype.split
-        .call(path, regexp)
-        .filter(Boolean)
-        .reduce(
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          (res, key) => (res !== null && res !== undefined ? res[key] : res),
-          obj,
-        ) as RecordObject | string
-
-    const result = travel(/[,[\]]+?/) || travel(/[,[\].]+?/)
-
-    return result === undefined || result === obj ? defaultValue : (result as T)
-  } catch (e) {
-    return undefined
-  }
 }
 
 export const isValidScreen = (node: FormNode): boolean => {

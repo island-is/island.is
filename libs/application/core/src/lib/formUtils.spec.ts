@@ -2,9 +2,9 @@ import {
   extractRepeaterIndexFromField,
   formatText,
   getFormNodeLeaves,
-  getValueViaPath,
   mergeAnswers,
 } from './formUtils'
+import { getValueViaPath } from './getValueViaPath'
 import {
   Application,
   ApplicationTypes,

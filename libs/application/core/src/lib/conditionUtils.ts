@@ -6,7 +6,7 @@ import {
   SingleConditionCheck,
   StaticCheck,
 } from '../types/Condition'
-import { getValueViaPath } from './formUtils'
+import { getValueViaPath } from './getValueViaPath'
 
 function applyStaticConditionalCheck(
   formValue: FormValue,
