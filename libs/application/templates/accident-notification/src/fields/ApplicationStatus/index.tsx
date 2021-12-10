@@ -283,7 +283,7 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
           variant="text"
           onClick={() => changeScreens('inReviewOverviewScreen')}
         >
-          Skoða yfirlit
+          {formatMessage(inReview.buttons.goToOverview)}
         </Button>
       </Box>
       {isAssignee &&
@@ -299,8 +299,8 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
               }
               title={
                 reviewApproval === ReviewApprovalEnum.APPROVED
-                  ? 'Tilkynning hefur verið samþykkt.'
-                  : 'Tilkynning hefur verið andmælt.'
+                  ? formatMessage(inReview.alertMessage.reviewApproved)
+                  : formatMessage(inReview.alertMessage.reviewRejected)
               }
             />
           </Box>
