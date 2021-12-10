@@ -25,7 +25,6 @@ import {
   accidentLocation,
   accidentType,
   applicantInformation,
-  application as applicationMessage,
   application as applicationMessages,
   childInCustody,
   fatalAccident,
@@ -520,8 +519,8 @@ export const FormOverview: FC<FieldBaseProps & FormOverviewProps> = ({
               label={hindrances.carAccident.radioFieldTitle}
               value={
                 answers.carAccidentHindrance === YES
-                  ? applicationMessage.general.yesOptionLabel
-                  : applicationMessage.general.noOptionLabel
+                  ? applicationMessages.general.yesOptionLabel
+                  : applicationMessages.general.noOptionLabel
               }
             />
           </GridColumn>
@@ -530,8 +529,8 @@ export const FormOverview: FC<FieldBaseProps & FormOverviewProps> = ({
               label={hindrances.timePassedHindrance.radioFieldTitle}
               value={
                 answers.timePassedHindrance === YES
-                  ? applicationMessage.general.yesOptionLabel
-                  : applicationMessage.general.noOptionLabel
+                  ? applicationMessages.general.yesOptionLabel
+                  : applicationMessages.general.noOptionLabel
               }
             />
           </GridColumn>
@@ -541,8 +540,8 @@ export const FormOverview: FC<FieldBaseProps & FormOverviewProps> = ({
                 label={sportsClubInfo.employee.title}
                 value={
                   answers.onPayRoll.answer === YES
-                    ? applicationMessage.general.yesOptionLabel
-                    : applicationMessage.general.noOptionLabel
+                    ? applicationMessages.general.yesOptionLabel
+                    : applicationMessages.general.noOptionLabel
                 }
               />
             </GridColumn>
@@ -554,8 +553,8 @@ export const FormOverview: FC<FieldBaseProps & FormOverviewProps> = ({
                 label={workMachine.general.workMachineRadioTitle}
                 value={
                   answers.workMachineRadio === YES
-                    ? applicationMessage.general.yesOptionLabel
-                    : applicationMessage.general.noOptionLabel
+                    ? applicationMessages.general.yesOptionLabel
+                    : applicationMessages.general.noOptionLabel
                 }
               />
             </GridColumn>
