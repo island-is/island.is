@@ -101,7 +101,7 @@ export class StaffService {
           subject: 'Vinnsluaðili og stjórnandi í vinnslukerfi fjárhagsaðstoðar',
           html: AdminAndEmployeeEmailTemplate(
             municipalityName,
-            environment.veitaUrl,
+            environment.veitaBaseUrl,
             input.email,
             isFirstStaffForMunicipality,
           ),
@@ -121,7 +121,7 @@ export class StaffService {
           ...contact,
           subject: 'Stjórnandi í vinnslukerfi fjárhagsaðstoðar',
           html: AdminEmailTemplate(
-            environment.veitaUrl,
+            environment.veitaBaseUrl,
             input.email,
             isFirstStaffForMunicipality,
           ),
