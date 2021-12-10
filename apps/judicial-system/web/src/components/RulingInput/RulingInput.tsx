@@ -11,7 +11,7 @@ import { ruling as m } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isRequired: boolean
   rows?: number
 }
@@ -37,7 +37,7 @@ const RulingInput: React.FC<Props> = (props) => {
     ) {
       autofill('ruling', workingCase.parentCase.ruling, workingCase)
     }
-  }, [workingCase, autofill, formatMessage])
+  }, [])
 
   return (
     <Input
@@ -45,7 +45,7 @@ const RulingInput: React.FC<Props> = (props) => {
       name="ruling"
       label={formatMessage(m.label)}
       placeholder={formatMessage(m.placeholder)}
-      defaultValue={workingCase.ruling}
+      value={workingCase.ruling || ''}
       rows={rows ?? 16}
       errorMessage={rulingErrorMessage}
       hasError={rulingErrorMessage !== ''}

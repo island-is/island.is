@@ -1,8 +1,9 @@
-import React, { FC, useContext } from 'react'
+import React, { FC } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
+
 import {
   Box,
   Stack,
@@ -10,17 +11,20 @@ import {
   BreadcrumbsDeprecated as Breadcrumbs,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
+
 import { PageLayout, InlineError } from '@island.is/skilavottord-web/components'
-import { ActionCardContainer, ProgressCardContainer } from './components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { RecycleActionTypes } from '@island.is/skilavottord-web/types'
-import { UserContext } from '@island.is/skilavottord-web/context'
+import { Query } from '@island.is/skilavottord-web/graphql/schema'
+
 import { filterCarsByStatus } from '@island.is/skilavottord-web/utils'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 
-const skilavottordVehiclesQuery = gql`
-  query skilavottordVehiclesQuery($nationalId: String!) {
-    skilavottordVehicles(nationalId: $nationalId) {
+import { ActionCardContainer, ProgressCardContainer } from './components'
+import { RecycleActionTypes } from './types'
+
+const SkilavottordVehiclesQuery = gql`
+  query skilavottordVehiclesQuery {
+    skilavottordVehicles {
       permno
       vinNumber
       type
@@ -34,7 +38,6 @@ const skilavottordVehiclesQuery = gql`
 `
 
 const Overview: FC = () => {
-  const { user } = useContext(UserContext)
   const {
     t: {
       myCars: t,
@@ -46,11 +49,8 @@ const Overview: FC = () => {
   } = useI18n()
   const router = useRouter()
 
-  const nationalId = user?.nationalId
-  const { data, loading, error } = useQuery(skilavottordVehiclesQuery, {
-    variables: { nationalId },
+  const { data, loading, error } = useQuery<Query>(SkilavottordVehiclesQuery, {
     fetchPolicy: 'cache-and-network',
-    skip: !nationalId,
   })
 
   const cars = data?.skilavottordVehicles || []

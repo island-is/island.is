@@ -44,7 +44,9 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
-
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
       - name: Cache for NodeJS dependencies
         id: node-modules
         uses: island-is/cache@v0.1
@@ -73,7 +75,7 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.ENVS) }}
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Cache for NodeJS dependencies
         id: node-modules
         uses: island-is/cache@v0.1

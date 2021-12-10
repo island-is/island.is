@@ -10,6 +10,7 @@ import { FileModule } from '../file'
 import { environment } from '../../../environments'
 import { StaffModule } from '../staff'
 import { MunicipalityModule } from '../municipality'
+import { AmountModule } from '../amount'
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { MunicipalityModule } from '../municipality'
     SequelizeModule.forFeature([ApplicationModel]),
     StaffModule,
     MunicipalityModule,
+    AmountModule,
   ],
   providers: [ApplicationService],
   controllers: [ApplicationController],

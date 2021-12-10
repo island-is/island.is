@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
+
 import { CaseGender } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
@@ -12,11 +13,12 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+
 import * as styles from './DefendantInfo.css'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
 }
 
 const DefendantInfo: React.FC<Props> = (props) => {
@@ -114,6 +116,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
         <InputMask
           mask="999999-9999"
           maskPlaceholder={null}
+          value={workingCase.accusedNationalId || ''}
           onChange={(event) =>
             removeTabsValidateAndSet(
               'accusedNationalId',
@@ -142,7 +145,6 @@ const DefendantInfo: React.FC<Props> = (props) => {
             autoComplete="off"
             label={formatMessage(core.nationalId)}
             placeholder={formatMessage(core.nationalId)}
-            defaultValue={workingCase.accusedNationalId}
             errorMessage={nationalIdErrorMessage}
             hasError={nationalIdErrorMessage !== ''}
             required
@@ -156,7 +158,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           autoComplete="off"
           label={formatMessage(core.fullName)}
           placeholder={formatMessage(core.fullName)}
-          defaultValue={workingCase.accusedName}
+          value={workingCase.accusedName || ''}
           errorMessage={accusedNameErrorMessage}
           hasError={accusedNameErrorMessage !== ''}
           onChange={(event) =>
@@ -189,7 +191,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
         autoComplete="off"
         label={formatMessage(core.addressOrResidence)}
         placeholder={formatMessage(core.addressOrResidence)}
-        defaultValue={workingCase.accusedAddress}
+        value={workingCase.accusedAddress || ''}
         errorMessage={accusedAddressErrorMessage}
         hasError={
           Boolean(accusedAddressErrorMessage) &&

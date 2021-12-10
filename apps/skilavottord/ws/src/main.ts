@@ -6,4 +6,5 @@ bootstrap({
   appModule: AppModule,
   name: 'skilavottord-ws',
   port: 3333,
+  stripNonClassValidatorInputs: false,
 })
