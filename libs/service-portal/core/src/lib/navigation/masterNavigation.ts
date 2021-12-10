@@ -19,7 +19,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Rafraen skjol
       {
-        heading: m.service,
         name: m.documents,
         path: ServicePortalPath.ElectronicDocumentsRoot,
         icon: {
@@ -80,7 +79,25 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'receipt',
         },
       },
-
+      // Mín réttindi
+      {
+        name: m.delegation,
+        path: ServicePortalPath.MyLicensesRoot,
+        icon: {
+          type: 'outline',
+          icon: 'receipt',
+        },
+        children: [
+          {
+            name: m.parentalLeave,
+            path: ServicePortalPath.ParentalLeave,
+          },
+          {
+            name: m.drivingLicense,
+            path: ServicePortalPath.DrivingLicense,
+          },
+        ],
+      },
       // Menntun
       {
         name: m.education,
@@ -90,7 +107,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'school',
         },
       },
-
       {
         name: m.documentProvider,
         path: ServicePortalPath.DocumentProviderRoot,
@@ -210,15 +226,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'car',
         },
       },
-    ],
-  },
-
-  {
-    name: m.actions,
-    children: [
-      // Stillingar
       {
-        heading: m.comingSoon,
         name: m.settings,
         path: ServicePortalPath.SettingsRoot,
         systemRoute: true,
@@ -244,26 +252,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.islykill,
             path: ServicePortalPath.SettingsIslykill,
-          },
-        ],
-      },
-
-      // Mín réttindi
-      {
-        name: m.delegation,
-        path: ServicePortalPath.MyLicensesRoot,
-        icon: {
-          type: 'outline',
-          icon: 'receipt',
-        },
-        children: [
-          {
-            name: m.parentalLeave,
-            path: ServicePortalPath.ParentalLeave,
-          },
-          {
-            name: m.drivingLicense,
-            path: ServicePortalPath.DrivingLicense,
           },
         ],
       },
