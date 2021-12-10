@@ -77,7 +77,9 @@ const FileUpload = () => {
             },
           },
         }).then((results) => {
-          updateApplication(results.data?.application)
+          if (results.data?.application) {
+            updateApplication(results.data?.application)
+          }
         })
 
         updateForm({
