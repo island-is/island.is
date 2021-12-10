@@ -16,6 +16,7 @@ import cn from 'classnames'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
+import kennitala from 'kennitala'
 import React, { FC } from 'react'
 import { States, YES } from '../../constants'
 import { AccidentNotification } from '../../lib/dataSchema'
@@ -24,18 +25,18 @@ import {
   accidentLocation,
   accidentType,
   applicantInformation,
+  application as applicationMessage,
   application as applicationMessages,
   childInCustody,
   fatalAccident,
   fishingCompanyInfo,
+  hindrances,
   injuredPersonInformation,
+  inReview,
   juridicalPerson,
   locationAndPurpose,
   overview,
   sportsClubInfo,
-  inReview,
-  hindrances,
-  application as applicationMessage,
   workMachine,
 } from '../../lib/messages'
 import {
@@ -57,8 +58,6 @@ import {
 } from '../../utils'
 import * as styles from './FormOverview.css'
 import { FileValueLine, ValueLine } from './ValueLine'
-import kennitala from 'kennitala'
-import { AccidentTypeEnum, WorkAccidentTypeEnum } from '../../types'
 
 interface SubmittedApplicationData {
   data?: {
@@ -124,7 +123,7 @@ export const FormOverview: FC<FieldBaseProps & FormOverviewProps> = ({
       <Text variant="h4" paddingTop={5} paddingBottom={3}>
         {formatText(
           isAssignee
-            ? applicantInformation.general.titleForReviewer
+            ? applicantInformation.forThirdParty.title
             : applicantInformation.general.title,
           application,
           formatMessage,
