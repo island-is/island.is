@@ -1,7 +1,8 @@
 module.exports = {
   preset: '../../../jest.preset.js',
   coverageDirectory: '../../../coverage/apps/reference-backend',
-  setupFiles: ['./test/environment.jest.ts'],
+  globalSetup: './test/globalSetup.ts',
+  globalTeardown: './test/globalTeardown.ts',
   setupFilesAfterEnv: ['./test/setup.ts'],
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   globals: {
