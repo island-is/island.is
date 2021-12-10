@@ -23,6 +23,7 @@ import {
 import { environment } from '../../../environments'
 import { Cookie, CookieOptions, Credentials } from './auth.types'
 import { getSession, signIn, useSession } from 'next-auth/client'
+import { AuthContext } from '@island.is/air-discount-scheme-web/components'
 
 const { samlEntryPoint, audience: audienceUrl, jwtSecret,  } = environment.auth
 const { identityServerAuth } = environment
@@ -122,12 +123,12 @@ export class AuthController {
 */
 
   @Get('/session')
-  async session(@Res() res): Promise<any | null> {
+  async session(@Res() res, @Req() req): Promise<any | null> {
     //ApiStatusStore.getInstance().clearStatus()
     
-    res.session = await getSession()
-
-    return JSON.stringify(identityServerAuth.issuer)
+    res.session = await getSession({req})
+    console.dir(res.session)
+    return res.session//JSON.stringify(identityServerAuth.issuer)
   }
 
   // @Get('/login')

@@ -7,6 +7,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { Role, AuthUser } from './auth.types'
 import { AuthService } from './auth.service'
 import { getSession, signIn } from 'next-auth/client'
+import { AuthContext, AuthProvider } from '@island.is/air-discount-scheme-web/components/AuthProvider'
 
 type AuthorizeOptions = {
   throwOnUnAuthorized?: boolean
@@ -28,10 +29,11 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
   //   return super.canActivate(new ExecutionContextHost([req]))
   // return getSession()
   // }
-  
-  session = getSession()
+
+  session = getSession(AuthContext)
   canActivate(session) {
     console.log('auth guard session is authenticated: ' + session)
+    console.dir(session)
     return session.isAuthenticated
   }
   

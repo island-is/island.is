@@ -1,7 +1,7 @@
 import React, { createContext, ReactNode } from 'react'
 import { AuthenticateUser as User } from '@island.is/air-discount-scheme-web/lib'
 import useUser from '@island.is/air-discount-scheme-web/utils/hooks/useUser'
-import { useSession } from 'next-auth/client'
+import { getSession, useSession } from 'next-auth/client'
 //import { useLogout } from '../../pages/api/auth/logout'
 
 interface AuthProvider {
@@ -21,7 +21,7 @@ export const AuthContext = createContext<AuthProvider>({
 })
 
 const AuthProvider = ({ children }: Props) => {
-  const [session] = useSession()
+  //const session = useSession()
   //const logOut = useLogOut()
   //const use = useUser()
   const { isAuthenticated, user, setUser, loadingUser } = useUser()
@@ -29,6 +29,8 @@ const AuthProvider = ({ children }: Props) => {
   return (
     <AuthContext.Provider
     value={{
+        isAuthenticated,
+        user,
         loadingUser,
         setUser,
       }}

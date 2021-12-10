@@ -8,14 +8,17 @@ import {
 import { FlightLeg } from '../flightLeg'
 import { Authorize, CurrentUser, AuthService, AuthUser } from '../auth'
 import { User } from './models'
+import { Inject } from '@nestjs/common'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Resolver(() => User)
 export class UserResolver {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, @Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
 
   @Authorize({ throwOnUnAuthorized: false })
   @Query(() => User, { nullable: true })
-  user(@CurrentUser() user: AuthUser): User {
+  async user(@CurrentUser() user: AuthUser): Promise<User | undefined> {
     if (!user) {
       return null
     }

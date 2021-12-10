@@ -11,6 +11,7 @@ import {
 } from '@island.is/next-ids-auth'
 import { NextApiRequest, NextApiResponse } from 'next-auth/internals/utils'
 import { JWT } from 'next-auth/jwt'
+import { decode } from 'jsonwebtoken'
 import { useSession } from 'next-auth/client'
 
 const providers = [
@@ -28,7 +29,7 @@ const providers = [
 const callbacks: CallbacksOptions = {
   signIn: signIn,
   jwt: jwt,
-  session: session,
+  session: sessionFunc,
 }
 
 
@@ -64,15 +65,30 @@ async function jwt(token: JWT, user: AuthUser) {
   )
 }
 
-async function session(session: AuthSession, user: AuthUser) {
+async function sessionFunc(session: AuthSession, user: AuthUser) {
   // if(session=undefined) {
   //   session = useSession()
   // }
   console.log('[nextauth] session ' + session)
-  return handleSession(session, user)
+  session.accessToken = user.accessToken
+  session.idToken = user.idToken
+  const decoded = decode(session.accessToken)
+  console.log(decoded)
+  console.log('session access token ' + session.accessToken)
+  if (
+    decoded &&
+    !(typeof decoded === 'string') &&
+    decoded['exp'] &&
+    decoded['scope']
+  ) {
+    session.expires = JSON.stringify(new Date(decoded.exp * 1000))
+    session.scope = decoded.scope
+  }
+
+  return session
 }
 
-const options = { providers, callbacks }
+const options = { providers, callbacks, session: {jwt: true} }
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
   console.log('look at me')

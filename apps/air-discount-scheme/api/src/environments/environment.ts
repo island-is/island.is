@@ -26,7 +26,6 @@ const devConfig = {
     jwtSecret: 'securesecret',
   },
   idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
-
   backendUrl: 'http://localhost:4248',
 }
 
@@ -49,7 +48,7 @@ const prodConfig = {
     jwtSecret: process.env.AUTH_JWT_SECRET,
   },
   idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
-  backendUrl: process.env.BACKEND_URL ?? 'http://localhost:4200',
+  backendUrl: process.env.BACKEND_URL ?? 'http://localhost:4248',
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

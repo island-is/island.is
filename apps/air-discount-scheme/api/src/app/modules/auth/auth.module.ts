@@ -12,10 +12,10 @@ import { AuthModule as AuthNestModule } from '@island.is/auth-nest-tools'
 const ONE_HOUR = 3600
 @Module({
   imports: [
-    // PassportModule.register({
-    //   defaultStrategy: 'jwt',
-    //   session: true,
-    // }),
+    PassportModule.register({
+      defaultStrategy: 'jwt',
+      session: true,
+    }),
     // JwtModule.register({
     //   secretOrPrivateKey: environment.auth.jwtSecret,
     //   signOptions: {
@@ -24,7 +24,7 @@ const ONE_HOUR = 3600
     // }),
     AuthNestModule.register(environment.identityServerAuth),
   ],
-  controllers: [AuthController],
+  //controllers: [AuthController],
   providers: [AuthService],// JwtStrategy],
   exports: [AuthService],
 })

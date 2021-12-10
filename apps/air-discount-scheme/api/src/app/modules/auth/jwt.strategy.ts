@@ -1,12 +1,13 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
-import { Strategy } from 'passport-jwt'
+import { Strategy, ExtractJwt } from 'passport-jwt'
 
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/air-discount-scheme/consts'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { environment } from '../../../environments'
 import { Credentials } from './auth.types'
+const AUTH_BODY_FIELD_NAME = '__accessToken'
 
 const cookieExtractor = (req) => {
   if (req && req.cookies) {
@@ -19,7 +20,11 @@ const cookieExtractor = (req) => {
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {
     super({
-      jwtFromRequest: cookieExtractor,
+      //jwtFromRequest: cookieExtractor,
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        ExtractJwt.fromBodyField(AUTH_BODY_FIELD_NAME),
+      ]),
       secretOrKey: environment.auth.jwtSecret,
       passReqToCallback: true,
     })
