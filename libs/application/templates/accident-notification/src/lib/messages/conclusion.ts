@@ -29,7 +29,7 @@ export const conclusion = {
     bulletOne: {
       id: 'an.application:conclusion.information.bulletOne',
       defaultMessage:
-        'Þriðji aðilli fer yfir tilkynninguna og staðfestir að allar upplýsingar eru réttar',
+        'Þriðji aðili fer yfir tilkynninguna og staðfestir að allar upplýsingar eru réttar.',
       description: 'Conclusion information box bulletOne',
     },
     bulletTwo: {
@@ -41,7 +41,7 @@ export const conclusion = {
     bulletThree: {
       id: 'an.application:conclusion.information.bulletThree',
       defaultMessage:
-        'Þegar öll nauðsynleg gögn hafa borist, fer Sjúkratryggingar Íslands yfir umsókn og er afstaða tekin til bótaskyldu.',
+        'Þegar öll nauðsynleg gögn hafa borist, fara Sjúkratryggingar Íslands yfir umsókn og er afstaða tekin til bótaskyldu.',
       description: 'Conclusion information box bulletThree',
     },
     bulletFour: {
