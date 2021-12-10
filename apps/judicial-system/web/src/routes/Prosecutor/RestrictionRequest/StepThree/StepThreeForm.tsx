@@ -156,7 +156,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
             placeholder={formatMessage(
               rcDemands.sections.lawsBroken.placeholder,
             )}
-            defaultValue={workingCase?.lawsBroken}
+            value={workingCase.lawsBroken || ''}
             errorMessage={lawsBrokenErrorMessage}
             hasError={lawsBrokenErrorMessage !== ''}
             onChange={(event) =>
@@ -223,7 +223,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
               placeholder={formatMessage(
                 rcDemands.sections.legalBasis.legalBasisPlaceholder,
               )}
-              defaultValue={workingCase?.legalBasis}
+              value={workingCase.legalBasis || ''}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'legalBasis',
@@ -325,7 +325,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                 label={formatMessage(
                   rcDemands.sections.custodyRestrictions.label,
                 )}
-                defaultValue={workingCase.requestedOtherRestrictions}
+                value={workingCase.requestedOtherRestrictions || ''}
                 placeholder={formatMessage(
                   rcDemands.sections.custodyRestrictions.placeholder,
                 )}

@@ -6,7 +6,7 @@ import gql from 'graphql-tag'
 
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import {
   Box,
   Stack,
@@ -26,6 +26,7 @@ import {
   Vehicle,
   VehicleOwner,
   Query,
+  Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 import { getDate, getYear } from '@island.is/skilavottord-web/utils/dateUtils'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
@@ -101,14 +102,14 @@ const Overview: FC = () => {
   const getDeregisteredCars = () => {
     const deregisteredVehicles = [] as DeregisteredVehicle[]
     const owners = vehicleOwners?.map(({ vehicles }: VehicleOwner) =>
-      vehicles.map(
+      vehicles?.map(
         ({
           vehicleId,
           vehicleType,
           newregDate,
           recyclingRequests,
         }: Vehicle) => {
-          return recyclingRequests.map((request: RecyclingRequest) => {
+          return recyclingRequests?.map((request: RecyclingRequest) => {
             const { requestType, nameOfRequestor, createdAt } = request
             if (requestType === 'deregistered') {
               deregisteredVehicles.push({

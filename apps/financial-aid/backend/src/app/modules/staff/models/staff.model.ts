@@ -71,6 +71,7 @@ export class StaffModel extends Model<Staff> {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
   })
   @ApiProperty()
   usePseudoName: boolean
