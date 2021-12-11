@@ -1,35 +1,38 @@
-// import '@island.is/api/mocks'
+import '@island.is/api/mocks'
 import { withLocale } from '../i18n'
-// import { Home } from '../screens'
+import { Home } from '../screens'
 
-// export default withLocale('is', 'home')(Home)
+export default withLocale('is', 'home')(Home)
 
-import { useRouter } from 'next/router'
-import { useContext, useEffect } from 'react'
-import { AuthContext } from '@island.is/air-discount-scheme-web/components'
-import { signIn, useSession } from 'next-auth/client'
+// import { useRouter } from 'next/router'
+// import { useContext, useEffect } from 'react'
+// import { AuthContext } from '@island.is/air-discount-scheme-web/components'
+// import { signIn, useSession } from 'next-auth/client'
+// import initApollo from './'
 
-const Index = () => {
-  const [session, loading] = useSession()
-  const { isAuthenticated, user } = useContext(AuthContext)
-  const router = useRouter()
-  useEffect(() => {
-    document.title = 'Umsókn um fjárhagsaðstoð'
-  }, [])
 
-  // if(!session){
-  //   signIn('identity-provider', {callbackUrl: 'http://localhost:4200'})
-  // }
+// const Index = () => {
+//   const [session, loading] = useSession()
+//   const { isAuthenticated, user } = useContext(AuthContext)
+  
+//   const router = useRouter()
+//   useEffect(() => {
+//     document.title = 'MIN Loftbru'
+//   }, [])
 
-  const returnUrl = () => {
-    return `/min-rettindi`
-  }
+//   // if(!session){
+//   //   signIn('identity-provider', {callbackUrl: 'http://localhost:4200'})
+//   // }
 
-  if (isAuthenticated && user) {
-    router.push(returnUrl())
-  }
+//   const returnUrl = () => {
+//     return `/min-rettindi`
+//   }
 
-  return null
-}
+//   if (isAuthenticated && user) {
+//     router.push(returnUrl())
+//   }
 
-export default withLocale('is', 'home')(Index)
+//   return null
+// }
+
+// export default (Index)

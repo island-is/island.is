@@ -40,110 +40,9 @@ interface Props {
   user: User
 }
 
-class AirDiscountSchemeApplication extends App<AppProps> {
-  render() {
-    const { Component, pageProps } = this.props
-    return (
-      <Provider 
-        session={pageProps.session}
-        options={{ clientMaxAge: 120, basePath: '/api/auth'}} 
-      >
-        <ApolloProvider client={initApollo(pageProps.apolloState)}>
-          <AuthProvider>
-            <div>COOL STORY</div>
-            {/* <Component {...pageProps} /> */}
-          </AuthProvider>
-        </ApolloProvider>
-      </Provider>
-    )}
-}
-// class SupportApplication extends App<Props> {
-//   static async getInitialProps(appContext) { 
-//     const { Component, ctx } = appContext
-//     const apolloClient = initApollo({})
-//     const customContext = {
-//       ...ctx,
-//       apolloClient,
-//       ...AuthContext,
-//     }
-
-//     const pageProps = getSession()//(await Component.getInitialProps(customContext)) as any
-
-//     // const layoutProps = await AppLayout.getInitialProps({
-//     //   ...customContext,
-//     //   locale: pageProps.locale,
-//     //   localeKey: pageProps.localeKey,
-//     //   routeKey: pageProps.route,
-//     // } as any)
-
-//     const readonlyCookies = NextCookies(appContext)
-//     Sentry.configureScope((scope) => {
-//       scope.setContext('cookies', readonlyCookies)
-//     })
-
-//     const apolloState = apolloClient.cache.extract()
-    
-//     return {
-//       //layoutProps: { ...layoutProps, ...pageProps.layoutConfig },
-//       pageProps,
-//       apolloState,
-//     }
-//   }
-
-//   getLanguage = (path) => {
-//     if (path.startsWith('en')) {
-//       return 'en'
-//     }
-//     return 'is'
-//   }
-
+// class AirDiscountSchemeApplication extends App<AppProps> {
 //   render() {
-//     const {
-//       Component,
-//       pageProps,
-//       isAuthenticated,
-//       router,
-//       layoutProps,
-//       user,
-//     } = this.props
-
-//     // Sentry.configureScope((scope) => {
-//     //   scope.setExtra('lang', this.getLanguage(router.pathname))
-//     //   scope.setContext('router', {
-//     //     route: router.route,
-//     //     pathname: router.pathname,
-//     //     query: router.query,
-//     //     asPath: router.asPath,
-//     //   })
-//     // })
-
-//     // Sentry.addBreadcrumb({
-//     //   category: 'pages/_app',
-//     //   message: `Rendering app for Component "${get(
-//     //     Component,
-//     //     'name',
-//     //     'unknown',
-//     //   )}" (${process.browser ? 'browser' : 'server'})`,
-//     //   level: Sentry.Severity.Debug,
-//     // })
-
-
-//     const returnUrl = (user: User) => {
-//       console.log('_app returnUrl, user: ' + user)
-//       return `/min-rettindi`
-//     }
-
-//     if (isAuthenticated && user) {
-//       console.log('_app isAuthenticated - hello')
-//       router.push(returnUrl(user))
-//     } 
-//     // else {
-//     //   console.log('return null')
-//     //   return
-//     // }
-//     //console.log('before return _app with session: ' + pageProps.session)
-//     console.log(process.env.NEXTAUTH_URL)
-//     //const { data: session } = getSession()
+//     const { Component, pageProps } = this.props
 //     return (
 //       <Provider 
 //         session={pageProps.session}
@@ -151,23 +50,124 @@ class AirDiscountSchemeApplication extends App<AppProps> {
 //       >
 //         <ApolloProvider client={initApollo(pageProps.apolloState)}>
 //           <AuthProvider>
-//             {/* <AppLayout isAuthenticated={isAuthenticated} {...layoutProps}>
-//               <ErrorBoundary>
-//                 <Component {...pageProps} />
-//               </ErrorBoundary>
-//               <Toast />
-//             </AppLayout> */}
+//             <div>COOL STORY</div>
+//             {/* <Component {...pageProps} /> */}
 //           </AuthProvider>
 //         </ApolloProvider>
 //       </Provider>
-//     )
-//   }
+//     )}
 // }
+class SupportApplication extends App<Props> {
+  static async getInitialProps(appContext) { 
+    const { Component, ctx } = appContext
+    const apolloClient = initApollo({})
+    const customContext = {
+      ...ctx,
+      apolloClient,
+      ...AuthContext,
+    }
+
+    const pageProps = (await Component.getInitialProps(customContext)) as any
+
+    const layoutProps = await AppLayout.getInitialProps({
+      ...customContext,
+      locale: pageProps.locale,
+      localeKey: pageProps.localeKey,
+      routeKey: pageProps.route,
+    } as any)
+
+    const readonlyCookies = NextCookies(appContext)
+    Sentry.configureScope((scope) => {
+      scope.setContext('cookies', readonlyCookies)
+    })
+
+    const apolloState = apolloClient.cache.extract()
+    
+    return {
+      layoutProps: { ...layoutProps, ...pageProps.layoutConfig },
+      pageProps,
+      apolloState,
+    }
+  }
+
+  getLanguage = (path) => {
+    if (path.startsWith('en')) {
+      return 'en'
+    }
+    return 'is'
+  }
+
+  render() {
+    const {
+      Component,
+      pageProps,
+      isAuthenticated,
+      router,
+      layoutProps,
+      user,
+    } = this.props
+
+    // Sentry.configureScope((scope) => {
+    //   scope.setExtra('lang', this.getLanguage(router.pathname))
+    //   scope.setContext('router', {
+    //     route: router.route,
+    //     pathname: router.pathname,
+    //     query: router.query,
+    //     asPath: router.asPath,
+    //   })
+    // })
+
+    // Sentry.addBreadcrumb({
+    //   category: 'pages/_app',
+    //   message: `Rendering app for Component "${get(
+    //     Component,
+    //     'name',
+    //     'unknown',
+    //   )}" (${process.browser ? 'browser' : 'server'})`,
+    //   level: Sentry.Severity.Debug,
+    // })
+
+
+    const returnUrl = (user: User) => {
+      console.log('_app returnUrl, user: ' + user)
+      return `/min-rettindi`
+    }
+
+    if (isAuthenticated && user) {
+      console.log('_app isAuthenticated - hello')
+      router.push(returnUrl(user))
+    } 
+    // else {
+    //   console.log('return null')
+    //   return
+    // }
+    //console.log('before return _app with session: ' + pageProps.session)
+    console.log(process.env.NEXTAUTH_URL)
+    //const { data: session } = getSession()
+    return (
+      <Provider 
+        session={pageProps.session}
+        options={{ clientMaxAge: 120, basePath: '/api/auth'}} 
+      >
+        <ApolloProvider client={initApollo(pageProps.apolloState)}>
+          <AuthProvider>
+            <AppLayout isAuthenticated={isAuthenticated} {...layoutProps}>
+              <ErrorBoundary>
+                <Component {...pageProps} />
+              </ErrorBoundary>
+              <Toast />
+            </AppLayout>
+          </AuthProvider>
+        </ApolloProvider>
+      </Provider>
+    )
+  }
+}
 
 const { serverRuntimeConfig } = getConfig()
 const { graphqlEndpoint, apiUrl } = serverRuntimeConfig
 const externalEndpointDependencies = [graphqlEndpoint, apiUrl]
 
 export default appWithTranslation(
-  withHealthchecks(externalEndpointDependencies)(AirDiscountSchemeApplication),
+  withHealthchecks(externalEndpointDependencies)(SupportApplication)//(AirDiscountSchemeApplication),
 )
