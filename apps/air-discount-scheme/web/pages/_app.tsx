@@ -38,6 +38,8 @@ interface Props {
   isAuthenticated: boolean
   layoutProps: any
   user: User
+  session: any
+  apolloState: any
 }
 
 // class AirDiscountSchemeApplication extends App<AppProps> {
@@ -50,7 +52,7 @@ interface Props {
 //       >
 //         <ApolloProvider client={initApollo(pageProps.apolloState)}>
 //           <AuthProvider>
-//             <div>COOL STORY</div>
+//             <div>AuthProvider</div>
 //             {/* <Component {...pageProps} /> */}
 //           </AuthProvider>
 //         </ApolloProvider>
@@ -59,34 +61,37 @@ interface Props {
 // }
 class SupportApplication extends App<Props> {
   static async getInitialProps(appContext) { 
-    const { Component, ctx } = appContext
+    const { Component, ctx, session } = appContext
     const apolloClient = initApollo({})
     const customContext = {
       ...ctx,
       apolloClient,
-      ...AuthContext,
+    }
+    let pageProps, layoutProps
+    if(Component.getInitialProps){
+      pageProps = (await Component.getInitialProps(customContext)) as any
     }
 
-    const pageProps = (await Component.getInitialProps(customContext)) as any
-
-    const layoutProps = await AppLayout.getInitialProps({
-      ...customContext,
-      locale: pageProps.locale,
-      localeKey: pageProps.localeKey,
-      routeKey: pageProps.route,
-    } as any)
+    if(AppLayout.getInitialProps){
+      layoutProps = await AppLayout.getInitialProps({
+        ...customContext,
+        locale: pageProps?.locale ?? 'is',
+        localeKey: pageProps?.localeKey ?? 'is',
+        routeKey: pageProps?.route ?? '/',
+      } as any)
+    }
 
     const readonlyCookies = NextCookies(appContext)
     Sentry.configureScope((scope) => {
       scope.setContext('cookies', readonlyCookies)
     })
-
     const apolloState = apolloClient.cache.extract()
-    
+    console.log('PProps session: ' + JSON.stringify(session))
     return {
-      layoutProps: { ...layoutProps, ...pageProps.layoutConfig },
+      layoutProps: { ...layoutProps, ...pageProps?.layoutConfig },
       pageProps,
-      apolloState,
+      ...apolloState,
+      session,
     }
   }
 
@@ -105,6 +110,8 @@ class SupportApplication extends App<Props> {
       router,
       layoutProps,
       user,
+      apolloState,
+      session,
     } = this.props
 
     // Sentry.configureScope((scope) => {
@@ -141,15 +148,16 @@ class SupportApplication extends App<Props> {
     //   console.log('return null')
     //   return
     // }
-    //console.log('before return _app with session: ' + pageProps.session)
+    console.log('before return _app with session: ' + this.props.session)
+    
     console.log(process.env.NEXTAUTH_URL)
     //const { data: session } = getSession()
     return (
       <Provider 
-        session={pageProps.session}
+        session={this.props.session ?? getSession()}
         options={{ clientMaxAge: 120, basePath: '/api/auth'}} 
       >
-        <ApolloProvider client={initApollo(pageProps.apolloState)}>
+        <ApolloProvider client={initApollo(this.props.apolloState)}>
           <AuthProvider>
             <AppLayout isAuthenticated={isAuthenticated} {...layoutProps}>
               <ErrorBoundary>

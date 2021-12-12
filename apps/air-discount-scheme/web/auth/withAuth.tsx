@@ -4,8 +4,13 @@ import Router from 'next/router'
 import { isAuthenticated } from './utils'
 import { REDIRECT_KEY } from '../consts'
 import { Routes } from '../types'
+import { signIn } from 'next-auth/client'
 
-const AUTH_URL = '/api/auth/login'
+const AUTH_URL = '/api/auth/signin'
+
+export const login = async () => {
+  signIn('identity-server')
+}
 
 interface PropTypes {
   route: keyof Routes
@@ -13,7 +18,8 @@ interface PropTypes {
   hasAuthenticated: boolean
 }
 
-export default (WrappedComponent) =>
+//export default (WrappedComponent) =>
+const withAuth = (WrappedComponent) =>
   class extends Component<PropTypes> {
     /*
      * !NOTE!
@@ -30,23 +36,30 @@ export default (WrappedComponent) =>
      */
     componentDidMount() {
       const { route, redirectPath, hasAuthenticated } = this.props
-
+      console.log('withAuth did mount')
       if (route !== 'auth') {
+        console.log('route is not auth in withauth')
         localStorage.setItem(REDIRECT_KEY, redirectPath)
       }
       if (!hasAuthenticated) {
-        Router.push(AUTH_URL)
+        console.log('withauth !HasAuthenticated -window is ' + window.location.href)
+        Router.push(AUTH_URL)//('https://identity-server.dev01.devland.is')
+        login()
       }
     }
 
     static async getInitialProps(ctx) {
+      console.log('withAuth getinitialProps')
       const hasAuthenticated = isAuthenticated(ctx)
+      console.log('withauth getinit isAuthenticated ' + isAuthenticated(ctx))
       const props = { redirectPath: ctx.pathname, hasAuthenticated }
+      console.log('withAuth redirPath: ctxpathname: ' + ctx.pathname)
       if (!hasAuthenticated) {
         return props
       }
 
       if (WrappedComponent.getInitialProps) {
+        console.log('inside this withauth - wrapped component  getinitprops')
         return { ...props, ...(await WrappedComponent.getInitialProps(ctx)) }
       }
       return props
@@ -54,7 +67,9 @@ export default (WrappedComponent) =>
 
     render() {
       const { hasAuthenticated } = this.props
+      console.log('withauth render redir ' + this.props.redirectPath)
       if (hasAuthenticated) {
+        Router.push(this.props.redirectPath)
         return <WrappedComponent {...this.props} />
       }
 
@@ -75,3 +90,4 @@ export default (WrappedComponent) =>
       )
     }
   }
+export default withAuth

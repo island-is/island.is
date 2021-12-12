@@ -24,6 +24,8 @@ const AuthProvider = ({ children }: Props) => {
   //const session = useSession()
   //const logOut = useLogOut()
   //const use = useUser()
+  const session = getSession()
+
   const { isAuthenticated, user, setUser, loadingUser } = useUser()
   console.log('inside auth provider - isauth: ' + isAuthenticated + ' -user: ' + user)
   return (

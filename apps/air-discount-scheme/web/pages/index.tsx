@@ -1,8 +1,13 @@
 import '@island.is/api/mocks'
+import { useSession } from 'next-auth/client'
 import { withLocale } from '../i18n'
 import { Home } from '../screens'
-
-export default withLocale('is', 'home')(Home)
+// const IndexHome = () => {
+   //const [session, loading] = useSession()
+//   //console.log(session)
+//   return withLocale('is', 'home')(Home)
+// }
+export default withLocale('is', 'home')(Home)//IndexHome 
 
 // import { useRouter } from 'next/router'
 // import { useContext, useEffect } from 'react'
@@ -32,7 +37,7 @@ export default withLocale('is', 'home')(Home)
 //     router.push(returnUrl())
 //   }
 
-//   return null
+//   return withLocale('is', 'home')(Home)
 // }
 
 // export default (Index)

@@ -19,6 +19,8 @@ export class UserResolver {
   @Authorize({ throwOnUnAuthorized: false })
   @Query(() => User, { nullable: true })
   async user(@CurrentUser() user: AuthUser): Promise<User | undefined> {
+    console.log('user resolver API')
+    console.log(user)
     if (!user) {
       return null
     }
