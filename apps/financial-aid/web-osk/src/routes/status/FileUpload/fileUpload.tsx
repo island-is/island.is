@@ -46,9 +46,9 @@ const FileUpload = () => {
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const [updateApplicationMutation] = useMutation<{ application: Application }>(
-    ApplicationMutation,
-  )
+  const [updateApplicationMutation] = useMutation<{
+    updateApplication: Application
+  }>(ApplicationMutation)
 
   const [createApplicationEventMutation] = useMutation(ApplicationEventMutation)
 
@@ -77,8 +77,8 @@ const FileUpload = () => {
             },
           },
         }).then((results) => {
-          if (results.data?.application) {
-            updateApplication(results.data?.application)
+          if (results.data?.updateApplication) {
+            updateApplication(results.data?.updateApplication)
           }
         })
 
