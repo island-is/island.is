@@ -4,9 +4,9 @@ import Router from 'next/router'
 import { isAuthenticated } from './utils'
 import { REDIRECT_KEY } from '../consts'
 import { Routes } from '../types'
-import { signIn } from 'next-auth/client'
+import { getSession, signIn } from 'next-auth/client'
 
-const AUTH_URL = '/api/auth/signin'
+const AUTH_URL = '/api/auth/signin-oidc'
 
 export const login = async () => {
   signIn('identity-server')
@@ -37,14 +37,15 @@ const withAuth = (WrappedComponent) =>
     componentDidMount() {
       const { route, redirectPath, hasAuthenticated } = this.props
       console.log('withAuth did mount')
+      const session = getSession()
       if (route !== 'auth') {
         console.log('route is not auth in withauth')
         localStorage.setItem(REDIRECT_KEY, redirectPath)
       }
       if (!hasAuthenticated) {
         console.log('withauth !HasAuthenticated -window is ' + window.location.href)
-        Router.push(AUTH_URL)//('https://identity-server.dev01.devland.is')
         login()
+        //Router.push(AUTH_URL)//('https://identity-server.dev01.devland.is')
       }
     }
 

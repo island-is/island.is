@@ -90,7 +90,7 @@ class SupportApplication extends App<Props> {
     return {
       layoutProps: { ...layoutProps, ...pageProps?.layoutConfig },
       pageProps,
-      ...apolloState,
+      apolloState,
       session,
     }
   }

@@ -44,6 +44,7 @@ export class UserService {
     model: new (user: NationalRegistryUser, fund: Fund) => T,
   ): Promise<T | null> {
     const user = await this.nationalRegistryService.getUser(nationalId)
+    console.log('backend getuserbynationalid ' + user)
     if (!user) {
       return null
     }
