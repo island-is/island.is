@@ -134,7 +134,7 @@ export const estimatedBreakDown = (
   ]
 }
 
-export const acceptedAmountBreakDown = (amount: Amount): Calculations[] => {
+export const acceptedAmountBreakDown = (amount?: Amount): Calculations[] => {
   if (!amount) {
     return []
   }

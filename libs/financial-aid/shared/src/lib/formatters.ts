@@ -1,5 +1,5 @@
 import { months, nextMonth } from './const'
-import { ApplicationFiltersEnum } from './enums'
+import { AmountModal, ApplicationFiltersEnum } from './enums'
 import {
   HomeCircumstances,
   ApplicationState,
@@ -13,10 +13,13 @@ import {
 } from './enums'
 import {
   Aid,
+  Amount,
   ApplicantEmailData,
   ApplicationEvent,
+  Calculations,
   Municipality,
 } from './interfaces'
+import { acceptedAmountBreakDown, estimatedBreakDown } from './taxCalculator'
 import type { KeyMapping } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
@@ -198,6 +201,26 @@ export const getFileTypeName: KeyMapping<FileType, string> = {
   Income: 'Tekjugögn',
   Other: 'Innsend gögn',
   SpouseFiles: 'Gögn frá maka',
+}
+
+export const getAidAmountModalInfo = (
+  type: AmountModal,
+  aidAmount: number = 0,
+  usePersonalTaxCredit: boolean = false,
+  finalAmount?: Amount,
+): { headline: string; calculations: Calculations[] } => {
+  switch (type) {
+    case AmountModal.ESTIMATED:
+      return {
+        headline: 'Áætluð aðstoð',
+        calculations: estimatedBreakDown(aidAmount, usePersonalTaxCredit),
+      }
+    case AmountModal.PROVIDED:
+      return {
+        headline: 'Veitt aðstoð',
+        calculations: acceptedAmountBreakDown(finalAmount),
+      }
+  }
 }
 
 export const getApplicantEmailDataFromEventType = (
