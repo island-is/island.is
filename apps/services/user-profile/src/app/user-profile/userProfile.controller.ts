@@ -20,11 +20,13 @@ import {
   ForbiddenException,
   BadRequestException,
   HttpCode,
+  Delete,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiSecurity,
   ApiTags,
@@ -34,7 +36,10 @@ import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
+import { DeleteTokenResponseDto } from './dto/deleteTokenResponseDto'
+import { DeviceTokenDto } from './dto/deviceToken.dto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
+import { UserDeviceTokensDto } from './dto/userDeviceTokens.dto'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
@@ -328,5 +333,67 @@ export class UserProfileController {
     }
 
     await this.verificationService.createSmsVerification(createSmsVerification)
+  }
+
+  // FINDALL token
+  @Audit()
+  @ApiOperation({
+    summary:
+      'NOTE: Returns a list of any user´s device tokens - Used by Notification workers - not exposed via GraphQL',
+  })
+  @ApiOkResponse({ type: [UserDeviceTokensDto] })
+  @Scopes(UserProfileScope.read)
+  @ApiSecurity('oauth2', [UserProfileScope.read])
+  @Get('userProfile/:nationalId/deviceToken')
+  async getDeviceTokens(
+    @Param('nationalId')
+    nationalId: string,
+  ): Promise<UserDeviceTokensDto[]> {
+    return await this.userProfileService.getDeviceTokens(nationalId)
+  }
+
+  // CREATE token
+  @Audit()
+  @ApiOperation({
+    summary: 'Adds a device token for notifications for a user device ',
+  })
+  @ApiOkResponse({ type: UserDeviceTokensDto })
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
+  @Post('userProfile/:nationalId/deviceToken')
+  async addDeviceToken(
+    @Param('nationalId')
+    nationalId: string,
+    @CurrentUser() user: User,
+    @Body() body: DeviceTokenDto,
+  ): Promise<UserDeviceTokensDto> {
+    if (nationalId != user.nationalId) {
+      throw new BadRequestException()
+    } else {
+      body.nationalId = user.nationalId
+      return await this.userProfileService.addDeviceToken(body)
+    }
+  }
+
+  // DELETE token
+  @Audit()
+  @ApiOperation({
+    summary: 'Deletes a device token for a user device',
+  })
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
+  @ApiOkResponse({ type: DeleteTokenResponseDto })
+  @Delete('userProfile/:nationalId/deviceToken')
+  async deleteDeviceToken(
+    @Param('nationalId')
+    nationalId: string,
+    @CurrentUser() user: User,
+    @Body() body: DeviceTokenDto,
+  ): Promise<DeleteTokenResponseDto> {
+    if (nationalId != user.nationalId) {
+      throw new BadRequestException()
+    } else {
+      return await this.userProfileService.deleteDeviceToken(body, user)
+    }
   }
 }
