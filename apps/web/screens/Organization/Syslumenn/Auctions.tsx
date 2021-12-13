@@ -23,7 +23,6 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
-  QueryGetAuctionArgs,
   SyslumennAuction,
 } from '@island.is/web/graphql/schema'
 import {
