@@ -44,7 +44,7 @@ export class IcelandicNameController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Get()
+  @Get('names')
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
@@ -54,7 +54,7 @@ export class IcelandicNameController {
     return await this.icelandicNameService.getAll()
   }
 
-  @Get('id/:id')
+  @Get('names/:id')
   @ApiOkResponse({
     type: IcelandicName,
     description: 'Gets icelandic name by id.',
@@ -72,7 +72,7 @@ export class IcelandicNameController {
     return result
   }
 
-  @Get('initial-letter/:initialLetter')
+  @Get('names/initial-letter/:initialLetter')
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
@@ -84,7 +84,7 @@ export class IcelandicNameController {
     return await this.icelandicNameService.getByInitialLetter(initialLetter)
   }
 
-  @Get('search/:q')
+  @Get('names/search/:q')
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
@@ -98,7 +98,7 @@ export class IcelandicNameController {
 
   @UseGuards(IdsUserGuard, NationalIdGuard, ScopesGuard)
   @Scopes(ApiScope.internal)
-  @Patch(':id')
+  @Patch('names/:id')
   @ApiBearerAuth()
   @ApiOkResponse()
   async updateNameById(
@@ -127,7 +127,7 @@ export class IcelandicNameController {
 
   @UseGuards(IdsUserGuard, NationalIdGuard, ScopesGuard)
   @Scopes(ApiScope.internal)
-  @Post()
+  @Post('names')
   @ApiBearerAuth()
   @HttpCode(201)
   @ApiOkResponse()
@@ -155,7 +155,7 @@ export class IcelandicNameController {
 
   @UseGuards(IdsUserGuard, NationalIdGuard, ScopesGuard)
   @Scopes(ApiScope.internal)
-  @Delete(':id')
+  @Delete('names/:id')
   @ApiBearerAuth()
   @ApiOkResponse()
   @HttpCode(204)
