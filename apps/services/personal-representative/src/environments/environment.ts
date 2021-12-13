@@ -4,7 +4,7 @@ const devConfig = {
     defaultNamespace: '@island.is/personal-representative',
   },
   auth: {
-    audience: '@island.is',
+    audience: '@island.is/auth',
     issuer:
       process.env.IDENTITY_SERVER_ISSUER_URL ??
       'https://identity-server.dev01.devland.is',
@@ -19,7 +19,7 @@ const prodConfig = {
     serviceName: 'services-personal-representative',
   },
   auth: {
-    audience: '@island.is',
+    audience: '@island.is/auth',
     issuer: process.env.IDS_ISSUER ?? '',
   },
 }
