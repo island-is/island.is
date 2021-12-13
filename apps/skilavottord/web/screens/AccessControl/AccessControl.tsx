@@ -125,14 +125,27 @@ const AccessControl: FC = () => {
 
   const [createSkilavottordAccessControl] = useMutation(
     CreateSkilavottordAccessControlMutation,
+    {
+      refetchQueries: [
+        {
+          query: SkilavottordAccessControlsQuery,
+        },
+      ],
+    },
   )
   const [updateSkilavottordAccessControl] = useMutation(
     UpdateSkilavottordAccessControlMutation,
+    {
+      refetchQueries: [
+        {
+          query: SkilavottordAccessControlsQuery,
+        },
+      ],
+    },
   )
   const [deleteSkilavottordAccessControl] = useMutation(
     DeleteSkilavottordAccessControlMutation,
     {
-      // TODO for now just to easily work with API, it may be optimized(optimistic UI/update cache)
       refetchQueries: [
         {
           query: SkilavottordAccessControlsQuery,
