@@ -16,6 +16,7 @@ import {
   isFatalAccident,
   isPowerOfAttorney,
   isReportingOnBehalfOfInjured,
+  isUniqueAssignee,
 } from '../../utils'
 
 export const addAttachmentsSection = (isAssignee?: boolean) =>
@@ -52,8 +53,9 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             space: 5,
             titleVariant: 'h5',
             condition: (formValue) =>
-              !isAssignee &&
+
               isPowerOfAttorney(formValue) &&
+              !isUniqueAssignee(formValue, !!isAssignee) &&
               !hasReceivedProxyDocument(formValue),
           }),
           buildCustomField({
@@ -61,8 +63,8 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             component: 'ProxyDocument',
             title: '',
             condition: (formValue) =>
-              !isAssignee &&
               isPowerOfAttorney(formValue) &&
+              !isUniqueAssignee(formValue, !!isAssignee) &&
               !hasReceivedProxyDocument(formValue),
           }),
           buildFileUploadField({
@@ -73,8 +75,8 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             uploadDescription: addDocuments.general.uploadDescription,
             uploadButtonLabel: addDocuments.general.uploadButtonLabel,
             condition: (formValue) =>
-              !isAssignee &&
               isPowerOfAttorney(formValue) &&
+              !isUniqueAssignee(formValue, !!isAssignee) &&
               !hasReceivedProxyDocument(formValue),
           }),
           buildDescriptionField({

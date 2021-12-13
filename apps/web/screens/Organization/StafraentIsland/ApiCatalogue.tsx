@@ -5,7 +5,7 @@ import {
   Box,
   Button,
   GridContainer,
-  LoadingIcon,
+  LoadingDots,
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
@@ -337,7 +337,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
                   {error ? (
                     <Text>{sn('errorHeading')}</Text>
                   ) : loading ? (
-                    <LoadingIcon animate color="blue400" size={32} />
+                    <LoadingDots />
                   ) : (
                     <Text>{sn('notFound')}</Text>
                   )}
@@ -353,11 +353,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
                   {data?.getApiCatalogue?.pageInfo?.nextCursor != null && (
                     <Box display="flex" justifyContent="center">
                       <Button onClick={() => onLoadMore()} variant="ghost">
-                        {!loading ? (
-                          sn('fmButton')
-                        ) : (
-                          <LoadingIcon animate color="blue400" size={16} />
-                        )}
+                        {!loading ? sn('fmButton') : <LoadingDots />}
                       </Button>
                     </Box>
                   )}

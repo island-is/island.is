@@ -59,7 +59,7 @@ cd apps/skilavottord/ws
 and run
 
 ```bash
-docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d
+docker-compose -f docker-compose.yml up -d
 ```
 
 Then run migrations and seed the database:

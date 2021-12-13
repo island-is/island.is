@@ -30,7 +30,6 @@ export * from './lib/Toast/Toast'
 // Components
 export * from './lib/AsyncSearch/AsyncSearch'
 export * from './lib/Logo/Logo'
-export * from './lib/LoadingIcon/LoadingIcon'
 export * from './lib/LoadingDots/LoadingDots'
 export * from './lib/Page/Page'
 export * from './lib/BulletList/BulletList'
@@ -53,7 +52,6 @@ export * from './lib/ModalBase/ModalBase'
 export * from './lib/Filter/Filter'
 export * from './lib/Filter/FilterMultiChoice/FilterMultiChoice'
 export * from './lib/Filter/FilterInput/FilterInput'
-export * from './lib/PdfViewer/PdfViewer'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'

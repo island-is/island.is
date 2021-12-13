@@ -54,7 +54,7 @@ export const hasReceivedAllDocuments = (answers: FormValue) => {
 export const getErrorMessageForMissingDocuments = (
   answers: FormValue,
   formatMessage: MessageFormatter,
-  isAssigne = false,
+  isAssigneeAndUnique: boolean,
 ) => {
   const whoIsTheNotificationFor = getValueViaPath(
     answers,
@@ -69,11 +69,11 @@ export const getErrorMessageForMissingDocuments = (
     )
   }
 
-  // Need to make sure the assignee isnt getting the option of uploading the proxy document
+  // Only show this to applicant or assignee that is also the applicant
   if (
     whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY &&
-    !isAssigne &&
-    !hasReceivedProxyDocument(answers)
+    !hasReceivedProxyDocument(answers) &&
+    !isAssigneeAndUnique
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.powerOfAttorneyDocument),
