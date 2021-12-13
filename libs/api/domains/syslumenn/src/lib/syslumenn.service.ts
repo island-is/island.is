@@ -121,10 +121,12 @@ export class SyslumennService {
     nationalId: string,
   ): Promise<CertificateInfoRepsonse> {
     await this.login()
-    const certificate = await this.syslumennApiWithAuth().faVottordUpplysingarGet({
-      audkenni: this.id,
-      kennitala: nationalId,
-    })
+    const certificate = await this.syslumennApiWithAuth().faVottordUpplysingarGet(
+      {
+        audkenni: this.id,
+        kennitala: nationalId,
+      },
+    )
     // Once syslumenn openapi defenition is fixed this will not need parsing
     const parsedCertificate = JSON.parse(
       JSON.parse(JSON.stringify(certificate)),
