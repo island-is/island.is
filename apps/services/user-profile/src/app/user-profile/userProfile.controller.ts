@@ -335,7 +335,6 @@ export class UserProfileController {
     await this.verificationService.createSmsVerification(createSmsVerification)
   }
 
-  // FINDALL token
   @Audit()
   @ApiOperation({
     summary:
@@ -352,7 +351,6 @@ export class UserProfileController {
     return await this.userProfileService.getDeviceTokens(nationalId)
   }
 
-  // CREATE token
   @Audit()
   @ApiOperation({
     summary: 'Adds a device token for notifications for a user device ',
@@ -375,7 +373,6 @@ export class UserProfileController {
     }
   }
 
-  // DELETE token
   @Audit()
   @ApiOperation({
     summary: 'Deletes a device token for a user device',

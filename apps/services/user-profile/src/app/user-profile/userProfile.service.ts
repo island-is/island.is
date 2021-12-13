@@ -63,7 +63,6 @@ export class UserProfileService {
     return { numberOfAffectedRows, updatedUserProfile }
   }
 
-  // FIND ALL TOKENS by NationalId - used by notifications workers
   async getDeviceTokens(nationalId: string) {
     return await this.UserDeviceTokensModel.findAll({
       where: { nationalId },
@@ -71,7 +70,6 @@ export class UserProfileService {
     })
   }
 
-  // CREATE TOKEN
   async addDeviceToken(body: DeviceTokenDto) {
     try {
       return await this.UserDeviceTokensModel.create(body)
@@ -80,7 +78,6 @@ export class UserProfileService {
     }
   }
 
-  // DELETE TOKEN
   async deleteDeviceToken(body: DeviceTokenDto, user: User) {
     const token = await this.UserDeviceTokensModel.findOne({
       where: { nationalId: user.nationalId, deviceToken: body.deviceToken },
