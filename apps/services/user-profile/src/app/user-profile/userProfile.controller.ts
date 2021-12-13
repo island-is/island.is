@@ -335,7 +335,6 @@ export class UserProfileController {
     await this.verificationService.createSmsVerification(createSmsVerification)
   }
 
-
   @ApiOperation({
     summary:
       'NOTE: Returns a list of any user´s device tokens - Used by Notification workers - not exposed via GraphQL',
