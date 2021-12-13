@@ -1,7 +1,9 @@
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   PersonalRepresentativeRightType,
   PersonalRepresentativeRightTypeService,
 } from '@island.is/auth-api-lib/personal-representative'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import {
   BadRequestException,
   Controller,
@@ -14,15 +16,18 @@ import {
 import {
   ApiOperation,
   ApiOkResponse,
-  ApiBearerAuth,
+  ApiHeader,
   ApiTags,
 } from '@nestjs/swagger'
-import { AuthGuard } from '../common'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.representativeRead)
 @ApiTags('Personal Representative External - Permission Types')
 @Controller('v1/permission-type')
-@UseGuards(AuthGuard)
-@ApiBearerAuth()
+@ApiHeader({
+  name: 'authorization',
+  description: 'Bearer token authorization',
+})
 export class PermissionTypeController {
   constructor(
     @Inject(PersonalRepresentativeRightTypeService)

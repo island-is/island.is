@@ -1,8 +1,7 @@
-import { setupWithoutAuth } from '../../../../../test/setup'
+import { setupWithAuth, setupWithoutAuth } from '../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../test/testHelpers'
 import request from 'supertest'
 import { TestApp } from '@island.is/testing/nest'
-import { environment } from '../../../../environments'
 import {
   PersonalRepresentative,
   PersonalRepresentativeDTO,
@@ -12,10 +11,62 @@ import {
 } from '@island.is/auth-api-lib/personal-representative'
 import { PersonalRepresentativeRightTypeService } from '@island.is/auth-api-lib/personal-representative'
 import { PersonalRepresentativeService } from '@island.is/auth-api-lib/personal-representative'
+import { ApiScope } from '@island.is/auth/scopes'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+
+const user = createCurrentUser({
+  nationalId: '1122334455',
+  scope: [ApiScope.representativeRead],
+})
+
+const rightTypeList = [
+  { code: 'code1', description: 'code1 description' },
+  { code: 'code2', description: 'code2 description' },
+]
+
+const personalRepresentativeType = {
+  code: 'prTypeCode',
+  name: 'prTypeName',
+  description: 'prTypeDescription',
+}
+
+const simpleRequestData: PersonalRepresentativeDTO = {
+  contractId: '123456',
+  nationalIdPersonalRepresentative: '1234567890',
+  nationalIdRepresentedPerson: '1234567891',
+  rightCodes: [],
+}
+
+describe('PersonalRepresentativePermissionController - Without Auth', () => {
+  let app: TestApp
+  let server: request.SuperTest<request.Test>
+
+  beforeAll(async () => {
+    // TestApp setup with auth and database
+    app = await setupWithoutAuth()
+    server = request(app.getHttpServer())
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
+  })
+
+  it('Get v1/personal-representative-permission/{nationalId} should fail and return 403 error if bearer is missing', async () => {
+    // Test get personal rep
+    const response = await server
+      .get(
+        `/v1/personal-representative-permission/${simpleRequestData.nationalIdPersonalRepresentative}/`,
+      )
+      .expect(403)
+
+    expect(response.body).toMatchObject({
+      ...errorExpectedStructure,
+      statusCode: 403,
+    })
+  })
+})
 
 describe('PersonalRepresentativePermissionController', () => {
-  const { externalServiceProvidersApiKeys } = environment
-
   let app: TestApp
   let server: request.SuperTest<request.Test>
   let rightService: PersonalRepresentativeRightTypeService
@@ -26,26 +77,8 @@ describe('PersonalRepresentativePermissionController', () => {
   let prPermissionsModel: typeof PersonalRepresentativeRight
   let personalRep: PersonalRepresentativeDTO | null
 
-  const rightTypeList = [
-    { code: 'code1', description: 'code1 description' },
-    { code: 'code2', description: 'code2 description' },
-  ]
-
-  const personalRepresentativeType = {
-    code: 'prTypeCode',
-    name: 'prTypeName',
-    description: 'prTypeDescription',
-  }
-
-  const simpleRequestData: PersonalRepresentativeDTO = {
-    contractId: '123456',
-    nationalIdPersonalRepresentative: '1234567890',
-    nationalIdRepresentedPerson: '1234567891',
-    rightCodes: [],
-  }
-
   beforeAll(async () => {
-    app = await setupWithoutAuth()
+    app = await setupWithAuth({ user })
     server = request(app.getHttpServer())
     rightService = app.get<PersonalRepresentativeRightTypeService>(
       PersonalRepresentativeRightTypeService,
@@ -114,29 +147,11 @@ describe('PersonalRepresentativePermissionController', () => {
   })
 
   describe('Get', () => {
-    it('Get v1/personal-representative-permission/{nationalId} should fail and return 403 error if bearer is missing', async () => {
-      // Test get personal rep
-      const response = await server
-        .get(
-          `/v1/personal-representative-permission/${simpleRequestData.nationalIdPersonalRepresentative}/`,
-        )
-        .expect(403)
-
-      expect(response.body).toMatchObject({
-        ...errorExpectedStructure,
-        statusCode: 403,
-      })
-    })
-
     it('Get v1/personal-representative-permission/{nationalId} should get personal rep connections', async () => {
       // Test get personal rep
       const response = await server
         .get(
           `/v1/personal-representative-permission/${simpleRequestData.nationalIdPersonalRepresentative}/`,
-        )
-        .set(
-          'Authorization',
-          `Bearer ${externalServiceProvidersApiKeys.heilsuvera}`,
         )
         .expect(200)
 

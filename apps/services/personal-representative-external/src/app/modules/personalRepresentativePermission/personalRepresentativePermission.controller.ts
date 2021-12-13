@@ -1,3 +1,4 @@
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   PersonalRepresentativeDTO,
   PersonalRepresentativeService,
@@ -9,27 +10,34 @@ import {
   Get,
   Inject,
   Param,
-  Req,
 } from '@nestjs/common'
 import {
   ApiOperation,
   ApiOkResponse,
-  ApiBearerAuth,
+  ApiHeader,
   ApiTags,
   ApiParam,
 } from '@nestjs/swagger'
-import { AuthGuard } from '../common'
 import { AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/'
-import type { HttpRequest } from '../../app.types'
-import { User } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representative-permission`
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.representativeRead)
 @ApiTags('Personal Representative Permission')
 @Controller('v1/personal-representative-permission')
-@UseGuards(AuthGuard)
-@ApiBearerAuth()
+@ApiHeader({
+  name: 'authorization',
+  description: 'Bearer token authorization',
+})
 export class PersonalRepresentativePermissionController {
   constructor(
     @Inject(PersonalRepresentativeService)
@@ -51,17 +59,10 @@ export class PersonalRepresentativePermissionController {
   @ApiParam({ name: 'nationalId', required: true, type: String })
   async getByPersonalRepresentativeAsync(
     @Param('nationalId') nationalId: string,
-    @Req() request: HttpRequest,
+    @CurrentUser() user: User,
   ): Promise<PersonalRepresentativeDTO[]> {
     if (!nationalId) {
       throw new BadRequestException('NationalId needs to be provided')
-    }
-    // Since we do not have an island.is user login we need to create a user object
-    const user: User = {
-      nationalId: nationalId,
-      scope: [],
-      authorization: '',
-      client: request.serviceProvider,
     }
 
     return await this.auditService.auditPromise(

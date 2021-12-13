@@ -1,13 +1,13 @@
-import { ChildServiceApiKeys } from '../app/modules/consts/childServices'
-
 const devConfig = {
   production: false,
   audit: {
     defaultNamespace: '@island.is/personal-representative',
   },
-  childServiceApiKeys: {
-    [ChildServiceApiKeys.felagsmalaraduneytid]:
-      ChildServiceApiKeys.felagsmalaraduneytid,
+  auth: {
+    audience: '@island.is',
+    issuer:
+      process.env.IDENTITY_SERVER_ISSUER_URL ??
+      'https://identity-server.dev01.devland.is',
   },
 }
 
@@ -18,9 +18,9 @@ const prodConfig = {
     groupName: process.env.AUDIT_GROUP_NAME,
     serviceName: 'services-personal-representative',
   },
-  childServiceApiKeys: {
-    [ChildServiceApiKeys.felagsmalaraduneytid]:
-      process.env.FELAGSMALARADUNEYTI_API_KEY,
+  auth: {
+    audience: '@island.is',
+    issuer: process.env.IDS_ISSUER ?? '',
   },
 }
 

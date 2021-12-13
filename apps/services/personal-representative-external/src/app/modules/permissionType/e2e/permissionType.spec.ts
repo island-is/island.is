@@ -1,15 +1,38 @@
-import { setupWithoutAuth } from '../../../../../test/setup'
+import { setupWithAuth, setupWithoutAuth } from '../../../../../test/setup'
 import request from 'supertest'
 import { TestApp } from '@island.is/testing/nest'
-import { environment } from '../../../../environments'
 import {
   PersonalRepresentativeRightTypeService,
   PersonalRepresentativeRightType,
 } from '@island.is/auth-api-lib/personal-representative'
+import { ApiScope } from '@island.is/auth/scopes'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+
+const user = createCurrentUser({
+  nationalId: '1122334455',
+  scope: [ApiScope.representativeRead],
+})
+
+describe('PermissionTypeController - Without Auth', () => {
+  let app: TestApp
+  let server: request.SuperTest<request.Test>
+
+  beforeAll(async () => {
+    // TestApp setup with auth and database
+    app = await setupWithoutAuth()
+    server = request(app.getHttpServer())
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
+  })
+
+  it('Get v1/permission-type  should fail and return 403 error if bearer is missing', async () => {
+    await server.get(`/v1/permission-type`).expect(403)
+  })
+})
 
 describe('PermissionTypeController', () => {
-  const { externalServiceProvidersApiKeys } = environment
-
   let app: TestApp
   let server: request.SuperTest<request.Test>
   let rightService: PersonalRepresentativeRightTypeService
@@ -21,7 +44,7 @@ describe('PermissionTypeController', () => {
   ]
 
   beforeAll(async () => {
-    app = await setupWithoutAuth()
+    app = await setupWithAuth({ user })
     server = request(app.getHttpServer())
     rightService = app.get<PersonalRepresentativeRightTypeService>(
       PersonalRepresentativeRightTypeService,
@@ -50,13 +73,7 @@ describe('PermissionTypeController', () => {
   describe('Get', () => {
     it('Get v1/permission-type should get all permission types', async () => {
       // Test get personal rep
-      const response = await server
-        .get(`/v1/permission-type`)
-        .set(
-          'Authorization',
-          `Bearer ${externalServiceProvidersApiKeys.heilsuvera}`,
-        )
-        .expect(200)
+      const response = await server.get(`/v1/permission-type`).expect(200)
 
       expect(response.body).toMatchObject(rightTypeList)
     })
@@ -65,10 +82,6 @@ describe('PermissionTypeController', () => {
       // Test get personal rep
       const response = await server
         .get(`/v1/permission-type/${rightTypeList[0].code}`)
-        .set(
-          'Authorization',
-          `Bearer ${externalServiceProvidersApiKeys.heilsuvera}`,
-        )
         .expect(200)
 
       expect(response.body).toMatchObject(rightTypeList[0])

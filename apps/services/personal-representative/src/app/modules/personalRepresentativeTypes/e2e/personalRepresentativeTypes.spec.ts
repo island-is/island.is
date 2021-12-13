@@ -1,26 +1,57 @@
-import { setupWithoutAuth } from '../../../../../test/setup'
+import { setupWithoutAuth, setupWithAuth } from '../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../test/testHelpers'
 import request from 'supertest'
-import { environment } from '../../../../environments'
 import { TestApp } from '@island.is/testing/nest'
 import { PersonalRepresentativeType } from '@island.is/auth-api-lib/personal-representative'
+import { ApiScope } from '@island.is/auth/scopes'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+
+const user = createCurrentUser({
+  nationalId: '1122334455',
+  scope: [ApiScope.representativeWrite],
+})
+
+const simpleRequestData = {
+  code: 'Code',
+  name: 'Name',
+  description: 'Description',
+}
+
+describe('PersonalRepresentativeTypesController - Without Auth', () => {
+  let app: TestApp
+  let server: request.SuperTest<request.Test>
+
+  beforeAll(async () => {
+    // TestApp setup with auth and database
+    app = await setupWithoutAuth()
+    server = request(app.getHttpServer())
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
+  })
+
+  it('POST /v1/personal-representative-types should fail and return 403 error if bearer is missing', async () => {
+    const response = await server
+      .post('/v1/personal-representative-types')
+      .send(simpleRequestData)
+      .expect(403)
+
+    expect(response.body).toMatchObject({
+      ...errorExpectedStructure,
+      statusCode: 403,
+    })
+  })
+})
 
 describe('PersonalRepresentativeTypesController', () => {
-  const { childServiceApiKeys } = environment
-
-  const simpleRequestData = {
-    code: 'Code',
-    name: 'Name',
-    description: 'Description',
-  }
-
   let app: TestApp
   let server: request.SuperTest<request.Test>
   let prTypeModel: typeof PersonalRepresentativeType
 
   beforeAll(async () => {
     // TestApp setup with auth and database
-    app = await setupWithoutAuth()
+    app = await setupWithAuth({ user })
     server = request(app.getHttpServer())
     // Get reference on personalRepresentativeType models to seed DB
     prTypeModel = app.get<typeof PersonalRepresentativeType>(
@@ -42,18 +73,6 @@ describe('PersonalRepresentativeTypesController', () => {
   })
 
   describe('Create', () => {
-    it('POST /v1/personal-representative-types should fail and return 403 error if bearer is missing', async () => {
-      const response = await server
-        .post('/v1/personal-representative-types')
-        .send(simpleRequestData)
-        .expect(403)
-
-      expect(response.body).toMatchObject({
-        ...errorExpectedStructure,
-        statusCode: 403,
-      })
-    })
-
     it('POST /v1/personal-representative-types should return error when data is invalid', async () => {
       const requestData = {
         code: 'Code',
@@ -62,10 +81,6 @@ describe('PersonalRepresentativeTypesController', () => {
       }
       const response = await server
         .post('/v1/personal-representative-types')
-        .set(
-          'Authorization',
-          `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
-        )
         .send(requestData)
         .expect(400)
 
@@ -79,10 +94,6 @@ describe('PersonalRepresentativeTypesController', () => {
       const response = await server
         .post('/v1/personal-representative-types')
         .send(simpleRequestData)
-        .set(
-          'Authorization',
-          `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
-        )
         .expect(201)
       expect(response.body).toMatchObject(simpleRequestData)
     })
@@ -93,10 +104,6 @@ describe('PersonalRepresentativeTypesController', () => {
       await server
         .post('/v1/personal-representative-types')
         .send(simpleRequestData)
-        .set(
-          'Authorization',
-          `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
-        )
 
       const requestData = {
         ...simpleRequestData,
@@ -106,10 +113,6 @@ describe('PersonalRepresentativeTypesController', () => {
       const response = await server
         .put(`/v1/personal-representative-types/${requestData.code}`)
         .send(requestData)
-        .set(
-          'Authorization',
-          `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
-        )
         .expect(200)
 
       expect(response.body).toMatchObject(requestData)
@@ -121,16 +124,8 @@ describe('PersonalRepresentativeTypesController', () => {
       await server
         .post('/v1/personal-representative-types')
         .send(simpleRequestData)
-        .set(
-          'Authorization',
-          `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
-        )
       const response = await server
         .get(`/v1/personal-representative-types/${simpleRequestData.code}`)
-        .set(
-          'Authorization',
-          `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
-        )
         .expect(200)
 
       expect(response.body.code).toMatch(simpleRequestData.code)
@@ -143,25 +138,14 @@ describe('PersonalRepresentativeTypesController', () => {
       await server
         .post('/v1/personal-representative-types')
         .send(simpleRequestData)
-        .set(
-          'Authorization',
-          `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
-        )
       await server
         .delete(`/v1/personal-representative-types/${simpleRequestData.code}`)
         .send()
-        .set(
-          'Authorization',
-          `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
-        )
         .expect(200)
 
-      const response = await request(app.getHttpServer())
-        .get(`/v1/personal-representative-types/${simpleRequestData.code}`)
-        .set(
-          'Authorization',
-          `Bearer ${childServiceApiKeys.felagsmalaraduneytid}`,
-        )
+      const response = await request(app.getHttpServer()).get(
+        `/v1/personal-representative-types/${simpleRequestData.code}`,
+      )
 
       expect(response.body.code).toMatch(simpleRequestData.code)
       expect(response.body.description).toMatch(simpleRequestData.description)
