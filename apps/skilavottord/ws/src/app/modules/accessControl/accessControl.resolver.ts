@@ -1,7 +1,9 @@
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
+import { NotFoundException } from '@nestjs/common'
+import { ApolloError } from 'apollo-server-express'
 
-import { Authorize, AuthService, CurrentUser, Role } from '../auth'
-import type { AuthUser } from '../auth'
+import { Authorize, CurrentUser, Role } from '../auth'
+import type { User } from '../auth'
 
 import { AccessControlModel } from './accessControl.model'
 import { AccessControlService } from './accessControl.service'
@@ -10,8 +12,6 @@ import {
   CreateAccessControlInput,
   DeleteAccessControlInput,
 } from './accessControl.input'
-import { ApolloError } from 'apollo-server-express'
-import { NotFoundException } from '@nestjs/common'
 
 @Authorize({
   throwOnUnAuthorized: false,
@@ -19,13 +19,10 @@ import { NotFoundException } from '@nestjs/common'
 })
 @Resolver(() => AccessControlModel)
 export class AccessControlResolver {
-  constructor(
-    private accessControlService: AccessControlService,
-    private authService: AuthService,
-  ) {}
+  constructor(private accessControlService: AccessControlService) {}
 
-  private verifyDeveloperAccess(user: AuthUser, role: Role) {
-    const isDeveloper = this.authService.getRole(user) === Role.developer
+  private verifyDeveloperAccess(user: User, role: Role) {
+    const isDeveloper = user.role === Role.developer
     if (!isDeveloper && role === Role.developer) {
       throw new ApolloError('Only developers can modify developer access')
     }
@@ -33,9 +30,9 @@ export class AccessControlResolver {
 
   @Query(() => [AccessControlModel])
   async skilavottordAccessControls(
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() user: User,
   ): Promise<AccessControlModel[]> {
-    const isDeveloper = this.authService.getRole(user) === Role.developer
+    const isDeveloper = user.role === Role.developer
     return this.accessControlService.findAll(isDeveloper)
   }
 
@@ -43,7 +40,7 @@ export class AccessControlResolver {
   async createSkilavottordAccessControl(
     @Args('input', { type: () => CreateAccessControlInput })
     input: CreateAccessControlInput,
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() user: User,
   ): Promise<AccessControlModel> {
     this.verifyDeveloperAccess(user, input.role)
     return this.accessControlService.createAccess(input)
@@ -53,7 +50,7 @@ export class AccessControlResolver {
   async updateSkilavottordAccessControl(
     @Args('input', { type: () => UpdateAccessControlInput })
     input: UpdateAccessControlInput,
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() user: User,
   ): Promise<AccessControlModel> {
     this.verifyDeveloperAccess(user, input.role)
     return this.accessControlService.updateAccess(input)
@@ -63,7 +60,7 @@ export class AccessControlResolver {
   async deleteSkilavottordAccessControl(
     @Args('input', { type: () => DeleteAccessControlInput })
     input: DeleteAccessControlInput,
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() user: User,
   ): Promise<Boolean> {
     const accessControl = await this.accessControlService.findOne(
       input.nationalId,
