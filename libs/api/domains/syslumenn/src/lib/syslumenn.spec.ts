@@ -1,27 +1,18 @@
 import { Test } from '@nestjs/testing'
 import { SyslumennService } from './syslumenn.service'
-import { SyslumennModule } from './syslumenn.module'
-import {
-  SYSLUMENN_CLIENT_CONFIG,
-  SyslumennClient,
-  SyslumennClientConfig,
-} from './client/syslumenn.client'
 import { startMocking } from '@island.is/shared/mocking'
-import { createLogger } from 'winston'
 import { requestHandlers } from './__mock-data__/requestHandlers'
 import {
   VHSUCCESS,
-  VHFAIL,
   OPERATING_LICENSE,
   DATA_UPLOAD,
 } from './__mock-data__/responses'
-import { HttpModule } from '@nestjs/common'
-import { Homestay, mapHomestay } from './models/homestay'
-import { IHomestay } from './client/models/homestay'
+import { mapHomestay } from './models/homestay'
 import { SYSLUMENN_AUCTION } from './__mock-data__/responses'
 import { mapSyslumennAuction } from './models/syslumennAuction'
 import { mapOperatingLicense } from './models/operatingLicense'
-import { PersonType } from './models/dataUpload'
+import { PersonType } from './dto/uploadData.input'
+import { SyslumennApiConfig, SyslumennApiModule, VirkarHeimagistingar } from '@island.is/clients/syslumenn'
 
 const YEAR = 2021
 const PERSON = [
@@ -41,12 +32,13 @@ const ATTACHMENT = {
   name: 'attachment',
   content: 'content',
 }
+const APPLICATION_TYPE = 'string'
 
 const config = {
   url: 'http://localhost',
   username: '',
   password: '',
-} as SyslumennClientConfig
+} as SyslumennApiConfig
 
 startMocking(requestHandlers)
 
@@ -56,15 +48,12 @@ describe('SyslumennService', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [
-        HttpModule.register({
-          timeout: 10000,
-        }),
+        SyslumennApiModule.register(config)
       ],
       providers: [
         SyslumennService,
-        SyslumennClient,
         {
-          provide: SYSLUMENN_CLIENT_CONFIG,
+          provide: "SYSLUMENN_CLIENT_CONFIG",
           useValue: config,
         },
       ],
@@ -110,9 +99,7 @@ describe('SyslumennService', () => {
 
   describe('uploadData', () => {
     it('should return data upload response', async () => {
-      const response = await service.uploadData(PERSON, ATTACHMENT, {
-        key: 'string',
-      })
+      const response = await service.uploadData(PERSON, ATTACHMENT, APPLICATION_TYPE)
       expect(response).toStrictEqual(DATA_UPLOAD)
     })
   })

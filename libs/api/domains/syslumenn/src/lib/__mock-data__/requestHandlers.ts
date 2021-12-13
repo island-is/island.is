@@ -5,6 +5,7 @@ import {
   SYSLUMENN_AUCTION,
   OPERATING_LICENSE,
   DATA_UPLOAD,
+  OPERATING_LICENSE_SERVICE_RES,
 } from './responses'
 
 const url = (path: string) => {
@@ -45,13 +46,12 @@ export const requestHandlers = [
   rest.get(url('/api/VirkLeyfi/:id'), (req, res, ctx) => {
     const success = req.params.id ? true : false
     if (success) {
-      return res(ctx.status(200), ctx.json(OPERATING_LICENSE))
+      return res(ctx.status(200), ctx.json(OPERATING_LICENSE_SERVICE_RES))
     } else {
       return res(ctx.status(401), ctx.json(VHFAIL))
     }
   }),
   rest.post(url('/api/v1/SyslMottakaGogn'), (req, res, ctx) => {
-    console.log(typeof req.body)
     return res(ctx.status(200), ctx.json(DATA_UPLOAD))
   }),
 ]

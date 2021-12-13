@@ -80,7 +80,6 @@ export class SyslumennService {
 
   async getSyslumennAuctions(): Promise<SyslumennAuction[]> {
     const api = await this.syslumennApiWithAuth()
-    console.log(api)
     const syslumennAuctions = await api.uppbodGet({
       audkenni: this.id,
     })
@@ -112,7 +111,6 @@ export class SyslumennService {
       applicationType,
       extraData,
     )
-      console.log(payload)
     return await api.syslMottakaGognPost(payload)
   }
 

@@ -1,6 +1,4 @@
-import { IHomestay } from '../client/models/homestay'
-import { IOperatingLicense } from '../client/models/operatingLicense'
-import { ISyslumennAuction } from '../client/models/syslumennAuction'
+import { Uppbod, VirkarHeimagistingar, VirkLeyfi } from '@island.is/clients/syslumenn'
 import { DataUploadResponse } from '../models/dataUpload'
 
 export const VHSUCCESS = [
@@ -9,14 +7,15 @@ export const VHSUCCESS = [
     heitiHeimagistingar: 'string',
     heimilisfang: 'string',
     abyrgdarmadur: 'string',
-    umsoknarAr: 0,
+    umsoknarAr: 'string',
     sveitarfelag: 'string',
     gestafjoldi: 0,
     fjoldiHerbergja: 0,
     fastanumer: 'string',
     ibudanumer: 'string',
-  },
-] as IHomestay[]
+    postnumer: 'string'
+  }
+] as VirkarHeimagistingar[]
 
 export const VHFAIL = {
   type: 'string',
@@ -32,7 +31,7 @@ export const SYSLUMENN_AUCTION = [
     starfsstod: 'string',
     tegund: 'string',
     andlag: 'string',
-    dagsetning: 'string',
+    dagsetning: new Date('12.12.21'),
     klukkan: 'string',
     fastanumer: 'string',
     andlagHeiti: 'string',
@@ -40,7 +39,7 @@ export const SYSLUMENN_AUCTION = [
     gerdartholar: 'string',
     lausafjarmunir: 'string',
   },
-] as ISyslumennAuction[]
+] as Uppbod[]
 
 export const OPERATING_LICENSE = [
   {
@@ -52,7 +51,28 @@ export const OPERATING_LICENSE = [
     gata: 'string',
     postnumer: 'string',
     tegund: 'string',
-    gildirTil: 'string',
+    gildirTil: new Date('12.12.21'),
+    leyfishafi: 'string',
+    flokkur: 'string',
+    leyfiTilUtiveitinga: 'string',
+    afgrAfgengisVirkirdagar: 'string',
+    afgrAfgengisAdfaranottFridaga: 'string',
+    afgrAfgengisVirkirdagarUtiveitingar: 'string',
+    afgrAfgengisAdfaranottFridagaUtiveitingar: 'string',
+  },
+] as VirkLeyfi[]
+
+export const OPERATING_LICENSE_SERVICE_RES = [
+  {
+    rowNum: 0,
+    utgefidAf: 'string',
+    leyfisnumer: 'string',
+    stadur: 'string',
+    kallast: 'string',
+    gata: 'string',
+    postnumer: 'string',
+    tegund: 'string',
+    gildirTil: new Date('12.12.21'),
     leyfishafi: 'string',
     flokkur: 'string',
     leyfi_Til_Utiveitinga: 'string',
@@ -61,7 +81,7 @@ export const OPERATING_LICENSE = [
     afgr_Afgengis_Virkirdagar_Utiveitingar: 'string',
     afgr_Afgengis_Adfaranott_Fridaga_Utiveitingar: 'string',
   },
-] as IOperatingLicense[]
+] as any[]
 
 export const DATA_UPLOAD = {
   skilabod: 'string',
