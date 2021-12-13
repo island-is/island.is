@@ -7,15 +7,12 @@ import { OperatingLicense } from './models/operatingLicense'
 import { DataUploadResponse } from './models/dataUpload'
 import { UploadDataInput } from './dto/uploadData.input'
 import { CertificateInfoInput } from './dto/certificateInfo.input'
-import { CertificateInfoRepsonse } from './models/certificateInfo';
+import { CertificateInfoRepsonse, CertificateRepsonse } from './models/certificateInfo';
+import { Vottord } from '@island.is/clients/syslumenn'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
 const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
-interface data {
-  data: string[]
-}
-
 @Resolver()
 export class SyslumennResolver {
   constructor(private syslumennService: SyslumennService) {}
@@ -51,10 +48,9 @@ export class SyslumennResolver {
   }
   
 
-  @Query(() => [String])
-  getSyslumennCertificateInfo(@Args('input') input: CertificateInfoInput): Promise<void> {
-    
+  @Query(() => CertificateInfoRepsonse)
+  getSyslumennCertificateInfo(@Args('input') input: CertificateInfoInput): Promise<CertificateInfoRepsonse>  {
     return this.syslumennService.getCertificateInfo(input.nationalId)
-    
   }
 }
+   

@@ -767,10 +767,7 @@
             "x-nullable": false,
             "description": "Success",
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "$ref": "#/definitions/Vottord"
             }
           }
         },
@@ -1080,6 +1077,20 @@
           "type": "string"
         },
         "accessToken": {
+          "type": "string"
+        }
+      }
+    },
+    "Vottord": {
+      "type": "object",
+      "properties": {
+        "kennitala": {
+          "type": "string"
+        },
+        "gildisTimi": {
+          "type": "string"
+        },
+        "utgafudagur": {
           "type": "string"
         }
       }

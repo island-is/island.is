@@ -35,7 +35,6 @@ export class Homestay {
 }
 
 export const mapHomestay = (homestay: VirkarHeimagistingar): Homestay => {
-  console.log(homestay)
   return {
   registrationNumber: homestay.skraningarnumer,
   name: homestay.heitiHeimagistingar,

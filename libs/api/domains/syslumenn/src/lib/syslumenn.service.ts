@@ -20,9 +20,10 @@ import {
   VirkarHeimagistingar,
   Uppbod,
   VirkLeyfi,
+  Vottord,
 } from '@island.is/clients/syslumenn'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-import { CertificateInfoRepsonse } from './models/certificateInfo'
+import { CertificateInfoRepsonse, CertificateRepsonse, mapCertificateInfo } from './models/certificateInfo';
 
 const SYSLUMENN_CLIENT_CONFIG = 'SYSLUMENN_CLIENT_CONFIG'
 @Injectable()
@@ -114,13 +115,13 @@ export class SyslumennService {
     return await api.syslMottakaGognPost(payload)
   }
 
-  async getCertificateInfo(nationalId: string): Promise<void> {//Promise<CertificateInfoRepsonse> {
+  async getCertificateInfo(nationalId: string): Promise<CertificateInfoRepsonse> {
     const api = await this.syslumennApiWithAuth()
-    const data =  await api.faVottordUpplysingarGet({
+    const certificate =  await api.faVottordUpplysingarGet({
       audkenni: this.id,
       kennitala: nationalId
     })
-    console.log(data)
-    // Object.values(data).map(a => console.log(a))
+    console.log(certificate)
+    return mapCertificateInfo(certificate as Vottord)
   }
 }
