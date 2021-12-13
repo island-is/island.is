@@ -58,21 +58,21 @@ const NavItemContent: FC<Props> = ({
               type={active ? 'filled' : icon.type}
               icon={icon.icon}
               size="medium"
-              color={'blue400'}
+              color={'blue600'}
             />
           </Box>
         ) : null}
         <Box className={styles.text}>{children}</Box>
       </Box>
       {showChevron && (
-        <Icon type={'filled'} icon={chevron} size="medium" color={'blue400'} />
+        <Icon type={'filled'} icon={chevron} size="medium" color={'blue600'} />
       )}
       {showLock && (
         <Icon
           type={'filled'}
           icon={'lockClosed'}
           size="small"
-          color={'blue400'}
+          color={'blue600'}
         />
       )}
     </Box>

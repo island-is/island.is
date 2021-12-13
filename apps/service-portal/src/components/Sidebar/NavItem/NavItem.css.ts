@@ -29,7 +29,7 @@ export const navItemActive = styleVariants({
 export const text = style({
   fontSize: 16,
   lineHeight: '26px',
-  color: theme.color.blue400,
+  color: theme.color.blue600,
 })
 
 export const dot = style({
