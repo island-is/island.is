@@ -54,6 +54,7 @@ export const RulingStepOne: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
   const [, setValidToDateIsValid] = useState<boolean>(true)
   const [, setIsolationToIsValid] = useState<boolean>(true)
@@ -81,46 +82,47 @@ export const RulingStepOne: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    let theCase = workingCase
+    if (isCaseUpToDate) {
+      let theCase = workingCase
 
-    if (!theCase.custodyRestrictions) {
-      theCase = {
-        ...theCase,
-        custodyRestrictions: theCase.requestedCustodyRestrictions,
+      if (!theCase.custodyRestrictions) {
+        theCase = {
+          ...theCase,
+          custodyRestrictions: theCase.requestedCustodyRestrictions,
+        }
+
+        updateCase(
+          theCase.id,
+          parseArray(
+            'custodyRestrictions',
+            theCase.requestedCustodyRestrictions ?? [],
+          ),
+        )
       }
 
-      updateCase(
-        theCase.id,
-        parseArray(
-          'custodyRestrictions',
-          theCase.requestedCustodyRestrictions ?? [],
-        ),
-      )
-    }
+      if (theCase.demands) {
+        autofill('prosecutorDemands', theCase.demands, theCase)
+      }
 
-    if (theCase.demands) {
-      autofill('prosecutorDemands', theCase.demands, theCase)
-    }
+      if (theCase.requestedValidToDate) {
+        autofill('validToDate', theCase.requestedValidToDate, theCase)
+      }
 
-    if (theCase.requestedValidToDate) {
-      autofill('validToDate', theCase.requestedValidToDate, theCase)
-    }
+      if (theCase.validToDate) {
+        autofill('isolationToDate', theCase.validToDate, theCase)
+      }
 
-    if (theCase.validToDate) {
-      autofill('isolationToDate', theCase.validToDate, theCase)
-    }
+      if (theCase.caseFacts) {
+        autofill('courtCaseFacts', theCase.caseFacts, theCase)
+      }
 
-    if (theCase.caseFacts) {
-      autofill('courtCaseFacts', theCase.caseFacts, theCase)
-    }
+      if (theCase.legalArguments) {
+        autofill('courtLegalArguments', theCase.legalArguments, theCase)
+      }
 
-    if (theCase.legalArguments) {
-      autofill('courtLegalArguments', theCase.legalArguments, theCase)
-    }
-    if (workingCase.id !== '') {
       setWorkingCase(theCase)
     }
-  }, [workingCase.id])
+  }, [autofill, isCaseUpToDate, setWorkingCase, updateCase, workingCase])
 
   return (
     <PageLayout
@@ -352,6 +354,7 @@ export const RulingStepOne: React.FC = () => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            isCaseUpToDate={isCaseUpToDate}
             isRequired
           />
         </Box>

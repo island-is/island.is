@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { DatePicker, Input } from '@island.is/island-ui/core'
 import { TimeInputField, BlueBox } from '../../components'
 import * as styles from './DateTime.css'
@@ -56,6 +56,12 @@ const DateTime: React.FC<Props> = (props) => {
 
   const [datepickerErrorMessage, setDatepickerErrorMessage] = useState<string>()
   const [timeErrorMessage, setTimeErrorMessage] = useState<string>()
+
+  useEffect(() => {
+    const time = getTimeFromDate(selectedDate)
+
+    setCurrentTime(time)
+  }, [selectedDate])
 
   const isValidDateTime = (
     date: Date | undefined,

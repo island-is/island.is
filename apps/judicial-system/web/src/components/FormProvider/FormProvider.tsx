@@ -1,15 +1,18 @@
-import React, { createContext, ReactNode, useMemo, useState } from 'react'
-import { useQuery } from '@apollo/client'
+import React, { createContext, ReactNode, useEffect, useState } from 'react'
+import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
 import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
+
+import { CaseData } from '../../types'
 
 interface FormProvider {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoadingWorkingCase: boolean
   caseNotFound: boolean
+  isCaseUpToDate: boolean
 }
 
 interface Props {
@@ -31,6 +34,7 @@ export const FormContext = createContext<FormProvider>({
   setWorkingCase: () => initialState,
   isLoadingWorkingCase: true,
   caseNotFound: false,
+  isCaseUpToDate: false,
 })
 
 const FormProvider = ({ children }: Props) => {
@@ -48,22 +52,41 @@ const FormProvider = ({ children }: Props) => {
     ...initialState,
     type: caseType,
   })
+  const [isLoadingWorkingCase, setIsLoadingWorkingCase] = useState(false)
+  const [caseNotFound, setCaseNotFound] = useState(false)
+  const [isCaseUpToDate, setIsCaseUpToDate] = useState(false)
 
-  const {
-    data: workingCaseData,
-    loading: isLoadingWorkingCase,
-    error,
-  } = useQuery(CaseQuery, {
-    variables: { input: { id: id } },
+  const [getCase] = useLazyQuery<CaseData>(CaseQuery, {
     fetchPolicy: 'no-cache',
-    skip: !id,
+    onCompleted: (caseData) => {
+      if (caseData?.case) {
+        setWorkingCase(caseData.case)
+        setIsLoadingWorkingCase(false)
+        setIsCaseUpToDate(true)
+      }
+    },
+    onError: () => {
+      setCaseNotFound(true)
+      setIsLoadingWorkingCase(false)
+    },
   })
 
-  useMemo(() => {
-    if (workingCaseData) {
-      setWorkingCase(workingCaseData.case)
+  useEffect(() => {
+    if (
+      id &&
+      (router.pathname.startsWith('/krafa') ||
+        router.pathname.startsWith('/domur'))
+    ) {
+      setIsLoadingWorkingCase(true)
+      getCase({ variables: { input: { id } } })
     }
-  }, [workingCaseData])
+  }, [id, router.pathname, getCase])
+
+  useEffect(() => {
+    if (isCaseUpToDate) {
+      setIsCaseUpToDate(false)
+    }
+  }, [isCaseUpToDate])
 
   return (
     <FormContext.Provider
@@ -71,7 +94,8 @@ const FormProvider = ({ children }: Props) => {
         workingCase,
         setWorkingCase,
         isLoadingWorkingCase,
-        caseNotFound: error !== undefined,
+        caseNotFound,
+        isCaseUpToDate,
       }}
     >
       {children}

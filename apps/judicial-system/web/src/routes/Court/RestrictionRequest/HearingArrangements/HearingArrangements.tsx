@@ -54,6 +54,7 @@ export const HearingArrangements: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState(false)
   const [, setCourtDateIsValid] = useState(true)
@@ -110,14 +111,16 @@ export const HearingArrangements: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const theCase = workingCase
+    if (isCaseUpToDate) {
+      const theCase = workingCase
 
-    if (theCase.requestedCourtDate) {
-      autofill('courtDate', theCase.requestedCourtDate, theCase)
+      if (theCase.requestedCourtDate) {
+        autofill('courtDate', theCase.requestedCourtDate, theCase)
+      }
+
+      setWorkingCase(theCase)
     }
-
-    setWorkingCase(theCase)
-  }, [setWorkingCase, workingCase, autofill])
+  }, [autofill, isCaseUpToDate, setWorkingCase, workingCase])
 
   const setJudge = (id: string) => {
     if (workingCase) {

@@ -47,6 +47,7 @@ export const CourtRecord: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
   const [, setCourtRecordStartDateIsValid] = useState(true)
   const [courtLocationErrorMessage, setCourtLocationMessage] = useState('')
@@ -66,102 +67,102 @@ export const CourtRecord: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const defaultCourtAttendees = (wc: Case): string => {
-      let attendees = ''
+    if (isCaseUpToDate) {
+      const defaultCourtAttendees = (wc: Case): string => {
+        let attendees = ''
 
-      if (wc.prosecutor && wc.accusedName) {
-        attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
-          wc.accusedName
-        } ${formatAccusedByGender(wc?.accusedGender)}`
+        if (wc.prosecutor && wc.accusedName) {
+          attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
+            wc.accusedName
+          } ${formatAccusedByGender(wc?.accusedGender)}`
+        }
+
+        if (wc.defenderName) {
+          attendees += `\n${
+            wc.defenderName
+          } skipaður verjandi ${formatAccusedByGender(
+            wc?.accusedGender,
+            NounCases.GENITIVE,
+          )}`
+        }
+
+        if (wc.translator) {
+          attendees += `\n${wc.translator} túlkur`
+        }
+
+        return attendees
       }
 
-      if (wc.defenderName) {
-        attendees += `\n${
-          wc.defenderName
-        } skipaður verjandi ${formatAccusedByGender(
-          wc?.accusedGender,
-          NounCases.GENITIVE,
-        )}`
+      const theCase = workingCase
+
+      if (theCase.courtDate) {
+        autofill('courtStartDate', theCase.courtDate, theCase)
       }
 
-      if (wc.translator) {
-        attendees += `\n${wc.translator} túlkur`
+      if (theCase.court) {
+        autofill(
+          'courtLocation',
+          `í ${
+            theCase.court.name.indexOf('dómur') > -1
+              ? theCase.court.name.replace('dómur', 'dómi')
+              : theCase.court.name
+          }`,
+          theCase,
+        )
       }
 
-      return attendees
-    }
+      if (theCase.courtAttendees !== '') {
+        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      }
 
-    const theCase = workingCase
+      if (theCase.type === CaseType.CUSTODY) {
+        autofill(
+          'litigationPresentations',
+          `Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi ${formatAccusedByGender(
+            theCase.accusedGender,
+            NounCases.GENITIVE,
+          )} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að ${formatAccusedByGender(
+            theCase.accusedGender,
+            NounCases.DATIVE,
+          )} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að ${formatAccusedByGender(
+            theCase.accusedGender,
+            NounCases.DATIVE,
+          )} verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.`,
+          theCase,
+        )
+      }
 
-    if (theCase.courtDate) {
-      autofill('courtStartDate', theCase.courtDate, theCase)
-    }
+      let autofillAccusedBookings = ''
 
-    if (theCase.court) {
-      autofill(
-        'courtLocation',
-        `í ${
-          theCase.court.name.indexOf('dómur') > -1
-            ? theCase.court.name.replace('dómur', 'dómi')
-            : theCase.court.name
-        }`,
-        theCase,
-      )
-    }
+      if (theCase.defenderName) {
+        autofillAccusedBookings += `${formatMessage(
+          m.sections.accusedBookings.autofillDefender,
+          {
+            defender: theCase.defenderName,
+          },
+        )}\n\n`
+      }
 
-    if (theCase.courtAttendees !== '') {
-      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
-    }
+      if (theCase.translator) {
+        autofillAccusedBookings += `${formatMessage(
+          m.sections.accusedBookings.autofillTranslator,
+          {
+            translator: theCase.translator,
+          },
+        )}\n\n`
+      }
 
-    if (theCase.type === CaseType.CUSTODY) {
-      autofill(
-        'litigationPresentations',
-        `Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi ${formatAccusedByGender(
-          theCase.accusedGender,
-          NounCases.GENITIVE,
-        )} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að ${formatAccusedByGender(
-          theCase.accusedGender,
-          NounCases.DATIVE,
-        )} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að ${formatAccusedByGender(
-          theCase.accusedGender,
-          NounCases.DATIVE,
-        )} verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.`,
-        theCase,
-      )
-    }
-
-    let autofillAccusedBookings = ''
-
-    if (theCase.defenderName) {
       autofillAccusedBookings += `${formatMessage(
-        m.sections.accusedBookings.autofillDefender,
-        {
-          defender: theCase.defenderName,
-        },
-      )}\n\n`
-    }
+        m.sections.accusedBookings.autofillRightToRemainSilent,
+      )}\n\n${formatMessage(
+        m.sections.accusedBookings.autofillCourtDocumentOne,
+      )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
 
-    if (theCase.translator) {
-      autofillAccusedBookings += `${formatMessage(
-        m.sections.accusedBookings.autofillTranslator,
-        {
-          translator: theCase.translator,
-        },
-      )}\n\n`
-    }
+      autofill('accusedBookings', autofillAccusedBookings, theCase)
 
-    autofillAccusedBookings += `${formatMessage(
-      m.sections.accusedBookings.autofillRightToRemainSilent,
-    )}\n\n${formatMessage(
-      m.sections.accusedBookings.autofillCourtDocumentOne,
-    )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
-
-    autofill('accusedBookings', autofillAccusedBookings, theCase)
-
-    if (workingCase.id !== '') {
       setWorkingCase(theCase)
     }
-  }, [workingCase.id])
+  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
     <PageLayout
