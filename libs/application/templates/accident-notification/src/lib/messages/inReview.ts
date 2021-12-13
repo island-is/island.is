@@ -19,6 +19,18 @@ export const inReview = {
         'A button to view application located in application state screen',
     },
   }),
+  alertMessage: defineMessages({
+    reviewApproved: {
+      id: 'an.application:inReview.alertMessage.reviewApproved',
+      defaultMessage: 'Tilkynning hefur verið samþykkt.',
+      description: 'Application has been approved',
+    },
+    reviewRejected: {
+      id: 'an.application:inReview.alertMessage.reviewRejected',
+      defaultMessage: 'Tilkynning hefur verið andmælt.',
+      description: 'Application has been rejected',
+    },
+  }),
   tags: defineMessages({
     missing: {
       id: 'an.application:inReview.tags.missingDocuments',
@@ -189,6 +201,11 @@ export const inReview = {
       id: 'an.application:inReview.buttons.sendAttachmentsButton',
       defaultMessage: 'Senda fylgiskjöl',
       description: 'Review send attachments button',
+    },
+    goToOverview: {
+      id: 'an.application:inReview.buttons.goToOverview',
+      defaultMessage: 'Skoða yfirlit',
+      description: 'Go to overview button',
     },
   }),
   confirmationModal: {

@@ -676,5 +676,28 @@ describe('EnhancedFetch', () => {
       await expect(response1.text()).resolves.toEqual('Response 1')
       await expect(response2.text()).resolves.toEqual('Response 2')
     })
+
+    it('supports empty response bodies', async () => {
+      // Arrange
+      const cacheManager = caching({ store: 'memory', ttl: 0 })
+      const enhancedFetch = createTestEnhancedFetch({
+        cache: {
+          cacheManager,
+          overrideCacheControl: buildCacheControl({ maxAge: 50 }),
+        },
+      })
+      fetch
+        .mockResolvedValueOnce(fakeResponse(''))
+        .mockResolvedValueOnce(fakeResponse(''))
+
+      // Act
+      const response1 = await enhancedFetch(testUrl)
+      const response2 = await enhancedFetch(testUrl)
+
+      // Assert
+      expect(fetch).toHaveBeenCalledTimes(1)
+      await expect(response1.text()).resolves.toEqual('')
+      await expect(response2.text()).resolves.toEqual('')
+    })
   })
 })
