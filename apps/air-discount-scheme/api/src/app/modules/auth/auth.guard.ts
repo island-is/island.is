@@ -44,7 +44,7 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
     if (throwOnUnAuthorized && (err || !user)) {
       console.log('inside handlerequest auth.guard')
       
-      //signIn('identity-server')
+      signIn('identity-server')
       throw new AuthenticationError((err && err.message) || 'Unauthorized')
     }
 

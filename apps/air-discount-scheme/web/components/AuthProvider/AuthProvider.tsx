@@ -1,8 +1,6 @@
 import React, { createContext, ReactNode } from 'react'
 import { AuthenticateUser as User } from '@island.is/air-discount-scheme-web/lib'
 import useUser from '@island.is/air-discount-scheme-web/utils/hooks/useUser'
-import { getSession, useSession } from 'next-auth/client'
-//import { useLogout } from '../../pages/api/auth/logout'
 
 interface AuthProvider {
   isAuthenticated?: boolean
@@ -21,14 +19,6 @@ export const AuthContext = createContext<AuthProvider>({
 })
 
 const AuthProvider = ({ children }: Props) => {
-  //const session = useSession()
-  //const logOut = useLogOut()
-  //const use = useUser()
-  // const session = getSession()
-  // if(session === undefined) {
-  //   return null
-  // }
-
   const { isAuthenticated, user, setUser, loadingUser } = useUser()
   console.log('inside auth provider - isauth: ' + isAuthenticated + ' -user: ' + user)
   return (
