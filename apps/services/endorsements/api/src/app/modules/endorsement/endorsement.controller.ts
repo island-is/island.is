@@ -174,14 +174,11 @@ export class EndorsementController {
     @Body() endorsement: EndorsementDto,
     @CurrentUser() user: User,
   ): Promise<Endorsement> {
-    return await this.endorsementService.createEndorsementOnList(
-      {
-        nationalId: user.nationalId,
-        endorsementList,
-        showName: endorsement.showName,
-      },
-      user,
-    )
+    return await this.endorsementService.createEndorsementOnList({
+      nationalId: user.nationalId,
+      endorsementList,
+      showName: endorsement.showName,
+    })
   }
 
   @ApiOperation({
