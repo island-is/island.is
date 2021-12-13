@@ -51,6 +51,15 @@ const IdentityQuery = gql`
 `
 
 function GrantAccess() {
+  const noUserFoundToast = () => {
+    toast.error(
+      formatMessage({
+        id: 'service.portal.settings.accessControl:grant-identity-error',
+        defaultMessage: 'Enginn notandi fannst með þessa kennitölu.',
+      }),
+    )
+  }
+
   const [name, setName] = useState('')
   const { handleSubmit, control, errors, watch, reset } = useForm({
     mode: 'onChange',
@@ -64,13 +73,11 @@ function GrantAccess() {
   const [getIdentity, { data, loading: queryLoading }] = useLazyQuery<Query>(
     IdentityQuery,
     {
-      onError: (error) => {
-        toast.error(
-          formatMessage({
-            id: 'service.portal.settings.accessControl:grant-identity-error',
-            defaultMessage: 'Enginn notandi fannst með þessa kennitölu.',
-          }),
-        )
+      onError: noUserFoundToast,
+      onCompleted: (data) => {
+        if (!data.identity) {
+          noUserFoundToast()
+        }
       },
     },
   )
@@ -108,7 +115,7 @@ function GrantAccess() {
       })
       if (data) {
         history.push(
-          `${ServicePortalPath.SettingsAccessControl}/${data.createAuthDelegation.to.nationalId}`,
+          `${ServicePortalPath.SettingsAccessControl}/${data.createAuthDelegation.id}`,
         )
       }
     } catch (error) {

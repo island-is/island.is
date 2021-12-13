@@ -33,6 +33,11 @@ export const sharedMessages = defineMessages({
     defaultMessage: 'Útskrá',
   },
 
+  settings: {
+    id: 'global:settings',
+    defaultMessage: 'Stillingar',
+  },
+
   close: {
     id: 'global:close',
     description: 'Label to close a dropdown, dialog or pop-up.',

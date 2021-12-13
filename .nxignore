@@ -2,6 +2,10 @@
 apps/**/infra/*
 libs/**/infra/*
 
+# skilavottord
+apps/skilavottord/codegen.yml
+apps/skilavottord/api.graphql
+
 # gjafakort
 apps/gjafakort/bin
 apps/gjafakort/codegen.yml

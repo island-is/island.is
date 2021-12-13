@@ -17,6 +17,27 @@ export const logoTitleContainer = style({
   },
 })
 
+export const headingLink = style({
+  textDecoration: 'none',
+  ':active': {
+    textDecoration: 'none',
+  },
+  ':hover': {
+    textDecoration: 'none',
+  },
+  selectors: {
+    '&:hover:active': {
+      textDecoration: 'none',
+    },
+  },
+})
+
+export const logoTitleContainerDark = style({
+  ':before': {
+    backgroundColor: theme.color.dark400,
+  },
+})
+
 export const headerActions = style({
   height: 40,
   ...themeUtils.responsiveStyle({

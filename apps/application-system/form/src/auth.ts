@@ -1,6 +1,7 @@
 import { configure, configureMock } from '@island.is/auth/react'
 import { environment } from './environments'
 import {
+  ApiScope,
   ApplicationScope,
   NationalRegistryScope,
   UserProfileScope,
@@ -31,6 +32,8 @@ if (userMocked) {
       UserProfileScope.read,
       NationalRegistryScope.individuals,
       EndorsementsScope.main,
+      ApiScope.internal,
+      ApiScope.meDetails,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'as.',

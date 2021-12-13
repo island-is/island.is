@@ -93,6 +93,13 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
           </span>
         </Text>
       )}
+      <Text marginBottom={2}>
+        <strong>{txt('infoboxPublishedDate')}:</strong>
+        <br />
+        <span className={RSBStyles.smallText}>
+          {formatDate(regulation.publishedDate)}
+        </span>
+      </Text>
 
       {regulation.repealedDate ? (
         <Text marginBottom={3}>

@@ -11,7 +11,7 @@ import {
 
 import { VehicleModel } from '../vehicle'
 
-@ObjectType()
+@ObjectType('VehicleOwner')
 @Table({ tableName: 'vehicle_owner' })
 export class VehicleOwnerModel extends Model<VehicleOwnerModel> {
   @Field()

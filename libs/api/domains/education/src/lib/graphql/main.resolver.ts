@@ -1,3 +1,4 @@
+import { ApiScope } from '@island.is/auth/scopes'
 import { Args, Query, Mutation, Resolver, Int } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
@@ -7,6 +8,7 @@ import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
+  Scopes,
 } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
 
@@ -29,6 +31,7 @@ export class MainResolver {
   ) {}
 
   @Query(() => [EducationLicense])
+  @Scopes(ApiScope.internal)
   educationLicense(@CurrentUser() user: User): Promise<EducationLicense[]> {
     return this.auditService.auditPromise<EducationLicense[]>(
       {
@@ -42,6 +45,7 @@ export class MainResolver {
   }
 
   @Mutation(() => EducationSignedLicense, { nullable: true })
+  @Scopes(ApiScope.internal)
   async fetchEducationSignedLicenseUrl(
     @CurrentUser() user: User,
     @Args('input', { type: () => FetchEducationSignedLicenseUrlInput })
@@ -66,6 +70,7 @@ export class MainResolver {
   }
 
   @Query(() => [ExamFamilyOverview])
+  @Scopes(ApiScope.education)
   educationExamFamilyOverviews(
     @CurrentUser() user: User,
   ): Promise<ExamFamilyOverview[]> {
@@ -81,6 +86,7 @@ export class MainResolver {
   }
 
   @Query(() => ExamResult)
+  @Scopes(ApiScope.education)
   async educationExamResult(
     @CurrentUser() user: User,
     @Args('familyIndex', { type: () => Int }) familyIndex: number,
