@@ -23,7 +23,7 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
   }
 
   handleRequest<TUser extends AuthUser>(err: Error, user: TUser): TUser {
-    const { throwOnUnAuthorized, roles } = this.options
+    const { throwOnUnAuthorized } = this.options
     if (throwOnUnAuthorized && (err || !user)) {
       throw new AuthenticationError((err && err.message) || 'Unauthorized')
     }
