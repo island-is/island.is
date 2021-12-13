@@ -1,8 +1,15 @@
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   PersonalRepresentativeRightType,
   PersonalRepresentativeRightTypeDTO,
   PersonalRepresentativeRightTypeService,
 } from '@island.is/auth-api-lib/personal-representative'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import {
   BadRequestException,
   Body,
@@ -15,27 +22,28 @@ import {
   Post,
   Put,
   Inject,
-  Req,
 } from '@nestjs/common'
 import {
   ApiOperation,
   ApiCreatedResponse,
   ApiOkResponse,
-  ApiBearerAuth,
   ApiTags,
+  ApiHeader,
 } from '@nestjs/swagger'
-import { AuthGuard } from '../common'
-import type { HttpRequest } from '../../app.types'
 import { User } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
 import { AuditService } from '@island.is/nest/audit'
 
 const namespace = `${environment.audit.defaultNamespace}/right-types`
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.representativeWrite)
 @ApiTags('Right Types')
 @Controller('v1/right-types')
-@UseGuards(AuthGuard)
-@ApiBearerAuth()
+@ApiHeader({
+  name: 'authorization',
+  description: 'Bearer token authorization',
+})
 export class RightTypesController {
   constructor(
     @Inject(PersonalRepresentativeRightTypeService)
@@ -90,18 +98,10 @@ export class RightTypesController {
   @ApiOkResponse()
   async removeAsync(
     @Param('code') code: string,
-    @Req() request: HttpRequest,
+    @CurrentUser() user: User,
   ): Promise<number> {
     if (!code) {
       throw new BadRequestException('Key needs to be provided')
-    }
-
-    // Since we do not have an island.is user login we need to create a user object
-    const user: User = {
-      nationalId: '',
-      scope: [],
-      authorization: '',
-      client: request.childService,
     }
     // delete right type
     return await this.auditService.auditPromise(
@@ -123,15 +123,8 @@ export class RightTypesController {
   @ApiCreatedResponse({ type: PersonalRepresentativeRightType })
   async create(
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
-    @Req() request: HttpRequest,
+    @CurrentUser() user: User,
   ): Promise<PersonalRepresentativeRightType> {
-    // Since we do not have an island.is user login we need to create a user object
-    const user: User = {
-      nationalId: '',
-      scope: [],
-      authorization: '',
-      client: request.childService,
-    }
     // Create a new right type
     return await this.auditService.auditPromise(
       {
@@ -154,18 +147,10 @@ export class RightTypesController {
   async update(
     @Param('code') code: string,
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
-    @Req() request: HttpRequest,
+    @CurrentUser() user: User,
   ): Promise<PersonalRepresentativeRightType> {
     if (!code) {
       throw new BadRequestException('Code must be provided')
-    }
-
-    // Since we do not have an island.is user login we need to create a user object
-    const user: User = {
-      nationalId: '',
-      scope: [],
-      authorization: '',
-      client: request.childService,
     }
 
     // Update right type
