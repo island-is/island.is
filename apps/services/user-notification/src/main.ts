@@ -18,7 +18,7 @@ if (argv.job === 'worker') {
 } else {
   bootstrap({
     appModule: AppModule,
-    name: 'services-notifications',
+    name: 'services-user-notifications',
     openApi,
     swaggerPath: '',
   })

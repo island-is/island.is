@@ -8,4 +8,4 @@ USER runner
 WORKDIR "/code"
 VOLUME ["/code"]
 
-ENTRYPOINT /code/scripts/ci/_wait-for.sh localstack:4566 -t 60 -- yarn test services-notifications --runInBand --runner=docker-test --codeCoverage
+ENTRYPOINT /code/scripts/ci/_wait-for.sh localstack:4566 -t 60 -- yarn test services-user-notifications --runInBand --runner=docker-test --codeCoverage
