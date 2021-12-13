@@ -6,6 +6,10 @@ import {
   SQSClient,
 } from '@aws-sdk/client-sqs'
 
+if (!process.env.SQS_ENDPOINT) {
+  throw new Error('sqs endpoint not set')
+}
+
 export const clientConfig = {
   region: 'eu-west-1',
   endpoint: process.env.SQS_ENDPOINT,
