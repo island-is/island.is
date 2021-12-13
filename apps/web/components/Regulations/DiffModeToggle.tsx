@@ -6,7 +6,7 @@ import { RegulationPageTexts } from './RegulationTexts.types'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { useRegulationLinkResolver } from './regulationUtils'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
-import { ISODate } from '@hugsmidjan/regulations-editor/types'
+import { ISODate } from '@island.is/regulations-tools/types'
 import cl from 'classnames'
 
 export type DiffModeToggleProps = {
