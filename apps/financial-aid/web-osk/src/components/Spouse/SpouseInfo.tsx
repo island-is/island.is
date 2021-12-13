@@ -3,6 +3,7 @@ import { Input, Checkbox, Box } from '@island.is/island-ui/core'
 
 import {
   focusOnNextInput,
+  isEmailValid,
   sanitizeNationalId,
 } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '../FormProvider/FormProvider'
@@ -53,7 +54,14 @@ const SpouseInfo = ({
         />
       </Box>
 
-      <SpouseEmailInput hasError={hasError} removeError={removeError} />
+      <SpouseEmailInput
+        hasError={
+          hasError &&
+          Boolean(form.spouse?.email && isEmailValid(form.spouse.email)) ===
+            false
+        }
+        removeError={removeError}
+      />
 
       <Box>
         <Checkbox

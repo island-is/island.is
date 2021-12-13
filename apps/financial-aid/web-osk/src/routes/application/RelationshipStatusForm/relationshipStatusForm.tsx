@@ -12,7 +12,7 @@ import {
   InRelationshipForm,
   UnknownRelationshipForm,
 } from '@island.is/financial-aid-web/osk/src/routes/application/RelationshipStatusForm'
-import { AppContext } from '../../../components/AppProvider/AppProvider'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const RelationshipStatusForm = () => {
   const router = useRouter()

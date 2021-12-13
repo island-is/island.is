@@ -32,8 +32,6 @@ const InRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
       return
     }
 
-    console.log('acceptData', acceptData, 'isInputEmail', isInputEmailValid())
-
     if (!acceptData || isInputEmailValid() === false) {
       setHasError(true)
       return

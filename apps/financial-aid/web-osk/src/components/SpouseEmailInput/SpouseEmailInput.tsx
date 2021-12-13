@@ -1,7 +1,5 @@
 import React, { useContext } from 'react'
 import { Input, Box } from '@island.is/island-ui/core'
-
-import { isEmailValid } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '../FormProvider/FormProvider'
 
 interface Props {
@@ -20,10 +18,7 @@ const SpouseEmailInput = ({ hasError, removeError }: Props) => {
         id="email"
         placeholder="Sláðu inn netfang maka"
         backgroundColor="blue"
-        hasError={
-          (hasError && !form?.spouse?.email) ||
-          (hasError && !isEmailValid(form?.spouse?.email))
-        }
+        hasError={hasError}
         errorMessage="Athugaðu hvort netfang sé rétt slegið inn"
         type="email"
         value={form?.spouse?.email}
