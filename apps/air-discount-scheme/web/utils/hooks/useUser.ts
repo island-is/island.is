@@ -2,14 +2,13 @@ import { useEffect, useState } from 'react'
 import { gql, useQuery } from '@apollo/client'
 
 import { AuthenticateUser as User } from '@island.is/air-discount-scheme-web/lib'
-import { useSession, getSession } from 'next-auth/client'
-import { signIn } from 'next-auth/client'
+
 
 const useUser = () => {
   const [user, setUser] = useState<User>()
-  const [session] = useSession()
+  //const [session] = useSession()
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    Boolean(session?.user),
+    Boolean(false)//(session?.user),
   )
   // if(!isAuthenticated) {
   //   return signIn('identity-server')

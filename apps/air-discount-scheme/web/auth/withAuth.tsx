@@ -72,6 +72,7 @@ const withAuth = (WrappedComponent) =>
       /*
        * Render white screen for the redirection
        */
+//      return signIn('identity-server', {callbackUrl: `${window.location.href}`})
       return (
         <div
           style={{

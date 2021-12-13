@@ -7,8 +7,9 @@ export const serviceSetup = (services: {
     .namespace('air-discount-scheme')
     .env({
       API_URL: ref((h) => `http://${h.svc(services.adsApi)}`),
-      NEXTAUTH_URL: 'http://localhost:4200/api/auth/[...nextauth]',
-      IDENTITY_SERVER_DOMAIN: '@vegagerdin.is',
+      NEXTAUTH_URL: 'http://localhost:4200/api/auth',
+      IDENTITY_SERVER_DOMAIN: 'https://identity-server.dev01.devland.is',
+      NEXTAUTH_URL_INTERNAL: 'http://10.240.8.16',
       IDS_COOKIE_NAME: 'next-auth.session-token',
       AUTH_PUBLIC_URL: {
         dev: 'https://identity-server.dev01.devland.is',

@@ -13,7 +13,6 @@ import {
 import { NextApiRequest, NextApiResponse } from 'next-auth/internals/utils'
 import { JWT } from 'next-auth/jwt'
 import { decode } from 'jsonwebtoken'
-import { useSession } from 'next-auth/client'
 import { Router } from 'express'
 
 export default(req, res) => NextAuth(req, res, {
@@ -147,9 +146,6 @@ export default(req, res) => NextAuth(req, res, {
 // }
 
 // async function session(session: AuthSession, user: AuthUser) {
-//   // if(session=undefined) {
-//   //   session = useSession()
-//   // }
 //   console.log('[nextauth] session ' + session)
 //   session.accessToken = user.accessToken
 //   session.idToken = user.idToken

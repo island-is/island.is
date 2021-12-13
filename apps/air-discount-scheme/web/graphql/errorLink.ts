@@ -12,19 +12,23 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   }
 
   if (graphQLErrors) {
+    console.log('errorlink graphql error')
     graphQLErrors.forEach((err) => {
+      
       if (err.message === 'Unauthorized') {
-        return signIn(identityServerId)
+        return signIn(identityServerId, {callbackUrl: `${window.location.href}`})
       }
       switch (err.extensions?.code) {
         case 'UNAUTHENTICATED':
-          return api.logout().then(() => Router.reload())
+          return signIn(identityServerId, {callbackUrl: `${window.location.href}`})
+          //return api.logout().then(() => Router.reload())
         case 'FORBIDDEN':
           return
         default:
-          return NotificationService.onGraphQLError({
-            graphQLErrors,
-          } as ApolloError)
+          return signIn(identityServerId, {callbackUrl: `${window.location}`})
+          // NotificationService.onGraphQLError({
+          //   graphQLErrors,
+          // } as ApolloError)
       }
     })
   }

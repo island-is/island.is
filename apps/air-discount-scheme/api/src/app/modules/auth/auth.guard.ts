@@ -6,7 +6,7 @@ import { AuthGuard } from '@nestjs/passport'
 
 import { Role, AuthUser } from './auth.types'
 import { AuthService } from './auth.service'
-import { getSession, signIn } from 'next-auth/client'
+import { signIn } from 'next-auth/client'
 import { AuthContext, AuthProvider } from '@island.is/air-discount-scheme-web/components/AuthProvider'
 import { useContext } from 'react'
 
@@ -23,28 +23,26 @@ const authService = new AuthService()
 class GraphQLAuthGuard extends AuthGuard('jwt') {
   options: AuthorizeOptions
 
-  // canActivate(context: ExecutionContext) {
-  //   const ctx = GqlExecutionContext.create(context)
-  //   const { req } = ctx.getContext()
+  canActivate(context: ExecutionContext) {
+    const ctx = GqlExecutionContext.create(context)
+    const { req } = ctx.getContext()
 
-  //   return super.canActivate(new ExecutionContextHost([req]))
-  // return getSession()
-  // }
-  //ctx = useContext(AuthContext)
-  session = getSession()
-  //session = getSession(AuthProvider)
-  canActivate(session) {
-    console.log('auth guard session is authenticated: ' + session)
-    console.dir(session.args)
-    return true//(session !== undefined ? true : false)
+    return super.canActivate(new ExecutionContextHost([req]))
   }
+//  ctx = useContext(AuthContext)
+
+  // canActivate({}) {
+  //   console.log('auth guard session is authenticated: ')
+    
+  //   return true//(session !== undefined ? true : false)}
+  
   
   handleRequest<TUser extends AuthUser>(err: Error, user: TUser): TUser {
     const { throwOnUnAuthorized, role } = this.options
     if (throwOnUnAuthorized && (err || !user)) {
       console.log('inside handlerequest auth.guard')
       
-      signIn('identity-server')
+      //signIn('identity-server')
       throw new AuthenticationError((err && err.message) || 'Unauthorized')
     }
 

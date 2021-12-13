@@ -22,7 +22,7 @@ import {
 } from '@island.is/air-discount-scheme/consts'
 import { environment } from '../../../environments'
 import { Cookie, CookieOptions, Credentials } from './auth.types'
-import { getSession, signIn, useSession } from 'next-auth/client'
+import { signIn } from 'next-auth/client'
 import { AuthContext } from '@island.is/air-discount-scheme-web/components'
 
 const { samlEntryPoint, audience: audienceUrl, jwtSecret,  } = environment.auth
@@ -126,9 +126,9 @@ export class AuthController {
   async session(@Res() res, @Req() req): Promise<any | null> {
     //ApiStatusStore.getInstance().clearStatus()
     
-    res.session = await getSession({req})
-    console.dir(res.session)
-    return res.session//JSON.stringify(identityServerAuth.issuer)
+    // res.session = await getSession({req})
+    // console.dir(res.session)
+    // return res.session//JSON.stringify(identityServerAuth.issuer)
   }
 
   // @Get('/login')

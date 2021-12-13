@@ -5,7 +5,7 @@ import NextCookies from 'next-cookies'
 import getConfig from 'next/config'
 import { ApolloProvider } from '@apollo/client'
 import * as Sentry from '@sentry/node'
-import { getSession, Provider, useSession } from 'next-auth/client'
+import { Provider } from 'next-auth/client'
 
 import {
   getActiveEnvironment,
@@ -151,10 +151,9 @@ class SupportApplication extends App<Props> {
     console.log('before return _app with session: ' + this.props.session)
     
     console.log(process.env.NEXTAUTH_URL)
-    //const { data: session } = getSession()
     return (
       <Provider 
-        session={this.props.session ?? getSession()}
+        session={this.props.session}
         options={{ clientMaxAge: 120, basePath: '/api/auth'}} 
       >
         <ApolloProvider client={initApollo(this.props.apolloState)}>
