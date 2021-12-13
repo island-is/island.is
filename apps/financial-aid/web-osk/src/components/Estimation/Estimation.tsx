@@ -55,14 +55,9 @@ const Estimation = ({
 
       {aboutText}
 
-      {municipality && aidAmount && (
-        <Breakdown
-          calculations={estimatedBreakDown(
-            aidAmount,
-            usePersonalTaxCredit ?? false,
-          )}
-        />
-      )}
+      <Breakdown
+        calculations={estimatedBreakDown(aidAmount, usePersonalTaxCredit)}
+      />
     </>
   )
 }

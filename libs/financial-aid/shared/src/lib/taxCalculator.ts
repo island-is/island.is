@@ -97,9 +97,13 @@ export const calculateAcceptedAidFinalAmount = (
 }
 
 export const estimatedBreakDown = (
-  aidAmount: number,
-  usePersonalTaxCredit: boolean,
+  aidAmount: number = 0,
+  usePersonalTaxCredit: boolean = false,
 ): Calculations[] => {
+  if (aidAmount === 0) {
+    return []
+  }
+
   return [
     {
       title: 'Grunnupphæð',
