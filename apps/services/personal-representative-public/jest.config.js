@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'services-personal-representative-external',
+  displayName: 'services-personal-representative-public',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -12,6 +12,6 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   coverageDirectory:
-    '../../../coverage/apps/services/personal-representative-external',
+    '../../../coverage/apps/services/personal-representative-public',
   setupFiles: ['./test/environment.jest.ts'],
 }

@@ -1,7 +1,7 @@
 const devConfig = {
   production: false,
   audit: {
-    defaultNamespace: '@island.is/personal-representative-external',
+    defaultNamespace: '@island.is/personal-representative-public',
   },
   auth: {
     audience: '@island.is',
@@ -14,9 +14,9 @@ const devConfig = {
 const prodConfig = {
   production: true,
   audit: {
-    defaultNamespace: '@island.is/personal-representative-external',
+    defaultNamespace: '@island.is/personal-representative-public',
     groupName: process.env.AUDIT_GROUP_NAME,
-    serviceName: 'services-personal-representative-external',
+    serviceName: 'services-personal-representative-public',
   },
   auth: {
     audience: '@island.is',

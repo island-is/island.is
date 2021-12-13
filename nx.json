@@ -670,7 +670,7 @@
     "services-personal-representative": {
       "tags": []
     },
-    "services-personal-representative-external": {
+    "services-personal-representative-public": {
       "tags": []
     },
     "services-search-indexer": {

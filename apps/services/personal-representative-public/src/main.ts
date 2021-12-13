@@ -5,6 +5,6 @@ import { openApi } from './openApi'
 
 bootstrap({
   appModule: AppModule,
-  name: 'personal-representative-external',
+  name: 'personal-representative-public',
   openApi,
 })
