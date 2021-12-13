@@ -1,4 +1,5 @@
 import { ApplicantEmailData } from '@island.is/financial-aid/shared/lib'
+import { fonts, header, sambandIcon } from './shared'
 
 export const ApplicantEmailTemplate = (emailData: ApplicantEmailData) => {
   return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -28,18 +29,7 @@ export const ApplicantEmailTemplate = (emailData: ApplicantEmailData) => {
       <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i" rel="stylesheet"> 
       <!--<![endif]--> 
       <style type="text/css">
-      @font-face {
-        font-family: 'IBM Plex Sans';
-        font-style: normal;
-        font-weight: 300;
-        src: local('IBMPlexSans-Light'), url(https://fonts.gstatic.com/s/ibmplexsans/v8/zYX9KVElMYYaJe8bpLHnCwDKjXr8AIFsdP3pBms.woff2) format('woff2');
-      }
-      @font-face {
-        font-family: 'IBM Plex Sans';
-        font-style: normal;
-        font-weight: 600;
-        src: local('IBMPlexSans-SemiBold'), url(https://fonts.gstatic.com/s/ibmplexsans/v8/zYX9KVElMYYaJe8bpLHnCwDKjQ76AIFsdP3pBms.woff2) format('woff2');
-      }
+      ${fonts}
     #outlook a {
         padding:0;
     }
@@ -84,26 +74,7 @@ export const ApplicantEmailTemplate = (emailData: ApplicantEmailData) => {
             <table class="es-wrapper" width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;padding:0;Margin:0;width:100%;height:100%;background-repeat:repeat;background-position:center top"> 
             <tr> 
              <td valign="top" style="padding:0;Margin:0"> 
-              <table class="es-header" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%;background-color:transparent;background-repeat:repeat;background-position:center top"> 
-                <tr> 
-                 <td align="center" style="padding:0;Margin:0"> 
-                  <table class="es-header-body" cellspacing="0" cellpadding="0" bgcolor="#ffffff" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#FFFFFF;width:600px"> 
-                    <tr> 
-                     <td align="left" style="padding:30px;Margin:0"> 
-                      <table cellpadding="0" cellspacing="0" width="100%" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> 
-                        <tr> 
-                         <td align="center" valign="top" style="padding:0;Margin:0;width:540px"> 
-                          <table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> 
-                            <tr> 
-                             <td align="left" style="padding:0;Margin:0;padding-bottom:40px;font-size:0px"><img class="adapt-img" src="https://orohoy.stripocdn.email/content/guids/CABINET_da4781bc309fc9253f69ae53878fabb3/images/sislogo.png" alt style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic" height="64"></td> 
-                            </tr> 
-                          </table></td> 
-                        </tr> 
-                      </table></td> 
-                    </tr> 
-                  </table></td> 
-                </tr> 
-              </table> 
+            ${sambandIcon}
            <table class="es-content" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%"> 
              <tr> 
               <td align="center" style="padding:0;Margin:0"> 
@@ -115,13 +86,17 @@ export const ApplicantEmailTemplate = (emailData: ApplicantEmailData) => {
                       <td valign="top" align="center" style="padding:0;Margin:0;width:540px"> 
                        <table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> 
                        <tr> 
-                       <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#00003c;font-size:14px"><strong>${emailData.municipality.name} · Fjárhagsaðstoð</strong></p></td> 
+                       <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#00003c;font-size:14px"><strong>${
+                         emailData.municipality.name
+                       } · Fjárhagsaðstoð</strong></p></td> 
                       </tr> 
                        <tr> 
-                          <td align="left" style="padding:0;Margin:0;padding-bottom:15px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:51px;color:#0061ff;font-size:34px"><strong>${emailData.header}</strong></p></td> 
+                          ${header(emailData.header)}
                          </tr> 
                          <tr> 
-                          <td align="left" style="padding:0;Margin:0"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#00003c;font-size:18px">${emailData.content}</p></td> 
+                          <td align="left" style="padding:0;Margin:0"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#00003c;font-size:18px">${
+                            emailData.content
+                          }</p></td> 
                          </tr> 
                        </table></td> 
                      </tr> 
@@ -141,20 +116,28 @@ export const ApplicantEmailTemplate = (emailData: ApplicantEmailData) => {
                       <td align="center" valign="top" style="padding:0;Margin:0;width:520px"> 
                        <table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> 
                          <tr> 
-                          <td align="center" style="padding:0;Margin:0;padding-bottom:10px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:30px;color:#00003c;font-size:20px"><strong>Fjárhagsaðstoð fyrir ${emailData.applicationMonth} ${emailData.applicationYear}</strong></p></td> 
+                          <td align="center" style="padding:0;Margin:0;padding-bottom:10px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:30px;color:#00003c;font-size:20px"><strong>Fjárhagsaðstoð fyrir ${
+                            emailData.applicationMonth
+                          } ${emailData.applicationYear}</strong></p></td> 
                          </tr> 
                          <tr> 
-                          <td align="center" style="padding:0;Margin:0;padding-bottom:30px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#00003c;font-size:18px">${emailData.applicationChange}</p></td> 
+                          <td align="center" style="padding:0;Margin:0;padding-bottom:30px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#00003c;font-size:18px">${
+                            emailData.applicationChange
+                          }</p></td> 
                          </tr> 
                          <tr> 
-                          <td align="center" style="padding:0;Margin:0;padding-bottom:30px"><span class="es-button-border" style="border-style:solid;border-color:#2CB543;background:#2CB543;border-width:0px 0px 2px 0px;display:inline-block;border-radius:30px;width:auto;border-top-left-radius:8px;border-top-right-radius:8px;border-bottom-right-radius:8px;border-bottom-left-radius:8px;background-color:#0061ff;border-bottom-width:0px"><a href="${emailData.applicationLink}" class="es-button es-button-1" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:18px;border-style:solid;border-color:#0061ff;border-width:18px 24px;display:inline-block;background:#31CB4B;border-radius:30px;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-weight:normal;font-style:normal;line-height:22px;width:auto;text-align:center;background-color:#0061ff;border-top-left-radius:8px;border-top-right-radius:8px;border-bottom-right-radius:8px;border-bottom-left-radius:8px">Skoða stöðu umsóknar</a></span></td> 
+                          <td align="center" style="padding:0;Margin:0;padding-bottom:30px"><span class="es-button-border" style="border-style:solid;border-color:#2CB543;background:#2CB543;border-width:0px 0px 2px 0px;display:inline-block;border-radius:30px;width:auto;border-top-left-radius:8px;border-top-right-radius:8px;border-bottom-right-radius:8px;border-bottom-left-radius:8px;background-color:#0061ff;border-bottom-width:0px"><a href="${
+                            emailData.applicationLink
+                          }" class="es-button es-button-1" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:18px;border-style:solid;border-color:#0061ff;border-width:18px 24px;display:inline-block;background:#31CB4B;border-radius:30px;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-weight:normal;font-style:normal;line-height:22px;width:auto;text-align:center;background-color:#0061ff;border-top-left-radius:8px;border-top-right-radius:8px;border-bottom-right-radius:8px;border-bottom-left-radius:8px">Skoða stöðu umsóknar</a></span></td> 
                          </tr> 
                          <tr> 
                           <td align="center" style="padding:0;Margin:0"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#00003c;font-size:14px">Athugaðu að þú gætir þurft að skrá þig aftur inn með rafrænum skilríkjum.</p></td> 
                          </tr> 
-                       </table></td> 
+                       </table>
+                       </td> 
                      </tr> 
-                   </table></td> 
+                   </table>
+                   </td> 
                  </tr> 
                  <tr> 
                   <td align="left" style="padding:30px;Margin:0"> 
@@ -166,30 +149,48 @@ export const ApplicantEmailTemplate = (emailData: ApplicantEmailData) => {
                           <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#00003c;font-size:18px"><strong>Frekari upplýsingar</strong></p></td> 
                          </tr> 
                          <tr> 
-                          <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><span class="es-button-border" style="border-style:solid;border-color:#2cb543;background:#2CB543;border-width:0px;display:inline-block;border-radius:30px;width:auto;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff"><a href="${emailData.municipality.homepage}" class="es-button es-button-1637596853650" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#0061ff;font-size:14px;border-style:solid;border-color:#ffffff;border-width:0px;display:inline-block;background:#31CB4B;border-radius:30px;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-weight:normal;font-style:normal;line-height:17px;width:auto;text-align:center;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff">Heimasíða ${emailData.municipality.name} (netspjall) 
+                          <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><span class="es-button-border" style="border-style:solid;border-color:#2cb543;background:#2CB543;border-width:0px;display:inline-block;border-radius:30px;width:auto;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff"><a href="${
+                            emailData.municipality.homepage
+                          }" class="es-button es-button-1637596853650" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#0061ff;font-size:14px;border-style:solid;border-color:#ffffff;border-width:0px;display:inline-block;background:#31CB4B;border-radius:30px;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-weight:normal;font-style:normal;line-height:17px;width:auto;text-align:center;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff"><strong><u>Heimasíða ${
+    emailData.municipality.name
+  } (netspjall)</u></strong>
                              <!--[if !mso]><!-- --><img src="https://orohoy.stripocdn.email/content/guids/CABINET_da4781bc309fc9253f69ae53878fabb3/images/open.png" alt="icon" align="absmiddle" style="display:inline-block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;vertical-align:middle;margin-left:4px" width="16"> 
                              <!--<![endif]--></a></span></td> 
                          </tr> 
                          <tr> 
-                          <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><span class="es-button-border" style="border-style:solid;border-color:#2cb543;background:#2CB543;border-width:0px;display:inline-block;border-radius:30px;width:auto;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff"><a href="${emailData.municipality.rulesHomepage}" class="es-button es-button-1637597003739" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#0061ff;font-size:14px;border-style:solid;border-color:#ffffff;border-width:0px;display:inline-block;background:#31CB4B;border-radius:30px;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-weight:normal;font-style:normal;line-height:17px;width:auto;text-align:center;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff">Reglur um fjárhagsaðstoð hjá ${emailData.municipality.name} 
+                          <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><span class="es-button-border" style="border-style:solid;border-color:#2cb543;background:#2CB543;border-width:0px;display:inline-block;border-radius:30px;width:auto;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff"><a href="${
+                            emailData.municipality.rulesHomepage
+                          }" class="es-button es-button-1637597003739" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#0061ff;font-size:14px;border-style:solid;border-color:#ffffff;border-width:0px;display:inline-block;background:#31CB4B;border-radius:30px;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-weight:normal;font-style:normal;line-height:17px;width:auto;text-align:center;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff"><strong><u>Reglur um fjárhagsaðstoð hjá ${
+    emailData.municipality.name
+  }</u></strong>
                              <!--[if !mso]><!-- --><img src="https://orohoy.stripocdn.email/content/guids/CABINET_da4781bc309fc9253f69ae53878fabb3/images/open.png" alt="icon" align="absmiddle" style="display:inline-block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;vertical-align:middle;margin-left:4px" width="16"> 
                              <!--<![endif]--></a></span></td> 
                          </tr> 
                          <tr> 
-                          <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><span class="es-button-border" style="border-style:solid;border-color:#2cb543;background:#2CB543;border-width:0px;display:inline-block;border-radius:30px;width:auto;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff"><a href="${emailData.applicationLink}" class="es-button es-button-1637597036754" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#0061ff;font-size:14px;border-style:solid;border-color:#ffffff;border-width:0px;display:inline-block;background:#31CB4B;border-radius:30px;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-weight:normal;font-style:normal;line-height:17px;width:auto;text-align:center;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff">Stöðusíða umsóknar 
+                          <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><span class="es-button-border" style="border-style:solid;border-color:#2cb543;background:#2CB543;border-width:0px;display:inline-block;border-radius:30px;width:auto;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff"><a href="${
+                            emailData.applicationLink
+                          }" class="es-button es-button-1637597036754" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#0061ff;font-size:14px;border-style:solid;border-color:#ffffff;border-width:0px;display:inline-block;background:#31CB4B;border-radius:30px;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-weight:normal;font-style:normal;line-height:17px;width:auto;text-align:center;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff"><strong><u>Stöðusíða umsóknar</u></strong>
                              <!--[if !mso]><!-- --><img src="https://orohoy.stripocdn.email/content/guids/CABINET_da4781bc309fc9253f69ae53878fabb3/images/open.png" alt="icon" align="absmiddle" style="display:inline-block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;vertical-align:middle;margin-left:4px" width="16"> 
                              <!--<![endif]--></a></span></td> 
                          </tr> 
                          <tr> 
-                          <td align="left" style="padding:0;Margin:0"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#00003c;font-size:14px">Þú ert að fá þennan tölvupóst á netfangið ${emailData.applicantEmail} vegna þess að þú sóttir um fjárhagsaðstoð frá ${emailData.municipality.name}. Við munum senda pósta þegar eitthvað nýtt gerist eða þegar við þurfum eitthvað frá þér.</p></td> 
+                          <td align="left" style="padding:0;Margin:0"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#00003c;font-size:14px">Þú ert að fá þennan tölvupóst á netfangið ${
+                            emailData.applicantEmail
+                          } vegna þess að þú sóttir um fjárhagsaðstoð frá ${
+    emailData.municipality.name
+  }. Við munum senda pósta þegar eitthvað nýtt gerist eða þegar við þurfum eitthvað frá þér.</p></td> 
                          </tr> 
-                       </table></td> 
+                       </table>
+                       </td> 
                      </tr> 
-                   </table></td> 
+                   </table>
+                   </td> 
                  </tr> 
-               </table></td> 
+               </table>
+               </td> 
              </tr> 
-           </table></td> 
+           </table>
+           </td> 
          </tr> 
        </table> 
       </div>  

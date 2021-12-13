@@ -42,7 +42,7 @@ interface Recipient {
 }
 
 const linkToStatusPage = (applicationId: string) => {
-  return `${environment.baseUrl}/stada/${applicationId}"`
+  return `${environment.oskBaseUrl}/stada/${applicationId}"`
 }
 
 const firstDateOfMonth = () => {
@@ -301,7 +301,7 @@ export class ApplicationService {
     if (application.spouseNationalId) {
       const emailData = getApplicantEmailDataFromEventType(
         'SPOUSE',
-        environment.baseUrl,
+        environment.oskBaseUrl,
         appModel.spouseEmail,
         municipality,
         appModel.created,
@@ -398,6 +398,9 @@ export class ApplicationService {
         updatedApplication.created,
         update.event === ApplicationEventType.DATANEEDED
           ? update?.comment
+          : undefined,
+        update.event === ApplicationEventType.REJECTED
+          ? update?.rejection
           : undefined,
       )
 

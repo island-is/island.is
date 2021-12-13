@@ -11,6 +11,7 @@ import {
   Text,
   Option,
   Tooltip,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import {
   FormFooter,
@@ -44,7 +45,6 @@ import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
-import { useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -168,6 +168,15 @@ export const HearingArrangements: React.FC = () => {
       notFound={caseNotFound}
     >
       <FormContentContainer>
+        {workingCase.comments && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.comments.title)}
+              message={workingCase.comments}
+            />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
