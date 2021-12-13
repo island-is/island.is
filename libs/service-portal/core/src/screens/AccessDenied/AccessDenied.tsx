@@ -14,8 +14,8 @@ export const AccessDenied: ServicePortalModuleComponent<Props> = ({
 
   return (
     <ErrorScreen
-      tag={'403'}
-      tagVariant={'purple'}
+      tag={formatMessage(m.accessDenied)}
+      tagVariant={'red'}
       title={formatMessage(title || m.accessDenied)}
       figure="/assets/images/hourglass.svg"
     >
