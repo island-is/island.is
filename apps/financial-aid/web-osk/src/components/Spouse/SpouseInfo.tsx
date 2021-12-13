@@ -7,6 +7,7 @@ import {
   sanitizeNationalId,
 } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '../FormProvider/FormProvider'
+import SpouseEmailInput from '../SpouseEmailInput/SpouseEmailInput'
 
 interface Props {
   hasError: boolean
@@ -53,32 +54,14 @@ const SpouseInfo = ({
         />
       </Box>
 
-      <Box marginBottom={[2, 2, 3]}>
-        <Input
-          label="Netfang maka"
-          name="emailSpouse"
-          id="email"
-          placeholder="Sláðu inn netfang maka"
-          backgroundColor="blue"
-          hasError={
-            (hasError && !form?.spouse?.email) ||
-            (hasError && !isEmailValid(form?.spouse?.email))
-          }
-          errorMessage="Athugaðu hvort netfang sé rétt slegið inn"
-          type="email"
-          value={form?.spouse?.email}
-          onChange={(event) => {
-            removeError()
-            updateForm({
-              ...form,
-              spouse: {
-                ...form.spouse,
-                email: event.target.value,
-              },
-            })
-          }}
-        />
-      </Box>
+      <SpouseEmailInput
+        hasError={
+          hasError &&
+          Boolean(form.spouse?.email && isEmailValid(form.spouse.email)) ===
+            false
+        }
+        removeError={removeError}
+      />
 
       <Box>
         <Checkbox
