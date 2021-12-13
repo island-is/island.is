@@ -11,6 +11,7 @@ import {
   DeleteAccessControlInput,
 } from './accessControl.input'
 import { ApolloError } from 'apollo-server-express'
+import { NotFoundException } from '@nestjs/common'
 
 @Authorize({
   throwOnUnAuthorized: false,
@@ -68,6 +69,9 @@ export class AccessControlResolver {
       input.nationalId,
     )
     this.verifyDeveloperAccess(user, accessControl.role)
+    if (!accessControl) {
+      throw new NotFoundException('AccessControl not found')
+    }
     return this.accessControlService.deleteAccess(input)
   }
 }
