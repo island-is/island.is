@@ -126,6 +126,17 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             uploadHeader: addDocuments.general.uploadHeader,
             uploadDescription: addDocuments.general.uploadDescription,
             uploadButtonLabel: addDocuments.general.uploadButtonLabel,
+            condition: (formValue) =>
+              !isUniqueAssignee(formValue, !!isAssignee),
+          }),
+          buildFileUploadField({
+            id: 'attachments.additionalFilesFromReviewer.file',
+            title: '',
+            uploadAccept: UPLOAD_ACCEPT,
+            uploadHeader: addDocuments.general.uploadHeader,
+            uploadDescription: addDocuments.general.uploadDescription,
+            uploadButtonLabel: addDocuments.general.uploadButtonLabel,
+            condition: (formValue) => isUniqueAssignee(formValue, !!isAssignee),
           }),
           buildSubmitField({
             id: 'overview.submit',

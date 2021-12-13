@@ -13,6 +13,7 @@ import {
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
 import {
+  additionalFilesFromReviewerRequest,
   additionalFilesRequest,
   allAttachmentRequestConfig,
   injuryCertificateRequest,
@@ -378,6 +379,7 @@ export const attachmentStatusToAttachmentRequests = (
   }
   if (!receivedAttachments.Unknown && receivedAttachments.Unknown != null) {
     attachmentRequests.push(additionalFilesRequest)
+    attachmentRequests.push(additionalFilesFromReviewerRequest)
   }
 
   return attachmentRequests
