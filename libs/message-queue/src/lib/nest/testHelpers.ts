@@ -8,7 +8,7 @@ import {
 
 export const clientConfig = {
   region: 'eu-west-1',
-  endpoint: 'http://localhost:4566',
+  endpoint: process.env.SQS_ENDPOINT,
   credentials: {
     accessKeyId: 'testing',
     secretAccessKey: 'testing',

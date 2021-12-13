@@ -13,8 +13,10 @@ export class NotificationsWorkerService {
   ) {}
 
   async run() {
-    await this.worker.run(async (message: Message): Promise<void> => {
-      this.logger.info('Got message', message)
-    })
+    await this.worker.run(
+      async (message: Message): Promise<void> => {
+        this.logger.info('Got message', message)
+      },
+    )
   }
 }

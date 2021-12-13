@@ -47,9 +47,7 @@ const validateMessage = async (body: Request['body']): Promise<Message> => {
 @Controller('notifications')
 @ApiExtraModels(NewDocumentMessage)
 export class NotificationsController {
-  constructor(
-    @InjectQueue('notifications') private queue: QueueService,
-  ) {}
+  constructor(@InjectQueue('notifications') private queue: QueueService) {}
 
   @Post()
   @ApiBody({
