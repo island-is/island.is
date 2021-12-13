@@ -1,13 +1,13 @@
-import { ExternalServiceProvidersApiKeys } from '../app/modules/consts/external-service-providers'
-
 const devConfig = {
   production: false,
   audit: {
     defaultNamespace: '@island.is/personal-representative-external',
   },
-  externalServiceProvidersApiKeys: {
-    [ExternalServiceProvidersApiKeys.heilsuvera]:
-      ExternalServiceProvidersApiKeys.heilsuvera,
+  auth: {
+    audience: '@island.is',
+    issuer:
+      process.env.IDENTITY_SERVER_ISSUER_URL ??
+      'https://identity-server.dev01.devland.is',
   },
 }
 
@@ -18,9 +18,9 @@ const prodConfig = {
     groupName: process.env.AUDIT_GROUP_NAME,
     serviceName: 'services-personal-representative-external',
   },
-  externalServiceProvidersApiKeys: {
-    [ExternalServiceProvidersApiKeys.heilsuvera]:
-      process.env.HEILSUVERA_API_KEY,
+  auth: {
+    audience: '@island.is',
+    issuer: process.env.IDS_ISSUER ?? '',
   },
 }
 
