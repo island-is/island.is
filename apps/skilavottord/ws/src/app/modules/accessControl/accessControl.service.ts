@@ -31,10 +31,6 @@ export class AccessControlService {
   }
 
   async findOne(nationalId: string): Promise<AccessControlModel> {
-    // TODO check this out
-    if (!nationalId) {
-      return null
-    }
     return this.accessControlModel.findOne({
       where: { nationalId },
       include: [
@@ -58,6 +54,7 @@ export class AccessControlService {
   }: UpdateAccessControlInput): Promise<AccessControlModel> {
     const [_, [accessControl]] = await this.accessControlModel.update(input, {
       where: { nationalId },
+      returning: true,
     })
     return accessControl
   }

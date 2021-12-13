@@ -45,6 +45,16 @@ import {
 
 import * as styles from './AccessControl.css'
 
+const SkilavottordAllRecyclingPartnersQuery = gql`
+  query skilavottordAllRecyclingPartnersQuery {
+    skilavottordAllRecyclingPartners {
+      companyId
+      companyName
+      active
+    }
+  }
+`
+
 const SkilavottordAccessControlsQuery = gql`
   query skilavottordAccessControlsQuery {
     skilavottordAccessControls {
@@ -103,6 +113,11 @@ const AccessControl: FC = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
   const { user } = useContext(UserContext)
   const {
+    data: recyclingPartnerData,
+    error: recyclingPartnerError,
+    loading: recyclingPartnerLoading,
+  } = useQuery<Query>(SkilavottordAllRecyclingPartnersQuery, { ssr: false })
+  const {
     data: accessControlsData,
     error: accessControlsError,
     loading: accessControlsLoading,
@@ -132,9 +147,9 @@ const AccessControl: FC = () => {
   ] = useState(false)
   const [partner, setPartner] = useState<AccessControlType>()
 
-  const error = accessControlsError
-  const loading = accessControlsLoading
-  const isData = !!accessControlsData
+  const error = recyclingPartnerError || accessControlsError
+  const loading = recyclingPartnerLoading || accessControlsLoading
+  const isData = !!recyclingPartnerData && !!accessControlsData
 
   const {
     t: { accessControl: t, recyclingFundSidenav: sidenavText, routes },
@@ -148,15 +163,15 @@ const AccessControl: FC = () => {
 
   const accessControls = accessControlsData?.skilavottordAccessControls || []
 
-  // const recyclingPartners = filterInternalPartners(partners).map((partner) => ({
-  //   label: partner.companyName,
-  //   value: partner.companyId,
-  // }))
-  // const recyclingPartners = []
+  const partners = recyclingPartnerData?.skilavottordAllRecyclingPartners || []
+  const recyclingPartners = filterInternalPartners(partners).map((partner) => ({
+    label: partner.companyName,
+    value: partner.companyId,
+  }))
 
   const roles = Object.keys(Role)
     .filter((role) =>
-      !isDeveloper(user!.role) ? role !== Role.developer : role,
+      !isDeveloper(user?.role) ? role !== Role.developer : role,
     )
     .map((role) => ({
       label: startCase(role),
@@ -267,7 +282,7 @@ const AccessControl: FC = () => {
             show={isCreateAccessControlModalVisible}
             onCancel={handleCreateAccessControlCloseModal}
             onSubmit={handleCreateAccessControl}
-            recyclingPartners={[]}
+            recyclingPartners={recyclingPartners}
             roles={roles}
           />
         </Box>
@@ -303,75 +318,67 @@ const AccessControl: FC = () => {
                 </Row>
               </Head>
               <Body>
-                {accessControls.map((item) => {
-                  return (
-                    <Row key={item.nationalId}>
-                      <Data>{kennitala.format(item.nationalId)}</Data>
-                      <Data>{item.name}</Data>
-                      <Data>{startCase(item.role)}</Data>
-                      <Data>
-                        {/* {
-                          partners.find(
-                            (partner) => partner.companyId === item.partnerId,
-                          )?.companyName
-                        } */}
-                      </Data>
-                      <Data>
-                        <DropdownMenu
-                          disclosure={
-                            <Button
-                              variant="text"
-                              icon="chevronDown"
-                              size="small"
-                              nowrap
-                            >
-                              {t.buttons.actions}
-                            </Button>
-                          }
-                          items={[
-                            {
-                              title: t.buttons.edit,
-                              onClick: () => setPartner(item),
-                            },
-                            {
-                              title: t.buttons.delete,
-                              render: () => (
-                                <DialogPrompt
-                                  title={t.modal.titles.delete}
-                                  description={t.modal.subtitles.delete}
-                                  baseId={`delete-${item.nationalId}-dialog`}
-                                  ariaLabel={`delete-${item.nationalId}-dialog`}
-                                  disclosureElement={
-                                    <Box
-                                      display="flex"
-                                      alignItems="center"
-                                      justifyContent="center"
-                                      paddingY={2}
-                                      cursor="pointer"
-                                      className={styles.deleteMenuItem}
-                                    >
-                                      <Text variant="eyebrow" color="red600">
-                                        {t.buttons.delete}
-                                      </Text>
-                                    </Box>
-                                  }
-                                  buttonTextCancel={t.modal.buttons.cancel}
-                                  buttonTextConfirm={t.modal.buttons.confirm}
-                                  onConfirm={() =>
-                                    handleDeleteAccessControl({
-                                      nationalId: item.nationalId,
-                                    })
-                                  }
-                                />
-                              ),
-                            },
-                          ]}
-                          menuLabel={t.buttons.actions}
-                        />
-                      </Data>
-                    </Row>
-                  )
-                })}
+                {accessControls.map((item) => (
+                  <Row key={item.nationalId}>
+                    <Data>{kennitala.format(item.nationalId)}</Data>
+                    <Data>{item.name}</Data>
+                    <Data>{startCase(item.role)}</Data>
+                    <Data>{item?.recyclingPartner?.companyName}</Data>
+                    <Data>
+                      <DropdownMenu
+                        disclosure={
+                          <Button
+                            variant="text"
+                            icon="chevronDown"
+                            size="small"
+                            nowrap
+                          >
+                            {t.buttons.actions}
+                          </Button>
+                        }
+                        items={[
+                          {
+                            title: t.buttons.edit,
+                            onClick: () => setPartner(item),
+                          },
+                          {
+                            title: t.buttons.delete,
+                            render: () => (
+                              <DialogPrompt
+                                title={t.modal.titles.delete}
+                                description={t.modal.subtitles.delete}
+                                baseId={`delete-${item.nationalId}-dialog`}
+                                ariaLabel={`delete-${item.nationalId}-dialog`}
+                                disclosureElement={
+                                  <Box
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    paddingY={2}
+                                    cursor="pointer"
+                                    className={styles.deleteMenuItem}
+                                  >
+                                    <Text variant="eyebrow" color="red600">
+                                      {t.buttons.delete}
+                                    </Text>
+                                  </Box>
+                                }
+                                buttonTextCancel={t.modal.buttons.cancel}
+                                buttonTextConfirm={t.modal.buttons.confirm}
+                                onConfirm={() =>
+                                  handleDeleteAccessControl({
+                                    nationalId: item.nationalId,
+                                  })
+                                }
+                              />
+                            ),
+                          },
+                        ]}
+                        menuLabel={t.buttons.actions}
+                      />
+                    </Data>
+                  </Row>
+                ))}
               </Body>
             </Table>
           )}
@@ -383,7 +390,7 @@ const AccessControl: FC = () => {
         show={!!partner}
         onCancel={handleUpdateAccessControlCloseModal}
         onSubmit={handleUpdateAccessControl}
-        recyclingPartners={[]}
+        recyclingPartners={recyclingPartners}
         roles={roles}
         currentPartner={partner}
       />

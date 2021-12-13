@@ -15,9 +15,8 @@ export class User {
   @Field({ nullable: true })
   mobile?: string
 
-  // TODO change to non nullable
-  @Field(() => Role, { nullable: true })
-  role?: Role
+  @Field(() => Role)
+  role: Role
 
   @Field({ nullable: true })
   partnerId?: string
