@@ -2,7 +2,6 @@ import {
   EnvironmentVariables,
   Secrets,
   XroadConfig,
-  MissingSetting,
 } from './types/input-types'
 import { json } from './dsl'
 
@@ -247,8 +246,8 @@ export const CriminalRecord = new XroadConf({
   env: {
     XROAD_CRIMINAL_RECORD_PATH: {
       dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
-      staging: MissingSetting,
-      prod: MissingSetting,
+      staging: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
+      prod: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
     },
   },
 })
