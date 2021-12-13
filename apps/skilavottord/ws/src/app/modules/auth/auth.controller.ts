@@ -25,7 +25,6 @@ import {
 import { environment } from '../../../environments'
 import { Cookie, CookieOptions, Credentials } from './auth.types'
 import { Role, AuthUser } from './auth.types'
-import { AuthService } from './auth.service'
 
 const {
   samlEntryPoint,
