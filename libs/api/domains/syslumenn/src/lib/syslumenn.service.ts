@@ -55,9 +55,7 @@ export class SyslumennService {
       this.accessToken = accessToken
     }
   }
-  private async syslumennApiWithAuth() {
-    await this.login()
-
+  syslumennApiWithAuth() {
     const auth = {
       scope: [],
       authorization: `Bearer ${this.accessToken}`,
@@ -83,8 +81,8 @@ export class SyslumennService {
   }
 
   async getSyslumennAuctions(): Promise<SyslumennAuction[]> {
-    const api = await this.syslumennApiWithAuth()
-    const syslumennAuctions = await api.uppbodGet({
+    await this.login()
+    const syslumennAuctions = await this.syslumennApiWithAuth().uppbodGet({
       audkenni: this.id,
     })
 
@@ -106,7 +104,7 @@ export class SyslumennService {
     applicationType: string,
     extraData?: { [key: string]: string },
   ): Promise<DataUploadResponse> {
-    const api = await this.syslumennApiWithAuth()
+    await this.login()
 
     const payload = constructUploadDataObject(
       this.id,
@@ -115,12 +113,13 @@ export class SyslumennService {
       applicationType,
       extraData,
     )
-    return await api.syslMottakaGognPost(payload)
+    return await this.syslumennApiWithAuth().syslMottakaGognPost(payload)
   }
 
   async getCertificateInfo(
     nationalId: string,
   ): Promise<CertificateInfoRepsonse> {
+    await this.login()
     const api = await this.syslumennApiWithAuth()
     const certificate = await api.faVottordUpplysingarGet({
       audkenni: this.id,
