@@ -15,7 +15,7 @@ import {
   Text,
   Inline,
   Icon,
-  LoadingIcon,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
@@ -263,7 +263,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
             <span className={styles.inputIcon}>
               {isLoading ? (
                 <span className={covidStyles.iconColor}>
-                  <LoadingIcon size={24} color="currentColor" />
+                  <LoadingDots />
                 </span>
               ) : (
                 <Icon
