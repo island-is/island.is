@@ -70,7 +70,7 @@ export default(req, res) => NextAuth(req, res, {
         identityServerConfig.clientId,
         process.env.IDENTITY_SERVER_SECRET,
         process.env.NEXTAUTH_URL ?? 'http://localhost:4200/api/auth',
-        process.env.IDENTITY_SERVER_DOMAIN ?? '@vegagerdin.is',
+        process.env.IDENTITY_SERVER_DOMAIN ?? 'https://identity-server.dev01.devland.is',
       )
     },
     async signIn (
@@ -142,7 +142,7 @@ export default(req, res) => NextAuth(req, res, {
 //     identityServerConfig.clientId,
 //     process.env.IDENTITY_SERVER_SECRET,
 //     process.env.NEXTAUTH_URL ?? 'http://localhost:4200/api/auth',
-//     process.env.IDENTITY_SERVER_DOMAIN ?? '@vegagerdin.is',
+//     process.env.IDENTITY_SERVER_DOMAIN ?? 'https://identity-server.dev01.devland.is',
 //   )
 // }
 
