@@ -73,7 +73,10 @@ const FileUpload = () => {
             input: {
               id: router.query.id,
               state: ApplicationState.INPROGRESS,
-              event: ApplicationState.INPROGRESS,
+              event: isSpouse
+                ? ApplicationEventType.SPOUSEFILEUPLOAD
+                : ApplicationEventType.FILEUPLOAD,
+              comment: form.fileUploadComment,
             },
           },
         }).then((results) => {
@@ -100,25 +103,25 @@ const FileUpload = () => {
     setIsLoading(false)
   }
 
-  const sendUserComment = async () => {
-    try {
-      await createApplicationEventMutation({
-        variables: {
-          input: {
-            applicationId: router.query.id,
-            comment: form.fileUploadComment,
-            eventType: isSpouse
-              ? ApplicationEventType.SPOUSEFILEUPLOAD
-              : ApplicationEventType.FILEUPLOAD,
-          },
-        },
-      })
-    } catch (e) {
-      router.push(
-        `${Routes.statusFileUploadFailure(router.query.id as string)}`,
-      )
-    }
-  }
+  // const sendUserComment = async () => {
+  //   try {
+  //     await createApplicationEventMutation({
+  //       variables: {
+  //         input: {
+  //           applicationId: router.query.id,
+  //           comment: form.fileUploadComment,
+  //           eventType: isSpouse
+  //             ? ApplicationEventType.SPOUSEFILEUPLOAD
+  //             : ApplicationEventType.FILEUPLOAD,
+  //         },
+  //       },
+  //     })
+  //   } catch (e) {
+  //     router.push(
+  //       `${Routes.statusFileUploadFailure(router.query.id as string)}`,
+  //     )
+  //   }
+  // }
 
   return (
     <>
@@ -179,7 +182,7 @@ const FileUpload = () => {
           if (form?.otherFiles.length <= 0 || router.query.id === undefined) {
             return setError(true)
           }
-          Promise.all([sendFiles(), sendUserComment()])
+          Promise.all([sendFiles()])
         }}
       />
     </>

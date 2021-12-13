@@ -16,7 +16,6 @@ interface Props {
   [key: string]: any
   applicantName: string
   spouseName: string
-  automaticChange: boolean
 }
 
 const TimeLineContainer = ({
@@ -24,36 +23,48 @@ const TimeLineContainer = ({
   applicantName,
   spouseName,
   children,
-  automaticChange,
 }: Props) => {
-  const eventData = getEventData(
-    event,
-    applicantName,
-    spouseName,
-    automaticChange,
-  )
+  const eventData = getEventData(event, applicantName, spouseName)
+
+  const eventCreated = format(new Date(event.created), 'dd/MM/yyyy HH:MM')
 
   return (
-    <Box
-      className={cn({
-        [`${styles.timelineContainer}`]: true,
-        [`${styles.acceptedEvent}`]:
-          event.eventType === ApplicationEventType.APPROVED,
-        [`${styles.rejectedEvent}`]:
-          event.eventType === ApplicationEventType.REJECTED,
-      })}
-    >
-      <Box paddingLeft={3}>
-        <Text variant="h5">{eventData.header}</Text>
-        <Text marginBottom={2}>
-          {eventData.prefix} <strong>{eventData.text}</strong>
-        </Text>
-        {children}
-        <Text variant="small" color="dark300" marginBottom={5}>
-          {format(new Date(event.created), 'dd/MM/yyyy HH:MM')}
-        </Text>
+    <>
+      {event.eventType === ApplicationEventType.FILEUPLOAD && (
+        <Box className={`${styles.timelineContainer}`}>
+          <Box paddingLeft={3}>
+            <Text variant="h5">Í vinnslu</Text>
+            <Text marginBottom={2}>
+              Stöðu <strong> breytt vegna innsendingu gagna</strong>
+            </Text>
+            <Text variant="small" color="dark300" marginBottom={5}>
+              {eventCreated}
+            </Text>
+          </Box>
+        </Box>
+      )}
+
+      <Box
+        className={cn({
+          [`${styles.timelineContainer}`]: true,
+          [`${styles.acceptedEvent}`]:
+            event.eventType === ApplicationEventType.APPROVED,
+          [`${styles.rejectedEvent}`]:
+            event.eventType === ApplicationEventType.REJECTED,
+        })}
+      >
+        <Box paddingLeft={3}>
+          <Text variant="h5">{eventData.header}</Text>
+          <Text marginBottom={2}>
+            {eventData.prefix} <strong>{eventData.text}</strong>
+          </Text>
+          {children}
+          <Text variant="small" color="dark300" marginBottom={5}>
+            {eventCreated}
+          </Text>
+        </Box>
       </Box>
-    </Box>
+    </>
   )
 }
 
