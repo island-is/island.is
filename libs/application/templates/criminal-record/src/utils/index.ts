@@ -1,1 +1,0 @@
-export { getAge } from './getAge'

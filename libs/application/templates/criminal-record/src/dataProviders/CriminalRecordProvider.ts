@@ -4,7 +4,7 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { getAge } from '../utils'
+import { info } from 'kennitala'
 import { m } from '../lib/messages'
 import { MessageDescriptor } from '@formatjs/intl'
 
@@ -46,7 +46,7 @@ export class CriminalRecordProvider extends BasicDataProvider {
   validateApplicant(ssn: string): MessageDescriptor | null {
     // Validate applicants age
     const minAge = 15
-    const age = getAge(ssn)
+    const { age } = info(ssn)
     if (age < minAge) {
       return m.errorMinAgeNotFulfilled
     }
