@@ -63,7 +63,7 @@ const api_scope_user_claims = [
   },
 ]
 
-const client_id = 'island.is_1'
+const client_id = 'island-is_1'
 
 const client_allowed_scopes = [
   {
