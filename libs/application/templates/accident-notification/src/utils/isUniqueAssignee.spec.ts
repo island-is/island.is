@@ -1,42 +1,29 @@
-import {
-  Application,
-  ApplicationStatus,
-  ApplicationTypes,
-} from '@island.is/application/core'
+import { FormValue } from '@island.is/application/core'
 import { isUniqueAssignee } from './isUniqueAssignee'
 describe('isUniqueAssignee', () => {
+  // Gervimenn nationalIds:
   const applicant = '0101051450'
-  const assigneeSameAsApplicant = ['0101051450']
-  const uniqueAssignee = ['0102491479']
+  const assigneeSameAsApplicant = '0101051450'
+  const uniqueAssignee = '0102491479'
   const isAssignee = true
 
-  const applicationSameAsApplicant = {
-    id: '123',
-    state: '',
-    typeId: ApplicationTypes.ACCIDENT_NOTIFICATION,
-    modified: new Date(),
-    created: new Date(),
-    attachments: {},
-    answers: {},
-    externalData: {},
-    status: ApplicationStatus.IN_PROGRESS,
-    applicant,
-    assignees: assigneeSameAsApplicant,
-  } as Application
+  const applicationSameAsApplicant: FormValue = {
+    applicant: {
+      nationalId: applicant,
+    },
+    representative: {
+      nationalId: assigneeSameAsApplicant,
+    },
+  }
 
-  const applicationUniqueAssignee = {
-    id: '123',
-    state: '',
-    typeId: ApplicationTypes.ACCIDENT_NOTIFICATION,
-    modified: new Date(),
-    created: new Date(),
-    attachments: {},
-    answers: {},
-    externalData: {},
-    status: ApplicationStatus.IN_PROGRESS,
-    applicant,
-    assignees: uniqueAssignee,
-  } as Application
+  const applicationUniqueAssignee: FormValue = {
+    applicant: {
+      nationalId: applicant,
+    },
+    representative: {
+      nationalId: uniqueAssignee,
+    },
+  }
 
   it('should return false for assignee that is the same as applicant', () => {
     expect(isUniqueAssignee(applicationSameAsApplicant, isAssignee)).toEqual(

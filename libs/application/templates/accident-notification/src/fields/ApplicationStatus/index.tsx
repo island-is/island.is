@@ -58,7 +58,7 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
   )
 
   const answers = application?.answers as FormValue
-  const isAssigneeAndUnique = isUniqueAssignee(application, isAssignee)
+  const isAssigneeAndUnique = isUniqueAssignee(answers, isAssignee)
 
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)

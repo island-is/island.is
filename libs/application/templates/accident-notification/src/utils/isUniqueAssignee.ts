@@ -1,10 +1,14 @@
-import { Application } from '@island.is/application/core'
+import { FormValue, getValueViaPath } from '@island.is/application/core'
 
 export const isUniqueAssignee = (
-  application: Application,
+  formValue: FormValue,
   isAssignee: boolean,
 ): boolean => {
-  const isSamePerson = application.applicant === application.assignees[0]
+  const applicant = getValueViaPath(formValue, 'applicant.nationalId')
+  const assignee = getValueViaPath(formValue, 'representative.nationalId')
+  console.log(applicant, assignee)
+  const isSamePerson = applicant === assignee
+  console.log(isSamePerson)
 
   return !isSamePerson && isAssignee
 }
