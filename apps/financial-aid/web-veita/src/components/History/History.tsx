@@ -57,10 +57,6 @@ const History = ({
               key={'timeline-' + index}
               applicantName={applicantName}
               spouseName={spouseName}
-              automaticChange={Boolean(
-                item.eventType === ApplicationEventType.INPROGRESS &&
-                  applicationEvents[index + 1]?.eventType,
-              )}
             >
               <StaffComment
                 isVisable={item.eventType === ApplicationEventType.STAFFCOMMENT}
