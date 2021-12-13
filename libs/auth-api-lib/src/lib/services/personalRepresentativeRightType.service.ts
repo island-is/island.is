@@ -102,7 +102,7 @@ export class PersonalRepresentativeRightTypeService {
     )
 
     if (!code) {
-      throw new BadRequestException('name must be provided')
+      throw new BadRequestException('code must be provided')
     }
 
     await this.personalRepresentativeRightTypeModel.update(
@@ -119,7 +119,7 @@ export class PersonalRepresentativeRightTypeService {
 
   /** Soft delete on a personal repreasentative right type by code */
   async deleteAsync(code: string): Promise<number> {
-    this.logger.debug('Soft deleting a grant type with name: ', code)
+    this.logger.debug('Soft deleting a right type with code: ', code)
 
     if (!code) {
       throw new BadRequestException('code must be provided')

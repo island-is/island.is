@@ -4,6 +4,6 @@ export enum ApiScope {
   financeOverview = '@island.is/finance:overview',
   financeSalary = '@island.is/finance/salary',
   internal = '@island.is/internal',
-  representativeWrite = '@island.is/representative:write',
+  representativeWrite = '@island.is/auth/representative:write',
   meDetails = '@island.is/me:details',
 }
