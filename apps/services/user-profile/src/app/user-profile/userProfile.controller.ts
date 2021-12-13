@@ -1,4 +1,4 @@
-import type { User } from '@island.is/auth-nest-tools'
+import { BypassAuth, User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -335,14 +335,13 @@ export class UserProfileController {
     await this.verificationService.createSmsVerification(createSmsVerification)
   }
 
-  @Audit()
+
   @ApiOperation({
     summary:
       'NOTE: Returns a list of any user´s device tokens - Used by Notification workers - not exposed via GraphQL',
   })
   @ApiOkResponse({ type: [UserDeviceTokensDto] })
-  @Scopes(UserProfileScope.read)
-  @ApiSecurity('oauth2', [UserProfileScope.read])
+  @BypassAuth()
   @Get('userProfile/:nationalId/deviceToken')
   async getDeviceTokens(
     @Param('nationalId')
