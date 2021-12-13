@@ -4,8 +4,8 @@ import {
   AlertBanner,
   Box,
   Text,
-  LoadingIcon,
   Stack,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import {
   GetOpenApiInput,
@@ -52,7 +52,7 @@ export const OpenApiView = ({ strings, openApiInput }: OpenApiViewProps) => {
     <Box paddingTop={[3, 3, 4]} paddingBottom={[0, 0, 6]}>
       {loading && (
         <Stack space={3} align="center">
-          <LoadingIcon animate size={40} color="blue400" />
+          <LoadingDots />
           <Text variant="h4" color="blue600">
             {n('gettingDocumentation')}
           </Text>

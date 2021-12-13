@@ -2,8 +2,8 @@ import {
   Application,
   formatText,
   FormValue,
-  getValueViaPath,
   getErrorViaPath,
+  getValueViaPath,
   RecordObject,
 } from '@island.is/application/core'
 import {
@@ -13,14 +13,14 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { InputController, RadioController } from '@island.is/shared/form-fields'
 import React, { FC, useState } from 'react'
-import { useLocale } from '@island.is/localization'
-import { complaint, sharedFields } from '../../lib/messages'
-import { YES, NO } from '../../shared'
 import { ArrayField } from 'react-hook-form'
-import * as styles from './ComplaineeRepeater.css'
+import { complaint, sharedFields } from '../../lib/messages'
+import { NO, YES } from '../../shared'
 import { ComplaineeField } from './ComplaineeRepeater'
+import * as styles from './ComplaineeRepeater.css'
 
 interface Props {
   id: string
@@ -82,7 +82,6 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
           error={errors && getErrorViaPath(errors, nameField)}
           required
           backgroundColor="blue"
-          defaultValue=""
         />
         <InputController
           id={addressField}
@@ -95,7 +94,6 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
           error={errors && getErrorViaPath(errors, addressField)}
           required
           backgroundColor="blue"
-          defaultValue=""
         />
         <InputController
           id={nationalIdField}
@@ -109,7 +107,6 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
           error={errors && getErrorViaPath(errors, nationalIdField)}
           required
           backgroundColor="blue"
-          defaultValue=""
         />
       </Stack>
       <Text variant="h5" marginTop={4} marginBottom={2}>

@@ -170,7 +170,7 @@ export const RulingStepOne: React.FC = () => {
             data-testid="prosecutorDemands"
             name="prosecutorDemands"
             label={formatMessage(m.sections.prosecutorDemands.label)}
-            defaultValue={workingCase.prosecutorDemands}
+            value={workingCase.prosecutorDemands || ''}
             placeholder={formatMessage(
               m.sections.prosecutorDemands.placeholder,
             )}
@@ -216,7 +216,7 @@ export const RulingStepOne: React.FC = () => {
               data-testid="courtCaseFacts"
               name="courtCaseFacts"
               label={formatMessage(m.sections.courtCaseFacts.label)}
-              defaultValue={workingCase.courtCaseFacts}
+              value={workingCase.courtCaseFacts || ''}
               placeholder={formatMessage(m.sections.courtCaseFacts.placeholder)}
               onChange={(event) =>
                 removeTabsValidateAndSet(
@@ -261,7 +261,7 @@ export const RulingStepOne: React.FC = () => {
               data-testid="courtLegalArguments"
               name="courtLegalArguments"
               label={formatMessage(m.sections.courtLegalArguments.label)}
-              defaultValue={workingCase.courtLegalArguments}
+              value={workingCase.courtLegalArguments || ''}
               placeholder={formatMessage(
                 m.sections.courtLegalArguments.placeholder,
               )}

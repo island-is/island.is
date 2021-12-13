@@ -1,4 +1,9 @@
-import { Field, ObjectType, createUnionType } from '@nestjs/graphql'
+import {
+  Field,
+  ObjectType,
+  createUnionType,
+  registerEnumType,
+} from '@nestjs/graphql'
 import {
   Column,
   DataType,
@@ -16,6 +21,17 @@ import {
 import { RecyclingPartnerModel } from '../recyclingPartner'
 import { VehicleModel } from '../vehicle'
 
+enum RecyclingRequestTypes {
+  pendingRecycle = 'pendingRecycle',
+  handOver = 'handOver',
+  deregistered = 'deregistered',
+  cancelled = 'cancelled',
+  paymentInitiated = 'paymentInitiated',
+  paymentFailed = 'paymentFailed',
+}
+
+registerEnumType(RecyclingRequestTypes, { name: 'RecyclingRequestTypes' })
+
 @ObjectType()
 export class RequestErrors {
   @Field()
@@ -31,8 +47,8 @@ export class RequestStatus {
   status: boolean
 }
 
-export const RecyclingRequestUnion = createUnionType({
-  name: 'RecyclingRequest',
+export const RecyclingRequestResponse = createUnionType({
+  name: 'RecyclingRequestResponse',
   types: () => [RequestErrors, RequestStatus],
   resolveType(res) {
     if (res.status) {
@@ -45,7 +61,7 @@ export const RecyclingRequestUnion = createUnionType({
   },
 })
 
-@ObjectType()
+@ObjectType('RecyclingRequest')
 @Table({ tableName: 'recycling_request' })
 export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @Field()
@@ -77,7 +93,7 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @BelongsTo(() => RecyclingPartnerModel)
   recyclingPartner: RecyclingPartnerModel
 
-  @Field()
+  @Field(() => RecyclingRequestTypes)
   @Column({
     type: DataType.STRING,
     allowNull: false,

@@ -25,7 +25,7 @@ const AboutFormSpouse = () => {
       <Text variant="intro" fontWeight="light" marginBottom={3}>
         Svo hægt sé að klára umsóknina þurfum við að fá þig til að hlaða upp{' '}
         <strong>tekju- og skattagögnum</strong> til að reikna út fjárhagsaðstoð
-        til útgreiðslu í byrjun {months[nextMonth]}.
+        til útgreiðslu í byrjun {months[nextMonth()]}.
       </Text>
     </>
   )

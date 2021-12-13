@@ -1,11 +1,20 @@
 import { Resolver, Query } from '@nestjs/graphql'
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
+
+import { ApiScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+
 import { PartyLetterRegistry } from './models/partyLetterRegistry.model'
 import { PartyLetterRegistryService } from './partyLetterRegistry.service'
-import type { User } from '@island.is/auth-nest-tools'
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.internal)
 @Resolver('PartyLetterRegistryResolver')
 export class PartyLetterRegistryResolver {
   constructor(private partyLetterRegistryService: PartyLetterRegistryService) {}
