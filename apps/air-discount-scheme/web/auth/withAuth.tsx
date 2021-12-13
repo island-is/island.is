@@ -4,7 +4,7 @@ import Router from 'next/router'
 import { isAuthenticated } from './utils'
 import { REDIRECT_KEY } from '../consts'
 import { Routes } from '../types'
-import { signIn } from 'next-auth/client'
+import { getSession, signIn, useSession } from 'next-auth/client'
 
 const AUTH_URL = '/api/auth/signin-oidc'
 
@@ -72,19 +72,23 @@ const withAuth = (WrappedComponent) =>
       /*
        * Render white screen for the redirection
        */
-//      return signIn('identity-server', {callbackUrl: `${window.location.href}`})
-      return (
-        <div
-          style={{
-            position: 'absolute',
-            height: '100%',
-            width: '100%',
-            background: '#fff',
-            zIndex: 999,
-            top: 0,
-          }}
-        />
-      )
+      return <WrappedComponent {...signIn('identity-server')} />
+
+      //error webpack-internal:///…evelopment.js:13231 Uncaught Error: Objects are not valid as a React child (found: [object Promise]). If you meant to render a collection of children, use an array instead.
+      //​ The above error occurred in the <_class> component:
+      //return signIn('identity-server')
+      // return (
+      //   <div
+      //     style={{
+      //       position: 'absolute',
+      //       height: '100%',
+      //       width: '100%',
+      //       background: '#0ff',
+      //       zIndex: 999,
+      //       top: 0,
+      //     }}
+      //   />
+      // )
     }
   }
 export default withAuth

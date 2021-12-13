@@ -14,20 +14,10 @@ import { NextApiRequest, NextApiResponse } from 'next-auth/internals/utils'
 import { JWT } from 'next-auth/jwt'
 import { decode } from 'jsonwebtoken'
 import { Router } from 'express'
+import idsProvider from './providers'
 
 export default(req, res) => NextAuth(req, res, {
-  providers: [
-    Providers.IdentityServer4({
-      id: identityServerConfig.id,
-      name: identityServerConfig.name,
-      scope: identityServerConfig.scope,
-      clientId: identityServerConfig.clientId,
-      domain: 'identity-server.dev01.devland.is',
-      clientSecret: process.env.IDENTITY_SERVER_SECRET,
-      authorizationUrl: process.env.NEXTAUTH_URL,
-      protection: 'pkce',
-    }),
-  ],
+  providers: [idsProvider],
   callbacks: {
     //const callbacks:CallbacksOptions = {}
     async session(session: AuthSession, user: AuthUser): Promise<Session> {

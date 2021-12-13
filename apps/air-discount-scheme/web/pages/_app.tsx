@@ -86,7 +86,6 @@ class SupportApplication extends App<Props> {
       scope.setContext('cookies', readonlyCookies)
     })
     const apolloState = apolloClient.cache.extract()
-    console.log('PProps session: ' + JSON.stringify(session))
     return {
       layoutProps: { ...layoutProps, ...pageProps?.layoutConfig },
       pageProps,
@@ -144,12 +143,7 @@ class SupportApplication extends App<Props> {
       console.log('_app isAuthenticated - hello')
       router.push(returnUrl(user))
     } 
-    // else {
-    //   console.log('return null')
-    //   return
-    // }
-    console.log('before return _app with session: ' + this.props.session)
-    
+
     console.log(process.env.NEXTAUTH_URL)
     return (
       <Provider 
