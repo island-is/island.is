@@ -26,6 +26,7 @@ import {
   hasReceivedAllDocuments,
   isInjuredAndRepresentativeOfCompanyOrInstitute,
   shouldRequestReview,
+  isUniqueAssignee,
 } from '../../utils'
 import { hasReceivedConfirmation } from '../../utils/hasReceivedConfirmation'
 import { StatusStep } from './StatusStep'
@@ -57,6 +58,7 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
   )
 
   const answers = application?.answers as FormValue
+  const isAssigneeAndUnique = isUniqueAssignee(application, isAssignee)
 
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)
@@ -213,7 +215,11 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
         },
         title: formatMessage(inReview.action.documents.title),
         description: formatMessage(inReview.action.documents.description),
-        fileNames: getErrorMessageForMissingDocuments(answers, formatMessage), // We need to get this from first form
+        fileNames: getErrorMessageForMissingDocuments(
+          answers,
+          formatMessage,
+          isAssigneeAndUnique,
+        ), // We need to get this from first form
         actionButtonTitle: formatMessage(
           inReview.action.documents.actionButtonTitle,
         ),
