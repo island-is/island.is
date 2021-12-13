@@ -192,6 +192,11 @@ export const m = defineMessages({
     `,
     description: 'Description of photo requirements',
   },
+  qualityPhotoNoPhotoAlertMessage: {
+    id: 'dl.application:qualityPhoto.qualityPhotoNoPhotoAlertMessage',
+    defaultMessage: 'Ath. Skylda er að hlaða inn mynd',
+    description: 'Alert on no photo attachment',
+  },
 
   /* Delivery method Section */
   deliveryMethodTitle: {

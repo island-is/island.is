@@ -142,7 +142,7 @@ export const getApplication = (): Form => {
               buildTextField({
                 id: 'phone',
                 title: m.applicantsPhoneNumber,
-                variant: 'number',
+                variant: 'tel',
                 width: 'half',
                 backgroundColor: 'blue',
                 defaultValue: (application: Application) => {
@@ -237,6 +237,11 @@ export const getApplication = (): Form => {
                 title: '',
                 component: 'PhotoUpload',
               }),
+              buildDescriptionField({
+                id: 'attachmentFileName',
+                title: '',
+                description: '',
+              }),
             ],
           }),
         ],
@@ -321,7 +326,9 @@ export const getApplication = (): Form => {
                 width: 'half',
                 value: ({ externalData: { nationalRegistry } }) =>
                   (nationalRegistry.data as NationalRegistryUser).address
-                    ?.postalCode,
+                    ?.postalCode +
+                  ', ' +
+                  (nationalRegistry.data as NationalRegistryUser).address?.city,
               }),
               buildKeyValueField({
                 label: m.applicantsEmail,

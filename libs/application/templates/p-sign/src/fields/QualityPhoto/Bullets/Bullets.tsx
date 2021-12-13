@@ -11,7 +11,7 @@ interface BulletsData {
 const Bullets = ({ application }: BulletsData) => {
   const { formatMessage } = useLocale()
   return (
-    <Box marginY={5}>
+    <Box marginTop={3}>
       <BulletList>
         <Bullet>
           {formatText(
