@@ -1,8 +1,10 @@
-import { AdiliTegund, SyslMottakaGognPostRequest } from '@island.is/clients/syslumenn'
+import {
+  AdiliTegund,
+  SyslMottakaGognPostRequest,
+} from '@island.is/clients/syslumenn'
 import { Field, ObjectType } from '@nestjs/graphql'
 import { uuid } from 'uuidv4'
 import { Attachment, Person, PersonType } from '../dto/uploadData.input'
-
 
 export function constructUploadDataObject(
   id: string,
@@ -11,31 +13,33 @@ export function constructUploadDataObject(
   applicationType: string,
   extraData?: { [key: string]: string },
 ): SyslMottakaGognPostRequest {
-  return {payload: {
-    audkenni: id,
-    gognSkeytis: {
-      audkenni: applicationType,
-      skeytaHeiti: applicationType,
-      adilar: persons.map((p) => {
-        return {
-          id: uuid(),
-          nafn: p.name,
-          kennitala: p.ssn,
-          simi: p.phoneNumber,
-          tolvupostur: p.email,
-          heimilisfang: p.homeAddress,
-          postaritun: p.postalCode,
-          sveitafelag: p.city,
-          undirritad: p.signed,
-          tegund: mapPersonEnum(p.type),
-        }
-      }),
-      attachments: [
-        { nafnSkraar: attachment.name, innihaldSkraar: attachment.content },
-      ],
-      gagnaMengi: extraData ?? {},
+  return {
+    payload: {
+      audkenni: id,
+      gognSkeytis: {
+        audkenni: applicationType,
+        skeytaHeiti: applicationType,
+        adilar: persons.map((p) => {
+          return {
+            id: uuid(),
+            nafn: p.name,
+            kennitala: p.ssn,
+            simi: p.phoneNumber,
+            tolvupostur: p.email,
+            heimilisfang: p.homeAddress,
+            postaritun: p.postalCode,
+            sveitafelag: p.city,
+            undirritad: p.signed,
+            tegund: mapPersonEnum(p.type),
+          }
+        }),
+        attachments: [
+          { nafnSkraar: attachment.name, innihaldSkraar: attachment.content },
+        ],
+        gagnaMengi: extraData ?? {},
+      },
     },
-  }}
+  }
 }
 
 function mapPersonEnum(e: PersonType) {
@@ -49,7 +53,6 @@ function mapPersonEnum(e: PersonType) {
   }
 }
 
-
 @ObjectType()
 export class DataUploadResponse {
   @Field()
@@ -61,4 +64,3 @@ export class DataUploadResponse {
   @Field()
   malsnumer?: string
 }
-

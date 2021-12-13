@@ -11,9 +11,8 @@ The client is generated from a copy of the openApi document provided by Syslumen
 ### Updating the open api definition (clientConfig.json)
 
 ```sh
-yarn nx run clients-syslumenn:update-openapi-document 
+yarn nx run clients-syslumenn:update-openapi-document
 ```
-
 
 ### Regenerating the client:
 
@@ -22,8 +21,6 @@ yarn nx run clients-syslumenn:schemas/external-openapi-generator
 ```
 
 ### Import into other NestJS modules
-
-
 
 ## Code owners and maintainers
 

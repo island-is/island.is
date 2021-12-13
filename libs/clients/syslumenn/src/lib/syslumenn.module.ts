@@ -1,15 +1,12 @@
 import { DynamicModule } from '@nestjs/common'
 import { SyslumennApi, Configuration } from '../../gen/fetch'
-import {
-  createEnhancedFetch,
-} from '@island.is/clients/middlewares'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
 export interface SyslumennApiConfig {
   url: string
   username: string
   password: string
 }
-
 
 export class SyslumennApiModule {
   static register(config: SyslumennApiConfig): DynamicModule {

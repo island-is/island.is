@@ -453,14 +453,7 @@ const Auctions: Screen<AuctionsProps> = ({
 
   const [showCount, setShowCount] = useState(10)
 
-  const { loading, error, data } = useQuery<
-    Query,
-    QueryGetAuctionArgs
-  >(GET_SYSLUMENN_AUCTIONS_QUERY, {
-    variables: {
-      input: {},
-    },
-  })
+  const { loading, error, data } = useQuery<Query>(GET_SYSLUMENN_AUCTIONS_QUERY)
 
   useEffect(() => {
     const hashString = window.location.hash.replace('#', '')
@@ -939,11 +932,8 @@ Auctions.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetSyslumennAuctionsArgs>({
+    apolloClient.query<Query>({
       query: GET_SYSLUMENN_AUCTIONS_QUERY,
-      variables: {
-        input: {},
-      },
     }),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({

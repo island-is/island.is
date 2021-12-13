@@ -12,7 +12,11 @@ import { SYSLUMENN_AUCTION } from './__mock-data__/responses'
 import { mapSyslumennAuction } from './models/syslumennAuction'
 import { mapOperatingLicense } from './models/operatingLicense'
 import { PersonType } from './dto/uploadData.input'
-import { SyslumennApiConfig, SyslumennApiModule, VirkarHeimagistingar } from '@island.is/clients/syslumenn'
+import {
+  SyslumennApiConfig,
+  SyslumennApiModule,
+  VirkarHeimagistingar,
+} from '@island.is/clients/syslumenn'
 
 const YEAR = 2021
 const PERSON = [
@@ -47,13 +51,11 @@ describe('SyslumennService', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [
-        SyslumennApiModule.register(config)
-      ],
+      imports: [SyslumennApiModule.register(config)],
       providers: [
         SyslumennService,
         {
-          provide: "SYSLUMENN_CLIENT_CONFIG",
+          provide: 'SYSLUMENN_CLIENT_CONFIG',
           useValue: config,
         },
       ],
@@ -99,7 +101,11 @@ describe('SyslumennService', () => {
 
   describe('uploadData', () => {
     it('should return data upload response', async () => {
-      const response = await service.uploadData(PERSON, ATTACHMENT, APPLICATION_TYPE)
+      const response = await service.uploadData(
+        PERSON,
+        ATTACHMENT,
+        APPLICATION_TYPE,
+      )
       expect(response).toStrictEqual(DATA_UPLOAD)
     })
   })

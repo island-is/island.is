@@ -17,10 +17,12 @@ export class CertificateRepsonse {
   @Field()
   data?: string
 }
-export const mapCertificateInfo = (response: Vottord): CertificateInfoRepsonse => {
+export const mapCertificateInfo = (
+  response: Vottord,
+): CertificateInfoRepsonse => {
   return {
     nationalId: response.kennitala ?? '',
     expirationDate: response.gildisTimi ?? '',
     releaseDate: response.utgafudagur ?? '',
-}
+  }
 }

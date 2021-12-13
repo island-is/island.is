@@ -23,7 +23,11 @@ import {
   Vottord,
 } from '@island.is/clients/syslumenn'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-import { CertificateInfoRepsonse, CertificateRepsonse, mapCertificateInfo } from './models/certificateInfo';
+import {
+  CertificateInfoRepsonse,
+  CertificateRepsonse,
+  mapCertificateInfo,
+} from './models/certificateInfo'
 
 const SYSLUMENN_CLIENT_CONFIG = 'SYSLUMENN_CLIENT_CONFIG'
 @Injectable()
@@ -43,7 +47,7 @@ export class SyslumennService {
       lykilord: this.clientConfig.password,
     }
 
-    const {audkenni, accessToken} = await this.syslumennApi.innskraningPost({
+    const { audkenni, accessToken } = await this.syslumennApi.innskraningPost({
       notandi: config,
     })
     if (audkenni && accessToken) {
@@ -114,13 +118,18 @@ export class SyslumennService {
     return await api.syslMottakaGognPost(payload)
   }
 
-  async getCertificateInfo(nationalId: string): Promise<CertificateInfoRepsonse> {
+  async getCertificateInfo(
+    nationalId: string,
+  ): Promise<CertificateInfoRepsonse> {
     const api = await this.syslumennApiWithAuth()
-    const certificate =  await api.faVottordUpplysingarGet({
+    const certificate = await api.faVottordUpplysingarGet({
       audkenni: this.id,
-      kennitala: nationalId
+      kennitala: nationalId,
     })
-  
-    return mapCertificateInfo(JSON.parse(JSON.parse(certificate)) as Vottord)
+    // Once syslumenn openapi defenition is fixed this will not need parsing
+    const parsedCertificate = JSON.parse(
+      JSON.parse(JSON.stringify(certificate)),
+    )
+    return mapCertificateInfo(parsedCertificate ?? ('' as Vottord))
   }
 }

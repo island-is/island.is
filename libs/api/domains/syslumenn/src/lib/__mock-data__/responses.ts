@@ -1,4 +1,8 @@
-import { Uppbod, VirkarHeimagistingar, VirkLeyfi } from '@island.is/clients/syslumenn'
+import {
+  Uppbod,
+  VirkarHeimagistingar,
+  VirkLeyfi,
+} from '@island.is/clients/syslumenn'
 import { DataUploadResponse } from '../models/dataUpload'
 
 export const VHSUCCESS = [
@@ -13,8 +17,8 @@ export const VHSUCCESS = [
     fjoldiHerbergja: 0,
     fastanumer: 'string',
     ibudanumer: 'string',
-    postnumer: 'string'
-  }
+    postnumer: 'string',
+  },
 ] as VirkarHeimagistingar[]
 
 export const VHFAIL = {

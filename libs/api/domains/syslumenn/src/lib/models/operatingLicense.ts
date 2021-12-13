@@ -62,7 +62,9 @@ export const mapOperatingLicense = (
   street: operatingLicense.gata,
   postalCode: operatingLicense.postnumer,
   type: operatingLicense.tegund,
-  validUntil: operatingLicense.gildirTil ? operatingLicense.gildirTil.toLocaleString() : '',
+  validUntil: operatingLicense.gildirTil
+    ? operatingLicense.gildirTil.toLocaleString()
+    : '',
   licenseHolder: operatingLicense.leyfishafi,
   category: operatingLicense.flokkur,
   outdoorLicense: operatingLicense.leyfiTilUtiveitinga,

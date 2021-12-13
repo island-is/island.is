@@ -36,15 +36,15 @@ export class Homestay {
 
 export const mapHomestay = (homestay: VirkarHeimagistingar): Homestay => {
   return {
-  registrationNumber: homestay.skraningarnumer,
-  name: homestay.heitiHeimagistingar,
-  address: homestay.heimilisfang,
-  manager: homestay.abyrgdarmadur,
-  year: parseFloat(homestay.umsoknarAr || ''),
-  city: homestay.sveitarfelag,
-  guests: homestay.gestafjoldi,
-  rooms: homestay.fjoldiHerbergja,
-  propertyId: homestay.fastanumer,
-  apartmentId: homestay.ibudanumer,
-}
+    registrationNumber: homestay.skraningarnumer,
+    name: homestay.heitiHeimagistingar,
+    address: homestay.heimilisfang,
+    manager: homestay.abyrgdarmadur,
+    year: parseFloat(homestay.umsoknarAr || ''),
+    city: homestay.sveitarfelag,
+    guests: homestay.gestafjoldi,
+    rooms: homestay.fjoldiHerbergja,
+    propertyId: homestay.fastanumer,
+    apartmentId: homestay.ibudanumer,
+  }
 }
