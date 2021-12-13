@@ -22,6 +22,15 @@ const mockProfile = {
   mobilePhoneNumber: '9876543',
 }
 
+const mockDeviceToken = {
+  id: 'b3f99e48-57e6-4d30-a933-1304dad40c62',
+  nationalId: mockProfile.nationalId,
+  deviceToken:
+    'f4XghAZSRs6L-RNWRo9-Mw:APA91bFGgAc-0rhMgeHCDvkMJBH_nU4dApG6qqATliEbPs9xXf5n7EJ7FiAjJ6NNCHMBKdqHMdLrkaFHxuShzTwmZquyCjchuVMwAGmlwdXY8vZWnVqvMVItYn5lfIH-mR7Q9FvnNlhv',
+  created: '2021-12-09T12:58:04.967Z',
+  modified: '2021-12-09T12:58:04.967Z',
+}
+
 beforeAll(async () => {
   app = await setup({
     override: (builder) =>
@@ -226,6 +235,7 @@ describe('User profile API', () => {
       //Arrange
       const updatedProfile = {
         locale: 'is',
+        documentNotifications: true,
       }
       await request(app.getHttpServer()).post('/userProfile').send(mockProfile)
 
@@ -241,6 +251,11 @@ describe('User profile API', () => {
       )
       expect(updateResponse.body).toEqual(
         expect.objectContaining({ locale: updatedProfile.locale }),
+      )
+      expect(updateResponse.body).toEqual(
+        expect.objectContaining({
+          documentNotifications: updatedProfile.documentNotifications,
+        }),
       )
     })
 
@@ -615,6 +630,100 @@ describe('User profile API', () => {
           "message": "SMS confirmed",
         }
       `)
+    })
+  })
+
+  describe('/userProfile/{nationalId}/deviceToken', () => {
+    it('GET /userProfile/{nationalId}/deviceToken should return list of tokens', async () => {
+      // create one first
+      await request(app.getHttpServer())
+        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .send({
+          deviceToken: mockDeviceToken.deviceToken,
+        })
+        .expect(201)
+      // get it in a list
+      const response = await request(app.getHttpServer())
+        .get(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .expect(200)
+      // Assert
+      expect(response.body.length).toBe(1)
+      expect(response.body[0].deviceToken).toBe(mockDeviceToken.deviceToken)
+    })
+
+    it('GET /userProfile/{nationalId}/deviceToken should work with different nationalId', async () => {
+      // create one first
+      await request(app.getHttpServer())
+        .get(`/userProfile/0101302989/deviceToken`) // GERVIMAÐUR KT
+        .send({
+          deviceToken: mockDeviceToken.deviceToken,
+        })
+        .expect(200)
+    })
+
+    it('POST /userProfile/{nationalId}/deviceToken should return 201 created', async () => {
+      // create it
+      const response = await request(app.getHttpServer())
+        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .send({
+          deviceToken: mockDeviceToken.deviceToken,
+        })
+        .expect(201)
+
+      expect(response.body).toEqual(
+        expect.objectContaining({
+          deviceToken: mockDeviceToken.deviceToken,
+          nationalId: mockProfile.nationalId,
+        }),
+      )
+    })
+
+    it('POST /userProfile/{nationalId}/deviceToken duplicate token should return 400 bad request', async () => {
+      // create it
+      await request(app.getHttpServer())
+        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .send({
+          deviceToken: mockDeviceToken.deviceToken,
+        })
+        .expect(201)
+      // try to create same again
+      await request(app.getHttpServer())
+        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .send({
+          deviceToken: mockDeviceToken.deviceToken,
+        })
+        .expect(400)
+    })
+
+    it('POST /userProfile/{nationalId}/deviceToken with missing payload should 400 bad request', async () => {
+      // create it
+      await request(app.getHttpServer())
+        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .send({})
+        .expect(400)
+    })
+
+    it('DELETE /userProfile/{nationalId}/deviceToken should remove row with 200', async () => {
+      // create one first ...
+      await request(app.getHttpServer())
+        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .send({
+          deviceToken: mockDeviceToken.deviceToken,
+        })
+        .expect(201)
+
+      // ... so we can delete it
+      const response = await request(app.getHttpServer())
+        .delete(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .send({
+          deviceToken: mockDeviceToken.deviceToken,
+        })
+        .expect(200)
+      expect(response.body).toEqual(
+        expect.objectContaining({
+          success: true,
+        }),
+      )
     })
   })
 })
