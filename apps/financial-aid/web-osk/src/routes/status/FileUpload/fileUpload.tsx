@@ -16,10 +16,7 @@ import {
   getCommentFromLatestEvent,
 } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
-import {
-  ApplicationEventMutation,
-  ApplicationMutation,
-} from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import { ApplicationMutation } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import { AlertMessage, Box, Input, Text } from '@island.is/island-ui/core'
 
@@ -49,8 +46,6 @@ const FileUpload = () => {
   const [updateApplicationMutation] = useMutation<{
     updateApplication: Application
   }>(ApplicationMutation)
-
-  const [createApplicationEventMutation] = useMutation(ApplicationEventMutation)
 
   const isSpouse = user?.nationalId === myApplication?.spouseNationalId
 
@@ -102,26 +97,6 @@ const FileUpload = () => {
 
     setIsLoading(false)
   }
-
-  // const sendUserComment = async () => {
-  //   try {
-  //     await createApplicationEventMutation({
-  //       variables: {
-  //         input: {
-  //           applicationId: router.query.id,
-  //           comment: form.fileUploadComment,
-  //           eventType: isSpouse
-  //             ? ApplicationEventType.SPOUSEFILEUPLOAD
-  //             : ApplicationEventType.FILEUPLOAD,
-  //         },
-  //       },
-  //     })
-  //   } catch (e) {
-  //     router.push(
-  //       `${Routes.statusFileUploadFailure(router.query.id as string)}`,
-  //     )
-  //   }
-  // }
 
   return (
     <>

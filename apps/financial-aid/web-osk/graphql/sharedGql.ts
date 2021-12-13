@@ -8,14 +8,6 @@ export const CreateApplicationMutation = gql`
   }
 `
 
-export const ApplicationEventMutation = gql`
-  mutation createApplicationEvent($input: CreateApplicationEventInput!) {
-    createApplicationEvent(input: $input) {
-      id
-    }
-  }
-`
-
 export const ApplicationFilesMutation = gql`
   mutation createApplicationFiles($input: CreateApplicationFilesInput!) {
     createApplicationFiles(input: $input) {
