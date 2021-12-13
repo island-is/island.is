@@ -190,6 +190,6 @@ module.exports = {
     '<rootDir>/libs/testing/containers',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
-    '<rootDir>/apps/services/personal-representative-external',
+    '<rootDir>/apps/services/personal-representative-public',
   ],
 }

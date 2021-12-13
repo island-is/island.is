@@ -4,7 +4,7 @@ import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
 
 buildOpenApi({
-  path: 'apps/services/personal-representative-external/src/openapi.yaml',
+  path: 'apps/services/personal-representative-public/src/openapi.yaml',
   appModule: AppModule,
   openApi,
 })
