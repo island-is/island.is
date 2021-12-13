@@ -1,8 +1,4 @@
-import {
-  EnvironmentVariables,
-  Secrets,
-  XroadConfig,
-} from './types/input-types'
+import { EnvironmentVariables, Secrets, XroadConfig } from './types/input-types'
 import { json } from './dsl'
 
 type XroadSectionConfig = {
