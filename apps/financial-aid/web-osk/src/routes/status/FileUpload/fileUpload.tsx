@@ -157,7 +157,7 @@ const FileUpload = () => {
           if (form?.otherFiles.length <= 0 || router.query.id === undefined) {
             return setError(true)
           }
-          Promise.all([sendFiles()])
+          sendFiles()
         }}
       />
     </>
