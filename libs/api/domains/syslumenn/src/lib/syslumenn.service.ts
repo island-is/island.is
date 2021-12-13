@@ -55,6 +55,7 @@ export class SyslumennService {
       this.accessToken = accessToken
     }
   }
+
   syslumennApiWithAuth() {
     const auth = {
       scope: [],
