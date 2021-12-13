@@ -18,7 +18,6 @@ export class CertificateRepsonse {
   data?: string
 }
 export const mapCertificateInfo = (response: Vottord): CertificateInfoRepsonse => {
-  console.log(response)
   return {
     nationalId: response.kennitala ?? '',
     expirationDate: response.gildisTimi ?? '',

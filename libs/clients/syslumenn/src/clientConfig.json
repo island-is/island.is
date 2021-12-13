@@ -767,7 +767,10 @@
             "x-nullable": false,
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/Vottord"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         },

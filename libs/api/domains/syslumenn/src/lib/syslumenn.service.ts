@@ -80,6 +80,7 @@ export class SyslumennService {
 
   async getSyslumennAuctions(): Promise<SyslumennAuction[]> {
     const api = await this.syslumennApiWithAuth()
+    console.log(api)
     const syslumennAuctions = await api.uppbodGet({
       audkenni: this.id,
     })
@@ -111,7 +112,7 @@ export class SyslumennService {
       applicationType,
       extraData,
     )
-
+      console.log(payload)
     return await api.syslMottakaGognPost(payload)
   }
 
@@ -121,7 +122,7 @@ export class SyslumennService {
       audkenni: this.id,
       kennitala: nationalId
     })
-    console.log(certificate)
-    return mapCertificateInfo(certificate as Vottord)
+  
+    return mapCertificateInfo(JSON.parse(JSON.parse(certificate)) as Vottord)
   }
 }
