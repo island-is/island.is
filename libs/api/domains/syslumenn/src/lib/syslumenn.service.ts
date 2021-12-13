@@ -121,8 +121,7 @@ export class SyslumennService {
     nationalId: string,
   ): Promise<CertificateInfoRepsonse> {
     await this.login()
-    const api = await this.syslumennApiWithAuth()
-    const certificate = await api.faVottordUpplysingarGet({
+    const certificate = await this.syslumennApiWithAuth().faVottordUpplysingarGet({
       audkenni: this.id,
       kennitala: nationalId,
     })
