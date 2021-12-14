@@ -8,14 +8,6 @@ export const CreateApplicationMutation = gql`
   }
 `
 
-export const ApplicationEventMutation = gql`
-  mutation createApplicationEvent($input: CreateApplicationEventInput!) {
-    createApplicationEvent(input: $input) {
-      id
-    }
-  }
-`
-
 export const ApplicationFilesMutation = gql`
   mutation createApplicationFiles($input: CreateApplicationFilesInput!) {
     createApplicationFiles(input: $input) {
@@ -89,6 +81,33 @@ export const ApplicationMutation = gql`
   mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
     updateApplication(input: $input) {
       id
+      homeCircumstances
+      usePersonalTaxCredit
+      state
+      amount {
+        aidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
+      }
+      rejection
+      created
+      modified
+      municipalityCode
+      spouseNationalId
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
     }
   }
 `
