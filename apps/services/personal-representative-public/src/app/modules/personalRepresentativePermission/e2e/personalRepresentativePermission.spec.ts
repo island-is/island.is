@@ -164,7 +164,6 @@ describe('PersonalRepresentativePermissionController', () => {
       }
     })
   })
-
   describe('Post', () => {
     it('Post v1/personal-representative-permission/loc-access should create access log', async () => {
       const simpleAccessData: PersonalRepresentativeAccessDTO = {
