@@ -95,3 +95,8 @@ export enum MartialStatusType {
   MARRIED = 'Married',
   SINGLE = 'Single',
 }
+
+export enum AmountModal {
+  ESTIMATED = 'Estimated',
+  PROVIDED = 'Provided',
+}
