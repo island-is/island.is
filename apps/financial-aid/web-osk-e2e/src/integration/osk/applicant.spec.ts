@@ -1,12 +1,12 @@
-describe('applicant flow', () => {
-  beforeEach(() => {
-    cy.visit('/')
-  })
+/// <reference path="../../support/index.d.ts" />
 
+describe('applicant flow', () => {
   it('should login', () => {
+    cy.visit('/')
     cy.contains('Samband Íslenskra Sveitarfélaga - Fjárhagsaðstoð')
-    cy.get('phoneUserIdentifier').focus().type('0107789')
-    cy.get('submitPhoneNumber').click()
+    cy.get('input').first().focus().type('0107789')
+    cy.wait(1000)
+    cy.contains('Auðkenna').click()
   })
 
   it('should be logged in', () => {
