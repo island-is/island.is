@@ -1,5 +1,8 @@
 import { AuthScope } from '@island.is/auth/scopes'
 import {
+  PersonalRepresentativeAccess,
+  PersonalRepresentativeAccessDTO,
+  PersonalRepresentativeAccessService,
   PersonalRepresentativeDTO,
   PersonalRepresentativeService,
 } from '@island.is/auth-api-lib/personal-representative'
@@ -8,6 +11,8 @@ import {
   Controller,
   UseGuards,
   Get,
+  Post,
+  Body,
   Inject,
   Param,
 } from '@nestjs/common'
@@ -39,6 +44,8 @@ export class PersonalRepresentativePermissionController {
   constructor(
     @Inject(PersonalRepresentativeService)
     private readonly prService: PersonalRepresentativeService,
+    @Inject(PersonalRepresentativeAccessService)
+    private readonly prAccessService: PersonalRepresentativeAccessService,
     private readonly auditService: AuditService,
   ) {}
 
@@ -70,6 +77,38 @@ export class PersonalRepresentativePermissionController {
         resources: nationalId,
       },
       this.prService.getByPersonalRepresentativeAsync(nationalId, false),
+    )
+  }
+
+  /** Gets a personal representative rights by nationalId of personal representative */
+  @ApiOperation({
+    summary: 'Log access',
+    description:
+      'Logs the access of a personal representative on behalf of represented person',
+  })
+  @Post('log-access')
+  @ApiOkResponse({
+    description: 'Access log file',
+    type: PersonalRepresentativeAccess,
+  })
+  async logAccessByPersonalRepresentativeAsync(
+    @Body() personalRepresentativeAccess: PersonalRepresentativeAccessDTO,
+    @CurrentUser() user: User,
+  ): Promise<PersonalRepresentativeAccess | null> {
+    if (!personalRepresentativeAccess) {
+      throw new BadRequestException('access body needs to be provided')
+    }
+
+    return await this.auditService.auditPromise(
+      {
+        user,
+        action: 'logPersonalRepresentativeAccess',
+        namespace,
+        resources:
+          personalRepresentativeAccess.nationalIdPersonalRepresentative,
+        meta: { fields: Object.keys(personalRepresentativeAccess) },
+      },
+      this.prAccessService.logAccessAsync(personalRepresentativeAccess),
     )
   }
 }
