@@ -158,6 +158,7 @@ const ViewPetitionAdmin = () => {
                   label="Tímabil frá"
                   locale="is"
                   placeholderText="Veldu dagsetningu"
+                  size="xs"
                 />
               </Box>
               <Box width="half" marginLeft={[0, 2]} marginTop={[2, 0]}>
@@ -167,6 +168,7 @@ const ViewPetitionAdmin = () => {
                   label="Tímabil til"
                   locale="is"
                   placeholderText="Veldu dagsetningu"
+                  size="xs"
                 />
               </Box>
             </Box>

@@ -125,6 +125,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
                   selected={value}
                   locale="is"
                   handleChange={onChange}
+                  size="xs"
                 />
               )}
             />
@@ -143,6 +144,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
                   selected={value}
                   locale="is"
                   handleChange={onChange}
+                  size="xs"
                 />
               )}
             />

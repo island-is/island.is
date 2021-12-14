@@ -70,6 +70,7 @@ const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
                   minYear={2011}
                   maxYear={today.getFullYear()}
                   handleChange={(date: Date) => setFromDate(date)}
+                  size="xs"
                 />
               </GridColumn>
               <GridColumn span="6/12">
@@ -89,6 +90,7 @@ const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
                   errorMessage={formatMessage(
                     m.documentProvidersDateToErrorMessage,
                   )}
+                  size="xs"
                 />
               </GridColumn>
             </GridRow>
