@@ -1,5 +1,5 @@
-import { months } from './const'
-import { ApplicationFiltersEnum } from './enums'
+import { months, nextMonth } from './const'
+import { AmountModal, ApplicationFiltersEnum } from './enums'
 import {
   HomeCircumstances,
   ApplicationState,
@@ -13,10 +13,13 @@ import {
 } from './enums'
 import {
   Aid,
+  Amount,
   ApplicantEmailData,
   ApplicationEvent,
+  Calculations,
   Municipality,
 } from './interfaces'
+import { acceptedAmountBreakDown, estimatedBreakDown } from './taxCalculator'
 import type { KeyMapping } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
@@ -200,17 +203,39 @@ export const getFileTypeName: KeyMapping<FileType, string> = {
   SpouseFiles: 'Gögn frá maka',
 }
 
+export const getAidAmountModalInfo = (
+  type: AmountModal,
+  aidAmount = 0,
+  usePersonalTaxCredit = false,
+  finalAmount?: Amount,
+): { headline: string; calculations: Calculations[] } => {
+  switch (type) {
+    case AmountModal.ESTIMATED:
+      return {
+        headline: 'Áætluð aðstoð',
+        calculations: estimatedBreakDown(aidAmount, usePersonalTaxCredit),
+      }
+    case AmountModal.PROVIDED:
+      return {
+        headline: 'Veitt aðstoð',
+        calculations: acceptedAmountBreakDown(finalAmount),
+      }
+  }
+}
+
 export const getApplicantEmailDataFromEventType = (
   event:
     | ApplicationEventType.NEW
     | ApplicationEventType.DATANEEDED
     | ApplicationEventType.REJECTED
-    | ApplicationEventType.APPROVED,
-  linkToStatusPage: string,
+    | ApplicationEventType.APPROVED
+    | 'SPOUSE',
+  applicationLink: string,
   applicantEmail: string,
   municipality: Municipality,
   createdDate: Date,
   typeOfDataNeeded?: string,
+  rejectionComment?: string,
 ): { subject: string; data: ApplicantEmailData } => {
   const getPeriod = {
     month: months[createdDate.getMonth()],
@@ -228,7 +253,7 @@ export const getApplicantEmailDataFromEventType = (
           applicationChange: 'Umsókn móttekin og í vinnslu',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
-          statusPageUrl: linkToStatusPage,
+          applicationLink,
           applicantEmail,
           municipality,
         },
@@ -244,7 +269,7 @@ export const getApplicantEmailDataFromEventType = (
           applicationChange: 'Umsóknin bíður eftir gögnum',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
-          statusPageUrl: linkToStatusPage,
+          applicationLink,
           applicantEmail,
           municipality,
         },
@@ -256,11 +281,11 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn synjað',
           header: 'Umsókn þinni um aðstoð hefur verið synjað',
-          content: `Umsókn þinni um fjárhagsaðstoð í ${getPeriod.month} hefur verið synjað á grundvelli 12. gr.: Tekjur og eignir umsækjanda. Smelltu á hlekkinn hér fyrir neðan til að kynna þér reglur um fjárhagsaðstoð.`,
+          content: `${rejectionComment}`,
           applicationChange: 'Umsókn synjað',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
-          statusPageUrl: linkToStatusPage,
+          applicationLink,
           applicantEmail,
           municipality,
         },
@@ -276,7 +301,27 @@ export const getApplicantEmailDataFromEventType = (
           applicationChange: 'Umsóknin er samþykkt og áætlun liggur fyrir',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
-          statusPageUrl: linkToStatusPage,
+          applicationLink,
+          applicantEmail,
+          municipality,
+        },
+      }
+
+    case 'SPOUSE':
+      return {
+        subject: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð hjá ${municipality.name}`,
+        data: {
+          title: 'Fjárhagsaðstoð Umsókn móttekin',
+          header: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð hjá ${municipality.name}`,
+          content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${
+            getPeriod.month
+          } mánuð. Svo hægt sé að klára umsóknina þurfum við að fá þig til að hlaða upp tekju- og skattagögnum til að reikna út fjárhagsaðstoð til útgreiðslu í byrjun ${nextMonth(
+            createdDate.getMonth(),
+          )}.`,
+          applicationChange: 'Umsókn bíður eftir gögnum frá maka',
+          applicationMonth: getPeriod.month,
+          applicationYear: getPeriod.year,
+          applicationLink,
           applicantEmail,
           municipality,
         },

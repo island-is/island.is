@@ -1,18 +1,19 @@
-import { Query, Resolver, Args } from '@nestjs/graphql'
+import { Query, Resolver } from '@nestjs/graphql'
 
 import { VehicleInformation } from './samgongustofa.model'
 import { SamgongustofaService } from './samgongustofa.service'
-import { Authorize } from '../auth'
+import { Authorize, CurrentUser } from '../auth'
+import type { AuthUser } from '../auth'
 
+@Authorize({ throwOnUnAuthorized: false })
 @Resolver(() => VehicleInformation)
 export class SamgongustofaResolver {
   constructor(private samgongustofaService: SamgongustofaService) {}
 
-  @Authorize({ throwOnUnAuthorized: false })
   @Query(() => [VehicleInformation])
   async skilavottordVehicles(
-    @Args('nationalId') nid: string,
+    @CurrentUser() user: AuthUser,
   ): Promise<Array<VehicleInformation>> {
-    return this.samgongustofaService.getVehicleInformation(nid)
+    return this.samgongustofaService.getVehicleInformation(user.nationalId)
   }
 }

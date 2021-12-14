@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
-import InputMask from 'react-input-mask'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { Box, Checkbox, Input, Select, Text } from '@island.is/island-ui/core'
+import { Box, Input, Select, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
@@ -21,6 +20,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { setAndSendToServer as setSelectAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { defendant as m } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -43,16 +43,6 @@ const DefendantForm: React.FC<Props> = (props) => {
     isLoading,
   } = props
 
-  const [
-    defenderEmailErrorMessage,
-    setDefenderEmailErrorMessage,
-  ] = useState<string>('')
-
-  const [
-    defenderPhoneNumberErrorMessage,
-    setDefenderPhoneNumberErrorMessage,
-  ] = useState<string>('')
-
   const validations: FormSettings = {
     policeCaseNumber: {
       validations: ['empty', 'police-casenumber-format'],
@@ -71,6 +61,12 @@ const DefendantForm: React.FC<Props> = (props) => {
     },
     accusedAddress: {
       validations: ['empty'],
+    },
+    defenderEmail: {
+      validations: ['email-format'],
+    },
+    defenderPhoneNumber: {
+      validations: ['phonenumber'],
     },
   }
 
@@ -122,7 +118,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                       updateCase,
                     )
                   }
-                  defaultValue={
+                  value={
                     workingCase?.id
                       ? {
                           value: CaseType[workingCase.type],
@@ -152,7 +148,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                 placeholder={formatMessage(
                   m.sections.investigationType.description.placeholder,
                 )}
-                defaultValue={workingCase.description}
+                value={workingCase.description || ''}
                 autoComplete="off"
                 onChange={(event) => {
                   setField(event.target)
@@ -183,84 +179,11 @@ const DefendantForm: React.FC<Props> = (props) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
               >
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  alignItems="baseline"
-                  marginBottom={2}
-                >
-                  <Text as="h3" variant="h3">
-                    {formatMessage(m.sections.defenderInfo.heading)}
-                  </Text>
-                </Box>
-                <BlueBox>
-                  <Box marginBottom={2}>
-                    <Input
-                      data-testid="defenderName"
-                      name="defenderName"
-                      autoComplete="off"
-                      label={formatMessage(m.sections.defenderInfo.name.label)}
-                      placeholder={formatMessage(
-                        m.sections.defenderInfo.name.placeholder,
-                      )}
-                      defaultValue={workingCase.defenderName}
-                      onChange={(event) => setField(event.target)}
-                      onBlur={(event) => validateAndSendToServer(event.target)}
-                    />
-                  </Box>
-                  <Box marginBottom={2}>
-                    <Input
-                      data-testid="defenderEmail"
-                      name="defenderEmail"
-                      autoComplete="off"
-                      label={formatMessage(m.sections.defenderInfo.email.label)}
-                      placeholder={formatMessage(
-                        m.sections.defenderInfo.email.placeholder,
-                      )}
-                      defaultValue={workingCase.defenderEmail}
-                      errorMessage={defenderEmailErrorMessage}
-                      hasError={defenderEmailErrorMessage !== ''}
-                      onChange={(event) => setField(event.target)}
-                      onBlur={(event) => validateAndSendToServer(event.target)}
-                    />
-                  </Box>
-                  <Box marginBottom={2}>
-                    <InputMask
-                      mask="999-9999"
-                      maskPlaceholder={null}
-                      onChange={(event) => setField(event.target)}
-                      onBlur={(event) => validateAndSendToServer(event.target)}
-                    >
-                      <Input
-                        data-testid="defenderPhoneNumber"
-                        name="defenderPhoneNumber"
-                        autoComplete="off"
-                        label={formatMessage(
-                          m.sections.defenderInfo.phoneNumber.label,
-                        )}
-                        placeholder={formatMessage(
-                          m.sections.defenderInfo.phoneNumber.placeholder,
-                        )}
-                        defaultValue={workingCase.defenderPhoneNumber}
-                        errorMessage={defenderPhoneNumberErrorMessage}
-                        hasError={defenderPhoneNumberErrorMessage !== ''}
-                      />
-                    </InputMask>
-                  </Box>
-                  <Checkbox
-                    name="sendRequestToDefender"
-                    label={formatMessage(
-                      m.sections.defenderInfo.sendRequest.label,
-                    )}
-                    tooltip={formatMessage(
-                      m.sections.defenderInfo.sendRequest.tooltip,
-                    )}
-                    checked={workingCase.sendRequestToDefender}
-                    onChange={(event) => setAndSendToServer(event.target)}
-                    large
-                    filled
-                  />
-                </BlueBox>
+                <DefenderInfo
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                  setAndSendToServer={setAndSendToServer}
+                />
               </motion.section>
             )}
           </AnimatePresence>

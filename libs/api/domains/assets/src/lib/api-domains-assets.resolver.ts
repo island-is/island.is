@@ -2,10 +2,12 @@ import { UseGuards } from '@nestjs/common'
 import { Query, Args } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 import type { User } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   CurrentUser,
   IdsAuthGuard,
   IdsUserGuard,
+  Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
@@ -21,6 +23,7 @@ import { PropertyOverview } from '../models/propertyOverview.model'
 import { AssetsXRoadService } from './api-domains-assets.service'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.assets)
 @Audit({ namespace: '@island.is/api/assets' })
 export class AssetsXRoadResolver {
   constructor(private assetsXRoadService: AssetsXRoadService) {}

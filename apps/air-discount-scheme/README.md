@@ -73,7 +73,7 @@ yarn get-secrets air-discount-scheme --reset
 2. Start the resources with docker-compose:
 
 ```bash
-docker-compose -f apps/air-discount-scheme/backend/docker-compose.base.yml -f apps/air-discount-scheme/backend/docker-compose.dev.yml up
+docker-compose -f apps/air-discount-scheme/backend/docker-compose.yml up
 ```
 
 3. Start the front end:
