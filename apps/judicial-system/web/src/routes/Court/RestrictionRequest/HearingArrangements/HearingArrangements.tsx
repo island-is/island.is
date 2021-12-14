@@ -11,6 +11,7 @@ import {
   Text,
   Option,
   Tooltip,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import {
   FormFooter,
@@ -44,7 +45,6 @@ import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
-import { useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -168,6 +168,15 @@ export const HearingArrangements: React.FC = () => {
       notFound={caseNotFound}
     >
       <FormContentContainer>
+        {workingCase.comments && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.comments.title)}
+              message={workingCase.comments}
+            />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
@@ -187,7 +196,7 @@ export const HearingArrangements: React.FC = () => {
             name="judge"
             label="Veldu dómara"
             placeholder="Velja héraðsdómara"
-            defaultValue={defaultJudge}
+            value={defaultJudge}
             options={judges}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setJudge((selectedOption as ReactSelectOption).value.toString())
@@ -206,7 +215,7 @@ export const HearingArrangements: React.FC = () => {
             name="registrar"
             label="Veldu dómritara"
             placeholder="Velja dómritara"
-            defaultValue={defaultRegistrar}
+            value={defaultRegistrar}
             options={registrars}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setRegistrar(
@@ -253,7 +262,7 @@ export const HearingArrangements: React.FC = () => {
                 name="courtroom"
                 label="Dómsalur"
                 autoComplete="off"
-                defaultValue={workingCase.courtRoom}
+                value={workingCase.courtRoom || ''}
                 placeholder="Skráðu inn dómsal"
                 onChange={(event) =>
                   removeTabsValidateAndSet(

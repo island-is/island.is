@@ -63,7 +63,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
     onChange,
     onRemove,
     onRetry,
-  } = useS3Upload(workingCase)
+  } = useS3Upload(workingCase, setWorkingCase)
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
 
@@ -332,7 +332,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
               name="caseFilesComments"
               label={formatMessage(m.sections.comments.label)}
               placeholder={formatMessage(m.sections.comments.placeholder)}
-              defaultValue={workingCase?.caseFilesComments}
+              value={workingCase.caseFilesComments || ''}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'caseFilesComments',

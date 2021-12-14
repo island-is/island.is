@@ -20,6 +20,15 @@ export const isValid24HFormatTime = (value: string) => {
   return true
 }
 
+export const formatPhonenumber = (value: string) => {
+  const splitAt = (index: number) => (x: string) => [
+    x.slice(0, index),
+    x.slice(index),
+  ]
+  if (value.length > 3) return splitAt(3)(value).join('-')
+  return value
+}
+
 const hasAttachment = (attachment: FileType[] | undefined) =>
   attachment && attachment.length > 0
 
@@ -121,3 +130,4 @@ export * from './isFatalAccident'
 export * from './isReportingBehalfOfSelf'
 export * from './isOfWorkTypeAccident'
 export * from './shouldRequestReview'
+export * from './isUniqueAssignee'
