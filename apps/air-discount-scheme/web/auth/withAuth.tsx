@@ -87,6 +87,7 @@ const withAuth = (WrappedComponent) =>
       //throw new ErrorLink()
       
 
+      
       /*
        * Render white screen for the redirection
        */

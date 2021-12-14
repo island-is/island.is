@@ -42,23 +42,6 @@ interface Props {
   apolloState: any
 }
 
-// class AirDiscountSchemeApplication extends App<AppProps> {
-//   render() {
-//     const { Component, pageProps } = this.props
-//     return (
-//       <Provider 
-//         session={pageProps.session}
-//         options={{ clientMaxAge: 120, basePath: '/api/auth'}} 
-//       >
-//         <ApolloProvider client={initApollo(pageProps.apolloState)}>
-//           <AuthProvider>
-//             <div>AuthProvider</div>
-//             {/* <Component {...pageProps} /> */}
-//           </AuthProvider>
-//         </ApolloProvider>
-//       </Provider>
-//     )}
-// }
 class SupportApplication extends App<Props> {
   static async getInitialProps(appContext) { 
     const { Component, ctx, session } = appContext
@@ -172,3 +155,21 @@ const externalEndpointDependencies = [graphqlEndpoint, apiUrl]
 export default appWithTranslation(
   withHealthchecks(externalEndpointDependencies)(SupportApplication)//(AirDiscountSchemeApplication),
 )
+
+// class AirDiscountSchemeApplication extends App<AppProps> {
+//   render() {
+//     const { Component, pageProps } = this.props
+//     return (
+//       <Provider 
+//         session={pageProps.session}
+//         options={{ clientMaxAge: 120, basePath: '/api/auth'}} 
+//       >
+//         <ApolloProvider client={initApollo(pageProps.apolloState)}>
+//           <AuthProvider>
+//             <div>AuthProvider</div>
+//             {/* <Component {...pageProps} /> */}
+//           </AuthProvider>
+//         </ApolloProvider>
+//       </Provider>
+//     )}
+// }
