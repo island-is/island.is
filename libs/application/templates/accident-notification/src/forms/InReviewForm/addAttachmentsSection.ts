@@ -53,7 +53,6 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             space: 5,
             titleVariant: 'h5',
             condition: (formValue) =>
-
               isPowerOfAttorney(formValue) &&
               !isUniqueAssignee(formValue, !!isAssignee) &&
               !hasReceivedProxyDocument(formValue),
