@@ -1,4 +1,4 @@
-import { ApiScope } from '@island.is/auth/scopes'
+import { AuthScope } from '@island.is/auth/scopes'
 import {
   PersonalRepresentativeDTO,
   PersonalRepresentativeService,
@@ -21,7 +21,7 @@ import {
   ApiOkResponse,
   ApiTags,
   ApiParam,
-  ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger'
 import { isNationalIdValid } from '@island.is/financial-aid/shared/lib'
 import {
@@ -37,13 +37,10 @@ import { AuditService } from '@island.is/nest/audit'
 const namespace = `${environment.audit.defaultNamespace}/personal-representative`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.representativeWrite)
+@Scopes(AuthScope.writePersonalRepresentative)
 @ApiTags('Personal Representative')
 @Controller('v1/personal-representative')
-@ApiHeader({
-  name: 'authorization',
-  description: 'Bearer token authorization',
-})
+@ApiBearerAuth()
 export class PersonalRepresentativeController {
   constructor(
     @Inject(PersonalRepresentativeService)
