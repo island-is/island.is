@@ -12,4 +12,6 @@ module.exports = {
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../../coverage/apps/services/user-notification',
   setupFiles: ['./test/environment.ts'],
+  globalSetup: './test/globalSetup.ts',
+  globalTeardown: './test/globalTeardown.ts',
 }

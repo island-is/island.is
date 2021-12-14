@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { Injectable, OnModuleDestroy } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import {
   SQSClient,
   SQSClientConfig,
@@ -13,10 +13,10 @@ import {
   SetQueueAttributesCommand,
   Message,
 } from '@aws-sdk/client-sqs'
-import { Logger } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @Injectable()
-export class ClientService implements OnModuleDestroy {
+export class ClientService {
   private client: SQSClient
 
   constructor(config: SQSClientConfig, private logger: Logger) {
@@ -146,9 +146,5 @@ export class ClientService implements OnModuleDestroy {
         }),
       )
     }
-  }
-
-  onModuleDestroy() {
-    this.client.destroy()
   }
 }

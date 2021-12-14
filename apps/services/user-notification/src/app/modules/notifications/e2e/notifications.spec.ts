@@ -19,7 +19,7 @@ const environment = {
   mainQueueName: 'test-main',
   deadLetterQueueName: 'test-failure',
   sqsConfig: {
-    endpoint: process.env.SQS_ENDPOINT ?? 'http://localhost:4566',
+    endpoint: process.env.SQS_ENDPOINT,
     region: 'eu-west-1',
     credentials: {
       accessKeyId: 'testing',
