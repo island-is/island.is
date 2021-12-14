@@ -1,4 +1,3 @@
-import { NationalID } from './../../../../../apps/skilavottord/web/i18n/locales/translation.d';
 import { Sequelize } from 'sequelize-typescript'
 import { uuid } from 'uuidv4'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
@@ -232,7 +231,6 @@ export class PersonalRepresentativeService {
   async createAsync(
     personalRepresentative: PersonalRepresentativeDTO,
   ): Promise<PersonalRepresentativeDTO | null> {
-
     // Create new personal representative connection
     let prId = ''
     try {

@@ -7,6 +7,7 @@ import {
   PersonalRepresentativeDTO,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
+  PersonalRepresentativeAccessDTO,
 } from '@island.is/auth-api-lib/personal-representative'
 import { PersonalRepresentativeRightTypeService } from '@island.is/auth-api-lib/personal-representative'
 import { PersonalRepresentativeService } from '@island.is/auth-api-lib/personal-representative'
@@ -139,6 +140,22 @@ describe('PersonalRepresentativePermissionController', () => {
       } else {
         expect('Failed to create personal rep').toMatch('0')
       }
+    })
+  })
+
+  describe('Post', () => {
+    it('Post v1/personal-representative-permission/loc-access should create access log', async () => {
+      const simpleAccessData: PersonalRepresentativeAccessDTO = {
+        nationalIdPersonalRepresentative: '1234567890',
+        nationalIdRepresentedPerson: '1234567891',
+      }
+      // Test get personal rep
+      const response = await server
+        .post('/v1/personal-representative-permission/log-access')
+        .send(simpleAccessData)
+        .expect(201)
+
+      expect(response.body).toMatchObject(simpleAccessData)
     })
   })
 })
