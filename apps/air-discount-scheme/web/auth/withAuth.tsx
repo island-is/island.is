@@ -5,6 +5,10 @@ import { isAuthenticated } from './utils'
 import { REDIRECT_KEY } from '../consts'
 import { Routes } from '../types'
 import { getSession, signIn, useSession } from 'next-auth/client'
+import { GraphQLError } from 'graphql'
+import errorLink from '../graphql/errorLink'
+import { onError, ErrorResponse, ErrorLink } from '@apollo/client/link/error'
+
 
 const AUTH_URL = '/api/auth/signin-oidc'
 
@@ -40,6 +44,7 @@ const withAuth = (WrappedComponent) =>
       if (!hasAuthenticated) {
         console.log('withauth !HasAuthenticated -window is ' + window.location.href)
         //Router.push(AUTH_URL)//('https://identity-server.dev01.devland.is')
+        //return signIn('identity-server', {callbackUrl: `${window.location}`})
       }
     }
 
@@ -72,31 +77,34 @@ const withAuth = (WrappedComponent) =>
       //
       //Uncaught TypeError: _ref$page is undefined Subsidy Subsidy.tsx:30 --- The above error occurred in the <Subsidy> component
       //next-auth][error][client_fetch_error] https://next-auth.js.org/errors#client_fetch_error providers AND session
-      return <WrappedComponent {...signIn('identity-server')} />
+      //return <WrappedComponent {...signIn('identity-server')} />
       
 
       //error webpack-internal:///…evelopment.js:13231 Uncaught Error: Objects are not valid as a React child (found: [object Promise]). If you meant to render a collection of children, use an array instead.
       //​ The above error occurred in the <_class> component:
       //next-auth][error][client_fetch_error] https://next-auth.js.org/errors#client_fetch_error providers 
-      //return signIn('identity-server')
-
-
+      //return signIn('identity-server', {callbackUrl: `${window.location.href}`})
+      //throw new ErrorLink()
+      
 
       /*
        * Render white screen for the redirection
        */
-      // return (
-      //   <div
-      //     style={{
-      //       position: 'absolute',
-      //       height: '100%',
-      //       width: '100%',
-      //       background: '#0ff',
-      //       zIndex: 999,
-      //       top: 0,
-      //     }}
-      //   />
-      // )
+      const callbackObj = {callbackUrl: `${window.location.href}`}
+      return (
+        <div
+          style={{
+            position: 'absolute',
+            height: '100%',
+            width: '100%',
+            background: '#0ff',
+            zIndex: 999,
+            top: 0,
+          }}
+        >
+          <button onClick={() => [signIn('identity-server4'),callbackObj]}>sign in</button>
+        </div>
+      )
     }
   }
 export default withAuth
