@@ -6,7 +6,7 @@ import {
   NationalRegistryScope,
   EndorsementsScope,
   DocumentsScope,
-  RegulationsAdminScope,
+  ApiScope,
 } from '@island.is/auth/scopes'
 
 import { environment } from './environments'
@@ -39,8 +39,12 @@ if (userMocked) {
       DocumentsScope.main,
       EndorsementsScope.main,
       EndorsementsScope.admin,
-      RegulationsAdminScope.create,
-      RegulationsAdminScope.manage,
+      ApiScope.assets,
+      ApiScope.education,
+      ApiScope.financeOverview,
+      ApiScope.financeSalary,
+      ApiScope.internal,
+      ApiScope.meDetails,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'sp.',

@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+import { ValueType } from 'react-select/src/types'
+
 import type { Case, Institution, User } from '@island.is/judicial-system/types'
 import { Box, Input, Text, Checkbox } from '@island.is/island-ui/core'
 import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -11,18 +13,18 @@ import {
   FormFooter,
   BlueBox,
 } from '@island.is/judicial-system-web/src/components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
+import { useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
-import { useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { ValueType } from 'react-select/src/types'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   prosecutors: ReactSelectOption[]
   courts: Institution[]
   handleNextButtonClick: () => Promise<void>
@@ -168,7 +170,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
             placeholder={formatMessage(
               rcRequestedHearingArrangements.sections.translator.placeholder,
             )}
-            defaultValue={workingCase.translator}
+            value={workingCase.translator || ''}
             onChange={(event) => setField(event.target)}
             onBlur={(event) => validateAndSendToServer(event.target)}
           />

@@ -8,7 +8,6 @@ import {
   LawChapterSlug,
   MinistrySlug,
   RegulationType,
-  Kennitala,
 } from './types'
 
 // ---------------------------------------------------------------------------
@@ -24,15 +23,22 @@ export type DraftingStatus = 'draft' | 'proposal' | 'shipped'
 // ===========================================================================
 
 declare const _RegulationDraftId__Brand: unique symbol
-export type RegulationDraftId = string & { [_RegulationDraftId__Brand]: true }
+export type RegulationDraftId = number & { [_RegulationDraftId__Brand]: true }
 
-export type DB_RegulationDraft = {
+export type DB_RegulationDraft = (
+  | {
+      draftingStatus: Exclude<DraftingStatus, 'shipped'>
+      /** Name (publication id) provided by Stjórnartíðindi's systems as part of shipping/publishing the Regulation */
+      name?: undefined
+    }
+  | {
+      draftingStatus: Extract<DraftingStatus, 'shipped'>
+      /** Name (publication id) provided by Stjórnartíðindi's systems as part of shipping/publishing the Regulation */
+      name: RegName
+    }
+) & {
   /** Primary key */
   id: RegulationDraftId
-
-  drafting_status: DraftingStatus
-
-  name?: RegName
 
   /** The title of the regulation */
   title: PlainText
@@ -44,7 +50,7 @@ export type DB_RegulationDraft = {
    *
    * May include email-addresses or phone numbers of people working on the draft.
    */
-  drafting_notes: HTMLText
+  draftingNotes: HTMLText
 
   /** Requested date of publication in Stjórnartíðindi.
    *
@@ -56,54 +62,75 @@ export type DB_RegulationDraft = {
    *
    * A future date set on an **immediate** weekend or national holiday also signifies a request for special fast-tracking.
    */
-  ideal_publish_date?: ISODate
+  idealPublishDate?: ISODate
 
-  ministry_id?: MinistrySlug
-
-  law_chapters?: LawChapterSlug[]
+  ministryId?: MinistrySlug
 
   /** Date signed in the ministry */
-  signature_date?: ISODate
+  signatureDate?: ISODate
 
-  /** Date when the regulation took effect for the first time */
-  effective_date?: ISODate
+  /** NOTE: This date is for informational purposes only */
+  effectiveDate?: ISODate
 
   type?: RegulationType
+}
 
-  authors?: Kennitala[]
+// ===========================================================================
 
-  changes?: DB_DraftRegulationChange[]
+declare const _DraftAuthorId__Brand: unique symbol
+export type DraftAuthorId = number & { [_DraftAuthorId__Brand]: true }
 
-  cancel?: DB_DraftRegulationCancel
+declare const _AuthorId__Brand: unique symbol
+export type AuthorId = number & { [_AuthorId__Brand]: true }
+
+/** Table that maps the N-to-N relationships between authors and drafts. */
+export type DB_DraftAuthor = {
+  /** Primary key */
+  id: DraftAuthorId
+  draftId: RegulationDraftId
+  /** the ID (??) of the author/contact that took part in authoring this RegulationDraft (including "editors") */
+  authorId?: AuthorId
+}
+
+// ===========================================================================
+
+declare const _DraftLawChapterId__Brand: unique symbol
+export type DraftLawChapterId = number & { [_DraftLawChapterId__Brand]: true }
+
+export type DB_DraftLawChapter = {
+  /** Primary key */
+  id: DraftLawChapterId
+  draftId: RegulationDraftId
+  lawChapterId?: LawChapterId
 }
 
 // ===========================================================================
 
 declare const _DraftRegulationCancelId__Brand: unique symbol
-export type DraftRegulationCancelId = string & {
+export type DraftRegulationCancelId = number & {
   [_DraftRegulationCancelId__Brand]: true
 }
 
 export type DB_DraftRegulationCancel = {
   /** Primary key */
   id: DraftRegulationCancelId
-  changing_id: RegulationDraftId
-  regulation: RegName
+  changingId: RegulationDraftId
+  regulationId: RegulationId
   date: ISODate
 }
 
 // ===========================================================================
 
 declare const _DraftRegulationChangeId__Brand: unique symbol
-export type DraftRegulationChangeId = string & {
+export type DraftRegulationChangeId = number & {
   [_DraftRegulationChangeId__Brand]: true
 }
 
 export type DB_DraftRegulationChange = {
   /** Primary key */
   id: DraftRegulationChangeId
-  changing_id: RegulationDraftId
-  regulation: RegName
+  changingId: RegulationDraftId
+  regulationId: RegulationId
   date: ISODate
   title: PlainText
   text: HTMLText

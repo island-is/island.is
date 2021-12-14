@@ -36,14 +36,17 @@ export interface Staff {
   municipalityHomepage?: string
   nickname?: string
   email?: string
+  usePseudoName?: boolean
 }
 
 export interface UpdateStaff {
+  name?: string
   nationalId?: string
   roles?: StaffRole[]
   active?: boolean
   nickname?: string
   email?: string
+  usePseudoName?: boolean
 }
 
 export interface Aid {
@@ -56,6 +59,23 @@ export interface Aid {
   municipalityId: string
   type: AidType
 }
+
+export interface Amount {
+  applicationId?: string
+  aidAmount: number
+  income?: number
+  personalTaxCredit: number
+  spousePersonalTaxCredit?: number
+  tax: number
+  finalAmount: number
+  deductionFactors?: DeductionFactors[]
+}
+
+export interface DeductionFactors {
+  amount?: number
+  description?: string
+}
+
 export interface NavigationProps {
   activeSectionIndex: number
   activeSubSectionIndex?: number
@@ -92,13 +112,14 @@ export interface Address {
 export interface UpdateApplication {
   state?: ApplicationState
   event: ApplicationEventType
-  amount?: number
   rejection?: string
   comment?: string
   staffId?: string
   spousePhoneNumber?: string
   spouseEmail?: string
   spouseName?: string
+  spouseFormComment?: string
+  amount?: Amount
 }
 
 export interface UpdateApplicationTable {
@@ -198,10 +219,11 @@ export interface CreateApplication {
 export interface ApplicantEmailData {
   header: string
   content: string
+  title: string
   applicationChange: string
   applicationMonth: string
   applicationYear: number
-  statusPageUrl: string
+  applicationLink: string
   applicantEmail: string
   municipality: Municipality
 }
@@ -236,13 +258,14 @@ export interface Application {
   homeCircumstancesCustom?: string
   studentCustom?: string
   formComment?: string
+  spouseFormComment?: string
   state: ApplicationState
   files?: ApplicationFile[]
-  amount?: number
   comment?: string
   rejection?: string
   staff?: Staff
   applicationEvents?: ApplicationEvent[]
+  amount?: Amount
   spouseNationalId?: string
   spouseEmail?: string
   spousePhoneNumber?: string
@@ -283,7 +306,7 @@ export interface NationalRegistryData {
     city: string
     municipalityCode: string
   }
-  spouse: {
+  spouse?: {
     nationalId?: string
     maritalStatus?: string
     name?: string
@@ -311,10 +334,12 @@ export interface CreateStaff {
   email: string
   nationalId: string
   roles: StaffRole[]
+  municipalityName?: string
+  municipalityId?: string
 }
 
-export interface CreateStaffMuncipality {
-  id: string
-  name: string
-  homepage?: string
+export interface CreateStaffMunicipality {
+  municipalityId: string
+  municipalityName: string
+  municipalityHomepage?: string
 }

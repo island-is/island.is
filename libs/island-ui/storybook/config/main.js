@@ -67,6 +67,7 @@ module.exports = {
         '@island.is/shared/form-fields': rootDir(
           '../../../shared/form-fields/src',
         ),
+        '@island.is/shared/utils': rootDir('../../../shared/utils/src'),
         '@island.is/localization': rootDir('../../../localization/src'),
       },
     }

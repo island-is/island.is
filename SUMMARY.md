@@ -211,6 +211,7 @@
 - [Nest Modules](libs/nest/README.md)
   - [Audit Module](libs/nest/audit/README.md)
   - [Nest Config](libs/nest/config/README.md)
+  - [Nest Feature Flags](libs/nest/feature-flags/README.md)
   - [Nest Sequelize Cursor Pagination](libs/nest/pagination/README.md)
   - [Problem Module](libs/nest/problem/README.md)
 - [Next Ids Auth Lib](libs/next-ids-auth/README.md)
@@ -246,6 +247,7 @@
   - [Shared Translations](libs/shared/translations/README.md)
   - [Types](libs/shared/types/README.md)
   - [Utils](libs/shared/utils/README.md)
+  - [Testing Containers](libs/testing/containers/README.md)
   - [Testing Fixtures](libs/testing/fixtures/README.md)
   - [Testing Nest](libs/testing/nest/README.md)
 

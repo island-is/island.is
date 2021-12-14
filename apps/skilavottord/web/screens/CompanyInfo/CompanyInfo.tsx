@@ -16,11 +16,15 @@ import {
   Sidenav,
 } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { RecyclingPartner } from '@island.is/skilavottord-web/types'
+import {
+  RecyclingPartner,
+  Query,
+  Role,
+} from '@island.is/skilavottord-web/graphql/schema'
 
-const skilavottordAllActiveRecyclingPartnersQuery = gql`
+const SkilavottordAllActiveRecyclingPartnersQuery = gql`
   query skilavottordAllActiveRecyclingPartnersQuery {
     skilavottordAllActiveRecyclingPartners {
       companyId
@@ -35,7 +39,7 @@ const skilavottordAllActiveRecyclingPartnersQuery = gql`
 
 const CompanyInfo: FC = () => {
   const { user } = useContext(UserContext)
-  const { data } = useQuery(skilavottordAllActiveRecyclingPartnersQuery)
+  const { data } = useQuery<Query>(SkilavottordAllActiveRecyclingPartnersQuery)
 
   const {
     t: { companyInfo: t, deregisterSidenav: sidenavText, routes },
@@ -59,7 +63,7 @@ const CompanyInfo: FC = () => {
     <PartnerPageLayout
       side={
         <Sidenav
-          title={partnerName || user?.name}
+          title={partnerName || sidenavText.title}
           sections={[
             {
               icon: 'car',
@@ -89,25 +93,27 @@ const CompanyInfo: FC = () => {
           <Text variant="h3">{t.subtitles.location}</Text>
           <Box>
             {activePartner.length > 0 ? (
-              activePartner.map((partner: RecyclingPartner, index: string) => (
-                <ListItem
-                  key={index}
-                  title={partner.companyName}
-                  content={[
-                    {
-                      text: `${partner.address}, ${partner.postnumber}`,
-                    },
-                    {
-                      text: `${partner.phone}`,
-                      isHighlighted: true,
-                    },
-                    {
-                      text: `${partner.website}`,
-                      href: partner.website,
-                    },
-                  ]}
-                />
-              ))
+              activePartner.map(
+                (partner: RecyclingPartner, index: string | number) => (
+                  <ListItem
+                    key={index}
+                    title={partner.companyName}
+                    content={[
+                      {
+                        text: `${partner.address}, ${partner.postnumber}`,
+                      },
+                      {
+                        text: `${partner.phone}`,
+                        isHighlighted: true,
+                      },
+                      {
+                        text: `${partner.website}`,
+                        href: partner.website,
+                      },
+                    ]}
+                  />
+                ),
+              )
             ) : (
               <Text>{t.empty}</Text>
             )}

@@ -1,5 +1,4 @@
 import '@testing-library/jest-dom'
-
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -18,8 +17,9 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import Requests from './Requests'
 import { LocaleProvider } from '@island.is/localization'
+
+import Requests from './Requests'
 
 const mockCasesQuery = [
   {

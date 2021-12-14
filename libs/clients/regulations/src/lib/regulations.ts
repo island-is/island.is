@@ -1,18 +1,15 @@
-import { Inject } from '@nestjs/common'
+import { Inject, Injectable, Scope } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import {
   buildRegulationApiPath,
   ISODate,
-  LawChapterSlug,
-  MinistrySlug,
   RegQueryName,
   Year,
 } from '@island.is/regulations'
 import {
   Regulation,
   RegulationDiff,
-  RegulationLawChapter,
   RegulationLawChapterTree,
   RegulationListItem,
   RegulationMinistryList,
@@ -29,9 +26,9 @@ export const REGULATIONS_OPTIONS = 'REGULATIONS_OPTIONS'
 
 export interface RegulationsServiceOptions {
   url: string
-  ttl?: number
 }
 
+@Injectable()
 export class RegulationsService extends RESTDataSource {
   constructor(
     @Inject(REGULATIONS_OPTIONS)
@@ -43,6 +40,9 @@ export class RegulationsService extends RESTDataSource {
   }
 
   willSendRequest(request: RequestOptions) {
+    // We need to clear the memoized cache for every request to make sure
+    // updates are live when editing and viewing
+    this.memoizedResults.clear()
     request.headers.set('Content-Type', 'application/json')
   }
   /*
@@ -68,11 +68,9 @@ export class RegulationsService extends RESTDataSource {
       isCustomDiff,
       earlierDate,
     })
-    const ttl = this.options.ttl ?? 600 // defaults to 10 minutes
-
     const response = await this.get<
       Regulation | RegulationDiff | RegulationRedirect | null
-    >(url, { cacheOptions: { ttl } })
+    >(url)
     return response
   }
 
@@ -83,9 +81,6 @@ export class RegulationsService extends RESTDataSource {
     page = page && page > 1 ? page : undefined
     const response = await this.get<RegulationSearchResults | null>(
       `regulations/${type}${page ? '?page=' + page : ''}`,
-      {
-        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-      },
     )
     return response
   }
@@ -105,45 +100,25 @@ export class RegulationsService extends RESTDataSource {
       // Strip away empty params
       // Object.fromEntries(Object.entries({ q, rn, year, yearTo, ch, iA, iR, page }).filter((val) => val))
       pickBy({ q, rn, year, yearTo, ch, iA, iR, page }, identity),
-      {
-        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-      },
     )
     return response
   }
 
   async getRegulationsYears(): Promise<RegulationYears | null> {
-    const response = await this.get<RegulationYears | null>(`years`, {
-      cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-    })
+    const response = await this.get<RegulationYears | null>(`years`)
     return response
   }
 
-  async getRegulationsMinistries(
-    slugs?: Array<MinistrySlug>,
-  ): Promise<RegulationMinistryList | null> {
-    const response = await this.get<RegulationMinistryList | null>(
-      `ministries${slugs ? '?slugs=' + slugs.join(',') : ''}`,
-      {
-        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-      },
-    )
+  async getRegulationsMinistries(): Promise<RegulationMinistryList | null> {
+    const response = await this.get<RegulationMinistryList | null>(`ministries`)
     return response
   }
 
   async getRegulationsLawChapters(
     tree: boolean,
-    slugs?: Array<LawChapterSlug>,
-  ): Promise<RegulationLawChapterTree | RegulationLawChapter[] | null> {
-    const response = await this.get<
-      RegulationLawChapterTree | RegulationLawChapter[] | null
-    >(
-      `lawchapters${tree ? '/tree' : ''}${
-        slugs ? '?slugs=' + slugs.join(',') : ''
-      }`,
-      {
-        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-      },
+  ): Promise<RegulationLawChapterTree | null> {
+    const response = await this.get<RegulationLawChapterTree | null>(
+      `lawchapters${tree ? '/tree' : ''}`,
     )
     return response
   }
