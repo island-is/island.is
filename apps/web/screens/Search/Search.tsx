@@ -88,6 +88,20 @@ type TagsList = {
   key: string
 }
 
+const visibleTags: Partial<
+  Record<
+    SearchableContentTypes | string,
+    Array<keyof typeof SearchableContentTypes | string>
+  >
+> = {
+  webArticle: ['WebArticle', 'WebSubArticle'],
+  webAdgerdirPage: ['WebAdgerdirPage'],
+  webNews: ['WebNews'],
+  webQNA: ['WebQna'],
+  webLifeEventPage: ['WebLifeEventPage'],
+  webProcessEntry: ['WebArticle'],
+}
+
 const Search: Screen<CategoryProps> = ({
   q,
   page,
@@ -116,12 +130,14 @@ const Search: Screen<CategoryProps> = ({
     })
   }
 
+  console.log(searchResults, countResults)
+
   const filters: SearchQueryFilters = {
     category: query.category as string,
     type: query.type as string,
   }
 
-  const tagNameTranslations:
+  const tagTitles:
     | Partial<Record<SearchableContentTypes, string>>
     | Record<string, string> = useMemo(
     () => ({
@@ -132,30 +148,22 @@ const Search: Screen<CategoryProps> = ({
       webNews: n('webNews', 'Fréttir og tilkynningar'),
       webQNA: n('webQNA', 'Spurt og svarað'),
       webLifeEventPage: n('webLifeEventPage', 'Lífsviðburðir'),
+      webProcessEntry: n('webProcessEntry', 'Umsókn'),
     }),
     [n],
   )
 
-  const mappedTagNames: Partial<
-    Record<
-      SearchableContentTypes | string,
-      Array<keyof typeof SearchableContentTypes | string>
-    >
-  > = useMemo(
-    () => ({
-      webArticle: ['WebArticle', 'WebSubArticle'],
-      webAdgerdirPage: ['WebAdgerdirPage'],
-      webNews: ['WebNews'],
-      webQNA: ['WebQna'],
-      webLifeEventPage: ['WebLifeEventPage'],
-    }),
-    [],
-  )
-
-  const onToggleSearchType = (type: SearchableContentTypes) => {
-    const a = [...activeSearchTypes]
-    a.includes(type) ? a.splice(a.indexOf(type), 1) : a.push(type)
-    setActiveSearchTypes(a)
+  const onToggleSearchType = (
+    type: SearchableContentTypes,
+    single?: boolean,
+  ) => {
+    if (single) {
+      setActiveSearchTypes([type])
+    } else {
+      const a = [...activeSearchTypes]
+      a.includes(type) ? a.splice(a.indexOf(type), 1) : a.push(type)
+      setActiveSearchTypes(a)
+    }
   }
 
   const pathname = linkResolver('search').href
@@ -163,8 +171,8 @@ const Search: Screen<CategoryProps> = ({
   useEffect(() => {
     const searchTypes = activeSearchTypes
       .map((x) => {
-        if (Object.keys(mappedTagNames).includes(x)) {
-          return mappedTagNames[x].map(firstLower).join()
+        if (Object.keys(visibleTags).includes(x)) {
+          return visibleTags[x].map(firstLower).join()
         }
 
         return x
@@ -180,7 +188,7 @@ const Search: Screen<CategoryProps> = ({
     }).then(() => {
       window.scrollTo(0, 0)
     })
-  }, [activeSearchTypes, pathname, q, replace, mappedTagNames])
+  }, [activeSearchTypes, pathname, q, replace])
 
   const tagsList = useMemo((): TagsList[] => {
     const processEntryArticles = (searchResults.items as Array<Article>)
@@ -189,30 +197,22 @@ const Search: Screen<CategoryProps> = ({
 
     return [
       ...countResults.typesCount
-        .filter((x) => x.key in tagNameTranslations)
-        .filter((x) =>
-          Object.keys(mappedTagNames).some((y) => y.includes(x.key)),
-        )
+        .filter((x) => x.key in tagTitles)
+        .filter((x) => Object.keys(visibleTags).some((y) => y.includes(x.key)))
         .map((x) => ({
-          title: tagNameTranslations[x.key] as string,
+          title: tagTitles[x.key] as string,
           count: x.count,
           key: x.key,
         })),
       ...[
         {
-          title: n('processEntry', 'Umsókn') as string,
+          title: (n('processEntry', 'Umsókn') + 'bla') as string,
           count: processEntryArticles.length,
-          key: 'processEntry',
+          key: 'webProcessEntry',
         } as TagsList,
       ],
     ]
-  }, [
-    searchResults.items,
-    countResults.typesCount,
-    n,
-    tagNameTranslations,
-    mappedTagNames,
-  ])
+  }, [searchResults.items, countResults.typesCount, n, tagTitles])
 
   console.log('tagsList', tagsList)
 
@@ -479,7 +479,7 @@ const Search: Screen<CategoryProps> = ({
                     variant="blue"
                     active={activeSearchTypes.includes(key)}
                     onClick={() =>
-                      onToggleSearchType(key as SearchableContentTypes)
+                      onToggleSearchType(key as SearchableContentTypes, true)
                     }
                   >
                     {title} ({count})
@@ -598,9 +598,9 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   let tags = {}
   let countTag = {}
   if (category) {
-    tags = { tags: [{ key: category, type: 'category' as SearchableTags }] }
+    tags = { tags: [{ key: category, type: 'processentry' as SearchableTags }] }
   } else {
-    countTag = { countTag: 'category' as SearchableTags }
+    countTag = { countTag: 'processentry' as SearchableTags }
   }
 
   const allTypes = [
