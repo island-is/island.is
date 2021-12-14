@@ -1,4 +1,4 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
@@ -22,23 +22,27 @@ const SubNavItemContent: FC<Props> = ({
   <Box
     display="flex"
     alignItems="center"
-    cursor={enabled === false ? undefined : 'pointer'}
+    cursor={'pointer'}
     position="relative"
-    onClick={enabled === false ? undefined : onClick}
+    onClick={onClick}
+    justifyContent={'spaceBetween'}
+    paddingRight={2}
   >
     <Text
       fontWeight={active ? 'semiBold' : 'regular'}
       variant="small"
-      color={
-        enabled === false
-          ? 'dark200'
-          : variant === 'blue'
-          ? 'blue600'
-          : 'blueberry600'
-      }
+      color={variant === 'blue' ? 'blue600' : 'blueberry600'}
     >
       <span>{children}</span>
     </Text>
+    {!enabled && (
+      <Icon
+        type={'filled'}
+        icon={'lockClosed'}
+        size="small"
+        color={'blue600'}
+      />
+    )}
   </Box>
 )
 
@@ -48,13 +52,9 @@ const SubNavItem: FC<Props> = (props) => {
       <SubNavItemContent {...props} />
     </a>
   ) : props.path ? (
-    props.enabled === false ? (
+    <Link to={props.path}>
       <SubNavItemContent {...props} />
-    ) : (
-      <Link to={props.path}>
-        <SubNavItemContent {...props} />
-      </Link>
-    )
+    </Link>
   ) : (
     <SubNavItemContent {...props} />
   )

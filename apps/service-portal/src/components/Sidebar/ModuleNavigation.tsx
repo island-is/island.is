@@ -105,7 +105,7 @@ const ModuleNavigation: FC<Props> = ({
       >
         {formatMessage(nav.name)}
       </NavItem>
-      {!collapsed && navArray && (
+      {!collapsed && navArray && nav.enabled && (
         <AnimateHeight
           duration={300}
           height={isModuleActive || alwaysExpanded ? 'auto' : 0}
