@@ -248,7 +248,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           <Text variant="eyebrow" color="purple400">
             {eyebrow}
           </Text>
-          <Text variant={headingVariant} as="h3">
+          <Text variant={headingVariant} as="p">
             {heading}
           </Text>
           <Text paddingTop={heading ? 1 : 0}>{text}</Text>

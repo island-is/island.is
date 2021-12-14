@@ -44,7 +44,11 @@ const RouteLoader: FC<{
   <Switch>
     {routes.map((route) =>
       route.enabled === false ? (
-        <Route path={route.path} component={AccessDenied} />
+        <Route
+          key={Array.isArray(route.path) ? route.path[0] : route.path}
+          path={route.path}
+          component={AccessDenied}
+        />
       ) : (
         <Route
           path={route.path}
