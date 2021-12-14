@@ -29,7 +29,8 @@
     "logform",
     "pg-native",
     "form-data",
-    "sequelize-replace-enum-postgres"
+    "sequelize-replace-enum-postgres",
+    "sequelize"
   ],
   "keepNames": true
 }
