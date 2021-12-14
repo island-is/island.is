@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'personal-representative',
+  displayName: 'services-personal-representative',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
