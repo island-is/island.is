@@ -6704,7 +6704,7 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "command": "docker-compose up -d",
             "cwd": "apps/services/regulations-admin-backend"
           }
         },
