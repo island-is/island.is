@@ -13,7 +13,6 @@ import {
   calculateTaxOfAmount,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
-import format from 'date-fns/format'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 
@@ -51,8 +50,6 @@ const AcceptModal = ({
 
   const maximumInputLength = 6
 
-  const currentYear = format(new Date(), 'yyyy')
-
   const { municipality } = useContext(AdminContext)
 
   const aidAmount = useMemo(() => {
@@ -78,7 +75,7 @@ const AcceptModal = ({
     amount: aidAmount,
     income: undefined,
     personalTaxCreditPercentage: undefined,
-    tax: calculateTaxOfAmount(aidAmount, currentYear),
+    tax: calculateTaxOfAmount(aidAmount),
     secondPersonalTaxCredit: 0,
     showSecondPersonalTaxCredit: false,
     deductionFactor: [],
@@ -99,7 +96,6 @@ const AcceptModal = ({
 
   const finalAmount = calculateAcceptedAidFinalAmount(
     aidAmount - checkingValue(state.income) - sumValues(state.deductionFactor),
-    currentYear,
     checkingValue(state.personalTaxCreditPercentage),
     state.secondPersonalTaxCredit,
   )
@@ -329,7 +325,6 @@ const AcceptModal = ({
             (aidAmount || 0) -
               checkingValue(state.income) -
               sumValues(state.deductionFactor),
-            currentYear,
           ).toLocaleString('de-DE')}
           readOnly={true}
         />

@@ -30,7 +30,8 @@
     "kennitala",
     "sequelize",
     "p-try",
-    "camelcase"
+    "camelcase",
+    "sequelize"
   ],
   "keepNames": true
 }

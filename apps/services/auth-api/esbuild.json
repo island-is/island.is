@@ -25,7 +25,8 @@
     "logform",
     "pg-native",
     "form-data",
-    "configcat-node"
+    "configcat-node",
+    "sequelize"
   ],
   "keepNames": true
 }
