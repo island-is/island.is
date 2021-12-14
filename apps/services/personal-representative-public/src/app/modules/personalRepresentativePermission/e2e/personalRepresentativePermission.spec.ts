@@ -11,12 +11,12 @@ import {
 } from '@island.is/auth-api-lib/personal-representative'
 import { PersonalRepresentativeRightTypeService } from '@island.is/auth-api-lib/personal-representative'
 import { PersonalRepresentativeService } from '@island.is/auth-api-lib/personal-representative'
-import { ApiScope } from '@island.is/auth/scopes'
+import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 
 const user = createCurrentUser({
   nationalId: '1122334455',
-  scope: [ApiScope.representativeRead],
+  scope: [AuthScope.readPersonalRepresentative],
 })
 
 const rightTypeList = [
