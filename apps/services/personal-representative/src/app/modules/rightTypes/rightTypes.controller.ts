@@ -1,4 +1,4 @@
-import { ApiScope } from '@island.is/auth/scopes'
+import { AuthScope } from '@island.is/auth/scopes'
 import {
   PersonalRepresentativeRightType,
   PersonalRepresentativeRightTypeDTO,
@@ -22,17 +22,14 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiTags,
-  ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.representativeWrite)
+@Scopes(AuthScope.writePersonalRepresentative)
+@ApiBearerAuth()
 @ApiTags('Right Types')
 @Controller('v1/right-types')
-@ApiHeader({
-  name: 'authorization',
-  description: 'Bearer token authorization',
-})
 export class RightTypesController {
   constructor(
     @Inject(PersonalRepresentativeRightTypeService)

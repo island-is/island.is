@@ -4,12 +4,12 @@ import request from 'supertest'
 import { TestApp } from '@island.is/testing/nest'
 import { PersonalRepresentativeRightType } from '@island.is/auth-api-lib/personal-representative'
 import { createCurrentUser } from '@island.is/testing/fixtures'
-import { ApiScope } from '@island.is/auth/scopes'
+import { AuthScope } from '@island.is/auth/scopes'
 
 const scopes = ['@island.is/scope0', '@island.is/scope1']
 const user = createCurrentUser({
   nationalId: '1122334455',
-  scope: [ApiScope.representativeWrite, scopes[0]],
+  scope: [AuthScope.writePersonalRepresentative, scopes[0]],
 })
 
 const simpleRequestData = {
