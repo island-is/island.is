@@ -98,131 +98,121 @@ const AboutFormApplicant = () => {
           id="id_1"
           label="Nánar um persónuverndarstefnu þíns sveitarfélags"
         >
-          <Text marginBottom={[2, 2, 4]}>
-            Til að geta sannreynt rétt umsækjanda skv. umsókn þessari, í samræmi
-            við reglur {municipality?.name} og gildandi lög varðandi veitingu
-            þjónustunnar, þá þarf fjölskyldu- og barnamálasvið{' '}
-            {municipality?.name} að afla persónuupplýsinga um umsækjanda. Verði
-            umbeðnar nauðsynlegar upplýsingar ekki veittar kann það að leiða til
-            þess að ekki er unnt að verða við umsókn þinni.
+          <Text marginBottom={2} fontWeight="semiBold">
+            Umsókn um fjárhagsaðstoð
           </Text>
 
-          <Text marginBottom={[1, 1, 2]}>
-            Með því að senda inn umsókn þessa staðfestir umsækjandi að hann hafi
-            kynnt sér efni varðandi vinnslu persónuupplýsinga af hálfu
-            fjölskyldu- og barnamálasvið {municipality?.name} vegna umsóknar
-            þessarar og fylgir umsóknarformi þessu "persónuvernd og vinnsla
-            persónuupplýsinga".
+          <Text marginBottom={2}>
+            Til þess að geta unnið úr umsókn þinni og lagt mat á rétt þinn til
+            fjárhagsaðstoðar er sveitarfélaginu nauðsynlegt að vinna með nánar
+            tilgreindar persónuupplýsingar þínar. Unnið er með upplýsingar sem
+            þú lætur af hendi í umsóknarferlinu en einnig aflar sveitarfélagið
+            upplýsinga um þig frá þriðju aðilum.
+          </Text>
+          <Text marginBottom={2}>
+            Upplýsingarnar gætu verið notaðar til vinnslu tölfræðirannsókna.
+          </Text>
+          <Text marginBottom={2}>
+            Í samræmi við lög um opinber skjalasöfn þá varðveitir sveitarélagið
+            upplýsingarnar ótímabundið.
+          </Text>
+          <Text marginBottom={[3, 3, 7]}>
+            Verði umbeðnar nauðsynlegar upplýsingar ekki veittar kann það að
+            leiða til þess að ekki er unnt að verða við umsókn þessari.{' '}
           </Text>
 
-          <Text marginBottom={[1, 1, 2]}>
-            Persónuvernd og vinnsla persónuupplýsinga
+          <Text marginBottom={2} fontWeight="semiBold">
+            Tilgangur vinnslu og lagagrundvöllur
+          </Text>
+          <Text marginBottom={[3, 3, 7]}>
+            Persónuupplýsingar þær sem óskað er eftir á umsóknarformi þessu og
+            unnið er með, eru nauðsynlegar sveitarfélaginu til að geta metið og
+            tryggt rétt umsækjanda til þjónustu í samræmi við umsókn þessa með
+            vísan til lagaskyldu samkvæmt lögum um félagsþjónustu sveitarfélaga{' '}
           </Text>
 
-          <Text marginBottom={[1, 1, 2]}>
-            Svo unnt sé að vinna úr umsókn þinni og leggja mat á rétt þinn til
-            þjónustu hjá {municipality?.name} samkvæmt umsókninni, þá þarf
-            fjölskyldu- og barnamálasvið {municipality?.name} að vinna með nánar
-            tilgreindar persónuupplýsingar þínar. Unnið er með þær upplýsingar
-            sem þú veitir í umsóknarferlinu og jafnframt þær upplýsingar sem
-            nauðsynlegar eru og tilgreindar eru hér til að sannreyna að skilyrði
-            reglna {municipality?.name} séu uppfyllt við upphaf og á meðan
-            þjónustusamband aðila stendur yfir.
+          <Text marginBottom={2} fontWeight="semiBold">
+            Hvaða upplýsingar er unnið með?
+          </Text>
+          <Text marginBottom={[3, 3, 7]}>
+            Það fer því eftir stöðu þinni hvaða upplýsingar sveitarfélaginu er
+            nauðsynlegt að vinna með í tengslum við umsókn þína. Ákveðnar
+            grunnupplýsingar eru hins vegar unnar um alla umsækjendur sem óska
+            eftir fjárhagsaðstoð. Unnið er með eftirfarandi upplýsingar með
+            hliðsjón af stöðu umsækjanda:
           </Text>
 
-          <Text marginBottom={[1, 1, 2]}>
-            Tilgangur vinnslu og lagagrundvöllur Persónuupplýsingar þær sem
-            óskað er eftir á umsóknarformi þessu og unnið er með, eru
-            nauðsynlegar fjölskyldusviði {municipality?.name} til að geta
-            sannreynt og tryggt rétt umsækjanda til þjónustu í samræmi við
-            umsókn þessa, skv. eftirfarandi lögum: <br /> V, VI. og VII kafli
-            laga um félagsþjónustu sveitarfélaga nr. 40/1991.
+          <Text marginBottom={2} fontWeight="semiBold">
+            Allir umsækjendur
           </Text>
-          <Text marginBottom={[2, 2, 4]}>
-            Reglur {municipality?.name} um fjárhagsaðstoð hjá{' '}
-            {municipality?.name}, síðast breytt 15. mars 2020.
-          </Text>
-
-          <Text marginBottom={[2, 2, 4]}>
-            Tegundir persónuupplýsinga: Unnið er með eftirfarandi flokkar
-            upplýsinga um umsækjendur: Almennar persónuupplýsingar:
-            Íbúaupplýsingar (s.s. nafn, kt., lögheimili/aðsetur, símanúmer,
-            netfang, fjölskyldugerð), fjárhags- og eignaupplýsingar,
-            húsnæðisstaða, atvinnustaða, félagsleg staða og aðstaða,
-            þjónustuþörf og aðrar upplýsingar sem umsækjandi vill koma á
-            framfæri í umsóknarferli. Viðkvæmar persónuupplýsingar:
-            heilsufarsupplýsingar.
+          <Text marginBottom={[3, 3, 7]}>
+            Nafn, lögheimili/aðsetur, kyn, hjúskaparstöðu, fjölskyldunúmer,
+            fjölskyldugerð, kennitölu, símanúmer, netfang, stöðu umsækjanda,
+            húsnæðisstaða, skattskyldar tekjur á yfirstandandi ári og allt árið
+            á undan, álagningaskrá: eignir og skuldir auk virðisaukaskattskrá,
+            upplýsingar um ofgreiðslur, bankareikningur, tímabil umsóknar, eðli
+            umsóknar og aðrar upplýsingar sem umsækjandi vill koma á framfæri í
+            umsóknarferli. Ef umsækjandi hefur einhvern á sinni framfærslu þá
+            eru jafnframt sóttar eftirtaldar upplýsingar slíkra aðila frá
+            Þjóðskrá sem eru nafn, kennitala og lögheimili. Ef umsækjandi
+            greiðir meðlag er jafnframt óskað eftir upplýsingum um slíkar
+            greiðslur.
           </Text>
 
-          <Text marginBottom={[1, 1, 2]}>
-            Hvaðan koma upplýsingarnar? Umsækjandi veitir þær upplýsingar sem
-            unnið er með vegna framkominnar umsóknar auk þess sem{' '}
-            {municipality?.name} ur sækir grunnupplýsingar um umsækjanda til
-            Þjóðskrár.
+          <Text marginBottom={2} fontWeight="semiBold">
+            Vinnufærir umsækjendur
+          </Text>
+          <Text marginBottom={[3, 3, 7]}>
+            Minnisblað atvinnuleitanda sem kallað er eftir frá umsækjanda.
+            Staðfesting frá Vinnumálastofnun um rétt til atvinnuleysisbóta ásamt
+            staðfestingu á skráningu á Atvinnutorgi.
           </Text>
 
-          <Text marginBottom={[1, 1, 2]}>
-            Þá er sérstaklega aflað upplýsinga um umsækjanda í tengslum við
-            umsókn þessa frá:
+          <Text marginBottom={2} fontWeight="semiBold">
+            Óvinnufærir umsækjendur
+          </Text>
+          <Text marginBottom={2}>
+            Sjúkradagpeningavottorð og læknisvottorð frá umsækjanda auk
+            upplýsinga um greiðslur frá stéttarfélagi sem óskað er eftir frá
+            Ríkisskattstjóra.{' '}
+          </Text>
+          <Text marginBottom={2}>
+            Umsækjendur sem eru örorku-, endurhæfingar- eða ellilífeyrisþegar
+          </Text>
+          <Text marginBottom={[3, 3, 7]}>
+            Sundurliðaðar tekjur og greiðslur frá Tryggingastofnun ríkisins í
+            umsóknarmánuði og mánuði þar á undan. Upplýsingar um mæðra- og
+            feðralaun og/eða makabætur, eftir því sem við á.
           </Text>
 
-          <Text marginBottom={[1, 1, 2]}>Ríkisskattstjóra </Text>
-
-          <Text marginBottom={[2, 2, 4]}>
-            Ef við á getur þurft að afla upplýsinga frá fleiri aðilum:
-            Tryggingastofnun ríkisins, Hagstofa Íslands,
-            atvinnuleysistryggingasjóði og útlendingastofnun.
+          <Text marginBottom={2} fontWeight="semiBold">
+            Annað{' '}
+          </Text>
+          <Text marginBottom={[3, 3, 7]}>
+            Ef umsækjandi er á leigumarkaði þá kann að vera óskað eftir afriti
+            af þinglýstum leigusamningi frá umsækjanda. Dvalarleyfisskírteini ef
+            umsækjandi er erlendur ríkisborgari utan Evrópska efnahagssvæðisins.
+            Vottorð frá sýslumanni varðandi hjúskapar/sambúðarslit, ef við á.
           </Text>
 
-          <Text marginBottom={[2, 2, 4]}>
-            Hversu lengi eru persónuupplýsingarnar varðveittar:
-            Persónuupplýsingar þínar eru geymdar ótímabundið á grundvelli
-            lagaskyldu sem hvílir á {municipality?.name} skv. lögum um opinber
-            skjalasöfn nr. 77/2014. Almennt að liðnum 30 árum er{' '}
-            {municipality?.name} skylt að afhenda Þjóðskjalasafni til varðveislu
-            þau skjöl sem myndast við umsókn þína.
+          <Text marginBottom={2} fontWeight="semiBold">
+            Hvaðan koma upplýsingarnar?
+          </Text>
+          <Text marginBottom={[3, 3, 7]}>
+            Auk þeirra persónuupplýsinga sem þú veitir sveitarfélaginu í
+            umsóknarferlinu þá er kallað eftir grunnupplýsingum um þig frá
+            Þjóðskrá og fjárhagsupplýsingum frá Ríkisskattstjóra auk þess sem
+            auðkenning þín er sótt til þjónustuveitanda auðkenningarþjónustu. Þá
+            kann sveitarfélagið að kalla eftir persónuupplýsingum frá
+            Vinnumálastofnun, Tryggingastofnun ríkisins og sýslumanni.
           </Text>
 
-          <Text marginBottom={[2, 2, 4]}>
-            Öryggi persónuupplýsinganna: {municipality?.name} gætir öryggis
-            persónuupplýsinga með viðeigandi skipulagslegum og tæknilegum
-            ráðstöfunum, þ. á m. aðgangsstýringum og dulkóðun. Allt það
-            starfsfólk sem kemur að vinnslu persónuupplýsinga umsækjanda er
-            bundið þagnarskyldu.
+          <Text marginBottom={2} fontWeight="semiBold">
+            Nánar um vinnslu persónuupplýsinga
           </Text>
-
-          <Text marginBottom={[2, 2, 4]}>
-            Miðlun persónuupplýsinganna til þriðja aðila Tilteknum upplýsingum
-            sem {municipality?.name} hefur aflað í tengslum við umsókn þessa er
-            miðlað til þriðja aðila. Aðeins er miðlað þeim upplýsingum sem eru
-            nauðsynlegar til að veita hér umbeðna þjónustu. Persónuupplýsingar
-            eru ekki sendar annað án leyfis umsækjanda. Nánar tiltekið er um að
-            ræða:
-          </Text>
-
-          <Text marginBottom={[2, 2, 4]}>
-            Réttindi: Þú kannt að eiga rétt til þess að fá aðgang að þeim
-            persónuupplýsingum sem {municipality?.name} vinnur með í tengslum
-            við umsókn þína. Þá kannt þú að hafa rétt til að andmæla vinnslunni,
-            fá upplýsingar leiðréttar, krefjast þess að þeim verði eytt eða fara
-            fram á að vinnslan verði takmörkuð.
-          </Text>
-
-          <Text marginBottom={[2, 2, 4]}>
-            Kvörtun yfir vinnslu persónuupplýsinga: Sérstök athygli er vakin á
-            því að ef þú ert ósátt/ur við meðferð {municipality?.name} á
-            persónuupplýsingum þínum getur þú ávallt haft samband við
-            persónuverndarfulltrúa {municipality?.name}{' '}
-            <a href={`mailto:${municipality?.email}`} rel="noreferrer noopener">
-              <span className="linkInText"> {municipality?.email}</span>
-            </a>{' '}
-            eða sent erindi til Persónuverndar.
-          </Text>
-
-          <Text marginBottom={1}>
-            Frekari upplýsingar um vinnslu persónuupplýsinga hjá{' '}
-            {municipality?.name} má finna í persónuverndarstefnu
-            sveitarfélagsins sem aðgengileg er á vefsíðunni
+          <Text marginBottom={[3, 3, 7]}>
+            Frekari upplýsingar um vinnslu persónuupplýsinga hjá sveitarfélaginu
+            má finna í persónuverndar-stefnu þess sem aðgengileg er á vefsíðunni
             <a
               href={municipality?.homepage}
               target="_blank"
@@ -230,6 +220,7 @@ const AboutFormApplicant = () => {
             >
               <span className="linkInText"> {municipality?.homepage}</span>
             </a>
+            .
           </Text>
         </AccordionItem>
       </Accordion>

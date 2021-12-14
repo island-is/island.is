@@ -67,26 +67,6 @@ describe('createEndorsement', () => {
       statusCode: 405,
     })
   })
-  it(`POST /endorsement-list/:listId/endorsement should fail to create endorsement when conflicts within tags`, async () => {
-    const app = await getAuthenticatedApp({
-      nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
-    })
-    const endorsementBody = {
-      showName: true,
-    }
-    const response = await request(app.getHttpServer())
-      .post(
-        `/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c5/endorsement`,
-      )
-      .send(endorsementBody)
-      .expect(400)
-
-    expect(response.body).toMatchObject({
-      ...errorExpectedStructure,
-      statusCode: 400,
-    })
-  })
   it(`POST /endorsement-list/:listId/endorsement should create a new endorsement and populate metadata`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
