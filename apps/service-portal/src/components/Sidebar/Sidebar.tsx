@@ -64,7 +64,7 @@ export const Sidebar: FC<{}> = () => {
             <Icon
               type="outline"
               icon={collapsed ? 'chevronForward' : 'chevronBack'}
-              size="small"
+              size="medium"
               color="blue400"
             />
           </Box>

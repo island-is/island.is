@@ -84,6 +84,7 @@ const NavItemContent: FC<Props> = ({
           icon={'lockClosed'}
           size="small"
           color={'blue600'}
+          className={styles.lock}
         />
       )}
     </Box>

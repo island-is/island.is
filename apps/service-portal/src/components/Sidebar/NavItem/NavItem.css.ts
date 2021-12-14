@@ -68,3 +68,7 @@ export const badge = styleVariants({
     display: 'none',
   },
 })
+
+export const lock = style({
+  marginRight: 4,
+})
