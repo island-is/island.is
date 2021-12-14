@@ -86,10 +86,18 @@ type TagsList = {
   key: string
 }
 
-const visibleTags: Partial<
+type SearchType = Article &
+  LifeEventPage &
+  News &
+  AdgerdirPage &
+  SubArticle &
+  OrganizationSubpage &
+  LinkItem
+
+const connectedTypes: Partial<
   Record<
     SearchableContentTypes | string,
-    Array<keyof typeof SearchableContentTypes | string>
+    Array<SearchableContentTypes | string>
   >
 > = {
   webArticle: ['WebArticle', 'WebSubArticle'],
@@ -97,7 +105,7 @@ const visibleTags: Partial<
   webNews: ['WebNews'],
   webQNA: ['WebQna'],
   webLifeEventPage: ['WebLifeEventPage'],
-  webProcessEntry: ['WebArticle'],
+  ArticlesWithProcessEntry: ['WebArticle'],
 }
 
 const Search: Screen<CategoryProps> = ({
@@ -114,13 +122,15 @@ const Search: Screen<CategoryProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const [activeSearchTypes, setActiveSearchTypes] = useState<Array<string>>([])
+  const [activeSearchType, setActiveSearchType] = useState<string>('')
   const [sidebarData, setSidebarData] = useState<SidebarData>({
     totalTagCount: 0,
     tags: {},
     types: {},
   })
 
-  console.log(searchResults, countResults)
+  console.log('searchResults', searchResults)
+  console.log('countResults', countResults)
 
   const filters: SearchQueryFilters = {
     category: query.category as string,
@@ -138,73 +148,88 @@ const Search: Screen<CategoryProps> = ({
       webNews: n('webNews', 'Fréttir og tilkynningar'),
       webQNA: n('webQNA', 'Spurt og svarað'),
       webLifeEventPage: n('webLifeEventPage', 'Lífsviðburðir'),
-      webProcessEntry: n('webProcessEntry', 'Umsókn'),
+      ArticlesWithProcessEntry: n('processEntry', 'Umsókn'),
     }),
     [n],
   )
 
-  const onToggleSearchType = (
-    type: SearchableContentTypes,
-    single?: boolean,
-  ) => {
-    if (single) {
-      setActiveSearchTypes([type])
-    } else {
-      const a = [...activeSearchTypes]
-      a.includes(type) ? a.splice(a.indexOf(type), 1) : a.push(type)
-      setActiveSearchTypes(a)
-    }
-  }
+  // const onToggleSearchType = (
+  //   type: SearchableContentTypes | string,
+  //   single?: boolean,
+  // ) => {
+  //   if (single) {
+  //     setActiveSearchTypes([type])
+  //   } else {
+  //     const a = [...activeSearchTypes]
+  //     a.includes(type) ? a.splice(a.indexOf(type), 1) : a.push(type)
+  //     setActiveSearchTypes(a)
+  //   }
+  // }
 
   const pathname = linkResolver('search').href
 
-  useEffect(() => {
-    const searchTypes = activeSearchTypes
-      .map((x) => {
-        if (Object.keys(visibleTags).includes(x)) {
-          return visibleTags[x].map(firstLower).join()
-        }
+  const getCombinedCount = (type: string) => {
+    const types = connectedTypes[type] ?? []
 
-        return x
-      })
-      .join()
+    return types.map(firstLower).reduce((total, key) => {
+      const item = countResults.typesCount.find((x) => key === x.key)
 
-    replace({
-      pathname,
-      query: {
-        q,
-        ...(searchTypes && { type: searchTypes }),
-      },
-    }).then(() => {
-      window.scrollTo(0, 0)
-    })
-  }, [activeSearchTypes, pathname, q, replace])
+      if (item) {
+        return total + item.count
+      }
+
+      return total
+    }, 0)
+  }
+
+  // useEffect(() => {
+  //   const searchTypes = activeSearchTypes
+  //     .map((x) => {
+  //       if (Object.keys(connectedTypes).includes(x)) {
+  //         return connectedTypes[x].map(firstLower).join()
+  //       }
+
+  //       return x
+  //     })
+  //     .join()
+
+  //   replace({
+  //     pathname,
+  //     query: {
+  //       q,
+  //       ...(searchTypes && { type: searchTypes }),
+  //     },
+  //   }).then(() => {
+  //     window.scrollTo(0, 0)
+  //   })
+  // }, [activeSearchTypes, pathname, q, replace])
 
   const tagsList = useMemo((): TagsList[] => {
-    const processEntryArticles = (searchResults.items as Array<Article>)
-      .filter((x) => x.__typename === 'Article')
-      .filter((x) => x.processEntry?.id && x.processEntry?.processTitle)
+    // const processEntryArticles = (searchResults.items as Array<Article>)
+    //   .filter((x) => x.__typename === 'Article')
+    //   .filter((x) => x.processEntry?.id && x.processEntry?.processTitle)
 
     return [
       ...countResults.typesCount
         .filter((x) => x.key in tagTitles)
-        .filter((x) => Object.keys(visibleTags).some((y) => y.includes(x.key)))
+        .filter((x) =>
+          Object.keys(connectedTypes).some((y) => y.includes(x.key)),
+        )
         .map((x) => ({
           title: tagTitles[x.key] as string,
           count: x.count,
           key: x.key,
         })),
       ...[
-        {
-          title: (n('processEntry', 'Umsókn') + 'bla') as string,
-          count: processEntryArticles.length,
-          key: 'webProcessEntry',
-        } as TagsList,
+        countResults.processEntryCount > 0 &&
+          ({
+            title: n('processEntry', 'Umsókn') as string,
+            count: countResults.processEntryCount,
+            key: 'ArticlesWithProcessEntry',
+          } as TagsList),
       ],
     ]
-  }, [searchResults.items, countResults.typesCount, n, tagTitles])
-
-  console.log('tagsList', tagsList)
+  }, [countResults.typesCount, tagTitles])
 
   useEffect(() => {
     // we get the tag count manually since the total includes uncategorised data and the type count
@@ -229,7 +254,7 @@ const Search: Screen<CategoryProps> = ({
 
     // create a map of sidebar type data for easier lookup later
     const typeNames = {
-      // webNews: n('newsTitle'),
+      webNews: n('newsTitle'),
       webOrganizationSubpage: n('organizationsTitle', 'Opinberir aðilar'),
     }
     const typeCountResults = countResults.typesCount.reduce(
@@ -299,26 +324,71 @@ const Search: Screen<CategoryProps> = ({
     return labels
   }
 
-  const searchResultsItems = (searchResults.items as Array<
-    Article &
-      LifeEventPage &
-      News &
-      AdgerdirPage &
-      SubArticle &
-      OrganizationSubpage &
-      LinkItem
-  >).map((item) => ({
-    title: item.title,
-    parentTitle: item.parent?.title,
-    description: item.intro ?? item.description ?? item.parent?.intro,
-    link: linkResolver(item.__typename, item?.url ?? item.slug.split('/')),
-    categorySlug: item.category?.slug ?? item.parent?.category?.slug,
-    category: item.category ?? item.parent?.category,
-    group: item.group,
-    ...(item.image && { image: item.image as Image }),
-    ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
-    labels: getLabels(item),
-  }))
+  const checkForProcessEntries = (item: SearchType) => {
+    console.log('ITEM', item)
+    if (item.__typename === 'Article') {
+      const hasMainProcessEntry =
+        !!item.processEntry?.processTitle || !!item.processEntry?.processLink
+      const hasProcessEntryInBody = item.body?.filter((content) => {
+        console.log('content', content)
+        return content.__typename === 'ProcessEntry'
+      })
+
+      console.log('Article', item.title)
+      console.log('hasMainProcessEntry', hasMainProcessEntry)
+      console.log('hasProcessEntryInBody', hasProcessEntryInBody)
+
+      return true
+    }
+
+    return false
+  }
+
+  const searchResultsItems = (searchResults.items as Array<SearchType>).map(
+    (item) => ({
+      typename: item.__typename,
+      title: item.title,
+      parentTitle: item.parent?.title,
+      description: item.intro ?? item.description ?? item.parent?.intro,
+      link: linkResolver(item.__typename, item?.url ?? item.slug.split('/')),
+      categorySlug: item.category?.slug ?? item.parent?.category?.slug,
+      category: item.category ?? item.parent?.category,
+      hasProcessEntry: checkForProcessEntries(item),
+      group: item.group,
+      ...(item.image && { image: item.image as Image }),
+      ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
+      labels: getLabels(item),
+    }),
+  )
+
+  useEffect(() => {
+    let searchTypes = ''
+
+    if (Object.keys(connectedTypes).includes(activeSearchType)) {
+      searchTypes = connectedTypes[activeSearchType].map(firstLower).join()
+    }
+
+    replace({
+      pathname,
+      query: {
+        q,
+        ...(searchTypes && { type: searchTypes }),
+      },
+    }).then(() => {
+      window.scrollTo(0, 0)
+    })
+  }, [activeSearchType, pathname, q, replace])
+
+  useEffect(() => {
+    if (activeSearchType === 'ArticlesWithProcessEntry') {
+      const test = searchResultsItems.filter((x) => {
+        console.log('x', x)
+        return x.typename === 'Article' && x.hasProcessEntry
+      })
+
+      console.log('testerinn', test)
+    }
+  }, [activeSearchType, searchResultsItems])
 
   const byCategory = (item) => {
     if (!item.category && filters.category === 'uncategorized') {
@@ -398,6 +468,8 @@ const Search: Screen<CategoryProps> = ({
       ? (n('searchResult', 'leitarniðurstaða') as string).toLowerCase()
       : (n('searchResults', 'leitarniðurstöður') as string).toLowerCase()
 
+  console.log('activeSearchType', activeSearchType)
+
   return (
     <>
       <Head>
@@ -455,26 +527,42 @@ const Search: Screen<CategoryProps> = ({
               {countResults.total > 0 && (
                 <Tag
                   variant="blue"
-                  active={activeSearchTypes.length === 0}
-                  onClick={() => setActiveSearchTypes([])}
+                  // active={activeSearchTypes.length === 0}
+                  active={!activeSearchType}
+                  // onClick={() => setActiveSearchTypes([])}
+                  onClick={() => setActiveSearchType('')}
                 >
                   Allar tegundir ({countResults.total})
                 </Tag>
               )}
               {tagsList
                 .filter((x) => x.count > 0)
-                .map(({ title, count, key }, index) => (
+                .map(({ title, key }, index) => (
                   <Tag
                     key={index}
                     variant="blue"
                     active={activeSearchTypes.includes(key)}
                     onClick={() =>
-                      onToggleSearchType(key as SearchableContentTypes, true)
+                      // onToggleSearchType(key as SearchableContentTypes, true)
+                      setActiveSearchType(key)
                     }
                   >
-                    {title} ({count})
+                    {title} ({getCombinedCount(key)})
                   </Tag>
                 ))}
+              {/* {countResults.processEntryCount > 0 && (
+                <Tag
+                  variant="blue"
+                  active={activeSearchTypes.includes(
+                    'ArticlesWithProcessEntry',
+                  )}
+                  onClick={() =>
+                    onToggleSearchType('ArticlesWithProcessEntry', true)
+                  }
+                >
+                  {n('processEntry', 'Umsókn')} (?)
+                </Tag>
+              )} */}
             </Inline>
           </Box>
           <Hidden above="sm">
@@ -586,9 +674,9 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   let tags = {}
   let countTag = {}
   if (category) {
-    tags = { tags: [{ key: category, type: 'processentry' as SearchableTags }] }
+    tags = { tags: [{ key: category, type: 'category' as SearchableTags }] }
   } else {
-    countTag = { countTag: 'processentry' as SearchableTags }
+    countTag = { countTag: 'category' as SearchableTags }
   }
 
   const allTypes = [
@@ -631,6 +719,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
           ...tags,
           ...countTag,
           countTypes: true,
+          countProcessEntry: true,
           size: PERPAGE,
           page,
         },
@@ -645,6 +734,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
           countTag: 'category' as SearchableTags,
           types: allTypes,
           countTypes: true,
+          countProcessEntry: true,
         },
       },
     }),
