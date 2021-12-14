@@ -16,7 +16,7 @@ export interface TaxInfo {
 import format from 'date-fns/format'
 import { Amount, Calculations } from './interfaces'
 
-export const currentYear = format(new Date(), 'yyyy')
+const currentYear = format(new Date(), 'yyyy')
 
 export const calculateAidFinalAmount = (
   amount: number,
