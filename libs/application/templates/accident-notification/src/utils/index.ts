@@ -61,11 +61,10 @@ export const getAttachmentTitles = (answers: AccidentNotification) => {
     AttachmentsEnum.HOSPITALSENDSCERTIFICATE
   )
     files.push(overview.labels.hospitalSendsCertificate)
-  if (
-    hasAttachment(additionalFiles) ||
-    hasAttachment(additionalFilesFromReviewer)
-  )
-    files.push(attachments.documentNames.additionalDocuments)
+  if (hasAttachment(additionalFiles))
+    files.push(attachments.documentNames.additionalDocumentsFromApplicant)
+  if (hasAttachment(additionalFilesFromReviewer))
+    files.push(attachments.documentNames.additionalDocumentsFromReviewer)
 
   return files
 }
