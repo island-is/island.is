@@ -56,8 +56,7 @@ export const RulingStepOne: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const [, setValidToDateIsValid] = useState<boolean>(true)
-  const [, setIsolationToIsValid] = useState<boolean>(true)
+
   const [
     courtCaseFactsErrorMessage,
     setCourtCaseFactsErrorMessage,
@@ -382,11 +381,7 @@ export const RulingStepOne: React.FC = () => {
                     ? 'Gæsluvarðhald til'
                     : 'Farbann til'
                 }
-                selectedDate={
-                  workingCase.validToDate
-                    ? new Date(workingCase.validToDate)
-                    : undefined
-                }
+                selectedDate={workingCase.validToDate}
                 minDate={new Date()}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   newSetAndSendDateToServer(
@@ -395,7 +390,6 @@ export const RulingStepOne: React.FC = () => {
                     valid,
                     workingCase,
                     setWorkingCase,
-                    setValidToDateIsValid,
                     updateCase,
                   )
                 }}
@@ -438,9 +432,9 @@ export const RulingStepOne: React.FC = () => {
                   }
                   selectedDate={
                     workingCase.isolationToDate
-                      ? new Date(workingCase.isolationToDate)
+                      ? workingCase.isolationToDate
                       : workingCase.validToDate
-                      ? new Date(workingCase.validToDate)
+                      ? workingCase.validToDate
                       : undefined
                   }
                   // Isolation can never be set in the past.
@@ -457,7 +451,6 @@ export const RulingStepOne: React.FC = () => {
                       valid,
                       workingCase,
                       setWorkingCase,
-                      setIsolationToIsValid,
                       updateCase,
                     )
                   }}

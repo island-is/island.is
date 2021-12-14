@@ -57,7 +57,6 @@ export const HearingArrangements: React.FC = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState(false)
-  const [, setCourtDateIsValid] = useState(true)
 
   const router = useRouter()
   const id = router.query.id
@@ -239,11 +238,7 @@ export const HearingArrangements: React.FC = () => {
               <Box marginBottom={2}>
                 <DateTime
                   name="courtDate"
-                  selectedDate={
-                    workingCase.courtDate
-                      ? new Date(workingCase.courtDate)
-                      : undefined
-                  }
+                  selectedDate={workingCase.courtDate}
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
                     newSetAndSendDateToServer(
@@ -252,7 +247,6 @@ export const HearingArrangements: React.FC = () => {
                       valid,
                       workingCase,
                       setWorkingCase,
-                      setCourtDateIsValid,
                       updateCase,
                     )
                   }}

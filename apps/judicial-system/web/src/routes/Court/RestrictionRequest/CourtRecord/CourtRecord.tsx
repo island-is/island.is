@@ -49,7 +49,6 @@ export const CourtRecord: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const [, setCourtRecordStartDateIsValid] = useState(true)
   const [courtLocationErrorMessage, setCourtLocationMessage] = useState('')
   const [
     litigationPresentationsErrorMessage,
@@ -191,11 +190,7 @@ export const CourtRecord: React.FC = () => {
                 datepickerLabel="Dagsetning þinghalds"
                 timeLabel="Þinghald hófst (kk:mm)"
                 maxDate={new Date()}
-                selectedDate={
-                  workingCase.courtStartDate
-                    ? new Date(workingCase.courtStartDate)
-                    : new Date()
-                }
+                selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   newSetAndSendDateToServer(
                     'courtStartDate',
@@ -203,7 +198,6 @@ export const CourtRecord: React.FC = () => {
                     valid,
                     workingCase,
                     setWorkingCase,
-                    setCourtRecordStartDateIsValid,
                     updateCase,
                   )
                 }}
