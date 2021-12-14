@@ -44,7 +44,9 @@ describe('/domur/urskurdur/:id', () => {
 
     intercept(caseDataAddition)
 
-    cy.getByTestid('ruling').clear()
+    cy.getByTestid('ruling')
+      .contains('héraðsdómari kveður upp úrskurð þennan.')
+      .clear()
     cy.clickOutside()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('ruling').type('lorem')
