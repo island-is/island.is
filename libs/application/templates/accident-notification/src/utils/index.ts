@@ -1,11 +1,5 @@
 import { MessageFormatter } from '@island.is/application/core'
-import {
-  AttachmentsEnum,
-  FileType,
-  PowerOfAttorneyUploadEnum,
-  WhoIsTheNotificationForEnum,
-} from '..'
-
+import { AttachmentsEnum, FileType, WhoIsTheNotificationForEnum } from '..'
 import { getValueViaPath } from '@island.is/application/core'
 import { YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
