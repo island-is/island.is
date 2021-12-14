@@ -1,2 +1,2 @@
 export * from '../gen/fetch'
-export * from './lib/syslumenn.module'
+export {SyslumennApiConfig, SyslumennApiModule} from './lib/syslumenn.module'
