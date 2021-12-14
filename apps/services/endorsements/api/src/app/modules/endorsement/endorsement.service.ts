@@ -20,6 +20,7 @@ import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
+import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 
 interface FindEndorsementInput {
   listId: string
@@ -82,6 +83,7 @@ export class EndorsementService {
     private logger: Logger,
     private readonly metadataService: EndorsementMetadataService,
     private readonly validatorService: EndorsementValidatorService,
+    private readonly nationalRegistryApi: NationalRegistryApi,
   ) {}
 
   private getEndorsementMetadataForNationalId = async (
@@ -250,25 +252,27 @@ export class EndorsementService {
   }
 
   // FIXME: Find a way to combine with create bulk endorsements
-  async createEndorsementOnList(
-    { endorsementList, nationalId, showName }: EndorsementInput,
-    auth: User,
-  ) {
+  async createEndorsementOnList({
+    endorsementList,
+    nationalId,
+    showName,
+  }: EndorsementInput) {
     this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
 
     // we don't allow endorsements on closed lists
     if (new Date() >= endorsementList.closedDate) {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
-
-    const endorsement = await this.processEndorsement(
-      {
-        nationalId: auth.nationalId,
-        endorsementList,
+    const fullName = showName ? await this.getEndorserInfo(nationalId) : ''
+    const endorsement = {
+      endorser: nationalId,
+      endorsementListId: endorsementList.id,
+      // this removes validation fields fetched by meta service
+      meta: {
+        fullName: fullName,
         showName: showName,
       },
-      auth,
-    )
+    }
 
     return this.endorsementModel.create(endorsement).catch((error) => {
       // map meaningful sequelize errors to custom errors, else return error
@@ -377,6 +381,23 @@ export class EndorsementService {
         { listId: endorsementList.id },
       )
       throw new NotFoundException(["This endorsement doesn't exist"])
+    }
+  }
+
+  private async getEndorserInfo(nationalId: string) {
+    this.logger.debug(`Finding fullName of Endorser "${nationalId}" by id`)
+
+    try {
+      return (await this.nationalRegistryApi.getUser(nationalId)).Fulltnafn
+    } catch (e) {
+      if (e instanceof Error) {
+        this.logger.warn(
+          `Occured when fetching endorser name from NationalRegistryApi v1 ${e.message} \n${e.stack}`,
+        )
+        return ''
+      } else {
+        throw e
+      }
     }
   }
 }
