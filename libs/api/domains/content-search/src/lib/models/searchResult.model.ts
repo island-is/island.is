@@ -42,6 +42,9 @@ export class SearchResult {
 
   @Field(() => [TypeCount], { nullable: true })
   typesCount?: TypeCount[]
+
+  @Field(() => Int, { nullable: true })
+  processEntryCount?: number
 }
 
 // TODO: Classes form multiple domains can conflict here, look into adding namespace prefixes to classes
