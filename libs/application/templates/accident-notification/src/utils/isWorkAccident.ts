@@ -1,9 +1,10 @@
-import { FormValue } from '@island.is/application/core'
+import { FormValue, getValueViaPath } from '@island.is/application/core'
 import { AccidentTypeEnum } from '../types'
 
 export const isWorkAccident = (formValue: FormValue) => {
-  const accidentType = (formValue as {
-    accidentType: { radioButton: AccidentTypeEnum }
-  })?.accidentType?.radioButton
+  const accidentType = getValueViaPath(
+    formValue,
+    'accidentType.radioButton',
+  ) as AccidentTypeEnum
   return accidentType === AccidentTypeEnum.WORK
 }
