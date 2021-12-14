@@ -1,4 +1,4 @@
 export { OverviewPaymentCharge } from './OverviewPaymentCharge'
-export { ExamplePaymentPendingField } from './ExamplePaymentPendingField'
+export { PaymentPendingField } from './PaymentPendingField'
 export { ConfirmationField } from './ConfirmationField'
 export { PaymentUrlNotFoundField } from './PaymentUrlNotFoundField'

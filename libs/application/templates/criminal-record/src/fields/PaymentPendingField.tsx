@@ -27,7 +27,7 @@ interface PaymentStatus {
   fulfilled: boolean
 }
 
-export const ExamplePaymentPendingField: FC<Props> = ({
+export const PaymentPendingField: FC<Props> = ({
   error,
   application,
   refetch,

@@ -62,7 +62,7 @@ export const CriminalRecordForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'payment.info',
-          title: 'Greiðsla',
+          title: m.payment,
           space: 1,
           children: [
             buildSubmitField({
@@ -88,21 +88,9 @@ export const CriminalRecordForm: Form = buildForm({
         buildDescriptionField({
           id: 'final',
           title: 'Takk',
-          description: (application) => {
-            const sendApplicationActionResult =
-              application.externalData[ApiActions.createApplication]
-
-            let id = 'unknown'
-            if (sendApplicationActionResult) {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              id = sendApplicationActionResult.data.id
-            }
+          description: () => {
             return {
               ...m.outroMessage,
-              values: {
-                id,
-              },
             }
           },
         }),
