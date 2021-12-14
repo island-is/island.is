@@ -205,8 +205,8 @@ export const getFileTypeName: KeyMapping<FileType, string> = {
 
 export const getAidAmountModalInfo = (
   type: AmountModal,
-  aidAmount: number = 0,
-  usePersonalTaxCredit: boolean = false,
+  aidAmount = 0,
+  usePersonalTaxCredit = false,
   finalAmount?: Amount,
 ): { headline: string; calculations: Calculations[] } => {
   switch (type) {

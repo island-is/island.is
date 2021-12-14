@@ -97,8 +97,8 @@ export const calculateAcceptedAidFinalAmount = (
 }
 
 export const estimatedBreakDown = (
-  aidAmount: number = 0,
-  usePersonalTaxCredit: boolean = false,
+  aidAmount = 0,
+  usePersonalTaxCredit = false,
 ): Calculations[] => {
   if (aidAmount === 0) {
     return []
