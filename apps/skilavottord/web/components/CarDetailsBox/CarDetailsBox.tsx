@@ -6,7 +6,7 @@ interface BoxProps {
   vehicleId: string
   vehicleType: string
   modelYear: string
-  vehicleOwner?: string
+  vehicleOwner?: string | null
 }
 
 export const CarDetailsBox: FC<BoxProps> = ({
