@@ -33,11 +33,11 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '14.17.6'
 
       - name: Check node version
         run: |
-          node -v 
+          node -v
           ls -l `which node`
 
       - run: |

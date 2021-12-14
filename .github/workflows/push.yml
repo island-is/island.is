@@ -128,11 +128,11 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '14.17.6'
 
       - name: Check node version
         run: |
-          node -v 
+          node -v
           ls -l `which node`
 
       - name: Cleanup disk space
@@ -348,7 +348,7 @@ jobs:
         continue-on-error: true
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '14.17.6'
         if: steps.gather.outcome == 'success'
       - uses: actions/checkout@v2
         if: steps.gather.outcome == 'success'
