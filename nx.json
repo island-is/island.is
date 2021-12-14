@@ -409,6 +409,10 @@
     "financial-aid-web-veita": {
       "tags": []
     },
+    "financial-aid-web-osk-e2e": {
+      "tags": [],
+      "implicitDependencies": ["financial-aid-web-osk"]
+    },
     "github-actions-cache": {
       "tags": []
     },
