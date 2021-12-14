@@ -46,7 +46,7 @@ export class MunicipalityModel extends Model<Municipality> {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
-    defaultValue: true,
+    defaultValue: false,
   })
   @ApiProperty()
   active: boolean

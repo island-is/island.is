@@ -15,7 +15,7 @@ interface Props {
   timeLabel?: string
   minDate?: Date
   maxDate?: Date
-  selectedDate?: Date
+  selectedDate?: Date | string
   disabled?: boolean
   required?: boolean
   blueBox?: boolean
@@ -51,15 +51,22 @@ const DateTime: React.FC<Props> = (props) => {
           .padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
       : ''
 
-  const [currentDate, setCurrentDate] = useState(selectedDate)
-  const [currentTime, setCurrentTime] = useState(getTimeFromDate(selectedDate))
+  const date = (d: Date | string | undefined) => {
+    return d ? new Date(d) : undefined
+  }
+
+  const [currentDate, setCurrentDate] = useState(date(selectedDate))
+  const [currentTime, setCurrentTime] = useState(
+    getTimeFromDate(date(selectedDate)),
+  )
 
   const [datepickerErrorMessage, setDatepickerErrorMessage] = useState<string>()
   const [timeErrorMessage, setTimeErrorMessage] = useState<string>()
 
   useEffect(() => {
-    const time = getTimeFromDate(selectedDate)
+    const time = getTimeFromDate(date(date(selectedDate)))
 
+    setCurrentDate(date(selectedDate))
     setCurrentTime(time)
   }, [selectedDate])
 

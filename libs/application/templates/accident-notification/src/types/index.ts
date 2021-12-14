@@ -11,6 +11,26 @@ export type CompanyInfo = {
   }
 }
 
+export type Applicant = {
+  name: string
+  nationalId: string
+  email: string
+  phoneNumber: string
+}
+
+export type AccidentNotifTypes =
+  | 'InjuryCertificate'
+  | 'ProxyDocument'
+  | 'PoliceReport'
+  | 'Unknown'
+
+export type AccidentNotificationAttachmentStatus = {
+  InjuryCertificate?: boolean | null
+  ProxyDocument?: boolean | null
+  PoliceReport?: boolean | null
+  Unknown?: boolean | null
+}
+
 export type RepresentativeInfo = {
   name: string
   nationalId: string
