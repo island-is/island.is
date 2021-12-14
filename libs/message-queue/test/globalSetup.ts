@@ -1,7 +1,7 @@
 import { GenericContainer, Wait } from 'testcontainers'
 
 export default async () => {
-  const lc = await new GenericContainer('localstack/localstack')
+  const lc = await new GenericContainer(`${process.env.DOCKER_REGISTRY}localstack/localstack:0.13.1`)
     .withEnv('SERVICES', 'sqs')
     .withExposedPorts(4566)
     .withHealthCheck({
