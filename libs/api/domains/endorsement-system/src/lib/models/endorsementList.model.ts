@@ -2,7 +2,6 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 import { EndorsementListTagsEnum } from '../enums/endorsementListTags.enum'
 import { Endorsement } from './endorsement.model'
-import { ValidationRule } from './validationRule.model'
 
 @ObjectType()
 export class EndorsementList {
@@ -26,9 +25,6 @@ export class EndorsementList {
 
   @Field(() => [EndorsementListTagsEnum])
   tags!: EndorsementListTagsEnum[]
-
-  @Field(() => [ValidationRule])
-  validationRules!: ValidationRule[]
 
   @Field(() => graphqlTypeJson)
   meta!: object

@@ -10,7 +10,6 @@ import { accessControlModule } from '@island.is/service-portal/settings/access-c
 import { educationModule } from '@island.is/service-portal/education'
 import { educationLicenseModule } from '@island.is/service-portal/education-license'
 import {
-  endorsementsModule,
   petitionsModule,
 } from '@island.is/service-portal/endorsements'
 import { educationDegreeModule } from '@island.is/service-portal/education-degree'
@@ -42,7 +41,6 @@ export type ModuleKeys =
   | 'personalInformation'
   | 'education'
   | 'educationLicense'
-  | 'endorsements'
   | 'educationCareer'
   | 'educationStudentAssessment'
   | 'assets'
@@ -55,7 +53,6 @@ export type ModuleKeys =
 export const featureFlaggedModules: ModuleKeys[] = [
   'accessControl',
   'documentProvider',
-  'endorsements',
   'icelandicNamesRegistry',
   'finance',
   'assets',
@@ -75,7 +72,6 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   education: educationModule,
   educationLicense: educationLicenseModule,
   petitions: petitionsModule,
-  endorsements: endorsementsModule,
   educationCareer: educationCareerModule,
   educationStudentAssessment: educationStudentAssessmentModule,
   assets: assetsModule,

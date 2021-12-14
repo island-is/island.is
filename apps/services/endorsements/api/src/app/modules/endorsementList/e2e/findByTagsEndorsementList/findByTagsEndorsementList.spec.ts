@@ -29,7 +29,7 @@ describe('findByTagsEndorsementList', () => {
       scope: [EndorsementsScope.main],
     })
     const response = await request(app.getHttpServer())
-      .get(`/endorsement-list?tags=${EndorsementTag.PARTY_LETTER_2021}`)
+      .get(`/endorsement-list?tags=${EndorsementTag.GENERAL_PETITION}`)
       .send()
       .expect(200)
     expect(response.body.data).toStrictEqual([])
