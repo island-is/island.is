@@ -218,7 +218,7 @@ const AboutFormApplicant = () => {
               target="_blank"
               rel="noreferrer noopener"
             >
-              <span className="linkInText"> {municipality?.homepage}</span>
+              {municipality?.homepage}
             </a>
             .
           </Text>

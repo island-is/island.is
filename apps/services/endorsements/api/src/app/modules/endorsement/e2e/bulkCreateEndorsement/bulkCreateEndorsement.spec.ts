@@ -4,7 +4,7 @@ import { authNationalId } from './seed'
 import { getAuthenticatedApp } from '../../../../../../test/setup'
 import {
   errorExpectedStructure,
-  metaDataResponse,
+  bulkMetaDataResponse,
 } from '../../../../../../test/testHelpers'
 
 describe('bulkCreateEndorsement', () => {
@@ -48,7 +48,7 @@ describe('bulkCreateEndorsement', () => {
         expect.objectContaining({
           // lets make sure metadata got correctly populated
           meta: {
-            ...metaDataResponse,
+            ...bulkMetaDataResponse,
             bulkEndorsement: true,
           },
         }),
@@ -113,7 +113,7 @@ describe('bulkCreateEndorsement', () => {
           endorsementListId: listId,
           // lets make sure metadata got correctly populated
           meta: {
-            ...metaDataResponse,
+            ...bulkMetaDataResponse,
             bulkEndorsement: true,
           },
         }),
