@@ -175,7 +175,7 @@ const EditForm: React.FC<PropTypes> = ({
                         onChange={(option) =>
                           onChange(String((option as Option).value))
                         }
-                        size="sm"
+                        size="xs"
                         hasError={Boolean(errors?.type?.message)}
                         errorMessage={errors?.type?.message}
                         backgroundColor="blue"
@@ -205,7 +205,7 @@ const EditForm: React.FC<PropTypes> = ({
                         onChange={(option) =>
                           onChange(String((option as Option).value))
                         }
-                        size="sm"
+                        size="xs"
                         hasError={Boolean(errors?.status?.message)}
                         errorMessage={errors?.status?.message}
                         backgroundColor="blue"

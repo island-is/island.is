@@ -69,6 +69,7 @@ export const StatisticsSearch = () => {
               { label: 'Fjármál', value: 'fjarmal' },
               { label: 'Annað', value: 'annad' },
             ]}
+            size="xs"
           />
         </GridColumn>
         <GridColumn span="6/12">
@@ -86,6 +87,7 @@ export const StatisticsSearch = () => {
               { label: 'Fjármál', value: 'fjarmal' },
               { label: 'Annað', value: 'annad' },
             ]}
+            size="xs"
           />
         </GridColumn>
       </GridRow>

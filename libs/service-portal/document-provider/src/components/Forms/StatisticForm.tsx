@@ -81,6 +81,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
                     { label: 'Fjármál', value: 'fjarmal' },
                     { label: 'Annað', value: 'annad' },
                   ]}
+                  size="xs"
                 />
               )}
             />
@@ -104,6 +105,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
                     { label: 'Greiðsluseðill', value: 'greidslusedill' },
                     { label: 'Tilkynning', value: 'tilkynning' },
                   ]}
+                  size="xs"
                 />
               )}
             />
