@@ -15,6 +15,9 @@ import useNationalRegistry from '@island.is/financial-aid-web/osk/src/utils/hook
 
 interface AppProvider {
   myApplication?: Application
+  updateApplication: React.Dispatch<
+    React.SetStateAction<Application | undefined>
+  >
   loading: boolean
   error?: ApolloError
   municipality?: Municipality
@@ -35,6 +38,7 @@ interface Props {
 }
 
 export const AppContext = createContext<AppProvider>({
+  updateApplication: () => undefined,
   setUser: () => undefined,
   setMunicipalityById: () => Promise.resolve(undefined),
   setNationalRegistryData: () => {},
@@ -52,7 +56,12 @@ const AppProvider = ({ children }: Props) => {
 
   const { isAuthenticated, user, setUser, loadingUser } = useUser()
 
-  const { myApplication, error, loading } = useMyApplication()
+  const {
+    myApplication,
+    error,
+    loading,
+    updateApplication,
+  } = useMyApplication()
 
   const {
     nationalRegistryData,
@@ -63,6 +72,7 @@ const AppProvider = ({ children }: Props) => {
     <AppContext.Provider
       value={{
         myApplication,
+        updateApplication,
         error,
         loading,
         municipality,
