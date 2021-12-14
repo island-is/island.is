@@ -1,9 +1,9 @@
 import assert from 'assert'
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common'
 import { ClientService } from './client.service'
-import { Logger } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { DAY, MINUTE } from './time'
-import { Queue } from './types'
+import type { Queue } from './types'
 
 @Injectable()
 export class QueueService implements OnApplicationBootstrap {

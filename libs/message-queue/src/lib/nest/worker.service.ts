@@ -1,9 +1,9 @@
 import assert from 'assert'
 import { Injectable, OnModuleDestroy } from '@nestjs/common'
 import { Message } from '@aws-sdk/client-sqs'
-import { Logger } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { QueueService } from './queue.service'
-import { Queue } from './types'
+import type { Queue } from './types'
 import { clamp } from './utils'
 import { ClientService } from './client.service'
 
