@@ -148,8 +148,8 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 type: 'category',
               },
               {
-                key: entry.fields?.processEntry ? 'true' : 'false',
-                value: entry.fields?.processEntry ? 'Yes' : 'No',
+                key: processEntryCount > 0 ? 'true' : 'false',
+                value: processEntryCount > 0 ? 'Yes' : 'No',
                 type: 'processentry',
               },
               ...(mapped.otherCategories ?? []).map((x) => ({

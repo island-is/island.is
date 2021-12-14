@@ -96,6 +96,7 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           }
         }
       }
+      processEntryCount
     }
   }
 `
@@ -108,11 +109,13 @@ export const GET_SEARCH_COUNT_QUERY = gql`
         key
         value
         count
+        type
       }
       typesCount {
         key
         count
       }
+      processEntryCount
     }
   }
 `
@@ -159,6 +162,13 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           title
           slug
           intro
+          body {
+            ... on ProcessEntry {
+              __typename
+              processTitle
+              processLink
+            }
+          }
           processEntry {
             id
           }
@@ -286,6 +296,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
         key
         count
       }
+      processEntryCount
     }
   }
 `

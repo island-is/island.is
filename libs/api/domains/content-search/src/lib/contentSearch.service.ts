@@ -33,7 +33,7 @@ export class ContentSearchService {
     }
     let total = 0
     for (const bucket of aggregations.processEntryCount.buckets) {
-      total += bucket.doc_count * bucket.key
+      total += bucket.doc_count * (bucket.key === 0 ? 0 : 1)
     }
     return total
   }
@@ -45,11 +45,14 @@ export class ContentSearchService {
       return
     }
     return aggregations.group.filtered.count.buckets.map<TagCount>(
-      (tagObject) => ({
-        key: tagObject.key,
-        count: tagObject.doc_count.toString(),
-        value: tagObject.value.buckets?.[0]?.key ?? '', // value of tag is always the first value here we provide default value since value is optional
-      }),
+      (tagObject) => {
+        return {
+          key: tagObject.key,
+          count: tagObject.doc_count.toString(),
+          value: tagObject.value.buckets?.[0]?.key ?? '', // value of tag is always the first value here we provide default value since value is optional
+          type: tagObject.type.buckets?.[0]?.key ?? '',
+        }
+      },
     )
   }
 

@@ -1,6 +1,10 @@
+import { SearchableTags } from '@island.is/api/schema'
 import { TagAggregationInput } from '../types'
 
-export const tagAggregationQueryFragment = (tagType: string, size = 20) => ({
+export const tagAggregationQueryFragment = (
+  tagTypes: SearchableTags[],
+  size = 20,
+) => ({
   aggs: {
     group: {
       nested: {
@@ -9,8 +13,8 @@ export const tagAggregationQueryFragment = (tagType: string, size = 20) => ({
       aggs: {
         filtered: {
           filter: {
-            term: {
-              'tags.type': tagType, // we only count tags of this value and return the keys and values
+            terms: {
+              ['tags.type']: tagTypes,
             },
           },
           aggs: {
@@ -26,6 +30,12 @@ export const tagAggregationQueryFragment = (tagType: string, size = 20) => ({
                     size: 1, // we only need the one value
                   },
                 },
+                type: {
+                  terms: {
+                    field: 'tags.type',
+                    size: 1,
+                  },
+                },
               },
             },
           },
@@ -37,7 +47,7 @@ export const tagAggregationQueryFragment = (tagType: string, size = 20) => ({
 
 export const tagAggregationQuery = ({
   documentTypes,
-  tagType,
+  tagTypes,
   size,
 }: TagAggregationInput) => {
   const query = {
@@ -50,7 +60,7 @@ export const tagAggregationQuery = ({
         },
       },
     },
-    ...tagAggregationQueryFragment(tagType, size),
+    ...tagAggregationQueryFragment(tagTypes, size),
   }
 
   return query

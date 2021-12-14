@@ -1,6 +1,8 @@
+import { SearchableTags } from '@island.is/api/schema'
+
 export interface TagAggregationInput {
   documentTypes: string[]
-  tagType: string
+  tagTypes: SearchableTags[]
   size?: number
 }
 
@@ -14,6 +16,14 @@ export interface TagAggregationResponse {
             key: string
             doc_count: number
             value: {
+              buckets: [
+                {
+                  key: string
+                  doc_count: number
+                },
+              ]
+            }
+            type: {
               buckets: [
                 {
                   key: string
