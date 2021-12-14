@@ -36,7 +36,7 @@ export const AccessControlCreate: FC<AccessControlCreateProps> = ({
         nationalId,
         name,
         role: role.value,
-        partnerId: partnerId.value,
+        partnerId: partnerId?.value,
       })
     },
   )

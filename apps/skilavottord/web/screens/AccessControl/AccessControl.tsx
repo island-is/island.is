@@ -336,7 +336,7 @@ const AccessControl: FC = () => {
                     <Data>{kennitala.format(item.nationalId)}</Data>
                     <Data>{item.name}</Data>
                     <Data>{startCase(item.role)}</Data>
-                    <Data>{item?.recyclingPartner?.companyName}</Data>
+                    <Data>{item?.recyclingPartner?.companyName || '-'} </Data>
                     <Data>
                       <DropdownMenu
                         disclosure={
