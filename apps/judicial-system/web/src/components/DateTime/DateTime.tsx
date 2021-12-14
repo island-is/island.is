@@ -64,7 +64,7 @@ const DateTime: React.FC<Props> = (props) => {
   const [timeErrorMessage, setTimeErrorMessage] = useState<string>()
 
   useEffect(() => {
-    const time = getTimeFromDate(date(date(selectedDate)))
+    const time = getTimeFromDate(date(selectedDate))
 
     setCurrentDate(date(selectedDate))
     setCurrentTime(time)
