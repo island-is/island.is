@@ -2,6 +2,7 @@ import { SearchInput } from '../types'
 import { tagAggregationQueryFragment } from './tagAggregation'
 import { TagQuery, tagQuery } from './tagQuery'
 import { typeAggregationQuery } from './typeAggregation'
+import { processAggregationQuery } from './processAggregation'
 
 export const searchQuery = ({
   queryString,
@@ -11,6 +12,7 @@ export const searchQuery = ({
   tags = [],
   countTag = '',
   countTypes = false,
+  countProcessEntry = false,
 }: SearchInput) => {
   const should = []
   const must: TagQuery[] = []
@@ -58,6 +60,13 @@ export const searchQuery = ({
   if (countTypes) {
     // add tag aggregation, handle if there is already an existing aggregation
     aggregation.aggs = { ...aggregation.aggs, ...typeAggregationQuery().aggs }
+  }
+
+  if (countProcessEntry) {
+    aggregation.aggs = {
+      ...aggregation.aggs,
+      ...processAggregationQuery().aggs,
+    }
   }
 
   return {

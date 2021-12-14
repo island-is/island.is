@@ -3,6 +3,7 @@ import {
   ElasticService,
   TagAggregationResponse,
   TypeAggregationResponse,
+  ProcessEntryAggregationResponse,
 } from '@island.is/content-search-toolkit'
 import { logger } from '@island.is/logging'
 import { SearchResult } from './models/searchResult.model'
@@ -22,6 +23,19 @@ export class ContentSearchService {
 
   private getIndex(lang: ElasticsearchIndexLocale = 'is') {
     return getElasticsearchIndex(lang)
+  }
+
+  mapProcessEntryAggregations(
+    aggregations: ProcessEntryAggregationResponse,
+  ): number {
+    if (!aggregations?.processEntryCount) {
+      return null
+    }
+    let total = 0
+    for (const bucket of aggregations.processEntryCount.buckets) {
+      total += bucket.doc_count * bucket.key
+    }
+    return total
   }
 
   mapTagAggregations(aggregations: TagAggregationResponse): TagCount[] {
@@ -62,6 +76,9 @@ export class ContentSearchService {
       ),
       typesCount: this.mapTypeAggregations(
         body.aggregations as TypeAggregationResponse,
+      ),
+      processEntryCount: this.mapProcessEntryAggregations(
+        body.aggregations as ProcessEntryAggregationResponse,
       ),
     }
   }
