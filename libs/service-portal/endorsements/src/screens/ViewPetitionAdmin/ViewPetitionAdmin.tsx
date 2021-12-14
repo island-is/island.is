@@ -137,6 +137,7 @@ const ViewPetitionAdmin = () => {
               setTitle(e.target.value)
             }}
             label={formatMessage(m.viewPetition.listTitleHeader)}
+            size="xs"
           />
           <Input
             size="xs"

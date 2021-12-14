@@ -74,6 +74,7 @@ export const SimplePhoneForm: FC<Props> = ({
           }}
           label={formatMessage(sharedMessages.phoneNumber)}
           error={errors.tel?.message}
+          size="xs"
         />
       </Box>
       {(renderBackButton || renderSubmitButton) && (

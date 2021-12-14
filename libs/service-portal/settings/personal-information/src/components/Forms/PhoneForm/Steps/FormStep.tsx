@@ -75,6 +75,7 @@ export const FormStep: FC<Props> = ({
           }}
           label={formatMessage(sharedMessages.phoneNumber)}
           error={errors.tel?.message}
+          size="xs"
         />
       </Box>
       <Box
