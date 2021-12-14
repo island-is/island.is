@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode } from 'react'
-import { AuthenticateUser as User } from '@island.is/air-discount-scheme-web/lib'
+import { AuthenticateUser as AuthUser, User } from '@island.is/air-discount-scheme-web/lib'
 import useUser from '@island.is/air-discount-scheme-web/utils/hooks/useUser'
 
 interface AuthProvider {
@@ -24,10 +24,10 @@ const AuthProvider = ({ children }: Props) => {
   return (
     <AuthContext.Provider
     value={{
-        isAuthenticated,
-        user,
+        isAuthenticated: false,
+        user: undefined,
         loadingUser,
-        setUser,
+        setUser: async() => null,
       }}
     >
       {children}
