@@ -69,14 +69,22 @@ const withAuth = (WrappedComponent) =>
         return <WrappedComponent {...this.props} />
       }
 
-      /*
-       * Render white screen for the redirection
-       */
+      //
+      //Uncaught TypeError: _ref$page is undefined Subsidy Subsidy.tsx:30 --- The above error occurred in the <Subsidy> component
+      //next-auth][error][client_fetch_error] https://next-auth.js.org/errors#client_fetch_error providers AND session
       return <WrappedComponent {...signIn('identity-server')} />
+      
 
       //error webpack-internal:///…evelopment.js:13231 Uncaught Error: Objects are not valid as a React child (found: [object Promise]). If you meant to render a collection of children, use an array instead.
       //​ The above error occurred in the <_class> component:
+      //next-auth][error][client_fetch_error] https://next-auth.js.org/errors#client_fetch_error providers 
       //return signIn('identity-server')
+
+
+
+      /*
+       * Render white screen for the redirection
+       */
       // return (
       //   <div
       //     style={{
