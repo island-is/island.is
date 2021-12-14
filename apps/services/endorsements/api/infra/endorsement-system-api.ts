@@ -48,7 +48,6 @@ export const serviceSetup = (services: {
         prod: 'noreply@island.is',
       },
     })
-    .xroad(Base, Client, NationalRegistry)
     .secrets({
       ACCESS_GROUP_DMR:
         '/k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS',
