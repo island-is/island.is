@@ -3,6 +3,7 @@ import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import * as styles from './NavItem.css'
 import { Link } from 'react-router-dom'
+import { useStore } from '../../../store/stateProvider'
 
 interface Props {
   path?: ServicePortalPath
@@ -27,11 +28,16 @@ const NavItemContent: FC<Props> = ({
   alwaysExpanded = false,
   badge = false,
 }) => {
+  const [{ sidebarState }] = useStore()
+  const collapsed = sidebarState === 'closed'
   const chevron = active ? 'chevronUp' : 'chevronDown'
   const showLock = enabled === false
-  const showChevron = hasArray && !alwaysExpanded && !showLock
+  const showChevron =
+    hasArray && !alwaysExpanded && !showLock && sidebarState === 'open'
   const navItemActive: keyof typeof styles.navItemActive = active
-    ? 'active'
+    ? collapsed
+      ? 'activeCollapsed'
+      : 'active'
     : 'inactive'
   const badgeActive: keyof typeof styles.badge = badge ? 'active' : 'inactive'
   return (
@@ -39,17 +45,22 @@ const NavItemContent: FC<Props> = ({
       className={styles.navItemActive[navItemActive]}
       display="flex"
       alignItems="center"
-      justifyContent="spaceBetween"
+      justifyContent={collapsed ? 'center' : 'spaceBetween'}
       cursor={showLock ? undefined : 'pointer'}
       position="relative"
       onClick={showLock ? (active ? onClick : undefined) : onClick}
       paddingY={1}
-      paddingLeft={3}
-      paddingRight={2}
+      paddingLeft={collapsed ? 1 : 3}
+      paddingRight={collapsed ? 1 : 2}
     >
       <Box display="flex" height="full" alignItems="center">
         {icon ? (
-          <Box display="flex" alignItems="center" marginRight={1}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent={collapsed ? 'center' : 'flexStart'}
+            marginRight={collapsed ? 0 : 1}
+          >
             <Box
               borderRadius="circle"
               className={styles.badge[badgeActive]}
@@ -62,7 +73,7 @@ const NavItemContent: FC<Props> = ({
             />
           </Box>
         ) : null}
-        <Box className={styles.text}>{children}</Box>
+        {!collapsed ? <Box className={styles.text}>{children}</Box> : ''}
       </Box>
       {showChevron && (
         <Icon type={'filled'} icon={chevron} size="medium" color={'blue600'} />

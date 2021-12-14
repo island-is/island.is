@@ -14,19 +14,23 @@ export const sidebar = style({
 })
 
 export const collapsed = style({
-  left: '-125px',
-  backgroundColor: theme.color.transparent,
+  width: 138,
 })
 
 export const logoCollapsed = style({
   display: 'flex',
   justifyContent: 'flex-end',
   paddingTop: theme.spacing[3],
+  marginRight: -22,
 })
-
 export const subnav = style({
   paddingLeft: 26,
   borderLeft: `1px solid ${theme.color.blue200}`,
+})
+
+export const subnavCollapsed = style({
+  padding: 0,
+  borderLeft: 'none',
 })
 
 export const navIcon = style({

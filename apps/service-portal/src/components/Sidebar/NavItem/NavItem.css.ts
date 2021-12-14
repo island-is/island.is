@@ -9,8 +9,8 @@ export const navItem = style({})
 
 export const navItemActive = styleVariants({
   active: {
-    backgroundColor: '#E0ECFF',
-    border: '1px solid #E0ECFF',
+    backgroundColor: theme.color.blue200,
+    border: `1px solid ${theme.color.blue200}`,
     borderTopLeftRadius: '8px',
     borderBottomLeftRadius: '8px',
   },
@@ -23,6 +23,11 @@ export const navItemActive = styleVariants({
         border: 'none',
       },
     },
+  },
+  activeCollapsed: {
+    backgroundColor: theme.color.blue200,
+    border: `1px solid ${theme.color.blue200}`,
+    borderRadius: '8px',
   },
 })
 

@@ -25,8 +25,8 @@ export const Sidebar: FC<{}> = () => {
         justifyContent="flexStart"
         marginBottom={3}
         background={collapsed ? 'transparent' : 'blue100'}
-        padding={3}
-        paddingRight={0}
+        padding={collapsed ? 6 : 3}
+        paddingRight={collapsed ? 6 : 0}
       >
         <Box
           className={cn({ [styles.logoCollapsed]: collapsed })}
@@ -69,24 +69,23 @@ export const Sidebar: FC<{}> = () => {
             />
           </Box>
         </Box>
-        {!collapsed &&
-          navigation.map((rootItem, rootIndex) => (
-            <Stack space={1} key={rootIndex}>
-              {rootItem.children?.map(
-                (navRoot, index) =>
-                  navRoot.path !== ServicePortalPath.MinarSidurRoot && (
-                    <ModuleNavigation
-                      key={index}
-                      nav={navRoot}
-                      badge={
-                        navRoot.subscribesTo === 'documents' &&
-                        badgeContext.unreadDocumentsCounter > 0
-                      }
-                    />
-                  ),
-              )}
-            </Stack>
-          ))}
+        {navigation.map((rootItem, rootIndex) => (
+          <Stack space={1} key={rootIndex}>
+            {rootItem.children?.map(
+              (navRoot, index) =>
+                navRoot.path !== ServicePortalPath.MinarSidurRoot && (
+                  <ModuleNavigation
+                    key={index}
+                    nav={navRoot}
+                    badge={
+                      navRoot.subscribesTo === 'documents' &&
+                      badgeContext.unreadDocumentsCounter > 0
+                    }
+                  />
+                ),
+            )}
+          </Stack>
+        ))}
       </Box>
     </aside>
   )
