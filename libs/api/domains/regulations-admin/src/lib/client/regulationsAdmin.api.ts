@@ -40,7 +40,6 @@ export class RegulationsAdminApi extends RESTDataSource {
       '/draft_regulations',
       {},
       {
-        cacheOptions: { ttl: this.options.ttl },
         headers: { authorization },
       },
     )
@@ -54,7 +53,6 @@ export class RegulationsAdminApi extends RESTDataSource {
       `/draft_regulations_shipped`,
       {},
       {
-        cacheOptions: { ttl: this.options.ttl },
         headers: { authorization },
       },
     )
@@ -69,7 +67,6 @@ export class RegulationsAdminApi extends RESTDataSource {
       `/draft_regulation/${regulationId}`,
       {},
       {
-        // cacheOptions: { ttl: this.options.ttl },
         headers: { authorization },
       },
     )

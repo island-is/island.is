@@ -101,7 +101,7 @@ const prodConfig = () => ({
   },
   regulationsAdmin: {
     baseApiUrl: process.env.REGULATIONS_ADMIN_URL,
-    regulationsApiUrl: process.env.REGULATIONS_API_URL
+    regulationsApiUrl: process.env.REGULATIONS_API_URL,
   },
   endorsementSystem: {
     baseApiUrl: process.env.ENDORSEMENT_SYSTEM_BASE_API_URL,
@@ -273,7 +273,8 @@ const devConfig = () => ({
     ttl: parseInt(process.env.FJARMAL_TTL, 10) || 600,
   },
   regulationsAdmin: {
-    baseApiUrl: process.env.REGULATIONS_ADMIN_URL ?? 'http://localhost:3333/api',
+    baseApiUrl:
+      process.env.REGULATIONS_ADMIN_URL ?? 'http://localhost:3333/api',
     regulationsApiUrl:
       process.env.REGULATIONS_API_URL ??
       'https://reglugerdir-api.herokuapp.com/api/v1',
