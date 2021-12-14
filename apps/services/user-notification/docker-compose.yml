@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   localstack:
-    image: localstack/localstack
+    image: public.ecr.aws/localstack/localstack
     networks:
       - local
     ports:
