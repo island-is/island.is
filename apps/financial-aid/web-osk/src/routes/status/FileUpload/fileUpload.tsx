@@ -16,10 +16,7 @@ import {
   getCommentFromLatestEvent,
 } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
-import {
-  ApplicationEventMutation,
-  ApplicationMutation,
-} from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import { ApplicationMutation } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import { AlertMessage, Box, Input, Text } from '@island.is/island-ui/core'
 
@@ -28,7 +25,7 @@ import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppP
 
 const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)
-  const { myApplication, user } = useContext(AppContext)
+  const { myApplication, user, updateApplication } = useContext(AppContext)
 
   const fileComment = useMemo(() => {
     if (myApplication?.applicationEvents) {
@@ -46,11 +43,9 @@ const FileUpload = () => {
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const [updateApplicationMutation] = useMutation<{ application: Application }>(
-    ApplicationMutation,
-  )
-
-  const [createApplicationEventMutation] = useMutation(ApplicationEventMutation)
+  const [updateApplicationMutation] = useMutation<{
+    updateApplication: Application
+  }>(ApplicationMutation)
 
   const isSpouse = user?.nationalId === myApplication?.spouseNationalId
 
@@ -76,8 +71,13 @@ const FileUpload = () => {
               event: isSpouse
                 ? ApplicationEventType.SPOUSEFILEUPLOAD
                 : ApplicationEventType.FILEUPLOAD,
+              comment: form.fileUploadComment,
             },
           },
+        }).then((results) => {
+          if (results.data?.updateApplication) {
+            updateApplication(results.data?.updateApplication)
+          }
         })
 
         updateForm({
@@ -96,24 +96,6 @@ const FileUpload = () => {
     }
 
     setIsLoading(false)
-  }
-
-  const sendUserComment = async () => {
-    try {
-      await createApplicationEventMutation({
-        variables: {
-          input: {
-            applicationId: router.query.id,
-            comment: form.fileUploadComment,
-            eventType: ApplicationEventType.FILEUPLOAD,
-          },
-        },
-      })
-    } catch (e) {
-      router.push(
-        `${Routes.statusFileUploadFailure(router.query.id as string)}`,
-      )
-    }
   }
 
   return (
@@ -175,7 +157,7 @@ const FileUpload = () => {
           if (form?.otherFiles.length <= 0 || router.query.id === undefined) {
             return setError(true)
           }
-          Promise.all([sendFiles(), sendUserComment()])
+          sendFiles()
         }}
       />
     </>
