@@ -5,7 +5,9 @@ import ReactSelect, {
   GroupedOptionsType,
   ActionMeta,
   ValueType,
+  createFilter,
 } from 'react-select'
+import { Config } from 'react-select/src/filters'
 import CreatableReactSelect from 'react-select/creatable'
 import { formatGroupLabel } from 'react-select/src/builtins'
 import {
@@ -31,6 +33,8 @@ interface AriaError {
 export type Option = {
   label: string
   value: string | number
+  description?: string
+  descriptionTruncated?: boolean
   disabled?: boolean
 }
 
@@ -59,6 +63,7 @@ export interface SelectProps {
   required?: boolean
   ariaError?: AriaError
   formatGroupLabel?: formatGroupLabel<Option>
+  filterConfig?: Config | null
 }
 
 export const Select = ({
@@ -81,6 +86,7 @@ export const Select = ({
   backgroundColor = 'white',
   required,
   formatGroupLabel,
+  filterConfig = null,
 }: SelectProps) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -121,6 +127,7 @@ export const Select = ({
         formatCreateLabel={() => currentValue}
         createOptionPosition="first"
         onInputChange={(inputValue) => setCurrentValue(inputValue)}
+        filterOption={createFilter(filterConfig)}
         components={{
           Control,
           Input,
@@ -168,6 +175,7 @@ export const Select = ({
         required={required}
         ariaError={ariaError as AriaError}
         formatGroupLabel={formatGroupLabel}
+        filterOption={createFilter(filterConfig)}
         components={{
           Control,
           Input,

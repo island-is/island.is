@@ -10,14 +10,14 @@ import {
   Button,
   Hidden,
   Inline,
-  LoadingIcon,
+  LoadingDots,
   Stack,
   Text,
   toast,
 } from '@island.is/island-ui/core'
 
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import { getYear } from '@island.is/skilavottord-web/utils/dateUtils'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import {
@@ -26,7 +26,11 @@ import {
   OutlinedError,
   CarDetailsBox,
 } from '@island.is/skilavottord-web/components'
-import { Mutation, Query } from '@island.is/skilavottord-web/graphql/schema'
+import {
+  Mutation,
+  Query,
+  Role,
+} from '@island.is/skilavottord-web/graphql/schema'
 
 const SkilavottordVehicleReadyToDeregisteredQuery = gql`
   query skilavottordVehicleReadyToDeregisteredQuery($permno: String!) {
@@ -129,7 +133,7 @@ const Confirm: FC = () => {
           <Box textAlign="center">
             <Stack space={4}>
               <Text variant="h1">{t.titles.loading}</Text>
-              <LoadingIcon size={50} />
+              <LoadingDots large />
             </Stack>
           </Box>
         ) : (
@@ -174,7 +178,7 @@ const Confirm: FC = () => {
           <Box>
             {loading ? (
               <Box textAlign="center">
-                <LoadingIcon size={50} />
+                <LoadingDots large />
               </Box>
             ) : (
               <Stack space={4}>

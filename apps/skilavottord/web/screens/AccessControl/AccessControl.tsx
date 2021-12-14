@@ -15,6 +15,8 @@ import {
   GridColumn,
   GridRow,
   SkeletonLoader,
+  DialogPrompt,
+  DropdownMenu,
 } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -29,6 +31,7 @@ import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
 import {
   AccessControl as AccessControlType,
   CreateAccessControlInput,
+  DeleteAccessControlInput,
   Query,
   Role,
   UpdateAccessControlInput,
@@ -39,6 +42,8 @@ import {
   AccessControlCreate,
   AccessControlUpdate,
 } from './components'
+
+import * as styles from './AccessControl.css'
 
 const SkilavottordAllRecyclingPartnersQuery = gql`
   query skilavottordAllRecyclingPartnersQuery {
@@ -87,6 +92,14 @@ export const UpdateSkilavottordAccessControlMutation = gql`
   }
 `
 
+export const DeleteSkilavottordAccessControlMutation = gql`
+  mutation deleteSkilavottordAccessControlMutation(
+    $input: DeleteAccessControlInput!
+  ) {
+    deleteSkilavottordAccessControl(input: $input)
+  }
+`
+
 const AccessControl: FC = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
   const { user } = useContext(UserContext)
@@ -106,6 +119,17 @@ const AccessControl: FC = () => {
   )
   const [updateSkilavottordAccessControl] = useMutation(
     UpdateSkilavottordAccessControlMutation,
+  )
+  const [deleteSkilavottordAccessControl] = useMutation(
+    DeleteSkilavottordAccessControlMutation,
+    {
+      // TODO for now just to easily work with API, it may be optimized(optimistic UI/update cache)
+      refetchQueries: [
+        {
+          query: SkilavottordAccessControlsQuery,
+        },
+      ],
+    },
   )
 
   const [
@@ -169,6 +193,12 @@ const AccessControl: FC = () => {
     if (!errors) {
       handleUpdateAccessControlCloseModal()
     }
+  }
+
+  const handleDeleteAccessControl = async (input: DeleteAccessControlInput) => {
+    await deleteSkilavottordAccessControl({
+      variables: { input },
+    })
   }
 
   return (
@@ -293,15 +323,57 @@ const AccessControl: FC = () => {
                         }
                       </Data>
                       <Data>
-                        <Button
-                          onClick={() => setPartner(item)}
-                          variant="text"
-                          icon="pencil"
-                          size="small"
-                          nowrap
-                        >
-                          {t.buttons.edit}
-                        </Button>
+                        <DropdownMenu
+                          disclosure={
+                            <Button
+                              variant="text"
+                              icon="chevronDown"
+                              size="small"
+                              nowrap
+                            >
+                              {t.buttons.actions}
+                            </Button>
+                          }
+                          items={[
+                            {
+                              title: t.buttons.edit,
+                              onClick: () => setPartner(item),
+                            },
+                            {
+                              title: t.buttons.delete,
+                              render: () => (
+                                <DialogPrompt
+                                  title={t.modal.titles.delete}
+                                  description={t.modal.subtitles.delete}
+                                  baseId={`delete-${item.nationalId}-dialog`}
+                                  ariaLabel={`delete-${item.nationalId}-dialog`}
+                                  disclosureElement={
+                                    <Box
+                                      display="flex"
+                                      alignItems="center"
+                                      justifyContent="center"
+                                      paddingY={2}
+                                      cursor="pointer"
+                                      className={styles.deleteMenuItem}
+                                    >
+                                      <Text variant="eyebrow" color="red600">
+                                        {t.buttons.delete}
+                                      </Text>
+                                    </Box>
+                                  }
+                                  buttonTextCancel={t.modal.buttons.cancel}
+                                  buttonTextConfirm={t.modal.buttons.confirm}
+                                  onConfirm={() =>
+                                    handleDeleteAccessControl({
+                                      nationalId: item.nationalId,
+                                    })
+                                  }
+                                />
+                              ),
+                            },
+                          ]}
+                          menuLabel={t.buttons.actions}
+                        />
                       </Data>
                     </Row>
                   )

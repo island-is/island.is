@@ -1,11 +1,5 @@
 import { MessageFormatter } from '@island.is/application/core'
-import {
-  AttachmentsEnum,
-  FileType,
-  PowerOfAttorneyUploadEnum,
-  WhoIsTheNotificationForEnum,
-} from '..'
-
+import { AttachmentsEnum, FileType, WhoIsTheNotificationForEnum } from '..'
 import { getValueViaPath } from '@island.is/application/core'
 import { YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
@@ -18,6 +12,15 @@ export const isValid24HFormatTime = (value: string) => {
   if (hours > 23) return false
   if (minutes > 59) return false
   return true
+}
+
+export const formatPhonenumber = (value: string) => {
+  const splitAt = (index: number) => (x: string) => [
+    x.slice(0, index),
+    x.slice(index),
+  ]
+  if (value.length > 3) return splitAt(3)(value).join('-')
+  return value
 }
 
 const hasAttachment = (attachment: FileType[] | undefined) =>
@@ -121,3 +124,4 @@ export * from './isFatalAccident'
 export * from './isReportingBehalfOfSelf'
 export * from './isOfWorkTypeAccident'
 export * from './shouldRequestReview'
+export * from './isUniqueAssignee'

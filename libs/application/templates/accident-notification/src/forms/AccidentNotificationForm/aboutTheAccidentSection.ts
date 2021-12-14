@@ -89,6 +89,7 @@ export const aboutTheAccidentSection = buildSection({
               id: 'timePassedHindranceFielAlertMessage',
               title: hindrances.timePassedHindrance.errorTitle,
               description: hindrances.timePassedHindrance.errorDescription,
+              doesNotRequireAnswer: true,
               condition: (formValue) => formValue.timePassedHindrance === YES,
             }),
           ],
@@ -112,6 +113,7 @@ export const aboutTheAccidentSection = buildSection({
               id: 'carAccidentHindranceFielAlertMessage',
               title: hindrances.carAccident.errorTitle,
               description: hindrances.carAccident.errorDescription,
+              doesNotRequireAnswer: true,
               condition: (formValue) => formValue.carAccidentHindrance === YES,
             }),
           ],
@@ -171,6 +173,7 @@ export const aboutTheAccidentSection = buildSection({
                 title: attachments.labels.alertMessage,
                 description: accidentType.warning.agricultureAccidentWarning,
                 component: 'FieldAlertMessage',
+                doesNotRequireAnswer: true,
                 condition: (formValue) => isAgricultureAccident(formValue),
               },
               { type: 'warning' },
@@ -532,6 +535,7 @@ export const aboutTheAccidentSection = buildSection({
           ],
         }),
         buildMultiField({
+          id: 'workMachine.description',
           title: workMachine.general.subSectionTitle,
           condition: (formValue) => formValue.workMachineRadio === YES,
           children: [
@@ -646,6 +650,7 @@ export const aboutTheAccidentSection = buildSection({
                 title: attachments.labels.alertMessage,
                 description: attachments.general.alertMessage,
                 component: 'FieldAlertMessage',
+                doesNotRequireAnswer: true,
                 condition: (formValue) =>
                   getValueViaPath(formValue, 'injuryCertificate.answer') ===
                   AttachmentsEnum.SENDCERTIFICATELATER,
@@ -718,6 +723,7 @@ export const aboutTheAccidentSection = buildSection({
                 title: fatalAccident.alertMessage.title,
                 description: fatalAccident.alertMessage.description,
                 component: 'FieldAlertMessage',
+                doesNotRequireAnswer: true,
                 condition: (formValue) =>
                   getValueViaPath(
                     formValue,
@@ -773,6 +779,7 @@ export const aboutTheAccidentSection = buildSection({
                 title: attachments.labels.alertMessage,
                 description: attachments.general.alertMessage,
                 component: 'FieldAlertMessage',
+                doesNotRequireAnswer: true,
                 condition: (formValue) =>
                   getValueViaPath(formValue, 'additionalAttachments.answer') ===
                   AttachmentsEnum.ADDITIONALLATER,
@@ -904,6 +911,7 @@ export const aboutTheAccidentSection = buildSection({
               {
                 id: 'representativeInfo.custom',
                 title: '',
+                doesNotRequireAnswer: true,
                 component: 'HiddenInformation',
               },
               {
@@ -1013,6 +1021,7 @@ export const aboutTheAccidentSection = buildSection({
               {
                 id: 'schoolInfo.custom',
                 title: '',
+                doesNotRequireAnswer: true,
                 component: 'HiddenInformation',
               },
               {
@@ -1026,7 +1035,10 @@ export const aboutTheAccidentSection = buildSection({
     // fishery information if fisherman
     buildSubSection({
       id: 'fishingCompanyInfo.subSection',
-      title: fishingCompanyInfo.general.title,
+      title: (application) =>
+        isReportingOnBehalfOfEmployee(application.answers)
+          ? fishingCompanyInfo.general.informationAboutShipTitle
+          : fishingCompanyInfo.general.title,
       condition: (formValue) => isFishermanAccident(formValue),
       children: [
         buildMultiField({
@@ -1158,6 +1170,7 @@ export const aboutTheAccidentSection = buildSection({
               {
                 id: 'representativeInfo.custom',
                 title: '',
+                doesNotRequireAnswer: true,
                 component: 'HiddenInformation',
               },
               {
@@ -1266,6 +1279,7 @@ export const aboutTheAccidentSection = buildSection({
               {
                 id: 'representativeInfo.custom',
                 title: '',
+                doesNotRequireAnswer: true,
                 component: 'HiddenInformation',
               },
               {
@@ -1365,6 +1379,7 @@ export const aboutTheAccidentSection = buildSection({
               format: '###-####',
               variant: 'tel',
               width: 'half',
+              doesNotRequireAnswer: true,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1372,6 +1387,7 @@ export const aboutTheAccidentSection = buildSection({
               {
                 id: 'representativeInfo.custom',
                 title: '',
+                doesNotRequireAnswer: true,
                 component: 'HiddenInformation',
               },
               {

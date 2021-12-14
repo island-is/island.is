@@ -81,7 +81,7 @@ export const personalInformationModule: ServicePortalModule = {
 
     return routes
   },
-  global: async ({ client }) => {
+  global: async ({ client, userInfo }) => {
     const routes: ServicePortalGlobalComponent[] = []
 
     /**
@@ -95,7 +95,8 @@ export const personalInformationModule: ServicePortalModule = {
       // If the user profile is empty, we render the onboarding modal
       if (
         process.env.NODE_ENV !== 'development' &&
-        res.data?.getUserProfile === null
+        res.data?.getUserProfile === null &&
+        userInfo.scopes.includes(UserProfileScope.write)
       )
         routes.push({
           render: () =>

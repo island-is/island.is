@@ -13,11 +13,14 @@ import {
   capitalize,
   formatDate,
   formatRequestedCustodyRestrictions,
-  laws,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  laws,
+  requestCourtDate,
+} from '@island.is/judicial-system-web/messages'
 import type {
   Case,
   CaseLegalProvisions,
@@ -169,7 +172,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               (legalProvision: CaseLegalProvisions, index) => {
                 return (
                   <div key={index}>
-                    <Text>{laws[legalProvision]}</Text>
+                    <Text>{formatMessage(laws[legalProvision].title)}</Text>
                   </div>
                 )
               },
