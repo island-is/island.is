@@ -1,4 +1,4 @@
-import { ApiScope } from '@island.is/auth/scopes'
+import { AuthScope } from '@island.is/auth/scopes'
 import {
   PersonalRepresentativeType,
   PersonalRepresentativeTypeDTO,
@@ -37,7 +37,7 @@ import { AuditService } from '@island.is/nest/audit'
 const namespace = `${environment.audit.defaultNamespace}/personal-representative-types`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.representativeWrite)
+@Scopes(AuthScope.writePersonalRepresentative)
 @ApiTags('Personal Representative Types')
 @Controller('v1/personal-representative-types')
 @ApiHeader({

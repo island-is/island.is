@@ -7,9 +7,8 @@ import {
   ArrayNotEmpty,
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-import { PersonalRepresentativeRightTypeDTO } from './personal-representative-right-type.dto'
 
-export class PersonalRepresentativeDTO {
+export class PersonalRepresentativeCreateDTO {
   @IsString()
   @IsOptional()
   @ApiProperty({
@@ -65,8 +64,7 @@ export class PersonalRepresentativeDTO {
   @IsArray()
   @ArrayNotEmpty()
   @ApiProperty({
-    example:
-      '[{code:"health", description:"health descr", validFrom:"xx.yy.zzzz", validTo: "kk.dd.oooo"}, {code:"finance"}, description:"finance descr"}]',
+    example: '["health", "finance"]',
   })
-  readonly rights!: PersonalRepresentativeRightTypeDTO[]
+  readonly rightCodes!: string[]
 }

@@ -12,6 +12,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 import { PersonalRepresentative } from './personal-representative.model'
 import { PersonalRepresentativeRightType } from './personal-representative-right-type.model'
+import { PersonalRepresentativeRightTypeDTO } from '../dto/personal-representative-right-type.dto'
 
 @Table({
   tableName: 'personal_representative_right',

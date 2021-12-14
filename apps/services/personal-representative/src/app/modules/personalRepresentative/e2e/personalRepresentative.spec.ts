@@ -8,6 +8,7 @@ import {
   PersonalRepresentativeDTO,
   PersonalRepresentativeRightType,
   PersonalRepresentativeType,
+  PersonalRepresentativeCreateDTO,
 } from '@island.is/auth-api-lib/personal-representative'
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -28,8 +29,9 @@ const personalRepresentativeType = {
   description: 'prTypeDescription',
 }
 
-const simpleRequestData: PersonalRepresentativeDTO = {
+const simpleRequestData: PersonalRepresentativeCreateDTO = {
   contractId: '12345',
+  externalUserId: 'adUserFromContractSystem',
   nationalIdPersonalRepresentative: '1234567890',
   nationalIdRepresentedPerson: '1234567891',
   rightCodes: [],
@@ -158,7 +160,10 @@ describe('PersonalRepresentativeController', () => {
         .send(requestData)
         .expect(201)
 
-      expect(response.body).toMatchObject(requestData)
+      console.log(requestData)
+      console.log(response.body)
+
+      expect(convertDtoToCreateDto(response.body)).toMatchObject(requestData)
     })
   })
 
@@ -207,11 +212,26 @@ describe('PersonalRepresentativeController', () => {
   })
 
   async function setupBasePersonalRep(
-    data: PersonalRepresentativeDTO,
-  ): Promise<PersonalRepresentativeDTO> {
+    data: PersonalRepresentativeCreateDTO,
+  ): Promise<PersonalRepresentativeCreateDTO> {
     const responseCreate = await server
       .post('/v1/personal-representative')
       .send(data)
     return responseCreate.body
+  }
+
+  function convertDtoToCreateDto(
+    data: PersonalRepresentativeDTO,
+  ): PersonalRepresentativeCreateDTO {
+    return {
+      id: data.id,
+      externalUserId: data.externalUserId,
+      contractId: data.contractId,
+      personalRepresentativeTypeCode: data.personalRepresentativeTypeCode,
+      nationalIdPersonalRepresentative: data.nationalIdPersonalRepresentative,
+      nationalIdRepresentedPerson: data.nationalIdRepresentedPerson,
+      validTo: data.validTo,
+      rightCodes: data.rights.map((r) => r.code),
+    }
   }
 })

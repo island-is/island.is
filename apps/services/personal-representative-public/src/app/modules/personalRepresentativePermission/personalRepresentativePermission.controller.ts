@@ -32,6 +32,7 @@ import {
   ScopesGuard,
   User,
 } from '@island.is/auth-nest-tools'
+import { PersonalRepresentativePublicDTO } from './dto/personalRepresentativePublicDTO.dto'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representative-permission`
 
@@ -58,18 +59,18 @@ export class PersonalRepresentativePermissionController {
   @Get(':nationalId')
   @ApiOkResponse({
     description: 'Personal representative connections with rights',
-    type: PersonalRepresentativeDTO,
+    type: PersonalRepresentativePublicDTO,
   })
   @ApiParam({ name: 'nationalId', required: true, type: String })
   async getByPersonalRepresentativeAsync(
     @Param('nationalId') nationalId: string,
     @CurrentUser() user: User,
-  ): Promise<PersonalRepresentativeDTO[]> {
+  ): Promise<PersonalRepresentativePublicDTO[]> {
     if (!nationalId) {
       throw new BadRequestException('NationalId needs to be provided')
     }
 
-    return await this.auditService.auditPromise(
+    const personalReps = await this.auditService.auditPromise(
       {
         user,
         action: 'getPersonalRepresentativePermissions',
@@ -77,6 +78,10 @@ export class PersonalRepresentativePermissionController {
         resources: nationalId,
       },
       this.prService.getByPersonalRepresentativeAsync(nationalId, false),
+    )
+
+    return personalReps.map((pr) =>
+      new PersonalRepresentativePublicDTO().fromDTO(pr),
     )
   }
 

@@ -1,5 +1,6 @@
 import { AuthScope } from '@island.is/auth/scopes'
 import {
+  PersonalRepresentativeCreateDTO,
   PersonalRepresentativeDTO,
   PersonalRepresentativeService,
 } from '@island.is/auth-api-lib/personal-representative'
@@ -203,7 +204,7 @@ export class PersonalRepresentativeController {
     type: PersonalRepresentativeDTO,
   })
   async create(
-    @Body() personalRepresentative: PersonalRepresentativeDTO,
+    @Body() personalRepresentative: PersonalRepresentativeCreateDTO,
     @CurrentUser() user: User,
   ): Promise<PersonalRepresentativeDTO | null> {
     if (personalRepresentative.rightCodes.length === 0) {

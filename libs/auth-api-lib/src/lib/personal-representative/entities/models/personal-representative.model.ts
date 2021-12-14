@@ -13,6 +13,8 @@ import { ApiProperty } from '@nestjs/swagger'
 import { PersonalRepresentativeType } from './personal-representative-type.model'
 import { PersonalRepresentativeRight } from './personal-representative-right.model'
 import { PersonalRepresentativeDTO } from '../dto/personal-representative.dto'
+import { PersonalRepresentativeRightTypeDTO } from '../dto/personal-representative-right-type.dto'
+import { PersonalRepresentativeRightType } from './personal-representative-right-type.model'
 
 @Table({
   tableName: 'personal_representative',
@@ -29,7 +31,6 @@ export class PersonalRepresentative extends Model<PersonalRepresentative> {
   @ForeignKey(() => PersonalRepresentativeType)
   @Column({
     type: DataType.STRING,
-    primaryKey: true,
     allowNull: false,
   })
   @ApiProperty()
@@ -41,6 +42,13 @@ export class PersonalRepresentative extends Model<PersonalRepresentative> {
   })
   @ApiProperty()
   contractId!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  externalUserId!: string
 
   @Column({
     type: DataType.STRING,
@@ -83,18 +91,22 @@ export class PersonalRepresentative extends Model<PersonalRepresentative> {
   toDTO(): PersonalRepresentativeDTO {
     return {
       id: this.id,
+      externalUserId: this.externalUserId,
       contractId: this.contractId,
       personalRepresentativeTypeCode: this.personalRepresentativeTypeCode,
       nationalIdPersonalRepresentative: this.nationalIdPersonalRepresentative,
       nationalIdRepresentedPerson: this.nationalIdRepresentedPerson,
       validTo: this.validTo,
-      rightCodes: this.rights?.map((r) => r.rightTypeCode),
+      rights: this.rights?.map((r) =>
+        (r.rightType as PersonalRepresentativeRightType).toDTO(),
+      ),
     }
   }
 
   fromDTO(id: string, dto: PersonalRepresentativeDTO): PersonalRepresentative {
     this.id = id
     this.contractId = dto.contractId
+    this.externalUserId = dto.externalUserId
     this.personalRepresentativeTypeCode = dto.personalRepresentativeTypeCode
     this.nationalIdPersonalRepresentative = dto.nationalIdPersonalRepresentative
     this.nationalIdRepresentedPerson = dto.nationalIdRepresentedPerson

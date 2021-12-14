@@ -9,11 +9,13 @@ import {
   PersonalRepresentativeRightType,
   PersonalRepresentativeType,
   PersonalRepresentativeAccessDTO,
+  PersonalRepresentativeCreateDTO,
 } from '@island.is/auth-api-lib/personal-representative'
 import { PersonalRepresentativeRightTypeService } from '@island.is/auth-api-lib/personal-representative'
 import { PersonalRepresentativeService } from '@island.is/auth-api-lib/personal-representative'
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
+import { PersonalRepresentativePublicDTO } from '../dto/personalRepresentativePublicDTO.dto'
 
 const user = createCurrentUser({
   nationalId: '1122334455',
@@ -31,10 +33,11 @@ const personalRepresentativeType = {
   description: 'prTypeDescription',
 }
 
-const simpleRequestData: PersonalRepresentativeDTO = {
+const simpleRequestData: PersonalRepresentativeCreateDTO = {
   contractId: '123456',
   nationalIdPersonalRepresentative: '1234567890',
   nationalIdRepresentedPerson: '1234567891',
+  externalUserId: 'adUserFromContractSystem',
   rightCodes: [],
 }
 
@@ -145,6 +148,7 @@ describe('PersonalRepresentativePermissionController', () => {
       rightCodes: rightTypeList.map((rt) => rt.code),
       personalRepresentativeTypeCode: personalRepresentativeType.code,
     })
+    console.log(personalRep)
   })
 
   describe('Get', () => {
@@ -156,9 +160,13 @@ describe('PersonalRepresentativePermissionController', () => {
         )
         .expect(200)
 
-      const responseData: PersonalRepresentativeDTO[] = response.body
+      const responseData: PersonalRepresentativePublicDTO[] = response.body
       if (personalRep) {
-        expect(responseData[0]).toMatchObject(personalRep)
+        const personalRepPublic = new PersonalRepresentativePublicDTO().fromDTO(
+          personalRep,
+        )
+        console.log(responseData[0])
+        expect(responseData[0]).toMatchObject(personalRepPublic)
       } else {
         expect('Failed to create personal rep').toMatch('0')
       }
@@ -175,7 +183,6 @@ describe('PersonalRepresentativePermissionController', () => {
         .post('/v1/personal-representative-permission/log-access')
         .send(simpleAccessData)
         .expect(201)
-
       expect(response.body).toMatchObject(simpleAccessData)
     })
   })

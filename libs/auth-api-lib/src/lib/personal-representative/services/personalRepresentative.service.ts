@@ -9,6 +9,7 @@ import { PersonalRepresentative } from '../entities/models/personal-representati
 import { PersonalRepresentativeRight } from '../entities/models/personal-representative-right.model'
 import { PersonalRepresentativeRightType } from '../entities/models/personal-representative-right-type.model'
 import { PersonalRepresentativeDTO } from '../entities/dto/personal-representative.dto'
+import { PersonalRepresentativeCreateDTO } from '../entities/dto/personal-representative-create.dto'
 
 @Injectable()
 export class PersonalRepresentativeService {
@@ -229,7 +230,7 @@ export class PersonalRepresentativeService {
 
   /** Create a new personal repreasentative */
   async createAsync(
-    personalRepresentative: PersonalRepresentativeDTO,
+    personalRepresentative: PersonalRepresentativeCreateDTO,
   ): Promise<PersonalRepresentativeDTO | null> {
     // Create new personal representative connection
     let prId = ''
@@ -261,6 +262,7 @@ export class PersonalRepresentativeService {
           {
             model: PersonalRepresentativeRight,
             required: true,
+            include: [PersonalRepresentativeRightType],
           },
         ],
       })
