@@ -74,10 +74,10 @@ export class PersonalRepresentativeAccessService {
       })
     } catch (err) {
       this.logger.error(
-        `Exception creating personal representative access log: ${err}`,
+        `Error creating personal representative access log: ${err}`,
       )
       throw new BadRequestException(
-        `Error creating personal representative access: ${err}`,
+        `Error creating personal representative access log: ${err}`,
       )
     }
   }

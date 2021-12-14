@@ -10,7 +10,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 
 @Table({
-  tableName: 'personal_representative',
+  tableName: 'personal_representative_access',
 })
 export class PersonalRepresentativeAccess extends Model<PersonalRepresentativeAccess> {
   @PrimaryKey
