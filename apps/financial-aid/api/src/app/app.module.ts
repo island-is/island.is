@@ -45,6 +45,5 @@ const autoSchemaFile = environment.production
       load: [XRoadConfig, NationalRegistryClientConfig],
     }),
   ],
-  providers: [BackendAPI],
 })
 export class AppModule {}
