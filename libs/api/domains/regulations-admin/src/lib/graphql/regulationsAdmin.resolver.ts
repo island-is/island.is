@@ -21,8 +21,8 @@ import {
   DraftRegulationChange,
   RegulationDraft,
 } from '@island.is/regulations/admin'
-import { HTMLText } from '@hugsmidjan/regulations-editor/types'
-import { extractAppendixesAndComments } from '@hugsmidjan/regulations-editor/cleanupEditorOutput'
+import { HTMLText } from '@island.is/regulations-tools/types'
+import { extractAppendixesAndComments } from '@island.is/regulations-tools/cleanupEditorOutput'
 import { RegulationAppendix } from '@island.is/regulations/web'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -37,11 +37,11 @@ export class RegulationsAdminResolver {
   @Query(() => graphqlTypeJson)
   async getDraftRegulation(
     @Args('input') input: GetDraftRegulationInput,
-    @CurrentUser() { authorization }: User,
+    @CurrentUser() user: User,
   ): Promise<RegulationDraft | null> {
     const regulation = await this.regulationsAdminApiService.getDraftRegulation(
       input.regulationId,
-      authorization,
+      user.authorization,
     )
 
     if (!regulation) {
@@ -65,7 +65,7 @@ export class RegulationsAdminResolver {
     regulation?.authors?.forEach(async (nationalId) => {
       const author = await this.regulationsAdminApiService.getAuthorInfo(
         nationalId,
-        authorization,
+        user,
       )
       author && authors.push(author)
     })
@@ -129,9 +129,9 @@ export class RegulationsAdminResolver {
 
   // @Query(() => [DraftRegulationModel])
   @Query(() => graphqlTypeJson)
-  async getDraftRegulations(@CurrentUser() { authorization }: User) {
+  async getDraftRegulations(@CurrentUser() user: User) {
     const DBregulations = await this.regulationsAdminApiService.getDraftRegulations(
-      authorization,
+      user.authorization,
     )
 
     const regulations: RegulationDraft[] = []
@@ -142,7 +142,7 @@ export class RegulationsAdminResolver {
         for await (const nationalId of regulation.authors) {
           const author = await this.regulationsAdminApiService.getAuthorInfo(
             nationalId,
-            authorization,
+            user,
           )
 
           authors.push({

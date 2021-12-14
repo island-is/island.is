@@ -3967,17 +3967,10 @@
   resolved "https://registry.yarnpkg.com/@hugsmidjan/qj/-/qj-4.7.0.tgz#ef2793bf1f349bc01b2118dc2d20d6f22163fa84"
   integrity sha512-/kIAN1WvMTlzmtKXgIRl57KbTpAd9UmNgPfcO0NtZNllwhfKDRVOrN9c6ZeBxnrfWsYBP6/BFldYur1aBDBO2g==
 
-<<<<<<< HEAD
 "@hugsmidjan/react@^0.4.4":
   version "0.4.5"
   resolved "https://registry.yarnpkg.com/@hugsmidjan/react/-/react-0.4.5.tgz#3756ae5058a706cc899e4455110c19af7919372c"
   integrity sha512-DxY6bqcXVnhYFQVAAUmrUYR7JE/199XW/hyuoz4/fsyr5CJGlhZGOuoZp9DoDKot3oU99zxLTP4uCCfZDzbR1Q==
-=======
-"@hugsmidjan/regulations-editor@0.4.8":
-  version "0.4.8"
-  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.4.8.tgz#aadf218dd8761d6c04a39dc4c4879d9d84b40588"
-  integrity sha512-+zfGUehMvgGqJAj++kcJu5V/MW9L8s5di96O6tBPMaufYX2wmNRIn9MkT+HmOS/z7LJQ47GWnSAYfdsZkhQW2w==
->>>>>>> main
   dependencies:
     "@hugsmidjan/qj" "^4.1.1"
 

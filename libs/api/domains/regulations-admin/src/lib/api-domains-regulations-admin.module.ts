@@ -26,9 +26,7 @@ export class RegulationsAdminModule {
             new RegulationsService({ url: config.regulationsApiUrl }),
         },
       ],
-      imports: [
-        NationalRegistryXRoadModule.register(config.nationalRegistryXRoad),
-      ],
+      imports: [NationalRegistryXRoadModule],
     }
   }
 }

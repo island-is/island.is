@@ -4,12 +4,15 @@ import { DataSourceConfig } from 'apollo-datasource'
 import {
   buildRegulationApiPath,
   ISODate,
+  LawChapterSlug,
+  MinistrySlug,
   RegQueryName,
   Year,
 } from '@island.is/regulations'
 import {
   Regulation,
   RegulationDiff,
+  RegulationLawChapter,
   RegulationLawChapterTree,
   RegulationListItem,
   RegulationMinistryList,
@@ -109,16 +112,25 @@ export class RegulationsService extends RESTDataSource {
     return response
   }
 
-  async getRegulationsMinistries(): Promise<RegulationMinistryList | null> {
-    const response = await this.get<RegulationMinistryList | null>(`ministries`)
+  async getRegulationsMinistries(
+    slugs?: Array<MinistrySlug>,
+  ): Promise<RegulationMinistryList | null> {
+    const response = await this.get<RegulationMinistryList | null>(
+      `ministries${slugs ? '?slugs=' + slugs.join(',') : ''}`,
+    )
     return response
   }
 
   async getRegulationsLawChapters(
     tree: boolean,
-  ): Promise<RegulationLawChapterTree | null> {
-    const response = await this.get<RegulationLawChapterTree | null>(
-      `lawchapters${tree ? '/tree' : ''}`,
+    slugs?: Array<LawChapterSlug>,
+  ): Promise<RegulationLawChapterTree | RegulationLawChapter[] | null> {
+    const response = await this.get<
+      RegulationLawChapterTree | RegulationLawChapter[] | null
+    >(
+      `lawchapters${tree ? '/tree' : ''}${
+        slugs ? '?slugs=' + slugs.join(',') : ''
+      }`,
     )
     return response
   }

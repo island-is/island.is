@@ -6,7 +6,7 @@ import { Box } from '@island.is/island-ui/core'
 import {
   Editor as RegulationsEditor,
   EditorProps,
-} from '@hugsmidjan/regulations-editor/Editor'
+} from '@island.is/regulations-tools/Editor'
 import cn from 'classnames'
 
 type EditorInputProps = Omit<EditorProps, 'name'> & {

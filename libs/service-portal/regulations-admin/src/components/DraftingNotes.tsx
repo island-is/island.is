@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { HTMLText } from '@hugsmidjan/regulations-editor/types'
+import { HTMLText } from '@island.is/regulations-tools/types'
 import { Box, Button } from '@island.is/island-ui/core'
 import { RegDraftForm } from '../state/types'
 import { EditorInput } from './EditorInput'

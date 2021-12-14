@@ -6,11 +6,9 @@ import { EditDraftBody } from '../graphql/dto/editDraftRegulation.input'
 import { Author, DB_RegulationDraft } from '@island.is/regulations/admin'
 import * as kennitala from 'kennitala'
 
-import {
-  NationalRegistryXRoadConfig,
-  NationalRegistryXRoadService,
-} from '@island.is/api/domains/national-registry-x-road'
+import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import { User } from '@island.is/auth-nest-tools'
+import { Kennitala } from '@island.is/regulations'
 
 export const REGULATIONS_ADMIN_OPTIONS = 'REGULATIONS_ADMIN_OPTIONS'
 
@@ -18,7 +16,6 @@ export interface RegulationsAdminOptions {
   baseApiUrl?: string
   regulationsApiUrl: string
   ttl?: number
-  nationalRegistryXRoad: NationalRegistryXRoadConfig
 }
 
 export class RegulationsAdminApi extends RESTDataSource {
@@ -102,21 +99,23 @@ export class RegulationsAdminApi extends RESTDataSource {
     })
   }
 
-  async getAuthorInfo(
-    nationalId: string,
-    authorization: User['authorization'],
-  ): Promise<Author | null> {
+  async getAuthorInfo(nationalId: string, user: User): Promise<Author | null> {
     if (kennitala.isCompany(nationalId)) {
       return null
     }
 
     const person = await this.nationalRegistryXRoadService.getNationalRegistryPerson(
+      user,
       nationalId,
-      authorization,
     )
+
+    if (!person) {
+      return null
+    }
+
     return {
       name: person.fullName,
-      authorId: person.nationalId as any,
+      authorId: person.nationalId as Kennitala,
     }
   }
 }

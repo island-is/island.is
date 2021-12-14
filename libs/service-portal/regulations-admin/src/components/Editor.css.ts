@@ -1,4 +1,4 @@
-import type { EditorClasses } from '@hugsmidjan/regulations-editor/Editor'
+import type { EditorClasses } from '@island.is/regulations-tools/Editor'
 import { style, globalStyle, keyframes, StyleRule } from '@vanilla-extract/css'
 import {
   SERVICE_PORTAL_HEADER_HEIGHT_SM,
@@ -231,9 +231,9 @@ export const classes: EditorClasses = {
   result_base: style({
     // …
   }),
-  result_dirty: style({
-    // …
-  }),
+  //result_dirty: style({
+  // …
+  //}),
 
   // ---------------------------------------------------------------------------
 
