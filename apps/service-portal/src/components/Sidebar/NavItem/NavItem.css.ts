@@ -72,3 +72,7 @@ export const badge = styleVariants({
 export const lock = style({
   marginRight: 4,
 })
+
+export const subLock = style({
+  marginRight: 5,
+})

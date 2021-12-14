@@ -2,7 +2,7 @@ import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
-
+import * as styles from '../NavItem/NavItem.css'
 interface Props {
   path?: ServicePortalPath
   active: boolean
@@ -41,6 +41,7 @@ const SubNavItemContent: FC<Props> = ({
         icon={'lockClosed'}
         size="small"
         color={'blue600'}
+        className={styles.subLock}
       />
     )}
   </Box>
