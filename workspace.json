@@ -6661,6 +6661,7 @@
                 "output": "./"
               }
             ],
+            "webpackConfig": "apps/services/regulations-admin-backend/webpack.config.js",
             "maxWorkers": 2
           },
           "configurations": {
