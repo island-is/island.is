@@ -119,10 +119,13 @@ export class PersonalRepresentativeRightTypeService {
 
   /** Soft delete on a personal repreasentative right type by code */
   async deleteAsync(code: string): Promise<number> {
-    this.logger.debug('Soft deleting a right type with code: ', code)
+    this.logger.debug(
+      'Soft deleting a personal representative right type with name: ',
+      code,
+    )
 
     if (!code) {
-      throw new BadRequestException('code must be provided')
+      throw new BadRequestException('Code must be provided')
     }
 
     const result = await this.personalRepresentativeRightTypeModel.update(
