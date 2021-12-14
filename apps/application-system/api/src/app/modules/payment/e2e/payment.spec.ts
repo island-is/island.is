@@ -9,7 +9,6 @@ import { setup } from '../../../../../test/setup'
 import { PaymentAPI } from '@island.is/clients/payment'
 import { CreateChargeInput } from '../dto/createChargeInput.dto'
 import { PaymentService } from '../payment.service'
-import { ChargeItemCode } from '@island.is/shared/constants'
 
 let app: INestApplication
 
@@ -20,33 +19,6 @@ class MockPaymentApi {
     return {
       user4: faker.datatype.number(),
       receptionID: faker.datatype.number(),
-    }
-  }
-  async getCatalogByPerformingOrg() {
-    const json = {
-      item: [
-        {
-          performingOrgID: '6509142520',
-          chargeType: 'AY1',
-          chargeItemCode: ChargeItemCode.CRIMINAL_RECORD,
-          chargeItemName: 'Sakarvottorð',
-          priceAmount: 2500,
-        },
-        {
-          performingOrgID: '6509142520',
-          chargeType: 'AY1',
-          chargeItemCode: 'AY102',
-          chargeItemName: 'Veðbókarvottorð',
-          priceAmount: 2000,
-        },
-        {
-          performingOrgID: '6509142520',
-          chargeType: 'AY1',
-          chargeItemCode: 'AY110',
-          chargeItemName: 'Ökuskírteini',
-          priceAmount: 8000,
-        },
-      ],
     }
   }
   async getCatalog() {

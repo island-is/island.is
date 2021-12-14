@@ -5,7 +5,6 @@ import * as styles from './PdfViewer.css'
 import { Pagination } from '../Pagination/Pagination'
 import { LoadingDots } from '../LoadingDots/LoadingDots'
 import { AlertMessage } from '../AlertMessage/AlertMessage'
-import { coreErrorMessages } from '@island.is/application/core'
 
 export interface PdfViewerProps {
   file: string
@@ -15,7 +14,7 @@ interface PdfProps {
 }
 
 interface IPdfLib {
-  default: typeof import('/Users/ori.unnuri/Git/island.is/node_modules/@types/react-pdf/index')
+  default: any
   pdfjs: typeof pdfjs
   Document: typeof Document
   Page: typeof Page
