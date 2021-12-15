@@ -140,15 +140,23 @@ export class RegulationsAdminResolver {
 
       if (regulation.authors) {
         for await (const nationalId of regulation.authors) {
-          const author = await this.regulationsAdminApiService.getAuthorInfo(
-            nationalId,
-            user,
-          )
+          try {
+            const author = await this.regulationsAdminApiService.getAuthorInfo(
+              nationalId,
+              user,
+            )
 
-          authors.push({
-            authorId: nationalId,
-            name: author?.name ?? '',
-          })
+            authors.push({
+              authorId: nationalId,
+              name: author?.name ?? '',
+            })
+          } catch (e) {
+            // Fallback to nationalId if fetching name fails
+            authors.push({
+              authorId: nationalId,
+              name: nationalId,
+            })
+          }
         }
       }
 
