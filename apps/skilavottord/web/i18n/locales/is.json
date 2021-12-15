@@ -356,7 +356,89 @@
     },
     "buttons": {
       "add": "Bæta við móttökuaðila",
-      "edit": "Breyta"
+      "view": "View"
+    },
+    "recyclingCompany": {
+      "view": {
+        "title": "View recycling company",
+        "breadcrumb": "View",
+        "info": "View recycling company View recycling company View recycling company View recycling company View recycling company",
+        "updated": "Successfully updated",
+        "deleted": "Successfully deleted"
+      },
+      "add": {
+        "title": "Add recycling company",
+        "breadcrumb": "Add",
+        "info": "Add recycling company Add recycling company Add recycling company Add recycling company Add recycling company",
+        "added": "Successfully added"
+      },
+      "form": {
+        "inputs": {
+          "companyId": {
+            "label": "Company Id",
+            "placeholder": "Company Id",
+            "rules": {
+              "required": "Company Id is required",
+              "validate": "Company Id is incorrect"
+            }
+          },
+          "companyName": {
+            "label": "Company Name",
+            "placeholder": "Company Name",
+            "rules": {
+              "required": "Company Name is required"
+            }
+          },
+          "address": {
+            "label": "Address",
+            "placeholder": "Address",
+            "rules": {
+              "required": "Address is required"
+            }
+          },
+          "postnumber": {
+            "label": "Postnumber",
+            "placeholder": "Postnumber",
+            "rules": {
+              "required": "Postnumber is required"
+            }
+          },
+          "city": {
+            "label": "City",
+            "placeholder": "City",
+            "rules": {
+              "required": "City is required"
+            }
+          },
+          "website": {
+            "label": "Website",
+            "placeholder": "Website",
+            "rules": {
+              "required": "Website is required"
+            }
+          },
+          "phone": {
+            "label": "Phone",
+            "placeholder": "Phone",
+            "rules": {
+              "required": "Phone is required"
+            }
+          },
+          "active": {
+            "label": "Active",
+            "placeholder": "Active",
+            "rules": {
+              "required": "Active is required"
+            }
+          }
+        },
+        "buttons": {
+          "cancel": "Cancel",
+          "continue": "Submit",
+          "confirm": "Confirm",
+          "delete": "Delete"
+        }
+      }
     }
   },
   "accessControl": {
@@ -463,7 +545,7 @@
     "recyclingCompanies": {
       "baseRoute": "/recycling-companies",
       "add": "/recycling-companies/add",
-      "edit": "/recycling-companies/[company]"
+      "edit": "/recycling-companies/[id]"
     },
     "companyInfo": {
       "baseRoute": "/company-info",

@@ -245,9 +245,7 @@ export class RecyclingRequestService {
       // is partnerId null?
       if (partnerId) {
         newRecyclingRequest.recyclingPartnerId = partnerId
-        const partner = await this.recycllingPartnerService.findByPartnerId(
-          partnerId,
-        )
+        const partner = await this.recycllingPartnerService.findOne(partnerId)
         if (!partner) {
           this.logger.error(
             `Could not find Partner from partnerId: ${partnerId}`,

@@ -1,18 +1,18 @@
 import React, { FC, useContext } from 'react'
+import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import gql from 'graphql-tag'
 import NextLink from 'next/link'
 
 import {
-  ActionCard,
   Box,
   Breadcrumbs,
-  Button,
   GridColumn,
   GridRow,
   Stack,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -20,31 +20,45 @@ import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
 import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
-import {
-  RecyclingPartner,
-  Query,
-  Role,
-} from '@island.is/skilavottord-web/graphql/schema'
-import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
+import { Role } from '@island.is/skilavottord-web/graphql/schema'
 
-import { RecyclingCompanyImage } from './components'
+import { RecyclingCompanyForm, RecyclingCompanyImage } from '../components'
+import { SkilavottordAllRecyclingPartnersQuery } from '../RecyclingCompanies'
 
-export const SkilavottordAllRecyclingPartnersQuery = gql`
-  query skilavottordAllRecyclingPartnersQuery {
-    skilavottordAllRecyclingPartners {
+export const CreateSkilavottordRecyclingPartnerMutation = gql`
+  mutation createSkilavottordRecyclingPartnerMutation(
+    $input: CreateRecyclingPartnerInput!
+  ) {
+    createSkilavottordRecyclingPartner(input: $input) {
       companyId
       companyName
+      active
+      address
+      postnumber
+      city
+      website
+      phone
       active
     }
   }
 `
 
-const RecyclingCompanies: FC = () => {
+const RecyclingCompanyCreate: FC = () => {
   const { user } = useContext(UserContext)
   const router = useRouter()
-  const { data, error, loading } = useQuery<Query>(
-    SkilavottordAllRecyclingPartnersQuery,
+  const [createSkilavottordRecyclingPartner] = useMutation(
+    CreateSkilavottordRecyclingPartnerMutation,
+    {
+      refetchQueries: [
+        {
+          query: SkilavottordAllRecyclingPartnersQuery,
+        },
+      ],
+    },
   )
+  const { control, errors, handleSubmit } = useForm({
+    mode: 'onChange',
+  })
   const {
     t: { recyclingCompanies: t, recyclingFundSidenav: sidenavText, routes },
   } = useI18n()
@@ -55,21 +69,18 @@ const RecyclingCompanies: FC = () => {
     return <NotFound />
   }
 
-  const partners = data?.skilavottordAllRecyclingPartners || []
-  const recyclingPartners = filterInternalPartners(partners)
-
-  const onCreate = () => {
-    router.push({
-      pathname: routes.recyclingCompanies.add,
+  const handleCreateRecyclingPartner = handleSubmit(async (input) => {
+    const { errors } = await createSkilavottordRecyclingPartner({
+      variables: { input: { ...input, active: !!input.active } },
     })
-  }
+    if (!errors) {
+      router.push(routes.recyclingCompanies.baseRoute).then(() => {
+        toast.success(t.recyclingCompany.add.added)
+      })
+    }
+  })
 
-  const onUpdate = (id: string) => {
-    router.push({
-      pathname: routes.recyclingCompanies.edit,
-      query: { id },
-    })
-  }
+  const handleCancel = () => router.push(routes.recyclingCompanies.baseRoute)
 
   return (
     <PartnerPageLayout
@@ -107,6 +118,10 @@ const RecyclingCompanies: FC = () => {
             { title: 'Ísland.is', href: routes.home['recyclingCompany'] },
             {
               title: t.title,
+              href: routes.recyclingCompanies.baseRoute,
+            },
+            {
+              title: t.recyclingCompany.add.breadcrumb,
             },
           ]}
           renderLink={(link, item) => {
@@ -125,9 +140,9 @@ const RecyclingCompanies: FC = () => {
           <GridRow marginBottom={7}>
             <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
               <Text variant="h1" as="h1" marginBottom={4}>
-                {t.title}
+                {t.recyclingCompany.add.title}
               </Text>
-              <Text variant="intro">{t.info}</Text>
+              <Text variant="intro">{t.recyclingCompany.add.info}</Text>
             </GridColumn>
             <GridColumn
               span={['8/8', '2/8']}
@@ -140,34 +155,17 @@ const RecyclingCompanies: FC = () => {
             </GridColumn>
           </GridRow>
         </Box>
-        <Box display="flex" justifyContent="flexEnd">
-          <Button onClick={onCreate}>{t.buttons.add}</Button>
-        </Box>
-        {error || (loading && !data) ? (
-          <Text>{t.empty}</Text>
-        ) : (
-          <Stack space={3}>
-            {recyclingPartners.map((partner: RecyclingPartner) => (
-              <ActionCard
-                key={partner.companyId}
-                cta={{
-                  label: t.buttons.view,
-                  variant: 'text',
-                  onClick: () => onUpdate(partner.companyId),
-                }}
-                heading={partner.companyName}
-                text={partner.companyId}
-                tag={{
-                  label: partner.active ? t.status.active : t.status.inactive,
-                  variant: partner.active ? 'mint' : 'red',
-                }}
-              />
-            ))}
-          </Stack>
-        )}
       </Stack>
+      <Box marginTop={7}>
+        <RecyclingCompanyForm
+          onSubmit={handleCreateRecyclingPartner}
+          onCancel={handleCancel}
+          control={control}
+          errors={errors}
+        />
+      </Box>
     </PartnerPageLayout>
   )
 }
 
-export default RecyclingCompanies
+export default RecyclingCompanyCreate

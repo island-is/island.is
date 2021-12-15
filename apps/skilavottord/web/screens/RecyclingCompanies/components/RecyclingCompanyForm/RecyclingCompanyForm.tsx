@@ -1,0 +1,243 @@
+import React, { BaseSyntheticEvent, FC } from 'react'
+import { Control, Controller, FieldError } from 'react-hook-form'
+import { FieldValues } from 'react-hook-form/dist/types/form'
+import { DeepMap } from 'react-hook-form/dist/types/utils'
+
+import {
+  Box,
+  Button,
+  Checkbox,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Stack,
+} from '@island.is/island-ui/core'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { InputController } from '@island.is/shared/form-fields'
+
+interface RecyclingCompanyForm {
+  onSubmit: (
+    e?: BaseSyntheticEvent<object, any, any> | undefined,
+  ) => Promise<void>
+  onCancel: () => void
+  onDelete?: () => void
+  errors: DeepMap<FieldValues, FieldError>
+  control: Control<FieldValues>
+  editView?: boolean
+}
+
+const RecyclingCompanyForm: FC<RecyclingCompanyForm> = ({
+  onSubmit,
+  onCancel,
+  onDelete,
+  control,
+  errors,
+}) => {
+  const {
+    t: { recyclingCompanies: t },
+  } = useI18n()
+
+  return (
+    <form onSubmit={onSubmit}>
+      <GridContainer>
+        <Stack space={3}>
+          <GridRow>
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '6/12']}
+              paddingBottom={[3, 3, 3, 0]}
+            >
+              <InputController
+                id="companyId"
+                control={control}
+                required
+                label={t.recyclingCompany.form.inputs.companyId.label}
+                placeholder={
+                  t.recyclingCompany.form.inputs.companyId.placeholder
+                }
+                rules={{
+                  required: {
+                    value: true,
+                    message:
+                      t.recyclingCompany.form.inputs.companyId.rules?.required,
+                  },
+                }}
+                error={errors?.companyId?.message}
+                disabled={!!onDelete}
+                backgroundColor="blue"
+              />
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <InputController
+                id="companyName"
+                control={control}
+                required
+                label={t.recyclingCompany.form.inputs.companyName.label}
+                placeholder={
+                  t.recyclingCompany.form.inputs.companyName.placeholder
+                }
+                rules={{
+                  required: {
+                    value: true,
+                    message:
+                      t.recyclingCompany.form.inputs.companyName.rules
+                        ?.required,
+                  },
+                }}
+                error={errors?.companyName?.message}
+                backgroundColor="blue"
+              />
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn span="12/12">
+              <InputController
+                id="address"
+                control={control}
+                required
+                label={t.recyclingCompany.form.inputs.address.label}
+                placeholder={t.recyclingCompany.form.inputs.address.placeholder}
+                rules={{
+                  required: {
+                    value: true,
+                    message:
+                      t.recyclingCompany.form.inputs.address.rules?.required,
+                  },
+                }}
+                error={errors?.address?.message}
+                backgroundColor="blue"
+              />
+            </GridColumn>
+          </GridRow>
+
+          <GridRow>
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '6/12']}
+              paddingBottom={[3, 3, 3, 0]}
+            >
+              <InputController
+                id="postnumber"
+                control={control}
+                required
+                label={t.recyclingCompany.form.inputs.postnumber.label}
+                placeholder={
+                  t.recyclingCompany.form.inputs.postnumber.placeholder
+                }
+                rules={{
+                  required: {
+                    value: true,
+                    message:
+                      t.recyclingCompany.form.inputs.postnumber.rules?.required,
+                  },
+                }}
+                error={errors?.postnumber?.message}
+                backgroundColor="blue"
+              />
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <InputController
+                id="city"
+                control={control}
+                required
+                label={t.recyclingCompany.form.inputs.city.label}
+                placeholder={t.recyclingCompany.form.inputs.city.placeholder}
+                rules={{
+                  required: {
+                    value: true,
+                    message:
+                      t.recyclingCompany.form.inputs.city.rules?.required,
+                  },
+                }}
+                error={errors?.city?.message}
+                backgroundColor="blue"
+              />
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '6/12']}
+              paddingBottom={[3, 3, 3, 0]}
+            >
+              <InputController
+                id="website"
+                control={control}
+                required
+                label={t.recyclingCompany.form.inputs.website.label}
+                placeholder={t.recyclingCompany.form.inputs.website.placeholder}
+                rules={{
+                  required: {
+                    value: true,
+                    message:
+                      t.recyclingCompany.form.inputs.website.rules?.required,
+                  },
+                }}
+                error={errors?.website?.message}
+                backgroundColor="blue"
+              />
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <InputController
+                id="phone"
+                control={control}
+                required
+                label={t.recyclingCompany.form.inputs.phone.label}
+                placeholder={t.recyclingCompany.form.inputs.phone.placeholder}
+                rules={{
+                  required: {
+                    value: true,
+                    message:
+                      t.recyclingCompany.form.inputs.phone.rules?.required,
+                  },
+                }}
+                type="tel"
+                error={errors?.phone?.message}
+                backgroundColor="blue"
+              />
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn span="12/12">
+              <Controller
+                name="active"
+                control={control}
+                render={({ onChange, value, name }) => {
+                  return (
+                    <Checkbox
+                      large
+                      name={name}
+                      label={t.recyclingCompany.form.inputs.active.label}
+                      hasError={!!errors?.partnerId?.message}
+                      errorMessage={errors?.partnerId?.message}
+                      backgroundColor="blue"
+                      onChange={() => {
+                        onChange(!value)
+                      }}
+                      checked={value ? value : false}
+                    />
+                  )
+                }}
+              />
+            </GridColumn>
+          </GridRow>
+        </Stack>
+      </GridContainer>
+
+      <Box display="flex" justifyContent="spaceBetween" marginTop={7}>
+        {!!onDelete ? (
+          <Button variant="ghost" colorScheme="destructive" onClick={onDelete}>
+            {t.recyclingCompany.form.buttons.delete}
+          </Button>
+        ) : (
+          <Button variant="ghost" onClick={onCancel}>
+            {t.recyclingCompany.form.buttons.cancel}
+          </Button>
+        )}
+
+        <Button icon="arrowForward" type="submit">
+          {t.recyclingCompany.form.buttons.continue}
+        </Button>
+      </Box>
+    </form>
+  )
+}
+
+export default RecyclingCompanyForm

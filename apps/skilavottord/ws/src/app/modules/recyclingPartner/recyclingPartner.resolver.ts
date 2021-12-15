@@ -1,12 +1,20 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import { Authorize, Role } from '../auth'
-import { logger } from '@island.is/logging'
 
 import { RecyclingPartnerModel } from './recyclingPartner.model'
 import { RecyclingPartnerService } from './recyclingPartner.service'
+import {
+  CreateRecyclingPartnerInput,
+  DeleteRecyclingPartnerInput,
+  RecyclingPartnerInput,
+  UpdateRecyclingPartnerInput,
+} from './recyclingPartner.input'
 
-@Authorize({ throwOnUnAuthorized: false })
+@Authorize({
+  throwOnUnAuthorized: false,
+  roles: [Role.developer, Role.recyclingCompany],
+})
 @Resolver(() => RecyclingPartnerModel)
 export class RecyclingPartnerResolver {
   constructor(private recyclingPartnerService: RecyclingPartnerService) {}
@@ -20,62 +28,38 @@ export class RecyclingPartnerResolver {
   async skilavottordAllActiveRecyclingPartners(): Promise<
     RecyclingPartnerModel[]
   > {
-    return await this.recyclingPartnerService.findActive()
+    return this.recyclingPartnerService.findAllActive()
   }
 
-  @Authorize({ roles: [Role.developer, Role.recyclingFund] })
-  @Mutation((_) => Boolean)
+  @Query(() => RecyclingPartnerModel)
+  async skilavottordRecyclingPartner(
+    @Args('input', { type: () => RecyclingPartnerInput })
+    { companyId }: RecyclingPartnerInput,
+  ): Promise<RecyclingPartnerModel> {
+    return this.recyclingPartnerService.findOne(companyId)
+  }
+
+  @Mutation(() => RecyclingPartnerModel)
   async createSkilavottordRecyclingPartner(
-    @Args('companyId') nationalId: string,
-    @Args('companyName') companyName: string,
-    @Args('address') address: string,
-    @Args('postnumber') postnumber: string,
-    @Args('city') city: string,
-    @Args('website') website: string,
-    @Args('phone') phone: string,
-    @Args('active') active: boolean,
+    @Args('input', { type: () => CreateRecyclingPartnerInput })
+    input: CreateRecyclingPartnerInput,
   ) {
-    const rp = new RecyclingPartnerModel()
-    rp.companyId = nationalId
-    rp.companyName = companyName
-    rp.address = address
-    rp.postnumber = postnumber
-    rp.city = city
-    rp.website = website
-    rp.phone = phone
-    rp.active = active
-    logger.info('create new recyclingPartner...' + JSON.stringify(rp, null, 2))
-    await this.recyclingPartnerService.createRecyclingPartner(rp)
-    return true
+    return this.recyclingPartnerService.createRecyclingPartner(input)
   }
 
-  @Authorize({ roles: [Role.developer, Role.recyclingFund] })
-  @Mutation((_) => String)
-  async skilavottordDeactivateRecycllingPartner(
-    @Args('companyId') nationalId: string,
+  @Mutation(() => RecyclingPartnerModel)
+  async updateSkilavottordRecyclingPartner(
+    @Args('input', { type: () => UpdateRecyclingPartnerInput })
+    input: UpdateRecyclingPartnerInput,
   ) {
-    logger.info('deactivate recyclingPartner:' + nationalId)
-    RecyclingPartnerModel.findOne({ where: { companyId: nationalId } }).then(
-      (rp) => {
-        rp.active = false
-        return rp.save()
-      },
-    )
-    return nationalId
+    return this.recyclingPartnerService.updateRecyclingPartner(input)
   }
 
-  @Authorize({ roles: [Role.developer, Role.recyclingFund] })
-  @Mutation((_) => String)
-  async skilavottordActivateRecycllingPartner(
-    @Args('companyId') nationalId: string,
+  @Mutation(() => Boolean)
+  async deleteSkilavottordRecyclingPartner(
+    @Args('input', { type: () => DeleteRecyclingPartnerInput })
+    input: DeleteRecyclingPartnerInput,
   ) {
-    logger.info('activate recyclingPartner:' + nationalId)
-    RecyclingPartnerModel.findOne({ where: { companyId: nationalId } }).then(
-      (rp) => {
-        rp.active = true
-        return rp.save()
-      },
-    )
-    return nationalId
+    return this.recyclingPartnerService.deleteRecyclingPartner(input)
   }
 }
