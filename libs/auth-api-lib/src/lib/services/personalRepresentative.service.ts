@@ -1,5 +1,4 @@
 import { Sequelize } from 'sequelize-typescript'
-import { uuid } from 'uuidv4'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
@@ -236,14 +235,13 @@ export class PersonalRepresentativeService {
     try {
       await this.sequelize.transaction(async (t) => {
         const newPr = await this.personalRepresentativeModel.create(
-          { ...personalRepresentative, id: uuid() },
+          personalRepresentative,
           { transaction: t },
         )
 
         const rightCodes = personalRepresentative.rightCodes.map(
           (rightCode) => {
             return {
-              id: uuid(),
               personalRepresentativeId: newPr.id,
               rightTypeCode: rightCode,
             }
