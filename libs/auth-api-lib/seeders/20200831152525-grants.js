@@ -1,4 +1,5 @@
 'use strict'
+
 /* eslint-env node */
 /* eslint-disable no-undef */
 

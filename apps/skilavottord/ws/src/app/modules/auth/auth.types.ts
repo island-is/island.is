@@ -26,3 +26,7 @@ export type Credentials = {
   user: AuthUser
   csrfToken: string
 }
+
+export type User = AuthUser & {
+  role: Role
+}
