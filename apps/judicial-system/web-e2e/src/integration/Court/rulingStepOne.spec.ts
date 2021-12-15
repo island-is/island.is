@@ -44,7 +44,11 @@ describe('/domur/urskurdur/:id', () => {
 
     intercept(caseDataAddition)
 
-    cy.getByTestid('ruling').clear()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+    cy.getByTestid('ruling')
+      .contains('héraðsdómari kveður upp úrskurð þennan.')
+      .clear()
     cy.clickOutside()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('ruling').type('lorem')

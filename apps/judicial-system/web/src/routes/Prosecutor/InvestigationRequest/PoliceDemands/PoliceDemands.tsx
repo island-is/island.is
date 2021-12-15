@@ -15,6 +15,7 @@ const PoliceDemands: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
 
   useEffect(() => {
@@ -36,6 +37,7 @@ const PoliceDemands: React.FC = () => {
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         isLoading={isLoadingWorkingCase}
+        isCaseUpToDate={isCaseUpToDate}
       />
     </PageLayout>
   )
