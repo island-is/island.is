@@ -16,6 +16,7 @@ const RulingStepOne = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
 
   const { autofill } = useCase()
@@ -25,16 +26,18 @@ const RulingStepOne = () => {
   }, [])
 
   useEffect(() => {
-    if (workingCase.caseFacts) {
-      autofill('courtCaseFacts', workingCase.caseFacts, workingCase)
-    }
+    if (isCaseUpToDate) {
+      if (workingCase.caseFacts) {
+        autofill('courtCaseFacts', workingCase.caseFacts, workingCase)
+      }
 
-    if (workingCase.legalArguments) {
-      autofill('courtLegalArguments', workingCase.legalArguments, workingCase)
-    }
+      if (workingCase.legalArguments) {
+        autofill('courtLegalArguments', workingCase.legalArguments, workingCase)
+      }
 
-    setWorkingCase(workingCase)
-  }, [])
+      setWorkingCase(workingCase)
+    }
+  }, [autofill, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
     <PageLayout
@@ -50,6 +53,7 @@ const RulingStepOne = () => {
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         isLoading={isLoadingWorkingCase}
+        isCaseUpToDate={isCaseUpToDate}
       />
     </PageLayout>
   )

@@ -12,32 +12,41 @@ import { ruling as m } from '@island.is/judicial-system-web/messages'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  isCaseUpToDate: boolean
   isRequired: boolean
   rows?: number
 }
 
 const RulingInput: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isRequired, rows } = props
+  const {
+    workingCase,
+    setWorkingCase,
+    isCaseUpToDate,
+    isRequired,
+    rows,
+  } = props
   const { updateCase, autofill } = useCase()
   const { formatMessage } = useIntl()
   const [rulingErrorMessage, setRulingErrorMessage] = useState('')
 
   useEffect(() => {
-    if (!workingCase.parentCase) {
-      autofill(
-        'ruling',
-        `\n${formatMessage(m.autofill, {
-          judgeName: workingCase.judge?.name,
-        })}`,
-        workingCase,
-      )
-    } else if (
-      workingCase.parentCase.ruling &&
-      isAcceptingCaseDecision(workingCase.decision)
-    ) {
-      autofill('ruling', workingCase.parentCase.ruling, workingCase)
+    if (isCaseUpToDate) {
+      if (!workingCase.parentCase) {
+        autofill(
+          'ruling',
+          `\n${formatMessage(m.autofill, {
+            judgeName: workingCase.judge?.name,
+          })}`,
+          workingCase,
+        )
+      } else if (
+        workingCase.parentCase.ruling &&
+        isAcceptingCaseDecision(workingCase.decision)
+      ) {
+        autofill('ruling', workingCase.parentCase.ruling, workingCase)
+      }
     }
-  }, [])
+  }, [autofill, formatMessage, isCaseUpToDate, workingCase])
 
   return (
     <Input
