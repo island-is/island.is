@@ -60,11 +60,10 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
             display="flex"
             alignItems="center"
             justifyContent={['flexEnd', 'flexStart']}
-            height="full"
             paddingX={[0, 2]}
-            marginBottom={1}
+            paddingY={2}
           >
-            <Text variant="small" lineHeight="lg">
+            <Text variant="medium">
               {format(new Date(documentLine.date), dateFormat.is)}
             </Text>
           </Box>
@@ -119,11 +118,10 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
             alignItems="center"
             height="full"
             paddingX={[0, 2]}
+            paddingY={2}
             overflow="hidden"
           >
-            <Text variant="small" lineHeight="lg">
-              {documentLine.senderName}
-            </Text>
+            <Text variant="medium">{documentLine.senderName}</Text>
           </Box>
         </GridColumn>
       </GridRow>

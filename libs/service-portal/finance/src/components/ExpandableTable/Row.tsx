@@ -12,6 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import * as styles from './ExpandableTable.css'
+import { tableStyles } from '@island.is/service-portal/core'
 
 interface Props {
   data: Array<{ value: string | number; align?: 'left' | 'right' }>
@@ -60,11 +61,12 @@ const ExpandableLine: FC<Props> = ({
               borderColor: fullClose || loading ? 'blue200' : 'blue100',
               position: 'relative',
             }}
+            style={tableStyles}
           >
             {!fullClose && i === 0 && !loading ? (
               <div className={styles.line} />
             ) : null}
-            <Text variant={last ? 'eyebrow' : 'default'} as="span">
+            <Text variant={last ? 'eyebrow' : 'medium'} as="span">
               <div
                 className={
                   item.align === 'right' ? styles.financeTd : undefined
@@ -82,6 +84,7 @@ const ExpandableLine: FC<Props> = ({
             borderColor: fullClose || loading ? 'blue200' : 'blue100',
             printHidden: true,
           }}
+          style={tableStyles}
         >
           {!last && !loading && (
             <Box
@@ -93,7 +96,7 @@ const ExpandableLine: FC<Props> = ({
             >
               <Hidden below="xl" inline>
                 <Text
-                  variant={last ? 'eyebrow' : 'small'}
+                  variant={last ? 'eyebrow' : 'medium'}
                   as="span"
                   color="blue400"
                 >

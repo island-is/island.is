@@ -12,6 +12,7 @@ import { useLocale } from '@island.is/localization'
 
 import type { Scope } from '../../Access'
 import * as styles from './AccessItem.css'
+import { tableStyles } from '@island.is/service-portal/core'
 
 type TableDataProps = React.ComponentProps<typeof T.Data>
 
@@ -117,6 +118,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
                 ...tdStyling,
                 paddingLeft: isFirstItem ? 3 : 8,
               }}
+              style={tableStyles}
             >
               <CheckboxController
                 id={`${item.model}.name`}
@@ -132,12 +134,12 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
                 onSelect={(value) => onSelect(item, value)}
               />
             </T.Data>
-            <T.Data box={tdStyling}>
+            <T.Data box={tdStyling} style={tableStyles}>
               <Text variant={isFirstItem ? 'default' : 'small'}>
                 {item.description}
               </Text>
             </T.Data>
-            <T.Data box={tdStyling}>
+            <T.Data box={tdStyling} style={tableStyles}>
               <div className={cs(isSelected ? undefined : styles.hidden)}>
                 <DatePickerController
                   id={`${item.model}.validTo`}

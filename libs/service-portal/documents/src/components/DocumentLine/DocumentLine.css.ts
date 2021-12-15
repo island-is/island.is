@@ -23,9 +23,9 @@ export const line = style({
 
 export const button = style({
   color: theme.color.blue400,
-  fontSize: theme.typography.baseFontSize,
+  fontSize: 16,
   fontWeight: theme.typography.regular,
-  lineHeight: 1.75,
+  lineHeight: 1.5,
   textAlign: 'left',
   ':hover': {
     textDecoration: 'underline',
@@ -51,9 +51,6 @@ export const sender = style({
 })
 
 export const date = style({
-  fontWeight: theme.typography.regular,
-  fontSize: theme.typography.baseFontSize,
-  color: theme.color.dark300,
   ...themeUtils.responsiveStyle({
     sm: {
       paddingBottom: 0,

@@ -108,7 +108,7 @@ const StudentAssessmentTable = () => {
       )}
       {data?.educationExamResult.grades.map((studentAssessment, index) => (
         <Box key={index} marginBottom={7}>
-          <Text variant="h3" marginBottom={3}>
+          <Text variant="h4" as="h2" marginBottom={3}>
             Samræmd könnunarpróf {studentAssessment.studentYear}. bekkur
           </Text>
           <T.Table>

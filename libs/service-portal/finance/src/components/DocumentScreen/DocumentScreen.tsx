@@ -27,6 +27,7 @@ import amountFormat from '../../utils/amountFormat'
 import { billsFilter } from '../../utils/simpleFilter'
 import { formSubmit } from '../../utils/documentFormSubmission'
 import { User } from 'oidc-client'
+import { tableStyles } from '@island.is/service-portal/core'
 
 const ITEMS_ON_PAGE = 20
 
@@ -215,28 +216,28 @@ const DocumentScreen: FC<Props> = ({
             <T.Table>
               <T.Head>
                 <T.Row>
-                  <T.HeadData>
-                    <Text variant="default" fontWeight="semiBold">
+                  <T.HeadData style={tableStyles}>
+                    <Text variant="medium" fontWeight="semiBold">
                       {formatMessage(m.date)}
                     </Text>
                   </T.HeadData>
-                  <T.HeadData>
-                    <Text variant="default" fontWeight="semiBold">
+                  <T.HeadData style={tableStyles}>
+                    <Text variant="medium" fontWeight="semiBold">
                       {formatMessage(m.transactionType)}
                     </Text>
                   </T.HeadData>
-                  <T.HeadData>
-                    <Text variant="default" fontWeight="semiBold">
+                  <T.HeadData style={tableStyles}>
+                    <Text variant="medium" fontWeight="semiBold">
                       {formatMessage(m.performingOrganization)}
                     </Text>
                   </T.HeadData>
-                  <T.HeadData box={{ textAlign: 'right' }}>
-                    <Text variant="default" fontWeight="semiBold">
+                  <T.HeadData box={{ textAlign: 'right' }} style={tableStyles}>
+                    <Text variant="medium" fontWeight="semiBold">
                       {formatMessage(m.amount)}
                     </Text>
                   </T.HeadData>
-                  <T.HeadData>
-                    <Text variant="default" fontWeight="semiBold">
+                  <T.HeadData style={tableStyles}>
+                    <Text variant="medium" fontWeight="semiBold">
                       {formatMessage(m.explanationNote)}
                     </Text>
                   </T.HeadData>
@@ -247,14 +248,18 @@ const DocumentScreen: FC<Props> = ({
                   .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
                   .map((listItem) => (
                     <T.Row key={listItem.id}>
-                      <T.Data>
-                        <Text variant="default">
+                      <T.Data style={tableStyles}>
+                        <Text variant="medium">
                           {format(new Date(listItem.date), dateFormat.is)}
                         </Text>
                       </T.Data>
-                      <T.Data box={{ position: 'relative' }}>
+                      <T.Data
+                        box={{ position: 'relative' }}
+                        style={tableStyles}
+                      >
                         <Button
                           variant="text"
+                          size="small"
                           onClick={() =>
                             formSubmit(
                               `${data?.getDocumentsList?.downloadServiceURL}${listItem.id}`,
@@ -265,15 +270,17 @@ const DocumentScreen: FC<Props> = ({
                           {listItem.type}
                         </Button>
                       </T.Data>
-                      <T.Data>
+                      <T.Data style={tableStyles}>
                         {' '}
-                        <Text variant="default">{listItem.sender}</Text>
+                        <Text variant="medium">{listItem.sender}</Text>
                       </T.Data>
-                      <T.Data box={{ textAlign: 'right' }}>
-                        <Text>{amountFormat(listItem.amount)}</Text>
+                      <T.Data box={{ textAlign: 'right' }} style={tableStyles}>
+                        <Text variant="medium">
+                          {amountFormat(listItem.amount)}
+                        </Text>
                       </T.Data>
-                      <T.Data>
-                        <Text>{listItem.note}</Text>
+                      <T.Data style={tableStyles}>
+                        <Text variant="medium">{listItem.note}</Text>
                       </T.Data>
                     </T.Row>
                   ))}
