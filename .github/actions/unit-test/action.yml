@@ -34,6 +34,7 @@ runs:
 
     - name: Docker login to ECR repo
       run: ./scripts/ci/docker-login-ecr.sh
+      shell: bash
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
