@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
@@ -17,18 +17,9 @@ export const StepThree: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
 
-  const [
-    requestedValidToDateIsValid,
-    setRequestedValidToDateIsValid,
-  ] = useState(false)
-
   useEffect(() => {
     document.title = 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt'
   }, [])
-
-  useEffect(() => {
-    setRequestedValidToDateIsValid(workingCase.requestedValidToDate != null)
-  }, [workingCase])
 
   return (
     <PageLayout
@@ -43,8 +34,6 @@ export const StepThree: React.FC = () => {
       <StepThreeForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
-        requestedValidToDateIsValid={requestedValidToDateIsValid}
-        setRequestedValidToDateIsValid={setRequestedValidToDateIsValid}
       />
     </PageLayout>
   )
