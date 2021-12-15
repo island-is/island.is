@@ -68,10 +68,9 @@ export class PersonalRepresentativeAccessService {
     // Create new personal representative connection
     try {
       this.logger.info('Creating personal representative access log')
-      return await this.personalRepresentativeAccessModel.create({
-        ...personalRepresentativeAccess,
-        id: uuid(),
-      })
+      return await this.personalRepresentativeAccessModel.create(
+        personalRepresentativeAccess,
+      )
     } catch (err) {
       this.logger.error(
         `Error creating personal representative access log: ${err}`,

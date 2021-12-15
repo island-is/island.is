@@ -5,9 +5,10 @@ module.exports = {
     return queryInterface.sequelize.query(`
       BEGIN;
         CREATE TABLE personal_representative_access (
-          id VARCHAR NOT NULL,
+          id UUID NOT NULL,
           national_id_personal_representative VARCHAR NOT NULL,
           national_id_represented_person VARCHAR NOT NULL,
+          service_provider VARCHAR NOT NULL,
           created TIMESTAMP WITH TIME ZONE DEFAULT now(),
           modified TIMESTAMP WITH TIME ZONE,
           PRIMARY KEY (id)
