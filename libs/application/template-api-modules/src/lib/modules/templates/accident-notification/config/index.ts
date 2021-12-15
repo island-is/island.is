@@ -34,6 +34,12 @@ export const additionalFilesRequest: AccidentNotificationAttachmentGatherRequest
   filenamePrefix: 'aukaskjal',
 }
 
+export const additionalFilesFromReviewerRequest: AccidentNotificationAttachmentGatherRequest = {
+  answerKey: 'attachments.additionalFilesFromReviewer.file',
+  attachmentType: AttachmentTypeEnum.ADDITIONAL_FILES,
+  filenamePrefix: 'aukaskjal',
+}
+
 export const injuryCertificateRequest: AccidentNotificationAttachmentGatherRequest = {
   answerKey: 'attachments.injuryCertificateFile.file',
   attachmentType: AttachmentTypeEnum.INJURY_CERTIFICATE,

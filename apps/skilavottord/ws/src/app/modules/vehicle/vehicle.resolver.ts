@@ -5,7 +5,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { Authorize, Role, CurrentUser } from '../auth'
-import type { AuthUser } from '../auth'
+import type { User } from '../auth'
 import { VehicleModel } from './vehicle.model'
 import { VehicleService } from './vehicle.service'
 
@@ -47,7 +47,7 @@ export class VehicleResolver {
 
   @Mutation(() => Boolean)
   async createSkilavottordVehicle(
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() user: User,
     @Args('permno') permno: string,
     @Args('type') type: string,
     @Args('color') color: string,

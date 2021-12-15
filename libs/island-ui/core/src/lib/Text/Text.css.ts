@@ -7,6 +7,7 @@ import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
 export type TextVariants =
   | 'default'
   | 'small'
+  | 'medium'
   | 'h1'
   | 'h2'
   | 'h3'
@@ -63,7 +64,8 @@ const availableLineHeights = {
 }
 
 const availableFontSizes = {
-  xs: { xs: 12, md: 14 },
+  xxs: { xs: 12, md: 14 },
+  xs: { xs: 14, md: 16 },
   sm: { xs: 16, md: 18 },
   md: { xs: 18, md: 20 },
   lg: { xs: 20, md: 24 },
@@ -87,6 +89,7 @@ const defaultFontWeightsMap: defaultFontWeights = {
   h4: theme.typography.headingsFontWeight,
   h5: theme.typography.headingsFontWeight,
   small: theme.typography.regular,
+  medium: theme.typography.regular,
   intro: theme.typography.light,
   eyebrow: theme.typography.semiBold,
 }
@@ -99,6 +102,7 @@ const defaultLineHeightsMap: defaultFontWeights = {
   h4: availableLineHeights.md,
   h5: availableLineHeights.md,
   small: availableLineHeights.md,
+  medium: availableLineHeights.md,
   intro: availableLineHeights.md,
   eyebrow: availableLineHeights.md,
 }
@@ -139,13 +143,16 @@ export const variants: Variants = {
     fontSize: availableFontSizes.sm,
   },
   small: {
+    fontSize: availableFontSizes.xxs,
+  },
+  medium: {
     fontSize: availableFontSizes.xs,
   },
   intro: {
     fontSize: availableFontSizes.lg,
   },
   eyebrow: {
-    fontSize: availableFontSizes.xs,
+    fontSize: availableFontSizes.xxs,
   },
 }
 
