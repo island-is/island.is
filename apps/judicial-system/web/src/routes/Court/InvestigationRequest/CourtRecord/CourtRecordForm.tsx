@@ -236,7 +236,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                 )
               }
               textarea
-              rows={7}
+              rows={16}
             />
           </Box>
         )}
@@ -277,7 +277,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               errorMessage={litigationPresentationsErrorMessage}
               hasError={litigationPresentationsErrorMessage !== ''}
               textarea
-              rows={7}
+              rows={16}
               required
             />
           </Box>
