@@ -3,9 +3,10 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.query(`
-    BEGIN;
+      BEGIN;
+
         CREATE TABLE personal_representative (
-          id VARCHAR NOT NULL,
+          id UUID NOT NULL,
           national_id_personal_representative VARCHAR NOT NULL,
           national_id_represented_person VARCHAR NOT NULL,
           valid_to TIMESTAMP WITH TIME ZONE NULL,
@@ -15,8 +16,8 @@ module.exports = {
         );
 
         CREATE TABLE personal_representative_right (
-          id VARCHAR NOT NULL,
-          personal_representative_id VARCHAR NOT NULL,
+          id UUID NOT NULL,
+          personal_representative_id UUID NOT NULL,
           right_type_code VARCHAR NOT NULL,
           created TIMESTAMP WITH TIME ZONE DEFAULT now(),
           modified TIMESTAMP WITH TIME ZONE,

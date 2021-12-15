@@ -18,9 +18,10 @@ import { PersonalRepresentativeDTO } from '../dto/personal-representative.dto'
 export class PersonalRepresentative extends Model<PersonalRepresentative> {
   @PrimaryKey
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
     primaryKey: true,
     allowNull: false,
+    defaultValue: DataType.UUIDV4,
   })
   id!: string
 

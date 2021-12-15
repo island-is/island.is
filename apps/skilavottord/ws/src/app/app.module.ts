@@ -5,8 +5,9 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 import {
-  UserModule,
+  AccessControlModule,
   AuthModule,
+  UserModule,
   GdprModule,
   VehicleModule,
   RecyclingRequestModule,
@@ -14,7 +15,6 @@ import {
   VehicleOwnerModule,
   SamgongustofaModule,
   FjarsyslaModule,
-  AccessControlModule,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { environment } from '../environments'
