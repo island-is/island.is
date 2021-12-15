@@ -124,7 +124,10 @@ export const companyIconSize = style({
   width: 40,
   height: 40,
 })
-
+export const userDelegationWrapper = style({
+  maxHeight: 240,
+  overflowY: 'auto',
+})
 export const userDelegationsText = style({
   fontSize: 16,
   lineHeight: '21px',

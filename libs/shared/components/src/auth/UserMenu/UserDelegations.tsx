@@ -12,7 +12,7 @@ import { userMessages } from '@island.is/shared/translations'
 import { ActorDelegationsQuery } from '../../../gen/graphql'
 import { UserTopicCard } from './UserTopicCard'
 import { QueryResult } from '@apollo/client'
-
+import * as styles from './UserMenu.css'
 interface UserDelegationsProps {
   user: User
   onSwitchUser: (nationalId: string) => void
@@ -47,7 +47,6 @@ export const UserDelegations = ({
   const actor = user.profile.actor
   const currentNationalId = user.profile.nationalId as string
   const delegations = getInitialDelegations(user)
-  const isDelegation = Boolean(actor)
 
   if (data.data) {
     delegations.push(
@@ -66,42 +65,43 @@ export const UserDelegations = ({
   const onClickDelegation = (delegation: Delegation) => {
     onSwitchUser(delegation.nationalId)
   }
-
   return (
     <Box>
       <Text variant="small" marginBottom={1}>
         {formatMessage(userMessages.delegationList)}
       </Text>
-      <Stack space={1}>
-        {!!actor && (
-          <UserTopicCard
-            colorScheme={'purple'}
-            onClick={() => onSwitchUser(actor?.nationalId)}
-          >
-            {actor?.name}
-          </UserTopicCard>
-        )}
-        {delegations.map((delegation) => (
-          <UserTopicCard
-            key={delegation.nationalId}
-            colorScheme="blue"
-            onClick={
-              delegation.isCurrent
-                ? undefined
-                : () => onClickDelegation(delegation)
-            }
-          >
-            {delegation.name || delegation.nationalId}
-          </UserTopicCard>
-        ))}
-        {data.loading ? (
-          <SkeletonLoader display="block" height={59} borderRadius="large" />
-        ) : data.error ? (
-          <Text color="red400">
-            {formatMessage(userMessages.delegationError)}
-          </Text>
-        ) : null}
-      </Stack>
+      <Box className={styles.userDelegationWrapper}>
+        <Stack space={1}>
+          {!!actor && (
+            <UserTopicCard
+              colorScheme={'purple'}
+              onClick={() => onSwitchUser(actor?.nationalId)}
+            >
+              {actor?.name}
+            </UserTopicCard>
+          )}
+          {delegations.map((delegation) => (
+            <UserTopicCard
+              key={delegation.nationalId}
+              colorScheme="blue"
+              onClick={
+                delegation.isCurrent
+                  ? undefined
+                  : () => onClickDelegation(delegation)
+              }
+            >
+              {delegation.name || delegation.nationalId}
+            </UserTopicCard>
+          ))}
+          {data.loading ? (
+            <SkeletonLoader display="block" height={59} borderRadius="large" />
+          ) : data.error ? (
+            <Text color="red400">
+              {formatMessage(userMessages.delegationError)}
+            </Text>
+          ) : null}
+        </Stack>
+      </Box>
       <Box paddingTop={3}>
         <Divider />
       </Box>
