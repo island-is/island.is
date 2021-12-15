@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 
@@ -15,6 +15,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import type {
   Case,
   Institution,
@@ -26,7 +27,6 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
-import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   workingCase: Case
