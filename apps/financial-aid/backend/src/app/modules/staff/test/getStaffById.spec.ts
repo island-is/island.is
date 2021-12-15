@@ -1,7 +1,7 @@
 import { uuid } from 'uuidv4'
 
 import { StaffModel } from '../models'
-import { createTestingStaffModule } from './createTestingStaffModule'
+import { createTestingStaffModule } from './createTestingStaffModule.spec.'
 
 interface Then {
   result: StaffModel
@@ -16,7 +16,7 @@ describe('StaffController - Get by id', () => {
   beforeEach(async () => {
     const { staffController } = await createTestingStaffModule()
 
-    givenWhenThen = async (staffId: string) => {
+    givenWhenThen = async (staffId: string): Promise<Then> => {
       const then = {} as Then
 
       try {

@@ -1,15 +1,16 @@
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
-import { EmailService } from '@island.is/email-service'
 import { LoggingModule } from '@island.is/logging'
 
 import { StaffModel } from '../models'
 import { StaffController } from '../staff.controller'
 import { StaffService } from '../staff.service'
-
+import { EmailModule, EmailService } from '@island.is/email-service'
+import { environment } from '../../../../environments'
+import { JobSettings } from 'aws-sdk/clients/mediaconvert'
 // jest.mock('@island.is/dokobit-signing')
-// jest.mock('@island.is/email-service')
+jest.mock
 // jest.mock('@island.is/cms-translations')
 // jest.mock('../../court/court.service.ts')
 // jest.mock('../../event/event.service.ts')
@@ -19,18 +20,18 @@ import { StaffService } from '../staff.service'
 
 export const createTestingStaffModule = async () => {
   const staffModule = await Test.createTestingModule({
-    imports: [LoggingModule],
+    imports: [LoggingModule, EmailModule.register(environment.emailOptions)],
     controllers: [StaffController],
     providers: [
       EmailService,
-      {
-        provide: getModelToken(StaffModel),
-        useValue: {
-          // create: jest.fn(),
-          // findOne: jest.fn(),
-          // update: jest.fn(),
-        },
-      },
+      // {
+      //   provide: getModelToken(StaffModel),
+      //   useValue: {
+      //     create: jest.fn(),
+      //     findOne: jest.fn(),
+      //     update: jest.fn(),
+      //   },
+      // },
       StaffService,
     ],
   }).compile()

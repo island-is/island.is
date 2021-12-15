@@ -38,10 +38,10 @@ describe('StaffController', () => {
           provide: StaffService,
           useClass: jest.fn(() => ({})),
         },
-        {
-          provide: EmailService,
-          useClass: jest.fn(() => ({})),
-        },
+        // {
+        //   provide: EmailService,
+        //   useClass: jest.fn(() => ({})),
+        // },
         {
           provide: getModelToken(StaffModel),
           useValue: staffModel,
