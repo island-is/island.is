@@ -13,7 +13,7 @@ const prodConfig = {
   files: {
     cloudFrontPublicKeyId: process.env.CLOUDFRONT_PUBLIC_KEY_ID,
     cloudFrontPrivateKey: process.env.CLOUDFRONT_PRIVATE_KEY,
-    fileBaseUrl: `${process.env.BASE_URL}/files`,
+    fileBaseUrl: `${process.env.OSK_BASE_URL}/files`,
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
   },
@@ -31,7 +31,13 @@ const prodConfig = {
       region: process.env.EMAIL_REGION ?? '',
     },
   },
-  baseUrl: process.env.BASE_URL,
+  oskBaseUrl: process.env.OSK_BASE_URL,
+  veitaBaseUrl: process.env.VEITA_BASE_URL,
+  audit: {
+    defaultNamespace: '@samband.is/financial-aid',
+    groupName: process.env.AUDIT_GROUP_NAME,
+    serviceName: 'financial-aid-backend',
+  },
 }
 
 const devConfig = {
@@ -39,8 +45,8 @@ const devConfig = {
   files: {
     cloudFrontPublicKeyId: process.env.CLOUDFRONT_PUBLIC_KEY_ID ?? '',
     cloudFrontPrivateKey: process.env.CLOUDFRONT_PRIVATE_KEY ?? '',
-    fileBaseUrl: process.env.BASE_URL
-      ? `${process.env.BASE_URL}/files`
+    fileBaseUrl: process.env.OSK_BASE_URL
+      ? `${process.env.OSK_BASE_URL}/files`
       : 'https://fjarhagsadstod.dev.sveitarfelog.net/files',
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
@@ -57,7 +63,11 @@ const devConfig = {
       region: process.env.EMAIL_REGION ?? '',
     },
   },
-  baseUrl: process.env.BASE_URL ?? 'http://localhost:4200',
+  oskBaseUrl: process.env.OSK_BASE_URL ?? 'http://localhost:4200',
+  veitaBaseUrl: process.env.VEITA_BASE_URL ?? 'http://localhost:4200',
+  audit: {
+    defaultNamespace: '@samband.is/financial-backend',
+  },
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

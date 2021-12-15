@@ -1,6 +1,5 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import Head from 'next/head'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -26,19 +25,18 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 
+import { CustomNextError } from '@island.is/web/units/errors'
 import {
   Card,
   SimpleStackedSlider,
-  ServiceWebSearchSection,
-  ServiceWebHeader,
+  ServiceWebWrapper,
+  ServiceWebContext,
 } from '@island.is/web/components'
-import Footer from '../shared/Footer'
 import { useNamespace, LinkResolverResponse } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import { getSlugPart } from '../utils'
 
 import * as styles from './Home.css'
-import * as sharedStyles from '../shared/styles.css'
 
 interface HomeProps {
   organization?: Organization
@@ -57,85 +55,84 @@ const Home: Screen<HomeProps> = ({
   const n = useNamespace(namespace)
   const institutionSlug = getSlugPart(Router.asPath, 2)
 
-  const organizationTitle = organization ? organization.title : 'Ísland.is'
-
-  const logoUrl =
-    organization?.logo?.url ??
-    '//images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
-
+  const organizationTitle = (organization && organization.title) || 'Ísland.is'
+  const logoUrl = organization?.logo?.url ?? ''
   const searchTitle = n('canWeAssist', 'Getum við aðstoðað?')
+  const pageTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
+  const headerTitle = institutionSlug
+    ? organization.serviceWebTitle ?? pageTitle
+    : pageTitle
 
-  const pageTitle = organizationTitle
-    ? `${organizationTitle} | ${n('serviceWeb', 'Þjónustuvefur')}`
-    : n('serviceWeb', 'Þjónustuvefur')
-
-  const headerTitle = `${n(
-    'serviceWeb',
-    'Þjónustuvefur',
-  )} - ${organizationTitle}`
+  const hasContent = !!supportCategories?.length
 
   return (
-    <>
-      <Head>
-        <title>{pageTitle}</title>
-      </Head>
-      <ServiceWebHeader hideSearch title={headerTitle} />
-      <div className={sharedStyles.bg} />
-      <Box className={styles.searchSection}>
-        <ServiceWebSearchSection
-          logoTitle={organizationTitle}
-          logoUrl={logoUrl}
-          title={searchTitle}
-        />
-      </Box>
-      <Box className={styles.categories}>
-        <GridContainer>
-          <GridRow>
-            <GridColumn span="12/12" paddingBottom={[2, 2, 3]}>
-              <Text variant="h3" color="white">
-                Svör eftir flokkum
-              </Text>
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
-        <SimpleStackedSlider
-          itemWidth={280}
-          span={['12/12', '6/12', '6/12', '4/12']}
-        >
-          {supportCategories.map(
-            ({ title, slug, description, organization }, index) => {
-              return (
-                <Card
-                  key={index}
-                  title={title}
-                  description={description}
-                  link={
-                    {
-                      href: `/thjonustuvefur/${organization.slug}/${slug}`,
-                    } as LinkResolverResponse
-                  }
-                />
-              )
-            },
-          )}
-        </SimpleStackedSlider>
-      </Box>
-      <Box marginY={[7, 10, 10]}>
-        <GridContainer>
-          <GridRow>
-            <GridColumn
-              offset={[null, null, null, '1/12']}
-              span={['12/12', '12/12', '12/12', '10/12']}
-            >
-              <Box marginY={[10, 10, 20]}>
-                <ContactBanner slug={institutionSlug} />
+    <ServiceWebWrapper
+      pageTitle={pageTitle}
+      headerTitle={headerTitle}
+      institutionSlug={institutionSlug}
+      logoUrl={logoUrl}
+      organization={organization}
+      organizationTitle={organizationTitle}
+      searchTitle={searchTitle}
+    >
+      {hasContent && (
+        <ServiceWebContext.Consumer>
+          {({ textMode }) => (
+            <>
+              <Box className={styles.categories}>
+                <GridContainer>
+                  <GridRow>
+                    <GridColumn span="12/12" paddingBottom={[2, 2, 3]}>
+                      <Text
+                        variant="h3"
+                        {...(textMode === 'dark' ? {} : { color: 'white' })}
+                      >
+                        {n('answersByCategory', 'Svör eftir flokkum')}
+                      </Text>
+                    </GridColumn>
+                  </GridRow>
+                </GridContainer>
+                <SimpleStackedSlider
+                  itemWidth={280}
+                  span={['12/12', '6/12', '6/12', '4/12']}
+                >
+                  {supportCategories.map(
+                    ({ title, slug, description, organization }, index) => {
+                      return (
+                        <Card
+                          key={index}
+                          title={title}
+                          description={description}
+                          link={
+                            {
+                              href: `/thjonustuvefur/${organization.slug}/${slug}`,
+                            } as LinkResolverResponse
+                          }
+                        />
+                      )
+                    },
+                  )}
+                </SimpleStackedSlider>
               </Box>
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
-      </Box>
-      <Footer institutionSlug={institutionSlug} organization={organization} />
-    </>
+              <Box marginY={[7, 10, 10]}>
+                <GridContainer>
+                  <GridRow>
+                    <GridColumn
+                      offset={[null, null, null, '1/12']}
+                      span={['12/12', '12/12', '12/12', '10/12']}
+                    >
+                      <Box marginY={[10, 10, 20]}>
+                        <ContactBanner slug={institutionSlug} />
+                      </Box>
+                    </GridColumn>
+                  </GridRow>
+                </GridContainer>
+              </Box>
+            </>
+          )}
+        </ServiceWebContext.Consumer>
+      )}
+    </ServiceWebWrapper>
   )
 }
 
@@ -196,6 +193,16 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   processedCategories = processedCategories.filter(
     (item) => !!item.organization,
   )
+
+  if (
+    !organization ||
+    !organization?.data?.getOrganization?.serviceWebEnabled
+  ) {
+    throw new CustomNextError(
+      404,
+      'Service web not active for this organization',
+    )
+  }
 
   return {
     organization: organization?.data?.getOrganization,

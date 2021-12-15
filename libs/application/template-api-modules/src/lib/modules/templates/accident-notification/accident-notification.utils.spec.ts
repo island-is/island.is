@@ -1,5 +1,6 @@
 import { attachmentStatusToAttachmentRequests } from './accident-notification.utils'
 import {
+  additionalFilesFromReviewerRequest,
   additionalFilesRequest,
   allAttachmentRequestConfig,
   injuryCertificateRequest,
@@ -15,7 +16,11 @@ describe('reportStatusToAttachmentRequests', () => {
     })
 
     it('should return only police report and additional files', () => {
-      const expected = [policeReportRequest, additionalFilesRequest]
+      const expected = [
+        policeReportRequest,
+        additionalFilesRequest,
+        additionalFilesFromReviewerRequest,
+      ]
       const receivedAttachments = {
         InjuryCertificate: true,
         PoliceReport: false,

@@ -47,7 +47,7 @@ export const EditNudge: ServicePortalModuleComponent = () => {
         variables: {
           input: {
             email: settings?.email,
-            mobile: settings?.mobilePhoneNumber,
+            mobile: settings?.mobile,
             canNudge: formData.nudge,
           },
         },

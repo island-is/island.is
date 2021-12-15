@@ -272,6 +272,7 @@
     "success": "Company location was successfully updated."
   },
   "deregisterSidenav": {
+    "title": "Actions",
     "deregister": "Deregister car",
     "companyInfo": "Company information"
   },
@@ -323,7 +324,7 @@
     "subtitles": {
       "deregistered": "Deregistered"
     },
-    "info": "There are no recycled cars yet",
+    "info": "Here is the list of all deregistered vehicles, along with date of the registration.",
     "buttons": {
       "export": "Export"
     },
@@ -334,9 +335,10 @@
     "table": ["Reg nr", "Model", "Year", "Company", "Deregistered"]
   },
   "recyclingFundSidenav": {
-    "title": "Icelandic Recycling Fund",
+    "title": "Service",
     "recycled": "Recycled cars",
-    "companies": "Reycling companies"
+    "companies": "Recycling companies",
+    "accessControl": "Access Control"
   },
   "recyclingCompanies": {
     "title": "Recycling companies",
@@ -352,6 +354,75 @@
     "buttons": {
       "add": "Add recycling company",
       "edit": "Edit"
+    }
+  },
+  "accessControl": {
+    "title": "Access control",
+    "info": "Here's a list of all accesses you've given. You can give, edit, and/or remove access.",
+    "empty": "There accesses to display",
+    "tableHeaders": {
+      "nationalId": "National Id",
+      "name": "Name",
+      "role": "Role",
+      "partner": "Partner"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "buttons": {
+      "add": "Give access",
+      "edit": "Edit",
+      "delete": "Delete",
+      "actions": "actions"
+    },
+    "modal": {
+      "titles": {
+        "add": "Give access",
+        "edit": "Edit access",
+        "delete": "Delete access"
+      },
+      "subtitles": {
+        "add": "An access holder will get access to perform actions based on his/her role. Please be certain that the national id matches the person you want to give access to",
+        "edit": "An access holder will get access to perform actions based on his/her role. Please be certain that the role applies to this person.",
+        "delete": "Are you sure you want to delete this access?"
+      },
+      "inputs": {
+        "nationalId": {
+          "label": "National Id",
+          "placeholder": "National Id",
+          "rules": {
+            "required": "National Id is required",
+            "validate": "National Id is incorrect"
+          }
+        },
+        "name": {
+          "label": "Name",
+          "placeholder": "Name",
+          "rules": {
+            "required": "Name is required"
+          }
+        },
+        "role": {
+          "label": "Role",
+          "placeholder": "Role",
+          "rules": {
+            "required": "Role is required"
+          }
+        },
+        "partner": {
+          "label": "Partner",
+          "placeholder": "Partner",
+          "rules": {
+            "required": "Partner is required"
+          }
+        }
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "continue": "Submit",
+        "confirm": "Confirm"
+      }
     }
   },
   "notFound": {
@@ -385,6 +456,7 @@
       "deregister": "/en/deregister-vehicle/[id]"
     },
     "recycledVehicles": "/en/recycled-vehicles",
+    "accessControl": "/en/access-control",
     "recyclingCompanies": {
       "baseRoute": "/en/recycling-companies",
       "add": "/en/recycling-companies/add",

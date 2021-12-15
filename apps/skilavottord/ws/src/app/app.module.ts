@@ -5,8 +5,9 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 import {
-  UserModule,
+  AccessControlModule,
   AuthModule,
+  UserModule,
   GdprModule,
   VehicleModule,
   RecyclingRequestModule,
@@ -22,7 +23,7 @@ const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const autoSchemaFile = environment.production
   ? true
-  : 'apps/skilavottord/ws/src/app/api.graphql'
+  : 'apps/skilavottord/api.graphql'
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ const autoSchemaFile = environment.production
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+    AccessControlModule,
     RecyclingRequestModule,
     AuthModule,
     UserModule,

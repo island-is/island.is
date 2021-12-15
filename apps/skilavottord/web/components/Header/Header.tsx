@@ -1,7 +1,10 @@
 import React, { FC, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import gql from 'graphql-tag'
+import { useQuery } from '@apollo/client'
+
 import { Header as IslandUIHeader, Link } from '@island.is/island-ui/core'
+
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { api } from '@island.is/skilavottord-web/services'
@@ -10,10 +13,9 @@ import {
   getBaseUrl,
   getRoutefromLocale,
 } from '@island.is/skilavottord-web/utils/routesMapper'
-import { useQuery } from '@apollo/client'
-import { Role } from '@island.is/skilavottord-web/auth/utils'
+import { Query, Role } from '@island.is/skilavottord-web/graphql/schema'
 
-export const skilavottordUserQuery = gql`
+export const SkilavottordUserQuery = gql`
   query skilavottordUserQuery {
     skilavottordUser {
       name
@@ -35,7 +37,7 @@ export const Header: FC = () => {
     t: { header: t, routes },
   } = useI18n()
 
-  const { data } = useQuery(skilavottordUserQuery)
+  const { data } = useQuery<Query>(SkilavottordUserQuery)
   const user = data?.skilavottordUser
 
   const nextLanguage = activeLocale === 'is' ? 'en' : 'is'
@@ -48,7 +50,8 @@ export const Header: FC = () => {
     )
     const queryKeys = Object.keys(router.query)
     const path = queryKeys.reduce(
-      (acc, key) => acc.replace(`[${key}]`, router.query[key].toString()),
+      (acc, key) =>
+        acc.replace(`[${key}]`, (router.query[key] || '').toString()),
       route,
     )
     if (route) {
@@ -68,7 +71,14 @@ export const Header: FC = () => {
     setBaseUrl(baseUrl)
   }, [])
 
-  const homeRoute = routes.home[user?.role as Role] ?? routes.home['citizen']
+  const mapUserRoleToRoute = (userRole?: Role | null) => {
+    if (!userRole || userRole === Role.developer) {
+      return Role.citizen
+    }
+    return userRole
+  }
+
+  const homeRoute = routes.home[mapUserRoleToRoute(user?.role)]
 
   return (
     <IslandUIHeader

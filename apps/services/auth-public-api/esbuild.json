@@ -27,7 +27,8 @@
     "logform",
     "pg-native",
     "form-data",
-    "swagger-ui-dist"
+    "swagger-ui-dist",
+    "configcat-node"
   ],
   "keepNames": true
 }

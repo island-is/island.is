@@ -1,13 +1,15 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import AppealSection from './AppealSection'
+import { LocaleProvider } from '@island.is/localization'
+import { MockedProvider } from '@apollo/client/testing'
+
 import {
   CaseAppealDecision,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system/types'
-import { LocaleProvider } from '@island.is/localization'
-import { MockedProvider } from '@apollo/client/testing'
+
+import AppealSection from './AppealSection'
 
 describe('Appeal section component', () => {
   const baseWorkingCase = {

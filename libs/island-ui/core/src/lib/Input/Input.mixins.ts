@@ -108,7 +108,29 @@ export const inputSizes = {
     ...themeUtils.responsiveStyle({
       md: {
         fontSize: inputFontSize,
-        lineHeight: 1.4166666667,
+      },
+    }),
+  },
+}
+
+export const optionDescriptionSizes = {
+  sm: {
+    fontSize: mobileLabelFontSize,
+    lineHeight: 1.25,
+    ...themeUtils.responsiveStyle({
+      md: {
+        fontSize: labelFontSize,
+        lineHeight: 1.555556,
+      },
+    }),
+  },
+  md: {
+    fontSize: mobileLabelFontSize,
+    lineHeight: 1.3,
+    ...themeUtils.responsiveStyle({
+      md: {
+        fontSize: labelFontSize,
+        lineHeight: 1.555556,
       },
     }),
   },

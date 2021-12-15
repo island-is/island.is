@@ -33,6 +33,8 @@ import { environment } from '../../../environments'
 import { ApplicantEmailTemplate } from './emailTemplates/applicantEmailTemplate'
 import { MunicipalityService } from '../municipality'
 import { logger } from '@island.is/logging'
+import { AmountModel, AmountService } from '../amount'
+import { DeductionFactorsModel } from '../deductionFactors'
 
 interface Recipient {
   name: string
@@ -40,7 +42,7 @@ interface Recipient {
 }
 
 const linkToStatusPage = (applicationId: string) => {
-  return `${environment.baseUrl}/stada/${applicationId}"`
+  return `${environment.oskBaseUrl}/stada/${applicationId}"`
 }
 
 const firstDateOfMonth = () => {
@@ -55,6 +57,7 @@ export class ApplicationService {
     @InjectModel(ApplicationModel)
     private readonly applicationModel: typeof ApplicationModel,
     private readonly fileService: FileService,
+    private readonly amountService: AmountService,
     private readonly applicationEventService: ApplicationEventService,
     private readonly emailService: EmailService,
     private readonly municipalityService: MunicipalityService,
@@ -182,6 +185,11 @@ export class ApplicationService {
           separate: true,
           order: [['created', 'DESC']],
         },
+        {
+          model: AmountModel,
+          as: 'amount',
+          include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
+        },
       ],
     })
 
@@ -255,6 +263,16 @@ export class ApplicationService {
       await Promise.all(promises)
     }
 
+    await this.createApplicationEmails(application, appModel, user)
+
+    return appModel
+  }
+
+  private async createApplicationEmails(
+    application: CreateApplicationDto,
+    appModel: ApplicationModel,
+    user: User,
+  ) {
     const municipality = await this.municipalityService.findByMunicipalityId(
       application.municipalityCode,
     )
@@ -264,18 +282,43 @@ export class ApplicationService {
       linkToStatusPage(appModel.id),
       application.email,
       municipality,
+      appModel.created,
     )
 
-    await this.sendEmail(
-      {
-        name: user.name,
-        address: appModel.email,
-      },
-      emailData.subject,
-      ApplicantEmailTemplate(emailData.data),
+    const emailPromises: Promise<void>[] = []
+
+    emailPromises.push(
+      this.sendEmail(
+        {
+          name: user.name,
+          address: appModel.email,
+        },
+        emailData.subject,
+        ApplicantEmailTemplate(emailData.data),
+      ),
     )
 
-    return appModel
+    if (application.spouseNationalId) {
+      const emailData = getApplicantEmailDataFromEventType(
+        'SPOUSE',
+        environment.oskBaseUrl,
+        appModel.spouseEmail,
+        municipality,
+        appModel.created,
+      )
+      emailPromises.push(
+        this.sendEmail(
+          {
+            name: appModel.spouseName,
+            address: appModel.spouseEmail,
+          },
+          emailData.subject,
+          ApplicantEmailTemplate(emailData.data),
+        ),
+      )
+    }
+
+    await Promise.all(emailPromises)
   }
 
   async update(
@@ -290,17 +333,6 @@ export class ApplicationService {
       update.staffId = null
     }
 
-    await this.applicationEventService.create({
-      applicationId: id,
-      eventType: update.event,
-      comment:
-        update?.rejection ||
-        update?.amount?.toLocaleString('de-DE') ||
-        update?.comment,
-      staffName: staff?.name,
-      staffNationalId: staff?.nationalId,
-    })
-
     const [
       numberOfAffectedRows,
       [updatedApplication],
@@ -309,12 +341,47 @@ export class ApplicationService {
       returning: true,
     })
 
-    const events = await this.applicationEventService.findById(id)
-    updatedApplication?.setDataValue('applicationEvents', events)
+    await this.applicationEventService.create({
+      applicationId: id,
+      eventType: update.event,
+      comment:
+        update?.rejection ||
+        update?.amount?.finalAmount.toLocaleString('de-DE') ||
+        update?.comment,
+      staffName: staff?.name,
+      staffNationalId: staff?.nationalId,
+    })
 
-    const files = await this.fileService.getAllApplicationFiles(id)
-    updatedApplication?.setDataValue('files', files)
+    if (update.amount) {
+      const amount = await this.amountService.create(update.amount)
+      updatedApplication?.setDataValue('amount', amount)
+    }
 
+    const events = this.applicationEventService
+      .findById(id)
+      .then((eventsResolved) => {
+        updatedApplication?.setDataValue('applicationEvents', eventsResolved)
+      })
+
+    const files = this.fileService
+      .getAllApplicationFiles(id)
+      .then((filesResolved) => {
+        updatedApplication?.setDataValue('files', filesResolved)
+      })
+
+    await Promise.all([
+      events,
+      files,
+      this.sendApplicationUpdateEmail(update, updatedApplication),
+    ])
+
+    return { numberOfAffectedRows, updatedApplication }
+  }
+
+  private async sendApplicationUpdateEmail(
+    update: UpdateApplicationDto,
+    updatedApplication: ApplicationModel,
+  ) {
     if (
       update.event === ApplicationEventType.DATANEEDED ||
       update.event === ApplicationEventType.REJECTED ||
@@ -328,8 +395,12 @@ export class ApplicationService {
         linkToStatusPage(updatedApplication.id),
         updatedApplication.email,
         municipality,
+        updatedApplication.created,
         update.event === ApplicationEventType.DATANEEDED
           ? update?.comment
+          : undefined,
+        update.event === ApplicationEventType.REJECTED
+          ? update?.rejection
           : undefined,
       )
 
@@ -342,8 +413,6 @@ export class ApplicationService {
         ApplicantEmailTemplate(emailData.data),
       )
     }
-
-    return { numberOfAffectedRows, updatedApplication }
   }
 
   private async sendEmail(

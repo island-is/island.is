@@ -1,6 +1,7 @@
+import compareAsc from 'date-fns/compareAsc'
+
 import { TagVariant } from '@island.is/island-ui/core'
 import { CaseAppealDecision, CaseState } from '@island.is/judicial-system/types'
-import compareAsc from 'date-fns/compareAsc'
 
 export const mapCaseStateToTagVariant = (
   state: CaseState,

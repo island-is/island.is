@@ -24,7 +24,7 @@ interface CourtDocumentsProps {
     id: string,
     updatedCase: { courtDocuments: Array<string> },
   ) => void
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   workingCase: Case
 }
 
