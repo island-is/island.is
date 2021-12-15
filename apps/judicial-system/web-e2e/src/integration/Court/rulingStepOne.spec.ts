@@ -44,6 +44,8 @@ describe('/domur/urskurdur/:id', () => {
 
     intercept(caseDataAddition)
 
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
     cy.getByTestid('ruling')
       .contains('héraðsdómari kveður upp úrskurð þennan.')
       .clear()
