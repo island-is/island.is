@@ -32,7 +32,7 @@ import {
 } from '@nestjs/swagger'
 import { User } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
-import { AuditService } from '@island.is/nest/audit'
+import { AuditService, Audit } from '@island.is/nest/audit'
 
 const namespace = `${environment.audit.defaultNamespace}/right-types`
 
@@ -41,6 +41,7 @@ const namespace = `${environment.audit.defaultNamespace}/right-types`
 @ApiBearerAuth()
 @ApiTags('Right Types')
 @Controller('v1/right-types')
+@Audit({ namespace })
 export class RightTypesController {
   constructor(
     @Inject(PersonalRepresentativeRightTypeService)
@@ -54,6 +55,9 @@ export class RightTypesController {
   })
   @Get()
   @ApiOkResponse({ type: PersonalRepresentativeRightType })
+  @Audit<PersonalRepresentativeRightType[]>({
+    resources: (types) => types.map((type) => type.code),
+  })
   async getAll(): Promise<PersonalRepresentativeRightType[]> {
     const rightTypes = await this.rightTypesService.getAllAsync()
 
@@ -70,6 +74,9 @@ export class RightTypesController {
   })
   @Get(':code')
   @ApiOkResponse({ type: PersonalRepresentativeRightType })
+  @Audit<PersonalRepresentativeRightType>({
+    resources: (type) => type.code,
+  })
   async getAsync(
     @Param('code') code: string,
   ): Promise<PersonalRepresentativeRightType> {
@@ -118,6 +125,9 @@ export class RightTypesController {
   })
   @Post()
   @ApiCreatedResponse({ type: PersonalRepresentativeRightType })
+  @Audit<PersonalRepresentativeRightType>({
+    resources: (type) => type.code,
+  })
   async create(
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
     @CurrentUser() user: User,
@@ -141,6 +151,9 @@ export class RightTypesController {
   })
   @Put(':code')
   @ApiCreatedResponse({ type: PersonalRepresentativeRightType })
+  @Audit<PersonalRepresentativeRightType>({
+    resources: (type) => type.code,
+  })
   async update(
     @Param('code') code: string,
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
