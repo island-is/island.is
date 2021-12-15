@@ -123,7 +123,7 @@ const Search: Screen<CategoryProps> = ({
   const { query } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const [activeSearchTypes, setActiveSearchTypes] = useState<Array<string>>([])
+  // const [activeSearchTypes, setActiveSearchTypes] = useState<Array<string>>([])
   const [activeSearchType, setActiveSearchType] = useState<string>('')
   const [sidebarData, setSidebarData] = useState<SidebarData>({
     totalTagCount: 0,
@@ -146,6 +146,52 @@ const Search: Screen<CategoryProps> = ({
   const filters: SearchQueryFilters = {
     category: query.category as string,
     type: query.type as string,
+  }
+
+  const getLabels = (item: SearchType) => {
+    const labels = []
+
+    switch (item.__typename) {
+      case 'LifeEventPage':
+        labels.push(n('lifeEvent'))
+        break
+      case 'News':
+        labels.push(n('newsTitle'))
+        break
+      case 'AdgerdirPage':
+        labels.push(n('adgerdirTitle'))
+        break
+      default:
+        break
+    }
+
+    if (checkForProcessEntries(item)) {
+      labels.push(n('applicationForm'))
+    }
+
+    if (item.group) {
+      labels.push(item.group.title)
+    }
+
+    if (item.organization?.length) {
+      labels.push(item.organization[0].title)
+    }
+
+    if (item.parent) {
+      if (item.parent.group) {
+        labels.push(item.parent.group.title)
+      }
+
+      if (item.parent.organization?.length) {
+        labels.push(item.parent.organization[0].title)
+      }
+    }
+
+    if (item.organizationPage?.organization?.title) {
+      labels.push(item.organizationPage.organization.title)
+    }
+
+    return labels
   }
 
   const tagTitles:
@@ -215,6 +261,8 @@ const Search: Screen<CategoryProps> = ({
   //   })
   // }, [activeSearchTypes, pathname, q, replace])
 
+  const processEntryTagTitle = n('processEntry', 'Umsókn') as string
+
   const tagsList = useMemo((): TagsList[] => {
     // const processEntryArticles = (searchResults.items as Array<Article>)
     //   .filter((x) => x.__typename === 'Article')
@@ -234,13 +282,18 @@ const Search: Screen<CategoryProps> = ({
       ...[
         countResults.processEntryCount > 0 &&
           ({
-            title: n('processEntry', 'Umsókn') as string,
+            title: processEntryTagTitle,
             count: countResults.processEntryCount,
             key: 'ArticlesWithProcessEntry',
           } as TagsList),
       ],
     ]
-  }, [countResults.typesCount, tagTitles])
+  }, [
+    countResults.processEntryCount,
+    countResults.typesCount,
+    processEntryTagTitle,
+    tagTitles,
+  ])
 
   useEffect(() => {
     // we get the tag count manually since the total includes uncategorised data and the type count
@@ -268,6 +321,7 @@ const Search: Screen<CategoryProps> = ({
       webNews: n('newsTitle'),
       webOrganizationSubpage: n('organizationsTitle', 'Opinberir aðilar'),
     }
+
     const typeCountResults = countResults.typesCount.reduce(
       (typeList: SidebarTagMap, { key, count: total }) => {
         if (Object.keys(typeNames).includes(key)) {
@@ -280,6 +334,7 @@ const Search: Screen<CategoryProps> = ({
       },
       {},
     )
+
     setSidebarData({
       totalTagCount,
       tags: tagCountResults,
@@ -288,68 +343,15 @@ const Search: Screen<CategoryProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countResults])
 
-  const getLabels = (item) => {
-    const labels = []
-    switch (
-      item.__typename as LifeEventPage['__typename'] & News['__typename']
-    ) {
-      case 'LifeEventPage':
-        labels.push(n('lifeEvent'))
-        break
-      case 'News':
-        labels.push(n('newsTitle'))
-        break
-      case 'AdgerdirPage':
-        labels.push(n('adgerdirTitle'))
-        break
-      default:
-        break
-    }
-
-    if (item.processEntry) {
-      labels.push(n('applicationForm'))
-    }
-
-    if (item.group) {
-      labels.push(item.group.title)
-    }
-
-    if (item.organization?.length) {
-      labels.push(item.organization[0].title)
-    }
-
-    if (item.parent) {
-      if (item.parent.group) {
-        labels.push(item.parent.group.title)
-      }
-
-      if (item.parent.organization?.length) {
-        labels.push(item.parent.organization[0].title)
-      }
-    }
-
-    if (item.organizationPage?.organization?.title) {
-      labels.push(item.organizationPage.organization.title)
-    }
-
-    return labels
-  }
-
   const checkForProcessEntries = (item: SearchType) => {
-    console.log('ITEM', item)
     if (item.__typename === 'Article') {
       const hasMainProcessEntry =
         !!item.processEntry?.processTitle || !!item.processEntry?.processLink
-      const hasProcessEntryInBody = item.body?.filter((content) => {
-        console.log('content', content)
+      const hasProcessEntryInBody = !!item.body?.filter((content) => {
         return content.__typename === 'ProcessEntry'
-      })
+      }).length
 
-      console.log('Article', item.title)
-      console.log('hasMainProcessEntry', hasMainProcessEntry)
-      console.log('hasProcessEntryInBody', hasProcessEntryInBody)
-
-      return true
+      return hasMainProcessEntry || hasProcessEntryInBody
     }
 
     return false
@@ -384,6 +386,9 @@ const Search: Screen<CategoryProps> = ({
       query: {
         q,
         ...(searchTypes && { type: searchTypes }),
+        ...(activeSearchType === 'ArticlesWithProcessEntry' && {
+          processentry: true,
+        }),
       },
     }).then(() => {
       window.scrollTo(0, 0)
@@ -401,7 +406,7 @@ const Search: Screen<CategoryProps> = ({
     }
   }, [activeSearchType, searchResultsItems])
 
-  const byCategory = (item) => {
+  const noUncategorized = (item) => {
     if (!item.category && filters.category === 'uncategorized') {
       return true
     }
@@ -409,7 +414,10 @@ const Search: Screen<CategoryProps> = ({
     return !filters.category || filters.category === item.categorySlug
   }
 
-  const filteredItems = searchResultsItems.filter(byCategory)
+  console.log('searchResultsItems', searchResultsItems)
+  // const filteredItems = [...searchResultsItems].filter(noUncategorized)
+  const filteredItems = [...searchResultsItems]
+  console.log('filteredItems', filteredItems)
   const nothingFound = filteredItems.length === 0
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
@@ -552,7 +560,8 @@ const Search: Screen<CategoryProps> = ({
                   <Tag
                     key={index}
                     variant="blue"
-                    active={activeSearchTypes.includes(key)}
+                    // active={activeSearchTypes.includes(key)}
+                    active={activeSearchType === key}
                     onClick={() =>
                       // onToggleSearchType(key as SearchableContentTypes, true)
                       setActiveSearchType(key)
@@ -681,13 +690,17 @@ const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   const queryString = single(query.q) || ''
   const category = single(query.category) || ''
+  const processentry = single(query.processentry) || ''
   const type = single(query.type) || ''
   const page = Number(single(query.page)) || 1
 
   let tags = {}
   let countTag = {}
+
   if (category) {
     tags = { tags: [{ key: category, type: 'category' as SearchableTags }] }
+  } else if (processentry) {
+    tags = { tags: [{ key: 'true', type: 'processentry' as SearchableTags }] }
   } else {
     countTag = { countTag: 'category' as SearchableTags }
   }
