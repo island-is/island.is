@@ -652,15 +652,6 @@
     "services-notifications": {
       "tags": []
     },
-<<<<<<< HEAD
-=======
-    "services-party-letter-registry-api": {
-      "tags": []
-    },
-    "services-personal-representative": {
-      "tags": []
-    },
->>>>>>> main
     "services-search-indexer": {
       "tags": []
     },

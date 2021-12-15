@@ -48,7 +48,6 @@ describe('createEndorsementList', () => {
         today.getTime() + 7 * 24 * 60 * 60 * 1000,
       ).toISOString(),
       adminLock: false,
-      validationRules: [],
       meta: {},
     }
     const response = await request(app.getHttpServer())

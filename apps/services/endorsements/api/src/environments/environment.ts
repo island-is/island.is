@@ -1,7 +1,3 @@
-import {
-  createXRoadAPIPath,
-  XRoadMemberClass,
-} from '@island.is/shared/utils/server'
 
 declare const process: {
   env: {
