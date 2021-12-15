@@ -17,7 +17,7 @@ const paymentPlanSchema = z
   .optional()
 
 export const PublicDebtPaymentPlanSchema = z.object({
-  // TODO: Applicant schema
+  approveExternalData: z.boolean().refine((v) => v),
   applicant: z.object({
     address: z.string(),
     city: z.string(),
@@ -33,13 +33,7 @@ export const PublicDebtPaymentPlanSchema = z.object({
       .object({
         id: z
           .string()
-          .refine(
-            (x) =>
-              x &&
-              x.length !== 0 &&
-              kennitala.isValid(x) &&
-              kennitala.isCompany(x),
-          ),
+          .refine((x) => x && x.length !== 0 && kennitala.isValid(x)),
       })
       .optional(),
   }),

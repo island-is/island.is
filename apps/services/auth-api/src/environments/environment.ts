@@ -20,13 +20,6 @@ const devConfig = {
     password: process.env.RSK_PASSWORD,
   },
   nationalRegistry: {
-    xroad: {
-      basePath: 'http://localhost:8081/r1/IS-DEV',
-      memberClass: XRoadMemberClass.GovernmentInstitution,
-      memberCode: '10001',
-      apiPath: '/SKRA-Protected/Einstaklingar-v1',
-      clientId: 'IS-DEV/GOV/10000/island-is-client',
-    },
     authMiddlewareOptions: {
       forwardUserInfo: false,
     },
@@ -43,6 +36,7 @@ const prodConfig = {
   production: true,
   auth: {
     audience: '@identityserver.api',
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     issuer: process.env.IDS_ISSUER!,
   },
   port: 3333,
@@ -58,13 +52,6 @@ const prodConfig = {
     password: process.env.RSK_PASSWORD,
   },
   nationalRegistry: {
-    xroad: {
-      basePath: process.env.XROAD_BASE_PATH_WITH_ENV,
-      memberClass: XRoadMemberClass.GovernmentInstitution,
-      memberCode: process.env.XROAD_NATIONAL_REGISTRY_MEMBER_CODE,
-      apiPath: process.env.XROAD_NATIONAL_REGISTRY_API_PATH,
-      clientId: process.env.XROAD_NATIONAL_REGISTRY_CLIENT_ID,
-    },
     authMiddlewareOptions: {
       forwardUserInfo: false,
     },

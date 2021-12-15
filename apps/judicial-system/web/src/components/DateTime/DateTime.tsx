@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { DatePicker, Input } from '@island.is/island-ui/core'
 import { TimeInputField, BlueBox } from '../../components'
 import * as styles from './DateTime.css'
@@ -15,7 +15,7 @@ interface Props {
   timeLabel?: string
   minDate?: Date
   maxDate?: Date
-  selectedDate?: Date
+  selectedDate?: Date | string
   disabled?: boolean
   required?: boolean
   blueBox?: boolean
@@ -51,11 +51,24 @@ const DateTime: React.FC<Props> = (props) => {
           .padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
       : ''
 
-  const [currentDate, setCurrentDate] = useState(selectedDate)
-  const [currentTime, setCurrentTime] = useState(getTimeFromDate(selectedDate))
+  const date = (d: Date | string | undefined) => {
+    return d ? new Date(d) : undefined
+  }
+
+  const [currentDate, setCurrentDate] = useState(date(selectedDate))
+  const [currentTime, setCurrentTime] = useState(
+    getTimeFromDate(date(selectedDate)),
+  )
 
   const [datepickerErrorMessage, setDatepickerErrorMessage] = useState<string>()
   const [timeErrorMessage, setTimeErrorMessage] = useState<string>()
+
+  useEffect(() => {
+    const time = getTimeFromDate(date(selectedDate))
+
+    setCurrentDate(date(selectedDate))
+    setCurrentTime(time)
+  }, [selectedDate])
 
   const isValidDateTime = (
     date: Date | undefined,
@@ -168,6 +181,7 @@ const DateTime: React.FC<Props> = (props) => {
           disabled={disabled || locked || currentDate === undefined}
           onChange={onTimeChange}
           onBlur={onTimeBlur}
+          value={currentTime}
         >
           <Input
             data-testid={`${name}-time`}
@@ -176,7 +190,6 @@ const DateTime: React.FC<Props> = (props) => {
             placeholder="Veldu tíma"
             errorMessage={timeErrorMessage}
             hasError={timeErrorMessage !== undefined}
-            defaultValue={getTimeFromDate(selectedDate)}
             icon={locked ? 'lockClosed' : undefined}
             iconType="outline"
             required={required}

@@ -9,15 +9,15 @@ export class ApiScope {
   @Field(() => ID)
   name!: string
 
-  @Field((_) => ScopeType)
+  @Field(() => ScopeType)
   type!: ScopeType
 
   @Field(() => String)
   displayName!: string
 
   @Field(() => ApiScopeGroup, { nullable: true })
-  group?: typeof ApiScopeGroup
+  group?: typeof ApiScopeGroup | null
 
   @Field(() => String, { nullable: true })
-  description?: string
+  description?: string | null
 }

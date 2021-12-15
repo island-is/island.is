@@ -38,6 +38,7 @@ export const TextFormField: FC<Props> = ({
     suffix,
     rows,
     required,
+    maxLength,
   } = field
   const { clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
@@ -71,6 +72,7 @@ export const TextFormField: FC<Props> = ({
               clearErrors(id)
             }
           }}
+          maxLength={maxLength}
           textarea={variant === 'textarea'}
           currency={variant === 'currency'}
           type={

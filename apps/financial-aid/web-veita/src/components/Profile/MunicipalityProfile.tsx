@@ -1,5 +1,12 @@
-import React, { useState } from 'react'
-import { Box, Button, Link, Text } from '@island.is/island-ui/core'
+import React, { useContext, useEffect, useState } from 'react'
+import {
+  Box,
+  Button,
+  Link,
+  Text,
+  toast,
+  ToastContainer,
+} from '@island.is/island-ui/core'
 
 import * as styles from './Profile.css'
 import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
@@ -20,6 +27,12 @@ import {
   ActivationButtonTableItem,
   NewUserModal,
 } from '@island.is/financial-aid-web/veita/src/components'
+import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
+import { useLazyQuery } from '@apollo/client'
+import { AdminUsersQuery } from '@island.is/financial-aid-web/veita/graphql'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+import { useMutation } from '@apollo/client'
+import { MunicipalityActivityMutation } from '@island.is/financial-aid-web/veita/graphql'
 
 interface MunicipalityProfileProps {
   municipality: Municipality
@@ -31,19 +44,61 @@ const MunicipalityProfile = ({
   getMunicipality,
 }: MunicipalityProfileProps) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const { changeUserActivity, staffActivationLoading } = useStaff()
+  const [adminUsers, setAdminUsers] = useState(municipality.adminUsers)
+  const { admin } = useContext(AdminContext)
+
+  const [
+    getAdminUsers,
+    { data: adminUsersData, loading: AdminUsersLoading },
+  ] = useLazyQuery<{ municipality: Municipality }, { input: { id: string } }>(
+    AdminUsersQuery,
+    { fetchPolicy: 'no-cache' },
+  )
+
+  useEffect(() => {
+    if (adminUsersData?.municipality.adminUsers) {
+      setAdminUsers(adminUsersData.municipality.adminUsers)
+    }
+  }, [adminUsersData])
 
   const refreshList = () => {
     setIsModalVisible(false)
     getMunicipality()
   }
 
+  const [municipalityActivity] = useMutation(MunicipalityActivityMutation)
+
+  const changeMunicipalityActivity = async (id: string, active: boolean) => {
+    await municipalityActivity({
+      variables: {
+        input: {
+          id,
+          active,
+        },
+      },
+    })
+      .then(() => {
+        getMunicipality()
+      })
+      .catch(() => {
+        toast.error(
+          'Ekki tókst að uppfæra sveitarfélag, vinsamlega reynið aftur síðar',
+        )
+      })
+  }
+
   const smallText = 'small'
   const headline = 'h5'
+
+  const isLoggedInUser = (staff: Staff) =>
+    admin?.nationalId === staff.nationalId
+
   const aidTableBody = (value: AidTypeHomeCircumstances) => {
     switch (value) {
       case AidTypeHomeCircumstances.OWNPLACE:
         return [
-          TextTableItem(headline, 'Eigin húsnæði'),
+          TextTableItem(headline, 'Eigið húsnæði'),
           TextTableItem(smallText, municipality.individualAid.ownPlace),
           TextTableItem(smallText, municipality.cohabitationAid.ownPlace),
         ]
@@ -124,7 +179,12 @@ const MunicipalityProfile = ({
               </Text>
             </Box>
             <button
-              onClick={() => console.log('🔜')}
+              onClick={() =>
+                changeMunicipalityActivity(
+                  municipality.id,
+                  !municipality.active,
+                )
+              }
               className={headerStyles.button}
             >
               {municipality.active ? 'Óvirkja' : 'Virkja'}
@@ -159,18 +219,40 @@ const MunicipalityProfile = ({
               </thead>
 
               <tbody>
-                {municipality.adminUsers?.map((item: Staff, index) => (
+                {adminUsers?.map((item: Staff, index) => (
                   <TableBody
                     items={[
-                      TextTableItem(headline, item.name),
-                      TextTableItem(smallText, item.nationalId),
-                      TextTableItem(smallText, item.email),
-                      ActivationButtonTableItem(
-                        'Óvirkja',
-                        false,
-                        () => console.log('🔜'),
-                        true,
+                      TextTableItem(
+                        headline,
+                        `${item.name} ${isLoggedInUser(item) ? '(Þú)' : ''}`,
+                        item.active ? 'dark400' : 'dark300',
                       ),
+                      TextTableItem(
+                        smallText,
+                        item.nationalId,
+                        item.active ? 'dark400' : 'dark300',
+                      ),
+                      TextTableItem(
+                        smallText,
+                        item.email,
+                        item.active ? 'dark400' : 'dark300',
+                      ),
+                      isLoggedInUser(item) === false &&
+                        ActivationButtonTableItem(
+                          item.active ? 'Óvirkja' : 'Virkja',
+                          staffActivationLoading || AdminUsersLoading,
+                          () =>
+                            changeUserActivity(!item.active, item.id).then(
+                              () => {
+                                getAdminUsers({
+                                  variables: {
+                                    input: { id: municipality.municipalityId },
+                                  },
+                                })
+                              },
+                            ),
+                          item.active,
+                        ),
                     ]}
                     index={index}
                     identifier={item.id}
@@ -216,7 +298,7 @@ const MunicipalityProfile = ({
                     identifier={value}
                     key={`aidTableBody-${value}`}
                     hasMaxWidth={false}
-                    animationDelay={55 * (municipality.adminUsers?.length ?? 1)}
+                    animationDelay={55 * index}
                   />
                 ))}
               </tbody>
@@ -288,7 +370,9 @@ const MunicipalityProfile = ({
         }}
         onStaffCreated={refreshList}
         predefinedRoles={[StaffRole.ADMIN]}
+        municipalityName={municipality.name}
       />
+      <ToastContainer />
     </Box>
   )
 }

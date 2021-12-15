@@ -2,14 +2,13 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
-  ApplicationRole,
   ApplicationStateSchema,
   DefaultStateLifeCycle,
   DefaultEvents,
 } from '@island.is/application/core'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
-import { Events, States } from './constants'
+import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationFeatureFlags,
@@ -40,7 +39,7 @@ const template: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: async ({ featureFlagClient }) => {
                 const featureFlags = await getApplicationFeatureFlags(
                   featureFlagClient as FeatureFlagClient,
@@ -89,7 +88,7 @@ const template: ApplicationTemplate<
           },
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/payment').then((val) => val.payment),
               actions: [
@@ -110,7 +109,7 @@ const template: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () => import('../forms/done').then((val) => val.done),
               read: 'all',
             },
@@ -125,7 +124,7 @@ const template: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/declined').then((val) => val.declined),
               read: 'all',
@@ -136,8 +135,12 @@ const template: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(): ApplicationRole {
-    return 'applicant'
+  mapUserToRole(nationalId, { applicant }) {
+    if (nationalId === applicant) {
+      return Roles.APPLICANT
+    }
+
+    return undefined
   },
 }
 

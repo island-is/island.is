@@ -10,7 +10,6 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import Hyperlink from '../Hyperlink/Hyperlink'
-
 import * as styles from './RichText.css'
 
 const defaultHeaderMargins: {
@@ -151,5 +150,21 @@ export const defaultRenderNode: RenderNode = {
     return asset.fields.file?.url ? (
       <Hyperlink href={asset.fields.file.url}>{children}</Hyperlink>
     ) : null
+  },
+  [INLINES.ENTRY_HYPERLINK]: (node, children) => {
+    const entry = node.data.target
+    const type = entry?.sys?.contentType?.sys?.id
+    switch (type) {
+      case 'article':
+        return entry.fields.slug ? (
+          <Hyperlink href={`/${entry.fields.slug}`}>{children}</Hyperlink>
+        ) : null
+      case 'subArticle':
+        return entry.fields.url ? (
+          <Hyperlink href={entry.fields.url}>{children}</Hyperlink>
+        ) : null
+      default:
+        return null
+    }
   },
 }

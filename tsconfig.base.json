@@ -226,6 +226,9 @@
         "libs/application/ui-shell/src/index.ts"
       ],
       "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
+      "@island.is/auth-api-lib/personal-representative": [
+        "libs/auth-api-lib/src/lib/personal-representative/index.ts"
+      ],
       "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
       "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
@@ -355,6 +358,8 @@
       "@island.is/logging": ["libs/logging/src/index.ts"],
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
+      "@island.is/nest/config": ["libs/nest/config/src/index.ts"],
+      "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
       "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
@@ -457,6 +462,7 @@
         "libs/skilavottord/consts/src/index.ts"
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
+      "@island.is/testing/containers": ["libs/testing/containers/src/index.ts"],
       "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
       "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],

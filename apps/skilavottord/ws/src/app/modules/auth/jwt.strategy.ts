@@ -1,12 +1,16 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { AuthenticationError, ForbiddenError } from 'apollo-server-express'
+import { Injectable, Inject, forwardRef } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-jwt'
 
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/skilavottord/consts'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { environment } from '../../../environments'
-import { Credentials } from './auth.types'
+import { AccessControlService } from '../accessControl'
+import { Credentials, Role } from './auth.types'
+import type { AuthUser, User } from './auth.types'
 
 const cookieExtractor = (req) => {
   if (req && req.cookies) {
@@ -17,7 +21,12 @@ const cookieExtractor = (req) => {
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {
+  constructor(
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
+    @Inject(forwardRef(() => AccessControlService))
+    private accessControlService: AccessControlService,
+  ) {
     super({
       jwtFromRequest: cookieExtractor,
       secretOrKey: environment.auth.jwtSecret,
@@ -25,13 +34,29 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     })
   }
 
-  validate(req: Request, { csrfToken, user }: Credentials) {
-    this.logger.info('--- validate starting ---')
+  private async getUser(user: AuthUser): Promise<User> {
+    const accessControl = await this.accessControlService.findOne(
+      user.nationalId,
+    )
+    if (accessControl) {
+      return { ...user, ...accessControl } as User
+    }
+    return { ...user, role: Role.citizen }
+  }
+
+  async validate(req: Request, { csrfToken, user }: Credentials) {
+    const authUser = await this.getUser(user)
+
+    const { throwOnUnAuthorized, roles } = req['authGuardOptions']
+    if (roles && !roles.find((role) => role === authUser.role)) {
+      throw new ForbiddenError('Forbidden')
+    }
+
     if (csrfToken && `Bearer ${csrfToken}` !== req.headers['authorization']) {
       this.logger.error('invalid csrf token -')
       return null
     }
-    this.logger.info('csrf token for is valid')
-    return user
+
+    return authUser
   }
 }
