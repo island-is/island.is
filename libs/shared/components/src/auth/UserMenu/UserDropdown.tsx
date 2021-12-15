@@ -8,18 +8,15 @@ import {
   Icon,
   GridContainer,
   Divider,
-  Option,
 } from '@island.is/island-ui/core'
-import { User, Locale } from '@island.is/shared/types'
+import { User } from '@island.is/shared/types'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
-import { useUpdateUserProfileMutation } from '../../../gen/graphql'
 import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
 import { UserDropdownItem } from './UserDropdownItem'
 import { UserProfileInfo } from './UserProfileInfo'
 import * as kennitala from 'kennitala'
-import { ValueType } from 'react-select'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { useActorDelegationsQuery } from '../../../gen/graphql'
 import { QueryResult } from '@apollo/client'
@@ -39,32 +36,11 @@ export const UserDropdown = ({
   onSwitchUser,
   onLogout,
 }: UserDropdownProps) => {
-  const { lang, formatMessage, changeLanguage } = useLocale()
+  const { formatMessage } = useLocale()
   const isVisible = dropdownState === 'open'
   const onClose = () => {
     setDropdownState('closed')
   }
-
-  const [updateUserProfileMutation] = useUpdateUserProfileMutation()
-
-  // const handleLanguageChange = async (option: ValueType<Option>) => {
-  //   const locale = (option as Option).value.toString()
-  //   changeLanguage(locale as Locale)
-
-  //   if (user && !isDelegation) {
-  //     try {
-  //       await updateUserProfileMutation({
-  //         variables: {
-  //           input: {
-  //             locale: locale,
-  //           },
-  //         },
-  //       })
-  //     } catch (e) {
-  //       return null
-  //     }
-  //   }
-  // }
 
   const actor = user.profile.actor
   const isDelegation = Boolean(actor)

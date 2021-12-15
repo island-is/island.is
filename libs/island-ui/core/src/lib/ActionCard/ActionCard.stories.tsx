@@ -17,7 +17,7 @@ export const Default = () => (
 
 export const SmallHeading = () => (
   <ActionCard
-    headingVariant="h3"
+    headingVariant="h4"
     heading="Small Heading"
     text="This is the text"
     cta={{ label: 'Click me' }}

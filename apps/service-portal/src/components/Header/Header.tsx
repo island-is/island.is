@@ -32,8 +32,14 @@ export const Header: FC<{}> = () => {
       <header className={styles.header}>
         <Box width="full">
           <Box
-            className={styles.headerWrapper}
             display="flex"
+            justifyContent={[
+              'spaceBetween',
+              'spaceBetween',
+              'spaceBetween',
+              'flexEnd',
+              'flexEnd',
+            ]}
             alignItems="center"
             width="full"
             background="white"

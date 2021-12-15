@@ -271,7 +271,6 @@ const DocumentScreen: FC<Props> = ({
                         </Button>
                       </T.Data>
                       <T.Data style={tableStyles}>
-                        {' '}
                         <Text variant="medium">{listItem.sender}</Text>
                       </T.Data>
                       <T.Data box={{ textAlign: 'right' }} style={tableStyles}>
