@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common'
+import { Module, forwardRef } from '@nestjs/common'
 import { PassportModule } from '@nestjs/passport'
 import { JwtModule } from '@nestjs/jwt'
 
 import { environment } from '../../../environments'
-import { AuthService } from './auth.service'
+import { AccessControlModule } from '../accessControl'
+
 import { AuthController } from './auth.controller'
 import { JwtStrategy } from './jwt.strategy'
 
@@ -21,9 +22,9 @@ const ONE_HOUR = 3600
         expiresIn: ONE_HOUR,
       },
     }),
+    forwardRef(() => AccessControlModule),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
-  exports: [AuthService],
+  providers: [JwtStrategy],
 })
 export class AuthModule {}
