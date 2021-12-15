@@ -6,7 +6,6 @@ import {
   IsArray,
   IsObject,
   IsBoolean,
-  IsDate,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
