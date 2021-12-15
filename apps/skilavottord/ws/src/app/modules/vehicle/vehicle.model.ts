@@ -25,7 +25,6 @@ export class VehicleModel extends Model<VehicleModel> {
   })
   vehicleId: string
 
-  //ATH
   @AllowNull(true)
   @ForeignKey(() => VehicleOwnerModel)
   @Column({
