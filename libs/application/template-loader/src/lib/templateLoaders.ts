@@ -13,8 +13,6 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/driving-assessment-approval'),
   [ApplicationTypes.PASSPORT]: () =>
     import('@island.is/application/templates/passport'),
-  [ApplicationTypes.META_APPLICATION]: () =>
-    import('@island.is/application/templates/meta-application'),
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: () =>
     import('@island.is/application/templates/document-provider-onboarding'),
   [ApplicationTypes.HEALTH_INSURANCE]: () =>
