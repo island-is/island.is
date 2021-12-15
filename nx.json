@@ -1,5 +1,17 @@
 {
   "implicitDependencies": {
+    "libs/island-ui/core/*": ["*web", "*form", "service-portal*"],
+    "libs/react/*": ["*web", "*form", "service-portal*"],
+    "libs/infra-next-server/*": ["*web", "*form", "service-portal*"],
+    "libs/auth/*": ["*web", "*form", "service-portal*"],
+    "libs/localization/*": ["*web", "*form", "service-portal*"],
+    "libs/shared/*": ["*web", "*form", "service-portal*"],
+    "libs/infra-nest-server/*": ["*api*", "*ws", "*backend", "*services"],
+    "libs/infra-monitoring/*": ["*api*", "*ws", "*backend", "*services"],
+    "libs/feature-flags/*": ["*api*", "*ws", "*backend", "*services"],
+    "libs/auth-api-lib/*": ["*api*", "*ws", "*backend", "*services"],
+    "libs/logging/*": ["*api*", "*ws", "*backend", "*services"],
+    "libs/api/*": ["api"],
     "workspace.json": "*",
     "package.json": {
       "dependencies": "*",
