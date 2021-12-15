@@ -26,6 +26,7 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
+import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   workingCase: Case
@@ -36,6 +37,7 @@ interface Props {
   isLoading: boolean
   onNextButtonClick: () => Promise<void>
   onProsecutorChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
+  onCourtChange: (courtId: string) => boolean
   updateCase: (id: string, updateCase: UpdateCase) => Promise<Case | undefined>
 }
 
@@ -49,6 +51,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
     isLoading,
     onNextButtonClick,
     onProsecutorChange,
+    onCourtChange,
     updateCase,
   } = props
 
@@ -63,9 +66,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
     },
   }
 
-  const [selectedCourt, setSelectedCourt] = useState<string>()
   const {
-    isValid,
     setField,
     validateAndSendToServer,
     setAndSendToServer,
@@ -118,9 +119,8 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
           <Box component="section" marginBottom={5}>
             <SelectCourt
               workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              setSelectedCourt={setSelectedCourt}
               courts={courts}
+              onChange={onCourtChange}
             />
           </Box>
         )}
@@ -161,7 +161,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.IC_DEFENDANT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={async () => await onNextButtonClick()}
-          nextIsDisabled={!isValid || (!workingCase.court && !selectedCourt)}
+          nextIsDisabled={!isHearingArrangementsStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />
       </FormContentContainer>
