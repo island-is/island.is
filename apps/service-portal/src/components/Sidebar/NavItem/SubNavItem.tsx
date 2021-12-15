@@ -22,10 +22,10 @@ const SubNavItemContent: FC<Props> = ({
   <Box
     display="flex"
     alignItems="center"
-    cursor={'pointer'}
+    cursor="pointer"
     position="relative"
     onClick={onClick}
-    justifyContent={'spaceBetween'}
+    justifyContent="spaceBetween"
     paddingRight={2}
   >
     <Text
@@ -37,10 +37,10 @@ const SubNavItemContent: FC<Props> = ({
     </Text>
     {!enabled && (
       <Icon
-        type={'filled'}
-        icon={'lockClosed'}
+        type="filled"
+        icon="lockClosed"
         size="small"
-        color={'blue600'}
+        color="blue600"
         className={styles.subLock}
       />
     )}

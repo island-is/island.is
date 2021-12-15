@@ -70,7 +70,7 @@ export const EducationCard = ({
       >
         {eyebrow && <Tag variant="purple">{eyebrow}</Tag>}
         {CTA && (
-          <Box marginTop={'p2'} marginLeft="auto" textAlign="right">
+          <Box marginTop="p2" marginLeft="auto" textAlign="right">
             {CTA}
           </Box>
         )}

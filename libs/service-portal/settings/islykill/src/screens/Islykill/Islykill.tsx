@@ -264,7 +264,7 @@ export default function Islykill() {
   return (
     <Box>
       <IntroHeader
-        title={'Íslykill'}
+        title="Íslykill"
         intro={defineMessage({
           id: 'service.portal.settings.islykill:intro',
           defaultMessage: 'Stillingar á Íslykil.',

@@ -15,8 +15,8 @@ export const NotFound: FC<Props> = ({ title }) => {
 
   return (
     <ErrorScreen
-      tag={'404'}
-      tagVariant={'purple'}
+      tag="404"
+      tagVariant="purple"
       title={formatMessage(title || m.notFound)}
       figure="/assets/images/hourglass.svg"
     >

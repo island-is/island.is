@@ -122,7 +122,7 @@ const EditForm: React.FC<PropTypes> = ({
         >
           <GridContainer position="none">
             <GridRow>
-              <GridColumn span={'12/12'} paddingBottom={6}>
+              <GridColumn span="12/12" paddingBottom={6}>
                 <Text variant="h3" as="h1">
                   {!isUpdating
                     ? 'Skráning íslensks nafns'
@@ -132,7 +132,7 @@ const EditForm: React.FC<PropTypes> = ({
             </GridRow>
 
             <GridRow>
-              <GridColumn span={'12/12'} paddingBottom={spacing}>
+              <GridColumn span="12/12" paddingBottom={spacing}>
                 <Controller
                   name="icelandicName"
                   control={control}
@@ -219,7 +219,7 @@ const EditForm: React.FC<PropTypes> = ({
             </GridRow>
 
             <GridRow marginTop={3}>
-              <GridColumn span={'12/12'} paddingBottom={spacing}>
+              <GridColumn span="12/12" paddingBottom={spacing}>
                 <Controller
                   name="description"
                   render={({ onChange, value, name }) => {
@@ -241,7 +241,7 @@ const EditForm: React.FC<PropTypes> = ({
             </GridRow>
 
             <GridRow marginTop={3}>
-              <GridColumn span={'12/12'} paddingBottom={spacing}>
+              <GridColumn span="12/12" paddingBottom={spacing}>
                 <Controller
                   name="url"
                   render={({ onChange, value, name }) => {
@@ -262,7 +262,7 @@ const EditForm: React.FC<PropTypes> = ({
                 />
               </GridColumn>
 
-              <GridColumn span={'6/12'} paddingBottom={spacing}>
+              <GridColumn span="6/12" paddingBottom={spacing}>
                 <Controller
                   name="verdict"
                   render={({ onChange, value, name }) => {
@@ -285,7 +285,7 @@ const EditForm: React.FC<PropTypes> = ({
             </GridRow>
 
             <GridRow marginTop={3}>
-              <GridColumn span={'12/12'} paddingBottom={spacing}>
+              <GridColumn span="12/12" paddingBottom={spacing}>
                 <Controller
                   name="visible"
                   control={control}
@@ -325,7 +325,7 @@ const EditForm: React.FC<PropTypes> = ({
         >
           <GridContainer position="none">
             <GridRow>
-              <GridColumn span={'6/12'} paddingBottom={3}>
+              <GridColumn span="6/12" paddingBottom={3}>
                 <Box>
                   <Button
                     onClick={() => {
@@ -340,7 +340,7 @@ const EditForm: React.FC<PropTypes> = ({
                   </Button>
                 </Box>
               </GridColumn>
-              <GridColumn span={'6/12'} paddingBottom={3}>
+              <GridColumn span="6/12" paddingBottom={3}>
                 <Box display="flex" justifyContent="flexEnd" width="full">
                   <Button
                     type="submit"

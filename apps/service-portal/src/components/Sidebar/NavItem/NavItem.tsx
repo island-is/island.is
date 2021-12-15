@@ -69,21 +69,21 @@ const NavItemContent: FC<Props> = ({
               type={active ? 'filled' : icon.type}
               icon={icon.icon}
               size="medium"
-              color={'blue600'}
+              color="blue600"
             />
           </Box>
         ) : null}
         {!collapsed ? <Box className={styles.text}>{children}</Box> : ''}
       </Box>
       {showChevron && (
-        <Icon type={'filled'} icon={chevron} size="medium" color={'blue600'} />
+        <Icon type="filled" icon={chevron} size="medium" color="blue600" />
       )}
       {showLock && (
         <Icon
-          type={'filled'}
-          icon={'lockClosed'}
+          type="filled"
+          icon="lockClosed"
           size="small"
-          color={'blue600'}
+          color="blue600"
           className={styles.lock}
         />
       )}

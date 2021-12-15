@@ -91,8 +91,8 @@ const Greeting: FC<{}> = () => {
       </GridColumn>
       <GridColumn span={['12/12', '5/12']}>
         <img
-          src={'./assets/images/school.svg'}
-          alt={`skrautmynd fyrir upphafssíðu`}
+          src="./assets/images/school.svg"
+          alt="skrautmynd fyrir upphafssíðu"
         />
       </GridColumn>
     </GridRow>
