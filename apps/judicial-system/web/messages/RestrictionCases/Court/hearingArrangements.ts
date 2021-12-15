@@ -69,6 +69,14 @@ export const rcHearingArrangements = {
         description:
           'Notaður sem titill fyrir "Verjanda" hlutann á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      tooltip: defineMessage({
+        id:
+          'judicial.system.restriction_cases:hearing_arrangements.defender.tooltip',
+        defaultMessage:
+          'Lögmaður sem er valinn hér verður skipaður verjandi í þinghaldi og fær sendan úrskurð rafrænt.',
+        description:
+          'Notaður sem upplýsingatexti í upplýsingasvæði við "Verjanda" fyrirsögn á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
+      }),
       nameLabel: {
         id:
           'judicial.system.restriction_cases:hearing_arrangements.defender.name_label',

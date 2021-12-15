@@ -109,6 +109,14 @@ export const icHearingArrangements = {
         description:
           'Notaður sem titill fyrir "Verjandi/talsmaður" hlutann á fyrirtöku skrefi í rannsóknarheimildum.',
       },
+      tooltip: defineMessage({
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.tooltip',
+        defaultMessage:
+          'Lögmaður sem er valinn hér verður skipaður {defenderType} í þinghaldi og fær sendan úrskurð rafrænt.',
+        description:
+          'Notaður sem upplýsingatexti í upplýsingasvæði við "Verjanda" fyrirsögn á fyrirtöku skrefi í rannsóknarheimildum.',
+      }),
       nameLabel: {
         id:
           'judicial.system.investigation_cases:hearing_arrangements.defender.name_label',
