@@ -28,6 +28,10 @@ export const label = style({
   },
 })
 
+export const description = style({
+  // …
+})
+
 export const isRequiredStar = style({
   color: theme.color.red600,
 })

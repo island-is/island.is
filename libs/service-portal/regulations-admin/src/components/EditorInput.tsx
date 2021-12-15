@@ -11,13 +11,22 @@ import cn from 'classnames'
 
 type EditorInputProps = Omit<EditorProps, 'name'> & {
   label: string
+  description: string
   // make EditorProps more strict with branded types
   error?: string
   draftId: string
 }
 
 export const EditorInput = (props: EditorInputProps) => {
-  const { error, label, draftId, onFocus, onBlur, ...editorProps } = props
+  const {
+    error,
+    label,
+    description,
+    draftId,
+    onFocus,
+    onBlur,
+    ...editorProps
+  } = props
   const [hasFocus, setHasFocus] = useState(false)
   const labelId = draftId + '-label'
   const hasError = !!error || undefined
@@ -36,6 +45,7 @@ export const EditorInput = (props: EditorInputProps) => {
           {label}
           <span className={s.isRequiredStar}> *</span>
         </h4>
+        {description && <div className={s.description}>{description}</div>}
         <RegulationsEditor
           {...editorProps}
           classes={classes}
