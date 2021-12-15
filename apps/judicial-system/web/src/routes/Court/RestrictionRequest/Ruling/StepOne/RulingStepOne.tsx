@@ -84,7 +84,7 @@ export const RulingStepOne: React.FC = () => {
     if (isCaseUpToDate) {
       let theCase = workingCase
 
-      if (!theCase.custodyRestrictions) {
+      if (theCase.custodyRestrictions === null) {
         theCase = {
           ...theCase,
           custodyRestrictions: theCase.requestedCustodyRestrictions,
