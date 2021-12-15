@@ -92,7 +92,8 @@ export const isDefendantStepValidIC = (workingCase: Case) => {
     workingCase.accusedGender &&
     validate(workingCase.accusedNationalId, 'empty').isValid &&
     validate(workingCase.accusedNationalId, 'national-id').isValid &&
-    validate(workingCase.accusedName || '', 'empty').isValid
+    validate(workingCase.accusedName || '', 'empty').isValid &&
+    validate(workingCase.accusedAddress || '', 'empty').isValid
   )
 }
 
