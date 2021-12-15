@@ -6,6 +6,7 @@ import {
   IsArray,
   IsObject,
   IsBoolean,
+  IsDate
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
@@ -41,10 +42,12 @@ export class EndorsementListDto {
 
   @ApiProperty({ type: Date })
   @Type(() => Date)
+  @IsDate()
   closedDate!: Date
 
   @ApiProperty({ type: Date })
   @Type(() => Date)
+  @IsDate()
   openedDate!: Date
 
   @ApiProperty({ type: Boolean })
