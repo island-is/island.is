@@ -1,4 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { ConflictException, NotFoundException } from '@nestjs/common'
 
 import { Authorize, Role } from '../auth'
 
@@ -21,7 +22,7 @@ export class RecyclingPartnerResolver {
 
   @Query(() => [RecyclingPartnerModel])
   async skilavottordAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
-    return await this.recyclingPartnerService.findAll()
+    return this.recyclingPartnerService.findAll()
   }
 
   @Query(() => [RecyclingPartnerModel])
@@ -44,7 +45,17 @@ export class RecyclingPartnerResolver {
     @Args('input', { type: () => CreateRecyclingPartnerInput })
     input: CreateRecyclingPartnerInput,
   ) {
-    return this.recyclingPartnerService.createRecyclingPartner(input)
+    const recyclingPartner = await this.recyclingPartnerService.findOne(
+      input.companyId,
+    )
+
+    if (recyclingPartner) {
+      throw new ConflictException(
+        'Recycling partner with that id already exists',
+      )
+    }
+
+    return this.recyclingPartnerService.create(input)
   }
 
   @Mutation(() => RecyclingPartnerModel)
@@ -52,7 +63,13 @@ export class RecyclingPartnerResolver {
     @Args('input', { type: () => UpdateRecyclingPartnerInput })
     input: UpdateRecyclingPartnerInput,
   ) {
-    return this.recyclingPartnerService.updateRecyclingPartner(input)
+    const recyclingPartner = await this.recyclingPartnerService.findOne(
+      input.companyId,
+    )
+    if (!recyclingPartner) {
+      throw new NotFoundException("Recycling partner doesn't exists")
+    }
+    return this.recyclingPartnerService.update(input)
   }
 
   @Mutation(() => Boolean)
@@ -60,6 +77,12 @@ export class RecyclingPartnerResolver {
     @Args('input', { type: () => DeleteRecyclingPartnerInput })
     input: DeleteRecyclingPartnerInput,
   ) {
-    return this.recyclingPartnerService.deleteRecyclingPartner(input)
+    const recyclingPartner = await this.recyclingPartnerService.findOne(
+      input.companyId,
+    )
+    if (!recyclingPartner) {
+      throw new NotFoundException("Recycling partner doesn't exists")
+    }
+    return this.recyclingPartnerService.delete(input)
   }
 }

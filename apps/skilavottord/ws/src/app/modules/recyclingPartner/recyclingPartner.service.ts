@@ -32,13 +32,13 @@ export class RecyclingPartnerService {
     })
   }
 
-  async createRecyclingPartner(
+  async create(
     input: CreateRecyclingPartnerInput,
   ): Promise<RecyclingPartnerModel> {
     return this.recyclingPartnerModel.create(input)
   }
 
-  async updateRecyclingPartner({
+  async update({
     companyId,
     ...input
   }: UpdateRecyclingPartnerInput): Promise<RecyclingPartnerModel> {
@@ -52,9 +52,7 @@ export class RecyclingPartnerService {
     return accessControl
   }
 
-  async deleteRecyclingPartner({
-    companyId,
-  }: DeleteRecyclingPartnerInput): Promise<Boolean> {
+  async delete({ companyId }: DeleteRecyclingPartnerInput): Promise<Boolean> {
     const affectedRows = await this.recyclingPartnerModel.destroy({
       where: { companyId },
     })
