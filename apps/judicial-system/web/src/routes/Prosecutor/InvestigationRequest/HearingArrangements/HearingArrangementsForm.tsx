@@ -62,9 +62,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
       validations: ['empty'],
     },
   }
-  const [, setRequestedCourtDateIsValid] = useState<boolean>(
-    workingCase.requestedCourtDate !== null,
-  )
+
   const [selectedCourt, setSelectedCourt] = useState<string>()
   const {
     isValid,
@@ -136,7 +134,6 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
                 valid,
                 workingCase,
                 setWorkingCase,
-                setRequestedCourtDateIsValid,
                 updateCase,
               )
             }

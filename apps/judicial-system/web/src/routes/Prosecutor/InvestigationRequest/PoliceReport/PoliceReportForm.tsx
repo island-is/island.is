@@ -24,10 +24,11 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  isCaseUpToDate: boolean
 }
 
 const PoliceReportForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
+  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
   const validations: FormSettings = {
     caseFacts: {
       validations: ['empty'],
@@ -49,14 +50,21 @@ const PoliceReportForm: React.FC<Props> = (props) => {
     icReportForm.prosecutorOnly.input.defaultValue,
   )
   useEffect(() => {
-    if (workingCase.requestProsecutorOnlySession) {
-      autofill(
-        'prosecutorOnlySessionRequest',
-        defaultProsecutorOnlySessionRequest,
-        workingCase,
-      )
+    if (isCaseUpToDate) {
+      if (workingCase.requestProsecutorOnlySession) {
+        autofill(
+          'prosecutorOnlySessionRequest',
+          defaultProsecutorOnlySessionRequest,
+          workingCase,
+        )
+      }
     }
-  }, [autofill, workingCase, defaultProsecutorOnlySessionRequest])
+  }, [
+    autofill,
+    defaultProsecutorOnlySessionRequest,
+    isCaseUpToDate,
+    workingCase,
+  ])
 
   return (
     <>

@@ -36,6 +36,7 @@ const prodConfig = {
   production: true,
   auth: {
     audience: '@identityserver.api',
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     issuer: process.env.IDS_ISSUER!,
   },
   port: 3333,
