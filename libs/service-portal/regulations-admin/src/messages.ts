@@ -116,7 +116,12 @@ export const editorMsgs = defineMessages({
 
   draftingNotes: {
     id: 'ap.regulations-admin:draft-labels-draftingnotes',
-    defaultMessage: 'Minnispunktar / Ábendingar',
+    defaultMessage: 'Minnispunktar / Skilaboð',
+  },
+  draftingNotes_descr: {
+    id: 'ap.regulations-admin:draft-description-draftingnotes',
+    defaultMessage:
+      '(Ekki partur af reglugerðinni. Bara til óformlegrar hliðsjónar í útgáfuferlinu.)',
   },
 
   draftingNotes_hide: {
@@ -156,7 +161,7 @@ export const editorMsgs = defineMessages({
   },
   lawChapterPlaceholder: {
     id: 'ap.regulations-admin:draft-labels-choose-ministry',
-    defaultMessage: 'Veldu lagakafla',
+    defaultMessage: 'Veldu kafla',
   },
   lawChapter_add: {
     id: 'ap.regulations-admin:draft-btn-lawchapter-add',
@@ -345,7 +350,7 @@ export const ministryMessages = defineMessages({
   },
   intro: {
     id: 'ap.regulations-admin:ministry-intro',
-    defaultMessage: 'Ritstjórn ráðuneyta er góð skemmtun.',
+    defaultMessage: 'Umsýsla og skráning ráðuneyta er góð skemmtun.',
   },
   cta: {
     id: 'ap.regulations-admin:ministry-cta',
