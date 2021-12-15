@@ -1,8 +1,10 @@
+export { QualityPhotoProvider } from '@island.is/application/data-providers'
 export { NationalRegistryProvider } from '@island.is/application/data-providers'
 export { UserProfileProvider } from '@island.is/application/data-providers'
 export { JuristictionProvider } from './JuristictionProvider'
-export { QualityPhotoProvider } from './QualityPhotoProvider'
+// export { QualityPhotoProvider } from './QualityPhotoProvider'
 export { TeachersProvider } from './TeachersProvider'
 export { DrivingAssessmentProvider } from './DrivingAssessmentProvider'
 export { CurrentLicenseProvider } from './CurrentLicenseProvider'
 export { FeeInfoProvider } from './FeeInfoProvider'
+
