@@ -20,9 +20,10 @@ import { PersonalRepresentativeRightTypeDTO } from '../dto/personal-representati
 export class PersonalRepresentativeRight extends Model<PersonalRepresentativeRight> {
   @PrimaryKey
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
     primaryKey: true,
     allowNull: false,
+    defaultValue: DataType.UUIDV4,
   })
   id!: string
 
@@ -36,7 +37,7 @@ export class PersonalRepresentativeRight extends Model<PersonalRepresentativeRig
 
   @ForeignKey(() => PersonalRepresentative)
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
     allowNull: false,
   })
   @ApiProperty()
