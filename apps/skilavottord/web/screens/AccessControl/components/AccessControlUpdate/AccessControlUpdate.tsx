@@ -40,7 +40,8 @@ export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
       ...currentPartner,
       role: roles.find((option) => option.value === currentPartner?.role),
       partnerId: recyclingPartners.find(
-        (option) => option.value === currentPartner?.partnerId,
+        (option) =>
+          option.value === currentPartner?.recyclingPartner?.companyId,
       ),
     })
   }, [currentPartner])
@@ -51,7 +52,7 @@ export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
         nationalId,
         name,
         role: role.value,
-        partnerId: partnerId.value,
+        partnerId: partnerId?.value,
       })
     },
   )
