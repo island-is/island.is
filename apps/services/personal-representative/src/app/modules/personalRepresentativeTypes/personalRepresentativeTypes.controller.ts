@@ -21,7 +21,7 @@ import {
   ApiOperation,
   ApiCreatedResponse,
   ApiOkResponse,
-  ApiHeader,
+  ApiBearerAuth,
   ApiTags,
 } from '@nestjs/swagger'
 import {
@@ -40,10 +40,7 @@ const namespace = `${environment.audit.defaultNamespace}/personal-representative
 @Scopes(AuthScope.writePersonalRepresentative)
 @ApiTags('Personal Representative Types')
 @Controller('v1/personal-representative-types')
-@ApiHeader({
-  name: 'authorization',
-  description: 'Bearer token authorization',
-})
+@ApiBearerAuth()
 export class PersonalRepresentativeTypesController {
   constructor(
     @Inject(PersonalRepresentativeTypeService)

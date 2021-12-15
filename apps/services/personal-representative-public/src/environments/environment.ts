@@ -3,6 +3,7 @@ const devConfig = {
   audit: {
     defaultNamespace: '@island.is/personal-representative-public',
   },
+  port: 3378,
   auth: {
     audience: '@island.is',
     issuer:
@@ -18,6 +19,7 @@ const prodConfig = {
     groupName: process.env.AUDIT_GROUP_NAME,
     serviceName: 'services-personal-representative-public',
   },
+  port: 3338,
   auth: {
     audience: '@island.is',
     issuer: process.env.IDS_ISSUER ?? '',
