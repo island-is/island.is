@@ -5,7 +5,7 @@
 1. Start the resources with docker-compose:
 
 ```bash
-docker-compose -f apps/services/regulations-admin-backend/docker-compose.base.yml -f apps/services/regulations-admin-backend/docker-compose.dev.yml up
+docker-compose -f apps/services/regulations-admin-backend/docker-compose.yml up
 ```
 
 2. Start the backend service:
