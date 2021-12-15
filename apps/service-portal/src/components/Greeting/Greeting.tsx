@@ -90,7 +90,10 @@ const Greeting: FC<{}> = () => {
         </Box>
       </GridColumn>
       <GridColumn span={['12/12', '5/12']}>
-        <img src={'./assets/images/school.svg'} alt="" />
+        <img
+          src={'./assets/images/school.svg'}
+          alt={`skrautmynd fyrir upphafssíðu`}
+        />
       </GridColumn>
     </GridRow>
   )

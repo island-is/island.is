@@ -56,7 +56,7 @@ const UserInfoOverviewItem: FC<UserInfoOverviewItemComponent> = ({
           alignItems="center"
           marginBottom={[3, 3, 0]}
         >
-          <img src={image} alt="Skrautmynd" />
+          <img src={image} alt={`skrautmynd fyrir ${heading}`} />
         </Box>
       </GridColumn>
     </GridRow>

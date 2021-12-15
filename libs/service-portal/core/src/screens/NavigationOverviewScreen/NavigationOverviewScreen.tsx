@@ -62,7 +62,7 @@ export const NavigationOverviewScreen: FC<Props> = ({
               marginLeft={[4, 0]}
               className={styles.image}
             >
-              <img src={nav.image} alt="" />
+              <img src={nav.image} alt={`skrautmynd fyrir ${title}`} />
             </Box>
           </GridColumn>
         </GridRow>

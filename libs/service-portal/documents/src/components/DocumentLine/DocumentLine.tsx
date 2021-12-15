@@ -84,7 +84,7 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
               <img
                 className={styles.image}
                 src={img}
-                alt={documentLine.subject}
+                alt={`skrautmynd fyrir ${documentLine.subject}`}
               />
             )}
             {documentLine.fileType === 'url' && documentLine.url ? (

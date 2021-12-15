@@ -113,7 +113,10 @@ function Eligibility(): JSX.Element {
                 alignItems="center"
                 marginBottom={[3, 3, 0]}
               >
-                <img src={item.image} alt="Skrautmynd" />
+                <img
+                  src={item.image}
+                  alt={`skrautmynd fyrir ${item.heading}`}
+                />
               </Box>
             </GridColumn>
           </GridRow>
