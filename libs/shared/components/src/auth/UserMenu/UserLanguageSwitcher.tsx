@@ -35,6 +35,7 @@ export const UserLanguageSwitcher = ({ user }: { user: User }) => {
         variant="utility"
         onClick={handleLanguageChange}
         aria-label={'switch language'}
+        data-testid="language-switcher"
       >
         {lang === 'en' ? 'IS' : 'EN'}
       </Button>
