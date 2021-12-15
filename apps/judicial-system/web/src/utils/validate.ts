@@ -126,6 +126,14 @@ export const isPoliceDemandsStepValidRC = (workingCase: Case) => {
   )
 }
 
+export const isPoliceDemandsStepValidIC = (workingCase: Case) => {
+  return (
+    validate(workingCase.demands || '', 'empty').isValid &&
+    validate(workingCase.lawsBroken || '', 'empty').isValid &&
+    validate(workingCase.legalBasis || '', 'empty').isValid
+  )
+}
+
 export const isPoliceReportStepValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.demands || '', 'empty').isValid &&
@@ -134,11 +142,10 @@ export const isPoliceReportStepValidRC = (workingCase: Case) => {
   )
 }
 
-export const isPoliceDemandsStepValidIC = (workingCase: Case) => {
+export const isPoliceReportStepValidIC = (workingCase: Case) => {
   return (
-    validate(workingCase.demands || '', 'empty').isValid &&
-    validate(workingCase.lawsBroken || '', 'empty').isValid &&
-    validate(workingCase.legalBasis || '', 'empty').isValid
+    validate(workingCase.caseFacts || '', 'empty').isValid &&
+    validate(workingCase.legalArguments || '', 'empty').isValid
   )
 }
 
