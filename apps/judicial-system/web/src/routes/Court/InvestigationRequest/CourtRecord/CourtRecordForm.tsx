@@ -41,7 +41,6 @@ interface Props {
 
 const CourtRecordForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
-  const [, setCourtRecordStartDateIsValid] = useState(true)
   const [courtLocationEM, setCourtLocationEM] = useState('')
   const [
     litigationPresentationsErrorMessage,
@@ -88,11 +87,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                 datepickerLabel="Dagsetning þinghalds"
                 timeLabel="Þinghald hófst (kk:mm)"
                 maxDate={new Date()}
-                selectedDate={
-                  workingCase.courtStartDate
-                    ? new Date(workingCase.courtStartDate)
-                    : new Date()
-                }
+                selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   newSetAndSendDateToServer(
                     'courtStartDate',
@@ -100,7 +95,6 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                     valid,
                     workingCase,
                     setWorkingCase,
-                    setCourtRecordStartDateIsValid,
                     updateCase,
                   )
                 }}
