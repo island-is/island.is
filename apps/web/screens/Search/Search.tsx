@@ -123,7 +123,6 @@ const Search: Screen<CategoryProps> = ({
   const { query } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  // const [activeSearchTypes, setActiveSearchTypes] = useState<Array<string>>([])
   const [activeSearchType, setActiveSearchType] = useState<string>('')
   const [sidebarData, setSidebarData] = useState<SidebarData>({
     totalTagCount: 0,
@@ -147,6 +146,31 @@ const Search: Screen<CategoryProps> = ({
     category: query.category as string,
     type: query.type as string,
   }
+
+  const getArticleCount = useMemo(
+    () => () => {
+      let total = 0
+
+      total +=
+        (countResults?.typesCount ?? []).find((x) => x.key === 'webArticle')
+          ?.count ?? 0
+
+      total +=
+        (countResults?.typesCount ?? []).find((x) => x.key === 'webSubArticle')
+          ?.count ?? 0
+
+      if (query.processentry) {
+        return total + (countResults?.processEntryCount ?? 0)
+      }
+
+      return total
+    },
+    [
+      countResults?.processEntryCount,
+      countResults?.typesCount,
+      query.processentry,
+    ],
+  )
 
   const getLabels = (item: SearchType) => {
     const labels = []
@@ -210,90 +234,44 @@ const Search: Screen<CategoryProps> = ({
     [n],
   )
 
-  // const onToggleSearchType = (
-  //   type: SearchableContentTypes | string,
-  //   single?: boolean,
-  // ) => {
-  //   if (single) {
-  //     setActiveSearchTypes([type])
-  //   } else {
-  //     const a = [...activeSearchTypes]
-  //     a.includes(type) ? a.splice(a.indexOf(type), 1) : a.push(type)
-  //     setActiveSearchTypes(a)
-  //   }
-  // }
-
   const pathname = linkResolver('search').href
 
-  const getCombinedCount = (type: string) => {
-    const types = connectedTypes[type] ?? []
+  // const getCombinedCount = (type: string) => {
+  //   const types = connectedTypes[type] ?? []
 
-    return types.map(firstLower).reduce((total, key) => {
-      const item = countResults.typesCount.find((x) => key === x.key)
+  //   return types.map(firstLower).reduce((total, key) => {
+  //     const item = countResults.typesCount.find((x) => key === x.key)
 
-      if (item) {
-        return total + item.count
-      }
+  //     if (item) {
+  //       return total + item.count
+  //     }
 
-      return total
-    }, 0)
-  }
-
-  // useEffect(() => {
-  //   const searchTypes = activeSearchTypes
-  //     .map((x) => {
-  //       if (Object.keys(connectedTypes).includes(x)) {
-  //         return connectedTypes[x].map(firstLower).join()
-  //       }
-
-  //       return x
-  //     })
-  //     .join()
-
-  //   replace({
-  //     pathname,
-  //     query: {
-  //       q,
-  //       ...(searchTypes && { type: searchTypes }),
-  //     },
-  //   }).then(() => {
-  //     window.scrollTo(0, 0)
-  //   })
-  // }, [activeSearchTypes, pathname, q, replace])
-
-  const processEntryTagTitle = n('processEntry', 'Umsókn') as string
+  //     return total
+  //   }, 0)
+  // }
 
   const tagsList = useMemo((): TagsList[] => {
-    // const processEntryArticles = (searchResults.items as Array<Article>)
-    //   .filter((x) => x.__typename === 'Article')
-    //   .filter((x) => x.processEntry?.id && x.processEntry?.processTitle)
-
     return [
       ...countResults.typesCount
         .filter((x) => x.key in tagTitles)
         .filter((x) =>
           Object.keys(connectedTypes).some((y) => y.includes(x.key)),
         )
-        .map((x) => ({
-          title: tagTitles[x.key] as string,
-          count: x.count,
-          key: x.key,
-        })),
-      ...[
-        countResults.processEntryCount > 0 &&
-          ({
-            title: processEntryTagTitle,
-            count: countResults.processEntryCount,
-            key: 'ArticlesWithProcessEntry',
-          } as TagsList),
-      ],
+        .map((x) => {
+          let count = x.count
+
+          if (x.key === 'webArticle') {
+            count = getArticleCount()
+          }
+
+          return {
+            title: tagTitles[x.key] as string,
+            key: x.key,
+            count,
+          }
+        }),
     ]
-  }, [
-    countResults.processEntryCount,
-    countResults.typesCount,
-    processEntryTagTitle,
-    tagTitles,
-  ])
+  }, [countResults.typesCount, getArticleCount, tagTitles])
 
   useEffect(() => {
     // we get the tag count manually since the total includes uncategorised data and the type count
@@ -395,17 +373,6 @@ const Search: Screen<CategoryProps> = ({
     })
   }, [activeSearchType, pathname, q, replace])
 
-  useEffect(() => {
-    if (activeSearchType === 'ArticlesWithProcessEntry') {
-      const test = searchResultsItems.filter((x) => {
-        console.log('x', x)
-        return x.typename === 'Article' && x.hasProcessEntry
-      })
-
-      console.log('testerinn', test)
-    }
-  }, [activeSearchType, searchResultsItems])
-
   const noUncategorized = (item) => {
     if (!item.category && filters.category === 'uncategorized') {
       return true
@@ -414,10 +381,7 @@ const Search: Screen<CategoryProps> = ({
     return !filters.category || filters.category === item.categorySlug
   }
 
-  console.log('searchResultsItems', searchResultsItems)
-  // const filteredItems = [...searchResultsItems].filter(noUncategorized)
-  const filteredItems = [...searchResultsItems]
-  console.log('filteredItems', filteredItems)
+  const filteredItems = [...searchResultsItems].filter(noUncategorized)
   const nothingFound = filteredItems.length === 0
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
@@ -487,8 +451,6 @@ const Search: Screen<CategoryProps> = ({
       ? (n('searchResult', 'leitarniðurstaða') as string).toLowerCase()
       : (n('searchResults', 'leitarniðurstöður') as string).toLowerCase()
 
-  console.log('activeSearchType', activeSearchType)
-
   return (
     <>
       <Head>
@@ -546,43 +508,36 @@ const Search: Screen<CategoryProps> = ({
               {countResults.total > 0 && (
                 <Tag
                   variant="blue"
-                  // active={activeSearchTypes.length === 0}
                   active={!activeSearchType}
-                  // onClick={() => setActiveSearchTypes([])}
                   onClick={() => setActiveSearchType('')}
                 >
-                  Allar tegundir ({countResults.total})
+                  Allar tegundir
                 </Tag>
               )}
               {tagsList
                 .filter((x) => x.count > 0)
-                .map(({ title, key }, index) => (
+                .map(({ title, count, key }, index) => (
                   <Tag
                     key={index}
                     variant="blue"
-                    // active={activeSearchTypes.includes(key)}
                     active={activeSearchType === key}
-                    onClick={() =>
-                      // onToggleSearchType(key as SearchableContentTypes, true)
-                      setActiveSearchType(key)
-                    }
+                    onClick={() => setActiveSearchType(key)}
                   >
-                    {title} ({getCombinedCount(key)})
+                    {title} ({count})
                   </Tag>
                 ))}
-              {/* {countResults.processEntryCount > 0 && (
+              {countResults.processEntryCount > 0 && (
                 <Tag
                   variant="blue"
-                  active={activeSearchTypes.includes(
-                    'ArticlesWithProcessEntry',
-                  )}
+                  active={activeSearchType === 'ArticlesWithProcessEntry'}
                   onClick={() =>
-                    onToggleSearchType('ArticlesWithProcessEntry', true)
+                    setActiveSearchType('ArticlesWithProcessEntry')
                   }
                 >
-                  {n('processEntry', 'Umsókn')} (?)
+                  {n('processEntry', 'Umsókn')} (
+                  {countResults.processEntryCount})
                 </Tag>
-              )} */}
+              )}
             </Inline>
           </Box>
           <Hidden above="sm">
@@ -741,11 +696,10 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          types,
+          types: allTypes,
           ...tags,
           ...countTag,
           countTypes: true,
-          countProcessEntry: true,
           size: PERPAGE,
           page,
         },
