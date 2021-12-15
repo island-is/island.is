@@ -4,7 +4,7 @@ export const errorExpectedStructure = {
   statusCode: expect.any(Number),
 }
 
-export const metaDataResponse = {
+export const bulkMetaDataResponse = {
   fullName: expect.any(String),
   address: {
     streetAddress: expect.any(String),
@@ -17,4 +17,8 @@ export const metaDataResponse = {
     voterRegionNumber: expect.any(Number),
     voterRegionName: expect.any(String),
   },
+}
+
+export const metaDataResponse = {
+  fullName: expect.any(String),
 }

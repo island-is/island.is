@@ -31,4 +31,9 @@ export class UpdateUserProfileDto {
   @IsOptional()
   @IsBoolean()
   readonly mobilePhoneNumberVerified?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly documentNotifications?: boolean
 }

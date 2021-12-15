@@ -126,7 +126,7 @@
     "class-validator": "0.12.2",
     "classnames": "2.2.6",
     "configcat-js": "5.4.0",
-    "configcat-node": "6.5.0",
+    "configcat-node": "6.7.0",
     "contentful": "7.14.6",
     "contentful-management": "6.0.5",
     "contentful-ui-extensions-sdk": "3.32.0",

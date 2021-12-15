@@ -306,7 +306,7 @@ export const CourtRecord: React.FC = () => {
           />
         </Box>
         <Box component="section" marginBottom={8}>
-          <Box marginBottom={1}>
+          <Box marginBottom={2}>
             <Text as="h3" variant="h3">
               {`${formatMessage(m.sections.accusedBookings.title, {
                 genderedAccused: formatAccusedByGender(
@@ -349,7 +349,7 @@ export const CourtRecord: React.FC = () => {
               )
             }
             textarea
-            rows={7}
+            rows={16}
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -389,7 +389,7 @@ export const CourtRecord: React.FC = () => {
               errorMessage={litigationPresentationsErrorMessage}
               hasError={litigationPresentationsErrorMessage !== ''}
               textarea
-              rows={7}
+              rows={16}
               required
             />
           </Box>
