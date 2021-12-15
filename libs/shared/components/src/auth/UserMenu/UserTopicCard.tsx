@@ -55,7 +55,7 @@ export const UserTopicCard: React.FC<UserTopicCardProps> = ({
     >
       {!icon ? (
         <UserAvatar
-          color={colorScheme}
+          color={colorScheme === 'blue' ? 'darkBlue' : 'purple'}
           size="medium"
           username={children?.toString()}
         />

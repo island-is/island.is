@@ -11,7 +11,7 @@ interface UserAvatarProps {
   size?: keyof typeof styles.avatarSize
   isDelegation?: boolean
   ariaLabel?: string
-  color?: 'purple' | 'blue'
+  color?: 'purple' | 'blue' | 'darkBlue'
 }
 
 const getInitials = (username?: string) => {
