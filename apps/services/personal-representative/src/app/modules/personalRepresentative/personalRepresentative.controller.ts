@@ -32,7 +32,7 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
-import { AuditService } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representative`
 
@@ -41,6 +41,7 @@ const namespace = `${environment.audit.defaultNamespace}/personal-representative
 @ApiTags('Personal Representative')
 @Controller('v1/personal-representative')
 @ApiBearerAuth()
+@Audit({ namespace })
 export class PersonalRepresentativeController {
   constructor(
     @Inject(PersonalRepresentativeService)
@@ -48,8 +49,8 @@ export class PersonalRepresentativeController {
     private readonly auditService: AuditService,
   ) {}
 
-  /** Gets all persoanal representatives */
-  @ApiOperation({ summary: 'Gets all persoanal representatives' })
+  /** Gets all personal representatives */
+  @ApiOperation({ summary: 'Gets all personal representatives' })
   @Get('all/:includeInvalid?')
   @ApiOkResponse({
     description: 'Personal representative connections with rights',
@@ -60,6 +61,9 @@ export class PersonalRepresentativeController {
     required: false,
     type: 'boolean',
     allowEmptyValue: true,
+  })
+  @Audit<PersonalRepresentativeDTO[]>({
+    resources: (prs) => prs.map((pr) => pr.id ?? ''),
   })
   async getAll(
     @Param('includeInvalid') includeInvalid?: boolean,
@@ -81,6 +85,9 @@ export class PersonalRepresentativeController {
   @ApiOkResponse({
     description: 'Personal representative connection with rights',
     type: PersonalRepresentativeDTO,
+  })
+  @Audit<PersonalRepresentativeDTO>({
+    resources: (pr) => pr.id ?? '',
   })
   async getAsync(@Param('id') id: string): Promise<PersonalRepresentativeDTO> {
     if (!id) {
@@ -118,6 +125,9 @@ export class PersonalRepresentativeController {
     type: 'boolean',
     allowEmptyValue: true,
   })
+  @Audit<PersonalRepresentativeDTO[]>({
+    resources: (prs) => prs.map((pr) => pr.id ?? ''),
+  })
   async getByPersonalRepresentativeAsync(
     nationalId: string,
     includeInvalid?: boolean,
@@ -150,6 +160,9 @@ export class PersonalRepresentativeController {
     required: false,
     type: 'boolean',
     allowEmptyValue: false,
+  })
+  @Audit<PersonalRepresentativeDTO>({
+    resources: (pr) => pr.id ?? '',
   })
   async getByRepresentedPersonAsync(
     nationalId: string,
@@ -202,12 +215,15 @@ export class PersonalRepresentativeController {
     description: 'Created personal representative connections with rights',
     type: PersonalRepresentativeDTO,
   })
+  @Audit<PersonalRepresentativeDTO>({
+    resources: (pr) => pr.id ?? '',
+  })
   async create(
     @Body() personalRepresentative: PersonalRepresentativeDTO,
     @CurrentUser() user: User,
   ): Promise<PersonalRepresentativeDTO | null> {
     if (personalRepresentative.rightCodes.length === 0) {
-      throw new BadRequestException('RightCodes list must be providec')
+      throw new BadRequestException('RightCodes list must be provided')
     }
     if (
       !isNationalIdValid(
