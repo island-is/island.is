@@ -206,6 +206,12 @@ const autoSchemaFile = environment.production
     RegulationsAdminModule.register({
       baseApiUrl: environment.regulationsAdmin.baseApiUrl,
       regulationsApiUrl: environment.regulationsAdmin.regulationsApiUrl,
+      nationalRegistry: {
+        baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
+        user: environment.nationalRegistry.user,
+        password: environment.nationalRegistry.password,
+        host: environment.nationalRegistry.host,
+      },
     }),
     FinanceModule.register({
       ttl: environment.fjarmalDomain.ttl,

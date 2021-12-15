@@ -5,7 +5,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { Authorize, Role, CurrentUser } from '../auth'
-import type { AuthUser } from '../auth'
+import type { User } from '../auth'
 import { VehicleOwnerModel } from './vehicleOwner.model'
 import { VehicleOwnerService } from './vehicleOwner.service'
 
@@ -30,7 +30,7 @@ export class VehicleOwnerResolver {
   //TODO find right name
   @Query(() => VehicleOwnerModel)
   async skilavottordVehiclesFromLocal(
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() user: User,
   ): Promise<VehicleOwnerModel> {
     const res = await this.vehicleOwnerService.findByNationalId(user.nationalId)
     this.logger.warn(
@@ -55,7 +55,7 @@ export class VehicleOwnerResolver {
 
   @Mutation(() => Boolean)
   async createSkilavottordVehicleOwner(
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() user: User,
     @Args('name') name: string,
   ) {
     const vm = new VehicleOwnerModel()

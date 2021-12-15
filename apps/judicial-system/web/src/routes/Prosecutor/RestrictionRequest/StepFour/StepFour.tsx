@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
 import {
@@ -38,6 +37,7 @@ export const StepFour: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
   const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
@@ -47,8 +47,6 @@ export const StepFour: React.FC = () => {
   ] = useState<string>('')
 
   const { formatMessage } = useIntl()
-  const router = useRouter()
-  const id = router.query.id
 
   const { updateCase, autofill } = useCase()
 
@@ -57,39 +55,42 @@ export const StepFour: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const theCase: Case = workingCase
+    if (isCaseUpToDate) {
+      const theCase: Case = workingCase
 
-    autofill(
-      'demands',
-      `${formatMessage(rcReportForm.sections.demands.autofill, {
-        accusedName: theCase.accusedName,
-        accusedNationalId: formatNationalId(theCase.accusedNationalId),
-        extensionSuffix:
-          theCase.parentCase &&
-          isAcceptingCaseDecision(theCase.parentCase.decision)
-            ? ' áframhaldandi'
-            : '',
-        caseType:
-          theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
-        court: theCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
-        requestedValidToDate: formatDate(theCase.requestedValidToDate, 'PPPPp')
-          ?.replace('dagur,', 'dagsins')
-          ?.replace(' kl.', ', kl.'),
-        isolationSuffix:
-          theCase.type === CaseType.CUSTODY &&
-          theCase.requestedCustodyRestrictions?.includes(
-            CaseCustodyRestrictions.ISOLATION,
+      autofill(
+        'demands',
+        `${formatMessage(rcReportForm.sections.demands.autofill, {
+          accusedName: theCase.accusedName,
+          accusedNationalId: formatNationalId(theCase.accusedNationalId),
+          extensionSuffix:
+            theCase.parentCase &&
+            isAcceptingCaseDecision(theCase.parentCase.decision)
+              ? ' áframhaldandi'
+              : '',
+          caseType:
+            theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
+          court: theCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
+          requestedValidToDate: formatDate(
+            theCase.requestedValidToDate,
+            'PPPPp',
           )
-            ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
-            : '',
-      })}`,
-      theCase,
-    )
+            ?.replace('dagur,', 'dagsins')
+            ?.replace(' kl.', ', kl.'),
+          isolationSuffix:
+            theCase.type === CaseType.CUSTODY &&
+            theCase.requestedCustodyRestrictions?.includes(
+              CaseCustodyRestrictions.ISOLATION,
+            )
+              ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
+              : '',
+        })}`,
+        theCase,
+      )
 
-    if (workingCase.id !== '') {
       setWorkingCase(theCase)
     }
-  }, [workingCase.id])
+  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
     <PageLayout

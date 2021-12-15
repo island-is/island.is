@@ -39,10 +39,11 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  isCaseUpToDate: boolean
 }
 
 const OverviewForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
+  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
   const [courtCaseNumberEM, setCourtCaseNumberEM] = useState<string>('')
   const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
     false,
@@ -314,6 +315,7 @@ const OverviewForm: React.FC<Props> = (props) => {
             <DraftConclusionModal
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
+              isCaseUpToDate={isCaseUpToDate}
               isDraftingConclusion={isDraftingConclusion}
               setIsDraftingConclusion={setIsDraftingConclusion}
             />
