@@ -6,19 +6,35 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [
+        "nx-enforce-module-boundaries": [
           "error",
           {
-            "enforceBuildableLibDependency": true,
             "allow": [],
             "depConstraints": [
               {
-                "sourceTag": "*",
-                "onlyDependOnLibsWithTags": ["*"]
+                "sourceTag": "type:app",
+                "onlyDependOnLibsWithTags": ["type:lib", "scope:utils"]
+              },
+              {
+                "sourceTag": "scope:react",
+                "bannedExternalImports": ["*nest*"]
+              },
+              {
+                "sourceTag": "scope:nextjs",
+                "bannedExternalImports": ["*nest*"]
+              },
+              {
+                "sourceTag": "scope:graphql-api",
+                "bannedExternalImports": ["*react*", "*next*"]
+              },
+              {
+                "sourceTag": "scope:rest-api",
+                "bannedExternalImports": ["*react*", "*next*"]
               }
             ]
           }
         ],
+
         "no-restricted-imports": [
           "error",
           {
