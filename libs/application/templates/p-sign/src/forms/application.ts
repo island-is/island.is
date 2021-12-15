@@ -358,6 +358,13 @@ export const getApplication = (): Form => {
                 id: 'userPhoto',
                 title: '',
                 component: 'Photo',
+                condition: (answers) => answers.qualityPhoto === 'no',
+              }),
+              buildCustomField({
+                id: 'qphoto',
+                title: '',
+                component: 'QualityPhoto',
+                condition: (answers) => answers.qualityPhoto === 'yes',
               }),
               buildDividerField({}),
               buildKeyValueField({
