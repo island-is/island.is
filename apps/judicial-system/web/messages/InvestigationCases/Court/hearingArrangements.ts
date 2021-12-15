@@ -2,6 +2,15 @@ import { defineMessage, defineMessages } from 'react-intl'
 
 // Strings for court officials
 export const icHearingArrangements = {
+  comments: {
+    title: defineMessage({
+      id:
+        'judicial.system.investigation_cases:hearing_arrangements.comments.title',
+      defaultMessage: 'Athugasemdir vegna málsmeðferðar',
+      description:
+        'Notaður sem titill í viðvörunarboxi með athugasemdum vegna málsmeðferðar á fyrirtöku skrefi í rannsóknarheimildum.',
+    }),
+  },
   title: defineMessage({
     id: 'judicial.system.investigation_cases:hearing_arrangements.title',
     defaultMessage: 'Fyrirtaka',
@@ -99,6 +108,56 @@ export const icHearingArrangements = {
         defaultMessage: 'Verjandi/talsmaður',
         description:
           'Notaður sem titill fyrir "Verjandi/talsmaður" hlutann á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      tooltip: defineMessage({
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.tooltip',
+        defaultMessage:
+          'Lögmaður sem er valinn hér verður skipaður {defenderType} í þinghaldi og fær sendan úrskurð rafrænt.',
+        description:
+          'Notaður sem upplýsingatexti í upplýsingasvæði við "Verjanda" fyrirsögn á fyrirtöku skrefi í rannsóknarheimildum.',
+      }),
+      nameLabel: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.name_label',
+        defaultMessage: 'Nafn {defenderType}',
+        description:
+          'Notaður sem titill í "Nafn verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      namePlaceholder: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.name_placeholder',
+        defaultMessage: 'Fullt nafn',
+        description:
+          'Notaður sem skýritexti í "Nafn verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      emailLabel: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.email_label',
+        defaultMessage: 'Netfang {defenderType}',
+        description:
+          'Notaður sem titill í "Netfang verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      emailPlaceholder: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.email_placeholder',
+        defaultMessage: 'Netfang',
+        description:
+          'Notaður sem skýritexti í "Netfang verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      phoneNumberLabel: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.phone_number_label',
+        defaultMessage: 'Símanúmer {defenderType}',
+        description:
+          'Notaður sem titill í "Símanúmer verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      phoneNumberPlaceholder: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.phone_number_placeholder',
+        defaultMessage: 'Símanúmer',
+        description:
+          'Notaður sem skýritexti í "Símanúmer verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
       },
     }),
   },

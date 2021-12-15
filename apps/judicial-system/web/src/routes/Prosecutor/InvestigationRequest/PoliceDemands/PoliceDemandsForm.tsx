@@ -57,10 +57,11 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  isCaseUpToDate: boolean
 }
 
 const PoliceDemandsForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
+  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
   const validations: FormSettings = {
     demands: {
       validations: ['empty'],
@@ -84,22 +85,24 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   )
 
   useEffect(() => {
-    if (workingCase) {
-      const courtClaim = courtClaimPrefill[workingCase.type]
-      const courtClaimText = courtClaim
-        ? formatMessage(courtClaim.text, {
-            ...(courtClaim.format?.accusedName && {
-              accusedName: workingCase.accusedName,
-            }),
-            ...(courtClaim.format?.address && {
-              address: workingCase.accusedAddress,
-            }),
-          })
-        : ''
-      autofill('demands', courtClaimText, workingCase)
-      setWorkingCase(workingCase)
+    if (isCaseUpToDate) {
+      if (workingCase) {
+        const courtClaim = courtClaimPrefill[workingCase.type]
+        const courtClaimText = courtClaim
+          ? formatMessage(courtClaim.text, {
+              ...(courtClaim.format?.accusedName && {
+                accusedName: workingCase.accusedName,
+              }),
+              ...(courtClaim.format?.address && {
+                address: workingCase.accusedAddress,
+              }),
+            })
+          : ''
+        autofill('demands', courtClaimText, workingCase)
+        setWorkingCase(workingCase)
+      }
     }
-  }, [workingCase, setWorkingCase, autofill])
+  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
     <>
@@ -120,7 +123,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             name="demands"
             label={formatMessage(icDemands.sections.demands.label)}
             placeholder={formatMessage(icDemands.sections.demands.placeholder)}
-            defaultValue={workingCase.demands}
+            value={workingCase.demands || ''}
             errorMessage={demandsEM}
             hasError={demandsEM !== ''}
             onChange={(event) =>
@@ -164,7 +167,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             placeholder={formatMessage(
               icDemands.sections.lawsBroken.placeholder,
             )}
-            defaultValue={workingCase.lawsBroken}
+            value={workingCase.lawsBroken || ''}
             errorMessage={lawsBrokenEM}
             hasError={lawsBrokenEM !== ''}
             onChange={(event) =>
@@ -206,7 +209,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             placeholder={formatMessage(
               icDemands.sections.legalBasis.placeholder,
             )}
-            defaultValue={workingCase.legalBasis}
+            value={workingCase.legalBasis || ''}
             errorMessage={legalBasisEM}
             hasError={legalBasisEM !== ''}
             onChange={(event) =>

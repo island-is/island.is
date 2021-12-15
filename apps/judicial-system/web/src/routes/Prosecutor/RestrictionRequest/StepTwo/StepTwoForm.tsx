@@ -44,10 +44,6 @@ const StepTwoForm: React.FC<Props> = (props) => {
     transitionLoading,
     user,
   } = props
-  const [, setArrestDateIsValid] = useState(true)
-  const [, setRequestedCourtDateIsValid] = useState<boolean>(
-    workingCase.requestedCourtDate !== null,
-  )
   const [, setSelectedCourt] = useState<string>()
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
@@ -117,11 +113,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
             <DateTime
               name="arrestDate"
               maxDate={new Date()}
-              selectedDate={
-                workingCase.arrestDate
-                  ? new Date(workingCase.arrestDate)
-                  : undefined
-              }
+              selectedDate={workingCase.arrestDate}
               onChange={(date: Date | undefined, valid: boolean) => {
                 newSetAndSendDateToServer(
                   'arrestDate',
@@ -129,7 +121,6 @@ const StepTwoForm: React.FC<Props> = (props) => {
                   valid,
                   workingCase,
                   setWorkingCase,
-                  setArrestDateIsValid,
                   updateCase,
                 )
               }}
@@ -146,7 +137,6 @@ const StepTwoForm: React.FC<Props> = (props) => {
                 valid,
                 workingCase,
                 setWorkingCase,
-                setRequestedCourtDateIsValid,
                 updateCase,
               )
             }
@@ -170,7 +160,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
             placeholder={formatMessage(
               rcRequestedHearingArrangements.sections.translator.placeholder,
             )}
-            defaultValue={workingCase.translator}
+            value={workingCase.translator || ''}
             onChange={(event) => setField(event.target)}
             onBlur={(event) => validateAndSendToServer(event.target)}
           />

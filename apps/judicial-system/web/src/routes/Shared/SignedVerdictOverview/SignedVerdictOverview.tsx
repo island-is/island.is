@@ -1,8 +1,9 @@
 import React, { ReactNode, useContext, useEffect, useState } from 'react'
-import { useMutation } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import formatISO from 'date-fns/formatISO'
 import { ValueType } from 'react-select/src/types'
+import { useIntl } from 'react-intl'
 
 import {
   CaseDecision,
@@ -10,8 +11,11 @@ import {
   CaseType,
   InstitutionType,
   isRestrictionCase,
+  RequestSignatureResponse,
+  SignatureConfirmationResponse,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   FormFooter,
   PageLayout,
@@ -19,18 +23,22 @@ import {
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import {
   parseNull,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { Text } from '@island.is/island-ui/core'
+import {
+  CaseData,
+  ReactSelectOption,
+} from '@island.is/judicial-system-web/src/types'
+import { Box, Text } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 
+import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
 
 export const SignedVerdictOverview: React.FC = () => {
@@ -49,14 +57,85 @@ export const SignedVerdictOverview: React.FC = () => {
     selectedSharingInstitutionId,
     setSelectedSharingInstitutionId,
   ] = useState<ValueType<ReactSelectOption>>()
+  const [
+    requestCourtRecordSignatureResponse,
+    setRequestCourtRecordSignatureResponse,
+  ] = useState<RequestSignatureResponse>()
+  const [
+    courtRecordSignatureConfirmationResponse,
+    setCourtRecordSignatureConfirmationResponse,
+  ] = useState<SignatureConfirmationResponse>()
 
   const router = useRouter()
   const { user } = useContext(UserContext)
-  const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
+  const {
+    updateCase,
+    requestCourtRecordSignature,
+    isRequestingCourtRecordSignature,
+    extendCase,
+    isExtendingCase,
+  } = useCase()
 
-  const [extendCaseMutation, { loading: isCreatingExtension }] = useMutation(
-    ExtendCaseMutation,
+  const [getCourtRecordSignatureConfirmation] = useLazyQuery(
+    CourtRecordSignatureConfirmationQuery,
+    {
+      fetchPolicy: 'no-cache',
+      onCompleted: (courtRecordSignatureConfirmationData) => {
+        if (
+          courtRecordSignatureConfirmationData?.courtRecordSignatureConfirmation
+        ) {
+          setCourtRecordSignatureConfirmationResponse(
+            courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation,
+          )
+          if (workingCase) {
+            reloadCase({ variables: { input: { id: workingCase.id } } })
+          }
+        } else {
+          setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
+        }
+      },
+      onError: (reason) => {
+        console.log(reason)
+        setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
+      },
+    },
   )
+
+  const [reloadCase] = useLazyQuery<CaseData>(CaseQuery, {
+    fetchPolicy: 'no-cache',
+    onCompleted: (caseData) => {
+      if (caseData?.case) {
+        setWorkingCase(caseData.case)
+      }
+    },
+  })
+
+  const handleRequestCourtRecordSignature = async () => {
+    if (!workingCase) {
+      return
+    }
+
+    // Request court record signature to get control code
+    requestCourtRecordSignature(workingCase.id)
+      .then((requestCourtRecordSignatureResponse) => {
+        setRequestCourtRecordSignatureResponse(
+          requestCourtRecordSignatureResponse,
+        )
+        getCourtRecordSignatureConfirmation({
+          variables: {
+            input: {
+              caseId: workingCase.id,
+              documentToken: requestCourtRecordSignatureResponse?.documentToken,
+            },
+          },
+        })
+      })
+      .catch((reason) => {
+        // TODO: Handle error
+        console.log(reason)
+      })
+  }
 
   useEffect(() => {
     document.title = 'Yfirlit staðfestrar kröfu - Réttarvörslugátt'
@@ -73,21 +152,22 @@ export const SignedVerdictOverview: React.FC = () => {
           )
         }
       } else {
-        const { data } = await extendCaseMutation({
-          variables: {
-            input: {
-              id: workingCase.id,
-            },
-          },
-        })
-
-        if (data) {
-          if (isRestrictionCase(workingCase.type)) {
-            router.push(`${Constants.STEP_ONE_ROUTE}/${data.extendCase.id}`)
-          } else {
-            router.push(`${Constants.IC_DEFENDANT_ROUTE}/${data.extendCase.id}`)
-          }
-        }
+        await extendCase(workingCase.id)
+          .then((extendedCase) => {
+            if (extendedCase) {
+              if (isRestrictionCase(extendedCase.type)) {
+                router.push(`${Constants.STEP_ONE_ROUTE}/${extendedCase.id}`)
+              } else {
+                router.push(
+                  `${Constants.IC_DEFENDANT_ROUTE}/${extendedCase.id}`,
+                )
+              }
+            }
+          })
+          .catch((reason) => {
+            // TODO: Handle error
+            console.log(reason)
+          })
       }
     }
   }
@@ -255,11 +335,11 @@ export const SignedVerdictOverview: React.FC = () => {
    * 2. Alternative travel ban accepted and the travel ban end date is in the past
    *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and validToDate < today
    * 3. Accepted and the custody end date is in the past
-   *    - state === ACCEPTED and decision === ACCEPTING and validToDate < today
+   *    - state === ACCEPTED and decision === ACCEPTING/ACCEPTING_PARTIALLY and validToDate < today
    * 5. Alternative travel ban accepted and the travel ban end date is not in the past
    *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and validToDate > today
    * 3. Accepted and the custody end date is not in the past
-   *    - state === ACCEPTED and decision === ACCEPTING and validToDate > today
+   *    - state === ACCEPTED and decision === ACCEPTING/ACCEPTING_PARTIALLY and validToDate > today
    */
 
   return (
@@ -279,6 +359,8 @@ export const SignedVerdictOverview: React.FC = () => {
         shareCaseWithAnotherInstitution={shareCaseWithAnotherInstitution}
         selectedSharingInstitutionId={selectedSharingInstitutionId}
         setSelectedSharingInstitutionId={setSelectedSharingInstitutionId}
+        isRequestingCourtRecordSignature={isRequestingCourtRecordSignature}
+        handleRequestCourtRecordSignature={handleRequestCourtRecordSignature}
       />
       <FormContentContainer isFooter>
         <FormFooter
@@ -300,7 +382,7 @@ export const SignedVerdictOverview: React.FC = () => {
               : 'heimild'
           }`}
           onNextButtonClick={() => handleNextButtonClick()}
-          nextIsLoading={isCreatingExtension}
+          nextIsLoading={isExtendingCase}
           infoBoxText={getInfoText(workingCase)}
         />
       </FormContentContainer>
@@ -310,6 +392,56 @@ export const SignedVerdictOverview: React.FC = () => {
           text={shareCaseModal.text}
           primaryButtonText="Loka glugga"
           handlePrimaryButtonClick={() => setSharedCaseModal(undefined)}
+        />
+      )}
+      {requestCourtRecordSignatureResponse && (
+        <Modal
+          title={
+            !courtRecordSignatureConfirmationResponse
+              ? formatMessage(m.sections.courtRecordSignatureModal.titleSigning)
+              : courtRecordSignatureConfirmationResponse.documentSigned
+              ? formatMessage(m.sections.courtRecordSignatureModal.titleSuccess)
+              : courtRecordSignatureConfirmationResponse.code === 7023 // User cancelled
+              ? formatMessage(
+                  m.sections.courtRecordSignatureModal.titleCanceled,
+                )
+              : formatMessage(m.sections.courtRecordSignatureModal.titleFailure)
+          }
+          text={
+            !courtRecordSignatureConfirmationResponse ? (
+              <>
+                <Box marginBottom={2}>
+                  <Text variant="h2" color="blue400">
+                    {formatMessage(
+                      m.sections.courtRecordSignatureModal.controlCode,
+                      {
+                        controlCode:
+                          requestCourtRecordSignatureResponse?.controlCode,
+                      },
+                    )}
+                  </Text>
+                </Box>
+                <Text>
+                  {formatMessage(
+                    m.sections.courtRecordSignatureModal.controlCodeDisclaimer,
+                  )}
+                </Text>
+              </>
+            ) : courtRecordSignatureConfirmationResponse.documentSigned ? (
+              formatMessage(m.sections.courtRecordSignatureModal.completed)
+            ) : (
+              formatMessage(m.sections.courtRecordSignatureModal.notCompleted)
+            )
+          }
+          primaryButtonText={
+            courtRecordSignatureConfirmationResponse
+              ? formatMessage(m.sections.courtRecordSignatureModal.closeButon)
+              : ''
+          }
+          handlePrimaryButtonClick={() => {
+            setRequestCourtRecordSignatureResponse(undefined)
+            setCourtRecordSignatureConfirmationResponse(undefined)
+          }}
         />
       )}
     </PageLayout>

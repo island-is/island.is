@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 import {
   Column,
   DataType,
@@ -11,13 +11,14 @@ import {
 
 import { RecyclingRequestModel } from '../recyclingRequest'
 
-@ObjectType()
+@ObjectType('RecyclingPartner')
 @Table({ tableName: 'recycling_partner' })
 export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
-  @Field()
+  @Field(() => ID)
   @Column({
     type: DataType.STRING,
     primaryKey: true,
+    field: 'company_id',
   })
   companyId: string
 
@@ -25,6 +26,7 @@ export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    field: 'company_name',
   })
   companyName: string
 
@@ -66,12 +68,16 @@ export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
 
   @Field()
   @CreatedAt
-  @Column
+  @Column({
+    field: 'created_at',
+  })
   createdAt: Date
 
   @Field()
   @UpdatedAt
-  @Column
+  @Column({
+    field: 'updated_at',
+  })
   updatedAt: Date
 
   @Field(() => [RecyclingRequestModel])

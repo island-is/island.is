@@ -670,6 +670,9 @@
     "services-party-letter-registry-api": {
       "tags": []
     },
+    "services-personal-representative": {
+      "tags": []
+    },
     "services-search-indexer": {
       "tags": []
     },
@@ -729,6 +732,9 @@
       "tags": []
     },
     "system-e2e": {
+      "tags": []
+    },
+    "testing-containers": {
       "tags": []
     },
     "testing-fixtures": {

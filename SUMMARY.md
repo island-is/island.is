@@ -101,6 +101,7 @@
     - [Endorsements API](apps/services/endorsements/api/README.md)
   - [Notifications - Hnipp](apps/services/notifications/README.md)
   - [Party Letter Registry](apps/services/party-letter-registry-api/README.md)
+  - [Personal Representative](apps/services/personal-representative/README.md)
   - [Search Indexer](apps/services/search-indexer/README.md)
     - [Elasticsearch Search Dev Server](apps/services/search-indexer/dev-services/README.md)
       - [Search Indexer Migration](apps/services/search-indexer/src/migrate/README.md)
@@ -246,6 +247,7 @@
   - [Shared Translations](libs/shared/translations/README.md)
   - [Types](libs/shared/types/README.md)
   - [Utils](libs/shared/utils/README.md)
+  - [Testing Containers](libs/testing/containers/README.md)
   - [Testing Fixtures](libs/testing/fixtures/README.md)
   - [Testing Nest](libs/testing/nest/README.md)
 

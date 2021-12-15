@@ -15,7 +15,7 @@ import {
 import { RecyclingRequestModel } from '../recyclingRequest'
 import { VehicleOwnerModel } from '../vehicleOwner'
 
-@ObjectType()
+@ObjectType('Vehicle')
 @Table({ tableName: 'vehicle' })
 export class VehicleModel extends Model<VehicleModel> {
   @Field()
@@ -25,7 +25,6 @@ export class VehicleModel extends Model<VehicleModel> {
   })
   vehicleId: string
 
-  //ATH
   @AllowNull(true)
   @ForeignKey(() => VehicleOwnerModel)
   @Column({

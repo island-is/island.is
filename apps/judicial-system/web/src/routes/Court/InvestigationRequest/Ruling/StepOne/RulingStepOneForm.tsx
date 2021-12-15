@@ -37,10 +37,11 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  isCaseUpToDate: boolean
 }
 
 const RulingStepOneForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
+  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
@@ -106,7 +107,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             data-testid="prosecutorDemands"
             name="prosecutorDemands"
             label={formatMessage(m.sections.prosecutorDemands.label)}
-            defaultValue={workingCase.prosecutorDemands}
+            value={workingCase.prosecutorDemands || ''}
             placeholder={formatMessage(m.sections.prosecutorDemands.label)}
             onChange={(event) =>
               removeTabsValidateAndSet(
@@ -150,7 +151,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               data-testid="courtCaseFacts"
               name="courtCaseFacts"
               label={formatMessage(m.sections.courtCaseFacts.label)}
-              defaultValue={workingCase.courtCaseFacts}
+              value={workingCase.courtCaseFacts || ''}
               placeholder={formatMessage(m.sections.courtCaseFacts.placeholder)}
               onChange={(event) =>
                 removeTabsValidateAndSet(
@@ -195,7 +196,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               data-testid="courtLegalArguments"
               name="courtLegalArguments"
               label={formatMessage(m.sections.courtLegalArguments.label)}
-              defaultValue={workingCase.courtLegalArguments}
+              value={workingCase.courtLegalArguments || ''}
               placeholder={formatMessage(
                 m.sections.courtLegalArguments.placeholder,
               )}
@@ -259,6 +260,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            isCaseUpToDate={isCaseUpToDate}
             isRequired
           />
         </Box>
