@@ -25,7 +25,8 @@
     "logform",
     "pg-native",
     "form-data",
-    "csv-parse"
+    "csv-parse",
+    "sequelize"
   ],
   "keepNames": true
 }
