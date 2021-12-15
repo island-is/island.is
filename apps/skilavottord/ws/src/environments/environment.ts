@@ -33,13 +33,6 @@ const devConfig = {
     restUsername: process.env.FJARSYSLA_REST_USER ?? 'xxxxxxxxxxxxx',
     restPassword: process.env.FJARSYSLA_REST_PASS ?? 'xxxxxxxxx',
   },
-  skilavottord: {
-    userList:
-      process.env.SKILAVOTTORD_USER_LIST ??
-      `[{"nationalId":"1111111111","name":"xxxxxxxxxxxxxxxxxxxxx","role":"developer","partnerId":""},
-        {"nationalId":"2222222222","name":"xxxxxxxx","role":"recyclingFund","partnerId":""},
-        {"nationalId":"3333333333","name":"xxxxxxxxxxxxxxxxxx","role":"recyclingCompany","partnerId":""}]`,
-  },
   backendUrl: 'http://localhost:3333',
 }
 
@@ -68,9 +61,6 @@ const prodConfig = {
     restUrl: process.env.FJARSYSLA_REST_URL,
     restUsername: process.env.FJARSYSLA_REST_USER,
     restPassword: process.env.FJARSYSLA_REST_PASS,
-  },
-  skilavottord: {
-    userList: process.env.SKILAVOTTORD_USER_LIST ?? '[]',
   },
   backendUrl: process.env.BACKEND_URL,
 }
