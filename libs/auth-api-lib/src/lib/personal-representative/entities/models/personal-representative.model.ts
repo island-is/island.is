@@ -13,7 +13,6 @@ import { ApiProperty } from '@nestjs/swagger'
 import { PersonalRepresentativeType } from './personal-representative-type.model'
 import { PersonalRepresentativeRight } from './personal-representative-right.model'
 import { PersonalRepresentativeDTO } from '../dto/personal-representative.dto'
-import { PersonalRepresentativeRightTypeDTO } from '../dto/personal-representative-right-type.dto'
 import { PersonalRepresentativeRightType } from './personal-representative-right-type.model'
 
 @Table({

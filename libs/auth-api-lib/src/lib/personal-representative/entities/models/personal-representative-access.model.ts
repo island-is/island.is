@@ -15,9 +15,10 @@ import { ApiProperty } from '@nestjs/swagger'
 export class PersonalRepresentativeAccess extends Model<PersonalRepresentativeAccess> {
   @PrimaryKey
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
     primaryKey: true,
     allowNull: false,
+    defaultValue: DataType.UUIDV4,
   })
   id!: string
 
