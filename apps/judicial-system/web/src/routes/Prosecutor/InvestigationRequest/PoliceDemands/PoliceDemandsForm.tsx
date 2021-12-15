@@ -57,10 +57,11 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  isCaseUpToDate: boolean
 }
 
 const PoliceDemandsForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
+  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
   const validations: FormSettings = {
     demands: {
       validations: ['empty'],
@@ -84,22 +85,24 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   )
 
   useEffect(() => {
-    if (workingCase) {
-      const courtClaim = courtClaimPrefill[workingCase.type]
-      const courtClaimText = courtClaim
-        ? formatMessage(courtClaim.text, {
-            ...(courtClaim.format?.accusedName && {
-              accusedName: workingCase.accusedName,
-            }),
-            ...(courtClaim.format?.address && {
-              address: workingCase.accusedAddress,
-            }),
-          })
-        : ''
-      autofill('demands', courtClaimText, workingCase)
-      setWorkingCase(workingCase)
+    if (isCaseUpToDate) {
+      if (workingCase) {
+        const courtClaim = courtClaimPrefill[workingCase.type]
+        const courtClaimText = courtClaim
+          ? formatMessage(courtClaim.text, {
+              ...(courtClaim.format?.accusedName && {
+                accusedName: workingCase.accusedName,
+              }),
+              ...(courtClaim.format?.address && {
+                address: workingCase.accusedAddress,
+              }),
+            })
+          : ''
+        autofill('demands', courtClaimText, workingCase)
+        setWorkingCase(workingCase)
+      }
     }
-  }, [workingCase, setWorkingCase, autofill])
+  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
     <>
