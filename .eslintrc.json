@@ -6,7 +6,7 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "nx-enforce-module-boundaries": [
+        "@nrwl/nx/enforce-module-boundaries": [
           "error",
           {
             "allow": [],
@@ -17,11 +17,11 @@
               },
               {
                 "sourceTag": "scope:react",
-                "bannedExternalImports": ["*nest*"]
+                "bannedExternalImports": ["*nest*", "*next*"]
               },
               {
                 "sourceTag": "scope:nextjs",
-                "bannedExternalImports": ["*nest*"]
+                "bannedExternalImports": ["*nest*", "react-router*"]
               },
               {
                 "sourceTag": "scope:graphql-api",
