@@ -29,7 +29,7 @@ if [ -f "$PROJECT_ROOT"/"$APP_HOME"/docker-compose.ci.yml ]; then
   mkdir -p .cache/nx/terminalOutputs/
 
   # Running the tests using docker-compose
-  docker-compose -p test-"$APP" -e SERVERSIDE_FEATURES_ON="" "${COMPOSE_FILES[@]}" run --rm sut
+  docker-compose -p test-"$APP" -e SERVERSIDE_FEATURES_ON=\"\" "${COMPOSE_FILES[@]}" run --rm sut
 else
   # Standalone execution of tests when no external dependencies are needed (DBs, queues, etc.)
   SERVERSIDE_FEATURES_ON="" exec yarn run \
