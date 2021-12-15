@@ -8,7 +8,10 @@ const args = argv.string('_').help().argv
 const main = async () => {
   const { AppModule } = require('../' + args._[0])
 
-  const app = await createApp({ appModule: AppModule, name: 'graphql-generator' })
+  const app = await createApp({
+    appModule: AppModule,
+    name: 'graphql-generator',
+  })
   await app.init()
   await app.close()
 }
