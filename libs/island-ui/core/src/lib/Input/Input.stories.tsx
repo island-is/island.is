@@ -90,3 +90,11 @@ ResponsiveBackgroundColor.args = {
   name: 'Test9',
   backgroundColor: ['white', 'blue', 'white', 'blue', 'white'],
 }
+
+export const WithLabelAbove = Template.bind({})
+WithLabelAbove.args = {
+  label: 'This is the above label',
+  placeholder: 'This is the placeholder',
+  name: 'Test10',
+  size: 'xs',
+}
