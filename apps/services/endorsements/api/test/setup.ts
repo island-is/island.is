@@ -59,7 +59,6 @@ export const getAuthenticatedApp = ({
       ),
   })
 
-
 afterAll(async () => {
   if (app && sequelize) {
     await app.close()

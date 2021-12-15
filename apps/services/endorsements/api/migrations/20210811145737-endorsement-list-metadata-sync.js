@@ -17,10 +17,8 @@ module.exports = {
       const newMetadataFields = [
         {
           field: 'fullName',
-        }
+        },
       ]
-
-
     })
   },
 

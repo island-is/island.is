@@ -13,12 +13,10 @@ export class UpdateEndorsementListDto {
   description = ''
 
   @ApiProperty({ type: Date })
-  @IsDate()
   @Type(() => Date)
   closedDate!: Date
 
   @ApiProperty({ type: Date })
-  @IsDate()
   @Type(() => Date)
   openedDate!: Date
 }

@@ -27,9 +27,7 @@ module.exports = {
       {
         ...getGenericEndorsementList(),
         endorsement_meta: ['fullName'],
-        endorsement_metadata: JSON.stringify([
-          { field: 'fullName' },
-        ]),
+        endorsement_metadata: JSON.stringify([{ field: 'fullName' }]),
         tags: ['generalPetition'],
         owner: '0101302399',
         meta: JSON.stringify({
@@ -59,7 +57,6 @@ module.exports = {
         meta: JSON.stringify({
           fullName: faker.fake('{{name.firstName}} {{name.lastName}}'),
           showName: true,
-
         }),
       })),
     ]

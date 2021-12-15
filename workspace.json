@@ -2295,9 +2295,10 @@
           "options": {
             "commands": [
               "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
-              "yarn start application-system-api &",
-              "yarn start application-system-form &",
-              "yarn start services-endorsements-api &"
+              "yarn start application-system-api $NX_OPTIONS &",
+              "yarn start application-system-form $NX_OPTIONS &",
+              "yarn start services-endorsements-api $NX_OPTIONS &",
+              "yarn start api $NX_OPTIONS &"
             ],
             "parallel": true
           }

@@ -5,6 +5,5 @@ import { Type } from 'class-transformer'
 export class ChangeEndorsmentListClosedDateDto {
   @ApiProperty({ type: Date })
   @Type(() => Date)
-  @IsDate()
   closedDate!: Date
 }

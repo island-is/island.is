@@ -4,7 +4,7 @@ import { IsEnum } from 'class-validator'
 // add types for new metadata fields here
 export enum EndorsementMetaField {
   FULL_NAME = 'fullName',
-  SHOW_NAME = 'showName'
+  SHOW_NAME = 'showName',
 }
 
 export class EndorsementMetadataDto {

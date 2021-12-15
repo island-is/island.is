@@ -9,9 +9,7 @@ import { personalInformationModule } from '@island.is/service-portal/settings/pe
 import { accessControlModule } from '@island.is/service-portal/settings/access-control'
 import { educationModule } from '@island.is/service-portal/education'
 import { educationLicenseModule } from '@island.is/service-portal/education-license'
-import {
-  petitionsModule,
-} from '@island.is/service-portal/endorsements'
+import { petitionsModule } from '@island.is/service-portal/endorsements'
 import { educationDegreeModule } from '@island.is/service-portal/education-degree'
 import { educationCareerModule } from '@island.is/service-portal/education-career'
 import { educationStudentAssessmentModule } from '@island.is/service-portal/education-student-assessment'

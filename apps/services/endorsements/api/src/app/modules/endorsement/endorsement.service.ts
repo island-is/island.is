@@ -39,7 +39,6 @@ interface FindUserEndorsementsByTagsInput {
   tags: EndorsementTag[]
 }
 
-
 export interface NationalIdError {
   nationalId: string
   message: string

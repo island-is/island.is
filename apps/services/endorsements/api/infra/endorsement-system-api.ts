@@ -12,8 +12,7 @@ const postgresInfo: PostgresInfo = {
   name: 'services_endorsements_api',
   username: 'services_endorsements_api',
 }
-export const serviceSetup = (services: {
-}): ServiceBuilder<'endorsement-system-api'> =>
+export const serviceSetup = (services: {}): ServiceBuilder<'endorsement-system-api'> =>
   service('endorsement-system-api')
     .image('services-endorsements-api')
     .namespace('endorsement-system')
