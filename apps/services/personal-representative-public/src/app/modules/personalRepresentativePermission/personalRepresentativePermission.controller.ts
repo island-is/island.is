@@ -3,7 +3,6 @@ import {
   PersonalRepresentativeAccess,
   PersonalRepresentativeAccessDTO,
   PersonalRepresentativeAccessService,
-  PersonalRepresentativeDTO,
   PersonalRepresentativeService,
 } from '@island.is/auth-api-lib/personal-representative'
 import {

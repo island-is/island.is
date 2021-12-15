@@ -148,7 +148,6 @@ describe('PersonalRepresentativePermissionController', () => {
       rightCodes: rightTypeList.map((rt) => rt.code),
       personalRepresentativeTypeCode: personalRepresentativeType.code,
     })
-    console.log(personalRep)
   })
 
   describe('Get', () => {
