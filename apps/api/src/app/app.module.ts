@@ -44,6 +44,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -264,6 +265,7 @@ const autoSchemaFile = environment.production
         XRoadConfig,
         NationalRegistryClientConfig,
         AuthPublicApiClientConfig,
+        FeatureFlagConfig,
       ],
     }),
   ],
