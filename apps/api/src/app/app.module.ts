@@ -32,8 +32,6 @@ import { AssetsModule } from '@island.is/api/domains/assets'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
-import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-voter-registry'
-import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { IslykillModule } from '@island.is/api/domains/islykill'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
@@ -41,7 +39,6 @@ import { NationalRegistryClientConfig } from '@island.is/clients/national-regist
 import { AuditModule } from '@island.is/nest/audit'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { ProblemModule } from '@island.is/nest/problem'
-import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
@@ -197,9 +194,6 @@ const autoSchemaFile = environment.production
     EndorsementSystemModule.register({
       baseApiUrl: environment.endorsementSystem.baseApiUrl,
     }),
-    TemporaryVoterRegistryModule.register({
-      baseApiUrl: environment.temporaryVoterRegistry.baseApiUrl,
-    }),
     RegulationsModule.register({
       url: environment.regulationsDomain.url,
     }),
@@ -226,9 +220,6 @@ const autoSchemaFile = environment.production
       callbackBaseUrl: environment.paymentDomain.callbackBaseUrl,
       callbackAdditionUrl: environment.paymentDomain.callbackAdditionUrl,
       arkBaseUrl: environment.paymentDomain.arkBaseUrl,
-    }),
-    PartyLetterRegistryModule.register({
-      baseApiUrl: environment.partyLetterRegistry.baseApiUrl,
     }),
     LicenseServiceModule.register({
       xroad: {
@@ -259,13 +250,6 @@ const autoSchemaFile = environment.production
       basePath: environment.islykill.basePath,
     }),
     ProblemModule,
-    CriminalRecordModule.register({
-      clientConfig: {
-        xroadBaseUrl: environment.xroad.baseUrl,
-        xroadClientId: environment.xroad.clientId,
-        xroadPath: environment.criminalRecord.xroadPath,
-      },
-    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

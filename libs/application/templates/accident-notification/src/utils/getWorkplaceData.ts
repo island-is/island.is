@@ -41,8 +41,11 @@ export const getWorkplaceData = (
   }
 
   const workplaceData = {
-    companyInfo: answers.companyInfo,
-    representitive: answers.representative,
+    companyInfo: getValueViaPath(answers, 'companyInfo') as CompanyInfo,
+    representitive: getValueViaPath(
+      answers,
+      'representative',
+    ) as RepresentativeInfo,
     representitiveMsg: representativeInfo,
   } as WorkplaceData
 

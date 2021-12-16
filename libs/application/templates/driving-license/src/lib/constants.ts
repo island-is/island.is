@@ -6,6 +6,10 @@ export type Events =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }
 
+export enum Roles {
+  APPLICANT = 'applicant',
+}
+
 export enum States {
   DRAFT = 'draft',
   DONE = 'done',

@@ -69,6 +69,14 @@ export const rcHearingArrangements = {
         description:
           'Notaður sem titill fyrir "Verjanda" hlutann á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      tooltip: defineMessage({
+        id:
+          'judicial.system.restriction_cases:hearing_arrangements.defender.tooltip',
+        defaultMessage:
+          'Lögmaður sem er valinn hér verður skipaður verjandi í þinghaldi og fær sendan úrskurð rafrænt.',
+        description:
+          'Notaður sem upplýsingatexti í upplýsingasvæði við "Verjanda" fyrirsögn á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
+      }),
       nameLabel: {
         id:
           'judicial.system.restriction_cases:hearing_arrangements.defender.name_label',
@@ -99,14 +107,14 @@ export const rcHearingArrangements = {
       },
       phoneNumberLabel: {
         id:
-          'judicial.system.investigation_cases:hearing_arrangements.defender.phone_number_label',
+          'judicial.system.restriction_cases:hearing_arrangements.defender.phone_number_label',
         defaultMessage: 'Símanúmer verjanda',
         description:
           'Notaður sem titill í "Símanúmer verjanda" textaboxi á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       phoneNumberPlaceholder: {
         id:
-          'judicial.system.investigation_cases:hearing_arrangements.defender.phone_number_placeholder',
+          'judicial.system.restriction_cases:hearing_arrangements.defender.phone_number_placeholder',
         defaultMessage: 'Símanúmer',
         description:
           'Notaður sem skýritexti í "Símanúmer verjanda" textaboxi á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',

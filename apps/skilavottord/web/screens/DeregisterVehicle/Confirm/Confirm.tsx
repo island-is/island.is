@@ -10,7 +10,7 @@ import {
   Button,
   Hidden,
   Inline,
-  LoadingIcon,
+  LoadingDots,
   Stack,
   Text,
   toast,
@@ -29,6 +29,8 @@ import {
 import {
   Mutation,
   Query,
+  RequestErrors,
+  RequestStatus,
   Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 
@@ -99,7 +101,7 @@ const Confirm: FC = () => {
   const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
 
   useEffect(() => {
-    if (mutationResponse?.status) {
+    if ((mutationResponse as RequestStatus)?.status) {
       router.replace(routes.baseRoute).then(() => toast.success(t.success))
     }
   }, [mutationResponse, router, routes, t.success])
@@ -126,14 +128,18 @@ const Confirm: FC = () => {
     return <NotFound />
   }
 
-  if (mutationError || mutationLoading || mutationResponse?.message) {
+  if (
+    mutationError ||
+    mutationLoading ||
+    (mutationResponse as RequestErrors)?.message
+  ) {
     return (
       <ProcessPageLayout processType={'company'} activeSection={1}>
         {mutationLoading ? (
           <Box textAlign="center">
             <Stack space={4}>
               <Text variant="h1">{t.titles.loading}</Text>
-              <LoadingIcon size={50} />
+              <LoadingDots large />
             </Stack>
           </Box>
         ) : (
@@ -178,7 +184,7 @@ const Confirm: FC = () => {
           <Box>
             {loading ? (
               <Box textAlign="center">
-                <LoadingIcon size={50} />
+                <LoadingDots large />
               </Box>
             ) : (
               <Stack space={4}>

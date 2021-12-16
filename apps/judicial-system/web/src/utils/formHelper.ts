@@ -148,11 +148,8 @@ export const newSetAndSendDateToServer = (
   isValid: boolean,
   theCase: Case,
   setCase: (value: React.SetStateAction<Case>) => void,
-  setIsValid: (value: React.SetStateAction<boolean>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
-  setIsValid(isValid)
-
   if (!isValid) {
     return
   }
