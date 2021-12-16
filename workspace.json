@@ -2313,6 +2313,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
+              "nx run services-endorsements-api:schemas/build-openapi-internal $NX_OPTIONS",
               "nx run application-templates-general-petition:schemas/openapi-generator $NX_OPTIONS"
             ],
             "parallel": false
