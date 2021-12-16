@@ -25,6 +25,10 @@ module.exports = {
       tags: {
         type: Sequelize.ARRAY(Sequelize.STRING),
       },
+      validation_rules: {
+        type: Sequelize.JSONB,
+        defaultValue: '[]',
+      },
       owner: {
         type: Sequelize.STRING,
         allowNull: false,
