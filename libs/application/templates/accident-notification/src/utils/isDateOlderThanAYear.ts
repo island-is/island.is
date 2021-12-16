@@ -1,4 +1,4 @@
-import { FormValue } from '@island.is/application/core'
+import { FormValue, getValueViaPath } from '@island.is/application/core'
 import { AccidentNotificationAnswers } from '..'
 
 const getDateAYearBack = () => {
@@ -10,7 +10,9 @@ const getDateAYearBack = () => {
 
 export const isDateOlderThanAYear = (answers: FormValue) => {
   const aYearAgo = getDateAYearBack()
-  const date = (answers as AccidentNotificationAnswers).accidentDetails
-    ?.dateOfAccident
+  const date = getValueViaPath(
+    answers,
+    'accidentDetails.dateOfAccident',
+  ) as string
   return !!date && new Date(date).getTime() < aYearAgo.getTime()
 }

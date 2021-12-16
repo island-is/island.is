@@ -25,7 +25,8 @@
     "logform",
     "pg-native",
     "form-data",
-    "@island.is/login"
+    "@island.is/login",
+    "sequelize"
   ],
   "keepNames": true
 }
