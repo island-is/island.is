@@ -50,23 +50,6 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
   const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
 
-  const validations: FormSettings = {
-    prosecutorDemands: {
-      validations: ['empty'],
-    },
-    ruling: {
-      validations: ['empty'],
-    },
-    courtCaseFacts: {
-      validations: ['empty'],
-    },
-    courtLegalArguments: {
-      validations: ['empty'],
-    },
-  }
-
-  useCaseFormHelper(workingCase, setWorkingCase, validations)
-
   return (
     <>
       <FormContentContainer>

@@ -7,6 +7,7 @@ import {
   PersonalRepresentativeRight,
   PersonalRepresentativeDTO,
   PersonalRepresentativeRightType,
+  PaginatedPersonalRepresentativeDto,
 } from '@island.is/auth-api-lib/personal-representative'
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -170,11 +171,11 @@ describe('PersonalRepresentativeController', () => {
 
       // Test get personal rep
       const response = await server
-        .get(`/v1/personal-representative/all/`)
+        .get(`/v1/personal-representative/all/false?limit=1`)
         .expect(200)
 
-      const responseData: PersonalRepresentativeDTO[] = response.body
-      expect(responseData[0]).toMatchObject(personalRep)
+      const responseData: PaginatedPersonalRepresentativeDto = response.body
+      expect(responseData.data[0]).toMatchObject(personalRep)
     })
   })
 

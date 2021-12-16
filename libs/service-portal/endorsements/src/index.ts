@@ -7,19 +7,6 @@ import {
 } from '@island.is/service-portal/core'
 import { EndorsementsScope } from '@island.is/auth/scopes'
 
-export const endorsementsModule: ServicePortalModule = {
-  name: 'Meðmæli',
-  widgets: () => [],
-  routes: ({ userInfo }) => [
-    {
-      name: m.endorsements,
-      path: ServicePortalPath.Petitions,
-      enabled: userInfo.scopes.includes(EndorsementsScope.main),
-      render: () => lazy(() => import('./screens/Endorsements')),
-    },
-  ],
-}
-
 export const petitionsModule: ServicePortalModule = {
   name: 'Almennir undirskriftalistar',
   widgets: () => [],

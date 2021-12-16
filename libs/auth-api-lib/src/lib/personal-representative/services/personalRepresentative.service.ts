@@ -8,6 +8,8 @@ import { PersonalRepresentative } from '../entities/models/personal-representati
 import { PersonalRepresentativeRight } from '../entities/models/personal-representative-right.model'
 import { PersonalRepresentativeRightType } from '../entities/models/personal-representative-right-type.model'
 import { PersonalRepresentativeDTO } from '../entities/dto/personal-representative.dto'
+import { PaginatedPersonalRepresentativeDto } from '../entities/dto/paginated-personal-representative.dto'
+import { paginate } from '@island.is/nest/pagination'
 
 @Injectable()
 export class PersonalRepresentativeService {
@@ -21,49 +23,76 @@ export class PersonalRepresentativeService {
     private sequelize: Sequelize,
   ) {}
 
-  private validToClause = {
-    [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
-  }
   /** Get's all personal repreasentatives  */
-  async getAllAsync(
+  async getMany(
     includeInvalid: boolean,
-  ): Promise<PersonalRepresentativeDTO[]> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    query: any,
+  ): Promise<PaginatedPersonalRepresentativeDto> {
+    const validToClause = {
+      [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
+    }
+    const validFromClause = {
+      [Op.or]: { [Op.eq]: null, [Op.lt]: new Date() },
+    }
     const whereClause: WhereOptions = includeInvalid
       ? {}
-      : { validTo: this.validToClause }
-    const personalRepresentatives = await this.personalRepresentativeModel.findAll(
-      {
-        where: whereClause,
+      : { validTo: validToClause }
+
+    const whereClauseRights: WhereOptions = {}
+    if (!includeInvalid) {
+      whereClause['validTo'] = validToClause
+      whereClauseRights['validFrom'] = validFromClause
+      whereClauseRights['validTo'] = validToClause
+    }
+
+    const result = await paginate({
+      Model: this.personalRepresentativeModel,
+      limit: query.limit || 10,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'id',
+      orderOption: [['id', 'DESC']],
+      where: whereClause,
+    })
+
+    // Since paginate in sequlize does not support inclue correctly we need to fetch the rights array separately
+    for await (const rec of result.data) {
+      rec.rights = await this.personalRepresentativeRightModel.findAll({
+        where: { personalRepresentativeId: rec.id },
         include: [
           {
-            model: PersonalRepresentativeRight,
+            model: PersonalRepresentativeRightType,
             required: true,
-            include: [
-              {
-                model: PersonalRepresentativeRightType,
-                required: true,
-                where: whereClause,
-              },
-            ],
+            where: whereClauseRights,
           },
         ],
-      },
-    )
-    return personalRepresentatives.map((pr) => pr.toDTO())
+      })
+    }
+
+    result.data = result.data.map((rec) => rec.toDTO())
+    return result
   }
 
   /** Get's all personal repreasentative connections for personal representative  */
-  async getByPersonalRepresentativeAsync(
+  async getByPersonalRepresentative(
     nationalIdPersonalRepresentative: string,
     includeInvalid: boolean,
   ): Promise<PersonalRepresentativeDTO[]> {
+    const validToClause = {
+      [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
+    }
+    const validFromClause = {
+      [Op.or]: { [Op.eq]: null, [Op.lt]: new Date() },
+    }
     const whereClause: WhereOptions = {
       nationalIdPersonalRepresentative: nationalIdPersonalRepresentative,
     }
     const whereClauseRights: WhereOptions = {}
     if (!includeInvalid) {
-      whereClause['validTo'] = this.validToClause
-      whereClauseRights['validTo'] = this.validToClause
+      whereClause['validTo'] = validToClause
+      whereClauseRights['validFrom'] = validFromClause
+      whereClauseRights['validTo'] = validToClause
     }
     const personalRepresentatives = await this.personalRepresentativeModel.findAll(
       {
@@ -87,17 +116,24 @@ export class PersonalRepresentativeService {
   }
 
   /** Get's all personal repreasentative connections for personal representative  */
-  async getPersonalRepresentativeByRepresentedPersonAsync(
+  async getPersonalRepresentativeByRepresentedPerson(
     nationalIdRepresentedPerson: string,
     includeInvalid: boolean,
   ): Promise<PersonalRepresentativeDTO | null> {
+    const validToClause = {
+      [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
+    }
+    const validFromClause = {
+      [Op.or]: { [Op.eq]: null, [Op.lt]: new Date() },
+    }
     const whereClause: WhereOptions = {
       nationalIdRepresentedPerson: nationalIdRepresentedPerson,
     }
     const whereClauseRights: WhereOptions = {}
     if (!includeInvalid) {
-      whereClause['validTo'] = this.validToClause
-      whereClauseRights['validTo'] = this.validToClause
+      whereClause['validTo'] = validToClause
+      whereClauseRights['validFrom'] = validFromClause
+      whereClauseRights['validTo'] = validToClause
     }
     const personalRepresentatives = await this.personalRepresentativeModel.findAll(
       {
@@ -131,82 +167,8 @@ export class PersonalRepresentativeService {
     return personalRepresentatives[0].toDTO()
   }
 
-  /** Get's all personal repreasentatives and count */
-  async getAndCountAllAsync(
-    page: number,
-    count: number,
-    includeInvalid: boolean,
-  ): Promise<{
-    rows: PersonalRepresentativeDTO[]
-    count: number
-  }> {
-    page--
-    const offset = page * count
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const whereClause: any = includeInvalid
-      ? {}
-      : { validTo: this.validToClause }
-    const personalRepresentatives = await this.personalRepresentativeModel.findAndCountAll(
-      {
-        limit: count,
-        offset: offset,
-        where: whereClause,
-        include: [
-          {
-            model: PersonalRepresentativeRight,
-            required: true,
-            where: whereClause,
-          },
-        ],
-      },
-    )
-    return {
-      rows: personalRepresentatives.rows.map((pr) => pr.toDTO()),
-      count: personalRepresentatives.count,
-    }
-  }
-
-  /** Get's all personal repreasentatives and count by searchstring */
-  async findAsync(
-    searchString: string,
-    page: number,
-    count: number,
-  ): Promise<{
-    rows: PersonalRepresentativeDTO[]
-    count: number
-  }> {
-    page--
-    const offset = page * count
-    const personalRepresentatives = await this.personalRepresentativeModel.findAndCountAll(
-      {
-        limit: count,
-        offset: offset,
-        include: [
-          {
-            model: PersonalRepresentativeRight,
-            required: true,
-          },
-        ],
-        where: {
-          [Op.or]: [
-            {
-              name: { [Op.like]: searchString },
-            },
-            {
-              code: { [Op.like]: searchString },
-            },
-          ],
-        },
-      },
-    )
-    return {
-      rows: personalRepresentatives.rows.map((pr) => pr.toDTO()),
-      count: personalRepresentatives.count,
-    }
-  }
-
   /** Get's a personal repreasentatives by id */
-  async getPersonalRepresentativeAsync(
+  async getPersonalRepresentative(
     id: string,
   ): Promise<PersonalRepresentativeDTO | null> {
     this.logger.debug(
@@ -227,7 +189,7 @@ export class PersonalRepresentativeService {
   }
 
   /** Create a new personal repreasentative */
-  async createAsync(
+  async create(
     personalRepresentative: PersonalRepresentativeDTO,
   ): Promise<PersonalRepresentativeDTO | null> {
     // Create new personal representative connection
@@ -271,7 +233,7 @@ export class PersonalRepresentativeService {
   }
 
   /** Delete a personal repreasentative */
-  async deleteAsync(id: string): Promise<number> {
+  async delete(id: string): Promise<number> {
     this.logger.debug('Deleting a personal representative with id: ', id)
     await this.personalRepresentativeRightModel.destroy({
       where: { personalRepresentativeId: id },
