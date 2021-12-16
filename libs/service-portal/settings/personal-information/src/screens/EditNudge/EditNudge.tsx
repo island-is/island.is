@@ -8,7 +8,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { gql, useMutation } from '@apollo/client'
-import { useUserProfileAndIslykill } from '@island.is/service-portal/graphql'
+import { useUserProfile } from '@island.is/service-portal/graphql'
 import { Link, Redirect } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -29,7 +29,7 @@ const UpdateIslykillSettings = gql`
 
 export const EditNudge: ServicePortalModuleComponent = () => {
   useNamespaces('sp.settings')
-  const { data: settings } = useUserProfileAndIslykill()
+  const { data: settings } = useUserProfile()
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
     'passive',
   )
@@ -47,7 +47,7 @@ export const EditNudge: ServicePortalModuleComponent = () => {
         variables: {
           input: {
             email: settings?.email,
-            mobile: settings?.mobile,
+            mobile: settings?.mobilePhoneNumber,
             canNudge: formData.nudge,
           },
         },

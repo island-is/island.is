@@ -12,7 +12,7 @@ import {
   useUpdateUserProfile,
   useCreateIslykillSettings,
   useUserProfile,
-  useUserProfileAndIslykill,
+  useGetIslykillSettingsQuery,
   UPDATE_ISLYKILL_SETTINGS,
 } from '@island.is/service-portal/graphql'
 import React, { useState } from 'react'
@@ -23,7 +23,7 @@ import { OnboardingStepper } from './OnboardingStepper'
 import { EmailStep } from './Steps/EmailStep'
 import { FormSubmittedStep } from './Steps/FormSubmittedStep'
 import { LanguageStep } from './Steps/LanguageStep'
-import { PhoneStep } from './Islykill/PhoneStep'
+import { PhoneStep } from './Steps/PhoneStep'
 import { SubmitFormStep } from './Steps/SubmitFormStep'
 import {
   servicePortalCloseOnBoardingModal,
@@ -59,7 +59,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const [updateIslykill] = useMutation(UPDATE_ISLYKILL_SETTINGS)
 
   const { data: userProfile } = useUserProfile()
-  const { data: settings } = useUserProfileAndIslykill()
+  const { data: settings } = useGetIslykillSettingsQuery()
 
   const { changeLanguage } = useNamespaces()
   const { pathname } = useLocation()
@@ -101,7 +101,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
           locale,
         })
       }
-      if (settings?.noUserFound) {
+      if (settings?.getIslykillSettings?.noUserFound) {
         await createIslykillSettings({
           email,
           mobile: `+354-${mobilePhoneNumber}`,

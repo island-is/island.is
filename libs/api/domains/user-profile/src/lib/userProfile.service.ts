@@ -45,6 +45,8 @@ export class UserProfileService {
       return {
         mobilePhoneNumber: islyklarData?.mobile,
         email: islyklarData?.email,
+        canNudge: islyklarData?.canNudge,
+        bankInfo: islyklarData?.bankInfo,
       }
     } catch (e) {
       return null // Do nothing to prevent blocking of getUserProfile.
@@ -63,14 +65,12 @@ export class UserProfileService {
 
       return {
         ...profile,
+
         // Temporary solution while we still run the old user profile service.
-        mobilePhoneNumber:
-          islyklarData?.mobilePhoneNumber ?? profile.mobilePhoneNumber,
-        email: islyklarData?.email ?? profile.email,
-        mobilePhoneNumberVerified: islyklarData?.mobilePhoneNumber
-          ? true
-          : profile.mobilePhoneNumberVerified,
-        emailVerified: islyklarData?.email ? true : profile.emailVerified,
+        mobilePhoneNumber: islyklarData?.mobilePhoneNumber,
+        email: islyklarData?.email,
+        canNudge: islyklarData?.canNudge,
+        bankInfo: islyklarData?.bankInfo,
       }
     } catch (error) {
       if (error.status === 404) return null

@@ -10,14 +10,14 @@ import {
 import { Link, Redirect } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { gql, useMutation } from '@apollo/client'
-import { useUserProfileAndIslykill } from '@island.is/service-portal/graphql'
+import { useUserProfile } from '@island.is/service-portal/graphql'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
 import React, { useEffect, useState } from 'react'
-import { SimplePhoneForm } from '../../components/UserOnboardingModal/Islykill/PhoneForm'
+import { PhoneForm } from '../../components/Forms/PhoneForm/PhoneForm'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 const UpdateIslykillSettings = gql`
@@ -32,21 +32,21 @@ interface PhoneFormData {
   tel: string
 }
 
-export const EditPhoneNumber: ServicePortalModuleComponent = () => {
+export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
   const [tel, setTel] = useState('')
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
     'passive',
   )
 
-  const { data: settings } = useUserProfileAndIslykill()
+  const { data: settings } = useUserProfile()
   const [updateIslykill, { loading, error }] = useMutation(
     UpdateIslykillSettings,
   )
   const { formatMessage } = useLocale()
 
   useEffect(() => {
-    if (settings?.mobile) setTel(settings?.mobile)
+    if (settings?.mobilePhoneNumber) setTel(settings?.mobilePhoneNumber)
   }, [settings])
 
   const submitFormData = async (formData: PhoneFormData) => {
@@ -104,21 +104,18 @@ export const EditPhoneNumber: ServicePortalModuleComponent = () => {
           </GridColumn>
         </GridRow>
       </Box>
-      <SimplePhoneForm
+      <PhoneForm
         tel={phoneNumber?.nationalNumber ? `${phoneNumber.nationalNumber}` : ''}
+        natReg={userInfo.profile.nationalId}
         renderBackButton={() => (
           <Link to={ServicePortalPath.SettingsPersonalInformation}>
             <Button variant="ghost">{formatMessage(m.goBack)}</Button>
           </Link>
         )}
-        renderSubmitButton={() => (
-          <Button type="submit" variant="primary" icon="arrowForward">
-            {formatMessage({
-              id: 'sp.settings:save-changes',
-              defaultMessage: 'Vista breytingar',
-            })}
-          </Button>
-        )}
+        submitButtonText={formatMessage({
+          id: 'sp.settings:save-changes',
+          defaultMessage: 'Vista breytingar',
+        })}
         onSubmit={submitFormData}
       />
       {status !== 'passive' && !loading && (
