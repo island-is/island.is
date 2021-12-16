@@ -14,9 +14,9 @@ export class FeatureFlagGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const featureFlag = this.reflector.get<Features | undefined>(
+    const featureFlag = this.reflector.getAllAndOverride<Features | undefined>(
       FEATURE_FLAG_KEY,
-      context.getHandler(),
+      [context.getHandler(), context.getClass()],
     )
     if (!featureFlag) {
       return true

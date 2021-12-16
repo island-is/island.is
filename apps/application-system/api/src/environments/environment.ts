@@ -79,33 +79,8 @@ const devConfig = {
       username: process.env.XROAD_PAYMENT_USER,
       password: process.env.XROAD_PAYMENT_PASSWORD,
     },
-    partyLetter: {
-      partyLetterRegistryApiBasePath: 'http://localhost:4251',
-      endorsementsApiBasePath: 'http://localhost:4246',
-      defaultClosedDate: new Date(
-        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
-          '2021-09-15T00:00:00.000Z',
-      ),
-    },
     generalPetition: {
       endorsementsApiBasePath: 'http://localhost:4246',
-    },
-    partyApplication: {
-      defaultClosedDate: new Date(
-        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
-          '2021-09-15T00:00:00.000Z',
-      ),
-      endorsementsApiBasePath: 'http://localhost:4246',
-      options: {
-        adminEmails: {
-          partyApplicationRvkSouth: 's@kogk.is',
-          partyApplicationRvkNorth: 's@kogk.is',
-          partyApplicationSouthWest: 's@kogk.is',
-          partyApplicationNorthWest: 's@kogk.is',
-          partyApplicationNorth: 's@kogk.is',
-          partyApplicationSouth: 's@kogk.is',
-        },
-      },
     },
     paymentScheduleConfig: {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
@@ -216,40 +191,8 @@ const prodConfig = {
       username: process.env.XROAD_PAYMENT_USER,
       password: process.env.XROAD_PAYMENT_PASSWORD,
     },
-    partyLetter: {
-      partyLetterRegistryApiBasePath:
-        process.env.PARTY_LETTER_REGISTRY_API_BASE_PATH,
-      endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
-      defaultClosedDate: new Date(
-        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
-          '2021-09-15T00:00:00.000Z',
-      ),
-    },
     generalPetition: {
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
-    },
-    partyApplication: {
-      defaultClosedDate: new Date(
-        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
-          '2021-09-15T00:00:00.000Z',
-      ),
-      endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
-      options: {
-        adminEmails: {
-          partyApplicationRvkSouth:
-            process.env.PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL,
-          partyApplicationRvkNorth:
-            process.env.PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL,
-          partyApplicationSouthWest:
-            process.env.PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL,
-          partyApplicationNorthWest:
-            process.env.PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL,
-          partyApplicationNorth:
-            process.env.PARTY_APPLICATION_NORTH_ADMIN_EMAIL,
-          partyApplicationSouth:
-            process.env.PARTY_APPLICATION_SOUTH_ADMIN_EMAIL,
-        },
-      },
     },
     paymentScheduleConfig: {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,

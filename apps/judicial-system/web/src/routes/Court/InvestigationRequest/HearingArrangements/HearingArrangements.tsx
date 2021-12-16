@@ -21,6 +21,7 @@ const HearingArrangements = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
 
@@ -36,18 +37,24 @@ const HearingArrangements = () => {
   }, [])
 
   useEffect(() => {
-    const theCase = workingCase
+    if (isCaseUpToDate) {
+      const theCase = workingCase
 
-    if (theCase.requestedCourtDate) {
-      autofill('courtDate', theCase.requestedCourtDate, theCase)
+      if (theCase.requestedCourtDate) {
+        autofill('courtDate', theCase.requestedCourtDate, theCase)
+      }
+
+      if (theCase.defenderName) {
+        autofill(
+          'sessionArrangements',
+          SessionArrangements.ALL_PRESENT,
+          theCase,
+        )
+      }
+
+      setWorkingCase(theCase)
     }
-
-    if (theCase.defenderName) {
-      autofill('sessionArrangements', SessionArrangements.ALL_PRESENT, theCase)
-    }
-
-    setWorkingCase(theCase)
-  }, [])
+  }, [autofill, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
     <PageLayout
