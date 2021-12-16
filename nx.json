@@ -203,9 +203,6 @@
     "application-templates-driving-assessment-approval": {
       "tags": []
     },
-    "application-templates-driving-lessons": {
-      "tags": []
-    },
     "application-templates-driving-license": {
       "tags": []
     },
@@ -650,6 +647,9 @@
       "tags": []
     },
     "services-notifications": {
+      "tags": []
+    },
+    "services-personal-representative": {
       "tags": []
     },
     "services-search-indexer": {
