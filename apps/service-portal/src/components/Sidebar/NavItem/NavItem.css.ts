@@ -37,6 +37,10 @@ export const text = style({
   color: theme.color.blue600,
 })
 
+export const icon = style({
+  pointerEvents: 'none',
+})
+
 export const dot = style({
   left: -35,
   width: theme.spacing['1'],

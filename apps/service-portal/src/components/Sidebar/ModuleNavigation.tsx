@@ -29,8 +29,8 @@ const ModuleNavigation: FC<Props> = ({
   const [expand, setExpand] = useState(false)
   const [hover, setHover] = useState(false)
   const [{ sidebarState }] = useStore()
-
   const { pathname } = useLocation()
+
   const isModuleActive =
     (nav.path &&
       nav.path !== ServicePortalPath.MinarSidurRoot &&
@@ -52,7 +52,6 @@ const ModuleNavigation: FC<Props> = ({
   const navChildren = nav?.children?.filter((child) => !child.navHide)
   const navArray = Array.isArray(navChildren) && navChildren.length > 0
   const collapsed = sidebarState === 'closed'
-  const displaySubNavModal = navArray && collapsed
 
   return (
     <Box
@@ -64,7 +63,7 @@ const ModuleNavigation: FC<Props> = ({
         collapsed && setHover(false)
       }}
     >
-      {displaySubNavModal && (
+      {navArray && collapsed && (
         <SubNavModal active={hover}>
           <SubNav
             collapsed
