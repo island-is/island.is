@@ -13,10 +13,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { icDemands } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -62,27 +59,13 @@ interface Props {
 
 const PoliceDemandsForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
-  const validations: FormSettings = {
-    demands: {
-      validations: ['empty'],
-    },
-    lawsBroken: {
-      validations: ['empty'],
-    },
-    legalBasis: {
-      validations: ['empty'],
-    },
-  }
+
   const { formatMessage } = useIntl()
   const { updateCase, autofill } = useCase()
+
   const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
   const [legalBasisEM, setLegalBasisEM] = useState<string>('')
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
 
   useEffect(() => {
     if (isCaseUpToDate) {
@@ -243,7 +226,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.IC_POLICE_REPORT_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isValid}
+          nextIsDisabled={!isPoliceDemandsStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />
       </FormContentContainer>
