@@ -1,5 +1,6 @@
 import { AuthScope } from '@island.is/auth/scopes'
 import {
+  PaginatedPersonalRepresentativeRightTypeDto,
   PersonalRepresentativeRightType,
   PersonalRepresentativeRightTypeDTO,
   PersonalRepresentativeRightTypeService,
@@ -22,6 +23,7 @@ import {
   Post,
   Put,
   Inject,
+  Query,
 } from '@nestjs/common'
 import {
   ApiOperation,
@@ -33,6 +35,7 @@ import {
 import { User } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
 import { AuditService, Audit } from '@island.is/nest/audit'
+import { PaginationDto } from '@island.is/nest/pagination'
 
 const namespace = `${environment.audit.defaultNamespace}/right-types`
 
@@ -54,16 +57,14 @@ export class RightTypesController {
     summary: 'Get a list of all right types for personal representatives',
   })
   @Get()
-  @ApiOkResponse({ type: PersonalRepresentativeRightType })
-  @Audit<PersonalRepresentativeRightType[]>({
-    resources: (types) => types.map((type) => type.code),
+  @ApiOkResponse({ type: PaginatedPersonalRepresentativeRightTypeDto })
+  @Audit<PaginatedPersonalRepresentativeRightTypeDto>({
+    resources: (pgData) => pgData.data.map((type) => type.code),
   })
-  async getAll(): Promise<PersonalRepresentativeRightType[]> {
-    const rightTypes = await this.rightTypesService.getAll()
-
-    if (!rightTypes) {
-      throw new NotFoundException('No right types found')
-    }
+  async getAll(
+    @Query() query: PaginationDto,
+  ): Promise<PaginatedPersonalRepresentativeRightTypeDto> {
+    const rightTypes = await this.rightTypesService.getMany(query)
 
     return rightTypes
   }

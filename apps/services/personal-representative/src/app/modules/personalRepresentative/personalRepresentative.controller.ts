@@ -1,5 +1,6 @@
 import { AuthScope } from '@island.is/auth/scopes'
 import {
+  PaginatedPersonalRepresentativeDto,
   PersonalRepresentativeDTO,
   PersonalRepresentativeService,
 } from '@island.is/auth-api-lib/personal-representative'
@@ -14,6 +15,7 @@ import {
   Param,
   Post,
   Inject,
+  Query,
 } from '@nestjs/common'
 import {
   ApiOperation,
@@ -33,6 +35,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
 import { Audit, AuditService } from '@island.is/nest/audit'
+import { PaginationDto } from '@island.is/nest/pagination'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representative`
 
@@ -62,19 +65,17 @@ export class PersonalRepresentativeController {
     type: 'boolean',
     allowEmptyValue: true,
   })
-  @Audit<PersonalRepresentativeDTO[]>({
-    resources: (prs) => prs.map((pr) => pr.id ?? ''),
+  @Audit<PaginatedPersonalRepresentativeDto>({
+    resources: (pgData) => pgData.data.map((pr) => pr.id ?? ''),
   })
   async getAll(
+    @Query() query: PaginationDto,
     @Param('includeInvalid') includeInvalid?: boolean,
-  ): Promise<PersonalRepresentativeDTO[]> {
-    const personalRepresentatives = await this.prService.getAll(
+  ): Promise<PaginatedPersonalRepresentativeDto> {
+    const personalRepresentatives = await this.prService.getMany(
       includeInvalid ? (includeInvalid as boolean) : false,
+      query,
     )
-
-    if (!personalRepresentatives) {
-      throw new NotFoundException('No personal representatives found')
-    }
 
     return personalRepresentatives
   }
