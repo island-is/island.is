@@ -17,7 +17,6 @@ export interface LinkProps extends NextLinkProps {
   onClick?: () => void
   pureChildren?: boolean
   newTab?: boolean
-  openAsExternalLink?: boolean
 }
 
 // Next link that can handle external urls
@@ -36,7 +35,6 @@ export const Link: React.FC<LinkProps> = ({
   underlineVisibility = 'hover',
   pureChildren,
   newTab = false,
-  openAsExternalLink,
   ...linkProps
 }) => {
   const isInternal = !shouldLinkOpenInNewWindow(href as string)
@@ -61,7 +59,7 @@ export const Link: React.FC<LinkProps> = ({
     )
   }
 
-  if (isInternal && !openAsExternalLink) {
+  if (isInternal) {
     return (
       <NextLink
         href={href}

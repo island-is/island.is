@@ -62,7 +62,7 @@ export const ProcessEntryLinkButton: FC<
       src={processLink}
     />
   ) : (
-    <Link href={processLink} prefetch={false} openAsExternalLink skipTab>
+    <Link href={processLink} newTab skipTab>
       {button}
     </Link>
   )
