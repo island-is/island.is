@@ -74,9 +74,11 @@ export const badge = styleVariants({
 })
 
 export const lock = style({
+  pointerEvents: 'none',
   marginRight: 4,
 })
 
 export const subLock = style({
+  pointerEvents: 'none',
   marginRight: 5,
 })

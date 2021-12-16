@@ -4,7 +4,6 @@ import React, { FC } from 'react'
 import * as styles from './NavItem.css'
 import { Link } from 'react-router-dom'
 import { useStore } from '../../../store/stateProvider'
-import cn from 'classnames'
 
 interface Props {
   path?: ServicePortalPath
@@ -92,7 +91,7 @@ const NavItemContent: FC<Props> = ({
           icon="lockClosed"
           size="small"
           color="blue600"
-          className={cn(styles.lock, styles.icon)}
+          className={styles.lock}
         />
       )}
     </Box>
