@@ -56,6 +56,7 @@ export class PersonalRepresentativeService {
       where: whereClause,
     })
 
+    // Since paginate in sequlize does not support inclue correctly we need to fetch the rights array separately
     for await (const rec of result.data) {
       rec.rights = await this.personalRepresentativeRightModel.findAll({
         where: { personalRepresentativeId: rec.id },
