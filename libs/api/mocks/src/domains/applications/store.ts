@@ -9,7 +9,6 @@ export const store = createStore(() => {
     .list(10)
     .concat([application({ applicant: '0000000000' })])
     .concat([application({ applicant: '0000000000', typeId: 'ParentalLeave' })])
-    .concat([application({ applicant: '0000000000', typeId: 'PartyLetter' })])
   const familyMembers: NationalRegistryFamilyMember[] = [
     {
       nationalId: '1234567890',

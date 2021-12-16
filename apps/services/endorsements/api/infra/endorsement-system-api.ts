@@ -12,9 +12,7 @@ const postgresInfo: PostgresInfo = {
   name: 'services_endorsements_api',
   username: 'services_endorsements_api',
 }
-export const serviceSetup = (services: {
-  servicesTemporaryVoterRegistryApi: ServiceBuilder<'services-temporary-voter-registry-api'>
-}): ServiceBuilder<'endorsement-system-api'> =>
+export const serviceSetup = (services: {}): ServiceBuilder<'endorsement-system-api'> =>
   service('endorsement-system-api')
     .image('services-endorsements-api')
     .namespace('endorsement-system')
@@ -34,9 +32,6 @@ export const serviceSetup = (services: {
     })
     .env({
       EMAIL_REGION: 'eu-west-1',
-      TEMPORARY_VOTER_REGISTRY_API_URL: ref(
-        (h) => `http://${h.svc(services.servicesTemporaryVoterRegistryApi)}`,
-      ),
       EMAIL_FROM_NAME: {
         dev: 'devland.is',
         staging: 'devland.is',
@@ -48,10 +43,7 @@ export const serviceSetup = (services: {
         prod: 'noreply@island.is',
       },
     })
-    .xroad(Base, Client, NationalRegistry)
     .secrets({
-      ACCESS_GROUP_DMR:
-        '/k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS',
       SOFFIA_HOST_URL: '/k8s/endorsement-system-api/SOFFIA_HOST_URL',
       SOFFIA_SOAP_URL: '/k8s/endorsement-system-api/SOFFIA_SOAP_URL',
       SOFFIA_USER: settings.SOFFIA_USER,
