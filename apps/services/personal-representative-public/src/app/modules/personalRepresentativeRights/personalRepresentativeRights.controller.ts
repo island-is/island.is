@@ -23,8 +23,8 @@ import {
   ApiTags,
   ApiParam,
 } from '@nestjs/swagger'
-import { AuditService } from '@island.is/nest/audit'
-import { environment } from '../../../environments/'
+import { Audit, AuditService } from '@island.is/nest/audit'
+import { environment } from '../../../environments'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -33,14 +33,15 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 
-const namespace = `${environment.audit.defaultNamespace}/personal-representative-permission`
+const namespace = `${environment.audit.defaultNamespace}/personal-representative-rights`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AuthScope.readPersonalRepresentative)
-@ApiTags('Personal Representative Permission')
-@Controller('v1/personal-representative-permission')
+@ApiTags('Personal Representative Public - Rights')
+@Controller('v1/personal-representative-rights')
 @ApiBearerAuth()
-export class PersonalRepresentativePermissionController {
+@Audit({ namespace })
+export class PersonalRepresentativeRightsController {
   constructor(
     @Inject(PersonalRepresentativeService)
     private readonly prService: PersonalRepresentativeService,
@@ -61,7 +62,10 @@ export class PersonalRepresentativePermissionController {
     type: PersonalRepresentativeDTO,
   })
   @ApiParam({ name: 'nationalId', required: true, type: String })
-  async getByPersonalRepresentativeAsync(
+  @Audit<PersonalRepresentativeDTO>({
+    resources: (pr) => pr.id ?? '',
+  })
+  async getByPersonalRepresentative(
     @Param('nationalId') nationalId: string,
     @CurrentUser() user: User,
   ): Promise<PersonalRepresentativeDTO[]> {
@@ -76,7 +80,7 @@ export class PersonalRepresentativePermissionController {
         namespace,
         resources: nationalId,
       },
-      this.prService.getByPersonalRepresentativeAsync(nationalId, false),
+      this.prService.getByPersonalRepresentative(nationalId, false),
     )
   }
 
@@ -91,7 +95,10 @@ export class PersonalRepresentativePermissionController {
     description: 'Access log file',
     type: PersonalRepresentativeAccess,
   })
-  async logAccessByPersonalRepresentativeAsync(
+  @Audit<PersonalRepresentativeAccess>({
+    resources: (log) => log.id ?? '',
+  })
+  async logAccessByPersonalRepresentative(
     @Body() personalRepresentativeAccess: PersonalRepresentativeAccessDTO,
     @CurrentUser() user: User,
   ): Promise<PersonalRepresentativeAccess | null> {
@@ -108,7 +115,7 @@ export class PersonalRepresentativePermissionController {
           personalRepresentativeAccess.nationalIdPersonalRepresentative,
         meta: { fields: Object.keys(personalRepresentativeAccess) },
       },
-      this.prAccessService.logAccessAsync(personalRepresentativeAccess),
+      this.prAccessService.logAccess(personalRepresentativeAccess),
     )
   }
 }

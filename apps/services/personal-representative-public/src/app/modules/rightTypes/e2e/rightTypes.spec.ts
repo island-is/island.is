@@ -1,3 +1,4 @@
+import { deserialize } from './../../../../../../../../libs/contentful-extensions/translation/src/utils/deserialize'
 import { setupWithAuth, setupWithoutAuth } from '../../../../../test/setup'
 import request from 'supertest'
 import { TestApp } from '@island.is/testing/nest'
@@ -13,7 +14,7 @@ const user = createCurrentUser({
   scope: [AuthScope.readPersonalRepresentative],
 })
 
-describe('PermissionTypeController - Without Auth', () => {
+describe('RightTypesTypeController - Without Auth', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
 
@@ -27,12 +28,12 @@ describe('PermissionTypeController - Without Auth', () => {
     await app.cleanUp()
   })
 
-  it('Get v1/permission-type  should fail and return 403 error if bearer is missing', async () => {
-    await server.get(`/v1/permission-type`).expect(403)
+  it('Get v1/right-types  should fail and return 403 error if bearer is missing', async () => {
+    await server.get(`/v1/right-types`).expect(403)
   })
 })
 
-describe('PermissionTypeController', () => {
+describe('RightTypesTypeController', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
   let rightService: PersonalRepresentativeRightTypeService
@@ -63,7 +64,7 @@ describe('PermissionTypeController', () => {
       force: true,
     })
     for (const rightType of rightTypeList) {
-      await rightService.createAsync({
+      await rightService.create({
         code: rightType.code,
         description: rightType.description,
       })
@@ -71,17 +72,29 @@ describe('PermissionTypeController', () => {
   })
 
   describe('Get', () => {
-    it('Get v1/permission-type should get all permission types', async () => {
+    it('Get v1/right-types should get all permission types', async () => {
       // Test get personal rep
-      const response = await server.get(`/v1/permission-type`).expect(200)
+      const response = await server.get(`/v1/right-types`).expect(200)
 
-      expect(response.body).toMatchObject(rightTypeList)
+      const rightTypesResult: {
+        code: string
+        description: string
+      } = response.body.data.map((type: PersonalRepresentativeRightType) => {
+        return {
+          code: type.code,
+          description: type.description,
+        }
+      })
+      console.log(rightTypesResult)
+      console.log(rightTypeList)
+
+      expect(rightTypesResult).toMatchObject(rightTypeList)
     })
 
-    it('Get v1/permission-type should get permission type by code', async () => {
+    it('Get v1/right-types should get permission type by code', async () => {
       // Test get personal rep
       const response = await server
-        .get(`/v1/permission-type/${rightTypeList[0].code}`)
+        .get(`/v1/right-types/${rightTypeList[0].code}`)
         .expect(200)
 
       expect(response.body).toMatchObject(rightTypeList[0])

@@ -28,7 +28,7 @@ export class PersonalRepresentativeRightTypeService {
       after: query.after,
       before: query.before,
       primaryKeyField: 'code',
-      orderOption: [['code', 'DESC']],
+      orderOption: [['code', 'ASC']],
       where: {},
     })
   }
@@ -45,7 +45,7 @@ export class PersonalRepresentativeRightTypeService {
       after: query.after,
       before: query.before,
       primaryKeyField: 'code',
-      orderOption: [['code', 'DESC']],
+      orderOption: [['code', 'ASC']],
       where: {
         $or: [
           {

@@ -52,7 +52,7 @@ export class PersonalRepresentativeService {
       after: query.after,
       before: query.before,
       primaryKeyField: 'id',
-      orderOption: [['id', 'DESC']],
+      orderOption: [['id', 'ASC']],
       where: whereClause,
     })
 

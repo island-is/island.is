@@ -44,11 +44,11 @@ describe('PersonalRepresentativePermissionController - Without Auth', () => {
     await app.cleanUp()
   })
 
-  it('Get v1/personal-representative-permission/{nationalId} should fail and return 403 error if bearer is missing', async () => {
+  it('Get v1/personal-representative-rights/{nationalId} should fail and return 403 error if bearer is missing', async () => {
     // Test get personal rep
     const response = await server
       .get(
-        `/v1/personal-representative-permission/${simpleRequestData.nationalIdPersonalRepresentative}/`,
+        `/v1/personal-representative-rights/${simpleRequestData.nationalIdPersonalRepresentative}/`,
       )
       .expect(403)
 
@@ -113,24 +113,24 @@ describe('PersonalRepresentativePermissionController', () => {
     })
     // Create right types
     for (const rightType of rightTypeList) {
-      await rightService.createAsync({
+      await rightService.create({
         code: rightType.code,
         description: rightType.description,
       })
     }
     // Creating personal rep
-    personalRep = await prService.createAsync({
+    personalRep = await prService.create({
       ...simpleRequestData,
       rightCodes: rightTypeList.map((rt) => rt.code),
     })
   })
 
   describe('Get', () => {
-    it('Get v1/personal-representative-permission/{nationalId} should get personal rep connections', async () => {
+    it('Get v1/personal-representative-rights/{nationalId} should get personal rep connections', async () => {
       // Test get personal rep
       const response = await server
         .get(
-          `/v1/personal-representative-permission/${simpleRequestData.nationalIdPersonalRepresentative}/`,
+          `/v1/personal-representative-rights/${simpleRequestData.nationalIdPersonalRepresentative}/`,
         )
         .expect(200)
 
@@ -144,14 +144,14 @@ describe('PersonalRepresentativePermissionController', () => {
   })
 
   describe('Post', () => {
-    it('Post v1/personal-representative-permission/loc-access should create access log', async () => {
+    it('Post v1/personal-representative-rights/loc-access should create access log', async () => {
       const simpleAccessData: PersonalRepresentativeAccessDTO = {
         nationalIdPersonalRepresentative: '1234567890',
         nationalIdRepresentedPerson: '1234567891',
       }
       // Test get personal rep
       const response = await server
-        .post('/v1/personal-representative-permission/log-access')
+        .post('/v1/personal-representative-rights/log-access')
         .send(simpleAccessData)
         .expect(201)
 

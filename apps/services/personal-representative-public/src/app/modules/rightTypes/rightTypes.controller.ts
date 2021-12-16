@@ -1,5 +1,6 @@
 import { AuthScope } from '@island.is/auth/scopes'
 import {
+  PaginatedPersonalRepresentativeRightTypeDto,
   PersonalRepresentativeRightType,
   PersonalRepresentativeRightTypeService,
 } from '@island.is/auth-api-lib/personal-representative'
@@ -12,6 +13,7 @@ import {
   NotFoundException,
   Param,
   Inject,
+  Query,
 } from '@nestjs/common'
 import {
   ApiOperation,
@@ -19,13 +21,19 @@ import {
   ApiBearerAuth,
   ApiTags,
 } from '@nestjs/swagger'
+import { Audit } from '@island.is/nest/audit'
+import { PaginationDto } from '@island.is/nest/pagination'
+import { environment } from '../../../environments'
+
+const namespace = `${environment.audit.defaultNamespace}/right-types`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AuthScope.readPersonalRepresentative)
-@ApiTags('Personal Representative External - Permission Types')
-@Controller('v1/permission-type')
+@ApiTags('Personal Representative Public - Right Types')
+@Controller('v1/right-types')
 @ApiBearerAuth()
-export class PermissionTypeController {
+@Audit({ namespace })
+export class RightTypesController {
   constructor(
     @Inject(PersonalRepresentativeRightTypeService)
     private readonly rightTypesService: PersonalRepresentativeRightTypeService,
@@ -36,13 +44,14 @@ export class PermissionTypeController {
     summary: 'Get a list of all right types for personal representatives',
   })
   @Get()
-  @ApiOkResponse({ type: PersonalRepresentativeRightType })
-  async getAll(): Promise<PersonalRepresentativeRightType[]> {
-    const rightTypes = await this.rightTypesService.getAllAsync()
-
-    if (!rightTypes) {
-      throw new NotFoundException('No right types found')
-    }
+  @ApiOkResponse({ type: PaginatedPersonalRepresentativeRightTypeDto })
+  @Audit<PaginatedPersonalRepresentativeRightTypeDto>({
+    resources: (pgData) => pgData.data.map((type) => type.code),
+  })
+  async getMany(
+    @Query() query: PaginationDto,
+  ): Promise<PaginatedPersonalRepresentativeRightTypeDto> {
+    const rightTypes = await this.rightTypesService.getMany(query)
 
     return rightTypes
   }
@@ -53,14 +62,14 @@ export class PermissionTypeController {
   })
   @Get(':code')
   @ApiOkResponse({ type: PersonalRepresentativeRightType })
-  async getAsync(
+  async get(
     @Param('code') code: string,
   ): Promise<PersonalRepresentativeRightType> {
     if (!code) {
       throw new BadRequestException('Code needs to be provided')
     }
 
-    const rightType = await this.rightTypesService.getPersonalRepresentativeRightTypeAsync(
+    const rightType = await this.rightTypesService.getPersonalRepresentativeRightType(
       code,
     )
 

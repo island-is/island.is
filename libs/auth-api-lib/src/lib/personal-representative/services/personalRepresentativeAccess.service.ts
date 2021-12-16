@@ -17,12 +17,12 @@ export class PersonalRepresentativeAccessService {
   ) {}
 
   /** Get's all personal repreasentatives  */
-  async getAllAsync(): Promise<PersonalRepresentativeAccess[]> {
+  async getMany(): Promise<PersonalRepresentativeAccess[]> {
     return await this.personalRepresentativeAccessModel.findAll()
   }
 
   /** Get's all personal repreasentative connections for personal representative  */
-  async getByPersonalRepresentativeAsync(
+  async getByPersonalRepresentative(
     nationalIdPersonalRepresentative: string,
   ): Promise<PersonalRepresentativeAccess[]> {
     const whereClause: WhereOptions = {
@@ -34,7 +34,7 @@ export class PersonalRepresentativeAccessService {
   }
 
   /** Get's all personal repreasentative connections for personal representative  */
-  async getByRepresentedPersonAsync(
+  async getByRepresentedPerson(
     nationalIdRepresentedPerson: string,
   ): Promise<PersonalRepresentativeAccess[] | null> {
     const whereClause: WhereOptions = {
@@ -45,24 +45,8 @@ export class PersonalRepresentativeAccessService {
     })
   }
 
-  /** Get's all personal repreasentatives and count */
-  async getAndCountAllAsync(
-    page: number,
-    count: number,
-  ): Promise<{
-    rows: PersonalRepresentativeAccess[]
-    count: number
-  }> {
-    page--
-    const offset = page * count
-    return await this.personalRepresentativeAccessModel.findAndCountAll({
-      limit: count,
-      offset: offset,
-    })
-  }
-
   /** Create a new personal repreasentative access record */
-  async logAccessAsync(
+  async logAccess(
     personalRepresentativeAccess: PersonalRepresentativeAccessDTO,
   ): Promise<PersonalRepresentativeAccess | null> {
     // Create new personal representative connection
