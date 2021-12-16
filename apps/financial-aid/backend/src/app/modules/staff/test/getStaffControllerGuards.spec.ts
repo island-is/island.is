@@ -1,6 +1,7 @@
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { CanActivate } from '@nestjs/common'
 import { RolesGuard } from '../../../guards/roles.guard'
+import { StaffGuard } from '../../../guards/staff.guard'
 
 import { StaffController } from '../staff.controller'
 
@@ -13,6 +14,7 @@ describe('StaffController - Get guards', () => {
   })
 
   it('should have two guards', () => {
+    console.log(guards[1])
     expect(guards).toHaveLength(2)
   })
 
@@ -38,5 +40,92 @@ describe('StaffController - Get guards', () => {
     it('should have RolesGuard as quard 2', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
+  })
+})
+
+describe('StaffController - Gets staff for municipality guard', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let guards: any[]
+
+  beforeEach(() => {
+    guards = Reflect.getMetadata(
+      '__guards__',
+      StaffController.prototype.getStaffForMunicipality,
+    )
+  })
+  it('should have one guards', () => {
+    expect(guards).toHaveLength(1)
+  })
+
+  // describe('StaffGuard', () => {
+  //   let guard: CanActivate
+
+  //   beforeEach(() => {
+  //     guard = new guards[0]()
+  //   })
+
+  //   it('should have StaffGuard as quard 1', () => {
+  //     console.log(guard)
+  //     expect(guard).toBeInstanceOf(StaffGuard)
+  //   })
+  // })
+})
+
+describe('StaffController -  Counts users for municipality guard', () => {
+  let guards: any[]
+
+  beforeEach(() => {
+    guards = Reflect.getMetadata(
+      '__guards__',
+      StaffController.prototype.numberOfUsersForMunicipality,
+    )
+  })
+  it('should have one guards', () => {
+    expect(guards).toHaveLength(1)
+  })
+})
+
+describe('StaffController - creates staff guard', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let guards: any[]
+
+  beforeEach(() => {
+    guards = Reflect.getMetadata(
+      '__guards__',
+      StaffController.prototype.createStaff,
+    )
+  })
+  it('should have one guards', () => {
+    expect(guards).toHaveLength(1)
+  })
+})
+
+describe('StaffController - Gets admin users by municipality id guard', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let guards: any[]
+
+  beforeEach(() => {
+    guards = Reflect.getMetadata(
+      '__guards__',
+      StaffController.prototype.getUsers,
+    )
+  })
+  it('should have one guards', () => {
+    expect(guards).toHaveLength(1)
+  })
+})
+
+describe('StaffController - Gets supervisors guard', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let guards: any[]
+
+  beforeEach(() => {
+    guards = Reflect.getMetadata(
+      '__guards__',
+      StaffController.prototype.getSupervisors,
+    )
+  })
+  it('should have one guards', () => {
+    expect(guards).toHaveLength(1)
   })
 })
