@@ -34,7 +34,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
       user.institution?.id === workingCase.creatingProsecutor?.institution?.id
 
     const isCourtRoleWithAccess =
-      user.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
+      user.role === UserRole.JUDGE || user.role === UserRole.REGISTRAR
 
     if (
       !isAppealGracePeriodExpired &&
