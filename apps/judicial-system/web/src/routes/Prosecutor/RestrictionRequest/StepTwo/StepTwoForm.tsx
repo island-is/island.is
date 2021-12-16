@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
 
@@ -29,6 +29,7 @@ interface Props {
   courts: Institution[]
   handleNextButtonClick: () => Promise<void>
   onProsecutorChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
+  onCourtChange: (courtId: string) => boolean
   transitionLoading: boolean
   user?: User
 }
@@ -41,10 +42,10 @@ const StepTwoForm: React.FC<Props> = (props) => {
     courts,
     handleNextButtonClick,
     onProsecutorChange,
+    onCourtChange,
     transitionLoading,
     user,
   } = props
-  const [, setSelectedCourt] = useState<string>()
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
   const {
@@ -96,9 +97,8 @@ const StepTwoForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <SelectCourt
             workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            setSelectedCourt={setSelectedCourt}
             courts={courts}
+            onChange={onCourtChange}
           />
         </Box>
         {!workingCase.parentCase && (
