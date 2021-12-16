@@ -67,7 +67,6 @@ const municipalitySeeds = `[
   }
 ]`
 
-
 module.exports = {
   up: (queryInterface, Sequelize) => {
     var model = queryInterface.sequelize.define('staff', {
