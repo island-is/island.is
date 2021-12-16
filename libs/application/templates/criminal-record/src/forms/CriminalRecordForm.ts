@@ -12,7 +12,6 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
-import { ApiActions } from '../shared'
 
 export const CriminalRecordForm: Form = buildForm({
   id: 'CriminalRecordFormDraft',
