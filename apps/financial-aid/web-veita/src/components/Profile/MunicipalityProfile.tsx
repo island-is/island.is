@@ -98,7 +98,7 @@ const MunicipalityProfile = ({
     switch (value) {
       case AidTypeHomeCircumstances.OWNPLACE:
         return [
-          TextTableItem(headline, 'Eigin húsnæði'),
+          TextTableItem(headline, 'Eigið húsnæði'),
           TextTableItem(smallText, municipality.individualAid.ownPlace),
           TextTableItem(smallText, municipality.cohabitationAid.ownPlace),
         ]

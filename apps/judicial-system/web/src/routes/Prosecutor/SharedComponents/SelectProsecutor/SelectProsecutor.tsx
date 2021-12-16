@@ -19,10 +19,14 @@ const SelectProsecutor: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const [selectedProsecutor, setSelectedProsecutor] = useState<
     ValueType<Option>
-  >({
-    label: workingCase.prosecutor?.name || '',
-    value: workingCase.prosecutor?.id || '',
-  })
+  >(
+    workingCase.prosecutor
+      ? {
+          label: workingCase.prosecutor.name,
+          value: workingCase.prosecutor.id,
+        }
+      : null,
+  )
 
   return (
     <>
@@ -37,6 +41,7 @@ const SelectProsecutor: React.FC<Props> = (props) => {
       <Select
         name="prosecutor"
         label={formatMessage(m.label)}
+        placeholder={formatMessage(m.placeholder)}
         value={selectedProsecutor}
         options={prosecutors}
         onChange={(selectedOption) => {

@@ -5,11 +5,12 @@ import { HttpModule, HttpService } from '@nestjs/common'
 
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { SamgongustofaService } from '../samgongustofa.service'
 import {
   RecyclingRequestService,
   RecyclingRequestModel,
 } from '../../recyclingRequest'
+
+import { SamgongustofaService } from '../samgongustofa.service'
 import { MockData } from './mock-data'
 
 const recyclingRequestModel = {
