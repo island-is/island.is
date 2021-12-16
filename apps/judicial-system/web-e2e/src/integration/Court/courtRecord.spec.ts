@@ -9,6 +9,7 @@ describe('/domur/thingbok/:id', () => {
     const caseDataAddition: Case = {
       ...caseData,
       prosecutor: makeProsecutor(),
+      courtDate: '2021-12-16T10:50:04.033Z',
       demands:
         'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     }
@@ -27,7 +28,6 @@ describe('/domur/thingbok/:id', () => {
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('continueButton').should('be.disabled')
-    cy.getByTestid('courtStartDate-time').type('1222')
     cy.getByTestid('courtLocation').type('í Dúfnahólum 10')
     cy.getByTestid('litigationPresentations').type('lorem')
     cy.getByTestid('continueButton').should('not.be.disabled')

@@ -17,7 +17,7 @@ import { UserSpouse } from './models/userSpouse.model'
 @Scopes('@samband.is/internal')
 @Resolver(() => Person)
 @Audit({ namespace: '@island.is/api/national-registry-x-road' })
-export class NationalRegistryXRoadResolver {
+export class MunicipalityNationalRegistryResolver {
   constructor(
     private nationalRegistryXRoadService: NationalRegistryXRoadService,
   ) {}
