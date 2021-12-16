@@ -20,17 +20,17 @@ interface RecyclingCompanyForm {
     e?: BaseSyntheticEvent<object, any, any> | undefined,
   ) => Promise<void>
   onCancel: () => void
-  onDelete?: () => void
   errors: DeepMap<FieldValues, FieldError>
   control: Control<FieldValues>
+  editView?: boolean
 }
 
 const RecyclingCompanyForm: FC<RecyclingCompanyForm> = ({
   onSubmit,
   onCancel,
-  onDelete,
   control,
   errors,
+  editView = false,
 }) => {
   const {
     t: { recyclingCompanies: t },
@@ -61,7 +61,7 @@ const RecyclingCompanyForm: FC<RecyclingCompanyForm> = ({
                   },
                 }}
                 error={errors?.companyId?.message}
-                disabled={!!onDelete}
+                disabled={editView}
                 backgroundColor="blue"
               />
             </GridColumn>
@@ -221,9 +221,9 @@ const RecyclingCompanyForm: FC<RecyclingCompanyForm> = ({
       </GridContainer>
 
       <Box display="flex" justifyContent="spaceBetween" marginTop={7}>
-        {!!onDelete ? (
-          <Button variant="ghost" colorScheme="destructive" onClick={onDelete}>
-            {t.recyclingCompany.form.buttons.delete}
+        {editView ? (
+          <Button variant="ghost" onClick={onCancel} preTextIcon="arrowBack">
+            {t.recyclingCompany.form.buttons.goBack}
           </Button>
         ) : (
           <Button variant="ghost" onClick={onCancel}>

@@ -26,6 +26,7 @@ import {
   Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
+import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 import { RecyclingCompanyImage } from './components'
 
@@ -66,7 +67,7 @@ const RecyclingCompanies: FC = () => {
 
   const handleUpdate = (id: string) => {
     router.push({
-      pathname: routes.recyclingCompanies.edit,
+      pathname: BASE_PATH + routes.recyclingCompanies.edit, // without BASE-PATH it changes the whole route, probably some bug
       query: { id },
     })
   }

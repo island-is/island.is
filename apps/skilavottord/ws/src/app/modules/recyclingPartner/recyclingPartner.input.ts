@@ -59,9 +59,3 @@ export class UpdateRecyclingPartnerInput {
   @Field()
   active!: boolean
 }
-
-@InputType()
-export class DeleteRecyclingPartnerInput {
-  @Field()
-  companyId!: string
-}

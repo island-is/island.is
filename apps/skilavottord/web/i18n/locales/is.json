@@ -435,7 +435,7 @@
           "cancel": "Hætta við",
           "continue": "Halda áfram",
           "confirm": "Staðfesta",
-          "delete": "Eyða"
+          "goBack": "Til baka"
         }
       }
     }

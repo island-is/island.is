@@ -4,7 +4,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import { RecyclingPartnerModel } from './recyclingPartner.model'
 import {
   CreateRecyclingPartnerInput,
-  DeleteRecyclingPartnerInput,
   UpdateRecyclingPartnerInput,
 } from './recyclingPartner.input'
 
@@ -50,12 +49,5 @@ export class RecyclingPartnerService {
       },
     )
     return accessControl
-  }
-
-  async delete({ companyId }: DeleteRecyclingPartnerInput): Promise<Boolean> {
-    const affectedRows = await this.recyclingPartnerModel.destroy({
-      where: { companyId },
-    })
-    return affectedRows === 1
   }
 }

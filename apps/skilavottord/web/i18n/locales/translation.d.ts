@@ -59,7 +59,7 @@ export interface FormButtons {
   cancel: string
   continue: string
   confirm: string
-  delete?: string
+  goBack?: string
 }
 
 export interface ModalInputs {
@@ -784,7 +784,7 @@ const typeMap: any = {
       { json: 'cancel', js: 'cancel', typ: '' },
       { json: 'continue', js: 'continue', typ: '' },
       { json: 'confirm', js: 'confirm', typ: '' },
-      { json: 'delete', js: 'delete', typ: u(undefined, '') },
+      { json: 'goBack', js: 'goBack', typ: u(undefined, '') },
     ],
     false,
   ),

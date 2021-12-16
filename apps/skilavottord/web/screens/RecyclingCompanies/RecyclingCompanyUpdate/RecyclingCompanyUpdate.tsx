@@ -60,14 +60,6 @@ const UpdateSkilavottordRecyclingPartnerMutation = gql`
   }
 `
 
-const DeleteSkilavottordRecyclingPartnerMutation = gql`
-  mutation deleteSkilavottordRecyclingPartnerMutation(
-    $input: DeleteRecyclingPartnerInput!
-  ) {
-    deleteSkilavottordRecyclingPartner(input: $input)
-  }
-`
-
 const RecyclingCompanyUpdate: FC = () => {
   const { user } = useContext(UserContext)
   const router = useRouter()
@@ -98,17 +90,6 @@ const RecyclingCompanyUpdate: FC = () => {
     },
   )
 
-  const [deleteSkilavottordRecyclingPartner] = useMutation(
-    DeleteSkilavottordRecyclingPartnerMutation,
-    {
-      refetchQueries: [
-        {
-          query: SkilavottordAllRecyclingPartnersQuery,
-        },
-      ],
-    },
-  )
-
   const { control, errors, reset, handleSubmit } = useForm({
     mode: 'onChange',
   })
@@ -122,7 +103,7 @@ const RecyclingCompanyUpdate: FC = () => {
     return <NotFound />
   }
 
-  if (!data || error) {
+  if (!loading && (!data || error)) {
     return <NotFound />
   }
 
@@ -136,17 +117,6 @@ const RecyclingCompanyUpdate: FC = () => {
       })
     }
   })
-
-  const handleDeleteRecyclingPartner = async () => {
-    const { errors } = await deleteSkilavottordRecyclingPartner({
-      variables: { input: { companyId: id } },
-    })
-    if (!errors) {
-      router.push(routes.recyclingCompanies.baseRoute).then(() => {
-        toast.success(t.recyclingCompany.view.deleted)
-      })
-    }
-  }
 
   const handleCancel = () => router.push(routes.recyclingCompanies.baseRoute)
 
@@ -231,9 +201,9 @@ const RecyclingCompanyUpdate: FC = () => {
           <RecyclingCompanyForm
             onSubmit={handleUpdateRecyclingPartner}
             onCancel={handleCancel}
-            onDelete={handleDeleteRecyclingPartner}
             control={control}
             errors={errors}
+            editView
           />
         )}
       </Box>

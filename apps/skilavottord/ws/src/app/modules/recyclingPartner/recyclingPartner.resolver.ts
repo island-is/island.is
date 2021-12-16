@@ -7,7 +7,6 @@ import { RecyclingPartnerModel } from './recyclingPartner.model'
 import { RecyclingPartnerService } from './recyclingPartner.service'
 import {
   CreateRecyclingPartnerInput,
-  DeleteRecyclingPartnerInput,
   RecyclingPartnerInput,
   UpdateRecyclingPartnerInput,
 } from './recyclingPartner.input'
@@ -70,19 +69,5 @@ export class RecyclingPartnerResolver {
       throw new NotFoundException("Recycling partner doesn't exists")
     }
     return this.recyclingPartnerService.update(input)
-  }
-
-  @Mutation(() => Boolean)
-  async deleteSkilavottordRecyclingPartner(
-    @Args('input', { type: () => DeleteRecyclingPartnerInput })
-    input: DeleteRecyclingPartnerInput,
-  ) {
-    const recyclingPartner = await this.recyclingPartnerService.findOne(
-      input.companyId,
-    )
-    if (!recyclingPartner) {
-      throw new NotFoundException("Recycling partner doesn't exists")
-    }
-    return this.recyclingPartnerService.delete(input)
   }
 }
