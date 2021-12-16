@@ -4,7 +4,7 @@ import { DraftingStatus } from '@island.is/regulations/admin'
 export const editorMsgs = defineMessages({
   step1Headline: {
     id: 'ap.regulations-admin:draft-step1-headline',
-    defaultMessage: 'Kjarnaupplýsingar',
+    defaultMessage: 'Texti reglugerðarinnar',
   },
   step2Headline: {
     id: 'ap.regulations-admin:draft-step2-headline',
@@ -121,7 +121,7 @@ export const editorMsgs = defineMessages({
   draftingNotes_descr: {
     id: 'ap.regulations-admin:draft-description-draftingnotes',
     defaultMessage:
-      '(Ekki partur af reglugerðinni. Bara til óformlegrar hliðsjónar í útgáfuferlinu.)',
+      '(Ekki partur af reglugerðinni, aðeins til hliðsjónar í útgáfuferlinu.)',
   },
 
   draftingNotes_hide: {
