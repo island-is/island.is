@@ -31,7 +31,8 @@
     "ioredis",
     "p-map",
     "lru-cache",
-    "pdfkit"
+    "pdfkit",
+    "sequelize"
   ],
   "keepNames": true
 }

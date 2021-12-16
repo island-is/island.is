@@ -136,9 +136,6 @@
     "api-domains-national-registry-x-road": {
       "tags": []
     },
-    "api-domains-party-letter-registry": {
-      "tags": []
-    },
     "api-domains-payment": {
       "tags": []
     },
@@ -152,9 +149,6 @@
       "tags": []
     },
     "api-domains-syslumenn": {
-      "tags": []
-    },
-    "api-domains-temporary-voter-registry": {
       "tags": []
     },
     "api-domains-user-profile": {
@@ -240,12 +234,6 @@
       "tags": []
     },
     "application-templates-parental-leave": {
-      "tags": []
-    },
-    "application-templates-party-application": {
-      "tags": []
-    },
-    "application-templates-party-letter": {
       "tags": []
     },
     "application-templates-passport": {
@@ -661,13 +649,7 @@
     "services-endorsements-api": {
       "tags": []
     },
-    "services-party-letter-registry-api": {
-      "tags": []
-    },
     "services-search-indexer": {
-      "tags": []
-    },
-    "services-temporary-voter-registry-api": {
       "tags": []
     },
     "services-user-notification": {

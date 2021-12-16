@@ -28,7 +28,8 @@
     "pg-native",
     "form-data",
     "swagger-ui-express",
-    "swagger-ui-dist"
+    "swagger-ui-dist",
+    "sequelize"
   ],
   "keepNames": true
 }
