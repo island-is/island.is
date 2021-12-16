@@ -2,7 +2,7 @@ import { GenericContainer, Wait } from 'testcontainers'
 
 export default async () => {
   const lc = await new GenericContainer(
-    `${process.env.DOCKER_REGISTRY}localstack/localstack:0.13.1`,
+    `${process.env.DOCKER_REGISTRY ?? ''}localstack/localstack:0.13.1`,
   )
     .withEnv('SERVICES', 'sqs')
     .withExposedPorts(4566)
@@ -10,7 +10,7 @@ export default async () => {
       test: 'curl -f http://localhost:4566/health || exit 1',
       interval: 1000,
       timeout: 5000,
-      retries: 5,
+      retries: 60,
       startPeriod: 1000,
     })
     .withWaitStrategy(Wait.forHealthCheck())
