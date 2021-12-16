@@ -10,6 +10,7 @@ import { FjarsyslaService } from '../fjarsysla'
 import { RecyclingPartnerService } from '../recyclingPartner'
 import {
   RecyclingRequestModel,
+  RecyclingRequestTypes,
   RecyclingRequestResponse,
   RequestErrors,
   RequestStatus,
@@ -188,7 +189,7 @@ export class RecyclingRequestService {
   // Create new RecyclingRequest for citizen and recyclingPartner.
   // partnerId could be null, when it's the request is for citizen
   async createRecyclingRequest(
-    requestType: string,
+    requestType: RecyclingRequestTypes,
     permno: string,
     nameOfRequestor: string,
     partnerId: string,
@@ -309,7 +310,7 @@ export class RecyclingRequestService {
           const req = new RecyclingRequestModel()
           req.vehicleId = newRecyclingRequest.vehicleId
           req.nameOfRequestor = newRecyclingRequest.nameOfRequestor
-          req.requestType = 'handOver'
+          req.requestType = RecyclingRequestTypes.handOver
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           await req.save()
         } catch (err) {
@@ -337,7 +338,7 @@ export class RecyclingRequestService {
           const req = new RecyclingRequestModel()
           req.vehicleId = newRecyclingRequest.vehicleId
           req.nameOfRequestor = newRecyclingRequest.nameOfRequestor
-          req.requestType = 'pendingRecycle'
+          req.requestType = RecyclingRequestTypes.pendingRecycle
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           await req.save()
           errors.operation = 'deregistered'
@@ -354,7 +355,7 @@ export class RecyclingRequestService {
           const req = new RecyclingRequestModel()
           req.vehicleId = newRecyclingRequest.vehicleId
           req.nameOfRequestor = newRecyclingRequest.nameOfRequestor
-          req.requestType = 'deregistered'
+          req.requestType = RecyclingRequestTypes.deregistered
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           getGuId = await req.save()
         } catch (err) {
@@ -378,7 +379,7 @@ export class RecyclingRequestService {
             const req = new RecyclingRequestModel()
             req.vehicleId = newRecyclingRequest.vehicleId
             req.nameOfRequestor = newRecyclingRequest.nameOfRequestor
-            req.requestType = 'paymentFailed'
+            req.requestType = RecyclingRequestTypes.paymentFailed
             req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
             await req.save()
             errors.operation = 'paymentFailed'
@@ -401,7 +402,7 @@ export class RecyclingRequestService {
           const req = new RecyclingRequestModel()
           req.vehicleId = newRecyclingRequest.vehicleId
           req.nameOfRequestor = newRecyclingRequest.nameOfRequestor
-          req.requestType = 'paymentFailed'
+          req.requestType = RecyclingRequestTypes.paymentFailed
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           await req.save()
           errors.operation = 'paymentFailed'
@@ -417,7 +418,7 @@ export class RecyclingRequestService {
           const req = new RecyclingRequestModel()
           req.vehicleId = newRecyclingRequest.vehicleId
           req.nameOfRequestor = newRecyclingRequest.nameOfRequestor
-          req.requestType = 'paymentInitiated'
+          req.requestType = RecyclingRequestTypes.paymentInitiated
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           await req.save()
         } catch (err) {
