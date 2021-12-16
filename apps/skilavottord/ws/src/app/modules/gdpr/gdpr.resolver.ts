@@ -5,7 +5,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { Authorize, CurrentUser } from '../auth'
-import type { AuthUser } from '../auth'
+import type { User } from '../auth'
 import { GdprService } from './gdpr.service'
 import { GdprModel } from './gdpr.model'
 
@@ -20,7 +20,7 @@ export class GdprResolver {
 
   @Mutation((_) => Boolean)
   async createSkilavottordGdpr(
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() user: User,
     @Args('gdprStatus') gdprStatus: string,
   ): Promise<boolean> {
     await this.gdprService.createGdpr(user.nationalId, gdprStatus)
@@ -28,7 +28,7 @@ export class GdprResolver {
   }
 
   @Query(() => GdprModel)
-  async skilavottordGdpr(@CurrentUser() user: AuthUser): Promise<GdprModel> {
+  async skilavottordGdpr(@CurrentUser() user: User): Promise<GdprModel> {
     return await this.gdprService.findByNationalId(user.nationalId)
   }
 
