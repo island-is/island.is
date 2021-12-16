@@ -29,6 +29,7 @@ const SpouseInfo = ({
         <Input
           label="Kennitala maka"
           name="nationalIdSpouse"
+          data-testid="nationalIdSpouse"
           placeholder="Sláðu inn kennitölu maka"
           backgroundColor="blue"
           hasError={
@@ -57,6 +58,7 @@ const SpouseInfo = ({
         <Input
           label="Netfang maka"
           name="emailSpouse"
+          data-testid="emailSpouse"
           id="email"
           placeholder="Sláðu inn netfang maka"
           backgroundColor="blue"
@@ -80,7 +82,7 @@ const SpouseInfo = ({
         />
       </Box>
 
-      <Box>
+      <Box data-testid="acceptSpouseTerms">
         <Checkbox
           name={'accept'}
           id="accept"

@@ -86,43 +86,48 @@ const HomeCircumstancesForm = () => {
           }}
         />
 
-        <div
-          className={cn({
-            [`errorMessage`]: true,
-            [`showErrorMessage`]: hasError && !form?.homeCircumstances,
-          })}
-        >
-          <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að velja einn valmöguleika
-          </Text>
-        </div>
+        {hasError && !form?.homeCircumstances && (
+          <div
+            data-testid="errorMessage"
+            className={cn({
+              [`errorMessage`]: true,
+              [`showErrorMessage`]: hasError && !form?.homeCircumstances,
+            })}
+          >
+            <Text color="red600" fontWeight="semiBold" variant="small">
+              Þú þarft að velja einn valmöguleika
+            </Text>
+          </div>
+        )}
 
-        <Box
-          marginTop={1}
-          marginBottom={10}
-          className={cn({
-            [`${styles.inputContainer}`]: true,
-            [`${styles.inputAppear}`]:
-              form?.homeCircumstances === HomeCircumstances.OTHER,
-          })}
-        >
-          <Input
-            backgroundColor={'blue'}
-            label="Lýstu þínum aðstæðum"
-            name="homeCircumstancesCustom"
-            rows={8}
-            textarea
-            value={form?.homeCircumstancesCustom}
-            hasError={hasError && !Boolean(form?.homeCircumstancesCustom)}
-            errorMessage="Þú þarft að skrifa í textareitinn"
-            onChange={(event) => {
-              updateForm({
-                ...form,
-                homeCircumstancesCustom: event.target.value,
-              })
-            }}
-          />
-        </Box>
+        {form?.homeCircumstances === HomeCircumstances.OTHER && (
+          <Box
+            marginTop={1}
+            marginBottom={10}
+            className={cn({
+              [`${styles.inputContainer}`]: true,
+              [`${styles.inputAppear}`]:
+                form?.homeCircumstances === HomeCircumstances.OTHER,
+            })}
+          >
+            <Input
+              backgroundColor={'blue'}
+              label="Lýstu þínum aðstæðum"
+              name="homeCircumstancesCustom"
+              rows={8}
+              textarea
+              value={form?.homeCircumstancesCustom}
+              hasError={hasError && !Boolean(form?.homeCircumstancesCustom)}
+              errorMessage="Þú þarft að skrifa í textareitinn"
+              onChange={(event) => {
+                updateForm({
+                  ...form,
+                  homeCircumstancesCustom: event.target.value,
+                })
+              }}
+            />
+          </Box>
+        )}
       </ContentContainer>
 
       <Footer

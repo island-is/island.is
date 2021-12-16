@@ -83,39 +83,44 @@ const EmploymentForm = () => {
           }}
         />
 
-        <div
-          className={cn({
-            [`errorMessage`]: true,
-            [`showErrorMessage`]: hasError && !form?.employment,
-          })}
-        >
-          <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að velja einn valmöguleika
-          </Text>
-        </div>
+        {hasError && !form?.employment && (
+          <div
+            data-testid="noOptionSelectedErrorMessage"
+            className={cn({
+              [`errorMessage`]: true,
+              [`showErrorMessage`]: hasError && !form?.employment,
+            })}
+          >
+            <Text color="red600" fontWeight="semiBold" variant="small">
+              Þú þarft að velja einn valmöguleika
+            </Text>
+          </div>
+        )}
 
-        <Box
-          marginTop={1}
-          marginBottom={10}
-          className={cn({
-            [`${styles.inputContainer}`]: true,
-            [`${styles.inputAppear}`]: form?.employment === 'Other',
-          })}
-        >
-          <Input
-            backgroundColor={'blue'}
-            label="Lýstu þinni stöðu"
-            name="employmentCustom"
-            rows={8}
-            textarea
-            value={form?.employmentCustom}
-            hasError={hasError && !Boolean(form?.employmentCustom)}
-            errorMessage="Þú þarft að skrifa í textareitinn"
-            onChange={(event) => {
-              updateForm({ ...form, employmentCustom: event.target.value })
-            }}
-          />
-        </Box>
+        {form?.employment === 'Other' && (
+          <Box
+            marginTop={1}
+            marginBottom={10}
+            className={cn({
+              [`${styles.inputContainer}`]: true,
+              [`${styles.inputAppear}`]: form?.employment === 'Other',
+            })}
+          >
+            <Input
+              backgroundColor={'blue'}
+              label="Lýstu þinni stöðu"
+              name="employmentCustom"
+              rows={8}
+              textarea
+              value={form?.employmentCustom}
+              hasError={hasError && !Boolean(form?.employmentCustom)}
+              errorMessage="Þú þarft að skrifa í textareitinn"
+              onChange={(event) => {
+                updateForm({ ...form, employmentCustom: event.target.value })
+              }}
+            />
+          </Box>
+        )}
       </ContentContainer>
 
       <Footer

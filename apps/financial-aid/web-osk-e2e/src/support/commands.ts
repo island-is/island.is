@@ -10,14 +10,17 @@
 
 import { CyHttpMessages } from 'cypress/types/net-stubbing'
 
+type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
+
+const getFixtureFromRequest: KeyMapping<string, { fixture: string }> = {
+  CurrentUserQuery: { fixture: 'currentUserQuery' },
+  getNationalRegistryUserQuery: { fixture: 'nationalRegistryUserQuery' },
+  GetMunicipalityQuery: { fixture: 'municipalityQuery' },
+  createApplication: { fixture: 'createApplicationMutation' },
+}
+
 const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
-  if (graphqlRequest.body.hasOwnProperty('query')) {
-    if (graphqlRequest.body.query.includes('CurrentUserQuery')) {
-      return {
-        fixture: 'currentUserQuery',
-      }
-    }
-  }
+  return getFixtureFromRequest[graphqlRequest.body.operationName]
 }
 
 Cypress.Commands.add('getByTestId', (selector) => {
