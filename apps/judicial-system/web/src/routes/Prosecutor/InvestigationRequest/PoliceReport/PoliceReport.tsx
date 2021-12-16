@@ -15,7 +15,6 @@ const PoliceReport = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
-    isCaseUpToDate,
   } = useContext(FormContext)
 
   useEffect(() => {
@@ -36,7 +35,6 @@ const PoliceReport = () => {
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         isLoading={isLoadingWorkingCase}
-        isCaseUpToDate={isCaseUpToDate}
       />
     </PageLayout>
   )

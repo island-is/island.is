@@ -60,14 +60,6 @@ const OverviewForm: React.FC<Props> = (props) => {
   } = useCase()
   const { formatMessage } = useIntl()
 
-  const validations: FormSettings = {
-    courtCaseNumber: {
-      validations: ['empty'],
-    },
-  }
-
-  useCaseFormHelper(workingCase, setWorkingCase, validations)
-
   const receiveCase = async (workingCase: Case, courtCaseNumber: string) => {
     if (workingCase.state === CaseState.SUBMITTED && !isTransitioningCase) {
       // Transition case from SUBMITTED to RECEIVED when courtCaseNumber is set
