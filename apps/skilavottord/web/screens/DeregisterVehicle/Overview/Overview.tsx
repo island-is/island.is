@@ -174,7 +174,9 @@ const Overview: FC = () => {
               <Text variant="h1">{t.title}</Text>
               <Text variant="intro">{t.info}</Text>
             </Stack>
-            <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
+            <Box marginTop={4}>
+              <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
+            </Box>
           </Stack>
         </GridColumn>
         {deregisteredVehicles?.length > 0 && (
