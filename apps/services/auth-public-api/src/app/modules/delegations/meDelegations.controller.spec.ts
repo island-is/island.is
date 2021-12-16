@@ -437,6 +437,39 @@ describe('MeDelegationsController', () => {
         expectMatchingObject(res.body, expectedModel)
       })
 
+      it('can filter future scopes for delegation that exists for auth user', async () => {
+        // Arrange
+        await delegationModel.bulkCreate(Object.values(mockDelegations), {
+          include: [
+            {
+              model: DelegationScope,
+              as: 'delegationScopes',
+            },
+          ],
+        })
+        const expectedModel = (
+          await delegationModel.findByPk(mockDelegations.expiredOutgoing.id, {
+            include: [
+              {
+                model: DelegationScope,
+                as: 'delegationScopes',
+                include: [{ model: ApiScope, as: 'apiScope' }],
+              },
+            ],
+          })
+        )?.toDTO()
+        Object.assign(expectedModel, { scopes: [], validTo: undefined })
+
+        // Act
+        const res = await server.get(
+          `${path}/${mockDelegations.expiredOutgoing.id}?valid=includeFuture`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expectMatchingObject(res.body, expectedModel)
+      })
+
       it('should return 404 not found if delegation does not exist or not connected to the user', async () => {
         // Arrange
         await delegationModel.bulkCreate(Object.values(mockDelegations), {
