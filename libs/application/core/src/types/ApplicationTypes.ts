@@ -5,7 +5,6 @@ export enum ApplicationTypes {
   DRIVING_LICENSE = 'DrivingLicense',
   DRIVING_ASSESSMENT_APPROVAL = 'DrivingAssessmentApproval',
   PARENTAL_LEAVE = 'ParentalLeave',
-  META_APPLICATION = 'MetaApplication',
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
   HEALTH_INSURANCE = 'HealthInsurance',
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
@@ -47,10 +46,6 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PARENTAL_LEAVE]: {
     slug: 'faedingarorlof',
     translation: 'pl.application',
-  },
-  [ApplicationTypes.META_APPLICATION]: {
-    slug: 'adild-ad-umsoknakerfi',
-    translation: 'meta.application',
   },
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: {
     slug: 'skjalaveita',
