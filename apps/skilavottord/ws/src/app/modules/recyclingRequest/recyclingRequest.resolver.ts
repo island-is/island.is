@@ -8,6 +8,7 @@ import { VehicleModel } from '../vehicle'
 import { Authorize, Role } from '../auth'
 import {
   RecyclingRequestModel,
+  RecyclingRequestTypes,
   RecyclingRequestResponse,
 } from './recyclingRequest.model'
 import { RecyclingRequestService } from './recyclingRequest.service'
@@ -63,7 +64,7 @@ export class RecyclingRequestResolver {
 
   @Mutation(() => RecyclingRequestResponse)
   async createSkilavottordRecyclingRequest(
-    @Args('requestType') requestType: string,
+    @Args('requestType') requestType: RecyclingRequestTypes,
     @Args('permno') permno: string,
     @Args('nameOfRequestor', { nullable: true }) name: string,
     @Args('partnerId', { nullable: true }) partnerId: string,

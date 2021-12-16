@@ -90,7 +90,9 @@ const CompanyInfo: FC = () => {
             <Text variant="h1">{t.title}</Text>
             <Text variant="intro">{t.info}</Text>
           </Stack>
-          <Text variant="h3">{t.subtitles.location}</Text>
+          <Text marginTop={4} variant="h3">
+            {t.subtitles.location}
+          </Text>
           <Box>
             {activePartner.length > 0 ? (
               activePartner.map(
