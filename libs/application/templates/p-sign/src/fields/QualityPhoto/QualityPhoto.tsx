@@ -40,7 +40,7 @@ const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
   const img = Photo(photo)
 
   return (
-    <Box marginBottom={4}>
+    <Box marginBottom={3}>
       {photo.data.success ? (
         <Box marginTop={4} style={{ width: '191px', height: '242px' }}>
           {img}

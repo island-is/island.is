@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, InputFileUpload } from '@island.is/island-ui/core'
+import { Box, InputFileUpload, Stack } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { Application, FieldBaseProps } from '@island.is/application/core'
@@ -46,23 +46,25 @@ const PhotoUpload = ({ application }: PhotoUploadProps & FieldBaseProps) => {
   }
 
   return (
-    <Box marginY={4}>
-      <Photo application={application} img={image} />
-      <Box marginTop={3}>
-        <InputFileUpload
-          fileList={fileName}
-          header={formatMessage(m.qualityPhotoFileUploadTitle)}
-          description={formatMessage(m.qualityPhotoFileUploadDescription)}
-          buttonLabel={formatMessage(m.qualityPhotoUploadButtonLabel)}
-          accept=".jpeg, .png, .jpg"
-          onChange={onChange}
-          onRemove={() => {
-            setFileName([])
-            setImage('')
-            updateApp('', '')
-          }}
-        />
-      </Box>
+    <Box marginTop={4}>
+      <Stack space={5}>
+        <Photo application={application} img={image} bulletsView={true} />
+        <Box>
+          <InputFileUpload
+            fileList={fileName}
+            header={formatMessage(m.qualityPhotoFileUploadTitle)}
+            description={formatMessage(m.qualityPhotoFileUploadDescription)}
+            buttonLabel={formatMessage(m.qualityPhotoUploadButtonLabel)}
+            accept=".jpeg, .png, .jpg"
+            onChange={onChange}
+            onRemove={() => {
+              setFileName([])
+              setImage('')
+              updateApp('', '')
+            }}
+          />
+        </Box>
+      </Stack>
     </Box>
   )
 }

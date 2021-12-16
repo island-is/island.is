@@ -197,17 +197,16 @@ export const getApplication = (): Form => {
                 ],
               }),
               buildCustomField({
-                id: 'photdesc',
-                title: '',
-                component: 'Bullets',
-                condition: (answers) => answers.qualityPhoto === 'no',
-              }),
-              buildCustomField({
                 id: 'photoAttachment',
                 title: '',
                 component: 'PhotoUpload',
                 condition: (answers: FormValue) =>
                   answers.qualityPhoto === 'no',
+              }),
+              buildDescriptionField({
+                id: 'attachmentFileName',
+                title: '',
+                description: '',
               }),
             ],
           }),
@@ -225,12 +224,6 @@ export const getApplication = (): Form => {
                 id: 'descriptionNoPhoto',
                 title: '',
                 description: m.qualityPhotoNoPhotoDescription,
-              }),
-              buildCustomField({
-                id: 'photdesc',
-                title: '',
-                component: 'Bullets',
-                condition: (answers: FormValue) => !answers.photoAttachment,
               }),
               buildCustomField({
                 id: 'photoAttachment',
@@ -358,7 +351,8 @@ export const getApplication = (): Form => {
                 id: 'userPhoto',
                 title: '',
                 component: 'Photo',
-                condition: (answers) => answers.qualityPhoto === 'no',
+                condition: (answers) =>
+                  answers.qualityPhoto === 'no' || !answers.qualityPhoto,
               }),
               buildCustomField({
                 id: 'qphoto',
