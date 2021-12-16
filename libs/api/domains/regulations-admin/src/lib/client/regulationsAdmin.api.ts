@@ -34,6 +34,7 @@ export class RegulationsAdminApi extends RESTDataSource {
   }
 
   willSendRequest(request: RequestOptions) {
+    this.memoizedResults.clear()
     request.headers.set('Content-Type', 'application/json')
   }
 
