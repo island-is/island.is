@@ -122,6 +122,10 @@ const RecyclingCompanyUpdate: FC = () => {
     return <NotFound />
   }
 
+  if (!data || error) {
+    return <NotFound />
+  }
+
   const handleUpdateRecyclingPartner = handleSubmit(async (input) => {
     const { errors } = await updateSkilavottordRecyclingPartner({
       variables: { input },
@@ -222,11 +226,7 @@ const RecyclingCompanyUpdate: FC = () => {
       </Stack>
       <Box marginTop={7}>
         {loading ? (
-          <SkeletonLoader width="100%" height={206} />
-        ) : !data || error ? (
-          <Box marginTop={4}>
-            <Text>{t.empty}</Text>
-          </Box>
+          <SkeletonLoader width="100%" space={3} repeat={5} height={78} />
         ) : (
           <RecyclingCompanyForm
             onSubmit={handleUpdateRecyclingPartner}
@@ -234,7 +234,6 @@ const RecyclingCompanyUpdate: FC = () => {
             onDelete={handleDeleteRecyclingPartner}
             control={control}
             errors={errors}
-            editView
           />
         )}
       </Box>

@@ -23,7 +23,6 @@ interface RecyclingCompanyForm {
   onDelete?: () => void
   errors: DeepMap<FieldValues, FieldError>
   control: Control<FieldValues>
-  editView?: boolean
 }
 
 const RecyclingCompanyForm: FC<RecyclingCompanyForm> = ({

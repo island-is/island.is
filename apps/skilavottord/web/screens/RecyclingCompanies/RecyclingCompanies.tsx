@@ -58,13 +58,13 @@ const RecyclingCompanies: FC = () => {
   const partners = data?.skilavottordAllRecyclingPartners || []
   const recyclingPartners = filterInternalPartners(partners)
 
-  const onCreate = () => {
+  const handleCreate = () => {
     router.push({
       pathname: routes.recyclingCompanies.add,
     })
   }
 
-  const onUpdate = (id: string) => {
+  const handleUpdate = (id: string) => {
     router.push({
       pathname: routes.recyclingCompanies.edit,
       query: { id },
@@ -141,7 +141,7 @@ const RecyclingCompanies: FC = () => {
           </GridRow>
         </Box>
         <Box display="flex" justifyContent="flexEnd">
-          <Button onClick={onCreate}>{t.buttons.add}</Button>
+          <Button onClick={handleCreate}>{t.buttons.add}</Button>
         </Box>
         {error || (loading && !data) ? (
           <Text>{t.empty}</Text>
@@ -153,7 +153,7 @@ const RecyclingCompanies: FC = () => {
                 cta={{
                   label: t.buttons.view,
                   variant: 'text',
-                  onClick: () => onUpdate(partner.companyId),
+                  onClick: () => handleUpdate(partner.companyId),
                 }}
                 heading={partner.companyName}
                 text={partner.companyId}
