@@ -5,5 +5,5 @@ import { IsString } from 'class-validator'
 export class DeleteDraftRegulationInput {
   @Field()
   @IsString()
-  id!: string
+  draftId!: string
 }

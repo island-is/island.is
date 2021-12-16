@@ -205,12 +205,12 @@ export class RegulationsAdminResolver {
     @CurrentUser() { authorization }: User,
   ): Promise<any> {
     await this.regulationsAdminApiService.deleteById(
-      input.id,
+      input.draftId,
       authorization ?? '',
     )
 
     return {
-      id: input.id,
+      id: input.draftId,
     }
   }
 
