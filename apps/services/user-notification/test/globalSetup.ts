@@ -5,15 +5,9 @@ export default async () => {
     `${process.env.DOCKER_REGISTRY ?? ''}localstack/localstack:0.13.1`,
   )
     .withEnv('SERVICES', 'sqs')
+    .withEnv('DEBUG', '1')
     .withExposedPorts(4566)
-    .withHealthCheck({
-      test: 'curl -f http://localhost:4566/health || exit 1',
-      interval: 1000,
-      timeout: 5000,
-      retries: 120,
-      startPeriod: 1000,
-    })
-    .withWaitStrategy(Wait.forHealthCheck())
+    .withStartupTimeout(120000)
     .start()
 
   ;(global as any).__localstack__ = lc
