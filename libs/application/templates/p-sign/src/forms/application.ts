@@ -24,7 +24,7 @@ import { QualityPhotoData } from '../types'
 import {
   NationalRegistryUser,
   UserProfile,
-  Jurisdiction,
+  Juristiction,
 } from '../types/schema'
 import { m } from '../lib/messages'
 
@@ -271,7 +271,7 @@ export const getApplication = (): Form => {
                     jurisdictions: { data },
                   },
                 }) => {
-                  return (data as Jurisdiction[]).map(({ id, name, zip }) => ({
+                  return (data as Juristiction[]).map(({ id, name, zip }) => ({
                     value: name,
                     label: name,
                     tooltip: `Póstnúmer ${zip}`,
