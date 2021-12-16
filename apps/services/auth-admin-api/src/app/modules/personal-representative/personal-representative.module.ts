@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common'
 import {
-  PersonalRepresentative,
-  PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeRightTypeService,
   PersonalRepresentativeScopePermissionService,
@@ -14,8 +12,6 @@ import { PersonalRepresentativeController } from './personal-representative.cont
   imports: [
     SequelizeModule.forFeature([
       PersonalRepresentativeRightType,
-      PersonalRepresentativeRight,
-      PersonalRepresentative,
       PersonalRepresentativeScopePermission,
     ]),
   ],
