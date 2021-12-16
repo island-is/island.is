@@ -122,6 +122,22 @@ export const StepTwo: React.FC = () => {
     }
   }
 
+  const handleCourtChange = (courtId: string) => {
+    if (workingCase) {
+      setAndSendToServer(
+        'courtId',
+        courtId,
+        workingCase,
+        setWorkingCase,
+        updateCase,
+      )
+
+      return true
+    }
+
+    return false
+  }
+
   const handleProsecutorChange = (
     selectedOption: ValueType<ReactSelectOption>,
   ) => {
@@ -164,6 +180,7 @@ export const StepTwo: React.FC = () => {
             transitionLoading={isTransitioningCase}
             user={user}
             onProsecutorChange={handleProsecutorChange}
+            onCourtChange={handleCourtChange}
           />
           {modalVisible && (
             <Modal
