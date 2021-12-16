@@ -248,8 +248,8 @@
         "placeholder": "Ex. Maplestreet 2"
       },
       "postNumber": {
-        "label": "Postnumber",
-        "placeholder": "Postnumber of visiting adress"
+        "label": "Postal code",
+        "placeholder": "Postal code of visiting adress"
       },
       "city": {
         "label": "City",
@@ -357,33 +357,32 @@
     },
     "recyclingCompany": {
       "view": {
-        "title": "View recycling company",
+        "title": "Recycling company",
         "breadcrumb": "View",
-        "info": "View recycling company View recycling company View recycling company View recycling company View recycling company",
+        "info": "You can either update or edit a recycling company. Please verify that the companies information is correct",
         "updated": "Successfully updated",
         "deleted": "Successfully deleted"
       },
       "add": {
         "title": "Add recycling company",
         "breadcrumb": "Add",
-        "info": "Add recycling company Add recycling company Add recycling company Add recycling company Add recycling company",
+        "info": "Adding a new recycling company will make it available to access control. Please verify that the companies information is correct.",
         "added": "Successfully added"
       },
       "form": {
         "inputs": {
           "companyId": {
-            "label": "Company Id",
-            "placeholder": "Company Id",
+            "label": "Company ID",
+            "placeholder": "Company ID",
             "rules": {
-              "required": "Company Id is required",
-              "validate": "Company Id is incorrect"
+              "required": "Company ID is required"
             }
           },
           "companyName": {
-            "label": "Company Name",
-            "placeholder": "Company Name",
+            "label": "Company name",
+            "placeholder": "Company name",
             "rules": {
-              "required": "Company Name is required"
+              "required": "Company name is required"
             }
           },
           "address": {
@@ -394,10 +393,10 @@
             }
           },
           "postnumber": {
-            "label": "Postnumber",
-            "placeholder": "Postnumber",
+            "label": "Postal code",
+            "placeholder": "Postal code",
             "rules": {
-              "required": "Postnumber is required"
+              "required": "Postal code is required"
             }
           },
           "city": {
@@ -471,11 +470,11 @@
       },
       "inputs": {
         "nationalId": {
-          "label": "National Id",
-          "placeholder": "National Id",
+          "label": "National ID",
+          "placeholder": "National ID",
           "rules": {
-            "required": "National Id is required",
-            "validate": "National Id is incorrect"
+            "required": "National ID is required",
+            "validate": "National ID is incorrect"
           }
         },
         "name": {

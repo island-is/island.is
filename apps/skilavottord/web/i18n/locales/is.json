@@ -356,87 +356,86 @@
     },
     "buttons": {
       "add": "Bæta við móttökuaðila",
-      "view": "View"
+      "view": "Skoða"
     },
     "recyclingCompany": {
       "view": {
-        "title": "View recycling company",
-        "breadcrumb": "View",
-        "info": "View recycling company View recycling company View recycling company View recycling company View recycling company",
-        "updated": "Successfully updated",
-        "deleted": "Successfully deleted"
+        "title": "Móttökuaðili",
+        "breadcrumb": "Skoða",
+        "info": "Þú getur annaðhvort uppfært eða eytt móttökuaðila. Vinsamlegast staðfestið að upplýsingar fyrirtækis séu rétt slegnar inn.",
+        "updated": "Uppfært",
+        "deleted": "Eytt"
       },
       "add": {
-        "title": "Add recycling company",
-        "breadcrumb": "Add",
-        "info": "Add recycling company Add recycling company Add recycling company Add recycling company Add recycling company",
-        "added": "Successfully added"
+        "title": "Bæta við móttökuaðila",
+        "breadcrumb": "Bæta við",
+        "info": "Þegar nýjum móttökuaðila er bætt við, verður hann aðgengilegur í aðgangsstýringu. Vinsamlegast staðfestið að upplýsingar fyrirtækis séu rétt slegnar inn.",
+        "added": "Bætt við"
       },
       "form": {
         "inputs": {
           "companyId": {
-            "label": "Company Id",
-            "placeholder": "Company Id",
+            "label": "Auðkenni fyrirtækis (ID)",
+            "placeholder": "Auðkenni fyrirtækis",
             "rules": {
-              "required": "Company Id is required",
-              "validate": "Company Id is incorrect"
+              "required": "Skylda er að fylla út auðkenni fyrirtækis"
             }
           },
           "companyName": {
-            "label": "Company Name",
-            "placeholder": "Company Name",
+            "label": "Nafn fyrirtækis",
+            "placeholder": "Nafn fyrirtækis",
             "rules": {
-              "required": "Company Name is required"
+              "required": "Skylda er að fylla út nafn fyrirtækis"
             }
           },
           "address": {
-            "label": "Address",
-            "placeholder": "Address",
+            "label": "Heimilisfang",
+            "placeholder": "Heimilisfang",
             "rules": {
-              "required": "Address is required"
+              "required": "Skylda er að fylla út heimilisfang"
             }
           },
           "postnumber": {
-            "label": "Postnumber",
-            "placeholder": "Postnumber",
+            "label": "Póstnúmer",
+            "placeholder": "Póstnúmer",
             "rules": {
-              "required": "Postnumber is required"
+              "required": "Skylda er að fylla út póstnúmer"
             }
           },
           "city": {
-            "label": "City",
-            "placeholder": "City",
+            "label": "Borg",
+            "placeholder": "Borg",
             "rules": {
-              "required": "City is required"
+              "required": "Skylda er að fylla út borg"
             }
           },
           "website": {
-            "label": "Website",
-            "placeholder": "Website",
+            "label": "Vefsíða",
+            "placeholder": "Vefsíða",
             "rules": {
-              "required": "Website is required"
+              "required": "Skylda er að fylla út vefsíðu"
             }
           },
           "phone": {
-            "label": "Phone",
-            "placeholder": "Phone",
+            "label": "Símanúmer",
+            "placeholder": "Símanúmer",
             "rules": {
-              "required": "Phone is required"
+              "required": "Skylda er að fylla út símanúmer"
             }
           },
           "active": {
-            "label": "Active",
-            "placeholder": "Active",
+            "label": "Virkt",
+            "placeholder": "Virkt",
             "rules": {
-              "required": "Active is required"
+              "required": "Skylda er að fylla út virkni"
             }
           }
         },
         "buttons": {
-          "cancel": "Cancel",
-          "continue": "Submit",
-          "confirm": "Confirm",
-          "delete": "Delete"
+          "cancel": "Hætta við",
+          "continue": "Halda áfram",
+          "confirm": "Staðfesta",
+          "delete": "Eyða"
         }
       }
     }
