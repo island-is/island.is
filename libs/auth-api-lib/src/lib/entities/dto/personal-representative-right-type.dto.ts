@@ -21,7 +21,7 @@ export class PersonalRepresentativeRightTypeDTO {
   @Type(() => Date)
   @IsOptional()
   @ApiProperty({
-    // add one day as validTo example
+    // add one day as validFrom example
     example: new Date(new Date().setTime(new Date().getTime() - 86400000)), //86400000 = nr of ms in one day
   })
   readonly validFrom?: Date
