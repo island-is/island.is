@@ -41,7 +41,6 @@ interface Props {
 
 const CourtRecordForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
-  const [, setCourtRecordStartDateIsValid] = useState(true)
   const [courtLocationEM, setCourtLocationEM] = useState('')
   const [
     litigationPresentationsErrorMessage,
@@ -50,17 +49,6 @@ const CourtRecordForm: React.FC<Props> = (props) => {
 
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
-
-  const validations: FormSettings = {
-    courtLocation: {
-      validations: ['empty'],
-    },
-    litigationPresentations: {
-      validations: ['empty'],
-    },
-  }
-
-  useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   const displayAccusedBookings =
     workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
@@ -88,11 +76,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                 datepickerLabel="Dagsetning þinghalds"
                 timeLabel="Þinghald hófst (kk:mm)"
                 maxDate={new Date()}
-                selectedDate={
-                  workingCase.courtStartDate
-                    ? new Date(workingCase.courtStartDate)
-                    : new Date()
-                }
+                selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   newSetAndSendDateToServer(
                     'courtStartDate',
@@ -100,7 +84,6 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                     valid,
                     workingCase,
                     setWorkingCase,
-                    setCourtRecordStartDateIsValid,
                     updateCase,
                   )
                 }}
@@ -113,7 +96,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               name="courtLocation"
               tooltip={formatMessage(m.sections.courtLocation.tooltip)}
               label={formatMessage(m.sections.courtLocation.label)}
-              defaultValue={workingCase.courtLocation}
+              value={workingCase.courtLocation || ''}
               placeholder={formatMessage(m.sections.courtLocation.placeholder)}
               onChange={(event) =>
                 removeTabsValidateAndSet(
@@ -164,7 +147,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             data-testid="courtAttendees"
             name="courtAttendees"
             label="Mættir eru"
-            defaultValue={workingCase.courtAttendees}
+            value={workingCase.courtAttendees || ''}
             placeholder="Skrifa hér..."
             onChange={(event) =>
               removeTabsValidateAndSet(
@@ -219,7 +202,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               data-testid="accusedBookings"
               name="accusedBookings"
               label={formatMessage(m.sections.accusedBookings.label)}
-              defaultValue={workingCase.accusedBookings}
+              value={workingCase.accusedBookings || ''}
               placeholder={formatMessage(
                 m.sections.accusedBookings.placeholder,
               )}
@@ -242,7 +225,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                 )
               }
               textarea
-              rows={7}
+              rows={16}
             />
           </Box>
         )}
@@ -257,7 +240,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               data-testid="litigationPresentations"
               name="litigationPresentations"
               label="Málflutningur og aðrar bókanir"
-              defaultValue={workingCase.litigationPresentations}
+              value={workingCase.litigationPresentations || ''}
               placeholder="Málflutningsræður og annað sem fram kom í þinghaldi er skráð hér..."
               onChange={(event) =>
                 removeTabsValidateAndSet(
@@ -283,7 +266,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               errorMessage={litigationPresentationsErrorMessage}
               hasError={litigationPresentationsErrorMessage !== ''}
               textarea
-              rows={7}
+              rows={16}
               required
             />
           </Box>

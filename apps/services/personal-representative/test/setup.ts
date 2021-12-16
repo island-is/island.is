@@ -1,37 +1,23 @@
-import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
-import { getConnectionToken } from '@nestjs/sequelize'
-import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
-import type { INestApplication, Type } from '@nestjs/common'
-import { logger } from '@island.is/logging'
-import { PersonalRepresentativeRightTypeService } from '@island.is/auth-api-lib/personal-representative'
+import {
+  testServer,
+  useDatabase,
+  TestApp,
+  useAuth,
+} from '@island.is/testing/nest'
+import { SequelizeConfigService } from '@island.is/auth-api-lib/personal-representative'
+import { User } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 
-export let app: INestApplication
-let sequelize: Sequelize
-
-export const truncate = async () => {
-  if (!sequelize) {
-    return
-  }
-
-  await Promise.all(
-    Object.values(sequelize.models).map((model) => {
-      if (model.tableName.toLowerCase() === 'sequelize') {
-        return null
-      }
-
-      return model.destroy({
-        where: {},
-        cascade: true,
-        truncate: true,
-        force: true,
-      })
-    }),
-  )
+interface SetupOptions {
+  user: User
+  scopes: string[]
 }
 
 // needed for generic error validation
 expect.extend({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   anyOf(value: any, classTypes: any[]) {
     const types = classTypes.map((type) => type.name).join(', ')
     const message = `expected to be any of type: ${types}`
@@ -51,26 +37,38 @@ expect.extend({
   },
 })
 
-export const setup = async (options?: Partial<TestServerOptions>) => {
-  app = await testServer({
+export const setupWithAuth = async ({
+  user,
+  scopes,
+}: SetupOptions): Promise<TestApp> => {
+  user.nationalId
+  const app = await testServer<AppModule>({
     appModule: AppModule,
-    ...options,
+    override: (builder) =>
+      builder.overrideProvider(IdsUserGuard).useValue(
+        new MockAuthGuard({
+          nationalId: user.nationalId,
+          scope: scopes,
+        }),
+      ),
+    hooks: [
+      useAuth({ auth: user }),
+      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+    ],
   })
-  sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
-  try {
-    await sequelize.sync()
-  } catch (err) {
-    logger.error('Migration error', err)
-  }
   return app
 }
 
-beforeEach(truncate)
+export const setupWithoutAuth = async (): Promise<TestApp> => {
+  const user = createCurrentUser()
+  const app = await testServer<AppModule>({
+    appModule: AppModule,
+    hooks: [
+      useAuth({ auth: user }),
+      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+    ],
+  })
 
-afterAll(async () => {
-  if (app && sequelize) {
-    await app.close()
-    await sequelize.close()
-  }
-})
+  return app
+}

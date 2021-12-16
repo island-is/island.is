@@ -41,12 +41,10 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  requestedValidToDateIsValid: boolean
-  setRequestedValidToDateIsValid: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const StepThreeForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, setRequestedValidToDateIsValid } = props
+  const { workingCase, setWorkingCase } = props
   const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
     '',
   )
@@ -95,11 +93,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                     : 'Farbann'
                 } til`}
                 minDate={new Date()}
-                selectedDate={
-                  workingCase.requestedValidToDate
-                    ? new Date(workingCase.requestedValidToDate)
-                    : undefined
-                }
+                selectedDate={workingCase.requestedValidToDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   newSetAndSendDateToServer(
                     'requestedValidToDate',
@@ -107,7 +101,6 @@ const StepThreeForm: React.FC<Props> = (props) => {
                     valid,
                     workingCase,
                     setWorkingCase,
-                    setRequestedValidToDateIsValid,
                     updateCase,
                   )
                 }}
@@ -156,7 +149,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
             placeholder={formatMessage(
               rcDemands.sections.lawsBroken.placeholder,
             )}
-            defaultValue={workingCase?.lawsBroken}
+            value={workingCase.lawsBroken || ''}
             errorMessage={lawsBrokenErrorMessage}
             hasError={lawsBrokenErrorMessage !== ''}
             onChange={(event) =>
@@ -223,7 +216,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
               placeholder={formatMessage(
                 rcDemands.sections.legalBasis.legalBasisPlaceholder,
               )}
-              defaultValue={workingCase?.legalBasis}
+              value={workingCase.legalBasis || ''}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'legalBasis',
@@ -325,7 +318,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                 label={formatMessage(
                   rcDemands.sections.custodyRestrictions.label,
                 )}
-                defaultValue={workingCase.requestedOtherRestrictions}
+                value={workingCase.requestedOtherRestrictions || ''}
                 placeholder={formatMessage(
                   rcDemands.sections.custodyRestrictions.placeholder,
                 )}

@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
@@ -12,6 +11,7 @@ import {
   Text,
   Option,
   Tooltip,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import {
   FormFooter,
@@ -44,6 +44,7 @@ import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -53,14 +54,9 @@ export const HearingArrangements: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState(false)
-  const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState('')
-  const [
-    defenderPhoneNumberErrorMessage,
-    setDefenderPhoneNumberErrorMessage,
-  ] = useState('')
-  const [, setCourtDateIsValid] = useState(true)
 
   const router = useRouter()
   const id = router.query.id
@@ -114,14 +110,16 @@ export const HearingArrangements: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const theCase = workingCase
+    if (isCaseUpToDate) {
+      const theCase = workingCase
 
-    if (theCase.requestedCourtDate) {
-      autofill('courtDate', theCase.requestedCourtDate, theCase)
+      if (theCase.requestedCourtDate) {
+        autofill('courtDate', theCase.requestedCourtDate, theCase)
+      }
+
+      setWorkingCase(theCase)
     }
-
-    setWorkingCase(theCase)
-  }, [setWorkingCase, workingCase, autofill])
+  }, [autofill, isCaseUpToDate, setWorkingCase, workingCase])
 
   const setJudge = (id: string) => {
     if (workingCase) {
@@ -172,6 +170,15 @@ export const HearingArrangements: React.FC = () => {
       notFound={caseNotFound}
     >
       <FormContentContainer>
+        {workingCase.comments && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.comments.title)}
+              message={workingCase.comments}
+            />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
@@ -191,7 +198,7 @@ export const HearingArrangements: React.FC = () => {
             name="judge"
             label="Veldu dómara"
             placeholder="Velja héraðsdómara"
-            defaultValue={defaultJudge}
+            value={defaultJudge}
             options={judges}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setJudge((selectedOption as ReactSelectOption).value.toString())
@@ -210,7 +217,7 @@ export const HearingArrangements: React.FC = () => {
             name="registrar"
             label="Veldu dómritara"
             placeholder="Velja dómritara"
-            defaultValue={defaultRegistrar}
+            value={defaultRegistrar}
             options={registrars}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setRegistrar(
@@ -231,11 +238,7 @@ export const HearingArrangements: React.FC = () => {
               <Box marginBottom={2}>
                 <DateTime
                   name="courtDate"
-                  selectedDate={
-                    workingCase.courtDate
-                      ? new Date(workingCase.courtDate)
-                      : undefined
-                  }
+                  selectedDate={workingCase.courtDate}
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
                     newSetAndSendDateToServer(
@@ -244,7 +247,6 @@ export const HearingArrangements: React.FC = () => {
                       valid,
                       workingCase,
                       setWorkingCase,
-                      setCourtDateIsValid,
                       updateCase,
                     )
                   }}
@@ -257,7 +259,7 @@ export const HearingArrangements: React.FC = () => {
                 name="courtroom"
                 label="Dómsalur"
                 autoComplete="off"
-                defaultValue={workingCase.courtRoom}
+                value={workingCase.courtRoom || ''}
                 placeholder="Skráðu inn dómsal"
                 onChange={(event) =>
                   removeTabsValidateAndSet(
@@ -282,107 +284,10 @@ export const HearingArrangements: React.FC = () => {
           </Box>
         </Box>
         <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.defender.title)}
-            </Text>
-          </Box>
-          <BlueBox>
-            <Box marginBottom={3}>
-              <Input
-                name="defenderName"
-                label="Nafn verjanda"
-                autoComplete="off"
-                defaultValue={workingCase.defenderName}
-                placeholder="Fullt nafn"
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'defenderName',
-                    event,
-                    [],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'defenderName',
-                    event.target.value,
-                    [],
-                    workingCase,
-                    updateCase,
-                  )
-                }
-              />
-            </Box>
-            <Box marginBottom={3}>
-              <Input
-                name="defenderEmail"
-                label="Netfang verjanda"
-                autoComplete="off"
-                defaultValue={workingCase.defenderEmail}
-                placeholder="Netfang"
-                errorMessage={defenderEmailErrorMessage}
-                hasError={defenderEmailErrorMessage !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'defenderEmail',
-                    event,
-                    ['email-format'],
-                    workingCase,
-                    setWorkingCase,
-                    defenderEmailErrorMessage,
-                    setDefenderEmailErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'defenderEmail',
-                    event.target.value,
-                    ['email-format'],
-                    workingCase,
-                    updateCase,
-                    setDefenderEmailErrorMessage,
-                  )
-                }
-              />
-            </Box>
-            <InputMask
-              mask="999-9999"
-              maskPlaceholder={null}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'defenderPhoneNumber',
-                  event,
-                  ['phonenumber'],
-                  workingCase,
-                  setWorkingCase,
-                  defenderPhoneNumberErrorMessage,
-                  setDefenderPhoneNumberErrorMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'defenderPhoneNumber',
-                  event.target.value,
-                  ['phonenumber'],
-                  workingCase,
-                  updateCase,
-                  setDefenderPhoneNumberErrorMessage,
-                )
-              }
-            >
-              <Input
-                name="defenderPhoneNumber"
-                label="Símanúmer verjanda"
-                autoComplete="off"
-                defaultValue={workingCase.defenderPhoneNumber}
-                placeholder="Símanúmer"
-                errorMessage={defenderPhoneNumberErrorMessage}
-                hasError={defenderPhoneNumberErrorMessage !== ''}
-              />
-            </InputMask>
-          </BlueBox>
+          <DefenderInfo
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+          />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
