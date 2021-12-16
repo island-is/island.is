@@ -18,7 +18,7 @@ export const Sidebar: FC<{}> = () => {
   const badgeContext = useUpdateUnreadDocuments()
 
   return (
-    <aside className={cn(styles.sidebar, { [styles.collapsed]: collapsed })}>
+    <aside className={cn(styles.sidebar, collapsed && styles.collapsed)}>
       <Box
         display="flex"
         flexDirection="column"
@@ -29,7 +29,7 @@ export const Sidebar: FC<{}> = () => {
         paddingRight={collapsed ? 6 : 0}
       >
         <Box
-          className={cn({ [styles.logoCollapsed]: collapsed })}
+          className={collapsed && styles.logoCollapsed}
           paddingBottom={8}
           paddingTop={3}
         >

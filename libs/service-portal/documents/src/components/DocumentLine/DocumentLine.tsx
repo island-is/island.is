@@ -90,18 +90,20 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
             {documentLine.fileType === 'url' && documentLine.url ? (
               <Link href={documentLine.url}>
                 <button
-                  className={cn(styles.button, {
-                    [styles.unopened]: !documentLine.opened,
-                  })}
+                  className={cn(
+                    styles.button,
+                    !documentLine.opened && styles.unopened,
+                  )}
                 >
                   {documentLine.subject}
                 </button>
               </Link>
             ) : (
               <button
-                className={cn(styles.button, {
-                  [styles.unopened]: !documentLine.opened,
-                })}
+                className={cn(
+                  styles.button,
+                  !documentLine.opened && styles.unopened,
+                )}
                 onClick={onClickHandler}
               >
                 {documentLine.subject}
