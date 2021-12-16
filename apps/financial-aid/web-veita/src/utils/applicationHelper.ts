@@ -97,10 +97,6 @@ export const getNationalRegistryInfo = (application: Application) => {
         : 'Enginn maki',
     },
     {
-      title: 'Fjöldi barna',
-      content: '0',
-    },
-    {
       title: 'Ríkisfang',
       content: 'Ísland',
     },
