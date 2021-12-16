@@ -10,7 +10,6 @@ import {
 } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
-import { HTMLText } from '@island.is/regulations'
 import { StepComponent } from '../state/useDraftingState'
 import { getMinPublishDate, useLocale } from '../utils'
 import { Appendixes, AppendixStateItem } from './Appendixes'
@@ -90,7 +89,7 @@ export const EditBasics: StepComponent = (props) => {
             <Box marginBottom={[4, 4, 8]}>
               <EditorInput
                 label={t(msg.text)}
-                baseText={'' as HTMLText}
+                baseText={''}
                 isImpact={false}
                 draftId={draft.id}
                 valueRef={textRef}

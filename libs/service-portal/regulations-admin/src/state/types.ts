@@ -97,8 +97,8 @@ export type RegDraftFormSimpleProps =
   | 'text'
   | 'idealPublishDate' // This prop needs its own action that checks for working days and updates the `fastTrack` flag accordingly
   | 'fastTrack'
-  | 'signatureDate' // Need to be checked and must never be **after* `idealPublishDate`
   | 'effectiveDate' // Need to be checked and must never be **before** `idealPublishDate`
+  | 'signatureDate' // Need to be checked and must never be **after* `idealPublishDate`
   // | 'lawChapters'
   | 'ministry'
   | 'type'

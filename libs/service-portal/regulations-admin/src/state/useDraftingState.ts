@@ -112,11 +112,12 @@ const makeDraftForm = (
     ),
     fastTrack: f(draft.fastTrack || false),
 
+    effectiveDate: f(draft.effectiveDate && new Date(draft.effectiveDate)),
+
     signatureDate: f(
       draft.signatureDate && new Date(draft.signatureDate),
       true,
     ),
-    effectiveDate: f(draft.effectiveDate && new Date(draft.effectiveDate)),
 
     lawChapters: f((draft.lawChapters || []).map((chapter) => chapter.slug)),
     ministry: f(draft.ministry?.slug, true),
@@ -157,12 +158,12 @@ const makeDraftForm = (
 const getEmptyDraft = (): RegulationDraft => ({
   id: 'new' as RegulationDraftId,
   draftingStatus: 'draft',
-  draftingNotes: '' as HTMLText,
+  draftingNotes: '',
   authors: [],
   title: '',
-  text: '' as HTMLText,
+  text: '',
   appendixes: [],
-  comments: '' as HTMLText,
+  comments: '',
   ministry: undefined,
   lawChapters: [],
   impacts: [],

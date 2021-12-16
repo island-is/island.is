@@ -179,14 +179,15 @@ export const Appendixes = (props: AppendixesProps) => {
   const t = useLocale().formatMessage
 
   const addAppendix = () => {
-    props.onChange((appendixes) =>
-      appendixes.concat({
+    props.onChange((appendixes) => {
+      const newAppendix: AppendixStateItem = {
         key: NEW_PREFIX + domid(),
         title: '',
-        valueRef: { current: () => '' as HTMLText },
+        valueRef: { current: () => '' },
         elmRef: { current: null },
-      }),
-    )
+      }
+      return appendixes.concat(newAppendix)
+    })
   }
 
   return (

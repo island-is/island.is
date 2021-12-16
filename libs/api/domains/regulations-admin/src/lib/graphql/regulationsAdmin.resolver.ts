@@ -80,11 +80,11 @@ export class RegulationsAdminResolver {
         id: change.id,
         type: 'amend',
         title: change.title,
-        text: text as HTMLText,
+        text,
         name: change.regulation,
         date: change.date,
-        appendixes: appendixes as RegulationAppendix[],
-        comments: comments as HTMLText,
+        appendixes,
+        comments,
       })
     })
     if (regulation.cancel) {
@@ -105,15 +105,15 @@ export class RegulationsAdminResolver {
       draftingStatus: regulation.drafting_status,
       title: regulation.title,
       name: regulation.name,
-      text: text as HTMLText,
+      text,
       lawChapters: lawChapters ?? undefined,
       ministry: ministries?.[0] ?? undefined,
-      authors: authors,
+      authors,
       idealPublishDate: regulation.ideal_publish_date as any, // TODO: Exclude original from response.
       draftingNotes: regulation?.drafting_notes, // TODO: Exclude original from response.
       appendixes: appendixes as RegulationAppendix[],
-      comments: comments as HTMLText,
-      impacts: impacts,
+      comments,
+      impacts,
       type: regulation.type,
       signatureDate: regulation.signature_date,
       effectiveDate: regulation.effective_date,
@@ -167,10 +167,10 @@ export class RegulationsAdminResolver {
         draftingNotes: regulation.drafting_notes,
         idealPublishDate: regulation.ideal_publish_date,
         impacts: [],
-        authors: authors,
-        text: '' as any,
+        authors,
+        text: '',
         appendixes: [],
-        comments: '' as any,
+        comments: '',
       })
     }
 
