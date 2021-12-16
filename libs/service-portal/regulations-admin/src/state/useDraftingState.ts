@@ -1,5 +1,10 @@
 import { useMutation, gql } from '@apollo/client'
-import { HTMLText, LawChapterSlug, PlainText } from '@island.is/regulations'
+import {
+  HTMLText,
+  isNonNull,
+  LawChapterSlug,
+  PlainText,
+} from '@island.is/regulations'
 import {
   useMinistriesQuery,
   useRegulationDraftQuery,
@@ -185,31 +190,29 @@ const getEmptyDraft = (): RegulationDraft => ({
 
 // ---------------------------------------------------------------------------
 
-const guessFromTitle = (state: DraftingState, newTitle?: PlainText) => {
-  if (!state.draft) return
-  const draft = state.draft
-  const type = draft.type
-  if (newTitle !== draft.title.value && (!type.value || type.guessed)) {
-    type.value = findRegulationType(newTitle ?? draft.title.value)
-    type.guessed = true
-  }
-}
-
 const specialUpdates: {
   [Prop in RegDraftFormSimpleProps]?: (
     state: DraftingState,
-    newValue: RegDraftForm[Prop]['value'],
+    newValue?: RegDraftForm[Prop]['value'],
   ) => RegDraftForm[Prop]['value'] | null | void
 } = {
-  title: guessFromTitle,
+  title: (state: DraftingState, newTitle?: PlainText) => {
+    const draft = state.draft
+    if (!draft) return
+    const type = draft.type
+    if (newTitle !== draft.title.value && (!type.value || type.guessed)) {
+      type.value = findRegulationType(newTitle ?? draft.title.value)
+      type.guessed = true
+    }
+  },
 
   text: (state, newValue) => {
-    if (!state.draft) return
     const draft = state.draft
+    if (!draft) return
     const text = draft.text
     if (newValue !== text.value) {
       const { ministrySlug, signatureDate } = findSignatureInText(
-        newValue,
+        newValue ?? text.value,
         state.ministries,
       )
       draft.ministry.value = ministrySlug
@@ -246,7 +249,9 @@ const actionHandlers: {
   LOADING_DRAFT_SUCCESS: (state, { draft }) => {
     state.loading = false
     state.draft = makeDraftForm(draft)
-    guessFromTitle(state)
+    Object.values(specialUpdates)
+      .filter(isNonNull)
+      .forEach((specialUpdater) => specialUpdater(state))
   },
   LOADING_DRAFT_ERROR: (state, { error }) => {
     state.loading = false
@@ -614,6 +619,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     history, // NOTE: Should be immutable
     createDraftRegulation, // NOTE: Should be immutable
     updateDraftRegulationById, // NOTE: Should be immutable
+    deleteDraftRegulationMutation, // NOTE: Should be immutable
     t,
   ])
 
