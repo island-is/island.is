@@ -1,7 +1,6 @@
 export enum ApplicationTypes {
   EXAMPLE = 'ExampleForm',
   PASSPORT = 'Passport',
-  DRIVING_LESSONS = 'DrivingLessons',
   DRIVING_LICENSE = 'DrivingLicense',
   DRIVING_ASSESSMENT_APPROVAL = 'DrivingAssessmentApproval',
   PARENTAL_LEAVE = 'ParentalLeave',
@@ -10,9 +9,7 @@ export enum ApplicationTypes {
   HEALTH_INSURANCE = 'HealthInsurance',
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
-  PARTY_LETTER = 'PartyLetter',
   LOGIN_SERVICE = 'LoginService',
-  PARTY_APPLICATION = 'PartyApplication',
   INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
   FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
   PUBLIC_DEBT_PAYMENT_PLAN = 'PublicDebtPaymentPlan',
@@ -31,10 +28,6 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PASSPORT]: {
     slug: 'vegabref',
     translation: 'pp.application',
-  },
-  [ApplicationTypes.DRIVING_LESSONS]: {
-    slug: 'okunam',
-    translation: 'dl.application',
   },
   [ApplicationTypes.DRIVING_LICENSE]: {
     slug: 'okuskirteini',
@@ -68,17 +61,9 @@ export const ApplicationConfigurations = {
     slug: 'kvortun-til-personuverndar',
     translation: 'dpac.application',
   },
-  [ApplicationTypes.PARTY_LETTER]: {
-    slug: 'listabokstafur',
-    translation: 'ple.application',
-  },
   [ApplicationTypes.LOGIN_SERVICE]: {
     slug: 'innskraningarthjonusta',
     translation: 'ls.application',
-  },
-  [ApplicationTypes.PARTY_APPLICATION]: {
-    slug: 'frambod',
-    translation: 'pa.application',
   },
   [ApplicationTypes.INSTITUTION_COLLABORATION]: {
     slug: 'samstarf',

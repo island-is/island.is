@@ -135,7 +135,7 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
       </Text>
       <Box marginBottom={[1, 1, 3]}>
         <NumberInput
-          label="Eigin húsnæði"
+          label="Eigið húsnæði"
           name="individualsOwnPlace"
           id="individualsOwnPlace"
           maximumInputLength={maxAmountLength}
@@ -246,7 +246,7 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
       </Text>
       <Box marginBottom={[1, 1, 3]}>
         <NumberInput
-          label="Eigin húsnæði"
+          label="Eigið húsnæði"
           name="cohabitationOwnPlace"
           id="cohabitationOwnPlace"
           maximumInputLength={maxAmountLength}

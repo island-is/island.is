@@ -8,8 +8,8 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 import {
   FamilyStatus,
+  FormSpouse,
   isEmailValid,
-  Spouse,
 } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import * as styles from './relationshipStatusForm.css'
@@ -40,7 +40,7 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
     },
   ]
 
-  const isInputAndRadioValid = (acceptData: boolean, spouse?: Spouse) => {
+  const isInputAndRadioValid = (acceptData: boolean, spouse?: FormSpouse) => {
     return (
       !acceptData ||
       !spouse?.email ||
@@ -56,10 +56,7 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
       return
     }
 
-    if (
-      form?.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION &&
-      isInputAndRadioValid(acceptData, form?.spouse)
-    ) {
+    if (isInputAndRadioValid(acceptData, form?.spouse)) {
       setHasError(true)
       return
     }

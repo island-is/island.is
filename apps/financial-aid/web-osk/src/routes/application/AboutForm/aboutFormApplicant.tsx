@@ -213,12 +213,13 @@ const AboutFormApplicant = () => {
           <Text marginBottom={[3, 3, 7]}>
             Frekari upplýsingar um vinnslu persónuupplýsinga hjá sveitarfélaginu
             má finna í persónuverndar-stefnu þess sem aðgengileg er á vefsíðunni
+            {` `}
             <a
               href={municipality?.homepage}
               target="_blank"
               rel="noreferrer noopener"
             >
-              <span className="linkInText"> {municipality?.homepage}</span>
+              {municipality?.homepage}
             </a>
             .
           </Text>

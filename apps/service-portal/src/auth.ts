@@ -16,6 +16,14 @@ const userMocked = process.env.API_MOCKS === 'true'
 if (userMocked) {
   configureMock({
     profile: { name: 'Mock', locale: 'is', nationalId: '0000000000' },
+    scopes: [
+      ApiScope.assets,
+      ApiScope.education,
+      ApiScope.financeOverview,
+      ApiScope.financeSalary,
+      ApiScope.internal,
+      ApiScope.meDetails,
+    ],
   })
 } else {
   configure({
