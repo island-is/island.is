@@ -4,6 +4,10 @@ import { JWT } from 'next-auth/jwt'
 import { NextApiRequest, NextApiResponse } from 'next-auth/internals/utils'
 import { uuid } from 'uuidv4'
 
+import environment from '../../../environments/environment'
+
+const { identityProvider } = environment
+
 import {
   AuthUser,
   signIn as handleSignIn,
@@ -17,9 +21,9 @@ const providers = [
     id: 'identity-server',
     name: 'Skilavottord',
     scope: 'openid profile offline_access',
-    clientId: '', // TODO
-    domain: process.env.IDENTITY_SERVER_DOMAIN ?? '',
-    clientSecret: process.env.IDENTITY_SERVER_SECRET ?? '',
+    clientId: '@urvinnslusjodur.is/skilavottord',
+    domain: identityProvider.domain,
+    clientSecret: identityProvider.clientSecret,
     protection: 'pkce',
   }),
 ]
