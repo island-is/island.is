@@ -99,7 +99,7 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
     type: DataType.STRING,
     allowNull: false,
   })
-  requestType: string
+  requestType: RecyclingRequestTypes
 
   @Field()
   @Column({
