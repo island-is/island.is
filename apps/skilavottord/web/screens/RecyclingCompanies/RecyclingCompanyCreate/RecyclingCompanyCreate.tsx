@@ -1,9 +1,10 @@
 import React, { FC, useContext } from 'react'
+import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/router'
+import { useMutation } from '@apollo/client'
 import gql from 'graphql-tag'
-import { useQuery } from '@apollo/client'
 import NextLink from 'next/link'
 
-import { useI18n } from '@island.is/skilavottord-web/i18n'
 import {
   Box,
   Breadcrumbs,
@@ -11,45 +12,75 @@ import {
   GridRow,
   Stack,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { Sidenav, NotFound } from '@island.is/skilavottord-web/components'
-import { UserContext } from '@island.is/skilavottord-web/context'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
+import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
 import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
-import { Query, Role } from '@island.is/skilavottord-web/graphql/schema'
+import { UserContext } from '@island.is/skilavottord-web/context'
+import { NotFound } from '@island.is/skilavottord-web/components'
+import { Role } from '@island.is/skilavottord-web/graphql/schema'
 
-import { CarsTable, RecyclingCompanyImage } from './components'
+import { RecyclingCompanyForm, RecyclingCompanyImage } from '../components'
+import { SkilavottordAllRecyclingPartnersQuery } from '../RecyclingCompanies'
 
-export const SkilavottordVehiclesQuery = gql`
-  query skilavottordVehiclesQuery {
-    skilavottordAllDeregisteredVehicles {
-      vehicleId
-      vehicleType
-      newregDate
-      createdAt
-      recyclingRequests {
-        id
-        nameOfRequestor
-        createdAt
-      }
+export const CreateSkilavottordRecyclingPartnerMutation = gql`
+  mutation createSkilavottordRecyclingPartnerMutation(
+    $input: CreateRecyclingPartnerInput!
+  ) {
+    createSkilavottordRecyclingPartner(input: $input) {
+      companyId
+      companyName
+      active
+      address
+      postnumber
+      city
+      website
+      phone
+      active
     }
   }
 `
 
-const Overview: FC = () => {
+const RecyclingCompanyCreate: FC = () => {
   const { user } = useContext(UserContext)
+  const router = useRouter()
+  const [createSkilavottordRecyclingPartner] = useMutation(
+    CreateSkilavottordRecyclingPartnerMutation,
+    {
+      refetchQueries: [
+        {
+          query: SkilavottordAllRecyclingPartnersQuery,
+        },
+      ],
+    },
+  )
+  const { control, errors, handleSubmit } = useForm({
+    mode: 'onChange',
+  })
   const {
-    t: { recyclingFundOverview: t, recyclingFundSidenav: sidenavText, routes },
+    t: { recyclingCompanies: t, recyclingFundSidenav: sidenavText, routes },
   } = useI18n()
-
-  const { data } = useQuery<Query>(SkilavottordVehiclesQuery)
-  const vehicles = data?.skilavottordAllDeregisteredVehicles ?? []
 
   if (!user) {
     return null
-  } else if (!hasPermission('recycledVehicles', user?.role as Role)) {
+  } else if (!hasPermission('recyclingCompanies', user?.role as Role)) {
     return <NotFound />
   }
+
+  const handleCreateRecyclingPartner = handleSubmit(async (input) => {
+    const { errors } = await createSkilavottordRecyclingPartner({
+      variables: { input: { ...input, active: !!input.active } },
+    })
+    if (!errors) {
+      router.push(routes.recyclingCompanies.baseRoute).then(() => {
+        toast.success(t.recyclingCompany.add.added)
+      })
+    }
+  })
+
+  const handleCancel = () => router.push(routes.recyclingCompanies.baseRoute)
 
   return (
     <PartnerPageLayout
@@ -77,7 +108,7 @@ const Overview: FC = () => {
                 : null),
             } as React.ComponentProps<typeof Sidenav>['sections'][0],
           ].filter(Boolean)}
-          activeSection={0}
+          activeSection={1}
         />
       }
     >
@@ -87,6 +118,10 @@ const Overview: FC = () => {
             { title: 'Ísland.is', href: routes.home['recyclingCompany'] },
             {
               title: t.title,
+              href: routes.recyclingCompanies.baseRoute,
+            },
+            {
+              title: t.recyclingCompany.add.breadcrumb,
             },
           ]}
           renderLink={(link, item) => {
@@ -105,9 +140,9 @@ const Overview: FC = () => {
           <GridRow marginBottom={7}>
             <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
               <Text variant="h1" as="h1" marginBottom={4}>
-                {t.title}
+                {t.recyclingCompany.add.title}
               </Text>
-              <Text variant="intro">{t.info}</Text>
+              <Text variant="intro">{t.recyclingCompany.add.info}</Text>
             </GridColumn>
             <GridColumn
               span={['8/8', '2/8']}
@@ -120,17 +155,17 @@ const Overview: FC = () => {
             </GridColumn>
           </GridRow>
         </Box>
-        <Stack space={3}>
-          <Text variant="h3">{t.subtitles.deregistered}</Text>
-          {vehicles.length > 0 ? (
-            <CarsTable titles={t.table} vehicles={vehicles} />
-          ) : (
-            <Text>{t.info}</Text>
-          )}
-        </Stack>
       </Stack>
+      <Box marginTop={7}>
+        <RecyclingCompanyForm
+          onSubmit={handleCreateRecyclingPartner}
+          onCancel={handleCancel}
+          control={control}
+          errors={errors}
+        />
+      </Box>
     </PartnerPageLayout>
   )
 }
 
-export default Overview
+export default RecyclingCompanyCreate
