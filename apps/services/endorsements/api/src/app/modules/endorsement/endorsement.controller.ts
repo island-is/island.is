@@ -34,15 +34,11 @@ import {
 import { environment } from '../../../environments'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementListByIdPipe } from '../endorsementList/pipes/endorsementListById.pipe'
-import { BulkEndorsementDto } from './dto/bulkEndorsement.dto'
 import { EndorsementDto } from './dto/endorsement.dto'
 import { Endorsement } from './models/endorsement.model'
 import { EndorsementService } from './endorsement.service'
 import { EndorsementsScope } from '@island.is/auth/scopes'
-import type { User, Auth } from '@island.is/auth-nest-tools'
-import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
-import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
-import { AccessGroup } from '../../guards/accessGuard/access.enum'
+import type { User } from '@island.is/auth-nest-tools'
 import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementDto } from './dto/paginatedEndorsement.dto'
 import { EndorsementInterceptor } from './interceptors/endorsement.interceptor'
@@ -179,43 +175,6 @@ export class EndorsementController {
       endorsementList,
       showName: endorsement.showName,
     })
-  }
-
-  @ApiOperation({
-    summary: 'Creates multiple endorsements given an array of national ids',
-  })
-  @ApiCreatedResponse({
-    description: 'Creates multiple endorsements given an array of national ids',
-    type: EndorsementBulkCreate,
-  })
-  @ApiParam({ name: 'listId', type: String })
-  @ApiBody({
-    type: BulkEndorsementDto,
-  })
-  @Scopes(EndorsementsScope.main)
-  @Post('/bulk')
-  @HasAccessGroup(AccessGroup.Owner)
-  @Audit<EndorsementBulkCreate>({
-    resources: (response) => response.succeeded.map((e) => e.id),
-    meta: (response) => ({ count: response.succeeded.length }),
-  })
-  async bulkCreate(
-    @Param(
-      'listId',
-      new ParseUUIDPipe({ version: '4' }),
-      EndorsementListByIdPipe,
-    )
-    endorsementList: EndorsementList,
-    @Body() { nationalIds }: BulkEndorsementDto,
-    @CurrentAuth() auth: Auth,
-  ): Promise<EndorsementBulkCreate> {
-    return await this.endorsementService.bulkCreateEndorsementOnList(
-      {
-        nationalIds,
-        endorsementList,
-      },
-      auth,
-    )
   }
 
   @ApiOperation({
