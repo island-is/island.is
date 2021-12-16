@@ -649,9 +649,6 @@
     "services-endorsements-api": {
       "tags": []
     },
-    "services-search-indexer": {
-      "tags": []
-    },
     "services-user-notification": {
       "tags": []
     },
