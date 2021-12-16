@@ -10,12 +10,16 @@ import { DraftRegulation } from './draft_regulation.model'
 import { DraftRegulationChange } from '../draft_regulation_change'
 import { DraftRegulationCancel } from '../draft_regulation_cancel'
 import { Op } from 'sequelize'
+import { DraftRegulationCancelService } from '../draft_regulation_cancel/draft_regulation_cancel.service'
+import { DraftRegulationChangeService } from '../draft_regulation_change/draft_regulation_change.service'
 
 @Injectable()
 export class DraftRegulationService {
   constructor(
     @InjectModel(DraftRegulation)
     private readonly draftRegulationModel: typeof DraftRegulation,
+    private readonly draftRegulationCancelService: DraftRegulationCancelService,
+    private readonly draftRegulationChangeService: DraftRegulationChangeService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -106,6 +110,10 @@ export class DraftRegulationService {
 
   async delete(id: string): Promise<number> {
     this.logger.debug(`Deleting DraftRegulation ${id}`)
+
+    // destroy all draft regulation impacts
+    await this.draftRegulationCancelService.deleteRegulationDraftCancels(id)
+    await this.draftRegulationChangeService.deleteRegulationDraftChanges(id)
 
     return this.draftRegulationModel.destroy({
       where: {

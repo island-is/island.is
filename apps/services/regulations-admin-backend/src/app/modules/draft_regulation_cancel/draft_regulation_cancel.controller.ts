@@ -110,4 +110,28 @@ export class DraftRegulationCancelController {
       this.draftRegulationCancelService.delete(id),
     )
   }
+
+  @Scopes('@island.is/regulations:create')
+  @Delete('draft_regulation_cancel/:regulationId')
+  @ApiCreatedResponse()
+  async deleteRegulationDraftCancels(
+    @Param('regulationId') regulationId: string,
+    @CurrentUser() user: User,
+  ): Promise<number> {
+    if (!regulationId) {
+      throw new BadRequestException('regulationId must be provided')
+    }
+
+    return this.auditService.auditPromise(
+      {
+        user,
+        action: 'deleteRegulationDraftCancels',
+        namespace,
+        resources: regulationId,
+      },
+      this.draftRegulationCancelService.deleteRegulationDraftCancels(
+        regulationId,
+      ),
+    )
+  }
 }

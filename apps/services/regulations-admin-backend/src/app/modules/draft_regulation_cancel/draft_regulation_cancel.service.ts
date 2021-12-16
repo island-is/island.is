@@ -59,4 +59,14 @@ export class DraftRegulationCancelService {
       },
     })
   }
+
+  async deleteRegulationDraftCancels(changingId: string): Promise<number> {
+    this.logger.debug(`Deleting RegulationDraftCancels for: ${changingId}`)
+
+    return this.draftRegulationCancelModel.destroy({
+      where: {
+        changing_id: changingId,
+      },
+    })
+  }
 }
