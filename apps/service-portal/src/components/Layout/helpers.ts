@@ -1,5 +1,6 @@
 import { GridColumns, ResponsiveProp } from '@island.is/island-ui/core/types'
 import { ServicePortalPath } from '@island.is/service-portal/core'
+import { MenuState } from '../../store/actions'
 type responsiveGridColumns = {
   default: {
     span: ResponsiveProp<GridColumns>
@@ -49,3 +50,34 @@ export const wideScreens = [
   ServicePortalPath.FinanceLocalTax,
   ServicePortalPath.FinancePayments,
 ]
+
+export type GridLayout = {
+  span: ResponsiveProp<GridColumns>
+  offset: ResponsiveProp<GridColumns>
+}
+
+export const getLayout = (
+  pathname: string,
+  sidebarState: MenuState,
+): GridLayout => {
+  const hasWideLayout = wideScreens.includes(pathname as ServicePortalPath)
+  const sidebarCollapsed = sidebarState === 'closed'
+  if (sidebarCollapsed && hasWideLayout) {
+    return {
+      span: gridlayout.wideClosed.span,
+      offset: gridlayout.wideClosed.offset,
+    }
+  } else if (sidebarCollapsed && !hasWideLayout) {
+    return {
+      span: gridlayout.defaultClosed.span,
+      offset: gridlayout.defaultClosed.offset,
+    }
+  } else if (!sidebarCollapsed && hasWideLayout) {
+    return { span: gridlayout.wide.span, offset: gridlayout.wide.offset }
+  } else {
+    return {
+      span: gridlayout.default.span,
+      offset: gridlayout.default.offset,
+    }
+  }
+}
