@@ -426,6 +426,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
       goBack:
         (draft || isNew) && stepNav.prev
           ? () => {
+              actions.saveStatus()
               history.replace(
                 generatePath(ServicePortalPath.RegulationsAdminEdit, {
                   id: draftId,
@@ -439,6 +440,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
         stepNav.next &&
         (isEditor || stepNav.next !== 'review')
           ? () => {
+              actions.saveStatus()
               // BASICS
               if (stepNav.name === 'basics') {
                 const basicsRequired = [
@@ -599,6 +601,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
             }
           : undefined,
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     stepNav,
     // TODO: Review the use of draft here, and remove if possible.
