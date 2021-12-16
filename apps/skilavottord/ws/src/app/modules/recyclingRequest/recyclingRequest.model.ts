@@ -21,7 +21,7 @@ import {
 import { RecyclingPartnerModel } from '../recyclingPartner'
 import { VehicleModel } from '../vehicle'
 
-enum RecyclingRequestTypes {
+export enum RecyclingRequestTypes {
   pendingRecycle = 'pendingRecycle',
   handOver = 'handOver',
   deregistered = 'deregistered',
@@ -75,6 +75,7 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @ForeignKey(() => VehicleModel)
   @Column({
     type: DataType.STRING,
+    field: 'vehicle_id',
   })
   vehicleId!: string
 
@@ -98,7 +99,7 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
     type: DataType.STRING,
     allowNull: false,
   })
-  requestType: string
+  requestType: RecyclingRequestTypes
 
   @Field()
   @Column({
@@ -109,11 +110,15 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
 
   @Field()
   @CreatedAt
-  @Column
+  @Column({
+    field: 'created_at',
+  })
   createdAt: Date
 
   @Field()
   @UpdatedAt
-  @Column
+  @Column({
+    field: 'updated_at',
+  })
   updatedAt: Date
 }

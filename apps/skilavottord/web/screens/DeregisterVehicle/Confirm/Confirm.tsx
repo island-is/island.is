@@ -29,6 +29,8 @@ import {
 import {
   Mutation,
   Query,
+  RequestErrors,
+  RequestStatus,
   Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 
@@ -99,7 +101,7 @@ const Confirm: FC = () => {
   const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
 
   useEffect(() => {
-    if (mutationResponse?.status) {
+    if ((mutationResponse as RequestStatus)?.status) {
       router.replace(routes.baseRoute).then(() => toast.success(t.success))
     }
   }, [mutationResponse, router, routes, t.success])
@@ -126,7 +128,11 @@ const Confirm: FC = () => {
     return <NotFound />
   }
 
-  if (mutationError || mutationLoading || mutationResponse?.message) {
+  if (
+    mutationError ||
+    mutationLoading ||
+    (mutationResponse as RequestErrors)?.message
+  ) {
     return (
       <ProcessPageLayout processType={'company'} activeSection={1}>
         {mutationLoading ? (

@@ -10,7 +10,7 @@ import {
 } from './gen/fetch/endorsements'
 
 const CREATE_ENDORSEMENT_LIST_QUERY = `
-  mutation EndorsementSystemCreatePartyLetterEndorsementList($input: CreateEndorsementListDto!) {
+  mutation EndorsementSystemCreateEndorsementList($input: CreateEndorsementListDto!) {
     endorsementSystemCreateEndorsementList(input: $input) {
       id
     }
@@ -75,18 +75,9 @@ export class GeneralPetitionService {
             title: application.answers.listName,
             description: application.answers.aboutList,
             endorsementMetadata: [
-              { field: EndorsementMetadataDtoFieldEnum.address },
               { field: EndorsementMetadataDtoFieldEnum.fullName },
             ],
             tags: [EndorsementListTagsEnum.generalPetition],
-            validationRules: [
-              {
-                type: 'minAge',
-                value: {
-                  age: 18,
-                },
-              },
-            ],
             meta: {
               // to be able to link back to this application
               applicationTypeId: application.typeId,

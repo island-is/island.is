@@ -88,7 +88,7 @@ export class PaymentController {
 
     this.auditService.audit({
       user,
-      action: 'create',
+      action: 'createCharge',
       resources: paymentDto.application_id as string,
       meta: { applicationId: paymentDto.application_id, id: payment.id },
     })

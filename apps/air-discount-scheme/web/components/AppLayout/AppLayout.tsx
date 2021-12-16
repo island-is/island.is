@@ -46,8 +46,6 @@ export const AppLayout: NextComponentType<
   isAuthenticated,
   footerUpperMenu,
   footerLowerMenu,
-  footerMiddleMenu,
-  footerTagsMenu,
   namespace,
   routeKey,
   localeKey,
@@ -73,7 +71,6 @@ export const AppLayout: NextComponentType<
     .filter(noEmptyOrHash)
     .map(mapLocalLinks)
   const footerMiddleMenuFiltered = [] // footerMiddleMenu.filter(noEmptyOrHash)
-  const footerTagsMenuFiltered = [] // footerTagsMenu.filter(noEmptyOrHash)
 
   return (
     <UserContext.Provider value={{ isAuthenticated, user, setUser }}>
@@ -131,11 +128,8 @@ export const AppLayout: NextComponentType<
           topLinksContact={[]}
           bottomLinks={footerLowerMenuFiltered}
           middleLinks={footerMiddleMenuFiltered}
-          tagLinks={footerTagsMenuFiltered}
           middleLinksTitle={namespace.footerMiddleLabel}
-          tagLinksTitle={namespace.footerRightLabel}
           showMiddleLinks={footerMiddleMenuFiltered.length > 0}
-          showTagLinks={footerTagsMenuFiltered.length > 0}
           languageSwitchLink={languageRoute}
           languageSwitchOnClick={() => {
             switchLanguage(null, nextLanguage)

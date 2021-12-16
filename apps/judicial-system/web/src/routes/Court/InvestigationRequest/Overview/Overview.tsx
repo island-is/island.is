@@ -15,6 +15,7 @@ const Overview = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
 
   useEffect(() => {
@@ -35,6 +36,7 @@ const Overview = () => {
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         isLoading={isLoadingWorkingCase}
+        isCaseUpToDate={isCaseUpToDate}
       />
     </PageLayout>
   )
