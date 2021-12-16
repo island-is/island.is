@@ -56,7 +56,10 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
       return
     }
 
-    if (isInputAndRadioValid(acceptData, form?.spouse)) {
+    if (
+      form.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION &&
+      isInputAndRadioValid(acceptData, form?.spouse)
+    ) {
       setHasError(true)
       return
     }

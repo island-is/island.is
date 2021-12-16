@@ -11,9 +11,9 @@
         "__typename": "UserAddress"
       },
       "spouse": {
-        "nationalId": "0101303019",
-        "maritalStatus": "3",
-        "name": "Gervimaður Afríka",
+        "nationalId": "",
+        "maritalStatus": "4",
+        "name": "",
         "__typename": "UserSpouse"
       },
       "__typename": "Person"
