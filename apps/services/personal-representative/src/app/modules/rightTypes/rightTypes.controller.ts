@@ -59,7 +59,7 @@ export class RightTypesController {
     resources: (types) => types.map((type) => type.code),
   })
   async getAll(): Promise<PersonalRepresentativeRightType[]> {
-    const rightTypes = await this.rightTypesService.getAllAsync()
+    const rightTypes = await this.rightTypesService.getAll()
 
     if (!rightTypes) {
       throw new NotFoundException('No right types found')
@@ -84,7 +84,7 @@ export class RightTypesController {
       throw new BadRequestException('Code needs to be provided')
     }
 
-    const rightType = await this.rightTypesService.getPersonalRepresentativeRightTypeAsync(
+    const rightType = await this.rightTypesService.getPersonalRepresentativeRightType(
       code,
     )
 
@@ -115,7 +115,7 @@ export class RightTypesController {
         namespace,
         resources: code,
       },
-      this.rightTypesService.deleteAsync(code),
+      this.rightTypesService.delete(code),
     )
   }
 
@@ -141,7 +141,7 @@ export class RightTypesController {
         resources: rightType.code,
         meta: { fields: Object.keys(rightType) },
       },
-      this.rightTypesService.createAsync(rightType),
+      this.rightTypesService.create(rightType),
     )
   }
 
@@ -172,7 +172,7 @@ export class RightTypesController {
         resources: rightType.code,
         meta: { fields: Object.keys(rightType) },
       },
-      this.rightTypesService.updateAsync(code, rightType),
+      this.rightTypesService.update(code, rightType),
     )
 
     if (result == null) {

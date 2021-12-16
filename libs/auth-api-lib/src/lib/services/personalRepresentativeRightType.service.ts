@@ -16,12 +16,12 @@ export class PersonalRepresentativeRightTypeService {
   ) {}
 
   /** Get's all personal repreasentative right types  */
-  async getAllAsync(): Promise<PersonalRepresentativeRightType[] | null> {
+  async getAll(): Promise<PersonalRepresentativeRightType[] | null> {
     return this.personalRepresentativeRightTypeModel.findAll()
   }
 
   /** Get's all personal repreasentative right types and count */
-  async getAndCountAllAsync(
+  async getAndCountAll(
     page: number,
     count: number,
   ): Promise<{
@@ -37,7 +37,7 @@ export class PersonalRepresentativeRightTypeService {
   }
 
   /** Get's all personal repreasentative right types and count by searchstring */
-  async findAsync(
+  async find(
     searchString: string,
     page: number,
     count: number,
@@ -64,7 +64,7 @@ export class PersonalRepresentativeRightTypeService {
   }
 
   /** Get's a personal repreasentative right type by code */
-  async getPersonalRepresentativeRightTypeAsync(
+  async getPersonalRepresentativeRightType(
     code: string,
   ): Promise<PersonalRepresentativeRightType | null> {
     this.logger.debug(
@@ -79,7 +79,7 @@ export class PersonalRepresentativeRightTypeService {
   }
 
   /** Create a new personal repreasentative right type */
-  async createAsync(
+  async create(
     personalRepresentativeRightType: PersonalRepresentativeRightTypeDTO,
   ): Promise<PersonalRepresentativeRightType> {
     this.logger.debug(
@@ -92,7 +92,7 @@ export class PersonalRepresentativeRightTypeService {
   }
 
   /** Updates an existing personal repreasentative right type */
-  async updateAsync(
+  async update(
     code: string,
     personalRepresentativeRightType: PersonalRepresentativeRightTypeDTO,
   ): Promise<PersonalRepresentativeRightType | null> {
@@ -118,7 +118,7 @@ export class PersonalRepresentativeRightTypeService {
   }
 
   /** Soft delete on a personal repreasentative right type by code */
-  async deleteAsync(code: string): Promise<number> {
+  async delete(code: string): Promise<number> {
     this.logger.debug(
       'Soft deleting a personal representative right type with name: ',
       code,

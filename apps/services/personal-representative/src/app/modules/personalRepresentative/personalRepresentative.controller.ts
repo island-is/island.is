@@ -68,7 +68,7 @@ export class PersonalRepresentativeController {
   async getAll(
     @Param('includeInvalid') includeInvalid?: boolean,
   ): Promise<PersonalRepresentativeDTO[]> {
-    const personalRepresentatives = await this.prService.getAllAsync(
+    const personalRepresentatives = await this.prService.getAll(
       includeInvalid ? (includeInvalid as boolean) : false,
     )
 
@@ -94,7 +94,7 @@ export class PersonalRepresentativeController {
       throw new BadRequestException('Id needs to be provided')
     }
 
-    const personalRepresentative = await this.prService.getPersonalRepresentativeAsync(
+    const personalRepresentative = await this.prService.getPersonalRepresentative(
       id,
     )
 
@@ -136,7 +136,7 @@ export class PersonalRepresentativeController {
       throw new BadRequestException('NationalId needs to be provided')
     }
 
-    const personalRepresentatives = await this.prService.getByPersonalRepresentativeAsync(
+    const personalRepresentatives = await this.prService.getByPersonalRepresentative(
       nationalId,
       includeInvalid ? (includeInvalid as boolean) : false,
     )
@@ -172,7 +172,7 @@ export class PersonalRepresentativeController {
       throw new BadRequestException('NationalId needs to be provided')
     }
 
-    const personalRepresentative = await this.prService.getPersonalRepresentativeByRepresentedPersonAsync(
+    const personalRepresentative = await this.prService.getPersonalRepresentativeByRepresentedPerson(
       nationalId,
       includeInvalid ? (includeInvalid as boolean) : false,
     )
@@ -200,7 +200,7 @@ export class PersonalRepresentativeController {
         namespace,
         resources: id,
       },
-      this.prService.deleteAsync(id),
+      this.prService.delete(id),
     )
   }
 
@@ -239,7 +239,7 @@ export class PersonalRepresentativeController {
     }
 
     // Find current personal representative connection between nationalIds and remove since only one should be active
-    const currentContract = await this.prService.getPersonalRepresentativeByRepresentedPersonAsync(
+    const currentContract = await this.prService.getPersonalRepresentativeByRepresentedPerson(
       personalRepresentative.nationalIdRepresentedPerson,
       true,
     )
@@ -253,7 +253,7 @@ export class PersonalRepresentativeController {
           resources: personalRepresentative.nationalIdRepresentedPerson,
           meta: { fields: Object.keys(currentContract) },
         },
-        this.prService.deleteAsync(currentContract.id),
+        this.prService.delete(currentContract.id),
       )
     }
     // Create a new personal representative
@@ -265,7 +265,7 @@ export class PersonalRepresentativeController {
         resources: personalRepresentative.nationalIdRepresentedPerson,
         meta: { fields: Object.keys(personalRepresentative) },
       },
-      this.prService.createAsync(personalRepresentative),
+      this.prService.create(personalRepresentative),
     )
   }
 }

@@ -21,16 +21,14 @@ export class PersonalRepresentativeService {
     private sequelize: Sequelize,
   ) {}
 
-  private validToClause = {
-    [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
-  }
   /** Get's all personal repreasentatives  */
-  async getAllAsync(
-    includeInvalid: boolean,
-  ): Promise<PersonalRepresentativeDTO[]> {
+  async getAll(includeInvalid: boolean): Promise<PersonalRepresentativeDTO[]> {
+    const validToClause = {
+      [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
+    }
     const whereClause: WhereOptions = includeInvalid
       ? {}
-      : { validTo: this.validToClause }
+      : { validTo: validToClause }
     const personalRepresentatives = await this.personalRepresentativeModel.findAll(
       {
         where: whereClause,
@@ -53,17 +51,24 @@ export class PersonalRepresentativeService {
   }
 
   /** Get's all personal repreasentative connections for personal representative  */
-  async getByPersonalRepresentativeAsync(
+  async getByPersonalRepresentative(
     nationalIdPersonalRepresentative: string,
     includeInvalid: boolean,
   ): Promise<PersonalRepresentativeDTO[]> {
+    const validToClause = {
+      [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
+    }
+    const validFromClause = {
+      [Op.or]: { [Op.eq]: null, [Op.lt]: new Date() },
+    }
     const whereClause: WhereOptions = {
       nationalIdPersonalRepresentative: nationalIdPersonalRepresentative,
     }
     const whereClauseRights: WhereOptions = {}
     if (!includeInvalid) {
-      whereClause['validTo'] = this.validToClause
-      whereClauseRights['validTo'] = this.validToClause
+      whereClause['validTo'] = validToClause
+      whereClauseRights['validFrom'] = validFromClause
+      whereClauseRights['validTo'] = validToClause
     }
     const personalRepresentatives = await this.personalRepresentativeModel.findAll(
       {
@@ -87,17 +92,24 @@ export class PersonalRepresentativeService {
   }
 
   /** Get's all personal repreasentative connections for personal representative  */
-  async getPersonalRepresentativeByRepresentedPersonAsync(
+  async getPersonalRepresentativeByRepresentedPerson(
     nationalIdRepresentedPerson: string,
     includeInvalid: boolean,
   ): Promise<PersonalRepresentativeDTO | null> {
+    const validToClause = {
+      [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
+    }
+    const validFromClause = {
+      [Op.or]: { [Op.eq]: null, [Op.lt]: new Date() },
+    }
     const whereClause: WhereOptions = {
       nationalIdRepresentedPerson: nationalIdRepresentedPerson,
     }
     const whereClauseRights: WhereOptions = {}
     if (!includeInvalid) {
-      whereClause['validTo'] = this.validToClause
-      whereClauseRights['validTo'] = this.validToClause
+      whereClause['validTo'] = validToClause
+      whereClauseRights['validFrom'] = validFromClause
+      whereClauseRights['validTo'] = validToClause
     }
     const personalRepresentatives = await this.personalRepresentativeModel.findAll(
       {
@@ -132,7 +144,7 @@ export class PersonalRepresentativeService {
   }
 
   /** Get's all personal repreasentatives and count */
-  async getAndCountAllAsync(
+  async getAndCountAll(
     page: number,
     count: number,
     includeInvalid: boolean,
@@ -142,10 +154,11 @@ export class PersonalRepresentativeService {
   }> {
     page--
     const offset = page * count
+    const validToClause = {
+      [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const whereClause: any = includeInvalid
-      ? {}
-      : { validTo: this.validToClause }
+    const whereClause: any = includeInvalid ? {} : { validTo: validToClause }
     const personalRepresentatives = await this.personalRepresentativeModel.findAndCountAll(
       {
         limit: count,
@@ -167,7 +180,7 @@ export class PersonalRepresentativeService {
   }
 
   /** Get's all personal repreasentatives and count by searchstring */
-  async findAsync(
+  async find(
     searchString: string,
     page: number,
     count: number,
@@ -185,18 +198,24 @@ export class PersonalRepresentativeService {
           {
             model: PersonalRepresentativeRight,
             required: true,
+            include: [
+              {
+                model: PersonalRepresentativeRightType,
+                required: true,
+                where: {
+                  [Op.or]: [
+                    {
+                      name: { [Op.like]: searchString },
+                    },
+                    {
+                      code: { [Op.like]: searchString },
+                    },
+                  ],
+                },
+              },
+            ],
           },
         ],
-        where: {
-          [Op.or]: [
-            {
-              name: { [Op.like]: searchString },
-            },
-            {
-              code: { [Op.like]: searchString },
-            },
-          ],
-        },
       },
     )
     return {
@@ -206,7 +225,7 @@ export class PersonalRepresentativeService {
   }
 
   /** Get's a personal repreasentatives by id */
-  async getPersonalRepresentativeAsync(
+  async getPersonalRepresentative(
     id: string,
   ): Promise<PersonalRepresentativeDTO | null> {
     this.logger.debug(
@@ -227,7 +246,7 @@ export class PersonalRepresentativeService {
   }
 
   /** Create a new personal repreasentative */
-  async createAsync(
+  async create(
     personalRepresentative: PersonalRepresentativeDTO,
   ): Promise<PersonalRepresentativeDTO | null> {
     // Create new personal representative connection
@@ -271,7 +290,7 @@ export class PersonalRepresentativeService {
   }
 
   /** Delete a personal repreasentative */
-  async deleteAsync(id: string): Promise<number> {
+  async delete(id: string): Promise<number> {
     this.logger.debug('Deleting a personal representative with id: ', id)
     await this.personalRepresentativeRightModel.destroy({
       where: { personalRepresentativeId: id },
