@@ -1,5 +1,4 @@
 export { AccessControlModule } from './accessControl'
-export { AuthModule } from './auth/auth.module' // dig-in import to avoid circular dependency
 export { GdprModule } from './gdpr'
 export { UserModule } from './user'
 export { FjarsyslaModule } from './fjarsysla'

@@ -1,16 +1,17 @@
+import { UseGuards } from '@nestjs/common'
 import { Query, Resolver, Args } from '@nestjs/graphql'
 
-import { Authorize, Role, CurrentUser } from '../auth'
-import type { User } from '../auth'
+import { IdsUserGuard, CurrentUser, User } from '@island.is/auth-nest-tools'
+
 import { Fjarsysla } from './fjarsysla.model'
 import { FjarsyslaService } from './fjarsysla.service'
 
-@Authorize({ throwOnUnAuthorized: false })
+@UseGuards(IdsUserGuard)
 @Resolver(() => Fjarsysla)
 export class FjarsyslaResolver {
   constructor(private fjarsyslaService: FjarsyslaService) {}
 
-  @Authorize({ roles: [Role.developer, Role.recyclingCompany] })
+  // @Authorize({ roles: [Role.developer, Role.recyclingCompany] })
   @Query(() => Boolean)
   async skilavottordFjarsyslaSkilagjald(
     @CurrentUser() user: User,

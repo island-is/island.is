@@ -1,15 +1,14 @@
-import { Inject } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { IdsUserGuard, CurrentUser, User } from '@island.is/auth-nest-tools'
 
-import { Authorize, CurrentUser } from '../auth'
-import type { User } from '../auth'
 import { GdprService } from './gdpr.service'
 import { GdprModel } from './gdpr.model'
 
-@Authorize({ throwOnUnAuthorized: false })
+@UseGuards(IdsUserGuard)
 @Resolver(() => GdprModel)
 export class GdprResolver {
   constructor(

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { Op } from 'sequelize'
 
 import { RecyclingPartnerModel } from '../recyclingPartner'
-import { Role } from '../auth'
+import { Role } from '../user'
 
 import { AccessControlModel } from './accessControl.model'
 import {

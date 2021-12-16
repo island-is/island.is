@@ -1,10 +1,15 @@
+import { UseGuards } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
 
-import { Authorize, CurrentUser } from '../auth'
-import type { User as AuthenticatedUser } from '../auth'
+import {
+  IdsUserGuard,
+  CurrentUser,
+  User as AuthenticatedUser,
+} from '@island.is/auth-nest-tools'
+
 import { User } from './user.model'
 
-@Authorize({ throwOnUnAuthorized: false })
+@UseGuards(IdsUserGuard)
 @Resolver(() => User)
 export class UserResolver {
   @Query(() => User, { nullable: true })

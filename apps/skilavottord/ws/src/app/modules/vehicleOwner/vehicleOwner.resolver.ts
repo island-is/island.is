@@ -1,15 +1,14 @@
-import { Inject } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { IdsUserGuard, User, CurrentUser } from '@island.is/auth-nest-tools'
 
-import { Authorize, Role, CurrentUser } from '../auth'
-import type { User } from '../auth'
 import { VehicleOwnerModel } from './vehicleOwner.model'
 import { VehicleOwnerService } from './vehicleOwner.service'
 
-@Authorize({ throwOnUnAuthorized: false })
+@UseGuards(IdsUserGuard)
 @Resolver(() => VehicleOwnerModel)
 export class VehicleOwnerResolver {
   constructor(
@@ -39,9 +38,7 @@ export class VehicleOwnerResolver {
     return res
   }
 
-  @Authorize({
-    roles: [Role.developer, Role.recyclingCompany, Role.recyclingFund],
-  })
+  // @Authorize({ roles: [Role.developer, Role.recyclingCompany, Role.recyclingFund] })
   @Query(() => [VehicleOwnerModel])
   async skilavottordRecyclingPartnerVehicles(
     @Args('partnerId') partnerId: string,

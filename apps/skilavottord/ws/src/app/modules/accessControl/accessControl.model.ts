@@ -9,7 +9,7 @@ import {
   Table,
 } from 'sequelize-typescript'
 
-import { Role } from '../auth'
+import { Role } from '../user'
 import { RecyclingPartnerModel } from '../recyclingPartner'
 
 @ObjectType('AccessControl')

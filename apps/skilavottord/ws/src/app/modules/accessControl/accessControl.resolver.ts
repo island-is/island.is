@@ -1,9 +1,11 @@
+import { UseGuards } from '@nestjs/common'
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { NotFoundException } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 
-import { Authorize, CurrentUser, Role } from '../auth'
-import type { User } from '../auth'
+import { IdsUserGuard, CurrentUser, User } from '@island.is/auth-nest-tools'
+
+import { Role } from '../user'
 
 import { AccessControlModel } from './accessControl.model'
 import { AccessControlService } from './accessControl.service'
@@ -13,10 +15,8 @@ import {
   DeleteAccessControlInput,
 } from './accessControl.input'
 
-@Authorize({
-  throwOnUnAuthorized: false,
-  roles: [Role.developer, Role.recyclingFund],
-})
+// @Authorize({ throwOnUnAuthorized: false, roles: [Role.developer, Role.recyclingFund] })
+@UseGuards(IdsUserGuard)
 @Resolver(() => AccessControlModel)
 export class AccessControlResolver {
   constructor(private accessControlService: AccessControlService) {}

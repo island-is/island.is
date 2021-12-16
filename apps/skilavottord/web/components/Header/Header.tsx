@@ -9,10 +9,7 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { api } from '@island.is/skilavottord-web/services'
 import { Locale } from '@island.is/shared/types'
-import {
-  getBaseUrl,
-  getRoutefromLocale,
-} from '@island.is/skilavottord-web/utils/routesMapper'
+import { getRoutefromLocale } from '@island.is/skilavottord-web/utils/routesMapper'
 import { Query, Role } from '@island.is/skilavottord-web/graphql/schema'
 
 export const SkilavottordUserQuery = gql`
@@ -66,11 +63,6 @@ export const Header: FC = () => {
     }
   }, [user, setUser])
 
-  useEffect(() => {
-    const baseUrl = getBaseUrl()
-    setBaseUrl(baseUrl)
-  }, [])
-
   const mapUserRoleToRoute = (userRole?: Role | null) => {
     if (!userRole || userRole === Role.developer) {
       return Role.citizen
@@ -90,9 +82,7 @@ export const Header: FC = () => {
       userName={user?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {
-        api
-          .logout()
-          .then(() => (window.location.href = `${baseUrl}/skilavottord`))
+        api.logout()
       }}
     />
   )
