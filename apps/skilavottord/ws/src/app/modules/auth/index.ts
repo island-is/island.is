@@ -1,4 +1,3 @@
-export { AuthModule } from './auth.module'
 export type { AuthUser, User } from './auth.types'
 export { Role } from './auth.types'
 export { Authorize } from './auth.guard'
