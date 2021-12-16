@@ -70,6 +70,7 @@ export class SmsService extends RESTDataSource {
   }
 
   willSendRequest(request: RequestOptions) {
+    this.memoizedResults.clear()
     request.headers.set('Content-Type', 'application/json')
   }
 
