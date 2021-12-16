@@ -18,6 +18,7 @@ export enum ApplicationTypes {
   COMPLAINTS_TO_ALTHINGI_OMBUDSMAN = 'ComplaintsToAlthingiOmbudsman',
   ACCIDENT_NOTIFICATION = 'AccidentNotification',
   GENERAL_PETITION = 'GeneralPetitionService',
+  P_SIGN = 'PSign',
 }
 
 export const ApplicationConfigurations = {
@@ -96,5 +97,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.GENERAL_PETITION]: {
     slug: 'medmaelendalisti',
     translation: 'gpt.application',
+  },
+  [ApplicationTypes.P_SIGN]: {
+    slug: 'p-merki',
+    translation: 'pm.application',
   },
 }

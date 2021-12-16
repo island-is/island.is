@@ -2449,6 +2449,40 @@
         }
       }
     },
+    "application-templates-p-sign": {
+      "root": "libs/application/templates/p-sign",
+      "sourceRoot": "libs/application/templates/p-sign/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/p-sign/tsconfig.lib.json",
+              "libs/application/templates/p-sign/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/p-sign/**/*"
+            ]
+          }
+        }
+      },
+      "schemas/codegen": {
+        "builder": "@nrwl/workspace:run-commands",
+        "options": {
+          "command": "graphql-codegen --config libs/application/templates/p-sign/codegen.yml"
+        }
+      },
+      "extract-strings": {
+        "builder": "@nrwl/workspace:run-commands",
+        "options": {
+          "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/p-sign/src/lib/messages.ts"
+        }
+      }
+    },
     "application-templates-parental-leave": {
       "root": "libs/application/templates/parental-leave",
       "sourceRoot": "libs/application/templates/parental-leave/src",

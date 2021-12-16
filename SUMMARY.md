@@ -151,6 +151,7 @@
     - [Health Insurance](libs/application/templates/health-insurance/README.md)
     - [Institution Collaboration](libs/application/templates/institution-collaboration/README.md)
     - [Application Templates Login Service](libs/application/templates/login-service/README.md)
+    - [Application Templates P-Sign](libs/application/templates/p-sign/README.md)
     - [Application Templates Parental Leave](libs/application/templates/parental-leave/README.md)
     - [Payable Template](libs/application/templates/payable-dummy-template/README.md)
     - [Application Templates Public Debt Payment Plan](libs/application/templates/public-debt-payment-plan/README.md)

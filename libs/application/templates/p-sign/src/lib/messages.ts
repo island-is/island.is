@@ -1,0 +1,279 @@
+import { defineMessages } from 'react-intl'
+
+export const m = defineMessages({
+  /* Data Collection Section */
+  dataCollectionTitle: {
+    id: 'dl.application:applicationDataCollectionTitle',
+    defaultMessage: 'Gagnaöflun',
+    description: 'Title for data collection section',
+  },
+  dataCollectionSubtitle: {
+    id: 'dl.application:dataCollectionSubtitle',
+    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
+    description: 'Subtitle for data collection section',
+  },
+  dataCollectionDescription: {
+    id: 'dl.application:dataCollectionDescription',
+    defaultMessage:
+      'Til þess að athuga hvort þú sért með gilt P-merki þá verða upplýsingar verða sóttar  úr kerfi sýslumanna.',
+    description: 'Description for data collection section',
+  },
+  dataCollectionCheckboxLabel: {
+    id: 'dl.application:dataCollectionCheckboxLabel',
+    defaultMessage: 'Ég samþykki að láta sækja gögn',
+    description: 'Checkbox label for data collection section',
+  },
+  dataCollectionDoctorsNoteTitle: {
+    id: 'dl.application:dataCollectionDoctorsNoteTitle',
+    defaultMessage: 'Læknisvottorð',
+    description: 'Doctors note title',
+  },
+  dataCollectionDoctorsNoteSubtitle: {
+    id: 'dl.application:dataCollectionDoctorsNoteLabel',
+    defaultMessage: 'Nisi at fermentum adipiscing montes, mi.',
+    description: 'Doctors note subtitle',
+  },
+
+  /* Information Section */
+  informationTitle: {
+    id: 'dl.application:informationSectionTitle',
+    defaultMessage: 'Upplýsingar um stæðiskort',
+    description: 'Information section title',
+  },
+  informationSectionTitle: {
+    id: 'dl.application:informationTitle',
+    defaultMessage: 'Upplýsingar',
+    description: 'Information title',
+  },
+
+  /* Applicant - used in information and overview sections */
+  applicantsName: {
+    id: 'dl.application:applicantsName',
+    defaultMessage: 'Nafn',
+    description: 'Name label',
+  },
+  applicantsNationalId: {
+    id: 'dl.application:applicantsNationalId',
+    defaultMessage: 'Kennitala',
+    description: 'National id label',
+  },
+  applicantsAddress: {
+    id: 'dl.application:applicantsAddress',
+    defaultMessage: 'Heimilisfang',
+    description: 'Address label',
+  },
+  applicantsCity: {
+    id: 'dl.application:applicantsCity',
+    defaultMessage: 'Staður',
+    description: 'City label',
+  },
+  applicantsEmail: {
+    id: 'dl.application:applicantsEmail',
+    defaultMessage: 'Netfang',
+    description: 'Email label',
+  },
+  applicantsPhoneNumber: {
+    id: 'dl.application:applicantsPhoneNumber',
+    defaultMessage: 'Símanúmer',
+    description: 'Phone number label',
+  },
+  cardValidityPeriod: {
+    id: 'dl.application:cardValidityPeriod',
+    defaultMessage: 'Gildistími',
+    description: 'Card validity label',
+  },
+
+  /* Quality Photo Section */
+  qualityPhotoTitle: {
+    id: 'dl.application:qualityPhotoSectionTitle',
+    defaultMessage: 'Mynd í stæðiskort',
+    description: 'Title for quality photo section',
+  },
+  qualityPhotoSectionTitle: {
+    id: 'dl.application:qualityPhotoSectionTitle',
+    defaultMessage: 'Mynd',
+    description: 'Title for quality photo section',
+  },
+  qualityPhotoExistingPhotoText: {
+    id: 'dl.application:qualityPhotoExistingPhotoText',
+    defaultMessage:
+      'Hér er núverandi ljósmynd. Óskir þú eftir að nota nýja mynd þá þarf að hlaða henni hér inn að neðan.',
+    description: `Text for the user's existing quality photo`,
+  },
+  qualityPhotoUseExistingPhoto: {
+    id: 'dl.application:qualityPhotoUseExistingPhoto',
+    defaultMessage: 'Nota núverandi mynd',
+    description: `Text for the user's existing quality photo`,
+  },
+  qualityPhotoUploadNewPhoto: {
+    id: 'dl.application:qualityPhotoUploadNewPhoto',
+    defaultMessage: 'Hlaða inn mynd',
+    description: `Text for uploading a new photo`,
+  },
+  qualityPhotoFileUploadTitle: {
+    id: 'dl.application:qualityPhotoFileUploadTitle',
+    defaultMessage: 'Dragðu mynd hingað til að hlaða upp',
+    description: `Title for file upload`,
+  },
+  qualityPhotoFileUploadDescription: {
+    id: 'dl.application:qualityPhotoFileUploadDescription',
+    defaultMessage: 'Tekið er við mynd með endingu: .jpeg, .png, .jpg',
+    description: `Description for file upload`,
+  },
+  qualityPhotoUploadButtonLabel: {
+    id: 'dl.application:qualityPhotoUploadButtonLabel',
+    defaultMessage: 'Velja mynd til að hlaða upp',
+    description: `Upload button label`,
+  },
+  qualityPhotoNoPhotoDescription: {
+    id: 'dl.application:qualityPhotoNoPhotoDescription',
+    defaultMessage:
+      'Texti sem útskýrir að það þarf að hlaða inn mynd fyrir stæðiskort.',
+    description: `Description text for no existing photo`,
+  },
+  qualityPhotoAltText: {
+    id: 'dl.application:qualityPhotoAltText',
+    defaultMessage: 'Þín mynd skv. ökuskírteinaskrá',
+    description: `Alt text for the user's quality photo`,
+  },
+  qualityPhotoWarningTitle: {
+    id: 'dl.application:qualityPhotoWarningTitle',
+    defaultMessage: 'Ljósmynd í ökuskírteinaskrá ekki gæðamerkt',
+    description: 'title for quality photo warning',
+  },
+  qualityPhotoWarningDescription: {
+    id: 'dl.application:qualityPhotoWarningDescription',
+    defaultMessage:
+      'Núverandi ljósmynd þín í ökuskírteinaskrá stenst ekki gæðakröfur og þarf því að koma með nýja ljósmynd.',
+    description: 'Description for quality photo warning',
+  },
+  qualityPhotoInstructions: {
+    id: 'dl.application:qualityPhoto.instructions',
+    defaultMessage: `
+    Ljósmynd af umsækjanda þarf að vera tekin beint að framan, hún þarf að sýna höfuð (án höfuðfats)
+    og herðar þar sem lýsing andlits er jöfn. Athuga þarf að ekki glampi á gleraugu og skyggi
+    á augu. Bakgrunnur þarf að vera ljós og ekki virka truflandi á myndefni.
+    Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
+    `,
+    description: 'Description of photo requirements',
+  },
+  qualityPhotoInstructionsBulletOne: {
+    id: 'dl.application:qualityPhoto.instructionsbulletone',
+    defaultMessage: `
+    Ljósmynd af umsækjanda þarf að vera tekin beint að framan.
+    `,
+    description: 'Description of photo requirements',
+  },
+  qualityPhotoInstructionsBulletTwo: {
+    id: 'dl.application:qualityPhoto.instructionsbullettwo',
+    defaultMessage: `
+    Sýna þarf höfuð (án höfuðfats) og herðar.
+    `,
+    description: 'Description of photo requirements',
+  },
+  qualityPhotoInstructionsBulletThree: {
+    id: 'dl.application:qualityPhoto.instructionsbulletthree',
+    defaultMessage: `
+    Lýsing andlits þarf að vera jöfn.
+    `,
+    description: 'Description of photo requirements',
+  },
+  qualityPhotoInstructionsBulletFour: {
+    id: 'dl.application:qualityPhoto.instructionsbulletfour',
+    defaultMessage: `
+    Athuga þarf að ekki glampi á gleraugu og skyggi á augu.
+    `,
+    description: 'Description of photo requirements',
+  },
+  qualityPhotoInstructionsBulletFive: {
+    id: 'dl.application:qualityPhoto.instructionsbulletfive',
+    defaultMessage: `
+    Bakgrunnur þarf að vera ljós og ekki virka truflandi á myndefni.
+    `,
+    description: 'Description of photo requirements',
+  },
+  qualityPhotoNoPhotoAlertMessage: {
+    id: 'dl.application:qualityPhoto.qualityPhotoNoPhotoAlertMessage',
+    defaultMessage: 'Ath. Skylda er að hlaða inn mynd',
+    description: 'Alert on no photo attachment',
+  },
+
+  /* Delivery method Section */
+  deliveryMethodTitle: {
+    id: 'dl.application:deliveryMethodTitle',
+    defaultMessage: 'Afhending',
+    description: 'Title for delivery method section',
+  },
+  deliveryMethodDescription: {
+    id: 'dl.application:deliveryMethodDescription',
+    defaultMessage:
+      'Stæðiskort er sjálfkrafa sent með pósti á uppgefið heimilisfang eftir 3-5 virka daga. Óskir þú eftir að fá stæðiskortið afhent fyrr þá getur þú valið um að sækja það sjálfur á valda staðsetningu hér að neðan.',
+    description: 'Description for delivery method section',
+  },
+  deliveryMethodHomeDelivery: {
+    id: 'dl.application:deliveryMethodHomeDelivery',
+    defaultMessage: 'Fá sent heim í pósti',
+    description: 'Checkbox label for home delivery method',
+  },
+  deliveryMethodPickUp: {
+    id: 'dl.application:deliveryMethodPickUp',
+    defaultMessage: 'Sækja til Sýslumanns',
+    description: 'Checkbox label for self-pickup',
+  },
+  deliveryMethodOfficeLabel: {
+    id: 'dl.application:deliveryMethodOfficeLabel',
+    defaultMessage: 'Embætti',
+    description: 'Title for office',
+  },
+  deliveryMethodOfficeSelectPlaceholder: {
+    id: 'dl.application:deliveryMethodOfficeSelectPlaceholder',
+    defaultMessage: 'Veldu embætti',
+    description: 'Placeholder for office selection',
+  },
+
+  /* Overview Section */
+  overviewTitle: {
+    id: 'dl.application:overviewTitle',
+    defaultMessage: 'Yfirlit umsóknar',
+    description: 'Title for overview section',
+  },
+  overviewSectionTitle: {
+    id: 'dl.application:overviewTitle',
+    defaultMessage: 'Yfirlit',
+    description: 'Title for overview section',
+  },
+  overviewSectionDescription: {
+    id: 'dl.application:overviewSectionDescription',
+    defaultMessage:
+      'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp.',
+    description: 'Description for overview section',
+  },
+  overviewSelfPickupText: {
+    id: 'dl.application:overviewSelfPickupText',
+    defaultMessage: 'Þú hefur valið að sækja P-merkið sjálf/ur/t á: ',
+    description: 'Text for delivery info',
+  },
+  overviewDeliveryText: {
+    id: 'dl.application:overviewDeliveryText',
+    defaultMessage: 'Þú hefur valið að fá P-merkið sent heim í pósti',
+    description: 'Text for delivery info',
+  },
+
+  /* Congratulation Section */
+  congratulationsTitleSuccess: {
+    id: 'dl.application:congratulationsTitleSuccess',
+    defaultMessage:
+      'Umsókn þín um P-Merki hefur verið móttekin. Þú færð P-Merkið afhent á uppgefið heimilisfang eftir 3-4 virka daga.',
+    description: 'Your application for P-sign was successful.',
+  },
+  congratulationsTitle: {
+    id: 'dl.application:congratulationsTitle',
+    defaultMessage: 'Til hamingju',
+    description: 'Congratulations',
+  },
+  errorDataProvider: {
+    id: 'dl.application:error.dataProvider',
+    defaultMessage: 'Reyndu aftur síðar',
+    description: 'Unhandled error in data provider',
+  },
+})
