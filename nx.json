@@ -655,6 +655,12 @@
     "services-user-notification": {
       "tags": []
     },
+    "services-personal-representative": {
+      "tags": []
+    },
+    "services-search-indexer": {
+      "tags": []
+    },
     "services-user-profile": {
       "tags": []
     },
