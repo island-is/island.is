@@ -1,25 +1,15 @@
 import { GridColumns, ResponsiveProp } from '@island.is/island-ui/core/types'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { MenuState } from '../../store/actions'
-type responsiveGridColumns = {
-  default: {
-    span: ResponsiveProp<GridColumns>
-    offset: ResponsiveProp<GridColumns>
-  }
-  wide: {
-    span: ResponsiveProp<GridColumns>
-    offset: ResponsiveProp<GridColumns>
-  }
-  defaultClosed: {
-    span: ResponsiveProp<GridColumns>
-    offset: ResponsiveProp<GridColumns>
-  }
-  wideClosed: {
-    span: ResponsiveProp<GridColumns>
-    offset: ResponsiveProp<GridColumns>
-  }
-}
 
+type ColumnState = 'default' | 'wide' | 'defaultClosed' | 'wideClosed'
+type responsiveGridColumns = Record<
+  ColumnState,
+  {
+    span: ResponsiveProp<GridColumns>
+    offset: ResponsiveProp<GridColumns>
+  }
+>
 export const gridlayout: responsiveGridColumns = {
   default: {
     span: ['12/12', '12/12', '12/12', '9/12', '9/12'],
@@ -62,6 +52,7 @@ export const getLayout = (
 ): GridLayout => {
   const hasWideLayout = wideScreens.includes(pathname as ServicePortalPath)
   const sidebarCollapsed = sidebarState === 'closed'
+
   if (sidebarCollapsed && hasWideLayout) {
     return {
       span: gridlayout.wideClosed.span,
