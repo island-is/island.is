@@ -138,6 +138,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
                   backgroundColor="blue"
                   options={recyclingPartners}
                   onChange={onChange}
+                  isCreatable
                 />
               )
             }}

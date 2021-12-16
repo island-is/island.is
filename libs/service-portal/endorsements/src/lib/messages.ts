@@ -20,16 +20,6 @@ export const m: MessageDir = {
       defaultMessage: 'Mínar skráningar',
       description: 'Section title for your endorsements',
     },
-    availablePartyApplicationEndorsements: {
-      id: 'sp.endorsements:available-endorsements',
-      defaultMessage: 'Framboðslistar sem þú getur stutt í þínu kjördæmi',
-      description: 'Section title for available endorsements in your area',
-    },
-    availablePartyLetterEndorsements: {
-      id: 'sp.endorsements:available-party-letter-endorsements',
-      defaultMessage: 'Listabókstafir sem þú getur mælt með',
-      description: 'Section title for available endorsements in your area',
-    },
     actionCardButtonEndorse: {
       id: 'sp.endorsements:endorse-button',
       defaultMessage: 'Mæla með',
