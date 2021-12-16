@@ -10,7 +10,7 @@ export default async () => {
       test: 'curl -f http://localhost:4566/health || exit 1',
       interval: 1000,
       timeout: 5000,
-      retries: 60,
+      retries: 120,
       startPeriod: 1000,
     })
     .withWaitStrategy(Wait.forHealthCheck())
