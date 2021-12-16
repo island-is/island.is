@@ -15,6 +15,7 @@ export class QualityPhotoProvider extends BasicDataProvider {
       | DataProviderFakeData
       | undefined
 
+    // To use fake data for the quality photo provider take a look at the implementation in libs/application/templates/driving-license/src/forms/application.ts
     if (fakeData?.useFakeData === YES) {
       return {
         success: fakeData.qualityPhoto === YES,

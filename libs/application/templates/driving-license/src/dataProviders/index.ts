@@ -6,4 +6,3 @@ export { TeachersProvider } from './TeachersProvider'
 export { DrivingAssessmentProvider } from './DrivingAssessmentProvider'
 export { CurrentLicenseProvider } from './CurrentLicenseProvider'
 export { FeeInfoProvider } from './FeeInfoProvider'
-
