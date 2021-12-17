@@ -79,6 +79,7 @@ export class ClientsService {
   async findAndCountAll(
     page: number,
     count: number,
+    includeArchived: boolean,
   ): Promise<{ rows: Client[]; count: number } | null> {
     page--
     const offset = page * count
@@ -86,6 +87,7 @@ export class ClientsService {
       limit: count,
       offset: offset,
       distinct: true,
+      where: includeArchived ? {} : { archived: null },
     })
   }
 
@@ -120,7 +122,12 @@ export class ClientsService {
   }
 
   /** Find clients by searh string and returns with paging */
-  async findClients(searchString: string, page: number, count: number) {
+  async findClients(
+    searchString: string,
+    page: number,
+    count: number,
+    includeArchived: boolean,
+  ) {
     if (!searchString) {
       throw new BadRequestException('Search String must be provided')
     }
@@ -128,9 +135,14 @@ export class ClientsService {
     searchString = searchString.trim()
 
     if (isNaN(+searchString)) {
-      return this.findAllClientsById(searchString, page, count)
+      return this.findAllClientsById(searchString, page, count, includeArchived)
     } else {
-      return this.findAllClientsByNationalId(searchString, page, count)
+      return this.findAllClientsByNationalId(
+        searchString,
+        page,
+        count,
+        includeArchived,
+      )
     }
   }
 
@@ -139,24 +151,34 @@ export class ClientsService {
     searchString: string,
     page: number,
     count: number,
+    includeArchived: boolean,
   ) {
     page--
     const offset = page * count
     return this.clientModel.findAndCountAll({
       limit: count,
-      where: { nationalId: searchString },
+      where: includeArchived
+        ? { nationalId: searchString }
+        : { nationalId: searchString, archived: null },
       offset: offset,
       distinct: true,
     })
   }
 
   /** Finds client by client Id with paging return type */
-  async findAllClientsById(searchString: string, page: number, count: number) {
+  async findAllClientsById(
+    searchString: string,
+    page: number,
+    count: number,
+    includeArchived: boolean,
+  ) {
     page--
     const offset = page * count
     return this.clientModel.findAndCountAll({
       limit: count,
-      where: { clientId: searchString },
+      where: includeArchived
+        ? { clientId: searchString }
+        : { clientId: searchString, archived: null },
       offset: offset,
       distinct: true,
     })

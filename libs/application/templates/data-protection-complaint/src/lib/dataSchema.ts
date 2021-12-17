@@ -130,9 +130,6 @@ export const DataProtectionComplaintSchema = z.object({
 
     documents: z.array(FileSchema),
   }),
-  overview: z.object({
-    termsAgreement: z.string().refine((x) => x === DefaultEvents.SUBMIT),
-  }),
 })
 
 export type DataProtectionComplaint = z.TypeOf<

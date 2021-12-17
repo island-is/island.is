@@ -1,8 +1,8 @@
 module.exports = {
   preset: '../../../jest.preset.js',
   coverageDirectory: '../../../coverage/apps/financial-aid/backend',
-  setupFiles: ['./test/environment.jest.ts'],
-  setupFilesAfterEnv: ['./test/setup.ts'],
+  globalSetup: './test/globalSetup.ts',
+  globalTeardown: './test/globalTeardown.ts',
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   globals: {
     'ts-jest': {

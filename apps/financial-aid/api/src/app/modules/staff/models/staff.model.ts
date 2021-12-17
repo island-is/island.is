@@ -26,6 +26,9 @@ export class StaffModel implements Staff {
   readonly active!: boolean
 
   @Field({ nullable: true })
+  readonly usePseudoName?: boolean
+
+  @Field({ nullable: true })
   readonly phoneNumber?: string
 
   @Field()
