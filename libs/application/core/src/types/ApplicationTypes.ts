@@ -18,7 +18,11 @@ export enum ApplicationTypes {
   COMPLAINTS_TO_ALTHINGI_OMBUDSMAN = 'ComplaintsToAlthingiOmbudsman',
   ACCIDENT_NOTIFICATION = 'AccidentNotification',
   GENERAL_PETITION = 'GeneralPetitionService',
+<<<<<<< HEAD
   GENERAL_FISHING_LICENSE = 'GeneralFishingLicense',
+=======
+  CRIMINAL_RECORD = 'CriminalRecord',
+>>>>>>> dcbc07a81aeecf4ab35ba9472eab18b1ecdc8102
 }
 
 export const ApplicationConfigurations = {
@@ -101,5 +105,8 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: {
     slug: 'almennt-fiskveidileyfi',
     translation: 'gfl.application',
+  [ApplicationTypes.CRIMINAL_RECORD]: {
+    slug: 'sakavottord',
+    translation: 'cr.application',
   },
 }

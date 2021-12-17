@@ -154,8 +154,10 @@ export const RulingStepOne: React.FC = () => {
                 caseId={workingCase.id}
                 files={workingCase.caseFiles ?? []}
                 canOpenFiles={
-                  workingCase.judge !== null &&
-                  workingCase.judge?.id === user?.id
+                  (workingCase.judge !== null &&
+                    workingCase.judge?.id === user?.id) ||
+                  (workingCase.registrar !== null &&
+                    workingCase.registrar?.id === user?.id)
                 }
               />
             </AccordionItem>

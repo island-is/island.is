@@ -11,6 +11,7 @@ import {
   Payment,
   Properties,
   PaymentSchedule,
+  CriminalRecord,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 
@@ -157,6 +158,7 @@ export const serviceSetup = (services: {
       NationalRegistry,
       Properties,
       PaymentSchedule,
+      CriminalRecord,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
