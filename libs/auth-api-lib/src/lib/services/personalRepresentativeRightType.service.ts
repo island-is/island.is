@@ -19,7 +19,6 @@ export class PersonalRepresentativeRightTypeService {
 
   /** Get's all personal repreasentative right types  */
   async getMany(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     query: PaginationDto,
   ): Promise<PaginatedPersonalRepresentativeRightTypeDto> {
     return await paginate({
