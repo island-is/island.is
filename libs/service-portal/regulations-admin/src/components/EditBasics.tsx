@@ -36,6 +36,7 @@ export const EditBasics: StepComponent = (props) => {
             updateState('title', value)
           }}
           error={t(draft.title.error)}
+          required
         />
       </Box>
 
@@ -53,6 +54,7 @@ export const EditBasics: StepComponent = (props) => {
             handleChange={(date: Date) => updateState('idealPublishDate', date)}
             hasError={!!draft.idealPublishDate.error}
             errorMessage={t(draft.idealPublishDate.error)}
+            required
           />
           <Checkbox
             label={t(msg.applyForFastTrack)}

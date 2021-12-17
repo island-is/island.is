@@ -498,59 +498,61 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
               )
             }
           : undefined,
-      saveStatus: draft
-        ? () => {
-            if (isNew) {
-              createDraftRegulation({
-                variables: {
-                  input: {
-                    id: uuid(),
-                    drafting_status: 'draft',
-                    title: state.draft?.title.value,
-                    text: state.draft?.text.value, // (text + appendix + comments)
-                    drafting_notes: state.draft?.draftingNotes.value,
-                    ministry_id: state.draft?.ministry.value || '',
-                    ideal_publish_date: state.draft?.idealPublishDate.value,
-                    type: 'base', // Ritill
-                  },
-                },
-              }).then((res) => {
-                const newDraft = res.data
-                  ? (res.data.createDraftRegulation as RegulationDraft)
-                  : undefined
-                if (newDraft?.id) {
-                  history.replace(
-                    generatePath(ServicePortalPath.RegulationsAdminEdit, {
-                      id: newDraft?.id,
-                      step: stepNav.next,
-                    }),
-                  )
-                }
-              })
-            } else {
-              updateDraftRegulationById({
-                variables: {
-                  input: {
-                    id: state.draft?.id,
-                    body: {
-                      title: state.draft?.title?.value,
-                      text: state.draft?.text?.value, // (text + appendix + comments)
-                      ministry_id: state.draft?.ministry?.value,
+      saveStatus:
+        draft || isNew
+          ? () => {
+              if (isNew) {
+                createDraftRegulation({
+                  variables: {
+                    input: {
+                      id: uuid(),
+                      drafting_status: 'draft',
+                      title: state.draft?.title.value,
+                      text: state.draft?.text.value, // (text + appendix + comments)
                       drafting_notes: state.draft?.draftingNotes.value,
-                      ideal_publish_date: state.draft?.idealPublishDate?.value,
-                      law_chapters: state.draft?.lawChapters?.value,
-                      signature_date: state.draft?.signatureDate?.value,
-                      effective_date: state.draft?.effectiveDate?.value,
-                      type: state.draft?.type?.value,
+                      ministry_id: state.draft?.ministry.value || '',
+                      ideal_publish_date: state.draft?.idealPublishDate.value,
+                      type: 'base', // Ritill
                     },
                   },
-                },
-              }).then((res) => {
-                console.log('!!DRAFT UPDATED!! ', res)
-              })
+                }).then((res) => {
+                  const newDraft = res.data
+                    ? (res.data.createDraftRegulation as RegulationDraft)
+                    : undefined
+                  if (newDraft?.id) {
+                    history.replace(
+                      generatePath(ServicePortalPath.RegulationsAdminEdit, {
+                        id: newDraft?.id,
+                        step: stepNav.next,
+                      }),
+                    )
+                  }
+                })
+              } else {
+                updateDraftRegulationById({
+                  variables: {
+                    input: {
+                      id: state.draft?.id,
+                      body: {
+                        title: state.draft?.title?.value,
+                        text: state.draft?.text?.value, // (text + appendix + comments)
+                        ministry_id: state.draft?.ministry?.value,
+                        drafting_notes: state.draft?.draftingNotes.value,
+                        ideal_publish_date:
+                          state.draft?.idealPublishDate?.value,
+                        law_chapters: state.draft?.lawChapters?.value,
+                        signature_date: state.draft?.signatureDate?.value,
+                        effective_date: state.draft?.effectiveDate?.value,
+                        type: state.draft?.type?.value,
+                      },
+                    },
+                  },
+                }).then((res) => {
+                  console.log('!!DRAFT UPDATED!! ', res)
+                })
+              }
             }
-          }
-        : () => undefined,
+          : () => undefined,
 
       // FIXME: rename to updateProp??
       updateState: <Prop extends RegDraftFormSimpleProps>(
