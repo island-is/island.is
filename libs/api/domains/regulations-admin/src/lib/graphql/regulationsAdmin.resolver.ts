@@ -48,12 +48,13 @@ export class RegulationsAdminResolver {
       return null
     }
 
-    const lawChapters = regulation
-      ? await this.regulationsService.getRegulationsLawChapters(
-          false,
-          regulation.law_chapters,
-        )
-      : null
+    const lawChapters =
+      regulation && regulation.law_chapters
+        ? await this.regulationsService.getRegulationsLawChapters(
+            false,
+            regulation.law_chapters,
+          )
+        : null
 
     const ministries = regulation?.ministry_id
       ? await this.regulationsService.getRegulationsMinistries([
