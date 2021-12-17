@@ -28,13 +28,6 @@ export const label = style({
   },
 })
 
-export const description = style({
-  fontSize: 14,
-  lineHeight: 1,
-  padding: '0 8px 12px 8px',
-  color: theme.color.dark400,
-})
-
 export const isRequiredStar = style({
   color: theme.color.red600,
 })

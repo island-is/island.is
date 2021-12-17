@@ -26,7 +26,6 @@ export const DraftingNotes = (props: DraftingNotesProps) => {
       {showDraftingNotes && (
         <EditorInput
           label={t(msg.draftingNotes)}
-          description={t(msg.draftingNotes_descr)}
           isImpact={false}
           draftId={`${draft.id}-notes`}
           valueRef={notesRef}
