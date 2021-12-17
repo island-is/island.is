@@ -10,7 +10,7 @@ import {
 import { UPLOAD_ACCEPT } from '../../constants'
 import { addDocuments } from '../../lib/messages'
 import {
-  hasReceivedInjueryCertificateOrAddedToAnswers,
+  hasReceivedInjuryCertificateOrAddedToAnswers,
   hasReceivedPoliceReportOrAddedToAnswers,
   hasReceivedProxyDocumentOrAddedToAnswers,
   isFatalAccident,
@@ -36,7 +36,7 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             space: 5,
             titleVariant: 'h5',
             condition: (formValue) =>
-              !hasReceivedInjueryCertificateOrAddedToAnswers(formValue),
+              !hasReceivedInjuryCertificateOrAddedToAnswers(formValue),
           }),
           buildFileUploadField({
             id: 'attachments.injuryCertificateFile.file',
@@ -46,7 +46,7 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             uploadDescription: addDocuments.general.uploadDescription,
             uploadButtonLabel: addDocuments.general.uploadButtonLabel,
             condition: (formValue) =>
-              !hasReceivedInjueryCertificateOrAddedToAnswers(formValue),
+              !hasReceivedInjuryCertificateOrAddedToAnswers(formValue),
           }),
           buildDescriptionField({
             id: 'attachments.powerOfAttorney.title',

@@ -42,7 +42,7 @@ export const hasReceivedPoliceReport = (answers: FormValue) => {
   return includesAttachment(answers, 'PoliceReport')
 }
 
-export const hasReceivedInjueryCertificateOrAddedToAnswers = (
+export const hasReceivedInjuryCertificateOrAddedToAnswers = (
   answers: FormValue,
 ) => {
   const injuryCertificateFile = getValueViaPath(
@@ -115,7 +115,7 @@ export const getErrorMessageForMissingDocuments = (
   ) as YesOrNo
   const missingDocuments = []
 
-  if (!hasReceivedInjueryCertificateOrAddedToAnswers(answers)) {
+  if (!hasReceivedInjuryCertificateOrAddedToAnswers(answers)) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.injuryCertificate),
     )
