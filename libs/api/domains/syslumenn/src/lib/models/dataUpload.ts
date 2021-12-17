@@ -6,19 +6,27 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { uuid } from 'uuidv4'
 import { Attachment, Person, PersonType } from '../dto/uploadData.input'
 
+// export enum PersonType {
+//   Plaintiff,
+//   CounterParty,
+//   Child,
+//   CriminalRecordApplicant,
+// }
+
 export function constructUploadDataObject(
   id: string,
   persons: Person[],
   attachment: Attachment,
-  applicationType: string,
-  extraData?: { [key: string]: string },
+  extraData: { [key: string]: string },
+  uploadDataName: string,
+  uploadDataId?: string,
 ): SyslMottakaGognPostRequest {
   return {
     payload: {
       audkenni: id,
       gognSkeytis: {
-        audkenni: applicationType,
-        skeytaHeiti: applicationType,
+        audkenni: uploadDataId || uuid(),
+        skeytaHeiti: uploadDataName,
         adilar: persons.map((p) => {
           return {
             id: uuid(),
@@ -42,6 +50,7 @@ export function constructUploadDataObject(
   }
 }
 
+
 function mapPersonEnum(e: PersonType) {
   switch (e) {
     case PersonType.Plaintiff:
@@ -50,6 +59,8 @@ function mapPersonEnum(e: PersonType) {
       return AdiliTegund.NUMBER_1
     case PersonType.Child:
       return AdiliTegund.NUMBER_2
+    case PersonType.CriminalRecordApplicant:
+      return AdiliTegund.NUMBER_0
   }
 }
 
@@ -63,4 +74,10 @@ export class DataUploadResponse {
 
   @Field()
   malsnumer?: string
+}
+
+export interface SealedCriminalRecordResponse {
+  audkenni: string
+  skilabod: string
+  skjal: string
 }

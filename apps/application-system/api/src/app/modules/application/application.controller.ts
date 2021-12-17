@@ -579,7 +579,9 @@ export class ApplicationController {
       resources: existingApplication.id,
       meta: {
         event: updateApplicationStateDto.event,
-        fields: Object.keys(permittedAnswers).length,
+        before: existingApplication.state,
+        after: updatedApplication.state,
+        fields: Object.keys(permittedAnswers),
       },
     })
 

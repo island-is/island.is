@@ -10,6 +10,10 @@ import {
 
 import { Attachment, Person } from './dto/uploadData.input'
 import {
+  DataUploadResponse,
+  SealedCriminalRecordResponse,
+} from './models/dataUpload'
+import {
   OperatingLicense,
   mapOperatingLicense,
 } from './models/operatingLicense'
@@ -20,7 +24,8 @@ import {
   Uppbod,
   VirkLeyfi,
   VottordSkeyti,
-  Skilabod
+  Skilabod,
+  InnsiglaSvar
 } from '@island.is/clients/syslumenn'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
@@ -98,11 +103,20 @@ export class SyslumennService {
     return ((operatingLicenses as VirkLeyfi[]) ?? []).map(mapOperatingLicense)
   }
 
+  async sealCriminalRecord(
+    criminalRecord: string,
+  ): Promise<InnsiglaSvar> {
+    await this.login()
+    const explination = 'Undirritað af sýslumanni'
+    return await this.syslumennApiWithAuth().innsiglunPost({skeyti: {audkenni: this.id, skyring: explination, skjal: criminalRecord}})
+  }
+
   async uploadData(
     persons: Person[],
     attachment: Attachment,
-    applicationType: string,
-    extraData?: { [key: string]: string },
+    extraData: { [key: string]: string },
+    uploadDataName: string,
+    uploadDataId?: string,
   ): Promise<Skilabod> {
     await this.login()
 
@@ -110,8 +124,9 @@ export class SyslumennService {
       this.id,
       persons,
       attachment,
-      applicationType,
       extraData,
+      uploadDataName,
+      uploadDataId,
     )
     return await this.syslumennApiWithAuth().syslMottakaGognPost(payload)
   }

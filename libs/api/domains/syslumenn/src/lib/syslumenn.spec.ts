@@ -104,7 +104,14 @@ describe('SyslumennService', () => {
       const response = await service.uploadData(
         PERSON,
         ATTACHMENT,
+<<<<<<< HEAD
         APPLICATION_TYPE,
+=======
+        {
+          key: 'string',
+        },
+        'Lögheimilisbreyting barns',
+>>>>>>> main
       )
       expect(response).toStrictEqual(DATA_UPLOAD)
     })

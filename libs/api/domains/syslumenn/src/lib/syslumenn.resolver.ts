@@ -39,12 +39,14 @@ export class SyslumennResolver {
   @Mutation()
   postSyslumennUploadData(
     @Args('input')
-    { persons, attachment, applicationType }: UploadDataInput,
+    { persons, attachment, extraData, uploadDataName, uploadDataId }: UploadDataInput,
   ): Promise<Skilabod> {
     return this.syslumennService.uploadData(
       persons,
       attachment,
-      applicationType,
+      extraData,
+      uploadDataName,
+      uploadDataId
     )
   }
 

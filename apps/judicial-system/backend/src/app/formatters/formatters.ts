@@ -171,8 +171,8 @@ export function formatProsecutorCourtDateEmailNotification(
     ? `Dómari: ${judgeName}`
     : 'Dómari hefur ekki verið skráður'
   const registrarText = registrarName
-    ? `Dómritari: ${registrarName}`
-    : 'Dómritari hefur ekki verið skráður'
+    ? `<br /><br />Dómritari: ${registrarName}.`
+    : ''
   const defenderText =
     sessionArrangements === SessionArrangements.PROSECUTOR_PRESENT ||
     sessionArrangements === SessionArrangements.REMOTE_SESSION
@@ -185,7 +185,7 @@ export function formatProsecutorCourtDateEmailNotification(
           defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
         } sakbornings hefur ekki verið skráður.`
 
-  return `${court} hefur staðfest fyrirtökutíma fyrir ${scheduledCaseText}.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />${courtRoomText}.<br /><br />${judgeText}.<br /><br />${registrarText}.${defenderText}`
+  return `${court} hefur staðfest fyrirtökutíma fyrir ${scheduledCaseText}.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />${courtRoomText}.<br /><br />${judgeText}.${registrarText}${defenderText}`
 }
 
 export function formatPrisonCourtDateEmailNotification(
@@ -249,7 +249,9 @@ export function formatDefenderCourtDateEmailNotification(
       ', kl.',
     )}.<br /><br />Málsnúmer: ${courtCaseNumber}.<br /><br />${
     courtRoom ? `Dómsalur: ${courtRoom}` : 'Dómsalur hefur ekki verið skráður'
-  }.<br /><br />Dómari: ${judgeName}.<br /><br />Dómritari: ${registrarName}.<br /><br />Sækjandi: ${prosecutorName} (${prosecutorInstitution}).`
+  }.<br /><br />Dómari: ${judgeName}.${
+    registrarName ? `<br /><br />Dómritari: ${registrarName}.` : ''
+  }<br /><br />Sækjandi: ${prosecutorName} (${prosecutorInstitution}).`
 }
 
 // This function is only intended for case type CUSTODY

@@ -55,6 +55,9 @@
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
       ],
+      "@island.is/api/domains/criminal-record": [
+        "libs/api/domains/criminal-record/src/index.ts"
+      ],
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
       ],
@@ -103,9 +106,6 @@
       "@island.is/api/domains/national-registry-x-road": [
         "libs/api/domains/national-registry-x-road/src/index.ts"
       ],
-      "@island.is/api/domains/party-letter-registry": [
-        "libs/api/domains/party-letter-registry/src/index.ts"
-      ],
       "@island.is/api/domains/payment": [
         "libs/api/domains/payment/src/index.ts"
       ],
@@ -153,6 +153,9 @@
       "@island.is/application/templates/complaints-to-althingi-ombudsman": [
         "libs/application/templates/complaints-to-althingi-ombudsman/src/index.ts"
       ],
+      "@island.is/application/templates/criminal-record": [
+        "libs/application/templates/criminal-record/src/index.ts"
+      ],
       "@island.is/application/templates/data-protection-complaint": [
         "libs/application/templates/data-protection-complaint/src/index.ts"
       ],
@@ -161,9 +164,6 @@
       ],
       "@island.is/application/templates/driving-assessment-approval": [
         "libs/application/templates/driving-assessment-approval/src/index.ts"
-      ],
-      "@island.is/application/templates/driving-lessons": [
-        "libs/application/templates/driving-lessons/src/index.ts"
       ],
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
@@ -195,12 +195,6 @@
       "@island.is/application/templates/parental-leave": [
         "libs/application/templates/parental-leave/src/index.ts"
       ],
-      "@island.is/application/templates/party-application": [
-        "libs/application/templates/party-application/src/index.ts"
-      ],
-      "@island.is/application/templates/party-letter": [
-        "libs/application/templates/party-letter/src/index.ts"
-      ],
       "@island.is/application/templates/passport": [
         "libs/application/templates/passport/src/index.ts"
       ],
@@ -223,6 +217,9 @@
         "libs/application/ui-shell/src/index.ts"
       ],
       "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
+      "@island.is/auth-api-lib/personal-representative": [
+        "libs/auth-api-lib/src/lib/personal-representative/index.ts"
+      ],
       "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
       "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
@@ -230,6 +227,9 @@
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
       "@island.is/clients/auth-public-api": [
         "libs/clients/auth-public-api/src/index.ts"
+      ],
+      "@island.is/clients/criminal-record": [
+        "libs/clients/criminal-record/src/index.ts"
       ],
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"

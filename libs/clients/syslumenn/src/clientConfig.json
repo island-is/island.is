@@ -759,7 +759,11 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/InnsiglaSvar"
+            }
           },
           "401": {
             "x-nullable": false,
@@ -1416,6 +1420,20 @@
           "type": "string"
         },
         "skyring": {
+          "type": "string"
+        },
+        "skjal": {
+          "type": "string"
+        }
+      }
+    },
+    "InnsiglaSvar": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "skilabod": {
           "type": "string"
         },
         "skjal": {

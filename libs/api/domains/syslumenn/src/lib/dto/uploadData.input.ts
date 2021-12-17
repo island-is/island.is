@@ -51,10 +51,20 @@ export class UploadDataInput {
 
   @Field()
   applicationType!: string
+
+  @Field()
+  extraData!: { [key: string]: string }
+  
+  @Field()
+  uploadDataName!: string
+
+  @Field()
+  uploadDataId?: string
 }
 
 export enum PersonType {
   Plaintiff,
   CounterParty,
   Child,
+  CriminalRecordApplicant,
 }

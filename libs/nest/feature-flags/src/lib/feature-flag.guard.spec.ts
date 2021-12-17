@@ -38,6 +38,26 @@ export class TestResolver {
   }
 }
 
+@UseGuards(IdsUserGuard, FeatureFlagGuard)
+@FeatureFlag(testFeature)
+@Controller('rest-feature')
+export class TestFeatureController {
+  @Get()
+  getSomething() {
+    // Will only reach here if someFeature is turned on, either globally or for the authenticated user.
+  }
+}
+
+@UseGuards(IdsUserGuard, FeatureFlagGuard)
+@FeatureFlag(testFeature)
+@Resolver()
+export class TestFeatureResolver {
+  @Query(() => Boolean, { nullable: true })
+  getSomethingElse() {
+    // Will only reach here if someFeature is turned on, either globally or for the authenticated user.
+  }
+}
+
 describe('FeatureFlagGuard', () => {
   let app: INestApplication
   const featureFlagClient = {
@@ -46,8 +66,8 @@ describe('FeatureFlagGuard', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      controllers: [TestController],
-      providers: [TestResolver],
+      controllers: [TestController, TestFeatureController],
+      providers: [TestResolver, TestFeatureResolver],
       imports: [
         FeatureFlagModule,
         GraphQLModule.forRoot({ autoSchemaFile: true, path: '/graphql' }),
@@ -73,10 +93,18 @@ describe('FeatureFlagGuard', () => {
     featureFlagClient.getValue.mockResolvedValue(false)
 
     // Act
+    return request(app.getHttpServer()).get('/rest-feature').expect(403)
+  })
+
+  it('guards controller endpoint if feature is disabled', () => {
+    // Arrange
+    featureFlagClient.getValue.mockResolvedValue(false)
+
+    // Act
     return request(app.getHttpServer()).get('/rest').expect(403)
   })
 
-  it('allows controller if feature is enabled', async () => {
+  it('allows controller endpoint if feature is enabled', async () => {
     // Arrange
     featureFlagClient.getValue.mockResolvedValue(true)
 
@@ -98,7 +126,23 @@ describe('FeatureFlagGuard', () => {
     )
   })
 
-  it('guards resolver if feature is disabled', async () => {
+  it('guards resolver class if feature is disabled', async () => {
+    // Arrange
+    featureFlagClient.getValue.mockResolvedValue(false)
+
+    // Act
+    const response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getSomethingElse }' })
+
+    // Assert
+    expect(response.body).toMatchObject({
+      data: { getSomethingElse: null },
+      errors: [{ message: 'Forbidden resource' }],
+    })
+  })
+
+  it('guards resolver method if feature is disabled', async () => {
     // Arrange
     featureFlagClient.getValue.mockResolvedValue(false)
 
@@ -114,7 +158,7 @@ describe('FeatureFlagGuard', () => {
     })
   })
 
-  it('allows resolver if feature is enabled', async () => {
+  it('allows resolver method if feature is enabled', async () => {
     // Arrange
     featureFlagClient.getValue.mockResolvedValue(true)
 

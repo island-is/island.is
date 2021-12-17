@@ -1,0 +1,74 @@
+import { AppModule } from '../src/app/app.module'
+import {
+  testServer,
+  useDatabase,
+  TestApp,
+  useAuth,
+} from '@island.is/testing/nest'
+import { SequelizeConfigService } from '@island.is/auth-api-lib/personal-representative'
+import { User } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+
+interface SetupOptions {
+  user: User
+  scopes: string[]
+}
+
+// needed for generic error validation
+expect.extend({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  anyOf(value: any, classTypes: any[]) {
+    const types = classTypes.map((type) => type.name).join(', ')
+    const message = `expected to be any of type: ${types}`
+    for (let i = 0; i < classTypes.length; i++) {
+      if (value.constructor === classTypes[i]) {
+        return {
+          pass: true,
+          message: () => message,
+        }
+      }
+    }
+
+    return {
+      pass: false,
+      message: () => message,
+    }
+  },
+})
+
+export const setupWithAuth = async ({
+  user,
+  scopes,
+}: SetupOptions): Promise<TestApp> => {
+  user.nationalId
+  const app = await testServer<AppModule>({
+    appModule: AppModule,
+    override: (builder) =>
+      builder.overrideProvider(IdsUserGuard).useValue(
+        new MockAuthGuard({
+          nationalId: user.nationalId,
+          scope: scopes,
+        }),
+      ),
+    hooks: [
+      useAuth({ auth: user }),
+      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+    ],
+  })
+
+  return app
+}
+
+export const setupWithoutAuth = async (): Promise<TestApp> => {
+  const user = createCurrentUser()
+  const app = await testServer<AppModule>({
+    appModule: AppModule,
+    hooks: [
+      useAuth({ auth: user }),
+      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+    ],
+  })
+
+  return app
+}
