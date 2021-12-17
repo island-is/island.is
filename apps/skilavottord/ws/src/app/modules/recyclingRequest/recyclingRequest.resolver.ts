@@ -64,7 +64,8 @@ export class RecyclingRequestResolver {
 
   @Mutation(() => RecyclingRequestResponse)
   async createSkilavottordRecyclingRequest(
-    @Args('requestType') requestType: RecyclingRequestTypes,
+    @Args({ name: 'requestType', type: () => RecyclingRequestTypes })
+    requestType: RecyclingRequestTypes,
     @Args('permno') permno: string,
     @Args('nameOfRequestor', { nullable: true }) name: string,
     @Args('partnerId', { nullable: true }) partnerId: string,

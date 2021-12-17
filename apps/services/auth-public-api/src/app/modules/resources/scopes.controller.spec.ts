@@ -2,24 +2,24 @@ import request from 'supertest'
 
 import { ApiScope } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
-import { TestApp } from '@island.is/testing/nest'
 import {
   createCurrentUser,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
+import { TestApp } from '@island.is/testing/nest'
 
 import {
+  Scopes,
   setupWithAuth,
   setupWithoutAuth,
   setupWithoutPermission,
 } from '../../../../test/setup'
-import { getRequestMethod } from '../../../../test/utils'
 import { TestEndpointOptions } from '../../../../test/types'
+import { getRequestMethod } from '../../../../test/utils'
 
-const scopes = ['@island.is/scope0', '@island.is/scope1']
 const user = createCurrentUser({
   nationalId: '1122334455',
-  scope: [AuthScope.readDelegations, scopes[0]],
+  scope: [AuthScope.readDelegations, Scopes[0].name],
 })
 const userName = 'Tester Tests'
 const nationalRegistryUser = createNationalRegistryUser({
@@ -38,7 +38,6 @@ describe('ScopesController', () => {
         user,
         userName,
         nationalRegistryUser,
-        scopes,
       })
       server = request(app.getHttpServer())
 
@@ -55,7 +54,7 @@ describe('ScopesController', () => {
         // Arrange
         const expectedScopes = await apiScopeModel.findAll({
           where: {
-            name: scopes[0],
+            name: Scopes[0].name,
           },
         })
 
@@ -80,7 +79,6 @@ describe('ScopesController', () => {
         },
         userName,
         nationalRegistryUser,
-        scopes,
       })
 
       // Act
