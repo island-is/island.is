@@ -6,7 +6,7 @@ import {
   PersonalRepresentativeRightTypeService,
 } from '@island.is/auth-api-lib/personal-representative'
 import {
-  CurrentActor,
+  CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
@@ -103,7 +103,7 @@ export class RightTypesController {
   @ApiOkResponse()
   async removeAsync(
     @Param('code') code: string,
-    @CurrentActor() user: User,
+    @CurrentUser() user: User,
   ): Promise<number> {
     if (!code) {
       throw new BadRequestException('Key needs to be provided')
@@ -131,7 +131,7 @@ export class RightTypesController {
   })
   async create(
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
-    @CurrentActor() user: User,
+    @CurrentUser() user: User,
   ): Promise<PersonalRepresentativeRightType> {
     // Create a new right type
     return await this.auditService.auditPromise(
@@ -158,7 +158,7 @@ export class RightTypesController {
   async update(
     @Param('code') code: string,
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
-    @CurrentActor() user: User,
+    @CurrentUser() user: User,
   ): Promise<PersonalRepresentativeRightType> {
     if (!code) {
       throw new BadRequestException('Code must be provided')
