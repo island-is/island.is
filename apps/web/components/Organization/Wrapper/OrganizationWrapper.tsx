@@ -21,6 +21,8 @@ import {
   ProfileCard,
   Stack,
   Text,
+  Button,
+  Inline,
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
 import {
@@ -126,6 +128,40 @@ export const OrganizationAlert: React.FC<AlertProps> = ({
             title: n('alertLinkTitle', 'Nánar'),
           }}
         />
+      </Box>
+    )
+  }
+  return null
+}
+
+interface ExternalLinksProps {
+  organizationPage: OrganizationPage
+}
+
+export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
+  organizationPage,
+}) => {
+  if (organizationPage.externalLinks) {
+    return (
+      <Box
+        display={['none', 'none', 'flex', 'flex']}
+        justifyContent="flexEnd"
+        marginBottom={4}
+      >
+        <Inline space={2}>
+          {organizationPage.externalLinks.map((link) => (
+            <Link href={link.url}>
+              <Button
+                colorScheme="light"
+                icon="open"
+                iconType="outline"
+                size="small"
+              >
+                {link.text}
+              </Button>
+            </Link>
+          ))}
+        </Inline>
       </Box>
     )
   }
@@ -385,6 +421,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                       }}
                     />
                   )}
+                  <OrganizationExternalLinks
+                    organizationPage={organizationPage}
+                  />
                   {pageDescription && (
                     <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
                       <Text variant="default">{pageDescription}</Text>
