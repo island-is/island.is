@@ -106,9 +106,6 @@
       "@island.is/api/domains/national-registry-x-road": [
         "libs/api/domains/national-registry-x-road/src/index.ts"
       ],
-      "@island.is/api/domains/party-letter-registry": [
-        "libs/api/domains/party-letter-registry/src/index.ts"
-      ],
       "@island.is/api/domains/payment": [
         "libs/api/domains/payment/src/index.ts"
       ],
@@ -168,9 +165,6 @@
       "@island.is/application/templates/driving-assessment-approval": [
         "libs/application/templates/driving-assessment-approval/src/index.ts"
       ],
-      "@island.is/application/templates/driving-lessons": [
-        "libs/application/templates/driving-lessons/src/index.ts"
-      ],
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
@@ -200,12 +194,6 @@
       ],
       "@island.is/application/templates/parental-leave": [
         "libs/application/templates/parental-leave/src/index.ts"
-      ],
-      "@island.is/application/templates/party-application": [
-        "libs/application/templates/party-application/src/index.ts"
-      ],
-      "@island.is/application/templates/party-letter": [
-        "libs/application/templates/party-letter/src/index.ts"
       ],
       "@island.is/application/templates/passport": [
         "libs/application/templates/passport/src/index.ts"

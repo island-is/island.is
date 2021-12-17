@@ -10,6 +10,7 @@ import {
   RadioButton,
   Select,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import lawyers from '@island.is/judicial-system-web/src/utils/lawyerScraper/db.json'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
@@ -161,6 +162,34 @@ const DefenderInfo: React.FC<Props> = (props) => {
     }
   }
 
+  const renderTooltip = () => {
+    if (
+      isRestrictionCase(workingCase.type) &&
+      (user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR)
+    ) {
+      return (
+        <Tooltip
+          text={formatMessage(rcHearingArrangements.sections.defender.tooltip)}
+        />
+      )
+    } else if (
+      isInvestigationCase(workingCase.type) &&
+      (user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR)
+    ) {
+      return (
+        <Tooltip
+          text={formatMessage(icHearingArrangements.sections.defender.tooltip, {
+            defenderType: workingCase.defenderIsSpokesperson
+              ? 'talsmaður'
+              : 'verjandi',
+          })}
+        />
+      )
+    } else {
+      return ''
+    }
+  }
+
   return (
     <>
       <Box
@@ -170,7 +199,8 @@ const DefenderInfo: React.FC<Props> = (props) => {
         marginBottom={2}
       >
         <Text as="h3" variant="h3">
-          {formatMessage(getTranslations().title)}
+          {`${formatMessage(getTranslations().title)} `}
+          {renderTooltip()}
         </Text>
       </Box>
       <BlueBox>

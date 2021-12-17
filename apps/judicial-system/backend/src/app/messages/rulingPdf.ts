@@ -124,7 +124,7 @@ export const ruling = {
     description:
       'Notaður fyrir ábendingu dómara um heimild kærða til að bera framkvæmd farbanns undir hann.',
   }),
-  registratWitness: defineMessage({
+  registrarWitness: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.registrar_witness',
     defaultMessage: 'Vottur að þinghaldi er {registrarNameAndTitle}.',
     description:

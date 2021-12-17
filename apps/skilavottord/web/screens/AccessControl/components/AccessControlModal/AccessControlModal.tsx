@@ -1,5 +1,5 @@
 import React, { BaseSyntheticEvent, FC } from 'react'
-import { Control, Controller, ValidationRules } from 'react-hook-form'
+import { Control, Controller } from 'react-hook-form'
 import { FieldError, FieldValues } from 'react-hook-form/dist/types/form'
 import { DeepMap } from 'react-hook-form/dist/types/utils'
 import * as kennitala from 'kennitala'
@@ -58,24 +58,22 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             required
             label={t.modal.inputs.nationalId.label}
             placeholder={t.modal.inputs.nationalId.placeholder}
-            rules={
-              {
-                required: {
-                  value: true,
-                  message: t.modal.inputs.nationalId.rules?.required,
+            rules={{
+              required: {
+                value: true,
+                message: t.modal.inputs.nationalId.rules?.required,
+              },
+              validate: {
+                value: (value: number) => {
+                  if (
+                    value.toString().length === 10 &&
+                    !kennitala.isPerson(value)
+                  ) {
+                    return t.modal.inputs.nationalId.rules?.validate
+                  }
                 },
-                validate: {
-                  value: (value: number) => {
-                    if (
-                      value.toString().length === 10 &&
-                      !kennitala.isPerson(value)
-                    ) {
-                      return t.modal.inputs.nationalId.rules?.validate
-                    }
-                  },
-                },
-              } as ValidationRules
-            }
+              },
+            }}
             type="tel"
             format="######-####"
             error={errors?.nationalId?.message}
@@ -88,28 +86,24 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             required
             label={t.modal.inputs.name.label}
             placeholder={t.modal.inputs.name.placeholder}
-            rules={
-              {
-                required: {
-                  value: true,
-                  message: t.modal.inputs.name.rules?.required,
-                },
-              } as ValidationRules
-            }
+            rules={{
+              required: {
+                value: true,
+                message: t.modal.inputs.name.rules?.required,
+              },
+            }}
             error={errors?.name?.message}
             backgroundColor="blue"
           />
           <Controller
             name="role"
             control={control}
-            rules={
-              {
-                required: {
-                  value: true,
-                  message: t.modal.inputs.role.rules?.required,
-                },
-              } as ValidationRules
-            }
+            rules={{
+              required: {
+                value: true,
+                message: t.modal.inputs.role.rules?.required,
+              },
+            }}
             render={({ onChange, value, name }) => {
               return (
                 <Select
@@ -131,18 +125,9 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
           <Controller
             name="partnerId"
             control={control}
-            rules={
-              {
-                required: {
-                  value: true,
-                  message: t.modal.inputs.partner.rules?.required,
-                },
-              } as ValidationRules
-            }
             render={({ onChange, value, name }) => {
               return (
                 <Select
-                  required
                   name={name}
                   label={t.modal.inputs.partner.label}
                   placeholder={t.modal.inputs.partner.placeholder}
@@ -153,6 +138,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
                   backgroundColor="blue"
                   options={recyclingPartners}
                   onChange={onChange}
+                  isCreatable
                 />
               )
             }}

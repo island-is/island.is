@@ -49,6 +49,5 @@ const autoSchemaFile = environment.production
     CmsTranslationsModule,
     PoliceModule,
   ],
-  providers: [BackendAPI],
 })
 export class AppModule {}
