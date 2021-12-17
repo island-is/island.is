@@ -1,4 +1,4 @@
-# application-templates-general-fishing-license
+# Application Templates General Fishing License
 
 This library was generated with [Nx](https://nx.dev).
 
