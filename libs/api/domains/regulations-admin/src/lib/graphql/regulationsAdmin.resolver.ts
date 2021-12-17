@@ -21,7 +21,6 @@ import {
   DraftRegulationChange,
   RegulationDraft,
 } from '@island.is/regulations/admin'
-import { HTMLText } from '@island.is/regulations-tools/types'
 import { extractAppendixesAndComments } from '@island.is/regulations-tools/textHelpers'
 import { RegulationAppendix } from '@island.is/regulations/web'
 
