@@ -14,7 +14,6 @@ describe('StaffController - Get guards', () => {
   })
 
   it('should have two guards', () => {
-    console.log(guards[1])
     expect(guards).toHaveLength(2)
   })
 
@@ -53,19 +52,17 @@ describe('StaffController - Gets staff for municipality guard', () => {
       StaffController.prototype.getStaffForMunicipality,
     )
   })
-  it('should have one guards', () => {
+  it('should have one guard', () => {
+    console.log(guards)
     expect(guards).toHaveLength(1)
   })
-
   // describe('StaffGuard', () => {
   //   let guard: CanActivate
 
   //   beforeEach(() => {
-  //     guard = new guards[0]()
+  //     guard = new guards[1]()
   //   })
-
   //   it('should have StaffGuard as quard 1', () => {
-  //     console.log(guard)
   //     expect(guard).toBeInstanceOf(StaffGuard)
   //   })
   // })
