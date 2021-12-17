@@ -14,6 +14,7 @@ import {
   injuryCertificateRequest,
   policeReportRequest,
   powerOfAttorneyRequest,
+  additionalFilesFromReviewerRequest,
 } from '../config'
 
 export const attachmentStatusToAttachmentRequests = (
@@ -43,6 +44,7 @@ export const attachmentStatusToAttachmentRequests = (
   }
   if (!receivedAttachments.Unknown && receivedAttachments.Unknown != null) {
     attachmentRequests.push(additionalFilesRequest)
+    attachmentRequests.push(additionalFilesFromReviewerRequest)
   }
 
   return attachmentRequests

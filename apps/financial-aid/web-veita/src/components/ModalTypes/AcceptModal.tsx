@@ -13,7 +13,6 @@ import {
   calculateTaxOfAmount,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
-import format from 'date-fns/format'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 
@@ -32,7 +31,6 @@ interface calculationsState {
   amount: number
   income?: number
   personalTaxCreditPercentage?: number
-  tax: number
   secondPersonalTaxCredit: number
   showSecondPersonalTaxCredit: boolean
   hasError: boolean
@@ -50,8 +48,6 @@ const AcceptModal = ({
   const router = useRouter()
 
   const maximumInputLength = 6
-
-  const currentYear = format(new Date(), 'yyyy')
 
   const { municipality } = useContext(AdminContext)
 
@@ -78,7 +74,6 @@ const AcceptModal = ({
     amount: aidAmount,
     income: undefined,
     personalTaxCreditPercentage: undefined,
-    tax: calculateTaxOfAmount(aidAmount, currentYear),
     secondPersonalTaxCredit: 0,
     showSecondPersonalTaxCredit: false,
     deductionFactor: [],
@@ -98,10 +93,17 @@ const AcceptModal = ({
   const checkingValue = (element?: number) => (element ? element : 0)
 
   const finalAmount = calculateAcceptedAidFinalAmount(
-    aidAmount - checkingValue(state.income) - sumValues(state.deductionFactor),
-    currentYear,
+    state.amount -
+      checkingValue(state.income) -
+      sumValues(state.deductionFactor),
     checkingValue(state.personalTaxCreditPercentage),
     state.secondPersonalTaxCredit,
+  )
+
+  const taxAmount = calculateTaxOfAmount(
+    (aidAmount || 0) -
+      checkingValue(state.income) -
+      sumValues(state.deductionFactor),
   )
 
   const areRequiredFieldsFilled =
@@ -122,7 +124,7 @@ const AcceptModal = ({
       income: state.income,
       personalTaxCredit: state.personalTaxCreditPercentage ?? 0,
       spousePersonalTaxCredit: state.secondPersonalTaxCredit,
-      tax: state.tax,
+      tax: taxAmount,
       finalAmount: finalAmount,
       deductionFactors: state.deductionFactor,
     })
@@ -325,12 +327,7 @@ const AcceptModal = ({
           label="Skattur "
           id="tax"
           name="tax"
-          value={calculateTaxOfAmount(
-            (aidAmount || 0) -
-              checkingValue(state.income) -
-              sumValues(state.deductionFactor),
-            currentYear,
-          ).toLocaleString('de-DE')}
+          value={taxAmount.toLocaleString('de-DE')}
           readOnly={true}
         />
       </Box>

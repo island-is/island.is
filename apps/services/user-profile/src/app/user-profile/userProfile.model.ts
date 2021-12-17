@@ -83,4 +83,11 @@ export class UserProfile extends Model<UserProfile> {
   })
   @ApiProperty()
   profileImageUrl?: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+  })
+  @ApiProperty()
+  documentNotifications!: boolean
 }

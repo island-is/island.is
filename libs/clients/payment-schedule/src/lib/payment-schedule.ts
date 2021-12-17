@@ -31,6 +31,7 @@ export class PaymentScheduleAPI extends RESTDataSource {
   }
 
   willSendRequest(request: RequestOptions) {
+    this.memoizedResults.clear()
     request.headers.set('Content-Type', 'application/json')
     request.headers.set('X-Road-Client', this.options.xRoadClientId)
   }
