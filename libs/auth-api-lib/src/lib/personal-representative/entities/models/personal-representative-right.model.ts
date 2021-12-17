@@ -52,14 +52,14 @@ export class PersonalRepresentativeRight extends Model<PersonalRepresentativeRig
   rightTypeCode!: string
 
   @ApiProperty({
-    type: () => [PersonalRepresentative],
+    type: () => PersonalRepresentative,
     required: true,
   })
   @BelongsTo(() => PersonalRepresentative)
   personalRepresentative?: unknown
 
   @ApiProperty({
-    type: () => [PersonalRepresentativeRightType],
+    type: () => PersonalRepresentativeRightType,
     required: true,
   })
   @BelongsTo(() => PersonalRepresentativeRightType)

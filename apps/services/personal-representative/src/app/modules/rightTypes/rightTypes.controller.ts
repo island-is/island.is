@@ -1,11 +1,12 @@
 import { AuthScope } from '@island.is/auth/scopes'
 import {
+  PaginatedPersonalRepresentativeRightTypeDto,
   PersonalRepresentativeRightType,
   PersonalRepresentativeRightTypeDTO,
   PersonalRepresentativeRightTypeService,
 } from '@island.is/auth-api-lib/personal-representative'
 import {
-  CurrentUser,
+  CurrentActor,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
@@ -22,6 +23,7 @@ import {
   Post,
   Put,
   Inject,
+  Query,
 } from '@nestjs/common'
 import {
   ApiOperation,
@@ -33,6 +35,7 @@ import {
 import { User } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
 import { AuditService, Audit } from '@island.is/nest/audit'
+import { PaginationDto } from '@island.is/nest/pagination'
 
 const namespace = `${environment.audit.defaultNamespace}/right-types`
 
@@ -54,16 +57,14 @@ export class RightTypesController {
     summary: 'Get a list of all right types for personal representatives',
   })
   @Get()
-  @ApiOkResponse({ type: PersonalRepresentativeRightType })
-  @Audit<PersonalRepresentativeRightType[]>({
-    resources: (types) => types.map((type) => type.code),
+  @ApiOkResponse({ type: PaginatedPersonalRepresentativeRightTypeDto })
+  @Audit<PaginatedPersonalRepresentativeRightTypeDto>({
+    resources: (pgData) => pgData.data.map((type) => type.code),
   })
-  async getAll(): Promise<PersonalRepresentativeRightType[]> {
-    const rightTypes = await this.rightTypesService.getAllAsync()
-
-    if (!rightTypes) {
-      throw new NotFoundException('No right types found')
-    }
+  async getAll(
+    @Query() query: PaginationDto,
+  ): Promise<PaginatedPersonalRepresentativeRightTypeDto> {
+    const rightTypes = await this.rightTypesService.getMany(query)
 
     return rightTypes
   }
@@ -84,7 +85,7 @@ export class RightTypesController {
       throw new BadRequestException('Code needs to be provided')
     }
 
-    const rightType = await this.rightTypesService.getPersonalRepresentativeRightTypeAsync(
+    const rightType = await this.rightTypesService.getPersonalRepresentativeRightType(
       code,
     )
 
@@ -102,7 +103,7 @@ export class RightTypesController {
   @ApiOkResponse()
   async removeAsync(
     @Param('code') code: string,
-    @CurrentUser() user: User,
+    @CurrentActor() user: User,
   ): Promise<number> {
     if (!code) {
       throw new BadRequestException('Key needs to be provided')
@@ -115,7 +116,7 @@ export class RightTypesController {
         namespace,
         resources: code,
       },
-      this.rightTypesService.deleteAsync(code),
+      this.rightTypesService.delete(code),
     )
   }
 
@@ -130,7 +131,7 @@ export class RightTypesController {
   })
   async create(
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
-    @CurrentUser() user: User,
+    @CurrentActor() user: User,
   ): Promise<PersonalRepresentativeRightType> {
     // Create a new right type
     return await this.auditService.auditPromise(
@@ -141,7 +142,7 @@ export class RightTypesController {
         resources: rightType.code,
         meta: { fields: Object.keys(rightType) },
       },
-      this.rightTypesService.createAsync(rightType),
+      this.rightTypesService.create(rightType),
     )
   }
 
@@ -157,7 +158,7 @@ export class RightTypesController {
   async update(
     @Param('code') code: string,
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
-    @CurrentUser() user: User,
+    @CurrentActor() user: User,
   ): Promise<PersonalRepresentativeRightType> {
     if (!code) {
       throw new BadRequestException('Code must be provided')
@@ -172,7 +173,7 @@ export class RightTypesController {
         resources: rightType.code,
         meta: { fields: Object.keys(rightType) },
       },
-      this.rightTypesService.updateAsync(code, rightType),
+      this.rightTypesService.update(code, rightType),
     )
 
     if (result == null) {

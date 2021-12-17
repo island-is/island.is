@@ -118,12 +118,6 @@ const prodConfig = () => ({
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
   },
-  temporaryVoterRegistry: {
-    baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_BASE_API_URL,
-  },
-  partyLetterRegistry: {
-    baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
-  },
   fjarmalDomain: {
     xroadApiPath: process.env.XROAD_FINANCES_PATH,
     ttl: parseInt(process.env.FJARMAL_TTL, 10) || 600,
@@ -290,12 +284,6 @@ const devConfig = () => ({
     callbackBaseUrl: process.env.XROAD_PAYMENT_BASE_CALLBACK_URL,
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
-  },
-  temporaryVoterRegistry: {
-    baseApiUrl: 'http://localhost:4248',
-  },
-  partyLetterRegistry: {
-    baseApiUrl: 'http://localhost:4251',
   },
   pkpass: {
     apiKey: process.env.PKPASS_API_KEY,

@@ -21,7 +21,7 @@ import {
 import { RecyclingPartnerModel } from '../recyclingPartner'
 import { VehicleModel } from '../vehicle'
 
-enum RecyclingRequestTypes {
+export enum RecyclingRequestTypes {
   pendingRecycle = 'pendingRecycle',
   handOver = 'handOver',
   deregistered = 'deregistered',
@@ -99,7 +99,7 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
     type: DataType.STRING,
     allowNull: false,
   })
-  requestType: string
+  requestType: RecyclingRequestTypes
 
   @Field()
   @Column({

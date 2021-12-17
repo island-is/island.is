@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import type { Case } from '@island.is/judicial-system/types'
 import { parseString, replaceTabs } from './formatters'
 import { validate, Validation } from './validate'
@@ -19,29 +18,7 @@ export const useCaseFormHelper = (
   setCase: (value: React.SetStateAction<Case>) => void,
   formSettings: FormSettings,
 ) => {
-  const [isValid, setIsValid] = useState(true)
   const { updateCase } = useCase()
-
-  useEffect(() => {
-    let valid = true
-
-    for (const fieldName in formSettings) {
-      const fieldSettings = formSettings[fieldName]
-      const value = (theCase[fieldName as keyof Case] ?? '') as string
-
-      if (
-        fieldSettings.validations?.some(
-          (v) => validate(value, v).isValid === false,
-        )
-      ) {
-        valid = false
-      } else if (fieldSettings.errorMessage && fieldSettings.setErrorMessage) {
-        fieldSettings.setErrorMessage('')
-      }
-    }
-
-    setIsValid(valid)
-  }, [theCase, formSettings, setIsValid])
 
   const setField = (element: HTMLInputElement | HTMLTextAreaElement) => {
     if (element.value.includes('\t')) {
@@ -94,7 +71,6 @@ export const useCaseFormHelper = (
   }
 
   return {
-    isValid,
     setField,
     validateAndSendToServer,
     setAndSendToServer,
