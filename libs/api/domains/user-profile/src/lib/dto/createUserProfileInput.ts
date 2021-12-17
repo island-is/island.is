@@ -15,4 +15,9 @@ export class CreateUserProfileInput {
   @Field(() => String, { nullable: true })
   @IsOptional()
   email?: string
+
+  // Temporary merge with islyklar service
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  canNudge?: boolean
 }

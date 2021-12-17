@@ -9,8 +9,11 @@ import {
 } from '@island.is/island-ui/core'
 import { Link, Redirect } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { gql, useMutation } from '@apollo/client'
-import { useUserProfile } from '@island.is/service-portal/graphql'
+import {
+  useUserProfile,
+  useCreateUserProfile,
+  useUpdateUserProfile,
+} from '@island.is/service-portal/graphql'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
@@ -19,14 +22,6 @@ import {
 import React, { useEffect, useState } from 'react'
 import { PhoneForm } from '../../components/Forms/PhoneForm/PhoneForm'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-
-const UpdateIslykillSettings = gql`
-  mutation updateIslykillSettings($input: UpdateIslykillSettingsInput!) {
-    updateIslykillSettings(input: $input) {
-      nationalId
-    }
-  }
-`
 
 interface PhoneFormData {
   tel: string
@@ -40,9 +35,9 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
   )
 
   const { data: settings } = useUserProfile()
-  const [updateIslykill, { loading, error }] = useMutation(
-    UpdateIslykillSettings,
-  )
+  const { createUserProfile } = useCreateUserProfile()
+  const { updateUserProfile } = useUpdateUserProfile()
+
   const { formatMessage } = useLocale()
 
   useEffect(() => {
@@ -57,14 +52,15 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
       if (!parsePhoneNumber?.isValid()) {
         throw Error('Not valid phone number')
       }
-      await updateIslykill({
-        variables: {
-          input: {
-            mobile: `+${parsePhoneNumber?.countryCallingCode}-${parsePhoneNumber?.nationalNumber}`,
-            email: settings?.email,
-          },
-        },
-      })
+      if (settings) {
+        await updateUserProfile({
+          mobilePhoneNumber: `+${parsePhoneNumber?.countryCallingCode}-${parsePhoneNumber?.nationalNumber}`,
+        })
+      } else {
+        await createUserProfile({
+          mobilePhoneNumber: `+${parsePhoneNumber?.countryCallingCode}-${parsePhoneNumber?.nationalNumber}`,
+        })
+      }
       setStatus('success')
       toast.success(
         formatMessage({
@@ -118,9 +114,9 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
         })}
         onSubmit={submitFormData}
       />
-      {status !== 'passive' && !loading && (
+      {status !== 'passive' && (
         <Box marginTop={[5, 7, 15]}>
-          {(status === 'error' || error) && (
+          {status === 'error' && (
             <AlertMessage
               type="error"
               title={formatMessage({

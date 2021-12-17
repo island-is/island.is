@@ -16,7 +16,7 @@ import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
 import { UserProfile } from './userProfile.model'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { IslyklarApi } from '@island.is/clients/islykill'
+import { IslykillService } from '@island.is/api/domains/islykill'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 
 // eslint-disable-next-line
@@ -29,28 +29,11 @@ const handleError = (error: any) => {
 export class UserProfileService {
   constructor(
     private userProfileApi: UserProfileApi,
-    private readonly islyklarApi: IslyklarApi,
+    private readonly islyklarService: IslykillService,
   ) {}
 
   userProfileApiWithAuth(auth: Auth) {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  async getIslyklarData(ssn: User['nationalId']) {
-    try {
-      const islyklarData = await this.islyklarApi.islyklarGet({
-        ssn,
-      })
-
-      return {
-        mobilePhoneNumber: islyklarData?.mobile,
-        email: islyklarData?.email,
-        canNudge: islyklarData?.canNudge,
-        bankInfo: islyklarData?.bankInfo,
-      }
-    } catch (e) {
-      return null // Do nothing to prevent blocking of getUserProfile.
-    }
   }
 
   async getUserProfile(user: User) {
@@ -61,13 +44,15 @@ export class UserProfileService {
         nationalId: user.nationalId,
       })
 
-      const islyklarData = await this.getIslyklarData(user.nationalId)
+      const islyklarData = await this.islyklarService.getIslykillSettings(
+        user.nationalId,
+      )
 
       return {
         ...profile,
 
         // Temporary solution while we still run the old user profile service.
-        mobilePhoneNumber: islyklarData?.mobilePhoneNumber,
+        mobilePhoneNumber: islyklarData?.mobile,
         email: islyklarData?.email,
         canNudge: islyklarData?.canNudge,
         bankInfo: islyklarData?.bankInfo,
@@ -86,15 +71,27 @@ export class UserProfileService {
       nationalId: user.nationalId,
       //temporary as schemas where not working properly
       locale: input.locale as string,
-      mobilePhoneNumber: input.mobilePhoneNumber,
-      email: input.email,
+
+      /* Mobile and email will be within islykill service */
+      // mobilePhoneNumber: input.mobilePhoneNumber,
+      // email: input.email,
     }
     const request: UserProfileControllerCreateRequest = {
       createUserProfileDto: createUserDto,
     }
-    return await this.userProfileApiWithAuth(user)
+    await this.islyklarService
+      .createIslykillSettings(user.nationalId, {
+        email: input.email,
+        mobile: input.mobilePhoneNumber,
+        canNudge: input.canNudge,
+      }) // Current version does not return the newly created user in the response.
+      .catch(handleError)
+
+    const userProfileResponse = await this.userProfileApiWithAuth(user)
       .userProfileControllerCreate(request)
       .catch(handleError)
+
+    return userProfileResponse
   }
 
   async updateUserProfile(
@@ -104,13 +101,29 @@ export class UserProfileService {
     const updateUserDto: UpdateUserProfileDto = {
       //temporary as schemas where not working properly
       locale: input.locale as string,
-      mobilePhoneNumber: input.mobilePhoneNumber,
-      email: input.email,
+
+      /* Mobile and email will be within islykill service */
+      // mobilePhoneNumber: input.mobilePhoneNumber,
+      // email: input.email,
     }
     const request: UserProfileControllerUpdateRequest = {
       nationalId: user.nationalId,
       updateUserProfileDto: updateUserDto,
     }
+
+    const islyklarData = await this.islyklarService.getIslykillSettings(
+      user.nationalId,
+    )
+
+    // if email exists and *only* mobile is updated, email will become undefined. And vice-versa.
+    await this.islyklarService
+      .updateIslykillSettings(user.nationalId, {
+        email: input.email || islyklarData.email,
+        mobile: input.mobilePhoneNumber || islyklarData.mobile,
+        canNudge: input.canNudge,
+      }) // Current version does not return the updated user in the response.
+      .catch(handleError)
+
     return await this.userProfileApiWithAuth(user)
       .userProfileControllerUpdate(request)
       .catch(handleError)

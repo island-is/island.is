@@ -13,6 +13,7 @@ export type UpdateUserProfileData = {
   email?: string
   locale?: Locale
   mobilePhoneNumber?: string
+  canNudge?: boolean
 }
 
 export const useUpdateUserProfile = () => {
@@ -40,6 +41,7 @@ export const useUpdateUserProfile = () => {
     if (data.email) input.email = data.email
     if (data.locale) input.locale = data.locale
     if (data.mobilePhoneNumber) input.mobilePhoneNumber = data.mobilePhoneNumber
+    if (data.canNudge) input.canNudge = data.canNudge
 
     return updateUserProfileMutation({
       variables: {

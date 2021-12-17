@@ -15,7 +15,7 @@ export class IslykillService {
       email,
       mobile,
       canNudge,
-    }: { email: string; mobile: string; canNudge?: boolean },
+    }: { email?: string; mobile?: string; canNudge?: boolean },
   ): Promise<UpdateIslykillSettings> {
     const inputUserData: PublicUser = {
       ssn: nationalId,
@@ -76,12 +76,17 @@ export class IslykillService {
 
   async createIslykillSettings(
     nationalId: User['nationalId'],
-    { email, mobile }: { email: string; mobile?: string },
+    {
+      email,
+      mobile,
+      canNudge,
+    }: { email?: string; mobile?: string; canNudge?: boolean },
   ) {
     const inputUserData: PublicUser = {
       ssn: nationalId,
       email,
       mobile,
+      canNudge,
     }
 
     const errorMsg = 'Unable to create islykill settings for user'

@@ -7,8 +7,11 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { gql, useMutation } from '@apollo/client'
-import { useUserProfile } from '@island.is/service-portal/graphql'
+import {
+  useUserProfile,
+  useCreateUserProfile,
+  useUpdateUserProfile,
+} from '@island.is/service-portal/graphql'
 import { Link, Redirect } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -19,25 +22,17 @@ import {
 import React, { useState, useEffect } from 'react'
 import { EmailForm, EmailFormData } from '../../components/Forms/EmailForm'
 
-const UpdateIslykillSettings = gql`
-  mutation updateIslykillSettings($input: UpdateIslykillSettingsInput!) {
-    updateIslykillSettings(input: $input) {
-      nationalId
-    }
-  }
-`
-
 export const EditEmail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.settings')
   const [email, setEmail] = useState('')
-  const { data: settings } = useUserProfile()
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
     'passive',
   )
 
-  const [updateIslykill, { loading, error }] = useMutation(
-    UpdateIslykillSettings,
-  )
+  const { data: settings } = useUserProfile()
+  const { createUserProfile } = useCreateUserProfile()
+  const { updateUserProfile } = useUpdateUserProfile()
+
   const { formatMessage } = useLocale()
 
   useEffect(() => {
@@ -49,11 +44,15 @@ export const EditEmail: ServicePortalModuleComponent = () => {
 
     try {
       // Update the profile if it exists, otherwise create one
-      await updateIslykill({
-        variables: {
-          input: { email: formData.email, mobile: settings?.mobilePhoneNumber },
-        },
-      })
+      if (settings) {
+        await updateUserProfile({
+          email: formData.email,
+        })
+      } else {
+        await createUserProfile({
+          email: formData.email,
+        })
+      }
       setStatus('success')
       toast.success(
         formatMessage({
@@ -109,9 +108,9 @@ export const EditEmail: ServicePortalModuleComponent = () => {
         )}
         onSubmit={submitFormData}
       />
-      {status !== 'passive' && !loading && (
+      {status !== 'passive' && (
         <Box marginTop={[5, 7, 15]}>
-          {(status === 'error' || error) && (
+          {status === 'error' && (
             <AlertMessage
               type="error"
               title={formatMessage({

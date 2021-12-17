@@ -3,11 +3,15 @@ import { IsEmail, IsOptional } from 'class-validator'
 
 @InputType()
 export class CreateIslykillSettingsInput {
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   @IsEmail()
-  email!: string
+  email?: string
 
   @Field(() => String, { nullable: true })
   @IsOptional()
   mobile?: string
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  canNudge?: boolean
 }

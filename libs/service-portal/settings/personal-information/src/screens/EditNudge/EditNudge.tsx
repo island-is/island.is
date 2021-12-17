@@ -7,8 +7,11 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { gql, useMutation } from '@apollo/client'
-import { useUserProfile } from '@island.is/service-portal/graphql'
+import {
+  useUserProfile,
+  useUpdateUserProfile,
+  useCreateUserProfile,
+} from '@island.is/service-portal/graphql'
 import { Link, Redirect } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -19,39 +22,30 @@ import {
 import React, { useState } from 'react'
 import { NudgeForm, NudgeFormData } from '../../components/Forms/NudgeForm'
 
-const UpdateIslykillSettings = gql`
-  mutation updateIslykillSettings($input: UpdateIslykillSettingsInput!) {
-    updateIslykillSettings(input: $input) {
-      nationalId
-    }
-  }
-`
-
 export const EditNudge: ServicePortalModuleComponent = () => {
   useNamespaces('sp.settings')
   const { data: settings } = useUserProfile()
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
     'passive',
   )
+  const { createUserProfile } = useCreateUserProfile()
+  const { updateUserProfile } = useUpdateUserProfile()
 
-  const [updateIslykill, { loading, error }] = useMutation(
-    UpdateIslykillSettings,
-  )
   const { formatMessage } = useLocale()
 
   const submitFormData = async (formData: NudgeFormData) => {
     if (status !== 'passive') setStatus('passive')
 
     try {
-      await updateIslykill({
-        variables: {
-          input: {
-            email: settings?.email,
-            mobile: settings?.mobilePhoneNumber,
-            canNudge: formData.nudge,
-          },
-        },
-      })
+      if (settings) {
+        await updateUserProfile({
+          canNudge: formData.nudge,
+        })
+      } else {
+        await createUserProfile({
+          canNudge: formData.nudge,
+        })
+      }
       setStatus('success')
       toast.success(
         formatMessage({
@@ -109,9 +103,9 @@ export const EditNudge: ServicePortalModuleComponent = () => {
           onSubmit={submitFormData}
         />
       )}
-      {status !== 'passive' && !loading && (
+      {status !== 'passive' && (
         <Box marginTop={[5, 7, 15]}>
-          {(status === 'error' || error) && (
+          {status === 'error' && (
             <AlertMessage
               type="error"
               title={formatMessage({

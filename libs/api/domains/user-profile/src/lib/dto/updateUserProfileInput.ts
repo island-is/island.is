@@ -1,5 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsString, IsOptional, IsEmail, IsEnum } from 'class-validator'
+import {
+  IsString,
+  IsOptional,
+  IsEmail,
+  IsEnum,
+  IsBoolean,
+} from 'class-validator'
 import { Locale } from '../types/locales.enum'
 
 @InputType()
@@ -18,4 +24,10 @@ export class UpdateUserProfileInput {
   @IsOptional()
   @IsEmail()
   email?: string
+
+  // Temporary merge with islyklar service
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  canNudge?: boolean
 }
