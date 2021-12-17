@@ -133,11 +133,6 @@ export const editorMsgs = defineMessages({
       '(Ekki partur af reglugerðinni, aðeins til hliðsjónar í útgáfuferlinu.)',
   },
 
-  draftingNotes_hide: {
-    id: 'ap.regulations-admin:draft-labels-draftingnotes-hide',
-    defaultMessage: 'Fela minnispunkta',
-  },
-
   idealPublishDate: {
     id: 'ap.regulations-admin:draft-labels-idealpublishdate',
     defaultMessage: 'Ósk um útgáfudag',
