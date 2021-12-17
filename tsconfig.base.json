@@ -168,6 +168,9 @@
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
       ],
+      "@island.is/application/templates/general-fishing-license": [
+        "libs/application/templates/general-fishing-license/src/index.ts"
+      ],
       "@island.is/application/templates/general-petition": [
         "libs/application/templates/general-petition/src/index.ts"
       ],

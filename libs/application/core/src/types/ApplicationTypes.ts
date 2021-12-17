@@ -18,6 +18,7 @@ export enum ApplicationTypes {
   COMPLAINTS_TO_ALTHINGI_OMBUDSMAN = 'ComplaintsToAlthingiOmbudsman',
   ACCIDENT_NOTIFICATION = 'AccidentNotification',
   GENERAL_PETITION = 'GeneralPetitionService',
+  GENERAL_FISHING_LICENSE = 'GeneralFishingLicense',
 }
 
 export const ApplicationConfigurations = {
@@ -96,5 +97,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.GENERAL_PETITION]: {
     slug: 'medmaelendalisti',
     translation: 'gpt.application',
+  },
+  [ApplicationTypes.GENERAL_FISHING_LICENSE]: {
+    slug: 'almennt-fiskveidileyfi',
+    translation: 'gfl.application',
   },
 }

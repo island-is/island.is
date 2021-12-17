@@ -2205,6 +2205,28 @@
         }
       }
     },
+    "application-templates-general-fishing-license": {
+      "root": "libs/application/templates/general-fishing-license",
+      "sourceRoot": "libs/application/templates/general-fishing-license/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/general-fishing-license/tsconfig.lib.json",
+              "libs/application/templates/general-fishing-license/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/general-fishing-license/**/*"
+            ]
+          }
+        }
+      }
+    },
     "application-templates-general-petition": {
       "root": "libs/application/templates/general-petition",
       "sourceRoot": "libs/application/templates/general-petition/src",
