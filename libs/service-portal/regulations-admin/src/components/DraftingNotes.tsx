@@ -8,11 +8,11 @@ import { useLocale } from '../utils'
 
 export type DraftingNotesProps = {
   draft: RegDraftForm
-  actions: { updateDraftingNotes: (notes: HTMLText) => void }
+  onChange: (notes: HTMLText) => void
 }
 
 export const DraftingNotes = (props: DraftingNotesProps) => {
-  const { draft, actions } = props
+  const { draft, onChange } = props
 
   const t = useLocale().formatMessage
   const notesRef = useRef(() => draft.draftingNotes.value)
@@ -31,7 +31,7 @@ export const DraftingNotes = (props: DraftingNotesProps) => {
           draftId={`${draft.id}-notes`}
           valueRef={notesRef}
           onBlur={() =>
-            actions.updateDraftingNotes(
+            onChange(
               notesRef
                 .current()
                 // Replace empty HTML with empty string ('')

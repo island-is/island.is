@@ -10,6 +10,7 @@ import {
   LawChapterSlug,
   MinistrySlug,
   PlainText,
+  URLString,
 } from '@island.is/regulations'
 import { Kennitala, RegulationType } from '@island.is/regulations'
 import { Step } from '../types'
@@ -63,6 +64,9 @@ export type RegDraftForm = BodyDraftFields & {
   ministry: DraftField<MinistrySlug | undefined>
   type: DraftField<RegulationType | undefined>
 
+  signatureText: HtmlDraftField
+  signedDocumentUrl: DraftField<URLString | undefined>
+
   impacts: Array<ChangeDraftFields | CancelDraftFields>
 
   readonly draftingStatus: DraftingStatus // non-editable except via saveStatus or propose actions
@@ -99,6 +103,8 @@ export type RegDraftFormSimpleProps =
   | 'fastTrack'
   | 'effectiveDate' // Need to be checked and must never be **before** `idealPublishDate`
   | 'signatureDate' // Need to be checked and must never be **after* `idealPublishDate`
+  | 'signatureText'
+  | 'signedDocumentUrl'
   // | 'lawChapters'
   | 'ministry'
   | 'type'

@@ -1,19 +1,12 @@
 import React, { useRef, useState } from 'react'
-import {
-  Box,
-  Button,
-  DatePicker,
-  Checkbox,
-  Accordion,
-  AccordionItem,
-  Inline,
-} from '@island.is/island-ui/core'
+import { Box, Accordion, AccordionItem } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
 import { StepComponent } from '../state/useDraftingState'
-import { getMinPublishDate, useLocale } from '../utils'
+import { useLocale } from '../utils'
 import { Appendixes, AppendixStateItem } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
+import { SignatureText } from './SignatureText'
 
 export const EditBasics: StepComponent = (props) => {
   const { draft, actions } = props
@@ -40,47 +33,6 @@ export const EditBasics: StepComponent = (props) => {
         />
       </Box>
 
-      <Box>
-        <Inline space="gutter" alignY="center">
-          <DatePicker
-            size="sm"
-            label={t(msg.idealPublishDate)}
-            placeholderText={t(msg.idealPublishDate_default)}
-            minDate={getMinPublishDate(
-              draft.fastTrack.value,
-              draft.signatureDate.value,
-            )}
-            selected={draft.idealPublishDate.value}
-            handleChange={(date: Date) => updateState('idealPublishDate', date)}
-            hasError={!!draft.idealPublishDate.error}
-            errorMessage={t(draft.idealPublishDate.error)}
-            required
-          />
-          <Checkbox
-            label={t(msg.applyForFastTrack)}
-            labelVariant="default"
-            checked={draft.fastTrack.value}
-            onChange={() => {
-              updateState('fastTrack', !draft.fastTrack.value)
-            }}
-          />
-        </Inline>
-      </Box>
-      <Box marginBottom={6}>
-        {!!draft.idealPublishDate.value && (
-          <Button
-            size="small"
-            variant="text"
-            preTextIcon="close"
-            onClick={() => {
-              updateState('idealPublishDate', undefined)
-            }}
-          >
-            {t(msg.idealPublishDate_default)}
-          </Button>
-        )}
-      </Box>
-
       <Box marginTop={6} marginBottom={[6, 6, 8]}>
         <Accordion>
           <AccordionItem
@@ -88,16 +40,23 @@ export const EditBasics: StepComponent = (props) => {
             label={t(msg.text)}
             // startExpanded={!draft.text.value || !!draft.text.error}
           >
-            <Box marginBottom={[4, 4, 8]}>
+            <Box marginBottom={3}>
               <EditorInput
                 label={t(msg.text)}
-                baseText={''}
                 isImpact={false}
                 draftId={draft.id}
                 valueRef={textRef}
                 error={t(draft.text.error)}
                 onBlur={() => {
                   updateState('text', textRef.current())
+                }}
+              />
+            </Box>
+            <Box marginBottom={[4, 4, 6]}>
+              <SignatureText
+                draft={draft}
+                onChange={(text) => {
+                  updateState('signatureText', text)
                 }}
               />
             </Box>

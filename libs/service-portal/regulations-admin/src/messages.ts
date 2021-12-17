@@ -2,29 +2,38 @@ import { defineMessages, MessageDescriptor } from 'react-intl'
 import { DraftingStatus } from '@island.is/regulations/admin'
 
 export const editorMsgs = defineMessages({
-  step1Headline: {
-    id: 'ap.regulations-admin:draft-step1-headline',
+  stepContentHeadline: {
+    id: 'ap.regulations-admin:draft-step_content-headline',
     defaultMessage: 'Texti reglugerðarinnar',
   },
-  step2Headline: {
-    id: 'ap.regulations-admin:draft-step2-headline',
+  stepMetaHeadline: {
+    id: 'ap.regulations-admin:draft-step_meta2-headline',
     defaultMessage: 'Skráning lýsigagna',
   },
-  step3Headline: {
-    id: 'ap.regulations-admin:draft-step3-headline',
+  stepSignatureHeadline: {
+    id: 'ap.regulations-admin:draft-step_impact-headline',
+    defaultMessage: 'Undirritun ráðherra',
+  },
+  stepSignatureIntro: {
+    id: 'ap.regulations-admin:draft-step3-intro',
+    defaultMessage:
+      'Hér hlaða upp eintaki af reglugerðinni með undirritun ráðherra. Það skjal verður að lokum framsent til Stjórnartíðinda.',
+  },
+  stepImpactHeadline: {
+    id: 'ap.regulations-admin:draft-step_impact-headline',
     defaultMessage: 'Áhrif á aðrar reglugerðir',
   },
-  step3Intro: {
+  stepImpactIntro: {
     id: 'ap.regulations-admin:draft-step3-intro',
     defaultMessage:
       'Hér er skráð hvaða reglugerðir falla brott og hvaða stofnreglugerðir taka efnislegum breytingum og texti þeirra uppfærður.',
   },
-  step4Headline: {
-    id: 'ap.regulations-admin:draft-step4-headline',
+  stepReviewHeadline: {
+    id: 'ap.regulations-admin:draft-step_review-headline',
     defaultMessage: 'Staðfesting fyrir útgáfu í Stjórnartíðindum',
   },
-  step4Intro: {
-    id: 'ap.regulations-admin:draft-step4-intro',
+  stepReviewIntro: {
+    id: 'ap.regulations-admin:draft-step_review-intro',
     defaultMessage:
       'Vinsamlega yfirfarið að allar skráðar upplýsingar séu réttar',
   },
@@ -179,6 +188,28 @@ export const editorMsgs = defineMessages({
   signatureDatePlaceholder: {
     id: 'ap.regulations-admin:draft-placeholder-signaturedate',
     defaultMessage: 'Lesin úr undirritun reglugerðar',
+  },
+
+  signatureText: {
+    id: 'ap.regulations-admin:draft-labels-signaturetext',
+    defaultMessage: 'Undirritunarkafli',
+  },
+
+  signedDocumentDownloadFresh: {
+    id: 'ap.regulations-admin:draft-labels-signeddocument-download',
+    defaultMessage: 'Sækja PDF til undirritunar',
+  },
+  signedDocumentUpload: {
+    id: 'ap.regulations-admin:draft-labels-signeddocument-upload',
+    defaultMessage: 'Hlaða upp undirrituðu eintaki',
+  },
+  signedDocumentUploading: {
+    id: 'ap.regulations-admin:draft-labels-signeddocument-uploading',
+    defaultMessage: 'Hleð upp undirrituðu eintaki …',
+  },
+  signedDocumentLink: {
+    id: 'ap.regulations-admin:draft-labels-signeddocument-view',
+    defaultMessage: 'Skoða undiritað eintak',
   },
 
   effectiveDate: {

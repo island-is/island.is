@@ -71,11 +71,16 @@ export const steps: Record<Step, StepNav> = {
   meta: {
     name: 'meta',
     prev: 'basics',
+    next: 'signature',
+  },
+  signature: {
+    name: 'signature',
+    prev: 'meta',
     next: 'impacts',
   },
   impacts: {
     name: 'impacts',
-    prev: 'meta',
+    prev: 'signature',
     next: 'review',
   },
   review: {
@@ -123,6 +128,8 @@ const makeDraftForm = (
       draft.signatureDate && new Date(draft.signatureDate),
       true,
     ),
+    signatureText: fHtml(draft.signatureText),
+    signedDocumentUrl: f(draft.signedDocumentUrl),
 
     lawChapters: f((draft.lawChapters || []).map((chapter) => chapter.slug)),
     ministry: f(draft.ministry?.slug, true),
@@ -172,6 +179,7 @@ const getEmptyDraft = (): RegulationDraft => ({
   ministry: undefined,
   lawChapters: [],
   impacts: [],
+  signatureText: '',
 })
 
 // ---------------------------------------------------------------------------
@@ -206,16 +214,20 @@ const specialUpdates: {
     }
   },
 
-  text: (state, newValue) => {
+  signatureText: (state, newValue) => {
     const draft = state.draft
     if (!draft) return
-    const text = draft.text
-    if (newValue !== text.value) {
+    const signatureText = draft.signatureText
+    if (newValue !== signatureText.value) {
       const { ministrySlug, signatureDate } = findSignatureInText(
-        newValue ?? text.value,
+        newValue ?? signatureText.value,
         state.ministries,
       )
-      draft.ministry.value = ministrySlug
+      const ministry = draft.ministry
+      if (!ministry.value || ministry.guessed) {
+        ministry.value = ministrySlug
+        ministry.guessed = true
+      }
       draft.signatureDate.value = signatureDate
     }
   },
@@ -587,10 +599,6 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
           console.error('delete draft regulation error: ', e)
           return
         }
-      },
-
-      updateDraftingNotes: (value: HTMLText) => {
-        dispatch({ type: 'UPDATE_PROP', name: 'draftingNotes', value })
       },
 
       updateLawChapterProp: (

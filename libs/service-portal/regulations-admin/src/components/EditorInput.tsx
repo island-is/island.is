@@ -11,6 +11,7 @@ import cn from 'classnames'
 
 type EditorInputProps = Omit<EditorProps, 'name'> & {
   label: string
+  hiddenLabel?: boolean
   description?: string
   // make EditorProps more strict with branded types
   error?: string
@@ -21,6 +22,7 @@ export const EditorInput = (props: EditorInputProps) => {
   const {
     error,
     label,
+    hiddenLabel,
     description,
     draftId,
     onFocus,
@@ -32,20 +34,25 @@ export const EditorInput = (props: EditorInputProps) => {
   const hasError = !!error || undefined
   const errorId = hasError && draftId + '-error'
 
+  const srOnlyClass = hiddenLabel ? ' ' + s.srOnly : ''
+
   return (
     <>
       <Box
         background="white"
-        className={cn(s.container, {
-          [s.hasError]: hasError,
-          [s.hasFocus]: hasFocus,
-        })}
+        className={cn(
+          s.container,
+          hasError && s.hasError,
+          hasFocus && s.hasFocus,
+        )}
       >
-        <h4 className={s.label} id={labelId}>
+        <h4 className={cn(s.label + srOnlyClass)} id={labelId}>
           {label}
           <span className={s.isRequiredStar}> *</span>
         </h4>
-        {description && <div className={s.description}>{description}</div>}
+        {description && (
+          <div className={s.description + srOnlyClass}>{description}</div>
+        )}
         <RegulationsEditor
           {...editorProps}
           classes={classes}

@@ -5,7 +5,6 @@ import {
   Column,
   Columns,
   DatePicker,
-  Input,
   Option,
   Select,
 } from '@island.is/island-ui/core'
@@ -18,7 +17,6 @@ import { findValueOption, useLocale } from '../utils'
 import { regulationTypes } from '../utils/constants'
 import { LawChapterSlug, RegulationType } from '@island.is/regulations'
 import { LawChaptersSelect } from './LawChaptersSelect'
-import { useMinistriesQuery } from '@island.is/service-portal/graphql'
 
 const LawChaptersQuery = gql`
   query DraftRegulationsLawChaptersQuery {
@@ -29,7 +27,7 @@ const LawChaptersQuery = gql`
 // ---------------------------------------------------------------------------
 
 export const EditMeta: StepComponent = (props) => {
-  const { formatMessage: t, formatDateFns } = useLocale()
+  const { formatMessage: t } = useLocale()
   const { draft, actions } = props
   const { updateState, updateLawChapterProp } = actions
 
@@ -37,28 +35,9 @@ export const EditMeta: StepComponent = (props) => {
   const lawChapters = lawChapterQuery.data
     ?.getDraftRegulationsLawChapters as RegulationLawChapter[]
 
-  const { ministries } = useMinistriesQuery()
-  const ministryName = (ministries || []).find(
-    (m) => m.slug === draft.ministry.value,
-  )?.name
-
   return (
     <>
       <Columns space={3} collapseBelow="lg">
-        <Column>
-          <Box marginBottom={3}>
-            <Input
-              label={t(msg.ministry)}
-              value={ministryName || draft.ministry.value}
-              placeholder={t(msg.ministryPlaceholder)}
-              name="_rn"
-              size="sm"
-              backgroundColor="blue"
-              readOnly
-            />
-          </Box>
-        </Column>
-
         <Column>
           <Box marginBottom={3}>
             <Select
@@ -80,28 +59,7 @@ export const EditMeta: StepComponent = (props) => {
               }
             />
           </Box>
-        </Column>
-      </Columns>
 
-      <Columns space={3} collapseBelow="lg">
-        <Column>
-          <Box marginBottom={3}>
-            <Input
-              label={t(msg.signatureDate)}
-              value={
-                draft.signatureDate.value &&
-                formatDateFns(draft.signatureDate.value, 'dd/mm/yyyy')
-              }
-              placeholder={t(msg.signatureDatePlaceholder)}
-              name="_signatureDate"
-              size="sm"
-              backgroundColor="blue"
-              readOnly
-            />
-          </Box>
-        </Column>
-
-        <Column>
           <Box marginBottom={3}>
             <DatePicker
               size="sm"

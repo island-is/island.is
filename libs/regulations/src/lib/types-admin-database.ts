@@ -9,6 +9,7 @@ import {
   MinistrySlug,
   RegulationType,
   Kennitala,
+  URLString,
 } from './types'
 
 // ---------------------------------------------------------------------------
@@ -52,21 +53,31 @@ export type DB_RegulationDraft = {
    *
    * A Date a (working) day or two into the future signifies a preference for that date.
    *
-   * Current (or past) date means "As soon as humanly possible — drop everything"
-   *
-   * A future date set on an **immediate** weekend or national holiday also signifies a request for special fast-tracking.
    */
+  //  * Current (or past) date means "As soon as humanly possible — drop everything"
+  //  *
+  //  * A future date set on an **immediate** weekend or national holiday also signifies a request for special fast-tracking.
+  //  */
   ideal_publish_date?: ISODate
+
+  /** Did the author explicitly request a "hraðbirting" */
+  fast_track?: boolean
 
   ministry_id?: MinistrySlug
 
   law_chapters?: LawChapterSlug[]
 
+  /** Date when the regulation took effect for the first time */
+  effective_date?: ISODate
+
   /** Date signed in the ministry */
   signature_date?: ISODate
 
-  /** Date when the regulation took effect for the first time */
-  effective_date?: ISODate
+  /** Signature paragraphs for the regulation text (appended at publication time) */
+  signature_text: HTMLText
+
+  /** URL of an uploaded signed copy of the regulation */
+  signed_document_url?: URLString
 
   type?: RegulationType
 

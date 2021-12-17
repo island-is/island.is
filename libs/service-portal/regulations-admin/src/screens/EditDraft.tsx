@@ -7,6 +7,7 @@ import { RegulationDraftId } from '@island.is/regulations/admin'
 import { isUuid } from 'uuidv4'
 import { EditBasics } from '../components/EditBasics'
 import { EditMeta } from '../components/EditMeta'
+import { EditSignature } from '../components/EditSignature'
 import { EditImpacts } from '../components/EditImpacts'
 import { EditReview } from '../components/EditReview'
 import { editorMsgs } from '../messages'
@@ -34,21 +35,26 @@ const stepData: Record<
   }
 > = {
   basics: {
-    title: editorMsgs.step1Headline,
+    title: editorMsgs.stepContentHeadline,
     Component: EditBasics,
   },
   meta: {
-    title: editorMsgs.step2Headline,
+    title: editorMsgs.stepMetaHeadline,
     Component: EditMeta,
   },
+  signature: {
+    title: editorMsgs.stepSignatureHeadline,
+    intro: editorMsgs.stepSignatureIntro,
+    Component: EditSignature,
+  },
   impacts: {
-    title: editorMsgs.step3Headline,
-    intro: editorMsgs.step3Intro,
+    title: editorMsgs.stepImpactHeadline,
+    intro: editorMsgs.stepImpactIntro,
     Component: EditImpacts,
   },
   review: {
-    title: editorMsgs.step4Headline,
-    intro: editorMsgs.step4Intro,
+    title: editorMsgs.stepReviewHeadline,
+    intro: editorMsgs.stepReviewIntro,
     Component: EditReview,
   },
 }
@@ -114,7 +120,14 @@ const EditDraft = () => {
         <SkeletonLoader height={120} repeat={2} space={3} />
       )}
 
-      {draft && <DraftingNotes draft={draft} actions={actions} />}
+      {draft && (
+        <DraftingNotes
+          draft={draft}
+          onChange={(text) => {
+            actions.updateState('draftingNotes', text)
+          }}
+        />
+      )}
 
       <ButtonBar id={id} stepNav={stepNav} actions={actions} />
     </Fragment>

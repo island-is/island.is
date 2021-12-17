@@ -116,8 +116,11 @@ export class RegulationsAdminResolver {
       comments,
       impacts,
       type: regulation.type,
-      signatureDate: regulation.signature_date,
       effectiveDate: regulation.effective_date,
+      signatureDate: regulation.signature_date,
+      signatureText: regulation.signature_text || '',
+      signedDocumentUrl: regulation.signed_document_url,
+      // fastTrack: ??
     }
   }
 
@@ -167,6 +170,15 @@ export class RegulationsAdminResolver {
         title: regulation.title,
         draftingNotes: regulation.drafting_notes,
         idealPublishDate: regulation.ideal_publish_date,
+        signatureText: regulation.signature_text || '',
+        signatureDate: regulation.signature_date,
+        signedDocumentUrl: regulation.signed_document_url,
+        effectiveDate: regulation.effective_date,
+        type: regulation.type,
+        name: regulation.name,
+        // lawChapters: regulation.law_chapters,
+        // ministry: regulation.ministry_id,
+        // fastTrack: ???,
         impacts: [],
         authors,
         text: '',

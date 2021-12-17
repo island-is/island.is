@@ -19,6 +19,7 @@ import {
   PlainText,
   HTMLText,
   RegulationType,
+  URLString,
 } from './types'
 
 export type {
@@ -68,6 +69,8 @@ export type RegulationDraft = {
   fastTrack?: boolean
   effectiveDate?: ISODate
   signatureDate?: ISODate
+  signatureText: HTMLText
+  signedDocumentUrl?: URLString
   type?: RegulationType
   ministry?: RegulationMinistry
   impacts: ReadonlyArray<DraftRegulationCancel | DraftRegulationChange>
