@@ -19,7 +19,6 @@ import { Case, CaseFile, CaseFileState } from '@island.is/judicial-system/types'
 import {
   useCase,
   useS3Upload,
-  useS3UploadDraft,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   FormContentContainer,
@@ -63,8 +62,9 @@ export const StepFiveForm: React.FC<Props> = (props) => {
     addFileToCase,
     onRemove,
     onRetry,
-  } = useS3Upload(workingCase, setWorkingCase)
-  const { onChange, files } = useS3UploadDraft(workingCase)
+    onChange,
+    files,
+  } = useS3Upload(workingCase)
   const { updateCase } = useCase()
 
   useEffect(() => {
@@ -151,7 +151,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
 
     setPoliceCaseFileList(newPoliceCaseFileList)
   }
-  console.log(files)
+
   return (
     <>
       <FormContentContainer>
