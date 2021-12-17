@@ -4,7 +4,7 @@ export {
   CaseReadGuard,
   CaseWriteGuard,
   CaseNotCompletedGuard,
-  CaseCompletedGuard,
+  CaseReceivedGuard,
   CurrentCase,
 } from './guards'
 export { CaseOriginalAncestorInterceptor } from './interceptors'

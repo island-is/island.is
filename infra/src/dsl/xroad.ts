@@ -237,3 +237,13 @@ export const PaymentSchedule = new XroadConf({
     PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD',
   },
 })
+
+export const CriminalRecord = new XroadConf({
+  env: {
+    XROAD_CRIMINAL_RECORD_PATH: {
+      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
+      staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakavottord-PDF-v1',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakavottord-PDF-v1',
+    },
+  },
+})

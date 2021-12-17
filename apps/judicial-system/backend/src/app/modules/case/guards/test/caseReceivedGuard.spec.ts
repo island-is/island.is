@@ -8,7 +8,7 @@ import {
 
 import { CaseState } from '@island.is/judicial-system/types'
 
-import { CaseCompletedGuard } from '../caseCompleted.guard'
+import { CaseReceivedGuard } from '../caseReceived.guard'
 
 interface Then {
   result: boolean
@@ -23,7 +23,7 @@ describe('Case Completed Guard', () => {
 
   beforeEach(() => {
     givenWhenThen = (): Then => {
-      const guard = new CaseCompletedGuard()
+      const guard = new CaseReceivedGuard()
       const then = {} as Then
 
       try {
@@ -40,6 +40,7 @@ describe('Case Completed Guard', () => {
 
   each`
     state
+    ${CaseState.RECEIVED}
     ${CaseState.ACCEPTED}
     ${CaseState.REJECTED}
     ${CaseState.DISMISSED}
@@ -62,7 +63,6 @@ describe('Case Completed Guard', () => {
     ${CaseState.NEW}
     ${CaseState.DRAFT}
     ${CaseState.SUBMITTED}
-    ${CaseState.RECEIVED}
     ${CaseState.DELETED}
   `.describe('uncompleted case', ({ state }) => {
     let then: Then
