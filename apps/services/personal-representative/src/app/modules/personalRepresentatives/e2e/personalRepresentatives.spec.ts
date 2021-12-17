@@ -6,6 +6,7 @@ import {
   PersonalRepresentative,
   PersonalRepresentativeRight,
   PersonalRepresentativeDTO,
+  PersonalRepresentativeCreateDTO,
   PersonalRepresentativeRightType,
   PaginatedPersonalRepresentativeDto,
 } from '@island.is/auth-api-lib/personal-representative'
@@ -17,7 +18,9 @@ const user = createCurrentUser({
   scope: [AuthScope.writePersonalRepresentative],
 })
 
-const simpleRequestData: PersonalRepresentativeDTO = {
+const simpleRequestData: PersonalRepresentativeCreateDTO = {
+  contractId: '1234',
+  externalUserId: 'externalUser',
   nationalIdPersonalRepresentative: '1234567890',
   nationalIdRepresentedPerson: '1234567891',
   rightCodes: [],
@@ -171,7 +174,7 @@ describe('PersonalRepresentativeController', () => {
   })
 
   async function setupBasePersonalRep(
-    data: PersonalRepresentativeDTO,
+    data: PersonalRepresentativeCreateDTO,
   ): Promise<PersonalRepresentativeDTO> {
     const responseCreate = await server.post(path).send(data)
     return responseCreate.body
