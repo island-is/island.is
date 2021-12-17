@@ -6,7 +6,12 @@ import { Box, AccordionItem, Button } from '@island.is/island-ui/core'
 import { UploadState } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import { UploadStateMessage } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/Components/UploadStateMessage'
 import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
-import { Case, User, UserRole } from '@island.is/judicial-system/types'
+import {
+  Case,
+  completedCaseStates,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages/Core/caseFilesAccordion'
 
 import { CaseFileList, InfoBox } from '../..'
@@ -33,8 +38,13 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
       user.role === UserRole.PROSECUTOR &&
       user.institution?.id === workingCase.creatingProsecutor?.institution?.id
 
-    const isCourtRoleWithAccess =
-      user.role === UserRole.JUDGE || user.role === UserRole.REGISTRAR
+    const isCourtRoleWithAccess = completedCaseStates.includes(
+      workingCase.state,
+    )
+      ? user.role === UserRole.JUDGE || user.role === UserRole.REGISTRAR
+      : (user.role === UserRole.JUDGE && workingCase.judge?.id === user.id) ||
+        (user.role === UserRole.REGISTRAR &&
+          workingCase.registrar?.id === user.id)
 
     if (
       !isAppealGracePeriodExpired &&
