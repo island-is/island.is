@@ -68,7 +68,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
     }
   }
 
-  const setRegistrar = (id: string) => {
+  const setRegistrar = (id?: string) => {
     if (workingCase) {
       setAndSendToServer(
         'registrarId',
@@ -80,7 +80,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
 
       const registrar = users?.users.find((r) => r.id === id)
 
-      setWorkingCase({ ...workingCase, registrar: registrar })
+      setWorkingCase({ ...workingCase, registrar })
     }
   }
 
@@ -176,12 +176,16 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             placeholder="Velja dómritara"
             value={defaultRegistrar}
             options={registrars}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-              setRegistrar(
-                (selectedOption as ReactSelectOption).value.toString(),
-              )
-            }
-            required
+            onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+              if (selectedOption) {
+                setRegistrar(
+                  (selectedOption as ReactSelectOption).value.toString(),
+                )
+              } else {
+                setRegistrar(undefined)
+              }
+            }}
+            isClearable
           />
         </Box>
         <Box component="section" marginBottom={8}>

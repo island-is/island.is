@@ -26,14 +26,9 @@ module.exports = {
     const endorsementLists = [
       {
         ...getGenericEndorsementList(),
-        endorsement_meta: ['fullName', 'address'],
-        endorsement_metadata: JSON.stringify([
-          { field: 'fullName' },
-          { field: 'address', keepUpToDate: true },
-          { field: 'voterRegion', keepUpToDate: true },
-        ]),
+        endorsement_meta: ['fullName'],
+        endorsement_metadata: JSON.stringify([{ field: 'fullName' }]),
         tags: ['generalPetition'],
-        validation_rules: JSON.stringify([]),
         owner: '0101302399',
         meta: JSON.stringify({
           applicationId: 'someId',
@@ -61,20 +56,7 @@ module.exports = {
         endorser: fakeNationalId,
         meta: JSON.stringify({
           fullName: faker.fake('{{name.firstName}} {{name.lastName}}'),
-          address: {
-            city: faker.random.words(2),
-            postalCode: faker.phone.phoneNumber('###'),
-            streetAddress: `${faker.random.word()} ${faker.phone.phoneNumber(
-              '##',
-            )}`,
-          },
-          signedTags: [],
-          bulkEndorsement: faker.datatype.boolean(),
           showName: true,
-          voterRegion: {
-            voterRegionNumber: faker.phone.phoneNumber('#'),
-            voterRegionName: faker.random.word(),
-          },
         }),
       })),
     ]

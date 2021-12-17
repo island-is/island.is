@@ -1,8 +1,8 @@
 import { Application } from '@island.is/application/core'
 import { Config as DrivingLicenseApiConfig } from '@island.is/api/domains/driving-license'
+import { Config as CriminalRecordConfig } from '@island.is/api/domains/criminal-record'
 import { PaymentServiceOptions } from '@island.is/clients/payment'
 import { Message } from '@island.is/email-service'
-import { PartyApplicationServiceOptions } from '../modules/templates/party-application/party-application.service'
 import { User } from '@island.is/auth-nest-tools'
 import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedule'
 import {
@@ -38,19 +38,10 @@ export interface BaseTemplateAPIModuleConfig {
     password: string
   }
   drivingLicense: DrivingLicenseApiConfig
+  criminalRecord: CriminalRecordConfig
   attachmentBucket: string
   presignBucket: string
   paymentOptions: PaymentServiceOptions
-  partyLetter: {
-    partyLetterRegistryApiBasePath: string
-    endorsementsApiBasePath: string
-    defaultClosedDate: Date
-  }
-  partyApplication: {
-    endorsementsApiBasePath: string
-    options: PartyApplicationServiceOptions
-    defaultClosedDate: Date
-  }
   generalPetition: {
     endorsementsApiBasePath: string
   }
