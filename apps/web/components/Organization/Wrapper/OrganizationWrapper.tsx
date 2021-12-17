@@ -149,8 +149,8 @@ export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
         marginBottom={4}
       >
         <Inline space={2}>
-          {organizationPage.externalLinks.map((link) => (
-            <Link href={link.url}>
+          {organizationPage.externalLinks.map((link, index) => (
+            <Link href={link.url} key={'organization-external-link-' + index}>
               <Button
                 colorScheme="light"
                 icon="open"
