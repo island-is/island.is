@@ -102,8 +102,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.P_SIGN]: {
     slug: 'p-merki',
     translation: 'pm.application',
-  [ApplicationTypes.CRIMINAL_RECORD]: {
-    slug: 'sakavottord',
-    translation: 'cr.application',
+    [ApplicationTypes.CRIMINAL_RECORD]: {
+      slug: 'sakavottord',
+      translation: 'cr.application',
+    },
   },
 }
