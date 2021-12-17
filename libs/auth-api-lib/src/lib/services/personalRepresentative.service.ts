@@ -9,7 +9,7 @@ import { PersonalRepresentativeRight } from '../entities/models/personal-represe
 import { PersonalRepresentativeRightType } from '../entities/models/personal-representative-right-type.model'
 import { PersonalRepresentativeDTO } from '../entities/dto/personal-representative.dto'
 import { PaginatedPersonalRepresentativeDto } from '../entities/dto/paginated-personal-representative.dto'
-import { paginate } from '@island.is/nest/pagination'
+import { paginate, PaginationDto } from '@island.is/nest/pagination'
 
 @Injectable()
 export class PersonalRepresentativeService {
@@ -26,8 +26,7 @@ export class PersonalRepresentativeService {
   /** Get's all personal repreasentatives  */
   async getMany(
     includeInvalid: boolean,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    query: any,
+    query: PaginationDto,
   ): Promise<PaginatedPersonalRepresentativeDto> {
     const validToClause = {
       [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
@@ -35,10 +34,7 @@ export class PersonalRepresentativeService {
     const validFromClause = {
       [Op.or]: { [Op.eq]: null, [Op.lt]: new Date() },
     }
-    const whereClause: WhereOptions = includeInvalid
-      ? {}
-      : { validTo: validToClause }
-
+    const whereClause: WhereOptions = {}
     const whereClauseRights: WhereOptions = {}
     if (!includeInvalid) {
       whereClause['validTo'] = validToClause
@@ -49,14 +45,14 @@ export class PersonalRepresentativeService {
     const result = await paginate({
       Model: this.personalRepresentativeModel,
       limit: query.limit || 10,
-      after: query.after,
-      before: query.before,
+      after: query.after ?? '',
+      before: query.before ?? '',
       primaryKeyField: 'id',
       orderOption: [['id', 'DESC']],
       where: whereClause,
     })
 
-    // Since paginate in sequlize does not support inclue correctly we need to fetch the rights array separately
+    // Since paginate in sequlize does not support include correctly we need to fetch the rights array separately
     for await (const rec of result.data) {
       rec.rights = await this.personalRepresentativeRightModel.findAll({
         where: { personalRepresentativeId: rec.id },

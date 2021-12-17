@@ -1,4 +1,4 @@
-import { PersonalRepresentativeController } from './personalRepresentative.controller'
+import { PersonalRepresentativesController } from './personalRepresentatives.controller'
 import { Module } from '@nestjs/common'
 import {
   PersonalRepresentative,
@@ -16,7 +16,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
       PersonalRepresentative,
     ]),
   ],
-  controllers: [PersonalRepresentativeController],
+  controllers: [PersonalRepresentativesController],
   providers: [PersonalRepresentativeService],
 })
-export class PersonalRepresentativeModule {}
+export class PersonalRepresentativesModule {}

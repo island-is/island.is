@@ -5,7 +5,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Op } from 'sequelize'
 import { PersonalRepresentativeRightType } from '../entities/models/personal-representative-right-type.model'
 import { PersonalRepresentativeRightTypeDTO } from '../entities/dto/personal-representative-right-type.dto'
-import { paginate } from '@island.is/nest/pagination'
+import { paginate, PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedPersonalRepresentativeRightTypeDto } from '../entities/dto/paginated-personal-representative-right-type.dto'
 
 @Injectable()
@@ -20,13 +20,13 @@ export class PersonalRepresentativeRightTypeService {
   /** Get's all personal repreasentative right types  */
   async getMany(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    query: any,
+    query: PaginationDto,
   ): Promise<PaginatedPersonalRepresentativeRightTypeDto> {
     return await paginate({
       Model: this.personalRepresentativeRightTypeModel,
       limit: query.limit || 10,
-      after: query.after,
-      before: query.before,
+      after: query.after ?? '',
+      before: query.before ?? '',
       primaryKeyField: 'code',
       orderOption: [['code', 'DESC']],
       where: {},
@@ -36,14 +36,13 @@ export class PersonalRepresentativeRightTypeService {
   /** Get's all personal repreasentative right types and count by searchstring */
   async findMany(
     searchString: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    query: any,
+    query: PaginationDto,
   ): Promise<PaginatedPersonalRepresentativeRightTypeDto> {
     return await paginate({
       Model: this.personalRepresentativeRightTypeModel,
       limit: query.limit || 10,
-      after: query.after,
-      before: query.before,
+      after: query.after ?? '',
+      before: query.before ?? '',
       primaryKeyField: 'code',
       orderOption: [['code', 'DESC']],
       where: {

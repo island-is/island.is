@@ -17,6 +17,8 @@ const simpleRequestData = {
   description: 'Description',
 }
 
+const path = '/v1/right-types'
+
 describe('RightTypesController - Without Auth', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
@@ -32,10 +34,7 @@ describe('RightTypesController - Without Auth', () => {
   })
 
   it('POST /v1/right-types should fail and return 403 error if bearer is missing', async () => {
-    const response = await server
-      .post('/v1/right-types')
-      .send(simpleRequestData)
-      .expect(403)
+    const response = await server.post(path).send(simpleRequestData).expect(403)
 
     expect(response.body).toMatchObject({
       ...errorExpectedStructure,
@@ -78,10 +77,7 @@ describe('RightTypesController - With Auth', () => {
           description: 'Description',
           validFrom: '10-11-2021',
         }
-        const response = await server
-          .post('/v1/right-types')
-          .send(requestData)
-          .expect(400)
+        const response = await server.post(path).send(requestData).expect(400)
 
         expect(response.body).toMatchObject({
           ...errorExpectedStructure,
@@ -91,7 +87,7 @@ describe('RightTypesController - With Auth', () => {
 
       it('POST /v1/right-types should create a new entry', async () => {
         const response = await server
-          .post('/v1/right-types')
+          .post(path)
           .send(simpleRequestData)
           .expect(201)
         expect(response.body).toMatchObject(simpleRequestData)
@@ -100,7 +96,7 @@ describe('RightTypesController - With Auth', () => {
 
     describe('Update Right Type', () => {
       it('Put /v1/right-types should update right type with new description', async () => {
-        await server.post('/v1/right-types').send(simpleRequestData)
+        await server.post(path).send(simpleRequestData)
 
         const requestData = {
           ...simpleRequestData,
@@ -108,7 +104,7 @@ describe('RightTypesController - With Auth', () => {
         }
 
         const response = await server
-          .put(`/v1/right-types/${requestData.code}`)
+          .put(`${path}/${requestData.code}`)
           .send(requestData)
           .expect(200)
 
@@ -117,10 +113,10 @@ describe('RightTypesController - With Auth', () => {
     })
 
     describe('Get Right Type/s', () => {
-      it('Get /v1/right-types should return a list of right types', async () => {
-        await server.post('/v1/right-types').send(simpleRequestData)
+      it('Get /v1/right-types should return a specific right type', async () => {
+        await server.post(path).send(simpleRequestData)
         const response = await server
-          .get(`/v1/right-types/${simpleRequestData.code}`)
+          .get(`${path}/${simpleRequestData.code}`)
           .expect(200)
 
         expect(response.body.code).toMatch(simpleRequestData.code)
@@ -130,14 +126,14 @@ describe('RightTypesController - With Auth', () => {
 
     describe('Delete/Remove Right Type', () => {
       it('Delete /v1/right-types mark right type as invalid', async () => {
-        await server.post('/v1/right-types').send(simpleRequestData)
+        await server.post(path).send(simpleRequestData)
         await server
-          .delete(`/v1/right-types/${simpleRequestData.code}`)
+          .delete(`${path}/${simpleRequestData.code}`)
           .send()
           .expect(200)
 
         const response = await request(app.getHttpServer()).get(
-          `/v1/right-types/${simpleRequestData.code}`,
+          `${path}/${simpleRequestData.code}`,
         )
 
         expect(response.body.code).toMatch(simpleRequestData.code)

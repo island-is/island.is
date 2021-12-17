@@ -27,7 +27,7 @@ import {
 } from '@nestjs/swagger'
 import { isNationalIdValid } from '@island.is/financial-aid/shared/lib'
 import {
-  CurrentUser,
+  CurrentActor,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
@@ -35,17 +35,17 @@ import {
 } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { PaginationDto } from '@island.is/nest/pagination'
+import { PaginationWithInvalidDto } from './dto/PaginationWithInvalidDto.dto'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representative`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AuthScope.writePersonalRepresentative)
-@ApiTags('Personal Representative')
-@Controller('v1/personal-representative')
+@ApiTags('Personal Representatives')
+@Controller('v1/personal-representatives')
 @ApiBearerAuth()
 @Audit({ namespace })
-export class PersonalRepresentativeController {
+export class PersonalRepresentativesController {
   constructor(
     @Inject(PersonalRepresentativeService)
     private readonly prService: PersonalRepresentativeService,
@@ -54,26 +54,19 @@ export class PersonalRepresentativeController {
 
   /** Gets all personal representatives */
   @ApiOperation({ summary: 'Gets all personal representatives' })
-  @Get('all/:includeInvalid?')
+  @Get()
   @ApiOkResponse({
     description: 'Personal representative connections with rights',
     type: PersonalRepresentativeDTO,
-  })
-  @ApiParam({
-    name: 'includeInvalid',
-    required: false,
-    type: 'boolean',
-    allowEmptyValue: true,
   })
   @Audit<PaginatedPersonalRepresentativeDto>({
     resources: (pgData) => pgData.data.map((pr) => pr.id ?? ''),
   })
   async getAll(
-    @Query() query: PaginationDto,
-    @Param('includeInvalid') includeInvalid?: boolean,
+    @Query() query: PaginationWithInvalidDto,
   ): Promise<PaginatedPersonalRepresentativeDto> {
     const personalRepresentatives = await this.prService.getMany(
-      includeInvalid ? (includeInvalid as boolean) : false,
+      query.includeInvalid ? (query.includeInvalid as boolean) : false,
       query,
     )
 
@@ -189,7 +182,7 @@ export class PersonalRepresentativeController {
   @ApiOkResponse()
   async removeAsync(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentActor() user: User,
   ): Promise<number> {
     if (!id) {
       throw new BadRequestException('Id needs to be provided')
@@ -221,7 +214,7 @@ export class PersonalRepresentativeController {
   })
   async create(
     @Body() personalRepresentative: PersonalRepresentativeDTO,
-    @CurrentUser() user: User,
+    @CurrentActor() user: User,
   ): Promise<PersonalRepresentativeDTO | null> {
     if (personalRepresentative.rightCodes.length === 0) {
       throw new BadRequestException('RightCodes list must be provided')

@@ -23,6 +23,8 @@ const simpleRequestData: PersonalRepresentativeDTO = {
   rightCodes: [],
 }
 
+const path = '/v1/personal-representatives'
+
 describe('PersonalRepresentativeController - Without Auth', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
@@ -37,11 +39,8 @@ describe('PersonalRepresentativeController - Without Auth', () => {
     await app.cleanUp()
   })
 
-  it('POST /v1/personal-representative should fail and return 403 error if bearer is missing', async () => {
-    const response = await server
-      .post('/v1/personal-representative')
-      .send(simpleRequestData)
-      .expect(403)
+  it('POST /v1/personal-representatives should fail and return 403 error if bearer is missing', async () => {
+    const response = await server.post(path).send(simpleRequestData).expect(403)
 
     expect(response.body).toMatchObject({
       ...errorExpectedStructure,
@@ -106,23 +105,20 @@ describe('PersonalRepresentativeController', () => {
   })
 
   describe('Create', () => {
-    it('POST /v1/personal-representative should return error when data is invalid', async () => {
+    it('POST /v1/personal-representatives should return error when data is invalid', async () => {
       const requestData = {
         code: 'Code',
         description: 'Description',
         validFrom: '10-11-2021',
       }
-      const response = await server
-        .post('/v1/personal-representative')
-        .send(requestData)
-        .expect(400)
+      const response = await server.post(path).send(requestData).expect(400)
       expect(response.body).toMatchObject({
         ...errorExpectedStructure,
         statusCode: 400,
       })
     })
 
-    it('POST /v1/personal-representative should create a new entry', async () => {
+    it('POST /v1/personal-representatives should create a new entry', async () => {
       // Create right types
       await prRightTypeModel.bulkCreate(rightTypeList)
 
@@ -132,17 +128,14 @@ describe('PersonalRepresentativeController', () => {
         rightCodes: rightTypeList.map((rt) => rt.code),
       }
 
-      const response = await server
-        .post('/v1/personal-representative')
-        .send(requestData)
-        .expect(201)
+      const response = await server.post(path).send(requestData).expect(201)
 
       expect(response.body).toMatchObject(requestData)
     })
   })
 
   describe('Delete', () => {
-    it('DELETE /v1/personal-representative should delete personal rep', async () => {
+    it('DELETE /v1/personal-representatives should delete personal rep', async () => {
       // Create right types
       await prRightTypeModel.bulkCreate(rightTypeList)
 
@@ -152,14 +145,12 @@ describe('PersonalRepresentativeController', () => {
         rightCodes: rightTypeList.map((rt) => rt.code),
       })
       // Test delete personal rep
-      await server
-        .delete(`/v1/personal-representative/${personalRep.id}`)
-        .expect(200)
+      await server.delete(`${path}/${personalRep.id}`).expect(200)
     })
   })
 
   describe('Get', () => {
-    it('Get v1/personal-representative/all should get personal rep', async () => {
+    it('Get v1/personal-representatives should get personal reps', async () => {
       // Create right types
       await prRightTypeModel.bulkCreate(rightTypeList)
 
@@ -171,7 +162,7 @@ describe('PersonalRepresentativeController', () => {
 
       // Test get personal rep
       const response = await server
-        .get(`/v1/personal-representative/all/false?limit=1`)
+        .get(`${path}?includeInvalid=false&limit=1`)
         .expect(200)
 
       const responseData: PaginatedPersonalRepresentativeDto = response.body
@@ -182,9 +173,7 @@ describe('PersonalRepresentativeController', () => {
   async function setupBasePersonalRep(
     data: PersonalRepresentativeDTO,
   ): Promise<PersonalRepresentativeDTO> {
-    const responseCreate = await server
-      .post('/v1/personal-representative')
-      .send(data)
+    const responseCreate = await server.post(path).send(data)
     return responseCreate.body
   }
 })
