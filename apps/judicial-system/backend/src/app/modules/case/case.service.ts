@@ -293,18 +293,22 @@ export class CaseService {
     ]
 
     if (!uploadedToCourt) {
+      const recipients = [
+        {
+          name: existingCase.judge?.name ?? '',
+          address: existingCase.judge?.email ?? '',
+        },
+      ]
+      if (existingCase.registrar) {
+        recipients.push({
+          name: existingCase.registrar?.name ?? '',
+          address: existingCase.registrar?.email ?? '',
+        })
+      }
+
       emailPromises.push(
         this.sendEmail(
-          [
-            {
-              name: existingCase.registrar?.name ?? '',
-              address: existingCase.registrar?.email ?? '',
-            },
-            {
-              name: existingCase.judge?.name ?? '',
-              address: existingCase.judge?.email ?? '',
-            },
-          ],
+          recipients,
           intl.formatMessage(m.signedRuling.courtBodyAttachment),
           intl.formatMessage,
           existingCase.courtCaseNumber,

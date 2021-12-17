@@ -35,23 +35,12 @@ import HearingArrangementsForms from './HearingArrangementsForm'
 
 const HearingArrangements = () => {
   const router = useRouter()
-  const id = router.query.id
   const {
     workingCase,
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const [prosecutors, setProsecutors] = useState<ReactSelectOption[]>()
-  const [
-    isNotificationModalVisible,
-    setIsNotificationModalVisible,
-  ] = useState<boolean>(false)
-  const [
-    isProsecutorAccessModalVisible,
-    setIsProsecutorAccessModalVisible,
-  ] = useState<boolean>(false)
-  const [substituteProsecutorId, setSubstituteProsecutorId] = useState<string>()
   const { user } = useContext(UserContext)
   const { courts } = useInstitution()
   const { formatMessage } = useIntl()
@@ -67,6 +56,17 @@ const HearingArrangements = () => {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
+
+  const [prosecutors, setProsecutors] = useState<ReactSelectOption[]>()
+  const [
+    isNotificationModalVisible,
+    setIsNotificationModalVisible,
+  ] = useState<boolean>(false)
+  const [
+    isProsecutorAccessModalVisible,
+    setIsProsecutorAccessModalVisible,
+  ] = useState<boolean>(false)
+  const [substituteProsecutorId, setSubstituteProsecutorId] = useState<string>()
 
   useEffect(() => {
     document.title = 'Óskir um fyrirtöku - Réttarvörslugátt'
@@ -130,6 +130,22 @@ const HearingArrangements = () => {
     }
   }
 
+  const handleCourtChange = (courtId: string) => {
+    if (workingCase) {
+      setAndSendToServer(
+        'courtId',
+        courtId,
+        workingCase,
+        setWorkingCase,
+        updateCase,
+      )
+
+      return true
+    }
+
+    return false
+  }
+
   const handleProsecutorChange = (
     selectedOption: ValueType<ReactSelectOption>,
   ) => {
@@ -178,6 +194,7 @@ const HearingArrangements = () => {
             isLoading={isLoadingWorkingCase || isTransitioningCase}
             onNextButtonClick={handleNextButtonClick}
             onProsecutorChange={handleProsecutorChange}
+            onCourtChange={handleCourtChange}
             updateCase={updateCase}
           />
           {isNotificationModalVisible && (
