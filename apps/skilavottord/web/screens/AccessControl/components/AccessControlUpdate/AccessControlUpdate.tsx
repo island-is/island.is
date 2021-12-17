@@ -52,7 +52,7 @@ export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
         nationalId,
         name,
         role: role.value,
-        partnerId: partnerId?.value,
+        partnerId: partnerId?.value || null,
       })
     },
   )

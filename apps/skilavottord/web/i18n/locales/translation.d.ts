@@ -51,17 +51,18 @@ export interface SubtitlesClass {
 export interface Modal {
   titles: SubtitlesClass
   subtitles: SubtitlesClass
-  inputs: Inputs
-  buttons: PurpleButtons
+  inputs: ModalInputs
+  buttons: FormButtons
 }
 
-export interface PurpleButtons {
+export interface FormButtons {
   cancel: string
   continue: string
   confirm: string
+  goBack?: string
 }
 
-export interface Inputs {
+export interface ModalInputs {
   nationalId: NationalID
   name: Name
   role: Name
@@ -116,7 +117,7 @@ export interface CompanyInfoSubtitles {
 export interface CompanyInfoForm {
   addTitle: string
   editTitle: string
-  form: Form
+  form: CompanyInfoFormForm
   buttons: CompanyInfoFormButtons
   success: string
 }
@@ -127,7 +128,7 @@ export interface CompanyInfoFormButtons {
   cancel: string
 }
 
-export interface Form {
+export interface CompanyInfoFormForm {
   title: string
   company: FormCompany
   visitingAddress: Search
@@ -425,11 +426,49 @@ export interface RecyclingCompanies {
   subtitles: RecyclingCompaniesSubtitles
   status: AccessControlStatus
   buttons: RecyclingCompaniesButtons
+  recyclingCompany: RecyclingCompany
 }
 
 export interface RecyclingCompaniesButtons {
   add: string
-  edit: string
+  view: string
+}
+
+export interface RecyclingCompany {
+  view: View
+  add: Add
+  form: RecyclingCompanyForm
+}
+
+export interface Add {
+  title: string
+  breadcrumb: string
+  info: string
+  added: string
+}
+
+export interface RecyclingCompanyForm {
+  inputs: FormInputs
+  buttons: FormButtons
+}
+
+export interface FormInputs {
+  companyId: Name
+  companyName: Name
+  address: Name
+  postnumber: Name
+  city: Name
+  website: Name
+  phone: Name
+  active: Name
+}
+
+export interface View {
+  title: string
+  breadcrumb: string
+  info: string
+  updated: string
+  deleted: string
 }
 
 export interface RecyclingCompaniesSubtitles {
@@ -735,20 +774,21 @@ const typeMap: any = {
     [
       { json: 'titles', js: 'titles', typ: r('SubtitlesClass') },
       { json: 'subtitles', js: 'subtitles', typ: r('SubtitlesClass') },
-      { json: 'inputs', js: 'inputs', typ: r('Inputs') },
-      { json: 'buttons', js: 'buttons', typ: r('PurpleButtons') },
+      { json: 'inputs', js: 'inputs', typ: r('ModalInputs') },
+      { json: 'buttons', js: 'buttons', typ: r('FormButtons') },
     ],
     false,
   ),
-  PurpleButtons: o(
+  FormButtons: o(
     [
       { json: 'cancel', js: 'cancel', typ: '' },
       { json: 'continue', js: 'continue', typ: '' },
       { json: 'confirm', js: 'confirm', typ: '' },
+      { json: 'goBack', js: 'goBack', typ: u(undefined, '') },
     ],
     false,
   ),
-  Inputs: o(
+  ModalInputs: o(
     [
       { json: 'nationalId', js: 'nationalId', typ: r('NationalID') },
       { json: 'name', js: 'name', typ: r('Name') },
@@ -815,7 +855,7 @@ const typeMap: any = {
     [
       { json: 'addTitle', js: 'addTitle', typ: '' },
       { json: 'editTitle', js: 'editTitle', typ: '' },
-      { json: 'form', js: 'form', typ: r('Form') },
+      { json: 'form', js: 'form', typ: r('CompanyInfoFormForm') },
       { json: 'buttons', js: 'buttons', typ: r('CompanyInfoFormButtons') },
       { json: 'success', js: 'success', typ: '' },
     ],
@@ -829,7 +869,7 @@ const typeMap: any = {
     ],
     false,
   ),
-  Form: o(
+  CompanyInfoFormForm: o(
     [
       { json: 'title', js: 'title', typ: '' },
       { json: 'company', js: 'company', typ: r('FormCompany') },
@@ -1197,13 +1237,65 @@ const typeMap: any = {
       },
       { json: 'status', js: 'status', typ: r('AccessControlStatus') },
       { json: 'buttons', js: 'buttons', typ: r('RecyclingCompaniesButtons') },
+      {
+        json: 'recyclingCompany',
+        js: 'recyclingCompany',
+        typ: r('RecyclingCompany'),
+      },
     ],
     false,
   ),
   RecyclingCompaniesButtons: o(
     [
       { json: 'add', js: 'add', typ: '' },
-      { json: 'edit', js: 'edit', typ: '' },
+      { json: 'view', js: 'view', typ: '' },
+    ],
+    false,
+  ),
+  RecyclingCompany: o(
+    [
+      { json: 'view', js: 'view', typ: r('View') },
+      { json: 'add', js: 'add', typ: r('Add') },
+      { json: 'form', js: 'form', typ: r('RecyclingCompanyForm') },
+    ],
+    false,
+  ),
+  Add: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'breadcrumb', js: 'breadcrumb', typ: '' },
+      { json: 'info', js: 'info', typ: '' },
+      { json: 'added', js: 'added', typ: '' },
+    ],
+    false,
+  ),
+  RecyclingCompanyForm: o(
+    [
+      { json: 'inputs', js: 'inputs', typ: r('FormInputs') },
+      { json: 'buttons', js: 'buttons', typ: r('FormButtons') },
+    ],
+    false,
+  ),
+  FormInputs: o(
+    [
+      { json: 'companyId', js: 'companyId', typ: r('Name') },
+      { json: 'companyName', js: 'companyName', typ: r('Name') },
+      { json: 'address', js: 'address', typ: r('Name') },
+      { json: 'postnumber', js: 'postnumber', typ: r('Name') },
+      { json: 'city', js: 'city', typ: r('Name') },
+      { json: 'website', js: 'website', typ: r('Name') },
+      { json: 'phone', js: 'phone', typ: r('Name') },
+      { json: 'active', js: 'active', typ: r('Name') },
+    ],
+    false,
+  ),
+  View: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'breadcrumb', js: 'breadcrumb', typ: '' },
+      { json: 'info', js: 'info', typ: '' },
+      { json: 'updated', js: 'updated', typ: '' },
+      { json: 'deleted', js: 'deleted', typ: '' },
     ],
     false,
   ),
