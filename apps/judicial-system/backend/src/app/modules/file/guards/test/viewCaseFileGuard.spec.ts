@@ -52,7 +52,6 @@ describe('View Case File Guard', () => {
     })
 
     it('should activate', () => {
-      console.log(then)
       expect(then.result).toBe(true)
     })
   })
@@ -79,7 +78,6 @@ describe('View Case File Guard', () => {
       })
 
       it('should activate', () => {
-        console.log(then)
         expect(then.result).toBe(true)
       })
     },
@@ -126,7 +124,6 @@ describe('View Case File Guard', () => {
     })
 
     it('should activate', () => {
-      console.log(then)
       expect(then.result).toBe(true)
     })
   })
@@ -144,7 +141,6 @@ describe('View Case File Guard', () => {
     })
 
     it('should activate', () => {
-      console.log(then)
       expect(then.result).toBe(true)
     })
   })
