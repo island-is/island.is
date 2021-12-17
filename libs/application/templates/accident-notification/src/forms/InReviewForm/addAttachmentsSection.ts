@@ -57,7 +57,6 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             condition: (formValue) =>
               isPowerOfAttorney(formValue) &&
               !isUniqueAssignee(formValue, !!isAssignee) &&
-              isReportingOnBehalfOfInjured(formValue) &&
               !hasReceivedProxyDocumentOrAddedToAnswers(formValue),
           }),
           buildCustomField({
@@ -67,7 +66,6 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             condition: (formValue) =>
               isPowerOfAttorney(formValue) &&
               !isUniqueAssignee(formValue, !!isAssignee) &&
-              isReportingOnBehalfOfInjured(formValue) &&
               !hasReceivedProxyDocumentOrAddedToAnswers(formValue),
           }),
           buildFileUploadField({
@@ -80,7 +78,6 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             condition: (formValue) =>
               isPowerOfAttorney(formValue) &&
               !isUniqueAssignee(formValue, !!isAssignee) &&
-              isReportingOnBehalfOfInjured(formValue) &&
               !hasReceivedProxyDocumentOrAddedToAnswers(formValue),
           }),
           buildDescriptionField({
