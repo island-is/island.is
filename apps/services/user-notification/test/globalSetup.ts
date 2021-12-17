@@ -2,12 +2,11 @@ import { GenericContainer, Wait } from 'testcontainers'
 
 export default async () => {
   const lc = await new GenericContainer(
-    `${process.env.DOCKER_REGISTRY ?? ''}localstack/localstack:0.13.1`,
+    `${process.env.DOCKER_REGISTRY ?? ''}localstack/localstack:0.11.1`,
   )
     .withEnv('SERVICES', 'sqs')
-    .withEnv('DEBUG', '1')
     .withExposedPorts(4566)
-    .withStartupTimeout(120000)
+    .withWaitStrategy(Wait.forLogMessage('Ready.'))
     .start()
 
   ;(global as any).__localstack__ = lc
