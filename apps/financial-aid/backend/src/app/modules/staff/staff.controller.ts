@@ -61,7 +61,6 @@ export class StaffController {
     if (staff === null) {
       throw new ForbiddenException('Staff not found')
     }
-
     return staff
   }
 

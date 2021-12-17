@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
+import { useMeasure } from 'react-use'
 import cn from 'classnames'
 
 import * as styles from './InputFileUpload.css'
@@ -10,7 +11,6 @@ import { Button } from '../Button/Button'
 import { theme, Colors } from '@island.is/island-ui/theme'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconTypes } from '../IconRC/iconMap'
-import { useMeasure } from 'react-use'
 
 export type UploadFileStatus = 'error' | 'done' | 'uploading'
 
@@ -150,7 +150,7 @@ export const UploadedFile = ({
       }}
     >
       <Text truncate fontWeight="semiBold">
-        <Box className={{ [styles.fileName]: onOpenFile }}>
+        <Box component="span" className={{ [styles.fileName]: onOpenFile }}>
           {truncateInMiddle(file.name)}
           {showFileSize && file.size && (
             <Text as="span">{` (${kb(file.size)}KB)`}</Text>

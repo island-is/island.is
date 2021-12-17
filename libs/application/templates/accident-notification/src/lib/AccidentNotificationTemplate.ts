@@ -12,16 +12,15 @@ import {
 import set from 'lodash/set'
 import { assign } from 'xstate'
 import { AccidentTypeEnum, ReviewApprovalEnum } from '..'
-// import * as z from 'zod'
 import { States } from '../constants'
 import { ApiActions } from '../shared'
 import { WhoIsTheNotificationForEnum } from '../types'
 import { AccidentNotificationSchema } from './dataSchema'
 import { application } from './messages'
 
-// Uncomment for empty data schema
-// const AccidentNotificationSchema = z.object({})
-
+// The applicant is the applicant of the application, can be someone in power of attorney or the representative for the company
+// The assignee is the person who is assigned to review the application can be the injured person or the representative for the company
+// The assignee should see all data related to the application being submitted to sjukra but not data only relevant to applicant
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
