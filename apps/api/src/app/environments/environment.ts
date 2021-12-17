@@ -22,6 +22,9 @@ const prodConfig = () => ({
         : process.env.XROAD_DRIVING_LICENSE_V2_PATH,
     },
   },
+  criminalRecord: {
+    xroadPath: process.env.XROAD_CRIMINAL_RECORD_PATH,
+  },
   education: {
     xroadLicenseServiceId: process.env.XROAD_MMS_LICENSE_SERVICE_ID,
     xroadGradeServiceId: process.env.XROAD_MMS_GRADE_SERVICE_ID,
@@ -169,6 +172,11 @@ const devConfig = () => ({
         process.env.XROAD_DRIVING_LICENSE_V2_PATH ??
         'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
     },
+  },
+  criminalRecord: {
+    xroadPath:
+      process.env.XROAD_CRIMINAL_RECORD_PATH ??
+      'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
   },
   education: {
     xroadLicenseServiceId: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
