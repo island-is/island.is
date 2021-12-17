@@ -108,6 +108,7 @@ module.exports = {
     '<rootDir>/libs/application/templates/driving-lessons',
     '<rootDir>/libs/application/templates/driving-license',
     '<rootDir>/libs/application/templates/funding-government-projects',
+    '<rootDir>/libs/application/templates/general-fishing-license',
     '<rootDir>/libs/application/templates/health-insurance',
     '<rootDir>/libs/application/templates/login-service',
     '<rootDir>/libs/application/templates/meta-application',
@@ -191,6 +192,5 @@ module.exports = {
     '<rootDir>/libs/testing/containers',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
-    '<rootDir>/libs/application/templates/general-fishing-license',
   ],
 }
