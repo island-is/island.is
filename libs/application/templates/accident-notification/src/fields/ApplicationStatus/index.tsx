@@ -54,11 +54,21 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
     getAccidentStatusQuery,
     {
       variables: { input: { ihiDocumentID: ihiDocumentID } },
+      // Fetch every 5 minutes in case user leaves screen
+      // open for long period of time and does not refresh.
+      // We might get information from organization during that time.
+      pollInterval: 300000,
     },
   )
 
   const answers = application?.answers as FormValue
   const isAssigneeAndUnique = isUniqueAssignee(answers, isAssignee)
+
+  const errorMessage = getErrorMessageForMissingDocuments(
+    answers,
+    formatMessage,
+    isAssigneeAndUnique,
+  )
 
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)
@@ -208,18 +218,14 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
       tagVariant: hasReceivedAllDocuments(answers) ? 'blue' : 'rose',
       title: formatMessage(inReview.documents.title),
       description: formatMessage(inReview.documents.summary),
-      hasActionMessage: !hasReceivedAllDocuments(answers),
+      hasActionMessage: errorMessage.length > 0,
       action: {
         cta: () => {
           changeScreens('addAttachmentScreen')
         },
         title: formatMessage(inReview.action.documents.title),
         description: formatMessage(inReview.action.documents.description),
-        fileNames: getErrorMessageForMissingDocuments(
-          answers,
-          formatMessage,
-          isAssigneeAndUnique,
-        ), // We need to get this from first form
+        fileNames: errorMessage, // We need to get this from first form
         actionButtonTitle: formatMessage(
           inReview.action.documents.actionButtonTitle,
         ),
