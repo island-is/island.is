@@ -1,7 +1,7 @@
 /// <reference path="../../support/index.d.ts" />
 
 describe('applicant flow', () => {
-  describe('login', () => {
+  // describe('login', () => {
   //   it('should visit login page and have correct identifier', () => {
   //     cy.visit('/')
   //     cy.contains('Samband Íslenskra Sveitarfélaga - Fjárhagsaðstoð')
