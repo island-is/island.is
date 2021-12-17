@@ -131,7 +131,7 @@ export const HearingArrangements: React.FC = () => {
     }
   }
 
-  const setRegistrar = (id: string) => {
+  const setRegistrar = (id?: string) => {
     if (workingCase) {
       setAndSendToServer(
         'registrarId',
@@ -143,7 +143,7 @@ export const HearingArrangements: React.FC = () => {
 
       const registrar = userData?.users.find((r) => r.id === id)
 
-      setWorkingCase({ ...workingCase, registrar: registrar })
+      setWorkingCase({ ...workingCase, registrar })
     }
   }
 
@@ -219,12 +219,16 @@ export const HearingArrangements: React.FC = () => {
             placeholder="Velja dómritara"
             value={defaultRegistrar}
             options={registrars}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-              setRegistrar(
-                (selectedOption as ReactSelectOption).value.toString(),
-              )
-            }
-            required
+            onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+              if (selectedOption) {
+                setRegistrar(
+                  (selectedOption as ReactSelectOption).value.toString(),
+                )
+              } else {
+                setRegistrar(undefined)
+              }
+            }}
+            isClearable
           />
         </Box>
         <Box component="section" marginBottom={8}>
