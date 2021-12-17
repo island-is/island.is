@@ -100,16 +100,16 @@ const HomeCircumstancesForm = () => {
           </div>
         )}
 
-        {form?.homeCircumstances === HomeCircumstances.OTHER && (
-          <Box
-            marginTop={1}
-            marginBottom={10}
-            className={cn({
-              [`${styles.inputContainer}`]: true,
-              [`${styles.inputAppear}`]:
-                form?.homeCircumstances === HomeCircumstances.OTHER,
-            })}
-          >
+        <Box
+          marginTop={1}
+          marginBottom={10}
+          className={cn({
+            [`${styles.inputContainer}`]: true,
+            [`${styles.inputAppear}`]:
+              form?.homeCircumstances === HomeCircumstances.OTHER,
+          })}
+        >
+          {form?.homeCircumstances === HomeCircumstances.OTHER && (
             <Input
               backgroundColor={'blue'}
               label="Lýstu þínum aðstæðum"
@@ -126,8 +126,8 @@ const HomeCircumstancesForm = () => {
                 })
               }}
             />
-          </Box>
-        )}
+          )}
+        </Box>
       </ContentContainer>
 
       <Footer
