@@ -28,7 +28,7 @@ import {
 } from '@nestjs/swagger'
 import { isNationalIdValid } from '@island.is/financial-aid/shared/lib'
 import {
-  CurrentActor,
+  CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
@@ -183,7 +183,7 @@ export class PersonalRepresentativesController {
   @ApiOkResponse()
   async removeAsync(
     @Param('id') id: string,
-    @CurrentActor() user: User,
+    @CurrentUser() user: User,
   ): Promise<number> {
     if (!id) {
       throw new BadRequestException('Id needs to be provided')
@@ -214,8 +214,8 @@ export class PersonalRepresentativesController {
     resources: (pr) => pr.id ?? '',
   })
   async create(
-    @Body() personalRepresentative: PersonalRepresentativeCreateDTO,
-    @CurrentActor() user: User,
+    @Body() personalRepresentative: PersonalRepresentativeDTO,
+    @CurrentUser() user: User,
   ): Promise<PersonalRepresentativeDTO | null> {
     if (personalRepresentative.rightCodes.length === 0) {
       throw new BadRequestException('RightCodes list must be provided')
