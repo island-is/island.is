@@ -84,8 +84,6 @@ describe('RightTypesTypeController', () => {
           description: type.description,
         }
       })
-      console.log(rightTypesResult)
-      console.log(rightTypeList)
 
       expect(rightTypesResult).toMatchObject(rightTypeList)
     })

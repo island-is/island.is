@@ -62,8 +62,9 @@ export class PersonalRepresentativeRightsController {
     type: PersonalRepresentativePublicDTO,
   })
   @ApiParam({ name: 'nationalId', required: true, type: String })
-  @Audit<PersonalRepresentativeDTO>({
-    resources: (pr) => pr.id ?? '',
+  @Audit<PersonalRepresentativePublicDTO[]>({
+    resources: (prRights) =>
+      prRights.map((pr) => pr.nationalIdRepresentedPerson),
   })
   async getByPersonalRepresentative(
     @Param('nationalId') nationalId: string,

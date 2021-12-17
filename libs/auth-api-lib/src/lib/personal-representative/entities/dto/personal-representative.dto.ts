@@ -8,6 +8,7 @@ import {
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
+import { PersonalRepresentativeRightTypeDTO } from './personal-representative-right-type.dto'
 
 export class PersonalRepresentativeDTO {
   @IsString()

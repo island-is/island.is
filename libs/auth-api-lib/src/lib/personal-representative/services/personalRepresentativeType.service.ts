@@ -5,6 +5,9 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Op } from 'sequelize'
 import { PersonalRepresentativeType } from '../entities/models/personal-representative-type.model'
 import { PersonalRepresentativeTypeDTO } from '../entities/dto/personal-representative-type.dto'
+import { PaginatedPersonalRepresentativeTypeDto } from '../entities/dto/paginated-personal-representative-type.dto'
+
+import { paginate, PaginationDto } from '@island.is/nest/pagination'
 
 @Injectable()
 export class PersonalRepresentativeTypeService {
@@ -16,40 +19,32 @@ export class PersonalRepresentativeTypeService {
   ) {}
 
   /** Get's all personal repreasentative types  */
-  async getAllAsync(): Promise<PersonalRepresentativeType[] | null> {
-    return this.personalRepresentativeTypeModel.findAll()
-  }
-
-  /** Get's all personal repreasentative types and count */
-  async getAndCountAllAsync(
-    page: number,
-    count: number,
-  ): Promise<{
-    rows: PersonalRepresentativeType[]
-    count: number
-  } | null> {
-    page--
-    const offset = page * count
-    return await this.personalRepresentativeTypeModel.findAndCountAll({
-      limit: count,
-      offset: offset,
+  async getMany(
+    query: PaginationDto,
+  ): Promise<PaginatedPersonalRepresentativeTypeDto> {
+    return await paginate({
+      Model: this.personalRepresentativeTypeModel,
+      limit: query.limit || 10,
+      after: query.after ?? '',
+      before: query.before ?? '',
+      primaryKeyField: 'code',
+      orderOption: [['code', 'ASC']],
+      where: {},
     })
   }
 
   /** Get's all personal repreasentative types and count by searchstring */
-  async findAsync(
+  async findMany(
     searchString: string,
-    page: number,
-    count: number,
-  ): Promise<{
-    rows: PersonalRepresentativeType[]
-    count: number
-  } | null> {
-    page--
-    const offset = page * count
-    return await this.personalRepresentativeTypeModel.findAndCountAll({
-      limit: count,
-      offset: offset,
+    query: PaginationDto,
+  ): Promise<PaginatedPersonalRepresentativeTypeDto> {
+    return await paginate({
+      Model: this.personalRepresentativeTypeModel,
+      limit: query.limit || 10,
+      after: query.after ?? '',
+      before: query.before ?? '',
+      primaryKeyField: 'code',
+      orderOption: [['code', 'ASC']],
       where: {
         $or: [
           {
@@ -64,7 +59,7 @@ export class PersonalRepresentativeTypeService {
   }
 
   /** Get's a personal repreasentative type by code */
-  async getPersonalRepresentativeTypeAsync(
+  async getPersonalRepresentativeType(
     code: string,
   ): Promise<PersonalRepresentativeType | null> {
     this.logger.debug(
@@ -79,7 +74,7 @@ export class PersonalRepresentativeTypeService {
   }
 
   /** Create a new personal repreasentative type */
-  async createAsync(
+  async create(
     personalRepresentativeType: PersonalRepresentativeTypeDTO,
   ): Promise<PersonalRepresentativeType> {
     this.logger.debug(
@@ -92,7 +87,7 @@ export class PersonalRepresentativeTypeService {
   }
 
   /** Updates an existing personal repreasentative type */
-  async updateAsync(
+  async update(
     code: string,
     personalRepresentativeType: PersonalRepresentativeTypeDTO,
   ): Promise<PersonalRepresentativeType | null> {
@@ -115,7 +110,7 @@ export class PersonalRepresentativeTypeService {
   }
 
   /** Soft delete on a personal repreasentative type by code */
-  async deleteAsync(code: string): Promise<number> {
+  async delete(code: string): Promise<number> {
     this.logger.debug(
       'Soft deleting a personal representative type with code: ',
       code,

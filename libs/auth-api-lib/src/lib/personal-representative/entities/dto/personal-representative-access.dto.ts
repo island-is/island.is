@@ -12,6 +12,13 @@ export class PersonalRepresentativeAccessDTO {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
+    example: 'serviceProvider',
+  })
+  readonly serviceProvider!: string
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
     example: 'nationalId of Personal Representative',
   })
   readonly nationalIdPersonalRepresentative!: string

@@ -1,11 +1,11 @@
-import { uuid } from 'uuidv4'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { WhereOptions } from 'sequelize'
 import { PersonalRepresentativeAccess } from '../entities/models/personal-representative-access.model'
 import { PersonalRepresentativeAccessDTO } from '../entities/dto/personal-representative-access.dto'
+import { PaginatedPersonalRepresentativeAccessDto } from '../entities/dto/paginated-personal-representative-access.dto'
+import { paginate, PaginationDto } from '@island.is/nest/pagination'
 
 @Injectable()
 export class PersonalRepresentativeAccessService {
@@ -17,31 +17,53 @@ export class PersonalRepresentativeAccessService {
   ) {}
 
   /** Get's all personal repreasentatives  */
-  async getMany(): Promise<PersonalRepresentativeAccess[]> {
-    return await this.personalRepresentativeAccessModel.findAll()
+  async getMany(
+    query: PaginationDto,
+  ): Promise<PaginatedPersonalRepresentativeAccessDto> {
+    return await paginate({
+      Model: this.personalRepresentativeAccessModel,
+      limit: query.limit || 10,
+      after: query.after ?? '',
+      before: query.before ?? '',
+      primaryKeyField: 'id',
+      orderOption: [['id', 'ASC']],
+      where: {},
+    })
   }
 
   /** Get's all personal repreasentative connections for personal representative  */
   async getByPersonalRepresentative(
     nationalIdPersonalRepresentative: string,
-  ): Promise<PersonalRepresentativeAccess[]> {
-    const whereClause: WhereOptions = {
-      nationalIdPersonalRepresentative: nationalIdPersonalRepresentative,
-    }
-    return await this.personalRepresentativeAccessModel.findAll({
-      where: whereClause,
+    query: PaginationDto,
+  ): Promise<PaginatedPersonalRepresentativeAccessDto> {
+    return await paginate({
+      Model: this.personalRepresentativeAccessModel,
+      limit: query.limit || 10,
+      after: query.after ?? '',
+      before: query.before ?? '',
+      primaryKeyField: 'id',
+      orderOption: [['id', 'ASC']],
+      where: {
+        nationalIdPersonalRepresentative: nationalIdPersonalRepresentative,
+      },
     })
   }
 
   /** Get's all personal repreasentative connections for personal representative  */
   async getByRepresentedPerson(
     nationalIdRepresentedPerson: string,
-  ): Promise<PersonalRepresentativeAccess[] | null> {
-    const whereClause: WhereOptions = {
-      nationalIdRepresentedPerson: nationalIdRepresentedPerson,
-    }
-    return await this.personalRepresentativeAccessModel.findAll({
-      where: whereClause,
+    query: PaginationDto,
+  ): Promise<PaginatedPersonalRepresentativeAccessDto> {
+    return await paginate({
+      Model: this.personalRepresentativeAccessModel,
+      limit: query.limit || 10,
+      after: query.after ?? '',
+      before: query.before ?? '',
+      primaryKeyField: 'id',
+      orderOption: [['id', 'ASC']],
+      where: {
+        nationalIdRepresentedPerson: nationalIdRepresentedPerson,
+      },
     })
   }
 

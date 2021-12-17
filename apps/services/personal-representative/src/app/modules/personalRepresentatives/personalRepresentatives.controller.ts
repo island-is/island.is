@@ -84,7 +84,7 @@ export class PersonalRepresentativesController {
   @Audit<PersonalRepresentativeDTO>({
     resources: (pr) => pr.id ?? '',
   })
-  async getAsync(@Param('id') id: string): Promise<PersonalRepresentativeDTO> {
+  async get(@Param('id') id: string): Promise<PersonalRepresentativeDTO> {
     if (!id) {
       throw new BadRequestException('Id needs to be provided')
     }
@@ -108,7 +108,7 @@ export class PersonalRepresentativesController {
       'Gets personal representative rights by nationalId of personal representative',
     description: 'A personal representative can represent more than one person',
   })
-  @Get('byPersonalRepresentative/:nationalId/:includeInvalid?')
+  @Get(':nationalId/personal-representative/:includeInvalid?')
   @ApiOkResponse({
     description: 'Personal representative connections with rights',
     type: PersonalRepresentativeDTO,
@@ -123,7 +123,7 @@ export class PersonalRepresentativesController {
   @Audit<PersonalRepresentativeDTO[]>({
     resources: (prs) => prs.map((pr) => pr.id ?? ''),
   })
-  async getByPersonalRepresentativeAsync(
+  async getByPersonalRepresentative(
     nationalId: string,
     includeInvalid?: boolean,
   ): Promise<PersonalRepresentativeDTO[]> {
@@ -144,7 +144,7 @@ export class PersonalRepresentativesController {
     summary:
       'Gets a personal representative rights by nationalId of represented person',
   })
-  @Get('byRepresentedPerson/:nationalId/:includeInvalid?')
+  @Get(':nationalId/represented-person/:includeInvalid?')
   @ApiOkResponse({
     description: 'Personal representative connection with rights',
     type: PersonalRepresentativeDTO,
@@ -159,7 +159,7 @@ export class PersonalRepresentativesController {
   @Audit<PersonalRepresentativeDTO>({
     resources: (pr) => pr.id ?? '',
   })
-  async getByRepresentedPersonAsync(
+  async getByRepresentedPerson(
     nationalId: string,
     includeInvalid?: boolean,
   ): Promise<PersonalRepresentativeDTO | null> {
@@ -181,7 +181,7 @@ export class PersonalRepresentativesController {
   })
   @Delete(':id')
   @ApiOkResponse()
-  async removeAsync(
+  async remove(
     @Param('id') id: string,
     @CurrentUser() user: User,
   ): Promise<number> {
@@ -214,7 +214,7 @@ export class PersonalRepresentativesController {
     resources: (pr) => pr.id ?? '',
   })
   async create(
-    @Body() personalRepresentative: PersonalRepresentativeDTO,
+    @Body() personalRepresentative: PersonalRepresentativeCreateDTO,
     @CurrentUser() user: User,
   ): Promise<PersonalRepresentativeDTO | null> {
     if (personalRepresentative.rightCodes.length === 0) {

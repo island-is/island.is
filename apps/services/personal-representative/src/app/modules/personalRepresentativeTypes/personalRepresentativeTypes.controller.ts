@@ -2,6 +2,7 @@ import { AuthScope } from '@island.is/auth/scopes'
 import {
   PersonalRepresentativeType,
   PersonalRepresentativeTypeDTO,
+  PaginatedPersonalRepresentativeTypeDto,
   PersonalRepresentativeTypeService,
 } from '@island.is/auth-api-lib/personal-representative'
 import {
@@ -16,6 +17,7 @@ import {
   Post,
   Put,
   Inject,
+  Query,
 } from '@nestjs/common'
 import {
   ApiOperation,
@@ -32,15 +34,17 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
-import { AuditService } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
+import { PaginationDto } from '@island.is/nest/pagination'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representative-types`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AuthScope.writePersonalRepresentative)
-@ApiTags('Personal Representative Types')
+@ApiTags('Personal Representative - Types')
 @Controller('v1/personal-representative-types')
 @ApiBearerAuth()
+@Audit({ namespace })
 export class PersonalRepresentativeTypesController {
   constructor(
     @Inject(PersonalRepresentativeTypeService)
@@ -54,13 +58,16 @@ export class PersonalRepresentativeTypesController {
       'Get a list of all personal representative types for personal representatives',
   })
   @Get()
-  @ApiOkResponse({ type: PersonalRepresentativeType })
-  async getAll(): Promise<PersonalRepresentativeType[]> {
-    const personalRepresentativeTypes = await this.personalRepresentativeTypesService.getAllAsync()
-
-    if (!personalRepresentativeTypes) {
-      throw new NotFoundException('No personal representative types found')
-    }
+  @ApiOkResponse({ type: PaginatedPersonalRepresentativeTypeDto })
+  @Audit<PaginatedPersonalRepresentativeTypeDto>({
+    resources: (pgData) => pgData.data.map((type) => type.code),
+  })
+  async getAll(
+    @Query() query: PaginationDto,
+  ): Promise<PaginatedPersonalRepresentativeTypeDto> {
+    const personalRepresentativeTypes = await this.personalRepresentativeTypesService.getMany(
+      query,
+    )
 
     return personalRepresentativeTypes
   }
@@ -78,7 +85,7 @@ export class PersonalRepresentativeTypesController {
       throw new BadRequestException('Code needs to be provided')
     }
 
-    const personalRepresentativeType = await this.personalRepresentativeTypesService.getPersonalRepresentativeTypeAsync(
+    const personalRepresentativeType = await this.personalRepresentativeTypesService.getPersonalRepresentativeType(
       code,
     )
 
@@ -110,7 +117,7 @@ export class PersonalRepresentativeTypesController {
         namespace,
         resources: code,
       },
-      this.personalRepresentativeTypesService.deleteAsync(code),
+      this.personalRepresentativeTypesService.delete(code),
     )
   }
 
@@ -133,7 +140,7 @@ export class PersonalRepresentativeTypesController {
         resources: rightType.code,
         meta: { fields: Object.keys(rightType) },
       },
-      this.personalRepresentativeTypesService.createAsync(rightType),
+      this.personalRepresentativeTypesService.create(rightType),
     )
   }
 
@@ -160,7 +167,7 @@ export class PersonalRepresentativeTypesController {
         resources: rightType.code,
         meta: { fields: Object.keys(rightType) },
       },
-      this.personalRepresentativeTypesService.updateAsync(code, rightType),
+      this.personalRepresentativeTypesService.update(code, rightType),
     )
 
     if (result == null) {

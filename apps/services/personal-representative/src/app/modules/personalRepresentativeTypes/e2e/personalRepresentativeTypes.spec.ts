@@ -17,6 +17,8 @@ const simpleRequestData = {
   description: 'Description',
 }
 
+const path = '/v1/personal-representative-types'
+
 describe('PersonalRepresentativeTypesController - Without Auth', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
@@ -32,10 +34,7 @@ describe('PersonalRepresentativeTypesController - Without Auth', () => {
   })
 
   it('POST /v1/personal-representative-types should fail and return 403 error if bearer is missing', async () => {
-    const response = await server
-      .post('/v1/personal-representative-types')
-      .send(simpleRequestData)
-      .expect(403)
+    const response = await server.post(path).send(simpleRequestData).expect(403)
 
     expect(response.body).toMatchObject({
       ...errorExpectedStructure,
@@ -79,10 +78,7 @@ describe('PersonalRepresentativeTypesController', () => {
         description: 'Description',
         validFrom: '10-11-2021',
       }
-      const response = await server
-        .post('/v1/personal-representative-types')
-        .send(requestData)
-        .expect(400)
+      const response = await server.post(path).send(requestData).expect(400)
 
       expect(response.body).toMatchObject({
         ...errorExpectedStructure,
@@ -92,7 +88,7 @@ describe('PersonalRepresentativeTypesController', () => {
 
     it('POST /v1/personal-representative-types should create a new entry', async () => {
       const response = await server
-        .post('/v1/personal-representative-types')
+        .post(path)
         .send(simpleRequestData)
         .expect(201)
       expect(response.body).toMatchObject(simpleRequestData)
@@ -101,9 +97,7 @@ describe('PersonalRepresentativeTypesController', () => {
 
   describe('Update', () => {
     it('Put /v1/personal-representative-types should update type with new description', async () => {
-      await server
-        .post('/v1/personal-representative-types')
-        .send(simpleRequestData)
+      await server.post(path).send(simpleRequestData)
 
       const requestData = {
         ...simpleRequestData,
@@ -111,7 +105,7 @@ describe('PersonalRepresentativeTypesController', () => {
       }
 
       const response = await server
-        .put(`/v1/personal-representative-types/${requestData.code}`)
+        .put(`${path}/${requestData.code}`)
         .send(requestData)
         .expect(200)
 
@@ -121,11 +115,9 @@ describe('PersonalRepresentativeTypesController', () => {
 
   describe('Get', () => {
     it('Get /v1/personal-representative-types should return a list of types', async () => {
-      await server
-        .post('/v1/personal-representative-types')
-        .send(simpleRequestData)
+      await server.post(path).send(simpleRequestData)
       const response = await server
-        .get(`/v1/personal-representative-types/${simpleRequestData.code}`)
+        .get(`${path}/${simpleRequestData.code}`)
         .expect(200)
 
       expect(response.body.code).toMatch(simpleRequestData.code)
@@ -135,16 +127,14 @@ describe('PersonalRepresentativeTypesController', () => {
 
   describe('Delete/Remove', () => {
     it('Delete /v1/personal-representative-types mark type as invalid', async () => {
+      await server.post(path).send(simpleRequestData)
       await server
-        .post('/v1/personal-representative-types')
-        .send(simpleRequestData)
-      await server
-        .delete(`/v1/personal-representative-types/${simpleRequestData.code}`)
+        .delete(`${path}/${simpleRequestData.code}`)
         .send()
         .expect(200)
 
       const response = await request(app.getHttpServer()).get(
-        `/v1/personal-representative-types/${simpleRequestData.code}`,
+        `${path}/${simpleRequestData.code}`,
       )
 
       expect(response.body.code).toMatch(simpleRequestData.code)
