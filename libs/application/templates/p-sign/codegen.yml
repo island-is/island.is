@@ -1,6 +1,5 @@
 schema:
   - apps/api/src/api.graphql
-documents: libs/application/templates/p-sign/src/graphql/queries.ts
 generates:
   libs/application/templates/p-sign/src/types/schema.ts:
     plugins:
