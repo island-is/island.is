@@ -400,6 +400,10 @@
     "financial-aid-web-osk": {
       "tags": []
     },
+    "financial-aid-web-osk-e2e": {
+      "tags": [],
+      "implicitDependencies": ["financial-aid-web-osk"]
+    },
     "financial-aid-web-veita": {
       "tags": []
     },
