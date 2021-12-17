@@ -95,7 +95,9 @@ const AcceptModal = ({
   const checkingValue = (element?: number) => (element ? element : 0)
 
   const finalAmount = calculateAcceptedAidFinalAmount(
-    aidAmount - checkingValue(state.income) - sumValues(state.deductionFactor),
+    state.amount -
+      checkingValue(state.income) -
+      sumValues(state.deductionFactor),
     checkingValue(state.personalTaxCreditPercentage),
     state.secondPersonalTaxCredit,
   )
@@ -322,7 +324,7 @@ const AcceptModal = ({
           id="tax"
           name="tax"
           value={calculateTaxOfAmount(
-            (aidAmount || 0) -
+            (state.amount || 0) -
               checkingValue(state.income) -
               sumValues(state.deductionFactor),
           ).toLocaleString('de-DE')}
