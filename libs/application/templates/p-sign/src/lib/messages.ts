@@ -15,7 +15,7 @@ export const m = defineMessages({
   dataCollectionDescription: {
     id: 'dl.application:dataCollectionDescription',
     defaultMessage:
-      'Til þess að athuga hvort þú sért með gilt P-merki þá verða upplýsingar verða sóttar  úr kerfi sýslumanna.',
+      'Til þess að athuga hvort þú sért með gilt P-merki þá verða upplýsingar verða sóttar úr kerfi sýslumanna.',
     description: 'Description for data collection section',
   },
   dataCollectionCheckboxLabel: {

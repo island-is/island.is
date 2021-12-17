@@ -18,6 +18,7 @@ const PSignTemplate: ApplicationTemplate<
   type: ApplicationTypes.P_SIGN,
   name: 'P-Merki',
   dataSchema: dataSchema,
+  readyForProduction: false,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
