@@ -135,12 +135,12 @@ class SupportApplication extends App<Props> {
       >
         <ApolloProvider client={initApollo(this.props.apolloState)}>
           <AuthProvider>
-            <AppLayout isAuthenticated={isAuthenticated} {...layoutProps}>
+            {/* <AppLayout isAuthenticated={isAuthenticated} {...layoutProps}>
+            </AppLayout> */}
               <ErrorBoundary>
                 <Component {...pageProps} />
               </ErrorBoundary>
               <Toast />
-            </AppLayout>
           </AuthProvider>
         </ApolloProvider>
       </Provider>

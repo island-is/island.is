@@ -8,6 +8,7 @@ import { getSession, signIn, useSession } from 'next-auth/client'
 import { GraphQLError } from 'graphql'
 import errorLink from '../graphql/errorLink'
 import { onError, ErrorResponse, ErrorLink } from '@apollo/client/link/error'
+import { Link } from '@island.is/island-ui/core'
 
 
 const AUTH_URL = '/api/auth/signin-oidc'
@@ -103,7 +104,8 @@ const withAuth = (WrappedComponent) =>
             top: 0,
           }}
         >
-          <button onClick={() => [signIn('identity-server4'),callbackObj]}>sign in</button>
+          {/* <button onClick={() => [signIn('identity-server4'),callbackObj]}>sign in</button> */}
+          <Link href="/api/auth/signin">Sign in here</Link>
         </div>
       )
     }

@@ -16,16 +16,16 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
     graphQLErrors.forEach((err) => {
       
       if (err.message === 'Unauthorized') {
-        return signIn(identityServerId, {callbackUrl: `${window.location}`})
+        //return signIn(identityServerId, {callbackUrl: `${window.location}`})
       }
       switch (err.extensions?.code) {
         case 'UNAUTHENTICATED':
-          return signIn(identityServerId, {callbackUrl: `${window.location}`})
+          //return signIn(identityServerId, {callbackUrl: `${window.location}`})
           //return api.logout().then(() => Router.reload())
         case 'FORBIDDEN':
           return
         default:
-          return signIn(identityServerId, {callbackUrl: `${window.location}`})
+          //return signIn(identityServerId, {callbackUrl: `${window.location}`})
           // NotificationService.onGraphQLError({
           //   graphQLErrors,
           // } as ApolloError)
