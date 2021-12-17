@@ -5,7 +5,6 @@ import {
 } from './models/syslumennAuction'
 import { Injectable, Inject } from '@nestjs/common'
 import {
-  DataUploadResponse,
   constructUploadDataObject,
 } from './models/dataUpload'
 
@@ -20,12 +19,12 @@ import {
   VirkarHeimagistingar,
   Uppbod,
   VirkLeyfi,
-  Vottord,
+  VottordSkeyti,
+  Skilabod
 } from '@island.is/clients/syslumenn'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   CertificateInfoRepsonse,
-  CertificateRepsonse,
   mapCertificateInfo,
 } from './models/certificateInfo'
 
@@ -104,7 +103,7 @@ export class SyslumennService {
     attachment: Attachment,
     applicationType: string,
     extraData?: { [key: string]: string },
-  ): Promise<DataUploadResponse> {
+  ): Promise<Skilabod> {
     await this.login()
 
     const payload = constructUploadDataObject(
@@ -121,7 +120,7 @@ export class SyslumennService {
     nationalId: string,
   ): Promise<CertificateInfoRepsonse> {
     await this.login()
-    const certificate = await this.syslumennApiWithAuth().faVottordUpplysingarGet(
+    const certificate: VottordSkeyti = await this.syslumennApiWithAuth().faVottordUpplysingarGet(
       {
         audkenni: this.id,
         kennitala: nationalId,
@@ -131,6 +130,6 @@ export class SyslumennService {
     const parsedCertificate = JSON.parse(
       JSON.parse(JSON.stringify(certificate)),
     )
-    return mapCertificateInfo(parsedCertificate ?? ('' as Vottord))
+    return mapCertificateInfo(parsedCertificate ?? '')
   }
 }

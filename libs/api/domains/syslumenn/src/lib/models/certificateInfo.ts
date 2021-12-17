@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Skilabod, Vottord } from '@island.is/clients/syslumenn'
+import { VottordSkeyti } from '@island.is/clients/syslumenn'
 
 @ObjectType()
 export class CertificateInfoRepsonse {
@@ -12,13 +12,9 @@ export class CertificateInfoRepsonse {
   @Field()
   releaseDate?: string
 }
-@ObjectType()
-export class CertificateRepsonse {
-  @Field()
-  data?: string
-}
+
 export const mapCertificateInfo = (
-  response: Vottord,
+  response: VottordSkeyti,
 ): CertificateInfoRepsonse => {
   return {
     nationalId: response.kennitala ?? '',

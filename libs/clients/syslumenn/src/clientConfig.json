@@ -7,7 +7,7 @@
     "version": "v1"
   },
   "host": "api.syslumenn.is",
-  "basePath": "/dev",
+  "basePath": "/Test",
   "schemes": ["https"],
   "produces": ["text/plain", "application/json", "text/json"],
   "paths": {
@@ -725,10 +725,7 @@
             "x-nullable": false,
             "description": "Success",
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "$ref": "#/definitions/VottordSkeyti"
             }
           }
         },
@@ -1024,20 +1021,6 @@
           "type": "string"
         },
         "accessToken": {
-          "type": "string"
-        }
-      }
-    },
-    "Vottord": {
-      "type": "object",
-      "properties": {
-        "kennitala": {
-          "type": "string"
-        },
-        "gildisTimi": {
-          "type": "string"
-        },
-        "utgafudagur": {
           "type": "string"
         }
       }
@@ -1408,6 +1391,20 @@
           "type": "string"
         },
         "kennitala": {
+          "type": "string"
+        }
+      }
+    },
+    "VottordSkeyti": {
+      "type": "object",
+      "properties": {
+        "kennitala": {
+          "type": "string"
+        },
+        "gildisTimi": {
+          "type": "string"
+        },
+        "utgafudagur": {
           "type": "string"
         }
       }

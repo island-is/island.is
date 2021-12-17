@@ -4,14 +4,12 @@ import { Homestay } from './models/homestay'
 import { SyslumennAuction } from './models/syslumennAuction'
 import { SyslumennService } from './syslumenn.service'
 import { OperatingLicense } from './models/operatingLicense'
-import { DataUploadResponse } from './models/dataUpload'
 import { UploadDataInput } from './dto/uploadData.input'
 import { CertificateInfoInput } from './dto/certificateInfo.input'
+import { Skilabod } from '@island.is/clients/syslumenn'
 import {
   CertificateInfoRepsonse,
-  CertificateRepsonse,
 } from './models/certificateInfo'
-import { Vottord } from '@island.is/clients/syslumenn'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -38,11 +36,11 @@ export class SyslumennResolver {
     return this.syslumennService.getOperatingLicenses()
   }
 
-  @Mutation(() => DataUploadResponse)
+  @Mutation()
   postSyslumennUploadData(
     @Args('input')
     { persons, attachment, applicationType }: UploadDataInput,
-  ): Promise<DataUploadResponse> {
+  ): Promise<Skilabod> {
     return this.syslumennService.uploadData(
       persons,
       attachment,
