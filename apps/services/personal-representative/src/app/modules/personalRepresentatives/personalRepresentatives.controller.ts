@@ -2,6 +2,7 @@ import { AuthScope } from '@island.is/auth/scopes'
 import {
   PaginatedPersonalRepresentativeDto,
   PersonalRepresentativeDTO,
+  PersonalRepresentativeCreateDTO,
   PersonalRepresentativeService,
 } from '@island.is/auth-api-lib/personal-representative'
 import {
@@ -213,7 +214,7 @@ export class PersonalRepresentativesController {
     resources: (pr) => pr.id ?? '',
   })
   async create(
-    @Body() personalRepresentative: PersonalRepresentativeDTO,
+    @Body() personalRepresentative: PersonalRepresentativeCreateDTO,
     @CurrentActor() user: User,
   ): Promise<PersonalRepresentativeDTO | null> {
     if (personalRepresentative.rightCodes.length === 0) {
@@ -250,6 +251,7 @@ export class PersonalRepresentativesController {
         this.prService.delete(currentContract.id),
       )
     }
+
     // Create a new personal representative
     return await this.auditService.auditPromise(
       {

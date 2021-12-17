@@ -222,6 +222,7 @@ export class PersonalRepresentativeService {
           },
         ],
       })
+
       return result ? result.toDTO() : null
     } catch (err) {
       throw new BadRequestException(

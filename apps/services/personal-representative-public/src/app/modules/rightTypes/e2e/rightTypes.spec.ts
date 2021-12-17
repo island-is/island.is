@@ -1,4 +1,3 @@
-import { deserialize } from './../../../../../../../../libs/contentful-extensions/translation/src/utils/deserialize'
 import { setupWithAuth, setupWithoutAuth } from '../../../../../test/setup'
 import request from 'supertest'
 import { TestApp } from '@island.is/testing/nest'

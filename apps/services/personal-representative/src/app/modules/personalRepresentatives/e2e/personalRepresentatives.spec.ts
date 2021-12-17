@@ -9,6 +9,7 @@ import {
   PersonalRepresentativeCreateDTO,
   PersonalRepresentativeRightType,
   PaginatedPersonalRepresentativeDto,
+  PersonalRepresentativeType,
 } from '@island.is/auth-api-lib/personal-representative'
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -24,6 +25,12 @@ const simpleRequestData: PersonalRepresentativeCreateDTO = {
   nationalIdPersonalRepresentative: '1234567890',
   nationalIdRepresentedPerson: '1234567891',
   rightCodes: [],
+}
+
+const personalRepresentativeType = {
+  code: 'prTypeCode',
+  name: 'prTypeName',
+  description: 'prTypeDescription',
 }
 
 const path = '/v1/personal-representatives'
@@ -61,8 +68,9 @@ describe('PersonalRepresentativeController', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
   let prRightTypeModel: typeof PersonalRepresentativeRightType
+  let prTypeModel: typeof PersonalRepresentativeType
   let prModel: typeof PersonalRepresentative
-  let prPermissionsModel: typeof PersonalRepresentativeRight
+  let prRightsModel: typeof PersonalRepresentativeRight
 
   beforeAll(async () => {
     // TestApp setup with auth and database
@@ -72,12 +80,15 @@ describe('PersonalRepresentativeController', () => {
     prRightTypeModel = app.get<typeof PersonalRepresentativeRightType>(
       'PersonalRepresentativeRightTypeRepository',
     )
+    prTypeModel = app.get<typeof PersonalRepresentativeType>(
+      'PersonalRepresentativeTypeRepository',
+    )
     // Get reference on personal representative models to seed DB
     prModel = app.get<typeof PersonalRepresentative>(
       'PersonalRepresentativeRepository',
     )
     // Get reference on personal representative right models to seed DB
-    prPermissionsModel = app.get<typeof PersonalRepresentativeRight>(
+    prRightsModel = app.get<typeof PersonalRepresentativeRight>(
       'PersonalRepresentativeRightRepository',
     )
   })
@@ -87,7 +98,7 @@ describe('PersonalRepresentativeController', () => {
   })
 
   beforeEach(async () => {
-    await prPermissionsModel.destroy({
+    await prRightsModel.destroy({
       where: {},
       cascade: true,
       truncate: true,
@@ -100,6 +111,12 @@ describe('PersonalRepresentativeController', () => {
       force: true,
     })
     await prRightTypeModel.destroy({
+      where: {},
+      cascade: true,
+      truncate: true,
+      force: true,
+    })
+    await prTypeModel.destroy({
       where: {},
       cascade: true,
       truncate: true,
@@ -124,16 +141,25 @@ describe('PersonalRepresentativeController', () => {
     it('POST /v1/personal-representatives should create a new entry', async () => {
       // Create right types
       await prRightTypeModel.bulkCreate(rightTypeList)
+      // Create type
+      await prTypeModel.create(personalRepresentativeType)
 
       // Test creating personal rep
       const requestData = {
         ...simpleRequestData,
         rightCodes: rightTypeList.map((rt) => rt.code),
+        personalRepresentativeTypeCode: personalRepresentativeType.code,
       }
 
       const response = await server.post(path).send(requestData).expect(201)
 
-      expect(response.body).toMatchObject(requestData)
+      const result = {
+        ...response.body,
+        rightCodes: response.body.rights.map(
+          (r: PersonalRepresentativeRightType) => r.code,
+        ),
+      }
+      expect(result).toMatchObject(requestData)
     })
   })
 
@@ -141,11 +167,14 @@ describe('PersonalRepresentativeController', () => {
     it('DELETE /v1/personal-representatives should delete personal rep', async () => {
       // Create right types
       await prRightTypeModel.bulkCreate(rightTypeList)
+      // Create type
+      await prTypeModel.create(personalRepresentativeType)
 
       // Creating personal rep
       const personalRep = await setupBasePersonalRep({
         ...simpleRequestData,
         rightCodes: rightTypeList.map((rt) => rt.code),
+        personalRepresentativeTypeCode: personalRepresentativeType.code,
       })
       // Test delete personal rep
       await server.delete(`${path}/${personalRep.id}`).expect(200)
@@ -156,11 +185,14 @@ describe('PersonalRepresentativeController', () => {
     it('Get v1/personal-representatives should get personal reps', async () => {
       // Create right types
       await prRightTypeModel.bulkCreate(rightTypeList)
+      // Create type
+      await prTypeModel.create(personalRepresentativeType)
 
       // Creating personal rep
       const personalRep = await setupBasePersonalRep({
         ...simpleRequestData,
         rightCodes: rightTypeList.map((rt) => rt.code),
+        personalRepresentativeTypeCode: personalRepresentativeType.code,
       })
 
       // Test get personal rep
