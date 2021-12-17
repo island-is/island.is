@@ -10,7 +10,7 @@ describe('MunicipalityController - Get guards', () => {
     guards = Reflect.getMetadata('__guards__', MunicipalityController)
   })
 
-  it('should have two guards', () => {
+  it('should have one guards', () => {
     expect(guards).toHaveLength(1)
   })
 
