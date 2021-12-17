@@ -51,7 +51,9 @@ export const createTestingFileModule = async () => {
     getModelToken(CaseFile),
   )
 
+  const fileService = fileModule.get<FileService>(FileService)
+
   const fileController = fileModule.get<FileController>(FileController)
 
-  return { awsS3Service, courtService, fileModel, fileController }
+  return { awsS3Service, courtService, fileModel, fileService, fileController }
 }

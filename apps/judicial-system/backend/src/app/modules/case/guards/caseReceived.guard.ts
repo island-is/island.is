@@ -6,10 +6,13 @@ import {
   ForbiddenException,
 } from '@nestjs/common'
 
-import { completedCaseStates } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  completedCaseStates,
+} from '@island.is/judicial-system/types'
 
 @Injectable()
-export class CaseCompletedGuard implements CanActivate {
+export class CaseReceivedGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
@@ -19,7 +22,7 @@ export class CaseCompletedGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case')
     }
 
-    if (!completedCaseStates.includes(theCase.state)) {
+    if (![...completedCaseStates, CaseState.RECEIVED].includes(theCase.state)) {
       throw new ForbiddenException('Forbidden for uncompleted cases')
     }
 
