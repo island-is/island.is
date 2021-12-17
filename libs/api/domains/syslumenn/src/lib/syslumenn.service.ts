@@ -126,10 +126,7 @@ export class SyslumennService {
         kennitala: nationalId,
       },
     )
-    // Once syslumenn openapi defenition is fixed this will not need parsing
-    const parsedCertificate = JSON.parse(
-      JSON.parse(JSON.stringify(certificate)),
-    )
-    return mapCertificateInfo(parsedCertificate ?? '')
+
+    return mapCertificateInfo(certificate)
   }
 }
