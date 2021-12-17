@@ -18,7 +18,7 @@ export const NotFound: FC<Props> = ({ title }) => {
       tag="404"
       tagVariant="purple"
       title={formatMessage(title || m.notFound)}
-      figure="/assets/images/hourglass.svg"
+      figure="./assets/images/hourglass.svg"
     >
       {formatMessage(m.notFoundMessage, {
         path: pathname,
