@@ -16,14 +16,12 @@ export class CreateDraftRegulationInput {
   @IsOptional()
   name?: string
 
-  @Field()
+  @Field({ defaultValue: '' })
   @IsString()
-  @IsOptional()
-  title?: string
+  title!: string
 
-  @Field()
+  @Field({ defaultValue: '' })
   @IsString()
-  @IsOptional()
   text!: string
 
   @Field()

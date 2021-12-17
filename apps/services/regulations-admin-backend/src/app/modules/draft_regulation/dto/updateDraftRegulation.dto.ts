@@ -56,7 +56,7 @@ export class UpdateDraftRegulationDto {
   @IsOptional()
   @IsArray()
   @ApiProperty()
-  readonly authors?: string[]
+  authors?: string[]
 
   @IsOptional()
   @IsArray()

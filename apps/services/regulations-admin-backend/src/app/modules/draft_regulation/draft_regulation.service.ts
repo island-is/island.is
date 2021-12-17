@@ -81,21 +81,28 @@ export class DraftRegulationService {
   }
 
   create(
-    draftRegulationToCreate: CreateDraftRegulationDto,
+    create: CreateDraftRegulationDto,
+    nationalId: string,
   ): Promise<DraftRegulation> {
     this.logger.debug('Creating a new DraftRegulation')
 
-    return this.draftRegulationModel.create(draftRegulationToCreate)
+    create.authors = [nationalId]
+    return this.draftRegulationModel.create(create)
   }
 
   async update(
     id: string,
     update: UpdateDraftRegulationDto,
+    nationalId: string,
   ): Promise<{
     numberOfAffectedRows: number
     updatedDraftRegulation: DraftRegulation
   }> {
     this.logger.debug(`Updating DraftRegulation ${id}`)
+
+    if (update.authors && !update.authors.includes(nationalId)) {
+      update.authors.push(nationalId)
+    }
 
     const [
       numberOfAffectedRows,

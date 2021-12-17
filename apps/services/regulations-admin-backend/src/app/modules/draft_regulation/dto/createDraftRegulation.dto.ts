@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsBoolean,
   IsDate,
   IsOptional,
@@ -22,15 +23,13 @@ export class CreateDraftRegulationDto {
   @ApiProperty()
   readonly name?: string
 
-  @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly title?: string
+  readonly title!: string
 
-  @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly text?: string
+  readonly text!: string
 
   @IsOptional()
   @IsString()
@@ -56,6 +55,11 @@ export class CreateDraftRegulationDto {
   @IsString()
   @ApiProperty()
   readonly effective_date?: string
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty()
+  authors?: string[]
 
   @IsOptional()
   @IsString()

@@ -57,7 +57,10 @@ export class DraftRegulationController {
     draftRegulationToCreate: CreateDraftRegulationDto,
     @CurrentUser() user: User,
   ): Promise<DraftRegulation> {
-    return await this.draftRegulationService.create(draftRegulationToCreate)
+    return await this.draftRegulationService.create(
+      draftRegulationToCreate,
+      user.nationalId,
+    )
   }
 
   @Scopes('@island.is/regulations:create')
@@ -77,7 +80,11 @@ export class DraftRegulationController {
     const {
       numberOfAffectedRows,
       updatedDraftRegulation,
-    } = await this.draftRegulationService.update(id, draftRegulationToUpdate)
+    } = await this.draftRegulationService.update(
+      id,
+      draftRegulationToUpdate,
+      user.nationalId,
+    )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`DraftRegulation ${id} does not exist`)
