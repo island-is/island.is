@@ -14,6 +14,7 @@ import {
   hasReceivedPoliceReportOrAddedToAnswers,
   hasReceivedProxyDocumentOrAddedToAnswers,
   isFatalAccident,
+  isPowerOfAttorney,
   isReportingOnBehalfOfInjured,
   isUniqueAssignee,
 } from '../../utils'
@@ -54,6 +55,7 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             space: 5,
             titleVariant: 'h5',
             condition: (formValue) =>
+              isPowerOfAttorney(formValue) &&
               !isUniqueAssignee(formValue, !!isAssignee) &&
               isReportingOnBehalfOfInjured(formValue) &&
               !hasReceivedProxyDocumentOrAddedToAnswers(formValue),
@@ -63,6 +65,7 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             component: 'ProxyDocument',
             title: '',
             condition: (formValue) =>
+              isPowerOfAttorney(formValue) &&
               !isUniqueAssignee(formValue, !!isAssignee) &&
               isReportingOnBehalfOfInjured(formValue) &&
               !hasReceivedProxyDocumentOrAddedToAnswers(formValue),
@@ -75,6 +78,7 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             uploadDescription: addDocuments.general.uploadDescription,
             uploadButtonLabel: addDocuments.general.uploadButtonLabel,
             condition: (formValue) =>
+              isPowerOfAttorney(formValue) &&
               !isUniqueAssignee(formValue, !!isAssignee) &&
               isReportingOnBehalfOfInjured(formValue) &&
               !hasReceivedProxyDocumentOrAddedToAnswers(formValue),
@@ -122,6 +126,17 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             uploadHeader: addDocuments.general.uploadHeader,
             uploadDescription: addDocuments.general.uploadDescription,
             uploadButtonLabel: addDocuments.general.uploadButtonLabel,
+            condition: (formValue) =>
+              !isUniqueAssignee(formValue, !!isAssignee),
+          }),
+          buildFileUploadField({
+            id: 'attachments.additionalFilesFromReviewer.file',
+            title: '',
+            uploadAccept: UPLOAD_ACCEPT,
+            uploadHeader: addDocuments.general.uploadHeader,
+            uploadDescription: addDocuments.general.uploadDescription,
+            uploadButtonLabel: addDocuments.general.uploadButtonLabel,
+            condition: (formValue) => isUniqueAssignee(formValue, !!isAssignee),
           }),
           buildSubmitField({
             id: 'overview.submit',

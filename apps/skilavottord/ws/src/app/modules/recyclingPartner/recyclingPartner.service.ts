@@ -1,70 +1,53 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-
 import { RecyclingPartnerModel } from './recyclingPartner.model'
+import {
+  CreateRecyclingPartnerInput,
+  UpdateRecyclingPartnerInput,
+} from './recyclingPartner.input'
 
 @Injectable()
 export class RecyclingPartnerService {
   constructor(
     @InjectModel(RecyclingPartnerModel)
     private recyclingPartnerModel: typeof RecyclingPartnerModel,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
   ) {}
 
-  async findByPartnerId(companyId: string): Promise<RecyclingPartnerModel> {
-    this.logger.info(`Finding recyclingPartner by companyId - "${companyId}"`)
-    try {
-      return await this.recyclingPartnerModel.findOne({
-        where: { companyId },
-      })
-    } catch (error) {
-      this.logger.error('error findByPartnerId:' + error)
-    }
-  }
-
   async findAll(): Promise<RecyclingPartnerModel[]> {
-    this.logger.info('find all recyclingPartners...')
-    try {
-      const res = await this.recyclingPartnerModel.findAll()
-      this.logger.info(
-        'findAll-recyclingPartners result:' + JSON.stringify(res, null, 2),
-      )
-      return res
-    } catch (error) {
-      this.logger.error('error finding all recyclingPartners:' + error)
-    }
+    return await this.recyclingPartnerModel.findAll()
   }
 
-  async findActive(): Promise<RecyclingPartnerModel[]> {
-    this.logger.info('findActive recyclingPartner...')
-    try {
-      const res = await this.recyclingPartnerModel.findAll({
-        where: { active: true },
-      })
-      this.logger.info(
-        'findAll-recyclingPartners result:' + JSON.stringify(res, null, 2),
-      )
-      return res
-    } catch (error) {
-      this.logger.error('error finding active recyclingPartner:' + error)
-    }
+  async findAllActive(): Promise<RecyclingPartnerModel[]> {
+    return this.recyclingPartnerModel.findAll({
+      where: { active: true },
+    })
   }
 
-  async createRecyclingPartner(
-    recyclingPartner: RecyclingPartnerModel,
-  ): Promise<boolean> {
-    this.logger.info(
-      'Creating recyclingPartner:' + JSON.stringify(recyclingPartner, null, 2),
+  async findOne(companyId: string): Promise<RecyclingPartnerModel> {
+    return this.recyclingPartnerModel.findOne({
+      where: { companyId },
+      raw: true,
+    })
+  }
+
+  async create(
+    input: CreateRecyclingPartnerInput,
+  ): Promise<RecyclingPartnerModel> {
+    return this.recyclingPartnerModel.create(input)
+  }
+
+  async update({
+    companyId,
+    ...input
+  }: UpdateRecyclingPartnerInput): Promise<RecyclingPartnerModel> {
+    const [_, [accessControl]] = await this.recyclingPartnerModel.update(
+      input,
+      {
+        where: { companyId },
+        returning: true,
+      },
     )
-    try {
-      await recyclingPartner.save()
-      return true
-    } catch (error) {
-      this.logger.error('error creating recyclingpartner:' + error)
-    }
+    return accessControl
   }
 }

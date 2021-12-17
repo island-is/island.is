@@ -35,6 +35,8 @@ export const getAttachmentTitles = (answers: AccidentNotification) => {
     answers.attachments?.powerOfAttorneyFile?.file || undefined
   const additionalFiles =
     answers.attachments?.additionalFiles?.file || undefined
+  const additionalFilesFromReviewer =
+    answers.attachments?.additionalFilesFromReviewer?.file || undefined
 
   const files = []
 
@@ -54,7 +56,9 @@ export const getAttachmentTitles = (answers: AccidentNotification) => {
   )
     files.push(overview.labels.hospitalSendsCertificate)
   if (hasAttachment(additionalFiles))
-    files.push(attachments.documentNames.additionalDocuments)
+    files.push(attachments.documentNames.additionalDocumentsFromApplicant)
+  if (hasAttachment(additionalFilesFromReviewer))
+    files.push(attachments.documentNames.additionalDocumentsFromReviewer)
 
   return files
 }

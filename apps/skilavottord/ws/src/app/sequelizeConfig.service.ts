@@ -40,6 +40,7 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
       },
       autoLoadModels: true,
       synchronize: false,
+      logging: false,
     }
   }
 }

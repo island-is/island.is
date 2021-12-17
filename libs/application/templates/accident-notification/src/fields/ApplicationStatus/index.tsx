@@ -299,7 +299,6 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
         </Button>
       </Box>
       {isAssignee &&
-        application.state === States.IN_FINAL_REVIEW &&
         (reviewApproval === ReviewApprovalEnum.APPROVED ||
           reviewApproval === ReviewApprovalEnum.REJECTED) && (
           <Box marginTop={4}>
