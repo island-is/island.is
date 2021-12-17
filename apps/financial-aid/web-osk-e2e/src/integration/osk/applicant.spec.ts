@@ -2,12 +2,12 @@
 
 describe('applicant flow', () => {
   describe('login', () => {
-    it('should visit login page and have correct identifier', () => {
-      cy.visit('/')
-      cy.contains('Samband Íslenskra Sveitarfélaga - Fjárhagsaðstoð')
-      cy.url().should('include', '@samband.is')
-    })
-  })
+  //   it('should visit login page and have correct identifier', () => {
+  //     cy.visit('/')
+  //     cy.contains('Samband Íslenskra Sveitarfélaga - Fjárhagsaðstoð')
+  //     cy.url().should('include', '@samband.is')
+  //   })
+  // })
 
   describe('application', () => {
     describe('/umsokn', () => {
