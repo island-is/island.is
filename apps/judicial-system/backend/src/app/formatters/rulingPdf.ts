@@ -748,3 +748,24 @@ export async function getRulingPdfAsString(
 
   return pdf
 }
+
+export async function getRulingPdfAsBuffer(
+  existingCase: Case,
+  formatMessage: FormatMessage,
+  shortVersion: boolean,
+): Promise<Buffer> {
+  const stream = constructRulingPdf(existingCase, formatMessage, shortVersion)
+
+  // wait for the writing to finish
+  const pdf = await new Promise<Buffer>(function (resolve) {
+    stream.on('finish', () => {
+      resolve(stream.getContents() as Buffer)
+    })
+  })
+
+  if (!environment.production) {
+    writeFile(`${existingCase.id}-ruling.pdf`, pdf)
+  }
+
+  return pdf
+}
