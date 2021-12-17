@@ -649,13 +649,13 @@
     "services-endorsements-api": {
       "tags": []
     },
-    "services-user-notification": {
-      "tags": []
-    },
     "services-personal-representative": {
       "tags": []
     },
     "services-search-indexer": {
+      "tags": []
+    },
+    "services-user-notification": {
       "tags": []
     },
     "services-user-profile": {
