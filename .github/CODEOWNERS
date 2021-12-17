@@ -169,3 +169,4 @@ infra/                                                                          
 /libs/auth-nest-tools/                                                                        @island-is/fuglar @island-is/aranja-core
 
 /apps/services/personal-representative/                                                       @island-is/programm
+/apps/services/personal-representative-public/                                                @island-is/programm
