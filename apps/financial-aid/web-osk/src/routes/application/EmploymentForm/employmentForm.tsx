@@ -97,15 +97,15 @@ const EmploymentForm = () => {
           </div>
         )}
 
-        {form?.employment === 'Other' && (
-          <Box
-            marginTop={1}
-            marginBottom={10}
-            className={cn({
-              [`${styles.inputContainer}`]: true,
-              [`${styles.inputAppear}`]: form?.employment === 'Other',
-            })}
-          >
+        <Box
+          marginTop={1}
+          marginBottom={10}
+          className={cn({
+            [`${styles.inputContainer}`]: true,
+            [`${styles.inputAppear}`]: form?.employment === 'Other',
+          })}
+        >
+          {form?.employment === 'Other' && (
             <Input
               backgroundColor={'blue'}
               label="Lýstu þinni stöðu"
@@ -119,8 +119,8 @@ const EmploymentForm = () => {
                 updateForm({ ...form, employmentCustom: event.target.value })
               }}
             />
-          </Box>
-        )}
+          )}
+        </Box>
       </ContentContainer>
 
       <Footer
