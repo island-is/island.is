@@ -227,7 +227,7 @@ export const validateAndSendTimeToServer = (
 
 export const setAndSendToServer = (
   field: string,
-  value: string | boolean | null,
+  value: string | boolean | undefined,
   theCase: Case,
   setCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
