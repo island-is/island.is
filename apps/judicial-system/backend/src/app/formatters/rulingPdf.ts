@@ -639,13 +639,10 @@ function constructInvestigationRulingPdf(
     })
     .text(' ')
     .font('Times-Roman')
-
-  if (existingCase.sessionArrangements !== SessionArrangements.REMOTE_SESSION) {
-    doc.text(' ').text(formatMessage(ruling.rulingTextIntro), {
+    .text(formatMessage(ruling.rulingTextIntro), {
       align: 'justify',
       paragraphGap: 1,
     })
-  }
 
   if (existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
     doc.text(' ').text(formatMessage(ruling.appealDirections), {
@@ -688,10 +685,7 @@ function constructInvestigationRulingPdf(
     doc.text(' ').text(accusedAppeal, { align: 'justify', paragraphGap: 1 })
   }
 
-  if (
-    existingCase.registrar &&
-    existingCase.sessionArrangements !== SessionArrangements.REMOTE_SESSION
-  ) {
+  if (existingCase.registrar) {
     doc.text(' ').text(
       formatMessage(ruling.registrarWitness, {
         registrarNameAndTitle: `${existingCase.registrar.name} ${existingCase.registrar.title}`,
