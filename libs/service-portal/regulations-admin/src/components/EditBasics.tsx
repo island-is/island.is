@@ -38,7 +38,7 @@ export const EditBasics: StepComponent = (props) => {
           <AccordionItem
             id={draft.id}
             label={t(msg.text)}
-            // startExpanded={!draft.text.value || !!draft.text.error}
+            startExpanded={!draft.text.value || !!draft.text.error}
           >
             <Box marginBottom={3}>
               <EditorInput
