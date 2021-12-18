@@ -42,13 +42,9 @@ const api_resource_scope_tmp = {
   is_access_controlled: false,
 }
 
-const api_scopes = [skra_is_individuals_scope, api_resource_scope_tmp]
+const api_scopes = [api_resource_scope_tmp]
 
 const api_resource_scopes = [
-  {
-    api_resource_name: skra_is_resource.name,
-    scope_name: skra_is_individuals_scope.name,
-  },
   {
     api_resource_name: skra_is_resource.name,
     scope_name: api_resource_scope_tmp.name,

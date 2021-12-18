@@ -10,30 +10,283 @@ const api_resource = {
 
 const api_resources = [api_resource]
 
-const api_scope = {
-  enabled: true,
-  name: '@island.is/applications:read',
-  display_name: 'Read applications',
-  description: null,
-  show_in_discovery_document: false,
-  required: false,
-  emphasize: false,
-  grant_to_legal_guardians: true,
-  grant_to_procuring_holders: true,
-  allow_explicit_delegation_grant: true,
-  also_for_delegated_user: false,
-  automatic_delegation_grant: false,
-  is_access_controlled: false,
-}
-
-const api_scopes = [api_scope]
-
-const api_resource_scopes = [
+const api_scopes = [
   {
-    api_resource_name: api_resource.name,
-    scope_name: api_scope.name,
+    enabled: true,
+    name: 'api_resource.scope',
+    display_name: 'Tmp',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
+  },
+  {
+    enabled: true,
+    name: '@island.is/applications:read',
+    display_name: 'Read applications',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
+  },
+  {
+    enabled: true,
+    name: '@island.is/user-profile:read',
+    display_name: 'Read user profile',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
+  },
+  {
+    enabled: true,
+    name: '@island.is/user-profile:write',
+    display_name: 'Write user profile',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
+  },
+  {
+    enabled: true,
+    name: '@island.is/auth/actor-delegations',
+    display_name: 'Actor delegations',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
+  },
+  {
+    enabled: true,
+    name: '@island.is/auth/delegations:read',
+    display_name: 'Read delegations',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
+  },
+  {
+    enabled: true,
+    name: '@island.is/auth/delegations:write',
+    display_name: 'Write delegations',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
+  },
+  {
+    enabled: true,
+    name: '@skra.is/individuals',
+    display_name: 'Skra individuals',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
+  },
+  {
+    enabled: true,
+    name: '@skra.is/properties',
+    display_name: 'Skra properties',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
+  },
+  {
+    enabled: true,
+    name: '@island.is/documents',
+    display_name: 'Documents',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
+  },
+  {
+    enabled: true,
+    name: '@island.is/endorsements',
+    display_name: 'Endorsments',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
+  },
+  {
+    enabled: true,
+    name: '@island.is/endorsements:admin',
+    display_name: 'Endorsments admin',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: true,
+  },
+  {
+    enabled: true,
+    name: '@island.is/assets',
+    display_name: 'assets',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
+  },
+  {
+    enabled: true,
+    name: '@island.is/education',
+    display_name: 'education',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
+  },
+  {
+    enabled: true,
+    name: '@island.is/finance:overview',
+    display_name: 'finance:overview',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
+  },
+  {
+    enabled: true,
+    name: '@island.is/finance/salary',
+    display_name: 'finance/salary',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
+  },
+  {
+    enabled: true,
+    name: '@island.is/internal',
+    display_name: 'internal',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
+  },
+  {
+    enabled: true,
+    name: '@island.is/me:details',
+    display_name: 'me:details',
+    description: null,
+    show_in_discovery_document: false,
+    required: false,
+    emphasize: false,
+    grant_to_legal_guardians: true,
+    grant_to_procuring_holders: false,
+    allow_explicit_delegation_grant: true,
+    also_for_delegated_user: false,
+    automatic_delegation_grant: false,
+    is_access_controlled: false,
   },
 ]
+
+const api_resource_scopes = api_scopes.map((s) => ({
+  api_resource_name: api_resource.name,
+  scope_name: s.name,
+}))
 
 const api_resource_user_claims = [
   {
@@ -78,25 +331,23 @@ const client = {
   supports_delegation: true,
   supports_legal_guardians: true,
   supports_procuring_holders: true,
-  prompt_delegations: true,
+  prompt_delegations: false,
 }
 
 const clients = [client]
 
-const client_allowed_scopes = [
-  {
-    client_id: client.client_id,
-    scope_name: 'openid',
-  },
-  {
-    client_id: client.client_id,
-    scope_name: 'profile',
-  },
-  {
-    client_id: client.client_id,
-    scope_name: api_scope.name,
-  },
-]
+const client_allowed_scopes = api_scopes.map((s) => ({
+  client_id: client.client_id,
+  scope_name: s.name,
+}))
+client_allowed_scopes.push({
+  client_id: client.client_id,
+  scope_name: 'openid',
+})
+client_allowed_scopes.push({
+  client_id: client.client_id,
+  scope_name: 'profile',
+})
 
 const client_grant_types = [
   {
@@ -108,7 +359,7 @@ const client_grant_types = [
 const client_redirect_uris = [
   {
     client_id: client.client_id,
-    redirect_uri: 'http://localhost:4200/api/auth/callback/identity-server',
+    redirect_uri: 'http://localhost:4200/minarsidur/signin-oidc',
   },
   {
     client_id: client.client_id,
@@ -137,12 +388,10 @@ const client_post_logout_redirect_uris = [
   },
 ]
 
-const client_secrets = [
+const client_allowed_cors_origins = [
   {
     client_id: client.client_id,
-    value: 'P+W04fL1Bwpc5+FwAd1LmhC02J8XvapBI1dHQcLih/E=',
-    expiration: null,
-    type: 'SharedSecret',
+    origin: 'http://localhost:4200',
   },
 ]
 
@@ -167,9 +416,6 @@ module.exports = {
       )
 
       await queryInterface.bulkInsert('client', clients, { transaction })
-      await queryInterface.bulkInsert('client_secret', client_secrets, {
-        transaction,
-      })
       await queryInterface.bulkInsert('client_grant_type', client_grant_types, {
         transaction,
       })
@@ -188,8 +434,14 @@ module.exports = {
         client_post_logout_redirect_uris,
         { transaction },
       )
+      await queryInterface.bulkInsert(
+        'client_allowed_cors_origin',
+        client_allowed_cors_origins,
+        { transaction },
+      )
     } catch (err) {
       await transaction.rollback()
+      console.log(err)
       throw err
     }
 

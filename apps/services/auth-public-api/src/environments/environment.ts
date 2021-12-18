@@ -6,7 +6,7 @@ const devConfig = {
     defaultNamespace: '@island.is/auth-public-api',
   },
   auth: {
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer: 'https://localhost:6001',
     audience: '@island.is',
   },
   port: 3370,

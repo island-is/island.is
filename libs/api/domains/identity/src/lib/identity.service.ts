@@ -18,23 +18,33 @@ export class IdentityService {
       return null
     }
 
-    const person = await this.nationalRegistryXRoadService.getNationalRegistryPerson(
-      user,
-      nationalId,
-    )
+    // const person = await this.nationalRegistryXRoadService.getNationalRegistryPerson(
+    //   user,
+    //   nationalId,
+    // )
 
-    if (!person) {
-      return null
-    }
+    // if (!person) {
+    //   return null
+    // }
 
+    // return {
+    //   nationalId: person.nationalId,
+    //   name: person.fullName,
+    //   address: person.address && {
+    //     streetAddress: person.address.streetName,
+    //     postalCode: person.address.postalCode,
+    //     city: person.address.city,
+    //   },
+    //   type: IdentityType.Person,
+    // } as Identity
     return {
-      nationalId: person.nationalId,
-      name: person.fullName,
-      address: person.address && {
-        streetAddress: person.address.streetName,
-        postalCode: person.address.postalCode,
-        city: person.address.city,
-      },
+      nationalId,
+      name: 'ble',
+      // address: person.address && {
+      //   streetAddress: person.address.streetName,
+      //   postalCode: person.address.postalCode,
+      //   city: person.address.city,
+      // },
       type: IdentityType.Person,
     } as Identity
   }

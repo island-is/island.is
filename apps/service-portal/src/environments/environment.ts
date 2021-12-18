@@ -3,7 +3,7 @@ import { getStaticEnv } from '@island.is/shared/utils'
 const devConfig = {
   production: false,
   identityServer: {
-    authority: 'https://identity-server.dev01.devland.is',
+    authority: 'https://localhost:6001',
   },
   sentry: {
     dsn:

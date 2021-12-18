@@ -5,7 +5,7 @@ const devConfig = {
   },
   auth: {
     audience: '@island.is/auth/admin',
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer: 'https://localhost:6001',
   },
 }
 
