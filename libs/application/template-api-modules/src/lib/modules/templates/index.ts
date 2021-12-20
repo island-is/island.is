@@ -46,4 +46,4 @@ export { AccidentNotificationService } from './accident-notification/accident-no
 export { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
 export { GeneralPetitionService } from './general-petition/general-petition.service'
 export { CriminalRecordSubmissionService } from './criminal-record-submission/criminal-record-submission.service'
-export { DataProtectionComplaintModule } from './data-protection-complaint/data-protection-complaint.module'
+export { DataProtectionComplaintService } from './data-protection-complaint/data-protection-complaint.service'
