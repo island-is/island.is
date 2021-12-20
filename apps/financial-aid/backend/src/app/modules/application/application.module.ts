@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { ApplicationModel } from './models'
@@ -16,9 +16,9 @@ import { AmountModule } from '../amount'
   imports: [
     FileModule,
     EmailModule.register(environment.emailOptions),
-    ApplicationEventModule,
     SequelizeModule.forFeature([ApplicationModel]),
     StaffModule,
+    ApplicationEventModule,
     MunicipalityModule,
     AmountModule,
   ],

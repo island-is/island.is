@@ -56,17 +56,18 @@ describe('StaffController - Gets staff for municipality guard', () => {
   it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
+
+  // const {  staffService } = await createTestingStaffModule()
+
   // describe('StaffGuard', () => {
   //   let guard: CanActivate
 
-  //   beforeEach(async () => {
-  //     const { staffService } = await createTestingStaffModule()
-  //     console.log(new StaffGuard(staffService))
+  //   beforeEach(() => {
   //     guard = new guards[0]()
   //   })
 
   //   it('should have StaffGuard as quard 1', () => {
-  //     // expect(guard).toBeInstanceOf(StaffGuard(staffService))
+  //     expect(guard).toBeInstanceOf(StaffGuard)
   //   })
   // })
 })
