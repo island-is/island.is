@@ -16,6 +16,14 @@ const {
 
 module.exports = withVanillaExtract(
   withHealthcheckConfig({
+    async rewrites() {
+      return [
+        {
+          source: '/umsoknir/:slug',
+          destination: 'https://island.is/umsoknir/:slug',
+        },
+      ]
+    },
     webpack: (config, { isServer }) => {
       if (!isServer) {
         config.resolve.alias['@sentry/node'] = '@sentry/browser'

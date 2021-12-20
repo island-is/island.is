@@ -91,6 +91,9 @@
     "api-domains-content-search": {
       "tags": []
     },
+    "api-domains-criminal-record": {
+      "tags": []
+    },
     "api-domains-directorate-of-labour": {
       "tags": []
     },
@@ -136,9 +139,6 @@
     "api-domains-national-registry-x-road": {
       "tags": []
     },
-    "api-domains-party-letter-registry": {
-      "tags": []
-    },
     "api-domains-payment": {
       "tags": []
     },
@@ -152,9 +152,6 @@
       "tags": []
     },
     "api-domains-syslumenn": {
-      "tags": []
-    },
-    "api-domains-temporary-voter-registry": {
       "tags": []
     },
     "api-domains-user-profile": {
@@ -200,6 +197,9 @@
     "application-templates-complaints-to-althingi-ombudsman": {
       "tags": []
     },
+    "application-templates-criminal-record": {
+      "tags": []
+    },
     "application-templates-data-protection-complaint": {
       "tags": []
     },
@@ -207,9 +207,6 @@
       "tags": []
     },
     "application-templates-driving-assessment-approval": {
-      "tags": []
-    },
-    "application-templates-driving-lessons": {
       "tags": []
     },
     "application-templates-driving-license": {
@@ -240,12 +237,6 @@
       "tags": []
     },
     "application-templates-parental-leave": {
-      "tags": []
-    },
-    "application-templates-party-application": {
-      "tags": []
-    },
-    "application-templates-party-letter": {
       "tags": []
     },
     "application-templates-passport": {
@@ -297,6 +288,9 @@
     "clients-auth-public-api": {
       "tags": [],
       "implicitDependencies": ["services-auth-public-api"]
+    },
+    "clients-criminal-record": {
+      "tags": []
     },
     "clients-document-provider": {
       "tags": []
@@ -405,6 +399,10 @@
     },
     "financial-aid-web-osk": {
       "tags": []
+    },
+    "financial-aid-web-osk-e2e": {
+      "tags": [],
+      "implicitDependencies": ["financial-aid-web-osk"]
     },
     "financial-aid-web-veita": {
       "tags": []
@@ -664,16 +662,10 @@
     "services-notifications": {
       "tags": []
     },
-    "services-party-letter-registry-api": {
-      "tags": []
-    },
     "services-personal-representative": {
       "tags": []
     },
     "services-search-indexer": {
-      "tags": []
-    },
-    "services-temporary-voter-registry-api": {
       "tags": []
     },
     "services-user-profile": {
