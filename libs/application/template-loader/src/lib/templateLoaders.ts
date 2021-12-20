@@ -31,14 +31,14 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/public-debt-payment-plan'),
   [ApplicationTypes.JOINT_CUSTODY_AGREEMENT]: () =>
     import('@island.is/application/templates/joint-custody-agreement'),
-  [ApplicationTypes.PAYABLE_DUMMY_TEMPLATE]: () =>
-    import('@island.is/application/templates/payable-dummy-template'),
   [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]: () =>
     import('@island.is/application/templates/complaints-to-althingi-ombudsman'),
   [ApplicationTypes.ACCIDENT_NOTIFICATION]: () =>
     import('@island.is/application/templates/accident-notification'),
   [ApplicationTypes.GENERAL_PETITION]: () =>
     import('@island.is/application/templates/general-petition'),
+  [ApplicationTypes.CRIMINAL_RECORD]: () =>
+    import('@island.is/application/templates/criminal-record'),
 }
 
 export default templates

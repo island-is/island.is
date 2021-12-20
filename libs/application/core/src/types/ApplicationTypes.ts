@@ -14,10 +14,10 @@ export enum ApplicationTypes {
   FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
   PUBLIC_DEBT_PAYMENT_PLAN = 'PublicDebtPaymentPlan',
   JOINT_CUSTODY_AGREEMENT = 'JointCustodyAgreement',
-  PAYABLE_DUMMY_TEMPLATE = 'PayableDummyTemplate',
   COMPLAINTS_TO_ALTHINGI_OMBUDSMAN = 'ComplaintsToAlthingiOmbudsman',
   ACCIDENT_NOTIFICATION = 'AccidentNotification',
   GENERAL_PETITION = 'GeneralPetitionService',
+  CRIMINAL_RECORD = 'CriminalRecord',
 }
 
 export const ApplicationConfigurations = {
@@ -81,10 +81,6 @@ export const ApplicationConfigurations = {
     slug: 'forsja-barns',
     translation: 'jca.application',
   },
-  [ApplicationTypes.PAYABLE_DUMMY_TEMPLATE]: {
-    slug: 'borga',
-    translation: 'pay.application',
-  },
   [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]: {
     slug: 'kvortun-til-umbodsmanns-althingis',
     translation: 'ctao.application',
@@ -96,5 +92,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.GENERAL_PETITION]: {
     slug: 'medmaelendalisti',
     translation: 'gpt.application',
+  },
+  [ApplicationTypes.CRIMINAL_RECORD]: {
+    slug: 'sakavottord',
+    translation: 'cr.application',
   },
 }
