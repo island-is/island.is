@@ -30,6 +30,7 @@ const SpouseInfo = ({
         <Input
           label="Kennitala maka"
           name="nationalIdSpouse"
+          data-testid="nationalIdSpouse"
           placeholder="Sláðu inn kennitölu maka"
           backgroundColor="blue"
           hasError={
@@ -63,7 +64,7 @@ const SpouseInfo = ({
         removeError={removeError}
       />
 
-      <Box>
+      <Box data-testid="acceptSpouseTerms">
         <Checkbox
           name={'accept'}
           id="accept"
