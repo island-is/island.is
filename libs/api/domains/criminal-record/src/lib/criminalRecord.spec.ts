@@ -18,9 +18,10 @@ describe('CriminalRecordService', () => {
     const module = await Test.createTestingModule({
       imports: [
         CriminalRecordApiModule.register({
-          xroadBaseUrl: 'http://localhost:8081',
+          xroadBaseUrl: 'http://localhost',
           xroadClientId: '',
-          xroadPath: 'v2',
+          xroadPath:
+            'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
           fetchOptions: {
             logger: createLogger({
               silent: true,
