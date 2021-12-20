@@ -44,26 +44,19 @@ export const UserAvatar = ({
     alignItems="center"
     flexShrink={0}
     flexGrow={0}
-    background={
-      isDelegation
-        ? color === 'blue'
-          ? 'blue400'
-          : 'purple400'
-        : color === 'blue'
-        ? 'blue100'
-        : 'purple100'
-    }
     borderRadius="circle"
-    className={[styles.avatarSize[size], styles.avatarColor[color]]}
+    className={[
+      styles.avatarSize[size],
+      styles.avatarColor[isDelegation ? 'isDelegation' : color],
+    ]}
     onClick={onClick}
     aria-label={ariaLabel}
   >
     <p
       className={cn(
         styles.initials,
-        isDelegation && styles.initialsDelegation,
         styles.initialsSize[size],
-        styles.avatarColor[color],
+        styles.avatarColor[isDelegation ? 'isDelegation' : color],
       )}
       aria-hidden
     >

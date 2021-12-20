@@ -18,6 +18,10 @@ export const avatarSize = styleVariants({
 })
 
 export const avatarColor = styleVariants({
+  isDelegation: {
+    backgroundColor: theme.color.blue400,
+    color: theme.color.white,
+  },
   blue: {
     backgroundColor: theme.color.blue100,
     color: theme.color.blue400,
@@ -34,10 +38,6 @@ export const avatarColor = styleVariants({
 
 export const initials = style({
   fontWeight: 600,
-})
-
-export const initialsDelegation = style({
-  color: theme.color.white,
 })
 
 export const initialsSize = styleVariants({
