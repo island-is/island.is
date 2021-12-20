@@ -73,7 +73,7 @@ export const getApplication = (): Form => {
               }),
               buildDataProviderItem({
                 id: 'jurisdictions',
-                type: 'JurisdictionProvider',
+                type: 'JuristictionProvider',
                 title: '',
                 subTitle: '',
               }),

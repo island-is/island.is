@@ -1,4 +1,4 @@
 export { NationalRegistryProvider } from '@island.is/application/data-providers'
 export { UserProfileProvider } from '@island.is/application/data-providers'
-export { QualityPhotoProvider } from './QualityPhotoProvider'
-export { JurisdictionProvider } from './JurisdictionProvider'
+export { QualityPhotoProvider } from '@island.is/application/data-providers'
+export { JuristictionProvider } from '@island.is/application/data-providers'
