@@ -18,6 +18,9 @@ export const EditBasics: StepComponent = (props) => {
     [] as readonly AppendixStateItem[],
   )
 
+  const startTextExpanded =
+    !draft.text.value || appendixes.length === 0 || !!draft.text.error
+
   return (
     <>
       <Box marginBottom={3}>
@@ -38,11 +41,12 @@ export const EditBasics: StepComponent = (props) => {
           <AccordionItem
             id={draft.id}
             label={t(msg.text)}
-            startExpanded={!draft.text.value || !!draft.text.error}
+            startExpanded={startTextExpanded}
           >
             <Box marginBottom={3}>
               <EditorInput
                 label={t(msg.text)}
+                hiddenLabel
                 isImpact={false}
                 draftId={draft.id}
                 valueRef={textRef}
