@@ -81,12 +81,12 @@ export class StaffService {
   ) {
     const contact = {
       from: {
-        name: user.name,
-        address: user.email,
+        name: 'Samband íslenskra sveitarfélaga',
+        address: environment.emailOptions.fromEmail,
       },
       replyTo: {
-        name: user.name,
-        address: user.email,
+        name: 'Samband íslenskra sveitarfélaga',
+        address: environment.emailOptions.replyToEmail,
       },
       to: input.email,
     }
