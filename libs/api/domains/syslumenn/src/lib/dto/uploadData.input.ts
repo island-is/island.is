@@ -39,32 +39,6 @@ export class Attachment {
   content!: string
 }
 
-@InputType()
-export class ExtraData {
-  @Field()
-  name!: string
-
-  @Field()
-  content!: string
-}
-@InputType()
-export class UploadDataInput {
-  @Field(() => [Person])
-  persons!: Person[]
-
-  @Field(() => Attachment)
-  attachment!: Attachment
-
-  @Field()
-  uploadDataName!: string
-
-  @Field()
-  uploadDataId?: string
-
-  @Field(() => ExtraData)
-  extraData?: ExtraData
-}
-
 export enum PersonType {
   Plaintiff,
   CounterParty,

@@ -14,13 +14,11 @@ import {
 import {
   SyslumennApi,
   SyslumennApiConfig,
-  VirkarHeimagistingar,
   Uppbod,
   VirkLeyfi,
   VottordSkeyti,
   Skilabod,
   SvarSkeyti,
-  EmbaettiOgStarfsstodvar,
 } from '@island.is/clients/syslumenn'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
@@ -60,11 +58,11 @@ export class SyslumennService {
   }
 
   syslumennApiWithAuth() {
-    const auth = {
+    const auth: Auth = {
       scope: [],
       authorization: `Bearer ${this.accessToken}`,
       client: 'client-syslumenn',
-    } as Auth
+    }
 
     return this.syslumennApi.withMiddleware(new AuthMiddleware(auth))
   }
@@ -81,7 +79,7 @@ export class SyslumennService {
           audkenni: this.id,
         })
 
-    return ((homestays as VirkarHeimagistingar[]) ?? []).map(mapHomestay)
+    return (homestays ?? []).map(mapHomestay)
   }
 
   async getSyslumennAuctions(): Promise<SyslumennAuction[]> {
