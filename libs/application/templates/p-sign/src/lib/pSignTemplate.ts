@@ -9,6 +9,7 @@ import {
 } from '@island.is/application/core'
 import { ApiModuleActions, Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
+import { m } from '../lib/messages'
 
 const PSignTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -26,7 +27,7 @@ const PSignTemplate: ApplicationTemplate<
         meta: {
           name: 'Draft',
           actionCard: {
-            title: 'Umsókn um P-Merki',
+            title: m.applicationTitle,
           },
           progress: 0.33,
           lifecycle: DefaultStateLifeCycle,
@@ -55,11 +56,6 @@ const PSignTemplate: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.createPSignApplication,
-            shouldPersistToExternalData: true,
-            throwOnError: true,
-          },
           roles: [
             {
               id: 'applicant',

@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  applicationTitle: {
+    id: 'dl.application:applicationTitle',
+    defaultMessage: 'Umsókn um P-Merki',
+    description: 'Application for P-Sign',
+  },
   /* Data Collection Section */
   dataCollectionTitle: {
     id: 'dl.application:applicationDataCollectionTitle',

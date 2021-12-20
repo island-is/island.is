@@ -18,7 +18,7 @@ import {
   buildKeyValueField,
   buildSubmitField,
 } from '@island.is/application/core'
-import { User } from '@island.is/api/domains/national-registry'
+import type { User } from '@island.is/api/domains/national-registry'
 import { format } from 'kennitala'
 import { QualityPhotoData } from '../types'
 import {
@@ -261,6 +261,7 @@ export const getApplication = (): Form => {
                   { value: 'sendHome', label: m.deliveryMethodHomeDelivery },
                   { value: 'pickUp', label: m.deliveryMethodPickUp },
                 ],
+                defaultValue: 'sendHome'
               }),
               buildSelectField({
                 id: 'jurisdiction',

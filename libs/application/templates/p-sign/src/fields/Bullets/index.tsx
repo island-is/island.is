@@ -8,45 +8,21 @@ interface BulletsData {
   application: Application
 }
 
+const bullets = [
+  m.qualityPhotoInstructionsBulletOne,
+  m.qualityPhotoInstructionsBulletTwo,
+  m.qualityPhotoInstructionsBulletThree,
+  m.qualityPhotoInstructionsBulletFour,
+  m.qualityPhotoInstructionsBulletFive,
+]
+
 const Bullets = ({ application }: BulletsData) => {
   const { formatMessage } = useLocale()
   return (
     <BulletList>
-      <Bullet>
-        {formatText(
-          m.qualityPhotoInstructionsBulletOne,
-          application,
-          formatMessage,
-        )}
-      </Bullet>
-      <Bullet>
-        {formatText(
-          m.qualityPhotoInstructionsBulletTwo,
-          application,
-          formatMessage,
-        )}
-      </Bullet>
-      <Bullet>
-        {formatText(
-          m.qualityPhotoInstructionsBulletThree,
-          application,
-          formatMessage,
-        )}
-      </Bullet>
-      <Bullet>
-        {formatText(
-          m.qualityPhotoInstructionsBulletFour,
-          application,
-          formatMessage,
-        )}
-      </Bullet>
-      <Bullet>
-        {formatText(
-          m.qualityPhotoInstructionsBulletFive,
-          application,
-          formatMessage,
-        )}
-      </Bullet>
+      {bullets.map((bullet) => (
+        <Bullet>{formatText(bullet, application, formatMessage)}</Bullet>
+      ))}
     </BulletList>
   )
 }
