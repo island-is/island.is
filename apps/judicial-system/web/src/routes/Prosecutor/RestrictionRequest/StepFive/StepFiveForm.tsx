@@ -56,15 +56,15 @@ export const StepFiveForm: React.FC<Props> = (props) => {
   const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const {
-    files,
     uploadErrorMessage,
     allFilesUploaded,
     uploadPoliceCaseFile,
     addFileToCase,
-    onChange,
     onRemove,
     onRetry,
-  } = useS3Upload(workingCase, setWorkingCase)
+    onChange,
+    files,
+  } = useS3Upload(workingCase)
   const { updateCase } = useCase()
 
   useEffect(() => {

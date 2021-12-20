@@ -15,6 +15,7 @@ const SpouseEmailInput = ({ hasError, removeError }: Props) => {
       <Input
         label="Netfang maka"
         name="emailSpouse"
+        data-testid="emailSpouse"
         id="email"
         placeholder="Sláðu inn netfang maka"
         backgroundColor="blue"

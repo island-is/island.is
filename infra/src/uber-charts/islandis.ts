@@ -23,6 +23,11 @@ import { serviceSetup as downloadServiceSetup } from '../../../apps/download-ser
 import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
 import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-actions-cache/infra/github-actions-cache'
 
+import {
+  userNotificationServiceSetup,
+  userNotificationWorkerSetup,
+} from '../../../apps/services/user-notification/infra/user-notification'
+
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
 import { serviceSetup as adsWebSetup } from '../../../apps/air-discount-scheme/web/infra/web'
 import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-scheme/backend/infra/backend'
@@ -60,6 +65,9 @@ const storybook = storybookSetup({})
 const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 
 const downloadService = downloadServiceSetup()
+
+const userNotificationService = userNotificationServiceSetup()
+const userNotificationWorkerService = userNotificationWorkerSetup()
 
 const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })
@@ -108,6 +116,8 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
+    userNotificationService,
+    userNotificationWorkerService,
   ],
   dev: [
     appSystemApi,
@@ -130,6 +140,8 @@ export const Services: EnvironmentServices = {
     adsBackend,
     adsApi,
     githubActionsCache,
+    userNotificationService,
+    userNotificationWorkerService,
   ],
 }
 

@@ -27,7 +27,7 @@ const includesAttachment = (
     answers,
     'accidentStatus.receivedAttachments',
   ) as AccidentNotificationAttachmentStatus
-  return accidentNotifications[attachmentType] || false
+  return accidentNotifications?.[attachmentType] || false
 }
 
 export const hasReceivedInjuryCertificate = (answers: FormValue) => {
@@ -40,6 +40,43 @@ export const hasReceivedProxyDocument = (answers: FormValue) => {
 
 export const hasReceivedPoliceReport = (answers: FormValue) => {
   return includesAttachment(answers, 'PoliceReport')
+}
+
+export const hasReceivedInjuryCertificateOrAddedToAnswers = (
+  answers: FormValue,
+) => {
+  const injuryCertificateFile = getValueViaPath(
+    answers,
+    'attachments.injuryCertificateFile.file',
+    {},
+  ) as FileType[]
+
+  return (
+    hasReceivedInjuryCertificate(answers) ||
+    hasAttachment(injuryCertificateFile)
+  )
+}
+
+export const hasReceivedProxyDocumentOrAddedToAnswers = (
+  answers: FormValue,
+) => {
+  const powerOfAttorneyFile = getValueViaPath(
+    answers,
+    'attachments.powerOfAttorneyFile.file',
+    {},
+  ) as FileType[]
+
+  return hasReceivedProxyDocument(answers) || hasAttachment(powerOfAttorneyFile)
+}
+
+export const hasReceivedPoliceReportOrAddedToAnswers = (answers: FormValue) => {
+  const deathCertificateFile = getValueViaPath(
+    answers,
+    'attachments.deathCertificateFile.file',
+    {},
+  ) as FileType[]
+
+  return hasReceivedPoliceReport(answers) || hasAttachment(deathCertificateFile)
 }
 
 export const hasReceivedAllDocuments = (answers: FormValue) => {
@@ -78,7 +115,7 @@ export const getErrorMessageForMissingDocuments = (
   ) as YesOrNo
   const missingDocuments = []
 
-  if (!hasReceivedInjuryCertificate(answers)) {
+  if (!hasReceivedInjuryCertificateOrAddedToAnswers(answers)) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.injuryCertificate),
     )
@@ -87,7 +124,7 @@ export const getErrorMessageForMissingDocuments = (
   // Only show this to applicant or assignee that is also the applicant
   if (
     whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY &&
-    !hasReceivedProxyDocument(answers) &&
+    !hasReceivedProxyDocumentOrAddedToAnswers(answers) &&
     !isAssigneeAndUnique
   ) {
     missingDocuments.push(
@@ -95,7 +132,10 @@ export const getErrorMessageForMissingDocuments = (
     )
   }
 
-  if (wasTheAccidentFatal === YES && !hasReceivedPoliceReport(answers)) {
+  if (
+    wasTheAccidentFatal === YES &&
+    !hasReceivedPoliceReportOrAddedToAnswers(answers)
+  ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.deathCertificate),
     )
