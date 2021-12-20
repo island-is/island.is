@@ -8,13 +8,14 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
+import { MessageDescriptor } from 'react-intl'
 
 type FieldAlertMessageProps = {
   field: {
     props: {
       links: {
-        title: string
-        url: string
+        title: MessageDescriptor | string
+        url: MessageDescriptor | string
       }[]
     }
   }
@@ -45,14 +46,14 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
               <Box display="flex" flexWrap="wrap" marginTop={2}>
                 {props.links.map((link, index) => (
                   <Box component="span" marginRight={2} key={index}>
-                    <Link href={link.url}>
+                    <Link href={formatMessage(link.url)}>
                       <Button
                         variant="text"
                         icon="open"
                         iconType="outline"
                         size="small"
                       >
-                        {link.title}
+                        {formatMessage(link.title)}
                       </Button>
                     </Link>
                   </Box>
