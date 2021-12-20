@@ -8,10 +8,10 @@ interface Props {
   navChildren?: ServicePortalNavigationItem[]
   pathname?: string
   collapsed?: boolean
-  onClick?: () => void
+  onItemClick?: () => void
 }
 
-const SubNav = ({ navChildren, onClick, pathname, collapsed }: Props) => {
+const SubNav = ({ navChildren, onItemClick, pathname, collapsed }: Props) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -28,7 +28,7 @@ const SubNav = ({ navChildren, onClick, pathname, collapsed }: Props) => {
             key={`child-${index}`}
             active={child.path && pathname?.includes(child.path) ? true : false}
             external={child.external}
-            onClick={() => onClick}
+            onClick={onItemClick}
           >
             {formatMessage(child.name)}
           </SubNavItem>

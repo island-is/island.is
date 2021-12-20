@@ -68,7 +68,7 @@ const ModuleNavigation: FC<Props> = ({
           <SubNav
             collapsed
             navChildren={navChildren}
-            onClick={onItemClick}
+            onItemClick={() => onItemClick && onItemClick()}
             pathname={pathname}
           />
         </SubNavModal>
@@ -111,7 +111,7 @@ const ModuleNavigation: FC<Props> = ({
         >
           <SubNav
             navChildren={navChildren}
-            onClick={onItemClick}
+            onItemClick={() => onItemClick && onItemClick()}
             pathname={pathname}
           />
         </AnimateHeight>
