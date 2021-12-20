@@ -12,7 +12,7 @@ export const submitted = {
     descriptionBulletOne: {
       id: `ls.application:section.submitted.descriptionBulletOne`,
       defaultMessage:
-        'Við munum nú fara yfir verkefnið og við sendum á þig svör innan tíðar.',
+        'Við munum nú fara yfir umsóknina og hafa svo samband við ábyrgðaraðila í kjölfarið.',
       description: 'submitted descriptionBulletOne',
     },
     descriptionBulletTwo: {
@@ -24,7 +24,7 @@ export const submitted = {
     descriptionBulletThree: {
       id: `ls.application:section.submitted.descriptionBulletThree`,
       defaultMessage:
-        'Ef þú þarft frekari upplýsingar þá getur þú haft samband í síma {tel} eða á netfangið',
+        'Ef þú þarft frekari upplýsingar þá getur þú haft samband með tölvupósti á netfangið',
       description: 'submitted descriptionBulletThree',
     },
   }),
