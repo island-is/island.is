@@ -51,6 +51,18 @@ const ItemHeader: React.FC<{ title: StaticText; subTitle?: StaticText }> = ({
   )
 }
 
+const isTranslationObject = (reason?: StaticText) => {
+  if (typeof reason !== 'object') {
+    return false
+  }
+
+  const hasId = reason.id !== undefined
+  const hasDescription = reason.description !== undefined
+  const hasDefaultMessage = reason.defaultMessage !== undefined
+
+  return hasId && hasDescription && hasDefaultMessage
+}
+
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
   provider: DataProviderItem
@@ -74,9 +86,11 @@ const ProviderItem: FC<{
             type="error"
             title={formatMessage(coreErrorMessages.errorDataProvider)}
             message={
-              typeof dataProviderResult?.reason === 'object'
-                ? formatMessage(dataProviderResult?.reason)
-                : dataProviderResult?.reason
+              isTranslationObject(dataProviderResult?.reason)
+                ? formatMessage(dataProviderResult.reason!)
+                : typeof dataProviderResult?.reason === 'string'
+                ? typeof dataProviderResult.reason
+                : formatMessage(coreErrorMessages.failedDataProvider)
             }
           />
         </Box>
