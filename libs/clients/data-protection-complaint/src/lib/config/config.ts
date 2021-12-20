@@ -1,3 +1,4 @@
+export const CLIENT_CONFIG = 'CLIENT_CONFIG'
 export interface DataProtectionComplaintClientConfig {
   username: string
   password: string
@@ -5,5 +6,3 @@ export interface DataProtectionComplaintClientConfig {
   XRoadProviderId: string
   xRoadClientId: string
 }
-
-export const CLIENT_CONFIG = 'CLIENT_CONFIG'

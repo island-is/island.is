@@ -7,14 +7,12 @@ import {
   MemoApi,
   SecurityApi,
 } from '../gen/fetch/dev'
-import {
-  CLIENT_CONFIG,
-  DataProtectionComplaintClientConfig,
-} from './data-protection-complaint-client.config'
+
 import { logger } from '@island.is/logging'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { TokenMiddleware } from './data-protection-complaint-client.middleware'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { CLIENT_CONFIG, DataProtectionComplaintClientConfig } from './config'
 
 const useXroad = !isRunningOnEnvironment('local')
 
