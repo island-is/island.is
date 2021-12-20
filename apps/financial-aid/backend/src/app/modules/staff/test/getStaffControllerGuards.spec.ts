@@ -5,7 +5,6 @@ import { RolesGuard } from '../../../guards/roles.guard'
 import { StaffController } from '../staff.controller'
 
 describe('StaffController - Get guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -42,7 +41,6 @@ describe('StaffController - Get guards', () => {
 })
 
 describe('StaffController - Gets staff for municipality guard', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -84,7 +82,6 @@ describe('StaffController -  Counts users for municipality guard', () => {
 })
 
 describe('StaffController - creates staff guard', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -99,7 +96,6 @@ describe('StaffController - creates staff guard', () => {
 })
 
 describe('StaffController - Gets admin users by municipality id guard', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -114,7 +110,6 @@ describe('StaffController - Gets admin users by municipality id guard', () => {
 })
 
 describe('StaffController - Gets supervisors guard', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {

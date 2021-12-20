@@ -1,15 +1,10 @@
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { CanActivate, ExecutionContext } from '@nestjs/common'
-import { ApplicationGuard } from '../../../guards/application.guard'
+import { CanActivate } from '@nestjs/common'
 import { RolesGuard } from '../../../guards/roles.guard'
 
 import { ApplicationController } from '../application.controller'
-import { ApplicationModel } from '../models'
-
-import { createTestingApplicationModule } from './createTestingApplicationModule'
 
 describe('ApplicationController - guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -34,7 +29,6 @@ describe('ApplicationController - guards', () => {
 })
 
 describe('ApplicationController - Checks if user has a current application for this period guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -62,7 +56,6 @@ describe('ApplicationController - Checks if user has a current application for t
 })
 
 describe('ApplicationController - Searches for application by nationalId guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -90,7 +83,6 @@ describe('ApplicationController - Searches for application by nationalId guards'
 })
 
 describe('ApplicationController - Checking if user is spouse guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -118,7 +110,6 @@ describe('ApplicationController - Checking if user is spouse guards', () => {
 })
 
 describe('ApplicationController - Gets all existing applications guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -146,7 +137,6 @@ describe('ApplicationController - Gets all existing applications guards', () => 
 })
 
 describe('ApplicationController - Get application guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -162,7 +152,6 @@ describe('ApplicationController - Get application guards', () => {
 })
 
 describe('ApplicationController - Gets all existing applications filters guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -190,7 +179,6 @@ describe('ApplicationController - Gets all existing applications filters guards'
 })
 
 describe('ApplicationController - Updates an existing application and returns application table guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -218,7 +206,6 @@ describe('ApplicationController - Updates an existing application and returns ap
 })
 
 describe('ApplicationController - Creates a new application guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {

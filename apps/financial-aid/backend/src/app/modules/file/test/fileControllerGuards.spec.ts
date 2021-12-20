@@ -5,7 +5,6 @@ import { RolesGuard } from '../../../guards/roles.guard'
 import { FileController } from '../file.controller'
 
 describe('FileController - guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -30,7 +29,6 @@ describe('FileController - guards', () => {
 })
 
 describe('FileController - Creates a new signed url guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -58,7 +56,6 @@ describe('FileController - Creates a new signed url guards', () => {
 })
 
 describe('FileController - Creates a new signed url guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -86,7 +83,6 @@ describe('FileController - Creates a new signed url guards', () => {
 })
 
 describe('FileController - Creates a new signed url guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {

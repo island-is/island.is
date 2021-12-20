@@ -3,7 +3,6 @@ import { CanActivate } from '@nestjs/common'
 
 import { MunicipalityController } from '../municipality.controller'
 describe('MunicipalityController - Get guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -27,7 +26,6 @@ describe('MunicipalityController - Get guards', () => {
 })
 
 describe('MunicipalityController - Get Creates a new municipality guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -43,7 +41,6 @@ describe('MunicipalityController - Get Creates a new municipality guards', () =>
 })
 
 describe('MunicipalityController - Gets municipalities guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -59,7 +56,6 @@ describe('MunicipalityController - Gets municipalities guards', () => {
 })
 
 describe('MunicipalityController - Gets Updates municipality guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
@@ -75,7 +71,6 @@ describe('MunicipalityController - Gets Updates municipality guards', () => {
 })
 
 describe('MunicipalityController - Gets Updates activity for municipality guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
