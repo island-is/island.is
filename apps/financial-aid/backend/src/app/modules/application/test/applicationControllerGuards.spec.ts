@@ -1,9 +1,12 @@
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { CanActivate } from '@nestjs/common'
+import { CanActivate, ExecutionContext } from '@nestjs/common'
 import { ApplicationGuard } from '../../../guards/application.guard'
 import { RolesGuard } from '../../../guards/roles.guard'
 
 import { ApplicationController } from '../application.controller'
+import { ApplicationModel } from '../models'
+
+import { createTestingApplicationModule } from './createTestingApplicationModule'
 
 describe('ApplicationController - guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
