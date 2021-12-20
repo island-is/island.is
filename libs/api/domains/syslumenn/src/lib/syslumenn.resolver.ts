@@ -8,6 +8,7 @@ import { UploadDataInput } from './dto/uploadData.input'
 import { CertificateInfoInput } from './dto/certificateInfo.input'
 import { DataUploadResponse } from './models/dataUpload'
 import {CertificateInfoRepsonse} from './models/certificateInfo'
+import { DistrictCommissionersAgenciesRepsonse } from './models/districtCommissionersAgencies'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -53,5 +54,11 @@ export class SyslumennResolver {
     @Args('input') input: CertificateInfoInput,
   ): Promise<CertificateInfoRepsonse> {
     return this.syslumennService.getCertificateInfo(input.nationalId)
+  }
+
+  @Query(() => [DistrictCommissionersAgenciesRepsonse])
+  getSyslumennDistrictCommissionersAgencies(
+  ): Promise<DistrictCommissionersAgenciesRepsonse[]> {
+    return this.syslumennService.getDistrictCommissionersAgencies()
   }
 }

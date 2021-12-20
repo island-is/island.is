@@ -20,12 +20,14 @@ import {
   VottordSkeyti,
   Skilabod,
   SvarSkeyti,
+  EmbaettiOgStarfsstodvar,
 } from '@island.is/clients/syslumenn'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   CertificateInfoRepsonse,
   mapCertificateInfo,
 } from './models/certificateInfo'
+import { DistrictCommissionersAgenciesRepsonse, mapDistrictCommissionersAgenciesRepsonse } from './models/districtCommissionersAgencies'
 
 const SYSLUMENN_CLIENT_CONFIG = 'SYSLUMENN_CLIENT_CONFIG'
 @Injectable()
@@ -143,5 +145,12 @@ export class SyslumennService {
     )
 
     return mapCertificateInfo(certificate)
+  }
+
+
+  async getDistrictCommissionersAgencies(): Promise<DistrictCommissionersAgenciesRepsonse[]> {
+    const response = await this.syslumennApi.embaettiOgStarfsstodvarGetEmbaetti()
+    return response.map(mapDistrictCommissionersAgenciesRepsonse)
+
   }
 }

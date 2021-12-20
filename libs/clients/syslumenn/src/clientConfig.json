@@ -1207,6 +1207,9 @@
         },
         "adsetur": {
           "type": "string"
+        },
+        "starfsstodID": {
+          "type": "string"
         }
       }
     },

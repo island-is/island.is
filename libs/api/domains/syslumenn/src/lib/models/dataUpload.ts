@@ -68,4 +68,3 @@ export class DataUploadResponse {
   @Field()
   malsnumer?: string
 }
-
