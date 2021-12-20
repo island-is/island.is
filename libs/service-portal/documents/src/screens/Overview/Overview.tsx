@@ -253,7 +253,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
           <AnimateHeight duration={400} height={isDateRangeOpen ? 'auto' : 0}>
             <Box marginTop={[1, 3]}>
               <GridRow>
-                <GridColumn paddingBottom={[1, 0]} span={['1/1', '6/12']}>
+                <GridColumn paddingBottom={[1, 0]} span={['1/1', '4/8', '3/8']}>
                   <DatePicker
                     label={formatMessage({
                       id: 'sp.documents:datepicker-dateFrom-label',
@@ -270,7 +270,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     handleChange={handleDateFromInput}
                   />
                 </GridColumn>
-                <GridColumn span={['1/1', '6/12']}>
+                <GridColumn span={['1/1', '4/8', '3/8']}>
                   <DatePicker
                     label={formatMessage({
                       id: 'sp.documents:datepicker-dateTo-label',
