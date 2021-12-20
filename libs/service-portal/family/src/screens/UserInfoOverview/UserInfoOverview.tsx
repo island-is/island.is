@@ -46,7 +46,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
                 {formatMessage({
                   id: 'sp.family:user-info-description',
                   defaultMessage:
-                    'Hér eru þín gögn frá þjóðskrá. Þú hefur kost á að gera breytingar á þessum gögnum.',
+                    'Hér eru gögn um þig og fjölskyldu þína sem sótt eru til Þjóðskrár. Með því að smella á skoða nánar er hægt að óska eftir breytingum á þeim upplýsingum.',
                 })}
               </Text>
             </Stack>
