@@ -9,15 +9,13 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import { States } from '../constants'
-// import { GeneralFishingLicenseSchema } from './dataSchema'
+import { GeneralFishingLicenseSchema } from './dataSchema'
 import { application } from './messages'
 import * as z from 'zod'
 
 enum Roles {
   APPLICANT = 'applicant',
 }
-
-const GeneralFishingLicenseSchema = z.object({})
 
 type GeneralFishingLicenseEvent = { type: DefaultEvents.SUBMIT }
 
