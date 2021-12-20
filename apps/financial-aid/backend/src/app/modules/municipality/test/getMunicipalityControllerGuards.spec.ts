@@ -25,3 +25,67 @@ describe('MunicipalityController - Get guards', () => {
     })
   })
 })
+
+describe('MunicipalityController - Get Creates a new municipality guards', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let guards: any[]
+
+  beforeEach(() => {
+    guards = Reflect.getMetadata(
+      '__guards__',
+      MunicipalityController.prototype.create,
+    )
+  })
+
+  it('should have one guards', () => {
+    expect(guards).toHaveLength(1)
+  })
+})
+
+describe('MunicipalityController - Gets municipalities guards', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let guards: any[]
+
+  beforeEach(() => {
+    guards = Reflect.getMetadata(
+      '__guards__',
+      MunicipalityController.prototype.getAllMunicipalities,
+    )
+  })
+
+  it('should have one guards', () => {
+    expect(guards).toHaveLength(1)
+  })
+})
+
+describe('MunicipalityController - Gets Updates municipality guards', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let guards: any[]
+
+  beforeEach(() => {
+    guards = Reflect.getMetadata(
+      '__guards__',
+      MunicipalityController.prototype.updateMunicipality,
+    )
+  })
+
+  it('should have one guards', () => {
+    expect(guards).toHaveLength(1)
+  })
+})
+
+describe('MunicipalityController - Gets Updates activity for municipality guards', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let guards: any[]
+
+  beforeEach(() => {
+    guards = Reflect.getMetadata(
+      '__guards__',
+      MunicipalityController.prototype.updateMunicipalityActivity,
+    )
+  })
+
+  it('should have one guards', () => {
+    expect(guards).toHaveLength(1)
+  })
+})
