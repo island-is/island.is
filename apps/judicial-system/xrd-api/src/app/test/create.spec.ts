@@ -76,7 +76,6 @@ describe('AppController - Greate', () => {
     })
 
     it('should return a new case', () => {
-      console.log(then)
       expect(then.result).toEqual({ id: caseId })
     })
   })

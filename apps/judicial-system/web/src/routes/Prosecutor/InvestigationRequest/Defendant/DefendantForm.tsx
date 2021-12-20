@@ -21,6 +21,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
+import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { setAndSendToServer as setSelectAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { defendant as m } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -73,7 +74,6 @@ const DefendantForm: React.FC<Props> = (props) => {
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
   const {
-    isValid,
     setField,
     validateAndSendToServer,
     setAndSendToServer,
@@ -118,7 +118,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                       updateCase,
                     )
                   }
-                  defaultValue={
+                  value={
                     workingCase?.id
                       ? {
                           value: CaseType[workingCase.type],
@@ -148,7 +148,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                 placeholder={formatMessage(
                   m.sections.investigationType.description.placeholder,
                 )}
-                defaultValue={workingCase.description}
+                value={workingCase.description || ''}
                 autoComplete="off"
                 onChange={(event) => {
                   setField(event.target)
@@ -193,7 +193,7 @@ const DefendantForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${constants.REQUEST_LIST_ROUTE}`}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
-          nextIsDisabled={!isValid}
+          nextIsDisabled={!isDefendantStepValidIC(workingCase)}
           nextIsLoading={isLoading}
           nextButtonText={
             workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'

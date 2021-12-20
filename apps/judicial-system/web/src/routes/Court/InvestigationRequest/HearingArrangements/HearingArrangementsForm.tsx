@@ -11,6 +11,7 @@ import {
   Option,
   Input,
   RadioButton,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -36,10 +37,6 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import type { Case, User } from '@island.is/judicial-system/types'
@@ -57,21 +54,9 @@ interface Props {
 const HearingArrangementsForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, users, user } = props
   const [modalVisible, setModalVisible] = useState(false)
-  const [, setCourtDateIsValid] = useState(true)
   const { updateCase, sendNotification, isSendingNotification } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
-
-  const validations: FormSettings = {
-    judge: {
-      validations: ['empty'],
-    },
-    registrar: {
-      validations: ['empty'],
-    },
-  }
-
-  useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   const setJudge = (id: string) => {
     if (workingCase) {
@@ -83,7 +68,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
     }
   }
 
-  const setRegistrar = (id: string) => {
+  const setRegistrar = (id?: string) => {
     if (workingCase) {
       setAndSendToServer(
         'registrarId',
@@ -95,7 +80,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
 
       const registrar = users?.users.find((r) => r.id === id)
 
-      setWorkingCase({ ...workingCase, registrar: registrar })
+      setWorkingCase({ ...workingCase, registrar })
     }
   }
 
@@ -142,6 +127,15 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   return (
     <>
       <FormContentContainer>
+        {workingCase.comments && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.comments.title)}
+              message={workingCase.comments}
+            />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
@@ -161,7 +155,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             name="judge"
             label="Veldu dómara"
             placeholder="Velja héraðsdómara"
-            defaultValue={defaultJudge}
+            value={defaultJudge}
             options={judges}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setJudge((selectedOption as ReactSelectOption).value.toString())
@@ -180,14 +174,18 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             name="registrar"
             label="Veldu dómritara"
             placeholder="Velja dómritara"
-            defaultValue={defaultRegistrar}
+            value={defaultRegistrar}
             options={registrars}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-              setRegistrar(
-                (selectedOption as ReactSelectOption).value.toString(),
-              )
-            }
-            required
+            onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+              if (selectedOption) {
+                setRegistrar(
+                  (selectedOption as ReactSelectOption).value.toString(),
+                )
+              } else {
+                setRegistrar(undefined)
+              }
+            }}
+            isClearable
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -286,11 +284,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
               <Box marginBottom={2}>
                 <DateTime
                   name="courtDate"
-                  selectedDate={
-                    workingCase.courtDate
-                      ? new Date(workingCase.courtDate)
-                      : undefined
-                  }
+                  selectedDate={workingCase.courtDate}
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
                     newSetAndSendDateToServer(
@@ -299,7 +293,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                       valid,
                       workingCase,
                       setWorkingCase,
-                      setCourtDateIsValid,
                       updateCase,
                     )
                   }}
@@ -311,7 +304,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 data-testid="courtroom"
                 name="courtroom"
                 label="Dómsalur"
-                defaultValue={workingCase.courtRoom}
+                value={workingCase.courtRoom || ''}
                 placeholder="Skráðu inn dómsal"
                 autoComplete="off"
                 onChange={(event) =>

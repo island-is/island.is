@@ -10,13 +10,12 @@ import {
   ChildrenResidenceChangeService,
   LoginServiceService,
   FundingGovernmentProjectsService,
-  PartyLetterService,
   DrivingLicenseSubmissionService,
-  PartyApplicationService,
   PayableDummyTemplateService,
   AccidentNotificationService,
   PublicDebtPaymentPlanTemplateService,
   GeneralPetitionService,
+  CriminalRecordSubmissionService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -46,13 +45,12 @@ export class TemplateAPIService {
     private readonly childrenResidenceChangeService: ChildrenResidenceChangeService,
     private readonly loginServiceService: LoginServiceService,
     private readonly fundingGovernmentProjectsService: FundingGovernmentProjectsService,
-    private readonly partyLetterService: PartyLetterService,
     private readonly drivingLicenseSubmissionService: DrivingLicenseSubmissionService,
-    private readonly partyApplicationService: PartyApplicationService,
     private readonly payableDummyTemplateService: PayableDummyTemplateService,
     private readonly accidentNotificationService: AccidentNotificationService,
     private readonly publicDebtPaymentPlanService: PublicDebtPaymentPlanTemplateService,
     private readonly generalPetitionService: GeneralPetitionService,
+    private readonly criminalRecordSubmissionService: CriminalRecordSubmissionService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -65,13 +63,12 @@ export class TemplateAPIService {
       | ChildrenResidenceChangeService
       | LoginServiceService
       | FundingGovernmentProjectsService
-      | PartyLetterService
       | DrivingLicenseSubmissionService
-      | PartyApplicationService
       | PayableDummyTemplateService
       | AccidentNotificationService
       | PublicDebtPaymentPlanTemplateService
-      | GeneralPetitionService,
+      | GeneralPetitionService
+      | CriminalRecordSubmissionService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -140,9 +137,6 @@ export class TemplateAPIService {
           this.fundingGovernmentProjectsService,
           action,
         )
-      case ApplicationTypes.PARTY_LETTER:
-        return this.tryRunningActionOnService(this.partyLetterService, action)
-
       case ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL:
         return this.tryRunningActionOnService(
           this.drivingLicenseSubmissionService,
@@ -151,11 +145,6 @@ export class TemplateAPIService {
       case ApplicationTypes.DRIVING_LICENSE:
         return this.tryRunningActionOnService(
           this.drivingLicenseSubmissionService,
-          action,
-        )
-      case ApplicationTypes.PARTY_APPLICATION:
-        return this.tryRunningActionOnService(
-          this.partyApplicationService,
           action,
         )
       case ApplicationTypes.PAYABLE_DUMMY_TEMPLATE:
@@ -176,6 +165,11 @@ export class TemplateAPIService {
       case ApplicationTypes.GENERAL_PETITION:
         return this.tryRunningActionOnService(
           this.generalPetitionService,
+          action,
+        )
+      case ApplicationTypes.CRIMINAL_RECORD:
+        return this.tryRunningActionOnService(
+          this.criminalRecordSubmissionService,
           action,
         )
     }

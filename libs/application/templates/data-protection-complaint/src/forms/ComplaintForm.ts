@@ -90,15 +90,15 @@ export const ComplaintForm: Form = buildForm({
                     id: 'inCourtProceedingsAlert',
                     title: errorCards.inCourtProceedingsTitle,
                     description: errorCards.inCourtProceedingsDescription,
+                    doesNotRequireAnswer: true,
                     condition: (formValue) =>
                       formValue.inCourtProceedings === YES,
                   },
                   {
                     links: [
                       {
-                        title: 'Frekari upplýsingar',
-                        url:
-                          'https://www.personuvernd.is/einstaklingar/spurt-og-svarad/allar-spurningar-og-svor/hvad-getur-personuvernd-ekki-gert',
+                        title: delimitation.links.inCourtProceedingsTitle,
+                        url: delimitation.links.inCourtProceedingsUrl,
                       },
                     ],
                   },
@@ -128,19 +128,21 @@ export const ComplaintForm: Form = buildForm({
                     id: 'concernsMediaCoverageAlert',
                     title: errorCards.concernsMediaCoverageTitle,
                     description: errorCards.concernsMediaCoverageDescription,
+                    doesNotRequireAnswer: true,
                     condition: (formValue) =>
                       formValue.concernsMediaCoverage === YES,
                   },
                   {
                     links: [
                       {
-                        title: 'Fjölmiðlanefnd',
-                        url: 'https://fjolmidlanefnd.is/',
+                        title:
+                          delimitation.links.concernsMediaCoverageFirstTitle,
+                        url: delimitation.links.concernsMediaCoverageFirstUrl,
                       },
                       {
-                        title: 'Siðanefnd Blaðamannafélags Íslands',
-                        url:
-                          'https://www.press.is/is/faglegt/sidavefur/sidanefnd',
+                        title:
+                          delimitation.links.concernsMediaCoverageSecondTitle,
+                        url: delimitation.links.concernsMediaCoverageSecondUrl,
                       },
                     ],
                   },
@@ -170,18 +172,19 @@ export const ComplaintForm: Form = buildForm({
                     id: 'concernsBanMarkingAlert',
                     title: errorCards.concernsBanMarkingTitle,
                     description: errorCards.concernsBanMarkingDescription,
+                    doesNotRequireAnswer: true,
                     condition: (formValue) =>
                       formValue.concernsBanMarking === YES,
                   },
                   {
                     links: [
                       {
-                        title: 'Póst- og fjarskiptastofnun',
-                        url: 'https://www.pfs.is/',
+                        title: delimitation.links.concernsBanMarkingFirstTitle,
+                        url: delimitation.links.concernsBanMarkingFirstUrl,
                       },
                       {
-                        title: 'Þjóðskrá Íslands',
-                        url: 'https://www.skra.is/',
+                        title: delimitation.links.concernsBanMarkingSecondTitle,
+                        url: delimitation.links.concernsBanMarkingSecondUrl,
                       },
                     ],
                   },
@@ -211,14 +214,14 @@ export const ComplaintForm: Form = buildForm({
                     id: 'concernsLibelAlert',
                     title: errorCards.concernsLibelTitle,
                     description: errorCards.concernsLibelDescription,
+                    doesNotRequireAnswer: true,
                     condition: (formValue) => formValue.concernsLibel === YES,
                   },
                   {
                     links: [
                       {
-                        title: 'Nánari uppýsingar',
-                        url:
-                          'https://www.personuvernd.is/einstaklingar/spurt-og-svarad/allar-spurningar-og-svor/hvad-getur-personuvernd-ekki-gert',
+                        title: delimitation.links.concernsLibelTitle,
+                        url: delimitation.links.concernsLibelUrl,
                       },
                     ],
                   },
@@ -234,6 +237,7 @@ export const ComplaintForm: Form = buildForm({
             buildCustomField({
               id: 'agreementSectionDescription',
               title: section.agreement,
+              doesNotRequireAnswer: true,
               component: 'AgreementDescription',
             }),
           ],
@@ -274,6 +278,7 @@ export const ComplaintForm: Form = buildForm({
                 buildCustomField({
                   id: 'onBehalfDescription',
                   title: '',
+                  doesNotRequireAnswer: true,
                   component: 'CompanyDisclaimer',
                 }),
               ],
@@ -457,6 +462,7 @@ export const ComplaintForm: Form = buildForm({
                 buildCustomField({
                   id: 'commissions.commissionDocument',
                   title: info.labels.commissionsPerson,
+                  doesNotRequireAnswer: true,
                   component: 'CommissionDocument',
                 }),
                 buildFileUploadField({
@@ -583,11 +589,13 @@ export const ComplaintForm: Form = buildForm({
                 buildCustomField({
                   id: 'complaint.description',
                   title: complaint.labels.complaintDescription,
+                  doesNotRequireAnswer: true,
                   component: 'ComplaintDescription',
                 }),
                 buildCustomField({
                   id: 'complaint.documentHeading',
                   title: complaint.labels.complaintDescription,
+                  doesNotRequireAnswer: true,
                   component: 'ComplaintDocumentHeading',
                   defaultValue: '',
                 }),
@@ -605,6 +613,7 @@ export const ComplaintForm: Form = buildForm({
                 buildCustomField({
                   component: 'FieldAlertMessage',
                   id: 'complaintDocumentsInfo',
+                  doesNotRequireAnswer: true,
                   title:
                     complaint.labels.complaintDocumentsInfoAlertMessageTitle,
                   description: complaint.labels.complaintDocumentsInfoLabel,
@@ -626,6 +635,7 @@ export const ComplaintForm: Form = buildForm({
             buildCustomField({
               id: 'overviewComplaintOverview',
               title: overview.general.pageTitle,
+              doesNotRequireAnswer: true,
               component: 'ComplaintOverview',
             }),
             buildSubmitField({

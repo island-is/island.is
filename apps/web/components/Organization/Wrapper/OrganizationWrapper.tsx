@@ -2,10 +2,12 @@ import React, { ReactNode } from 'react'
 import {
   Image,
   LinkGroup,
+  Namespace,
   Organization,
   OrganizationPage,
 } from '@island.is/web/graphql/schema'
 import {
+  AlertBanner,
   Box,
   BreadCrumbItem,
   Breadcrumbs,
@@ -19,6 +21,8 @@ import {
   ProfileCard,
   Stack,
   Text,
+  Button,
+  Inline,
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
 import {
@@ -43,6 +47,7 @@ import {
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 import { useRouter } from 'next/router'
 import * as styles from './OrganizationWrapper.css'
+import { useNamespace } from '@island.is/web/hooks'
 
 interface NavigationData {
   title: string
@@ -63,6 +68,7 @@ interface WrapperProps {
   stickySidebar?: boolean
   minimal?: boolean
   showSecondaryMenu?: boolean
+  namespace: Namespace
 }
 
 interface HeaderProps {
@@ -85,6 +91,81 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
+}
+
+interface AlertProps {
+  organizationPage: OrganizationPage
+  namespace: Namespace
+}
+
+export const OrganizationAlert: React.FC<AlertProps> = ({
+  organizationPage,
+  namespace,
+}) => {
+  /**
+   * The following code was added as a quick fix in order to get the message out to
+   * users ASAP. After December 14th 2021, the PR that added this code can be reverted.
+   */
+  const n = useNamespace(namespace)
+  const alertEndDate = new Date(2021, 11, 14) // Dec. 14th 2021
+  const withinAlertTimeframe = new Date() < alertEndDate
+  if (organizationPage.slug === 'syslumenn' && withinAlertTimeframe) {
+    return (
+      <Box paddingTop={[3, 4, 8]} paddingX={[3, 3, 6]}>
+        <AlertBanner
+          variant={n('alertVariant', 'info')}
+          title={n('alertTitle', 'Lokað er hjá sýslumönnum 13. desember')}
+          description={n(
+            'alertDescription',
+            'Skrifstofur embætta sýslumanna um land allt verða lokaðar mánudaginn 13. desember vegna uppfærslu tölvukerfa.',
+          )}
+          dismissable={false}
+          link={{
+            href: n(
+              'alertLinkHref',
+              'https://island.is/s/syslumenn/frett/lokad-hja-syslumonnum-13-desember',
+            ),
+            title: n('alertLinkTitle', 'Nánar'),
+          }}
+        />
+      </Box>
+    )
+  }
+  return null
+}
+
+interface ExternalLinksProps {
+  organizationPage: OrganizationPage
+}
+
+export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
+  organizationPage,
+}) => {
+  if (organizationPage.externalLinks) {
+    return (
+      <Box
+        display={['none', 'none', 'flex', 'flex']}
+        justifyContent="flexEnd"
+        marginBottom={4}
+      >
+        <Inline space={2}>
+          {organizationPage.externalLinks.map((link, index) => (
+            <Link href={link.url} key={'organization-external-link-' + index}>
+              <Button
+                colorScheme="light"
+                icon="open"
+                iconType="outline"
+                size="small"
+              >
+                {link.text}
+              </Button>
+            </Link>
+          ))}
+        </Inline>
+      </Box>
+    )
+  }
+  return null
 }
 
 interface FooterProps {
@@ -202,6 +283,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   children,
   minimal = false,
   showSecondaryMenu = true,
+  namespace,
 }) => {
   const Router = useRouter()
 
@@ -229,6 +311,16 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
       />
       <OrganizationHeader organizationPage={organizationPage} />
       <Main>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '12/12', '12/12', '11/12']}>
+              <OrganizationAlert
+                organizationPage={organizationPage}
+                namespace={namespace}
+              />
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
         {!minimal && (
           <SidebarLayout
             paddingTop={[2, 2, 9]}
@@ -329,6 +421,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                       }}
                     />
                   )}
+                  <OrganizationExternalLinks
+                    organizationPage={organizationPage}
+                  />
                   {pageDescription && (
                     <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
                       <Text variant="default">{pageDescription}</Text>

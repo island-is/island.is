@@ -14,8 +14,8 @@ export class CreateAccessControlInput {
   role!: Role
 
   // TODO: get from samgongustofa
-  @Field()
-  partnerId!: string
+  @Field({ nullable: true })
+  partnerId?: string
 }
 
 @InputType()
@@ -30,6 +30,12 @@ export class UpdateAccessControlInput {
   role!: Role
 
   // TODO: get from samgongustofa
+  @Field({ nullable: true })
+  partnerId?: string
+}
+
+@InputType()
+export class DeleteAccessControlInput {
   @Field()
-  partnerId!: string
+  nationalId!: string
 }

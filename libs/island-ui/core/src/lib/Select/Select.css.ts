@@ -284,9 +284,25 @@ export const option = style({
   },
 })
 
+export const optionDescription = style({
+  paddingTop: theme.spacing[1],
+})
+
+export const optionDescriptionTruncated = style({
+  overflow: 'hidden',
+  display: '-webkit-box',
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
+})
+
 export const optionSizes = styleVariants({
   sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
   md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
+})
+
+export const optionDescriptionSizes = styleVariants({
+  sm: wrapMedia(inputMixins.optionDescriptionSizes.sm, `${wrapper} &`),
+  md: wrapMedia(inputMixins.optionDescriptionSizes.md, `${wrapper} &`),
 })
 
 export const dontRotateIconOnOpen = style({})

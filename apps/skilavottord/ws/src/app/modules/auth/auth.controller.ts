@@ -7,6 +7,7 @@ import {
   Query,
   Req,
   Res,
+  forwardRef,
 } from '@nestjs/common'
 import jwt from 'jsonwebtoken'
 import { Entropy } from 'entropy-string'
@@ -22,10 +23,10 @@ import {
   BASE_PATH,
 } from '@island.is/skilavottord/consts'
 
+import { AccessControlService } from '../accessControl'
 import { environment } from '../../../environments'
 import { Cookie, CookieOptions, Credentials } from './auth.types'
 import { Role, AuthUser } from './auth.types'
-import { AuthService } from './auth.service'
 
 const {
   samlEntryPoint,
@@ -74,6 +75,8 @@ export class AuthController {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @Inject(forwardRef(() => AccessControlService))
+    private accessControlService: AccessControlService,
   ) {}
 
   @Post('/citizen/callback')
@@ -88,6 +91,7 @@ export class AuthController {
     }
 
     const { returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
+    this.logger.info(`  - returnUrl = ${returnUrl}`)
     const { user } = verifyResult
     if (!user) {
       this.logger.error('Could not verify user authenticity ')
@@ -119,17 +123,6 @@ export class AuthController {
     }
 
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
-
-    /* this.logger.info(
-      `  - personalId = ${user.kennitala}  name = ${user.fullname}   mobile = ${user.mobile}`,
-    )*/
-    this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
-    this.logger.info(`  - ACCESS_TOKEN_COOKIE = ${ACCESS_TOKEN_COOKIE.name}`)
-    this.logger.info(`  - returnUrl = ${returnUrl}`)
-    this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
-    //this.logger.info(`  - Role for ${user.fullname} is Citizen`)
-    this.logger.info(`  - Role for user is Citizen`)
-    this.logger.info(`--- /citizen/callback ending ---`)
     return res
       .cookie(CSRF_COOKIE.name, csrfToken, {
         ...CSRF_COOKIE.options,
@@ -184,39 +177,22 @@ export class AuthController {
       return res.redirect('/error')
     }
 
-    const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
+    const accessControl = await this.accessControlService.findOne(
+      user.kennitala,
+    )
+    const role = accessControl?.role ?? Role.citizen
 
-    /* this.logger.info(
-      `  - personalId = ${user.kennitala}  name = ${user.fullname}   mobile = ${user.mobile}`,
-    )*/
-    // this.logger.info(`  - csrfToken = ${csrfToken}`)
-    this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
-    this.logger.info(`  - ACCESS_TOKEN_COOKIE = ${ACCESS_TOKEN_COOKIE.name}`)
-    this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
-    const authService = new AuthService()
-
-    const RoleUser: AuthUser = {
-      nationalId: user.kennitala,
-      mobile: user.mobile,
-      name: user.fullname,
-    }
-
-    const roleForUser = authService.getRole(RoleUser)
-
-    //this.logger.info(`  - Role for ${user.fullname} is ${roleForUser}`)
-    this.logger.info(`  - Role for user is ${roleForUser}`)
-    let returnUrlComp: string
-    if (roleForUser === Role.recyclingCompany) {
+    let returnUrlComp = '/error'
+    if (role === Role.recyclingCompany) {
       returnUrlComp = `${BASE_PATH}/deregister-vehicle`
-    } else if (roleForUser === Role.recyclingFund) {
+    } else if (role === Role.recyclingFund) {
       returnUrlComp = `${BASE_PATH}/recycled-vehicles`
-    } else if (roleForUser === Role.developer) {
+    } else if (role === Role.developer) {
       returnUrlComp = `${BASE_PATH}/recycled-vehicles`
-    } else {
-      return '/error'
     }
     this.logger.info(`  - redirecting to ${returnUrlComp}`)
-    this.logger.info(`--- /company/callback ending ---`)
+
+    const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
     return res
       .cookie(CSRF_COOKIE.name, csrfToken, {
         ...CSRF_COOKIE.options,

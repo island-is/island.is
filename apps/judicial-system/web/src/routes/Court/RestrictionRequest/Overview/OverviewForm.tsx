@@ -3,21 +3,24 @@ import { useIntl } from 'react-intl'
 
 import { CaseType } from '@island.is/judicial-system/types'
 import {
-  CaseFileList,
   FormContentContainer,
   InfoCard,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Accordion, Box, Button, Text } from '@island.is/island-ui/core'
 import {
   capitalize,
   formatDate,
   formatRequestedCustodyRestrictions,
-  laws,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
+import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
+import {
+  core,
+  laws,
+  requestCourtDate,
+} from '@island.is/judicial-system-web/messages'
 import type {
   Case,
   CaseLegalProvisions,
@@ -169,7 +172,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               (legalProvision: CaseLegalProvisions, index) => {
                 return (
                   <div key={index}>
-                    <Text>{laws[legalProvision]}</Text>
+                    <Text>{formatMessage(laws[legalProvision].title)}</Text>
                   </div>
                 )
               },
@@ -273,23 +276,17 @@ const OverviewForm: React.FC<Props> = (props) => {
             )}
           </div>
         )}
-
-        <div className={styles.infoSection}>
-          <Box marginBottom={1}>
-            <Text as="h2" variant="h3">
-              {`Rannsóknargögn (${
-                workingCase.caseFiles ? workingCase.caseFiles.length : 0
-              })`}
-            </Text>
+        {user && (
+          <Box marginBottom={5}>
+            <Accordion>
+              <CaseFilesAccordionItem
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+                user={user}
+              />
+            </Accordion>
           </Box>
-          <CaseFileList
-            caseId={workingCase.id}
-            files={workingCase.caseFiles ?? []}
-            canOpenFiles={
-              workingCase.judge !== null && workingCase.judge?.id === user?.id
-            }
-          />
-        </div>
+        )}
         <Box marginBottom={3}>
           <PdfButton
             caseId={workingCase.id}

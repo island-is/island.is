@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 
@@ -15,6 +15,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import type {
   Case,
   Institution,
@@ -36,6 +37,7 @@ interface Props {
   isLoading: boolean
   onNextButtonClick: () => Promise<void>
   onProsecutorChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
+  onCourtChange: (courtId: string) => boolean
   updateCase: (id: string, updateCase: UpdateCase) => Promise<Case | undefined>
 }
 
@@ -49,6 +51,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
     isLoading,
     onNextButtonClick,
     onProsecutorChange,
+    onCourtChange,
     updateCase,
   } = props
 
@@ -62,12 +65,8 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
       validations: ['empty'],
     },
   }
-  const [, setRequestedCourtDateIsValid] = useState<boolean>(
-    workingCase.requestedCourtDate !== null,
-  )
-  const [selectedCourt, setSelectedCourt] = useState<string>()
+
   const {
-    isValid,
     setField,
     validateAndSendToServer,
     setAndSendToServer,
@@ -120,9 +119,8 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
           <Box component="section" marginBottom={5}>
             <SelectCourt
               workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              setSelectedCourt={setSelectedCourt}
               courts={courts}
+              onChange={onCourtChange}
             />
           </Box>
         )}
@@ -136,7 +134,6 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
                 valid,
                 workingCase,
                 setWorkingCase,
-                setRequestedCourtDateIsValid,
                 updateCase,
               )
             }
@@ -154,7 +151,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
             autoComplete="off"
             label={formatMessage(m.sections.translator.label)}
             placeholder={formatMessage(m.sections.translator.placeholder)}
-            defaultValue={workingCase.translator}
+            value={workingCase.translator || ''}
             onChange={(event) => setField(event.target)}
             onBlur={(event) => validateAndSendToServer(event.target)}
           />
@@ -164,7 +161,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.IC_DEFENDANT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={async () => await onNextButtonClick()}
-          nextIsDisabled={!isValid || (!workingCase.court && !selectedCourt)}
+          nextIsDisabled={!isHearingArrangementsStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />
       </FormContentContainer>

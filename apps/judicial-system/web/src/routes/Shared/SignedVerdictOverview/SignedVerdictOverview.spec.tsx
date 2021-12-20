@@ -26,7 +26,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_2' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -57,7 +57,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_4' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -88,7 +88,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_2' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -121,7 +121,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_2' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -162,7 +162,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_12' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -193,7 +193,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_12' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -224,7 +224,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_12' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -257,7 +257,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_12' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -298,7 +298,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_5' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -332,7 +332,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_5' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -377,7 +377,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -408,7 +408,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -441,7 +441,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -472,7 +472,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -509,7 +509,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -540,7 +540,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -574,7 +574,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id_6' },
-          pathname: '/gaesluvardhald/test_id_2',
+          pathname: '/krafa/test_id_2',
         }))
 
         render(
@@ -608,7 +608,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id_6' },
-          pathname: '/gaesluvardhald/test_id_2',
+          pathname: '/krafa/test_id_2',
         }))
 
         render(
@@ -653,7 +653,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id_6' },
-          pathname: '/gaesluvardhald/test_id_2',
+          pathname: '/krafa/test_id_2',
         }))
 
         render(
@@ -684,7 +684,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id' },
-          pathname: '/gaesluvardhald/test_id_2',
+          pathname: '/krafa/test_id_2',
         }))
 
         render(
@@ -719,7 +719,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id_8' },
-          pathname: '/gaesluvardhald/test_id_2',
+          pathname: '/krafa/test_id_2',
         }))
 
         render(
@@ -754,7 +754,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id_7' },
-          pathname: '/gaesluvardhald/test_id_2',
+          pathname: '/krafa/test_id_2',
         }))
 
         render(
@@ -783,7 +783,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id' },
-          pathname: '/gaesluvardhald/test_id_2',
+          pathname: '/krafa/test_id_2',
         }))
 
         render(
@@ -808,7 +808,7 @@ describe('Signed Verdict Overview route', () => {
         expect(screen.queryByTestId('requestPDFButton')).not.toBeInTheDocument()
         expect(screen.queryByTestId('rulingPDFButton')).not.toBeInTheDocument()
         expect(
-          await screen.findByTestId('rulingSVPDFButton'),
+          await screen.findByTestId('courtRecordPDFButton'),
         ).toBeInTheDocument()
         expect(
           await screen.findByTestId('custodyNoticePDFButton'),
@@ -822,7 +822,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_7' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -853,7 +853,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_7' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
       const date = '2020-09-25T19:50:08.033Z'
       const rulingDate = '2020-09-20T17:50:08.033Z'
@@ -900,7 +900,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -933,7 +933,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_7' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -968,7 +968,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_8' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -1001,7 +1001,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_8' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -1046,7 +1046,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(

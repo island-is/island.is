@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
+
 import { UploadFile } from '@island.is/island-ui/core'
 import {
   CreateFileMutation,
@@ -13,21 +14,21 @@ import {
   UploadPoliceCaseFileResponse,
 } from '@island.is/judicial-system/types'
 
-export const useS3Upload = (workingCase?: Case) => {
+export const useS3Upload = (workingCase: Case) => {
   const [files, setFiles] = useState<UploadFile[]>([])
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [allFilesUploaded, setAllFilesUploaded] = useState<boolean>(true)
   const filesRef = useRef<UploadFile[]>(files)
 
   useEffect(() => {
-    const uploadCaseFiles = workingCase?.caseFiles?.map((caseFile) => {
+    const uploadCaseFiles = workingCase.caseFiles?.map((caseFile) => {
       const uploadCaseFile = caseFile as UploadFile
       uploadCaseFile.status = 'done'
       return uploadCaseFile
     })
 
     setFilesRefAndState(uploadCaseFiles ?? [])
-  }, [workingCase?.caseFiles])
+  }, [workingCase.caseFiles])
 
   useMemo(() => {
     setAllFilesUploaded(
@@ -53,7 +54,7 @@ export const useS3Upload = (workingCase?: Case) => {
     } = await uploadPoliceCaseFileMutation({
       variables: {
         input: {
-          caseId: workingCase?.id,
+          caseId: workingCase.id,
           id: id,
           name: name,
         },
@@ -70,7 +71,7 @@ export const useS3Upload = (workingCase?: Case) => {
     const { data: presignedPostData } = await createPresignedPostMutation({
       variables: {
         input: {
-          caseId: workingCase?.id,
+          caseId: workingCase.id,
           fileName: filename,
           type,
         },

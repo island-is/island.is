@@ -4,7 +4,8 @@ import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Authorize, Role } from '../auth'
+import { Authorize, Role, CurrentUser } from '../auth'
+import type { User } from '../auth'
 import { VehicleOwnerModel } from './vehicleOwner.model'
 import { VehicleOwnerService } from './vehicleOwner.service'
 
@@ -29,9 +30,9 @@ export class VehicleOwnerResolver {
   //TODO find right name
   @Query(() => VehicleOwnerModel)
   async skilavottordVehiclesFromLocal(
-    @Args('nationalId') nationalId: string,
+    @CurrentUser() user: User,
   ): Promise<VehicleOwnerModel> {
-    const res = await this.vehicleOwnerService.findByNationalId(nationalId)
+    const res = await this.vehicleOwnerService.findByNationalId(user.nationalId)
     this.logger.warn(
       'getVehicleOwnersByNationaId responce:' + JSON.stringify(res, null, 2),
     )
@@ -54,11 +55,11 @@ export class VehicleOwnerResolver {
 
   @Mutation(() => Boolean)
   async createSkilavottordVehicleOwner(
-    @Args('nationalId') nationalId: string,
+    @CurrentUser() user: User,
     @Args('name') name: string,
   ) {
     const vm = new VehicleOwnerModel()
-    vm.nationalId = nationalId
+    vm.nationalId = user.nationalId
     vm.personname = name
 
     this.logger.info(

@@ -14,7 +14,11 @@ import { environment } from '../../../environments'
 import { StaffModel } from './models'
 import { EmailService } from '@island.is/email-service'
 import { logger } from '@island.is/logging'
-import { EmployeeEmailTemplate } from '../application/emailTemplates'
+import {
+  EmployeeEmailTemplate,
+  AdminEmailTemplate,
+  AdminAndEmployeeEmailTemplate,
+} from '../application/emailTemplates'
 
 @Injectable()
 export class StaffService {
@@ -73,39 +77,74 @@ export class StaffService {
     input: CreateStaffDto,
     municipalityName: string,
     user: Staff,
+    isFirstStaffForMunicipality: boolean,
   ) {
-    if (input.roles.includes(StaffRole.EMPLOYEE)) {
-      try {
+    const contact = {
+      from: {
+        name: 'Samband íslenskra sveitarfélaga',
+        address: environment.emailOptions.fromEmail,
+      },
+      replyTo: {
+        name: 'Samband íslenskra sveitarfélaga',
+        address: environment.emailOptions.replyToEmail,
+      },
+      to: input.email,
+    }
+
+    try {
+      if (
+        input.roles.includes(StaffRole.EMPLOYEE) &&
+        input.roles.includes(StaffRole.ADMIN)
+      ) {
         await this.emailService.sendEmail({
-          from: {
-            name: user.name,
-            address: user.email,
-          },
-          replyTo: {
-            name: user.name,
-            address: user.email,
-          },
-          to: input.email,
-          subject: 'Aðgangur fyrir vinnslukerfi fjárhagsaðstoðar veittur',
+          ...contact,
+          subject: 'Vinnsluaðili og stjórnandi í vinnslukerfi fjárhagsaðstoðar',
+          html: AdminAndEmployeeEmailTemplate(
+            municipalityName,
+            environment.veitaBaseUrl,
+            input.email,
+            isFirstStaffForMunicipality,
+          ),
+        })
+      } else if (input.roles.includes(StaffRole.EMPLOYEE)) {
+        await this.emailService.sendEmail({
+          ...contact,
+          subject: 'Vinnsluaðili í vinnslukerfi fjárhagsaðstoðar',
           html: EmployeeEmailTemplate(
             municipalityName,
-            environment.veitaUrl,
+            environment.veitaBaseUrl,
             input.email,
           ),
         })
-      } catch (error) {
-        logger.warn('failed to send email', error)
+      } else if (input.roles.includes(StaffRole.ADMIN)) {
+        await this.emailService.sendEmail({
+          ...contact,
+          subject: 'Stjórnandi í vinnslukerfi fjárhagsaðstoðar',
+          html: AdminEmailTemplate(
+            environment.veitaBaseUrl,
+            input.email,
+            isFirstStaffForMunicipality,
+          ),
+        })
       }
+    } catch (error) {
+      logger.warn('failed to send email', error)
     }
   }
 
   async createStaff(
     input: CreateStaffDto,
     municipality: CreateStaffMunicipality,
-    user?: Staff,
+    user: Staff,
     t?: Transaction,
+    isFirstStaffForMunicipality: boolean = false,
   ): Promise<StaffModel> {
-    await this.sendEmail(input, municipality.municipalityName, user)
+    await this.sendEmail(
+      input,
+      municipality.municipalityName,
+      user,
+      isFirstStaffForMunicipality,
+    )
     return await this.staffModel.create(
       {
         nationalId: input.nationalId,

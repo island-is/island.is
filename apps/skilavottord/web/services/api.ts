@@ -1,7 +1,8 @@
 import getConfig from 'next/config'
 
-const { serverRuntimeConfig } = getConfig()
-const { apiUrl } = serverRuntimeConfig
+const {
+  publicRuntimeConfig: { apiUrl },
+} = getConfig()
 
 export const logout = () =>
   fetch(`${apiUrl}/auth/logout`, {

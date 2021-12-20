@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 import {
   Column,
   DataType,
@@ -7,6 +7,7 @@ import {
   CreatedAt,
   UpdatedAt,
   HasMany,
+  PrimaryKey,
 } from 'sequelize-typescript'
 
 import { RecyclingRequestModel } from '../recyclingRequest'
@@ -14,64 +15,70 @@ import { RecyclingRequestModel } from '../recyclingRequest'
 @ObjectType('RecyclingPartner')
 @Table({ tableName: 'recycling_partner' })
 export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
-  @Field()
+  @Field((_) => ID)
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     primaryKey: true,
+    field: 'company_id',
   })
-  companyId: string
+  companyId!: string
 
   @Field()
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    field: 'company_name',
   })
-  companyName: string
-
-  @Field()
-  @Column({
-    type: DataType.STRING,
-  })
-  address: string
+  companyName!: string
 
   @Field()
   @Column({
     type: DataType.STRING,
   })
-  postnumber: string
+  address!: string
 
   @Field()
   @Column({
     type: DataType.STRING,
   })
-  city: string
+  postnumber!: string
 
   @Field()
   @Column({
     type: DataType.STRING,
   })
-  website: string
+  city!: string
 
   @Field()
   @Column({
     type: DataType.STRING,
   })
-  phone: string
+  website!: string
+
+  @Field()
+  @Column({
+    type: DataType.STRING,
+  })
+  phone!: string
 
   @Field()
   @Column({
     type: DataType.BOOLEAN,
   })
-  active: boolean
+  active!: boolean
 
   @Field()
   @CreatedAt
-  @Column
+  @Column({
+    field: 'created_at',
+  })
   createdAt: Date
 
   @Field()
   @UpdatedAt
-  @Column
+  @Column({
+    field: 'updated_at',
+  })
   updatedAt: Date
 
   @Field(() => [RecyclingRequestModel])

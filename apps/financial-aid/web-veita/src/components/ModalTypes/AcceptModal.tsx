@@ -8,19 +8,20 @@ import {
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import {
   aidCalculator,
+  Amount,
   calculateAcceptedAidFinalAmount,
   calculateTaxOfAmount,
   HomeCircumstances,
-  isObjEmpty,
 } from '@island.is/financial-aid/shared/lib'
-import format from 'date-fns/format'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
+import cn from 'classnames'
 
 import * as modalStyles from './ModalTypes.css'
+import { useRouter } from 'next/router'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
-  onSaveApplication: (amount: number) => void
+  onSaveApplication: (amount: Amount) => void
   isModalVisable: boolean
   homeCircumstances: HomeCircumstances
   spouseNationalId?: string
@@ -30,11 +31,11 @@ interface calculationsState {
   amount: number
   income?: number
   personalTaxCreditPercentage?: number
-  tax: number
   secondPersonalTaxCredit: number
   showSecondPersonalTaxCredit: boolean
   hasError: boolean
-  deductionFactor: Record<string, { description: string; amount: number }>
+  hasSubmitError: boolean
+  deductionFactor: Array<{ description: string; amount: number }>
 }
 
 const AcceptModal = ({
@@ -44,9 +45,9 @@ const AcceptModal = ({
   homeCircumstances,
   spouseNationalId,
 }: Props) => {
-  const maximumInputLength = 6
+  const router = useRouter()
 
-  const currentYear = format(new Date(), 'yyyy')
+  const maximumInputLength = 6
 
   const { municipality } = useContext(AdminContext)
 
@@ -73,17 +74,15 @@ const AcceptModal = ({
     amount: aidAmount,
     income: undefined,
     personalTaxCreditPercentage: undefined,
-    tax: calculateTaxOfAmount(aidAmount, currentYear),
     secondPersonalTaxCredit: 0,
     showSecondPersonalTaxCredit: false,
-    deductionFactor: {},
+    deductionFactor: [],
     hasError: false,
+    hasSubmitError: false,
   })
 
-  const sumValues = (
-    obj: Record<string, { description: string; amount: number }>,
-  ) =>
-    Object.values(obj)
+  const sumValues = (deductionFactor: calculationsState['deductionFactor']) =>
+    deductionFactor
       .map((item) => {
         return item.amount
       })
@@ -94,10 +93,17 @@ const AcceptModal = ({
   const checkingValue = (element?: number) => (element ? element : 0)
 
   const finalAmount = calculateAcceptedAidFinalAmount(
-    aidAmount - checkingValue(state.income) - sumValues(state.deductionFactor),
-    currentYear,
+    state.amount -
+      checkingValue(state.income) -
+      sumValues(state.deductionFactor),
     checkingValue(state.personalTaxCreditPercentage),
     state.secondPersonalTaxCredit,
+  )
+
+  const taxAmount = calculateTaxOfAmount(
+    (aidAmount || 0) -
+      checkingValue(state.income) -
+      sumValues(state.deductionFactor),
   )
 
   const areRequiredFieldsFilled =
@@ -106,21 +112,33 @@ const AcceptModal = ({
     !finalAmount ||
     finalAmount === 0
 
+  const submit = async () => {
+    if (areRequiredFieldsFilled) {
+      setState({ ...state, hasError: true })
+      return
+    }
+
+    onSaveApplication({
+      applicationId: router.query.id as string,
+      aidAmount: state.amount,
+      income: state.income,
+      personalTaxCredit: state.personalTaxCreditPercentage ?? 0,
+      spousePersonalTaxCredit: state.secondPersonalTaxCredit,
+      tax: taxAmount,
+      finalAmount: finalAmount,
+      deductionFactors: state.deductionFactor,
+    })
+  }
+
   return (
     <InputModal
       headline="Umsóknin þín er samþykkt og áætlun er tilbúin"
       onCancel={onCancel}
-      onSubmit={() => {
-        if (areRequiredFieldsFilled) {
-          setState({ ...state, hasError: true })
-          return
-        }
-        onSaveApplication(finalAmount)
-      }}
+      onSubmit={submit}
       submitButtonText="Samþykkja"
       isModalVisable={isModalVisable}
-      hasError={state.hasError}
-      errorMessage="Þú þarft að fylla út alla reiti"
+      hasError={state.hasSubmitError}
+      errorMessage={'Eitthvað fór úrskeiðis, vinsamlega reynið aftur síðar'}
     >
       <Box marginBottom={3}>
         <NumberInput
@@ -151,99 +169,87 @@ const AcceptModal = ({
         />
       </Box>
 
-      {!isObjEmpty(state.deductionFactor) && (
-        <>
-          {Object.keys(state.deductionFactor).map(function (key) {
-            return (
-              <Box
-                className={modalStyles.deductionFactor}
-                key={`deductionFactor-${key}`}
-              >
-                <Input
-                  label="Lýsing"
-                  placeholder="Sláðu inn lýsingu"
-                  id={`description-${key}`}
-                  name={`description-${key}`}
-                  value={state.deductionFactor[key].description}
-                  onChange={(e) => {
-                    setState({
-                      ...state,
-                      hasError: false,
-                      deductionFactor: {
-                        ...state.deductionFactor,
-                        [key]: {
-                          ...state.deductionFactor[key],
-                          description: e.target.value,
-                        },
-                      },
-                    })
-                  }}
-                  backgroundColor="blue"
-                />
+      {state.deductionFactor.map((item, index) => {
+        return (
+          <Box
+            className={modalStyles.deductionFactor}
+            key={`deductionFactor-${index}`}
+          >
+            <Input
+              label="Lýsing"
+              placeholder="Sláðu inn lýsingu"
+              id={`description-${index}`}
+              name={`description-${index}`}
+              value={state.deductionFactor[index].description}
+              onChange={(e) => {
+                setState({
+                  ...state,
+                  hasError: false,
+                  deductionFactor: [...state.deductionFactor].map((object) => {
+                    if (object === item) {
+                      return {
+                        ...object,
+                        description: e.target.value,
+                      }
+                    } else return object
+                  }),
+                })
+              }}
+              backgroundColor="blue"
+            />
 
-                <NumberInput
-                  label="Upphæð frádráttar"
-                  placeholder="Sláðu inn upphæð"
-                  id={`amount-${key}`}
-                  name={`amount-${key}`}
-                  value={state.deductionFactor[key].amount.toString()}
-                  onUpdate={(input) => {
-                    setState({
-                      ...state,
-                      hasError: false,
-                      deductionFactor: {
-                        ...state.deductionFactor,
-                        [key]: { ...state.deductionFactor[key], amount: input },
-                      },
-                    })
-                  }}
-                  maximumInputLength={maximumInputLength}
-                />
+            <NumberInput
+              label="Upphæð frádráttar"
+              placeholder="Sláðu inn upphæð"
+              id={`amount-${index}`}
+              name={`amount-${index}`}
+              value={state.deductionFactor[index].amount.toString()}
+              onUpdate={(input) => {
+                setState({
+                  ...state,
+                  hasError: false,
+                  deductionFactor: [...state.deductionFactor].map((object) => {
+                    if (object === item) {
+                      return {
+                        ...object,
+                        amount: input,
+                      }
+                    } else return object
+                  }),
+                })
+              }}
+              maximumInputLength={maximumInputLength}
+            />
 
-                <Button
-                  circle
-                  icon="remove"
-                  onClick={() => {
-                    const removeFactor = state.deductionFactor
-                    delete removeFactor[key]
-
-                    setState({
-                      ...state,
-                      hasError: false,
-                      deductionFactor: removeFactor,
-                    })
-                  }}
-                  size="small"
-                  variant="ghost"
-                />
-              </Box>
-            )
-          })}
-        </>
-      )}
+            <Button
+              circle
+              icon="remove"
+              onClick={() => {
+                setState({
+                  ...state,
+                  deductionFactor: state.deductionFactor.filter(
+                    (el) => el !== item,
+                  ),
+                })
+              }}
+              size="small"
+              variant="ghost"
+            />
+          </Box>
+        )
+      })}
 
       <Box marginBottom={3}>
         <Button
           icon="add"
           onClick={() => {
-            if (isObjEmpty(state.deductionFactor)) {
-              setState({
-                ...state,
-                hasError: false,
-                deductionFactor: { factor1: { description: '', amount: 0 } },
-              })
-              return
-            }
             setState({
               ...state,
               hasError: false,
-              deductionFactor: {
+              deductionFactor: [
                 ...state.deductionFactor,
-                [`factor${Object.keys(state.deductionFactor).length + 1}`]: {
-                  description: '',
-                  amount: 0,
-                },
-              },
+                { description: '', amount: 0 },
+              ],
             })
           }}
           variant="text"
@@ -321,15 +327,21 @@ const AcceptModal = ({
           label="Skattur "
           id="tax"
           name="tax"
-          value={calculateTaxOfAmount(
-            (aidAmount || 0) -
-              checkingValue(state.income) -
-              sumValues(state.deductionFactor),
-            currentYear,
-          ).toLocaleString('de-DE')}
+          value={taxAmount.toLocaleString('de-DE')}
           readOnly={true}
         />
       </Box>
+
+      <div
+        className={cn({
+          [`errorMessage`]: true,
+          [`showErrorMessage`]: state.hasError,
+        })}
+      >
+        <Text color="red600" fontWeight="semiBold" variant="small">
+          Þú þarft að fylla út alla reiti
+        </Text>
+      </div>
 
       <Text variant="h3" marginBottom={3}>
         Útreikningur

@@ -2,8 +2,8 @@ import {
   BadRequestException,
   Inject,
   Injectable,
-  NotFoundException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import startOfDay from 'date-fns/startOfDay'
@@ -14,27 +14,19 @@ import { uuid } from 'uuidv4'
 import {
   ApiScope,
   DelegationScope,
-  IdentityResource,
   DelegationValidity,
 } from '@island.is/auth-api-lib'
 import {
   AuthMiddleware,
   AuthMiddlewareOptions,
 } from '@island.is/auth-nest-tools'
-import type { AuthConfig, User } from '@island.is/auth-nest-tools'
 import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
-import type {
-  EinstaklingarGetEinstaklingurRequest,
-  EinstaklingarGetForsjaRequest,
-} from '@island.is/clients/national-registry-v2'
 import { RskApi } from '@island.is/clients/rsk/v2'
-import type { CompaniesResponse } from '@island.is/clients/rsk/v2'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 import {
@@ -47,6 +39,13 @@ import {
 import { Delegation } from '../entities/models/delegation.model'
 import { DelegationScopeService } from './delegationScope.service'
 
+import type { AuthConfig, User } from '@island.is/auth-nest-tools'
+import type {
+  EinstaklingarGetEinstaklingurRequest,
+  EinstaklingarGetForsjaRequest,
+} from '@island.is/clients/national-registry-v2'
+import type { CompaniesResponse } from '@island.is/clients/rsk/v2'
+import type { Logger } from '@island.is/logging'
 export const DELEGATIONS_AUTH_CONFIG = 'DELEGATIONS_AUTH_CONFIG'
 
 @Injectable()
@@ -127,8 +126,8 @@ export class DelegationsService {
 
     this.logger.debug(`Updating delegation ${delegation.id}`)
 
-    if (input.scopes) {
-      await this.delegationScopeService.delete(delegationId)
+    await this.delegationScopeService.delete(delegationId)
+    if (input.scopes && input.scopes.length > 0) {
       await this.delegationScopeService.createMany(delegationId, input.scopes)
     }
     return this.findById(fromNationalId, delegationId)
@@ -176,7 +175,15 @@ export class DelegationsService {
         {
           model: DelegationScope,
           as: 'delegationScopes',
-          include: [{ model: ApiScope, as: 'apiScope' }],
+          include: [
+            {
+              model: ApiScope,
+              as: 'apiScope',
+              where: {
+                allowExplicitDelegationGrant: true,
+              },
+            },
+          ],
         },
       ],
     })
@@ -207,7 +214,15 @@ export class DelegationsService {
       include: [
         {
           model: DelegationScope,
-          include: [ApiScope, IdentityResource],
+          include: [
+            {
+              model: ApiScope,
+              as: 'apiScope',
+              where: {
+                allowExplicitDelegationGrant: true,
+              },
+            },
+          ],
           required: valid !== DelegationValidity.ALL,
           where: this.getScopeValidWhereClause(valid),
         },
@@ -419,15 +434,21 @@ export class DelegationsService {
           model: DelegationScope,
           required: true,
           where: this.getScopeValidWhereClause(DelegationValidity.NOW),
+          include: [
+            {
+              model: ApiScope,
+              as: 'apiScope',
+              required: true,
+              where: {
+                allowExplicitDelegationGrant: true,
+              },
+            },
+          ],
         },
       ],
     })
 
-    const filtered = result.filter(
-      (x) => x.delegationScopes != null && x.delegationScopes.length > 0,
-    )
-
-    return filtered.map((d) => d.toDTO())
+    return result.map((d) => d.toDTO())
   }
 
   /**
