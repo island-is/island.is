@@ -44,6 +44,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(request: Request, payload: JwtPayload): Promise<Auth> {
     const actor = payload.actor ?? payload.act
+    console.log(
+      '================================================================',
+    )
+    console.log(JSON.stringify(request.headers))
+    console.log(JSON.stringify(request.ip))
+    console.log(
+      '----------------------------------------------------------------',
+    )
 
     return {
       nationalId: payload.nationalId,
