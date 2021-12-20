@@ -6,8 +6,7 @@ import { SyslumennService } from './syslumenn.service'
 import { OperatingLicense } from './models/operatingLicense'
 import { UploadDataInput } from './dto/uploadData.input'
 import { CertificateInfoInput } from './dto/certificateInfo.input'
-import { Skilabod } from '@island.is/clients/syslumenn'
-import { DataUploadResponse, SealedCriminalRecordResponse } from './models/dataUpload';
+import { DataUploadResponse } from './models/dataUpload'
 import {CertificateInfoRepsonse} from './models/certificateInfo'
 
 const cacheTime = process.env.CACHE_TIME || 300
@@ -46,16 +45,6 @@ export class SyslumennResolver {
       {},
       uploadDataName,
       uploadDataId
-    )
-  }
-
-  @Mutation(() => SealedCriminalRecordResponse)
-  postSyslumennSeal(
-    @Args('input')
-    input: string,
-  ): Promise<SealedCriminalRecordResponse> {
-    return this.syslumennService.sealCriminalRecord(
-      input
     )
   }
 

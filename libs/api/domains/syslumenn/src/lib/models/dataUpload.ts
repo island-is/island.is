@@ -6,13 +6,6 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { uuid } from 'uuidv4'
 import { Attachment, Person, PersonType } from '../dto/uploadData.input'
 
-// export enum PersonType {
-//   Plaintiff,
-//   CounterParty,
-//   Child,
-//   CriminalRecordApplicant,
-// }
-
 export function constructUploadDataObject(
   id: string,
   persons: Person[],
@@ -76,12 +69,3 @@ export class DataUploadResponse {
   malsnumer?: string
 }
 
-@ObjectType()
-export class SealedCriminalRecordResponse {
-  @Field()
-  audkenni!: string
-  @Field()
-  skilabod!: string
-  @Field()
-  skjal!: string
-}

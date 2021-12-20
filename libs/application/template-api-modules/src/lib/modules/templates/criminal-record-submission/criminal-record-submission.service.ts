@@ -79,6 +79,13 @@ export class CriminalRecordSubmissionService {
       record.contentBase64,
     )
 
+    if (!sealedRecordResponse?.skjal) {
+  
+      throw new Error(
+        'Eitthvað fór úrskeiðis.',
+      )
+    }
+
     const sealedRecord: CriminalRecord = {
       contentBase64: sealedRecordResponse.skjal,
     }

@@ -8,10 +8,6 @@ import { constructUploadDataObject } from './models/dataUpload'
 
 import { Attachment, Person } from './dto/uploadData.input'
 import {
-  DataUploadResponse,
-  SealedCriminalRecordResponse,
-} from './models/dataUpload'
-import {
   OperatingLicense,
   mapOperatingLicense,
 } from './models/operatingLicense'
@@ -103,21 +99,16 @@ export class SyslumennService {
 
   async sealCriminalRecord(
     criminalRecord: string,
-  ): Promise<SealedCriminalRecordResponse> {
+  ): Promise<InnsiglaSvar> {
     await this.login()
     const explination = 'Undirritað af sýslumanni'
-    const response = await this.syslumennApiWithAuth().innsiglunPost({
+    return await this.syslumennApiWithAuth().innsiglunPost({
       skeyti: {
         audkenni: this.id,
         skyring: explination,
         skjal: criminalRecord,
       },
     })
-    return {
-      audkenni: response.audkenni ?? '',
-      skjal: response.skjal ?? '',
-      skilabod: response.skilabod ?? 'Something went wrong',
-    }
   }
 
   async uploadData(
