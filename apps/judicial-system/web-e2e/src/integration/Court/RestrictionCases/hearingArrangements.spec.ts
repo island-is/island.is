@@ -1,11 +1,14 @@
 import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
-import { makeCase, makeCourt } from '@island.is/judicial-system/formatters'
+import {
+  makeCustodyCase,
+  makeCourt,
+} from '@island.is/judicial-system/formatters'
 import * as faker from 'faker'
 import { intercept } from '../../../utils'
 
 describe('/domur/krafa/fyrirtokutimi/:id', () => {
   beforeEach(() => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       court: makeCourt(),
@@ -19,7 +22,7 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
   })
 
   it('should display case comments', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const comment = faker.lorem.sentence(1)
     const caseDataAddition: Case = {
       ...caseData,
@@ -33,7 +36,7 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
   })
 
   it('should allow users to choose if they send COURT_DATE notification', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       court: makeCourt(),
@@ -54,7 +57,7 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       court: makeCourt(),
@@ -75,7 +78,7 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
   })
 
   it.skip('should hide the next button and show a info panel instead if the case is an investigation case and the current user does not have access to continue', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       court: makeCourt(),

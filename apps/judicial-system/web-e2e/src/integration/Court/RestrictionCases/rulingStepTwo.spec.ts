@@ -4,7 +4,7 @@ import {
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system/types'
-import { makeCase } from '@island.is/judicial-system/formatters'
+import { makeCustodyCase } from '@island.is/judicial-system/formatters'
 import { intercept } from '../../../utils'
 
 describe('/domur/urskurdarord/:id', () => {
@@ -13,7 +13,7 @@ describe('/domur/urskurdarord/:id', () => {
   })
 
   it('should format conclusion for a rejected case', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.REJECTING,
@@ -30,7 +30,7 @@ describe('/domur/urskurdarord/:id', () => {
   })
 
   it('should format conclusion for an accepted case without isolation', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.ACCEPTING,
@@ -48,7 +48,7 @@ describe('/domur/urskurdarord/:id', () => {
   })
 
   it('should format conclusion for an accepted case with isolation', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.ACCEPTING,
@@ -67,7 +67,7 @@ describe('/domur/urskurdarord/:id', () => {
   })
 
   it('should format conclusion for an accepted case with isolation and the isolation ends before the custody does', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.ACCEPTING,
@@ -89,7 +89,7 @@ describe('/domur/urskurdarord/:id', () => {
   })
 
   it('should format conclusion for a case where custody is rejected, but alternative travel ban accepted', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
@@ -109,12 +109,12 @@ describe('/domur/urskurdarord/:id', () => {
   })
 
   it('should format conclusion for rejected extension', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.REJECTING,
       parentCase: {
-        ...makeCase(),
+        ...makeCustodyCase(),
         decision: CaseDecision.ACCEPTING,
       },
     }
@@ -130,12 +130,12 @@ describe('/domur/urskurdarord/:id', () => {
   })
 
   it('should format conclusion for rejected extension when previous ruling was travel ban', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.REJECTING,
       parentCase: {
-        ...makeCase(),
+        ...makeCustodyCase(),
         decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
       },
     }
@@ -153,12 +153,12 @@ describe('/domur/urskurdarord/:id', () => {
   })
 
   it('should format conclusion for accepted extension', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.ACCEPTING,
       parentCase: {
-        ...makeCase(),
+        ...makeCustodyCase(),
         decision: CaseDecision.ACCEPTING,
       },
       validToDate: '2020-12-22T11:23:00.000Z',
@@ -175,12 +175,12 @@ describe('/domur/urskurdarord/:id', () => {
   })
 
   it('should format conclusion for accepted extension when previous ruling was travel ban', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.ACCEPTING,
       parentCase: {
-        ...makeCase(),
+        ...makeCustodyCase(),
         decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
       },
       validToDate: '2020-12-22T11:23:00.000Z',
@@ -199,12 +199,12 @@ describe('/domur/urskurdarord/:id', () => {
   })
 
   it('should format conclusion for rejected extension when alternative travel ban accepted', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
       parentCase: {
-        ...makeCase(),
+        ...makeCustodyCase(),
         decision: CaseDecision.ACCEPTING,
       },
       validToDate: '2020-12-22T11:23:00.000Z',
@@ -223,7 +223,7 @@ describe('/domur/urskurdarord/:id', () => {
   })
 
   it('should format conclusion for a rejected travel ban', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       type: CaseType.TRAVEL_BAN,
@@ -241,7 +241,7 @@ describe('/domur/urskurdarord/:id', () => {
   })
 
   it('should format conclusion for an accepted travel ban', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       type: CaseType.TRAVEL_BAN,
@@ -260,7 +260,7 @@ describe('/domur/urskurdarord/:id', () => {
   })
 
   it('should require a accused and prosecutor appeal decisions to be made', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       courtStartDate: '2020-12-22T11:23:00.000Z',
@@ -278,7 +278,7 @@ describe('/domur/urskurdarord/:id', () => {
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       courtStartDate: '2020-12-22T11:23:00.000Z',

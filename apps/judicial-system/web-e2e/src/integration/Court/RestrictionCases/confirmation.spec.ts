@@ -1,5 +1,5 @@
 import { Case, CaseDecision } from '@island.is/judicial-system/types'
-import { makeCase } from '@island.is/judicial-system/formatters'
+import { makeCustodyCase } from '@island.is/judicial-system/formatters'
 import { intercept } from '../../../utils'
 
 describe('/domur/stadfesta/:id', () => {
@@ -9,7 +9,7 @@ describe('/domur/stadfesta/:id', () => {
   })
 
   it('should display the ruling statement', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       conclusion:
@@ -26,7 +26,7 @@ describe('/domur/stadfesta/:id', () => {
   })
 
   it('should display the ruling', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       conclusion:
@@ -43,7 +43,7 @@ describe('/domur/stadfesta/:id', () => {
   })
 
   it('should have the correct "confirm" button if decision is "ACCEPTING" in custody and travel ban cases', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.ACCEPTING,
@@ -57,7 +57,7 @@ describe('/domur/stadfesta/:id', () => {
   })
 
   it('should have the correct "confirm" button if decision is "REJECTING" in custody and travel ban cases', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.REJECTING,
@@ -71,7 +71,7 @@ describe('/domur/stadfesta/:id', () => {
   })
 
   it('should have the correct "confirm" button if decision is "DISMISSING" in custody and travel ban cases', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.DISMISSING,
@@ -85,7 +85,7 @@ describe('/domur/stadfesta/:id', () => {
   })
 
   it('should have the correct "confirm" button if decision is "ACCEPTING_ALTERNATIVE_TRAVEL_BAN" in custody and travel ban cases', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,

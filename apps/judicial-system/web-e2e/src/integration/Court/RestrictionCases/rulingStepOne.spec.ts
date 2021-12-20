@@ -5,7 +5,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
 } from '@island.is/judicial-system/types'
-import { makeCase } from '@island.is/judicial-system/formatters'
+import { makeCustodyCase } from '@island.is/judicial-system/formatters'
 import { intercept } from '../../../utils'
 
 describe('/domur/urskurdur/:id', () => {
@@ -14,7 +14,7 @@ describe('/domur/urskurdur/:id', () => {
   })
 
   it('should autofill prosecutor demands', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       caseFacts: 'lorem ipsum',
@@ -32,7 +32,7 @@ describe('/domur/urskurdur/:id', () => {
   })
 
   it('should require a valid ruling', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       caseFacts: 'lorem ipsum',
@@ -56,7 +56,7 @@ describe('/domur/urskurdur/:id', () => {
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       caseFacts: 'lorem ipsum',
@@ -75,7 +75,7 @@ describe('/domur/urskurdur/:id', () => {
   })
 
   it('should show appropriate valid to dates based on decision', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       caseFacts: 'lorem ipsum',
@@ -97,7 +97,7 @@ describe('/domur/urskurdur/:id', () => {
   })
 
   it('should have a disabled isolationTo datepicker if isolation is not one of the custody restrictions and not if it is', () => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.ACCEPTING,

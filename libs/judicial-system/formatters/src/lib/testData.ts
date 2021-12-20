@@ -8,8 +8,9 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
+import faker from 'faker'
 
-export const makeCase = (): Case => {
+export const makeCustodyCase = (): Case => {
   return {
     id: 'test_id',
     created: '2020-09-16T19:50:08.033Z',
@@ -21,6 +22,37 @@ export const makeCase = (): Case => {
     accusedName: 'Donald Duck',
     accusedGender: CaseGender.MALE,
     accusedAddress: 'Batcave 1337',
+  }
+}
+
+export const makeInvestigationCase = (): Case => {
+  return {
+    id: faker.datatype.uuid(),
+    created: faker.date.past().toISOString(),
+    modified: faker.date.past().toISOString(),
+    state: CaseState.DRAFT,
+    type: CaseType.INTERNET_USAGE,
+    court: {
+      id: 'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf',
+      created: '2020-09-16T19:50:08.033Z',
+      modified: '2020-09-16T19:50:08.033Z',
+      type: InstitutionType.COURT,
+      name: 'Héraðsdómur Reykjavíkur',
+    },
+    policeCaseNumber: `${faker.datatype.number({
+      min: 3,
+      max: 3,
+    })}-${faker.datatype.number({ min: 4, max: 4 })}-${faker.datatype.number({
+      min: 3,
+      max: 6,
+    })}`,
+    accusedNationalId: `${faker.datatype.number({
+      min: 6,
+      max: 6,
+    })}-${faker.datatype.number({ min: 4, max: 4 })}`,
+    accusedName: faker.name.firstName(),
+    accusedGender: CaseGender.MALE,
+    accusedAddress: faker.address.streetAddress(),
   }
 }
 

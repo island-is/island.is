@@ -1,6 +1,6 @@
 import { Case } from '@island.is/judicial-system/types'
 import {
-  makeCase,
+  makeCustodyCase,
   makeCourt,
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
@@ -8,7 +8,7 @@ import { intercept } from '../../../utils'
 
 describe('/krafa/stadfesta/:id', () => {
   beforeEach(() => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       accusedName: 'Donald Duck',

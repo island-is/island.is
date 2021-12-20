@@ -172,6 +172,8 @@ const HearingArrangements = () => {
     return false
   }
 
+  console.log(user, prosecutors, courts)
+
   return (
     <PageLayout
       workingCase={workingCase}
