@@ -289,11 +289,11 @@ export const getInputFieldsWithErrors = (
   draft: RegDraftForm | undefined,
 ) => {
   if (draft) {
-    const hasErrors = inputs.filter((x) => !draft[x].value)
-    if (hasErrors.length > 0) {
-      const errorUpdateArray = hasErrors.map((item) => ({
-        [item]: {
-          ...draft?.[item],
+    const emptyFields = inputs.filter((x) => !draft[x].value)
+    if (emptyFields.length > 0) {
+      const errorUpdateArray = emptyFields.map((fieldName) => ({
+        [fieldName]: {
+          ...draft[fieldName],
           error: true,
         },
       }))

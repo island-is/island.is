@@ -458,9 +458,6 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
         stepNav.next &&
         (isEditor || stepNav.next !== 'review')
           ? () => {
-              if (!draft?.title || !draft?.text) {
-                return
-              }
               actions.saveStatus()
               // BASICS
               if (stepNav.name === 'basics') {
