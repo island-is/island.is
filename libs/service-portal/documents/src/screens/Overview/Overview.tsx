@@ -315,7 +315,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 alignItems="center"
                 justifyContent="spaceBetween"
               >
-                <Text variant="h3" as="h3">{`${
+                <Text variant="h5" as="h3">{`${
                   filteredDocuments.length
                 } ${formatMessage(documentsFoundText())}`}</Text>
                 <div>
