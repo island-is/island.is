@@ -123,7 +123,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
               <CheckboxController
                 id={`${item.model}.name`}
                 spacing={0}
-                labelVariant={isFirstItem ? 'default' : 'small'}
+                labelVariant={isFirstItem ? 'default' : 'medium'}
                 defaultValue={existingScope ? [existingScope.name] : []}
                 options={[
                   {
@@ -135,7 +135,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
               />
             </T.Data>
             <T.Data box={tdStyling} style={tableStyles}>
-              <Text variant={isFirstItem ? 'default' : 'small'}>
+              <Text variant={isFirstItem ? 'default' : 'medium'}>
                 {item.description}
               </Text>
             </T.Data>
