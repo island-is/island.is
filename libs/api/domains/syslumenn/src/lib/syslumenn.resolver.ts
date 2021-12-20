@@ -1,13 +1,11 @@
-import { Args, Directive, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
 import { GetHomestaysInput } from './dto/getHomestays.input'
 import { Homestay } from './models/homestay'
 import { SyslumennAuction } from './models/syslumennAuction'
 import { SyslumennService } from './syslumenn.service'
 import { OperatingLicense } from './models/operatingLicense'
-import { UploadDataInput } from './dto/uploadData.input'
 import { CertificateInfoInput } from './dto/certificateInfo.input'
-import { DataUploadResponse } from './models/dataUpload'
-import {CertificateInfoRepsonse} from './models/certificateInfo'
+import { CertificateInfoRepsonse } from './models/certificateInfo'
 import { DistrictCommissionersAgenciesRepsonse } from './models/districtCommissionersAgencies'
 
 const cacheTime = process.env.CACHE_TIME || 300
@@ -35,20 +33,6 @@ export class SyslumennResolver {
     return this.syslumennService.getOperatingLicenses()
   }
 
-  @Mutation(() => DataUploadResponse)
-  postSyslumennUploadData(
-    @Args('input')
-    { persons, attachment, uploadDataName, uploadDataId, extraData }: UploadDataInput,
-  ): Promise<DataUploadResponse> {
-    return this.syslumennService.uploadData(
-      persons,
-      attachment,
-      extraData ? { StarfsstodID: extraData?.content }: {},
-      uploadDataName,
-      uploadDataId
-    )
-  }
-
   @Query(() => CertificateInfoRepsonse)
   getSyslumennCertificateInfo(
     @Args('input') input: CertificateInfoInput,
@@ -57,8 +41,9 @@ export class SyslumennResolver {
   }
 
   @Query(() => [DistrictCommissionersAgenciesRepsonse])
-  getSyslumennDistrictCommissionersAgencies(
-  ): Promise<DistrictCommissionersAgenciesRepsonse[]> {
+  getSyslumennDistrictCommissionersAgencies(): Promise<
+    DistrictCommissionersAgenciesRepsonse[]
+  > {
     return this.syslumennService.getDistrictCommissionersAgencies()
   }
 }

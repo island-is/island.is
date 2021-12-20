@@ -54,7 +54,7 @@ export class UploadDataInput {
 
   @Field(() => Attachment)
   attachment!: Attachment
-  
+
   @Field()
   uploadDataName!: string
 

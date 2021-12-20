@@ -23,6 +23,6 @@ export const mapDistrictCommissionersAgenciesRepsonse = (
     id: response.starfsstodID,
     name: response.nafn,
     place: response.stadur,
-    address: response.adsetur
+    address: response.adsetur,
   }
 }

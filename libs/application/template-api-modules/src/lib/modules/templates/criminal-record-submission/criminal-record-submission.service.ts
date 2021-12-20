@@ -80,10 +80,7 @@ export class CriminalRecordSubmissionService {
     )
 
     if (!sealedRecordResponse?.skjal) {
-  
-      throw new Error(
-        'Eitthvað fór úrskeiðis.',
-      )
+      throw new Error('Eitthvað fór úrskeiðis.')
     }
 
     const sealedRecord: CriminalRecord = {

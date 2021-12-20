@@ -43,7 +43,6 @@ export function constructUploadDataObject(
   }
 }
 
-
 function mapPersonEnum(e: PersonType) {
   switch (e) {
     case PersonType.Plaintiff:

@@ -27,7 +27,10 @@ import {
   CertificateInfoRepsonse,
   mapCertificateInfo,
 } from './models/certificateInfo'
-import { DistrictCommissionersAgenciesRepsonse, mapDistrictCommissionersAgenciesRepsonse } from './models/districtCommissionersAgencies'
+import {
+  DistrictCommissionersAgenciesRepsonse,
+  mapDistrictCommissionersAgenciesRepsonse,
+} from './models/districtCommissionersAgencies'
 
 const SYSLUMENN_CLIENT_CONFIG = 'SYSLUMENN_CLIENT_CONFIG'
 @Injectable()
@@ -99,9 +102,7 @@ export class SyslumennService {
     return ((operatingLicenses as VirkLeyfi[]) ?? []).map(mapOperatingLicense)
   }
 
-  async sealCriminalRecord(
-    criminalRecord: string,
-  ): Promise<SvarSkeyti> {
+  async sealCriminalRecord(criminalRecord: string): Promise<SvarSkeyti> {
     await this.login()
     const explination = 'Undirritað af sýslumanni'
     return await this.syslumennApiWithAuth().innsiglunPost({
@@ -147,10 +148,10 @@ export class SyslumennService {
     return mapCertificateInfo(certificate)
   }
 
-
-  async getDistrictCommissionersAgencies(): Promise<DistrictCommissionersAgenciesRepsonse[]> {
+  async getDistrictCommissionersAgencies(): Promise<
+    DistrictCommissionersAgenciesRepsonse[]
+  > {
     const response = await this.syslumennApi.embaettiOgStarfsstodvarGetEmbaetti()
     return response.map(mapDistrictCommissionersAgenciesRepsonse)
-
   }
 }
