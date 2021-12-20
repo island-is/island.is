@@ -40,7 +40,6 @@ export class Attachment {
   @Field()
   content!: string
 }
-
 @InputType()
 export class UploadDataInput {
   @Field(() => [Person])
@@ -51,9 +50,6 @@ export class UploadDataInput {
 
   @Field()
   applicationType!: string
-
-  @Field()
-  extraData!: { [key: string]: string }
   
   @Field()
   uploadDataName!: string

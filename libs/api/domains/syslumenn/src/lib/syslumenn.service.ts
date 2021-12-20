@@ -4,9 +4,7 @@ import {
   mapSyslumennAuction,
 } from './models/syslumennAuction'
 import { Injectable, Inject } from '@nestjs/common'
-import {
-  constructUploadDataObject,
-} from './models/dataUpload'
+import { constructUploadDataObject } from './models/dataUpload'
 
 import { Attachment, Person } from './dto/uploadData.input'
 import {
@@ -25,7 +23,7 @@ import {
   VirkLeyfi,
   VottordSkeyti,
   Skilabod,
-  InnsiglaSvar
+  InnsiglaSvar,
 } from '@island.is/clients/syslumenn'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
@@ -105,10 +103,21 @@ export class SyslumennService {
 
   async sealCriminalRecord(
     criminalRecord: string,
-  ): Promise<InnsiglaSvar> {
+  ): Promise<SealedCriminalRecordResponse> {
     await this.login()
     const explination = 'Undirritað af sýslumanni'
-    return await this.syslumennApiWithAuth().innsiglunPost({skeyti: {audkenni: this.id, skyring: explination, skjal: criminalRecord}})
+    const response = await this.syslumennApiWithAuth().innsiglunPost({
+      skeyti: {
+        audkenni: this.id,
+        skyring: explination,
+        skjal: criminalRecord,
+      },
+    })
+    return {
+      audkenni: response.audkenni ?? '',
+      skjal: response.skjal ?? '',
+      skilabod: response.skilabod ?? 'Something went wrong',
+    }
   }
 
   async uploadData(

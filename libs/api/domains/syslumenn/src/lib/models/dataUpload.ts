@@ -76,8 +76,12 @@ export class DataUploadResponse {
   malsnumer?: string
 }
 
-export interface SealedCriminalRecordResponse {
-  audkenni: string
-  skilabod: string
-  skjal: string
+@ObjectType()
+export class SealedCriminalRecordResponse {
+  @Field()
+  audkenni!: string
+  @Field()
+  skilabod!: string
+  @Field()
+  skjal!: string
 }
