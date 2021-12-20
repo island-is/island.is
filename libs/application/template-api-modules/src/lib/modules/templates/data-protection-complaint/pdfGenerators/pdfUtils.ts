@@ -6,8 +6,8 @@ export const addToDoc = (
   fontSize: number,
   lineGap: number,
   text: string,
-  continued: boolean = false,
-  indent: number = 0,
+  continued = false,
+  indent = 0,
 ) => {
   doc
     .font(font)
