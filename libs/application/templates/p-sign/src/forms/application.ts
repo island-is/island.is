@@ -48,27 +48,34 @@ export const getApplication = (): Form => {
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
+                id: 'doctorsNote',
+                type: '',
                 title: m.dataCollectionDoctorsNoteTitle,
                 subTitle: m.dataCollectionDoctorsNoteSubtitle,
               }),
               buildDataProviderItem({
-                id: 'userProfile',
-                type: 'UserProfileProvider',
-                title: '',
-                subTitle: '',
+                id: 'nationalRegistry',
+                type: 'NationalRegistryProvider',
+                title: m.dataCollectionNationalRegistryTitle,
+                subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
               buildDataProviderItem({
                 id: 'qualityPhoto',
                 type: 'QualityPhotoProvider',
-                title: '',
-                subTitle: '',
+                title: m.dataCollectionQualityPhotoTitle,
+                subTitle: m.dataCollectionQualityPhotoSubtitle,
+              }),
+              buildDataProviderItem({
+                id: 'userProfile',
+                type: 'UserProfileProvider',
+                title: m.dataCollectionUserProfileTitle,
+                subTitle: m.dataCollectionUserProfileSubtitle,
               }),
               buildDataProviderItem({
                 id: 'jurisdictions',
                 type: 'JurisdictionProvider',
                 title: '',
+                subTitle: '',
               }),
             ],
           }),
@@ -261,7 +268,7 @@ export const getApplication = (): Form => {
                   { value: 'sendHome', label: m.deliveryMethodHomeDelivery },
                   { value: 'pickUp', label: m.deliveryMethodPickUp },
                 ],
-                defaultValue: 'sendHome'
+                defaultValue: 'sendHome',
               }),
               buildSelectField({
                 id: 'jurisdiction',
@@ -340,7 +347,7 @@ export const getApplication = (): Form => {
               buildKeyValueField({
                 label: m.cardValidityPeriod,
                 width: 'half',
-                value: () => '19/10/24',
+                value: () => '19/10/2024',
               }),
               buildDividerField({}),
               buildKeyValueField({

@@ -38,6 +38,39 @@ export const m = defineMessages({
     defaultMessage: 'Nisi at fermentum adipiscing montes, mi.',
     description: 'Doctors note subtitle',
   },
+  dataCollectionNationalRegistryTitle: {
+    id: 'dl.application:dataCollectionNationalRegistryTitle',
+    defaultMessage: 'Persónuupplýsingar úr Þjóðskrá',
+    description: 'National registry title',
+  },
+  dataCollectionNationalRegistrySubtitle: {
+    id: 'dl.application:dataCollectionNationalRegistrySubtitle',
+    defaultMessage:
+      'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
+    description: 'National registry subtitle',
+  },
+  dataCollectionQualityPhotoTitle: {
+    id: 'dl.application:dataCollectionQualityPhotoTitle',
+    defaultMessage: 'Upplýsingar úr ökuskírteinaskrá',
+    description: 'Info from drivers license',
+  },
+  dataCollectionQualityPhotoSubtitle: {
+    id: 'dl.application:dataCollectionQualityPhotoSubtitle',
+    defaultMessage: 'Nisi at fermentum adipiscing montes, mi.',
+    description: 'National registry subtitle',
+  },
+  dataCollectionUserProfileTitle: {
+    id: 'cr.application:dataCollectionUserProfileTitle',
+    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
+    description: 'Your user profile information',
+  },
+  dataCollectionUserProfileSubtitle: {
+    id: 'cr.application:dataCollectionUserProfileSubtitle',
+    defaultMessage:
+      'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
+    description:
+      'In order to apply for this application we need your email and phone number',
+  },
 
   /* Information Section */
   informationTitle: {
