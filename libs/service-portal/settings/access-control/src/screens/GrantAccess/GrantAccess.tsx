@@ -155,99 +155,100 @@ function GrantAccess() {
               })}
             </Text>
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '8/12']} paddingBottom={4}>
-            <div className={styles.inputWrapper}>
-              {name && (
-                <Input
-                  name="name"
-                  value={name}
-                  aria-live="assertive"
-                  label={formatMessage({
-                    id:
-                      'service.portal.settings.accessControl:grant-form-access-holder',
-                    defaultMessage: 'Aðgangshafi',
-                  })}
-                  disabled
-                  size="xs"
-                />
-              )}
-              <Box display={name ? 'none' : 'block'} aria-live="assertive">
-                <InputController
-                  control={control}
-                  id="toNationalId"
-                  defaultValue=""
-                  icon={name || queryLoading ? undefined : 'search'}
-                  rules={
-                    {
-                      required: {
-                        value: true,
-                        message: formatMessage({
-                          id:
-                            'service.portal.settings.accessControl:grant-required-ssn',
-                          defaultMessage: 'Skylda er að fylla út kennitölu',
-                        }),
-                      },
-                      validate: {
-                        value: (value: number) => {
-                          if (
-                            value.toString().length === 10 &&
-                            !kennitala.isValid(value)
-                          ) {
-                            return formatMessage({
-                              id:
-                                'service.portal.settings.accessControl:grant-invalid-ssn',
-                              defaultMessage:
-                                'Kennitalan er ekki gild kennitala',
-                            })
-                          }
+          <Box display="flex" width="full" alignItems="flexEnd">
+            <GridColumn span={['12/12', '12/12', '8/12']}>
+              <div className={styles.inputWrapper}>
+                {name && (
+                  <Input
+                    name="name"
+                    value={name}
+                    aria-live="assertive"
+                    label={formatMessage({
+                      id:
+                        'service.portal.settings.accessControl:grant-form-access-holder',
+                      defaultMessage: 'Aðgangshafi',
+                    })}
+                    disabled
+                    size="xs"
+                  />
+                )}
+                <Box display={name ? 'none' : 'block'} aria-live="assertive">
+                  <InputController
+                    control={control}
+                    id="toNationalId"
+                    defaultValue=""
+                    icon={name || queryLoading ? undefined : 'search'}
+                    rules={
+                      {
+                        required: {
+                          value: true,
+                          message: formatMessage({
+                            id:
+                              'service.portal.settings.accessControl:grant-required-ssn',
+                            defaultMessage: 'Skylda er að fylla út kennitölu',
+                          }),
                         },
-                      },
-                    } as ValidationRules
-                  }
-                  type="tel"
-                  format="######-####"
-                  label={formatMessage(sharedMessages.nationalId)}
-                  placeholder={formatMessage(sharedMessages.nationalId)}
-                  error={errors.toNationalId?.message}
-                  onChange={(value) => {
-                    requestDelegation(value)
-                  }}
-                  size="xs"
-                />
-              </Box>
-              {queryLoading ? (
-                <span
-                  className={cn(styles.icon, styles.loadingIcon)}
-                  aria-label="Loading"
-                >
-                  <Icon icon="reload" size="large" color="blue400" />
-                </span>
-              ) : name ? (
-                <button
-                  disabled={loading}
-                  onClick={clearForm}
-                  className={styles.icon}
-                >
-                  <Icon icon="close" size="large" color="blue400" />
-                </button>
-              ) : null}
-            </div>
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '4/12']}>
-            <Button
-              size="large"
-              fluid
-              type="submit"
-              icon="arrowForward"
-              disabled={!name || loading}
-              loading={loading}
-            >
-              {formatMessage({
-                id: 'service.portal.settings.accessControl:grant-form-submit',
-                defaultMessage: 'Áfram',
-              })}
-            </Button>
-          </GridColumn>
+                        validate: {
+                          value: (value: number) => {
+                            if (
+                              value.toString().length === 10 &&
+                              !kennitala.isValid(value)
+                            ) {
+                              return formatMessage({
+                                id:
+                                  'service.portal.settings.accessControl:grant-invalid-ssn',
+                                defaultMessage:
+                                  'Kennitalan er ekki gild kennitala',
+                              })
+                            }
+                          },
+                        },
+                      } as ValidationRules
+                    }
+                    type="tel"
+                    format="######-####"
+                    label={formatMessage(sharedMessages.nationalId)}
+                    placeholder={formatMessage(sharedMessages.nationalId)}
+                    error={errors.toNationalId?.message}
+                    onChange={(value) => {
+                      requestDelegation(value)
+                    }}
+                    size="xs"
+                  />
+                </Box>
+                {queryLoading ? (
+                  <span
+                    className={cn(styles.icon, styles.loadingIcon)}
+                    aria-label="Loading"
+                  >
+                    <Icon icon="reload" size="large" color="blue400" />
+                  </span>
+                ) : name ? (
+                  <button
+                    disabled={loading}
+                    onClick={clearForm}
+                    className={styles.icon}
+                  >
+                    <Icon icon="close" size="large" color="blue400" />
+                  </button>
+                ) : null}
+              </div>
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '4/12']}>
+              <Button
+                size={name ? 'small' : 'large'}
+                type="submit"
+                icon="arrowForward"
+                disabled={!name || loading}
+                loading={loading}
+              >
+                {formatMessage({
+                  id: 'service.portal.settings.accessControl:grant-form-submit',
+                  defaultMessage: 'Áfram',
+                })}
+              </Button>
+            </GridColumn>
+          </Box>
         </GridRow>
       </form>
     </Box>

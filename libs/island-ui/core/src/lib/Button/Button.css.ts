@@ -123,6 +123,7 @@ export const size = styleVariants({
   medium: {
     fontSize: 14,
     lineHeight: 1.25,
+    height: 48,
     ...themeUtils.responsiveStyle({
       md: {
         fontSize: 16,
