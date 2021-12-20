@@ -573,37 +573,6 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     )
   })
 
-  test('should format court date notification when prosecutor will not attend', () => {
-    // Arrange
-    const type = CaseType.OTHER
-    const court = 'Héraðsdómur Reykjavíkur'
-    const courtDate = new Date('2021-12-24T10:00')
-    const courtRoom = '999'
-    const judgeName = 'Dóra Dómari'
-    const registrarName = 'Dalli Dómritari'
-    const defenderName = 'Tinni Talsmaður'
-    const defenderIsSpokesperson = true
-    const sessionArrangements = SessionArrangements.REMOTE_SESSION
-
-    // Act
-    const res = formatProsecutorCourtDateEmailNotification(
-      type,
-      court,
-      courtDate,
-      courtRoom,
-      judgeName,
-      registrarName,
-      defenderName,
-      defenderIsSpokesperson,
-      sessionArrangements,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Úrskurðað verður um kröfuna án mætingar af hálfu málsaðila.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.',
-    )
-  })
-
   test('should format court date notification when defender will not attend', () => {
     // Arrange
     const type = CaseType.OTHER
