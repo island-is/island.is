@@ -120,6 +120,16 @@ export const size = styleVariants({
       },
     }),
   },
+  medium: {
+    fontSize: 14,
+    lineHeight: 1.25,
+    ...themeUtils.responsiveStyle({
+      md: {
+        fontSize: 16,
+        lineHeight: '16px',
+      },
+    }),
+  },
 })
 
 export const padding = styleVariants({
@@ -132,6 +142,14 @@ export const padding = styleVariants({
     ...themeUtils.responsiveStyle({
       md: {
         padding: '18px 24px',
+      },
+    }),
+  },
+  medium: {
+    padding: 14,
+    ...themeUtils.responsiveStyle({
+      md: {
+        padding: 16,
       },
     }),
   },
@@ -170,6 +188,10 @@ export const circleSizes = styleVariants({
   small: {
     width: 24,
     height: 24,
+  },
+  medium: {
+    width: 48,
+    height: 48,
   },
   large: {
     width: 48,

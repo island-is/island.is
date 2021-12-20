@@ -108,11 +108,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.size[size]]:
               variant !== 'utility' &&
               !circle &&
-              !(variant === 'text' && size === 'small'),
+              !(variant === 'text' && size === 'small') &&
+              !(variant === 'text' && size === 'medium'),
             [styles.fluid]: fluid,
             [styles.nowrap]: nowrap,
             [styles.size.utility]: variant === 'utility',
             [styles.size.textSmall]: variant === 'text' && size === 'small',
+            [styles.size.medium]: variant === 'text' && size === 'medium',
+
             [styles.circleSizes[size]]: circle,
             [styles.circle]: circle,
             [styles.padding[size]]:

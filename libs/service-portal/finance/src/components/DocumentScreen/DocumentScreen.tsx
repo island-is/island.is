@@ -259,7 +259,7 @@ const DocumentScreen: FC<Props> = ({
                       >
                         <Button
                           variant="text"
-                          size="small"
+                          size="medium"
                           onClick={() =>
                             formSubmit(
                               `${data?.getDocumentsList?.downloadServiceURL}${listItem.id}`,
