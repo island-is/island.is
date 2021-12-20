@@ -28,41 +28,18 @@ export const applicationOverviewTemplate = (
     'applicant.responsiblePartyTel',
   )
 
-  // Technical Contact
-  const technicalContactName = getValueViaPath(
+  // Technical Announcements
+  const technicalAnnouncementsEmail = getValueViaPath(
     application.answers,
-    'technicalContact.name',
+    'technicalAnnouncements.email',
   )
-  const technicalContactEmail = getValueViaPath(
+  const technicalAnnouncementsPhoneNumber = getValueViaPath(
     application.answers,
-    'technicalContact.email',
+    'technicalAnnouncements.phoneNumber',
   )
-  const technicalContactPhoneNumber = getValueViaPath(
+  const technicalAnnouncementsType = getValueViaPath(
     application.answers,
-    'technicalContact.phoneNumber',
-  )
-
-  const technicalContactTechAnnouncementsEmail = getValueViaPath(
-    application.answers,
-    'technicalContact.techAnnouncementsEmail',
-  )
-
-  // Technical Info
-  const technicalInfoType = getValueViaPath(
-    application.answers,
-    'technicalInfo.type',
-  )
-  const technicalInfoDevReturnUrl = getValueViaPath(
-    application.answers,
-    'technicalInfo.devReturnUrl',
-  )
-  const technicalInfoStagingReturnUrl = getValueViaPath(
-    application.answers,
-    'technicalInfo.stagingReturnUrl',
-  )
-  const technicalInfoProdReturnUrl = getValueViaPath(
-    application.answers,
-    'technicalInfo.prodReturnUrl',
+    'technicalAnnouncements.type',
   )
 
   return dedent(`
@@ -99,73 +76,30 @@ export const applicationOverviewTemplate = (
     </p>
 
 
-    <h3>${messages.technicalContact.general.pageTitle.defaultMessage}</h3>
+    <h3>${messages.technicalAnnouncements.general.pageTitle.defaultMessage}</h3>
     ${
-      technicalContactName
+      technicalAnnouncementsEmail
         ? `
           <p>
-            <b>${messages.technicalContact.labels.name.defaultMessage}</b> </br>
-            ${technicalContactName}
+            <b>${messages.technicalAnnouncements.labels.email.defaultMessage}</b> </br>
+            ${technicalAnnouncementsEmail}
           </p>
         `
         : ''
     }
     ${
-      technicalContactEmail
+      technicalAnnouncementsPhoneNumber
         ? `
           <p>
-            <b>${messages.technicalContact.labels.email.defaultMessage}</b> </br>
-            ${technicalContactEmail}
-          </p>
-        `
-        : ''
-    }
-    ${
-      technicalContactPhoneNumber
-        ? `
-          <p>
-            <b>${messages.technicalContact.labels.tel.defaultMessage}</b> </br>
-            ${technicalContactPhoneNumber}
+            <b>${messages.technicalAnnouncements.labels.tel.defaultMessage}</b> </br>
+            ${technicalAnnouncementsPhoneNumber}
           </p>
         `
         : ''
     }
     <p>
-      <b>${
-        messages.technicalContact.labels.techAnnouncementsEmail.defaultMessage
-      }</b> </br>
-      ${technicalContactTechAnnouncementsEmail}
-    </p>
-
-
-    <h3>${messages.technicalInfo.general.pageTitle.defaultMessage}</h3>
-    <p>
-      <b>${messages.technicalInfo.labels.type.defaultMessage}</b> </br>
-      ${technicalInfoType}
-    </p>
-    ${
-      technicalInfoDevReturnUrl
-        ? `
-          <p>
-            <b>${messages.technicalInfo.labels.devReturnUrl.defaultMessage}</b> </br>
-            ${technicalInfoDevReturnUrl}
-          </p>
-        `
-        : ''
-    }
-    ${
-      technicalInfoStagingReturnUrl
-        ? `
-          <p>
-            <b>${messages.technicalInfo.labels.stagingReturnUrl.defaultMessage}</b> </br>
-            ${technicalInfoStagingReturnUrl}
-          </p>
-        `
-        : ''
-    }
-    <p>
-      <b>${messages.technicalInfo.labels.prodReturnUrl.defaultMessage}</b> </br>
-      ${technicalInfoProdReturnUrl}
+      <b>${messages.technicalAnnouncements.labels.type.defaultMessage}</b> </br>
+      ${technicalAnnouncementsType}
     </p>
 
   `)
