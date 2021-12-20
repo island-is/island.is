@@ -16,6 +16,7 @@ import {
 import { Icon } from '../../IconRC/Icon'
 import * as styles from '../Select.css'
 import { SelectProps, Option as ReactSelectOption } from '../Select'
+import { labelSizes } from '../../Input/Input.mixins'
 
 export const Menu = (props: MenuProps<ReactSelectOption>) => (
   <components.Menu className={styles.menu} {...props} />
@@ -131,35 +132,23 @@ export const Input: ComponentType<InputProps> = (
     />
   )
 }
-
 export const Control = (props: ControlProps<ReactSelectOption>) => {
   const size: NonNullableSize = props.selectProps.size || 'md'
-  if (size === 'xs') {
-    return (
-      <>
-        <label
-          htmlFor={props.selectProps.name}
-          className={cn(styles.label, styles.labelSizes[size!])}
-        >
-          {props.selectProps.label}
-          {props.selectProps.required && (
-            <span aria-hidden="true" className={styles.isRequiredStar}>
-              {' '}
-              *
-            </span>
-          )}
-        </label>
-        <components.Control
-          className={cn(styles.container, styles.containerSizes[size!], {
-            [styles.hasError]: props.selectProps.hasError,
-          })}
-          {...props}
-        >
-          {props.children}
-        </components.Control>
-      </>
-    )
-  } else {
+  const label: JSX.Element = (
+    <label
+      htmlFor={props.selectProps.name}
+      className={cn(styles.label, styles.labelSizes[size!])}
+    >
+      {props.selectProps.label}
+      {props.selectProps.required && (
+        <span aria-hidden="true" className={styles.isRequiredStar}>
+          {' '}
+          *
+        </span>
+      )}
+    </label>
+  )
+  const component = (label?: JSX.Element) => {
     return (
       <components.Control
         className={cn(styles.container, styles.containerSizes[size!], {
@@ -167,21 +156,19 @@ export const Control = (props: ControlProps<ReactSelectOption>) => {
         })}
         {...props}
       >
-        <label
-          htmlFor={props.selectProps.name}
-          className={cn(styles.label, styles.labelSizes[size!])}
-        >
-          {props.selectProps.label}
-          {props.selectProps.required && (
-            <span aria-hidden="true" className={styles.isRequiredStar}>
-              {' '}
-              *
-            </span>
-          )}
-        </label>
+        {label && label}
         {props.children}
       </components.Control>
     )
+  }
+  if (size === 'xs') {
+    return (
+      <>
+        {label} {component()}
+      </>
+    )
+  } else {
+    return component(label)
   }
 }
 
