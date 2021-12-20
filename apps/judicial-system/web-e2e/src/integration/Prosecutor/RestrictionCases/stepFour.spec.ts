@@ -1,5 +1,5 @@
 import { makeCase } from '@island.is/judicial-system/formatters'
-import { intercept } from '../../utils'
+import { intercept } from '../../../utils'
 
 describe('/krafa/greinagerd/:id', () => {
   beforeEach(() => {

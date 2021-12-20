@@ -1,7 +1,7 @@
 import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 import { makeCase, makeCourt } from '@island.is/judicial-system/formatters'
 import * as faker from 'faker'
-import { intercept } from '../../utils'
+import { intercept } from '../../../utils'
 
 describe('/domur/krafa/fyrirtokutimi/:id', () => {
   beforeEach(() => {

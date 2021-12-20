@@ -1,4 +1,4 @@
-/// <reference path="../../support/index.d.ts" />
+/// <reference path="../../../support/index.d.ts" />
 
 import {
   Case,
@@ -6,7 +6,7 @@ import {
   CaseDecision,
 } from '@island.is/judicial-system/types'
 import { makeCase } from '@island.is/judicial-system/formatters'
-import { intercept } from '../../utils'
+import { intercept } from '../../../utils'
 
 describe('/domur/urskurdur/:id', () => {
   beforeEach(() => {

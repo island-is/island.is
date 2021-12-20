@@ -4,7 +4,7 @@ import {
   makeCourt,
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
-import { intercept } from '../../utils'
+import { intercept } from '../../../utils'
 
 describe('/krafa/stadfesta/:id', () => {
   beforeEach(() => {
