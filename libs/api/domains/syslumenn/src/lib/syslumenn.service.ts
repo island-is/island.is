@@ -19,7 +19,7 @@ import {
   VirkLeyfi,
   VottordSkeyti,
   Skilabod,
-  InnsiglaSvar,
+  SvarSkeyti,
 } from '@island.is/clients/syslumenn'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
@@ -99,7 +99,7 @@ export class SyslumennService {
 
   async sealCriminalRecord(
     criminalRecord: string,
-  ): Promise<InnsiglaSvar> {
+  ): Promise<SvarSkeyti> {
     await this.login()
     const explination = 'Undirritað af sýslumanni'
     return await this.syslumennApiWithAuth().innsiglunPost({

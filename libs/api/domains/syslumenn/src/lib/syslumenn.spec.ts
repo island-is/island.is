@@ -15,7 +15,6 @@ import { PersonType } from './dto/uploadData.input'
 import {
   SyslumennApiConfig,
   SyslumennApiModule,
-  VirkarHeimagistingar,
 } from '@island.is/clients/syslumenn'
 
 const YEAR = 2021
@@ -36,7 +35,6 @@ const ATTACHMENT = {
   name: 'attachment',
   content: 'content',
 }
-const APPLICATION_TYPE = 'string'
 
 const config = {
   url: 'http://localhost',
@@ -104,14 +102,10 @@ describe('SyslumennService', () => {
       const response = await service.uploadData(
         PERSON,
         ATTACHMENT,
-<<<<<<< HEAD
-        APPLICATION_TYPE,
-=======
         {
           key: 'string',
         },
         'Lögheimilisbreyting barns',
->>>>>>> main
       )
       expect(response).toStrictEqual(DATA_UPLOAD)
     })

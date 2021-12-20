@@ -37,12 +37,12 @@ export class SyslumennResolver {
   @Mutation(() => DataUploadResponse)
   postSyslumennUploadData(
     @Args('input')
-    { persons, attachment, uploadDataName, uploadDataId }: UploadDataInput,
+    { persons, attachment, uploadDataName, uploadDataId, extraData }: UploadDataInput,
   ): Promise<DataUploadResponse> {
     return this.syslumennService.uploadData(
       persons,
       attachment,
-      {},
+      extraData ? { StarfsstodID: extraData?.content }: {},
       uploadDataName,
       uploadDataId
     )

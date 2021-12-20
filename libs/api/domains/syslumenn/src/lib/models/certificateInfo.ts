@@ -3,13 +3,13 @@ import { VottordSkeyti } from '@island.is/clients/syslumenn'
 
 @ObjectType()
 export class CertificateInfoRepsonse {
-  @Field()
+  @Field({ nullable: true })
   nationalId?: string
 
-  @Field()
+  @Field({ nullable: true })
   expirationDate?: string
 
-  @Field()
+  @Field({ nullable: true })
   releaseDate?: string
 }
 
@@ -17,8 +17,8 @@ export const mapCertificateInfo = (
   response: VottordSkeyti,
 ): CertificateInfoRepsonse => {
   return {
-    nationalId: response.kennitala ?? '',
-    expirationDate: response.gildisTimi ?? '',
-    releaseDate: response.utgafudagur ?? '',
+    nationalId: response.kennitala,
+    expirationDate: response.gildisTimi,
+    releaseDate: response.utgafudagur,
   }
 }

@@ -1,6 +1,4 @@
-import { IsNumber, IsOptional } from 'class-validator'
 import { Field, InputType } from '@nestjs/graphql'
-import graphqlTypeJson from 'graphql-type-json'
 
 @InputType()
 export class Person {
@@ -40,6 +38,15 @@ export class Attachment {
   @Field()
   content!: string
 }
+
+@InputType()
+export class ExtraData {
+  @Field()
+  name!: string
+
+  @Field()
+  content!: string
+}
 @InputType()
 export class UploadDataInput {
   @Field(() => [Person])
@@ -47,15 +54,15 @@ export class UploadDataInput {
 
   @Field(() => Attachment)
   attachment!: Attachment
-
-  @Field()
-  applicationType!: string
   
   @Field()
   uploadDataName!: string
 
   @Field()
   uploadDataId?: string
+
+  @Field(() => ExtraData)
+  extraData?: ExtraData
 }
 
 export enum PersonType {
