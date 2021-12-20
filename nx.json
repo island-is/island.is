@@ -397,6 +397,10 @@
     "financial-aid-web-osk": {
       "tags": []
     },
+    "financial-aid-web-osk-e2e": {
+      "tags": [],
+      "implicitDependencies": ["financial-aid-web-osk"]
+    },
     "financial-aid-web-veita": {
       "tags": []
     },
@@ -652,13 +656,13 @@
     "services-endorsements-api": {
       "tags": []
     },
-    "services-notifications": {
-      "tags": []
-    },
     "services-personal-representative": {
       "tags": []
     },
     "services-search-indexer": {
+      "tags": []
+    },
+    "services-user-notification": {
       "tags": []
     },
     "services-user-profile": {
