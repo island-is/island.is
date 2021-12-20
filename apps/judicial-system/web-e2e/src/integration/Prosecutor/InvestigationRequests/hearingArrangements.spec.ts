@@ -51,7 +51,7 @@ describe('/krafa/rannsoknarheimild/fyrirtaka/:id', () => {
     cy.getByTestid('select-court').contains('Héraðsdómur Reykjavíkur')
   })
 
-  it.only('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
+  it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('datepicker').type('01.01.2020')
     cy.getByTestid('datepickerIncreaseMonth').dblclick()
     cy.contains('15').click()
