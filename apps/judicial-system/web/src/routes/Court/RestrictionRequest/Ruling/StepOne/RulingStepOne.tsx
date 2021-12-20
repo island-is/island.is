@@ -54,9 +54,9 @@ export const RulingStepOne: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
-  const [, setValidToDateIsValid] = useState<boolean>(true)
-  const [, setIsolationToIsValid] = useState<boolean>(true)
+
   const [
     courtCaseFactsErrorMessage,
     setCourtCaseFactsErrorMessage,
@@ -81,46 +81,47 @@ export const RulingStepOne: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    let theCase = workingCase
+    if (isCaseUpToDate) {
+      let theCase = workingCase
 
-    if (!theCase.custodyRestrictions) {
-      theCase = {
-        ...theCase,
-        custodyRestrictions: theCase.requestedCustodyRestrictions,
+      if (theCase.custodyRestrictions === null) {
+        theCase = {
+          ...theCase,
+          custodyRestrictions: theCase.requestedCustodyRestrictions,
+        }
+
+        updateCase(
+          theCase.id,
+          parseArray(
+            'custodyRestrictions',
+            theCase.requestedCustodyRestrictions ?? [],
+          ),
+        )
       }
 
-      updateCase(
-        theCase.id,
-        parseArray(
-          'custodyRestrictions',
-          theCase.requestedCustodyRestrictions ?? [],
-        ),
-      )
-    }
+      if (theCase.demands) {
+        autofill('prosecutorDemands', theCase.demands, theCase)
+      }
 
-    if (theCase.demands) {
-      autofill('prosecutorDemands', theCase.demands, theCase)
-    }
+      if (theCase.requestedValidToDate) {
+        autofill('validToDate', theCase.requestedValidToDate, theCase)
+      }
 
-    if (theCase.requestedValidToDate) {
-      autofill('validToDate', theCase.requestedValidToDate, theCase)
-    }
+      if (theCase.validToDate) {
+        autofill('isolationToDate', theCase.validToDate, theCase)
+      }
 
-    if (theCase.validToDate) {
-      autofill('isolationToDate', theCase.validToDate, theCase)
-    }
+      if (theCase.caseFacts) {
+        autofill('courtCaseFacts', theCase.caseFacts, theCase)
+      }
 
-    if (theCase.caseFacts) {
-      autofill('courtCaseFacts', theCase.caseFacts, theCase)
-    }
+      if (theCase.legalArguments) {
+        autofill('courtLegalArguments', theCase.legalArguments, theCase)
+      }
 
-    if (theCase.legalArguments) {
-      autofill('courtLegalArguments', theCase.legalArguments, theCase)
-    }
-    if (workingCase.id !== '') {
       setWorkingCase(theCase)
     }
-  }, [workingCase.id])
+  }, [autofill, isCaseUpToDate, setWorkingCase, updateCase, workingCase])
 
   return (
     <PageLayout
@@ -153,8 +154,10 @@ export const RulingStepOne: React.FC = () => {
                 caseId={workingCase.id}
                 files={workingCase.caseFiles ?? []}
                 canOpenFiles={
-                  workingCase.judge !== null &&
-                  workingCase.judge?.id === user?.id
+                  (workingCase.judge !== null &&
+                    workingCase.judge?.id === user?.id) ||
+                  (workingCase.registrar !== null &&
+                    workingCase.registrar?.id === user?.id)
                 }
               />
             </AccordionItem>
@@ -352,6 +355,7 @@ export const RulingStepOne: React.FC = () => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            isCaseUpToDate={isCaseUpToDate}
             isRequired
           />
         </Box>
@@ -379,11 +383,7 @@ export const RulingStepOne: React.FC = () => {
                     ? 'Gæsluvarðhald til'
                     : 'Farbann til'
                 }
-                selectedDate={
-                  workingCase.validToDate
-                    ? new Date(workingCase.validToDate)
-                    : undefined
-                }
+                selectedDate={workingCase.validToDate}
                 minDate={new Date()}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   newSetAndSendDateToServer(
@@ -392,7 +392,6 @@ export const RulingStepOne: React.FC = () => {
                     valid,
                     workingCase,
                     setWorkingCase,
-                    setValidToDateIsValid,
                     updateCase,
                   )
                 }}
@@ -435,9 +434,9 @@ export const RulingStepOne: React.FC = () => {
                   }
                   selectedDate={
                     workingCase.isolationToDate
-                      ? new Date(workingCase.isolationToDate)
+                      ? workingCase.isolationToDate
                       : workingCase.validToDate
-                      ? new Date(workingCase.validToDate)
+                      ? workingCase.validToDate
                       : undefined
                   }
                   // Isolation can never be set in the past.
@@ -454,7 +453,6 @@ export const RulingStepOne: React.FC = () => {
                       valid,
                       workingCase,
                       setWorkingCase,
-                      setIsolationToIsValid,
                       updateCase,
                     )
                   }}

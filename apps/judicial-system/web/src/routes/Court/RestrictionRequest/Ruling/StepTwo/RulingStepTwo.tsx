@@ -65,6 +65,7 @@ export const RulingStepTwo: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
   const [
     courtDocumentEndErrorMessage,
@@ -79,99 +80,107 @@ export const RulingStepTwo: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const theCase = workingCase
-    const isolationEndsBeforeValidToDate =
-      theCase.validToDate &&
-      theCase.isolationToDate &&
-      new Date(theCase.validToDate) > new Date(theCase.isolationToDate)
+    if (isCaseUpToDate) {
+      const theCase = workingCase
+      const isolationEndsBeforeValidToDate =
+        theCase.validToDate &&
+        theCase.isolationToDate &&
+        new Date(theCase.validToDate) > new Date(theCase.isolationToDate)
 
-    // Normally we always autofill if the target has a "falsy" value.
-    // However, if the target is optional, then it should not be autofilled after
-    // the autofilled value has been deleted (is the empty string).
-    if (
-      theCase.requestedOtherRestrictions &&
-      theCase.otherRestrictions !== ''
-    ) {
-      autofill('otherRestrictions', theCase.requestedOtherRestrictions, theCase)
-    }
+      // Normally we always autofill if the target has a "falsy" value.
+      // However, if the target is optional, then it should not be autofilled after
+      // the autofilled value has been deleted (is the empty string).
+      if (
+        theCase.requestedOtherRestrictions &&
+        theCase.otherRestrictions !== ''
+      ) {
+        autofill(
+          'otherRestrictions',
+          theCase.requestedOtherRestrictions,
+          theCase,
+        )
+      }
 
-    autofill(
-      'conclusion',
-      theCase.decision === CaseDecision.DISMISSING
-        ? formatMessage(m.sections.conclusion.dismissingAutofill, {
-            genderedAccused: formatAccusedByGender(theCase.accusedGender),
-            accusedName: theCase.accusedName,
-            extensionSuffix:
-              theCase.parentCase &&
-              isAcceptingCaseDecision(theCase.parentCase.decision)
-                ? ' áframhaldandi'
-                : '',
-            caseType:
-              theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
-          })
-        : theCase.decision === CaseDecision.REJECTING
-        ? formatMessage(m.sections.conclusion.rejectingAutofill, {
-            genderedAccused: formatAccusedByGender(theCase.accusedGender),
-            accusedName: theCase.accusedName,
-            accusedNationalId: formatNationalId(theCase.accusedNationalId),
-            extensionSuffix:
-              theCase.parentCase &&
-              isAcceptingCaseDecision(theCase.parentCase.decision)
-                ? ' áframhaldandi'
-                : '',
-            caseType:
-              theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
-          })
-        : formatMessage(m.sections.conclusion.acceptingAutofill, {
-            genderedAccused: capitalize(
-              formatAccusedByGender(theCase.accusedGender),
-            ),
-            accusedName: theCase.accusedName,
-            accusedNationalId: formatNationalId(theCase.accusedNationalId),
-            caseTypeAndExtensionSuffix:
-              theCase.decision === CaseDecision.ACCEPTING ||
-              theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
-                ? `${
-                    theCase.parentCase &&
-                    isAcceptingCaseDecision(theCase.parentCase.decision)
-                      ? 'áframhaldandi '
-                      : ''
-                  }${
-                    theCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhaldi'
-                      : 'farbanni'
-                  }`
-                : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                  'farbanni',
-            validToDate: `${formatDate(theCase.validToDate, 'PPPPp')
-              ?.replace('dagur,', 'dagsins')
-              ?.replace(' kl.', ', kl.')}`,
-            isolationSuffix:
-              isAcceptingCaseDecision(theCase.decision) &&
-              theCase.custodyRestrictions?.includes(
-                CaseCustodyRestrictions.ISOLATION,
-              )
-                ? ` ${capitalize(
-                    formatAccusedByGender(theCase.accusedGender),
-                  )} skal sæta einangrun ${
-                    isolationEndsBeforeValidToDate
-                      ? `ekki lengur en til ${formatDate(
-                          theCase.isolationToDate,
-                          'PPPPp',
-                        )
-                          ?.replace('dagur,', 'dagsins')
-                          ?.replace(' kl.', ', kl.')}.`
-                      : 'á meðan á gæsluvarðhaldinu stendur.'
-                  }`
-                : '',
-          }),
-      theCase,
-    )
+      autofill(
+        'conclusion',
+        theCase.decision === CaseDecision.DISMISSING
+          ? formatMessage(m.sections.conclusion.dismissingAutofill, {
+              genderedAccused: formatAccusedByGender(theCase.accusedGender),
+              accusedName: theCase.accusedName,
+              extensionSuffix:
+                theCase.parentCase &&
+                isAcceptingCaseDecision(theCase.parentCase.decision)
+                  ? ' áframhaldandi'
+                  : '',
+              caseType:
+                theCase.type === CaseType.CUSTODY
+                  ? 'gæsluvarðhaldi'
+                  : 'farbanni',
+            })
+          : theCase.decision === CaseDecision.REJECTING
+          ? formatMessage(m.sections.conclusion.rejectingAutofill, {
+              genderedAccused: formatAccusedByGender(theCase.accusedGender),
+              accusedName: theCase.accusedName,
+              accusedNationalId: formatNationalId(theCase.accusedNationalId),
+              extensionSuffix:
+                theCase.parentCase &&
+                isAcceptingCaseDecision(theCase.parentCase.decision)
+                  ? ' áframhaldandi'
+                  : '',
+              caseType:
+                theCase.type === CaseType.CUSTODY
+                  ? 'gæsluvarðhaldi'
+                  : 'farbanni',
+            })
+          : formatMessage(m.sections.conclusion.acceptingAutofill, {
+              genderedAccused: capitalize(
+                formatAccusedByGender(theCase.accusedGender),
+              ),
+              accusedName: theCase.accusedName,
+              accusedNationalId: formatNationalId(theCase.accusedNationalId),
+              caseTypeAndExtensionSuffix:
+                theCase.decision === CaseDecision.ACCEPTING ||
+                theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
+                  ? `${
+                      theCase.parentCase &&
+                      isAcceptingCaseDecision(theCase.parentCase.decision)
+                        ? 'áframhaldandi '
+                        : ''
+                    }${
+                      theCase.type === CaseType.CUSTODY
+                        ? 'gæsluvarðhaldi'
+                        : 'farbanni'
+                    }`
+                  : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                    'farbanni',
+              validToDate: `${formatDate(theCase.validToDate, 'PPPPp')
+                ?.replace('dagur,', 'dagsins')
+                ?.replace(' kl.', ', kl.')}`,
+              isolationSuffix:
+                isAcceptingCaseDecision(theCase.decision) &&
+                theCase.custodyRestrictions?.includes(
+                  CaseCustodyRestrictions.ISOLATION,
+                )
+                  ? ` ${capitalize(
+                      formatAccusedByGender(theCase.accusedGender),
+                    )} skal sæta einangrun ${
+                      isolationEndsBeforeValidToDate
+                        ? `ekki lengur en til ${formatDate(
+                            theCase.isolationToDate,
+                            'PPPPp',
+                          )
+                            ?.replace('dagur,', 'dagsins')
+                            ?.replace(' kl.', ', kl.')}.`
+                        : 'á meðan á gæsluvarðhaldinu stendur.'
+                    }`
+                  : '',
+            }),
+        theCase,
+      )
 
-    if (workingCase.id) {
       setWorkingCase(theCase)
     }
-  }, [workingCase.id])
+  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
     <PageLayout

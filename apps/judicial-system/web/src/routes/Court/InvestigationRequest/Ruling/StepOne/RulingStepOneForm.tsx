@@ -37,10 +37,11 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  isCaseUpToDate: boolean
 }
 
 const RulingStepOneForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
+  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
@@ -48,23 +49,6 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
   const [courtCaseFactsEM, setCourtCaseFactsEM] = useState<string>('')
   const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
-
-  const validations: FormSettings = {
-    prosecutorDemands: {
-      validations: ['empty'],
-    },
-    ruling: {
-      validations: ['empty'],
-    },
-    courtCaseFacts: {
-      validations: ['empty'],
-    },
-    courtLegalArguments: {
-      validations: ['empty'],
-    },
-  }
-
-  useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   return (
     <>
@@ -89,8 +73,10 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
                 caseId={workingCase.id}
                 files={workingCase.caseFiles ?? []}
                 canOpenFiles={
-                  workingCase.judge !== null &&
-                  workingCase.judge?.id === user?.id
+                  (workingCase.judge !== null &&
+                    workingCase.judge?.id === user?.id) ||
+                  (workingCase.registrar !== null &&
+                    workingCase.registrar?.id === user?.id)
                 }
               />
             </AccordionItem>
@@ -259,6 +245,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            isCaseUpToDate={isCaseUpToDate}
             isRequired
           />
         </Box>

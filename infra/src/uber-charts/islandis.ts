@@ -21,9 +21,12 @@ import { serviceSetup as contentfulTranslationExtensionSetup } from '../../../li
 
 import { serviceSetup as downloadServiceSetup } from '../../../apps/download-service/infra/download-service'
 import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
-import { serviceSetup as partyLetterServiceSetup } from '../../../apps/services/party-letter-registry-api/infra/party-letter-registry-api'
-import { serviceSetup as temporaryVoterRegistryServiceSetup } from '../../../apps/services/temporary-voter-registry-api/infra/temporary-voter-registry-api'
 import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-actions-cache/infra/github-actions-cache'
+
+import {
+  userNotificationServiceSetup,
+  userNotificationWorkerSetup,
+} from '../../../apps/services/user-notification/infra/user-notification'
 
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
 import { serviceSetup as adsWebSetup } from '../../../apps/air-discount-scheme/web/infra/web'
@@ -31,17 +34,12 @@ import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-sche
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 
-const temporaryVoterRegistry = temporaryVoterRegistryServiceSetup()
-const partyLetterRegistry = partyLetterServiceSetup()
-const endorsement = endorsementServiceSetup({
-  servicesTemporaryVoterRegistryApi: temporaryVoterRegistry,
-})
+const endorsement = endorsementServiceSetup({})
 
 const documentsService = serviceDocumentsSetup()
 const appSystemApi = appSystemApiSetup({
   documentsService,
   servicesEndorsementApi: endorsement,
-  servicesPartyLetterRegistryApi: partyLetterRegistry,
 })
 const appSystemForm = appSystemFormSetup({})
 
@@ -54,8 +52,6 @@ const api = apiSetup({
   documentsService,
   icelandicNameRegistryBackend: nameRegistryBackend,
   servicesEndorsementApi: endorsement,
-  servicesPartyLetterRegistryApi: partyLetterRegistry,
-  servicesTemporaryVoterRegistryApi: temporaryVoterRegistry,
 })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
@@ -69,6 +65,9 @@ const storybook = storybookSetup({})
 const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 
 const downloadService = downloadServiceSetup()
+
+const userNotificationService = userNotificationServiceSetup()
+const userNotificationWorkerService = userNotificationWorkerSetup()
 
 const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })
@@ -93,8 +92,6 @@ export const Services: EnvironmentServices = {
     downloadService,
     nameRegistryBackend,
     endorsement,
-    partyLetterRegistry,
-    temporaryVoterRegistry,
     adsWeb,
     adsBackend,
     adsApi,
@@ -116,11 +113,11 @@ export const Services: EnvironmentServices = {
     downloadService,
     nameRegistryBackend,
     endorsement,
-    partyLetterRegistry,
-    temporaryVoterRegistry,
     adsWeb,
     adsBackend,
     adsApi,
+    userNotificationService,
+    userNotificationWorkerService,
   ],
   dev: [
     appSystemApi,
@@ -139,12 +136,12 @@ export const Services: EnvironmentServices = {
     downloadService,
     nameRegistryBackend,
     endorsement,
-    partyLetterRegistry,
-    temporaryVoterRegistry,
     adsWeb,
     adsBackend,
     adsApi,
     githubActionsCache,
+    userNotificationService,
+    userNotificationWorkerService,
   ],
 }
 

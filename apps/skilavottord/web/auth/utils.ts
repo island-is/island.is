@@ -32,7 +32,7 @@ export const hasPermission = (page: Page, role: Role) => {
   const permittedRoutes = {
     recyclingCompany: ['deregisterVehicle', 'companyInfo'],
     citizen: ['myCars', 'recycleVehicle'],
-    recyclingFund: ['recycledVehicles', 'recyclingCompanies'], // 'accessControl'
+    recyclingFund: ['recycledVehicles', 'recyclingCompanies', 'accessControl'],
   }
 
   return permittedRoutes[role].includes(page)
