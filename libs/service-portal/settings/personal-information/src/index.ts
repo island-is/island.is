@@ -69,6 +69,15 @@ export const personalInformationModule: ServicePortalModule = {
       },
       {
         name: defineMessage({
+          id: 'sp.settings:edit-bankInfo',
+          defaultMessage: 'Breyta reikningsnúmeri',
+        }),
+        path: ServicePortalPath.SettingsPersonalInformationEditBankInfo,
+        enabled: userInfo.scopes.includes(UserProfileScope.write),
+        render: () => lazy(() => import('./screens/EditBankInfo/EditBankInfo')),
+      },
+      {
+        name: defineMessage({
           id: 'sp.settings:email-confirmation',
           defaultMessage: 'Staðfesta netfang',
         }),

@@ -99,13 +99,18 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
               url: ServicePortalPath.SettingsPersonalInformationEditLanguage,
             }}
           />
-          <UserInfoLine
-            label={m.bankAccountInfo}
-            labelColumnSpan={['8/12', '3/12']}
-            editColumnSpan={['1/1', '2/12']}
-            valueColumnSpan={['1/1', '7/12']}
-            content={settings?.bankInfo ?? ''}
-          />
+          {settings && (
+            <UserInfoLine
+              label={m.bankAccountInfo}
+              labelColumnSpan={['8/12', '3/12']}
+              editColumnSpan={['1/1', '2/12']}
+              valueColumnSpan={['1/1', '7/12']}
+              content={settings?.bankInfo ?? ''}
+              editLink={{
+                url: ServicePortalPath.SettingsPersonalInformationEditBankInfo,
+              }}
+            />
+          )}
         </Stack>
       )}
     </>

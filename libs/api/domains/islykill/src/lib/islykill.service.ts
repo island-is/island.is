@@ -15,12 +15,19 @@ export class IslykillService {
       email,
       mobile,
       canNudge,
-    }: { email?: string; mobile?: string; canNudge?: boolean },
+      bankInfo,
+    }: {
+      email?: string
+      mobile?: string
+      canNudge?: boolean
+      bankInfo?: string
+    },
   ): Promise<UpdateIslykillSettings> {
     const inputUserData: PublicUser = {
       ssn: nationalId,
       email,
       mobile,
+      bankInfo,
       ...(canNudge !== undefined && { canNudge }),
     }
     const errorMsg = 'Unable to update islykill settings for user'

@@ -121,6 +121,7 @@ export class UserProfileService {
         email: input.email || islyklarData.email,
         mobile: input.mobilePhoneNumber || islyklarData.mobile,
         canNudge: input.canNudge,
+        bankInfo: input.bankInfo,
       }) // Current version does not return the updated user in the response.
       .catch(handleError)
 

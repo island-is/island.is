@@ -30,4 +30,9 @@ export class UpdateUserProfileInput {
   @IsOptional()
   @IsBoolean()
   canNudge?: boolean
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  bankInfo?: string
 }
