@@ -814,6 +814,27 @@
         }
       }
     },
+    "api-domains-criminal-record": {
+      "root": "libs/api/domains/criminal-record",
+      "sourceRoot": "libs/api/domains/criminal-record/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/criminal-record/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/criminal-record"],
+          "options": {
+            "jestConfig": "libs/api/domains/criminal-record/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-directorate-of-labour": {
       "root": "libs/api/domains/directorate-of-labour",
       "sourceRoot": "libs/api/domains/directorate-of-labour/src",
@@ -1994,6 +2015,48 @@
         }
       }
     },
+    "application-templates-criminal-record": {
+      "root": "libs/application/templates/criminal-record",
+      "sourceRoot": "libs/application/templates/criminal-record/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/criminal-record/tsconfig.lib.json",
+              "libs/application/templates/criminal-record/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/criminal-record/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/application/templates/criminal-record"],
+          "options": {
+            "jestConfig": "libs/application/templates/criminal-record/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/criminal-record/codegen.yml"
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/criminal-record/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
     "application-templates-data-protection-complaint": {
       "root": "libs/application/templates/data-protection-complaint",
       "sourceRoot": "libs/application/templates/data-protection-complaint/src",
@@ -2100,42 +2163,6 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "graphql-codegen --config libs/application/templates/driving-assessment-approval/codegen.yml"
-          }
-        }
-      }
-    },
-    "application-templates-driving-lessons": {
-      "root": "libs/application/templates/driving-lessons",
-      "sourceRoot": "libs/application/templates/driving-lessons/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/application/templates/driving-lessons/tsconfig.lib.json",
-              "libs/application/templates/driving-lessons/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/application/templates/driving-lessons/**"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/application/templates/driving-lessons/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/application/templates/driving-lessons"]
-        },
-        "extract-strings": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/driving-lessons/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -2559,44 +2586,6 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/passport/src/**/*.{js,ts,tsx}'"
-          }
-        }
-      }
-    },
-    "application-templates-payable-dummy-template": {
-      "root": "libs/application/templates/payable-dummy-template",
-      "sourceRoot": "libs/application/templates/payable-dummy-template/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/application/templates/payable-dummy-template/tsconfig.lib.json",
-              "libs/application/templates/payable-dummy-template/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/application/templates/payable-dummy-template/**"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/application/templates/payable-dummy-template/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": [
-            "coverage/libs/application/templates/payable-dummy-template"
-          ]
-        },
-        "extract-strings": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/payable-dummy-template/src/lib/messages.ts"
           }
         }
       }
@@ -3055,6 +3044,45 @@
           "options": {
             "outputPath": "libs/clients/auth-public-api/gen",
             "command": "yarn openapi-generator -o libs/clients/auth-public-api/gen/fetch -i apps/services/auth-public-api/src/openapi.yaml"
+          }
+        }
+      }
+    },
+    "clients-criminal-record": {
+      "root": "libs/clients/criminal-record",
+      "sourceRoot": "libs/clients/criminal-record/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/criminal-record/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/criminal-record"],
+          "options": {
+            "jestConfig": "libs/clients/criminal-record/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10005/Logreglan-Protected/getOpenAPI?serviceCode=Sakavottord-PDF-v2 -H 'Accept: application/json' > src/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/criminal-record"
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn openapi-generator -o libs/clients/criminal-record/gen/fetch -i libs/clients/criminal-record/src/clientConfig.json"
+            ]
           }
         }
       }
@@ -4244,6 +4272,45 @@
           "outputs": ["coverage/apps/financial-aid/web-osk"]
         },
         "docker-next": {}
+      }
+    },
+    "financial-aid-web-osk-e2e": {
+      "root": "apps/financial-aid/web-osk-e2e",
+      "sourceRoot": "apps/financial-aid/web-osk-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/financial-aid/web-osk-e2e/cypress.json",
+            "tsConfig": "apps/financial-aid/web-osk-e2e/tsconfig.e2e.json",
+            "devServerTarget": "",
+            "baseUrl": "http://localhost:4200"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": ""
+            }
+          }
+        },
+        "e2e-ci": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "cypressConfig": "apps/financial-aid/web-osk-e2e/cypress.json",
+            "command": "yarn e2e-ci -n financial-aid-web-osk-e2e -c -d dist/apps/financial-aid/web-osk"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["apps/financial-aid/web-osk-e2e/tsconfig.e2e.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/financial-aid/web-osk-e2e/**/*"
+            ]
+          }
+        }
       }
     },
     "financial-aid-web-veita": {
@@ -5921,7 +5988,8 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/message-queue/jest.config.js",
-            "passWithNoTests": true
+            "passWithNoTests": true,
+            "runInBand": true
           },
           "outputs": ["coverage/libs/message-queue"]
         }
@@ -7763,20 +7831,20 @@
         "docker-express": {}
       }
     },
-    "services-notifications": {
-      "root": "apps/services/notifications",
-      "sourceRoot": "apps/services/notifications/src",
+    "services-personal-representative": {
+      "root": "apps/services/personal-representative",
+      "sourceRoot": "apps/services/personal-representative/src",
       "projectType": "application",
-      "prefix": "services-notifications",
+      "prefix": "services-personal-representative",
       "architect": {
         "build": {
-          "builder": "@irdnis/esbuildnx:build",
+          "builder": "@nrwl/node:build",
           "outputs": ["{options.outputPath}"],
           "options": {
-            "outputPath": "dist/apps/services/notifications",
-            "main": "apps/services/notifications/src/main.ts",
-            "tsConfig": "apps/services/notifications/tsconfig.app.json",
-            "assets": ["apps/services/notifications/src/assets"]
+            "outputPath": "dist/apps/services/personal-representative",
+            "main": "apps/services/personal-representative/src/main.ts",
+            "tsConfig": "apps/services/personal-representative/tsconfig.app.json",
+            "assets": ["apps/services/personal-representative/src/assets"]
           },
           "configurations": {
             "production": {
@@ -7785,8 +7853,8 @@
               "inspect": false,
               "fileReplacements": [
                 {
-                  "replace": "apps/services/notifications/src/environments/environment.ts",
-                  "with": "apps/services/notifications/src/environments/environment.prod.ts"
+                  "replace": "apps/services/personal-representative/src/environments/environment.ts",
+                  "with": "apps/services/personal-representative/src/environments/environment.prod.ts"
                 }
               ]
             }
@@ -7795,28 +7863,30 @@
         "serve": {
           "builder": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "services-notifications:build"
+            "buildTarget": "services-personal-representative:build"
           }
         },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/services/notifications/**/*.ts"]
+            "lintFilePatterns": [
+              "apps/services/personal-representative/**/*.ts"
+            ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/services/notifications"],
+          "outputs": ["coverage/apps/services/personal-representative"],
           "options": {
-            "jestConfig": "apps/services/notifications/jest.config.js",
+            "jestConfig": "apps/services/personal-representative/jest.config.js",
             "passWithNoTests": true
           }
         },
         "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "outputPath": "apps/services/notifications/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/services/notifications/tsconfig.app.json apps/services/notifications/src/buildOpenApi.ts"
+            "outputPath": "apps/services/personal-representative/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/services/personal-representative/tsconfig.app.json apps/services/personal-representative/src/buildOpenApi.ts"
           }
         }
       }
@@ -7905,6 +7975,78 @@
           "outputs": ["coverage/apps/services/search-indexer"]
         },
         "docker-express": {}
+      }
+    },
+    "services-user-notification": {
+      "root": "apps/services/user-notification",
+      "sourceRoot": "apps/services/user-notification/src",
+      "projectType": "application",
+      "prefix": "services-user-notification",
+      "architect": {
+        "build": {
+          "builder": "@irdnis/esbuildnx:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/services/user-notification",
+            "main": "apps/services/user-notification/src/main.ts",
+            "tsConfig": "apps/services/user-notification/tsconfig.app.json",
+            "assets": ["apps/services/user-notification/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/user-notification/src/environments/environment.ts",
+                  "with": "apps/services/user-notification/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-user-notification:build"
+          }
+        },
+        "worker": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-user-notification:build",
+            "args": ["--job", "worker"]
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/services/user-notification/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/services/user-notification"],
+          "options": {
+            "jestConfig": "apps/services/user-notification/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "docker-compose up -d --build",
+            "cwd": "apps/services/user-notification"
+          }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/services/user-notification/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/services/user-notification/tsconfig.app.json apps/services/user-notification/src/buildOpenApi.ts"
+          }
+        }
       }
     },
     "services-user-profile": {

@@ -27,7 +27,10 @@ import {
 } from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
-import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
+import {
+  filterInternalPartners,
+  getRoleTranslation,
+} from '@island.is/skilavottord-web/utils'
 import {
   AccessControl as AccessControlType,
   CreateAccessControlInput,
@@ -166,6 +169,7 @@ const AccessControl: FC = () => {
 
   const {
     t: { accessControl: t, recyclingFundSidenav: sidenavText, routes },
+    activeLocale,
   } = useI18n()
 
   if (!user) {
@@ -187,7 +191,7 @@ const AccessControl: FC = () => {
       !isDeveloper(user?.role) ? role !== Role.developer : role,
     )
     .map((role) => ({
-      label: startCase(role),
+      label: getRoleTranslation(role, activeLocale),
       value: role,
     }))
 

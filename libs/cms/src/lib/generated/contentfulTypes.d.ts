@@ -1930,6 +1930,9 @@ export interface IOrganizationPageFields {
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
+
+  /** External Links */
+  externalLinks?: ILink[] | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {

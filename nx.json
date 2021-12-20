@@ -91,6 +91,9 @@
     "api-domains-content-search": {
       "tags": []
     },
+    "api-domains-criminal-record": {
+      "tags": []
+    },
     "api-domains-directorate-of-labour": {
       "tags": []
     },
@@ -194,6 +197,9 @@
     "application-templates-complaints-to-althingi-ombudsman": {
       "tags": []
     },
+    "application-templates-criminal-record": {
+      "tags": []
+    },
     "application-templates-data-protection-complaint": {
       "tags": []
     },
@@ -201,9 +207,6 @@
       "tags": []
     },
     "application-templates-driving-assessment-approval": {
-      "tags": []
-    },
-    "application-templates-driving-lessons": {
       "tags": []
     },
     "application-templates-driving-license": {
@@ -237,9 +240,6 @@
       "tags": []
     },
     "application-templates-passport": {
-      "tags": []
-    },
-    "application-templates-payable-dummy-template": {
       "tags": []
     },
     "application-templates-public-debt-payment-plan": {
@@ -285,6 +285,9 @@
     "clients-auth-public-api": {
       "tags": [],
       "implicitDependencies": ["services-auth-public-api"]
+    },
+    "clients-criminal-record": {
+      "tags": []
     },
     "clients-document-provider": {
       "tags": []
@@ -393,6 +396,10 @@
     },
     "financial-aid-web-osk": {
       "tags": []
+    },
+    "financial-aid-web-osk-e2e": {
+      "tags": [],
+      "implicitDependencies": ["financial-aid-web-osk"]
     },
     "financial-aid-web-veita": {
       "tags": []
@@ -649,10 +656,13 @@
     "services-endorsements-api": {
       "tags": []
     },
-    "services-notifications": {
+    "services-personal-representative": {
       "tags": []
     },
     "services-search-indexer": {
+      "tags": []
+    },
+    "services-user-notification": {
       "tags": []
     },
     "services-user-profile": {
