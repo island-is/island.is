@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { ApplicationModel } from './models'

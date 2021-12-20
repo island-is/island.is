@@ -1,8 +1,6 @@
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { CanActivate } from '@nestjs/common'
-import { Reflector } from '@nestjs/core'
 import { RolesGuard } from '../../../guards/roles.guard'
-import { StaffGuard } from '../../../guards/staff.guard'
 
 import { StaffController } from '../staff.controller'
 
@@ -56,20 +54,19 @@ describe('StaffController - Gets staff for municipality guard', () => {
   it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
+  describe('StaffGuard', () => {
+    let guard: CanActivate
 
-  // const {  staffService } = await createTestingStaffModule()
-
-  // describe('StaffGuard', () => {
-  //   let guard: CanActivate
-
-  //   beforeEach(() => {
-  //     guard = new guards[0]()
-  //   })
-
-  //   it('should have StaffGuard as quard 1', () => {
-  //     expect(guard).toBeInstanceOf(StaffGuard)
-  //   })
-  // })
+    beforeEach(() => {
+      guards = Reflect.getMetadata(
+        '__guards__',
+        StaffController.prototype.getStaffForMunicipality,
+      )
+    })
+    it('should have one guards', () => {
+      expect(guards).toHaveLength(1)
+    })
+  })
 })
 
 describe('StaffController -  Counts users for municipality guard', () => {
@@ -130,8 +127,3 @@ describe('StaffController - Gets supervisors guard', () => {
     expect(guards).toHaveLength(1)
   })
 })
-function createTestingStaffModule():
-  | { staffService: any }
-  | PromiseLike<{ staffService: any }> {
-  throw new Error('Function not implemented.')
-}
