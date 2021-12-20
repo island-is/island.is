@@ -226,35 +226,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'car',
         },
       },
-      {
-        name: m.settings,
-        path: ServicePortalPath.SettingsRoot,
-        systemRoute: true,
-        icon: {
-          type: 'outline',
-          icon: 'settings',
-        },
-        children: [
-          {
-            name: m.accessControl,
-            path: ServicePortalPath.SettingsAccessControl,
-            children: [
-              {
-                name: m.accessControlGrant,
-                path: ServicePortalPath.SettingsAccessControlGrant,
-              },
-              {
-                name: m.accessControlAccess,
-                path: ServicePortalPath.SettingsAccessControlAccess,
-              },
-            ],
-          },
-          {
-            name: m.islykill,
-            path: ServicePortalPath.SettingsIslykill,
-          },
-        ],
-      },
     ],
   },
 ]
