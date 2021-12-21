@@ -58,7 +58,7 @@ export class StaffModel extends Model<Staff> {
     allowNull: false,
     values: Object.values(StaffRole),
   })
-  @ApiProperty()
+  @ApiProperty({ enum: StaffRole })
   roles: StaffRole[]
 
   @Column({
