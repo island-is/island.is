@@ -2,10 +2,6 @@ import { DefaultEvents } from '@island.is/application/core'
 
 export type Events = { type: DefaultEvents.SUBMIT }
 
-export enum ApiModuleActions {
-  createPSignApplication = 'createPSignApplication',
-}
-
 export enum States {
   DRAFT = 'draft',
   DONE = 'done',
