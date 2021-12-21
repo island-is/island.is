@@ -114,7 +114,7 @@ export const withAutoAuth = ({
     )
   }
 
-  let innerFetch = createEnhancedFetch({
+  const innerFetch = createEnhancedFetch({
     fetch: rootFetch,
     logger,
     name: `${name}:auth`,

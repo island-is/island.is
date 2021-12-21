@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { NationalRegistryClientPerson } from '@island.is/shared/types'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import { FetchError } from '@island.is/clients/middlewares'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
@@ -53,7 +54,9 @@ export class NationalRegistryXRoadService {
     user: User,
     nationalId: string,
   ): Promise<NationalRegistryPerson | undefined> {
-    const person = await this.nationalRegistryApiWithAuth(user)
+    const person: NationalRegistryClientPerson | undefined = await this.nationalRegistryApiWithAuth(
+      user,
+    )
       .einstaklingarGetEinstaklingur({ id: nationalId })
       .catch(this.handle404)
 
