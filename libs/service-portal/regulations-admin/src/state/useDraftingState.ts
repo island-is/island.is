@@ -458,7 +458,10 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
         stepNav.next &&
         (isEditor || stepNav.next !== 'review')
           ? () => {
-              actions.saveStatus()
+              // // At the moment, saveStatus() triggers routing on top of
+              // the routing triggered by this action.
+              // FIXME: Simplify the "new" state.
+              // actions.saveStatus()
               // BASICS
               if (stepNav.name === 'basics') {
                 const basicsRequired = [
