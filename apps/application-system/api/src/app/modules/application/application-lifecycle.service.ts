@@ -44,6 +44,12 @@ export class ApplicationLifeCycleService implements OnApplicationShutdown {
     this.printApplications(stuff)
   }
 
+  async get() {
+    console.log('get...')
+    const applications = await this.applicationService.findAllDueToBePruned()
+    return applications.length
+  }
+
   pruneAnswers(applications: Application[]) {
     console.log('pruneAnswers...')
     applications.forEach((application) => {

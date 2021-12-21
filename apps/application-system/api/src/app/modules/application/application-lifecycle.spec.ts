@@ -27,10 +27,17 @@ beforeAll(async () => {
   lifeCycleService = app.get<ApplicationLifeCycleService>(
     ApplicationLifeCycleService,
   )
-  server = request(app.getHttpServer())
 })
 describe('Example functional test', () => {
   let app: TestApp
+
+  it('should return 200', async () => {
+    const returnvalue = lifeCycleService.get()
+    expect(returnvalue).toEqual({
+      statusCode: 200,
+      body: 'Hello World!',
+    })
+  })
 
   afterAll(async () => {
     await app.cleanUp()
