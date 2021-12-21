@@ -27,7 +27,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
   type: ApplicationTypes.GENERAL_FISHING_LICENSE,
   name: application.general.name,
   institution: application.general.institutionName,
-  readyForProduction: true,
+  readyForProduction: false,
   translationNamespaces: [
     ApplicationConfigurations.GeneralFishingLicense.translation,
   ],
@@ -39,9 +39,11 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
         meta: {
           name: application.general.name.defaultMessage,
           progress: 0.2,
+          // Application is only suppose to live for an hour while building it, change later
           lifecycle: {
             shouldBeListed: true,
-            shouldBePruned: false,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
           },
           roles: [
             {
