@@ -118,7 +118,6 @@ const renderSlice = (slice, namespace, organizationPageSlug, fullWidth) => {
         <LatestNewsSlice
           slice={slice}
           organizationPageSlug={organizationPageSlug}
-          fullWidth={fullWidth}
         />
       )
     case 'MailingListSignupSlice':

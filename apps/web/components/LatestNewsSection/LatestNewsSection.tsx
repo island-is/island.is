@@ -8,13 +8,14 @@ import {
   Button,
   Box,
 } from '@island.is/island-ui/core'
-import { NewsCard } from '@island.is/web/components'
+import { GridItems, NewsCard } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { GetNewsQuery } from '@island.is/web/graphql/schema'
 import { GlobalContext } from '@island.is/web/context/GlobalContext/GlobalContext'
 import { useNamespace } from '@island.is/web/hooks'
 
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import Item from '@island.is/web/components/NewsItems/Item'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
 // On mobile it displays 3 news cards in a Swiper.
@@ -52,64 +53,57 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
   const titleProps = labelId ? { id: labelId } : {}
 
   return (
-    <GridContainer>
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '6/12']}>
-          <Text variant="h3" as="h2" paddingBottom={2} {...titleProps}>
+    <>
+      <GridContainer>
+        <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
+          <Text variant="h3" as="h2" {...titleProps}>
             {label}
           </Text>
-        </GridColumn>
-        <GridColumn paddingBottom={0} span="6/12" hiddenBelow="md">
-          <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
-            <Link
-              href={{
-                pathname: linkResolver(overview, parameters).href,
-                ...(!!newsTag && { query: { tag: newsTag } }),
-              }}
-              skipTab
-            >
-              <Text variant="h5" as="p" paddingBottom={2}>
-                <Button
-                  icon="arrowForward"
-                  iconType="filled"
-                  variant="text"
-                  as="span"
-                >
-                  {readMoreText ?? n('seeMore')}
-                </Button>
-              </Text>
+          <Box display={['none', 'none', 'block']}>
+            <Link {...linkResolver(overview, parameters)} skipTab>
+              <Button
+                icon="arrowForward"
+                iconType="filled"
+                variant="text"
+                as="span"
+              >
+                {readMoreText ?? n('seeMore')}
+              </Button>
             </Link>
           </Box>
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        {newsItems.map((newsItem) => {
-          return (
-            <GridColumn
-              span={[
-                '12/12',
-                '12/12',
-                '12/12',
-                '12/12',
-                variant === 'default' ? '4/12' : '6/12',
-              ]}
-              key={newsItem.slug}
-              paddingBottom={2}
-            >
-              <NewsCard
-                title={newsItem.title}
-                introduction={newsItem.intro}
-                readMoreText={t.readMore}
-                image={newsItem.image}
-                href={
-                  linkResolver(linkType, [...parameters, newsItem.slug]).href
+        </Box>
+      </GridContainer>
+      <GridItems
+        mobileItemsRows={1}
+        mobileItemWidth={270}
+        paddingTop={3}
+        paddingBottom={3}
+        insideGridContainer
+        half
+      >
+        {newsItems.map(
+          (
+            { __typename: tn, title, intro, image, slug, date, genericTags },
+            index,
+          ) => (
+            <Item
+              key={index}
+              date={date}
+              heading={title}
+              text={intro}
+              href={linkResolver(linkType, [...parameters, slug]).href}
+              image={image}
+              tags={genericTags.map(({ slug, title, __typename: tn }) => {
+                return {
+                  label: title,
+                  href: linkResolver(linkType, [...parameters, slug]).href,
                 }
-              />
-            </GridColumn>
-          )
-        })}
-      </GridRow>
-    </GridContainer>
+              })}
+            />
+          ),
+        )}
+      </GridItems>
+    </>
   )
 }
 
