@@ -23,6 +23,7 @@ export const createTestingStaffModule = async () => {
           findOne: jest.fn(),
           findAll: jest.fn(),
           update: jest.fn(),
+          count: jest.fn(),
         },
       },
       StaffService,
