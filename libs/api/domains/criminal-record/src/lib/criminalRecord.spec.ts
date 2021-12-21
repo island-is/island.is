@@ -18,7 +18,7 @@ describe('CriminalRecordService', () => {
     const module = await Test.createTestingModule({
       imports: [
         CriminalRecordApiModule.register({
-          xroadBaseUrl: 'http://localhost:8081',
+          xroadBaseUrl: 'http://localhost',
           xroadClientId: '',
           xroadPath: 'v2',
           fetchOptions: {
