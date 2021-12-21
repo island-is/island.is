@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { PersonalRepresentativeScopePermission } from '../entities/models/personal-representative-scope-permission.model'
-import { PersonalRepresentativeScopePermissionDTO } from '../personal-representative'
+import { PersonalRepresentativeScopePermissionDTO } from '../entities/dto/personal-representative-scope-permission.dto'
 
 @Injectable()
 export class PersonalRepresentativeScopePermissionService {

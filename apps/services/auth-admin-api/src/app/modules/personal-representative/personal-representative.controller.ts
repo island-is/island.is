@@ -5,7 +5,7 @@ import {
   PersonalRepresentativeScopePermission,
   PersonalRepresentativeScopePermissionDTO,
   PersonalRepresentativeScopePermissionService,
-} from '@island.is/auth-api-lib/personal-representative'
+} from '@island.is/auth-api-lib/personal-representative-scope-permissions'
 import {
   BadRequestException,
   Body,
@@ -18,6 +18,7 @@ import {
   Post,
   Inject,
   Query,
+  forwardRef,
 } from '@nestjs/common'
 import {
   ApiOperation,
@@ -47,7 +48,9 @@ export class PersonalRepresentativeController {
   constructor(
     @Inject(PersonalRepresentativeRightTypeService)
     private readonly rightTypesService: PersonalRepresentativeRightTypeService,
+    @Inject(forwardRef(() => PersonalRepresentativeScopePermissionService))
     private readonly scopePermissionService: PersonalRepresentativeScopePermissionService,
+    @Inject(AuditService)
     private readonly auditService: AuditService,
   ) {}
 

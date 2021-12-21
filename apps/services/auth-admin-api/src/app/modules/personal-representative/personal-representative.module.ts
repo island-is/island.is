@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common'
-import {
-  PersonalRepresentativeRightType,
-  PersonalRepresentativeRightTypeService,
-  PersonalRepresentativeScopePermissionService,
-  PersonalRepresentativeScopePermission,
-  PersonalRepresentativeRight,
-  PersonalRepresentative,
-} from '@island.is/auth-api-lib/personal-representative'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { PersonalRepresentativeController } from './personal-representative.controller'
+import {
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeRightTypeService,
+  PersonalRepresentativeScopePermission,
+  PersonalRepresentativeScopePermissionService,
+} from '@island.is/auth-api-lib/personal-representative-scope-permissions'
 
 @Module({
   imports: [
