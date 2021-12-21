@@ -4,12 +4,12 @@ export const application = {
   general: defineMessages({
     name: {
       id: 'gfl.application:general.name',
-      defaultMessage: 'Almenn fiskveiðileyfi fyrir Fiskistofnun',
-      description: 'General fishing license for Fiskistofnun',
+      defaultMessage: 'Almennt veiðileyfi',
+      description: 'General fishing license',
     },
     institutionName: {
       id: 'gfl.application:general.institutionName',
-      defaultMessage: 'Fiskistofnun',
+      defaultMessage: 'Fiskistofa',
       description: 'Institution name',
     },
   }),
