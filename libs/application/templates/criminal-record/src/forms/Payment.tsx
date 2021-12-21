@@ -92,7 +92,7 @@ export const Payment: Form = buildForm({
         }),
         buildCustomField({
           id: 'paymentPendingField',
-          component: 'ExamplePaymentPendingField',
+          component: 'PaymentPendingField',
           title: m.confirmation,
           condition: () => {
             console.log(!!window.document.location.href.match(/\?done$/))
