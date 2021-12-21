@@ -4,10 +4,8 @@ import {
   ISODate,
   toISODate,
   HTMLText,
-  MinistrySlug,
   RegulationType,
   PlainText,
-  RegName,
 } from '@island.is/regulations'
 import { startOfDay, addDays, set } from 'date-fns/esm'
 import { OptionTypeBase, ValueType } from 'react-select'
@@ -16,6 +14,7 @@ import { RegDraftFormSimpleProps, RegDraftForm } from '../state/types'
 import { Option } from '@island.is/island-ui/core'
 import { RegulationMinistry } from '@island.is/regulations/web'
 import { MessageDescriptor, useIntl } from 'react-intl'
+import { errorMsgs } from '../messages'
 
 type FormatMessageValues = Parameters<
   ReturnType<typeof useIntl>['formatMessage']
@@ -291,13 +290,16 @@ export const getInputFieldsWithErrors = (
   if (draft) {
     const emptyFields = inputs.filter((x) => !draft[x].value)
     if (emptyFields.length > 0) {
-      const errorUpdateArray = emptyFields.map((fieldName) => ({
-        [fieldName]: {
+      return emptyFields.reduce<
+        Partial<Pick<RegDraftForm, RegDraftFormSimpleProps>>
+      >((updates, fieldName) => {
+        updates[fieldName] = {
           ...draft[fieldName],
-          error: true,
-        },
-      }))
-      return Object.assign({}, ...errorUpdateArray)
+          // @ts-expect-error  (No idea why?!)
+          error: errorMsgs.fieldRequired,
+        }
+        return updates
+      }, {})
     }
   }
   return undefined
