@@ -94,6 +94,31 @@ describe('StaffController - Get staff by national id', () => {
     })
   })
 
+  describe('staff found', () => {
+    const nationalId = '0000000000'
+    const staff = {
+      id: uuid(),
+      name: 'Staff Tester',
+      nationalId,
+      municipalityId: '0',
+      municipalityName: 'Someplace',
+      roles: [StaffRole.EMPLOYEE],
+      active: true,
+    } as StaffModel
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFindByNationalId = mockStaffModel.findOne as jest.Mock
+      mockFindByNationalId.mockResolvedValueOnce(staff)
+
+      then = await givenWhenThen(nationalId)
+    })
+
+    it('should return staff', () => {
+      expect(then.result).toEqual(staff)
+    })
+  })
+
   describe('database query fails', () => {
     const nationalId = '0000000000'
     let then: Then
