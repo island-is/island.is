@@ -143,7 +143,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
               <div className={cs(isSelected ? undefined : styles.hidden)}>
                 <DatePickerController
                   id={`${item.model}.validTo`}
-                  size="xs"
+                  size="sm"
                   label={formatMessage({
                     id:
                       'service.portal.settings.accessControl:access-item-datepicker-label',
