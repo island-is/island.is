@@ -3,11 +3,10 @@ import { GraphQLModule } from '@nestjs/graphql'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { BASE_PATH } from '@island.is/skilavottord/consts'
-import { AuthModule } from '@island.is/auth-nest-tools'
 
 import {
   AccessControlModule,
-  UserModule,
+  AuthModule,
   GdprModule,
   VehicleModule,
   RecyclingRequestModule,
@@ -36,10 +35,9 @@ const autoSchemaFile = environment.production
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+    AuthModule,
     AccessControlModule,
     RecyclingRequestModule,
-    AuthModule.register(environment.auth),
-    UserModule,
     SamgongustofaModule,
     FjarsyslaModule,
     GdprModule,

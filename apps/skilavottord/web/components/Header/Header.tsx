@@ -19,9 +19,7 @@ export const SkilavottordUserQuery = gql`
     skilavottordUser {
       name
       nationalId
-      mobile
       role
-      partnerId
     }
   }
 `

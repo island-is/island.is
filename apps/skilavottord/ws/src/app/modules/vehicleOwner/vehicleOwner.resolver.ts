@@ -1,14 +1,15 @@
-import { Inject, UseGuards } from '@nestjs/common'
+import { Inject } from '@nestjs/common'
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { IdsUserGuard, User, CurrentUser } from '@island.is/auth-nest-tools'
+
+import { Authorize, CurrentUser, User, Role } from '../auth'
 
 import { VehicleOwnerModel } from './vehicleOwner.model'
 import { VehicleOwnerService } from './vehicleOwner.service'
 
-@UseGuards(IdsUserGuard)
+@Authorize()
 @Resolver(() => VehicleOwnerModel)
 export class VehicleOwnerResolver {
   constructor(
@@ -26,7 +27,6 @@ export class VehicleOwnerResolver {
     return res
   }
 
-  //TODO find right name
   @Query(() => VehicleOwnerModel)
   async skilavottordVehiclesFromLocal(
     @CurrentUser() user: User,
@@ -38,7 +38,9 @@ export class VehicleOwnerResolver {
     return res
   }
 
-  // @Authorize({ roles: [Role.developer, Role.recyclingCompany, Role.recyclingFund] })
+  @Authorize({
+    roles: [Role.developer, Role.recyclingCompany, Role.recyclingFund],
+  })
   @Query(() => [VehicleOwnerModel])
   async skilavottordRecyclingPartnerVehicles(
     @Args('partnerId') partnerId: string,

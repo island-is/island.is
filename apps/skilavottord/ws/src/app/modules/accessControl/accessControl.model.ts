@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 import {
   BelongsTo,
   Column,

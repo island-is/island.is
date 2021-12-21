@@ -4,8 +4,8 @@ const devConfig = {
     dsn: process.env.SENTRY_DSN,
   },
   auth: {
-    issuer: 'https://identity-server.dev01.devland.is',
-    audience: '@island.is',
+    issuer: 'https://identity-server.staging01.devland.is',
+    audience: '@urvinnslusjodur.is/skilavottord',
   },
   samgongustofa: {
     soapUrl:
@@ -41,7 +41,7 @@ const prodConfig = {
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-    audience: '@island.is',
+    audience: '@urvinnslusjodur.is/skilavottord',
   },
   samgongustofa: {
     soapUrl: process.env.SAMGONGUSTOFA_SOAP_URL,

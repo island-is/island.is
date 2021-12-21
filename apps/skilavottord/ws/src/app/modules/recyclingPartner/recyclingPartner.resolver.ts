@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { UseGuards, ConflictException, NotFoundException } from '@nestjs/common'
+import { ConflictException, NotFoundException } from '@nestjs/common'
 
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { Authorize, Role } from '../auth'
 
 import { RecyclingPartnerModel } from './recyclingPartner.model'
 import { RecyclingPartnerService } from './recyclingPartner.service'
@@ -11,8 +11,7 @@ import {
   UpdateRecyclingPartnerInput,
 } from './recyclingPartner.input'
 
-// @Authorize({ throwOnUnAuthorized: false, roles: [Role.developer, Role.recyclingCompany] })
-@UseGuards(IdsUserGuard)
+@Authorize({ roles: [Role.developer, Role.recyclingCompany] })
 @Resolver(() => RecyclingPartnerModel)
 export class RecyclingPartnerResolver {
   constructor(private recyclingPartnerService: RecyclingPartnerService) {}

@@ -1,12 +1,11 @@
-import { UseGuards } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
 
-import { IdsUserGuard, User, CurrentUser } from '@island.is/auth-nest-tools'
+import { Authorize, CurrentUser, User } from '../auth'
 
 import { VehicleInformation } from './samgongustofa.model'
 import { SamgongustofaService } from './samgongustofa.service'
 
-@UseGuards(IdsUserGuard)
+@Authorize()
 @Resolver(() => VehicleInformation)
 export class SamgongustofaResolver {
   constructor(private samgongustofaService: SamgongustofaService) {}
