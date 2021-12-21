@@ -9,9 +9,6 @@ const prodConfig = () => ({
   applicationSystem: {
     baseApiUrl: process.env.APPLICATION_SYSTEM_API_URL,
   },
-  authPublicApi: {
-    baseApiUrl: process.env.AUTH_PUBLIC_API_URL,
-  },
   drivingLicense: {
     secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
     v1: {
@@ -24,6 +21,9 @@ const prodConfig = () => ({
         ? process.env.XROAD_DRIVING_LICENSE_PATH
         : process.env.XROAD_DRIVING_LICENSE_V2_PATH,
     },
+  },
+  criminalRecord: {
+    xroadPath: process.env.XROAD_CRIMINAL_RECORD_PATH,
   },
   education: {
     xroadLicenseServiceId: process.env.XROAD_MMS_LICENSE_SERVICE_ID,
@@ -59,7 +59,7 @@ const prodConfig = () => ({
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-    audience: '',
+    audience: '@island.is',
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,
@@ -121,12 +121,6 @@ const prodConfig = () => ({
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
   },
-  temporaryVoterRegistry: {
-    baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_BASE_API_URL,
-  },
-  partyLetterRegistry: {
-    baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
-  },
   fjarmalDomain: {
     xroadApiPath: process.env.XROAD_FINANCES_PATH,
     ttl: parseInt(process.env.FJARMAL_TTL, 10) || 600,
@@ -166,9 +160,6 @@ const devConfig = () => ({
   applicationSystem: {
     baseApiUrl: 'http://localhost:3333',
   },
-  authPublicApi: {
-    baseApiUrl: process.env.AUTH_PUBLIC_API_URL ?? 'http://localhost:3370',
-  },
   drivingLicense: {
     secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
     v1: {
@@ -181,6 +172,11 @@ const devConfig = () => ({
         process.env.XROAD_DRIVING_LICENSE_V2_PATH ??
         'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
     },
+  },
+  criminalRecord: {
+    xroadPath:
+      process.env.XROAD_CRIMINAL_RECORD_PATH ??
+      'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
   },
   education: {
     xroadLicenseServiceId: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
@@ -221,7 +217,7 @@ const devConfig = () => ({
   },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
-    audience: '',
+    audience: '@island.is',
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,
@@ -296,12 +292,6 @@ const devConfig = () => ({
     callbackBaseUrl: process.env.XROAD_PAYMENT_BASE_CALLBACK_URL,
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
-  },
-  temporaryVoterRegistry: {
-    baseApiUrl: 'http://localhost:4248',
-  },
-  partyLetterRegistry: {
-    baseApiUrl: 'http://localhost:4251',
   },
   pkpass: {
     apiKey: process.env.PKPASS_API_KEY,

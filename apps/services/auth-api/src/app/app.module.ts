@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { SequelizeConfigService } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 
 import { ClientsModule } from './modules/clients/clients.module'
@@ -31,7 +32,7 @@ import { UserProfileModule } from './modules/user-profile/user-profile.module'
     UserProfileModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [XRoadConfig, NationalRegistryClientConfig],
+      load: [XRoadConfig, NationalRegistryClientConfig, FeatureFlagConfig],
     }),
   ],
 })

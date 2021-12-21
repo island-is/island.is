@@ -1,6 +1,7 @@
 import { Includeable } from 'sequelize/types'
 
 import {
+  BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -20,25 +21,26 @@ import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
   isRestrictionCase,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import {
   getRequestPdfAsBuffer,
-  getRequestPdfAsString,
   getRulingPdfAsString,
   getCasefilesPdfAsString,
   writeFile,
-  getCustodyNoticePdfAsString,
+  getRulingPdfAsBuffer,
+  getCustodyNoticePdfAsBuffer,
 } from '../../formatters'
 import { notificationMessages as m } from '../../messages'
 import { FileService } from '../file/file.service'
 import { Institution } from '../institution'
-import { User } from '../user'
+import { User, UserService } from '../user'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { CreateCaseDto, UpdateCaseDto } from './dto'
+import { CreateCaseDto, InternalCreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
 
@@ -87,6 +89,7 @@ export class CaseService {
   constructor(
     @InjectModel(Case)
     private readonly caseModel: typeof Case,
+    private readonly userService: UserService,
     private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
@@ -290,18 +293,22 @@ export class CaseService {
     ]
 
     if (!uploadedToCourt) {
+      const recipients = [
+        {
+          name: existingCase.judge?.name ?? '',
+          address: existingCase.judge?.email ?? '',
+        },
+      ]
+      if (existingCase.registrar) {
+        recipients.push({
+          name: existingCase.registrar?.name ?? '',
+          address: existingCase.registrar?.email ?? '',
+        })
+      }
+
       emailPromises.push(
         this.sendEmail(
-          [
-            {
-              name: existingCase.registrar?.name ?? '',
-              address: existingCase.registrar?.email ?? '',
-            },
-            {
-              name: existingCase.judge?.name ?? '',
-              address: existingCase.judge?.email ?? '',
-            },
-          ],
+          recipients,
           intl.formatMessage(m.signedRuling.courtBodyAttachment),
           intl.formatMessage,
           existingCase.courtCaseNumber,
@@ -382,13 +389,36 @@ export class CaseService {
     })
   }
 
-  async create(caseToCreate: CreateCaseDto, user?: TUser): Promise<Case> {
+  async internalCreate(caseToCreate: InternalCreateCaseDto): Promise<Case> {
+    this.logger.debug('Creating a new case')
+
+    if (!caseToCreate.prosecutorNationalId) {
+      return this.create(caseToCreate)
+    }
+
+    const prosecutor = await this.userService.findByNationalId(
+      caseToCreate.prosecutorNationalId,
+    )
+
+    if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
+      throw new BadRequestException(
+        `Person with national id ${caseToCreate.prosecutorNationalId} is not registered as a prosecutor`,
+      )
+    }
+
+    return this.create(caseToCreate, prosecutor.id)
+  }
+
+  async create(
+    caseToCreate: CreateCaseDto,
+    prosecutorId?: string,
+  ): Promise<Case> {
     this.logger.debug('Creating a new case')
 
     return this.caseModel.create({
       ...caseToCreate,
-      creatingProsecutorId: user?.id,
-      prosecutorId: user?.id,
+      creatingProsecutorId: prosecutorId,
+      prosecutorId,
     })
   }
 
@@ -409,7 +439,7 @@ export class CaseService {
     return { numberOfAffectedRows, updatedCase }
   }
 
-  async getRequestPdf(existingCase: Case): Promise<string> {
+  async getRequestPdf(existingCase: Case): Promise<Buffer> {
     this.logger.debug(
       `Getting the request for case ${existingCase.id} as a pdf document`,
     )
@@ -419,17 +449,16 @@ export class CaseService {
       'is',
     )
 
-    return getRequestPdfAsString(existingCase, intl.formatMessage)
+    return getRequestPdfAsBuffer(existingCase, intl.formatMessage)
   }
 
-  async getCourtRecordPdf(existingCase: Case): Promise<string> {
+  async getCourtRecordPdf(existingCase: Case): Promise<Buffer> {
     this.logger.debug(
       `Getting the court record for case ${existingCase.id} as a pdf document`,
     )
 
     const pdf = await this.awsS3Service
       .getObject(`generated/${existingCase.id}/courtRecord.pdf`)
-      .then((res) => res.toString('binary'))
       .catch(() => undefined)
 
     if (pdf) {
@@ -441,17 +470,16 @@ export class CaseService {
       'is',
     )
 
-    return getRulingPdfAsString(existingCase, intl.formatMessage, true)
+    return getRulingPdfAsBuffer(existingCase, intl.formatMessage, true)
   }
 
-  async getRulingPdf(existingCase: Case): Promise<string> {
+  async getRulingPdf(existingCase: Case): Promise<Buffer> {
     this.logger.debug(
       `Getting the ruling for case ${existingCase.id} as a pdf document`,
     )
 
     const pdf = await this.awsS3Service
       .getObject(`generated/${existingCase.id}/ruling.pdf`)
-      .then((res) => res.toString('binary'))
       .catch(() => undefined)
 
     if (pdf) {
@@ -463,15 +491,15 @@ export class CaseService {
       'is',
     )
 
-    return getRulingPdfAsString(existingCase, intl.formatMessage, false)
+    return getRulingPdfAsBuffer(existingCase, intl.formatMessage, false)
   }
 
-  async getCustodyPdf(existingCase: Case): Promise<string> {
+  async getCustodyPdf(existingCase: Case): Promise<Buffer> {
     this.logger.debug(
       `Getting the custody notice for case ${existingCase.id} as a pdf document`,
     )
 
-    return getCustodyNoticePdfAsString(existingCase)
+    return getCustodyNoticePdfAsBuffer(existingCase)
   }
 
   async requestCourtRecordSignature(

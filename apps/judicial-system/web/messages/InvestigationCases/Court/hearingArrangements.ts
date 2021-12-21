@@ -2,6 +2,15 @@ import { defineMessage, defineMessages } from 'react-intl'
 
 // Strings for court officials
 export const icHearingArrangements = {
+  comments: {
+    title: defineMessage({
+      id:
+        'judicial.system.investigation_cases:hearing_arrangements.comments.title',
+      defaultMessage: 'Athugasemdir vegna málsmeðferðar',
+      description:
+        'Notaður sem titill í viðvörunarboxi með athugasemdum vegna málsmeðferðar á fyrirtöku skrefi í rannsóknarheimildum.',
+    }),
+  },
   title: defineMessage({
     id: 'judicial.system.investigation_cases:hearing_arrangements.title',
     defaultMessage: 'Fyrirtaka',
@@ -100,6 +109,56 @@ export const icHearingArrangements = {
         description:
           'Notaður sem titill fyrir "Verjandi/talsmaður" hlutann á fyrirtöku skrefi í rannsóknarheimildum.',
       },
+      tooltip: defineMessage({
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.tooltip',
+        defaultMessage:
+          'Lögmaður sem er valinn hér verður skipaður {defenderType} í þinghaldi og fær sendan úrskurð rafrænt.',
+        description:
+          'Notaður sem upplýsingatexti í upplýsingasvæði við "Verjanda" fyrirsögn á fyrirtöku skrefi í rannsóknarheimildum.',
+      }),
+      nameLabel: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.name_label',
+        defaultMessage: 'Nafn {defenderType}',
+        description:
+          'Notaður sem titill í "Nafn verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      namePlaceholder: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.name_placeholder',
+        defaultMessage: 'Fullt nafn',
+        description:
+          'Notaður sem skýritexti í "Nafn verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      emailLabel: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.email_label',
+        defaultMessage: 'Netfang {defenderType}',
+        description:
+          'Notaður sem titill í "Netfang verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      emailPlaceholder: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.email_placeholder',
+        defaultMessage: 'Netfang',
+        description:
+          'Notaður sem skýritexti í "Netfang verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      phoneNumberLabel: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.phone_number_label',
+        defaultMessage: 'Símanúmer {defenderType}',
+        description:
+          'Notaður sem titill í "Símanúmer verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      phoneNumberPlaceholder: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.phone_number_placeholder',
+        defaultMessage: 'Símanúmer',
+        description:
+          'Notaður sem skýritexti í "Símanúmer verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
     }),
   },
   modal: defineMessages({
@@ -109,13 +168,6 @@ export const icHearingArrangements = {
       defaultMessage: 'Tilkynning um fyrirtökutíma hefur verið send',
       description:
         'Notaður sem titill fyrir tilkynningagluggan á fyrirtöku skrefi í rannsóknarheimildum.',
-    },
-    remoteSessionHeading: {
-      id:
-        'judicial.system.investigation_cases:hearing_arrangements.modal.remote_session_heading',
-      defaultMessage: 'Enginn hefur verið boðaður í þinghald að svo stöddu',
-      description:
-        'Notaður sem titill fyrir tilkynningagluggan á fyrirtöku skrefi í rannsóknarheimildum ef fyrirtaka er án munnlegs málflutnings.',
     },
     allPresentText: {
       id:
@@ -140,14 +192,6 @@ export const icHearingArrangements = {
       description:
         'Notaður sem texti í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fulltrúi ákæruvalds mætir.',
     },
-    remoteSessionText: {
-      id:
-        'judicial.system.investigation_cases:hearing_arrangements.modal.remote_session_text',
-      defaultMessage:
-        'Ekki er sjálfkrafa gert ráð fyrir boðun eða mætingu af hálfu málsaðila eða málflytjenda í þinghaldið.',
-      description:
-        'Notaður sem texti fyrir tilkynningagluggan á fyrirtöku skrefi í rannsóknarheimildum ef fyrirtaka er án munnlegs málflutnings.',
-    },
     secondaryButtonText: {
       id:
         'judicial.system.investigation_cases:hearing_arrangements.modal.secondary_button_text',
@@ -161,13 +205,6 @@ export const icHearingArrangements = {
       defaultMessage: 'Já, senda núna',
       description:
         'Notaður sem texti í "Já, senda núna" takkann í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum.',
-    },
-    primaryButtonRemoteSessionText: {
-      id:
-        'judicial.system.investigation_cases:hearing_arrangements.modal.primary_button_remote_session_text',
-      defaultMessage: 'Áfram',
-      description:
-        'Notaður sem texti í takkanum í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fyrirtaka er án munnlegs málflutnings.',
     },
   }),
   footer: defineMessages({

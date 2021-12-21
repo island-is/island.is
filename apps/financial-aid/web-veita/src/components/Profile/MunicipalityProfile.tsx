@@ -98,7 +98,7 @@ const MunicipalityProfile = ({
     switch (value) {
       case AidTypeHomeCircumstances.OWNPLACE:
         return [
-          TextTableItem(headline, 'Eigin húsnæði'),
+          TextTableItem(headline, 'Eigið húsnæði'),
           TextTableItem(smallText, municipality.individualAid.ownPlace),
           TextTableItem(smallText, municipality.cohabitationAid.ownPlace),
         ]
@@ -370,6 +370,7 @@ const MunicipalityProfile = ({
         }}
         onStaffCreated={refreshList}
         predefinedRoles={[StaffRole.ADMIN]}
+        municipalityName={municipality.name}
       />
       <ToastContainer />
     </Box>

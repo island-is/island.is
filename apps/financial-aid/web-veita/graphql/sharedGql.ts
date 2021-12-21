@@ -39,8 +39,8 @@ export const ApplicationQuery = gql`
       }
       state
       formComment
+      spouseFormComment
       studentCustom
-      amount
       rejection
       staff {
         name
@@ -55,6 +55,18 @@ export const ApplicationQuery = gql`
         created
         staffName
         staffNationalId
+      }
+      amount {
+        aidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
       }
     }
   }
@@ -170,7 +182,6 @@ export const ApplicationEventMutation = gql`
       state
       formComment
       studentCustom
-      amount
       rejection
       staff {
         name
@@ -206,6 +217,7 @@ export const CurrentUserQuery = gql`
         nickname
         municipalityHomepage
         email
+        usePseudoName
       }
     }
   }
@@ -243,7 +255,6 @@ export const UpdateApplicationMutation = gql`
       state
       formComment
       studentCustom
-      amount
       rejection
       applicationEvents {
         id
@@ -257,6 +268,18 @@ export const UpdateApplicationMutation = gql`
       staff {
         name
         municipalityId
+      }
+      amount {
+        aidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
       }
     }
   }
@@ -349,9 +372,15 @@ export const UpdateStaffMutation = gql`
     updateStaff(input: $input) {
       id
       nationalId
+      name
+      municipalityId
+      phoneNumber
       roles
+      active
       nickname
+      municipalityHomepage
       email
+      usePseudoName
     }
   }
 `

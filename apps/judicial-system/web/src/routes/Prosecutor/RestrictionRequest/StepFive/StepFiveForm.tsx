@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
+
 import {
   Text,
   Box,
@@ -23,18 +24,19 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
-import { rcCaseFiles as m } from '@island.is/judicial-system-web/messages'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
-import { PoliceCaseFilesData } from './StepFive'
+import { rcCaseFiles as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './StepFive.css'
+
+import { PoliceCaseFilesData } from './StepFive'
 import { PoliceCaseFilesMessageBox } from '../../SharedComponents/PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
+import * as styles from './StepFive.css'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   policeCaseFiles?: PoliceCaseFilesData
 }
 
@@ -54,14 +56,14 @@ export const StepFiveForm: React.FC<Props> = (props) => {
   const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const {
-    files,
     uploadErrorMessage,
     allFilesUploaded,
     uploadPoliceCaseFile,
     addFileToCase,
-    onChange,
     onRemove,
     onRetry,
+    onChange,
+    files,
   } = useS3Upload(workingCase)
   const { updateCase } = useCase()
 
@@ -342,7 +344,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
               name="caseFilesComments"
               label={formatMessage(m.sections.comments.label)}
               placeholder={formatMessage(m.sections.comments.placeholder)}
-              defaultValue={workingCase?.caseFilesComments}
+              value={workingCase.caseFilesComments || ''}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'caseFilesComments',

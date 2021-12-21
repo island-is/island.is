@@ -81,6 +81,7 @@ export const whoIsTheNotificationForSection = buildSection({
               width: 'half',
               backgroundColor: 'blue',
               required: true,
+              maxLength: 100,
             }),
             buildTextField({
               id: 'injuredPersonInformation.nationalId',
@@ -97,6 +98,7 @@ export const whoIsTheNotificationForSection = buildSection({
               width: 'half',
               variant: 'email',
               required: true,
+              maxLength: 100,
             }),
             buildTextField({
               id: 'injuredPersonInformation.phoneNumber',
@@ -126,6 +128,7 @@ export const whoIsTheNotificationForSection = buildSection({
               title: juridicalPerson.labels.companyName,
               width: 'half',
               required: true,
+              maxLength: 100,
             }),
             buildTextField({
               id: 'juridicalPerson.companyNationalId',
@@ -182,6 +185,7 @@ export const whoIsTheNotificationForSection = buildSection({
                 title: powerOfAttorney.alertMessage.title,
                 description: powerOfAttorney.alertMessage.description,
                 component: 'FieldAlertMessage',
+                doesNotRequireAnswer: true,
                 condition: (formValue) =>
                   getValueViaPath(formValue, 'powerOfAttorney.type') ===
                   PowerOfAttorneyUploadEnum.UPLOADLATER,
@@ -208,6 +212,7 @@ export const whoIsTheNotificationForSection = buildSection({
               title: childInCustody.labels.name,
               width: 'half',
               required: true,
+              maxLength: 100,
             }),
             buildTextField({
               id: 'childInCustody.nationalId',
@@ -234,6 +239,7 @@ export const whoIsTheNotificationForSection = buildSection({
             buildCustomField({
               id: 'attachments.powerOfAttorney.fileLink',
               component: 'ProxyDocument',
+              doesNotRequireAnswer: true,
               title: '',
             }),
             buildFileUploadField({

@@ -125,13 +125,6 @@ export const icRulingStepTwo = {
         description:
           'Notaður sem texti við valmöguleika sækjanda um lögbundinn frest radio takkann á úrskurðar og kæru skrefi í rannsóknarheimildum.',
       },
-      prosecutorPostponeInRemoteSession: {
-        id:
-          'judicial.system.investigation_cases:ruling_step_two.appeal_decision.prosecutor_postpone_in_remote_session',
-        defaultMessage: 'Sækjandi fær lögboðinn frest',
-        description:
-          'Notaður sem texti við valmöguleika sækjanda um lögbundinn frest radio takkann á úrskurðar og kæru skrefi í rannsóknarheimildum þegar fyrirtakan er án munnlegs málflutnings.',
-      },
       prosecutorNotApplicable: {
         id:
           'judicial.system.investigation_cases:ruling_step_two.appeal_decision.prosecutor_not_applicable',
@@ -141,14 +134,14 @@ export const icRulingStepTwo = {
       },
       prosecutorAnnouncementLabel: {
         id:
-          'judicial.system.restriction_cases:ruling_step_two.appeal_decision.prosecutor_announcement_label',
+          'judicial.system.investigation_cases:ruling_step_two.appeal_decision.prosecutor_announcement_label',
         defaultMessage: 'Yfirlýsing sækjanda',
         description:
           'Notaður sem titill á "Yfirlýsing sækjanda" innsláttarsvæði á úrskurðar og kæru skrefi í rannsóknarheimildum.',
       },
       prosecutorAnnouncementPlaceholder: {
         id:
-          'judicial.system.restriction_cases:ruling_step_two.appeal_decision.prosecutor_announcement_placeholder',
+          'judicial.system.investigation_cases:ruling_step_two.appeal_decision.prosecutor_announcement_placeholder',
         defaultMessage:
           'Hér er hægt að bóka frekar um það sem sækjandi vill taka fram ef við á.',
         description:

@@ -5,13 +5,15 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { VehicleModel } from '../vehicle'
-import { Authorize } from '../auth'
+import { Authorize, Role } from '../auth'
 import {
   RecyclingRequestModel,
-  RecyclingRequestUnion,
+  RecyclingRequestTypes,
+  RecyclingRequestResponse,
 } from './recyclingRequest.model'
 import { RecyclingRequestService } from './recyclingRequest.service'
 
+@Authorize({ throwOnUnAuthorized: false })
 @Resolver(() => RecyclingRequestModel)
 export class RecyclingRequestResolver {
   constructor(
@@ -20,7 +22,7 @@ export class RecyclingRequestResolver {
     private logger: Logger,
   ) {}
 
-  @Authorize({ throwOnUnAuthorized: false })
+  @Authorize({ roles: [Role.developer, Role.recyclingFund] })
   @Query(() => [RecyclingRequestModel])
   async skilavottordAllRecyclingRequests(): Promise<RecyclingRequestModel[]> {
     const res = await this.recyclingRequestService.findAll()
@@ -31,6 +33,7 @@ export class RecyclingRequestResolver {
     return res
   }
 
+  @Authorize({ roles: [Role.developer, Role.recyclingFund] })
   @Query(() => [RecyclingRequestModel])
   async skilavottordRecyclingRequest(
     @Args('permno') perm: string,
@@ -42,6 +45,7 @@ export class RecyclingRequestResolver {
     return res
   }
 
+  @Authorize({ roles: [Role.developer, Role.recyclingCompany] })
   @Query(() => Boolean)
   async skilavottordDeRegisterVehicle(
     @Args('vehiclePermno') nid: string,
@@ -50,6 +54,7 @@ export class RecyclingRequestResolver {
     return this.recyclingRequestService.deRegisterVehicle(nid, station)
   }
 
+  @Authorize({ roles: [Role.developer, Role.recyclingCompany] })
   @Query(() => VehicleModel)
   async skilavottordVehicleReadyToDeregistered(
     @Args('permno') permno: string,
@@ -57,14 +62,15 @@ export class RecyclingRequestResolver {
     return this.recyclingRequestService.getVehicleInfoToDeregistered(permno)
   }
 
-  @Mutation(() => RecyclingRequestUnion)
+  @Mutation(() => RecyclingRequestResponse)
   async createSkilavottordRecyclingRequest(
-    @Args('requestType') requestType: string,
+    @Args({ name: 'requestType', type: () => RecyclingRequestTypes })
+    requestType: RecyclingRequestTypes,
     @Args('permno') permno: string,
     @Args('nameOfRequestor', { nullable: true }) name: string,
     @Args('partnerId', { nullable: true }) partnerId: string,
-  ) {
-    return await this.recyclingRequestService.createRecyclingRequest(
+  ): Promise<typeof RecyclingRequestResponse> {
+    return this.recyclingRequestService.createRecyclingRequest(
       requestType,
       permno,
       name,

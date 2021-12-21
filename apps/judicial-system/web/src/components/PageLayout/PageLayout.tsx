@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext } from 'react'
+import React, { ReactNode, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -16,9 +16,9 @@ import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/C
 
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
-import Loading from '../Loading/Loading'
 import { getSections } from './utils'
 import * as styles from './PageLayout.css'
+import Skeleton from '../Skeleton/Skeleton'
 
 interface PageProps {
   children: ReactNode
@@ -49,7 +49,34 @@ const PageLayout: React.FC<PageProps> = ({
     user,
   )
 
-  return children ? (
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+  return isLoading ? (
+    <Skeleton />
+  ) : notFound ? (
+    <AlertBanner
+      title={
+        user?.role === UserRole.ADMIN
+          ? 'Notandi fannst ekki'
+          : 'Mál fannst ekki'
+      }
+      description={
+        user?.role === UserRole.ADMIN
+          ? 'Vinsamlegast reynið aftur með því að opna notandann aftur frá yfirlitssíðunni'
+          : 'Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni'
+      }
+      variant="error"
+      link={{
+        href:
+          user?.role === UserRole.ADMIN
+            ? Constants.USER_LIST_ROUTE
+            : Constants.REQUEST_LIST_ROUTE,
+        title: 'Fara á yfirlitssíðu',
+      }}
+    />
+  ) : children ? (
     <Box
       paddingY={[3, 3, 3, 6]}
       background="purple100"
@@ -99,31 +126,6 @@ const PageLayout: React.FC<PageProps> = ({
         </GridRow>
       </GridContainer>
     </Box>
-  ) : isLoading ? (
-    <Box className={styles.loadingWrapper}>
-      <Loading />
-    </Box>
-  ) : notFound ? (
-    <AlertBanner
-      title={
-        user?.role === UserRole.ADMIN
-          ? 'Notandi fannst ekki'
-          : 'Mál fannst ekki'
-      }
-      description={
-        user?.role === UserRole.ADMIN
-          ? 'Vinsamlegast reynið aftur með því að opna notandann aftur frá yfirlitssíðunni'
-          : 'Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni'
-      }
-      variant="error"
-      link={{
-        href:
-          user?.role === UserRole.ADMIN
-            ? Constants.USER_LIST_ROUTE
-            : Constants.REQUEST_LIST_ROUTE,
-        title: 'Fara á yfirlitssíðu',
-      }}
-    />
   ) : null
 }
 

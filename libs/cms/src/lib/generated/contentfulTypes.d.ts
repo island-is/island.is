@@ -1828,6 +1828,12 @@ export interface IOrganizationFields {
 
   /** Email */
   email?: string | undefined
+
+  /** Titill á þjónustuvef */
+  serviceWebTitle?: string | undefined
+
+  /** Birta á þjónustuvef */
+  serviceWebEnabled?: boolean | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -1924,6 +1930,9 @@ export interface IOrganizationPageFields {
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
+
+  /** External Links */
+  externalLinks?: ILink[] | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {

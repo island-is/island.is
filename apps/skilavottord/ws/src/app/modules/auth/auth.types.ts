@@ -15,13 +15,18 @@ export type Cookie = {
   options: CookieOptions
 }
 
-export type Role =
-  | 'developer'
-  | 'citizen'
-  | 'recyclingCompany'
-  | 'recyclingFund'
+export enum Role {
+  developer = 'developer',
+  recyclingCompany = 'recyclingCompany',
+  recyclingFund = 'recyclingFund',
+  citizen = 'citizen',
+}
 
 export type Credentials = {
   user: AuthUser
   csrfToken: string
+}
+
+export type User = AuthUser & {
+  role: Role
 }

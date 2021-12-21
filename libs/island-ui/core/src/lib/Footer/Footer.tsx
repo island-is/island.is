@@ -13,6 +13,7 @@ import { Link } from '../Link/Link'
 import { Button } from '../Button/Button'
 import Hyphen from '../Hyphen/Hyphen'
 import { LinkContext } from '../context/LinkContext/LinkContext'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
 import * as styles from './Footer.css'
 
@@ -91,7 +92,7 @@ export const Footer = ({
                 <Box display="flex" flexDirection={'column'} paddingBottom={4}>
                   {topLinksContact.map(({ title, href }, index) => {
                     const isLast = index + 1 === topLinksContact.length
-                    const isInternalLink = href.indexOf('/') === 0
+                    const isInternalLink = !shouldLinkOpenInNewWindow(href)
                     return (
                       <Box marginBottom={isLast ? 0 : 3} key={index}>
                         <Link href={href} skipTab>
@@ -162,7 +163,7 @@ export const Footer = ({
                   <LinkContext.Provider
                     value={{
                       linkRenderer: (href, children) => (
-                        <Link href={href} color="blue400" underline="normal">
+                        <Link href={href} color="blue600" underline="normal">
                           {children}
                         </Link>
                       ),

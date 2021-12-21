@@ -5,7 +5,7 @@ This library is a low-level wrapper for whatever feature flag service **Island.i
 For high-level libraries, check out the following:
 
 - [`@island.is/react/feature-flags`](../react/feature-flags/README.md)
-- `@island.is/nest/feature-flags` (...coming soon)
+- [`@island.is/nest/feature-flags`](../nest/feature-flags/README.md)
 
 {% hint style="warning" %}
 Feature flagging is a way to soft launch a "beta ready" feature to a specific
