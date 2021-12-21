@@ -155,7 +155,6 @@
     - [Institution Collaboration](libs/application/templates/institution-collaboration/README.md)
     - [Application Templates Login Service](libs/application/templates/login-service/README.md)
     - [Application Templates Parental Leave](libs/application/templates/parental-leave/README.md)
-    - [Payable Template](libs/application/templates/payable-dummy-template/README.md)
     - [Application Templates Public Debt Payment Plan](libs/application/templates/public-debt-payment-plan/README.md)
     - [Reference Template](libs/application/templates/reference-template/README.md)
   - [UI Components](libs/application/ui-components/README.md)

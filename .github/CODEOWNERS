@@ -28,7 +28,6 @@
 /libs/cms/                                                                                    @island-is/kosmos-kaos
 /libs/api/domains/endorsement-system                                                          @island-is/kosmos-kaos
 /libs/api/domains/icelandic-names-registry/                                                   @island-is/kosmos-kaos
-/libs/application/templates/payable-dummy-template/                                           @island-is/kosmos-kaos
 /libs/clients/payment/                                                                        @island-is/kosmos-kaos
 /libs/clients/rsk/                                                                            @island-is/kosmos-kaos
 /libs/clients/zendesk/                                                                        @island-is/kosmos-kaos
