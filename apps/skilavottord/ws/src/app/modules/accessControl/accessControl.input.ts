@@ -12,7 +12,7 @@ export class CreateAccessControlInput {
   name!: string
 
   @Field(() => AccessControlRole)
-  role!: AccessControlRole
+  role!: AccessControlRoleType
 
   @Field({ nullable: true })
   partnerId?: string
@@ -27,7 +27,7 @@ export class UpdateAccessControlInput {
   name!: string
 
   @Field(() => AccessControlRole)
-  role!: AccessControlRole
+  role!: AccessControlRoleType
 
   @Field({ nullable: true })
   partnerId?: string
