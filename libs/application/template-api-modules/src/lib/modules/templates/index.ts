@@ -7,7 +7,6 @@ import { ChildrenResidenceChangeModule } from './children-residence-change/child
 import { LoginServiceModule } from './login-service/login-service.module'
 import { FundingGovernmentProjectsModule } from './funding-government-projects/funding-government-projects.module'
 import { DrivingLicenseSubmissionModule } from './driving-license-submission/driving-license-submission.module'
-import { PayableDummyTemplateModule } from './payable-dummy-template/payable-dummy-template.module'
 import { AccidentNotificationModule } from './accident-notification/accident-notification.module'
 import { PublicDebtPaymentPlanTemplateModule } from './public-debt-payment-plan/public-debt-payment-plan.module'
 import { GeneralPetitionModule } from './general-petition/general-petition.module'
@@ -24,7 +23,6 @@ export const modules = [
   LoginServiceModule,
   FundingGovernmentProjectsModule,
   DrivingLicenseSubmissionModule,
-  PayableDummyTemplateModule,
   AccidentNotificationModule,
   PublicDebtPaymentPlanTemplateModule,
   GeneralPetitionModule,
@@ -41,7 +39,6 @@ export { ChildrenResidenceChangeService } from './children-residence-change/chil
 export { LoginServiceService } from './login-service/login-service.service'
 export { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'
 export { DrivingLicenseSubmissionService } from './driving-license-submission/driving-license-submission.service'
-export { PayableDummyTemplateService } from './payable-dummy-template/payable-dummy-template.service'
 export { AccidentNotificationService } from './accident-notification/accident-notification.service'
 export { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
 export { GeneralPetitionService } from './general-petition/general-petition.service'
