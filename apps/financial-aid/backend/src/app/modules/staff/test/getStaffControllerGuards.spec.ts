@@ -22,7 +22,7 @@ describe('StaffController - Get guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have IdsUserGuard as quard 1', () => {
+    it('should have IdsUserGuard as quard 0', () => {
       expect(guard).toBeInstanceOf(IdsUserGuard)
     })
   })
@@ -34,7 +34,7 @@ describe('StaffController - Get guards', () => {
       guard = new guards[1]()
     })
 
-    it('should have RolesGuard as quard 2', () => {
+    it('should have RolesGuard as quard 1', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -61,7 +61,7 @@ describe('StaffController - Gets staff for municipality guard', () => {
         StaffController.prototype.getStaffForMunicipality,
       )
     })
-    it('should have one guards', () => {
+    it('should have one guard', () => {
       expect(guards).toHaveLength(1)
     })
   })
@@ -76,7 +76,7 @@ describe('StaffController -  Counts users for municipality guard', () => {
       StaffController.prototype.numberOfUsersForMunicipality,
     )
   })
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 })
@@ -90,7 +90,7 @@ describe('StaffController - creates staff guard', () => {
       StaffController.prototype.createStaff,
     )
   })
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 })
@@ -104,7 +104,7 @@ describe('StaffController - Gets admin users by municipality id guard', () => {
       StaffController.prototype.getUsers,
     )
   })
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 })
@@ -118,7 +118,7 @@ describe('StaffController - Gets supervisors guard', () => {
       StaffController.prototype.getSupervisors,
     )
   })
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 })

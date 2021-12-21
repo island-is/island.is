@@ -9,7 +9,7 @@ describe('MunicipalityController - Get guards', () => {
     guards = Reflect.getMetadata('__guards__', MunicipalityController)
   })
 
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 
@@ -19,7 +19,7 @@ describe('MunicipalityController - Get guards', () => {
     beforeEach(() => {
       guard = new guards[0]()
     })
-    it('should have IdsUserGuard as quard 1', () => {
+    it('should have IdsUserGuard as quard 0', () => {
       expect(guard).toBeInstanceOf(IdsUserGuard)
     })
   })
@@ -35,7 +35,7 @@ describe('MunicipalityController - Get Creates a new municipality guards', () =>
     )
   })
 
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 })
@@ -50,7 +50,7 @@ describe('MunicipalityController - Gets municipalities guards', () => {
     )
   })
 
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 })
@@ -65,7 +65,7 @@ describe('MunicipalityController - Gets Updates municipality guards', () => {
     )
   })
 
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 })
@@ -80,7 +80,7 @@ describe('MunicipalityController - Gets Updates activity for municipality guards
     )
   })
 
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 })

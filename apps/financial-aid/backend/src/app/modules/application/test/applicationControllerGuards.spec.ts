@@ -11,7 +11,7 @@ describe('ApplicationController - guards', () => {
     guards = Reflect.getMetadata('__guards__', ApplicationController)
   })
 
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 
@@ -22,7 +22,7 @@ describe('ApplicationController - guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have IdsUserGuard as quard 1', () => {
+    it('should have IdsUserGuard as quard 0', () => {
       expect(guard).toBeInstanceOf(IdsUserGuard)
     })
   })
@@ -38,7 +38,7 @@ describe('ApplicationController - Checks if user has a current application for t
     )
   })
 
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 
@@ -49,7 +49,7 @@ describe('ApplicationController - Checks if user has a current application for t
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 1', () => {
+    it('should have RolesGuard as quard 0', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -65,7 +65,7 @@ describe('ApplicationController - Searches for application by nationalId guards'
     )
   })
 
-  it('should have one guards', () => {
+  it('should have two guards', () => {
     expect(guards).toHaveLength(2)
   })
 
@@ -76,7 +76,7 @@ describe('ApplicationController - Searches for application by nationalId guards'
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 1', () => {
+    it('should have RolesGuard as quard 0', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -92,7 +92,7 @@ describe('ApplicationController - Checking if user is spouse guards', () => {
     )
   })
 
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 
@@ -103,7 +103,7 @@ describe('ApplicationController - Checking if user is spouse guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 1', () => {
+    it('should have RolesGuard as quard 0', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -119,7 +119,7 @@ describe('ApplicationController - Gets all existing applications guards', () => 
     )
   })
 
-  it('should have one guards', () => {
+  it('should have two guards', () => {
     expect(guards).toHaveLength(2)
   })
 
@@ -130,7 +130,7 @@ describe('ApplicationController - Gets all existing applications guards', () => 
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 1', () => {
+    it('should have RolesGuard as quard 0', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -146,7 +146,7 @@ describe('ApplicationController - Get application guards', () => {
     )
   })
 
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 })
@@ -161,7 +161,7 @@ describe('ApplicationController - Gets all existing applications filters guards'
     )
   })
 
-  it('should have one guards', () => {
+  it('should have two guards', () => {
     expect(guards).toHaveLength(2)
   })
 
@@ -172,7 +172,7 @@ describe('ApplicationController - Gets all existing applications filters guards'
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 1', () => {
+    it('should have RolesGuard as quard 0', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -188,7 +188,7 @@ describe('ApplicationController - Updates an existing application and returns ap
     )
   })
 
-  it('should have one guards', () => {
+  it('should have two guards', () => {
     expect(guards).toHaveLength(2)
   })
 
@@ -199,7 +199,7 @@ describe('ApplicationController - Updates an existing application and returns ap
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 1', () => {
+    it('should have RolesGuard as quard 0', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -215,7 +215,7 @@ describe('ApplicationController - Creates a new application guards', () => {
     )
   })
 
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 
@@ -226,7 +226,7 @@ describe('ApplicationController - Creates a new application guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 1', () => {
+    it('should have RolesGuard as quard 0', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })

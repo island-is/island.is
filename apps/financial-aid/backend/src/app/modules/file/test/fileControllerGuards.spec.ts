@@ -11,7 +11,7 @@ describe('FileController - guards', () => {
     guards = Reflect.getMetadata('__guards__', FileController)
   })
 
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 
@@ -22,7 +22,7 @@ describe('FileController - guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have IdsUserGuard as quard 1', () => {
+    it('should have IdsUserGuard as quard 0', () => {
       expect(guard).toBeInstanceOf(IdsUserGuard)
     })
   })
@@ -38,7 +38,7 @@ describe('FileController - Creates a new signed url guards', () => {
     )
   })
 
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 
@@ -49,7 +49,7 @@ describe('FileController - Creates a new signed url guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 1', () => {
+    it('should have RolesGuard as quard 0', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -65,7 +65,7 @@ describe('FileController - Creates a new signed url guards', () => {
     )
   })
 
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 
@@ -76,7 +76,7 @@ describe('FileController - Creates a new signed url guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 1', () => {
+    it('should have RolesGuard as quard 0', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -92,7 +92,7 @@ describe('FileController - Creates a new signed url guards', () => {
     )
   })
 
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 
@@ -103,7 +103,7 @@ describe('FileController - Creates a new signed url guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 1', () => {
+    it('should have RolesGuard as quard 0', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
