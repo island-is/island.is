@@ -1,6 +1,11 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 
 import { Role } from '../auth'
+
+export const { citizen, ...AccessControlRole} = Role;
+type excludeOptions = typeof Role.citizen;
+type AccessControlRole = Exclude<Role, excludeOptions>
+registerEnumType(AccessControlRole, {name: 'AccessControlRole'})
 
 @InputType()
 export class CreateAccessControlInput {
@@ -10,10 +15,9 @@ export class CreateAccessControlInput {
   @Field()
   name!: string
 
-  @Field(() => Role)
-  role!: Role
+  @Field(() => AccessControlRole)
+  role!: AccessControlRole
 
-  // TODO: get from samgongustofa
   @Field({ nullable: true })
   partnerId?: string
 }
@@ -26,10 +30,9 @@ export class UpdateAccessControlInput {
   @Field()
   name!: string
 
-  @Field(() => Role)
-  role!: Role
+  @Field(() => AccessControlRole)
+  role!: AccessControlRole
 
-  // TODO: get from samgongustofa
   @Field({ nullable: true })
   partnerId?: string
 }
