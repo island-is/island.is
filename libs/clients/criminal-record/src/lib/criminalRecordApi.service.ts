@@ -7,7 +7,7 @@ export class CriminalRecordApi {
   constructor(private readonly api: CrimeCertificateApi) {}
 
   public async getCriminalRecord(ssn: string): Promise<CriminalRecord> {
-    const contentBlob = await this.api.apiPdfCreatePersonIdGet({
+    const contentBlob = await this.api.apiPdfV1CreatePersonalPersonIdGet({
       personId: ssn,
     })
     const contentArrayBuffer = await contentBlob.arrayBuffer()
