@@ -11,7 +11,6 @@ import {
   LoginServiceService,
   FundingGovernmentProjectsService,
   DrivingLicenseSubmissionService,
-  PayableDummyTemplateService,
   AccidentNotificationService,
   PublicDebtPaymentPlanTemplateService,
   GeneralPetitionService,
@@ -46,7 +45,6 @@ export class TemplateAPIService {
     private readonly loginServiceService: LoginServiceService,
     private readonly fundingGovernmentProjectsService: FundingGovernmentProjectsService,
     private readonly drivingLicenseSubmissionService: DrivingLicenseSubmissionService,
-    private readonly payableDummyTemplateService: PayableDummyTemplateService,
     private readonly accidentNotificationService: AccidentNotificationService,
     private readonly publicDebtPaymentPlanService: PublicDebtPaymentPlanTemplateService,
     private readonly generalPetitionService: GeneralPetitionService,
@@ -64,7 +62,6 @@ export class TemplateAPIService {
       | LoginServiceService
       | FundingGovernmentProjectsService
       | DrivingLicenseSubmissionService
-      | PayableDummyTemplateService
       | AccidentNotificationService
       | PublicDebtPaymentPlanTemplateService
       | GeneralPetitionService
@@ -145,11 +142,6 @@ export class TemplateAPIService {
       case ApplicationTypes.DRIVING_LICENSE:
         return this.tryRunningActionOnService(
           this.drivingLicenseSubmissionService,
-          action,
-        )
-      case ApplicationTypes.PAYABLE_DUMMY_TEMPLATE:
-        return this.tryRunningActionOnService(
-          this.payableDummyTemplateService,
           action,
         )
       case ApplicationTypes.ACCIDENT_NOTIFICATION:

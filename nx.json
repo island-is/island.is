@@ -242,9 +242,6 @@
     "application-templates-passport": {
       "tags": []
     },
-    "application-templates-payable-dummy-template": {
-      "tags": []
-    },
     "application-templates-public-debt-payment-plan": {
       "tags": []
     },
@@ -659,13 +656,13 @@
     "services-endorsements-api": {
       "tags": []
     },
-    "services-notifications": {
-      "tags": []
-    },
     "services-personal-representative": {
       "tags": []
     },
     "services-search-indexer": {
+      "tags": []
+    },
+    "services-user-notification": {
       "tags": []
     },
     "services-user-profile": {
