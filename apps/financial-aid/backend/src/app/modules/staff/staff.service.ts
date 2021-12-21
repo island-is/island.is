@@ -5,7 +5,6 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Sequelize } from 'sequelize-typescript'
 import { UpdateStaffDto, CreateStaffDto } from './dto'
 import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'

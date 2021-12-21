@@ -2,7 +2,6 @@ import { StaffModel } from '../models/staff.model'
 
 import { createTestingStaffModule } from './createTestingStaffModule'
 import { Staff, StaffRole } from '@island.is/financial-aid/shared/lib'
-import { Sequelize } from 'sequelize-typescript'
 
 interface Then {
   result: StaffModel[]
