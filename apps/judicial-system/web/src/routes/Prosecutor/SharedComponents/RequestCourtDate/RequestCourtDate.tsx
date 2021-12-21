@@ -1,7 +1,8 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
+
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import type { Case } from '@island.is/judicial-system/types'
-import { useIntl } from 'react-intl'
 import { requestCourtDate as m } from '@island.is/judicial-system-web/messages'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 
@@ -26,11 +27,7 @@ const RequestCourtDate: React.FC<Props> = (props) => {
       </Box>
       <DateTime
         name="reqCourtDate"
-        selectedDate={
-          workingCase.requestedCourtDate
-            ? new Date(workingCase.requestedCourtDate)
-            : undefined
-        }
+        selectedDate={workingCase.requestedCourtDate}
         onChange={onChange}
         timeLabel={formatMessage(m.dateInput.timeLabel)}
         locked={

@@ -1,4 +1,5 @@
 import { EnvironmentVariables, Secrets, XroadConfig } from './types/input-types'
+import { json } from './dsl'
 
 type XroadSectionConfig = {
   secrets?: Secrets
@@ -178,6 +179,24 @@ export const Education = new XroadConf({
 
 export const NationalRegistry = new XroadConf({
   env: {
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
+      dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+      prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+    },
+    // Only cache on dev for now.
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
+      dev: json([
+        'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+      ]),
+      staging: json([
+        'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+      ]),
+      prod: json([
+        'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+      ]),
+    },
+    // Deprecated:
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
     XROAD_TJODSKRA_MEMBER_CODE: {
       prod: '6503760649',
@@ -216,5 +235,15 @@ export const PaymentSchedule = new XroadConf({
   secrets: {
     PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER',
     PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD',
+  },
+})
+
+export const CriminalRecord = new XroadConf({
+  env: {
+    XROAD_CRIMINAL_RECORD_PATH: {
+      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
+      staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakavottord-PDF-v1',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakavottord-PDF-v1',
+    },
   },
 })

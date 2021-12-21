@@ -1,5 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { useIntl } from 'react-intl'
+import { useQuery, useLazyQuery } from '@apollo/client'
+import router from 'next/router'
+
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
   DropdownMenu,
@@ -15,8 +18,6 @@ import {
   isRestrictionCase,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   getCustodyAndTravelBanProsecutorSection,
   getInvestigationCaseProsecutorSection,
@@ -24,17 +25,18 @@ import {
   getCourtSections,
   findLastValidStep,
 } from '@island.is/judicial-system-web/src/utils/sections'
-import { useQuery, useLazyQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { CaseData } from '@island.is/judicial-system-web/src/types'
+import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
+import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 import ActiveRequests from './ActiveRequests'
 import PastRequests from './PastRequests'
-import router from 'next/router'
 import * as styles from './Requests.css'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
-import { CaseData } from '@island.is/judicial-system-web/src/types'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
 export const Requests: React.FC = () => {
@@ -82,14 +84,9 @@ export const Requests: React.FC = () => {
 
       setActiveCases(
         casesWithoutDeleted.filter((c: Case) => {
-          return isProsecutor
-            ? !completedCaseStates.includes(c.state)
-            : // Judges and registrars should see all cases except cases with status code NEW.
-            isJudge || isRegistrar
-            ? ![...completedCaseStates, CaseState.NEW].includes(c.state)
-            : isPrisonAdminUser || isPrisonUser
+          return isPrisonAdminUser || isPrisonUser
             ? !c.isValidToDateInThePast
-            : null
+            : !completedCaseStates.includes(c.state)
         }),
       )
 

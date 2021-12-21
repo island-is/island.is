@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
+
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import {
   FormContentContainer,
@@ -12,10 +13,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { icDemands } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -54,51 +52,40 @@ const courtClaimPrefill: Partial<
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  isCaseUpToDate: boolean
 }
 
 const PoliceDemandsForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
-  const validations: FormSettings = {
-    demands: {
-      validations: ['empty'],
-    },
-    lawsBroken: {
-      validations: ['empty'],
-    },
-    legalBasis: {
-      validations: ['empty'],
-    },
-  }
+  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
+
   const { formatMessage } = useIntl()
   const { updateCase, autofill } = useCase()
+
   const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
   const [legalBasisEM, setLegalBasisEM] = useState<string>('')
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
 
   useEffect(() => {
-    if (workingCase) {
-      const courtClaim = courtClaimPrefill[workingCase.type]
-      const courtClaimText = courtClaim
-        ? formatMessage(courtClaim.text, {
-            ...(courtClaim.format?.accusedName && {
-              accusedName: workingCase.accusedName,
-            }),
-            ...(courtClaim.format?.address && {
-              address: workingCase.accusedAddress,
-            }),
-          })
-        : ''
-      autofill('demands', courtClaimText, workingCase)
-      setWorkingCase(workingCase)
+    if (isCaseUpToDate) {
+      if (workingCase) {
+        const courtClaim = courtClaimPrefill[workingCase.type]
+        const courtClaimText = courtClaim
+          ? formatMessage(courtClaim.text, {
+              ...(courtClaim.format?.accusedName && {
+                accusedName: workingCase.accusedName,
+              }),
+              ...(courtClaim.format?.address && {
+                address: workingCase.accusedAddress,
+              }),
+            })
+          : ''
+        autofill('demands', courtClaimText, workingCase)
+        setWorkingCase(workingCase)
+      }
     }
-  }, [workingCase, setWorkingCase, autofill])
+  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
     <>
@@ -119,7 +106,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             name="demands"
             label={formatMessage(icDemands.sections.demands.label)}
             placeholder={formatMessage(icDemands.sections.demands.placeholder)}
-            defaultValue={workingCase.demands}
+            value={workingCase.demands || ''}
             errorMessage={demandsEM}
             hasError={demandsEM !== ''}
             onChange={(event) =>
@@ -163,7 +150,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             placeholder={formatMessage(
               icDemands.sections.lawsBroken.placeholder,
             )}
-            defaultValue={workingCase.lawsBroken}
+            value={workingCase.lawsBroken || ''}
             errorMessage={lawsBrokenEM}
             hasError={lawsBrokenEM !== ''}
             onChange={(event) =>
@@ -205,7 +192,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             placeholder={formatMessage(
               icDemands.sections.legalBasis.placeholder,
             )}
-            defaultValue={workingCase.legalBasis}
+            value={workingCase.legalBasis || ''}
             errorMessage={legalBasisEM}
             hasError={legalBasisEM !== ''}
             onChange={(event) =>
@@ -239,7 +226,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.IC_POLICE_REPORT_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isValid}
+          nextIsDisabled={!isPoliceDemandsStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />
       </FormContentContainer>

@@ -248,8 +248,8 @@
         "placeholder": "Ex. Maplestreet 2"
       },
       "postNumber": {
-        "label": "Postnumber",
-        "placeholder": "Postnumber of visiting adress"
+        "label": "Postal code",
+        "placeholder": "Postal code of visiting adress"
       },
       "city": {
         "label": "City",
@@ -272,6 +272,7 @@
     "success": "Company location was successfully updated."
   },
   "deregisterSidenav": {
+    "title": "Actions",
     "deregister": "Deregister car",
     "companyInfo": "Company information"
   },
@@ -323,7 +324,7 @@
     "subtitles": {
       "deregistered": "Deregistered"
     },
-    "info": "There are no recycled cars yet",
+    "info": "Here is the list of all deregistered vehicles, along with date of the registration.",
     "buttons": {
       "export": "Export"
     },
@@ -334,9 +335,10 @@
     "table": ["Reg nr", "Model", "Year", "Company", "Deregistered"]
   },
   "recyclingFundSidenav": {
-    "title": "Icelandic Recycling Fund",
+    "title": "Service",
     "recycled": "Recycled cars",
-    "companies": "Reycling companies"
+    "companies": "Recycling companies",
+    "accessControl": "Access Control"
   },
   "recyclingCompanies": {
     "title": "Recycling companies",
@@ -351,7 +353,157 @@
     },
     "buttons": {
       "add": "Add recycling company",
-      "edit": "Edit"
+      "view": "View"
+    },
+    "recyclingCompany": {
+      "view": {
+        "title": "Recycling company",
+        "breadcrumb": "View",
+        "info": "You can either update or edit a recycling company. Please verify that the companies information is correct",
+        "updated": "Successfully updated",
+        "deleted": "Successfully deleted"
+      },
+      "add": {
+        "title": "Add recycling company",
+        "breadcrumb": "Add",
+        "info": "Adding a new recycling company will make it available to access control. Please verify that the companies information is correct.",
+        "added": "Successfully added"
+      },
+      "form": {
+        "inputs": {
+          "companyId": {
+            "label": "Company ID",
+            "placeholder": "Company ID",
+            "rules": {
+              "required": "Company ID is required"
+            }
+          },
+          "companyName": {
+            "label": "Company name",
+            "placeholder": "Company name",
+            "rules": {
+              "required": "Company name is required"
+            }
+          },
+          "address": {
+            "label": "Address",
+            "placeholder": "Address",
+            "rules": {
+              "required": "Address is required"
+            }
+          },
+          "postnumber": {
+            "label": "Postal code",
+            "placeholder": "Postal code",
+            "rules": {
+              "required": "Postal code is required"
+            }
+          },
+          "city": {
+            "label": "City",
+            "placeholder": "City",
+            "rules": {
+              "required": "City is required"
+            }
+          },
+          "website": {
+            "label": "Website",
+            "placeholder": "Website",
+            "rules": {
+              "required": "Website is required"
+            }
+          },
+          "phone": {
+            "label": "Phone",
+            "placeholder": "Phone",
+            "rules": {
+              "required": "Phone is required"
+            }
+          },
+          "active": {
+            "label": "Active",
+            "placeholder": "Active",
+            "rules": {
+              "required": "Active is required"
+            }
+          }
+        },
+        "buttons": {
+          "cancel": "Cancel",
+          "continue": "Submit",
+          "confirm": "Confirm",
+          "goBack": "Go back"
+        }
+      }
+    }
+  },
+  "accessControl": {
+    "title": "Access control",
+    "info": "Here's a list of all accesses you've given. You can give, edit, and/or remove access.",
+    "empty": "There accesses to display",
+    "tableHeaders": {
+      "nationalId": "National Id",
+      "name": "Name",
+      "role": "Role",
+      "partner": "Partner"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "buttons": {
+      "add": "Give access",
+      "edit": "Edit",
+      "delete": "Delete",
+      "actions": "actions"
+    },
+    "modal": {
+      "titles": {
+        "add": "Give access",
+        "edit": "Edit access",
+        "delete": "Delete access"
+      },
+      "subtitles": {
+        "add": "An access holder will get access to perform actions based on his/her role. Please be certain that the national id matches the person you want to give access to",
+        "edit": "An access holder will get access to perform actions based on his/her role. Please be certain that the role applies to this person.",
+        "delete": "Are you sure you want to delete this access?"
+      },
+      "inputs": {
+        "nationalId": {
+          "label": "National ID",
+          "placeholder": "National ID",
+          "rules": {
+            "required": "National ID is required",
+            "validate": "National ID is incorrect"
+          }
+        },
+        "name": {
+          "label": "Name",
+          "placeholder": "Name",
+          "rules": {
+            "required": "Name is required"
+          }
+        },
+        "role": {
+          "label": "Role",
+          "placeholder": "Role",
+          "rules": {
+            "required": "Role is required"
+          }
+        },
+        "partner": {
+          "label": "Partner",
+          "placeholder": "Partner",
+          "rules": {
+            "required": "Partner is required"
+          }
+        }
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "continue": "Submit",
+        "confirm": "Confirm"
+      }
     }
   },
   "notFound": {
@@ -385,10 +537,11 @@
       "deregister": "/en/deregister-vehicle/[id]"
     },
     "recycledVehicles": "/en/recycled-vehicles",
+    "accessControl": "/en/access-control",
     "recyclingCompanies": {
       "baseRoute": "/en/recycling-companies",
       "add": "/en/recycling-companies/add",
-      "edit": "/en/recycling-companies/[company]"
+      "edit": "/en/recycling-companies/[id]"
     },
     "companyInfo": {
       "baseRoute": "/en/company-info",

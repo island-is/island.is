@@ -217,6 +217,7 @@ export const singleValueSizes = styleVariants(
 )
 export const indicatorsContainer = style(
   {
+    cursor: 'pointer',
     selectors: {
       [`${wrapper} &`]: {
         height: '100%',
@@ -283,13 +284,31 @@ export const option = style({
   },
 })
 
+export const optionDescription = style({
+  paddingTop: theme.spacing[1],
+})
+
+export const optionDescriptionTruncated = style({
+  overflow: 'hidden',
+  display: '-webkit-box',
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
+})
+
 export const optionSizes = styleVariants({
   sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
   md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
 })
 
+export const optionDescriptionSizes = styleVariants({
+  sm: wrapMedia(inputMixins.optionDescriptionSizes.sm, `${wrapper} &`),
+  md: wrapMedia(inputMixins.optionDescriptionSizes.md, `${wrapper} &`),
+})
+
+export const dontRotateIconOnOpen = style({})
+
 globalStyle(
-  `${wrapper} .island-select__control${container}.island-select__control--menu-is-open ${indicatorsContainer}`,
+  `${wrapper} .island-select__control${container}.island-select__control--menu-is-open ${indicatorsContainer}:not(${dontRotateIconOnOpen})`,
   {
     transform: 'rotateX(180deg)',
   },

@@ -2,12 +2,13 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { ValueType } from 'react-select'
+import { useQuery } from '@apollo/client'
+
 import {
   Modal,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseData,
   ProsecutorSubsections,
   ReactSelectOption,
   Sections,
@@ -18,34 +19,28 @@ import {
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { Case, User } from '@island.is/judicial-system/types'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
-import HearingArrangementsForms from './HearingArrangementsForm'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import type { User } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import HearingArrangementsForms from './HearingArrangementsForm'
 
 const HearingArrangements = () => {
   const router = useRouter()
-  const id = router.query.id
-  const [workingCase, setWorkingCase] = useState<Case>()
-  const [prosecutors, setProsecutors] = useState<ReactSelectOption[]>()
-  const [
-    isNotificationModalVisible,
-    setIsNotificationModalVisible,
-  ] = useState<boolean>(false)
-  const [
-    isProsecutorAccessModalVisible,
-    setIsProsecutorAccessModalVisible,
-  ] = useState<boolean>(false)
-  const [substituteProsecutorId, setSubstituteProsecutorId] = useState<string>()
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { courts } = useInstitution()
   const { formatMessage } = useIntl()
@@ -57,25 +52,25 @@ const HearingArrangements = () => {
     updateCase,
   } = useCase()
 
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
   const { data: userData } = useQuery<{ users: User[] }>(UsersQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
+  const [prosecutors, setProsecutors] = useState<ReactSelectOption[]>()
+  const [
+    isNotificationModalVisible,
+    setIsNotificationModalVisible,
+  ] = useState<boolean>(false)
+  const [
+    isProsecutorAccessModalVisible,
+    setIsProsecutorAccessModalVisible,
+  ] = useState<boolean>(false)
+  const [substituteProsecutorId, setSubstituteProsecutorId] = useState<string>()
+
   useEffect(() => {
     document.title = 'Óskir um fyrirtöku - Réttarvörslugátt'
   }, [])
-
-  useEffect(() => {
-    if (!workingCase && data) {
-      setWorkingCase(data.case)
-    }
-  }, [workingCase, setWorkingCase, data])
 
   useEffect(() => {
     if (userData && workingCase) {
@@ -135,6 +130,22 @@ const HearingArrangements = () => {
     }
   }
 
+  const handleCourtChange = (courtId: string) => {
+    if (workingCase) {
+      setAndSendToServer(
+        'courtId',
+        courtId,
+        workingCase,
+        setWorkingCase,
+        updateCase,
+      )
+
+      return true
+    }
+
+    return false
+  }
+
   const handleProsecutorChange = (
     selectedOption: ValueType<ReactSelectOption>,
   ) => {
@@ -168,11 +179,11 @@ const HearingArrangements = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_TWO}
-      isLoading={loading}
-      notFound={id !== undefined && data?.case === undefined}
+      isLoading={isLoadingWorkingCase}
+      notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
     >
-      {workingCase && user && prosecutors && courts && (
+      {user && prosecutors && courts && (
         <>
           <HearingArrangementsForms
             workingCase={workingCase}
@@ -180,9 +191,10 @@ const HearingArrangements = () => {
             user={user}
             prosecutors={prosecutors}
             courts={courts}
-            isLoading={loading || isTransitioningCase}
+            isLoading={isLoadingWorkingCase || isTransitioningCase}
             onNextButtonClick={handleNextButtonClick}
             onProsecutorChange={handleProsecutorChange}
+            onCourtChange={handleCourtChange}
             updateCase={updateCase}
           />
           {isNotificationModalVisible && (

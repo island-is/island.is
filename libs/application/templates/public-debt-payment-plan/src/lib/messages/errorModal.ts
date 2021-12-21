@@ -110,4 +110,27 @@ export const errorModal = {
       description: 'Error Modal: Default payment collection name of link two',
     },
   }),
+  noDebts: defineMessages({
+    title: {
+      id: `pdpp.application:errorModal.noDebts.title`,
+      defaultMessage: 'Engar ógreiddar kröfur',
+      description: 'Error Modal: Debts title',
+    },
+    summary: {
+      id: `pdpp.application:errorModal.noDebts.summary`,
+      defaultMessage: `Engar ógreiddar kröfur fundust á þinni kennitölu sem hægt er að gera greiðsluáætlun um í sjálfsafgreiðslu.
+        Vinsamlegast hafðu samband við innheimtumenn ríkissjóðs fyrir frekari upplýsingar.`,
+      description: 'Error Modal: Debts summary',
+    },
+    linkOne: {
+      id: `pdpp.application:errorModal.noDebts.linkOne`,
+      defaultMessage: 'https://island.is/minarsidur/fjarmal/stada',
+      description: 'Error Modal: Debts link one',
+    },
+    linkOneName: {
+      id: `pdpp.application:errorModal.noDebts.linkOneName`,
+      defaultMessage: 'Skoða fjármál á mínum síðum island.is',
+      description: 'Error Modal: Debts name of link one',
+    },
+  }),
 }

@@ -89,7 +89,6 @@ export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
   PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
-  REMOTE_SESSION = 'REMOTE_SESSION',
 }
 
 export interface Case {
@@ -163,14 +162,16 @@ export interface Case {
   isAppealDeadlineExpired?: boolean
   isAppealGracePeriodExpired?: boolean
   rulingDate?: string
+  initialRulingDate?: string
   registrar?: User
   judge?: User
+  courtRecordSignatory?: User
+  courtRecordSignatureDate?: string
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
   caseFiles?: CaseFile[]
   isMasked?: boolean
-  initialRulingDate?: string
 }
 
 export interface CreateCase {

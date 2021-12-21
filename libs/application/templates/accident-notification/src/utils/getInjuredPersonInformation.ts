@@ -1,12 +1,15 @@
-import { FormValue } from '@island.is/application/core'
+import { FormValue, getValueViaPath } from '@island.is/application/core'
 
 export const getInjuredPersonInformation = (answers: FormValue) => {
-  const injuredPersonsEmail = (answers as {
-    injuredPersonInformation: { email: string }
-  })?.injuredPersonInformation?.email
-  const injuredPersonsName = (answers as {
-    injuredPersonInformation: { name: string }
-  })?.injuredPersonInformation?.name
+  const injuredPersonsEmail = getValueViaPath(
+    answers,
+    'injuredPersonInformation.email',
+  ) as string
+
+  const injuredPersonsName = getValueViaPath(
+    answers,
+    'injuredPersonInformation.name',
+  ) as string
   const injuredPersonsInformation = {
     email: injuredPersonsEmail,
     name: injuredPersonsName,
