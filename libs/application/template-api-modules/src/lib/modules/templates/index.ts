@@ -12,6 +12,11 @@ import { AccidentNotificationModule } from './accident-notification/accident-not
 import { PublicDebtPaymentPlanTemplateModule } from './public-debt-payment-plan/public-debt-payment-plan.module'
 import { GeneralPetitionModule } from './general-petition/general-petition.module'
 import { CriminalRecordSubmissionModule } from './criminal-record-submission/criminal-record-submission.module'
+// Modules that use  '@island.is/nest/config' and need to be registered in config root
+import {
+  SyslumennClientModule,
+  SyslumennClientConfig,
+} from '@island.is/clients/syslumenn'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -29,6 +34,10 @@ export const modules = [
   GeneralPetitionModule,
   CriminalRecordSubmissionModule,
 ]
+
+export const clientModules = [SyslumennClientModule]
+
+export const clientConfigs = [SyslumennClientConfig]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
 export { ParentalLeaveService } from './parental-leave/parental-leave.service'
