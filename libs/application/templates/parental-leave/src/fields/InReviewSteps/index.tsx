@@ -110,6 +110,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   const dobDate = dob ? new Date(dob) : null
 
   const canBeEdited =
+    application.state === ApplicationStates.OTHER_PARENT_APPROVAL ||
     application.state === ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN ||
     application.state === ApplicationStates.APPROVED
 
