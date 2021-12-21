@@ -228,6 +228,9 @@
       "@island.is/clients/criminal-record": [
         "libs/clients/criminal-record/src/index.ts"
       ],
+      "@island.is/clients/data-protection-complaint": [
+        "libs/clients/data-protection-complaint/src/index.ts"
+      ],
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"
       ],
