@@ -12,7 +12,6 @@ import {
   ProcessPageLayout,
   CarDetailsBox,
 } from '@island.is/skilavottord-web/components'
-import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
 import { formatDate, formatYear } from '@island.is/skilavottord-web/utils'
 import { Mutation } from '@island.is/skilavottord-web/graphql/schema'
 import { UserContext } from '@island.is/skilavottord-web/context'

@@ -2,7 +2,6 @@ import NextAuth, { CallbacksOptions } from 'next-auth'
 import Providers from 'next-auth/providers'
 import { JWT } from 'next-auth/jwt'
 import { NextApiRequest, NextApiResponse } from 'next-auth/internals/utils'
-import { uuid } from 'uuidv4'
 
 import environment from '../../../environments/environment'
 
@@ -12,37 +11,17 @@ import {
   AuthUser,
   signIn as handleSignIn,
   jwt as handleJwt,
-  session as handleSession,
+  session,
   AuthSession,
 } from '@island.is/next-ids-auth'
 
-const providers = [
-  Providers.IdentityServer4({
-    id: 'identity-server',
-    name: 'Skilavottord',
-    scope: 'openid profile offline_access',
-    clientId: '@urvinnslusjodur.is/skilavottord',
-    domain: identityProvider.domain,
-    clientSecret: identityProvider.clientSecret,
-    protection: 'pkce',
-  }),
-]
-
-const callbacks: CallbacksOptions = {
-  signIn: signIn,
-  jwt: jwt,
-  session: session,
-}
-
-async function signIn(
+const signIn = (
   user: AuthUser,
   account: Record<string, unknown>,
   profile: Record<string, unknown>,
-): Promise<boolean> {
-  return handleSignIn(user, account, profile, 'identity-server')
-}
+): boolean => handleSignIn(user, account, profile, 'identity-server')
 
-async function jwt(token: JWT, user: AuthUser) {
+const jwt = async (token: JWT, user: AuthUser) => {
   if (user) {
     token = {
       nationalId: user.nationalId,
