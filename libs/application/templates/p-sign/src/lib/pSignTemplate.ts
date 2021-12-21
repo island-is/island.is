@@ -7,7 +7,7 @@ import {
   DefaultStateLifeCycle,
   Application,
 } from '@island.is/application/core'
-import { ApiModuleActions, Events, States, Roles } from './constants'
+import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from '../lib/messages'
 
