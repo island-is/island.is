@@ -20,35 +20,40 @@ describe('ApplicationController - Checks if user has a current application for t
 })
 
 describe('ApplicationController - Searches for application by nationalId rules', () => {
-  let rules: any[]
-  let staffrules: any[]
+  describe('ApplicationController - findApplication roles rules', () => {
+    let rules: any[]
 
-  beforeEach(() => {
-    rules = Reflect.getMetadata(
-      'roles-rules',
-      ApplicationController.prototype.findApplication,
-    )
-  })
-  it('should have one rule', () => {
-    expect(rules).toHaveLength(1)
-  })
+    beforeEach(() => {
+      rules = Reflect.getMetadata(
+        'roles-rules',
+        ApplicationController.prototype.findApplication,
+      )
+    })
+    it('should have one rule', () => {
+      expect(rules).toHaveLength(1)
+    })
 
-  it('should give permission to staff', () => {
-    expect(rules).toContain(RolesRule.VEITA)
-  })
-
-  beforeEach(() => {
-    staffrules = Reflect.getMetadata(
-      'staff-roles-rules',
-      ApplicationController.prototype.findApplication,
-    )
-  })
-  it('should have one rule', () => {
-    expect(staffrules).toHaveLength(1)
+    it('should give permission to staff', () => {
+      expect(rules).toContain(RolesRule.VEITA)
+    })
   })
 
-  it('should give permission to EMPLOYEE', () => {
-    expect(staffrules).toContain(StaffRole.EMPLOYEE)
+  describe('ApplicationController - findApplication staff rules', () => {
+    let staffrules: any[]
+
+    beforeEach(() => {
+      staffrules = Reflect.getMetadata(
+        'staff-roles-rules',
+        ApplicationController.prototype.findApplication,
+      )
+    })
+    it('should have one rule', () => {
+      expect(staffrules).toHaveLength(1)
+    })
+
+    it('should give permission to EMPLOYEE', () => {
+      expect(staffrules).toContain(StaffRole.EMPLOYEE)
+    })
   })
 })
 
@@ -71,68 +76,76 @@ describe('ApplicationController - Checking if user is spouse rules', () => {
 })
 
 describe('ApplicationController - Gets all existing applications', () => {
-  let rules: any[]
-  let staffrules: any[]
+  describe('ApplicationController - getAll Roles rule', () => {
+    let rules: any[]
+    beforeEach(() => {
+      rules = Reflect.getMetadata(
+        'roles-rules',
+        ApplicationController.prototype.getAll,
+      )
+    })
+    it('should have one rule', () => {
+      expect(rules).toHaveLength(1)
+    })
 
-  beforeEach(() => {
-    rules = Reflect.getMetadata(
-      'roles-rules',
-      ApplicationController.prototype.getAll,
-    )
-  })
-  it('should have one rule', () => {
-    expect(rules).toHaveLength(1)
-  })
-
-  it('should give permission to staff', () => {
-    expect(rules).toContain(RolesRule.VEITA)
-  })
-
-  beforeEach(() => {
-    staffrules = Reflect.getMetadata(
-      'staff-roles-rules',
-      ApplicationController.prototype.getAll,
-    )
-  })
-  it('should have one rule', () => {
-    expect(staffrules).toHaveLength(1)
+    it('should give permission to staff', () => {
+      expect(rules).toContain(RolesRule.VEITA)
+    })
   })
 
-  it('should give permission to EMPLOYEE', () => {
-    expect(staffrules).toContain(StaffRole.EMPLOYEE)
+  describe('ApplicationController - getAll staff rule', () => {
+    let staffrules: any[]
+
+    beforeEach(() => {
+      staffrules = Reflect.getMetadata(
+        'staff-roles-rules',
+        ApplicationController.prototype.getAll,
+      )
+    })
+    it('should have one rule', () => {
+      expect(staffrules).toHaveLength(1)
+    })
+
+    it('should give permission to EMPLOYEE', () => {
+      expect(staffrules).toContain(StaffRole.EMPLOYEE)
+    })
   })
 })
 
 describe('ApplicationController - Gets all existing applications filters rules', () => {
-  let rules: any[]
-  let staffrules: any[]
+  describe('ApplicationController - getAllFilters  roles rules', () => {
+    let rules: any[]
+    beforeEach(() => {
+      rules = Reflect.getMetadata(
+        'roles-rules',
+        ApplicationController.prototype.getAllFilters,
+      )
+    })
+    it('should have one rule', () => {
+      expect(rules).toHaveLength(1)
+    })
 
-  beforeEach(() => {
-    rules = Reflect.getMetadata(
-      'roles-rules',
-      ApplicationController.prototype.getAllFilters,
-    )
-  })
-  it('should have one rule', () => {
-    expect(rules).toHaveLength(1)
-  })
-
-  it('should give permission to staff', () => {
-    expect(rules).toContain(RolesRule.VEITA)
-  })
-
-  beforeEach(() => {
-    staffrules = Reflect.getMetadata(
-      'staff-roles-rules',
-      ApplicationController.prototype.getAllFilters,
-    )
-  })
-  it('should have one rule', () => {
-    expect(staffrules).toHaveLength(1)
+    it('should give permission to staff', () => {
+      expect(rules).toContain(RolesRule.VEITA)
+    })
   })
 
-  it('should give permission to EMPLOYEE', () => {
-    expect(staffrules).toContain(StaffRole.EMPLOYEE)
+  describe('ApplicationController - getAllFilters  staff rules', () => {
+    let staffrules: any[]
+
+    beforeEach(() => {
+      staffrules = Reflect.getMetadata(
+        'staff-roles-rules',
+        ApplicationController.prototype.getAllFilters,
+      )
+    })
+    it('should have one rule', () => {
+      expect(staffrules).toHaveLength(1)
+    })
+
+    it('should give permission to EMPLOYEE', () => {
+      expect(staffrules).toContain(StaffRole.EMPLOYEE)
+    })
   })
 })
 
