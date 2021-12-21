@@ -87,8 +87,7 @@ const standardIncludes: Includeable[] = [
 @Injectable()
 export class CaseService {
   constructor(
-    @InjectModel(Case)
-    private readonly caseModel: typeof Case,
+    @InjectModel(Case) private readonly caseModel: typeof Case,
     private readonly userService: UserService,
     private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
@@ -96,8 +95,7 @@ export class CaseService {
     private readonly signingService: SigningService,
     private readonly emailService: EmailService,
     private readonly intlService: IntlService,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   private async uploadSignedRulingPdfToS3(
