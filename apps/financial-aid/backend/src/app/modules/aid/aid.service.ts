@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { AidModel } from './models'
+import { AidModel } from './models/aid.model'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
