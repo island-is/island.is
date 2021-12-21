@@ -84,7 +84,7 @@ export class PoliceService {
     }
 
     if (!res.ok) {
-      this.logger.warn(
+      this.logger.info(
         `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
         res,
       )
@@ -133,8 +133,8 @@ export class PoliceService {
     }
 
     if (!res.ok) {
-      this.logger.warn(
-        `Could not get police case files for case ${caseId}`,
+      this.logger.info(
+        `Failed to get police case files for case ${caseId}`,
         res,
       )
 

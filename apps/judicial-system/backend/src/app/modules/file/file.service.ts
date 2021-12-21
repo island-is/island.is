@@ -123,7 +123,9 @@ export class FileService {
     const regExp = new RegExp(`^uploads/${caseId}/.{36}/(.*)$`)
 
     if (!regExp.test(key)) {
-      throw new BadRequestException(`${key} is not a valid key`)
+      throw new BadRequestException(
+        `${key} is not a valid key for case ${caseId}`,
+      )
     }
 
     return this.fileModel.create({
@@ -204,6 +206,7 @@ export class FileService {
         { state: CaseFileState.BOKEN_LINK },
         { where: { id: file.id } },
       )
+
       throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
