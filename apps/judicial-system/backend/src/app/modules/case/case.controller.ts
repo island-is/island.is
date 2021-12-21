@@ -404,7 +404,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
-  ) {
+  ): Promise<void> {
     if (
       isInvestigationCase(theCase.type) &&
       ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
@@ -433,7 +433,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
-  ) {
+  ): Promise<void> {
     if (
       isInvestigationCase(theCase.type) &&
       ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
@@ -462,7 +462,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
-  ) {
+  ): Promise<void> {
     if (
       isInvestigationCase(theCase.type) &&
       ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
@@ -491,7 +491,7 @@ export class CaseController {
     @Param('caseId') _0: string,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
-  ) {
+  ): Promise<void> {
     if (theCase.type !== CaseType.CUSTODY) {
       throw new BadRequestException(
         `Cannot generate a custody notice for ${theCase.type} cases`,
@@ -527,7 +527,7 @@ export class CaseController {
       )
     }
 
-    return await this.caseService
+    return this.caseService
       .requestCourtRecordSignature(theCase, user)
       .catch((error) => {
         if (error instanceof DokobitError) {

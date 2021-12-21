@@ -43,6 +43,7 @@ import { CourtService } from '../court'
 import { CreateCaseDto, InternalCreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
+import { number } from 'yargs'
 
 interface Recipient {
   name: string
@@ -508,34 +509,30 @@ export class CaseService {
       `Requesting signature of court record for case ${existingCase.id}`,
     )
 
-    // Production, or development with signing service access token
-    if (environment.production || environment.signingOptions.accessToken) {
-      const intl = await this.intlService.useIntl(
-        ['judicial.system.backend'],
-        'is',
-      )
-
-      const pdf = await getRulingPdfAsString(
-        existingCase,
-        intl.formatMessage,
-        true,
-      )
-
-      return this.signingService.requestSignature(
-        user.mobileNumber ?? '',
-        'Undirrita skjal - Öryggistala',
-        user.name ?? '',
-        'Ísland',
-        'courtRecord.pdf',
-        pdf,
-      )
-    }
-
     // Development without signing service access token
-    return {
-      controlCode: '0000',
-      documentToken: 'DEVELOPMENT',
+    if (!environment.production && !environment.signingOptions.accessToken) {
+      return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
     }
+
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    const pdf = await getRulingPdfAsString(
+      existingCase,
+      intl.formatMessage,
+      true,
+    )
+
+    return this.signingService.requestSignature(
+      user.mobileNumber ?? '',
+      'Undirrita skjal - Öryggistala',
+      user.name ?? '',
+      'Ísland',
+      'courtRecord.pdf',
+      pdf,
+    )
   }
 
   async getCourtRecordSignatureConfirmation(
@@ -562,10 +559,11 @@ export class CaseService {
             `generated/${existingCase.id}/courtRecord.pdf`,
             courtRecordPdf,
           )
-          .catch(() => {
-            // Tolerate failure
+          .catch((reason) => {
+            // Tolerate failure, but log error
             this.logger.error(
               `Failed to upload signed court record pdf to AWS S3 for case ${existingCase.id}`,
+              reason,
             )
           })
       } catch (error) {
@@ -585,11 +583,16 @@ export class CaseService {
     await this.update(existingCase.id, {
       courtRecordSignatoryId: user.id,
       courtRecordSignatureDate: new Date(),
-    } as UpdateCaseDto)
+    } as UpdateCaseDto).then(({ numberOfAffectedRows }) => {
+      if (numberOfAffectedRows !== 1) {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${existingCase.id} after court record signature confirmation`,
+        )
+      }
+    })
 
-    return {
-      documentSigned: true,
-    }
+    return { documentSigned: true }
   }
 
   async requestRulingSignature(
@@ -599,34 +602,30 @@ export class CaseService {
       `Requesting signature of ruling for case ${existingCase.id}`,
     )
 
-    // Production, or development with signing service access token
-    if (environment.production || environment.signingOptions.accessToken) {
-      const intl = await this.intlService.useIntl(
-        ['judicial.system.backend'],
-        'is',
-      )
-
-      const pdf = await getRulingPdfAsString(
-        existingCase,
-        intl.formatMessage,
-        false,
-      )
-
-      return this.signingService.requestSignature(
-        existingCase.judge?.mobileNumber ?? '',
-        'Undirrita skjal - Öryggistala',
-        existingCase.judge?.name ?? '',
-        'Ísland',
-        'ruling.pdf',
-        pdf,
-      )
-    }
-
     // Development without signing service access token
-    return {
-      controlCode: '0000',
-      documentToken: 'DEVELOPMENT',
+    if (!environment.production && !environment.signingOptions.accessToken) {
+      return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
     }
+
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    const pdf = await getRulingPdfAsString(
+      existingCase,
+      intl.formatMessage,
+      false,
+    )
+
+    return this.signingService.requestSignature(
+      existingCase.judge?.mobileNumber ?? '',
+      'Undirrita skjal - Öryggistala',
+      existingCase.judge?.name ?? '',
+      'Ísland',
+      'ruling.pdf',
+      pdf,
+    )
   }
 
   async getRulingSignatureConfirmation(
@@ -664,7 +663,14 @@ export class CaseService {
     // TODO: UpdateCaseDto does not contain rulingDate - create a new type for CaseService.update
     await this.update(existingCase.id, {
       rulingDate: new Date(),
-    } as UpdateCaseDto)
+    } as UpdateCaseDto).then(({ numberOfAffectedRows }) => {
+      if (numberOfAffectedRows !== 1) {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${existingCase.id} after ruling signature confirmation`,
+        )
+      }
+    })
 
     return {
       documentSigned: true,
