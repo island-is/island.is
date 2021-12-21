@@ -37,7 +37,11 @@ beforeAll(async () => {
       builder.overrideGuard(IdsUserGuard).useValue(
         new MockAuthGuard({
           nationalId: mockProfile.nationalId,
-          scope: [UserProfileScope.read, UserProfileScope.write],
+          scope: [
+            UserProfileScope.admin,
+            UserProfileScope.read,
+            UserProfileScope.write,
+          ],
         }),
       ),
   })

@@ -1,4 +1,4 @@
-import type { User } from '@island.is/auth-nest-tools'
+import { IdsAuthGuard, User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -335,24 +335,6 @@ export class UserProfileController {
     await this.verificationService.createSmsVerification(createSmsVerification)
   }
 
-  // FINDALL token
-  @Audit()
-  @ApiOperation({
-    summary:
-      'NOTE: Returns a list of any user´s device tokens - Used by Notification workers - not exposed via GraphQL',
-  })
-  @ApiOkResponse({ type: [UserDeviceTokensDto] })
-  @Scopes(UserProfileScope.read)
-  @ApiSecurity('oauth2', [UserProfileScope.read])
-  @Get('userProfile/:nationalId/deviceToken')
-  async getDeviceTokens(
-    @Param('nationalId')
-    nationalId: string,
-  ): Promise<UserDeviceTokensDto[]> {
-    return await this.userProfileService.getDeviceTokens(nationalId)
-  }
-
-  // CREATE token
   @Audit()
   @ApiOperation({
     summary: 'Adds a device token for notifications for a user device ',
@@ -375,7 +357,6 @@ export class UserProfileController {
     }
   }
 
-  // DELETE token
   @Audit()
   @ApiOperation({
     summary: 'Deletes a device token for a user device',
@@ -395,5 +376,26 @@ export class UserProfileController {
     } else {
       return await this.userProfileService.deleteDeviceToken(body, user)
     }
+  }
+}
+
+// this controller separate for guards and scopes logic
+@UseGuards(IdsAuthGuard, ScopesGuard)
+@ApiTags('User Profile')
+@Controller()
+export class UserTokenController {
+  constructor(private readonly userProfileService: UserProfileService) {}
+  @ApiOperation({
+    summary: 'admin access - returns a list of user device tokens',
+  })
+  @ApiOkResponse({ type: [UserDeviceTokensDto] })
+  @Scopes(UserProfileScope.admin)
+  @ApiSecurity('oauth2', [UserProfileScope.admin])
+  @Get('userProfile/:nationalId/deviceToken')
+  async getDeviceTokens(
+    @Param('nationalId')
+    nationalId: string,
+  ): Promise<UserDeviceTokensDto[]> {
+    return await this.userProfileService.getDeviceTokens(nationalId)
   }
 }
