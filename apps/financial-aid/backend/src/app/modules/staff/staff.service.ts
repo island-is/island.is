@@ -49,9 +49,10 @@ export class StaffService {
       where: {
         municipalityId,
       },
-      order: Sequelize.literal(
-        'CASE WHEN active = true THEN 0 ELSE 1 END, name ASC',
-      ),
+      order: [
+        ['active', 'DESC'],
+        ['name', 'ASC'],
+      ],
     })
   }
 
