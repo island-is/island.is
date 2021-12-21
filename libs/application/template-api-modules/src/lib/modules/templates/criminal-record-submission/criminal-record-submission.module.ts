@@ -15,7 +15,7 @@ export class CriminalRecordSubmissionModule {
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
         CriminalRecordModule.register(baseConfig.criminalRecord),
-        SyslumennModule.register(baseConfig.syslumenn),
+        SyslumennModule,
       ],
       providers: [CriminalRecordSubmissionService],
       exports: [CriminalRecordSubmissionService],

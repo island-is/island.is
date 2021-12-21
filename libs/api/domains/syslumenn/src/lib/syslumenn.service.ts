@@ -13,13 +13,14 @@ import {
 } from './models/operatingLicense'
 import {
   SyslumennApi,
-  SyslumennApiConfig,
+  SyslumennClientConfig,
   Uppbod,
   VirkLeyfi,
   VottordSkeyti,
   Skilabod,
   SvarSkeyti,
 } from '@island.is/clients/syslumenn'
+import { ConfigType } from '@island.is/nest/config'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   CertificateInfoRepsonse,
@@ -30,7 +31,6 @@ import {
   mapDistrictCommissionersAgenciesRepsonse,
 } from './models/districtCommissionersAgencies'
 
-const SYSLUMENN_CLIENT_CONFIG = 'SYSLUMENN_CLIENT_CONFIG'
 @Injectable()
 export class SyslumennService {
   private id = ''
@@ -38,16 +38,15 @@ export class SyslumennService {
 
   constructor(
     private syslumennApi: SyslumennApi,
-    @Inject(SYSLUMENN_CLIENT_CONFIG)
-    private clientConfig: SyslumennApiConfig,
+    @Inject(SyslumennClientConfig.KEY)
+    private clientConfig: ConfigType<typeof SyslumennClientConfig>,
   ) {}
 
   private async login() {
     const config = {
-      notandi: this.clientConfig.username,
-      lykilord: this.clientConfig.password,
+      notandi: this.clientConfig.username ?? '',
+      lykilord: this.clientConfig.password ?? '',
     }
-
     const { audkenni, accessToken } = await this.syslumennApi.innskraningPost({
       notandi: config,
     })

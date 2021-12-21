@@ -13,7 +13,7 @@ export class ChildrenResidenceChangeModule {
     return {
       module: ChildrenResidenceChangeModule,
       imports: [
-        SyslumennModule.register(config.syslumenn),
+        SyslumennModule,
         SharedTemplateAPIModule.register(config),
         SmsModule.register(config.smsOptions),
       ],

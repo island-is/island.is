@@ -1,2 +1,3 @@
+export { SyslumennClientModule } from './lib/syslumenn.module'
+export { SyslumennClientConfig } from './lib/syslumennClient.config'
 export * from '../gen/fetch'
-export { SyslumennApiConfig, SyslumennApiModule } from './lib/syslumenn.module'

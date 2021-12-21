@@ -23,6 +23,10 @@ import { HealthController } from './health.controller'
 import { getConfig } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
+import {
+  SyslumennClientModule,
+  SyslumennClientConfig,
+} from '@island.is/clients/syslumenn'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { RSKModule } from '@island.is/api/domains/rsk'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
@@ -179,11 +183,8 @@ const autoSchemaFile = environment.production
     ApiCatalogueModule,
     IdentityModule,
     AuthModule.register(environment.auth),
-    SyslumennModule.register({
-      url: environment.syslumennService.url,
-      username: environment.syslumennService.username,
-      password: environment.syslumennService.password,
-    }),
+    SyslumennClientModule,
+    SyslumennModule,
     RSKModule.register({
       password: environment.rskDomain.password,
       url: environment.rskDomain.url,
@@ -264,6 +265,7 @@ const autoSchemaFile = environment.production
         XRoadConfig,
         NationalRegistryClientConfig,
         AuthPublicApiClientConfig,
+        SyslumennClientConfig,
       ],
     }),
   ],

@@ -12,10 +12,9 @@ import { SYSLUMENN_AUCTION } from './__mock-data__/responses'
 import { mapSyslumennAuction } from './models/syslumennAuction'
 import { mapOperatingLicense } from './models/operatingLicense'
 import { PersonType } from './dto/uploadData.input'
-import {
-  SyslumennApiConfig,
-  SyslumennApiModule,
-} from '@island.is/clients/syslumenn'
+import { SyslumennClientModule } from '@island.is/clients/syslumenn'
+
+import { defineConfig, ConfigModule } from '@island.is/nest/config'
 
 const YEAR = 2021
 const PERSON = [
@@ -36,11 +35,17 @@ const ATTACHMENT = {
   content: 'content',
 }
 
-const config = {
-  url: 'http://localhost',
-  username: '',
-  password: '',
-} as SyslumennApiConfig
+const config = defineConfig({
+  name: 'SyslumennApi',
+  load: () => ({
+    url: 'http://localhost',
+    fetch: {
+      timeout: '5000',
+    },
+    username: '',
+    password: '',
+  }),
+})
 
 startMocking(requestHandlers)
 
@@ -49,14 +54,11 @@ describe('SyslumennService', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [SyslumennApiModule.register(config)],
-      providers: [
-        SyslumennService,
-        {
-          provide: 'SYSLUMENN_CLIENT_CONFIG',
-          useValue: config,
-        },
+      imports: [
+        SyslumennClientModule,
+        ConfigModule.forRoot({ isGlobal: true, load: [config] }),
       ],
+      providers: [SyslumennService],
     }).compile()
 
     service = module.get(SyslumennService)
