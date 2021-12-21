@@ -4,12 +4,11 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { Juristiction } from '../types/schema'
 
 export class JuristictionProvider extends BasicDataProvider {
   type = 'JuristictionProvider'
 
-  async provide(application: Application): Promise<Juristiction[]> {
+  async provide(application: Application) {
     const query = `
       query DrivingLicenseEntitlementTypes {
         drivingLicenseListOfJuristictions {
