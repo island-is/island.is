@@ -88,7 +88,7 @@ describe('StaffController - Get staff by id', () => {
       then = await givenWhenThen(id)
     })
 
-    it('should throw not found exception', () => {
+    it('should return staff', () => {
       expect(then.result).toEqual(staff)
     })
   })

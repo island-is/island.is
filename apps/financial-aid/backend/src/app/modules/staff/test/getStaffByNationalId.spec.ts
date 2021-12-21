@@ -114,7 +114,7 @@ describe('StaffController - Get staff by national id', () => {
       then = await givenWhenThen(nationalId)
     })
 
-    it('should throw forbidden exception', () => {
+    it('should return staff', () => {
       expect(then.result).toEqual(staff)
     })
   })
