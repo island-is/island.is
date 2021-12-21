@@ -27,12 +27,12 @@ import {
   ApiTags,
   ApiQuery,
 } from '@nestjs/swagger'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   Scopes,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/'
