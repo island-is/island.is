@@ -37,9 +37,13 @@ export const UserDropdownItem = ({
       </Box>
 
       {link ? (
-        <Link className={styles.delegationName} to={link}>
+        <a
+          href={link}
+          className={styles.delegationName}
+          rel="noreferrer noopener"
+        >
           {text}
-        </Link>
+        </a>
       ) : (
         <button className={styles.delegationName}>{text}</button>
       )}

@@ -2,11 +2,14 @@ import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { UserDropdownItem } from './UserDropdownItem'
-import { ServicePortalPath, m } from '@island.is/service-portal/core'
+import { m } from '@island.is/service-portal/core'
 
 export const UserProfileInfo = ({ onClick }: { onClick: () => void }) => {
   const { formatMessage } = useLocale()
-
+  const isDev = process.env.NODE_ENV !== 'development'
+  const baseUrl = isDev
+    ? 'http://localhost:4200/minarsidur/stillingar'
+    : 'https://island.is/minarsidur/stillingar'
   return (
     <Box>
       <Box marginBottom={1}>
@@ -16,7 +19,7 @@ export const UserProfileInfo = ({ onClick }: { onClick: () => void }) => {
       <Box>
         <UserDropdownItem
           text={formatMessage(m.personalInformation)}
-          link={ServicePortalPath.SettingsPersonalInformation}
+          link={`${baseUrl}/personuupplysingar`}
           icon={{ type: 'outline', icon: 'person' }}
           onClick={() => onClick()}
         />
@@ -24,7 +27,7 @@ export const UserProfileInfo = ({ onClick }: { onClick: () => void }) => {
       <Box paddingTop={1}>
         <UserDropdownItem
           text={formatMessage(m.accessControl)}
-          link={ServicePortalPath.SettingsAccessControl}
+          link={`${baseUrl}/adgangsstyring`}
           icon={{ type: 'outline', icon: 'people' }}
           onClick={() => onClick()}
         />

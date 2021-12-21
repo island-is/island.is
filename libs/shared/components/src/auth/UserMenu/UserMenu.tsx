@@ -39,7 +39,7 @@ export const UserMenu = ({
           setDropdownState('closed')
           switchUser(nationalId)
         }}
-      ></UserDropdown>
+      />
     </Box>
   )
 }
