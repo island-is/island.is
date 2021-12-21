@@ -21,6 +21,7 @@ export const createTestingStaffModule = async () => {
         useValue: {
           create: jest.fn(),
           findOne: jest.fn(),
+          findAll: jest.fn(),
           update: jest.fn(),
         },
       },
