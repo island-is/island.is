@@ -10,6 +10,9 @@ import {
 } from '@island.is/judicial-system/types'
 import faker from 'faker'
 
+export const investigationCaseAccusedName = `${faker.name.firstName()} ${faker.name.lastName()}`
+export const investigationCaseAccusedAddress = faker.address.streetAddress()
+
 export const makeCustodyCase = (): Case => {
   return {
     id: 'test_id',
@@ -46,13 +49,10 @@ export const makeInvestigationCase = (): Case => {
       min: 3,
       max: 6,
     })}`,
-    accusedNationalId: `${faker.datatype.number({
-      min: 6,
-      max: 6,
-    })}-${faker.datatype.number({ min: 4, max: 4 })}`,
-    accusedName: faker.name.firstName(),
+    accusedNationalId: '000000-0000',
+    accusedName: investigationCaseAccusedName,
     accusedGender: CaseGender.MALE,
-    accusedAddress: faker.address.streetAddress(),
+    accusedAddress: investigationCaseAccusedAddress,
   }
 }
 

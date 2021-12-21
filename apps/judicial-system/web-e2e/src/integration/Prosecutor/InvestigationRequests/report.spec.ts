@@ -1,15 +1,15 @@
 import faker from 'faker'
 
-import { makeCustodyCase } from '@island.is/judicial-system/formatters'
-
-import { intercept } from '../../../utils'
+import { makeInvestigationCase } from '@island.is/judicial-system/formatters'
 import { Case } from '@island.is/judicial-system/types'
 
-describe('/krafa/greinargerd/domkrofur-og-lagaakvaedi/:id', () => {
+import { intercept } from '../../../utils'
+
+describe('/krafa/rannsoknarheimild/greinargerd/:id', () => {
   const demands = faker.lorem.paragraph()
 
   beforeEach(() => {
-    const caseData = makeCustodyCase()
+    const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
       ...caseData,
       demands,

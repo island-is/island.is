@@ -1,12 +1,12 @@
 import faker from 'faker'
 
-import { makeCustodyCase } from '@island.is/judicial-system/formatters'
+import { makeInvestigationCase } from '@island.is/judicial-system/formatters'
 
 import { intercept } from '../../../utils'
 
 describe('/krafa/rannsoknarheimild/domkrofur-og-lagaakvaedi/:id', () => {
   beforeEach(() => {
-    const caseData = makeCustodyCase()
+    const caseData = makeInvestigationCase()
 
     cy.stubAPIResponses()
     cy.visit('/krafa/rannsoknarheimild/domkrofur-og-lagaakvaedi/test_id')
