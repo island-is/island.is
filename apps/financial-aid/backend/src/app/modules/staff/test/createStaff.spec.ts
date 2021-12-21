@@ -112,22 +112,6 @@ describe('StaffController - createStaff', () => {
       await givenWhenThen(staff, input)
     })
 
-    it('should run create query with inherit data', () => {
-      expect(mockUpdate).toHaveBeenCalledWith(
-        {
-          nationalId: input.nationalId,
-          name: input.name,
-          municipalityId: staff.municipalityId,
-          email: input.email,
-          roles: input.roles,
-          active: true,
-          municipalityName: staff.municipalityName,
-          municipalityHomepage: staff.municipalityHomepage,
-        },
-        { transaction: undefined },
-      )
-    })
-
     it('should run create query with inherit municipality data from staff', () => {
       expect(mockUpdate).toHaveBeenCalledWith(
         {
