@@ -169,13 +169,6 @@ export const icHearingArrangements = {
       description:
         'Notaður sem titill fyrir tilkynningagluggan á fyrirtöku skrefi í rannsóknarheimildum.',
     },
-    remoteSessionHeading: {
-      id:
-        'judicial.system.investigation_cases:hearing_arrangements.modal.remote_session_heading',
-      defaultMessage: 'Enginn hefur verið boðaður í þinghald að svo stöddu',
-      description:
-        'Notaður sem titill fyrir tilkynningagluggan á fyrirtöku skrefi í rannsóknarheimildum ef fyrirtaka er án munnlegs málflutnings.',
-    },
     allPresentText: {
       id:
         'judicial.system.investigation_cases:hearing_arrangements.modal.all_present_text',
@@ -199,14 +192,6 @@ export const icHearingArrangements = {
       description:
         'Notaður sem texti í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fulltrúi ákæruvalds mætir.',
     },
-    remoteSessionText: {
-      id:
-        'judicial.system.investigation_cases:hearing_arrangements.modal.remote_session_text',
-      defaultMessage:
-        'Ekki er sjálfkrafa gert ráð fyrir boðun eða mætingu af hálfu málsaðila eða málflytjenda í þinghaldið.',
-      description:
-        'Notaður sem texti fyrir tilkynningagluggan á fyrirtöku skrefi í rannsóknarheimildum ef fyrirtaka er án munnlegs málflutnings.',
-    },
     secondaryButtonText: {
       id:
         'judicial.system.investigation_cases:hearing_arrangements.modal.secondary_button_text',
@@ -220,13 +205,6 @@ export const icHearingArrangements = {
       defaultMessage: 'Já, senda núna',
       description:
         'Notaður sem texti í "Já, senda núna" takkann í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum.',
-    },
-    primaryButtonRemoteSessionText: {
-      id:
-        'judicial.system.investigation_cases:hearing_arrangements.modal.primary_button_remote_session_text',
-      defaultMessage: 'Áfram',
-      description:
-        'Notaður sem texti í takkanum í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fyrirtaka er án munnlegs málflutnings.',
     },
   }),
   footer: defineMessages({
