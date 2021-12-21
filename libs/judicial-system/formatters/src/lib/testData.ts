@@ -72,6 +72,29 @@ export const makeProsecutor = (): User => {
   }
 }
 
+export const makeJudge = (): User => {
+  return {
+    id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c2',
+    created: '2020-09-16T19:50:08.033Z',
+    modified: '2020-09-16T19:50:08.033Z',
+    name: 'Dóra Dómariiii',
+    title: 'dómari',
+    // eslint-disable-next-line local-rules/disallow-kennitalas
+    nationalId: '111111-1111',
+    mobileNumber: '111-1111',
+    email: 'judge@law.is',
+    role: UserRole.JUDGE,
+    active: true,
+    institution: {
+      id: '',
+      created: '',
+      modified: '',
+      type: InstitutionType.COURT,
+      name: 'Bráðabirgðadómstóllinn',
+    },
+  }
+}
+
 export const makeCourt = (): Institution => {
   return {
     id: 'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf',
