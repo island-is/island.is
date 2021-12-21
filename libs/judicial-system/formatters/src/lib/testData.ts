@@ -31,8 +31,8 @@ export const makeCustodyCase = (): Case => {
 export const makeInvestigationCase = (): Case => {
   return {
     id: faker.datatype.uuid(),
-    created: faker.date.past().toISOString(),
-    modified: faker.date.past().toISOString(),
+    created: '2020-09-16T19:50:08.033Z',
+    modified: '2020-09-16T19:50:08.033Z',
     state: CaseState.DRAFT,
     type: CaseType.INTERNET_USAGE,
     court: {
@@ -42,13 +42,7 @@ export const makeInvestigationCase = (): Case => {
       type: InstitutionType.COURT,
       name: 'Héraðsdómur Reykjavíkur',
     },
-    policeCaseNumber: `${faker.datatype.number({
-      min: 3,
-      max: 3,
-    })}-${faker.datatype.number({ min: 4, max: 4 })}-${faker.datatype.number({
-      min: 3,
-      max: 6,
-    })}`,
+    policeCaseNumber: '007-2021-202000',
     accusedNationalId: '000000-0000',
     accusedName: investigationCaseAccusedName,
     accusedGender: CaseGender.MALE,
