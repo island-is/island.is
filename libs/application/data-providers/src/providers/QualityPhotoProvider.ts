@@ -3,25 +3,30 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
   Application,
+  coreErrorMessages,
 } from '@island.is/application/core'
-import { DrivingLicenseFakeData, YES } from '../lib/constants'
-import { m } from '../lib/messages'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { DataProviderFakeData, YES } from '../libs/constants'
 
 export class QualityPhotoProvider extends BasicDataProvider {
   type = 'QualityPhotoProvider'
 
   async provide(application: Application) {
-    const fakeData = application.answers.fakeData as
-      | DrivingLicenseFakeData
-      | undefined
+    // If running locally or on dev allow for fake data
+    if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+      const fakeData = application.answers.fakeData as
+        | DataProviderFakeData
+        | undefined
 
-    if (fakeData?.useFakeData === YES) {
-      return {
-        success: fakeData.qualityPhoto === YES,
-        qualityPhoto:
-          fakeData.qualityPhoto === YES
-            ? `data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAQEBAQEBAQEBAQGBgUGBggHBwcHCAwJCQkJCQwTDA4MDA4MExEUEA8QFBEeFxUVFx4iHRsdIiolJSo0MjRERFwBBAQEBAQEBAQEBAYGBQYGCAcHBwcIDAkJCQkJDBMMDgwMDgwTERQQDxAUER4XFRUXHiIdGx0iKiUlKjQyNEREXP/CABEIAAIAAgMBIgACEQEDEQH/xAAUAAEAAAAAAAAAAAAAAAAAAAAH/9oACAEBAAAAAHP/xAAUAQEAAAAAAAAAAAAAAAAAAAAH/9oACAECEAAAADv/xAAUAQEAAAAAAAAAAAAAAAAAAAAG/9oACAEDEAAAAHn/xAAZEAABBQAAAAAAAAAAAAAAAAAAAgMTU5H/2gAIAQEAAT8AjbrTh//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Af//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Af//Z`
-            : null,
+      // To use fake data for the quality photo provider take a look at the implementation in libs/application/templates/driving-license/src/forms/application.ts
+      if (fakeData?.useFakeData === YES) {
+        return {
+          success: fakeData.qualityPhoto === YES,
+          qualityPhoto:
+            fakeData.qualityPhoto === YES
+              ? `data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAQEBAQEBAQEBAQGBgUGBggHBwcHCAwJCQkJCQwTDA4MDA4MExEUEA8QFBEeFxUVFx4iHRsdIiolJSo0MjRERFwBBAQEBAQEBAQEBAYGBQYGCAcHBwcIDAkJCQkJDBMMDgwMDgwTERQQDxAUER4XFRUXHiIdGx0iKiUlKjQyNEREXP/CABEIAAIAAgMBIgACEQEDEQH/xAAUAAEAAAAAAAAAAAAAAAAAAAAH/9oACAEBAAAAAHP/xAAUAQEAAAAAAAAAAAAAAAAAAAAH/9oACAECEAAAADv/xAAUAQEAAAAAAAAAAAAAAAAAAAAG/9oACAEDEAAAAHn/xAAZEAABBQAAAAAAAAAAAAAAAAAAAgMTU5H/2gAIAQEAAT8AjbrTh//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Af//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Af//Z`
+              : null,
+        }
       }
     }
 
@@ -69,7 +74,7 @@ export class QualityPhotoProvider extends BasicDataProvider {
   onProvideError(): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason: m.errorDataProvider,
+      reason: coreErrorMessages.errorDataProvider,
       status: 'failure',
       data: {},
     }
