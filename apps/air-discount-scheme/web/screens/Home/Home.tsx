@@ -84,21 +84,21 @@ const GetGenericPageQuery = gql`
   }
 `
 
-Home.getInitialProps = async ({ apolloClient, locale }) => {
-  const {
-    data: { getGenericPage: page },
-  } = await apolloClient.query<Query, QueryGetGenericPageArgs>({
-    query: GetGenericPageQuery,
-    variables: {
-      input: {
-        lang: locale,
-        slug: 'loftbru',
-      },
-    },
-  })
-  return {
-    page,
-  }
-}
+// Home.getInitialProps = async ({ apolloClient, locale }) => {
+//   const {
+//     data: { getGenericPage: page },
+//   } = await apolloClient.query<Query, QueryGetGenericPageArgs>({
+//     query: GetGenericPageQuery,
+//     variables: {
+//       input: {
+//         lang: locale,
+//         slug: 'loftbru',
+//       },
+//     },
+//   })
+//   return {
+//     page,
+//   }
+// }
 
 export default Home

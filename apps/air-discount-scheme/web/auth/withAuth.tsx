@@ -49,23 +49,23 @@ const withAuth = (WrappedComponent) =>
       }
     }
 
-    static async getInitialProps(ctx) {
-      console.log('withAuth getinitialProps')
-      const hasAuthenticated = isAuthenticated(ctx)
-      console.log('withauth getinit isAuthenticated ' + isAuthenticated(ctx))
-      const props = { redirectPath: ctx.pathname, hasAuthenticated }
-      console.log('withAuth redirPath: ctxpathname: ' + ctx.pathname)
-      if (!hasAuthenticated) {
-        console.log('!hasAuth returning props ' + JSON.stringify(props))
-        return props
-      }
+    // static async getInitialProps(ctx) {
+    //   console.log('withAuth getinitialProps')
+    //   const hasAuthenticated = isAuthenticated(ctx)
+    //   console.log('withauth getinit isAuthenticated ' + isAuthenticated(ctx))
+    //   const props = { redirectPath: ctx.pathname, hasAuthenticated }
+    //   console.log('withAuth redirPath: ctxpathname: ' + ctx.pathname)
+    //   if (!hasAuthenticated) {
+    //     console.log('!hasAuth returning props ' + JSON.stringify(props))
+    //     return props
+    //   }
 
-      if (WrappedComponent.getInitialProps) {
-        console.log('inside this withauth - wrapped component  getinitprops')
-        return { ...props, ...(await WrappedComponent.getInitialProps(ctx)) }
-      }
-      return props
-    }
+    //   if (WrappedComponent.getInitialProps) {
+    //     console.log('inside this withauth - wrapped component  getinitprops')
+    //     return { ...props, ...(await WrappedComponent.getInitialProps(ctx)) }
+    //   }
+    //   return props
+    // }
 
     render() {
       const { hasAuthenticated } = this.props

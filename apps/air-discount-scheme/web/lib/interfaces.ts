@@ -1,10 +1,6 @@
 export interface AuthenticateUser {
   isAuthenticated: boolean
-  user: {
-    name: string
-    nationalId: string
-    mobile?: string
-  }
+  user: User
 }
 
 export interface User {

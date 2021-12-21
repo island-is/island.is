@@ -2,40 +2,34 @@ import { useEffect, useState } from 'react'
 import { gql, useQuery } from '@apollo/client'
 
 import { AuthenticateUser as User } from '@island.is/air-discount-scheme-web/lib'
+import { CurrentUserQuery } from '@island.is/air-discount-scheme-web/graphql/sharedGql'
+import { signin, useSession } from 'next-auth/client'
 
 
 const useUser = () => {
   const [user, setUser] = useState<User>()
-  //const [session] = useSession()
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    Boolean(false)//(session?.user),
-  )
-  // if(!isAuthenticated) {
-  //   return signIn('identity-server')
-  // }
-  console.log('inside useUser before gqpl')
-  // TODO finish grpql
-  const tempGqlQuery = gql`
-  query UserQuery {
-    user {
-      name
-      nationalId
-      mobile
-      role
-    }
-  }
-`
+  const [session, loading] = useSession()
 
-  const { data, loading: loadingUser } = useQuery(tempGqlQuery, {
-    fetchPolicy: 'no-cache',
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
+    Boolean(session?.user),
+  )
+
+  console.log('inside useUser before gqpl')
+
+  const { data, loading: loadingUser } = useQuery(CurrentUserQuery, {
+    fetchPolicy: 'no-cache', ssr: false,
   })
-  console.log(data)
+  //console.log(data)
   const loggedInUser = data?.currentUser
 
   useEffect(() => {
+    console.log('useUser useEffect')
     if (loggedInUser && !user) {
       setUser(loggedInUser)
       setIsAuthenticated(true)
+    }
+    if(session === undefined && !loading){
+      signin('identity-server')
     }
   }, [setUser, loggedInUser, user])
   return {

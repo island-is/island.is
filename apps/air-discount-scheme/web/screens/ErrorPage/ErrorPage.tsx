@@ -50,6 +50,6 @@ function ErrorPage() {
   )
 }
 
-ErrorPage.getInitialProps = () => ({})
+//ErrorPage.getInitialProps = () => ({})
 
 export default ErrorPage

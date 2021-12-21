@@ -9,15 +9,16 @@ import {
 } from '@nestjs/graphql'
 
 import type { FlightLeg as TFlightLeg } from '@island.is/air-discount-scheme/types'
-import { Authorize, AuthService } from '../auth'
 import { FlightLegsInput, ConfirmInvoiceInput } from './dto'
 import { FlightLeg } from './flightLeg.model'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { UseGuards } from '@nestjs/common'
 
+@UseGuards(IdsUserGuard)
 @Resolver(() => FlightLeg)
 export class FlightLegResolver {
-  constructor(private readonly authService: AuthService) {}
 
-  @Authorize({ role: 'admin' })
+  // TODO AUTHORIZE ADMIN ONLY  @Authorize({ role: 'admin' })
   @Query(() => [FlightLeg])
   flightLegs(
     @Context('dataSources') { backendApi },
@@ -26,7 +27,7 @@ export class FlightLegResolver {
     return backendApi.getFlightLegs(input)
   }
 
-  @Authorize({ role: 'admin' })
+  //TODO AUTHORIZE ADMIN ONLY@Authorize({ role: 'admin' })
   @Mutation(() => [FlightLeg])
   confirmInvoice(
     @Context('dataSources') { backendApi },

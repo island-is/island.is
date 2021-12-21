@@ -6,17 +6,20 @@ import {
   FlightLeg as TFlightLeg,
 } from '@island.is/air-discount-scheme/types'
 import { FlightLeg } from '../flightLeg'
-import { Authorize, CurrentUser, AuthService, AuthUser } from '../auth'
+import { CurrentUser } from '../decorators'
+import { AuthUser, Role } from '../auth/types'
 import { User } from './models'
 import { Inject } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { UseGuards } from '@nestjs/common'
 
+@UseGuards(IdsUserGuard)
 @Resolver(() => User)
 export class UserResolver {
-  constructor(private authService: AuthService, @Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
+  constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
 
-  @Authorize({ throwOnUnAuthorized: false })
   @Query(() => User, { nullable: true })
   async user(@CurrentUser() user: AuthUser): Promise<User | undefined> {
     console.log('user resolver API')
@@ -28,10 +31,10 @@ export class UserResolver {
     return user as User
   }
 
-  @Authorize({ throwOnUnAuthorized: false })
+  // TODO FIGURE OUT ROLE AND RETURN IT
   @ResolveField('role')
   resolveRole(@CurrentUser() user: AuthUser): string {
-    return this.authService.getRole(user)
+    return 'developer' as Role
   }
 
   @ResolveField('meetsADSRequirements')
@@ -43,7 +46,6 @@ export class UserResolver {
     return false
   }
 
-  @Authorize()
   @ResolveField('flightLegs', () => [FlightLeg])
   async resolveFlights(
     @CurrentUser() user: AuthUser,
