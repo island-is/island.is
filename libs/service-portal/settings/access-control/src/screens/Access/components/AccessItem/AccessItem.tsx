@@ -118,7 +118,6 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
                 ...tdStyling,
                 paddingLeft: isFirstItem ? 3 : 8,
               }}
-              style={tableStyles}
             >
               <CheckboxController
                 id={`${item.model}.name`}
@@ -134,12 +133,12 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
                 onSelect={(value) => onSelect(item, value)}
               />
             </T.Data>
-            <T.Data box={tdStyling} style={tableStyles}>
+            <T.Data box={tdStyling}>
               <Text variant={isFirstItem ? 'default' : 'medium'}>
                 {item.description}
               </Text>
             </T.Data>
-            <T.Data box={tdStyling} style={tableStyles}>
+            <T.Data box={tdStyling}>
               <div className={cs(isSelected ? undefined : styles.hidden)}>
                 <DatePickerController
                   id={`${item.model}.validTo`}
