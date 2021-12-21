@@ -12,7 +12,9 @@
   "paths": {
     "/api/pdf/v1/Create/{personId}": {
       "get": {
-        "tags": ["CrimeCertificate"],
+        "tags": [
+          "CrimeCertificate"
+        ],
         "summary": "Create pdf report for open criminal record",
         "parameters": [
           {
@@ -49,7 +51,9 @@
     },
     "/api/pdf/v1/Create/Personal/{personId}": {
       "get": {
-        "tags": ["CrimeCertificate"],
+        "tags": [
+          "CrimeCertificate"
+        ],
         "summary": "Create pdf report for private record",
         "parameters": [
           {
@@ -85,5 +89,5 @@
       }
     }
   },
-  "components": {}
+  "components": { }
 }
