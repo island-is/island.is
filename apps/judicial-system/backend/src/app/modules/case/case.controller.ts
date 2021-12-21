@@ -10,11 +10,12 @@ import {
   Put,
   ForbiddenException,
   Query,
-  ConflictException,
   Res,
   Header,
   UseGuards,
   BadRequestException,
+  InternalServerErrorException,
+  HttpException,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -303,8 +304,8 @@ export class CaseController {
     )
 
     if (numberOfAffectedRows === 0) {
-      // TODO: Find a more suitable exception to throw
-      throw new NotFoundException(`Case ${caseId} does not exist`)
+      // This should not happen
+      throw new InternalServerErrorException(`Case ${caseId} does not exist`)
     }
 
     if (
@@ -354,7 +355,8 @@ export class CaseController {
     )
 
     if (numberOfAffectedRows === 0) {
-      throw new ConflictException(
+      // This should not happen
+      throw new InternalServerErrorException(
         `A more recent version exists of the case with id ${caseId}`,
       )
     }
@@ -515,33 +517,33 @@ export class CaseController {
     description: 'Requests a court record signature for an existing case',
   })
   async requestCourtRecordSignature(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
-    @Res() res: Response,
-  ) {
+  ): Promise<SigningServiceResponse> {
     if (user.id !== theCase.judgeId && user.id !== theCase.registrarId) {
       throw new ForbiddenException(
         'A court record must be signed by the assigned judge or registrar',
       )
     }
 
-    try {
-      const response = await this.caseService.requestCourtRecordSignature(
-        theCase,
-        user,
-      )
-      return res.status(201).send(response)
-    } catch (error) {
-      if (error instanceof DokobitError) {
-        return res.status(error.status).json({
-          code: error.code,
-          message: error.message,
-        })
-      }
+    return await this.caseService
+      .requestCourtRecordSignature(theCase, user)
+      .catch((error) => {
+        if (error instanceof DokobitError) {
+          throw new HttpException(
+            {
+              statusCode: error.status,
+              message: `Failed to request a court record signature for case ${caseId}`,
+              code: error.code,
+              error: error.message,
+            },
+            error.status,
+          )
+        }
 
-      throw error
-    }
+        throw error
+      })
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
@@ -552,7 +554,7 @@ export class CaseController {
     description:
       'Confirms a previously requested court record signature for an existing case',
   })
-  async getCourtRecordSignatureConfirmation(
+  getCourtRecordSignatureConfirmation(
     @Param('caseId') _0: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
@@ -579,30 +581,31 @@ export class CaseController {
     description: 'Requests a ruling signature for an existing case',
   })
   async requestRulingSignature(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
-    @Res() res: Response,
-  ) {
+  ): Promise<SigningServiceResponse> {
     if (user.id !== theCase.judgeId) {
       throw new ForbiddenException(
         'A ruling must be signed by the assigned judge',
       )
     }
 
-    try {
-      const response = await this.caseService.requestRulingSignature(theCase)
-      return res.status(201).send(response)
-    } catch (error) {
+    return this.caseService.requestRulingSignature(theCase).catch((error) => {
       if (error instanceof DokobitError) {
-        return res.status(error.status).json({
-          code: error.code,
-          message: error.message,
-        })
+        throw new HttpException(
+          {
+            statusCode: error.status,
+            message: `Failed to request a ruling signature for case ${caseId}`,
+            code: error.code,
+            error: error.message,
+          },
+          error.status,
+        )
       }
 
       throw error
-    }
+    })
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
@@ -613,7 +616,7 @@ export class CaseController {
     description:
       'Confirms a previously requested ruling signature for an existing case',
   })
-  async getRulingSignatureConfirmation(
+  getRulingSignatureConfirmation(
     @Param('caseId') _0: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
