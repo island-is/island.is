@@ -50,7 +50,7 @@ describe('StaffController - Get staff for municipality', () => {
       await givenWhenThen(staff)
     })
 
-    it('should request staff by national id from the database', () => {
+    it('should request staff by municipality id from the database', () => {
       expect(mockFindByMunicipalityId).toHaveBeenCalledWith({
         where: {
           municipalityId: staff.municipalityId,
