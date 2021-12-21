@@ -120,6 +120,7 @@ module.exports = {
     '<rootDir>/libs/clients/assets',
     '<rootDir>/libs/clients/auth-public-api',
     '<rootDir>/libs/clients/criminal-record',
+    '<rootDir>/libs/clients/data-protection-complaint',
     '<rootDir>/libs/clients/document-provider',
     '<rootDir>/libs/clients/documents',
     '<rootDir>/libs/clients/finance',
@@ -191,6 +192,5 @@ module.exports = {
     '<rootDir>/libs/testing/containers',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
-    '<rootDir>/libs/clients/data-protection-complaint',
   ],
 }
