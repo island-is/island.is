@@ -939,7 +939,7 @@
     {
       "name": "Bjarni Lárusson",
       "practice": "LBL - lögmannsstofa Bjarna Lárussonar ehf",
-      "email": "bjarnil@allt.is",
+      "email": "bjarni@allt.is",
       "phoneNr": "5605518"
     },
     {
@@ -1250,9 +1250,9 @@
     },
     {
       "name": "Davíð Blöndal Þorgeirsson",
-      "practice": "Íslandsbanki hf.",
-      "email": "david.blondal.thorgeirsson@islandsbanki.is",
-      "phoneNr": "4404890"
+      "practice": "",
+      "email": "davidblondal@gmail.com",
+      "phoneNr": ""
     },
     {
       "name": "Davíð Guðmundsson",
@@ -1317,8 +1317,14 @@
     {
       "name": "Dögg Pálsdóttir",
       "practice": "Málsefni Lögmannsþjónusta I Legal Iceland Law Services",
-      "email": "dogg@legaliceland.com",
+      "email": "dogg@dp.is",
       "phoneNr": "8976627"
+    },
+    {
+      "name": "E. Austri Þorsteinsson",
+      "practice": "BBA Fjeldco",
+      "email": "austri@bbafjeldco.is",
+      "phoneNr": "5500500"
     },
     {
       "name": "Ebba Schram",
@@ -1706,9 +1712,9 @@
     },
     {
       "name": "Eyþóra Kristín Geirsdóttir",
-      "practice": "",
-      "email": "",
-      "phoneNr": ""
+      "practice": "Isavia",
+      "email": "eythora.geirsdottir@isavia.is",
+      "phoneNr": "4244000"
     },
     {
       "name": "Fannar Freyr Ívarsson",
@@ -2815,12 +2821,6 @@
       "phoneNr": "4881600"
     },
     {
-      "name": "Helgi Brynjarsson",
-      "practice": "Lagastoð",
-      "email": "helgi.brynjarsson@lagastod.is",
-      "phoneNr": "5164000"
-    },
-    {
       "name": "Helgi Jóhannesson",
       "practice": "Catus ehf.",
       "email": "helgi@catus.is",
@@ -2847,7 +2847,7 @@
     {
       "name": "Helgi Þorsteinsson",
       "practice": "Silva lögmannsstofa",
-      "email": "helgithorsteinsson89@gmail.com",
+      "email": "helgi@nns.is",
       "phoneNr": "8682991"
     },
     {
@@ -3392,9 +3392,9 @@
     },
     {
       "name": "Jakob Árnason",
-      "practice": "NBI hf.",
+      "practice": "",
       "email": "",
-      "phoneNr": "5606951"
+      "phoneNr": ""
     },
     {
       "name": "Jakob Björgvin Jakobsson",
@@ -3459,7 +3459,7 @@
     {
       "name": "Jóhann Halldórsson",
       "practice": "Lögmannsstofa Jóhanns Halldórssonar ehf.",
-      "email": "",
+      "email": "jh@s8.is",
       "phoneNr": ""
     },
     {
@@ -3723,7 +3723,7 @@
     {
       "name": "Jón M. Bergsson",
       "practice": "Lög og innheimta",
-      "email": "jon.bergsson@loi.is",
+      "email": "jmbergsson@gmail.com",
       "phoneNr": "7771215"
     },
     {
@@ -3747,7 +3747,7 @@
     {
       "name": "Jón Pétur Skúlason",
       "practice": "Embætti borgarlögmanns",
-      "email": "jpskulason@gmail.com",
+      "email": "jon.petur.skulason@reykjavik.is",
       "phoneNr": "4114100"
     },
     {
@@ -4010,15 +4010,15 @@
     },
     {
       "name": "Kjartan Ragnars",
-      "practice": "",
-      "email": "kjr@centrum.is",
-      "phoneNr": "5111890"
-    },
-    {
-      "name": "Kjartan Ragnars",
       "practice": "Cicero lögmannsstofa ehf.",
       "email": "kjartan@ccl.is",
       "phoneNr": "5195885"
+    },
+    {
+      "name": "Kjartan Ragnars",
+      "practice": "",
+      "email": "kjr@centrum.is",
+      "phoneNr": "5111890"
     },
     {
       "name": "Kjartan Vilhjálmsson",
@@ -4205,6 +4205,12 @@
       "practice": "RG lögmenn",
       "email": "leifur@rglogmenn.is",
       "phoneNr": "5504060"
+    },
+    {
+      "name": "Leifur Valentín Gunnarsson",
+      "practice": "LMG lögmenn",
+      "email": "leifur1992@gmail.com",
+      "phoneNr": "5111190"
     },
     {
       "name": "Leó Daðason",
@@ -4838,15 +4844,15 @@
     },
     {
       "name": "Pétur Már Jónsson",
-      "practice": "Sector legal ehf.",
-      "email": "petur@sector.is",
-      "phoneNr": "5111119"
-    },
-    {
-      "name": "Pétur Már Jónsson",
       "practice": "",
       "email": "k230445@gmail.com",
       "phoneNr": "8605105"
+    },
+    {
+      "name": "Pétur Már Jónsson",
+      "practice": "Sector legal ehf.",
+      "email": "petur@sector.is",
+      "phoneNr": "5111119"
     },
     {
       "name": "Pétur Steinn Guðmundsson",
@@ -4857,7 +4863,7 @@
     {
       "name": "Pétur Þór Sigurðsson",
       "practice": "Lögfræðistofan ehf.",
-      "email": "peturthorsigurds@gmail.com",
+      "email": "pthorsig@gmail.com",
       "phoneNr": "8957664"
     },
     {
@@ -5318,15 +5324,15 @@
     },
     {
       "name": "Sigurður Sigurjónsson",
-      "practice": "Lögfræðiþjónusta Sigurðar Sigurjónssonar hrl. ehf.",
-      "email": "sigurdursig@gmail.com",
-      "phoneNr": "5787805"
-    },
-    {
-      "name": "Sigurður Sigurjónsson",
       "practice": "Lögmenn Suðurlandi",
       "email": "sigsig@log.is",
       "phoneNr": "4802900"
+    },
+    {
+      "name": "Sigurður Sigurjónsson",
+      "practice": "Lögfræðiþjónusta Sigurðar Sigurjónssonar hrl. ehf.",
+      "email": "sigurdursig@gmail.com",
+      "phoneNr": "5787805"
     },
     {
       "name": "Sigurður Skúli Bergsson",
@@ -5528,8 +5534,8 @@
     },
     {
       "name": "Stefán Bjarnason",
-      "practice": "Eventus lögfræðiþjónusta",
-      "email": "stefan@eventus.is",
+      "practice": "",
+      "email": "stefan06@gmail.com",
       "phoneNr": "7707227"
     },
     {
@@ -5852,9 +5858,9 @@
     },
     {
       "name": "Tómas Aron Viggósson",
-      "practice": "LOGOS",
-      "email": "tomas@logos.is",
-      "phoneNr": "5400300"
+      "practice": "",
+      "email": "",
+      "phoneNr": ""
     },
     {
       "name": "Tómas Eiríksson",
@@ -5924,9 +5930,9 @@
     },
     {
       "name": "Tryggvi Þórhallsson",
-      "practice": "Samband íslenskra sveitarfélaga",
-      "email": "tryggvi.thorhallsson@samband.is",
-      "phoneNr": "5154900"
+      "practice": "Skútustaðahreppur",
+      "email": "",
+      "phoneNr": "4646660"
     },
     {
       "name": "Unnar Steinn Bjarndal",
@@ -6236,15 +6242,15 @@
     },
     {
       "name": "Þórdís Bjarnadóttir",
-      "practice": "Deloitte Legal ehf.",
-      "email": "tbjarnadottir@deloitte.is",
-      "phoneNr": "5803454"
-    },
-    {
-      "name": "Þórdís Bjarnadóttir",
       "practice": "Lögfræðimiðstöðin ehf",
       "email": "thordis@lognet.is",
       "phoneNr": "5557722"
+    },
+    {
+      "name": "Þórdís Bjarnadóttir",
+      "practice": "Deloitte Legal ehf.",
+      "email": "tbjarnadottir@deloitte.is",
+      "phoneNr": "5803454"
     },
     {
       "name": "Þórður Bogason",
