@@ -2,8 +2,10 @@ import React, { FC, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
+import { signOut, useSession } from 'next-auth/client'
 
 import { Header as IslandUIHeader, Link } from '@island.is/island-ui/core'
+import { AuthSession } from '@island.is/next-ids-auth'
 
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { UserContext } from '@island.is/skilavottord-web/context'
@@ -27,6 +29,7 @@ export const SkilavottordUserQuery = gql`
 export const Header: FC = () => {
   const router = useRouter()
   const { setUser, isAuthenticated } = useContext(UserContext)
+  const [session]: AuthSession = useSession()
   const [baseUrl, setBaseUrl] = useState<string>('island.is')
   const {
     activeLocale,
@@ -34,7 +37,10 @@ export const Header: FC = () => {
     t: { header: t, routes },
   } = useI18n()
 
-  const { data } = useQuery<Query>(SkilavottordUserQuery)
+  const { data, client } = useQuery<Query>(SkilavottordUserQuery, {
+    fetchPolicy: 'network-only',
+    skip: !session?.user,
+  })
   const user = data?.skilavottordUser
 
   const nextLanguage = activeLocale === 'is' ? 'en' : 'is'
@@ -70,6 +76,16 @@ export const Header: FC = () => {
     return userRole
   }
 
+  const logout = () => {
+    setUser && setUser(undefined)
+    sessionStorage.clear()
+    client.stop()
+    client.clearStore()
+    signOut({
+      callbackUrl: `${window.location.origin}/app/skilavottord/api/auth/logout?id_token=${session?.idToken}`,
+    })
+  }
+
   const homeRoute = routes.home[mapUserRoleToRoute(user?.role)]
 
   return (
@@ -77,13 +93,11 @@ export const Header: FC = () => {
       logoRender={(logo) => <Link href={homeRoute}>{logo}</Link>}
       logoutText={t.logoutText}
       userLogo={user?.role === 'developer' ? '👑' : undefined}
-      language={nextLanguage.toUpperCase()}
+      language={activeLocale}
       switchLanguage={() => switchLanguage(nextLanguage)}
-      userName={user?.name ?? ''}
-      authenticated={isAuthenticated}
-      onLogout={() => {
-        api.logout()
-      }}
+      userName={user?.name ?? session?.user.name ?? ''}
+      authenticated={true || isAuthenticated}
+      onLogout={logout}
     />
   )
 }

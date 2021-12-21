@@ -1,9 +1,10 @@
 const devConfig = {
   production: false,
   identityProvider: {
-    domain: 'https://identity-server.staging01.devland.is',
+    domain: 'identity-server.staging01.devland.is',
     clientSecret: process.env.IDENTITY_SERVER_CLIENT_SECRET,
     logoutRedirectUrl: '/',
+    nextAuth: process.env.NEXTAUTH_URL,
   },
 }
 
@@ -13,6 +14,7 @@ const prodConfig = {
     domain: process.env.IDENTITY_SERVER_DOMAIN,
     clientSecret: process.env.IDENTITY_SERVER_CLIENT_SECRET,
     logoutRedirectUrl: 'https://island.is/skilavottord',
+    nextAuth: process.env.NEXTAUTH_URL,
   },
 }
 
