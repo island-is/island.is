@@ -8075,7 +8075,8 @@
             "outputPath": "apps/services/user-notification/src/openapi.yaml",
             "command": "yarn ts-node -P apps/services/user-notification/tsconfig.app.json apps/services/user-notification/src/buildOpenApi.ts"
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "services-user-profile": {
