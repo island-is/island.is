@@ -48,7 +48,6 @@ describe('CaseController - Request court record signature', () => {
           caseId,
           user,
           theCase,
-          res,
         )) as MockResponse
       } catch (error) {
         then.error = error as Error
