@@ -1,11 +1,7 @@
-import { Field, InputType, registerEnumType } from '@nestjs/graphql'
+import { Field, InputType } from '@nestjs/graphql'
 
-import { Role } from '../auth'
-
-export const { citizen, ...AccessControlRole } = Role
-type excludeOptions = typeof Role.citizen
-type AccessControlRole = Exclude<Role, excludeOptions>
-registerEnumType(AccessControlRole, { name: 'AccessControlRole' })
+import { AccessControlRole } from './accessControl.model'
+import type { AccessControlRoleType } from './accessControl.model'
 
 @InputType()
 export class CreateAccessControlInput {
@@ -16,7 +12,7 @@ export class CreateAccessControlInput {
   name!: string
 
   @Field(() => AccessControlRole)
-  role!: AccessControlRole
+  role!: AccessControlRoleType
 
   @Field({ nullable: true })
   partnerId?: string
@@ -31,7 +27,7 @@ export class UpdateAccessControlInput {
   name!: string
 
   @Field(() => AccessControlRole)
-  role!: AccessControlRole
+  role!: AccessControlRoleType
 
   @Field({ nullable: true })
   partnerId?: string
