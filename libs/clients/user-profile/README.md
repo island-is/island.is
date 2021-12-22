@@ -42,9 +42,9 @@ export class SomeService {
 
   async getStuff(@CurrentUser() user: User)
       return this.UserProfileApi.userTokenControllerGetDeviceTokens({nationalId:user.nationalId})
-      
+
 ```
+
 ## machine client auth
-```js
+
 Check out [AutoAuth](https://github.com/island-is/island.is/pull/6057).
-```

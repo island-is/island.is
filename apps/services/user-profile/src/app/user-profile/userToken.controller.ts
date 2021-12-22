@@ -1,20 +1,7 @@
 import { UserProfileScope } from '@island.is/auth/scopes'
+import { Scopes, ScopesGuard, IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { Controller, Get, Param, UseGuards } from '@nestjs/common'
 import {
-  Scopes,
-  ScopesGuard,
-  IdsAuthGuard,
-} from '@island.is/auth-nest-tools'
-import {
-  Controller,
-  Get,
-
-  Param,
-
-  UseGuards,
-
-} from '@nestjs/common'
-import {
-
   ApiOkResponse,
   ApiOperation,
   ApiSecurity,
