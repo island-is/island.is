@@ -35,7 +35,7 @@ export const Header: FC = () => {
     t: { header: t, routes },
   } = useI18n()
 
-  const { data, client } = useQuery<Query>(SkilavottordUserQuery, {
+  const { data, client, loading } = useQuery<Query>(SkilavottordUserQuery, {
     fetchPolicy: 'network-only',
     skip: !session?.user,
   })
@@ -93,7 +93,7 @@ export const Header: FC = () => {
       userLogo={user?.role === 'developer' ? '👑' : undefined}
       language={activeLocale}
       switchLanguage={() => switchLanguage(nextLanguage)}
-      userName={user?.name ?? session?.user.name ?? ''}
+      userName={loading ? '' : user?.name ?? session?.user.name ?? ''}
       authenticated={true || isAuthenticated}
       onLogout={logout}
     />
