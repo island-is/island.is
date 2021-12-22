@@ -11,7 +11,7 @@ export const serviceSetup = (services: {
       IDENTITY_SERVER_DOMAIN: 'https://identity-server.dev01.devland.is',
       NEXTAUTH_URL_INTERNAL: 'http://10.240.8.16',
       IDS_COOKIE_NAME: 'next-auth.session-token',
-      AUTH_PUBLIC_URL: {
+      SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',

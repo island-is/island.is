@@ -9,3 +9,5 @@ export interface User {
   mobile?: string
   token?: string
 }
+
+export type Role = 'developer' | 'admin' | 'user'
