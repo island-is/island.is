@@ -22,7 +22,7 @@ const initDdRum = (params: DdRumInitParams) => {
       'https://island.is',
       /https:\/\/.*\.island\.is/,
       /https:\/\/.*\.devland\.is/,
-      'http://localhost:4200',
+      /http:\/\/localhost:*/,
     ],
     beforeSend: (event) => {
       event.view.url = maskNationalId(event.view.url)
