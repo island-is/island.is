@@ -379,7 +379,7 @@ export class UserProfileController {
   }
 }
 
-// this controller separate for guards and scopes logic
+// this controller separate for guards and scopes logic - idsauthguard vs idsuserguard
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('User Profile')
 @Controller()
