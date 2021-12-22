@@ -166,6 +166,10 @@ export const Properties = new XroadConf({
     // Deprecated:
     XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1',
   },
+  secrets: {
+    XROAD_PROPERTIES_CLIENT_SECRET:
+      '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
+  },
 })
 
 export const Education = new XroadConf({
