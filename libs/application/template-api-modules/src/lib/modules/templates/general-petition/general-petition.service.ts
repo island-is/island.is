@@ -33,9 +33,7 @@ export class GeneralPetitionService {
   ) {}
 
   endorsementListApiWithAuth(token: string) {
-    return this.endorsementListApi.withMiddleware(
-      new HeaderMiddleware(token),
-    )
+    return this.endorsementListApi.withMiddleware(new HeaderMiddleware(token))
   }
 
   async createEndorsementList({

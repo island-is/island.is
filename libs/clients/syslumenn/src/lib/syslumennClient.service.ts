@@ -60,9 +60,7 @@ export class SyslumennService {
         api: api.withMiddleware(new HeaderMiddleware(`Bearer ${accessToken}`)),
       }
     } else {
-      throw new Error(
-        'Syslumenn client configuration and login went wrong',
-      )
+      throw new Error('Syslumenn client configuration and login went wrong')
     }
   }
 
