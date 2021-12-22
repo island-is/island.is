@@ -94,31 +94,18 @@ const ExpandableLine: FC<Props> = ({
               onClick={onExpandButton}
               cursor="pointer"
             >
-              <Hidden below="xl" inline>
-                <Text
-                  variant={last ? 'eyebrow' : 'medium'}
-                  as="span"
-                  color="blue400"
-                >
-                  {expanded
-                    ? formatMessage(m.closeFinanceDetail)
-                    : formatMessage(m.openFinanceDetail)}
-                </Text>
-              </Hidden>
-              <Box marginLeft={1}>
-                <Button
-                  circle
-                  colorScheme="light"
-                  icon={expanded ? 'remove' : 'add'}
-                  iconType="filled"
-                  onClick={onExpandButton}
-                  preTextIconType="filled"
-                  size="small"
-                  title="Sundurliðun"
-                  type="button"
-                  variant="primary"
-                />
-              </Box>
+              <Button
+                circle
+                colorScheme="light"
+                icon={expanded ? 'remove' : 'add'}
+                iconType="filled"
+                onClick={onExpandButton}
+                preTextIconType="filled"
+                size="small"
+                title="Sundurliðun"
+                type="button"
+                variant="primary"
+              />
             </Box>
           )}
           {loading && (
