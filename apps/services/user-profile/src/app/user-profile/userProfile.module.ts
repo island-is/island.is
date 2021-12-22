@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import {
-  UserProfileController,
-  UserTokenController,
-} from './userProfile.controller'
+import { UserProfileController } from './userProfile.controller'
+import { UserTokenController } from './userToken.controller'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { SmsModule } from '@island.is/nova-sms'

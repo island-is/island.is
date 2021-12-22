@@ -40,9 +40,11 @@ export class SomeService {
     private readonly userProfileApi: UserProfileApi,
   ) {}
 
-  async getStuff()
-      const clientAuthToken = await acquireAuthToken()
-      const currentAuth = convertTokenToAuth(clientAuthToken)
-      return this.UserProfileApi.withMiddleware(new AuthMiddleware(currentAuth))
-      .userTokenControllerGetDeviceTokens({nationalId:"0101302989"})
+  async getStuff(@CurrentUser() user: User)
+      return this.UserProfileApi.userTokenControllerGetDeviceTokens({nationalId:user.nationalId})
+      
+```
+## machine client auth
+```js
+Check out [AutoAuth](https://github.com/island-is/island.is/pull/6057).
 ```

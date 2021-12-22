@@ -633,19 +633,19 @@ describe('User profile API', () => {
     })
   })
 
-  describe('/userProfile/{nationalId}/deviceToken', () => {
-    it('GET /userProfile/{nationalId}/deviceToken should 401 as admin:scope is needed', async () => {
+  describe('/userProfile/{nationalId}/device-tokens', () => {
+    it('GET /userProfile/{nationalId}/device-tokens should 401 as admin:scope is needed', async () => {
       // create one first
       await request(app.getHttpServer())
-        .get(`/userProfile/${mockProfile.nationalId}/deviceToken`) // GERVIMAÐUR KT
+        .get(`/userProfile/${mockProfile.nationalId}/device-tokens`) // GERVIMAÐUR KT
         .send()
         .expect(401)
     })
 
-    it('POST /userProfile/{nationalId}/deviceToken should return 201 created', async () => {
+    it('POST /userProfile/{nationalId}/device-tokens should return 201 created', async () => {
       // create it
       const response = await request(app.getHttpServer())
-        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .post(`/userProfile/${mockProfile.nationalId}/device-tokens`)
         .send({
           deviceToken: mockDeviceToken.deviceToken,
         })
@@ -659,35 +659,35 @@ describe('User profile API', () => {
       )
     })
 
-    it('POST /userProfile/{nationalId}/deviceToken duplicate token should return 400 bad request', async () => {
+    it('POST /userProfile/{nationalId}/device-tokens duplicate token should return 400 bad request', async () => {
       // create it
       await request(app.getHttpServer())
-        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .post(`/userProfile/${mockProfile.nationalId}/device-tokens`)
         .send({
           deviceToken: mockDeviceToken.deviceToken,
         })
         .expect(201)
       // try to create same again
       await request(app.getHttpServer())
-        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .post(`/userProfile/${mockProfile.nationalId}/device-tokens`)
         .send({
           deviceToken: mockDeviceToken.deviceToken,
         })
         .expect(400)
     })
 
-    it('POST /userProfile/{nationalId}/deviceToken with missing payload should 400 bad request', async () => {
+    it('POST /userProfile/{nationalId}/device-tokens with missing payload should 400 bad request', async () => {
       // create it
       await request(app.getHttpServer())
-        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .post(`/userProfile/${mockProfile.nationalId}/device-tokens`)
         .send({})
         .expect(400)
     })
 
-    it('DELETE /userProfile/{nationalId}/deviceToken should remove row with 200', async () => {
+    it('DELETE /userProfile/{nationalId}/device-tokens should remove row with 200', async () => {
       // create one first ...
       await request(app.getHttpServer())
-        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .post(`/userProfile/${mockProfile.nationalId}/device-tokens`)
         .send({
           deviceToken: mockDeviceToken.deviceToken,
         })
@@ -695,7 +695,7 @@ describe('User profile API', () => {
 
       // ... so we can delete it
       const response = await request(app.getHttpServer())
-        .delete(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .delete(`/userProfile/${mockProfile.nationalId}/device-tokens`)
         .send({
           deviceToken: mockDeviceToken.deviceToken,
         })

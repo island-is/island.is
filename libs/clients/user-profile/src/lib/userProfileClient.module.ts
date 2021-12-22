@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common'
 import { UserProfileApi } from '../../gen/fetch'
 
-import { ApiConfiguration } from './apiConfiguration'
-// import { exportedApis } from './apis'
+import { UserProfileApiProvider } from './apiConfiguration'
 
 @Module({
-  providers: [ApiConfiguration],
+  providers: [UserProfileApiProvider],
   exports: [UserProfileApi],
 })
 export class UserProfileClientModule {}

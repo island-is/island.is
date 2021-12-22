@@ -4,7 +4,7 @@ import { UserProfileApi, Configuration } from '../../gen/fetch'
 
 import { UserProfileClientConfig } from './userProfileClient.config'
 
-export const ApiConfiguration = {
+export const UserProfileApiProvider = {
   provide: UserProfileApi,
   useFactory: (config: ConfigType<typeof UserProfileClientConfig>) => {
     return new UserProfileApi(

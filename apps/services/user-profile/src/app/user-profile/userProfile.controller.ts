@@ -5,7 +5,6 @@ import {
   Scopes,
   ScopesGuard,
   IdsUserGuard,
-  IdsAuthGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
@@ -343,7 +342,7 @@ export class UserProfileController {
   @ApiOkResponse({ type: UserDeviceTokensDto })
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
-  @Post('userProfile/:nationalId/deviceToken')
+  @Post('userProfile/:nationalId/device-tokens')
   async addDeviceToken(
     @Param('nationalId')
     nationalId: string,
@@ -365,7 +364,7 @@ export class UserProfileController {
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
   @ApiOkResponse({ type: DeleteTokenResponseDto })
-  @Delete('userProfile/:nationalId/deviceToken')
+  @Delete('userProfile/:nationalId/device-tokens')
   async deleteDeviceToken(
     @Param('nationalId')
     nationalId: string,
@@ -377,26 +376,5 @@ export class UserProfileController {
     } else {
       return await this.userProfileService.deleteDeviceToken(body, user)
     }
-  }
-}
-
-// this controller separate for guards and scopes logic - idsauthguard vs idsuserguard
-@UseGuards(IdsAuthGuard, ScopesGuard)
-@ApiTags('User Profile')
-@Controller()
-export class UserTokenController {
-  constructor(private readonly userProfileService: UserProfileService) {}
-  @ApiOperation({
-    summary: 'admin access - returns a list of user device tokens',
-  })
-  @ApiOkResponse({ type: [UserDeviceTokensDto] })
-  @Scopes(UserProfileScope.admin)
-  @ApiSecurity('oauth2', [UserProfileScope.admin])
-  @Get('userProfile/:nationalId/deviceToken')
-  async getDeviceTokens(
-    @Param('nationalId')
-    nationalId: string,
-  ): Promise<UserDeviceTokensDto[]> {
-    return await this.userProfileService.getDeviceTokens(nationalId)
   }
 }
