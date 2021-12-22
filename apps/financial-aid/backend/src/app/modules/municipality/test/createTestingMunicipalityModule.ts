@@ -9,11 +9,10 @@ import { MunicipalityService } from '../municipality.service'
 import { AidService } from '../../aid/aid.service'
 import { StaffService } from '../../staff/staff.service'
 import { Sequelize } from 'sequelize'
-import { StaffModel } from '../../staff'
 
-jest.mock('sequelize')
 jest.mock('../../aid/aid.service.ts')
 jest.mock('../../staff/staff.service.ts')
+jest.mock('sequelize')
 
 export const createTestingMunicipalityModule = async () => {
   const municipalityModule = await Test.createTestingModule({
@@ -21,17 +20,7 @@ export const createTestingMunicipalityModule = async () => {
     controllers: [MunicipalityController],
     providers: [
       AidService,
-      StaffService,
       Sequelize,
-      {
-        provide: getModelToken(StaffModel),
-        useValue: {
-          create: jest.fn(),
-          findAll: jest.fn(),
-          findOne: jest.fn(),
-          update: jest.fn(),
-        },
-      },
       {
         provide: getModelToken(MunicipalityModel),
         useValue: {
@@ -42,6 +31,7 @@ export const createTestingMunicipalityModule = async () => {
         },
       },
       MunicipalityService,
+      StaffService,
     ],
   }).compile()
 

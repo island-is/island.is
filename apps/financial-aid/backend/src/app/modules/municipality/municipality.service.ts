@@ -13,7 +13,7 @@ import { Sequelize } from 'sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { StaffService } from '../staff'
+import { StaffService } from '../staff/staff.service'
 import { CreateStaffDto } from '../staff/dto'
 
 @Injectable()
