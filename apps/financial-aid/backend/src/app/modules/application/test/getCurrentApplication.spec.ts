@@ -1,6 +1,7 @@
 import { firstDateOfMonth } from '@island.is/financial-aid/shared/lib'
 import { NotFoundException } from '@nestjs/common'
 import { Op } from 'sequelize'
+import { uuid } from 'uuidv4'
 import { ApplicationModel } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
 
