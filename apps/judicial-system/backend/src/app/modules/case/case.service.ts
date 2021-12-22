@@ -44,6 +44,7 @@ import { CourtService } from '../court'
 import { CreateCaseDto, InternalCreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
+import { StaticText } from '@island.is/application/core'
 
 interface Recipient {
   name: string
@@ -87,6 +88,13 @@ const standardIncludes: Includeable[] = [
 
 @Injectable()
 export class CaseService {
+  private formatMessage: (
+    descriptor: StaticText,
+    values?: unknown,
+  ) => string = () => {
+    throw new InternalServerErrorException('Format message not initialized')
+  }
+
   constructor(
     @InjectModel(Case) private readonly caseModel: typeof Case,
     private readonly userService: UserService,
@@ -95,9 +103,13 @@ export class CaseService {
     private readonly courtService: CourtService,
     private readonly signingService: SigningService,
     private readonly emailService: EmailService,
-    private readonly intlService: IntlService,
+    intlService: IntlService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
+  ) {
+    intlService
+      .useIntl(['judicial.system.backend'], 'is')
+      .then((res) => (this.formatMessage = res.formatMessage))
+  }
 
   private async uploadSignedRulingPdfToS3(
     theCase: Case,
@@ -232,11 +244,6 @@ export class CaseService {
     theCase: Case,
     signedRulingPdf: string,
   ): Promise<void> {
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
     if (!environment.production) {
       writeFile(`${theCase.id}-ruling-signed.pdf`, signedRulingPdf)
     }
@@ -273,15 +280,15 @@ export class CaseService {
           address: theCase.prosecutor?.email ?? '',
         },
         uploadedToS3
-          ? intl.formatMessage(m.signedRuling.prosecutorBodyS3, {
+          ? this.formatMessage(m.signedRuling.prosecutorBodyS3, {
               courtCaseNumber: theCase.courtCaseNumber,
               courtName: theCase.court?.name?.replace('dómur', 'dómi'),
             })
-          : intl.formatMessage(m.signedRuling.prosecutorBodyAttachment, {
+          : this.formatMessage(m.signedRuling.prosecutorBodyAttachment, {
               courtName: theCase.court?.name,
               courtCaseNumber: theCase.courtCaseNumber,
             }),
-        intl.formatMessage,
+        this.formatMessage,
         theCase.courtCaseNumber,
         uploadedToS3 ? undefined : signedRulingPdf,
       ),
@@ -304,8 +311,8 @@ export class CaseService {
       emailPromises.push(
         this.sendEmail(
           recipients,
-          intl.formatMessage(m.signedRuling.courtBodyAttachment),
-          intl.formatMessage,
+          this.formatMessage(m.signedRuling.courtBodyAttachment),
+          this.formatMessage,
           theCase.courtCaseNumber,
           signedRulingPdf,
         ),
@@ -326,11 +333,11 @@ export class CaseService {
             name: theCase.defenderName ?? '',
             address: theCase.defenderEmail,
           },
-          intl.formatMessage(m.signedRuling.defenderBodyAttachment, {
+          this.formatMessage(m.signedRuling.defenderBodyAttachment, {
             courtName: theCase.court?.name,
             courtCaseNumber: theCase.courtCaseNumber,
           }),
-          intl.formatMessage,
+          this.formatMessage,
           theCase.courtCaseNumber,
           signedRulingPdf,
         ),
@@ -441,12 +448,7 @@ export class CaseService {
   }
 
   async getRequestPdf(theCase: Case): Promise<Buffer> {
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
-    return getRequestPdfAsBuffer(theCase, intl.formatMessage)
+    return getRequestPdfAsBuffer(theCase, this.formatMessage)
   }
 
   async getCourtRecordPdf(theCase: Case): Promise<Buffer> {
@@ -464,12 +466,7 @@ export class CaseService {
       return pdf
     }
 
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
-    return getRulingPdfAsBuffer(theCase, intl.formatMessage, true)
+    return getRulingPdfAsBuffer(theCase, this.formatMessage, true)
   }
 
   async getRulingPdf(theCase: Case): Promise<Buffer> {
@@ -487,12 +484,7 @@ export class CaseService {
       return pdf
     }
 
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
-    return getRulingPdfAsBuffer(theCase, intl.formatMessage, false)
+    return getRulingPdfAsBuffer(theCase, this.formatMessage, false)
   }
 
   async getCustodyPdf(theCase: Case): Promise<Buffer> {
@@ -508,12 +500,7 @@ export class CaseService {
       return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
     }
 
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
-    const pdf = await getRulingPdfAsString(theCase, intl.formatMessage, true)
+    const pdf = await getRulingPdfAsString(theCase, this.formatMessage, true)
 
     return this.signingService.requestSignature(
       user.mobileNumber ?? '',
@@ -581,12 +568,7 @@ export class CaseService {
       return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
     }
 
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
-    const pdf = await getRulingPdfAsString(theCase, intl.formatMessage, false)
+    const pdf = await getRulingPdfAsString(theCase, this.formatMessage, false)
 
     return this.signingService.requestSignature(
       theCase.judge?.mobileNumber ?? '',
@@ -675,12 +657,7 @@ export class CaseService {
   async uploadRequestPdfToCourt(theCase: Case): Promise<void> {
     this.logger.debug(`Uploading request pdf to court for case ${theCase.id}`)
 
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
-    const pdf = await getRequestPdfAsBuffer(theCase, intl.formatMessage)
+    const pdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
 
     try {
       const streamId = await this.courtService.uploadStream(
