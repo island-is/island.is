@@ -209,10 +209,6 @@ export class CaseController {
   ) {
     const assignedUser = await this.userService.findById(assignedUserId)
 
-    if (!assignedUser) {
-      throw new NotFoundException(`User ${assignedUserId} does not exist`)
-    }
-
     if (assignedUser.role !== assignedUserRole) {
       throw new ForbiddenException(
         `User ${assignedUserId} is not a ${assignedUserRole}}`,

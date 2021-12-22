@@ -614,11 +614,13 @@ describe('User', () => {
           created: dbUser.created ?? 'FAILURE',
           modified: apiUser.modified,
           nationalId: dbUser.nationalId ?? 'FAILURE',
+          institution: apiUser.institution,
         } as CUser)
 
         // Check the data in the database
         return User.findOne({
           where: { id: apiUser.id },
+          include: [{ model: Institution, as: 'institution' }],
         })
       })
       .then((newValue) => {
