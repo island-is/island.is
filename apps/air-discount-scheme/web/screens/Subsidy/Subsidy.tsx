@@ -77,21 +77,21 @@ const GetGenericPageQuery = gql`
   }
 `
 
-// Subsidy.getInitialProps = async ({ apolloClient, locale }) => {
-//   const {
-//     data: { getGenericPage: page },
-//   } = await apolloClient.query<Query, QueryGetGenericPageArgs>({
-//     query: GetGenericPageQuery,
-//     variables: {
-//       input: {
-//         lang: locale,
-//         slug: 'min-rettindi',
-//       },
-//     },
-//   })
-//   return {
-//     page,
-//   }
-// }
+Subsidy.getInitialProps = async ({ apolloClient, locale }) => {
+  const {
+    data: { getGenericPage: page },
+  } = await apolloClient.query<Query, QueryGetGenericPageArgs>({
+    query: GetGenericPageQuery,
+    variables: {
+      input: {
+        lang: locale,
+        slug: 'min-rettindi',
+      },
+    },
+  })
+  return {
+    page,
+  }
+}
 
 export default Subsidy

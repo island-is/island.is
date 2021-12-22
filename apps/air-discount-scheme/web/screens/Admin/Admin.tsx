@@ -252,6 +252,6 @@ const Admin: Screen = ({}) => {
   )
 }
 
-//Admin.getInitialProps = () => ({})
+Admin.getInitialProps = () => ({})
 
 export default Admin

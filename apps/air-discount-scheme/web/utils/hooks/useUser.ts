@@ -4,6 +4,7 @@ import { gql, useQuery } from '@apollo/client'
 import { AuthenticateUser as User } from '@island.is/air-discount-scheme-web/lib'
 import { CurrentUserQuery } from '@island.is/air-discount-scheme-web/graphql/sharedGql'
 import { signin, useSession } from 'next-auth/client'
+import { identityServerId } from '@island.is/air-discount-scheme-web/lib'
 
 
 const useUser = () => {
@@ -19,7 +20,7 @@ const useUser = () => {
   const { data, loading: loadingUser } = useQuery(CurrentUserQuery, {
     fetchPolicy: 'no-cache', ssr: false,
   })
-  //console.log(data)
+  console.log(data)
   const loggedInUser = data?.currentUser
 
   useEffect(() => {
@@ -29,7 +30,7 @@ const useUser = () => {
       setIsAuthenticated(true)
     }
     if(session === undefined && !loading){
-      signin('identity-server')
+      signin(identityServerId)
     }
   }, [setUser, loggedInUser, user])
   return {

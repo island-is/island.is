@@ -66,8 +66,7 @@ function I18n({ children, localeKey }: PropTypes) {
   }
 
   return (
-    //<I18nContext.Provider value={i18nWrapper}>{children}</I18nContext.Provider>
-    <></>
+    <I18nContext.Provider value={i18nWrapper}>{children}</I18nContext.Provider>
   )
 }
 

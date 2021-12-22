@@ -40,13 +40,12 @@ export const TranslationsContext = createContext<TranslationsContextType | null>
 const appWithTranslation = (WrappedComponent) => {
   const AppWithTranslation = (props) => {
     return (
-      // <I18n localeKey={props.pageProps?.localeKey}>
-      //   <WrappedComponent {...props} />
-      // </I18n>
-      <></>
+      <I18n localeKey={props.pageProps?.localeKey}>
+        <WrappedComponent {...props} />
+      </I18n>
     )
   }
-  //AppWithTranslation.getInitialProps = WrappedComponent.getInitialProps
+  AppWithTranslation.getInitialProps = WrappedComponent.getInitialProps
 
   return AppWithTranslation
 }
