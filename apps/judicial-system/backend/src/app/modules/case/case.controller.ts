@@ -16,9 +16,12 @@ import {
   BadRequestException,
   InternalServerErrorException,
   HttpException,
+  Inject,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   DokobitError,
   SigningServiceResponse,
@@ -197,6 +200,7 @@ export class CaseController {
     private readonly caseService: CaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   private async validateAssignedUser(
@@ -229,6 +233,8 @@ export class CaseController {
   async internalCreate(
     @Body() caseToCreate: InternalCreateCaseDto,
   ): Promise<Case | null> {
+    this.logger.debug('Creating a new case')
+
     const createdCase = await this.caseService.internalCreate(caseToCreate)
 
     const resCase = await this.caseService.findById(createdCase.id)
@@ -246,6 +252,8 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @Body() caseToCreate: CreateCaseDto,
   ): Promise<Case | null> {
+    this.logger.debug('Creating a new case')
+
     const createdCase = await this.caseService.create(caseToCreate, user.id)
 
     const resCase = await this.caseService.findById(createdCase.id)
@@ -265,6 +273,8 @@ export class CaseController {
     @CurrentCase() theCase: Case,
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case | null> {
+    this.logger.debug(`Updating case ${caseId}`)
+
     // Make sure valid users are assigned to the case's roles
     if (caseToUpdate.prosecutorId) {
       await this.validateAssignedUser(
@@ -298,15 +308,9 @@ export class CaseController {
       )
     }
 
-    const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
-      caseId,
-      caseToUpdate,
-    )
+    await this.caseService.update(caseId, caseToUpdate)
 
-    if (numberOfAffectedRows === 0) {
-      // This should not happen
-      throw new InternalServerErrorException(`Case ${caseId} does not exist`)
-    }
+    const updatedCase = await this.caseService.findById(caseId)
 
     if (
       theCase.courtId &&
@@ -316,10 +320,10 @@ export class CaseController {
     ) {
       // TODO: Find a better place for this
       // No need to wait for the upload
-      this.caseService.uploadRequestPdfToCourt(caseId)
+      this.caseService.uploadRequestPdfToCourt(updatedCase as Case)
     }
 
-    return this.caseService.findById(updatedCase.id)
+    return updatedCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
@@ -339,6 +343,8 @@ export class CaseController {
     @CurrentCase() theCase: Case,
     @Body() transition: TransitionCaseDto,
   ): Promise<Case | null> {
+    this.logger.debug(`Transitioning case ${caseId}`)
+
     // Use existingCase.modified when client is ready to send last modified timestamp with all updates
     const state = transitionCase(transition.transition, theCase.state)
 
@@ -349,19 +355,9 @@ export class CaseController {
       update.parentCaseId = null
     }
 
-    const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
-      caseId,
-      update as UpdateCaseDto,
-    )
+    await this.caseService.update(caseId, update as UpdateCaseDto)
 
-    if (numberOfAffectedRows === 0) {
-      // This should not happen
-      throw new InternalServerErrorException(
-        `A more recent version exists of the case with id ${caseId}`,
-      )
-    }
-
-    const resCase = await this.caseService.findById(updatedCase.id)
+    const resCase = await this.caseService.findById(caseId)
 
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,
@@ -380,6 +376,8 @@ export class CaseController {
     description: 'Gets all existing cases',
   })
   getAll(@CurrentHttpUser() user: User): Promise<Case[]> {
+    this.logger.debug('Getting all cases')
+
     return this.caseService.getAll(user)
   }
 
@@ -387,7 +385,9 @@ export class CaseController {
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
-  getById(@Param('caseId') _0: string, @CurrentCase() theCase: Case): Case {
+  getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
+    this.logger.debug(`Getting case ${caseId} by id`)
+
     return theCase
   }
 
@@ -400,11 +400,15 @@ export class CaseController {
     description: 'Gets the request for an existing case as a pdf document',
   })
   async getRequestPdf(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
+    this.logger.debug(
+      `Getting the request for case ${caseId} as a pdf document`,
+    )
+
     if (
       isInvestigationCase(theCase.type) &&
       ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
@@ -429,11 +433,15 @@ export class CaseController {
     description: 'Gets the court record for an existing case as a pdf document',
   })
   async getCourtRecordPdf(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
+    this.logger.debug(
+      `Getting the court record for case ${caseId} as a pdf document`,
+    )
+
     if (
       isInvestigationCase(theCase.type) &&
       ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
@@ -458,11 +466,13 @@ export class CaseController {
     description: 'Gets the ruling for an existing case as a pdf document',
   })
   async getRulingPdf(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
+    this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
+
     if (
       isInvestigationCase(theCase.type) &&
       ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
@@ -488,10 +498,14 @@ export class CaseController {
       'Gets custody notice for an existing custody case as a pdf document',
   })
   async getCustodyNoticePdf(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
+    this.logger.debug(
+      `Getting the custody notice for case ${caseId} as a pdf document`,
+    )
+
     if (theCase.type !== CaseType.CUSTODY) {
       throw new BadRequestException(
         `Cannot generate a custody notice for ${theCase.type} cases`,
@@ -521,6 +535,10 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
   ): Promise<SigningServiceResponse> {
+    this.logger.debug(
+      `Requesting a signature for the court record of case ${caseId}`,
+    )
+
     if (user.id !== theCase.judgeId && user.id !== theCase.registrarId) {
       throw new ForbiddenException(
         'A court record must be signed by the assigned judge or registrar',
@@ -555,11 +573,15 @@ export class CaseController {
       'Confirms a previously requested court record signature for an existing case',
   })
   getCourtRecordSignatureConfirmation(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
+    this.logger.debug(
+      `Confirming a signature for the court record of case ${caseId}`,
+    )
+
     if (user.id !== theCase.judgeId && user.id !== theCase.registrarId) {
       throw new ForbiddenException(
         'A court record must be signed by the assigned judge or registrar',
@@ -585,6 +607,8 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
   ): Promise<SigningServiceResponse> {
+    this.logger.debug(`Requesting a signature for the ruling of case ${caseId}`)
+
     if (user.id !== theCase.judgeId) {
       throw new ForbiddenException(
         'A ruling must be signed by the assigned judge',
@@ -617,11 +641,13 @@ export class CaseController {
       'Confirms a previously requested ruling signature for an existing case',
   })
   getRulingSignatureConfirmation(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
+    this.logger.debug(`Confirming a signature for the ruling of case ${caseId}`)
+
     if (user.id !== theCase.judgeId) {
       throw new ForbiddenException(
         'A ruling must be signed by the assigned judge',
@@ -642,10 +668,12 @@ export class CaseController {
     description: 'Clones a new case based on an existing case',
   })
   async extend(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
   ): Promise<Case | null> {
+    this.logger.debug(`Extending case ${caseId}`)
+
     if (theCase.childCase) {
       return theCase.childCase
     }

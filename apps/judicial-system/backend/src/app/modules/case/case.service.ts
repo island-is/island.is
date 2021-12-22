@@ -43,7 +43,6 @@ import { CourtService } from '../court'
 import { CreateCaseDto, InternalCreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
-import { number } from 'yargs'
 
 interface Recipient {
   name: string
@@ -348,8 +347,6 @@ export class CaseService {
     id: string,
     additionalIncludes: Includeable[] = [],
   ): Promise<Case | null> {
-    this.logger.debug(`Finding case ${id}`)
-
     const include = standardIncludes.concat(additionalIncludes)
 
     return this.caseModel.findOne({
@@ -379,8 +376,6 @@ export class CaseService {
   }
 
   async getAll(user: TUser): Promise<Case[]> {
-    this.logger.debug('Getting all cases')
-
     return this.caseModel.findAll({
       order: [['created', 'DESC']],
       where: getCasesQueryFilter(user),
@@ -389,8 +384,6 @@ export class CaseService {
   }
 
   async internalCreate(caseToCreate: InternalCreateCaseDto): Promise<Case> {
-    this.logger.debug('Creating a new case')
-
     if (!caseToCreate.prosecutorNationalId) {
       return this.create(caseToCreate)
     }
@@ -412,8 +405,6 @@ export class CaseService {
     caseToCreate: CreateCaseDto,
     prosecutorId?: string,
   ): Promise<Case> {
-    this.logger.debug('Creating a new case')
-
     return this.caseModel.create({
       ...caseToCreate,
       creatingProsecutorId: prosecutorId,
@@ -421,28 +412,23 @@ export class CaseService {
     })
   }
 
-  async update(
-    id: string,
-    update: UpdateCaseDto,
-  ): Promise<{ numberOfAffectedRows: number; updatedCase: Case }> {
-    this.logger.debug(`Updating case ${id}`)
+  async update(id: string, update: UpdateCaseDto): Promise<void> {
+    const [numberOfAffectedRows] = await this.caseModel.update(update, {
+      where: { id },
+      returning: true,
+    })
 
-    const [numberOfAffectedRows, [updatedCase]] = await this.caseModel.update(
-      update,
-      {
-        where: { id },
-        returning: true,
-      },
-    )
-
-    return { numberOfAffectedRows, updatedCase }
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${id}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(`Could not update case ${id}`)
+    }
   }
 
   async getRequestPdf(existingCase: Case): Promise<Buffer> {
-    this.logger.debug(
-      `Getting the request for case ${existingCase.id} as a pdf document`,
-    )
-
     const intl = await this.intlService.useIntl(
       ['judicial.system.backend'],
       'is',
@@ -452,13 +438,15 @@ export class CaseService {
   }
 
   async getCourtRecordPdf(existingCase: Case): Promise<Buffer> {
-    this.logger.debug(
-      `Getting the court record for case ${existingCase.id} as a pdf document`,
-    )
-
     const pdf = await this.awsS3Service
       .getObject(`generated/${existingCase.id}/courtRecord.pdf`)
-      .catch(() => undefined)
+      .catch((reason) => {
+        this.logger.info(
+          `The court record for case ${existingCase.id} was not found in AWS S3`,
+          reason,
+        )
+        return undefined
+      })
 
     if (pdf) {
       return pdf
@@ -473,13 +461,15 @@ export class CaseService {
   }
 
   async getRulingPdf(existingCase: Case): Promise<Buffer> {
-    this.logger.debug(
-      `Getting the ruling for case ${existingCase.id} as a pdf document`,
-    )
-
     const pdf = await this.awsS3Service
       .getObject(`generated/${existingCase.id}/ruling.pdf`)
-      .catch(() => undefined)
+      .catch((reason) => {
+        this.logger.info(
+          `The ruling for case ${existingCase.id} was not found in AWS S3`,
+          reason,
+        )
+        return undefined
+      })
 
     if (pdf) {
       return pdf
@@ -494,10 +484,6 @@ export class CaseService {
   }
 
   async getCustodyPdf(existingCase: Case): Promise<Buffer> {
-    this.logger.debug(
-      `Getting the custody notice for case ${existingCase.id} as a pdf document`,
-    )
-
     return getCustodyNoticePdfAsBuffer(existingCase)
   }
 
@@ -505,10 +491,6 @@ export class CaseService {
     existingCase: Case,
     user: TUser,
   ): Promise<SigningServiceResponse> {
-    this.logger.debug(
-      `Requesting signature of court record for case ${existingCase.id}`,
-    )
-
     // Development without signing service access token
     if (!environment.production && !environment.signingOptions.accessToken) {
       return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
@@ -540,10 +522,6 @@ export class CaseService {
     user: TUser,
     documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
-    this.logger.debug(
-      `Confirming signature of court record for case ${existingCase.id}`,
-    )
-
     // This method should be called immediately after requestCourtRecordSignature
 
     // Production, or development with signing service access token
@@ -583,14 +561,7 @@ export class CaseService {
     await this.update(existingCase.id, {
       courtRecordSignatoryId: user.id,
       courtRecordSignatureDate: new Date(),
-    } as UpdateCaseDto).then(({ numberOfAffectedRows }) => {
-      if (numberOfAffectedRows !== 1) {
-        // Tolerate failure, but log error
-        this.logger.error(
-          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${existingCase.id} after court record signature confirmation`,
-        )
-      }
-    })
+    } as UpdateCaseDto)
 
     return { documentSigned: true }
   }
@@ -598,10 +569,6 @@ export class CaseService {
   async requestRulingSignature(
     existingCase: Case,
   ): Promise<SigningServiceResponse> {
-    this.logger.debug(
-      `Requesting signature of ruling for case ${existingCase.id}`,
-    )
-
     // Development without signing service access token
     if (!environment.production && !environment.signingOptions.accessToken) {
       return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
@@ -632,10 +599,6 @@ export class CaseService {
     existingCase: Case,
     documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
-    this.logger.debug(
-      `Confirming signature of ruling for case ${existingCase.id}`,
-    )
-
     // This method should be called immediately after requestRulingSignature
 
     // Production, or development with signing service access token
@@ -663,14 +626,7 @@ export class CaseService {
     // TODO: UpdateCaseDto does not contain rulingDate - create a new type for CaseService.update
     await this.update(existingCase.id, {
       rulingDate: new Date(),
-    } as UpdateCaseDto).then(({ numberOfAffectedRows }) => {
-      if (numberOfAffectedRows !== 1) {
-        // Tolerate failure, but log error
-        this.logger.error(
-          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${existingCase.id} after ruling signature confirmation`,
-        )
-      }
-    })
+    } as UpdateCaseDto)
 
     return {
       documentSigned: true,
@@ -678,8 +634,6 @@ export class CaseService {
   }
 
   async extend(existingCase: Case, user: TUser): Promise<Case> {
-    this.logger.debug(`Extending case ${existingCase.id}`)
-
     return this.caseModel.create({
       type: existingCase.type,
       policeCaseNumber: existingCase.policeCaseNumber,
@@ -710,35 +664,34 @@ export class CaseService {
     })
   }
 
-  async uploadRequestPdfToCourt(id: string): Promise<void> {
-    this.logger.debug(`Uploading request pdf to court for case ${id}`)
-
-    const existingCase = (await this.findById(id)) as Case
+  async uploadRequestPdfToCourt(theCase: Case): Promise<void> {
+    this.logger.debug(`Uploading request pdf to court for case ${theCase.id}`)
 
     const intl = await this.intlService.useIntl(
       ['judicial.system.backend'],
       'is',
     )
 
-    const pdf = await getRequestPdfAsBuffer(existingCase, intl.formatMessage)
+    const pdf = await getRequestPdfAsBuffer(theCase, intl.formatMessage)
 
     try {
       const streamId = await this.courtService.uploadStream(
-        existingCase.courtId,
+        theCase.courtId,
         'Krafa.pdf',
         'application/pdf',
         pdf,
       )
       await this.courtService.createRequest(
-        existingCase.courtId,
-        existingCase.courtCaseNumber,
+        theCase.courtId,
+        theCase.courtCaseNumber,
         'Krafa',
         'Krafa.pdf',
         streamId,
       )
     } catch (error) {
+      // Tolerate failure, but log error
       this.logger.error(
-        `Failed to upload request pdf to court for case ${id}`,
+        `Failed to upload request pdf to court for case ${theCase.id}`,
         error,
       )
     }
