@@ -1,11 +1,12 @@
-import { IdsAuthGuard, User } from '@island.is/auth-nest-tools'
-import {
+import { UserProfileScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
+import { 
   CurrentUser,
-  IdsUserGuard,
   Scopes,
   ScopesGuard,
+  IdsUserGuard,
+  IdsAuthGuard,
 } from '@island.is/auth-nest-tools'
-import { UserProfileScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
