@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { APP_FILTER } from '@nestjs/core'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
@@ -16,6 +17,7 @@ import {
   AwsS3Module,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
+import { AllExceptionsFilter } from './filters'
 
 @Module({
   imports: [
@@ -35,6 +37,12 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     EventModule,
     PoliceModule,
     AwsS3Module,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
   ],
 })
 export class AppModule {}
