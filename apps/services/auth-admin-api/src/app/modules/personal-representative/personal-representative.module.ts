@@ -8,7 +8,7 @@ import {
   PersonalRepresentativeRightTypeService,
   PersonalRepresentativeScopePermission,
   PersonalRepresentativeScopePermissionService,
-} from '@island.is/auth-api-lib/personal-representative-scope-permissions'
+} from '@island.is/auth-api-lib'
 
 @Module({
   imports: [

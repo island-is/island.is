@@ -5,7 +5,7 @@ import {
   PersonalRepresentativeScopePermission,
   PersonalRepresentativeScopePermissionDTO,
   PersonalRepresentativeScopePermissionService,
-} from '@island.is/auth-api-lib/personal-representative-scope-permissions'
+} from '@island.is/auth-api-lib'
 import {
   BadRequestException,
   Body,
