@@ -8,7 +8,7 @@ import { Logger } from '@island.is/logging'
 import CircuitBreaker from 'opossum'
 import { SetOptional } from 'type-fest'
 import { Response, FetchAPI as NodeFetchAPI } from '../src/lib/nodeFetch'
-import { TokenResponse } from '../src/lib/withAutoAuth'
+import { TokenResponse, TokenType } from '../src/lib/withAutoAuth'
 
 export interface EnhancedFetchTestEnv {
   enhancedFetch: EnhancedFetchAPI
@@ -33,7 +33,7 @@ export const fakeAuthResponse = (override?: Partial<TokenResponse>) => {
     scope: 'testScope',
     token_type: fakeAuthentication.split(' ')[0],
     access_token: fakeAuthentication.split(' ')[1],
-    issued_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+    issued_token_type: TokenType.accessToken,
     ...override,
   }
   return new Response(JSON.stringify(response))

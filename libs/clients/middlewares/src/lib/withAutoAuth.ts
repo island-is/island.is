@@ -1,6 +1,6 @@
-import { buildCacheControl } from '@island.is/clients/middlewares'
 import { caching } from 'cache-manager'
 import { Logger } from 'winston'
+import { buildCacheControl } from './withCache/buildCacheControl'
 import { CacheConfig } from './withCache/types'
 import { createEnhancedFetch } from './createEnhancedFetch'
 import {
@@ -88,6 +88,16 @@ export interface TokenResponse {
   issued_token_type?: string
 }
 
+export enum TokenType {
+  accessToken = 'urn:ietf:params:oauth:token-type:access_token',
+  actorAccessToken = 'islandis:oauth:token-type:actor-access-token',
+}
+
+export enum GrantType {
+  tokenExchane = 'urn:ietf:params:oauth:grant-type:token-exchange',
+  clientCredentials = 'client_credentials',
+}
+
 /**
  * In-memory cache key for client credential token.
  */
@@ -173,27 +183,19 @@ export const withAutoAuth = ({
     }
 
     const params = new URLSearchParams({
-      grant_type: 'client_credentials',
+      grant_type: GrantType.clientCredentials,
       client_id: options.clientId,
       client_secret: options.clientSecret,
       scope: options.scope.join(' '),
     })
 
     if (auth && isTokenExchange) {
-      params.set(
-        'grant_type',
-        'urn:ietf:params:oauth:grant-type:token-exchange',
-      )
+      params.set('grant_type', GrantType.tokenExchane)
       params.set('subject_token', auth.authorization.replace(/^bearer /i, ''))
-      params.set(
-        'subject_token_type',
-        'urn:ietf:params:oauth:token-type:access_token',
-      )
+      params.set('subject_token_type', TokenType.accessToken)
       params.set(
         'requested_token_type',
-        requestActorToken
-          ? 'islandis:oauth:token-type:actor-access-token'
-          : 'urn:ietf:params:oauth:token-type:access_token',
+        requestActorToken ? TokenType.actorAccessToken : TokenType.accessToken,
       )
     }
 
@@ -214,11 +216,13 @@ export const withAutoAuth = ({
       )
     }
 
-    if (
-      isTokenExchange &&
-      result.issued_token_type !=
-        'urn:ietf:params:oauth:token-type:access_token'
-    ) {
+    // These should ideally mirror requested_token_type, but when this is written, the IDS always issues
+    // a normal access token. Checking for both for future compatibility.
+    const isValidTokenExchange = [
+      TokenType.accessToken,
+      TokenType.actorAccessToken,
+    ].includes(result.issued_token_type as TokenType)
+    if (isTokenExchange && !isValidTokenExchange) {
       throw new Error(
         `Fetch (${name}): Token exchange failed, invalid issued token type (${result.issued_token_type})`,
       )
