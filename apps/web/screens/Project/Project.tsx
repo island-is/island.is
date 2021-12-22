@@ -29,6 +29,7 @@ import {
   GridContainer,
   GridRow,
   Navigation,
+  NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
@@ -91,6 +92,12 @@ interface PageProps {
   namespace: Query['getNamespace']
 }
 
+interface NavigationData {
+  title: string
+  activeItemTitle?: string
+  items: NavigationItem[]
+}
+
 const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
@@ -99,6 +106,23 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
   const subpage = projectPage.projectSubpages.find((x) => {
     return x.slug === router.query.subSlug
   })
+
+  const navigationList: NavigationItem[] = projectPage.sidebarLinks.map(
+    ({ primaryLink, childrenLinks }) => ({
+      title: primaryLink.text,
+      href: primaryLink.url,
+      active: router.asPath === primaryLink.url,
+      items: childrenLinks.map(({ text, url }) => ({
+        title: text,
+        href: url,
+      })),
+    }),
+  )
+
+  const navigationData: NavigationData = {
+    title: n('navigationTitle', 'Efnisyfirlit'),
+    items: navigationList,
+  }
 
   return (
     <>
@@ -117,12 +141,9 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           <>
             <Navigation
               baseId="pageNav"
-              items={projectPage.sidebarLinks?.map(({ text, url }) => ({
-                title: text,
-                href: url,
-                active: router.asPath === url,
-              }))}
-              title="Efnisyfirlit"
+              items={navigationData.items}
+              activeItemTitle={navigationData.activeItemTitle}
+              title={navigationData.title}
               renderLink={(link, item) => {
                 return item?.href ? (
                   <NextLink href={item?.href}>{link}</NextLink>
