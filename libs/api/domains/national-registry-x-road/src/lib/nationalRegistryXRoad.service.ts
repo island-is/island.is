@@ -54,9 +54,9 @@ export class NationalRegistryXRoadService {
     user: User,
     nationalId: string,
   ): Promise<NationalRegistryPerson | undefined> {
-    const person: NationalRegistryClientPerson | undefined = await this.nationalRegistryApiWithAuth(
-      user,
-    )
+    const person:
+      | NationalRegistryClientPerson
+      | undefined = await this.nationalRegistryApiWithAuth(user)
       .einstaklingarGetEinstaklingur({ id: nationalId })
       .catch(this.handle404)
 

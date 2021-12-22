@@ -1,6 +1,6 @@
 import * as faker from 'faker'
 
-import { NationalRegistryClientPerson } from "@island.is/shared/types";
+import { NationalRegistryClientPerson } from '@island.is/shared/types'
 
 const createRandomNationalRegistryUser = (): NationalRegistryClientPerson => {
   const [firstName, middleName, lastName] = [

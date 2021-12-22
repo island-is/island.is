@@ -10,25 +10,25 @@ export interface NationalRegistryClientAddress {
    * Street name
    * @type {string}
    */
-  heiti: string;
+  heiti: string
 
   /**
    * Postal code
    * @type {string}
    */
-  postnumer?: string | null;
+  postnumer?: string | null
 
   /**
    * Location
    * @type {string}
    */
-  stadur?: string | null;
+  stadur?: string | null
 
   /**
    * Municipality number - definition can be looked up using resources in "Lyklar"
    * @type {string}
    */
-  sveitarfelagsnumer?: string | null;
+  sveitarfelagsnumer?: string | null
 }
 
 export interface NationalRegistryClientPerson {
@@ -36,65 +36,65 @@ export interface NationalRegistryClientPerson {
    * NationalId
    * @type {string}
    */
-  kennitala: string;
+  kennitala: string
 
   /**
    * Legal name
    * @type {string}
    */
-  nafn: string;
+  nafn: string
 
   /**
    * First name
    * @type {string}
    */
-  eiginnafn?: string | null;
+  eiginnafn?: string | null
 
   /**
    * Middle name
    * @type {string}
    */
-  millinafn?: string | null;
+  millinafn?: string | null
 
   /**
    * Surname
    * @type {string}
    */
-  kenninafn?: string | null;
+  kenninafn?: string | null
 
   /**
    * Full name
    * @type {string}
    */
-  fulltNafn?: string | null;
+  fulltNafn?: string | null
 
   /**
    * Gender code - definition can be looked up using resources in "Lyklar"
    * @type {string}
    */
-  kynkodi: string;
+  kynkodi: string
 
   /**
    * Details can be found at: https://www.skra.is/thjonusta/einstaklingar/eg-i-thjodskra/bannmerking-aetlad-einstaklingum/
    * @type {boolean}
    */
-  bannmerking: boolean;
+  bannmerking: boolean
 
   /**
    * Date of birth
    * @type {Date}
    */
-  faedingardagur: Date;
+  faedingardagur: Date
 
   /**
    * Information about legal domicile
    * @type {NationalRegistryClientAddress}
    */
-  logheimili?: NationalRegistryClientAddress | null;
+  logheimili?: NationalRegistryClientAddress | null
 
   /**
    * Information about residence
    * @type {NationalRegistryClientAddress}
    */
-  adsetur?: NationalRegistryClientAddress | null;
+  adsetur?: NationalRegistryClientAddress | null
 }
