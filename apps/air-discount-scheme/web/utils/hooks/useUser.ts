@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { gql, useQuery } from '@apollo/client'
 
 import { AuthenticateUser as User } from '@island.is/air-discount-scheme-web/lib'
-import { CurrentUserQuery } from '@island.is/air-discount-scheme-web/graphql/sharedGql'
+import { CurrentUserQuery } from '@island.is/air-discount-scheme-web/graphql/gqlQueries'
 import { signin, useSession } from 'next-auth/client'
 import { identityServerId } from '@island.is/air-discount-scheme-web/lib'
 

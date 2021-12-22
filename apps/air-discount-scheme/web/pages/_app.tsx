@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import Head from 'next/head'
-import { ApolloProvider } from 'react-apollo'
+//import { ApolloProvider } from 'react-apollo'
+import { ApolloProvider } from '@apollo/client'
 
   
 import { getSession, Provider } from "next-auth/client"
@@ -72,12 +73,12 @@ const SupportApplication: any = ({ Component, pageProps }) => {
     )}" (${process.browser ? 'browser' : 'server'})`,
     level: Sentry.Severity.Debug,
   })
-
+  
   return (
     <ApolloProvider client={initApollo(pageProps.apolloState)}>
       <Provider session={pageProps.session} >
         <Layout>
-          <Component {...pageProps} />
+          <Component {...pageProps.pageProps} />
         </Layout>
       </Provider>
     </ApolloProvider>
