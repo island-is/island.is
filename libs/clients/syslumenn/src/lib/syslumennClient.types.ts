@@ -82,3 +82,11 @@ export interface Attachment {
   content: string
 }
 
+
+export enum PersonType {
+  Plaintiff,
+  CounterParty,
+  Child,
+  CriminalRecordApplicant,
+}
+

@@ -19,8 +19,8 @@ export const SyslumennClientConfig = defineConfig({
       fetch: {
         timeout: env.optionalJSON('SYSLUMENN_TIMEOUT') ?? 10000,
       },
-      username: env.required('SYSLUMENN_USERNAME', 'SYSLUMENN_USERNAME'),
-      password: env.required('SYSLUMENN_PASSWORD', 'SYSLUMENN_PASSWORD'),
+      username: env.required('SYSLUMENN_USERNAME'),
+      password: env.required('SYSLUMENN_PASSWORD'),
     }
   },
 })

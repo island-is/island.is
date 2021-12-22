@@ -8,7 +8,7 @@ import {
   Person,
   Attachment,
   PersonType,
-} from '@island.is/api/domains/syslumenn'
+} from '@island.is/clients/syslumenn'
 import { generateSyslumennNotificationEmail } from './emailGenerators/syslumennNotification'
 import { Application } from '@island.is/application/core'
 import { NationalRegistry, UserProfile } from './types'
