@@ -96,8 +96,13 @@ export const resetButtonPadding = style({
 })
 
 export const delegationName = style({
-  fontSize: '16px',
+  fontSize: '14px',
   lineHeight: '20px',
+  ...themeUtils.responsiveStyle({
+    md: {
+      fontSize: '16px',
+    },
+  }),
 })
 
 export const actorName = style({

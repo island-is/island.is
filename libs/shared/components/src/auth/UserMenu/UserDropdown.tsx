@@ -139,8 +139,9 @@ export const UserDropdown = ({
             </>
           )}
           {/* End of user settings */}
+
           {/* Logout */}
-          <Box paddingTop={3}>
+          <Box paddingTop={2}>
             <UserDropdownItem
               text={formatMessage(sharedMessages.logout)}
               icon={{ type: 'outline', icon: 'logOut' }}

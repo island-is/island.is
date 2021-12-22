@@ -6,7 +6,7 @@ import { m } from '@island.is/service-portal/core'
 
 export const UserProfileInfo = ({ onClick }: { onClick: () => void }) => {
   const { formatMessage } = useLocale()
-  const isDev = process.env.NODE_ENV !== 'development'
+  const isDev = process.env.NODE_ENV === 'development'
   const baseUrl = isDev
     ? 'http://localhost:4200/minarsidur/stillingar'
     : 'https://island.is/minarsidur/stillingar'
@@ -24,9 +24,17 @@ export const UserProfileInfo = ({ onClick }: { onClick: () => void }) => {
           onClick={() => onClick()}
         />
       </Box>
-      <Box paddingTop={1}>
+      <Box>
         <UserDropdownItem
           text={formatMessage(m.accessControl)}
+          link={`${baseUrl}/adgangsstyring`}
+          icon={{ type: 'outline', icon: 'people' }}
+          onClick={() => onClick()}
+        />
+      </Box>
+      <Box>
+        <UserDropdownItem
+          text={'Íslenska - skipta um tungumál'}
           link={`${baseUrl}/adgangsstyring`}
           icon={{ type: 'outline', icon: 'people' }}
           onClick={() => onClick()}
