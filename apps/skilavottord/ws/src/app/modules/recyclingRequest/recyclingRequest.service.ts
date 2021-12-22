@@ -206,10 +206,13 @@ export class RecyclingRequestService {
 
       // Check if user has this car
       // and the car may be deregistered
-      const carList = await this.samgongustofaService.getVehicleInformation(nationalId);
-      if (!carList.find(car => car.isRecyclable && car.permno === permno
-      )){
-        this.logger.error(`User is not the car's owner or the car could not be recycle.`)
+      const carList = await this.samgongustofaService.getVehicleInformation(
+        nationalId,
+      )
+      if (!carList.find((car) => car.isRecyclable && car.permno === permno)) {
+        this.logger.error(
+          `User is not the car's owner or the car could not be recycle.`,
+        )
       }
 
       // nameOfRequestor and partnerId are not required arguments
