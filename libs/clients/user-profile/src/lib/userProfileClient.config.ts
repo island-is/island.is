@@ -6,7 +6,7 @@ const schema = z.object({
 })
 
 export const UserProfileClientConfig = defineConfig({
-  name: 'UserProfileClient',
+  name: 'UserProfileApi',
   schema,
   load(env) {
     return {

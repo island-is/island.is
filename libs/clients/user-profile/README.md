@@ -2,40 +2,47 @@
 
 This library implements a client to use User Profile APIs
 
-### Import into other NestJS modules
+## app.module.ts
 
-Add the service to your module imports:
-
-```typescript
-import { Configuration, UserProfileApi } from '@island.is/clients/user-profile'
-
-providers: [
-  {
-    provide: UserProfileApi,
-    useFactory: () =>
-      new UserProfileApi(
-        new Configuration({
-          fetchApi: fetch,
-          basePath: config.userProfileServiceBasePath || "http://localhost:3366",
-        }),
-      ),
-  },
-],
+```js
+import { ConfigModule } from '@island.is/nest/config'
+@Module({
+  imports: [
+      UserProfileClientModule,
+      ConfigModule.forRoot({
+        isGlobal:true,
+        load:[UserProfileClientConfig]
+      })
+    ],
+})
 ```
 
-Then you'll have access to user-profile APIs:
+## some-name.module.ts
 
-```typescript
+```js
+import { UserProfileClientModule } from '@island.is/clients/user-profile'
+
+  imports: [
+    UserProfileClientModule
+  ],
+```
+
+## some-name.service.ts
+
+```js
 import { UserProfileApi } from '@island.is/clients/user-profile'
+
 
 @Injectable()
 export class SomeService {
-  constructor(private userProfileApi: UserProfileApi) {}
+  constructor(
+    @Inject(UserProfileApi)
+    private readonly userProfileApi: UserProfileApi,
+  ) {}
 
-  async getStuff(): Promise<any> {
-    return this.userProfileApi
-      .withMiddleware(new AuthMiddleware(currentAuth))
-      .userProfileControllerGetDeviceTokens({ nationalId: '0101302989' })
-  }
-}
+  async getStuff()
+      const clientAuthToken = await acquireAuthToken()
+      const currentAuth = convertTokenToAuth(clientAuthToken)
+      return this.UserProfileApi.withMiddleware(new AuthMiddleware(currentAuth))
+      .userTokenControllerGetDeviceTokens({nationalId:"0101302989"})
 ```

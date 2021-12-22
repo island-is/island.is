@@ -37,11 +37,7 @@ beforeAll(async () => {
       builder.overrideGuard(IdsUserGuard).useValue(
         new MockAuthGuard({
           nationalId: mockProfile.nationalId,
-          scope: [
-            UserProfileScope.admin,
-            UserProfileScope.read,
-            UserProfileScope.write,
-          ],
+          scope: [UserProfileScope.read, UserProfileScope.write],
         }),
       ),
   })
@@ -638,31 +634,12 @@ describe('User profile API', () => {
   })
 
   describe('/userProfile/{nationalId}/deviceToken', () => {
-    it('GET /userProfile/{nationalId}/deviceToken should return list of tokens', async () => {
+    it('GET /userProfile/{nationalId}/deviceToken should 401 as admin:scope is needed', async () => {
       // create one first
       await request(app.getHttpServer())
-        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
-        .send({
-          deviceToken: mockDeviceToken.deviceToken,
-        })
-        .expect(201)
-      // get it in a list
-      const response = await request(app.getHttpServer())
-        .get(`/userProfile/${mockProfile.nationalId}/deviceToken`)
-        .expect(200)
-      // Assert
-      expect(response.body.length).toBe(1)
-      expect(response.body[0].deviceToken).toBe(mockDeviceToken.deviceToken)
-    })
-
-    it('GET /userProfile/{nationalId}/deviceToken should work with different nationalId', async () => {
-      // create one first
-      await request(app.getHttpServer())
-        .get(`/userProfile/0101302989/deviceToken`) // GERVIMAÐUR KT
-        .send({
-          deviceToken: mockDeviceToken.deviceToken,
-        })
-        .expect(200)
+        .get(`/userProfile/${mockProfile.nationalId}/deviceToken`) // GERVIMAÐUR KT
+        .send()
+        .expect(401)
     })
 
     it('POST /userProfile/{nationalId}/deviceToken should return 201 created', async () => {
