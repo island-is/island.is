@@ -16,6 +16,17 @@ export const userNotificationServiceSetup = (): ServiceBuilder<'user-notificatio
     })
     .liveness('/liveness')
     .readiness('/liveness')
+    .ingress({
+      primary: {
+        host: {
+          dev: 'user-notification-xrd',
+          staging: 'user-notification-xrd',
+          prod: 'user-notification-xrd',
+        },
+        paths: ['/notifications'],
+        public: false,
+      },
+    })
 
 export const userNotificationWorkerSetup = (): ServiceBuilder<'user-notification-worker'> =>
   service('user-notification-worker')
