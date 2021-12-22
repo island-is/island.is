@@ -121,7 +121,7 @@
     "info": "Adding your car for recycling which will allow you to recycle it at any of our connected recycling companies. This is not binding and the car will only be recycled if you hand over the car to a recycling company.",
     "buttons": {
       "cancel": "Cancel",
-      "continue": "Confirm with icekey"
+      "continue": "Confirm"
     },
     "checkbox": {
       "label": "I agree to the",

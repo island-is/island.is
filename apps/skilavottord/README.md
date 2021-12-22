@@ -117,8 +117,4 @@ This page also lists all available recycling companies.
 ## Code owners and maintainers
 
 - [Deloitte](https://github.com/orgs/island-is/teams/deloitte/members)
-
-## The variable process.env.SKILAVOTTORD_USER_LIST
-
-The environment variable process.env.SKILAVOTTORD_USER_LIST contains list of users with roles and partnerid (subrole). The format of the variable is like: New users can be added in this variable.
-{"nationalId":"1111111111","name":"Gervimaður","role":"recyclingCompany","partnerId":"999"}
+- [Vice Versa](https://github.com/orgs/island-is/teams/vice-versa/members)
