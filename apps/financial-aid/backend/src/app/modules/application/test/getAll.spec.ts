@@ -3,12 +3,10 @@ import {
   ApplicationStateUrl,
   Employment,
   FamilyStatus,
-  firstDateOfMonth,
   getStateFromUrl,
   HomeCircumstances,
   Staff,
 } from '@island.is/financial-aid/shared/lib'
-import { NotFoundException } from '@nestjs/common'
 import { Op } from 'sequelize'
 import { uuid } from 'uuidv4'
 import { StaffModel } from '../../staff/models/staff.model'
