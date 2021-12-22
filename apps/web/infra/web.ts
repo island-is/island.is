@@ -13,7 +13,6 @@ export const serviceSetup = (services: {
         staging: 'beta.staging01.devland.is',
         prod: 'island.is',
       },
-      DD_RUM_ENABLED: 'true',
       DISABLE_API_CATALOGUE: { dev: 'false', staging: 'false', prod: 'false' },
       DISABLE_SYSLUMENN_PAGE: { dev: 'false', staging: 'false', prod: 'false' },
       DISABLE_ORGANIZATION_CHATBOT: {
@@ -25,6 +24,8 @@ export const serviceSetup = (services: {
     })
     .secrets({
       SENTRY_DSN: '/k8s/web/SENTRY_DSN',
+      DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
+      DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
     })
     .ingress({
       primary: {

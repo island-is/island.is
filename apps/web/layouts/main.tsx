@@ -118,9 +118,15 @@ if (environment.sentryDsn) {
   })
 }
 
-if (publicRuntimeConfig.ddRumEnabled && typeof window !== 'undefined') {
+if (
+  publicRuntimeConfig.applicationId &&
+  publicRuntimeConfig.clientToken &&
+  typeof window !== 'undefined'
+) {
   userMonitoring.initDdRum({
     service: 'islandis',
+    applicationId: publicRuntimeConfig.applicationId,
+    clientToken: publicRuntimeConfig.clientToken,
     env: publicRuntimeConfig.environment || 'local',
     version: publicRuntimeConfig.appVersion || 'local',
   })
