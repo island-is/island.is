@@ -27,7 +27,10 @@ import {
 } from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
-import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
+import {
+  filterInternalPartners,
+  getRoleTranslation,
+} from '@island.is/skilavottord-web/utils'
 import {
   AccessControl as AccessControlType,
   CreateAccessControlInput,
@@ -35,6 +38,7 @@ import {
   Query,
   Role,
   UpdateAccessControlInput,
+  AccessControlRole,
 } from '@island.is/skilavottord-web/graphql/schema'
 
 import {
@@ -166,6 +170,7 @@ const AccessControl: FC = () => {
 
   const {
     t: { accessControl: t, recyclingFundSidenav: sidenavText, routes },
+    activeLocale,
   } = useI18n()
 
   if (!user) {
@@ -182,12 +187,12 @@ const AccessControl: FC = () => {
     value: partner.companyId,
   }))
 
-  const roles = Object.keys(Role)
+  const roles = Object.keys(AccessControlRole)
     .filter((role) =>
       !isDeveloper(user?.role) ? role !== Role.developer : role,
     )
     .map((role) => ({
-      label: startCase(role),
+      label: getRoleTranslation(role, activeLocale),
       value: role,
     }))
 
