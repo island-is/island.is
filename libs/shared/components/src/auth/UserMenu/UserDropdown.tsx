@@ -27,6 +27,7 @@ interface UserDropdownProps {
   setDropdownState: Dispatch<SetStateAction<'closed' | 'open'>>
   onLogout?: () => void
   onSwitchUser: (nationalId: string) => void
+  fullscreen: boolean
 }
 
 export const UserDropdown = ({
@@ -35,6 +36,7 @@ export const UserDropdown = ({
   setDropdownState,
   onSwitchUser,
   onLogout,
+  fullscreen,
 }: UserDropdownProps) => {
   const { formatMessage } = useLocale()
   const isVisible = dropdownState === 'open'
@@ -75,24 +77,27 @@ export const UserDropdown = ({
         }
       }}
     >
-      <GridContainer>
-        <Box display="flex" justifyContent="flexEnd">
+      <Box
+        position="relative"
+        background="white"
+        padding={3}
+        borderRadius="large"
+        display="flex"
+        flexDirection="column"
+        className={fullscreen ? styles.fullScreen : styles.dropdown}
+      >
+        <Box display="flex" flexDirection="column" className={styles.wrapper}>
+          {/* Current User */}
           <Box
-            position="relative"
-            background="white"
-            padding={3}
-            borderRadius="large"
             display="flex"
-            flexDirection="column"
-            className={styles.fullScreen}
+            flexWrap="nowrap"
+            alignItems="center"
+            paddingBottom={3}
           >
-            <Stack space={3}>
-              {/* Current User */}
-              <Box display="flex" flexWrap="nowrap" alignItems="center">
-                {/* Check if actor is company - display company icon
-                 * kennitala function is buggy - temp removal
-                 */}
-                {/* {isDelegationCompany ? (
+            {/* Check if actor is company - display company icon
+             * kennitala function is buggy - temp removal
+             */}
+            {/* {isDelegationCompany ? (
                   <Box
                     borderRadius="circle"
                     background="blue100"
@@ -100,59 +105,58 @@ export const UserDropdown = ({
                     alignItems="center"
                     justifyContent="center"
                     className={styles.companyIconSize}
-                  >
+                    >
                     <Icon icon="business" type="filled" color="blue400" />
-                  </Box>
-                ) : (
-                  <UserAvatar username={isDelegation ? actorName : userName} />
+                    </Box>
+                    ) : (
+                      <UserAvatar username={isDelegation ? actorName : userName} />
                 )} */}
-                <UserAvatar username={isDelegation ? actorName : userName} />
+            <UserAvatar username={isDelegation ? actorName : userName} />
 
-                <Box marginLeft={1} marginRight={4}>
-                  <Text variant="h4" as="h4">
-                    {userName}
-                  </Text>
-                  {isDelegation && <Text variant="small">{actorName}</Text>}
-                </Box>
-              </Box>
-              <Divider />
-              {/* End of current User */}
-              {/* User delegations */}
-              {hasDelegationsData && (
-                <UserDelegations
-                  user={user}
-                  onSwitchUser={onSwitchUser}
-                  data={{ data, error, loading } as QueryResult}
-                />
-              )}
-              {/* End of user delegations */}
-              {/* User settings */}
-              {!isDelegation && showPersonalInfo && (
-                <>
-                  <UserProfileInfo onClick={() => onClose()} />
-                  <Divider />
-                </>
-              )}
-              {/* End of user settings */}
-              {/* Logout */}
-              <UserDropdownItem
-                text={formatMessage(sharedMessages.logout)}
-                icon={{ type: 'outline', icon: 'logOut' }}
-                onClick={onLogout}
-              />
-              {/* End of Logout */}
-            </Stack>
-
-            <button
-              className={styles.closeButton}
-              onClick={() => setDropdownState('closed')}
-              aria-label={formatMessage(sharedMessages.close)}
-            >
-              <Icon icon="close" color="blue400" />
-            </button>
+            <Box marginLeft={1} marginRight={4}>
+              <Text variant="h4" as="h4">
+                {userName}
+              </Text>
+              {isDelegation && <Text variant="small">{actorName}</Text>}
+            </Box>
           </Box>
+          <Divider />
+          {/* End of current User */}
+          {/* User delegations */}
+          {hasDelegationsData && (
+            <UserDelegations
+              user={user}
+              onSwitchUser={onSwitchUser}
+              data={{ data, error, loading } as QueryResult}
+            />
+          )}
+          {/* End of user delegations */}
+          {/* User settings */}
+          {!isDelegation && showPersonalInfo && (
+            <>
+              <UserProfileInfo onClick={() => onClose()} />
+              <Divider />
+            </>
+          )}
+          {/* End of user settings */}
+          {/* Logout */}
+          <Box paddingTop={3}>
+            <UserDropdownItem
+              text={formatMessage(sharedMessages.logout)}
+              icon={{ type: 'outline', icon: 'logOut' }}
+              onClick={onLogout}
+            />
+          </Box>
+          {/* End of Logout */}
         </Box>
-      </GridContainer>
+        <button
+          className={styles.closeButton}
+          onClick={() => setDropdownState('closed')}
+          aria-label={formatMessage(sharedMessages.close)}
+        >
+          <Icon icon="close" color="blue400" />
+        </button>
+      </Box>
     </ModalBase>
   )
 }

@@ -1,7 +1,8 @@
 import { style } from '@vanilla-extract/css'
 import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
+import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
-export const dropdown = style({
+const dropdownBase: StyleWithSelectors = {
   position: 'fixed',
   top: spacing[3],
   right: spacing[3],
@@ -9,7 +10,10 @@ export const dropdown = style({
 
   maxHeight: `calc(100vh - ${spacing[6]}px)`,
   filter: 'drop-shadow(0px 4px 70px rgba(0, 97, 255, 0.1))',
+}
 
+export const dropdown = style({
+  ...dropdownBase,
   ...themeUtils.responsiveStyle({
     md: {
       left: 'auto',
@@ -20,22 +24,19 @@ export const dropdown = style({
 })
 
 export const fullScreen = style({
-  position: 'fixed',
-  top: spacing[4],
-  right: spacing[4],
-  maxHeight: `calc(100vh - ${spacing[6]}px)`,
-  filter: 'drop-shadow(0px 4px 70px rgba(0, 97, 255, 0.1))',
-
+  ...dropdownBase,
   ...themeUtils.responsiveStyle({
     md: {
-      top: spacing[4],
-      right: spacing[4],
+      left: 'auto',
       width: 358,
     },
-    xl: {
-      right: spacing[6],
-    },
   }),
+})
+
+export const wrapper = style({
+  maxHeight: `calc(100vh - ${spacing[12]}px)`,
+  overflowY: 'auto',
+  overflowX: 'hidden',
 })
 
 export const closeButton = style({
@@ -125,8 +126,9 @@ export const companyIconSize = style({
   height: 40,
 })
 export const userDelegationWrapper = style({
-  maxHeight: 240,
   overflowY: 'auto',
+  overflowX: 'hidden',
+  maxHeight: 210,
 })
 export const userDelegationsText = style({
   fontSize: 16,

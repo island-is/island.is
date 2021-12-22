@@ -54,7 +54,7 @@ export const Header: FC<{}> = () => {
               </Link>
             </Hidden>
             <Box display="flex" alignItems="center" flexWrap="nowrap">
-              <UserMenu showLanguageButton />
+              <UserMenu showLanguageButton fullscreen />
               <Hidden above="md">
                 <Box marginLeft={2}>
                   <Button

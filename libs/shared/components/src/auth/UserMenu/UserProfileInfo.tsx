@@ -11,7 +11,7 @@ export const UserProfileInfo = ({ onClick }: { onClick: () => void }) => {
     ? 'http://localhost:4200/minarsidur/stillingar'
     : 'https://island.is/minarsidur/stillingar'
   return (
-    <Box>
+    <Box paddingY={3}>
       <Box marginBottom={1}>
         <Text variant="small">{formatMessage(m.settings)}</Text>
       </Box>

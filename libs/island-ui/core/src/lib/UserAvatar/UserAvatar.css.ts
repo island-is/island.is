@@ -30,6 +30,10 @@ export const avatarColor = styleVariants({
     backgroundColor: theme.color.blue200,
     color: theme.color.blue400,
   },
+  darkPurple: {
+    backgroundColor: theme.color.purple200,
+    color: theme.color.purple400,
+  },
   purple: {
     backgroundColor: theme.color.purple100,
     color: theme.color.purple400,

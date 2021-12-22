@@ -66,8 +66,8 @@ export const UserDelegations = ({
     onSwitchUser(delegation.nationalId)
   }
   return (
-    <Box>
-      <Text variant="small" marginBottom={1}>
+    <>
+      <Text variant="small" marginBottom={1} paddingTop={3}>
         {formatMessage(userMessages.delegationList)}
       </Text>
       <Box className={styles.userDelegationWrapper}>
@@ -105,6 +105,6 @@ export const UserDelegations = ({
       <Box paddingTop={3}>
         <Divider />
       </Box>
-    </Box>
+    </>
   )
 }

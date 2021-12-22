@@ -7,8 +7,10 @@ import { UserLanguageSwitcher } from './UserLanguageSwitcher'
 
 export const UserMenu = ({
   showLanguageButton = false,
+  fullscreen = false,
 }: {
   showLanguageButton?: boolean
+  fullscreen?: boolean
 }) => {
   const [dropdownState, setDropdownState] = useState<'closed' | 'open'>(
     'closed',
@@ -39,6 +41,7 @@ export const UserMenu = ({
           setDropdownState('closed')
           switchUser(nationalId)
         }}
+        fullscreen={fullscreen}
       />
     </Box>
   )
