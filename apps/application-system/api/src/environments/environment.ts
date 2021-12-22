@@ -101,6 +101,13 @@ const devConfig = {
       username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME ?? '',
       password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD ?? '',
     },
+    dataProtectionComplaint: {
+      password: process.env.DATA_PROTECTION_COMPLAINT_API_PASSWORD,
+      username: process.env.DATA_PROTECTION_COMPLAINT_API_USERNAME,
+      XRoadProviderId: process.env.DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID,
+      xRoadClientId: process.env.XROAD_CLIENT_ID,
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
+    },
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
@@ -207,6 +214,13 @@ const prodConfig = {
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME,
       password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD,
+    },
+    dataProtectionComplaint: {
+      password: process.env.DATA_PROTECTION_COMPLAINT_API_PASSWORD,
+      username: process.env.DATA_PROTECTION_COMPLAINT_API_USERNAME,
+      XRoadProviderId: process.env.DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID,
+      xRoadClientId: process.env.XROAD_CLIENT_ID,
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     },
   },
   application: {
