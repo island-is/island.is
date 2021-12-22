@@ -231,14 +231,14 @@ export class CaseController {
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   async internalCreate(
     @Body() caseToCreate: InternalCreateCaseDto,
-  ): Promise<Case | null> {
+  ): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    const theCase = await this.caseService.internalCreate(caseToCreate)
+    const createdCase = await this.caseService.internalCreate(caseToCreate)
 
-    this.eventService.postEvent(CaseEvent.CREATE_XRD, theCase as Case)
+    this.eventService.postEvent(CaseEvent.CREATE_XRD, createdCase as Case)
 
-    return theCase
+    return createdCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -248,14 +248,14 @@ export class CaseController {
   async create(
     @CurrentHttpUser() user: User,
     @Body() caseToCreate: CreateCaseDto,
-  ): Promise<Case | null> {
+  ): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    const theCase = await this.caseService.create(caseToCreate, user.id)
+    const createdCase = await this.caseService.create(caseToCreate, user.id)
 
-    this.eventService.postEvent(CaseEvent.CREATE, theCase as Case)
+    this.eventService.postEvent(CaseEvent.CREATE, createdCase as Case)
 
-    return theCase
+    return createdCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
@@ -303,9 +303,7 @@ export class CaseController {
       )
     }
 
-    await this.caseService.update(caseId, caseToUpdate)
-
-    const updatedCase = await this.caseService.findById(caseId)
+    const updatedCase = await this.caseService.update(caseId, caseToUpdate)
 
     if (
       theCase.courtId &&
@@ -350,16 +348,17 @@ export class CaseController {
       update.parentCaseId = null
     }
 
-    await this.caseService.update(caseId, update as UpdateCaseDto)
-
-    const resCase = await this.caseService.findById(caseId)
+    const updatedCase = await this.caseService.update(
+      caseId,
+      update as UpdateCaseDto,
+    )
 
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,
-      resCase as Case,
+      updatedCase as Case,
     )
 
-    return resCase
+    return updatedCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -675,10 +674,8 @@ export class CaseController {
 
     const extendedCase = await this.caseService.extend(theCase, user)
 
-    const resCase = await this.caseService.findById(extendedCase.id)
+    this.eventService.postEvent(CaseEvent.EXTEND, extendedCase as Case)
 
-    this.eventService.postEvent(CaseEvent.EXTEND, resCase as Case)
-
-    return resCase
+    return extendedCase
   }
 }

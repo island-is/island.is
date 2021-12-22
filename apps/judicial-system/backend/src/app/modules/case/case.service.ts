@@ -421,7 +421,7 @@ export class CaseService {
     return this.findById(theCase.id)
   }
 
-  async update(id: string, update: UpdateCaseDto): Promise<void> {
+  async update(id: string, update: UpdateCaseDto): Promise<Case> {
     const [numberOfAffectedRows] = await this.caseModel.update(update, {
       where: { id },
     })
@@ -434,6 +434,8 @@ export class CaseService {
     } else if (numberOfAffectedRows < 1) {
       throw new InternalServerErrorException(`Could not update case ${id}`)
     }
+
+    return this.findById(id)
   }
 
   async getRequestPdf(existingCase: Case): Promise<Buffer> {
@@ -642,7 +644,7 @@ export class CaseService {
   }
 
   async extend(existingCase: Case, user: TUser): Promise<Case> {
-    return this.caseModel.create({
+    const theCase = await this.caseModel.create({
       type: existingCase.type,
       policeCaseNumber: existingCase.policeCaseNumber,
       description: existingCase.description,
@@ -670,6 +672,8 @@ export class CaseService {
       initialRulingDate:
         existingCase.initialRulingDate ?? existingCase.rulingDate,
     })
+
+    return this.findById(theCase.id)
   }
 
   async uploadRequestPdfToCourt(theCase: Case): Promise<void> {
