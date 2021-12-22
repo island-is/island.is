@@ -315,9 +315,9 @@ export const getApplicantEmailDataFromEventType = (
           header: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð hjá ${municipality.name}`,
           content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${
             getPeriod.month
-          } mánuð. Svo hægt sé að klára umsóknina þurfum við að fá þig til að hlaða upp tekju- og skattagögnum til að reikna út fjárhagsaðstoð til útgreiðslu í byrjun ${nextMonth(
-            createdDate.getMonth(),
-          )}.`,
+          } mánuð. Svo hægt sé að klára umsóknina þurfum við að fá þig til að hlaða upp tekju- og skattagögnum til að reikna út fjárhagsaðstoð til útgreiðslu í byrjun ${
+            months[nextMonth(createdDate.getMonth())]
+          }.`,
           applicationChange: 'Umsókn bíður eftir gögnum frá maka',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
