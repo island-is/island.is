@@ -8,6 +8,7 @@ import {
   EndorsementMetadataDtoFieldEnum,
   EndorsementListTagsEnum,
 } from './gen/fetch/endorsements'
+import { HeaderMiddleware } from '@island.is/auth-nest-tools'
 
 const CREATE_ENDORSEMENT_LIST_QUERY = `
   mutation EndorsementSystemCreateEndorsementList($input: CreateEndorsementListDto!) {
@@ -16,31 +17,6 @@ const CREATE_ENDORSEMENT_LIST_QUERY = `
     }
   }
 `
-
-/**
- * We proxy the auth header to the subsystem where it is resolved.
- */
-interface FetchParams {
-  url: string
-  init: RequestInit
-}
-
-interface RequestContext {
-  init: RequestInit
-}
-
-interface Middleware {
-  pre?(context: RequestContext): Promise<FetchParams | void>
-}
-class ForwardAuthHeaderMiddleware implements Middleware {
-  constructor(private bearerToken: string) {}
-
-  async pre(context: RequestContext) {
-    context.init.headers = Object.assign({}, context.init.headers, {
-      authorization: this.bearerToken,
-    })
-  }
-}
 
 interface EndorsementListData {
   endorsementSystemCreateEndorsementList: {
@@ -58,7 +34,7 @@ export class GeneralPetitionService {
 
   endorsementListApiWithAuth(token: string) {
     return this.endorsementListApi.withMiddleware(
-      new ForwardAuthHeaderMiddleware(token),
+      new HeaderMiddleware(token),
     )
   }
 

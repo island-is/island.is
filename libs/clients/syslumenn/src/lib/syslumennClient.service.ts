@@ -21,9 +21,8 @@ import { Injectable, Inject } from '@nestjs/common'
 import { SyslumennApi, SvarSkeyti, Configuration } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import { ConfigType } from '@island.is/nest/config'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { HeaderMiddleware } from '@island.is/auth-nest-tools'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { AuthenticationError } from 'apollo-server-express'
 
 @Injectable()
 export class SyslumennService {
@@ -46,24 +45,23 @@ export class SyslumennService {
         },
       }),
     )
+
     const config = {
-      notandi: this.clientConfig.username ?? '',
-      lykilord: this.clientConfig.password ?? '',
+      notandi: this.clientConfig.username,
+      lykilord: this.clientConfig.password,
     }
+
     const { audkenni, accessToken } = await api.innskraningPost({
       notandi: config,
     })
     if (audkenni && accessToken) {
-      const auth: Auth = {
-        scope: [],
-        authorization: `Bearer ${accessToken}`,
-        client: 'client-syslumenn',
+      return {
+        id: audkenni,
+        api: api.withMiddleware(new HeaderMiddleware(`Bearer ${accessToken}`)),
       }
-
-      return { id: audkenni, api: api.withMiddleware(new AuthMiddleware(auth)) }
     } else {
-      throw new AuthenticationError(
-        'Syslumenn client configureation and login went wrong',
+      throw new Error(
+        'Syslumenn client configuration and login went wrong',
       )
     }
   }
@@ -150,7 +148,7 @@ export class SyslumennService {
   async getDistrictCommissionersAgencies(): Promise<
     DistrictCommissionersAgenciesRepsonse[]
   > {
-    const { id, api } = await this.createApi()
+    const { api } = await this.createApi()
     const response = await api.embaettiOgStarfsstodvarGetEmbaetti()
     return response.map(mapDistrictCommissionersAgenciesRepsonse)
   }
