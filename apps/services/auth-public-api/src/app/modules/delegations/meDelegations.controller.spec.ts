@@ -17,6 +17,7 @@ import {
 } from '@island.is/testing/fixtures'
 import { AuthScope } from '@island.is/auth/scopes'
 import {
+  Scopes,
   setupWithAuth,
   setupWithoutAuth,
   setupWithoutPermission,
@@ -29,11 +30,13 @@ import {
 } from '../../../../test/utils'
 import { TestEndpointOptions } from '../../../../test/types'
 
-// The currentUser has access to 'scope0' but not to 'scope1'
-const scopes = ['@island.is/scope0', '@island.is/scope1']
 const user = createCurrentUser({
   nationalId: '1122334455',
-  scope: [AuthScope.readDelegations, AuthScope.writeDelegations, scopes[0]],
+  scope: [
+    AuthScope.readDelegations,
+    AuthScope.writeDelegations,
+    Scopes[0].name,
+  ],
 })
 const userName = 'Tester Tests'
 const nationalRegistryUser = createNationalRegistryUser({
@@ -45,14 +48,14 @@ const mockDelegations = {
   validOutgoing: createDelegation({
     fromNationalId: user.nationalId,
     toNationalId: '1234567890',
-    scopes: [scopes[0]],
+    scopes: [Scopes[0].name],
     today,
   }),
   // Valid but becomes active in the future outgoing delegation
   futureValidOutgoing: createDelegation({
     fromNationalId: user.nationalId,
     toNationalId: '2234567890',
-    scopes: [scopes[0]],
+    scopes: [Scopes[0].name],
     today,
     expired: false,
     future: true,
@@ -61,31 +64,45 @@ const mockDelegations = {
   expiredOutgoing: createDelegation({
     fromNationalId: user.nationalId,
     toNationalId: '3234567890',
-    scopes: [scopes[0]],
+    scopes: [Scopes[0].name],
     today,
     expired: true,
+  }),
+  // With scope that changes to be not allowed for delegation
+  notAllowedOutgoing: createDelegation({
+    fromNationalId: user.nationalId,
+    toNationalId: '4234567890',
+    scopes: [Scopes[2].name],
+    today,
+  }),
+  // With multiple scopes where one changes to be not allowed for delegation
+  withOneNotAllowedOutgoing: createDelegation({
+    fromNationalId: user.nationalId,
+    toNationalId: '5234567890',
+    scopes: [Scopes[0].name, Scopes[2].name],
+    today,
   }),
   // Valid incoming delegation
   validIncoming: createDelegation({
     fromNationalId: '1234567890',
     toNationalId: user.nationalId,
-    scopes: [scopes[0]],
+    scopes: [Scopes[0].name],
     today,
   }),
   // Valid but becomes active in the future incoming delegation
   futureValidIncoming: createDelegation({
     fromNationalId: '2234567890',
     toNationalId: user.nationalId,
-    scopes: [scopes[0]],
+    scopes: [Scopes[0].name],
     today,
     expired: false,
     future: true,
   }),
   // Expired incoming delegation
-  expireIncoming: createDelegation({
+  expiredIncoming: createDelegation({
     fromNationalId: '3234567890',
     toNationalId: user.nationalId,
-    scopes: [scopes[0]],
+    scopes: [Scopes[0].name],
     today,
     expired: true,
   }),
@@ -93,7 +110,7 @@ const mockDelegations = {
   otherUsers: createDelegation({
     fromNationalId: '1234567890',
     toNationalId: '0987654321',
-    scopes: [scopes[1]],
+    scopes: [Scopes[1].name],
     today,
   }),
 }
@@ -109,6 +126,7 @@ describe('MeDelegationsController', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
     let delegationModel: typeof Delegation
+    let apiScopeModel: typeof ApiScope
 
     beforeAll(async () => {
       // TestApp setup with auth and database
@@ -116,12 +134,12 @@ describe('MeDelegationsController', () => {
         user,
         userName,
         nationalRegistryUser,
-        scopes,
       })
       server = request(app.getHttpServer())
 
-      // Get reference on delegation and delegationScope models to seed DB
+      // Get reference on delegation and apiScope models to seed DB
       delegationModel = app.get<typeof Delegation>('DelegationRepository')
+      apiScopeModel = app.get<typeof ApiScope>('ApiScopeRepository')
     })
 
     afterAll(async () => {
@@ -155,13 +173,23 @@ describe('MeDelegationsController', () => {
                 mockDelegations.validOutgoing.id,
                 mockDelegations.futureValidOutgoing.id,
                 mockDelegations.expiredOutgoing.id,
+                mockDelegations.notAllowedOutgoing.id,
+                mockDelegations.withOneNotAllowedOutgoing.id,
               ],
             },
             include: [
               {
                 model: DelegationScope,
                 as: 'delegationScopes',
-                include: [{ model: ApiScope, as: 'apiScope' }],
+                include: [
+                  {
+                    model: ApiScope,
+                    as: 'apiScope',
+                    where: {
+                      allowExplicitDelegationGrant: true,
+                    },
+                  },
+                ],
               },
             ],
           })
@@ -176,7 +204,7 @@ describe('MeDelegationsController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
-        expect(res.body).toHaveLength(3)
+        expect(res.body).toHaveLength(5)
         expectMatchingObject(res.body, expectedModels)
       })
 
@@ -190,29 +218,45 @@ describe('MeDelegationsController', () => {
             },
           ],
         })
-        const expectedModel = [
-          (
-            await delegationModel.findByPk(mockDelegations.validOutgoing.id, {
-              include: [
-                {
-                  model: DelegationScope,
-                  as: 'delegationScopes',
-                  include: [{ model: ApiScope, as: 'apiScope' }],
-                },
+        const expectedModels = (
+          await delegationModel.findAll({
+            where: {
+              id: [
+                mockDelegations.validOutgoing.id,
+                mockDelegations.withOneNotAllowedOutgoing.id,
               ],
-            })
-          )?.toDTO(),
-        ]
+            },
+            include: [
+              {
+                model: DelegationScope,
+                as: 'delegationScopes',
+                include: [
+                  {
+                    model: ApiScope,
+                    as: 'apiScope',
+                    where: {
+                      allowExplicitDelegationGrant: true,
+                    },
+                  },
+                ],
+              },
+            ],
+          })
+        )?.map((delegation) => delegation.toDTO())
 
         // Act
         const res = await server.get(
           `${path}?direction=outgoing&valid=${DelegationValidity.NOW}`,
         )
 
+        // Sort before asserting
+        sortDelegations(res.body)
+        sortDelegations(expectedModels)
+
         // Assert
         expect(res.status).toEqual(200)
-        expect(res.body).toHaveLength(1)
-        expectMatchingObject(res.body, expectedModel)
+        expect(res.body).toHaveLength(2)
+        expectMatchingObject(res.body, expectedModels)
       })
 
       it('should return all valid delegations with direction=outgoing&valid=includeFuture', async () => {
@@ -231,13 +275,22 @@ describe('MeDelegationsController', () => {
               id: [
                 mockDelegations.validOutgoing.id,
                 mockDelegations.futureValidOutgoing.id,
+                mockDelegations.withOneNotAllowedOutgoing.id,
               ],
             },
             include: [
               {
                 model: DelegationScope,
                 as: 'delegationScopes',
-                include: [{ model: ApiScope, as: 'apiScope' }],
+                include: [
+                  {
+                    model: ApiScope,
+                    as: 'apiScope',
+                    where: {
+                      allowExplicitDelegationGrant: true,
+                    },
+                  },
+                ],
               },
             ],
           })
@@ -254,7 +307,7 @@ describe('MeDelegationsController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
-        expect(res.body).toHaveLength(2)
+        expect(res.body).toHaveLength(3)
         expectMatchingObject(res.body, expectedModels)
       })
 
@@ -416,24 +469,80 @@ describe('MeDelegationsController', () => {
           ],
         })
         const expectedModel = (
-          await delegationModel.findByPk(mockDelegations.validOutgoing.id, {
-            include: [
-              {
-                model: DelegationScope,
-                as: 'delegationScopes',
-                include: [{ model: ApiScope, as: 'apiScope' }],
-              },
-            ],
-          })
+          await delegationModel.findByPk(
+            mockDelegations.withOneNotAllowedOutgoing.id,
+            {
+              include: [
+                {
+                  model: DelegationScope,
+                  as: 'delegationScopes',
+                  include: [
+                    {
+                      model: ApiScope,
+                      as: 'apiScope',
+                      where: {
+                        allowExplicitDelegationGrant: true,
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          )
         )?.toDTO()
 
         // Act
         const res = await server.get(
-          `${path}/${mockDelegations.validOutgoing.id}`,
+          `${path}/${mockDelegations.withOneNotAllowedOutgoing.id}`,
         )
 
         // Assert
         expect(res.status).toEqual(200)
+        expect((res.body as DelegationDTO).scopes).toHaveLength(1)
+        expectMatchingObject(res.body, expectedModel)
+      })
+
+      it('should return a delegation with no scopes if no scope is allowed for delegation', async () => {
+        // Arrange
+        await delegationModel.bulkCreate(Object.values(mockDelegations), {
+          include: [
+            {
+              model: DelegationScope,
+              as: 'delegationScopes',
+            },
+          ],
+        })
+        const expectedModel = (
+          await delegationModel.findByPk(
+            mockDelegations.notAllowedOutgoing.id,
+            {
+              include: [
+                {
+                  model: DelegationScope,
+                  as: 'delegationScopes',
+                  include: [
+                    {
+                      model: ApiScope,
+                      as: 'apiScope',
+                      where: {
+                        allowExplicitDelegationGrant: true,
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          )
+        )?.toDTO()
+
+        // Act
+        const res = await server.get(
+          `${path}/${mockDelegations.notAllowedOutgoing.id}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect((res.body as DelegationDTO).scopes).toHaveLength(0)
         expectMatchingObject(res.body, expectedModel)
       })
 
@@ -494,17 +603,21 @@ describe('MeDelegationsController', () => {
         model
         ${{
   toNationalId: nationalRegistryUser.kennitala,
+}}
+        ${{
+  toNationalId: nationalRegistryUser.kennitala,
   scopes: [],
 }}
         ${{
   toNationalId: nationalRegistryUser.kennitala,
   scopes: [{
-      name: scopes[0],
+      name: Scopes[0].name,
       type: ScopeType.ApiScope,
       validTo: addDays(today, 1),
     }],
 }}
       `(
+        // Description logs out $model.scopes.length when scopes is undefined in the first test case
         'should return 201 Created for valid delegation with $model.scopes.length scopes',
         async ({ model }: { model: CreateDelegationDTO }) => {
           // Act
@@ -527,32 +640,13 @@ describe('MeDelegationsController', () => {
         },
       )
 
-      it('should return 201 Created for valid delegation with no scopes', async () => {
-        // Act
-        const res = await server
-          .post(path)
-          .send({ toNationalId: nationalRegistryUser.kennitala })
-
-        // Assert
-        const { rows, count } = await delegationModel.findAndCountAll({
-          include: [DelegationScope],
-        })
-        expect(res.status).toEqual(201)
-        expect(count).toEqual(1)
-        expectMatchingObject(res.body, {
-          ...rows[0].toDTO(),
-          toNationalId: nationalRegistryUser.kennitala,
-          scopes: [],
-        })
-      })
-
       it('should return 409 Conflict when existing delegation relationship exists', async () => {
         // Arrange
         const model = {
           toNationalId: nationalRegistryUser.kennitala,
           scopes: [
             {
-              name: scopes[0],
+              name: Scopes[0].name,
               type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
@@ -573,18 +667,43 @@ describe('MeDelegationsController', () => {
         })
       })
 
+      it('should return 400 Bad Request when scope is not allowed for delegation', async () => {
+        // Arrange
+        const model = {
+          toNationalId: nationalRegistryUser.kennitala,
+          scopes: [
+            {
+              name: Scopes[2].name,
+              type: ScopeType.ApiScope,
+              validTo: addDays(today, 1),
+            },
+          ],
+        }
+        // Act
+        const res = await server.post(path).send(model)
+
+        // Assert
+        expect(res.status).toEqual(400)
+        expect(res.body).toMatchObject({
+          status: 400,
+          type: 'https://httpstatuses.com/400',
+          title: 'Bad Request',
+          detail: 'User does not have access to the requested scopes.',
+        })
+      })
+
       it('should return 400 Bad Request when user does not have access to all the requested scopes', async () => {
         // Arrange
         const model = {
           toNationalId: nationalRegistryUser.kennitala,
           scopes: [
             {
-              name: scopes[0],
+              name: Scopes[0].name,
               type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
             {
-              name: scopes[1],
+              name: Scopes[1].name,
               type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
@@ -610,7 +729,7 @@ describe('MeDelegationsController', () => {
           toNationalId: nationalRegistryUser.kennitala,
           scopes: [
             {
-              name: scopes[0],
+              name: Scopes[0].name,
               type: ScopeType.ApiScope,
               validTo: addDays(today, -1),
             },
@@ -637,7 +756,7 @@ describe('MeDelegationsController', () => {
           toNationalId: nationalRegistryUser.kennitala,
           scopes: [
             {
-              name: scopes[0],
+              name: Scopes[0].name,
               type: 'invalidType',
               validTo: addDays(today, 1),
             },
@@ -666,7 +785,7 @@ describe('MeDelegationsController', () => {
           toNationalId: nationalRegistryUser.kennitala,
           scopes: [
             {
-              name: scopes[0],
+              name: Scopes[0].name,
               type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
@@ -675,7 +794,7 @@ describe('MeDelegationsController', () => {
         const model = {
           scopes: [
             {
-              name: scopes[0],
+              name: Scopes[0].name,
               type: ScopeType.ApiScope,
               validTo: expectedValidTo,
             },
@@ -701,12 +820,11 @@ describe('MeDelegationsController', () => {
 
       it('should return 200 OK for update with no scopes', async () => {
         // Arrange
-        const expectedValidTo = addDays(today, 2)
         const createModel = {
           toNationalId: nationalRegistryUser.kennitala,
           scopes: [
             {
-              name: scopes[0],
+              name: Scopes[0].name,
               type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
@@ -726,13 +844,49 @@ describe('MeDelegationsController', () => {
         })
       })
 
+      it('should return 400 Bad Request when scope is not allowed for delegation', async () => {
+        // Arrange
+        const createModel = {
+          toNationalId: nationalRegistryUser.kennitala,
+          scopes: [
+            {
+              name: Scopes[0].name,
+              type: ScopeType.ApiScope,
+              validTo: addDays(today, 1),
+            },
+          ],
+        }
+        const delegation = (await server.post(path).send(createModel))
+          .body as DelegationDTO
+        const model = {
+          scopes: [
+            {
+              name: Scopes[2].name,
+              type: ScopeType.ApiScope,
+              validTo: addDays(today, 1),
+            },
+          ],
+        }
+        // Act
+        const res = await server.put(`${path}/${delegation.id}`).send(model)
+
+        // Assert
+        expect(res.status).toEqual(400)
+        expect(res.body).toMatchObject({
+          status: 400,
+          type: 'https://httpstatuses.com/400',
+          title: 'Bad Request',
+          detail: 'User does not have access to the requested scopes.',
+        })
+      })
+
       it('should return 400 Bad Request when user does not have access to all the request scopes', async () => {
         // Arrange
         const createModel = {
           toNationalId: nationalRegistryUser.kennitala,
           scopes: [
             {
-              name: scopes[0],
+              name: Scopes[0].name,
               type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
@@ -741,7 +895,7 @@ describe('MeDelegationsController', () => {
         const model = {
           scopes: [
             {
-              name: scopes[1],
+              name: Scopes[1].name,
               type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
@@ -769,7 +923,7 @@ describe('MeDelegationsController', () => {
           toNationalId: nationalRegistryUser.kennitala,
           scopes: [
             {
-              name: scopes[0],
+              name: Scopes[0].name,
               type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
@@ -778,7 +932,7 @@ describe('MeDelegationsController', () => {
         const model = {
           scopes: [
             {
-              name: scopes[0],
+              name: Scopes[0].name,
               type: ScopeType.ApiScope,
               validTo: addDays(today, -1),
             },
@@ -807,7 +961,7 @@ describe('MeDelegationsController', () => {
           toNationalId: nationalRegistryUser.kennitala,
           scopes: [
             {
-              name: scopes[0],
+              name: Scopes[0].name,
               type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
@@ -816,7 +970,7 @@ describe('MeDelegationsController', () => {
         const model = {
           scopes: [
             {
-              name: scopes[0],
+              name: Scopes[0].name,
               type: 'invalidScope',
               validTo: addDays(today, 1),
             },
@@ -843,7 +997,7 @@ describe('MeDelegationsController', () => {
         const model = {
           scopes: [
             {
-              name: scopes[0],
+              name: Scopes[0].name,
               type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
@@ -871,7 +1025,7 @@ describe('MeDelegationsController', () => {
           toNationalId: nationalRegistryUser.kennitala,
           scopes: [
             {
-              name: scopes[0],
+              name: Scopes[0].name,
               type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },

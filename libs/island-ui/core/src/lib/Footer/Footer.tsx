@@ -163,7 +163,7 @@ export const Footer = ({
                   <LinkContext.Provider
                     value={{
                       linkRenderer: (href, children) => (
-                        <Link href={href} color="blue400" underline="normal">
+                        <Link href={href} color="blue600" underline="normal">
                           {children}
                         </Link>
                       ),

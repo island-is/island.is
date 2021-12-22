@@ -13,7 +13,7 @@ import {
 import { SamgongustofaService } from '../samgongustofa.service'
 import { MockData } from './mock-data'
 
-const recyclingRequestModel = {
+const recyclingRequestModel = ({
   id: '1234',
   vehicleId: 'ZUG18',
   recyclingPartnerId: '1',
@@ -22,7 +22,7 @@ const recyclingRequestModel = {
   nameOfRequestor: '',
   createdAt: new Date('2021-10-05T14:48:00.000Z'),
   updatedAt: new Date('2021-10-05T14:48:00.000Z'),
-} as RecyclingRequestModel
+} as unknown) as RecyclingRequestModel
 
 const getAllVehilceResp: AxiosResponse = {
   data: MockData.allVehiclesForPersidnoResponse,

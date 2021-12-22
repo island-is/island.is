@@ -1,4 +1,3 @@
-import { ReadableStreamBuffer } from 'stream-buffers'
 import { Response } from 'express'
 
 import {
@@ -416,15 +415,7 @@ export class CaseController {
 
     const pdf = await this.caseService.getRequestPdf(theCase)
 
-    const stream = new ReadableStreamBuffer({
-      frequency: 10,
-      chunkSize: 2048,
-    })
-    stream.put(pdf, 'binary')
-
-    res.header('Content-length', pdf.length.toString())
-
-    return stream.pipe(res)
+    return res.end(pdf)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
@@ -453,15 +444,7 @@ export class CaseController {
 
     const pdf = await this.caseService.getCourtRecordPdf(theCase)
 
-    const stream = new ReadableStreamBuffer({
-      frequency: 10,
-      chunkSize: 2048,
-    })
-    stream.put(pdf, 'binary')
-
-    res.header('Content-length', pdf.length.toString())
-
-    return stream.pipe(res)
+    return res.end(pdf)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
@@ -490,15 +473,7 @@ export class CaseController {
 
     const pdf = await this.caseService.getRulingPdf(theCase)
 
-    const stream = new ReadableStreamBuffer({
-      frequency: 10,
-      chunkSize: 2048,
-    })
-    stream.put(pdf, 'binary')
-
-    res.header('Content-length', pdf.length.toString())
-
-    return stream.pipe(res)
+    return res.end(pdf)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
@@ -529,15 +504,7 @@ export class CaseController {
 
     const pdf = await this.caseService.getCustodyPdf(theCase)
 
-    const stream = new ReadableStreamBuffer({
-      frequency: 10,
-      chunkSize: 2048,
-    })
-    stream.put(pdf, 'binary')
-
-    res.header('Content-length', pdf.length.toString())
-
-    return stream.pipe(res)
+    return res.end(pdf)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
