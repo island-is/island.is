@@ -41,9 +41,8 @@ export class PoliceService {
   private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
 
   constructor(
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
     private readonly awsS3Service: AwsS3Service,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   private async throttleUploadPoliceCaseFile(
@@ -55,7 +54,7 @@ export class PoliceService {
     )
 
     await this.throttle.catch((reason) => {
-      this.logger.error('Previous upload failed', { reason })
+      this.logger.info('Previous upload failed', { reason })
     })
 
     this.logger.debug(
@@ -75,7 +74,7 @@ export class PoliceService {
     } catch (error) {
       this.logger.error(
         `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
-        error,
+        { error },
       )
 
       throw new BadGatewayException(
@@ -86,7 +85,7 @@ export class PoliceService {
     if (!res.ok) {
       this.logger.info(
         `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
-        res,
+        { res },
       )
 
       throw new NotFoundException(
@@ -109,8 +108,6 @@ export class PoliceService {
   }
 
   async getAllPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
-    this.logger.debug(`Getting all police files for case ${caseId}`)
-
     let res: Response
 
     try {
@@ -122,10 +119,9 @@ export class PoliceService {
         } as RequestInit,
       )
     } catch (error) {
-      this.logger.error(
-        `Failed to get police case files for case ${caseId}`,
+      this.logger.error(`Failed to get police case files for case ${caseId}`, {
         error,
-      )
+      })
 
       throw new BadGatewayException(
         `Failed to get police case files for case ${caseId}`,
@@ -133,10 +129,9 @@ export class PoliceService {
     }
 
     if (!res.ok) {
-      this.logger.info(
-        `Failed to get police case files for case ${caseId}`,
+      this.logger.info(`Failed to get police case files for case ${caseId}`, {
         res,
-      )
+      })
 
       throw new NotFoundException(
         `No police case files found for case ${caseId}`,
@@ -157,10 +152,6 @@ export class PoliceService {
     caseId: string,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
   ): Promise<UploadPoliceCaseFileResponse> {
-    this.logger.debug(
-      `Uploading police file ${uploadPoliceCaseFile.id} of case ${caseId} to AWS S3`,
-    )
-
     this.throttle = this.throttleUploadPoliceCaseFile(
       caseId,
       uploadPoliceCaseFile,
