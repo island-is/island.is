@@ -49,4 +49,3 @@ export class OperatingLicense {
   @Field({ nullable: true })
   alcoholWeekendOutdoorLicense?: string
 }
-

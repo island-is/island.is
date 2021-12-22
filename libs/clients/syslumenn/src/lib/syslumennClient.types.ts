@@ -1,5 +1,3 @@
-
-
 export interface SyslumennAuction {
   office: string
   location: string
@@ -82,11 +80,9 @@ export interface Attachment {
   content: string
 }
 
-
 export enum PersonType {
   Plaintiff,
   CounterParty,
   Child,
   CriminalRecordApplicant,
 }
-

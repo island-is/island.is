@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import {SyslumennService} from './syslumennClient.service'
+import { SyslumennService } from './syslumennClient.service'
 
 @Module({
   providers: [SyslumennService],

@@ -2,8 +2,9 @@ import {
   Uppbod,
   VirkarHeimagistingar,
   VirkLeyfi,
-} from '@island.is/clients/syslumenn'
-import { DataUploadResponse } from '../models/dataUpload'
+  Skilabod,
+} from '../../../gen/fetch'
+import { DataUploadResponse } from '../../../../../api/domains/syslumenn/src/lib/models/dataUpload'
 
 export const VHSUCCESS = [
   {
@@ -87,8 +88,8 @@ export const OPERATING_LICENSE_SERVICE_RES = [
   },
 ] as any[]
 
-export const DATA_UPLOAD = {
+export const DATA_UPLOAD: Skilabod = {
   skilabod: 'string',
   audkenni: 'string',
   malsnumer: 'string',
-} as DataUploadResponse
+}

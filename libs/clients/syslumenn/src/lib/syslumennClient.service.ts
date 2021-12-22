@@ -15,23 +15,18 @@ import {
   mapCertificateInfo,
   mapDistrictCommissionersAgenciesRepsonse,
   mapDataUploadResponse,
-  constructUploadDataObject
+  constructUploadDataObject,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
-import {
-  SyslumennApi,
-  SvarSkeyti,
-  Configuration
-} from '../../gen/fetch'
-  import {SyslumennClientConfig } from './syslumennClient.config'
+import { SyslumennApi, SvarSkeyti, Configuration } from '../../gen/fetch'
+import { SyslumennClientConfig } from './syslumennClient.config'
 import { ConfigType } from '@island.is/nest/config'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { AuthenticationError } from 'apollo-server-express';
+import { AuthenticationError } from 'apollo-server-express'
 
 @Injectable()
 export class SyslumennService {
-
   constructor(
     @Inject(SyslumennClientConfig.KEY)
     private clientConfig: ConfigType<typeof SyslumennClientConfig>,
@@ -59,23 +54,22 @@ export class SyslumennService {
       notandi: config,
     })
     if (audkenni && accessToken) {
-          const auth: Auth = {
-      scope: [],
-      authorization: `Bearer ${accessToken}`,
-      client: 'client-syslumenn',
-    }
+      const auth: Auth = {
+        scope: [],
+        authorization: `Bearer ${accessToken}`,
+        client: 'client-syslumenn',
+      }
 
-    return {id: audkenni, api: api.withMiddleware(new AuthMiddleware(auth))}
+      return { id: audkenni, api: api.withMiddleware(new AuthMiddleware(auth)) }
     } else {
-      throw new AuthenticationError("Syslumenn client configureation and login went wrong")
+      throw new AuthenticationError(
+        'Syslumenn client configureation and login went wrong',
+      )
     }
-
   }
 
-
-
   async getHomestays(year?: number): Promise<Homestay[]> {
-    const {id, api } = await this.createApi()
+    const { id, api } = await this.createApi()
 
     const homestays = year
       ? await api.virkarHeimagistingarGet({
@@ -90,25 +84,25 @@ export class SyslumennService {
   }
 
   async getSyslumennAuctions(): Promise<SyslumennAuction[]> {
-    const {id, api } = await this.createApi()
+    const { id, api } = await this.createApi()
     const syslumennAuctions = await api.uppbodGet({
       audkenni: id,
     })
 
-    return ((syslumennAuctions) ?? []).map(mapSyslumennAuction)
+    return (syslumennAuctions ?? []).map(mapSyslumennAuction)
   }
 
   async getOperatingLicenses(): Promise<OperatingLicense[]> {
-    const {id, api } = await this.createApi()
+    const { id, api } = await this.createApi()
     const operatingLicenses = await api.virkLeyfiGet({
       audkenni: id,
     })
 
-    return ((operatingLicenses) ?? []).map(mapOperatingLicense)
+    return (operatingLicenses ?? []).map(mapOperatingLicense)
   }
 
   async sealCriminalRecord(criminalRecord: string): Promise<SvarSkeyti> {
-    const {id, api } = await this.createApi()
+    const { id, api } = await this.createApi()
     const explination = 'Undirritað af sýslumanni'
     return await api.innsiglunPost({
       skeyti: {
@@ -126,7 +120,7 @@ export class SyslumennService {
     uploadDataName: string,
     uploadDataId?: string,
   ): Promise<DataUploadResponse> {
-    const {id, api } = await this.createApi()
+    const { id, api } = await this.createApi()
 
     const payload = constructUploadDataObject(
       id,
@@ -137,20 +131,18 @@ export class SyslumennService {
       uploadDataId,
     )
 
-    const response =  await api.syslMottakaGognPost(payload)
+    const response = await api.syslMottakaGognPost(payload)
     return mapDataUploadResponse(response)
   }
 
   async getCertificateInfo(
     nationalId: string,
   ): Promise<CertificateInfoRepsonse> {
-    const {id, api } = await this.createApi()
-    const certificate = await api.faVottordUpplysingarGet(
-      {
-        audkenni: id,
-        kennitala: nationalId,
-      },
-    )
+    const { id, api } = await this.createApi()
+    const certificate = await api.faVottordUpplysingarGet({
+      audkenni: id,
+      kennitala: nationalId,
+    })
 
     return mapCertificateInfo(certificate)
   }
@@ -158,7 +150,7 @@ export class SyslumennService {
   async getDistrictCommissionersAgencies(): Promise<
     DistrictCommissionersAgenciesRepsonse[]
   > {
-    const {id, api } = await this.createApi()
+    const { id, api } = await this.createApi()
     const response = await api.embaettiOgStarfsstodvarGetEmbaetti()
     return response.map(mapDistrictCommissionersAgenciesRepsonse)
   }

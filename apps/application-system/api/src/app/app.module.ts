@@ -15,9 +15,7 @@ import { ConfigModule } from '@island.is/nest/config'
     ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        SyslumennClientConfig,
-      ],
+      load: [SyslumennClientConfig],
     }),
   ],
 })

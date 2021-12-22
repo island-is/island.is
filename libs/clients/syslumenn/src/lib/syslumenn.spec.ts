@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing'
-import { SyslumennService } from './syslumenn.service'
+import { SyslumennService } from './syslumennClient.service'
 import { startMocking } from '@island.is/shared/mocking'
 import { requestHandlers } from './__mock-data__/requestHandlers'
 import {
@@ -7,11 +7,14 @@ import {
   OPERATING_LICENSE,
   DATA_UPLOAD,
 } from './__mock-data__/responses'
-import { mapHomestay } from './models/homestay'
+import {
+  mapHomestay,
+  mapSyslumennAuction,
+  mapOperatingLicense,
+  mapDataUploadResponse,
+} from './syslumennClient.utils'
 import { SYSLUMENN_AUCTION } from './__mock-data__/responses'
-import { mapSyslumennAuction } from './models/syslumennAuction'
-import { mapOperatingLicense } from './models/operatingLicense'
-import { PersonType } from './dto/uploadData.input'
+import { PersonType } from './syslumennClient.types'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 
 import { defineConfig, ConfigModule } from '@island.is/nest/config'
@@ -109,7 +112,7 @@ describe('SyslumennService', () => {
         },
         'Lögheimilisbreyting barns',
       )
-      expect(response).toStrictEqual(DATA_UPLOAD)
+      expect(response).toStrictEqual(mapDataUploadResponse(DATA_UPLOAD))
     })
   })
 })
