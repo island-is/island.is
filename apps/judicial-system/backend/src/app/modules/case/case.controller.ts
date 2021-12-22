@@ -14,7 +14,6 @@ import {
   Header,
   UseGuards,
   BadRequestException,
-  InternalServerErrorException,
   HttpException,
   Inject,
 } from '@nestjs/common'
@@ -235,13 +234,11 @@ export class CaseController {
   ): Promise<Case | null> {
     this.logger.debug('Creating a new case')
 
-    const createdCase = await this.caseService.internalCreate(caseToCreate)
+    const theCase = await this.caseService.internalCreate(caseToCreate)
 
-    const resCase = await this.caseService.findById(createdCase.id)
+    this.eventService.postEvent(CaseEvent.CREATE_XRD, theCase as Case)
 
-    this.eventService.postEvent(CaseEvent.CREATE_XRD, resCase as Case)
-
-    return resCase
+    return theCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -254,13 +251,11 @@ export class CaseController {
   ): Promise<Case | null> {
     this.logger.debug('Creating a new case')
 
-    const createdCase = await this.caseService.create(caseToCreate, user.id)
+    const theCase = await this.caseService.create(caseToCreate, user.id)
 
-    const resCase = await this.caseService.findById(createdCase.id)
+    this.eventService.postEvent(CaseEvent.CREATE, theCase as Case)
 
-    this.eventService.postEvent(CaseEvent.CREATE, resCase as Case)
-
-    return resCase
+    return theCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)

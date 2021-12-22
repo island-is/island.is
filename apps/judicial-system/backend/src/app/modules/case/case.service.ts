@@ -5,6 +5,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
@@ -346,13 +347,19 @@ export class CaseService {
   async findById(
     id: string,
     additionalIncludes: Includeable[] = [],
-  ): Promise<Case | null> {
+  ): Promise<Case> {
     const include = standardIncludes.concat(additionalIncludes)
 
-    return this.caseModel.findOne({
+    const theCase = await this.caseModel.findOne({
       where: { id },
       include,
     })
+
+    if (!theCase) {
+      throw new NotFoundException(`Case ${id} does not exist`)
+    }
+
+    return theCase
   }
 
   async findOriginalAncestor(theCase: Case): Promise<Case> {
@@ -405,17 +412,18 @@ export class CaseService {
     caseToCreate: CreateCaseDto,
     prosecutorId?: string,
   ): Promise<Case> {
-    return this.caseModel.create({
+    const theCase = await this.caseModel.create({
       ...caseToCreate,
       creatingProsecutorId: prosecutorId,
       prosecutorId,
     })
+
+    return this.findById(theCase.id)
   }
 
   async update(id: string, update: UpdateCaseDto): Promise<void> {
     const [numberOfAffectedRows] = await this.caseModel.update(update, {
       where: { id },
-      returning: true,
     })
 
     if (numberOfAffectedRows > 1) {
