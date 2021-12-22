@@ -81,7 +81,7 @@ describe('ApplicationController - Get current application', () => {
   describe('application found', () => {
     let then: Then
     const nationalId = '0000000000'
-    const applicationId = '1'
+    const applicationId = uuid()
     const application = { id: applicationId } as ApplicationModel
 
     beforeEach(async () => {
