@@ -57,7 +57,7 @@ describe('ApplicationController - find application', () => {
       await givenWhenThen(nationalId, staff, user)
     })
 
-    it('should request staff by national id from the database', () => {
+    it('should request staff by national id and municipality code from the database', () => {
       expect(mockFindApplication).toHaveBeenCalledWith({
         where: {
           [Op.or]: [
