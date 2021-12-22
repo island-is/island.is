@@ -4,7 +4,14 @@ import { useWindowSize } from 'react-use'
 import { useMutation } from '@apollo/client'
 import gql from 'graphql-tag'
 
-import { Box, Stack, Button, Checkbox, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Stack,
+  Button,
+  Checkbox,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -12,7 +19,6 @@ import {
   ProcessPageLayout,
   CarDetailsBox,
 } from '@island.is/skilavottord-web/components'
-import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
 import { formatDate, formatYear } from '@island.is/skilavottord-web/utils'
 import { Mutation } from '@island.is/skilavottord-web/graphql/schema'
 import { UserContext } from '@island.is/skilavottord-web/context'
@@ -78,33 +84,17 @@ const Confirm = ({ apolloState }: PropTypes) => {
     setIsTablet(false)
   }, [width])
 
-  const [setVehicle] = useMutation<Mutation>(SkilavottordVehicleMutation, {
-    onCompleted() {
-      routeToAuthCheck()
-    },
-    onError() {
-      // Because we want to show error after checking authenication
-      routeToAuthCheck()
-    },
-  })
+  const [
+    createSkilavottordVehicle,
+    { loading: createSkilavottordVehicleLoading },
+  ] = useMutation<Mutation>(SkilavottordVehicleMutation)
+  const [
+    createSkilavottordVehicleOwner,
+    { loading: createSkilavottordVehicleOwnerLoading },
+  ] = useMutation<Mutation>(SkilavottordVehicleOwnerMutation)
 
-  const [setVehicleOwner] = useMutation<Mutation>(
-    SkilavottordVehicleOwnerMutation,
-    {
-      onCompleted() {
-        setVehicle({
-          variables: {
-            ...car,
-            newRegDate: formatDate(car.firstRegDate, dateFormat.is),
-          },
-        })
-      },
-      onError() {
-        // Because we want to show error after checking authenication
-        routeToAuthCheck()
-      },
-    },
-  )
+  const loading =
+    createSkilavottordVehicleLoading || createSkilavottordVehicleOwnerLoading
 
   const onCancel = () => {
     router.replace({
@@ -112,19 +102,24 @@ const Confirm = ({ apolloState }: PropTypes) => {
     })
   }
 
-  const onConfirm = () => {
-    setVehicleOwner({
+  const onConfirm = async () => {
+    localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, (id || '').toString())
+    const { errors } = await createSkilavottordVehicleOwner({
       variables: {
         name: user?.name,
       },
     })
-  }
+    if (errors && errors.length > 0) {
+      toast.error(errors.join('\n'))
+    }
 
-  const routeToAuthCheck = () => {
-    localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, (id || '').toString())
-    router.replace(
-      `${AUTH_URL['citizen']}/login?returnUrl=${BASE_PATH}${routes.recycleVehicle.baseRoute}/${id}/handover`,
-    )
+    await createSkilavottordVehicle({
+      variables: {
+        ...car,
+        newRegDate: formatDate(car.firstRegDate, dateFormat.is),
+      },
+    })
+    router.replace(`${routes.recycleVehicle.baseRoute}/${id}/handover`)
   }
 
   const checkboxLabel = (
@@ -190,8 +185,9 @@ const Confirm = ({ apolloState }: PropTypes) => {
               )}
               <Button
                 disabled={!checkbox}
+                loading={loading}
                 icon="arrowForward"
-                onClick={() => onConfirm()}
+                onClick={onConfirm}
               >
                 {t.buttons.continue}
               </Button>
