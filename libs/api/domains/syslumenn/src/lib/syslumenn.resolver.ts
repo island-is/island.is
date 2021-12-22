@@ -4,8 +4,8 @@ import { Homestay } from './models/homestay'
 import { SyslumennAuction } from './models/syslumennAuction'
 import { SyslumennService } from '@island.is/clients/syslumenn'
 import { OperatingLicense } from './models/operatingLicense'
-import { CertificateInfoRepsonse } from './models/certificateInfo'
-import { DistrictCommissionersAgenciesRepsonse } from './models/districtCommissionersAgencies'
+import { CertificateInfoResponse } from './models/certificateInfo'
+import { DistrictCommissionersAgenciesResponse } from './models/districtCommissionersAgencies'
 import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
@@ -46,18 +46,18 @@ export class SyslumennResolver {
     return this.syslumennService.getOperatingLicenses()
   }
 
-  @Query(() => CertificateInfoRepsonse)
+  @Query(() => CertificateInfoResponse)
   @Scopes(ApiScope.internal)
   getSyslumennCertificateInfo(
     @CurrentUser() user: User,
-  ): Promise<CertificateInfoRepsonse> {
+  ): Promise<CertificateInfoResponse> {
     return this.syslumennService.getCertificateInfo(user.nationalId)
   }
 
-  @Query(() => [DistrictCommissionersAgenciesRepsonse])
+  @Query(() => [DistrictCommissionersAgenciesResponse])
   @BypassAuth()
   getSyslumennDistrictCommissionersAgencies(): Promise<
-    DistrictCommissionersAgenciesRepsonse[]
+    DistrictCommissionersAgenciesResponse[]
   > {
     return this.syslumennService.getDistrictCommissionersAgencies()
   }

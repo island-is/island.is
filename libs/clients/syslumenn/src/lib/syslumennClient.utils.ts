@@ -16,14 +16,14 @@ import {
   OperatingLicense,
   Person,
   Attachment,
-  CertificateInfoRepsonse,
-  DistrictCommissionersAgenciesRepsonse,
+  CertificateInfoResponse,
+  DistrictCommissionersAgenciesResponse,
   PersonType,
 } from './syslumennClient.types'
 
-export const mapDistrictCommissionersAgenciesRepsonse = (
+export const mapDistrictCommissionersAgenciesResponse = (
   response: EmbaettiOgStarfsstodvar,
-): DistrictCommissionersAgenciesRepsonse => {
+): DistrictCommissionersAgenciesResponse => {
   return {
     id: response.starfsstodID,
     name: response.nafn,
@@ -34,7 +34,7 @@ export const mapDistrictCommissionersAgenciesRepsonse = (
 
 export const mapCertificateInfo = (
   response: VottordSkeyti,
-): CertificateInfoRepsonse => {
+): CertificateInfoResponse => {
   return {
     nationalId: response.kennitala,
     expirationDate: response.gildisTimi,

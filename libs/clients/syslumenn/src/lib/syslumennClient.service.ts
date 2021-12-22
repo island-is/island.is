@@ -2,8 +2,8 @@ import {
   SyslumennAuction,
   Homestay,
   OperatingLicense,
-  CertificateInfoRepsonse,
-  DistrictCommissionersAgenciesRepsonse,
+  CertificateInfoResponse,
+  DistrictCommissionersAgenciesResponse,
   DataUploadResponse,
   Person,
   Attachment,
@@ -13,7 +13,7 @@ import {
   mapHomestay,
   mapOperatingLicense,
   mapCertificateInfo,
-  mapDistrictCommissionersAgenciesRepsonse,
+  mapDistrictCommissionersAgenciesResponse,
   mapDataUploadResponse,
   constructUploadDataObject,
 } from './syslumennClient.utils'
@@ -135,7 +135,7 @@ export class SyslumennService {
 
   async getCertificateInfo(
     nationalId: string,
-  ): Promise<CertificateInfoRepsonse> {
+  ): Promise<CertificateInfoResponse> {
     const { id, api } = await this.createApi()
     const certificate = await api.faVottordUpplysingarGet({
       audkenni: id,
@@ -146,10 +146,10 @@ export class SyslumennService {
   }
 
   async getDistrictCommissionersAgencies(): Promise<
-    DistrictCommissionersAgenciesRepsonse[]
+    DistrictCommissionersAgenciesResponse[]
   > {
     const { api } = await this.createApi()
     const response = await api.embaettiOgStarfsstodvarGetEmbaetti()
-    return response.map(mapDistrictCommissionersAgenciesRepsonse)
+    return response.map(mapDistrictCommissionersAgenciesResponse)
   }
 }

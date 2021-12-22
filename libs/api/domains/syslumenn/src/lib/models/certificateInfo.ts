@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class CertificateInfoRepsonse {
+export class CertificateInfoResponse {
   @Field({ nullable: true })
   nationalId?: string
 

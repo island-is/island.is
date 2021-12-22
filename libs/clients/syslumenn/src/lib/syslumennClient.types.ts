@@ -50,13 +50,13 @@ export interface OperatingLicense {
   alcoholWeekendOutdoorLicense?: string
 }
 
-export interface CertificateInfoRepsonse {
+export interface CertificateInfoResponse {
   nationalId?: string
   expirationDate?: string
   releaseDate?: string
 }
 
-export interface DistrictCommissionersAgenciesRepsonse {
+export interface DistrictCommissionersAgenciesResponse {
   name?: string
   place?: string
   address?: string
