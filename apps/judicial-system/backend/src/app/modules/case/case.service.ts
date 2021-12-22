@@ -118,9 +118,10 @@ export class CaseService {
     return this.awsS3Service
       .putObject(`generated/${theCase.id}/ruling.pdf`, pdf)
       .then(() => true)
-      .catch(() => {
+      .catch((reason) => {
         this.logger.error(
           `Failed to upload signed ruling pdf to AWS S3 for case ${theCase.id}`,
+          { reason },
         )
 
         return false
@@ -166,7 +167,7 @@ export class CaseService {
       // Log and ignore this error. The overview is not that critical.
       this.logger.error(
         `Failed to upload case files overview pdf to court for case ${theCase.id}`,
-        error,
+        { error },
       )
     }
 
@@ -193,7 +194,7 @@ export class CaseService {
     } catch (error) {
       this.logger.error(
         `Failed to upload signed ruling pdf to court for case ${theCase.id}`,
-        error,
+        { error },
       )
 
       return false
@@ -236,7 +237,7 @@ export class CaseService {
           : undefined,
       })
     } catch (error) {
-      this.logger.error('Failed to send email', error)
+      this.logger.error('Failed to send email', { error })
     }
   }
 
@@ -457,7 +458,7 @@ export class CaseService {
       .catch((reason) => {
         this.logger.info(
           `The court record for case ${theCase.id} was not found in AWS S3`,
-          reason,
+          { reason },
         )
         return undefined
       })
@@ -475,7 +476,7 @@ export class CaseService {
       .catch((reason) => {
         this.logger.info(
           `The ruling for case ${theCase.id} was not found in AWS S3`,
-          reason,
+          { reason },
         )
         return undefined
       })
@@ -533,7 +534,7 @@ export class CaseService {
             // Tolerate failure, but log error
             this.logger.error(
               `Failed to upload signed court record pdf to AWS S3 for case ${theCase.id}`,
-              reason,
+              { reason },
             )
           })
       } catch (error) {
@@ -677,7 +678,7 @@ export class CaseService {
       // Tolerate failure, but log error
       this.logger.error(
         `Failed to upload request pdf to court for case ${theCase.id}`,
-        error,
+        { error },
       )
     }
   }

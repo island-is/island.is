@@ -42,26 +42,24 @@ export class FileService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private async deleteFileFromDatabase(id: string): Promise<boolean> {
-    this.logger.debug(`Deleting file ${id} from the database`)
+  private async deleteFileFromDatabase(fileId: string): Promise<boolean> {
+    this.logger.debug(`Deleting file ${fileId} from the database`)
 
     const [nrOfRowsUpdated] = await this.fileModel.update(
       { state: CaseFileState.DELETED },
-      { where: { id } },
+      { where: { id: fileId } },
     )
 
     return nrOfRowsUpdated > 0
   }
 
-  private async tryDeleteFileFromS3(key: string) {
+  private tryDeleteFileFromS3(key: string) {
     this.logger.debug(`Attempting to delete file ${key} from AWS S3`)
 
-    // We don't really care if this succeeds
-    try {
-      await this.awsS3Service.deleteObject(key)
-    } catch (error) {
-      this.logger.info(`Could not delete file ${key} from AWS S3`, error)
-    }
+    this.awsS3Service.deleteObject(key).catch((reason) => {
+      // Tolerate failure, but log what happened
+      this.logger.info(`Could not delete file ${key} from AWS S3`, { reason })
+    })
   }
 
   private async throttleUploadStream(
@@ -69,7 +67,7 @@ export class FileService {
     courtId: string | undefined,
   ): Promise<string> {
     await this.throttle.catch((reason) => {
-      this.logger.warn('Previous upload failed', { reason })
+      this.logger.info('Previous upload failed', { reason })
     })
 
     const content = await this.awsS3Service.getObject(file.key)
@@ -86,14 +84,22 @@ export class FileService {
     )
   }
 
-  async findById(id: string, caseId: string): Promise<CaseFile | null> {
-    return this.fileModel.findOne({
+  async findById(fileId: string, caseId: string): Promise<CaseFile | null> {
+    const caseFile = this.fileModel.findOne({
       where: {
-        id,
+        id: fileId,
         caseId,
         state: { [Op.not]: CaseFileState.DELETED },
       },
     })
+
+    if (!caseFile) {
+      throw new NotFoundException(
+        `Case file ${fileId} of case ${caseId} does not exist`,
+      )
+    }
+
+    return caseFile
   }
 
   createPresignedPost(
@@ -152,6 +158,7 @@ export class FileService {
         { state: CaseFileState.BOKEN_LINK },
         { where: { id: file.id } },
       )
+
       throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
