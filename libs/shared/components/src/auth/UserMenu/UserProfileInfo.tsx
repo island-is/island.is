@@ -32,14 +32,6 @@ export const UserProfileInfo = ({ onClick }: { onClick: () => void }) => {
           onClick={() => onClick()}
         />
       </Box>
-      <Box>
-        <UserDropdownItem
-          text={'Íslenska - skipta um tungumál'}
-          link={`${baseUrl}/adgangsstyring`}
-          icon={{ type: 'outline', icon: 'people' }}
-          onClick={() => onClick()}
-        />
-      </Box>
     </Box>
   )
 }
