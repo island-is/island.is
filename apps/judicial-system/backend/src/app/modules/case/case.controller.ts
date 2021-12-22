@@ -303,7 +303,10 @@ export class CaseController {
       )
     }
 
-    const updatedCase = await this.caseService.update(caseId, caseToUpdate)
+    const updatedCase = (await this.caseService.update(
+      caseId,
+      caseToUpdate,
+    )) as Case
 
     if (
       theCase.courtId &&
@@ -313,7 +316,7 @@ export class CaseController {
     ) {
       // TODO: Find a better place for this
       // No need to wait for the upload
-      this.caseService.uploadRequestPdfToCourt(updatedCase as Case)
+      this.caseService.uploadRequestPdfToCourt(updatedCase)
     }
 
     return updatedCase
@@ -348,14 +351,14 @@ export class CaseController {
       update.parentCaseId = null
     }
 
-    const updatedCase = await this.caseService.update(
+    const updatedCase = (await this.caseService.update(
       caseId,
       update as UpdateCaseDto,
-    )
+    )) as Case
 
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,
-      updatedCase as Case,
+      updatedCase,
     )
 
     return updatedCase
