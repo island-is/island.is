@@ -121,7 +121,7 @@
     "info": "Þegar ökutæki hefur verið samþykkt til úrvinnslu getur þú leitið upplýsinga hjá viðkomandi sveitarfélagi/móttökuaðila um hvert eigi að fara með ökutækið til að farga því. Umsóknin er ekki bindandi, ökutæki verður einungis endurunnið sé því skilað til móttökuaðila.",
     "buttons": {
       "cancel": "Hætta við",
-      "continue": "Rafrænt samþykki"
+      "continue": "Staðfesta"
     },
     "checkbox": {
       "label": "Samþykkja",

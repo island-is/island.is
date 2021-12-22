@@ -4,12 +4,12 @@ import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Authorize, CurrentUser } from '../auth'
-import type { User } from '../auth'
+import { Authorize, CurrentUser, User } from '../auth'
+
 import { GdprService } from './gdpr.service'
 import { GdprModel } from './gdpr.model'
 
-@Authorize({ throwOnUnAuthorized: false })
+@Authorize()
 @Resolver(() => GdprModel)
 export class GdprResolver {
   constructor(

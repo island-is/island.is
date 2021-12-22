@@ -125,13 +125,6 @@ export const icRulingStepTwo = {
         description:
           'Notaður sem texti við valmöguleika sækjanda um lögbundinn frest radio takkann á úrskurðar og kæru skrefi í rannsóknarheimildum.',
       },
-      prosecutorPostponeInRemoteSession: {
-        id:
-          'judicial.system.investigation_cases:ruling_step_two.appeal_decision.prosecutor_postpone_in_remote_session',
-        defaultMessage: 'Sækjandi fær lögboðinn frest',
-        description:
-          'Notaður sem texti við valmöguleika sækjanda um lögbundinn frest radio takkann á úrskurðar og kæru skrefi í rannsóknarheimildum þegar fyrirtakan er án munnlegs málflutnings.',
-      },
       prosecutorNotApplicable: {
         id:
           'judicial.system.investigation_cases:ruling_step_two.appeal_decision.prosecutor_not_applicable',
