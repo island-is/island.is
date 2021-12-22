@@ -59,11 +59,11 @@ function mapPersonEnum(e: PersonType) {
 @ObjectType()
 export class DataUploadResponse {
   @Field()
-  skilabod?: string
+  message?: string
 
   @Field()
-  audkenni?: string
+  id?: string
 
   @Field()
-  malsnumer?: string
+  caseNumber?: string
 }

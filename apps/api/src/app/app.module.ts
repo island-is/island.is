@@ -24,7 +24,6 @@ import { getConfig } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import {
-  SyslumennClientModule,
   SyslumennClientConfig,
 } from '@island.is/clients/syslumenn'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
@@ -183,7 +182,6 @@ const autoSchemaFile = environment.production
     ApiCatalogueModule,
     IdentityModule,
     AuthModule.register(environment.auth),
-    SyslumennClientModule,
     SyslumennModule,
     RSKModule.register({
       password: environment.rskDomain.password,
