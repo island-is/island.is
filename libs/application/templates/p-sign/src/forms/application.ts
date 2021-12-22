@@ -49,7 +49,7 @@ export const getApplication = (): Form => {
             dataProviders: [
               buildDataProviderItem({
                 id: 'doctorsNote',
-                type: '',
+                type: 'DoctorsNoteProvider',
                 title: m.dataCollectionDoctorsNoteTitle,
                 subTitle: m.dataCollectionDoctorsNoteSubtitle,
               }),
@@ -94,6 +94,7 @@ export const getApplication = (): Form => {
                 title: m.applicantsName,
                 width: 'half',
                 backgroundColor: 'white',
+                disabled: true,
                 defaultValue: (application: Application) => {
                   const nationalRegistry = application.externalData
                     .nationalRegistry.data as User
@@ -105,6 +106,7 @@ export const getApplication = (): Form => {
                 title: m.applicantsNationalId,
                 width: 'half',
                 backgroundColor: 'white',
+                disabled: true,
                 defaultValue: (application: Application) =>
                   format(application.applicant),
               }),
@@ -113,6 +115,7 @@ export const getApplication = (): Form => {
                 title: m.applicantsAddress,
                 width: 'half',
                 backgroundColor: 'white',
+                disabled: true,
                 defaultValue: (application: Application) => {
                   const nationalRegistry = application.externalData
                     .nationalRegistry.data as User
@@ -124,6 +127,7 @@ export const getApplication = (): Form => {
                 title: m.applicantsCity,
                 width: 'half',
                 backgroundColor: 'white',
+                disabled: true,
                 defaultValue: (application: Application) => {
                   const nationalRegistry = application.externalData
                     .nationalRegistry.data as User
@@ -163,7 +167,11 @@ export const getApplication = (): Form => {
                 title: m.cardValidityPeriod,
                 width: 'half',
                 backgroundColor: 'white',
-                defaultValue: () => new Date().toISOString(),
+                disabled: true,
+                defaultValue: (application: Application) => {
+                  const data = application.externalData.doctorsNote.data as any
+                  return data?.expirationDate
+                },
               }),
             ],
           }),
@@ -347,7 +355,8 @@ export const getApplication = (): Form => {
               buildKeyValueField({
                 label: m.cardValidityPeriod,
                 width: 'half',
-                value: () => '19/10/2024',
+                value: ({ externalData: { doctorsNote } }) =>
+                  (doctorsNote.data as any).expirationDate as string,
               }),
               buildDividerField({}),
               buildKeyValueField({

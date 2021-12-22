@@ -20,7 +20,7 @@ export const m = defineMessages({
   dataCollectionDescription: {
     id: 'dl.application:dataCollectionDescription',
     defaultMessage:
-      'Til þess að athuga hvort þú sért með gilt P-merki þá verða upplýsingar verða sóttar úr kerfi sýslumanna.',
+      'Svo hægt sé að afgreiða umsókn þína um stæðiskort, þarf að sækja eftirfarandi gögn með þínu samþykki.',
     description: 'Description for data collection section',
   },
   dataCollectionCheckboxLabel: {
@@ -30,44 +30,44 @@ export const m = defineMessages({
   },
   dataCollectionDoctorsNoteTitle: {
     id: 'dl.application:dataCollectionDoctorsNoteTitle',
-    defaultMessage: 'Læknisvottorð',
+    defaultMessage: 'Læknisvottorð vegna umsóknar um stæðiskort',
     description: 'Doctors note title',
   },
   dataCollectionDoctorsNoteSubtitle: {
     id: 'dl.application:dataCollectionDoctorsNoteLabel',
-    defaultMessage: 'Nisi at fermentum adipiscing montes, mi.',
+    defaultMessage:
+      'Rafrænt læknisvottorð frá heimilislækni, þar sem tilgreindur er gildistími stæðiskorts.',
     description: 'Doctors note subtitle',
   },
   dataCollectionNationalRegistryTitle: {
     id: 'dl.application:dataCollectionNationalRegistryTitle',
-    defaultMessage: 'Persónuupplýsingar úr Þjóðskrá',
+    defaultMessage: 'Uppfletting í Þjóðskrá',
     description: 'National registry title',
   },
   dataCollectionNationalRegistrySubtitle: {
     id: 'dl.application:dataCollectionNationalRegistrySubtitle',
-    defaultMessage:
-      'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
+    defaultMessage: 'Fullt nafn, kennitala, heimilisfang.',
     description: 'National registry subtitle',
   },
   dataCollectionQualityPhotoTitle: {
     id: 'dl.application:dataCollectionQualityPhotoTitle',
-    defaultMessage: 'Upplýsingar úr ökuskírteinaskrá',
+    defaultMessage: 'Upplýsingar úr ökuskírteinaskrá (ef við á)',
     description: 'Info from drivers license',
   },
   dataCollectionQualityPhotoSubtitle: {
     id: 'dl.application:dataCollectionQualityPhotoSubtitle',
-    defaultMessage: 'Nisi at fermentum adipiscing montes, mi.',
+    defaultMessage: 'Mynd er sótt úr ökuskírteinakerfi.',
     description: 'National registry subtitle',
   },
   dataCollectionUserProfileTitle: {
     id: 'cr.application:dataCollectionUserProfileTitle',
-    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
+    defaultMessage: 'Mínar síður á Ísland.is/stillingar',
     description: 'Your user profile information',
   },
   dataCollectionUserProfileSubtitle: {
     id: 'cr.application:dataCollectionUserProfileSubtitle',
     defaultMessage:
-      'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
+      'Ef þú ert með skráaðar upplýsingar um síma og netfang á Mínum Síðum inná Ísland.is kemur það sjálfkrafa í umsókn þína.',
     description:
       'In order to apply for this application we need your email and phone number',
   },
@@ -75,7 +75,8 @@ export const m = defineMessages({
   /* Information Section */
   informationTitle: {
     id: 'dl.application:informationSectionTitle',
-    defaultMessage: 'Upplýsingar um stæðiskort',
+    defaultMessage:
+      'Persónuupplýsingar umsækjanda, vegna umsóknar um stæðiskort',
     description: 'Information section title',
   },
   informationSectionTitle: {
@@ -135,7 +136,7 @@ export const m = defineMessages({
   qualityPhotoExistingPhotoText: {
     id: 'dl.application:qualityPhotoExistingPhotoText',
     defaultMessage:
-      'Hér er núverandi ljósmynd. Óskir þú eftir að nota nýja mynd þá þarf að hlaða henni hér inn að neðan.',
+      'Hér er núverandi mynd úr ökuskírteinaskrá. Hægt er að nota hana eða hlaða inn nýrri mynd með tilgreindum skilyrðum hér fyrir neðan.',
     description: `Text for the user's existing quality photo`,
   },
   qualityPhotoUseExistingPhoto: {
@@ -166,7 +167,7 @@ export const m = defineMessages({
   qualityPhotoNoPhotoDescription: {
     id: 'dl.application:qualityPhotoNoPhotoDescription',
     defaultMessage:
-      'Texti sem útskýrir að það þarf að hlaða inn mynd fyrir stæðiskort.',
+      'Til að hlaða inn mynd fyrir stæðiskort, þarf hún að fylla upp eftirfarandi skilyrði:',
     description: `Description text for no existing photo`,
   },
   qualityPhotoAltText: {
@@ -245,7 +246,7 @@ export const m = defineMessages({
   deliveryMethodDescription: {
     id: 'dl.application:deliveryMethodDescription',
     defaultMessage:
-      'Stæðiskort er sjálfkrafa sent með pósti á uppgefið heimilisfang eftir 3-5 virka daga. Óskir þú eftir að fá stæðiskortið afhent fyrr þá getur þú valið um að sækja það sjálfur á valda staðsetningu hér að neðan.',
+      'Stæðiskort er sjálfkrafa sent með pósti á lögheimili eftir 3-5 virka daga frá umsóknardegi. Umsækjandi getur einnig valið að sækja stæðiskort á hvaða sýslumannsembætti sem er á landinu.',
     description: 'Description for delivery method section',
   },
   deliveryMethodHomeDelivery: {
@@ -283,7 +284,7 @@ export const m = defineMessages({
   overviewSectionDescription: {
     id: 'dl.application:overviewSectionDescription',
     defaultMessage:
-      'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp.',
+      'Vinsamlegast staðfestu að neðangreindar upplýsingar séu réttar.,',
     description: 'Description for overview section',
   },
   overviewSelfPickupText: {
