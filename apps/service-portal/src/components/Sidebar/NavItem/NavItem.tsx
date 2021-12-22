@@ -53,7 +53,7 @@ const NavItemContent: FC<Props> = ({
       paddingLeft={collapsed ? 1 : 3}
       paddingRight={collapsed ? 1 : 2}
     >
-      <Box display="flex" height="full" alignItems="center">
+      <Box display="flex" height="full" alignItems="center" overflow="hidden">
         {icon ? (
           <Box
             display="flex"

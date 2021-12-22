@@ -35,10 +35,13 @@ export const text = style({
   fontSize: 16,
   lineHeight: '26px',
   color: theme.color.blue600,
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
 })
 
 export const icon = style({
   pointerEvents: 'none',
+  height: '26px',
 })
 
 export const dot = style({

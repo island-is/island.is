@@ -20,7 +20,6 @@ export const collapsed = style({
 export const logoCollapsed = style({
   display: 'flex',
   justifyContent: 'flex-end',
-  paddingTop: 0,
   marginRight: -22,
 })
 export const subnav = style({

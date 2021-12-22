@@ -25,8 +25,10 @@ export const Sidebar: FC<{}> = () => {
         justifyContent="flexStart"
         marginBottom={3}
         background={collapsed ? 'transparent' : 'blue100'}
-        padding={collapsed ? 6 : 3}
+        paddingLeft={collapsed ? 6 : 3}
+        paddingBottom={collapsed ? 6 : 3}
         paddingRight={collapsed ? 6 : 0}
+        paddingTop={3}
       >
         <Box
           className={collapsed && styles.logoCollapsed}
@@ -37,6 +39,7 @@ export const Sidebar: FC<{}> = () => {
             <FocusableBox component="div">
               <Logo
                 width={collapsed ? 24 : 136}
+                height={31}
                 iconOnly={collapsed}
                 id="sidebar"
               />
