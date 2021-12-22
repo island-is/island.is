@@ -1,6 +1,6 @@
 # Shared Pii
 
-This library was generated with [Nx](https://nx.dev).
+Tools for handling personally identifiable information.
 
 ## Running unit tests
 
