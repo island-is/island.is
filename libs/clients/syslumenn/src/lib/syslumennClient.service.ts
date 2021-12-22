@@ -21,7 +21,7 @@ import { Injectable, Inject } from '@nestjs/common'
 import { SyslumennApi, SvarSkeyti, Configuration } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import { ConfigType } from '@island.is/nest/config'
-import { HeaderMiddleware } from '@island.is/auth-nest-tools'
+import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
 @Injectable()
@@ -57,7 +57,9 @@ export class SyslumennService {
     if (audkenni && accessToken) {
       return {
         id: audkenni,
-        api: api.withMiddleware(new HeaderMiddleware(`Bearer ${accessToken}`)),
+        api: api.withMiddleware(
+          new AuthHeaderMiddleware(`Bearer ${accessToken}`),
+        ),
       }
     } else {
       throw new Error('Syslumenn client configuration and login went wrong')

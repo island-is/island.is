@@ -14,7 +14,7 @@ interface Middleware {
   pre?(context: RequestContext): Promise<FetchParams | void>
 }
 
-export class HeaderMiddleware implements Middleware {
+export class AuthHeaderMiddleware implements Middleware {
   constructor(private bearerToken: string) {}
 
   async pre(context: RequestContext) {

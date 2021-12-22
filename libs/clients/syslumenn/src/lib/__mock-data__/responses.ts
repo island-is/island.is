@@ -4,7 +4,6 @@ import {
   VirkLeyfi,
   Skilabod,
 } from '../../../gen/fetch'
-import { DataUploadResponse } from '../../../../../api/domains/syslumenn/src/lib/models/dataUpload'
 
 export const VHSUCCESS = [
   {

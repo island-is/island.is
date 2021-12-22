@@ -8,7 +8,7 @@ import {
   EndorsementMetadataDtoFieldEnum,
   EndorsementListTagsEnum,
 } from './gen/fetch/endorsements'
-import { HeaderMiddleware } from '@island.is/auth-nest-tools'
+import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 
 const CREATE_ENDORSEMENT_LIST_QUERY = `
   mutation EndorsementSystemCreateEndorsementList($input: CreateEndorsementListDto!) {
@@ -33,7 +33,9 @@ export class GeneralPetitionService {
   ) {}
 
   endorsementListApiWithAuth(token: string) {
-    return this.endorsementListApi.withMiddleware(new HeaderMiddleware(token))
+    return this.endorsementListApi.withMiddleware(
+      new AuthHeaderMiddleware(token),
+    )
   }
 
   async createEndorsementList({
