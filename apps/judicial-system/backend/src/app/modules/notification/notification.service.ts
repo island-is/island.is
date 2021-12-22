@@ -1,9 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { IntlService } from '@island.is/cms-translations'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
 import { IntegratedCourts } from '@island.is/judicial-system/consts'
@@ -56,21 +60,28 @@ interface Attachment {
 
 @Injectable()
 export class NotificationService {
+  private formatMessage: FormatMessage = () => {
+    throw new InternalServerErrorException('Format message not initialized')
+  }
+
   constructor(
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
     private readonly courtService: CourtService,
     private readonly smsService: SmsService,
     private readonly emailService: EmailService,
-    private readonly intlService: IntlService,
     private readonly eventService: EventService,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
-  ) {}
+    intlService: IntlService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {
+    intlService
+      .useIntl(['judicial.system.backend'], 'is')
+      .then((res) => (this.formatMessage = res.formatMessage))
+  }
 
   private async existsRevokableNotification(
     caseId: string,
-    recipientAddress: string | undefined,
+    recipientAddress?: string,
   ): Promise<boolean> {
     try {
       const notifications: Notification[] = await this.notificationModel.findAll(
@@ -98,12 +109,18 @@ export class NotificationService {
             recipient.address === recipientAddress && recipient.success,
         )
       })
-    } catch {
+    } catch (error) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Error while looking up revokable notifications for case ${caseId}`,
+        { error },
+      )
+
       return false
     }
   }
 
-  private getCourtMobileNumber(courtId: string | undefined) {
+  private getCourtMobileNumber(courtId?: string) {
     return (
       (courtId && environment.notifications.courtsMobileNumbers[courtId]) ??
       undefined
@@ -111,15 +128,17 @@ export class NotificationService {
   }
 
   private async sendSms(
-    mobileNumbers: string | undefined,
     smsText: string,
+    mobileNumbers?: string,
   ): Promise<Recipient> {
     // Production or local development with judge mobile number
     if (environment.production || mobileNumbers) {
       try {
         await this.smsService.sendSms(mobileNumbers?.split(',') ?? '', smsText)
       } catch (error) {
-        this.logger.error('Failed to send sms to court mobile number', error)
+        this.logger.error('Failed to send sms to court mobile numbers', {
+          error,
+        })
 
         return {
           address: mobileNumbers,
@@ -135,10 +154,10 @@ export class NotificationService {
   }
 
   private async sendEmail(
-    recipientName: string | undefined,
-    recipientEmail: string | undefined,
     subject: string,
     html: string,
+    recipientName?: string,
+    recipientEmail?: string,
     attachments?: Attachment[],
   ): Promise<Recipient> {
     try {
@@ -163,7 +182,7 @@ export class NotificationService {
         attachments: attachments,
       })
     } catch (error) {
-      this.logger.error('Failed to send email', error)
+      this.logger.error('Failed to send email', { error })
 
       return {
         address: recipientEmail,
@@ -198,14 +217,9 @@ export class NotificationService {
   }
 
   private async uploadRequestPdfToCourt(existingCase: Case): Promise<void> {
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
     const requestPdf = await getRequestPdfAsBuffer(
       existingCase,
-      intl.formatMessage,
+      this.formatMessage,
     )
 
     try {
@@ -223,7 +237,7 @@ export class NotificationService {
         streamId,
       )
     } catch (error) {
-      this.logger.error('Failed to upload request pdf to court', error)
+      this.logger.error('Failed to upload request pdf to court', { error })
     }
   }
 
@@ -240,8 +254,8 @@ export class NotificationService {
     )
 
     return this.sendSms(
-      this.getCourtMobileNumber(existingCase.courtId),
       smsText,
+      this.getCourtMobileNumber(existingCase.courtId),
     )
   }
 
@@ -267,8 +281,8 @@ export class NotificationService {
     )
 
     return this.sendSms(
-      this.getCourtMobileNumber(existingCase.courtId),
       smsText,
+      this.getCourtMobileNumber(existingCase.courtId),
     )
   }
 
@@ -280,31 +294,26 @@ export class NotificationService {
     )
 
     return this.sendSms(
-      this.getCourtMobileNumber(existingCase.courtId),
       smsText,
+      this.getCourtMobileNumber(existingCase.courtId),
     )
   }
 
   private async sendReadyForCourtEmailNotificationToProsecutor(
     existingCase: Case,
   ): Promise<Recipient> {
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
     const { type, court, policeCaseNumber } = existingCase
 
     const subject = `Krafa í máli ${policeCaseNumber}`
 
     const caseType =
       type === CaseType.CUSTODY
-        ? intl.formatMessage(core.caseType.custody)
+        ? this.formatMessage(core.caseType.custody)
         : type === CaseType.TRAVEL_BAN
-        ? intl.formatMessage(core.caseType.travelBan)
-        : intl.formatMessage(core.caseType.investigate)
+        ? this.formatMessage(core.caseType.travelBan)
+        : this.formatMessage(core.caseType.investigate)
 
-    const html = intl.formatMessage(
+    const html = this.formatMessage(
       notificationMessages.readyForCourt.prosecutorHtml,
       {
         caseType,
@@ -314,10 +323,10 @@ export class NotificationService {
     )
 
     return this.sendEmail(
-      existingCase.prosecutor?.name,
-      existingCase.prosecutor?.email,
       subject,
       html,
+      existingCase.prosecutor?.name,
+      existingCase.prosecutor?.email,
     )
   }
 
@@ -378,7 +387,7 @@ export class NotificationService {
       existingCase.courtCaseNumber,
     )
 
-    return this.sendSms(existingCase.prosecutor?.mobileNumber, smsText)
+    return this.sendSms(smsText, existingCase.prosecutor?.mobileNumber)
   }
 
   private async sendReceivedByCourtNotifications(
@@ -414,10 +423,10 @@ export class NotificationService {
     )
 
     return this.sendEmail(
-      existingCase.prosecutor?.name,
-      existingCase.prosecutor?.email,
       subject,
       html,
+      existingCase.prosecutor?.name,
+      existingCase.prosecutor?.email,
     )
   }
 
@@ -441,10 +450,10 @@ export class NotificationService {
     )
 
     return this.sendEmail(
-      'Gæsluvarðhaldsfangelsi',
-      environment.notifications.prisonEmail,
       subject,
       html,
+      'Gæsluvarðhaldsfangelsi',
+      environment.notifications.prisonEmail,
     )
   }
 
@@ -467,11 +476,7 @@ export class NotificationService {
     let attachments: Attachment[] | undefined
 
     if (existingCase.sendRequestToDefender) {
-      const intl = await this.intlService.useIntl(
-        ['judicial.system.backend'],
-        'is',
-      )
-      const pdf = await getRequestPdfAsString(existingCase, intl.formatMessage)
+      const pdf = await getRequestPdfAsString(existingCase, this.formatMessage)
 
       attachments = [
         {
@@ -483,10 +488,10 @@ export class NotificationService {
     }
 
     return this.sendEmail(
-      existingCase.defenderName,
-      existingCase.defenderEmail,
       subject,
       html,
+      existingCase.defenderName,
+      existingCase.defenderEmail,
       attachments,
     )
   }
@@ -552,10 +557,10 @@ export class NotificationService {
     ]
 
     return this.sendEmail(
-      'Gæsluvarðhaldsfangelsi',
-      environment.notifications.prisonEmail,
       subject,
       html,
+      'Gæsluvarðhaldsfangelsi',
+      environment.notifications.prisonEmail,
       attachments,
     )
   }
@@ -565,10 +570,10 @@ export class NotificationService {
     rulingPdf: string,
   ): Promise<Recipient> {
     return this.sendEmail(
-      'Fangelsismálastofnun',
-      environment.notifications.prisonAdminEmail,
       existingCase.courtCaseNumber ?? '',
       'Sjá viðhengi',
+      'Fangelsismálastofnun',
+      environment.notifications.prisonAdminEmail,
       [
         {
           filename: `Þingbók án úrskurðar ${existingCase.courtCaseNumber}.pdf`,
@@ -588,14 +593,9 @@ export class NotificationService {
       }
     }
 
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
     const rulingPdf = await getRulingPdfAsString(
       existingCase,
-      intl.formatMessage,
+      this.formatMessage,
       true,
     )
 
@@ -636,8 +636,8 @@ export class NotificationService {
     )
 
     return this.sendSms(
-      this.getCourtMobileNumber(existingCase.courtId),
       smsText,
+      this.getCourtMobileNumber(existingCase.courtId),
     )
   }
 
@@ -655,10 +655,10 @@ export class NotificationService {
     )
 
     return this.sendEmail(
-      'Gæsluvarðhaldsfangelsi',
-      environment.notifications.prisonEmail,
       subject,
       html,
+      'Gæsluvarðhaldsfangelsi',
+      environment.notifications.prisonEmail,
     )
   }
 
@@ -679,10 +679,10 @@ export class NotificationService {
     )
 
     return this.sendEmail(
-      existingCase.defenderName,
-      existingCase.defenderEmail,
       subject,
       html,
+      existingCase.defenderName,
+      existingCase.defenderEmail,
     )
   }
 
@@ -738,8 +738,6 @@ export class NotificationService {
   /* API */
 
   async getAllCaseNotifications(existingCase: Case): Promise<Notification[]> {
-    this.logger.debug(`Getting all notifications for case ${existingCase.id}`)
-
     return this.notificationModel.findAll({
       where: { caseId: existingCase.id },
       order: [['created', 'DESC']],
@@ -750,10 +748,6 @@ export class NotificationService {
     notification: SendNotificationDto,
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
-    this.logger.debug(
-      `Sending ${notification.type} notification for case ${existingCase.id}`,
-    )
-
     switch (notification.type) {
       case NotificationType.HEADS_UP:
         return this.sendHeadsUpNotifications(existingCase)

@@ -9,9 +9,9 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
   DokobitError,
   SigningService,
@@ -44,7 +44,6 @@ import { CourtService } from '../court'
 import { CreateCaseDto, InternalCreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
-import { StaticText } from '@island.is/application/core'
 
 interface Recipient {
   name: string
@@ -88,10 +87,7 @@ const standardIncludes: Includeable[] = [
 
 @Injectable()
 export class CaseService {
-  private formatMessage: (
-    descriptor: StaticText,
-    values?: unknown,
-  ) => string = () => {
+  private formatMessage: FormatMessage = () => {
     throw new InternalServerErrorException('Format message not initialized')
   }
 
