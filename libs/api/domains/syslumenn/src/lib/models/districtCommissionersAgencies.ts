@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { EmbaettiOgStarfsstodvar } from '@island.is/clients/syslumenn'
 
 @ObjectType()
 export class DistrictCommissionersAgenciesRepsonse {
@@ -14,15 +13,4 @@ export class DistrictCommissionersAgenciesRepsonse {
 
   @Field({ nullable: true })
   id?: string
-}
-
-export const mapDistrictCommissionersAgenciesRepsonse = (
-  response: EmbaettiOgStarfsstodvar,
-): DistrictCommissionersAgenciesRepsonse => {
-  return {
-    id: response.starfsstodID,
-    name: response.nafn,
-    place: response.stadur,
-    address: response.adsetur,
-  }
 }

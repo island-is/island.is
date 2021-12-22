@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { VirkLeyfi } from '@island.is/clients/syslumenn'
 @ObjectType()
 export class OperatingLicense {
   @Field({ nullable: true })
@@ -51,27 +50,3 @@ export class OperatingLicense {
   alcoholWeekendOutdoorLicense?: string
 }
 
-export const mapOperatingLicense = (
-  operatingLicense: VirkLeyfi,
-): OperatingLicense => ({
-  id: operatingLicense.rowNum,
-  issuedBy: operatingLicense.utgefidAf,
-  licenseNumber: operatingLicense.leyfisnumer,
-  location: operatingLicense.stadur,
-  name: operatingLicense.kallast,
-  street: operatingLicense.gata,
-  postalCode: operatingLicense.postnumer,
-  type: operatingLicense.tegund,
-  validUntil: operatingLicense.gildirTil
-    ? operatingLicense.gildirTil.toLocaleString()
-    : '',
-  licenseHolder: operatingLicense.leyfishafi,
-  category: operatingLicense.flokkur,
-  outdoorLicense: operatingLicense.leyfiTilUtiveitinga,
-  alcoholWeekdayLicense: operatingLicense.afgrAfgengisVirkirdagar,
-  alcoholWeekendLicense: operatingLicense.afgrAfgengisAdfaranottFridaga,
-  alcoholWeekdayOutdoorLicense:
-    operatingLicense.afgrAfgengisVirkirdagarUtiveitingar,
-  alcoholWeekendOutdoorLicense:
-    operatingLicense.afgrAfgengisAdfaranottFridagaUtiveitingar,
-})

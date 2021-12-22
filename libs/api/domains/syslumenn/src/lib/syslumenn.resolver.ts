@@ -2,7 +2,8 @@ import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
 import { GetHomestaysInput } from './dto/getHomestays.input'
 import { Homestay } from './models/homestay'
 import { SyslumennAuction } from './models/syslumennAuction'
-import { SyslumennService } from './syslumenn.service'
+import { SyslumennService } from '@island.is/clients/syslumenn'
+// import { SyslumennService } from './syslumenn.service'
 import { OperatingLicense } from './models/operatingLicense'
 import { CertificateInfoInput } from './dto/certificateInfo.input'
 import { CertificateInfoRepsonse } from './models/certificateInfo'
@@ -33,6 +34,7 @@ export class SyslumennResolver {
     return this.syslumennService.getOperatingLicenses()
   }
 
+  // TODO: Add curr user and ids check
   @Query(() => CertificateInfoRepsonse)
   getSyslumennCertificateInfo(
     @Args('input') input: CertificateInfoInput,

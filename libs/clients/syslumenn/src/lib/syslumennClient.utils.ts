@@ -62,10 +62,10 @@ export enum PersonType {
       name: homestay.heitiHeimagistingar ?? '',
       address: homestay.heimilisfang ?? '',
       manager: homestay.abyrgdarmadur ?? '',
-      year: homestay.umsoknarAr ? parseFloat(homestay.umsoknarAr) : null,
+      year: homestay.umsoknarAr ? parseFloat(homestay.umsoknarAr) : undefined,
       city: homestay.sveitarfelag ?? '',
-      guests: homestay.gestafjoldi ?? null,
-      rooms: homestay.fjoldiHerbergja ?? null,
+      guests: homestay.gestafjoldi,
+      rooms: homestay.fjoldiHerbergja,
       propertyId: homestay.fastanumer ?? '',
       apartmentId: homestay.ibudanumer ?? '',
     }

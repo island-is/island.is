@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common'
-import { ApiConfiguration } from './apiConfiguration'
-import { SyslumennApi } from '../../gen/fetch'
+import {SyslumennService} from './syslumennClient.service'
 
 @Module({
-  providers: [ApiConfiguration],
-  exports: [SyslumennApi],
+  providers: [SyslumennService],
+  exports: [SyslumennService],
 })
 export class SyslumennClientModule {}

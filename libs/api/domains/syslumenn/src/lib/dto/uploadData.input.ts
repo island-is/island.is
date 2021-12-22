@@ -38,10 +38,3 @@ export class Attachment {
   @Field()
   content!: string
 }
-
-export enum PersonType {
-  Plaintiff,
-  CounterParty,
-  Child,
-  CriminalRecordApplicant,
-}

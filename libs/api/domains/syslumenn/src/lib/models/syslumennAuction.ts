@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Uppbod } from '@island.is/clients/syslumenn'
 
 @ObjectType()
 export class SyslumennAuction {
@@ -36,17 +35,3 @@ export class SyslumennAuction {
   @Field({ nullable: true })
   respondent?: string
 }
-
-export const mapSyslumennAuction = (auction: Uppbod): SyslumennAuction => ({
-  office: auction.embaetti ?? '',
-  location: auction.starfsstod ?? '',
-  auctionType: auction.tegund ?? '',
-  lotType: auction.andlag ?? '',
-  lotName: auction.andlagHeiti ?? '',
-  lotId: auction.fastanumer ?? '',
-  lotItems: auction.lausafjarmunir ?? '',
-  auctionDate: auction.dagsetning ? auction.dagsetning.toLocaleString() : '',
-  auctionTime: auction.klukkan ?? '',
-  petitioners: auction.gerdarbeidendur ?? '',
-  respondent: auction.gerdartholar ?? '',
-})
