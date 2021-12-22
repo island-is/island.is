@@ -421,7 +421,11 @@ export class CaseService {
     return this.findById(theCase.id)
   }
 
-  async update(id: string, update: UpdateCaseDto): Promise<Case> {
+  async update(
+    id: string,
+    update: UpdateCaseDto,
+    returnUpdatedCase = true,
+  ): Promise<Case | undefined> {
     const [numberOfAffectedRows] = await this.caseModel.update(update, {
       where: { id },
     })
@@ -435,7 +439,9 @@ export class CaseService {
       throw new InternalServerErrorException(`Could not update case ${id}`)
     }
 
-    return this.findById(id)
+    if (returnUpdatedCase) {
+      return this.findById(id)
+    }
   }
 
   async getRequestPdf(existingCase: Case): Promise<Buffer> {
@@ -568,10 +574,14 @@ export class CaseService {
     }
 
     // TODO: UpdateCaseDto does not contain courtRecordSignatoryId and courtRecordSignatureDate - create a new type for CaseService.update
-    await this.update(existingCase.id, {
-      courtRecordSignatoryId: user.id,
-      courtRecordSignatureDate: new Date(),
-    } as UpdateCaseDto)
+    await this.update(
+      existingCase.id,
+      {
+        courtRecordSignatoryId: user.id,
+        courtRecordSignatureDate: new Date(),
+      } as UpdateCaseDto,
+      false,
+    )
 
     return { documentSigned: true }
   }
@@ -634,9 +644,13 @@ export class CaseService {
     }
 
     // TODO: UpdateCaseDto does not contain rulingDate - create a new type for CaseService.update
-    await this.update(existingCase.id, {
-      rulingDate: new Date(),
-    } as UpdateCaseDto)
+    await this.update(
+      existingCase.id,
+      {
+        rulingDate: new Date(),
+      } as UpdateCaseDto,
+      false,
+    )
 
     return {
       documentSigned: true,
