@@ -8,6 +8,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { environment } from '../../../environments'
 import { FjarsyslaService } from '../fjarsysla'
 import { RecyclingPartnerService } from '../recyclingPartner'
+import { SamgongustofaService } from '../samgongustofa'
 import {
   RecyclingRequestModel,
   RecyclingRequestTypes,
@@ -27,6 +28,8 @@ export class RecyclingRequestService {
     private fjarsyslaService: FjarsyslaService,
     @Inject(forwardRef(() => RecyclingPartnerService))
     private recycllingPartnerService: RecyclingPartnerService,
+    @Inject(forwardRef(() => SamgongustofaService))
+    private samgongustofaService: SamgongustofaService,
     private vehicleService: VehicleService,
   ) {}
 
@@ -189,6 +192,7 @@ export class RecyclingRequestService {
   // Create new RecyclingRequest for citizen and recyclingPartner.
   // partnerId could be null, when it's the request is for citizen
   async createRecyclingRequest(
+    nationalId: string,
     requestType: RecyclingRequestTypes,
     permno: string,
     nameOfRequestor: string,
@@ -199,6 +203,15 @@ export class RecyclingRequestService {
       this.logger.info(
         `---- Starting update requestType for ${permno} to requestType: ${requestType} ----`,
       )
+
+      // Check if user has this car
+      // and the car may be deregistered
+      const carList = await this.samgongustofaService.getVehicleInformation(nationalId);
+      if (!carList.find(car => car.isRecyclable && car.permno === permno
+      )){
+        this.logger.error(`User is not the car's owner or the car could not be recycle.`)
+      }
+
       // nameOfRequestor and partnerId are not required arguments
       // But partnerId and partnerId could not both be null at the same time
       if (!nameOfRequestor && !partnerId) {
