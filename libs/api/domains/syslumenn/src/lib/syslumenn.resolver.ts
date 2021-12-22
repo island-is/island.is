@@ -14,8 +14,8 @@ import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
 } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
