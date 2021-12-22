@@ -481,7 +481,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur: 101.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Dómritari hefur ekki verið skráður.<br /><br />Talsmaður sakbornings hefur ekki verið skráður.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur: 101.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Talsmaður sakbornings hefur ekki verið skráður.',
     )
   })
 
@@ -570,37 +570,6 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     // Assert
     expect(res).toBe(
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
-    )
-  })
-
-  test('should format court date notification when prosecutor will not attend', () => {
-    // Arrange
-    const type = CaseType.OTHER
-    const court = 'Héraðsdómur Reykjavíkur'
-    const courtDate = new Date('2021-12-24T10:00')
-    const courtRoom = '999'
-    const judgeName = 'Dóra Dómari'
-    const registrarName = 'Dalli Dómritari'
-    const defenderName = 'Tinni Talsmaður'
-    const defenderIsSpokesperson = true
-    const sessionArrangements = SessionArrangements.REMOTE_SESSION
-
-    // Act
-    const res = formatProsecutorCourtDateEmailNotification(
-      type,
-      court,
-      courtDate,
-      courtRoom,
-      judgeName,
-      registrarName,
-      defenderName,
-      defenderIsSpokesperson,
-      sessionArrangements,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Úrskurðað verður um kröfuna án mætingar af hálfu málsaðila.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.',
     )
   })
 
@@ -912,6 +881,34 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     // Assert
     expect(res).toBe(
       'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
+    )
+  })
+
+  test('should format defender court date notification when registrar is not set', () => {
+    // Arrange
+    const court = 'Héraðsdómur Norðurlands'
+    const courtCaseNumber = 'R-77/2021'
+    const courtDate = new Date('2020-12-19T10:19')
+    const courtRoom = undefined
+    const judgeName = 'Judy'
+    const prosecutor = makeProsecutor()
+
+    // Act
+    const res = formatDefenderCourtDateEmailNotification(
+      court,
+      courtCaseNumber,
+      courtDate,
+      courtRoom,
+      false,
+      judgeName,
+      undefined,
+      prosecutor.name,
+      prosecutor.institution?.name,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Judy.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
     )
   })
 })

@@ -5,7 +5,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 import {
-  UserModule,
+  AccessControlModule,
   AuthModule,
   GdprModule,
   VehicleModule,
@@ -14,7 +14,6 @@ import {
   VehicleOwnerModule,
   SamgongustofaModule,
   FjarsyslaModule,
-  AccessControlModule,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { environment } from '../environments'
@@ -36,10 +35,9 @@ const autoSchemaFile = environment.production
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+    AuthModule,
     AccessControlModule,
     RecyclingRequestModule,
-    AuthModule,
-    UserModule,
     SamgongustofaModule,
     FjarsyslaModule,
     GdprModule,

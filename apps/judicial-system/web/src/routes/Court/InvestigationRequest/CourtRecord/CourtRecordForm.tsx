@@ -50,17 +50,6 @@ const CourtRecordForm: React.FC<Props> = (props) => {
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
 
-  const validations: FormSettings = {
-    courtLocation: {
-      validations: ['empty'],
-    },
-    litigationPresentations: {
-      validations: ['empty'],
-    },
-  }
-
-  useCaseFormHelper(workingCase, setWorkingCase, validations)
-
   const displayAccusedBookings =
     workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
     (workingCase.sessionArrangements ===
