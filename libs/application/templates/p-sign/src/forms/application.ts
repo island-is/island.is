@@ -19,7 +19,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import type { User } from '@island.is/api/domains/national-registry'
-import { format } from 'kennitala'
+import { format as formatNationalId } from 'kennitala'
 import { QualityPhotoData } from '../types'
 import {
   NationalRegistryUser,
@@ -27,6 +27,8 @@ import {
   Juristiction,
 } from '../types/schema'
 import { m } from '../lib/messages'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 
 export const getApplication = (): Form => {
   return buildForm({
@@ -108,7 +110,7 @@ export const getApplication = (): Form => {
                 backgroundColor: 'white',
                 disabled: true,
                 defaultValue: (application: Application) =>
-                  format(application.applicant),
+                  formatNationalId(application.applicant),
               }),
               buildTextField({
                 id: 'address',
@@ -321,7 +323,7 @@ export const getApplication = (): Form => {
                 label: m.applicantsNationalId,
                 width: 'half',
                 value: (application: Application) =>
-                  format(application.applicant),
+                  formatNationalId(application.applicant),
               }),
               buildKeyValueField({
                 label: m.applicantsAddress,
@@ -356,7 +358,11 @@ export const getApplication = (): Form => {
                 label: m.cardValidityPeriod,
                 width: 'half',
                 value: ({ externalData: { doctorsNote } }) =>
-                  (doctorsNote.data as any).expirationDate as string,
+                  format(
+                    new Date((doctorsNote.data as any).expirationDate),
+                    'dd/mm/yyyy',
+                    { locale: is },
+                  ),
               }),
               buildDividerField({}),
               buildKeyValueField({
