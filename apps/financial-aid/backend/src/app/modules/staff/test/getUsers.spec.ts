@@ -43,7 +43,7 @@ describe('StaffController - Get users', () => {
       await givenWhenThen(municipalityId)
     })
 
-    it('should request staff by national id from the database', () => {
+    it('should run expected query', () => {
       expect(mockGetUsers).toHaveBeenCalledWith({
         where: {
           municipalityId,
