@@ -5,7 +5,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
 @Catch(HttpException)
-export class AllExceptionsFilter extends BaseExceptionFilter {
+export class HttpExceptionFilter extends BaseExceptionFilter {
   constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {
     super()
   }

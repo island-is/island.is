@@ -17,7 +17,7 @@ import {
   AwsS3Module,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
-import { AllExceptionsFilter } from './filters'
+import { HttpExceptionFilter } from './filters'
 
 @Module({
   imports: [
@@ -41,7 +41,7 @@ import { AllExceptionsFilter } from './filters'
   providers: [
     {
       provide: APP_FILTER,
-      useClass: AllExceptionsFilter,
+      useClass: HttpExceptionFilter,
     },
   ],
 })
