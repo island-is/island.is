@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch'
 
 import {
   BadGatewayException,
-  BadRequestException,
+  HttpException,
   Inject,
   Injectable,
 } from '@nestjs/common'
@@ -23,8 +23,7 @@ import { Case } from './app.model'
 export class AppService {
   constructor(
     private readonly auditTrailService: AuditTrailService,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   private async createCase(caseToCreate: CreateCaseDto): Promise<Case> {
@@ -36,21 +35,23 @@ export class AppService {
       },
       body: JSON.stringify(caseToCreate),
     }).catch((reason) => {
-      this.logger.error('Could not create a new case', reason)
+      this.logger.error('Failed to create a new case', { reason })
 
-      throw new BadGatewayException('Could not create a new case')
+      throw new BadGatewayException('Failed to create a new case')
     })
 
     if (!res.ok) {
-      this.logger.error('Could not create a new case', res)
+      // TODO: Find a way to read error from body
+      this.logger.info('Failed to create a new case', { res })
 
-      console.log(res)
-      if (res.status === 400) {
-        // TODO: Get message from res when exception handling has been improved in the backend
-        throw new BadRequestException('Could not create a new case')
+      if (res.status < 500) {
+        throw new HttpException(
+          { statusCode: res.status, message: 'Failed to create a new case' },
+          res.status,
+        )
       }
 
-      throw new BadGatewayException('Could not create a new case')
+      throw new BadGatewayException('Failed to create a new case')
     }
 
     return res
@@ -64,8 +65,6 @@ export class AppService {
   }
 
   async create(caseToCreate: CreateCaseDto): Promise<Case> {
-    this.logger.info('Creating a new case')
-
     return this.auditTrailService.audit(
       'xrd-api',
       AuditedAction.CREATE_CASE,

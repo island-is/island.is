@@ -73,7 +73,7 @@ export class UserService {
     })
 
     if (!user) {
-      throw new NotFoundException(`User with does not exist`)
+      throw new NotFoundException('User does not exist')
     }
 
     return user

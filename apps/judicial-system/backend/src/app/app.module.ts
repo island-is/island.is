@@ -2,7 +2,10 @@ import { Module } from '@nestjs/common'
 import { APP_FILTER } from '@nestjs/core'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import {
+  HttpExceptionFilter,
+  SharedAuthModule,
+} from '@island.is/judicial-system/auth'
 
 import { environment } from '../environments'
 import {
@@ -17,7 +20,6 @@ import {
   AwsS3Module,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
-import { HttpExceptionFilter } from './filters'
 
 @Module({
   imports: [

@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common'
+import { APP_FILTER } from '@nestjs/core'
 
+import { HttpExceptionFilter } from '@island.is/judicial-system/auth'
 import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
 
 import { environment } from '../environments'
@@ -9,6 +11,12 @@ import { AppService } from './app.service'
 @Module({
   imports: [AuditTrailModule.register(environment.auditTrail)],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+    AppService,
+  ],
 })
 export class AppModule {}
