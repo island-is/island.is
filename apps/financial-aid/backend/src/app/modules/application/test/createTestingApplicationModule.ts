@@ -57,5 +57,12 @@ export const createTestingApplicationModule = async () => {
     ApplicationController,
   )
 
-  return { applicationModel, applicationService, applicationController }
+  const fileService = applicationModule.get<FileService>(FileService)
+
+  return {
+    applicationModel,
+    applicationService,
+    applicationController,
+    fileService,
+  }
 }
