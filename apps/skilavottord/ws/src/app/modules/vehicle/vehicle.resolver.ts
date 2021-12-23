@@ -61,6 +61,6 @@ export class VehicleResolver {
     newVehicle.vehicleType = type
     newVehicle.ownerNationalId = user.nationalId
     newVehicle.vehicleId = permno
-    return await this.vehicleService.create(newVehicle)
+    return await this.vehicleService.create(newVehicle, user)
   }
 }

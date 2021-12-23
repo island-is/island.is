@@ -1,17 +1,26 @@
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  forwardRef,
+  UnauthorizedException,
+} from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { Role, User } from '../auth'
 import { RecyclingRequestModel } from '../recyclingRequest'
 import { RecyclingPartnerModel } from '../recyclingPartner'
 import { VehicleModel } from './vehicle.model'
+import { SamgongustofaService } from '../samgongustofa'
 
 @Injectable()
 export class VehicleService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @Inject(forwardRef(() => SamgongustofaService))
+    private samgongustofaService: SamgongustofaService,
   ) {}
 
   async findAll(): Promise<VehicleModel[]> {
@@ -63,11 +72,24 @@ export class VehicleService {
     }
   }
 
-  async create(vehicle: VehicleModel): Promise<boolean> {
+  async create(vehicle: VehicleModel, user: User): Promise<boolean> {
     try {
       this.logger.info(
         `starting creating vehicle with vehicle id - ${vehicle.vehicleId}...`,
       )
+
+      const carList = await this.samgongustofaService.getVehicleInformation(
+        user.nationalId,
+      )
+      if (
+        !(
+          carList.find(
+            (car) => car.isRecyclable && car.permno === vehicle.vehicleId,
+          ) || Role.developer === user.role
+        )
+      ) {
+        throw new UnauthorizedException()
+      }
       // Check if Vehicle is already in database
       const findVehicle = await this.findByVehicleId(vehicle.vehicleId)
       if (findVehicle) {
