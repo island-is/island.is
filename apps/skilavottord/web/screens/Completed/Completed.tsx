@@ -32,7 +32,7 @@ import { dateFormat } from '@island.is/shared/constants'
 
 export const SkilavottordRecyclingRequestQuery = gql`
   query skilavottordRecyclingRequestQuery($permno: String!) {
-    skilavottordRecyclingRequest(permno: $permno) {
+    skilavottordUserRecyclingRequest(permno: $permno) {
       id
       requestType
       nameOfRequestor
