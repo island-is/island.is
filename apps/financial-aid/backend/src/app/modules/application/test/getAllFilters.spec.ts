@@ -109,47 +109,48 @@ describe('ApplicationController - Get all filters', () => {
 
   describe('get filters', () => {
     let then: Then
+    const expectedValue = 10
     const staff = { id: uuid(), municipalityId: '10' } as Staff
 
     beforeEach(async () => {
       const mockFindById = mockApplicationModel.count as jest.Mock
-      mockFindById.mockReturnValue(10)
+      mockFindById.mockReturnValue(expectedValue)
 
       then = await givenWhenThen(staff)
     })
 
     it('should return New filters', () => {
-      expect(then.result.New).toBe(10)
+      expect(then.result.New).toBe(expectedValue)
     })
 
     it('should return InProgress filters', () => {
-      expect(then.result.InProgress).toBe(10)
+      expect(then.result.InProgress).toBe(expectedValue)
     })
 
     it('should return DataNeeded filters', () => {
-      expect(then.result.DataNeeded).toBe(10)
+      expect(then.result.DataNeeded).toBe(expectedValue)
     })
 
     it('should return Rejected filters', () => {
-      expect(then.result.Rejected).toBe(10)
+      expect(then.result.Rejected).toBe(expectedValue)
     })
 
     it('should return Approved filters', () => {
-      expect(then.result.Approved).toBe(10)
+      expect(then.result.Approved).toBe(expectedValue)
     })
 
     it('should return MyCases filters', () => {
-      expect(then.result.MyCases).toBe(10)
+      expect(then.result.MyCases).toBe(expectedValue)
     })
 
     it('should return expected filters', () => {
       expect(then.result).toEqual({
-        New: 10,
-        InProgress: 10,
-        DataNeeded: 10,
-        Rejected: 10,
-        Approved: 10,
-        MyCases: 10,
+        New: expectedValue,
+        InProgress: expectedValue,
+        DataNeeded: expectedValue,
+        Rejected: expectedValue,
+        Approved: expectedValue,
+        MyCases: expectedValue,
       } as ApplicationFilters)
     })
   })
