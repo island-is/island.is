@@ -4,6 +4,8 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   GetNewsQuery,
+  Link,
+  LinkGroup,
   Query,
   QueryGetNamespaceArgs,
   QueryGetProjectPageArgs,
@@ -93,11 +95,64 @@ interface PageProps {
   namespace: Query['getNamespace']
 }
 
-interface NavigationData {
-  title: string
-  activeItemTitle?: string
-  items: NavigationItem[]
+const convertLinksToNavigationItem = (links: Link[]) =>
+  links.map(({ text, url }) => {
+    return {
+      title: text,
+      href: url,
+      active: false,
+    }
+  })
+
+const convertLinkGroupsToNavigationItems = (
+  linkGroups: LinkGroup[],
+): NavigationItem[] =>
+  linkGroups.map(({ primaryLink, childrenLinks }) => {
+    return {
+      title: primaryLink.text,
+      href: primaryLink.url,
+      active: false,
+      items: convertLinksToNavigationItem(childrenLinks),
+    }
+  })
+
+const getActiveNavigationItemTitle = (
+  navigationItems: NavigationItem[],
+  clientUrl: string,
+) => {
+  for (const item of navigationItems) {
+    if (clientUrl === item.href) {
+      return item.title
+    }
+    for (const childItem of item.items) {
+      if (clientUrl === childItem.href) {
+        return childItem.title
+      }
+    }
+  }
 }
+
+const assignNavigationActive = (
+  items: NavigationItem[],
+  clientUrl: string,
+): NavigationItem[] =>
+  items.map((item) => {
+    let isAnyChildActive = false
+    const childItems = item.items.map((childItem) => {
+      const isChildActive = clientUrl === childItem.href
+      if (isChildActive) isAnyChildActive = isChildActive
+      return {
+        ...childItem,
+        active: isChildActive,
+      }
+    })
+    return {
+      title: item.title,
+      href: item.href,
+      active: clientUrl === item.href || isAnyChildActive,
+      items: childItems,
+    }
+  })
 
 const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
   const n = useNamespace(namespace)
@@ -108,44 +163,17 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
     return x.slug === router.query.subSlug
   })
 
-  const navigationList: NavigationItem[] = projectPage.sidebarLinks.map(
-    ({ primaryLink, childrenLinks }) => {
-      let isAnyChildActive = false
-      const items = childrenLinks.map(({ text, url }) => {
-        const isChildActive = router.asPath === url
-        if (isChildActive) isAnyChildActive = isChildActive
-        return {
-          title: text,
-          href: url,
-          active: isChildActive,
-        }
-      })
-      return {
-        title: primaryLink.text,
-        href: primaryLink.url,
-        active: router.asPath === primaryLink.url || isAnyChildActive,
-        items,
-      }
-    },
+  const navigationList = assignNavigationActive(
+    convertLinkGroupsToNavigationItems(projectPage.sidebarLinks),
+    router.asPath,
   )
 
-  // Keep track of what navigation link is active and update it when the browser url changes
-  const activeNavigationItem = useMemo(() => {
-    let result: string | undefined = undefined
-    navigationList.forEach((item) => {
-      if (router.asPath === item.href) result = item.title
-      item.items.forEach((childItem) => {
-        if (router.asPath === childItem.href) result = childItem.title
-      })
-    })
-    return result
-  }, [router.asPath])
+  const activeNavigationItemTitle = useMemo(
+    () => getActiveNavigationItemTitle(navigationList, router.asPath),
+    [router.asPath],
+  )
 
-  const navigationData: NavigationData = {
-    title: n('navigationTitle', 'Efnisyfirlit'),
-    items: navigationList,
-    activeItemTitle: activeNavigationItem,
-  }
+  const navigationTitle = n('navigationTitle', 'Efnisyfirlit')
 
   return (
     <>
@@ -164,9 +192,9 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           <>
             <Navigation
               baseId="pageNav"
-              items={navigationData.items}
-              activeItemTitle={navigationData.activeItemTitle}
-              title={navigationData.title}
+              items={navigationList}
+              activeItemTitle={activeNavigationItemTitle}
+              title={navigationTitle}
               renderLink={(link, item) => {
                 return item?.href ? (
                   <NextLink href={item?.href}>{link}</NextLink>
@@ -184,9 +212,9 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
               <Navigation
                 isMenuDialog
                 baseId="pageNav"
-                items={navigationData.items}
-                activeItemTitle={navigationData.activeItemTitle}
-                title={navigationData.title}
+                items={navigationList}
+                activeItemTitle={activeNavigationItemTitle}
+                title={navigationTitle}
                 renderLink={(link, item) => {
                   return item?.href ? (
                     <NextLink href={item?.href}>{link}</NextLink>

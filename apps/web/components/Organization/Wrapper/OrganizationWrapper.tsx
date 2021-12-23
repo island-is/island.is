@@ -268,6 +268,22 @@ const SecondaryMenu = ({
   </Box>
 )
 
+const getActiveNavigationItemTitle = (
+  navigationItems: NavigationItem[],
+  clientUrl: string,
+) => {
+  for (const item of navigationItems) {
+    if (clientUrl === item.href) {
+      return item.title
+    }
+    for (const childItem of item.items) {
+      if (clientUrl === childItem.href) {
+        return childItem.title
+      }
+    }
+  }
+}
+
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
   pageDescription,
@@ -293,17 +309,10 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
       active: router.asPath === url,
     })) ?? []
 
-  // Keep track of what navigation link is active and update it when the browser url changes
-  const activeNavigationItem = useMemo(() => {
-    let result: string | undefined = undefined
-    navigationData.items.forEach((item) => {
-      if (router.asPath === item.href) result = item.title
-      item.items.forEach((childItem) => {
-        if (router.asPath === childItem.href) result = childItem.title
-      })
-    })
-    return result
-  }, [router.asPath])
+  const activeNavigationItemTitle = useMemo(
+    () => getActiveNavigationItemTitle(navigationData.items, router.asPath),
+    [router.asPath],
+  )
 
   const metaTitleSuffix =
     pageTitle !== organizationPage.title ? ` | ${organizationPage.title}` : ''
@@ -344,7 +353,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   baseId="pageNav"
                   items={navigationData.items}
                   title={navigationData.title}
-                  activeItemTitle={activeNavigationItem}
+                  activeItemTitle={activeNavigationItemTitle}
                   renderLink={(link, item) => {
                     return item?.href ? (
                       <NextLink href={item?.href}>{link}</NextLink>
@@ -384,7 +393,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     isMenuDialog={true}
                     items={navigationData.items}
                     title={navigationData.title}
-                    activeItemTitle={activeNavigationItem}
+                    activeItemTitle={activeNavigationItemTitle}
                     renderLink={(link, item) => {
                       return item?.href ? (
                         <NextLink href={item?.href}>{link}</NextLink>
