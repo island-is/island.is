@@ -27,6 +27,7 @@ export const userNotificationServiceSetup = (): ServiceBuilder<'user-notificatio
         public: false,
       },
     })
+    .grantNamespaces('nginx-ingress-internal')
 
 export const userNotificationWorkerSetup = (): ServiceBuilder<'user-notification-worker'> =>
   service('user-notification-worker')
