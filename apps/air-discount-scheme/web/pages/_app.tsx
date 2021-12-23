@@ -4,7 +4,7 @@ import Head from 'next/head'
 import { ApolloProvider } from '@apollo/client'
 
   
-import { getSession, Provider } from "next-auth/client"
+import { getSession, Provider, signIn, useSession } from "next-auth/client"
 
 import initApollo from '../graphql/client'
 import { UserContext } from '../context'
@@ -15,7 +15,7 @@ import NextCookies from 'next-cookies'
 import getConfig from 'next/config'
 import * as Sentry from '@sentry/node'
 
-import { Toast, ErrorBoundary, AppLayout } from '../components'
+import { Toast, ErrorBoundary, AppLayout, AuthProvider } from '../components'
 import { appWithTranslation } from '../i18n'
 import { isAuthenticated } from '../auth/utils'
 import { withHealthchecks } from '../utils/Healthchecks/withHealthchecks'
@@ -51,6 +51,23 @@ const getLanguage = (path) => {
   return 'is'
 }
 
+function Auth({ children }) {
+  const [session, loading] = useSession()
+  const isUser = !!session?.user
+  React.useEffect(() => {
+    if (loading) return // Do nothing while loading
+    if (!isUser) signIn('identity-server') // If not authenticated, force log in
+  }, [isUser, loading])
+
+  if (isUser) {
+    return children
+  }
+  
+  // Session is being fetched, or no user.
+  // If no user, useEffect() will redirect.
+  return <div>Loading...</div>
+}
+
 const SupportApplication: any = ({ Component, pageProps }) => {
   if(process.browser) {
     Sentry.configureScope((scope) => {
@@ -76,10 +93,13 @@ const SupportApplication: any = ({ Component, pageProps }) => {
   
   return (
     <ApolloProvider client={initApollo(pageProps.apolloState)}>
-      <Provider session={pageProps.session} >
-        <Layout>
-          <Component {...pageProps.pageProps} />
-        </Layout>
+      <Provider session={pageProps.session}>
+          <Layout>
+            {
+              Component.auth ? <Auth><Component {...pageProps.pageProps} /></Auth>
+              : <Component {...pageProps.pageProps} />
+            }
+          </Layout>
       </Provider>
     </ApolloProvider>
   )

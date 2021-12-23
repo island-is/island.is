@@ -17,6 +17,7 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import { NoBenefits, CodeCard } from '../'
+import { useSession } from 'next-auth/client'
 
 const TEN_SECONDS = 10000 // milli-seconds
 
@@ -50,6 +51,7 @@ const DiscountsQuery = gql`
 `
 
 function Benefits({ misc }: PropTypes) {
+  const [session] = useSession()
   const { data, loading, called } = useQuery(DiscountsQuery, {
     ssr: false,
     pollInterval: TEN_SECONDS,
@@ -197,5 +199,5 @@ function Benefits({ misc }: PropTypes) {
     </Box>
   )
 }
-
+Benefits.auth = true
 export default Benefits

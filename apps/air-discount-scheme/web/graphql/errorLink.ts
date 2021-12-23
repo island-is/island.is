@@ -11,12 +11,13 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   }
 
   if (graphQLErrors) {
+    console.log(JSON.stringify(graphQLErrors))
     graphQLErrors.forEach((err) => {
-      // if (err.message === 'Unauthorized') {
-      //   return signIn(identityServerId, {
-      //     callbackUrl: `${window.location.href}`,
-      //   })
-      // }
+      if (err.message === 'Unauthorized') {
+        return signIn(identityServerId, {
+          callbackUrl: `${window.location.href}`,
+        })
+      }
       switch (err.extensions?.code) {
         case 'UNAUTHENTICATED':
           // return signIn(identityServerId, {
