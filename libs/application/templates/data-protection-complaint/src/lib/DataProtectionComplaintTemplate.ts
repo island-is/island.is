@@ -9,14 +9,10 @@ import {
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import { DataProtectionComplaintSchema } from './dataSchema'
-import { application } from './messages/application'
+import { application } from './messages'
+import { Roles, TEMPLATE_API_ACTIONS } from '../shared'
 
 type DataProtectionComplaintEvent = { type: DefaultEvents.SUBMIT }
-
-enum Roles {
-  APPLICANT = 'applicant',
-  ASSIGNEE = 'assignee',
-}
 
 const DataProtectionComplaintTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -60,12 +56,15 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
           name: 'In Review',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ComplaintFormInReview').then((module) =>
-                  Promise.resolve(module.ComplaintFormInReview),
+                import('../forms/ComplaintForm').then((module) =>
+                  Promise.resolve(module.ComplaintForm),
                 ),
               write: 'all',
             },
