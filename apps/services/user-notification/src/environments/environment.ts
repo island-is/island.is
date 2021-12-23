@@ -20,6 +20,9 @@ const required = (name: string): string => {
   return v
 }
 
+// required by firebase-admin
+required('GOOGLE_APPLICATION_CREDENTIALS')
+
 export const environment = {
   mainQueueName: required('MAIN_QUEUE_NAME'),
   deadLetterQueueName: env.DEAD_LETTER_QUEUE_NAME,
