@@ -6,6 +6,8 @@ This library implements a client to use User Profile APIs
 
 ```js
 import { ConfigModule } from '@island.is/nest/config'
+import { UserProfileClientModule, UserProfileClientConfig } from '@island.is/clients/user-profile'
+
 @Module({
   imports: [
       UserProfileClientModule,
