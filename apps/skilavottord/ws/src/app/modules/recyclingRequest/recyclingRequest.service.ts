@@ -1,10 +1,17 @@
-import { Inject, Injectable, HttpService, forwardRef } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  HttpService,
+  forwardRef,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import format from 'date-fns/format'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { Role, User } from '../auth'
 import { environment } from '../../../environments'
 import { FjarsyslaService } from '../fjarsysla'
 import { RecyclingPartnerService } from '../recyclingPartner'
@@ -113,6 +120,31 @@ export class RecyclingRequestService {
     return res
   }
 
+  async findRecyclingRequestWithPermno(
+    permno: string,
+    user: User,
+  ): Promise<RecyclingRequestModel[]> {
+    this.logger.info(
+      `---- Starting findRecyclingRequestWithPermno for ${permno} ----`,
+    )
+    const carList = await this.samgongustofaService.getVehicleInformation(
+      user.nationalId,
+    )
+    if (
+      carList.find((car) => car.isRecyclable && car.permno === permno) ||
+      [Role.recyclingCompany, Role.developer].includes(user.role)
+    ) {
+      const res = this.findAllWithPermno(permno)
+      return [res[0]]
+    }
+    this.logger.error(
+      `User doesn't have right to fetch the vehicle's information`,
+    )
+    throw new UnauthorizedException(
+      `User doesn't have right to fetch the vehicle's information`,
+    )
+  }
+
   // Find all a vehicle's requests
   async findAllWithPermno(permno: string): Promise<RecyclingRequestModel[]> {
     this.logger.info(
@@ -192,7 +224,7 @@ export class RecyclingRequestService {
   // Create new RecyclingRequest for citizen and recyclingPartner.
   // partnerId could be null, when it's the request is for citizen
   async createRecyclingRequest(
-    nationalId: string,
+    user: User,
     requestType: RecyclingRequestTypes,
     permno: string,
     nameOfRequestor: string,
@@ -203,17 +235,6 @@ export class RecyclingRequestService {
       this.logger.info(
         `---- Starting update requestType for ${permno} to requestType: ${requestType} ----`,
       )
-
-      // Check if user has this car
-      // and the car may be deregistered
-      const carList = await this.samgongustofaService.getVehicleInformation(
-        nationalId,
-      )
-      if (!carList.find((car) => car.isRecyclable && car.permno === permno)) {
-        this.logger.error(
-          `User is not the car's owner or the car could not be recycle.`,
-        )
-      }
 
       // nameOfRequestor and partnerId are not required arguments
       // But partnerId and partnerId could not both be null at the same time
@@ -284,7 +305,8 @@ export class RecyclingRequestService {
       }
 
       // Here is a bit tricky
-      // 1. Check if lastest vehicle's requestType is 'pendingRecycle'
+      // Only Developer and RecyclingCompany may deregistered vehicle
+      // 1. Check whether lastest vehicle's requestType is 'pendingRecycle' or 'handOver'
       // 2. Set requestType to 'handOver'
       // 3. Then deregistered the vehicle from Samgongustofa
       // 4. Set requestType to 'deregistered'
@@ -292,8 +314,11 @@ export class RecyclingRequestService {
       // 6. Set requestType to 'paymentInitiated'
       // If we encounter error then update requestType to 'paymentFailed'
       // If we encounter error with 'partnerId' then there is no request saved
-      if (requestType == 'deregistered') {
-        // 1. Check 'pendingRecycle' requestType
+      if (
+        requestType == 'deregistered' &&
+        [Role.developer, Role.recyclingCompany].includes(user.role)
+      ) {
+        // 1. Check 'pendingRecycle'/'handOver' requestType
         this.logger.info(`Check "pendingRecycle" status on vehicle: ${permno}`)
         const resRequestType = await this.findAllWithPermno(permno)
         if (!requestType || resRequestType.length == 0) {
@@ -445,6 +470,19 @@ export class RecyclingRequestService {
       }
       // requestType: 'pendingRecycle' or 'cancelled'
       else {
+        // Check if user has the vehicle
+        const carList = await this.samgongustofaService.getVehicleInformation(
+          user.nationalId,
+        )
+        if (!carList.find((car) => car.isRecyclable && car.permno === permno)) {
+          this.logger.error(
+            `User is not the car's owner or the car could not be recycle.`,
+          )
+          throw new UnauthorizedException(
+            `User doesn't have right to deregistered the vehicle`,
+          )
+        }
+
         this.logger.info(`create requestType: ${requestType} for ${permno}`)
         await newRecyclingRequest.save()
       }

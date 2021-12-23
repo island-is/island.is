@@ -4,9 +4,8 @@ import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Authorize, Role, CurrentUser } from '../auth'
+import { Authorize, Role, CurrentUser, User } from '../auth'
 import { VehicleModel } from '../vehicle'
-import type { User } from '../auth'
 import {
   RecyclingRequestModel,
   RecyclingRequestTypes,
@@ -34,6 +33,25 @@ export class RecyclingRequestResolver {
     return res
   }
 
+  @Query(() => [RecyclingRequestModel])
+  async skilavottordUserRecyclingRequest(
+    @CurrentUser() user: User,
+    @Args('permno') perm: string,
+  ): Promise<RecyclingRequestModel[]> {
+    const res = await this.recyclingRequestService.findRecyclingRequestWithPermno(
+      perm,
+      user,
+    )
+    this.logger.info(
+      'skilavottordUserRecyclingRequest responce:' +
+        JSON.stringify(res, null, 2),
+    )
+    return res
+  }
+
+  @Authorize({
+    roles: [Role.developer, Role.recyclingCompany, Role.recyclingCompany],
+  })
   @Query(() => [RecyclingRequestModel])
   async skilavottordRecyclingRequest(
     @Args('permno') perm: string,
@@ -72,7 +90,7 @@ export class RecyclingRequestResolver {
     @Args('partnerId', { nullable: true }) partnerId: string,
   ): Promise<typeof RecyclingRequestResponse> {
     return this.recyclingRequestService.createRecyclingRequest(
-      user.nationalId,
+      user,
       requestType,
       permno,
       name,
