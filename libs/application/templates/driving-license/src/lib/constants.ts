@@ -15,6 +15,7 @@ export enum States {
   DONE = 'done',
   PAYMENT = 'payment',
   DECLINED = 'declined',
+  PREREQUISITES = 'prerequisites',
 }
 
 export const YES = 'yes'
