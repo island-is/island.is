@@ -39,6 +39,7 @@ export const createTestingApplicationModule = async () => {
         useValue: {
           findOne: jest.fn(),
           findAll: jest.fn(),
+          update: jest.fn(),
         },
       },
       ApplicationService,
@@ -59,10 +60,25 @@ export const createTestingApplicationModule = async () => {
 
   const fileService = applicationModule.get<FileService>(FileService)
 
+  const staffService = applicationModule.get<StaffService>(StaffService)
+
+  const amountService = applicationModule.get<AmountService>(AmountService)
+
+  const applicationEventService = applicationModule.get<ApplicationEventService>(
+    ApplicationEventService,
+  )
+
+  const municipalityService = applicationModule.get<MunicipalityService>(
+    MunicipalityService,
+  )
   return {
     applicationModel,
     applicationService,
     applicationController,
     fileService,
+    staffService,
+    amountService,
+    applicationEventService,
+    municipalityService,
   }
 }
