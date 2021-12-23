@@ -38,6 +38,7 @@ export const createTestingApplicationModule = async () => {
         provide: getModelToken(ApplicationModel),
         useValue: {
           findOne: jest.fn(),
+          count: jest.fn(),
           findAll: jest.fn(),
         },
       },
