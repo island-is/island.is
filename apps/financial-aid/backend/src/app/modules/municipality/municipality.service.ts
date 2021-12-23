@@ -63,6 +63,7 @@ export class MunicipalityService {
     admin: CreateStaffDto,
     currentUser: Staff,
   ): Promise<MunicipalityModel> {
+    console.log('2')
     return await this.sequelize.transaction(async (t) => {
       return await Promise.all(
         Object.values(AidType).map((item) => {
@@ -110,6 +111,7 @@ export class MunicipalityService {
     municipalityId: string,
     municipality: UpdateMunicipalityDto,
   ): Promise<MunicipalityModel> {
+    console.log('3')
     try {
       await this.sequelize.transaction((t) => {
         return Promise.all([

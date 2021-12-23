@@ -10,7 +10,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (id: string) => Promise<Then>
+type GivenWhenThen = (municipalityId: string) => Promise<Then>
 describe('MunicipalityController - Gets municipality by id', () => {
   let mockMunicipalityModel: typeof MunicipalityModel
   let givenWhenThen: GivenWhenThen
@@ -23,11 +23,11 @@ describe('MunicipalityController - Gets municipality by id', () => {
 
     mockMunicipalityModel = municipalityModel
 
-    givenWhenThen = async (id: string): Promise<Then> => {
+    givenWhenThen = async (municipalityId: string): Promise<Then> => {
       const then = {} as Then
 
       await municipalityController
-        .getById(id)
+        .getById(municipalityId)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -45,7 +45,7 @@ describe('MunicipalityController - Gets municipality by id', () => {
       await givenWhenThen(municipalityId)
     })
 
-    it('should request muncipality by national id from the database', () => {
+    it.only('should request municipality by id from the database', () => {
       expect(mockFindById).toHaveBeenCalledWith({
         where: {
           municipalityId,

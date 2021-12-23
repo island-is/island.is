@@ -5,13 +5,13 @@ import { LoggingModule } from '@island.is/logging'
 import { MunicipalityModel } from '../models/municipality.model'
 import { MunicipalityController } from '../municipality.controller'
 import { StaffService } from '../../staff/staff.service'
-import { EmailService } from '@island.is/email-service'
 import { MunicipalityService } from '../municipality.service'
 import { AidService } from '../../aid/aid.service'
+import { Sequelize } from 'sequelize'
 
-jest.mock('@island.is/email-service')
-jest.mock('../../staff/staff.service.ts')
 jest.mock('../../aid/aid.service.ts')
+jest.mock('sequelize')
+jest.mock('../../staff/staff.service.ts')
 
 export const createTestingMunicipalityModule = async () => {
   const municipalityModule = await Test.createTestingModule({
@@ -19,11 +19,12 @@ export const createTestingMunicipalityModule = async () => {
     controllers: [MunicipalityController],
     providers: [
       StaffService,
-      EmailService,
       AidService,
+      Sequelize,
       {
         provide: getModelToken(MunicipalityModel),
         useValue: {
+          create: jest.fn(),
           findOne: jest.fn(),
         },
       },
