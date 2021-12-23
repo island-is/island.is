@@ -19,6 +19,10 @@ export function withCache({
   cacheManager,
 }: CacheMiddlewareConfig): FetchAPI {
   const sharedFor = typeof shared === 'function' ? shared : () => shared
+  const overrideCacheControlFor =
+    typeof overrideCacheControl === 'function'
+      ? overrideCacheControl
+      : () => overrideCacheControl
   const debug = DEBUG_NAMES.includes('*') || DEBUG_NAMES.includes(name)
 
   const fetchWithCache: FetchAPI = async (input, init) => {
@@ -39,7 +43,11 @@ export function withCache({
       const response = await fetch(request)
       const policy = new CachePolicy(
         policyRequestFrom(request),
-        policyResponseFrom(response, request),
+        policyResponseFrom(
+          response,
+          request,
+          await getCacheControl(request, response),
+        ),
         {
           shared: isShared,
         },
@@ -98,36 +106,17 @@ export function withCache({
   }
 
   /**
-   * Transform fetch request to something http-cache-semantics understands.
+   * Gets the cache control for a response.
    */
-  function policyRequestFrom(request: Request) {
-    return {
-      url: request.url,
-      method: request.method,
-      headers: headersToObject(request.headers),
+  async function getCacheControl(
+    request: Request,
+    response: Response,
+  ): Promise<string | undefined> {
+    let cacheControl: string | undefined
+    if (request.method === 'GET' || overrideForPost) {
+      cacheControl = await overrideCacheControlFor(request, response)
     }
-  }
-
-  /**
-   * Transform fetch response to something http-cache-semantics understands.
-   */
-  function policyResponseFrom(response: Response, request: Request) {
-    const headers = headersToObject(response.headers)
-
-    if (overrideCacheControl && (request.method === 'GET' || overrideForPost)) {
-      const cacheControl =
-        typeof overrideCacheControl !== 'function'
-          ? overrideCacheControl
-          : overrideCacheControl(request, response)
-      if (cacheControl) {
-        headers['cache-control'] = cacheControl
-      }
-    }
-
-    return {
-      status: response.status,
-      headers,
-    }
+    return cacheControl ?? response.headers.get('cache-control') ?? undefined
   }
 
   /**
@@ -193,7 +182,11 @@ export function withCache({
       policy: revalidatedPolicy,
     } = cacheResponse.policy.revalidatedPolicy(
       policyRequestFrom(revalidationRequest),
-      policyResponseFrom(revalidationResponse, revalidationRequest),
+      policyResponseFrom(
+        revalidationResponse,
+        revalidationRequest,
+        await getCacheControl(revalidationRequest, revalidationResponse),
+      ),
     )
 
     // Working around a bug where the revalidated policy does not inherit the
@@ -261,4 +254,35 @@ function headersToObject(headers: Headers) {
     object[name] = value
   }
   return object
+}
+
+/**
+ * Transform fetch request to something http-cache-semantics understands.
+ */
+function policyRequestFrom(request: Request) {
+  return {
+    url: request.url,
+    method: request.method,
+    headers: headersToObject(request.headers),
+  }
+}
+
+/**
+ * Transform fetch response to something http-cache-semantics understands.
+ */
+function policyResponseFrom(
+  response: Response,
+  request: Request,
+  cacheControl?: string,
+) {
+  const headers = headersToObject(response.headers)
+
+  if (cacheControl) {
+    headers['cache-control'] = cacheControl
+  }
+
+  return {
+    status: response.status,
+    headers,
+  }
 }

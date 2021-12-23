@@ -4,8 +4,8 @@ import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { VehicleModel } from '../vehicle'
 import { Authorize, Role } from '../auth'
+import { VehicleModel } from '../vehicle'
 import {
   RecyclingRequestModel,
   RecyclingRequestTypes,
@@ -13,7 +13,7 @@ import {
 } from './recyclingRequest.model'
 import { RecyclingRequestService } from './recyclingRequest.service'
 
-@Authorize({ throwOnUnAuthorized: false })
+@Authorize()
 @Resolver(() => RecyclingRequestModel)
 export class RecyclingRequestResolver {
   constructor(
