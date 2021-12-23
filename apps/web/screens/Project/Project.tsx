@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useMemo, useRef, useState } from 'react'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -25,9 +25,11 @@ import {
   ElectionProjectHeader,
 } from '@island.is/web/components'
 import {
+  Box,
   GridColumn,
   GridContainer,
   GridRow,
+  Hidden,
   Navigation,
   NavigationItem,
   Text,
@@ -38,7 +40,6 @@ import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
-
 const lightThemes = ['traveling-to-iceland', 'election']
 
 interface ProjectWrapperProps {
@@ -108,20 +109,42 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
   })
 
   const navigationList: NavigationItem[] = projectPage.sidebarLinks.map(
-    ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
-      active: router.asPath === primaryLink.url,
-      items: childrenLinks.map(({ text, url }) => ({
-        title: text,
-        href: url,
-      })),
-    }),
+    ({ primaryLink, childrenLinks }) => {
+      let isAnyChildActive = false
+      const items = childrenLinks.map(({ text, url }) => {
+        const isChildActive = router.asPath === url
+        if (isChildActive) isAnyChildActive = isChildActive
+        return {
+          title: text,
+          href: url,
+          active: isChildActive,
+        }
+      })
+      return {
+        title: primaryLink.text,
+        href: primaryLink.url,
+        active: router.asPath === primaryLink.url || isAnyChildActive,
+        items,
+      }
+    },
   )
+
+  // Keep track of what navigation link is active and update it when the browser url changes
+  const activeNavigationItem = useMemo(() => {
+    let result: string | undefined = undefined
+    navigationList.forEach((item) => {
+      if (router.asPath === item.href) result = item.title
+      item.items.forEach((childItem) => {
+        if (router.asPath === childItem.href) result = childItem.title
+      })
+    })
+    return result
+  }, [router.asPath])
 
   const navigationData: NavigationData = {
     title: n('navigationTitle', 'Efnisyfirlit'),
     items: navigationList,
+    activeItemTitle: activeNavigationItem,
   }
 
   return (
@@ -155,6 +178,26 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           </>
         }
       >
+        <Hidden above="sm">
+          <Box>
+            <Box marginY={2}>
+              <Navigation
+                isMenuDialog
+                baseId="pageNav"
+                items={navigationData.items}
+                activeItemTitle={navigationData.activeItemTitle}
+                title={navigationData.title}
+                renderLink={(link, item) => {
+                  return item?.href ? (
+                    <NextLink href={item?.href}>{link}</NextLink>
+                  ) : (
+                    link
+                  )
+                }}
+              />
+            </Box>
+          </Box>
+        </Hidden>
         {!!subpage && (
           <Text as="h1" variant="h1">
             {subpage.title}
