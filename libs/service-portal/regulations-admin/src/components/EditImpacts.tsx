@@ -98,6 +98,7 @@ export const EditImpacts: StepComponent = (props) => {
           value={findValueOption(mentionedOptions, selReg)}
           options={mentionedOptions}
           onChange={(option) => setSelReg((option as Option).value as RegName)}
+          backgroundColor="blue"
         />
       </Box>
 
@@ -111,6 +112,7 @@ export const EditImpacts: StepComponent = (props) => {
           handleChange={setEffectiveDate}
           hasError={!!effectiveDate.error}
           errorMessage={t(effectiveDate.error)}
+          backgroundColor="blue"
         />
         {!!draft.effectiveDate.value && (
           <Button

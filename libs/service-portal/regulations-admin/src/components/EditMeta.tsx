@@ -57,6 +57,7 @@ export const EditMeta: StepComponent = (props) => {
                   (typeOption as Option).value as RegulationType,
                 )
               }
+              backgroundColor="blue"
             />
           </Box>
 
@@ -70,6 +71,7 @@ export const EditMeta: StepComponent = (props) => {
               handleChange={(date: Date) => updateState('effectiveDate', date)}
               hasError={!!draft.effectiveDate.error}
               errorMessage={t(draft.effectiveDate.error)}
+              backgroundColor="blue"
             />
             {!!draft.effectiveDate.value && (
               <Button

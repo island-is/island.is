@@ -68,6 +68,7 @@ export const MagicTextarea = (props: MagicTextareaProps) => {
       textarea
       rows={rows || 1}
       ref={elmRef}
+      backgroundColor="blue"
     />
   )
 }

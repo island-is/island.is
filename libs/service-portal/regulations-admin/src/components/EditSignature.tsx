@@ -148,7 +148,6 @@ export const EditSignature: StepComponent = (props) => {
                   placeholder={t(msg.signatureDatePlaceholder)}
                   name="_signatureDate"
                   size="sm"
-                  backgroundColor="blue"
                   readOnly
                 />
               </Box>
@@ -163,7 +162,6 @@ export const EditSignature: StepComponent = (props) => {
                     placeholder={t(msg.ministryPlaceholder)}
                     name="_rn"
                     size="sm"
-                    backgroundColor="blue"
                     readOnly
                   />
                 ) : (
@@ -184,6 +182,7 @@ export const EditSignature: StepComponent = (props) => {
                         (typeOption as Option).value as MinistrySlug,
                       )
                     }
+                    backgroundColor="blue"
                   />
                 )}
               </Box>
@@ -206,6 +205,7 @@ export const EditSignature: StepComponent = (props) => {
                 }
                 hasError={!!draft.idealPublishDate.error}
                 errorMessage={t(draft.idealPublishDate.error)}
+                backgroundColor="blue"
               />
               <Checkbox
                 label={t(msg.applyForFastTrack)}

@@ -52,6 +52,7 @@ export const LawChaptersSelect = (props: LawChaptersSelectProps) => {
         onChange={(option) =>
           addChapter((option as Option).value as LawChapterSlug)
         }
+        backgroundColor="blue"
       />
 
       {activeChapters.length > 0 && (
