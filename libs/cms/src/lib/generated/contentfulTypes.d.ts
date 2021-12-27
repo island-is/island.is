@@ -2219,6 +2219,9 @@ export interface IProjectSubpageFields {
   /** Content */
   content?: Document | undefined
 
+  /** Render slices as tabs */
+  renderSlicesAsTabs?: boolean | undefined
+
   /** Slices */
   slices?: (IAccordionSlice | IOneColumnText | ITwoColumnText)[] | undefined
 }

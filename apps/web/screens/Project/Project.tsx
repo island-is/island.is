@@ -6,6 +6,7 @@ import {
   GetNewsQuery,
   Link,
   LinkGroup,
+  OneColumnText,
   Query,
   QueryGetNamespaceArgs,
   QueryGetProjectPageArgs,
@@ -28,12 +29,15 @@ import {
 } from '@island.is/web/components'
 import {
   Box,
+  Button,
+  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
   Hidden,
   Navigation,
   NavigationItem,
+  TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
@@ -163,17 +167,27 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
     return x.slug === router.query.subSlug
   })
 
-  const navigationList = assignNavigationActive(
-    convertLinkGroupsToNavigationItems(projectPage.sidebarLinks),
-    router.asPath,
+  const navigationList = useMemo(
+    () =>
+      assignNavigationActive(
+        convertLinkGroupsToNavigationItems(projectPage.sidebarLinks),
+        router.asPath,
+      ),
+    [router.asPath, projectPage.sidebarLinks],
   )
 
   const activeNavigationItemTitle = useMemo(
     () => getActiveNavigationItemTitle(navigationList, router.asPath),
-    [router.asPath],
+    [router.asPath, navigationList],
   )
 
   const navigationTitle = n('navigationTitle', 'Efnisyfirlit')
+
+  const renderSlicesAsTabs = subpage?.renderSlicesAsTabs ?? false
+
+  const [selectedSliceTab, setSelectedSliceTab] = useState<
+    OneColumnText | undefined
+  >(undefined)
 
   return (
     <>
@@ -189,21 +203,19 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
       <ProjectWrapper
         withSidebar={projectPage.sidebar}
         sidebarContent={
-          <>
-            <Navigation
-              baseId="pageNav"
-              items={navigationList}
-              activeItemTitle={activeNavigationItemTitle}
-              title={navigationTitle}
-              renderLink={(link, item) => {
-                return item?.href ? (
-                  <NextLink href={item?.href}>{link}</NextLink>
-                ) : (
-                  link
-                )
-              }}
-            />
-          </>
+          <Navigation
+            baseId="pageNav"
+            items={navigationList}
+            activeItemTitle={activeNavigationItemTitle}
+            title={navigationTitle}
+            renderLink={(link, item) => {
+              return item?.href ? (
+                <NextLink href={item?.href}>{link}</NextLink>
+              ) : (
+                link
+              )
+            }}
+          />
         }
       >
         <Hidden above="sm">
@@ -231,7 +243,21 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
             {subpage.title}
           </Text>
         )}
-        {richText((subpage ?? projectPage).content as SliceType[])}
+        {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
+          <TableOfContents
+            tableOfContentsTitle={navigationTitle}
+            headings={subpage.slices.map((slice) => ({
+              headingId: slice.id,
+              headingTitle: (slice as OneColumnText).title,
+            }))}
+            onClick={(id) =>
+              setSelectedSliceTab(
+                subpage.slices.find((s) => s.id === id) as OneColumnText,
+              )
+            }
+          />
+        )}
+        {richText((selectedSliceTab ?? projectPage).content as SliceType[])}
         {!subpage && projectPage.stepper && (
           <Stepper
             stepper={projectPage.stepper}
@@ -240,15 +266,16 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
             backLabel={n('stepperBack', 'Til baka')}
           />
         )}
-        {(subpage ?? projectPage).slices.map((slice) => (
-          <OrganizationSlice
-            key={slice.id}
-            slice={slice}
-            namespace={namespace}
-            fullWidth={true}
-            organizationPageSlug={projectPage.slug}
-          />
-        ))}
+        {!renderSlicesAsTabs &&
+          (subpage ?? projectPage).slices.map((slice) => (
+            <OrganizationSlice
+              key={slice.id}
+              slice={slice}
+              namespace={namespace}
+              fullWidth={true}
+              organizationPageSlug={projectPage.slug}
+            />
+          ))}
       </ProjectWrapper>
       {!subpage && !!projectPage.newsTag && (
         <div style={{ overflow: 'hidden' }}>
