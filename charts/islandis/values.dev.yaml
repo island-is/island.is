@@ -1217,7 +1217,7 @@ user-notification:
       hosts:
         - host: 'user-notification-xrd.internal.dev01.devland.is'
           paths:
-            - '/notifications'
+            - '/'
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
