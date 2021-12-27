@@ -1,7 +1,7 @@
 import * as s from './SaveDeleteButtons.css'
 import { Box, Button } from '@island.is/island-ui/core'
 import React from 'react'
-import { buttonsMsgs as msg } from '../messages'
+import { buttonsMsgs, buttonsMsgs as msg } from '../messages'
 import { useLocale } from '../utils'
 
 // ===========================================================================
@@ -29,12 +29,22 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
 
   const newDraft = id === 'new'
 
+  const deleteDraft = () => {
+    if (
+      newDraft ||
+      // eslint-disable-next-line no-restricted-globals
+      confirm(t(buttonsMsgs.confirmDelete))
+    ) {
+      actions.deleteDraft()
+    }
+  }
+
   const buttons = (
     <>
       {!newDraft && (
         <Box className={classes.deleteDraft}>
           <Button
-            onClick={actions.deleteDraft}
+            onClick={deleteDraft}
             icon="trash"
             iconType="outline"
             variant="text"

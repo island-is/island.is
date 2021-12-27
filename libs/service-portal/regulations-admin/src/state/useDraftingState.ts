@@ -37,9 +37,12 @@ import {
   RegDraftFormSimpleProps,
   Action,
   ActionName,
+  AppendixFormSimpleProps,
+  AppendixDraftForm,
 } from './types'
 import { uuid } from 'uuidv4'
-import { buttonsMsgs, errorMsgs } from '../messages'
+import { errorMsgs } from '../messages'
+import { RegulationAppendix } from '@island.is/regulations/web'
 
 export const CREATE_DRAFT_REGULATION_MUTATION = gql`
   mutation CreateDraftRegulationMutation($input: CreateDraftRegulationInput!) {
@@ -91,30 +94,32 @@ export const steps: Record<Step, StepNav> = {
 
 // ---------------------------------------------------------------------------
 
+const f = <T>(value: T, required?: true): DraftField<T> => ({
+  value,
+  required,
+})
+const fHtml = (value: HTMLText, required?: true): HtmlDraftField => ({
+  value,
+  required,
+})
+
+const makeDraftAppendixForm = (appendix: RegulationAppendix, key: string) => ({
+  title: f(appendix.title, true),
+  text: fHtml(appendix.text, true),
+  key,
+})
+
 const makeDraftForm = (
   draft: RegulationDraft,
   /** Default initial `dirty` state for all fields */
-  dirty?: boolean, //
 ): RegDraftForm => {
-  const f = <T>(value: T, required?: true): DraftField<T> => ({
-    value,
-    dirty,
-    required,
-  })
-  const fHtml = (value: HTMLText, required?: true): HtmlDraftField => ({
-    value,
-    dirty,
-    required,
-  })
-
   const form: RegDraftForm = {
     id: draft.id,
     title: f(draft.title, true),
     text: fHtml(draft.text, true),
-    appendixes: draft.appendixes.map((appendix) => ({
-      title: f(appendix.title, true),
-      text: fHtml(appendix.text, true),
-    })),
+    appendixes: draft.appendixes.map((a, i) =>
+      makeDraftAppendixForm(a, String(i)),
+    ),
     comments: fHtml(draft.comments),
 
     idealPublishDate: f(
@@ -145,10 +150,9 @@ const makeDraftForm = (
             ...{
               title: f(impact.title, true),
               text: fHtml(impact.text, true),
-              appendixes: impact.appendixes.map((appendix) => ({
-                title: f(appendix.title, true),
-                text: fHtml(appendix.text, true),
-              })),
+              appendixes: impact.appendixes.map((a, i) =>
+                makeDraftAppendixForm(a, String(i)),
+              ),
               comments: fHtml(impact.comments),
             },
           }
@@ -283,23 +287,69 @@ const actionHandlers: {
     if (!state.draft) {
       return
     }
-    const prop = state.draft[name]
+    const field = state.draft[name]
+    field.value = value
+    field.guessed = false
+    field.dirty = true
+    field.error =
+      field.required && !field.value ? errorMsgs.fieldRequired : undefined
 
-    const specialUpdater = specialUpdates[name]
-    specialUpdater &&
-      specialUpdater(
-        state,
-        // @ts-expect-error  (Pretty sure I'm holding this correctly,
-        // and TS is in the weird here.
-        // Name and value are intrinsically linked both in this action's
-        // arguments and in the `specialUpdaters` signature.)
-        value,
-      )
+    specialUpdates[name]?.(
+      state,
+      // @ts-expect-error  (Pretty sure I'm holding this correctly,
+      // and TS is in the weird here.
+      // Name and value are intrinsically linked both in this action's
+      // arguments and in the `specialUpdaters` signature.)
+      value,
+    )
+  },
 
-    prop.value = value
-    prop.guessed = false
-    prop.dirty = true
-    prop.error = !prop.value ? errorMsgs.fieldRequired : undefined
+  APPENDIX_ADD: (state) => {
+    if (!state.draft) {
+      return
+    }
+    const { appendixes } = state.draft
+    appendixes.push(
+      makeDraftAppendixForm({ title: '', text: '' }, String(appendixes.length)),
+    )
+  },
+
+  APPENDIX_SET_PROP: (state, { idx, name, value }) => {
+    if (!state.draft) {
+      return
+    }
+    const appendix = state.draft.appendixes[idx]
+    if (appendix) {
+      const field = appendix[name]
+      field.value = value
+      field.dirty = true
+      field.error =
+        field.required && !field.value ? errorMsgs.fieldRequired : undefined
+    }
+  },
+
+  APPENDIX_REMOVE: (state, { idx }) => {
+    if (!state.draft) {
+      return
+    }
+    const { appendixes } = state.draft
+    if (appendixes[idx]) {
+      appendixes.splice(idx, 1)
+    }
+  },
+
+  APPENDIX_MOVE_UP: (state, { idx }) => {
+    if (!state.draft) {
+      return
+    }
+    const prevIdx = idx - 1
+    const { appendixes } = state.draft
+    const appendix = appendixes[idx]
+    const prevAppendix = appendixes[prevIdx]
+    if (appendix && prevAppendix) {
+      appendixes[prevIdx] = appendix
+      appendixes[idx] = prevAppendix
+    }
   },
 
   UPDATE_MULTIPLE_PROPS: (state, { multiData }) => {
@@ -578,14 +628,27 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
         dispatch({ type: 'UPDATE_PROP', name, value })
       },
 
+      setAppendixProp: <Prop extends AppendixFormSimpleProps>(
+        idx: number,
+        name: Prop,
+        value: AppendixDraftForm[Prop]['value'],
+      ) => {
+        // @ts-expect-error  (FML! FIXME: make this nicer)
+        dispatch({ type: 'APPENDIX_SET_PROP', idx, name, value })
+      },
+
+      removeAppendix: (idx: number) => {
+        dispatch({ type: 'APPENDIX_REMOVE', idx })
+      },
+      moveAppendixUp: (idx: number) => {
+        dispatch({ type: 'APPENDIX_MOVE_UP', idx })
+      },
+
+      addAppendix: () => {
+        dispatch({ type: 'APPENDIX_ADD' })
+      },
+
       deleteDraft: async () => {
-        if (
-          isNew ||
-          // eslint-disable-next-line no-restricted-globals
-          !confirm(t(buttonsMsgs.confirmDelete))
-        ) {
-          return
-        }
         // TODO: Dialog opens to CONFIRM the deletion by user?
         try {
           await deleteDraftRegulationMutation({
@@ -642,6 +705,8 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     actions,
   }
 }
+
+export type RegDraftActions = ReturnType<typeof useDraftingState>['actions']
 
 // ===========================================================================
 

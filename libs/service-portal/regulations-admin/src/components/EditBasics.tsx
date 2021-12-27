@@ -1,25 +1,21 @@
-import React, { useRef, useState } from 'react'
+import React from 'react'
 import { Box, Accordion, AccordionItem } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
 import { StepComponent } from '../state/useDraftingState'
 import { useLocale } from '../utils'
-import { Appendixes, AppendixStateItem } from './Appendixes'
+import { Appendixes } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
-import { SignatureText } from './SignatureText'
 
 export const EditBasics: StepComponent = (props) => {
   const { draft, actions } = props
   const { updateState } = actions
+  const { text, appendixes } = draft
 
   const t = useLocale().formatMessage
-  const textRef = useRef(() => draft.text.value)
-  const [appendixes, setAppendixes] = useState(
-    [] as readonly AppendixStateItem[],
-  )
 
   const startTextExpanded =
-    !draft.text.value || appendixes.length === 0 || !!draft.text.error
+    !text.value || appendixes.length === 0 || !!text.error
 
   return (
     <>
@@ -47,33 +43,27 @@ export const EditBasics: StepComponent = (props) => {
               <EditorInput
                 label={t(msg.text)}
                 hiddenLabel
-                isImpact={false}
                 draftId={draft.id}
-                valueRef={textRef}
-                error={t(draft.text.error)}
-                onBlur={() => {
-                  updateState('text', textRef.current())
-                }}
+                value={text.value}
+                onChange={(value) => updateState('text', value)}
+                error={t(text.error)}
               />
             </Box>
             <Box marginBottom={[4, 4, 6]}>
-              <SignatureText
-                draft={draft}
-                onChange={(text) => {
-                  updateState('signatureText', text)
-                }}
+              <EditorInput
+                label={t(msg.signatureText)}
+                draftId={draft.id}
+                value={draft.signatureText.value}
+                onChange={(text) => updateState('signatureText', text)}
               />
             </Box>
           </AccordionItem>
         </Accordion>
 
         <Appendixes
-          appendixes={appendixes}
-          onChange={(appendixCallback) =>
-            setAppendixes(appendixCallback(appendixes))
-          }
-          defaultClosed
           draftId={draft.id}
+          appendixes={appendixes}
+          actions={actions}
         />
       </Box>
     </>

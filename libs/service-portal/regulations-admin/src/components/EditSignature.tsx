@@ -14,12 +14,11 @@ import {
 } from '@island.is/island-ui/core'
 import { StepComponent } from '../state/useDraftingState'
 import { editorMsgs as msg } from '../messages'
-import { findValueOption, getMinPublishDate, useLocale } from '../utils'
+import { getMinPublishDate, useLocale } from '../utils'
 import { useMinistriesQuery } from '@island.is/service-portal/graphql'
-import { RegulationDraft } from '@island.is/regulations/admin'
+
 import { RegDraftForm } from '../state/types'
 import { EditorInput } from './EditorInput'
-import { SignatureText } from './SignatureText'
 import { MinistrySlug, URLString } from '@island.is/regulations'
 
 // ---------------------------------------------------------------------------
@@ -129,8 +128,10 @@ export const EditSignature: StepComponent = (props) => {
           </Box>
 
           <Box marginBottom={3}>
-            <SignatureText
-              draft={draft}
+            <EditorInput
+              label={t(msg.signatureText)}
+              draftId={draft.id}
+              value={draft.signatureText.value}
               onChange={(text) => updateState('signatureText', text)}
             />
           </Box>

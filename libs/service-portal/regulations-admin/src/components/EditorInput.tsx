@@ -1,20 +1,28 @@
 import * as s from './EditorInput.css'
 import { classes } from './Editor.css'
 
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Box } from '@island.is/island-ui/core'
 import {
   Editor as RegulationsEditor,
   EditorProps,
 } from '@island.is/regulations-tools/Editor'
 import cn from 'classnames'
+import { HTMLText, useDomid } from '@island.is/regulations'
+import { RegulationDraftId } from '@island.is/regulations/admin'
 
-type EditorInputProps = Omit<EditorProps, 'name'> & {
+type EditorInputProps = Omit<
+  EditorProps,
+  'name' | 'valueRef' | 'onBlur' | 'onFocus' | 'onChange'
+> & {
+  value: HTMLText
   label: string
   hiddenLabel?: boolean
   // make EditorProps more strict with branded types
   error?: string
-  draftId: string
+  draftId: RegulationDraftId
+  /** Called on editor blur */
+  onChange: (newValue: HTMLText) => void
 }
 
 export const EditorInput = (props: EditorInputProps) => {
@@ -23,14 +31,16 @@ export const EditorInput = (props: EditorInputProps) => {
     label,
     hiddenLabel,
     draftId,
-    onFocus,
-    onBlur,
+    onChange,
+    value,
     ...editorProps
   } = props
+  const valueRef = useRef(() => value)
   const [hasFocus, setHasFocus] = useState(false)
-  const labelId = draftId + '-label'
+  const domid = useDomid()
+  const labelId = domid + '-label'
   const hasError = !!error || undefined
-  const errorId = hasError && draftId + '-error'
+  const errorId = hasError && domid + '-error'
 
   const srOnlyClass = hiddenLabel ? ' ' + s.srOnly : ''
 
@@ -50,15 +60,15 @@ export const EditorInput = (props: EditorInputProps) => {
         </h4>
         <RegulationsEditor
           {...editorProps}
+          valueRef={valueRef}
           classes={classes}
           name={'draft-' + draftId}
           onFocus={() => {
             setHasFocus(true)
-            onFocus && onFocus()
           }}
           onBlur={() => {
             setHasFocus(false)
-            onBlur && onBlur()
+            onChange(valueRef.current())
           }}
           aria-labelledBy={labelId}
           aria-describedBy={errorId}

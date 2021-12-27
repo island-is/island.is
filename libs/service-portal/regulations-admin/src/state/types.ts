@@ -36,13 +36,16 @@ export type DraftField<Type> = {
 // TODO: Figure out how the Editor components lazy valueRef.current() getter fits into this
 export type HtmlDraftField = DraftField<HTMLText>
 
+export type AppendixDraftForm = {
+  title: DraftField<PlainText>
+  text: HtmlDraftField
+  key: string
+}
+
 export type BodyDraftFields = {
   title: DraftField<PlainText>
   text: HtmlDraftField
-  appendixes: Array<{
-    title: DraftField<PlainText>
-    text: HtmlDraftField
-  }>
+  appendixes: Array<AppendixDraftForm>
   comments: HtmlDraftField
 }
 
@@ -89,6 +92,18 @@ export type DraftingState = {
 
 // -----------------------------
 
+export type AppendixFieldNameValuePair = {
+  [Key in AppendixFormSimpleProps]: {
+    name: Key
+    value: AppendixDraftForm[Key]['value']
+  }
+}[AppendixFormSimpleProps]
+
+export type AppendixFormSimpleProps = Extract<
+  keyof AppendixDraftForm,
+  'title' | 'text'
+>
+
 export type FieldNameValuePair = {
   [Key in RegDraftFormSimpleProps]: {
     name: Key
@@ -96,7 +111,8 @@ export type FieldNameValuePair = {
   }
 }[RegDraftFormSimpleProps]
 
-export type RegDraftFormSimpleProps =
+export type RegDraftFormSimpleProps = Extract<
+  keyof RegDraftForm,
   | 'title'
   | 'text'
   | 'idealPublishDate' // This prop needs its own action that checks for working days and updates the `fastTrack` flag accordingly
@@ -110,6 +126,7 @@ export type RegDraftFormSimpleProps =
   | 'type'
   | 'draftingNotes'
   | 'authors'
+>
 
 export type Action =
   | {
@@ -150,6 +167,21 @@ export type Action =
   | ({
       type: 'UPDATE_PROP'
     } & FieldNameValuePair)
+  | {
+      type: 'APPENDIX_ADD'
+    }
+  | ({
+      type: 'APPENDIX_SET_PROP'
+      idx: number
+    } & AppendixFieldNameValuePair)
+  | {
+      type: 'APPENDIX_MOVE_UP'
+      idx: number
+    }
+  | {
+      type: 'APPENDIX_REMOVE'
+      idx: number
+    }
   | {
       type: 'SHIP'
     }
