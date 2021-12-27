@@ -111,6 +111,10 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         gradientStartColor
         gradientEndColor
       }
+      externalLinks {
+        text
+        url
+      }
     }
   }
   ${slices}

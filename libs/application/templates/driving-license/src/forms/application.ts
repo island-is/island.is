@@ -35,6 +35,7 @@ import {
   B_TEMP,
 } from '../shared/constants'
 import { hasYes } from '../utils'
+import { CurrentLicenseProviderResult } from '../dataProviders/CurrentLicenseProvider'
 
 const allowFakeCondition = (result = YES) => (answers: FormValue) =>
   getValueViaPath(answers, 'fakeData.useFakeData') === result
@@ -251,21 +252,31 @@ export const getApplication = (
                 description: '',
                 space: 0,
                 largeButtons: true,
-                options: [
-                  {
-                    label: m.applicationForTempLicenseTitle,
-                    subLabel:
-                      m.applicationForTempLicenseDescription.defaultMessage,
-                    value: B_TEMP,
-                  },
-                  {
-                    label: m.applicationForFullLicenseTitle,
-                    subLabel:
-                      m.applicationForFullLicenseDescription.defaultMessage,
-                    value: B_FULL,
-                    disabled: true,
-                  },
-                ],
+                options: (app) => {
+                  const {
+                    currentLicense,
+                  } = getValueViaPath<CurrentLicenseProviderResult>(
+                    app.externalData,
+                    'currentLicense.data',
+                  ) ?? { currentLicense: null }
+
+                  return [
+                    {
+                      label: m.applicationForTempLicenseTitle,
+                      subLabel:
+                        m.applicationForTempLicenseDescription.defaultMessage,
+                      value: B_TEMP,
+                      disabled: !!currentLicense,
+                    },
+                    {
+                      label: m.applicationForFullLicenseTitle,
+                      subLabel:
+                        m.applicationForFullLicenseDescription.defaultMessage,
+                      value: B_FULL,
+                      disabled: !currentLicense,
+                    },
+                  ]
+                },
               }),
             ],
           }),

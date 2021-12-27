@@ -161,21 +161,17 @@ export function formatProsecutorCourtDateEmailNotification(
       ? 'kröfu um rannsóknarheimild'
       : `kröfu um rannsóknarheimild (${caseTypes[type]})`
   const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
-  const courtRoomText =
-    sessionArrangements === SessionArrangements.REMOTE_SESSION
-      ? 'Úrskurðað verður um kröfuna án mætingar af hálfu málsaðila'
-      : courtRoom
-      ? `Dómsalur: ${courtRoom}`
-      : 'Dómsalur hefur ekki verið skráður'
+  const courtRoomText = courtRoom
+    ? `Dómsalur: ${courtRoom}`
+    : 'Dómsalur hefur ekki verið skráður'
   const judgeText = judgeName
     ? `Dómari: ${judgeName}`
     : 'Dómari hefur ekki verið skráður'
   const registrarText = registrarName
-    ? `Dómritari: ${registrarName}`
-    : 'Dómritari hefur ekki verið skráður'
+    ? `<br /><br />Dómritari: ${registrarName}.`
+    : ''
   const defenderText =
-    sessionArrangements === SessionArrangements.PROSECUTOR_PRESENT ||
-    sessionArrangements === SessionArrangements.REMOTE_SESSION
+    sessionArrangements === SessionArrangements.PROSECUTOR_PRESENT
       ? ''
       : defenderName
       ? `<br /><br />${
@@ -185,7 +181,7 @@ export function formatProsecutorCourtDateEmailNotification(
           defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
         } sakbornings hefur ekki verið skráður.`
 
-  return `${court} hefur staðfest fyrirtökutíma fyrir ${scheduledCaseText}.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />${courtRoomText}.<br /><br />${judgeText}.<br /><br />${registrarText}.${defenderText}`
+  return `${court} hefur staðfest fyrirtökutíma fyrir ${scheduledCaseText}.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />${courtRoomText}.<br /><br />${judgeText}.${registrarText}${defenderText}`
 }
 
 export function formatPrisonCourtDateEmailNotification(
@@ -249,7 +245,9 @@ export function formatDefenderCourtDateEmailNotification(
       ', kl.',
     )}.<br /><br />Málsnúmer: ${courtCaseNumber}.<br /><br />${
     courtRoom ? `Dómsalur: ${courtRoom}` : 'Dómsalur hefur ekki verið skráður'
-  }.<br /><br />Dómari: ${judgeName}.<br /><br />Dómritari: ${registrarName}.<br /><br />Sækjandi: ${prosecutorName} (${prosecutorInstitution}).`
+  }.<br /><br />Dómari: ${judgeName}.${
+    registrarName ? `<br /><br />Dómritari: ${registrarName}.` : ''
+  }<br /><br />Sækjandi: ${prosecutorName} (${prosecutorInstitution}).`
 }
 
 // This function is only intended for case type CUSTODY
