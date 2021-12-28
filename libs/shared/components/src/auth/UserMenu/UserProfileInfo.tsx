@@ -6,12 +6,10 @@ import { m } from '@island.is/service-portal/core'
 
 export const UserProfileInfo = ({ onClick }: { onClick: () => void }) => {
   const { formatMessage } = useLocale()
-  const isDev = process.env.NODE_ENV === 'development'
-  const baseUrl = isDev
-    ? 'http://localhost:4200/minarsidur/stillingar'
-    : 'https://island.is/minarsidur/stillingar'
+  const origin = window.location.origin
+  const baseUrl = `${origin}/minarsidur/stillingar`
   return (
-    <Box paddingY={3}>
+    <Box paddingY={[1, 3]}>
       <Box marginBottom={1}>
         <Text variant="small">{formatMessage(m.settings)}</Text>
       </Box>
