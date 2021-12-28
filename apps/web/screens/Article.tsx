@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
+import { createMachine, interpret } from '@xstate/fsm';
 import {
   Slice as SliceType,
   ProcessEntry,
@@ -359,6 +360,20 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const organizationTitle = article.organization[0]?.title
   const organizationShortTitle = article.organization[0]?.shortTitle
 
+  // Stepper state machine
+  const demoToggleMachine = createMachine({
+    id: 'toggle',
+    initial: 'inactive',
+    states: {
+      inactive: { on: { TOGGLE: 'active' } },
+      active: { on: { TOGGLE: 'inactive' } }
+    }
+  });
+  const demoToggleService = interpret(demoToggleMachine).start();
+  demoToggleService.subscribe((state) => {
+    console.log(state.value);
+  });
+
   return (
     <>
       <HeadWithSocialSharing
@@ -510,6 +525,11 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               undefined,
               activeLocale,
             )}
+            <Text>RENDER STEPPER HERE...</Text>
+            <Button
+              onClick={() => demoToggleService.send('TOGGLE')}>
+              Test State Machine
+            </Button>
             <AppendedArticleComponents article={article} />
           </Box>
           <Box
