@@ -8,6 +8,6 @@ import { SamgongustofaResolver } from './samgongustofa.resolver'
 @Module({
   imports: [HttpModule, forwardRef(() => RecyclingRequestModule)],
   providers: [SamgongustofaResolver, SamgongustofaService],
-  exports: [SamgongustofaService]
+  exports: [SamgongustofaService],
 })
 export class SamgongustofaModule {}
