@@ -9,8 +9,8 @@ export const inputWrapper = style({
 export const icon = style({
   position: 'absolute',
   lineHeight: 0,
-  top: '67%',
-  right: 8,
+  top: '50%',
+  right: 26,
   transform: 'translateY(-50%)',
 })
 
