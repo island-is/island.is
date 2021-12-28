@@ -54,22 +54,15 @@ export const getLayout = (
   const hasWideLayout = wideScreens.includes(pathname as ServicePortalPath)
   const sidebarCollapsed = sidebarState === 'closed'
 
-  if (sidebarCollapsed && hasWideLayout) {
-    return {
-      span: gridlayout.wideClosed.span,
-      offset: gridlayout.wideClosed.offset,
-    }
-  } else if (sidebarCollapsed && !hasWideLayout) {
-    return {
-      span: gridlayout.defaultClosed.span,
-      offset: gridlayout.defaultClosed.offset,
-    }
-  } else if (!sidebarCollapsed && hasWideLayout) {
-    return { span: gridlayout.wide.span, offset: gridlayout.wide.offset }
-  } else {
-    return {
-      span: gridlayout.default.span,
-      offset: gridlayout.default.offset,
-    }
-  }
+  type LayoutType = keyof typeof gridlayout
+  const layoutType: LayoutType =
+    sidebarCollapsed && hasWideLayout
+      ? 'wideClosed'
+      : sidebarCollapsed && !hasWideLayout
+      ? 'defaultClosed'
+      : !sidebarCollapsed && hasWideLayout
+      ? 'wide'
+      : 'default'
+
+  return gridlayout[layoutType]
 }
