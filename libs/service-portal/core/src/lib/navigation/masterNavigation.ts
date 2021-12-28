@@ -226,6 +226,46 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'car',
         },
       },
+      // Stillingar - hidden from nav
+      {
+        name: m.settings,
+        path: ServicePortalPath.SettingsRoot,
+        navHide: true,
+        children: [
+          {
+            name: m.accessControl,
+            path: ServicePortalPath.SettingsAccessControl,
+          },
+          {
+            name: m.accessControlGrant,
+            path: ServicePortalPath.SettingsAccessControlGrant,
+          },
+          {
+            name: m.accessControlAccess,
+            path: ServicePortalPath.SettingsAccessControlAccess,
+          },
+          {
+            name: m.personalInformation,
+            path: ServicePortalPath.SettingsPersonalInformation,
+          },
+          {
+            name: m.email,
+            path: ServicePortalPath.SettingsPersonalInformationEditEmail,
+          },
+          {
+            name: m.phone,
+            path: ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
+          },
+          {
+            name: m.nudge,
+            path: ServicePortalPath.SettingsPersonalInformationEditNudge,
+          },
+          {
+            name: m.language,
+            path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
+          },
+        ],
+      },
     ],
   },
 ]

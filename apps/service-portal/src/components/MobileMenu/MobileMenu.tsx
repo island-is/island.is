@@ -48,7 +48,8 @@ const MobileMenu = (): ReactElement | null => {
           <Stack space={0}>
             {rootItem.children?.map(
               (navRoot, index) =>
-                navRoot.path !== ServicePortalPath.MinarSidurRoot && (
+                navRoot.path !== ServicePortalPath.MinarSidurRoot &&
+                !navRoot.navHide && (
                   <ModuleNavigation
                     key={index}
                     nav={navRoot}
