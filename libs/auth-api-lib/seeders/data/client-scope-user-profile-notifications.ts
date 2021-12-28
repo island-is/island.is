@@ -13,5 +13,5 @@ export const up = compose(
     displayName: 'user profile admin scope',
     description: '',
     addToClients: ['@island.is/system/notifications'],
-  })
+  }),
 )
