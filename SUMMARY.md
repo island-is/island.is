@@ -187,6 +187,7 @@
     - [Rsk](libs/clients/rsk/v1/README.md)
     - [RSK V2](libs/clients/rsk/v2/README.md)
   - [User Profile Client](libs/clients/user-profile/README.md)
+  - [Clients Syslumenn](libs/clients/syslumenn/README.md)
   - [VMST](libs/clients/vmst/README.md)
   - [Zendesk Service](libs/clients/zendesk/README.md)
 - [CMS](libs/cms/README.md)
