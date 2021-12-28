@@ -1,5 +1,5 @@
 import { UserProfileScope } from '@island.is/auth/scopes'
-import type { User } from '@island.is/auth-nest-tools'
+import { IdsAuthGuard, User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   Scopes,
@@ -21,6 +21,7 @@ import {
   BadRequestException,
   HttpCode,
   Delete,
+  Req,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -376,5 +377,23 @@ export class UserProfileController {
     } else {
       return await this.userProfileService.deleteDeviceToken(body, user)
     }
+  }
+}
+
+
+
+
+@UseGuards(IdsAuthGuard, ScopesGuard)
+@Controller('whutController')
+export class whutController {
+  
+  @Get("wtf")
+  @Scopes('@island.is/user-profile:admin')
+  @ApiSecurity('oauth2', ['@island.is/user-profile:admin'])
+  async asdf(
+    @Req() req: Request,
+  ): Promise<any> {
+    // console.log(req)
+    return {"hello":"worldz"}
   }
 }

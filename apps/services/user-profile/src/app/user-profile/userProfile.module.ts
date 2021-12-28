@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { UserProfileController } from './userProfile.controller'
+import { UserProfileController, whutController } from './userProfile.controller'
 import { UserTokenController } from './userToken.controller'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
@@ -33,6 +33,7 @@ import { UserDeviceTokens } from './userDeviceTokens.model'
     UserProfileController,
     UserProfileInfraController,
     UserTokenController,
+    whutController,
   ],
   providers: [UserProfileService, VerificationService, SequelizeConfigService],
   exports: [UserProfileService],
