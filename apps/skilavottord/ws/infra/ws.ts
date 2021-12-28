@@ -45,6 +45,8 @@ export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
       SAMGONGUSTOFA_SOAP_USER: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_USER',
       SAMGONGUSTOFA_REST_USER: '/k8s/skilavottord/SAMGONGUSTOFA_REST_USER',
       FJARSYSLA_REST_USER: '/k8s/skilavottord/FJARSYSLA_REST_USER',
+      IDENTITY_SERVER_ISSUER_URL:
+        '/k8s/skilavottord/ws/IDENTITY_SERVER_ISSUER_URL',
     })
     .liveness('/liveness')
     .readiness('/liveness')

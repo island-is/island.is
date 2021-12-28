@@ -44,7 +44,7 @@ const SkilavottordRecyclingRequestMutation = gql`
   mutation skilavottordRecyclingRequestMutation(
     $nameOfRequestor: String
     $permno: String!
-    $requestType: String!
+    $requestType: RecyclingRequestTypes!
   ) {
     createSkilavottordRecyclingRequest(
       nameOfRequestor: $nameOfRequestor

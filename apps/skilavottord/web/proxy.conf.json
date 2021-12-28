@@ -1,5 +1,5 @@
 {
-  "/app/skilavottord/api": {
+  "/app/skilavottord/api/graphql": {
     "target": "http://localhost:3333",
     "secure": false
   }
