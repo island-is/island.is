@@ -3,7 +3,7 @@ import {
   Homestay,
   OperatingLicense,
   CertificateInfoResponse,
-  DistrictCommissionersAgenciesResponse,
+  DistrictCommissionerAgencies,
   DataUploadResponse,
   Person,
   Attachment,
@@ -146,7 +146,7 @@ export class SyslumennService {
   }
 
   async getDistrictCommissionersAgencies(): Promise<
-    DistrictCommissionersAgenciesResponse[]
+  DistrictCommissionerAgencies[]
   > {
     const { api } = await this.createApi()
     const response = await api.embaettiOgStarfsstodvarGetEmbaetti()

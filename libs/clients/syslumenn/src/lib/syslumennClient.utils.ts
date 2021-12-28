@@ -17,18 +17,18 @@ import {
   Person,
   Attachment,
   CertificateInfoResponse,
-  DistrictCommissionersAgenciesResponse,
+  DistrictCommissionerAgencies,
   PersonType,
 } from './syslumennClient.types'
 
 export const mapDistrictCommissionersAgenciesResponse = (
   response: EmbaettiOgStarfsstodvar,
-): DistrictCommissionersAgenciesResponse => {
+): DistrictCommissionerAgencies => {
   return {
-    id: response.starfsstodID,
-    name: response.nafn,
-    place: response.stadur,
-    address: response.adsetur,
+    id: response.starfsstodID ?? '',
+    name: response.nafn ?? '',
+    place: response.stadur ?? '',
+    address: response.adsetur ?? '',
   }
 }
 

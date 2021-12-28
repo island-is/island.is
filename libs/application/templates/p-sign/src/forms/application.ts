@@ -24,7 +24,7 @@ import { QualityPhotoData } from '../types'
 import {
   NationalRegistryUser,
   UserProfile,
-  Juristiction,
+  DistrictCommissionerAgencies,
 } from '../types/schema'
 import { m } from '../lib/messages'
 import format from 'date-fns/format'
@@ -39,7 +39,7 @@ export const getApplication = (): Form => {
     renderLastScreenBackButton: true,
     children: [
       buildSection({
-        id: 'conditions',
+        id: 'externalData',
         title: m.dataCollectionTitle,
         children: [
           buildExternalDataProvider({
@@ -74,8 +74,8 @@ export const getApplication = (): Form => {
                 subTitle: m.dataCollectionUserProfileSubtitle,
               }),
               buildDataProviderItem({
-                id: 'jurisdictions',
-                type: 'JuristictionProvider',
+                id: 'districts',
+                type: 'DistrictsProvider',
                 title: '',
                 subTitle: '',
               }),
@@ -281,20 +281,21 @@ export const getApplication = (): Form => {
                 defaultValue: 'sendHome',
               }),
               buildSelectField({
-                id: 'jurisdiction',
+                id: 'district',
                 title: m.deliveryMethodOfficeLabel,
                 placeholder: m.deliveryMethodOfficeSelectPlaceholder,
                 options: ({
                   externalData: {
-                    jurisdictions: { data },
+                    districts: { data },
                   },
                 }) => {
-                  return (data as Juristiction[]).map(({ id, name, zip }) => ({
-                    value: name,
-                    label: name,
-                    tooltip: `Póstnúmer ${zip}`,
+                  return (data as DistrictCommissionerAgencies[]).map(({ id, name, place, address }) => ({
+                    value: id,
+                    label: `${name}, ${place}`,
+                    tooltip: `${address}`,
                   }))
                 },
+
                 condition: (answers: FormValue) =>
                   answers.deliveryMethod === 'pickUp',
               }),
@@ -386,10 +387,20 @@ export const getApplication = (): Form => {
               buildDividerField({}),
               buildKeyValueField({
                 label: m.deliveryMethodTitle,
-                value: (application: Application) =>
-                  application.answers.deliveryMethod === 'pickUp'
-                    ? `Þú hefur valið að sækja P-merkið sjálf/ur/t á: ${application.answers.jurisdiction}`
-                    : m.overviewDeliveryText,
+                value: ({
+                  externalData: {
+                    districts: { data },
+                  }, answers
+                }) => {
+                  const district = (data as DistrictCommissionerAgencies[]).find((d) => d.id === answers.district)
+                  return `Þú hefur valið að sækja P-merkið sjálf/ur/t hjá: ${district?.name}, ${district?.place}`
+                  },
+                condition: (answers) => answers.deliveryMethod === 'pickUp'
+              }),
+              buildKeyValueField({
+                label: m.deliveryMethodTitle,
+                value: () => m.overviewDeliveryText,
+                condition: (answers) => answers.deliveryMethod === 'sendHome'
               }),
               buildSubmitField({
                 id: 'submit',

@@ -56,11 +56,11 @@ export interface CertificateInfoResponse {
   releaseDate?: string
 }
 
-export interface DistrictCommissionersAgenciesResponse {
-  name?: string
-  place?: string
-  address?: string
-  id?: string
+export interface DistrictCommissionerAgencies {
+  name: string
+  place: string
+  address: string
+  id: string
 }
 
 export interface Person {

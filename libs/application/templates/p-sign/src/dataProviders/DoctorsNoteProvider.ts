@@ -4,15 +4,16 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
+import { CertificateInfoResponse } from '../types/schema'
 
 export class DoctorsNoteProvider extends BasicDataProvider {
   type = 'DoctorsNoteProvider'
 
-  async provide() {
+  async provide(): Promise<CertificateInfoResponse> {
     //TODO
-    /*const query = `
-      query getSyslumennCertificateInfo ($input: CertificateInfoInput!) {
-        getSyslumennCertificateInfo (input: $input) {
+    const query = `
+      query getSyslumennCertificateInfo {
+        getSyslumennCertificateInfo {
           nationalId
           expirationDate
           releaseDate
@@ -22,22 +23,19 @@ export class DoctorsNoteProvider extends BasicDataProvider {
 
     return this.useGraphqlGateway(query)
       .then(async (res: Response) => {
-        const response = await res.json()
-
-        if (response.errors) {
-          return this.handleError()
+        const response = await res.json() 
+        if (response.errors?.length > 0) {
+          return this.handleError(response.errors[0])
         }
 
-        return Promise.resolve(response.data.drivingLicenseListOfJuristictions)
+        return Promise.resolve(response.data.getSyslumennCertificateInfo)
       })
-      .catch(() => {
-        return this.handleError()
-      })*/
+      .catch((error) => this.handleError(error))
 
-    return Promise.resolve({ expirationDate: '2025-12-21T14:28:20.747Z' })
   }
 
-  handleError() {
+  handleError(error: any) {
+    console.log('Provider error - DoctorsNoteProvider:', error)
     return Promise.resolve({})
   }
 

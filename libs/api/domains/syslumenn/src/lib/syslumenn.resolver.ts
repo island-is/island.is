@@ -5,7 +5,7 @@ import { SyslumennAuction } from './models/syslumennAuction'
 import { SyslumennService } from '@island.is/clients/syslumenn'
 import { OperatingLicense } from './models/operatingLicense'
 import { CertificateInfoResponse } from './models/certificateInfo'
-import { DistrictCommissionersAgenciesResponse } from './models/districtCommissionersAgencies'
+import { DistrictCommissionerAgencies } from './models/districtCommissionerAgencies'
 import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
@@ -54,10 +54,10 @@ export class SyslumennResolver {
     return this.syslumennService.getCertificateInfo(user.nationalId)
   }
 
-  @Query(() => [DistrictCommissionersAgenciesResponse])
+  @Query(() => [DistrictCommissionerAgencies])
   @BypassAuth()
   getSyslumennDistrictCommissionersAgencies(): Promise<
-    DistrictCommissionersAgenciesResponse[]
+  DistrictCommissionerAgencies[]
   > {
     return this.syslumennService.getDistrictCommissionersAgencies()
   }

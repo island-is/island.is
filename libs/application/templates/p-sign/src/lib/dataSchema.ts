@@ -20,7 +20,7 @@ export const dataSchema = z.object({
   deliveryMethod: z.string().nonempty(),
   photoAttachment: z.string(),
   attachmentFileName: z.string(),
-  jurisdiction: z.string(),
+  district: z.string(),
   nationalId: z.string(),
   qualityPhoto: z.enum(['yes', 'no']),
   /*healthDeclaration: z.object({
