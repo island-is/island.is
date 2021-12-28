@@ -19,3 +19,7 @@ export interface PSignFakeData {
   useFakeData?: YesOrNo
   qualityPhoto?: YesOrNo
 }
+
+export enum ApiActions {
+  submitApplication = 'submitApplication',
+}

@@ -29,6 +29,7 @@ import {
 import { m } from '../lib/messages'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
+import { DefaultEvents } from '../../../../core/src/types/StateMachine';
 
 export const getApplication = (): Form => {
   return buildForm({
@@ -408,7 +409,7 @@ export const getApplication = (): Form => {
                 placement: 'footer',
                 actions: [
                   {
-                    event: 'SUBMIT',
+                    event: DefaultEvents.SUBMIT,
                     name: 'Senda inn umsókn',
                     type: 'primary',
                   },

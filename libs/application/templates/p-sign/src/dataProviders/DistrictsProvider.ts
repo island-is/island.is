@@ -4,12 +4,12 @@ import {
     SuccessfulDataProviderResult,
     FailedDataProviderResult,
   } from '@island.is/application/core'
-  import { DistrictCommissionersAgenciesResponse } from '../types/schema'
+  import { DistrictCommissionerAgencies } from '../types/schema'
   
   export class DistrictsProvider extends BasicDataProvider {
     type = 'DistrictsProvider'
   
-    async provide() {
+    async provide(): Promise<DistrictCommissionerAgencies> {
       //TODO
       const query = `
         query getSyslumennDistrictCommissionersAgencies {
@@ -50,7 +50,6 @@ import {
     }
   
     onProvideSuccess(result: object): SuccessfulDataProviderResult {
-      console.log(result)
       return { date: new Date(), status: 'success', data: result }
     }
   }

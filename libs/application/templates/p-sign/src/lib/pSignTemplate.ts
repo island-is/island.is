@@ -6,10 +6,12 @@ import {
   ApplicationRole,
   DefaultStateLifeCycle,
   Application,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from '../lib/messages'
+import { ApiActions } from './constants'
 
 const PSignTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -39,16 +41,18 @@ const PSignTemplate: ApplicationTemplate<
                   Promise.resolve(val.getApplication()),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
               ],
               write: 'all',
             },
           ],
         },
         on: {
-          SUBMIT: {
-            target: States.DONE,
-          },
+          [DefaultEvents.SUBMIT]: { target: States.DONE },
         },
       },
       [States.DONE]: {
@@ -56,6 +60,9 @@ const PSignTemplate: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
+          },
           roles: [
             {
               id: 'applicant',

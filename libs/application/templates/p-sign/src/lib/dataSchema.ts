@@ -23,16 +23,4 @@ export const dataSchema = z.object({
   district: z.string(),
   nationalId: z.string(),
   qualityPhoto: z.enum(['yes', 'no']),
-  /*healthDeclaration: z.object({
-    usesContactGlasses: z.enum([YES, NO]),
-    hasReducedPeripheralVision: z.enum([YES, NO]),
-    hasEpilepsy: z.enum([YES, NO]),
-    hasHeartDisease: z.enum([YES, NO]),
-    hasMentalIllness: z.enum([YES, NO]),
-    usesMedicalDrugs: z.enum([YES, NO]),
-    isAlcoholic: z.enum([YES, NO]),
-    hasDiabetes: z.enum([YES, NO]),
-    isDisabled: z.enum([YES, NO]),
-    hasOtherDiseases: z.enum([YES, NO]),
-  }),*/
 })
