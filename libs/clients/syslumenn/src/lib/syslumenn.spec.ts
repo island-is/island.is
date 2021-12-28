@@ -1,27 +1,23 @@
 import { Test } from '@nestjs/testing'
-import { SyslumennService } from './syslumenn.service'
-import { SyslumennModule } from './syslumenn.module'
-import {
-  SYSLUMENN_CLIENT_CONFIG,
-  SyslumennClient,
-  SyslumennClientConfig,
-} from './client/syslumenn.client'
+import { SyslumennService } from './syslumennClient.service'
 import { startMocking } from '@island.is/shared/mocking'
-import { createLogger } from 'winston'
 import { requestHandlers } from './__mock-data__/requestHandlers'
 import {
   VHSUCCESS,
-  VHFAIL,
   OPERATING_LICENSE,
   DATA_UPLOAD,
 } from './__mock-data__/responses'
-import { HttpModule } from '@nestjs/common'
-import { Homestay, mapHomestay } from './models/homestay'
-import { IHomestay } from './client/models/homestay'
+import {
+  mapHomestay,
+  mapSyslumennAuction,
+  mapOperatingLicense,
+  mapDataUploadResponse,
+} from './syslumennClient.utils'
 import { SYSLUMENN_AUCTION } from './__mock-data__/responses'
-import { mapSyslumennAuction } from './models/syslumennAuction'
-import { mapOperatingLicense } from './models/operatingLicense'
-import { PersonType } from './models/dataUpload'
+import { PersonType } from './syslumennClient.types'
+import { SyslumennClientModule } from '@island.is/clients/syslumenn'
+
+import { defineConfig, ConfigModule } from '@island.is/nest/config'
 
 const YEAR = 2021
 const PERSON = [
@@ -42,11 +38,17 @@ const ATTACHMENT = {
   content: 'content',
 }
 
-const config = {
-  url: 'http://localhost',
-  username: '',
-  password: '',
-} as SyslumennClientConfig
+const config = defineConfig({
+  name: 'SyslumennApi',
+  load: () => ({
+    url: 'http://localhost',
+    fetch: {
+      timeout: '5000',
+    },
+    username: '',
+    password: '',
+  }),
+})
 
 startMocking(requestHandlers)
 
@@ -56,18 +58,10 @@ describe('SyslumennService', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [
-        HttpModule.register({
-          timeout: 10000,
-        }),
+        SyslumennClientModule,
+        ConfigModule.forRoot({ isGlobal: true, load: [config] }),
       ],
-      providers: [
-        SyslumennService,
-        SyslumennClient,
-        {
-          provide: SYSLUMENN_CLIENT_CONFIG,
-          useValue: config,
-        },
-      ],
+      providers: [SyslumennService],
     }).compile()
 
     service = module.get(SyslumennService)
@@ -118,7 +112,7 @@ describe('SyslumennService', () => {
         },
         'Lögheimilisbreyting barns',
       )
-      expect(response).toStrictEqual(DATA_UPLOAD)
+      expect(response).toStrictEqual(mapDataUploadResponse(DATA_UPLOAD))
     })
   })
 })
