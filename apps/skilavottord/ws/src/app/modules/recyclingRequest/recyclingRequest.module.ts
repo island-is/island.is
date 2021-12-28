@@ -3,7 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { VehicleModule } from '../vehicle/vehicle.module'
 import { RecyclingPartnerModule } from '../recyclingPartner/recyclingPartner.module'
-import { SamgongustofaModule } from '../samgongustofa'
+import { SamgongustofaModule } from '../samgongustofa/samgongustofa.module'
 import { FjarsyslaModule } from '../fjarsysla/fjarsysla.module'
 
 import { RecyclingRequestModel } from './recyclingRequest.model'

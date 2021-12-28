@@ -12,7 +12,7 @@ import { Role, User } from '../auth'
 import { RecyclingRequestModel } from '../recyclingRequest'
 import { RecyclingPartnerModel } from '../recyclingPartner'
 import { VehicleModel } from './vehicle.model'
-import { SamgongustofaService } from '../samgongustofa'
+import { SamgongustofaService } from '../samgongustofa/samgongustofa.service'
 
 @Injectable()
 export class VehicleService {

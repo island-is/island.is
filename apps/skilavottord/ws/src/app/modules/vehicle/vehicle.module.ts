@@ -4,7 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { VehicleModel } from './vehicle.model'
 import { VehicleService } from './vehicle.service'
 import { VehicleResolver } from './vehicle.resolver'
-import { SamgongustofaModule } from '../samgongustofa'
+import { SamgongustofaModule } from '../samgongustofa/samgongustofa.module'
 
 @Module({
   imports: [

@@ -15,7 +15,7 @@ import { Role, User } from '../auth'
 import { environment } from '../../../environments'
 import { FjarsyslaService } from '../fjarsysla'
 import { RecyclingPartnerService } from '../recyclingPartner'
-import { SamgongustofaService } from '../samgongustofa'
+import { SamgongustofaService } from '../samgongustofa/samgongustofa.service'
 import {
   RecyclingRequestModel,
   RecyclingRequestTypes,

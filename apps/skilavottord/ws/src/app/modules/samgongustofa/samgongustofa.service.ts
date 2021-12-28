@@ -1,4 +1,4 @@
-import { Injectable, HttpService, Inject } from '@nestjs/common'
+import { Injectable, HttpService, Inject, forwardRef } from '@nestjs/common'
 import * as xml2js from 'xml2js'
 
 import type { Logger } from '@island.is/logging'
@@ -15,6 +15,7 @@ export class SamgongustofaService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private httpService: HttpService,
+    @Inject(forwardRef(() => RecyclingRequestService))
     private recyclingRequestService: RecyclingRequestService,
   ) {}
 
