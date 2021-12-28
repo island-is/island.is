@@ -1,10 +1,17 @@
 import React from 'react'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, Select } from '@island.is/island-ui/core'
 import { User, Locale } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
 import { useUpdateUserProfileMutation } from '../../../gen/graphql'
+import { sharedMessages } from '@island.is/shared/translations'
 
-export const UserLanguageSwitcher = ({ user }: { user: User }) => {
+export const UserLanguageSwitcher = ({
+  user,
+  dropdown = false,
+}: {
+  user: User
+  dropdown?: boolean
+}) => {
   const { lang, formatMessage, changeLanguage } = useLocale()
   const [updateUserProfileMutation] = useUpdateUserProfileMutation()
 
@@ -29,7 +36,26 @@ export const UserLanguageSwitcher = ({ user }: { user: User }) => {
     }
   }
 
-  return (
+  return dropdown ? (
+    <Box paddingBottom={[2, 3]}>
+      <Select
+        backgroundColor="blue"
+        name="language-switcher"
+        size="xs"
+        value={
+          lang === 'en'
+            ? { label: 'English', value: 'en' }
+            : { label: 'Íslenska', value: 'is' }
+        }
+        onChange={handleLanguageChange}
+        label={formatMessage(sharedMessages.language)}
+        options={[
+          { label: 'Íslenska', value: 'is' },
+          { label: 'English', value: 'en' },
+        ]}
+      />
+    </Box>
+  ) : (
     <Box marginRight={2}>
       <Button
         variant="utility"

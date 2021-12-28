@@ -170,7 +170,7 @@ describe('UserMenu', () => {
     // Arrange
     renderAuthenticated(
       <>
-        <UserMenu showLanguageButton />
+        <UserMenu />
         <LocaleContext.Consumer>
           {({ lang }) => <span>Current: {lang}</span>}
         </LocaleContext.Consumer>

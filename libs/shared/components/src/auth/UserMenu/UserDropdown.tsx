@@ -8,6 +8,7 @@ import {
   Icon,
   GridContainer,
   Divider,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
@@ -20,6 +21,8 @@ import * as kennitala from 'kennitala'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { useActorDelegationsQuery } from '../../../gen/graphql'
 import { QueryResult } from '@apollo/client'
+import { UserLanguageSwitcher } from './UserLanguageSwitcher'
+import cn from 'classnames'
 
 interface UserDropdownProps {
   user: User
@@ -86,7 +89,10 @@ export const UserDropdown = ({
             borderRadius="large"
             display="flex"
             flexDirection="column"
-            className={fullscreen ? styles.fullScreen : styles.dropdown}
+            className={cn(
+              fullscreen ? styles.fullScreen : styles.dropdown,
+              styles.container,
+            )}
           >
             <Box
               display="flex"
@@ -126,6 +132,11 @@ export const UserDropdown = ({
                   {isDelegation && <Text variant="small">{actorName}</Text>}
                 </Box>
               </Box>
+              {/* <Divider /> */}
+              <Hidden above="sm">
+                {<UserLanguageSwitcher user={user} dropdown />}
+              </Hidden>
+
               <Divider />
               {/* End of current User */}
               {/* User delegations */}
@@ -147,7 +158,7 @@ export const UserDropdown = ({
               {/* End of user settings */}
 
               {/* Logout */}
-              <Box paddingTop={2}>
+              <Box paddingTop={[1, 2]}>
                 <UserDropdownItem
                   text={formatMessage(sharedMessages.logout)}
                   icon={{ type: 'outline', icon: 'logOut' }}

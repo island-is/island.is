@@ -1,14 +1,38 @@
-import { style } from '@vanilla-extract/css'
+import { keyframes, style } from '@vanilla-extract/css'
 import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
 import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
+import {
+  SERVICE_PORTAL_HEADER_HEIGHT_SM,
+  zIndex,
+} from '@island.is/service-portal/constants'
+
+export const container = style({
+  top: SERVICE_PORTAL_HEADER_HEIGHT_SM,
+  zIndex: zIndex.mobileMenu,
+  maxHeight: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_SM}px)`,
+  overflowY: 'auto',
+
+  ...themeUtils.responsiveStyle({
+    md: {
+      maxHeight: 'unset',
+      overflowY: 'unset',
+      top: 'unset',
+    },
+  }),
+})
 
 const dropdownBase: StyleWithSelectors = {
   position: 'fixed',
-  top: spacing[3],
-  right: spacing[3],
-  left: spacing[3],
+  right: spacing[0],
+  left: spacing[0],
+  borderRadius: 'unset',
+  maxHeight: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_SM}px)`,
+}
 
-  maxHeight: `calc(100vh - ${spacing[6]}px)`,
+const dropdownBaseMD: StyleWithSelectors = {
+  top: spacing[3],
+  width: 358,
+  borderRadius: theme.border.radius.large,
   filter: 'drop-shadow(0px 4px 70px rgba(0, 97, 255, 0.1))',
 }
 
@@ -16,9 +40,9 @@ export const dropdown = style({
   ...dropdownBase,
   ...themeUtils.responsiveStyle({
     md: {
+      ...dropdownBaseMD,
       left: 'auto',
       right: 'auto',
-      width: 358,
     },
   }),
 })
@@ -27,8 +51,9 @@ export const fullScreen = style({
   ...dropdownBase,
   ...themeUtils.responsiveStyle({
     md: {
+      ...dropdownBaseMD,
       left: 'auto',
-      width: 358,
+      right: spacing[3],
     },
   }),
 })
@@ -40,7 +65,6 @@ export const wrapper = style({
 })
 
 export const closeButton = style({
-  display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
 
@@ -68,7 +92,6 @@ export const closeButton = style({
     borderColor: theme.color.mint200,
   },
 })
-
 export const hr = style({
   marginTop: theme.spacing[2],
   marginBottom: theme.spacing[2],
@@ -131,9 +154,13 @@ export const companyIconSize = style({
   height: 40,
 })
 export const userDelegationWrapper = style({
-  overflowY: 'auto',
-  overflowX: 'hidden',
-  maxHeight: 210,
+  ...themeUtils.responsiveStyle({
+    md: {
+      overflowY: 'auto',
+      overflowX: 'hidden',
+      maxHeight: 210,
+    },
+  }),
 })
 export const userDelegationsText = style({
   fontSize: 16,

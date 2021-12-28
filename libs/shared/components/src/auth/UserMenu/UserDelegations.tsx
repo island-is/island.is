@@ -67,7 +67,7 @@ export const UserDelegations = ({
   }
   return (
     <>
-      <Text variant="small" marginBottom={1} paddingTop={3}>
+      <Text variant="small" marginBottom={1} paddingTop={[1, 3]}>
         {formatMessage(userMessages.delegationList)}
       </Text>
       <Box className={styles.userDelegationWrapper}>
@@ -80,19 +80,23 @@ export const UserDelegations = ({
               {actor?.name}
             </UserTopicCard>
           )}
-          {delegations.map((delegation) => (
-            <UserTopicCard
-              key={delegation.nationalId}
-              colorScheme="blue"
-              onClick={
-                delegation.isCurrent
-                  ? undefined
-                  : () => onClickDelegation(delegation)
-              }
-            >
-              {delegation.name || delegation.nationalId}
-            </UserTopicCard>
-          ))}
+          {delegations
+            .filter(
+              (delegation) => delegation.nationalId !== user.profile.nationalId,
+            )
+            .map((delegation) => (
+              <UserTopicCard
+                key={delegation.nationalId}
+                colorScheme="blue"
+                onClick={
+                  delegation.isCurrent
+                    ? undefined
+                    : () => onClickDelegation(delegation)
+                }
+              >
+                {delegation.name || delegation.nationalId}
+              </UserTopicCard>
+            ))}
           {data.loading ? (
             <SkeletonLoader display="block" height={59} borderRadius="large" />
           ) : data.error ? (
