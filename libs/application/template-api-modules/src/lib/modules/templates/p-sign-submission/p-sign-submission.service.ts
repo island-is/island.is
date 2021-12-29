@@ -6,6 +6,7 @@ import {
   Person,
   Attachment,
   PersonType,
+  DataUploadResponse,
 } from '@island.is/clients/syslumenn'
 import { NationalRegistry, UserProfile } from './types'
 
@@ -38,15 +39,25 @@ export class PSignSubmissionService {
       content: content,
     }
 
-    const extraData: { [key: string]: string } = {
+    const extraData: { [key: string]: string } = application.answers.deliveryMethod === 'sendHome' ? {
       StarfsstodID: application.answers.district as string,
-    }
+    } : {}
 
     const uploadDataName = 'pkort1.0'
     const uploadDataId = 'pkort1.0'
 
-    await this.syslumennService
+    const result: DataUploadResponse = await this.syslumennService
       .uploadData(persons, attachment, extraData, uploadDataName, uploadDataId)
-      .catch((error) => new Error('Ekki tókst að senda umsókn'))
+      .catch((e) => {
+        return {
+          success: false,
+          errorMessage: e.message,
+        }
+      })
+
+    if (!result.success) {
+      throw new Error(`Application submission failed`)
+    }
+    return { success: result.success, id: result.caseNumber }
   }
 }

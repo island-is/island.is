@@ -33,6 +33,11 @@ const PSignTemplate: ApplicationTemplate<
           },
           progress: 0.33,
           lifecycle: DefaultStateLifeCycle,
+          onExit: {
+            apiModuleAction: ApiActions.submitApplication,
+            shouldPersistToExternalData: true,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -60,12 +65,10 @@ const PSignTemplate: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () => import('../forms/done').then((val) => val.done),
               read: 'all',
             },

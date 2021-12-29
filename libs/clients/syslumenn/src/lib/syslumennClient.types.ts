@@ -13,6 +13,7 @@ export interface SyslumennAuction {
 }
 
 export interface DataUploadResponse {
+  success: boolean
   message?: string
   id?: string
   caseNumber?: string

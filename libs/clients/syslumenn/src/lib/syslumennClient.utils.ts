@@ -20,6 +20,7 @@ import {
   DistrictCommissionerAgencies,
   PersonType,
 } from './syslumennClient.types'
+const UPLOAD_DATA_SUCCESS: string = 'Gögn móttekin'
 
 export const mapDistrictCommissionersAgenciesResponse = (
   response: EmbaettiOgStarfsstodvar,
@@ -45,6 +46,7 @@ export const mapDataUploadResponse = (
   response: Skilabod,
 ): DataUploadResponse => {
   return {
+    success: response.skilabod === UPLOAD_DATA_SUCCESS,
     message: response.skilabod,
     id: response.audkenni,
     caseNumber: response.malsnumer,

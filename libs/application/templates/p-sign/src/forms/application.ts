@@ -412,6 +412,7 @@ export const getApplication = (): Form => {
                 id: 'submit',
                 title: '',
                 placement: 'footer',
+                refetchApplicationAfterSubmit: true,
                 actions: [
                   {
                     event: DefaultEvents.SUBMIT,

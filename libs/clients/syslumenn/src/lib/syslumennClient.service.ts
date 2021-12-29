@@ -130,7 +130,6 @@ export class SyslumennService {
       uploadDataName,
       uploadDataId,
     )
-
     const response = await api.syslMottakaGognPost(payload)
     const success = response.skilabod === UPLOAD_DATA_SUCCESS
     if (!success) {
