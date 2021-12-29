@@ -3,8 +3,8 @@ import {
   buildExternalDataProvider,
   buildSection,
 } from '@island.is/application/core'
-import { externalData } from '../lib/messages'
-import { DataProviderTypes } from '../types'
+import { externalData } from '../../lib/messages'
+import { DataProviderTypes } from '../../types'
 
 export const externalDataSection = buildSection({
   id: 'ExternalDataSection',

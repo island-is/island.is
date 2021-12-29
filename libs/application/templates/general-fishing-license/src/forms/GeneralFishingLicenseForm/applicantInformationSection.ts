@@ -3,9 +3,9 @@ import {
   buildSection,
   buildTextField,
 } from '@island.is/application/core'
-import { GeneralFishingLicense } from '../lib/dataSchema'
+import { GeneralFishingLicense } from '../../lib/dataSchema'
 
-import { applicantInformation } from '../lib/messages'
+import { applicantInformation } from '../../lib/messages'
 
 export const applicantInformationSection = buildSection({
   id: 'applicantInformationSection',

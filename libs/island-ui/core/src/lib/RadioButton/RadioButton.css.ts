@@ -39,6 +39,9 @@ export const labelText = style({
   display: 'flex',
   flexDirection: 'column',
 })
+export const labelFullWidth = style({
+  width: '100%',
+})
 export const largeLabel = style({
   alignItems: 'center',
   padding: `${theme.spacing[3]}px ${theme.spacing[2]}px`,
