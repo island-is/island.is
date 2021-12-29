@@ -74,6 +74,108 @@ function callApiWithEnhancedFetch() {
 }
 ```
 
+### Authorization
+
+You can configure Enhanced Fetch to automatically get OAuth2 tokens from an IDP. There are three modes:
+
+- `token`: Get non-user tokens using [Client Credential Grant](https://datatracker.ietf.org/doc/html/rfc6749#section-1.3.4).
+- `tokenExchange`: Exchange a user-token from an `Auth` object for a new user-token using [Token Exchange](https://datatracker.ietf.org/doc/html/rfc8693).
+- `auto`: Performs token exchange if an `Auth` object is passed into fetch, otherwise fetches a non-user token.
+
+In both modes you specify these options:
+
+- `issuer: string` - the base URL of the IDP. We will request a token from `${issuer}/connect/token`.
+- `clientId: string` - the client id to use in the client credential or token exchange grant.
+- `clientSecret: string` - the client secret to use in the client credential or token exchange grant.
+- `scope: string[]` - which scopes to request.
+
+#### Token mode
+
+Token mode is ideal for cron jobs or workers where no user token is involved. As such, they usually have scopes which authorize endpoints that don't require any user authorization.
+
+Enhanced Fetch handles the client credential grant and caches the token in-memory until it expires.
+
+```ts
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+
+const enhancedFetch = createEnhancedFetch({
+  name: 'my-fetch',
+  autoAuth: {
+    issuer: 'https://your-idp',
+    clientId: '@island.is/you-client',
+    clientSecret: 'YourClientSecret',
+    scope: ['the', 'scopes', 'you', 'need'],
+    mode: 'token',
+  },
+})
+
+// Gets an access token and adds as authorization header.
+const response = await enhancedFetch('https://backend/api')
+```
+
+#### Token exchange mode
+
+You can set up token exchange when your system is doing something on behalf of a user which their existing access token is not authorized to do. Here are some use cases:
+
+- The user might have a delegation token with limited access, but your API needs to expand their access for a specific purpose.
+- The backend is talking to a service which the user token should not have direct access to, but we still want to send a signed user token for authorization and audit reasons.
+
+For token exchange to work, you need to pass an `Auth` object to `enhancedFetch`:
+
+```ts
+import { caching } from 'cache-manager'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+
+const enhancedFetch = createEnhancedFetch({
+  name: 'my-fetch',
+  autoAuth: {
+    issuer: 'https://your-idp',
+    clientId: '@island.is/you-client',
+    clientSecret: 'YourClientSecret',
+    scope: ['the', 'scopes', 'you', 'need'],
+    mode: 'tokenExchange',
+  },
+})
+
+// Performs a token exchange using `currentUser` to get a new access token with the scopes listed above.
+const response = await enhancedFetch('https://backend/api', {
+  auth: currentUser,
+})
+```
+
+By default, Enhanced Fetch will perform a token exchange only if the existing authorization is missing some of the scopes specified in `autoAuth`.
+
+This behaviour can be configured along with a couple of other options:
+
+- `alwaysTokenExchange: boolean` - Request token exchange even though the current authentication has all of the specified scopes. Defaults to false.
+
+- `requestActorToken: boolean` - Request a token for the actor (the real end-user) and removes information about the active delegation. This is useful for services that do not understand island.is delegation tokens or should always return data for the actor rather than the active delegation. Defaults to false.
+
+- `useCache: boolean` - Enables private caching for token exchange tokens. Requires [`cacheManager`](#caching) to be configured. This involves storing user-tokens between requests, so "Keep it secret. Keep it safe." Defaults to false.
+
+```ts
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+
+const enhancedFetch = createEnhancedFetch({
+  name: 'my-fetch',
+  cache: {
+    cacheManager: caching({ store: 'memory', ttl: 0 }),
+  },
+  autoAuth: {
+    issuer: 'https://your-idp',
+    clientId: '@island.is/you-client',
+    clientSecret: 'YourClientSecret',
+    scope: ['the', 'scopes', 'you', 'need'],
+    mode: 'tokenExchange',
+    tokenExchange: {
+      alwaysTokenExchange: true,
+      requestActorToken: true,
+      useCache: true,
+    },
+  },
+})
+```
+
 ### Caching
 
 Enhanced Fetch includes built-in response cache functionality based on standard cache-control semantics. To enable caching, you need to call createEnhancedFetch with a [cache-manager](https://www.npmjs.com/package/cache-manager) Cache instance:
@@ -142,7 +244,7 @@ const enhancedFetch = createEnhancedFetch({
 Only responses with [specific status codes](https://developer.mozilla.org/en-US/docs/Glossary/cacheable) can be cached. Notably, that list excludes "201 Created", "400 Bad Request", "401 Unauthorized", "403 Forbidden" as well as most 500 responses. Those responses won't be cached even if you override the cache-control value.
 {% endhint %}
 
-### Stale responses
+#### Stale responses
 
 You can configure the cache to return stale responses in specific circumstances:
 
@@ -167,7 +269,7 @@ In the above example, it will return a response from the cache:
 - If it's less than 1 day old. In this case it will immediately update the cache in the background to return fresher data in future requests.
 - If it's less than 30 days old and the server is offline or returns an error response (eg "500 Internal Server Error").
 
-### Authorized APIs
+#### Authorized APIs
 
 The cache is shared for all requests by default. Requests that have an authorization headers need special consideration since those won't be stored by default.
 

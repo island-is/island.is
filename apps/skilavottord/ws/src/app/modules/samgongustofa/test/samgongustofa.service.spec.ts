@@ -74,7 +74,7 @@ describe('skilavottordApiTest', () => {
     describe('samgongustofaGetVehicleInformation', () => {
       it('get vehicle info', async () => {
         const kennitala = '1234567890'
-        const httpServiceSpy = jest
+        jest
           .spyOn(httpService, 'post')
           .mockImplementationOnce(() => of(getAllVehilceResp))
           .mockImplementationOnce(() => of(getBasicVehicleResp))
