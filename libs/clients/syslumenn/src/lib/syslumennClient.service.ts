@@ -133,9 +133,7 @@ export class SyslumennService {
     const response = await api.syslMottakaGognPost(payload)
     const success = response.skilabod === UPLOAD_DATA_SUCCESS
     if (!success) {
-      throw new Error(
-        `POST uploadData was not successful`,
-      )
+      throw new Error(`POST uploadData was not successful`)
     }
     return mapDataUploadResponse(response)
   }

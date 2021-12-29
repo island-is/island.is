@@ -65,7 +65,7 @@ const PSignTemplate: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          
+
           roles: [
             {
               id: Roles.APPLICANT,

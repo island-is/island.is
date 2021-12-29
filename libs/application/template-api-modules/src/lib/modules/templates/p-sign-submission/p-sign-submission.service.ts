@@ -39,9 +39,12 @@ export class PSignSubmissionService {
       content: content,
     }
 
-    const extraData: { [key: string]: string } = application.answers.deliveryMethod === 'sendHome' ? {
-      StarfsstodID: application.answers.district as string,
-    } : {}
+    const extraData: { [key: string]: string } =
+      application.answers.deliveryMethod === 'sendHome'
+        ? {
+            StarfsstodID: application.answers.district as string,
+          }
+        : {}
 
     const uploadDataName = 'pkort1.0'
     const uploadDataId = 'pkort1.0'

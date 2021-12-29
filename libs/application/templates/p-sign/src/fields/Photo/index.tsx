@@ -15,7 +15,7 @@ const Photo = ({ application, img, bulletsView }: PhotoProps) => {
     img !== undefined ? img : (application.answers.photoAttachment as string)
 
   return (
-    <Box display={['block', 'flex', 'flex']} justifyContent="spaceBetween">
+    <Box display={['block', 'block', 'flex']} justifyContent="spaceBetween">
       <Box className={boxStyle}>
         {image ? (
           <img alt={''} src={image} id="myimage" />
