@@ -14,7 +14,10 @@ import {
 } from '@island.is/regulations'
 import { Kennitala, RegulationType } from '@island.is/regulations'
 import { Step } from '../types'
-import { RegulationMinistry } from '@island.is/regulations/web'
+import {
+  RegulationMinistry,
+  RegulationMinistryList,
+} from '@island.is/regulations/web'
 import { MessageDescriptor } from 'react-intl'
 
 export type DraftIdFromParam = 'new' | RegulationDraftId
@@ -25,12 +28,15 @@ export type StepNav = {
   next?: Step
 }
 
+export type InputType = 'text' | 'html'
+
 export type DraftField<Type> = {
   value: Type
   required?: boolean
   dirty?: boolean
   guessed?: boolean
   error?: MessageDescriptor
+  type?: InputType
 }
 
 // TODO: Figure out how the Editor components lazy valueRef.current() getter fits into this
@@ -60,6 +66,9 @@ export type CancelDraftFields = Readonly<
 > & { date: DraftField<Date> }
 
 export type RegDraftForm = BodyDraftFields & {
+  id: RegulationDraftId
+  readonly draftingStatus: DraftingStatus // non-editable except via saveStatus or propose actions
+
   idealPublishDate: DraftField<Date | undefined>
   signatureDate: DraftField<Date | undefined>
   effectiveDate: DraftField<Date | undefined>
@@ -72,22 +81,20 @@ export type RegDraftForm = BodyDraftFields & {
 
   impacts: Array<ChangeDraftFields | CancelDraftFields>
 
-  readonly draftingStatus: DraftingStatus // non-editable except via saveStatus or propose actions
   draftingNotes: HtmlDraftField
   authors: DraftField<Array<Kennitala>>
 
-  id: RegulationDraft['id']
   fastTrack: DraftField<boolean>
 }
 
 export type DraftingState = {
   isEditor: boolean
   stepName: Step
-  savingStatus?: boolean
-  loading?: boolean
+  draft: RegDraftForm
+  ministries: RegulationMinistryList
+  saving?: boolean
+  shipping?: boolean
   error?: Error
-  draft?: RegDraftForm
-  ministries: Array<RegulationMinistry>
 }
 
 // -----------------------------
@@ -134,21 +141,6 @@ export type Action =
       stepName: Step
     }
   | {
-      type: 'LOADING_DRAFT'
-    }
-  | {
-      type: 'LOADING_DRAFT_ERROR'
-      error: Error
-    }
-  | {
-      type: 'LOADING_DRAFT_SUCCESS'
-      draft: RegulationDraft
-    }
-  | {
-      type: 'MINISTRIES_LOADED'
-      ministries: Array<RegulationMinistry>
-    }
-  | {
       type: 'SAVING_STATUS'
     }
   | {
@@ -166,6 +158,7 @@ export type Action =
     }
   | ({
       type: 'UPDATE_PROP'
+      explicit?: boolean
     } & FieldNameValuePair)
   | {
       type: 'APPENDIX_ADD'

@@ -32,7 +32,7 @@ export const regulationsAdminModule: ServicePortalModule = {
         name: 'Skrá nýja reglugerð',
         path: ServicePortalPath.RegulationsAdminEdit,
         enabled: mayCreate,
-        render: () => lazy(() => import('./screens/EditDraft')),
+        render: () => lazy(() => import('./screens/Edit')),
       },
       {
         name: 'Ráðuneyti',

@@ -3,11 +3,22 @@ import { Box, Button } from '@island.is/island-ui/core'
 import React from 'react'
 import { buttonsMsgs, buttonsMsgs as msg } from '../messages'
 import { useLocale } from '../utils'
+import { RegDraftForm } from '../state/types'
+
+const isDraftEmpty = (draft: RegDraftForm): boolean => {
+  const someContent =
+    draft.title.value ||
+    draft.text.value ||
+    draft.appendixes.some(({ text, title }) => title.value || text.value) ||
+    draft.impacts.length
+
+  return !someContent
+}
 
 // ===========================================================================
 
 export type SaveDeleteButtonsProps = {
-  id: string | undefined
+  draft: RegDraftForm
   actions: {
     saveStatus: () => void
     deleteDraft: () => void
@@ -24,14 +35,12 @@ export type SaveDeleteButtonsProps = {
 )
 
 export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
-  const { id, actions, wrap, classes = s } = props
+  const { draft, actions, wrap, classes = s } = props
   const t = useLocale().formatMessage
-
-  const newDraft = id === 'new'
 
   const deleteDraft = () => {
     if (
-      newDraft ||
+      isDraftEmpty(draft) ||
       // eslint-disable-next-line no-restricted-globals
       confirm(t(buttonsMsgs.confirmDelete))
     ) {
@@ -41,20 +50,18 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
 
   const buttons = (
     <>
-      {!newDraft && (
-        <Box className={classes.deleteDraft}>
-          <Button
-            onClick={deleteDraft}
-            icon="trash"
-            iconType="outline"
-            variant="text"
-            colorScheme="destructive"
-            size="small"
-          >
-            {t(msg.delete)}
-          </Button>
-        </Box>
-      )}{' '}
+      <Box className={classes.deleteDraft}>
+        <Button
+          onClick={deleteDraft}
+          icon="trash"
+          iconType="outline"
+          variant="text"
+          colorScheme="destructive"
+          size="small"
+        >
+          {t(msg.delete)}
+        </Button>
+      </Box>{' '}
       <Box className={classes.saveDraft}>
         <Button
           onClick={actions.saveStatus}

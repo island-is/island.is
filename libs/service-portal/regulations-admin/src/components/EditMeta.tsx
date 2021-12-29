@@ -55,6 +55,7 @@ export const EditMeta: StepComponent = (props) => {
                 updateState(
                   'type',
                   (typeOption as Option).value as RegulationType,
+                  true,
                 )
               }
               backgroundColor="blue"
@@ -68,7 +69,9 @@ export const EditMeta: StepComponent = (props) => {
               placeholderText={t(msg.effectiveDate_default)}
               minDate={draft.idealPublishDate.value || null}
               selected={draft.effectiveDate.value}
-              handleChange={(date: Date) => updateState('effectiveDate', date)}
+              handleChange={(date: Date) =>
+                updateState('effectiveDate', date, true)
+              }
               hasError={!!draft.effectiveDate.error}
               errorMessage={t(draft.effectiveDate.error)}
               backgroundColor="blue"

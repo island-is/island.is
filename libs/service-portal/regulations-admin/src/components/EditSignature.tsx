@@ -60,7 +60,7 @@ export const EditSignature: StepComponent = (props) => {
     uploading: false,
   })
 
-  const { ministries } = useMinistriesQuery()
+  const ministries = useMinistriesQuery().data
   const ministrySlug = draft.ministry.value
   const { ministryOptions, ministryOption, ministryName } = useMemo(() => {
     const ministryOptions = (ministries || []).map((m) => ({
@@ -180,6 +180,7 @@ export const EditSignature: StepComponent = (props) => {
                       updateState(
                         'ministry',
                         (typeOption as Option).value as MinistrySlug,
+                        true,
                       )
                     }
                     backgroundColor="blue"
@@ -201,7 +202,7 @@ export const EditSignature: StepComponent = (props) => {
                 )}
                 selected={draft.idealPublishDate.value}
                 handleChange={(date: Date) =>
-                  updateState('idealPublishDate', date)
+                  updateState('idealPublishDate', date, true)
                 }
                 hasError={!!draft.idealPublishDate.error}
                 errorMessage={t(draft.idealPublishDate.error)}

@@ -4,17 +4,18 @@ import React from 'react'
 
 import { Box, Button } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
-import { IntroHeader, ServicePortalPath } from '@island.is/service-portal/core'
+import { IntroHeader } from '@island.is/service-portal/core'
 import { TaskList } from '../components/TaskList'
 import { ShippedRegulations } from '../components/ShippedRegulations'
-import { useHistory, generatePath } from 'react-router-dom'
 import { homeMessages as msg } from '../messages'
 import { useLocale } from '../utils'
+import { useCreateRegulationDraft } from '@island.is/service-portal/graphql'
 
 const Home = () => {
   useNamespaces('ap.regulations-admin')
-  const history = useHistory()
   const t = useLocale().formatMessage
+
+  const { createNewDraft, creating, error } = useCreateRegulationDraft()
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -31,13 +32,8 @@ const Home = () => {
           preTextIconType="filled"
           size="small"
           variant="primary"
-          onClick={() =>
-            history.push(
-              generatePath(ServicePortalPath.RegulationsAdminEdit, {
-                id: 'new',
-              }),
-            )
-          }
+          disabled={creating}
+          onClick={() => createNewDraft()}
         >
           {t(msg.createRegulation)}
         </Button>

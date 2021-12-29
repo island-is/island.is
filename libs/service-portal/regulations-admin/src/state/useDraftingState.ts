@@ -1,14 +1,5 @@
 import { useMutation, gql } from '@apollo/client'
-import {
-  HTMLText,
-  isNonNull,
-  LawChapterSlug,
-  PlainText,
-} from '@island.is/regulations'
-import {
-  useMinistriesQuery,
-  useRegulationDraftQuery,
-} from '@island.is/service-portal/graphql'
+import { HTMLText, LawChapterSlug, PlainText } from '@island.is/regulations'
 import { useAuth } from '@island.is/auth/react'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { FC, Reducer, useEffect, useMemo, useReducer } from 'react'
@@ -23,12 +14,8 @@ import {
 } from '../utils'
 import { mockSave } from '../_mockData'
 import { RegulationsAdminScope } from '@island.is/auth/scopes'
+import { RegulationDraft } from '@island.is/regulations/admin'
 import {
-  RegulationDraft,
-  RegulationDraftId,
-} from '@island.is/regulations/admin'
-import {
-  DraftIdFromParam,
   StepNav,
   DraftField,
   HtmlDraftField,
@@ -39,16 +26,13 @@ import {
   ActionName,
   AppendixFormSimpleProps,
   AppendixDraftForm,
+  InputType,
 } from './types'
-import { uuid } from 'uuidv4'
 import { errorMsgs } from '../messages'
-import { RegulationAppendix } from '@island.is/regulations/web'
-
-export const CREATE_DRAFT_REGULATION_MUTATION = gql`
-  mutation CreateDraftRegulationMutation($input: CreateDraftRegulationInput!) {
-    createDraftRegulation(input: $input)
-  }
-`
+import {
+  RegulationAppendix,
+  RegulationMinistryList,
+} from '@island.is/regulations/web'
 
 export const UPDATE_DRAFT_REGULATION_MUTATION = gql`
   mutation UpdateDraftRegulationMutation($input: EditDraftRegulationInput!) {
@@ -94,17 +78,36 @@ export const steps: Record<Step, StepNav> = {
 
 // ---------------------------------------------------------------------------
 
-const f = <T>(value: T, required?: true): DraftField<T> => ({
+const tidyUp = {
+  text: (value: string) => value.trimLeft() as PlainText,
+  html: (value: HTMLText) => value.trimLeft() as HTMLText,
+  _: <T extends unknown>(value: T) => value,
+} as const
+
+// ---------------------------------------------------------------------------
+
+const f = <T>(
+  value: T,
+  required?: true,
+  type?: Exclude<InputType, 'html' | 'text'>,
+): DraftField<T> => ({
   value,
   required,
+  type,
+})
+const fText = <T extends string>(value: T, required?: true): DraftField<T> => ({
+  value,
+  required,
+  type: 'text',
 })
 const fHtml = (value: HTMLText, required?: true): HtmlDraftField => ({
   value,
   required,
+  type: 'html',
 })
 
 const makeDraftAppendixForm = (appendix: RegulationAppendix, key: string) => ({
-  title: f(appendix.title, true),
+  title: fText(appendix.title, true),
   text: fHtml(appendix.text, true),
   key,
 })
@@ -115,7 +118,7 @@ const makeDraftForm = (
 ): RegDraftForm => {
   const form: RegDraftForm = {
     id: draft.id,
-    title: f(draft.title, true),
+    title: fText(draft.title, true),
     text: fHtml(draft.text, true),
     appendixes: draft.appendixes.map((a, i) =>
       makeDraftAppendixForm(a, String(i)),
@@ -148,7 +151,7 @@ const makeDraftForm = (
             name: impact.name,
             date: f(new Date(impact.date), true),
             ...{
-              title: f(impact.title, true),
+              title: fText(impact.title, true),
               text: fHtml(impact.text, true),
               appendixes: impact.appendixes.map((a, i) =>
                 makeDraftAppendixForm(a, String(i)),
@@ -170,21 +173,6 @@ const makeDraftForm = (
   }
   return form
 }
-
-const getEmptyDraft = (): RegulationDraft => ({
-  id: 'new' as RegulationDraftId,
-  draftingStatus: 'draft',
-  draftingNotes: '',
-  authors: [],
-  title: '',
-  text: '',
-  appendixes: [],
-  comments: '',
-  ministry: undefined,
-  lawChapters: [],
-  impacts: [],
-  signatureText: '',
-})
 
 // ---------------------------------------------------------------------------
 
@@ -244,7 +232,7 @@ const actionHandlers: {
   [Type in ActionName]: (
     state: Draft<DraftingState>,
     action: Omit<Extract<Action, { type: Type }>, 'type'>,
-  ) => DraftingState | void
+  ) => Draft<DraftingState> | void
 } = {
   CHANGE_STEP: (state, { stepName }) => {
     if (stepName === 'review' && !state.isEditor) {
@@ -252,47 +240,28 @@ const actionHandlers: {
       return
     }
     state.stepName = stepName
-    return
-  },
-
-  MINISTRIES_LOADED: (state, { ministries }) => {
-    state.ministries = ministries
-  },
-
-  LOADING_DRAFT: (state) => {
-    state.loading = true
-  },
-  LOADING_DRAFT_SUCCESS: (state, { draft }) => {
-    state.loading = false
-    state.draft = makeDraftForm(draft)
-    Object.values(specialUpdates)
-      .filter(isNonNull)
-      .forEach((specialUpdater) => specialUpdater(state))
-  },
-  LOADING_DRAFT_ERROR: (state, { error }) => {
-    state.loading = false
-    state.error = error
-    state.draft = undefined
   },
 
   SAVING_STATUS: (state) => {
-    state.savingStatus = true
+    state.saving = true
   },
   SAVING_STATUS_DONE: (state, { error }) => {
     state.error = error
-    state.savingStatus = false
+    state.saving = false
   },
 
-  UPDATE_PROP: (state, { name, value }) => {
-    if (!state.draft) {
-      return
-    }
+  UPDATE_PROP: (state, { name, value, explicit }) => {
     const field = state.draft[name]
-    field.value = value
-    field.guessed = false
-    field.dirty = true
+    if (value !== field.value || explicit) {
+      // @ts-expect-error  (Fuu)
+      field.value = tidyUp[field.type || '_'](value)
+      field.dirty = true
+      field.guessed = false
+    }
     field.error =
-      field.required && !field.value ? errorMsgs.fieldRequired : undefined
+      field.required && !field.value && field.dirty
+        ? errorMsgs.fieldRequired
+        : undefined
 
     specialUpdates[name]?.(
       state,
@@ -305,9 +274,6 @@ const actionHandlers: {
   },
 
   APPENDIX_ADD: (state) => {
-    if (!state.draft) {
-      return
-    }
     const { appendixes } = state.draft
     appendixes.push(
       makeDraftAppendixForm({ title: '', text: '' }, String(appendixes.length)),
@@ -315,23 +281,23 @@ const actionHandlers: {
   },
 
   APPENDIX_SET_PROP: (state, { idx, name, value }) => {
-    if (!state.draft) {
-      return
-    }
     const appendix = state.draft.appendixes[idx]
     if (appendix) {
       const field = appendix[name]
-      field.value = value
-      field.dirty = true
+      if (value !== field.value) {
+        // @ts-expect-error  (Fuu)
+        field.value = tidyUp[field.type || '_'](value)
+        field.dirty = true
+        field.guessed = false
+      }
       field.error =
-        field.required && !field.value ? errorMsgs.fieldRequired : undefined
+        field.required && !field.value && field.dirty
+          ? errorMsgs.fieldRequired
+          : undefined
     }
   },
 
   APPENDIX_REMOVE: (state, { idx }) => {
-    if (!state.draft) {
-      return
-    }
     const { appendixes } = state.draft
     if (appendixes[idx]) {
       appendixes.splice(idx, 1)
@@ -339,9 +305,6 @@ const actionHandlers: {
   },
 
   APPENDIX_MOVE_UP: (state, { idx }) => {
-    if (!state.draft) {
-      return
-    }
     const prevIdx = idx - 1
     const { appendixes } = state.draft
     const appendix = appendixes[idx]
@@ -353,20 +316,10 @@ const actionHandlers: {
   },
 
   UPDATE_MULTIPLE_PROPS: (state, { multiData }) => {
-    if (!state.draft) {
-      return
-    }
-
-    state.draft = {
-      ...state.draft,
-      ...multiData,
-    }
+    Object.assign(state.draft, multiData)
   },
 
   UPDATE_LAWCHAPTER_PROP: (state, { action, value }) => {
-    if (!state.draft) {
-      return
-    }
     const lawChaptersField = state.draft.lawChapters
     const lawChapters = lawChaptersField.value
     const includesValue = lawChapters.includes(value)
@@ -385,7 +338,7 @@ const actionHandlers: {
     if (!state.isEditor) {
       state.error = new Error('Must be an editor')
     } else {
-      state.loading = true
+      state.shipping = true
     }
   },
 }
@@ -396,46 +349,24 @@ const draftingStateReducer: Reducer<DraftingState, Action> = (
   action,
 ) => {
   setAutoFreeze(false)
-  const newState = produce(state, (draft) => {
-    const newDraft = actionHandlers[action.type](
-      draft,
+  const newState = produce(state, (sDraft) =>
+    actionHandlers[action.type](
+      sDraft,
       // @ts-expect-error  (Can't get this to work. FML)
       action,
-    )
-    return newDraft
-  })
+    ),
+  )
   setAutoFreeze(true)
   return newState
 }
 
 // ---------------------------------------------------------------------------
 
-const getInitialState = (args: {
-  draftId: DraftIdFromParam
-  stepName: Step
-  isEditor: boolean
-}): DraftingState => {
-  const { draftId, stepName, isEditor } = args
-  if (draftId === 'new') {
-    return {
-      isEditor,
-      stepName,
-      loading: false,
-      draft: makeDraftForm(getEmptyDraft()),
-      ministries: [],
-    }
-  }
-  return {
-    isEditor,
-    stepName,
-    loading: true,
-    ministries: [],
-  }
-}
-
-// ---------------------------------------------------------------------------
-
-export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
+export const useDraftingState = (
+  draft: RegulationDraft,
+  ministries: RegulationMinistryList,
+  stepName: Step,
+) => {
   const history = useHistory()
   const isEditor =
     useAuth().userInfo?.scopes?.includes(RegulationsAdminScope.manage) || false
@@ -446,41 +377,20 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
 
   const t = useLocale().formatMessage
 
-  const [state, dispatch] = useReducer(
-    draftingStateReducer,
-    { draftId, stepName, isEditor },
-    getInitialState,
-  )
-
-  const isNew = draftId === 'new'
-  const { draft, loading, error } = useRegulationDraftQuery(
-    isNew && !state.error,
-    draftId,
-  )
-  const { ministries } = useMinistriesQuery()
-
-  const [deleteDraftRegulationMutation] = useMutation(
-    DELETE_DRAFT_REGULATION_MUTATION,
-  )
+  const [state, dispatch] = useReducer(draftingStateReducer, {}, () => ({
+    draft: makeDraftForm(draft),
+    stepName,
+    ministries,
+    isEditor,
+  }))
 
   useEffect(() => {
     dispatch({ type: 'CHANGE_STEP', stepName })
   }, [stepName])
 
-  useEffect(() => {
-    if (ministries) {
-      dispatch({ type: 'MINISTRIES_LOADED', ministries })
-    }
-    if (loading) {
-      dispatch({ type: 'LOADING_DRAFT' })
-    } else if (error) {
-      dispatch({ type: 'LOADING_DRAFT_ERROR', error })
-    } else if (draft && ministries) {
-      dispatch({ type: 'LOADING_DRAFT_SUCCESS', draft })
-    }
-  }, [loading, error, draft, ministries])
-
-  const [createDraftRegulation] = useMutation(CREATE_DRAFT_REGULATION_MUTATION)
+  const [deleteDraftRegulationMutation] = useMutation(
+    DELETE_DRAFT_REGULATION_MUTATION,
+  )
   const [updateDraftRegulationById] = useMutation(
     UPDATE_DRAFT_REGULATION_MUTATION,
   )
@@ -488,30 +398,23 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
   const stepNav = steps[stepName]
 
   const actions = useMemo(() => {
-    const isNew = draftId === 'new'
-
     return {
-      goBack:
-        (draft || isNew) && stepNav.prev
+      goBack: stepNav.prev
+        ? () => {
+            actions.saveStatus()
+            history.replace(
+              generatePath(ServicePortalPath.RegulationsAdminEdit, {
+                id: draft.id,
+                step: stepNav.prev,
+              }),
+            )
+          }
+        : undefined,
+      goForward:
+        stepNav.next && (isEditor || stepNav.next !== 'review')
           ? () => {
               actions.saveStatus()
-              history.replace(
-                generatePath(ServicePortalPath.RegulationsAdminEdit, {
-                  id: draftId,
-                  step: stepNav.prev,
-                }),
-              )
-            }
-          : undefined,
-      goForward:
-        (draft || isNew) &&
-        stepNav.next &&
-        (isEditor || stepNav.next !== 'review')
-          ? () => {
-              // // At the moment, saveStatus() triggers routing on top of
-              // the routing triggered by this action.
-              // FIXME: Simplify the "new" state.
-              // actions.saveStatus()
+
               // BASICS
               if (stepNav.name === 'basics') {
                 const basicsRequired = [
@@ -557,75 +460,21 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
 
               history.replace(
                 generatePath(ServicePortalPath.RegulationsAdminEdit, {
-                  id: draftId,
+                  id: draft.id,
                   step: stepNav.next,
                 }),
               )
             }
           : undefined,
-      saveStatus:
-        draft || isNew
-          ? () => {
-              if (isNew) {
-                createDraftRegulation({
-                  variables: {
-                    input: {
-                      id: uuid(),
-                      drafting_status: 'draft',
-                      title: state.draft?.title.value,
-                      text: state.draft?.text.value, // (text + appendix + comments)
-                      drafting_notes: state.draft?.draftingNotes.value,
-                      ministry_id: state.draft?.ministry.value || '',
-                      ideal_publish_date: state.draft?.idealPublishDate.value,
-                      type: 'base', // Ritill
-                    },
-                  },
-                }).then((res) => {
-                  const newDraft = res.data
-                    ? (res.data.createDraftRegulation as RegulationDraft)
-                    : undefined
-                  if (newDraft?.id) {
-                    history.replace(
-                      generatePath(ServicePortalPath.RegulationsAdminEdit, {
-                        id: newDraft?.id,
-                        step: stepNav.next,
-                      }),
-                    )
-                  }
-                })
-              } else {
-                updateDraftRegulationById({
-                  variables: {
-                    input: {
-                      id: state.draft?.id,
-                      body: {
-                        title: state.draft?.title?.value,
-                        text: state.draft?.text?.value, // (text + appendix + comments)
-                        ministry_id: state.draft?.ministry?.value,
-                        drafting_notes: state.draft?.draftingNotes.value,
-                        ideal_publish_date:
-                          state.draft?.idealPublishDate?.value,
-                        law_chapters: state.draft?.lawChapters?.value,
-                        signature_date: state.draft?.signatureDate?.value,
-                        effective_date: state.draft?.effectiveDate?.value,
-                        type: state.draft?.type?.value,
-                      },
-                    },
-                  },
-                }).then((res) => {
-                  console.log('!!DRAFT UPDATED!! ', res)
-                })
-              }
-            }
-          : () => undefined,
 
       // FIXME: rename to updateProp??
       updateState: <Prop extends RegDraftFormSimpleProps>(
         name: Prop,
         value: RegDraftForm[Prop]['value'],
+        explicit?: boolean,
       ) => {
         // @ts-expect-error  (FML! FIXME: make this nicer)
-        dispatch({ type: 'UPDATE_PROP', name, value })
+        dispatch({ type: 'UPDATE_PROP', name, value, explicit })
       },
 
       setAppendixProp: <Prop extends AppendixFormSimpleProps>(
@@ -648,25 +497,6 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
         dispatch({ type: 'APPENDIX_ADD' })
       },
 
-      deleteDraft: async () => {
-        // TODO: Dialog opens to CONFIRM the deletion by user?
-        try {
-          await deleteDraftRegulationMutation({
-            variables: {
-              input: {
-                draftId,
-              },
-            },
-          }).then(() => {
-            // TODO: Láta notanda vita að færslu hefur verið eytt út?
-            history.push(ServicePortalPath.RegulationsAdminRoot)
-          })
-        } catch (e) {
-          console.error('delete draft regulation error: ', e)
-          return
-        }
-      },
-
       updateLawChapterProp: (
         action: 'add' | 'delete',
         value: LawChapterSlug,
@@ -674,14 +504,59 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
         dispatch({ type: 'UPDATE_LAWCHAPTER_PROP', action, value })
       },
 
-      propose:
-        draft && !isEditor
-          ? () => {
-              mockSave({ ...draft, draftingStatus: 'proposal' }).then(() => {
-                history.push(ServicePortalPath.RegulationsAdminRoot)
-              })
-            }
-          : undefined,
+      deleteDraft: async () => {
+        if (draft.draftingStatus === 'shipped') {
+          return
+        }
+        try {
+          await deleteDraftRegulationMutation({
+            variables: {
+              input: {
+                draftId: draft.id,
+              },
+            },
+          }).then(() => {
+            // TODO: Láta notanda vita að færslu hefur verið eytt út?
+            history.push(ServicePortalPath.RegulationsAdminRoot)
+          })
+        } catch (e) {
+          console.error('Failed to delete regulation draft: ', e)
+          return
+        }
+      },
+
+      saveStatus: () => {
+        const draft = state.draft
+        updateDraftRegulationById({
+          variables: {
+            input: {
+              id: draft.id,
+              body: {
+                title: draft.title.value,
+                text: draft.text.value, // (text + appendix + comments)
+                ministry_id: draft.ministry.value,
+                drafting_notes: draft.draftingNotes.value,
+                ideal_publish_date: draft.idealPublishDate?.value,
+                law_chapters: draft.lawChapters.value,
+                signature_date: draft.signatureDate.value,
+                effective_date: draft.effectiveDate.value,
+                type: draft.type.value,
+              },
+            },
+          },
+        }).then((res) => {
+          console.log('!!DRAFT UPDATED!! ', res)
+        })
+      },
+
+      propose: !isEditor
+        ? () => {
+            // FIXME: Make this work
+            mockSave({ ...draft, draftingStatus: 'proposal' }).then(() => {
+              history.push(ServicePortalPath.RegulationsAdminRoot)
+            })
+          }
+        : undefined,
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -690,10 +565,8 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     draft,
     isEditor,
     state,
-    draftId,
 
     history, // NOTE: Should be immutable
-    createDraftRegulation, // NOTE: Should be immutable
     updateDraftRegulationById, // NOTE: Should be immutable
     deleteDraftRegulationMutation, // NOTE: Should be immutable
     t,
