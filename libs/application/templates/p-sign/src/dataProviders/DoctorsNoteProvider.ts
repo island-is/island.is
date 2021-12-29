@@ -36,7 +36,7 @@ export class DoctorsNoteProvider extends BasicDataProvider {
 
   handleError(error: any) {
     console.log('Provider error - DoctorsNoteProvider:', error)
-    return Promise.resolve({})
+    return Promise.reject({errors: error})
   }
 
   onProvideError(result: string): FailedDataProviderResult {
