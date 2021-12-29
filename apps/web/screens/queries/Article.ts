@@ -89,6 +89,20 @@ export const GET_ARTICLE_QUERY = gql`
           ...AllSlices
         }
         showTableOfContents
+        stepper {
+          steps {
+            title
+            slug
+            subtitle {
+              ...HtmlFields
+            }
+            text {
+              ...HtmlFields
+            }
+            isAnswer
+            options
+          }
+        }
       }
       featuredImage {
         url
