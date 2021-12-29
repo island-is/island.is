@@ -292,6 +292,9 @@
     "clients-criminal-record": {
       "tags": []
     },
+    "clients-data-protection-complaint": {
+      "tags": []
+    },
     "clients-document-provider": {
       "tags": []
     },
@@ -336,6 +339,13 @@
     },
     "clients-rsk-v2": {
       "tags": []
+    },
+    "clients-syslumenn": {
+      "tags": []
+    },
+    "clients-user-profile": {
+      "tags": [],
+      "implicitDependencies": ["services-user-profile"]
     },
     "clients-vmst": {
       "tags": []
