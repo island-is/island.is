@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { ReactElement, useMemo, useRef, useState } from 'react'
+import React, { ReactElement, useEffect, useMemo, useState } from 'react'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -29,8 +29,6 @@ import {
 } from '@island.is/web/components'
 import {
   Box,
-  Button,
-  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
@@ -189,6 +187,17 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
     OneColumnText | undefined
   >(undefined)
 
+  let content: SliceType[] = []
+
+  if (!!subpage && renderSlicesAsTabs)
+    content = selectedSliceTab?.content as SliceType[]
+  if (!subpage) content = projectPage?.content as SliceType[]
+
+  useEffect(() => {
+    if (renderSlicesAsTabs && !!subpage && subpage?.slices?.length > 0)
+      setSelectedSliceTab(subpage.slices[0] as OneColumnText)
+  }, [router.asPath])
+
   return (
     <>
       <HeadWithSocialSharing
@@ -239,9 +248,12 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           </Box>
         </Hidden>
         {!!subpage && (
-          <Text as="h1" variant="h1">
-            {subpage.title}
-          </Text>
+          <>
+            <Text as="h1" variant="h1">
+              {subpage.title}
+            </Text>
+            {subpage.content && richText(subpage.content as SliceType[])}
+          </>
         )}
         {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
           <TableOfContents
@@ -257,7 +269,12 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
             }
           />
         )}
-        {richText((selectedSliceTab ?? projectPage).content as SliceType[])}
+        {renderSlicesAsTabs && selectedSliceTab && (
+          <Text paddingTop={4} as="h2" variant="h2">
+            {selectedSliceTab.title}
+          </Text>
+        )}
+        {content && richText(content)}
         {!subpage && projectPage.stepper && (
           <Stepper
             stepper={projectPage.stepper}
