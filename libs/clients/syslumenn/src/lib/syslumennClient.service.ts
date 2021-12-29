@@ -135,6 +135,7 @@ export class SyslumennService {
     if (!success) {
       throw new Error(`POST uploadData was not successful`)
     }
+
     return mapDataUploadResponse(response)
   }
 
@@ -158,7 +159,6 @@ export class SyslumennService {
     if (!certificate) {
       return null
     }
-
     return mapCertificateInfo(certificate)
   }
 
