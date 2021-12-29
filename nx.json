@@ -233,6 +233,9 @@
     "application-templates-login-service": {
       "tags": []
     },
+    "application-templates-meta-application": {
+      "tags": []
+    },
     "application-templates-p-sign": {
       "tags": []
     },
@@ -339,6 +342,10 @@
     },
     "clients-syslumenn": {
       "tags": []
+    },
+    "clients-user-profile": {
+      "tags": [],
+      "implicitDependencies": ["services-user-profile"]
     },
     "clients-vmst": {
       "tags": []
