@@ -1,10 +1,10 @@
 import {
   BasicDataProvider,
-  Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
 import { CertificateInfoResponse } from '../types/schema'
+import { m } from '../lib/messages'
 
 export class DoctorsNoteProvider extends BasicDataProvider {
   type = 'DoctorsNoteProvider'
@@ -21,29 +21,31 @@ export class DoctorsNoteProvider extends BasicDataProvider {
       }
     `
 
-    return this.useGraphqlGateway(query)
-      .then(async (res: Response) => {
-        const response = await res.json()
-        if (response.errors?.length > 0) {
-          return this.handleError(response.errors[0])
-        }
+    const res = await this.useGraphqlGateway(query)
+    if (!res.ok) {
+      console.error('[DoctorsNoteProvider]', await res.json())
 
-        return Promise.resolve(response.data.getSyslumennCertificateInfo)
+      return Promise.reject({
+        reason: 'Náði ekki sambandi við vefþjónustu',
       })
-      .catch((error) => this.handleError(error))
+    }
+
+    const response = await res.json()
+    if (response.errors) {
+      return Promise.reject({ error: response.errors })
+    }
+    if (!response.data.getSyslumennCertificateInfo.expirationDate) {
+      return Promise.reject({})
+    }
+
+    return Promise.resolve(response.data.getSyslumennCertificateInfo)
   }
 
-  handleError(error: any) {
-    console.log('Provider error - DoctorsNoteProvider:', error)
-    return Promise.reject({ errors: error })
-  }
-
-  onProvideError(result: string): FailedDataProviderResult {
+  onProvideError(): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason: result,
+      reason: m.errorDataProvider,
       status: 'failure',
-      data: result,
     }
   }
 

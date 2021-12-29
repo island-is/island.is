@@ -50,7 +50,7 @@ export class SyslumennResolver {
   @Scopes(ApiScope.internal)
   getSyslumennCertificateInfo(
     @CurrentUser() user: User,
-  ): Promise<CertificateInfoResponse> {
+  ): Promise<CertificateInfoResponse | null> {
     return this.syslumennService.getCertificateInfo(user.nationalId)
   }
 

@@ -1,10 +1,10 @@
 import {
   BasicDataProvider,
-  Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
 import { DistrictCommissionerAgencies } from '../types/schema'
+import { m } from '../lib/messages'
 
 export class DistrictsProvider extends BasicDataProvider {
   type = 'DistrictsProvider'
@@ -37,16 +37,14 @@ export class DistrictsProvider extends BasicDataProvider {
   }
 
   handleError(error: any) {
-    console.log('Provider error - DistrictsProvider:', error)
-    return Promise.resolve({})
+    return Promise.reject({})
   }
 
-  onProvideError(result: string): FailedDataProviderResult {
+  onProvideError(): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason: result,
+      reason: m.errorDataProvider,
       status: 'failure',
-      data: result,
     }
   }
 
