@@ -135,7 +135,7 @@ export class SyslumennService {
     const success = response.skilabod === UPLOAD_DATA_SUCCESS
     if (!success) {
       throw new Error(
-        `POST uploadData was not successful, response was: ${response}`,
+        `POST uploadData was not successful`,
       )
     }
     return mapDataUploadResponse(response)
