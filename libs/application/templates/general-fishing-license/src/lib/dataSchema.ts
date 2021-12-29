@@ -1,6 +1,7 @@
 import * as z from 'zod'
 import { error } from './messages'
 import * as kennitala from 'kennitala'
+import { FishingLicenseEnum } from '../types'
 
 export const GeneralFishingLicenseSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -47,6 +48,11 @@ export const GeneralFishingLicenseSchema = z.object({
     email: z.string().email(),
     phoneNumber: z.string().optional(),
   }),
+  shipSelection: z.enum(['0', '1', '2', '3', '4', '5']),
+  fishingLicense: z.enum([
+    FishingLicenseEnum.HOOKCATCHLIMIT,
+    FishingLicenseEnum.CATCHLIMIT,
+  ]),
 })
 
 export type GeneralFishingLicense = z.TypeOf<typeof GeneralFishingLicenseSchema>

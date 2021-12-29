@@ -38,7 +38,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: application.general.name.defaultMessage,
-          progress: 0.2,
+          progress: 0.3,
           // Application is only suppose to live for an hour while building it, change later
           lifecycle: {
             shouldBeListed: true,
@@ -49,10 +49,41 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/index').then((val) =>
+                import('../forms/GeneralFishingLicenseForm/index').then((val) =>
                   Promise.resolve(val.GeneralFishingLicenseForm),
                 ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
               write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.SUBMITTED,
+          },
+        },
+      },
+      [States.SUBMITTED]: {
+        meta: {
+          name: application.general.name.defaultMessage,
+          progress: 1,
+          // Application is only suppose to live for an hour while building it, change later
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import(
+                  '../forms/GeneralFishingLicenseSubmittedForm'
+                ).then((val) =>
+                  Promise.resolve(val.GeneralFishingLicenseSubmittedForm),
+                ),
             },
           ],
         },
