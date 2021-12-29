@@ -29,7 +29,7 @@ import {
 import { m } from '../lib/messages'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import { DefaultEvents } from '../../../../core/src/types/StateMachine';
+import { DefaultEvents } from '../../../../core/src/types/StateMachine'
 
 export const getApplication = (): Form => {
   return buildForm({
@@ -290,11 +290,13 @@ export const getApplication = (): Form => {
                     districts: { data },
                   },
                 }) => {
-                  return (data as DistrictCommissionerAgencies[]).map(({ id, name, place, address }) => ({
-                    value: id,
-                    label: `${name}, ${place}`,
-                    tooltip: `${address}`,
-                  }))
+                  return (data as DistrictCommissionerAgencies[]).map(
+                    ({ id, name, place, address }) => ({
+                      value: id,
+                      label: `${name}, ${place}`,
+                      tooltip: `${address}`,
+                    }),
+                  )
                 },
 
                 condition: (answers: FormValue) =>
@@ -391,17 +393,20 @@ export const getApplication = (): Form => {
                 value: ({
                   externalData: {
                     districts: { data },
-                  }, answers
-                }) => {
-                  const district = (data as DistrictCommissionerAgencies[]).find((d) => d.id === answers.district)
-                  return `Þú hefur valið að sækja P-merkið sjálf/ur/t hjá: ${district?.name}, ${district?.place}`
                   },
-                condition: (answers) => answers.deliveryMethod === 'pickUp'
+                  answers,
+                }) => {
+                  const district = (data as DistrictCommissionerAgencies[]).find(
+                    (d) => d.id === answers.district,
+                  )
+                  return `Þú hefur valið að sækja P-merkið sjálf/ur/t hjá: ${district?.name}, ${district?.place}`
+                },
+                condition: (answers) => answers.deliveryMethod === 'pickUp',
               }),
               buildKeyValueField({
                 label: m.deliveryMethodTitle,
                 value: () => m.overviewDeliveryText,
-                condition: (answers) => answers.deliveryMethod === 'sendHome'
+                condition: (answers) => answers.deliveryMethod === 'sendHome',
               }),
               buildSubmitField({
                 id: 'submit',

@@ -146,7 +146,7 @@ export class SyslumennService {
   }
 
   async getDistrictCommissionersAgencies(): Promise<
-  DistrictCommissionerAgencies[]
+    DistrictCommissionerAgencies[]
   > {
     const { api } = await this.createApi()
     const response = await api.embaettiOgStarfsstodvarGetEmbaetti()

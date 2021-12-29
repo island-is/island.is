@@ -16,7 +16,7 @@ import {
   GeneralPetitionService,
   CriminalRecordSubmissionService,
   DataProtectionComplaintService,
-  PSignSubmissionService
+  PSignSubmissionService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -52,7 +52,7 @@ export class TemplateAPIService {
     private readonly generalPetitionService: GeneralPetitionService,
     private readonly criminalRecordSubmissionService: CriminalRecordSubmissionService,
     private readonly dataProtectionComplaintService: DataProtectionComplaintService,
-    private readonly pSignSubmissionService: PSignSubmissionService
+    private readonly pSignSubmissionService: PSignSubmissionService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -178,7 +178,7 @@ export class TemplateAPIService {
       case ApplicationTypes.P_SIGN:
         return this.tryRunningActionOnService(
           this.pSignSubmissionService,
-          action
+          action,
         )
     }
 

@@ -23,7 +23,7 @@ export class DoctorsNoteProvider extends BasicDataProvider {
 
     return this.useGraphqlGateway(query)
       .then(async (res: Response) => {
-        const response = await res.json() 
+        const response = await res.json()
         if (response.errors?.length > 0) {
           return this.handleError(response.errors[0])
         }
@@ -31,12 +31,11 @@ export class DoctorsNoteProvider extends BasicDataProvider {
         return Promise.resolve(response.data.getSyslumennCertificateInfo)
       })
       .catch((error) => this.handleError(error))
-
   }
 
   handleError(error: any) {
     console.log('Provider error - DoctorsNoteProvider:', error)
-    return Promise.reject({errors: error})
+    return Promise.reject({ errors: error })
   }
 
   onProvideError(result: string): FailedDataProviderResult {

@@ -57,7 +57,7 @@ export class SyslumennResolver {
   @Query(() => [DistrictCommissionerAgencies])
   @BypassAuth()
   getSyslumennDistrictCommissionersAgencies(): Promise<
-  DistrictCommissionerAgencies[]
+    DistrictCommissionerAgencies[]
   > {
     return this.syslumennService.getDistrictCommissionersAgencies()
   }

@@ -11,10 +11,7 @@ import { NationalRegistry, UserProfile } from './types'
 
 @Injectable()
 export class PSignSubmissionService {
-  constructor(
-    private readonly syslumennService: SyslumennService,
-  ) {}
-
+  constructor(private readonly syslumennService: SyslumennService) {}
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const nationalRegistryData = application.externalData.nationalRegistry
@@ -38,16 +35,18 @@ export class PSignSubmissionService {
     const content = application.answers.photoAttachment as string
     const attachment: Attachment = {
       name: `p_kort_mynd_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
-      content: content
+      content: content,
     }
 
-    const extraData: { [key: string]: string } = {"StarfsstodID": application.answers.district as string}
+    const extraData: { [key: string]: string } = {
+      StarfsstodID: application.answers.district as string,
+    }
 
     const uploadDataName = 'pkort1.0'
     const uploadDataId = 'pkort1.0'
 
     await this.syslumennService
       .uploadData(persons, attachment, extraData, uploadDataName, uploadDataId)
-      .catch((error) =>  new Error('Ekki tókst að senda umsókn'))
+      .catch((error) => new Error('Ekki tókst að senda umsókn'))
   }
 }
