@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   SyslumennService,
@@ -8,17 +7,16 @@ import {
   PersonType,
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
-import { NationalRegistry, UserProfile } from './types'
+import { NationalRegistry } from './types'
 
 @Injectable()
 export class PSignSubmissionService {
   constructor(private readonly syslumennService: SyslumennService) {}
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async submitApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
-    const userProfileData = application.externalData.userProfile
-      ?.data as UserProfile
+
     const person: Person = {
       name: nationalRegistryData?.fullName,
       ssn: nationalRegistryData?.nationalId,
@@ -39,9 +37,12 @@ export class PSignSubmissionService {
       content: content,
     }
 
-    const extraData: { [key: string]: string } = application.answers.deliveryMethod === 'sendHome' ? {
-      StarfsstodID: application.answers.district as string,
-    } : {}
+    const extraData: { [key: string]: string } =
+      application.answers.deliveryMethod === 'sendHome'
+        ? {
+            StarfsstodID: application.answers.district as string,
+          }
+        : {}
 
     const uploadDataName = 'pkort1.0'
     const uploadDataId = 'pkort1.0'

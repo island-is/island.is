@@ -9,8 +9,3 @@ export interface NationalRegistry {
   fullName: string
   address: Address
 }
-
-export interface UserProfile {
-  email: string
-  mobilePhoneNumber: string
-}
