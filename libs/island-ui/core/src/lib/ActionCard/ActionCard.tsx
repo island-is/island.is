@@ -9,7 +9,6 @@ import {
   ProgressMeterVariant,
 } from '../ProgressMeter/ProgressMeter'
 import * as styles from './ActionCard.css'
-import { Icon } from '../IconRC/Icon'
 
 type ActionCardProps = {
   date?: string
@@ -45,6 +44,7 @@ type ActionCardProps = {
     label?: string
     message?: string
   }
+  avatar?: boolean
 }
 
 const defaultCta = {
@@ -82,6 +82,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   tag: _tag,
   unavailable: _unavailable,
   progressMeter: _progressMeter,
+  avatar,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
@@ -93,6 +94,29 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       : backgroundColor === 'red'
       ? 'red100'
       : 'blue100'
+
+  const renderAvatar = () => {
+    if (!avatar) {
+      return null
+    }
+
+    return heading ? (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        flexShrink={0}
+        marginRight={[2, 3]}
+        borderRadius="circle"
+        background="blue100"
+        className={styles.avatar}
+      >
+        <Text variant="h3" as="p" color="blue400">
+          {getTitleAbbreviation(heading)}
+        </Text>
+      </Box>
+    ) : null
+  }
 
   const renderDisabled = () => {
     const { label, message } = unavailable
@@ -116,13 +140,10 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         display="flex"
         flexDirection={['column', 'row']}
         justifyContent="spaceBetween"
-        marginBottom={1}
+        marginBottom={[0, 2]}
+        marginTop={[2, 0]}
       >
         <Box display="flex" flexDirection="row" alignItems="center">
-          <Box marginRight="smallGutter">
-            <Icon size="small" icon="time" type="outline" color="blue400" />
-          </Box>
-
           <Text variant="small">{date}</Text>
         </Box>
 
@@ -227,8 +248,14 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   return (
     <Box
       display="flex"
-      flexDirection="column"
-      borderColor={backgroundColor === 'red' ? 'red200' : 'blue200'}
+      flexDirection={['columnReverse', 'column']}
+      borderColor={
+        backgroundColor === 'red'
+          ? 'red200'
+          : backgroundColor === 'blue'
+          ? 'blue100'
+          : 'blue200'
+      }
       borderRadius="large"
       borderWidth="standard"
       paddingX={[3, 3, 4]}
@@ -242,12 +269,22 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         display="flex"
         flexDirection={['column', 'row']}
       >
+        {renderAvatar()}
         <Box>
-          <Text variant="eyebrow" color="purple400">
-            {eyebrow}
-          </Text>
-          <Text variant="h3">{heading}</Text>
-          <Text paddingTop={heading ? 1 : 0}>{text}</Text>
+          {eyebrow && (
+            <Text variant="eyebrow" color="purple400" marginBottom={1}>
+              {eyebrow}
+            </Text>
+          )}
+          {heading && (
+            <Text
+              variant="h3"
+              color={backgroundColor === 'blue' ? 'blue600' : 'currentColor'}
+            >
+              {heading}
+            </Text>
+          )}
+          {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
         </Box>
 
         <Box
@@ -257,6 +294,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           flexShrink={0}
           marginTop={['gutter', 0]}
           marginLeft={[0, 'auto']}
+          className={styles.button}
         >
           {unavailable.active ? renderDisabled() : renderDefault()}
         </Box>
@@ -265,4 +303,14 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       {progressMeter.active && renderProgressMeter()}
     </Box>
   )
+}
+
+const getTitleAbbreviation = (title: string) => {
+  const words = title.split(' ')
+  let initials = words[0].substring(0, 1).toUpperCase()
+
+  if (words.length > 1)
+    initials += words[words.length - 1].substring(0, 1).toUpperCase()
+
+  return initials
 }
