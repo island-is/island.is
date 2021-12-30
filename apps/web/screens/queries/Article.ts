@@ -90,6 +90,7 @@ export const GET_ARTICLE_QUERY = gql`
         }
         showTableOfContents
         stepper {
+          title
           steps {
             title
             slug
@@ -102,6 +103,7 @@ export const GET_ARTICLE_QUERY = gql`
             isAnswer
             options
           }
+          config
         }
       }
       featuredImage {
