@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { YES, NO } from './constants'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 const isValidEmail = (value: string) => emailRegex.test(value)
@@ -22,5 +23,5 @@ export const dataSchema = z.object({
   attachmentFileName: z.string(),
   district: z.string(),
   nationalId: z.string(),
-  qualityPhoto: z.enum(['yes', 'no']),
+  qualityPhoto: z.enum([YES, NO]),
 })

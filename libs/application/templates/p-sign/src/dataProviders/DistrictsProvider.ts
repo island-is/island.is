@@ -10,7 +10,6 @@ export class DistrictsProvider extends BasicDataProvider {
   type = 'DistrictsProvider'
 
   async provide(): Promise<DistrictCommissionerAgencies> {
-    //TODO
     const query = `
         query getSyslumennDistrictCommissionersAgencies {
           getSyslumennDistrictCommissionersAgencies {

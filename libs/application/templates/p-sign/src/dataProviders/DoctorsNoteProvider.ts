@@ -10,7 +10,6 @@ export class DoctorsNoteProvider extends BasicDataProvider {
   type = 'DoctorsNoteProvider'
 
   async provide(): Promise<CertificateInfoResponse> {
-    //TODO
     const query = `
       query getSyslumennCertificateInfo {
         getSyslumennCertificateInfo {
