@@ -192,10 +192,9 @@ export class RegulationsAdminResolver {
   @Mutation(() => graphqlTypeJson)
   // @Mutation(() => CreateDraftRegulationModel)
   async createDraftRegulation(
-    @Args('input') input: CreateDraftRegulationInput,
     @CurrentUser() { authorization }: User,
   ): Promise<any> {
-    return this.regulationsAdminApiService.create(input, authorization ?? '')
+    return this.regulationsAdminApiService.create(authorization ?? '')
   }
 
   @Mutation(() => graphqlTypeJson)

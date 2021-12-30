@@ -5,6 +5,7 @@ import { CreateDraftRegulationInput } from '../graphql/dto/createDraftRegulation
 import { EditDraftBody } from '../graphql/dto/editDraftRegulation.input'
 import { Author, DB_RegulationDraft } from '@island.is/regulations/admin'
 import * as kennitala from 'kennitala'
+import { uuid } from 'uuidv4'
 
 import {
   NationalRegistryApi,
@@ -78,11 +79,22 @@ export class RegulationsAdminApi extends RESTDataSource {
     return response
   }
 
-  create(
-    body: CreateDraftRegulationInput,
-    authorization: string,
-  ): Promise<any> {
-    return this.post(`/draft_regulation`, body, { headers: { authorization } })
+  create(authorization: string): Promise<any> {
+    return this.post(
+      `/draft_regulation`,
+      {
+        id: uuid(),
+        drafting_status: 'draft',
+        title: '',
+        text: '',
+        drafting_notes: '',
+        ministry_id: '',
+        // FIXME: the below fields should be make optional, and empty/null/undefined by default
+        ideal_publish_date: '2022-06-01',
+        type: 'base',
+      },
+      { headers: { authorization } },
+    )
   }
 
   updateById(

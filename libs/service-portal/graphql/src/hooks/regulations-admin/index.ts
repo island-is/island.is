@@ -100,47 +100,34 @@ export const useCreateRegulationDraft = () => {
   const [createDraftRegulation] = useMutation(CREATE_DRAFT_REGULATION_MUTATION)
   const history = useHistory()
 
-  const createNewDraft = () => {
-    if (status.creating) {
-      return
-    }
-    setStatus({ creating: true })
-    createDraftRegulation({
-      variables: {
-        input: {
-          id: uuid(),
-          drafting_status: 'draft',
-          title: '',
-          text: '',
-          drafting_notes: '',
-          ministry_id: '',
-          ideal_publish_date: '2022-06-01',
-          type: 'base',
-        },
-      },
-    })
-      .then((res) => {
-        const newDraft = res.data
-          ? (res.data.createDraftRegulation as RegulationDraft)
-          : undefined
-        if (!newDraft) {
-          throw new Error('Regulation draft not created (??)')
-        }
-        setStatus({ creating: false })
-        history.push(
-          generatePath(ServicePortalPath.RegulationsAdminEdit, {
-            id: newDraft.id,
-          }),
-        )
-      })
-      .catch((e) => {
-        const error = e instanceof Error ? e : new Error(String(e))
-        setStatus({ error })
-      })
-  }
-
   return {
-    createNewDraft,
     ...status,
+
+    createNewDraft: () => {
+      if (status.creating) {
+        return
+      }
+      setStatus({ creating: true })
+      createDraftRegulation()
+        .then((res) => {
+          const newDraft = res.data
+            ? (res.data.createDraftRegulation as RegulationDraft)
+            : undefined
+          if (!newDraft) {
+            throw new Error('Regulation draft not created (??)')
+          }
+
+          setStatus({ creating: false })
+          history.push(
+            generatePath(ServicePortalPath.RegulationsAdminEdit, {
+              id: newDraft.id,
+            }),
+          )
+        })
+        .catch((e) => {
+          const error = e instanceof Error ? e : new Error(String(e))
+          setStatus({ error })
+        })
+    },
   }
 }
