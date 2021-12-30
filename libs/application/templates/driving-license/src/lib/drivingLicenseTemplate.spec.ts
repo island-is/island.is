@@ -2,9 +2,9 @@ import {
   ApplicationTemplateHelper,
   DefaultEvents,
 } from '@island.is/application/core'
+import { createApplication } from '@island.is/testing/fixtures'
 import { States } from './constants'
 import DrivingLicenseTemplate from './drivingLicenseTemplate'
-import { createApplication } from '@island.is/testing/fixtures'
 
 describe('Driving License Application Template', () => {
   describe('state transitions', () => {
