@@ -21,7 +21,7 @@ const PSignTemplate: ApplicationTemplate<
   type: ApplicationTypes.P_SIGN,
   name: 'P-Merki',
   dataSchema: dataSchema,
-  readyForProduction: false,
+  readyForProduction: true,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

@@ -20,7 +20,7 @@ import {
   DistrictCommissionerAgencies,
   PersonType,
 } from './syslumennClient.types'
-const UPLOAD_DATA_SUCCESS: string = 'Gögn móttekin'
+const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
 export const mapDistrictCommissionersAgenciesResponse = (
   response: EmbaettiOgStarfsstodvar,
