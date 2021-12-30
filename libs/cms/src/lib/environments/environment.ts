@@ -22,6 +22,8 @@ export default {
     'organizationPage',
     'organization',
     'subArticle',
+    'stepper',
+    'step',
     'processEntry',
     'embeddedVideo',
     'faqList',
