@@ -20,6 +20,8 @@ export default {
   ],
   nestedContentTypes: [
     'subArticle',
+    'stepper',
+    'step',
     'processEntry',
     'embeddedVideo',
     'faqList',
