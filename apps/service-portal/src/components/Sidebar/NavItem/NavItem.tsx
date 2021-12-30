@@ -4,6 +4,8 @@ import React, { FC } from 'react'
 import * as styles from './NavItem.css'
 import { Link } from 'react-router-dom'
 import { useStore } from '../../../store/stateProvider'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 interface Props {
   path?: ServicePortalPath
@@ -29,7 +31,9 @@ const NavItemContent: FC<Props> = ({
   badge = false,
 }) => {
   const [{ sidebarState }] = useStore()
-  const collapsed = sidebarState === 'closed'
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.lg
+  const collapsed = sidebarState === 'closed' && !isMobile
   const chevron = active ? 'chevronUp' : 'chevronDown'
   const showLock = enabled === false
   const showChevron =
