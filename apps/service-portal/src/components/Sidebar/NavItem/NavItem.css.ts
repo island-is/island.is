@@ -1,33 +1,65 @@
 import { style, styleVariants } from '@vanilla-extract/css'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const dotState = styleVariants({
   active: {},
   inactive: {},
 })
+
 export const navItem = style({})
 
 export const navItemActive = styleVariants({
   active: {
-    backgroundColor: theme.color.blue200,
-    border: `1px solid ${theme.color.blue200}`,
-    borderTopLeftRadius: '8px',
-    borderBottomLeftRadius: '8px',
+    backgroundColor: theme.color.white,
+    border: 'unset',
+    borderLeft: `4px solid ${theme.color.blue600}`,
+    borderRadius: 'unset',
+    marginTop: 1,
+    marginBottom: 1,
+    paddingLeft: 44,
+    maxWidth: 280,
+    ...themeUtils.responsiveStyle({
+      lg: {
+        backgroundColor: theme.color.blue200,
+        border: `1px solid ${theme.color.blue200}`,
+        borderTopLeftRadius: '8px',
+        borderBottomLeftRadius: '8px',
+        paddingLeft: 24,
+        maxWidth: 'unset',
+      },
+    }),
   },
   inactive: {
-    border: `1px solid ${theme.color.blue100}`,
-    backgroundColor: theme.color.blue100,
-    '@media': {
-      [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
-        backgroundColor: 'white',
-        border: 'none',
+    backgroundColor: theme.color.white,
+    border: `1px solid ${theme.color.white}`,
+    maxWidth: 280,
+    paddingLeft: 48,
+    ...themeUtils.responsiveStyle({
+      lg: {
+        paddingLeft: 24,
+        backgroundColor: theme.color.blue100,
+        border: `1px solid ${theme.color.blue100}`,
+        maxWidth: 'unset',
       },
-    },
+    }),
   },
   activeCollapsed: {
     backgroundColor: theme.color.blue200,
     border: `1px solid ${theme.color.blue200}`,
     borderRadius: '8px',
+    ...themeUtils.responsiveStyle({
+      lg: {
+        paddingLeft: theme.spacing[1],
+      },
+    }),
+  },
+  inactiveCollapsed: {
+    ...themeUtils.responsiveStyle({
+      lg: {
+        paddingLeft: theme.spacing[1],
+        border: `1px solid ${theme.color.blue100}`,
+      },
+    }),
   },
 })
 

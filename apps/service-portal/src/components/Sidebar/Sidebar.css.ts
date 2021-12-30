@@ -1,5 +1,5 @@
 import { style } from '@vanilla-extract/css'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const sidebar = style({
   position: 'absolute',
@@ -23,13 +23,21 @@ export const logoCollapsed = style({
   marginRight: -22,
 })
 export const subnav = style({
-  paddingLeft: 26,
+  paddingLeft: 20,
+  marginLeft: 60,
   borderLeft: `1px solid ${theme.color.blue200}`,
+  ...themeUtils.responsiveStyle({
+    md: {
+      paddingLeft: 26,
+      marginLeft: 37,
+    },
+  }),
 })
 
 export const subnavCollapsed = style({
   padding: 0,
   borderLeft: 'none',
+  marginLeft: 0,
 })
 
 export const navIcon = style({

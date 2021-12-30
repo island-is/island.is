@@ -43,9 +43,9 @@ const ModuleNavigation: FC<Props> = ({
   const handleExpand = () => {
     setExpand(!expand)
   }
-  const handleRootItemClick = (external?: boolean) => {
+  const handleRootItemClick = (external?: boolean, expand?: boolean) => {
     if (nav.path === undefined) handleExpand()
-    if (onItemClick) onItemClick()
+    if (onItemClick && expand) onItemClick()
     if (external) servicePortalOutboundLink()
   }
 
@@ -68,7 +68,7 @@ const ModuleNavigation: FC<Props> = ({
           <SubNav
             collapsed
             navChildren={navChildren}
-            onItemClick={() => onItemClick && onItemClick()}
+            onItemClick={() => handleRootItemClick(false, true)}
             pathname={pathname}
           />
         </SubNavModal>

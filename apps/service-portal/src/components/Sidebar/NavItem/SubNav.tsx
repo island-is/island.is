@@ -18,7 +18,6 @@ const SubNav = ({ navChildren, onItemClick, pathname, collapsed }: Props) => {
     <Box
       className={collapsed ? styles.subnavCollapsed : styles.subnav}
       marginTop={collapsed ? 0 : 3}
-      marginLeft={collapsed ? 0 : 'p2'}
     >
       <Stack space={2}>
         {navChildren?.map((child, index) => (

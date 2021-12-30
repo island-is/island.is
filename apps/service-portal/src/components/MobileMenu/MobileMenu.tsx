@@ -36,16 +36,9 @@ const MobileMenu = (): ReactElement | null => {
       className={styles.wrapper}
       ref={ref}
     >
-      <Box paddingX={3} paddingBottom={2} background="white">
-        <a href={ISLAND_IS_URL}>
-          <Button variant="utility" fluid>
-            {formatMessage(m.goToIslandIs)}
-          </Button>
-        </a>
-      </Box>
       {navigation.map((rootItem, rootIndex) => (
-        <Box key={rootIndex} paddingX={4}>
-          <Stack space={0}>
+        <Box key={rootIndex} paddingX={0} marginTop={3}>
+          <Stack space={2}>
             {rootItem.children?.map(
               (navRoot, index) =>
                 navRoot.path !== ServicePortalPath.MinarSidurRoot &&
@@ -53,7 +46,6 @@ const MobileMenu = (): ReactElement | null => {
                   <ModuleNavigation
                     key={index}
                     nav={navRoot}
-                    alwaysExpanded
                     onItemClick={handleLinkClick}
                     badge={
                       navRoot.subscribesTo === 'documents' &&

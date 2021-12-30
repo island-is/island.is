@@ -43,7 +43,7 @@ export const Header: FC<{}> = () => {
             alignItems="center"
             width="full"
             background="white"
-            paddingX={[2, 4, 4, 4, 6]}
+            paddingX={[2, 3, 3, 3, 6]}
           >
             <Hidden above="md">
               <Link to={ServicePortalPath.MinarSidurRoot}>
@@ -56,7 +56,7 @@ export const Header: FC<{}> = () => {
             <Box display="flex" alignItems="center" flexWrap="nowrap">
               <UserMenu fullscreen />
               <Hidden above="md">
-                <Box marginLeft={2}>
+                <Box marginLeft={1}>
                   <Button
                     variant="utility"
                     icon={mobileMenuState === 'open' ? 'close' : 'menu'}

@@ -38,6 +38,8 @@ const NavItemContent: FC<Props> = ({
     ? collapsed
       ? 'activeCollapsed'
       : 'active'
+    : collapsed
+    ? 'inactiveCollapsed'
     : 'inactive'
   const badgeActive: keyof typeof styles.badge = badge ? 'active' : 'inactive'
   return (
@@ -53,7 +55,13 @@ const NavItemContent: FC<Props> = ({
       paddingLeft={collapsed ? 1 : 3}
       paddingRight={collapsed ? 1 : 2}
     >
-      <Box display="flex" height="full" alignItems="center" overflow="hidden">
+      <Box
+        display="flex"
+        height="full"
+        alignItems="center"
+        overflow="hidden"
+        paddingX={[3, 0]}
+      >
         {icon ? (
           <Box
             display="flex"
