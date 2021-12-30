@@ -14,8 +14,8 @@ export const navItemActive = styleVariants({
     border: 'unset',
     borderLeft: `4px solid ${theme.color.blue600}`,
     borderRadius: 'unset',
-    paddingTop: 1,
-    paddingBottom: 1,
+    marginTop: 1,
+    marginBottom: 1,
     paddingLeft: 20,
     maxWidth: 305,
     ...themeUtils.responsiveStyle({
