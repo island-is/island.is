@@ -5,6 +5,7 @@ import {
   ApplicationStateSchema,
   DefaultStateLifeCycle,
   DefaultEvents,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
@@ -15,6 +16,7 @@ import {
   DrivingLicenseFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
+import { hasCompletedPrerequisitesStep } from './utils'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -89,7 +91,16 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+          [DefaultEvents.PAYMENT]: [
+            {
+              target: States.PREREQUISITES,
+              cond: hasCompletedPrerequisitesStep(false),
+            },
+            {
+              target: States.PAYMENT,
+              cond: hasCompletedPrerequisitesStep(true),
+            },
+          ],
           [DefaultEvents.REJECT]: { target: States.DECLINED },
         },
       },

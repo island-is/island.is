@@ -1,4 +1,8 @@
-import { getValueViaPath, FormValue } from '@island.is/application/core'
+import {
+  getValueViaPath,
+  FormValue,
+  ApplicationContext,
+} from '@island.is/application/core'
 import { m } from '../messages'
 import { ConditionFn } from '../types'
 import { NO, YES } from '../constants'
@@ -24,10 +28,12 @@ export const isVisible = (...fns: ConditionFn[]) => (answers: FormValue) =>
 export const isApplicationForCondition = (
   result: DrivingLicenseApplicationFor,
 ) => (answers: FormValue) => {
-  const applicationFor: string[] = getValueViaPath(answers, 'applicationFor', [
-    B_FULL,
-  ]) as string[]
-  return applicationFor.includes(result)
+  const [applicationFor] =
+    getValueViaPath<DrivingLicenseApplicationFor[]>(answers, 'applicationFor', [
+      B_FULL,
+    ]) ?? []
+
+  return applicationFor === result
 }
 
 export const hasNoDrivingLicenseInOtherCountry = (answers: FormValue) =>
@@ -38,18 +44,26 @@ export const chooseDistrictCommissionerDescription = ({
 }: {
   answers: FormValue
 }) => {
-  const applicationFor = getValueViaPath(
-    answers,
-    'applicationFor',
-    B_FULL,
-  ) as string
+  const applicationForTemp =
+    getValueViaPath<DrivingLicenseApplicationFor>(
+      answers,
+      'applicationFor',
+      B_FULL,
+    ) === B_TEMP
 
-  switch (applicationFor) {
-    case B_TEMP:
-      return m.chooseDistrictCommisionerForTempLicense.defaultMessage
-    case B_FULL:
-      return m.chooseDistrictCommisionerForFullLicense.defaultMessage
-    default:
-      return ''
-  }
+  return applicationForTemp
+    ? m.chooseDistrictCommisionerForTempLicense.defaultMessage
+    : m.chooseDistrictCommisionerForFullLicense.defaultMessage
+}
+
+export const hasCompletedPrerequisitesStep = (value = false) => ({
+  application,
+}: ApplicationContext) => {
+  const requirementsMet =
+    getValueViaPath<boolean>(application.answers, 'requirementsMet', false) ===
+    true
+
+  // TODO: check for gdpr approval as well?
+
+  return requirementsMet === value
 }
