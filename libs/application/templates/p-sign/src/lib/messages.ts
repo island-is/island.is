@@ -302,7 +302,7 @@ export const m = defineMessages({
   congratulationsTitleSuccess: {
     id: 'dl.application:congratulationsTitleSuccess',
     defaultMessage:
-      'Umsókn þín um P-Merki hefur verið móttekin. Þú færð P-Merkið afhent á uppgefið heimilisfang eftir 3-4 virka daga.',
+      'Umsókn þín um P-Merki hefur verið móttekin. Þú færð P-Merkið afhent á uppgefið heimilisfang/afhendingarstað eftir 3-5 virka daga.',
     description: 'Your application for P-sign was successful.',
   },
   congratulationsTitle: {

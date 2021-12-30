@@ -17,6 +17,7 @@ import {
   buildDividerField,
   buildKeyValueField,
   buildSubmitField,
+  DefaultEvents,
 } from '@island.is/application/core'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
@@ -29,7 +30,6 @@ import {
 import { m } from '../lib/messages'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import { DefaultEvents } from '../../../../core/src/types/StateMachine'
 
 export const getApplication = (): Form => {
   return buildForm({
@@ -364,7 +364,7 @@ export const getApplication = (): Form => {
                 value: ({ externalData: { doctorsNote } }) =>
                   format(
                     new Date((doctorsNote.data as any).expirationDate),
-                    'dd/mm/yyyy',
+                    'dd/MM/yyyy',
                     { locale: is },
                   ),
               }),
