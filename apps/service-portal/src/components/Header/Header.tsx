@@ -43,7 +43,7 @@ export const Header: FC<{}> = () => {
             alignItems="center"
             width="full"
             background="white"
-            paddingX={[2, 3, 3, 3, 6]}
+            paddingX={[3, 3, 3, 3, 6]}
           >
             <Hidden above="md">
               <Link to={ServicePortalPath.MinarSidurRoot}>

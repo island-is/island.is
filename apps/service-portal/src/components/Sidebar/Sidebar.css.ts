@@ -24,7 +24,7 @@ export const logoCollapsed = style({
 })
 export const subnav = style({
   paddingLeft: 20,
-  marginLeft: 60,
+  marginLeft: 85,
   borderLeft: `1px solid ${theme.color.blue200}`,
   ...themeUtils.responsiveStyle({
     md: {

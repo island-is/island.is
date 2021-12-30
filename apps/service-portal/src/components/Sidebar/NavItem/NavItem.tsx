@@ -60,7 +60,7 @@ const NavItemContent: FC<Props> = ({
         height="full"
         alignItems="center"
         overflow="hidden"
-        paddingX={[3, 0]}
+        paddingX={[3, 3, 3, 0]}
       >
         {icon ? (
           <Box

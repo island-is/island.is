@@ -14,10 +14,10 @@ export const navItemActive = styleVariants({
     border: 'unset',
     borderLeft: `4px solid ${theme.color.blue600}`,
     borderRadius: 'unset',
-    marginTop: 1,
-    marginBottom: 1,
-    paddingLeft: 44,
-    maxWidth: 280,
+    paddingTop: 1,
+    paddingBottom: 1,
+    paddingLeft: 20,
+    maxWidth: 305,
     ...themeUtils.responsiveStyle({
       lg: {
         backgroundColor: theme.color.blue200,
@@ -32,8 +32,8 @@ export const navItemActive = styleVariants({
   inactive: {
     backgroundColor: theme.color.white,
     border: `1px solid ${theme.color.white}`,
-    maxWidth: 280,
-    paddingLeft: 48,
+    maxWidth: 305,
+    paddingLeft: 24,
     ...themeUtils.responsiveStyle({
       lg: {
         paddingLeft: 24,
