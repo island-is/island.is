@@ -5,10 +5,4 @@ export const DefaultStateLifeCycle: StateLifeCycle = {
   shouldBeListed: true,
 } as const
 
-export const EphemeralStateLifeCycle: StateLifeCycle = {
-  shouldBeListed: false,
-  shouldBePruned: true,
-  whenToPrune: 24 * 3600 * 1000,
-}
-
 export const NO_ANSWER = null

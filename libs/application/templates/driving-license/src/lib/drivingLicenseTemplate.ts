@@ -5,11 +5,10 @@ import {
   ApplicationStateSchema,
   DefaultStateLifeCycle,
   DefaultEvents,
-  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
-import { Events, States, Roles } from './constants'
+import { Events, States, Roles, EphemeralStateLifeCycle } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationFeatureFlags,
