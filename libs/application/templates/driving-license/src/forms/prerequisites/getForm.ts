@@ -10,6 +10,7 @@ import { sectionFakeData } from './sectionFakeData'
 import { sectionExternalData } from './sectionExternalData'
 import { sectionApplicationFor } from './sectionApplicationFor'
 import { sectionRequirements } from './sectionRequirements'
+import { sectionExistingApplication } from './sectionExistingApplication'
 
 export const getForm = ({
   allowFakeData = false,
@@ -29,6 +30,7 @@ export const getForm = ({
         children: [
           ...(allowFakeData ? [sectionFakeData] : []),
           sectionExternalData,
+          sectionExistingApplication,
           ...(allowPickLicense ? [sectionApplicationFor] : []),
           sectionRequirements,
         ],
@@ -36,11 +38,6 @@ export const getForm = ({
       buildSection({
         id: 'info',
         title: m.informationTitle,
-        children: [],
-      }),
-      buildSection({
-        id: 'foreignlic',
-        title: m.foreignDrivingLicense,
         children: [],
       }),
       buildSection({

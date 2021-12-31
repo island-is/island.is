@@ -63,6 +63,7 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+          [DefaultEvents.REJECT]: { target: States.DECLINED },
         },
       },
       [States.DRAFT]: {

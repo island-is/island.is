@@ -9,9 +9,9 @@ import {
 import { States } from '../lib/constants'
 import { m } from '../lib/messages'
 
-type ApplicationInfo = Pick<Application, 'id' | 'created' | 'state' | 'answers'>
+type ApplicationInfo = Omit<Application, 'externalData' | 'answers'>
 
-const disallowedExistingStates: string[] = [States.PAYMENT, States.DONE]
+const disallowedExistingStates: string[] = [States.PAYMENT, States.DRAFT]
 
 export class ExistingApplicationProvider extends BasicDataProvider {
   type = 'ExistingApplicationProvider'
@@ -19,28 +19,24 @@ export class ExistingApplicationProvider extends BasicDataProvider {
   async provide(
     application: Application,
     customTemplateFindQuery: CustomTemplateFindQuery,
-  ): Promise<ApplicationInfo | undefined> {
+  ): Promise<ApplicationInfo[] | undefined> {
     const existingApplications = (
       await customTemplateFindQuery({
         applicant: application.applicant,
       })
     )
-      .map<ApplicationInfo>(({ id, created, state, answers }) => ({
-        id,
-        created,
-        state,
-        answers,
-      }))
+      .map<ApplicationInfo>(
+        ({ externalData, answers, ...partialApplication }) =>
+          partialApplication,
+      )
       .filter(({ state }) => disallowedExistingStates.includes(state))
       .sort(({ created: a }, { created: b }) => b.getTime() - a.getTime())
 
-    const [existingApplication] = existingApplications
-
-    return existingApplication
+    return existingApplications
   }
 
   onProvideSuccess(
-    application: Application | undefined,
+    application: Application[] | undefined,
   ): SuccessfulDataProviderResult {
     return {
       date: new Date(),

@@ -1,5 +1,5 @@
 import { m } from '../../lib/messages'
-import type { Application } from '@island.is/application/core'
+import { Application, getValueViaPath } from '@island.is/application/core'
 import { ApplicationEligibility } from '../../types/schema'
 import { useQuery, gql } from '@apollo/client'
 import { DrivingLicenseFakeData, YES } from '../../lib/constants'
@@ -26,11 +26,15 @@ export interface UseEligibilityResult {
 export const useEligibility = (
   answers: Application['answers'],
 ): UseEligibilityResult => {
-  const fakeData = answers.fakeData as DrivingLicenseFakeData | undefined
+  const fakeData = getValueViaPath<DrivingLicenseFakeData>(answers, 'fakeData')
   const usingFakeData = fakeData?.useFakeData === YES
 
   const applicationFor =
-    (answers.applicationFor as DrivingLicenseApplicationFor) || B_FULL
+    getValueViaPath<DrivingLicenseApplicationFor>(
+      answers,
+      'applicationFor',
+      B_FULL,
+    ) ?? B_FULL
 
   const { data = {}, error, loading } = useQuery(QUERY, {
     skip: usingFakeData,
