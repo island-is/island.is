@@ -4,7 +4,7 @@ export const identityServerConfig = {
   id: identityServerId,
   name: 'Iceland authentication service',
   scope:
-  'openid profile @vegagerdin.is/air-discount-scheme-scope @vegagerdin.is/air-discount-scheme-scope:admin offline_access @skra.is/individuals',
+  'openid profile @skra.is/individuals @vegagerdin.is/air-discount-scheme-scope',
   clientId: '@vegagerdin.is/air-discount-scheme',
 }
 
