@@ -10,6 +10,7 @@ import {
 } from '@island.is/application/core'
 import { ApplicationList } from '@island.is/application/ui-components'
 import { m } from '../lib/messages'
+import { useHistory } from 'react-router-dom'
 
 export const LinkExistingApplication: FC<FieldBaseProps> = ({
   application,
@@ -17,6 +18,7 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
   const { description } = field
+  const history = useHistory()
 
   const existing =
     getValueViaPath<Application[]>(
@@ -45,7 +47,7 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
               formatMessage,
             ),
           }))}
-          onClick={(url) => (document.location = url)}
+          onClick={(url) => history.push(`../../${url}`)}
         />
       </Box>
     </>
