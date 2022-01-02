@@ -51,7 +51,7 @@ function Usage({ misc }: PropTypes) {
   const flightLegs = user?.flightLegs || []
   const { currentUsage, user: userTitle, path, date } = JSON.parse(misc)
   const { activeLocale } = useI18n()
-
+  
   if (flightLegs.length <= 0) {
     return null
   }

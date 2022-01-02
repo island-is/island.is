@@ -4,7 +4,7 @@ import Head from 'next/head'
 import { ApolloProvider } from '@apollo/client'
 
   
-import { getSession, Provider, signIn, useSession } from "next-auth/client"
+import { getSession, Provider } from "next-auth/client"
 
 import initApollo from '../graphql/client'
 import { UserContext } from '../context'
@@ -30,17 +30,6 @@ Sentry.init({
   dsn: SENTRY_DSN,
 })
 
-const Layout: FC = ({ children }) => {
-  return (
-    <div>
-      <Head>
-        <title>Ísland.is</title>
-      </Head>
-      {children}
-    </div>
-  )
-}
-
 const getLanguage = (path) => {
   if(path === undefined) {
     return 'is'
@@ -49,23 +38,6 @@ const getLanguage = (path) => {
     return 'en'
   }
   return 'is'
-}
-
-function Auth({ children }) {
-  const [session, loading] = useSession()
-  const isUser = !!session?.user
-  React.useEffect(() => {
-    if (loading) return // Do nothing while loading
-    if (!isUser) signIn('identity-server') // If not authenticated, force log in
-  }, [isUser, loading])
-
-  if (isUser) {
-    return children
-  }
-  
-  // Session is being fetched, or no user.
-  // If no user, useEffect() will redirect.
-  return <div>Loading...</div>
 }
 
 const SupportApplication: any = ({ Component, pageProps }) => {
@@ -90,16 +62,15 @@ const SupportApplication: any = ({ Component, pageProps }) => {
     )}" (${process.browser ? 'browser' : 'server'})`,
     level: Sentry.Severity.Debug,
   })
-  
+
   return (
     <ApolloProvider client={initApollo(pageProps.apolloState)}>
       <Provider session={pageProps.session}>
-          <Layout>
-            {
-              Component.auth ? <Auth><Component {...pageProps.pageProps} /></Auth>
-              : <Component {...pageProps.pageProps} />
-            }
-          </Layout>
+        <AuthProvider>
+          <AppLayout isAuthenticated={pageProps.isAuthenticated} {...pageProps.layoutProps}>
+            <Component {...pageProps.pageProps } />
+          </AppLayout>
+        </AuthProvider>
       </Provider>
     </ApolloProvider>
   )
@@ -132,7 +103,7 @@ SupportApplication.getInitialProps = async (appContext) => {
     })
 
   const apolloState = apolloClient.cache.extract()
-
+  console.log(isAuthenticated(appContext.ctx))
   return {
     pageProps: {
       layoutProps: { ...layoutProps, ...pageProps.layoutConfig},
@@ -140,6 +111,7 @@ SupportApplication.getInitialProps = async (appContext) => {
       apolloState: apolloState,
       session: session,
       router: router,
+      isAuthenticated: isAuthenticated(appContext.ctx)
     }
   }
 }

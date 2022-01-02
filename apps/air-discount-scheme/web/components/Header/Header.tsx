@@ -9,6 +9,7 @@ import { api } from '../../services'
 import { REDIRECT_KEY } from '../../consts'
 import { useI18n } from '../../i18n'
 import { Routes } from '../../types'
+import { useLogOut } from '@island.is/air-discount-scheme-web/utils/hooks/useLogout'
 
 interface PropTypes {
   routeKey: keyof Routes
@@ -28,6 +29,7 @@ export const UserQuery = gql`
 
 function Header({ routeKey, localeKey }: PropTypes) {
   const { setUser, isAuthenticated } = useContext(UserContext)
+  const logOut = useLogOut()
   const { data } = useQuery(UserQuery, { ssr: false })
   const user = data?.user
   useEffect(() => {
@@ -52,12 +54,7 @@ function Header({ routeKey, localeKey }: PropTypes) {
       }}
       userName={user?.name ?? ''}
       authenticated={isAuthenticated}
-      onLogout={() => {
-        api.logout().then(() => {
-          localStorage.removeItem(REDIRECT_KEY)
-          window.location.pathname = nextPath
-        })
-      }}
+      onLogout={() => logOut()}
     />
   )
 }

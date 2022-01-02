@@ -199,5 +199,4 @@ function Benefits({ misc }: PropTypes) {
     </Box>
   )
 }
-Benefits.auth = true
 export default Benefits

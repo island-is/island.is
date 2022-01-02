@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react'
-import { gql, useQuery } from '@apollo/client'
-
-import { AuthenticateUser as User } from '@island.is/air-discount-scheme-web/lib'
+import { useQuery } from '@apollo/client'
+//import { AuthenticateUser as User } from '@island.is/air-discount-scheme-web/lib'
 import { CurrentUserQuery } from '@island.is/air-discount-scheme-web/graphql/gqlQueries'
-import { signin, useSession } from 'next-auth/client'
-import { identityServerId } from '@island.is/air-discount-scheme-web/lib'
-
+import { useSession } from 'next-auth/client'
+import { User } from '@island.is/air-discount-scheme-web/graphql/schema'
 
 const useUser = () => {
   const [user, setUser] = useState<User>()
@@ -15,22 +13,15 @@ const useUser = () => {
     Boolean(session?.user),
   )
 
-  console.log('inside useUser before gqpl')
-
   const { data, loading: loadingUser } = useQuery(CurrentUserQuery, {
     fetchPolicy: 'no-cache', ssr: false,
   })
-  console.log(data)
-  const loggedInUser = data?.currentUser
+  const loggedInUser = data?.user
 
   useEffect(() => {
-    console.log('useUser useEffect')
     if (loggedInUser && !user) {
       setUser(loggedInUser)
       setIsAuthenticated(true)
-    }
-    if(session === undefined && !loading){
-      signin(identityServerId)
     }
   }, [setUser, loggedInUser, user])
   return {
