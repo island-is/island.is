@@ -14,6 +14,12 @@ import { ApiScope } from './api-scope.model'
 
 @Table({
   tableName: 'personal_representative_scope_permission',
+  indexes: [
+    {
+      unique: true,
+      fields: ['rightTypeCode', 'apiScopeName'],
+    },
+  ],
 })
 export class PersonalRepresentativeScopePermission extends Model<PersonalRepresentativeScopePermission> {
   @PrimaryKey
