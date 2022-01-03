@@ -81,16 +81,21 @@ export const useDomid = (staticId?: string) => useState(staticId || domid)[0]
 const DEFAULT_DURATION = 0
 // TODO: Add function signtures allowing either zero args, or 2.
 
-/** State variable that always snaps back to `undefined` after `duration` milliseconds. */
+/**
+ * State variable that always snaps back to `undefined` after `duration` milliseconds.
+ */
 export const useShortState = <S>(
-  /** Initial temporary state that then gets reverted back
-   * to `undefined` after `duration` milliseconds
-   * */
+  /**
+   * Initial (temporary) state.
+   * Reverts back to `undefined` after `duration` milliseconds
+   */
   initialState?: S | (() => S),
 
-  /** Default duration, can be overridden on a case-by-case basis
+  /**
+   * Default duration in milliseconds.
+   * Can be overridden on a case-by-case basis
    * by passing a custom duration to the `setState` function
-   * */
+   */
   defaultDuration = DEFAULT_DURATION,
 ) => {
   const [state, _setState] = useState<S | undefined>(initialState)
