@@ -167,7 +167,7 @@ export const acceptedAmountBreakDown = (amount?: Amount): Calculations[] => {
     },
     {
       title: 'Persónuafsláttur',
-      calculation: `${amount?.personalTaxCredit.toLocaleString('de-DE')} kr. `,
+      calculation: `${amount?.personalTaxCredit.toLocaleString('de-DE')} kr. , ` +,
     },
     {
       title: 'Aðstoð',
