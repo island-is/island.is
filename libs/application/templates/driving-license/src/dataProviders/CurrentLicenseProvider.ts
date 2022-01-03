@@ -3,21 +3,25 @@ import {
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import { DrivingLicenseFakeData, YES } from '../lib/constants'
 import { Eligibility } from '../types/schema'
 
+export interface CurrentLicenseProviderResult {
+  currentLicense: Eligibility['name'] | null
+}
 export class CurrentLicenseProvider extends BasicDataProvider {
   type = 'CurrentLicenseProvider'
 
   async provide(
     application: Application,
-  ): Promise<{ currentLicense: Eligibility['name'] | null }> {
-    const fakeData = application.answers.fakeData as
-      | DrivingLicenseFakeData
-      | undefined
-
+  ): Promise<CurrentLicenseProviderResult> {
+    const fakeData = getValueViaPath<DrivingLicenseFakeData>(
+      application.answers,
+      'fakeData',
+    )
     if (fakeData?.useFakeData === YES) {
       return {
         currentLicense: fakeData.currentLicense === 'temp' ? 'B' : null,
@@ -62,11 +66,12 @@ export class CurrentLicenseProvider extends BasicDataProvider {
       date: new Date(),
       reason: m.errorDataProvider,
       status: 'failure',
-      data: {},
     }
   }
 
-  onProvideSuccess(result: object): SuccessfulDataProviderResult {
+  onProvideSuccess(
+    result: CurrentLicenseProviderResult,
+  ): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

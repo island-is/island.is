@@ -90,12 +90,6 @@ const CourtRecord = () => {
         autofill('prosecutorDemands', theCase.demands, theCase)
       }
 
-      autofill(
-        'litigationPresentations',
-        formatMessage(m.sections.litigationPresentations.autofill),
-        theCase,
-      )
-
       if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
         let autofillAccusedBookings = ''
 
