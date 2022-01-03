@@ -58,7 +58,7 @@ export class AppService {
       .json()
       .then((newCase: TCase) => ({ id: newCase.id }))
       .catch((reason) => {
-        this.logger.error('Could not create a new case', reason)
+        this.logger.error('Could not create a new case', { reason })
 
         throw new BadGatewayException('Could not create a new case')
       })
