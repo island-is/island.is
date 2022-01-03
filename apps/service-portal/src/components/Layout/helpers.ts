@@ -53,16 +53,14 @@ export const getLayout = (
 ): GridLayout => {
   const hasWideLayout = wideScreens.includes(pathname as ServicePortalPath)
   const sidebarCollapsed = sidebarState === 'closed'
-
   type LayoutType = keyof typeof gridlayout
-  const layoutType: LayoutType =
-    sidebarCollapsed && hasWideLayout
-      ? 'wideClosed'
-      : sidebarCollapsed && !hasWideLayout
-      ? 'defaultClosed'
-      : !sidebarCollapsed && hasWideLayout
-      ? 'wide'
-      : 'default'
+  let layoutType: LayoutType
+
+  if (sidebarCollapsed) {
+    layoutType = hasWideLayout ? 'wideClosed' : 'defaultClosed'
+  } else {
+    layoutType = hasWideLayout ? 'wide' : 'default'
+  }
 
   return gridlayout[layoutType]
 }

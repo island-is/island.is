@@ -7,7 +7,8 @@ export const layoutWrapper = style({
 })
 
 export const layoutGrid = style({
-  transition: 'all 150ms ease-in-out',
+  transition: 'margin 150ms ease-in-out, flexBasis 150ms ease-in-out',
+  willChange: 'transition',
 })
 export const mainWrapper = style({
   width: '100%',
