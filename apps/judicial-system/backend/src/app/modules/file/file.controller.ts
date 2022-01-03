@@ -22,7 +22,7 @@ import {
   CurrentCase,
   CaseExistsGuard,
   CaseReadGuard,
-  CaseCompletedGuard,
+  CaseReceivedGuard,
   CaseWriteGuard,
 } from '../case'
 import {
@@ -129,7 +129,7 @@ export class FileController {
   @UseGuards(
     CaseExistsGuard,
     CaseWriteGuard,
-    CaseCompletedGuard,
+    CaseReceivedGuard,
     CaseFileExistsGuard,
   )
   @RolesRules(judgeRule, registrarRule)

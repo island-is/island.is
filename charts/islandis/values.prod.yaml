@@ -183,6 +183,7 @@ api:
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+    XROAD_CRIMINAL_RECORD_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakavottord-PDF-v1'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v2'
     XROAD_FINANCES_PATH: 'IS/GOV/5402697509/FJS-Public/financeIsland'
@@ -331,6 +332,7 @@ application-system-api:
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+    XROAD_CRIMINAL_RECORD_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakavottord-PDF-v1'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v2'
     XROAD_HEALTH_INSURANCE_ID: 'IS/GOV/4804080550/SJUKRA-Protected'
@@ -1047,6 +1049,10 @@ skilavottord-web:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET'
+    IDENTITY_SERVER_DOMAIN: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN'
+    IDENTITY_SERVER_LOGOUT_REDIRECT_URL: '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
+    NEXTAUTH_URL: '/k8s/skilavottord/web/NEXTAUTH_URL'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1111,6 +1117,7 @@ skilavottord-ws:
     FJARSYSLA_REST_PASS: '/k8s/skilavottord/FJARSYSLA_REST_PASS'
     FJARSYSLA_REST_URL: '/k8s/skilavottord-ws/FJARSYSLA_REST_URL'
     FJARSYSLA_REST_USER: '/k8s/skilavottord/FJARSYSLA_REST_USER'
+    IDENTITY_SERVER_ISSUER_URL: '/k8s/skilavottord/ws/IDENTITY_SERVER_ISSUER_URL'
     SAMGONGUSTOFA_REST_AUTH_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_REST_AUTH_URL'
     SAMGONGUSTOFA_REST_DEREG_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_REST_DEREG_URL'
     SAMGONGUSTOFA_REST_PASS: '/k8s/skilavottord/SAMGONGUSTOFA_REST_PASS'

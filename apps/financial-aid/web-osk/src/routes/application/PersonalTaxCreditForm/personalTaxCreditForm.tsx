@@ -75,17 +75,20 @@ const PersonalTaxCreditForm = () => {
           }}
         />
 
-        <div
-          className={cn({
-            [`errorMessage`]: true,
-            [`showErrorMessage`]:
-              hasError && form?.usePersonalTaxCredit === undefined,
-          })}
-        >
-          <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að velja einn valmöguleika
-          </Text>
-        </div>
+        {hasError && form?.usePersonalTaxCredit === undefined && (
+          <div
+            data-testid="noOptionSelectedErrorMessage"
+            className={cn({
+              [`errorMessage`]: true,
+              [`showErrorMessage`]:
+                hasError && form?.usePersonalTaxCredit === undefined,
+            })}
+          >
+            <Text color="red600" fontWeight="semiBold" variant="small">
+              Þú þarft að velja einn valmöguleika
+            </Text>
+          </div>
+        )}
 
         <Text
           as="h2"

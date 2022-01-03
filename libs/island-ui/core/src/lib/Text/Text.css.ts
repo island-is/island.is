@@ -182,20 +182,6 @@ globalStyle(`${base} mark`, {
   fontWeight: theme.typography.regular,
 })
 
-globalStyle(`${base} a`, {
-  cursor: 'pointer',
-  color: theme.color.blue400,
-  transition: 'color .2s, box-shadow .2s',
-  textDecoration: 'none',
-  boxShadow: `inset 0 -1px 0 0 ${theme.color.blue400}`,
-})
-
-globalStyle(`${base} a:hover`, {
-  color: theme.color.blueberry400,
-  boxShadow: `inset 0 -2px 0 0 ${theme.color.blueberry400}`,
-  textDecoration: 'none',
-})
-
 globalStyle(`${base} a svg path`, {
   transition: 'fill .2s, box-shadow .2s',
   fill: theme.color.blue400,

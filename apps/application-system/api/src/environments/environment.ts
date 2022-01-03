@@ -31,11 +31,6 @@ const devConfig = {
     jwtSecret: 'supersecret',
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl: 'http://localhost:4444',
-    syslumenn: {
-      url: 'https://api.syslumenn.is/dev',
-      username: process.env.SYSLUMENN_USERNAME,
-      password: process.env.SYSLUMENN_PASSWORD,
-    },
     smsOptions: {
       url: 'https://smsapi.devnova.is',
       username: 'IslandIs_User_Development',
@@ -50,6 +45,16 @@ const devConfig = {
           'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
         xroadPathV2:
           'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
+      },
+    },
+    criminalRecord: {
+      clientConfig: {
+        xroadClientId:
+          process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
+        xroadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
+        xroadPath:
+          process.env.XROAD_CRIMINAL_RECORD_PATH ??
+          'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
       },
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
@@ -90,6 +95,13 @@ const devConfig = {
         process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
       username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME ?? '',
       password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD ?? '',
+    },
+    dataProtectionComplaint: {
+      password: process.env.DATA_PROTECTION_COMPLAINT_API_PASSWORD,
+      username: process.env.DATA_PROTECTION_COMPLAINT_API_USERNAME,
+      XRoadProviderId: process.env.DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID,
+      xRoadClientId: process.env.XROAD_CLIENT_ID,
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     },
   },
   application: {
@@ -143,11 +155,6 @@ const prodConfig = {
     jwtSecret: process.env.AUTH_JWT_SECRET,
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl: process.env.GRAPHQL_API_URL,
-    syslumenn: {
-      url: process.env.SYSLUMENN_HOST,
-      username: process.env.SYSLUMENN_USERNAME,
-      password: process.env.SYSLUMENN_PASSWORD,
-    },
     smsOptions: {
       url: process.env.NOVA_URL,
       username: process.env.NOVA_USERNAME,
@@ -162,6 +169,13 @@ const prodConfig = {
         xroadBaseUrl: process.env.XROAD_BASE_PATH,
         xroadPathV1: process.env.XROAD_DRIVING_LICENSE_PATH,
         xroadPathV2: process.env.XROAD_DRIVING_LICENSE_PATH,
+      },
+    },
+    criminalRecord: {
+      clientConfig: {
+        xroadClientId: process.env.XROAD_CLIENT_ID,
+        xroadBaseUrl: process.env.XROAD_BASE_PATH,
+        xroadPath: process.env.XROAD_CRIMINAL_RECORD_PATH,
       },
     },
     paymentOptions: {
@@ -190,6 +204,13 @@ const prodConfig = {
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME,
       password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD,
+    },
+    dataProtectionComplaint: {
+      password: process.env.DATA_PROTECTION_COMPLAINT_API_PASSWORD,
+      username: process.env.DATA_PROTECTION_COMPLAINT_API_USERNAME,
+      XRoadProviderId: process.env.DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID,
+      xRoadClientId: process.env.XROAD_CLIENT_ID,
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     },
   },
   application: {
