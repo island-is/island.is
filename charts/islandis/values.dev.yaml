@@ -1196,8 +1196,9 @@ user-notification:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     MAIN_QUEUE_NAME: 'user-notification'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -1216,7 +1217,7 @@ user-notification:
       hosts:
         - host: 'user-notification-xrd.internal.dev01.devland.is'
           paths:
-            - '/notifications'
+            - '/'
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
@@ -1245,8 +1246,9 @@ user-notification-worker:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     MAIN_QUEUE_NAME: 'user-notification'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
