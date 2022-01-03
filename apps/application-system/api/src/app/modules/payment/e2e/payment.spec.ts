@@ -21,7 +21,6 @@ class MockPaymentApi {
       receptionID: faker.datatype.number(),
     }
   }
-
   async getCatalog() {
     return {
       item: [...Array.from({ length: 10 })].map((_, i) => ({

@@ -31,7 +31,6 @@ interface calculationsState {
   amount: number
   income?: number
   personalTaxCreditPercentage?: number
-  tax: number
   secondPersonalTaxCredit: number
   showSecondPersonalTaxCredit: boolean
   hasError: boolean
@@ -75,7 +74,6 @@ const AcceptModal = ({
     amount: aidAmount,
     income: undefined,
     personalTaxCreditPercentage: undefined,
-    tax: calculateTaxOfAmount(aidAmount),
     secondPersonalTaxCredit: 0,
     showSecondPersonalTaxCredit: false,
     deductionFactor: [],
@@ -95,9 +93,17 @@ const AcceptModal = ({
   const checkingValue = (element?: number) => (element ? element : 0)
 
   const finalAmount = calculateAcceptedAidFinalAmount(
-    aidAmount - checkingValue(state.income) - sumValues(state.deductionFactor),
+    state.amount -
+      checkingValue(state.income) -
+      sumValues(state.deductionFactor),
     checkingValue(state.personalTaxCreditPercentage),
     state.secondPersonalTaxCredit,
+  )
+
+  const taxAmount = calculateTaxOfAmount(
+    (state.amount || 0) -
+      checkingValue(state.income) -
+      sumValues(state.deductionFactor),
   )
 
   const areRequiredFieldsFilled =
@@ -118,7 +124,7 @@ const AcceptModal = ({
       income: state.income,
       personalTaxCredit: state.personalTaxCreditPercentage ?? 0,
       spousePersonalTaxCredit: state.secondPersonalTaxCredit,
-      tax: state.tax,
+      tax: taxAmount,
       finalAmount: finalAmount,
       deductionFactors: state.deductionFactor,
     })
@@ -321,11 +327,7 @@ const AcceptModal = ({
           label="Skattur "
           id="tax"
           name="tax"
-          value={calculateTaxOfAmount(
-            (aidAmount || 0) -
-              checkingValue(state.income) -
-              sumValues(state.deductionFactor),
-          ).toLocaleString('de-DE')}
+          value={taxAmount.toLocaleString('de-DE')}
           readOnly={true}
         />
       </Box>

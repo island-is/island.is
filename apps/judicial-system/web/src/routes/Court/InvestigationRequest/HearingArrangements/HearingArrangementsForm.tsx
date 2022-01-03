@@ -68,7 +68,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
     }
   }
 
-  const setRegistrar = (id: string) => {
+  const setRegistrar = (id?: string) => {
     if (workingCase) {
       setAndSendToServer(
         'registrarId',
@@ -80,7 +80,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
 
       const registrar = users?.users.find((r) => r.id === id)
 
-      setWorkingCase({ ...workingCase, registrar: registrar })
+      setWorkingCase({ ...workingCase, registrar })
     }
   }
 
@@ -176,12 +176,16 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             placeholder="Velja dómritara"
             value={defaultRegistrar}
             options={registrars}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-              setRegistrar(
-                (selectedOption as ReactSelectOption).value.toString(),
-              )
-            }
-            required
+            onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+              if (selectedOption) {
+                setRegistrar(
+                  (selectedOption as ReactSelectOption).value.toString(),
+                )
+              } else {
+                setRegistrar(undefined)
+              }
+            }}
+            isClearable
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -352,59 +356,32 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       {modalVisible && (
         <Modal
-          title={formatMessage(
-            workingCase.sessionArrangements ===
-              SessionArrangements.REMOTE_SESSION
-              ? m.modal.remoteSessionHeading
-              : m.modal.heading,
-          )}
+          title={formatMessage(m.modal.heading)}
           text={formatMessage(
             workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
               ? m.modal.allPresentText
               : workingCase.sessionArrangements ===
                 SessionArrangements.ALL_PRESENT_SPOKESPERSON
               ? m.modal.allPresentSpokespersonText
-              : workingCase.sessionArrangements ===
-                SessionArrangements.PROSECUTOR_PRESENT
-              ? m.modal.prosecutorPresentText
-              : m.modal.remoteSessionText,
+              : m.modal.prosecutorPresentText,
           )}
           handlePrimaryButtonClick={async () => {
-            if (
-              workingCase.sessionArrangements ===
-              SessionArrangements.REMOTE_SESSION
-            ) {
+            const notificationSent = await sendNotification(
+              workingCase.id,
+              NotificationType.COURT_DATE,
+            )
+
+            if (notificationSent) {
               router.push(
                 `${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`,
               )
-            } else {
-              const notificationSent = await sendNotification(
-                workingCase.id,
-                NotificationType.COURT_DATE,
-              )
-
-              if (notificationSent) {
-                router.push(
-                  `${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`,
-                )
-              }
             }
           }}
           handleSecondaryButtonClick={() => {
             router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
           }}
-          primaryButtonText={formatMessage(
-            workingCase.sessionArrangements ===
-              SessionArrangements.REMOTE_SESSION
-              ? m.modal.primaryButtonRemoteSessionText
-              : m.modal.primaryButtonText,
-          )}
-          secondaryButtonText={
-            workingCase.sessionArrangements ===
-            SessionArrangements.REMOTE_SESSION
-              ? undefined
-              : formatMessage(m.modal.secondaryButtonText)
-          }
+          primaryButtonText={formatMessage(m.modal.primaryButtonText)}
+          secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}
           isPrimaryButtonLoading={isSendingNotification}
         />
       )}

@@ -23,7 +23,7 @@ export class CaseReadGuard implements CanActivate {
     const theCase = request.case
 
     if (!theCase) {
-      throw new BadRequestException('Missing case')
+      throw new InternalServerErrorException('Missing case')
     }
 
     if (isCaseBlockedFromUser(theCase, user, false)) {

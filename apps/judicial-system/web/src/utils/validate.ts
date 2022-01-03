@@ -92,7 +92,8 @@ export const isDefendantStepValidIC = (workingCase: Case) => {
     workingCase.accusedGender &&
     validate(workingCase.accusedNationalId, 'empty').isValid &&
     validate(workingCase.accusedNationalId, 'national-id').isValid &&
-    validate(workingCase.accusedName || '', 'empty').isValid
+    validate(workingCase.accusedName || '', 'empty').isValid &&
+    validate(workingCase.accusedAddress || '', 'empty').isValid
   )
 }
 
@@ -125,6 +126,14 @@ export const isPoliceDemandsStepValidRC = (workingCase: Case) => {
   )
 }
 
+export const isPoliceDemandsStepValidIC = (workingCase: Case) => {
+  return (
+    validate(workingCase.demands || '', 'empty').isValid &&
+    validate(workingCase.lawsBroken || '', 'empty').isValid &&
+    validate(workingCase.legalBasis || '', 'empty').isValid
+  )
+}
+
 export const isPoliceReportStepValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.demands || '', 'empty').isValid &&
@@ -133,9 +142,8 @@ export const isPoliceReportStepValidRC = (workingCase: Case) => {
   )
 }
 
-export const isPoliceDemandsStepValidIC = (workingCase: Case) => {
+export const isPoliceReportStepValidIC = (workingCase: Case) => {
   return (
-    validate(workingCase.demands || '', 'empty').isValid &&
     validate(workingCase.caseFacts || '', 'empty').isValid &&
     validate(workingCase.legalArguments || '', 'empty').isValid
   )
@@ -154,15 +162,13 @@ export const isCourtHearingArrangemenstStepValidRC = (workingCase: Case) => {
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid &&
     validate(workingCase.courtDate || '', 'date-format').isValid &&
-    workingCase.judge &&
-    workingCase.registrar
+    workingCase.judge
   )
 }
 
 export const isCourtHearingArrangementsStepValidIC = (workingCase: Case) => {
   return (
     workingCase.judge &&
-    workingCase.registrar &&
     workingCase.sessionArrangements &&
     validate(workingCase.courtDate || '', 'date-format').isValid
   )
