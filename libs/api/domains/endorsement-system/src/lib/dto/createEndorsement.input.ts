@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsUUID, IsBoolean } from 'class-validator'
+import { IsUUID } from 'class-validator'
 import { EndorsementInput } from './endorsement.input'
 
 @InputType()

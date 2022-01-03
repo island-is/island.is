@@ -52,7 +52,11 @@ export class ViewCaseFileGuard implements CanActivate {
 
     // Registrars have permission to view files of completed cases
     if (user.role === UserRole.REGISTRAR) {
-      if (completedCaseStates.includes(theCase.state)) {
+      if (
+        completedCaseStates.includes(theCase.state) ||
+        (theCase.state === CaseState.RECEIVED &&
+          user.id === theCase.registrarId)
+      ) {
         return true
       }
 

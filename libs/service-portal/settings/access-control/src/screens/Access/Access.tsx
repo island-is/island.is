@@ -25,6 +25,7 @@ import {
 } from '@island.is/api/schema'
 import {
   IntroHeader,
+  m as coreMessages,
   NotFound,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
@@ -121,13 +122,17 @@ function Access() {
   const { formatMessage } = useLocale()
   const { delegationId }: { delegationId: string } = useParams()
   const history = useHistory()
+
+  const onError = () => {
+    toast.error(formatMessage(coreMessages.somethingWrong))
+  }
   const [updateDelegation, { loading: updateLoading }] = useMutation<Mutation>(
     UpdateAuthDelegationMutation,
-    { refetchQueries: [{ query: AuthDelegationsQuery }] },
+    { refetchQueries: [{ query: AuthDelegationsQuery }], onError },
   )
   const [deleteDelegation, { loading: deleteLoading }] = useMutation<Mutation>(
     DeleteAuthDelegationMutation,
-    { refetchQueries: [{ query: AuthDelegationsQuery }] },
+    { refetchQueries: [{ query: AuthDelegationsQuery }], onError },
   )
   const { data: apiScopeData, loading: apiScopeLoading } = useQuery<Query>(
     AuthApiScopesQuery,

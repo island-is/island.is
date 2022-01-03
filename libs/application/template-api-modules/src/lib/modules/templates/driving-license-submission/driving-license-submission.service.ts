@@ -6,7 +6,7 @@ import {
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { FormValue } from '@island.is/application/core'
+import { FormValue, getValueViaPath } from '@island.is/application/core'
 import {
   generateDrivingLicenseSubmittedEmail,
   generateDrivingAssessmentApprovalEmail,
@@ -27,7 +27,12 @@ export class DrivingLicenseSubmissionService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const applicationFor = answers.applicationFor || 'B-full'
+    const applicationFor = getValueViaPath<'B-full' | 'B-temp'>(
+      answers,
+      'applicationFor',
+      'B-full',
+    )
+
     const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
 
     const response = await this.sharedTemplateAPIService.createCharge(

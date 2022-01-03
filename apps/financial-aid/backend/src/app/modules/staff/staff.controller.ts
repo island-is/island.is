@@ -57,11 +57,9 @@ export class StaffController {
   })
   async getStaffById(@Param('id') id: string): Promise<StaffModel> {
     const staff = await this.staffService.findById(id)
-
     if (staff === null) {
-      throw new ForbiddenException('Staff not found')
+      throw new NotFoundException('Staff not found')
     }
-
     return staff
   }
 
