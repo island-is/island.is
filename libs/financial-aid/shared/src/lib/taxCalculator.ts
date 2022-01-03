@@ -3,6 +3,10 @@ export const taxInfoNumbers = {
     taxPercentage: 31.45,
     personalTaxAllowance: 50792,
   },
+  '2022': {
+    taxPercentage: 31.45,
+    personalTaxAllowance: 50792,
+  },
 }
 
 interface TaxInfoYear {
@@ -66,6 +70,26 @@ export const calculatePersonalTaxAllowanceUsed = (
 
   // Only show the amount of used personal tax allowence, not the full tax allowence
   return Math.min(personalTaxAllowanceUsed, tax)
+}
+
+export const calculatePersonalTaxAllowanceFromAmount = (
+  personalTaxCreditPercentage: number = 0,
+  spousedPersonalTaxCreditPercentage: number = 0,
+): number => {
+  const taxInfoYear: TaxInfoYear = taxInfoNumbers
+  const taxInfo = taxInfoYear[currentYear]
+
+  const taxPercentage = taxInfo.taxPercentage / 100
+
+  const personalTaxAllowance = Math.floor(
+    taxInfo.personalTaxAllowance * (personalTaxCreditPercentage / 100),
+  )
+
+  const spouseTaxAllowance = Math.floor(
+    taxInfo.personalTaxAllowance * (spousedPersonalTaxCreditPercentage / 100),
+  )
+
+  return personalTaxAllowance + spouseTaxAllowance
 }
 
 export const calculateAcceptedAidFinalAmount = (
@@ -167,7 +191,10 @@ export const acceptedAmountBreakDown = (amount?: Amount): Calculations[] => {
     },
     {
       title: 'Persónuafsláttur',
-      calculation: `${amount?.personalTaxCredit.toLocaleString('de-DE')} kr. , ` +,
+      calculation: `${calculatePersonalTaxAllowanceFromAmount(
+        amount.personalTaxCredit,
+        amount.spousePersonalTaxCredit,
+      ).toLocaleString('de-DE')} kr.`,
     },
     {
       title: 'Aðstoð',
