@@ -1,22 +1,21 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { RskCompanyAddress } from './rskCompanyAddress.model'
 import { RskCompanyFormOfOperation } from './rskCompanyFormOfOperation.model'
-import { RskCompanyLink } from './rskCompanyLink.model'
 import { RskCompanyRelatedParty } from './rskCompanyRelatedParty.model'
 import { RskCompanyVat } from './rskCompanyVat.model'
 
 @ObjectType()
 export class RskCompanyInfo {
-  @Field(() => [RskCompanyFormOfOperation], { nullable: true })
+  @Field(() => [RskCompanyFormOfOperation], { defaultValue: [] })
   formOfOperation?: RskCompanyFormOfOperation[]
 
-  @Field(() => [RskCompanyAddress], { nullable: true })
+  @Field(() => [RskCompanyAddress], { defaultValue: [] })
   address?: RskCompanyAddress[]
 
-  @Field(() => [RskCompanyRelatedParty], { nullable: true })
+  @Field(() => [RskCompanyRelatedParty], { defaultValue: [] })
   relatedParty?: RskCompanyRelatedParty[]
 
-  @Field(() => [RskCompanyVat], { nullable: true })
+  @Field(() => [RskCompanyVat], { defaultValue: [] })
   vat?: RskCompanyVat[]
 }
 
@@ -37,7 +36,7 @@ export class RskCompany {
   @Field(() => String)
   vatNumber?: string
 
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   lastUpdated?: Date
 
   @Field(() => RskCompanyInfo, { nullable: true })

@@ -23,7 +23,6 @@ export class RskCompanyInfoResolver {
     name: 'rskCompany',
     nullable: true,
   })
-  // @Audit()
   async companyInformation(
     @Args('input', { type: () => RskCompanyInfoInput })
     input: RskCompanyInfoInput,
