@@ -1090,7 +1090,7 @@ skilavottord-ws:
       hosts:
         - host: 'beta.staging01.devland.is'
           paths:
-            - '/app/skilavottord/api/'
+            - '/app/skilavottord/api/graphql'
   initContainer:
     containers:
       - args:
@@ -1125,7 +1125,6 @@ skilavottord-ws:
     SAMGONGUSTOFA_SOAP_PASS: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_PASS'
     SAMGONGUSTOFA_SOAP_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_SOAP_URL'
     SAMGONGUSTOFA_SOAP_USER: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_USER'
-    SKILAVOTTORD_USER_LIST: '/k8s/skilavottord/SKILAVOTTORD_USER_LIST'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
