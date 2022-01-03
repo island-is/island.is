@@ -43,6 +43,7 @@ import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -261,6 +262,7 @@ const autoSchemaFile = environment.production
         NationalRegistryClientConfig,
         AuthPublicApiClientConfig,
         SyslumennClientConfig,
+        FeatureFlagConfig,
       ],
     }),
   ],

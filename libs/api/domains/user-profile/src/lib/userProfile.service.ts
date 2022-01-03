@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { ApolloError } from 'apollo-server-express'
 import {
   ConfirmationDtoResponse,
@@ -30,6 +31,7 @@ export class UserProfileService {
   constructor(
     private userProfileApi: UserProfileApi,
     private readonly islyklarService: IslykillService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   userProfileApiWithAuth(auth: Auth) {
@@ -79,6 +81,17 @@ export class UserProfileService {
     const request: UserProfileControllerCreateRequest = {
       createUserProfileDto: createUserDto,
     }
+
+    const feature = await this.featureFlagService.getValue(
+      Features.personalInformation,
+      false,
+      user,
+    )
+
+    if (!feature) {
+      handleError({ status: 'User profile create is feature flagged for user' })
+    }
+
     await this.islyklarService
       .createIslykillSettings(user.nationalId, {
         email: input.email,
@@ -109,6 +122,16 @@ export class UserProfileService {
     const request: UserProfileControllerUpdateRequest = {
       nationalId: user.nationalId,
       updateUserProfileDto: updateUserDto,
+    }
+
+    const feature = await this.featureFlagService.getValue(
+      Features.personalInformation,
+      false,
+      user,
+    )
+
+    if (!feature) {
+      handleError({ status: 'User profile update is feature flagged for user' })
     }
 
     const islyklarData = await this.islyklarService.getIslykillSettings(
