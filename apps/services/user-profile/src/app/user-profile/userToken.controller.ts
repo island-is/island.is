@@ -1,6 +1,12 @@
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { Scopes, ScopesGuard, IdsAuthGuard } from '@island.is/auth-nest-tools'
-import { Controller, Get, NotFoundException, Param, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  UseGuards,
+} from '@nestjs/common'
 import {
   ApiOkResponse,
   ApiOperation,
@@ -40,7 +46,7 @@ export class UserTokenController {
   @ApiOkResponse({ type: UserProfile })
   async findOneByNationalId(
     @Param('nationalId')
-    nationalId: string
+    nationalId: string,
   ): Promise<UserProfile> {
     const userProfile = await this.userProfileService.findByNationalId(
       nationalId,
