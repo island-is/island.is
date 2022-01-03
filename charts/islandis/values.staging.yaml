@@ -1160,7 +1160,7 @@ user-notification:
       hosts:
         - host: 'user-notification-xrd.internal.staging01.devland.is'
           paths:
-            - '/notifications'
+            - '/'
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
@@ -1228,6 +1228,7 @@ web:
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
+    ENVIRONMENT: 'staging'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
     TRACKING_DOMAIN: 'beta.staging01.devland.is'
@@ -1269,6 +1270,8 @@ web:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
+    DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
     SENTRY_DSN: '/k8s/web/SENTRY_DSN'
   securityContext:
     allowPrivilegeEscalation: false

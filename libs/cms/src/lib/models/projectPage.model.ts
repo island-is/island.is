@@ -7,10 +7,10 @@ import {
   SliceUnion,
 } from '../unions/slice.union'
 import { GenericTag, mapGenericTag } from './genericTag.model'
-import { Link, mapLink } from './link.model'
 import { mapProjectSubpage, ProjectSubpage } from './projectSubpage.model'
 import { mapStepper, Stepper } from './stepper.model'
 import { mapImage, Image } from './image.model'
+import { LinkGroup, mapLinkGroup } from './linkGroup.model'
 
 @ObjectType()
 export class ProjectPage {
@@ -29,8 +29,8 @@ export class ProjectPage {
   @Field()
   sidebar!: boolean
 
-  @Field(() => [Link])
-  sidebarLinks!: Array<Link>
+  @Field(() => [LinkGroup])
+  sidebarLinks!: Array<LinkGroup>
 
   @Field()
   subtitle!: string
@@ -63,7 +63,7 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   slug: fields.slug ?? '',
   theme: fields.theme ?? 'default',
   sidebar: fields.sidebar ?? false,
-  sidebarLinks: (fields.sidebarLinks ?? []).map(mapLink),
+  sidebarLinks: (fields.sidebarLinks ?? []).map(mapLinkGroup),
   subtitle: fields.subtitle ?? '',
   intro: fields.intro ?? '',
   content: fields.content
