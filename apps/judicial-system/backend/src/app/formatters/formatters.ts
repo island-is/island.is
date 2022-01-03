@@ -161,12 +161,9 @@ export function formatProsecutorCourtDateEmailNotification(
       ? 'kröfu um rannsóknarheimild'
       : `kröfu um rannsóknarheimild (${caseTypes[type]})`
   const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
-  const courtRoomText =
-    sessionArrangements === SessionArrangements.REMOTE_SESSION
-      ? 'Úrskurðað verður um kröfuna án mætingar af hálfu málsaðila'
-      : courtRoom
-      ? `Dómsalur: ${courtRoom}`
-      : 'Dómsalur hefur ekki verið skráður'
+  const courtRoomText = courtRoom
+    ? `Dómsalur: ${courtRoom}`
+    : 'Dómsalur hefur ekki verið skráður'
   const judgeText = judgeName
     ? `Dómari: ${judgeName}`
     : 'Dómari hefur ekki verið skráður'
@@ -174,8 +171,7 @@ export function formatProsecutorCourtDateEmailNotification(
     ? `<br /><br />Dómritari: ${registrarName}.`
     : ''
   const defenderText =
-    sessionArrangements === SessionArrangements.PROSECUTOR_PRESENT ||
-    sessionArrangements === SessionArrangements.REMOTE_SESSION
+    sessionArrangements === SessionArrangements.PROSECUTOR_PRESENT
       ? ''
       : defenderName
       ? `<br /><br />${
