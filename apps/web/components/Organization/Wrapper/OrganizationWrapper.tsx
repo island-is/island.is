@@ -136,7 +136,6 @@ export const OrganizationAlert: React.FC<AlertProps> = ({
 
 interface ExternalLinksProps {
   organizationPage: OrganizationPage
-  showExternalLinks: boolean
 }
 
 export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
