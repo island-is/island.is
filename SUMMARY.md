@@ -129,7 +129,6 @@
     - [API Domains Regulations](libs/api/domains/regulations/README.md)
     - [API Domains Rsk](libs/api/domains/rsk/README.md)
     - [API Domains Rsk Company Info](libs/api/domains/rsk-company-info/README.md)
-    - [API Domains Temporary Voter Registry](libs/api/domains/temporary-voter-registry/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
