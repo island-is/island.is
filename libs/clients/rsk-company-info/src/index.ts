@@ -1,3 +1,2 @@
 export * from './lib/types'
-export { DefaultApi as CompanyApi } from './lib/gen/fetch'
-export { Configuration } from './lib/gen/fetch'
+export { RskCompanyInfoClientModule } from './lib/rsk-company-info-module'
