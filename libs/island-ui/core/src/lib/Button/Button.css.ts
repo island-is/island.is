@@ -147,12 +147,7 @@ export const padding = styleVariants({
     }),
   },
   medium: {
-    padding: 14,
-    ...themeUtils.responsiveStyle({
-      md: {
-        padding: 16,
-      },
-    }),
+    padding: theme.spacing[2],
   },
   small: {
     padding: '10px 16px',

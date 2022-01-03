@@ -67,7 +67,7 @@ export const containerSizes = {
     padding: 8,
     ...themeUtils.responsiveStyle({
       md: {
-        padding: '10px 16px 10px 10px',
+        padding: `${theme.spacing[1]} ${theme.spacing[2]} ${theme.spacing[1]} ${theme.spacing[1]}`,
       },
     }),
   },
@@ -75,12 +75,12 @@ export const containerSizes = {
     padding: 8,
     ...themeUtils.responsiveStyle({
       md: {
-        padding: '8px 16px 8px 8px',
+        padding: `${theme.spacing[1]} ${theme.spacing[2]} ${theme.spacing[1]} ${theme.spacing[1]}`,
       },
     }),
   },
   md: {
-    padding: '8px 16px 16px 8px',
+    padding: `${theme.spacing[1]} ${theme.spacing[2]} ${theme.spacing[2]} ${theme.spacing[1]}`,
     ...themeUtils.responsiveStyle({
       md: {
         padding: '8px 24px 14px 8px',
@@ -120,7 +120,7 @@ export const inputSizes = {
     ...themeUtils.responsiveStyle({
       md: {
         fontSize: inputFontSizeSmall,
-        lineHeight: 1.555556,
+        lineHeight: 1.777777777777778,
       },
     }),
   },

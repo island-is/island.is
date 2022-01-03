@@ -181,12 +181,12 @@ globalStyle(`${wrapper}  .island-select__menu-list`, {
 })
 
 export const icon = style({
-  width: 24,
-  height: 24,
+  width: theme.spacing[3],
+  height: theme.spacing[3],
   ...themeUtils.responsiveStyle({
     md: {
-      width: 32,
-      height: 32,
+      width: theme.spacing[4],
+      height: theme.spacing[4],
     },
   }),
 })
@@ -194,8 +194,8 @@ export const icon = style({
 export const iconExtraSmall = style({
   ...themeUtils.responsiveStyle({
     md: {
-      width: 24,
-      height: 24,
+      width: theme.spacing[3],
+      height: theme.spacing[3],
     },
   }),
 })
@@ -235,7 +235,7 @@ export const indicatorsContainer = style(
       [`${wrapper} &`]: {
         height: '100%',
         position: 'absolute',
-        right: 32,
+        right: theme.spacing[4],
         top: 0,
         bottom: 0,
         display: 'flex',

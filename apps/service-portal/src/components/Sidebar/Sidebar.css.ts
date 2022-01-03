@@ -12,7 +12,6 @@ export const sidebar = style({
   width: 252,
   backgroundColor: theme.color.blue100,
 })
-
 export const collapsed = style({
   width: 138,
 })
@@ -20,30 +19,30 @@ export const collapsed = style({
 export const logoCollapsed = style({
   display: 'flex',
   justifyContent: 'flex-end',
-  marginRight: -22,
+  marginRight: -theme.spacing[3],
 })
 export const subnav = style({
-  paddingLeft: 20,
-  marginLeft: 85,
+  paddingLeft: theme.spacing[3],
+  marginLeft: theme.spacing[8],
   borderLeft: `1px solid ${theme.color.blue200}`,
   ...themeUtils.responsiveStyle({
     md: {
-      paddingLeft: 26,
-      marginLeft: 37,
+      paddingLeft: theme.spacing[3],
+      marginLeft: theme.spacing[5],
     },
   }),
 })
 
 export const subnavCollapsed = style({
   padding: 0,
-  borderLeft: 'none',
   marginLeft: 0,
+  borderLeft: 'none',
 })
 
 export const navIcon = style({
   position: 'absolute',
-  right: '-28px',
-  top: '88px',
+  right: -theme.spacing[4],
+  top: theme.spacing[10],
   ':hover': {
     cursor: 'pointer',
   },
