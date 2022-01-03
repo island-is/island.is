@@ -493,6 +493,7 @@ const BackButton = ({ title, href }: { title: string; href: string }) => (
       size="small"
       type="button"
       variant="text"
+      truncate
     >
       {title}
     </Button>
