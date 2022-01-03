@@ -324,6 +324,7 @@ export class EndorsementListController {
     @Body() endorsementList: EndorsementListDto,
     @CurrentUser() user: User,
   ): Promise<EndorsementList> {
+    console.log(endorsementList.closedDate)
     return await this.endorsementListService.create({
       ...endorsementList,
       owner: user.nationalId,

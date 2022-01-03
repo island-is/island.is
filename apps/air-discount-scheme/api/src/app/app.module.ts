@@ -35,6 +35,5 @@ const autoSchemaFile = environment.production
     FlightLegModule,
     CmsModule,
   ],
-  providers: [BackendAPI],
 })
 export class AppModule {}

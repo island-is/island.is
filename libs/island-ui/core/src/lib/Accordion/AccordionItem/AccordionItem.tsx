@@ -106,6 +106,10 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       }
     }
 
+    useEffect(() => {
+      setHeight(expanded ? 'auto' : 0)
+    }, [expanded])
+
     useEffect(
       () => {
         if (startExpanded && expandedProp == null) {
