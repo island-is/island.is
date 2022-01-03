@@ -73,7 +73,7 @@ export const UserDropdown = ({
       hideOnEsc={true}
       modalLabel={formatMessage(userMessages.userButtonAria)}
       removeOnClose={true}
-      preventBodyScroll={false}
+      preventBodyScroll={true}
       onVisibilityChange={(visibility: boolean) => {
         if (visibility !== isVisible) {
           onClose()
