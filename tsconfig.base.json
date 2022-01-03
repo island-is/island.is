@@ -445,6 +445,7 @@
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],
       "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"],
       "@island.is/shared/mocking": ["libs/shared/mocking/src/index.ts"],
+      "@island.is/shared/pii": ["libs/shared/pii/src/index.ts"],
       "@island.is/shared/problem": ["libs/shared/problem/src/index.ts"],
       "@island.is/shared/table": ["libs/shared/table/src/index.ts"],
       "@island.is/shared/translations": [
@@ -461,6 +462,7 @@
       "@island.is/testing/containers": ["libs/testing/containers/src/index.ts"],
       "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
       "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
+      "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"]
     }

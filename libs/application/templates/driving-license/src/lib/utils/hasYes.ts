@@ -1,5 +1,5 @@
 import { Answer } from '@island.is/application/core'
-import { YES } from '../lib/constants'
+import { YES } from '../constants'
 
 export const hasYes = (answer: Answer) => {
   if (Array.isArray(answer)) {
