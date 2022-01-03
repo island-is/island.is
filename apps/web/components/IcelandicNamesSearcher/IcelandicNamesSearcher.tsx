@@ -93,7 +93,13 @@ const toggledFiltersReducer = (
     case 'toggleApproved':
       return { ...state, approved: !state.approved }
     case 'clearCategories':
-      return { ...state, males: false, females: false, middleNames: false }
+      return {
+        ...state,
+        males: false,
+        females: false,
+        middleNames: false,
+        neutral: false,
+      }
     case 'clearStatuses':
       return { ...state, approved: false, denied: false }
     case 'clearAll':

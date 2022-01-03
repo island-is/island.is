@@ -7,6 +7,7 @@ import {
   CreatedAt,
   UpdatedAt,
   HasMany,
+  PrimaryKey,
 } from 'sequelize-typescript'
 
 import { RecyclingRequestModel } from '../recyclingRequest'
@@ -14,57 +15,57 @@ import { RecyclingRequestModel } from '../recyclingRequest'
 @ObjectType('RecyclingPartner')
 @Table({ tableName: 'recycling_partner' })
 export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
-  @Field(() => ID)
+  @Field((_) => ID)
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     primaryKey: true,
     field: 'company_id',
   })
-  companyId: string
+  companyId!: string
 
   @Field()
   @Column({
     type: DataType.STRING,
-    allowNull: false,
     field: 'company_name',
   })
-  companyName: string
+  companyName!: string
 
   @Field()
   @Column({
     type: DataType.STRING,
   })
-  address: string
+  address!: string
 
   @Field()
   @Column({
     type: DataType.STRING,
   })
-  postnumber: string
+  postnumber!: string
 
   @Field()
   @Column({
     type: DataType.STRING,
   })
-  city: string
+  city!: string
 
   @Field()
   @Column({
     type: DataType.STRING,
   })
-  website: string
+  website!: string
 
   @Field()
   @Column({
     type: DataType.STRING,
   })
-  phone: string
+  phone!: string
 
   @Field()
   @Column({
     type: DataType.BOOLEAN,
   })
-  active: boolean
+  active!: boolean
 
   @Field()
   @CreatedAt

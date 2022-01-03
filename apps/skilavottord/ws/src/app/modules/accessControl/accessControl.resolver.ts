@@ -2,8 +2,7 @@ import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { NotFoundException } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 
-import { Authorize, CurrentUser, Role } from '../auth'
-import type { User } from '../auth'
+import { Authorize, CurrentUser, User, Role } from '../auth'
 
 import { AccessControlModel } from './accessControl.model'
 import { AccessControlService } from './accessControl.service'
@@ -14,7 +13,6 @@ import {
 } from './accessControl.input'
 
 @Authorize({
-  throwOnUnAuthorized: false,
   roles: [Role.developer, Role.recyclingFund],
 })
 @Resolver(() => AccessControlModel)
@@ -61,7 +59,7 @@ export class AccessControlResolver {
     @Args('input', { type: () => DeleteAccessControlInput })
     input: DeleteAccessControlInput,
     @CurrentUser() user: User,
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     const accessControl = await this.accessControlService.findOne(
       input.nationalId,
     )

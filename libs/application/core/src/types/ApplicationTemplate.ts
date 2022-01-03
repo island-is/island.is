@@ -31,7 +31,7 @@ export interface ApplicationTemplate<
   }
   readonly stateMachineOptions?: Partial<MachineOptions<TContext, TEvents>>
   mapUserToRole(
-    id: string,
+    nationalId: string,
     application: Application,
   ): ApplicationRole | undefined
   answerValidators?: Record<string, AnswerValidator>
