@@ -602,4 +602,8 @@ export const m = defineMessages({
     id: 'service.portal:islykill',
     defaultMessage: 'Íslykill',
   },
+  altText: {
+    id: 'service.portal:alt-text',
+    defaultMessage: 'Skrautmynd fyrir',
+  },
 })

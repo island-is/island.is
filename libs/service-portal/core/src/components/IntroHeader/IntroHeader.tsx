@@ -8,7 +8,7 @@ import {
   Box,
   Hidden,
 } from '@island.is/island-ui/core'
-
+import { m } from '@island.is/service-portal/core'
 interface Props {
   title: MessageDescriptor | string
   intro?: MessageDescriptor
@@ -39,7 +39,7 @@ export const IntroHeader = ({
         >
           <Hidden print={hideImgPrint}>
             <Box textAlign={['center', 'right']} padding={[6, 0]}>
-              <img src={img} alt={`skrautmynd fyrir ${title}`} />
+              <img src={img} alt={`${formatMessage(m.altText)} ${title}`} />
             </Box>
           </Hidden>
         </GridColumn>

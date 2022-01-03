@@ -13,11 +13,7 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  ServicePortalModuleComponent,
-  ServicePortalPath,
-  m,
-} from '@island.is/service-portal/core'
+import { ServicePortalPath, m } from '@island.is/service-portal/core'
 
 type Data = {
   heading: MessageDescriptor | string
@@ -115,7 +111,7 @@ function Eligibility(): JSX.Element {
               >
                 <img
                   src={item.image}
-                  alt={`skrautmynd fyrir ${item.heading}`}
+                  alt={`${formatMessage(m.altText)} ${item.heading}`}
                 />
               </Box>
             </GridColumn>

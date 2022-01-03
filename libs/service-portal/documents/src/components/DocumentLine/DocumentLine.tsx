@@ -14,6 +14,7 @@ import { dateFormat } from '@island.is/shared/constants'
 import * as styles from './DocumentLine.css'
 import { User } from 'oidc-client'
 import cn from 'classnames'
+import { m } from '@island.is/service-portal/core'
 interface Props {
   documentLine: Document
   userInfo: User
@@ -21,6 +22,7 @@ interface Props {
 }
 
 const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
+  const { formatMessage } = useLocale()
   const onClickHandler = () => {
     // Create form elements
     const form = document.createElement('form')
@@ -84,7 +86,7 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
               <img
                 className={styles.image}
                 src={img}
-                alt={`skrautmynd fyrir ${documentLine.subject}`}
+                alt={`${formatMessage(m.altText)} ${documentLine.subject}`}
               />
             )}
             {documentLine.fileType === 'url' && documentLine.url ? (

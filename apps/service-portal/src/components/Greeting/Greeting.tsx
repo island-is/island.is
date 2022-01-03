@@ -92,7 +92,10 @@ const Greeting: FC<{}> = () => {
       <GridColumn span={['12/12', '5/12']}>
         <img
           src="./assets/images/school.svg"
-          alt="skrautmynd fyrir upphafssíðu"
+          alt={`${formatMessage(m.altText)} ${formatMessage({
+            defaultMessage: 'upphafssíðu',
+            id: 'service.portal:start-page',
+          })}`}
         />
       </GridColumn>
     </GridRow>

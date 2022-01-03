@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react'
-
 import { Box, Text, Tag } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
 import * as styles from './EducationCard.css'
 interface ActionCard {
   eyebrow?: string
@@ -20,6 +21,8 @@ export const EducationCard = ({
   CTA,
   imgPlaceholder,
 }: ActionCard) => {
+  const { formatMessage } = useLocale()
+
   return (
     <Box
       display={['block', 'flex']}
@@ -33,7 +36,7 @@ export const EducationCard = ({
         {img && (
           <img
             src={img}
-            alt={`skrautmynd fyrir ${title}`}
+            alt={`${formatMessage(m.altText)} ${title}`}
             className={styles.img}
           />
         )}
