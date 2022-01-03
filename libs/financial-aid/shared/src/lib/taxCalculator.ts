@@ -3,6 +3,10 @@ export const taxInfoNumbers = {
     taxPercentage: 31.45,
     personalTaxAllowance: 50792,
   },
+  '2022': {
+    taxPercentage: 31.45,
+    personalTaxAllowance: 53916,
+  },
 }
 
 interface TaxInfoYear {
