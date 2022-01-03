@@ -68,7 +68,7 @@ interface WrapperProps {
   minimal?: boolean
   showSecondaryMenu?: boolean
   namespace: Namespace
-  showExternalLinks: boolean
+  showExternalLinks?: boolean
 }
 
 interface HeaderProps {
