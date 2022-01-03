@@ -9,14 +9,15 @@ export const progressMeter = style({
   }),
 })
 
-export const progressMeterWithDate = style({
+export const tag = style({
+  marginBottom: theme.spacing[1],
   ...themeUtils.responsiveStyle({
-    lg: {
-      marginTop: -18,
+    md: {
+      marginBottom: 'unset',
+      alignSelf: 'flex-start',
     },
   }),
 })
-
 export const avatar = style({
   display: 'none',
   ...themeUtils.responsiveStyle({

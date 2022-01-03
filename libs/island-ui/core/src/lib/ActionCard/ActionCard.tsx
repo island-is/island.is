@@ -9,6 +9,7 @@ import {
   ProgressMeterVariant,
 } from '../ProgressMeter/ProgressMeter'
 import * as styles from './ActionCard.css'
+import { Hidden } from '../Hidden/Hidden'
 
 type ActionCardProps = {
   date?: string
@@ -129,6 +130,26 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     )
   }
 
+  const renderEyebrow = () => {
+    if (!eyebrow) {
+      return null
+    }
+
+    return (
+      <Box
+        alignItems="center"
+        display="flex"
+        flexDirection="row"
+        justifyContent={eyebrow ? 'spaceBetween' : 'flexEnd'}
+        marginBottom={[0, 1]}
+      >
+        <Text variant="eyebrow" color="purple400">
+          {eyebrow}
+        </Text>
+        {renderTag()}
+      </Box>
+    )
+  }
   const renderDate = () => {
     if (!date) {
       return null
@@ -136,12 +157,11 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
     return (
       <Box
-        alignItems={['flexStart', 'center']}
+        alignItems="center"
         display="flex"
-        flexDirection={['column', 'row']}
-        justifyContent="spaceBetween"
+        flexDirection="row"
+        justifyContent={date ? 'spaceBetween' : 'flexEnd'}
         marginBottom={[0, 2]}
-        marginTop={[2, 0]}
       >
         <Box display="flex" flexDirection="row" alignItems="center">
           <Text variant="small">{date}</Text>
@@ -158,7 +178,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     }
 
     return (
-      <Box paddingTop={[1, 1, 0]}>
+      <Box paddingTop={[0, 1, 0]}>
         <Tag outlined={tag.outlined} variant={tag.variant} disabled>
           {tag.label}
         </Tag>
@@ -172,42 +192,38 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       hasCTA && secondaryCta?.label && !progressMeter.active
 
     return (
-      <>
-        {!date && renderTag()}
-
-        {!!hasCTA && (
-          <Box
-            paddingTop={tag.label ? 'gutter' : 0}
-            display="flex"
-            justifyContent={['flexStart', 'flexEnd']}
-            alignItems="center"
-            flexDirection="row"
-          >
-            {hasSecondaryCTA && (
-              <Box paddingRight={4} paddingLeft={2}>
-                <Button
-                  variant="text"
-                  onClick={secondaryCta?.onClick}
-                  icon={'document'}
-                >
-                  {secondaryCta?.label}
-                </Button>
-              </Box>
-            )}
-            <Box>
+      !!hasCTA && (
+        <Box
+          paddingTop={tag.label ? 'gutter' : 0}
+          display="flex"
+          justifyContent={['flexStart', 'flexEnd']}
+          alignItems="center"
+          flexDirection="row"
+        >
+          {hasSecondaryCTA && (
+            <Box paddingRight={4} paddingLeft={2}>
               <Button
-                variant={cta.variant}
-                size="small"
-                onClick={cta.onClick}
-                disabled={cta.disabled}
-                icon={cta.icon}
+                variant="text"
+                onClick={secondaryCta?.onClick}
+                icon={'document'}
               >
-                {cta.label}
+                {secondaryCta?.label}
               </Button>
             </Box>
+          )}
+          <Box>
+            <Button
+              variant={cta.variant}
+              size="small"
+              onClick={cta.onClick}
+              disabled={cta.disabled}
+              icon={cta.icon}
+            >
+              {cta.label}
+            </Button>
           </Box>
-        )}
-      </>
+        </Box>
+      )
     )
   }
 
@@ -223,7 +239,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         display="flex"
         alignItems={['flexStart', 'flexStart', alignWithDate]}
         flexDirection={['column', 'column', 'row']}
-        className={date ? styles.progressMeterWithDate : undefined}
       >
         <ProgressMeter
           variant={variant}
@@ -248,7 +263,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   return (
     <Box
       display="flex"
-      flexDirection={['columnReverse', 'column']}
+      flexDirection="column"
       borderColor={
         backgroundColor === 'red'
           ? 'red200'
@@ -262,28 +277,35 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       paddingY={3}
       background={bgr}
     >
-      {renderDate()}
+      {renderEyebrow()}
 
+      {renderDate()}
       <Box
         alignItems={['flexStart', 'center']}
         display="flex"
         flexDirection={['column', 'row']}
       >
         {renderAvatar()}
-        <Box>
-          {eyebrow && (
-            <Text variant="eyebrow" color="purple400" marginBottom={1}>
-              {eyebrow}
-            </Text>
-          )}
+        <Box flexDirection="row" width="full">
           {heading && (
-            <Text
-              variant="h3"
-              color={backgroundColor === 'blue' ? 'blue600' : 'currentColor'}
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="spaceBetween"
+              alignItems="flexEnd"
             >
-              {heading}
-            </Text>
+              <Text
+                variant="h3"
+                color={backgroundColor === 'blue' ? 'blue600' : 'currentColor'}
+              >
+                {heading}
+              </Text>
+              <Hidden above="xs">
+                <Box>{!date && !eyebrow && renderTag()}</Box>
+              </Hidden>
+            </Box>
           )}
+
           {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
         </Box>
 
@@ -292,10 +314,11 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           alignItems={['flexStart', 'flexEnd']}
           flexDirection="column"
           flexShrink={0}
-          marginTop={['gutter', 0]}
+          marginTop={[1, 0]}
           marginLeft={[0, 'auto']}
-          className={styles.button}
+          className={progressMeter.active && tag ? styles.tag : styles.button}
         >
+          <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
           {unavailable.active ? renderDisabled() : renderDefault()}
         </Box>
       </Box>
