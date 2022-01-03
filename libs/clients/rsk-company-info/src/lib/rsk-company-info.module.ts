@@ -1,21 +1,12 @@
 import { DynamicModule } from '@nestjs/common'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import fetch from 'isomorphic-fetch'
 import { logger } from '@island.is/logging'
 
 import { DefaultApi as CompanyApi, Configuration } from './gen/fetch'
-import { createWrappedFetchWithLogging } from './utils'
-
-export interface RskCompanyInfoClientModuleConfig {
-  xRoadBaseUrl: string
-  xRoadProviderId: string
-  xRoadClientId: string
-}
-
-const isRunningOnProduction = isRunningOnEnvironment('production')
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { RskCompanyInfoServiceOptions } from './types/service-options.type'
 
 export class RskCompanyInfoClientModule {
-  static register(config: RskCompanyInfoClientModuleConfig): DynamicModule {
+  static register(config: RskCompanyInfoServiceOptions): DynamicModule {
     if (!config.xRoadProviderId) {
       logger.error('RskCompanyInfoModule XROAD_PROVIDER_ID not provided')
     }
@@ -36,7 +27,11 @@ export class RskCompanyInfoClientModule {
     const RSK_COMPANY_BASE_PATH = `${xRoadBaseUrl}/r1/${xRoadProviderId}/`
 
     const providerConfiguration = new Configuration({
-      fetchApi: isRunningOnProduction ? fetch : createWrappedFetchWithLogging,
+      fetchApi: createEnhancedFetch({
+        name: 'clients-rsk-company-info',
+        treat400ResponsesAsErrors: true,
+        logErrorResponseBody: true,
+      }),
       basePath: RSK_COMPANY_BASE_PATH,
       headers,
     })
