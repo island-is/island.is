@@ -696,6 +696,9 @@
     "shared-mocking": {
       "tags": []
     },
+    "shared-pii": {
+      "tags": []
+    },
     "shared-problem": {
       "tags": []
     },
@@ -734,6 +737,9 @@
       "tags": []
     },
     "testing-nest": {
+      "tags": []
+    },
+    "user-monitoring": {
       "tags": []
     },
     "web": {
