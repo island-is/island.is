@@ -5,16 +5,18 @@ import {
   ApplicationStateSchema,
   DefaultStateLifeCycle,
   DefaultEvents,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
-import { Events, States, Roles } from './constants'
+import { Events, States, Roles, EphemeralStateLifeCycle } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationFeatureFlags,
   DrivingLicenseFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
+import { hasCompletedPrerequisitesStep } from './utils'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -27,16 +29,13 @@ const template: ApplicationTemplate<
   dataSchema,
   readyForProduction: true,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
-      [States.DRAFT]: {
+      [States.PREREQUISITES]: {
         meta: {
           name: m.applicationForDrivingLicense.defaultMessage,
-          actionCard: {
-            description: m.actionCardDraft,
-          },
-          progress: 0.33,
-          lifecycle: DefaultStateLifeCycle,
+          progress: 0.2,
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -45,17 +44,41 @@ const template: ApplicationTemplate<
                   featureFlagClient as FeatureFlagClient,
                 )
 
-                const getApplication = await import(
-                  '../forms/application'
-                ).then((val) => val.getApplication)
+                const getForm = await import(
+                  '../forms/prerequisites/getForm'
+                ).then((val) => val.getForm)
 
-                return getApplication(
-                  featureFlags[DrivingLicenseFeatureFlags.ALLOW_FAKE],
-                  featureFlags[
-                    DrivingLicenseFeatureFlags.ALLOW_LICENSE_SELECTION
-                  ],
-                )
+                return getForm({
+                  allowFakeData:
+                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_FAKE],
+                  allowPickLicense:
+                    featureFlags[
+                      DrivingLicenseFeatureFlags.ALLOW_LICENSE_SELECTION
+                    ],
+                })
               },
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+          [DefaultEvents.REJECT]: { target: States.DECLINED },
+        },
+      },
+      [States.DRAFT]: {
+        meta: {
+          name: m.applicationForDrivingLicense.defaultMessage,
+          actionCard: {
+            description: m.actionCardDraft,
+          },
+          progress: 0.4,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: async () =>
+                (await import('../forms/application')).application,
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
@@ -64,11 +87,21 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              read: 'all',
             },
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+          [DefaultEvents.PAYMENT]: [
+            {
+              target: States.PREREQUISITES,
+              cond: hasCompletedPrerequisitesStep(false),
+            },
+            {
+              target: States.PAYMENT,
+              cond: hasCompletedPrerequisitesStep(true),
+            },
+          ],
           [DefaultEvents.REJECT]: { target: States.DECLINED },
         },
       },
