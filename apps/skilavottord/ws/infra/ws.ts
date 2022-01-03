@@ -41,7 +41,6 @@ export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
       SAMGONGUSTOFA_REST_PASS: '/k8s/skilavottord/SAMGONGUSTOFA_REST_PASS',
       SAMGONGUSTOFA_SOAP_PASS: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_PASS',
       FJARSYSLA_REST_PASS: '/k8s/skilavottord/FJARSYSLA_REST_PASS',
-      SKILAVOTTORD_USER_LIST: '/k8s/skilavottord/SKILAVOTTORD_USER_LIST',
       SAMGONGUSTOFA_SOAP_USER: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_USER',
       SAMGONGUSTOFA_REST_USER: '/k8s/skilavottord/SAMGONGUSTOFA_REST_USER',
       FJARSYSLA_REST_USER: '/k8s/skilavottord/FJARSYSLA_REST_USER',
@@ -57,6 +56,6 @@ export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
           staging: ['beta'],
           prod: ['', 'www.island.is'],
         },
-        paths: ['/app/skilavottord/api/'],
+        paths: ['/app/skilavottord/api/graphql'],
       },
     })
