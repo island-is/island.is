@@ -6,7 +6,7 @@ export const up = compose(
     clientType: 'machine',
     displayName: 'Notifications machine client',
     description: '',
-    allowedScopes: ['@island.is/user-profile:admin'],
+    allowedScopes: [],
   }),
   createScope({
     name: '@island.is/user-profile:admin',
