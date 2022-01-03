@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { LoggingModule } from '@island.is/logging'
-import { NotificationsController, RabbzController } from './notifications.controller'
+import { NotificationsController } from './notifications.controller'
 import { environment } from '../../../environments/environment'
 import { QueueModule } from '@island.is/message-queue'
 import { NotificationsWorkerService } from './notificationsWorker.service'
@@ -19,7 +19,7 @@ import { NotificationsWorkerService } from './notificationsWorker.service'
       },
     }),
   ],
-  controllers: [NotificationsController,RabbzController],
+  controllers: [NotificationsController],
   providers: [NotificationsWorkerService],
 })
 export class NotificationsModule {}

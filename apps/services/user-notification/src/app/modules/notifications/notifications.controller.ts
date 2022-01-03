@@ -24,7 +24,8 @@ import {
 } from './dto/createNotification.dto'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CreateNotificationResponse } from './dto/createNotification.response'
-import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+
 
 const throwIfError = (errors: ValidationError[]): void => {
   if (errors.length > 0) {
@@ -75,37 +76,14 @@ export class NotificationsController {
     const id = await this.queue.add(message)
     return { id }
   }
-}
 
-
-
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
-
-// @UseGuards(IdsAuthGuard, ScopesGuard)
-@ApiTags('Rabbz')
-@Controller("rabbz")
-export class RabbzController {
-  constructor(
-    // private readonly userProfileService: UserProfileService,
-    // private readonly verificationService: VerificationService,
-    // private readonly auditService: AuditService,
-  ) {}
-
-
-  @Get()
+  @Get("rabbz")
   async asdf(
   ): Promise<any> {
     console.log(process.env.NOTIFICATIONS_CLIENT_ID,process.env.NOTIFICATIONS_CLIENT_SECRET)
     
-    let url = "http://localhost:3333/liveness"
-    url = "http://localhost:3366/whutController/wtf"
-    url = "http://localhost:3366/userProfile/1305775399/device-tokens"
-    url = "http://localhost:3366/userProfile/0101302989/device-tokens"
-
-
-    // // BASIC FETCH
-    // const response = await fetch(url)
-    // return response.json()
+    // some kennitala 
+    const url = "http://localhost:3366/userProfile/0101302989/device-tokens"
 
 
     // THIS IS WHAT NEEDS TO WORK
@@ -128,8 +106,5 @@ export class RabbzController {
     } catch (error) {
       return error
     }
-    
-
-
   }
 }

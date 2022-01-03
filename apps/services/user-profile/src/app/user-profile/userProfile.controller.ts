@@ -379,21 +379,3 @@ export class UserProfileController {
     }
   }
 }
-
-
-
-
-@UseGuards(IdsAuthGuard, ScopesGuard)
-@Controller('whutController')
-export class whutController {
-  
-  @Get("wtf")
-  @Scopes('@island.is/user-profile:admin')
-  @ApiSecurity('oauth2', ['@island.is/user-profile:admin'])
-  async asdf(
-    @Req() req: Request,
-  ): Promise<any> {
-    // console.log(req)
-    return {"hello":"worldz"}
-  }
-}
