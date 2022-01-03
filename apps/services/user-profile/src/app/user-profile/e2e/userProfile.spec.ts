@@ -634,10 +634,16 @@ describe('User profile API', () => {
   })
 
   describe('/userProfile/{nationalId}/device-tokens', () => {
-    it('GET /userProfile/{nationalId}/device-tokens should 401 as admin:scope is needed', async () => {
-      // create one first
+    it('GET /userProfile/{nationalId}/device-tokens should 401 as admin:scope is needed and is IdsAuthGuard-ed', async () => {
       await request(app.getHttpServer())
-        .get(`/userProfile/${mockProfile.nationalId}/device-tokens`) // GERVIMAÐUR KT
+        .get(`/userProfile/${mockProfile.nationalId}/device-tokens`)
+        .send()
+        .expect(401)
+    })
+
+    it('GET /userProfile/{nationalId}/notification-settings should 401 as admin:scope is needed and is IdsAuthGuard-ed', async () => {
+      await request(app.getHttpServer())
+        .get(`/userProfile/${mockProfile.nationalId}/notification-settings`)
         .send()
         .expect(401)
     })
