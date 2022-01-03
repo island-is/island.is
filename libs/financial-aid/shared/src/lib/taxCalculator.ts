@@ -163,6 +163,12 @@ export const acceptedAmountBreakDown = (amount?: Amount): Calculations[] => {
     return []
   }
 
+  const isPos =
+    calculatePersonalTaxAllowanceFromAmount(
+      amount.personalTaxCredit,
+      amount.spousePersonalTaxCredit,
+    ) > 0
+
   const deductionFactors =
     amount?.deductionFactors?.map((deductionFactor) => {
       return {
@@ -191,7 +197,9 @@ export const acceptedAmountBreakDown = (amount?: Amount): Calculations[] => {
     },
     {
       title: 'Persónuafsláttur',
-      calculation: `${calculatePersonalTaxAllowanceFromAmount(
+      calculation: `${
+        isPos ? '+' : ''
+      } ${calculatePersonalTaxAllowanceFromAmount(
         amount.personalTaxCredit,
         amount.spousePersonalTaxCredit,
       ).toLocaleString('de-DE')} kr.`,
