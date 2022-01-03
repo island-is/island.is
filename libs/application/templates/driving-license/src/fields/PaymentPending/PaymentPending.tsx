@@ -23,7 +23,7 @@ export const PaymentPending: FC<Props> = (props) => {
     'createCharge.data.paymentUrl',
   )
 
-  const submitBack = useSubmitApplication({
+  const [submitBack, backError] = useSubmitApplication({
     application,
     refetch,
   })
@@ -36,7 +36,7 @@ export const PaymentPending: FC<Props> = (props) => {
     }
   }, [paymentUrl, submitBack, fromRedirect])
 
-  if (!paymentUrl) {
+  if (!paymentUrl || backError) {
     return (
       <PaymentError
         title={msg(m.submitErrorTitle)}
@@ -69,28 +69,26 @@ const ForwardToPaymentFlow: FC<{ url: string; message: string }> = ({
 
 const PollingForPayment: FC<Props> = ({ error, application, refetch }) => {
   const msg = useMsg(application)
-  const [submitError, setSubmitError] = useState(false)
-  const [hasSubmitted, setHasSubmitted] = useState(false)
 
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
     application.id,
   )
 
-  const submitApplication = useSubmitApplication({
+  const [submitApplication, submitError] = useSubmitApplication({
     application,
     refetch,
   })
 
   // automatically go to done state if payment has been fulfilled
   useEffect(() => {
-    if (!paymentStatus.fulfilled || hasSubmitted) {
+    if (!paymentStatus.fulfilled) {
       return
     }
 
     stopPolling()
 
     submitApplication()
-  }, [submitApplication, paymentStatus, hasSubmitted, stopPolling])
+  }, [submitApplication, paymentStatus, stopPolling])
 
   if (pollingError) {
     return <Text>{msg(m.examplePaymentPendingFieldError)}</Text>

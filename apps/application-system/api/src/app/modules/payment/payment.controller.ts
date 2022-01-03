@@ -30,7 +30,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
-import { isUuid } from 'uuidv4'
 import { CreateChargeInput } from './dto/createChargeInput.dto'
 import { PaymentAPI } from '@island.is/clients/payment'
 

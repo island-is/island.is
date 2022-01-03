@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client'
+import { MutationTuple, useMutation } from '@apollo/client'
 import { DefaultEvents, Application } from '@island.is/application/core'
 import { SUBMIT_APPLICATION } from './queries.graphql'
 
@@ -7,7 +7,16 @@ export interface UseSubmitApplication {
     application: Application
     refetch: (() => void) | undefined
     event?: DefaultEvents
-  }): () => void
+  }): MutationTuple<
+    void,
+    {
+      input: {
+        id: Application['id']
+        event: DefaultEvents
+        answers: Application['answers']
+      }
+    }
+  >
 }
 
 export const useSubmitApplication: UseSubmitApplication = ({
@@ -15,7 +24,7 @@ export const useSubmitApplication: UseSubmitApplication = ({
   refetch,
   event = DefaultEvents.SUBMIT,
 }) => {
-  const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
+  return useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
     onCompleted: () => {
       refetch?.()
@@ -28,6 +37,4 @@ export const useSubmitApplication: UseSubmitApplication = ({
       },
     },
   })
-
-  return submitApplication
 }
