@@ -8432,6 +8432,27 @@
         }
       }
     },
+    "shared-pii": {
+      "root": "libs/shared/pii",
+      "sourceRoot": "libs/shared/pii/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/shared/pii/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/pii"],
+          "options": {
+            "jestConfig": "libs/shared/pii/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "shared-problem": {
       "root": "libs/shared/problem",
       "sourceRoot": "libs/shared/problem/src",
@@ -8907,6 +8928,27 @@
           "outputs": ["coverage/libs/testing/nest"],
           "options": {
             "jestConfig": "libs/testing/nest/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "user-monitoring": {
+      "root": "libs/user-monitoring",
+      "sourceRoot": "libs/user-monitoring/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/user-monitoring/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/user-monitoring"],
+          "options": {
+            "jestConfig": "libs/user-monitoring/jest.config.js",
             "passWithNoTests": true
           }
         }
