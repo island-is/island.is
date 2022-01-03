@@ -138,9 +138,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
       <AccordionListItem title="Málflutningur" breakSpaces>
         <Text>{workingCase.litigationPresentations}</Text>
       </AccordionListItem>
-      {(isRestrictionCase(workingCase.type) ||
-        workingCase.sessionArrangements !==
-          SessionArrangements.REMOTE_SESSION) && (
+      {isRestrictionCase(workingCase.type) && (
         <Box marginBottom={3}>
           <Text>{formatMessage(m.sections.conclusion.disclaimer)}</Text>
         </Box>

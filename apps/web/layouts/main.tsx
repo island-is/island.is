@@ -222,7 +222,7 @@ const Layout: NextComponentType<
                 href={href}
                 as="font"
                 type="font/woff2"
-                crossOrigin="true"
+                crossOrigin="anonymous"
               />
             )
           })}
