@@ -5,6 +5,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Notification } from './types'
 import { isDefined } from './utils'
 import { FIREBASE_PROVIDER } from '../../../constants'
+import { UserProfileApi } from '../../../../gen/fetch'
 
 export class PushNotificationError extends Error {
   constructor(public readonly firebaseErrors: firebaseAdmin.FirebaseError[]) {
@@ -37,14 +38,18 @@ export class NotificationDispatchService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(FIREBASE_PROVIDER) private firebase: firebaseAdmin.app.App,
+    private userProfileApi: UserProfileApi,
   ) {}
 
   async sendPushNotification(
     notification: Notification,
     nationalId: string,
   ): Promise<void> {
-    // TODO: call user-profile service to get tokens
-    const tokens: string[] = []
+    const deviceTokensResponse = await this.userProfileApi.userTokenControllerGetDeviceTokens(
+      { nationalId },
+    )
+
+    const tokens = deviceTokensResponse.map((token) => token.deviceToken)
 
     if (tokens.length === 0) {
       this.logger.debug(`No push-notification tokens found for ${nationalId}`)

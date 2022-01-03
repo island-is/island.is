@@ -24,6 +24,11 @@ const required = (name: string): string => {
 required('GOOGLE_APPLICATION_CREDENTIALS')
 
 export const environment = {
+  identityServerPath: required('IDENTITY_SERVER_PATH'),
+  userProfileServiceBasePath: required('SERVICE_USER_PROFILE_BASEPATH'),
+  notificationsClientId: required('USER_NOTIFICATION_CLIENT_ID'),
+  notificationsClientSecret: required('USER_NOTIFICATION_CLIENT_SECRET'),
+
   mainQueueName: required('MAIN_QUEUE_NAME'),
   deadLetterQueueName: env.DEAD_LETTER_QUEUE_NAME,
 

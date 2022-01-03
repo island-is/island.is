@@ -9,6 +9,8 @@ import { NotificationsWorkerService } from './notificationsWorker.service'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { MessageProcessorService } from './messageProcessor.service'
 import { FIREBASE_PROVIDER } from '../../../constants'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import * as userProfile from '../../../../gen/fetch'
 
 @Module({
   imports: [
@@ -33,6 +35,25 @@ import { FIREBASE_PROVIDER } from '../../../constants'
     {
       provide: FIREBASE_PROVIDER,
       useFactory: () => firebaseAdmin.initializeApp(),
+    },
+    {
+      provide: userProfile.UserProfileApi,
+      useFactory: () =>
+        new userProfile.UserProfileApi(
+          new userProfile.Configuration({
+            basePath: environment.userProfileServiceBasePath,
+            fetchApi: createEnhancedFetch({
+              name: 'services-user-notification',
+              autoAuth: {
+                issuer: environment.identityServerPath,
+                clientId: environment.notificationsClientId,
+                clientSecret: environment.notificationsClientSecret,
+                scope: ['@island.is/user-profile:admin'],
+                mode: 'auto',
+              },
+            }),
+          }),
+        ),
     },
   ],
 })
