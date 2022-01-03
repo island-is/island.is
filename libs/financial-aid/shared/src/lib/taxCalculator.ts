@@ -5,7 +5,7 @@ export const taxInfoNumbers = {
   },
   '2022': {
     taxPercentage: 31.45,
-    personalTaxAllowance: 50792,
+    personalTaxAllowance: 53916,
   },
 }
 
