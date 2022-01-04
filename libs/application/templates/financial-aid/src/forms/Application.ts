@@ -5,7 +5,7 @@ import {
   FormModes,
 } from '@island.is/application/core'
 
-export const Apply: Form = buildForm({
+export const Application: Form = buildForm({
   id: 'ApprovedApplicationForm',
   title: 'Samþykkt',
   children: [
