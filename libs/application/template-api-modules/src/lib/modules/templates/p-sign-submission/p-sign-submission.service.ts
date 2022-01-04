@@ -8,12 +8,18 @@ import {
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
 import { NationalRegistry } from './types'
+import { Application, getValueViaPath } from '@island.is/application/core'
+import { FileStorageService } from '@island.is/file-storage'
 
 @Injectable()
 export class PSignSubmissionService {
-  constructor(private readonly syslumennService: SyslumennService) {}
+  constructor(
+    private readonly syslumennService: SyslumennService,
+    private readonly fileStorageService: FileStorageService,
+  ) {}
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
+    const attachments = await this.prepareAttachments(application)
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
 
@@ -60,5 +66,31 @@ export class PSignSubmissionService {
       throw new Error(`Application submission failed`)
     }
     return { success: result.success, id: result.caseNumber }
+  }
+
+  private async prepareAttachments(
+    application: Application,
+  ): Promise<{name: String, url: string}[]> {
+    const attachments = getValueViaPath(
+      application.answers,
+      'attachments',
+    ) as Array<{ key: string; name: string }>
+    const hasAttachments = attachments && attachments?.length > 0
+
+    if (!hasAttachments) {
+      return []
+    }
+
+    return await Promise.all(
+      attachments.map(async ({ key, name }) => {
+        const url = (application.attachments as {
+          [key: string]: string
+        })[key]
+        console.log(url)
+        const signedUrl = await this.fileStorageService.getFileContentAsBase64(url)
+        console.log(signedUrl)
+        return { name, url: signedUrl }
+      }),
+    )
   }
 }

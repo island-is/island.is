@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import { Box, InputFileUpload, Stack } from '@island.is/island-ui/core'
+import { Box, Stack } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { Application, FieldBaseProps } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import Photo from '../Photo'
+import { FileUploadController } from '@island.is/shared/form-fields'
 
 interface PhotoUploadProps {
   application: Application
@@ -50,18 +51,12 @@ const PhotoUpload = ({ application }: PhotoUploadProps & FieldBaseProps) => {
       <Stack space={5}>
         <Photo application={application} img={image} bulletsView={true} />
         <Box>
-          <InputFileUpload
-            fileList={fileName}
+          <FileUploadController
+            application={application}
+            id='attachments'
             header={formatMessage(m.qualityPhotoFileUploadTitle)}
             description={formatMessage(m.qualityPhotoFileUploadDescription)}
             buttonLabel={formatMessage(m.qualityPhotoUploadButtonLabel)}
-            accept=".jpeg, .png, .jpg"
-            onChange={onChange}
-            onRemove={() => {
-              setFileName([])
-              setImage('')
-              updateApp('', '')
-            }}
           />
         </Box>
       </Stack>
