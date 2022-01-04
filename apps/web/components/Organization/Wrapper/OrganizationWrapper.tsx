@@ -1,7 +1,6 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useMemo } from 'react'
 import {
   Image,
-  LinkGroup,
   Namespace,
   Organization,
   OrganizationPage,
@@ -69,6 +68,7 @@ interface WrapperProps {
   minimal?: boolean
   showSecondaryMenu?: boolean
   namespace: Namespace
+  showExternalLinks: boolean
 }
 
 interface HeaderProps {
@@ -269,6 +269,22 @@ const SecondaryMenu = ({
   </Box>
 )
 
+const getActiveNavigationItemTitle = (
+  navigationItems: NavigationItem[],
+  clientUrl: string,
+) => {
+  for (const item of navigationItems) {
+    if (clientUrl === item.href) {
+      return item.title
+    }
+    for (const childItem of item.items) {
+      if (clientUrl === childItem.href) {
+        return childItem.title
+      }
+    }
+  }
+}
+
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
   pageDescription,
@@ -284,15 +300,21 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   minimal = false,
   showSecondaryMenu = true,
   namespace,
+  showExternalLinks = false,
 }) => {
-  const Router = useRouter()
+  const router = useRouter()
 
   const secondaryNavList: NavigationItem[] =
     organizationPage.secondaryMenu?.childrenLinks.map(({ text, url }) => ({
       title: text,
       href: url,
-      active: Router.asPath === url,
+      active: router.asPath === url,
     })) ?? []
+
+  const activeNavigationItemTitle = useMemo(
+    () => getActiveNavigationItemTitle(navigationData.items, router.asPath),
+    [router.asPath],
+  )
 
   const metaTitleSuffix =
     pageTitle !== organizationPage.title ? ` | ${organizationPage.title}` : ''
@@ -333,7 +355,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   baseId="pageNav"
                   items={navigationData.items}
                   title={navigationData.title}
-                  activeItemTitle={navigationData.activeItemTitle}
+                  activeItemTitle={activeNavigationItemTitle}
                   renderLink={(link, item) => {
                     return item?.href ? (
                       <NextLink href={item?.href}>{link}</NextLink>
@@ -373,7 +395,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     isMenuDialog={true}
                     items={navigationData.items}
                     title={navigationData.title}
-                    activeItemTitle={navigationData.activeItemTitle}
+                    activeItemTitle={activeNavigationItemTitle}
                     renderLink={(link, item) => {
                       return item?.href ? (
                         <NextLink href={item?.href}>{link}</NextLink>
@@ -421,9 +443,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                       }}
                     />
                   )}
-                  <OrganizationExternalLinks
-                    organizationPage={organizationPage}
-                  />
+                  {showExternalLinks && (
+                    <OrganizationExternalLinks
+                      organizationPage={organizationPage}
+                    />
+                  )}
+
                   {pageDescription && (
                     <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
                       <Text variant="default">{pageDescription}</Text>

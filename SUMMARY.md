@@ -154,7 +154,6 @@
     - [Institution Collaboration](libs/application/templates/institution-collaboration/README.md)
     - [Application Templates Login Service](libs/application/templates/login-service/README.md)
     - [Application Templates Parental Leave](libs/application/templates/parental-leave/README.md)
-    - [Payable Template](libs/application/templates/payable-dummy-template/README.md)
     - [Application Templates Public Debt Payment Plan](libs/application/templates/public-debt-payment-plan/README.md)
     - [Reference Template](libs/application/templates/reference-template/README.md)
   - [UI Components](libs/application/ui-components/README.md)
@@ -170,6 +169,7 @@
   - [Clients Assets](libs/clients/assets/README.md)
   - [Auth Public API Client](libs/clients/auth-public-api/README.md)
   - [Clients Criminal Record](libs/clients/criminal-record/README.md)
+  - [Clients Data Protection Complaint](libs/clients/data-protection-complaint/README.md)
   - [Clients Document Provider](libs/clients/document-provider/README.md)
   - [Documents (Pósthólf)](libs/clients/documents/README.md)
   - [Clients Driving License V1 / V2](libs/clients/driving-license/README.md)
@@ -186,6 +186,8 @@
   - [Regulations](libs/clients/regulations/README.md)
     - [Rsk](libs/clients/rsk/v1/README.md)
     - [RSK V2](libs/clients/rsk/v2/README.md)
+  - [Clients Syslumenn](libs/clients/syslumenn/README.md)
+  - [User Profile Client](libs/clients/user-profile/README.md)
   - [VMST](libs/clients/vmst/README.md)
   - [Zendesk Service](libs/clients/zendesk/README.md)
 - [CMS](libs/cms/README.md)
@@ -240,6 +242,7 @@
   - [Constants](libs/shared/constants/README.md)
   - [Form Fields](libs/shared/form-fields/README.md)
   - [Mocking](libs/shared/mocking/README.md)
+  - [Shared Pii](libs/shared/pii/README.md)
   - [Problem Types](libs/shared/problem/README.md)
   - [Shared Translations](libs/shared/translations/README.md)
   - [Types](libs/shared/types/README.md)
@@ -247,6 +250,7 @@
   - [Testing Containers](libs/testing/containers/README.md)
   - [Testing Fixtures](libs/testing/fixtures/README.md)
   - [Testing Nest](libs/testing/nest/README.md)
+- [User Monitoring](libs/user-monitoring/README.md)
 
 ## Reference
 
