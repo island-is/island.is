@@ -1,3 +1,4 @@
+import { NationalRegistryScope } from '@island.is/auth/scopes'
 import { defineConfig } from '@island.is/nest/config'
 import * as z from 'zod'
 
@@ -33,7 +34,7 @@ export const AssetsClientConfig = defineConfig<z.infer<typeof schema>>({
           '@island.is/clients/national-registry',
         clientSecret: env.required('XROAD_PROPERTIES_CLIENT_SECRET'),
         scope: env.optionalJSON('XROAD_PROPERTIES_SCOPE') ?? [
-          '@skra.is/properties',
+          NationalRegistryScope.properties,
           'api_resource.scope',
         ],
       },
