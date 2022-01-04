@@ -204,7 +204,7 @@ export const editorMsgs = defineMessages({
   },
   signedDocumentUploadDescr: {
     id: 'ap.regulations-admin:draft-labels-signeddocument-description',
-    defaultMessage: '', // 'Leyfileg skráarsnið: PDF'
+    defaultMessage: ' ', // 'Leyfileg skráarsnið: PDF'
   },
   signedDocumentClear: {
     id: 'ap.regulations-admin:draft-labels-signeddocument-clear',

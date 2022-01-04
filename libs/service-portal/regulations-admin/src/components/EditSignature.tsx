@@ -209,7 +209,9 @@ export const EditSignature: StepComponent = (props) => {
         <InputFileUpload
           fileList={uploadStatus.file || []}
           header={t(msg.signedDocumentUploadDragPrompt)}
-          description={t(msg.signedDocumentUploadDescr) || undefined}
+          description={
+            t(msg.signedDocumentUploadDescr).replace(/^\s+$/, '') || undefined
+          }
           buttonLabel={t(msg.signedDocumentUpload)}
           onChange={uploadSignedPDF}
           onRetry={retryUpload}
