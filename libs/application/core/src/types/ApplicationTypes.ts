@@ -90,7 +90,7 @@ export const ApplicationConfigurations = {
     translation: 'gpt.application',
   },
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: {
-    slug: 'almennt-fiskveidileyfi',
+    slug: 'veidileyfi',
     translation: 'gfl.application',
   },
   [ApplicationTypes.CRIMINAL_RECORD]: {
