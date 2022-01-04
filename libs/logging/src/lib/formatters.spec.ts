@@ -1,24 +1,25 @@
-import { removeNationalIds } from './remove-national-ids'
 import { MESSAGE } from 'triple-beam'
 import { TransformableInfo } from 'logform'
 
-const messageSymbol = (MESSAGE as unknown) as string
+import { maskNationalIdFormatter } from './formatters'
 
-describe('removeNationalIds', () => {
+describe('maskNationalIdFormatter', () => {
+  const messageSymbol = (MESSAGE as unknown) as string
+
   it('should mask national ids', () => {
     // Arrange
-    const transformer = removeNationalIds()
+    const transformer = maskNationalIdFormatter()
 
     // Act
     const result = transformer.transform({
       level: 'INFO',
       message: 'Ignored',
-      [messageSymbol]: 'Test 1234561234, 123456-1234',
+      [messageSymbol]: 'Test 0101307789, 010130-7789',
     })
 
     // Assert
     expect((result as TransformableInfo)[messageSymbol]).toMatchInlineSnapshot(
-      `"Test **REMOVE_PII: 1234561234**, **REMOVE_PII: 123456-1234**"`,
+      `"Test **REMOVE_PII: 0101307789**, **REMOVE_PII: 010130-7789**"`,
     )
   })
 })
