@@ -172,7 +172,6 @@ const HearingArrangements = () => {
     return false
   }
 
-
   return (
     <PageLayout
       workingCase={workingCase}
