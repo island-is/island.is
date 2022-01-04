@@ -3,8 +3,6 @@ import { signIn, signOut } from 'next-auth/client'
 
 import { toast } from '@island.is/island-ui/core'
 
-import { api } from '../services'
-
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (networkError) {
     toast.error(networkError.message)
