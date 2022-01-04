@@ -6,17 +6,17 @@ import { RskCompanyVat } from './rskCompanyVat.model'
 
 @ObjectType()
 export class RskCompanyInfo {
-  @Field(() => [RskCompanyFormOfOperation], { defaultValue: [] })
-  formOfOperation?: RskCompanyFormOfOperation[]
+  @Field(() => [RskCompanyFormOfOperation])
+  formOfOperation: RskCompanyFormOfOperation[] = []
 
-  @Field(() => [RskCompanyAddress], { defaultValue: [] })
-  address?: RskCompanyAddress[]
+  @Field(() => [RskCompanyAddress])
+  address: RskCompanyAddress[] = []
 
-  @Field(() => [RskCompanyRelatedParty], { defaultValue: [] })
-  relatedParty?: RskCompanyRelatedParty[]
+  @Field(() => [RskCompanyRelatedParty])
+  relatedParty: RskCompanyRelatedParty[] = []
 
-  @Field(() => [RskCompanyVat], { defaultValue: [] })
-  vat?: RskCompanyVat[]
+  @Field(() => [RskCompanyVat])
+  vat: RskCompanyVat[] = []
 }
 
 @ObjectType()

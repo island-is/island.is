@@ -1,7 +1,6 @@
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { RskCompany } from './models/rskCompany.model'
-import { Audit } from '@island.is/nest/audit'
+import { RskCompany, RskCompanyInfo } from './models/rskCompany.model'
 import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import { RskCompanyInfoService } from './rsk-company-info.service'
 import { RskCompanyInfoInput } from './dto/RskCompanyInfo.input'
@@ -41,7 +40,6 @@ export class RskCompanyInfoResolver {
   @Query(() => RskCompanySearchItems, {
     name: 'rskCompanies',
   })
-  @Audit()
   async companyInformationSearch(
     @Args('input', { type: () => RskCompanyInfoSearchInput })
     input: RskCompanyInfoSearchInput,
@@ -54,23 +52,16 @@ export class RskCompanyInfoResolver {
     )
   }
 
-  @Audit()
-  @ResolveField(() => RskCompany)
-  async companySearchItems(
-    @Parent() parent: RskCompanySearchItems,
-  ): Promise<RskCompany[]> {
-    this.logger.debug('RskCompanySearchItems')
-    return parent.items ?? []
-  }
-
-  @Audit()
-  @ResolveField(() => RskCompany)
+  @ResolveField(() => RskCompanyInfo)
   async companyInfo(
     @Parent() rskCompanyItem: RskCompany,
-  ): Promise<RskCompany | null> {
+  ): Promise<RskCompanyInfo | undefined> {
     this.logger.debug('Resolving companyInfo')
-    return await this.rskCompanyInfoService.getCompanyInformationWithExtra(
+    if (rskCompanyItem.companyInfo) return rskCompanyItem.companyInfo
+
+    const company = await this.rskCompanyInfoService.getCompanyInformationWithExtra(
       rskCompanyItem.nationalId ?? '',
     )
+    return company.companyInfo
   }
 }

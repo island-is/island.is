@@ -34,47 +34,53 @@ export class RskCompanyInfoService {
       dateOfRegistration: new Date(company.skrad),
       status: company.stada,
       companyInfo: {
-        formOfOperation: company.rekstrarform?.map((item) => {
-          return {
-            type: item.tegund,
-            name: item.heiti,
-            suffix: item.vidskeyti,
-          } as RskCompanyFormOfOperation
-        }),
-        address: company.heimilisfang?.map((item) => {
-          return {
-            streetAddress: item.heimilisfang1,
-            streetAddress2: item.heimilisfang2,
-            postalCode: item.postnumer,
-            city: item.sveitarfelag,
-            cityNumber: item.sveitarfelagsnumer,
-            country: item.land,
-          } as RskCompanyAddress
-        }),
-        relatedParty: company.tengdirAdilar?.map((item) => {
-          return {
-            type: item.tegund,
-            nationalId: item.kennitala,
-            name: item.nafn,
-          } as RskCompanyRelatedParty
-        }),
-        vat: company.virdisaukaskattur?.map((item) => {
-          return {
-            vatNumber: item.vskNumer,
-            dateOfRegistration: new Date(item.skrad),
-            status: item.stada,
-            dateOfDeregistration: new Date(item.afskraning),
-            classification: item.flokkun?.map(
-              (classification) =>
-                ({
-                  type: classification.gerd,
-                  classificationSystem: classification.flokkunarkerfi,
-                  number: classification.numer,
-                  name: classification.heiti,
-                } as RskCompanyClassification),
-            ),
-          } as RskCompanyVat
-        }),
+        formOfOperation:
+          company.rekstrarform?.map((item) => {
+            return {
+              type: item.tegund,
+              name: item.heiti,
+              suffix: item.vidskeyti,
+            } as RskCompanyFormOfOperation
+          }) ?? [],
+        address:
+          company.heimilisfang?.map((item) => {
+            return {
+              streetAddress: item.heimilisfang1,
+              streetAddress2: item.heimilisfang2,
+              postalCode: item.postnumer,
+              city: item.sveitarfelag,
+              cityNumber: item.sveitarfelagsnumer,
+              country: item.land,
+            } as RskCompanyAddress
+          }) ?? [],
+        relatedParty:
+          company.tengdirAdilar?.map((item) => {
+            return {
+              type: item.tegund,
+              nationalId: item.kennitala,
+              name: item.nafn,
+            } as RskCompanyRelatedParty
+          }) ?? [],
+        vat:
+          company.virdisaukaskattur?.map((item) => {
+            return {
+              vatNumber: item.vskNumer,
+              dateOfRegistration: new Date(item.skrad),
+              status: item.stada,
+              dateOfDeregistration: item.afskraning
+                ? new Date(item.afskraning)
+                : undefined,
+              classification: item.flokkun?.map(
+                (classification) =>
+                  ({
+                    type: classification.gerd,
+                    classificationSystem: classification.flokkunarkerfi,
+                    number: classification.numer,
+                    name: classification.heiti,
+                  } as RskCompanyClassification),
+              ),
+            } as RskCompanyVat
+          }) ?? [],
       },
       lastUpdated: company.sidastUppfaert
         ? new Date(company.sidastUppfaert)
