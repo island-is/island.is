@@ -1,22 +1,14 @@
-import {
-  Inject,
-  Injectable,
-  HttpService,
-  forwardRef,
-  BadRequestException,
-  NotFoundException,
-} from '@nestjs/common'
+import { Inject, Injectable, HttpService, forwardRef } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import format from 'date-fns/format'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Role, User } from '../auth'
+import { User } from '../auth'
 import { environment } from '../../../environments'
 import { FjarsyslaService } from '../fjarsysla'
 import { RecyclingPartnerService } from '../recyclingPartner'
-import { SamgongustofaService } from '../samgongustofa/samgongustofa.service'
 import { VehicleInformation } from '../samgongustofa'
 import {
   RecyclingRequestModel,
@@ -37,8 +29,6 @@ export class RecyclingRequestService {
     private fjarsyslaService: FjarsyslaService,
     @Inject(forwardRef(() => RecyclingPartnerService))
     private recycllingPartnerService: RecyclingPartnerService,
-    @Inject(forwardRef(() => SamgongustofaService))
-    private samgongustofaService: SamgongustofaService,
     private vehicleService: VehicleService,
   ) {}
 
@@ -218,10 +208,11 @@ export class RecyclingRequestService {
   async createRecyclingRequest(
     user: User,
     requestType: RecyclingRequestTypes,
-    permno: string,
+    vehicle: VehicleInformation,
   ): Promise<typeof RecyclingRequestResponse> {
     const nameOfRequestor = user.name
     const partnerId = user.partnerId
+    const permno = vehicle.permno
     const errors = new RequestErrors()
     try {
       this.logger.info(
@@ -306,10 +297,7 @@ export class RecyclingRequestService {
       // 6. Set requestType to 'paymentInitiated'
       // If we encounter error then update requestType to 'paymentFailed'
       // If we encounter error with 'partnerId' then there is no request saved
-      if (
-        requestType == 'deregistered' &&
-        [Role.developer, Role.recyclingCompany].includes(user.role)
-      ) {
+      if (requestType == 'deregistered') {
         // 1. Check 'pendingRecycle'/'handOver' requestType
         this.logger.info(`Check "pendingRecycle" status on vehicle: ${permno}`)
         const resRequestType = await this.findAllWithPermno(permno)
@@ -462,30 +450,6 @@ export class RecyclingRequestService {
       }
       // requestType: 'pendingRecycle' or 'cancelled'
       else {
-        if (
-          !(requestType === 'pendingRecycle' || requestType === 'cancelled')
-        ) {
-          this.logger.error(
-            `User could not use this requestType: ${requestType}`,
-          )
-          throw new BadRequestException(
-            `User doesn't have right call this action`,
-          )
-        }
-        // Check if user has the vehicle
-        const vehicle = await this.samgongustofaService.getUserVehicle(
-          user.nationalId,
-          permno,
-        )
-        if (!vehicle) {
-          this.logger.error(
-            `User is not the car's owner or the car could not be recycle.`,
-          )
-          throw new NotFoundException(
-            `User doesn't have right to deregistered the vehicle`,
-          )
-        }
-
         this.logger.info(`create requestType: ${requestType} for ${permno}`)
         await newRecyclingRequest.save()
       }

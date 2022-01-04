@@ -33,20 +33,8 @@ const SkilavottordVehicleOwnerMutation = gql`
 `
 
 const SkilavottordVehicleMutation = gql`
-  mutation skilavottordVehicleMutation(
-    $vinNumber: String!
-    $newRegDate: DateTime!
-    $color: String!
-    $type: String!
-    $permno: String!
-  ) {
-    createSkilavottordVehicle(
-      vinNumber: $vinNumber
-      newRegDate: $newRegDate
-      color: $color
-      type: $type
-      permno: $permno
-    )
+  mutation skilavottordVehicleMutation($permno: String!) {
+    createSkilavottordVehicle(permno: $permno)
   }
 `
 
@@ -115,8 +103,7 @@ const Confirm = ({ apolloState }: PropTypes) => {
 
     await createSkilavottordVehicle({
       variables: {
-        ...car,
-        newRegDate: formatDate(car.firstRegDate, dateFormat.is),
+        permno: car?.permno,
       },
     })
     router.replace(`${routes.recycleVehicle.baseRoute}/${id}/handover`)

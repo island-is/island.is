@@ -1,5 +1,6 @@
 import { Inject, NotFoundException, forwardRef } from '@nestjs/common'
 import { Query, Resolver, Mutation, Args } from '@nestjs/graphql'
+import parse from 'date-fns/parse'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -8,7 +9,7 @@ import { Authorize, CurrentUser, User, Role } from '../auth'
 
 import { VehicleModel } from './vehicle.model'
 import { VehicleService } from './vehicle.service'
-import { SamgongustofaService } from '../samgongustofa/samgongustofa.service'
+import { SamgongustofaService } from '../samgongustofa'
 
 @Authorize()
 @Resolver(() => VehicleModel)
@@ -56,29 +57,29 @@ export class VehicleResolver {
   async createSkilavottordVehicle(
     @CurrentUser() user: User,
     @Args('permno') permno: string,
-    @Args('type') type: string,
-    @Args('color') color: string,
-    @Args('newRegDate') newReg: Date,
-    @Args('vinNumber') vin: string,
   ) {
     const vehicle = await this.samgongustofaService.getUserVehicle(
       user.nationalId,
       permno,
     )
-    if (!(vehicle || Role.developer === user.role)) {
+    if (!vehicle) {
       this.logger.error(
         `User does not have right to call createSkilavottordVehicle action`,
       )
-      throw new NotFoundException()
+      throw new NotFoundException(`User does not have this vehicle`)
     }
 
     const newVehicle = new VehicleModel()
-    newVehicle.vinNumber = vin
-    newVehicle.newregDate = newReg
-    newVehicle.vehicleColor = color
-    newVehicle.vehicleType = type
+    newVehicle.vinNumber = vehicle.vinNumber
+    newVehicle.newregDate = parse(
+      vehicle.firstRegDate,
+      'dd.MM.yyyy',
+      new Date(),
+    )
+    newVehicle.vehicleColor = vehicle.color
+    newVehicle.vehicleType = vehicle.type
     newVehicle.ownerNationalId = user.nationalId
-    newVehicle.vehicleId = permno
+    newVehicle.vehicleId = vehicle.permno
     return await this.vehicleService.create(newVehicle)
   }
 }

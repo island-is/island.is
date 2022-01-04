@@ -32,6 +32,7 @@ import {
   RequestErrors,
   RequestStatus,
   Role,
+  RecyclingRequestTypes,
 } from '@island.is/skilavottord-web/graphql/schema'
 
 const SkilavottordVehicleReadyToDeregisteredQuery = gql`
@@ -50,7 +51,7 @@ const SkilavottordVehicleReadyToDeregisteredQuery = gql`
 const SkilavottordRecyclingRequestMutation = gql`
   mutation skilavottordRecyclingRequestMutation(
     $permno: String!
-    $requestType: String!
+    $requestType: RecyclingRequestTypes!
   ) {
     createSkilavottordRecyclingRequest(
       permno: $permno
@@ -108,7 +109,7 @@ const Confirm: FC = () => {
     setRecyclingRequest({
       variables: {
         permno: id,
-        requestType: 'deregistered',
+        requestType: RecyclingRequestTypes.deregistered,
       },
     })
   }

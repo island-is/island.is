@@ -30,7 +30,9 @@ export class AccessControlResolver {
     input: CreateAccessControlInput | UpdateAccessControlInput,
   ) {
     if (input.role === Role.recyclingCompany && !input.partnerId) {
-      throw new BadRequestException()
+      throw new BadRequestException(
+        `User is not recyclingCompany or partnerId not found`,
+      )
     }
   }
 
