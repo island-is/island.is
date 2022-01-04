@@ -17,6 +17,7 @@ export enum ApplicationTypes {
   ACCIDENT_NOTIFICATION = 'AccidentNotification',
   GENERAL_PETITION = 'GeneralPetitionService',
   CRIMINAL_RECORD = 'CriminalRecord',
+  FINANCIAL_AID = 'FinancialAid',
 }
 
 export const ApplicationConfigurations = {
@@ -91,5 +92,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.CRIMINAL_RECORD]: {
     slug: 'sakavottord',
     translation: 'cr.application',
+  },
+  [ApplicationTypes.FINANCIAL_AID]: {
+    slug: 'fjarhagsadstod',
+    translation: 'fa.application',
   },
 }

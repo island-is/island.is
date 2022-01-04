@@ -171,6 +171,9 @@
       "@island.is/application/templates/family-matters-core/*": [
         "libs/application/templates/family-matters/core/src/*"
       ],
+      "@island.is/application/templates/financial-aid": [
+        "libs/application/templates/financial-aid/src/index.ts"
+      ],
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
       ],

@@ -37,6 +37,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/general-petition'),
   [ApplicationTypes.CRIMINAL_RECORD]: () =>
     import('@island.is/application/templates/criminal-record'),
+  [ApplicationTypes.FINANCIAL_AID]: () =>
+    import('@island.is/application/templates/financial-aid'),
 }
 
 export default templates

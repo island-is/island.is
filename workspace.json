@@ -2231,6 +2231,28 @@
         }
       }
     },
+    "application-templates-financial-aid": {
+      "root": "libs/application/templates/financial-aid",
+      "sourceRoot": "libs/application/templates/financial-aid/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/financial-aid/tsconfig.lib.json",
+              "libs/application/templates/financial-aid/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/financial-aid/**/*"
+            ]
+          }
+        }
+      }
+    },
     "application-templates-funding-government-projects": {
       "root": "libs/application/templates/funding-government-projects",
       "sourceRoot": "libs/application/templates/funding-government-projects/src",
