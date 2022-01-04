@@ -17,7 +17,6 @@ import {
 import { UserDeviceTokensDto } from './dto/userDeviceTokens.dto'
 import { UserProfileService } from './userProfile.service'
 import { UserProfile } from './userProfile.model'
-import { logger } from '@island.is/logging'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('User Profile')
@@ -49,18 +48,14 @@ export class UserTokenController {
     @Param('nationalId')
     nationalId: string,
   ): Promise<UserProfile> {
-    try {
-      const userProfile = await this.userProfileService.findByNationalId(
-        nationalId,
+    const userProfile = await this.userProfileService.findByNationalId(
+      nationalId,
+    )
+    if (!userProfile) {
+      throw new NotFoundException(
+        `A user profile with nationalId ${nationalId} does not exist`,
       )
-      if (!userProfile) {
-        throw new NotFoundException(
-          `A user profile with nationalId ${nationalId} does not exist`,
-        )
-      }
-      return userProfile
-    } catch (error) {
-      throw error
     }
+    return userProfile
   }
 }

@@ -1,5 +1,5 @@
 import { setup } from '../../../../test/setup'
-import request, { Response } from 'supertest'
+import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
 import { EmailVerification } from '../emailVerification.model'
