@@ -73,13 +73,11 @@ export const calculatePersonalTaxAllowanceUsed = (
 }
 
 export const calculatePersonalTaxAllowanceFromAmount = (
-  personalTaxCreditPercentage: number = 0,
-  spousedPersonalTaxCreditPercentage: number = 0,
+  personalTaxCreditPercentage = 0,
+  spousedPersonalTaxCreditPercentage = 0,
 ): number => {
   const taxInfoYear: TaxInfoYear = taxInfoNumbers
   const taxInfo = taxInfoYear[currentYear]
-
-  const taxPercentage = taxInfo.taxPercentage / 100
 
   const personalTaxAllowance = Math.floor(
     taxInfo.personalTaxAllowance * (personalTaxCreditPercentage / 100),
