@@ -252,7 +252,7 @@ const actionHandlers: {
 
   UPDATE_PROP: (state, { name, value, explicit }) => {
     const field = state.draft[name]
-    if (value !== field.value || explicit) {
+    if (value !== field.value || explicit === true) {
       // @ts-expect-error  (Fuu)
       field.value = tidyUp[field.type || '_'](value)
       field.dirty = true
@@ -585,6 +585,5 @@ export type RegDraftActions = ReturnType<typeof useDraftingState>['actions']
 
 export type StepComponent = (props: {
   draft: RegDraftForm
-  new?: boolean
   actions: ReturnType<typeof useDraftingState>['actions'] // FIXME: Ick! Ack!
 }) => ReturnType<FC>

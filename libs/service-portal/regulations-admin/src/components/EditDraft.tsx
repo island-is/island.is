@@ -88,7 +88,7 @@ const EditDraft = (props: EditDraftProps) => {
       <SaveDeleteButtons draft={draft} actions={actions} wrap />
 
       {draft ? (
-        <step.Component actions={actions} new={id === 'new'} draft={draft} />
+        <step.Component actions={actions} draft={draft} />
       ) : (
         <SkeletonLoader height={120} repeat={2} space={3} />
       )}

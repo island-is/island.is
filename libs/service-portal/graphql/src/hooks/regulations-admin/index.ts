@@ -49,13 +49,13 @@ export const useRegulationDraftQuery = (
   if (loading) {
     return { loading }
   }
-  if (data) {
+  if (!data) {
     return {
-      data: data.getDraftRegulation as RegulationDraft,
+      error: error || new Error(`Error fetching regulation draft "${draftId}"`),
     }
   }
   return {
-    error: error || new Error(`Error fetching regulation draft "${draftId}"`),
+    data: data.getDraftRegulation as RegulationDraft,
   }
 }
 
@@ -73,13 +73,13 @@ export const useMinistriesQuery = (): QueryResult<RegulationMinistryList> => {
   if (loading) {
     return { loading }
   }
-  if (data) {
+  if (!data) {
     return {
-      data: data.getDraftRegulationsMinistries as RegulationMinistryList,
+      error: error || new Error(`Error fetching ministry list`),
     }
   }
   return {
-    error: error || new Error(`Error fetching ministry list`),
+    data: data.getDraftRegulationsMinistries as RegulationMinistryList,
   }
 }
 

@@ -2,7 +2,6 @@ import {
   DraftingStatus,
   DraftRegulationCancel,
   DraftRegulationChange,
-  RegulationDraft,
   RegulationDraftId,
 } from '@island.is/regulations/admin'
 import {
@@ -14,13 +13,8 @@ import {
 } from '@island.is/regulations'
 import { Kennitala, RegulationType } from '@island.is/regulations'
 import { Step } from '../types'
-import {
-  RegulationMinistry,
-  RegulationMinistryList,
-} from '@island.is/regulations/web'
+import { RegulationMinistryList } from '@island.is/regulations/web'
 import { MessageDescriptor } from 'react-intl'
-
-export type DraftIdFromParam = 'new' | RegulationDraftId
 
 export type StepNav = {
   name: Step
