@@ -40,6 +40,6 @@ describe('/krafa/rannsoknarheimild/domkrofur-og-lagaakvaedi/:id', () => {
     cy.getByTestid('lawsBroken').type(faker.lorem.words(5))
     cy.getByTestid('legalBasis').type(faker.lorem.words(5))
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', '/krafa/rannsoknarheimild/greinargerd/test_id')
+    cy.url().should('include', '/krafa/rannsoknarheimild/greinargerd')
   })
 })
