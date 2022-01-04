@@ -182,17 +182,16 @@ api:
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     NODE_OPTIONS: '--max-old-space-size=464'
-    PARTY_LETTER_REGISTRY_BASE_API_URL: 'http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     SEND_FROM_EMAIL: 'development@island.is'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
-    TEMPORARY_VOTER_REGISTRY_BASE_API_URL: 'http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_CRIMINAL_RECORD_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakavottord-PDF-v1'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
@@ -267,6 +266,7 @@ api:
     DOCUMENT_PROVIDER_CLIENT_SECRET_TEST: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST'
     DOCUMENT_PROVIDER_TOKEN_URL: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL'
     DOCUMENT_PROVIDER_TOKEN_URL_TEST: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST'
+    ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
     PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD'
     PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER'
@@ -331,8 +331,6 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
     NODE_OPTIONS: '--max-old-space-size=464'
     NOVA_USERNAME: 'IslandIs_User_Development'
-    PARTY_LETTER_REGISTRY_API_BASE_PATH: 'http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local'
-    PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: 'thorhildur@parallelradgjof.is'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
@@ -340,6 +338,7 @@ application-system-api:
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_CRIMINAL_RECORD_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakavottord-PDF-v1'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
     XROAD_HEALTH_INSURANCE_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected'
@@ -417,19 +416,6 @@ application-system-api:
     EMAIL_REPLY_TO_NAME: '/k8s/application-system/api/EMAIL_REPLY_TO_NAME'
     NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD'
     NOVA_URL: '/k8s/application-system-api/NOVA_URL'
-    PARTY_APPLICATION_NORTH_ADMIN_EMAIL: '/k8s/application-system/api/PARTY_APPLICATION_NORTH_ADMIN_EMAIL'
-    PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS'
-    PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL: '/k8s/application-system/api/PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL'
-    PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS'
-    PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL: '/k8s/application-system/api/PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL'
-    PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS'
-    PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL: '/k8s/application-system/api/PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL'
-    PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS'
-    PARTY_APPLICATION_SOUTH_ADMIN_EMAIL: '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_ADMIN_EMAIL'
-    PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS'
-    PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL: '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL'
-    PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS'
-    PARTY_LETTER_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS'
     PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD'
     PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER'
     SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
@@ -592,16 +578,6 @@ endorsement-system-api:
     EMAIL_FROM_NAME: 'devland.is'
     EMAIL_REGION: 'eu-west-1'
     SERVERSIDE_FEATURES_ON: ''
-    TEMPORARY_VOTER_REGISTRY_API_URL: 'http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local'
-    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
-    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
-    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
-    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
-    XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
-    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
-    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
     - 'islandis'
     - 'application-system'
@@ -640,7 +616,6 @@ endorsement-system-api:
     max: 3
     min: 2
   secrets:
-    ACCESS_GROUP_DMR: '/k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
     SOFFIA_HOST_URL: '/k8s/endorsement-system-api/SOFFIA_HOST_URL'
@@ -772,57 +747,8 @@ namespaces:
     - 'download-service'
     - 'icelandic-names-registry'
     - 'endorsement-system'
-    - 'party-letter-registry'
-    - 'temporary-voter-registry'
     - 'air-discount-scheme'
-party-letter-registry-api:
-  enabled: true
-  env:
-    DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_party_letter_registry_api'
-    DB_USER: 'services_party_letter_registry_api'
-    SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces:
-    - 'islandis'
-    - 'application-system'
-  grantNamespacesEnabled: true
-  healthCheck:
-    liveness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-    readiness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-  image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-party-letter-registry-api'
-  initContainer:
-    containers:
-      - args:
-          - 'sequelize-cli'
-          - 'db:migrate'
-        command:
-          - 'npx'
-        name: 'migrations'
-    env:
-      DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'services_party_letter_registry_api'
-      DB_USER: 'services_party_letter_registry_api'
-      SERVERSIDE_FEATURES_ON: ''
-    secrets:
-      DB_PASS: '/k8s/services-party-letter-registry-api/DB_PASSWORD'
-  namespace: 'party-letter-registry'
-  replicaCount:
-    default: 2
-    max: 3
-    min: 2
-  secrets:
-    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-party-letter-registry-api/DB_PASSWORD'
-  securityContext:
-    allowPrivilegeEscalation: false
-    privileged: false
+    - 'user-notification'
 search-indexer-service:
   enabled: true
   env:
@@ -1126,6 +1052,10 @@ skilavottord-web:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET'
+    IDENTITY_SERVER_DOMAIN: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN'
+    IDENTITY_SERVER_LOGOUT_REDIRECT_URL: '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
+    NEXTAUTH_URL: '/k8s/skilavottord/web/NEXTAUTH_URL'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1160,7 +1090,7 @@ skilavottord-ws:
       hosts:
         - host: 'beta.staging01.devland.is'
           paths:
-            - '/app/skilavottord/api/'
+            - '/app/skilavottord/api/graphql'
   initContainer:
     containers:
       - args:
@@ -1187,6 +1117,7 @@ skilavottord-ws:
     FJARSYSLA_REST_PASS: '/k8s/skilavottord/FJARSYSLA_REST_PASS'
     FJARSYSLA_REST_URL: '/k8s/skilavottord-ws/FJARSYSLA_REST_URL'
     FJARSYSLA_REST_USER: '/k8s/skilavottord/FJARSYSLA_REST_USER'
+    IDENTITY_SERVER_ISSUER_URL: '/k8s/skilavottord/ws/IDENTITY_SERVER_ISSUER_URL'
     SAMGONGUSTOFA_REST_AUTH_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_REST_AUTH_URL'
     SAMGONGUSTOFA_REST_DEREG_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_REST_DEREG_URL'
     SAMGONGUSTOFA_REST_PASS: '/k8s/skilavottord/SAMGONGUSTOFA_REST_PASS'
@@ -1194,20 +1125,21 @@ skilavottord-ws:
     SAMGONGUSTOFA_SOAP_PASS: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_PASS'
     SAMGONGUSTOFA_SOAP_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_SOAP_URL'
     SAMGONGUSTOFA_SOAP_USER: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_USER'
-    SKILAVOTTORD_USER_LIST: '/k8s/skilavottord/SKILAVOTTORD_USER_LIST'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-temporary-voter-registry-api:
+user-notification:
+  args:
+    - 'main.js'
+  command:
+    - 'node'
   enabled: true
   env:
-    DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_temporary_voter_registry_api'
-    DB_USER: 'services_temporary_voter_registry_api'
+    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    MAIN_QUEUE_NAME: 'user-notification'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - 'islandis'
-    - 'endorsement-system'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1219,33 +1151,74 @@ temporary-voter-registry-api:
       path: '/liveness'
       timeoutSeconds: 3
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-temporary-voter-registry-api'
-  initContainer:
-    containers:
-      - args:
-          - 'sequelize-cli'
-          - 'db:migrate'
-        command:
-          - 'npx'
-        name: 'migrations'
-    env:
-      DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'services_temporary_voter_registry_api'
-      DB_USER: 'services_temporary_voter_registry_api'
-      SERVERSIDE_FEATURES_ON: ''
-    secrets:
-      DB_PASS: '/k8s/services-temporary-voter-registry-api/DB_PASSWORD'
-  namespace: 'temporary-voter-registry'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+      hosts:
+        - host: 'user-notification-xrd.internal.staging01.devland.is'
+          paths:
+            - '/'
+  namespace: 'user-notification'
+  podSecurityContext:
+    fsGroup: 65534
   replicaCount:
     default: 2
     max: 3
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-temporary-voter-registry-api/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification'
+    create: true
+    name: 'user-notification'
+user-notification-worker:
+  args:
+    - 'main.js'
+    - '--job'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    MAIN_QUEUE_NAME: 'user-notification'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+  namespace: 'user-notification'
+  podSecurityContext:
+    fsGroup: 65534
+  replicaCount:
+    default: 2
+    max: 3
+    min: 2
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification-worker'
+    create: true
+    name: 'user-notification-worker'
 web:
   basicAuth: '/k8s/web/basic_auth'
   enabled: true
@@ -1254,6 +1227,7 @@ web:
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
+    ENVIRONMENT: 'staging'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
     TRACKING_DOMAIN: 'beta.staging01.devland.is'
@@ -1295,6 +1269,8 @@ web:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
+    DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
     SENTRY_DSN: '/k8s/web/SENTRY_DSN'
   securityContext:
     allowPrivilegeEscalation: false

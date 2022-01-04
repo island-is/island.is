@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react'
 import {
   Box,
-  LoadingIcon,
   NavigationItem,
   Option,
   Select,
@@ -16,6 +15,7 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -23,7 +23,6 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
-  QueryGetSyslumennAuctionsArgs,
   SyslumennAuction,
 } from '@island.is/web/graphql/schema'
 import {
@@ -453,14 +452,7 @@ const Auctions: Screen<AuctionsProps> = ({
 
   const [showCount, setShowCount] = useState(10)
 
-  const { loading, error, data } = useQuery<
-    Query,
-    QueryGetSyslumennAuctionsArgs
-  >(GET_SYSLUMENN_AUCTIONS_QUERY, {
-    variables: {
-      input: {},
-    },
-  })
+  const { loading, error, data } = useQuery<Query>(GET_SYSLUMENN_AUCTIONS_QUERY)
 
   useEffect(() => {
     const hashString = window.location.hash.replace('#', '')
@@ -714,7 +706,7 @@ const Auctions: Screen<AuctionsProps> = ({
       >
         {loading && (
           <Box display="flex" marginTop={4} justifyContent="center">
-            <LoadingIcon size={48} />
+            <LoadingDots />
           </Box>
         )}
         {(error || !filteredAuctions.length) && !loading && (
@@ -939,11 +931,8 @@ Auctions.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetSyslumennAuctionsArgs>({
+    apolloClient.query<Query>({
       query: GET_SYSLUMENN_AUCTIONS_QUERY,
-      variables: {
-        input: {},
-      },
     }),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({

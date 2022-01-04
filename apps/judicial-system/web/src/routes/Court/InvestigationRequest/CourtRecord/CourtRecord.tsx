@@ -22,6 +22,7 @@ const CourtRecord = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
 
   useEffect(() => {
@@ -29,127 +30,114 @@ const CourtRecord = () => {
   }, [])
 
   useEffect(() => {
-    const defaultCourtAttendees = (wc: Case): string => {
-      let attendees = ''
+    if (isCaseUpToDate) {
+      const defaultCourtAttendees = (wc: Case): string => {
+        let attendees = ''
 
-      if (
-        wc.prosecutor &&
-        wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
-      ) {
-        attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n`
+        if (wc.prosecutor) {
+          attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n`
+        }
+
+        if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+          if (wc.accusedName) {
+            attendees += `${wc.accusedName} varnaraðili`
+          }
+        } else {
+          attendees += formatMessage(
+            m.sections.courtAttendees.defendantNotPresentAutofill,
+          )
+        }
+
+        if (
+          wc.defenderName &&
+          wc.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
+        ) {
+          attendees += `\n${wc.defenderName} skipaður ${
+            wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+          } varnaraðila`
+        }
+
+        if (wc.translator) {
+          attendees += `\n${wc.translator} túlkur`
+        }
+
+        return attendees
       }
 
-      if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-        if (wc.accusedName) {
-          attendees += `${wc.accusedName} varnaraðili`
-        }
-      } else {
-        attendees += formatMessage(
-          m.sections.courtAttendees.defendantNotPresentAutofill,
+      const theCase = workingCase
+
+      if (theCase.courtDate) {
+        autofill('courtStartDate', theCase.courtDate, theCase)
+      }
+
+      if (theCase.court) {
+        autofill(
+          'courtLocation',
+          `í ${
+            theCase.court.name.indexOf('dómur') > -1
+              ? theCase.court.name.replace('dómur', 'dómi')
+              : theCase.court.name
+          }`,
+          theCase,
         )
       }
 
-      if (
-        wc.defenderName &&
-        wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION &&
-        wc.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
-      ) {
-        attendees += `\n${wc.defenderName} skipaður ${
-          wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-        } varnaraðila`
+      if (theCase.courtAttendees !== '') {
+        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
       }
 
-      if (
-        wc.translator &&
-        wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
-      ) {
-        attendees += `\n${wc.translator} túlkur`
+      if (theCase.demands) {
+        autofill('prosecutorDemands', theCase.demands, theCase)
       }
 
-      return attendees
-    }
+      if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+        let autofillAccusedBookings = ''
 
-    const theCase = workingCase
+        if (theCase.defenderName) {
+          autofillAccusedBookings += `${formatMessage(
+            m.sections.accusedBookings.autofillDefender,
+            {
+              defender: theCase.defenderName,
+            },
+          )}\n\n`
+        }
 
-    if (theCase.courtDate) {
-      autofill('courtStartDate', theCase.courtDate, theCase)
-    }
+        if (theCase.translator) {
+          autofillAccusedBookings += `${formatMessage(
+            m.sections.accusedBookings.autofillTranslator,
+            {
+              translator: theCase.translator,
+            },
+          )}\n\n`
+        }
 
-    if (theCase.court) {
-      autofill(
-        'courtLocation',
-        `í ${
-          theCase.court.name.indexOf('dómur') > -1
-            ? theCase.court.name.replace('dómur', 'dómi')
-            : theCase.court.name
-        }`,
-        theCase,
-      )
-    }
-
-    if (theCase.courtAttendees !== '') {
-      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
-    }
-
-    if (theCase.demands) {
-      autofill('prosecutorDemands', theCase.demands, theCase)
-    }
-
-    if (theCase.sessionArrangements === SessionArrangements.REMOTE_SESSION) {
-      autofill(
-        'litigationPresentations',
-        formatMessage(m.sections.litigationPresentations.autofill),
-        theCase,
-      )
-    }
-
-    if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-      let autofillAccusedBookings = ''
-
-      if (theCase.defenderName) {
         autofillAccusedBookings += `${formatMessage(
-          m.sections.accusedBookings.autofillDefender,
-          {
-            defender: theCase.defenderName,
-          },
-        )}\n\n`
+          m.sections.accusedBookings.autofillRightToRemainSilent,
+        )}\n\n${formatMessage(
+          m.sections.accusedBookings.autofillCourtDocumentOne,
+        )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
+
+        autofill('accusedBookings', autofillAccusedBookings, theCase)
       }
 
-      if (theCase.translator) {
-        autofillAccusedBookings += `${formatMessage(
-          m.sections.accusedBookings.autofillTranslator,
-          {
-            translator: theCase.translator,
-          },
-        )}\n\n`
+      if (
+        theCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+        theCase.defenderIsSpokesperson &&
+        theCase.defenderName
+      ) {
+        autofill(
+          'accusedBookings',
+          formatMessage(m.sections.accusedBookings.autofillSpokeperson, {
+            spokesperson: theCase.defenderName,
+          }),
+          theCase,
+        )
       }
 
-      autofillAccusedBookings += `${formatMessage(
-        m.sections.accusedBookings.autofillRightToRemainSilent,
-      )}\n\n${formatMessage(
-        m.sections.accusedBookings.autofillCourtDocumentOne,
-      )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
-
-      autofill('accusedBookings', autofillAccusedBookings, theCase)
+      setWorkingCase(workingCase)
     }
-
-    if (
-      theCase.sessionArrangements ===
-        SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
-      theCase.defenderIsSpokesperson &&
-      theCase.defenderName
-    ) {
-      autofill(
-        'accusedBookings',
-        formatMessage(m.sections.accusedBookings.autofillSpokeperson, {
-          spokesperson: theCase.defenderName,
-        }),
-        theCase,
-      )
-    }
-
-    setWorkingCase(workingCase)
-  }, [])
+  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
     <PageLayout

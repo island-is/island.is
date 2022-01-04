@@ -6,6 +6,7 @@ import { ApiScopeDTO } from '../entities/dtos/api-scope-dto'
 import { ApiScopeGroupDTO } from '../entities/dtos/api-scope-group.dto'
 import { DomainDTO } from '../entities/dtos/domain.dto'
 import IdentityResourceDTO from '../entities/dtos/identity-resource.dto'
+import { PersonalRepresentativeScopePermissionDTO } from '../entities/dtos/personal-representative-scope-permission.dto'
 import { UserClaimDTO } from '../entities/dtos/user-claim-dto'
 import { ApiResourceScope } from '../entities/models/api-resource-scope.model'
 import { ApiResourceSecret } from '../entities/models/api-resource-secret.model'
@@ -18,6 +19,8 @@ import { Domain } from '../entities/models/domain.model'
 import { IdentityResourceUserClaim } from '../entities/models/identity-resource-user-claim.model'
 import { IdentityResource } from '../entities/models/identity-resource.model'
 import { PagedRowsDTO } from '../entities/models/paged-rows.dto'
+import { PaginatedPersonalRepresentativeRightType } from '../entities/models/personal-representative-permission-type.model'
+import { ScopePermission } from '../entities/models/personal-representative-scope-permission.model'
 import { BaseService } from './BaseService'
 
 export class ResourcesService extends BaseService {
@@ -445,4 +448,29 @@ export class ResourcesService extends BaseService {
   }
 
   // #endregion Domain
+
+  static async getPersonalRepresentativePermissionTypes(): Promise<PaginatedPersonalRepresentativeRightType> {
+    return BaseService.GET('personal-representative/permission-types')
+  }
+
+  static async getPersonalRepresentativeScopePermissions(
+    apiScopeName: string,
+  ): Promise<ScopePermission[]> {
+    return BaseService.GET(
+      `personal-representative/permissions?apiScopeName=${apiScopeName}`,
+    )
+  }
+
+  static async createPersonalRepresentativeScopePermission(
+    scopePermission: PersonalRepresentativeScopePermissionDTO,
+  ) {
+    return await BaseService.POST(
+      'personal-representative/permissions',
+      scopePermission,
+    )
+  }
+
+  static async deletePersonalRepresentativeScopePermission(id: string) {
+    return BaseService.DELETE(`personal-representative/permissions/${id}`)
+  }
 }

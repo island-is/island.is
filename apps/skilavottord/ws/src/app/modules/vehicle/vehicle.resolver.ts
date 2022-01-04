@@ -4,12 +4,12 @@ import { Query, Resolver, Mutation, Args } from '@nestjs/graphql'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Authorize, Role, CurrentUser } from '../auth'
-import type { AuthUser } from '../auth'
+import { Authorize, CurrentUser, User, Role } from '../auth'
+
 import { VehicleModel } from './vehicle.model'
 import { VehicleService } from './vehicle.service'
 
-@Authorize({ throwOnUnAuthorized: false })
+@Authorize()
 @Resolver(() => VehicleModel)
 export class VehicleResolver {
   constructor(
@@ -47,7 +47,7 @@ export class VehicleResolver {
 
   @Mutation(() => Boolean)
   async createSkilavottordVehicle(
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() user: User,
     @Args('permno') permno: string,
     @Args('type') type: string,
     @Args('color') color: string,

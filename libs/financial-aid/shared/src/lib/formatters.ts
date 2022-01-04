@@ -1,5 +1,5 @@
 import { months, nextMonth } from './const'
-import { ApplicationFiltersEnum } from './enums'
+import { AmountModal, ApplicationFiltersEnum } from './enums'
 import {
   HomeCircumstances,
   ApplicationState,
@@ -13,10 +13,13 @@ import {
 } from './enums'
 import {
   Aid,
+  Amount,
   ApplicantEmailData,
   ApplicationEvent,
+  Calculations,
   Municipality,
 } from './interfaces'
+import { acceptedAmountBreakDown, estimatedBreakDown } from './taxCalculator'
 import type { KeyMapping } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
@@ -200,6 +203,26 @@ export const getFileTypeName: KeyMapping<FileType, string> = {
   SpouseFiles: 'Gögn frá maka',
 }
 
+export const getAidAmountModalInfo = (
+  type: AmountModal,
+  aidAmount = 0,
+  usePersonalTaxCredit = false,
+  finalAmount?: Amount,
+): { headline: string; calculations: Calculations[] } => {
+  switch (type) {
+    case AmountModal.ESTIMATED:
+      return {
+        headline: 'Áætluð aðstoð',
+        calculations: estimatedBreakDown(aidAmount, usePersonalTaxCredit),
+      }
+    case AmountModal.PROVIDED:
+      return {
+        headline: 'Veitt aðstoð',
+        calculations: acceptedAmountBreakDown(finalAmount),
+      }
+  }
+}
+
 export const getApplicantEmailDataFromEventType = (
   event:
     | ApplicationEventType.NEW
@@ -292,9 +315,9 @@ export const getApplicantEmailDataFromEventType = (
           header: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð hjá ${municipality.name}`,
           content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${
             getPeriod.month
-          } mánuð. Svo hægt sé að klára umsóknina þurfum við að fá þig til að hlaða upp tekju- og skattagögnum til að reikna út fjárhagsaðstoð til útgreiðslu í byrjun ${nextMonth(
-            createdDate.getMonth(),
-          )}.`,
+          } mánuð. Svo hægt sé að klára umsóknina þurfum við að fá þig til að hlaða upp tekju- og skattagögnum til að reikna út fjárhagsaðstoð til útgreiðslu í byrjun ${
+            months[nextMonth(createdDate.getMonth())]
+          }.`,
           applicationChange: 'Umsókn bíður eftir gögnum frá maka',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,

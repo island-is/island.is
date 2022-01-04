@@ -3,6 +3,10 @@ export const taxInfoNumbers = {
     taxPercentage: 31.45,
     personalTaxAllowance: 50792,
   },
+  '2022': {
+    taxPercentage: 31.45,
+    personalTaxAllowance: 53916,
+  },
 }
 
 interface TaxInfoYear {
@@ -13,11 +17,14 @@ export interface TaxInfo {
   personalTaxAllowance: number
   taxPercentage: number
 }
+import format from 'date-fns/format'
+import { Amount, Calculations } from './interfaces'
+
+const currentYear = format(new Date(), 'yyyy')
 
 export const calculateAidFinalAmount = (
   amount: number,
   usePersonalTaxAllowance: boolean,
-  currentYear: string,
 ): number => {
   const taxInfoYear: TaxInfoYear = taxInfoNumbers
   const taxInfo = taxInfoYear[currentYear]
@@ -37,10 +44,7 @@ export const calculateAidFinalAmount = (
   return amount - finalTaxAmount
 }
 
-export const calculateTaxOfAmount = (
-  amount: number,
-  currentYear: string,
-): number => {
+export const calculateTaxOfAmount = (amount: number): number => {
   const taxInfoYear: TaxInfoYear = taxInfoNumbers
   const taxInfo = taxInfoYear[currentYear]
 
@@ -52,7 +56,6 @@ export const calculateTaxOfAmount = (
 export const calculatePersonalTaxAllowanceUsed = (
   amount: number,
   usePersonalTaxAllowance: boolean,
-  currentYear: string,
 ): number => {
   const taxInfoYear: TaxInfoYear = taxInfoNumbers
   const taxInfo = taxInfoYear[currentYear]
@@ -63,7 +66,7 @@ export const calculatePersonalTaxAllowanceUsed = (
     ? personalTaxAllowance
     : 0
 
-  const tax = calculateTaxOfAmount(amount, currentYear)
+  const tax = calculateTaxOfAmount(amount)
 
   // Only show the amount of used personal tax allowence, not the full tax allowence
   return Math.min(personalTaxAllowanceUsed, tax)
@@ -71,7 +74,6 @@ export const calculatePersonalTaxAllowanceUsed = (
 
 export const calculateAcceptedAidFinalAmount = (
   amount: number,
-  currentYear: string,
   personalTaxCreditPercentage: number,
   spousedPersonalTaxCreditPercentage: number,
 ): number => {
@@ -96,4 +98,86 @@ export const calculateAcceptedAidFinalAmount = (
   )
 
   return amount - finalTaxAmount
+}
+
+export const estimatedBreakDown = (
+  aidAmount = 0,
+  usePersonalTaxCredit = false,
+): Calculations[] => {
+  if (aidAmount === 0) {
+    return []
+  }
+
+  return [
+    {
+      title: 'Grunnupphæð',
+      calculation: `+ ${aidAmount?.toLocaleString('de-DE')} kr.`,
+    },
+    {
+      title: 'Skattur',
+      calculation: `- ${calculateTaxOfAmount(aidAmount).toLocaleString(
+        'de-DE',
+      )} kr.`,
+    },
+    {
+      title: 'Persónuafsláttur',
+      calculation: `${
+        usePersonalTaxCredit ? '+ ' : ''
+      }${calculatePersonalTaxAllowanceUsed(
+        aidAmount,
+        usePersonalTaxCredit,
+      ).toLocaleString('de-DE')} kr. `,
+    },
+    {
+      title: 'Áætluð aðstoð (hámark)',
+      calculation: `${calculateAidFinalAmount(
+        aidAmount,
+        usePersonalTaxCredit,
+      ).toLocaleString('de-DE')} kr.`,
+    },
+  ]
+}
+
+export const acceptedAmountBreakDown = (amount?: Amount): Calculations[] => {
+  if (!amount) {
+    return []
+  }
+
+  const deductionFactors =
+    amount?.deductionFactors?.map((deductionFactor) => {
+      return {
+        title: deductionFactor.description ?? '',
+        calculation: `- ${deductionFactor?.amount?.toLocaleString(
+          'de-DE',
+        )} kr.`,
+      }
+    }) ?? []
+
+  const basicCalc = [
+    {
+      title: 'Grunnupphæð',
+      calculation: `+ ${amount?.aidAmount.toLocaleString('de-DE')} kr.`,
+    },
+    {
+      title: 'Tekjur',
+      calculation: amount?.income
+        ? `- ${amount?.income.toLocaleString('de-DE')} kr.`
+        : '0',
+    },
+    ...deductionFactors,
+    {
+      title: 'Skattur',
+      calculation: `- ${amount?.tax.toLocaleString('de-DE')} kr.`,
+    },
+    {
+      title: 'Persónuafsláttur',
+      calculation: `${amount?.personalTaxCredit.toLocaleString('de-DE')} kr. `,
+    },
+    {
+      title: 'Aðstoð',
+      calculation: `${amount.finalAmount.toLocaleString('de-DE')} kr.`,
+    },
+  ]
+
+  return basicCalc
 }
