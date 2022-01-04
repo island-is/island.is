@@ -9,31 +9,16 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import { StepComponent } from '../state/useDraftingState'
-import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
-import { RegulationLawChapter } from '@island.is/regulations/web'
 import { editorMsgs as msg } from '../messages'
 import { findValueOption, useLocale } from '../utils'
 import { regulationTypes } from '../utils/constants'
 import { LawChapterSlug, RegulationType } from '@island.is/regulations'
 import { LawChaptersSelect } from './LawChaptersSelect'
 
-const LawChaptersQuery = gql`
-  query DraftRegulationsLawChaptersQuery {
-    getDraftRegulationsLawChapters
-  }
-`
-
-// ---------------------------------------------------------------------------
-
 export const EditMeta: StepComponent = (props) => {
   const { formatMessage: t } = useLocale()
   const { draft, actions } = props
   const { updateState, updateLawChapterProp } = actions
-
-  const lawChapterQuery = useQuery<Query>(LawChaptersQuery)
-  const lawChapters = lawChapterQuery.data
-    ?.getDraftRegulationsLawChapters as RegulationLawChapter[]
 
   return (
     <>
@@ -94,7 +79,6 @@ export const EditMeta: StepComponent = (props) => {
 
       <Box>
         <LawChaptersSelect
-          lawChapters={lawChapters}
           activeChapters={draft.lawChapters.value}
           addChapter={(slug: LawChapterSlug) =>
             updateLawChapterProp('add', slug)

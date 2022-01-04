@@ -3,7 +3,10 @@ import { generatePath, useHistory } from 'react-router'
 import { Query } from '@island.is/api/schema'
 import { gql, useQuery, useMutation, ApolloError } from '@apollo/client'
 import { RegulationDraft } from '@island.is/regulations/admin'
-import { RegulationMinistryList } from '@island.is/regulations/web'
+import {
+  RegulationLawChapter,
+  RegulationMinistryList,
+} from '@island.is/regulations/web'
 import { uuid } from 'uuidv4'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 
@@ -80,6 +83,32 @@ export const useMinistriesQuery = (): QueryResult<RegulationMinistryList> => {
   }
   return {
     data: data.getDraftRegulationsMinistries as RegulationMinistryList,
+  }
+}
+
+// ---------------------------------------------------------------------------
+
+const LawChaptersQuery = gql`
+  query DraftRegulationsLawChaptersQuery {
+    getDraftRegulationsLawChapters
+  }
+`
+
+export const useLawChaptersQuery = (): QueryResult<
+  Array<RegulationLawChapter>
+> => {
+  const { loading, error, data } = useQuery<Query>(LawChaptersQuery)
+
+  if (loading) {
+    return { loading }
+  }
+  if (!data) {
+    return {
+      error: error || new Error(`Error fetching law chapters`),
+    }
+  }
+  return {
+    data: data.getDraftRegulationsLawChapters as Array<RegulationLawChapter>,
   }
 }
 

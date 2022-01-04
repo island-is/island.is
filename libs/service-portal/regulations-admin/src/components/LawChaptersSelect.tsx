@@ -4,23 +4,18 @@ import { Box, Inline, Option, Select, Tag } from '@island.is/island-ui/core'
 import { editorMsgs as msg } from '../messages'
 
 import { LawChapterSlug } from '@island.is/regulations'
-import { RegulationLawChapter } from '@island.is/regulations/web'
 import { emptyOption, useLocale } from '../utils'
+import { useLawChaptersQuery } from '@island.is/service-portal/graphql'
 
-type LawChaptersSelectProps = {
-  lawChapters?: RegulationLawChapter[]
-  activeChapters: readonly LawChapterSlug[]
-  addChapter: (slug: LawChapterSlug) => void
-  removeChapter: (slug: LawChapterSlug) => void
-}
-
-export const LawChaptersSelect = (props: LawChaptersSelectProps) => {
-  const t = useLocale().formatMessage
-  const { lawChapters = [], activeChapters, addChapter, removeChapter } = props
+const useLawChapters = (
+  activeChapters: ReadonlyArray<LawChapterSlug>,
+  placeholder: string,
+) => {
+  const lawChapters = useLawChaptersQuery().data
 
   const chaptersBySlug = useMemo(
     () =>
-      lawChapters.reduce<Record<string, string>>((map, ch) => {
+      (lawChapters || []).reduce<Record<string, string>>((map, ch) => {
         map[ch.slug] = ch.name
         return map
       }, {}),
@@ -28,15 +23,40 @@ export const LawChaptersSelect = (props: LawChaptersSelectProps) => {
   )
 
   const lawChaptersOptions = useMemo(
-    (): ReadonlyArray<Option> => [
-      emptyOption(t(msg.lawChapterPlaceholder)),
-      ...lawChapters.map((ch) => ({
-        value: ch.slug,
-        label: ch.name,
-        disabled: activeChapters.includes(ch.slug),
-      })),
+    () => [
+      emptyOption(placeholder),
+      ...(lawChapters || []).map(
+        (ch): Option => ({
+          value: ch.slug,
+          label: ch.name,
+          disabled: activeChapters.includes(ch.slug),
+        }),
+      ),
     ],
-    [lawChapters, activeChapters, t],
+    [lawChapters, activeChapters, placeholder],
+  )
+
+  return {
+    chaptersBySlug,
+    lawChaptersOptions,
+  }
+}
+
+// ---------------------------------------------------------------------------
+
+type LawChaptersSelectProps = {
+  activeChapters: ReadonlyArray<LawChapterSlug>
+  addChapter: (slug: LawChapterSlug) => void
+  removeChapter: (slug: LawChapterSlug) => void
+}
+
+export const LawChaptersSelect = (props: LawChaptersSelectProps) => {
+  const t = useLocale().formatMessage
+  const { activeChapters, addChapter, removeChapter } = props
+
+  const { chaptersBySlug, lawChaptersOptions } = useLawChapters(
+    activeChapters,
+    t(msg.lawChapterPlaceholder),
   )
 
   return (
