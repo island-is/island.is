@@ -1,9 +1,8 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect } from 'react'
 import {
   CustomField,
   FieldBaseProps,
   getValueViaPath,
-  DefaultEvents,
 } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
@@ -23,7 +22,7 @@ export const PaymentPending: FC<Props> = (props) => {
     'createCharge.data.paymentUrl',
   )
 
-  const [submitBack, backError] = useSubmitApplication({
+  const [submitBack, { error: backError }] = useSubmitApplication({
     application,
     refetch,
   })
@@ -74,7 +73,7 @@ const PollingForPayment: FC<Props> = ({ error, application, refetch }) => {
     application.id,
   )
 
-  const [submitApplication, submitError] = useSubmitApplication({
+  const [submitApplication, { error: submitError }] = useSubmitApplication({
     application,
     refetch,
   })

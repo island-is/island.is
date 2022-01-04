@@ -209,17 +209,38 @@ export class DrivingLicenseApi {
       apiVersion: DRIVING_LICENSE_API_VERSION_V2,
     })
 
-    // Service returns empty string on success (actually different but the generated
-    // client forces it to)
-    const success = '' + response === DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE
+    const handledResponse = this.getCreateResponse(response)
 
-    if (!success) {
+    if (!handledResponse.success) {
       throw new Error(
-        `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${response}`,
+        `POST apiOkuskirteiniApplicationsNewCategoryPost was not successful, response was: ${handledResponse.error}`,
       )
     }
 
-    return success
+    return handledResponse.success
+  }
+
+  // service returns response in the form of { value: number } but openapi doc says
+  // that it only returns a number - and it returns a string on error
+  private getCreateResponse(
+    response: unknown,
+  ): { error?: string | unknown; success: boolean } {
+    try {
+      const resObj = JSON.parse(response as string)
+
+      if (resObj?.value) {
+        return { success: true }
+      } else if (typeof resObj === 'number') {
+        // if it's a number it means the API now returns the same type as is documented
+        return { success: true }
+      } else if (typeof resObj === 'string') {
+        return { success: false, error: resObj }
+      } else {
+        return { success: false, error: 'unknown type of response' }
+      }
+    } catch (e) {
+      return { success: false, error: e }
+    }
   }
 
   async getHasQualityPhoto(params: { nationalId: string }): Promise<boolean> {
