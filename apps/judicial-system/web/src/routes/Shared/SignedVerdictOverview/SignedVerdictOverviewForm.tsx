@@ -216,7 +216,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               // Custody restrictions
               isAcceptingCaseDecision(workingCase.decision) &&
                 workingCase.type === CaseType.CUSTODY &&
-                workingCase.custodyRestrictions
+                workingCase.requestedCustodyRestrictions
                   ?.filter((restriction) =>
                     [
                       CaseCustodyRestrictions.ISOLATION,
@@ -247,7 +247,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   (workingCase.decision === CaseDecision.ACCEPTING ||
                     workingCase.decision ===
                       CaseDecision.ACCEPTING_PARTIALLY))) &&
-                workingCase.custodyRestrictions
+                workingCase.requestedCustodyRestrictions
                   ?.filter((restriction) =>
                     [
                       CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,

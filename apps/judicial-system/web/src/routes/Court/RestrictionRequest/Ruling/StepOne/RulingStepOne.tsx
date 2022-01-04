@@ -82,22 +82,22 @@ export const RulingStepOne: React.FC = () => {
 
   useEffect(() => {
     if (isCaseUpToDate) {
-      let theCase = workingCase
+      const theCase = workingCase
 
-      if (theCase.custodyRestrictions === null) {
-        theCase = {
-          ...theCase,
-          custodyRestrictions: theCase.requestedCustodyRestrictions,
-        }
+      // if (theCase.custodyRestrictions === null) {
+      //   theCase = {
+      //     ...theCase,
+      //     custodyRestrictions: theCase.requestedCustodyRestrictions,
+      //   }
 
-        updateCase(
-          theCase.id,
-          parseArray(
-            'custodyRestrictions',
-            theCase.requestedCustodyRestrictions ?? [],
-          ),
-        )
-      }
+      //   updateCase(
+      //     theCase.id,
+      //     parseArray(
+      //       'custodyRestrictions',
+      //       theCase.requestedCustodyRestrictions ?? [],
+      //     ),
+      //   )
+      // }
 
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)
@@ -411,7 +411,7 @@ export const RulingStepOne: React.FC = () => {
                 <Box marginBottom={3}>
                   <CheckboxList
                     checkboxes={isolation(workingCase.accusedGender)}
-                    selected={workingCase.custodyRestrictions}
+                    selected={workingCase.requestedCustodyRestrictions}
                     onChange={(id) =>
                       setCheckboxAndSendToServer(
                         'custodyRestrictions',
@@ -427,11 +427,7 @@ export const RulingStepOne: React.FC = () => {
                 <DateTime
                   name="isolationToDate"
                   datepickerLabel="Einangrun til"
-                  disabled={
-                    !workingCase.custodyRestrictions?.includes(
-                      CaseCustodyRestrictions.ISOLATION,
-                    )
-                  }
+                  disabled={!workingCase.isCustodyIsolation}
                   selectedDate={
                     workingCase.isolationToDate
                       ? workingCase.isolationToDate
@@ -458,11 +454,7 @@ export const RulingStepOne: React.FC = () => {
                   }}
                   blueBox={false}
                   backgroundColor={
-                    workingCase.custodyRestrictions?.includes(
-                      CaseCustodyRestrictions.ISOLATION,
-                    )
-                      ? 'white'
-                      : 'blue'
+                    workingCase.isCustodyIsolation ? 'white' : 'blue'
                   }
                 />
               </BlueBox>

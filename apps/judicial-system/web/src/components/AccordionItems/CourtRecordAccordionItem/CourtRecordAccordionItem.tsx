@@ -4,7 +4,7 @@ import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 import {
   capitalize,
   formatAccusedByGender,
-  formatAlternativeTravelBanRestrictions,
+  formatTravelBanRestrictions,
   formatAppeal,
   formatCustodyRestrictions,
   formatDate,
@@ -34,14 +34,15 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
   const { formatMessage } = useIntl()
 
   const custodyRestrictions = formatCustodyRestrictions(
-    workingCase.accusedGender,
-    workingCase.custodyRestrictions,
+    workingCase.requestedCustodyRestrictions,
+    workingCase.isCustodyIsolation,
+    true,
   )
 
-  const alternativeTravelBanRestrictions = formatAlternativeTravelBanRestrictions(
+  const alternativeTravelBanRestrictions = formatTravelBanRestrictions(
     workingCase.accusedGender,
-    workingCase.custodyRestrictions,
-    workingCase.otherRestrictions,
+    workingCase.requestedCustodyRestrictions,
+    workingCase.requestedOtherRestrictions,
   )
 
   const prosecutorAppeal = formatAppeal(

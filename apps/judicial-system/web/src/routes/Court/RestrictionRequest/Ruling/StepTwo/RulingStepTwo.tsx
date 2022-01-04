@@ -158,7 +158,7 @@ export const RulingStepTwo: React.FC = () => {
                 ?.replace(' kl.', ', kl.')}`,
               isolationSuffix:
                 isAcceptingCaseDecision(theCase.decision) &&
-                theCase.custodyRestrictions?.includes(
+                theCase.requestedCustodyRestrictions?.includes(
                   CaseCustodyRestrictions.ISOLATION,
                 )
                   ? ` ${capitalize(
@@ -635,7 +635,7 @@ export const RulingStepTwo: React.FC = () => {
                 <BlueBox>
                   <CheckboxList
                     checkboxes={restrictions}
-                    selected={workingCase.custodyRestrictions}
+                    selected={workingCase.requestedCustodyRestrictions}
                     onChange={(id) =>
                       setCheckboxAndSendToServer(
                         'custodyRestrictions',
@@ -663,7 +663,7 @@ export const RulingStepTwo: React.FC = () => {
                 <Box marginBottom={3}>
                   <CheckboxList
                     checkboxes={alternativeTravelBanRestrictions}
-                    selected={workingCase.custodyRestrictions}
+                    selected={workingCase.requestedCustodyRestrictions}
                     onChange={(id) =>
                       setCheckboxAndSendToServer(
                         'custodyRestrictions',

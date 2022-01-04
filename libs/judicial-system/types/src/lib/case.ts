@@ -149,10 +149,10 @@ export interface Case {
   decision?: CaseDecision
   validToDate?: string
   isValidToDateInThePast?: boolean
-  custodyRestrictions?: CaseCustodyRestrictions[]
-  otherRestrictions?: string
+  isCustodyIsolation?: boolean
   isolationToDate?: string
   conclusion?: string
+  endOfSessionBookings?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
@@ -241,10 +241,10 @@ export interface UpdateCase {
   ruling?: string
   decision?: CaseDecision
   validToDate?: string
-  custodyRestrictions?: CaseCustodyRestrictions[]
-  otherRestrictions?: string
+  isCustodyIsolation?: boolean
   isolationToDate?: string
   conclusion?: string
+  endOfSessionBookings?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
