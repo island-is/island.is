@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { IntlService } from '@island.is/cms-translations'
 import { Message } from './dto/createNotification.dto'
-import { User, Notification, MessageTypes } from './types'
+import { Notification, MessageTypes } from './types'
 import messages from '../../../messages'
+import { UserProfile } from '@island.is/clients/user-profile'
 
 const appProtocol = 'is.island.app'
 
@@ -10,20 +11,20 @@ const appProtocol = 'is.island.app'
 export class MessageProcessorService {
   constructor(private intlService: IntlService) {}
 
-  shouldSendNotification(type: MessageTypes, user: User): boolean {
+  shouldSendNotification(type: MessageTypes, profile: UserProfile): boolean {
     switch (type) {
       case MessageTypes.NewDocumentMessage:
-        return user.documentNotifications
+        return profile.documentNotifications
     }
   }
 
   async convertToNotification(
     message: Message,
-    user: User,
+    profile: UserProfile,
   ): Promise<Notification> {
     const t = await this.intlService.useIntl(
       ['user-notification.messages'],
-      user.locale,
+      profile.locale,
     )
 
     const { title, body } = messages.notifications[message.type]
