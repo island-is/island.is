@@ -337,6 +337,10 @@
     "clients-syslumenn": {
       "tags": []
     },
+    "clients-user-profile": {
+      "tags": [],
+      "implicitDependencies": ["services-user-profile"]
+    },
     "clients-vmst": {
       "tags": []
     },
@@ -692,6 +696,9 @@
     "shared-mocking": {
       "tags": []
     },
+    "shared-pii": {
+      "tags": []
+    },
     "shared-problem": {
       "tags": []
     },
@@ -730,6 +737,9 @@
       "tags": []
     },
     "testing-nest": {
+      "tags": []
+    },
+    "user-monitoring": {
       "tags": []
     },
     "web": {

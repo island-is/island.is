@@ -68,6 +68,7 @@ interface WrapperProps {
   minimal?: boolean
   showSecondaryMenu?: boolean
   namespace: Namespace
+  showExternalLinks: boolean
 }
 
 interface HeaderProps {
@@ -299,6 +300,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   minimal = false,
   showSecondaryMenu = true,
   namespace,
+  showExternalLinks = false,
 }) => {
   const router = useRouter()
 
@@ -441,9 +443,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                       }}
                     />
                   )}
-                  <OrganizationExternalLinks
-                    organizationPage={organizationPage}
-                  />
+                  {showExternalLinks && (
+                    <OrganizationExternalLinks
+                      organizationPage={organizationPage}
+                    />
+                  )}
+
                   {pageDescription && (
                     <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
                       <Text variant="default">{pageDescription}</Text>
