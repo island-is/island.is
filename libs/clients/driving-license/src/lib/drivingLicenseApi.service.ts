@@ -225,6 +225,10 @@ export class DrivingLicenseApi {
   private getCreateResponse(
     response: unknown,
   ): { error?: string | unknown; success: boolean } {
+    if (response === '') {
+      return { success: true }
+    }
+
     try {
       const resObj = JSON.parse(response as string)
 
