@@ -14,7 +14,7 @@ import {
 } from '../utils'
 import { mockSave } from '../_mockData'
 import { RegulationsAdminScope } from '@island.is/auth/scopes'
-import { RegulationDraft } from '@island.is/regulations/admin'
+import { DraftingStatus, RegulationDraft } from '@island.is/regulations/admin'
 import {
   StepNav,
   DraftField,
@@ -28,11 +28,12 @@ import {
   AppendixDraftForm,
   InputType,
 } from './types'
-import { errorMsgs } from '../messages'
+import { buttonsMsgs, errorMsgs } from '../messages'
 import {
   RegulationAppendix,
   RegulationMinistryList,
 } from '@island.is/regulations/web'
+import { toast } from '@island.is/island-ui/core'
 
 export const UPDATE_DRAFT_REGULATION_MUTATION = gql`
   mutation UpdateDraftRegulationMutation($input: EditDraftRegulationInput!) {
@@ -398,6 +399,38 @@ export const useDraftingState = (
   const stepNav = steps[stepName]
 
   const actions = useMemo(() => {
+    const draft = state.draft
+
+    const _saveStatus = (newStatus?: DraftingStatus) =>
+      updateDraftRegulationById({
+        variables: {
+          input: {
+            id: draft.id,
+            body: {
+              title: draft.title.value,
+              text: draft.text.value, // (text + appendix + comments)
+              ministry_id: draft.ministry.value,
+              drafting_notes: draft.draftingNotes.value,
+              ideal_publish_date: draft.idealPublishDate?.value,
+              law_chapters: draft.lawChapters.value,
+              signature_date: draft.signatureDate.value,
+              effective_date: draft.effectiveDate.value,
+              type: draft.type.value,
+              drafting_status: newStatus || draft.draftingStatus,
+            },
+          },
+        },
+      })
+        .then((res) => {
+          if (res.errors && res.errors.length > 1) {
+            throw res.errors[0]
+          }
+          return { success: true, error: undefined }
+        })
+        .catch((error) => {
+          return { success: false, error: error as Error }
+        })
+
     return {
       goBack: stepNav.prev
         ? () => {
@@ -424,7 +457,7 @@ export const useDraftingState = (
 
                 const errorFields = getInputFieldsWithErrors(
                   basicsRequired,
-                  state.draft,
+                  draft,
                 )
 
                 if (errorFields) {
@@ -446,7 +479,7 @@ export const useDraftingState = (
 
                 const errorFields = getInputFieldsWithErrors(
                   metaRequired,
-                  state.draft,
+                  draft,
                 )
 
                 if (errorFields) {
@@ -527,38 +560,28 @@ export const useDraftingState = (
 
       saveStatus: () => {
         dispatch({ type: 'SAVING_STATUS' })
-        const draft = state.draft
-        updateDraftRegulationById({
-          variables: {
-            input: {
-              id: draft.id,
-              body: {
-                title: draft.title.value,
-                text: draft.text.value, // (text + appendix + comments)
-                ministry_id: draft.ministry.value,
-                drafting_notes: draft.draftingNotes.value,
-                ideal_publish_date: draft.idealPublishDate?.value,
-                law_chapters: draft.lawChapters.value,
-                signature_date: draft.signatureDate.value,
-                effective_date: draft.effectiveDate.value,
-                type: draft.type.value,
-              },
-            },
-          },
+        _saveStatus().then(({ success, error }) => {
+          if (error) {
+            toast.error(t(buttonsMsgs.saveFailure))
+            console.error(error)
+          } else {
+            toast.success(t(buttonsMsgs.saveSuccess))
+          }
+          dispatch({ type: 'SAVING_STATUS_DONE', error })
         })
-          .then((res) => {
-            dispatch({ type: 'SAVING_STATUS_DONE' })
-          })
-          .catch((error) => {
-            dispatch({ type: 'SAVING_STATUS_DONE', error: error as Error })
-          })
       },
 
       propose: !isEditor
         ? () => {
-            // FIXME: Make this work
-            mockSave({ ...draft, draftingStatus: 'proposal' }).then(() => {
-              history.push(ServicePortalPath.RegulationsAdminRoot)
+            dispatch({ type: 'SAVING_STATUS' })
+            _saveStatus('proposal').then(({ success, error }) => {
+              if (error) {
+                toast.error(t(buttonsMsgs.saveFailure))
+                console.error(error)
+                dispatch({ type: 'SAVING_STATUS_DONE', error })
+              } else {
+                history.push(ServicePortalPath.RegulationsAdminRoot)
+              }
             })
           }
         : undefined,

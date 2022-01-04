@@ -67,7 +67,7 @@ const EditDraft = (props: EditDraftProps) => {
     props.ministries,
     props.stepName,
   )
-  const { draft, stepName } = state
+  const { draft, stepName, saving } = state
   const { id } = draft
 
   const step = stepData[stepName]
@@ -85,7 +85,7 @@ const EditDraft = (props: EditDraftProps) => {
         )}
       </Box>
 
-      <SaveDeleteButtons draft={draft} actions={actions} wrap />
+      <SaveDeleteButtons draft={draft} saving={saving} actions={actions} wrap />
 
       {draft ? (
         <step.Component actions={actions} draft={draft} />

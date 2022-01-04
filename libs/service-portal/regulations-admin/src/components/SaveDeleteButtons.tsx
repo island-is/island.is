@@ -1,9 +1,10 @@
 import * as s from './SaveDeleteButtons.css'
 import { Box, Button } from '@island.is/island-ui/core'
 import React from 'react'
-import { buttonsMsgs, buttonsMsgs as msg } from '../messages'
+import { buttonsMsgs as msg } from '../messages'
 import { useLocale } from '../utils'
 import { RegDraftForm } from '../state/types'
+import { RegDraftActions } from '../state/useDraftingState'
 
 const isDraftEmpty = (draft: RegDraftForm): boolean => {
   const someContent =
@@ -19,10 +20,8 @@ const isDraftEmpty = (draft: RegDraftForm): boolean => {
 
 export type SaveDeleteButtonsProps = {
   draft: RegDraftForm
-  actions: {
-    saveStatus: () => void
-    deleteDraft: () => void
-  }
+  saving?: boolean
+  actions: Pick<RegDraftActions, 'saveStatus' | 'deleteDraft' | 'propose'>
 } & (
   | { wrap: true; classes?: undefined }
   | {
@@ -30,19 +29,20 @@ export type SaveDeleteButtonsProps = {
       classes: {
         deleteDraft: string
         saveDraft: string
+        propose: string
       }
     }
 )
 
 export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
-  const { draft, actions, wrap, classes = s } = props
+  const { draft, actions, saving, wrap, classes = s } = props
   const t = useLocale().formatMessage
 
   const deleteDraft = () => {
     if (
       isDraftEmpty(draft) ||
       // eslint-disable-next-line no-restricted-globals
-      confirm(t(buttonsMsgs.confirmDelete))
+      confirm(t(msg.confirmDelete))
     ) {
       actions.deleteDraft()
     }
@@ -50,6 +50,32 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
 
   const buttons = (
     <>
+      <Box className={classes.saveDraft}>
+        <Button
+          onClick={actions.saveStatus}
+          icon="save"
+          iconType="outline"
+          variant="text"
+          size="small"
+          disabled={saving}
+        >
+          {t(msg.save)}
+        </Button>
+      </Box>
+      {actions.propose && (
+        <Box className={classes.saveDraft}>
+          <Button
+            onClick={actions.propose}
+            icon="open"
+            iconType="outline"
+            variant="text"
+            size="small"
+            disabled={saving}
+          >
+            {t(msg.propose)}
+          </Button>
+        </Box>
+      )}
       <Box className={classes.deleteDraft}>
         <Button
           onClick={deleteDraft}
@@ -62,27 +88,11 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
           {t(msg.delete)}
         </Button>
       </Box>{' '}
-      <Box className={classes.saveDraft}>
-        <Button
-          onClick={actions.saveStatus}
-          icon="save"
-          iconType="outline"
-          variant="text"
-          size="small"
-        >
-          {t(msg.save)}
-        </Button>
-      </Box>
     </>
   )
 
   return wrap ? (
-    <Box
-      marginBottom={[3, 3, 4]}
-      display="flex"
-      flexDirection="row"
-      justifyContent="flexEnd"
-    >
+    <Box marginBottom={[3, 3, 4]} display="flex" flexDirection="row">
       {buttons}
     </Box>
   ) : (

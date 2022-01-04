@@ -431,6 +431,14 @@ export const buttonsMsgs = defineMessages({
     id: 'ap.regulations-admin:btn-savestatus',
     defaultMessage: 'Vista stöðu',
   },
+  saveSuccess: {
+    id: 'ap.regulations-admin:btn-savestatus-success',
+    defaultMessage: 'Staða vistuð',
+  },
+  saveFailure: {
+    id: 'ap.regulations-admin:btn-savestatus-failure',
+    defaultMessage: 'Ekki tókst að vista',
+  },
   propose: {
     id: 'ap.regulations-admin:btn-propose',
     defaultMessage: 'Senda í yfirlestur',
