@@ -29,7 +29,10 @@ describe('MunicipalityController - Gets municipality by id', () => {
       await municipalityController
         .getById(municipalityId)
         .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+        .catch((error) => {
+          console.log('errrrrror', error)
+          then.error = error
+        })
 
       return then
     }

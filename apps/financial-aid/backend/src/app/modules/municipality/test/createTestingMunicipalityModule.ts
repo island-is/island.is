@@ -8,9 +8,33 @@ import { StaffService } from '../../staff/staff.service'
 import { MunicipalityService } from '../municipality.service'
 import { AidService } from '../../aid/aid.service'
 import { Sequelize } from 'sequelize'
+import { StaffModel } from '../../staff/models/staff.model'
+
+// const Sequelize = jest.mock('sequelize', () => {
+//   const mSequelize = {
+//     authenticate: jest.fn(),
+//     define: jest.fn(),
+//     transaction: jest.fn(),
+//     provide: jest.fn(),
+//     useValue: jest.fn(),
+//     useExisiting: jest.fn(),
+//   }
+//   const actualSequelize = jest.requireActual('sequelize')
+
+//   return {
+//     Sequelize: jest.fn(() => mSequelize),
+//     DataTypes: actualSequelize.DataTypes,
+//   }
+// })
 
 jest.mock('../../aid/aid.service.ts')
-jest.mock('sequelize')
+// jest.mock('@nestjs/sequelize', () => {
+//   const modelToken = jest.requireActual('@nestjs/sequelize')
+//   return {
+//     getModelToken: modelToken.getModelToken(),
+//     InjectModel: jest.fn(),
+//   }
+// })
 jest.mock('../../staff/staff.service.ts')
 
 export const createTestingMunicipalityModule = async () => {
