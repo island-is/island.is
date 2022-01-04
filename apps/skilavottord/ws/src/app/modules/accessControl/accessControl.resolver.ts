@@ -1,5 +1,5 @@
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
-import { NotFoundException } from '@nestjs/common'
+import { NotFoundException, BadRequestException } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 
 import { Authorize, CurrentUser, User, Role } from '../auth'
@@ -26,6 +26,14 @@ export class AccessControlResolver {
     }
   }
 
+  private verifyRecyclingCompanyInput(
+    input: CreateAccessControlInput | UpdateAccessControlInput,
+  ) {
+    if (input.role === Role.recyclingCompany && !input.partnerId) {
+      throw new BadRequestException()
+    }
+  }
+
   @Query(() => [AccessControlModel])
   async skilavottordAccessControls(
     @CurrentUser() user: User,
@@ -41,6 +49,7 @@ export class AccessControlResolver {
     @CurrentUser() user: User,
   ): Promise<AccessControlModel> {
     this.verifyDeveloperAccess(user, input.role)
+    this.verifyRecyclingCompanyInput(input)
     return this.accessControlService.createAccess(input)
   }
 
@@ -51,6 +60,7 @@ export class AccessControlResolver {
     @CurrentUser() user: User,
   ): Promise<AccessControlModel> {
     this.verifyDeveloperAccess(user, input.role)
+    this.verifyRecyclingCompanyInput(input)
     return this.accessControlService.updateAccess(input)
   }
 

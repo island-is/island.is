@@ -30,8 +30,8 @@ import { getTime, getDate, formatYear } from '@island.is/skilavottord-web/utils'
 import compareDesc from 'date-fns/compareDesc'
 import { dateFormat } from '@island.is/shared/constants'
 
-export const SkilavottordRecyclingRequestQuery = gql`
-  query skilavottordRecyclingRequestQuery($permno: String!) {
+export const SkilavottordUserRecyclingRequestQuery = gql`
+  query skilavottordUserRecyclingRequestQuery($permno: String!) {
     skilavottordUserRecyclingRequest(permno: $permno) {
       id
       requestType
@@ -56,7 +56,7 @@ const Completed = ({ apolloState }: PropTypes) => {
   const { id } = router.query
 
   const { data, error, loading } = useQuery<Query>(
-    SkilavottordRecyclingRequestQuery,
+    SkilavottordUserRecyclingRequestQuery,
     {
       variables: { permno: id },
     },

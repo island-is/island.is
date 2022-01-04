@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common'
+import { Inject, NotFoundException, forwardRef } from '@nestjs/common'
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
@@ -12,6 +12,7 @@ import {
   RecyclingRequestResponse,
 } from './recyclingRequest.model'
 import { RecyclingRequestService } from './recyclingRequest.service'
+import { SamgongustofaService } from '../samgongustofa/samgongustofa.service'
 
 @Authorize()
 @Resolver(() => RecyclingRequestModel)
@@ -20,17 +21,19 @@ export class RecyclingRequestResolver {
     private recyclingRequestService: RecyclingRequestService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @Inject(forwardRef(() => SamgongustofaService))
+    private samgongustofaService: SamgongustofaService,
   ) {}
 
   @Authorize({ roles: [Role.developer, Role.recyclingFund] })
   @Query(() => [RecyclingRequestModel])
   async skilavottordAllRecyclingRequests(): Promise<RecyclingRequestModel[]> {
-    const res = await this.recyclingRequestService.findAll()
+    const recyclingRequests = await this.recyclingRequestService.findAll()
     this.logger.info(
       'skilavottordAllRecyclingRequests response:' +
-        JSON.stringify(res, null, 2),
+        JSON.stringify(recyclingRequests, null, 2),
     )
-    return res
+    return recyclingRequests
   }
 
   @Query(() => [RecyclingRequestModel])
@@ -38,29 +41,45 @@ export class RecyclingRequestResolver {
     @CurrentUser() user: User,
     @Args('permno') perm: string,
   ): Promise<RecyclingRequestModel[]> {
-    const res = await this.recyclingRequestService.findRecyclingRequestWithPermno(
+    const vehicle = await this.samgongustofaService.getUserVehicle(
+      user.nationalId,
       perm,
-      user,
+    )
+    const hasPermission = [Role.recyclingCompany, Role.developer].includes(
+      user.role,
+    )
+    if (!vehicle || hasPermission) {
+      this.logger.error(
+        `User does not have permission to call skilavottordUserRecyclingRequest action`,
+      )
+      throw new NotFoundException()
+    }
+
+    const userLastRecyclingRequest = await this.recyclingRequestService.findUserRecyclingRequestWithPermno(
+      vehicle,
     )
     this.logger.info(
       'skilavottordUserRecyclingRequest responce:' +
-        JSON.stringify(res, null, 2),
+        JSON.stringify(userLastRecyclingRequest, null, 2),
     )
-    return res
+    return userLastRecyclingRequest
   }
 
   @Authorize({
     roles: [Role.developer, Role.recyclingCompany, Role.recyclingCompany],
   })
   @Query(() => [RecyclingRequestModel])
-  async skilavottordRecyclingRequest(
+  async skilavottordRecyclingRequests(
     @Args('permno') perm: string,
   ): Promise<RecyclingRequestModel[]> {
-    const res = await this.recyclingRequestService.findAllWithPermno(perm)
-    this.logger.info(
-      'skilavottordRecyclingRequest responce:' + JSON.stringify(res, null, 2),
+    const recyclingRequests = await this.recyclingRequestService.findAllWithPermno(
+      perm,
     )
-    return res
+    this.logger.info(
+      'skilavottordRecyclingRequest responce:' +
+        JSON.stringify(recyclingRequests, null, 2),
+    )
+    return recyclingRequests
   }
 
   @Authorize({ roles: [Role.developer, Role.recyclingCompany] })
@@ -86,15 +105,11 @@ export class RecyclingRequestResolver {
     @Args({ name: 'requestType', type: () => RecyclingRequestTypes })
     requestType: RecyclingRequestTypes,
     @Args('permno') permno: string,
-    @Args('nameOfRequestor', { nullable: true }) name: string,
-    @Args('partnerId', { nullable: true }) partnerId: string,
   ): Promise<typeof RecyclingRequestResponse> {
     return this.recyclingRequestService.createRecyclingRequest(
       user,
       requestType,
       permno,
-      name,
-      partnerId,
     )
   }
 }

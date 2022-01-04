@@ -3,7 +3,8 @@ import {
   Injectable,
   HttpService,
   forwardRef,
-  UnauthorizedException,
+  BadRequestException,
+  NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import format from 'date-fns/format'
@@ -16,6 +17,7 @@ import { environment } from '../../../environments'
 import { FjarsyslaService } from '../fjarsysla'
 import { RecyclingPartnerService } from '../recyclingPartner'
 import { SamgongustofaService } from '../samgongustofa/samgongustofa.service'
+import { VehicleInformation } from '../samgongustofa'
 import {
   RecyclingRequestModel,
   RecyclingRequestTypes,
@@ -120,29 +122,19 @@ export class RecyclingRequestService {
     return res
   }
 
-  async findRecyclingRequestWithPermno(
-    permno: string,
-    user: User,
+  async findUserRecyclingRequestWithPermno(
+    vehicle: VehicleInformation,
   ): Promise<RecyclingRequestModel[]> {
     this.logger.info(
-      `---- Starting findRecyclingRequestWithPermno for ${permno} ----`,
+      `---- Starting findUserRecyclingRequestWithPermno for ${vehicle.permno} ----`,
     )
-    const carList = await this.samgongustofaService.getVehicleInformation(
-      user.nationalId,
-    )
-    if (
-      carList.find((car) => car.isRecyclable && car.permno === permno) ||
-      [Role.recyclingCompany, Role.developer].includes(user.role)
-    ) {
-      const res = this.findAllWithPermno(permno)
-      return [res[0]]
+
+    const userRecyclingRequests = await this.findAllWithPermno(vehicle.permno)
+    if (userRecyclingRequests.length > 0) {
+      return [userRecyclingRequests[0]]
     }
-    this.logger.error(
-      `User doesn't have right to fetch the vehicle's information`,
-    )
-    throw new UnauthorizedException(
-      `User doesn't have right to fetch the vehicle's information`,
-    )
+
+    return []
   }
 
   // Find all a vehicle's requests
@@ -227,9 +219,9 @@ export class RecyclingRequestService {
     user: User,
     requestType: RecyclingRequestTypes,
     permno: string,
-    nameOfRequestor: string,
-    partnerId: string,
   ): Promise<typeof RecyclingRequestResponse> {
+    const nameOfRequestor = user.name
+    const partnerId = user.partnerId
     const errors = new RequestErrors()
     try {
       this.logger.info(
@@ -248,7 +240,7 @@ export class RecyclingRequestService {
       }
       // If requestType is 'deregistered'
       // partnerId could not be null when create requestType for recyclingPartner.
-      if (requestType == 'deregistered' && !partnerId) {
+      if (requestType === 'deregistered' && !partnerId) {
         this.logger.error(
           `partnerId could not be null when create requestType 'deregistered' for recylcing partner`,
         )
@@ -260,9 +252,9 @@ export class RecyclingRequestService {
       // If requestType is not 'pendingRecycle', 'cancelled' or 'deregistered'
       if (
         !(
-          requestType == 'pendingRecycle' ||
-          requestType == 'cancelled' ||
-          requestType == 'deregistered'
+          requestType === 'pendingRecycle' ||
+          requestType === 'cancelled' ||
+          requestType === 'deregistered'
         )
       ) {
         this.logger.error(
@@ -470,15 +462,26 @@ export class RecyclingRequestService {
       }
       // requestType: 'pendingRecycle' or 'cancelled'
       else {
+        if (
+          !(requestType === 'pendingRecycle' || requestType === 'cancelled')
+        ) {
+          this.logger.error(
+            `User could not use this requestType: ${requestType}`,
+          )
+          throw new BadRequestException(
+            `User doesn't have right call this action`,
+          )
+        }
         // Check if user has the vehicle
-        const carList = await this.samgongustofaService.getVehicleInformation(
+        const vehicle = await this.samgongustofaService.getUserVehicle(
           user.nationalId,
+          permno,
         )
-        if (!carList.find((car) => car.isRecyclable && car.permno === permno)) {
+        if (!vehicle) {
           this.logger.error(
             `User is not the car's owner or the car could not be recycle.`,
           )
-          throw new UnauthorizedException(
+          throw new NotFoundException(
             `User doesn't have right to deregistered the vehicle`,
           )
         }
