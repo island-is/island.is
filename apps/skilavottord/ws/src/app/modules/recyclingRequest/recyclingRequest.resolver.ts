@@ -12,7 +12,7 @@ import {
   RecyclingRequestResponse,
 } from './recyclingRequest.model'
 import { RecyclingRequestService } from './recyclingRequest.service'
-import { SamgongustofaService } from '../samgongustofa/samgongustofa.service'
+import { SamgongustofaService } from '../samgongustofa'
 
 @Authorize()
 @Resolver(() => RecyclingRequestModel)
@@ -48,7 +48,7 @@ export class RecyclingRequestResolver {
     const hasPermission = [Role.recyclingCompany, Role.developer].includes(
       user.role,
     )
-    if (!vehicle || hasPermission) {
+    if (!vehicle || !hasPermission) {
       this.logger.error(
         `User does not have permission to call skilavottordUserRecyclingRequest action`,
       )
@@ -106,10 +106,35 @@ export class RecyclingRequestResolver {
     requestType: RecyclingRequestTypes,
     @Args('permno') permno: string,
   ): Promise<typeof RecyclingRequestResponse> {
+    const vehicle = await this.samgongustofaService.getUserVehicle(
+      user.nationalId,
+      permno,
+    )
+    if (requestType === 'pendingRecycle' || requestType === 'cancelled') {
+      // Check if user has the vehicle
+      if (!vehicle) {
+        this.logger.error(
+          `User doesn't have right to deregistered the vehicle.`,
+        )
+        throw new NotFoundException(
+          `User doesn't have right to deregistered the vehicle`,
+        )
+      }
+    }
+    const hasPermission = [Role.developer, Role.recyclingCompany].includes(
+      user.role,
+    )
+    if (requestType === 'deregistered' && !hasPermission) {
+      this.logger.error(`User doesn't have right to deregistered the vehicle.`)
+      throw new NotFoundException(
+        `User doesn't have right to deregistered the vehicle`,
+      )
+    }
+
     return this.recyclingRequestService.createRecyclingRequest(
       user,
       requestType,
-      permno,
+      vehicle,
     )
   }
 }
