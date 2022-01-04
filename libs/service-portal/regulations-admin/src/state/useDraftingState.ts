@@ -526,6 +526,7 @@ export const useDraftingState = (
       },
 
       saveStatus: () => {
+        dispatch({ type: 'SAVING_STATUS' })
         const draft = state.draft
         updateDraftRegulationById({
           variables: {
@@ -544,9 +545,13 @@ export const useDraftingState = (
               },
             },
           },
-        }).then((res) => {
-          console.log('!!DRAFT UPDATED!! ', res)
         })
+          .then((res) => {
+            dispatch({ type: 'SAVING_STATUS_DONE' })
+          })
+          .catch((error) => {
+            dispatch({ type: 'SAVING_STATUS_DONE', error: error as Error })
+          })
       },
 
       propose: !isEditor
