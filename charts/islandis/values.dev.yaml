@@ -1119,12 +1119,9 @@ skilavottord-web:
 skilavottord-ws:
   enabled: true
   env:
-    AUTH_AUDIENCE: 'beta.dev01.devland.is'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'skilavottord'
     DB_USER: 'skilavottord'
-    SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=sv_citizen.dev'
-    SAML_ENTRY_POINT2: 'https://innskraning.island.is/?id=sv_company.dev'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1147,7 +1144,7 @@ skilavottord-ws:
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
-            - '/app/skilavottord/api/'
+            - '/app/skilavottord/api/graphql'
   initContainer:
     containers:
       - args:
@@ -1168,7 +1165,6 @@ skilavottord-ws:
     max: 3
     min: 2
   secrets:
-    AUTH_JWT_SECRET: '/k8s/skilavottord/AUTH_JWT_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
     FJARSYSLA_REST_PASS: '/k8s/skilavottord/FJARSYSLA_REST_PASS'
@@ -1182,7 +1178,6 @@ skilavottord-ws:
     SAMGONGUSTOFA_SOAP_PASS: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_PASS'
     SAMGONGUSTOFA_SOAP_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_SOAP_URL'
     SAMGONGUSTOFA_SOAP_USER: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_USER'
-    SKILAVOTTORD_USER_LIST: '/k8s/skilavottord/SKILAVOTTORD_USER_LIST'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
