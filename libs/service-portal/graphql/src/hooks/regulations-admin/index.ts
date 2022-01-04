@@ -7,7 +7,6 @@ import {
   RegulationLawChapter,
   RegulationMinistryList,
 } from '@island.is/regulations/web'
-import { uuid } from 'uuidv4'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 
 // import { APPLICATION_APPLICATIONS } from '../../lib/queries/applicationApplications'
