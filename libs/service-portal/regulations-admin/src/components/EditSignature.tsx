@@ -1,4 +1,6 @@
-import React, { useMemo, useState } from 'react'
+import * as s from '../utils/styles.css'
+
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   AlertMessage,
   Box,
@@ -9,6 +11,9 @@ import {
   DatePicker,
   Inline,
   Input,
+  InputFileUpload,
+  fileToObject,
+  UploadFile,
   Option,
   Select,
 } from '@island.is/island-ui/core'
@@ -19,11 +24,34 @@ import { useMinistriesQuery } from '@island.is/service-portal/graphql'
 
 import { RegDraftForm } from '../state/types'
 import { EditorInput } from './EditorInput'
-import { MinistrySlug, URLString } from '@island.is/regulations'
+import { MinistrySlug, URLString, useShortState } from '@island.is/regulations'
+import { produce } from 'immer'
 
 // ---------------------------------------------------------------------------
 
-const fetchPDF = (draft: RegDraftForm) =>
+const useMinistryOptions = (ministrySlug: MinistrySlug | undefined) => {
+  const ministries = useMinistriesQuery().data
+  return useMemo(() => {
+    const ministryOptions = (ministries || []).map((m) => ({
+      label: m.name,
+      value: m.slug,
+    }))
+    const selectedMinistryOption = ministryOptions.find(
+      (m) => m.value === ministrySlug,
+    )
+    const ministryName = selectedMinistryOption?.label
+
+    return {
+      ministryOptions,
+      selectedMinistryOption,
+      ministryName,
+    }
+  }, [ministrySlug, ministries])
+}
+
+// ---------------------------------------------------------------------------
+
+const fetchPDF = (pdfUrl: URLString, draft: RegDraftForm) => {
   new Promise<{ success: boolean }>((resolve) => {
     const fileName = draft.title.value + '.pdf'
     setTimeout(() => {
@@ -31,6 +59,9 @@ const fetchPDF = (draft: RegDraftForm) =>
       resolve({ success: true })
     }, 500)
   })
+}
+
+// ---------------------------------------------------------------------------
 
 type UploadResults =
   | { location: URLString; error?: never }
@@ -38,7 +69,6 @@ type UploadResults =
 
 const uploadPDF = (draft: RegDraftForm) =>
   new Promise<UploadResults>((resolve) => {
-    alert('Select file to upload')
     const fileName = draft.title.value + '.pdf'
     setTimeout(() => {
       resolve({
@@ -48,45 +78,124 @@ const uploadPDF = (draft: RegDraftForm) =>
   })
 
 type UploadingState =
-  | { uploading: false; error?: string }
-  | { uploading: true; error?: never }
+  | { uploading: false; file?: never; error?: string }
+  | { uploading: false; file: [UploadFile]; error?: never }
+  | { uploading: true; file?: never; error?: never }
+
+const useSignedUploader = (
+  draft: RegDraftForm,
+  setUrl: (location: URLString | undefined) => void,
+) => {
+  const signedDocumentUrl = draft.signedDocumentUrl.value
+  const [uploadStatus, setUploadStatus] = useState<UploadingState>({
+    uploading: false,
+  })
+  const downloadSignablePDF = signedDocumentUrl
+    ? () => fetchPDF(signedDocumentUrl, draft)
+    : () => undefined
+
+  let reader: FileReader | undefined
+
+  const uploadSignedPDF = (newFiles: Array<File>) => {
+    const [newFile] = newFiles
+    const newUploadFile = fileToObject(newFile)
+    const _reader = (reader = new FileReader())
+    _reader.onabort = () => console.log('file reading was aborted')
+    _reader.onerror = () => console.log('file reading has failed')
+    _reader.onload = () => {
+      // Do whatever you want with the file contents
+      const binaryStr = _reader.result
+      console.log(binaryStr)
+    }
+    _reader.readAsArrayBuffer(newFile)
+
+    setUploadStatus({ uploading: true })
+
+    uploadPDF(draft).then(({ location, error }) => {
+      if (!uploadStatus.uploading) {
+        location && setUrl(location)
+        setUploadStatus({ uploading: false, error })
+      }
+    })
+  }
+  const cancelUpload = () => {
+    reader && reader.abort()
+    setUploadStatus(
+      produce((draft) => {
+        draft.uploading = false
+      }),
+    )
+  }
+  const retryUpload = ({ originalFileObj }: UploadFile) =>
+    originalFileObj instanceof File && uploadSignedPDF([originalFileObj])
+
+  const [previousDocUrl, setPreviousDocUrl] = useShortState<
+    URLString | undefined
+  >()
+  const undoPeriod = 4000
+  const clearSignedPDF = () => {
+    setPreviousDocUrl(signedDocumentUrl, undoPeriod)
+    setUrl(undefined)
+  }
+  const undoClearSignedPDF = () => {
+    setPreviousDocUrl(undefined)
+    setUrl(previousDocUrl)
+  }
+
+  useEffect(() => {
+    // reset uploadStatus whenever signedDocumentUrl changes.
+    // use immer to prevent unneccessary re-render
+    setUploadStatus(
+      produce((draft) => {
+        draft.uploading = false
+        delete draft.error
+      }),
+    )
+  }, [signedDocumentUrl])
+
+  return {
+    uploadStatus,
+    downloadSignablePDF,
+    uploadSignedPDF,
+    cancelUpload,
+    retryUpload,
+    previousDocUrl,
+    undoPeriod,
+    clearSignedPDF,
+    undoClearSignedPDF,
+  }
+}
+
+// ===========================================================================
 
 export const EditSignature: StepComponent = (props) => {
   const { formatMessage: t, formatDateFns } = useLocale()
   const { draft, actions } = props
   const { updateState } = actions
 
-  const [uploadState, setUploadState] = useState<UploadingState>({
-    uploading: false,
-  })
+  const signedDocumentUrl = draft.signedDocumentUrl.value
 
-  const ministries = useMinistriesQuery().data
-  const ministrySlug = draft.ministry.value
-  const { ministryOptions, ministryOption, ministryName } = useMemo(() => {
-    const ministryOptions = (ministries || []).map((m) => ({
-      label: m.name,
-      value: m.slug,
-    }))
-    const ministryOption = ministryOptions.find((m) => m.value === ministrySlug)
-    const ministryName = ministryOption?.label
+  const {
+    ministryOptions,
+    selectedMinistryOption,
+    ministryName,
+  } = useMinistryOptions(draft.ministry.value)
 
-    return {
-      ministryOptions,
-      ministryOption,
-      ministryName,
-    }
-  }, [ministrySlug, ministries])
+  const {
+    uploadStatus,
+    downloadSignablePDF,
+    uploadSignedPDF,
+    cancelUpload,
+    retryUpload,
+    previousDocUrl,
+    undoPeriod,
+    clearSignedPDF,
+    undoClearSignedPDF,
+  } = useSignedUploader(draft, (location) =>
+    updateState('signedDocumentUrl', location),
+  )
 
-  const downloadSignablePDF = () => fetchPDF(draft)
-  const uploadSignedPDF = () => {
-    setUploadState({ uploading: true })
-    uploadPDF(draft).then(({ location, error }) => {
-      location && updateState('signedDocumentUrl', location)
-      setUploadState({ uploading: false, error })
-    })
-  }
-
-  const alreadyUploaded = draft.signedDocumentUrl.value
+  const alreadyUploaded = signedDocumentUrl != null
 
   return (
     <>
@@ -97,34 +206,70 @@ export const EditSignature: StepComponent = (props) => {
       </Box>
 
       <Box marginBottom={6}>
-        {uploadState.error && (
-          <AlertMessage type="error" title={uploadState.error} />
+        <InputFileUpload
+          fileList={uploadStatus.file || []}
+          header={t(msg.signedDocumentUploadDragPrompt)}
+          description={t(msg.signedDocumentUploadDescr) || undefined}
+          buttonLabel={t(msg.signedDocumentUpload)}
+          onChange={uploadSignedPDF}
+          onRetry={retryUpload}
+          onRemove={cancelUpload}
+          errorMessage={uploadStatus.error}
+          accept=".pdf"
+          multiple={false}
+        />
+        {uploadStatus.error && (
+          <AlertMessage type="error" title={uploadStatus.error} />
         )}
-        <Button
-          onClick={uploadSignedPDF}
-          icon="document"
-          disabled={uploadState.uploading}
-        >
-          {t(
-            uploadState.uploading
-              ? msg.signedDocumentUploading
-              : msg.signedDocumentUpload,
-          )}
-        </Button>
       </Box>
+
+      {previousDocUrl && (
+        <Box
+          marginBottom={3}
+          style={
+            {
+              '--fade-duration': 0.67 * undoPeriod,
+              '--fade-delay': 0.33 * undoPeriod,
+            } as React.CSSProperties
+          }
+          className={s.fadeOut}
+        >
+          <Button
+            onClick={undoClearSignedPDF}
+            variant="text"
+            as="button"
+            icon="reload"
+            disabled={uploadStatus.uploading}
+          >
+            {t(msg.signedDocumentClearUndo)}
+          </Button>
+        </Box>
+      )}
 
       {alreadyUploaded && (
         <>
           <Box marginBottom={3}>
             <strong>
               <a
-                href={draft.signedDocumentUrl.value}
+                href={signedDocumentUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 {t(msg.signedDocumentLink)}
               </a>
             </strong>
+
+            <Button
+              onClick={clearSignedPDF}
+              variant="text"
+              as="button"
+              icon="closeCircle"
+              disabled={uploadStatus.uploading}
+              title={t(msg.signedDocumentClearLong)}
+              aria-label={t(msg.signedDocumentClearLong)}
+            >
+              {t(msg.signedDocumentClear)}
+            </Button>
           </Box>
 
           <Box marginBottom={3}>
@@ -172,7 +317,7 @@ export const EditSignature: StepComponent = (props) => {
                     size="sm"
                     isSearchable={false}
                     options={ministryOptions}
-                    value={ministryOption}
+                    value={selectedMinistryOption}
                     required
                     errorMessage={t(draft.ministry.error)}
                     hasError={!!draft.ministry.error}

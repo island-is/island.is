@@ -198,9 +198,25 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-labels-signeddocument-upload',
     defaultMessage: 'Hlaða upp undirrituðu eintaki',
   },
-  signedDocumentUploading: {
-    id: 'ap.regulations-admin:draft-labels-signeddocument-uploading',
-    defaultMessage: 'Hleð upp undirrituðu eintaki …',
+  signedDocumentUploadDragPrompt: {
+    id: 'ap.regulations-admin:draft-labels-signeddocument-dragprompt',
+    defaultMessage: 'Dragðu undirritað PDF skjal hingað …',
+  },
+  signedDocumentUploadDescr: {
+    id: 'ap.regulations-admin:draft-labels-signeddocument-description',
+    defaultMessage: '', // 'Leyfileg skráarsnið: PDF'
+  },
+  signedDocumentClear: {
+    id: 'ap.regulations-admin:draft-labels-signeddocument-clear',
+    defaultMessage: 'Eyða',
+  },
+  signedDocumentClearLong: {
+    id: 'ap.regulations-admin:draft-labels-signeddocument-clearlong',
+    defaultMessage: 'Eyða undirrituðu eintaki',
+  },
+  signedDocumentClearUndo: {
+    id: 'ap.regulations-admin:draft-labels-signeddocument-clear-undo',
+    defaultMessage: 'Úbs! Afturkalla eyðingu.',
   },
   signedDocumentLink: {
     id: 'ap.regulations-admin:draft-labels-signeddocument-view',
