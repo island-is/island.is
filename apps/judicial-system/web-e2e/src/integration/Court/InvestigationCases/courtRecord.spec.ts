@@ -47,6 +47,7 @@ describe('/domur/rannsoknarheimild/thingbok/:id', () => {
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
+    cy.getByTestid('litigationPresentations').type(faker.lorem.words(5))
     cy.getByTestid('continueButton').click()
     cy.url().should('include', '/domur/rannsoknarheimild/urskurdur')
   })
