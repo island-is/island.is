@@ -54,6 +54,8 @@ const useMinistryOptions = (ministrySlug: MinistrySlug | undefined) => {
 const fetchPDF = (pdfUrl: URLString, draft: RegDraftForm) => {
   new Promise<{ success: boolean }>((resolve) => {
     const fileName = draft.title.value + '.pdf'
+    // import { downloadUrl } from '../utils/files'
+    // downloadUrl (...)
     setTimeout(() => {
       alert(`Save your file "${fileName}"`)
       resolve({ success: true })
