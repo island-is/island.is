@@ -195,8 +195,6 @@ export const EditSignature: StepComponent = (props) => {
     updateState('signedDocumentUrl', location),
   )
 
-  const alreadyUploaded = signedDocumentUrl != null
-
   return (
     <>
       <Box marginBottom={4}>
@@ -246,14 +244,13 @@ export const EditSignature: StepComponent = (props) => {
         </Box>
       )}
 
-      {alreadyUploaded && (
+      {signedDocumentUrl != null && (
         <>
           <Box marginBottom={3}>
             <strong>
               <a
                 href={signedDocumentUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                download={signedDocumentUrl.split('/').pop()}
               >
                 {t(msg.signedDocumentLink)}
               </a>
