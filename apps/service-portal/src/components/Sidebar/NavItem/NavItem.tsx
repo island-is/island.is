@@ -81,7 +81,6 @@ const NavItemContent: FC<Props> = ({
               type={active ? 'filled' : icon.type}
               icon={icon.icon}
               size="medium"
-              color="blue600"
               className={styles.icon}
             />
           </Box>
@@ -93,7 +92,6 @@ const NavItemContent: FC<Props> = ({
           type="filled"
           icon={chevron}
           size="medium"
-          color="blue600"
           className={styles.icon}
         />
       )}
@@ -102,7 +100,7 @@ const NavItemContent: FC<Props> = ({
           type="filled"
           icon="lockClosed"
           size="small"
-          color="blue600"
+          color="blue400"
           className={styles.lock}
         />
       )}
@@ -112,11 +110,16 @@ const NavItemContent: FC<Props> = ({
 
 const NavItem: FC<Props> = (props) => {
   return props.external ? (
-    <a href={props.path} target="_blank" rel="noreferrer noopener">
+    <a
+      href={props.path}
+      target="_blank"
+      rel="noreferrer noopener"
+      className={styles.link}
+    >
       <NavItemContent {...props} />
     </a>
   ) : props.path ? (
-    <Link to={props.path}>
+    <Link to={props.path} className={styles.link}>
       <NavItemContent {...props} />
     </Link>
   ) : (

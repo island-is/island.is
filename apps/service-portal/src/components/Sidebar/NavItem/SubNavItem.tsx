@@ -8,7 +8,6 @@ interface Props {
   active: boolean
   enabled?: boolean
   external?: boolean
-  variant?: 'blue' | 'blueberry'
   onClick?: () => void
 }
 
@@ -16,7 +15,6 @@ const SubNavItemContent: FC<Props> = ({
   active,
   onClick,
   enabled,
-  variant = 'blue',
   children,
 }) => (
   <Box
@@ -27,14 +25,9 @@ const SubNavItemContent: FC<Props> = ({
     onClick={onClick}
     justifyContent="spaceBetween"
     paddingRight={2}
+    className={active ? styles.subLinkActive : styles.subLink}
   >
-    <Text
-      fontWeight={active ? 'semiBold' : 'regular'}
-      variant="small"
-      color={variant === 'blue' ? 'blue600' : 'blueberry600'}
-    >
-      <span>{children}</span>
-    </Text>
+    <span>{children}</span>
     {!enabled && (
       <Icon
         type="filled"
@@ -49,11 +42,19 @@ const SubNavItemContent: FC<Props> = ({
 
 const SubNavItem: FC<Props> = (props) => {
   return props.external ? (
-    <a href={props.path} target="_blank" rel="noreferrer noopener">
+    <a
+      href={props.path}
+      target="_blank"
+      rel="noreferrer noopener"
+      className={props.active ? styles.subLinkActive : styles.subLink}
+    >
       <SubNavItemContent {...props} />
     </a>
   ) : props.path ? (
-    <Link to={props.path}>
+    <Link
+      to={props.path}
+      className={props.active ? styles.subLinkActive : styles.subLink}
+    >
       <SubNavItemContent {...props} />
     </Link>
   ) : (

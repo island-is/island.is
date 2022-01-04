@@ -57,10 +57,10 @@ const ModuleNavigation: FC<Props> = ({
     <Box
       position="relative"
       onMouseOver={() => {
-        collapsed && setHover(true)
+        setHover(true)
       }}
       onMouseLeave={() => {
-        collapsed && setHover(false)
+        setHover(false)
       }}
     >
       {navArray && collapsed && (

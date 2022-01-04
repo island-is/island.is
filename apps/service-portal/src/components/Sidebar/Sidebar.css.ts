@@ -8,9 +8,9 @@ export const sidebar = style({
   zIndex: 10,
   height: '100%',
   marginBottom: theme.spacing['10'],
+  borderRight: `1px solid ${theme.color.blue200}`,
   transition: 'all 250ms ease-in-out',
   width: 252,
-  backgroundColor: theme.color.blue100,
 })
 export const collapsed = style({
   width: 138,
@@ -21,6 +21,7 @@ export const logoCollapsed = style({
   justifyContent: 'flex-end',
   marginRight: -theme.spacing[3],
 })
+
 export const subnav = style({
   paddingLeft: theme.spacing[3],
   marginLeft: theme.spacing[8],

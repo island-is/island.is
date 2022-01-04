@@ -24,8 +24,7 @@ export const Sidebar: FC<{}> = () => {
         flexDirection="column"
         justifyContent="flexStart"
         marginBottom={3}
-        background={collapsed ? 'transparent' : 'blue100'}
-        paddingLeft={collapsed ? 6 : 3}
+        paddingLeft={collapsed ? 6 : 0}
         paddingBottom={collapsed ? 6 : 3}
         paddingRight={collapsed ? 6 : 0}
         paddingTop={3}
@@ -34,6 +33,7 @@ export const Sidebar: FC<{}> = () => {
           className={collapsed && styles.logoCollapsed}
           paddingBottom={8}
           paddingTop={3}
+          paddingLeft={4}
         >
           <Link to={ServicePortalPath.MinarSidurRoot}>
             <FocusableBox component="div">

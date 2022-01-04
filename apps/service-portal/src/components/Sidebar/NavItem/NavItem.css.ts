@@ -1,5 +1,6 @@
 import { style, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { NonceProvider } from 'react-select'
 
 export const dotState = styleVariants({
   active: {},
@@ -10,36 +11,34 @@ export const navItem = style({})
 
 export const navItemActive = styleVariants({
   active: {
-    backgroundColor: theme.color.white,
-    border: 'unset',
-    borderLeft: `4px solid ${theme.color.blue600}`,
-    borderRadius: 'unset',
-    marginTop: 1,
-    marginBottom: 1,
-    paddingLeft: 20,
-    maxWidth: 305,
+    paddingLeft: theme.spacing[2],
+    backgroundColor: theme.color.blue100,
+    borderLeft: `4px solid ${theme.color.blue400}`,
+    color: theme.color.blue400,
     ...themeUtils.responsiveStyle({
       lg: {
-        backgroundColor: theme.color.blue200,
-        border: `1px solid ${theme.color.blue200}`,
-        borderTopLeftRadius: '8px',
-        borderBottomLeftRadius: '8px',
-        paddingLeft: 24,
-        maxWidth: 'unset',
+        paddingLeft: theme.spacing[3],
+        ':hover': {
+          color: theme.color.blue400,
+          borderColor: theme.color.blue100,
+          textDecoration: 'none',
+        },
       },
     }),
   },
   inactive: {
-    backgroundColor: theme.color.white,
-    border: `1px solid ${theme.color.white}`,
-    maxWidth: 305,
-    paddingLeft: 24,
+    paddingLeft: theme.spacing[2],
+    marginLeft: 4,
+    color: theme.color.blue600,
     ...themeUtils.responsiveStyle({
       lg: {
-        paddingLeft: 24,
-        backgroundColor: theme.color.blue100,
-        border: `1px solid ${theme.color.blue100}`,
-        maxWidth: 'unset',
+        paddingLeft: theme.spacing[3],
+        ':hover': {
+          backgroundColor: theme.color.blue100,
+          color: theme.color.blue400,
+          border: 'unset',
+          marginLeft: 4,
+        },
       },
     }),
   },
@@ -49,6 +48,8 @@ export const navItemActive = styleVariants({
     borderRadius: '8px',
     ...themeUtils.responsiveStyle({
       lg: {
+        color: theme.color.blue400,
+        border: 'unset',
         paddingLeft: theme.spacing[1],
       },
     }),
@@ -56,8 +57,8 @@ export const navItemActive = styleVariants({
   inactiveCollapsed: {
     ...themeUtils.responsiveStyle({
       lg: {
+        color: theme.color.blue600,
         paddingLeft: theme.spacing[1],
-        border: `1px solid ${theme.color.blue100}`,
       },
     }),
   },
@@ -66,7 +67,6 @@ export const navItemActive = styleVariants({
 export const text = style({
   fontSize: 16,
   lineHeight: '26px',
-  color: theme.color.blue600,
   whiteSpace: 'nowrap',
   overflow: 'hidden',
 })
@@ -74,6 +74,9 @@ export const text = style({
 export const icon = style({
   pointerEvents: 'none',
   height: '26px',
+  ':hover': {
+    fill: theme.color.blue400,
+  },
 })
 
 export const dot = style({
@@ -116,4 +119,29 @@ export const lock = style({
 export const subLock = style({
   pointerEvents: 'none',
   marginRight: 5,
+})
+
+export const link = style({
+  ':hover': {
+    textDecoration: 'none',
+  },
+})
+
+export const subLink = style({
+  fontSize: 14,
+  color: theme.color.blue600,
+  ':hover': {
+    textDecoration: 'none',
+    color: theme.color.blue400,
+    fontWeight: theme.typography.semiBold,
+  },
+})
+
+export const subLinkActive = style({
+  fontSize: 14,
+  color: theme.color.blue400,
+  fontWeight: theme.typography.semiBold,
+  ':hover': {
+    textDecoration: 'none',
+  },
 })

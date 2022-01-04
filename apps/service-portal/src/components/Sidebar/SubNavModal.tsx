@@ -13,7 +13,7 @@ const SubNavModal = ({ active, children }: Props) => (
     justifyContent="flexEnd"
   >
     <Box
-      background="blue200"
+      background="blue100"
       paddingY={2}
       paddingX={3}
       className={styles.inner}
