@@ -58,7 +58,7 @@ export const EditEmail: ServicePortalModuleComponent = () => {
       toast.success(
         formatMessage({
           id: 'sp.settings:email-confirmed-saved',
-          defaultMessage: 'Tölvupóstfang vistað',
+          defaultMessage: 'Tölvupóstfang vistað.',
         }),
       )
     } catch (err) {
