@@ -49,12 +49,10 @@ const SkilavottordVehicleReadyToDeregisteredQuery = gql`
 
 const SkilavottordRecyclingRequestMutation = gql`
   mutation skilavottordRecyclingRequestMutation(
-    $partnerId: String
     $permno: String!
     $requestType: String!
   ) {
     createSkilavottordRecyclingRequest(
-      partnerId: $partnerId
       permno: $permno
       requestType: $requestType
     ) {
@@ -106,13 +104,10 @@ const Confirm: FC = () => {
     }
   }, [mutationResponse, router, routes, t.success])
 
-  const partnerId = user?.partnerId
-
   const handleConfirm = () => {
     setRecyclingRequest({
       variables: {
         permno: id,
-        partnerId: partnerId,
         requestType: 'deregistered',
       },
     })

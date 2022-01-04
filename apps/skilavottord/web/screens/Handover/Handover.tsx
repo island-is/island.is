@@ -42,12 +42,10 @@ const SkilavottordVehiclesQuery = gql`
 
 const SkilavottordRecyclingRequestMutation = gql`
   mutation skilavottordRecyclingRequestMutation(
-    $nameOfRequestor: String
     $permno: String!
     $requestType: RecyclingRequestTypes!
   ) {
     createSkilavottordRecyclingRequest(
-      nameOfRequestor: $nameOfRequestor
       permno: $permno
       requestType: $requestType
     ) {
@@ -119,7 +117,6 @@ const Handover: FC = () => {
             setRecyclingRequest({
               variables: {
                 permno: id,
-                nameOfRequestor: user?.name,
                 requestType: RecyclingRequestTypes.pendingRecycle,
               },
             })
@@ -149,7 +146,6 @@ const Handover: FC = () => {
     setRecyclingRequest({
       variables: {
         permno: id,
-        nameOfRequestor: user?.name,
         requestType: RecyclingRequestTypes.cancelled,
       },
     }).then(({ data }) => {
