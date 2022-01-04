@@ -131,7 +131,6 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 
   return (
     <OrganizationWrapper
-      namespace={namespace}
       pageTitle={n('services', 'Þjónusta')}
       organizationPage={organizationPage}
       pageFeaturedImage={organizationPage.featuredImage}

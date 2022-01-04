@@ -82,7 +82,6 @@ const SubPage: Screen<SubPageProps> = ({
 
   return (
     <OrganizationWrapper
-      namespace={namespace}
       pageTitle={subpage.title}
       organizationPage={organizationPage}
       fullWidthContent={true}
