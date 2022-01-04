@@ -167,7 +167,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           <Text variant="small">{date}</Text>
         </Box>
 
-        {renderTag()}
+        {!eyebrow && renderTag()}
       </Box>
     )
   }
