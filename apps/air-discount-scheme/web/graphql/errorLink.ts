@@ -11,6 +11,7 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   }
 
   if (graphQLErrors) {
+    console.log('graphqlerror in errorLink')
     console.log(JSON.stringify(graphQLErrors))
     graphQLErrors.forEach((err) => {
       if (err.message === 'Unauthorized') {
@@ -20,9 +21,9 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
       }
       switch (err.extensions?.code) {
         case 'UNAUTHENTICATED':
-          return signIn(identityServerId, {
-            callbackUrl: `${window.location.href}`,
-          })
+          // return signIn(identityServerId, {
+          //   callbackUrl: `${window.location.href}`,
+          // })
         default:
           return NotificationService.onGraphQLError({
             graphQLErrors,

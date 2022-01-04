@@ -6,5 +6,6 @@ export const CurrentUserQuery = gql`
       nationalId
       name
       mobile
+      role
     }
   }`

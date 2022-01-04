@@ -1,6 +1,4 @@
-import React, { createContext, ReactNode } from 'react'
-//import { AuthenticateUser as AuthUser, User } from '@island.is/air-discount-scheme-web/lib'
-
+import React, { ReactNode } from 'react'
 import useUser from '@island.is/air-discount-scheme-web/utils/hooks/useUser'
 import { UserContext } from '../../context'
 

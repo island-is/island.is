@@ -10,27 +10,28 @@ import { REDIRECT_KEY } from '../../consts'
 import { useI18n } from '../../i18n'
 import { Routes } from '../../types'
 import { useLogOut } from '@island.is/air-discount-scheme-web/utils/hooks/useLogout'
+import { CurrentUserQuery } from '@island.is/air-discount-scheme-web/graphql/gqlQueries'
 
 interface PropTypes {
   routeKey: keyof Routes
   localeKey: string
 }
 
-export const UserQuery = gql`
-  query UserQuery {
-    user {
-      name
-      nationalId
-      mobile
-      role
-    }
-  }
-`
+// export const UserQuery = gql`
+//   query UserQuery {
+//     user {
+//       name
+//       nationalId
+//       mobile
+//       role
+//     }
+//   }
+// `
 
 function Header({ routeKey, localeKey }: PropTypes) {
   const { setUser, isAuthenticated } = useContext(UserContext)
   const logOut = useLogOut()
-  const { data } = useQuery(UserQuery, { ssr: false })
+  const { data } = useQuery(CurrentUserQuery, { ssr: false })
   const user = data?.user
   useEffect(() => {
     setUser(user)

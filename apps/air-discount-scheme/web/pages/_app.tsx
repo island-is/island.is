@@ -103,7 +103,6 @@ SupportApplication.getInitialProps = async (appContext) => {
     })
 
   const apolloState = apolloClient.cache.extract()
-  console.log(isAuthenticated(appContext.ctx))
   return {
     pageProps: {
       layoutProps: { ...layoutProps, ...pageProps.layoutConfig},
