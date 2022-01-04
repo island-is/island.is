@@ -1062,12 +1062,9 @@ skilavottord-web:
 skilavottord-ws:
   enabled: true
   env:
-    AUTH_AUDIENCE: 'beta.staging01.devland.is'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'skilavottord'
     DB_USER: 'skilavottord'
-    SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=sv_citizen.staging&qaa=4'
-    SAML_ENTRY_POINT2: 'https://innskraning.island.is/?id=sv_company.staging&qaa=4'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1111,7 +1108,6 @@ skilavottord-ws:
     max: 3
     min: 2
   secrets:
-    AUTH_JWT_SECRET: '/k8s/skilavottord/AUTH_JWT_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
     FJARSYSLA_REST_PASS: '/k8s/skilavottord/FJARSYSLA_REST_PASS'
