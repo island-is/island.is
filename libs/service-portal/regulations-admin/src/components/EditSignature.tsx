@@ -364,22 +364,22 @@ export const EditSignature: StepComponent = (props) => {
               />
             </Inline>
           </Box>
+          <Box marginBottom={6}>
+            {!!draft.idealPublishDate.value && (
+              <Button
+                size="small"
+                variant="text"
+                preTextIcon="close"
+                onClick={() => {
+                  updateState('idealPublishDate', undefined)
+                }}
+              >
+                {t(msg.idealPublishDate_default)}
+              </Button>
+            )}
+          </Box>
         </>
       )}
-      <Box marginBottom={6}>
-        {!!draft.idealPublishDate.value && (
-          <Button
-            size="small"
-            variant="text"
-            preTextIcon="close"
-            onClick={() => {
-              updateState('idealPublishDate', undefined)
-            }}
-          >
-            {t(msg.idealPublishDate_default)}
-          </Button>
-        )}
-      </Box>
     </>
   )
 }
