@@ -19,7 +19,6 @@ import { UserProfileService } from './userProfile.service'
 import { UserProfile } from './userProfile.model'
 import { logger } from '@island.is/logging'
 
-
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('User Profile')
 @Controller()
