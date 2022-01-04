@@ -17,16 +17,26 @@ runs:
   using: 'composite'
   steps:
     - name: Cache for NodeJS dependencies - host OS
-      uses: island-is/cache@v0.1
+      id: node-modules
+      continue-on-error: true
+      uses: ./.github/actions/cache
       with:
         path: node_modules
         key: ${{ inputs.node-modules-hash }}-yarn
 
+    - name: Check cache status
+      run: '[[ "${{ steps.node-modules.outputs.status }}" != "failure" ]] || exit 1'
+
     - name: Cache for generated files
-      uses: island-is/cache@v0.1
+      id: generated-files-cache
+      continue-on-error: true
+      uses: ./.github/actions/cache
       with:
         path: generated_files.tar.gz
         key: ${{ inputs.generated-files-cache-key }}
+
+    - name: Check cache status
+      run: '[[ "${{ steps.generated-files-cache.outputs.status }}" != "failure" ]] || exit 1'
 
     - name: Untar generated files
       run: tar zxvf generated_files.tar.gz
