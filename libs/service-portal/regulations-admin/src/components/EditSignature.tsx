@@ -199,7 +199,7 @@ export const EditSignature: StepComponent = (props) => {
 
   return (
     <>
-      <Box marginBottom={4}>
+      <Box marginBottom={4} display="flex" justifyContent="center">
         <Button onClick={downloadSignablePDF} icon="download">
           {t(msg.signedDocumentDownloadFresh)}
         </Button>
