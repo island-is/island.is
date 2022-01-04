@@ -102,7 +102,7 @@ const Component = forwardRef<
     const { borderColor, textColor, tagVariant } = colorSchemes[colorScheme]
 
     const hasTags = Array.isArray(tags) && tags.length > 0
-    const hasImage = (!!src && !!alt) || customImage
+    const hasImage = !!src || !!customImage
 
     const shouldStack = width && width < stackWidth
 

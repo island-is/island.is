@@ -30,7 +30,7 @@ const getDemoTags = (amount: number) => {
   const getRandomTag = () =>
     demoTags[Math.floor(Math.random() * demoTags.length)]
 
-  return Array.from({ length: amount }, (_, i) => ({
+  return Array.from({ length: amount }, () => ({
     label: getRandomTag(),
     href: '/',
   }))
