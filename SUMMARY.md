@@ -148,6 +148,7 @@
       - [Children Residence Change Template](libs/application/templates/family-matters/children-residence-change/README.md)
       - [Family Matters Core](libs/application/templates/family-matters/core/README.md)
       - [Joint Custody Agreement Template](libs/application/templates/family-matters/joint-custody-agreement/README.md)
+    - [Application Templates Financial Aid](libs/application/templates/financial-aid/README.md)
     - [Application Templates Funding Government Projects](libs/application/templates/funding-government-projects/README.md)
     - [General Petitions](libs/application/templates/general-petition/README.md)
     - [Health Insurance](libs/application/templates/health-insurance/README.md)

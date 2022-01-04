@@ -1,4 +1,4 @@
-# application-templates-financial-aid
+# Application Templates Financial Aid
 
 This library was generated with [Nx](https://nx.dev).
 
