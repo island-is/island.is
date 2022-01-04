@@ -12,7 +12,6 @@ import {
   getInputFieldsWithErrors,
   useLocale,
 } from '../utils'
-import { mockSave } from '../_mockData'
 import { RegulationsAdminScope } from '@island.is/auth/scopes'
 import { DraftingStatus, RegulationDraft } from '@island.is/regulations/admin'
 import {
@@ -450,35 +449,8 @@ export const useDraftingState = (
 
               // BASICS
               if (stepNav.name === 'basics') {
-                const basicsRequired = [
-                  'title',
-                  'text',
-                ] as RegDraftFormSimpleProps[]
-
                 const errorFields = getInputFieldsWithErrors(
-                  basicsRequired,
-                  draft,
-                )
-
-                if (errorFields) {
-                  dispatch({
-                    type: 'UPDATE_MULTIPLE_PROPS',
-                    multiData: errorFields,
-                  })
-                  return // Prevent the user going forward
-                }
-              }
-
-              // META
-              if (stepNav.name === 'meta') {
-                const metaRequired = [
-                  'ministry',
-                  'type',
-                  'signatureDate',
-                ] as RegDraftFormSimpleProps[]
-
-                const errorFields = getInputFieldsWithErrors(
-                  metaRequired,
+                  ['title', 'text'],
                   draft,
                 )
 
