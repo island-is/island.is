@@ -53,6 +53,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
 
   return (
     <OrganizationWrapper
+      showExternalLinks={true}
       pageTitle={organizationPage.title}
       pageDescription={organizationPage.description}
       organizationPage={organizationPage}
@@ -72,22 +73,20 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
         />
       ))}
       sidebarContent={
-        <>
-          {WITH_SEARCH.includes(organizationPage.slug) && (
-            <SearchBox
-              organizationPage={organizationPage}
-              placeholder={n('searchServices', 'Leitaðu að þjónustu')}
-              noResultsText={n(
-                'noServicesFound',
-                'Engar niðurstöður í þjónustu sýslumanna',
-              )}
-              searchAllText={n(
-                'searchAllServices',
-                'Leita í öllu efni Ísland.is',
-              )}
-            />
-          )}
-        </>
+        WITH_SEARCH.includes(organizationPage.slug) && (
+          <SearchBox
+            organizationPage={organizationPage}
+            placeholder={n('searchServices', 'Leitaðu að þjónustu')}
+            noResultsText={n(
+              'noServicesFound',
+              'Engar niðurstöður í þjónustu sýslumanna',
+            )}
+            searchAllText={n(
+              'searchAllServices',
+              'Leita í öllu efni Ísland.is',
+            )}
+          />
+        )
       }
     >
       {organizationPage.bottomSlices.map((slice) => (
