@@ -23,10 +23,11 @@ export const userNotificationServiceSetup = (): ServiceBuilder<'user-notificatio
           staging: 'user-notification-xrd',
           prod: 'user-notification-xrd',
         },
-        paths: ['/notifications'],
+        paths: ['/'],
         public: false,
       },
     })
+    .grantNamespaces('nginx-ingress-internal')
 
 export const userNotificationWorkerSetup = (): ServiceBuilder<'user-notification-worker'> =>
   service('user-notification-worker')
