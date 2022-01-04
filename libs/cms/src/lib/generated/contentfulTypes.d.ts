@@ -2219,11 +2219,8 @@ export interface IProjectSubpageFields {
   /** Content */
   content?: Document | undefined
 
-  /** Render slices as tabs */
-  renderSlicesAsTabs?: boolean | undefined
-
   /** Slices */
-  slices?: IOneColumnText[] | undefined
+  slices?: (IAccordionSlice | IOneColumnText | ITwoColumnText)[] | undefined
 }
 
 export interface IProjectSubpage extends Entry<IProjectSubpageFields> {
@@ -2522,9 +2519,6 @@ export interface IStepperFields {
 
   /** Steps */
   steps?: IStep[] | undefined
-
-  /** Config */
-  config?: Record<string, any> | undefined
 }
 
 /** Used for asking users questions and returning an answer. */
@@ -2641,9 +2635,6 @@ export interface ISubArticleFields {
 
   /** Slug(old) */
   slug?: string | undefined
-
-  /** Stepper */
-  stepper?: IStepper | undefined
 }
 
 /** A sub article that's a part of another main article */
