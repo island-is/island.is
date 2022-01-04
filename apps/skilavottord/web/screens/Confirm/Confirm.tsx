@@ -19,11 +19,10 @@ import {
   ProcessPageLayout,
   CarDetailsBox,
 } from '@island.is/skilavottord-web/components'
-import { formatDate, formatYear } from '@island.is/skilavottord-web/utils'
+import { formatYear } from '@island.is/skilavottord-web/utils'
 import { Mutation } from '@island.is/skilavottord-web/graphql/schema'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
-import { BASE_PATH } from '@island.is/skilavottord/consts'
 import { dateFormat } from '@island.is/shared/constants'
 
 const SkilavottordVehicleOwnerMutation = gql`
@@ -103,7 +102,7 @@ const Confirm = ({ apolloState }: PropTypes) => {
 
     await createSkilavottordVehicle({
       variables: {
-        permno: car?.permno,
+        permno: id,
       },
     })
     router.replace(`${routes.recycleVehicle.baseRoute}/${id}/handover`)

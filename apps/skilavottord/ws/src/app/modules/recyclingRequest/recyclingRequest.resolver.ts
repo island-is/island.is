@@ -66,7 +66,7 @@ export class RecyclingRequestResolver {
   }
 
   @Authorize({
-    roles: [Role.developer, Role.recyclingCompany, Role.recyclingCompany],
+    roles: [Role.developer, Role.recyclingCompany, Role.recyclingFund],
   })
   @Query(() => [RecyclingRequestModel])
   async skilavottordRecyclingRequests(
