@@ -5,7 +5,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Notification } from './types'
 import { isDefined } from './utils'
 import { FIREBASE_PROVIDER } from '../../../constants'
-import { UserProfileApi } from '../../../../gen/fetch'
+import { UserProfileApi } from '@island.is/clients/user-profile'
 
 export class PushNotificationError extends Error {
   constructor(public readonly firebaseErrors: firebaseAdmin.FirebaseError[]) {

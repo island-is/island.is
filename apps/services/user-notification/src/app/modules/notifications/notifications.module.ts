@@ -10,7 +10,7 @@ import { NotificationDispatchService } from './notificationDispatch.service'
 import { MessageProcessorService } from './messageProcessor.service'
 import { FIREBASE_PROVIDER } from '../../../constants'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import * as userProfile from '../../../../gen/fetch'
+import * as userProfile from '@island.is/clients/user-profile'
 
 @Module({
   imports: [
