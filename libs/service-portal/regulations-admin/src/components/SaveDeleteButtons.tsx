@@ -37,14 +37,15 @@ export type SaveDeleteButtonsProps = {
 export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
   const { draft, actions, saving, wrap, classes = s } = props
   const t = useLocale().formatMessage
+  const { saveStatus, deleteDraft, propose } = actions
 
-  const deleteDraft = () => {
+  const handleDeleteClick = () => {
     if (
       isDraftEmpty(draft) ||
       // eslint-disable-next-line no-restricted-globals
       confirm(t(msg.confirmDelete))
     ) {
-      actions.deleteDraft()
+      deleteDraft()
     }
   }
 
@@ -52,7 +53,7 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
     <>
       <Box className={classes.saveDraft}>
         <Button
-          onClick={actions.saveStatus}
+          onClick={() => saveStatus()}
           icon="save"
           iconType="outline"
           variant="text"
@@ -62,10 +63,10 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
           {t(msg.save)}
         </Button>
       </Box>
-      {actions.propose && (
+      {propose && (
         <Box className={classes.saveDraft}>
           <Button
-            onClick={actions.propose}
+            onClick={() => propose()}
             icon="open"
             iconType="outline"
             variant="text"
@@ -78,7 +79,7 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
       )}
       <Box className={classes.deleteDraft}>
         <Button
-          onClick={deleteDraft}
+          onClick={() => handleDeleteClick()}
           icon="trash"
           iconType="outline"
           variant="text"

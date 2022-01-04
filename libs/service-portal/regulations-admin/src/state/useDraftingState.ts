@@ -434,7 +434,7 @@ export const useDraftingState = (
     return {
       goBack: stepNav.prev
         ? () => {
-            actions.saveStatus()
+            actions.saveStatus(true)
             history.replace(
               generatePath(ServicePortalPath.RegulationsAdminEdit, {
                 id: draft.id,
@@ -446,7 +446,7 @@ export const useDraftingState = (
       goForward:
         stepNav.next && (isEditor || stepNav.next !== 'review')
           ? () => {
-              actions.saveStatus()
+              actions.saveStatus(true)
 
               // BASICS
               if (stepNav.name === 'basics') {
@@ -558,13 +558,13 @@ export const useDraftingState = (
         }
       },
 
-      saveStatus: () => {
+      saveStatus: (silent?: boolean) => {
         dispatch({ type: 'SAVING_STATUS' })
         _saveStatus().then(({ success, error }) => {
           if (error) {
             toast.error(t(buttonsMsgs.saveFailure))
             console.error(error)
-          } else {
+          } else if (!silent) {
             toast.success(t(buttonsMsgs.saveSuccess))
           }
           dispatch({ type: 'SAVING_STATUS_DONE', error })
