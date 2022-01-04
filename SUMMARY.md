@@ -243,6 +243,7 @@
   - [Constants](libs/shared/constants/README.md)
   - [Form Fields](libs/shared/form-fields/README.md)
   - [Mocking](libs/shared/mocking/README.md)
+  - [Shared Pii](libs/shared/pii/README.md)
   - [Problem Types](libs/shared/problem/README.md)
   - [Shared Translations](libs/shared/translations/README.md)
   - [Types](libs/shared/types/README.md)
@@ -250,6 +251,7 @@
   - [Testing Containers](libs/testing/containers/README.md)
   - [Testing Fixtures](libs/testing/fixtures/README.md)
   - [Testing Nest](libs/testing/nest/README.md)
+- [User Monitoring](libs/user-monitoring/README.md)
 
 ## Reference
 

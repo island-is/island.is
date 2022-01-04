@@ -42,15 +42,12 @@ export class AuthGuard implements CanActivate {
   }
 
   private decodeSession(request: GraphQLContext['req']): Partial<User> {
-    const sessionToken = request.cookies
-      ? request.cookies['next-auth.session-token']
-      : null
-
-    if (!sessionToken) {
+    const accessToken = request.auth.authorization.replace('Bearer ', '')
+    if (!accessToken) {
       throw new AuthenticationError('Invalid user')
     }
 
-    const decodedToken = decode(sessionToken) as Partial<User>
+    const decodedToken = decode(accessToken) as Partial<User>
 
     return {
       name: decodedToken.name,
