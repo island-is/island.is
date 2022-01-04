@@ -13,6 +13,7 @@ import { AccessModule } from './modules/access/access.module'
 import { IdpProviderModule } from './modules/idp-provider/idp-provider.module'
 import { TranslationModule } from './modules/translation/translation.module'
 import { AuditModule } from '@island.is/nest/audit'
+import { PersonalRepresentativeModule } from './modules/personal-representative/personal-representative.module'
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { AuditModule } from '@island.is/nest/audit'
     AccessModule,
     IdpProviderModule,
     TranslationModule,
+    PersonalRepresentativeModule,
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.secret'],
     }),
