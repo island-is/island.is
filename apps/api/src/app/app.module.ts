@@ -261,6 +261,7 @@ const autoSchemaFile = environment.production
         XRoadConfig,
         NationalRegistryClientConfig,
         AuthPublicApiClientConfig,
+        FeatureFlagConfig,
         SyslumennClientConfig,
         FeatureFlagConfig,
       ],

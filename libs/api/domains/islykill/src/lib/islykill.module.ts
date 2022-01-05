@@ -1,4 +1,5 @@
 import { DynamicModule, Module } from '@nestjs/common'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import {
   IslykillApiModule,
@@ -13,7 +14,7 @@ export class IslykillModule {
     return {
       module: IslykillModule,
       providers: [IslykillService],
-      imports: [IslykillApiModule.register(config)],
+      imports: [IslykillApiModule.register(config), FeatureFlagModule],
     }
   }
 }

@@ -331,10 +331,34 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Cache for NodeJS dependencies - host OS
+        id: node-modules
+        continue-on-error: true
+        uses: ./.github/actions/cache
+        with:
+          path: node_modules
+          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+
+      - name: Check cache status
+        run: '[[ "${{ steps.node-modules.outputs.status }}" != "failure" ]] || exit 1'
+
+      - name: Cache for generated files
+        id: generated-files-cache
+        continue-on-error: true
+        uses: ./.github/actions/cache
+        with:
+          path: generated_files.tar.gz
+          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
+
+      - name: Check cache status
+        run: '[[ "${{ steps.generated-files-cache.outputs.status }}" != "failure" ]] || exit 1'
+
+      - name: Untar generated files
+        run: tar zxvf generated_files.tar.gz
+        shell: bash
+
       - uses: ./.github/actions/unit-test
         with:
-          node-modules-hash: ${{ needs.prepare.outputs.node-modules-hash }}
-          generated-files-cache-key: ${{ needs.prepare.outputs.generated-files-cache-key }}
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -562,11 +586,14 @@ jobs:
       - pre-checks
       - retag-unaffected
       - deploy
+      - tests
     steps:
       - name: Check retag success
         run: '[[ ${{ needs.retag-unaffected.result }} != "failure" ]] || exit 1'
       - name: Check deploy success
         run: '[[ ${{ needs.deploy.result }} != "failure" ]] || exit 1'
+      - name: Check tests success
+        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
       - name: Announce success
         if: needs.pre-checks.outputs.PRE_CHECK
         run: echo "Build is successful"
