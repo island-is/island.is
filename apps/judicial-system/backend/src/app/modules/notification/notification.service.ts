@@ -502,7 +502,7 @@ export class NotificationService {
       existingCase.prosecutor?.institution?.name,
     )
 
-    let attachments: Attachment[] | undefined
+    const attachments: Attachment[] = [this.createICalAttachment(existingCase)]
 
     if (existingCase.sendRequestToDefender) {
       const intl = await this.intlService.useIntl(
@@ -511,14 +511,11 @@ export class NotificationService {
       )
       const pdf = await getRequestPdfAsString(existingCase, intl.formatMessage)
 
-      attachments = [
-        this.createICalAttachment(existingCase),
-        {
-          filename: `${existingCase.policeCaseNumber}.pdf`,
-          content: pdf,
-          encoding: 'binary',
-        },
-      ]
+      attachments.push({
+        filename: `${existingCase.policeCaseNumber}.pdf`,
+        content: pdf,
+        encoding: 'binary',
+      })
     }
 
     return this.sendEmail(
