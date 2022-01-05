@@ -188,7 +188,6 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
   >(undefined)
 
   let content: SliceType[] = []
-
   if (!!subpage && renderSlicesAsTabs)
     content = selectedSliceTab?.content as SliceType[]
   if (!subpage) content = projectPage?.content as SliceType[]
