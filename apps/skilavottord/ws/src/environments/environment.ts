@@ -6,6 +6,7 @@ const devConfig = {
   auth: {
     issuer: 'https://identity-server.staging01.devland.is',
     audience: '@urvinnslusjodur.is/skilavottord',
+    nextAuthCookieName: 'next-auth.session-token',
   },
   samgongustofa: {
     soapUrl:
@@ -42,6 +43,7 @@ const prodConfig = {
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '@urvinnslusjodur.is/skilavottord',
+    nextAuthCookieName: '__Secure-next-auth.session-token',
   },
   samgongustofa: {
     soapUrl: process.env.SAMGONGUSTOFA_SOAP_URL,
