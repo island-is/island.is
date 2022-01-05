@@ -300,6 +300,7 @@ export const AsyncSearchInput = forwardRef<
             {...buttonProps}
           >
             <Icon
+              size={size}
               icon="search"
               color={whiteColorScheme ? 'white' : 'blue400'}
             />
