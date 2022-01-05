@@ -8,8 +8,10 @@ import {
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
 import { NationalRegistry } from './types'
-import { Application, getValueViaPath } from '@island.is/application/core'
 import { FileStorageService } from '@island.is/file-storage'
+import { GET_FILE_CONTENT_AS_BASE64 } from '@island.is/application/graphql'
+import { useQuery } from '@apollo/client'
+import { Application, getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
 export class PSignSubmissionService {
@@ -19,7 +21,7 @@ export class PSignSubmissionService {
   ) {}
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
-    const attachments = await this.prepareAttachments(application)
+    await this.prepareAttachments(application)
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
 
@@ -68,9 +70,7 @@ export class PSignSubmissionService {
     return { success: result.success, id: result.caseNumber }
   }
 
-  private async prepareAttachments(
-    application: Application,
-  ): Promise<{name: String, url: string}[]> {
+  private async prepareAttachments(application: Application) {
     const attachments = getValueViaPath(
       application.answers,
       'attachments',
@@ -78,19 +78,22 @@ export class PSignSubmissionService {
     const hasAttachments = attachments && attachments?.length > 0
 
     if (!hasAttachments) {
-      return []
+      return Promise.reject({})
     }
+    console.log(application.attachments)
 
-    return await Promise.all(
-      attachments.map(async ({ key, name }) => {
-        const url = (application.attachments as {
-          [key: string]: string
-        })[key]
-        console.log(url)
-        const signedUrl = await this.fileStorageService.getFileContentAsBase64(url)
-        console.log(signedUrl)
-        return { name, url: signedUrl }
-      }),
-    )
+    attachments.map(async ({ key, name }) => {
+      const url = (application.attachments as {
+        [key: string]: string
+      })[key]
+      console.log(url)
+
+      // const { loading: loadingData, error, data }= useQuery(GET_FILE_CONTENT_AS_BASE64, {
+      //   variables: { input: { id: application.id, key: key } },
+      // })
+      // console.log(data)
+      return { name, content: 'content' }
+    }),
+      console.log(attachments)
   }
 }

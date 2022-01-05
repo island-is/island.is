@@ -85,37 +85,4 @@ export class FileStorageService {
     await this.s3.copyObject(params).promise()
     return `https://${destinationBucket}.s3-${region}.amazonaws.com/${destinationKey}`
   }
-
-  public async getFileContentAsBase64(filename: string): Promise<string> {
-    try {
-      const { region, bucket, key } = AmazonS3URI(filename)
-      const sm = await this.getFile(key, bucket)
-      if (sm.Body) {
-        return sm.Body.toString('base64')
-      } else {
-        throw new Error('error getting file:' + key)
-      }
-    } catch (err) {
-      throw new Error(err.message)
-    }
-  }
-
-  async getFile(
-    filename: string,
-    bucketName: string,
-  ): Promise<S3.GetObjectOutput> {
-    return new Promise((resolve, reject) => {
-      const params = {
-        Bucket: bucketName,
-        Key: filename,
-      }
-      this.s3.getObject(params, function (err, data) {
-        if (err) {
-          reject(err)
-        } else {
-          resolve(data)
-        }
-      })
-    })
-  }
 }

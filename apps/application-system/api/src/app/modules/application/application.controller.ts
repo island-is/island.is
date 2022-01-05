@@ -85,6 +85,7 @@ import { ApplicationResponseDto } from './dto/application.response.dto'
 import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
 import { RequestFileSignatureResponseDto } from './dto/requestFileSignature.response.dto'
 import { UploadSignedFileResponseDto } from './dto/uploadSignedFile.response.dto'
+import { FileContentAsBase64ResponseDto } from './dto/fileContentAsBase64.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { verifyToken } from './utils/tokenUtils'
 import { getApplicationLifecycle } from './utils/application'
@@ -1006,5 +1007,36 @@ export class ApplicationController {
     })
 
     return { url }
+  }
+
+  @Scopes(ApplicationScope.read)
+  @Get('applications/:id/attachments/:key')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application to update the attachments for.',
+    allowEmptyValue: false,
+  })
+  @ApiOkResponse({ type: FileContentAsBase64ResponseDto })
+  async getFileContentAsBase64(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('key') key: string,
+    @CurrentUser() user: User,
+  ): Promise<FileContentAsBase64ResponseDto> {
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user.nationalId,
+    )
+
+    const fileName = (existingApplication.attachments as {
+      [key: string]: string
+    })[key]
+    console.log(fileName)
+
+    const content =  await this.fileService.getFileContentAsBase64(
+      fileName
+    )
+    return { content}
   }
 }

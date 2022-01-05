@@ -3,6 +3,7 @@ import { ApplicationResolver } from './application.resolver'
 import { ApplicationService } from './application.service'
 import { ApplicationsApi, PaymentsApi, Configuration } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { FileStorageModule } from '@island.is/file-storage'
 
 export interface Config {
   baseApiUrl: string
@@ -13,6 +14,7 @@ export class ApplicationModule {
   static register(config: Config): DynamicModule {
     return {
       module: ApplicationModule,
+      imports: [FileStorageModule.register({})],
       providers: [
         ApplicationResolver,
         ApplicationService,

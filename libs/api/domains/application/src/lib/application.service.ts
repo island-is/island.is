@@ -18,13 +18,16 @@ import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
+import { FileContentAsBase64Input } from './dto/fileContentAsBase64.input'
 import { ApplicationPayment } from './application.model'
+import { FileStorageService } from '@island.is/file-storage'
 
 @Injectable()
 export class ApplicationService {
   constructor(
     private _applicationApi: ApplicationsApi,
     private _applicationPaymentApi: PaymentsApi,
+    private readonly fileStorageService: FileStorageService,
   ) {}
 
   applicationApiWithAuth(auth: Auth) {
@@ -194,6 +197,17 @@ export class ApplicationService {
     ).applicationControllerGetPresignedUrl({
       id,
       pdfType: type,
+    })
+  }
+
+
+  async getFileContentBase64(input: FileContentAsBase64Input, auth: Auth) {
+    const { id, key } = input
+    return await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerGetFileContentAsBase64({
+      id,
+      key
     })
   }
 }
