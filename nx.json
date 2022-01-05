@@ -670,7 +670,8 @@
       "tags": []
     },
     "services-user-notification": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["clients-user-profile"]
     },
     "services-user-profile": {
       "tags": []
