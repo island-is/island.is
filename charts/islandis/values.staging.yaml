@@ -867,6 +867,7 @@ service-portal:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'islandis'
+    - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -912,6 +913,7 @@ service-portal-api:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'islandis'
+    - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
