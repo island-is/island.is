@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { ICalendar } from 'datebook'
 
 import { IntlService } from '@island.is/cms-translations'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -51,7 +52,7 @@ interface Recipient {
 interface Attachment {
   filename: string
   content: string
-  encoding: string
+  encoding?: string
 }
 
 @Injectable()
@@ -224,6 +225,42 @@ export class NotificationService {
       )
     } catch (error) {
       this.logger.error('Failed to upload request pdf to court', error)
+    }
+  }
+
+  private createICalAttachment(existingCase: Case): Attachment {
+    const courtDate = existingCase.courtDate?.toString().split('.')[0] || ''
+    const courtEnd = existingCase.courtDate
+    courtEnd?.setMinutes(courtEnd.getMinutes() + 30)
+
+    const icalendar = new ICalendar({
+      title: `Fyrirtaka í máli ${existingCase.policeCaseNumber}`,
+      location: `${existingCase.court?.name}. ${
+        existingCase.courtRoom
+          ? `Dómsalur: ${existingCase.courtRoom}`
+          : 'Dómsalur hefur ekki verið skráður.'
+      }`,
+      start: new Date(courtDate),
+      end: new Date(courtEnd ?? ''),
+      attendees: [
+        {
+          name: existingCase.registrar
+            ? existingCase.registrar.name
+            : existingCase.judge
+            ? existingCase.judge.name
+            : '',
+          email: existingCase.registrar
+            ? existingCase.registrar.email
+            : existingCase.judge
+            ? existingCase.judge.email
+            : '',
+        },
+      ],
+    })
+
+    return {
+      filename: 'court-date.ics',
+      content: icalendar.render(),
     }
   }
 
@@ -418,6 +455,7 @@ export class NotificationService {
       existingCase.prosecutor?.email,
       subject,
       html,
+      [this.createICalAttachment(existingCase)],
     )
   }
 
@@ -474,6 +512,7 @@ export class NotificationService {
       const pdf = await getRequestPdfAsString(existingCase, intl.formatMessage)
 
       attachments = [
+        this.createICalAttachment(existingCase),
         {
           filename: `${existingCase.policeCaseNumber}.pdf`,
           content: pdf,
