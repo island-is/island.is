@@ -1,7 +1,6 @@
 import React, { FC, useContext, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
-import startCase from 'lodash/startCase'
 import NextLink from 'next/link'
 import * as kennitala from 'kennitala'
 
