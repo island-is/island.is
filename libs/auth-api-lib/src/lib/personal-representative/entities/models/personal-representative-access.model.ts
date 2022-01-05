@@ -29,7 +29,6 @@ export class PersonalRepresentativeAccess extends Model<PersonalRepresentativeAc
   @ApiProperty()
   serviceProvider!: string
 
-  
   @Column({
     type: DataType.STRING,
     allowNull: false,

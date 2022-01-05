@@ -2,7 +2,10 @@ import { setupWithAuth, setupWithoutAuth } from '../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../test/testHelpers'
 import request from 'supertest'
 import { TestApp } from '@island.is/testing/nest'
-import { PersonalRepresentativeAccess, PersonalRepresentativeAccessDTO } from '@island.is/auth-api-lib/personal-representative'
+import {
+  PersonalRepresentativeAccess,
+  PersonalRepresentativeAccessDTO,
+} from '@island.is/auth-api-lib/personal-representative'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { AuthScope } from '@island.is/auth/scopes'
 
@@ -13,17 +16,20 @@ const user = createCurrentUser({
 })
 
 const accessData: PersonalRepresentativeAccessDTO[] = [
-  { nationalIdPersonalRepresentative: '1234567890',
+  {
+    nationalIdPersonalRepresentative: '1234567890',
     nationalIdRepresentedPerson: '1234567891',
-    serviceProvider: 'testServiceProvider'
+    serviceProvider: 'testServiceProvider',
   },
-  { nationalIdPersonalRepresentative: '1234567892',
+  {
+    nationalIdPersonalRepresentative: '1234567892',
     nationalIdRepresentedPerson: '1234567893',
-    serviceProvider: 'testServiceProvider'
+    serviceProvider: 'testServiceProvider',
   },
-  { nationalIdPersonalRepresentative: '1234567892',
+  {
+    nationalIdPersonalRepresentative: '1234567892',
     nationalIdRepresentedPerson: '1234567894',
-    serviceProvider: 'testServiceProvider'
+    serviceProvider: 'testServiceProvider',
   },
 ]
 
@@ -85,25 +91,28 @@ describe('AccessLogsController - With Auth', () => {
   describe('Get access-logs', () => {
     it('Get /v1/access-logs should return logs connected to specific personal representative', async () => {
       const response = await server
-        .get(`${path}/${accessData[0].nationalIdPersonalRepresentative}/personal-representative`)
+        .get(
+          `${path}/${accessData[0].nationalIdPersonalRepresentative}/personal-representative`,
+        )
         .expect(200)
 
       expect(response.body.data[0]).toMatchObject(accessData[0])
     })
 
     it('Get /v1/access-logs should return logs connected to specific represented person', async () => {
-      const response = await server.get(`${path}/${accessData[2].nationalIdRepresentedPerson}/represented-person`)
-      .expect(200)
+      const response = await server
+        .get(
+          `${path}/${accessData[2].nationalIdRepresentedPerson}/represented-person`,
+        )
+        .expect(200)
 
       expect(response.body.data[0]).toMatchObject(accessData[2])
     })
 
     it('Get /v1/access-logs should return all access logs', async () => {
-      const response = await server
-        .get(`${path}`)
-        .expect(200)
+      const response = await server.get(`${path}`).expect(200)
 
-        expect(response.body.totalCount).toBe(accessData.length)
+      expect(response.body.totalCount).toBe(accessData.length)
     })
   })
 })

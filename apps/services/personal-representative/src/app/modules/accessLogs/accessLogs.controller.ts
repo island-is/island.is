@@ -3,7 +3,14 @@ import {
   PersonalRepresentativeAccessService,
   PaginatedPersonalRepresentativeAccessDto,
 } from '@island.is/auth-api-lib/personal-representative'
-import { Controller, UseGuards, Get, Inject, Query, Param } from '@nestjs/common'
+import {
+  Controller,
+  UseGuards,
+  Get,
+  Inject,
+  Query,
+  Param,
+} from '@nestjs/common'
 import {
   ApiOperation,
   ApiOkResponse,
