@@ -193,6 +193,7 @@ export const RulingStepTwo: React.FC = () => {
         const travelBanRestrictions = formatTravelBanRestrictions(
           theCase.accusedGender,
           theCase.requestedCustodyRestrictions,
+          theCase.requestedOtherRestrictions,
         )
 
         autofill(
