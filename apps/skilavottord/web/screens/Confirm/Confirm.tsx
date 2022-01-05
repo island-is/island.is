@@ -12,7 +12,7 @@ import {
   ProcessPageLayout,
   CarDetailsBox,
 } from '@island.is/skilavottord-web/components'
-import { formatDate, formatYear } from '@island.is/skilavottord-web/utils'
+import { formatYear } from '@island.is/skilavottord-web/utils'
 import { Mutation } from '@island.is/skilavottord-web/graphql/schema'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { dateFormat } from '@island.is/shared/constants'
@@ -90,7 +90,7 @@ const Confirm = ({ apolloState }: PropTypes) => {
 
     await createSkilavottordVehicle({
       variables: {
-        permno: car?.permno,
+        permno: id,
       },
     })
     router.push(`${routes.recycleVehicle.baseRoute}/${id}/handover`)
@@ -107,7 +107,7 @@ const Confirm = ({ apolloState }: PropTypes) => {
           <Stack space={4}>
             <Text variant="h1">{t.title}</Text>
             <Stack space={2}>
-              <Text variant="h3">{t.subTitles.confirm}</Text>
+              <Text variant="h3">{t.subTitles?.confirm}</Text>
               <Text>{t.info}</Text>
             </Stack>
             <Stack space={2}>
