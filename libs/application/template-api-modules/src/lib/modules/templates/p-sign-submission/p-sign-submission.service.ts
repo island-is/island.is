@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   SyslumennService,
@@ -8,20 +8,46 @@ import {
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
 import { NationalRegistry } from './types'
-import { FileStorageService } from '@island.is/file-storage'
-import { GET_FILE_CONTENT_AS_BASE64 } from '@island.is/application/graphql'
-import { useQuery } from '@apollo/client'
+import { SharedTemplateApiService } from '../../shared'
 import { Application, getValueViaPath } from '@island.is/application/core'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
+interface ContentData {
+  getFileContentAsBase64: {
+    content: string
+  }
+}
+
+const QUERY = `
+query GetFileContentAsBase64($input: FileContentAsBase64Input!) {
+  getFileContentAsBase64(input: $input) {
+    content
+  }
+}
+`
+const YES = 'yes'
 @Injectable()
 export class PSignSubmissionService {
   constructor(
     private readonly syslumennService: SyslumennService,
-    private readonly fileStorageService: FileStorageService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async submitApplication({ application }: TemplateApiModuleActionProps) {
-    await this.prepareAttachments(application)
+  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+    const content: string =
+      application.answers.qualityPhoto === YES
+        ? (application.answers.photoAttachment as string)
+        : await this.getAttachments({
+            application,
+            auth,
+          })
+    const name = this.getName(application)
+    const attachment: Attachment = {
+      name,
+      content,
+    }
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
 
@@ -37,13 +63,6 @@ export class PSignSubmissionService {
       type: PersonType.Plaintiff,
     }
     const persons: Person[] = [person]
-
-    const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
-    const content = application.answers.photoAttachment as string
-    const attachment: Attachment = {
-      name: `p_kort_mynd_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
-      content: content,
-    }
 
     const extraData: { [key: string]: string } =
       application.answers.deliveryMethod === 'sendHome'
@@ -70,7 +89,18 @@ export class PSignSubmissionService {
     return { success: result.success, id: result.caseNumber }
   }
 
-  private async prepareAttachments(application: Application) {
+  private getName(application: Application): string {
+    const nationalRegistryData = application.externalData.nationalRegistry
+      ?.data as NationalRegistry
+    const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
+
+    return `p_kort_mynd_${nationalRegistryData?.nationalId}_${dateStr}.pdf`
+  }
+
+  private async getAttachments({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<string> {
     const attachments = getValueViaPath(
       application.answers,
       'attachments',
@@ -80,20 +110,26 @@ export class PSignSubmissionService {
     if (!hasAttachments) {
       return Promise.reject({})
     }
-    console.log(application.attachments)
 
-    attachments.map(async ({ key, name }) => {
-      const url = (application.attachments as {
-        [key: string]: string
-      })[key]
-      console.log(url)
+    const { key } = attachments[0]
 
-      // const { loading: loadingData, error, data }= useQuery(GET_FILE_CONTENT_AS_BASE64, {
-      //   variables: { input: { id: application.id, key: key } },
-      // })
-      // console.log(data)
-      return { name, content: 'content' }
-    }),
-      console.log(attachments)
+    const contentData = await this.sharedTemplateAPIService
+      .makeGraphqlQuery<ContentData>(auth.authorization, QUERY, {
+        input: {
+          id: application.id,
+          key: key,
+        },
+      })
+      .then((response) => response.json())
+
+    if ('errors' in contentData) {
+      this.logger.error(
+        'Failed to get base64 content from image upload in P-sign submission service',
+        contentData,
+      )
+      throw new Error('Failed to get base64 content from image upload')
+    }
+
+    return contentData.data?.getFileContentAsBase64.content as string
   }
 }

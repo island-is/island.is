@@ -1032,7 +1032,6 @@ export class ApplicationController {
     const fileName = (existingApplication.attachments as {
       [key: string]: string
     })[key]
-    console.log(fileName)
 
     const content = await this.fileService.getFileContentAsBase64(fileName)
     return { content }
