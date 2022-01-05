@@ -805,6 +805,7 @@ describe('Case', () => {
           modified: apiCase.modified,
           ...judgeCaseData,
           judge,
+          registrar,
         } as CCase)
 
         // Check the data in the database
