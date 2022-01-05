@@ -55,7 +55,9 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         renderSlicesAsTabs
         slices {
           ...AllSlices
-          ...NestedOneColumnTextFields
+          content {
+            ...AllSlices
+          }
         }
       }
       featuredImage {
