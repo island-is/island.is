@@ -16,9 +16,9 @@ const devConfig = {
     },
   },
   email: {
-    fromEmail: 'gudjon@kolibri.is',
+    fromEmail: 'ben10@omnitrix.is',
     fromName: 'Guðjón Guðjónsson',
-    replyToEmail: 'gudjon@kolibri.is',
+    replyToEmail: 'ben10@omnitrix.is',
     replyToName: 'Guðjón Guðjónsson',
   },
   smsOptions: {
