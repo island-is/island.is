@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch'
 
 import {
   BadGatewayException,
-  HttpException,
+  BadRequestException,
   Inject,
   Injectable,
 } from '@nestjs/common'
@@ -41,14 +41,10 @@ export class AppService {
     })
 
     if (!res.ok) {
-      // TODO: Find a way to read error from body
       this.logger.info('Failed to create a new case', { res })
 
       if (res.status < 500) {
-        throw new HttpException(
-          { statusCode: res.status, message: 'Failed to create a new case' },
-          res.status,
-        )
+        throw new BadRequestException('Failed to create a new case')
       }
 
       throw new BadGatewayException('Failed to create a new case')
