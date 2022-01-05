@@ -695,6 +695,77 @@ export interface IFooterItem extends Entry<IFooterItemFields> {
   }
 }
 
+export interface IFormFields {
+  /** id */
+  id: string
+
+  /** Fields */
+  fields: IFormField[]
+}
+
+/** Used for creating general forms */
+
+export interface IForm extends Entry<IFormFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'form'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IFormFieldFields {
+  /** Type */
+  type:
+    | 'text'
+    | 'number'
+    | 'SSN'
+    | 'email'
+    | 'textarea'
+    | 'phone'
+    | 'checkbox'
+    | 'filepicker'
+    | 'select'
+    | 'datepicker'
+    | 'submit'
+
+  /** Label */
+  label: string
+
+  /** Placeholder */
+  placeholder?: string | undefined
+
+  /** Options */
+  options?: string[] | undefined
+}
+
+/** A field to be used for general purpose forms */
+
+export interface IFormField extends Entry<IFormFieldFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'formField'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFrontpageFields {
   /** Title */
   title: string
@@ -2219,8 +2290,11 @@ export interface IProjectSubpageFields {
   /** Content */
   content?: Document | undefined
 
+  /** Render slices as tabs */
+  renderSlicesAsTabs?: boolean | undefined
+
   /** Slices */
-  slices?: (IAccordionSlice | IOneColumnText | ITwoColumnText)[] | undefined
+  slices?: IOneColumnText[] | undefined
 }
 
 export interface IProjectSubpage extends Entry<IProjectSubpageFields> {
@@ -2519,6 +2593,9 @@ export interface IStepperFields {
 
   /** Steps */
   steps?: IStep[] | undefined
+
+  /** Config */
+  config?: Record<string, any> | undefined
 }
 
 /** Used for asking users questions and returning an answer. */
@@ -2635,6 +2712,9 @@ export interface ISubArticleFields {
 
   /** Slug(old) */
   slug?: string | undefined
+
+  /** Stepper */
+  stepper?: IStepper | undefined
 }
 
 /** A sub article that's a part of another main article */
@@ -3428,6 +3508,8 @@ export type CONTENT_TYPE =
   | 'featured'
   | 'featuredArticles'
   | 'footerItem'
+  | 'form'
+  | 'formField'
   | 'frontpage'
   | 'frontpageSlider'
   | 'genericOverviewPage'

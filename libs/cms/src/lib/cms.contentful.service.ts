@@ -71,6 +71,8 @@ import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.in
 import { GetSupportFormInOrganizationInput } from './dto/getSupportFormInOrganization.input'
 import { mapSupportForm, SupportForm } from './models/supportForm.model'
 import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
+import { GetFormInput } from './dto/getForm.input'
+import { Form, mapForm } from './models/form.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -740,6 +742,23 @@ export class CmsContentfulService {
     return (
       (result.items as types.IOpenDataSubpage[]).map(mapOpenDataSubpage)[0] ??
       null
+    )
+  }
+
+  async getForm({
+    lang,
+    id
+  }: GetFormInput): Promise<Form> {
+    const params = {
+      ['content_type']: 'form',
+      'fields.id': id
+    }
+
+    const result = await this.contentfulRepository.getLocalizedEntries<types.IFormFields>(lang, params)
+    .catch(errorHandler('getForm'))
+
+    return (
+      (result.items as types.IForm[]).map(mapForm)[0] ?? null
     )
   }
 }
