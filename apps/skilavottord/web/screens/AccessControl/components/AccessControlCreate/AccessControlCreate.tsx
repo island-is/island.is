@@ -3,7 +3,10 @@ import { useForm } from 'react-hook-form'
 
 import { Option } from '@island.is/island-ui/core'
 import { ModalProps } from '@island.is/skilavottord-web/components'
-import { CreateAccessControlInput } from '@island.is/skilavottord-web/graphql/schema'
+import {
+  CreateAccessControlInput,
+  Role,
+} from '@island.is/skilavottord-web/graphql/schema'
 
 import { AccessControlModal } from '../AccessControlModal/AccessControlModal'
 
@@ -26,7 +29,7 @@ export const AccessControlCreate: FC<AccessControlCreateProps> = ({
   recyclingPartners,
   roles,
 }) => {
-  const { control, errors, handleSubmit } = useForm({
+  const { control, errors, handleSubmit, watch } = useForm({
     mode: 'onChange',
   })
 
@@ -52,6 +55,7 @@ export const AccessControlCreate: FC<AccessControlCreateProps> = ({
       roles={roles}
       control={control}
       errors={errors}
+      partnerIdRequired={watch('role')?.value === Role.recyclingCompany}
     />
   )
 }
