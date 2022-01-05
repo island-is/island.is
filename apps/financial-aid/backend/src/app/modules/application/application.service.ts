@@ -385,6 +385,7 @@ export class ApplicationService {
       const municipality = await this.municipalityService.findByMunicipalityId(
         updatedApplication.municipalityCode,
       )
+
       const emailData = getApplicantEmailDataFromEventType(
         update.event,
         linkToStatusPage(updatedApplication.id),

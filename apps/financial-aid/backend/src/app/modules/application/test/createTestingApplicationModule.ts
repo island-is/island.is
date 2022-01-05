@@ -21,6 +21,7 @@ jest.mock('../../applicationEvent/applicationEvent.service.ts')
 jest.mock('../../municipality/municipality.service.ts')
 jest.mock('../../amount/amount.service.ts')
 jest.mock('@island.is/nest/audit')
+jest.mock('@island.is/email-service')
 
 export const createTestingApplicationModule = async () => {
   const applicationModule = await Test.createTestingModule({
@@ -40,6 +41,7 @@ export const createTestingApplicationModule = async () => {
           findOne: jest.fn(),
           count: jest.fn(),
           findAll: jest.fn(),
+          update: jest.fn(),
         },
       },
       ApplicationService,
@@ -60,10 +62,29 @@ export const createTestingApplicationModule = async () => {
 
   const fileService = applicationModule.get<FileService>(FileService)
 
+  const staffService = applicationModule.get<StaffService>(StaffService)
+
+  const amountService = applicationModule.get<AmountService>(AmountService)
+
+  const applicationEventService = applicationModule.get<ApplicationEventService>(
+    ApplicationEventService,
+  )
+
+  const municipalityService = applicationModule.get<MunicipalityService>(
+    MunicipalityService,
+  )
+
+  const emailService = applicationModule.get<EmailService>(EmailService)
+
   return {
     applicationModel,
     applicationService,
     applicationController,
     fileService,
+    staffService,
+    amountService,
+    applicationEventService,
+    municipalityService,
+    emailService,
   }
 }
