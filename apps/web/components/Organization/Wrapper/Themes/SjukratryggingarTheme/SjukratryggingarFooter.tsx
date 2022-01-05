@@ -45,8 +45,11 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
               </Box>
             </Box>
             <GridRow>
-              {footerItems.slice(0, 4).map((item) => (
-                <GridColumn span={['12/12', '12/12', '6/12', '3/12']}>
+              {footerItems.slice(0, 4).map((item, index) => (
+                <GridColumn
+                  span={['12/12', '12/12', '6/12', '3/12']}
+                  key={`footer-main-row-column-${index}`}
+                >
                   <Box>
                     <Box marginBottom={2}>
                       {richText(item.content as SliceType[])}
@@ -79,10 +82,11 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
                 >
                   <img src="/assets/sjukratryggingar_heilbrigdisraduneytid.png" />
                 </GridColumn>
-                {footerItems.slice(4, 6).map((item) => (
+                {footerItems.slice(4, 6).map((item, index) => (
                   <GridColumn
                     span={['12/12', '12/12', '6/12', '3/12']}
                     className={styles.footerSecondRow}
+                    key={`footer-secondary-row-column-${index}`}
                   >
                     <Box>
                       {richText(item.content as SliceType[], {

@@ -9,7 +9,6 @@ import { AuthSession } from '@island.is/next-ids-auth'
 
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { api } from '@island.is/skilavottord-web/services'
 import { Locale } from '@island.is/shared/types'
 import { getRoutefromLocale } from '@island.is/skilavottord-web/utils/routesMapper'
 import { Query, Role } from '@island.is/skilavottord-web/graphql/schema'
