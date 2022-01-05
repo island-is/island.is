@@ -1,13 +1,13 @@
 import {
-  makeCase,
+  makeCustodyCase,
   makeCourt,
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
-import { intercept } from '../../utils'
+import { intercept } from '../../../utils'
 
 describe('/krafa/fyrirtaka/:id', () => {
   beforeEach(() => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition = {
       ...caseData,
       prosecutor: makeProsecutor(),
