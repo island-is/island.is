@@ -36,12 +36,13 @@ export class PSignSubmissionService {
   ) {}
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    const content: string = application.answers.qualityPhoto === YES
-      ? (application.answers.photoAttachment as string)
-      : await this.getAttachments({
-          application,
-          auth,
-        })
+    const content: string =
+      application.answers.qualityPhoto === YES
+        ? (application.answers.photoAttachment as string)
+        : await this.getAttachments({
+            application,
+            auth,
+          })
     const name = this.getName(application)
     const attachment: Attachment = {
       name,
@@ -87,6 +88,7 @@ export class PSignSubmissionService {
     }
     return { success: result.success, id: result.caseNumber }
   }
+
   private getName(application: Application): string {
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
@@ -109,7 +111,6 @@ export class PSignSubmissionService {
       return Promise.reject({})
     }
 
-    const name = this.getName(application)
     const { key } = attachments[0]
 
     const contentData = await this.sharedTemplateAPIService
