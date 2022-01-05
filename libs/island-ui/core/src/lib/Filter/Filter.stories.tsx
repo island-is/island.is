@@ -68,7 +68,7 @@ const RenderVariant = (variant: FilterProps['variant']) => {
 
   const renderDefaultFilter = (asDialog?: boolean) => (
     <Filter
-      labelClearAll="Hreinsa allar síu"
+      labelClearAll="Hreinsa allar síur"
       labelClear="Hreinsa síu"
       labelOpen="Opna síu"
       labelClose="Loka síu"
