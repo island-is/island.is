@@ -1,31 +1,9 @@
-import { DynamicModule, HttpModule } from '@nestjs/common'
-import {
-  SYSLUMENN_CLIENT_CONFIG,
-  SyslumennClient,
-  SyslumennClientConfig,
-} from './client/syslumenn.client'
+import { Module } from '@nestjs/common'
 import { SyslumennResolver } from './syslumenn.resolver'
-import { SyslumennService } from './syslumenn.service'
+import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 
-export class SyslumennModule {
-  static register(config: SyslumennClientConfig): DynamicModule {
-    return {
-      module: SyslumennModule,
-      imports: [
-        HttpModule.register({
-          timeout: 10000,
-        }),
-      ],
-      providers: [
-        SyslumennResolver,
-        SyslumennService,
-        SyslumennClient,
-        {
-          provide: SYSLUMENN_CLIENT_CONFIG,
-          useValue: config,
-        },
-      ],
-      exports: [SyslumennService],
-    }
-  }
-}
+@Module({
+  imports: [SyslumennClientModule],
+  providers: [SyslumennResolver],
+})
+export class SyslumennModule {}

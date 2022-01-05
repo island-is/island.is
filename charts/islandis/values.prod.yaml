@@ -1049,18 +1049,19 @@ skilavottord-web:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET'
+    IDENTITY_SERVER_DOMAIN: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN'
+    IDENTITY_SERVER_LOGOUT_REDIRECT_URL: '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
+    NEXTAUTH_URL: '/k8s/skilavottord/web/NEXTAUTH_URL'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 skilavottord-ws:
   enabled: true
   env:
-    AUTH_AUDIENCE: 'island.is'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'skilavottord'
     DB_USER: 'skilavottord'
-    SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=sv_citizen.prod&qaa=4'
-    SAML_ENTRY_POINT2: 'https://innskraning.island.is/?id=sv_company.prod&qaa=4'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1083,10 +1084,10 @@ skilavottord-ws:
       hosts:
         - host: 'island.is'
           paths:
-            - '/app/skilavottord/api/'
+            - '/app/skilavottord/api/graphql'
         - host: 'www.island.is'
           paths:
-            - '/app/skilavottord/api/'
+            - '/app/skilavottord/api/graphql'
   initContainer:
     containers:
       - args:
@@ -1107,12 +1108,12 @@ skilavottord-ws:
     max: 10
     min: 2
   secrets:
-    AUTH_JWT_SECRET: '/k8s/skilavottord/AUTH_JWT_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
     FJARSYSLA_REST_PASS: '/k8s/skilavottord/FJARSYSLA_REST_PASS'
     FJARSYSLA_REST_URL: '/k8s/skilavottord-ws/FJARSYSLA_REST_URL'
     FJARSYSLA_REST_USER: '/k8s/skilavottord/FJARSYSLA_REST_USER'
+    IDENTITY_SERVER_ISSUER_URL: '/k8s/skilavottord/ws/IDENTITY_SERVER_ISSUER_URL'
     SAMGONGUSTOFA_REST_AUTH_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_REST_AUTH_URL'
     SAMGONGUSTOFA_REST_DEREG_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_REST_DEREG_URL'
     SAMGONGUSTOFA_REST_PASS: '/k8s/skilavottord/SAMGONGUSTOFA_REST_PASS'
@@ -1120,7 +1121,6 @@ skilavottord-ws:
     SAMGONGUSTOFA_SOAP_PASS: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_PASS'
     SAMGONGUSTOFA_SOAP_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_SOAP_URL'
     SAMGONGUSTOFA_SOAP_USER: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_USER'
-    SKILAVOTTORD_USER_LIST: '/k8s/skilavottord/SKILAVOTTORD_USER_LIST'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1131,6 +1131,7 @@ web:
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
+    ENVIRONMENT: 'prod'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     TRACKING_DOMAIN: 'island.is'
@@ -1176,6 +1177,8 @@ web:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
+    DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
     SENTRY_DSN: '/k8s/web/SENTRY_DSN'
   securityContext:
     allowPrivilegeEscalation: false

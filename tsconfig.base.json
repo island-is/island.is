@@ -189,9 +189,6 @@
       "@island.is/application/templates/login-service": [
         "libs/application/templates/login-service/src/index.ts"
       ],
-      "@island.is/application/templates/meta-application": [
-        "libs/application/templates/meta-application/src/index.ts"
-      ],
       "@island.is/application/templates/parental-leave": [
         "libs/application/templates/parental-leave/src/index.ts"
       ],
@@ -262,6 +259,10 @@
       ],
       "@island.is/clients/rsk/v1": ["libs/clients/rsk/v1/src/index.ts"],
       "@island.is/clients/rsk/v2": ["libs/clients/rsk/v2/src/index.ts"],
+      "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
+      "@island.is/clients/user-profile": [
+        "libs/clients/user-profile/src/index.ts"
+      ],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/cms": ["libs/cms/src/index.ts"],
@@ -440,6 +441,7 @@
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],
       "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"],
       "@island.is/shared/mocking": ["libs/shared/mocking/src/index.ts"],
+      "@island.is/shared/pii": ["libs/shared/pii/src/index.ts"],
       "@island.is/shared/problem": ["libs/shared/problem/src/index.ts"],
       "@island.is/shared/table": ["libs/shared/table/src/index.ts"],
       "@island.is/shared/translations": [
@@ -456,6 +458,7 @@
       "@island.is/testing/containers": ["libs/testing/containers/src/index.ts"],
       "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
       "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
+      "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"]
     }

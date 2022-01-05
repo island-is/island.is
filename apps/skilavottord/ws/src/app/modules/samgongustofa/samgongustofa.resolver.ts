@@ -1,11 +1,11 @@
 import { Query, Resolver } from '@nestjs/graphql'
 
+import { Authorize, CurrentUser, User } from '../auth'
+
 import { VehicleInformation } from './samgongustofa.model'
 import { SamgongustofaService } from './samgongustofa.service'
-import { Authorize, CurrentUser } from '../auth'
-import type { User } from '../auth'
 
-@Authorize({ throwOnUnAuthorized: false })
+@Authorize()
 @Resolver(() => VehicleInformation)
 export class SamgongustofaResolver {
   constructor(private samgongustofaService: SamgongustofaService) {}
