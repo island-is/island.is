@@ -6,13 +6,15 @@ const schema = z.object({
   xRoadServicePath: z.string(),
   fetch: z.object({
     timeout: z.number().int(),
-    autoAuth: z.object({
-      mode: z.enum(['token', 'tokenExchange', 'auto']),
-      issuer: z.string(),
-      clientId: z.string(),
-      clientSecret: z.string(),
-      scope: z.array(z.string()),
-    }).optional(),
+    autoAuth: z
+      .object({
+        mode: z.enum(['token', 'tokenExchange', 'auto']),
+        issuer: z.string(),
+        clientId: z.string(),
+        clientSecret: z.string(),
+        scope: z.array(z.string()),
+      })
+      .optional(),
   }),
 })
 
@@ -28,21 +30,23 @@ export const AssetsClientConfig = defineConfig<z.infer<typeof schema>>({
       ),
       fetch: {
         timeout: env.optionalJSON('XROAD_PROPERTIES_TIMEOUT') ?? 10000,
-        autoAuth: clientSecret ? {
-          mode: 'tokenExchange',
-          issuer: env.required(
-            'IDENTITY_SERVER_ISSUER_URL',
-            'https://identity-server.dev01.devland.is',
-          ),
-          clientId:
-            env.optional('XROAD_PROPERTIES_CLIENT_ID') ??
-            '@island.is/clients/national-registry',
-          clientSecret,
-          scope: env.optionalJSON('XROAD_PROPERTIES_SCOPE') ?? [
-            NationalRegistryScope.properties,
-            'api_resource.scope',
-          ],
-        } : undefined,
+        autoAuth: clientSecret
+          ? {
+              mode: 'tokenExchange',
+              issuer: env.required(
+                'IDENTITY_SERVER_ISSUER_URL',
+                'https://identity-server.dev01.devland.is',
+              ),
+              clientId:
+                env.optional('XROAD_PROPERTIES_CLIENT_ID') ??
+                '@island.is/clients/national-registry',
+              clientSecret,
+              scope: env.optionalJSON('XROAD_PROPERTIES_SCOPE') ?? [
+                NationalRegistryScope.properties,
+                'api_resource.scope',
+              ],
+            }
+          : undefined,
       },
     }
   },
