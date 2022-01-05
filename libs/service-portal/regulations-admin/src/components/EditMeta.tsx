@@ -46,7 +46,9 @@ export const EditMeta: StepComponent = (props) => {
               backgroundColor="blue"
             />
           </Box>
+        </Column>
 
+        <Column>
           <Box marginBottom={3}>
             <DatePicker
               size="sm"

@@ -1,5 +1,10 @@
 import React from 'react'
-import { Box, Accordion, AccordionItem } from '@island.is/island-ui/core'
+import {
+  Box,
+  Accordion,
+  AccordionItem,
+  Divider,
+} from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
 import { StepComponent } from '../state/useDraftingState'
@@ -48,6 +53,10 @@ export const EditBasics: StepComponent = (props) => {
                 onChange={(value) => updateState('text', value)}
                 error={t(text.error)}
               />
+            </Box>
+            <Box>
+              <Divider weight="regular" />
+              {' '}
             </Box>
             <Box marginBottom={[4, 4, 6]}>
               <EditorInput

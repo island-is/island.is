@@ -93,7 +93,7 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
   )
 
   return wrap ? (
-    <Box marginBottom={[3, 3, 4]} display="flex" flexDirection="row">
+    <Box marginBottom={4} display="flex" flexDirection="row">
       {buttons}
     </Box>
   ) : (

@@ -16,6 +16,8 @@ import {
   UploadFile,
   Option,
   Select,
+  Text,
+  Divider,
 } from '@island.is/island-ui/core'
 import { StepComponent } from '../state/useDraftingState'
 import { editorMsgs as msg } from '../messages'
@@ -26,6 +28,7 @@ import { RegDraftForm } from '../state/types'
 import { EditorInput } from './EditorInput'
 import { MinistrySlug, URLString, useShortState } from '@island.is/regulations'
 import { produce } from 'immer'
+import { downloadUrl } from '../utils/files'
 
 // ---------------------------------------------------------------------------
 
@@ -134,7 +137,7 @@ const useSignedUploader = (
   const [previousDocUrl, setPreviousDocUrl] = useShortState<
     URLString | undefined
   >()
-  const undoPeriod = 4000
+  const undoPeriod = 5000
   const clearSignedPDF = () => {
     setPreviousDocUrl(signedDocumentUrl, undoPeriod)
     setUrl(undefined)
@@ -198,14 +201,14 @@ export const EditSignature: StepComponent = (props) => {
   )
 
   return (
-    <>
-      <Box marginBottom={4} display="flex" justifyContent="center">
+    <Box marginTop={4} marginBottom={6}>
+      <Box marginBottom={4}>
         <Button onClick={downloadSignablePDF} icon="download">
           {t(msg.signedDocumentDownloadFresh)}
         </Button>
       </Box>
 
-      <Box marginBottom={6}>
+      <Box marginBottom={4}>
         <InputFileUpload
           fileList={uploadStatus.file || []}
           header={t(msg.signedDocumentUploadDragPrompt)}
@@ -230,8 +233,8 @@ export const EditSignature: StepComponent = (props) => {
           marginBottom={3}
           style={
             {
-              '--fade-duration': 0.67 * undoPeriod,
-              '--fade-delay': 0.33 * undoPeriod,
+              '--fade-duration': 0.5 * undoPeriod,
+              '--fade-delay': 0.5 * undoPeriod,
             } as React.CSSProperties
           }
           className={s.fadeOut}
@@ -250,32 +253,50 @@ export const EditSignature: StepComponent = (props) => {
 
       {signedDocumentUrl != null && (
         <>
-          <Box marginBottom={3}>
-            <strong>
-              <a
-                href={signedDocumentUrl}
-                download={signedDocumentUrl.split('/').pop()}
+          <Box marginBottom={3} display="flex" flexWrap="wrap">
+            <Inline space={2} flexWrap="wrap">
+              <strong>{signedDocumentUrl.split('/').pop()}</strong>
+
+              <Button
+                onClick={() => downloadUrl(signedDocumentUrl)}
+                variant="text"
+                size="small"
+                as="button"
+                iconType="outline"
+                icon="download"
+                title={t(msg.signedDocumentLink)}
+                aria-label={t(msg.signedDocumentLink)}
               >
                 {t(msg.signedDocumentLink)}
-              </a>
-            </strong>
+              </Button>
 
-            <Button
-              onClick={clearSignedPDF}
-              variant="text"
-              as="button"
-              icon="closeCircle"
-              disabled={uploadStatus.uploading}
-              title={t(msg.signedDocumentClearLong)}
-              aria-label={t(msg.signedDocumentClearLong)}
-            >
-              {t(msg.signedDocumentClear)}
-            </Button>
+              <Button
+                onClick={clearSignedPDF}
+                variant="text"
+                size="small"
+                as="button"
+                iconType="outline"
+                icon="close"
+                disabled={uploadStatus.uploading}
+                title={t(msg.signedDocumentClearLong)}
+                aria-label={t(msg.signedDocumentClearLong)}
+              >
+                {t(msg.signedDocumentClear)}
+              </Button>
+            </Inline>
+          </Box>
+          <Box marginBottom={3}>
+            <Divider />
+            {' '}
           </Box>
 
-          <Box marginBottom={3}>
+          <Box marginBottom={5}>
+            <Text variant="h3" as="h5" marginBottom={2}>
+              {t(msg.signatureText)}
+            </Text>
             <EditorInput
               label={t(msg.signatureText)}
+              hiddenLabel
               draftId={draft.id}
               value={draft.signatureText.value}
               onChange={(text) => updateState('signatureText', text)}
@@ -364,7 +385,7 @@ export const EditSignature: StepComponent = (props) => {
               />
             </Inline>
           </Box>
-          <Box marginBottom={6}>
+          <Box marginBottom={3}>
             {!!draft.idealPublishDate.value && (
               <Button
                 size="small"
@@ -380,6 +401,6 @@ export const EditSignature: StepComponent = (props) => {
           </Box>
         </>
       )}
-    </>
+    </Box>
   )
 }

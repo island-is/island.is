@@ -187,7 +187,7 @@ export const editorMsgs = defineMessages({
 
   signatureText: {
     id: 'ap.regulations-admin:draft-labels-signaturetext',
-    defaultMessage: 'Undirritunarkafli',
+    defaultMessage: 'Texti undirritunarkafla',
   },
 
   signedDocumentDownloadFresh: {
@@ -208,19 +208,23 @@ export const editorMsgs = defineMessages({
   },
   signedDocumentClear: {
     id: 'ap.regulations-admin:draft-labels-signeddocument-clear',
-    defaultMessage: 'Eyða',
+    defaultMessage: 'Eyða skjali',
   },
   signedDocumentClearLong: {
     id: 'ap.regulations-admin:draft-labels-signeddocument-clearlong',
-    defaultMessage: 'Eyða undirrituðu eintaki',
+    defaultMessage: 'Eyða undirrituðu skjali',
   },
   signedDocumentClearUndo: {
     id: 'ap.regulations-admin:draft-labels-signeddocument-clear-undo',
-    defaultMessage: 'Úbs! Afturkalla eyðingu.',
+    defaultMessage: 'Afturkalla eyðingu.',
   },
   signedDocumentLink: {
     id: 'ap.regulations-admin:draft-labels-signeddocument-view',
-    defaultMessage: 'Skoða undiritað eintak',
+    defaultMessage: 'Skoða skjal',
+  },
+  signedDocumentLinkLong: {
+    id: 'ap.regulations-admin:draft-labels-signeddocument-viewlong',
+    defaultMessage: 'Skoða undirritað skjal',
   },
 
   effectiveDate: {

@@ -11,3 +11,4 @@ export const saveDraft = style({
   },
 })
 export const deleteDraft = saveDraft
+export const propose = saveDraft
