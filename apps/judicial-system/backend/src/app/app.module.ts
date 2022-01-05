@@ -1,11 +1,8 @@
 import { Module } from '@nestjs/common'
-import { APP_FILTER } from '@nestjs/core'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import {
-  HttpExceptionFilter,
-  SharedAuthModule,
-} from '@island.is/judicial-system/auth'
+import { ProblemModule } from '@island.is/nest/problem'
+import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../environments'
 import {
@@ -39,12 +36,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     EventModule,
     PoliceModule,
     AwsS3Module,
-  ],
-  providers: [
-    {
-      provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
-    },
+    ProblemModule.forRoot({ logAllErrors: true }),
   ],
 })
 export class AppModule {}

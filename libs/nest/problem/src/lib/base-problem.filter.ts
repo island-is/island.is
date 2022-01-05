@@ -4,12 +4,16 @@ import { Response } from 'express'
 import { Problem } from '@island.is/shared/problem'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { ProblemError } from './ProblemError'
+import { PROBLEM_OPTIONS, ProblemOptions } from './problem.options'
 
 export abstract class BaseProblemFilter implements ExceptionFilter {
-  protected readonly logger: Logger
+  private readonly logger: Logger
 
-  constructor(@Inject(LOGGER_PROVIDER) logger: Logger) {
+  constructor(
+    @Inject(PROBLEM_OPTIONS)
+    private readonly options: ProblemOptions,
+    @Inject(LOGGER_PROVIDER) logger: Logger,
+  ) {
     this.logger = logger.child({ context: 'ErrorFilter' })
   }
 
@@ -22,7 +26,13 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
   }
 
   catchGraphQLError(error: Error) {
-    const problem = (error as ProblemError).problem || this.getProblem(error)
+    const problem = this.getProblem(error)
+
+    if (problem.status && problem.status < 500) {
+      this.options.logAllErrors && this.logger.info(error)
+    } else {
+      this.logger.error(error)
+    }
 
     if (error instanceof ApolloError) {
       error.extensions.problem = error.extensions.problem || problem
@@ -36,6 +46,12 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
     const ctx = host.switchToHttp()
     const response = ctx.getResponse<Response>()
     const problem = this.getProblem(error)
+
+    if (problem.status && problem.status < 500) {
+      this.options.logAllErrors && this.logger.info(error)
+    } else {
+      this.logger.error(error)
+    }
 
     response.setHeader('Content-Language', 'en')
     response.setHeader('Content-Type', 'application/problem+json')
