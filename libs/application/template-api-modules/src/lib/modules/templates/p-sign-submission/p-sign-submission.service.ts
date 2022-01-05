@@ -9,7 +9,7 @@ import {
 } from '@island.is/clients/syslumenn'
 import { NationalRegistry } from './types'
 import { SharedTemplateApiService } from '../../shared'
-import { getValueViaPath } from '@island.is/application/core'
+import { Application, getValueViaPath } from '@island.is/application/core'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -35,10 +35,17 @@ export class PSignSubmissionService {
   ) {}
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    const attachment: Attachment = await this.getAttachments({
-      application,
-      auth,
-    })
+    const content: string = application.answers.photoAttachment
+      ? (application.answers.photoAttachment as string)
+      : await this.getAttachments({
+          application,
+          auth,
+        })
+    const name = this.getName(application)
+    const attachment: Attachment = {
+      name,
+      content,
+    }
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
 
@@ -79,11 +86,18 @@ export class PSignSubmissionService {
     }
     return { success: result.success, id: result.caseNumber }
   }
+  private getName(application: Application): string {
+    const nationalRegistryData = application.externalData.nationalRegistry
+      ?.data as NationalRegistry
+    const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
+
+    return `p_kort_mynd_${nationalRegistryData?.nationalId}_${dateStr}.pdf`
+  }
 
   private async getAttachments({
     application,
     auth,
-  }: TemplateApiModuleActionProps): Promise<Attachment> {
+  }: TemplateApiModuleActionProps): Promise<string> {
     const attachments = getValueViaPath(
       application.answers,
       'attachments',
@@ -94,11 +108,7 @@ export class PSignSubmissionService {
       return Promise.reject({})
     }
 
-    const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
-    const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
-
-    const name = `p_kort_mynd_${nationalRegistryData?.nationalId}_${dateStr}.pdf`
+    const name = this.getName(application)
     const { key } = attachments[0]
 
     const contentData = await this.sharedTemplateAPIService
@@ -118,9 +128,6 @@ export class PSignSubmissionService {
       throw new Error('Failed to get base64 content from image upload')
     }
 
-    return {
-      name,
-      content: contentData.data?.getFileContentAsBase64.content as string,
-    }
+    return contentData.data?.getFileContentAsBase64.content as string
   }
 }
