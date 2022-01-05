@@ -213,6 +213,7 @@ export const getApplication = (): Form => {
                   { value: 'yes', label: m.qualityPhotoUseExistingPhoto },
                   { value: 'no', label: m.qualityPhotoUploadNewPhoto },
                 ],
+                defaultValue: 'yes',
               }),
               buildCustomField({
                 id: 'photoAttachment',
