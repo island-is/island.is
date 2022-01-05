@@ -1034,9 +1034,7 @@ export class ApplicationController {
     })[key]
     console.log(fileName)
 
-    const content =  await this.fileService.getFileContentAsBase64(
-      fileName
-    )
-    return { content}
+    const content = await this.fileService.getFileContentAsBase64(fileName)
+    return { content }
   }
 }

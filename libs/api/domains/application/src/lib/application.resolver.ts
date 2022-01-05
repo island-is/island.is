@@ -27,7 +27,7 @@ import { RequestFileSignatureResponse } from './dto/requestFileSignature.respons
 import { PresignedUrlResponse } from './dto/presignedUrl.response'
 import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
 import { FileContentAsBase64Input } from './dto/fileContentAsBase64.input'
-import {FileContentAsBase64Response } from './dto/fileContentAsBase64.response'
+import { FileContentAsBase64Response } from './dto/fileContentAsBase64.response'
 import { ApplicationPaymentChargeInput } from './dto/applicationPaymentCharge.input'
 import { ApplicationPaymentChargeResponse } from './dto/applicationPaymentCharge'
 import { CreatePaymentResponseDto } from '../../gen/fetch'
@@ -185,7 +185,7 @@ export class ApplicationResolver {
     @Args('input') input: FileContentAsBase64Input,
     @CurrentUser() user: User,
   ): Promise<FileContentAsBase64Response> {
-    console.log("HERE")
+    console.log('HERE')
     return this.applicationService.getFileContentBase64(input, user)
   }
 }

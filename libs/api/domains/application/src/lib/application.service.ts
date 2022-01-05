@@ -200,14 +200,13 @@ export class ApplicationService {
     })
   }
 
-
   async getFileContentBase64(input: FileContentAsBase64Input, auth: Auth) {
     const { id, key } = input
     return await this.applicationApiWithAuth(
       auth,
     ).applicationControllerGetFileContentAsBase64({
       id,
-      key
+      key,
     })
   }
 }
