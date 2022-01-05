@@ -745,20 +745,16 @@ export class CmsContentfulService {
     )
   }
 
-  async getForm({
-    lang,
-    id
-  }: GetFormInput): Promise<Form> {
+  async getForm({ lang, id }: GetFormInput): Promise<Form> {
     const params = {
       ['content_type']: 'form',
-      'fields.id': id
+      'fields.id': id,
     }
 
-    const result = await this.contentfulRepository.getLocalizedEntries<types.IFormFields>(lang, params)
-    .catch(errorHandler('getForm'))
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IFormFields>(lang, params)
+      .catch(errorHandler('getForm'))
 
-    return (
-      (result.items as types.IForm[]).map(mapForm)[0] ?? null
-    )
+    return (result.items as types.IForm[]).map(mapForm)[0] ?? null
   }
 }
