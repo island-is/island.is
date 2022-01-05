@@ -87,7 +87,7 @@ export const calculatePersonalTaxAllowanceFromAmount = (
     taxInfo.personalTaxAllowance * (spousedPersonalTaxCreditPercentage / 100),
   )
 
-  return personalTaxAllowance + spouseTaxAllowance
+  return Math.floor(personalTaxAllowance + spouseTaxAllowance)
 }
 
 export const calculateAcceptedAidFinalAmount = (
@@ -114,7 +114,6 @@ export const calculateAcceptedAidFinalAmount = (
     tax - personalTaxAllowance + spouseTaxAllowance,
     0,
   )
-
   return amount - finalTaxAmount
 }
 
@@ -186,7 +185,7 @@ export const acceptedAmountBreakDown = (amount?: Amount): Calculations[] => {
       title: 'Tekjur',
       calculation: amount?.income
         ? `- ${amount?.income.toLocaleString('de-DE')} kr.`
-        : '0',
+        : '0 kr.',
     },
     ...deductionFactors,
     {
