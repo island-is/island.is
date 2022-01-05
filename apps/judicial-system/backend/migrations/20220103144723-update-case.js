@@ -119,7 +119,7 @@ module.exports = {
           'case',
           'end_of_session_bookings',
           {
-            type: Sequelize.STRING,
+            type: Sequelize.TEXT,
             allowNull: true,
           },
           { transaction: t },
@@ -201,7 +201,7 @@ module.exports = {
           'case',
           'other_restrictions',
           {
-            type: Sequelize.STRING,
+            type: Sequelize.TEXT,
             allowNull: true,
           },
           { transaction: t },
