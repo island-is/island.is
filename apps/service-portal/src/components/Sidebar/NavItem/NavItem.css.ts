@@ -43,8 +43,8 @@ export const navItemActive = styleVariants({
     }),
   },
   activeCollapsed: {
-    backgroundColor: theme.color.blue200,
-    border: `1px solid ${theme.color.blue200}`,
+    backgroundColor: theme.color.blue100,
+    border: `1px solid ${theme.color.blue100}`,
     borderRadius: '8px',
     ...themeUtils.responsiveStyle({
       lg: {
