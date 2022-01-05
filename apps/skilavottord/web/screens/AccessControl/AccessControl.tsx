@@ -192,7 +192,7 @@ const AccessControl: FC = () => {
       !isDeveloper(user?.role) ? role !== Role.developer : role,
     )
     .map((role) => ({
-      label: getRoleTranslation(role, activeLocale),
+      label: getRoleTranslation(role as Role, activeLocale),
       value: role,
     }))
 
@@ -340,7 +340,12 @@ const AccessControl: FC = () => {
                   <Row key={item.nationalId}>
                     <Data>{kennitala.format(item.nationalId)}</Data>
                     <Data>{item.name}</Data>
-                    <Data>{startCase(item.role)}</Data>
+                    <Data>
+                      {getRoleTranslation(
+                        item.role as AccessControlRole & Role,
+                        activeLocale,
+                      )}
+                    </Data>
                     <Data>{item?.recyclingPartner?.companyName || '-'} </Data>
                     <Data>
                       <DropdownMenu
