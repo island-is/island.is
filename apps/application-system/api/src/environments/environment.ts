@@ -31,11 +31,6 @@ const devConfig = {
     jwtSecret: 'supersecret',
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl: 'http://localhost:4444',
-    syslumenn: {
-      url: 'https://api.syslumenn.is/dev',
-      username: process.env.SYSLUMENN_USERNAME,
-      password: process.env.SYSLUMENN_PASSWORD,
-    },
     smsOptions: {
       url: 'https://smsapi.devnova.is',
       username: 'IslandIs_User_Development',
@@ -101,6 +96,13 @@ const devConfig = {
       username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME ?? '',
       password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD ?? '',
     },
+    dataProtectionComplaint: {
+      password: process.env.DATA_PROTECTION_COMPLAINT_API_PASSWORD,
+      username: process.env.DATA_PROTECTION_COMPLAINT_API_USERNAME,
+      XRoadProviderId: process.env.DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID,
+      xRoadClientId: process.env.XROAD_CLIENT_ID,
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
+    },
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
@@ -153,11 +155,6 @@ const prodConfig = {
     jwtSecret: process.env.AUTH_JWT_SECRET,
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl: process.env.GRAPHQL_API_URL,
-    syslumenn: {
-      url: process.env.SYSLUMENN_HOST,
-      username: process.env.SYSLUMENN_USERNAME,
-      password: process.env.SYSLUMENN_PASSWORD,
-    },
     smsOptions: {
       url: process.env.NOVA_URL,
       username: process.env.NOVA_USERNAME,
@@ -207,6 +204,13 @@ const prodConfig = {
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME,
       password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD,
+    },
+    dataProtectionComplaint: {
+      password: process.env.DATA_PROTECTION_COMPLAINT_API_PASSWORD,
+      username: process.env.DATA_PROTECTION_COMPLAINT_API_USERNAME,
+      XRoadProviderId: process.env.DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID,
+      xRoadClientId: process.env.XROAD_CLIENT_ID,
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     },
   },
   application: {

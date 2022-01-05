@@ -1,6 +1,17 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  existingApplicationTitle: {
+    id: 'dl.application:error.existingApplication',
+    defaultMessage: 'Fyrri umsóknir um ökuskírteini',
+    description: 'Title of the data needed to fetch existing applications',
+  },
+  existingApplicationExists: {
+    id: 'dl.application:error.existingApplicationExists',
+    defaultMessage: 'Þú átt nú þegar umsókn í vinnslu',
+    description:
+      'Message letting the applicant know they already have an application in progress',
+  },
   externalDataAgreement: {
     id: 'dl.application:externalData.agreement',
     defaultMessage: 'Ég hef kynnt mér ofangreint',
@@ -39,7 +50,7 @@ export const m = defineMessages({
   },
   externalDataSection: {
     id: 'dl.application:externalData.section',
-    defaultMessage: 'Upplýsingasöfnun',
+    defaultMessage: 'Forsendur',
     description: 'Information',
   },
   externalDataComplete: {

@@ -11,6 +11,7 @@ import { AccidentNotificationModule } from './accident-notification/accident-not
 import { PublicDebtPaymentPlanTemplateModule } from './public-debt-payment-plan/public-debt-payment-plan.module'
 import { GeneralPetitionModule } from './general-petition/general-petition.module'
 import { CriminalRecordSubmissionModule } from './criminal-record-submission/criminal-record-submission.module'
+import { DataProtectionComplaintModule } from './data-protection-complaint/data-protection-complaint.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -26,6 +27,7 @@ export const modules = [
   PublicDebtPaymentPlanTemplateModule,
   GeneralPetitionModule,
   CriminalRecordSubmissionModule,
+  DataProtectionComplaintModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -41,3 +43,4 @@ export { AccidentNotificationService } from './accident-notification/accident-no
 export { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
 export { GeneralPetitionService } from './general-petition/general-petition.service'
 export { CriminalRecordSubmissionService } from './criminal-record-submission/criminal-record-submission.service'
+export { DataProtectionComplaintService } from './data-protection-complaint/data-protection-complaint.service'
