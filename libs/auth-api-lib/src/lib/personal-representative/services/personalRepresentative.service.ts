@@ -29,10 +29,12 @@ export class PersonalRepresentativeService {
     includeInvalid: boolean,
     query: PaginationDto,
   ): Promise<PaginatedPersonalRepresentativeDto> {
-    const validToClause = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const validToClause: any = {
       [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
     }
-    const validFromClause = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const validFromClause: any = {
       [Op.or]: { [Op.eq]: null, [Op.lt]: new Date() },
     }
     const whereClause: WhereOptions = {}
@@ -76,10 +78,12 @@ export class PersonalRepresentativeService {
     nationalIdPersonalRepresentative: string,
     includeInvalid: boolean,
   ): Promise<PersonalRepresentativeDTO[]> {
-    const validToClause = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const validToClause: any = {
       [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
     }
-    const validFromClause = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const validFromClause: any = {
       [Op.or]: { [Op.eq]: null, [Op.lt]: new Date() },
     }
     const whereClause: WhereOptions = {
@@ -117,10 +121,12 @@ export class PersonalRepresentativeService {
     nationalIdRepresentedPerson: string,
     includeInvalid: boolean,
   ): Promise<PersonalRepresentativeDTO | null> {
-    const validToClause = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const validToClause: any = {
       [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
     }
-    const validFromClause = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const validFromClause: any = {
       [Op.or]: { [Op.eq]: null, [Op.lt]: new Date() },
     }
     const whereClause: WhereOptions = {
