@@ -198,7 +198,6 @@ const specialUpdates: {
 } = {
   title: (state: DraftingState, newTitle?: PlainText) => {
     const draft = state.draft
-    if (!draft) return
     const type = draft.type
     if (newTitle !== draft.title.value && (!type.value || type.guessed)) {
       type.value = findRegulationType(newTitle ?? draft.title.value)
@@ -208,7 +207,6 @@ const specialUpdates: {
 
   signatureText: (state, newValue) => {
     const draft = state.draft
-    if (!draft) return
     const signatureText = draft.signatureText
     if (newValue !== signatureText.value) {
       const { ministrySlug, signatureDate } = findSignatureInText(
@@ -252,25 +250,27 @@ const actionHandlers: {
 
   UPDATE_PROP: (state, { name, value, explicit }) => {
     const field = state.draft[name]
+    // @ts-expect-error  (Fuu)
+    value = tidyUp[field.type || '_'](value)
+
     if (value !== field.value || explicit === true) {
-      // @ts-expect-error  (Fuu)
-      field.value = tidyUp[field.type || '_'](value)
+      specialUpdates[name]?.(
+        state,
+        // @ts-expect-error  (Pretty sure I'm holding this correctly,
+        // and TS is in the weird here.
+        // Name and value are intrinsically linked both in this action's
+        // arguments and in the `specialUpdaters` signature.)
+        value,
+      )
+
+      field.value = value
       field.dirty = true
       field.guessed = false
     }
     field.error =
-      field.required && !field.value && field.dirty
+      field.required && !value && field.dirty
         ? errorMsgs.fieldRequired
         : undefined
-
-    specialUpdates[name]?.(
-      state,
-      // @ts-expect-error  (Pretty sure I'm holding this correctly,
-      // and TS is in the weird here.
-      // Name and value are intrinsically linked both in this action's
-      // arguments and in the `specialUpdaters` signature.)
-      value,
-    )
   },
 
   APPENDIX_ADD: (state) => {
@@ -284,14 +284,16 @@ const actionHandlers: {
     const appendix = state.draft.appendixes[idx]
     if (appendix) {
       const field = appendix[name]
+      // @ts-expect-error  (Fuu)
+      value = tidyUp[field.type || '_'](value)
+
       if (value !== field.value) {
-        // @ts-expect-error  (Fuu)
-        field.value = tidyUp[field.type || '_'](value)
+        field.value = value
         field.dirty = true
         field.guessed = false
       }
       field.error =
-        field.required && !field.value && field.dirty
+        field.required && !value && field.dirty
           ? errorMsgs.fieldRequired
           : undefined
     }

@@ -230,12 +230,12 @@ export const findSignatureInText = (
     'nóv',
     'des',
   ]
-  const undirskrRe = /^(.+?ráðuneyti)(?:ð|nu),? (\d{1,2})\.? (jan|feb|mar|apr|maí|jún|júl|ágú|sep|okt|nóv|des)(?:\.|[a-záðéíóúýþæö]+)? (2\d{3}).?$/i
+  const undirskrRe = /^(.+?ráðuneyti)(?:ð|nu)?,? (\d{1,2})\.? (jan|feb|mar|apr|maí|jún|júl|ágú|sep|okt|nóv|des)(?:\.|[a-záðéíóúýþæö]+)? (2\d{3}).?$/i
 
   let match: RegExpMatchArray | false | null = false
 
   // Side-effect `Array#find` to perform one-pass search and assign to `_match`.
-  paragraphs.reverse().find((elm) => {
+  paragraphs.find((elm) => {
     const textContent = elm.textContent || ''
     if (!/ráðuneyti/i.test(textContent)) {
       return false
