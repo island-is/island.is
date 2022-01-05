@@ -14,4 +14,15 @@ module.exports = {
   coverageDirectory:
     '../../../coverage/apps/services/personal-representative-public',
   setupFiles: ['./test/environment.jest.ts'],
+  collectCoverageFrom: [
+    '**/*.{js,jsx,ts,tsx}',
+    '!**/*.css.*',
+    '!**/*.config.*',
+    '!**/infra/*',
+    '!**/seeders/*',
+    '!**/migration/*',
+    '!**/main.ts',
+    '!**/buildOpenApi.ts',
+    '!**/openApi.ts',
+  ],
 }
