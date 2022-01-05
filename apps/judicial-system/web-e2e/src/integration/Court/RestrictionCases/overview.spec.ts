@@ -4,12 +4,15 @@ import {
   CaseCustodyRestrictions,
   CaseState,
 } from '@island.is/judicial-system/types'
-import { makeCase, makeProsecutor } from '@island.is/judicial-system/formatters'
-import { intercept } from '../../utils'
+import {
+  makeCustodyCase,
+  makeProsecutor,
+} from '@island.is/judicial-system/formatters'
+import { intercept } from '../../../utils'
 
 describe('/domur/krafa/:id', () => {
   beforeEach(() => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       creatingProsecutor: makeProsecutor(),
