@@ -205,28 +205,10 @@ describe.only('ApplicationController - Update', () => {
       folder: uuid(),
       service: RolesRule.OSK,
     }
-    const application = {
-      id,
-      nationalId: user.nationalId,
-      name: user.name,
-      homeCircumstances: HomeCircumstances.UNKNOWN,
-      employment: Employment.WORKING,
-      student: false,
-      usePersonalTaxCredit: false,
-      hasIncome: false,
-      state: applicationUpdate.state,
-      files: [],
-      familyStatus: FamilyStatus.COHABITATION,
-      municipalityCode: '1',
-      setDataValue: jest.fn,
-    }
+
     beforeEach(async () => {
       const mockUpdate = mockApplicationModel.update as jest.Mock
       mockUpdate.mockReturnValueOnce([0, [undefined]])
-      const eventFindById = mockApplicationEventService.findById as jest.Mock
-      eventFindById.mockReturnValueOnce(Promise.resolve([]))
-      const getApplicationFiles = mockFileService.getAllApplicationFiles as jest.Mock
-      getApplicationFiles.mockReturnValueOnce(Promise.resolve([]))
 
       then = await givenWhenThen(id, applicationUpdate, user)
     })
