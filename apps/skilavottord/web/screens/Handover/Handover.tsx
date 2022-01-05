@@ -235,7 +235,7 @@ const Handover: FC = () => {
         display="flex"
         justifyContent="spaceBetween"
         flexWrap="wrap"
-        marginTop={7}
+        marginTop={4}
         paddingTop={4}
         borderTopWidth="standard"
         borderColor="purple100"
