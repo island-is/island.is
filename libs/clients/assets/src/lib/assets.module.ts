@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { PropertiesApiProvider } from './properties-api.provider'
+import { PropertiesApiProvider } from './PropertiesApiProvider'
 
 @Module({
   providers: [PropertiesApiProvider],

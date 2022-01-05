@@ -1,5 +1,5 @@
 export { ConfigModule } from '@nestjs/config'
 export { XRoadConfig } from './lib/configurations/XRoadConfig'
 export { defineConfig } from './lib/defineConfig'
-export { LazyDuringDevScope } from './lib/lazy-during-dev.scope'
+export { LazyDuringDevScope } from './lib/LazyDuringDevScope'
 export * from './lib/types'
