@@ -11,7 +11,9 @@ export class RskCompanyInfoSearchInput {
   @IsNumber()
   first!: number
 
-  @Field()
-  @IsString()
-  after!: string
+  @Field({
+    description: 'Cursor for pagination as base64 encoded number',
+    nullable: true,
+  })
+  after?: string
 }

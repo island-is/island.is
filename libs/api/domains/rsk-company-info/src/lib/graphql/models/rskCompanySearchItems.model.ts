@@ -1,23 +1,15 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { RskCompany } from './rskCompany.model'
-
-@ObjectType()
-export class RskCompanyPageInfo {
-  @Field(() => String, { nullable: true })
-  endCursor?: string
-
-  @Field(() => Boolean, { nullable: true })
-  hasNextPage?: boolean
-}
+import { PageInfoDto } from '@island.is/nest/pagination'
 
 @ObjectType()
 export class RskCompanySearchItems {
-  @Field(() => [RskCompany], { nullable: true })
-  items?: RskCompany[]
+  @Field(() => [RskCompany])
+  data!: RskCompany[]
 
-  @Field(() => RskCompanyPageInfo, { nullable: true })
-  pageInfo?: RskCompanyPageInfo
+  @Field(() => PageInfoDto)
+  pageInfo!: PageInfoDto
 
-  @Field(() => Int, { nullable: true })
-  count?: number
+  @Field(() => Int)
+  totalCount!: number
 }

@@ -9,7 +9,7 @@ import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+// @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => RskCompany)
 export class RskCompanyInfoResolver {
   constructor(

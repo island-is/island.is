@@ -7,7 +7,7 @@ import { RskCompanyAddress } from './models/rskCompanyAddress.model'
 import { RskCompanyRelatedParty } from './models/rskCompanyRelatedParty.model'
 import { RskCompanyClassification } from './models/rskCompanyClassification.model'
 import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
-import { fromCursorHash, toCursorHash } from '../rsk-company-info.utils'
+import { decodeBase64, toBase64 } from '../rsk-company-info.utils'
 import { PageResult } from './types/pageResult'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -90,11 +90,15 @@ export class RskCompanyInfoService {
 
   async companyInformationSearch(
     searchTerm: string,
-    first: number,
-    after = '',
+    limit: number,
+    offset = toBase64('0'),
   ): Promise<RskCompanySearchItems | null> {
     const searchResults = await this.rskCompanyInfoApi.v1FyrirtaekjaskraSearchSearchStringGet(
-      { searchString: searchTerm },
+      {
+        searchString: searchTerm,
+        limit: limit.toString(),
+        offset: decodeBase64(offset),
+      },
     )
     if (
       !searchResults.items ||
@@ -117,54 +121,18 @@ export class RskCompanyInfoService {
       } as RskCompany
     })
 
-    const pageResult = this.getPage(formattedSearchResults, first, after)
-    if (!pageResult) {
-      throw new NotFoundException('No search results found')
-    }
-
     const totalLength = searchResults.count
-    const cursor = toCursorHash(this.getLastItemIdentifer(pageResult.items))
+    const cursor = toBase64((formattedSearchResults.length - 1).toString())
 
     return {
-      items: pageResult.items,
-      count: totalLength,
+      data: formattedSearchResults,
+      totalCount: totalLength,
       pageInfo: {
         endCursor: cursor,
-        hasNextPage: pageResult.hasNextPage,
+        hasNextPage: !!searchResults.hasMore,
+        hasPreviousPage: !!searchResults.offset && searchResults.offset > 0,
+        startCursor: toBase64(offset),
       },
-    }
-  }
-
-  getPage(
-    searchResult: RskCompany[],
-    first: number,
-    cursor: string,
-  ): PageResult {
-    if (searchResult) {
-      if (cursor === '')
-        return {
-          items: searchResult.slice(0, first),
-          hasNextPage: first < searchResult.length,
-        }
-
-      const index = searchResult.findIndex(
-        (x) => x.nationalId === fromCursorHash(cursor),
-      )
-      const start = index + 1
-
-      return {
-        items: searchResult.slice(start, start + first),
-        hasNextPage: start + first < searchResult.length,
-      }
-    }
-    return { items: [], hasNextPage: false }
-  }
-
-  getLastItemIdentifer(items: RskCompany[]): string {
-    if (items && items.length > 0) {
-      return items[items.length - 1].nationalId ?? ''
-    } else {
-      return ''
     }
   }
 }

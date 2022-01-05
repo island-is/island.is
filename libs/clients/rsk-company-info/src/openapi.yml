@@ -20,6 +20,21 @@ paths:
           schema:
             type: string
             default: Miracle%20ehf
+        # TODO: Limit and offset were manually added in. Update accordingly after RSK has updated their openapi to include limit and offset
+        - name: limit
+          in: query
+          required: false
+          description: Limit the number of results
+          schema:
+            type: string
+            default: '100'
+        - name: offset
+          in: query
+          required: false
+          description: Offset for pagination
+          schema:
+            type: string
+            default: '0'
       responses:
         '200':
           description: Search company registry
