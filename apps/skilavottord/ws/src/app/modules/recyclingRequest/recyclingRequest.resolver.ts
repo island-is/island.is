@@ -52,7 +52,9 @@ export class RecyclingRequestResolver {
       this.logger.error(
         `User does not have permission to call skilavottordUserRecyclingRequest action`,
       )
-      throw new NotFoundException()
+      throw new NotFoundException(
+        `User does not have permission to call skilavottordUserRecyclingRequest action`,
+      )
     }
 
     const userLastRecyclingRequest = await this.recyclingRequestService.findUserRecyclingRequestWithPermno(

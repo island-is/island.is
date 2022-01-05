@@ -16,9 +16,20 @@ export const hasPermission = (page: Page, role: Role) => {
   if (role === Role.developer) return true
 
   const permittedRoutes = {
-    recyclingCompany: ['deregisterVehicle', 'companyInfo'],
+    recyclingCompany: [
+      'deregisterVehicle',
+      'companyInfo',
+      'myCars',
+      'recycleVehicle',
+    ],
     citizen: ['myCars', 'recycleVehicle'],
-    recyclingFund: ['recycledVehicles', 'recyclingCompanies', 'accessControl'],
+    recyclingFund: [
+      'recycledVehicles',
+      'recyclingCompanies',
+      'accessControl',
+      'myCars',
+      'recycleVehicle',
+    ],
   }
 
   return permittedRoutes[role].includes(page)
