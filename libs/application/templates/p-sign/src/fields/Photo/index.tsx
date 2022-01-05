@@ -45,7 +45,7 @@ const Photo = ({ application, bulletsView }: PhotoProps) => {
       <Box className={boxStyle}>
         {data ? (
           <img
-            alt={''}
+            alt={'prófílmynd'}
             src={'data:image/jpeg;' + data.getFileContentAsBase64.content || ''}
             id="myimage"
           />
