@@ -32,7 +32,7 @@ const NavItemContent: FC<Props> = ({
 }) => {
   const [{ sidebarState }] = useStore()
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.lg
+  const isMobile = width < theme.breakpoints.md
   const collapsed = sidebarState === 'closed' && !isMobile
   const chevron = active ? 'chevronUp' : 'chevronDown'
   const showLock = enabled === false
@@ -64,7 +64,7 @@ const NavItemContent: FC<Props> = ({
         height="full"
         alignItems="center"
         overflow="hidden"
-        paddingX={[3, 3, 3, 0]}
+        paddingX={[3, 3, 0]}
       >
         {icon ? (
           <Box

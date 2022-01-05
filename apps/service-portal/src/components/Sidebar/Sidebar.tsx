@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Box, Stack, Logo, FocusableBox, Icon } from '@island.is/island-ui/core'
 import { BetaTag } from '../Logo/BetaTag'
 import { ActionType } from '../../store/actions'
@@ -10,12 +10,37 @@ import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { useUpdateUnreadDocuments } from '@island.is/service-portal/core'
 import * as styles from './Sidebar.css'
 import cn from 'classnames'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 export const Sidebar: FC<{}> = () => {
   const navigation = useNavigation()
   const [{ sidebarState }, dispatch] = useStore()
   const [collapsed, setCollapsed] = useState(sidebarState === 'closed')
+  const { width } = useWindowSize()
+  const isTablet = width < theme.breakpoints.lg && width > theme.breakpoints.md
+  const isMobile = width < theme.breakpoints.md
   const badgeContext = useUpdateUnreadDocuments()
+
+  useEffect(() => {
+    if (isTablet) {
+      dispatch({
+        type: ActionType.SetSidebarMenuState,
+        payload: 'closed',
+      })
+      setCollapsed(true)
+    }
+  }, [isTablet])
+
+  useEffect(() => {
+    if (isMobile) {
+      dispatch({
+        type: ActionType.SetSidebarMenuState,
+        payload: 'open',
+      })
+      setCollapsed(false)
+    }
+  }, [isMobile])
 
   return (
     <aside className={cn(styles.sidebar, collapsed && styles.collapsed)}>

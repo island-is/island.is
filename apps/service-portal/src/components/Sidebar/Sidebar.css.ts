@@ -9,6 +9,7 @@ export const sidebar = style({
   height: '100%',
   marginBottom: theme.spacing['10'],
   borderRight: `1px solid ${theme.color.blue200}`,
+  background: theme.color.white,
   transition: 'all 250ms ease-in-out',
   width: 252,
 })
