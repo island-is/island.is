@@ -134,7 +134,7 @@ export class SyslumennClient {
       Authorization: `Bearer ${this.accessToken}`,
     }
 
-    const explination = 'Undirritað af sýslumanni'
+    const explination = 'Rafrænt undirritað vottorð'
     const url = `${this.clientConfig.url}/api/Innsiglun`
 
     const request = JSON.stringify({
