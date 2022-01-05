@@ -38,6 +38,7 @@ export const createTestingApplicationModule = async () => {
         provide: getModelToken(ApplicationModel),
         useValue: {
           findOne: jest.fn(),
+          count: jest.fn(),
           findAll: jest.fn(),
         },
       },
@@ -57,5 +58,12 @@ export const createTestingApplicationModule = async () => {
     ApplicationController,
   )
 
-  return { applicationModel, applicationService, applicationController }
+  const fileService = applicationModule.get<FileService>(FileService)
+
+  return {
+    applicationModel,
+    applicationService,
+    applicationController,
+    fileService,
+  }
 }
