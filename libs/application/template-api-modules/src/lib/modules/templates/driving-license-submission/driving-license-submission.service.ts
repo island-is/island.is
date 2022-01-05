@@ -6,7 +6,7 @@ import {
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { FormValue } from '@island.is/application/core'
+import { FormValue, getValueViaPath } from '@island.is/application/core'
 import {
   generateDrivingLicenseSubmittedEmail,
   generateDrivingAssessmentApprovalEmail,
@@ -27,7 +27,12 @@ export class DrivingLicenseSubmissionService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const applicationFor = answers.applicationFor || 'B-full'
+    const applicationFor = getValueViaPath<'B-full' | 'B-temp'>(
+      answers,
+      'applicationFor',
+      'B-full',
+    )
+
     const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
 
     const response = await this.sharedTemplateAPIService.createCharge(
@@ -56,34 +61,30 @@ export class DrivingLicenseSubmissionService {
       application.id,
     )
 
-    if (isPayment?.fulfilled) {
-      const result = await this.createLicense(nationalId, answers).catch(
-        (e) => {
-          return {
-            success: false,
-            errorMessage: e.message,
-          }
-        },
-      )
-
-      if (!result.success) {
-        throw new Error(
-          `Application submission failed (${result.errorMessage})`,
-        )
-      }
-
-      await this.sharedTemplateAPIService.sendEmail(
-        generateDrivingLicenseSubmittedEmail,
-        application,
-      )
-
+    if (!isPayment?.fulfilled) {
       return {
-        success: result.success,
+        success: false,
       }
-    } else {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      )
+    }
+
+    const result = await this.createLicense(nationalId, answers).catch((e) => {
+      return {
+        success: false,
+        errorMessage: e.message,
+      }
+    })
+
+    if (!result.success) {
+      throw new Error(`Application submission failed (${result.errorMessage})`)
+    }
+
+    await this.sharedTemplateAPIService.sendEmail(
+      generateDrivingLicenseSubmittedEmail,
+      application,
+    )
+
+    return {
+      success: result.success,
     }
   }
 
@@ -91,7 +92,9 @@ export class DrivingLicenseSubmissionService {
     nationalId: string,
     answers: FormValue,
   ): Promise<NewDrivingLicenseResult> {
-    const applicationFor = answers.applicationFor || 'B-full'
+    const applicationFor =
+      getValueViaPath<'B-full' | 'B-temp'>(answers, 'applicationFor') ??
+      'B-full'
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
