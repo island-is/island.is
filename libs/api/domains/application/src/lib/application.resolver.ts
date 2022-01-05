@@ -185,7 +185,6 @@ export class ApplicationResolver {
     @Args('input') input: FileContentAsBase64Input,
     @CurrentUser() user: User,
   ): Promise<FileContentAsBase64Response> {
-    console.log('HERE')
     return this.applicationService.getFileContentBase64(input, user)
   }
 }
