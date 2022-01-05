@@ -42,6 +42,7 @@ type autofillProperties = Pick<
   | 'accusedBookings'
   | 'ruling'
   | 'sessionArrangements'
+  | 'endOfSessionBookings'
 >
 
 interface CreateCaseMutationResponse {
@@ -302,7 +303,7 @@ const useCase = () => {
   // TODO: find a way for this to work where value is something other then string
   const autofill = useMemo(
     () => (key: keyof autofillProperties, value: string, workingCase: Case) => {
-      if (!workingCase[key]) {
+      if (workingCase[key] === null) {
         workingCase[key] = value
 
         if (workingCase[key]) {

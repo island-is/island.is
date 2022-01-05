@@ -34,20 +34,16 @@ import {
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  setCheckboxAndSendToServer,
   validateAndSetTime,
   validateAndSendTimeToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
-import {
-  alternativeTravelBanRestrictions,
-  restrictions,
-} from '@island.is/judicial-system-web/src/utils/Restrictions'
 import {
   capitalize,
   formatAccusedByGender,
+  formatCustodyRestrictions,
   formatDate,
   formatNationalId,
+  formatTravelBanRestrictions,
   NounCases,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
@@ -86,20 +82,6 @@ export const RulingStepTwo: React.FC = () => {
         theCase.validToDate &&
         theCase.isolationToDate &&
         new Date(theCase.validToDate) > new Date(theCase.isolationToDate)
-
-      // Normally we always autofill if the target has a "falsy" value.
-      // However, if the target is optional, then it should not be autofilled after
-      // the autofilled value has been deleted (is the empty string).
-      if (
-        theCase.requestedOtherRestrictions &&
-        theCase.otherRestrictions !== ''
-      ) {
-        autofill(
-          'otherRestrictions',
-          theCase.requestedOtherRestrictions,
-          theCase,
-        )
-      }
 
       autofill(
         'conclusion',
@@ -177,6 +159,52 @@ export const RulingStepTwo: React.FC = () => {
             }),
         theCase,
       )
+
+      if (
+        theCase.type === CaseType.CUSTODY &&
+        (isAcceptingCaseDecision(theCase.decision) ||
+          theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+      ) {
+        autofill(
+          'endOfSessionBookings',
+          `${
+            isAcceptingCaseDecision(theCase.decision)
+              ? formatCustodyRestrictions(
+                  theCase.requestedCustodyRestrictions,
+                  theCase.isCustodyIsolation,
+                  true,
+                )
+              : formatTravelBanRestrictions(theCase.accusedGender, [
+                  CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
+                  CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
+                ])
+          }\n\n${formatMessage(m.sections.custodyRestrictions.disclaimer, {
+            caseType:
+              theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                ? 'farbannsins'
+                : 'gæsluvarðhaldsins',
+          })}`,
+          theCase,
+        )
+      } else if (
+        theCase.type === CaseType.TRAVEL_BAN &&
+        isAcceptingCaseDecision(theCase.decision)
+      ) {
+        const travelBanRestrictions = formatTravelBanRestrictions(
+          theCase.accusedGender,
+          theCase.requestedCustodyRestrictions,
+        )
+
+        autofill(
+          'endOfSessionBookings',
+          `${
+            travelBanRestrictions && `${travelBanRestrictions}\n\n`
+          }${formatMessage(m.sections.custodyRestrictions.disclaimer, {
+            caseType: 'farbannsins',
+          })}`,
+          theCase,
+        )
+      }
 
       setWorkingCase(theCase)
     }
@@ -624,101 +652,44 @@ export const RulingStepTwo: React.FC = () => {
               </Box>
             </BlueBox>
           </Box>
-          {isAcceptingCaseDecision(workingCase.decision) &&
-            workingCase.type === CaseType.CUSTODY && (
-              <Box component="section" marginBottom={3}>
-                <Box marginBottom={3}>
-                  <Text as="h3" variant="h3">
-                    Tilhögun gæsluvarðhalds
-                  </Text>
-                </Box>
-                <BlueBox>
-                  <CheckboxList
-                    checkboxes={restrictions}
-                    selected={workingCase.requestedCustodyRestrictions}
-                    onChange={(id) =>
-                      setCheckboxAndSendToServer(
-                        'custodyRestrictions',
-                        id,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }
-                  />
-                </BlueBox>
-              </Box>
-            )}
-          {(workingCase.decision ===
-            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-            (workingCase.decision === CaseDecision.ACCEPTING &&
-              workingCase.type === CaseType.TRAVEL_BAN)) && (
-            <Box component="section" marginBottom={4}>
-              <Box marginBottom={3}>
-                <Text as="h3" variant="h3">
-                  Tilhögun farbanns
-                </Text>
-              </Box>
-              <BlueBox>
-                <Box marginBottom={3}>
-                  <CheckboxList
-                    checkboxes={alternativeTravelBanRestrictions}
-                    selected={workingCase.requestedCustodyRestrictions}
-                    onChange={(id) =>
-                      setCheckboxAndSendToServer(
-                        'custodyRestrictions',
-                        id,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }
-                  />
-                </Box>
-                <Input
-                  name="otherRestrictions"
-                  data-testid="otherRestrictions"
-                  label="Nánari útlistun eða aðrar takmarkanir"
-                  value={workingCase.otherRestrictions || ''}
-                  placeholder="Til dæmis hvernig tilkynningarskyldu sé háttað..."
-                  onChange={(event) =>
-                    removeTabsValidateAndSet(
-                      'otherRestrictions',
-                      event,
-                      [],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }
-                  onBlur={(event) =>
-                    validateAndSendToServer(
-                      'otherRestrictions',
-                      event.target.value,
-                      [],
-                      workingCase,
-                      updateCase,
-                    )
-                  }
-                  rows={10}
-                  textarea
-                />
-              </BlueBox>
-            </Box>
-          )}
-          {(!workingCase.decision ||
-            isAcceptingCaseDecision(workingCase.decision) ||
-            workingCase.decision ===
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
-            <Text variant="h4" fontWeight="light">
-              {formatMessage(m.sections.custodyRestrictions.disclaimer, {
-                caseType:
-                  workingCase.type === CaseType.CUSTODY &&
-                  isAcceptingCaseDecision(workingCase.decision)
-                    ? 'gæsluvarðhaldsins'
-                    : 'farbannsins',
-              })}
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(m.sections.endOfSessionBookings.title)}
             </Text>
-          )}
+          </Box>
+          <Box marginBottom={5}>
+            <Input
+              data-testid="endOfSessionBookings"
+              name="endOfSessionBookings"
+              label={formatMessage(m.sections.endOfSessionBookings.label)}
+              value={workingCase.endOfSessionBookings || ''}
+              placeholder={formatMessage(
+                m.sections.endOfSessionBookings.placeholder,
+              )}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'endOfSessionBookings',
+                  event,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'endOfSessionBookings',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                )
+              }
+              rows={16}
+              textarea
+            />
+          </Box>
         </Box>
         <Box marginBottom={10}>
           <Box marginBottom={2}>
