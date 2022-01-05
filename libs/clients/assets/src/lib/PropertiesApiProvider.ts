@@ -1,7 +1,10 @@
 import { Provider } from '@nestjs/common/interfaces/modules/provider.interface'
 import nodeFetch, { Request } from 'node-fetch'
 
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import {
+  createEnhancedFetch,
+  EnhancedFetchOptions,
+} from '@island.is/clients/middlewares'
 import {
   ConfigType,
   LazyDuringDevScope,
@@ -23,10 +26,6 @@ export const PropertiesApiProvider: Provider<FasteignirApi> = {
         fetchApi: createEnhancedFetch({
           name: 'clients-assets',
           ...config.fetch,
-          autoAuth: {
-            mode: 'tokenExchange',
-            ...config.auth,
-          },
           fetch: (url, init) => {
             // The Properties API expects two different authorization headers for some reason.
             const request = new Request(url, init)
@@ -36,7 +35,8 @@ export const PropertiesApiProvider: Provider<FasteignirApi> = {
             )
             return nodeFetch(request)
           },
-        }),
+        } as EnhancedFetchOptions),
+        // TODO: Remove ^ "as EnhancedFetchOptions" after making API projects strict TS.
         basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
         headers: {
           'X-Road-Client': xroadConfig.xRoadClient,
