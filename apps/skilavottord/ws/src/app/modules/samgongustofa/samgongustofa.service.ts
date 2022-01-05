@@ -336,7 +336,7 @@ export class SamgongustofaService {
   async getUserVehicle(
     nationalId: string,
     permno: string,
-    requireRecyclable: boolean = true,
+    requireRecyclable = true,
   ): Promise<VehicleInformation> {
     const userVehicles = await this.getUserVehiclesInformation(nationalId)
     const car = userVehicles.find((car) => car.permno === permno)
