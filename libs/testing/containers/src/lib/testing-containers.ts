@@ -5,7 +5,7 @@ let postgresContainer: StartedTestContainer
 export const startPostgres = async () => {
   const name = 'test_db'
   postgresContainer = await new GenericContainer(
-    'public.ecr.aws/bitnami/postgresql:11.12.0',
+    'public.ecr.aws/docker/library/postgres:11.14-alpine',
   )
     .withEnv('POSTGRES_DB', name)
     .withEnv('POSTGRES_USER', name)
