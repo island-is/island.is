@@ -68,6 +68,7 @@ export class VehicleService {
       this.logger.info(
         `starting creating vehicle with vehicle id - ${vehicle.vehicleId}...`,
       )
+
       // Check if Vehicle is already in database
       const findVehicle = await this.findByVehicleId(vehicle.vehicleId)
       if (findVehicle) {
