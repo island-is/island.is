@@ -176,7 +176,7 @@ describe('PersonalRepresentativePermissionController', () => {
       const simpleAccessData: PersonalRepresentativeAccessDTO = {
         nationalIdPersonalRepresentative: '1234567890',
         nationalIdRepresentedPerson: '1234567891',
-        serviceProvider: 'testServiceProvider'
+        serviceProvider: 'testServiceProvider',
       }
       // Test get personal rep
       const response = await server
