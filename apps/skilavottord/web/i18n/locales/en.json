@@ -113,19 +113,30 @@
       "primaryButton": "Re-load page"
     }
   },
-  "confirm": {
-    "title": "Confirm car",
+  "recycle": {
+    "title": "Recycle car",
     "subTitles": {
       "confirm": "Do you want select this car for recycling?"
     },
     "info": "Adding your car for recycling which will allow you to recycle it at any of our connected recycling companies. This is not binding and the car will only be recycled if you hand over the car to a recycling company.",
     "buttons": {
       "cancel": "Cancel",
-      "continue": "Confirm"
+      "continue": "Continue"
     },
     "checkbox": {
       "label": "I agree to the",
       "linkLabel": " Terms and conditions"
+    }
+  },
+  "confirm": {
+    "title": "Confirm car recycling",
+    "subTitles": {
+      "confirm": "Are you sure you want to recycle this car?"
+    },
+    "info": "By confirming TODO Adding your car for recycling which will allow you to recycle it at any of our connected recycling companies. This is not binding and the car will only be recycled if you hand over the car to a recycling company.",
+    "buttons": {
+      "cancel": "Go back",
+      "continue": "Confirm"
     }
   },
   "handover": {
@@ -199,7 +210,7 @@
     "outOf": "out of",
     "citizen": {
       "title": "Recycle car",
-      "sections": ["Confirm car for recycling", "Handover car to recycle"],
+      "sections": ["Recycle car", "Confirmation", "Summary"],
       "completed": "Completed"
     },
     "company": {
@@ -527,6 +538,7 @@
     "myCars": "/en/my-cars",
     "recycleVehicle": {
       "baseRoute": "/en/recycle-vehicle",
+      "recycle": "/en/recycle-vehicle/[id]/recycle",
       "confirm": "/en/recycle-vehicle/[id]/confirm",
       "handover": "/en/recycle-vehicle/[id]/handover",
       "completed": "/en/recycle-vehicle/[id]/completed"
