@@ -1,7 +1,7 @@
 describe('/krafa/ny/gaesluvardhald', () => {
   beforeEach(() => {
     cy.stubAPIResponses()
-    cy.visit('/krafa/ny/gaesluvardhald')
+    cy.visit('/krafa/ny/rannsoknarheimild')
   })
 
   it('should require a valid police case number', () => {
@@ -15,10 +15,13 @@ describe('/krafa/ny/gaesluvardhald', () => {
 
   it('should require the accused gender be selected', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
+    cy.getByTestid('select-type')
+      .type('Krufning')
+      .get('.island-select__option')
+      .click()
     cy.getByTestid('nationalId').type('0000000000')
     cy.getByTestid('accusedName').type('Donald Duck')
     cy.getByTestid('accusedAddress').type('Batcave 1337')
-    cy.getByTestid('leadInvestigator').type('John Doe')
     cy.getByTestid('continueButton').should('be.disabled')
     cy.contains('Karl').click()
     cy.getByTestid('continueButton').should('not.be.disabled')
@@ -33,7 +36,7 @@ describe('/krafa/ny/gaesluvardhald', () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it('should require a valid accused national id', () => {
+  it('should require a valid accused name', () => {
     cy.getByTestid('accusedName').click().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('accusedName').clear().type('Sidwell Sidwellsson')
@@ -47,15 +50,19 @@ describe('/krafa/ny/gaesluvardhald', () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it('should not allow users to move forward if they entered an invalid defender email address', () => {
+  it('should not allow users to move forward if they entered an invalid defender email address or an invalid defender phonenumber', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
     cy.getByTestid('nationalId').type('0000000000')
     cy.getByTestid('accusedName').type('Donald Duck')
     cy.getByTestid('accusedAddress').type('Batcave 1337')
     cy.contains('Karl').click()
-    cy.getByTestid('leadInvestigator').type('John Doe')
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('defenderEmail').type('ill formed email address')
     cy.getByTestid('continueButton').should('be.disabled')
+    cy.getByTestid('defenderEmail').clear()
+    cy.getByTestid('defenderPhoneNumber').type('000')
+    cy.getByTestid('continueButton').should('be.disabled')
+    cy.getByTestid('defenderPhoneNumber').clear().type('1234567')
+    cy.getByTestid('continueButton').should('not.be.disabled')
   })
 })
