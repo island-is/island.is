@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
-
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
@@ -23,6 +22,7 @@ import { HealthController } from './health.controller'
 import { getConfig } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
+import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { RSKModule } from '@island.is/api/domains/rsk'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
@@ -43,6 +43,7 @@ import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -179,11 +180,7 @@ const autoSchemaFile = environment.production
     ApiCatalogueModule,
     IdentityModule,
     AuthModule.register(environment.auth),
-    SyslumennModule.register({
-      url: environment.syslumennService.url,
-      username: environment.syslumennService.username,
-      password: environment.syslumennService.password,
-    }),
+    SyslumennModule,
     RSKModule.register({
       password: environment.rskDomain.password,
       url: environment.rskDomain.url,
@@ -264,6 +261,8 @@ const autoSchemaFile = environment.production
         XRoadConfig,
         NationalRegistryClientConfig,
         AuthPublicApiClientConfig,
+        FeatureFlagConfig,
+        SyslumennClientConfig,
       ],
     }),
   ],
