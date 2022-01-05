@@ -112,7 +112,7 @@ describe.only('ApplicationController - Create', () => {
       await givenWhenThen(user, application)
     })
 
-    it('should request staff by national id from the database', () => {
+    it('should call create on model with application', () => {
       expect(mockCreate).toHaveBeenCalledWith(application)
     })
   })
