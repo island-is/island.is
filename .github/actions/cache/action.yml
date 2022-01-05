@@ -1,0 +1,83 @@
+# You can use this composite action if you want retry functionality with your
+# caching action. Because composite actions currently do not have the
+# continue-on-error feature we need a second step to check the output of the
+# cache action to determine if it ran successfully.
+#
+# Example:
+#
+# jobs:
+#   my-job:
+#     steps:
+#     - name: Cache node modules
+#       id: node-modules
+#       continue-on-error: true
+#       uses: ./.github/actions/cache
+#       with:
+#         path: node_modules
+#         key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
+#     - name: Check cache status
+#       run: '[[ "${{ steps.node-modules.outputs.status }}" != "failure" ]] || exit 1'
+#
+name: 'Cache'
+description: 'Cache with retry'
+inputs:
+  path:
+    required: true
+  key:
+    required: true
+  retry:
+    required: false
+    default: 2
+outputs:
+  status:
+    value: ${{ steps.computed_outputs.outputs.status }}
+  cache-hit:
+    value: ${{ steps.computed_outputs.outputs.cache-hit }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Cache try number one
+      id: cache_try_number_one
+      uses: island-is/cache@v0.1
+      with:
+        path: ${{ inputs.path }}
+        key: ${{ inputs.key }}
+
+    - name: Cache try number two
+      id: cache_try_number_two
+      if: always() && inputs.retry > 0 && steps.cache_try_number_one.outputs.cache-hit == ''
+      uses: island-is/cache@v0.1
+      with:
+        path: ${{ inputs.path }}
+        key: ${{ inputs.key }}
+
+    - name: Cache try number three
+      id: cache_try_number_three
+      if: always() && inputs.retry > 1 && steps.cache_try_number_one.outputs.cache-hit == '' && steps.cache_try_number_two.outputs.cache-hit == ''
+      uses: island-is/cache@v0.1
+      with:
+        path: ${{ inputs.path }}
+        key: ${{ inputs.key }}
+
+    - name: Gather outputs
+      id: computed_outputs
+      if: always()
+      shell: bash
+      run: |
+        if [[ "${{ steps.cache_try_number_one.outputs.cache-hit }}" != "" ]] || \
+           [[ "${{ steps.cache_try_number_two.outputs.cache-hit }}" != "" ]] || \
+           [[ "${{ steps.cache_try_number_three.outputs.cache-hit }}" != "" ]]
+        then
+          echo "::set-output name=status::success"
+        else
+          echo "::set-output name=status::failure"
+        fi
+
+        if [[ "${{ steps.cache_try_number_one.outputs.cache-hit }}" == "true" ]] || \
+           [[ "${{ steps.cache_try_number_two.outputs.cache-hit }}" == "true" ]] || \
+           [[ "${{ steps.cache_try_number_three.outputs.cache-hit }}" == "true" ]]
+        then
+          echo "::set-output name=cache-hit::true"
+        else
+          echo "::set-output name=cache-hit::false"
+        fi
