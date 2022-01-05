@@ -62,15 +62,11 @@ export class AwsService {
 
   async getFileContentAsBase64(fileName: string): Promise<string> {
     const { bucket, key } = AmazonS3URI(fileName)
-    console.log(bucket, key)
-
-      const sm = await this.getFile(bucket, key)
-
-      console.log(sm)
-      if (sm.Body) {
-        return `base64,${sm.Body.toString('base64')}`
-      } else {
-        throw new Error('error getting file:' + key)
-      }
+    const sm = await this.getFile(bucket, key)
+    if (sm.Body) {
+      return `base64,${sm.Body.toString('base64')}`
+    } else {
+      throw new Error('error getting file:' + key)
+    }
   }
 }
