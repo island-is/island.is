@@ -2732,34 +2732,6 @@ export interface ISupportCategory extends Entry<ISupportCategoryFields> {
   }
 }
 
-export interface ISupportFormFields {
-  /** Category */
-  category: string
-
-  /** Organization */
-  organization: IOrganization
-
-  /** Form */
-  form?: Record<string, any> | undefined
-}
-
-export interface ISupportForm extends Entry<ISupportFormFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'supportForm'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface ISupportQnaFields {
   /** Question */
   question: string
@@ -3491,7 +3463,6 @@ export type CONTENT_TYPE =
   | 'subArticle'
   | 'subpageHeader'
   | 'supportCategory'
-  | 'supportForm'
   | 'supportQNA'
   | 'supportSubCategory'
   | 'tabContent'

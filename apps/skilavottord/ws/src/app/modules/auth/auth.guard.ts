@@ -15,6 +15,7 @@ import { IdsUserGuard, getRequest } from '@island.is/auth-nest-tools'
 import type { GraphQLContext } from '@island.is/auth-nest-tools'
 
 import { AccessControlService } from '../accessControl'
+import { environment } from '../../../environments'
 
 import { User } from './user.model'
 import { RolesGuard } from './roles.guard'
@@ -36,14 +37,14 @@ export class AuthGuard implements CanActivate {
       user.nationalId,
     )
     if (accessControl) {
-      return { ...user, ...accessControl } as User
+      return { ...accessControl, ...user } as User
     }
     return { ...user, role: Role.citizen } as User
   }
 
   private decodeSession(request: GraphQLContext['req']): Partial<User> {
     const sessionToken = request.cookies
-      ? request.cookies['next-auth.session-token']
+      ? request.cookies[environment.auth.nextAuthCookieName]
       : null
 
     if (!sessionToken) {

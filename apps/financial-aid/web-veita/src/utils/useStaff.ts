@@ -23,11 +23,11 @@ export const useStaff = () => {
       },
     })
       .then(() => {
-        toast.success('Það tókst að uppfæra notanda')
+        toast.success('Stillingar hafa verið uppfærðar')
       })
       .catch(() => {
         toast.error(
-          'Ekki tókst að uppfæra notanda, vinsamlega reynið aftur síðar',
+          'Ekki tókst að uppfæra stillingar, vinsamlega reynið aftur síðar',
         )
       })
   }
@@ -58,11 +58,11 @@ export const useStaff = () => {
           setAdmin({ ...admin, staff: res.data?.updateStaff })
         }
 
-        toast.success('Það tókst að uppfæra notanda')
+        toast.success('Stillingar hafa verið uppfærðar')
       })
     } catch (e) {
       toast.error(
-        'Ekki tókst að uppfæra notanda, vinsamlega reynið aftur síðar',
+        'Ekki tókst að uppfæra stillingar, vinsamlega reynið aftur síðar',
       )
     }
   }
