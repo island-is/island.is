@@ -258,6 +258,16 @@ export const editorMsgs = defineMessages({
     defaultMessage: 'Ný texta-/ákvæðabreyting',
   },
 
+  impactRegExplainer: {
+    id: 'ap.regulations-admin:draft-impactedreg-explainer',
+    defaultMessage:
+      'ATH: Einungis er hægt að breyta reglugerðum sem minnst er á með skýrum hætti í texta reglugerðarinnar.',
+  },
+  impactRegExplainer_editLink: {
+    id: 'ap.regulations-admin:draft-impactedreg-editlink',
+    defaultMessage: 'Endurskoða textann',
+  },
+
   impactRegSelect: {
     id: 'ap.regulations-admin:draft-label-impactedreg',
     defaultMessage: 'Reglugerð sem breytist',

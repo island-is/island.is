@@ -1,3 +1,5 @@
+import * as s from './EditImpacts.css'
+
 import React, { useCallback, useMemo, useState } from 'react'
 import {
   Box,
@@ -5,6 +7,7 @@ import {
   DatePicker,
   Divider,
   Inline,
+  Link,
   Option,
   Select,
   Text,
@@ -23,6 +26,8 @@ import { RegName } from '@island.is/regulations'
 
 import { mockRegulationOptions, useMockQuery } from '../_mockData'
 import { MessageDescriptor } from '@formatjs/intl'
+import { generatePath } from 'react-router'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 
 // const RegulationListQuery = gql`
 //   query RegulationListQuery {
@@ -56,7 +61,7 @@ export const EditImpacts: StepComponent = (props) => {
     draft.effectiveDate.value || draft.idealPublishDate.value
 
   const [selReg, setSelReg] = useState<RegName>()
-  const [effectiveDate, _setEffectiveDate] = useState<{
+  const [effectiveDate, setRawEffectiveDate] = useState<{
     value?: Date | undefined
     error?: string | MessageDescriptor
   }>({})
@@ -64,10 +69,10 @@ export const EditImpacts: StepComponent = (props) => {
   const setEffectiveDate = useCallback(
     (value: Date | undefined) => {
       if (value && minEffectiveDate && value < minEffectiveDate) {
-        _setEffectiveDate({ value, error: msg.impactEffectiveDate_toosoon })
+        setRawEffectiveDate({ value, error: msg.impactEffectiveDate_toosoon })
         return
       }
-      _setEffectiveDate({ value, error: undefined })
+      setRawEffectiveDate({ value, error: undefined })
     },
     [minEffectiveDate],
   )
@@ -87,7 +92,20 @@ export const EditImpacts: StepComponent = (props) => {
 
   return (
     <>
-      <pre>{JSON.stringify(mentionRegNames, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(mentionRegNames, null, 2)}</pre> */}
+
+      <Box marginBottom={3} className={s.explainerText}>
+        {t(msg.impactRegExplainer)}{' '}
+        <Link
+          href="."
+          // href={generatePath(ServicePortalPath.RegulationsAdminEdit, {
+          //   id: draft.id,
+          //   step: 'basics',
+          // })}
+        >
+          {t(msg.impactRegExplainer_editLink)}
+        </Link>
+      </Box>
 
       <Box marginBottom={3}>
         <Select
@@ -126,10 +144,10 @@ export const EditImpacts: StepComponent = (props) => {
         )}
       </Box>
       <Box marginBottom={[4, 4, 8]}>
-        <Box marginBottom={4}>
-          <Divider />
+        <Box marginBottom={2}>
+          <Divider weight="regular" />
+          {' '}
         </Box>
-        <p>&nbsp;</p>
         <Text variant="h4" as="h4" marginBottom={[2, 2, 3, 4]}>
           {t(msg.chooseImpactType)}
         </Text>
@@ -142,8 +160,9 @@ export const EditImpacts: StepComponent = (props) => {
             {t(msg.chooseImpactType_cancel)}
           </Button>
         </Inline>
-        <Box marginTop={[4, 4, 8]}>
+        <Box marginTop={[2, 2, 6]}>
           <Divider />
+          {' '}
         </Box>
       </Box>
     </>
