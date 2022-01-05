@@ -1,5 +1,3 @@
-import './application-templates-financial-aid.module.scss'
-
 import {
   ApplicationTemplate,
   ApplicationTypes,
