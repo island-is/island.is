@@ -344,15 +344,10 @@ export class CaseService {
     await Promise.all(emailPromises)
   }
 
-  async findById(
-    caseId: string,
-    additionalIncludes: Includeable[] = [],
-  ): Promise<Case> {
-    const include = standardIncludes.concat(additionalIncludes)
-
+  async findById(caseId: string): Promise<Case> {
     const theCase = await this.caseModel.findOne({
       where: { id: caseId },
-      include,
+      include: standardIncludes,
     })
 
     if (!theCase) {

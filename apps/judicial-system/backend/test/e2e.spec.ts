@@ -116,7 +116,7 @@ beforeAll(async () => {
 
   registrar = (
     await request(app.getHttpServer())
-      .get(`/api/user/${registrarNationalId}`)
+      .get(`/api/user/?nationalId=${registrarNationalId}`)
       .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
 
@@ -851,6 +851,7 @@ describe('Case', () => {
           prosecutor,
           sharedWithProsecutorsOffice,
           judge,
+          registrar,
         })
 
         // Check the data in the database
