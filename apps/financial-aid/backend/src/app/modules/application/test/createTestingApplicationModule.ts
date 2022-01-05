@@ -21,6 +21,7 @@ jest.mock('../../applicationEvent/applicationEvent.service.ts')
 jest.mock('../../municipality/municipality.service.ts')
 jest.mock('../../amount/amount.service.ts')
 jest.mock('@island.is/nest/audit')
+jest.mock('@island.is/email-service')
 
 export const createTestingApplicationModule = async () => {
   const applicationModule = await Test.createTestingModule({
@@ -71,6 +72,9 @@ export const createTestingApplicationModule = async () => {
   const municipalityService = applicationModule.get<MunicipalityService>(
     MunicipalityService,
   )
+
+  const emailService = applicationModule.get<EmailService>(EmailService)
+
   return {
     applicationModel,
     applicationService,
@@ -80,5 +84,6 @@ export const createTestingApplicationModule = async () => {
     amountService,
     applicationEventService,
     municipalityService,
+    emailService,
   }
 }

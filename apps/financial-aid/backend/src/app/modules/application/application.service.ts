@@ -352,23 +352,23 @@ export class ApplicationService {
       updatedApplication?.setDataValue('amount', amount)
     }
 
-    // const events = this.applicationEventService
-    //   .findById(id)
-    //   .then((eventsResolved) => {
-    //     updatedApplication?.setDataValue('applicationEvents', eventsResolved)
-    //   })
+    const events = this.applicationEventService
+      .findById(id)
+      .then((eventsResolved) => {
+        updatedApplication?.setDataValue('applicationEvents', eventsResolved)
+      })
 
-    // const files = this.fileService
-    //   .getAllApplicationFiles(id)
-    //   .then((filesResolved) => {
-    //     updatedApplication?.setDataValue('files', filesResolved)
-    //   })
+    const files = this.fileService
+      .getAllApplicationFiles(id)
+      .then((filesResolved) => {
+        updatedApplication?.setDataValue('files', filesResolved)
+      })
 
-    // await Promise.all([
-    //   events,
-    //   files,
-    //   this.sendApplicationUpdateEmail(update, updatedApplication),
-    // ])
+    await Promise.all([
+      events,
+      files,
+      this.sendApplicationUpdateEmail(update, updatedApplication),
+    ])
 
     return { numberOfAffectedRows, updatedApplication }
   }
@@ -385,6 +385,7 @@ export class ApplicationService {
       const municipality = await this.municipalityService.findByMunicipalityId(
         updatedApplication.municipalityCode,
       )
+
       const emailData = getApplicantEmailDataFromEventType(
         update.event,
         linkToStatusPage(updatedApplication.id),
