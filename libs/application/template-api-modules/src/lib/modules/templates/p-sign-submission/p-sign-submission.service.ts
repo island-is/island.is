@@ -26,6 +26,7 @@ query GetFileContentAsBase64($input: FileContentAsBase64Input!) {
   }
 }
 `
+const YES = 'yes'
 @Injectable()
 export class PSignSubmissionService {
   constructor(
@@ -35,7 +36,7 @@ export class PSignSubmissionService {
   ) {}
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    const content: string = application.answers.photoAttachment
+    const content: string = application.answers.qualityPhoto === YES
       ? (application.answers.photoAttachment as string)
       : await this.getAttachments({
           application,
