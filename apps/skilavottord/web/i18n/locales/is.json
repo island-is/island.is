@@ -114,14 +114,14 @@
     }
   },
   "recycle": {
-    "title": "Recycle car",
+    "title": "Endurvinna ökutæki",
     "subTitles": {
       "confirm": "Viltu velja þetta ökutæki til úrvinnslu?"
     },
-    "info": "Þegar ökutæki hefur verið samþykkt til úrvinnslu getur þú leitið upplýsinga hjá viðkomandi sveitarfélagi/móttökuaðila um hvert eigi að fara með ökutækið til að farga því. Umsóknin er ekki bindandi, ökutæki verður einungis endurunnið sé því skilað til móttökuaðila.",
+    "info": "Þegar ökutæki hefur verið samþykkt til úrvinnslu getur þú leitað upplýsinga hjá viðkomandi sveitarfélagi/móttökuaðila um hvert eigi að fara með ökutækið til að farga því. Umsóknin er ekki bindandi, ökutæki verður einungis endurunnið sé því skilað til móttökuaðila.",
     "buttons": {
       "cancel": "Hætta við",
-      "continue": "Continue"
+      "continue": "Halda áfram"
     },
     "checkbox": {
       "label": "Samþykkja",
@@ -129,11 +129,11 @@
     }
   },
   "confirm": {
-    "title": "Confirm car recycling",
+    "title": "Staðfesta endurvinnslu",
     "subTitles": {
-      "confirm": "Are you sure you want to recycle this car?"
+      "confirm": "Ertu viss um að senda þetta ökutæki til úrvinnslu?"
     },
-    "info": "By confirming TODO icelandic Adding your car for recycling which will allow you to recycle it at any of our connected recycling companies. This is not binding and the car will only be recycled if you hand over the car to a recycling company.",
+    "info": "Með því að samþykkja verður bíllinn þinn skráður sem endurvinnanlegur. Umsóknin er ekki bindandi. Ökutæki verður einungis endurunnið sé því skilað til móttökuaðila.",
     "buttons": {
       "cancel": "Til baka",
       "continue": "Staðfesta"

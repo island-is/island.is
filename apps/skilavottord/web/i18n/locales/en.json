@@ -133,7 +133,7 @@
     "subTitles": {
       "confirm": "Are you sure you want to recycle this car?"
     },
-    "info": "By confirming TODO Adding your car for recycling which will allow you to recycle it at any of our connected recycling companies. This is not binding and the car will only be recycled if you hand over the car to a recycling company.",
+    "info": "By confirming your car will be marked as recyclable. This is not binding, and the car will only be recycled if you hand over the car to a recycling company.",
     "buttons": {
       "cancel": "Go back",
       "continue": "Confirm"
