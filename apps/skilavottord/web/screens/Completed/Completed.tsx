@@ -160,7 +160,7 @@ const Completed = ({ apolloState }: PropTypes) => {
       {car && (
         <ProcessPageLayout
           processType={'citizen'}
-          activeSection={2}
+          activeSection={4}
           activeCar={id?.toString()}
         >
           <Stack space={3}>

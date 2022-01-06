@@ -2,6 +2,7 @@ import {
   Filter,
   FilterInput,
   FilterMultiChoice,
+  FilterProps,
 } from '@island.is/island-ui/core'
 import React from 'react'
 
@@ -22,7 +23,7 @@ type FilterItem = {
 }
 
 interface ApiCatalogueFilterProps {
-  isDialog?: boolean
+  labelClearAll: string
   labelClear: string
   labelOpen: string
   labelClose: string
@@ -39,8 +40,10 @@ interface ApiCatalogueFilterProps {
   categories: Array<FilterCategory>
 }
 
-export const ApiCatalogueFilter: React.FC<ApiCatalogueFilterProps> = ({
-  isDialog = false,
+export const ApiCatalogueFilter: React.FC<
+  ApiCatalogueFilterProps & Pick<FilterProps, 'variant' | 'align'>
+> = ({
+  labelClearAll,
   labelClear,
   labelOpen,
   labelClose,
@@ -55,24 +58,30 @@ export const ApiCatalogueFilter: React.FC<ApiCatalogueFilterProps> = ({
   onCategoryChange,
   onCategoryClear,
   categories,
+  variant,
+  align,
 }) => {
   return (
     <Filter
+      labelClearAll={labelClearAll}
       labelClear={labelClear}
       labelOpen={labelOpen}
       labelClose={labelClose}
       labelResult={labelResult}
       labelTitle={labelTitle}
-      isDialog={isDialog}
       resultCount={resultCount}
       onFilterClear={onFilterClear}
+      align={align}
+      variant={variant}
+      filterInput={
+        <FilterInput
+          placeholder={inputPlaceholder}
+          name="filterInput"
+          value={inputValue}
+          onChange={onInputChange}
+        />
+      }
     >
-      <FilterInput
-        placeholder={inputPlaceholder}
-        name="filterInput"
-        value={inputValue}
-        onChange={onInputChange}
-      ></FilterInput>
       <FilterMultiChoice
         labelClear={labelCategoryClear}
         onChange={onCategoryChange}
