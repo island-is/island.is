@@ -59,7 +59,6 @@ describe('CaseController - Request ruling signature', () => {
     })
 
     it('should return a control code and a document token', () => {
-      console.log(then)
       expect(then.result).toEqual({
         controlCode: '0000',
         documentToken: 'DEVELOPMENT',
