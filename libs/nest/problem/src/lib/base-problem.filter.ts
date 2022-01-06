@@ -4,6 +4,7 @@ import { Response } from 'express'
 import { Problem } from '@island.is/shared/problem'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ProblemError } from './ProblemError'
 import { PROBLEM_OPTIONS, ProblemOptions } from './problem.options'
 
 export abstract class BaseProblemFilter implements ExceptionFilter {
@@ -26,12 +27,12 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
   }
 
   catchGraphQLError(error: Error) {
-    const problem = this.getProblem(error)
+    const problem = (error as ProblemError).problem || this.getProblem(error)
 
-    if (problem.status && problem.status < 500) {
-      this.options.logAllErrors && this.logger.info(error)
-    } else {
+    if (problem.status && problem.status >= 500) {
       this.logger.error(error)
+    } else if (this.options.logAllErrors) {
+      this.logger.info(error)
     }
 
     if (error instanceof ApolloError) {
@@ -47,10 +48,10 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>()
     const problem = this.getProblem(error)
 
-    if (problem.status && problem.status < 500) {
-      this.options.logAllErrors && this.logger.info(error)
-    } else {
+    if (problem.status && problem.status >= 500) {
       this.logger.error(error)
+    } else if (this.options.logAllErrors) {
+      this.logger.info(error)
     }
 
     response.setHeader('Content-Language', 'en')
