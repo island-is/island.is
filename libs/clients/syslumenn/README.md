@@ -25,3 +25,4 @@ yarn nx run clients-syslumenn:schemas/external-openapi-generator
 ## Code owners and maintainers
 
 - [Kosmos & Kaos](https://github.com/orgs/island-is/teams/kosmos-og-kaos/members)
+- [Stefna](https://github.com/orgs/island-is/teams/stefna/members)
