@@ -53,17 +53,65 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
     document.body.removeChild(form)
   }
 
+  const date = (variant: 'small' | 'medium') => (
+    <Text variant={variant}>
+      {format(new Date(documentLine.date), dateFormat.is)}
+    </Text>
+  )
+
+  const image = img && (
+    <img
+      className={styles.image}
+      src={img}
+      alt={`${formatMessage(m.altText)} ${documentLine.subject}`}
+    />
+  )
+
+  const subject =
+    documentLine.fileType === 'url' && documentLine.url ? (
+      <Link href={documentLine.url}>
+        <button
+          className={cn(styles.button, !documentLine.opened && styles.unopened)}
+        >
+          {documentLine.subject}
+        </button>
+      </Link>
+    ) : (
+      <button
+        className={cn(styles.button, !documentLine.opened && styles.unopened)}
+        onClick={onClickHandler}
+      >
+        {documentLine.subject}
+      </button>
+    )
+
+  const sender = (variant: 'eyebrow' | 'medium') => (
+    <Text variant={variant} id="senderName">
+      {documentLine.senderName}
+    </Text>
+  )
   return (
     <Box position="relative" className={styles.line} paddingY={2}>
-      <GridRow>
+      {/* 
+      RÖÐ:
+      1. Dagsetning
+      2. Mynd + titill
+      3. Stofnun 
+      
+      1. Mynd
+      2. RÖÐ
+      1 Stofnun
+      2 Dagsetning
+      3.Titill
+      */}
+      {/* <GridRow>
         <GridColumn span={['1/2', '2/12']} order={[2, 1]}>
           <Box
-            className={styles.date}
             display="flex"
             alignItems="center"
-            justifyContent={['flexEnd', 'flexStart']}
+            height="full"
             paddingX={[0, 2]}
-            paddingY={2}
+            overflow="hidden"
           >
             <Text variant="medium">
               {format(new Date(documentLine.date), dateFormat.is)}
@@ -122,11 +170,63 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
             alignItems="center"
             height="full"
             paddingX={[0, 2]}
-            paddingY={2}
             overflow="hidden"
           >
             <Text variant="medium">{documentLine.senderName}</Text>
           </Box>
+        </GridColumn>
+      </GridRow> */}
+
+      <GridRow>
+        <GridColumn>
+          <Box
+            display="flex"
+            alignItems="center"
+            height="full"
+            paddingX={[0, 2]}
+            paddingBottom={[1, 0]}
+            overflow="hidden"
+          >
+            {image}
+          </Box>
+        </GridColumn>
+        <GridColumn>
+          <GridRow>
+            <GridColumn>
+              <Box
+                display="flex"
+                alignItems="center"
+                height="full"
+                paddingX={[0, 2]}
+                overflow="hidden"
+                className={styles.sender}
+              >
+                {sender('eyebrow')}
+              </Box>
+            </GridColumn>
+            <GridColumn>
+              <Box
+                display="flex"
+                alignItems="center"
+                height="full"
+                paddingX={[0, 2]}
+                overflow="hidden"
+              >
+                {date('small')}
+              </Box>
+            </GridColumn>
+          </GridRow>
+          <GridColumn>
+            <Box
+              display="flex"
+              alignItems="center"
+              height="full"
+              paddingX={[0, 2]}
+              overflow="hidden"
+            >
+              {subject}
+            </Box>
+          </GridColumn>
         </GridColumn>
       </GridRow>
     </Box>

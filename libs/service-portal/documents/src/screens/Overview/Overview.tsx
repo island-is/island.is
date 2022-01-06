@@ -24,23 +24,23 @@ import {
 } from '@island.is/service-portal/core'
 import { Document } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import isAfter from 'date-fns/isAfter'
-import isBefore from 'date-fns/isBefore'
-import startOfTomorrow from 'date-fns/startOfTomorrow'
-import isWithinInterval from 'date-fns/isWithinInterval'
-import isEqual from 'lodash/isEqual'
 import { ValueType } from 'react-select'
 import { defineMessage } from 'react-intl'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
 import { useLocation } from 'react-router-dom'
-import * as Sentry from '@sentry/react'
-import AnimateHeight from 'react-animate-height'
 import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
-import * as styles from './Overview.css'
-import DocumentLine from '../../components/DocumentLine/DocumentLine'
-import getOrganizationLogoUrl from '../../utils/getOrganizationLogoUrl'
 import { m } from '@island.is/service-portal/core'
 import { useUpdateUnreadDocuments } from '@island.is/service-portal/core'
+import AnimateHeight from 'react-animate-height'
+import DocumentLine from '../../components/DocumentLine/DocumentLine'
+import getOrganizationLogoUrl from '../../utils/getOrganizationLogoUrl'
+import isAfter from 'date-fns/isAfter'
+import isBefore from 'date-fns/isBefore'
+import isEqual from 'lodash/isEqual'
+import isWithinInterval from 'date-fns/isWithinInterval'
+import startOfTomorrow from 'date-fns/startOfTomorrow'
+import * as Sentry from '@sentry/react'
+import * as styles from './Overview.css'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 15
@@ -181,6 +181,69 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
   const organizations = orgData?.getOrganizations?.items || {}
 
+  const mockData = [
+    {
+      id: '123',
+      date: new Date(),
+      subject: 'Subject',
+      senderName: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+      senderNatReg: 'Sender nat reg',
+      opened: true,
+      fileType: 'pdf',
+      url: 'https://visir.is',
+    },
+    {
+      id: '123',
+      date: new Date(),
+      subject: 'Subject',
+      senderName: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+      senderNatReg: 'Sender nat reg',
+      opened: true,
+      fileType: 'pdf',
+      url: 'https://visir.is',
+    },
+    {
+      id: '123',
+      date: new Date(),
+      subject: 'Subject',
+      senderName: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+      senderNatReg: 'Sender nat reg',
+      opened: true,
+      fileType: 'pdf',
+      url: 'https://visir.is',
+    },
+    {
+      id: '123',
+      date: new Date(),
+      subject: 'Subject',
+      senderName: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+      senderNatReg: 'Sender nat reg',
+      opened: false,
+      fileType: 'pdf',
+      url: 'https://visir.is',
+    },
+    {
+      id: '123',
+      date: new Date(),
+      subject: 'Subject',
+      senderName: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+      senderNatReg: 'Sender nat reg',
+      opened: true,
+      fileType: 'pdf',
+      url: 'https://visir.is',
+    },
+    {
+      id: '123',
+      date: new Date(),
+      subject: 'Subject',
+      senderName: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+      senderNatReg: 'Sender nat reg',
+      opened: false,
+      fileType: 'pdf',
+      url: 'https://visir.is',
+    },
+  ]
+
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>
@@ -218,19 +281,21 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               </Box>
             </GridColumn>
             <GridColumn span={['1/1', '3/8']}>
-              <Select
-                name="categories"
-                backgroundColor="blue"
-                size="xs"
-                defaultValue={categories[0]}
-                options={categories}
-                value={filterValue.activeCategory}
-                onChange={handleCategoryChange}
-                label={formatMessage({
-                  id: 'sp.documents:institution-label',
-                  defaultMessage: 'Stofnun',
-                })}
-              />
+              <Hidden below="sm">
+                <Select
+                  name="categories"
+                  backgroundColor="blue"
+                  size="xs"
+                  defaultValue={categories[0]}
+                  options={categories}
+                  value={filterValue.activeCategory}
+                  onChange={handleCategoryChange}
+                  label={formatMessage({
+                    id: 'sp.documents:institution-label',
+                    defaultMessage: 'Stofnun',
+                  })}
+                />
+              </Hidden>
             </GridColumn>
             <GridColumn span="2/8">
               <Hidden below="sm">
@@ -250,62 +315,51 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               </Hidden>
             </GridColumn>
           </GridRow>
-          <AnimateHeight duration={400} height={isDateRangeOpen ? 'auto' : 0}>
-            <Box marginTop={[1, 3]}>
-              <GridRow>
-                <GridColumn paddingBottom={[1, 0]} span={['1/1', '4/8', '3/8']}>
-                  <DatePicker
-                    label={formatMessage({
-                      id: 'sp.documents:datepicker-dateFrom-label',
-                      defaultMessage: 'Dagsetning frá',
-                    })}
-                    placeholderText={formatMessage({
-                      id: 'sp.documents:datepicker-dateFrom-placeholder',
-                      defaultMessage: 'Veldu dagsetningu',
-                    })}
-                    locale="is"
-                    backgroundColor="blue"
-                    size="xs"
-                    selected={filterValue.dateFrom}
-                    handleChange={handleDateFromInput}
-                  />
-                </GridColumn>
-                <GridColumn span={['1/1', '4/8', '3/8']}>
-                  <DatePicker
-                    label={formatMessage({
-                      id: 'sp.documents:datepicker-dateTo-label',
-                      defaultMessage: 'Dagsetning til',
-                    })}
-                    placeholderText={formatMessage({
-                      id: 'sp.documents:datepicker-dateTo-placeholder',
-                      defaultMessage: 'Veldu dagsetningu',
-                    })}
-                    locale="is"
-                    backgroundColor="blue"
-                    size="xs"
-                    selected={filterValue.dateTo}
-                    handleChange={handleDateToInput}
-                    minDate={filterValue.dateFrom || undefined}
-                  />
-                </GridColumn>
-              </GridRow>
-            </Box>
-          </AnimateHeight>
-
-          <Hidden above="xs">
-            <Box display="flex" justifyContent="flexEnd" marginTop={1}>
-              <Button
-                variant="ghost"
-                icon={isDateRangeOpen ? 'close' : 'filter'}
-                iconType="outline"
-                onClick={handleDateRangeButtonClick}
-              >
-                {formatMessage({
-                  id: 'sp.documents:select-range',
-                  defaultMessage: 'Tímabil',
-                })}
-              </Button>
-            </Box>
+          <Hidden below="sm">
+            <AnimateHeight duration={400} height={isDateRangeOpen ? 'auto' : 0}>
+              <Box marginTop={[1, 3]}>
+                <GridRow>
+                  <GridColumn
+                    paddingBottom={[1, 0]}
+                    span={['1/1', '4/8', '3/8']}
+                  >
+                    <DatePicker
+                      label={formatMessage({
+                        id: 'sp.documents:datepicker-dateFrom-label',
+                        defaultMessage: 'Dagsetning frá',
+                      })}
+                      placeholderText={formatMessage({
+                        id: 'sp.documents:datepicker-dateFrom-placeholder',
+                        defaultMessage: 'Veldu dagsetningu',
+                      })}
+                      locale="is"
+                      backgroundColor="blue"
+                      size="xs"
+                      selected={filterValue.dateFrom}
+                      handleChange={handleDateFromInput}
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '4/8', '3/8']}>
+                    <DatePicker
+                      label={formatMessage({
+                        id: 'sp.documents:datepicker-dateTo-label',
+                        defaultMessage: 'Dagsetning til',
+                      })}
+                      placeholderText={formatMessage({
+                        id: 'sp.documents:datepicker-dateTo-placeholder',
+                        defaultMessage: 'Veldu dagsetningu',
+                      })}
+                      locale="is"
+                      backgroundColor="blue"
+                      size="xs"
+                      selected={filterValue.dateTo}
+                      handleChange={handleDateToInput}
+                      minDate={filterValue.dateFrom || undefined}
+                    />
+                  </GridColumn>
+                </GridRow>
+              </Box>
+            </AnimateHeight>
           </Hidden>
 
           {hasActiveFilters() && (
@@ -330,7 +384,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             </Box>
           )}
 
-          <Box marginTop={4}>
+          <Box marginTop={[0, 4]}>
             <Hidden below="sm">
               <Box
                 className={styles.tableHeading}
@@ -376,7 +430,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 <LoadingDots large />
               </Box>
             )}
-            {!loading && !error && filteredDocuments?.length === 0 && (
+            {/* {!loading && !error && filteredDocuments?.length === 0 && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
                 <Text variant="h3" as="h3">
                   {formatMessage({
@@ -397,17 +451,18 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   })}
                 </Text>
               </Box>
-            )}
+            )} */}
             <Box>
-              {filteredDocuments
+              {mockData
                 ?.slice(pagedDocuments.from, pagedDocuments.to)
                 .map((document, index) => (
                   <Box key={document.id} ref={index === 0 ? scrollToRef : null}>
                     <DocumentLine
-                      img={getOrganizationLogoUrl(
-                        document.senderName,
-                        organizations,
-                      )}
+                      // img={getOrganizationLogoUrl(
+                      //   document.senderName,
+                      //   organizations,
+                      // )}
+                      img={'https://via.placeholder.com/48'}
                       documentLine={document}
                       userInfo={userInfo}
                     />

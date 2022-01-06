@@ -40,12 +40,16 @@ export const unopened = style({
 })
 
 export const sender = style({
-  fontWeight: theme.typography.regular,
-  fontSize: theme.typography.baseFontSize,
+  position: 'relative',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  fontWeight: theme.typography.light,
+  fontSize: 14,
   ...themeUtils.responsiveStyle({
-    sm: {
-      fontWeight: theme.typography.light,
-      fontSize: 16,
+    md: {
+      fontWeight: theme.typography.regular,
+      fontSize: theme.typography.baseFontSize,
     },
   }),
 })
