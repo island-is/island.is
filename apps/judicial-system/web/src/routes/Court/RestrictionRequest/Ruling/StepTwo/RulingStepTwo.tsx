@@ -140,9 +140,7 @@ export const RulingStepTwo: React.FC = () => {
                 ?.replace(' kl.', ', kl.')}`,
               isolationSuffix:
                 isAcceptingCaseDecision(theCase.decision) &&
-                theCase.requestedCustodyRestrictions?.includes(
-                  CaseCustodyRestrictions.ISOLATION,
-                )
+                workingCase.isCustodyIsolation
                   ? ` ${capitalize(
                       formatAccusedByGender(theCase.accusedGender),
                     )} skal sæta einangrun ${
