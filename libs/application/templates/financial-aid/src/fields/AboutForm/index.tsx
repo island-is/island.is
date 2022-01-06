@@ -28,9 +28,9 @@ const AboutForm = () => {
           id="id_1"
           label={formatMessage(aboutForm.personalInformation.accordionTitle)}
         >
-          <DescriptionText
+          {/* <DescriptionText
             text={aboutForm.personalInformation.accordionAbout}
-          />
+          /> */}
 
           {/* <a
               href={municipality?.homepage}

@@ -42,7 +42,7 @@ const ApplicationTemplatesFinancialAid: ApplicationTemplate<
     states: {
       [ApplicationStates.DRAFT]: {
         meta: {
-          name: applicationName,
+          name: application.name.defaultMessage,
           lifecycle: pruneAfter(oneYear),
           roles: [
             {
