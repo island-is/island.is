@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { S3 } from 'aws-sdk'
-import AmazonS3URI from 'amazon-s3-uri'
 
 @Injectable()
 export class AwsService {
@@ -58,15 +57,5 @@ export class AwsService {
         () => true,
         () => false,
       )
-  }
-
-  async getFileContentAsBase64(fileName: string): Promise<string> {
-    const { bucket, key } = AmazonS3URI(fileName)
-    const sm = await this.getFile(bucket, key)
-    if (sm.Body) {
-      return `base64,${sm.Body.toString('base64')}`
-    } else {
-      throw new Error('error getting file:' + key)
-    }
   }
 }

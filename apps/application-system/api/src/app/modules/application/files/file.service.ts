@@ -229,8 +229,4 @@ export class FileService {
 
     return bucket
   }
-
-  async getFileContentAsBase64(fileName: string) {
-    return this.awsService.getFileContentAsBase64(fileName)
-  }
 }

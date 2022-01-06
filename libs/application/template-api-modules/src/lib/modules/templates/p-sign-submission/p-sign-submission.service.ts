@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   SyslumennService,
@@ -8,18 +8,10 @@ import {
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
 import { NationalRegistry } from './types'
-import { SharedTemplateApiService } from '../../shared'
 import { Application, getValueViaPath, FieldBaseProps } from '@island.is/application/core'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
 
-interface ContentData {
-  getFileContentAsBase64: {
-    content: string
-  }
-}
 
 interface QualityPhotoData extends FieldBaseProps {
   data: {
@@ -28,21 +20,12 @@ interface QualityPhotoData extends FieldBaseProps {
   }
 }
 
-const QUERY = `
-query GetFileContentAsBase64($input: FileContentAsBase64Input!) {
-  getFileContentAsBase64(input: $input) {
-    content
-  }
-}
-`
 const YES = 'yes'
 @Injectable()
 export class PSignSubmissionService {
   s3: S3
   constructor(
     private readonly syslumennService: SyslumennService,
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) { this.s3 = new S3()}
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {

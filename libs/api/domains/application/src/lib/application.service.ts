@@ -17,7 +17,6 @@ import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
-import { FileContentAsBase64Input } from './dto/fileContentAsBase64.input'
 import { ApplicationPayment } from './application.model'
 
 @Injectable()
@@ -194,16 +193,6 @@ export class ApplicationService {
     ).applicationControllerGetPresignedUrl({
       id,
       pdfType: type,
-    })
-  }
-
-  async getFileContentBase64(input: FileContentAsBase64Input, auth: Auth) {
-    const { id, key } = input
-    return await this.applicationApiWithAuth(
-      auth,
-    ).applicationControllerGetFileContentAsBase64({
-      id,
-      key,
     })
   }
 }
