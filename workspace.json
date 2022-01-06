@@ -2425,34 +2425,6 @@
         }
       }
     },
-    "application-templates-joint-custody-agreement": {
-      "root": "libs/application/templates/family-matters/joint-custody-agreement",
-      "sourceRoot": "libs/application/templates/family-matters/joint-custody-agreement/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/application/templates/family-matters/joint-custody-agreement/tsconfig.lib.json",
-              "libs/application/templates/family-matters/joint-custody-agreement/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/application/templates/family-matters/joint-custody-agreement/**/*"
-            ]
-          }
-        },
-        "extract-strings": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/joint-custody-agreement/src/**/*.{js,ts,tsx}'"
-          }
-        }
-      }
-    },
     "application-templates-login-service": {
       "root": "libs/application/templates/login-service",
       "sourceRoot": "libs/application/templates/login-service/src",
