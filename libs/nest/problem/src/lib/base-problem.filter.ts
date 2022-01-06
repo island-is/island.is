@@ -4,8 +4,9 @@ import { Response } from 'express'
 import { Problem } from '@island.is/shared/problem'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ProblemOptions } from './problem.options'
+import { PROBLEM_OPTIONS } from './problem.options'
 import { ProblemError } from './ProblemError'
-import { PROBLEM_OPTIONS, ProblemOptions } from './problem.options'
 
 export abstract class BaseProblemFilter implements ExceptionFilter {
   private readonly logger: Logger
