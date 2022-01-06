@@ -7,19 +7,14 @@ import { expectGraphqlProblem } from './test/expectGraphqlProblem'
 describe('ErrorFilter', () => {
   let request: CreateRequest
   let handler: jest.Mock
-  let logger: Logger
-  let errorLog: jest.SpyInstance
   beforeAll(async () => {
+    let logger: Logger
     ;[request, handler, logger] = await setup({
       handler: () => {
         throw new Error('Test error')
       },
     })
-    errorLog = jest.spyOn(logger, 'error').mockImplementation(() => logger)
-  })
-
-  beforeEach(() => {
-    errorLog.mockClear()
+    jest.spyOn(logger, 'error').mockImplementation(() => logger)
   })
 
   it('returns valid problem response', async () => {
@@ -37,17 +32,6 @@ describe('ErrorFilter', () => {
       title: 'Internal server error',
       type: ProblemType.HTTP_INTERNAL_SERVER_ERROR,
     })
-  })
-
-  it('logs error', async () => {
-    // Act
-    await request()
-
-    // Assert
-    expect(errorLog).toHaveBeenCalled()
-    expect(errorLog.mock.calls[0][0]).toMatchInlineSnapshot(
-      `[Error: Test error]`,
-    )
   })
 
   it(`adds problem as GraphQL error extension`, async () => {
