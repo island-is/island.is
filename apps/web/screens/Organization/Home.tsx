@@ -28,7 +28,16 @@ interface HomeProps {
   namespace: Query['getNamespace']
 }
 
-const WITH_SEARCH = ['syslumenn', 'sjukratryggingar', 'utlendingastofnun']
+const WITH_SEARCH = [
+  'syslumenn',
+  'district-commissioner',
+
+  'sjukratryggingar',
+  'health-insurance-in-iceland',
+
+  'utlendingastofnun',
+  'directorate-of-immigration',
+]
 
 const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
   const { disableSyslumennPage: disablePage } = publicRuntimeConfig
