@@ -40,6 +40,7 @@ async function signIn(
 }
 
 async function jwt(token: JWT, user: AuthUser) {
+  console.log(token.accessToken)
   if (user) {
     token = {
       nationalId: user.nationalId,

@@ -19,10 +19,13 @@ import { AirlineUser, User } from './user.model'
 import { DiscountService } from '../discount'
 import { FlightService } from '../flight'
 import { AuthGuard } from '../common'
-
+import { CurrentUser, IdsAuthGuard, IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
+import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { User as AuthUser } from '@island.is/auth-nest-tools'
 @ApiTags('Users')
 @Controller('api/public')
 //@UseGuards(AuthGuard)
+//@UseGuards(IdsAuthGuard)
 @ApiBearerAuth()
 export class PublicUserController {
   constructor(
@@ -51,19 +54,25 @@ export class PublicUserController {
     return user
   }
 }
-
+@UseGuards(IdsUserGuard, ScopesGuard )
 @Controller('api/private')
 export class PrivateUserController {
   constructor(
     private readonly flightService: FlightService,
     private readonly userService: UserService,
+    private thjodskraXroad: NationalRegistryXRoadService,
   ) {}
 
   @Get('users/:nationalId/relations')
   @ApiExcludeEndpoint()
   async getUserRelations(
     @Param() params: GetUserRelationsParams,
+    @CurrentUser() user: AuthUser,
   ): Promise<User[]> {
+    console.log('before thjodskra Xroad')
+    const ok = await this.thjodskraXroad.getNationalRegistryPerson(user, '0101303019')
+    console.log(ok)
+    console.log('before user service relations')
     const relations = await this.userService.getRelations(params.nationalId)
     const users = await Promise.all([
       this.userService.getUserInfoByNationalId(params.nationalId),
