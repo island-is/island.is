@@ -1,4 +1,4 @@
-import { Injectable, HttpService, Inject } from '@nestjs/common'
+import { Injectable, HttpService, Inject, forwardRef } from '@nestjs/common'
 import * as xml2js from 'xml2js'
 
 import type { Logger } from '@island.is/logging'
@@ -15,12 +15,17 @@ export class SamgongustofaService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private httpService: HttpService,
+    @Inject(forwardRef(() => RecyclingRequestService))
     private recyclingRequestService: RecyclingRequestService,
   ) {}
 
-  async getVehicleInformation(nationalId: string) {
+  async getUserVehiclesInformation(
+    nationalId: string,
+  ): Promise<VehicleInformation[]> {
     try {
-      this.logger.info('Starting getVehicleInformation call on ${nationalId}')
+      this.logger.info(
+        'Starting getUserVehiclesInformation call on ${nationalId}',
+      )
       const { soapUrl, soapUsername, soapPassword } = environment.samgongustofa
 
       const parser = new xml2js.Parser()
@@ -317,7 +322,7 @@ export class SamgongustofaService {
       }
 
       this.logger.info(
-        `---- Finished getVehicleInformation call on ${nationalId} ----`,
+        `---- Finished getUserVehiclesInformation call on ${nationalId} ----`,
       )
       return this.vehicleInformationList
     } catch (err) {
@@ -326,5 +331,19 @@ export class SamgongustofaService {
       )
       throw new Error('Failed on getting vehicles information...')
     }
+  }
+
+  async getUserVehicle(
+    nationalId: string,
+    permno: string,
+    requireRecyclable = true,
+  ): Promise<VehicleInformation> {
+    const userVehicles = await this.getUserVehiclesInformation(nationalId)
+    const car = userVehicles.find((car) => car.permno === permno)
+
+    if (requireRecyclable && car) {
+      return car.isRecyclable ? car : null
+    }
+    return car
   }
 }
