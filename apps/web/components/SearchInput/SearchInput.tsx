@@ -42,6 +42,7 @@ import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
+const ITEM_LINK_PREFIX = '#ITEM_LINK_PREFIX#'
 
 type SearchState = {
   term: string
@@ -231,6 +232,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   ) => {
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
     const search = useSearch(locale, searchTerm, autocomplete)
+    const Router = useRouter()
 
     const onSubmit = useSubmit(locale)
     const [hasFocus, setHasFocus] = useState(false)
@@ -239,18 +241,32 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       setHasFocus(true)
     }, [setHasFocus])
 
+    const isLinkItem = (str: string) => str.includes(ITEM_LINK_PREFIX)
+
+    const onLinkItemSubmit = (val: string) => {
+      return Router.push({
+        pathname: val.replace(ITEM_LINK_PREFIX, ''),
+      }).then(() => {
+        window.scrollTo(0, 0)
+      })
+    }
+
     return (
       <Downshift<string>
         id={id}
         initialInputValue={initialInputValue}
         onChange={(q) => {
+          if (isLinkItem(q)) {
+            return onLinkItemSubmit(q)
+          }
+
           return onSubmit(`${search.prefix} ${q}`.trim() || '')
         }}
         onInputValueChange={(q) => setSearchTerm(q)}
         itemToString={(v) => {
           const str = `${search.prefix ? search.prefix + ' ' : ''}${v}`.trim()
 
-          if (str === 'null') {
+          if (isLinkItem(str) || str === 'null') {
             return ''
           }
 
@@ -295,6 +311,9 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             buttonProps={{
               onClick: () => {
                 closeMenu()
+                if (isLinkItem(inputValue)) {
+                  return onLinkItemSubmit(inputValue)
+                }
                 onSubmit(inputValue)
               },
               onFocus,
@@ -313,10 +332,17 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               placeholder,
               colored,
               onKeyDown: (e) => {
+                const val = e.currentTarget.value
+
                 if (e.key === 'Enter' && highlightedIndex == null) {
                   e.currentTarget.blur()
                   closeMenu()
-                  onSubmit(e.currentTarget.value)
+
+                  if (isLinkItem(val)) {
+                    return onLinkItemSubmit(val)
+                  }
+
+                  onSubmit(val)
                 }
               },
             })}
@@ -426,30 +452,35 @@ const Results = ({
                 News[] &
                 SubArticle[])
                 .slice(0, 5)
-                .map((item) => {
+                .map((item, i) => {
                   const { onClick, ...itemProps } = getItemProps({
-                    item: '',
+                    item:
+                      ITEM_LINK_PREFIX +
+                      linkResolver(
+                        item.__typename as LinkType,
+                        item.slug.split('/'),
+                      ).href,
                   })
                   return (
-                    <div
+                    <Link
                       key={item.id}
                       {...itemProps}
                       onClick={(e) => {
                         onClick(e)
                         onRouting()
                       }}
+                      color="blue400"
+                      underline="normal"
+                      pureChildren
+                      underlineVisibility={
+                        search.suggestions.length + i === highlightedIndex
+                          ? 'always'
+                          : 'hover'
+                      }
+                      skipTab
                     >
-                      <Link
-                        {...linkResolver(
-                          item.__typename as LinkType,
-                          item.slug.split('/'),
-                        )}
-                      >
-                        <Text variant="h5" color="blue400">
-                          {item.title}
-                        </Text>
-                      </Link>
-                    </div>
+                      {item.title}
+                    </Link>
                   )
                 })}
             </Stack>
