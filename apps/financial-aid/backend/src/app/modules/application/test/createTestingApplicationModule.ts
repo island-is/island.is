@@ -42,6 +42,7 @@ export const createTestingApplicationModule = async () => {
           count: jest.fn(),
           findAll: jest.fn(),
           update: jest.fn(),
+          create: jest.fn(),
         },
       },
       ApplicationService,
