@@ -12,7 +12,6 @@ import { Application, getValueViaPath, FieldBaseProps } from '@island.is/applica
 import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
 
-
 interface QualityPhotoData extends FieldBaseProps {
   data: {
     qualityPhoto: string
@@ -32,7 +31,8 @@ export class PSignSubmissionService {
     console.log(application.answers.qualityPhoto)
     const content: string =
       application.answers.qualityPhoto === YES
-        ? ((application.externalData.qualityPhoto as unknown) as QualityPhotoData).data.qualityPhoto
+        ? ((application.externalData
+            .qualityPhoto as unknown) as QualityPhotoData).data.qualityPhoto
         : await this.getAttachments({
             application,
             auth,
