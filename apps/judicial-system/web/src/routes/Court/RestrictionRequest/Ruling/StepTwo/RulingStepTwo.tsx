@@ -671,7 +671,7 @@ export const RulingStepTwo: React.FC = () => {
                 removeTabsValidateAndSet(
                   'endOfSessionBookings',
                   event,
-                  ['empty'],
+                  [],
                   workingCase,
                   setWorkingCase,
                 )
@@ -680,7 +680,7 @@ export const RulingStepTwo: React.FC = () => {
                 validateAndSendToServer(
                   'endOfSessionBookings',
                   event.target.value,
-                  ['empty'],
+                  [],
                   workingCase,
                   updateCase,
                 )
