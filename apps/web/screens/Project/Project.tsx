@@ -256,11 +256,12 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
         )}
         {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
           <TableOfContents
-            tableOfContentsTitle={navigationTitle}
+            tableOfContentsTitle="Undirkaflar"
             headings={subpage.slices.map((slice) => ({
               headingId: slice.id,
               headingTitle: (slice as OneColumnText).title,
             }))}
+            selectedHeadingId={selectedSliceTab?.id}
             onClick={(id) =>
               setSelectedSliceTab(
                 subpage.slices.find((s) => s.id === id) as OneColumnText,

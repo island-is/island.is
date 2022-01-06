@@ -8,12 +8,14 @@ import { Stack } from '../Stack/Stack'
 interface Props {
   tableOfContentsTitle: string
   headings: Array<{ headingTitle: string; headingId: string }>
+  selectedHeadingId?: string
   onClick: (selectedHeadingId: string) => void
 }
 
 export const TableOfContents: FC<Props> = ({
   tableOfContentsTitle,
   headings,
+  selectedHeadingId,
   onClick,
 }) => (
   <Box
@@ -34,7 +36,13 @@ export const TableOfContents: FC<Props> = ({
           textAlign="left"
           onClick={() => onClick(headingId)}
         >
-          <Text variant="small" color={'blue600'}>
+          <Text
+            fontWeight={
+              headingId === selectedHeadingId ? 'semiBold' : 'regular'
+            }
+            variant="small"
+            color={headingId === selectedHeadingId ? 'blue400' : 'blue600'}
+          >
             {headingTitle}
           </Text>
         </FocusableBox>
