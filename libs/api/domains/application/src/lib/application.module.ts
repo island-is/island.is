@@ -3,7 +3,6 @@ import { ApplicationResolver } from './application.resolver'
 import { ApplicationService } from './application.service'
 import { ApplicationsApi, PaymentsApi, Configuration } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { FileStorageModule } from '@island.is/file-storage'
 
 export interface Config {
   baseApiUrl: string
