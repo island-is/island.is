@@ -19,7 +19,6 @@ import {
   buildSubmitField,
   DefaultEvents,
   buildFileUploadField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
@@ -386,12 +385,10 @@ export const getApplication = (): Form => {
               buildKeyValueField({
                 label: '',
                 value: ({ answers }) => {
-                  const atts = getValueViaPath(
-                    answers,
-                    'attachments',
-                  ) as Array<{ key: string; name: string }>
-
-                  return atts[0].name
+                  return (answers.attachments as Array<{
+                    key: string
+                    name: string
+                  }>)[0].name
                 },
                 condition: (answers) =>
                   answers.qualityPhoto === 'no' || !answers.qualityPhoto,

@@ -9,7 +9,11 @@ import {
 } from '@island.is/clients/syslumenn'
 import { NationalRegistry } from './types'
 import { SharedTemplateApiService } from '../../shared'
-import { Application, getValueViaPath, FieldBaseProps } from '@island.is/application/core'
+import {
+  Application,
+  getValueViaPath,
+  FieldBaseProps,
+} from '@island.is/application/core'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -45,7 +49,8 @@ export class PSignSubmissionService {
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const content: string =
       application.answers.qualityPhoto === YES
-        ? ((application.externalData.qualityPhoto as unknown) as QualityPhotoData).data.qualityPhoto
+        ? ((application.externalData
+            .qualityPhoto as unknown) as QualityPhotoData).data.qualityPhoto
         : await this.getAttachments({
             application,
             auth,
