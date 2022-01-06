@@ -14,7 +14,6 @@ export class ApplicationModule {
   static register(config: Config): DynamicModule {
     return {
       module: ApplicationModule,
-      imports: [FileStorageModule.register({})],
       providers: [
         ApplicationResolver,
         ApplicationService,

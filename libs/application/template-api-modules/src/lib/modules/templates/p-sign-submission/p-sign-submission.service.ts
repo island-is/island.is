@@ -12,6 +12,8 @@ import { SharedTemplateApiService } from '../../shared'
 import { Application, getValueViaPath, FieldBaseProps } from '@island.is/application/core'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import AmazonS3URI from 'amazon-s3-uri'
+import { S3 } from 'aws-sdk'
 
 interface ContentData {
   getFileContentAsBase64: {
@@ -36,11 +38,12 @@ query GetFileContentAsBase64($input: FileContentAsBase64Input!) {
 const YES = 'yes'
 @Injectable()
 export class PSignSubmissionService {
+  s3: S3
   constructor(
     private readonly syslumennService: SyslumennService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {}
+  ) { this.s3 = new S3()}
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const content: string =
@@ -106,7 +109,6 @@ export class PSignSubmissionService {
 
   private async getAttachments({
     application,
-    auth,
   }: TemplateApiModuleActionProps): Promise<string> {
     const attachments = getValueViaPath(
       application.answers,
@@ -118,25 +120,22 @@ export class PSignSubmissionService {
       return Promise.reject({})
     }
 
-    const { key } = attachments[0]
+    const attachmentKey = attachments[0].key
+    const fileName = (application.attachments as {
+      [key: string]: string
+    })[attachmentKey]
 
-    const contentData = await this.sharedTemplateAPIService
-      .makeGraphqlQuery<ContentData>(auth.authorization, QUERY, {
-        input: {
-          id: application.id,
-          key: key,
-        },
+    const { bucket, key } = AmazonS3URI(fileName)
+
+    const uploadBucket = bucket
+    const file = await this.s3
+      .getObject({
+        Bucket: uploadBucket,
+        Key: key,
       })
-      .then((response) => response.json())
+      .promise()
+    const fileContent = file.Body as Buffer
 
-    if ('errors' in contentData) {
-      this.logger.error(
-        'Failed to get base64 content from image upload in P-sign submission service',
-        contentData,
-      )
-      throw new Error('Failed to get base64 content from image upload')
-    }
-
-    return contentData.data?.getFileContentAsBase64.content as string
+    return fileContent?.toString('base64') || ''
   }
 }

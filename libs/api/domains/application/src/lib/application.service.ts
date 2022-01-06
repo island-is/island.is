@@ -4,7 +4,6 @@ import { ApolloError } from 'apollo-server-express'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
-
 import { ApplicationsApi, PaymentsApi } from '../../gen/fetch'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
@@ -20,14 +19,12 @@ import { ApplicationApplicationsInput } from './dto/applicationApplications.inpu
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import { FileContentAsBase64Input } from './dto/fileContentAsBase64.input'
 import { ApplicationPayment } from './application.model'
-import { FileStorageService } from '@island.is/file-storage'
 
 @Injectable()
 export class ApplicationService {
   constructor(
     private _applicationApi: ApplicationsApi,
     private _applicationPaymentApi: PaymentsApi,
-    private readonly fileStorageService: FileStorageService,
   ) {}
 
   applicationApiWithAuth(auth: Auth) {
