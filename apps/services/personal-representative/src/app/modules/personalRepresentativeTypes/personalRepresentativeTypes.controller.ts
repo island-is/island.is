@@ -103,7 +103,7 @@ export class PersonalRepresentativeTypesController {
   @ApiOkResponse()
   async removeAsync(
     @Param('code') code: string,
-    @CurrentAuth() auth: Auth,
+    @CurrentAuth() user: Auth,
   ): Promise<number> {
     if (!code) {
       throw new BadRequestException('Key needs to be provided')
@@ -112,7 +112,7 @@ export class PersonalRepresentativeTypesController {
     // delete right type
     return await this.auditService.auditPromise(
       {
-        auth,
+        user,
         action: 'deletePersonalRepresentativeType',
         namespace,
         resources: code,
@@ -129,12 +129,12 @@ export class PersonalRepresentativeTypesController {
   @ApiCreatedResponse({ type: PersonalRepresentativeType })
   async create(
     @Body() rightType: PersonalRepresentativeTypeDTO,
-    @CurrentAuth() auth: Auth,
+    @CurrentAuth() user: Auth,
   ): Promise<PersonalRepresentativeType> {
     // Create a new right type
     return await this.auditService.auditPromise(
       {
-        auth,
+        user,
         action: 'createPersonalRepresentativeType',
         namespace,
         resources: rightType.code,
@@ -153,7 +153,7 @@ export class PersonalRepresentativeTypesController {
   async update(
     @Param('code') code: string,
     @Body() rightType: PersonalRepresentativeTypeDTO,
-    @CurrentAuth() auth: Auth,
+    @CurrentAuth() user: Auth,
   ): Promise<PersonalRepresentativeType> {
     if (!code) {
       throw new BadRequestException('Code must be provided')
@@ -161,7 +161,7 @@ export class PersonalRepresentativeTypesController {
     // Update right type
     const result = await this.auditService.auditPromise(
       {
-        auth,
+        user,
         action: 'updatePersonalRepresentativeType',
         namespace,
         resources: rightType.code,

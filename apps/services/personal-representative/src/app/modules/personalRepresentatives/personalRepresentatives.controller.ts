@@ -183,14 +183,14 @@ export class PersonalRepresentativesController {
   @ApiOkResponse()
   async remove(
     @Param('id') id: string,
-    @CurrentAuth() auth: Auth,
+    @CurrentAuth() user: Auth,
   ): Promise<number> {
     if (!id) {
       throw new BadRequestException('Id needs to be provided')
     }
     return await this.auditService.auditPromise(
       {
-        auth,
+        user,
         action: 'deletePersonalRepresentative',
         namespace,
         resources: id,
@@ -215,7 +215,7 @@ export class PersonalRepresentativesController {
   })
   async create(
     @Body() personalRepresentative: PersonalRepresentativeCreateDTO,
-    @CurrentAuth() auth: Auth,
+    @CurrentAuth() user: Auth,
   ): Promise<PersonalRepresentativeDTO | null> {
     if (personalRepresentative.rightCodes.length === 0) {
       throw new BadRequestException('RightCodes list must be provided')

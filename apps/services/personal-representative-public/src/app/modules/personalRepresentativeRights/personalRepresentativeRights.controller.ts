@@ -68,7 +68,7 @@ export class PersonalRepresentativeRightsController {
   })
   async getByPersonalRepresentative(
     @Param('nationalId') nationalId: string,
-    @CurrentAuth() auth: Auth,
+    @CurrentAuth() user: Auth,
   ): Promise<PersonalRepresentativePublicDTO[]> {
     if (!nationalId) {
       throw new BadRequestException('NationalId needs to be provided')
@@ -76,7 +76,7 @@ export class PersonalRepresentativeRightsController {
 
     const personalReps = await this.auditService.auditPromise(
       {
-        auth,
+        user,
         action: 'getPersonalRepresentativePermissions',
         namespace,
         resources: nationalId,
@@ -86,41 +86,6 @@ export class PersonalRepresentativeRightsController {
 
     return personalReps.map((pr) =>
       new PersonalRepresentativePublicDTO().fromDTO(pr),
-    )
-  }
-
-  /** Gets a personal representative rights by nationalId of personal representative */
-  @ApiOperation({
-    summary: 'Log access',
-    description:
-      'Logs the access of a personal representative on behalf of represented person',
-  })
-  @Post('log-access')
-  @ApiOkResponse({
-    description: 'Access log file',
-    type: PersonalRepresentativeAccess,
-  })
-  @Audit<PersonalRepresentativeAccess>({
-    resources: (log) => log.id ?? '',
-  })
-  async logAccessByPersonalRepresentative(
-    @Body() personalRepresentativeAccess: PersonalRepresentativeAccessDTO,
-    @CurrentAuth() auth: Auth,
-  ): Promise<PersonalRepresentativeAccess | null> {
-    if (!personalRepresentativeAccess) {
-      throw new BadRequestException('access body needs to be provided')
-    }
-
-    return await this.auditService.auditPromise(
-      {
-        auth,
-        action: 'logPersonalRepresentativeAccess',
-        namespace,
-        resources:
-          personalRepresentativeAccess.nationalIdPersonalRepresentative,
-        meta: { fields: Object.keys(personalRepresentativeAccess) },
-      },
-      this.prAccessService.logAccess(personalRepresentativeAccess),
     )
   }
 }

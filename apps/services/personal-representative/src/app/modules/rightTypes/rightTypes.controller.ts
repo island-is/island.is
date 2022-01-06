@@ -103,7 +103,7 @@ export class RightTypesController {
   @ApiOkResponse()
   async removeAsync(
     @Param('code') code: string,
-    @CurrentAuth() auth: Auth,
+    @CurrentAuth() user: Auth,
   ): Promise<number> {
     if (!code) {
       throw new BadRequestException('Key needs to be provided')
@@ -131,12 +131,12 @@ export class RightTypesController {
   })
   async create(
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
-    @CurrentAuth() auth: Auth,
+    @CurrentAuth() user: Auth,
   ): Promise<PersonalRepresentativeRightType> {
     // Create a new right type
     return await this.auditService.auditPromise(
       {
-        auth,
+        user,
         action: 'createPersonalRepresentativeRightType',
         namespace,
         resources: rightType.code,
@@ -158,7 +158,7 @@ export class RightTypesController {
   async update(
     @Param('code') code: string,
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
-    @CurrentAuth() auth: Auth,
+    @CurrentAuth() user: Auth,
   ): Promise<PersonalRepresentativeRightType> {
     if (!code) {
       throw new BadRequestException('Code must be provided')
@@ -167,7 +167,7 @@ export class RightTypesController {
     // Update right type
     const result = await this.auditService.auditPromise(
       {
-        auth,
+        user,
         action: 'updatePersonalRepresentativeRightType',
         namespace,
         resources: rightType.code,
