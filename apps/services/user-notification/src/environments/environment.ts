@@ -14,11 +14,7 @@ if (!env.NODE_ENV || env.NODE_ENV === 'development') {
   }
 }
 
-const required = (name: string): string => {
-  const v = env[name]
-  assert(v, `missing required environment variable: ${name}`)
-  return v
-}
+const required = (name: string): string => env[name] ?? ''
 
 // required by firebase-admin
 required('GOOGLE_APPLICATION_CREDENTIALS')
