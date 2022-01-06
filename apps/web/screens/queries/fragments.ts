@@ -516,3 +516,12 @@ export const slices = gql`
     ...FaqListFields
   }
 `
+
+export const nestedOneColumnTextFields = gql`
+  fragment NestedOneColumnTextFields on OneColumnText {
+    ...OneColumnTextFields
+    content {
+      ...AllSlices
+    }
+  }
+`

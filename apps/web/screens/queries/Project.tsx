@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { slices } from './fragments'
+import { nestedOneColumnTextFields, slices } from './fragments'
 
 export const GET_PROJECT_PAGE_QUERY = gql`
   query GetProjectPage($input: GetProjectPageInput!) {
@@ -55,9 +55,7 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         renderSlicesAsTabs
         slices {
           ...AllSlices
-          content {
-            ...AllSlices
-          }
+          ...NestedOneColumnTextFields
         }
       }
       featuredImage {
@@ -69,4 +67,5 @@ export const GET_PROJECT_PAGE_QUERY = gql`
     }
   }
   ${slices}
+  ${nestedOneColumnTextFields}
 `
