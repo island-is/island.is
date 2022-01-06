@@ -6,10 +6,11 @@ import {
   PersonalRepresentativeRightTypeService,
 } from '@island.is/auth-api-lib/personal-representative'
 import {
-  CurrentUser,
-  IdsUserGuard,
+  CurrentAuth,
+  IdsAuthGuard,
   Scopes,
   ScopesGuard,
+  Auth,
 } from '@island.is/auth-nest-tools'
 import {
   BadRequestException,
@@ -32,14 +33,13 @@ import {
   ApiTags,
   ApiBearerAuth,
 } from '@nestjs/swagger'
-import { User } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
 import { AuditService, Audit } from '@island.is/nest/audit'
 import { PaginationDto } from '@island.is/nest/pagination'
 
 const namespace = `${environment.audit.defaultNamespace}/right-types`
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.writePersonalRepresentative)
 @ApiBearerAuth()
 @ApiTags('Right Types')
@@ -103,7 +103,7 @@ export class RightTypesController {
   @ApiOkResponse()
   async removeAsync(
     @Param('code') code: string,
-    @CurrentUser() user: User,
+    @CurrentAuth() auth: Auth,
   ): Promise<number> {
     if (!code) {
       throw new BadRequestException('Key needs to be provided')
@@ -131,12 +131,12 @@ export class RightTypesController {
   })
   async create(
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
-    @CurrentUser() user: User,
+    @CurrentAuth() auth: Auth,
   ): Promise<PersonalRepresentativeRightType> {
     // Create a new right type
     return await this.auditService.auditPromise(
       {
-        user,
+        auth,
         action: 'createPersonalRepresentativeRightType',
         namespace,
         resources: rightType.code,
@@ -158,7 +158,7 @@ export class RightTypesController {
   async update(
     @Param('code') code: string,
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
-    @CurrentUser() user: User,
+    @CurrentAuth() auth: Auth,
   ): Promise<PersonalRepresentativeRightType> {
     if (!code) {
       throw new BadRequestException('Code must be provided')
@@ -167,7 +167,7 @@ export class RightTypesController {
     // Update right type
     const result = await this.auditService.auditPromise(
       {
-        user,
+        auth,
         action: 'updatePersonalRepresentativeRightType',
         namespace,
         resources: rightType.code,

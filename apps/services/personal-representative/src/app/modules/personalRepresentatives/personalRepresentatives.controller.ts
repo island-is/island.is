@@ -28,11 +28,11 @@ import {
 } from '@nestjs/swagger'
 import { isNationalIdValid } from '@island.is/financial-aid/shared/lib'
 import {
-  CurrentUser,
-  IdsUserGuard,
+  CurrentAuth,
+  IdsAuthGuard,
   Scopes,
   ScopesGuard,
-  User,
+  Auth,
 } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
 import { Audit, AuditService } from '@island.is/nest/audit'
@@ -40,7 +40,7 @@ import { PaginationWithInvalidDto } from './dto/PaginationWithInvalidDto.dto'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representative`
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.writePersonalRepresentative)
 @ApiTags('Personal Representatives')
 @Controller('v1/personal-representatives')
@@ -183,14 +183,14 @@ export class PersonalRepresentativesController {
   @ApiOkResponse()
   async remove(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentAuth() auth: Auth,
   ): Promise<number> {
     if (!id) {
       throw new BadRequestException('Id needs to be provided')
     }
     return await this.auditService.auditPromise(
       {
-        user,
+        auth,
         action: 'deletePersonalRepresentative',
         namespace,
         resources: id,
@@ -215,7 +215,7 @@ export class PersonalRepresentativesController {
   })
   async create(
     @Body() personalRepresentative: PersonalRepresentativeCreateDTO,
-    @CurrentUser() user: User,
+    @CurrentAuth() auth: Auth,
   ): Promise<PersonalRepresentativeDTO | null> {
     if (personalRepresentative.rightCodes.length === 0) {
       throw new BadRequestException('RightCodes list must be provided')

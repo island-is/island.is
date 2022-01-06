@@ -25,17 +25,17 @@ import {
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments'
 import {
-  CurrentUser,
-  IdsUserGuard,
+  CurrentAuth,
+  IdsAuthGuard,
   Scopes,
   ScopesGuard,
-  User,
+  Auth,
 } from '@island.is/auth-nest-tools'
 import { PersonalRepresentativePublicDTO } from './dto/personalRepresentativePublicDTO.dto'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representative-rights`
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.readPersonalRepresentative)
 @ApiTags('Personal Representative Public - Rights')
 @Controller('v1/personal-representative-rights')
@@ -68,7 +68,7 @@ export class PersonalRepresentativeRightsController {
   })
   async getByPersonalRepresentative(
     @Param('nationalId') nationalId: string,
-    @CurrentUser() user: User,
+    @CurrentAuth() auth: Auth,
   ): Promise<PersonalRepresentativePublicDTO[]> {
     if (!nationalId) {
       throw new BadRequestException('NationalId needs to be provided')
@@ -76,7 +76,7 @@ export class PersonalRepresentativeRightsController {
 
     const personalReps = await this.auditService.auditPromise(
       {
-        user,
+        auth,
         action: 'getPersonalRepresentativePermissions',
         namespace,
         resources: nationalId,
@@ -105,7 +105,7 @@ export class PersonalRepresentativeRightsController {
   })
   async logAccessByPersonalRepresentative(
     @Body() personalRepresentativeAccess: PersonalRepresentativeAccessDTO,
-    @CurrentUser() user: User,
+    @CurrentAuth() auth: Auth,
   ): Promise<PersonalRepresentativeAccess | null> {
     if (!personalRepresentativeAccess) {
       throw new BadRequestException('access body needs to be provided')
@@ -113,7 +113,7 @@ export class PersonalRepresentativeRightsController {
 
     return await this.auditService.auditPromise(
       {
-        user,
+        auth,
         action: 'logPersonalRepresentativeAccess',
         namespace,
         resources:

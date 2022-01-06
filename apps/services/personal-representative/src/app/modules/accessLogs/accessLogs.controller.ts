@@ -18,14 +18,14 @@ import {
   ApiTags,
   ApiParam,
 } from '@nestjs/swagger'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
 import { Audit } from '@island.is/nest/audit'
 import { PaginationDto } from '@island.is/nest/pagination'
 
 const namespace = `${environment.audit.defaultNamespace}/access-logs`
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.writePersonalRepresentative)
 @ApiTags('Personal Representative - Access logs')
 @Controller('v1/access-logs')

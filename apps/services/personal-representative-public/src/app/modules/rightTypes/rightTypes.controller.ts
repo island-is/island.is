@@ -4,7 +4,7 @@ import {
   PersonalRepresentativeRightType,
   PersonalRepresentativeRightTypeService,
 } from '@island.is/auth-api-lib/personal-representative'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import {
   BadRequestException,
   Controller,
@@ -27,7 +27,7 @@ import { environment } from '../../../environments'
 
 const namespace = `${environment.audit.defaultNamespace}/right-types`
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.readPersonalRepresentative)
 @ApiTags('Personal Representative Public - Right Types')
 @Controller('v1/right-types')
