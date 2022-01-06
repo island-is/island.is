@@ -271,6 +271,7 @@ describe('Mask Case', () => {
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.OTHER}
   `.it('should mask $type cases', ({ type }) => {
     const theCase = createCase(type)
@@ -314,6 +315,7 @@ describe('Mask Case by User', () => {
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.OTHER}
   `.describe('given a $type case', ({ type }) => {
     each`
@@ -375,6 +377,7 @@ describe('Full name', () => {
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.OTHER}
   `.it('should mask the name', ({ type }) => {
     const res = maskCase({ type, accusedName: 'Jón Jónsson' } as Case)

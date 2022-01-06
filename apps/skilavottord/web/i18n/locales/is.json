@@ -113,19 +113,30 @@
       "primaryButton": "Endurhlaða síðu"
     }
   },
-  "confirm": {
-    "title": "Samþykkja úrvinnslu ökutækis",
+  "recycle": {
+    "title": "Endurvinna ökutæki",
     "subTitles": {
       "confirm": "Viltu velja þetta ökutæki til úrvinnslu?"
     },
-    "info": "Þegar ökutæki hefur verið samþykkt til úrvinnslu getur þú leitið upplýsinga hjá viðkomandi sveitarfélagi/móttökuaðila um hvert eigi að fara með ökutækið til að farga því. Umsóknin er ekki bindandi, ökutæki verður einungis endurunnið sé því skilað til móttökuaðila.",
+    "info": "Þegar ökutæki hefur verið samþykkt til úrvinnslu getur þú leitað upplýsinga hjá viðkomandi sveitarfélagi/móttökuaðila um hvert eigi að fara með ökutækið til að farga því. Umsóknin er ekki bindandi, ökutæki verður einungis endurunnið sé því skilað til móttökuaðila.",
     "buttons": {
       "cancel": "Hætta við",
-      "continue": "Rafrænt samþykki"
+      "continue": "Halda áfram"
     },
     "checkbox": {
       "label": "Samþykkja",
       "linkLabel": "Skilmála og skilyrði"
+    }
+  },
+  "confirm": {
+    "title": "Staðfesta endurvinnslu",
+    "subTitles": {
+      "confirm": "Ertu viss um að senda þetta ökutæki til úrvinnslu?"
+    },
+    "info": "Með því að samþykkja verður bíllinn þinn skráður sem endurvinnanlegur. Umsóknin er ekki bindandi. Ökutæki verður einungis endurunnið sé því skilað til móttökuaðila.",
+    "buttons": {
+      "cancel": "Til baka",
+      "continue": "Staðfesta"
     }
   },
   "handover": {
@@ -199,10 +210,7 @@
     "outOf": "af",
     "citizen": {
       "title": "Skil á ökutæki",
-      "sections": [
-        "Samþykkja úrvinnslu ökutækis",
-        "Afhenda ökutæki til móttökuaðila"
-      ],
+      "sections": ["Endurvinna bíl", "Staðfesting", "Yfirlit"],
       "completed": "Lokið"
     },
     "company": {
@@ -356,7 +364,88 @@
     },
     "buttons": {
       "add": "Bæta við móttökuaðila",
-      "edit": "Breyta"
+      "view": "Skoða"
+    },
+    "recyclingCompany": {
+      "view": {
+        "title": "Móttökuaðili",
+        "breadcrumb": "Skoða",
+        "info": "Þú getur annaðhvort uppfært eða eytt móttökuaðila. Vinsamlegast staðfestið að upplýsingar fyrirtækis séu rétt slegnar inn.",
+        "updated": "Uppfært",
+        "deleted": "Eytt"
+      },
+      "add": {
+        "title": "Bæta við móttökuaðila",
+        "breadcrumb": "Bæta við",
+        "info": "Þegar nýjum móttökuaðila er bætt við, verður hann aðgengilegur í aðgangsstýringu. Vinsamlegast staðfestið að upplýsingar fyrirtækis séu rétt slegnar inn.",
+        "added": "Bætt við"
+      },
+      "form": {
+        "inputs": {
+          "companyId": {
+            "label": "Auðkenni fyrirtækis (ID)",
+            "placeholder": "Auðkenni fyrirtækis",
+            "rules": {
+              "required": "Skylda er að fylla út auðkenni fyrirtækis"
+            }
+          },
+          "companyName": {
+            "label": "Nafn fyrirtækis",
+            "placeholder": "Nafn fyrirtækis",
+            "rules": {
+              "required": "Skylda er að fylla út nafn fyrirtækis"
+            }
+          },
+          "address": {
+            "label": "Heimilisfang",
+            "placeholder": "Heimilisfang",
+            "rules": {
+              "required": "Skylda er að fylla út heimilisfang"
+            }
+          },
+          "postnumber": {
+            "label": "Póstnúmer",
+            "placeholder": "Póstnúmer",
+            "rules": {
+              "required": "Skylda er að fylla út póstnúmer"
+            }
+          },
+          "city": {
+            "label": "Borg",
+            "placeholder": "Borg",
+            "rules": {
+              "required": "Skylda er að fylla út borg"
+            }
+          },
+          "website": {
+            "label": "Vefsíða",
+            "placeholder": "Vefsíða",
+            "rules": {
+              "required": "Skylda er að fylla út vefsíðu"
+            }
+          },
+          "phone": {
+            "label": "Símanúmer",
+            "placeholder": "Símanúmer",
+            "rules": {
+              "required": "Skylda er að fylla út símanúmer"
+            }
+          },
+          "active": {
+            "label": "Virkt",
+            "placeholder": "Virkt",
+            "rules": {
+              "required": "Skylda er að fylla út virkni"
+            }
+          }
+        },
+        "buttons": {
+          "cancel": "Hætta við",
+          "continue": "Halda áfram",
+          "confirm": "Staðfesta",
+          "goBack": "Til baka"
+        }
+      }
     }
   },
   "accessControl": {
@@ -449,6 +538,7 @@
     "myCars": "/my-cars",
     "recycleVehicle": {
       "baseRoute": "/recycle-vehicle",
+      "recycle": "/recycle-vehicle/[id]/recycle",
       "confirm": "/recycle-vehicle/[id]/confirm",
       "handover": "/recycle-vehicle/[id]/handover",
       "completed": "/recycle-vehicle/[id]/completed"
@@ -463,7 +553,7 @@
     "recyclingCompanies": {
       "baseRoute": "/recycling-companies",
       "add": "/recycling-companies/add",
-      "edit": "/recycling-companies/[company]"
+      "edit": "/recycling-companies/[id]"
     },
     "companyInfo": {
       "baseRoute": "/company-info",

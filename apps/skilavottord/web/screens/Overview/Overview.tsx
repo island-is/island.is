@@ -118,7 +118,7 @@ const Overview: FC = () => {
           {inUseCars.length > 0 ? (
             <ActionCardContainer
               cars={inUseCars}
-              actionType="confirm"
+              actionType="recycle"
               onContinue={onContinue}
             />
           ) : (

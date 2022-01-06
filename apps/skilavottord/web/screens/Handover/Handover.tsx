@@ -42,12 +42,10 @@ const SkilavottordVehiclesQuery = gql`
 
 const SkilavottordRecyclingRequestMutation = gql`
   mutation skilavottordRecyclingRequestMutation(
-    $nameOfRequestor: String
     $permno: String!
-    $requestType: String!
+    $requestType: RecyclingRequestTypes!
   ) {
     createSkilavottordRecyclingRequest(
-      nameOfRequestor: $nameOfRequestor
       permno: $permno
       requestType: $requestType
     ) {
@@ -119,7 +117,6 @@ const Handover: FC = () => {
             setRecyclingRequest({
               variables: {
                 permno: id,
-                nameOfRequestor: user?.name,
                 requestType: RecyclingRequestTypes.pendingRecycle,
               },
             })
@@ -149,7 +146,6 @@ const Handover: FC = () => {
     setRecyclingRequest({
       variables: {
         permno: id,
-        nameOfRequestor: user?.name,
         requestType: RecyclingRequestTypes.cancelled,
       },
     }).then(({ data }) => {
@@ -180,7 +176,7 @@ const Handover: FC = () => {
     return (
       <ProcessPageLayout
         processType={'citizen'}
-        activeSection={1}
+        activeSection={2}
         activeCar={id?.toString()}
       >
         {mutationLoading || loading ? (
@@ -214,7 +210,7 @@ const Handover: FC = () => {
   return (
     <ProcessPageLayout
       processType={'citizen'}
-      activeSection={1}
+      activeSection={2}
       activeCar={id?.toString()}
     >
       <Stack space={6}>
@@ -230,31 +226,40 @@ const Handover: FC = () => {
           <Text variant="h3">{t.subTitles.companies}</Text>
           <CompanyList />
         </Stack>
-        <Box display="flex" justifyContent="spaceBetween" flexWrap="wrap">
-          {isMobile ? (
-            <Box paddingBottom={4} className={styles.cancelButtonContainer}>
-              <Button
-                onClick={onCancelRecycling}
-                variant="text"
-                colorScheme="destructive"
-              >
-                {t.buttons.cancel}
-              </Button>
-            </Box>
-          ) : (
+      </Stack>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        flexWrap="wrap"
+        marginTop={4}
+        paddingTop={4}
+        borderTopWidth="standard"
+        borderColor="purple100"
+        borderStyle="solid"
+      >
+        {isMobile ? (
+          <Box paddingBottom={4} className={styles.cancelButtonContainer}>
             <Button
               onClick={onCancelRecycling}
-              variant="ghost"
+              variant="text"
               colorScheme="destructive"
             >
               {t.buttons.cancel}
             </Button>
-          )}
-          <Button onClick={routeHome} fluid={isMobile}>
-            {t.buttons.close}
+          </Box>
+        ) : (
+          <Button
+            onClick={onCancelRecycling}
+            variant="ghost"
+            colorScheme="destructive"
+          >
+            {t.buttons.cancel}
           </Button>
-        </Box>
-      </Stack>
+        )}
+        <Button onClick={routeHome} fluid={isMobile}>
+          {t.buttons.close}
+        </Button>
+      </Box>
       <Modal
         show={showModal}
         onContinue={onConfirmCancellation}

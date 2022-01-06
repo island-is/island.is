@@ -28,18 +28,39 @@ import { createApiScope } from './fixtures'
 import { RskApi } from '@island.is/clients/rsk/v2'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
+export interface ScopeSetupOptions {
+  name: string
+  allowExplicitDelegationGrant?: boolean
+}
+
 interface SetupOptions {
   user: User
   userName: string
   nationalRegistryUser: Einstaklingsupplysingar
-  scopes: string[]
+  scopes?: ScopeSetupOptions[]
 }
+
+export const Scopes: ScopeSetupOptions[] = [
+  {
+    // Test user has access to
+    name: '@island.is/scope0',
+  },
+  {
+    // Test user does not have access to
+    name: '@island.is/scope1',
+  },
+  {
+    // Not allowed for delegations
+    name: '@island.is/scope2',
+    allowExplicitDelegationGrant: false,
+  },
+]
 
 export const setupWithAuth = async ({
   user,
   userName,
   nationalRegistryUser,
-  scopes,
+  scopes = Scopes,
 }: SetupOptions): Promise<TestApp> => {
   // Setup app with authentication and database
   const app = await testServer<AppModule>({
@@ -60,10 +81,7 @@ export const setupWithAuth = async ({
 
   // Add scopes in the "system" to use for delegation setup
   const apiScopeModel = app.get<typeof ApiScope>('ApiScopeRepository')
-  await apiScopeModel.bulkCreate([
-    createApiScope({ name: scopes[0] }),
-    createApiScope({ name: scopes[1] }),
-  ])
+  await apiScopeModel.bulkCreate(scopes.map((scope) => createApiScope(scope)))
 
   // Mock the name of the authentication user
   jest

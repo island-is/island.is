@@ -23,20 +23,11 @@
 /libs/testing/                                                                                @island-is/core @island-is/vice-versa
 
 /apps/services/endorsements/                                                                  @island-is/kosmos-kaos
-/apps/services/temporary-voter-registry-api/                                                  @island-is/kosmos-kaos
-/apps/services/party-letter-registry-api/                                                     @island-is/kosmos-kaos
 /apps/icelandic-names-registry*/                                                              @island-is/kosmos-kaos
 /apps/web/screens/PetitionView/                                                               @island-is/kosmos-kaos
 /libs/cms/                                                                                    @island-is/kosmos-kaos
 /libs/api/domains/endorsement-system                                                          @island-is/kosmos-kaos
 /libs/api/domains/icelandic-names-registry/                                                   @island-is/kosmos-kaos
-/libs/api/domains/temporary-voter-registry/                                                   @island-is/kosmos-kaos
-/libs/api/domains/party-letter-registry/                                                      @island-is/kosmos-kaos
-/libs/application/templates/party-letter/                                                     @island-is/kosmos-kaos
-/libs/application/templates/party-application/                                                @island-is/kosmos-kaos
-/libs/application/templates/payable-dummy-template/                                           @island-is/kosmos-kaos
-/libs/application/template-api-modules/src/lib/modules/templates/party-application/           @island-is/kosmos-kaos
-/libs/application/template-api-modules/src/lib/modules/templates/party-letter/                @island-is/kosmos-kaos
 /libs/clients/payment/                                                                        @island-is/kosmos-kaos
 /libs/clients/rsk/                                                                            @island-is/kosmos-kaos
 /libs/clients/zendesk/                                                                        @island-is/kosmos-kaos
@@ -61,7 +52,7 @@
 /libs/application/templates/general-petition/                                                 @island-is/kosmos-kaos
 /libs/shared/connected/src/lib/generalPetition/GeneralPetitionLists                           @island-is/kosmos-kaos
 /libs/api/domains/communications/                                                             @island-is/kosmos-kaos
-/apps/services/notifications/                                                                 @island-is/kosmos-kaos
+/apps/services/user-notification/                                                             @island-is/kosmos-kaos
 /apps/air-discount-scheme/                                                                    @island-is/kosmos-kaos
 /libs/air-discount-scheme/                                                                    @island-is/kosmos-kaos
 
@@ -131,6 +122,8 @@
 /libs/api/domains/health-insurance/                                                           @island-is/sendiradid
 /libs/application/templates/health-insurance/                                                 @island-is/sendiradid
 /libs/clients/health-insurance-v2/                                                            @island-is/sendiradid
+/libs/clients/data-protection-complaint/                                                      @island-is/sendiradid
+/libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/   @island-is/sendiradid
 
 /apps/services/search-indexer/                                                                @island-is/stefna @island-is/kosmos-kaos
 /apps/web/screens/Organization/                                                               @island-is/stefna
@@ -141,6 +134,7 @@
 /libs/content-search-indexer/                                                                 @island-is/stefna @island-is/kosmos-kaos
 /libs/api/domains/content-search/                                                             @island-is/stefna @island-is/kosmos-kaos
 /libs/api/domains/syslumenn/                                                                  @island-is/stefna
+/libs/clients/syslumenn/                                                                      @island-is/stefna @island-is/kosmos-kaos
 
 /libs/island-ui/                                                                              @island-is/island-ui
 

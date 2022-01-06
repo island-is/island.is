@@ -4,11 +4,13 @@ import { testServer } from '@island.is/infra-nest-server'
 import { GraphQLModule, Query, Resolver } from '@nestjs/graphql'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { ProblemModule } from '../problem.module'
+import { ProblemOptions } from '../problem.options'
 
 export type CreateRequest = (mode?: 'rest' | 'graphql') => Test
 
 export const setup = async (
   options: {
+    problemOptions?: ProblemOptions
     handler?: () => void
   } = {},
 ): Promise<[CreateRequest, jest.Mock, Logger]> => {
@@ -32,7 +34,9 @@ export const setup = async (
   @Module({
     imports: [
       GraphQLModule.forRoot({ path: '/graphql', autoSchemaFile: true }),
-      ProblemModule,
+      options.problemOptions
+        ? ProblemModule.forRoot(options.problemOptions)
+        : ProblemModule,
     ],
     controllers: [TestController],
     providers: [TestResolver],

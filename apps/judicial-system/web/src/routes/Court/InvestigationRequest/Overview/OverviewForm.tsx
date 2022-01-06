@@ -1,9 +1,8 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Accordion, Box, Button, Text } from '@island.is/island-ui/core'
 import {
-  CaseFileList,
   FormContentContainer,
   FormFooter,
   InfoCard,
@@ -22,12 +21,9 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 import { isOverviewStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -59,14 +55,6 @@ const OverviewForm: React.FC<Props> = (props) => {
     sendNotification,
   } = useCase()
   const { formatMessage } = useIntl()
-
-  const validations: FormSettings = {
-    courtCaseNumber: {
-      validations: ['empty'],
-    },
-  }
-
-  useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   const receiveCase = async (workingCase: Case, courtCaseNumber: string) => {
     if (workingCase.state === CaseState.SUBMITTED && !isTransitioningCase) {
@@ -278,23 +266,17 @@ const OverviewForm: React.FC<Props> = (props) => {
                 )}
               </div>
             )}
-            <div className={styles.infoSection}>
-              <Box marginBottom={1}>
-                <Text as="h2" variant="h3">
-                  {`Rannsóknargögn (${
-                    workingCase.caseFiles ? workingCase.caseFiles.length : 0
-                  })`}
-                </Text>
+            {user && (
+              <Box marginBottom={5}>
+                <Accordion>
+                  <CaseFilesAccordionItem
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                    user={user}
+                  />
+                </Accordion>
               </Box>
-              <CaseFileList
-                caseId={workingCase.id}
-                files={workingCase.caseFiles ?? []}
-                canOpenFiles={
-                  workingCase.judge !== null &&
-                  workingCase.judge?.id === user?.id
-                }
-              />
-            </div>
+            )}
             <Box marginBottom={10}>
               <Box marginBottom={3}>
                 <PdfButton
