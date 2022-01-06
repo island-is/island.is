@@ -10,6 +10,8 @@ import {
 import { Roles, ApplicationStates } from './constants'
 
 import * as z from 'zod'
+import { application } from './messages'
+import { dataSchema } from './dataSchema'
 
 type Events = { type: DefaultEvents.SUBMIT }
 
@@ -32,9 +34,9 @@ const ApplicationTemplatesFinancialAid: ApplicationTemplate<
 > = {
   readyForProduction: false,
   type: ApplicationTypes.FINANCIAL_AID,
-  name: applicationName,
+  name: application.name,
+  dataSchema,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
-  dataSchema: z.object({}),
   stateMachineConfig: {
     initial: ApplicationStates.DRAFT,
     states: {
