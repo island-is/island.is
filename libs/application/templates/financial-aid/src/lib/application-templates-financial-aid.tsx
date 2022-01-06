@@ -8,8 +8,7 @@ import {
 } from '@island.is/application/core'
 import { Roles, ApplicationStates } from './constants'
 import { application } from './messages'
-
-import * as z from 'zod'
+import { dataSchema } from './dataSchema'
 
 type Events = { type: DefaultEvents.SUBMIT }
 
@@ -31,8 +30,8 @@ const ApplicationTemplatesFinancialAid: ApplicationTemplate<
   readyForProduction: false,
   type: ApplicationTypes.FINANCIAL_AID,
   name: application.name,
+  dataSchema,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
-  dataSchema: z.object({}),
   stateMachineConfig: {
     initial: ApplicationStates.DRAFT,
     states: {
