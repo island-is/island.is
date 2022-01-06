@@ -5,6 +5,7 @@ import {
   DataType,
   ForeignKey,
   HasMany,
+  HasOne,
   Model,
   Table,
   UpdatedAt,
@@ -20,9 +21,10 @@ import {
   FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 
-import { ApplicationEventModel } from '../../applicationEvent/models'
-import { ApplicationFileModel } from '../../file/models'
-import { StaffModel } from '../../staff'
+import { ApplicationEventModel } from '../../applicationEvent/models/applicationEvent.model'
+import { ApplicationFileModel } from '../../file/models/file.model'
+import { StaffModel } from '../../staff/models/staff.model'
+import { AmountModel } from '../../amount/models/amount.model'
 
 @Table({
   tableName: 'applications',
@@ -168,6 +170,13 @@ export class ApplicationModel extends Model<Application> {
   formComment: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  spouseFormComment: string
+
+  @Column({
     type: DataType.ENUM,
     allowNull: false,
     values: Object.values(ApplicationState),
@@ -178,13 +187,6 @@ export class ApplicationModel extends Model<Application> {
   @HasMany(() => ApplicationFileModel, 'applicationId')
   @ApiProperty({ type: ApplicationFileModel, isArray: true })
   files: ApplicationFileModel[]
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: true,
-  })
-  @ApiProperty()
-  amount: number
 
   @Column({
     type: DataType.STRING,
@@ -244,6 +246,10 @@ export class ApplicationModel extends Model<Application> {
   @HasMany(() => ApplicationEventModel, 'applicationId')
   @ApiProperty({ type: ApplicationEventModel, isArray: true })
   applicationEvents?: ApplicationEventModel[]
+
+  @HasOne(() => AmountModel, 'applicationId')
+  @ApiProperty({ type: AmountModel })
+  amount?: AmountModel
 
   @Column({
     type: DataType.STRING,

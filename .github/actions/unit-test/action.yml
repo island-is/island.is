@@ -1,34 +1,30 @@
 name: 'Unit Test'
 description: 'Run unit tests'
 inputs:
-  node-modules-hash:
+  aws-access-key-id:
     required: true
-  generated-files-cache-key:
+  aws-secret-access-key:
+    required: true
+  docker-registry:
     required: true
   codecov-token:
     required: true
 runs:
   using: 'composite'
   steps:
-    - name: Cache for NodeJS dependencies - host OS
-      uses: ./cache/
-      with:
-        path: node_modules
-        key: ${{ inputs.node-modules-hash }}-yarn
-
-    - name: Cache for generated files
-      uses: ./cache/
-      with:
-        path: generated_files.tar.gz
-        key: ${{ inputs.generated-files-cache-key }}
-
-    - name: Untar generated files
-      run: tar zxvf generated_files.tar.gz
+    - name: Docker login to ECR repo
+      run: ./scripts/ci/docker-login-ecr.sh
       shell: bash
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
+        DOCKER_REGISTRY: ${{ inputs.docker-registry }}
 
     - name: Running tests
       run: ./scripts/ci/run-in-parallel.sh 30_test
       shell: bash
+      env:
+        DOCKER_REGISTRY: ${{ inputs.docker-registry }}
 
     - name: Install codecov uploader
       run: |

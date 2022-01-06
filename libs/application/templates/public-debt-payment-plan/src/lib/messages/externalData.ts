@@ -70,12 +70,12 @@ export const externalData = {
       description: 'External data section payment plan title',
     },
     paymentDebtsTitle: {
-      id: `pdpp.application:section.externalData.paymentEmployerTitle`,
+      id: `pdpp.application:section.externalData.paymentDebtsTitle`,
       defaultMessage: 'Upplýsingar frá skattinum',
       description: 'External data section payment plan title',
     },
     paymentDebtsSubtitle: {
-      id: `pdpp.application:section.externalData.paymentEmployerSubtitle`,
+      id: `pdpp.application:section.externalData.paymentDebtsSubtitle`,
       defaultMessage: 'Upplýsingar um skuldir',
       description: 'External data section payment plan title',
     },

@@ -186,6 +186,7 @@ export function buildTextField(
     suffix,
     rows,
     required,
+    maxLength,
   } = data
   return {
     ...extractCommonFields(data),
@@ -197,6 +198,7 @@ export function buildTextField(
     suffix,
     rows,
     required,
+    maxLength,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }

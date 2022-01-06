@@ -15,6 +15,7 @@ import {
   LinkContext,
   Navigation,
   NavigationItem,
+  ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
@@ -207,8 +208,8 @@ const Search: Screen<CategoryProps> = ({
     parentTitle: item.parent?.title,
     description: item.intro ?? item.description ?? item.parent?.intro,
     link: linkResolver(item.__typename, item?.url ?? item.slug.split('/')),
-    categorySlug: item.category?.slug,
-    category: item.category,
+    categorySlug: item.category?.slug ?? item.parent?.category?.slug,
+    category: item.category ?? item.parent?.category,
     group: item.group,
     ...(item.image && { image: item.image as Image }),
     ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
@@ -224,44 +225,51 @@ const Search: Screen<CategoryProps> = ({
   }
 
   const filteredItems = searchResultsItems.filter(byCategory)
+  const nothingFound = filteredItems.length === 0
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
   const sidebarDataTypes = Object.entries(sidebarData.types)
   const sidebarDataTags = Object.entries(sidebarData.tags)
 
-  const categorySelectOptions = sidebarDataTags.map(
-    ([key, { title, total }]) => ({
-      label: `${title} (${total})`,
-      value: key,
-    }),
+  const serviceCategoryItems = (sidebarDataTags ?? []).reduce(
+    (all, [key, { title, total }]) => {
+      const active = key === filters.category
+      const text = `${title} (${total})`
+
+      if (key === 'uncategorized') {
+        return all
+      }
+
+      all.push({
+        title: text,
+        href: `${linkResolver('search').href}?q=${q}&category=${key}`,
+        active,
+      })
+
+      return all
+    },
+    [],
   )
 
-  categorySelectOptions.unshift({
-    label: n('allCategories', 'Allir flokkar'),
-    value: '',
-  })
+  const hasFilters = sidebarDataTypes.length || serviceCategoryItems.length
 
   const items: NavigationItem[] = [
     {
-      title: `${n('allCategories', 'Allir flokkar')} (${
-        sidebarData.totalTagCount
-      })`,
+      title: n('showAll', 'Sýna allt'),
       active: !filters.category && !filters.type,
       href: `${linkResolver('search').href}?q=${q}`,
-      accordion: true,
-      items: sidebarDataTags.map(([key, { title, total }]) => {
-        const active = key === filters.category
-        const text = `${title} (${total})`
-
-        if (key === 'uncategorized') {
-          return null
-        }
-
-        return {
-          title: text,
-          href: `${linkResolver('search').href}?q=${q}&category=${key}`,
-          active,
-        }
+    },
+    {
+      ...(serviceCategoryItems.length && {
+        title: `${n('serviceCategories', 'Þjónustuflokkar')} (${
+          sidebarData.totalTagCount
+        })`,
+        active: filters.type === 'webArticle,webSubArticle',
+        href: `${
+          linkResolver('search').href
+        }?q=${q}&type=webArticle,webSubArticle`,
+        accordion: true,
+        items: serviceCategoryItems,
       }),
     },
     ...(sidebarDataTypes ?? []).map(([key, { title, total }]) => {
@@ -288,21 +296,23 @@ const Search: Screen<CategoryProps> = ({
       </Head>
       <SidebarLayout
         sidebarContent={
-          <Navigation
-            title={n('filterResults', 'Sía niðurstöður')}
-            label={n('filterResults', 'Sía niðurstöður')}
-            baseId="search-navigation"
-            colorScheme="purple"
-            activeItemTitle={selectedTitle}
-            items={items}
-            renderLink={(link, item) => {
-              return item?.href ? (
-                <NextLink href={item?.href}>{link}</NextLink>
-              ) : (
-                link
-              )
-            }}
-          />
+          !!hasFilters && (
+            <Navigation
+              title={n('filterResults', 'Sía niðurstöður')}
+              label={n('filterResults', 'Sía niðurstöður')}
+              baseId="search-navigation"
+              colorScheme="purple"
+              activeItemTitle={selectedTitle}
+              items={items}
+              renderLink={(link, item) => {
+                return item?.href ? (
+                  <NextLink href={item?.href}>{link}</NextLink>
+                ) : (
+                  link
+                )
+              }}
+            />
+          )
         }
       >
         <Stack space={[3, 3, 4]}>
@@ -326,6 +336,7 @@ const Search: Screen<CategoryProps> = ({
             id="search_input_search_page"
             ref={searchRef}
             size="large"
+            placeholder={n('inputSearchQuery', 'Sláðu inn leitarorð')}
             quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
             activeLocale={activeLocale}
             initialInputValue={q}
@@ -349,12 +360,17 @@ const Search: Screen<CategoryProps> = ({
             />
           </Hidden>
 
-          {filteredItems.length === 0 ? (
+          {nothingFound ? (
             <>
-              <Text variant="intro" as="p">
-                {n('nothingFoundWhenSearchingFor', 'Ekkert fannst við leit á')}{' '}
-                <strong>{q}</strong>
-              </Text>
+              {!!q && (
+                <Text variant="intro" as="p">
+                  {n(
+                    'nothingFoundWhenSearchingFor',
+                    'Ekkert fannst við leit á',
+                  )}{' '}
+                  <strong>{q}</strong>
+                </Text>
+              )}
 
               <Text variant="intro" as="p">
                 {n('nothingFoundExtendedExplanation')}
@@ -369,8 +385,8 @@ const Search: Screen<CategoryProps> = ({
           ) : (
             <Box marginBottom={2}>
               <Text variant="intro" as="p">
-                {totalSearchResults}{' '}
-                {totalSearchResults === 1
+                {filteredItems.length}{' '}
+                {filteredItems.length === 1
                   ? (n(
                       'searchResult',
                       'leitarniðurstaða',
@@ -383,50 +399,52 @@ const Search: Screen<CategoryProps> = ({
             </Box>
           )}
         </Stack>
-        <Stack space={2}>
-          {filteredItems.map(
-            ({ image, thumbnail, labels, parentTitle, ...rest }, index) => {
-              const tags: Array<CardTagsProps> = []
+        <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
+          <Stack space={2}>
+            {filteredItems.map(
+              ({ image, thumbnail, labels, parentTitle, ...rest }, index) => {
+                const tags: Array<CardTagsProps> = []
 
-              labels.forEach((label) => {
-                tags.push({
-                  title: label,
-                  tagProps: {
-                    outlined: true,
-                  },
+                labels.forEach((label) => {
+                  tags.push({
+                    title: label,
+                    tagProps: {
+                      outlined: true,
+                    },
+                  })
                 })
-              })
 
-              return (
-                <Card
-                  key={index}
-                  tags={tags}
-                  image={thumbnail ? thumbnail : image}
-                  subTitle={parentTitle}
-                  {...rest}
+                return (
+                  <Card
+                    key={index}
+                    tags={tags}
+                    image={thumbnail ? thumbnail : image}
+                    subTitle={parentTitle}
+                    {...rest}
+                  />
+                )
+              },
+            )}{' '}
+            {totalSearchResults > 0 && (
+              <Box paddingTop={8}>
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  renderLink={(page, className, children) => (
+                    <Link
+                      href={{
+                        pathname: linkResolver('search').href,
+                        query: { ...Router.query, page },
+                      }}
+                    >
+                      <span className={className}>{children}</span>
+                    </Link>
+                  )}
                 />
-              )
-            },
-          )}{' '}
-          {totalSearchResults > 0 && (
-            <Box paddingTop={8}>
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                renderLink={(page, className, children) => (
-                  <Link
-                    href={{
-                      pathname: linkResolver('search').href,
-                      query: { ...Router.query, page },
-                    }}
-                  >
-                    <span className={className}>{children}</span>
-                  </Link>
-                )}
-              />
-            </Box>
-          )}
-        </Stack>
+              </Box>
+            )}
+          </Stack>
+        </ColorSchemeContext.Provider>
       </SidebarLayout>
     </>
   )
@@ -448,19 +466,25 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     countTag = { countTag: 'category' as SearchableTags }
   }
 
+  const allTypes = [
+    'webArticle' as SearchableContentTypes,
+    'webLifeEventPage' as SearchableContentTypes,
+    'webAdgerdirPage' as SearchableContentTypes,
+    'webSubArticle' as SearchableContentTypes,
+    'webLink' as SearchableContentTypes,
+    'webNews' as SearchableContentTypes,
+    'webOrganizationSubpage' as SearchableContentTypes,
+  ]
+
   let types
-  if (type) {
+
+  const typeStrings = type.split(',') as SearchableContentTypes[]
+  if (typeStrings.length > 1) {
+    types = typeStrings
+  } else if (type) {
     types = [type as SearchableContentTypes]
   } else {
-    types = [
-      'webArticle' as SearchableContentTypes,
-      'webLifeEventPage' as SearchableContentTypes,
-      'webAdgerdirPage' as SearchableContentTypes,
-      'webSubArticle' as SearchableContentTypes,
-      'webLink' as SearchableContentTypes,
-      'webNews' as SearchableContentTypes,
-      'webOrganizationSubpage' as SearchableContentTypes,
-    ]
+    types = allTypes
   }
 
   const [
@@ -481,6 +505,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
           types,
           ...tags,
           ...countTag,
+          countTypes: true,
           size: PERPAGE,
           page,
         },
@@ -493,6 +518,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
           language: locale as ContentLanguage,
           queryString,
           countTag: 'category' as SearchableTags,
+          types: allTypes,
           countTypes: true,
         },
       },

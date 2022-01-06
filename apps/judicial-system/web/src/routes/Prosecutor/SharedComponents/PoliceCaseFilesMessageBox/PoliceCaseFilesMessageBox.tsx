@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { Box, Icon, Text, IconMapIcon } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 

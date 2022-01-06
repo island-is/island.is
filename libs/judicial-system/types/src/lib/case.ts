@@ -17,6 +17,7 @@ export enum CaseType {
   BODY_SEARCH = 'BODY_SEARCH',
   INTERNET_USAGE = 'INTERNET_USAGE',
   RESTRAINING_ORDER = 'RESTRAINING_ORDER',
+  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION = 'ELECTRONIC_DATA_DISCOVERY_INVESTIGATION',
   OTHER = 'OTHER',
 }
 
@@ -89,7 +90,6 @@ export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
   PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
-  REMOTE_SESSION = 'REMOTE_SESSION',
 }
 
 export interface Case {
@@ -163,14 +163,16 @@ export interface Case {
   isAppealDeadlineExpired?: boolean
   isAppealGracePeriodExpired?: boolean
   rulingDate?: string
+  initialRulingDate?: string
   registrar?: User
   judge?: User
+  courtRecordSignatory?: User
+  courtRecordSignatureDate?: string
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
   caseFiles?: CaseFile[]
   isMasked?: boolean
-  initialRulingDate?: string
 }
 
 export interface CreateCase {
@@ -290,6 +292,7 @@ export const investigationCases = [
   CaseType.BODY_SEARCH,
   CaseType.INTERNET_USAGE,
   CaseType.RESTRAINING_ORDER,
+  CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
   CaseType.OTHER,
 ]
 

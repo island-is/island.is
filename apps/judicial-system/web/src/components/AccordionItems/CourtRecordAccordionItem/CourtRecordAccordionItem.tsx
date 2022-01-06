@@ -138,9 +138,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
       <AccordionListItem title="Málflutningur" breakSpaces>
         <Text>{workingCase.litigationPresentations}</Text>
       </AccordionListItem>
-      {(isRestrictionCase(workingCase.type) ||
-        workingCase.sessionArrangements !==
-          SessionArrangements.REMOTE_SESSION) && (
+      {isRestrictionCase(workingCase.type) && (
         <Box marginBottom={3}>
           <Text>{formatMessage(m.sections.conclusion.disclaimer)}</Text>
         </Box>
@@ -198,7 +196,8 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         workingCase.decision ===
           CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) ||
         (workingCase.type === CaseType.TRAVEL_BAN &&
-          workingCase.decision === CaseDecision.ACCEPTING)) && (
+          (workingCase.decision === CaseDecision.ACCEPTING ||
+            workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY))) && (
         <AccordionListItem title="Tilhögun farbanns">
           {alternativeTravelBanRestrictions && (
             <Box marginBottom={2}>

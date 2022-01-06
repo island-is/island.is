@@ -44,16 +44,18 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
       graphqlRequest.alias = 'gqlUpdateCaseMutatation'
 
       return { fixture: 'updateCaseMutationResponse' }
-    } else if (graphqlRequest.body.query.includes('RequestSignatureMutation')) {
+    } else if (
+      graphqlRequest.body.query.includes('RequestRulingSignatureMutation')
+    ) {
       graphqlRequest.alias = 'gqlRequsestSignatureMutation'
 
-      return { fixture: 'requestSignatureMutationResponse' }
+      return { fixture: 'requestRulingSignatureMutationResponse' }
     } else if (
-      graphqlRequest.body.query.includes('SignatureConfirmationQuery')
+      graphqlRequest.body.query.includes('RulingSignatureConfirmationQuery')
     ) {
       graphqlRequest.alias = 'gqlSignatureConfirmationResponse'
 
-      return { fixture: 'signatureConfirmationResponse' }
+      return { fixture: 'rulingSignatureConfirmationResponse' }
     } else if (graphqlRequest.body.query.includes('InstitutionsQuery')) {
       graphqlRequest.alias = 'gqlInstitutionsQuery'
 
@@ -66,6 +68,10 @@ Cypress.Commands.add('stubAPIResponses', () => {
   cy.intercept('POST', '**/api/graphql', (req) => {
     req.reply(getFixtureFor(req))
   })
+})
+
+Cypress.Commands.add('login', () => {
+  cy.setCookie('judicial-system.csrf', 'test-csrf-token')
 })
 
 Cypress.Commands.add('getByTestid', (selector) => {

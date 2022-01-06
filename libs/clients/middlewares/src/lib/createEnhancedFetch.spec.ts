@@ -1,81 +1,78 @@
+import * as faker from 'faker'
+
 import {
-  createEnhancedFetch,
-  EnhancedFetchOptions,
-} from './createEnhancedFetch'
-import { Logger } from 'winston'
-import { Response as FakeResponse } from 'node-fetch'
-import { SetOptional } from 'type-fest'
+  EnhancedFetchTestEnv,
+  fakeResponse,
+  setupTestEnv,
+} from '../../test/setup'
 
-const fakeResponse = (
-  ...args: ConstructorParameters<typeof FakeResponse>
-): Response => (new FakeResponse(...args) as unknown) as Response
+import { Request } from './nodeFetch'
 
-type FetchAPI = WindowOrWorkerGlobalScope['fetch']
-
-const timeout = 500
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+const testUrl = 'http://localhost/test'
 
 describe('EnhancedFetch', () => {
-  let enhancedFetch: FetchAPI
-  let fetch: jest.Mock<ReturnType<FetchAPI>>
-  let logger: { log: jest.Mock; error: jest.Mock }
-
-  const createTestEnhancedFetch = (
-    override?: SetOptional<EnhancedFetchOptions, 'name'>,
-  ) =>
-    createEnhancedFetch({
-      name: 'test',
-      fetch,
-      timeout,
-      logger: (logger as unknown) as Logger,
-      ...override,
-      opossum: {
-        volumeThreshold: 0,
-        ...override?.opossum,
-      },
-    })
+  let env: EnhancedFetchTestEnv
 
   beforeEach(() => {
-    fetch = jest.fn(() => Promise.resolve(fakeResponse()))
-    logger = {
-      log: jest.fn(),
-      error: jest.fn(),
-    }
-    enhancedFetch = createTestEnhancedFetch()
+    env = setupTestEnv()
   })
 
   it('adds request timeout', async () => {
+    // Arrange
+    const timeout = 500
+    env = setupTestEnv({ timeout })
+
     // Act
-    await enhancedFetch('/test')
+    await env.enhancedFetch(testUrl)
 
     // Assert
-    expect(fetch).toHaveBeenCalledWith(
-      '/test',
+    expect(env.fetch).toHaveBeenCalledWith(
+      testUrl,
       expect.objectContaining({ timeout }),
     )
   })
 
-  it('logs arbitrary errors', async () => {
+  it('adds authentication header', async () => {
     // Arrange
-    fetch.mockRejectedValue(new Error('Test error'))
+    const mockUser = {
+      nationalId: faker.helpers.replaceSymbolWithNumber('##########'),
+      scope: [],
+      authorization: faker.random.word(),
+      client: faker.random.word(),
+    }
 
     // Act
-    await enhancedFetch('/test').catch(() => null)
+    await env.enhancedFetch(testUrl, { auth: mockUser })
 
     // Assert
-    expect(logger.log).toHaveBeenCalledWith(
+    expect(env.fetch).toHaveBeenCalled()
+    const request = new Request(
+      env.fetch.mock.calls[0][0],
+      env.fetch.mock.calls[0][1],
+    )
+    expect(request.headers.get('authorization')).toEqual(mockUser.authorization)
+  })
+
+  it('logs arbitrary errors', async () => {
+    // Arrange
+    env.fetch.mockRejectedValue(new Error('Test error'))
+
+    // Act
+    await env.enhancedFetch(testUrl).catch(() => null)
+
+    // Assert
+    expect(env.logger.log).toHaveBeenCalledWith(
       'error',
       expect.objectContaining({
         message: expect.stringContaining('Test error'),
-        url: '/test',
+        url: testUrl,
       }),
     )
   })
 
   it('logs server response errors', async () => {
     // Arrange
-    fetch.mockResolvedValue(
+    env.fetch.mockResolvedValue(
       fakeResponse('Error', {
         status: 500,
         statusText: 'Server Test Error',
@@ -83,14 +80,14 @@ describe('EnhancedFetch', () => {
     )
 
     // Act
-    await enhancedFetch('/test').catch(() => null)
+    await env.enhancedFetch(testUrl).catch(() => null)
 
     // Assert
-    expect(logger.log).toHaveBeenCalledWith(
+    expect(env.logger.log).toHaveBeenCalledWith(
       'error',
       expect.objectContaining({
         message: expect.stringContaining('Request failed with status code 500'),
-        url: '/test',
+        url: testUrl,
         status: 500,
         statusText: 'Server Test Error',
       }),
@@ -99,7 +96,7 @@ describe('EnhancedFetch', () => {
 
   it('supports response problem spec', async () => {
     // Arrange
-    fetch.mockResolvedValue(
+    env.fetch.mockResolvedValue(
       fakeResponse('{"title": "Problem", "type": "my-problem"}', {
         status: 500,
         statusText: 'Server Test Error',
@@ -111,11 +108,11 @@ describe('EnhancedFetch', () => {
     const problem = { title: 'Problem', type: 'my-problem' }
 
     // Act
-    const error = await enhancedFetch('/test').catch((error) => error)
+    const error = await env.enhancedFetch(testUrl).catch((error) => error)
 
     // Assert
     expect(error).toMatchObject({ problem })
-    expect(logger.log).toHaveBeenCalledWith(
+    expect(env.logger.log).toHaveBeenCalledWith(
       'error',
       expect.objectContaining({ problem }),
     )
@@ -123,8 +120,8 @@ describe('EnhancedFetch', () => {
 
   it('can optionally log json body', async () => {
     // Arrange
-    enhancedFetch = createTestEnhancedFetch({ logErrorResponseBody: true })
-    fetch.mockResolvedValue(
+    env = setupTestEnv({ logErrorResponseBody: true })
+    env.fetch.mockResolvedValue(
       fakeResponse('{"yo": "error"}', {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
@@ -132,11 +129,11 @@ describe('EnhancedFetch', () => {
     )
 
     // Act
-    const error = await enhancedFetch('/test').catch((error) => error)
+    const error = await env.enhancedFetch(testUrl).catch((error) => error)
 
     // Assert
     expect(error).toMatchObject({ body: { yo: 'error' } })
-    expect(logger.log).toHaveBeenCalledWith(
+    expect(env.logger.log).toHaveBeenCalledWith(
       'error',
       expect.objectContaining({ body: { yo: 'error' } }),
     )
@@ -144,15 +141,15 @@ describe('EnhancedFetch', () => {
 
   it('can optionally log text body', async () => {
     // Arrange
-    enhancedFetch = createTestEnhancedFetch({ logErrorResponseBody: true })
-    fetch.mockResolvedValue(fakeResponse('My Error', { status: 500 }))
+    env = setupTestEnv({ logErrorResponseBody: true })
+    env.fetch.mockResolvedValue(fakeResponse('My Error', { status: 500 }))
 
     // Act
-    const error = await enhancedFetch('/test').catch((error) => error)
+    const error = await env.enhancedFetch(testUrl).catch((error) => error)
 
     // Assert
     expect(error).toMatchObject({ body: 'My Error' })
-    expect(logger.log).toHaveBeenCalledWith(
+    expect(env.logger.log).toHaveBeenCalledWith(
       'error',
       expect.objectContaining({ body: 'My Error' }),
     )
@@ -160,47 +157,47 @@ describe('EnhancedFetch', () => {
 
   it('opens circuit after enough 500 errors', async () => {
     // Arrange
-    fetch.mockResolvedValue(fakeResponse('Error', { status: 500 }))
-    await enhancedFetch('/test').catch(() => null)
+    env.fetch.mockResolvedValue(fakeResponse('Error', { status: 500 }))
+    await env.enhancedFetch(testUrl).catch(() => null)
 
     // Act
-    const promise = enhancedFetch('/test')
+    const promise = env.enhancedFetch(testUrl)
 
     // Assert
     await expect(promise).rejects.toThrowErrorMatchingInlineSnapshot(
       `"Breaker is open"`,
     )
-    expect(fetch).toHaveBeenCalledTimes(1)
+    expect(env.fetch).toHaveBeenCalledTimes(1)
   })
 
   it('does not open circuit for 400 responses', async () => {
     // Arrange
-    fetch.mockResolvedValue(fakeResponse('Error', { status: 400 }))
-    await enhancedFetch('/test').catch(() => null)
+    env.fetch.mockResolvedValue(fakeResponse('Error', { status: 400 }))
+    await env.enhancedFetch(testUrl).catch(() => null)
 
     // Act
-    const promise = enhancedFetch('/test')
+    const promise = env.enhancedFetch(testUrl)
 
     // Assert
     await expect(promise).rejects.toThrowErrorMatchingInlineSnapshot(
       `"Request failed with status code 400"`,
     )
-    expect(fetch).toHaveBeenCalledTimes(2)
+    expect(env.fetch).toHaveBeenCalledTimes(2)
   })
 
   it('can be configured to open circuit for 400 errors', async () => {
     // Arrange
-    enhancedFetch = createTestEnhancedFetch({ treat400ResponsesAsErrors: true })
-    fetch.mockResolvedValue(fakeResponse('Error', { status: 400 }))
-    await enhancedFetch('/test').catch(() => null)
+    env = setupTestEnv({ treat400ResponsesAsErrors: true })
+    env.fetch.mockResolvedValue(fakeResponse('Error', { status: 400 }))
+    await env.enhancedFetch(testUrl).catch(() => null)
 
     // Act
-    const promise = enhancedFetch('/test')
+    const promise = env.enhancedFetch(testUrl)
 
     // Assert
     await expect(promise).rejects.toThrowErrorMatchingInlineSnapshot(
       `"Breaker is open"`,
     )
-    expect(fetch).toHaveBeenCalledTimes(1)
+    expect(env.fetch).toHaveBeenCalledTimes(1)
   })
 })

@@ -1,17 +1,18 @@
+declare const process: {
+  env: {
+    [key: string]: string
+  }
+}
+
 const isProductionEnvironment = process.env.NODE_ENV === 'production'
 
 const devConfig = {
   production: isProductionEnvironment,
-  metadataProvider: {
-    nationalRegistry: {
-      baseSoapUrl: 'https://localhost:8443',
-      user: process.env.SOFFIA_USER ?? '',
-      password: process.env.SOFFIA_PASS ?? '',
-      host: 'soffiaprufa.skra.is',
-    },
-    temporaryVoterRegistry: {
-      baseApiUrl: 'http://localhost:4248',
-    },
+  nationalRegistry: {
+    baseSoapUrl: 'https://localhost:8443',
+    user: process.env.SOFFIA_USER ?? '',
+    password: process.env.SOFFIA_PASS ?? '',
+    host: 'soffiaprufa.skra.is',
   },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
@@ -20,10 +21,6 @@ const devConfig = {
   apiMock: process.env.API_MOCKS === 'true',
   audit: {
     defaultNamespace: '@island.is/services-endorsements-api',
-  },
-  accessGroups: {
-    DMR: process.env.ACCESS_GROUP_DMR ?? '',
-    Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
   email: {
     sender: 'devland.is',
@@ -40,16 +37,11 @@ const devConfig = {
 
 const prodConfig = {
   production: isProductionEnvironment,
-  metadataProvider: {
-    nationalRegistry: {
-      baseSoapUrl: process.env.SOFFIA_SOAP_URL,
-      user: process.env.SOFFIA_USER,
-      password: process.env.SOFFIA_PASS,
-      host: process.env.SOFFIA_HOST_URL,
-    },
-    temporaryVoterRegistry: {
-      baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_API_URL,
-    },
+  nationalRegistry: {
+    baseSoapUrl: process.env.SOFFIA_SOAP_URL ?? '',
+    user: process.env.SOFFIA_USER ?? '',
+    password: process.env.SOFFIA_PASS ?? '',
+    host: process.env.SOFFIA_HOST_URL ?? '',
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
@@ -60,10 +52,6 @@ const prodConfig = {
     groupName: process.env.AUDIT_GROUP_NAME, // used in cloudwatch
     serviceName: 'services-endorsements-api', // used in cloudwatch
     defaultNamespace: '@island.is/services-endorsements-api',
-  },
-  accessGroups: {
-    DMR: process.env.ACCESS_GROUP_DMR ?? '',
-    Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
   email: {
     sender: process.env.EMAIL_FROM_NAME ?? '',

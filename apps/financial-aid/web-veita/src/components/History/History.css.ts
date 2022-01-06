@@ -1,6 +1,10 @@
 import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
+export const historyHeadline = style({
+  gridColumn: '1/-1',
+})
+
 export const historyContainer = style({
   gridColumn: '1/-1',
   marginBottom: -theme.spacing[12],

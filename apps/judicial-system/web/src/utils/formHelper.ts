@@ -17,7 +17,7 @@ export const removeTabsValidateAndSet = (
   evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   validations: Validation[],
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
@@ -46,7 +46,7 @@ export const validateAndSet = (
   value: string,
   validations: Validation[],
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
@@ -70,7 +70,7 @@ export const validateAndSetTime = (
   time: string,
   validations: Validation[],
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
   setTime?: (value: React.SetStateAction<string | undefined>) => void,
@@ -106,7 +106,7 @@ export const setAndSendDateToServer = (
   date: Date | null,
   theCase: Case,
   required: boolean,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
@@ -147,12 +147,9 @@ export const newSetAndSendDateToServer = (
   date: Date | undefined,
   isValid: boolean,
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
-  setIsValid: (value: React.SetStateAction<boolean>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
-  setIsValid(isValid)
-
   if (!isValid) {
     return
   }
@@ -230,9 +227,9 @@ export const validateAndSendTimeToServer = (
 
 export const setAndSendToServer = (
   field: string,
-  value: string | boolean | null,
+  value: string | boolean | undefined,
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
   let stringValue = ''
@@ -257,7 +254,7 @@ export const setCheckboxAndSendToServer = (
   field: string,
   value: string,
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
   const checks = theCase[field as keyof Case]

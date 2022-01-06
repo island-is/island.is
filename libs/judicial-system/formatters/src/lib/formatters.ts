@@ -66,12 +66,12 @@ export const formatNationalId = (nationalId: string): string => {
 }
 
 export const laws = {
-  _95_1_A: 'a-lið 1. mgr. 95. gr.',
-  _95_1_B: 'b-lið 1. mgr. 95. gr.',
-  _95_1_C: 'c-lið 1. mgr. 95. gr.',
-  _95_1_D: 'd-lið 1. mgr. 95. gr.',
-  _95_2: '2. mgr. 95. gr.',
-  _99_1_B: 'b-lið 1. mgr. 99. gr.',
+  _95_1_A: 'a-lið 1. mgr. 95. gr. sml.',
+  _95_1_B: 'b-lið 1. mgr. 95. gr. sml.',
+  _95_1_C: 'c-lið 1. mgr. 95. gr. sml.',
+  _95_1_D: 'd-lið 1. mgr. 95. gr. sml.',
+  _95_2: '2. mgr. 95. gr. sml.',
+  _99_1_B: 'b-lið 1. mgr. 99. gr. sml.',
   _100_1: '1. mgr. 100. gr. sml.',
 }
 
@@ -89,6 +89,7 @@ export const caseTypes = {
   BODY_SEARCH: 'leit og líkamsrannsókn',
   INTERNET_USAGE: 'upplýsingar um vefnotkun',
   RESTRAINING_ORDER: 'nálgunarbann',
+  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
   OTHER: 'annað',
 }
 

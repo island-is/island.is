@@ -158,6 +158,9 @@ RUN id
 # point Cypress at the /root/cache no matter what user account is used
 # see https://on.cypress.io/caching
 ENV CYPRESS_CACHE_FOLDER=/root/.cache/Cypress
+# TODO: keep an eye on https://github.com/cypress-io/cypress/issues/19102
+# and remove this once that's fixed
+RUN npm install -g har-validator
 RUN npm install -g "cypress@6.5.0"
 RUN cypress verify
 

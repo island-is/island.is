@@ -1,32 +1,40 @@
-import React, { FC, useCallback, useEffect } from 'react'
-import { Box, Button, SkeletonLoader, Text } from '@island.is/island-ui/core'
+import { useMutation, useQuery } from '@apollo/client'
+import { AccidentNotificationStatus } from '@island.is/api/schema'
 import {
   FieldBaseProps,
   FormValue,
   getValueViaPath,
 } from '@island.is/application/core'
-import { useLocale } from '@island.is/localization'
-import { SubmittedApplicationData } from '../../types'
-import {
-  hasReceivedAllDocuments,
-  getErrorMessageForMissingDocuments,
-  shouldRequestReview,
-  isInjuredAndRepresentativeOfCompanyOrInstitute,
-} from '../../utils'
-import { inReview } from '../../lib/messages'
-import { StatusStep } from './StatusStep'
-import { getAccidentStatusQuery } from '../../hooks/useLazyStatusOfNotification'
-import { useFormContext } from 'react-hook-form'
-import { useMutation, useQuery } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  SkeletonLoader,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import React, { FC, useCallback, useEffect } from 'react'
+import { useFormContext } from 'react-hook-form'
+import { AccidentNotificationAnswers } from '../..'
+import { States } from '../../constants'
+import { getAccidentStatusQuery } from '../../hooks/useLazyStatusOfNotification'
+import { inReview } from '../../lib/messages'
+import { ReviewApprovalEnum, SubmittedApplicationData } from '../../types'
+import {
+  getErrorMessageForMissingDocuments,
+  hasReceivedAllDocuments,
+  isInjuredAndRepresentativeOfCompanyOrInstitute,
+  shouldRequestReview,
+  isUniqueAssignee,
+} from '../../utils'
 import { hasReceivedConfirmation } from '../../utils/hasReceivedConfirmation'
+import { StatusStep } from './StatusStep'
 import {
   AccidentNotificationStatusEnum,
   ApplicationStatusProps,
   Steps,
 } from './StatusStep/types'
-import { AccidentNotificationStatus } from '@island.is/api/schema'
-import { AccidentNotificationAnswers } from '../..'
 
 export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
   goToScreen,
@@ -46,10 +54,21 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
     getAccidentStatusQuery,
     {
       variables: { input: { ihiDocumentID: ihiDocumentID } },
+      // Fetch every 5 minutes in case user leaves screen
+      // open for long period of time and does not refresh.
+      // We might get information from organization during that time.
+      pollInterval: 300000,
     },
   )
 
   const answers = application?.answers as FormValue
+  const isAssigneeAndUnique = isUniqueAssignee(answers, isAssignee)
+
+  const errorMessage = getErrorMessageForMissingDocuments(
+    answers,
+    formatMessage,
+    isAssigneeAndUnique,
+  )
 
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)
@@ -59,6 +78,12 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
     answers,
     'accidentStatus',
   ) as AccidentNotificationStatus
+
+  const reviewApproval = getValueViaPath(
+    answers,
+    'reviewApproval',
+    ReviewApprovalEnum.NOTREVIEWED,
+  ) as ReviewApprovalEnum
 
   const hasAccidentStatusChanged = useCallback(
     (
@@ -193,14 +218,14 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
       tagVariant: hasReceivedAllDocuments(answers) ? 'blue' : 'rose',
       title: formatMessage(inReview.documents.title),
       description: formatMessage(inReview.documents.summary),
-      hasActionMessage: !hasReceivedAllDocuments(answers),
+      hasActionMessage: errorMessage.length > 0,
       action: {
         cta: () => {
           changeScreens('addAttachmentScreen')
         },
         title: formatMessage(inReview.action.documents.title),
         description: formatMessage(inReview.action.documents.description),
-        fileNames: getErrorMessageForMissingDocuments(answers, formatMessage), // We need to get this from first form
+        fileNames: errorMessage, // We need to get this from first form
         actionButtonTitle: formatMessage(
           inReview.action.documents.actionButtonTitle,
         ),
@@ -270,9 +295,27 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
           variant="text"
           onClick={() => changeScreens('inReviewOverviewScreen')}
         >
-          Skoða yfirlit
+          {formatMessage(inReview.buttons.goToOverview)}
         </Button>
       </Box>
+      {isAssignee &&
+        (reviewApproval === ReviewApprovalEnum.APPROVED ||
+          reviewApproval === ReviewApprovalEnum.REJECTED) && (
+          <Box marginTop={4}>
+            <AlertMessage
+              type={
+                reviewApproval === ReviewApprovalEnum.APPROVED
+                  ? 'success'
+                  : 'error'
+              }
+              title={
+                reviewApproval === ReviewApprovalEnum.APPROVED
+                  ? formatMessage(inReview.alertMessage.reviewApproved)
+                  : formatMessage(inReview.alertMessage.reviewRejected)
+              }
+            />
+          </Box>
+        )}
       <Box marginTop={4} marginBottom={8}>
         {steps.map((step, index) => (
           <StatusStep

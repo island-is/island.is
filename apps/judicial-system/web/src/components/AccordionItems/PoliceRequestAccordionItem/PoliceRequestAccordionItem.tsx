@@ -7,7 +7,6 @@ import {
   formatRequestedCustodyRestrictions,
   formatDate,
   TIME_FORMAT,
-  laws,
   formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
@@ -15,7 +14,11 @@ import type {
   Case,
   CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
-import { requestCourtDate, core } from '@island.is/judicial-system-web/messages'
+import {
+  requestCourtDate,
+  core,
+  laws,
+} from '@island.is/judicial-system-web/messages'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'
@@ -85,7 +88,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
                 (legalProvision: CaseLegalProvisions, index) => {
                   return (
                     <div key={index}>
-                      <Text>{laws[legalProvision]}</Text>
+                      <Text>{formatMessage(laws[legalProvision].title)}</Text>
                     </div>
                   )
                 },

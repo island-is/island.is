@@ -43,7 +43,7 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
 
   const selectedJuristictionId = getValueViaPath<number>(
     application.answers,
-    'juristictionId',
+    'juristiction',
   )
 
   const juristictions = getValueViaPath<{ name: string; id: number }[]>(

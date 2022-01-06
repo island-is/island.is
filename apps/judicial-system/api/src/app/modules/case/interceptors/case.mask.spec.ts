@@ -85,8 +85,11 @@ function createCase(type: CaseType): Case {
     isAppealDeadlineExpired: true,
     isAppealGracePeriodExpired: true,
     rulingDate: '-',
+    initialRulingDate: '-',
     judge: undefined,
     registrar: undefined,
+    courtRecordSignatory: undefined,
+    courtRecordSignatureDate: '-',
     parentCase: undefined,
     childCase: undefined,
     notifications: [],
@@ -145,6 +148,18 @@ function createCase(type: CaseType): Case {
       role: UserRole.REGISTRAR,
       active: true,
     },
+    courtRecordSignatory: {
+      id: '-',
+      created: '-',
+      modified: '-',
+      nationalId: '-',
+      name: '-',
+      title: '-',
+      email: '-',
+      mobileNumber: '-',
+      role: UserRole.REGISTRAR,
+      active: true,
+    },
     parentCase: baseCase,
     childCase: baseCase,
     notifications: [],
@@ -180,12 +195,15 @@ function maskedCase(theCase: Case) {
     creatingProsecutor: theCase.creatingProsecutor,
     prosecutor: theCase.prosecutor,
     rulingDate: theCase.rulingDate,
+    initialRulingDate: theCase.initialRulingDate,
     accusedAppealDecision: theCase.accusedAppealDecision,
     prosecutorAppealDecision: theCase.prosecutorAppealDecision,
     accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
     prosecutorPostponedAppealDate: theCase.prosecutorPostponedAppealDate,
     judge: theCase.judge,
     registrar: theCase.registrar,
+    courtRecordSignatory: theCase.courtRecordSignatory,
+    courtRecordSignatureDate: theCase.courtRecordSignatureDate,
     parentCase: theCase.parentCase && {
       id: theCase.parentCase.id,
       created: theCase.parentCase.created,
@@ -212,6 +230,7 @@ function maskedCase(theCase: Case) {
       creatingProsecutor: theCase.parentCase.creatingProsecutor,
       prosecutor: theCase.parentCase.prosecutor,
       rulingDate: theCase.parentCase.rulingDate,
+      initialRulingDate: theCase.parentCase.initialRulingDate,
       accusedAppealDecision: theCase.parentCase.accusedAppealDecision,
       prosecutorAppealDecision: theCase.parentCase.prosecutorAppealDecision,
       accusedPostponedAppealDate: theCase.parentCase.accusedPostponedAppealDate,
@@ -219,6 +238,8 @@ function maskedCase(theCase: Case) {
         theCase.parentCase.prosecutorPostponedAppealDate,
       judge: theCase.parentCase.judge,
       registrar: theCase.parentCase.registrar,
+      courtRecordSignatory: theCase.parentCase.courtRecordSignatory,
+      courtRecordSignatureDate: theCase.parentCase.courtRecordSignatureDate,
     },
     isMasked: true,
   }
@@ -250,6 +271,7 @@ describe('Mask Case', () => {
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.OTHER}
   `.it('should mask $type cases', ({ type }) => {
     const theCase = createCase(type)
@@ -293,6 +315,7 @@ describe('Mask Case by User', () => {
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.OTHER}
   `.describe('given a $type case', ({ type }) => {
     each`
@@ -354,6 +377,7 @@ describe('Full name', () => {
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.OTHER}
   `.it('should mask the name', ({ type }) => {
     const res = maskCase({ type, accusedName: 'Jón Jónsson' } as Case)

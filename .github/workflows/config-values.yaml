@@ -44,18 +44,20 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
-
-      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          repository: 'island-is/cache'
-          path: 'cache/'
+          node-version: '14'
 
       - name: Cache for NodeJS dependencies
         id: node-modules
-        uses: ./cache/
+        continue-on-error: true
+        uses: ./.github/actions/cache
         with:
           path: infra/node_modules
           key: ${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-infra
+
+      - name: Check cache status
+        run: '[[ "${{ steps.node-modules.outputs.status }}" != "failure" ]] || exit 1'
 
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
@@ -79,17 +81,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/checkout@v2
-        with:
-          repository: 'island-is/cache'
-          path: 'cache/'
-
       - name: Cache for NodeJS dependencies
         id: node-modules
-        uses: ./cache/
+        continue-on-error: true
+        uses: ./.github/actions/cache
         with:
           path: infra/node_modules
           key: ${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-infra
+
+      - name: Check cache status
+        run: '[[ "${{ steps.node-modules.outputs.status }}" != "failure" ]] || exit 1'
 
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
