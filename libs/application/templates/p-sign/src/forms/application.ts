@@ -18,6 +18,8 @@ import {
   buildKeyValueField,
   buildSubmitField,
   DefaultEvents,
+  buildFileUploadField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
@@ -216,16 +218,20 @@ export const getApplication = (): Form => {
                 defaultValue: 'yes',
               }),
               buildCustomField({
-                id: 'photoAttachment',
+                id: 'bullets',
                 title: '',
-                component: 'PhotoUpload',
+                component: 'Bullets',
                 condition: (answers: FormValue) =>
                   answers.qualityPhoto === 'no',
               }),
-              buildDescriptionField({
-                id: 'attachmentFileName',
+              buildFileUploadField({
+                id: 'attachments',
                 title: '',
-                description: '',
+                uploadHeader: m.qualityPhotoFileUploadTitle,
+                uploadDescription: m.qualityPhotoFileUploadDescription,
+                uploadButtonLabel: m.qualityPhotoUploadButtonLabel,
+                condition: (answers: FormValue) =>
+                  answers.qualityPhoto === 'no',
               }),
             ],
           }),
@@ -245,14 +251,16 @@ export const getApplication = (): Form => {
                 description: m.qualityPhotoNoPhotoDescription,
               }),
               buildCustomField({
-                id: 'photoAttachment',
+                id: 'bullets',
                 title: '',
-                component: 'PhotoUpload',
+                component: 'Bullets',
               }),
-              buildDescriptionField({
-                id: 'attachmentFileName',
+              buildFileUploadField({
+                id: 'attachments',
                 title: '',
-                description: '',
+                uploadHeader: m.qualityPhotoFileUploadTitle,
+                uploadDescription: m.qualityPhotoFileUploadDescription,
+                uploadButtonLabel: m.qualityPhotoUploadButtonLabel,
               }),
             ],
           }),
@@ -375,10 +383,16 @@ export const getApplication = (): Form => {
                 width: 'half',
                 value: '',
               }),
-              buildCustomField({
-                id: 'userPhoto',
-                title: '',
-                component: 'Photo',
+              buildKeyValueField({
+                label: '',
+                value: ({ answers }) => {
+                  const atts = getValueViaPath(
+                    answers,
+                    'attachments',
+                  ) as Array<{ key: string; name: string }>
+
+                  return atts[0].name
+                },
                 condition: (answers) =>
                   answers.qualityPhoto === 'no' || !answers.qualityPhoto,
               }),

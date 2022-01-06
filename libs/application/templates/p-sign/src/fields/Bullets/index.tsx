@@ -19,7 +19,7 @@ const bullets = [
 const Bullets = ({ application }: BulletsData) => {
   const { formatMessage } = useLocale()
   return (
-    <Box marginTop={[5, 5, 0]}>
+    <Box marginY={4}>
       <BulletList>
         {bullets.map((bullet, i) => (
           <Bullet key={i}>
