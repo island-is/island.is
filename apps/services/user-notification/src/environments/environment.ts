@@ -1,40 +1,44 @@
-import assert from 'assert'
+import { defineConfig } from '@island.is/nest/config'
+import * as z from 'zod'
 
-let env = process.env
+export default defineConfig({
+  name: 'UserNotification',
+  schema: z.object({
+    mainQueueName: z.string(),
+    deadLetterQueueName: z.string(),
+    sqsConfig: z.object({
+      endpoint: z.string().optional(),
+      region: z.string().optional(),
+      credentials: z
+        .object({
+          accessKeyId: z.string(),
+          secretAccessKey: z.string(),
+        })
+        .optional(),
+    }),
+  }),
+  load: (env) => {
+    const accessKeyId = env.optional('SQS_ACCESS_KEY', 'testing')
+    const secretAccessKey = env.optional('SQS_SECRET_ACCESS_KEY', 'testing')
 
-if (!env.NODE_ENV || env.NODE_ENV === 'development') {
-  env = {
-    MAIN_QUEUE_NAME: 'notifications',
-    DEAD_LETTER_QUEUE_NAME: 'notifications-failure',
-    SQS_REGION: 'eu-west-1',
-    SQS_ENDPOINT: 'http://localhost:4566',
-    SQS_ACCESS_KEY: 'testing',
-    SQS_SECRET_ACCESS_KEY: 'testing',
-    ...env,
-  }
-}
+    return {
+      mainQueueName: env.required('MAIN_QUEUE_NAME', 'notifications'),
+      deadLetterQueueName: env.required(
+        'DEAD_LETTER_QUEUE_NAME',
+        'notifications-failure',
+      ),
 
-const required = (name: string): string => {
-  const v = env[name]
-  assert(v, `missing required environment variable: ${name}`)
-  return v
-}
-
-export const environment = {
-  mainQueueName: required('MAIN_QUEUE_NAME'),
-  deadLetterQueueName: env.DEAD_LETTER_QUEUE_NAME,
-
-  sqsConfig: {
-    endpoint: env.SQS_ENDPOINT,
-    region: env.SQS_REGION,
-    ...(env.SQS_ACCESS_KEY &&
-      env.SQS_SECRET_ACCESS_KEY && {
-        credentials: {
-          accessKeyId: env.SQS_ACCESS_KEY,
-          secretAccessKey: env.SQS_SECRET_ACCESS_KEY,
-        },
-      }),
+      sqsConfig: {
+        region: env.optional('SQS_REGION', 'eu-west-1'),
+        endpoint: env.optional('SQS_ENDPOINT'),
+        ...(accessKeyId &&
+          secretAccessKey && {
+            credentials: {
+              accessKeyId,
+              secretAccessKey,
+            },
+          }),
+      },
+    }
   },
-}
-
-export type Config = typeof environment
+})

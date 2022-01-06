@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { LoggingModule } from '@island.is/logging'
 import { NotificationsController } from './notifications.controller'
-import { environment } from '../../../environments/environment'
+import environment from '../../../environments/environment'
 import { QueueModule } from '@island.is/message-queue'
 import { NotificationsWorkerService } from './notificationsWorker.service'
 
@@ -9,7 +9,7 @@ import { NotificationsWorkerService } from './notificationsWorker.service'
   imports: [
     LoggingModule,
     QueueModule.register({
-      client: environment.sqsConfig,
+      client: environment...,
       queue: {
         name: 'notifications',
         queueName: environment.mainQueueName,
