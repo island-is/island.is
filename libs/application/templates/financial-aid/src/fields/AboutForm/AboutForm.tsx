@@ -32,7 +32,7 @@ const AboutForm = () => {
             text={aboutForm.personalInformation.accordionAbout}
             format={{
               homePageName: 'slóð sveitarfélags',
-              homePageNameUrl: 'https://www.mbl.is/frettir/',
+              homePageNameUrl: '',
             }}
           />
         </AccordionItem>

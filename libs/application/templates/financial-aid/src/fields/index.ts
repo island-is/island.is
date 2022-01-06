@@ -1,2 +1,2 @@
-export { default as AboutForm } from './AboutForm'
-export { default as DescriptionText } from './DescriptionText'
+export { default as AboutForm } from './AboutForm/AboutForm'
+export { default as DescriptionText } from './DescriptionText/DescriptionText'

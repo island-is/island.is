@@ -9,13 +9,10 @@ import {
 
 import { Roles, ApplicationStates } from './constants'
 
-import * as z from 'zod'
 import { application } from './messages'
 import { dataSchema } from './dataSchema'
 
 type Events = { type: DefaultEvents.SUBMIT }
-
-const applicationName = 'Umsókn um fjárhagsaðstoð'
 
 const oneYear = 24 * 3600 * 1000 * 365
 
