@@ -82,21 +82,6 @@ export const RulingStepOne: React.FC = () => {
     if (isCaseUpToDate) {
       const theCase = workingCase
 
-      // if (theCase.custodyRestrictions === null) {
-      //   theCase = {
-      //     ...theCase,
-      //     custodyRestrictions: theCase.requestedCustodyRestrictions,
-      //   }
-
-      //   updateCase(
-      //     theCase.id,
-      //     parseArray(
-      //       'custodyRestrictions',
-      //       theCase.requestedCustodyRestrictions ?? [],
-      //     ),
-      //   )
-      // }
-
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)
       }
