@@ -58,7 +58,7 @@ describe('BaseProblemFilter', () => {
     })
   })
 
-  describe('default loggging', () => {
+  describe('with logAllErrors', () => {
     let request: CreateRequest
     let handler: jest.Mock
     let logger: Logger
