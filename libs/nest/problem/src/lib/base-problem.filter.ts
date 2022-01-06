@@ -20,14 +20,6 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
   }
 
   catch(error: Error, host: ArgumentsHost) {
-    if ((host.getType() as string) === 'graphql') {
-      this.catchGraphQLError(error)
-    } else {
-      this.catchRestError(error, host)
-    }
-  }
-
-  catchGraphQLError(error: Error) {
     const problem = (error as ProblemError).problem || this.getProblem(error)
 
     if (problem.status && problem.status >= 500) {
@@ -36,6 +28,14 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
       this.logger.info(error)
     }
 
+    if ((host.getType() as string) === 'graphql') {
+      this.catchGraphQLError(error, problem)
+    } else {
+      this.catchRestError(host, problem)
+    }
+  }
+
+  catchGraphQLError(error: Error, problem: Problem) {
     if (error instanceof ApolloError) {
       error.extensions.problem = error.extensions.problem || problem
       throw error
@@ -44,16 +44,9 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
     }
   }
 
-  catchRestError(error: Error, host: ArgumentsHost) {
+  catchRestError(host: ArgumentsHost, problem: Problem) {
     const ctx = host.switchToHttp()
     const response = ctx.getResponse<Response>()
-    const problem = this.getProblem(error)
-
-    if (problem.status && problem.status >= 500) {
-      this.logger.error(error)
-    } else if (this.options.logAllErrors) {
-      this.logger.info(error)
-    }
 
     response.setHeader('Content-Language', 'en')
     response.setHeader('Content-Type', 'application/problem+json')
