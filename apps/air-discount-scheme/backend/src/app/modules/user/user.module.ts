@@ -5,7 +5,7 @@ import { UserService } from './user.service'
 import { DiscountModule } from '../discount'
 import { FlightModule } from '../flight'
 import { NationalRegistryModule as ADSNationalRegistryModule } from '../nationalRegistry'
-import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
+//import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 
 
@@ -14,7 +14,7 @@ import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-reg
     DiscountModule, 
     FlightModule, 
     ADSNationalRegistryModule,
-    NationalRegistryClientModule,
+    //NationalRegistryClientModule,
     NationalRegistryXRoadModule
   ],
   controllers: [PublicUserController, PrivateUserController],
