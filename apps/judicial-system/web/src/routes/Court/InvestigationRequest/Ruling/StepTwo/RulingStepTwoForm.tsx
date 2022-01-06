@@ -473,7 +473,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                 removeTabsValidateAndSet(
                   'endOfSessionBookings',
                   event,
-                  ['empty'],
+                  [],
                   workingCase,
                   setWorkingCase,
                 )
@@ -482,7 +482,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                 validateAndSendToServer(
                   'endOfSessionBookings',
                   event.target.value,
-                  ['empty'],
+                  [],
                   workingCase,
                   updateCase,
                 )
