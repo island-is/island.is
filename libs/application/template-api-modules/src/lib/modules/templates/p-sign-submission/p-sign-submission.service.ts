@@ -29,6 +29,7 @@ export class PSignSubmissionService {
   ) { this.s3 = new S3()}
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+    console.log(application.answers.qualityPhoto)
     const content: string =
       application.answers.qualityPhoto === YES
         ? ((application.externalData.qualityPhoto as unknown) as QualityPhotoData).data.qualityPhoto
@@ -36,6 +37,7 @@ export class PSignSubmissionService {
             application,
             auth,
           })
+    console.log(content)
     const name = this.getName(application)
     const attachment: Attachment = {
       name,
