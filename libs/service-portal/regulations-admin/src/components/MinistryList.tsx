@@ -1,38 +1,21 @@
 import React from 'react'
-
-// import { gql, useQuery } from '@apollo/client'
-// import { Query } from '@island.is/api/schema'
 import {
   ActionCard,
   Box,
   SkeletonLoader,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
-import { mockMinistrylist, useMockQuery } from '../_mockData'
 import { ministryMessages as msg } from '../messages'
-import { ISODate } from '@island.is/regulations'
-import { workingDaysUntil, useLocale } from '../utils'
-import { generatePath, useHistory } from 'react-router'
-import { ServicePortalPath } from '@island.is/service-portal/core'
-
-// const RegulationMinistryListQuery = gql`
-//   query RegulationMinistryListQuery {
-//     ministryList {
-//       id
-//       title
-//     }
-//   }
-// `
+import { useLocale } from '../utils'
+import { useHistory } from 'react-router'
+import { useMinistriesQuery } from '@island.is/service-portal/graphql'
 
 export const MinistryList = () => {
-  const { formatMessage, formatDateFns } = useLocale()
   const history = useHistory()
-  const { data, loading } = useMockQuery({
-    regulationMinistries: mockMinistrylist,
-  }) // useQuery<Query>(RegulationMinistryListQuery)
+  const t = useLocale().formatMessage
+  const ministries = useMinistriesQuery()
 
-  if (loading) {
+  if (ministries.loading) {
     return (
       <Box marginBottom={[4, 4, 6]}>
         <SkeletonLoader height={80} repeat={3} space={1} />
@@ -40,16 +23,14 @@ export const MinistryList = () => {
     )
   }
 
-  const { regulationMinistries = [] } = data || {}
-
-  if (regulationMinistries.length === 0) {
+  if (ministries.error || ministries.data.length === 0) {
     return null
   }
 
   return (
     <Box marginBottom={[4, 4, 6]}>
       <Stack space={2}>
-        {regulationMinistries.map((item, i) => {
+        {ministries.data.map((item, i) => {
           const { name, slug } = item
           return (
             <ActionCard
@@ -57,7 +38,7 @@ export const MinistryList = () => {
               heading={name}
               // text={''}
               cta={{
-                label: formatMessage(msg.cta),
+                label: t(msg.cta),
                 // variant: draftingStatus === 'draft' ? 'ghost' : undefined,
                 // onClick: () => {},
               }}

@@ -1,33 +1,8 @@
-import React, { useMemo, useState } from 'react'
-import {
-  Box,
-  Button,
-  DatePicker,
-  Divider,
-  Inline,
-  Option,
-  Select,
-  Text,
-} from '@island.is/island-ui/core'
+import React from 'react'
+import { Box, Button, Inline, Text } from '@island.is/island-ui/core'
 import { StepComponent } from '../state/useDraftingState'
-import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import { buttonsMsgs as msg } from '../messages'
-import {
-  emptyOption,
-  findAffectedRegulationsInText,
-  findValueOption,
-  useLocale,
-} from '../utils'
-import { RegName } from '@island.is/regulations'
-
-import { mockRegulationOptions, useMockQuery } from '../_mockData'
-
-// const RegulationListQuery = gql`
-//   query RegulationListQuery {
-//     getRegulationList
-//   }
-// `
+import { useLocale } from '../utils'
 
 // ---------------------------------------------------------------------------
 
