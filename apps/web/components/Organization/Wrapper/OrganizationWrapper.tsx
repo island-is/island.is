@@ -64,7 +64,7 @@ interface WrapperProps {
   stickySidebar?: boolean
   minimal?: boolean
   showSecondaryMenu?: boolean
-  showExternalLinks: boolean
+  showExternalLinks?: boolean
 }
 
 interface HeaderProps {
