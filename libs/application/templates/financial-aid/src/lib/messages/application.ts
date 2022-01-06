@@ -8,3 +8,12 @@ export const application = defineMessages({
     description: 'name of financial aid application',
   },
 })
+
+// All sections in the application
+export const section = defineMessages({
+  backgroundInformation: {
+    id: 'fa.application:section.dataGathering',
+    defaultMessage: 'Gagnaöflun',
+    description: 'Data gathering section',
+  },
+})
