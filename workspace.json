@@ -1457,6 +1457,7 @@
           },
           "outputs": ["coverage/libs/api/domains/user-profile"]
         }
+      }
     },
     "api-mocks": {
       "root": "libs/api/mocks",
