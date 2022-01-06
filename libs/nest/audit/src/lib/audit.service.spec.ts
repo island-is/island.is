@@ -6,8 +6,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { AuditService } from './audit.service'
-import { AUDIT_OPTIONS, AuditOptions } from '@island.is/nest/audit'
-import type { User } from '@island.is/auth-nest-tools'
+import { AUDIT_OPTIONS } from '@island.is/nest/audit'
+import type { Auth, User } from '@island.is/auth-nest-tools'
 import SpyInstance = jest.SpyInstance
 
 jest.mock('@island.is/logging', () => {
@@ -72,6 +72,7 @@ describe('AuditService against Cloudwatch', () => {
   // Cleanup
   afterEach(() => {
     jest.restoreAllMocks()
+    //spy.mockReset()
   })
 
   it('should be defined', () => {
@@ -140,6 +141,31 @@ describe('AuditService against Cloudwatch', () => {
         action,
       })
     }).toThrowError('Audit namespace is required')
+  })
+
+  it('supports auditing for auth without nationalId', () => {
+    // Arrange
+    const action = 'viewDetails'
+
+    const auth: Auth = {
+      scope: [],
+      authorization: '',
+      client: 'machine-client',
+      ip: '10.10.10.10',
+    }
+
+    // Act
+    service.audit({
+      user: auth,
+      action,
+    })
+
+    // Assert
+    expect(spy).toHaveBeenCalledWith({
+      client: [auth.client],
+      action: `${defaultNamespace}#${action}`,
+      ip: auth.ip,
+    })
   })
 
   it('supports auditing promises with audit templates', async () => {
