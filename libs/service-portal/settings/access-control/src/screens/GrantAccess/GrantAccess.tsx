@@ -171,7 +171,11 @@ function GrantAccess() {
                   size="md"
                 />
               )}
-              <Box display={name ? 'none' : 'block'} aria-live="assertive">
+              <Box
+                display={name ? 'none' : 'block'}
+                aria-live="assertive"
+                marginBottom={[1, 1, 0]}
+              >
                 <InputController
                   control={control}
                   id="toNationalId"
