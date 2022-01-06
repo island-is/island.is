@@ -6,6 +6,7 @@ import {
   Accordion,
   AccordionItem,
   Box,
+  Checkbox,
   Input,
   Text,
   Tooltip,
@@ -22,26 +23,23 @@ import {
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
 import { isRulingStepOneValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  setCheckboxAndSendToServer,
   newSetAndSendDateToServer,
   removeTabsValidateAndSet,
   validateAndSendToServer,
+  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
-import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
@@ -409,19 +407,21 @@ export const RulingStepOne: React.FC = () => {
               </Box>
               <BlueBox>
                 <Box marginBottom={3}>
-                  <CheckboxList
-                    checkboxes={isolation(workingCase.accusedGender)}
-                    selected={workingCase.requestedCustodyRestrictions}
-                    onChange={(id) =>
-                      setCheckboxAndSendToServer(
-                        'custodyRestrictions',
-                        id,
+                  <Checkbox
+                    name="isCustodyIsolation"
+                    label={isolation(workingCase.accusedGender)[0].title}
+                    checked={workingCase.isCustodyIsolation}
+                    onChange={() => {
+                      setAndSendToServer(
+                        'isCustodyIsolation',
+                        !workingCase.isCustodyIsolation,
                         workingCase,
                         setWorkingCase,
                         updateCase,
                       )
-                    }
-                    fullWidth
+                    }}
+                    filled
+                    large
                   />
                 </Box>
                 <DateTime
