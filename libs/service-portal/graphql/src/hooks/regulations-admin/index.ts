@@ -1,13 +1,18 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { generatePath, useHistory } from 'react-router'
 import { Query } from '@island.is/api/schema'
 import { gql, useQuery, useMutation, ApolloError } from '@apollo/client'
-import { RegulationDraft } from '@island.is/regulations/admin'
+import {
+  RegulationDraft,
+  RegulationList,
+  RegulationOption,
+} from '@island.is/regulations/admin'
 import {
   RegulationLawChapter,
   RegulationMinistryList,
 } from '@island.is/regulations/web'
 import { ServicePortalPath } from '@island.is/service-portal/core'
+import { isNonNull, RegName } from '@island.is/regulations'
 
 // import { APPLICATION_APPLICATIONS } from '../../lib/queries/applicationApplications'
 
@@ -157,5 +162,83 @@ export const useCreateRegulationDraft = () => {
           setStatus({ error })
         })
     },
+  }
+}
+
+// ---------------------------------------------------------------------------
+
+// const RegulationListQuery = gql`
+//   query RegulationListQuery {
+//     getRegulationList
+//   }
+// `
+
+const useMockRegulationListQuery = (maybeNames: ReadonlyArray<string>) => {
+  const mockData: Array<Omit<RegulationOption, 'name'>> = [
+    {
+      title: 'Reglugerð fyrir hafnir Hafnasjóðs Dalvíkurbyggðar.',
+      migrated: true,
+    },
+    {
+      title: 'Reglugerð um (1.) breytingu á reglugerð nr. 101/2021.',
+      cancelled: true,
+      migrated: true,
+    },
+    {
+      title: 'Reglugerð um eitthvað gamalt og gott.',
+      migrated: false,
+    },
+    {
+      title:
+        'Reglugerð um ákvörðun framlaga úr sveitarsjóði til sjálfstætt rekinna grunnskóla.',
+      migrated: true,
+    },
+    {
+      title: 'Reglugerð um jólasveina',
+      migrated: true,
+    },
+  ]
+
+  const getRegulationList = useMemo(
+    () =>
+      maybeNames
+        .filter((_, i) => i !== 1)
+        .map(
+          (name, i): RegulationOption => {
+            return {
+              name: name as RegName,
+              ...(mockData[i] || mockData[0]),
+            }
+          },
+        ),
+    [maybeNames],
+  )
+
+  return {
+    data: { getRegulationList },
+    loading: false,
+    error: undefined,
+  }
+}
+
+export const useRegulationListQuery = (
+  maybeNames: ReadonlyArray<string>,
+): QueryResult<RegulationList> => {
+  // const { loading, error, data } = useQuery<Query>(RegulationListQuery, {
+  //   variables: { input: { names: maybeNames } },
+  //   fetchPolicy: 'no-cache',
+  // })
+  const { loading, error, data } = useMockRegulationListQuery(maybeNames)
+
+  if (loading) {
+    return { loading }
+  }
+  if (!data) {
+    return {
+      error: error || new Error(`Error fetching regulation`),
+    }
+  }
+  return {
+    data: data.getRegulationList as RegulationList,
   }
 }

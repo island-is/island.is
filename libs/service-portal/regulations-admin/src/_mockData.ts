@@ -1,7 +1,7 @@
-import { RegName, MinistrySlug } from '@island.is/regulations'
+import { MinistrySlug } from '@island.is/regulations'
 import { RegulationMinistryList } from '@island.is/regulations/web'
 import { useEffect, useRef, useState } from 'react'
-import { RegulationDraft, RegulationList } from '@island.is/regulations/admin'
+import { RegulationDraft } from '@island.is/regulations/admin'
 // import { } from './utils'
 
 export const useMockQuery = <T>(data: T, skip?: boolean) => {
@@ -44,32 +44,5 @@ export const mockMinistrylist: RegulationMinistryList = [
   {
     name: 'Samgöngu- og sveitarstjórnarráðuneyti',
     slug: 'ssvrn' as MinistrySlug,
-  },
-]
-
-// ---------------------------------------------------------------------------
-
-export const mockRegulationOptions: RegulationList = [
-  {
-    name: '0244/2021' as RegName,
-    title: 'Reglugerð fyrir hafnir Hafnasjóðs Dalvíkurbyggðar.',
-    migrated: true,
-  },
-  {
-    name: '0245/2021' as RegName,
-    title: 'Reglugerð um (1.) breytingu á reglugerð nr. 101/2021.',
-    cancelled: true,
-    migrated: true,
-  },
-  {
-    name: '0001/1975' as RegName,
-    title: 'Reglugerð um eitthvað gamalt og gott.',
-    migrated: false,
-  },
-  {
-    name: '1270/2016' as RegName,
-    title:
-      'Reglugerð um ákvörðun framlaga úr sveitarsjóði til sjálfstætt rekinna grunnskóla.',
-    migrated: true,
   },
 ]

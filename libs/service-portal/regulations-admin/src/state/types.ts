@@ -9,6 +9,7 @@ import {
   LawChapterSlug,
   MinistrySlug,
   PlainText,
+  RegName,
   URLString,
 } from '@island.is/regulations'
 import { Kennitala, RegulationType } from '@island.is/regulations'
@@ -49,15 +50,23 @@ export type BodyDraftFields = {
   comments: HtmlDraftField
 }
 
-export type ChangeDraftFields = Readonly<
+type DraftImpactFields<
+  ImpactType extends DraftRegulationChange | DraftRegulationCancel
+> = Readonly<
   // always prefilled on "create" - non-editable
-  Pick<DraftRegulationChange, 'id' | 'type' | 'name'>
-> & { date: DraftField<Date> } & BodyDraftFields
+  Pick<ImpactType, 'id' | 'type' | 'name'>
+> & {
+  date: DraftField<Date>
+  regTitle: string
+  error?: MessageDescriptor
+}
 
-export type CancelDraftFields = Readonly<
-  // always prefilled on "create" - non-editable
-  Pick<DraftRegulationCancel, 'id' | 'type' | 'name'>
-> & { date: DraftField<Date> }
+export type ChangeDraftFields = DraftImpactFields<DraftRegulationChange> &
+  BodyDraftFields
+
+export type CancelDraftFields = DraftImpactFields<DraftRegulationCancel>
+
+// ---------------------------------------------------------------------------
 
 export type RegDraftForm = BodyDraftFields & {
   id: RegulationDraftId
@@ -73,6 +82,7 @@ export type RegDraftForm = BodyDraftFields & {
   signatureText: HtmlDraftField
   signedDocumentUrl: DraftField<URLString | undefined>
 
+  mentioned: Array<RegName>
   impacts: Array<ChangeDraftFields | CancelDraftFields>
 
   draftingNotes: HtmlDraftField

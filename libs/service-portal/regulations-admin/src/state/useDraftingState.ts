@@ -1,5 +1,10 @@
 import { useMutation, gql } from '@apollo/client'
-import { HTMLText, LawChapterSlug, PlainText } from '@island.is/regulations'
+import {
+  HTMLText,
+  LawChapterSlug,
+  PlainText,
+  RegName,
+} from '@island.is/regulations'
 import { useAuth } from '@island.is/auth/react'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { FC, Reducer, useEffect, useMemo, useReducer } from 'react'
@@ -7,6 +12,7 @@ import { produce, setAutoFreeze, Draft } from 'immer'
 import { useHistory, generatePath } from 'react-router-dom'
 import { Step } from '../types'
 import {
+  findAffectedRegulationsInText,
   findRegulationType,
   findSignatureInText,
   getInputFieldsWithErrors,
@@ -143,34 +149,39 @@ const makeDraftForm = (
     ministry: f(draft.ministry?.slug, true),
     type: f(draft.type, true),
 
-    impacts: draft.impacts.map((impact) =>
-      impact.type === 'amend'
+    mentioned: [],
+
+    impacts: draft.impacts.map((impact) => {
+      return impact.type === 'amend'
         ? {
-            id: impact.id,
             type: impact.type,
+            id: impact.id,
             name: impact.name,
+            regTitle: impact.regTitle,
             date: f(new Date(impact.date), true),
-            ...{
-              title: fText(impact.title, true),
-              text: fHtml(impact.text, true),
-              appendixes: impact.appendixes.map((a, i) =>
-                makeDraftAppendixForm(a, String(i)),
-              ),
-              comments: fHtml(impact.comments),
-            },
+            title: fText(impact.title, true),
+            text: fHtml(impact.text, true),
+            appendixes: impact.appendixes.map((a, i) =>
+              makeDraftAppendixForm(a, String(i)),
+            ),
+            comments: fHtml(impact.comments),
           }
         : {
-            id: impact.id,
             type: impact.type,
+            id: impact.id,
             name: impact.name,
-            date: f(new Date(impact.date)),
-          },
-    ),
+            regTitle: impact.regTitle,
+            date: f(new Date(impact.date), true),
+          }
+    }),
 
     draftingNotes: fHtml(draft.draftingNotes),
     draftingStatus: draft.draftingStatus,
     authors: f(draft.authors.map((author) => author.authorId)),
   }
+
+  updateImpacts(form, draft.title, draft.text)
+
   return form
 }
 
@@ -188,38 +199,64 @@ const makeDraftForm = (
 //   return
 // }
 
+const updateImpacts = (
+  draft: RegDraftForm,
+  title: PlainText,
+  text: HTMLText,
+) => {
+  const { impacts, mentioned, type } = draft
+
+  const checkedTitle = type.value === 'amending' ? title : ''
+  const newMentions = findAffectedRegulationsInText(checkedTitle, text)
+
+  const mentionsChanged =
+    newMentions.length !== mentioned.length ||
+    mentioned.some((name, i) => name !== newMentions[i])
+
+  if (mentionsChanged) {
+    draft.mentioned = newMentions
+    impacts.forEach((impact) => {
+      if (impact.name === 'self') return
+
+      if (newMentions.includes(impact.name)) {
+        delete impact.error
+      } else {
+        impact.error = errorMsgs.impactingUnMentioned
+      }
+    })
+  }
+}
+
 // ---------------------------------------------------------------------------
 
 const specialUpdates: {
   [Prop in RegDraftFormSimpleProps]?: (
     state: DraftingState,
-    newValue?: RegDraftForm[Prop]['value'],
+    newValue: RegDraftForm[Prop]['value'],
   ) => RegDraftForm[Prop]['value'] | null | void
 } = {
-  title: (state: DraftingState, newTitle?: PlainText) => {
-    const draft = state.draft
-    const type = draft.type
-    if (newTitle !== draft.title.value && (!type.value || type.guessed)) {
-      type.value = findRegulationType(newTitle ?? draft.title.value)
+  title: (state: DraftingState, newTitle) => {
+    const { type, text } = state.draft
+    if (!type.value || type.guessed) {
+      type.value = findRegulationType(newTitle)
       type.guessed = true
     }
+    updateImpacts(state.draft, newTitle, text.value)
+  },
+
+  text: (state, newValue) => {
+    const { title } = state.draft
+    updateImpacts(state.draft, title.value, newValue)
   },
 
   signatureText: (state, newValue) => {
-    const draft = state.draft
-    const signatureText = draft.signatureText
-    if (newValue !== signatureText.value) {
-      const { ministrySlug, signatureDate } = findSignatureInText(
-        newValue ?? signatureText.value,
-        state.ministries,
-      )
-      const ministry = draft.ministry
-      if (!ministry.value || ministry.guessed) {
-        ministry.value = ministrySlug
-        ministry.guessed = true
-      }
-      draft.signatureDate.value = signatureDate
+    const { signatureDate, ministry } = state.draft
+    const findResults = findSignatureInText(newValue, state.ministries)
+    if (!ministry.value || ministry.guessed) {
+      ministry.value = findResults.ministrySlug
+      ministry.guessed = true
     }
+    signatureDate.value = findResults.signatureDate
   },
 }
 
@@ -253,7 +290,7 @@ const actionHandlers: {
     // @ts-expect-error  (Fuu)
     value = tidyUp[field.type || '_'](value)
 
-    if (value !== field.value || explicit === true) {
+    if (value !== field.value) {
       specialUpdates[name]?.(
         state,
         // @ts-expect-error  (Pretty sure I'm holding this correctly,
@@ -262,7 +299,8 @@ const actionHandlers: {
         // arguments and in the `specialUpdaters` signature.)
         value,
       )
-
+    }
+    if (value !== field.value || explicit === true) {
       field.value = value
       field.dirty = true
       field.guessed = false
@@ -398,6 +436,8 @@ export const useDraftingState = (
   )
 
   const stepNav = steps[stepName]
+  const nextStep = stepNav.next
+  const prevStep = stepNav.prev
 
   const actions = useMemo(() => {
     const draft = state.draft
@@ -433,22 +473,11 @@ export const useDraftingState = (
         })
 
     return {
-      goBack: stepNav.prev
-        ? () => {
-            actions.saveStatus(true)
-            history.replace(
-              generatePath(ServicePortalPath.RegulationsAdminEdit, {
-                id: draft.id,
-                step: stepNav.prev,
-              }),
-            )
-          }
-        : undefined,
-      goForward:
-        stepNav.next && (isEditor || stepNav.next !== 'review')
-          ? () => {
-              actions.saveStatus(true)
+      goBack: prevStep ? () => actions.goToStep(prevStep) : undefined,
 
+      goForward:
+        nextStep && (isEditor || nextStep !== 'review')
+          ? () => {
               // BASICS
               if (stepNav.name === 'basics') {
                 const errorFields = getInputFieldsWithErrors(
@@ -465,15 +494,19 @@ export const useDraftingState = (
                 }
               }
 
-              history.replace(
-                generatePath(ServicePortalPath.RegulationsAdminEdit, {
-                  id: draft.id,
-                  step: stepNav.next,
-                }),
-              )
+              actions.goToStep(nextStep)
             }
           : undefined,
 
+      goToStep: (stepName: Step) => {
+        actions.saveStatus(true)
+        history.push(
+          generatePath(ServicePortalPath.RegulationsAdminEdit, {
+            id: draft.id,
+            step: stepName,
+          }),
+        )
+      },
       // FIXME: rename to updateProp??
       updateState: <Prop extends RegDraftFormSimpleProps>(
         name: Prop,

@@ -272,6 +272,10 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-label-impactedreg',
     defaultMessage: 'Reglugerð sem breytist',
   },
+  impactRegSelect_mentionedNotFound: {
+    id: 'ap.regulations-admin:draft-opts-mentionednotfound',
+    defaultMessage: 'er ekki reglugerð',
+  },
   impactRegSelect_placeholder: {
     id: 'ap.regulations-admin:draft-opts-impactedreg_placeholder',
     defaultMessage: 'Veldu reglugerð',
@@ -348,6 +352,11 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-legend-changedtitle',
     defaultMessage: 'Uppfærður texti reglugerðar',
   },
+
+  impactSelfAffecting: {
+    id: 'ap.regulations-admin:draft-label-impact-selfaffecting',
+    defaultMessage: 'Hefur áhrif á sjálfa sig',
+  },
 })
 
 export const errorMsgs = defineMessages({
@@ -358,7 +367,12 @@ export const errorMsgs = defineMessages({
   impactMissing: {
     id: 'ap.regulations-admin:error-impactmissing',
     defaultMessage:
-      'Breytingareglugerð verður að fella einhverja reglugerð úr gildi eða breyta ákvæðum hennar.',
+      'Breytingareglugerð verður í það minnsta að fella eina reglugerð úr gildi eða breyta ákvæðum hennar.',
+  },
+  impactingUnMentioned: {
+    id: 'ap.regulations-admin:error-impact-unmentioned',
+    defaultMessage:
+      'Hvergi er minnst á þessa reglugerð í texta nýju reglugerðarinnar.',
   },
 })
 

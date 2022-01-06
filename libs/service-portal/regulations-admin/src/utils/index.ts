@@ -6,6 +6,8 @@ import {
   HTMLText,
   RegulationType,
   PlainText,
+  ensureRegName,
+  RegName,
 } from '@island.is/regulations'
 import { startOfDay, addDays, set } from 'date-fns/esm'
 import { OptionTypeBase, ValueType } from 'react-select'
@@ -194,18 +196,37 @@ const getSpacedTextContent = (html: HTMLText): PlainText => {
 export const findAffectedRegulationsInText = (
   title: PlainText,
   text: HTMLText,
-): Array<string> => {
+): Array<RegName> => {
   const totalString = title + ' ' + getSpacedTextContent(text)
-  const maybeRegNames: Record<string, true> = {}
+  const mentionedRegNames = new Set<RegName>()
 
-  const nameMatchRe = /(?<!(?:lög|lögum|laga)\s+(?:nr.|númer)\s*)[\s(]\d{1,4}\/(?:19|20)\d{2}[\s,.;)]/gi
+  const nameMatchRe = new RegExp(
+    [
+      // not obviously referring to laws, which have the same name-pattern.
+      // (See: "Negative lookbehind assertion" https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Assertions#other_assertions)
+      /(?<!(?:lög|lögum|laga)\s+(?:nr.|númer)\s*)/,
+      // preceeded by either whitespace or parenthesis.
+      /[\s(]?/,
+      // Capture 1 one to four digits
+      /(\d{1,4})/, // $1
+      // sigle dash or " árið " or " frá árinu"
+      /(?:\/|,?\s+(?:árið|frá\s+árinu)\s+)/,
+      // A year-ish string ("19XX" or "20XX")
+      /((?:19|20)\d{2})/, // $2
+      // followed by either whitespace, parenthesis, or basic punctuation.
+      /[\s,.;)]/,
+    ]
+      .map((r) => r.source)
+      .join(''),
+    'gi',
+  )
 
   let m: RegExpExecArray | null
   while ((m = nameMatchRe.exec(totalString))) {
-    const maybeName = m[0].replace(/^[\s(]/, '').replace(/[\s,.;)]$/, '')
-    maybeRegNames[maybeName] = true
+    const maybeName = ensureRegName(m[1] + '/' + m[2])
+    maybeName && mentionedRegNames.add(maybeName)
   }
-  return Object.keys(maybeRegNames)
+  return Array.from(mentionedRegNames)
 }
 
 // ---------------------------------------------------------------------------
@@ -230,7 +251,19 @@ export const findSignatureInText = (
     'nóv',
     'des',
   ]
-  const undirskrRe = /^(.+?ráðuneyti)(?:ð|nu)?,? (\d{1,2})\.? (jan|feb|mar|apr|maí|jún|júl|ágú|sep|okt|nóv|des)(?:\.|[a-záðéíóúýþæö]+)? (2\d{3}).?$/i
+  const undirskrRe = new RegExp(
+    [
+      // Capture name of ráðuneyti from start of paragraph
+      /^(.+?ráðuneyti)(?:ð|nu)?/,
+      /,? /,
+      /(\d{1,2})\.?/,
+      /\s(jan|feb|mar|apr|maí|jún|júl|ágú|sep|okt|nóv|des)(?:\.|[a-záðéíóúýþæö]+)?/,
+      /\s(2\d{3}).?$/,
+    ]
+      .map((r) => r.source)
+      .join(''),
+    'i',
+  )
 
   let match: RegExpMatchArray | false | null = false
 
@@ -264,7 +297,8 @@ export const findSignatureInText = (
     month: threeLetterMonths.indexOf(monthName.toLowerCase()),
     year: parseInt(year),
   })
-  const ministrySlug = ministries.find((m) => m.name === ministryName)?.slug
+  const ministrySlug = ministries.find((m) => ministryName.endsWith(m.name))
+    ?.slug
 
   return {
     ministrySlug,

@@ -78,16 +78,20 @@ export type RegulationDraft = {
 
 // ---------------------------------------------------------------------------
 
+export type DraftImpactName = RegName | 'self'
+
 export type DraftRegulationCancel = {
   type: 'repeal'
-  name: RegName | 'self'
+  name: DraftImpactName
+  regTitle: PlainText
 } & Pick<DB_DraftRegulationCancel, 'id' | 'date'>
 
 // ---------------------------------------------------------------------------
 
 export type DraftRegulationChange = {
   type: 'amend'
-  name: RegName | 'self'
+  name: DraftImpactName
+  regTitle: PlainText
 } & Pick<DB_DraftRegulationChange, 'id' | 'date' | 'title'> &
   Pick<Regulation, 'text' | 'appendixes' | 'comments'>
 
