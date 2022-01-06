@@ -240,13 +240,10 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   ))
             }
             {
-              // Alternative travel ban restrictions
-              (workingCase.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-                (workingCase.type === CaseType.TRAVEL_BAN &&
-                  (workingCase.decision === CaseDecision.ACCEPTING ||
-                    workingCase.decision ===
-                      CaseDecision.ACCEPTING_PARTIALLY))) &&
+              // Travel ban restrictions
+              workingCase.type === CaseType.TRAVEL_BAN &&
+                (workingCase.decision === CaseDecision.ACCEPTING ||
+                  workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
                 workingCase.requestedCustodyRestrictions
                   ?.filter((restriction) =>
                     [
