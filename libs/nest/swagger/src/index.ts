@@ -1,1 +1,1 @@
-export {} from './lib/documentation.documentation.decorator'
+export { Documentation } from './lib/documentation.decorator'
