@@ -1,4 +1,4 @@
-# nest-swagger
+# Nest Swagger
 
 This library was generated with [Nx](https://nx.dev).
 
