@@ -1,4 +1,6 @@
-{
+import { ActionsListWorkflowRunsForRepoResponseData } from "detection";
+
+export const response: ActionsListWorkflowRunsForRepoResponseData = {
   "total_count": 2,
   "workflow_runs": [
     {
