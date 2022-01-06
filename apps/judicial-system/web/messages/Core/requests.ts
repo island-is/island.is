@@ -3,6 +3,45 @@ import { defineMessage, defineMessages } from 'react-intl'
 export const requests = {
   sections: {
     activeRequests: {
+      table: {
+        headers: {
+          caseNumber: defineMessage({
+            id:
+              'judicial.system.core:requests.active_requests.table.headers.case_number',
+            defaultMessage: 'Málsnr.',
+            description:
+              'Notaður sem titill fyrir málsnúmer dálk í lista yfir kröfur í vinnslu.',
+          }),
+          accused: defineMessage({
+            id:
+              'judicial.system.core:requests.active_requests.table.headers.accused',
+            defaultMessage: 'Sakborningur',
+            description:
+              'Notaður sem titill fyrir sakbornings dálk í lista yfir kröfur í vinnslu.',
+          }),
+          type: defineMessage({
+            id:
+              'judicial.system.core:requests.active_requests.table.headers.type',
+            defaultMessage: 'Tegund',
+            description:
+              'Notaður sem titill fyrir tegund dálk í lista yfir kröfur í vinnslu.',
+          }),
+          state: defineMessage({
+            id:
+              'judicial.system.core:requests.active_requests.table.headers.state',
+            defaultMessage: 'Staða',
+            description:
+              'Notaður sem titill fyrir staða dálk í lista yfir kröfur í vinnslu.',
+          }),
+          created: defineMessage({
+            id:
+              'judicial.system.core:requests.active_requests.table.headers.created',
+            defaultMessage: 'Krafa stofnuð',
+            description:
+              'Notaður sem titill fyrir krafa stofnuð dálk í lista yfir kröfur í vinnslu.',
+          }),
+        },
+      },
       title: defineMessage({
         id: 'judicial.system.core:requests.active_requests.title',
         defaultMessage: 'Kröfur í vinnslu',
@@ -53,6 +92,45 @@ export const requests = {
       }),
     },
     pastRequests: {
+      table: {
+        headers: {
+          caseNumber: defineMessage({
+            id:
+              'judicial.system.core:requests.past_requests.table.headers.case_number',
+            defaultMessage: 'Málsnr.',
+            description:
+              'Notaður sem titill fyrir málsnúmer dálk í lista yfir afgreiddar kröfur.',
+          }),
+          accused: defineMessage({
+            id:
+              'judicial.system.core:requests.past_requests.table.headers.accused',
+            defaultMessage: 'Sakborningur',
+            description:
+              'Notaður sem titill fyrir sakbornings dálk í lista yfir afgreiddar kröfur.',
+          }),
+          type: defineMessage({
+            id:
+              'judicial.system.core:requests.past_requests.table.headers.type',
+            defaultMessage: 'Tegund',
+            description:
+              'Notaður sem titill fyrir tegund dálk í lista yfir afgreiddar kröfur.',
+          }),
+          state: defineMessage({
+            id:
+              'judicial.system.core:requests.past_requests.table.headers.state',
+            defaultMessage: 'Staða',
+            description:
+              'Notaður sem titill fyrir staða dálk í lista yfir afgreiddar kröfur.',
+          }),
+          duration: defineMessage({
+            id:
+              'judicial.system.core:requests.past_requests.table.headers.duration',
+            defaultMessage: 'Gildistími',
+            description:
+              'Notaður sem titill fyrir gildistíma dálk í lista yfir afgreiddar kröfur.',
+          }),
+        },
+      },
       title: defineMessage({
         id: 'judicial.system.core:requests.past_requests.title',
         defaultMessage: 'Afgreiddar kröfur',
