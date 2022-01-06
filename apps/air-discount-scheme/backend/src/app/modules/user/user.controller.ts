@@ -22,7 +22,7 @@ import { AuthGuard } from '../common'
 
 @ApiTags('Users')
 @Controller('api/public')
-@UseGuards(AuthGuard)
+//@UseGuards(AuthGuard)
 @ApiBearerAuth()
 export class PublicUserController {
   constructor(

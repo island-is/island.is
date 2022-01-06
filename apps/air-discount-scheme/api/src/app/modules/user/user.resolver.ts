@@ -15,7 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 
-@UseGuards(IdsUserGuard)
+//@UseGuards(IdsUserGuard)
 @Resolver(() => User)
 export class UserResolver {
   constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}

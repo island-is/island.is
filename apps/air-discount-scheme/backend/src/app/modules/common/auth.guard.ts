@@ -10,6 +10,7 @@ const AUTH_TYPE = 'bearer'
 @Injectable()
 export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    console.log('backend custom authguard')
     console.log(context)
     const user = getUserFromContext(context)
     const request = context.switchToHttp().getRequest<HttpRequest>()
