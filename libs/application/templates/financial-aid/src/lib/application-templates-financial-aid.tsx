@@ -6,12 +6,14 @@ import {
   DefaultEvents,
   ApplicationConfigurations,
 } from '@island.is/application/core'
+
 import { Roles, ApplicationStates } from './constants'
-import { application } from './messages'
 
 import * as z from 'zod'
 
 type Events = { type: DefaultEvents.SUBMIT }
+
+const applicationName = 'Umsókn um fjárhagsaðstoð'
 
 const oneYear = 24 * 3600 * 1000 * 365
 
@@ -30,7 +32,7 @@ const ApplicationTemplatesFinancialAid: ApplicationTemplate<
 > = {
   readyForProduction: false,
   type: ApplicationTypes.FINANCIAL_AID,
-  name: application.name,
+  name: applicationName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: z.object({}),
   stateMachineConfig: {
@@ -38,7 +40,7 @@ const ApplicationTemplatesFinancialAid: ApplicationTemplate<
     states: {
       [ApplicationStates.DRAFT]: {
         meta: {
-          name: application.name.defaultMessage,
+          name: applicationName,
           lifecycle: pruneAfter(oneYear),
           roles: [
             {

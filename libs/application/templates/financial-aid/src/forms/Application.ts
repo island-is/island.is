@@ -3,16 +3,26 @@ import {
   buildDescriptionField,
   Form,
   FormModes,
+  buildSection,
+  buildCustomField,
 } from '@island.is/application/core'
 
+import * as m from '../lib/messages'
+
 export const Application: Form = buildForm({
-  id: 'ApprovedApplicationForm',
-  title: 'Samþykkt',
+  id: 'ApplicantForm',
+  title: m.application.name,
   children: [
-    buildDescriptionField({
-      id: 'approved',
-      title: 'Til hamingju!',
-      description: 'Umsókn þín hefur verið samþykkt!',
+    buildSection({
+      id: 'aboutForm',
+      title: m.aboutForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'acceptContract',
+          title: m.aboutForm.general.pageTitle,
+          component: 'AboutForm',
+        }),
+      ],
     }),
   ],
 })
