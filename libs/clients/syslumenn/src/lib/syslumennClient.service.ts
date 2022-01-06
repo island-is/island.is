@@ -101,7 +101,7 @@ export class SyslumennService {
 
   async sealCriminalRecord(criminalRecord: string): Promise<SvarSkeyti> {
     const { id, api } = await this.createApi()
-    const explination = 'Undirritað af sýslumanni'
+    const explination = 'Rafrænt undirritað vottorð'
     return await api.innsiglunPost({
       skeyti: {
         audkenni: id,
