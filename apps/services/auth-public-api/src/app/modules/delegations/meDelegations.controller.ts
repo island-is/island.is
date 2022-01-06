@@ -5,7 +5,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
   NotFoundException,
   Param,
   Post,
@@ -13,23 +12,10 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common'
-import {
-  ApiBadRequestResponse,
-  ApiConflictResponse,
-  ApiCreatedResponse,
-  ApiForbiddenResponse,
-  ApiInternalServerErrorResponse,
-  ApiNoContentResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import startOfDay from 'date-fns/startOfDay'
 
+import { Documentation } from '@island.is/nest/swagger'
 import {
   CreateDelegationDTO,
   DelegationDirection,
@@ -75,28 +61,28 @@ export class MeDelegationsController {
   @Scopes(AuthScope.readDelegations)
   @FeatureFlag(Features.customDelegations)
   @Get()
-  @ApiQuery({
-    name: 'direction',
-    required: true,
-    schema: {
-      enum: [DelegationDirection.OUTGOING],
-      default: DelegationDirection.OUTGOING,
-    },
+  @Documentation({
+    response: { status: 200, type: [DelegationDTO] },
+    queries: [
+      {
+        name: 'direction',
+        required: true,
+        schema: {
+          enum: [DelegationDirection.OUTGOING],
+          default: DelegationDirection.OUTGOING,
+        },
+      },
+      {
+        name: 'valid',
+        required: false,
+        schema: {
+          enum: Object.values(DelegationValidity),
+          default: DelegationValidity.ALL,
+        },
+      },
+      { name: 'otherUser', required: false, type: 'string' },
+    ],
   })
-  @ApiQuery({
-    name: 'valid',
-    required: false,
-    schema: {
-      enum: Object.values(DelegationValidity),
-      default: DelegationValidity.ALL,
-    },
-  })
-  @ApiQuery({ name: 'otherUser', required: false, type: 'string' })
-  @ApiOkResponse({ type: [DelegationDTO] })
-  @ApiBadRequestResponse({ type: HttpProblemResponse })
-  @ApiForbiddenResponse({ type: HttpProblemResponse })
-  @ApiUnauthorizedResponse({ type: HttpProblemResponse })
-  @ApiInternalServerErrorResponse()
   @Audit<DelegationDTO[]>({
     resources: (delegations) =>
       delegations.map((delegation) => delegation?.id ?? ''),
@@ -123,28 +109,28 @@ export class MeDelegationsController {
   @Scopes(AuthScope.readDelegations)
   @FeatureFlag(Features.customDelegations)
   @Get(':delegationId')
-  @ApiOperation({
+  @Documentation({
+    response: { status: 200, type: DelegationDTO },
     description: `Finds a single delegation by ID where the authenticated user is either giving or receiving.
        Does not include delegations from NationalRegistry or CompanyRegistry.`,
+    params: [
+      {
+        name: 'delegationId',
+        type: 'string',
+        description: 'Delegation ID.',
+      },
+    ],
+    queries: [
+      {
+        name: 'valid',
+        required: false,
+        schema: {
+          enum: Object.values(DelegationValidity),
+          default: DelegationValidity.ALL,
+        },
+      },
+    ],
   })
-  @ApiParam({
-    name: 'delegationId',
-    type: 'string',
-    description: 'Delegation ID.',
-  })
-  @ApiQuery({
-    name: 'valid',
-    required: false,
-    schema: {
-      enum: Object.values(DelegationValidity),
-      default: DelegationValidity.ALL,
-    },
-  })
-  @ApiOkResponse({ type: DelegationDTO })
-  @ApiNotFoundResponse({ type: HttpProblemResponse })
-  @ApiForbiddenResponse({ type: HttpProblemResponse })
-  @ApiUnauthorizedResponse({ type: HttpProblemResponse })
-  @ApiInternalServerErrorResponse()
   @Audit<DelegationDTO>({
     resources: (delegation) => delegation?.id ?? '',
   })
@@ -169,12 +155,9 @@ export class MeDelegationsController {
   @Scopes(AuthScope.writeDelegations)
   @FeatureFlag(Features.customDelegations)
   @Post()
-  @ApiCreatedResponse({ type: DelegationDTO })
-  @ApiBadRequestResponse({ type: HttpProblemResponse })
-  @ApiConflictResponse({ type: HttpProblemResponse })
-  @ApiUnauthorizedResponse({ type: HttpProblemResponse })
-  @ApiForbiddenResponse({ type: HttpProblemResponse })
-  @ApiInternalServerErrorResponse()
+  @Documentation({
+    response: { status: 201, type: DelegationDTO },
+  })
   @Audit<DelegationDTO>({
     resources: (delegation) => delegation?.id ?? '',
   })
@@ -216,12 +199,9 @@ export class MeDelegationsController {
   @Scopes(AuthScope.writeDelegations)
   @FeatureFlag(Features.customDelegations)
   @Put(':delegationId')
-  @ApiOkResponse({ type: DelegationDTO })
-  @ApiBadRequestResponse({ type: HttpProblemResponse })
-  @ApiNotFoundResponse({ type: HttpProblemResponse })
-  @ApiUnauthorizedResponse({ type: HttpProblemResponse })
-  @ApiForbiddenResponse({ type: HttpProblemResponse })
-  @ApiInternalServerErrorResponse()
+  @Documentation({
+    response: { status: 200, type: DelegationDTO },
+  })
   async update(
     @CurrentUser() user: User,
     @Body() delegation: UpdateDelegationDTO,
@@ -254,11 +234,9 @@ export class MeDelegationsController {
   @Scopes(AuthScope.writeDelegations)
   @FeatureFlag(Features.customDelegations)
   @Delete(':delegationId')
-  @HttpCode(204)
-  @ApiNoContentResponse()
-  @ApiUnauthorizedResponse({ type: HttpProblemResponse })
-  @ApiForbiddenResponse({ type: HttpProblemResponse })
-  @ApiInternalServerErrorResponse()
+  @Documentation({
+    response: { status: 204 },
+  })
   async delete(
     @CurrentUser() user: User,
     @Param('delegationId') delegationId: string,
