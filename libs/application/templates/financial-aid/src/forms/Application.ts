@@ -15,8 +15,8 @@ export const Application: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'backgroundInformation',
-      title: m.section.backgroundInformation,
+      id: 'nationalRegistryData',
+      title: m.section.dataGathering,
       children: [
         buildExternalDataProvider({
           title: m.externalData.general.pageTitle,

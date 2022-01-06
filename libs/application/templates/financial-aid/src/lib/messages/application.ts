@@ -11,7 +11,7 @@ export const application = defineMessages({
 
 // All sections in the application
 export const section = defineMessages({
-  backgroundInformation: {
+  dataGathering: {
     id: 'fa.application:section.dataGathering',
     defaultMessage: 'Gagnaöflun',
     description: 'Data gathering section',
