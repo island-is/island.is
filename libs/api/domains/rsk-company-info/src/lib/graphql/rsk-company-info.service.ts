@@ -91,7 +91,7 @@ export class RskCompanyInfoService {
   async companyInformationSearch(
     searchTerm: string,
     limit: number,
-    offset = toBase64('0'),
+    offset = '0',
   ): Promise<RskCompanySearchItems | null> {
     const searchResults = await this.rskCompanyInfoApi.v1FyrirtaekjaskraSearchSearchStringGet(
       {
@@ -122,7 +122,10 @@ export class RskCompanyInfoService {
     })
 
     const totalLength = searchResults.count
-    const cursor = toBase64((formattedSearchResults.length - 1).toString())
+    const resultOffset = searchResults.offset ?? 0
+    const cursor = toBase64(
+      (resultOffset + formattedSearchResults.length).toString(),
+    )
 
     return {
       data: formattedSearchResults,
@@ -130,8 +133,8 @@ export class RskCompanyInfoService {
       pageInfo: {
         endCursor: cursor,
         hasNextPage: !!searchResults.hasMore,
-        hasPreviousPage: !!searchResults.offset && searchResults.offset > 0,
-        startCursor: toBase64(offset),
+        hasPreviousPage: resultOffset > 0,
+        startCursor: toBase64(resultOffset.toString()),
       },
     }
   }
