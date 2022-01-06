@@ -28,17 +28,13 @@ const AboutForm = () => {
           id="id_1"
           label={formatMessage(aboutForm.personalInformation.accordionTitle)}
         >
-          {/* <DescriptionText
+          <DescriptionText
             text={aboutForm.personalInformation.accordionAbout}
-          /> */}
-
-          {/* <a
-              href={municipality?.homepage}
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              {municipality?.homepage}
-            </a> */}
+            format={{
+              homePageName: 'slóð sveitarfélags',
+              homePageNameUrl: 'https://www.mbl.is/frettir/',
+            }}
+          />
         </AccordionItem>
       </Accordion>
     </>
