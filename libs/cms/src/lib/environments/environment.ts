@@ -12,6 +12,7 @@ export default {
     'vidspyrnaPage',
     'menu',
     'groupedMenu',
+    'organization',
     'organizationPage',
     'organizationSubpage',
     'supportQNA',
@@ -19,6 +20,7 @@ export default {
     'frontpage',
   ],
   nestedContentTypes: [
+    'organizationPage',
     'subArticle',
     'processEntry',
     'embeddedVideo',
