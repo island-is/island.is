@@ -6,9 +6,7 @@ export class PSignSubmissionModule {
   static register(): DynamicModule {
     return {
       module: PSignSubmissionModule,
-      imports: [
-        SyslumennClientModule,
-      ],
+      imports: [SyslumennClientModule],
       providers: [PSignSubmissionService],
       exports: [PSignSubmissionService],
     }

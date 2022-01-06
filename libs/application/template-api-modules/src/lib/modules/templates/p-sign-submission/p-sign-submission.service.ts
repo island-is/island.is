@@ -8,7 +8,11 @@ import {
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
 import { NationalRegistry } from './types'
-import { Application, getValueViaPath, FieldBaseProps } from '@island.is/application/core'
+import {
+  Application,
+  getValueViaPath,
+  FieldBaseProps,
+} from '@island.is/application/core'
 import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
 
@@ -23,12 +27,11 @@ const YES = 'yes'
 @Injectable()
 export class PSignSubmissionService {
   s3: S3
-  constructor(
-    private readonly syslumennService: SyslumennService,
-  ) { this.s3 = new S3()}
+  constructor(private readonly syslumennService: SyslumennService) {
+    this.s3 = new S3()
+  }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    console.log(application.answers.qualityPhoto)
     const content: string =
       application.answers.qualityPhoto === YES
         ? ((application.externalData
@@ -37,7 +40,6 @@ export class PSignSubmissionService {
             application,
             auth,
           })
-    console.log(content)
     const name = this.getName(application)
     const attachment: Attachment = {
       name,
