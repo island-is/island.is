@@ -44,16 +44,11 @@ export class RecyclingRequestResolver {
     const vehicle = await this.samgongustofaService.getUserVehicle(
       user.nationalId,
       perm,
+      false,
     )
-    const hasPermission = [Role.recyclingCompany, Role.developer].includes(
-      user.role,
-    )
-    if (!vehicle || !hasPermission) {
-      this.logger.error(
-        `User does not have permission to call skilavottordUserRecyclingRequest action`,
-      )
+    if (!vehicle) {
       throw new NotFoundException(
-        `User does not have permission to call skilavottordUserRecyclingRequest action`,
+        `Car with license plate ${perm} was not found for this user`,
       )
     }
 
