@@ -5,7 +5,6 @@ import {
   ApplicationStateSchema,
   DefaultStateLifeCycle,
   DefaultEvents,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
@@ -116,9 +115,6 @@ const template: ApplicationTemplate<
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -126,6 +122,11 @@ const template: ApplicationTemplate<
                 import('../forms/payment').then((val) => val.payment),
               actions: [
                 { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+                {
+                  event: DefaultEvents.ABORT,
+                  name: 'Hætta við',
+                  type: 'reject',
+                },
               ],
               write: 'all',
             },
@@ -133,6 +134,7 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DONE },
+          [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
       [States.DONE]: {
@@ -140,6 +142,9 @@ const template: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

@@ -89,6 +89,7 @@ export const caseTypes = {
   BODY_SEARCH: 'leit og líkamsrannsókn',
   INTERNET_USAGE: 'upplýsingar um vefnotkun',
   RESTRAINING_ORDER: 'nálgunarbann',
+  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
   OTHER: 'annað',
 }
 

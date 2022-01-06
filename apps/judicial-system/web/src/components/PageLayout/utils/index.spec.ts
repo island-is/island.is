@@ -1,4 +1,4 @@
-import { makeCase } from '@island.is/judicial-system/formatters'
+import { makeCustodyCase } from '@island.is/judicial-system/formatters'
 import {
   CaseDecision,
   CaseState,
@@ -23,7 +23,7 @@ describe('Page layout utils', () => {
       it('should return the correct string if the case is an investigation case and the state is REJECTED', () => {
         // Arrange
         const workingCase = {
-          ...makeCase(),
+          ...makeCustodyCase(),
           type: CaseType.AUTOPSY,
           state: CaseState.REJECTED,
         }
@@ -38,7 +38,7 @@ describe('Page layout utils', () => {
       it('should return the correct string if the case is an restriction case and the state is REJECTED', () => {
         // Arrange
         const workingCase = {
-          ...makeCase(),
+          ...makeCustodyCase(),
           type: CaseType.TRAVEL_BAN,
           state: CaseState.REJECTED,
         }
@@ -56,7 +56,7 @@ describe('Page layout utils', () => {
     it('should return the correct string if the case is an investigation case and the state is ACCEPTED', () => {
       // Arrange
       const workingCase = {
-        ...makeCase(),
+        ...makeCustodyCase(),
         type: CaseType.AUTOPSY,
         state: CaseState.ACCEPTED,
       }
@@ -71,10 +71,10 @@ describe('Page layout utils', () => {
     it(`should return the correct string if the case is an investigation case and it's parent case state is ACCEPTED`, () => {
       // Arrange
       const workingCase = {
-        ...makeCase(),
+        ...makeCustodyCase(),
         type: CaseType.AUTOPSY,
         parentCase: {
-          ...makeCase(),
+          ...makeCustodyCase(),
           state: CaseState.ACCEPTED,
         },
       }
@@ -89,7 +89,7 @@ describe('Page layout utils', () => {
     it('should return the correct string if the case is an restriction case and the state is ACCEPTED', () => {
       // Arrange
       const workingCase = {
-        ...makeCase(),
+        ...makeCustodyCase(),
         type: CaseType.TRAVEL_BAN,
         state: CaseState.ACCEPTED,
       }
@@ -104,10 +104,10 @@ describe('Page layout utils', () => {
     it(`should return the correct string if the case is an restriction case and it's parent case state is ACCEPTED`, () => {
       // Arrange
       const workingCase = {
-        ...makeCase(),
+        ...makeCustodyCase(),
         type: CaseType.CUSTODY,
         parentCase: {
-          ...makeCase(),
+          ...makeCustodyCase(),
           state: CaseState.ACCEPTED,
         },
       }
@@ -122,7 +122,7 @@ describe('Page layout utils', () => {
     it('should return the correct string if the case is an restriction case and the state is ACCEPTED and the valid to date is in the past', () => {
       // Arrange
       const workingCase = {
-        ...makeCase(),
+        ...makeCustodyCase(),
         type: CaseType.TRAVEL_BAN,
         state: CaseState.ACCEPTED,
         isValidToDateInThePast: true,
@@ -140,7 +140,7 @@ describe('Page layout utils', () => {
     it('should return the correct string if the case state is DISMISSED', () => {
       // Arrange
       const workingCase = {
-        ...makeCase(),
+        ...makeCustodyCase(),
         type: CaseType.AUTOPSY,
         state: CaseState.DISMISSED,
       }
@@ -157,7 +157,7 @@ describe('Page layout utils', () => {
     it('should return the correct string if the case state is ACCEPTED and the case decision is ACCEPTING_ALTERNATIVE_TRAVEL_BAN', () => {
       // Arrange
       const workingCase = {
-        ...makeCase(),
+        ...makeCustodyCase(),
         type: CaseType.CUSTODY,
         state: CaseState.ACCEPTED,
         decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
@@ -173,7 +173,7 @@ describe('Page layout utils', () => {
     it('should return the correct string if the case state is ACCEPTED, the case decision is ACCEPTING_ALTERNATIVE_TRAVEL_BAN and the valid to date is in the past', () => {
       // Arrange
       const workingCase = {
-        ...makeCase(),
+        ...makeCustodyCase(),
         type: CaseType.CUSTODY,
         state: CaseState.ACCEPTED,
         decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
