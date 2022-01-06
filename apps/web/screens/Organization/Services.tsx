@@ -39,7 +39,6 @@ import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import getConfig from 'next/config'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { useRouter } from 'next/router'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -72,14 +71,16 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const Router = useRouter()
+
   useContentfulId(organizationPage.id)
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: primaryLink.url === `/s/${organizationPage.slug}/thjonusta`,
+      active:
+        primaryLink.url.includes(`${organizationPage.slug}/thjonusta`) ||
+        primaryLink.url.includes(`${organizationPage.slug}/services`),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -175,20 +176,20 @@ const ServicesPage: Screen<ServicesPageProps> = ({
             <Select
               backgroundColor="white"
               icon="chevronDown"
-              label="Þjónustuflokkur"
+              label={n('services', 'Þjónustuflokkur')}
               isSearchable
               name="category"
               value={
                 categories.find(
                   (x) => x.value === parameters.categories[0],
                 ) ?? {
-                  label: 'Allir þjónustuflokkar',
+                  label: n('allServices', 'Allir þjónustuflokkar'),
                   value: '',
                 }
               }
               options={[
                 {
-                  label: 'Allir þjónustuflokkar',
+                  label: n('allServices', 'Allir þjónustuflokkar'),
                   value: '',
                 },
                 ...categories,

@@ -6,6 +6,7 @@ import { ModalProps } from '@island.is/skilavottord-web/components'
 import {
   AccessControl,
   UpdateAccessControlInput,
+  Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 
 import { AccessControlModal } from '../AccessControlModal/AccessControlModal'
@@ -31,7 +32,7 @@ export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
   roles,
   currentPartner,
 }) => {
-  const { control, errors, reset, handleSubmit } = useForm({
+  const { control, errors, reset, handleSubmit, watch } = useForm({
     mode: 'onChange',
   })
 
@@ -68,7 +69,8 @@ export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
       roles={roles}
       control={control}
       errors={errors}
-      isNationalIdDisabled
+      partnerIdRequired={watch('role')?.value === Role.recyclingCompany}
+      nationalIdDisabled
     />
   )
 }
