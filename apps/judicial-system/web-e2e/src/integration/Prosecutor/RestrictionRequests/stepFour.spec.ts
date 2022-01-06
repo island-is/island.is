@@ -1,9 +1,9 @@
-import { makeCase } from '@island.is/judicial-system/formatters'
-import { intercept } from '../../utils'
+import { makeCustodyCase } from '@island.is/judicial-system/formatters'
+import { intercept } from '../../../utils'
 
 describe('/krafa/greinagerd/:id', () => {
   beforeEach(() => {
-    const caseData = makeCase()
+    const caseData = makeCustodyCase()
 
     cy.stubAPIResponses()
     cy.visit('/krafa/greinargerd/test_id')
