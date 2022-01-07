@@ -83,6 +83,18 @@ export const text = style({
   overflow: 'hidden',
 })
 
+export const iconWrapper = style({
+  position: 'absolute',
+  right: 0,
+  paddingRight: theme.spacing[2],
+  paddingTop: theme.spacing[1],
+  cursor: 'pointer',
+  color: theme.color.blue600,
+  ':hover': {
+    color: theme.color.blue400,
+  },
+})
+
 export const icon = style({
   pointerEvents: 'none',
   height: '26px',
@@ -148,6 +160,7 @@ export const subLockCollapsed = style({
   pointerEvents: 'none',
 })
 export const link = style({
+  width: '100%',
   ':hover': {
     textDecoration: 'none',
   },

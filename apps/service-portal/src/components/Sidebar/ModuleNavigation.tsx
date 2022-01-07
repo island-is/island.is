@@ -41,7 +41,6 @@ const ModuleNavigation: FC<Props> = ({
       pathname.includes(nav.path)) ||
     nav.children?.find((x) => x.path && pathname.includes(x.path)) !==
       undefined ||
-    expand ||
     nav.path === pathname
 
   const handleExpand = () => {
@@ -102,6 +101,9 @@ const ModuleNavigation: FC<Props> = ({
         onClick={() => {
           !collapsed && handleRootItemClick(nav.external)
         }}
+        onChevronClick={() => {
+          setExpand(!expand)
+        }}
         alwaysExpanded={alwaysExpanded}
         badge={badge}
       >
@@ -110,7 +112,7 @@ const ModuleNavigation: FC<Props> = ({
       {!collapsed && navArray && nav.enabled !== false && (
         <AnimateHeight
           duration={300}
-          height={isModuleActive || alwaysExpanded ? 'auto' : 0}
+          height={expand ? 'auto' : alwaysExpanded ? 'auto' : 0}
         >
           <SubNav
             navChildren={navChildren}
