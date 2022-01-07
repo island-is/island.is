@@ -467,6 +467,16 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: true,
   })
+  supportsPersonalRepresentatives!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
   promptDelegations!: boolean
 
   @CreatedAt
