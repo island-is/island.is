@@ -55,3 +55,5 @@ export const userNotificationWorkerSetup = (): ServiceBuilder<'user-notification
       USER_NOTIFICATION_CLIENT_SECRET:
         '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET',
     })
+    .liveness('/liveness')
+    .readiness('/liveness')
