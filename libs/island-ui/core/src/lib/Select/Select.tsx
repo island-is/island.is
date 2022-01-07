@@ -57,8 +57,8 @@ export interface SelectProps {
   defaultValue?: Option
   icon?: string
   isSearchable?: boolean
+  size?: 'xs' | 'sm' | 'md'
   isCreatable?: boolean
-  size?: 'sm' | 'md'
   backgroundColor?: InputBackgroundColor
   required?: boolean
   ariaError?: AriaError
