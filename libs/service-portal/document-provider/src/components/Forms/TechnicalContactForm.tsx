@@ -55,6 +55,7 @@ export const TechnicalContactForm: FC<Props> = ({
           }}
           render={({ onChange, name, value }) => (
             <Input
+              size="xs"
               label={formatMessage(m.SettingsEditTechnicalContactName)}
               placeholder={formatMessage(m.SettingsEditTechnicalContactName)}
               name={name}
@@ -85,6 +86,7 @@ export const TechnicalContactForm: FC<Props> = ({
           }}
           render={({ onChange, name, value }) => (
             <Input
+              size="xs"
               label={formatMessage(m.SettingsEditTechnicalContactEmail)}
               placeholder={formatMessage(m.SettingsEditTechnicalContactEmail)}
               name={name}
@@ -115,6 +117,7 @@ export const TechnicalContactForm: FC<Props> = ({
           }}
           render={({ onChange, name, value }) => (
             <Input
+              size="xs"
               label={formatMessage(m.SettingsEditTechnicalContactTel)}
               placeholder={formatMessage(m.SettingsEditTechnicalContactTel)}
               name={name}

@@ -64,9 +64,10 @@ export class PSignSubmissionService {
     const extraData: { [key: string]: string } =
       application.answers.deliveryMethod === 'sendHome'
         ? {
+            Afhentingarmati: 'Sótt á næsta afgreiðslustað',
             StarfsstodID: application.answers.district as string,
           }
-        : {}
+        : { Afhentingarmati: 'Sent með pósti' }
 
     const uploadDataName = 'pkort1.0'
     const uploadDataId = 'pkort1.0'
@@ -91,7 +92,7 @@ export class PSignSubmissionService {
       ?.data as NationalRegistry
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
 
-    return `p_kort_mynd_${nationalRegistryData?.nationalId}_${dateStr}.pdf`
+    return `p_kort_mynd_${nationalRegistryData?.nationalId}_${dateStr}.jpeg`
   }
 
   private async getAttachments({

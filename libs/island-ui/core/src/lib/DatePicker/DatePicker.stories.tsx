@@ -126,6 +126,19 @@ export const SizeSmall = () => {
   )
 }
 
+export const SizeExtraSmall = () => {
+  return (
+    <div style={{ height: 600 }}>
+      <DatePicker
+        label="Extra small"
+        placeholderText="Pick a date"
+        size="xs"
+        handleChange={(date: Date) => console.log(date)}
+      />
+    </div>
+  )
+}
+
 export const WithErrors = () => (
   <>
     <Wrap>
@@ -153,4 +166,27 @@ export const Disabled = () => (
       />
     </Wrap>
   </>
+)
+
+export const WithoutLabel = () => (
+  <Wrap>
+    <DatePicker
+      label=""
+      placeholderText="Pick a date"
+      selected={new Date()}
+      handleChange={(date: Date) => console.log(date)}
+    />
+  </Wrap>
+)
+
+export const SmallWithoutLabel = () => (
+  <Wrap>
+    <DatePicker
+      label=""
+      size="sm"
+      placeholderText="Pick a date"
+      selected={new Date()}
+      handleChange={(date: Date) => console.log(date)}
+    />
+  </Wrap>
 )
