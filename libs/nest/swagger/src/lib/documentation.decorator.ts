@@ -10,84 +10,98 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiParamOptions,
   ApiQuery,
-  ApiUnauthorizedResponse,
   ApiQueryOptions,
   ApiResponseMetadata,
-  ApiParamOptions,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 
 import { HttpProblemResponse } from '@island.is/nest/problem'
 
+type ExtendedOmit<T, K extends keyof any> = {
+  [P in keyof T as Exclude<P, K>]: T[P]
+}
+
 interface Options {
-  isAuthorized?: boolean
-  queries?: ApiQueryOptions[]
-  params?: ApiParamOptions[]
-  description?: string
+  request?: {
+    params?: Record<string, ExtendedOmit<ApiParamOptions, 'name'>>
+    query?: Record<string, ExtendedOmit<ApiQueryOptions, 'name'>>
+  }
   response: {
     status: 200 | 201 | 204
     type?: ApiResponseMetadata['type']
   }
+  isAuthorized?: boolean
+  description?: string
 }
 
-const getResponseDecorator = (
+const getResponseDecorators = (
   response: Options['response'],
-): MethodDecorator => {
+): MethodDecorator[] => {
   switch (response.status) {
     case 200:
-      return ApiOkResponse(response)
+      return [ApiOkResponse(response)]
     case 201:
-      return ApiCreatedResponse(response)
+      return [
+        ApiCreatedResponse(response),
+        ApiConflictResponse({ type: HttpProblemResponse }),
+      ]
     case 204:
-      return ApiNoContentResponse(response)
+      return [ApiNoContentResponse(response)]
+    default:
+      return []
   }
 }
 
-const getQueriesDecorators = (
-  queries: Options['queries'],
-): MethodDecorator[] => {
-  if (!queries) {
-    return []
-  }
+const getRequestDecorators = ({
+  query = {},
+  params = {},
+}: Options['request'] = {}): MethodDecorator[] => {
+  const queryDecorators = Object.keys(query).map((name) =>
+    ApiQuery({ name, ...query[name] }),
+  )
+  const paramsDecorators = Object.keys(params).map((name) =>
+    ApiParam({ name, ...params[name] }),
+  )
 
-  return queries.map((options) => ApiQuery(options))
+  return [...queryDecorators, ...paramsDecorators]
 }
 
-const getParamsDecorators = (params: Options['params']): MethodDecorator[] => {
-  if (!params) {
-    return []
+const getExtraDecorators = ({
+  isAuthorized,
+  description,
+}: Omit<Options, 'response' | 'request'>): MethodDecorator[] => {
+  let decorators: MethodDecorator[] = []
+  if (isAuthorized) {
+    decorators = [
+      ...decorators,
+      ApiUnauthorizedResponse({ type: HttpProblemResponse }),
+    ]
   }
 
-  return params.map((options) => ApiParam(options))
-}
-
-const getOptionalDecorators = (
-  isAuthorized: Options['isAuthorized'],
-): MethodDecorator[] => {
-  if (!isAuthorized) {
-    return []
+  if (description) {
+    decorators = [...decorators, ApiOperation({ description })]
   }
 
-  return [ApiUnauthorizedResponse({ type: HttpProblemResponse })]
+  return decorators
 }
 
 export const Documentation = ({
-  isAuthorized = true,
   response,
-  queries,
-  params,
-  description,
+  request,
+  ...extra
 }: Options): MethodDecorator =>
   applyDecorators(
+    /* BEGIN DEFAULT DECORATORS */
     HttpCode(response.status),
     ApiNotFoundResponse,
     ApiInternalServerErrorResponse(),
     ApiBadRequestResponse({ type: HttpProblemResponse }),
     ApiForbiddenResponse({ type: HttpProblemResponse }),
-    ApiConflictResponse({ type: HttpProblemResponse }),
-    ApiOperation({ description }),
-    getResponseDecorator(response),
-    ...getOptionalDecorators(isAuthorized),
-    ...getQueriesDecorators(queries),
-    ...getParamsDecorators(params),
+    /* END DEFAULT DECORATORS */
+
+    ...getResponseDecorators(response),
+    ...getRequestDecorators(request),
+    ...getExtraDecorators(extra),
   )

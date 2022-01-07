@@ -63,25 +63,28 @@ export class MeDelegationsController {
   @Get()
   @Documentation({
     response: { status: 200, type: [DelegationDTO] },
-    queries: [
-      {
-        name: 'direction',
-        required: true,
-        schema: {
-          enum: [DelegationDirection.OUTGOING],
-          default: DelegationDirection.OUTGOING,
+    request: {
+      query: {
+        direction: {
+          required: true,
+          schema: {
+            enum: [DelegationDirection.OUTGOING],
+            default: DelegationDirection.OUTGOING,
+          },
+        },
+        valid: {
+          required: false,
+          schema: {
+            enum: Object.values(DelegationValidity),
+            default: DelegationValidity.ALL,
+          },
+        },
+        otherUser: {
+          required: false,
+          type: 'string',
         },
       },
-      {
-        name: 'valid',
-        required: false,
-        schema: {
-          enum: Object.values(DelegationValidity),
-          default: DelegationValidity.ALL,
-        },
-      },
-      { name: 'otherUser', required: false, type: 'string' },
-    ],
+    },
   })
   @Audit<DelegationDTO[]>({
     resources: (delegations) =>
@@ -110,26 +113,26 @@ export class MeDelegationsController {
   @FeatureFlag(Features.customDelegations)
   @Get(':delegationId')
   @Documentation({
-    response: { status: 200, type: DelegationDTO },
     description: `Finds a single delegation by ID where the authenticated user is either giving or receiving.
        Does not include delegations from NationalRegistry or CompanyRegistry.`,
-    params: [
-      {
-        name: 'delegationId',
-        type: 'string',
-        description: 'Delegation ID.',
-      },
-    ],
-    queries: [
-      {
-        name: 'valid',
-        required: false,
-        schema: {
-          enum: Object.values(DelegationValidity),
-          default: DelegationValidity.ALL,
+    response: { status: 200, type: DelegationDTO },
+    request: {
+      params: {
+        delegationId: {
+          type: 'string',
+          description: 'Delegation ID.',
         },
       },
-    ],
+      query: {
+        valid: {
+          required: false,
+          schema: {
+            enum: Object.values(DelegationValidity),
+            default: DelegationValidity.ALL,
+          },
+        },
+      },
+    },
   })
   @Audit<DelegationDTO>({
     resources: (delegation) => delegation?.id ?? '',
