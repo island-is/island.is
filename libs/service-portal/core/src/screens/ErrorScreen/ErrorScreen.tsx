@@ -9,6 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
+import * as styles from './ErrorScreen.css'
 interface Props {
   title: string
   children?: React.ReactNode
@@ -29,8 +30,8 @@ export const ErrorScreen: FC<Props> = ({
     <GridRow>
       <GridColumn span={['1/1', '10/12']} offset={['0', '0']} order={[2, 1]}>
         <Box
-          marginTop={6}
-          marginBottom={6}
+          marginTop={[0, 6]}
+          marginBottom={[0, 6]}
           textAlign="center"
           justifyContent="center"
         >
@@ -51,8 +52,12 @@ export const ErrorScreen: FC<Props> = ({
           offset={['0', '3/12']}
           order={[1, 2]}
         >
-          <Box marginBottom={[3, 0]} display="flex" justifyContent="center">
-            <img src={figure} alt={`${formatMessage(m.altText)} ${title}`} />
+          <Box display="flex" justifyContent="center" marginBottom={[1, 0]}>
+            <img
+              src={figure}
+              alt={`${formatMessage(m.altText)} ${title}`}
+              className={styles.img}
+            />
           </Box>
         </GridColumn>
       )}
