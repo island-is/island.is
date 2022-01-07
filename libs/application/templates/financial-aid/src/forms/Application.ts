@@ -8,7 +8,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { DataProviderTypes } from '../types'
+import { DataProviderTypes, ExternalData } from '../types'
 
 import * as m from '../lib/messages'
 
@@ -50,6 +50,9 @@ export const Application: Form = buildForm({
       ],
     }),
     buildSection({
+      condition: (_, externalData) =>
+        ((externalData as unknown) as ExternalData).nationalRegistry?.data
+          ?.spouse !== undefined,
       id: 'personalInterest',
       title: m.section.personalInterest,
       children: [
