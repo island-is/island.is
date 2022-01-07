@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Text} from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Approved } from '@island.is/application/ui-components'
 import { CopyLink } from '@island.is/application/ui-components'
