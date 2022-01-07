@@ -52,8 +52,31 @@ WithLabelAbove.args = {
       value: '2',
     },
   ],
-  noOptionsMessage: 'Enginn valmöguleiki',
   size: 'xs',
+  noOptionsMessage: 'Enginn valmöguleiki',
+}
+
+export const Disabled = Template.bind({})
+Disabled.args = {
+  name: 'select3',
+  label: 'Tegund fyrirtækis',
+  placeholder: 'Veldu tegund',
+  options: [
+    {
+      label: 'Valmöguleiki 1',
+      value: '0',
+    },
+    {
+      label: 'Valmöguleiki 2',
+      value: '1',
+    },
+    {
+      label: 'Valmöguleiki 3',
+      value: '2',
+    },
+  ],
+  noOptionsMessage: 'Enginn valmöguleiki',
+  disabled: true,
 }
 
 export const TempTest = () => (

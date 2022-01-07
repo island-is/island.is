@@ -98,3 +98,11 @@ WithLabelAbove.args = {
   name: 'Test10',
   size: 'xs',
 }
+
+export const Disabled = Template.bind({})
+Disabled.args = {
+  label: 'This is the label',
+  placeholder: 'This is the placeholder',
+  name: 'Test10',
+  disabled: true,
+}

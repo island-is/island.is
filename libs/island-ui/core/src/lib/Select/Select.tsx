@@ -101,7 +101,10 @@ export const Select = ({
 
   return isCreatable ? (
     <div
-      className={cn(styles.wrapper, styles.wrapperColor[backgroundColor])}
+      className={cn(styles.wrapper, {
+        [styles.wrapperColor[backgroundColor]]: !disabled,
+        [styles.containerDisabled]: disabled,
+      })}
       data-testid={`creatable-select-${name}`}
     >
       <CreatableReactSelect
@@ -152,7 +155,10 @@ export const Select = ({
     </div>
   ) : (
     <div
-      className={cn(styles.wrapper, styles.wrapperColor[backgroundColor])}
+      className={cn(styles.wrapper, {
+        [styles.wrapperColor[backgroundColor]]: !disabled,
+        [styles.containerDisabled]: disabled,
+      })}
       data-testid={`select-${name}`}
     >
       <ReactSelect
