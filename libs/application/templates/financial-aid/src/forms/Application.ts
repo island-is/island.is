@@ -59,5 +59,16 @@ export const Application: Form = buildForm({
         }),
       ],
     }),
+    buildSection({
+      id: 'bla',
+      title: m.aboutForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'acceptContract',
+          title: m.aboutForm.general.pageTitle,
+          component: 'AboutForm',
+        }),
+      ],
+    }),
   ],
 })

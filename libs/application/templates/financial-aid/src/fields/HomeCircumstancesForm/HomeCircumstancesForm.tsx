@@ -11,10 +11,11 @@ import { CRCFieldBaseProps } from '../../types'
 
 const HomeCircumstancesForm = ({ field, errors }: CRCFieldBaseProps) => {
   const { formatMessage } = useIntl()
-
   const [statefulAnswer, setStatefulAnswer] = useState<
     HomeCircumstances | undefined
   >()
+
+  const [statefulInput, setStatefulInput] = useState<string>()
 
   return (
     <>
@@ -64,7 +65,7 @@ const HomeCircumstancesForm = ({ field, errors }: CRCFieldBaseProps) => {
           }
           largeButtons
           backgroundColor="white"
-          error={errors?.homeCircumstances}
+          error={errors?.homeCircumstances.type}
         />
       </Box>
 
@@ -80,10 +81,12 @@ const HomeCircumstancesForm = ({ field, errors }: CRCFieldBaseProps) => {
           name="homeCircumstancesCustom"
           rows={8}
           textarea
-          value=""
-          hasError={false}
-          errorMessage={formatMessage(error.validation.inputErrorMessage)}
-          onChange={(event) => {}}
+          value={statefulInput}
+          hasError={errors?.homeCircumstances.custom !== undefined}
+          errorMessage={errors?.homeCircumstances.custom}
+          onChange={(event) => {
+            setStatefulInput(event.target.value)
+          }}
         />
       </Box>
     </>
