@@ -55,17 +55,14 @@ export class AwsS3Service {
     })
   }
 
-  deleteObject(key: string): Promise<boolean> {
+  async deleteObject(key: string): Promise<boolean> {
     return this.s3
       .deleteObject({
         Bucket: environment.files.bucket,
         Key: key,
       })
       .promise()
-      .then(
-        () => true,
-        () => false,
-      )
+      .then(() => true)
   }
 
   objectExists(key: string): Promise<boolean> {

@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
-import { CmsTranslationsModule } from '@island.is/cms-translations'
 
+import { CmsTranslationsModule } from '@island.is/cms-translations'
+import { ProblemModule } from '@island.is/nest/problem'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
 
@@ -48,6 +49,7 @@ const autoSchemaFile = environment.production
     FeatureModule,
     CmsTranslationsModule,
     PoliceModule,
+    ProblemModule.forRoot({ logAllErrors: true }),
   ],
 })
 export class AppModule {}
