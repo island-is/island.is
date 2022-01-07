@@ -249,35 +249,27 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     }, [setHasFocus])
 
     return (
-      <Downshift<string>
+      <Downshift<SubmitType>
         id={id}
         initialInputValue={initialInputValue}
-        onChange={(q) => {
-          if (q && typeof q === 'object') {
-            const item: SubmitType = q
+        onChange={(item) => {
+          if (item?.type === 'query') {
+            return onSubmit({
+              ...item,
+              string: `${search.prefix} ${item.string}`.trim() || '',
+            })
+          }
 
-            if (item.type === 'query') {
-              return onSubmit({
-                ...item,
-                string: `${search.prefix} ${item.string}`.trim() || '',
-              })
-            }
-
-            if (item.type === 'link') {
-              return onSubmit(item)
-            }
+          if (item?.type === 'link') {
+            return onSubmit(item)
           }
         }}
         onInputValueChange={(q) => setSearchTerm(q)}
-        itemToString={(v) => {
-          if (v && typeof v === 'object') {
-            const item: SubmitType = v
-
-            if (item.type === 'query') {
-              return `${search.prefix ? search.prefix + ' ' : ''}${
-                item.string
-              }`.trim()
-            }
+        itemToString={(item) => {
+          if (item?.type === 'query') {
+            return `${search.prefix ? search.prefix + ' ' : ''}${
+              item.string
+            }`.trim()
           }
 
           return ''
@@ -429,7 +421,7 @@ const Results = ({
                 item: {
                   type: 'query',
                   string: suggestion,
-                } as SubmitType,
+                },
               })
               return (
                 <div
@@ -471,7 +463,7 @@ const Results = ({
                         item.__typename as LinkType,
                         item.slug.split('/'),
                       ).href,
-                    } as SubmitType,
+                    },
                   })
                   return (
                     <Link
