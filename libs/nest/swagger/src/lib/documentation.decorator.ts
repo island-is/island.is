@@ -23,7 +23,7 @@ type ExtendedOmit<T, K extends keyof any> = {
   [P in keyof T as Exclude<P, K>]: T[P]
 }
 
-interface Options {
+export interface Options {
   request?: {
     params?: Record<string, ExtendedOmit<ApiParamOptions, 'name'>>
     query?: Record<string, ExtendedOmit<ApiQueryOptions, 'name'>>
@@ -69,7 +69,7 @@ const getRequestDecorators = ({
 }
 
 const getExtraDecorators = ({
-  isAuthorized,
+  isAuthorized = true,
   description,
 }: Omit<Options, 'response' | 'request'>): MethodDecorator[] => {
   let decorators: MethodDecorator[] = []
@@ -95,8 +95,8 @@ export const Documentation = ({
   applyDecorators(
     /* BEGIN DEFAULT DECORATORS */
     HttpCode(response.status),
-    ApiNotFoundResponse,
     ApiInternalServerErrorResponse(),
+    ApiNotFoundResponse({ type: HttpProblemResponse }),
     ApiBadRequestResponse({ type: HttpProblemResponse }),
     ApiForbiddenResponse({ type: HttpProblemResponse }),
     /* END DEFAULT DECORATORS */
