@@ -39,6 +39,19 @@ export const userNotificationWorkerSetup = (): ServiceBuilder<'user-notification
     .env({
       MAIN_QUEUE_NAME,
       DEAD_LETTER_QUEUE_NAME,
+      IDENTITY_SERVER_PATH: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
     })
-    .liveness('/liveness')
-    .readiness('/liveness')
+    .secrets({
+      GOOGLE_APPLICATION_CREDENTIALS:
+        '/k8s/user-notification/GOOGLE_APPLICATION_CREDENTIALS',
+      SERVICE_USER_PROFILE_BASEPATH:
+        '/k8s/user-notification/SERVICE_USER_PROFILE_BASEPATH',
+      USER_NOTIFICATION_CLIENT_ID:
+        '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID',
+      USER_NOTIFICATION_CLIENT_SECRET:
+        '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET',
+    })
