@@ -1278,40 +1278,6 @@ export interface ILinkUrl extends Entry<ILinkUrlFields> {
   }
 }
 
-export interface ILocationFields {
-  /** Title */
-  title: string
-
-  /** subTitle */
-  subTitle?: string | undefined
-
-  /** Address */
-  address?: string | undefined
-
-  /** Link */
-  link?: ILink | undefined
-
-  /** Background */
-  background: Asset
-}
-
-export interface ILocation extends Entry<ILocationFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'location'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface ILogoListSliceFields {
   /** Title */
   title?: string | undefined
@@ -3425,7 +3391,6 @@ export type CONTENT_TYPE =
   | 'linkGroup'
   | 'linkList'
   | 'linkUrl'
-  | 'location'
   | 'logoListSlice'
   | 'mailingListSignup'
   | 'menu'

@@ -1456,13 +1456,6 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/api/domains/user-profile"]
-        },
-        "schemas/openapi-generator": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "libs/api/domains/user-profile/gen/fetch",
-            "command": "yarn openapi-generator -o libs/api/domains/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
-          }
         }
       }
     },
@@ -2421,34 +2414,6 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/institution-collaboration/src/lib/messages.ts"
-          }
-        }
-      }
-    },
-    "application-templates-joint-custody-agreement": {
-      "root": "libs/application/templates/family-matters/joint-custody-agreement",
-      "sourceRoot": "libs/application/templates/family-matters/joint-custody-agreement/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/application/templates/family-matters/joint-custody-agreement/tsconfig.lib.json",
-              "libs/application/templates/family-matters/joint-custody-agreement/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/application/templates/family-matters/joint-custody-agreement/**/*"
-            ]
-          }
-        },
-        "extract-strings": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/joint-custody-agreement/src/**/*.{js,ts,tsx}'"
           }
         }
       }
