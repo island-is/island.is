@@ -1,8 +1,10 @@
 import {
+  buildCustomField,
   buildDataProviderItem,
   buildExternalDataProvider,
   buildForm,
   buildSection,
+  buildSubSection,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -15,7 +17,7 @@ export const Application: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'nationalRegistryData',
+      id: 'externalData',
       title: m.section.dataGathering,
       children: [
         buildExternalDataProvider({
@@ -30,6 +32,22 @@ export const Application: Form = buildForm({
               type: DataProviderTypes.NationalRegistry,
               title: m.externalData.applicant.title,
               subTitle: m.externalData.applicant.subTitle,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'personalInterest',
+      title: m.section.personalInterest,
+      children: [
+        buildSubSection({
+          title: m.inRelationship.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'inRelationship',
+              title: m.inRelationship.general.pageTitle,
+              component: 'InRelationship',
             }),
           ],
         }),

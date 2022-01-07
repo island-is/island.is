@@ -16,4 +16,9 @@ export const section = defineMessages({
     defaultMessage: 'Gagnaöflun',
     description: 'Data gathering section',
   },
+  personalInterest: {
+    id: 'fa.application:section.personalInterest',
+    defaultMessage: 'Persónuhagir',
+    description: 'Personal interest section',
+  },
 })
