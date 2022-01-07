@@ -6,7 +6,9 @@ import {
   DefaultEvents,
   ApplicationConfigurations,
 } from '@island.is/application/core'
+
 import { Roles, ApplicationStates } from './constants'
+
 import { application } from './messages'
 import { dataSchema } from './dataSchema'
 

@@ -27,14 +27,14 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/funding-government-projects'),
   [ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN]: () =>
     import('@island.is/application/templates/public-debt-payment-plan'),
-  [ApplicationTypes.JOINT_CUSTODY_AGREEMENT]: () =>
-    import('@island.is/application/templates/joint-custody-agreement'),
   [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]: () =>
     import('@island.is/application/templates/complaints-to-althingi-ombudsman'),
   [ApplicationTypes.ACCIDENT_NOTIFICATION]: () =>
     import('@island.is/application/templates/accident-notification'),
   [ApplicationTypes.GENERAL_PETITION]: () =>
     import('@island.is/application/templates/general-petition'),
+  [ApplicationTypes.P_SIGN]: () =>
+    import('@island.is/application/templates/p-sign'),
   [ApplicationTypes.CRIMINAL_RECORD]: () =>
     import('@island.is/application/templates/criminal-record'),
   [ApplicationTypes.FINANCIAL_AID]: () =>

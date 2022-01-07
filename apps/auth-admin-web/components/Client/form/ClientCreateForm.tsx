@@ -695,6 +695,41 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       <div className="client__container__checkbox__field">
                         <label
                           className="client__label"
+                          htmlFor="supportsPersonalRepresentatives"
+                        >
+                          {
+                            localization.fields[
+                              'supportsPersonalRepresentatives'
+                            ].label
+                          }
+                        </label>
+                        <input
+                          id="supportsPersonalRepresentatives"
+                          type="checkbox"
+                          name="client.supportsPersonalRepresentatives"
+                          defaultChecked={
+                            client.supportsPersonalRepresentatives
+                          }
+                          className="client__input"
+                          ref={register}
+                          title={
+                            localization.fields[
+                              'supportsPersonalRepresentatives'
+                            ].helpText
+                          }
+                        />
+                        <HelpBox
+                          helpText={
+                            localization.fields[
+                              'supportsPersonalRepresentatives'
+                            ].helpText
+                          }
+                        />
+                      </div>
+
+                      <div className="client__container__checkbox__field">
+                        <label
+                          className="client__label"
                           htmlFor="supportsProcuringHolders"
                         >
                           {
