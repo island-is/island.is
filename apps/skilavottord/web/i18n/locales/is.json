@@ -113,19 +113,30 @@
       "primaryButton": "Endurhlaða síðu"
     }
   },
-  "confirm": {
-    "title": "Samþykkja úrvinnslu ökutækis",
+  "recycle": {
+    "title": "Endurvinna ökutæki",
     "subTitles": {
       "confirm": "Viltu velja þetta ökutæki til úrvinnslu?"
     },
-    "info": "Þegar ökutæki hefur verið samþykkt til úrvinnslu getur þú leitið upplýsinga hjá viðkomandi sveitarfélagi/móttökuaðila um hvert eigi að fara með ökutækið til að farga því. Umsóknin er ekki bindandi, ökutæki verður einungis endurunnið sé því skilað til móttökuaðila.",
+    "info": "Þegar ökutæki hefur verið samþykkt til úrvinnslu getur þú leitað upplýsinga hjá viðkomandi sveitarfélagi/móttökuaðila um hvert eigi að fara með ökutækið til að farga því. Umsóknin er ekki bindandi, ökutæki verður einungis endurunnið sé því skilað til móttökuaðila.",
     "buttons": {
       "cancel": "Hætta við",
-      "continue": "Rafrænt samþykki"
+      "continue": "Halda áfram"
     },
     "checkbox": {
       "label": "Samþykkja",
       "linkLabel": "Skilmála og skilyrði"
+    }
+  },
+  "confirm": {
+    "title": "Staðfesta endurvinnslu",
+    "subTitles": {
+      "confirm": "Ertu viss um að senda þetta ökutæki til úrvinnslu?"
+    },
+    "info": "Með því að samþykkja verður bíllinn þinn skráður sem endurvinnanlegur. Umsóknin er ekki bindandi. Ökutæki verður einungis endurunnið sé því skilað til móttökuaðila.",
+    "buttons": {
+      "cancel": "Til baka",
+      "continue": "Staðfesta"
     }
   },
   "handover": {
@@ -199,10 +210,7 @@
     "outOf": "af",
     "citizen": {
       "title": "Skil á ökutæki",
-      "sections": [
-        "Samþykkja úrvinnslu ökutækis",
-        "Afhenda ökutæki til móttökuaðila"
-      ],
+      "sections": ["Endurvinna bíl", "Staðfesting", "Yfirlit"],
       "completed": "Lokið"
     },
     "company": {
@@ -275,6 +283,7 @@
     "success": "Staðsetning var uppfærð."
   },
   "deregisterSidenav": {
+    "title": "Aðgerðir",
     "deregister": "Afskrá ökutæki",
     "companyInfo": "Upplýsingar fyrirtækis"
   },
@@ -326,9 +335,9 @@
     "subtitles": {
       "deregistered": "Afskráð ökutæki"
     },
-    "info": "Engin meðhöndluð ökutæki",
+    "info": "Hér má sjá lista af afskráðum ökutækjum, ásamt dagsetningu afskráningarinnar.",
     "buttons": {
-      "export": "Export"
+      "export": "Senda"
     },
     "search": {
       "label": "Leita að skráningarnúmeri",
@@ -339,7 +348,8 @@
   "recyclingFundSidenav": {
     "title": "Úrvinnslusjóður",
     "recycled": "Meðhöndluð ökutæki",
-    "companies": "Móttökuaðilar"
+    "companies": "Móttökuaðilar",
+    "accessControl": "Aðgangsstýring"
   },
   "recyclingCompanies": {
     "title": "Móttökuaðilar",
@@ -354,7 +364,157 @@
     },
     "buttons": {
       "add": "Bæta við móttökuaðila",
-      "edit": "Breyta"
+      "view": "Skoða"
+    },
+    "recyclingCompany": {
+      "view": {
+        "title": "Móttökuaðili",
+        "breadcrumb": "Skoða",
+        "info": "Þú getur annaðhvort uppfært eða eytt móttökuaðila. Vinsamlegast staðfestið að upplýsingar fyrirtækis séu rétt slegnar inn.",
+        "updated": "Uppfært",
+        "deleted": "Eytt"
+      },
+      "add": {
+        "title": "Bæta við móttökuaðila",
+        "breadcrumb": "Bæta við",
+        "info": "Þegar nýjum móttökuaðila er bætt við, verður hann aðgengilegur í aðgangsstýringu. Vinsamlegast staðfestið að upplýsingar fyrirtækis séu rétt slegnar inn.",
+        "added": "Bætt við"
+      },
+      "form": {
+        "inputs": {
+          "companyId": {
+            "label": "Auðkenni fyrirtækis (ID)",
+            "placeholder": "Auðkenni fyrirtækis",
+            "rules": {
+              "required": "Skylda er að fylla út auðkenni fyrirtækis"
+            }
+          },
+          "companyName": {
+            "label": "Nafn fyrirtækis",
+            "placeholder": "Nafn fyrirtækis",
+            "rules": {
+              "required": "Skylda er að fylla út nafn fyrirtækis"
+            }
+          },
+          "address": {
+            "label": "Heimilisfang",
+            "placeholder": "Heimilisfang",
+            "rules": {
+              "required": "Skylda er að fylla út heimilisfang"
+            }
+          },
+          "postnumber": {
+            "label": "Póstnúmer",
+            "placeholder": "Póstnúmer",
+            "rules": {
+              "required": "Skylda er að fylla út póstnúmer"
+            }
+          },
+          "city": {
+            "label": "Borg",
+            "placeholder": "Borg",
+            "rules": {
+              "required": "Skylda er að fylla út borg"
+            }
+          },
+          "website": {
+            "label": "Vefsíða",
+            "placeholder": "Vefsíða",
+            "rules": {
+              "required": "Skylda er að fylla út vefsíðu"
+            }
+          },
+          "phone": {
+            "label": "Símanúmer",
+            "placeholder": "Símanúmer",
+            "rules": {
+              "required": "Skylda er að fylla út símanúmer"
+            }
+          },
+          "active": {
+            "label": "Virkt",
+            "placeholder": "Virkt",
+            "rules": {
+              "required": "Skylda er að fylla út virkni"
+            }
+          }
+        },
+        "buttons": {
+          "cancel": "Hætta við",
+          "continue": "Halda áfram",
+          "confirm": "Staðfesta",
+          "goBack": "Til baka"
+        }
+      }
+    }
+  },
+  "accessControl": {
+    "title": "Aðgangsstýring",
+    "info": "Hérna kemur listi yfir þá aðganga sem þú hefur gefið öðrum. Þú getur eytt aðgangi eða bætt við nýjum.",
+    "empty": "Enginn aðgangur hefur verið veittur",
+    "tableHeaders": {
+      "nationalId": "Kennitala",
+      "name": "Nafn",
+      "role": "Hlutverk",
+      "partner": "Móttökuaðili"
+    },
+    "status": {
+      "active": "Virkt",
+      "inactive": "Óvirkt"
+    },
+    "buttons": {
+      "add": "Bæta við aðgangi",
+      "edit": "Breyta",
+      "delete": "Fjarlægja",
+      "actions": "aðgerðir"
+    },
+    "modal": {
+      "titles": {
+        "add": "Bæta við aðgangi",
+        "edit": "Breyta aðgangi",
+        "delete": "Eyða aðgangi"
+      },
+      "subtitles": {
+        "add": "Aðgangshafi mun fá aðgang til að framkvæma aðgerðir í því hlutverki sem er sett. Vinsamlegast verið viss um að kennitalan eigi við réttan einstakling.",
+        "edit": "Aðgangshafi mun fá aðgang til að framkvæma aðgerðir í því hlutverki sem er sett. Vinsamlegast verið viss um að hlutverkið eigi við réttan einstakling.",
+        "delete": "Ertu viss um að þú viljir eyða þessum aðgangi?"
+      },
+      "inputs": {
+        "nationalId": {
+          "label": "Kennitala",
+          "placeholder": "Kennitala",
+          "rules": {
+            "required": "Skylda er að fylla út kennitölu",
+            "validate": "Kennitalan er ekki gild kennitala"
+          }
+        },
+        "name": {
+          "label": "Nafn",
+          "placeholder": "Nafn",
+          "rules": {
+            "required": "Skylda er að fylla út nafn"
+          }
+        },
+        "role": {
+          "label": "Hlutverk",
+          "placeholder": "Hlutverk",
+          "rules": {
+            "required": "Skylda er að fylla út hlutverk"
+          }
+        },
+        "partner": {
+          "label": "Móttökuaðili",
+          "placeholder": "Móttökuaðili",
+          "rules": {
+            "required": "Skylda er að fylla út móttökuaðila"
+          }
+        }
+      },
+      "buttons": {
+        "cancel": "Hætta við",
+        "continue": "Staðfesta",
+        "confirm": "Staðfesta"
+      }
     }
   },
   "notFound": {
@@ -378,6 +538,7 @@
     "myCars": "/my-cars",
     "recycleVehicle": {
       "baseRoute": "/recycle-vehicle",
+      "recycle": "/recycle-vehicle/[id]/recycle",
       "confirm": "/recycle-vehicle/[id]/confirm",
       "handover": "/recycle-vehicle/[id]/handover",
       "completed": "/recycle-vehicle/[id]/completed"
@@ -388,10 +549,11 @@
       "deregister": "/deregister-vehicle/[id]"
     },
     "recycledVehicles": "/recycled-vehicles",
+    "accessControl": "/access-control",
     "recyclingCompanies": {
       "baseRoute": "/recycling-companies",
       "add": "/recycling-companies/add",
-      "edit": "/recycling-companies/[company]"
+      "edit": "/recycling-companies/[id]"
     },
     "companyInfo": {
       "baseRoute": "/company-info",

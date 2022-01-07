@@ -10,7 +10,7 @@ import {
 import { Link, Redirect } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { gql, useMutation } from '@apollo/client'
-import { useUserProfile } from '@island.is/service-portal/graphql'
+import { useUserProfileAndIslykill } from '@island.is/service-portal/graphql'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
@@ -39,14 +39,14 @@ export const EditPhoneNumber: ServicePortalModuleComponent = () => {
     'passive',
   )
 
-  const { data: settings } = useUserProfile()
+  const { data: settings } = useUserProfileAndIslykill()
   const [updateIslykill, { loading, error }] = useMutation(
     UpdateIslykillSettings,
   )
   const { formatMessage } = useLocale()
 
   useEffect(() => {
-    if (settings?.mobilePhoneNumber) setTel(settings?.mobilePhoneNumber)
+    if (settings?.mobile) setTel(settings?.mobile)
   }, [settings])
 
   const submitFormData = async (formData: PhoneFormData) => {
@@ -81,7 +81,7 @@ export const EditPhoneNumber: ServicePortalModuleComponent = () => {
   return (
     <>
       <Box marginBottom={4}>
-        <Text variant="h1" as="h1">
+        <Text variant="h3" as="h1">
           {formatMessage({
             id: 'sp.settings:edit-phone-number',
             defaultMessage: 'Breyta símanúmeri',

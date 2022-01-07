@@ -26,11 +26,9 @@ export const Submitted = () => {
               {formatMessage(submitted.labels.descriptionBulletTwo)}
             </Bullet>
             <Bullet>
-              {formatMessage(submitted.labels.descriptionBulletThree, {
-                tel: '847 3759',
-              })}{' '}
-              <Link href={`mailto:island.is`} color="blue400">
-                island.is
+              {formatMessage(submitted.labels.descriptionBulletThree)}{' '}
+              <Link href={`mailto:island@island.is`} color="blue400">
+                island@island.is
               </Link>
             </Bullet>
           </BulletList>

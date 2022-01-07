@@ -4,11 +4,12 @@ import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Authorize } from '../auth'
+import { Authorize, CurrentUser, User, Role } from '../auth'
+
 import { VehicleOwnerModel } from './vehicleOwner.model'
 import { VehicleOwnerService } from './vehicleOwner.service'
 
-@Authorize({ throwOnUnAuthorized: false })
+@Authorize()
 @Resolver(() => VehicleOwnerModel)
 export class VehicleOwnerResolver {
   constructor(
@@ -26,19 +27,20 @@ export class VehicleOwnerResolver {
     return res
   }
 
-  //TODO find right name
   @Query(() => VehicleOwnerModel)
   async skilavottordVehiclesFromLocal(
-    @Args('nationalId') nationalId: string,
+    @CurrentUser() user: User,
   ): Promise<VehicleOwnerModel> {
-    const res = await this.vehicleOwnerService.findByNationalId(nationalId)
+    const res = await this.vehicleOwnerService.findByNationalId(user.nationalId)
     this.logger.warn(
       'getVehicleOwnersByNationaId responce:' + JSON.stringify(res, null, 2),
     )
     return res
   }
 
-  @Authorize({ roles: ['developer', 'recyclingCompany', 'recyclingFund'] })
+  @Authorize({
+    roles: [Role.developer, Role.recyclingCompany, Role.recyclingFund],
+  })
   @Query(() => [VehicleOwnerModel])
   async skilavottordRecyclingPartnerVehicles(
     @Args('partnerId') partnerId: string,
@@ -52,11 +54,11 @@ export class VehicleOwnerResolver {
 
   @Mutation(() => Boolean)
   async createSkilavottordVehicleOwner(
-    @Args('nationalId') nationalId: string,
+    @CurrentUser() user: User,
     @Args('name') name: string,
   ) {
     const vm = new VehicleOwnerModel()
-    vm.nationalId = nationalId
+    vm.nationalId = user.nationalId
     vm.personname = name
 
     this.logger.info(

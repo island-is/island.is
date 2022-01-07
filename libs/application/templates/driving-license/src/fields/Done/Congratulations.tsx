@@ -14,7 +14,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import WarningSection, { Step } from './WarningSection'
-import { hasYes } from '../../utils'
+import { hasYes } from '../../lib/utils'
 
 interface ReasonsProps {
   key: string

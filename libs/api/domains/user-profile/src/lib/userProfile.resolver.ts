@@ -14,6 +14,9 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
+import { UserDeviceToken } from './userDeviceToken.model'
+import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
+import { DeleteTokenResponse } from './dto/deleteTokenResponse'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -71,5 +74,21 @@ export class UserProfileResolver {
     @CurrentUser() user: User,
   ): Promise<ConfirmResponse | null> {
     return await this.userUserProfileService.confirmEmail(input, user)
+  }
+
+  @Mutation(() => UserDeviceToken)
+  async addUserProfileDeviceToken(
+    @Args('input') input: UserDeviceTokenInput,
+    @CurrentUser() user: User,
+  ): Promise<UserDeviceToken> {
+    return await this.userUserProfileService.addDeviceToken(input, user)
+  }
+
+  @Mutation(() => DeleteTokenResponse)
+  async deleteUserProfileDeviceToken(
+    @Args('input') input: UserDeviceTokenInput,
+    @CurrentUser() user: User,
+  ): Promise<DeleteTokenResponse> {
+    return await this.userUserProfileService.deleteDeviceToken(input, user)
   }
 }

@@ -3,7 +3,6 @@ import {
   Controller,
   Header,
   Inject,
-  Get,
   Post,
   Res,
   Param,
@@ -12,11 +11,18 @@ import {
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
 import { FinanceService } from '@island.is/api/domains/finance'
+import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { GetFinanceDocumentDto } from './dto/getFinanceDocument.dto'
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.financeOverview, ApiScope.financeSalary)
 @Controller('finance')
 export class FinanceDocumentController {
   constructor(

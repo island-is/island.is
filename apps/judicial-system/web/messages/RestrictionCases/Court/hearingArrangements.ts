@@ -2,6 +2,15 @@ import { defineMessages, defineMessage } from 'react-intl'
 
 // Strings for court officials
 export const rcHearingArrangements = {
+  comments: {
+    title: defineMessage({
+      id:
+        'judicial.system.restriction_cases:hearing_arrangements.comments.title',
+      defaultMessage: 'Athugasemdir vegna málsmeðferðar',
+      description:
+        'Notaður sem titill í viðvörunarboxi með athugasemdum vegna málsmeðferðar á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
+    }),
+  },
   title: defineMessage({
     id: 'judicial.system.restriction_cases:hearing_arrangements.title',
     defaultMessage: 'Fyrirtaka',
@@ -59,6 +68,56 @@ export const rcHearingArrangements = {
         defaultMessage: 'Verjandi',
         description:
           'Notaður sem titill fyrir "Verjanda" hlutann á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      tooltip: defineMessage({
+        id:
+          'judicial.system.restriction_cases:hearing_arrangements.defender.tooltip',
+        defaultMessage:
+          'Lögmaður sem er valinn hér verður skipaður verjandi í þinghaldi og fær sendan úrskurð rafrænt.',
+        description:
+          'Notaður sem upplýsingatexti í upplýsingasvæði við "Verjanda" fyrirsögn á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
+      }),
+      nameLabel: {
+        id:
+          'judicial.system.restriction_cases:hearing_arrangements.defender.name_label',
+        defaultMessage: 'Nafn verjanda',
+        description:
+          'Notaður sem titill í "Nafn verjanda" textaboxi á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      namePlaceholder: {
+        id:
+          'judicial.system.restriction_cases:hearing_arrangements.defender.name_placeholder',
+        defaultMessage: 'Fullt nafn',
+        description:
+          'Notaður sem skýritexti í "Nafn verjanda" textaboxi á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      emailLabel: {
+        id:
+          'judicial.system.restriction_cases:hearing_arrangements.defender.email_label',
+        defaultMessage: 'Netfang verjanda',
+        description:
+          'Notaður sem titill í "Netfang verjanda" textaboxi á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      emailPlaceholder: {
+        id:
+          'judicial.system.restriction_cases:hearing_arrangements.defender.email_placeholder',
+        defaultMessage: 'Netfang',
+        description:
+          'Notaður sem skýritexti í "Netfang verjanda" textaboxi á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      phoneNumberLabel: {
+        id:
+          'judicial.system.restriction_cases:hearing_arrangements.defender.phone_number_label',
+        defaultMessage: 'Símanúmer verjanda',
+        description:
+          'Notaður sem titill í "Símanúmer verjanda" textaboxi á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      phoneNumberPlaceholder: {
+        id:
+          'judicial.system.restriction_cases:hearing_arrangements.defender.phone_number_placeholder',
+        defaultMessage: 'Símanúmer',
+        description:
+          'Notaður sem skýritexti í "Símanúmer verjanda" textaboxi á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
   },

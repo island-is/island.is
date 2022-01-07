@@ -13,6 +13,9 @@ export const openApi = new DocumentBuilder()
     flows: {
       authorizationCode: {
         scopes: {
+          ['openid']: '',
+          ['profile']: '',
+          [UserProfileScope.admin]: 'Get user device tokens',
           [UserProfileScope.read]: 'Get a single user profile.',
           [UserProfileScope.write]:
             'Update and email/sms varifications for a single user profile.',

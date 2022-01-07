@@ -1,10 +1,11 @@
 import { createContext } from 'react'
-import { User } from '../types'
+
+import { SkilavottordUser } from '@island.is/skilavottord-web/graphql/schema'
 
 export interface UserProvider {
   isAuthenticated?: boolean
-  user?: User
-  setUser?: React.Dispatch<React.SetStateAction<User | undefined>>
+  user?: SkilavottordUser
+  setUser?: React.Dispatch<React.SetStateAction<SkilavottordUser | undefined>>
 }
 
 const UserContext = createContext<UserProvider>({})

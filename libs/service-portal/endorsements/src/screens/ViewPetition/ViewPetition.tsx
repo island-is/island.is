@@ -252,6 +252,7 @@ const ViewPetition = () => {
                       </Text>
                       <Box display="flex" marginTop={3}>
                         <DatePicker
+                          size="xs"
                           label="Breyta loka dagsetningu"
                           locale="is"
                           placeholderText="Veldu dagsetningu"
@@ -330,6 +331,7 @@ const ViewPetition = () => {
                           handleChange={(date) =>
                             setSelectedDateToOpenList(date)
                           }
+                          size="xs"
                         />
                       </Box>
                       <Box

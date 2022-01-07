@@ -76,7 +76,6 @@ describe('AppController - Greate', () => {
     })
 
     it('should return a new case', () => {
-      console.log(then)
       expect(then.result).toEqual({ id: caseId })
     })
   })
@@ -98,7 +97,7 @@ describe('AppController - Greate', () => {
 
     it('should throw BadRequestException', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toBe('Could not create a new case')
+      expect(then.error.message).toBe('Failed to create a new case')
     })
   })
 
@@ -117,7 +116,7 @@ describe('AppController - Greate', () => {
 
     it('should throw BadGatewayException', () => {
       expect(then.error).toBeInstanceOf(BadGatewayException)
-      expect(then.error.message).toBe('Could not create a new case')
+      expect(then.error.message).toBe('Failed to create a new case')
     })
   })
 
@@ -137,7 +136,7 @@ describe('AppController - Greate', () => {
 
     it('should throw a BadGatewayException', () => {
       expect(then.error).toBeInstanceOf(BadGatewayException)
-      expect(then.error.message).toBe('Could not create a new case')
+      expect(then.error.message).toBe('Failed to create a new case')
     })
   })
 
@@ -154,7 +153,7 @@ describe('AppController - Greate', () => {
 
     it('should throw a BadGatewayException', () => {
       expect(then.error).toBeInstanceOf(BadGatewayException)
-      expect(then.error.message).toBe('Could not create a new case')
+      expect(then.error.message).toBe('Failed to create a new case')
     })
   })
 })

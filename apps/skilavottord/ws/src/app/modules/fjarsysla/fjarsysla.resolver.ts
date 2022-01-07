@@ -1,21 +1,21 @@
 import { Query, Resolver, Args } from '@nestjs/graphql'
 
-import { Authorize } from '../auth'
+import { Authorize, CurrentUser, User, Role } from '../auth'
+
 import { Fjarsysla } from './fjarsysla.model'
 import { FjarsyslaService } from './fjarsysla.service'
 
-@Authorize({ throwOnUnAuthorized: false })
+@Authorize({ roles: [Role.developer, Role.recyclingCompany] })
 @Resolver(() => Fjarsysla)
 export class FjarsyslaResolver {
   constructor(private fjarsyslaService: FjarsyslaService) {}
 
-  @Authorize({ roles: ['developer', 'recyclingCompany'] })
   @Query(() => Boolean)
   async skilavottordFjarsyslaSkilagjald(
-    @Args('nationalId') nid: string,
+    @CurrentUser() user: User,
     @Args('vehiclePermno') permno: string,
     @Args('guid') id: string,
   ): Promise<boolean> {
-    return this.fjarsyslaService.getFjarsysluRest(nid, permno, id)
+    return this.fjarsyslaService.getFjarsysluRest(user.nationalId, permno, id)
   }
 }

@@ -11,7 +11,6 @@ import { NationalRegistryClientConfig } from '@island.is/clients/national-regist
 import { environment } from '../environments'
 import { DelegationsModule } from './modules/delegations/delegations.module'
 import { ResourcesModule } from './modules/resources/resources.module'
-import { TranslationModule } from './modules/translation/translation.module'
 
 @Module({
   imports: [
@@ -22,7 +21,6 @@ import { TranslationModule } from './modules/translation/translation.module'
     }),
     DelegationsModule,
     ResourcesModule,
-    TranslationModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [XRoadConfig, NationalRegistryClientConfig, FeatureFlagConfig],

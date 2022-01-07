@@ -3,6 +3,7 @@ import { DrivingAssessment, Juristiction, QualityPhoto } from '..'
 import { ApiV1, EmbaettiDto } from '../v1'
 import { ApiV2, DRIVING_LICENSE_API_VERSION_V2, Rettindi } from '../v2'
 import { DriversLicense, Teacher } from './drivingLicenseApi.types'
+import { handleCreateResponse } from './utils/handleCreateResponse'
 
 // empty string === successful license posted!?!
 const DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE = ''
@@ -209,17 +210,15 @@ export class DrivingLicenseApi {
       apiVersion: DRIVING_LICENSE_API_VERSION_V2,
     })
 
-    // Service returns empty string on success (actually different but the generated
-    // client forces it to)
-    const success = '' + response === DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE
+    const handledResponse = handleCreateResponse(response)
 
-    if (!success) {
+    if (!handledResponse.success) {
       throw new Error(
-        `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${response}`,
+        `POST apiOkuskirteiniApplicationsNewCategoryPost was not successful, response was: ${handledResponse.error}`,
       )
     }
 
-    return success
+    return handledResponse.success
   }
 
   async getHasQualityPhoto(params: { nationalId: string }): Promise<boolean> {

@@ -6,7 +6,11 @@ import isCircular from 'is-circular'
 import { ISubArticle } from '../../generated/contentfulTypes'
 import { mapSubArticle } from '../../models/subArticle.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
-import { createTerms, extractStringsFromObject } from './utils'
+import {
+  createTerms,
+  extractStringsFromObject,
+  removeEntryHyperlinkFields,
+} from './utils'
 
 @Injectable()
 export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
@@ -48,6 +52,12 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
               ...entry.fields,
               parent: processedArticle,
             },
+          }
+          // An entry hyperlink does not need the extra content present in
+          // the entry hyperlink associated fields
+          // We remove them from the reference itself on nodeType `entry-hyperlink`
+          if (processedEntry.fields?.content) {
+            removeEntryHyperlinkFields(processedEntry.fields.content)
           }
 
           if (!isCircular(processedEntry)) {

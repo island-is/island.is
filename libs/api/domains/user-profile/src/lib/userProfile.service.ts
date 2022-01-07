@@ -8,7 +8,7 @@ import {
   UserProfileApi,
   UserProfileControllerCreateRequest,
   UserProfileControllerUpdateRequest,
-} from '../../gen/fetch'
+} from '@island.is/clients/user-profile'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
@@ -17,6 +17,7 @@ import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInp
 import { UserProfile } from './userProfile.model'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslyklarApi } from '@island.is/clients/islykill'
+import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 
 // eslint-disable-next-line
 const handleError = (error: any) => {
@@ -155,6 +156,24 @@ export class UserProfileService {
       .userProfileControllerConfirmEmail({
         nationalId: user.nationalId,
         confirmEmailDto,
+      })
+      .catch(handleError)
+  }
+
+  async addDeviceToken(input: UserDeviceTokenInput, user: User) {
+    return await this.userProfileApiWithAuth(user)
+      .userProfileControllerAddDeviceToken({
+        nationalId: user.nationalId,
+        deviceTokenDto: input,
+      })
+      .catch(handleError)
+  }
+
+  async deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
+    return await this.userProfileApiWithAuth(user)
+      .userProfileControllerDeleteDeviceToken({
+        nationalId: user.nationalId,
+        deviceTokenDto: input,
       })
       .catch(handleError)
   }

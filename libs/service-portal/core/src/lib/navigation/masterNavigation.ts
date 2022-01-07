@@ -19,13 +19,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Rafraen skjol
       {
-        heading: m.service,
         name: m.documents,
         path: ServicePortalPath.ElectronicDocumentsRoot,
         icon: {
           type: 'outline',
           icon: 'reader',
         },
+        subscribesTo: 'documents',
       },
 
       // Umsoknir
@@ -40,7 +40,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Min Gogn
       {
-        heading: m.myInfo,
         name: m.userInfo,
         path: ServicePortalPath.MyInfoRoot,
         icon: {
@@ -80,7 +79,25 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'receipt',
         },
       },
-
+      // Mín réttindi
+      {
+        name: m.delegation,
+        path: ServicePortalPath.MyLicensesRoot,
+        icon: {
+          type: 'outline',
+          icon: 'receipt',
+        },
+        children: [
+          {
+            name: m.parentalLeave,
+            path: ServicePortalPath.ParentalLeave,
+          },
+          {
+            name: m.drivingLicense,
+            path: ServicePortalPath.DrivingLicense,
+          },
+        ],
+      },
       // Menntun
       {
         name: m.education,
@@ -90,7 +107,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'school',
         },
       },
-
       {
         name: m.documentProvider,
         path: ServicePortalPath.DocumentProviderRoot,
@@ -210,64 +226,43 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'car',
         },
       },
-    ],
-  },
-
-  {
-    name: m.actions,
-    children: [
-      // Stillingar
+      // Stillingar - hidden from nav
       {
-        heading: m.comingSoon,
         name: m.settings,
         path: ServicePortalPath.SettingsRoot,
-        systemRoute: true,
-        icon: {
-          type: 'outline',
-          icon: 'settings',
-        },
+        navHide: true,
         children: [
           {
             name: m.accessControl,
             path: ServicePortalPath.SettingsAccessControl,
-            children: [
-              {
-                name: m.accessControlGrant,
-                path: ServicePortalPath.SettingsAccessControlGrant,
-              },
-              {
-                name: m.accessControlAccess,
-                path: ServicePortalPath.SettingsAccessControlAccess,
-              },
-            ],
+          },
+          {
+            name: m.accessControlGrant,
+            path: ServicePortalPath.SettingsAccessControlGrant,
+          },
+          {
+            name: m.accessControlAccess,
+            path: ServicePortalPath.SettingsAccessControlAccess,
           },
           {
             name: m.personalInformation,
             path: ServicePortalPath.SettingsPersonalInformation,
           },
           {
-            name: m.islykill,
-            path: ServicePortalPath.SettingsIslykill,
-          },
-        ],
-      },
-
-      // Mín réttindi
-      {
-        name: m.delegation,
-        path: ServicePortalPath.MyLicensesRoot,
-        icon: {
-          type: 'outline',
-          icon: 'receipt',
-        },
-        children: [
-          {
-            name: m.parentalLeave,
-            path: ServicePortalPath.ParentalLeave,
+            name: m.email,
+            path: ServicePortalPath.SettingsPersonalInformationEditEmail,
           },
           {
-            name: m.drivingLicense,
-            path: ServicePortalPath.DrivingLicense,
+            name: m.phone,
+            path: ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
+          },
+          {
+            name: m.nudge,
+            path: ServicePortalPath.SettingsPersonalInformationEditNudge,
+          },
+          {
+            name: m.language,
+            path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
           },
         ],
       },
