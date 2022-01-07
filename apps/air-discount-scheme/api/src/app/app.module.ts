@@ -11,9 +11,6 @@ import {
 import { BackendAPI } from '../services'
 import { environment } from '../environments'
 import { AuthModule } from '@island.is/auth-nest-tools'
-// import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
-// import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
-
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -37,10 +34,6 @@ const autoSchemaFile = environment.production
     FlightModule,
     FlightLegModule,
     CmsModule,
-    // ConfigModule.forRoot({
-    //   isGlobal: true,
-    //   load: [XRoadConfig, NationalRegistryClientConfig],
-    // }),
   ],
 })
 export class AppModule {}

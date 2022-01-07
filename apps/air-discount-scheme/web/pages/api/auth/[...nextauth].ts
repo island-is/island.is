@@ -1,7 +1,8 @@
 import NextAuth, { CallbacksOptions } from 'next-auth'
 import Providers from 'next-auth/providers'
 import { uuid } from 'uuidv4'
-import { identityServerConfig, Role } from '@island.is/air-discount-scheme-web/lib'
+import { identityServerConfig } from '@island.is/air-discount-scheme-web/lib'
+import { Role } from '@island.is/air-discount-scheme/types'
 import environment from '@island.is/air-discount-scheme-web/environments/environment'
 import {
   AuthUser,
@@ -40,7 +41,6 @@ async function signIn(
 }
 
 async function jwt(token: JWT, user: AuthUser) {
-  console.log(token.accessToken)
   if (user) {
     token = {
       nationalId: user.nationalId,
@@ -50,7 +50,7 @@ async function jwt(token: JWT, user: AuthUser) {
       idToken: user.idToken,
       isRefreshTokenExpired: false,
       folder: token.folder ?? uuid(),
-      //service: Role,
+      role: Role,
     }
   }
   return await handleJwt(

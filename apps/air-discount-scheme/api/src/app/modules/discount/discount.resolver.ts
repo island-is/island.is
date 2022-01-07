@@ -4,11 +4,9 @@ import {
   Discount as TDiscount,
   User as TUser,
 } from '@island.is/air-discount-scheme/types'
-import { AuthUser } from '../auth/types'
-import { CurrentUser } from '../decorators'
 import { Discount } from './discount.model'
 import { User } from '../user'
-import { IdsUserGuard, IdsAuthGuard, ScopesGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, ScopesGuard, CurrentUser, User as AuthUser, Scopes } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 
 type DiscountWithTUser = Discount & { user: TUser }
@@ -16,6 +14,7 @@ type DiscountWithTUser = Discount & { user: TUser }
 const TWO_HOURS = 7200 // seconds
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes('@vegagerdin.is/air-discount-scheme-scope')
 @Resolver(() => Discount)
 export class DiscountResolver {
 
@@ -24,7 +23,6 @@ export class DiscountResolver {
     @CurrentUser() user: AuthUser,
     @Context('dataSources') { backendApi },
   ): Promise<DiscountWithTUser[]> {
-    console.log('inside discounts')
     const relations: TUser[] = await backendApi.getUserRelations(
       user.nationalId,
     )

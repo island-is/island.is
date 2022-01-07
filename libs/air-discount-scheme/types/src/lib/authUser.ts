@@ -1,7 +1,11 @@
 import { FlightLeg } from ".."
 import { Fund } from './user'
 
-export type Role = 'developer' | 'admin' | 'user'
+export enum Role {
+  DEVELOPER = 'developer',
+  ADMIN = 'admin',
+  USER = 'user',
+}
 
 export interface AuthUser {
   nationalId: string

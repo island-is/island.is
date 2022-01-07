@@ -7,15 +7,18 @@ import {
 } from '@island.is/air-discount-scheme/types'
 import { FlightLeg } from '../flightLeg'
 import { CurrentUser } from '../decorators'
-import { AuthUser, Role } from '../auth/types'
+import { AuthUser } from '../auth/types'
 import { User } from './models'
 import { Inject } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
+import { getRole } from '../auth/roles'
+//import { Role } from '@island.is/air-discount-scheme/types'
 
-//@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes('@vegagerdin.is/air-discount-scheme-scope')
 @Resolver(() => User)
 export class UserResolver {
   constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
@@ -31,10 +34,9 @@ export class UserResolver {
     return user as User
   }
 
-  // TODO FIGURE OUT ROLE AND RETURN IT
   @ResolveField('role')
   resolveRole(@CurrentUser() user: AuthUser): string {
-    return 'developer' as Role
+    return getRole(user)
   }
 
   @ResolveField('meetsADSRequirements')
@@ -42,7 +44,6 @@ export class UserResolver {
     if (user.fund) {
       return user.fund.credit === user.fund.total - user.fund.used
     }
-
     return false
   }
 
@@ -51,9 +52,11 @@ export class UserResolver {
     @CurrentUser() user: AuthUser,
     @Context('dataSources') { backendApi },
   ): Promise<TFlightLeg[]> {
+    console.log('before backend getuserlations')
     const relations: TUser[] = await backendApi.getUserRelations(
       user.nationalId,
     )
+    console.log(relations)
     return relations.reduce(
       (promise: Promise<FlightLeg[]>, relation: TUser) => {
         return promise.then(async (acc) => {

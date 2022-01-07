@@ -11,14 +11,18 @@ import {
 import type { FlightLeg as TFlightLeg } from '@island.is/air-discount-scheme/types'
 import { FlightLegsInput, ConfirmInvoiceInput } from './dto'
 import { FlightLeg } from './flightLeg.model'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
+import { Roles } from '../decorators/roles.decorator'
+import { Role } from '@island.is/air-discount-scheme/types'
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes('@vegagerdin.is/air-discount-scheme-scope')
 @Resolver(() => FlightLeg)
 export class FlightLegResolver {
 
   // TODO AUTHORIZE ADMIN ONLY  @Authorize({ role: 'admin' })
+  @Roles(Role.ADMIN)
   @Query(() => [FlightLeg])
   flightLegs(
     @Context('dataSources') { backendApi },
@@ -28,6 +32,7 @@ export class FlightLegResolver {
   }
 
   //TODO AUTHORIZE ADMIN ONLY@Authorize({ role: 'admin' })
+  @Roles(Role.ADMIN)
   @Mutation(() => [FlightLeg])
   confirmInvoice(
     @Context('dataSources') { backendApi },

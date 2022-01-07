@@ -12,16 +12,15 @@ import {
   ApiTags,
   ApiExcludeEndpoint,
 } from '@nestjs/swagger'
-
 import { GetUserByDiscountCodeParams, GetUserRelationsParams } from './dto'
 import { UserService } from './user.service'
 import { AirlineUser, User } from './user.model'
 import { DiscountService } from '../discount'
 import { FlightService } from '../flight'
-import { AuthGuard } from '../common'
-import { CurrentUser, IdsAuthGuard, IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import { User as AuthUser } from '@island.is/auth-nest-tools'
+
 @ApiTags('Users')
 @Controller('api/public')
 //@UseGuards(AuthGuard)
@@ -54,7 +53,8 @@ export class PublicUserController {
     return user
   }
 }
-@UseGuards(IdsUserGuard, ScopesGuard )
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes('@vegagerdin.is/air-discount-scheme-scope')
 @Controller('api/private')
 export class PrivateUserController {
   constructor(
@@ -70,7 +70,13 @@ export class PrivateUserController {
     @CurrentUser() user: AuthUser,
   ): Promise<User[]> {
     console.log('before thjodskra Xroad')
-    const ok = await this.thjodskraXroad.getNationalRegistryPerson(user, '0101303019')
+    let ok
+    try {
+      ok = await this.thjodskraXroad.getChildrenCustodyInformation(user, '0101303019')
+    } catch (e) {
+      console.log(e)
+    }
+    //ok = await this.thjodskraXroad.getNationalRegistryPerson(user, '0101303019')
     console.log(ok)
     console.log('before user service relations')
     const relations = await this.userService.getRelations(params.nationalId)
