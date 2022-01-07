@@ -33,6 +33,29 @@ Default.args = {
   noOptionsMessage: 'Enginn valmöguleiki',
 }
 
+export const Disabled = Template.bind({})
+Disabled.args = {
+  name: 'select2',
+  label: 'Tegund fyrirtækis',
+  placeholder: 'Veldu tegund',
+  options: [
+    {
+      label: 'Valmöguleiki 1',
+      value: '0',
+    },
+    {
+      label: 'Valmöguleiki 2',
+      value: '1',
+    },
+    {
+      label: 'Valmöguleiki 3',
+      value: '2',
+    },
+  ],
+  noOptionsMessage: 'Enginn valmöguleiki',
+  disabled: true,
+}
+
 export const TempTest = () => (
   <div style={{ height: 900 }}>
     <h1>WIP</h1>
