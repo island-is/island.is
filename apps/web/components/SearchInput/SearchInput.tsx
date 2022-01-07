@@ -42,7 +42,6 @@ import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
-const ITEM_LINK_PREFIX = '#ITEM_LINK_PREFIX#'
 
 type SearchState = {
   term: string
@@ -173,25 +172,34 @@ const useSearch = (
   return state
 }
 
+type SubmitType = {
+  type: 'query' | 'link'
+  string: string
+}
+
 const useSubmit = (locale: Locale, onRouting?: () => void) => {
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
 
   return useCallback(
-    (q: string) => {
-      if (q) {
-        Router.push({
+    (item: SubmitType) => {
+      Router.push({
+        ...(item.type === 'query' && {
           pathname: linkResolver('search').href,
-          query: { q },
-        }).then(() => {
-          window.scrollTo(0, 0)
-        })
-        if (onRouting) {
-          onRouting()
-        }
+          query: { q: item.string },
+        }),
+        ...(item.type === 'link' && {
+          pathname: item.string,
+        }),
+      }).then(() => {
+        window.scrollTo(0, 0)
+      })
+
+      if (onRouting) {
+        onRouting()
       }
     },
-    [Router, linkResolver],
+    [Router, linkResolver, onRouting],
   )
 }
 
@@ -232,7 +240,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   ) => {
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
     const search = useSearch(locale, searchTerm, autocomplete)
-    const Router = useRouter()
 
     const onSubmit = useSubmit(locale)
     const [hasFocus, setHasFocus] = useState(false)
@@ -241,36 +248,39 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       setHasFocus(true)
     }, [setHasFocus])
 
-    const isLinkItem = (str: string) => str.includes(ITEM_LINK_PREFIX)
-
-    const onLinkItemSubmit = (val: string) => {
-      return Router.push({
-        pathname: val.replace(ITEM_LINK_PREFIX, ''),
-      }).then(() => {
-        window.scrollTo(0, 0)
-      })
-    }
-
     return (
       <Downshift<string>
         id={id}
         initialInputValue={initialInputValue}
         onChange={(q) => {
-          if (isLinkItem(q)) {
-            return onLinkItemSubmit(q)
-          }
+          if (q && typeof q === 'object') {
+            const item: SubmitType = q
 
-          return onSubmit(`${search.prefix} ${q}`.trim() || '')
+            if (item.type === 'query') {
+              return onSubmit({
+                ...item,
+                string: `${search.prefix} ${item.string}`.trim() || '',
+              })
+            }
+
+            if (item.type === 'link') {
+              return onSubmit(item)
+            }
+          }
         }}
         onInputValueChange={(q) => setSearchTerm(q)}
         itemToString={(v) => {
-          const str = `${search.prefix ? search.prefix + ' ' : ''}${v}`.trim()
+          if (v && typeof v === 'object') {
+            const item: SubmitType = v
 
-          if (isLinkItem(str) || str === 'null') {
-            return ''
+            if (item.type === 'query') {
+              return `${search.prefix ? search.prefix + ' ' : ''}${
+                item.string
+              }`.trim()
+            }
           }
 
-          return str
+          return ''
         }}
         stateReducer={(state, changes) => {
           // pressing tab when input is not empty should move focus to the
@@ -311,10 +321,10 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             buttonProps={{
               onClick: () => {
                 closeMenu()
-                if (isLinkItem(inputValue)) {
-                  return onLinkItemSubmit(inputValue)
-                }
-                onSubmit(inputValue)
+                onSubmit({
+                  type: 'query',
+                  string: inputValue,
+                })
               },
               onFocus,
               onBlur,
@@ -332,17 +342,15 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               placeholder,
               colored,
               onKeyDown: (e) => {
-                const val = e.currentTarget.value
+                const v = e.currentTarget.value
 
                 if (e.key === 'Enter' && highlightedIndex == null) {
                   e.currentTarget.blur()
                   closeMenu()
-
-                  if (isLinkItem(val)) {
-                    return onLinkItemSubmit(val)
-                  }
-
-                  onSubmit(val)
+                  onSubmit({
+                    type: 'query',
+                    string: v,
+                  })
                 }
               },
             })}
@@ -418,7 +426,10 @@ const Results = ({
                 ? suggestion.replace(search.term, '')
                 : ''
               const { onClick, ...itemProps } = getItemProps({
-                item: suggestion,
+                item: {
+                  type: 'query',
+                  string: suggestion,
+                } as SubmitType,
               })
               return (
                 <div
@@ -454,12 +465,13 @@ const Results = ({
                 .slice(0, 5)
                 .map((item, i) => {
                   const { onClick, ...itemProps } = getItemProps({
-                    item:
-                      ITEM_LINK_PREFIX +
-                      linkResolver(
+                    item: {
+                      type: 'link',
+                      string: linkResolver(
                         item.__typename as LinkType,
                         item.slug.split('/'),
                       ).href,
+                    } as SubmitType,
                   })
                   return (
                     <Link
