@@ -3,10 +3,17 @@ import { InjectWorker, WorkerService } from '@island.is/message-queue'
 import { Message } from './dto/createNotification.dto'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { UserProfile, UserProfileApi } from '@island.is/clients/user-profile'
+import { UserProfileApi } from '@island.is/clients/user-profile'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { MessageProcessorService } from './messageProcessor.service'
 import { FetchError } from '@island.is/clients/middlewares'
+
+const notFoundHandler = (e: unknown) => {
+  if (e instanceof FetchError && e.status === 404) {
+    return null
+  }
+  throw e
+}
 
 @Injectable()
 export class NotificationsWorkerService {
@@ -25,7 +32,11 @@ export class NotificationsWorkerService {
       async (message: Message): Promise<void> => {
         this.logger.debug('Got message', message)
 
-        const profile = await this.fetchProfile(message.recipient)
+        const profile = await this.userProfileApi
+          .userTokenControllerFindOneByNationalId({
+            nationalId: message.recipient,
+          })
+          .catch(notFoundHandler)
 
         // can't send message if user has no user profile
         if (!profile) {
@@ -56,18 +67,5 @@ export class NotificationsWorkerService {
         )
       },
     )
-  }
-
-  private async fetchProfile(nationalId: string): Promise<UserProfile | null> {
-    try {
-      return await this.userProfileApi.userTokenControllerFindOneByNationalId({
-        nationalId,
-      })
-    } catch (e) {
-      if (e instanceof FetchError && e.status === 404) {
-        return null
-      }
-      throw e
-    }
   }
 }

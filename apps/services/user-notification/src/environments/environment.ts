@@ -1,5 +1,3 @@
-import assert from 'assert'
-
 let env = process.env
 
 if (!env.NODE_ENV || env.NODE_ENV === 'development') {
