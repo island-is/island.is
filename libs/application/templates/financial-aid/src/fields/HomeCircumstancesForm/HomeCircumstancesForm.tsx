@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import { Box, Input } from '@island.is/island-ui/core'
-import { homeCircumstancesForm, errorMessage } from '../../lib/messages'
+import { homeCircumstancesForm, error } from '../../lib/messages'
 import { useIntl } from 'react-intl'
-
-import { currentMonth } from '@island.is/financial-aid/shared/lib'
-import { DescriptionText } from '..'
 
 import { RadioController } from '@island.is/shared/form-fields'
 import { HomeCircumstances } from '@island.is/financial-aid/shared/lib'
+import * as styles from '../Shared.css'
+import cn from 'classnames'
+import { CRCFieldBaseProps } from '../../types'
 
-const HomeCircumstancesForm = () => {
+const HomeCircumstancesForm = ({ field, errors }: CRCFieldBaseProps) => {
   const { formatMessage } = useIntl()
 
   const [statefulAnswer, setStatefulAnswer] = useState<
@@ -20,7 +20,7 @@ const HomeCircumstancesForm = () => {
     <>
       <Box marginTop={5}>
         <RadioController
-          id={`bla`}
+          id={field.id}
           defaultValue={statefulAnswer}
           options={[
             {
@@ -64,10 +64,16 @@ const HomeCircumstancesForm = () => {
           }
           largeButtons
           backgroundColor="white"
-          error={undefined}
+          error={errors?.homeCircumstances}
         />
       </Box>
-      <Box>
+
+      <Box
+        className={cn({
+          [`${styles.inputContainer}`]: true,
+          [`${styles.inputAppear}`]: statefulAnswer === HomeCircumstances.OTHER,
+        })}
+      >
         <Input
           backgroundColor={'blue'}
           label={formatMessage(homeCircumstancesForm.general.inputLabel)}
@@ -76,7 +82,7 @@ const HomeCircumstancesForm = () => {
           textarea
           value=""
           hasError={false}
-          errorMessage={formatMessage(errorMessage.inputErrorMessage)}
+          errorMessage={formatMessage(error.validation.inputErrorMessage)}
           onChange={(event) => {}}
         />
       </Box>
