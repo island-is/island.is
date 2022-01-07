@@ -154,3 +154,26 @@ export const Disabled = () => (
     </Wrap>
   </>
 )
+
+export const WithoutLabel = () => (
+  <Wrap>
+    <DatePicker
+      label=""
+      placeholderText="Pick a date"
+      selected={new Date()}
+      handleChange={(date: Date) => console.log(date)}
+    />
+  </Wrap>
+)
+
+export const SmallWithoutLabel = () => (
+  <Wrap>
+    <DatePicker
+      label=""
+      size="sm"
+      placeholderText="Pick a date"
+      selected={new Date()}
+      handleChange={(date: Date) => console.log(date)}
+    />
+  </Wrap>
+)
