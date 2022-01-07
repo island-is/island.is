@@ -13,7 +13,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import cn from 'classnames'
 import * as styles from './FinanceStatusDetailTable.css'
-
+import { tableStyles } from '@island.is/service-portal/core'
 interface Props {
   organization: FinanceStatusOrganizationType
   financeStatusDetails: FinanceStatusDetailsType
@@ -55,8 +55,9 @@ const FinanceStatusDetailTable: FC<Props> = ({
                 }}
                 key={i}
                 text={{ truncate: true }}
+                style={tableStyles}
               >
-                <Text fontWeight="semiBold" variant="small">
+                <Text variant="medium" fontWeight="semiBold">
                   {item.value}
                 </Text>
               </T.HeadData>
@@ -85,9 +86,9 @@ const FinanceStatusDetailTable: FC<Props> = ({
                       position: 'relative',
                     }}
                     key={ii}
+                    style={tableStyles}
                   >
                     <Button
-                      size="small"
                       variant="text"
                       onClick={() =>
                         formSubmit(
@@ -100,13 +101,17 @@ const FinanceStatusDetailTable: FC<Props> = ({
                     </Button>
                   </T.Data>
                 ) : (
-                  <T.Data box={{ paddingRight: 2, paddingLeft: 2 }} key={ii}>
+                  <T.Data
+                    box={{ paddingRight: 2, paddingLeft: 2 }}
+                    key={ii}
+                    style={tableStyles}
+                  >
                     <div
                       className={cn(styles.td, {
                         [styles.alignTd]: item.align,
                       })}
                     >
-                      <Text variant="small">{item.value}</Text>
+                      <Text variant="medium">{item.value}</Text>
                     </div>
                   </T.Data>
                 ),
@@ -118,7 +123,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
       <Box paddingX={2} paddingTop={2} background="blue100">
         <Columns>
           <Column width="content">
-            <Text fontWeight="semiBold" variant="small">
+            <Text fontWeight="semiBold" variant="medium">
               {formatMessage(m.contactInfo)}
             </Text>
           </Column>
@@ -126,7 +131,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
         <Box>
           {organization.homepage && (
             <Box display="inlineBlock" marginRight={2}>
-              <Text variant="small" as="span">
+              <Text variant="medium" as="span">
                 {formatMessage(m.website)}:
               </Text>{' '}
               <a
@@ -134,7 +139,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
                 rel="noreferrer noopener"
                 target="_blank"
               >
-                <Text color="blue400" variant="small" as="span">
+                <Text variant="medium" color="blue400" as="span">
                   {organization.homepage}
                 </Text>
               </a>
@@ -142,7 +147,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
           )}
           {organization.email && (
             <Box display="inlineBlock" marginRight={2}>
-              <Text variant="small" as="span">
+              <Text variant="medium" as="span">
                 {formatMessage(m.email)}:
               </Text>{' '}
               <a
@@ -150,7 +155,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
                 rel="noreferrer noopener"
                 target="_blank"
               >
-                <Text color="blue400" variant="small" as="span">
+                <Text variant="medium" color="blue400" as="span">
                   {organization.email}
                 </Text>
               </a>
@@ -158,7 +163,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
           )}
           {organization.phone && (
             <Box display="inlineBlock">
-              <Text variant="small" as="span">
+              <Text variant="medium" as="span">
                 {formatMessage(m.phone)}:
               </Text>{' '}
               <a
@@ -166,7 +171,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
                 rel="noreferrer noopener"
                 target="_blank"
               >
-                <Text color="blue400" variant="small" as="span">
+                <Text variant="medium" color="blue400" as="span">
                   {organization.phone}
                 </Text>
               </a>

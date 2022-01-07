@@ -10746,7 +10746,7 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.2.0.tgz#75f502eeaf9ffde42fc98829645be4ea76bd9e2d"
   integrity sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==
 
-bindings@^1.5.0:
+bindings@^1.3.0, bindings@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/bindings/-/bindings-1.5.0.tgz#10353c9e945334bc0511a6d90b38fbc7c9c504df"
   integrity sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==
@@ -17170,6 +17170,13 @@ hosted-git-info@3.0.8, hosted-git-info@^2.1.4, hosted-git-info@^3.0.6, hosted-gi
   integrity sha512-aXpmwoOhRBrw6X3j0h5RloK4x1OzsxMPyxqIHyNfSe2pypkVTZFpEiRoSipPEPlMrh0HW/XsjkJ5WgnCirpNUw==
   dependencies:
     lru-cache "^6.0.0"
+
+hot-shots@9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/hot-shots/-/hot-shots-9.0.0.tgz#b88421aa81c1ef37f4cc53ade7f1e3daaa584b5e"
+  integrity sha512-fpljto22PvfzDGznnzUpWgFMgccyZRtWo+fY8R4ktwipkv3ywDyeaTLijYaM629DEZvtnEDAN00yV6zxzivnpQ==
+  optionalDependencies:
+    unix-dgram "2.0.x"
 
 hpack.js@^2.1.6:
   version "2.1.6"
@@ -29054,6 +29061,14 @@ universalify@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/universalify/-/universalify-2.0.0.tgz#75a4984efedc4b08975c5aeb73f530d02df25717"
   integrity sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==
+
+unix-dgram@2.0.x:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/unix-dgram/-/unix-dgram-2.0.4.tgz#14d4fc21e539742b8fb027de16eccd4e5503a344"
+  integrity sha512-7tpK6x7ls7J7pDrrAU63h93R0dVhRbPwiRRCawR10cl+2e1VOvF3bHlVJc6WI1dl/8qk5He673QU+Ogv7bPNaw==
+  dependencies:
+    bindings "^1.3.0"
+    nan "^2.13.2"
 
 unixify@1.0.0:
   version "1.0.0"

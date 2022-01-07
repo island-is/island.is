@@ -5,6 +5,7 @@ export const root = style({
   position: 'relative',
   paddingBottom: 4,
   display: 'inline-block',
+  width: 'max-content',
   color: theme.color.blue400,
   '::before': {
     content: "''",

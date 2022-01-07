@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { m } from '@island.is/service-portal/core'
+import { m, tableStyles } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { Text, Box, Button, Table as T } from '@island.is/island-ui/core'
 
@@ -36,8 +36,10 @@ const TableUnits: FC<Props> = ({ tables, title, paginateCallback }) => {
           <T.Head>
             <T.Row>
               {table.header.map((header, ii) => (
-                <T.HeadData key={`head-${ii}`}>
-                  <Text variant="eyebrow">{header}</Text>
+                <T.HeadData key={`head-${ii}`} style={tableStyles}>
+                  <Text variant="medium" fontWeight="semiBold">
+                    {header}
+                  </Text>
                 </T.HeadData>
               ))}
             </T.Row>
@@ -46,13 +48,15 @@ const TableUnits: FC<Props> = ({ tables, title, paginateCallback }) => {
             {table.rows.map((row, iii) => (
               <T.Row key={`trow-${iii}`}>
                 {row.map((rowitem, iiii) => (
-                  <T.Data key={`tdata-${iiii}`}>{rowitem}</T.Data>
+                  <T.Data key={`tdata-${iiii}`} style={tableStyles}>
+                    <Text variant="medium">{rowitem}</Text>
+                  </T.Data>
                 ))}
               </T.Row>
             ))}
             {table.paginate ? (
               <T.Row>
-                <T.Data borderColor="white" colSpan={5}>
+                <T.Data borderColor="white" colSpan={5} style={tableStyles}>
                   <Box
                     alignItems="center"
                     justifyContent="center"

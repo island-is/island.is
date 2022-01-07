@@ -1,5 +1,5 @@
 import { DynamicModule } from '@nestjs/common'
-import { Configuration, UserProfileApi } from '../../gen/fetch'
+import { Configuration, UserProfileApi } from '@island.is/clients/user-profile'
 import { UserProfileResolver } from './userProfile.resolver'
 import { UserProfileService } from './userProfile.service'
 import {

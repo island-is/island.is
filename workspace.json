@@ -1456,13 +1456,6 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/api/domains/user-profile"]
-        },
-        "schemas/openapi-generator": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "libs/api/domains/user-profile/gen/fetch",
-            "command": "yarn openapi-generator -o libs/api/domains/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
-          }
         }
       }
     },
@@ -2450,6 +2443,40 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/login-service/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-templates-p-sign": {
+      "root": "libs/application/templates/p-sign",
+      "sourceRoot": "libs/application/templates/p-sign/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/p-sign/tsconfig.lib.json",
+              "libs/application/templates/p-sign/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/p-sign/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/p-sign/src/lib/messages.ts"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/p-sign/codegen.yml"
           }
         }
       }
@@ -3964,6 +3991,51 @@
           },
           "outputs": ["coverage/libs/email-service"]
         }
+      }
+    },
+    "external-contracts-tests": {
+      "root": "apps/external-contracts-tests",
+      "sourceRoot": "apps/external-contracts-tests/src",
+      "projectType": "application",
+      "prefix": "external-contracts-tests",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["apps/external-contracts-tests/tsconfig.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/external-contracts-tests/**/*"
+            ]
+          }
+        },
+        "build": {
+          "builder": "@irdnis/esbuildnx:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/external-contracts-tests",
+            "main": "apps/external-contracts-tests/main.spec.ts",
+            "tsConfig": "apps/external-contracts-tests/tsconfig.json"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
+        "external-test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/external-contracts-tests/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/apps/external-contracts-tests"]
+        },
+        "docker-jest": {}
       }
     },
     "feature-flags": {

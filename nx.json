@@ -230,6 +230,9 @@
     "application-templates-login-service": {
       "tags": []
     },
+    "application-templates-p-sign": {
+      "tags": []
+    },
     "application-templates-parental-leave": {
       "tags": []
     },
@@ -381,6 +384,9 @@
       "tags": []
     },
     "email-service": {
+      "tags": []
+    },
+    "external-contracts-tests": {
       "tags": []
     },
     "feature-flags": {
