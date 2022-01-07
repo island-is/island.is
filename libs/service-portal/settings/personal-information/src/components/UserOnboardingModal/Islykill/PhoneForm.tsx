@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from 'react'
-import { useForm, Controller } from 'react-hook-form'
-import { Box, Button, Input } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
+import { useForm } from 'react-hook-form'
+import { InputController } from '@island.is/shared/form-fields'
+import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { sharedMessages } from '@island.is/shared/translations'
 
@@ -35,9 +35,13 @@ export const SimplePhoneForm: FC<Props> = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box>
-        <Controller
+        <InputController
           control={control}
+          id="tel"
           name="tel"
+          required={true}
+          type="tel"
+          format="### ####"
           rules={{
             required: {
               value: true,
@@ -47,7 +51,6 @@ export const SimplePhoneForm: FC<Props> = ({
               }),
             },
             minLength: {
-              // Do we need options for foreign phone numbers?
               value: 7,
               message: formatMessage({
                 id: 'sp.settings:tel-required-length-msg',
@@ -69,18 +72,9 @@ export const SimplePhoneForm: FC<Props> = ({
               }),
             },
           }}
-          defaultValue={tel}
-          render={({ onChange, value, name }) => (
-            <Input
-              label={formatMessage(sharedMessages.phoneNumber)}
-              placeholder={formatMessage(sharedMessages.phoneNumber)}
-              name={name}
-              value={value}
-              hasError={errors.tel}
-              errorMessage={errors.tel?.message}
-              onChange={onChange}
-            />
-          )}
+          label={formatMessage(sharedMessages.phoneNumber)}
+          error={errors.tel?.message}
+          size="xs"
         />
       </Box>
       {(renderBackButton || renderSubmitButton) && (

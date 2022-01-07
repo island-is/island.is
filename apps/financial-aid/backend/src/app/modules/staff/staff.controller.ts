@@ -57,11 +57,9 @@ export class StaffController {
   })
   async getStaffById(@Param('id') id: string): Promise<StaffModel> {
     const staff = await this.staffService.findById(id)
-
     if (staff === null) {
-      throw new ForbiddenException('Staff not found')
+      throw new NotFoundException('Staff not found')
     }
-
     return staff
   }
 
@@ -110,11 +108,16 @@ export class StaffController {
     @CurrentStaff() staff: Staff,
     @Body() createStaffInput: CreateStaffDto,
   ): Promise<StaffModel> {
-    return await this.staffService.createStaff(createStaffInput, {
-      id: staff.municipalityId,
-      name: staff.municipalityName,
-      homepage: staff.municipalityHomepage,
-    })
+    return await this.staffService.createStaff(
+      createStaffInput,
+      {
+        municipalityId: createStaffInput.municipalityId ?? staff.municipalityId,
+        municipalityName:
+          createStaffInput.municipalityName ?? staff.municipalityName,
+        municipalityHomepage: staff.municipalityHomepage,
+      },
+      staff,
+    )
   }
 
   @UseGuards(StaffGuard)

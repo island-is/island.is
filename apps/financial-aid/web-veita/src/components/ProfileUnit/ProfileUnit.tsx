@@ -26,8 +26,10 @@ const ProfileUnit = ({ heading, info, className }: Props) => {
           [`${className}`]: true,
         })}
         marginBottom={[2, 2, 3]}
+        borderBottomWidth="standard"
+        borderColor="dark200"
       >
-        <Text as="h2" variant="h3" color="dark300">
+        <Text as="h2" variant="h3" color="dark300" marginBottom={1}>
           {heading}
         </Text>
       </Box>

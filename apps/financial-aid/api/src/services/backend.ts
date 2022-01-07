@@ -20,6 +20,7 @@ import {
   Staff,
   CreateStaff,
   CreateMunicipality,
+  Amount,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -30,6 +31,7 @@ import {
   CreateMunicipalityInput,
   UpdateMunicipalityInput,
 } from '../app/modules/municipality/dto'
+import { CreateAmountInput } from '../app/modules/amount/dto'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -46,6 +48,10 @@ class BackendAPI extends RESTDataSource {
 
   getApplication(id: string): Promise<Application> {
     return this.get(`application/id/${id}`)
+  }
+
+  searchForApplication(nationalId: string): Promise<Application[]> {
+    return this.get(`application/find/${nationalId}`)
   }
 
   getApplicationFilters(): Promise<ApplicationFilters> {

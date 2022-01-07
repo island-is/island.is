@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import {
   Box,
   Divider,
@@ -6,7 +6,6 @@ import {
   Text,
   Checkbox,
   Button,
-  toast,
   ToastContainer,
 } from '@island.is/island-ui/core'
 
@@ -14,14 +13,15 @@ import * as styles from './Profile.css'
 
 import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
 import {
+  InputType,
   isEmailValid,
   Staff,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
 
 import cn from 'classnames'
-import { UpdateStaffMutation } from '@island.is/financial-aid-web/veita/graphql'
-import { useMutation } from '@apollo/client'
+import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 interface EmployeeProfileProps {
   user: Staff
@@ -35,9 +35,12 @@ interface EmployeeProfileInfo {
   roles: StaffRole[]
 }
 
-type InputType = 'text' | 'number' | 'email' | 'tel'
-
 const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
+  const { admin } = useContext(AdminContext)
+
+  const isLoggedInUser = (staff: Staff) =>
+    admin?.nationalId === staff.nationalId
+
   const [state, setState] = useState<EmployeeProfileInfo>({
     nationalId: user.nationalId,
     nickname: user?.nickname ?? '',
@@ -45,6 +48,8 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
     hasError: false,
     roles: user.roles,
   })
+
+  const { changeUserActivity, staffActivationLoading, updateInfo } = useStaff()
 
   const changeStaffAccess = (role: StaffRole, isAddingRole: boolean) => {
     isAddingRole
@@ -105,27 +110,6 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
     },
   ]
 
-  const [updateStaff, { loading }] = useMutation(UpdateStaffMutation)
-
-  const changeUserActivity = async (active: boolean) => {
-    await updateStaff({
-      variables: {
-        input: {
-          id: user.id,
-          active,
-        },
-      },
-    })
-      .then(() => {
-        toast.success('Það tókst að uppfæra notanda')
-      })
-      .catch(() => {
-        toast.error(
-          'Ekki tókst að uppfæra notanda, vinsamlega reynið aftur síðar',
-        )
-      })
-  }
-
   const areRequiredFieldsFilled =
     !state.email ||
     !state.nationalId ||
@@ -139,25 +123,13 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
       return
     }
 
-    try {
-      await updateStaff({
-        variables: {
-          input: {
-            id: user.id,
-            nationalId: state.nationalId,
-            roles: state.roles,
-            nickname: state.nickname,
-            email: state.email,
-          },
-        },
-      }).then(() => {
-        toast.success('Það tókst að uppfæra notanda')
-      })
-    } catch (e) {
-      toast.error(
-        'Ekki tókst að uppfæra notanda, vinsamlega reynið aftur síðar',
-      )
-    }
+    await updateInfo(
+      user.id,
+      state.nationalId,
+      state.roles,
+      state.nickname,
+      state.email,
+    )
   }
 
   return (
@@ -186,13 +158,15 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
                   Notandi er {user.active ? 'virkur' : 'óvirkur'}
                 </Text>
               </Box>
-              <button
-                onClick={() => changeUserActivity(!user.active)}
-                disabled={loading}
-                className={headerStyles.button}
-              >
-                {user.active ? 'Óvirkja' : 'Virkja'}
-              </button>
+              {isLoggedInUser(user) === false && (
+                <button
+                  onClick={() => changeUserActivity(!user.active, user.id)}
+                  disabled={staffActivationLoading}
+                  className={headerStyles.button}
+                >
+                  {user.active ? 'Óvirkja' : 'Virkja'}
+                </button>
+              )}
             </Box>
           </Box>
 
@@ -275,7 +249,11 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
             display="flex"
             justifyContent="flexEnd"
           >
-            <Button loading={loading} icon="checkmark" onClick={onSubmitUpdate}>
+            <Button
+              loading={staffActivationLoading}
+              icon="checkmark"
+              onClick={onSubmitUpdate}
+            >
               Vista stillingar
             </Button>
           </Box>

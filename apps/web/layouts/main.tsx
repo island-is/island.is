@@ -12,11 +12,13 @@ import {
   ColorSchemeContext,
   ColorSchemes,
 } from '@island.is/island-ui/core'
+import getConfig from 'next/config'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
 import Cookies from 'js-cookie'
 import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
+import { userMonitoring } from '@island.is/user-monitoring'
 import { useRouter } from 'next/router'
 import {
   Header,
@@ -56,6 +58,11 @@ import {
 } from '../hooks/useLinkResolver'
 import { stringHash } from '@island.is/web/utils/stringHash'
 
+import Illustration from './Illustration'
+import * as styles from './main.css'
+
+const { publicRuntimeConfig = {} } = getConfig() ?? {}
+
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
 
@@ -82,6 +89,7 @@ export interface LayoutProps {
   headerColorScheme?: ColorSchemes
   headerButtonColorScheme?: ButtonTypes['colorScheme']
   showFooter?: boolean
+  showFooterIllustration?: boolean
   categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
   footerUpperInfo?: FooterLinkProps[]
@@ -110,6 +118,20 @@ if (environment.sentryDsn) {
   })
 }
 
+if (
+  publicRuntimeConfig.applicationId &&
+  publicRuntimeConfig.clientToken &&
+  typeof window !== 'undefined'
+) {
+  userMonitoring.initDdRum({
+    service: 'islandis',
+    applicationId: publicRuntimeConfig.applicationId,
+    clientToken: publicRuntimeConfig.clientToken,
+    env: publicRuntimeConfig.environment || 'local',
+    version: publicRuntimeConfig.appVersion || 'local',
+  })
+}
+
 const Layout: NextComponentType<
   GetInitialPropsContext<NextPageContext>,
   LayoutProps,
@@ -121,13 +143,13 @@ const Layout: NextComponentType<
   headerColorScheme,
   headerButtonColorScheme,
   showFooter = true,
+  showFooterIllustration = false,
   categories,
   topMenuCustomLinks,
   footerUpperInfo,
   footerUpperContact,
   footerLowerMenu,
   footerMiddleMenu,
-  footerTagsMenu,
   namespace,
   alertBannerContent,
   respOrigin,
@@ -200,7 +222,7 @@ const Layout: NextComponentType<
                 href={href}
                 as="font"
                 type="font/woff2"
-                crossOrigin="true"
+                crossOrigin="anonymous"
               />
             )
           })}
@@ -318,21 +340,21 @@ const Layout: NextComponentType<
         </MenuTabsContext.Provider>
         {showFooter && (
           <Hidden print={true}>
+            {showFooterIllustration && (
+              <Illustration className={styles.illustration} />
+            )}
             <Footer
               topLinks={footerUpperInfo}
               topLinksContact={footerUpperContact}
               bottomLinks={footerLowerMenu}
               middleLinks={footerMiddleMenu}
               bottomLinksTitle={t.siteExternalTitle}
-              tagLinks={footerTagsMenu}
               middleLinksTitle={String(namespace.footerMiddleLabel)}
-              tagLinksTitle={String(namespace.footerRightLabel)}
               languageSwitchLink={{
                 title: activeLocale === 'en' ? 'Íslenska' : 'English',
                 href: activeLocale === 'en' ? '/' : '/en',
               }}
               showMiddleLinks
-              showTagLinks
             />
           </Hidden>
         )}

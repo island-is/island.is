@@ -1,57 +1,35 @@
 import React from 'react'
-import { Button, Box, Icon, Text } from '@island.is/island-ui/core'
-import { useFeatureFlag } from '@island.is/react/feature-flags'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { sharedMessages } from '@island.is/shared/translations'
-import { useGetUserProfileQuery } from '../../../gen/graphql'
-import * as styles from './UserMenu.css'
+import { UserDropdownItem } from './UserDropdownItem'
+import { m } from '@island.is/service-portal/core'
 
-export const UserProfileInfo = () => {
-  const { value: showPersonalInfo } = useFeatureFlag(
-    'isServicePortalPersonalInformationModuleEnabled',
-    false,
-  )
-  const { data } = useGetUserProfileQuery({ skip: !showPersonalInfo })
+export const UserProfileInfo = ({ onClick }: { onClick: () => void }) => {
   const { formatMessage } = useLocale()
-  if (showPersonalInfo) {
-    const settings = data?.getUserProfile
-    return (
-      <>
-        {settings?.email && (
-          <Box
-            display="flex"
-            alignItems="center"
-            marginBottom={1}
-            className={styles.breakWord}
-          >
-            <Box display="flex" alignItems="center" marginRight={2}>
-              <Icon type="outline" icon="mail" color="blue300" />
-            </Box>
-            <Text>{settings.email}</Text>
-          </Box>
-        )}
-        {settings?.mobilePhoneNumber && (
-          <Box
-            display="flex"
-            alignItems="center"
-            marginBottom={2}
-            className={styles.breakWord}
-          >
-            <Box display="flex" alignItems="center" marginRight={2}>
-              <Icon type="outline" icon="call" color="blue300" />
-            </Box>
-            <Text>{settings?.mobilePhoneNumber}</Text>
-          </Box>
-        )}
-        {(settings?.email || settings?.mobilePhoneNumber) && (
-          <a href="/minarsidur/stillingar/personuupplysingar">
-            <Button variant="text" icon="arrowForward" size="small">
-              {formatMessage(sharedMessages.edit)}
-            </Button>
-          </a>
-        )}
-      </>
-    )
-  }
-  return null
+  const origin = window.location.origin
+  const baseUrl = `${origin}/minarsidur/stillingar`
+  return (
+    <Box paddingY={[1, 3]}>
+      <Box marginBottom={1}>
+        <Text variant="small">{formatMessage(m.settings)}</Text>
+      </Box>
+
+      <Box>
+        <UserDropdownItem
+          text={formatMessage(m.personalInformation)}
+          link={`${baseUrl}/personuupplysingar`}
+          icon={{ type: 'outline', icon: 'person' }}
+          onClick={() => onClick()}
+        />
+      </Box>
+      <Box>
+        <UserDropdownItem
+          text={formatMessage(m.accessControl)}
+          link={`${baseUrl}/adgangsstyring`}
+          icon={{ type: 'outline', icon: 'people' }}
+          onClick={() => onClick()}
+        />
+      </Box>
+    </Box>
+  )
 }

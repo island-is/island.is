@@ -3,12 +3,11 @@ import {
   SequelizeModuleOptions,
   SequelizeOptionsFactory,
 } from '@nestjs/sequelize'
+
 import * as databaseConfig from '../../sequelize.config.js'
 
 @Injectable()
 export class SequelizeConfigService implements SequelizeOptionsFactory {
-  //constructor(/*@Inject(LOGGER_PROVIDER) private logger: Logger,*/) {}
-
   createSequelizeOptions(): SequelizeModuleOptions {
     let config
     switch (process.env.NODE_ENV) {
@@ -41,6 +40,7 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
       },
       autoLoadModels: true,
       synchronize: false,
+      logging: false,
     }
   }
 }

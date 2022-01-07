@@ -14,7 +14,9 @@ import {
 import {
   Application,
   ApplicationState,
+  CreateAmount,
   eventTypeFromApplicationState,
+  HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
 import { useApplicationState } from '../../utils/useApplicationState'
 import StateModalContainer from './StateModalContainer'
@@ -26,6 +28,8 @@ interface Props {
   currentState: ApplicationState
   setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  homeCircumstances: HomeCircumstances
+  spouseNationalId?: string
 }
 
 const StateModal = ({
@@ -35,6 +39,8 @@ const StateModal = ({
   currentState,
   setApplication,
   setIsLoading,
+  homeCircumstances,
+  spouseNationalId,
 }: Props) => {
   const [selected, setSelected] = useState<ApplicationState | undefined>()
 
@@ -43,9 +49,9 @@ const StateModal = ({
   const saveStateApplication = async (
     applicationId: string,
     state: ApplicationState,
-    amount?: number,
     rejection?: string,
     comment?: string,
+    amount?: CreateAmount,
   ) => {
     setIsLoading(true)
 
@@ -55,9 +61,9 @@ const StateModal = ({
       applicationId,
       state,
       eventTypeFromApplicationState[state],
-      amount,
       rejection,
       comment,
+      amount,
     )
       .then((updatedApplication) => {
         setIsLoading(false)
@@ -149,25 +155,27 @@ const StateModal = ({
               if (!selected) {
                 return
               }
-              saveStateApplication(
-                applicationId,
-                selected,
-                undefined,
-                undefined,
-                comment,
-              )
+              saveStateApplication(applicationId, selected, undefined, comment)
             }}
           />
 
           <AcceptModal
             isModalVisable={selected === ApplicationState.APPROVED}
             onCancel={onClickCancel}
-            onSaveApplication={(amount: number) => {
+            onSaveApplication={(amount: CreateAmount) => {
               if (!selected) {
                 return
               }
-              saveStateApplication(applicationId, selected, amount)
+              saveStateApplication(
+                applicationId,
+                selected,
+                undefined,
+                undefined,
+                amount,
+              )
             }}
+            homeCircumstances={homeCircumstances}
+            spouseNationalId={spouseNationalId}
           />
 
           <RejectModal
@@ -177,12 +185,7 @@ const StateModal = ({
               if (!selected) {
                 return
               }
-              saveStateApplication(
-                applicationId,
-                selected,
-                undefined,
-                reasonForRejection,
-              )
+              saveStateApplication(applicationId, selected, reasonForRejection)
             }}
           />
         </AnimateSharedLayout>

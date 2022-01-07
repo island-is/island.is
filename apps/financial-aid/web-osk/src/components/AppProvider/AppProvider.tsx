@@ -15,6 +15,9 @@ import useNationalRegistry from '@island.is/financial-aid-web/osk/src/utils/hook
 
 interface AppProvider {
   myApplication?: Application
+  updateApplication: React.Dispatch<
+    React.SetStateAction<Application | undefined>
+  >
   loading: boolean
   error?: ApolloError
   municipality?: Municipality
@@ -25,7 +28,7 @@ interface AppProvider {
   user?: User
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>
   loadingUser: boolean
-  loadingMuncipality: boolean
+  loadingMunicipality: boolean
   nationalRegistryData?: NationalRegistryData
   setNationalRegistryData: (data: NationalRegistryData) => void
 }
@@ -35,24 +38,30 @@ interface Props {
 }
 
 export const AppContext = createContext<AppProvider>({
+  updateApplication: () => undefined,
   setUser: () => undefined,
   setMunicipalityById: () => Promise.resolve(undefined),
   setNationalRegistryData: () => {},
   loading: false,
   loadingUser: false,
-  loadingMuncipality: false,
+  loadingMunicipality: false,
 })
 
 const AppProvider = ({ children }: Props) => {
   const {
     municipality,
     setMunicipalityById,
-    loading: loadingMuncipality,
+    loading: loadingMunicipality,
   } = useMunicipality()
 
   const { isAuthenticated, user, setUser, loadingUser } = useUser()
 
-  const { myApplication, error, loading } = useMyApplication()
+  const {
+    myApplication,
+    error,
+    loading,
+    updateApplication,
+  } = useMyApplication()
 
   const {
     nationalRegistryData,
@@ -63,11 +72,12 @@ const AppProvider = ({ children }: Props) => {
     <AppContext.Provider
       value={{
         myApplication,
+        updateApplication,
         error,
         loading,
         municipality,
         setMunicipalityById,
-        loadingMuncipality,
+        loadingMunicipality,
         isAuthenticated,
         user,
         loadingUser,

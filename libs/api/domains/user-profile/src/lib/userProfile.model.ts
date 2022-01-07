@@ -19,4 +19,7 @@ export class UserProfile {
 
   @Field(() => Boolean)
   mobilePhoneNumberVerified!: boolean
+
+  @Field(() => Boolean)
+  documentNotifications!: boolean
 }

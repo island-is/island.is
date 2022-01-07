@@ -6,6 +6,11 @@ export const ruling = {
     defaultMessage: 'Þingbók og úrskurður',
     description: 'Notaður sem fyrirsögn á þingbók.',
   }),
+  proceedingsHeadingShortVersion: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.proceedings_heading_short_version',
+    defaultMessage: 'Þingbók',
+    description: 'Notaður sem fyrirsögn á styttri útgáfu af þingbók.',
+  }),
   caseNumber: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.case_number',
     defaultMessage: 'Mál nr. {caseNumber}',
@@ -119,7 +124,7 @@ export const ruling = {
     description:
       'Notaður fyrir ábendingu dómara um heimild kærða til að bera framkvæmd farbanns undir hann.',
   }),
-  registratWitness: defineMessage({
+  registrarWitness: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.registrar_witness',
     defaultMessage: 'Vottur að þinghaldi er {registrarNameAndTitle}.',
     description:

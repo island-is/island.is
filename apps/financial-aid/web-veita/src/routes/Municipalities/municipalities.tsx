@@ -24,7 +24,6 @@ import { Municipality, Routes } from '@island.is/financial-aid/shared/lib'
 import {
   MunicipalityActivityMutation,
   MunicipalitiesQuery,
-  UpdateMunicipalityMutation,
 } from '@island.is/financial-aid-web/veita/graphql'
 import { useRouter } from 'next/router'
 

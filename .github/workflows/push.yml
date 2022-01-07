@@ -126,17 +126,21 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          repository: 'island-is/cache'
-          path: 'cache/'
+          node-version: '14'
+
+      - name: Check node version
+        run: |
+          node -v 
+          ls -l `which node`
 
       - name: Cleanup disk space
         run: |
           df -h
           # https://github.com/actions/virtual-environments/issues/709#issuecomment-612569242
           sudo rm -rf "/usr/local/share/boost"
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo apt clean
           df -h
 
       - name: Git refs
@@ -216,17 +220,25 @@ jobs:
 
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps
-        uses: ./cache/
+        continue-on-error: true
+        uses: ./.github/actions/cache
         with:
           path: cache
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-deps
 
+      - name: Check cache status
+        run: '[[ "${{ steps.cache-deps.outputs.status }}" != "failure" ]] || exit 1'
+
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps-base
-        uses: ./cache/
+        continue-on-error: true
+        uses: ./.github/actions/cache
         with:
           path: cache_output
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-output-base
+
+      - name: Check cache status
+        run: '[[ "${{ steps.cache-deps-base.outputs.status }}" != "failure" ]] || exit 1'
 
       - name: Building NodeJS dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
@@ -234,10 +246,14 @@ jobs:
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
-        uses: ./cache/
+        continue-on-error: true
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
+
+      - name: Check cache status
+        run: '[[ "${{ steps.node-modules.outputs.status }}" != "failure" ]] || exit 1'
 
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
@@ -248,14 +264,20 @@ jobs:
 
       - name: Cache for generated files
         id: generated-files-cache
-        uses: ./cache/
+        continue-on-error: true
+        uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
 
+      - name: Check cache status
+        run: '[[ "${{ steps.generated-files-cache.outputs.status }}" != "failure" ]] || exit 1'
+
       - name: Generate schemas
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
-        run: tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --skip-cache | xargs realpath --relative-to $(pwd))
+        run: |
+          node --version
+          tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --skip-cache | xargs realpath --relative-to $(pwd))
 
       - name: Prepare test targets
         id: test_projects
@@ -268,7 +290,7 @@ jobs:
       - name: Prepare docker build targets
         id: build_map
         run: |
-          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress)
+          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress docker-jest)
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
@@ -280,7 +302,7 @@ jobs:
         env:
           BASE: 'origin/main'
         run: |
-          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress)
+          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress docker-jest)
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=IMAGES::$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"
@@ -289,7 +311,7 @@ jobs:
       - name: Gather unaffected docker images
         id: unaffected
         run: |
-          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-cypress)
+          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-cypress docker-jest)
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
   tests:
@@ -308,16 +330,39 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: actions/checkout@v2
+
+      - name: Cache for NodeJS dependencies - host OS
+        id: node-modules
+        continue-on-error: true
+        uses: ./.github/actions/cache
         with:
-          repository: 'island-is/cache'
-          path: 'cache/'
+          path: node_modules
+          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+
+      - name: Check cache status
+        run: '[[ "${{ steps.node-modules.outputs.status }}" != "failure" ]] || exit 1'
+
+      - name: Cache for generated files
+        id: generated-files-cache
+        continue-on-error: true
+        uses: ./.github/actions/cache
+        with:
+          path: generated_files.tar.gz
+          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
+
+      - name: Check cache status
+        run: '[[ "${{ steps.generated-files-cache.outputs.status }}" != "failure" ]] || exit 1'
+
+      - name: Untar generated files
+        run: tar zxvf generated_files.tar.gz
+        shell: bash
 
       - uses: ./.github/actions/unit-test
         with:
-          node-modules-hash: ${{ needs.prepare.outputs.node-modules-hash }}
-          generated-files-cache-key: ${{ needs.prepare.outputs.generated-files-cache-key }}
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          docker-registry: ${{ env.DOCKER_REGISTRY}}
 
   docker-build:
     needs:
@@ -344,19 +389,23 @@ jobs:
           echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
           echo "DOCKER_TYPE=$DOCKER_TYPE" >> $GITHUB_ENV
         continue-on-error: true
-      - uses: actions/checkout@v2
-        if: steps.gather.outcome == 'success'
-      - uses: actions/checkout@v2
-        if: steps.gather.outcome == 'success'
+      - uses: actions/setup-node@v2
         with:
-          repository: 'island-is/cache'
-          path: 'cache/'
-      - name: Cache for generated files
+          node-version: '14'
         if: steps.gather.outcome == 'success'
-        uses: ./cache/
+      - uses: actions/checkout@v2
+        if: steps.gather.outcome == 'success'
+      - name: Cache for generated files
+        id: generated-files-cache
+        if: steps.gather.outcome == 'success'
+        continue-on-error: true
+        uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
+
+      - name: Check cache status
+        run: '[[ "${{ steps.generated-files-cache.outputs.status }}" != "failure" ]] || exit 1'
 
       - name: Untar generated files
         if: steps.gather.outcome == 'success'
@@ -364,18 +413,27 @@ jobs:
 
       - name: Cache for dependencies Docker layer
         if: steps.gather.outcome == 'success'
-        id: cache-deps
-        uses: ./cache/
+        id: cache-deps-base
+        continue-on-error: true
+        uses: ./.github/actions/cache
         with:
           path: cache_output
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-output-base
 
+      - name: Check cache status
+        run: '[[ "${{ steps.cache-deps-base.outputs.status }}" != "failure" ]] || exit 1'
+
       - name: Cache for NodeJS dependencies - Docker layer
+        id: cache-deps
         if: steps.gather.outcome == 'success'
-        uses: ./cache/
+        continue-on-error: true
+        uses: ./.github/actions/cache
         with:
           path: cache
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps
+
+      - name: Check cache status
+        run: '[[ "${{ steps.cache-deps.outputs.status }}" != "failure" ]] || exit 1'
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
@@ -528,11 +586,14 @@ jobs:
       - pre-checks
       - retag-unaffected
       - deploy
+      - tests
     steps:
       - name: Check retag success
         run: '[[ ${{ needs.retag-unaffected.result }} != "failure" ]] || exit 1'
       - name: Check deploy success
         run: '[[ ${{ needs.deploy.result }} != "failure" ]] || exit 1'
+      - name: Check tests success
+        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
       - name: Announce success
         if: needs.pre-checks.outputs.PRE_CHECK
         run: echo "Build is successful"

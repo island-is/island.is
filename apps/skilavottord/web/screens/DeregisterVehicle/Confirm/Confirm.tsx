@@ -2,6 +2,7 @@ import React, { FC, useContext, useEffect } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import gql from 'graphql-tag'
+
 import {
   Box,
   Bullet,
@@ -9,13 +10,14 @@ import {
   Button,
   Hidden,
   Inline,
-  LoadingIcon,
+  LoadingDots,
   Stack,
   Text,
   toast,
 } from '@island.is/island-ui/core'
+
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import { getYear } from '@island.is/skilavottord-web/utils/dateUtils'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import {
@@ -24,9 +26,16 @@ import {
   OutlinedError,
   CarDetailsBox,
 } from '@island.is/skilavottord-web/components'
-import { RecyclingRequestMutation } from '@island.is/skilavottord-web/types'
+import {
+  Mutation,
+  Query,
+  RequestErrors,
+  RequestStatus,
+  Role,
+  RecyclingRequestTypes,
+} from '@island.is/skilavottord-web/graphql/schema'
 
-const skilavottordVehicleReadyToDeregisteredQuery = gql`
+const SkilavottordVehicleReadyToDeregisteredQuery = gql`
   query skilavottordVehicleReadyToDeregisteredQuery($permno: String!) {
     skilavottordVehicleReadyToDeregistered(permno: $permno) {
       vehicleId
@@ -39,14 +48,12 @@ const skilavottordVehicleReadyToDeregisteredQuery = gql`
   }
 `
 
-const skilavottordRecyclingRequestMutation = gql`
+const SkilavottordRecyclingRequestMutation = gql`
   mutation skilavottordRecyclingRequestMutation(
-    $partnerId: String
     $permno: String!
-    $requestType: String!
+    $requestType: RecyclingRequestTypes!
   ) {
     createSkilavottordRecyclingRequest(
-      partnerId: $partnerId
       permno: $permno
       requestType: $requestType
     ) {
@@ -72,8 +79,8 @@ const Confirm: FC = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const { data, loading } = useQuery(
-    skilavottordVehicleReadyToDeregisteredQuery,
+  const { data, loading } = useQuery<Query>(
+    SkilavottordVehicleReadyToDeregisteredQuery,
     {
       variables: { permno: id },
     },
@@ -84,31 +91,25 @@ const Confirm: FC = () => {
   const [
     setRecyclingRequest,
     { data: mutationData, error: mutationError, loading: mutationLoading },
-  ] = useMutation<RecyclingRequestMutation>(
-    skilavottordRecyclingRequestMutation,
-    {
-      onError() {
-        return mutationError
-      },
+  ] = useMutation<Mutation>(SkilavottordRecyclingRequestMutation, {
+    onError() {
+      return mutationError
     },
-  )
+  })
 
   const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
 
   useEffect(() => {
-    if (mutationResponse?.status) {
+    if ((mutationResponse as RequestStatus)?.status) {
       router.replace(routes.baseRoute).then(() => toast.success(t.success))
     }
   }, [mutationResponse, router, routes, t.success])
-
-  const partnerId = user?.partnerId
 
   const handleConfirm = () => {
     setRecyclingRequest({
       variables: {
         permno: id,
-        partnerId: partnerId,
-        requestType: 'deregistered',
+        requestType: RecyclingRequestTypes.deregistered,
       },
     })
   }
@@ -123,14 +124,18 @@ const Confirm: FC = () => {
     return <NotFound />
   }
 
-  if (mutationError || mutationLoading || mutationResponse?.message) {
+  if (
+    mutationError ||
+    mutationLoading ||
+    (mutationResponse as RequestErrors)?.message
+  ) {
     return (
       <ProcessPageLayout processType={'company'} activeSection={1}>
         {mutationLoading ? (
           <Box textAlign="center">
             <Stack space={4}>
               <Text variant="h1">{t.titles.loading}</Text>
-              <LoadingIcon size={50} />
+              <LoadingDots large />
             </Stack>
           </Box>
         ) : (
@@ -175,7 +180,7 @@ const Confirm: FC = () => {
           <Box>
             {loading ? (
               <Box textAlign="center">
-                <LoadingIcon size={50} />
+                <LoadingDots large />
               </Box>
             ) : (
               <Stack space={4}>

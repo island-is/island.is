@@ -11,9 +11,9 @@ import {
   Box,
   Button,
   GridContainer,
-  LoadingIcon,
   Navigation,
   Link,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 
 import {
@@ -338,6 +338,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               sidebarContent={
                 <Box paddingRight={[0, 0, 3]}>
                   <ApiCatalogueFilter
+                    labelClearAll={fn('clearAll')}
                     labelClear={fn('clear')}
                     labelOpen={fn('openFilterButton')}
                     labelClose={fn('closeFilter')}
@@ -377,9 +378,9 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               }
             >
               <Box display={['block', 'block', 'none']} paddingBottom={4}>
-                {/* <ApiCatalogueFilter isDialog={true} /> */}
                 <ApiCatalogueFilter
-                  isDialog={true}
+                  variant="dialog"
+                  labelClearAll={fn('clearAll')}
                   labelClear={fn('clear')}
                   labelOpen={fn('openFilterButton')}
                   labelClose={fn('closeFilter')}
@@ -422,7 +423,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                   {error ? (
                     <Text>{sn('errorHeading')}</Text>
                   ) : loading ? (
-                    <LoadingIcon animate color="blue400" size={32} />
+                    <LoadingDots />
                   ) : (
                     <Text>{sn('notFound')}</Text>
                   )}
@@ -438,11 +439,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                   {data?.getApiCatalogue?.pageInfo?.nextCursor != null && (
                     <Box display="flex" justifyContent="center">
                       <Button onClick={() => onLoadMore()} variant="ghost">
-                        {!loading ? (
-                          sn('fmButton')
-                        ) : (
-                          <LoadingIcon animate color="blue400" size={16} />
-                        )}
+                        {!loading ? sn('fmButton') : <LoadingDots single />}
                       </Button>
                     </Box>
                   )}

@@ -488,6 +488,39 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                       }
                     />
                   </div>
+
+                  <div className="api-scope-form__container__checkbox__field">
+                    <label
+                      htmlFor="apiScope.grantToPersonalRepresentatives"
+                      className="api-scope-form__label"
+                    >
+                      {
+                        localization.fields['grantToPersonalRepresentatives']
+                          .label
+                      }
+                    </label>
+                    <input
+                      ref={register}
+                      id="apiScope.grantToPersonalRepresentatives"
+                      name="apiScope.grantToPersonalRepresentatives"
+                      type="checkbox"
+                      defaultChecked={
+                        props.apiScope.grantToPersonalRepresentatives
+                      }
+                      className="api-scope-form__checkbox"
+                      title={
+                        localization.fields['grantToPersonalRepresentatives']
+                          .helpText
+                      }
+                    />
+                    <HelpBox
+                      helpText={
+                        localization.fields['grantToPersonalRepresentatives']
+                          .helpText
+                      }
+                    />
+                  </div>
+
                   <div className="api-scope-form__container__checkbox__field">
                     <label
                       htmlFor="apiScope.allowExplicitDelegationGrant"

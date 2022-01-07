@@ -1,24 +1,28 @@
 import React, { Dispatch, SetStateAction } from 'react'
-
 import {
   Box,
-  Button,
-  Select,
   Stack,
   Text,
   ModalBase,
   UserAvatar,
   Icon,
   GridContainer,
-  Option,
+  Divider,
+  Hidden,
 } from '@island.is/island-ui/core'
-import { Locale, User } from '@island.is/shared/types'
+import { User } from '@island.is/shared/types'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
 import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
+import { UserDropdownItem } from './UserDropdownItem'
 import { UserProfileInfo } from './UserProfileInfo'
-import { ValueType } from 'react-select'
+import * as kennitala from 'kennitala'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
+import { useActorDelegationsQuery } from '../../../gen/graphql'
+import { QueryResult } from '@apollo/client'
+import { UserLanguageSwitcher } from './UserLanguageSwitcher'
+import cn from 'classnames'
 
 interface UserDropdownProps {
   user: User
@@ -26,6 +30,7 @@ interface UserDropdownProps {
   setDropdownState: Dispatch<SetStateAction<'closed' | 'open'>>
   onLogout?: () => void
   onSwitchUser: (nationalId: string) => void
+  fullscreen: boolean
 }
 
 export const UserDropdown = ({
@@ -34,19 +39,31 @@ export const UserDropdown = ({
   setDropdownState,
   onSwitchUser,
   onLogout,
+  fullscreen,
 }: UserDropdownProps) => {
-  const { lang, formatMessage, changeLanguage } = useLocale()
-  const handleLanguageChange = (option: ValueType<Option>) =>
-    changeLanguage((option as Option).value.toString() as Locale)
+  const { formatMessage } = useLocale()
   const isVisible = dropdownState === 'open'
   const onClose = () => {
     setDropdownState('closed')
   }
 
-  const isDelegation = Boolean(user.profile.actor)
-  const username = user.profile.actor
-    ? user.profile.actor.name
-    : user.profile.name
+  const actor = user.profile.actor
+  const isDelegation = Boolean(actor)
+  const userName = user.profile.name
+  const actorName = actor?.name
+  const isDelegationCompany = false
+
+  const { value: showPersonalInfo } = useFeatureFlag(
+    'isServicePortalPersonalInformationModuleEnabled',
+    false,
+  )
+
+  const showDelegations =
+    useFeatureFlag(Features.delegationsEnabled, false).value || Boolean(actor)
+  const { data, error, loading } = useActorDelegationsQuery({
+    skip: !showDelegations,
+  })
+  const hasDelegationsData = data && data.authActorDelegations?.length > 0
 
   return (
     <ModalBase
@@ -56,7 +73,7 @@ export const UserDropdown = ({
       hideOnEsc={true}
       modalLabel={formatMessage(userMessages.userButtonAria)}
       removeOnClose={true}
-      preventBodyScroll={false}
+      preventBodyScroll={true}
       onVisibilityChange={(visibility: boolean) => {
         if (visibility !== isVisible) {
           onClose()
@@ -72,61 +89,84 @@ export const UserDropdown = ({
             borderRadius="large"
             display="flex"
             flexDirection="column"
-            className={styles.dropdown}
+            className={cn(
+              fullscreen ? styles.fullScreen : styles.dropdown,
+              styles.container,
+            )}
           >
-            <Stack space={2}>
-              <Box display="flex" flexWrap="nowrap" alignItems="center">
-                <UserAvatar username={username} />
+            <Box
+              display="flex"
+              flexDirection="column"
+              className={styles.wrapper}
+            >
+              {/* Current User */}
+              <Box
+                display="flex"
+                flexWrap="nowrap"
+                alignItems="center"
+                paddingBottom={3}
+              >
+                {/* Check if actor is company - display company icon
+                 * kennitala function is buggy - temp removal
+                 */}
+                {/* {isDelegationCompany ? (
+                  <Box
+                    borderRadius="circle"
+                    background="blue100"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    className={styles.companyIconSize}
+                    >
+                    <Icon icon="business" type="filled" color="blue400" />
+                    </Box>
+                    ) : (
+                      <UserAvatar username={isDelegation ? actorName : userName} />
+                )} */}
+                <UserAvatar username={isDelegation ? actorName : userName} />
 
                 <Box marginLeft={1} marginRight={4}>
                   <Text variant="h4" as="h4">
-                    {username}
+                    {userName}
                   </Text>
+                  {isDelegation && <Text variant="small">{actorName}</Text>}
                 </Box>
               </Box>
+              {/* <Divider /> */}
+              <Hidden above="sm">
+                {<UserLanguageSwitcher user={user} dropdown />}
+              </Hidden>
 
-              <Select
-                name="language-switcher"
-                size="sm"
-                value={
-                  lang === 'en'
-                    ? { label: 'English', value: 'en' }
-                    : { label: 'Íslenska', value: 'is' }
-                }
-                onChange={handleLanguageChange}
-                label={formatMessage(sharedMessages.language)}
-                options={[
-                  { label: 'Íslenska', value: 'is' },
-                  { label: 'English', value: 'en' },
-                ]}
-              />
-
-              {isDelegation && (
-                <Box>
-                  <Button
-                    variant="ghost"
-                    onClick={() => onSwitchUser(user.profile.actor!.nationalId)}
-                    fluid
-                  >
-                    {formatMessage(userMessages.backToMyself)}
-                  </Button>
-                </Box>
+              <Divider />
+              {/* End of current User */}
+              {/* User delegations */}
+              {hasDelegationsData && (
+                <UserDelegations
+                  user={user}
+                  onSwitchUser={onSwitchUser}
+                  data={{ data, error, loading } as QueryResult}
+                />
               )}
-              {!isDelegation && <UserProfileInfo />}
-              <Box>
-                <Button
+              {/* End of user delegations */}
+              {/* User settings */}
+              {!isDelegation && showPersonalInfo && (
+                <>
+                  <UserProfileInfo onClick={() => onClose()} />
+                  <Divider />
+                </>
+              )}
+              {/* End of user settings */}
+
+              {/* Logout */}
+              <Box paddingTop={[1, 2]}>
+                <UserDropdownItem
+                  text={formatMessage(sharedMessages.logout)}
+                  icon={{ type: 'outline', icon: 'logOut' }}
                   onClick={onLogout}
-                  fluid
-                  icon="logOut"
-                  iconType="outline"
-                >
-                  {formatMessage(sharedMessages.logout)}
-                </Button>
+                />
               </Box>
-            </Stack>
-
-            <UserDelegations user={user} onSwitchUser={onSwitchUser} />
-
+              {/* End of Logout */}
+            </Box>
             <button
               className={styles.closeButton}
               onClick={() => setDropdownState('closed')}

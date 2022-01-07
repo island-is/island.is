@@ -10,6 +10,8 @@ import {
   getMonth,
   calculateAidFinalAmount,
   showSpouseData,
+  AmountModal,
+  getAidAmountModalInfo,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -37,6 +39,11 @@ interface ApplicationProps {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+interface CalculationsModal {
+  visible: boolean
+  type: AmountModal
+}
+
 const ApplicationProfile = ({
   application,
   setApplication,
@@ -44,7 +51,12 @@ const ApplicationProfile = ({
 }: ApplicationProps) => {
   const [isStateModalVisible, setStateModalVisible] = useState(false)
 
-  const [isAidModalVisible, setAidModalVisible] = useState(false)
+  const [calculationsModal, setCalculationsModal] = useState<CalculationsModal>(
+    {
+      visible: false,
+      type: AmountModal.ESTIMATED,
+    },
+  )
 
   const { municipality } = useContext(AdminContext)
 
@@ -58,8 +70,6 @@ const ApplicationProfile = ({
       )
     }
   }, [application, municipality])
-
-  const currentYear = format(new Date(), 'yyyy')
 
   const applicationInfo = [
     {
@@ -78,10 +88,9 @@ const ApplicationProfile = ({
           content: `${calculateAidFinalAmount(
             aidAmount,
             application.usePersonalTaxCredit,
-            currentYear,
           ).toLocaleString('de-DE')} kr.`,
           onclick: () => {
-            setAidModalVisible(!isAidModalVisible)
+            setCalculationsModal({ visible: true, type: AmountModal.ESTIMATED })
           },
         }
       : {
@@ -93,7 +102,10 @@ const ApplicationProfile = ({
   if (application.state === ApplicationState.APPROVED) {
     applicationInfo.push({
       title: 'Veitt',
-      content: `${application.amount?.toLocaleString('de-DE')} kr.`,
+      content: `${application.amount?.finalAmount.toLocaleString('de-DE')} kr.`,
+      onclick: () => {
+        setCalculationsModal({ visible: true, type: AmountModal.PROVIDED })
+      },
     })
   }
   if (application.state === ApplicationState.REJECTED) {
@@ -112,6 +124,13 @@ const ApplicationProfile = ({
   const applicantMoreInfo = getApplicantMoreInfo(application)
 
   const nationalRegistryInfo = getNationalRegistryInfo(application)
+
+  const modalInfo = getAidAmountModalInfo(
+    calculationsModal.type,
+    aidAmount,
+    application.usePersonalTaxCredit,
+    application?.amount,
+  )
 
   return (
     <>
@@ -174,7 +193,6 @@ const ApplicationProfile = ({
           spouseName={application.spouseName ?? ''}
         />
       </Box>
-
       {application.state && (
         <StateModal
           isVisible={isStateModalVisible}
@@ -184,20 +202,20 @@ const ApplicationProfile = ({
           setApplication={setApplication}
           applicationId={application.id}
           currentState={application.state}
+          homeCircumstances={application.homeCircumstances}
+          spouseNationalId={application.spouseNationalId}
           setIsLoading={setIsLoading}
         />
       )}
 
-      {aidAmount && (
-        <AidAmountModal
-          aidAmount={aidAmount}
-          usePersonalTaxCredit={application.usePersonalTaxCredit}
-          isVisible={isAidModalVisible}
-          onVisibilityChange={(isVisibleBoolean) => {
-            setAidModalVisible(isVisibleBoolean)
-          }}
-        />
-      )}
+      <AidAmountModal
+        headline={modalInfo.headline}
+        calculations={modalInfo.calculations}
+        isVisible={calculationsModal.visible}
+        onVisibilityChange={() => {
+          setCalculationsModal({ ...calculationsModal, visible: false })
+        }}
+      />
     </>
   )
 }

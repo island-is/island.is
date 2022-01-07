@@ -1,11 +1,12 @@
 import React, { FC, useContext } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
+
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import {
   Box,
   Stack,
@@ -19,17 +20,19 @@ import {
   NotFound,
   PartnerPageLayout,
 } from '@island.is/skilavottord-web/components'
-import { CarsTable } from './components/CarsTable'
 import {
   RecyclingPartner,
   RecyclingRequest,
   Vehicle,
   VehicleOwner,
-} from '@island.is/skilavottord-web/types'
+  Query,
+  Role,
+} from '@island.is/skilavottord-web/graphql/schema'
 import { getDate, getYear } from '@island.is/skilavottord-web/utils/dateUtils'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
+import { CarsTable } from './components/CarsTable'
 
-export const skilavottordRecyclingPartnerVehiclesQuery = gql`
+export const SkilavottordRecyclingPartnerVehiclesQuery = gql`
   query skilavottordRecyclingPartnerVehiclesQuery($partnerId: String!) {
     skilavottordRecyclingPartnerVehicles(partnerId: $partnerId) {
       nationalId
@@ -48,7 +51,7 @@ export const skilavottordRecyclingPartnerVehiclesQuery = gql`
   }
 `
 
-const skilavottordAllRecyclingPartnersQuery = gql`
+const SkilavottordAllRecyclingPartnersQuery = gql`
   query skilavottordAllRecyclingPartnersQuery {
     skilavottordAllRecyclingPartners {
       companyId
@@ -73,8 +76,8 @@ const Overview: FC = () => {
   const router = useRouter()
 
   const partnerId = user?.partnerId
-  const { data: vehicleData } = useQuery(
-    skilavottordRecyclingPartnerVehiclesQuery,
+  const { data: vehicleData } = useQuery<Query>(
+    SkilavottordRecyclingPartnerVehiclesQuery,
     {
       variables: { partnerId },
       fetchPolicy: 'cache-and-network',
@@ -82,8 +85,8 @@ const Overview: FC = () => {
     },
   )
 
-  const { data: partnerData } = useQuery(
-    skilavottordAllRecyclingPartnersQuery,
+  const { data: partnerData } = useQuery<Query>(
+    SkilavottordAllRecyclingPartnersQuery,
     {
       variables: { partnerId },
     },
@@ -99,14 +102,14 @@ const Overview: FC = () => {
   const getDeregisteredCars = () => {
     const deregisteredVehicles = [] as DeregisteredVehicle[]
     const owners = vehicleOwners?.map(({ vehicles }: VehicleOwner) =>
-      vehicles.map(
+      vehicles?.map(
         ({
           vehicleId,
           vehicleType,
           newregDate,
           recyclingRequests,
         }: Vehicle) => {
-          return recyclingRequests.map((request: RecyclingRequest) => {
+          return recyclingRequests?.map((request: RecyclingRequest) => {
             const { requestType, nameOfRequestor, createdAt } = request
             if (requestType === 'deregistered') {
               deregisteredVehicles.push({
@@ -141,7 +144,7 @@ const Overview: FC = () => {
     <PartnerPageLayout
       side={
         <Sidenav
-          title={activePartner?.companyName || user.name}
+          title={activePartner?.companyName || sidenavText.title}
           sections={[
             {
               icon: 'car',
@@ -171,7 +174,9 @@ const Overview: FC = () => {
               <Text variant="h1">{t.title}</Text>
               <Text variant="intro">{t.info}</Text>
             </Stack>
-            <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
+            <Box marginTop={4}>
+              <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
+            </Box>
           </Stack>
         </GridColumn>
         {deregisteredVehicles?.length > 0 && (

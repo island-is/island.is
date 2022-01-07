@@ -116,7 +116,7 @@ beforeAll(async () => {
 
   registrar = (
     await request(app.getHttpServer())
-      .get(`/api/user/${registrarNationalId}`)
+      .get(`/api/user/?nationalId=${registrarNationalId}`)
       .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
 
@@ -614,11 +614,13 @@ describe('User', () => {
           created: dbUser.created ?? 'FAILURE',
           modified: apiUser.modified,
           nationalId: dbUser.nationalId ?? 'FAILURE',
+          institution: apiUser.institution,
         } as CUser)
 
         // Check the data in the database
         return User.findOne({
           where: { id: apiUser.id },
+          include: [{ model: Institution, as: 'institution' }],
         })
       })
       .then((newValue) => {
@@ -803,6 +805,7 @@ describe('Case', () => {
           modified: apiCase.modified,
           ...judgeCaseData,
           judge,
+          registrar,
         } as CCase)
 
         // Check the data in the database
@@ -849,6 +852,7 @@ describe('Case', () => {
           prosecutor,
           sharedWithProsecutorsOffice,
           judge,
+          registrar,
         })
 
         // Check the data in the database
@@ -879,93 +883,6 @@ describe('Case', () => {
       .then((response) => {
         // Check the response - should have at least two cases
         expect(response.body.length).toBeGreaterThanOrEqual(2)
-      })
-  })
-
-  it('GET /api/case/:id should get a case by id', async () => {
-    let dbCase: CCase
-
-    await Case.create(getCaseData(true, true, true, true))
-      .then((value) => {
-        dbCase = caseToCCase(value)
-
-        return request(app.getHttpServer())
-          .get(`/api/case/${dbCase.id}`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
-          .send()
-          .expect(200)
-      })
-      .then((response) => {
-        // Check the response
-        expectCasesToMatch(response.body, {
-          ...dbCase,
-          court,
-          prosecutor,
-          sharedWithProsecutorsOffice,
-          judge,
-          registrar,
-        })
-      })
-  })
-
-  it('POST /api/case/:id/signature should request a signature for a case', async () => {
-    await Case.create({
-      ...getCaseData(true, true, true, true),
-      state: CaseState.REJECTED,
-    })
-      .then(async (value) =>
-        request(app.getHttpServer())
-          .post(`/api/case/${value.id}/signature`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
-          .expect(201),
-      )
-      .then(async (response) => {
-        // Check the response
-        expect(response.body.controlCode).toBe('0000')
-        expect(response.body.documentToken).toBe('DEVELOPMENT')
-      })
-  })
-
-  it('GET /api/case/:id/signature should confirm a signature for a case', async () => {
-    let dbCase: CCase
-
-    await Case.create({
-      ...getCaseData(true, true, true, true),
-      state: CaseState.ACCEPTED,
-    })
-      .then((value) => {
-        dbCase = caseToCCase(value)
-
-        return request(app.getHttpServer())
-          .get(`/api/case/${dbCase.id}/signature`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
-          .query({ documentToken: 'DEVELOPMENT' })
-          .expect(200)
-      })
-      .then(async (response) => {
-        // Check the response
-        expect(response.body).not.toBeNull()
-        expect(response.body.documentSigned).toBe(true)
-        expect(response.body.code).toBeUndefined()
-        expect(response.body.message).toBeUndefined()
-
-        // Check the data in the database
-        return getCase(dbCase.id)
-      })
-      .then((value) => {
-        const updatedDbCase = caseToCCase(value)
-
-        expect(updatedDbCase.rulingDate).not.toBeNull()
-        expectCasesToMatch(updatedDbCase, {
-          ...dbCase,
-          modified: updatedDbCase.modified,
-          rulingDate: updatedDbCase.rulingDate,
-          court,
-          prosecutor,
-          sharedWithProsecutorsOffice,
-          registrar,
-          judge,
-        })
       })
   })
 

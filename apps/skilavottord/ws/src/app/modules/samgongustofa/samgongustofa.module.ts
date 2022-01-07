@@ -1,10 +1,13 @@
-import { Module, HttpModule } from '@nestjs/common'
-import { SamgongustofaService } from './models/samgongustofa.service'
+import { Module, HttpModule, forwardRef } from '@nestjs/common'
+
+import { RecyclingRequestModule } from '../recyclingRequest/recyclingRequest.module'
+
+import { SamgongustofaService } from './samgongustofa.service'
 import { SamgongustofaResolver } from './samgongustofa.resolver'
-import { RecyclingRequestModule } from '../recycling.request/recycling.request.module'
 
 @Module({
-  imports: [HttpModule, RecyclingRequestModule],
+  imports: [HttpModule, forwardRef(() => RecyclingRequestModule)],
   providers: [SamgongustofaResolver, SamgongustofaService],
+  exports: [SamgongustofaService],
 })
 export class SamgongustofaModule {}

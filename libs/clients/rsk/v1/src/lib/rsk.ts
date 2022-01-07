@@ -45,6 +45,7 @@ export class RSKService extends RESTDataSource {
   }
 
   willSendRequest(request: RequestOptions) {
+    this.memoizedResults.clear()
     request.headers.set('Content-Type', 'application/json')
     request.headers.set(
       'Authorization',

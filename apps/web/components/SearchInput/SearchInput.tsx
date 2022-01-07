@@ -172,25 +172,34 @@ const useSearch = (
   return state
 }
 
+type SubmitType = {
+  type: 'query' | 'link'
+  string: string
+}
+
 const useSubmit = (locale: Locale, onRouting?: () => void) => {
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
 
   return useCallback(
-    (q: string) => {
-      if (q) {
-        Router.push({
+    (item: SubmitType) => {
+      Router.push({
+        ...(item.type === 'query' && {
           pathname: linkResolver('search').href,
-          query: { q },
-        }).then(() => {
-          window.scrollTo(0, 0)
-        })
-        if (onRouting) {
-          onRouting()
-        }
+          query: { q: item.string },
+        }),
+        ...(item.type === 'link' && {
+          pathname: item.string,
+        }),
+      }).then(() => {
+        window.scrollTo(0, 0)
+      })
+
+      if (onRouting) {
+        onRouting()
       }
     },
-    [Router, linkResolver],
+    [Router, linkResolver, onRouting],
   )
 }
 
@@ -240,106 +249,121 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     }, [setHasFocus])
 
     return (
-      <>
-        <Downshift<string>
-          id={id}
-          initialInputValue={initialInputValue}
-          onChange={(q) => {
-            return onSubmit(`${search.prefix} ${q}`.trim() || '')
-          }}
-          onInputValueChange={(q) => setSearchTerm(q)}
-          itemToString={(v) => {
-            const str = `${search.prefix ? search.prefix + ' ' : ''}${v}`.trim()
+      <Downshift<SubmitType>
+        id={id}
+        initialInputValue={initialInputValue}
+        onChange={(item) => {
+          if (item?.type === 'query') {
+            return onSubmit({
+              ...item,
+              string: `${search.prefix} ${item.string}`.trim() || '',
+            })
+          }
 
-            if (str === 'null') {
-              return ''
-            }
+          if (item?.type === 'link') {
+            return onSubmit(item)
+          }
+        }}
+        onInputValueChange={(q) => setSearchTerm(q)}
+        itemToString={(item) => {
+          if (item?.type === 'query') {
+            return `${search.prefix ? search.prefix + ' ' : ''}${
+              item.string
+            }`.trim()
+          }
 
-            return str
-          }}
-          stateReducer={(state, changes) => {
-            // pressing tab when input is not empty should move focus to the
-            // search icon, so we need to prevent downshift from closing on blur
-            const shouldIgnore =
-              changes.type === Downshift.stateChangeTypes.mouseUp ||
-              (changes.type === Downshift.stateChangeTypes.blurInput &&
-                state.inputValue !== '')
+          return ''
+        }}
+        stateReducer={(state, changes) => {
+          // pressing tab when input is not empty should move focus to the
+          // search icon, so we need to prevent downshift from closing on blur
+          const shouldIgnore =
+            changes.type === Downshift.stateChangeTypes.mouseUp ||
+            (changes.type === Downshift.stateChangeTypes.blurInput &&
+              state.inputValue !== '')
 
-            return shouldIgnore ? {} : changes
-          }}
-        >
-          {({
-            highlightedIndex,
-            isOpen,
-            getRootProps,
-            getInputProps,
-            getItemProps,
-            getMenuProps,
-            openMenu,
-            closeMenu,
-            inputValue,
-          }) => (
-            <AsyncSearchInput
-              ref={ref}
-              white={white}
-              hasFocus={hasFocus}
-              loading={search.isLoading}
-              skipContext={skipContext}
-              rootProps={{
-                'aria-controls': id + '-menu',
-                ...getRootProps(),
-              }}
-              menuProps={{
-                comp: 'div',
-                ...getMenuProps(),
-              }}
-              buttonProps={{
-                onClick: () => {
+          return shouldIgnore ? {} : changes
+        }}
+      >
+        {({
+          highlightedIndex,
+          isOpen,
+          getRootProps,
+          getInputProps,
+          getItemProps,
+          getMenuProps,
+          openMenu,
+          closeMenu,
+          inputValue,
+        }) => (
+          <AsyncSearchInput
+            ref={ref}
+            white={white}
+            hasFocus={hasFocus}
+            loading={search.isLoading}
+            skipContext={skipContext}
+            rootProps={{
+              'aria-controls': id + '-menu',
+              ...getRootProps(),
+            }}
+            menuProps={{
+              comp: 'div',
+              ...getMenuProps(),
+            }}
+            buttonProps={{
+              onClick: () => {
+                closeMenu()
+                onSubmit({
+                  type: 'query',
+                  string: inputValue,
+                })
+              },
+              onFocus,
+              onBlur,
+              'aria-label': locale === 'is' ? 'Leita' : 'Search',
+            }}
+            inputProps={getInputProps({
+              inputSize: size,
+              onFocus: () => {
+                onFocus()
+                if (openOnFocus) {
+                  openMenu()
+                }
+              },
+              onBlur,
+              placeholder,
+              colored,
+              onKeyDown: (e) => {
+                const v = e.currentTarget.value
+
+                if (e.key === 'Enter' && highlightedIndex == null) {
+                  e.currentTarget.blur()
                   closeMenu()
-                  onSubmit(inputValue)
-                },
-                onFocus,
-                onBlur,
-                'aria-label': locale === 'is' ? 'Leita' : 'Search',
-              }}
-              inputProps={getInputProps({
-                inputSize: size,
-                onFocus: () => {
-                  onFocus()
-                  if (openOnFocus) {
-                    openMenu()
+                  onSubmit({
+                    type: 'query',
+                    string: v,
+                  })
+                }
+              },
+            })}
+          >
+            {isOpen && !isEmpty(search) && (
+              <Results
+                quickContentLabel={quickContentLabel}
+                search={search}
+                highlightedIndex={highlightedIndex}
+                getItemProps={getItemProps}
+                autosuggest={autosuggest}
+                onRouting={() => {
+                  if (onRouting) {
+                    onRouting()
                   }
-                },
-                onBlur,
-                placeholder,
-                colored,
-                onKeyDown: (e) => {
-                  if (e.key === 'Enter' && highlightedIndex == null) {
-                    e.currentTarget.blur()
-                    closeMenu()
-                    onSubmit(e.currentTarget.value)
-                  }
-                },
-              })}
-            >
-              {isOpen && !isEmpty(search) && (
-                <Results
-                  quickContentLabel={quickContentLabel}
-                  search={search}
-                  highlightedIndex={highlightedIndex}
-                  getItemProps={getItemProps}
-                  autosuggest={autosuggest}
-                  onRouting={() => {
-                    if (onRouting) {
-                      onRouting()
-                    }
-                  }}
-                />
-              )}
-            </AsyncSearchInput>
-          )}
-        </Downshift>
-      </>
+                }}
+              />
+            )}
+          </AsyncSearchInput>
+        )}
+      </Downshift>
     )
   },
 )
@@ -394,7 +418,10 @@ const Results = ({
                 ? suggestion.replace(search.term, '')
                 : ''
               const { onClick, ...itemProps } = getItemProps({
-                item: suggestion,
+                item: {
+                  type: 'query',
+                  string: suggestion,
+                },
               })
               return (
                 <div
@@ -428,30 +455,36 @@ const Results = ({
                 News[] &
                 SubArticle[])
                 .slice(0, 5)
-                .map((item) => {
+                .map((item, i) => {
                   const { onClick, ...itemProps } = getItemProps({
-                    item: '',
+                    item: {
+                      type: 'link',
+                      string: linkResolver(
+                        item.__typename as LinkType,
+                        item.slug.split('/'),
+                      ).href,
+                    },
                   })
                   return (
-                    <div
+                    <Link
                       key={item.id}
                       {...itemProps}
                       onClick={(e) => {
                         onClick(e)
                         onRouting()
                       }}
+                      color="blue400"
+                      underline="normal"
+                      pureChildren
+                      underlineVisibility={
+                        search.suggestions.length + i === highlightedIndex
+                          ? 'always'
+                          : 'hover'
+                      }
+                      skipTab
                     >
-                      <Link
-                        {...linkResolver(
-                          item.__typename as LinkType,
-                          item.slug.split('/'),
-                        )}
-                      >
-                        <Text variant="h5" color="blue400">
-                          {item.title}
-                        </Text>
-                      </Link>
-                    </div>
+                      {item.title}
+                    </Link>
                   )
                 })}
             </Stack>

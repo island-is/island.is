@@ -23,10 +23,6 @@ export class StaffGuard implements CanActivate {
       context.getHandler(),
     )
 
-    if (!staffRolesRule) {
-      return true
-    }
-
     const staff = await this.staffService.findByNationalId(user.nationalId)
 
     const rule = staffRolesRule.some((r) => staff.roles.includes(r))
