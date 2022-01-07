@@ -48,5 +48,16 @@ export const Application: Form = buildForm({
         }),
       ],
     }),
+    buildSection({
+      id: 'homeCircumstancesForm',
+      title: m.homeCircumstancesForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'homeCircumstances',
+          title: m.homeCircumstancesForm.general.pageTitle,
+          component: 'HomeCircumstancesForm',
+        }),
+      ],
+    }),
   ],
 })
