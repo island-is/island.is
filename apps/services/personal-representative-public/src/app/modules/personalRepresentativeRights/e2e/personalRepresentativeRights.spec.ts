@@ -8,7 +8,6 @@ import {
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeType,
-  PersonalRepresentativeAccessDTO,
   PersonalRepresentativeCreateDTO,
 } from '@island.is/auth-api-lib/personal-representative'
 import { PersonalRepresentativeRightTypeService } from '@island.is/auth-api-lib/personal-representative'

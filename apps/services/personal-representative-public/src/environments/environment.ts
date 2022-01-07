@@ -5,7 +5,7 @@ const devConfig = {
   },
   port: 3378,
   auth: {
-    audience: '@island.is',
+    audience: '@island.is/auth',
     issuer:
       process.env.IDENTITY_SERVER_ISSUER_URL ??
       'https://identity-server.dev01.devland.is',

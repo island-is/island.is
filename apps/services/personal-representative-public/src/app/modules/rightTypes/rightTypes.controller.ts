@@ -29,9 +29,9 @@ const namespace = `${environment.audit.defaultNamespace}/right-types`
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.readPersonalRepresentative)
+@ApiBearerAuth()
 @ApiTags('Personal Representative Public - Right Types')
 @Controller('v1/right-types')
-@ApiBearerAuth()
 @Audit({ namespace })
 export class RightTypesController {
   constructor(
