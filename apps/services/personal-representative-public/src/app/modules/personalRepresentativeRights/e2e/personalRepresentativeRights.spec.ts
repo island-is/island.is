@@ -164,26 +164,10 @@ describe('PersonalRepresentativePermissionController', () => {
         const personalRepPublic = new PersonalRepresentativePublicDTO().fromDTO(
           personalRep,
         )
-        console.log(responseData[0])
         expect(responseData[0]).toMatchObject(personalRepPublic)
       } else {
         expect('Failed to create personal rep').toMatch('0')
       }
-    })
-  })
-  describe('Post', () => {
-    it('Post v1/personal-representative-rights/loc-access should create access log', async () => {
-      const simpleAccessData: PersonalRepresentativeAccessDTO = {
-        nationalIdPersonalRepresentative: '1234567890',
-        nationalIdRepresentedPerson: '1234567891',
-        serviceProvider: 'testServiceProvider',
-      }
-      // Test get personal rep
-      const response = await server
-        .post('/v1/personal-representative-rights/log-access')
-        .send(simpleAccessData)
-        .expect(201)
-      expect(response.body).toMatchObject(simpleAccessData)
     })
   })
 })
