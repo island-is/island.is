@@ -39,13 +39,7 @@ const NavItemContent: FC<Props> = ({
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.lg
   const collapsed = sidebarState === 'closed' && !isMobile
-  const chevron = expanded
-    ? expanded
-      ? 'chevronUp'
-      : 'chevronDown'
-    : expanded
-    ? 'chevronUp'
-    : 'chevronDown'
+  const chevron = active ? 'chevronUp' : 'chevronDown'
   const showLock = enabled === false
   const showChevron =
     hasArray && !alwaysExpanded && !showLock && sidebarState === 'open'
