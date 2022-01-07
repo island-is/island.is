@@ -39,6 +39,8 @@ import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
 import * as styles from './Overview.css'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import getOrganizationLogoUrl from '../../utils/getOrganizationLogoUrl'
+import { m } from '@island.is/service-portal/core'
+import { useUpdateUnreadDocuments } from '@island.is/service-portal/core'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 15
@@ -64,6 +66,7 @@ const getFilteredDocuments = (
   filterValues: FilterValues,
 ): Document[] => {
   const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
+
   let filteredDocuments = documents.filter((document) => {
     const minDate = dateFrom || new Date('1900-01-01')
     const maxDate = dateTo || startOfTomorrow()
@@ -84,7 +87,6 @@ const getFilteredDocuments = (
       x.subject.toLowerCase().includes(searchQuery.toLowerCase()),
     )
   }
-
   return filteredDocuments
 }
 
@@ -97,6 +99,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   )
 
   const { formatMessage, lang } = useLocale()
+  const badgeContext = useUpdateUnreadDocuments()
   const [page, setPage] = useState(1)
   const [isDateRangeOpen, setIsDateRangeOpen] = useState(false)
   const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(
@@ -181,7 +184,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>
-        <Text variant="h1" as="h1">
+        <Text variant="h3" as="h1">
           {formatMessage({
             id: 'sp.documents:title',
             defaultMessage: 'Pósthólf',
@@ -189,7 +192,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
         </Text>
         <Columns collapseBelow="sm">
           <Column width="7/12">
-            <Text variant="intro">
+            <Text variant="default">
               {formatMessage({
                 id: 'sp.documents:intro',
                 defaultMessage:
@@ -199,20 +202,18 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
           </Column>
         </Columns>
         <Box marginTop={[1, 1, 2, 2, 6]}>
-          <GridRow>
+          <GridRow alignItems="flexEnd">
             <GridColumn paddingBottom={[1, 0]} span={['1/1', '3/8']}>
               <Box height="full">
                 <Input
                   icon="search"
                   backgroundColor="blue"
-                  size="md"
+                  size="xs"
                   value={filterValue.searchQuery}
                   onChange={(ev) => handleSearchChange(ev.target.value)}
                   name="rafraen-skjol-leit"
-                  placeholder={formatMessage({
-                    id: 'sp.documents:search-placeholder',
-                    defaultMessage: 'Leitaðu að skjali',
-                  })}
+                  label={formatMessage(m.searchLabel)}
+                  placeholder={formatMessage(m.searchPlaceholder)}
                 />
               </Box>
             </GridColumn>
@@ -220,7 +221,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               <Select
                 name="categories"
                 backgroundColor="blue"
-                size="sm"
+                size="xs"
                 defaultValue={categories[0]}
                 options={categories}
                 value={filterValue.activeCategory}
@@ -238,6 +239,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   fluid
                   icon={isDateRangeOpen ? 'close' : 'filter'}
                   iconType="outline"
+                  size="small"
                   onClick={handleDateRangeButtonClick}
                 >
                   {formatMessage({
@@ -251,7 +253,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
           <AnimateHeight duration={400} height={isDateRangeOpen ? 'auto' : 0}>
             <Box marginTop={[1, 3]}>
               <GridRow>
-                <GridColumn paddingBottom={[1, 0]} span={['1/1', '6/12']}>
+                <GridColumn paddingBottom={[1, 0]} span={['1/1', '4/8', '3/8']}>
                   <DatePicker
                     label={formatMessage({
                       id: 'sp.documents:datepicker-dateFrom-label',
@@ -263,12 +265,12 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     })}
                     locale="is"
                     backgroundColor="blue"
-                    size="sm"
+                    size="xs"
                     selected={filterValue.dateFrom}
                     handleChange={handleDateFromInput}
                   />
                 </GridColumn>
-                <GridColumn span={['1/1', '6/12']}>
+                <GridColumn span={['1/1', '4/8', '3/8']}>
                   <DatePicker
                     label={formatMessage({
                       id: 'sp.documents:datepicker-dateTo-label',
@@ -280,7 +282,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     })}
                     locale="is"
                     backgroundColor="blue"
-                    size="sm"
+                    size="xs"
                     selected={filterValue.dateTo}
                     handleChange={handleDateToInput}
                     minDate={filterValue.dateFrom || undefined}
@@ -313,7 +315,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 alignItems="center"
                 justifyContent="spaceBetween"
               >
-                <Text variant="h3" as="h3">{`${
+                <Text variant="h5" as="h3">{`${
                   filteredDocuments.length
                 } ${formatMessage(documentsFoundText())}`}</Text>
                 <div>
@@ -338,7 +340,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 <GridRow>
                   <GridColumn span={['1/1', '2/12']}>
                     <Box paddingX={2}>
-                      <Text variant="eyebrow" fontWeight="semiBold">
+                      <Text fontWeight="semiBold" variant="medium">
                         {formatMessage({
                           id: 'sp.documents:table-header-date',
                           defaultMessage: 'Dagsetning',
@@ -348,7 +350,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   </GridColumn>
                   <GridColumn span={['1/1', '6/12', '7/12', '6/12', '7/12']}>
                     <Box paddingX={2}>
-                      <Text variant="eyebrow" fontWeight="semiBold">
+                      <Text fontWeight="semiBold" variant="medium">
                         {formatMessage({
                           id: 'sp.documents:table-header-information',
                           defaultMessage: 'Upplýsingar',
@@ -358,7 +360,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   </GridColumn>
                   <GridColumn span={['1/1', '4/12', '3/12', '4/12', '3/12']}>
                     <Box paddingX={2}>
-                      <Text variant="eyebrow" fontWeight="semiBold">
+                      <Text fontWeight="semiBold" variant="medium">
                         {formatMessage({
                           id: 'sp.documents:table-header-institution',
                           defaultMessage: 'Stofnun',
@@ -422,7 +424,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 renderLink={(page, className, children) => (
                   <button
                     className={className}
-                    onClick={handlePageChange.bind(null, page)}
+                    onClick={
+                      (handlePageChange.bind(null, page),
+                      badgeContext.updateUnreadDocumentsCounter())
+                    }
                   >
                     {children}
                   </button>

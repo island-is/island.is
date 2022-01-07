@@ -14,8 +14,14 @@ const Template = (args) => <Checkbox {...args} />
 export const Default = Template.bind({})
 Default.args = { label: 'My label', large: false }
 
+export const Disabled = Template.bind({})
+Disabled.args = { label: 'Disabled', large: false, disabled: true }
+
 export const Large = Template.bind({})
 Large.args = { label: 'Large version', large: true }
+
+export const LargeDisabled = Template.bind({})
+LargeDisabled.args = { label: 'Large disabled', large: true, disabled: true }
 
 export const WithSubLabel = Template.bind({})
 WithSubLabel.args = {

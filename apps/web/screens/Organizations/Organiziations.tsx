@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import NextLink from 'next/link'
+import { useWindowSize } from 'react-use'
 import {
   Box,
   Text,
@@ -11,7 +12,7 @@ import {
   ResponsiveSpace,
   Pagination,
 } from '@island.is/island-ui/core'
-import { helperStyles } from '@island.is/island-ui/theme'
+import { helperStyles, theme } from '@island.is/island-ui/theme'
 import {
   Query,
   QueryGetNamespaceArgs,
@@ -38,7 +39,7 @@ import {
   FilterLabels,
 } from './FilterMenu'
 
-const CARDS_PER_PAGE = 10
+const CARDS_PER_PAGE = 12
 
 interface OrganizationProps {
   organizations: Query['getOrganizations']
@@ -53,6 +54,14 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   tags,
   namespace,
 }) => {
+  const [isMobile, setIsMobile] = useState(false)
+  const { width } = useWindowSize()
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
   const n = useNamespace(namespace)
   const [page, setPage] = useState<number>(1)
   const { linkResolver } = useLinkResolver()
@@ -99,9 +108,12 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const base = page === 1 ? 0 : (page - 1) * CARDS_PER_PAGE
   const visibleItems = filteredItems.slice(base, page * CARDS_PER_PAGE)
 
-  const goToPage = (page = 1) => {
+  const goToPage = (page = 1, scrollTop = true) => {
     setPage(page)
-    window.scrollTo(0, 0)
+
+    if (scrollTop) {
+      window.scrollTo(0, 0)
+    }
   }
 
   const metaTitle = `${n(
@@ -110,8 +122,9 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   )} | Ísland.is`
 
   const filterLabels: FilterLabels = {
+    labelClearAll: n('filterClearAll', 'Hreinsa allar síur'),
     labelClear: n('filterClear', 'Hreinsa síu'),
-    labelOpen: n('filterOpen', 'Opna síu'),
+    labelOpen: n('filterOpen', 'Sía niðurstöður'),
     labelClose: n('filterClose', 'Loka síu'),
     labelTitle: n('filterOrganization', 'Sía stofnanir'),
     labelResult: n('showResults', 'Sýna niðurstöður'),
@@ -147,103 +160,76 @@ const OrganizationPage: Screen<OrganizationProps> = ({
           {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')}
         </Text>
       </SidebarLayout>
-      <Box
-        background="blue100"
-        display="inlineBlock"
-        width="full"
-        paddingTop={[verticalSpacing, verticalSpacing, 0]}
-      >
+      <Box background="blue100" display="inlineBlock" width="full">
         <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-          <SidebarLayout
-            contentId="organizations-list"
-            sidebarContent={
+          <GridContainer id="organizations-list">
+            <Box marginY={[3, 3, 6]}>
               <FilterMenu
                 {...filterLabels}
                 categories={categories}
                 filter={filter}
                 setFilter={setFilter}
                 resultCount={filteredItems.length}
-                onBeforeUpdate={() => goToPage(1)}
+                onBeforeUpdate={() => goToPage(1, false)}
+                align="right"
+                variant={isMobile ? 'dialog' : 'popover'}
               />
-            }
-            hiddenOnTablet
-          >
-            <GridContainer>
+            </Box>
+            <GridRow>
+              {visibleItems.map(({ title, description, tag, link }, index) => {
+                const tags =
+                  (tag &&
+                    tag.map((x) => ({
+                      title: x.title,
+                      tagProps: {
+                        outlined: true,
+                      },
+                    }))) ||
+                  []
+
+                return (
+                  <GridColumn
+                    key={index}
+                    span={['12/12', '6/12', '6/12', '4/12']}
+                    paddingBottom={verticalSpacing}
+                  >
+                    <Card
+                      link={{ href: link }}
+                      key={index}
+                      description={description}
+                      title={title}
+                      tags={tags}
+                    />
+                  </GridColumn>
+                )
+              })}
+            </GridRow>
+            {totalPages > 1 && (
               <GridRow>
-                <GridColumn
-                  hiddenAbove="md"
-                  span="12/12"
-                  paddingBottom={verticalSpacing}
-                >
-                  <FilterMenu
-                    {...filterLabels}
-                    categories={categories}
-                    filter={filter}
-                    setFilter={setFilter}
-                    resultCount={filteredItems.length}
-                    onBeforeUpdate={() => goToPage(1)}
-                    asDialog={true}
-                  />
+                <GridColumn span="12/12">
+                  <Box paddingTop={8}>
+                    <Pagination
+                      page={page}
+                      totalPages={totalPages}
+                      variant="blue"
+                      renderLink={(page, className, children) => (
+                        <button
+                          onClick={() => {
+                            goToPage(page)
+                          }}
+                        >
+                          <span className={helperStyles.srOnly}>
+                            {n('page', 'Síða')}
+                          </span>
+                          <span className={className}>{children}</span>
+                        </button>
+                      )}
+                    />
+                  </Box>
                 </GridColumn>
               </GridRow>
-              <GridRow>
-                {visibleItems.map(
-                  ({ title, description, tag, link }, index) => {
-                    const tags =
-                      (tag &&
-                        tag.map((x) => ({
-                          title: x.title,
-                          tagProps: {
-                            outlined: true,
-                          },
-                        }))) ||
-                      []
-
-                    return (
-                      <GridColumn
-                        key={index}
-                        span={['12/12', '6/12', '6/12', '12/12', '6/12']}
-                        paddingBottom={verticalSpacing}
-                      >
-                        <Card
-                          link={{ href: link }}
-                          key={index}
-                          description={description}
-                          title={title}
-                          tags={tags}
-                        />
-                      </GridColumn>
-                    )
-                  },
-                )}
-              </GridRow>
-              {totalPages > 1 && (
-                <GridRow>
-                  <GridColumn span="12/12">
-                    <Box paddingTop={8}>
-                      <Pagination
-                        page={page}
-                        totalPages={totalPages}
-                        variant="blue"
-                        renderLink={(page, className, children) => (
-                          <button
-                            onClick={() => {
-                              goToPage(page)
-                            }}
-                          >
-                            <span className={helperStyles.srOnly}>
-                              {n('page', 'Síða')}
-                            </span>
-                            <span className={className}>{children}</span>
-                          </button>
-                        )}
-                      />
-                    </Box>
-                  </GridColumn>
-                </GridRow>
-              )}
-            </GridContainer>
-          </SidebarLayout>
+            )}
+          </GridContainer>
         </ColorSchemeContext.Provider>
       </Box>
     </>

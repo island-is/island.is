@@ -20,7 +20,7 @@ export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel }) => {
       <Text variant="h1" as="h1" marginBottom={3}>
         {formatMessage(m.telNumber)}
       </Text>
-      <Text variant="intro" marginBottom={7}>
+      <Text variant="default" marginBottom={7}>
         {formatMessage({
           id: 'sp.settings:onboarding-phone-form-message',
           defaultMessage: `

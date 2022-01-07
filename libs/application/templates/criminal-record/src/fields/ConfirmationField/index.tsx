@@ -15,6 +15,7 @@ import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import * as styles from './ConfirmationField.css'
+import { Bus } from '../../assets'
 
 type ConfirmationFieldProps = {
   field: {
@@ -195,11 +196,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         marginTop={2}
         marginBottom={4}
       >
-        <img
-          src="/assets/images/bus.svg"
-          alt={formatText(m.paymentImage, application, formatMessage)}
-          style={{ maxWidth: 220 }}
-        />
+        <Bus />
       </Box>
 
       {renderFooter()}
