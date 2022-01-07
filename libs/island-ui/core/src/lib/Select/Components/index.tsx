@@ -12,6 +12,7 @@ import {
   SingleValueProps,
   IndicatorProps,
   Props,
+  StylesConfig,
 } from 'react-select'
 import { Icon } from '../../IconRC/Icon'
 import * as styles from '../Select.css'
@@ -139,7 +140,9 @@ export const Control = (props: ControlProps<ReactSelectOption>) => {
     >
       <label
         htmlFor={props.selectProps.name}
-        className={cn(styles.label, styles.labelSizes[size])}
+        className={cn(styles.label, styles.labelSizes[size], {
+          [styles.labelDisabled]: props.selectProps.isDisabled,
+        })}
       >
         {props.selectProps.label}
         {props.selectProps.required && (
@@ -154,6 +157,11 @@ export const Control = (props: ControlProps<ReactSelectOption>) => {
   )
 }
 
-export const customStyles = {
+export const customStyles: StylesConfig = {
   indicatorSeparator: () => ({}),
+  control: (provided, state) => ({
+    ...provided,
+    background: 'transparent',
+    opacity: state.isDisabled ? '0.5' : '1',
+  }),
 }

@@ -116,7 +116,7 @@ describe('FileController - Create case file', () => {
     it('should throw bad gateway exception', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(then.error.message).toBe(
-        `uploads/${caseId}/${uuId}/test.txt is not a valid key`,
+        `uploads/${caseId}/${uuId}/test.txt is not a valid key for case ${caseId}`,
       )
     })
   })

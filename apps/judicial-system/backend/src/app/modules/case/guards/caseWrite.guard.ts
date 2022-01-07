@@ -2,7 +2,6 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  BadRequestException,
   InternalServerErrorException,
   ForbiddenException,
 } from '@nestjs/common'
