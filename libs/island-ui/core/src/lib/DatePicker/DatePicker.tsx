@@ -81,6 +81,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       <div
         className={cn(styles.root, 'island-ui-datepicker', {
           [styles.small]: size === 'sm',
+          [styles.extraSmall]: size === 'xs',
         })}
       >
         <ReactDatePicker

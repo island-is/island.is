@@ -16,6 +16,7 @@ export const backgroundBlue = style({
 })
 
 export const small = style({})
+export const extraSmall = style({})
 
 export const inputContainer = style({
   display: 'flex',

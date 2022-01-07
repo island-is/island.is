@@ -137,8 +137,10 @@ const ViewPetitionAdmin = () => {
               setTitle(e.target.value)
             }}
             label={formatMessage(m.viewPetition.listTitleHeader)}
+            size="xs"
           />
           <Input
+            size="xs"
             name={description as string}
             value={description ?? ''}
             onChange={(e) => {
@@ -157,6 +159,7 @@ const ViewPetitionAdmin = () => {
                   label="Tímabil frá"
                   locale="is"
                   placeholderText="Veldu dagsetningu"
+                  size="xs"
                 />
               </Box>
               <Box width="half" marginLeft={[0, 2]} marginTop={[2, 0]}>
@@ -166,12 +169,14 @@ const ViewPetitionAdmin = () => {
                   label="Tímabil til"
                   locale="is"
                   placeholderText="Veldu dagsetningu"
+                  size="xs"
                 />
               </Box>
             </Box>
           )}
 
           <Input
+            size="xs"
             backgroundColor="blue"
             disabled
             name={petition?.ownerName ?? ''}

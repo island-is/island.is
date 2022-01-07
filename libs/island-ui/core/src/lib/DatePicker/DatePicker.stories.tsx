@@ -126,6 +126,19 @@ export const SizeSmall = () => {
   )
 }
 
+export const SizeExtraSmall = () => {
+  return (
+    <div style={{ height: 600 }}>
+      <DatePicker
+        label="Extra small"
+        placeholderText="Pick a date"
+        size="xs"
+        handleChange={(date: Date) => console.log(date)}
+      />
+    </div>
+  )
+}
+
 export const WithErrors = () => (
   <>
     <Wrap>
