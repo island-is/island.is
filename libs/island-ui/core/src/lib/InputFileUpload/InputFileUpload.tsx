@@ -287,13 +287,13 @@ export const InputFileUpload = ({
       borderRadius="standard"
       textAlign="center"
       padding={4}
-      className={styles.container}
+      className={cn(styles.container, { [styles.containerDisabled]: disabled })}
       {...getRootProps({ style })}
     >
       <Text variant="h4">{header}</Text>
       <Text>{description}</Text>
       <Box marginY={4}>
-        <Button variant="ghost" icon="attach">
+        <Button variant="ghost" icon="attach" disabled={disabled}>
           {buttonLabel}
         </Button>
       </Box>

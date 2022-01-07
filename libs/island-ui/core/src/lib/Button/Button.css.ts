@@ -468,6 +468,12 @@ export const icon = style({
     [`${size.small} &, ${variants.utility} &, ${size.textSmall} &, ${circleSizes.small} &`]: {
       width: 16,
       height: 16,
+      ...themeUtils.responsiveStyle({
+        md: {
+          width: 20,
+          height: 20,
+        },
+      }),
     },
     [`${variants.text}:not(${size.textSmall}) &`]: {
       marginBottom: -5,

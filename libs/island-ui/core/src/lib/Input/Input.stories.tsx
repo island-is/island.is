@@ -90,3 +90,11 @@ ResponsiveBackgroundColor.args = {
   name: 'Test9',
   backgroundColor: ['white', 'blue', 'white', 'blue', 'white'],
 }
+
+export const Disabled = Template.bind({})
+Disabled.args = {
+  label: 'This is the label',
+  placeholder: 'This is the placeholder',
+  name: 'Test10',
+  disabled: true,
+}
