@@ -13,6 +13,7 @@ export interface Translation {
   footer: Footer
   gdpr: Gdpr
   myCars: MyCars
+  recycle: Confirm
   confirm: Confirm
   handover: Handover
   completed: Completed
@@ -187,10 +188,11 @@ export interface CompletedSubTitles {
 
 export interface Confirm {
   title: string
-  subTitles: ConfirmSubTitles
+  subTitles?: ConfirmSubTitles
   info: string
   buttons: ConfirmButtons
-  checkbox: Checkbox
+  input?: Input
+  checkbox?: Checkbox
 }
 
 export interface ConfirmButtons {
@@ -201,6 +203,18 @@ export interface ConfirmButtons {
 export interface Checkbox {
   label: string
   linkLabel: string
+}
+
+export interface Input {
+  label: string
+  placeholder: string
+  errors: Errors
+}
+
+export interface Errors {
+  empty: string
+  length: string
+  invalidRegNumber: string
 }
 
 export interface ConfirmSubTitles {
@@ -231,7 +245,7 @@ export interface DeregisterSidenav {
 }
 
 export interface TranslationDeregisterVehicle {
-  select: Select
+  select: Confirm
   deregister: Deregister
 }
 
@@ -253,25 +267,6 @@ export interface InfoClass {
   error: string
   notfound?: string
   loading?: string
-}
-
-export interface Select {
-  title: string
-  info: string
-  input: Input
-  buttons: ConfirmButtons
-}
-
-export interface Input {
-  label: string
-  placeholder: string
-  errors: Errors
-}
-
-export interface Errors {
-  empty: string
-  length: string
-  invalidRegNumber: string
 }
 
 export interface ErrorBoundary {
@@ -530,6 +525,7 @@ export interface RoutesHome {
 
 export interface RecycleVehicle {
   baseRoute: string
+  recycle: string
   confirm: string
   handover: string
   completed: string
@@ -702,6 +698,7 @@ const typeMap: any = {
       { json: 'footer', js: 'footer', typ: r('Footer') },
       { json: 'gdpr', js: 'gdpr', typ: r('Gdpr') },
       { json: 'myCars', js: 'myCars', typ: r('MyCars') },
+      { json: 'recycle', js: 'recycle', typ: r('Confirm') },
       { json: 'confirm', js: 'confirm', typ: r('Confirm') },
       { json: 'handover', js: 'handover', typ: r('Handover') },
       { json: 'completed', js: 'completed', typ: r('Completed') },
@@ -937,10 +934,15 @@ const typeMap: any = {
   Confirm: o(
     [
       { json: 'title', js: 'title', typ: '' },
-      { json: 'subTitles', js: 'subTitles', typ: r('ConfirmSubTitles') },
+      {
+        json: 'subTitles',
+        js: 'subTitles',
+        typ: u(undefined, r('ConfirmSubTitles')),
+      },
       { json: 'info', js: 'info', typ: '' },
       { json: 'buttons', js: 'buttons', typ: r('ConfirmButtons') },
-      { json: 'checkbox', js: 'checkbox', typ: r('Checkbox') },
+      { json: 'input', js: 'input', typ: u(undefined, r('Input')) },
+      { json: 'checkbox', js: 'checkbox', typ: u(undefined, r('Checkbox')) },
     ],
     false,
   ),
@@ -955,6 +957,22 @@ const typeMap: any = {
     [
       { json: 'label', js: 'label', typ: '' },
       { json: 'linkLabel', js: 'linkLabel', typ: '' },
+    ],
+    false,
+  ),
+  Input: o(
+    [
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'placeholder', js: 'placeholder', typ: '' },
+      { json: 'errors', js: 'errors', typ: r('Errors') },
+    ],
+    false,
+  ),
+  Errors: o(
+    [
+      { json: 'empty', js: 'empty', typ: '' },
+      { json: 'length', js: 'length', typ: '' },
+      { json: 'invalidRegNumber', js: 'invalidRegNumber', typ: '' },
     ],
     false,
   ),
@@ -992,7 +1010,7 @@ const typeMap: any = {
   ),
   TranslationDeregisterVehicle: o(
     [
-      { json: 'select', js: 'select', typ: r('Select') },
+      { json: 'select', js: 'select', typ: r('Confirm') },
       { json: 'deregister', js: 'deregister', typ: r('Deregister') },
     ],
     false,
@@ -1020,31 +1038,6 @@ const typeMap: any = {
       { json: 'error', js: 'error', typ: '' },
       { json: 'notfound', js: 'notfound', typ: u(undefined, '') },
       { json: 'loading', js: 'loading', typ: u(undefined, '') },
-    ],
-    false,
-  ),
-  Select: o(
-    [
-      { json: 'title', js: 'title', typ: '' },
-      { json: 'info', js: 'info', typ: '' },
-      { json: 'input', js: 'input', typ: r('Input') },
-      { json: 'buttons', js: 'buttons', typ: r('ConfirmButtons') },
-    ],
-    false,
-  ),
-  Input: o(
-    [
-      { json: 'label', js: 'label', typ: '' },
-      { json: 'placeholder', js: 'placeholder', typ: '' },
-      { json: 'errors', js: 'errors', typ: r('Errors') },
-    ],
-    false,
-  ),
-  Errors: o(
-    [
-      { json: 'empty', js: 'empty', typ: '' },
-      { json: 'length', js: 'length', typ: '' },
-      { json: 'invalidRegNumber', js: 'invalidRegNumber', typ: '' },
     ],
     false,
   ),
@@ -1395,6 +1388,7 @@ const typeMap: any = {
   RecycleVehicle: o(
     [
       { json: 'baseRoute', js: 'baseRoute', typ: '' },
+      { json: 'recycle', js: 'recycle', typ: '' },
       { json: 'confirm', js: 'confirm', typ: '' },
       { json: 'handover', js: 'handover', typ: '' },
       { json: 'completed', js: 'completed', typ: '' },

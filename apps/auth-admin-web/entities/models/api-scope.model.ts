@@ -14,6 +14,7 @@ export class ApiScope {
   emphasize!: boolean
   grantToLegalGuardians!: boolean
   grantToProcuringHolders!: boolean
+  grantToPersonalRepresentatives!: boolean
   allowExplicitDelegationGrant!: boolean
   automaticDelegationGrant!: boolean
   alsoForDelegatedUser!: boolean

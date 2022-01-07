@@ -1,6 +1,7 @@
 /* Citizen screens */
 export * from './Overview'
 export * from './Confirm'
+export * from './RecycleCar'
 export * from './Handover'
 export * from './Completed'
 

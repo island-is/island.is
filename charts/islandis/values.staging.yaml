@@ -1176,7 +1176,7 @@ user-notification:
 user-notification-worker:
   args:
     - 'main.js'
-    - '--job'
+    - '--job=worker'
   command:
     - 'node'
   enabled: true
