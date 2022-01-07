@@ -4,7 +4,11 @@ import * as mixins from './Input.mixins'
 import omit from 'lodash/omit'
 import mapValues from 'lodash/mapValues'
 
-export const containerDisabled = style({})
+export const containerDisabled = style({
+  opacity: 0.5,
+  backgroundColor: 'transparent',
+})
+
 export const noLabel = style({})
 
 export const container = style({
@@ -116,8 +120,4 @@ export const icon = style({
 
 export const iconError = style({
   color: theme.color.red600,
-})
-
-export const disabled = style({
-  opacity: 0.5,
 })
