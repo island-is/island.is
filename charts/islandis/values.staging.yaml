@@ -1185,6 +1185,7 @@ user-notification-worker:
     IDENTITY_SERVER_PATH: 'https://identity-server.staging01.devland.is'
     MAIN_QUEUE_NAME: 'user-notification'
     SERVERSIDE_FEATURES_ON: ''
+    SERVICE_USER_PROFILE_BASEPATH: 'https://beta.staging01.devland.is/minarsidur'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
@@ -1209,7 +1210,6 @@ user-notification-worker:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     GOOGLE_APPLICATION_CREDENTIALS: '/k8s/user-notification/GOOGLE_APPLICATION_CREDENTIALS'
-    SERVICE_USER_PROFILE_BASEPATH: '/k8s/user-notification/SERVICE_USER_PROFILE_BASEPATH'
     USER_NOTIFICATION_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
     USER_NOTIFICATION_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
   securityContext:
