@@ -145,9 +145,15 @@ describe('formatCustodyRestrictions', () => {
   test('should return formatted restrictions for no restrictions', () => {
     // Arrange
     const custodyRestrictions: Array<CaseCustodyRestrictions> = []
+    const isIsolation = false
+    const isRuling = true
 
     // Act
-    const res = formatCustodyRestrictions(custodyRestrictions, true)
+    const res = formatCustodyRestrictions(
+      custodyRestrictions,
+      isIsolation,
+      isRuling,
+    )
 
     // Assert
     expect(res).toBe('')
@@ -168,11 +174,16 @@ describe('formatCustodyRestrictions', () => {
 
   test('should return formatted restrictions for isolation only', () => {
     // Arrange
+    const custodyRestrictions: Array<CaseCustodyRestrictions> = []
     const isIsolation = true
     const isRuling = true
 
     // Act
-    const res = formatCustodyRestrictions([], isIsolation, isRuling)
+    const res = formatCustodyRestrictions(
+      custodyRestrictions,
+      isIsolation,
+      isRuling,
+    )
 
     // Assert
     expect(res).toBe('')
@@ -180,11 +191,16 @@ describe('formatCustodyRestrictions', () => {
 
   test('should return formatted restrictions for isolation only in custody notice', () => {
     // Arrange
+    const custodyRestrictions: Array<CaseCustodyRestrictions> = []
     const isIsolation = true
     const isRuling = false
 
     // Act
-    const res = formatCustodyRestrictions([], isIsolation, isRuling)
+    const res = formatCustodyRestrictions(
+      custodyRestrictions,
+      isIsolation,
+      isRuling,
+    )
 
     // Assert
     expect(res).toBe(
