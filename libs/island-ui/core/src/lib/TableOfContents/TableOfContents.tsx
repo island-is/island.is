@@ -41,7 +41,11 @@ export const TableOfContents: FC<Props> = ({
               headingId === selectedHeadingId ? 'semiBold' : 'regular'
             }
             variant="small"
-            color={headingId === selectedHeadingId ? 'blue400' : 'blue600'}
+            color={
+              selectedHeadingId && headingId === selectedHeadingId
+                ? 'blue400'
+                : 'blue600'
+            }
           >
             {headingTitle}
           </Text>
