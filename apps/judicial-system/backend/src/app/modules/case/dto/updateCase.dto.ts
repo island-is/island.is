@@ -12,7 +12,7 @@ import {
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
-  CaseGender,
+  Gender,
   CaseDecision,
   CaseType,
   SessionArrangements,
@@ -51,8 +51,8 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional({ enum: CaseGender })
-  readonly accusedGender?: CaseGender
+  @ApiPropertyOptional({ enum: Gender })
+  readonly accusedGender?: Gender
 
   @IsOptional()
   @IsString()

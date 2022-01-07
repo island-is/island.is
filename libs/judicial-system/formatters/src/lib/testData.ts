@@ -1,6 +1,6 @@
 import {
   Case,
-  CaseGender,
+  Gender,
   CaseState,
   CaseType,
   Institution,
@@ -23,7 +23,7 @@ export const makeCustodyCase = (): Case => {
     policeCaseNumber: '007-2021-202000',
     accusedNationalId: '000000-0000',
     accusedName: 'Donald Duck',
-    accusedGender: CaseGender.MALE,
+    accusedGender: Gender.MALE,
     accusedAddress: 'Batcave 1337',
   }
 }
@@ -45,7 +45,7 @@ export const makeInvestigationCase = (): Case => {
     policeCaseNumber: '007-2021-202000',
     accusedNationalId: '000000-0000',
     accusedName: investigationCaseAccusedName,
-    accusedGender: CaseGender.MALE,
+    accusedGender: Gender.MALE,
     accusedAddress: investigationCaseAccusedAddress,
   }
 }

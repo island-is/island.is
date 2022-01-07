@@ -13,7 +13,7 @@ import {
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import type { CaseGender } from '@island.is/judicial-system/types'
+import type { Gender } from '@island.is/judicial-system/types'
 
 function legalProvisionsOrder(p: CaseLegalProvisions) {
   switch (p) {
@@ -189,7 +189,7 @@ export function formatPrisonCourtDateEmailNotification(
   court?: string,
   courtDate?: Date,
   accusedName?: string,
-  accusedGender?: CaseGender,
+  accusedGender?: Gender,
   requestedValidToDate?: Date,
   isolation?: boolean,
   defenderName?: string,
@@ -330,7 +330,7 @@ export function stripHtmlTags(html: string): string {
 }
 
 export function formatCustodyIsolation(
-  gender?: CaseGender,
+  gender?: Gender,
   isolationToDate?: Date,
 ) {
   return `${capitalize(

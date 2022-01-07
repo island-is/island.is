@@ -1,7 +1,7 @@
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  CaseGender,
+  Gender,
   CaseType,
 } from '@island.is/judicial-system/types'
 
@@ -145,7 +145,7 @@ describe('formatRequestedCustodyRestrictions', () => {
 describe('formatCustodyRestrictions', () => {
   test('should return formatted restrictions for no restrictions', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const custodyRestrictions: Array<CaseCustodyRestrictions> = []
 
     // Act
@@ -161,7 +161,7 @@ describe('formatCustodyRestrictions', () => {
 
   test('should return formatted restrictions for no restrictions in custody notice', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const custodyRestrictions: Array<CaseCustodyRestrictions> = []
 
     // Act
@@ -175,7 +175,7 @@ describe('formatCustodyRestrictions', () => {
 
   test('should return formatted restrictions for isolation only', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
 
     // Act
@@ -191,7 +191,7 @@ describe('formatCustodyRestrictions', () => {
 
   test('should return formatted restrictions for isolation only in custody notice', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
 
     // Act
@@ -205,7 +205,7 @@ describe('formatCustodyRestrictions', () => {
 
   test('should return formatted restrictions for isolation and one other restriction', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const custodyRestrictions = [
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
@@ -222,7 +222,7 @@ describe('formatCustodyRestrictions', () => {
 
   test('should return formatted restrictions for all but isolation', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const custodyRestrictions = [
       CaseCustodyRestrictions.COMMUNICATION,
       CaseCustodyRestrictions.MEDIA,
@@ -240,7 +240,7 @@ describe('formatCustodyRestrictions', () => {
 
   test('should order non-isolation restrictions', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const custodyRestrictions = [
       CaseCustodyRestrictions.MEDIA,
       CaseCustodyRestrictions.VISITAION,
@@ -260,7 +260,7 @@ describe('formatCustodyRestrictions', () => {
 describe('formatAlternativeTravelBanRestrictions', () => {
   test('should return formatted restrictions for no restrictions', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const custodyRestrictions: Array<CaseCustodyRestrictions> = []
 
     // Act
@@ -275,7 +275,7 @@ describe('formatAlternativeTravelBanRestrictions', () => {
 
   test('should return formatted restrictions for one restriction', () => {
     // Arrange
-    const accusedGender = CaseGender.FEMALE
+    const accusedGender = Gender.FEMALE
     const custodyRestrictions = [
       CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
     ]
@@ -294,7 +294,7 @@ describe('formatAlternativeTravelBanRestrictions', () => {
 
   test('should return formatted restrictions for all restrictions', () => {
     // Arrange
-    const accusedGender = CaseGender.OTHER
+    const accusedGender = Gender.OTHER
     const custodyRestrictions = [
       CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
       CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
@@ -314,7 +314,7 @@ describe('formatAlternativeTravelBanRestrictions', () => {
 
   test('should return formatted restrictions with other restrictions', () => {
     // Arrange
-    const accusedGender = CaseGender.OTHER
+    const accusedGender = Gender.OTHER
     const custodyRestrictions = [
       CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
       CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
@@ -336,7 +336,7 @@ describe('formatAlternativeTravelBanRestrictions', () => {
 
   test('should return formatted restrictions with other restrictions only', () => {
     // Arrange
-    const accusedGender = CaseGender.OTHER
+    const accusedGender = Gender.OTHER
     const otherRestrictions = 'Stay in town.'
 
     // Act
@@ -367,7 +367,7 @@ describe('capitalize', () => {
 describe('formatGender', () => {
   test('should format male', () => {
     // Arrange
-    const gender = CaseGender.MALE
+    const gender = Gender.MALE
 
     // Act
     const r = formatGender(gender)
@@ -378,7 +378,7 @@ describe('formatGender', () => {
 
   test('should format female', () => {
     // Arrange
-    const gender = CaseGender.FEMALE
+    const gender = Gender.FEMALE
 
     // Act
     const r = formatGender(gender)
@@ -389,7 +389,7 @@ describe('formatGender', () => {
 
   test('should format other', () => {
     // Arrange
-    const gender = CaseGender.OTHER
+    const gender = Gender.OTHER
 
     // Act
     const r = formatGender(gender)
@@ -444,7 +444,7 @@ describe('formatAppeal', () => {
     // Arrange
     const appealDecision = CaseAppealDecision.POSTPONE
     const stakeholder = 'Kærða'
-    const stakeholderGender = CaseGender.FEMALE
+    const stakeholderGender = Gender.FEMALE
 
     // Act
     const res = formatAppeal(appealDecision, stakeholder, stakeholderGender)

@@ -6,7 +6,7 @@ import type {
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseGender,
+  Gender,
   CaseState,
   CaseType,
   SessionArrangements,
@@ -50,7 +50,7 @@ export class Case implements TCase {
   readonly accusedAddress?: string
 
   @Field(() => String, { nullable: true })
-  readonly accusedGender?: CaseGender
+  readonly accusedGender?: Gender
 
   @Field({ nullable: true })
   readonly defenderName?: string

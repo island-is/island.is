@@ -2,7 +2,7 @@ import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
-  CaseGender,
+  Gender,
 } from '@island.is/judicial-system/types'
 import parseISO from 'date-fns/parseISO'
 import addDays from 'date-fns/addDays'
@@ -16,15 +16,15 @@ export const isDirty = (value?: string | null): boolean => {
   return typeof value === 'string'
 }
 
-export const getShortGender = (gender?: CaseGender): string => {
+export const getShortGender = (gender?: Gender): string => {
   switch (gender) {
-    case CaseGender.MALE: {
+    case Gender.MALE: {
       return 'kk'
     }
-    case CaseGender.FEMALE: {
+    case Gender.FEMALE: {
       return 'kvk'
     }
-    case CaseGender.OTHER: {
+    case Gender.OTHER: {
       return 'annað'
     }
     default: {

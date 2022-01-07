@@ -1,7 +1,7 @@
 import { makeProsecutor } from '@island.is/judicial-system/formatters'
 import {
   CaseLegalProvisions,
-  CaseGender,
+  Gender,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
@@ -639,7 +639,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
     const accusedName = 'Maggi Murder'
-    const accusedGender = CaseGender.FEMALE
+    const accusedGender = Gender.FEMALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = true
     const defenderName = 'Varði Varnari'
@@ -671,7 +671,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
     const accusedName = 'Maggi Murder'
-    const accusedGender = CaseGender.OTHER
+    const accusedGender = Gender.OTHER
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = true
     const defenderName = 'Vala Verja'
@@ -704,7 +704,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
     const accusedName = 'Maggi Murder'
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
     const defenderName = 'Vala Verja'
@@ -737,7 +737,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
     const accusedName = 'Maggi Murder'
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
     const isExtension = false
@@ -768,7 +768,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-11T12:02')
     const accusedName = 'Maggi Murder'
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
     const defenderIsSpokesperson = true
@@ -1099,7 +1099,7 @@ describe('stripHtmlTags', () => {
 describe('formatCustodyIsolation', () => {
   test('should format custody isolation', () => {
     // Arrange
-    const gender = CaseGender.OTHER
+    const gender = Gender.OTHER
     const isolationToDate = new Date('2021-12-31T16:00')
 
     //Act

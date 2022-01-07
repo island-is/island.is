@@ -3,7 +3,7 @@ import { Allow } from 'class-validator'
 import { Field, InputType } from '@nestjs/graphql'
 
 import type {
-  CaseGender,
+  Gender,
   CaseType,
   CreateCase,
 } from '@island.is/judicial-system/types'
@@ -36,7 +36,7 @@ export class CreateCaseInput implements CreateCase {
 
   @Allow()
   @Field(() => String, { nullable: true })
-  readonly accusedGender?: CaseGender
+  readonly accusedGender?: Gender
 
   @Allow()
   @Field({ nullable: true })

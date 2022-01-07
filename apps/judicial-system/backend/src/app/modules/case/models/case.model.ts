@@ -18,7 +18,7 @@ import {
   CaseLegalProvisions,
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  CaseGender,
+  Gender,
   CaseDecision,
   CaseType,
   SessionArrangements,
@@ -137,9 +137,9 @@ export class Case extends Model<Case> {
   @Column({
     type: DataType.ENUM,
     allowNull: true,
-    values: Object.values(CaseGender),
+    values: Object.values(Gender),
   })
-  accusedGender?: CaseGender
+  accusedGender?: Gender
 
   /**********
    * The name of the accused's defender - optional

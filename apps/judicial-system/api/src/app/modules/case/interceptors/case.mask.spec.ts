@@ -3,7 +3,7 @@ import each from 'jest-each'
 import {
   CaseAppealDecision,
   CaseDecision,
-  CaseGender,
+  Gender,
   CaseState,
   CaseType,
   InstitutionType,
@@ -27,7 +27,7 @@ function createCase(type: CaseType): Case {
     accusedNationalId: '-',
     accusedName: '-',
     accusedAddress: '-',
-    accusedGender: CaseGender.FEMALE,
+    accusedGender: Gender.FEMALE,
     defenderName: '-',
     defenderEmail: '-',
     defenderPhoneNumber: '-',

@@ -5,7 +5,7 @@ import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-import
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  CaseGender,
+  Gender,
   CaseType,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -143,7 +143,7 @@ export enum NounCases {
 }
 
 export function formatAccusedByGender(
-  accusedGender?: CaseGender,
+  accusedGender?: Gender,
   nounCase: NounCases = NounCases.NOMINATIVE,
   isInvestigationCase?: boolean,
 ) {
@@ -151,11 +151,11 @@ export function formatAccusedByGender(
     return nounCase === NounCases.NOMINATIVE ? 'varnaraðili' : 'varnaraðila'
   } else {
     switch (accusedGender) {
-      case CaseGender.MALE:
+      case Gender.MALE:
         return nounCase === NounCases.NOMINATIVE ? 'kærði' : 'kærða'
-      case CaseGender.FEMALE:
+      case Gender.FEMALE:
         return nounCase === NounCases.NOMINATIVE ? 'kærða' : 'kærðu'
-      case CaseGender.OTHER:
+      case Gender.OTHER:
       default:
         return 'kærða'
     }
@@ -165,7 +165,7 @@ export function formatAccusedByGender(
 // Formats the restrictions set by the judge
 // Note that only the predetermined list of restrictions is relevant here
 export function formatCustodyRestrictions(
-  accusedGender?: CaseGender,
+  accusedGender?: Gender,
   custodyRestrictions?: CaseCustodyRestrictions[],
   isRuling?: boolean,
 ): string {
@@ -246,7 +246,7 @@ export function formatCustodyRestrictions(
 
 // Fromats the restrictions set by the judge when choosing alternative travle ban
 export const formatAlternativeTravelBanRestrictions = (
-  accusedGender?: CaseGender,
+  accusedGender?: Gender,
   custodyRestrictions?: CaseCustodyRestrictions[],
   otherRestrictions?: string,
 ): string => {
@@ -333,25 +333,25 @@ export const formatRequestedCustodyRestrictions = (
   return `${requestedCustodyRestrictionsText}${paragraphBreak}${requestedOtherRestrictionsText}`
 }
 
-export function formatGender(gender?: CaseGender): string {
+export function formatGender(gender?: Gender): string {
   switch (gender) {
-    case CaseGender.MALE:
+    case Gender.MALE:
       return 'Karl'
-    case CaseGender.FEMALE:
+    case Gender.FEMALE:
       return 'Kona'
-    case CaseGender.OTHER:
+    case Gender.OTHER:
     default:
       return 'Kynsegin/Annað'
   }
 }
 
-export function formatGenderPronouns(gender?: CaseGender): string {
+export function formatGenderPronouns(gender?: Gender): string {
   switch (gender) {
-    case CaseGender.MALE:
+    case Gender.MALE:
       return 'hann'
-    case CaseGender.FEMALE:
+    case Gender.FEMALE:
       return 'hún'
-    case CaseGender.OTHER:
+    case Gender.OTHER:
     default:
       return 'hán'
   }
@@ -360,7 +360,7 @@ export function formatGenderPronouns(gender?: CaseGender): string {
 export function formatAppeal(
   appealDecision: CaseAppealDecision | undefined,
   stakeholder: string,
-  stakeholderGender: CaseGender = CaseGender.MALE,
+  stakeholderGender: Gender = Gender.MALE,
 ): string {
   const stakeholderGenderText = formatGenderPronouns(stakeholderGender)
 

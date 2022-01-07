@@ -2,11 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
 
-import {
-  CaseGender,
-  CaseType,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { Gender, CaseType, UserRole } from '@island.is/judicial-system/types'
 
 import { User, UserService } from '../../user'
 import { InternalCreateCaseDto } from '../dto'
@@ -85,7 +81,7 @@ describe('CaseController - Internal create', () => {
       accusedNationalId: '1234567890',
       accusedName: 'John Doe',
       accusedAddress: 'Some Street',
-      accusedGender: CaseGender.MALE,
+      accusedGender: Gender.MALE,
       leadInvestigator: 'The Boss',
     }
 
@@ -107,7 +103,7 @@ describe('CaseController - Internal create', () => {
       accusedNationalId: '1234567890',
       accusedName: 'John Doe',
       accusedAddress: 'Some Street',
-      accusedGender: CaseGender.MALE,
+      accusedGender: Gender.MALE,
       leadInvestigator: 'The Boss',
     } as InternalCreateCaseDto
     const userId = uuid()

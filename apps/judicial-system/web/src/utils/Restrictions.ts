@@ -3,7 +3,7 @@ import {
   formatAccusedByGender,
 } from '@island.is/judicial-system/formatters'
 import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
-import type { CaseGender } from '@island.is/judicial-system/types'
+import type { Gender } from '@island.is/judicial-system/types'
 import { restrictions as m } from '@island.is/judicial-system-web/messages'
 
 export const restrictions = [
@@ -56,7 +56,7 @@ const isolationRestrictions = [
   },
 ]
 
-export const isolation = (accusedGender?: CaseGender) =>
+export const isolation = (accusedGender?: Gender) =>
   isolationRestrictions.map((provision) => {
     return {
       ...provision,

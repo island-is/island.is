@@ -72,7 +72,7 @@ export enum CaseAppealDecision {
   NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
 
-export enum CaseGender {
+export enum Gender {
   MALE = 'MALE',
   FEMALE = 'FEMALE',
   OTHER = 'OTHER',
@@ -103,7 +103,7 @@ export interface Case {
   accusedNationalId: string
   accusedName?: string
   accusedAddress?: string
-  accusedGender?: CaseGender
+  accusedGender?: Gender
   defenderName?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
@@ -182,7 +182,7 @@ export interface CreateCase {
   accusedNationalId: string
   accusedName?: string
   accusedAddress?: string
-  accusedGender?: CaseGender
+  accusedGender?: Gender
   defenderName?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
@@ -198,7 +198,7 @@ export interface UpdateCase {
   accusedNationalId?: string
   accusedName?: string
   accusedAddress?: string
-  accusedGender?: CaseGender
+  accusedGender?: Gender
   defenderName?: string
   defenderEmail?: string
   defenderPhoneNumber?: string

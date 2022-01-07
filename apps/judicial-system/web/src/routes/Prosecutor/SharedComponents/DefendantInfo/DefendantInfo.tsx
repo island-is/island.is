@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
-import { CaseGender } from '@island.is/judicial-system/types'
+import { Gender } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
@@ -56,12 +56,12 @@ const DefendantInfo: React.FC<Props> = (props) => {
             name="accusedGender"
             id="genderMale"
             label={formatMessage(core.male)}
-            value={CaseGender.MALE}
-            checked={workingCase.accusedGender === CaseGender.MALE}
+            value={Gender.MALE}
+            checked={workingCase.accusedGender === Gender.MALE}
             onChange={() =>
               setAndSendToServer(
                 'accusedGender',
-                CaseGender.MALE,
+                Gender.MALE,
                 workingCase,
                 setWorkingCase,
                 updateCase,
@@ -76,12 +76,12 @@ const DefendantInfo: React.FC<Props> = (props) => {
             name="accusedGender"
             id="genderFemale"
             label={formatMessage(core.female)}
-            value={CaseGender.FEMALE}
-            checked={workingCase.accusedGender === CaseGender.FEMALE}
+            value={Gender.FEMALE}
+            checked={workingCase.accusedGender === Gender.FEMALE}
             onChange={() =>
               setAndSendToServer(
                 'accusedGender',
-                CaseGender.FEMALE,
+                Gender.FEMALE,
                 workingCase,
                 setWorkingCase,
                 updateCase,
@@ -96,12 +96,12 @@ const DefendantInfo: React.FC<Props> = (props) => {
             name="accusedGender"
             id="genderOther"
             label={formatMessage(core.otherGender)}
-            value={CaseGender.OTHER}
-            checked={workingCase.accusedGender === CaseGender.OTHER}
+            value={Gender.OTHER}
+            checked={workingCase.accusedGender === Gender.OTHER}
             onChange={() =>
               setAndSendToServer(
                 'accusedGender',
-                CaseGender.OTHER,
+                Gender.OTHER,
                 workingCase,
                 setWorkingCase,
                 updateCase,

@@ -2,7 +2,7 @@ import { IsNotEmpty, IsString, IsOptional, IsBoolean } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { CaseGender, CaseType } from '@island.is/judicial-system/types'
+import { Gender, CaseType } from '@island.is/judicial-system/types'
 
 export class CreateCaseDto {
   @IsOptional()
@@ -37,8 +37,8 @@ export class CreateCaseDto {
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional({ enum: CaseGender })
-  readonly accusedGender?: CaseGender
+  @ApiPropertyOptional({ enum: Gender })
+  readonly accusedGender?: Gender
 
   @IsOptional()
   @IsString()

@@ -35,7 +35,7 @@ export {
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
-  CaseGender,
+  Gender,
   CaseDecision,
   SessionArrangements,
   restrictionCases,

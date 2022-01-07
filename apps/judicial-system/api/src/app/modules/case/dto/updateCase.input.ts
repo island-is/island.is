@@ -7,7 +7,7 @@ import type {
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseGender,
+  Gender,
   UpdateCase,
   CaseType,
   SessionArrangements,
@@ -45,7 +45,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field(() => String, { nullable: true })
-  readonly accusedGender?: CaseGender
+  readonly accusedGender?: Gender
 
   @Allow()
   @Field({ nullable: true })
