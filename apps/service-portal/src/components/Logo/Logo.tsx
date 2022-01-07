@@ -1,9 +1,5 @@
 import React, { forwardRef } from 'react'
 
-import * as styles from './Logo.css'
-
-import cn from 'classnames'
-
 interface LogoProps {
   width?: number
   solid?: boolean
@@ -13,16 +9,7 @@ interface LogoProps {
 }
 
 export const Logo = forwardRef<SVGSVGElement, LogoProps>(
-  (
-    {
-      width = 247,
-      solid = false,
-      solidColor = '#fff',
-      iconOnly = false,
-      title,
-    },
-    ref,
-  ) =>
+  ({ iconOnly = false }) =>
     iconOnly ? (
       <svg
         width="81"
