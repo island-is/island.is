@@ -135,6 +135,47 @@ export const increaseButton = style({
   },
 })
 
+export const popper = style({
+  marginTop: '0',
+  right: '0',
+  width: '100%',
+  top: '65px !important',
+  transform: 'none !important',
+  margin: '0 !important',
+  ...themeUtils.responsiveStyle({
+    md: {
+      top: '70px !important',
+    },
+  }),
+})
+
+export const popperSmall = style({
+  top: '51px !important',
+  ...themeUtils.responsiveStyle({
+    md: {
+      top: '57px !important',
+    },
+  }),
+})
+
+export const popperSmallWithoutLabel = style({
+  top: '42px !important',
+  ...themeUtils.responsiveStyle({
+    md: {
+      top: '42px !important',
+    },
+  }),
+})
+
+export const popperWithoutLabel = style({
+  top: '52px !important',
+  ...themeUtils.responsiveStyle({
+    md: {
+      top: '52px !important',
+    },
+  }),
+})
+
 // Overwrite default ReactDatepicker styles
 globalStyle(`${root}.island-ui-datepicker .react-datepicker`, {
   display: 'block',
@@ -162,29 +203,6 @@ globalStyle(
     borderBottom: 'none',
   },
 )
-
-globalStyle(`${root}.island-ui-datepicker .react-datepicker-popper`, {
-  marginTop: '0',
-  right: '0',
-  width: '100%',
-  top: '65px !important',
-  transform: 'none !important',
-  margin: '0 !important',
-  ...themeUtils.responsiveStyle({
-    md: {
-      top: '70px !important',
-    },
-  }),
-})
-
-globalStyle(`${root}${small}.island-ui-datepicker .react-datepicker-popper`, {
-  top: '51px !important',
-  ...themeUtils.responsiveStyle({
-    md: {
-      top: '57px !important',
-    },
-  }),
-})
 
 globalStyle(`${root}.island-ui-datepicker .react-datepicker__month-container`, {
   float: 'none',

@@ -85,6 +85,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         })}
       >
         <ReactDatePicker
+          popperClassName={cn(styles.popper, {
+            [styles.popperSmall]: size === 'sm',
+            [styles.popperSmallWithoutLabel]: size === 'sm' && !label,
+            [styles.popperWithoutLabel]: size === 'md' && !label,
+          })}
           id={id}
           disabled={disabled}
           selected={selected ?? startDate}
