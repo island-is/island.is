@@ -159,6 +159,7 @@ export const subLockCollapsed = style({
   marginRight: 5,
   pointerEvents: 'none',
 })
+
 export const link = style({
   width: '100%',
   ':hover': {

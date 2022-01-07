@@ -87,6 +87,7 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
                   'dateTil',
                   'dateFrom',
                 ],
+                externalData: ['createEndorsementList'],
               },
             },
           ],

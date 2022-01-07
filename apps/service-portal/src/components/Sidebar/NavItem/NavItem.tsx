@@ -113,7 +113,6 @@ const NavItemContent: FC<Props> = ({
         ) : null}
         {!collapsed ? <Box className={styles.text}>{children}</Box> : ''}
       </Box>
-
       {showLock && (
         <Icon
           type="filled"
