@@ -1,1 +1,1 @@
-export * from './national-registry.spec'
+export * from './soffia.spec'
