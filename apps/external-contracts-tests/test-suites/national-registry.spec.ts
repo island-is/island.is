@@ -1,25 +1,24 @@
 // NOTE: To run this locally, you'll need to portforward soffia and set
 // the environment variable "SOFFIA_SOAP_URL" to https://localhost:8443
-// kubectl port-forward svc/socat-soffia 8443:443 -n socat
+// kubectl port-forward svc/socat-xroad 8088:80 -n socat
 import { Test, TestingModule } from '@nestjs/testing'
-import {
-  NationalRegistryModule,
-  EinstaklingarApi,
-} from '@island.is/clients/national-registry-v2'
 import {
   createXRoadAPIPath,
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
-import { LoggingModule } from '@island.is/logging'
+import {
+  NationalRegistryModule,
+  EinstaklingarApi,
+} from '@island.is/clients/national-registry-v2'
 
-describe('is.island.external.national', async () => {
+describe('is.island.external.national', () => {
   let client: EinstaklingarApi
   const XROAD_CLIENT = process.env.XROAD_CLIENT_ID!
+
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        LoggingModule,
         NationalRegistryModule.register({
           xRoadPath: createXRoadAPIPath(
             process.env.XROAD_BASE_PATH_WITH_ENV!,
@@ -31,7 +30,7 @@ describe('is.island.external.national', async () => {
         }),
       ],
     }).compile()
-    client = await module.get<EinstaklingarApi>(EinstaklingarApi)
+    client = await module.get(EinstaklingarApi)
   })
   it('should get user correctly', async () => {
     const user = await client.einstaklingarGetEinstaklingur({

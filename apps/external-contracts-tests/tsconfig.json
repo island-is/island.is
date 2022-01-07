@@ -4,6 +4,6 @@
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
     "types": ["jest", "node"],
-    "lib": ["ES2019"]
+    "lib": ["ES2019", "DOM"]
   }
 }
