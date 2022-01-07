@@ -12,13 +12,6 @@ export const requests = {
             description:
               'Notaður sem titill fyrir málsnúmer dálk í lista yfir kröfur í vinnslu.',
           }),
-          accused: defineMessage({
-            id:
-              'judicial.system.core:requests.active_requests.table.headers.accused',
-            defaultMessage: 'Sakborningur',
-            description:
-              'Notaður sem titill fyrir sakbornings dálk í lista yfir kröfur í vinnslu.',
-          }),
           type: defineMessage({
             id:
               'judicial.system.core:requests.active_requests.table.headers.type',
@@ -100,13 +93,6 @@ export const requests = {
             defaultMessage: 'Málsnr.',
             description:
               'Notaður sem titill fyrir málsnúmer dálk í lista yfir afgreiddar kröfur.',
-          }),
-          accused: defineMessage({
-            id:
-              'judicial.system.core:requests.past_requests.table.headers.accused',
-            defaultMessage: 'Sakborningur',
-            description:
-              'Notaður sem titill fyrir sakbornings dálk í lista yfir afgreiddar kröfur.',
           }),
           type: defineMessage({
             id:

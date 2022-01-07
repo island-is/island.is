@@ -14,7 +14,7 @@ import {
   SortConfig,
 } from '@island.is/judicial-system-web/src/types'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
-import { requests } from '@island.is/judicial-system-web/messages/Core/requests'
+import { core, requests } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 
 import { mapCaseStateToTagVariant } from './utils'
@@ -101,11 +101,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
               onClick={() => requestSort('accusedName')}
               data-testid="accusedNameSortButton"
             >
-              <Text fontWeight="regular">
-                {formatMessage(
-                  requests.sections.activeRequests.table.headers.accused,
-                )}
-              </Text>
+              <Text fontWeight="regular">{formatMessage(core.accused)}</Text>
               <Box
                 className={cn(styles.sortIcon, {
                   [styles.sortAccusedNameAsc]:

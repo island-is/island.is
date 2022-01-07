@@ -20,7 +20,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { Table } from '@island.is/judicial-system-web/src/components'
 import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
-import { requests } from '@island.is/judicial-system-web/messages/Core/requests'
+import { core, requests } from '@island.is/judicial-system-web/messages'
 
 import { getAppealDate, mapCaseStateToTagVariant } from './utils'
 import * as styles from './Requests.css'
@@ -64,9 +64,7 @@ const PastRequests: React.FC<Props> = (props) => {
       },
     },
     {
-      Header: formatMessage(
-        requests.sections.pastRequests.table.headers.accused,
-      ),
+      Header: formatMessage(core.accused),
       accessor: 'accusedName' as keyof Case,
       Cell: (row: {
         row: { original: { accusedName: string; accusedNationalId: string } }
