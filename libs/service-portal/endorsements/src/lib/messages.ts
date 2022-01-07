@@ -157,6 +157,11 @@ export const m: MessageDir = {
       defaultMessage: 'Ertu viss um að vilja loka lista?',
       description: 'Dialog prompt title',
     },
+    dialogPromptLockListTitle: {
+      id: 'sp.petitions:dialog-prompt-close',
+      defaultMessage: 'Ertu viss um að vilja læsa lista?',
+      description: 'Dialog prompt title',
+    },
     dialogPromptOpenListTitle: {
       id: 'sp.petitions:dialog-prompt-open',
       defaultMessage: 'Ertu viss um að vilja opna lista?',
@@ -170,6 +175,11 @@ export const m: MessageDir = {
     closeListButton: {
       id: 'sp.petitions:close-list',
       defaultMessage: 'Loka lista',
+      description: 'Button label',
+    },
+    lockListButton: {
+      id: 'sp.petitions:close-list',
+      defaultMessage: 'Læsa lista',
       description: 'Button label',
     },
     updateListButton: {
@@ -207,6 +217,11 @@ export const m: MessageDir = {
       defaultMessage: 'Ekki tókst að loka lista',
       description: 'Toast error message',
     },
+    toastErrorLockList: {
+      id: 'sp.petitions:toast-error-message-close',
+      defaultMessage: 'Ekki tókst að læsa lista',
+      description: 'Toast error message',
+    },
     toastErrorSendList: {
       id: 'sp.petitions:toast-error-send-list',
       defaultMessage: 'Ekki tókst að senda lista á netfang',
@@ -220,6 +235,11 @@ export const m: MessageDir = {
     toastSuccessCloseList: {
       id: 'sp.petitions:toast-success-message-close-list',
       defaultMessage: 'Tókst að loka lista',
+      description: 'Toast success message',
+    },
+    toastSuccessLockList: {
+      id: 'sp.petitions:toast-success-message-close-list',
+      defaultMessage: 'Tókst að læsa lista',
       description: 'Toast success message',
     },
     toastSuccessOpenList: {
