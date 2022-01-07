@@ -5,9 +5,11 @@ import {
   buildSection,
   Form,
   FormModes,
+  buildCustomField,
 } from '@island.is/application/core'
-import * as m from '../lib/messages'
 import { DataProviderTypes } from '../types'
+
+import * as m from '../lib/messages'
 
 export const Application: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -32,6 +34,17 @@ export const Application: Form = buildForm({
               subTitle: m.externalData.applicant.subTitle,
             }),
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'aboutForm',
+      title: m.aboutForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'acceptContract',
+          title: m.aboutForm.general.pageTitle,
+          component: 'AboutForm',
         }),
       ],
     }),
