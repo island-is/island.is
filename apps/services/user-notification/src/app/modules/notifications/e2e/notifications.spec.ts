@@ -56,9 +56,7 @@ describe('Notifications API', () => {
         }),
       ],
       controllers: [NotificationsController],
-      providers: [
-        NotificationsWorkerService,
-      ],
+      providers: [NotificationsWorkerService],
     })
       .overrideProvider(NotificationsWorkerService)
       .useClass(WorkerMock)

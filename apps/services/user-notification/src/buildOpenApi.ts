@@ -10,7 +10,7 @@ import { NotificationsController } from './app/modules/notifications/notificatio
       client: {},
       queue: {
         name: 'notifications',
-        queueName: ''
+        queueName: '',
       },
     }),
   ],
