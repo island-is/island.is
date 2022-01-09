@@ -254,6 +254,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
               sidebarContent={
                 <Box paddingRight={[0, 0, 3]}>
                   <ApiCatalogueFilter
+                    labelClearAll={fn('clearAll')}
                     labelClear={fn('clear')}
                     labelOpen={fn('openFilterButton')}
                     labelClose={fn('closeFilter')}
@@ -294,7 +295,8 @@ const ApiCatalogue: Screen<HomestayProps> = ({
             >
               <Box display={['block', 'block', 'none']} paddingBottom={4}>
                 <ApiCatalogueFilter
-                  isDialog={true}
+                  variant="dialog"
+                  labelClearAll={fn('clearAll')}
                   labelClear={fn('clear')}
                   labelOpen={fn('openFilterButton')}
                   labelClose={fn('closeFilter')}

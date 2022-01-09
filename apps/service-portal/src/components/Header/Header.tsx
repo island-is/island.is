@@ -1,9 +1,7 @@
 import React, { FC } from 'react'
-import { Link } from 'react-router-dom'
 import {
   Box,
   Hidden,
-  ContentBlock,
   Button,
   Logo,
   FocusableBox,
@@ -16,6 +14,7 @@ import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
 import { BetaTag } from '../Logo/BetaTag'
 import { m } from '@island.is/service-portal/core'
+import { Link } from 'react-router-dom'
 
 export const Header: FC<{}> = () => {
   const { formatMessage } = useLocale()
@@ -32,42 +31,43 @@ export const Header: FC<{}> = () => {
       <div className={styles.placeholder} />
       <header className={styles.header}>
         <Box width="full">
-          <ContentBlock>
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              height="full"
-              background="white"
-              paddingX={[2, 2, 4, 4, 6]}
-            >
+          <Box
+            display="flex"
+            justifyContent={[
+              'spaceBetween',
+              'spaceBetween',
+              'spaceBetween',
+              'flexEnd',
+              'flexEnd',
+            ]}
+            alignItems="center"
+            width="full"
+            background="white"
+            paddingX={[3, 3, 3, 3, 6]}
+          >
+            <Hidden above="md">
               <Link to={ServicePortalPath.MinarSidurRoot}>
                 <FocusableBox component="div">
-                  <Hidden above="md">
-                    <Logo width={40} iconOnly />
-                  </Hidden>
-                  <Hidden below="lg">
-                    <Logo width={160} />
-                  </Hidden>
+                  <Logo width={40} iconOnly />
                   <BetaTag />
                 </FocusableBox>
               </Link>
-              <Box display="flex" alignItems="center" flexWrap="nowrap">
-                <UserMenu />
-                <Hidden above="md">
-                  <Box marginLeft={2}>
-                    <Button
-                      variant="utility"
-                      icon={mobileMenuState === 'open' ? 'close' : 'menu'}
-                      onClick={handleMobileMenuTriggerClick}
-                    >
-                      {formatMessage(m.menu)}
-                    </Button>
-                  </Box>
-                </Hidden>
-              </Box>
+            </Hidden>
+            <Box display="flex" alignItems="center" flexWrap="nowrap">
+              <UserMenu fullscreen />
+              <Hidden above="md">
+                <Box marginLeft={1}>
+                  <Button
+                    variant="utility"
+                    icon={mobileMenuState === 'open' ? 'close' : 'menu'}
+                    onClick={handleMobileMenuTriggerClick}
+                  >
+                    {formatMessage(m.menu)}
+                  </Button>
+                </Box>
+              </Hidden>
             </Box>
-          </ContentBlock>
+          </Box>
         </Box>
       </header>
     </>

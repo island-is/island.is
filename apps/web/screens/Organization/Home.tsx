@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { Button, NavigationItem, Text } from '@island.is/island-ui/core'
+import { NavigationItem } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -28,7 +28,16 @@ interface HomeProps {
   namespace: Query['getNamespace']
 }
 
-const WITH_SEARCH = ['syslumenn', 'sjukratryggingar', 'utlendingastofnun']
+const WITH_SEARCH = [
+  'syslumenn',
+  'district-commissioner',
+
+  'sjukratryggingar',
+  'health-insurance-in-iceland',
+
+  'utlendingastofnun',
+  'directorate-of-immigration',
+]
 
 const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
   const { disableSyslumennPage: disablePage } = publicRuntimeConfig

@@ -52,6 +52,7 @@ export class Client {
   contactEmail!: string
   supportsDelegation!: boolean
   supportsLegalGuardians!: boolean
+  supportsPersonalRepresentatives!: boolean
   supportsProcuringHolders!: boolean
   promptDelegations!: boolean
   readonly created!: Date
