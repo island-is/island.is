@@ -103,8 +103,8 @@ describe('/domur/urskurdur/:id', () => {
 
     intercept(caseDataAddition)
 
-    cy.get('#isolationToDate').should('have.attr', 'disabled')
-    cy.getByTestid('checkbox').children('div').children('input').check()
     cy.get('#isolationToDate').should('not.have.attr', 'disabled')
+    cy.getByTestid('checkbox').children('div').children('input').check()
+    cy.get('#isolationToDate').should('have.attr', 'disabled')
   })
 })
