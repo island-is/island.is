@@ -1,6 +1,6 @@
 import React from 'react'
-import { Box, Input, Text } from '@island.is/island-ui/core'
-import { FAFieldBaseProps } from '../../types'
+import { Box, Text } from '@island.is/island-ui/core'
+import { FAFieldBaseProps } from '../../lib/types'
 import {
   CheckboxController,
   InputController,

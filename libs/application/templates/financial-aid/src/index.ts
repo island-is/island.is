@@ -6,6 +6,6 @@ export const getDataProviders = () => import('./dataProviders/')
 
 export const getFields = () => import('./fields/')
 
-export * from './types'
+export * from './lib/types'
 
 export default ApplicationTemplatesFinancialAid

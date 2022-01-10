@@ -1,8 +1,6 @@
 import { error } from './messages/index'
 import * as z from 'zod'
-
-const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-const isValidEmail = (value: string) => emailRegex.test(value)
+import { isValidEmail } from './utils'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, {

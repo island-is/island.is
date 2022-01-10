@@ -3,7 +3,7 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-import { DataProviderTypes, Applicant } from '../types'
+import { DataProviderTypes, Applicant } from '../lib/types'
 
 export class NationalRegistryProvider extends BasicDataProvider {
   readonly type = DataProviderTypes.NationalRegistry
@@ -30,7 +30,6 @@ export class NationalRegistryProvider extends BasicDataProvider {
 
     return this.useGraphqlGateway<Applicant>(query)
       .then(async (res: Response) => {
-        console.log('response', res)
         const response = await res.json()
         if (response.errors) {
           return this.handleError(response.errors)
@@ -39,7 +38,6 @@ export class NationalRegistryProvider extends BasicDataProvider {
         return Promise.resolve(returnObject)
       })
       .catch((error) => {
-        console.log('error', error)
         return this.handleError(error)
       })
   }

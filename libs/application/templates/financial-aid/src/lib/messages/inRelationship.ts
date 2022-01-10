@@ -1,6 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-// Reason
 export const inRelationship = {
   general: defineMessages({
     sectionTitle: {
@@ -23,7 +22,7 @@ export const inRelationship = {
       id:
         'fa.application:section.personalInterest.inRelationship.description#markdown',
       defaultMessage:
-        'Hvað þýðir það? Þú klárar að fylla út þína umsókn um fjárhagsaðstoð hér og maki þinn notar sín rafrænu skilríki til að skila inn nauðsynlegum gögnum. \\n\\n\\n Úrvinnsla umsóknarinnar hefst þegar öll gögn hafa borist.',
+        'Hvað þýðir það? Þú klárar að fylla út þína umsókn um fjárhagsaðstoð hér og maki þinn notar sín rafrænu skilríki til að skila inn nauðsynlegum gögnum. \n\n\n Úrvinnsla umsóknarinnar hefst þegar öll gögn hafa borist.',
       description: 'In relationship description',
     },
   }),

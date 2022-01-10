@@ -1,5 +1,5 @@
 import { Application, FieldBaseProps } from '@island.is/application/core'
-import { answersSchema } from '../lib/dataSchema'
+import { answersSchema } from './dataSchema'
 
 export enum DataProviderTypes {
   NationalRegistry = 'NationalRegistryProvider',

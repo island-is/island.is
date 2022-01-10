@@ -1,6 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-// Error messages in the application
 export const error = {
   validation: defineMessages({
     dataGathering: {

@@ -8,7 +8,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { DataProviderTypes, ExternalData } from '../types'
+import { DataProviderTypes, ExternalData } from '../lib/types'
 
 import * as m from '../lib/messages'
 
