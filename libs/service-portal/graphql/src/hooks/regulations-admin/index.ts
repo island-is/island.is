@@ -46,9 +46,7 @@ export const useRegulationDraftQuery = (
 ): QueryResult<RegulationDraft> => {
   const { loading, error, data } = useQuery(RegulationDraftQuery, {
     variables: {
-      input: {
-        regulationId: draftId,
-      },
+      input: { draftId },
     },
     fetchPolicy: 'no-cache',
   })

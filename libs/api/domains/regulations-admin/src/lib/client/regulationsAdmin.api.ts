@@ -66,11 +66,11 @@ export class RegulationsAdminApi extends RESTDataSource {
   }
 
   async getDraftRegulation(
-    regulationId: string,
+    draftId: string,
     authorization: string,
   ): Promise<DB_RegulationDraft | null> {
     const response = await this.get<DB_RegulationDraft | null>(
-      `/draft_regulation/${regulationId}`,
+      `/draft_regulation/${draftId}`,
       {},
       {
         headers: { authorization },
@@ -98,27 +98,27 @@ export class RegulationsAdminApi extends RESTDataSource {
   }
 
   updateById(
-    id: string,
+    draftId: string,
     body: EditDraftBody,
     authorization: string,
   ): Promise<any> {
-    return this.put(`/draft_regulation/${id}`, body, {
+    return this.put(`/draft_regulation/${draftId}`, body, {
       headers: { authorization },
     })
   }
 
-  deleteById(id: string, authorization: string): Promise<number> {
-    return this.delete(`/draft_regulation/${id}`, undefined, {
+  deleteById(draftId: string, authorization: string): Promise<number> {
+    return this.delete(`/draft_regulation/${draftId}`, undefined, {
       headers: { authorization },
     })
   }
 
-  async getAuthorInfo(nationalId: string, user: User): Promise<Author | null> {
-    if (kennitala.isCompany(nationalId)) {
+  async getAuthorInfo(kt: string, user: User): Promise<Author | null> {
+    if (kennitala.isCompany(kt)) {
       return null
     }
 
-    const person = await this.nationalRegistryApi.getUser(nationalId)
+    const person = await this.nationalRegistryApi.getUser(kt)
 
     if (!person) {
       return null
@@ -126,7 +126,7 @@ export class RegulationsAdminApi extends RESTDataSource {
 
     return {
       name: person.Fulltnafn,
-      authorId: nationalId as Kennitala,
+      authorId: kt as Kennitala,
     }
   }
 }

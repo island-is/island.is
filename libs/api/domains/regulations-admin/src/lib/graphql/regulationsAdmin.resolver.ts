@@ -3,7 +3,6 @@ import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { RegulationsService } from '@island.is/clients/regulations'
 import { GetDraftRegulationInput } from './dto/getDraftRegulation.input'
-import { CreateDraftRegulationInput } from './dto/createDraftRegulation.input'
 import { DeleteDraftRegulationInput } from './dto/deleteDraftRegulation.input'
 import { EditDraftRegulationInput } from './dto/editDraftRegulation.input'
 import { DraftRegulationModel } from './models/draftRegulation.model'
@@ -38,30 +37,30 @@ export class RegulationsAdminResolver {
     @Args('input') input: GetDraftRegulationInput,
     @CurrentUser() user: User,
   ): Promise<RegulationDraft | null> {
-    const regulation = await this.regulationsAdminApiService.getDraftRegulation(
-      input.regulationId,
+    const draft = await this.regulationsAdminApiService.getDraftRegulation(
+      input.draftId,
       user.authorization,
     )
 
-    if (!regulation) {
+    if (!draft) {
       return null
     }
 
     const lawChapters =
-      (regulation.law_chapters &&
+      (draft.law_chapters &&
         (await this.regulationsService.getRegulationsLawChapters(
           false,
-          regulation.law_chapters,
+          draft.law_chapters,
         ))) ||
       undefined
 
     const [ministry] =
       (await this.regulationsService.getRegulationsMinistries(
-        regulation.ministry_id && [regulation.ministry_id],
+        draft.ministry_id && [draft.ministry_id],
       )) || []
 
     const authors: Author[] = []
-    regulation?.authors?.forEach(async (nationalId) => {
+    draft?.authors?.forEach(async (nationalId) => {
       const author = await this.regulationsAdminApiService.getAuthorInfo(
         nationalId,
         user,
@@ -70,7 +69,7 @@ export class RegulationsAdminResolver {
     })
 
     const impacts: (DraftRegulationCancel | DraftRegulationChange)[] = []
-    regulation.changes?.forEach((change) => {
+    draft.changes?.forEach((change) => {
       const changeTexts = extractAppendixesAndComments(change.text)
 
       impacts.push({
@@ -86,41 +85,40 @@ export class RegulationsAdminResolver {
         regTitle: getChangedRegulationByName(change.regulation).title, // helpful for human-readable display in the UI
       })
     })
-    if (regulation.cancel) {
+    if (draft.cancel) {
       impacts.push({
-        id: regulation.cancel.id,
+        id: draft.cancel.id,
         type: 'repeal',
-        date: regulation.cancel.date,
+        date: draft.cancel.date,
         // About the cancelled reglugerð
-        name: regulation.cancel.regulation, // primary-key reference to the reglugerð
-        regTitle: getCancelledRegulationByName(regulation.cancel.regulation)
-          .title, // helpful for human-readable display in the UI
+        name: draft.cancel.regulation, // primary-key reference to the reglugerð
+        regTitle: getCancelledRegulationByName(draft.cancel.regulation).title, // helpful for human-readable display in the UI
       })
     }
 
     const { text, appendixes, comments } = extractAppendixesAndComments(
-      regulation.text,
+      draft.text,
     )
 
     return {
-      id: regulation.id,
-      draftingStatus: regulation.drafting_status,
-      title: regulation.title,
-      name: regulation.name,
+      id: draft.id,
+      draftingStatus: draft.drafting_status,
+      title: draft.title,
+      name: draft.name,
       text,
       lawChapters,
       ministry,
       authors,
-      idealPublishDate: regulation.ideal_publish_date as any, // TODO: Exclude original from response.
-      draftingNotes: regulation.drafting_notes, // TODO: Exclude original from response.
+      idealPublishDate: draft.ideal_publish_date as any, // TODO: Exclude original from response.
+      draftingNotes: draft.drafting_notes, // TODO: Exclude original from response.
       appendixes: appendixes as RegulationAppendix[],
       comments,
       impacts,
-      type: regulation.type,
-      effectiveDate: regulation.effective_date,
-      signatureDate: regulation.signature_date,
-      signatureText: regulation.signature_text || '',
-      signedDocumentUrl: regulation.signed_document_url,
+      type: draft.type,
+      effectiveDate: draft.effective_date,
+      signatureDate: draft.signature_date,
+      signatureText: draft.signature_text || '',
+      signedDocumentUrl: draft.signed_document_url,
       // fastTrack: ??
     }
   }
@@ -135,16 +133,16 @@ export class RegulationsAdminResolver {
   // @Query(() => [DraftRegulationModel])
   @Query(() => graphqlTypeJson)
   async getDraftRegulations(@CurrentUser() user: User) {
-    const DBregulations = await this.regulationsAdminApiService.getDraftRegulations(
+    const draftRegulations = await this.regulationsAdminApiService.getDraftRegulations(
       user.authorization,
     )
 
-    const regulations: RegulationDraft[] = []
-    for await (const regulation of DBregulations) {
+    const drafts: RegulationDraft[] = []
+    for await (const draft of draftRegulations) {
       const authors: Author[] = []
 
-      if (regulation.authors) {
-        for await (const nationalId of regulation.authors) {
+      if (draft.authors) {
+        for await (const nationalId of draft.authors) {
           try {
             const author = await this.regulationsAdminApiService.getAuthorInfo(
               nationalId,
@@ -165,20 +163,20 @@ export class RegulationsAdminResolver {
         }
       }
 
-      regulations.push({
-        id: regulation.id,
-        draftingStatus: regulation.drafting_status,
-        title: regulation.title,
-        draftingNotes: regulation.drafting_notes,
-        idealPublishDate: regulation.ideal_publish_date,
-        signatureText: regulation.signature_text || '',
-        signatureDate: regulation.signature_date,
-        signedDocumentUrl: regulation.signed_document_url,
-        effectiveDate: regulation.effective_date,
-        type: regulation.type,
-        name: regulation.name,
-        // lawChapters: regulation.law_chapters,
-        // ministry: regulation.ministry_id,
+      drafts.push({
+        id: draft.id,
+        draftingStatus: draft.drafting_status,
+        title: draft.title,
+        draftingNotes: draft.drafting_notes,
+        idealPublishDate: draft.ideal_publish_date,
+        signatureText: draft.signature_text || '',
+        signatureDate: draft.signature_date,
+        signedDocumentUrl: draft.signed_document_url,
+        effectiveDate: draft.effective_date,
+        type: draft.type,
+        name: draft.name,
+        // lawChapters: draft.law_chapters,
+        // ministry: draft.ministry_id,
         // fastTrack: ???,
         impacts: [],
         authors,
@@ -188,7 +186,7 @@ export class RegulationsAdminResolver {
       })
     }
 
-    return regulations
+    return drafts
   }
 
   @Mutation(() => graphqlTypeJson)
