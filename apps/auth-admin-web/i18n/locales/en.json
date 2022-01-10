@@ -1507,6 +1507,12 @@
           "helpText": "Should procuring holders automatically get this scope for their organisations",
           "errorMessage": ""
         },
+        "grantToPersonalRepresentatives": {
+          "label": "Grant To PersonalRepresentatives",
+          "placeholder": "",
+          "helpText": "Should personal representatives automatically get this scope for their clients",
+          "errorMessage": ""
+        },
         "allowExplicitDelegationGrant": {
           "label": "Allow Explicit Delegation Grant",
           "placeholder": "",
@@ -1727,6 +1733,10 @@
         "supportsProcuringHolders": {
           "label": "Supports Procuring Holders Delegation",
           "helpText": "Specifies if the client supports Procuring Holders delegation"
+        },
+        "supportsPersonalRepresentatives": {
+          "label": "Supports Personal Representatives Delegation",
+          "helpText": "Specifies if the client supports Personal Representatives delegation"
         },
         "promptDelegations": {
           "label": "Prompt delegations",

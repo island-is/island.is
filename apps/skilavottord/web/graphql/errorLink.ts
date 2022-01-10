@@ -26,6 +26,6 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
       return
     }
 
-    toast.error(graphQLErrors.join('\n'))
+    toast.error(graphQLErrors.map((error) => error.message).join('\n'))
   }
 })

@@ -153,3 +153,40 @@ export const WithErrors = () => (
     </Wrap>
   </>
 )
+
+export const Disabled = () => (
+  <>
+    <Wrap>
+      <DatePicker
+        label="Date"
+        placeholderText="Pick a date"
+        selected={new Date()}
+        handleChange={(date: Date) => console.log(date)}
+        disabled
+      />
+    </Wrap>
+  </>
+)
+
+export const WithoutLabel = () => (
+  <Wrap>
+    <DatePicker
+      label=""
+      placeholderText="Pick a date"
+      selected={new Date()}
+      handleChange={(date: Date) => console.log(date)}
+    />
+  </Wrap>
+)
+
+export const SmallWithoutLabel = () => (
+  <Wrap>
+    <DatePicker
+      label=""
+      size="sm"
+      placeholderText="Pick a date"
+      selected={new Date()}
+      handleChange={(date: Date) => console.log(date)}
+    />
+  </Wrap>
+)

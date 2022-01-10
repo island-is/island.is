@@ -19,20 +19,20 @@ const SubNav = ({ navChildren, onItemClick, pathname, collapsed }: Props) => {
       className={collapsed ? styles.subnavCollapsed : styles.subnav}
       marginTop={collapsed ? 0 : 3}
     >
-      <Stack space={2}>
-        {navChildren?.map((child, index) => (
-          <SubNavItem
-            path={child.path}
-            enabled={child.enabled}
-            key={`child-${index}`}
-            active={child.path && pathname?.includes(child.path) ? true : false}
-            external={child.external}
-            onClick={onItemClick}
-          >
-            {formatMessage(child.name)}
-          </SubNavItem>
-        ))}
-      </Stack>
+      {navChildren?.map((child, index) => (
+        <SubNavItem
+          first={index === 0}
+          path={child.path}
+          enabled={child.enabled}
+          collapsed={collapsed}
+          key={`child-${index}`}
+          active={child.path && pathname?.includes(child.path) ? true : false}
+          external={child.external}
+          onClick={onItemClick}
+        >
+          {formatMessage(child.name)}
+        </SubNavItem>
+      ))}
     </Box>
   )
 }

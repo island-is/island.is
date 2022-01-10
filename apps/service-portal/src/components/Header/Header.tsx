@@ -51,7 +51,6 @@ export const Header: FC<{}> = () => {
       </Box>
     )
   }
-  console.log('userMenuOpen', userMenuOpen)
   return (
     <>
       <div className={styles.placeholder} />

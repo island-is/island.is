@@ -15,6 +15,7 @@ import {
   LinkContext,
   Navigation,
   NavigationItem,
+  ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
@@ -398,50 +399,52 @@ const Search: Screen<CategoryProps> = ({
             </Box>
           )}
         </Stack>
-        <Stack space={2}>
-          {filteredItems.map(
-            ({ image, thumbnail, labels, parentTitle, ...rest }, index) => {
-              const tags: Array<CardTagsProps> = []
+        <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
+          <Stack space={2}>
+            {filteredItems.map(
+              ({ image, thumbnail, labels, parentTitle, ...rest }, index) => {
+                const tags: Array<CardTagsProps> = []
 
-              labels.forEach((label) => {
-                tags.push({
-                  title: label,
-                  tagProps: {
-                    outlined: true,
-                  },
+                labels.forEach((label) => {
+                  tags.push({
+                    title: label,
+                    tagProps: {
+                      outlined: true,
+                    },
+                  })
                 })
-              })
 
-              return (
-                <Card
-                  key={index}
-                  tags={tags}
-                  image={thumbnail ? thumbnail : image}
-                  subTitle={parentTitle}
-                  {...rest}
+                return (
+                  <Card
+                    key={index}
+                    tags={tags}
+                    image={thumbnail ? thumbnail : image}
+                    subTitle={parentTitle}
+                    {...rest}
+                  />
+                )
+              },
+            )}{' '}
+            {totalSearchResults > 0 && (
+              <Box paddingTop={8}>
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  renderLink={(page, className, children) => (
+                    <Link
+                      href={{
+                        pathname: linkResolver('search').href,
+                        query: { ...Router.query, page },
+                      }}
+                    >
+                      <span className={className}>{children}</span>
+                    </Link>
+                  )}
                 />
-              )
-            },
-          )}{' '}
-          {totalSearchResults > 0 && (
-            <Box paddingTop={8}>
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                renderLink={(page, className, children) => (
-                  <Link
-                    href={{
-                      pathname: linkResolver('search').href,
-                      query: { ...Router.query, page },
-                    }}
-                  >
-                    <span className={className}>{children}</span>
-                  </Link>
-                )}
-              />
-            </Box>
-          )}
-        </Stack>
+              </Box>
+            )}
+          </Stack>
+        </ColorSchemeContext.Provider>
       </SidebarLayout>
     </>
   )
