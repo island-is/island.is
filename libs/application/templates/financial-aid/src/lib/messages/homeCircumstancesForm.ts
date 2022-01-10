@@ -10,48 +10,53 @@ export const homeCircumstancesForm = {
     pageTitle: {
       id: 'fa.application:section.homeCircumstancesForm.general.pageTitle',
       defaultMessage: 'Hvað lýsir búsetu þinni best?',
-      description: 'About form page title',
+      description: 'Home circumstances form page title',
     },
     inputLabel: {
       id: 'fa.application:section.homeCircumstancesForm.general.inputLabel',
       defaultMessage: 'Lýstu þínum aðstæðum',
-      description: 'About form page description',
+      description: 'Home circumstances custom form input label',
     },
   }),
   circumstances: defineMessages({
-    WithParents: {
+    withParents: {
       id:
         'fa.application:section.homeCircumstancesForm.circumstances.WithParents',
       defaultMessage: 'Ég bý hjá foreldrum',
-      description: 'Home circumstances form circumstances',
+      description:
+        'Home circumstances form circumstances if applicant is living with parents',
     },
-    WithOthers: {
+    withOthers: {
       id:
         'fa.application:section.homeCircumstancesForm.circumstances.WithOthers',
       defaultMessage: 'Ég bý eða leigi hjá öðrum án leigusamnings',
-      description: 'Home circumstances form circumstances',
+      description:
+        'Home circumstances form circumstances if applicant lives with others',
     },
-    OwnPlace: {
+    ownPlace: {
       id: 'fa.application:section.homeCircumstancesForm.circumstances.OwnPlace',
       defaultMessage: 'Ég bý í eigin húsnæði',
-      description: 'Home circumstances form circumstances',
+      description:
+        'Home circumstances form circumstances if applicant has its own place',
     },
-    RegisteredLease: {
+    registeredLease: {
       id:
         'fa.application:section.homeCircumstancesForm.circumstances.RegisteredLease',
       defaultMessage: 'Ég leigi með þinglýstan leigusamning',
-      description: 'Home circumstances form circumstances',
+      description:
+        'Home circumstances form circumstances if applicant has registered lease',
     },
-    UnregisteredLease: {
+    unregisteredLease: {
       id:
         'fa.application:section.homeCircumstancesForm.circumstances.UnregisteredLease',
       defaultMessage: 'Ég leigi með óþinglýstan leigusamning',
-      description: 'Home circumstances form circumstances',
+      description:
+        'Home circumstances form circumstances if applicant has unregistered lease',
     },
-    Other: {
+    other: {
       id: 'fa.application:section.homeCircumstancesForm.circumstances.Other',
       defaultMessage: 'Annað',
-      description: 'Home circumstances form circumstances',
+      description: 'If home circumstances dont apply to applicant  ',
     },
   }),
 }

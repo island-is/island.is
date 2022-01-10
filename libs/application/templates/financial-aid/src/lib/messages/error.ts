@@ -10,12 +10,12 @@ export const error = {
     radioErrorMessage: {
       id: 'fa.application:section.radioErrorMessage',
       defaultMessage: 'Þú þarft að velja einn valmöguleika',
-      description: 'When radio is not selected',
+      description: 'Error message when no option is selecte',
     },
     inputErrorMessage: {
       id: 'fa.application:section.inputErrorMessage',
       defaultMessage: 'Þú þarft að skrifa í textareitinn',
-      description: 'When input is empty',
+      description: 'Error message when no input is empty',
     },
     email: {
       id: 'fa.application:error.email',

@@ -43,43 +43,43 @@ const HomeCircumstancesForm = ({
     <>
       <Box marginTop={5}>
         <RadioController
-          id={`${typeInput.id}`}
-          defaultValue={statefulAnswer}
+          id={typeInput.id}
+          defaultValue={answers?.homeCircumstances?.type}
           options={[
             {
               value: HomeCircumstances.OWNPLACE,
               label: formatMessage(
-                homeCircumstancesForm.circumstances.OwnPlace,
+                homeCircumstancesForm.circumstances.ownPlace,
               ),
             },
             {
               value: HomeCircumstances.REGISTEREDLEASE,
               label: formatMessage(
-                homeCircumstancesForm.circumstances.RegisteredLease,
+                homeCircumstancesForm.circumstances.registeredLease,
               ),
             },
             {
               value: HomeCircumstances.UNREGISTEREDLEASE,
               label: formatMessage(
-                homeCircumstancesForm.circumstances.UnregisteredLease,
+                homeCircumstancesForm.circumstances.unregisteredLease,
               ),
             },
 
             {
               value: HomeCircumstances.WITHOTHERS,
               label: formatMessage(
-                homeCircumstancesForm.circumstances.WithOthers,
+                homeCircumstancesForm.circumstances.withOthers,
               ),
             },
             {
               value: HomeCircumstances.WITHPARENTS,
               label: formatMessage(
-                homeCircumstancesForm.circumstances.WithParents,
+                homeCircumstancesForm.circumstances.withParents,
               ),
             },
             {
               value: HomeCircumstances.OTHER,
-              label: formatMessage(homeCircumstancesForm.circumstances.Other),
+              label: formatMessage(homeCircumstancesForm.circumstances.other),
             },
           ]}
           onSelect={(newAnswer) =>
