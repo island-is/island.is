@@ -41,7 +41,7 @@ const Layout: FC = ({ children }) => {
           <MobileMenu />
         </Hidden>
       </RemoveScroll>
-      <Hidden below="md">
+      <Hidden below="lg">
         <Sidebar />
       </Hidden>
       <Box overflow="hidden" className={styles.layoutWrapper} paddingBottom={7}>

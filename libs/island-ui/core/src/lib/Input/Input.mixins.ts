@@ -67,7 +67,7 @@ export const containerSizes = {
     padding: 8,
     ...themeUtils.responsiveStyle({
       md: {
-        padding: `${theme.spacing[1]} ${theme.spacing[2]} ${theme.spacing[1]} ${theme.spacing[1]}`,
+        padding: `${theme.spacing[1]}px ${theme.spacing[2]}px ${theme.spacing[1]}px ${theme.spacing[1]}px`,
       },
     }),
   },
@@ -75,12 +75,12 @@ export const containerSizes = {
     padding: 8,
     ...themeUtils.responsiveStyle({
       md: {
-        padding: `${theme.spacing[1]} ${theme.spacing[2]} ${theme.spacing[1]} ${theme.spacing[1]}`,
+        padding: `${theme.spacing[1]}px ${theme.spacing[2]}px ${theme.spacing[1]}px ${theme.spacing[1]}px`,
       },
     }),
   },
   md: {
-    padding: `${theme.spacing[1]} ${theme.spacing[2]} ${theme.spacing[2]} ${theme.spacing[1]}`,
+    padding: `${theme.spacing[1]}px ${theme.spacing[2]}px ${theme.spacing[2]}px ${theme.spacing[1]}px`,
     ...themeUtils.responsiveStyle({
       md: {
         padding: '8px 24px 14px 8px',

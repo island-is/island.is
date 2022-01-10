@@ -7,15 +7,19 @@ interface Props {
   path?: ServicePortalPath
   active: boolean
   enabled?: boolean
+  collapsed?: boolean
   external?: boolean
   onClick?: () => void
+  first?: boolean
 }
 
 const SubNavItemContent: FC<Props> = ({
   active,
   onClick,
   enabled,
+  collapsed,
   children,
+  first,
 }) => (
   <Box
     display="flex"
@@ -25,6 +29,7 @@ const SubNavItemContent: FC<Props> = ({
     onClick={onClick}
     justifyContent="spaceBetween"
     paddingRight={2}
+    paddingTop={first ? 0 : 3}
     className={active ? styles.subLinkActive : styles.subLink}
   >
     <span>{children}</span>
@@ -33,8 +38,7 @@ const SubNavItemContent: FC<Props> = ({
         type="filled"
         icon="lockClosed"
         size="small"
-        color="blue600"
-        className={styles.subLock}
+        className={collapsed ? styles.subLockCollapsed : styles.subLock}
       />
     )}
   </Box>

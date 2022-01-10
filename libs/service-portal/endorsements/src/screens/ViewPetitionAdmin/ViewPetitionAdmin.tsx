@@ -73,11 +73,11 @@ const ViewPetitionAdmin = () => {
         },
       },
     }).catch(() => {
-      toast.error(formatMessage(m.viewPetition.toastErrorCloseList))
+      toast.error(formatMessage(m.viewPetition.toastErrorLockList))
     })
 
     if (success) {
-      toast.success(formatMessage(m.viewPetition.toastSuccessCloseList))
+      toast.success(formatMessage(m.viewPetition.toastSuccessLockList))
     }
   }
 
@@ -193,9 +193,9 @@ const ViewPetitionAdmin = () => {
             {!petition.adminLock ? (
               <DialogPrompt
                 baseId="demo_dialog"
-                title={formatMessage(m.viewPetition.dialogPromptCloseListTitle)}
+                title={formatMessage(m.viewPetition.dialogPromptLockListTitle)}
                 ariaLabel={formatMessage(
-                  m.viewPetition.dialogPromptCloseListTitle,
+                  m.viewPetition.dialogPromptLockListTitle,
                 )}
                 disclosureElement={
                   <Button
@@ -203,7 +203,7 @@ const ViewPetitionAdmin = () => {
                     iconType="outline"
                     colorScheme="destructive"
                   >
-                    {formatMessage(m.viewPetition.closeListButton)}
+                    {formatMessage(m.viewPetition.LockListButton)}
                   </Button>
                 }
                 onConfirm={() => onLockList()}
