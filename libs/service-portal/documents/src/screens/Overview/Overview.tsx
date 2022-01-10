@@ -402,7 +402,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       </Text>
                     </Box>
                   </GridColumn>
-                  <GridColumn span={['1/1', '6/12', '7/12', '6/12', '7/12']}>
+                  <GridColumn span={['1/1', '6/12', '6/12', '6/12', '7/12']}>
                     <Box paddingX={2}>
                       <Text fontWeight="semiBold" variant="medium">
                         {formatMessage({
@@ -412,7 +412,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       </Text>
                     </Box>
                   </GridColumn>
-                  <GridColumn span={['1/1', '4/12', '3/12', '4/12', '3/12']}>
+                  <GridColumn span={['1/1', '4/12', '4/12', '4/12', '3/12']}>
                     <Box paddingX={2}>
                       <Text fontWeight="semiBold" variant="medium">
                         {formatMessage({

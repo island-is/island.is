@@ -15,6 +15,9 @@ import * as styles from './DocumentLine.css'
 import { User } from 'oidc-client'
 import cn from 'classnames'
 import { m } from '@island.is/service-portal/core'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
+
 interface Props {
   documentLine: Document
   userInfo: User
@@ -23,6 +26,9 @@ interface Props {
 
 const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
   const { formatMessage } = useLocale()
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.sm
+
   const onClickHandler = () => {
     // Create form elements
     const form = document.createElement('form')
@@ -91,144 +97,91 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
     </Text>
   )
   return (
-    <Box position="relative" className={styles.line} paddingY={2}>
-      {/* 
-      RÖÐ:
-      1. Dagsetning
-      2. Mynd + titill
-      3. Stofnun 
-      
-      1. Mynd
-      2. RÖÐ
-      1 Stofnun
-      2 Dagsetning
-      3.Titill
-      */}
-      {/* <GridRow>
-        <GridColumn span={['1/2', '2/12']} order={[2, 1]}>
-          <Box
-            display="flex"
-            alignItems="center"
-            height="full"
-            paddingX={[0, 2]}
-            overflow="hidden"
-          >
-            <Text variant="medium">
-              {format(new Date(documentLine.date), dateFormat.is)}
-            </Text>
-          </Box>
-        </GridColumn>
-        <GridColumn
-          span={['1/1', '6/12', '7/12', '6/12', '7/12']}
-          order={[2, 3]}
-        >
-          <Box
-            display="flex"
-            alignItems="center"
-            height="full"
-            paddingX={[0, 2]}
-            paddingBottom={[1, 0]}
-            overflow="hidden"
-          >
-            {img && (
-              <img
-                className={styles.image}
-                src={img}
-                alt={`${formatMessage(m.altText)} ${documentLine.subject}`}
-              />
-            )}
-            {documentLine.fileType === 'url' && documentLine.url ? (
-              <Link href={documentLine.url}>
-                <button
-                  className={cn(
-                    styles.button,
-                    !documentLine.opened && styles.unopened,
-                  )}
-                >
-                  {documentLine.subject}
-                </button>
-              </Link>
-            ) : (
-              <button
-                className={cn(
-                  styles.button,
-                  !documentLine.opened && styles.unopened,
-                )}
-                onClick={onClickHandler}
-              >
-                {documentLine.subject}
-              </button>
-            )}
-          </Box>
-        </GridColumn>
-        <GridColumn
-          span={['1/2', '4/12', '3/12', '4/12', '3/12']}
-          order={[1, 3]}
-        >
-          <Box
-            display="flex"
-            alignItems="center"
-            height="full"
-            paddingX={[0, 2]}
-            overflow="hidden"
-          >
-            <Text variant="medium">{documentLine.senderName}</Text>
-          </Box>
-        </GridColumn>
-      </GridRow> */}
-
-      <GridRow>
-        <GridColumn>
-          <Box
-            display="flex"
-            alignItems="center"
-            height="full"
-            paddingX={[0, 2]}
-            paddingBottom={[1, 0]}
-            overflow="hidden"
-          >
-            {image}
-          </Box>
-        </GridColumn>
-        <GridColumn>
-          <GridRow>
-            <GridColumn>
+    <Box
+      position="relative"
+      className={cn(
+        styles.line,
+        !documentLine.opened && styles.unopenedWrapper,
+      )}
+      paddingY={2}
+    >
+      {isMobile ? (
+        <GridRow alignItems="flexStart" align="flexStart">
+          {img && (
+            <GridColumn span="2/12">
               <Box
                 display="flex"
                 alignItems="center"
                 height="full"
                 paddingX={[0, 2]}
-                overflow="hidden"
-                className={styles.sender}
+                paddingBottom={[1, 0]}
               >
-                {sender('eyebrow')}
+                {image}
               </Box>
             </GridColumn>
-            <GridColumn>
-              <Box
-                display="flex"
-                alignItems="center"
-                height="full"
-                paddingX={[0, 2]}
-                overflow="hidden"
-              >
-                {date('small')}
-              </Box>
-            </GridColumn>
-          </GridRow>
-          <GridColumn>
+          )}
+          <GridColumn span="7/12">
+            <Box
+              display="flex"
+              alignItems="center"
+              paddingX={[0, 2]}
+              className={styles.sender}
+            >
+              {sender('eyebrow')}
+            </Box>
+            <Box display="flex" alignItems="center" paddingX={[0, 2]}>
+              {subject}
+            </Box>
+          </GridColumn>
+          <GridColumn span="3/12">
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="flexEnd"
+              height="full"
+              paddingX={[0, 2]}
+            >
+              {date('small')}
+            </Box>
+          </GridColumn>
+        </GridRow>
+      ) : (
+        <GridRow>
+          <GridColumn span={['1/1', '2/12']}>
             <Box
               display="flex"
               alignItems="center"
               height="full"
               paddingX={[0, 2]}
-              overflow="hidden"
             >
+              {date('medium')}
+            </Box>
+          </GridColumn>
+          <GridColumn span={['1/1', '6/12', '6/12', '6/12', '7/12']}>
+            <Box
+              display="flex"
+              alignItems="center"
+              height="full"
+              paddingX={[0, 2]}
+              paddingBottom={[1, 0]}
+            >
+              {img && image}
               {subject}
             </Box>
           </GridColumn>
-        </GridColumn>
-      </GridRow>
+          <GridColumn span={['1/1', '4/12', '4/12', '4/12', '3/12']}>
+            <Box
+              display="flex"
+              alignItems="center"
+              height="full"
+              paddingX={[0, 2]}
+              className={styles.sender}
+            >
+              {sender('medium')}
+            </Box>
+          </GridColumn>
+        </GridRow>
+      )}
     </Box>
   )
 }
