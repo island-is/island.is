@@ -48,11 +48,11 @@ export class VehicleModel extends Model<VehicleModel> {
   })
   vehicleColor: string
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: DataType.DATE,
   })
-  newregDate: Date
+  newregDate?: Date
 
   @Field()
   @Column({
@@ -61,14 +61,15 @@ export class VehicleModel extends Model<VehicleModel> {
   vinNumber: string
 
   @Field()
+  @Field({ nullable: true })
   @CreatedAt
   @Column
-  createdAt: Date
+  createdAt?: Date
 
-  @Field()
+  @Field({ nullable: true })
   @UpdatedAt
   @Column
-  updatedAt: Date
+  updatedAt?: Date
 
   @Field(() => [RecyclingRequestModel], { nullable: true })
   @HasMany(() => RecyclingRequestModel)
