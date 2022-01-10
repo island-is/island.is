@@ -3,12 +3,11 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-import { NationalRegistry } from '@island.is/application/templates/family-matters-core/types'
-import { DataProviderTypes } from '../types'
+import { DataProviderTypes, Applicant } from '../lib/types'
 
 export class NationalRegistryProvider extends BasicDataProvider {
   readonly type = DataProviderTypes.NationalRegistry
-  async provide(): Promise<NationalRegistry> {
+  async provide(): Promise<Applicant> {
     const query = `
       query NationalRegistryUserQuery {
         nationalRegistryUserV2 {
@@ -29,14 +28,13 @@ export class NationalRegistryProvider extends BasicDataProvider {
       }
     `
 
-    return this.useGraphqlGateway<NationalRegistry>(query)
+    return this.useGraphqlGateway<Applicant>(query)
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
           return this.handleError(response.errors)
         }
-        const returnObject: NationalRegistry =
-          response.data.nationalRegistryUserV2
+        const returnObject: Applicant = response.data.nationalRegistryUserV2
         return Promise.resolve(returnObject)
       })
       .catch((error) => {
@@ -44,8 +42,8 @@ export class NationalRegistryProvider extends BasicDataProvider {
       })
   }
   handleError(error: Error | unknown) {
-    console.error('Provider.ChildrenResidenceChange.Children:', error)
-    return Promise.reject('Failed to fetch children')
+    console.error('Provider.FinancialAid.NationalRegistry:', error)
+    return Promise.reject('Failed to fetch from national registry')
   }
   onProvideError(result: { message: string }): FailedDataProviderResult {
     return {
@@ -54,7 +52,7 @@ export class NationalRegistryProvider extends BasicDataProvider {
       status: 'failure',
     }
   }
-  onProvideSuccess(result: NationalRegistry): SuccessfulDataProviderResult {
+  onProvideSuccess(result: Applicant): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

@@ -1,6 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-// External information retrieval
 export const externalData = {
   general: defineMessages({
     sectionTitle: {
