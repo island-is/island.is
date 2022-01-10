@@ -105,13 +105,11 @@ export class MainResolver {
 
   @Query(() => HasQualityPhoto)
   hasQualityPhoto(@CurrentUser() user: User) {
-    console.log("am i here??")
     return this.drivingLicenseService.getHasQualityPhoto(user.nationalId)
   }
 
   @Query(() => QualityPhoto)
   qualityPhoto(@CurrentUser() user: User) {
-    console.log("or here???")
     return this.drivingLicenseService.getQualityPhoto(user.nationalId)
   }
 
