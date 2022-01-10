@@ -8,8 +8,6 @@ updates:
     labels:
       - automerge
       - dependencies
-    reviewers:
-      - island-is/core
 
   - package-ecosystem: github-actions
     directory: /
@@ -18,8 +16,6 @@ updates:
     labels:
       - automerge
       - dependencies
-    reviewers:
-      - island-is/core
 
   - package-ecosystem: npm
     directory: /.github/actions/
@@ -28,5 +24,3 @@ updates:
     labels:
       - automerge
       - dependencies
-    reviewers:
-      - island-is/core
