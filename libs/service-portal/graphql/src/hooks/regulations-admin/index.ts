@@ -199,7 +199,11 @@ const useMockRegulationListQuery = (maybeNames: ReadonlyArray<string>) => {
 
   const getRegulationList = useMemo(
     () =>
+      // Here we mix the incoming `RegName`s into the mock data
       maybeNames
+        // Skip over (ignore) one of the incoming names
+        // to emulate a false-positive in the name-detection algoritm,
+        // which the API just ignored.
         .filter((_, i) => i !== 1)
         .map(
           (name, i): RegulationOption => {
