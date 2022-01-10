@@ -1,6 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-// Error messages in the application
 export const error = {
   validation: defineMessages({
     dataGathering: {
@@ -17,6 +16,16 @@ export const error = {
       id: 'fa.application:section.inputErrorMessage',
       defaultMessage: 'Þú þarft að skrifa í textareitinn',
       description: 'When input is empty',
+    email: {
+      id: 'fa.application:error.email',
+      defaultMessage: 'Athugaðu hvort netfang sé rétt slegið inn',
+      description: 'Error message when email is invalid or not present',
+    },
+    approveSpouse: {
+      id: 'fa.application:error.approveSpouse',
+      defaultMessage: 'Þú þarft að samþykkja',
+      description:
+        'Error message when applicant has not checked that spouse has to send files for the application to be processed',
     },
   }),
 }

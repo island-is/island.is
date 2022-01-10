@@ -7,9 +7,9 @@ import { RadioController } from '@island.is/shared/form-fields'
 import { HomeCircumstances } from '@island.is/financial-aid/shared/lib'
 import * as styles from '../Shared.css'
 import cn from 'classnames'
-import { CRCFieldBaseProps } from '../../types'
+import { FAFieldBaseProps } from '../../lib/types'
 
-const HomeCircumstancesForm = ({ field, errors }: CRCFieldBaseProps) => {
+const HomeCircumstancesForm = ({ field, errors }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
 
   const [statefulAnswer, setStatefulAnswer] = useState<

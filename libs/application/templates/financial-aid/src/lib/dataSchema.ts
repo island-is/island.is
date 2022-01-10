@@ -1,6 +1,7 @@
 import { error } from './messages/index'
 import * as z from 'zod'
 import { HomeCircumstances } from '@island.is/financial-aid/shared/lib'
+import { isValidEmail } from './utils'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, {
@@ -39,6 +40,14 @@ export const dataSchema = z.object({
       params: error.validation.inputErrorMessage,
       path: ['custom'],
     }),
+  spouse: z.object({
+    email: z.string().refine((v) => isValidEmail(v), {
+      params: error.validation.email,
+    }),
+    approveTerms: z.boolean().refine((v) => v, {
+      params: error.validation.approveSpouse,
+    }),
+  }),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>
