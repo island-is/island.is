@@ -9,7 +9,7 @@ import {
   UserProfileApi,
   UserProfileControllerCreateRequest,
   UserProfileControllerUpdateRequest,
-} from '../../gen/fetch'
+} from '@island.is/clients/user-profile'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
