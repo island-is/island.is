@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Box, Input } from '@island.is/island-ui/core'
-import { homeCircumstancesForm, error } from '../../lib/messages'
+import { homeCircumstancesForm } from '../../lib/messages'
 import { useIntl } from 'react-intl'
 
 import { RadioController } from '@island.is/shared/form-fields'
@@ -11,6 +11,7 @@ import { CRCFieldBaseProps } from '../../types'
 
 const HomeCircumstancesForm = ({ field, errors }: CRCFieldBaseProps) => {
   const { formatMessage } = useIntl()
+
   const [statefulAnswer, setStatefulAnswer] = useState<
     HomeCircumstances | undefined
   >()
@@ -65,7 +66,7 @@ const HomeCircumstancesForm = ({ field, errors }: CRCFieldBaseProps) => {
           }
           largeButtons
           backgroundColor="white"
-          error={errors?.homeCircumstances.type}
+          error={undefined}
         />
       </Box>
 
@@ -75,6 +76,7 @@ const HomeCircumstancesForm = ({ field, errors }: CRCFieldBaseProps) => {
           [`${styles.inputAppear}`]: statefulAnswer === HomeCircumstances.OTHER,
         })}
       >
+        //controller
         <Input
           backgroundColor={'blue'}
           label={formatMessage(homeCircumstancesForm.general.inputLabel)}
@@ -82,12 +84,25 @@ const HomeCircumstancesForm = ({ field, errors }: CRCFieldBaseProps) => {
           rows={8}
           textarea
           value={statefulInput}
-          hasError={errors?.homeCircumstances.custom !== undefined}
-          errorMessage={errors?.homeCircumstances.custom}
+          hasError={false}
+          errorMessage={undefined}
           onChange={(event) => {
             setStatefulInput(event.target.value)
           }}
         />
+        {/* <InputController
+          id={phoneNumber.presentationId}
+          name={phoneNumber.presentationId}
+          backgroundColor="blue"
+          type="tel"
+          label={phoneNumber.label}
+          error={phoneNumber.error}
+          onChange={(event) => {
+            setStatefulInput(event.target.value)
+            // clearErrors(phoneNumber.clearErrors || phoneNumber.id)
+          }}
+          defaultValue={phoneNumber.defaultValue || ''}
+        /> */}
       </Box>
     </>
   )
