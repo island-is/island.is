@@ -130,7 +130,7 @@ export interface PageInfo {
   endCursor: string
 }
 
-export async function paginate<T extends any>({
+export async function paginate<T = any>({
   Model,
   primaryKeyField,
   orderOption,
