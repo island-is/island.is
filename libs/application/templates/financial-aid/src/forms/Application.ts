@@ -50,17 +50,6 @@ export const Application: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'homeCircumstancesForm',
-      title: m.homeCircumstancesForm.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'homeCircumstances',
-          title: m.homeCircumstancesForm.general.pageTitle,
-          component: 'HomeCircumstancesForm',
-        }),
-      ],
-    }),
-    buildSection({
       condition: (_, externalData) =>
         ((externalData as unknown) as ExternalData).nationalRegistry?.data
           ?.spouse !== undefined,
@@ -76,6 +65,17 @@ export const Application: Form = buildForm({
               component: 'InRelationship',
             }),
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'homeCircumstancesForm',
+      title: m.homeCircumstancesForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'homeCircumstances',
+          title: m.homeCircumstancesForm.general.pageTitle,
+          component: 'HomeCircumstancesForm',
         }),
       ],
     }),
