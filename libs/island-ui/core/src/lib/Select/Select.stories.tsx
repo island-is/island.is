@@ -52,12 +52,8 @@ WithLabelAbove.args = {
       value: '2',
     },
   ],
-<<<<<<< HEAD
   noOptionsMessage: 'Enginn valmöguleiki',
   size: 'xs',
-=======
-  size: 'xs',
-  noOptionsMessage: 'Enginn valmöguleiki',
 }
 
 export const Disabled = Template.bind({})
@@ -81,7 +77,6 @@ Disabled.args = {
   ],
   noOptionsMessage: 'Enginn valmöguleiki',
   disabled: true,
->>>>>>> main
 }
 
 export const TempTest = () => (

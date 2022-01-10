@@ -15,7 +15,7 @@ export const UserButton = ({ onClick, user: { profile } }: UserButtonProps) => {
   const { formatMessage } = useLocale()
   return (
     <>
-      <Hidden above="xs">
+      <Hidden above="sm">
         <Button
           variant="utility"
           colorScheme={isDelegation ? 'primary' : 'default'}
@@ -33,7 +33,7 @@ export const UserButton = ({ onClick, user: { profile } }: UserButtonProps) => {
           </div>
         </Button>
       </Hidden>
-      <Hidden below="sm">
+      <Hidden below="md">
         <Button
           variant="utility"
           colorScheme={isDelegation ? 'primary' : 'default'}
