@@ -21,7 +21,11 @@ import {
   RegulationDraft,
 } from '@island.is/regulations/admin'
 import { extractAppendixesAndComments } from '@island.is/regulations-tools/textHelpers'
-import { RegulationAppendix } from '@island.is/regulations/web'
+import {
+  RegulationAppendix,
+  RegulationViewTypes,
+} from '@island.is/regulations/web'
+import { PlainText, RegQueryName } from '@island.is/regulations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -69,7 +73,7 @@ export class RegulationsAdminResolver {
     })
 
     const impacts: (DraftRegulationCancel | DraftRegulationChange)[] = []
-    draft.changes?.forEach((change) => {
+    draft.changes?.forEach(async (change) => {
       const changeTexts = extractAppendixesAndComments(change.text)
 
       impacts.push({
@@ -82,7 +86,12 @@ export class RegulationsAdminResolver {
         comments: changeTexts.comments,
         // About the impaced stofnreglugerð
         name: change.regulation, // primary-key reference to the stofnreglugerð
-        regTitle: getChangedRegulationByName(change.regulation).title, // helpful for human-readable display in the UI
+        regTitle: (
+          await this.regulationsService.getRegulation(
+            RegulationViewTypes.current,
+            change.regulation.replace('/', '-') as RegQueryName,
+          )
+        )?.title as PlainText, // helpful for human-readable display in the UI
       })
     })
     if (draft.cancel) {
@@ -92,7 +101,12 @@ export class RegulationsAdminResolver {
         date: draft.cancel.date,
         // About the cancelled reglugerð
         name: draft.cancel.regulation, // primary-key reference to the reglugerð
-        regTitle: getCancelledRegulationByName(draft.cancel.regulation).title, // helpful for human-readable display in the UI
+        regTitle: (
+          await this.regulationsService.getRegulation(
+            RegulationViewTypes.current,
+            draft.cancel.regulation.replace('/', '-') as RegQueryName,
+          )
+        )?.title as PlainText, // helpful for human-readable display in the UI
       })
     }
 
