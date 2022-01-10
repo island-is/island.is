@@ -247,3 +247,13 @@ export const CriminalRecord = new XroadConf({
     },
   },
 })
+
+export const RskCompanyInfo = new XroadConf({
+  env: {
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10006/Skatturinn-Public/ftskra-v1',
+      staging: '', //TODO
+      prod: '', //TODO,
+    },
+  },
+})
