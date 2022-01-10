@@ -92,6 +92,7 @@ export const GET_ARTICLE_QUERY = gql`
         stepper {
           title
           steps {
+            id
             title
             slug
             subtitle {
