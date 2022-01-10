@@ -151,7 +151,6 @@ const OverviewForm: React.FC<Props> = (props) => {
               phoneNumber: workingCase.defenderPhoneNumber,
               defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
             }}
-            isInvestigationCase
           />
         </Box>
         {!workingCase.isMasked && (

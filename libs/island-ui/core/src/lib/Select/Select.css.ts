@@ -131,7 +131,9 @@ globalStyle(`${wrapper} ${input} input:focus`, inputMixins.inputFocus)
 export const errorMessage = style(inputMixins.errorMessage)
 export const hasError = style({})
 
-export const containerDisabled = style({})
+export const containerDisabled = style({
+  backgroundColor: 'transparent',
+})
 export const container = style({}, 'container')
 export const containerSizes = styleVariants(inputMixins.containerSizes)
 
@@ -194,6 +196,9 @@ export const label = style({
   selectors: {
     [`${hasError} &`]: inputMixins.labelErrorState,
   },
+})
+export const labelDisabled = style({
+  opacity: 0.5,
 })
 export const labelSizes = styleVariants({
   sm: inputMixins.labelSizes.sm,
