@@ -4,25 +4,46 @@ import { homeCircumstancesForm } from '../../lib/messages'
 import { useIntl } from 'react-intl'
 
 import { RadioController } from '@island.is/shared/form-fields'
+import { Controller, useFormContext } from 'react-hook-form'
 import { HomeCircumstances } from '@island.is/financial-aid/shared/lib'
 import * as styles from '../Shared.css'
 import cn from 'classnames'
-import { FAFieldBaseProps } from '../../lib/types'
+import { FAFieldBaseProps, InputTypes } from '../../lib/types'
 
-const HomeCircumstancesForm = ({ field, errors }: FAFieldBaseProps) => {
+const HomeCircumstancesForm = ({
+  application,
+  field,
+  errors,
+}: FAFieldBaseProps) => {
+  const typeInput = {
+    id: 'homeCircumstances.type',
+    error: errors?.homeCircumstances?.type,
+  } as InputTypes
+
+  const customeInput = {
+    id: 'homeCircumstances.custom',
+    error: errors?.homeCircumstances?.custom,
+  } as InputTypes
+
   const { formatMessage } = useIntl()
+
+  const { answers } = application
 
   const [statefulAnswer, setStatefulAnswer] = useState<
     HomeCircumstances | undefined
-  >()
+  >(answers?.homeCircumstances?.type)
 
-  const [statefulInput, setStatefulInput] = useState<string>()
+  const [statefulCustomInput, setstatefulCustomInput] = useState<string>(
+    answers?.homeCircumstances?.custom || '',
+  )
+
+  const { setValue } = useFormContext()
 
   return (
     <>
       <Box marginTop={5}>
         <RadioController
-          id={field.id}
+          id={`${typeInput.id}`}
           defaultValue={statefulAnswer}
           options={[
             {
@@ -66,7 +87,7 @@ const HomeCircumstancesForm = ({ field, errors }: FAFieldBaseProps) => {
           }
           largeButtons
           backgroundColor="white"
-          error={undefined}
+          error={typeInput.error}
         />
       </Box>
 
@@ -76,33 +97,29 @@ const HomeCircumstancesForm = ({ field, errors }: FAFieldBaseProps) => {
           [`${styles.inputAppear}`]: statefulAnswer === HomeCircumstances.OTHER,
         })}
       >
-        //controller
-        <Input
-          backgroundColor={'blue'}
-          label={formatMessage(homeCircumstancesForm.general.inputLabel)}
-          name="homeCircumstancesCustom"
-          rows={8}
-          textarea
-          value={statefulInput}
-          hasError={false}
-          errorMessage={undefined}
-          onChange={(event) => {
-            setStatefulInput(event.target.value)
+        <Controller
+          name="custom"
+          defaultValue={statefulCustomInput}
+          render={({ value, onChange }) => {
+            return (
+              <Input
+                id={`${customeInput.id}`}
+                name={`${customeInput.id}`}
+                label={formatMessage(homeCircumstancesForm.general.inputLabel)}
+                value={value}
+                textarea={true}
+                rows={8}
+                backgroundColor="blue"
+                hasError={customeInput.error !== undefined}
+                errorMessage={customeInput.error}
+                onChange={(e) => {
+                  onChange(e.target.value)
+                  setValue(customeInput.id, e.target.value)
+                }}
+              />
+            )
           }}
         />
-        {/* <InputController
-          id={phoneNumber.presentationId}
-          name={phoneNumber.presentationId}
-          backgroundColor="blue"
-          type="tel"
-          label={phoneNumber.label}
-          error={phoneNumber.error}
-          onChange={(event) => {
-            setStatefulInput(event.target.value)
-            // clearErrors(phoneNumber.clearErrors || phoneNumber.id)
-          }}
-          defaultValue={phoneNumber.defaultValue || ''}
-        /> */}
       </Box>
     </>
   )
