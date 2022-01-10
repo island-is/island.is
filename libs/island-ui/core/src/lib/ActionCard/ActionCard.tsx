@@ -14,6 +14,7 @@ import { Hidden } from '../Hidden/Hidden'
 type ActionCardProps = {
   date?: string
   heading?: string
+  headingVariant?: 'h3' | 'h4'
   text?: string
   eyebrow?: string
   backgroundColor?: 'white' | 'blue' | 'red'
@@ -75,6 +76,7 @@ const defaultUnavailable = {
 export const ActionCard: React.FC<ActionCardProps> = ({
   date,
   heading,
+  headingVariant = 'h3',
   text,
   eyebrow,
   backgroundColor = 'white',
@@ -295,7 +297,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               alignItems="flexEnd"
             >
               <Text
-                variant="h3"
+                variant={headingVariant}
                 color={backgroundColor === 'blue' ? 'blue600' : 'currentColor'}
               >
                 {heading}

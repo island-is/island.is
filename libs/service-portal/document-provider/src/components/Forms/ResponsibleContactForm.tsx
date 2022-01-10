@@ -49,6 +49,7 @@ export const ResponsibleContactForm: FC<Props> = ({
           }}
           render={({ onChange, name, value }) => (
             <Input
+              size="xs"
               name={name}
               value={value}
               label={formatMessage(m.SettingsEditResponsibleContactName)}
@@ -79,6 +80,7 @@ export const ResponsibleContactForm: FC<Props> = ({
           }}
           render={({ onChange, name, value }) => (
             <Input
+              size="xs"
               name={name}
               label={formatMessage(m.SettingsEditResponsibleContactEmail)}
               value={value}
@@ -109,6 +111,7 @@ export const ResponsibleContactForm: FC<Props> = ({
           }}
           render={({ onChange, name, value }) => (
             <Input
+              size="xs"
               name={name}
               label={formatMessage(m.SettingsEditResponsibleContactTel)}
               value={value}

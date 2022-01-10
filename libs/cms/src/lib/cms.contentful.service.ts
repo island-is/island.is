@@ -68,9 +68,8 @@ import {
   SupportCategory,
 } from './models/supportCategory.model'
 import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
-import { GetSupportFormInOrganizationInput } from './dto/getSupportFormInOrganization.input'
-import { mapSupportForm, SupportForm } from './models/supportForm.model'
 import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
+import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -677,7 +676,7 @@ export class CmsContentfulService {
   async getSupportCategoriesInOrganization({
     lang,
     slug,
-  }: GetSupportFormInOrganizationInput): Promise<SupportCategory[]> {
+  }: GetSupportCategoriesInOrganizationInput): Promise<SupportCategory[]> {
     const params = {
       ['content_type']: 'supportCategory',
       'fields.organization.sys.contentType.sys.id': 'organization',
@@ -686,26 +685,9 @@ export class CmsContentfulService {
 
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.ISupportCategoryFields>(lang, params)
-      .catch(errorHandler('getSupportFormInOrganization'))
+      .catch(errorHandler('getSupportCategoriesInOrganization'))
 
     return (result.items as types.ISupportCategory[]).map(mapSupportCategory)
-  }
-
-  async getSupportFormInOrganization({
-    lang,
-    slug,
-  }: GetSupportFormInOrganizationInput): Promise<SupportForm[]> {
-    const params = {
-      ['content_type']: 'supportForm',
-      'fields.organization.sys.contentType.sys.id': 'organization',
-      'fields.organization.fields.slug': slug,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.ISupportFormFields>(lang, params)
-      .catch(errorHandler('getSupportFormInOrganization'))
-
-    return (result.items as types.ISupportForm[]).map(mapSupportForm)
   }
 
   async getOpenDataPage({ lang }: GetOpenDataPageInput): Promise<OpenDataPage> {

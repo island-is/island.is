@@ -4,7 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { ISLAND_IS_URL } from '@island.is/service-portal/constants'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { m } from '@island.is/service-portal/core'
-
+import { useUpdateUnreadDocuments } from '@island.is/service-portal/core'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { ActionType } from '../../store/actions'
 import { useStore } from '../../store/stateProvider'
@@ -16,6 +16,7 @@ const MobileMenu = (): ReactElement | null => {
   const [{ mobileMenuState }, dispatch] = useStore()
   const { formatMessage } = useLocale()
   const navigation = useNavigation()
+  const badgeContext = useUpdateUnreadDocuments()
 
   const handleLinkClick = () =>
     dispatch({
@@ -35,38 +36,25 @@ const MobileMenu = (): ReactElement | null => {
       className={styles.wrapper}
       ref={ref}
     >
-      <Box paddingX={3}>
-        <a href={ISLAND_IS_URL}>
-          <Button variant="utility" fluid>
-            {formatMessage(m.goToIslandIs)}
-          </Button>
-        </a>
-      </Box>
       {navigation.map((rootItem, rootIndex) => (
-        <Box
-          background={rootIndex === 0 ? 'white' : 'blueberry100'}
-          key={rootIndex}
-          padding={4}
-        >
-          <Stack space={3}>
+        <Box key={rootIndex} paddingX={0} marginTop={3}>
+          <Stack space={2}>
             {rootItem.children?.map(
               (navRoot, index) =>
-                navRoot.path !== ServicePortalPath.MinarSidurRoot && (
+                navRoot.path !== ServicePortalPath.MinarSidurRoot &&
+                !navRoot.navHide && (
                   <ModuleNavigation
                     key={index}
                     nav={navRoot}
-                    variant={rootIndex === 0 ? 'blue' : 'blueberry'}
-                    alwaysExpanded
                     onItemClick={handleLinkClick}
+                    badge={
+                      navRoot.subscribesTo === 'documents' &&
+                      badgeContext.unreadDocumentsCounter > 0
+                    }
                   />
                 ),
             )}
           </Stack>
-          {rootIndex === 1 && (
-            <Text variant="small" color="blueberry600" marginTop={3}>
-              {formatMessage(m.incomingServicesFooterMobile)}
-            </Text>
-          )}
         </Box>
       ))}
     </Box>

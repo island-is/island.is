@@ -116,7 +116,7 @@ beforeAll(async () => {
 
   registrar = (
     await request(app.getHttpServer())
-      .get(`/api/user/${registrarNationalId}`)
+      .get(`/api/user/?nationalId=${registrarNationalId}`)
       .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
 
@@ -614,11 +614,13 @@ describe('User', () => {
           created: dbUser.created ?? 'FAILURE',
           modified: apiUser.modified,
           nationalId: dbUser.nationalId ?? 'FAILURE',
+          institution: apiUser.institution,
         } as CUser)
 
         // Check the data in the database
         return User.findOne({
           where: { id: apiUser.id },
+          include: [{ model: Institution, as: 'institution' }],
         })
       })
       .then((newValue) => {
@@ -803,6 +805,7 @@ describe('Case', () => {
           modified: apiCase.modified,
           ...judgeCaseData,
           judge,
+          registrar,
         } as CCase)
 
         // Check the data in the database
@@ -849,6 +852,7 @@ describe('Case', () => {
           prosecutor,
           sharedWithProsecutorsOffice,
           judge,
+          registrar,
         })
 
         // Check the data in the database
