@@ -18,7 +18,7 @@ export const Sidebar: FC<{}> = () => {
   const [{ sidebarState }, dispatch] = useStore()
   const [collapsed, setCollapsed] = useState(sidebarState === 'closed')
   const { width } = useWindowSize()
-  const isTablet = width < theme.breakpoints.lg && width > theme.breakpoints.md
+  const isTablet = width < theme.breakpoints.lg && width >= theme.breakpoints.md
   const isMobile = width < theme.breakpoints.md
   const badgeContext = useUpdateUnreadDocuments()
 
