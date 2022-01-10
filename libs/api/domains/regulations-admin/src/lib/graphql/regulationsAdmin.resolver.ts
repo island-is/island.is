@@ -85,6 +85,7 @@ export class RegulationsAdminResolver {
         date: change.date,
         appendixes,
         comments,
+        regTitle: regulation.title,
       })
     })
     if (regulation.cancel) {
@@ -93,6 +94,7 @@ export class RegulationsAdminResolver {
         type: 'repeal',
         name: regulation.cancel.regulation,
         date: regulation.cancel.date,
+        regTitle: regulation.title,
       })
     }
 
