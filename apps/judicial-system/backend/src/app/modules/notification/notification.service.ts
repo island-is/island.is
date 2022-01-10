@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { ICalendar } from 'datebook'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -55,7 +56,7 @@ interface Recipient {
 interface Attachment {
   filename: string
   content: string
-  encoding: string
+  encoding?: string
 }
 
 @Injectable()
@@ -238,6 +239,42 @@ export class NotificationService {
     }
   }
 
+  private createICalAttachment(existingCase: Case): Attachment {
+    const courtDate = existingCase.courtDate?.toString().split('.')[0] || ''
+    const courtEnd = existingCase.courtDate
+    courtEnd?.setMinutes(courtEnd.getMinutes() + 30)
+
+    const icalendar = new ICalendar({
+      title: `Fyrirtaka í máli ${existingCase.policeCaseNumber}`,
+      location: `${existingCase.court?.name}. ${
+        existingCase.courtRoom
+          ? `Dómsalur: ${existingCase.courtRoom}`
+          : 'Dómsalur hefur ekki verið skráður.'
+      }`,
+      start: new Date(courtDate),
+      end: new Date(courtEnd ?? ''),
+      attendees: [
+        {
+          name: existingCase.registrar
+            ? existingCase.registrar.name
+            : existingCase.judge
+            ? existingCase.judge.name
+            : '',
+          email: existingCase.registrar
+            ? existingCase.registrar.email
+            : existingCase.judge
+            ? existingCase.judge.email
+            : '',
+        },
+      ],
+    })
+
+    return {
+      filename: 'court-date.ics',
+      content: icalendar.render(),
+    }
+  }
+
   /* HEADS_UP notifications */
 
   private sendHeadsUpSmsNotificationToCourt(theCase: Case): Promise<Recipient> {
@@ -413,6 +450,7 @@ export class NotificationService {
       html,
       theCase.prosecutor?.name,
       theCase.prosecutor?.email,
+      [this.createICalAttachment(theCase)],
     )
   }
 
@@ -459,18 +497,16 @@ export class NotificationService {
       theCase.prosecutor?.institution?.name,
     )
 
-    let attachments: Attachment[] | undefined
+    const attachments: Attachment[] = [this.createICalAttachment(theCase)]
 
     if (theCase.sendRequestToDefender) {
       const pdf = await getRequestPdfAsString(theCase, this.formatMessage)
 
-      attachments = [
-        {
-          filename: `${theCase.policeCaseNumber}.pdf`,
-          content: pdf,
-          encoding: 'binary',
-        },
-      ]
+      attachments.push({
+        filename: `${theCase.policeCaseNumber}.pdf`,
+        content: pdf,
+        encoding: 'binary',
+      })
     }
 
     return this.sendEmail(
