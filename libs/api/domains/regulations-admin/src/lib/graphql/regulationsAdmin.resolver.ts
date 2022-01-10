@@ -55,11 +55,10 @@ export class RegulationsAdminResolver {
           )
         : null
 
-    const ministries = regulation?.ministry_id
-      ? await this.regulationsService.getRegulationsMinistries([
-          regulation.ministry_id,
-        ])
-      : null
+    const [ministry] =
+      (await this.regulationsService.getRegulationsMinistries(
+        regulation.ministry_id && [regulation.ministry_id],
+      )) || []
 
     const authors: Author[] = []
     regulation?.authors?.forEach(async (nationalId) => {
@@ -110,10 +109,10 @@ export class RegulationsAdminResolver {
       name: regulation.name,
       text,
       lawChapters: lawChapters ?? undefined,
-      ministry: ministries?.[0] ?? undefined,
+      ministry,
       authors,
       idealPublishDate: regulation.ideal_publish_date as any, // TODO: Exclude original from response.
-      draftingNotes: regulation?.drafting_notes, // TODO: Exclude original from response.
+      draftingNotes: regulation.drafting_notes, // TODO: Exclude original from response.
       appendixes: appendixes as RegulationAppendix[],
       comments,
       impacts,
