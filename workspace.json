@@ -3993,6 +3993,51 @@
         }
       }
     },
+    "external-contracts-tests": {
+      "root": "apps/external-contracts-tests",
+      "sourceRoot": "apps/external-contracts-tests/src",
+      "projectType": "application",
+      "prefix": "external-contracts-tests",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["apps/external-contracts-tests/tsconfig.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/external-contracts-tests/**/*"
+            ]
+          }
+        },
+        "build": {
+          "builder": "@irdnis/esbuildnx:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/external-contracts-tests",
+            "main": "apps/external-contracts-tests/main.spec.ts",
+            "tsConfig": "apps/external-contracts-tests/tsconfig.json"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
+        "external-test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/external-contracts-tests/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/apps/external-contracts-tests"]
+        },
+        "docker-jest": {}
+      }
+    },
     "feature-flags": {
       "root": "libs/feature-flags",
       "sourceRoot": "libs/feature-flags/src",
