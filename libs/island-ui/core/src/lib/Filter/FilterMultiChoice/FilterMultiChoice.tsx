@@ -38,6 +38,8 @@ export interface FilterMultiChoiceProps {
   categories: ReadonlyArray<FilterCategory>
   /** Label for clear button for localization */
   labelClear: string
+  /** Only expand one accordion item at a time */
+  singleExpand?: boolean
   /** OnChange event handler when user checks/unchecks a value */
   onChange: (event: FilterMultiChoiceChangeEvent) => void
   /** OnClear event handler to clear selected values for specific category */
@@ -47,10 +49,11 @@ export interface FilterMultiChoiceProps {
 export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
   labelClear,
   categories,
+  singleExpand,
   onChange,
   onClear,
 }: FilterMultiChoiceProps) => {
-  const { isDialog } = useContext(FilterContext)
+  const { variant } = useContext(FilterContext)
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -68,95 +71,91 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
     })
   }
 
-  return (
-    <>
-      {isDialog ? (
-        <Stack space={2}>
-          {categories.map((category) => (
-            <AccordionCard
-              key={category.id}
-              id={category.id}
-              label={category.label}
-              iconVariant="small"
-            >
-              <Stack space={2}>
-                {category.filters.map((filter) => (
-                  <Checkbox
-                    key={`${category.id}-${filter.value}`}
-                    name={`${category.id}-${filter.value}`}
-                    label={filter.label}
-                    value={filter.value}
-                    checked={category.selected.includes(filter.value)}
-                    onChange={(event) => handleChange(event, category)}
-                  />
-                ))}
-
-                {category.selected.length > 0 && (
-                  <Box textAlign="right">
-                    <Button
-                      icon="reload"
-                      size="small"
-                      variant="text"
-                      onClick={() => onClear(category.id)}
-                    >
-                      {labelClear}
-                    </Button>
-                  </Box>
-                )}
-              </Stack>
-            </AccordionCard>
-          ))}
-        </Stack>
-      ) : (
-        <Box paddingX={3} paddingY={1} borderRadius="large" background="white">
-          <Accordion
-            space={3}
-            dividerOnBottom={false}
-            dividerOnTop={false}
-            singleExpand={false}
-          >
-            {categories.map((category) => (
-              <AccordionItem
-                key={category.id}
-                id={category.id}
-                label={category.label}
-                labelUse="h5"
-                labelVariant="h5"
-                labelColor={
-                  category.selected.length > 0 ? 'blue400' : 'currentColor'
-                }
-                iconVariant="small"
-              >
-                <Stack space={2}>
-                  {category.filters.map((filter) => (
-                    <Checkbox
-                      key={`${category.id}-${filter.value}`}
-                      name={`${category.id}-${filter.value}`}
-                      label={filter.label}
-                      value={filter.value}
-                      checked={category.selected.includes(filter.value)}
-                      onChange={(event) => handleChange(event, category)}
-                    />
-                  ))}
-
-                  {category.selected.length > 0 && (
-                    <Box textAlign="right">
-                      <Button
-                        icon="reload"
-                        size="small"
-                        variant="text"
-                        onClick={() => onClear(category.id)}
-                      >
-                        {labelClear}
-                      </Button>
-                    </Box>
-                  )}
-                </Stack>
-              </AccordionItem>
+  return variant === 'dialog' ? (
+    <Stack space={2}>
+      {categories.map((category) => (
+        <AccordionCard
+          key={category.id}
+          id={category.id}
+          label={category.label}
+          iconVariant="small"
+        >
+          <Stack space={2}>
+            {category.filters.map((filter) => (
+              <Checkbox
+                key={`${category.id}-${filter.value}`}
+                name={`${category.id}-${filter.value}`}
+                label={filter.label}
+                value={filter.value}
+                checked={category.selected.includes(filter.value)}
+                onChange={(event) => handleChange(event, category)}
+              />
             ))}
-          </Accordion>
-        </Box>
-      )}
-    </>
+
+            {category.selected.length > 0 && (
+              <Box textAlign="right">
+                <Button
+                  icon="reload"
+                  size="small"
+                  variant="text"
+                  onClick={() => onClear(category.id)}
+                >
+                  {labelClear}
+                </Button>
+              </Box>
+            )}
+          </Stack>
+        </AccordionCard>
+      ))}
+    </Stack>
+  ) : (
+    <Box paddingX={3} paddingY={1} borderRadius="large" background="white">
+      <Accordion
+        space={3}
+        dividerOnBottom={false}
+        dividerOnTop={false}
+        singleExpand={singleExpand}
+      >
+        {categories.map((category) => (
+          <AccordionItem
+            key={category.id}
+            id={category.id}
+            label={category.label}
+            labelUse="h5"
+            labelVariant="h5"
+            labelColor={
+              category.selected.length > 0 ? 'blue400' : 'currentColor'
+            }
+            iconVariant="small"
+          >
+            <Stack space={2}>
+              {category.filters.map((filter) => (
+                <Checkbox
+                  key={`${category.id}-${filter.value}`}
+                  name={`${category.id}-${filter.value}`}
+                  label={filter.label}
+                  value={filter.value}
+                  checked={category.selected.includes(filter.value)}
+                  onChange={(event) => handleChange(event, category)}
+                />
+              ))}
+
+              {category.selected.length > 0 && (
+                <Box textAlign="right">
+                  <Button
+                    icon="reload"
+                    size="small"
+                    variant="text"
+                    onClick={() => onClear(category.id)}
+                  >
+                    {labelClear}
+                  </Button>
+                </Box>
+              )}
+            </Stack>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </Box>
   )
 }

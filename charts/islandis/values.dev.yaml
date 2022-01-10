@@ -206,6 +206,7 @@ api:
     XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/application-payment-v1/'
     XROAD_PAYMENT_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1'
+    XROAD_PROPERTIES_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Fasteignir-v1'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
@@ -300,6 +301,7 @@ api:
     XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_USERNAME'
     XROAD_PAYMENT_PASSWORD: '/k8s/application-system-api/PAYMENT_PASSWORD'
     XROAD_PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER'
+    XROAD_PROPERTIES_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
     XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY'
     ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
     ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
@@ -630,6 +632,54 @@ endorsement-system-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/endorsement-system-api'
     create: true
     name: 'endorsement-system-api'
+external-contracts-tests:
+  enabled: true
+  env:
+    NODE_OPTIONS: '--max-old-space-size=976'
+    SERVERSIDE_FEATURES_ON: ''
+    XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_MEMBER_CODE: '10001'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/external-contracts-tests'
+  namespace: 'external-contracts-tests'
+  replicaCount:
+    default: 2
+    max: 3
+    min: 2
+  resources:
+    limits:
+      cpu: '1'
+      memory: '1024Mi'
+    requests:
+      cpu: '500m'
+      memory: '512Mi'
+  schedule: '0 11 * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    SOFFIA_HOST_URL: '/k8s/api/SOFFIA_HOST_URL'
+    SOFFIA_PASS: '/k8s/service-portal/SOFFIA_PASS'
+    SOFFIA_SOAP_URL: '/k8s/api/SOFFIA_SOAP_URL'
+    SOFFIA_USER: '/k8s/service-portal/SOFFIA_USER'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
 github-actions-cache:
   args:
     - '--tls-min-v1.0'
@@ -807,6 +857,7 @@ namespaces:
     - 'air-discount-scheme'
     - 'github-actions-cache'
     - 'user-notification'
+    - 'external-contracts-tests'
 search-indexer-service:
   enabled: true
   env:
@@ -1233,7 +1284,7 @@ user-notification:
 user-notification-worker:
   args:
     - 'main.js'
-    - '--job'
+    - '--job=worker'
   command:
     - 'node'
   enabled: true
@@ -1247,11 +1298,11 @@ user-notification-worker:
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/'
       timeoutSeconds: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'

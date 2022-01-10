@@ -33,7 +33,7 @@ const EmailConfirmation: ServicePortalModuleComponent = () => {
   return (
     <>
       <Box marginBottom={4}>
-        <Text variant="h1" as="h1">
+        <Text variant="h3" as="h1">
           {formatMessage({
             id: 'sp.settings:verify-email',
             defaultMessage: 'Staðfesta netfang',

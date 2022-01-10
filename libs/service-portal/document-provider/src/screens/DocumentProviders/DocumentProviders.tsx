@@ -43,7 +43,7 @@ const DocumentProviders: ServicePortalModuleComponent = () => {
   return (
     <Box marginBottom={[2, 3, 5]}>
       <Box marginBottom={[2, 3]}>
-        <Text variant="h1" as="h1">
+        <Text variant="h3" as="h1">
           {formatMessage(m.documentProvidersTitle)}
         </Text>
       </Box>
@@ -65,6 +65,7 @@ const DocumentProviders: ServicePortalModuleComponent = () => {
               minYear={2011}
               maxYear={today.getFullYear()}
               handleChange={(date: Date) => setFromDate(date)}
+              size="xs"
             />
           </GridColumn>
           <GridColumn span="6/12">
@@ -84,6 +85,7 @@ const DocumentProviders: ServicePortalModuleComponent = () => {
               errorMessage={formatMessage(
                 m.documentProvidersDateToErrorMessage,
               )}
+              size="xs"
             />
           </GridColumn>
         </GridRow>

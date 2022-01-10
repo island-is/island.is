@@ -12,11 +12,11 @@ export enum ApplicationTypes {
   INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
   FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
   PUBLIC_DEBT_PAYMENT_PLAN = 'PublicDebtPaymentPlan',
-  JOINT_CUSTODY_AGREEMENT = 'JointCustodyAgreement',
   COMPLAINTS_TO_ALTHINGI_OMBUDSMAN = 'ComplaintsToAlthingiOmbudsman',
   ACCIDENT_NOTIFICATION = 'AccidentNotification',
   GENERAL_PETITION = 'GeneralPetitionService',
   GENERAL_FISHING_LICENSE = 'GeneralFishingLicense',
+  P_SIGN = 'PSign',
   CRIMINAL_RECORD = 'CriminalRecord',
 }
 
@@ -73,10 +73,6 @@ export const ApplicationConfigurations = {
     slug: 'greidsludreifing-skulda',
     translation: 'pdpp.application',
   },
-  [ApplicationTypes.JOINT_CUSTODY_AGREEMENT]: {
-    slug: 'forsja-barns',
-    translation: 'jca.application',
-  },
   [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]: {
     slug: 'kvortun-til-umbodsmanns-althingis',
     translation: 'ctao.application',
@@ -92,6 +88,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: {
     slug: 'veidileyfi',
     translation: 'gfl.application',
+  },
+  [ApplicationTypes.P_SIGN]: {
+    slug: 'p-merki',
+    translation: 'ps.application',
   },
   [ApplicationTypes.CRIMINAL_RECORD]: {
     slug: 'sakavottord',
