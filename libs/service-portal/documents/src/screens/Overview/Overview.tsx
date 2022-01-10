@@ -181,69 +181,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
   const organizations = orgData?.getOrganizations?.items || {}
 
-  const mockData = [
-    {
-      id: '123',
-      date: new Date(),
-      subject: 'Subject',
-      senderName: 'Lögreglustjórinn á höfuðborgarsvæðinu',
-      senderNatReg: 'Sender nat reg',
-      opened: true,
-      fileType: 'pdf',
-      url: 'https://visir.is',
-    },
-    {
-      id: '123',
-      date: new Date(),
-      subject: 'Subject',
-      senderName: 'Lögreglustjórinn á höfuðborgarsvæðinu',
-      senderNatReg: 'Sender nat reg',
-      opened: true,
-      fileType: 'pdf',
-      url: 'https://visir.is',
-    },
-    {
-      id: '123',
-      date: new Date(),
-      subject: 'Subject',
-      senderName: 'Lögreglustjórinn á höfuðborgarsvæðinu',
-      senderNatReg: 'Sender nat reg',
-      opened: true,
-      fileType: 'pdf',
-      url: 'https://visir.is',
-    },
-    {
-      id: '123',
-      date: new Date(),
-      subject: 'Subject',
-      senderName: 'Lögreglustjórinn á höfuðborgarsvæðinu',
-      senderNatReg: 'Sender nat reg',
-      opened: false,
-      fileType: 'pdf',
-      url: 'https://visir.is',
-    },
-    {
-      id: '123',
-      date: new Date(),
-      subject: 'Subject',
-      senderName: 'Lögreglustjórinn á höfuðborgarsvæðinu',
-      senderNatReg: 'Sender nat reg',
-      opened: true,
-      fileType: 'pdf',
-      url: 'https://visir.is',
-    },
-    {
-      id: '123',
-      date: new Date(),
-      subject: 'Subject',
-      senderName: 'Lögreglustjórinn á höfuðborgarsvæðinu',
-      senderNatReg: 'Sender nat reg',
-      opened: false,
-      fileType: 'pdf',
-      url: 'https://visir.is',
-    },
-  ]
-
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>
@@ -430,7 +367,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 <LoadingDots large />
               </Box>
             )}
-            {/* {!loading && !error && filteredDocuments?.length === 0 && (
+            {!loading && !error && filteredDocuments?.length === 0 && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
                 <Text variant="h3" as="h3">
                   {formatMessage({
@@ -451,18 +388,17 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   })}
                 </Text>
               </Box>
-            )} */}
+            )}
             <Box>
-              {mockData
+              {filteredDocuments
                 ?.slice(pagedDocuments.from, pagedDocuments.to)
                 .map((document, index) => (
                   <Box key={document.id} ref={index === 0 ? scrollToRef : null}>
                     <DocumentLine
-                      // img={getOrganizationLogoUrl(
-                      //   document.senderName,
-                      //   organizations,
-                      // )}
-                      img={'https://via.placeholder.com/48'}
+                      img={getOrganizationLogoUrl(
+                        document.senderName,
+                        organizations,
+                      )}
                       documentLine={document}
                       userInfo={userInfo}
                     />
