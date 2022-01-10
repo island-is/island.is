@@ -8,6 +8,7 @@ import { Step, Stepper } from '@island.is/api/schema'
 import * as style from './StepperFSM.css'
 import { StepperHelper } from './StepperFSMHelper'
 import { getStepperMachine, getCurrentStep } from './StepperFSMUtils'
+import { useRouter } from 'next/router'
 
 interface StepperProps {
   stepper: Stepper
@@ -17,7 +18,8 @@ interface StepperProps {
 }
 
 export const StepperFSM = ({ stepper }: StepperProps) => {
-  const [currentState, send] = useMachine(getStepperMachine(stepper))
+  const stepperMachine = getStepperMachine(stepper)
+  const [currentState, send] = useMachine(stepperMachine)
 
   // TODO: Consider keeping track of current step.
   // TODO: Consider explicitly stating the type of current step.
@@ -32,9 +34,11 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
   // TODO: Render Step options instead of raw transitions from machine.
   // TODO: Add support for rendering OptionsFromSource from Step definition.
   // TODO: Add compoment for showing previous answers.
-  // TODO: Add option to start over.
   // TODO: Append answer to query parameter when submitting.
   // TODO: Add support for initializing the State Machine using provided answers query parameter.
+
+  const router = useRouter()
+  const isOnFirstStep = stepperMachine.initialState.value === currentState.value
 
   return (
     <Box className={style.container}>
@@ -51,6 +55,15 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
           </Button>
         )
       })}
+
+      {!isOnFirstStep && (
+        <Box marginTop={3}>
+          <Button variant="text" onClick={router.reload}>
+            {/*TODO: change this to transition the machine to the initial state insted of reloading the page */}
+            Start again
+          </Button>
+        </Box>
+      )}
 
       {showStepperConfigHelper && (
         <StepperHelper
