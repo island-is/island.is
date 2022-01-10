@@ -64,6 +64,29 @@ export const navItemActive = styleVariants({
   },
 })
 
+export const navItemHover = styleVariants({
+  hoverActive: {
+    color: theme.color.blue400,
+    borderColor: theme.color.blue400,
+    textDecoration: 'none',
+  },
+  hoverInactive: {
+    backgroundColor: theme.color.blue100,
+    color: theme.color.blue400,
+    border: 'unset',
+    marginLeft: 4,
+  },
+  hoverCollapsed: {
+    ...themeUtils.responsiveStyle({
+      lg: {
+        backgroundColor: theme.color.blue100,
+        color: theme.color.blue400,
+        borderRadius: '8px',
+      },
+    }),
+  },
+  none: {},
+})
 export const text = style({
   fontSize: 16,
   lineHeight: '26px',
@@ -74,9 +97,6 @@ export const text = style({
 export const icon = style({
   pointerEvents: 'none',
   height: '26px',
-  ':hover': {
-    fill: theme.color.blue400,
-  },
 })
 
 export const dot = style({
@@ -100,7 +120,7 @@ export const dot = style({
 export const badge = styleVariants({
   active: {
     position: 'absolute',
-    top: 9,
+    top: 6,
     height: theme.spacing[1],
     width: theme.spacing[1],
     borderRadius: '50%',
@@ -111,16 +131,33 @@ export const badge = styleVariants({
   },
 })
 
+export const badgeCollapsed = style({
+  left: 10,
+})
+
 export const lock = style({
   pointerEvents: 'none',
   marginRight: 4,
 })
 
-export const subLock = style({
-  pointerEvents: 'none',
-  marginRight: 5,
+export const lockCollapsed = style({
+  position: 'absolute',
+  top: -5,
+  right: -8,
 })
 
+export const subLock = style({
+  marginRight: 5,
+  pointerEvents: 'none',
+})
+
+export const subLockCollapsed = style({
+  position: 'absolute',
+  right: -6,
+  height: 14,
+  marginRight: 5,
+  pointerEvents: 'none',
+})
 export const link = style({
   ':hover': {
     textDecoration: 'none',
@@ -131,9 +168,7 @@ export const subLink = style({
   fontSize: 14,
   color: theme.color.blue600,
   ':hover': {
-    textDecoration: 'none',
     color: theme.color.blue400,
-    fontWeight: theme.typography.semiBold,
   },
 })
 
@@ -141,7 +176,4 @@ export const subLinkActive = style({
   fontSize: 14,
   color: theme.color.blue400,
   fontWeight: theme.typography.semiBold,
-  ':hover': {
-    textDecoration: 'none',
-  },
 })

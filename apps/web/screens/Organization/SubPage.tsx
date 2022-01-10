@@ -61,21 +61,21 @@ const SubPage: Screen<SubPageProps> = ({
   const { linkResolver } = useLinkResolver()
   useContentfulId(organizationPage.id)
 
-  const pageUrl = `/s/${organizationPage.slug}/${subpage.slug}`
-  const parentSubpageUrl = `/s/${organizationPage.slug}/${subpage.parentSubpage}`
+  const pageUrl = `${organizationPage.slug}/${subpage.slug}`
+  const parentSubpageUrl = `${organizationPage.slug}/${subpage.parentSubpage}`
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
       active:
-        primaryLink.url === pageUrl ||
-        childrenLinks.some((link) => link.url === pageUrl) ||
-        childrenLinks.some((link) => link.url === parentSubpageUrl),
+        primaryLink.url.includes(pageUrl) ||
+        childrenLinks.some((link) => link.url.includes(pageUrl)) ||
+        childrenLinks.some((link) => link.url.includes(parentSubpageUrl)),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url === pageUrl || url === parentSubpageUrl,
+        active: url.includes(pageUrl) || url.includes(parentSubpageUrl),
       })),
     }),
   )

@@ -29,7 +29,11 @@ const ModuleNavigation: FC<Props> = ({
   const [expand, setExpand] = useState(false)
   const [hover, setHover] = useState(false)
   const [{ sidebarState }] = useStore()
+  const { formatMessage } = useLocale()
   const { pathname } = useLocation()
+  const navChildren = nav?.children?.filter((child) => !child.navHide)
+  const navArray = Array.isArray(navChildren) && navChildren.length > 0
+  const collapsed = sidebarState === 'closed'
 
   const isModuleActive =
     (nav.path &&
@@ -39,19 +43,16 @@ const ModuleNavigation: FC<Props> = ({
       undefined ||
     expand ||
     nav.path === pathname
-  const { formatMessage } = useLocale()
+
   const handleExpand = () => {
     setExpand(!expand)
   }
+
   const handleRootItemClick = (external?: boolean) => {
     if (nav.path === undefined) handleExpand()
     if (onItemClick) onItemClick()
     if (external) servicePortalOutboundLink()
   }
-
-  const navChildren = nav?.children?.filter((child) => !child.navHide)
-  const navArray = Array.isArray(navChildren) && navChildren.length > 0
-  const collapsed = sidebarState === 'closed'
 
   return (
     <Box
@@ -63,7 +64,7 @@ const ModuleNavigation: FC<Props> = ({
         setHover(false)
       }}
     >
-      {navArray && collapsed && (
+      {navArray && nav.enabled !== false && collapsed && (
         <SubNavModal active={hover}>
           <SubNav
             collapsed
@@ -92,7 +93,9 @@ const ModuleNavigation: FC<Props> = ({
       <NavItem
         path={nav.path}
         icon={nav.icon}
-        active={hover || isModuleActive}
+        hover={hover}
+        active={isModuleActive}
+        expanded={expand}
         hasArray={navArray}
         enabled={nav.enabled}
         external={nav.external}
@@ -104,7 +107,7 @@ const ModuleNavigation: FC<Props> = ({
       >
         {formatMessage(nav.name)}
       </NavItem>
-      {!collapsed && navArray && nav.enabled && (
+      {!collapsed && navArray && nav.enabled !== false && (
         <AnimateHeight
           duration={300}
           height={isModuleActive || alwaysExpanded ? 'auto' : 0}

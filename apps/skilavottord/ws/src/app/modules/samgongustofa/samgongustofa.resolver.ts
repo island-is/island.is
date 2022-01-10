@@ -14,6 +14,6 @@ export class SamgongustofaResolver {
   async skilavottordVehicles(
     @CurrentUser() user: User,
   ): Promise<Array<VehicleInformation>> {
-    return this.samgongustofaService.getVehicleInformation(user.nationalId)
+    return this.samgongustofaService.getUserVehiclesInformation(user.nationalId)
   }
 }

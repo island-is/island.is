@@ -29,7 +29,6 @@ export const subnav = style({
   borderLeft: `1px solid ${theme.color.blue200}`,
   ...themeUtils.responsiveStyle({
     md: {
-      paddingLeft: theme.spacing[3],
       marginLeft: theme.spacing[5],
     },
   }),
