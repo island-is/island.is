@@ -14,6 +14,11 @@ export const dataSchema = z.object({
       params: error.validation.approveSpouse,
     }),
   }),
+  student: z.object({
+    isStudent: z.boolean().refine((v) => v, {
+      params: error.validation.approveSpouse,
+    }),
+  }),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>
