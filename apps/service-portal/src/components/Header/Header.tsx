@@ -58,19 +58,13 @@ export const Header: FC<{}> = () => {
         <Box width="full">
           <Box
             display="flex"
-            justifyContent={[
-              'spaceBetween',
-              'spaceBetween',
-              'spaceBetween',
-              'flexEnd',
-              'flexEnd',
-            ]}
+            justifyContent={['spaceBetween', 'spaceBetween', 'flexEnd']}
             alignItems="center"
             width="full"
             background="white"
             paddingX={[3, 3, 3, 3, 6]}
           >
-            <Hidden above="md">
+            <Hidden above="sm">
               <Link to={ServicePortalPath.MinarSidurRoot}>
                 <FocusableBox component="div">
                   <Logo width={40} iconOnly />
@@ -79,40 +73,18 @@ export const Header: FC<{}> = () => {
               </Link>
             </Hidden>
             <Box display="flex" alignItems="center" flexWrap="nowrap">
-              <UserMenu
-                fullscreen
-                setUserMenuOpen={setUserMenuOpen}
-                userMenuOpen={userMenuOpen}
-              />
-
-              {userMenuOpen && (
-                <Hidden above="md">
-                  <Box display="flex" flexDirection="row" alignItems="center">
-                    {user && <UserLanguageSwitcher user={user} />}
-                    {closeButton(true)}
-                  </Box>
-                </Hidden>
-              )}
-              {!userMenuOpen && (
-                <Hidden above="md">
-                  {mobileMenuState === 'closed' ? (
-                    <Box marginLeft={1}>
-                      <Button
-                        variant="utility"
-                        icon="menu"
-                        onClick={handleMobileMenuTriggerClick}
-                      >
-                        {formatMessage(m.menu)}
-                      </Button>
-                    </Box>
-                  ) : (
-                    <Box display="flex" flexDirection="row" alignItems="center">
-                      {user && <UserLanguageSwitcher user={user} />}
-                      {closeButton(false)}
-                    </Box>
-                  )}
-                </Hidden>
-              )}
+              <UserMenu fullscreen />
+              <Hidden above="sm">
+                <Box marginLeft={1}>
+                  <Button
+                    variant="utility"
+                    icon={mobileMenuState === 'open' ? 'close' : 'menu'}
+                    onClick={handleMobileMenuTriggerClick}
+                  >
+                    {formatMessage(m.menu)}
+                  </Button>
+                </Box>
+              </Hidden>
             </Box>
           </Box>
         </Box>

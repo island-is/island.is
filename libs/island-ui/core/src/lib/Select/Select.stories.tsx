@@ -52,8 +52,8 @@ WithLabelAbove.args = {
       value: '2',
     },
   ],
-  noOptionsMessage: 'Enginn valmöguleiki',
   size: 'xs',
+  noOptionsMessage: 'Enginn valmöguleiki',
 }
 
 export const Disabled = Template.bind({})
