@@ -2,14 +2,12 @@ import { useMemo, useState } from 'react'
 import { generatePath, useHistory } from 'react-router'
 import { Query } from '@island.is/api/schema'
 import { gql, useQuery, useMutation, ApolloError } from '@apollo/client'
-import {
-  RegulationDraft,
-  RegulationList,
-  RegulationOption,
-} from '@island.is/regulations/admin'
+import { RegulationDraft } from '@island.is/regulations/admin'
 import {
   RegulationLawChapter,
   RegulationMinistryList,
+  RegulationOption,
+  RegulationOptionsList,
 } from '@island.is/regulations/web'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { isNonNull, RegName } from '@island.is/regulations'
@@ -117,8 +115,8 @@ export const useLawChaptersQuery = (): QueryResult<
 // ---------------------------------------------------------------------------
 
 const CREATE_DRAFT_REGULATION_MUTATION = gql`
-  mutation CreateDraftRegulationMutation($input: CreateDraftRegulationInput!) {
-    createDraftRegulation(input: $input)
+  mutation CreateDraftRegulationMutation {
+    createDraftRegulation()
   }
 `
 
@@ -225,7 +223,7 @@ const useMockRegulationListQuery = (maybeNames: ReadonlyArray<string>) => {
 
 export const useRegulationListQuery = (
   maybeNames: ReadonlyArray<string>,
-): QueryResult<RegulationList> => {
+): QueryResult<RegulationOptionsList> => {
   // const { loading, error, data } = useQuery<Query>(RegulationListQuery, {
   //   variables: { input: { names: maybeNames } },
   //   fetchPolicy: 'no-cache',
@@ -241,6 +239,6 @@ export const useRegulationListQuery = (
     }
   }
   return {
-    data: data.getRegulationList as RegulationList,
+    data: data.getRegulationList as RegulationOptionsList,
   }
 }

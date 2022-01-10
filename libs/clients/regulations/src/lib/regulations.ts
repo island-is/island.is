@@ -6,6 +6,7 @@ import {
   ISODate,
   LawChapterSlug,
   MinistrySlug,
+  RegName,
   RegQueryName,
   Year,
 } from '@island.is/regulations'
@@ -16,6 +17,7 @@ import {
   RegulationLawChapterTree,
   RegulationListItem,
   RegulationMinistryList,
+  RegulationOptionsList,
   RegulationOriginalDates,
   RegulationRedirect,
   RegulationSearchResults,
@@ -85,6 +87,16 @@ export class RegulationsService extends RESTDataSource {
     const response = await this.get<RegulationSearchResults | null>(
       `regulations/${type}${page ? '?page=' + page : ''}`,
     )
+    return response
+  }
+
+  async getRegulationsOptionsList(
+    names: Array<RegName>,
+  ): Promise<RegulationOptionsList> {
+    const response =
+      (await this.get<RegulationOptionsList>(
+        'regulations/optionsList?names=' + names.join(','),
+      )) ?? []
     return response
   }
 

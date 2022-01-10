@@ -25,7 +25,7 @@ import {
   RegulationAppendix,
   RegulationViewTypes,
 } from '@island.is/regulations/web'
-import { PlainText, RegQueryName } from '@island.is/regulations'
+import { nameToSlug, PlainText } from '@island.is/regulations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -72,6 +72,14 @@ export class RegulationsAdminResolver {
       author && authors.push(author)
     })
 
+    const impactNames = draft.changes?.map((change) => change.regulation) ?? []
+    if (draft.cancel) {
+      impactNames.push(draft.cancel.regulation)
+    }
+    const impactOptions = await this.regulationsService.getRegulationsOptionsList(
+      impactNames,
+    )
+
     const impacts: (DraftRegulationCancel | DraftRegulationChange)[] = []
     draft.changes?.forEach(async (change) => {
       const changeTexts = extractAppendixesAndComments(change.text)
@@ -86,12 +94,9 @@ export class RegulationsAdminResolver {
         comments: changeTexts.comments,
         // About the impaced stofnreglugerð
         name: change.regulation, // primary-key reference to the stofnreglugerð
-        regTitle: (
-          await this.regulationsService.getRegulation(
-            RegulationViewTypes.current,
-            change.regulation.replace('/', '-') as RegQueryName,
-          )
-        )?.title as PlainText, // helpful for human-readable display in the UI
+        regTitle:
+          impactOptions.find((opt) => opt.name === change.regulation)?.title ??
+          '', // helpful for human-readable display in the UI
       })
     })
     if (draft.cancel) {
@@ -101,12 +106,9 @@ export class RegulationsAdminResolver {
         date: draft.cancel.date,
         // About the cancelled reglugerð
         name: draft.cancel.regulation, // primary-key reference to the reglugerð
-        regTitle: (
-          await this.regulationsService.getRegulation(
-            RegulationViewTypes.current,
-            draft.cancel.regulation.replace('/', '-') as RegQueryName,
-          )
-        )?.title as PlainText, // helpful for human-readable display in the UI
+        regTitle:
+          impactOptions.find((opt) => opt.name === draft.cancel?.regulation)
+            ?.title ?? '', // helpful for human-readable display in the UI
       })
     }
 

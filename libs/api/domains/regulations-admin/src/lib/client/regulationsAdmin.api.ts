@@ -1,7 +1,6 @@
 import { Inject } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
-import { CreateDraftRegulationInput } from '../graphql/dto/createDraftRegulation.input'
 import { EditDraftBody } from '../graphql/dto/editDraftRegulation.input'
 import { Author, DB_RegulationDraft } from '@island.is/regulations/admin'
 import * as kennitala from 'kennitala'

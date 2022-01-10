@@ -197,6 +197,24 @@ export type Regulation = {
 
 // ---------------------------------------------------------------------------
 
+/** List of regulations that the draft impacts (cancels or updates) */
+export type RegulationOption = Pick<Regulation, 'name' | 'title'> & {
+  /** True if the regulation has been fully migrated
+   *
+   * Used to prevent any text-changes to be made (cancelling is OK)
+   */
+  migrated: boolean
+  /** True if the regulation has already been cancelled/repealed (Brottfelld)
+   *
+   * Used to display warning
+   */
+  cancelled?: true
+}
+
+export type RegulationOptionsList = Array<RegulationOption>
+
+// ---------------------------------------------------------------------------
+
 export type RegulationDiff = Omit<
   Regulation,
   'title' | 'appendixes' | 'showingDiff'
