@@ -48,12 +48,12 @@ export class RegulationsAdminResolver {
     }
 
     const lawChapters =
-      regulation && regulation.law_chapters
-        ? await this.regulationsService.getRegulationsLawChapters(
-            false,
-            regulation.law_chapters,
-          )
-        : null
+      (regulation.law_chapters &&
+        (await this.regulationsService.getRegulationsLawChapters(
+          false,
+          regulation.law_chapters,
+        ))) ||
+      undefined
 
     const [ministry] =
       (await this.regulationsService.getRegulationsMinistries(
@@ -108,7 +108,7 @@ export class RegulationsAdminResolver {
       title: regulation.title,
       name: regulation.name,
       text,
-      lawChapters: lawChapters ?? undefined,
+      lawChapters,
       ministry,
       authors,
       idealPublishDate: regulation.ideal_publish_date as any, // TODO: Exclude original from response.
