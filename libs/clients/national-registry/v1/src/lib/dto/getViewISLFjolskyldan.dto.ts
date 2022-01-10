@@ -1,4 +1,10 @@
-export interface Table {
+export interface GetViewISLFjolskyldanDto {
+  message: string
+  table: Table
+  success: boolean
+}
+
+interface Table {
   schema: Schema
   diffgram: Diffgram
 }
