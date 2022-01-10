@@ -72,29 +72,30 @@ export class RegulationsAdminResolver {
 
     const impacts: (DraftRegulationCancel | DraftRegulationChange)[] = []
     regulation.changes?.forEach((change) => {
-      const { text, appendixes, comments } = extractAppendixesAndComments(
-        regulation.text,
-      )
+      const changeTexts = extractAppendixesAndComments(change.text)
 
       impacts.push({
         id: change.id,
         type: 'amend',
-        title: change.title,
-        text,
-        name: change.regulation,
         date: change.date,
-        appendixes,
-        comments,
-        regTitle: regulation.title,
+        title: change.title,
+        text: changeTexts.text,
+        appendixes: changeTexts.appendixes,
+        comments: changeTexts.comments,
+        // About the impaced stofnreglugerð
+        name: change.regulation, // primary-key reference to the stofnreglugerð
+        regTitle: getChangedRegulationByName(change.regulation).title, // helpful for human-readable display in the UI
       })
     })
     if (regulation.cancel) {
       impacts.push({
         id: regulation.cancel.id,
         type: 'repeal',
-        name: regulation.cancel.regulation,
         date: regulation.cancel.date,
-        regTitle: regulation.title,
+        // About the cancelled reglugerð
+        name: regulation.cancel.regulation, // primary-key reference to the reglugerð
+        regTitle: getCancelledRegulationByName(regulation.cancel.regulation)
+          .title, // helpful for human-readable display in the UI
       })
     }
 
