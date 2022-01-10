@@ -34,6 +34,7 @@ const personalRepresentativeType = {
 
 const simpleRequestData: PersonalRepresentativeCreateDTO = {
   contractId: '123456',
+  personalRepresentativeTypeCode: 'prTypeCode',
   nationalIdPersonalRepresentative: '1234567890',
   nationalIdRepresentedPerson: '1234567891',
   externalUserId: 'adUserFromContractSystem',

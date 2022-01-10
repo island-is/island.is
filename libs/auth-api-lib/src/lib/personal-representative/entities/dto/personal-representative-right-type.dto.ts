@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, IsDate, IsOptional } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 
 export class PersonalRepresentativeRightTypeDTO {
@@ -13,14 +13,14 @@ export class PersonalRepresentativeRightTypeDTO {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    example: 'access to prescriptions through heilsuvera for example',
+    example: 'Access to prescriptions through heilsuvera for example',
   })
   readonly description!: string
 
   @IsDate()
   @Type(() => Date)
   @IsOptional()
-  @ApiProperty({
+  @ApiPropertyOptional({
     // add one day as validFrom example
     example: new Date(new Date().setTime(new Date().getTime() - 86400000)), //86400000 = nr of ms in one day
   })
@@ -29,7 +29,7 @@ export class PersonalRepresentativeRightTypeDTO {
   @IsDate()
   @Type(() => Date)
   @IsOptional()
-  @ApiProperty({
+  @ApiPropertyOptional({
     // add one day as validTo example
     example: new Date(new Date().setTime(new Date().getTime() + 86400000)), //86400000 = nr of ms in one day
   })

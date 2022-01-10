@@ -9,7 +9,7 @@ import {
   ForeignKey,
   HasMany,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { PersonalRepresentativeType } from './personal-representative-type.model'
 import { PersonalRepresentativeRight } from './personal-representative-right.model'
 import { PersonalRepresentativeDTO } from '../dto/personal-representative.dto'
@@ -34,7 +34,7 @@ export class PersonalRepresentative extends Model<PersonalRepresentative> {
     allowNull: false,
   })
   @ApiProperty()
-  personalRepresentativeTypeCode?: string
+  personalRepresentativeTypeCode!: string
 
   @Column({
     type: DataType.STRING,
@@ -68,7 +68,7 @@ export class PersonalRepresentative extends Model<PersonalRepresentative> {
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   validTo?: Date
 
   @CreatedAt

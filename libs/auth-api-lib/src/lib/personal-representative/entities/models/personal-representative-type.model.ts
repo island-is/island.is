@@ -8,7 +8,7 @@ import {
   PrimaryKey,
   HasMany,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { PersonalRepresentative } from './personal-representative.model'
 
 @Table({
@@ -42,7 +42,7 @@ export class PersonalRepresentativeType extends Model<PersonalRepresentativeType
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   validTo?: Date
 
   @CreatedAt

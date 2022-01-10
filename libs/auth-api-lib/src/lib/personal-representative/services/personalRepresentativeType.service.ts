@@ -22,7 +22,7 @@ export class PersonalRepresentativeTypeService {
   async getMany(
     query: PaginationDto,
   ): Promise<PaginatedPersonalRepresentativeTypeDto> {
-    return await paginate({
+    return paginate({
       Model: this.personalRepresentativeTypeModel,
       limit: query.limit || 10,
       after: query.after ?? '',
@@ -38,7 +38,7 @@ export class PersonalRepresentativeTypeService {
     searchString: string,
     query: PaginationDto,
   ): Promise<PaginatedPersonalRepresentativeTypeDto> {
-    return await paginate({
+    return paginate({
       Model: this.personalRepresentativeTypeModel,
       limit: query.limit || 10,
       after: query.after ?? '',

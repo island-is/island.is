@@ -36,7 +36,7 @@ export class PersonalRepresentativeAccessService {
     nationalIdPersonalRepresentative: string,
     query: PaginationDto,
   ): Promise<PaginatedPersonalRepresentativeAccessDto> {
-    return await paginate({
+    return paginate({
       Model: this.personalRepresentativeAccessModel,
       limit: query.limit || 10,
       after: query.after ?? '',
@@ -54,7 +54,7 @@ export class PersonalRepresentativeAccessService {
     nationalIdRepresentedPerson: string,
     query: PaginationDto,
   ): Promise<PaginatedPersonalRepresentativeAccessDto> {
-    return await paginate({
+    return paginate({
       Model: this.personalRepresentativeAccessModel,
       limit: query.limit || 10,
       after: query.after ?? '',
