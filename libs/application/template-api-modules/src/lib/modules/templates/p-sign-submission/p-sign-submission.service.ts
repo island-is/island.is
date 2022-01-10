@@ -15,11 +15,27 @@ import {
 } from '@island.is/application/core'
 import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
+import { SharedTemplateApiService } from '../../shared'
 
-interface QualityPhotoData extends FieldBaseProps {
-  data: {
-    qualityPhoto: string
+export const QUALITY_PHOTO = `
+query HasQualityPhoto {
+  qualityPhoto {
+    success
+    qualityPhoto
+  }
+}
+`
+
+interface QualityPhotoType {
+  qualityPhoto: {
+    qualityPhoto: string | null
     success: boolean
+  }
+}
+
+type HasQualityPhotoData = {
+  data: {
+    hasQualityPhoto: boolean
   }
 }
 
@@ -27,15 +43,26 @@ const YES = 'yes'
 @Injectable()
 export class PSignSubmissionService {
   s3: S3
-  constructor(private readonly syslumennService: SyslumennService) {
+  constructor(
+    private readonly syslumennService: SyslumennService,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
+  ) {
     this.s3 = new S3()
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const content: string =
-      application.answers.qualityPhoto === YES
-        ? ((application.externalData
-            .qualityPhoto as unknown) as QualityPhotoData).data.qualityPhoto
+      application.answers.qualityPhoto === YES &&
+      (application.externalData.qualityPhoto as HasQualityPhotoData)?.data
+        ?.hasQualityPhoto
+        ? ((
+            await this.sharedTemplateAPIService
+              .makeGraphqlQuery<QualityPhotoType>(
+                auth.authorization,
+                QUALITY_PHOTO,
+              )
+              .then((response) => response.json())
+          ).data?.qualityPhoto?.qualityPhoto as string)
         : await this.getAttachments({
             application,
             auth,
