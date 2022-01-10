@@ -21,16 +21,23 @@ import { Query, Role } from '@island.is/skilavottord-web/graphql/schema'
 import { CarsTable, RecyclingCompanyImage } from './components'
 
 export const SkilavottordVehiclesQuery = gql`
-  query skilavottordVehiclesQuery {
-    skilavottordAllDeregisteredVehicles {
-      vehicleId
-      vehicleType
-      newregDate
-      createdAt
-      recyclingRequests {
-        id
-        nameOfRequestor
+  query skilavottordVehiclesQuery($after: String!) {
+    skilavottordAllDeregisteredVehicles(first: 10, after: $after) {
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+      count
+      items {
+        vehicleId
+        vehicleType
+        newregDate
         createdAt
+        recyclingRequests {
+          id
+          nameOfRequestor
+          createdAt
+        }
       }
     }
   }
@@ -42,8 +49,11 @@ const Overview: FC = () => {
     t: { recyclingFundOverview: t, recyclingFundSidenav: sidenavText, routes },
   } = useI18n()
 
-  const { data } = useQuery<Query>(SkilavottordVehiclesQuery)
-  const vehicles = data?.skilavottordAllDeregisteredVehicles ?? []
+  const { data } = useQuery<Query>(SkilavottordVehiclesQuery, {
+    variables: { after: '' },
+  })
+  const { pageInfo, count, items: vehicles } =
+    data?.skilavottordAllDeregisteredVehicles ?? {}
 
   if (!user) {
     return null

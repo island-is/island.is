@@ -74,3 +74,30 @@ export class VehicleModel extends Model<VehicleModel> {
   @HasMany(() => RecyclingRequestModel)
   recyclingRequests!: RecyclingRequestModel[]
 }
+
+@ObjectType()
+export class PageInfo {
+  @Field()
+  hasNextPage!: boolean
+
+  @Field()
+  hasPreviousPage!: boolean
+
+  @Field({ nullable: true })
+  startCursor!: string
+
+  @Field({ nullable: true })
+  endCursor!: string
+}
+
+@ObjectType()
+export class VehicleConnection {
+  @Field(() => PageInfo)
+  pageInfo!: PageInfo
+
+  @Field()
+  count!: number
+
+  @Field(() => [VehicleModel])
+  items: VehicleModel[]
+}
