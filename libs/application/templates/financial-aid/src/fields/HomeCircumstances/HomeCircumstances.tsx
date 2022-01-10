@@ -33,10 +33,6 @@ const HomeCircumstancesForm = ({
     HomeCircumstances | undefined
   >(answers?.homeCircumstances?.type)
 
-  const [statefulCustomInput, setstatefulCustomInput] = useState<string>(
-    answers?.homeCircumstances?.custom || '',
-  )
-
   const { setValue } = useFormContext()
 
   return (
@@ -99,7 +95,7 @@ const HomeCircumstancesForm = ({
       >
         <Controller
           name="custom"
-          defaultValue={statefulCustomInput}
+          defaultValue={answers?.homeCircumstances?.custom}
           render={({ value, onChange }) => {
             return (
               <Input
