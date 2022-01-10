@@ -26,7 +26,7 @@ import {
 } from '../types/schema'
 import { m } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
-import { QualityPhotoData } from '../lib/types'
+import { HasQualityPhotoData } from '../lib/types'
 import { StudentAssessment } from '@island.is/api/schema'
 import { NO, YES } from '../lib/constants'
 import { B_FULL, B_TEMP } from '../shared/constants'
@@ -198,7 +198,7 @@ export const application: Form = buildForm({
           title: m.qualityPhotoTitle,
           condition: (_, externalData) => {
             return (
-              (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
+              (externalData.qualityPhoto as HasQualityPhotoData)?.data?.hasQualityPhoto ===
               true
             )
           },
@@ -230,7 +230,7 @@ export const application: Form = buildForm({
           title: m.qualityPhotoTitle,
           condition: (answers: FormValue, externalData) => {
             return (
-              (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
+              (externalData.qualityPhoto as HasQualityPhotoData)?.data?.hasQualityPhoto ===
               false
             )
           },

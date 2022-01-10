@@ -1,10 +1,10 @@
 import { FormValue } from '@island.is/application/core'
 
-export type QualityPhotoData = {
+export type HasQualityPhotoData = {
   data: {
-    qualityPhoto: string
-    success: boolean
+    hasQualityPhoto: boolean
   }
 }
 
 export type ConditionFn = (answer: FormValue) => boolean
+

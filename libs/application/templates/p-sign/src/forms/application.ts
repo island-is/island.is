@@ -31,6 +31,7 @@ import {
 import { m } from '../lib/messages'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
+import { HasQualityPhotoData } from '../fields/QualityPhoto/hooks/getQualityPhoto'
 
 export const getApplication = (): Form => {
   return buildForm({
@@ -190,8 +191,7 @@ export const getApplication = (): Form => {
             title: m.qualityPhotoTitle,
             condition: (_, externalData) => {
               return (
-                (externalData.qualityPhoto as QualityPhotoData)?.data
-                  ?.success === true
+                (externalData.qualityPhoto as HasQualityPhotoData)?.data?.hasQualityPhoto  === true
               )
             },
             children: [
@@ -239,8 +239,7 @@ export const getApplication = (): Form => {
             title: m.qualityPhotoTitle,
             condition: (_, externalData) => {
               return (
-                (externalData.qualityPhoto as QualityPhotoData)?.data
-                  ?.success === false
+                (externalData.qualityPhoto as HasQualityPhotoData)?.data?.hasQualityPhoto === false
               )
             },
             children: [

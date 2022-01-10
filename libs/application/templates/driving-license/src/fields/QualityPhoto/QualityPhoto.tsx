@@ -6,23 +6,20 @@ import {
   ContentBlock,
   AlertMessage,
 } from '@island.is/island-ui/core'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { Application, FieldBaseProps, formatText } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-
-interface QualityPhotoData extends FieldBaseProps {
-  data: {
-    qualityPhoto: string
-    success: boolean
-  }
+import { getQualityPhoto } from './hooks/getQualityPhoto'
+interface QualityPhotoData {
+  qualityPhoto: string | null,
+  application: Application
 }
 
 const Photo: FC<QualityPhotoData> = ({
-  data,
+  qualityPhoto,
   application,
 }: QualityPhotoData) => {
   const { formatMessage } = useLocale()
-  const { qualityPhoto } = data
 
   if (!qualityPhoto) {
     return null
@@ -39,14 +36,13 @@ const Photo: FC<QualityPhotoData> = ({
 }
 
 const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
-  const { qualityPhoto } = application.externalData
+  const { qualityPhoto, success } = getQualityPhoto(application)
   const { formatMessage } = useLocale()
-  const photo = (qualityPhoto as unknown) as QualityPhotoData
-  const img = Photo(photo)
+  const img = Photo({qualityPhoto, application})
 
   return (
     <Box marginBottom={4}>
-      {photo.data.success ? (
+      {success ? (
         <Box>
           <Text>
             {formatText(m.qualityPhotoSubTitle, application, formatMessage)}
