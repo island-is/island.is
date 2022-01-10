@@ -302,7 +302,7 @@ const useCase = () => {
   // TODO: find a way for this to work where value is something other then string
   const autofill = useMemo(
     () => (key: keyof autofillProperties, value: string, workingCase: Case) => {
-      if (workingCase[key] === null) {
+      if (!workingCase[key]) {
         workingCase[key] = value
 
         if (workingCase[key]) {
