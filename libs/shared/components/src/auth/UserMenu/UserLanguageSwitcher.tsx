@@ -41,6 +41,8 @@ export const UserLanguageSwitcher = ({
       <Select
         backgroundColor="blue"
         name="language-switcher"
+        data-testid="language-switcher"
+        id="language-switcher"
         size="xs"
         value={
           lang === 'en'
@@ -48,6 +50,7 @@ export const UserLanguageSwitcher = ({
             : { label: 'Íslenska', value: 'is' }
         }
         onChange={handleLanguageChange}
+        aria-label={'switch language'}
         label={formatMessage(sharedMessages.language)}
         options={[
           { label: 'Íslenska', value: 'is' },
@@ -61,7 +64,7 @@ export const UserLanguageSwitcher = ({
         variant="utility"
         onClick={handleLanguageChange}
         aria-label={'switch language'}
-        data-testid="language-switcher"
+        data-testid="language-switcher-button"
       >
         {lang === 'en' ? 'IS' : 'EN'}
       </Button>
