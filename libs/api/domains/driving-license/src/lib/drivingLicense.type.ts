@@ -78,6 +78,11 @@ export enum NeedsQualityPhoto {
   FALSE = 0,
 }
 
+export interface HasQualityPhotoResult {
+  nationalId: string
+  hasQualityPhoto: boolean
+}
+
 export interface QualityPhotoResult {
   success: boolean
   qualityPhoto: string | null

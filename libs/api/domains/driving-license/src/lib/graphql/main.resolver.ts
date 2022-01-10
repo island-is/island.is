@@ -20,6 +20,7 @@ import {
   StudentAssessment,
   ApplicationEligibilityInput,
   Teacher,
+  HasQualityPhoto,
 } from './models'
 import { AuditService } from '@island.is/nest/audit'
 
@@ -100,6 +101,11 @@ export class MainResolver {
   @Query(() => [Juristiction])
   drivingLicenseListOfJuristictions() {
     return this.drivingLicenseService.getListOfJuristictions()
+  }
+
+  @Query(() => HasQualityPhoto)
+  hasqualityPhoto(@CurrentUser() user: User) {
+    return this.drivingLicenseService.getHasQualityPhoto(user.nationalId)
   }
 
   @Query(() => QualityPhoto)
