@@ -15,19 +15,6 @@ export const dataSchema = z.object({
       params: error.validation.approveSpouse,
     }),
   }),
-  // homeCircumstances: z
-  //   .enum([
-  //     HomeCircumstances.WITHPARENTS,
-  //     HomeCircumstances.WITHOTHERS,
-  //     HomeCircumstances.OWNPLACE,
-  //     HomeCircumstances.REGISTEREDLEASE,
-  //     HomeCircumstances.UNREGISTEREDLEASE,
-  //     HomeCircumstances.OTHER,
-  //   ])
-  //   .refine((v) => v, {
-  //     params: error.validation.radioErrorMessage,
-  //   }),
-
   homeCircumstances: z
     .object({
       type: z
