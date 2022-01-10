@@ -231,12 +231,14 @@ describe('UserMenu', () => {
     expect(screen.getByText(/Current/)).toHaveTextContent('Current: is')
 
     // Act
-    fireEvent.mouseDown(
-      languageSelector.querySelector('.island-select__dropdown-indicator')!,
-      { button: 1 },
-    )
-    fireEvent.click(screen.getByText('English'))
+    act(() => {
+      fireEvent.mouseDown(
+        languageSelector.querySelector('.island-select__dropdown-indicator')!,
+        { button: 1 },
+      )
+    })
 
+    fireEvent.click(screen.getByText('English'))
     // Assert
     expect(screen.getByText(/Current/)).toHaveTextContent('Current: en')
   })
