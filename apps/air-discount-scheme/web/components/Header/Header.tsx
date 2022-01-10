@@ -6,6 +6,7 @@ import { useI18n } from '../../i18n'
 import { Routes } from '../../types'
 import { useLogOut } from '@island.is/air-discount-scheme-web/utils/hooks/useLogout'
 import { CurrentUserQuery } from '@island.is/air-discount-scheme-web/graphql/gqlQueries'
+import useUser from '@island.is/air-discount-scheme-web/utils/hooks/useUser'
 
 interface PropTypes {
   routeKey: keyof Routes
@@ -13,13 +14,9 @@ interface PropTypes {
 }
 
 function Header({ routeKey, localeKey }: PropTypes) {
-  const { setUser, isAuthenticated } = useContext(UserContext)
   const logOut = useLogOut()
-  const { data } = useQuery(CurrentUserQuery, { ssr: false })
-  const user = data?.user
-  useEffect(() => {
-    setUser(user)
-  }, [user, setUser])
+
+  const { isAuthenticated, user, setUser, loadingUser } = useUser()
   const { toRoute, activeLocale, switchLanguage } = useI18n()
 
   const nextLanguage = activeLocale === 'is' ? 'en' : 'is'

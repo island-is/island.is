@@ -3,7 +3,7 @@ import Providers from 'next-auth/providers'
 import { uuid } from 'uuidv4'
 import { identityServerConfig } from '@island.is/air-discount-scheme-web/lib'
 import { Role } from '@island.is/air-discount-scheme/types'
-import environment from '@island.is/air-discount-scheme-web/environments/environment'
+import { env } from '@island.is/air-discount-scheme-web/lib/environments'
 import {
   AuthUser,
   signIn as handleSignIn,
@@ -20,7 +20,7 @@ const providers = [
     name: identityServerConfig.name,
     scope: identityServerConfig.scope,
     clientId: identityServerConfig.clientId,
-    domain: environment.IDS,
+    domain: env.IDS,
     clientSecret: process.env.IDENTITY_SERVER_SECRET,
     protection: 'pkce',
   })

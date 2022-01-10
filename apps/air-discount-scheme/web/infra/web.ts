@@ -16,6 +16,12 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      LOFTBRU_HOST: {
+        dev: 'https://loftbru.dev01.devland.is',
+        staging: 'https://loftbru.staging01.devland.is',
+        prod: 'https://loftbru.island.is',
+      },
+      LOFTBRU_PROTECTED: '/min-rettindi',
     })
     .secrets({
       SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN',

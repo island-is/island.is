@@ -15,6 +15,7 @@ import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { Roles } from '../decorators/roles.decorator'
 import { Role } from '@island.is/air-discount-scheme/types'
+import { RolesGuard } from '../auth/roles.guard'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes('@vegagerdin.is/air-discount-scheme-scope')
@@ -23,6 +24,7 @@ export class FlightLegResolver {
 
   // TODO AUTHORIZE ADMIN ONLY  @Authorize({ role: 'admin' })
   @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   @Query(() => [FlightLeg])
   flightLegs(
     @Context('dataSources') { backendApi },
@@ -33,6 +35,7 @@ export class FlightLegResolver {
 
   //TODO AUTHORIZE ADMIN ONLY@Authorize({ role: 'admin' })
   @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   @Mutation(() => [FlightLeg])
   confirmInvoice(
     @Context('dataSources') { backendApi },
