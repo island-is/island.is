@@ -65,17 +65,20 @@ export class VerificationService {
     nationalId: string,
     email: string,
   ): Promise<EmailVerification | null> {
-    const hashString = randomBytes(16).toString('hex')
+    const emailCode = randomInt(0, 999999).toString().padStart(6, '0')
 
     const [record] = await this.emailVerificationModel.upsert(
-      { nationalId, email, hash: hashString },
+      { nationalId, email, hash: emailCode },
       {
         returning: true,
       },
     )
-    if (record) {
-      this.sendConfirmationEmail(record)
-    }
+
+    console.log('verification.hash', record.hash)
+    // TODO: COMMENT BACK IN.. REMOVED WHILE DEVELOPING
+    // if (record) {
+    //   this.sendConfirmationEmail(record)
+    // }
 
     return record
   }
@@ -194,7 +197,6 @@ export class VerificationService {
   }
 
   async sendConfirmationEmail(verification: EmailVerification) {
-    const resetLink = `${environment.email.servicePortalBaseUrl}/stillingar/personuupplysingar/stadfesta-netfang/${verification.hash}`
     try {
       await this.emailService.sendEmail({
         from: {
@@ -208,10 +210,15 @@ export class VerificationService {
           },
         ],
         subject: `Staðfesting netfangs á Ísland.is`,
-        html: `Þú hefur skráð netfangið þitt á Mínum síðum á Ísland.is. Vinsamlegast staðfestu skráninguna með því að smella á hlekkinn hér fyrir neðan:
-        <br><br><a href="${resetLink}" target="_blank">${resetLink}</a><br>
-        <br>Ef hlekkurinn er ekki lengur í gildi biðjum við þig að endurtaka skráninguna á Ísland.is.
-        <br><br>Ef þú kannast ekki við að hafa sett inn þetta netfang, vinsamlegast hunsaðu þennan póst.`,
+        html: `Þú hefur skráð netfangið þitt á Mínum síðum á Ísland.is. Vinsamlegast staðfestu
+        skráninguna með því að afrita kóðann hér að neðan yfir á skráningarsíðuna:
+        <br /><br /><span
+          style="font-size: 18px; padding: 3px; border-style: 1px solid #D1D1D1"
+          >${verification.hash}</span
+        ><br />
+        <br />Ef kóðinn er ekki lengur í gildi biðjum við þig að endurtaka
+        skráninguna á Ísland.is. <br /><br />Ef þú kannast ekki við að hafa sett inn
+        þetta netfang, vinsamlegast hunsaðu þennan póst.`,
       })
     } catch (exception) {
       this.logger.error(exception)

@@ -20,9 +20,13 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import React, { useState, useEffect } from 'react'
-import { EmailForm, EmailFormData } from '../../components/Forms/EmailForm'
+import { EmailForm } from '../../components/Forms/EmailForm/EmailForm'
 
-export const EditEmail: ServicePortalModuleComponent = () => {
+export interface EmailFormData {
+  email: string
+}
+
+export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
@@ -93,19 +97,16 @@ export const EditEmail: ServicePortalModuleComponent = () => {
       </Box>
       <EmailForm
         email={email}
+        natReg={userInfo.profile.nationalId}
         renderBackButton={() => (
           <Link to={ServicePortalPath.SettingsPersonalInformation}>
             <Button variant="ghost">{formatMessage(m.goBack)}</Button>
           </Link>
         )}
-        renderSubmitButton={() => (
-          <Button type="submit" variant="primary" icon="arrowForward">
-            {formatMessage({
-              id: 'sp.settings:save-changes',
-              defaultMessage: 'Vista breytingar',
-            })}
-          </Button>
-        )}
+        submitButtonText={formatMessage({
+          id: 'sp.settings:save-changes',
+          defaultMessage: 'Vista breytingar2',
+        })}
         onSubmit={submitFormData}
       />
       {status !== 'passive' && (

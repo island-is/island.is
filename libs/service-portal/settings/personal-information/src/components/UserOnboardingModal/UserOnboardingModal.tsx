@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
@@ -11,16 +12,17 @@ import {
   useUpdateUserProfile,
   useUserProfile,
 } from '@island.is/service-portal/graphql'
-import React, { useState } from 'react'
-import { EmailFormData } from '../Forms/EmailForm'
 import { LanguageFormData, LanguageFormOption } from '../Forms/LanguageForm'
+import { EmailFormData } from '../Forms/EmailForm/Steps/FormStep'
 import { PhoneFormData } from '../Forms/PhoneForm/Steps/FormStep'
 import { OnboardingStepper } from './OnboardingStepper'
 import { EmailStep } from './Steps/EmailStep'
 import { FormSubmittedStep } from './Steps/FormSubmittedStep'
 import { LanguageStep } from './Steps/LanguageStep'
+import { IntroStep } from './Steps/IntroStep'
 import { PhoneStep } from './Steps/PhoneStep'
 import { SubmitFormStep } from './Steps/SubmitFormStep'
+import { parseNumber } from '../../utils/phoneHelper'
 import {
   servicePortalCloseOnBoardingModal,
   servicePortalSubmitOnBoardingModal,
@@ -28,6 +30,7 @@ import {
 import { useLocation } from 'react-router-dom'
 
 export type OnboardingStep =
+  | 'intro'
   | 'language-form'
   | 'tel-form'
   | 'email-form'
@@ -41,17 +44,38 @@ const defaultLanguageOption: LanguageFormOption = {
 
 const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const [toggleCloseModal, setToggleCloseModal] = useState(false)
-  const [step, setStep] = useState<OnboardingStep>('language-form')
+  const [step, setStep] = useState<OnboardingStep>('intro')
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
   const [language, setLanguage] = useState<LanguageFormOption | null>(
     defaultLanguageOption,
   )
 
+  const { data: userProfile } = useUserProfile()
+
+  useEffect(() => {
+    if (userProfile) {
+      if (userProfile.mobilePhoneNumber) {
+        const parsedNumber = parseNumber(userProfile.mobilePhoneNumber)
+        setTel(parsedNumber)
+      }
+      if (userProfile.email) {
+        setEmail(userProfile.email)
+      }
+      if (userProfile.locale) {
+        const enOption: LanguageFormOption = {
+          value: 'en',
+          label: 'English',
+        }
+        const lang =
+          userProfile.locale === 'en' ? enOption : defaultLanguageOption
+        setLanguage(lang)
+      }
+    }
+  }, [userProfile])
+
   const { createUserProfile } = useCreateUserProfile()
   const { updateUserProfile } = useUpdateUserProfile()
-
-  const { data: userProfile } = useUserProfile()
 
   const { changeLanguage } = useNamespaces()
   const { pathname } = useLocation()
@@ -60,6 +84,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const dropOnboardingSideEffects = () => {
     toast.info('Notendaupplýsingum er hægt að breyta í stillingum')
     servicePortalCloseOnBoardingModal(pathname)
+    // TODO: Save in db date for reminder to finish in 3 months.
   }
 
   // Handles a close event directly in the onboarding component
@@ -133,6 +158,13 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       toggleClose={toggleCloseModal}
     >
       <OnboardingStepper activeStep={step} />
+      {step === 'intro' && (
+        <IntroStep
+          userInfo={userInfo}
+          onClose={dropOnboarding}
+          onSubmit={gotoStep.bind(null, 'language-form')}
+        />
+      )}
       {step === 'language-form' && (
         <LanguageStep
           onClose={dropOnboarding}
@@ -152,6 +184,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       {step === 'email-form' && (
         <EmailStep
           onBack={gotoStep.bind(null, 'tel-form')}
+          natReg={userInfo.profile.nationalId}
           email={email}
           onSubmit={handleEmailStepSubmit}
         />

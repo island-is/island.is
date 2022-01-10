@@ -76,16 +76,6 @@ export const personalInformationModule: ServicePortalModule = {
         enabled: userInfo.scopes.includes(UserProfileScope.write),
         render: () => lazy(() => import('./screens/EditBankInfo/EditBankInfo')),
       },
-      {
-        name: defineMessage({
-          id: 'sp.settings:email-confirmation',
-          defaultMessage: 'Staðfesta netfang',
-        }),
-        path: ServicePortalPath.SettingsPersonalInformationEmailConfirmation,
-        enabled: userInfo.scopes.includes(UserProfileScope.write),
-        render: () =>
-          lazy(() => import('./screens/EmailConfirmation/EmailConfirmation')),
-      },
     ]
 
     return routes

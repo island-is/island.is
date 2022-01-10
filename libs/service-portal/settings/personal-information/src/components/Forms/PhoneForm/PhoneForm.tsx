@@ -23,6 +23,7 @@ interface Props {
   submitButtonText?: string | MessageDescriptor
   onInternalStepChange?: (step: PhoneFormInternalStep) => void
   onSubmit: (data: PhoneFormData) => void
+  onSkip?: () => void
 }
 
 export const PhoneForm: FC<Props> = ({
@@ -31,6 +32,7 @@ export const PhoneForm: FC<Props> = ({
   submitButtonText,
   onInternalStepChange,
   onSubmit,
+  onSkip,
 }) => {
   const { formatMessage } = useLocale()
   const {
@@ -99,6 +101,7 @@ export const PhoneForm: FC<Props> = ({
           tel={tel}
           renderBackButton={renderBackButton}
           onSubmit={handleFormStepSubmit}
+          onSkip={onSkip}
           loading={createLoading}
         />
       )}

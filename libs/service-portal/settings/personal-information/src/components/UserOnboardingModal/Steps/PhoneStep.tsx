@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { Button, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import { Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import {
@@ -12,10 +12,17 @@ interface Props {
   tel: string
   natReg: string
   onBack: () => void
+  onSkip?: () => void
   onSubmit: (data: PhoneFormData) => void
 }
 
-export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel, natReg }) => {
+export const PhoneStep: FC<Props> = ({
+  onBack,
+  onSkip,
+  onSubmit,
+  tel,
+  natReg,
+}) => {
   const { formatMessage } = useLocale()
   const [step, setStep] = useState<PhoneFormInternalStep>('form')
 
@@ -55,6 +62,7 @@ export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel, natReg }) => {
           </Button>
         )}
         submitButtonText={m.nextStep}
+        onSkip={onSkip}
         onSubmit={onSubmit}
       />
     </>

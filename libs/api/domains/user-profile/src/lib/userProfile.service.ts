@@ -138,13 +138,13 @@ export class UserProfileService {
       user.nationalId,
     )
 
-    // if email exists and *only* mobile is updated, email will become undefined. And vice-versa.
+    // if only some fields are updated, others will become undefined. Therefore a fallback of the current data is needed.
     await this.islyklarService
       .updateIslykillSettings(user.nationalId, {
         email: input.email || islyklarData.email,
         mobile: input.mobilePhoneNumber || islyklarData.mobile,
-        canNudge: input.canNudge,
-        bankInfo: input.bankInfo,
+        canNudge: input.canNudge || islyklarData.canNudge,
+        bankInfo: input.bankInfo || islyklarData.bankInfo,
       }) // Current version does not return the updated user in the response.
       .catch(handleError)
 

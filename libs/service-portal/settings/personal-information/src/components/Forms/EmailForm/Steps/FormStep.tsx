@@ -6,20 +6,20 @@ import { m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { sharedMessages } from '@island.is/shared/translations'
 
-export interface PhoneFormData {
-  tel: string
+export interface EmailFormData {
+  email: string
 }
 
 interface Props {
-  tel: string
-  onSubmit: (data: PhoneFormData) => void
+  email: string
+  onSubmit: (data: EmailFormData) => void
   renderBackButton?: () => JSX.Element
   loading: boolean
   onSkip?: () => void
 }
 
 export const FormStep: FC<Props> = ({
-  tel,
+  email,
   onSubmit,
   onSkip,
   renderBackButton,
@@ -29,48 +29,34 @@ export const FormStep: FC<Props> = ({
   const { handleSubmit, control, errors, reset } = useForm()
 
   useEffect(() => {
-    if (tel.length > 0)
+    if (email)
       reset({
-        tel,
+        email,
       })
-  }, [tel])
+  }, [email])
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box>
         <InputController
           control={control}
-          id="tel"
-          name="tel"
-          type="tel"
-          format="### ####"
+          id="email"
+          name="email"
           required={false}
-          defaultValue={tel}
+          type="email"
           rules={{
-            minLength: {
-              value: 7,
-              message: formatMessage({
-                id: 'sp.settings:tel-required-length-msg',
-                defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
-              }),
-            },
-            maxLength: {
-              value: 7,
-              message: formatMessage({
-                id: 'sp.settings:tel-required-length-msg',
-                defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
-              }),
-            },
             pattern: {
-              value: /^\d+$/,
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
               message: formatMessage({
-                id: 'sp.settings:only-numbers-allowed',
-                defaultMessage: 'Eingöngu tölustafir eru leyfðir',
+                id: 'sp.settings:email-wrong-format-message',
+                defaultMessage: 'Netfangið er ekki á réttu formi',
               }),
             },
           }}
-          label={formatMessage(sharedMessages.phoneNumber)}
-          error={errors.tel?.message}
+          label={formatMessage(sharedMessages.email)}
+          placeholder={formatMessage(sharedMessages.email)}
+          error={errors.email?.message}
+          defaultValue={email}
         />
       </Box>
       <Box
@@ -81,7 +67,7 @@ export const FormStep: FC<Props> = ({
         marginTop={4}
       >
         {renderBackButton && <Box marginTop={[1, 0]}>{renderBackButton()}</Box>}
-        {tel === '' ? (
+        {email === '' ? (
           <Button variant="ghost" onClick={onSkip}>
             {formatMessage({
               id: 'sp.settings:finish-later',

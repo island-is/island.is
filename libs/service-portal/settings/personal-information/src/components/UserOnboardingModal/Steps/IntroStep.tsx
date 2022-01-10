@@ -33,14 +33,15 @@ export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
   const { formatMessage } = useLocale()
   const { data } = useQuery<Query>(NationalRegistryUserQuery)
   const { nationalRegistryUser } = data || {}
-
   const hasMaleGreeting =
-    nationalRegistryUser?.gender === 'Karl' ||
-    nationalRegistryUser?.gender === 'Drengur'
+    nationalRegistryUser?.gender === 'MALE' ||
+    nationalRegistryUser?.gender === 'MALE_MINOR'
   const hasFemaleGreeting =
-    nationalRegistryUser?.gender === 'Kona' ||
-    nationalRegistryUser?.gender === 'Stúlka'
-  const hasNonBinaryGreeting = nationalRegistryUser?.gender === 'Kynsegin'
+    nationalRegistryUser?.gender === 'FEMALE' ||
+    nationalRegistryUser?.gender === 'FEMALE_MINOR'
+  const hasNonBinaryGreeting =
+    nationalRegistryUser?.gender === 'TRANSGENDER' ||
+    nationalRegistryUser?.gender === 'TRANSGENDER_MINOR'
 
   return (
     <>
@@ -75,7 +76,7 @@ export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
           </Text>
         </GridColumn>
         <GridColumn order={[1, 1, 2]} span={['0', '0', '3/7']}>
-          <img src="assets/images/jobsGrid.jpg" alt="Skrautmynd" />
+          <img src="assets/images/jobsGrid.svg" width="100%" alt="Skrautmynd" />
         </GridColumn>
       </GridRow>
       <Box
