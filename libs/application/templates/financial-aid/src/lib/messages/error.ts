@@ -16,6 +16,7 @@ export const error = {
       id: 'fa.application:section.inputErrorMessage',
       defaultMessage: 'Þú þarft að skrifa í textareitinn',
       description: 'When input is empty',
+    },
     email: {
       id: 'fa.application:error.email',
       defaultMessage: 'Athugaðu hvort netfang sé rétt slegið inn',
