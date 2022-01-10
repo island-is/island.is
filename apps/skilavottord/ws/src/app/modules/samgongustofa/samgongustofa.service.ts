@@ -64,7 +64,7 @@ export class SamgongustofaService {
 
       const loggerReplacement = this.logger
       // Parse xml to Json all Soap and added all vehicles and their information to vehicleInformationList
-      let vehicleInformationList: VehicleInformation[] = await parser
+      const vehicleInformationList: VehicleInformation[] = await parser
         .parseStringPromise(allCarsResponse.data.replace(/(\t\n|\t|\n)/gm, ''))
         .then(function (allCarsResult) {
           // check if SOAP returns 200 status code but with Fault message
@@ -96,22 +96,7 @@ export class SamgongustofaService {
               if (allCars['persidnolookup']['vehicleList'][0] == '') {
                 return []
               }
-              let vehicleArr: VehicleInformation[]
-              vehicleArr = []
-              // TODO: will be fixed
-              vehicleArr.push(
-                new VehicleInformation(
-                  'HX111',
-                  'black',
-                  'vinNumber',
-                  'Nissan',
-                  '01.01.2020',
-                  true,
-                  true,
-                  'inUse',
-                ),
-              )
-              vehicleArr = []
+              const vehicleArr: VehicleInformation[] = []
               allCars['persidnolookup']['vehicleList'][0]['vehicle'].forEach(
                 (car) => {
                   loggerReplacement.info(
