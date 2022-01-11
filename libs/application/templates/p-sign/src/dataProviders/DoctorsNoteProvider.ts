@@ -19,29 +19,24 @@ export class DoctorsNoteProvider extends BasicDataProvider {
         }
       }
     `
-    return Promise.resolve({
-      nationalId: '0101303019',
-      expirationDate: '2023-05-29T13:52:33.22',
-      releaseDate: '2021-11-22T13:54:07.5',
-    })
-    // const res = await this.useGraphqlGateway(query)
-    // if (!res.ok) {
-    //   console.error('[DoctorsNoteProvider]', await res.json())
+    const res = await this.useGraphqlGateway(query)
+    if (!res.ok) {
+      console.error('[DoctorsNoteProvider]', await res.json())
 
-    //   return Promise.reject({
-    //     reason: 'Náði ekki sambandi við vefþjónustu',
-    //   })
-    // }
+      return Promise.reject({
+        reason: 'Náði ekki sambandi við vefþjónustu',
+      })
+    }
 
-    // const response = await res.json()
-    // if (response.errors) {
-    //   return Promise.reject({ error: response.errors })
-    // }
-    // if (!response.data.getSyslumennCertificateInfo.expirationDate) {
-    //   return Promise.reject({})
-    // }
+    const response = await res.json()
+    if (response.errors) {
+      return Promise.reject({ error: response.errors })
+    }
+    if (!response.data.getSyslumennCertificateInfo.expirationDate) {
+      return Promise.reject({})
+    }
 
-    // return Promise.resolve(response.data.getSyslumennCertificateInfo)
+    return Promise.resolve(response.data.getSyslumennCertificateInfo)
   }
 
   onProvideError(): FailedDataProviderResult {
