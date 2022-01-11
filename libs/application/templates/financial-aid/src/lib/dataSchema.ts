@@ -11,7 +11,7 @@ export const dataSchema = z.object({
     email: z.string().refine((v) => isValidEmail(v), {
       params: error.validation.email,
     }),
-    approveTerms: z.boolean().refine((v) => v, {
+    approveTerms: z.array(z.string()).refine((v) => v && v.length === 1, {
       params: error.validation.approveSpouse,
     }),
   }),
