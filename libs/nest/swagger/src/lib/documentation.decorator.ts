@@ -58,11 +58,19 @@ const getRequestDecorators = ({
   query = {},
   params = {},
 }: Options['request'] = {}): MethodDecorator[] => {
-  const queryDecorators = Object.keys(query).map((name) =>
+  const queryKeys = Object.keys(query)
+  const queryDecorators = queryKeys.map((name) =>
     ApiQuery({ name, ...query[name] }),
   )
-  const paramsDecorators = Object.keys(params).map((name) =>
-    ApiParam({ name, ...params[name] }),
+
+  const paramsKeys = Object.keys(params)
+  const defaultValue: MethodDecorator[] =
+    paramsKeys.length > 0
+      ? [ApiNotFoundResponse({ type: HttpProblemResponse })]
+      : []
+  const paramsDecorators = paramsKeys.reduce(
+    (acc, name) => [...acc, ApiParam({ name, ...params[name] })],
+    defaultValue,
   )
 
   return [...queryDecorators, ...paramsDecorators]
@@ -96,7 +104,6 @@ export const Documentation = ({
     /* BEGIN DEFAULT DECORATORS */
     HttpCode(response.status),
     ApiInternalServerErrorResponse(),
-    ApiNotFoundResponse({ type: HttpProblemResponse }),
     ApiBadRequestResponse({ type: HttpProblemResponse }),
     ApiForbiddenResponse({ type: HttpProblemResponse }),
     /* END DEFAULT DECORATORS */

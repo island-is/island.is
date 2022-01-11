@@ -19,7 +19,6 @@ const ApiUnauthorizedResponse = 'ApiUnauthorizedResponse'
 const getDefaultDecorators = (httpStatus: number) => [
   HttpCode(httpStatus),
   ApiInternalServerErrorResponse,
-  ApiNotFoundResponse,
   ApiBadRequestResponse,
   ApiForbiddenResponse,
 ]
@@ -206,6 +205,7 @@ describe('Documentation decorator', () => {
     expect(applyDecorators).toHaveBeenCalledWith(
       ...getDefaultDecorators(options.response.status),
       ApiOkResponse,
+      ApiNotFoundResponse,
       ApiParam,
       ApiParam,
       ApiParam,
