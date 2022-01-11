@@ -7,11 +7,14 @@ import {
   Button,
   RadioButton,
   Select,
+  GridRow,
+  GridColumn,
+  GridContainer,
 } from '@island.is/island-ui/core'
 
 import { Step, Stepper } from '@island.is/api/schema'
 
-import * as style from './StepperFSM.css'
+import * as styles from './StepperFSM.css'
 import { StepperHelper } from './StepperFSMHelper'
 
 import {
@@ -44,8 +47,6 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
   const stepperMachine = getStepperMachine(stepper)
   const [currentState, send] = useMachine(stepperMachine)
 
-  // TODO: Consider keeping track of current step.
-  // TODO: Consider explicitly stating the type of current step.
   const currentStep = useMemo<Step>(() => {
     return getCurrentStep(stepper, currentState)
   }, [stepper, currentState])
@@ -72,7 +73,23 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
   const [selectedOption, setSelectedOption] = useState<StepOption | undefined>(
     undefined,
   )
-  const stepOptions = getStepOptions(currentStep, activeLocale)
+  const stepOptions = useMemo(
+    () =>
+      currentStepType !== STEP_TYPES.ANSWER
+        ? getStepOptions(currentStep, activeLocale)
+        : [],
+    [activeLocale, currentStep, currentStepType],
+  )
+
+  const stepperQnA = [
+    { question: 'Frá hvaða landi kemur þú?', answer: 'Ísland' },
+    { question: 'Ertu viss um að hafa valið rétt land?', answer: 'Nei' },
+  ]
+
+  const [
+    hasClickedContinueWithoutSelecting,
+    setHasClickedContinueWithoutSelecting,
+  ] = useState<boolean>(false)
 
   // Select the first item by default if we have a dropdown
   if (
@@ -83,8 +100,26 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
     setSelectedOption(stepOptions[0])
   }
 
+  const ContinueButton = () => (
+    <Box marginTop={3}>
+      <Button
+        onClick={() => {
+          if (selectedOption === undefined) {
+            setHasClickedContinueWithoutSelecting(true)
+            return
+          }
+          setHasClickedContinueWithoutSelecting(false)
+          setSelectedOption(undefined)
+          send(selectedOption.transition)
+        }}
+      >
+        {activeLocale === 'is' ? 'Áfram' : 'Continue'}
+      </Button>
+    </Box>
+  )
+
   return (
-    <Box className={style.container}>
+    <Box className={styles.container}>
       {richText(currentStep.subtitle as SliceType[])}
 
       {currentStepType === STEP_TYPES.QUESTION_RADIO && (
@@ -96,20 +131,20 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
                 key={key}
                 name={key}
                 large={true}
+                hasError={
+                  hasClickedContinueWithoutSelecting &&
+                  selectedOption === undefined
+                }
                 label={option.label}
                 checked={option.slug === selectedOption?.slug}
                 onChange={() => setSelectedOption(option)}
               />
             )
           })}
-          <Box marginTop={3}>
-            {/* TODO: Validate whether there is a selectedOption, if not then show what needs to happen */}
-            <Button onClick={() => send('selectedOption.transition')}>
-              {activeLocale === 'is' ? 'Áfram' : 'Continue'}
-            </Button>
-          </Box>
+          <ContinueButton />
         </>
       )}
+
       {currentStepType === STEP_TYPES.QUESTION_DROPDOWN && (
         <>
           <Select
@@ -130,29 +165,43 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
               }
               setSelectedOption(newSelectedOption)
             }}
-            options={stepOptions.map((option) => {
-              return {
-                label: option.label,
-                value: option.slug,
-                transition: option.transition,
-              }
-            })}
+            options={stepOptions.map((option) => ({
+              label: option.label,
+              value: option.slug,
+              transition: option.transition,
+            }))}
           />
-          <Box marginTop={3}>
-            <Button onClick={() => send(selectedOption.transition)}>
-              {activeLocale === 'is' ? 'Áfram' : 'Continue'}
-            </Button>
-          </Box>
+          <ContinueButton />
         </>
       )}
-      {currentStepType === STEP_TYPES.ANSWER && <Text>Render Answer...</Text>}
+
+      {/* {currentStepType === STEP_TYPES.ANSWER && <Text>Render Answer...</Text>} */}
 
       {!isOnFirstStep && (
         <Box marginTop={3}>
-          {/*TODO: change this to transition the machine to the initial state insted of reloading the page */}
-          <Button variant="text" onClick={router.reload}>
-            {activeLocale === 'is' ? 'Byrja aftur' : 'Start again'}
-          </Button>
+          <Text variant="h3" marginBottom={2}>
+            {activeLocale === 'is' ? 'Svörin þín' : 'Your answers'}
+          </Text>
+          {/* TODO: change this to transition the machine to the initial state insted of reloading the page */}
+          <Box disabled={true} marginBottom={3}>
+            <Button variant="text" onClick={router.reload}>
+              {activeLocale === 'is' ? 'Byrja aftur' : 'Start again'}
+            </Button>
+          </Box>
+          <GridContainer>
+            <GridColumn>
+              {stepperQnA.map(({ question, answer }, i) => (
+                <GridRow key={i} alignItems="center">
+                  <Box marginRight={2}>
+                    <Text variant="h4">{question}</Text>
+                  </Box>
+                  <Box width="half">
+                    <Text>{answer}</Text>
+                  </Box>
+                </GridRow>
+              ))}
+            </GridColumn>
+          </GridContainer>
         </Box>
       )}
 
