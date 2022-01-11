@@ -23,7 +23,7 @@ const FinancialAidTemplate: ApplicationTemplate<
   type: ApplicationTypes.FINANCIAL_AID,
   name: application.name,
   dataSchema,
-  translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
+  translationNamespaces: [ApplicationConfigurations.FinancialAid.translation],
   stateMachineConfig: {
     initial: ApplicationStates.PREREQUISITES,
     states: {
