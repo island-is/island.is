@@ -183,7 +183,7 @@ function maskedCase(theCase: Case) {
     type: theCase.type,
     state: theCase.state,
     policeCaseNumber: theCase.policeCaseNumber,
-    defendants: [{ dNationalId: '0000000000', dName: 'T' }],
+    defendants: [{ nationalId: '0000000000', name: 'T' }],
     defenderName: theCase.defenderName,
     defenderEmail: theCase.defenderEmail,
     defenderPhoneNumber: theCase.defenderPhoneNumber,
@@ -389,6 +389,6 @@ describe('Full name', () => {
       defendants: [{ name: 'Jón Jónsson' }],
     } as Case)
 
-    expect(res.defendants[0].name).toBe('LU')
+    expect(res.defendants && res.defendants[0].name).toBe('LU')
   })
 })
