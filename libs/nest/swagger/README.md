@@ -50,6 +50,7 @@ This usage would add the following decorators (subject to change with code addit
 7. @ApiNotFound({ type: HttpProblemResponse })
 8. @ApiUnauthorizedResponse({ type: HttpProblemResponse }),
 9. @ApiForbiddenResponse({ type: HttpProblemResponse }),
+10. @ApiOperation({description: 'This endpoint fetches a single animal'})
 
 ## Running unit tests
 
