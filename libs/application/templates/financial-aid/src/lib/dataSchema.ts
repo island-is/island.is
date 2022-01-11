@@ -1,5 +1,6 @@
 import { error } from './messages/index'
 import * as z from 'zod'
+import { HomeCircumstances } from '@island.is/financial-aid/shared/lib'
 import { isValidEmail } from './utils'
 
 export const dataSchema = z.object({
@@ -14,6 +15,26 @@ export const dataSchema = z.object({
       params: error.validation.approveSpouse,
     }),
   }),
+  homeCircumstances: z
+    .object({
+      type: z
+        .enum([
+          HomeCircumstances.WITHPARENTS,
+          HomeCircumstances.WITHOTHERS,
+          HomeCircumstances.OWNPLACE,
+          HomeCircumstances.REGISTEREDLEASE,
+          HomeCircumstances.UNREGISTEREDLEASE,
+          HomeCircumstances.OTHER,
+        ])
+        .refine((v) => v, {
+          params: error.validation.radioErrorMessage,
+        }),
+      custom: z.string().optional(),
+    })
+    .refine((v) => (v.type === HomeCircumstances.OTHER ? v.custom : true), {
+      params: error.validation.inputErrorMessage,
+      path: ['custom'],
+    }),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>
