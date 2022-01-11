@@ -116,7 +116,7 @@ export class PersonalRepresentativeController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'deleteScopePermission',
         namespace,
         resources: id,

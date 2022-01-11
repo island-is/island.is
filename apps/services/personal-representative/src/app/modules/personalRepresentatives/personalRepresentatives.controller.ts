@@ -129,7 +129,7 @@ export class PersonalRepresentativesController {
     }
     await this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'deletePersonalRepresentative',
         namespace,
         resources: id,
@@ -181,7 +181,7 @@ export class PersonalRepresentativesController {
     if (currentContract && currentContract.id) {
       await this.auditService.auditPromise(
         {
-          user,
+          auth: user,
           action: 'deleteExistingPersonalRepresentative',
           namespace,
           resources: personalRepresentative.nationalIdRepresentedPerson,
@@ -194,7 +194,7 @@ export class PersonalRepresentativesController {
     // Create a new personal representative
     return await this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'createPersonalRepresentative',
         namespace,
         resources: personalRepresentative.nationalIdRepresentedPerson,

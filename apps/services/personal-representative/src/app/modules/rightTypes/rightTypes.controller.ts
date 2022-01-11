@@ -121,7 +121,7 @@ export class RightTypesController {
     // delete right type
     await this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'deletePersonalRepresentativeRightType',
         namespace,
         resources: code,
@@ -146,7 +146,7 @@ export class RightTypesController {
     // Create a new right type
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'createPersonalRepresentativeRightType',
         namespace,
         resources: rightType.code,
@@ -173,7 +173,7 @@ export class RightTypesController {
     // Update right type
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'updatePersonalRepresentativeRightType',
         namespace,
         resources: rightType.code,

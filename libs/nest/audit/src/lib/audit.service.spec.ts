@@ -27,7 +27,7 @@ jest.mock('winston-cloudwatch', () => {
 
 const defaultNamespace = '@test.is'
 
-const user: User = {
+const auth: User = {
   nationalId: '1234567890',
   actor: {
     nationalId: '2234567890',
@@ -87,7 +87,7 @@ describe('AuditService against Cloudwatch', () => {
 
     // Act
     service.audit({
-      user,
+      auth,
       namespace,
       action,
       resources,
@@ -96,14 +96,14 @@ describe('AuditService against Cloudwatch', () => {
 
     // Assert
     expect(spy).toHaveBeenCalledWith({
-      actor: user.actor?.nationalId,
-      subject: user.nationalId,
-      client: [user.client],
+      actor: auth.actor?.nationalId,
+      subject: auth.nationalId,
+      client: [auth.client],
       action: `${namespace}#${action}`,
       resources,
       meta,
-      ip: user.ip,
-      userAgent: user.userAgent,
+      ip: auth.ip,
+      userAgent: auth.userAgent,
     })
   })
 
@@ -113,18 +113,18 @@ describe('AuditService against Cloudwatch', () => {
 
     // Act
     service.audit({
-      user,
+      auth,
       action,
     })
 
     // Assert
     expect(spy).toHaveBeenCalledWith({
-      actor: user.actor?.nationalId,
-      subject: user.nationalId,
-      client: [user.client],
+      actor: auth.actor?.nationalId,
+      subject: auth.nationalId,
+      client: [auth.client],
       action: `${defaultNamespace}#${action}`,
-      ip: user.ip,
-      userAgent: user.userAgent,
+      ip: auth.ip,
+      userAgent: auth.userAgent,
     })
   })
 
@@ -135,7 +135,7 @@ describe('AuditService against Cloudwatch', () => {
     // Act and assert
     expect(() => {
       service.audit({
-        user,
+        auth,
         namespace: '',
         action,
       })
@@ -155,7 +155,7 @@ describe('AuditService against Cloudwatch', () => {
 
     // Act
     service.audit({
-      user: auth,
+      auth,
       action,
     })
 
@@ -177,7 +177,7 @@ describe('AuditService against Cloudwatch', () => {
     // Act
     await service.auditPromise(
       {
-        user,
+        auth,
         action,
         resources: (result) => result,
         meta: (result) => ({
@@ -189,14 +189,14 @@ describe('AuditService against Cloudwatch', () => {
 
     // Assert
     expect(spy).toHaveBeenCalledWith({
-      actor: user.actor?.nationalId,
-      subject: user.nationalId,
-      client: [user.client],
+      actor: auth.actor?.nationalId,
+      subject: auth.nationalId,
+      client: [auth.client],
       action: `${defaultNamespace}#${action}`,
       resources,
       meta,
-      ip: user.ip,
-      userAgent: user.userAgent,
+      ip: auth.ip,
+      userAgent: auth.userAgent,
     })
   })
 })
@@ -235,7 +235,7 @@ describe('AuditService in development', () => {
 
     // Act
     service.audit({
-      user,
+      auth,
       namespace,
       action,
       resources,
@@ -245,14 +245,14 @@ describe('AuditService in development', () => {
     // Assert
     expect(spy).toHaveBeenCalledWith({
       message: 'Audit record',
-      actor: user.actor?.nationalId,
-      subject: user.nationalId,
-      client: [user.client],
+      actor: auth.actor?.nationalId,
+      subject: auth.nationalId,
+      client: [auth.client],
       action: `${namespace}#${action}`,
       resources,
       meta,
-      ip: user.ip,
-      userAgent: user.userAgent,
+      ip: auth.ip,
+      userAgent: auth.userAgent,
     })
   })
 })
