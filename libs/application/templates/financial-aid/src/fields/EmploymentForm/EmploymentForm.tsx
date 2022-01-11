@@ -1,24 +1,24 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, Input } from '@island.is/island-ui/core'
-import { homeCircumstancesForm, input } from '../../lib/messages'
+import { employmentForm, input } from '../../lib/messages'
 import { useIntl } from 'react-intl'
 
 import { RadioController } from '@island.is/shared/form-fields'
 import { Controller, useFormContext } from 'react-hook-form'
-import { HomeCircumstances } from '@island.is/financial-aid/shared/lib'
+import { Employment } from '@island.is/financial-aid/shared/lib'
 import * as styles from '../Shared.css'
 import cn from 'classnames'
 import { FAFieldBaseProps, InputTypes } from '../../lib/types'
 
-const HomeCircumstancesForm = ({ application, errors }: FAFieldBaseProps) => {
+const EmploymentForm = ({ application, errors }: FAFieldBaseProps) => {
   const typeInput = {
-    id: 'homeCircumstances.type',
-    error: errors?.homeCircumstances?.type,
+    id: 'employment.type',
+    error: errors?.employment?.type,
   } as InputTypes
 
   const customInput = {
-    id: 'homeCircumstances.custom',
-    error: errors?.homeCircumstances?.custom,
+    id: 'employment.custom',
+    error: errors?.employment?.custom,
   } as InputTypes
 
   const { formatMessage } = useIntl()
@@ -32,42 +32,23 @@ const HomeCircumstancesForm = ({ application, errors }: FAFieldBaseProps) => {
       <Box marginTop={5}>
         <RadioController
           id={typeInput.id}
-          defaultValue={answers?.homeCircumstances?.type}
+          defaultValue={answers?.employment?.type}
           options={[
             {
-              value: HomeCircumstances.OWNPLACE,
-              label: formatMessage(
-                homeCircumstancesForm.circumstances.ownPlace,
-              ),
+              value: Employment.WORKING,
+              label: formatMessage(employmentForm.employment.working),
             },
             {
-              value: HomeCircumstances.REGISTEREDLEASE,
-              label: formatMessage(
-                homeCircumstancesForm.circumstances.registeredLease,
-              ),
+              value: Employment.UNEMPLOYED,
+              label: formatMessage(employmentForm.employment.unemployed),
             },
             {
-              value: HomeCircumstances.UNREGISTEREDLEASE,
-              label: formatMessage(
-                homeCircumstancesForm.circumstances.unregisteredLease,
-              ),
-            },
-
-            {
-              value: HomeCircumstances.WITHOTHERS,
-              label: formatMessage(
-                homeCircumstancesForm.circumstances.withOthers,
-              ),
+              value: Employment.CANNOTWORK,
+              label: formatMessage(employmentForm.employment.cannotWork),
             },
             {
-              value: HomeCircumstances.WITHPARENTS,
-              label: formatMessage(
-                homeCircumstancesForm.circumstances.withParents,
-              ),
-            },
-            {
-              value: HomeCircumstances.OTHER,
-              label: formatMessage(homeCircumstancesForm.circumstances.other),
+              value: Employment.OTHER,
+              label: formatMessage(employmentForm.employment.other),
             },
           ]}
           largeButtons
@@ -80,12 +61,12 @@ const HomeCircumstancesForm = ({ application, errors }: FAFieldBaseProps) => {
         className={cn({
           [`${styles.inputContainer}`]: true,
           [`${styles.inputAppear}`]:
-            getValues(typeInput.id) === HomeCircumstances.OTHER,
+            getValues(typeInput.id) === Employment.OTHER,
         })}
       >
         <Controller
-          name="homeCircumstancesCustom"
-          defaultValue={answers?.homeCircumstances?.custom}
+          name="employmentCustom"
+          defaultValue={answers?.employment?.custom}
           render={({ value, onChange }) => {
             return (
               <Input
@@ -112,4 +93,4 @@ const HomeCircumstancesForm = ({ application, errors }: FAFieldBaseProps) => {
   )
 }
 
-export default HomeCircumstancesForm
+export default EmploymentForm
