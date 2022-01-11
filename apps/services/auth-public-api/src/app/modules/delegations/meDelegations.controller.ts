@@ -224,7 +224,7 @@ export class MeDelegationsController {
 
     return this.auditService.auditPromise<DelegationDTO | null>(
       {
-        user,
+        auth: user,
         namespace,
         action: 'update',
         resources: (delegation) => delegation?.id ?? '',
@@ -246,7 +246,7 @@ export class MeDelegationsController {
   ): Promise<void> {
     await this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'deleteFrom',
         resources: delegationId,
