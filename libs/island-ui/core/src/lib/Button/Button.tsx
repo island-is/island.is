@@ -105,7 +105,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
         type={as === 'span' ? undefined : type}
         className={cn(
           styles.variants[variant],
-          icon && styles.padding.icon,
           (styles.colors[variant] as Record<string, string>)[colorScheme],
           {
             [styles.truncate]: truncate,
@@ -126,7 +125,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.isEmpty]: !children,
             [styles.loading]: loading,
           },
-          icon && styles.padding.icon,
         )}
         display={variant === 'text' ? 'inline' : inline ? 'inlineFlex' : 'flex'}
         disabled={disabled || loading}
