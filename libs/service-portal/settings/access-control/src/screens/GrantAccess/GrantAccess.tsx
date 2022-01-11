@@ -168,7 +168,7 @@ function GrantAccess() {
                     defaultMessage: 'Aðgangshafi',
                   })}
                   disabled
-                  size="md"
+                  size="xs"
                 />
               )}
               <Box

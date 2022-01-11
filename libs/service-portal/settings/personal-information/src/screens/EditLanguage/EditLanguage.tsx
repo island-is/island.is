@@ -110,11 +110,18 @@ export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
         language={language}
         renderBackButton={() => (
           <Link to={ServicePortalPath.SettingsPersonalInformation}>
-            <Button variant="ghost">{formatMessage(m.goBack)}</Button>
+            <Button variant="ghost" size="small">
+              {formatMessage(m.goBack)}
+            </Button>
           </Link>
         )}
         renderSubmitButton={() => (
-          <Button type="submit" variant="primary" icon="arrowForward">
+          <Button
+            type="submit"
+            variant="primary"
+            icon="arrowForward"
+            size="small"
+          >
             {formatMessage({
               id: 'sp.settings:save-changes',
               defaultMessage: 'Vista breytingar',
