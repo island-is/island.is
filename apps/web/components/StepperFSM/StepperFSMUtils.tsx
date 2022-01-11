@@ -77,5 +77,39 @@ const getStepperMachine = (stepper: Stepper): StepperMachine => {
   return Machine(stepperConfig.xStateFSM)
 }
 
-export { getStepBySlug, getCurrentStep, getStateMeta, getStepperMachine }
+const STEP_TYPES = {
+  QUESTION_RADIO: 'question-radio',
+  QUESTION_DROPDOWN: 'question-dropdown',
+  ANSWER: 'answer',
+}
+
+const resolveStepType = (step: Step): string => {
+  if (
+    step.stepType &&
+    step.stepType.toLowerCase().includes('question') &&
+    step.stepType.toLowerCase().includes('radio')
+  ) {
+    return STEP_TYPES.QUESTION_RADIO
+  }
+  if (
+    step.stepType &&
+    step.stepType.toLowerCase().includes('question') &&
+    step.stepType.toLowerCase().includes('dropdown')
+  ) {
+    return STEP_TYPES.QUESTION_DROPDOWN
+  }
+  if (step.stepType && step.stepType.toLowerCase().includes('answer')) {
+    return STEP_TYPES.ANSWER
+  }
+  return null
+}
+
+export { STEP_TYPES }
+export {
+  getStepBySlug,
+  getCurrentStep,
+  getStateMeta,
+  getStepperMachine,
+  resolveStepType,
+}
 export type { StepperConfig, StateMeta, StepperState }

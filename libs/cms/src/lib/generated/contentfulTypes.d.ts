@@ -2450,6 +2450,9 @@ export interface IStepFields {
   /** Slug */
   slug: string
 
+  /** Step Type */
+  stepType?: 'Question - Radio' | 'Question - Dropdown' | 'Answer' | undefined
+
   /** Subtitle */
   subtitle?: Document | undefined
 
