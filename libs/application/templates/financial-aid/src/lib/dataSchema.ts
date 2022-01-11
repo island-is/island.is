@@ -15,13 +15,19 @@ export const dataSchema = z.object({
       params: error.validation.approveSpouse,
     }),
   }),
-  student: z.object({
-    isStudent: z
-      .enum([TwoTypeAnswers.Yes, TwoTypeAnswers.No])
-      .refine((v) => v, {
-        params: error.validation.approveSpouse,
-      }),
-  }),
+  student: z
+    .object({
+      isStudent: z
+        .enum([TwoTypeAnswers.Yes, TwoTypeAnswers.No])
+        .refine((v) => v, {
+          params: error.validation.approveSpouse,
+        }),
+      custom: z.string().optional(),
+    })
+    .refine((v) => (v.isStudent === TwoTypeAnswers.Yes ? v.custom : true), {
+      params: error.validation.approveSpouse,
+      path: ['custom'],
+    }),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>

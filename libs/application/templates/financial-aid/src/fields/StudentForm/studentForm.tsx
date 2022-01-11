@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { FAFieldBaseProps, TwoTypeAnswers } from '../../lib/types'
 import { useIntl } from 'react-intl'
 import { studentForm } from '../../lib/messages'
@@ -12,6 +12,10 @@ const StudentForm = ({ errors, application }: FAFieldBaseProps) => {
   const typeInput = {
     id: 'student.isStudent',
     error: errors?.student?.isStudent,
+  }
+  const customeInput = {
+    id: 'student.custom',
+    error: errors?.student?.custom,
   }
 
   const [statefulAnswer, setStatefulAnswer] = useState<
@@ -27,11 +31,11 @@ const StudentForm = ({ errors, application }: FAFieldBaseProps) => {
           options={[
             {
               value: TwoTypeAnswers.No,
-              label: 'Nei',
+              label: formatMessage(studentForm.form.notStudent),
             },
             {
               value: TwoTypeAnswers.Yes,
-              label: 'Já',
+              label: formatMessage(studentForm.form.isStudent),
             },
           ]}
           onSelect={(newAnswer) =>
@@ -44,13 +48,16 @@ const StudentForm = ({ errors, application }: FAFieldBaseProps) => {
       </Box>
       {statefulAnswer === TwoTypeAnswers.Yes && (
         <Box>
-          hér kemur input
-          {/* <InputController
-            id={`${id}.nationalId`}
-            name={`${id}.nationalId`}
-            label="Kennitala"
-            format="######-####"
-          /> */}
+          <InputController
+            id={customeInput.id}
+            name={customeInput.id}
+            label={formatMessage(studentForm.input.label)}
+            placeholder={formatMessage(studentForm.input.placeholder)}
+            backgroundColor="blue"
+          />
+          <Text fontWeight="semiBold" variant="small" marginTop={1}>
+            {formatMessage(studentForm.input.example)}
+          </Text>
         </Box>
       )}
     </>
