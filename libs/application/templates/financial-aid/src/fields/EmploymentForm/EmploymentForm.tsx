@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Box, Input } from '@island.is/island-ui/core'
 import { employmentForm, input } from '../../lib/messages'
 import { useIntl } from 'react-intl'

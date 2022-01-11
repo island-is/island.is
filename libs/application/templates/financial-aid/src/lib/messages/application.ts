@@ -23,8 +23,9 @@ export const section = defineMessages({
 
 export const input = defineMessages({
   label: {
-    id: 'fa.application:section.homeCircumstancesForm.general.inputLabel',
+    id: 'fa.application:section.input.label',
     defaultMessage: 'Lýstu þínum aðstæðum',
-    description: 'Home circumstances custom form input label',
+    description:
+      'Input label for custom answers, describing your circumstances',
   },
 })
