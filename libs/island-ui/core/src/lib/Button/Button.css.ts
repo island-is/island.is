@@ -168,6 +168,14 @@ export const padding = styleVariants({
       },
     }),
   },
+  icon: {
+    padding: `${theme.spacing.p1}px ${theme.spacing[2]}px`,
+    ...themeUtils.responsiveStyle({
+      md: {
+        padding: `${theme.spacing.p1}px ${theme.spacing[2]}px`,
+      },
+    }),
+  },
 })
 
 export const circleSizes = styleVariants({
