@@ -29,6 +29,9 @@ export class Step {
 
   @Field({ nullable: true })
   options?: string
+
+  @Field({ nullable: true })
+  config?: string
 }
 
 export const mapStep = ({ sys, fields }: IStep): SystemMetadata<Step> => ({
@@ -43,4 +46,5 @@ export const mapStep = ({ sys, fields }: IStep): SystemMetadata<Step> => ({
   text: fields.text ? mapDocument(fields.text, sys.id + ':text') : [],
   isAnswer: fields.isAnswer ?? false,
   options: fields.options ? JSON.stringify(fields.options) : '[]',
+  config: fields.config ? JSON.stringify(fields.config) : '',
 })

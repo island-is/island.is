@@ -27,5 +27,5 @@ export const mapStepper = ({
   id: sys.id,
   title: fields.title ?? '',
   steps: (fields.steps ?? []).map(mapStep),
-  config: fields.config ? JSON.stringify(fields.config) : '[]',
+  config: fields.config ? JSON.stringify(fields.config) : '',
 })

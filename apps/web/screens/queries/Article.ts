@@ -104,6 +104,7 @@ export const GET_ARTICLE_QUERY = gql`
             }
             isAnswer
             options
+            config
           }
           config
         }

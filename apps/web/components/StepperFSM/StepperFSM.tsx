@@ -12,6 +12,7 @@ import {
   getStepperMachine,
   getCurrentStep,
   resolveStepType,
+  getStepOptions,
   STEP_TYPES,
 } from './StepperFSMUtils'
 import { useRouter } from 'next/router'
@@ -46,25 +47,52 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
   // TODO: Add compoment for showing previous answers.
   // TODO: Append answer to query parameter when submitting.
   // TODO: Add support for initializing the State Machine using provided answers query parameter.
+  // TODO: Currently, if you call the send function with an unavailable transition string, then it silently fails.
 
   const router = useRouter()
   const isOnFirstStep = stepperMachine.initialState.value === currentState.value
 
   return (
     <Box className={style.container}>
-      {currentStep.subtitle}
-      {currentState.nextEvents.map(function (nextEvent, i) {
-        return (
-          <Button
-            key={i}
-            onClick={() => {
-              send(nextEvent)
-            }}
-          >
-            {nextEvent}
-          </Button>
-        )
-      })}
+      {/* TODO: Render step subtitle {richText(currentStep.subtitle)} */}
+
+      {currentStepType === STEP_TYPES.QUESTION_RADIO && (
+        <>
+          <Text>Render Question Radio options...</Text>
+          { getStepOptions(currentStep).map(function (option, i) {
+            return (
+              <Button
+                key={i}
+                onClick={() => {
+                  console.log("selected option: ", option)
+                  send(option.transition)
+                }}
+              >
+                {option.label}
+              </Button>
+            )
+          })}
+        </>
+      )}
+      {currentStepType === STEP_TYPES.QUESTION_DROPDOWN && (
+        <>
+          <Text>Render Question Dropdown options...</Text>
+          { getStepOptions(currentStep).map(function (option, i) {
+            return (
+              <Button
+                key={i}
+                onClick={() => {
+                  console.log("selected option: ", option)
+                  send(option.transition)
+                }}
+              >
+                {option.label}
+              </Button>
+            )
+          })}
+        </>
+      )}
+      {currentStepType === STEP_TYPES.ANSWER && <Text>Render Answer...</Text>}
 
       {!isOnFirstStep && (
         <Box marginTop={3}>
@@ -74,14 +102,6 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
           </Button>
         </Box>
       )}
-
-      {currentStepType === STEP_TYPES.QUESTION_RADIO && (
-        <Text>Render Question Radio options...</Text>
-      )}
-      {currentStepType === STEP_TYPES.QUESTION_DROPDOWN && (
-        <Text>Render Question Dropdownb options...</Text>
-      )}
-      {currentStepType === STEP_TYPES.ANSWER && <Text>Render Answer...</Text>}
 
       {showStepperConfigHelper && (
         <StepperHelper

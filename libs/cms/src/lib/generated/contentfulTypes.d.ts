@@ -2464,6 +2464,9 @@ export interface IStepFields {
 
   /** Options */
   options?: Record<string, any> | undefined
+
+  /** Config */
+  config?: Record<string, any> | undefined
 }
 
 /** Step for stepper */
