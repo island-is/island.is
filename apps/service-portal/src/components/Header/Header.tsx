@@ -56,7 +56,7 @@ export const Header: FC<{}> = () => {
             <Box display="flex" alignItems="center" flexWrap="nowrap">
               <UserMenu fullscreen />
               <Hidden above="md">
-                <Box marginLeft={1}>
+                <Box marginLeft={[1, 2]}>
                   <Button
                     variant="utility"
                     icon={mobileMenuState === 'open' ? 'close' : 'menu'}
