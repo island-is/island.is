@@ -1,6 +1,7 @@
 import { error } from './messages/index'
 import * as z from 'zod'
 import { isValidEmail } from './utils'
+import { TwoTypeAnswers } from './types'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, {
@@ -15,9 +16,11 @@ export const dataSchema = z.object({
     }),
   }),
   student: z.object({
-    isStudent: z.boolean().refine((v) => v, {
-      params: error.validation.approveSpouse,
-    }),
+    isStudent: z
+      .enum([TwoTypeAnswers.Yes, TwoTypeAnswers.No])
+      .refine((v) => v, {
+        params: error.validation.approveSpouse,
+      }),
   }),
 })
 
