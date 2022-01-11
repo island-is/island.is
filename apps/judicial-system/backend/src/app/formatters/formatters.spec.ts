@@ -156,7 +156,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: Árni Ákærandi.',
+      'Ný gæsluvarðhaldskrafa í vinnslu. Sækjandi: Árni Ákærandi.',
     )
   })
 
@@ -174,7 +174,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: Ekki skráður.',
+      'Ný gæsluvarðhaldskrafa í vinnslu. Sækjandi: Ekki skráður.',
     )
   })
 
@@ -195,7 +195,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Ný farbannskrafa í vinnslu. Ákærandi: Ákærandinn. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 25.01.2021, eftir kl. 19:15.',
+      'Ný farbannskrafa í vinnslu. Sækjandi: Ákærandinn. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 25.01.2021, eftir kl. 19:15.',
     )
   })
 
@@ -216,7 +216,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Ný krafa um rannsóknarheimild (leit og líkamsrannsókn) í vinnslu. Ákærandi: Al Coe. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 20.06.2021, eftir kl. 10:00.',
+      'Ný krafa um rannsóknarheimild (leit og líkamsrannsókn) í vinnslu. Sækjandi: Al Coe. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 20.06.2021, eftir kl. 10:00.',
     )
   })
 
@@ -237,7 +237,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Ný krafa um rannsóknarheimild í vinnslu. Ákærandi: Al Coe. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 20.06.2021, eftir kl. 10:00.',
+      'Ný krafa um rannsóknarheimild í vinnslu. Sækjandi: Al Coe. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 20.06.2021, eftir kl. 10:00.',
     )
   })
 })
@@ -258,7 +258,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Reykjavíkur.',
+      'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi. Dómstóll: Héraðsdómur Reykjavíkur.',
     )
   })
 
@@ -275,7 +275,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Ákærandi: Ekki skráður. Dómstóll: Ekki skráður.',
+      'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Sækjandi: Ekki skráður. Dómstóll: Ekki skráður.',
     )
   })
 
@@ -294,7 +294,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Farbannskrafa tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+      'Farbannskrafa tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
     )
   })
 
@@ -313,7 +313,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um rannsóknarheimild (upplýsingar um vefnotkun) tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+      'Krafa um rannsóknarheimild (upplýsingar um vefnotkun) tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
     )
   })
 
@@ -332,7 +332,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um rannsóknarheimild tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+      'Krafa um rannsóknarheimild tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
     )
   })
 })
@@ -347,7 +347,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Ákærandi í máli R-123/2021 hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði.',
+      'Sækjandi í máli R-123/2021 hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði.',
     )
   })
 })
@@ -946,7 +946,7 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Gæsluvarðhaldskrafa afturkölluð. Ákærandi: Kiddi Kærari. Fyrirtökutími: 20.12.2021, kl. 11:30.',
+      'Gæsluvarðhaldskrafa afturkölluð. Sækjandi: Kiddi Kærari. Fyrirtökutími: 20.12.2021, kl. 11:30.',
     )
   })
 
@@ -966,7 +966,7 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Gæsluvarðhaldskrafa afturkölluð. Ákærandi: Kiddi Kærari. ÓVE fyrirtöku 20.01.2021, eftir kl. 11:10.',
+      'Gæsluvarðhaldskrafa afturkölluð. Sækjandi: Kiddi Kærari. ÓVE fyrirtöku 20.01.2021, eftir kl. 11:10.',
     )
   })
 
@@ -983,7 +983,7 @@ describe('formatCourtRevokedSmsNotification', () => {
     )
 
     // Assert
-    expect(res).toBe('Gæsluvarðhaldskrafa afturkölluð. Ákærandi: Ekki skráður.')
+    expect(res).toBe('Gæsluvarðhaldskrafa afturkölluð. Sækjandi: Ekki skráður.')
   })
 
   test('should format revoked sms for travel ban', () => {
@@ -1003,7 +1003,7 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Farbannskrafa afturkölluð. Ákærandi: Kiddi Kærari. Fyrirtökutími: 20.12.2021, kl. 11:30.',
+      'Farbannskrafa afturkölluð. Sækjandi: Kiddi Kærari. Fyrirtökutími: 20.12.2021, kl. 11:30.',
     )
   })
 })
