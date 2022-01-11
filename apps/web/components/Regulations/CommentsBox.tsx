@@ -11,7 +11,7 @@ export type CommentsBoxProps = {
 }
 
 export const CommentsBox = (props: CommentsBoxProps) =>
-  props.content && (
+  props.content ? (
     <Box marginTop={[6, 10]} id="aths_ritstjora">
       <AlertMessage
         type="info"
@@ -21,4 +21,4 @@ export const CommentsBox = (props: CommentsBoxProps) =>
         }
       />
     </Box>
-  )
+  ) : null
