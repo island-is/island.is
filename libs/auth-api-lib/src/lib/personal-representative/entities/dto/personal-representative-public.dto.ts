@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsArray, ArrayNotEmpty } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-import { PersonalRepresentativeDTO } from '@island.is/auth-api-lib/personal-representative'
+import { PersonalRepresentativeDTO } from './personal-representative.dto'
 
 export class PersonalRepresentativePublicDTO {
   @IsString()
@@ -28,19 +28,21 @@ export class PersonalRepresentativePublicDTO {
   nationalIdRepresentedPerson!: string
 
   @IsArray()
-  @ArrayNotEmpty()
   @ApiProperty({
     example: '["health", "finance"]',
     description:
       'A list of right typess that the personal representative has on behalf of represented person',
   })
-  permissions!: string[]
+  rights!: string[]
 
-  fromDTO(dto: PersonalRepresentativeDTO): PersonalRepresentativePublicDTO {
-    this.personalRepresentativeTypeCode = dto.personalRepresentativeTypeCode
-    this.nationalIdPersonalRepresentative = dto.nationalIdPersonalRepresentative
-    this.nationalIdRepresentedPerson = dto.nationalIdRepresentedPerson
-    this.permissions = dto.rights?.map((rc) => rc.code)
-    return this
+  static fromDTO(
+    dto: PersonalRepresentativeDTO,
+  ): PersonalRepresentativePublicDTO {
+    return {
+      personalRepresentativeTypeCode: dto.personalRepresentativeTypeCode,
+      nationalIdPersonalRepresentative: dto.nationalIdPersonalRepresentative,
+      nationalIdRepresentedPerson: dto.nationalIdRepresentedPerson,
+      rights: dto.rights.map((rc) => rc.code),
+    } as PersonalRepresentativePublicDTO
   }
 }

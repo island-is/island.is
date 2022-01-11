@@ -1,4 +1,8 @@
-import { setupWithAuth, setupWithoutAuth } from '../../../../../test/setup'
+import {
+  setupWithAuth,
+  setupWithoutAuth,
+  setupWithoutScope,
+} from '../../../../../test/setup'
 import request from 'supertest'
 import { TestApp } from '@island.is/testing/nest'
 import {
@@ -8,12 +12,14 @@ import {
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 
+const path = '/v1/rights'
+
 const user = createCurrentUser({
   nationalId: '1122334455',
   scope: [AuthScope.readPersonalRepresentative],
 })
 
-describe('RightTypesTypeController - Without Auth', () => {
+describe('RightsController - Without Auth', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
 
@@ -27,12 +33,31 @@ describe('RightTypesTypeController - Without Auth', () => {
     await app.cleanUp()
   })
 
-  it('Get v1/right-types  should fail and return 403 error if bearer is missing', async () => {
-    await server.get(`/v1/right-types`).expect(403)
+  it('Get v1/rights  should fail and return 401 error if bearer is missing', async () => {
+    await server.get(path).expect(401)
   })
 })
 
-describe('RightTypesTypeController', () => {
+describe('RightsController - Without Scope', () => {
+  let app: TestApp
+  let server: request.SuperTest<request.Test>
+
+  beforeAll(async () => {
+    // TestApp setup with auth and database
+    app = await setupWithoutScope()
+    server = request(app.getHttpServer())
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
+  })
+
+  it('Get v1/rights  should fail and return 403 error if bearer is missing the correct scope', async () => {
+    await server.get(path).expect(403)
+  })
+})
+
+describe('RightsController', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
   let rightService: PersonalRepresentativeRightTypeService
@@ -71,9 +96,9 @@ describe('RightTypesTypeController', () => {
   })
 
   describe('Get', () => {
-    it('Get v1/right-types should get all permission types', async () => {
+    it('Get v1/rights should get all permission types', async () => {
       // Test get personal rep
-      const response = await server.get(`/v1/right-types`).expect(200)
+      const response = await server.get(path).expect(200)
 
       const rightTypesResult: {
         code: string
@@ -88,10 +113,10 @@ describe('RightTypesTypeController', () => {
       expect(rightTypesResult).toMatchObject(rightTypeList)
     })
 
-    it('Get v1/right-types should get permission type by code', async () => {
+    it('Get v1/rights should get permission type by code', async () => {
       // Test get personal rep
       const response = await server
-        .get(`/v1/right-types/${rightTypeList[0].code}`)
+        .get(`${path}/${rightTypeList[0].code}`)
         .expect(200)
 
       expect(response.body).toMatchObject(rightTypeList[0])

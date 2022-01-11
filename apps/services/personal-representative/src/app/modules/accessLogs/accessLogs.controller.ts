@@ -3,32 +3,34 @@ import {
   PersonalRepresentativeAccessService,
   PaginatedPersonalRepresentativeAccessDto,
 } from '@island.is/auth-api-lib/personal-representative'
-import {
-  Controller,
-  UseGuards,
-  Get,
-  Inject,
-  Query,
-  Param,
-} from '@nestjs/common'
+import { Controller, UseGuards, Get, Inject, Query } from '@nestjs/common'
 import {
   ApiOperation,
   ApiOkResponse,
   ApiBearerAuth,
   ApiTags,
-  ApiParam,
+  ApiForbiddenResponse,
+  ApiUnauthorizedResponse,
+  ApiBadRequestResponse,
+  ApiInternalServerErrorResponse,
 } from '@nestjs/swagger'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
 import { Audit } from '@island.is/nest/audit'
-import { PaginationDto } from '@island.is/nest/pagination'
+import { HttpProblemResponse } from '@island.is/nest/problem'
+import { PaginationWithNationalIdsDto } from '../dto/PaginationWithNationalIds.dto'
+import { Op } from 'sequelize'
 
 const namespace = `${environment.audit.defaultNamespace}/access-logs`
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.writePersonalRepresentative)
-@ApiTags('Personal Representative - Access logs')
+@ApiTags('Access logs')
 @Controller('v1/access-logs')
+@ApiForbiddenResponse({ type: HttpProblemResponse })
+@ApiUnauthorizedResponse({ type: HttpProblemResponse })
+@ApiBadRequestResponse({ type: HttpProblemResponse })
+@ApiInternalServerErrorResponse()
 @ApiBearerAuth()
 @Audit({ namespace })
 export class AccessLogsController {
@@ -47,50 +49,31 @@ export class AccessLogsController {
     resources: (pgData) => pgData.data.map((access) => access.id),
   })
   async getAll(
-    @Query() query: PaginationDto,
+    @Query() query: PaginationWithNationalIdsDto,
   ): Promise<PaginatedPersonalRepresentativeAccessDto> {
-    return await this.personalRepresentativeAccessService.getMany(query)
-  }
+    const where =
+      query.personalRepresentativeId && query.representedPersonId
+        ? {
+            [Op.and]: [
+              {
+                nationalIdPersonalRepresentative:
+                  query.personalRepresentativeId,
+              },
+              {
+                nationalIdRepresentedPerson: query.representedPersonId,
+              },
+            ],
+          }
+        : query.personalRepresentativeId
+        ? {
+            nationalIdPersonalRepresentative: query.personalRepresentativeId,
+          }
+        : query.representedPersonId
+        ? {
+            nationalIdRepresentedPerson: query.representedPersonId,
+          }
+        : {}
 
-  /** Gets all access logs by personal representative */
-  @ApiOperation({
-    summary: 'Get a list of all logged accesses by personal representative',
-  })
-  @Get(':nationalId/personal-representative')
-  @ApiParam({ name: 'nationalId', required: true, type: String })
-  @ApiOkResponse({ type: PaginatedPersonalRepresentativeAccessDto })
-  @Audit<PaginatedPersonalRepresentativeAccessDto>({
-    resources: (pgData) => pgData.data.map((access) => access.id),
-  })
-  async getByPersonalRepresentative(
-    @Param('nationalId') nationalId: string,
-    @Query() query: PaginationDto,
-  ): Promise<PaginatedPersonalRepresentativeAccessDto> {
-    console.log(nationalId)
-    return await this.personalRepresentativeAccessService.getByPersonalRepresentative(
-      nationalId,
-      query,
-    )
-  }
-
-  /** Gets all access logs by represented person */
-  @ApiOperation({
-    summary: 'Get a list of all logged accesses by personal representative',
-  })
-  @Get(':nationalId/represented-person')
-  @ApiParam({ name: 'nationalId', required: true, type: String })
-  @ApiOkResponse({ type: PaginatedPersonalRepresentativeAccessDto })
-  @Audit<PaginatedPersonalRepresentativeAccessDto>({
-    resources: (pgData) => pgData.data.map((access) => access.id),
-  })
-  async getByRepresentedPerson(
-    @Param('nationalId') nationalId: string,
-    @Query() query: PaginationDto,
-  ): Promise<PaginatedPersonalRepresentativeAccessDto> {
-    console.log(nationalId)
-    return await this.personalRepresentativeAccessService.getByRepresentedPerson(
-      nationalId,
-      query,
-    )
+    return this.personalRepresentativeAccessService.getMany(query, where)
   }
 }

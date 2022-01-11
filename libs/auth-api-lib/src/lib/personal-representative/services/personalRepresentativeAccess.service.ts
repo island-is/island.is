@@ -19,15 +19,17 @@ export class PersonalRepresentativeAccessService {
   /** Get's all personal repreasentatives  */
   async getMany(
     query: PaginationDto,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    where: any,
   ): Promise<PaginatedPersonalRepresentativeAccessDto> {
-    return await paginate({
+    return paginate({
       Model: this.personalRepresentativeAccessModel,
       limit: query.limit || 10,
       after: query.after ?? '',
       before: query.before ?? '',
       primaryKeyField: 'id',
       orderOption: [['id', 'ASC']],
-      where: {},
+      where: where,
     })
   }
 
@@ -74,7 +76,7 @@ export class PersonalRepresentativeAccessService {
     // Create new personal representative connection
     try {
       this.logger.info('Creating personal representative access log')
-      return await this.personalRepresentativeAccessModel.create(
+      return this.personalRepresentativeAccessModel.create(
         personalRepresentativeAccess,
       )
     } catch (err) {

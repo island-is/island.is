@@ -27,9 +27,9 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.query(`
       BEGIN;
-        DROP TABLE personal_representative_type;
         ALTER TABLE personal_representative DROP CONSTRAINT FK_personal_representative_type;
         ALTER TABLE personal_representative DROP COLUMN personal_representative_type_code;
+        DROP TABLE personal_representative_type;
 
       COMMIT;
     `)

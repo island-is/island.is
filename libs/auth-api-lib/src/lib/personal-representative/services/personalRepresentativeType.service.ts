@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -95,6 +100,15 @@ export class PersonalRepresentativeTypeService {
 
     if (!code) {
       throw new BadRequestException('code must be provided')
+    }
+    if (code !== personalRepresentativeType.code) {
+      throw new BadRequestException('data descreptancy')
+    }
+    const currentData = await this.personalRepresentativeTypeModel.findByPk(
+      code,
+    )
+    if (!currentData) {
+      throw new NotFoundException()
     }
 
     await this.personalRepresentativeTypeModel.update(

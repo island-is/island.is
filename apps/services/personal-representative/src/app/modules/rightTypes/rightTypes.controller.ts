@@ -25,6 +25,7 @@ import {
   Put,
   Inject,
   Query,
+  HttpCode,
 } from '@nestjs/common'
 import {
   ApiOperation,
@@ -32,10 +33,16 @@ import {
   ApiOkResponse,
   ApiTags,
   ApiBearerAuth,
+  ApiForbiddenResponse,
+  ApiUnauthorizedResponse,
+  ApiBadRequestResponse,
+  ApiInternalServerErrorResponse,
+  ApiNoContentResponse,
 } from '@nestjs/swagger'
 import { environment } from '../../../environments'
 import { AuditService, Audit } from '@island.is/nest/audit'
 import { PaginationDto } from '@island.is/nest/pagination'
+import { HttpProblemResponse } from '@island.is/nest/problem'
 
 const namespace = `${environment.audit.defaultNamespace}/right-types`
 
@@ -44,6 +51,10 @@ const namespace = `${environment.audit.defaultNamespace}/right-types`
 @ApiBearerAuth()
 @ApiTags('Right Types')
 @Controller('v1/right-types')
+@ApiForbiddenResponse({ type: HttpProblemResponse })
+@ApiUnauthorizedResponse({ type: HttpProblemResponse })
+@ApiBadRequestResponse({ type: HttpProblemResponse })
+@ApiInternalServerErrorResponse()
 @Audit({ namespace })
 export class RightTypesController {
   constructor(
@@ -64,9 +75,7 @@ export class RightTypesController {
   async getAll(
     @Query() query: PaginationDto,
   ): Promise<PaginatedPersonalRepresentativeRightTypeDto> {
-    const rightTypes = await this.rightTypesService.getMany(query)
-
-    return rightTypes
+    return this.rightTypesService.getMany(query)
   }
 
   /** Gets a right type by it's key */
@@ -100,16 +109,17 @@ export class RightTypesController {
     summary: 'Delete a single right type by code',
   })
   @Delete(':code')
-  @ApiOkResponse()
+  @HttpCode(204)
+  @ApiNoContentResponse()
   async removeAsync(
     @Param('code') code: string,
     @CurrentAuth() user: Auth,
-  ): Promise<number> {
+  ): Promise<void> {
     if (!code) {
-      throw new BadRequestException('Key needs to be provided')
+      throw new BadRequestException('Code needs to be provided')
     }
     // delete right type
-    return await this.auditService.auditPromise(
+    await this.auditService.auditPromise(
       {
         user,
         action: 'deletePersonalRepresentativeRightType',
@@ -134,7 +144,7 @@ export class RightTypesController {
     @CurrentAuth() user: Auth,
   ): Promise<PersonalRepresentativeRightType> {
     // Create a new right type
-    return await this.auditService.auditPromise(
+    return this.auditService.auditPromise(
       {
         user,
         action: 'createPersonalRepresentativeRightType',
@@ -151,7 +161,7 @@ export class RightTypesController {
     summary: 'Update a right type by code',
   })
   @Put(':code')
-  @ApiCreatedResponse({ type: PersonalRepresentativeRightType })
+  @ApiOkResponse({ type: PersonalRepresentativeRightType })
   @Audit<PersonalRepresentativeRightType>({
     resources: (type) => type.code,
   })
@@ -159,13 +169,9 @@ export class RightTypesController {
     @Param('code') code: string,
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
     @CurrentAuth() user: Auth,
-  ): Promise<PersonalRepresentativeRightType> {
-    if (!code) {
-      throw new BadRequestException('Code must be provided')
-    }
-
+  ): Promise<PersonalRepresentativeRightType | null> {
     // Update right type
-    const result = await this.auditService.auditPromise(
+    return this.auditService.auditPromise(
       {
         user,
         action: 'updatePersonalRepresentativeRightType',
@@ -175,11 +181,5 @@ export class RightTypesController {
       },
       this.rightTypesService.update(code, rightType),
     )
-
-    if (result == null) {
-      throw new NotFoundException("This particular right type doesn't exist")
-    }
-
-    return result
   }
 }

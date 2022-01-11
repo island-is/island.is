@@ -1,9 +1,7 @@
-import { PersonalRepresentativeRightsController } from './personalRepresentativeRights.controller'
+import { PersonalRepresentativesController } from './personalRepresentatives.controller'
 import { Module } from '@nestjs/common'
 import {
   PersonalRepresentative,
-  PersonalRepresentativeAccess,
-  PersonalRepresentativeAccessService,
   PersonalRepresentativeRight,
   PersonalRepresentativeService,
   PersonalRepresentativeType,
@@ -13,16 +11,12 @@ import { SequelizeModule } from '@nestjs/sequelize'
 @Module({
   imports: [
     SequelizeModule.forFeature([
-      PersonalRepresentativeAccess,
       PersonalRepresentativeRight,
       PersonalRepresentativeType,
       PersonalRepresentative,
     ]),
   ],
-  controllers: [PersonalRepresentativeRightsController],
-  providers: [
-    PersonalRepresentativeAccessService,
-    PersonalRepresentativeService,
-  ],
+  controllers: [PersonalRepresentativesController],
+  providers: [PersonalRepresentativeService],
 })
-export class PersonalRepresentativeRightsModule {}
+export class PersonalRepresentativesModule {}

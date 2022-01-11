@@ -28,6 +28,8 @@ export class PersonalRepresentativeService {
   async getMany(
     includeInvalid: boolean,
     query: PaginationDto,
+    personalRepresentativeId?: string,
+    representedPersonId?: string,
   ): Promise<PaginatedPersonalRepresentativeDto> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const validToClause: any = {
@@ -43,6 +45,13 @@ export class PersonalRepresentativeService {
       whereClause['validTo'] = validToClause
       whereClauseRights['validFrom'] = validFromClause
       whereClauseRights['validTo'] = validToClause
+    }
+
+    if (personalRepresentativeId) {
+      whereClause['nationalIdPersonalRepresentative'] = personalRepresentativeId
+    }
+    if (representedPersonId) {
+      whereClause['nationalIdRepresentedPerson'] = representedPersonId
     }
 
     const result = await paginate({

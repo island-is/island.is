@@ -9,6 +9,8 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import { PersonalRepresentativeRightTypeDTO } from './personal-representative-right-type.dto'
+import { PersonalRepresentative } from '../models/personal-representative.model'
+import { PersonalRepresentativePublicDTO } from './personal-representative-public.dto'
 
 export class PersonalRepresentativeDTO {
   @IsString()
@@ -47,7 +49,7 @@ export class PersonalRepresentativeDTO {
   @ApiProperty({
     example: '0123456789',
     description: 'nationalId of Personal Representative',
-    pattern: '^d{10}$',
+    pattern: '^(0-9){10}$',
   })
   readonly nationalIdPersonalRepresentative!: string
 
@@ -70,7 +72,6 @@ export class PersonalRepresentativeDTO {
   readonly validTo?: Date
 
   @IsArray()
-  @ArrayNotEmpty()
   @ApiProperty({
     example:
       '[{code:"health", description:"health descr", validFrom:"xx.yy.zzzz", validTo: "kk.dd.oooo"}, {code:"finance"}, description:"finance descr"}]',
@@ -78,4 +79,16 @@ export class PersonalRepresentativeDTO {
       'A list of right typess that the personal representative has on behalf of represented person',
   })
   readonly rights!: PersonalRepresentativeRightTypeDTO[]
+
+  toModel(id: string): PersonalRepresentative {
+    return {
+      id: id,
+      contractId: this.contractId,
+      externalUserId: this.externalUserId,
+      personalRepresentativeTypeCode: this.personalRepresentativeTypeCode,
+      nationalIdPersonalRepresentative: this.nationalIdPersonalRepresentative,
+      nationalIdRepresentedPerson: this.nationalIdRepresentedPerson,
+      validTo: this.validTo,
+    } as PersonalRepresentative
+  }
 }

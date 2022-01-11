@@ -17,14 +17,19 @@ import {
   Post,
   Inject,
   Query,
+  HttpCode,
 } from '@nestjs/common'
 import {
   ApiOperation,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiTags,
-  ApiParam,
   ApiBearerAuth,
+  ApiNoContentResponse,
+  ApiBadRequestResponse,
+  ApiForbiddenResponse,
+  ApiInternalServerErrorResponse,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 import { isNationalIdValid } from '@island.is/financial-aid/shared/lib'
 import {
@@ -36,7 +41,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { PaginationWithInvalidDto } from './dto/PaginationWithInvalidDto.dto'
+import { HttpProblemResponse } from '@island.is/nest/problem'
+import { PaginationWithNationalIdsDto } from '../dto/PaginationWithNationalIds.dto'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representative`
 
@@ -44,6 +50,10 @@ const namespace = `${environment.audit.defaultNamespace}/personal-representative
 @Scopes(AuthScope.writePersonalRepresentative)
 @ApiTags('Personal Representatives')
 @Controller('v1/personal-representatives')
+@ApiForbiddenResponse({ type: HttpProblemResponse })
+@ApiUnauthorizedResponse({ type: HttpProblemResponse })
+@ApiBadRequestResponse({ type: HttpProblemResponse })
+@ApiInternalServerErrorResponse()
 @ApiBearerAuth()
 @Audit({ namespace })
 export class PersonalRepresentativesController {
@@ -53,22 +63,24 @@ export class PersonalRepresentativesController {
     private readonly auditService: AuditService,
   ) {}
 
-  /** Gets all personal representatives */
+  /** Gets a list of personal representatives */
   @ApiOperation({ summary: 'Gets all personal representatives' })
   @Get()
   @ApiOkResponse({
     description: 'Personal representative connections with rights',
-    type: PersonalRepresentativeDTO,
+    type: PaginatedPersonalRepresentativeDto,
   })
   @Audit<PaginatedPersonalRepresentativeDto>({
     resources: (pgData) => pgData.data.map((pr) => pr.id ?? ''),
   })
   async getAll(
-    @Query() query: PaginationWithInvalidDto,
+    @Query() query: PaginationWithNationalIdsDto,
   ): Promise<PaginatedPersonalRepresentativeDto> {
     const personalRepresentatives = await this.prService.getMany(
-      query.includeInvalid ? (query.includeInvalid as boolean) : false,
+      true,
       query,
+      query.personalRepresentativeId,
+      query.representedPersonId,
     )
 
     return personalRepresentatives
@@ -101,94 +113,21 @@ export class PersonalRepresentativesController {
 
     return personalRepresentative
   }
-
-  /** Gets a personal representative rights by nationalId of personal representative */
-  @ApiOperation({
-    summary:
-      'Gets personal representative rights by nationalId of personal representative',
-    description: 'A personal representative can represent more than one person',
-  })
-  @Get(':nationalId/personal-representative/:includeInvalid?')
-  @ApiOkResponse({
-    description: 'Personal representative connections with rights',
-    type: PersonalRepresentativeDTO,
-  })
-  @ApiParam({ name: 'nationalId', required: true, type: String })
-  @ApiParam({
-    name: 'includeInvalid',
-    required: false,
-    type: 'boolean',
-    allowEmptyValue: true,
-  })
-  @Audit<PersonalRepresentativeDTO[]>({
-    resources: (prs) => prs.map((pr) => pr.id ?? ''),
-  })
-  async getByPersonalRepresentative(
-    nationalId: string,
-    includeInvalid?: boolean,
-  ): Promise<PersonalRepresentativeDTO[]> {
-    if (!nationalId) {
-      throw new BadRequestException('NationalId needs to be provided')
-    }
-
-    const personalRepresentatives = await this.prService.getByPersonalRepresentative(
-      nationalId,
-      includeInvalid ? (includeInvalid as boolean) : false,
-    )
-
-    return personalRepresentatives
-  }
-
-  /** Gets a personal representative rights by nationalId of represented person */
-  @ApiOperation({
-    summary:
-      'Gets a personal representative rights by nationalId of represented person',
-  })
-  @Get(':nationalId/represented-person/:includeInvalid?')
-  @ApiOkResponse({
-    description: 'Personal representative connection with rights',
-    type: PersonalRepresentativeDTO,
-  })
-  @ApiParam({ name: 'nationalId', required: true, type: String })
-  @ApiParam({
-    name: 'includeInvalid',
-    required: false,
-    type: 'boolean',
-    allowEmptyValue: false,
-  })
-  @Audit<PersonalRepresentativeDTO>({
-    resources: (pr) => pr.id ?? '',
-  })
-  async getByRepresentedPerson(
-    nationalId: string,
-    includeInvalid?: boolean,
-  ): Promise<PersonalRepresentativeDTO | null> {
-    if (!nationalId) {
-      throw new BadRequestException('NationalId needs to be provided')
-    }
-
-    const personalRepresentative = await this.prService.getPersonalRepresentativeByRepresentedPerson(
-      nationalId,
-      includeInvalid ? (includeInvalid as boolean) : false,
-    )
-
-    return personalRepresentative
-  }
-
   /** Removes a personal representative by it's id */
   @ApiOperation({
     summary: 'Delete a personal representative connection by id',
   })
   @Delete(':id')
-  @ApiOkResponse()
+  @HttpCode(204)
+  @ApiNoContentResponse()
   async remove(
     @Param('id') id: string,
     @CurrentAuth() user: Auth,
-  ): Promise<number> {
+  ): Promise<void> {
     if (!id) {
       throw new BadRequestException('Id needs to be provided')
     }
-    return await this.auditService.auditPromise(
+    await this.auditService.auditPromise(
       {
         user,
         action: 'deletePersonalRepresentative',
@@ -199,7 +138,7 @@ export class PersonalRepresentativesController {
     )
   }
 
-  /** Creates a right type */
+  /** Creates a personal representative */
   @ApiOperation({
     summary: 'Create a new personal representative connection',
     description:

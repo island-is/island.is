@@ -1,10 +1,13 @@
-import { setupWithAuth, setupWithoutAuth } from '../../../../../test/setup'
-import { errorExpectedStructure } from '../../../../../test/testHelpers'
+import {
+  setupWithAuth,
+  setupWithoutAuth,
+  setupWithoutScope,
+} from '../../../../../test/setup'
 import request from 'supertest'
 import { TestApp } from '@island.is/testing/nest'
 import {
   PersonalRepresentative,
-  PersonalRepresentativeDTO,
+  PersonalRepresentativePublicDTO,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeType,
@@ -14,7 +17,8 @@ import { PersonalRepresentativeRightTypeService } from '@island.is/auth-api-lib/
 import { PersonalRepresentativeService } from '@island.is/auth-api-lib/personal-representative'
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
-import { PersonalRepresentativePublicDTO } from '../dto/personalRepresentativePublicDTO.dto'
+
+const path = '/v1/personal-representatives'
 
 const user = createCurrentUser({
   nationalId: '1122334455',
@@ -41,7 +45,7 @@ const simpleRequestData: PersonalRepresentativeCreateDTO = {
   rightCodes: [],
 }
 
-describe('PersonalRepresentativePermissionController - Without Auth', () => {
+describe('PersonalRepresentativesController - Without Auth', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
 
@@ -55,22 +59,37 @@ describe('PersonalRepresentativePermissionController - Without Auth', () => {
     await app.cleanUp()
   })
 
-  it('Get v1/personal-representative-rights/{nationalId} should fail and return 403 error if bearer is missing', async () => {
+  it('Get v1/personal-representatives/{nationalId} should fail and return 401 error if bearer is missing', async () => {
     // Test get personal rep
-    const response = await server
-      .get(
-        `/v1/personal-representative-rights/${simpleRequestData.nationalIdPersonalRepresentative}/`,
-      )
-      .expect(403)
-
-    expect(response.body).toMatchObject({
-      ...errorExpectedStructure,
-      statusCode: 403,
-    })
+    await server
+      .get(`${path}?prId=${simpleRequestData.nationalIdPersonalRepresentative}`)
+      .expect(401)
   })
 })
 
-describe('PersonalRepresentativePermissionController', () => {
+describe('PersonalRepresentativesController - Without Scope', () => {
+  let app: TestApp
+  let server: request.SuperTest<request.Test>
+
+  beforeAll(async () => {
+    // TestApp setup with auth and database
+    app = await setupWithoutScope()
+    server = request(app.getHttpServer())
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
+  })
+
+  it('Get v1/personal-representatives/{nationalId} should fail and return 403 error if bearer is missing the correct scope', async () => {
+    // Test get personal rep
+    await server
+      .get(`${path}?prId=${simpleRequestData.nationalIdPersonalRepresentative}`)
+      .expect(403)
+  })
+})
+
+describe('PersonalRepresentativesController', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
   let rightService: PersonalRepresentativeRightTypeService
@@ -79,7 +98,6 @@ describe('PersonalRepresentativePermissionController', () => {
   let prRightTypeModel: typeof PersonalRepresentativeRightType
   let prModel: typeof PersonalRepresentative
   let prPermissionsModel: typeof PersonalRepresentativeRight
-  let personalRep: PersonalRepresentativeDTO | null
 
   beforeAll(async () => {
     app = await setupWithAuth({ user })
@@ -142,32 +160,53 @@ describe('PersonalRepresentativePermissionController', () => {
         description: rightType.description,
       })
     }
-    // Creating personal rep
-    personalRep = await prService.create({
+    await prModel.create({
       ...simpleRequestData,
       rightCodes: rightTypeList.map((rt) => rt.code),
       personalRepresentativeTypeCode: personalRepresentativeType.code,
     })
+
+    // Creating personal rep
+    await prService.create({
+      ...simpleRequestData,
+      rightCodes: rightTypeList.map((rt) => rt.code),
+      personalRepresentativeTypeCode: personalRepresentativeType.code,
+    })
+    //personalRepPublic.rights = rightTypeList.map((rt) => rt.code)
   })
 
   describe('Get', () => {
-    it('Get v1/personal-representative-rights/{nationalId} should get personal rep connections', async () => {
+    it('Get v1/personal-representatives?prId={nationalId} should get personal rep connections', async () => {
+      const personalRepPublic = {
+        personalRepresentativeTypeCode:
+          simpleRequestData.personalRepresentativeTypeCode,
+        nationalIdPersonalRepresentative:
+          simpleRequestData.nationalIdPersonalRepresentative,
+        nationalIdRepresentedPerson:
+          simpleRequestData.nationalIdRepresentedPerson,
+        rights: rightTypeList.map((rt) => rt.code),
+      }
       // Test get personal rep
       const response = await server
         .get(
-          `/v1/personal-representative-rights/${simpleRequestData.nationalIdPersonalRepresentative}/`,
+          `${path}?prId=${simpleRequestData.nationalIdPersonalRepresentative}`,
         )
         .expect(200)
 
       const responseData: PersonalRepresentativePublicDTO[] = response.body
-      if (personalRep) {
-        const personalRepPublic = new PersonalRepresentativePublicDTO().fromDTO(
-          personalRep,
-        )
-        expect(responseData[0]).toMatchObject(personalRepPublic)
-      } else {
-        expect('Failed to create personal rep').toMatch('0')
-      }
+      expect(responseData).toMatchObject([personalRepPublic])
+    })
+
+    it('Get v1/personal-representatives?prId={nationalId} with unknown should get an empty list back', async () => {
+      // Test get personal rep
+      const response = await server.get(`${path}?prId=1111112222`).expect(200)
+      const responseData: PersonalRepresentativePublicDTO[] = response.body
+      expect(responseData.length).toEqual(0)
+    })
+
+    it('Get v1/personal-representatives should fail with 400 if prId is missing', async () => {
+      // Test get personal rep
+      await server.get(path).expect(400)
     })
   })
 })

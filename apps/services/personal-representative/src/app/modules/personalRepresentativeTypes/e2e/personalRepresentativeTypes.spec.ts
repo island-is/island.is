@@ -1,4 +1,8 @@
-import { setupWithoutAuth, setupWithAuth } from '../../../../../test/setup'
+import {
+  setupWithoutAuth,
+  setupWithAuth,
+  setupWithoutScope,
+} from '../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../test/testHelpers'
 import request from 'supertest'
 import { TestApp } from '@island.is/testing/nest'
@@ -19,6 +23,25 @@ const simpleRequestData = {
 
 const path = '/v1/personal-representative-types'
 
+describe('PersonalRepresentativeTypesController - Without Scope', () => {
+  let app: TestApp
+  let server: request.SuperTest<request.Test>
+
+  beforeAll(async () => {
+    // TestApp setup with auth and database
+    app = await setupWithoutScope()
+    server = request(app.getHttpServer())
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
+  })
+
+  it('POST /v1/personal-representative-types should fail and return 403 error if bearer is missing required scope', async () => {
+    await server.post(path).send(simpleRequestData).expect(403)
+  })
+})
+
 describe('PersonalRepresentativeTypesController - Without Auth', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
@@ -33,13 +56,8 @@ describe('PersonalRepresentativeTypesController - Without Auth', () => {
     await app.cleanUp()
   })
 
-  it('POST /v1/personal-representative-types should fail and return 403 error if bearer is missing', async () => {
-    const response = await server.post(path).send(simpleRequestData).expect(403)
-
-    expect(response.body).toMatchObject({
-      ...errorExpectedStructure,
-      statusCode: 403,
-    })
+  it('POST /v1/personal-representative-types should fail and return 401 error if bearer is missing', async () => {
+    await server.post(path).send(simpleRequestData).expect(401)
   })
 })
 
@@ -111,6 +129,20 @@ describe('PersonalRepresentativeTypesController', () => {
 
       expect(response.body).toMatchObject(requestData)
     })
+
+    it('Put /v1/personal-representative-types should fail with 400 on code descreptancy', async () => {
+      await server.post(path).send(simpleRequestData)
+
+      const requestData = {
+        code: 'NotSameAsBefore',
+        description: 'DescriptionUpdated',
+      }
+
+      await server
+        .put(`${path}/${requestData.code}`)
+        .send(requestData)
+        .expect(400)
+    })
   })
 
   describe('Get', () => {
@@ -128,10 +160,7 @@ describe('PersonalRepresentativeTypesController', () => {
   describe('Delete/Remove', () => {
     it('Delete /v1/personal-representative-types mark type as invalid', async () => {
       await server.post(path).send(simpleRequestData)
-      await server
-        .delete(`${path}/${simpleRequestData.code}`)
-        .send()
-        .expect(200)
+      await server.delete(`${path}/${simpleRequestData.code}`).expect(204)
 
       const response = await request(app.getHttpServer()).get(
         `${path}/${simpleRequestData.code}`,

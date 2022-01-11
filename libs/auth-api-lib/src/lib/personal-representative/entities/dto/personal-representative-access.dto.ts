@@ -1,10 +1,10 @@
 import { IsNotEmpty, IsString, IsOptional } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class PersonalRepresentativeAccessDTO {
   @IsString()
   @IsOptional()
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'guid',
   })
   readonly id?: string

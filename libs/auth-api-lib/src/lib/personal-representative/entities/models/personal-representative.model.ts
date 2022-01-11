@@ -14,6 +14,7 @@ import { PersonalRepresentativeType } from './personal-representative-type.model
 import { PersonalRepresentativeRight } from './personal-representative-right.model'
 import { PersonalRepresentativeDTO } from '../dto/personal-representative.dto'
 import { PersonalRepresentativeRightType } from './personal-representative-right-type.model'
+import { PersonalRepresentativePublicDTO } from '../dto/personal-representative-public.dto'
 
 @Table({
   tableName: 'personal_representative',
@@ -100,17 +101,17 @@ export class PersonalRepresentative extends Model<PersonalRepresentative> {
       rights: this.rights?.map((r) =>
         (r.rightType as PersonalRepresentativeRightType).toDTO(),
       ),
-    }
+    } as PersonalRepresentativeDTO
   }
 
-  fromDTO(id: string, dto: PersonalRepresentativeDTO): PersonalRepresentative {
-    this.id = id
-    this.contractId = dto.contractId
-    this.externalUserId = dto.externalUserId
-    this.personalRepresentativeTypeCode = dto.personalRepresentativeTypeCode
-    this.nationalIdPersonalRepresentative = dto.nationalIdPersonalRepresentative
-    this.nationalIdRepresentedPerson = dto.nationalIdRepresentedPerson
-    this.validTo = dto.validTo
-    return this
+  toPublicDTO(): PersonalRepresentativePublicDTO {
+    return {
+      personalRepresentativeTypeCode: this.personalRepresentativeTypeCode,
+      nationalIdPersonalRepresentative: this.nationalIdPersonalRepresentative,
+      nationalIdRepresentedPerson: this.nationalIdRepresentedPerson,
+      rights: this.rights?.map(
+        (r) => (r.rightType as PersonalRepresentativeRightType).code,
+      ),
+    }
   }
 }

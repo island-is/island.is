@@ -1,52 +1,54 @@
 import { AuthScope } from '@island.is/auth/scopes'
 import {
-  PersonalRepresentativeAccess,
-  PersonalRepresentativeAccessDTO,
-  PersonalRepresentativeAccessService,
   PersonalRepresentativeService,
+  PersonalRepresentativePublicDTO,
 } from '@island.is/auth-api-lib/personal-representative'
 import {
   BadRequestException,
   Controller,
   UseGuards,
   Get,
-  Post,
-  Body,
   Inject,
-  Param,
+  Query,
 } from '@nestjs/common'
 import {
   ApiOperation,
   ApiOkResponse,
   ApiBearerAuth,
   ApiTags,
-  ApiParam,
+  ApiForbiddenResponse,
+  ApiUnauthorizedResponse,
+  ApiBadRequestResponse,
+  ApiInternalServerErrorResponse,
+  ApiQuery,
 } from '@nestjs/swagger'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments'
 import {
+  Auth,
   CurrentAuth,
   IdsAuthGuard,
   Scopes,
   ScopesGuard,
-  Auth,
 } from '@island.is/auth-nest-tools'
-import { PersonalRepresentativePublicDTO } from './dto/personalRepresentativePublicDTO.dto'
+import { HttpProblemResponse } from '@island.is/nest/problem'
 
-const namespace = `${environment.audit.defaultNamespace}/personal-representative-rights`
+const namespace = `${environment.audit.defaultNamespace}/personal-representatives`
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.readPersonalRepresentative)
-@ApiTags('Personal Representative Public - Rights')
-@Controller('v1/personal-representative-rights')
+@ApiTags('Personal Representatives - Public')
+@Controller('v1/personal-representatives')
+@ApiForbiddenResponse({ type: HttpProblemResponse })
+@ApiUnauthorizedResponse({ type: HttpProblemResponse })
+@ApiBadRequestResponse({ type: HttpProblemResponse })
+@ApiInternalServerErrorResponse()
 @ApiBearerAuth()
 @Audit({ namespace })
-export class PersonalRepresentativeRightsController {
+export class PersonalRepresentativesController {
   constructor(
     @Inject(PersonalRepresentativeService)
     private readonly prService: PersonalRepresentativeService,
-    @Inject(PersonalRepresentativeAccessService)
-    private readonly prAccessService: PersonalRepresentativeAccessService,
     private readonly auditService: AuditService,
   ) {}
 
@@ -56,22 +58,25 @@ export class PersonalRepresentativeRightsController {
       'Gets personal representative rights by nationalId of personal representative',
     description: 'A personal representative can represent more than one person',
   })
-  @Get(':nationalId')
+  @Get()
+  @ApiQuery({
+    name: 'prId',
+    required: true,
+    type: 'string',
+    description: 'nationalId of personal representative.',
+  })
   @ApiOkResponse({
     description: 'Personal representative connections with rights',
-    type: PersonalRepresentativePublicDTO,
-  })
-  @ApiParam({ name: 'nationalId', required: true, type: String })
-  @Audit<PersonalRepresentativePublicDTO[]>({
-    resources: (prRights) =>
-      prRights.map((pr) => pr.nationalIdRepresentedPerson),
+    type: [PersonalRepresentativePublicDTO],
   })
   async getByPersonalRepresentative(
-    @Param('nationalId') nationalId: string,
+    @Query('prId') prId: string,
     @CurrentAuth() user: Auth,
   ): Promise<PersonalRepresentativePublicDTO[]> {
-    if (!nationalId) {
-      throw new BadRequestException('NationalId needs to be provided')
+    if (!prId) {
+      throw new BadRequestException(
+        'NationalId of personal representative needs to be provided',
+      )
     }
 
     const personalReps = await this.auditService.auditPromise(
@@ -79,13 +84,11 @@ export class PersonalRepresentativeRightsController {
         user,
         action: 'getPersonalRepresentativePermissions',
         namespace,
-        resources: nationalId,
+        resources: prId,
       },
-      this.prService.getByPersonalRepresentative(nationalId, false),
+      this.prService.getByPersonalRepresentative(prId, false),
     )
 
-    return personalReps.map((pr) =>
-      new PersonalRepresentativePublicDTO().fromDTO(pr),
-    )
+    return personalReps.map((pr) => PersonalRepresentativePublicDTO.fromDTO(pr))
   }
 }

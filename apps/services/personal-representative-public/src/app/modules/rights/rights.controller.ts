@@ -20,20 +20,31 @@ import {
   ApiOkResponse,
   ApiBearerAuth,
   ApiTags,
+  ApiParam,
+  ApiForbiddenResponse,
+  ApiUnauthorizedResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiBadRequestResponse,
 } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
 import { PaginationDto } from '@island.is/nest/pagination'
 import { environment } from '../../../environments'
+import { HttpProblemResponse } from '@island.is/nest/problem'
 
-const namespace = `${environment.audit.defaultNamespace}/right-types`
+const namespace = `${environment.audit.defaultNamespace}/rights`
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.readPersonalRepresentative)
 @ApiBearerAuth()
-@ApiTags('Personal Representative Public - Right Types')
-@Controller('v1/right-types')
+@ApiTags('Right Types - Public')
+@Controller('v1/rights')
+@ApiForbiddenResponse({ type: HttpProblemResponse })
+@ApiUnauthorizedResponse({ type: HttpProblemResponse })
+@ApiBadRequestResponse({ type: HttpProblemResponse })
+@ApiInternalServerErrorResponse()
 @Audit({ namespace })
-export class RightTypesController {
+export class RightsController {
   constructor(
     @Inject(PersonalRepresentativeRightTypeService)
     private readonly rightTypesService: PersonalRepresentativeRightTypeService,
@@ -51,17 +62,22 @@ export class RightTypesController {
   async getMany(
     @Query() query: PaginationDto,
   ): Promise<PaginatedPersonalRepresentativeRightTypeDto> {
-    const rightTypes = await this.rightTypesService.getMany(query)
-
-    return rightTypes
+    return await this.rightTypesService.getMany(query)
   }
 
   /** Gets a right type by it's key */
   @ApiOperation({
     summary: 'Get a single right type by code',
   })
+  @ApiParam({
+    name: 'code',
+    description: 'Unique code for a specific right type',
+    required: true,
+    type: String,
+  })
   @Get(':code')
   @ApiOkResponse({ type: PersonalRepresentativeRightType })
+  @ApiNotFoundResponse({ type: HttpProblemResponse })
   async get(
     @Param('code') code: string,
   ): Promise<PersonalRepresentativeRightType> {

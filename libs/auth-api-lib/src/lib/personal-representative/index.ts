@@ -7,6 +7,7 @@ export * from './entities/models/personal-representative-access.model'
 // DTO's
 export * from './entities/dto/personal-representative.dto'
 export * from './entities/dto/personal-representative-create.dto'
+export * from './entities/dto/personal-representative-public.dto'
 export * from './entities/dto/personal-representative-type.dto'
 export * from './entities/dto/personal-representative-right-type.dto'
 export * from './entities/dto/personal-representative-access.dto'

@@ -18,6 +18,7 @@ import {
   Put,
   Inject,
   Query,
+  HttpCode,
 } from '@nestjs/common'
 import {
   ApiOperation,
@@ -25,6 +26,11 @@ import {
   ApiOkResponse,
   ApiBearerAuth,
   ApiTags,
+  ApiNoContentResponse,
+  ApiForbiddenResponse,
+  ApiUnauthorizedResponse,
+  ApiBadRequestResponse,
+  ApiInternalServerErrorResponse,
 } from '@nestjs/swagger'
 import {
   CurrentAuth,
@@ -36,13 +42,18 @@ import {
 import { environment } from '../../../environments'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { PaginationDto } from '@island.is/nest/pagination'
+import { HttpProblemResponse } from '@island.is/nest/problem'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representative-types`
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.writePersonalRepresentative)
-@ApiTags('Personal Representative - Types')
+@ApiTags('Personal Representative Types')
 @Controller('v1/personal-representative-types')
+@ApiForbiddenResponse({ type: HttpProblemResponse })
+@ApiUnauthorizedResponse({ type: HttpProblemResponse })
+@ApiBadRequestResponse({ type: HttpProblemResponse })
+@ApiInternalServerErrorResponse()
 @ApiBearerAuth()
 @Audit({ namespace })
 export class PersonalRepresentativeTypesController {
@@ -65,11 +76,7 @@ export class PersonalRepresentativeTypesController {
   async getAll(
     @Query() query: PaginationDto,
   ): Promise<PaginatedPersonalRepresentativeTypeDto> {
-    const personalRepresentativeTypes = await this.personalRepresentativeTypesService.getMany(
-      query,
-    )
-
-    return personalRepresentativeTypes
+    return this.personalRepresentativeTypesService.getMany(query)
   }
 
   /** Gets a right type by it's key */
@@ -100,17 +107,18 @@ export class PersonalRepresentativeTypesController {
     summary: 'Delete a single personal representative type by code',
   })
   @Delete(':code')
-  @ApiOkResponse()
+  @HttpCode(204)
+  @ApiNoContentResponse()
   async removeAsync(
     @Param('code') code: string,
     @CurrentAuth() user: Auth,
-  ): Promise<number> {
+  ): Promise<void> {
     if (!code) {
       throw new BadRequestException('Key needs to be provided')
     }
 
     // delete right type
-    return await this.auditService.auditPromise(
+    await this.auditService.auditPromise(
       {
         user,
         action: 'deletePersonalRepresentativeType',
@@ -132,7 +140,7 @@ export class PersonalRepresentativeTypesController {
     @CurrentAuth() user: Auth,
   ): Promise<PersonalRepresentativeType> {
     // Create a new right type
-    return await this.auditService.auditPromise(
+    return this.auditService.auditPromise(
       {
         user,
         action: 'createPersonalRepresentativeType',
@@ -154,12 +162,9 @@ export class PersonalRepresentativeTypesController {
     @Param('code') code: string,
     @Body() rightType: PersonalRepresentativeTypeDTO,
     @CurrentAuth() user: Auth,
-  ): Promise<PersonalRepresentativeType> {
-    if (!code) {
-      throw new BadRequestException('Code must be provided')
-    }
+  ): Promise<PersonalRepresentativeType | null> {
     // Update right type
-    const result = await this.auditService.auditPromise(
+    return this.auditService.auditPromise(
       {
         user,
         action: 'updatePersonalRepresentativeType',
@@ -169,11 +174,5 @@ export class PersonalRepresentativeTypesController {
       },
       this.personalRepresentativeTypesService.update(code, rightType),
     )
-
-    if (result == null) {
-      throw new NotFoundException("This particular type doesn't exist")
-    }
-
-    return result
   }
 }
