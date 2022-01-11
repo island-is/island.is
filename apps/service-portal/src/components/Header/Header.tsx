@@ -33,21 +33,21 @@ export const Header: FC<{}> = () => {
 
   const closeButton = (userMenu: boolean) => {
     return (
-      <Box
-        borderRadius="circle"
-        color="blue400"
-        background="blue100"
-        onClick={
-          userMenu
-            ? () => setUserMenuOpen(false)
-            : () => handleMobileMenuTriggerClick()
-        }
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        padding={[1, 'p2']}
-      >
-        <Icon icon="close" color="blue400" />
+      <Box display="flex" alignItems="center">
+        <FocusableBox
+          component="button"
+          onClick={
+            userMenu
+              ? () => setUserMenuOpen(false)
+              : () => handleMobileMenuTriggerClick()
+          }
+          padding={1}
+          borderRadius="circle"
+          background="blue100"
+          className={styles.closeButton}
+        >
+          <Icon icon="close" color="blue400" />
+        </FocusableBox>
       </Box>
     )
   }
@@ -68,11 +68,15 @@ export const Header: FC<{}> = () => {
               <Link to={ServicePortalPath.MinarSidurRoot}>
                 <FocusableBox component="div">
                   <Logo width={40} iconOnly />
-                  <BetaTag />
                 </FocusableBox>
               </Link>
             </Hidden>
-            <Box display="flex" alignItems="center" flexWrap="nowrap">
+            <Box
+              display="flex"
+              alignItems="center"
+              flexWrap="nowrap"
+              marginLeft={1}
+            >
               <UserMenu
                 fullscreen
                 setUserMenuOpen={setUserMenuOpen}

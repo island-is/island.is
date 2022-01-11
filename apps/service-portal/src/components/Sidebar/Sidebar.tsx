@@ -58,17 +58,16 @@ export const Sidebar: FC<{}> = () => {
           className={collapsed && styles.logoCollapsed}
           paddingBottom={8}
           paddingTop={3}
-          paddingLeft={4}
+          paddingLeft={collapsed ? 0 : 4}
         >
           <Link to={ServicePortalPath.MinarSidurRoot}>
             <FocusableBox component="div">
               <Logo
                 width={collapsed ? 24 : 136}
-                height={31}
+                height={22}
                 iconOnly={collapsed}
                 id="sidebar"
               />
-              <BetaTag />
             </FocusableBox>
           </Link>
         </Box>
