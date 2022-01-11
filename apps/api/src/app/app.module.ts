@@ -45,6 +45,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
+import { FishingLicenseModule } from '../../../../libs/api/domains/fishing-licence/fishing-license.module'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -251,6 +252,7 @@ const autoSchemaFile = environment.production
         xroadPath: environment.criminalRecord.xroadPath,
       },
     }),
+    FishingLicenseModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

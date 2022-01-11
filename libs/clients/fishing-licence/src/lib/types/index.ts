@@ -1,6 +1,6 @@
 // Haffæri
 export type Seaworthiness = {
-  validTo: string
+  validTo: Date
 }
 
 //Sviptingar
@@ -18,7 +18,7 @@ export type Ship = {
   length: number
   homePort: string
   seaworthiness: Seaworthiness
-  deprivaitons: Deprivation[]
+  deprivations: Deprivation[]
   fishingLicences: string[]
 }
 

@@ -1,0 +1,33 @@
+import { UseGuards } from '@nestjs/common'
+import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Audit } from '@island.is/nest/audit'
+import { ApiScope } from '@island.is/auth/scopes'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import { FishingLicenseService } from '../lib/fishing-license.service'
+import { Ship } from './models/ship.model'
+
+// @UseGuards(IdsUserGuard, ScopesGuard)
+// @Scopes(ApiScope.internal)
+@Resolver()
+export class FishingLicenseResolver {
+  constructor(private fishingLicenseService: FishingLicenseService) {}
+
+  @Query(() => [Ship], {
+    name: 'fishingLicenseShips',
+    nullable: true,
+  })
+  // @Audit()
+  async shipQuery(
+    // @CurrentUser() user: User,
+    @Args('nationalId', { type: () => String })
+    nationalId: string,
+  ): Promise<Ship[]> {
+    return await this.fishingLicenseService.getShips(nationalId)
+  }
+}
