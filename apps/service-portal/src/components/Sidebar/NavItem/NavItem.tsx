@@ -5,13 +5,14 @@ import * as styles from './NavItem.css'
 import { Link } from 'react-router-dom'
 import { useStore } from '../../../store/stateProvider'
 import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
+import { blue400, blue600, theme } from '@island.is/island-ui/theme'
 import cn from 'classnames'
 
 interface ChevronProps {
   expanded?: boolean
   alwaysExpanded?: boolean
   enabled?: boolean
+  active: boolean
   onChevronClick?: () => void
 }
 interface Props {
@@ -104,7 +105,7 @@ const NavItemContent: FC<Props> = ({
               )}
             ></Box>
             <Icon
-              type={active || hover ? 'filled' : icon.type}
+              type={active || hover ? 'filled' : 'outline'}
               icon={icon.icon}
               size="medium"
               className={styles.icon}
@@ -129,6 +130,7 @@ const Chevron: FC<ChevronProps> = ({
   expanded,
   alwaysExpanded,
   enabled,
+  active,
   onChevronClick,
 }) => {
   const chevronIcon = expanded ? 'chevronUp' : 'chevronDown'
@@ -146,6 +148,7 @@ const Chevron: FC<ChevronProps> = ({
         type="filled"
         icon={chevronIcon}
         size="medium"
+        color={active ? 'blue400' : 'blue600'}
         className={styles.icon}
       />
     </Box>
