@@ -7,7 +7,13 @@ import { Step, Stepper } from '@island.is/api/schema'
 
 import * as style from './StepperFSM.css'
 import { StepperHelper } from './StepperFSMHelper'
-import { getStepperMachine, getCurrentStep } from './StepperFSMUtils'
+
+import {
+  getStepperMachine,
+  getCurrentStep,
+  resolveStepType,
+  STEP_TYPES,
+} from './StepperFSMUtils'
 import { useRouter } from 'next/router'
 
 interface StepperProps {
@@ -27,6 +33,10 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
     return getCurrentStep(stepper, currentState)
   }, [stepper, currentState])
 
+  const currentStepType = useMemo<string>(() => {
+    return resolveStepType(currentStep)
+  }, [currentStep])
+
   // TODO: Read showStepperConfigHelper from environment feature flag.
   // TODO: Add triple-click to show helper.
   const showStepperConfigHelper = true
@@ -42,7 +52,7 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
 
   return (
     <Box className={style.container}>
-      <Text variant="h3">{currentStep.title}</Text>
+      {currentStep.subtitle}
       {currentState.nextEvents.map(function (nextEvent, i) {
         return (
           <Button
@@ -64,6 +74,14 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
           </Button>
         </Box>
       )}
+
+      {currentStepType === STEP_TYPES.QUESTION_RADIO && (
+        <Text>Render Question Radio options...</Text>
+      )}
+      {currentStepType === STEP_TYPES.QUESTION_DROPDOWN && (
+        <Text>Render Question Dropdownb options...</Text>
+      )}
+      {currentStepType === STEP_TYPES.ANSWER && <Text>Render Answer...</Text>}
 
       {showStepperConfigHelper && (
         <StepperHelper

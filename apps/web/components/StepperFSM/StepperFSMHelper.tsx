@@ -11,7 +11,7 @@ import {
 
 import { Step, Stepper } from '@island.is/api/schema'
 
-import { StepperState } from './StepperFSMUtils'
+import { StepperState, resolveStepType } from './StepperFSMUtils'
 
 interface StepperHelperProps {
   stepper: Stepper
@@ -50,6 +50,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
       <Text variant="h4">Step</Text>
       <Text>Title: {currentStep.title}</Text>
       <Text>Slug: {currentStep.slug}</Text>
+      <Text>Type: {resolveStepType(currentStep)}</Text>
       <ArrowLink href={getContentfulLink(currentStep)}>Contentful</ArrowLink>
       <Text variant="h5">Options</Text>
       ...

@@ -95,6 +95,7 @@ export const GET_ARTICLE_QUERY = gql`
             id
             title
             slug
+            stepType
             subtitle {
               ...HtmlFields
             }

@@ -15,6 +15,9 @@ export class Step {
   @Field()
   slug?: string
 
+  @Field()
+  stepType?: string
+
   @Field(() => [SliceUnion], { nullable: true })
   subtitle?: Array<typeof SliceUnion>
 
@@ -33,6 +36,7 @@ export const mapStep = ({ sys, fields }: IStep): SystemMetadata<Step> => ({
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',
+  stepType: fields.stepType ?? '',
   subtitle: fields.subtitle
     ? mapDocument(fields.subtitle, sys.id + ':subtitle')
     : [],
