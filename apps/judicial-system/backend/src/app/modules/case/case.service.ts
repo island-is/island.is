@@ -37,6 +37,7 @@ import {
 } from '../../formatters'
 import { notificationMessages as m } from '../../messages'
 import { FileService } from '../file/file.service'
+import { Defendant } from '../defendant/models/defendant.model'
 import { Institution } from '../institution'
 import { User, UserService } from '../user'
 import { AwsS3Service } from '../aws-s3'
@@ -44,7 +45,6 @@ import { CourtService } from '../court'
 import { CreateCaseDto, InternalCreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
-import { Defendant } from '../defendant/models/defendant.model'
 
 interface Recipient {
   name: string
@@ -53,10 +53,7 @@ interface Recipient {
 
 const standardIncludes: Includeable[] = [
   { model: Defendant, as: 'defendants' },
-  {
-    model: Institution,
-    as: 'court',
-  },
+  { model: Institution, as: 'court' },
   {
     model: User,
     as: 'creatingProsecutor',

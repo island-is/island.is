@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
+import { Defendant } from '../../../defendant/models/defendant.model'
 import { Institution } from '../../../institution'
 import { User } from '../../../user'
 import { Case } from '../../models'
@@ -58,10 +59,8 @@ describe('Case Exists Guard', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         where: { id: caseId },
         include: [
-          {
-            model: Institution,
-            as: 'court',
-          },
+          { model: Defendant, as: 'defendants' },
+          { model: Institution, as: 'court' },
           {
             model: User,
             as: 'creatingProsecutor',

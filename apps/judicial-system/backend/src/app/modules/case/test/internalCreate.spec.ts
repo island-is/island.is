@@ -9,6 +9,7 @@ import { InternalCreateCaseDto } from '../dto'
 import { Case } from '../models'
 import { createTestingCaseModule } from './createTestingCaseModule'
 import { Institution } from '../../institution'
+import { Defendant } from '../../defendant/models/defendant.model'
 
 jest.mock('../../user/user.service')
 
@@ -141,10 +142,8 @@ describe('CaseController - Internal create', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         where: { id: caseId },
         include: [
-          {
-            model: Institution,
-            as: 'court',
-          },
+          { model: Defendant, as: 'defendants' },
+          { model: Institution, as: 'court' },
           {
             model: User,
             as: 'creatingProsecutor',
