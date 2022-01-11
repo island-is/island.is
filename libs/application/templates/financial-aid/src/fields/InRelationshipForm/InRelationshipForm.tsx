@@ -13,7 +13,7 @@ import { useFormContext } from 'react-hook-form'
 const spouseEmail = 'spouse.email'
 const spouseApproveTerms = 'spouse.approveTerms'
 
-const InRelationship = ({ errors, application }: FAFieldBaseProps) => {
+const InRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { answers } = application
   const { clearErrors } = useFormContext()
@@ -63,4 +63,4 @@ const InRelationship = ({ errors, application }: FAFieldBaseProps) => {
   )
 }
 
-export default InRelationship
+export default InRelationshipForm

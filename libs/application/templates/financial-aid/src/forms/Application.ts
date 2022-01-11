@@ -28,9 +28,20 @@ export const Application: Form = buildForm({
             buildCustomField({
               id: 'inRelationship',
               title: m.inRelationship.general.pageTitle,
-              component: 'InRelationship',
+              component: 'InRelationshipForm',
             }),
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'homeCircumstancesForm',
+      title: m.homeCircumstancesForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'homeCircumstances',
+          title: m.homeCircumstancesForm.general.pageTitle,
+          component: 'HomeCircumstancesForm',
         }),
       ],
     }),
