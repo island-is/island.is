@@ -1,8 +1,11 @@
 import * as s from './RegulationDisplay.css'
 
 import React, { useState } from 'react'
-import { ISODate, prettyName } from '@island.is/regulations'
-import { RegulationMaybeDiff } from '@island.is/regulations/web'
+import {
+  ISODate,
+  prettyName,
+  RegulationMaybeDiff,
+} from '@island.is/regulations'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { Button, Stack, Text, Hidden, Link } from '@island.is/island-ui/core'
 import { Sticky } from '@island.is/web/components'

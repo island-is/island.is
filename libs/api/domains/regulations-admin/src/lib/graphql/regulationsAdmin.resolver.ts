@@ -27,11 +27,10 @@ import {
 } from '@island.is/regulations/admin'
 import { extractAppendixesAndComments } from '@island.is/regulations-tools/textHelpers'
 import {
-  RegulationAppendix,
   RegulationViewTypes,
   RegulationPdfDownload,
 } from '@island.is/regulations/web'
-import { nameToSlug, PlainText } from '@island.is/regulations'
+import { nameToSlug, PlainText, Appendix } from '@island.is/regulations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -59,7 +58,7 @@ export class RegulationsAdminResolver {
     }
 
     const lawChapters =
-      (draft.law_chapters &&
+      (draft.law_chapters?.length &&
         (await this.regulationsService.getRegulationsLawChapters(
           false,
           draft.law_chapters,
@@ -135,7 +134,7 @@ export class RegulationsAdminResolver {
       authors,
       idealPublishDate: draft.ideal_publish_date as any, // TODO: Exclude original from response.
       draftingNotes: draft.drafting_notes, // TODO: Exclude original from response.
-      appendixes: appendixes as RegulationAppendix[],
+      appendixes: appendixes as Appendix[],
       comments,
       impacts,
       type: draft.type,

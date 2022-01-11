@@ -1,9 +1,13 @@
 import * as s from './RegulationStatus.css'
 
 import React from 'react'
-import { ISODate, interpolate, toISODate } from '@island.is/regulations'
-import { RegulationMaybeDiff } from '@island.is/regulations/web'
-import { Hidden, Link, Text } from '@island.is/island-ui/core'
+import {
+  ISODate,
+  interpolate,
+  toISODate,
+  RegulationMaybeDiff,
+} from '@island.is/regulations'
+import { Link, Text } from '@island.is/island-ui/core'
 import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'

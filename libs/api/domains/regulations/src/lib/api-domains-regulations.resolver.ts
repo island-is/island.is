@@ -4,15 +4,17 @@ import graphqlTypeJson from 'graphql-type-json'
 import { RegulationsService } from '@island.is/clients/regulations'
 import {
   RegulationSearchResults,
-  Regulation,
-  RegulationMinistryList,
   RegulationYears,
-  RegulationLawChapter,
-  RegulationLawChapterTree,
-  RegulationRedirect,
   RegulationListItem,
-  RegulationDiff,
 } from '@island.is/regulations/web'
+import {
+  Regulation,
+  RegulationDiff,
+  RegulationRedirect,
+  MinistryList,
+  LawChapter,
+  LawChapterTree,
+} from '@island.is/regulations'
 import { GetRegulationsInput } from './dto/getRegulations.input'
 import { GetRegulationInput } from './dto/getRegulation.input'
 import { GetRegulationsLawChaptersInput } from './dto/getRegulationsLawChapters.input'
@@ -72,14 +74,14 @@ export class RegulationsResolver {
   @Query(() => graphqlTypeJson)
   getRegulationsMinistries(
     @Args('input') input: GetRegulationsMinistriesInput,
-  ): Promise<RegulationMinistryList | null> {
+  ): Promise<MinistryList | null> {
     return this.regulationsService.getRegulationsMinistries(input.slugs)
   }
 
   @Query(() => graphqlTypeJson)
   getRegulationsLawChapters(
     @Args('input') input: GetRegulationsLawChaptersInput,
-  ): Promise<RegulationLawChapterTree | Array<RegulationLawChapter> | null> {
+  ): Promise<LawChapterTree | Array<LawChapter> | null> {
     return this.regulationsService.getRegulationsLawChapters(
       input.tree ?? (input.slugs ? false : true),
       input.slugs,

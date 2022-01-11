@@ -9,17 +9,17 @@ import {
   RegName,
   RegQueryName,
   Year,
-} from '@island.is/regulations'
-import {
   Regulation,
   RegulationDiff,
-  RegulationLawChapter,
-  RegulationLawChapterTree,
-  RegulationListItem,
-  RegulationMinistryList,
-  RegulationOptionsList,
-  RegulationOriginalDates,
+  LawChapter,
+  LawChapterTree,
+  MinistryList,
   RegulationRedirect,
+  RegulationOptionList,
+} from '@island.is/regulations'
+import {
+  RegulationListItem,
+  RegulationOriginalDates,
   RegulationSearchResults,
   RegulationViewTypes,
   RegulationYears,
@@ -95,9 +95,9 @@ export class RegulationsService extends RESTDataSource {
 
   async getRegulationsOptionsList(
     names: Array<RegName>,
-  ): Promise<RegulationOptionsList> {
+  ): Promise<RegulationOptionList> {
     const response =
-      (await this.get<RegulationOptionsList>(
+      (await this.get<RegulationOptionList>(
         'regulations/optionsList?names=' + names.join(','),
       )) ?? []
     return response
@@ -129,8 +129,8 @@ export class RegulationsService extends RESTDataSource {
 
   async getRegulationsMinistries(
     slugs?: Array<MinistrySlug>,
-  ): Promise<RegulationMinistryList | null> {
-    const response = await this.get<RegulationMinistryList | null>(
+  ): Promise<MinistryList | null> {
+    const response = await this.get<MinistryList | null>(
       `ministries${slugs ? '?slugs=' + slugs.join(',') : ''}`,
     )
     return response
@@ -139,10 +139,8 @@ export class RegulationsService extends RESTDataSource {
   async getRegulationsLawChapters(
     tree: boolean,
     slugs?: Array<LawChapterSlug>,
-  ): Promise<RegulationLawChapterTree | RegulationLawChapter[] | null> {
-    const response = await this.get<
-      RegulationLawChapterTree | RegulationLawChapter[] | null
-    >(
+  ): Promise<LawChapterTree | LawChapter[] | null> {
+    const response = await this.get<LawChapterTree | LawChapter[] | null>(
       `lawchapters${tree ? '/tree' : ''}${
         slugs ? '?slugs=' + slugs.join(',') : ''
       }`,

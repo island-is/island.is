@@ -8,13 +8,13 @@ import {
   PlainText,
   ensureRegName,
   RegName,
+  Ministry,
 } from '@island.is/regulations'
 import { startOfDay, addDays, set } from 'date-fns/esm'
 import { OptionTypeBase, ValueType } from 'react-select'
 import { RegDraftFormSimpleProps, RegDraftForm } from '../state/types'
 
 import { Option } from '@island.is/island-ui/core'
-import { RegulationMinistry } from '@island.is/regulations/web'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import { errorMsgs } from '../messages'
 
@@ -233,7 +233,7 @@ export const findAffectedRegulationsInText = (
 
 export const findSignatureInText = (
   html: HTMLText,
-  ministries: ReadonlyArray<RegulationMinistry>,
+  ministries: ReadonlyArray<Ministry>,
 ) => {
   const paragraphs = Array.from(asDiv(html).querySelectorAll('p')).slice(-40)
 

@@ -3,14 +3,14 @@ import { generatePath, useHistory } from 'react-router'
 import { Query } from '@island.is/api/schema'
 import { gql, useQuery, useMutation, ApolloError } from '@apollo/client'
 import { RegulationDraft } from '@island.is/regulations/admin'
-import {
-  RegulationLawChapter,
-  RegulationMinistryList,
-  RegulationOption,
-  RegulationOptionsList,
-} from '@island.is/regulations/web'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { isNonNull, RegName } from '@island.is/regulations'
+import {
+  RegName,
+  LawChapter,
+  MinistryList,
+  RegulationOption,
+  RegulationOptionList,
+} from '@island.is/regulations'
 
 // import { APPLICATION_APPLICATIONS } from '../../lib/queries/applicationApplications'
 
@@ -70,7 +70,7 @@ const MinistriesQuery = gql`
   }
 `
 
-export const useMinistriesQuery = (): QueryResult<RegulationMinistryList> => {
+export const useMinistriesQuery = (): QueryResult<MinistryList> => {
   const { loading, error, data } = useQuery<Query>(MinistriesQuery)
 
   if (loading) {
@@ -82,7 +82,7 @@ export const useMinistriesQuery = (): QueryResult<RegulationMinistryList> => {
     }
   }
   return {
-    data: data.getDraftRegulationsMinistries as RegulationMinistryList,
+    data: data.getDraftRegulationsMinistries as MinistryList,
   }
 }
 
@@ -94,9 +94,7 @@ const LawChaptersQuery = gql`
   }
 `
 
-export const useLawChaptersQuery = (): QueryResult<
-  Array<RegulationLawChapter>
-> => {
+export const useLawChaptersQuery = (): QueryResult<Array<LawChapter>> => {
   const { loading, error, data } = useQuery<Query>(LawChaptersQuery)
 
   if (loading) {
@@ -108,7 +106,7 @@ export const useLawChaptersQuery = (): QueryResult<
     }
   }
   return {
-    data: data.getDraftRegulationsLawChapters as Array<RegulationLawChapter>,
+    data: data.getDraftRegulationsLawChapters as Array<LawChapter>,
   }
 }
 
@@ -177,7 +175,7 @@ const useMockRegulationListQuery = (maybeNames: ReadonlyArray<string>) => {
     },
     {
       title: 'Reglugerð um (1.) breytingu á reglugerð nr. 101/2021.',
-      cancelled: true,
+      repealed: true,
       migrated: true,
     },
     {
@@ -223,7 +221,7 @@ const useMockRegulationListQuery = (maybeNames: ReadonlyArray<string>) => {
 
 export const useRegulationListQuery = (
   maybeNames: ReadonlyArray<string>,
-): QueryResult<RegulationOptionsList> => {
+): QueryResult<RegulationOptionList> => {
   // const { loading, error, data } = useQuery<Query>(RegulationListQuery, {
   //   variables: { input: { names: maybeNames } },
   //   fetchPolicy: 'no-cache',
@@ -239,6 +237,6 @@ export const useRegulationListQuery = (
     }
   }
   return {
-    data: data.getRegulationList as RegulationOptionsList,
+    data: data.getRegulationList as RegulationOptionList,
   }
 }

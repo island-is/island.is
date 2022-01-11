@@ -12,9 +12,8 @@ import {
   RegName,
   URLString,
 } from '@island.is/regulations'
-import { Kennitala, RegulationType } from '@island.is/regulations'
+import { Kennitala, RegulationType, MinistryList } from '@island.is/regulations'
 import { Step } from '../types'
-import { RegulationMinistryList } from '@island.is/regulations/web'
 import { MessageDescriptor } from 'react-intl'
 
 export type StepNav = {
@@ -95,7 +94,7 @@ export type DraftingState = {
   isEditor: boolean
   stepName: Step
   draft: RegDraftForm
-  ministries: RegulationMinistryList
+  ministries: MinistryList
   saving?: boolean
   shipping?: boolean
   error?: Error
