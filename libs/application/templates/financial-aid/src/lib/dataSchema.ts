@@ -1,5 +1,6 @@
 import { error } from './messages/index'
 import * as z from 'zod'
+import { HomeCircumstances } from '@island.is/financial-aid/shared/lib'
 import { isValidEmail } from './utils'
 import { ApproveOptions } from './types'
 
@@ -26,6 +27,25 @@ export const dataSchema = z.object({
     })
     .refine((v) => (v.isStudent === ApproveOptions.Yes ? v.custom : true), {
       params: error.validation.approveSpouse,
+    }),
+  homeCircumstances: z
+    .object({
+      type: z
+        .enum([
+          HomeCircumstances.WITHPARENTS,
+          HomeCircumstances.WITHOTHERS,
+          HomeCircumstances.OWNPLACE,
+          HomeCircumstances.REGISTEREDLEASE,
+          HomeCircumstances.UNREGISTEREDLEASE,
+          HomeCircumstances.OTHER,
+        ])
+        .refine((v) => v, {
+          params: error.validation.radioErrorMessage,
+        }),
+      custom: z.string().optional(),
+    })
+    .refine((v) => (v.type === HomeCircumstances.OTHER ? v.custom : true), {
+      params: error.validation.inputErrorMessage,
       path: ['custom'],
     }),
 })

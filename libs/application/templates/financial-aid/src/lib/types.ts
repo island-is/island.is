@@ -56,3 +56,8 @@ export interface Spouse {
   maritalStatus: string
   name: string
 }
+
+export interface InputTypes {
+  id: string
+  error?: string
+}
