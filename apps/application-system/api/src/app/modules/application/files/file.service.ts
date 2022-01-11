@@ -115,6 +115,10 @@ export class FileService {
     return await this.awsService.getPresignedUrl(bucket, fileName)
   }
 
+  async deleteFiles(files: { Key: string; name: string }[]) {
+    await this.awsService.deleteObjects(this.getBucketName(), files)
+  }
+
   private async createFile(application: Application, pdfType: PdfTypes) {
     switch (pdfType) {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {

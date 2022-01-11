@@ -22,7 +22,7 @@ import {
 } from './application.configuration'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { PaymentModule } from '../payment/payment.module'
-import { ApplicationLifeCycleService } from './application-lifecycle.service'
+import { ApplicationLifeCycleService } from './lifecycle/application-lifecycle.service'
 
 let BullModule: DynamicModule
 

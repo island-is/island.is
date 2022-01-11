@@ -8,7 +8,7 @@ import { NestFactory } from '@nestjs/core'
 import yargs from 'yargs'
 
 import { AppModule } from './app/app.module'
-import { ApplicationLifeCycleService } from './app/modules/application/application-lifecycle.service'
+import { ApplicationLifeCycleService } from './app/modules/application/lifecycle/application-lifecycle.service'
 import { openApi } from './openApi'
 
 const worker = async () => {

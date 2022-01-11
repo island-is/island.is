@@ -12,6 +12,7 @@ import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 
 import { ApplicationLifecycle } from './types'
+import { APP_PIPE } from '@nestjs/core'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -30,7 +31,6 @@ const applicationIsNotSetToBePruned = () => ({
 
 @Injectable()
 export class ApplicationService {
-  public stuff = 'stuffApplications'
   constructor(
     @InjectModel(Application)
     private applicationModel: typeof Application,
@@ -88,7 +88,7 @@ export class ApplicationService {
   async findAllDueToBePruned(): Promise<Application[]> {
     return this.applicationModel.findAll({
       where: {
-        [Op.or]: [
+        [Op.and]: [
           {
             pruneAt: {
               [Op.not]: null,
@@ -134,7 +134,9 @@ export class ApplicationService {
 
   async update(
     id: string,
-    application: Partial<Pick<Application, 'attachments' | 'answers'>>,
+    application: Partial<
+      Pick<Application, 'attachments' | 'answers' | 'externalData'>
+    >,
   ) {
     const [
       numberOfAffectedRows,
@@ -143,7 +145,6 @@ export class ApplicationService {
       where: { id },
       returning: true,
     })
-
     return { numberOfAffectedRows, updatedApplication }
   }
 

@@ -49,7 +49,7 @@ export class AwsService {
     return await this.s3.getSignedUrlPromise('getObject', presignedUrlParams)
   }
 
-  async fileExists(bucket: string, fileName: string): Promise<boolean> {
+  public async fileExists(bucket: string, fileName: string): Promise<boolean> {
     return await this.s3
       .headObject({ Bucket: bucket, Key: fileName })
       .promise()
@@ -57,5 +57,16 @@ export class AwsService {
         () => true,
         () => false,
       )
+  }
+
+  public async deleteObjects(bucket: string, fileObjects: { Key: string }[]) {
+    await this.s3
+      .deleteObjects({
+        Bucket: bucket,
+        Delete: {
+          Objects: fileObjects,
+        },
+      })
+      .promise()
   }
 }
