@@ -18,7 +18,6 @@ export class QualityPhotoProvider extends BasicDataProvider {
       application.answers,
       'fakeData.useFakeData',
     )
-
     // To use fake data for the quality photo provider take a look at the implementation in libs/application/templates/driving-license/src/forms/application.ts
     if (useFakeData === YES) {
       const hasQualityPhoto = getValueViaPath<'yes' | 'no'>(
@@ -29,17 +28,15 @@ export class QualityPhotoProvider extends BasicDataProvider {
         hasQualityPhoto: hasQualityPhoto === YES,
       }
     }
-
     const query = `
         query HasQualityPhoto {
           qualityPhoto {
             hasQualityPhoto
           }
-          
+        }
       `
 
     const res = await this.useGraphqlGateway(query)
-
     if (!res.ok) {
       return Promise.reject({
         reason: 'Náði ekki sambandi við vefþjónustu',

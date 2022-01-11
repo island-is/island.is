@@ -7,7 +7,7 @@ export interface QualityPhotoType {
   success: boolean
 }
 
-type HasQualityPhotoData = {
+export type HasQualityPhotoData = {
   data: {
     hasQualityPhoto: boolean
   }
