@@ -242,13 +242,17 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
     <Stack space={3}>
       {!!article.category && (
         <Box display={['none', 'none', 'block']} printHidden>
-          <Link {...linkResolver('articlecategory', [article.category.slug])}>
+          <Link
+            {...linkResolver('articlecategory', [article.category.slug])}
+            skipTab
+          >
             <Button
               preTextIcon="arrowBack"
               preTextIconType="filled"
               size="small"
               type="button"
               variant="text"
+              truncate
             >
               {article.category.title}
             </Button>
@@ -424,29 +428,18 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         >
           {!!article.category && (
             <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
-              <LinkContext.Provider
-                value={{
-                  linkRenderer: (href, children) => (
-                    <Link href={href} pureChildren skipTab>
-                      {children}
-                    </Link>
-                  ),
-                }}
-              >
-                <Text truncate>
-                  <a href={categoryHref}>
-                    <Button
-                      preTextIcon="arrowBack"
-                      preTextIconType="filled"
-                      size="small"
-                      type="button"
-                      variant="text"
-                    >
-                      {article.category.title}
-                    </Button>
-                  </a>
-                </Text>
-              </LinkContext.Provider>
+              <Link href={categoryHref} skipTab>
+                <Button
+                  preTextIcon="arrowBack"
+                  preTextIconType="filled"
+                  size="small"
+                  type="button"
+                  variant="text"
+                  truncate
+                >
+                  {article.category.title}
+                </Button>
+              </Link>
             </Box>
           )}
           {article.organization.length > 0 && (
