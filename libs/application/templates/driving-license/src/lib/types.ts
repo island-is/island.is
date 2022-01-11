@@ -7,4 +7,3 @@ export type HasQualityPhotoData = {
 }
 
 export type ConditionFn = (answer: FormValue) => boolean
-

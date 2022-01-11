@@ -23,7 +23,7 @@ type HasQualityPhotoData = {
   }
 }
 
-export const getQualityPhoto = ( application : Application): QualityPhotoType => {
+export const getQualityPhoto = (application: Application): QualityPhotoType => {
   // If running locally or on dev allow for fake data
   if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
     const fakeData = application.answers.fakeData as

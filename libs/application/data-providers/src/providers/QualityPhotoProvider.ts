@@ -10,7 +10,6 @@ export class QualityPhotoProvider extends BasicDataProvider {
   type = 'QualityPhotoProvider'
 
   async provide(application: Application) {
-    console.log("IN HERE!!!")
     const query = `
         query HasQualityPhoto {
           hasQualityPhoto {
@@ -37,7 +36,6 @@ export class QualityPhotoProvider extends BasicDataProvider {
       hasQualityPhoto: !!response.data.hasQualityPhoto?.hasQualityPhoto,
     }
   }
-
 
   onProvideError(): FailedDataProviderResult {
     return {

@@ -191,7 +191,8 @@ export const getApplication = (): Form => {
             title: m.qualityPhotoTitle,
             condition: (_, externalData) => {
               return (
-                (externalData.qualityPhoto as HasQualityPhotoData)?.data?.hasQualityPhoto  === true
+                (externalData.qualityPhoto as HasQualityPhotoData)?.data
+                  ?.hasQualityPhoto === true
               )
             },
             children: [
@@ -239,7 +240,8 @@ export const getApplication = (): Form => {
             title: m.qualityPhotoTitle,
             condition: (_, externalData) => {
               return (
-                (externalData.qualityPhoto as HasQualityPhotoData)?.data?.hasQualityPhoto === false
+                (externalData.qualityPhoto as HasQualityPhotoData)?.data
+                  ?.hasQualityPhoto === false
               )
             },
             children: [

@@ -247,13 +247,12 @@ export class DrivingLicenseService {
     }
 
     const image = await this.drivingLicenseApi.getQualityPhoto({
-          nationalId,
-        })
-    
-    const qualityPhoto = image ? `data:image/jpeg;base64,${image?.data.substr(
-      1,
-      image.data.length - 2,
-    )}` : null
+      nationalId,
+    })
+
+    const qualityPhoto = image
+      ? `data:image/jpeg;base64,${image?.data.substr(1, image.data.length - 2)}`
+      : null
 
     return {
       success: hasQualityPhoto,
