@@ -47,7 +47,7 @@ import { HttpProblemResponse } from '@island.is/nest/problem'
 const namespace = `${environment.audit.defaultNamespace}/right-types`
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
-@Scopes(AuthScope.writePersonalRepresentative)
+@Scopes(AuthScope.adminPersonalRepresentative)
 @ApiBearerAuth()
 @ApiTags('Right Types')
 @Controller('v1/right-types')

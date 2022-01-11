@@ -16,7 +16,7 @@ const path = '/v1/rights'
 
 const user = createCurrentUser({
   nationalId: '1122334455',
-  scope: [AuthScope.readPersonalRepresentative],
+  scope: [AuthScope.publicPersonalRepresentative],
 })
 
 describe('RightsController - Without Auth', () => {

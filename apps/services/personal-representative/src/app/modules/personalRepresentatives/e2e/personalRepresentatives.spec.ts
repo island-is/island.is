@@ -20,7 +20,7 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 
 const user = createCurrentUser({
   nationalId: '1122334455',
-  scope: [AuthScope.writePersonalRepresentative],
+  scope: [AuthScope.adminPersonalRepresentative],
 })
 
 const simpleRequestData: PersonalRepresentativeCreateDTO = {

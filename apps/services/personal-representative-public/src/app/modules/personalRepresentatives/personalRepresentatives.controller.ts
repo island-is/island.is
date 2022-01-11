@@ -36,7 +36,7 @@ import { HttpProblemResponse } from '@island.is/nest/problem'
 const namespace = `${environment.audit.defaultNamespace}/personal-representatives`
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
-@Scopes(AuthScope.readPersonalRepresentative)
+@Scopes(AuthScope.publicPersonalRepresentative)
 @ApiTags('Personal Representatives - Public')
 @Controller('v1/personal-representatives')
 @ApiForbiddenResponse({ type: HttpProblemResponse })
@@ -81,7 +81,7 @@ export class PersonalRepresentativesController {
 
     const personalReps = await this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'getPersonalRepresentativePermissions',
         namespace,
         resources: prId,

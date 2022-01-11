@@ -22,7 +22,7 @@ const path = '/v1/personal-representatives'
 
 const user = createCurrentUser({
   nationalId: '1122334455',
-  scope: [AuthScope.readPersonalRepresentative],
+  scope: [AuthScope.publicPersonalRepresentative],
 })
 
 const rightTypeList = [

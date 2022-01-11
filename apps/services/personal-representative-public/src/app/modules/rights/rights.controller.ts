@@ -35,7 +35,7 @@ import { HttpProblemResponse } from '@island.is/nest/problem'
 const namespace = `${environment.audit.defaultNamespace}/rights`
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
-@Scopes(AuthScope.readPersonalRepresentative)
+@Scopes(AuthScope.publicPersonalRepresentative)
 @ApiBearerAuth()
 @ApiTags('Right Types - Public')
 @Controller('v1/rights')

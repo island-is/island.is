@@ -24,7 +24,7 @@ import { Op } from 'sequelize'
 const namespace = `${environment.audit.defaultNamespace}/access-logs`
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
-@Scopes(AuthScope.writePersonalRepresentative)
+@Scopes(AuthScope.adminPersonalRepresentative)
 @ApiTags('Access logs')
 @Controller('v1/access-logs')
 @ApiForbiddenResponse({ type: HttpProblemResponse })

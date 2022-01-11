@@ -47,7 +47,7 @@ import { PaginationWithNationalIdsDto } from '../dto/PaginationWithNationalIds.d
 const namespace = `${environment.audit.defaultNamespace}/personal-representative`
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
-@Scopes(AuthScope.writePersonalRepresentative)
+@Scopes(AuthScope.adminPersonalRepresentative)
 @ApiTags('Personal Representatives')
 @Controller('v1/personal-representatives')
 @ApiForbiddenResponse({ type: HttpProblemResponse })

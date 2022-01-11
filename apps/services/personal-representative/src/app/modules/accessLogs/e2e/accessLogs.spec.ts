@@ -15,7 +15,7 @@ import { AuthScope } from '@island.is/auth/scopes'
 const scopes = ['@island.is/scope0', '@island.is/scope1']
 const user = createCurrentUser({
   nationalId: '1122334455',
-  scope: [AuthScope.writePersonalRepresentative, scopes[0]],
+  scope: [AuthScope.adminPersonalRepresentative, scopes[0]],
 })
 
 const accessData: PersonalRepresentativeAccessDTO[] = [

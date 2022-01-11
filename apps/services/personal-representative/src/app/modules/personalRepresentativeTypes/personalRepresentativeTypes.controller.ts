@@ -47,7 +47,7 @@ import { HttpProblemResponse } from '@island.is/nest/problem'
 const namespace = `${environment.audit.defaultNamespace}/personal-representative-types`
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
-@Scopes(AuthScope.writePersonalRepresentative)
+@Scopes(AuthScope.adminPersonalRepresentative)
 @ApiTags('Personal Representative Types')
 @Controller('v1/personal-representative-types')
 @ApiForbiddenResponse({ type: HttpProblemResponse })
@@ -120,7 +120,7 @@ export class PersonalRepresentativeTypesController {
     // delete right type
     await this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'deletePersonalRepresentativeType',
         namespace,
         resources: code,
@@ -142,7 +142,7 @@ export class PersonalRepresentativeTypesController {
     // Create a new right type
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'createPersonalRepresentativeType',
         namespace,
         resources: rightType.code,
@@ -166,7 +166,7 @@ export class PersonalRepresentativeTypesController {
     // Update right type
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'updatePersonalRepresentativeType',
         namespace,
         resources: rightType.code,
