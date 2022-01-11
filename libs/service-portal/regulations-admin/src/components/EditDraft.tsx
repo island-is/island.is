@@ -15,7 +15,7 @@ import { useDraftingState, StepComponent } from '../state/useDraftingState'
 import { MessageDescriptor } from 'react-intl'
 import { DraftingNotes } from '../components/DraftingNotes'
 import { useLocale } from '../utils'
-import { RegulationMinistryList } from '@island.is/regulations/web'
+import { MinistryList } from '@island.is/regulations'
 
 // ---------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ const stepData: Record<
 type EditDraftProps = {
   draft: RegulationDraft
   stepName: Step
-  ministries: RegulationMinistryList
+  ministries: MinistryList
 }
 
 const EditDraft = (props: EditDraftProps) => {

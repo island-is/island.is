@@ -4,6 +4,8 @@ import {
   LawChapterSlug,
   PlainText,
   RegName,
+  Appendix,
+  MinistryList,
 } from '@island.is/regulations'
 import { useAuth } from '@island.is/auth/react'
 import { ServicePortalPath } from '@island.is/service-portal/core'
@@ -34,10 +36,7 @@ import {
   InputType,
 } from './types'
 import { buttonsMsgs, errorMsgs } from '../messages'
-import {
-  RegulationAppendix,
-  RegulationMinistryList,
-} from '@island.is/regulations/web'
+import {} from '@island.is/regulations/web'
 import { toast } from '@island.is/island-ui/core'
 
 export const UPDATE_DRAFT_REGULATION_MUTATION = gql`
@@ -112,7 +111,7 @@ const fHtml = (value: HTMLText, required?: true): HtmlDraftField => ({
   type: 'html',
 })
 
-const makeDraftAppendixForm = (appendix: RegulationAppendix, key: string) => ({
+const makeDraftAppendixForm = (appendix: Appendix, key: string) => ({
   title: fText(appendix.title, true),
   text: fHtml(appendix.text, true),
   key,
@@ -404,7 +403,7 @@ const draftingStateReducer: Reducer<DraftingState, Action> = (
 
 export const useDraftingState = (
   draft: RegulationDraft,
-  ministries: RegulationMinistryList,
+  ministries: MinistryList,
   stepName: Step,
 ) => {
   const history = useHistory()

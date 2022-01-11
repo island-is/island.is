@@ -4,11 +4,13 @@ import React, { useEffect, useMemo, useState } from 'react'
 import cn from 'classnames'
 import { Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { ISODate, interpolate, prettyName } from '@island.is/regulations'
 import {
+  ISODate,
+  interpolate,
+  prettyName,
   RegulationHistoryItem,
   RegulationMaybeDiff,
-} from '@island.is/regulations/web'
+} from '@island.is/regulations'
 import {
   RegulationsSidebarBox,
   RegulationsSidebarLink,

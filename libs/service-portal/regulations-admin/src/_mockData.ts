@@ -1,5 +1,4 @@
-import { MinistrySlug } from '@island.is/regulations'
-import { RegulationMinistryList } from '@island.is/regulations/web'
+import { MinistrySlug, MinistryList } from '@island.is/regulations'
 import { useEffect, useRef, useState } from 'react'
 import { RegulationDraft } from '@island.is/regulations/admin'
 // import { } from './utils'
@@ -36,7 +35,7 @@ export const mockSave = (_: RegulationDraft) =>
 
 // ---------------------------------------------------------------------------
 
-export const mockMinistrylist: RegulationMinistryList = [
+export const mockMinistrylist: MinistryList = [
   {
     name: 'Forsætisráðuneyti',
     slug: 'fsr' as MinistrySlug,

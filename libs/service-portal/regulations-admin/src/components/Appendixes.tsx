@@ -4,7 +4,7 @@ import { EditorInput } from './EditorInput'
 import React, { MutableRefObject, useState } from 'react'
 import { MiniDiff } from './MiniDiff'
 import { editorMsgs as msg, errorMsgs } from '../messages'
-import { domid, HTMLText, PlainText } from '@island.is/regulations'
+import { HTMLText, PlainText, Appendix } from '@island.is/regulations'
 import { RegulationDraft } from '@island.is/regulations/admin'
 import {
   Accordion,
@@ -16,13 +16,12 @@ import { MagicTextarea } from './MagicTextarea'
 import { useLocale } from '../utils'
 import { AppendixDraftForm, RegDraftForm } from '../state/types'
 import { RegDraftActions } from '../state/useDraftingState'
-import { RegulationAppendix } from '@island.is/regulations/web'
 
 // ---------------------------------------------------------------------------
 
 type AppendixProps = {
   appendix: AppendixDraftForm
-  baseAppendix?: RegulationAppendix
+  baseAppendix?: Appendix
   idx: number
   removable: boolean
   moveUpable: boolean
@@ -164,7 +163,7 @@ export type AppendixStateItem = {
 type AppendixesProps = {
   draftId: RegulationDraft['id']
   appendixes: RegDraftForm['appendixes']
-  baseAppendixes?: ReadonlyArray<RegulationAppendix>
+  baseAppendixes?: ReadonlyArray<Appendix>
   actions: Pick<
     RegDraftActions,
     'setAppendixProp' | 'addAppendix' | 'removeAppendix' | 'moveAppendixUp'

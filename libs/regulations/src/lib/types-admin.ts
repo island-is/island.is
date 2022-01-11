@@ -8,18 +8,16 @@ import {
   RegulationDraftId,
 } from './types-admin-database'
 import {
-  Regulation,
-  RegulationLawChapter,
-  RegulationMinistry,
-} from './types-web'
-import {
   RegName,
   Kennitala,
   ISODate,
   PlainText,
   HTMLText,
-  RegulationType,
   URLString,
+  RegulationType,
+  Regulation,
+  LawChapter,
+  Ministry,
 } from './types'
 
 export type {
@@ -64,7 +62,7 @@ export type RegulationDraft = {
   name?: RegName
   draftingNotes: HTMLText
   authors: ReadonlyArray<Author>
-  lawChapters?: ReadonlyArray<RegulationLawChapter>
+  lawChapters?: ReadonlyArray<LawChapter>
   idealPublishDate?: ISODate
   fastTrack?: boolean
   effectiveDate?: ISODate
@@ -72,7 +70,7 @@ export type RegulationDraft = {
   signatureText: HTMLText
   signedDocumentUrl?: URLString
   type?: RegulationType
-  ministry?: RegulationMinistry
+  ministry?: Ministry
   impacts: ReadonlyArray<DraftRegulationCancel | DraftRegulationChange>
 } & Pick<Regulation, 'text' | 'appendixes' | 'comments'>
 
