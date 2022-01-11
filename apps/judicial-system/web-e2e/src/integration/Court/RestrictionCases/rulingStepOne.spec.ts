@@ -1,10 +1,6 @@
 /// <reference path="../../../support/index.d.ts" />
 
-import {
-  Case,
-  CaseCustodyRestrictions,
-  CaseDecision,
-} from '@island.is/judicial-system/types'
+import { Case, CaseDecision } from '@island.is/judicial-system/types'
 import { makeCustodyCase } from '@island.is/judicial-system/formatters'
 import { intercept } from '../../../utils'
 
@@ -96,19 +92,19 @@ describe('/domur/urskurdur/:id', () => {
     cy.getByTestid('caseDecisionSection').should('exist')
   })
 
-  it('should have a disabled isolationTo datepicker if isolation is not one of the custody restrictions and not if it is', () => {
+  it('should have a disabled isolationTo datepicker if isolation is nor selected and not if it is', () => {
     const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.ACCEPTING,
-      custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
+      isCustodyIsolation: true,
     }
     cy.visit('/domur/urskurdur/test_id_stadfest')
 
     intercept(caseDataAddition)
 
-    cy.get('#isolationToDate').should('have.attr', 'disabled')
-    cy.getByTestid('checkbox').children('div').children('input').check()
     cy.get('#isolationToDate').should('not.have.attr', 'disabled')
+    cy.get('[name="isCustodyIsolation"]').uncheck()
+    cy.get('#isolationToDate').should('have.attr', 'disabled')
   })
 })

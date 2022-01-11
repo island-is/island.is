@@ -19,6 +19,7 @@ export default {
     'frontpage',
   ],
   nestedContentTypes: [
+    'organization',
     'subArticle',
     'processEntry',
     'embeddedVideo',
