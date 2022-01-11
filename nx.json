@@ -307,83 +307,83 @@
       ]
     },
     "application-system-form": {
-      "tags": []
+      "tags": ["type:app", "scope:react"]
     },
     "application-system-form-e2e": {
       "tags": ["type:app", "scope:e2e"],
       "implicitDependencies": ["application-system-form"]
     },
     "application-template-api-modules": {
-      "tags": []
+      "tags": ["type:app", "scope:react"]
     },
     "application-template-loader": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-accident-notification": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-children-residence-change": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-complaints-to-althingi-ombudsman": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-criminal-record": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-data-protection-complaint": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-document-provider-onboarding": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-driving-assessment-approval": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-driving-license": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-family-matters-core": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-funding-government-projects": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-general-petition": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-health-insurance": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-institution-collaboration": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-login-service": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-p-sign": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-parental-leave": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-passport": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-public-debt-payment-plan": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-templates-reference-template": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-ui-components": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-ui-fields": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "application-ui-shell": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "auth-admin-web": {
       "tags": ["type:app", "scope:nextjs"],
@@ -431,75 +431,75 @@
       "tags": []
     },
     "clients-assets": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-auth-public-api": {
-      "tags": [],
+      "tags": ["type:lib", "scope:nestjs"],
       "implicitDependencies": ["services-auth-public-api"]
     },
     "clients-criminal-record": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-data-protection-complaint": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-document-provider": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-documents": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-driving-license": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-finance": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-health-insurance-v2": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-islykill": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-middlewares": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-mms": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-national-registry-v1": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-national-registry-v2": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-payment": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-payment-schedule": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-regulations": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-rsk-v1": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-rsk-v2": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-syslumenn": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-user-profile": {
-      "tags": [],
+      "tags": ["type:lib", "scope:nestjs"],
       "implicitDependencies": ["services-user-profile"]
     },
     "clients-vmst": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "clients-zendesk": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "cms": {
       "tags": []
@@ -511,16 +511,16 @@
       "tags": []
     },
     "content-search-indexer": {
-      "tags": []
+      "tags": ["type:lib", "scope:rest-api"]
     },
     "content-search-indexer-types": {
       "tags": []
     },
     "content-search-metrics": {
-      "tags": []
+      "tags": ["type:lib", "scope:rest-api"]
     },
     "content-search-toolkit": {
-      "tags": []
+      "tags": ["type:lib", "scope:utils"]
     },
     "contentful-mideind-extension": {
       "tags": []
@@ -532,7 +532,7 @@
       "tags": []
     },
     "dokobit-signing": {
-      "tags": []
+      "tags": ["type:lib", "scope:utils"]
     },
     "download-service": {
       "tags": []
@@ -544,7 +544,7 @@
       "tags": []
     },
     "feature-flags": {
-      "tags": []
+      "tags": ["type:lib", "scope:utils"]
     },
     "file-storage": {
       "tags": []
@@ -592,7 +592,7 @@
       ]
     },
     "financial-aid-web-osk-e2e": {
-      "tags": [],
+      "tags": ["type:app", "scope:e2e"],
       "implicitDependencies": ["financial-aid-web-osk"]
     },
     "financial-aid-web-veita": {
@@ -622,19 +622,19 @@
       ]
     },
     "github-actions-cache": {
-      "tags": []
+      "tags": ["type:lib", "scope:utils"]
     },
     "gjafakort-api": {
-      "tags": []
+      "tags": ["type:app", "scope:graphql-api"]
     },
     "gjafakort-application": {
-      "tags": []
+      "tags": ["type:app", "scope:rest-api"]
     },
     "gjafakort-consts": {
       "tags": ["type:lib", "scope:utils"]
     },
     "gjafakort-queue-listener": {
-      "tags": []
+      "tags": ["type:lib", "scope:utils"]
     },
     "gjafakort-types": {
       "tags": ["type:lib", "scope:utils"]
@@ -671,7 +671,7 @@
       "implicitDependencies": ["gjafakort-web"]
     },
     "health-insurance": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "icelandic-names-registry-backend": {
       "tags": ["type:app", "scope:rest-api"],
@@ -696,36 +696,36 @@
       "tags": []
     },
     "infra-nest-server": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "infra-next-server": {
-      "tags": []
+      "tags": ["type:lib", "scope:nextjs"]
     },
     "infra-tracing": {
-      "tags": []
+      "tags": ["type:lib", "scope:utils"]
     },
     "island-ui-contentful": {
-      "tags": []
+      "tags": ["type:lib", "scope:ui"]
     },
     "island-ui-core": {
-      "tags": [],
+      "tags": ["type:lib", "scope:ui"],
       "implicitDependencies": ["island-ui-theme"]
     },
     "island-ui-fonts": {
-      "tags": []
+      "tags": ["type:lib", "scope:ui"]
     },
     "island-ui-storybook": {
-      "tags": [],
+      "tags": ["type:lib", "scope:ui"],
       "implicitDependencies": ["island-ui-core"]
     },
     "island-ui-theme": {
-      "tags": []
+      "tags": ["type:lib", "scope:ui"]
     },
     "island-ui-utils": {
-      "tags": []
+      "tags": ["type:lib", "scope:ui"]
     },
     "island-ui-vanilla-extract-utils": {
-      "tags": []
+      "tags": ["type:lib", "scope:ui"]
     },
     "judicial-system-api": {
       "tags": []
@@ -792,37 +792,37 @@
       "tags": []
     },
     "localization": {
-      "tags": []
+      "tags": ["type:lib", "scope:utils"]
     },
     "logging": {
-      "tags": []
+      "tags": ["type:lib", "scope:utils"]
     },
     "message-queue": {
-      "tags": []
+      "tags": ["type:lib", "scope:utils"]
     },
     "nest-audit": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "nest-config": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "nest-feature-flags": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "nest-pagination": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "nest-problem": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "nest-swagger": {
       "tags": []
     },
     "nest-validators": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "next-ids-auth": {
-      "tags": []
+      "tags": ["type:lib", "scope:nextjs"]
     },
     "nova-sms": {
       "tags": []
@@ -831,7 +831,7 @@
       "tags": []
     },
     "react-feature-flags": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "reference-backend": {
       "tags": ["type:app", "scope:rest-api"],
@@ -844,7 +844,7 @@
       ]
     },
     "reference-next-app": {
-      "tags": []
+      "tags": ["type:lib", "scope:nextjs"]
     },
     "regulations": {
       "tags": []
@@ -879,80 +879,80 @@
       ]
     },
     "service-portal-applications": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-assets": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-constants": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-core": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-document-provider": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-documents": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-driving-license": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-e2e": {
       "tags": ["type:app", "scope:e2e"],
       "implicitDependencies": ["service-portal"]
     },
     "service-portal-education": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-education-career": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-education-degree": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-education-license": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-education-student-assessment": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-eligibility": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-endorsements": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-family": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-finance": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-graphql": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-health": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-icelandic-names-registry": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-licenses": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-settings-access-control": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-settings-islykill": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-settings-personal-information": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "service-portal-wip": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "services-auth-admin-api": {
       "tags": ["type:app", "scope:rest-api"]
@@ -981,10 +981,10 @@
     "services-search-indexer": {
       "tags": ["type:app", "scope:rest-api"]
     },
-    "services-user-notification": {
+    "services-temporary-voter-registry-api": {
       "tags": ["type:app", "scope:rest-api"]
     },
-    "services-temporary-voter-registry-api": {
+    "services-user-notification": {
       "tags": ["type:app", "scope:rest-api"]
     },
     "services-user-profile": {
@@ -1012,7 +1012,7 @@
       "tags": ["type:lib", "scope:testing"]
     },
     "shared-pii": {
-      "tags": []
+      "tags": ["type:lib", "scope:utils"]
     },
     "shared-problem": {
       "tags": ["type:lib", "scope:utils"]
@@ -1090,7 +1090,7 @@
       "tags": ["type:lib", "scope:testing"]
     },
     "user-monitoring": {
-      "tags": []
+      "tags": ["type:lib", "scope:utils"]
     },
     "web": {
       "tags": ["type:app", "scope:nextjs"],
