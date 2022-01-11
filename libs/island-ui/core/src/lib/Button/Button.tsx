@@ -69,6 +69,7 @@ export interface ButtonProps {
   title?: string
   inline?: boolean
   as?: As
+  truncate?: boolean
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
@@ -90,6 +91,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       nowrap,
       inline,
       as,
+      truncate,
       unfocusable,
       ...buttonProps
     },
@@ -106,6 +108,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
           icon && styles.padding.icon,
           (styles.colors[variant] as Record<string, string>)[colorScheme],
           {
+            [styles.truncate]: truncate,
             [styles.size[size]]:
               variant !== 'utility' &&
               !circle &&

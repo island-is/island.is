@@ -240,38 +240,42 @@ export class NotificationService {
   }
 
   private createICalAttachment(existingCase: Case): Attachment {
+    const eventOrganizer = {
+      name: existingCase.registrar
+        ? existingCase.registrar.name
+        : existingCase.judge
+        ? existingCase.judge.name
+        : '',
+      email: existingCase.registrar
+        ? existingCase.registrar.email
+        : existingCase.judge
+        ? existingCase.judge.email
+        : '',
+    }
+
     const courtDate = existingCase.courtDate?.toString().split('.')[0] || ''
     const courtEnd = existingCase.courtDate
     courtEnd?.setMinutes(courtEnd.getMinutes() + 30)
 
     const icalendar = new ICalendar({
-      title: `Fyrirtaka í máli ${existingCase.policeCaseNumber}`,
-      location: `${existingCase.court?.name}. ${
+      title: `Fyrirtaka í máli ${existingCase.courtCaseNumber} - ${existingCase.prosecutor?.institution?.name} gegn X`,
+      location: `${existingCase.court?.name} - ${
         existingCase.courtRoom
-          ? `Dómsalur: ${existingCase.courtRoom}`
+          ? `Dómsalur ${existingCase.courtRoom}`
           : 'Dómsalur hefur ekki verið skráður.'
       }`,
       start: new Date(courtDate),
       end: new Date(courtEnd ?? ''),
-      attendees: [
-        {
-          name: existingCase.registrar
-            ? existingCase.registrar.name
-            : existingCase.judge
-            ? existingCase.judge.name
-            : '',
-          email: existingCase.registrar
-            ? existingCase.registrar.email
-            : existingCase.judge
-            ? existingCase.judge.email
-            : '',
-        },
-      ],
     })
 
     return {
       filename: 'court-date.ics',
-      content: icalendar.render(),
+      content: icalendar
+        .addProperty(
+          `ORGANIZER;CN=${eventOrganizer.name}`,
+          `MAILTO:${eventOrganizer.email}`,
+        )
+        .render(),
     }
   }
 

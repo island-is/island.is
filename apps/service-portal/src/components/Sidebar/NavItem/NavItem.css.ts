@@ -16,8 +16,13 @@ export const navItemActive = styleVariants({
     borderLeft: `4px solid ${theme.color.blue400}`,
     color: theme.color.blue400,
     ...themeUtils.responsiveStyle({
-      lg: {
+      md: {
         paddingLeft: theme.spacing[3],
+        ':hover': {
+          color: theme.color.blue400,
+          borderColor: theme.color.blue100,
+          textDecoration: 'none',
+        },
       },
     }),
   },
@@ -26,8 +31,14 @@ export const navItemActive = styleVariants({
     marginLeft: 4,
     color: theme.color.blue600,
     ...themeUtils.responsiveStyle({
-      lg: {
+      md: {
         paddingLeft: theme.spacing[3],
+        ':hover': {
+          backgroundColor: theme.color.blue100,
+          color: theme.color.blue400,
+          border: 'unset',
+          marginLeft: 4,
+        },
       },
     }),
   },
@@ -36,7 +47,7 @@ export const navItemActive = styleVariants({
     border: `1px solid ${theme.color.blue100}`,
     borderRadius: '8px',
     ...themeUtils.responsiveStyle({
-      lg: {
+      md: {
         color: theme.color.blue400,
         border: 'unset',
         paddingLeft: theme.spacing[1],
@@ -45,7 +56,7 @@ export const navItemActive = styleVariants({
   },
   inactiveCollapsed: {
     ...themeUtils.responsiveStyle({
-      lg: {
+      md: {
         color: theme.color.blue600,
         paddingLeft: theme.spacing[1],
       },

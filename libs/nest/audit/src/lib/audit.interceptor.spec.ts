@@ -4,12 +4,12 @@ import { AuditService } from './audit.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import { AuditInterceptor } from './audit.interceptor'
 import { Audit } from './audit.decorator'
-import { getCurrentUser } from '@island.is/auth-nest-tools'
+import { getCurrentAuth } from '@island.is/auth-nest-tools'
 import { of } from 'rxjs'
 import MockInstance = jest.MockInstance
 
 jest.mock('@island.is/auth-nest-tools', () => ({
-  getCurrentUser: jest.fn(),
+  getCurrentAuth: jest.fn(),
 }))
 
 const context: any = {
@@ -124,11 +124,11 @@ describe('AuditInterceptor', () => {
     context.getClass.mockReturnValue(MyClass)
     context.getHandler.mockReturnValue(MyClass.prototype.handler)
     const user = 'Test user'
-    const getCurrentUserMock = (getCurrentUser as unknown) as MockInstance<
+    const getCurrentAuthMock = (getCurrentAuth as unknown) as MockInstance<
       string,
       unknown[]
     >
-    getCurrentUserMock.mockReturnValue(user)
+    getCurrentAuthMock.mockReturnValue(user)
 
     // Act
     const observable = interceptor.intercept(context, next)

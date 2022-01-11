@@ -578,3 +578,11 @@ export const loadingDot = style({
   },
   animation: `${dotAnimation} 1.4s forwards cubic-bezier(0.59, 0.01, 0.39, 1) infinite`,
 })
+
+export const truncate = style({
+  display: 'inline-block',
+  maxWidth: '100%',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+})
