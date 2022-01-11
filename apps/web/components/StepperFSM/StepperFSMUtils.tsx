@@ -121,17 +121,14 @@ const resolveStepType = (step: Step): string => {
   return null
 }
 
-const getStepOptions = (step: Step) : StepOption[] => {
-  const stepConfig: StepConfig = JSON.parse(
-    step.config,
-  ) as StepConfig
-  return stepConfig.options.map(o => {
-    // TODO: Get current lang.
-    const label = 'lang' === 'is' ? o.label_is : o.label_en
+const getStepOptions = (step: Step, lang = 'en'): StepOption[] => {
+  const stepConfig: StepConfig = JSON.parse(step.config) as StepConfig
+  return stepConfig.options.map((o) => {
+    const label = lang === 'is' ? o.label_is : o.label_en
     return {
       label: label,
       transition: o.transition,
-      slug: o.option_slug
+      slug: o.option_slug,
     }
   })
 }
