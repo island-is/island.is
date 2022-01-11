@@ -16,6 +16,7 @@ import {
   STEP_TYPES,
 } from './StepperFSMUtils'
 import { useRouter } from 'next/router'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 interface StepperProps {
   stepper: Stepper
@@ -54,11 +55,10 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
 
   return (
     <Box className={style.container}>
-      {/* TODO: Render step subtitle {richText(currentStep.subtitle)} */}
+      {richText(currentStep.subtitle as SliceType[])}
 
       {currentStepType === STEP_TYPES.QUESTION_RADIO && (
         <>
-          <Text>Render Question Radio options...</Text>
           { getStepOptions(currentStep).map(function (option, i) {
             return (
               <Button
@@ -76,7 +76,6 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
       )}
       {currentStepType === STEP_TYPES.QUESTION_DROPDOWN && (
         <>
-          <Text>Render Question Dropdown options...</Text>
           { getStepOptions(currentStep).map(function (option, i) {
             return (
               <Button
