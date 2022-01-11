@@ -62,7 +62,7 @@ export const Application: Form = buildForm({
             buildCustomField({
               id: 'inRelationship',
               title: m.inRelationship.general.pageTitle,
-              component: 'InRelationship',
+              component: 'InRelationshipForm',
             }),
           ],
         }),
