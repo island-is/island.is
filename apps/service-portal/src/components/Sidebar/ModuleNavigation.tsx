@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import {
   ServicePortalNavigationItem,
   ServicePortalPath,
@@ -52,6 +52,10 @@ const ModuleNavigation: FC<Props> = ({
     if (onItemClick) onItemClick()
     if (external) servicePortalOutboundLink()
   }
+
+  useEffect(() => {
+    setExpand(isModuleActive)
+  }, [isModuleActive])
 
   return (
     <Box
