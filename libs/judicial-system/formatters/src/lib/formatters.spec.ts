@@ -12,7 +12,6 @@ import {
   capitalize,
   formatGender,
   formatCustodyRestrictions,
-  formatAlternativeTravelBanRestrictions,
   formatAppeal,
 } from './formatters'
 
@@ -145,14 +144,15 @@ describe('formatRequestedCustodyRestrictions', () => {
 describe('formatCustodyRestrictions', () => {
   test('should return formatted restrictions for no restrictions', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
     const custodyRestrictions: Array<CaseCustodyRestrictions> = []
+    const isIsolation = false
+    const isRuling = true
 
     // Act
     const res = formatCustodyRestrictions(
-      accusedGender,
       custodyRestrictions,
-      true,
+      isIsolation,
+      isRuling,
     )
 
     // Assert
@@ -161,11 +161,10 @@ describe('formatCustodyRestrictions', () => {
 
   test('should return formatted restrictions for no restrictions in custody notice', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
     const custodyRestrictions: Array<CaseCustodyRestrictions> = []
 
     // Act
-    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(custodyRestrictions)
 
     // Assert
     expect(res).toBe(
@@ -175,14 +174,15 @@ describe('formatCustodyRestrictions', () => {
 
   test('should return formatted restrictions for isolation only', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
-    const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
+    const custodyRestrictions: Array<CaseCustodyRestrictions> = []
+    const isIsolation = true
+    const isRuling = true
 
     // Act
     const res = formatCustodyRestrictions(
-      accusedGender,
       custodyRestrictions,
-      true,
+      isIsolation,
+      isRuling,
     )
 
     // Assert
@@ -191,11 +191,16 @@ describe('formatCustodyRestrictions', () => {
 
   test('should return formatted restrictions for isolation only in custody notice', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
-    const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
+    const custodyRestrictions: Array<CaseCustodyRestrictions> = []
+    const isIsolation = true
+    const isRuling = false
 
     // Act
-    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(
+      custodyRestrictions,
+      isIsolation,
+      isRuling,
+    )
 
     // Assert
     expect(res).toBe(
@@ -205,14 +210,13 @@ describe('formatCustodyRestrictions', () => {
 
   test('should return formatted restrictions for isolation and one other restriction', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
     const custodyRestrictions = [
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
     ]
 
     // Act
-    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(custodyRestrictions)
 
     // Assert
     expect(res).toBe(
@@ -222,7 +226,6 @@ describe('formatCustodyRestrictions', () => {
 
   test('should return formatted restrictions for all but isolation', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
     const custodyRestrictions = [
       CaseCustodyRestrictions.COMMUNICATION,
       CaseCustodyRestrictions.MEDIA,
@@ -230,7 +233,7 @@ describe('formatCustodyRestrictions', () => {
     ]
 
     // Act
-    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(custodyRestrictions)
 
     // Assert
     expect(res).toBe(
@@ -240,7 +243,6 @@ describe('formatCustodyRestrictions', () => {
 
   test('should order non-isolation restrictions', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
     const custodyRestrictions = [
       CaseCustodyRestrictions.MEDIA,
       CaseCustodyRestrictions.VISITAION,
@@ -248,106 +250,12 @@ describe('formatCustodyRestrictions', () => {
     ]
 
     // Act
-    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(custodyRestrictions)
 
     // Assert
     expect(res).toBe(
       'Sækjandi tekur fram að gæsluvarðhaldið verði með heimsóknarbanni, bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
     )
-  })
-})
-
-describe('formatAlternativeTravelBanRestrictions', () => {
-  test('should return formatted restrictions for no restrictions', () => {
-    // Arrange
-    const accusedGender = CaseGender.MALE
-    const custodyRestrictions: Array<CaseCustodyRestrictions> = []
-
-    // Act
-    const res = formatAlternativeTravelBanRestrictions(
-      accusedGender,
-      custodyRestrictions,
-    )
-
-    // Assert
-    expect(res).toBe('')
-  })
-
-  test('should return formatted restrictions for one restriction', () => {
-    // Arrange
-    const accusedGender = CaseGender.FEMALE
-    const custodyRestrictions = [
-      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
-    ]
-
-    // Act
-    const res = formatAlternativeTravelBanRestrictions(
-      accusedGender,
-      custodyRestrictions,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Sækjandi tekur fram að farbannið verði með takmörkunum. Að kærðu verði gert að afhenda vegabréfið sitt.',
-    )
-  })
-
-  test('should return formatted restrictions for all restrictions', () => {
-    // Arrange
-    const accusedGender = CaseGender.OTHER
-    const custodyRestrictions = [
-      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
-      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-    ]
-
-    // Act
-    const res = formatAlternativeTravelBanRestrictions(
-      accusedGender,
-      custodyRestrictions,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Sækjandi tekur fram að farbannið verði með takmörkunum. Að kærða verði gert að tilkynna sig. Að kærða verði gert að afhenda vegabréfið sitt.',
-    )
-  })
-
-  test('should return formatted restrictions with other restrictions', () => {
-    // Arrange
-    const accusedGender = CaseGender.OTHER
-    const custodyRestrictions = [
-      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
-      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-    ]
-    const otherRestrictions = 'Stay in town.'
-
-    // Act
-    const res = formatAlternativeTravelBanRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      otherRestrictions,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Sækjandi tekur fram að farbannið verði með takmörkunum. Að kærða verði gert að tilkynna sig. Að kærða verði gert að afhenda vegabréfið sitt.\nStay in town.',
-    )
-  })
-
-  test('should return formatted restrictions with other restrictions only', () => {
-    // Arrange
-    const accusedGender = CaseGender.OTHER
-    const otherRestrictions = 'Stay in town.'
-
-    // Act
-    const res = formatAlternativeTravelBanRestrictions(
-      accusedGender,
-      undefined,
-      otherRestrictions,
-    )
-
-    // Assert
-    expect(res).toBe('Stay in town.')
   })
 })
 
