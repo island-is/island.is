@@ -26,6 +26,23 @@ type StepperMachine = StateMachine<
   { value: any; context: any }
 >
 
+interface StepOptionCMS {
+  label_is: string
+  label_en: string
+  transition: string
+  option_slug: string
+}
+
+interface StepConfig {
+  options: StepOptionCMS[]
+}
+
+interface StepOption {
+  label: string
+  transition: string
+  slug: string
+}
+
 interface StepperConfig {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   xStateFSM: MachineConfig<any, any, AnyEventObject>
@@ -104,6 +121,21 @@ const resolveStepType = (step: Step): string => {
   return null
 }
 
+const getStepOptions = (step: Step) : StepOption[] => {
+  const stepConfig: StepConfig = JSON.parse(
+    step.config,
+  ) as StepConfig
+  return stepConfig.options.map(o => {
+    // TODO: Get current lang.
+    const label = 'lang' === 'is' ? o.label_is : o.label_en
+    return {
+      label: label,
+      transition: o.transition,
+      slug: o.option_slug
+    }
+  })
+}
+
 export { STEP_TYPES }
 export {
   getStepBySlug,
@@ -111,5 +143,6 @@ export {
   getStateMeta,
   getStepperMachine,
   resolveStepType,
+  getStepOptions,
 }
-export type { StepperConfig, StateMeta, StepperState }
+export type { StepperConfig, StateMeta, StepperState, StepOption }
