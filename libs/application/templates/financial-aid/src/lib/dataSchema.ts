@@ -1,7 +1,7 @@
 import { error } from './messages/index'
 import * as z from 'zod'
 import { isValidEmail } from './utils'
-import { TwoTypeAnswers } from './types'
+import { ApproveOptions } from './types'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, {
@@ -18,13 +18,13 @@ export const dataSchema = z.object({
   student: z
     .object({
       isStudent: z
-        .enum([TwoTypeAnswers.Yes, TwoTypeAnswers.No])
+        .enum([ApproveOptions.Yes, ApproveOptions.No])
         .refine((v) => v, {
           params: error.validation.approveSpouse,
         }),
       custom: z.string().optional(),
     })
-    .refine((v) => (v.isStudent === TwoTypeAnswers.Yes ? v.custom : true), {
+    .refine((v) => (v.isStudent === ApproveOptions.Yes ? v.custom : true), {
       params: error.validation.approveSpouse,
       path: ['custom'],
     }),

@@ -5,7 +5,7 @@ export enum DataProviderTypes {
   NationalRegistry = 'NationalRegistryProvider',
 }
 
-export enum TwoTypeAnswers {
+export enum ApproveOptions {
   Yes = 'Yes',
   No = 'No',
 }

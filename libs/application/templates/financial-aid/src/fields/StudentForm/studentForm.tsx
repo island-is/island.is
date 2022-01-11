@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
-import { FAFieldBaseProps, TwoTypeAnswers } from '../../lib/types'
+import { FAFieldBaseProps, ApproveOptions } from '../../lib/types'
 import { useIntl } from 'react-intl'
 import { studentForm } from '../../lib/messages'
 import { InputController, RadioController } from '@island.is/shared/form-fields'
@@ -14,7 +14,7 @@ const StudentForm = ({ errors, application }: FAFieldBaseProps) => {
     id: 'student.isStudent',
     error: errors?.student?.isStudent,
   }
-  const customeInput = {
+  const customInput = {
     id: 'student.custom',
     error: errors?.student?.custom,
   }
@@ -28,12 +28,12 @@ const StudentForm = ({ errors, application }: FAFieldBaseProps) => {
           defaultValue={answers?.student?.isStudent}
           options={[
             {
-              value: TwoTypeAnswers.No,
-              label: formatMessage(studentForm.form.notStudent),
+              value: ApproveOptions.No,
+              label: formatMessage(studentForm.form.no),
             },
             {
-              value: TwoTypeAnswers.Yes,
-              label: formatMessage(studentForm.form.isStudent),
+              value: ApproveOptions.Yes,
+              label: formatMessage(studentForm.form.yes),
             },
           ]}
           largeButtons
@@ -41,17 +41,17 @@ const StudentForm = ({ errors, application }: FAFieldBaseProps) => {
           error={typeInput.error}
         />
       </Box>
-      {getValues(typeInput.id) === TwoTypeAnswers.Yes && (
+      {getValues(typeInput.id) === ApproveOptions.Yes && (
         <Box>
           <InputController
-            id={customeInput.id}
-            name={customeInput.id}
+            id={customInput.id}
+            name={customInput.id}
             label={formatMessage(studentForm.input.label)}
             placeholder={formatMessage(studentForm.input.placeholder)}
             backgroundColor="blue"
-            error={customeInput.error}
+            error={customInput.error}
             onChange={() => {
-              clearErrors(customeInput.id)
+              clearErrors(customInput.id)
             }}
           />
           <Text fontWeight="semiBold" variant="small" marginTop={1}>

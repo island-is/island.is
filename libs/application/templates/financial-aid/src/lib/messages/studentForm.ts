@@ -14,12 +14,13 @@ export const studentForm = {
     },
   }),
   form: defineMessages({
-    notStudent: {
+    no: {
       id: 'fa.application:section.studentForm.form.notStudent',
       defaultMessage: 'Nei',
-      description: 'Student form radio selection when applicant is not student',
+      description:
+        'Student form radio selection when applicant is not a student',
     },
-    isStudent: {
+    yes: {
       id: 'fa.application:section.studentForm.form.isStudent',
       defaultMessage: 'Já',
       description: 'Student form radio selection when applicant is a student',
