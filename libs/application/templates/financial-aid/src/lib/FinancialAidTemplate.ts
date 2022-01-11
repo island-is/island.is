@@ -7,24 +7,12 @@ import {
   ApplicationConfigurations,
 } from '@island.is/application/core'
 
-import { Roles, ApplicationStates } from './constants'
+import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
 
 import { application } from './messages'
 import { dataSchema } from './dataSchema'
-import { Application } from '../forms/Application'
 
 type Events = { type: DefaultEvents.SUBMIT }
-
-const oneYear = 24 * 3600 * 1000 * 365
-const oneDay = 24 * 3600 * 1000
-
-const pruneAfter = (time: number) => {
-  return {
-    shouldBeListed: true,
-    shouldBePruned: true,
-    whenToPrune: time,
-  }
-}
 
 const FinancialAidTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -37,32 +25,43 @@ const FinancialAidTemplate: ApplicationTemplate<
   dataSchema,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   stateMachineConfig: {
-    initial: ApplicationStates.PREREQUESITES,
+    initial: ApplicationStates.PREREQUISITES,
     states: {
-      [ApplicationStates.PREREQUESITES]: {
+      [ApplicationStates.PREREQUISITES]: {
         meta: {
           name: application.name.defaultMessage,
-          lifecycle: pruneAfter(oneDay),
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: ONE_DAY,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Prerequesites').then((module) =>
-                  Promise.resolve(module.Prerequesites),
+                import('../forms/Prerequisites').then((module) =>
+                  Promise.resolve(module.Prerequisites),
                 ),
-              externalData: ['nationalRegistry'],
+              write: {
+                answers: ['approveExternalData'],
+                externalData: ['nationalRegistry'],
+              },
             },
           ],
         },
         on: {
-          SUBMIT: [{ target: ApplicationStates.DRAFT, cond: true }],
+          SUBMIT: [{ target: ApplicationStates.DRAFT, cond: () => true }],
           // TODO: Add other states here depending on data received from Veita and þjóðskrá
         },
       },
       [ApplicationStates.DRAFT]: {
         meta: {
           name: application.name.defaultMessage,
-          lifecycle: pruneAfter(oneYear),
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: ONE_MONTH,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

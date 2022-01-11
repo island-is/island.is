@@ -20,11 +20,18 @@ export const aboutForm = {
     },
   }),
   bulletList: defineMessages({
-    first: {
-      id: 'fa.application:section.aboutForm.bulletList.first#markdown',
+    content: {
+      id: 'fa.application:section.aboutForm.bulletList.content#markdown',
       defaultMessage:
         '* Til að eiga rétt á fjárhagsaðstoð þurfa tekjur og eignir þínar að vera undir ákveðnum viðmiðunarmörkum.\n* Fjárhagsaðstoð getur verið í formi láns eða styrks. \n* Áður en þú sækir um fjárhagsaðstoð skaltu athuga hvort þú eigir rétt á annarskonar aðstoð. Dæmi um önnur úrræði eru [almannatryggingar](https://www.stjornarradid.is/verkefni/almannatryggingar-og-lifeyrir/almannatryggingar/), [atvinnuleysisbætur](https://vinnumalastofnun.is/umsoknir/umsokn-um-atvinnuleysisbaetur), [lífeyrissjóðir](https://www.lifeyrismal.is/is/sjodirnir), [Sjúkratryggingar Íslands](https://www.sjukra.is/) og sjúkrasjóðir stéttarfélaga. \n* Ef þú ert í lánshæfu námi gætir þú átt rétt á námsláni hjá [Menntasjóði námsmanna](https://menntasjodur.is/).',
-      description: 'About form Bullet list',
+      description: 'About form Bullet list content',
+    },
+  }),
+  goToApplication: defineMessages({
+    button: {
+      id: 'fa.application:section.aboutForm.goToApplication.button',
+      defaultMessage: 'Fara í umsókn',
+      description: 'Go to application button text',
     },
   }),
   personalInformation: defineMessages({

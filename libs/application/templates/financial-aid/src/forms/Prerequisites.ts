@@ -1,8 +1,12 @@
 import {
+  buildCustomField,
   buildDataProviderItem,
   buildExternalDataProvider,
   buildForm,
+  buildMultiField,
   buildSection,
+  buildSubmitField,
+  DefaultEvents,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -10,7 +14,7 @@ import { DataProviderTypes } from '../lib/types'
 
 import * as m from '../lib/messages'
 
-export const Prerequesites: Form = buildForm({
+export const Prerequisites: Form = buildForm({
   id: 'FinancialAidApplication',
   title: m.application.name,
   mode: FormModes.APPLYING,
@@ -33,6 +37,41 @@ export const Prerequesites: Form = buildForm({
               subTitle: m.externalData.applicant.subTitle,
             }),
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'aboutForm',
+      title: m.aboutForm.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'acceptContract',
+          title: m.aboutForm.general.pageTitle,
+          children: [
+            buildCustomField({
+              id: 'acceptContract',
+              title: m.aboutForm.general.pageTitle,
+              component: 'AboutForm',
+            }),
+            buildSubmitField({
+              id: 'toDraft',
+              title: '',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.aboutForm.goToApplication.button,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
+        }),
+        //
+        buildMultiField({
+          id: '',
+          title: '',
+          children: [],
         }),
       ],
     }),

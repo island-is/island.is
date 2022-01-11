@@ -16,17 +16,6 @@ export const Application: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'aboutForm',
-      title: m.aboutForm.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'acceptContract',
-          title: m.aboutForm.general.pageTitle,
-          component: 'AboutForm',
-        }),
-      ],
-    }),
-    buildSection({
       condition: (_, externalData) =>
         ((externalData as unknown) as ExternalData).nationalRegistry?.data
           ?.spouse !== undefined,
