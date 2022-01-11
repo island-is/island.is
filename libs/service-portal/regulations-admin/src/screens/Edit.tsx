@@ -11,6 +11,7 @@ import {
   useMinistriesQuery,
   useRegulationDraftQuery,
 } from '@island.is/service-portal/graphql'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 
 // ---------------------------------------------------------------------------
 
@@ -33,7 +34,7 @@ const ensureDraftId = (maybeId: string): RegulationDraftId => {
 
 // ---------------------------------------------------------------------------
 
-const Edit = () => {
+const Edit: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('ap.regulations-admin')
   const params = useParams<{ id: string; step?: string }>()
   const id = ensureDraftId(params.id)
@@ -59,6 +60,7 @@ const Edit = () => {
       draft={draft.data}
       stepName={stepName}
       ministries={ministries.data}
+      userInfo={userInfo}
     />
   )
 }

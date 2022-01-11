@@ -487,4 +487,12 @@ export const buttonsMsgs = defineMessages({
     id: 'ap.regulations-admin:btn-delete-confirm',
     defaultMessage: 'Þessu uppkasti að reglugerð verður eytt varanlega!',
   },
+  downloadDraft: {
+    id: 'ap.regulations-admin:btn-downloaddraft',
+    defaultMessage: 'Sækja PDF',
+  },
+  downloadDraftError: {
+    id: 'ap.regulations-admin:error-downloaddraft',
+    defaultMessage: 'Ekki var hægt að sækja PDF skrá',
+  },
 })

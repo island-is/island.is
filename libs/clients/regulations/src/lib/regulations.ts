@@ -1,4 +1,4 @@
-import { Inject, Injectable, Scope } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import {
@@ -23,6 +23,9 @@ import {
   RegulationSearchResults,
   RegulationViewTypes,
   RegulationYears,
+  RegulationPdf,
+  RegulationPdfInput,
+  RegulationPdfResponse,
 } from '@island.is/regulations/web'
 import pickBy from 'lodash/pickBy'
 import identity from 'lodash/identity'
@@ -145,5 +148,31 @@ export class RegulationsService extends RESTDataSource {
       }`,
     )
     return response
+  }
+
+  async generateDraftRegulationPdf(
+    regulationBody: RegulationPdfInput,
+  ): Promise<RegulationPdf> {
+    const filename = `draft-regulation-${regulationBody.name}.pdf`
+
+    let response: RegulationPdfResponse | null
+
+    try {
+      response = await this.post<RegulationPdfResponse>(
+        '/regulation/generate-pdf?responseType=base64',
+        JSON.stringify(regulationBody),
+      )
+    } catch (e) {
+      return {
+        error: '',
+      }
+    }
+
+    return {
+      data: {
+        buffer: Buffer.from(response.data, 'base64'),
+        filename,
+      },
+    }
   }
 }

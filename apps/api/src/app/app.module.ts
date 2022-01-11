@@ -205,6 +205,7 @@ const autoSchemaFile = environment.production
         password: environment.nationalRegistry.password,
         host: environment.nationalRegistry.host,
       },
+      downloadServiceUrl: environment.downloadService.baseUrl,
     }),
     FinanceModule.register({
       ttl: environment.fjarmalDomain.ttl,

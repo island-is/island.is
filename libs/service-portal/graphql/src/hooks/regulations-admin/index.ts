@@ -116,7 +116,7 @@ export const useLawChaptersQuery = (): QueryResult<
 
 const CREATE_DRAFT_REGULATION_MUTATION = gql`
   mutation CreateDraftRegulationMutation {
-    createDraftRegulation()
+    createDraftRegulation
   }
 `
 

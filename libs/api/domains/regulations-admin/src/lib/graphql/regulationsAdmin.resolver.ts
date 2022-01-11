@@ -1,8 +1,9 @@
 import graphqlTypeJson from 'graphql-type-json'
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import { RegulationsService } from '@island.is/clients/regulations'
 import { GetDraftRegulationInput } from './dto/getDraftRegulation.input'
+import { DownloadRegulationInput } from './dto/downloadRegulation.input'
 import { DeleteDraftRegulationInput } from './dto/deleteDraftRegulation.input'
 import { EditDraftRegulationInput } from './dto/editDraftRegulation.input'
 import { DraftRegulationModel } from './models/draftRegulation.model'
@@ -13,7 +14,11 @@ import {
   ScopesGuard,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
-import { RegulationsAdminApi } from '../client/regulationsAdmin.api'
+import {
+  RegulationsAdminApi,
+  RegulationsAdminOptions,
+  REGULATIONS_ADMIN_OPTIONS,
+} from '../client/regulationsAdmin.api'
 import {
   Author,
   DraftRegulationCancel,
@@ -24,6 +29,7 @@ import { extractAppendixesAndComments } from '@island.is/regulations-tools/textH
 import {
   RegulationAppendix,
   RegulationViewTypes,
+  RegulationPdfDownload,
 } from '@island.is/regulations/web'
 import { nameToSlug, PlainText } from '@island.is/regulations'
 
@@ -33,6 +39,8 @@ export class RegulationsAdminResolver {
   constructor(
     private regulationsService: RegulationsService,
     private regulationsAdminApiService: RegulationsAdminApi,
+    @Inject(REGULATIONS_ADMIN_OPTIONS)
+    private readonly options: RegulationsAdminOptions,
   ) {}
 
   // @Query(() => DraftRegulationModel, { nullable: true })
@@ -249,5 +257,32 @@ export class RegulationsAdminResolver {
   @Query(() => graphqlTypeJson)
   async getDraftRegulationsLawChapters(@CurrentUser() { authorization }: User) {
     return await this.regulationsService.getRegulationsLawChapters(false)
+  }
+
+  @Query(() => graphqlTypeJson)
+  async downloadRegulation(
+    @Args('input') input: DownloadRegulationInput,
+    @CurrentUser() { authorization }: User,
+  ): Promise<RegulationPdfDownload | null> {
+    // This is open to be extended with downloading published regulations as well
+
+    if (!this.options.downloadServiceUrl) {
+      console.warn('no downloadservice')
+      return null
+    }
+
+    const regulation = await this.regulationsAdminApiService.getDraftRegulation(
+      input.regulationId,
+      authorization,
+    )
+
+    if (!regulation) {
+      return null
+    }
+
+    return {
+      downloadService: true,
+      url: `${this.options.downloadServiceUrl}/download/v1/regulation/draft/${input.regulationId}`,
+    }
   }
 }

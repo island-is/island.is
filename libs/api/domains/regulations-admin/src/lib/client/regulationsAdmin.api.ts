@@ -20,6 +20,7 @@ export interface RegulationsAdminOptions {
   regulationsApiUrl: string
   ttl?: number
   nationalRegistry: NationalRegistryConfig
+  downloadServiceUrl?: string
 }
 
 export class RegulationsAdminApi extends RESTDataSource {

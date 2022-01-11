@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-
+import { User } from 'oidc-client'
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { RegulationDraft } from '@island.is/regulations/admin'
 import { EditBasics } from '../components/EditBasics'
@@ -11,6 +11,7 @@ import { editorMsgs } from '../messages'
 import { Step } from '../types'
 import { ButtonBar } from '../components/ButtonBar'
 import { SaveDeleteButtons } from '../components/SaveDeleteButtons'
+import { DownloadDraftButton } from './DownloadDraftButton'
 import { useDraftingState, StepComponent } from '../state/useDraftingState'
 import { MessageDescriptor } from 'react-intl'
 import { DraftingNotes } from '../components/DraftingNotes'
@@ -58,6 +59,7 @@ type EditDraftProps = {
   draft: RegulationDraft
   stepName: Step
   ministries: RegulationMinistryList
+  userInfo: User
 }
 
 const EditDraft = (props: EditDraftProps) => {
@@ -84,6 +86,11 @@ const EditDraft = (props: EditDraftProps) => {
           </Text>
         )}
       </Box>
+
+      <DownloadDraftButton
+        userInfo={props.userInfo}
+        regulationDraftId={draft.id}
+      />
 
       <SaveDeleteButtons draft={draft} saving={saving} actions={actions} wrap />
 

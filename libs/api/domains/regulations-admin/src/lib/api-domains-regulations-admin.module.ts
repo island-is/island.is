@@ -31,6 +31,7 @@ export class RegulationsAdminModule {
             NationalRegistryApi.instantiateClass(config.nationalRegistry),
         },
       ],
+      exports: [RegulationsService, RegulationsAdminApi],
     }
   }
 }

@@ -21,6 +21,13 @@ const devConfig = {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '',
   },
+  regulationsAdmin: {
+    baseApiUrl:
+      process.env.REGULATIONS_ADMIN_URL ?? 'http://localhost:3333/api',
+    regulationsApiUrl:
+      process.env.REGULATIONS_API_URL ?? 'http://localhost:3000/api/v1',
+    //'https://reglugerdir-api.herokuapp.com/api/v1',
+  },
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -51,6 +58,10 @@ const prodConfig = {
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL!,
     audience: '',
+  },
+  regulationsAdmin: {
+    baseApiUrl: process.env.REGULATIONS_ADMIN_URL ?? '',
+    regulationsApiUrl: process.env.REGULATIONS_API_URL ?? '',
   },
 }
 
