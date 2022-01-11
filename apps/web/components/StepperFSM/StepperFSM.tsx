@@ -1,7 +1,13 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useMachine } from '@xstate/react'
 
-import { Box, Text, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Button,
+  RadioButton,
+  Select,
+} from '@island.is/island-ui/core'
 
 import { Step, Stepper } from '@island.is/api/schema'
 
@@ -14,15 +20,24 @@ import {
   resolveStepType,
   getStepOptions,
   STEP_TYPES,
+  StepOption,
 } from './StepperFSMUtils'
 import { useRouter } from 'next/router'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { useI18n } from '@island.is/web/i18n'
+import { ValueType } from 'react-select'
 
 interface StepperProps {
   stepper: Stepper
   startAgainLabel: string
   answerLabel: string
   backLabel: string
+}
+
+interface StepOptionSelectItem {
+  label: string
+  value: string
+  transition: string
 }
 
 export const StepperFSM = ({ stepper }: StepperProps) => {
@@ -51,7 +66,22 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
   // TODO: Currently, if you call the send function with an unavailable transition string, then it silently fails.
 
   const router = useRouter()
+  const { activeLocale } = useI18n()
+
   const isOnFirstStep = stepperMachine.initialState.value === currentState.value
+  const [selectedOption, setSelectedOption] = useState<StepOption | undefined>(
+    undefined,
+  )
+  const stepOptions = getStepOptions(currentStep, activeLocale)
+
+  // Select the first item by default if we have a dropdown
+  if (
+    currentStepType === STEP_TYPES.QUESTION_DROPDOWN &&
+    selectedOption === undefined &&
+    stepOptions.length > 0
+  ) {
+    setSelectedOption(stepOptions[0])
+  }
 
   return (
     <Box className={style.container}>
@@ -59,45 +89,69 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
 
       {currentStepType === STEP_TYPES.QUESTION_RADIO && (
         <>
-          { getStepOptions(currentStep).map(function (option, i) {
+          {stepOptions.map(function (option, i) {
+            const key = `step-option-${i}`
             return (
-              <Button
-                key={i}
-                onClick={() => {
-                  console.log("selected option: ", option)
-                  send(option.transition)
-                }}
-              >
-                {option.label}
-              </Button>
+              <RadioButton
+                key={key}
+                name={key}
+                large={true}
+                label={option.label}
+                checked={option.slug === selectedOption?.slug}
+                onChange={() => setSelectedOption(option)}
+              />
             )
           })}
+          <Box marginTop={3}>
+            {/* TODO: Validate whether there is a selectedOption, if not then show what needs to happen */}
+            <Button onClick={() => send('selectedOption.transition')}>
+              {activeLocale === 'is' ? 'Áfram' : 'Continue'}
+            </Button>
+          </Box>
         </>
       )}
       {currentStepType === STEP_TYPES.QUESTION_DROPDOWN && (
         <>
-          { getStepOptions(currentStep).map(function (option, i) {
-            return (
-              <Button
-                key={i}
-                onClick={() => {
-                  console.log("selected option: ", option)
-                  send(option.transition)
-                }}
-              >
-                {option.label}
-              </Button>
-            )
-          })}
+          <Select
+            name="step-option-select"
+            noOptionsMessage={
+              activeLocale === 'is' ? 'Enginn valmöguleiki' : 'No options'
+            }
+            value={{
+              label: selectedOption?.label,
+              value: selectedOption?.slug,
+            }}
+            onChange={(option: ValueType<StepOptionSelectItem>) => {
+              const stepOptionSelectItem = option as StepOptionSelectItem
+              const newSelectedOption = {
+                label: stepOptionSelectItem.label,
+                slug: stepOptionSelectItem.value,
+                transition: stepOptionSelectItem.transition,
+              }
+              setSelectedOption(newSelectedOption)
+            }}
+            options={stepOptions.map((option) => {
+              return {
+                label: option.label,
+                value: option.slug,
+                transition: option.transition,
+              }
+            })}
+          />
+          <Box marginTop={3}>
+            <Button onClick={() => send(selectedOption.transition)}>
+              {activeLocale === 'is' ? 'Áfram' : 'Continue'}
+            </Button>
+          </Box>
         </>
       )}
       {currentStepType === STEP_TYPES.ANSWER && <Text>Render Answer...</Text>}
 
       {!isOnFirstStep && (
         <Box marginTop={3}>
+          {/*TODO: change this to transition the machine to the initial state insted of reloading the page */}
           <Button variant="text" onClick={router.reload}>
-            {/*TODO: change this to transition the machine to the initial state insted of reloading the page */}
-            Start again
+            {activeLocale === 'is' ? 'Byrja aftur' : 'Start again'}
           </Button>
         </Box>
       )}
