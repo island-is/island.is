@@ -20,26 +20,6 @@ export class CreateCaseDto {
   @ApiProperty()
   readonly policeCaseNumber!: string
 
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  readonly accusedNationalId!: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedName?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedAddress?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ enum: Gender })
-  readonly accusedGender?: Gender
-
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()

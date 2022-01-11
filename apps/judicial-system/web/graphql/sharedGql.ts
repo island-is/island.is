@@ -10,10 +10,12 @@ export const CaseQuery = gql`
       description
       state
       policeCaseNumber
-      accusedNationalId
-      accusedName
-      accusedAddress
-      accusedGender
+      defendants {
+        nationalId
+        name
+        gender
+        address
+      }
       defenderName
       defenderEmail
       defenderPhoneNumber

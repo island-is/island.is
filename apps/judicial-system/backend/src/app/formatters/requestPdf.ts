@@ -83,11 +83,20 @@ function constructRestrictionRequestPdf(
     .lineGap(4)
     .text(
       `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
-        existingCase.accusedNationalId,
+        (existingCase.defendants && existingCase.defendants[0].nationalId) ??
+          '',
       )}`,
     )
-    .text(`${formatMessage(m.baseInfo.fullName)} ${existingCase.accusedName}`)
-    .text(`${formatMessage(m.baseInfo.address)} ${existingCase.accusedAddress}`)
+    .text(
+      `${formatMessage(m.baseInfo.fullName)} ${
+        existingCase.defendants && existingCase.defendants[0].name
+      }`,
+    )
+    .text(
+      `${formatMessage(m.baseInfo.address)} ${
+        existingCase.defendants && existingCase.defendants[0].address
+      }`,
+    )
     .text(
       formatMessage(m.baseInfo.defender, {
         defenderName:
@@ -236,13 +245,23 @@ function constructInvestigationRequestPdf(
     .font('Helvetica')
     .fontSize(baseFontSize)
     .lineGap(4)
+    // TDOO defendants: handle multiple defendants
     .text(
       `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
-        existingCase.accusedNationalId,
+        (existingCase.defendants && existingCase.defendants[0].nationalId) ??
+          '',
       )}`,
     )
-    .text(`${formatMessage(m.baseInfo.fullName)} ${existingCase.accusedName}`)
-    .text(`${formatMessage(m.baseInfo.address)} ${existingCase.accusedAddress}`)
+    .text(
+      `${formatMessage(m.baseInfo.fullName)} ${
+        existingCase.defendants && existingCase.defendants[0].name
+      }`,
+    )
+    .text(
+      `${formatMessage(m.baseInfo.address)} ${
+        existingCase.defendants && existingCase.defendants[0].address
+      }`,
+    )
 
   if (existingCase.defenderName && !existingCase.defenderIsSpokesperson) {
     doc.text(

@@ -1,3 +1,4 @@
+import type { Defendant } from './defendant'
 import type { Institution } from './institution'
 import type { Notification } from './notification'
 import type { CaseFile } from './file'
@@ -72,12 +73,6 @@ export enum CaseAppealDecision {
   NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
 
-export enum Gender {
-  MALE = 'MALE',
-  FEMALE = 'FEMALE',
-  OTHER = 'OTHER',
-}
-
 export enum CaseDecision {
   ACCEPTING = 'ACCEPTING',
   REJECTING = 'REJECTING',
@@ -100,10 +95,7 @@ export interface Case {
   description?: string
   state: CaseState
   policeCaseNumber: string
-  accusedNationalId: string
-  accusedName?: string
-  accusedAddress?: string
-  accusedGender?: Gender
+  defendants?: Defendant[]
   defenderName?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
@@ -179,10 +171,6 @@ export interface CreateCase {
   type: CaseType
   description?: string
   policeCaseNumber: string
-  accusedNationalId: string
-  accusedName?: string
-  accusedAddress?: string
-  accusedGender?: Gender
   defenderName?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
@@ -195,10 +183,6 @@ export interface UpdateCase {
   type?: string
   description?: string
   policeCaseNumber?: string
-  accusedNationalId?: string
-  accusedName?: string
-  accusedAddress?: string
-  accusedGender?: Gender
   defenderName?: string
   defenderEmail?: string
   defenderPhoneNumber?: string

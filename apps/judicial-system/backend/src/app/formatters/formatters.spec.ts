@@ -1035,6 +1035,7 @@ describe('formatPrisonRevokedEmailNotification', () => {
   })
 })
 
+// TDOO defendants: handle multiple defendants
 describe('formatDefenderRevokedEmailNotification', () => {
   test('should format revoked notification', () => {
     // Arrange
@@ -1059,6 +1060,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
     )
   })
 
+  // TDOO defendants: handle multiple defendants
   test('should format revoked notification for travel ban', () => {
     // Arrange
     const type = CaseType.TRAVEL_BAN

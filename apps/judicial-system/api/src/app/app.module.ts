@@ -18,6 +18,7 @@ import {
   FeatureModule,
   PoliceModule,
 } from './modules/'
+import { DefendantModule } from './modules/defendant/defendant.module';
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -50,6 +51,7 @@ const autoSchemaFile = environment.production
     CmsTranslationsModule,
     PoliceModule,
     ProblemModule.forRoot({ logAllErrors: true }),
+    DefendantModule,
   ],
 })
 export class AppModule {}

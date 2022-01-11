@@ -141,8 +141,9 @@ const StepThreeForm: React.FC<Props> = (props) => {
             data-testid="lawsBroken"
             name="lawsBroken"
             label={formatMessage(rcDemands.sections.lawsBroken.label, {
+              // TDOO defendants: handle multiple defendants
               defendant: formatAccusedByGender(
-                workingCase?.accusedGender,
+                workingCase?.defendants && workingCase.defendants[0].gender,
                 NounCases.GENITIVE,
               ),
             })}

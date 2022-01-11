@@ -63,10 +63,22 @@ function constructCustodyNoticePdf(
     .lineGap(8)
     .text('Sakborningur')
     .fontSize(baseFontSize)
-    .text(existingCase.accusedName ?? 'Nafn ekki skráð')
+    // TDOO defendants: handle multiple defendants
+    .text(
+      (existingCase.defendants && existingCase.defendants[0].name) ??
+        'Nafn ekki skráð',
+    )
     .font('Helvetica')
-    .text(`kt. ${formatNationalId(existingCase.accusedNationalId)}`)
-    .text(existingCase.accusedAddress ?? 'Heimili ekki skráð')
+    .text(
+      `kt. ${formatNationalId(
+        (existingCase.defendants && existingCase.defendants[0].nationalId) ??
+          '',
+      )}`,
+    )
+    .text(
+      (existingCase.defendants && existingCase.defendants[0].address) ??
+        'Heimili ekki skráð',
+    )
     .text(' ')
     .text(' ')
     .font('Helvetica-Bold')
@@ -130,8 +142,9 @@ function constructCustodyNoticePdf(
         : 'Ekki skráður',
     )
 
+  // TODO defendants: handle multiple defendants
   const custodyRestrictions = formatCustodyRestrictions(
-    existingCase.accusedGender,
+    existingCase.defendants && existingCase.defendants[0].gender,
     existingCase.custodyRestrictions,
   )
 
@@ -155,9 +168,10 @@ function constructCustodyNoticePdf(
         CaseCustodyRestrictions.ISOLATION,
       )
     ) {
+      // TODO defendants: handle multiple defendants
       doc.text(
         formatCustodyIsolation(
-          existingCase.accusedGender,
+          existingCase.defendants && existingCase.defendants[0].gender,
           existingCase.isolationToDate,
         ),
       )

@@ -24,10 +24,7 @@ function createCase(type: CaseType): Case {
     description: '-',
     state: CaseState.SUBMITTED,
     policeCaseNumber: '-',
-    accusedNationalId: '-',
-    accusedName: '-',
-    accusedAddress: '-',
-    accusedGender: Gender.FEMALE,
+    defendants: undefined,
     defenderName: '-',
     defenderEmail: '-',
     defenderPhoneNumber: '-',
@@ -98,6 +95,18 @@ function createCase(type: CaseType): Case {
 
   return {
     ...baseCase,
+    defendants: [
+      {
+        id: '-',
+        created: '-',
+        modified: '-',
+        caseId: '-',
+        nationalId: '-',
+        name: '-',
+        address: '-',
+        gender: Gender.FEMALE,
+      },
+    ],
     court: {
       id: '-',
       created: '-',
@@ -162,8 +171,6 @@ function createCase(type: CaseType): Case {
     },
     parentCase: baseCase,
     childCase: baseCase,
-    notifications: [],
-    caseFiles: [],
     isMasked: false,
   }
 }
@@ -176,8 +183,7 @@ function maskedCase(theCase: Case) {
     type: theCase.type,
     state: theCase.state,
     policeCaseNumber: theCase.policeCaseNumber,
-    accusedNationalId: '0000000000',
-    accusedName: 'T',
+    defendants: [{ dNationalId: '0000000000', dName: 'T' }],
     defenderName: theCase.defenderName,
     defenderEmail: theCase.defenderEmail,
     defenderPhoneNumber: theCase.defenderPhoneNumber,
@@ -211,8 +217,6 @@ function maskedCase(theCase: Case) {
       type: theCase.parentCase.type,
       state: theCase.parentCase.state,
       policeCaseNumber: theCase.parentCase.policeCaseNumber,
-      accusedNationalId: '0000000000',
-      accusedName: 'T',
       defenderName: theCase.parentCase.defenderName,
       defenderEmail: theCase.parentCase.defenderEmail,
       defenderPhoneNumber: theCase.parentCase.defenderPhoneNumber,
@@ -380,8 +384,11 @@ describe('Full name', () => {
     ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.OTHER}
   `.it('should mask the name', ({ type }) => {
-    const res = maskCase({ type, accusedName: 'Jón Jónsson' } as Case)
+    const res = maskCase({
+      type,
+      defendants: [{ name: 'Jón Jónsson' }],
+    } as Case)
 
-    expect(res.accusedName).toBe('LU')
+    expect(res.defendants[0].name).toBe('LU')
   })
 })

@@ -18,7 +18,6 @@ import {
   CaseLegalProvisions,
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  Gender,
   CaseDecision,
   CaseType,
   SessionArrangements,
@@ -27,6 +26,7 @@ import {
 import { CaseFile } from '../../file/models/file.model'
 import { Institution } from '../../institution'
 import { User } from '../../user'
+import { Defendant } from '../../defendant/models/defendant.model'
 
 @Table({
   tableName: 'case',
@@ -102,44 +102,11 @@ export class Case extends Model<Case> {
   policeCaseNumber!: string
 
   /**********
-   * The national id of the accused
+   * The case's defendants
    **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
-  accusedNationalId!: string
-
-  /**********
-   * The name of the accused
-   **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  accusedName?: string
-
-  /**********
-   * The address of the accused
-   **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  accusedAddress?: string
-
-  /**********
-   * The gender of the accused
-   **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(Gender),
-  })
-  accusedGender?: Gender
+  @HasMany(() => Defendant, 'caseId')
+  @ApiProperty({ type: Defendant, isArray: true })
+  defendants?: Defendant[]
 
   /**********
    * The name of the accused's defender - optional

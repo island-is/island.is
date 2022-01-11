@@ -130,9 +130,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                 : 'Var ekki skráður',
             },
           ]}
-          accusedName={workingCase.accusedName}
-          accusedNationalId={workingCase.accusedNationalId}
-          accusedAddress={workingCase.accusedAddress}
+          defendants={workingCase.defendants ?? []}
           defender={{
             name: workingCase.defenderName ?? '',
             email: workingCase.defenderEmail,

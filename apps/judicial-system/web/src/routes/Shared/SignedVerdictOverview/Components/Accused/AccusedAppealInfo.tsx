@@ -35,7 +35,8 @@ const AccusedAppealInfo: React.FC<Props> = (props) => {
       <InfoBox
         text={`${capitalize(
           formatAccusedByGender(
-            workingCase.accusedGender,
+            // TDOO defendants: handle multiple defendants
+            workingCase.defendants && workingCase.defendants[0].gender,
             NounCases.NOMINATIVE,
             isInvestigationCase(workingCase.type),
           ),

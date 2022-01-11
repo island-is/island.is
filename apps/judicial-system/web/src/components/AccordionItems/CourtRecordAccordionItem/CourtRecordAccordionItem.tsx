@@ -33,13 +33,15 @@ interface Props {
 const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
   const { formatMessage } = useIntl()
 
+  // TODO defendants: handle multiple defendants
   const custodyRestrictions = formatCustodyRestrictions(
-    workingCase.accusedGender,
+    workingCase.defendants && workingCase.defendants[0].gender,
     workingCase.custodyRestrictions,
   )
 
+  // TODO defendants: handle multiple defendants
   const alternativeTravelBanRestrictions = formatAlternativeTravelBanRestrictions(
-    workingCase.accusedGender,
+    workingCase.defendants && workingCase.defendants[0].gender,
     workingCase.custodyRestrictions,
     workingCase.otherRestrictions,
   )
@@ -49,12 +51,19 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
     'Sækjandi',
   )
 
+  // TODO defendants: handle multiple defendants
   const accusedAppeal = formatAppeal(
     workingCase.accusedAppealDecision,
     isRestrictionCase(workingCase.type)
-      ? capitalize(formatAccusedByGender(workingCase.accusedGender))
+      ? capitalize(
+          formatAccusedByGender(
+            workingCase.defendants && workingCase.defendants[0].gender,
+          ),
+        )
       : 'Varnaraðili',
-    isRestrictionCase(workingCase.type) ? workingCase.accusedGender : undefined,
+    isRestrictionCase(workingCase.type)
+      ? workingCase.defendants && workingCase.defendants[0].gender
+      : undefined,
   )
   return (
     <AccordionItem
@@ -124,8 +133,9 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         <AccordionListItem
           title={formatMessage(m.sections.accusedBookings.title, {
             accusedType: isRestrictionCase(workingCase.type)
-              ? formatAccusedByGender(
-                  workingCase.accusedGender,
+              ? // TODO defendants: handle multiple defendants
+                formatAccusedByGender(
+                  workingCase.defendants && workingCase.defendants[0].gender,
                   NounCases.ACCUSATIVE,
                 )
               : 'varnaraðila',

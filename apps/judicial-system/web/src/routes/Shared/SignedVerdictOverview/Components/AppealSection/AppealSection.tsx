@@ -78,7 +78,10 @@ const AppealSection: React.FC<Props> = (props) => {
             <InfoBox
               text={formatMessage(signedVerdictOverview.accusedAppealed, {
                 genderedAccused: capitalize(
-                  formatAccusedByGender(workingCase.accusedGender),
+                  formatAccusedByGender(
+                    // TDOO defendants: handle multiple defendants
+                    workingCase.defendants && workingCase.defendants[0].gender,
+                  ),
                 ),
                 courtEndTime: `${formatDate(
                   workingCase.rulingDate,
@@ -97,7 +100,10 @@ const AppealSection: React.FC<Props> = (props) => {
             <InfoBox
               text={formatMessage(signedVerdictOverview.prosecutorAppealed, {
                 genderedAccused: capitalize(
-                  formatAccusedByGender(workingCase.accusedGender),
+                  formatAccusedByGender(
+                    // TDOO defendants: handle multiple defendants
+                    workingCase.defendants && workingCase.defendants[0].gender,
+                  ),
                 ),
                 courtEndTime: `${formatDate(
                   workingCase.courtEndTime,
@@ -127,7 +133,9 @@ const AppealSection: React.FC<Props> = (props) => {
               </AnimatePresence>
               <AnimatePresence>
                 {workingCase.accusedPostponedAppealDate &&
-                  workingCase.accusedGender && (
+                  // TDOO defendants: handle multiple defendants
+                  workingCase.defendants &&
+                  workingCase.defendants[0].gender && (
                     <AccusedAppealInfo
                       workingCase={workingCase}
                       withdrawAccusedAppealDate={

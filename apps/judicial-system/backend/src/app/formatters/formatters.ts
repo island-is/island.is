@@ -306,6 +306,7 @@ export function formatPrisonRevokedEmailNotification(
   }gæsluvarðhald sem send var til ${courtText} og taka átti fyrir ${courtDateText}.<br /><br />${accusedNameText}<br /><br />${defenderText}.`
 }
 
+// TDOO defendants: handle multiple defendants
 export function formatDefenderRevokedEmailNotification(
   type: CaseType,
   accusedNationalId: string,

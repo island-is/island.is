@@ -67,6 +67,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
   const [legalBasisEM, setLegalBasisEM] = useState<string>('')
 
+  // TODO defendants: handle multiple defendants
   useEffect(() => {
     if (isCaseUpToDate) {
       if (workingCase) {
@@ -74,10 +75,12 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
         const courtClaimText = courtClaim
           ? formatMessage(courtClaim.text, {
               ...(courtClaim.format?.accusedName && {
-                accusedName: workingCase.accusedName,
+                accusedName:
+                  workingCase.defendants && workingCase.defendants[0].name,
               }),
               ...(courtClaim.format?.address && {
-                address: workingCase.accusedAddress,
+                address:
+                  workingCase.defendants && workingCase.defendants[0].address,
               }),
             })
           : ''

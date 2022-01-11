@@ -39,8 +39,8 @@ const CourtRecord = () => {
         }
 
         if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-          if (wc.accusedName) {
-            attendees += `${wc.accusedName} varnaraðili`
+          if (wc.defendants && wc.defendants[0].name) {
+            attendees += `${wc.defendants[0].name} varnaraðili`
           }
         } else {
           attendees += formatMessage(

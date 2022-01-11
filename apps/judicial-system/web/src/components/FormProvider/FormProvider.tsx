@@ -34,7 +34,7 @@ const initialState: Case = {
   type: CaseType.CUSTODY,
   state: CaseState.NEW,
   policeCaseNumber: '',
-  accusedNationalId: '',
+  defendants: [],
 }
 
 export const FormContext = createContext<FormProvider>({

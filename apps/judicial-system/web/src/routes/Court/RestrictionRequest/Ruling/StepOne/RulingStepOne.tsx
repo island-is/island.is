@@ -410,7 +410,11 @@ export const RulingStepOne: React.FC = () => {
               <BlueBox>
                 <Box marginBottom={3}>
                   <CheckboxList
-                    checkboxes={isolation(workingCase.accusedGender)}
+                    // TODO defendants: handle multiple defendants
+                    checkboxes={isolation(
+                      workingCase.defendants &&
+                        workingCase.defendants[0].gender,
+                    )}
                     selected={workingCase.custodyRestrictions}
                     onChange={(id) =>
                       setCheckboxAndSendToServer(

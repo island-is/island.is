@@ -70,10 +70,11 @@ export const isAccusedStepValidRC = (workingCase: Case) => {
     validate(workingCase.policeCaseNumber, 'empty').isValid &&
     validate(workingCase.policeCaseNumber, 'police-casenumber-format')
       .isValid &&
-    workingCase.accusedGender &&
-    validate(workingCase.accusedNationalId, 'empty').isValid &&
-    validate(workingCase.accusedNationalId, 'national-id').isValid &&
-    validate(workingCase.accusedName || '', 'empty').isValid &&
+    workingCase.defendants &&
+    workingCase.defendants[0].gender &&
+    validate(workingCase.defendants[0].nationalId, 'empty').isValid &&
+    validate(workingCase.defendants[0].nationalId, 'national-id').isValid &&
+    validate(workingCase.defendants[0].name || '', 'empty').isValid &&
     (workingCase.type === CaseType.CUSTODY
       ? validate(workingCase.defenderEmail || '', 'email-format').isValid &&
         validate(workingCase.defenderPhoneNumber || '', 'phonenumber')
@@ -89,11 +90,12 @@ export const isDefendantStepValidIC = (workingCase: Case) => {
     validate(workingCase.policeCaseNumber, 'police-casenumber-format')
       .isValid &&
     workingCase.type &&
-    workingCase.accusedGender &&
-    validate(workingCase.accusedNationalId, 'empty').isValid &&
-    validate(workingCase.accusedNationalId, 'national-id').isValid &&
-    validate(workingCase.accusedName || '', 'empty').isValid &&
-    validate(workingCase.accusedAddress || '', 'empty').isValid &&
+    workingCase.defendants &&
+    workingCase.defendants[0].gender &&
+    validate(workingCase.defendants[0].nationalId, 'empty').isValid &&
+    validate(workingCase.defendants[0].nationalId, 'national-id').isValid &&
+    validate(workingCase.defendants[0].name || '', 'empty').isValid &&
+    validate(workingCase.defendants[0].address || '', 'empty').isValid &&
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid
   )

@@ -2,6 +2,7 @@ import React, { PropsWithChildren } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
+import { Defendant } from '@island.is/judicial-system/types'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 
@@ -9,9 +10,7 @@ import * as styles from './InfoCard.css'
 
 interface Props {
   data: Array<{ title: string; value?: string }>
-  accusedName?: string
-  accusedNationalId?: string
-  accusedAddress?: string
+  defendants: Defendant[]
   defender?: {
     name: string
     email?: string
@@ -28,12 +27,17 @@ const InfoCard: React.FC<Props> = (props: PropsWithChildren<Props>) => {
       <Text variant="h4">{formatMessage(core.accused)}</Text>
       <Box className={styles.infoCardTitleContainer}>
         <Box marginBottom={4}>
+          {/* TDOO defendants: handle multiple defendants */}
           <Text fontWeight="semiBold">
-            {props.accusedName}
+            {props.defendants && props.defendants[0].name}
             <Text as="span">{`, `}</Text>
-            {`kt. ${formatNationalId(props.accusedNationalId ?? '')}`}
-            {props.accusedAddress && (
-              <Text as="span">{`, ${props.accusedAddress}`}</Text>
+            {`kt. ${formatNationalId(
+              (props.defendants && props.defendants[0].nationalId) ?? '',
+            )}`}
+            {props.defendants && props.defendants[0].address && (
+              <Text as="span">{`, ${
+                props.defendants && props.defendants[0].address
+              }`}</Text>
             )}
           </Text>
         </Box>

@@ -1,5 +1,12 @@
 export { Feature } from './lib/feature'
 
+export { Gender } from './lib/defendant'
+export type {
+  Defendant,
+  CreateDefendant,
+  UpdateDefendant,
+} from './lib/defendant'
+
 export { InstitutionType } from './lib/institution'
 export type { Institution } from './lib/institution'
 
@@ -35,7 +42,6 @@ export {
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
-  Gender,
   CaseDecision,
   SessionArrangements,
   restrictionCases,

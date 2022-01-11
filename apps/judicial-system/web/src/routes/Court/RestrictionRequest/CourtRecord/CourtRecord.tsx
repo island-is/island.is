@@ -65,22 +65,23 @@ export const CourtRecord: React.FC = () => {
     document.title = 'Þingbók - Réttarvörslugátt'
   }, [])
 
+  // TODO defendants: handle multiple defendants
   useEffect(() => {
     if (isCaseUpToDate) {
       const defaultCourtAttendees = (wc: Case): string => {
         let attendees = ''
 
-        if (wc.prosecutor && wc.accusedName) {
+        if (wc.prosecutor && wc.defendants && wc.defendants[0].name) {
           attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
-            wc.accusedName
-          } ${formatAccusedByGender(wc?.accusedGender)}`
+            wc.defendants[0].name
+          } ${formatAccusedByGender(wc.defendants[0].gender)}`
         }
 
         if (wc.defenderName) {
           attendees += `\n${
             wc.defenderName
           } skipaður verjandi ${formatAccusedByGender(
-            wc?.accusedGender,
+            wc.defendants && wc.defendants[0].gender,
             NounCases.GENITIVE,
           )}`
         }
@@ -118,13 +119,13 @@ export const CourtRecord: React.FC = () => {
         autofill(
           'litigationPresentations',
           `Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi ${formatAccusedByGender(
-            theCase.accusedGender,
+            theCase.defendants && theCase.defendants[0].gender,
             NounCases.GENITIVE,
           )} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að ${formatAccusedByGender(
-            theCase.accusedGender,
+            theCase.defendants && theCase.defendants[0].gender,
             NounCases.DATIVE,
           )} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að ${formatAccusedByGender(
-            theCase.accusedGender,
+            theCase.defendants && theCase.defendants[0].gender,
             NounCases.DATIVE,
           )} verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.`,
           theCase,
@@ -304,8 +305,9 @@ export const CourtRecord: React.FC = () => {
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
               {`${formatMessage(m.sections.accusedBookings.title, {
+                // TODO defendants: handle multiple defendants
                 genderedAccused: formatAccusedByGender(
-                  workingCase.accusedGender,
+                  workingCase.defendants && workingCase.defendants[0].gender,
                   NounCases.GENITIVE,
                 ),
               })} `}
@@ -318,8 +320,9 @@ export const CourtRecord: React.FC = () => {
             data-testid="accusedBookings"
             name="accusedBookings"
             label={formatMessage(m.sections.accusedBookings.label, {
+              // TODO defendants: handle multiple defendants
               genderedAccused: formatAccusedByGender(
-                workingCase.accusedGender,
+                workingCase.defendants && workingCase.defendants[0].gender,
                 NounCases.GENITIVE,
               ),
             })}

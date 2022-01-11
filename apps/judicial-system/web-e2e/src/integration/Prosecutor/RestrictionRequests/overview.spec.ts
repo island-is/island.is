@@ -11,8 +11,7 @@ describe('/krafa/stadfesta/:id', () => {
     const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
-      accusedName: 'Donald Duck',
-      accusedAddress: 'Batcave 1337',
+      defendants: [{ name: 'Donald Duck', address: 'Batcave 1337' }],
       requestedCourtDate: '2020-09-16T19:50:08.033Z',
       arrestDate: '2020-09-16T19:50:08.033Z',
       demands:

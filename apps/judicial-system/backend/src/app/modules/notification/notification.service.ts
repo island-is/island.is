@@ -454,6 +454,7 @@ export class NotificationService {
     )
   }
 
+  // TODO defendants: handle multiple defendants
   private sendCourtDateEmailNotificationToPrison(
     theCase: Case,
   ): Promise<Recipient> {
@@ -462,8 +463,8 @@ export class NotificationService {
       theCase.creatingProsecutor?.institution?.name,
       theCase.court?.name,
       theCase.courtDate,
-      theCase.accusedName,
-      theCase.accusedGender,
+      theCase.defendants && theCase.defendants[0].name,
+      theCase.defendants && theCase.defendants[0].gender,
       theCase.requestedValidToDate,
       theCase.requestedCustodyRestrictions?.includes(
         CaseCustodyRestrictions.ISOLATION,
@@ -658,6 +659,7 @@ export class NotificationService {
     return this.sendSms(smsText, this.getCourtMobileNumber(theCase.courtId))
   }
 
+  // TODO defendants: handle multiple defendants
   private sendRevokedEmailNotificationToPrison(
     theCase: Case,
   ): Promise<Recipient> {
@@ -666,7 +668,7 @@ export class NotificationService {
       theCase.creatingProsecutor?.institution?.name,
       theCase.court?.name,
       theCase.courtDate,
-      theCase.accusedName,
+      theCase.defendants && theCase.defendants[0].name,
       theCase.defenderName,
       Boolean(theCase.parentCase),
     )
@@ -679,6 +681,7 @@ export class NotificationService {
     )
   }
 
+  // TDOO defendants: handle multiple defendants
   private sendRevokedEmailNotificationToDefender(
     theCase: Case,
   ): Promise<Recipient> {
@@ -689,8 +692,8 @@ export class NotificationService {
     } afturkölluð`
     const html = formatDefenderRevokedEmailNotification(
       theCase.type,
-      theCase.accusedNationalId,
-      theCase.accusedName,
+      (theCase.defendants && theCase.defendants[0].nationalId) ?? '',
+      theCase.defendants && theCase.defendants[0].name,
       theCase.court?.name,
       theCase.courtDate,
     )

@@ -75,10 +75,6 @@ const prosecutorUpdateRule = {
     'type',
     'description',
     'policeCaseNumber',
-    'accusedNationalId',
-    'accusedName',
-    'accusedAddress',
-    'accusedGender',
     'defenderName',
     'defenderEmail',
     'defenderPhoneNumber',
@@ -221,6 +217,7 @@ export class CaseController {
     }
   }
 
+  // TDOO defendants: create defendant
   @UseGuards(TokenGuard)
   @Post('internal/case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })

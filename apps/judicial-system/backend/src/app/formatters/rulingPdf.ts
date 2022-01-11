@@ -301,10 +301,15 @@ function constructRestrictionRulingPdf(
     doc.text(' ').text(prosecutorAppeal, { align: 'justify', paragraphGap: 1 })
   }
 
+  // TODO defendants: handle multiple defendants
   let accusedAppeal = formatAppeal(
     existingCase.accusedAppealDecision,
-    capitalize(formatAccusedByGender(existingCase.accusedGender)),
-    existingCase.accusedGender,
+    capitalize(
+      formatAccusedByGender(
+        existingCase.defendants && existingCase.defendants[0].gender,
+      ),
+    ),
+    existingCase.defendants && existingCase.defendants[0].gender,
   )
 
   if (accusedAppeal) {
@@ -324,8 +329,9 @@ function constructRestrictionRulingPdf(
     (existingCase.decision === CaseDecision.ACCEPTING ||
       existingCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
   ) {
+    // TODO defendants: handle multiple defendants
     const custodyRestrictions = formatCustodyRestrictions(
-      existingCase.accusedGender,
+      existingCase.defendants && existingCase.defendants[0].gender,
       existingCase.custodyRestrictions,
       true,
     )
@@ -351,8 +357,9 @@ function constructRestrictionRulingPdf(
       (existingCase.decision === CaseDecision.ACCEPTING ||
         existingCase.decision === CaseDecision.ACCEPTING_PARTIALLY))
   ) {
+    // TODO defendants: handle multiple defendants
     const alternativeTravelBanRestrictions = formatAlternativeTravelBanRestrictions(
-      existingCase.accusedGender,
+      existingCase.defendants && existingCase.defendants[0].gender,
       existingCase.custodyRestrictions,
       existingCase.otherRestrictions,
     )

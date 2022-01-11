@@ -41,6 +41,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
   ] = useState<string>('')
 
   return (
+    // TDOO defendants: handle multiple defendants
     <BlueBox>
       <Box marginBottom={2}>
         <Text as="h4" variant="h4">
@@ -57,7 +58,10 @@ const DefendantInfo: React.FC<Props> = (props) => {
             id="genderMale"
             label={formatMessage(core.male)}
             value={Gender.MALE}
-            checked={workingCase.accusedGender === Gender.MALE}
+            checked={
+              workingCase.defendants &&
+              workingCase.defendants[0].gender === Gender.MALE
+            }
             onChange={() =>
               setAndSendToServer(
                 'accusedGender',
@@ -77,7 +81,10 @@ const DefendantInfo: React.FC<Props> = (props) => {
             id="genderFemale"
             label={formatMessage(core.female)}
             value={Gender.FEMALE}
-            checked={workingCase.accusedGender === Gender.FEMALE}
+            checked={
+              workingCase.defendants &&
+              workingCase.defendants[0].gender === Gender.FEMALE
+            }
             onChange={() =>
               setAndSendToServer(
                 'accusedGender',
@@ -97,7 +104,10 @@ const DefendantInfo: React.FC<Props> = (props) => {
             id="genderOther"
             label={formatMessage(core.otherGender)}
             value={Gender.OTHER}
-            checked={workingCase.accusedGender === Gender.OTHER}
+            checked={
+              workingCase.defendants &&
+              workingCase.defendants[0].gender === Gender.OTHER
+            }
             onChange={() =>
               setAndSendToServer(
                 'accusedGender',
@@ -116,7 +126,10 @@ const DefendantInfo: React.FC<Props> = (props) => {
         <InputMask
           mask="999999-9999"
           maskPlaceholder={null}
-          value={workingCase.accusedNationalId || ''}
+          value={
+            (workingCase.defendants && workingCase.defendants[0].nationalId) ??
+            ''
+          }
           onChange={(event) =>
             removeTabsValidateAndSet(
               'accusedNationalId',
@@ -158,7 +171,9 @@ const DefendantInfo: React.FC<Props> = (props) => {
           autoComplete="off"
           label={formatMessage(core.fullName)}
           placeholder={formatMessage(core.fullName)}
-          value={workingCase.accusedName || ''}
+          value={
+            (workingCase.defendants && workingCase.defendants[0].name) ?? ''
+          }
           errorMessage={accusedNameErrorMessage}
           hasError={accusedNameErrorMessage !== ''}
           onChange={(event) =>
@@ -191,7 +206,9 @@ const DefendantInfo: React.FC<Props> = (props) => {
         autoComplete="off"
         label={formatMessage(core.addressOrResidence)}
         placeholder={formatMessage(core.addressOrResidence)}
-        value={workingCase.accusedAddress || ''}
+        value={
+          (workingCase.defendants && workingCase.defendants[0].address) ?? ''
+        }
         errorMessage={accusedAddressErrorMessage}
         hasError={
           Boolean(accusedAddressErrorMessage) &&

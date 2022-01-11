@@ -619,10 +619,6 @@ export class CaseService {
       type: theCase.type,
       policeCaseNumber: theCase.policeCaseNumber,
       description: theCase.description,
-      accusedNationalId: theCase.accusedNationalId,
-      accusedName: theCase.accusedName,
-      accusedAddress: theCase.accusedAddress,
-      accusedGender: theCase.accusedGender,
       defenderName: theCase.defenderName,
       defenderEmail: theCase.defenderEmail,
       defenderPhoneNumber: theCase.defenderPhoneNumber,
@@ -642,6 +638,8 @@ export class CaseService {
       parentCaseId: theCase.id,
       initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
     })
+
+    // TODO defendants: copy defendants to extended case
 
     return this.findById(extendedCase.id)
   }

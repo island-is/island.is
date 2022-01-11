@@ -44,6 +44,7 @@ const DefendantForm: React.FC<Props> = (props) => {
     isLoading,
   } = props
 
+  // TDOO defendants: handle multiple defendants in validation
   const validations: FormSettings = {
     policeCaseNumber: {
       validations: ['empty', 'police-casenumber-format'],

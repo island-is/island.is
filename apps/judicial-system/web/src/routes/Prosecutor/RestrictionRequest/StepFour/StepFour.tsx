@@ -58,11 +58,14 @@ export const StepFour: React.FC = () => {
     if (isCaseUpToDate) {
       const theCase: Case = workingCase
 
+      // TDOO defendants: handle multiple defendants
       autofill(
         'demands',
         `${formatMessage(rcReportForm.sections.demands.autofill, {
-          accusedName: theCase.accusedName,
-          accusedNationalId: formatNationalId(theCase.accusedNationalId),
+          accusedName: theCase.defendants && theCase.defendants[0].name,
+          accusedNationalId: formatNationalId(
+            (theCase.defendants && theCase.defendants[0].nationalId) ?? '',
+          ),
           extensionSuffix:
             theCase.parentCase &&
             isAcceptingCaseDecision(theCase.parentCase.decision)

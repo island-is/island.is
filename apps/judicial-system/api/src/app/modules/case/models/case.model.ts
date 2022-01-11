@@ -6,12 +6,12 @@ import type {
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
-  Gender,
   CaseState,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
+import { Defendant } from '../../defendant/models/defendant.model'
 import { Institution } from '../../institution'
 import { User } from '../../user'
 import { CaseFile } from '../../file'
@@ -40,17 +40,8 @@ export class Case implements TCase {
   @Field()
   readonly policeCaseNumber!: string
 
-  @Field()
-  readonly accusedNationalId!: string
-
-  @Field({ nullable: true })
-  readonly accusedName?: string
-
-  @Field({ nullable: true })
-  readonly accusedAddress?: string
-
-  @Field(() => String, { nullable: true })
-  readonly accusedGender?: Gender
+  @Field(() => [Defendant], { nullable: true })
+  readonly defendants?: Defendant[]
 
   @Field({ nullable: true })
   readonly defenderName?: string

@@ -92,7 +92,8 @@ const ActiveRequests: React.FC<Props> = (props) => {
               )}
             </Text>
           </th>
-          <th className={cn(styles.th, styles.largeColumn)}>
+          {/* TDOO defendants: handle multiple defendants */}
+          {/* <th className={cn(styles.th, styles.largeColumn)}>
             <Box
               component="button"
               display="flex"
@@ -117,7 +118,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
                 <Icon icon="caretDown" size="small" />
               </Box>
             </Box>
-          </th>
+          </th> */}
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
               {formatMessage(
@@ -196,15 +197,18 @@ const ActiveRequests: React.FC<Props> = (props) => {
             <td className={cn(styles.td, styles.largeColumn)}>
               <Text>
                 <Box component="span" className={styles.blockColumn}>
-                  {c.accusedName || '-'}
+                  {(c.defendants && c.defendants[0].name) ?? '-'}
                 </Box>
               </Text>
               <Text>
-                {c.accusedNationalId && (
+                {c.defendants && c.defendants[0].nationalId && (
                   <Text as="span" variant="small" color="dark400">
                     {`kt. ${
-                      insertAt(c.accusedNationalId.replace('-', ''), '-', 6) ||
-                      '-'
+                      insertAt(
+                        c.defendants[0].nationalId.replace('-', ''),
+                        '-',
+                        6,
+                      ) || '-'
                     }`}
                   </Text>
                 )}

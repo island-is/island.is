@@ -23,22 +23,6 @@ export class CreateCaseInput implements CreateCase {
   readonly policeCaseNumber!: string
 
   @Allow()
-  @Field()
-  readonly accusedNationalId!: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly accusedName?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly accusedAddress?: string
-
-  @Allow()
-  @Field(() => String, { nullable: true })
-  readonly accusedGender?: Gender
-
-  @Allow()
   @Field({ nullable: true })
   readonly defenderName?: string
 

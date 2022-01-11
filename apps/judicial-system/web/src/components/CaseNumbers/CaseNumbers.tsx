@@ -19,11 +19,12 @@ const CaseNumbers: React.FC<Props> = ({ workingCase }: Props) => {
           })}
         </Text>
       </Box>
+      {/* TODO defendants: handle multiple defendants */}
       <Text fontWeight="semiBold">{`${formatMessage(core.prosecutor)}: ${
         workingCase.prosecutor?.institution?.name
       }`}</Text>
       <Text fontWeight="semiBold">{`${formatMessage(core.accused)}: ${
-        workingCase.accusedName
+        workingCase.defendants && workingCase.defendants[0].name
       }`}</Text>
     </>
   )

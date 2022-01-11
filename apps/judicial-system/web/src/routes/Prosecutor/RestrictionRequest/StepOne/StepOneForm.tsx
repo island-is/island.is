@@ -43,6 +43,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
     setLeadInvestigatorErrorMessage,
   ] = useState<string>('')
 
+  // TDOO defendants: handle multiple defendants in validation
   const validations: FormSettings = {
     policeCaseNumber: {
       validations: ['empty', 'police-casenumber-format'],

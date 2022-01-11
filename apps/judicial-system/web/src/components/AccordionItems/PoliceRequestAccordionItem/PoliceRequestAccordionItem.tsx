@@ -44,14 +44,23 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
           {formatMessage(core.accused)}
         </Text>
       </Box>
+      {/* TDOO defendants: handle multiple defendants */}
       <Box marginBottom={1}>
-        <Text>Kennitala: {workingCase.accusedNationalId}</Text>
+        <Text>
+          Kennitala:{' '}
+          {workingCase.defendants && workingCase.defendants[0].nationalId}
+        </Text>
       </Box>
       <Box marginBottom={1}>
-        <Text>Fullt nafn: {workingCase.accusedName}</Text>
+        <Text>
+          Fullt nafn: {workingCase.defendants && workingCase.defendants[0].name}
+        </Text>
       </Box>
       <Box marginBottom={3}>
-        <Text>Lögheimili: {workingCase.accusedAddress}</Text>
+        <Text>
+          Lögheimili:{' '}
+          {workingCase.defendants && workingCase.defendants[0].address}
+        </Text>
       </Box>
       {workingCase.arrestDate && (
         <AccordionListItem title="Tími handtöku">

@@ -19,7 +19,7 @@ describe('Appeal section component', () => {
     type: CaseType.CUSTODY,
     state: CaseState.ACCEPTED,
     policeCaseNumber: '000',
-    accusedNationalId: '000000-0000',
+    defendants: [{ nationalId: '000000-0000' }],
   }
 
   test('should say when a case is no longer appealable if either the prosecutors or judges appeal decision is to postpone', async () => {

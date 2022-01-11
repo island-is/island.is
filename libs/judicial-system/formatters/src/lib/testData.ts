@@ -21,10 +21,14 @@ export const makeCustodyCase = (): Case => {
     state: CaseState.DRAFT,
     type: CaseType.CUSTODY,
     policeCaseNumber: '007-2021-202000',
-    accusedNationalId: '000000-0000',
-    accusedName: 'Donald Duck',
-    accusedGender: Gender.MALE,
-    accusedAddress: 'Batcave 1337',
+    defendants: [
+      {
+        nationalId: '000000-0000',
+        name: 'Donald Duck',
+        gender: Gender.MALE,
+        address: 'Batcave 1337',
+      },
+    ],
   }
 }
 
@@ -43,10 +47,14 @@ export const makeInvestigationCase = (): Case => {
       name: 'Héraðsdómur Reykjavíkur',
     },
     policeCaseNumber: '007-2021-202000',
-    accusedNationalId: '000000-0000',
-    accusedName: investigationCaseAccusedName,
-    accusedGender: Gender.MALE,
-    accusedAddress: investigationCaseAccusedAddress,
+    defendants: [
+      {
+        nationalId: '000000-0000',
+        name: investigationCaseAccusedName,
+        gender: Gender.MALE,
+        address: investigationCaseAccusedAddress,
+      },
+    ],
   }
 }
 
