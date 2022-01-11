@@ -4,6 +4,7 @@ import { FAFieldBaseProps, TwoTypeAnswers } from '../../lib/types'
 import { useIntl } from 'react-intl'
 import { studentForm } from '../../lib/messages'
 import { InputController, RadioController } from '@island.is/shared/form-fields'
+import { useFormContext } from 'react-hook-form'
 
 const StudentForm = ({ errors, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -17,17 +18,14 @@ const StudentForm = ({ errors, application }: FAFieldBaseProps) => {
     id: 'student.custom',
     error: errors?.student?.custom,
   }
-
-  const [statefulAnswer, setStatefulAnswer] = useState<
-    TwoTypeAnswers | undefined
-  >(answers?.student?.isStudent)
+  const { clearErrors, getValues } = useFormContext()
 
   return (
     <>
       <Box marginTop={[2, 2, 3]}>
         <RadioController
           id={typeInput.id}
-          defaultValue={statefulAnswer}
+          defaultValue={answers?.student?.isStudent}
           options={[
             {
               value: TwoTypeAnswers.No,
@@ -38,15 +36,12 @@ const StudentForm = ({ errors, application }: FAFieldBaseProps) => {
               label: formatMessage(studentForm.form.isStudent),
             },
           ]}
-          onSelect={(newAnswer) =>
-            setStatefulAnswer(newAnswer as TwoTypeAnswers)
-          }
           largeButtons
           backgroundColor="white"
           error={typeInput.error}
         />
       </Box>
-      {statefulAnswer === TwoTypeAnswers.Yes && (
+      {getValues(typeInput.id) === TwoTypeAnswers.Yes && (
         <Box>
           <InputController
             id={customeInput.id}
@@ -54,6 +49,10 @@ const StudentForm = ({ errors, application }: FAFieldBaseProps) => {
             label={formatMessage(studentForm.input.label)}
             placeholder={formatMessage(studentForm.input.placeholder)}
             backgroundColor="blue"
+            error={customeInput.error}
+            onChange={() => {
+              clearErrors(customeInput.id)
+            }}
           />
           <Text fontWeight="semiBold" variant="small" marginTop={1}>
             {formatMessage(studentForm.input.example)}
