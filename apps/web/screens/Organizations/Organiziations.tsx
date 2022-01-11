@@ -11,6 +11,8 @@ import {
   GridRow,
   ResponsiveSpace,
   Pagination,
+  CategoryCard,
+  TagProps,
 } from '@island.is/island-ui/core'
 import { helperStyles, theme } from '@island.is/island-ui/theme'
 import {
@@ -21,7 +23,7 @@ import {
   QueryGetOrganizationArgs,
 } from '@island.is/api/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { Card, HeadWithSocialSharing } from '@island.is/web/components'
+import { HeadWithSocialSharing } from '@island.is/web/components'
 import {
   GET_ORGANIZATIONS_QUERY,
   GET_NAMESPACE_QUERY,
@@ -176,33 +178,42 @@ const OrganizationPage: Screen<OrganizationProps> = ({
               />
             </Box>
             <GridRow>
-              {visibleItems.map(({ title, description, tag, link }, index) => {
-                const tags =
-                  (tag &&
-                    tag.map((x) => ({
-                      title: x.title,
-                      tagProps: {
-                        outlined: true,
-                      },
-                    }))) ||
-                  []
+              {visibleItems.map(
+                ({ title, description, tag, link, logo }, index) => {
+                  const tags =
+                    (tag &&
+                      tag.map((x) => ({
+                        title: x.title,
+                        label: x.title,
+                        tagProps: {
+                          outlined: true,
+                        } as TagProps,
+                      }))) ||
+                    []
 
-                return (
-                  <GridColumn
-                    key={index}
-                    span={['12/12', '6/12', '6/12', '4/12']}
-                    paddingBottom={verticalSpacing}
-                  >
-                    <Card
-                      link={{ href: link }}
+                  return (
+                    <GridColumn
                       key={index}
-                      description={description}
-                      title={title}
-                      tags={tags}
-                    />
-                  </GridColumn>
-                )
-              })}
+                      span={['12/12', '6/12', '6/12', '4/12']}
+                      paddingBottom={verticalSpacing}
+                    >
+                      <CategoryCard
+                        href={link}
+                        key={index}
+                        text={description}
+                        heading={title}
+                        tags={tags}
+                        hyphenate
+                        {...(logo?.url && {
+                          src: logo.url,
+                          alt: logo.title,
+                          autoStack: true,
+                        })}
+                      />
+                    </GridColumn>
+                  )
+                },
+              )}
             </GridRow>
             {totalPages > 1 && (
               <GridRow>

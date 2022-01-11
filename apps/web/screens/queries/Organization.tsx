@@ -9,6 +9,10 @@ export const GET_ORGANIZATIONS_QUERY = gql`
         slug
         title
         description
+        logo {
+          title
+          url
+        }
         link
         tag {
           id
