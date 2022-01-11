@@ -33,7 +33,7 @@ export class DocumentResolver {
   ): Promise<DocumentDetails> {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace: '@island.is/api/document',
         action: 'getDocument',
         resources: input.id,
