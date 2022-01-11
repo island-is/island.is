@@ -25,8 +25,8 @@ const devConfig = {
     baseApiUrl:
       process.env.REGULATIONS_ADMIN_URL ?? 'http://localhost:3333/api',
     regulationsApiUrl:
-      process.env.REGULATIONS_API_URL ?? 'http://localhost:3000/api/v1',
-    //'https://reglugerdir-api.herokuapp.com/api/v1',
+      process.env.REGULATIONS_API_URL ??
+      'https://reglugerdir-api.herokuapp.com/api/v1',
   },
 }
 
