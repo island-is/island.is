@@ -65,7 +65,7 @@ const EmploymentForm = ({ application, errors }: FAFieldBaseProps) => {
         })}
       >
         <Controller
-          name="employmentCustom"
+          name={customInput.id}
           defaultValue={answers?.employment?.custom}
           render={({ value, onChange }) => {
             return (
