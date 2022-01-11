@@ -88,7 +88,7 @@ export const Header: FC<{}> = () => {
                 </Hidden>
               )}
               {!userMenuOpen && (
-                <Hidden above="md">
+                <Hidden above="sm">
                   {mobileMenuState === 'closed' ? (
                     <Box marginLeft={1}>
                       <Button
