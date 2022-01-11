@@ -1,4 +1,5 @@
 export enum ApplicationStates {
+  PREREQUESITES = 'prerequisites',
   DRAFT = 'draft',
 }
 

@@ -18,6 +18,7 @@ const InRelationship = ({ errors, application }: FAFieldBaseProps) => {
   const { answers } = application
   const { clearErrors } = useFormContext()
   const spouseEmailError = errors?.spouse?.email
+  const spouseApproveTermsError = errors?.spouse?.approveTerms
 
   return (
     <div>
@@ -48,6 +49,8 @@ const InRelationship = ({ errors, application }: FAFieldBaseProps) => {
           name={spouseApproveTerms}
           backgroundColor="blue"
           large={true}
+          defaultValue={[]}
+          error={spouseApproveTermsError}
           options={[
             {
               value: 'yes',
