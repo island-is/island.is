@@ -104,7 +104,7 @@ export const Documentation = ({
   applyDecorators(
     /* BEGIN DEFAULT DECORATORS */
     HttpCode(response.status),
-    ApiInternalServerErrorResponse(),
+    ApiInternalServerErrorResponse({ type: HttpProblemResponse }),
     ApiBadRequestResponse({ type: HttpProblemResponse }),
     /* END DEFAULT DECORATORS */
 
