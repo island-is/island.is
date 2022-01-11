@@ -25,11 +25,7 @@ const HomeCircumstancesForm = ({ application, errors }: FAFieldBaseProps) => {
 
   const { answers } = application
 
-  const [statefulAnswer, setStatefulAnswer] = useState<
-    HomeCircumstances | undefined
-  >(answers?.homeCircumstances?.type)
-
-  const { setValue } = useFormContext()
+  const { setValue, getValues, clearErrors } = useFormContext()
 
   return (
     <>
@@ -74,9 +70,6 @@ const HomeCircumstancesForm = ({ application, errors }: FAFieldBaseProps) => {
               label: formatMessage(homeCircumstancesForm.circumstances.other),
             },
           ]}
-          onSelect={(newAnswer) =>
-            setStatefulAnswer(newAnswer as HomeCircumstances)
-          }
           largeButtons
           backgroundColor="white"
           error={typeInput.error}
@@ -86,7 +79,8 @@ const HomeCircumstancesForm = ({ application, errors }: FAFieldBaseProps) => {
       <Box
         className={cn({
           [`${styles.inputContainer}`]: true,
-          [`${styles.inputAppear}`]: statefulAnswer === HomeCircumstances.OTHER,
+          [`${styles.inputAppear}`]:
+            getValues(typeInput.id) === HomeCircumstances.OTHER,
         })}
       >
         <Controller
@@ -105,6 +99,7 @@ const HomeCircumstancesForm = ({ application, errors }: FAFieldBaseProps) => {
                 hasError={customInput.error !== undefined}
                 errorMessage={customInput.error}
                 onChange={(e) => {
+                  clearErrors(customInput.id)
                   onChange(e.target.value)
                   setValue(customInput.id, e.target.value)
                 }}
