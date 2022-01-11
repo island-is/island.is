@@ -12,7 +12,6 @@ import {
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
-  Gender,
   CaseDecision,
   NotificationType,
   CaseType,

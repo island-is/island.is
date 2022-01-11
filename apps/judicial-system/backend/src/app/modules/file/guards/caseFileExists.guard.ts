@@ -3,7 +3,6 @@ import {
   CanActivate,
   ExecutionContext,
   BadRequestException,
-  NotFoundException,
 } from '@nestjs/common'
 
 import { FileService } from '../file.service'

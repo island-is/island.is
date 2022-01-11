@@ -7,7 +7,6 @@ import type {
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
-  Gender,
   UpdateCase,
   CaseType,
   SessionArrangements,
