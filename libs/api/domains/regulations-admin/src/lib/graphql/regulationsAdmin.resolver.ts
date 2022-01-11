@@ -51,7 +51,7 @@ export class RegulationsAdminResolver {
     }
 
     const lawChapters =
-      (draft.law_chapters &&
+      (draft.law_chapters?.length &&
         (await this.regulationsService.getRegulationsLawChapters(
           false,
           draft.law_chapters,
