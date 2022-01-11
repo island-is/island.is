@@ -1,6 +1,4 @@
-import { keyframes, style, styleVariants } from '@vanilla-extract/css'
-
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { keyframes, style } from '@vanilla-extract/css'
 
 export const inputWrapper = style({
   display: 'inline-block',

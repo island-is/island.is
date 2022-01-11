@@ -4,13 +4,15 @@ import { ApolloError } from '@apollo/client'
 import AnimateHeight from 'react-animate-height'
 import {
   Box,
-  Button,
   Text,
   LoadingDots,
   Table as T,
+  Hidden,
+  Button,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import * as styles from './ExpandableTable.css'
+import { tableStyles } from '@island.is/service-portal/core'
 
 interface Props {
   data: Array<{ value: string | number; align?: 'left' | 'right' }>
@@ -59,11 +61,12 @@ const ExpandableLine: FC<Props> = ({
               borderColor: fullClose || loading ? 'blue200' : 'blue100',
               position: 'relative',
             }}
+            style={tableStyles}
           >
             {!fullClose && i === 0 && !loading ? (
               <div className={styles.line} />
             ) : null}
-            <Text variant={last ? 'eyebrow' : 'small'} as="span">
+            <Text variant={last ? 'eyebrow' : 'medium'} as="span">
               <div
                 className={
                   item.align === 'right' ? styles.financeTd : undefined
@@ -81,9 +84,16 @@ const ExpandableLine: FC<Props> = ({
             borderColor: fullClose || loading ? 'blue200' : 'blue100',
             printHidden: true,
           }}
+          style={tableStyles}
         >
           {!last && !loading && (
-            <Box display="flex" alignItems="flexEnd" justifyContent="flexEnd">
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="flexEnd"
+              onClick={onExpandButton}
+              cursor="pointer"
+            >
               <Button
                 circle
                 colorScheme="light"

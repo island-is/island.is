@@ -146,6 +146,7 @@ const PetitionsTable = (data: any) => {
 
                 <Box display={['block', 'flex']}>
                   <Input
+                    size="xs"
                     type="email"
                     name={formatMessage(m.viewPetition.sendListButton)}
                     value={email}

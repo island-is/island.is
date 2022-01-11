@@ -389,6 +389,9 @@
     "email-service": {
       "tags": []
     },
+    "external-contracts-tests": {
+      "tags": []
+    },
     "feature-flags": {
       "tags": []
     },

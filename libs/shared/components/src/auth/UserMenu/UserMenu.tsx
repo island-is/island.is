@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Button, Hidden } from '@island.is/island-ui/core'
 import { useAuth } from '@island.is/auth/react'
-import { UserDropdown } from './UserDropdown'
 import { UserButton } from './UserButton'
+import { UserDropdown } from './UserDropdown'
+import { UserLanguageSwitcher } from './UserLanguageSwitcher'
 
-export const UserMenu = () => {
+export const UserMenu = ({ fullscreen = false }: { fullscreen?: boolean }) => {
   const [dropdownState, setDropdownState] = useState<'closed' | 'open'>(
     'closed',
   )
@@ -20,8 +21,10 @@ export const UserMenu = () => {
 
   return (
     <Box display="flex" position="relative" height="full">
+      <Hidden below="md">
+        <UserLanguageSwitcher user={user} />
+      </Hidden>
       <UserButton user={user} onClick={handleClick} />
-
       <UserDropdown
         user={user}
         dropdownState={dropdownState}
@@ -34,6 +37,7 @@ export const UserMenu = () => {
           setDropdownState('closed')
           switchUser(nationalId)
         }}
+        fullscreen={fullscreen}
       />
     </Box>
   )
