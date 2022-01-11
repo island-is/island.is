@@ -86,10 +86,10 @@ export const CaseQuery = gql`
       decision
       validToDate
       isValidToDateInThePast
-      custodyRestrictions
-      otherRestrictions
+      isCustodyIsolation
       isolationToDate
       conclusion
+      endOfSessionBookings
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision

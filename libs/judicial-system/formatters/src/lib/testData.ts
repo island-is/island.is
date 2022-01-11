@@ -23,6 +23,10 @@ export const makeCustodyCase = (): Case => {
     policeCaseNumber: '007-2021-202000',
     defendants: [
       {
+        id: 'test_defendant_id',
+        created: '2020-09-16T19:50:08.033Z',
+        modified: '2020-09-16T19:51:39.466Z',
+        caseId: 'test_id',
         nationalId: '000000-0000',
         name: 'Donald Duck',
         gender: Gender.MALE,
@@ -33,8 +37,9 @@ export const makeCustodyCase = (): Case => {
 }
 
 export const makeInvestigationCase = (): Case => {
+  const caseId = faker.datatype.uuid()
   return {
-    id: faker.datatype.uuid(),
+    id: caseId,
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:50:08.033Z',
     state: CaseState.DRAFT,
@@ -49,6 +54,10 @@ export const makeInvestigationCase = (): Case => {
     policeCaseNumber: '007-2021-202000',
     defendants: [
       {
+        id: 'test_defendant_id',
+        created: '2020-09-16T19:50:08.033Z',
+        modified: '2020-09-16T19:51:39.466Z',
+        caseId,
         nationalId: '000000-0000',
         name: investigationCaseAccusedName,
         gender: Gender.MALE,

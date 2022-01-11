@@ -1,5 +1,5 @@
 import { Inject, NotFoundException, forwardRef } from '@nestjs/common'
-import { Query, Resolver, Mutation, Args } from '@nestjs/graphql'
+import { Query, Resolver, Mutation, Args, Int } from '@nestjs/graphql'
 import parse from 'date-fns/parse'
 
 import type { Logger } from '@island.is/logging'
@@ -7,7 +7,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { Authorize, CurrentUser, User, Role } from '../auth'
 
-import { VehicleModel } from './vehicle.model'
+import { VehicleModel, VehicleConnection } from './vehicle.model'
 import { VehicleService } from './vehicle.service'
 import { SamgongustofaService } from '../samgongustofa'
 
@@ -23,23 +23,22 @@ export class VehicleResolver {
   ) {}
 
   @Authorize({ roles: [Role.developer, Role.recyclingCompany] })
-  @Query(() => [VehicleModel])
-  async skilavottordAllVehicles(): Promise<VehicleModel[]> {
-    const vehicles = await this.vehicleService.findAll()
-    this.logger.info(
-      'getAllVehicle response:' + JSON.stringify(vehicles, null, 2),
-    )
-    return vehicles
-  }
-
   @Authorize({ roles: [Role.developer, Role.recyclingFund] })
-  @Query(() => [VehicleModel])
-  async skilavottordAllDeregisteredVehicles(): Promise<VehicleModel[]> {
-    const deregisteredVehicles = await this.vehicleService.findAllDeregistered()
-    this.logger.info(
-      'getAllVehicle response:' + JSON.stringify(deregisteredVehicles, null, 2),
-    )
-    return deregisteredVehicles
+  @Query(() => VehicleConnection)
+  async skilavottordAllDeregisteredVehicles(
+    @Args('first', { type: () => Int }) first: number,
+    @Args('after') after: string,
+  ): Promise<VehicleConnection> {
+    const {
+      pageInfo,
+      totalCount,
+      data,
+    } = await this.vehicleService.findAllDeregistered(first, after)
+    return {
+      pageInfo,
+      count: totalCount,
+      items: data,
+    }
   }
 
   @Query(() => VehicleModel)

@@ -40,5 +40,3 @@ export const userNotificationWorkerSetup = (): ServiceBuilder<'user-notification
       MAIN_QUEUE_NAME,
       DEAD_LETTER_QUEUE_NAME,
     })
-    .liveness('/liveness')
-    .readiness('/liveness')

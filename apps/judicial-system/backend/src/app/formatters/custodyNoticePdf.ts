@@ -6,7 +6,6 @@ import {
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
@@ -142,18 +141,12 @@ function constructCustodyNoticePdf(
         : 'Ekki skráður',
     )
 
-  // TODO defendants: handle multiple defendants
   const custodyRestrictions = formatCustodyRestrictions(
-    existingCase.defendants && existingCase.defendants[0].gender,
-    existingCase.custodyRestrictions,
+    existingCase.requestedCustodyRestrictions,
+    existingCase.isCustodyIsolation,
   )
 
-  if (
-    existingCase.custodyRestrictions?.includes(
-      CaseCustodyRestrictions.ISOLATION,
-    ) ||
-    custodyRestrictions
-  ) {
+  if (existingCase.isCustodyIsolation || custodyRestrictions) {
     doc
       .text(' ')
       .text(' ')
@@ -163,13 +156,9 @@ function constructCustodyNoticePdf(
       .text('Tilhögun gæsluvarðhalds')
       .font('Helvetica')
       .fontSize(baseFontSize)
-    if (
-      existingCase.custodyRestrictions?.includes(
-        CaseCustodyRestrictions.ISOLATION,
-      )
-    ) {
-      // TODO defendants: handle multiple defendants
+    if (existingCase.isCustodyIsolation) {
       doc.text(
+        // TODO defendants: handle multiple defendants
         formatCustodyIsolation(
           existingCase.defendants && existingCase.defendants[0].gender,
           existingCase.isolationToDate,

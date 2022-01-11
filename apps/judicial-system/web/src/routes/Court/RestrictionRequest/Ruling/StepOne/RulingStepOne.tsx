@@ -6,6 +6,7 @@ import {
   Accordion,
   AccordionItem,
   Box,
+  Checkbox,
   Input,
   Text,
   Tooltip,
@@ -22,26 +23,23 @@ import {
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
 import { isRulingStepOneValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  setCheckboxAndSendToServer,
   newSetAndSendDateToServer,
   removeTabsValidateAndSet,
   validateAndSendToServer,
+  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
-import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
@@ -82,22 +80,7 @@ export const RulingStepOne: React.FC = () => {
 
   useEffect(() => {
     if (isCaseUpToDate) {
-      let theCase = workingCase
-
-      if (theCase.custodyRestrictions === null) {
-        theCase = {
-          ...theCase,
-          custodyRestrictions: theCase.requestedCustodyRestrictions,
-        }
-
-        updateCase(
-          theCase.id,
-          parseArray(
-            'custodyRestrictions',
-            theCase.requestedCustodyRestrictions ?? [],
-          ),
-        )
-      }
+      const theCase = workingCase
 
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)
@@ -409,33 +392,33 @@ export const RulingStepOne: React.FC = () => {
               </Box>
               <BlueBox>
                 <Box marginBottom={3}>
-                  <CheckboxList
+                  <Checkbox
+                    name="isCustodyIsolation"
                     // TODO defendants: handle multiple defendants
-                    checkboxes={isolation(
-                      workingCase.defendants &&
-                        workingCase.defendants[0].gender,
-                    )}
-                    selected={workingCase.custodyRestrictions}
-                    onChange={(id) =>
-                      setCheckboxAndSendToServer(
-                        'custodyRestrictions',
-                        id,
+                    label={
+                      isolation(
+                        workingCase.defendants &&
+                          workingCase.defendants[0].gender,
+                      )[0].title
+                    }
+                    checked={workingCase.isCustodyIsolation}
+                    onChange={() => {
+                      setAndSendToServer(
+                        'isCustodyIsolation',
+                        !workingCase.isCustodyIsolation,
                         workingCase,
                         setWorkingCase,
                         updateCase,
                       )
-                    }
-                    fullWidth
+                    }}
+                    filled
+                    large
                   />
                 </Box>
                 <DateTime
                   name="isolationToDate"
                   datepickerLabel="Einangrun til"
-                  disabled={
-                    !workingCase.custodyRestrictions?.includes(
-                      CaseCustodyRestrictions.ISOLATION,
-                    )
-                  }
+                  disabled={!workingCase.isCustodyIsolation}
                   selectedDate={
                     workingCase.isolationToDate
                       ? workingCase.isolationToDate
@@ -462,11 +445,7 @@ export const RulingStepOne: React.FC = () => {
                   }}
                   blueBox={false}
                   backgroundColor={
-                    workingCase.custodyRestrictions?.includes(
-                      CaseCustodyRestrictions.ISOLATION,
-                    )
-                      ? 'white'
-                      : 'blue'
+                    workingCase.isCustodyIsolation ? 'white' : 'blue'
                   }
                 />
               </BlueBox>

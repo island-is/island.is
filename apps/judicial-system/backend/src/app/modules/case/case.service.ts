@@ -44,6 +44,7 @@ import { CourtService } from '../court'
 import { CreateCaseDto, InternalCreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
+import { Defendant } from '../defendant/models/defendant.model'
 
 interface Recipient {
   name: string
@@ -83,6 +84,7 @@ const standardIncludes: Includeable[] = [
   },
   { model: Case, as: 'parentCase' },
   { model: Case, as: 'childCase' },
+  { model: Defendant, as: 'defendants' },
 ]
 
 @Injectable()

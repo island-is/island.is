@@ -162,11 +162,11 @@ export function formatAccusedByGender(
   }
 }
 
-// Formats the restrictions set by the judge
+// Formats prefilled restrictions
 // Note that only the predetermined list of restrictions is relevant here
 export function formatCustodyRestrictions(
-  accusedGender?: Gender,
-  custodyRestrictions?: CaseCustodyRestrictions[],
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
+  isCustodyIsolation?: boolean,
   isRuling?: boolean,
 ): string {
   const caseCustodyRestrictions = [
@@ -198,7 +198,9 @@ export function formatCustodyRestrictions(
   ]
 
   const relevantCustodyRestrictions = caseCustodyRestrictions
-    ?.filter((restriction) => custodyRestrictions?.includes(restriction.type))
+    .filter((restriction) =>
+      requestedCustodyRestrictions?.includes(restriction.type),
+    )
     .sort((a, b) => {
       return a.id > b.id ? 1 : -1
     })
@@ -207,7 +209,7 @@ export function formatCustodyRestrictions(
     !(relevantCustodyRestrictions && relevantCustodyRestrictions.length > 0)
   ) {
     return !isRuling
-      ? custodyRestrictions?.includes(CaseCustodyRestrictions.ISOLATION)
+      ? isCustodyIsolation
         ? 'Sækjandi tekur fram að gæsluvarðhaldið verði án annarra takmarkana.'
         : 'Sækjandi tekur fram að gæsluvarðhaldið verði án takmarkana.'
       : ''
@@ -244,13 +246,13 @@ export function formatCustodyRestrictions(
     : `Sækjandi tekur fram að gæsluvarðhaldið verði með ${filteredCustodyRestrictionsAsString}skv. 99. gr. laga nr. 88/2008.`
 }
 
-// Fromats the restrictions set by the judge when choosing alternative travle ban
-export const formatAlternativeTravelBanRestrictions = (
+// Fromats the prefilled restrictions for travel ban
+export const formatTravelBanRestrictions = (
   accusedGender?: Gender,
-  custodyRestrictions?: CaseCustodyRestrictions[],
-  otherRestrictions?: string,
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
+  requestedOtherRestrictions?: string,
 ): string => {
-  const relevantCustodyRestrictions = custodyRestrictions?.filter(
+  const relevantCustodyRestrictions = requestedCustodyRestrictions?.filter(
     (restriction) =>
       [
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
@@ -260,7 +262,8 @@ export const formatAlternativeTravelBanRestrictions = (
 
   const hasTravelBanRestrictions =
     relevantCustodyRestrictions && relevantCustodyRestrictions?.length > 0
-  const hasOtherRestrictions = otherRestrictions && otherRestrictions.length > 0
+  const hasOtherRestrictions =
+    requestedOtherRestrictions && requestedOtherRestrictions.length > 0
 
   // No restrictions
   if (!hasTravelBanRestrictions && !hasOtherRestrictions) {
@@ -291,7 +294,9 @@ export const formatAlternativeTravelBanRestrictions = (
   const paragraphBreak =
     hasTravelBanRestrictions && hasOtherRestrictions ? '\n' : ''
 
-  const otherRestrictionsText = hasOtherRestrictions ? otherRestrictions : ''
+  const otherRestrictionsText = hasOtherRestrictions
+    ? requestedOtherRestrictions
+    : ''
 
   return `${travelBanRestrictionsText}${paragraphBreak}${otherRestrictionsText}`
 }

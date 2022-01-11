@@ -3,16 +3,12 @@ import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
 import {
-  CaseDecision,
-  CaseType,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
   capitalize,
   formatDate,
-  formatCustodyRestrictions,
-  formatAlternativeTravelBanRestrictions,
   formatAccusedByGender,
   lowercase,
   formatAppeal,
@@ -324,54 +320,8 @@ function constructRestrictionRulingPdf(
     doc.text(' ').text(accusedAppeal, { align: 'justify', paragraphGap: 1 })
   }
 
-  if (
-    existingCase.type === CaseType.CUSTODY &&
-    (existingCase.decision === CaseDecision.ACCEPTING ||
-      existingCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
-  ) {
-    // TODO defendants: handle multiple defendants
-    const custodyRestrictions = formatCustodyRestrictions(
-      existingCase.defendants && existingCase.defendants[0].gender,
-      existingCase.custodyRestrictions,
-      true,
-    )
-
-    if (custodyRestrictions) {
-      doc.text(' ').text(custodyRestrictions, {
-        align: 'justify',
-        paragraphGap: 1,
-      })
-    }
-
-    doc.text(' ').text(formatMessage(ruling.accusedCustodyDirections), {
-      align: 'justify',
-      paragraphGap: 1,
-    })
-  }
-
-  if (
-    (existingCase.type === CaseType.CUSTODY &&
-      existingCase.decision ===
-        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) ||
-    (existingCase.type === CaseType.TRAVEL_BAN &&
-      (existingCase.decision === CaseDecision.ACCEPTING ||
-        existingCase.decision === CaseDecision.ACCEPTING_PARTIALLY))
-  ) {
-    // TODO defendants: handle multiple defendants
-    const alternativeTravelBanRestrictions = formatAlternativeTravelBanRestrictions(
-      existingCase.defendants && existingCase.defendants[0].gender,
-      existingCase.custodyRestrictions,
-      existingCase.otherRestrictions,
-    )
-
-    if (alternativeTravelBanRestrictions) {
-      doc.text(' ').text(alternativeTravelBanRestrictions, {
-        align: 'justify',
-        paragraphGap: 1,
-      })
-    }
-
-    doc.text(' ').text(formatMessage(ruling.accusedTravelBanDirections), {
+  if (existingCase.endOfSessionBookings) {
+    doc.text(' ').text(existingCase.endOfSessionBookings, {
       align: 'justify',
       paragraphGap: 1,
     })
@@ -690,6 +640,13 @@ function constructInvestigationRulingPdf(
 
   if (accusedAppeal) {
     doc.text(' ').text(accusedAppeal, { align: 'justify', paragraphGap: 1 })
+  }
+
+  if (existingCase.endOfSessionBookings) {
+    doc.text(' ').text(existingCase.endOfSessionBookings, {
+      align: 'justify',
+      paragraphGap: 1,
+    })
   }
 
   if (existingCase.registrar) {
