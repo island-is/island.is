@@ -5,7 +5,7 @@ export const studentForm = {
     sectionTitle: {
       id: 'fa.application:section.studentForm.general.sectionTitle',
       defaultMessage: 'Nám',
-      description: 'Student form Page Title',
+      description: 'Student form section title',
     },
     pageTitle: {
       id: 'fa.application:section.studentForm.general.pageTitle',

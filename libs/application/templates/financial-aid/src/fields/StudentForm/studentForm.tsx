@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { FAFieldBaseProps, TwoTypeAnswers } from '../../lib/types'
 import { useIntl } from 'react-intl'
