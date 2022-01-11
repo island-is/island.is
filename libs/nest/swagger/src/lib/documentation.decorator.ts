@@ -85,6 +85,7 @@ const getExtraDecorators = ({
     decorators = [
       ...decorators,
       ApiUnauthorizedResponse({ type: HttpProblemResponse }),
+      ApiForbiddenResponse({ type: HttpProblemResponse }),
     ]
   }
 
@@ -105,7 +106,6 @@ export const Documentation = ({
     HttpCode(response.status),
     ApiInternalServerErrorResponse(),
     ApiBadRequestResponse({ type: HttpProblemResponse }),
-    ApiForbiddenResponse({ type: HttpProblemResponse }),
     /* END DEFAULT DECORATORS */
 
     ...getResponseDecorators(response),

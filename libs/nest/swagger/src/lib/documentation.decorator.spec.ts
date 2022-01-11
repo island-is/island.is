@@ -20,7 +20,6 @@ const getDefaultDecorators = (httpStatus: number) => [
   HttpCode(httpStatus),
   ApiInternalServerErrorResponse,
   ApiBadRequestResponse,
-  ApiForbiddenResponse,
 ]
 
 jest.mock('@nestjs/common', () => {
@@ -126,6 +125,7 @@ describe('Documentation decorator', () => {
       ...getDefaultDecorators(options.response.status),
       ApiOkResponse,
       ApiUnauthorizedResponse,
+      ApiForbiddenResponse,
     )
   })
 
