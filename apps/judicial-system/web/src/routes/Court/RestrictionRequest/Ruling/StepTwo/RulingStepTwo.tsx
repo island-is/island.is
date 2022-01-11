@@ -85,6 +85,7 @@ export const RulingStepTwo: React.FC = () => {
 
       autofill(
         'conclusion',
+        // TODO defendants: handle multiple defendants
         theCase.decision === CaseDecision.DISMISSING
           ? formatMessage(m.sections.conclusion.dismissingAutofill, {
               genderedAccused: formatAccusedByGender(
@@ -170,6 +171,7 @@ export const RulingStepTwo: React.FC = () => {
         theCase,
       )
 
+      // TODO defendants: handle multiple defendants
       if (
         theCase.type === CaseType.CUSTODY &&
         (isAcceptingCaseDecision(theCase.decision) ||
@@ -184,10 +186,13 @@ export const RulingStepTwo: React.FC = () => {
                   theCase.isCustodyIsolation,
                   true,
                 )
-              : formatTravelBanRestrictions(theCase.accusedGender, [
-                  CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-                  CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
-                ])
+              : formatTravelBanRestrictions(
+                  theCase.defendants && theCase.defendants[0].gender,
+                  [
+                    CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
+                    CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
+                  ],
+                )
           }\n\n${formatMessage(m.sections.custodyRestrictions.disclaimer, {
             caseType:
               theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
@@ -201,7 +206,7 @@ export const RulingStepTwo: React.FC = () => {
         isAcceptingCaseDecision(theCase.decision)
       ) {
         const travelBanRestrictions = formatTravelBanRestrictions(
-          theCase.accusedGender,
+          theCase.defendants && theCase.defendants[0].gender,
           theCase.requestedCustodyRestrictions,
           theCase.requestedOtherRestrictions,
         )

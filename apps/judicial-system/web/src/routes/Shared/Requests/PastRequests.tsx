@@ -64,6 +64,7 @@ const PastRequests: React.FC<Props> = (props) => {
       },
     },
     {
+      // TODO defendants: handle multiple defendants
       Header: formatMessage(core.accused),
       accessor: 'accusedName' as keyof Case,
       Cell: (row: {

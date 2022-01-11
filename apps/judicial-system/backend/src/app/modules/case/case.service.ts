@@ -52,6 +52,7 @@ interface Recipient {
 }
 
 const standardIncludes: Includeable[] = [
+  { model: Defendant, as: 'defendants' },
   {
     model: Institution,
     as: 'court',
@@ -84,7 +85,6 @@ const standardIncludes: Includeable[] = [
   },
   { model: Case, as: 'parentCase' },
   { model: Case, as: 'childCase' },
-  { model: Defendant, as: 'defendants' },
 ]
 
 @Injectable()
