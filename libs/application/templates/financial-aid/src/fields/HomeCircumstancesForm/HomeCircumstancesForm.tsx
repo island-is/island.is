@@ -10,17 +10,13 @@ import * as styles from '../Shared.css'
 import cn from 'classnames'
 import { FAFieldBaseProps, InputTypes } from '../../lib/types'
 
-const HomeCircumstancesForm = ({
-  application,
-  field,
-  errors,
-}: FAFieldBaseProps) => {
+const HomeCircumstancesForm = ({ application, errors }: FAFieldBaseProps) => {
   const typeInput = {
     id: 'homeCircumstances.type',
     error: errors?.homeCircumstances?.type,
   } as InputTypes
 
-  const customeInput = {
+  const customInput = {
     id: 'homeCircumstances.custom',
     error: errors?.homeCircumstances?.custom,
   } as InputTypes
@@ -99,18 +95,18 @@ const HomeCircumstancesForm = ({
           render={({ value, onChange }) => {
             return (
               <Input
-                id={`${customeInput.id}`}
-                name={`${customeInput.id}`}
-                label={formatMessage(homeCircumstancesForm.general.inputLabel)}
+                id={customInput.id}
+                name={customInput.id}
+                label={formatMessage(homeCircumstancesForm.input.label)}
                 value={value}
                 textarea={true}
                 rows={8}
                 backgroundColor="blue"
-                hasError={customeInput.error !== undefined}
-                errorMessage={customeInput.error}
+                hasError={customInput.error !== undefined}
+                errorMessage={customInput.error}
                 onChange={(e) => {
                   onChange(e.target.value)
-                  setValue(customeInput.id, e.target.value)
+                  setValue(customInput.id, e.target.value)
                 }}
               />
             )
