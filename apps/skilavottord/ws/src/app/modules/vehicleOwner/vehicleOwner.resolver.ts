@@ -18,26 +18,6 @@ export class VehicleOwnerResolver {
     private logger: Logger,
   ) {}
 
-  @Query(() => [VehicleOwnerModel])
-  async skilavottordAllVehicleOwners(): Promise<VehicleOwnerModel[]> {
-    const res = await this.vehicleOwnerService.findAll()
-    this.logger.debug(
-      'getAllVehicleOwners responce:' + JSON.stringify(res, null, 2),
-    )
-    return res
-  }
-
-  @Query(() => VehicleOwnerModel)
-  async skilavottordVehiclesFromLocal(
-    @CurrentUser() user: User,
-  ): Promise<VehicleOwnerModel> {
-    const res = await this.vehicleOwnerService.findByNationalId(user.nationalId)
-    this.logger.warn(
-      'getVehicleOwnersByNationaId responce:' + JSON.stringify(res, null, 2),
-    )
-    return res
-  }
-
   @Authorize({
     roles: [Role.developer, Role.recyclingCompany, Role.recyclingFund],
   })

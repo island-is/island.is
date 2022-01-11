@@ -95,13 +95,13 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
             defaultMessage:
               'Hér færðu upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert skráður eigandi að.',
           })}
-          img="./assets/images/sofa.svg"
         />
       </Box>
       {loading && <AssetCardLoader />}
       {data && (
         <AssetListCards paginateCallback={paginate} assets={assetData} />
       )}
+
       {error && (
         <Box>
           <AlertBanner

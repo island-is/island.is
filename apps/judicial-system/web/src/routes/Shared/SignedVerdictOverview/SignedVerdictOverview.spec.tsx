@@ -649,7 +649,7 @@ describe('Signed Verdict Overview route', () => {
         ).toBeInTheDocument()
       })
 
-      test('should display restriction tags if there are restrictions', async () => {
+      test('should display restriction tags if the prosecutor requested restrictions', async () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id_6' },

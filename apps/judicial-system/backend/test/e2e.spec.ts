@@ -200,8 +200,6 @@ function remainingJudgeCaseData() {
     ruling: 'Ruling',
     decision: CaseDecision.ACCEPTING,
     validToDate: '2021-09-28T12:00:00.000Z',
-    custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
-    otherRestrictions: 'Other Restrictions',
     isolationToDate: '2021-09-10T12:00:00.000Z',
     conclusion: 'Addition to Conclusion',
     accusedAppealDecision: CaseAppealDecision.APPEAL,
@@ -440,12 +438,6 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.ruling ?? null).toBe(caseTwo.ruling ?? null)
   expect(caseOne.decision ?? null).toBe(caseTwo.decision ?? null)
   expect(caseOne.validToDate ?? null).toBe(caseTwo.validToDate ?? null)
-  expect(caseOne.custodyRestrictions ?? null).toStrictEqual(
-    caseTwo.custodyRestrictions ?? null,
-  )
-  expect(caseOne.otherRestrictions ?? null).toBe(
-    caseTwo.otherRestrictions ?? null,
-  )
   expect(caseOne.isolationToDate ?? null).toBe(caseTwo.isolationToDate ?? null)
   expect(caseOne.conclusion ?? null).toBe(caseTwo.conclusion ?? null)
   expect(caseOne.accusedAppealDecision ?? null).toBe(

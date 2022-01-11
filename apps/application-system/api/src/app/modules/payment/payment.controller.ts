@@ -30,7 +30,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
-import { isUuid } from 'uuidv4'
 import { CreateChargeInput } from './dto/createChargeInput.dto'
 import { PaymentAPI } from '@island.is/clients/payment'
 
@@ -87,7 +86,7 @@ export class PaymentController {
     const chargeResult = await this.paymentService.createCharge(payment, user)
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'createCharge',
       resources: paymentDto.application_id as string,
       meta: { applicationId: paymentDto.application_id, id: payment.id },
