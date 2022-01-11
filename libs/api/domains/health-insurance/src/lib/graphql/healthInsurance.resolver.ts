@@ -41,7 +41,7 @@ export class HealthInsuranceResolver {
   ): Promise<boolean> {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'healthInsuranceIsHealthInsured',
       },
@@ -61,7 +61,7 @@ export class HealthInsuranceResolver {
   ): Promise<number[]> {
     return this.auditService.auditPromise<number[]>(
       {
-        user,
+        auth: user,
         namespace,
         action: 'healthInsuranceGetPendingApplication',
         resources: (results) => results.map(String),
