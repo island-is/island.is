@@ -134,8 +134,6 @@ export class RskCompanyInfoService {
       pageInfo: {
         endCursor: endCursor,
         hasNextPage: !!searchResults.hasMore,
-        hasPreviousPage: resultOffset > 0,
-        startCursor: toBase64(resultOffset.toString()),
       },
     }
   }
