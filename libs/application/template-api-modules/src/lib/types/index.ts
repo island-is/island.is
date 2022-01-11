@@ -24,11 +24,6 @@ export interface BaseTemplateAPIModuleConfig {
     }
   }
   baseApiUrl: string
-  syslumenn: {
-    url: string
-    username: string
-    password: string
-  }
   email: {
     sender: string
     address: string

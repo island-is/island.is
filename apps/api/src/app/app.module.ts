@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
-
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
@@ -23,6 +22,7 @@ import { HealthController } from './health.controller'
 import { getConfig } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
+import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { RSKModule } from '@island.is/api/domains/rsk'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
@@ -35,14 +35,16 @@ import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { IslykillModule } from '@island.is/api/domains/islykill'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
+import { AssetsClientConfig } from '@island.is/clients/assets'
+import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { AuditModule } from '@island.is/nest/audit'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
-import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -179,11 +181,7 @@ const autoSchemaFile = environment.production
     ApiCatalogueModule,
     IdentityModule,
     AuthModule.register(environment.auth),
-    SyslumennModule.register({
-      url: environment.syslumennService.url,
-      username: environment.syslumennService.username,
-      password: environment.syslumennService.password,
-    }),
+    SyslumennModule,
     RSKModule.register({
       password: environment.rskDomain.password,
       url: environment.rskDomain.url,
@@ -205,12 +203,7 @@ const autoSchemaFile = environment.production
       xroadBaseUrl: environment.xroad.baseUrl,
       xroadClientId: environment.xroad.clientId,
     }),
-    AssetsModule.register({
-      xRoadBasePathWithEnv: environment.propertiesXRoad.url,
-      xRoadAssetsMemberCode: environment.propertiesXRoad.memberCode,
-      xRoadAssetsApiPath: environment.propertiesXRoad.apiPath,
-      xRoadClientId: environment.propertiesXRoad.clientId,
-    }),
+    AssetsModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({
       xRoadProviderId: environment.paymentDomain.xRoadProviderId,
@@ -261,9 +254,12 @@ const autoSchemaFile = environment.production
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
-        XRoadConfig,
-        NationalRegistryClientConfig,
+        AssetsClientConfig,
         AuthPublicApiClientConfig,
+        FeatureFlagConfig,
+        NationalRegistryClientConfig,
+        SyslumennClientConfig,
+        XRoadConfig,
       ],
     }),
   ],

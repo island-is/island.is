@@ -81,29 +81,21 @@ const AcceptModal = ({
     hasSubmitError: false,
   })
 
-  const sumValues = (deductionFactor: calculationsState['deductionFactor']) =>
-    deductionFactor
-      .map((item) => {
-        return item.amount
-      })
-      .reduce((a, b) => {
-        return a + b
-      }, 0)
+  const sumValues = state.deductionFactor.reduce(
+    (n, { amount }) => n + amount,
+    0,
+  )
 
   const checkingValue = (element?: number) => (element ? element : 0)
 
   const finalAmount = calculateAcceptedAidFinalAmount(
-    state.amount -
-      checkingValue(state.income) -
-      sumValues(state.deductionFactor),
+    state.amount - checkingValue(state.income) - sumValues,
     checkingValue(state.personalTaxCreditPercentage),
     state.secondPersonalTaxCredit,
   )
 
   const taxAmount = calculateTaxOfAmount(
-    (aidAmount || 0) -
-      checkingValue(state.income) -
-      sumValues(state.deductionFactor),
+    (state.amount || 0) - checkingValue(state.income) - sumValues,
   )
 
   const areRequiredFieldsFilled =
