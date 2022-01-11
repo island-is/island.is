@@ -172,9 +172,11 @@ function GrantAccess() {
                 />
               )}
               <Box
-                display={name ? 'none' : 'block'}
+                display={name ? 'none' : 'flex'}
                 aria-live="assertive"
                 marginBottom={[1, 1, 0]}
+                flexDirection="column"
+                justifyContent="flexEnd"
               >
                 <InputController
                   control={control}
@@ -216,7 +218,7 @@ function GrantAccess() {
                   onChange={(value) => {
                     requestDelegation(value)
                   }}
-                  size="md"
+                  size="xs"
                 />
               </Box>
               {queryLoading ? (
@@ -237,9 +239,12 @@ function GrantAccess() {
               ) : null}
             </div>
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '4/12']}>
+          <GridColumn
+            span={['12/12', '12/12', '4/12']}
+            className={styles.button}
+          >
             <Button
-              size="large"
+              size="small"
               fluid
               type="submit"
               icon="arrowForward"

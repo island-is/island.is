@@ -27,3 +27,7 @@ export const loadingIcon = style({
   animationIterationCount: 'infinite',
   animationTimingFunction: 'linear',
 })
+
+export const button = style({
+  marginTop: 'auto',
+})
