@@ -4,7 +4,7 @@ export const QUALITY_PHOTO = gql`
   query HasQualityPhoto {
     qualityPhoto {
       success
-      qualityPhoto
+      qualityPhotoDataUri
     }
   }
 `

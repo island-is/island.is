@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
@@ -20,7 +20,6 @@ import {
   StudentAssessment,
   ApplicationEligibilityInput,
   Teacher,
-  HasQualityPhoto,
 } from './models'
 import { AuditService } from '@island.is/nest/audit'
 
@@ -28,13 +27,21 @@ const namespace = '@island.is/api/driving-license'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
-@Resolver()
+@Resolver(QualityPhoto)
 export class MainResolver {
   constructor(
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly auditService: AuditService,
   ) {}
 
+  @ResolveField('qualityPhotoDataUri', () => String, { nullable: true })
+  resolveQualityPhotoDataUri(
+    @Parent() qualityPhoto: QualityPhoto,
+  ): Promise<String | null> {
+    return this.drivingLicenseService.getQualityPhotoUri(
+      qualityPhoto.nationalId,
+    )
+  }
   @Query(() => DrivingLicense)
   drivingLicense(@CurrentUser() user: User) {
     return this.auditService.auditPromise(
@@ -101,11 +108,6 @@ export class MainResolver {
   @Query(() => [Juristiction])
   drivingLicenseListOfJuristictions() {
     return this.drivingLicenseService.getListOfJuristictions()
-  }
-
-  @Query(() => HasQualityPhoto)
-  hasQualityPhoto(@CurrentUser() user: User) {
-    return this.drivingLicenseService.getHasQualityPhoto(user.nationalId)
   }
 
   @Query(() => QualityPhoto)

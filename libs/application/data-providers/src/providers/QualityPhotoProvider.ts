@@ -12,7 +12,7 @@ export class QualityPhotoProvider extends BasicDataProvider {
   async provide(application: Application) {
     const query = `
         query HasQualityPhoto {
-          hasQualityPhoto {
+          qualityPhoto {
             hasQualityPhoto
           }
         }
@@ -33,7 +33,7 @@ export class QualityPhotoProvider extends BasicDataProvider {
     }
 
     return {
-      hasQualityPhoto: !!response.data.hasQualityPhoto?.hasQualityPhoto,
+      hasQualityPhoto: !!response.data.qualityPhoto?.hasQualityPhoto,
     }
   }
 

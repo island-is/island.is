@@ -13,7 +13,6 @@ import {
   QualityPhotoResult,
   DrivingLicenseApplicationType,
   NewTemporaryDrivingLicenseInput,
-  HasQualityPhotoResult,
 } from './drivingLicense.type'
 import {
   DriversLicense,
@@ -220,30 +219,14 @@ export class DrivingLicenseService {
     }
   }
 
-  async getHasQualityPhoto(
+  async getQualityPhotoUri(
     nationalId: User['nationalId'],
-  ): Promise<HasQualityPhotoResult> {
-    const hasQualityPhoto = await this.drivingLicenseApi.getHasQualityPhoto({
-      nationalId,
-    })
-    return {
-      nationalId,
-      hasQualityPhoto,
-    }
-  }
-
-  async getQualityPhoto(
-    nationalId: User['nationalId'],
-  ): Promise<QualityPhotoResult> {
+  ): Promise<string | null> {
     const hasQualityPhoto = await this.drivingLicenseApi.getHasQualityPhoto({
       nationalId,
     })
     if (!hasQualityPhoto) {
-      return {
-        success: hasQualityPhoto,
-        qualityPhoto: null,
-        errorMessage: null,
-      }
+      return null
     }
 
     const image = await this.drivingLicenseApi.getQualityPhoto({
@@ -254,9 +237,27 @@ export class DrivingLicenseService {
       ? `data:image/jpeg;base64,${image?.data.substr(1, image.data.length - 2)}`
       : null
 
+    return qualityPhoto
+  }
+
+  async getQualityPhoto(
+    nationalId: User['nationalId'],
+  ): Promise<QualityPhotoResult> {
+    const hasQualityPhoto = await this.drivingLicenseApi.getHasQualityPhoto({
+      nationalId,
+    })
+    if (!hasQualityPhoto) {
+      return {
+        nationalId: nationalId,
+        success: hasQualityPhoto,
+        hasQualityPhoto,
+        errorMessage: null,
+      }
+    }
     return {
+      nationalId: nationalId,
       success: hasQualityPhoto,
-      qualityPhoto,
+      hasQualityPhoto,
       errorMessage: null,
     }
   }

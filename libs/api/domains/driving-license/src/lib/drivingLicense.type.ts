@@ -77,15 +77,10 @@ export enum NeedsQualityPhoto {
   TRUE = 1,
   FALSE = 0,
 }
-
-export interface HasQualityPhotoResult {
-  nationalId: string
-  hasQualityPhoto: boolean
-}
-
 export interface QualityPhotoResult {
+  nationalId: string
   success: boolean
-  qualityPhoto: string | null
+  hasQualityPhoto: boolean
   errorMessage: string | null
 }
 

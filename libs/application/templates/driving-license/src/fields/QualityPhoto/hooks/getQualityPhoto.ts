@@ -55,6 +55,6 @@ export const getQualityPhoto = (application: Application): QualityPhotoType => {
 
   return {
     success: data?.qualityPhoto?.success,
-    qualityPhoto: data?.qualityPhoto?.qualityPhoto,
+    qualityPhoto: data?.qualityPhoto?.qualityPhotoDataUri,
   } as QualityPhotoType
 }
