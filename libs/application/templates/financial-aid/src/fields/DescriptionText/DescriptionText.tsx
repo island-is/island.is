@@ -12,11 +12,7 @@ import {
 import * as styles from './DescriptionText.css'
 
 const BulletListBox = ({ children }: { children: ReactNode }) => {
-  return (
-    <Box>
-      <BulletList space={2}>{children}</BulletList>
-    </Box>
-  )
+  return <BulletList space={2}>{children}</BulletList>
 }
 
 const TextComponent = ({ children, ...props }: { children: ReactNode }) => {

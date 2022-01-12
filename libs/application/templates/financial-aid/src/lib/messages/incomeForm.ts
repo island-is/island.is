@@ -26,14 +26,16 @@ export const incomeForm = {
         'fa.application:section.incomeForm.examplesOfIncome.leftSidedList#markup',
       defaultMessage:
         '* Greiðslur frá atvinnurekanda \n* Greiðslur frá Vinnumálastofnun \n* Greiðslur frá Tryggingastofnun',
-      description: 'Income form examples payments from employer',
+      description:
+        'Income form bullet list of examples of income, list is on the left side until window size is mobile',
     },
     rightSidedList: {
       id:
         'fa.application:section.incomeForm.examplesOfIncome.rightSidedList#markup',
       defaultMessage:
         '* Greiðslur frá fæðingarorlofssjóði \n* Greiðslur frá Sjúkratryggingum Íslands  \n* Styrkir frá lífeyrissjóðum',
-      description: 'Income form examples payments from employer',
+      description:
+        'Income form bullet list of examples of income, list is on the right side until window size is mobile',
     },
   }),
 }
