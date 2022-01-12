@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
+import { Text, Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
 import { aboutForm } from '../../lib/messages'
 import { useIntl } from 'react-intl'
 
@@ -16,8 +16,9 @@ const AboutForm = () => {
           currentMonth: currentMonth(),
         })}
       </Text>
-
-      <DescriptionText text={aboutForm.bulletList.content} />
+      <Box marginBottom={3}>
+        <DescriptionText text={aboutForm.bulletList.content} />
+      </Box>
 
       <Text as="h2" variant="h3" marginBottom={2} marginTop={5}>
         {formatMessage(aboutForm.personalInformation.sectionTitle)}

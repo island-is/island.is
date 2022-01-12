@@ -6,6 +6,7 @@ import { incomeForm, approveOptions } from '../../lib/messages'
 import * as styles from '../Shared.css'
 import cn from 'classnames'
 import { RadioController } from '@island.is/shared/form-fields'
+import DescriptionText from '../DescriptionText/DescriptionText'
 
 const IncomeForm = ({ field, errors, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -37,28 +38,8 @@ const IncomeForm = ({ field, errors, application }: FAFieldBaseProps) => {
         {formatMessage(incomeForm.bulletList.headline)}
       </Text>
       <Box className={styles.container} marginBottom={5}>
-        <BulletList type={'ul'} space={2}>
-          <Bullet>
-            {formatMessage(incomeForm.examplesOfIncome.fromEmployer)}
-          </Bullet>
-          <Bullet>
-            {formatMessage(incomeForm.examplesOfIncome.fromDirectorateOfLabor)}
-          </Bullet>
-          <Bullet>
-            {formatMessage(incomeForm.examplesOfIncome.fromInsurance)}
-          </Bullet>
-        </BulletList>
-        <BulletList type={'ul'} space={2}>
-          <Bullet>
-            {formatMessage(incomeForm.examplesOfIncome.fromMaternityLeaveFund)}
-          </Bullet>
-          <Bullet>
-            {formatMessage(incomeForm.examplesOfIncome.fromHealthInsurance)}
-          </Bullet>
-          <Bullet>
-            {formatMessage(incomeForm.examplesOfIncome.fromPensionFund)}
-          </Bullet>
-        </BulletList>
+        <DescriptionText text={incomeForm.examplesOfIncome.leftSidedList} />
+        <DescriptionText text={incomeForm.examplesOfIncome.rightSidedList} />
       </Box>
     </>
   )

@@ -21,41 +21,19 @@ export const incomeForm = {
     },
   }),
   examplesOfIncome: defineMessages({
-    fromEmployer: {
-      id: 'fa.application:section.incomeForm.examplesOfIncome.fromEmployer',
-      defaultMessage: 'Greiðslur frá atvinnurekanda',
+    leftSidedList: {
+      id:
+        'fa.application:section.incomeForm.examplesOfIncome.leftSidedList#markup',
+      defaultMessage:
+        '* Greiðslur frá atvinnurekanda \n* Greiðslur frá Vinnumálastofnun \n* Greiðslur frá Tryggingastofnun',
       description: 'Income form examples payments from employer',
     },
-    fromDirectorateOfLabor: {
+    rightSidedList: {
       id:
-        'fa.application:section.incomeForm.examplesOfIncome.fromDirectorateOfLabor',
-      defaultMessage: 'Greiðslur frá Vinnumálastofnun',
-      description:
-        'Income form examples payments from directorate of labor (Vinnumálastofnun)',
-    },
-    fromInsurance: {
-      id: 'fa.application:section.incomeForm.examplesOfIncome.fromInsurance',
-      defaultMessage: 'Greiðslur frá Tryggingastofnun',
-      description: 'Income form examples payments from insurance company',
-    },
-    fromMaternityLeaveFund: {
-      id:
-        'fa.application:section.incomeForm.examplesOfIncome.fromMaternityLeaveFund',
-      defaultMessage: 'Greiðslur frá fæðingarorlofssjóði',
-      description:
-        'Income form examples payments from maternity/parent leave fund',
-    },
-    fromHealthInsurance: {
-      id:
-        'fa.application:section.incomeForm.examplesOfIncome.fromHealthInsurance',
-      defaultMessage: 'Greiðslur frá Sjúkratryggingum Íslands',
-      description:
-        'Income form examples payments from Icelandic health insurance',
-    },
-    fromPensionFund: {
-      id: 'fa.application:section.incomeForm.examplesOfIncome.fromPensionFund',
-      defaultMessage: 'Styrkir frá lífeyrissjóðum',
-      description: 'Income form examples grants from pension funds',
+        'fa.application:section.incomeForm.examplesOfIncome.rightSidedList#markup',
+      defaultMessage:
+        '* Greiðslur frá fæðingarorlofssjóði \n* Greiðslur frá Sjúkratryggingum Íslands  \n* Styrkir frá lífeyrissjóðum',
+      description: 'Income form examples payments from employer',
     },
   }),
 }
