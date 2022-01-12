@@ -78,10 +78,10 @@ export const dataSchema = z.object({
       params: error.validation.radioErrorMessage,
     }),
   contactInfo: z.object({
-    email: z.string().refine((v) => v, {
-      params: error.validation.inputErrorMessage,
+    email: z.string().refine((v) => isValidEmail(v), {
+      params: error.validation.email,
     }),
-    phoneNumber: z.string().refine((v) => v, {
+    phone: z.string().refine((v) => v, {
       params: error.validation.inputErrorMessage,
     }),
   }),

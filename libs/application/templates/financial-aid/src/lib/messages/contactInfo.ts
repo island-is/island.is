@@ -31,4 +31,16 @@ export const contactInfo = {
       description: 'Contact info email input placeholder',
     },
   }),
+  phoneInput: defineMessages({
+    label: {
+      id: 'fa.application:section.contactInfo.phoneInput.label',
+      defaultMessage: 'Símanúmer',
+      description: 'Contact info phone input label',
+    },
+    placeholder: {
+      id: 'fa.application:section.contactInfo.phoneInput.placeholder',
+      defaultMessage: 'Sláðu inn símanúmer',
+      description: 'Contact info phone input placeholder',
+    },
+  }),
 }

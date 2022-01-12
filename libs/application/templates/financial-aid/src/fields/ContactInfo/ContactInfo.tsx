@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 import { FAFieldBaseProps } from '../../lib/types'
 import { useIntl } from 'react-intl'
 import { contactInfo } from '../../lib/messages'
@@ -10,7 +10,6 @@ const ContactInfo = ({ field, errors, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { answers } = application
   const { id } = field
-
   const { clearErrors } = useFormContext()
 
   return (
@@ -18,19 +17,36 @@ const ContactInfo = ({ field, errors, application }: FAFieldBaseProps) => {
       <Text marginTop={2}>
         {formatMessage(contactInfo.general.description)}
       </Text>
-      <InputController
-        id={`email`}
-        name={`email`}
-        backgroundColor="blue"
-        type="email"
-        label={formatMessage(contactInfo.emailInput.label)}
-        placeholder={formatMessage(contactInfo.emailInput.placeholder)}
-        error={undefined}
-        defaultValue={''}
-        onChange={() => {
-          // clearErrors(`${id}.email`)
-        }}
-      />
+      <Box marginTop={[2, 2, 4]}>
+        <InputController
+          id={`${id}.email`}
+          name={`${id}.email`}
+          backgroundColor="blue"
+          type="email"
+          label={formatMessage(contactInfo.emailInput.label)}
+          placeholder={formatMessage(contactInfo.emailInput.placeholder)}
+          error={errors?.contactInfo?.email}
+          defaultValue={answers?.contactInfo?.email}
+          onChange={() => {
+            clearErrors(`${id}.email` || errors?.contactInfo?.email)
+          }}
+        />
+      </Box>
+      <Box marginTop={[2, 2, 3]}>
+        <InputController
+          id={`${id}.phonen`}
+          name={`${id}.phone`}
+          backgroundColor="blue"
+          type="tel"
+          label={formatMessage(contactInfo.phoneInput.label)}
+          placeholder={formatMessage(contactInfo.phoneInput.placeholder)}
+          error={errors?.contactInfo?.phone}
+          defaultValue={answers?.contactInfo?.phone}
+          onChange={() => {
+            clearErrors(`${id}.phone`)
+          }}
+        />
+      </Box>
     </>
   )
 }
