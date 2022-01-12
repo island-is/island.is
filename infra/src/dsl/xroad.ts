@@ -252,8 +252,8 @@ export const RskCompanyInfo = new XroadConf({
   env: {
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
       dev: 'IS-DEV/GOV/10006/Skatturinn-Public/ftskra-v1',
-      staging: '', //TODO
-      prod: '', //TODO,
+      staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
+      prod: 'IS/GOV/5402696029/Skatturinn-Public/ft-v1',
     },
   },
 })
