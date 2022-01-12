@@ -69,6 +69,11 @@ export const dataSchema = z.object({
       params: error.validation.inputErrorMessage,
       path: ['custom'],
     }),
+  bankInfoForm: z.object({
+    bankNumber: z.string().optional(),
+    ledger: z.string().optional(),
+    accountNumber: z.string().optional(),
+  }),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>
