@@ -3,6 +3,8 @@ import {
   setupWithoutAuth,
   setupWithoutScope,
 } from '../../../../../test/setup'
+import { TestEndpointOptions } from '../../../../../test/types'
+import { getRequestMethod } from '../../../../../test/testHelpers'
 import request from 'supertest'
 import { TestApp } from '@island.is/testing/nest'
 import {
@@ -38,42 +40,63 @@ const accessData: PersonalRepresentativeAccessDTO[] = [
 
 const path = '/v1/access-logs'
 
-describe('AccessLogsController - Without Scope', () => {
-  let app: TestApp
-  let server: request.SuperTest<request.Test>
+describe('AccessLogsController - Without Scope and Auth', () => {
+  it.each`
+    method   | endpoint
+    ${'GET'} | ${'/v1/access-logs'}
+    ${'GET'} | ${'/v1/access-logs?personalRepresentativeId=1122334455'}
+    ${'GET'} | ${'/v1/access-logs?representedPersonId=1122334455'}
+    ${'GET'} | ${'/v1/access-logs?representedPersonId=1122334455&personalRepresentativeId=1122334455'}
+  `(
+    '$method $endpoint should return 403 when user is without scope',
+    async ({ method, endpoint }: TestEndpointOptions) => {
+      // Arrange
+      const app = await setupWithoutScope()
+      const server = request(app.getHttpServer())
 
-  beforeAll(async () => {
-    // TestApp setup with auth and database
-    app = await setupWithoutScope()
-    server = request(app.getHttpServer())
-  })
+      // Act
+      const res = await getRequestMethod(server, method)(endpoint)
 
-  afterAll(async () => {
-    await app.cleanUp()
-  })
+      // Assert
+      expect(res.status).toEqual(403)
+      expect(res.body).toMatchObject({
+        statusCode: 403,
+        error: 'Forbidden',
+        message: 'Forbidden resource',
+      })
 
-  it('Get /v1/access-logs should fail and return 403 error if bearer is is missing required scope', async () => {
-    await server.get(path).expect(403)
-  })
-})
+      // CleanUp
+      app.cleanUp()
+    },
+  )
 
-describe('AccessLogsController - Without Auth', () => {
-  let app: TestApp
-  let server: request.SuperTest<request.Test>
+  it.each`
+    method   | endpoint
+    ${'GET'} | ${'/v1/access-logs'}
+    ${'GET'} | ${'/v1/access-logs?personalRepresentativeId=1122334455'}
+    ${'GET'} | ${'/v1/access-logs?representedPersonId=1122334455'}
+    ${'GET'} | ${'/v1/access-logs?representedPersonId=1122334455&personalRepresentativeId=1122334455'}
+  `(
+    '$method $endpoint should return 401 when user is unauthorized',
+    async ({ method, endpoint }: TestEndpointOptions) => {
+      // Arrange
+      const app = await setupWithoutAuth()
+      const server = request(app.getHttpServer())
 
-  beforeAll(async () => {
-    // TestApp setup with auth and database
-    app = await setupWithoutAuth()
-    server = request(app.getHttpServer())
-  })
+      // Act
+      const res = await getRequestMethod(server, method)(endpoint)
+      console.log(res.body)
+      // Assert
+      expect(res.status).toEqual(401)
+      expect(res.body).toMatchObject({
+        statusCode: 401,
+        message: 'Unauthorized',
+      })
 
-  afterAll(async () => {
-    await app.cleanUp()
-  })
-
-  it('Get /v1/access-logs should fail and return 401 error if bearer is missing', async () => {
-    await server.get(path).expect(401)
-  })
+      // CleanUp
+      app.cleanUp()
+    },
+  )
 })
 
 describe('AccessLogsController', () => {

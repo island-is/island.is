@@ -5,7 +5,9 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { PersonalRepresentativeAccess } from '../entities/models/personal-representative-access.model'
 import { PersonalRepresentativeAccessDTO } from '../entities/dto/personal-representative-access.dto'
 import { PaginatedPersonalRepresentativeAccessDto } from '../entities/dto/paginated-personal-representative-access.dto'
-import { paginate, PaginationDto } from '@island.is/nest/pagination'
+import { PaginationWithNationalIdsDto } from '../entities/dto/pagination-with-national-ids.dto'
+import { paginate } from '@island.is/nest/pagination'
+import { Op } from 'sequelize'
 
 @Injectable()
 export class PersonalRepresentativeAccessService {
@@ -18,10 +20,30 @@ export class PersonalRepresentativeAccessService {
 
   /** Get's all personal repreasentatives  */
   async getMany(
-    query: PaginationDto,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    where: any,
+    query: PaginationWithNationalIdsDto,
   ): Promise<PaginatedPersonalRepresentativeAccessDto> {
+    const where =
+      query.personalRepresentativeId && query.representedPersonId
+        ? {
+            [Op.and]: [
+              {
+                nationalIdPersonalRepresentative:
+                  query.personalRepresentativeId,
+              },
+              {
+                nationalIdRepresentedPerson: query.representedPersonId,
+              },
+            ],
+          }
+        : query.personalRepresentativeId
+        ? {
+            nationalIdPersonalRepresentative: query.personalRepresentativeId,
+          }
+        : query.representedPersonId
+        ? {
+            nationalIdRepresentedPerson: query.representedPersonId,
+          }
+        : {}
     return paginate({
       Model: this.personalRepresentativeAccessModel,
       limit: query.limit || 10,
@@ -30,42 +52,6 @@ export class PersonalRepresentativeAccessService {
       primaryKeyField: 'id',
       orderOption: [['id', 'ASC']],
       where: where,
-    })
-  }
-
-  /** Get's all personal repreasentative connections for personal representative  */
-  async getByPersonalRepresentative(
-    nationalIdPersonalRepresentative: string,
-    query: PaginationDto,
-  ): Promise<PaginatedPersonalRepresentativeAccessDto> {
-    return paginate({
-      Model: this.personalRepresentativeAccessModel,
-      limit: query.limit || 10,
-      after: query.after ?? '',
-      before: query.before ?? '',
-      primaryKeyField: 'id',
-      orderOption: [['id', 'ASC']],
-      where: {
-        nationalIdPersonalRepresentative: nationalIdPersonalRepresentative,
-      },
-    })
-  }
-
-  /** Get's all personal repreasentative connections for personal representative  */
-  async getByRepresentedPerson(
-    nationalIdRepresentedPerson: string,
-    query: PaginationDto,
-  ): Promise<PaginatedPersonalRepresentativeAccessDto> {
-    return paginate({
-      Model: this.personalRepresentativeAccessModel,
-      limit: query.limit || 10,
-      after: query.after ?? '',
-      before: query.before ?? '',
-      primaryKeyField: 'id',
-      orderOption: [['id', 'ASC']],
-      where: {
-        nationalIdRepresentedPerson: nationalIdRepresentedPerson,
-      },
     })
   }
 

@@ -49,7 +49,7 @@ export class PersonalRepresentativeDTO {
   @ApiProperty({
     example: '0123456789',
     description: 'nationalId of Personal Representative',
-    pattern: '^(0-9){10}$',
+    pattern: '^d{10}$',
   })
   readonly nationalIdPersonalRepresentative!: string
 

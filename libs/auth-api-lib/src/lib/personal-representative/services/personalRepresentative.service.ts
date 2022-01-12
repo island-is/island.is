@@ -10,7 +10,8 @@ import { PersonalRepresentativeRightType } from '../entities/models/personal-rep
 import { PersonalRepresentativeDTO } from '../entities/dto/personal-representative.dto'
 import { PersonalRepresentativeCreateDTO } from '../entities/dto/personal-representative-create.dto'
 import { PaginatedPersonalRepresentativeDto } from '../entities/dto/paginated-personal-representative.dto'
-import { paginate, PaginationDto } from '@island.is/nest/pagination'
+import { PaginationWithNationalIdsDto } from '../entities/dto/pagination-with-national-ids.dto'
+import { paginate } from '@island.is/nest/pagination'
 
 @Injectable()
 export class PersonalRepresentativeService {
@@ -27,9 +28,7 @@ export class PersonalRepresentativeService {
   /** Get's all personal repreasentatives  */
   async getMany(
     includeInvalid: boolean,
-    query: PaginationDto,
-    personalRepresentativeId?: string,
-    representedPersonId?: string,
+    query: PaginationWithNationalIdsDto,
   ): Promise<PaginatedPersonalRepresentativeDto> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const validToClause: any = {
@@ -47,11 +46,12 @@ export class PersonalRepresentativeService {
       whereClauseRights['validTo'] = validToClause
     }
 
-    if (personalRepresentativeId) {
-      whereClause['nationalIdPersonalRepresentative'] = personalRepresentativeId
+    if (query.personalRepresentativeId) {
+      whereClause['nationalIdPersonalRepresentative'] =
+        query.personalRepresentativeId
     }
-    if (representedPersonId) {
-      whereClause['nationalIdRepresentedPerson'] = representedPersonId
+    if (query.representedPersonId) {
+      whereClause['nationalIdRepresentedPerson'] = query.representedPersonId
     }
 
     const result = await paginate({

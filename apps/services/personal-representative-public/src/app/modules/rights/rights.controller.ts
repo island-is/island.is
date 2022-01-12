@@ -6,7 +6,6 @@ import {
 } from '@island.is/auth-api-lib/personal-representative'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import {
-  BadRequestException,
   Controller,
   UseGuards,
   Get,
@@ -15,22 +14,11 @@ import {
   Inject,
   Query,
 } from '@nestjs/common'
-import {
-  ApiOperation,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiTags,
-  ApiParam,
-  ApiForbiddenResponse,
-  ApiUnauthorizedResponse,
-  ApiInternalServerErrorResponse,
-  ApiNotFoundResponse,
-  ApiBadRequestResponse,
-} from '@nestjs/swagger'
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger'
+import { Documentation } from '@island.is/nest/swagger'
 import { Audit } from '@island.is/nest/audit'
 import { PaginationDto } from '@island.is/nest/pagination'
 import { environment } from '../../../environments'
-import { HttpProblemResponse } from '@island.is/nest/problem'
 
 const namespace = `${environment.audit.defaultNamespace}/rights`
 
@@ -39,10 +27,6 @@ const namespace = `${environment.audit.defaultNamespace}/rights`
 @ApiBearerAuth()
 @ApiTags('Right Types - Public')
 @Controller('v1/rights')
-@ApiForbiddenResponse({ type: HttpProblemResponse })
-@ApiUnauthorizedResponse({ type: HttpProblemResponse })
-@ApiBadRequestResponse({ type: HttpProblemResponse })
-@ApiInternalServerErrorResponse()
 @Audit({ namespace })
 export class RightsController {
   constructor(
@@ -55,36 +39,44 @@ export class RightsController {
     summary: 'Get a list of all right types for personal representatives',
   })
   @Get()
-  @ApiOkResponse({ type: PaginatedPersonalRepresentativeRightTypeDto })
+  @Documentation({
+    response: {
+      status: 200,
+      type: PaginatedPersonalRepresentativeRightTypeDto,
+    },
+  })
   @Audit<PaginatedPersonalRepresentativeRightTypeDto>({
     resources: (pgData) => pgData.data.map((type) => type.code),
   })
   async getMany(
     @Query() query: PaginationDto,
   ): Promise<PaginatedPersonalRepresentativeRightTypeDto> {
-    return await this.rightTypesService.getMany(query)
+    return this.rightTypesService.getMany(query)
   }
 
   /** Gets a right type by it's key */
   @ApiOperation({
     summary: 'Get a single right type by code',
   })
-  @ApiParam({
-    name: 'code',
-    description: 'Unique code for a specific right type',
-    required: true,
-    type: String,
-  })
   @Get(':code')
-  @ApiOkResponse({ type: PersonalRepresentativeRightType })
-  @ApiNotFoundResponse({ type: HttpProblemResponse })
+  @Documentation({
+    response: {
+      status: 200,
+      type: PersonalRepresentativeRightType,
+    },
+    request: {
+      params: {
+        code: {
+          required: true,
+          description: 'Unique code for a specific right type',
+          type: String,
+        },
+      },
+    },
+  })
   async get(
     @Param('code') code: string,
   ): Promise<PersonalRepresentativeRightType> {
-    if (!code) {
-      throw new BadRequestException('Code needs to be provided')
-    }
-
     const rightType = await this.rightTypesService.getPersonalRepresentativeRightType(
       code,
     )

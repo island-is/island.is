@@ -4,6 +4,7 @@ import {
   PersonalRepresentativeDTO,
   PersonalRepresentativeCreateDTO,
   PersonalRepresentativeService,
+  PaginationWithNationalIdsDto,
 } from '@island.is/auth-api-lib/personal-representative'
 import {
   BadRequestException,
@@ -17,20 +18,9 @@ import {
   Post,
   Inject,
   Query,
-  HttpCode,
 } from '@nestjs/common'
-import {
-  ApiOperation,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiTags,
-  ApiBearerAuth,
-  ApiNoContentResponse,
-  ApiBadRequestResponse,
-  ApiForbiddenResponse,
-  ApiInternalServerErrorResponse,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger'
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger'
+import { Documentation } from '@island.is/nest/swagger'
 import { isNationalIdValid } from '@island.is/financial-aid/shared/lib'
 import {
   CurrentAuth,
@@ -41,8 +31,6 @@ import {
 } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { HttpProblemResponse } from '@island.is/nest/problem'
-import { PaginationWithNationalIdsDto } from '../dto/PaginationWithNationalIds.dto'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representative`
 
@@ -50,10 +38,6 @@ const namespace = `${environment.audit.defaultNamespace}/personal-representative
 @Scopes(AuthScope.adminPersonalRepresentative)
 @ApiTags('Personal Representatives')
 @Controller('v1/personal-representatives')
-@ApiForbiddenResponse({ type: HttpProblemResponse })
-@ApiUnauthorizedResponse({ type: HttpProblemResponse })
-@ApiBadRequestResponse({ type: HttpProblemResponse })
-@ApiInternalServerErrorResponse()
 @ApiBearerAuth()
 @Audit({ namespace })
 export class PersonalRepresentativesController {
@@ -66,9 +50,9 @@ export class PersonalRepresentativesController {
   /** Gets a list of personal representatives */
   @ApiOperation({ summary: 'Gets all personal representatives' })
   @Get()
-  @ApiOkResponse({
+  @Documentation({
     description: 'Personal representative connections with rights',
-    type: PaginatedPersonalRepresentativeDto,
+    response: { status: 200, type: [PaginatedPersonalRepresentativeDto] },
   })
   @Audit<PaginatedPersonalRepresentativeDto>({
     resources: (pgData) => pgData.data.map((pr) => pr.id ?? ''),
@@ -76,12 +60,7 @@ export class PersonalRepresentativesController {
   async getAll(
     @Query() query: PaginationWithNationalIdsDto,
   ): Promise<PaginatedPersonalRepresentativeDto> {
-    const personalRepresentatives = await this.prService.getMany(
-      true,
-      query,
-      query.personalRepresentativeId,
-      query.representedPersonId,
-    )
+    const personalRepresentatives = await this.prService.getMany(true, query)
 
     return personalRepresentatives
   }
@@ -89,18 +68,23 @@ export class PersonalRepresentativesController {
   /** Gets a personal representative rights by it's id */
   @ApiOperation({ summary: 'Gets a personal representative rights by id' })
   @Get(':id')
-  @ApiOkResponse({
+  @Documentation({
     description: 'Personal representative connection with rights',
-    type: PersonalRepresentativeDTO,
+    response: { status: 200, type: PersonalRepresentativeDTO },
+    request: {
+      params: {
+        id: {
+          required: true,
+          description: 'Unique id for a specific connection',
+          type: String,
+        },
+      },
+    },
   })
   @Audit<PersonalRepresentativeDTO>({
     resources: (pr) => pr.id ?? '',
   })
   async get(@Param('id') id: string): Promise<PersonalRepresentativeDTO> {
-    if (!id) {
-      throw new BadRequestException('Id needs to be provided')
-    }
-
     const personalRepresentative = await this.prService.getPersonalRepresentative(
       id,
     )
@@ -118,8 +102,18 @@ export class PersonalRepresentativesController {
     summary: 'Delete a personal representative connection by id',
   })
   @Delete(':id')
-  @HttpCode(204)
-  @ApiNoContentResponse()
+  @Documentation({
+    response: { status: 204 },
+    request: {
+      params: {
+        id: {
+          required: true,
+          description: 'Unique id for a specific connection',
+          type: String,
+        },
+      },
+    },
+  })
   async remove(
     @Param('id') id: string,
     @CurrentAuth() user: Auth,
@@ -145,9 +139,9 @@ export class PersonalRepresentativesController {
       'All other connections between nationalIds are removed, right list must be supplied',
   })
   @Post()
-  @ApiCreatedResponse({
+  @Documentation({
     description: 'Created personal representative connections with rights',
-    type: PersonalRepresentativeDTO,
+    response: { status: 201, type: PersonalRepresentativeDTO },
   })
   @Audit<PersonalRepresentativeDTO>({
     resources: (pr) => pr.id ?? '',

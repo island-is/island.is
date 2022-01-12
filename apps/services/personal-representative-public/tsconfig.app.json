@@ -5,8 +5,5 @@
     "types": ["node"]
   },
   "exclude": ["**/*.spec.ts", "test/**", "**/e2e/**"],
-  "include": [
-    "**/*.ts",
-    "../../../libs/auth-api-lib/src/lib/personal-representative/entities/dto/personalRepresentativePublicDTO.dto.ts"
-  ]
+  "include": ["**/*.ts"]
 }

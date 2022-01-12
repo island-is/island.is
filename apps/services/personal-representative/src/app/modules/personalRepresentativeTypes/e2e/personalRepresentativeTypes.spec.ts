@@ -3,7 +3,11 @@ import {
   setupWithAuth,
   setupWithoutScope,
 } from '../../../../../test/setup'
-import { errorExpectedStructure } from '../../../../../test/testHelpers'
+import {
+  errorExpectedStructure,
+  getRequestMethod,
+} from '../../../../../test/testHelpers'
+import { TestEndpointOptions } from '../../../../../test/types'
 import request from 'supertest'
 import { TestApp } from '@island.is/testing/nest'
 import { PersonalRepresentativeType } from '@island.is/auth-api-lib/personal-representative'
@@ -23,42 +27,65 @@ const simpleRequestData = {
 
 const path = '/v1/personal-representative-types'
 
-describe('PersonalRepresentativeTypesController - Without Scope', () => {
-  let app: TestApp
-  let server: request.SuperTest<request.Test>
+describe('PersonalRepresentativeTypesController - Without Scope and Auth', () => {
+  it.each`
+    method      | endpoint
+    ${'GET'}    | ${'/v1/personal-representative-types'}
+    ${'GET'}    | ${'/v1/personal-representative-types/1234'}
+    ${'POST'}   | ${'/v1/personal-representative-types'}
+    ${'PUT'}    | ${'/v1/personal-representative-types/1234'}
+    ${'DELETE'} | ${'/v1/personal-representative-types/1234'}
+  `(
+    '$method $endpoint should return 403 when user is without scope',
+    async ({ method, endpoint }: TestEndpointOptions) => {
+      // Arrange
+      const app = await setupWithoutScope()
+      const server = request(app.getHttpServer())
 
-  beforeAll(async () => {
-    // TestApp setup with auth and database
-    app = await setupWithoutScope()
-    server = request(app.getHttpServer())
-  })
+      // Act
+      const res = await getRequestMethod(server, method)(endpoint)
 
-  afterAll(async () => {
-    await app.cleanUp()
-  })
+      // Assert
+      expect(res.status).toEqual(403)
+      expect(res.body).toMatchObject({
+        statusCode: 403,
+        error: 'Forbidden',
+        message: 'Forbidden resource',
+      })
 
-  it('POST /v1/personal-representative-types should fail and return 403 error if bearer is missing required scope', async () => {
-    await server.post(path).send(simpleRequestData).expect(403)
-  })
-})
+      // CleanUp
+      app.cleanUp()
+    },
+  )
 
-describe('PersonalRepresentativeTypesController - Without Auth', () => {
-  let app: TestApp
-  let server: request.SuperTest<request.Test>
+  it.each`
+    method      | endpoint
+    ${'GET'}    | ${'/v1/personal-representative-types'}
+    ${'GET'}    | ${'/v1/personal-representative-types/1234'}
+    ${'POST'}   | ${'/v1/personal-representative-types'}
+    ${'PUT'}    | ${'/v1/personal-representative-types/1234'}
+    ${'DELETE'} | ${'/v1/personal-representative-types/1234'}
+  `(
+    '$method $endpoint should return 401 when user is unauthorized',
+    async ({ method, endpoint }: TestEndpointOptions) => {
+      // Arrange
+      const app = await setupWithoutAuth()
+      const server = request(app.getHttpServer())
 
-  beforeAll(async () => {
-    // TestApp setup with auth and database
-    app = await setupWithoutAuth()
-    server = request(app.getHttpServer())
-  })
+      // Act
+      const res = await getRequestMethod(server, method)(endpoint)
+      console.log(res.body)
+      // Assert
+      expect(res.status).toEqual(401)
+      expect(res.body).toMatchObject({
+        statusCode: 401,
+        message: 'Unauthorized',
+      })
 
-  afterAll(async () => {
-    await app.cleanUp()
-  })
-
-  it('POST /v1/personal-representative-types should fail and return 401 error if bearer is missing', async () => {
-    await server.post(path).send(simpleRequestData).expect(401)
-  })
+      // CleanUp
+      app.cleanUp()
+    },
+  )
 })
 
 describe('PersonalRepresentativeTypesController', () => {
@@ -139,7 +166,7 @@ describe('PersonalRepresentativeTypesController', () => {
       }
 
       await server
-        .put(`${path}/${requestData.code}`)
+        .put(`${path}/${simpleRequestData.code}`)
         .send(requestData)
         .expect(400)
     })

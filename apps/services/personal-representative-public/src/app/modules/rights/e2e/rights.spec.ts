@@ -97,7 +97,6 @@ describe('RightsController', () => {
 
   describe('Get', () => {
     it('Get v1/rights should get all permission types', async () => {
-      // Test get personal rep
       const response = await server.get(path).expect(200)
 
       const rightTypesResult: {
@@ -114,12 +113,15 @@ describe('RightsController', () => {
     })
 
     it('Get v1/rights should get permission type by code', async () => {
-      // Test get personal rep
       const response = await server
         .get(`${path}/${rightTypeList[0].code}`)
         .expect(200)
 
       expect(response.body).toMatchObject(rightTypeList[0])
+    })
+
+    it('Get v1/rights should get NotFound result for non existing code', async () => {
+      await server.get(`${path}/noexistingcode`).expect(404)
     })
   })
 })

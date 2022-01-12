@@ -5,6 +5,7 @@ export * from './entities/models/personal-representative-right.model'
 export * from './entities/models/personal-representative-right-type.model'
 export * from './entities/models/personal-representative-access.model'
 // DTO's
+export * from './entities/dto/pagination-with-national-ids.dto'
 export * from './entities/dto/personal-representative.dto'
 export * from './entities/dto/personal-representative-create.dto'
 export * from './entities/dto/personal-representative-public.dto'

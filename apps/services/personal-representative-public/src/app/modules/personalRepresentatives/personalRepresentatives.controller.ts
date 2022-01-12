@@ -11,17 +11,8 @@ import {
   Inject,
   Query,
 } from '@nestjs/common'
-import {
-  ApiOperation,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiTags,
-  ApiForbiddenResponse,
-  ApiUnauthorizedResponse,
-  ApiBadRequestResponse,
-  ApiInternalServerErrorResponse,
-  ApiQuery,
-} from '@nestjs/swagger'
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger'
+import { Documentation } from '@island.is/nest/swagger'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments'
 import {
@@ -31,19 +22,14 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { HttpProblemResponse } from '@island.is/nest/problem'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representatives`
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.publicPersonalRepresentative)
+@ApiBearerAuth()
 @ApiTags('Personal Representatives - Public')
 @Controller('v1/personal-representatives')
-@ApiForbiddenResponse({ type: HttpProblemResponse })
-@ApiUnauthorizedResponse({ type: HttpProblemResponse })
-@ApiBadRequestResponse({ type: HttpProblemResponse })
-@ApiInternalServerErrorResponse()
-@ApiBearerAuth()
 @Audit({ namespace })
 export class PersonalRepresentativesController {
   constructor(
@@ -59,15 +45,18 @@ export class PersonalRepresentativesController {
     description: 'A personal representative can represent more than one person',
   })
   @Get()
-  @ApiQuery({
-    name: 'prId',
-    required: true,
-    type: 'string',
-    description: 'nationalId of personal representative.',
-  })
-  @ApiOkResponse({
+  @Documentation({
     description: 'Personal representative connections with rights',
-    type: [PersonalRepresentativePublicDTO],
+    response: { status: 200, type: [PersonalRepresentativePublicDTO] },
+    request: {
+      query: {
+        prId: {
+          required: true,
+          type: 'string',
+          description: 'nationalId of personal representative.',
+        },
+      },
+    },
   })
   async getByPersonalRepresentative(
     @Query('prId') prId: string,

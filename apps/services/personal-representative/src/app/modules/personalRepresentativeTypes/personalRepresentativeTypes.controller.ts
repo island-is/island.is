@@ -18,20 +18,9 @@ import {
   Put,
   Inject,
   Query,
-  HttpCode,
 } from '@nestjs/common'
-import {
-  ApiOperation,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiTags,
-  ApiNoContentResponse,
-  ApiForbiddenResponse,
-  ApiUnauthorizedResponse,
-  ApiBadRequestResponse,
-  ApiInternalServerErrorResponse,
-} from '@nestjs/swagger'
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger'
+import { Documentation } from '@island.is/nest/swagger'
 import {
   CurrentAuth,
   IdsAuthGuard,
@@ -42,7 +31,6 @@ import {
 import { environment } from '../../../environments'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { PaginationDto } from '@island.is/nest/pagination'
-import { HttpProblemResponse } from '@island.is/nest/problem'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representative-types`
 
@@ -50,10 +38,6 @@ const namespace = `${environment.audit.defaultNamespace}/personal-representative
 @Scopes(AuthScope.adminPersonalRepresentative)
 @ApiTags('Personal Representative Types')
 @Controller('v1/personal-representative-types')
-@ApiForbiddenResponse({ type: HttpProblemResponse })
-@ApiUnauthorizedResponse({ type: HttpProblemResponse })
-@ApiBadRequestResponse({ type: HttpProblemResponse })
-@ApiInternalServerErrorResponse()
 @ApiBearerAuth()
 @Audit({ namespace })
 export class PersonalRepresentativeTypesController {
@@ -69,7 +53,9 @@ export class PersonalRepresentativeTypesController {
       'Get a list of all personal representative types for personal representatives',
   })
   @Get()
-  @ApiOkResponse({ type: PaginatedPersonalRepresentativeTypeDto })
+  @Documentation({
+    response: { status: 200, type: PaginatedPersonalRepresentativeTypeDto },
+  })
   @Audit<PaginatedPersonalRepresentativeTypeDto>({
     resources: (pgData) => pgData.data.map((type) => type.code),
   })
@@ -84,7 +70,18 @@ export class PersonalRepresentativeTypesController {
     summary: 'Get a single personal representative type by code',
   })
   @Get(':code')
-  @ApiOkResponse({ type: PersonalRepresentativeType })
+  @Documentation({
+    response: { status: 200, type: PersonalRepresentativeType },
+    request: {
+      params: {
+        code: {
+          required: true,
+          description: 'Unique code for a type',
+          type: String,
+        },
+      },
+    },
+  })
   async getAsync(
     @Param('code') code: string,
   ): Promise<PersonalRepresentativeType> {
@@ -107,16 +104,22 @@ export class PersonalRepresentativeTypesController {
     summary: 'Delete a single personal representative type by code',
   })
   @Delete(':code')
-  @HttpCode(204)
-  @ApiNoContentResponse()
+  @Documentation({
+    response: { status: 204 },
+    request: {
+      params: {
+        code: {
+          required: true,
+          description: 'Unique code for a type',
+          type: String,
+        },
+      },
+    },
+  })
   async removeAsync(
     @Param('code') code: string,
     @CurrentAuth() user: Auth,
   ): Promise<void> {
-    if (!code) {
-      throw new BadRequestException('Key needs to be provided')
-    }
-
     // delete right type
     await this.auditService.auditPromise(
       {
@@ -134,7 +137,9 @@ export class PersonalRepresentativeTypesController {
     summary: 'Create a personal representative type',
   })
   @Post()
-  @ApiCreatedResponse({ type: PersonalRepresentativeType })
+  @Documentation({
+    response: { status: 201, type: PersonalRepresentativeType },
+  })
   async create(
     @Body() rightType: PersonalRepresentativeTypeDTO,
     @CurrentAuth() user: Auth,
@@ -157,7 +162,18 @@ export class PersonalRepresentativeTypesController {
     summary: 'Update a personal representative type by code',
   })
   @Put(':code')
-  @ApiCreatedResponse({ type: PersonalRepresentativeType })
+  @Documentation({
+    response: { status: 200, type: PersonalRepresentativeType },
+    request: {
+      params: {
+        code: {
+          required: true,
+          description: 'Unique code for a type',
+          type: String,
+        },
+      },
+    },
+  })
   async update(
     @Param('code') code: string,
     @Body() rightType: PersonalRepresentativeTypeDTO,

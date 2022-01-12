@@ -27,22 +27,11 @@ import {
   Query,
   HttpCode,
 } from '@nestjs/common'
-import {
-  ApiOperation,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiTags,
-  ApiBearerAuth,
-  ApiForbiddenResponse,
-  ApiUnauthorizedResponse,
-  ApiBadRequestResponse,
-  ApiInternalServerErrorResponse,
-  ApiNoContentResponse,
-} from '@nestjs/swagger'
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger'
+import { Documentation } from '@island.is/nest/swagger'
 import { environment } from '../../../environments'
 import { AuditService, Audit } from '@island.is/nest/audit'
 import { PaginationDto } from '@island.is/nest/pagination'
-import { HttpProblemResponse } from '@island.is/nest/problem'
 
 const namespace = `${environment.audit.defaultNamespace}/right-types`
 
@@ -51,10 +40,6 @@ const namespace = `${environment.audit.defaultNamespace}/right-types`
 @ApiBearerAuth()
 @ApiTags('Right Types')
 @Controller('v1/right-types')
-@ApiForbiddenResponse({ type: HttpProblemResponse })
-@ApiUnauthorizedResponse({ type: HttpProblemResponse })
-@ApiBadRequestResponse({ type: HttpProblemResponse })
-@ApiInternalServerErrorResponse()
 @Audit({ namespace })
 export class RightTypesController {
   constructor(
@@ -68,7 +53,12 @@ export class RightTypesController {
     summary: 'Get a list of all right types for personal representatives',
   })
   @Get()
-  @ApiOkResponse({ type: PaginatedPersonalRepresentativeRightTypeDto })
+  @Documentation({
+    response: {
+      status: 200,
+      type: PaginatedPersonalRepresentativeRightTypeDto,
+    },
+  })
   @Audit<PaginatedPersonalRepresentativeRightTypeDto>({
     resources: (pgData) => pgData.data.map((type) => type.code),
   })
@@ -83,7 +73,18 @@ export class RightTypesController {
     summary: 'Get a single right type by code',
   })
   @Get(':code')
-  @ApiOkResponse({ type: PersonalRepresentativeRightType })
+  @Documentation({
+    response: { status: 200, type: PersonalRepresentativeRightType },
+    request: {
+      params: {
+        code: {
+          required: true,
+          description: 'Unique code for a type',
+          type: String,
+        },
+      },
+    },
+  })
   @Audit<PersonalRepresentativeRightType>({
     resources: (type) => type.code,
   })
@@ -109,8 +110,18 @@ export class RightTypesController {
     summary: 'Delete a single right type by code',
   })
   @Delete(':code')
-  @HttpCode(204)
-  @ApiNoContentResponse()
+  @Documentation({
+    response: { status: 204 },
+    request: {
+      params: {
+        code: {
+          required: true,
+          description: 'Unique code for a type',
+          type: String,
+        },
+      },
+    },
+  })
   async removeAsync(
     @Param('code') code: string,
     @CurrentAuth() user: Auth,
@@ -135,7 +146,9 @@ export class RightTypesController {
     summary: 'Create a right type',
   })
   @Post()
-  @ApiCreatedResponse({ type: PersonalRepresentativeRightType })
+  @Documentation({
+    response: { status: 201, type: PersonalRepresentativeRightType },
+  })
   @Audit<PersonalRepresentativeRightType>({
     resources: (type) => type.code,
   })
@@ -161,7 +174,18 @@ export class RightTypesController {
     summary: 'Update a right type by code',
   })
   @Put(':code')
-  @ApiOkResponse({ type: PersonalRepresentativeRightType })
+  @Documentation({
+    response: { status: 200, type: PersonalRepresentativeRightType },
+    request: {
+      params: {
+        code: {
+          required: true,
+          description: 'Unique code for a type',
+          type: String,
+        },
+      },
+    },
+  })
   @Audit<PersonalRepresentativeRightType>({
     resources: (type) => type.code,
   })
