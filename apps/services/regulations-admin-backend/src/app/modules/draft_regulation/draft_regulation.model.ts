@@ -19,6 +19,7 @@ import {
   LawChapterSlug,
   Kennitala,
 } from '@island.is/regulations'
+import { DraftingStatus } from '@island.is/regulations/admin'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { DraftRegulationChange } from '../draft_regulation_change'
@@ -40,10 +41,10 @@ export class DraftRegulation extends Model<DraftRegulation> {
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: ['draft', 'proposal', 'shipped'],
+    values: ['draft', 'proposal', 'shipped', 'published'],
   })
   @ApiProperty()
-  drafting_status!: 'draft' | 'proposal' | 'shipped'
+  drafting_status!: DraftingStatus
 
   @Column({
     type: DataType.STRING,
