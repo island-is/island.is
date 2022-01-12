@@ -7,10 +7,7 @@ import { isUuid } from 'uuidv4'
 import { Step } from '../types'
 import { steps } from '../state/useDraftingState'
 import EditDraft from '../components/EditDraft'
-import {
-  useMinistriesQuery,
-  useRegulationDraftQuery,
-} from '@island.is/service-portal/graphql'
+import { useMinistriesQuery, useRegulationDraftQuery } from '../utils/dataHooks'
 
 // ---------------------------------------------------------------------------
 

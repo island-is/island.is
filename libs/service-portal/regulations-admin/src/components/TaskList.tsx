@@ -14,8 +14,8 @@ import {
 import { homeMessages as msg, statusMsgs } from '../messages'
 import { ISODate, toISODate } from '@island.is/regulations'
 import { workingDaysUntil, useLocale } from '../utils'
-import { generatePath, useHistory } from 'react-router'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import { useHistory } from 'react-router'
+import { getEditUrl } from '../utils/routing'
 
 const RegulationTaskListQuery = gql`
   query RegulationTaskListQuery {
@@ -99,11 +99,7 @@ export const TaskList = () => {
                 label: formatMessage(msg.cta),
                 variant: 'ghost',
                 onClick: () => {
-                  history.push(
-                    generatePath(ServicePortalPath.RegulationsAdminEdit, {
-                      id,
-                    }),
-                  )
+                  history.push(getEditUrl(id))
                 },
               }}
             />

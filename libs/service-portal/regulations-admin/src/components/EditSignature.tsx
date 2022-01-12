@@ -22,7 +22,7 @@ import {
 import { StepComponent } from '../state/useDraftingState'
 import { editorMsgs as msg } from '../messages'
 import { getMinPublishDate, useLocale } from '../utils'
-import { useMinistriesQuery } from '@island.is/service-portal/graphql'
+import { useMinistriesQuery } from '../utils/dataHooks'
 
 import { RegDraftForm } from '../state/types'
 import { EditorInput } from './EditorInput'

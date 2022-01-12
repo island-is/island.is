@@ -5,7 +5,7 @@ import { editorMsgs as msg } from '../messages'
 
 import { LawChapterSlug } from '@island.is/regulations'
 import { emptyOption, useLocale } from '../utils'
-import { useLawChaptersQuery } from '@island.is/service-portal/graphql'
+import { useLawChaptersQuery } from '../utils/dataHooks'
 
 const useLawChapters = (
   activeChapters: ReadonlyArray<LawChapterSlug>,

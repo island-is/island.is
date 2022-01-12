@@ -1,9 +1,8 @@
 import { useMemo, useState } from 'react'
-import { generatePath, useHistory } from 'react-router'
+import { useHistory } from 'react-router'
 import { Query } from '@island.is/api/schema'
 import { gql, useQuery, useMutation, ApolloError } from '@apollo/client'
 import { RegulationDraft } from '@island.is/regulations/admin'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import {
   RegName,
   LawChapter,
@@ -11,6 +10,7 @@ import {
   RegulationOption,
   RegulationOptionList,
 } from '@island.is/regulations'
+import { getEditUrl } from './routing'
 
 // import { APPLICATION_APPLICATIONS } from '../../lib/queries/applicationApplications'
 
@@ -145,11 +145,7 @@ export const useCreateRegulationDraft = () => {
           }
 
           setStatus({ creating: false })
-          history.push(
-            generatePath(ServicePortalPath.RegulationsAdminEdit, {
-              id: newDraft.id,
-            }),
-          )
+          history.push(getEditUrl(newDraft.id))
         })
         .catch((e) => {
           const error = e instanceof Error ? e : new Error(String(e))
