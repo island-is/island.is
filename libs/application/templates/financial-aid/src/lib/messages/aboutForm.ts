@@ -5,7 +5,7 @@ export const aboutForm = {
     sectionTitle: {
       id: 'fa.application:section.aboutForm.general.sectionTitle',
       defaultMessage: 'Upplýsingar',
-      description: 'About form Page Title',
+      description: 'About form section title',
     },
     pageTitle: {
       id: 'fa.application:section.aboutForm.general.pageTitle',
