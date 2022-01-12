@@ -21,11 +21,11 @@ import { CaseController } from '../case.controller'
 
 jest.mock('@island.is/dokobit-signing')
 jest.mock('@island.is/email-service')
-jest.mock('../../court/court.service.ts')
-jest.mock('../../event/event.service.ts')
-jest.mock('../../user/user.service.ts')
-jest.mock('../../file/file.service.ts')
-jest.mock('../../aws-s3/awsS3.service.ts')
+jest.mock('../../court/court.service')
+jest.mock('../../event/event.service')
+jest.mock('../../user/user.service')
+jest.mock('../../file/file.service')
+jest.mock('../../aws-s3/awsS3.service')
 jest.mock('../../defendant/defendant.service')
 
 export const createTestingCaseModule = async () => {

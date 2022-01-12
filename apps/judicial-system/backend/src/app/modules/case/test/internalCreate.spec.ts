@@ -5,15 +5,13 @@ import { BadRequestException } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { Gender, CaseType, UserRole } from '@island.is/judicial-system/types'
 
+import { createTestingCaseModule } from './createTestingCaseModule'
 import { User, UserService } from '../../user'
 import { Institution } from '../../institution'
 import { DefendantService } from '../../defendant/defendant.service'
 import { Defendant } from '../../defendant/models/defendant.model'
 import { InternalCreateCaseDto } from '../dto'
 import { Case } from '../models'
-import { createTestingCaseModule } from './createTestingCaseModule'
-
-jest.mock('../../user/user.service')
 
 interface Then {
   result: Case

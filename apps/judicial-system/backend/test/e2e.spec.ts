@@ -657,69 +657,6 @@ describe('User', () => {
 })
 
 describe('Case', () => {
-  it('POST /api/case should create a case', async () => {
-    const data = getCaseData(true, true)
-    let apiCase: CCase
-
-    await request(app.getHttpServer())
-      .post('/api/case')
-      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
-      .send(data)
-      .expect(201)
-      .then((response) => {
-        apiCase = response.body
-
-        // Check the response
-        expectCasesToMatch(apiCase, {
-          ...data,
-          id: apiCase.id ?? 'FAILURE',
-          created: apiCase.created ?? 'FAILURE',
-          modified: apiCase.modified ?? 'FAILURE',
-          state: CaseState.NEW,
-          prosecutorId: prosecutor.id,
-          prosecutor,
-          court,
-        })
-
-        // Check the data in the database
-        return getCase(apiCase.id)
-      })
-      .then((value) => {
-        expectCasesToMatch(caseToCCase(value), apiCase)
-      })
-  })
-
-  it('POST /api/case with required fields should create a case', async () => {
-    const data = getCaseData()
-    let apiCase: CCase
-
-    await request(app.getHttpServer())
-      .post('/api/case')
-      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
-      .send(data)
-      .expect(201)
-      .then((response) => {
-        apiCase = response.body
-
-        // Check the response
-        expectCasesToMatch(apiCase, {
-          ...data,
-          id: apiCase.id ?? 'FAILURE',
-          created: apiCase.created ?? 'FAILURE',
-          modified: apiCase.modified ?? 'FAILURE',
-          state: CaseState.NEW,
-          prosecutorId: prosecutor.id,
-          prosecutor,
-        })
-
-        // Check the data in the database
-        return getCase(apiCase.id)
-      })
-      .then((value) => {
-        expectCasesToMatch(caseToCCase(value), apiCase)
-      })
-  })
-
   it('PUT /api/case/:id should update prosecutor fields of a case by id', async () => {
     const data = getCaseData(true, true, true)
     let dbCase: CCase

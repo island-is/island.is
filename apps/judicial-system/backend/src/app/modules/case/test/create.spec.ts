@@ -2,12 +2,12 @@ import { uuid } from 'uuidv4'
 
 import { CaseType, User as TUser } from '@island.is/judicial-system/types'
 
+import { createTestingCaseModule } from './createTestingCaseModule'
 import { User } from '../../user'
 import { Institution } from '../../institution'
 import { Defendant } from '../../defendant/models/defendant.model'
 import { CreateCaseDto } from '../dto'
 import { Case } from '../models'
-import { createTestingCaseModule } from './createTestingCaseModule'
 
 interface Then {
   result: Case
