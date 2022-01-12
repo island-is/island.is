@@ -22,7 +22,7 @@ const providers = [
     scope: identityServerConfig.scope,
     clientId: identityServerConfig.clientId,
     domain: env.IDS,
-    clientSecret: process.env.IDENTITY_SERVER_SECRET,
+    clientSecret: env.identityServerSecret,
     protection: 'pkce',
   })
 ]
@@ -60,9 +60,9 @@ async function jwt(token: JWT, user: AuthUser) {
   return await handleJwt(
     token,
     identityServerConfig.clientId,
-    process.env.IDENTITY_SERVER_SECRET,
-    process.env.NEXTAUTH_URL,
-    process.env.IDENTITY_SERVER_DOMAIN,
+    env.identityServerSecret,
+    env.NEXTAUTH_URL,
+    env.identityServerDomain,
   )
 }
 

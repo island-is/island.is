@@ -13,21 +13,21 @@ const devConfig = {
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
     xroad: {
       basePath: 'http://localhost:8081/r1/IS-DEV',
-      memberCode: '10001',
-      apiPath: '/SKRA-Protected/Einstaklingar-v1',
-      clientId: 'IS-DEV/GOV/10000/island-is-client',
+      memberCode: process.env.XROAD_NATIONAL_REGISTRY_MEMBER_CODE ?? '10001',
+      apiPath: process.env.XROAD_NATIONAL_REGISTRY_API_PATH ?? '/SKRA-Protected/Einstaklingar-v1',
+      clientId: process.env.XROAD_NATIONAL_REGISTRY_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
       memberClass: XRoadMemberClass.GovernmentInstitution
     },
-    authMiddlewareOptions: {
-      forwardUserInfo: false,
-      tokenExchangeOptions: {
-        issuer: 'https://identity-server.dev01.devland.is',
-        clientId: '@island.is/clients/national-registry',
-        clientSecret: process.env.NATIONAL_REGISTRY_IDS_CLIENT_SECRET,
-        scope: 'openid @skra.is/individuals @vegagerdin.is',//'openid @skra.is/individuals api_resource.scope',
-        requestActorToken: true,
-      },
-    },
+    // authMiddlewareOptions: {
+    //   forwardUserInfo: false,
+    //   tokenExchangeOptions: {
+    //     issuer: 'https://identity-server.dev01.devland.is',
+    //     clientId: '@island.is/clients/national-registry',
+    //     clientSecret: process.env.NATIONAL_REGISTRY_IDS_CLIENT_SECRET,
+    //     scope: 'openid @skra.is/individuals @vegagerdin.is',
+    //     requestActorToken: true,
+    //   },
+    // },
   },
   airlineApiKeys: {
     [Airlines.icelandair]: Airlines.icelandair,
@@ -68,6 +68,23 @@ const prodConfig = {
     url: process.env.NATIONAL_REGISTRY_URL,
     username: process.env.NATIONAL_REGISTRY_USERNAME,
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
+    xroad: {
+      basePath: process.env.XROAD_BASE_PATH_WITH_ENV,
+      memberCode: process.env.XROAD_NATIONAL_REGISTRY_MEMBER_CODE,
+      apiPath: process.env.XROAD_NATIONAL_REGISTRY_API_PATH,
+      clientId: process.env.XROAD_NATIONAL_REGISTRY_CLIENT_ID,
+      memberClass: XRoadMemberClass.GovernmentInstitution
+    },
+    // authMiddlewareOptions: {
+    //   forwardUserInfo: false,
+    //   tokenExchangeOptions: {
+    //     issuer: 'https://identity-server.dev01.devland.is',
+    //     clientId: '@island.is/clients/national-registry',
+    //     clientSecret: process.env.NATIONAL_REGISTRY_IDS_CLIENT_SECRET,
+    //     scope: 'openid @skra.is/individuals @vegagerdin.is',
+    //     requestActorToken: true,
+    //   },
+    // },
   },
   airlineApiKeys: {
     [Airlines.icelandair]: process.env.ICELANDAIR_API_KEY,

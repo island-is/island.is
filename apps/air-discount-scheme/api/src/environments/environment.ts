@@ -25,15 +25,6 @@ const devConfig = {
     audience: '@vegagerdin.is',
     jwtSecret: 'securesecret',
   },
-  nationalRegistry: {
-    xroad: {
-      basePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8081/r1/IS-DEV',
-      memberCode: process.env.XROAD_THJODSKRA_MEMBER ?? '10001',
-      apiPath: process.env.XROAD_THJODSKRA_API_PATH ?? '/SKRA-Protected/Einstaklingar-v1',
-      clientId: process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
-      memberClass: 'GOV',//XRoadMemberClass.GovernmentInstitution,
-    },
-  },
   idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
   backendUrl: 'http://localhost:4248',
 }
@@ -55,15 +46,6 @@ const prodConfig = {
     samlEntryPoint: process.env.SAML_ENTRY_POINT,
     audience: process.env.AUTH_AUDIENCE,
     jwtSecret: process.env.AUTH_JWT_SECRET,
-  },
-  nationalRegistry: {
-    xroad: {
-      basePath: process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8081/r1/IS-DEV',
-      memberCode: process.env.XROAD_THJODSKRA_MEMBER ?? '10001',
-      apiPath: process.env.XROAD_THJODSKRA_API_PATH ?? '/SKRA-Protected/Einstaklingar-v1',
-      clientId: process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
-      memberClass: 'GOV',//XRoadMemberClass.GovernmentInstitution,
-    },
   },
   idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
   backendUrl: process.env.BACKEND_URL ?? 'http://localhost:4248',
