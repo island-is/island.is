@@ -77,6 +77,11 @@ export const dataSchema = z.object({
     ledger: z.string().optional(),
     accountNumber: z.string().optional(),
   }),
+  personalTaxCreditForm: z
+    .enum([ApproveOptions.Yes, ApproveOptions.No])
+    .refine((v) => v, {
+      params: error.validation.radioErrorMessage,
+    }),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>

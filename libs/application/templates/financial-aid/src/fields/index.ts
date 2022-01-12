@@ -6,3 +6,4 @@ export { default as HomeCircumstancesForm } from './HomeCircumstancesForm/HomeCi
 export { default as IncomeForm } from './IncomeForm/IncomeForm'
 export { default as EmploymentForm } from './EmploymentForm/EmploymentForm'
 export { default as BankInfoForm } from './BankInfoForm/BankInfoForm'
+export { default as PersonalTaxCreditForm } from './PersonalTaxCreditForm/PersonalTaxCreditForm'
