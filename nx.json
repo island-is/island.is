@@ -130,13 +130,11 @@
         "api-domains-license-service",
         "api-domains-national-registry",
         "api-domains-national-registry-x-road",
-        "api-domains-party-letter-registry",
         "api-domains-payment",
         "api-domains-payment-schedule",
         "api-domains-regulations",
         "api-domains-rsk",
         "api-domains-syslumenn",
-        "api-domains-temporary-voter-registry",
         "api-domains-user-profile",
         "api-mocks",
         "api-schema",
@@ -253,10 +251,6 @@
       "tags": ["type:lib", "scope:graphql-api"],
       "implicitDependencies": ["logging"]
     },
-    "api-domains-party-letter-registry": {
-      "tags": ["type:lib", "scope:graphql-api"],
-      "implicitDependencies": ["logging"]
-    },
     "api-domains-payment": {
       "tags": ["type:lib", "scope:graphql-api"],
       "implicitDependencies": ["logging"]
@@ -274,10 +268,6 @@
       "implicitDependencies": ["logging"]
     },
     "api-domains-syslumenn": {
-      "tags": ["type:lib", "scope:graphql-api"],
-      "implicitDependencies": ["logging"]
-    },
-    "api-domains-temporary-voter-registry": {
       "tags": ["type:lib", "scope:graphql-api"],
       "implicitDependencies": ["logging"]
     },
@@ -970,19 +960,10 @@
     "services-endorsements-api": {
       "tags": ["type:app", "scope:rest-api"]
     },
-    "services-notifications": {
-      "tags": ["type:app", "scope:rest-api"]
-    },
-    "services-party-letter-registry-api": {
-      "tags": ["type:app", "scope:rest-api"]
-    },
     "services-personal-representative": {
       "tags": ["type:app", "scope:rest-api"]
     },
     "services-search-indexer": {
-      "tags": ["type:app", "scope:rest-api"]
-    },
-    "services-temporary-voter-registry-api": {
       "tags": ["type:app", "scope:rest-api"]
     },
     "services-user-notification": {
