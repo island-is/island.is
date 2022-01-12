@@ -22,6 +22,11 @@ export const error = {
       defaultMessage: 'Athugaðu hvort netfang sé rétt slegið inn',
       description: 'Error message when email is invalid or not present',
     },
+    phone: {
+      id: 'fa.application:error.phone',
+      defaultMessage: 'Athugaðu hvort símanúmer sé rétt slegið inn',
+      description: 'Error message when phone is invalid or not present',
+    },
     approveSpouse: {
       id: 'fa.application:error.approveSpouse',
       defaultMessage: 'Þú þarft að samþykkja',

@@ -82,7 +82,7 @@ export const dataSchema = z.object({
       params: error.validation.email,
     }),
     phone: z.string().refine((v) => v, {
-      params: error.validation.inputErrorMessage,
+      params: error.validation.phone,
     }),
   }),
 })
