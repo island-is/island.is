@@ -8,6 +8,9 @@ import { Discount } from './discount.model'
 import { User } from '../user'
 import { IdsUserGuard, ScopesGuard, CurrentUser, User as AuthUser, Scopes } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
+import { Roles } from '../decorators/roles.decorator'
+import { Role } from '@island.is/air-discount-scheme/types'
+import { RolesGuard } from '../auth/roles.guard'
 
 type DiscountWithTUser = Discount & { user: TUser }
 
@@ -17,7 +20,9 @@ const TWO_HOURS = 7200 // seconds
 @Scopes('@vegagerdin.is/air-discount-scheme-scope')
 @Resolver(() => Discount)
 export class DiscountResolver {
-
+  
+  @UseGuards(RolesGuard)
+  @Roles(Role.DEVELOPER)
   @Query(() => [Discount], { nullable: true })
   async discounts(
     @CurrentUser() user: AuthUser,

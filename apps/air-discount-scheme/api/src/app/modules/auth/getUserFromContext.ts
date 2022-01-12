@@ -2,13 +2,13 @@ import environment from '../../../environments/environment'
 import { AuthUser } from '@island.is/air-discount-scheme/types'
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common'
 import { decode } from 'jsonwebtoken'
+import { GqlExecutionContext } from '@nestjs/graphql'
 
 export const getUserFromContext = (
   context: ExecutionContext & { contextType?: string },
 ): AuthUser => {
-  const req = context.switchToHttp().getRequest()
-
-  const sessionToken = req.cookies
+  const req = GqlExecutionContext.create(context).getContext().req
+  const sessionToken = req?.cookies
     ? req.cookies[environment.idsTokenCookieName]
     : null
 

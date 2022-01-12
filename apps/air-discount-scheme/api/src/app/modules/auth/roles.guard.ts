@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { getRole } from './roles'
-import { getUserFromContext } from './getUserFromContext'
 import { Role } from '@island.is/air-discount-scheme/types'
+import { getUserFromContext } from './getUserFromContext'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -18,24 +18,19 @@ export class RolesGuard implements CanActivate {
       'roles',
       context.getHandler(),
     )
-
+    console.log(rolesRules)
     // Allow if no rules
     if (!rolesRules) {
       return true
     }
-
-    const user = getUserFromContext(context)
-    console.log('roles.guard user')
-    console.log(user)
+    let user = getUserFromContext(context)
+    user.role = getRole({name: user.name, nationalId: user.nationalId})
     // Deny if no user
     if (!user) {
       throw new UnauthorizedException()
     }
 
-    const userRole = user.role//getRole({name: user.name, nationalId: user.nationalId, })
-    console.log(userRole)
-
-    if (!rolesRules.includes(userRole)) {
+    if (!rolesRules.includes(user.role)) {
       throw new UnauthorizedException()
     }
     return true

@@ -13,6 +13,7 @@ import {
 } from '@island.is/next-ids-auth'
 import { NextApiRequest, NextApiResponse } from 'next-auth/internals/utils'
 import { JWT } from 'next-auth/jwt'
+import { useLogOut } from '@island.is/air-discount-scheme-web/utils/hooks/useLogout'
 
 const providers = [
   Providers.IdentityServer4({
@@ -41,6 +42,9 @@ async function signIn(
 }
 
 async function jwt(token: JWT, user: AuthUser) {
+  if(token.isRefreshTokenExpired === true) {
+    useLogOut()
+  }
   if (user) {
     token = {
       nationalId: user.nationalId,
@@ -50,7 +54,7 @@ async function jwt(token: JWT, user: AuthUser) {
       idToken: user.idToken,
       isRefreshTokenExpired: false,
       folder: token.folder ?? uuid(),
-      role: Role,
+      role: user.role ?? Role.USER,
     }
   }
   return await handleJwt(

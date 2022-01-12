@@ -15,10 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { getRole } from '../auth/roles'
-//import { Role } from '@island.is/air-discount-scheme/types'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes('@vegagerdin.is/air-discount-scheme-scope')
 @Resolver(() => User)
 export class UserResolver {
   constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
@@ -26,11 +23,11 @@ export class UserResolver {
   @Query(() => User, { nullable: true })
   async user(@CurrentUser() user: AuthUser): Promise<User | undefined> {
     console.log('user resolver API')
-    console.log(user)
     if (!user) {
       return null
     }
-
+    user.role = getRole(user)
+    console.log(user)
     return user as User
   }
 
@@ -39,6 +36,8 @@ export class UserResolver {
     return getRole(user)
   }
 
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes('@vegagerdin.is/air-discount-scheme-scope')
   @ResolveField('meetsADSRequirements')
   resolveMeetsADSRequirements(@Parent() user: TUser): boolean {
     if (user.fund) {
@@ -47,6 +46,8 @@ export class UserResolver {
     return false
   }
 
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes('@vegagerdin.is/air-discount-scheme-scope')
   @ResolveField('flightLegs', () => [FlightLeg])
   async resolveFlights(
     @CurrentUser() user: AuthUser,

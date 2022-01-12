@@ -20,6 +20,10 @@ export const CurrentUser = createParamDecorator(
     return {
       name: decodedToken.name,
       nationalId: decodedToken.nationalId,
+      mobile: decodedToken?.mobile,
+      role: decodedToken.role,
+      meetsADSRequirements: decodedToken?.meetsADSRequirements,
+      flightLegs: decodedToken?.flightLegs
     }
   },
 )

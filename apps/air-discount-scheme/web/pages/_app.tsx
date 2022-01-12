@@ -1,20 +1,11 @@
-import React, { FC } from 'react'
-import Head from 'next/head'
-//import { ApolloProvider } from 'react-apollo'
+import React from 'react'
 import { ApolloProvider } from '@apollo/client'
-
-  
 import { getSession, Provider } from "next-auth/client"
-
 import initApollo from '../graphql/client'
-import { UserContext } from '../context'
-
 import get from 'lodash/get'
-import App from 'next/app'
 import NextCookies from 'next-cookies'
 import getConfig from 'next/config'
 import * as Sentry from '@sentry/node'
-
 import { Toast, ErrorBoundary, AppLayout, AuthProvider } from '../components'
 import { appWithTranslation } from '../i18n'
 import { isAuthenticated } from '../auth/utils'
@@ -67,7 +58,7 @@ const SupportApplication: any = ({ Component, pageProps }) => {
     <ApolloProvider client={initApollo(pageProps.apolloState)}>
       <Provider session={pageProps.session}>
         <AuthProvider>
-          <AppLayout isAuthenticated={pageProps.isAuthenticated} {...pageProps.layoutProps}>
+          <AppLayout {...pageProps.layoutProps}>
             <Component {...pageProps.pageProps } />
           </AppLayout>
         </AuthProvider>

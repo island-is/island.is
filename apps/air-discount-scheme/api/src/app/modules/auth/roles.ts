@@ -5,7 +5,6 @@ import { Role } from '@island.is/air-discount-scheme/types'
 const {
   accessGroups: { developers = '', admins = ''},
 } = environment
-
 const DEVELOPERS = developers.split(',')
 const ADMINS = admins.split(',')
 
