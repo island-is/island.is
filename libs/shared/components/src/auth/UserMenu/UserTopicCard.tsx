@@ -60,7 +60,21 @@ export const UserTopicCard: React.FC<UserTopicCardProps> = ({
           username={children?.toString()}
         />
       ) : (
-        <Icon icon={icon.icon} type={icon.type} color={icon.color} />
+        <Box
+          borderRadius="circle"
+          background={colorSchemes[colorScheme].circleColor}
+          className={styles.iconCircle}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Icon
+            icon={icon.icon}
+            type={icon.type}
+            color={icon.color}
+            className={styles.icon}
+          />
+        </Box>
       )}
 
       <Box marginLeft={2} className={styles.userDelegationsText}>

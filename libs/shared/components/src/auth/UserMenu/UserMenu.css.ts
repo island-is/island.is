@@ -153,6 +153,7 @@ export const companyIconSize = style({
   width: 40,
   height: 40,
 })
+
 export const userDelegationWrapper = style({
   ...themeUtils.responsiveStyle({
     md: {
@@ -162,6 +163,7 @@ export const userDelegationWrapper = style({
     },
   }),
 })
+
 export const userDelegationsText = style({
   fontSize: 16,
   lineHeight: '21px',
@@ -171,4 +173,13 @@ export const userDelegationsText = style({
 
 export const userTopicCardBox = style({
   height: 64,
+})
+
+export const iconCircle = style({
+  width: theme.spacing[4],
+  height: theme.spacing[4],
+})
+export const icon = style({
+  width: 16,
+  height: 17,
 })

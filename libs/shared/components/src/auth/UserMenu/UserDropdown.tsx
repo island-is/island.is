@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction } from 'react'
 import {
   Box,
-  Stack,
   Text,
   ModalBase,
   UserAvatar,
@@ -106,9 +105,8 @@ export const UserDropdown = ({
                 alignItems="center"
                 paddingBottom={3}
               >
-                {/* Check if actor is company - display company icon
-                 * kennitala function is buggy - temp removal
-                 */}
+                {/* Start of current User */}
+                {/* Check if actor is company - display company icon */}
                 {isCompany ? (
                   <Box
                     borderRadius="circle"
@@ -121,10 +119,8 @@ export const UserDropdown = ({
                     <Icon icon="business" type="filled" color="blue400" />
                   </Box>
                 ) : (
-                  <UserAvatar username={isDelegation ? actorName : userName} />
+                  <UserAvatar username={userName} />
                 )}
-                {/* <UserAvatar username={isDelegation ? actorName : userName} /> */}
-
                 <Box marginLeft={1} marginRight={4}>
                   <Text variant="h4" as="h4">
                     {userName}
@@ -132,7 +128,6 @@ export const UserDropdown = ({
                   {isDelegation && <Text variant="small">{actorName}</Text>}
                 </Box>
               </Box>
-              {/* <Divider /> */}
               <Hidden above="sm">
                 {<UserLanguageSwitcher user={user} dropdown />}
               </Hidden>

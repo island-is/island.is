@@ -88,10 +88,12 @@ export const UserDelegations = ({
             .map((delegation) => (
               <UserTopicCard
                 key={delegation.nationalId}
-                colorScheme="blue"
+                colorScheme={
+                  isCompany(delegation.nationalId) ? 'purple' : 'blue'
+                }
                 icon={
                   isCompany(delegation.nationalId)
-                    ? { icon: 'business', type: 'filled', color: 'blue400' }
+                    ? { icon: 'business', type: 'filled', color: 'purple400' }
                     : undefined
                 }
                 onClick={
