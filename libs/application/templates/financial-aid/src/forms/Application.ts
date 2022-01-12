@@ -1,12 +1,13 @@
 import {
   buildCustomField,
+  buildFileUploadField,
   buildForm,
   buildSection,
   buildSubSection,
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { ExternalData } from '../lib/types'
+import { ApproveOptions, ExternalData } from '../lib/types'
 
 import * as m from '../lib/messages'
 
@@ -75,6 +76,22 @@ export const Application: Form = buildForm({
           id: 'income',
           title: m.incomeForm.general.pageTitle,
           component: 'IncomeForm',
+        }),
+      ],
+    }),
+    buildSection({
+      condition: (answers) => answers.income === ApproveOptions.Yes,
+      id: 'incomeFiles',
+      title: m.incomeFilesForm.general.sectionTitle,
+      children: [
+        buildFileUploadField({
+          id: 'incomeFiles',
+          title: m.incomeFilesForm.general.sectionTitle,
+          introduction: m.incomeFilesForm.general.description,
+          maxSize: 10000000, // 10 MB
+          uploadHeader: m.files.header,
+          uploadDescription: m.files.description,
+          uploadButtonLabel: m.files.buttonLabel,
         }),
       ],
     }),
