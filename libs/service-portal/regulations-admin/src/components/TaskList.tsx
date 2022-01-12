@@ -25,6 +25,8 @@ const RegulationTaskListQuery = gql`
 
 export const TaskList = () => {
   const { formatMessage, formatDateFns } = useLocale()
+  const t = formatMessage
+
   const history = useHistory()
   // const { data, loading } = useMockQuery({ regulationDraft: mockDraftlist }) // useQuery<Query>(RegulationTaskListQuery)
   const { data, loading } = useQuery<Query>(RegulationTaskListQuery, {
@@ -50,19 +52,17 @@ export const TaskList = () => {
     fastTrack?: boolean,
   ): string => {
     if (!date) {
-      return formatMessage(msg.publishSoon)
+      return t(msg.publishSoon)
     }
     const target = workingDaysUntil(date)
 
-    const fastTrackMsg = fastTrack
-      ? ' ' + formatMessage(msg.publishFastTrack)
-      : ''
+    const fastTrackMsg = fastTrack ? ' ' + t(msg.publishFastTrack) : ''
     const formattedDate = formatDateFns(date, 'd. MMM')
 
     if (target.today) {
       const today = toISODate(new Date())
       const overdueMsg = date < today ? `  (${formattedDate})` : ''
-      return formatMessage(msg.publishToday) + overdueMsg + fastTrackMsg
+      return t(msg.publishToday) + overdueMsg + fastTrackMsg
     }
     return formattedDate + fastTrackMsg
   }
@@ -70,7 +70,7 @@ export const TaskList = () => {
   return (
     <Box marginBottom={[4, 4, 8]}>
       <Text variant="h3" as="h2" paddingY={[1, 1]} marginBottom={[2, 2, 3]}>
-        {formatMessage(msg.taskListTitle)}
+        {t(msg.taskListTitle)}
       </Text>
       <Stack space={3}>
         {getDraftRegulations.map((item: RegulationDraft) => {
@@ -84,9 +84,7 @@ export const TaskList = () => {
               backgroundColor={item.fastTrack ? 'blue' : undefined}
               heading={title ?? ''}
               tag={{
-                label: formatMessage(
-                  statusMsgs[draftingStatus as DraftingStatus],
-                ),
+                label: t(statusMsgs[draftingStatus as DraftingStatus]),
                 outlined: false,
                 variant: draftingStatus === 'proposal' ? 'blueberry' : 'red',
               }}
@@ -96,7 +94,7 @@ export const TaskList = () => {
                 .join(', ')}
               cta={{
                 icon: 'arrowForward',
-                label: formatMessage(msg.cta),
+                label: t(msg.cta),
                 variant: 'ghost',
                 onClick: () => {
                   history.push(getEditUrl(id))
