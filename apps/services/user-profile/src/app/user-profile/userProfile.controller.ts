@@ -35,6 +35,7 @@ import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
+import { CreateEmailVerificationDto } from './dto/CreateEmailVerificationDto'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { DeleteTokenResponseDto } from './dto/deleteTokenResponseDto'
 import { DeviceTokenDto } from './dto/deviceToken.dto'
@@ -245,6 +246,28 @@ export class UserProfileController {
     await this.verificationService.createEmailVerification(
       profile.nationalId,
       profile.email,
+    )
+  }
+
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
+  @Post('emailVerification/')
+  @HttpCode(204)
+  @ApiNoContentResponse()
+  @Audit()
+  async createEmailVerification(
+    @Body()
+    emailVerification: CreateEmailVerificationDto,
+    @CurrentUser()
+    user: User,
+  ): Promise<void> {
+    if (emailVerification.nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+
+    await this.verificationService.createEmailVerification(
+      emailVerification.nationalId,
+      emailVerification.email,
     )
   }
 

@@ -2,6 +2,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
 import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
+import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { UserProfile } from './userProfile.model'
@@ -51,6 +52,15 @@ export class UserProfileResolver {
     @CurrentUser() user: User,
   ): Promise<Response> {
     await this.userUserProfileService.createSmsVerification(input, user)
+    return Promise.resolve({ created: true })
+  }
+
+  @Mutation(() => Response, { nullable: true })
+  async createEmailVerification(
+    @Args('input') input: CreateEmailVerificationInput,
+    @CurrentUser() user: User,
+  ): Promise<Response> {
+    await this.userUserProfileService.createEmailVerification(input, user)
     return Promise.resolve({ created: true })
   }
 

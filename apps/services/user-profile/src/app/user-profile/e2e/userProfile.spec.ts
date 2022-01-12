@@ -309,7 +309,7 @@ describe('User profile API', () => {
     })
   })
 
-  describe('POST /emailVerification', () => {
+  describe('POST /emailVerification/:nationalId', () => {
     it('POST /emailVerification/:nationalId re-creates an email verfication in db', async () => {
       // Arrange
       const spy = jest
@@ -373,6 +373,28 @@ describe('User profile API', () => {
         .post(`/emailVerification/${invalidNationalId}`)
         // Assert
         .expect(403)
+    })
+  })
+
+  describe('POST /emailVerification', () => {
+    it('POST /emailVerification/ creates a email verfication in db', async () => {
+      // Act
+      const spy = jest.spyOn(emailService, 'sendEmail')
+      await request(app.getHttpServer())
+        .post('/emailVerification/')
+        .send({
+          nationalId: mockProfile.nationalId,
+          email: mockProfile.email,
+        })
+        .expect(204)
+      expect(spy).toHaveBeenCalled()
+      const verification = await EmailVerification.findOne({
+        where: { nationalId: mockProfile.nationalId },
+      })
+
+      // Assert
+      expect(verification).toBeDefined()
+      expect(verification.hash).toMatch(/^\d{6}$/)
     })
   })
 

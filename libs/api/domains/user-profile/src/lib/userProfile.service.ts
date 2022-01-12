@@ -13,6 +13,7 @@ import {
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
+import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
 import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
 import { UserProfile } from './userProfile.model'
@@ -160,6 +161,18 @@ export class UserProfileService {
     const createSmsVerificationDto = { nationalId: user.nationalId, ...input }
     await this.userProfileApiWithAuth(user)
       .userProfileControllerCreateSmsVerification({ createSmsVerificationDto })
+      .catch(handleError)
+  }
+
+  async createEmailVerification(
+    input: CreateEmailVerificationInput,
+    user: User,
+  ): Promise<void> {
+    const createEmailVerificationDto = { nationalId: user.nationalId, ...input }
+    await this.userProfileApiWithAuth(user)
+      .userProfileControllerCreateEmailVerification({
+        createEmailVerificationDto,
+      })
       .catch(handleError)
   }
 
