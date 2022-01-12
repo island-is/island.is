@@ -8,41 +8,47 @@ import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import cn from 'classnames'
 
+interface ChevronProps {
+  expanded?: boolean
+  alwaysExpanded?: boolean
+  enabled?: boolean
+  active: boolean
+  onChevronClick?: () => void
+}
+
 interface Props {
   path?: ServicePortalPath
   icon?: Pick<IconProps, 'icon' | 'type'>
   active: boolean
-  expanded: boolean
+  chevron?: boolean
   hover: boolean
   enabled?: boolean
+  expanded?: boolean
   external?: boolean
   variant?: 'blue' | 'blueberry'
   hasArray?: boolean
   alwaysExpanded?: boolean
   onClick?: () => void
+  onChevronClick?: () => void
   badge?: boolean
 }
 
 const NavItemContent: FC<Props> = ({
   icon,
   active,
-  expanded,
   hover,
   enabled,
   hasArray,
   onClick,
   children,
-  alwaysExpanded = false,
   badge = false,
 }) => {
   const [{ sidebarState }] = useStore()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
   const collapsed = sidebarState === 'closed' && !isMobile
-  const chevron = active ? 'chevronUp' : 'chevronDown'
   const showLock = enabled === false
-  const showChevron =
-    hasArray && !alwaysExpanded && !showLock && sidebarState === 'open'
+
   const navItemActive: keyof typeof styles.navItemActive = active
     ? collapsed
       ? 'activeCollapsed'
@@ -110,14 +116,6 @@ const NavItemContent: FC<Props> = ({
         ) : null}
         {!collapsed ? <Box className={styles.text}>{children}</Box> : ''}
       </Box>
-      {showChevron && (
-        <Icon
-          type="filled"
-          icon={chevron}
-          size="medium"
-          className={styles.icon}
-        />
-      )}
       {showLock && (
         <Icon
           type="filled"
@@ -131,6 +129,35 @@ const NavItemContent: FC<Props> = ({
   )
 }
 
+const Chevron: FC<ChevronProps> = ({
+  expanded,
+  alwaysExpanded,
+  enabled,
+  active,
+  onChevronClick,
+}) => {
+  const chevronIcon = expanded ? 'chevronUp' : 'chevronDown'
+  const [{ sidebarState }] = useStore()
+  const showChevron = !alwaysExpanded && enabled && sidebarState === 'open'
+
+  return showChevron ? (
+    <Box
+      onClick={() => {
+        onChevronClick && onChevronClick()
+      }}
+      className={styles.iconWrapper}
+    >
+      <Icon
+        type="filled"
+        icon={chevronIcon}
+        size="medium"
+        color={active ? 'blue400' : 'blue600'}
+        className={styles.icon}
+      />
+    </Box>
+  ) : null
+}
+
 const NavItem: FC<Props> = (props) => {
   return props.external ? (
     <a
@@ -142,9 +169,18 @@ const NavItem: FC<Props> = (props) => {
       <NavItemContent {...props} />
     </a>
   ) : props.path ? (
-    <Link to={props.path} className={styles.link}>
-      <NavItemContent {...props} />
-    </Link>
+    props.hasArray ? (
+      <Box display="inlineFlex" width="full">
+        <Link to={props.path} className={styles.link}>
+          <NavItemContent {...props} />
+        </Link>
+        <Chevron {...props} />
+      </Box>
+    ) : (
+      <Link to={props.path} className={styles.link}>
+        <NavItemContent {...props} />
+      </Link>
+    )
   ) : (
     <NavItemContent {...props} />
   )

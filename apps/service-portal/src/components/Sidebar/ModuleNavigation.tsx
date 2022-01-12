@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import {
   ServicePortalNavigationItem,
   ServicePortalPath,
@@ -54,6 +54,10 @@ const ModuleNavigation: FC<Props> = ({
     if (external) servicePortalOutboundLink()
   }
 
+  useEffect(() => {
+    setExpand(isModuleActive)
+  }, [isModuleActive])
+
   return (
     <Box
       position="relative"
@@ -102,6 +106,9 @@ const ModuleNavigation: FC<Props> = ({
         onClick={() => {
           !collapsed && handleRootItemClick(nav.external)
         }}
+        onChevronClick={() => {
+          setExpand(!expand)
+        }}
         alwaysExpanded={alwaysExpanded}
         badge={badge}
       >
@@ -110,7 +117,7 @@ const ModuleNavigation: FC<Props> = ({
       {!collapsed && navArray && nav.enabled !== false && (
         <AnimateHeight
           duration={300}
-          height={isModuleActive || alwaysExpanded ? 'auto' : 0}
+          height={expand ? 'auto' : alwaysExpanded ? 'auto' : 0}
         >
           <SubNav
             navChildren={navChildren}
