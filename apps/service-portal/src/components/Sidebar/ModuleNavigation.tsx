@@ -55,7 +55,7 @@ const ModuleNavigation: FC<Props> = ({
 
   useEffect(() => {
     setExpand(isModuleActive)
-  }, [isModuleActive])
+  }, [isModuleActive, setExpand])
 
   return (
     <Box

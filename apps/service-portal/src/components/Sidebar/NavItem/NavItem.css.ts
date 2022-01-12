@@ -106,6 +106,7 @@ export const icon = style({
   pointerEvents: 'none',
   height: '26px',
   animation: `250ms ease-in-out 0s 1 ${iconEaseIn}`,
+  willChange: 'opacity',
 })
 
 export const dot = style({
