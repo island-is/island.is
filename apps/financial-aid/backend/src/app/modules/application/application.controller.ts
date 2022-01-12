@@ -114,7 +114,7 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'findByNationalId',
       resources: applications.map((application) => application.id),
     })
@@ -172,7 +172,7 @@ export class ApplicationController {
     this.logger.debug(`Application controller: Getting application by id ${id}`)
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'getApplication',
       resources: application.id,
     })

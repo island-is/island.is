@@ -5,6 +5,11 @@ export enum DataProviderTypes {
   NationalRegistry = 'NationalRegistryProvider',
 }
 
+export enum ApproveOptions {
+  Yes = 'Yes',
+  No = 'No',
+}
+
 type Override<T1, T2> = Omit<T1, keyof T2> & T2
 
 type ErrorSchema = NestedType<answersSchema>

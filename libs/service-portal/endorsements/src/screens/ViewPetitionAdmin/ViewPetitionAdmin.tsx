@@ -73,11 +73,11 @@ const ViewPetitionAdmin = () => {
         },
       },
     }).catch(() => {
-      toast.error(formatMessage(m.viewPetition.toastErrorCloseList))
+      toast.error(formatMessage(m.viewPetition.toastErrorLockList))
     })
 
     if (success) {
-      toast.success(formatMessage(m.viewPetition.toastSuccessCloseList))
+      toast.success(formatMessage(m.viewPetition.toastSuccessLockList))
     }
   }
 
@@ -137,8 +137,10 @@ const ViewPetitionAdmin = () => {
               setTitle(e.target.value)
             }}
             label={formatMessage(m.viewPetition.listTitleHeader)}
+            size="xs"
           />
           <Input
+            size="xs"
             name={description as string}
             value={description ?? ''}
             onChange={(e) => {
@@ -157,6 +159,7 @@ const ViewPetitionAdmin = () => {
                   label="Tímabil frá"
                   locale="is"
                   placeholderText="Veldu dagsetningu"
+                  size="xs"
                 />
               </Box>
               <Box width="half" marginLeft={[0, 2]} marginTop={[2, 0]}>
@@ -166,12 +169,14 @@ const ViewPetitionAdmin = () => {
                   label="Tímabil til"
                   locale="is"
                   placeholderText="Veldu dagsetningu"
+                  size="xs"
                 />
               </Box>
             </Box>
           )}
 
           <Input
+            size="xs"
             backgroundColor="blue"
             disabled
             name={petition?.ownerName ?? ''}
@@ -188,9 +193,9 @@ const ViewPetitionAdmin = () => {
             {!petition.adminLock ? (
               <DialogPrompt
                 baseId="demo_dialog"
-                title={formatMessage(m.viewPetition.dialogPromptCloseListTitle)}
+                title={formatMessage(m.viewPetition.dialogPromptLockListTitle)}
                 ariaLabel={formatMessage(
-                  m.viewPetition.dialogPromptCloseListTitle,
+                  m.viewPetition.dialogPromptLockListTitle,
                 )}
                 disclosureElement={
                   <Button
@@ -198,7 +203,7 @@ const ViewPetitionAdmin = () => {
                     iconType="outline"
                     colorScheme="destructive"
                   >
-                    {formatMessage(m.viewPetition.closeListButton)}
+                    {formatMessage(m.viewPetition.LockListButton)}
                   </Button>
                 }
                 onConfirm={() => onLockList()}

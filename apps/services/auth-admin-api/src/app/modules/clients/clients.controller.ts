@@ -134,7 +134,7 @@ export class ClientsController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'update',
         namespace,
         resources: id,
@@ -158,7 +158,7 @@ export class ClientsController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'delete',
         namespace,
         resources: id,

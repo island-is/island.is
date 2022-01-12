@@ -22,7 +22,7 @@ export interface CheckboxProps {
   filled?: boolean
   large?: boolean
   backgroundColor?: InputBackgroundColor
-  labelVariant?: 'default' | 'small'
+  labelVariant?: 'default' | 'small' | 'medium'
   /** subLabel can only be used if the 'large' prop set to true */
   subLabel?: string
 }

@@ -1,6 +1,6 @@
-import ApplicationTemplatesFinancialAid from './lib/application-templates-financial-aid'
+import FinancialAidTemplate from './lib/FinancialAidTemplate'
 
-export * from './lib/application-templates-financial-aid'
+export * from './lib/FinancialAidTemplate'
 
 export const getDataProviders = () => import('./dataProviders/')
 
@@ -8,4 +8,4 @@ export const getFields = () => import('./fields/')
 
 export * from './lib/types'
 
-export default ApplicationTemplatesFinancialAid
+export default FinancialAidTemplate

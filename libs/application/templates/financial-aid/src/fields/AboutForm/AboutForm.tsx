@@ -17,7 +17,7 @@ const AboutForm = () => {
         })}
       </Text>
 
-      <DescriptionText text={aboutForm.bulletList.first} />
+      <DescriptionText text={aboutForm.bulletList.content} />
 
       <Text as="h2" variant="h3" marginBottom={2} marginTop={5}>
         {formatMessage(aboutForm.personalInformation.sectionTitle)}

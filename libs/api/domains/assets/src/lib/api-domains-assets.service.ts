@@ -5,7 +5,6 @@ import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { AuthorizationIdentityMiddleware } from './authorization-identity.middleware'
 
 const getAssetString = (str: string) =>
   str.charAt(0).toLowerCase() === 'f' ? str.substring(1) : str
@@ -30,7 +29,6 @@ export class AssetsXRoadService {
   private getRealEstatesWithAuth(auth: Auth) {
     return this.FasteignirApi.withMiddleware(
       new AuthMiddleware(auth, { forwardUserInfo: true }),
-      new AuthorizationIdentityMiddleware(auth.authorization),
     )
   }
 
