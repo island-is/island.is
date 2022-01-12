@@ -45,5 +45,16 @@ export const Application: Form = buildForm({
         }),
       ],
     }),
+    buildSection({
+      id: 'studentForm',
+      title: m.studentForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'student',
+          title: m.studentForm.general.pageTitle,
+          component: 'StudentForm',
+        }),
+      ],
+    }),
   ],
 })
