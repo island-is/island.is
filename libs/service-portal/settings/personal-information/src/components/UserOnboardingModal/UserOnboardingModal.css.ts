@@ -16,3 +16,14 @@ export const stepDotActive = style({
     },
   }),
 })
+
+export const dialog = style({
+  backgroundColor: 'white',
+  minHeight: '100vh',
+  padding: `${theme.spacing[4]}px 0`,
+})
+
+export const endGrid = style({
+  display: 'flex',
+  justifyContent: 'center',
+})

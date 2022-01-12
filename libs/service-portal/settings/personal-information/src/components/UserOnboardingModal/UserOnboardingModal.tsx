@@ -3,10 +3,15 @@ import { toast } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { defaultLanguage } from '@island.is/shared/constants'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import {
-  Modal,
-  ServicePortalModuleComponent,
-} from '@island.is/service-portal/core'
+  ModalBase,
+  Box,
+  GridRow,
+  GridColumn,
+  GridContainer,
+  Button,
+} from '@island.is/island-ui/core'
 import {
   useCreateUserProfile,
   useUpdateUserProfile,
@@ -15,19 +20,17 @@ import {
 import { LanguageFormData, LanguageFormOption } from '../Forms/LanguageForm'
 import { EmailFormData } from '../Forms/EmailForm/Steps/FormStep'
 import { PhoneFormData } from '../Forms/PhoneForm/Steps/FormStep'
-import { OnboardingStepper } from './OnboardingStepper'
-import { EmailStep } from './Steps/EmailStep'
-import { FormSubmittedStep } from './Steps/FormSubmittedStep'
-import { LanguageStep } from './Steps/LanguageStep'
-import { IntroStep } from './Steps/IntroStep'
-import { PhoneStep } from './Steps/PhoneStep'
-import { SubmitFormStep } from './Steps/SubmitFormStep'
 import { parseNumber } from '../../utils/phoneHelper'
 import {
   servicePortalCloseOnBoardingModal,
   servicePortalSubmitOnBoardingModal,
 } from '@island.is/plausible'
 import { useLocation } from 'react-router-dom'
+import { OnboardingHeader } from './components/Header'
+import { OnboardingIntro } from './components/Intro'
+import { InputSection } from './components/InputSection'
+import { InputEmail } from './components/Inputs/Email'
+import * as styles from './UserOnboardingModal.css'
 
 export type OnboardingStep =
   | 'intro'
@@ -36,6 +39,7 @@ export type OnboardingStep =
   | 'email-form'
   | 'submit-form'
   | 'form-submitted'
+  | '00'
 
 const defaultLanguageOption: LanguageFormOption = {
   value: 'is',
@@ -44,7 +48,7 @@ const defaultLanguageOption: LanguageFormOption = {
 
 const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const [toggleCloseModal, setToggleCloseModal] = useState(false)
-  const [step, setStep] = useState<OnboardingStep>('intro')
+  const [step, setStep] = useState<OnboardingStep>('00')
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
   const [language, setLanguage] = useState<LanguageFormOption | null>(
@@ -152,46 +156,58 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   }
 
   return (
-    <Modal
-      id="user-onboarding-modal"
-      onCloseModal={dropOnboardingSideEffects}
+    <ModalBase
+      baseId="user-onboarding-modal"
       toggleClose={toggleCloseModal}
+      hideOnClickOutside={false}
+      initialVisibility={true}
+      className={styles.dialog}
     >
-      <OnboardingStepper activeStep={step} />
-      {step === 'intro' && (
-        <IntroStep
-          userInfo={userInfo}
-          onClose={dropOnboarding}
-          onSubmit={gotoStep.bind(null, 'language-form')}
-        />
-      )}
-      {step === 'language-form' && (
-        <LanguageStep
-          onClose={dropOnboarding}
-          language={language}
-          onSubmit={handleLanguageStepSubmit}
-          userInfo={userInfo}
-        />
-      )}
-      {step === 'tel-form' && (
-        <PhoneStep
-          onBack={gotoStep.bind(null, 'language-form')}
-          natReg={userInfo.profile.nationalId}
-          tel={tel}
-          onSubmit={handlePhoneStepSubmit}
-        />
-      )}
-      {step === 'email-form' && (
-        <EmailStep
-          onBack={gotoStep.bind(null, 'tel-form')}
-          natReg={userInfo.profile.nationalId}
-          email={email}
-          onSubmit={handleEmailStepSubmit}
-        />
-      )}
-      {step === 'submit-form' && <SubmitFormStep />}
-      {step === 'form-submitted' && <FormSubmittedStep onClose={closeModal} />}
-    </Modal>
+      <GridContainer>
+        <GridRow marginBottom={10}>
+          <GridColumn span="12/12">
+            <OnboardingHeader dropOnboarding={dropOnboarding} />
+          </GridColumn>
+          <GridColumn span={['12/12', '3/12']}></GridColumn>
+          <GridColumn span={['12/12', '5/12']}>
+            <OnboardingIntro name={userInfo?.profile?.name || ''} />
+            <InputSection
+              title={'Tölvupóstur'}
+              text="Vinsamlegt settu inn nefangið þitt. Við komum til með að senda á þig staðfestingar og tilkynningar."
+            >
+              <InputEmail buttonText="Vista netfang" />
+            </InputSection>
+            {/* <InputSection
+              title={'Símanúmer'}
+              text="Við komum til með að senda á þig staðfestinar og tilkynningar og því er gott að vera með rétt númer skráð. Endilega skráðu númerið þitt hér fyrir neðan og við sendum þér öryggiskóða til staðfestingar."
+            >
+              <InputEmail buttonText="Vista símanúmer" />
+            </InputSection> */}
+            <Box
+              paddingTop={4}
+              display="flex"
+              alignItems="flexEnd"
+              flexDirection="column"
+            >
+              <Button
+                icon="checkmark"
+                disabled
+                onClick={() => console.log('save email')}
+              >
+                Vista upplýsingar
+              </Button>
+            </Box>
+          </GridColumn>
+          <GridColumn className={styles.endGrid} span={['12/12', '4/12']}>
+            <img
+              src="assets/images/digitalServices.svg"
+              width="80%"
+              alt="Skrautmynd"
+            />
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    </ModalBase>
   )
 }
 
