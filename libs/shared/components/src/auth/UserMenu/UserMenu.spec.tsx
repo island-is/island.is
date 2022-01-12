@@ -166,11 +166,11 @@ describe('UserMenu', () => {
     expect(signOut).toHaveBeenCalled()
   })
 
-  it('can switch languages', async () => {
+  it('can switch languages using selectbox', async () => {
     // Arrange
     renderAuthenticated(
       <>
-        <UserMenu />
+        <UserMenu showDropdownLanguage />
         <LocaleContext.Consumer>
           {({ lang }) => <span>Current: {lang}</span>}
         </LocaleContext.Consumer>
@@ -189,6 +189,56 @@ describe('UserMenu', () => {
     )
     fireEvent.click(screen.getByText('English'))
 
+    // Assert
+    expect(screen.getByText(/Current/)).toHaveTextContent('Current: en')
+  })
+
+  it('can switch languages using button', async () => {
+    // Arrange
+    renderAuthenticated(
+      <>
+        <UserMenu fullscreen />
+        <LocaleContext.Consumer>
+          {({ lang }) => <span>Current: {lang}</span>}
+        </LocaleContext.Consumer>
+      </>,
+      { user: {} },
+    )
+    const dialog = await openMenu()
+    const languageSelector = screen.getByTestId('language-switcher-button')
+    expect(languageSelector).not.toBeNull()
+    expect(screen.getByText(/Current/)).toHaveTextContent('Current: is')
+    // Act
+    fireEvent.click(screen.getByText('EN'))
+
+    // Assert
+    expect(screen.getByText(/Current/)).toHaveTextContent('Current: en')
+  })
+  it('can switch languages using selectbox', async () => {
+    // Arrange
+    renderAuthenticated(
+      <>
+        <UserMenu showDropdownLanguage />
+        <LocaleContext.Consumer>
+          {({ lang }) => <span>Current: {lang}</span>}
+        </LocaleContext.Consumer>
+      </>,
+      { user: {} },
+    )
+    const dialog = await openMenu()
+    const languageSelector = dialog.querySelector('#language-switcher')!
+    expect(languageSelector).not.toBeNull()
+    expect(screen.getByText(/Current/)).toHaveTextContent('Current: is')
+
+    // Act
+    act(() => {
+      fireEvent.mouseDown(
+        languageSelector.querySelector('.island-select__dropdown-indicator')!,
+        { button: 1 },
+      )
+    })
+
+    fireEvent.click(screen.getByText('English'))
     // Assert
     expect(screen.getByText(/Current/)).toHaveTextContent('Current: en')
   })
