@@ -181,15 +181,11 @@ const OrganizationPage: Screen<OrganizationProps> = ({
               {visibleItems.map(
                 ({ title, description, tag, link, logo }, index) => {
                   const tags =
-                    (tag &&
-                      tag.map((x) => ({
-                        title: x.title,
-                        label: x.title,
-                        tagProps: {
-                          outlined: true,
-                        } as TagProps,
-                      }))) ||
-                    []
+                    tag &&
+                    tag.map((x) => ({
+                      title: x.title,
+                      label: x.title,
+                    }))
 
                   return (
                     <GridColumn
@@ -202,8 +198,12 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                         key={index}
                         text={description}
                         heading={title}
-                        tags={tags}
                         hyphenate
+                        {...(tags?.length && { tags })}
+                        tagOptions={{
+                          hyphenate: true,
+                          textLeft: true,
+                        }}
                         {...(logo?.url && {
                           src: logo.url,
                           alt: logo.title,
