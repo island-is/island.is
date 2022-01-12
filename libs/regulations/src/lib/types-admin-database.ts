@@ -14,13 +14,16 @@ import {
 
 // ---------------------------------------------------------------------------
 
-/** Regulation drafts have three lifecycle states:
+/** Regulation drafts have four lifecycle states:
  *
- * `draft` = The regulation is still being drafted. Do NOT edit and/or publish!
- * `proposal` = The regulation is ready for a final review/tweaking by an editor.
- * `shipped` = The regulation has been sent to Stjórnartíðindi and is awaiting formal publication.
+ * * `draft` = The regulation is still being drafted. Do NOT edit and/or publish!
+ * * `proposal` = The regulation is ready for a final review/tweaking by an editor.
+ * * `shipped` = The regulation has been sent to Stjórnartíðindi and is awaiting formal publication.
+ * * `published` = The regulation has been accepted and published (or queued for publication at a
+ *   fixed `publishedDate`) and received a `name`. It can now be `POST`ed to the
+ *   "Reglugerðasafn" database — either instantly or on `publishedDate`
  */
-export type DraftingStatus = 'draft' | 'proposal' | 'shipped'
+export type DraftingStatus = 'draft' | 'proposal' | 'shipped' | 'published'
 
 // ===========================================================================
 

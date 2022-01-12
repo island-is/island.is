@@ -57,10 +57,12 @@ export class DraftRegulationService {
   }
 
   getAllShipped(): Promise<DraftRegulation[]> {
-    this.logger.debug('Getting all shipped DraftRegulations')
+    this.logger.debug('Getting all shipped/published DraftRegulations')
 
     return this.draftRegulationModel.findAll({
-      where: { drafting_status: 'shipped' },
+      where: {
+        drafting_status: { [Op.in]: ['shipped', 'published'] },
+      },
       order: [['created', 'DESC']],
     })
   }
