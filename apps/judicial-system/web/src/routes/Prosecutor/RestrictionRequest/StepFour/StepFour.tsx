@@ -58,38 +58,39 @@ export const StepFour: React.FC = () => {
     if (isCaseUpToDate) {
       const theCase: Case = workingCase
 
-      // TDOO defendants: handle multiple defendants
-      autofill(
-        'demands',
-        `${formatMessage(rcReportForm.sections.demands.autofill, {
-          accusedName: theCase.defendants && theCase.defendants[0].name,
-          accusedNationalId: formatNationalId(
-            (theCase.defendants && theCase.defendants[0].nationalId) ?? '',
-          ),
-          extensionSuffix:
-            theCase.parentCase &&
-            isAcceptingCaseDecision(theCase.parentCase.decision)
-              ? ' áframhaldandi'
-              : '',
-          caseType:
-            theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
-          court: theCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
-          requestedValidToDate: formatDate(
-            theCase.requestedValidToDate,
-            'PPPPp',
-          )
-            ?.replace('dagur,', 'dagsins')
-            ?.replace(' kl.', ', kl.'),
-          isolationSuffix:
-            theCase.type === CaseType.CUSTODY &&
-            theCase.requestedCustodyRestrictions?.includes(
-              CaseCustodyRestrictions.ISOLATION,
+      if (theCase.defendants) {
+        autofill(
+          'demands',
+          `${formatMessage(rcReportForm.sections.demands.autofill, {
+            accusedName: theCase.defendants[0].name,
+            accusedNationalId: formatNationalId(
+              theCase.defendants[0].nationalId ?? '',
+            ),
+            extensionSuffix:
+              theCase.parentCase &&
+              isAcceptingCaseDecision(theCase.parentCase.decision)
+                ? ' áframhaldandi'
+                : '',
+            caseType:
+              theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
+            court: theCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
+            requestedValidToDate: formatDate(
+              theCase.requestedValidToDate,
+              'PPPPp',
             )
-              ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
-              : '',
-        })}`,
-        theCase,
-      )
+              ?.replace('dagur,', 'dagsins')
+              ?.replace(' kl.', ', kl.'),
+            isolationSuffix:
+              theCase.type === CaseType.CUSTODY &&
+              theCase.requestedCustodyRestrictions?.includes(
+                CaseCustodyRestrictions.ISOLATION,
+              )
+                ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
+                : '',
+          })}`,
+          theCase,
+        )
+      }
 
       setWorkingCase(theCase)
     }
