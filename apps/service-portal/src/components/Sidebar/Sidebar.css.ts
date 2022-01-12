@@ -1,5 +1,9 @@
 import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
+import {
+  SERVICE_PORTAL_SIDEBAR_WIDTH,
+  SERVICE_PORTAL_SIDEBAR_WIDTH_COLLAPSED,
+} from '@island.is/service-portal/constants'
 
 export const sidebar = style({
   position: 'absolute',
@@ -11,10 +15,10 @@ export const sidebar = style({
   borderRight: `1px solid ${theme.color.blue200}`,
   background: theme.color.white,
   transition: 'all 250ms ease-in-out',
-  width: 252,
+  width: SERVICE_PORTAL_SIDEBAR_WIDTH,
 })
 export const collapsed = style({
-  width: 138,
+  width: SERVICE_PORTAL_SIDEBAR_WIDTH_COLLAPSED,
 })
 
 export const logoCollapsed = style({
