@@ -7,7 +7,7 @@ import { UseMeasureRef } from 'react-use/lib/useMeasure'
 import { Box } from '../Box/Box'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Inline } from '../Inline/Inline'
-import { Tag } from '../Tag/Tag'
+import { Tag, TagProps } from '../Tag/Tag'
 import { Hyphen } from '../Hyphen/Hyphen'
 import { Text, TextProps } from '../Text/Text'
 
@@ -30,6 +30,7 @@ export type CategoryCardProps = {
   headingVariant?: TextProps['variant']
   text: string
   tags?: Tag[]
+  tagOptions?: Pick<TagProps, 'hyphenate' | 'truncate' | 'textLeft'>
   href?: string
   colorScheme?: 'blue' | 'purple' | 'red'
   /** The heading above is truncated instead of overflowing */
@@ -95,6 +96,7 @@ const Component = forwardRef<
       objectFit = 'contain',
       customImage,
       hyphenate = false,
+      tagOptions,
       autoStack,
     },
     ref,
@@ -154,7 +156,7 @@ const Component = forwardRef<
                       variant={tagVariant}
                       href={tag.href}
                       onClick={tag.onClick}
-                      truncate
+                      {...tagOptions}
                     >
                       {tag.label}
                     </Tag>
@@ -183,9 +185,7 @@ const Component = forwardRef<
                   src={src}
                   alt={alt}
                   style={{ objectFit }}
-                  className={cn(styles.image, {
-                    [styles.imageStacked]: shouldStack,
-                  })}
+                  className={styles.image}
                 />
               </Box>
             ))}

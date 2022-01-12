@@ -14,8 +14,3 @@ export const image = style({
   width: 60,
   height: 60,
 })
-
-export const imageStacked = style({
-  width: 60,
-  height: 60,
-})
