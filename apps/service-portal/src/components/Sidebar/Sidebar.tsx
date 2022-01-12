@@ -1,6 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Box, Stack, Logo, FocusableBox, Icon } from '@island.is/island-ui/core'
-import { BetaTag } from '../Logo/BetaTag'
 import { ActionType } from '../../store/actions'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
