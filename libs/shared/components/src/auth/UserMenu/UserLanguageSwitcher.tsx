@@ -57,7 +57,6 @@ export const UserLanguageSwitcher = ({
     </Box>
   ) : (
     <Box marginRight={[1, 2]}>
-      {' '}
       <Button
         variant="utility"
         onClick={handleLanguageChange}
