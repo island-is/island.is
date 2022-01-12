@@ -106,6 +106,32 @@ describe('AuditService against Cloudwatch', () => {
     })
   })
 
+  it('assembles client chain correctly', () => {
+    // Arrange
+    const action = 'viewDetails'
+
+    // Act
+    service.audit({
+      user: {
+        ...user,
+        act: {
+          client_id: 'test-client-3',
+          act: {
+            client_id: 'test-client-2',
+          },
+        },
+      },
+      action,
+    })
+
+    // Assert
+    expect(spy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        client: [user.client, 'test-client-2', 'test-client-3'],
+      }),
+    )
+  })
+
   it('supports default namespace', () => {
     // Arrange
     const action = 'viewDetails'
