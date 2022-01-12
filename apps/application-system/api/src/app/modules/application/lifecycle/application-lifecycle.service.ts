@@ -40,17 +40,6 @@ export class ApplicationLifeCycleService {
     return this.processingApplications
   }
 
-  private async getJustOneById(id: string) {
-    const application = await this.applicationService.findOneById(id)
-    if (application) {
-      this.processingApplications.push({
-        pruned: false,
-        application,
-        failedAttachments: {},
-      })
-    }
-  }
-
   private async fetchApplicationsToBePruned() {
     const applications = await this.applicationService.findAllDueToBePruned()
     this.logger.info(`Found ${applications.length} applications to be pruned.`)
