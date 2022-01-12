@@ -310,7 +310,7 @@ export const EditSignature: StepComponent = (props) => {
                   label={t(msg.signatureDate)}
                   value={
                     draft.signatureDate.value &&
-                    formatDateFns(draft.signatureDate.value, 'DD/MM/YYYY')
+                    formatDateFns(draft.signatureDate.value, 'dd/MM/yyyy')
                   }
                   placeholder={t(msg.signatureDatePlaceholder)}
                   name="_signatureDate"
