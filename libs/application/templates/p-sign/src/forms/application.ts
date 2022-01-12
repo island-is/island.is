@@ -31,7 +31,7 @@ import {
 import { m } from '../lib/messages'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import { HasQualityPhotoData } from '../fields/QualityPhoto/hooks/getQualityPhoto'
+import { HasQualityPhotoData } from '../fields/QualityPhoto/hooks/useQualityPhoto'
 
 export const getApplication = (): Form => {
   return buildForm({

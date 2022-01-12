@@ -198,8 +198,8 @@ export const application: Form = buildForm({
           title: m.qualityPhotoTitle,
           condition: (_, externalData) => {
             return (
-              (externalData.qualityPhoto as HasQualityPhotoData)?.data
-                ?.hasQualityPhoto === true
+              (externalData.qualityPhoto as HasQualityPhotoData)?.data?.hasQualityPhoto ===
+              true
             )
           },
           children: [
@@ -230,8 +230,8 @@ export const application: Form = buildForm({
           title: m.qualityPhotoTitle,
           condition: (answers: FormValue, externalData) => {
             return (
-              (externalData.qualityPhoto as HasQualityPhotoData)?.data
-                ?.hasQualityPhoto === false
+              (externalData.qualityPhoto as HasQualityPhotoData)?.data?.hasQualityPhoto ===
+              false
             )
           },
           children: [
