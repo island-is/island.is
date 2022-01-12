@@ -34,7 +34,7 @@ export const Header: FC = () => {
                 }
               : undefined
           }
-          headerItems={<UserMenu showDropdownLanguage />}
+          headerItems={<UserMenu showDropdownLanguage small />}
         />
       </GridContainer>
     </Box>
