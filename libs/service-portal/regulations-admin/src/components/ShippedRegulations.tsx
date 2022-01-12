@@ -33,13 +33,12 @@ export const ShippedRegulations = () => {
   // })
   const { data, loading } = useQuery<Query>(ShippedRegulationsQuery)
 
-  const { getShippedRegulations = [] } = data || {}
-
-  if (getShippedRegulations.length === 0) {
-    return null
-  }
+  const getShippedRegulations = data?.getShippedRegulations || []
 
   if (loading) {
+    return null
+  }
+  if (getShippedRegulations.length === 0) {
     return null
   }
 
@@ -49,15 +48,20 @@ export const ShippedRegulations = () => {
         {formatMessage(msg.shippedTitle)}
       </Text>
       <Stack space={2}>
-        {getShippedRegulations.map((shipped) => (
-          <TopicCard
-            key={shipped.id}
-            tag={formatDateFns(shipped.idealPublishDate as ISODate)}
-            onClick={() => undefined}
-          >
-            {prettyName(shipped.name as RegName)} {shipped.title}
-          </TopicCard>
-        ))}
+        {getShippedRegulations.map((shipped) => {
+          // @ts-expect-error  (DraftRegulationModel uses string|undefined — at the moment)
+          const name: RegName | undefined = shipped.name
+
+          return (
+            <TopicCard
+              key={shipped.id}
+              tag={formatDateFns(shipped.idealPublishDate as ISODate)}
+              onClick={() => undefined}
+            >
+              {name && prettyName(name)} {shipped.title}
+            </TopicCard>
+          )
+        })}
       </Stack>
     </Box>
   )
