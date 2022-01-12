@@ -82,6 +82,7 @@ export * from './lib/DatePicker/DatePicker'
 export * from './lib/Select/Select'
 export * from './lib/Input/Input'
 export * from './lib/InputFileUpload/InputFileUpload'
+export * from './lib/InputImageUpload/InputImageUpload'
 export * from './lib/InputError/InputError'
 export * from './lib/ToggleSwitch'
 

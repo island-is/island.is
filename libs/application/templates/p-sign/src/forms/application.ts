@@ -1,13 +1,11 @@
 import {
   buildForm,
   buildSection,
-  buildTextField,
   Form,
   FormModes,
   buildExternalDataProvider,
   buildDataProviderItem,
   buildMultiField,
-  buildDateField,
   Application,
   buildCustomField,
   buildRadioField,
@@ -51,12 +49,12 @@ export const getApplication = (): Form => {
             description: m.dataCollectionDescription,
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
-              buildDataProviderItem({
+              /*buildDataProviderItem({
                 id: 'doctorsNote',
                 type: 'DoctorsNoteProvider',
                 title: m.dataCollectionDoctorsNoteTitle,
                 subTitle: m.dataCollectionDoctorsNoteSubtitle,
-              }),
+              }),*/
               buildDataProviderItem({
                 id: 'nationalRegistry',
                 type: 'NationalRegistryProvider',
@@ -75,17 +73,17 @@ export const getApplication = (): Form => {
                 title: m.dataCollectionUserProfileTitle,
                 subTitle: m.dataCollectionUserProfileSubtitle,
               }),
-              buildDataProviderItem({
+              /*buildDataProviderItem({
                 id: 'districts',
                 type: 'DistrictsProvider',
                 title: '',
                 subTitle: '',
-              }),
+              }),*/
             ],
           }),
         ],
       }),
-      buildSection({
+      /*buildSection({
         id: 'information',
         title: m.informationSectionTitle,
         children: [
@@ -180,7 +178,7 @@ export const getApplication = (): Form => {
             ],
           }),
         ],
-      }),
+      }),*/
       buildSection({
         id: 'photo',
         title: m.qualityPhotoSectionTitle,
@@ -260,6 +258,7 @@ export const getApplication = (): Form => {
                 uploadHeader: m.qualityPhotoFileUploadTitle,
                 uploadDescription: m.qualityPhotoFileUploadDescription,
                 uploadButtonLabel: m.qualityPhotoUploadButtonLabel,
+                forImageUpload: true,
               }),
             ],
           }),

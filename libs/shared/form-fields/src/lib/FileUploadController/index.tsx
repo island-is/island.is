@@ -9,6 +9,7 @@ import {
 } from '@island.is/application/core'
 import {
   InputFileUpload,
+  InputImageUpload,
   UploadFile,
   fileToObject,
 } from '@island.is/island-ui/core'
@@ -72,6 +73,7 @@ interface FileUploadControllerProps {
   readonly multiple?: boolean
   readonly accept?: string
   readonly maxSize?: number
+  readonly forImageUpload?: boolean
 }
 
 export const FileUploadController: FC<FileUploadControllerProps> = ({
@@ -84,6 +86,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
   multiple,
   accept,
   maxSize,
+  forImageUpload,
 }) => {
   const { formatMessage } = useLocale()
   const { clearErrors, setValue } = useFormContext()
@@ -222,12 +225,14 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
     setUploadError(undefined)
   }
 
+  const FileUploadComponent = forImageUpload ? InputImageUpload : InputFileUpload
+
   return (
     <Controller
       name={id}
       defaultValue={initialUploadFiles}
-      render={() => (
-        <InputFileUpload
+      render={() =>
+        <FileUploadComponent
           fileList={state}
           header={header}
           description={description}
@@ -239,7 +244,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
           accept={accept}
           maxSize={maxSize}
         />
-      )}
+      }
     />
   )
 }
