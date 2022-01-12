@@ -548,6 +548,9 @@
     "nest-problem": {
       "tags": []
     },
+    "nest-swagger": {
+      "tags": []
+    },
     "nest-validators": {
       "tags": []
     },
