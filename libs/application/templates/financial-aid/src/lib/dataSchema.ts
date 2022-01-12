@@ -69,6 +69,11 @@ export const dataSchema = z.object({
       params: error.validation.inputErrorMessage,
       path: ['custom'],
     }),
+  personalTaxCreditForm: z
+    .enum([ApproveOptions.Yes, ApproveOptions.No])
+    .refine((v) => v, {
+      params: error.validation.radioErrorMessage,
+    }),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>

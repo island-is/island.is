@@ -67,5 +67,16 @@ export const Application: Form = buildForm({
         }),
       ],
     }),
+    buildSection({
+      id: 'personalTaxCreditForm',
+      title: m.personalTaxCreditForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'personalTaxCreditForm',
+          title: m.personalTaxCreditForm.general.pageTitle,
+          component: 'PersonalTaxCreditForm',
+        }),
+      ],
+    }),
   ],
 })
