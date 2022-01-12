@@ -1,8 +1,6 @@
-import { Inject, Injectable, OnApplicationShutdown } from '@nestjs/common'
-import {
-  ApplicationConfig,
-  APPLICATION_CONFIG,
-} from '../application.configuration'
+import { Inject, Injectable } from '@nestjs/common'
+import { APPLICATION_CONFIG } from '../application.configuration'
+import type { ApplicationConfig } from '../application.configuration'
 import { Application } from '../application.model'
 import { ApplicationService } from '../application.service'
 import { AwsService } from '../files'
