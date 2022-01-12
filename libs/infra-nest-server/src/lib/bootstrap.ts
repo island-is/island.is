@@ -61,10 +61,6 @@ type RunServerOptions = {
   globalPrefix?: string
 
   stripNonClassValidatorInputs?: boolean
-
-  jobs?: {
-    job: ({ app, args }: { app: INestApplication; args: any }) => Promise<void>
-  }
 }
 
 export const createApp = async ({
@@ -144,8 +140,6 @@ export const bootstrap = async (options: RunServerOptions) => {
   }).argv
 
   const app = await createApp(options)
-
-  options.jobs?.job({ app, args: yargs })
 
   if (options.openApi) {
     const document = setupOpenApi(app, options.openApi, options.swaggerPath)
