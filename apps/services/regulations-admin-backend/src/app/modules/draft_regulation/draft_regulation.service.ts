@@ -32,10 +32,7 @@ export class DraftRegulationService {
     if (nationalId) {
       return this.draftRegulationModel.findAll({
         where: {
-          [Op.or]: [
-            { drafting_status: 'draft' },
-            { drafting_status: 'proposal' },
-          ],
+          drafting_status: { [Op.in]: ['draft', 'proposal'] },
           authors: { [Op.contains]: [nationalId] },
         },
         order: [
