@@ -2,7 +2,11 @@ import { Inject } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import { EditDraftBody } from '../graphql/dto/editDraftRegulation.input'
-import { Author, DB_RegulationDraft } from '@island.is/regulations/admin'
+import {
+  Author,
+  DB_RegulationDraft,
+  DraftingStatus,
+} from '@island.is/regulations/admin'
 import * as kennitala from 'kennitala'
 import { uuid } from 'uuidv4'
 
@@ -38,30 +42,36 @@ export class RegulationsAdminApi extends RESTDataSource {
     request.headers.set('Content-Type', 'application/json')
   }
 
-  async getDraftRegulations(
-    authorization: string,
-  ): Promise<DB_RegulationDraft[]> {
-    const response = await this.get<DB_RegulationDraft[]>(
+  async getDraftRegulations(authorization: string) {
+    return await this.get<
+      Array<
+        DB_RegulationDraft & {
+          drafting_status: Extract<DraftingStatus, 'draft' | 'proposal'>
+        }
+      >
+    >(
       '/draft_regulations',
       {},
       {
         headers: { authorization },
       },
     )
-    return response
   }
 
-  async getShippedRegulations(
-    authorization: string,
-  ): Promise<DB_RegulationDraft[]> {
-    const response = await this.get<DB_RegulationDraft[]>(
+  async getShippedRegulations(authorization: string) {
+    return await this.get<
+      Array<
+        DB_RegulationDraft & {
+          drafting_status: Extract<DraftingStatus, 'shipped' | 'published'>
+        }
+      >
+    >(
       `/draft_regulations_shipped`,
       {},
       {
         headers: { authorization },
       },
     )
-    return response
   }
 
   async getDraftRegulation(
