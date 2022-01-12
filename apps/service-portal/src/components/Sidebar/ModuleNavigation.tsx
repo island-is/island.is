@@ -3,30 +3,38 @@ import {
   ServicePortalNavigationItem,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import * as styles from './Sidebar.css'
-import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import AnimateHeight from 'react-animate-height'
 import { useLocale } from '@island.is/localization'
 import NavItem from './NavItem/NavItem'
-import SubNavItem from './NavItem/SubNavItem'
+import SubNavModal from './SubNavModal'
 import { servicePortalOutboundLink } from '@island.is/plausible'
+import { useStore } from '../../store/stateProvider'
+import SubNav from './NavItem/SubNav'
 
 interface Props {
   nav: ServicePortalNavigationItem
-  variant: 'blue' | 'blueberry'
   alwaysExpanded?: boolean
+  badge?: boolean
   onItemClick?: () => void
 }
 
 const ModuleNavigation: FC<Props> = ({
   nav,
-  variant,
   alwaysExpanded,
   onItemClick,
+  badge,
 }) => {
   const [expand, setExpand] = useState(false)
+  const [hover, setHover] = useState(false)
+  const [{ sidebarState }] = useStore()
+  const { formatMessage } = useLocale()
   const { pathname } = useLocation()
+  const navChildren = nav?.children?.filter((child) => !child.navHide)
+  const navArray = Array.isArray(navChildren) && navChildren.length > 0
+  const collapsed = sidebarState === 'closed'
+
   const isModuleActive =
     (nav.path &&
       nav.path !== ServicePortalPath.MinarSidurRoot &&
@@ -35,27 +43,44 @@ const ModuleNavigation: FC<Props> = ({
       undefined ||
     expand ||
     nav.path === pathname
-  const { formatMessage } = useLocale()
-  const handleExpand = () => setExpand(!expand)
+
+  const handleExpand = () => {
+    setExpand(!expand)
+  }
 
   const handleRootItemClick = (external?: boolean) => {
     if (nav.path === undefined) handleExpand()
     if (onItemClick) onItemClick()
-    if (external) {
-      servicePortalOutboundLink()
-    }
+    if (external) servicePortalOutboundLink()
   }
 
-  const navChildren = nav?.children?.filter((child) => !child.navHide)
-
   return (
-    <Box>
+    <Box
+      position="relative"
+      onMouseOver={() => {
+        setHover(true)
+      }}
+      onMouseLeave={() => {
+        setHover(false)
+      }}
+    >
+      {navArray && nav.enabled !== false && collapsed && (
+        <SubNavModal active={hover}>
+          <SubNav
+            collapsed
+            navChildren={navChildren}
+            onItemClick={() => handleRootItemClick(false)}
+            pathname={pathname}
+          />
+        </SubNavModal>
+      )}
       {nav.heading && (
         <Text
           variant="eyebrow"
-          color={variant === 'blue' ? 'blue600' : 'blueberry600'}
+          color="blue400"
           fontWeight="semiBold"
           marginBottom={2}
+          marginTop={2}
         >
           {formatMessage(nav.heading)}
         </Text>
@@ -68,42 +93,30 @@ const ModuleNavigation: FC<Props> = ({
       <NavItem
         path={nav.path}
         icon={nav.icon}
+        hover={hover}
         active={isModuleActive}
+        expanded={expand}
+        hasArray={navArray}
         enabled={nav.enabled}
         external={nav.external}
         onClick={() => {
-          handleRootItemClick(nav.external)
+          !collapsed && handleRootItemClick(nav.external)
         }}
-        variant={variant}
+        alwaysExpanded={alwaysExpanded}
+        badge={badge}
       >
         {formatMessage(nav.name)}
       </NavItem>
-      {Array.isArray(navChildren) && navChildren.length > 0 && (
+      {!collapsed && navArray && nav.enabled !== false && (
         <AnimateHeight
           duration={300}
           height={isModuleActive || alwaysExpanded ? 'auto' : 0}
         >
-          <div>
-            <Box className={styles.subnav} marginTop={2}>
-              <Stack space={1}>
-                {navChildren.map((child, index) => (
-                  <SubNavItem
-                    path={child.path}
-                    enabled={child.enabled}
-                    key={`child-${index}`}
-                    active={
-                      child.path && pathname.includes(child.path) ? true : false
-                    }
-                    external={child.external}
-                    variant={variant}
-                    onClick={onItemClick}
-                  >
-                    {formatMessage(child.name)}
-                  </SubNavItem>
-                ))}
-              </Stack>
-            </Box>
-          </div>
+          <SubNav
+            navChildren={navChildren}
+            onItemClick={() => onItemClick && onItemClick()}
+            pathname={pathname}
+          />
         </AnimateHeight>
       )}
     </Box>

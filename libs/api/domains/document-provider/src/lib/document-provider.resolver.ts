@@ -204,7 +204,7 @@ export class DocumentProviderResolver {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'createTestProvider',
         resources: input.nationalId,
@@ -228,7 +228,7 @@ export class DocumentProviderResolver {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'updateTestEndpoint',
         resources: input.nationalId,
@@ -253,7 +253,7 @@ export class DocumentProviderResolver {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'runEndpointTests',
         resources: input.nationalId,
@@ -277,7 +277,7 @@ export class DocumentProviderResolver {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'createProvider',
         resources: input.nationalId,
@@ -301,7 +301,7 @@ export class DocumentProviderResolver {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'updateEndpoint',
         resources: input.nationalId,

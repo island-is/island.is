@@ -17,13 +17,9 @@ import {
 import { AwsService } from './aws.service'
 import { getOtherParentInformation } from '@island.is/application/templates/family-matters-core/utils'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
-import { JCAApplication } from '@island.is/application/templates/joint-custody-agreement'
 import type { ApplicationConfig } from '../application.configuration'
 import { APPLICATION_CONFIG } from '../application.configuration'
-import {
-  generateJointCustodyPdf,
-  generateResidenceChangePdf,
-} from './pdfGenerators'
+import { generateResidenceChangePdf } from './pdfGenerators'
 
 @Injectable()
 export class FileService {
@@ -124,9 +120,6 @@ export class FileService {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
         return await generateResidenceChangePdf(application as CRCApplication)
       }
-      case PdfTypes.JOINT_CUSTODY_AGREEMENT: {
-        return await generateJointCustodyPdf(application as JCAApplication)
-      }
     }
   }
 
@@ -183,31 +176,6 @@ export class FileService {
         return {
           phoneNumber,
           title: 'Lögheimilisbreyting barns',
-          name,
-        }
-      }
-      case PdfTypes.JOINT_CUSTODY_AGREEMENT: {
-        const { answers, externalData, state } = application as JCAApplication
-        const { nationalRegistry } = externalData
-        const isParentA = state === 'draft'
-        const applicant = nationalRegistry?.data
-        const parentB = getOtherParentInformation(
-          applicant.children,
-          answers.selectedChildren,
-        )
-        const { name, phoneNumber } = isParentA
-          ? {
-              name: applicant.fullName,
-              phoneNumber: answers.parentA.phoneNumber,
-            }
-          : {
-              name: parentB.fullName,
-              phoneNumber: answers.parentB.phoneNumber,
-            }
-
-        return {
-          phoneNumber,
-          title: 'Sameiginleg forsjá barns',
           name,
         }
       }
