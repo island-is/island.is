@@ -190,7 +190,8 @@
       "implicitDependencies": ["logging"]
     },
     "api-domains-criminal-record": {
-      "tags": []
+      "tags": ["type:lib", "scope:graphql-api"],
+      "implicitDependencies": ["logging"]
     },
     "api-domains-directorate-of-labour": {
       "tags": ["type:lib", "scope:graphql-api"],
@@ -416,19 +417,19 @@
       "implicitDependencies": ["auth-admin-web"]
     },
     "auth-api-lib": {
-      "tags": []
+      "tags": ["type:lib", "scope:api"]
     },
     "auth-nest-tools": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "auth-react": {
-      "tags": []
+      "tags": ["type:lib", "scope:react"]
     },
     "auth-scopes": {
-      "tags": []
+      "tags": ["type:lib", "scope:utils"]
     },
     "cache": {
-      "tags": []
+      "tags": ["type:lib", "scope:api"]
     },
     "clients-assets": {
       "tags": ["type:lib", "scope:nestjs"]
@@ -502,19 +503,19 @@
       "tags": ["type:lib", "scope:nestjs"]
     },
     "cms": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "cms-translations": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "content-search-index-manager": {
-      "tags": []
+      "tags": ["type:lib", "scope:api"]
     },
     "content-search-indexer": {
       "tags": ["type:lib", "scope:rest-api"]
     },
     "content-search-indexer-types": {
-      "tags": []
+      "tags": ["type:lib", "scope:api"]
     },
     "content-search-metrics": {
       "tags": ["type:lib", "scope:rest-api"]
@@ -523,34 +524,34 @@
       "tags": ["type:lib", "scope:utils"]
     },
     "contentful-mideind-extension": {
-      "tags": []
+      "tags": ["type:lib", "scope:utils"]
     },
     "contentful-parent-slug-extension": {
-      "tags": []
+      "tags": ["type:lib", "scope:test"]
     },
     "contentful-translation-extension": {
-      "tags": []
+      "tags": ["type:lib", "scope:ui"]
     },
     "dokobit-signing": {
       "tags": ["type:lib", "scope:utils"]
     },
     "download-service": {
-      "tags": []
+      "tags": ["type:app", "scope:rest-api"]
     },
     "email-service": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "external-contracts-tests": {
-      "tags": []
+      "tags": ["type:app", "scope:test"]
     },
     "feature-flags": {
       "tags": ["type:lib", "scope:utils"]
     },
     "file-storage": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "financial-aid-api": {
-      "tags": []
+      "tags": ["type:app", "scope:graphql-api"]
     },
     "financial-aid-backend": {
       "tags": ["type:app", "scope:rest-api"],
@@ -563,7 +564,7 @@
       ]
     },
     "financial-aid-shared": {
-      "tags": []
+      "tags": ["type:lib", "scope:ui"]
     },
     "financial-aid-web-osk": {
       "tags": ["type:app", "scope:nextjs"],
@@ -687,13 +688,13 @@
       "tags": ["type:lib", "scope:utils"]
     },
     "infra-express-server": {
-      "tags": []
+      "tags": ["type:lib", "scope:api"]
     },
     "infra-metrics": {
-      "tags": []
+      "tags": ["type:lib", "scope:api"]
     },
     "infra-monitoring": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "infra-nest-server": {
       "tags": ["type:lib", "scope:nestjs"]
@@ -728,13 +729,13 @@
       "tags": ["type:lib", "scope:ui"]
     },
     "judicial-system-api": {
-      "tags": []
+      "tags": ["type:app", "scope:graphql-api"]
     },
     "judicial-system-audit-trail": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "judicial-system-auth": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "judicial-system-backend": {
       "tags": ["type:app", "scope:rest-api"],
@@ -750,10 +751,10 @@
       "tags": ["type:lib", "scope:utils"]
     },
     "judicial-system-court-client": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "judicial-system-formatters": {
-      "tags": []
+      "tags": ["type:lib", "scope:utils"]
     },
     "judicial-system-types": {
       "tags": ["type:lib", "scope:utils"]
@@ -789,7 +790,7 @@
       "implicitDependencies": ["judicial-system-web"]
     },
     "judicial-system-xrd-api": {
-      "tags": []
+      "tags": ["type:app", "scope:rest-api"]
     },
     "localization": {
       "tags": ["type:lib", "scope:utils"]
@@ -816,7 +817,7 @@
       "tags": ["type:lib", "scope:nestjs"]
     },
     "nest-swagger": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "nest-validators": {
       "tags": ["type:lib", "scope:nestjs"]
@@ -825,10 +826,10 @@
       "tags": ["type:lib", "scope:nextjs"]
     },
     "nova-sms": {
-      "tags": []
+      "tags": ["type:lib", "scope:nestjs"]
     },
     "plausible": {
-      "tags": []
+      "tags": ["type:lib", "scope:ui"]
     },
     "react-feature-flags": {
       "tags": ["type:lib", "scope:react"]
@@ -847,10 +848,10 @@
       "tags": ["type:lib", "scope:nextjs"]
     },
     "regulations": {
-      "tags": []
+      "tags": ["type:lib", "scope:ui"]
     },
     "service-portal": {
-      "tags": [],
+      "tags": ["type:app", "scope:react"],
       "implicitDependencies": [
         "service-portal-applications",
         "service-portal-assets",
