@@ -12,7 +12,6 @@ import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 
 import { ApplicationLifecycle } from './types'
-import { APP_PIPE } from '@nestjs/core'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -51,7 +50,6 @@ export class ApplicationService {
               ],
             }
           : {}),
-        ...applicationIsNotSetToBePruned(),
       },
     })
   }
@@ -88,18 +86,23 @@ export class ApplicationService {
   async findAllDueToBePruned(): Promise<Application[]> {
     return this.applicationModel.findAll({
       where: {
-        [Op.and]: [
-          {
-            pruneAt: {
+        [Op.and]: {
+          pruneAt: {
+            [Op.and]: {
               [Op.not]: null,
-            },
-          },
-          {
-            pruneAt: {
               [Op.lt]: new Date(),
             },
           },
-        ],
+          answers: {
+            [Op.not]: '{}',
+          },
+          attachments: {
+            [Op.not]: '{}',
+          },
+          externalData: {
+            [Op.not]: '{}',
+          },
+        },
       },
       order: [['modified', 'DESC']],
     })

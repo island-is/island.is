@@ -56,10 +56,10 @@ beforeAll(async () => {
   app = await setup({
     override: (builder) =>
       builder
-        .overrideProvider(EmailService)
-        .useClass(MockEmailService)
         .overrideProvider(ContentfulRepository)
         .useClass(MockContentfulRepository)
+        .overrideProvider(EmailService)
+        .useClass(MockEmailService)
         .overrideGuard(IdsUserGuard)
         .useValue(
           new MockAuthGuard({
@@ -92,7 +92,7 @@ describe('ApplicationLifecycleService', () => {
     const secondUpdateResponse = await updateApplication(secondCreate.body.id)
     expect(secondUpdateResponse.body.answers.usage).toBe(4)
 
-    // Use the templates lifecycle and not mocking it.
+    // Use the templates own lifecycle and not mocking it.
     const thirdCreate = await createApplication()
     const thirdUpdateResponse = await updateApplication(thirdCreate.body.id)
     expect(thirdUpdateResponse.body.answers.usage).toBe(4)
@@ -117,6 +117,35 @@ describe('ApplicationLifecycleService', () => {
     expect(shouldBeEmpty2.body.answers).toEqual({})
     expect(shouldNotBeEmpty.body.answers).toEqual({ usage: 4 })
   })
+
+  it('should prune answers on applications correctly by lifecycle preset.', async () => {
+    //PREPARE
+    const date = new Date()
+    date.setDate(date.getDate() - 2)
+    mockLifecycleOnce(date)
+
+    const firstCreate = await createApplication()
+    const updateResponse = await await server
+      .put(`/applications/${firstCreate.body.id}`)
+      .send({
+        answers: {
+          usage: 4,
+        },
+      })
+      .expect(200)
+
+    expect(updateResponse.body.answers.usage).toBe(4)
+
+    //ACT
+    await lifeCycleService.run()
+
+    //ASSERT
+    const shouldBeEmpty = await server
+      .get(`/applications/${firstCreate.body.id}`)
+      .expect(200)
+
+    expect(shouldBeEmpty.body.answers).toEqual({})
+  })
 })
 
 export const mockLifecycleOnce = (pruneDate: Date) => {
@@ -129,16 +158,18 @@ export const mockLifecycleOnce = (pruneDate: Date) => {
 }
 
 export const createApplication = async () => {
+  console.log('creating application')
   const response = await server
     .post('/applications')
     .send({
-      typeId: ApplicationTypes.PARENTAL_LEAVE,
+      typeId: ApplicationTypes.EXAMPLE,
     })
     .expect(201)
   return response
 }
 
 export const updateApplication = async (applicationId: string) => {
+  console.log('updating application')
   const response = await server
     .put(`/applications/${applicationId}`)
     .send({

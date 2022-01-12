@@ -1,12 +1,5 @@
-import { TestApp } from '@island.is/testing/nest'
 import { Test } from '@nestjs/testing'
-import request from 'supertest'
-import {
-  createApplication,
-  createCurrentUser,
-} from '@island.is/testing/fixtures'
-import { INestApplication } from '@nestjs/common'
-import { setup } from '../../../../../../test/setup'
+import { createApplication } from '@island.is/testing/fixtures'
 import { ApplicationLifeCycleService } from '../application-lifecycle.service'
 import { ApplicationService } from '../../application.service'
 import { Application } from '@island.is/application/core'
@@ -16,17 +9,10 @@ import {
   APPLICATION_CONFIG,
 } from '../../application.configuration'
 import { LoggingModule } from '@island.is/logging'
-import AmazonS3URI from 'amazon-s3-uri'
-
-jest.mock('amazon-s3-uri')
-
-let app: INestApplication
 let lifeCycleService: ApplicationLifeCycleService
 let awsService: AwsService
 
 export const createApplications = () => {
-  const newApplication = createApplication()
-
   return [
     createApplication({
       answers: {
@@ -87,20 +73,6 @@ class ApplicationServiceMock {
 
 describe('ApplicationLifecycleService Unit tests', () => {
   beforeAll(async () => {
-    const currentUser = createCurrentUser()
-    const { nationalId } = currentUser
-
-    const mockAmazonS3URI = AmazonS3URI as jest.Mock
-    mockAmazonS3URI.mockReturnValue({ key: 'sdfsf' })
-    /*app = await setup({
-    override: (builder) =>
-      builder
-        .overrideProvider(ApplicationService)
-        .useClass(ApplicationServiceMock)
-        .overrideProvider(AwsService)
-        .useClass(AwsService),
-  })*/
-
     const config: ApplicationConfig = {
       presignBucket: 'bucket',
       attachmentBucket: 'bucket2',
@@ -136,18 +108,16 @@ describe('ApplicationLifecycleService Unit tests', () => {
     //ACT
     await lifeCycleService.run()
 
-    const res = lifeCycleService.getProcessingApplications()
-
     //ASSERT
+    const result = lifeCycleService.getProcessingApplications()
     expect(deleteObjectsSpy).toHaveBeenCalled()
     expect(fileExistsSpy).toHaveBeenCalledTimes(2)
-    expect(res[0].messages).toEqual([
-      'Failed to delete attachment of s3://example-bucket/path/to/object',
-    ])
-    expect(res[0].application.attachments).toEqual({
+
+    expect(result[0].application.attachments).toEqual({
       key: 's3://example-bucket/path/to/object',
     })
-    expect(res[0].application.answers).toEqual({})
-    expect(res[0].application.externalData).toEqual({})
+
+    expect(result[0].application.answers).toEqual({})
+    expect(result[0].application.externalData).toEqual({})
   })
 })

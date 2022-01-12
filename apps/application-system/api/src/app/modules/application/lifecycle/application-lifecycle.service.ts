@@ -7,68 +7,35 @@ import { Application } from '../application.model'
 import { ApplicationService } from '../application.service'
 import { AwsService } from '../files'
 import AmazonS3URI from 'amazon-s3-uri'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
-export interface ApplicationPruningProcess {
-  // TODO better name
-  id: string
-  pruneSuccess: boolean
-  messages: string[]
+export interface ApplicationPruning {
+  pruned: boolean
   application: Application
   failedAttachments: object
 }
 
-export enum ApplicationPruningProcessStatus {
-  Failed = 'failed',
-  Success = 'Success',
-  AttachmentFailure = 'attachment-failure',
-}
-
 @Injectable()
-export class ApplicationLifeCycleService implements OnApplicationShutdown {
-  //TODO better name
-  private processingApplications: ApplicationPruningProcess[] = []
+export class ApplicationLifeCycleService {
+  private processingApplications: ApplicationPruning[] = []
 
   constructor(
     @Inject(APPLICATION_CONFIG)
     private readonly config: ApplicationConfig,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
     private applicationService: ApplicationService,
     private awsService: AwsService,
   ) {}
 
-  onApplicationShutdown(signal?: string) {
-    console.log('shutdown...', signal)
-  }
-
-  onModuleDestroy() {
-    console.log('destroyed...')
-  }
-
-  /**
-   * Step 1:
-   * - get all applications from the database to be pruned
-   * Step 2:
-   * - prune the applications answers and external data
-   * Step 3:
-   * - collect attachment keys to be pruned
-   * Step 4:
-   * - delete/remove said attachemnts from S3
-   * Step 4:
-   * - prune the attachments from the applications
-   * Step 5:
-   * - validate that should be pruned is pruned.
-   * Step 6:
-   * - mark the applications as pruned??
-   * Step 7:
-   * - report results
-   */
   public async run() {
-    console.log('running...')
-    //const toBePruned = await this.applicationService.findAllDueToBePruned()
+    this.logger.info(`Starting application pruning...`)
     await this.fetchApplicationsToBePruned()
-    //await this.getJustOneById('c21b4710-1932-4b23-a960-5f1c9c15b9b8')
     await this.pruneAttachments()
-    await this.pruneAnswersAndData()
+    await this.pruneApplicationData()
     this.reportResults()
+    this.logger.info(`Application pruning done.`)
   }
 
   public getProcessingApplications() {
@@ -79,9 +46,7 @@ export class ApplicationLifeCycleService implements OnApplicationShutdown {
     const application = await this.applicationService.findOneById(id)
     if (application) {
       this.processingApplications.push({
-        id: application.id,
-        pruneSuccess: false,
-        messages: [],
+        pruned: false,
         application,
         failedAttachments: {},
       })
@@ -89,26 +54,62 @@ export class ApplicationLifeCycleService implements OnApplicationShutdown {
   }
 
   private async fetchApplicationsToBePruned() {
-    console.log('get...')
     const applications = await this.applicationService.findAllDueToBePruned()
-    console.log({ applications })
+    this.logger.info(`Found ${applications.length} applications to be pruned.`)
     this.processingApplications = applications.map((application) => {
       return {
-        id: application.id,
-        pruneSuccess: false,
-        messages: [],
+        pruned: true,
         application,
         failedAttachments: {},
       }
     })
   }
 
-  private async pruneAnswersAndData() {
-    console.log('pruneAnswers...')
+  private async pruneAttachments() {
+    for (const prune of this.processingApplications) {
+      const applicationAttachments = prune.application.attachments as {
+        key: string
+        name: string
+      }
+
+      const attachments = this.attachmentsToKeyArray(applicationAttachments)
+      try {
+        if (attachments) {
+          await this.awsService.deleteObjects(this.getBucketName(), attachments)
+        }
+      } catch (error) {
+        prune.pruned = false
+        this.logger.error(
+          `Failed to delete objects from S3 for application id  ${prune.application.id}`,
+          error,
+        )
+      }
+
+      //Verify if all attachments were deleted
+      for (const [key, value] of Object.entries(applicationAttachments)) {
+        const exists = await this.awsService.fileExists(
+          this.getBucketName(),
+          value,
+        )
+        if (exists) {
+          prune.pruned = false
+          prune.failedAttachments = {
+            ...prune.failedAttachments,
+            [key]: value,
+          }
+          this.logger.error(
+            `Attachment ${key}:${value} was not deleted for application id  ${prune.application.id}`,
+          )
+        }
+      }
+    }
+  }
+
+  private async pruneApplicationData() {
     for (const prune of this.processingApplications) {
       try {
         const { updatedApplication } = await this.applicationService.update(
-          prune.id,
+          prune.application.id,
           {
             attachments: prune.failedAttachments,
             externalData: {},
@@ -116,55 +117,28 @@ export class ApplicationLifeCycleService implements OnApplicationShutdown {
           },
         )
 
-        console.log({ updatedApplication })
-
-        prune.pruneSuccess = true
         prune.application = updatedApplication
-      } catch (e) {
-        console.log(e)
-        prune.pruneSuccess = false
-        prune.messages.push(`Answers And data error : ${e.message}`)
+      } catch (error) {
+        prune.pruned = false
+        this.logger.error(
+          `Application data prune error on id ${prune.application.id}`,
+          error,
+        )
       }
     }
   }
 
-  private async pruneAttachments() {
-    console.log('pruneAttachments...')
-    for (const prune of this.processingApplications) {
-      try {
-        const applicationAttachments = prune.application.attachments as {
-          key: string
-          name: string
-        }
+  private reportResults() {
+    const failed = this.processingApplications.filter(
+      (application) => !application.pruned,
+    )
 
-        const attachments = this.attachmentsToKeyArray(applicationAttachments)
+    const success = this.processingApplications.filter(
+      (application) => application.pruned,
+    )
 
-        if (attachments) {
-          //delete attachments
-          await this.awsService.deleteObjects(this.getBucketName(), attachments)
-
-          //Verify if all attachments were deleted
-          for (const [key, value] of Object.entries(applicationAttachments)) {
-            const exists = await this.awsService.fileExists(
-              this.getBucketName(),
-              value,
-            )
-            if (exists) {
-              prune.messages.push(`Failed to delete attachment of ${value}`)
-              prune.failedAttachments = {
-                ...prune.failedAttachments,
-                [key]: value,
-              }
-            }
-          }
-        }
-
-        prune.pruneSuccess = true
-      } catch (e) {
-        prune.pruneSuccess = false
-        prune.messages.push(`S3 delete error : ${e.message}`)
-      }
-    }
+    this.logger.info(`Successful: ${success.length}`)
+    this.logger.info(`Failed: ${failed.length}`)
   }
 
   private attachmentsToKeyArray(
@@ -181,17 +155,11 @@ export class ApplicationLifeCycleService implements OnApplicationShutdown {
     return keys
   }
 
-  private reportResults() {
-    console.log('reportResults...')
-    console.log(JSON.stringify(this.processingApplications, null, 2))
-  }
-
   private getBucketName() {
     const bucket = this.config.attachmentBucket
 
     if (!bucket) {
-      // throw new Error('Unable to get bucket name from config.')
-      return 'buekt'
+      throw new Error('Unable to get bucket name from config.')
     }
 
     return bucket
