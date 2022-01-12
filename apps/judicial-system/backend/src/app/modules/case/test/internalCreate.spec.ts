@@ -16,7 +16,7 @@ import { createTestingCaseModule } from './createTestingCaseModule'
 jest.mock('../../user/user.service')
 
 interface Then {
-  result: Case | null
+  result: Case
   error: Error
 }
 
