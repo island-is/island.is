@@ -39,7 +39,7 @@ export const personalTaxCreditForm = {
       defaultMessage: 'Já, nýta persónuafslátt',
       description: 'Student form radio button choice to use tax credit',
     },
-    notToUseTaxCredit: {
+    wontUseTaxCredit: {
       id:
         'fa.application:section.personalTaxCreditForm.radioChoices.notToUseTaxCredit',
       defaultMessage: 'Nei, ekki nýta persónuafslátt',

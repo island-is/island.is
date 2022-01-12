@@ -35,7 +35,7 @@ const PersonalTaxCreditForm = ({
             {
               value: ApproveOptions.No,
               label: formatMessage(
-                personalTaxCreditForm.radioChoices.notToUseTaxCredit,
+                personalTaxCreditForm.radioChoices.wontUseTaxCredit,
               ),
             },
           ]}
