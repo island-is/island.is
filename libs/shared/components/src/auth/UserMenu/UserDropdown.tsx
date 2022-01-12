@@ -51,7 +51,7 @@ export const UserDropdown = ({
   const isDelegation = Boolean(actor)
   const userName = user.profile.name
   const actorName = actor?.name
-  const isDelegationCompany = false
+  const isCompany = kennitala.isCompany(user.profile.nationalId)
 
   const { value: showPersonalInfo } = useFeatureFlag(
     'isServicePortalPersonalInformationModuleEnabled',
@@ -109,7 +109,7 @@ export const UserDropdown = ({
                 {/* Check if actor is company - display company icon
                  * kennitala function is buggy - temp removal
                  */}
-                {/* {isDelegationCompany ? (
+                {isCompany ? (
                   <Box
                     borderRadius="circle"
                     background="blue100"
@@ -117,13 +117,13 @@ export const UserDropdown = ({
                     alignItems="center"
                     justifyContent="center"
                     className={styles.companyIconSize}
-                    >
+                  >
                     <Icon icon="business" type="filled" color="blue400" />
-                    </Box>
-                    ) : (
-                      <UserAvatar username={isDelegation ? actorName : userName} />
-                )} */}
-                <UserAvatar username={isDelegation ? actorName : userName} />
+                  </Box>
+                ) : (
+                  <UserAvatar username={isDelegation ? actorName : userName} />
+                )}
+                {/* <UserAvatar username={isDelegation ? actorName : userName} /> */}
 
                 <Box marginLeft={1} marginRight={4}>
                   <Text variant="h4" as="h4">

@@ -13,6 +13,7 @@ import { ActorDelegationsQuery } from '../../../gen/graphql'
 import { UserTopicCard } from './UserTopicCard'
 import { QueryResult } from '@apollo/client'
 import * as styles from './UserMenu.css'
+import { isCompany } from 'kennitala'
 interface UserDelegationsProps {
   user: User
   onSwitchUser: (nationalId: string) => void
@@ -88,6 +89,11 @@ export const UserDelegations = ({
               <UserTopicCard
                 key={delegation.nationalId}
                 colorScheme="blue"
+                icon={
+                  isCompany(delegation.nationalId)
+                    ? { icon: 'business', type: 'filled', color: 'blue400' }
+                    : undefined
+                }
                 onClick={
                   delegation.isCurrent
                     ? undefined
