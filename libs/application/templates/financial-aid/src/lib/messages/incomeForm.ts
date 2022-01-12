@@ -17,7 +17,7 @@ export const incomeForm = {
     headline: {
       id: 'fa.application:section.incomeForm.bulletList.headline',
       defaultMessage: 'Dæmi um tekjur',
-      description: 'Income form bullet list headline',
+      description: 'Income form bullet list of examples of income headline',
     },
   }),
   examplesOfIncome: defineMessages({

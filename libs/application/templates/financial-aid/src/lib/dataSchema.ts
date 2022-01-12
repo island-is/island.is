@@ -8,9 +8,9 @@ import { isValidEmail } from './utils'
 import { ApproveOptions } from './types'
 
 export const dataSchema = z.object({
-  // approveExternalData: z.boolean().refine((v) => v, {
-  //   params: error.validation.dataGathering,
-  // }),
+  approveExternalData: z.boolean().refine((v) => v, {
+    params: error.validation.dataGathering,
+  }),
   spouse: z.object({
     email: z.string().refine((v) => isValidEmail(v), {
       params: error.validation.email,
