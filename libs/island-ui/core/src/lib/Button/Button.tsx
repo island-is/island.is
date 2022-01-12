@@ -125,6 +125,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.isEmpty]: !children,
             [styles.loading]: loading,
           },
+          icon && variant !== 'text' && !circle && styles.padding.icon,
         )}
         display={variant === 'text' ? 'inline' : inline ? 'inlineFlex' : 'flex'}
         disabled={disabled || loading}
