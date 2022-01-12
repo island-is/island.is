@@ -122,6 +122,7 @@
 /libs/api/domains/health-insurance/                                                           @island-is/sendiradid
 /libs/application/templates/health-insurance/                                                 @island-is/sendiradid
 /libs/clients/health-insurance-v2/                                                            @island-is/sendiradid
+/apps/application-system/api/src/app/modules/application/lifecycle/                           @island-is/sendiradid
 
 /apps/services/search-indexer/                                                                @island-is/stefna @island-is/kosmos-kaos
 /apps/web/screens/Organization/                                                               @island-is/stefna
