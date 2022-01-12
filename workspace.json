@@ -6233,6 +6233,27 @@
         }
       }
     },
+    "nest-swagger": {
+      "root": "libs/nest/swagger",
+      "sourceRoot": "libs/nest/swagger/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/swagger/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/swagger"],
+          "options": {
+            "jestConfig": "libs/nest/swagger/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nest-validators": {
       "root": "libs/nest/validators",
       "sourceRoot": "libs/nest/validators/src",

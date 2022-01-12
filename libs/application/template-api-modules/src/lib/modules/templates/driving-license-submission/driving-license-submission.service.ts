@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   DrivingLicenseService,
   NewDrivingLicenseResult,
@@ -11,6 +11,8 @@ import {
   generateDrivingLicenseSubmittedEmail,
   generateDrivingAssessmentApprovalEmail,
 } from './emailGenerators'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -19,6 +21,7 @@ const calculateNeedsHealthCert = (healthDeclaration = {}) => {
 @Injectable()
 export class DrivingLicenseSubmissionService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
@@ -67,25 +70,43 @@ export class DrivingLicenseSubmissionService {
       }
     }
 
-    const result = await this.createLicense(nationalId, answers).catch((e) => {
-      return {
-        success: false,
-        errorMessage: e.message,
-      }
-    })
+    let result
+    try {
+      result = await this.createLicense(nationalId, answers)
+    } catch (e) {
+      this.log('error', 'Creating license failed', {
+        e,
+        applicationFor: answers.applicationFor,
+        jurisdiction: answers.juristictionId,
+      })
+
+      throw e
+    }
 
     if (!result.success) {
       throw new Error(`Application submission failed (${result.errorMessage})`)
     }
 
-    await this.sharedTemplateAPIService.sendEmail(
-      generateDrivingLicenseSubmittedEmail,
-      application,
-    )
+    try {
+      await this.sharedTemplateAPIService.sendEmail(
+        generateDrivingLicenseSubmittedEmail,
+        application,
+      )
+    } catch (e) {
+      this.log(
+        'error',
+        'Could not send email to applicant after successful submission',
+        { e },
+      )
+    }
 
     return {
-      success: result.success,
+      success: true,
     }
+  }
+
+  private log(lvl: 'error' | 'info', message: string, meta: unknown) {
+    this.logger.log(lvl, `[driving-license-submission] ${message}`, meta)
   }
 
   private async createLicense(
