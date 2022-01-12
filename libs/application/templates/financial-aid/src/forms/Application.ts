@@ -78,6 +78,17 @@ export const Application: Form = buildForm({
         }),
       ],
     }),
+    buildSection({
+      id: 'personalTaxCreditForm',
+      title: m.personalTaxCreditForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'personalTaxCreditForm',
+          title: m.personalTaxCreditForm.general.pageTitle,
+          component: 'PersonalTaxCreditForm',
+        }),
+      ],
+    }),
     // This is here to be able to show submit button on former screen :( :( :(
     buildSection({
       id: '',
