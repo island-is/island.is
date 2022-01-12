@@ -11,12 +11,8 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './DescriptionText.css'
 
-const BulletListBox = ({ children }: { children: ReactNode }) => {
-  return (
-    <Box marginBottom={3}>
-      <BulletList space={2}>{children}</BulletList>
-    </Box>
-  )
+const Bulletlist = ({ children }: { children: ReactNode }) => {
+  return <BulletList space={2}>{children}</BulletList>
 }
 
 const TextComponent = ({ children, ...props }: { children: ReactNode }) => {
@@ -85,7 +81,7 @@ const DescriptionText = ({ text, format, textProps }: Props) => {
           h4: headingOverride,
           a: { component: LinkComponent },
           ul: {
-            component: BulletListBox,
+            component: Bulletlist,
           },
           li: {
             component: Bullet,

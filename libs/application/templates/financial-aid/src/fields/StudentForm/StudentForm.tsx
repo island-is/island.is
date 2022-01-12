@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { FAFieldBaseProps, ApproveOptions } from '../../lib/types'
 import { useIntl } from 'react-intl'
-import { studentForm } from '../../lib/messages'
+import { studentForm, approveOptions } from '../../lib/messages'
 import * as styles from '../Shared.css'
 import cn from 'classnames'
 import { InputController, RadioController } from '@island.is/shared/form-fields'
@@ -31,11 +31,11 @@ const StudentForm = ({ errors, application }: FAFieldBaseProps) => {
           options={[
             {
               value: ApproveOptions.No,
-              label: formatMessage(studentForm.form.no),
+              label: formatMessage(approveOptions.no),
             },
             {
               value: ApproveOptions.Yes,
-              label: formatMessage(studentForm.form.yes),
+              label: formatMessage(approveOptions.yes),
             },
           ]}
           largeButtons
