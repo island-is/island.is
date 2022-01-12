@@ -16,7 +16,7 @@ export interface Defendant {
 }
 
 export interface CreateDefendant {
-  nationalId: string
+  nationalId?: string
   name?: string
   gender?: Gender
   address?: string

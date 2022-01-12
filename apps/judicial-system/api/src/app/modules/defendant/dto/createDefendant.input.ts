@@ -8,7 +8,7 @@ import type { Gender, CreateDefendant } from '@island.is/judicial-system/types'
 export class CreateDefendantInput implements CreateDefendant {
   @Allow()
   @Field()
-  readonly nationalId!: string
+  readonly nationalId?: string
 
   @Allow()
   @Field({ nullable: true })

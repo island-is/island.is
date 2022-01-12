@@ -2,37 +2,43 @@ import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
 
+import type { Logger } from '@island.is/logging'
 import { Gender, CaseType, UserRole } from '@island.is/judicial-system/types'
 
+import { createTestingCaseModule } from './createTestingCaseModule'
 import { User, UserService } from '../../user'
+import { Institution } from '../../institution'
+import { DefendantService } from '../../defendant/defendant.service'
+import { Defendant } from '../../defendant/models/defendant.model'
 import { InternalCreateCaseDto } from '../dto'
 import { Case } from '../models'
-import { createTestingCaseModule } from './createTestingCaseModule'
-import { Institution } from '../../institution'
-import { Defendant } from '../../defendant/models/defendant.model'
-
-jest.mock('../../user/user.service')
 
 interface Then {
-  result: Case | null
+  result: Case
   error: Error
 }
 
 type GivenWhenThen = (caseToCreate: InternalCreateCaseDto) => Promise<Then>
 
 describe('CaseController - Internal create', () => {
+  let mockLogger: Logger
   let mockUserService: UserService
+  let mockDefendantService: DefendantService
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
+      logger,
       userService,
+      defendantService,
       caseModel,
       caseController,
     } = await createTestingCaseModule()
 
+    mockLogger = logger
     mockUserService = userService
+    mockDefendantService = defendantService
     mockCaseModel = caseModel
 
     givenWhenThen = async (caseToCreate: InternalCreateCaseDto) => {
@@ -106,7 +112,7 @@ describe('CaseController - Internal create', () => {
       accusedAddress: 'Some Street',
       accusedGender: Gender.MALE,
       leadInvestigator: 'The Boss',
-    } as InternalCreateCaseDto
+    }
     const userId = uuid()
     const user = { id: userId, role: UserRole.PROSECUTOR } as User
 
@@ -122,6 +128,37 @@ describe('CaseController - Internal create', () => {
         ...caseToCreate,
         creatingProsecutorId: userId,
         prosecutorId: userId,
+      })
+    })
+  })
+
+  describe('defendant created', () => {
+    const accusedNationalId = '1234567890'
+    const accusedName = 'John Doe'
+    const accusedAddress = 'Some Street'
+    const accusedGender = Gender.MALE
+    const caseToCreate = {
+      accusedNationalId,
+      accusedName,
+      accusedAddress,
+      accusedGender,
+    } as InternalCreateCaseDto
+    const caseId = uuid()
+    const createdCase = { id: caseId } as Case
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseModel.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(createdCase)
+
+      await givenWhenThen(caseToCreate)
+    })
+
+    it('should create a defendant', () => {
+      expect(mockDefendantService.create).toHaveBeenCalledWith(caseId, {
+        nationalId: accusedNationalId,
+        name: accusedName,
+        address: accusedAddress,
+        gender: accusedGender,
       })
     })
   })
@@ -179,9 +216,8 @@ describe('CaseController - Internal create', () => {
 
   describe('case returned', () => {
     const caseToCreate = {} as InternalCreateCaseDto
-    const caseId = uuid()
-    const createdCase = { id: caseId } as Case
-    const returnedCase = { id: caseId } as Case
+    const createdCase = {} as Case
+    const returnedCase = {} as Case
     let then: Then
 
     beforeEach(async () => {
@@ -257,13 +293,63 @@ describe('CaseController - Internal create', () => {
     })
   })
 
-  describe('case lookup fails', () => {
+  describe('case creation fails', () => {
     const caseToCreate = {} as InternalCreateCaseDto
     let then: Then
 
     beforeEach(async () => {
       const mockCreate = mockCaseModel.create as jest.Mock
       mockCreate.mockRejectedValueOnce(new Error('Some error'))
+
+      then = await givenWhenThen(caseToCreate)
+    })
+
+    it('should throw Error', () => {
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toBe('Some error')
+    })
+  })
+
+  describe('defendant creation fails', () => {
+    const caseToCreate = {} as InternalCreateCaseDto
+    let then: Then
+    const caseId = uuid()
+    const createdCase = { id: caseId } as Case
+    const error = new Error('Some error')
+    const returnedCase = {} as Case
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseModel.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(createdCase)
+      const mockDefendantCreate = mockDefendantService.create as jest.Mock
+      mockDefendantCreate.mockRejectedValueOnce(error)
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(returnedCase)
+
+      then = await givenWhenThen(caseToCreate)
+    })
+
+    it('should log and ignore the error', () => {
+      expect(then.error).toBeUndefined()
+      expect(
+        mockLogger.error,
+      ).toHaveBeenCalledWith(
+        `Failed to create a defendant for case ${caseId}`,
+        { error },
+      )
+    })
+  })
+
+  describe('case lookup fails', () => {
+    const caseToCreate = {} as InternalCreateCaseDto
+    const createdCase = {} as Case
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseModel.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(createdCase)
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseToCreate)
     })

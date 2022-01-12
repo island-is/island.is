@@ -8,7 +8,7 @@ export class CreateDefendantDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly nationalId!: string
+  readonly nationalId?: string
 
   @IsOptional()
   @IsString()

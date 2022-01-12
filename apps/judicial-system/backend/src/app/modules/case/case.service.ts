@@ -37,6 +37,7 @@ import {
 } from '../../formatters'
 import { notificationMessages as m } from '../../messages'
 import { FileService } from '../file/file.service'
+import { DefendantService } from '../defendant/defendant.service'
 import { Defendant } from '../defendant/models/defendant.model'
 import { Institution } from '../institution'
 import { User, UserService } from '../user'
@@ -92,6 +93,7 @@ export class CaseService {
 
   constructor(
     @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly defendantService: DefendantService,
     private readonly userService: UserService,
     private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
@@ -385,34 +387,61 @@ export class CaseService {
   }
 
   async internalCreate(caseToCreate: InternalCreateCaseDto): Promise<Case> {
-    if (!caseToCreate.prosecutorNationalId) {
-      return this.create(caseToCreate)
-    }
+    let prosecutorId = undefined
 
-    const prosecutor = await this.userService.findByNationalId(
-      caseToCreate.prosecutorNationalId,
-    )
-
-    if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
-      throw new BadRequestException(
-        `Person with national id ${caseToCreate.prosecutorNationalId} is not registered as a prosecutor`,
+    if (caseToCreate.prosecutorNationalId) {
+      const prosecutor = await this.userService.findByNationalId(
+        caseToCreate.prosecutorNationalId,
       )
+
+      if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
+        throw new BadRequestException(
+          `Person with national id ${caseToCreate.prosecutorNationalId} is not registered as a prosecutor`,
+        )
+      }
+
+      prosecutorId = prosecutor.id
     }
 
-    return this.create(caseToCreate, prosecutor.id)
+    const caseId = await this.createCase(caseToCreate, prosecutorId)
+
+    try {
+      await this.defendantService.create(caseId, {
+        nationalId: caseToCreate.accusedNationalId,
+        name: caseToCreate.accusedName,
+        gender: caseToCreate.accusedGender,
+        address: caseToCreate.accusedAddress,
+      })
+    } catch (error) {
+      // Tolerate failure, but log the error
+      this.logger.error(`Failed to create a defendant for case ${caseId}`, {
+        error,
+      })
+    }
+
+    return this.findById(caseId)
   }
 
-  async create(
+  private async createCase(
     caseToCreate: CreateCaseDto,
     prosecutorId?: string,
-  ): Promise<Case> {
+  ): Promise<string> {
     const theCase = await this.caseModel.create({
       ...caseToCreate,
       creatingProsecutorId: prosecutorId,
       prosecutorId,
     })
 
-    return this.findById(theCase.id)
+    return theCase.id
+  }
+
+  async create(
+    caseToCreate: CreateCaseDto,
+    prosecutorId?: string,
+  ): Promise<Case> {
+    const caseId = await this.createCase(caseToCreate, prosecutorId)
+
+    return this.findById(caseId)
   }
 
   async update(
