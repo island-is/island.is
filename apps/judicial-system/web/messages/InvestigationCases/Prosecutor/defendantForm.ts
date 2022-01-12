@@ -73,6 +73,13 @@ export const defendant = {
         description:
           'Notaður sem titill fyrir "upplýsingar um varnaraðila" hlutann á varnaraðila skrefi í rannsóknarheimildum.',
       }),
+      addDefendantButtonText: defineMessage({
+        id:
+          'judicial.system.investigation_cases:defendant.defendant_info.add_defendant_button_text',
+        defaultMessage: 'Bæta við varnaraðila',
+        description:
+          'Notaður sem text í "bæta við varnaraðila" takkann á varnaraðila skrefi í rannsóknarheimildum.',
+      }),
     },
     defenderInfo: {
       heading: defineMessage({

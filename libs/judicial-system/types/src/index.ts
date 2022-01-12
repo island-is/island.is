@@ -51,6 +51,7 @@ export {
   isAcceptingCaseDecision,
   completedCaseStates,
   hasCaseBeenAppealed,
+  isCaseTypeWithMultipleDefendantsSupport,
 } from './lib/case'
 export type {
   Case,

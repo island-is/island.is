@@ -41,6 +41,7 @@ export enum LoginErrorCodes {
 
 export type directionType = 'ascending' | 'descending'
 export type sortableTableColumn = 'defendant' | 'createdAt'
+
 export interface SortConfig {
   column: sortableTableColumn
   direction: directionType

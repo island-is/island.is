@@ -3,14 +3,17 @@ import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { Box, Input, Select, Text } from '@island.is/island-ui/core'
+import { Box, Button, Input, Select, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import { ICaseTypes } from '@island.is/judicial-system/consts'
-import { CaseType } from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  isCaseTypeWithMultipleDefendantsSupport,
+} from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
@@ -168,6 +171,21 @@ const DefendantForm: React.FC<Props> = (props) => {
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
             />
+            {isCaseTypeWithMultipleDefendantsSupport(workingCase.type) && (
+              <Box display="flex" justifyContent="flexEnd" marginTop={3}>
+                <Button
+                  variant="ghost"
+                  icon="add"
+                  onClick={() => {
+                    alert('NOT IMPLEMENTED')
+                  }}
+                >
+                  {formatMessage(
+                    m.sections.defendantInfo.addDefendantButtonText,
+                  )}
+                </Button>
+              </Box>
+            )}
           </Box>
           <AnimatePresence>
             {[
