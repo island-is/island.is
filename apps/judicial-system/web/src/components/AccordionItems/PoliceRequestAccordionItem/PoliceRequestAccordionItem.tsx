@@ -41,27 +41,25 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
     >
       <Box marginBottom={2}>
         <Text variant="h4" as="h4">
-          {formatMessage(core.accused)}
+          {formatMessage(core.accused, {
+            suffix: (workingCase.defendants || []).length > 1 ? 'ar' : 'i',
+          })}
         </Text>
       </Box>
-      {/* TDOO defendants: handle multiple defendants */}
-      <Box marginBottom={1}>
-        <Text>
-          Kennitala:{' '}
-          {workingCase.defendants && workingCase.defendants[0].nationalId}
-        </Text>
-      </Box>
-      <Box marginBottom={1}>
-        <Text>
-          Fullt nafn: {workingCase.defendants && workingCase.defendants[0].name}
-        </Text>
-      </Box>
-      <Box marginBottom={3}>
-        <Text>
-          Lögheimili:{' '}
-          {workingCase.defendants && workingCase.defendants[0].address}
-        </Text>
-      </Box>
+      {workingCase.defendants &&
+        workingCase.defendants.map((defendant, index) => (
+          <Box key={index}>
+            <Box marginBottom={1}>
+              <Text>Kennitala: {defendant.nationalId}</Text>
+            </Box>
+            <Box marginBottom={1}>
+              <Text>Fullt nafn: {defendant.name}</Text>
+            </Box>
+            <Box marginBottom={3}>
+              <Text>Lögheimili: {defendant.address}</Text>
+            </Box>
+          </Box>
+        ))}
       {workingCase.arrestDate && (
         <AccordionListItem title="Tími handtöku">
           <Text>

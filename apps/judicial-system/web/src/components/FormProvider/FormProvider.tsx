@@ -2,10 +2,16 @@ import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseState,
+  CaseType,
+  Gender,
+} from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 
 import { CaseData } from '../../types'
+import faker from 'faker'
 
 type ProviderState =
   | 'fetch'
@@ -90,7 +96,31 @@ const FormProvider = ({ children }: Props) => {
     fetchPolicy: 'no-cache',
     onCompleted: (caseData) => {
       if (caseData?.case) {
-        setWorkingCase(caseData.case)
+        setWorkingCase({
+          ...caseData.case,
+          defendants: [
+            {
+              name: faker.name.findName(),
+              id: faker.datatype.uuid(),
+              created: faker.date.past().toISOString(),
+              modified: faker.date.past().toISOString(),
+              caseId: faker.datatype.uuid(),
+              nationalId: '0000000000',
+              gender: Gender.MALE,
+              address: faker.address.streetAddress(),
+            },
+            {
+              name: faker.name.findName(),
+              id: faker.datatype.uuid(),
+              created: faker.date.past().toISOString(),
+              modified: faker.date.past().toISOString(),
+              caseId: faker.datatype.uuid(),
+              nationalId: '0000000001',
+              gender: Gender.MALE,
+              address: faker.address.streetAddress(),
+            },
+          ],
+        })
 
         // The case has been loaded from the server
         setState('up-to-date')

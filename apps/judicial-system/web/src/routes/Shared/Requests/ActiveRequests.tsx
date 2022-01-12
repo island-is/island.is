@@ -112,7 +112,9 @@ const ActiveRequests: React.FC<Props> = (props) => {
               onClick={() => requestSort('defendant')}
               data-testid="accusedNameSortButton"
             >
-              <Text fontWeight="regular">{formatMessage(core.accused)}</Text>
+              <Text fontWeight="regular">
+                {formatMessage(core.accused, { suffix: 'i' })}
+              </Text>
               <Box
                 className={cn(styles.sortIcon, {
                   [styles.sortAccusedNameAsc]:
