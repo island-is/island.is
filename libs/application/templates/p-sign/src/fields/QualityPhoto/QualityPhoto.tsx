@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { getQualityPhoto } from './hooks/getQualityPhoto'
+import { useQualityPhoto } from './hooks/useQualityPhoto'
 
 interface QualityPhotoData {
   qualityPhoto: string | null
@@ -36,7 +36,7 @@ const Photo: FC<QualityPhotoData> = ({
 }
 
 const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
-  const { qualityPhoto, success } = getQualityPhoto(application)
+  const { qualityPhoto, success } = useQualityPhoto(application)
   const { formatMessage } = useLocale()
   const img = Photo({ qualityPhoto, application })
   return (

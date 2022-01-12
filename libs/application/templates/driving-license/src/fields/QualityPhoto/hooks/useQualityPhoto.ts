@@ -13,22 +13,25 @@ export type HasQualityPhotoData = {
   }
 }
 
-export const getQualityPhoto = (application: Application): QualityPhotoType => {
+export const useQualityPhoto = (application: Application): QualityPhotoType => {
   const hasQualityPhoto = getValueViaPath<HasQualityPhotoData>(
     application.externalData,
     'qualityPhoto',
   )
+
+  const { data } = useQuery(QUALITY_PHOTO, {
+    skip: !hasQualityPhoto?.data?.hasQualityPhoto,
+  })
+
   if (hasQualityPhoto?.data?.hasQualityPhoto === false) {
     return {
       success: false,
       qualityPhoto: null,
     }
   }
-
-  const { data } = useQuery(QUALITY_PHOTO)
-
-  return {
+  const qualityPhoto: QualityPhotoType = {
     success: data?.qualityPhoto?.success,
     qualityPhoto: data?.qualityPhoto?.qualityPhotoDataUri,
-  } as QualityPhotoType
+  }
+  return qualityPhoto
 }
