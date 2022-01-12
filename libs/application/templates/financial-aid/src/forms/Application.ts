@@ -89,6 +89,17 @@ export const Application: Form = buildForm({
         }),
       ],
     }),
+    buildSection({
+      id: 'contactInfo',
+      title: m.contactInfo.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'contactInfo',
+          title: m.contactInfo.general.pageTitle,
+          component: 'ContactInfo',
+        }),
+      ],
+    }),
     // This is here to be able to show submit button on former screen :( :( :(
     buildSection({
       id: '',

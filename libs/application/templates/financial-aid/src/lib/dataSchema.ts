@@ -77,6 +77,14 @@ export const dataSchema = z.object({
     .refine((v) => v, {
       params: error.validation.radioErrorMessage,
     }),
+  contactInfo: z.object({
+    email: z.string().refine((v) => v, {
+      params: error.validation.inputErrorMessage,
+    }),
+    phoneNumber: z.string().refine((v) => v, {
+      params: error.validation.inputErrorMessage,
+    }),
+  }),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>
