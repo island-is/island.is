@@ -19,13 +19,16 @@ const CaseNumbers: React.FC<Props> = ({ workingCase }: Props) => {
           })}
         </Text>
       </Box>
-      {/* TODO defendants: handle multiple defendants */}
       <Text fontWeight="semiBold">{`${formatMessage(core.prosecutor)}: ${
         workingCase.prosecutor?.institution?.name
       }`}</Text>
-      <Text fontWeight="semiBold">{`${formatMessage(core.accused)}: ${
-        workingCase.defendants && workingCase.defendants[0].name
-      }`}</Text>
+      {workingCase.defendants && (
+        <Text fontWeight="semiBold">{`${formatMessage(core.accused, {
+          suffix: workingCase.defendants.length > 0 ? 'ar' : 'i',
+        })}:${workingCase.defendants.map(
+          (defendant) => ` ${defendant.name}`,
+        )}`}</Text>
+      )}
     </>
   )
 }
