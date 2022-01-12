@@ -1,6 +1,9 @@
 import { error } from './messages/index'
 import * as z from 'zod'
-import { HomeCircumstances } from '@island.is/financial-aid/shared/lib'
+import {
+  Employment,
+  HomeCircumstances,
+} from '@island.is/financial-aid/shared/lib'
 import { isValidEmail } from './utils'
 import { ApproveOptions } from './types'
 
@@ -51,6 +54,24 @@ export const dataSchema = z.object({
   income: z.enum([ApproveOptions.Yes, ApproveOptions.No]).refine((v) => v, {
     params: error.validation.radioErrorMessage,
   }),
+  employment: z
+    .object({
+      type: z
+        .enum([
+          Employment.WORKING,
+          Employment.UNEMPLOYED,
+          Employment.CANNOTWORK,
+          Employment.OTHER,
+        ])
+        .refine((v) => v, {
+          params: error.validation.radioErrorMessage,
+        }),
+      custom: z.string().optional(),
+    })
+    .refine((v) => (v.type === Employment.OTHER ? v.custom : true), {
+      params: error.validation.inputErrorMessage,
+      path: ['custom'],
+    }),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>

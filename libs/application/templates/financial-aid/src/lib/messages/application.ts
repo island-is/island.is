@@ -33,3 +33,12 @@ export const approveOptions = defineMessages({
     description: 'Applicant selected yes as his answer',
   },
 })
+
+export const input = defineMessages({
+  label: {
+    id: 'fa.application:section.input.label',
+    defaultMessage: 'Lýstu þínum aðstæðum',
+    description:
+      'Input label for custom answers, describing your circumstances',
+  },
+})

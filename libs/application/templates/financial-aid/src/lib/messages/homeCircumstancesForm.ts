@@ -54,11 +54,4 @@ export const homeCircumstancesForm = {
       description: 'If home circumstances dont apply to applicant',
     },
   }),
-  input: defineMessages({
-    label: {
-      id: 'fa.application:section.homeCircumstancesForm.general.inputLabel',
-      defaultMessage: 'Lýstu þínum aðstæðum',
-      description: 'Home circumstances custom form input label',
-    },
-  }),
 }
