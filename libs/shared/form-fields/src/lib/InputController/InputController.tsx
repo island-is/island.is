@@ -80,7 +80,9 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
-          onChange={(e) => {
+          onChange={(
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => {
             if (onInputChange) {
               onInputChange(e)
             }
@@ -108,7 +110,9 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
-          onChange={(e) => {
+          onChange={(
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => {
             if (onInputChange) {
               onInputChange(e)
             }
@@ -136,7 +140,9 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
-          onChange={(e) => {
+          onChange={(
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => {
             if (onInputChange) {
               onInputChange(e)
             }
