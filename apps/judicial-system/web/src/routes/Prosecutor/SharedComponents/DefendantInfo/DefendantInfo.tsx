@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import { Gender } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
-import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
+import { Box, Icon, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   removeTabsValidateAndSet,
