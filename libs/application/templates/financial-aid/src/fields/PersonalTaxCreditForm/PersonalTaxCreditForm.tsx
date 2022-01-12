@@ -3,10 +3,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { FAFieldBaseProps, ApproveOptions } from '../../lib/types'
 import { useIntl } from 'react-intl'
 import { personalTaxCreditForm } from '../../lib/messages'
-import * as styles from '../Shared.css'
-import cn from 'classnames'
-import { InputController, RadioController } from '@island.is/shared/form-fields'
-import { useFormContext } from 'react-hook-form'
+import { RadioController } from '@island.is/shared/form-fields'
 
 const PersonalTaxCreditForm = ({
   field,
