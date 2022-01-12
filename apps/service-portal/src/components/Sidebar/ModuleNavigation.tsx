@@ -41,7 +41,6 @@ const ModuleNavigation: FC<Props> = ({
       pathname.includes(nav.path)) ||
     nav.children?.find((x) => x.path && pathname.includes(x.path)) !==
       undefined ||
-    expand ||
     nav.path === pathname
 
   const handleExpand = () => {
