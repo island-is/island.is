@@ -68,6 +68,17 @@ export const Application: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'incomeForm',
+      title: m.incomeForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'income',
+          title: m.incomeForm.general.pageTitle,
+          component: 'IncomeForm',
+        }),
+      ],
+    }),
+    buildSection({
       id: 'bankInfoForm',
       title: m.bankInfoForm.general.sectionTitle,
       children: [
@@ -75,6 +86,18 @@ export const Application: Form = buildForm({
           id: 'bankInfoForm',
           title: m.bankInfoForm.general.pageTitle,
           component: 'BankInfoForm',
+        }),
+      ],
+    }),
+    // This is here to be able to show submit button on former screen :( :( :(
+    buildSection({
+      id: '',
+      title: '',
+      children: [
+        buildCustomField({
+          id: '',
+          title: '',
+          component: '',
         }),
       ],
     }),
