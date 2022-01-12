@@ -1,12 +1,10 @@
 import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
-import { FAFieldBaseProps, ApproveOptions } from '../../lib/types'
+import { FAFieldBaseProps } from '../../lib/types'
 import { useIntl } from 'react-intl'
 import { bankInfoForm } from '../../lib/messages'
 import * as styles from '../Shared.css'
-import cn from 'classnames'
 import { InputController } from '@island.is/shared/form-fields'
-import { useFormContext } from 'react-hook-form'
 
 const BankInfoForm = ({ field, errors, application }: FAFieldBaseProps) => {
   const { id } = field
