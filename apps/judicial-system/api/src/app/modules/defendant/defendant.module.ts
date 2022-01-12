@@ -1,4 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common'
 
-@Module({})
+import { DefendantResolver } from './defendant.resolver'
+
+@Module({
+  providers: [DefendantResolver],
+})
 export class DefendantModule {}

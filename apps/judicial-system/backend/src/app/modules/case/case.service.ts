@@ -345,6 +345,19 @@ export class CaseService {
     await Promise.all(emailPromises)
   }
 
+  private async createCase(
+    caseToCreate: CreateCaseDto,
+    prosecutorId?: string,
+  ): Promise<string> {
+    const theCase = await this.caseModel.create({
+      ...caseToCreate,
+      creatingProsecutorId: prosecutorId,
+      prosecutorId,
+    })
+
+    return theCase.id
+  }
+
   async findById(caseId: string): Promise<Case> {
     const theCase = await this.caseModel.findOne({
       where: { id: caseId },
@@ -420,19 +433,6 @@ export class CaseService {
     }
 
     return this.findById(caseId)
-  }
-
-  private async createCase(
-    caseToCreate: CreateCaseDto,
-    prosecutorId?: string,
-  ): Promise<string> {
-    const theCase = await this.caseModel.create({
-      ...caseToCreate,
-      creatingProsecutorId: prosecutorId,
-      prosecutorId,
-    })
-
-    return theCase.id
   }
 
   async create(

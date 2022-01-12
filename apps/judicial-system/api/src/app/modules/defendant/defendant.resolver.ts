@@ -1,0 +1,47 @@
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { Inject, UseGuards } from '@nestjs/common'
+
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+
+import {
+  AuditedAction,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
+import {
+  CurrentGraphQlUser,
+  JwtGraphQlAuthGuard,
+} from '@island.is/judicial-system/auth'
+import { User } from '@island.is/judicial-system/types'
+
+import { BackendAPI } from '../../../services'
+import { CreateDefendantInput } from './dto/createDefendant.input'
+import { Defendant } from './models/defendant.model'
+
+@UseGuards(JwtGraphQlAuthGuard)
+@Resolver()
+export class DefendantResolver {
+  constructor(
+    private readonly auditTrailService: AuditTrailService,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
+  ) {}
+
+  @Mutation(() => Defendant, { nullable: true })
+  createDefendant(
+    @Args('input', { type: () => CreateDefendantInput })
+    input: CreateDefendantInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Defendant> {
+    const { caseId, ...createDefendant } = input
+    this.logger.debug(`Creating a new defendant for case ${caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.CREATE_DEFENDANT,
+      backendApi.createDefendant(caseId, createDefendant),
+      (theDefendant) => theDefendant.id,
+    )
+  }
+}

@@ -8,6 +8,10 @@ import type { Gender, CreateDefendant } from '@island.is/judicial-system/types'
 export class CreateDefendantInput implements CreateDefendant {
   @Allow()
   @Field()
+  readonly caseId!: string
+
+  @Allow()
+  @Field()
   readonly nationalId?: string
 
   @Allow()
