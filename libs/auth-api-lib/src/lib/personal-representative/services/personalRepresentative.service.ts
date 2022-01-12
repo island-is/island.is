@@ -12,6 +12,7 @@ import { PersonalRepresentativeCreateDTO } from '../entities/dto/personal-repres
 import { PaginatedPersonalRepresentativeDto } from '../entities/dto/paginated-personal-representative.dto'
 import { PaginationWithNationalIdsDto } from '../entities/dto/pagination-with-national-ids.dto'
 import { paginate } from '@island.is/nest/pagination'
+import { PersonalRepresentativeType } from '../entities/models/personal-representative-type.model'
 
 @Injectable()
 export class PersonalRepresentativeService {
@@ -193,6 +194,7 @@ export class PersonalRepresentativeService {
           {
             model: PersonalRepresentativeRight,
             required: true,
+            include: [PersonalRepresentativeRightType],
           },
         ],
       },

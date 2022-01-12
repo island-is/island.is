@@ -229,6 +229,10 @@ describe('PersonalRepresentativeController', () => {
       // Test delete personal rep
       await server.delete(`${path}/${personalRep.id}`).expect(204)
     })
+    it('DELETE /v1/personal-representatives should return NotFound when trying to delete non existing personal rep', async () => {
+      // Test delete personal rep
+      await server.delete(`${path}/notexisting`).expect(204)
+    })
   })
 
   describe('Get', () => {
@@ -251,6 +255,29 @@ describe('PersonalRepresentativeController', () => {
       const responseData: PaginatedPersonalRepresentativeDto = response.body
       expect(responseData.data[0]).toMatchObject(personalRep)
     })
+  })
+
+  it('Get v1/personal-representatives should get a specific personal rep connection', async () => {
+    // Create right types
+    await prRightTypeModel.bulkCreate(rightTypeList)
+    // Create type
+    await prTypeModel.create(personalRepresentativeType)
+
+    // Creating personal rep
+    const personalRep = await setupBasePersonalRep({
+      ...simpleRequestData,
+      rightCodes: rightTypeList.map((rt) => rt.code),
+      personalRepresentativeTypeCode: personalRepresentativeType.code,
+    })
+
+    // Test get personal rep
+    console.log(personalRep)
+    const response = await server.get(`${path}/${personalRep.id}`).expect(200)
+    expect(response.body).toMatchObject(personalRep)
+  })
+
+  it('Get v1/personal-representatives should return notfound for a connection id that does not exist', async () => {
+    await server.get(`${path}/notexisting`).expect(404)
   })
 
   it('Get v1/personal-representatives should get all connections for a personal rep', async () => {

@@ -85,6 +85,7 @@ export class PersonalRepresentativesController {
     resources: (pr) => pr.id ?? '',
   })
   async get(@Param('id') id: string): Promise<PersonalRepresentativeDTO> {
+    console.log(id)
     const personalRepresentative = await this.prService.getPersonalRepresentative(
       id,
     )
