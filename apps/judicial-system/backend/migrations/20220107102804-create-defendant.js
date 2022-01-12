@@ -33,7 +33,7 @@ module.exports = {
             },
             national_id: {
               type: Sequelize.STRING,
-              allowNull: false,
+              allowNull: true,
             },
             name: {
               type: Sequelize.STRING,
