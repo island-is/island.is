@@ -11,13 +11,12 @@ import { FC, Reducer, useEffect, useMemo, useReducer } from 'react'
 import { produce, setAutoFreeze, Draft } from 'immer'
 import { useHistory } from 'react-router-dom'
 import { Step } from '../types'
+import { getInputFieldsWithErrors, useLocale } from '../utils'
 import {
   findAffectedRegulationsInText,
   findRegulationType,
   findSignatureInText,
-  getInputFieldsWithErrors,
-  useLocale,
-} from '../utils'
+} from '../utils/guessers'
 import { RegulationsAdminScope } from '@island.is/auth/scopes'
 import { DraftingStatus, RegulationDraft } from '@island.is/regulations/admin'
 import {
