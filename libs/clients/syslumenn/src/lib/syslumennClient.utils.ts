@@ -70,7 +70,7 @@ export const mapSyslumennAuction = (auction: Uppbod): SyslumennAuction => ({
   office: auction.embaetti ?? '',
   location: auction.starfsstod ?? '',
   auctionType: auction.tegund ?? '',
-  lotType: auction.andlag ?? '',
+  lotType: auction?.andlag?.trim() ?? '',
   lotName: auction.andlagHeiti ?? '',
   lotId: auction.fastanumer ?? '',
   lotItems: auction.lausafjarmunir ?? '',
@@ -78,6 +78,7 @@ export const mapSyslumennAuction = (auction: Uppbod): SyslumennAuction => ({
   auctionTime: auction.klukkan ?? '',
   petitioners: auction.gerdarbeidendur ?? '',
   respondent: auction.gerdartholar ?? '',
+  auctionTakesPlaceAt: auction.uppbodStadur ?? '',
 })
 
 export const mapOperatingLicense = (
