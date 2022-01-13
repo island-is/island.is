@@ -1,7 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { paginate } from '@island.is/nest/pagination'
 
 import { RecyclingRequestModel } from '../recyclingRequest'
 import { RecyclingPartnerModel } from '../recyclingPartner'
@@ -12,44 +14,31 @@ export class VehicleService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @InjectModel(VehicleModel)
+    private vehicleModel: VehicleModel,
   ) {}
 
-  async findAll(): Promise<VehicleModel[]> {
-    this.logger.info('Getting all vehicles...')
-    try {
-      return await VehicleModel.findAll({
-        include: [
-          {
-            model: RecyclingRequestModel,
+  async findAllDeregistered(first: number, after: string) {
+    return paginate<VehicleModel>({
+      Model: this.vehicleModel,
+      limit: first,
+      after,
+      primaryKeyField: 'vehicleId',
+      orderOption: [['updatedAt', 'DESC']],
+      include: [
+        {
+          model: RecyclingRequestModel,
+          where: {
+            requestType: 'deregistered',
           },
-        ],
-      })
-    } catch (error) {
-      this.logger.error('error finding all vehicles:' + error)
-    }
-  }
-
-  async findAllDeregistered(): Promise<VehicleModel[]> {
-    this.logger.info('finding all deregistered vehicles...')
-    try {
-      return await VehicleModel.findAll({
-        include: [
-          {
-            model: RecyclingRequestModel,
-            where: {
-              requestType: 'deregistered',
+          include: [
+            {
+              model: RecyclingPartnerModel,
             },
-            include: [
-              {
-                model: RecyclingPartnerModel,
-              },
-            ],
-          },
-        ],
-      })
-    } catch (error) {
-      this.logger.error('error finding all deregistered vehicles:' + error)
-    }
+          ],
+        },
+      ],
+    })
   }
 
   async findByVehicleId(vehicleId: string): Promise<VehicleModel> {
@@ -68,6 +57,7 @@ export class VehicleService {
       this.logger.info(
         `starting creating vehicle with vehicle id - ${vehicle.vehicleId}...`,
       )
+
       // Check if Vehicle is already in database
       const findVehicle = await this.findByVehicleId(vehicle.vehicleId)
       if (findVehicle) {

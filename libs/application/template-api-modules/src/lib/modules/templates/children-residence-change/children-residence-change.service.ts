@@ -5,7 +5,7 @@ import {
   Person,
   Attachment,
   PersonType,
-} from '@island.is/api/domains/syslumenn'
+} from '@island.is/clients/syslumenn'
 import {
   getSelectedChildrenFromExternalData,
   formatDate,
@@ -150,7 +150,7 @@ export class ChildrenResidenceChangeService {
           fileContent.toString('binary'),
           answers.parentA.email,
           syslumennData.name,
-          response?.malsnumer,
+          response?.caseNumber,
         ),
       (application as unknown) as Application,
     )
@@ -162,7 +162,7 @@ export class ChildrenResidenceChangeService {
           fileContent.toString('binary'),
           answers.parentB.email,
           syslumennData.name,
-          response?.malsnumer,
+          response?.caseNumber,
         ),
       (application as unknown) as Application,
     )

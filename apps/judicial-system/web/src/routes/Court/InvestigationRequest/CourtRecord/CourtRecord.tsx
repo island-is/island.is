@@ -34,10 +34,7 @@ const CourtRecord = () => {
       const defaultCourtAttendees = (wc: Case): string => {
         let attendees = ''
 
-        if (
-          wc.prosecutor &&
-          wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
-        ) {
+        if (wc.prosecutor) {
           attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n`
         }
 
@@ -53,7 +50,6 @@ const CourtRecord = () => {
 
         if (
           wc.defenderName &&
-          wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION &&
           wc.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
         ) {
           attendees += `\n${wc.defenderName} skipaður ${
@@ -61,10 +57,7 @@ const CourtRecord = () => {
           } varnaraðila`
         }
 
-        if (
-          wc.translator &&
-          wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
-        ) {
+        if (wc.translator) {
           attendees += `\n${wc.translator} túlkur`
         }
 
@@ -95,14 +88,6 @@ const CourtRecord = () => {
 
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)
-      }
-
-      if (theCase.sessionArrangements === SessionArrangements.REMOTE_SESSION) {
-        autofill(
-          'litigationPresentations',
-          formatMessage(m.sections.litigationPresentations.autofill),
-          theCase,
-        )
       }
 
       if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {

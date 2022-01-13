@@ -5,7 +5,6 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Sequelize } from 'sequelize-typescript'
 import { UpdateStaffDto, CreateStaffDto } from './dto'
 import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
@@ -49,9 +48,10 @@ export class StaffService {
       where: {
         municipalityId,
       },
-      order: Sequelize.literal(
-        'CASE WHEN active = true THEN 0 ELSE 1 END, name ASC',
-      ),
+      order: [
+        ['active', 'DESC'],
+        ['name', 'ASC'],
+      ],
     })
   }
 

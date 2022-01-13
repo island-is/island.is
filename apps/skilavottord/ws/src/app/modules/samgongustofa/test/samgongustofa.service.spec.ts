@@ -40,7 +40,7 @@ const getBasicVehicleResp: AxiosResponse = {
 }
 
 describe('skilavottordApiTest', () => {
-  describe('getVehicleInformationTest', () => {
+  describe('getUserVehiclesInformationTest', () => {
     let recyclingRequestService: RecyclingRequestService
     let samgongustofaService: SamgongustofaService
     let httpService: HttpService
@@ -71,10 +71,10 @@ describe('skilavottordApiTest', () => {
       httpService = moduleRef.get<HttpService>(HttpService)
     })
 
-    describe('samgongustofaGetVehicleInformation', () => {
+    describe('samgongustofaGetUserVehiclesInformation', () => {
       it('get vehicle info', async () => {
         const kennitala = '1234567890'
-        const httpServiceSpy = jest
+        jest
           .spyOn(httpService, 'post')
           .mockImplementationOnce(() => of(getAllVehilceResp))
           .mockImplementationOnce(() => of(getBasicVehicleResp))
@@ -84,7 +84,7 @@ describe('skilavottordApiTest', () => {
             'findAllWithPermno',
           )
           .mockImplementation(() => Promise.resolve([recyclingRequestModel]))
-        const checkVehileResp = await samgongustofaService.getVehicleInformation(
+        const checkVehileResp = await samgongustofaService.getUserVehiclesInformation(
           kennitala,
         )
         expect(checkVehileResp[0].permno).toBe('BAT01')

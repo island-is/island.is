@@ -12,6 +12,7 @@ import {
   getCustodyAndTravelBanProsecutorSection,
   getExtenstionSections,
   getInvestigationCaseCourtSections,
+  getInvestigationCaseExtenstionSections,
   getInvestigationCaseProsecutorSection,
 } from '@island.is/judicial-system-web/src/utils/sections'
 
@@ -102,7 +103,12 @@ export const getSections = (
         workingCase,
       ),
     },
-    getExtenstionSections(workingCase || ({} as Case), activeSubSection),
+    isRestrictionCase(workingCase?.type)
+      ? getExtenstionSections(workingCase || ({} as Case), activeSubSection)
+      : getInvestigationCaseExtenstionSections(
+          workingCase || ({} as Case),
+          activeSubSection,
+        ),
     getCourtSections(workingCase || ({} as Case), user, activeSubSection),
   ]
 }
