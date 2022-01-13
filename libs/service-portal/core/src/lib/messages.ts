@@ -455,6 +455,10 @@ export const m = defineMessages({
     id: 'service.portal:display-name',
     defaultMessage: 'Birtingarnafn',
   },
+  fullName: {
+    id: 'service.portal:full-name',
+    defaultMessage: 'Fullt nafn',
+  },
   gender: {
     id: 'service.portal:gender',
     defaultMessage: 'Kyn',

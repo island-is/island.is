@@ -15,12 +15,25 @@ import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/FamilyMemberCardLoader'
 
-const NationalRegistryFamilyQuery = gql`
-  query NationalRegistryFamilyQuery {
-    nationalRegistryFamily {
+const NationalRegistryCurrentUserQuery = gql`
+  query NationalRegistryCurrentUserQuery {
+    nationalRegistryUser {
       nationalId
+      spouse {
+        name
+        nationalId
+        cohabitant
+      }
+    }
+  }
+`
+
+const NationalRegistryChildrenQuery = gql`
+  query NationalRegistryChildrenQuery {
+    nationalRegistryChildren {
+      nationalId
+      displayName
       fullName
-      familyRelation
     }
   }
 `
@@ -28,11 +41,18 @@ const NationalRegistryFamilyQuery = gql`
 const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const { data, loading, error, called } = useQuery<Query>(
-    NationalRegistryFamilyQuery,
-  )
-  const { nationalRegistryFamily } = data || {}
 
+  const { data, loading, error, called } = useQuery<Query>(
+    NationalRegistryCurrentUserQuery,
+  )
+  const { nationalRegistryUser } = data || {}
+
+  const { data: childrenData, loading: childrenLoading } = useQuery<Query>(
+    NationalRegistryChildrenQuery,
+  )
+  const { nationalRegistryChildren } = childrenData || {}
+
+  const spouseData = nationalRegistryUser?.spouse
   return (
     <>
       <Box marginBottom={[2, 3, 5]}>
@@ -53,39 +73,34 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
           </GridColumn>
         </GridRow>
       </Box>
-      {error && (
-        <Box textAlign="center">
-          <Text variant="h3" as="h3">
-            {formatMessage({
-              id: 'sp.family:could-not-fetch-family-info',
-              defaultMessage:
-                'Tókst ekki að sækja upplýsingar um fjölskyldu, eitthvað fór úrskeiðis',
-            })}
-          </Text>
-        </Box>
-      )}
       <Stack space={2}>
-        {called &&
-          !loading &&
-          !error &&
-          nationalRegistryFamily?.length === 0 && (
-            <AlertMessage type="info" title={formatMessage(m.noDataPresent)} />
-          )}
+        {called && !loading && !error && !nationalRegistryUser && (
+          <AlertMessage type="info" title={formatMessage(m.noDataPresent)} />
+        )}
         <FamilyMemberCard
           title={userInfo.profile.name || ''}
           nationalId={userInfo.profile.nationalId}
           currentUser
         />
-        {loading &&
-          [...Array(3)].map((_key, index) => (
+        {loading && <FamilyMemberCardLoader />}
+        {spouseData && (
+          <FamilyMemberCard
+            key={nationalRegistryUser?.spouse?.nationalId}
+            title={nationalRegistryUser?.spouse?.name || ''}
+            nationalId={nationalRegistryUser?.spouse?.nationalId || ''}
+            familyRelation="spouse"
+          />
+        )}
+        {childrenLoading &&
+          [...Array(2)].map((_key, index) => (
             <FamilyMemberCardLoader key={index} />
           ))}
-        {nationalRegistryFamily?.map((familyMember, index) => (
+        {nationalRegistryChildren?.map((familyMember) => (
           <FamilyMemberCard
-            key={index}
-            title={familyMember.fullName}
+            key={familyMember.nationalId}
+            title={familyMember.fullName || familyMember.displayName || ''}
             nationalId={familyMember.nationalId}
-            familyRelation={familyMember.familyRelation}
+            familyRelation="child"
           />
         ))}
       </Stack>
