@@ -21,9 +21,9 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
       NATIONAL_REGISTRY_URL:
         '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL',
       XROAD_BASE_PATH_WITH_ENV: '/k8s/air-discount-scheme/XROAD_BASE_PATH_WITH_ENV',
-      XROAD_NATIONAL_REGISTRY_MEMBER_CODE: '/k8s/air-discount-scheme/XROAD_NATIONAL_REGISTRY_MEMBER_CODE',
-      XROAD_NATIONAL_REGISTRY_API_PATH: '/k8s/air-discount-scheme/XROAD_NATIONAL_REGISTRY_API_PATH',
-      XROAD_NATIONAL_REGISTRY_CLIENT_ID: '/k8s/air-discount-scheme/XROAD_NATIONAL_REGISTRY_CLIENT_ID',
+      XROAD_TJODSKRA_MEMBER_CODE: '/k8s/air-discount-scheme/XROAD_TJODSKRA_MEMBER_CODE',
+      XROAD_TJODSKRA_API_PATH: '/k8s/air-discount-scheme/XROAD_TJODSKRA_API_PATH',
+      XROAD_CLIENT_ID: '/k8s/air-discount-scheme/XROAD_TJODSKRA_CLIENT_ID',
     })
     .env({
       ENVIRONMENT: {

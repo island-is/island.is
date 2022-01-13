@@ -12,10 +12,10 @@ const devConfig = {
     username: process.env.NATIONAL_REGISTRY_USERNAME,
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
     xroad: {
-      basePath: 'http://localhost:8081/r1/IS-DEV',
-      memberCode: process.env.XROAD_NATIONAL_REGISTRY_MEMBER_CODE ?? '10001',
-      apiPath: process.env.XROAD_NATIONAL_REGISTRY_API_PATH ?? '/SKRA-Protected/Einstaklingar-v1',
-      clientId: process.env.XROAD_NATIONAL_REGISTRY_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
+      basePath: 'http://localhost:8081/r1/IS-DEV', // process.env.XROAD_BASE_PATH_WITH_ENV
+      memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE ?? '10001',
+      apiPath: process.env.XROAD_TJODSKRA_API_PATH ?? '/SKRA-Protected/Einstaklingar',
+      clientId: process.env.XROAD_TJODSKRA_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
       memberClass: XRoadMemberClass.GovernmentInstitution
     },
     // authMiddlewareOptions: {
@@ -70,9 +70,9 @@ const prodConfig = {
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
     xroad: {
       basePath: process.env.XROAD_BASE_PATH_WITH_ENV,
-      memberCode: process.env.XROAD_NATIONAL_REGISTRY_MEMBER_CODE,
-      apiPath: process.env.XROAD_NATIONAL_REGISTRY_API_PATH,
-      clientId: process.env.XROAD_NATIONAL_REGISTRY_CLIENT_ID,
+      memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE,
+      apiPath: process.env.XROAD_TJODSKRA_API_PATH,
+      clientId: process.env.XROAD_TJODSKRA_CLIENT_ID,
       memberClass: XRoadMemberClass.GovernmentInstitution
     },
     // authMiddlewareOptions: {
