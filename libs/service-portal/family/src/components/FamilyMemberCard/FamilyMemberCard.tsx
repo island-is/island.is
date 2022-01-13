@@ -14,7 +14,7 @@ import * as styles from './FamilyMemberCard.css'
 interface Props {
   title: string
   nationalId?: string
-  familyRelation?: string
+  familyRelation?: 'child' | 'spouse'
   currentUser?: boolean
 }
 
@@ -41,6 +41,11 @@ export const FamilyMemberCard: FC<Props> = ({
           id: 'sp.family:family-member',
           defaultMessage: 'Fjölskyldumeðlimur',
         })
+
+  const link = (nationalId: string) =>
+    familyRelation === 'spouse'
+      ? ServicePortalPath.Spouse.replace(':nationalId', nationalId)
+      : ServicePortalPath.FamilyMember.replace(':nationalId', nationalId)
 
   return (
     <Box
@@ -96,10 +101,7 @@ export const FamilyMemberCard: FC<Props> = ({
             to={{
               pathname: currentUser
                 ? ServicePortalPath.UserInfo
-                : ServicePortalPath.FamilyMember.replace(
-                    ':nationalId',
-                    nationalId,
-                  ),
+                : link(nationalId),
             }}
           >
             <Button variant="text" size="small">

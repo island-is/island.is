@@ -20,19 +20,13 @@ import {
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
-const NationalRegistryChildrenQuery = gql`
-  query NationalRegistryChildrenQuery {
-    nationalRegistryChildren {
+const NationalRegistryCurrentUserQuery = gql`
+  query NationalRegistryCurrentUserQuery {
+    nationalRegistryUser {
       nationalId
-      fullName
-      genderDisplay
-      birthplace
-      custody1
-      custodyText1
-      nameCustody1
-      custody2
-      custodyText2
-      nameCustody2
+      spouseName
+      spouseNationalId
+      spouseCohab
     }
   }
 `
@@ -47,14 +41,16 @@ const FamilyMember: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
 
   const { data, loading, error, called } = useQuery<Query>(
-    NationalRegistryChildrenQuery,
+    NationalRegistryCurrentUserQuery,
   )
-  const { nationalRegistryChildren } = data || {}
+  const { nationalRegistryUser } = data || {}
 
   const { nationalId }: { nationalId: string | undefined } = useParams()
 
   const person =
-    nationalRegistryChildren?.find((x) => x.nationalId === nationalId) || null
+    nationalRegistryUser?.spouseNationalId === nationalId
+      ? nationalRegistryUser
+      : null
 
   if (!nationalId || error || (!loading && !person))
     return (
@@ -66,7 +62,6 @@ const FamilyMember: ServicePortalModuleComponent = () => {
       />
     )
 
-  console.log('person', person)
   return (
     <>
       <Box marginBottom={6}>
@@ -74,7 +69,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
               <Text variant="h3" as="h1">
-                {person?.fullName || ''}
+                {person?.spouseName || ''}
               </Text>
             </Stack>
           </GridColumn>
@@ -83,7 +78,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
       <Stack space={1}>
         <UserInfoLine
           label={defineMessage(m.displayName)}
-          content={person?.fullName || '...'}
+          content={person?.spouseName || '...'}
           loading={loading}
         />
         <Divider />
@@ -94,52 +89,11 @@ const FamilyMember: ServicePortalModuleComponent = () => {
         />
         <Divider />
         <UserInfoLine
-          label={defineMessage(m.gender)}
+          label="Tengsl"
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : person?.genderDisplay || ''
-          }
-          loading={loading}
-        />
-        <Divider />
-        <UserInfoLine
-          label="Fæðingarstaður"
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : person?.birthplace || ''
-          }
-          loading={loading}
-        />
-        <Divider />
-        <UserInfoLine
-          label="Foreldrar"
-          renderContent={() =>
-            error ? (
-              <span>{formatMessage(dataNotFoundMessage)}</span>
-            ) : (
-              <Box>
-                <Box marginBottom={2}>
-                  <Text fontWeight="semiBold" variant="small">
-                    {person?.custodyText1}
-                  </Text>
-                  <Text variant="small">{person?.nameCustody1} </Text>
-                  <Text variant="small">
-                    {person?.custody1 ? formatNationalId(person.custody1) : ''}{' '}
-                  </Text>
-                </Box>
-                <Box>
-                  <Text fontWeight="semiBold" variant="small">
-                    {person?.custodyText2}
-                  </Text>
-                  <Text variant="small">{person?.nameCustody2} </Text>
-                  <Text variant="small">
-                    {person?.custody2 ? formatNationalId(person.custody2) : ''}{' '}
-                  </Text>
-                </Box>
-              </Box>
-            )
+              : person?.spouseCohab || ''
           }
           loading={loading}
         />

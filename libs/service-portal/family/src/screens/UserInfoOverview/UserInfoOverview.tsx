@@ -44,12 +44,9 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   )
   const { nationalRegistryUser } = data || {}
 
-  const {
-    data: childrenData,
-    loading: childrenLoading,
-    error: childrenError,
-    called: childrenCalled,
-  } = useQuery<Query>(NationalRegistryChildrenQuery)
+  const { data: childrenData, loading: childrenLoading } = useQuery<Query>(
+    NationalRegistryChildrenQuery,
+  )
   const { nationalRegistryChildren } = childrenData || {}
 
   const spouseData =
@@ -76,24 +73,10 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
           </GridColumn>
         </GridRow>
       </Box>
-      {childrenError && (
-        <Box textAlign="center" marginBottom={2}>
-          <Text variant="h4" as="h2">
-            {formatMessage({
-              id: 'sp.family:could-not-fetch-family-info',
-              defaultMessage:
-                'Tókst ekki að sækja upplýsingar um fjölskyldu, eitthvað fór úrskeiðis',
-            })}
-          </Text>
-        </Box>
-      )}
       <Stack space={2}>
-        {childrenCalled &&
-          !childrenLoading &&
-          !childrenError &&
-          nationalRegistryChildren?.length === 0 && (
-            <AlertMessage type="info" title={formatMessage(m.noDataPresent)} />
-          )}
+        {called && !loading && !error && !nationalRegistryUser && (
+          <AlertMessage type="info" title={formatMessage(m.noDataPresent)} />
+        )}
         <FamilyMemberCard
           title={userInfo.profile.name || ''}
           nationalId={userInfo.profile.nationalId}
