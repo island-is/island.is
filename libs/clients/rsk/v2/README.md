@@ -1,4 +1,5 @@
-# RSK V2
+<!-- gitbook-navigation: "V2" -->
+# RSK V2 Client
 
 This library was generated with [Nx](https://nx.dev).
 

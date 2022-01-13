@@ -1,4 +1,5 @@
-# Clients Finance
+<!-- gitbook-navigation: "Finance" -->
+# Finance Client
 
 This library was generated with [Nx](https://nx.dev).
 

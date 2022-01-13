@@ -1,4 +1,5 @@
-# Audit Module
+<!-- gitbook-navigation: "Audit" -->
+# Nest Audit Module
 
 This library provides a NestJS module to handle audit logging in our backend services.
 

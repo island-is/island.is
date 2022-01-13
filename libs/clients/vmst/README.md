@@ -1,4 +1,5 @@
-# VMST
+<!-- gitbook-navigation: "VMST" -->
+# VMST Client
 
 ## About
 

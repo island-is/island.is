@@ -1,3 +1,4 @@
+<!-- gitbook-navigation: "Swagger" -->
 # Nest Swagger
 
 The purpose of this library is to make REST documentation easier by combining

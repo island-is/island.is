@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # Icelandic Names Registry
 
 ## About

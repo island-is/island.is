@@ -1,3 +1,4 @@
+<!-- gitbook-navigation: "Feature Flags" -->
 # Nest Feature Flags
 
 A Nest module which wraps our low level [feature flagging library](../../feature-flags/README.md) with some handy nest utilities.

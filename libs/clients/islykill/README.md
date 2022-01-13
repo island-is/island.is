@@ -1,4 +1,5 @@
-# Clients Islykill
+<!-- gitbook-navigation: "Islykill" -->
+# Islykill Client
 
 ## About
 

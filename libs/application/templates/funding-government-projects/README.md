@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # Application Templates Funding Government Projects
 
 This library was generated with [Nx](https://nx.dev).
