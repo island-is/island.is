@@ -16,12 +16,22 @@ export const UserButton = ({ onClick, user: { profile } }: UserButtonProps) => {
   return (
     <>
       <Hidden above="xs">
-        <UserAvatar
-          isDelegation={isDelegation}
-          username={profile.name}
+        <Button
+          variant="utility"
+          colorScheme={isDelegation ? 'primary' : 'default'}
           onClick={onClick}
+          icon="person"
+          iconType="outline"
           aria-label={formatMessage(userMessages.userButtonAria)}
-        />
+        >
+          <div className={styles.resetButtonPadding}>
+            {
+              <Inline space={1} alignY="center">
+                {profile.name.split(' ')[0]}
+              </Inline>
+            }
+          </div>
+        </Button>
       </Hidden>
       <Hidden below="sm">
         <Button
@@ -38,10 +48,7 @@ export const UserButton = ({ onClick, user: { profile } }: UserButtonProps) => {
                 <div className={styles.actorName}>{profile.actor!.name}</div>
               </>
             ) : (
-              <Inline space={1} alignY="center">
-                <UserAvatar size="small" username={profile.name} />
-                {profile.name}
-              </Inline>
+              profile.name
             )}
           </div>
         </Button>

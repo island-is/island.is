@@ -386,6 +386,9 @@
     "email-service": {
       "tags": []
     },
+    "external-contracts-tests": {
+      "tags": []
+    },
     "feature-flags": {
       "tags": []
     },
@@ -543,6 +546,9 @@
       "tags": []
     },
     "nest-problem": {
+      "tags": []
+    },
+    "nest-swagger": {
       "tags": []
     },
     "nest-validators": {

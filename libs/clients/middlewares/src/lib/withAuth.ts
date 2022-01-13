@@ -21,7 +21,7 @@ export const withAuth = ({
       headers.set('user-agent', auth.userAgent)
     }
     if (forwardAuthUserAgent && auth.ip) {
-      headers.set('x-real-ip', auth.ip)
+      headers.set('x-forwarded-for', auth.ip)
     }
     return fetch(input, { ...init, headers })
   }

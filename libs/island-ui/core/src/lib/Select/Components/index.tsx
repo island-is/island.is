@@ -17,6 +17,7 @@ import {
 import { Icon } from '../../IconRC/Icon'
 import * as styles from '../Select.css'
 import { SelectProps, Option as ReactSelectOption } from '../Select'
+import { labelSizes } from '../../Input/Input.mixins'
 
 export const Menu = (props: MenuProps<ReactSelectOption>) => (
   <components.Menu className={styles.menu} {...props} />
@@ -58,11 +59,12 @@ export const IndicatorsContainer = (
   props: IndicatorContainerProps<ReactSelectOption>,
 ) => {
   const { icon } = props.selectProps
-
+  const size: SelectProps['size'] = props.selectProps.size || 'md'
   return (
     <components.IndicatorsContainer
       className={cn(styles.indicatorsContainer, {
         [styles.dontRotateIconOnOpen]: icon !== 'chevronDown',
+        [styles.indicatorsContainerExtraSmall]: size === 'xs',
       })}
       {...props}
     />
@@ -71,6 +73,7 @@ export const IndicatorsContainer = (
 
 export const DropdownIndicator = (props: IndicatorProps<ReactSelectOption>) => {
   const { icon, hasError } = props.selectProps
+  const size: SelectProps['size'] = props.selectProps.size || 'md'
 
   return (
     <components.DropdownIndicator
@@ -81,7 +84,9 @@ export const DropdownIndicator = (props: IndicatorProps<ReactSelectOption>) => {
         icon={icon}
         size="large"
         color={hasError ? 'red600' : 'blue400'}
-        className={styles.icon}
+        className={cn(styles.icon, {
+          [styles.iconExtraSmall]: size === 'xs',
+        })}
       />
     </components.DropdownIndicator>
   )
@@ -128,33 +133,46 @@ export const Input: ComponentType<InputProps> = (
     />
   )
 }
-
 export const Control = (props: ControlProps<ReactSelectOption>) => {
   const size: NonNullableSize = props.selectProps.size || 'md'
-  return (
-    <components.Control
-      className={cn(styles.container, styles.containerSizes[size], {
-        [styles.hasError]: props.selectProps.hasError,
+  const label: JSX.Element = (
+    <label
+      htmlFor={props.selectProps.name}
+      className={cn(styles.label, styles.labelSizes[size!], {
+        [styles.labelDisabled]: props.selectProps.isDisabled,
       })}
-      {...props}
     >
-      <label
-        htmlFor={props.selectProps.name}
-        className={cn(styles.label, styles.labelSizes[size], {
-          [styles.labelDisabled]: props.selectProps.isDisabled,
-        })}
-      >
-        {props.selectProps.label}
-        {props.selectProps.required && (
-          <span aria-hidden="true" className={styles.isRequiredStar}>
-            {' '}
-            *
-          </span>
-        )}
-      </label>
-      {props.children}
-    </components.Control>
+      {props.selectProps.label}
+      {props.selectProps.required && (
+        <span aria-hidden="true" className={styles.isRequiredStar}>
+          {' '}
+          *
+        </span>
+      )}
+    </label>
   )
+  const component = (label?: JSX.Element) => {
+    return (
+      <components.Control
+        className={cn(styles.container, styles.containerSizes[size!], {
+          [styles.hasError]: props.selectProps.hasError,
+        })}
+        {...props}
+      >
+        {label && label}
+        {props.children}
+      </components.Control>
+    )
+  }
+  if (size === 'xs') {
+    return (
+      <>
+        {label} {component()}
+      </>
+    )
+  } else {
+    return component(label)
+  }
 }
 
 export const customStyles: StylesConfig = {

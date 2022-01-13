@@ -85,7 +85,7 @@ describe('JwtStrategy#validate', () => {
       headers: {
         authorization: 'authorization',
         'user-agent': 'test user agent',
-        'x-real-ip': '2.2.2.2',
+        'x-forwarded-for': '2.2.2.2, 3.3.3.3',
       },
       ip: '1.1.1.1',
     } as unknown) as Request
@@ -98,7 +98,7 @@ describe('JwtStrategy#validate', () => {
     expect(user.scope).toEqual(payload.scope)
     expect(user.client).toEqual(payload.client_id)
     expect(user.authorization).toEqual(request.headers.authorization)
-    expect(user.ip).toEqual(request.headers['x-real-ip'])
+    expect(user.ip).toEqual(request.headers['x-forwarded-for'])
     expect(user.userAgent).toEqual(request.headers['user-agent'])
     expect(user.actor!.nationalId).toEqual(payload.act!.nationalId)
     expect(user.actor!.scope).toEqual(payload.act!.scope)

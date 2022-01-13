@@ -34,11 +34,11 @@ export class MainResolver {
     private readonly auditService: AuditService,
   ) {}
 
-  @Query(() => DrivingLicense)
+  @Query(() => DrivingLicense, { nullable: true })
   drivingLicense(@CurrentUser() user: User) {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'drivingLicense',
         resources: user.nationalId,
@@ -56,7 +56,7 @@ export class MainResolver {
   drivingLicenseTeachingRights(@CurrentUser() user: User) {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'drivingLicenseTeachingRights',
         resources: user.nationalId,
@@ -75,7 +75,7 @@ export class MainResolver {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       namespace,
       action: 'drivingLicenseStudentInformation',
       resources: nationalId,
@@ -107,7 +107,7 @@ export class MainResolver {
     return this.drivingLicenseService.getQualityPhoto(user.nationalId)
   }
 
-  @Query(() => StudentAssessment)
+  @Query(() => StudentAssessment, { nullable: true })
   drivingLicenseStudentAssessment(@CurrentUser() user: User) {
     return this.drivingLicenseService.getDrivingAssessment(user.nationalId)
   }
