@@ -18,8 +18,8 @@ import {
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import {
+  getThemeConfig,
   HeadWithSocialSharing,
-  lightThemes,
   NewsArticle,
   OrganizationWrapper,
 } from '@island.is/web/components'
@@ -172,13 +172,11 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'News not found')
   }
 
-  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
-
   return {
     organizationPage: getOrganizationPage,
     newsItem,
     namespace,
-    ...(lightTheme ? {} : { darkTheme: true }),
+    ...getThemeConfig(getOrganizationPage.theme),
   }
 }
 

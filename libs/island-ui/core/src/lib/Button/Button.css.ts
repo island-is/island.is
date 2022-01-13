@@ -413,6 +413,15 @@ export const colors = {
       theme.color.dark200,
       theme.color.blue100,
     ),
+    sjukratryggingar: utilityColors(
+      theme.color.blueberry600,
+      theme.color.blueberry600,
+      theme.color.blueberry600,
+      theme.color.blueberry600,
+      theme.color.dark200,
+      theme.color.blue100,
+      2,
+    ),
     primary: primaryColors(
       theme.color.blue400,
       theme.color.white,

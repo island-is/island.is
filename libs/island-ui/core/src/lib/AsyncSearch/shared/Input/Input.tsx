@@ -23,6 +23,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           [styles.colored]: colored,
           [styles.hasLabel]: hasLabel,
           [styles.white]: white,
+          [styles.sjukratrygginar]: true,
         })}
         ref={ref}
       />

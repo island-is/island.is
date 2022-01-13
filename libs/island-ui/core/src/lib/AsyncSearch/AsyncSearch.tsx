@@ -11,13 +11,13 @@ import React, {
 import Downshift, { DownshiftProps } from 'downshift'
 import { ControllerStateAndHelpers } from 'downshift/typings'
 import cn from 'classnames'
-import { helperStyles } from '@island.is/island-ui/theme'
+import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { Input, InputProps } from './shared/Input/Input'
 import { Label } from './shared/Label/Label'
 import { Menu, MenuProps } from './shared/Menu/Menu'
 import { Item } from './shared/Item/Item'
 import { Icon } from '../IconRC/Icon'
-import { ColorSchemeContext } from '../context'
+import { ColorSchemeContext, ColorSchemes } from '../context'
 
 import * as styles from './AsyncSearch.css'
 
@@ -233,6 +233,19 @@ const createFilterFunction = (
   return () => true
 }
 
+const getIconColor = (
+  colorSchemeContext: ColorSchemes,
+  whiteColorScheme: boolean,
+) => {
+  if (whiteColorScheme) {
+    return 'white'
+  }
+  if (colorSchemeContext === 'sjukratryggingar') {
+    return 'blueberry600'
+  }
+  return 'blue400'
+}
+
 export interface AsyncSearchInputProps {
   hasFocus: boolean
   rootProps: HTMLProps<HTMLDivElement>
@@ -275,6 +288,8 @@ export const AsyncSearchInput = forwardRef<
       ? false
       : colorSchemeContext === 'white' || white
 
+    const iconColor = getIconColor(colorSchemeContext, whiteColorScheme)
+
     return (
       <div
         {...rootProps}
@@ -284,7 +299,7 @@ export const AsyncSearchInput = forwardRef<
           [styles.white]: whiteColorScheme,
         })}
       >
-        <Input
+        <Input // TODO: change the background color and border of this guy
           {...inputProps}
           white={whiteColorScheme}
           isOpen={isOpen}
@@ -293,17 +308,14 @@ export const AsyncSearchInput = forwardRef<
         {!loading ? (
           <button
             className={cn(styles.icon, styles.iconSizes[size], {
-              [styles.iconWhite]: whiteColorScheme,
+              [styles.transparentBackground]:
+                whiteColorScheme || colorSchemeContext === 'sjukratryggingar',
               [styles.focusable]: value,
             })}
             tabIndex={value ? 0 : -1}
             {...buttonProps}
           >
-            <Icon
-              size={size}
-              icon="search"
-              color={whiteColorScheme ? 'white' : 'blue400'}
-            />
+            <Icon size={size} icon="search" color={iconColor} />
           </button>
         ) : (
           <span
@@ -311,10 +323,7 @@ export const AsyncSearchInput = forwardRef<
             aria-hidden="false"
             aria-label="Loading"
           >
-            <Icon
-              icon="reload"
-              color={whiteColorScheme ? 'white' : 'blue400'}
-            />
+            <Icon icon="reload" color={iconColor} />
           </span>
         )}
         {showLabel && <Label {...labelProps}>{label}</Label>}

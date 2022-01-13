@@ -101,3 +101,19 @@ export const white = style({
     },
   },
 })
+
+export const sjukratrygginar = style({
+  backgroundColor: theme.color.transparent,
+  boxShadow: `inset 0 0 0 1px ${theme.color.blueberry600}`,
+  border: 'none',
+  color: theme.color.blueberry600,
+  ':focus': {
+    boxShadow: `inset 0 0 0 0px ${theme.color.blueberry600}`,
+  },
+  ':hover': {
+    boxShadow: `inset 0 0 0 ${2}px ${theme.color.blueberry600}`,
+  },
+  '::placeholder': {
+    color: theme.color.blueberry600,
+  },
+})
