@@ -82,6 +82,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
           nationalId={userInfo.profile.nationalId}
           currentUser
         />
+        {loading && <FamilyMemberCardLoader />}
         {spouseData && (
           <FamilyMemberCard
             key={nationalRegistryUser?.spouseNationalId}
@@ -91,7 +92,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
           />
         )}
         {childrenLoading &&
-          [...Array(3)].map((_key, index) => (
+          [...Array(2)].map((_key, index) => (
             <FamilyMemberCardLoader key={index} />
           ))}
         {nationalRegistryChildren?.map((familyMember) => (
