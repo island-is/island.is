@@ -11,6 +11,7 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { FishingLicenseService } from '../lib/fishing-license.service'
 import { Ship } from './models/ship.model'
+import { FishingLicense } from './models/fishing-license.model'
 
 // @UseGuards(IdsUserGuard, ScopesGuard)
 // @Scopes(ApiScope.internal)
@@ -19,7 +20,7 @@ export class FishingLicenseResolver {
   constructor(private fishingLicenseService: FishingLicenseService) {}
 
   @Query(() => [Ship], {
-    name: 'fishingLicenseShips',
+    name: 'ships',
     nullable: true,
   })
   // @Audit()
@@ -29,5 +30,15 @@ export class FishingLicenseResolver {
     nationalId: string,
   ): Promise<Ship[]> {
     return await this.fishingLicenseService.getShips(nationalId)
+  }
+
+  @Query(() => [FishingLicense], { name: 'fishingLicenses' })
+  async fishingLicensesQuery(
+    @Args('registrationNumber', { type: () => Number })
+    registrationNumber: number,
+  ) {
+    return await this.fishingLicenseService.getFishingLicences(
+      registrationNumber,
+    )
   }
 }

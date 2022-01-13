@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class FishingLicenceReason {
+export class FishingLicenseReason {
   @Field()
   description!: string
   @Field()

@@ -1,13 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { FishingLicenceReason } from './fishing-license-reason.model'
+import { FishingLicenseReason } from './fishing-license-reason.model'
 
 @ObjectType()
-export class FishingLicence {
+export class FishingLicense {
   @Field()
   name!: string
   @Field()
   answer!: string //todo should this be named answer
   //todo should this be named answer
-  @Field(() => [FishingLicenceReason])
-  reasons!: FishingLicenceReason[]
+  @Field(() => [FishingLicenseReason])
+  reasons!: FishingLicenseReason[]
 }

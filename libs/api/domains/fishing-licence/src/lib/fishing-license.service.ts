@@ -15,6 +15,10 @@ export class FishingLicenseService {
     return this.fishingLicenseApi.getShips(nationalId)
   }
 
+  async getFishingLicences(shipRegistationNumber: number) {
+    return this.fishingLicenseApi.getFishingLicenses(shipRegistationNumber)
+  }
+
   //Todo fishingLicense type
   async createFishingLicense(fishingLicense: any) {
     console.log('🐟🐠🦈🎣')

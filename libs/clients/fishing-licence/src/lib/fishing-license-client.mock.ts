@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { Ship } from './types'
+import { FishingLicence, Ship } from './types'
 
 export interface FishingLicenseClient {
   getShips: (nationalId: string) => Ship[]
+  getFishingLicenses: (registrationNubmer: number) => FishingLicence[]
 }
 
 export const FISHING_LICENSE_CLIENT = 'FishingLicenseClient'
@@ -43,6 +44,26 @@ export class FishingLicenceApiClientMock implements FishingLicenseClient {
         deprivations: [],
         features: '',
         fishingLicences: [],
+      },
+    ]
+  }
+
+  getFishingLicenses(registrationNumber: number): FishingLicence[] {
+    return [
+      {
+        answer: true,
+        name: 'aflamark',
+        reasons: [{ description: 'test', directions: 'fulla ferð áfram' }],
+      },
+      {
+        answer: true,
+        name: 'krókaflamark',
+        reasons: [{ description: 'test', directions: 'fulla ferð áfram' }],
+      },
+      {
+        answer: true,
+        name: 'sérleyfi 1',
+        reasons: [{ description: 'test', directions: 'fulla ferð áfram' }],
       },
     ]
   }
