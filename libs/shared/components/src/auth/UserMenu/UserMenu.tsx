@@ -27,11 +27,12 @@ export const UserMenu = ({
     setDropdownState(dropdownState === 'open' ? 'closed' : 'open')
   }
   useEffect(() => {
-    setUserMenuOpen && setUserMenuOpen(dropdownState === 'open' ? true : false)
+    setUserMenuOpen && setUserMenuOpen(dropdownState === 'open')
   }, [dropdownState])
 
   useEffect(() => {
-    if ((dropdownState === 'open') !== userMenuOpen) {
+    // false !==
+    if (dropdownState === 'open' && !userMenuOpen) {
       setDropdownState('closed')
     }
   }, [userMenuOpen])
