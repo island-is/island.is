@@ -25,6 +25,7 @@ const NationalRegistryChildrenQuery = gql`
     nationalRegistryChildren {
       nationalId
       fullName
+      displayName
       genderDisplay
       birthplace
       custody1
@@ -81,8 +82,14 @@ const FamilyMember: ServicePortalModuleComponent = () => {
       </Box>
       <Stack space={1}>
         <UserInfoLine
-          label={defineMessage(m.displayName)}
+          label={defineMessage(m.fullName)}
           content={person?.fullName || '...'}
+          loading={loading}
+        />
+        <Divider />
+        <UserInfoLine
+          label={defineMessage(m.displayName)}
+          content={person?.displayName || '...'}
           loading={loading}
         />
         <Divider />
