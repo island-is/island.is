@@ -538,7 +538,7 @@ const Auctions: Screen<AuctionsProps> = ({
         auctionContainsVakaKeyword(auction))
     )
   }
-  const getAuctionTakesPlaceAtAndExtraInfo = (auction: SyslumennAuction) => {
+  const getExtraInfo = (auction: SyslumennAuction) => {
     if (auctionAtVaka(auction)) {
       return (
         <div>
@@ -801,30 +801,46 @@ const Auctions: Screen<AuctionsProps> = ({
                     />
                   )}
 
-                  {/* Auction takes place at & auction extra info */}
-                  {getAuctionTakesPlaceAtAndExtraInfo(auction)}
+                  {/* Auction extra info */}
+                  {getExtraInfo(auction)}
+
+                  {auction.auctionTakesPlaceAt && (
+                    <Text>Uppboðsstaður: {auction.auctionTakesPlaceAt}</Text>
+                  )}
 
                   {/* Respondents */}
                   {auctionRespondents &&
-                    auction.lotType === LOT_TYPES.REAL_ESTATE && (
-                      <Text paddingTop={2} paddingBottom={1}>
-                        {auctionRespondents.length > 1
-                          ? n('auctionRespondentsPlural', 'Þinglýstir eigendur')
-                          : n('auctionRespondentsSingle', 'Þinglýstur eigandi')}
-                        : {auctionRespondents.join(', ')}
-                      </Text>
-                    )}
+                  auction.lotType === LOT_TYPES.REAL_ESTATE ? (
+                    <Text paddingTop={2} paddingBottom={1}>
+                      {auctionRespondents.length > 1
+                        ? n(
+                            'auctionRealEstateRespondentsPlural',
+                            'Þinglýstir eigendur',
+                          )
+                        : n(
+                            'auctionRealEstateRespondentsSingle',
+                            'Þinglýstur eigandi',
+                          )}
+                      : {auctionRespondents.join(', ')}
+                    </Text>
+                  ) : (
+                    <Text paddingTop={2} paddingBottom={1}>
+                      {auctionRespondents.length > 1
+                        ? n('auctionRespondentsPlural', 'Gerðarþolar')
+                        : n('auctionRespondentsSingle', 'Gerðarþoli')}
+                      : {auctionRespondents.join(', ')}
+                    </Text>
+                  )}
 
                   {/* Petitioners */}
-                  {auctionPetitioners &&
-                    auction.lotType === LOT_TYPES.REAL_ESTATE && (
-                      <Text paddingBottom={1}>
-                        {auctionPetitioners.length > 1
-                          ? n('auctionPetitionersPlural', 'Gerðarbeiðendur')
-                          : n('auctionPetitionersSingle', 'Gerðarbeiðandi')}
-                        : {auctionPetitioners.join(', ')}
-                      </Text>
-                    )}
+                  {auctionPetitioners && (
+                    <Text paddingBottom={1}>
+                      {auctionPetitioners.length > 1
+                        ? n('auctionPetitionersPlural', 'Gerðarbeiðendur')
+                        : n('auctionPetitionersSingle', 'Gerðarbeiðandi')}
+                      : {auctionPetitioners.join(', ')}
+                    </Text>
+                  )}
 
                   <Box
                     alignItems="flexEnd"
