@@ -325,9 +325,9 @@ const useCase = () => {
   )
 
   const createDefendant = useMemo(
-    () => async (caseId: string, nationalId: string) => {
+    () => async (caseId: string) => {
       const { data } = await createDefendantMutation({
-        variables: { input: { caseId, nationalId } },
+        variables: { input: { caseId } },
       })
 
       return data?.defendant

@@ -187,7 +187,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                   variant="ghost"
                   icon="add"
                   onClick={() => {
-                    createDefendant(workingCase.id, '000000-0000')
+                    createDefendant(workingCase.id)
                   }}
                 >
                   {formatMessage(
