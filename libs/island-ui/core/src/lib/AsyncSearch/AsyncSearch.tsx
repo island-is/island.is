@@ -11,7 +11,7 @@ import React, {
 import Downshift, { DownshiftProps } from 'downshift'
 import { ControllerStateAndHelpers } from 'downshift/typings'
 import cn from 'classnames'
-import { helperStyles, theme } from '@island.is/island-ui/theme'
+import { helperStyles } from '@island.is/island-ui/theme'
 import { Input, InputProps } from './shared/Input/Input'
 import { Label } from './shared/Label/Label'
 import { Menu, MenuProps } from './shared/Menu/Menu'
@@ -240,7 +240,7 @@ const getIconColor = (
   if (whiteColorScheme) {
     return 'white'
   }
-  if (colorSchemeContext === 'sjukratryggingar') {
+  if (colorSchemeContext === 'blueberry') {
     return 'blueberry600'
   }
   return 'blue400'
@@ -289,6 +289,9 @@ export const AsyncSearchInput = forwardRef<
       : colorSchemeContext === 'white' || white
 
     const iconColor = getIconColor(colorSchemeContext, whiteColorScheme)
+    const blueberryColorScheme = skipContext
+      ? false
+      : colorSchemeContext === 'blueberry'
 
     return (
       <div
@@ -299,9 +302,10 @@ export const AsyncSearchInput = forwardRef<
           [styles.white]: whiteColorScheme,
         })}
       >
-        <Input // TODO: change the background color and border of this guy
+        <Input
           {...inputProps}
           white={whiteColorScheme}
+          blueberry={blueberryColorScheme}
           isOpen={isOpen}
           ref={ref}
         />
@@ -309,7 +313,7 @@ export const AsyncSearchInput = forwardRef<
           <button
             className={cn(styles.icon, styles.iconSizes[size], {
               [styles.transparentBackground]:
-                whiteColorScheme || colorSchemeContext === 'sjukratryggingar',
+                whiteColorScheme || colorSchemeContext === 'blueberry',
               [styles.focusable]: value,
             })}
             tabIndex={value ? 0 : -1}

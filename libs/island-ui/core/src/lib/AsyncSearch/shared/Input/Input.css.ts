@@ -102,7 +102,7 @@ export const white = style({
   },
 })
 
-export const sjukratrygginar = style({
+export const blueberry = style({
   backgroundColor: theme.color.transparent,
   boxShadow: `inset 0 0 0 1px ${theme.color.blueberry600}`,
   border: 'none',

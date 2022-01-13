@@ -413,7 +413,7 @@ export const colors = {
       theme.color.dark200,
       theme.color.blue100,
     ),
-    sjukratryggingar: utilityColors(
+    blueberry: utilityColors(
       theme.color.blueberry600,
       theme.color.blueberry600,
       theme.color.blueberry600,

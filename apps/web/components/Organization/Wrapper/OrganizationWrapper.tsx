@@ -81,8 +81,8 @@ export const getThemeConfig = (
   if (theme === 'sjukratryggingar')
     return {
       themeConfig: {
-        headerButtonColorScheme: 'sjukratryggingar',
-        headerColorScheme: 'sjukratryggingar',
+        headerButtonColorScheme: 'blueberry',
+        headerColorScheme: 'blueberry',
       },
     }
 
