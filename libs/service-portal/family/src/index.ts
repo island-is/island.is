@@ -37,6 +37,12 @@ export const familyModule: ServicePortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       render: () => lazy(() => import('./screens/FamilyMember/FamilyMember')),
     },
+    {
+      name: 'Spouse',
+      path: ServicePortalPath.Spouse,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      render: () => lazy(() => import('./screens/Spouse/Spouse')),
+    },
   ],
 }
 
