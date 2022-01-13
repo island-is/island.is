@@ -114,11 +114,16 @@ describe('ApplicationLifecycleService', () => {
       .expect(200)
 
     expect(shouldBeEmpty.body.answers).toEqual({})
+    expect(shouldBeEmpty.body.pruned).toEqual(true)
+
     expect(shouldBeEmpty2.body.answers).toEqual({})
+    expect(shouldBeEmpty2.body.pruned).toBe(true)
+
     expect(shouldNotBeEmpty.body.answers).toEqual({ usage: 4 })
+    expect(shouldNotBeEmpty.body.pruned).toBe(false)
   })
 
-  it('should prune answers on applications correctly by lifecycle preset.', async () => {
+  it('should not try to prune anything when all applications have been pruned.', async () => {
     //PREPARE
     const date = new Date()
     date.setDate(date.getDate() - 2)
@@ -145,6 +150,16 @@ describe('ApplicationLifecycleService', () => {
       .expect(200)
 
     expect(shouldBeEmpty.body.answers).toEqual({})
+    expect(shouldBeEmpty.body.pruned).toBe(true)
+
+    //create a new application with its default lifecycle that should not be pruned
+    await createApplication()
+
+    await lifeCycleService.run()
+
+    const processedApplications = lifeCycleService.getProcessingApplications()
+
+    expect(processedApplications).toEqual([])
   })
 })
 

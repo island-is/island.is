@@ -83,8 +83,12 @@ export class ApplicationService {
     })
   }
 
-  async findAllDueToBePruned(): Promise<Application[]> {
+  async findAllDueToBePruned(): Promise<
+    Pick<Application, 'id' | 'attachments'>[]
+  > {
     return this.applicationModel.findAll({
+      //TODO ONLY RETURN ID AND ATTACHMENTS
+      attributes: ['id', 'attachments'],
       where: {
         [Op.and]: {
           pruneAt: {
@@ -93,18 +97,11 @@ export class ApplicationService {
               [Op.lt]: new Date(),
             },
           },
-          answers: {
-            [Op.not]: '{}',
-          },
-          attachments: {
-            [Op.not]: '{}',
-          },
-          externalData: {
-            [Op.not]: '{}',
+          pruned: {
+            [Op.eq]: false,
           },
         },
       },
-      order: [['modified', 'DESC']],
     })
   }
 
@@ -138,7 +135,7 @@ export class ApplicationService {
   async update(
     id: string,
     application: Partial<
-      Pick<Application, 'attachments' | 'answers' | 'externalData'>
+      Pick<Application, 'attachments' | 'answers' | 'externalData' | 'pruned'>
     >,
   ) {
     const [

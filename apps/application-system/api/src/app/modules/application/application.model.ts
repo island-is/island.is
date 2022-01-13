@@ -113,4 +113,12 @@ export class Application extends Model<Application> {
   })
   @ApiPropertyOptional()
   pruneAt?: Date
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  pruned!: boolean
 }

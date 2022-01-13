@@ -10,7 +10,10 @@ import type { Logger } from '@island.is/logging'
 
 export interface ApplicationPruning {
   pruned: boolean
-  application: Application
+  application: Pick<
+    Application,
+    'id' | 'attachments' | 'answers' | 'externalData'
+  >
   failedAttachments: object
 }
 
@@ -41,7 +44,11 @@ export class ApplicationLifeCycleService {
   }
 
   private async fetchApplicationsToBePruned() {
-    const applications = await this.applicationService.findAllDueToBePruned()
+    const applications = (await this.applicationService.findAllDueToBePruned()) as Pick<
+      Application,
+      'id' | 'attachments' | 'answers' | 'externalData'
+    >[]
+
     this.logger.info(`Found ${applications.length} applications to be pruned.`)
     this.processingApplications = applications.map((application) => {
       return {
@@ -101,6 +108,7 @@ export class ApplicationLifeCycleService {
             attachments: prune.failedAttachments,
             externalData: {},
             answers: {},
+            pruned: true,
           },
         )
 
