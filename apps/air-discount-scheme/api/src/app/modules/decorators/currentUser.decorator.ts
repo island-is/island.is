@@ -23,7 +23,7 @@ export const CurrentUser = createParamDecorator(
       mobile: decodedToken?.mobile,
       role: decodedToken.role,
       meetsADSRequirements: decodedToken?.meetsADSRequirements,
-      flightLegs: decodedToken?.flightLegs
+      flightLegs: decodedToken?.flightLegs,
     }
   },
 )

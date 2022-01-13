@@ -1,6 +1,6 @@
 import React from 'react'
 import { ApolloProvider } from '@apollo/client'
-import { getSession, Provider } from "next-auth/client"
+import { getSession, Provider } from 'next-auth/client'
 import initApollo from '../graphql/client'
 import get from 'lodash/get'
 import NextCookies from 'next-cookies'
@@ -12,7 +12,6 @@ import { isAuthenticated } from '../auth/utils'
 import { withHealthchecks } from '../utils/Healthchecks/withHealthchecks'
 import router from 'next/router'
 
-
 const {
   publicRuntimeConfig: { SENTRY_DSN },
 } = getConfig()
@@ -22,7 +21,7 @@ Sentry.init({
 })
 
 const getLanguage = (path) => {
-  if(path === undefined) {
+  if (path === undefined) {
     return 'is'
   }
   if (path.startsWith('en')) {
@@ -32,7 +31,7 @@ const getLanguage = (path) => {
 }
 
 const SupportApplication: any = ({ Component, pageProps }) => {
-  if(process.browser) {
+  if (process.browser) {
     Sentry.configureScope((scope) => {
       scope.setExtra('lang', getLanguage(pageProps.router.pathname))
       scope.setContext('router', {
@@ -60,7 +59,7 @@ const SupportApplication: any = ({ Component, pageProps }) => {
         <AuthProvider>
           <AppLayout {...pageProps.layoutProps}>
             <ErrorBoundary>
-              <Component {...pageProps.pageProps } />
+              <Component {...pageProps.pageProps} />
             </ErrorBoundary>
             <Toast />
           </AppLayout>
@@ -79,33 +78,33 @@ SupportApplication.getInitialProps = async (appContext) => {
   }
   let pageProps, layoutProps
   const session = await getSession()
-  if(Component.getInitialProps) {
+  if (Component.getInitialProps) {
     pageProps = (await Component.getInitialProps(customContext)) as any
   }
-  if(AppLayout.getInitialProps) {
-    layoutProps = await AppLayout.getInitialProps({
+  if (AppLayout.getInitialProps) {
+    layoutProps = (await AppLayout.getInitialProps({
       ...customContext,
       locale: pageProps.locale,
       localeKey: pageProps.localeKey,
       routeKey: pageProps.route,
-    }) as any
+    })) as any
   }
 
   const readonlyCookies = NextCookies(appContext)
-    Sentry.configureScope((scope) => {
-      scope.setContext('cookies', readonlyCookies)
-    })
+  Sentry.configureScope((scope) => {
+    scope.setContext('cookies', readonlyCookies)
+  })
 
   const apolloState = apolloClient.cache.extract()
   return {
     pageProps: {
-      layoutProps: { ...layoutProps, ...pageProps.layoutConfig},
+      layoutProps: { ...layoutProps, ...pageProps.layoutConfig },
       pageProps: pageProps,
       apolloState: apolloState,
       session: session,
       router: router,
-      isAuthenticated: isAuthenticated(appContext.ctx)
-    }
+      isAuthenticated: isAuthenticated(appContext.ctx),
+    },
   }
 }
 

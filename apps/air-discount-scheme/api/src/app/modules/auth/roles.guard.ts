@@ -14,17 +14,14 @@ export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const rolesRules = this.reflector.get<Role[]>(
-      'roles',
-      context.getHandler(),
-    )
+    const rolesRules = this.reflector.get<Role[]>('roles', context.getHandler())
     console.log(rolesRules)
     // Allow if no rules
     if (!rolesRules) {
       return true
     }
     let user = getUserFromContext(context)
-    user.role = getRole({name: user.name, nationalId: user.nationalId})
+    user.role = getRole({ name: user.name, nationalId: user.nationalId })
     // Deny if no user
     if (!user) {
       throw new UnauthorizedException()

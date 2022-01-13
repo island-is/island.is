@@ -3,13 +3,13 @@ import { AuthUser } from './types'
 import { Role } from '@island.is/air-discount-scheme/types'
 
 const {
-  accessGroups: { developers = '', admins = ''},
+  accessGroups: { developers = '', admins = '' },
 } = environment
 const DEVELOPERS = developers.split(',')
 const ADMINS = admins.split(',')
 
 export function getRole(user: AuthUser): Role {
-  if(DEVELOPERS.includes(user.nationalId)) {
+  if (DEVELOPERS.includes(user.nationalId)) {
     return Role.DEVELOPER
   } else if (ADMINS.includes(user.nationalId)) {
     return Role.ADMIN
@@ -25,12 +25,10 @@ export function checkRole(user: AuthUser, role: Role) {
     case 'admin':
       return [...ADMINS, ...DEVELOPERS].includes(user.nationalId)
     default: {
-      if(role) {
+      if (role) {
         return false
       }
       return true
     }
   }
 }
-
-

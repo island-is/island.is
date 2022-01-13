@@ -11,8 +11,6 @@ import { AuthModule as AuthNestModule } from '@island.is/auth-nest-tools'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 
-
-
 @Module({
   imports: [
     SequelizeModule.forRootAsync({

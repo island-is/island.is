@@ -9,7 +9,8 @@ export const serviceSetup = (services: {
       API_URL: ref((h) => `http://${h.svc(services.adsApi)}`),
       NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? 'http://localhost:4200',
       IDENTITY_SERVER_DOMAIN: 'https://identity-server.dev01.devland.is',
-      IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET',
+      IDENTITY_SERVER_SECRET:
+        '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET',
       NEXTAUTH_URL_INTERNAL: 'http://10.240.8.16',
       IDS_COOKIE_NAME: 'next-auth.session-token',
       SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: {

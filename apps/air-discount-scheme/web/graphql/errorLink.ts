@@ -21,9 +21,9 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
       }
       switch (err.extensions?.code) {
         case 'UNAUTHENTICATED':
-          // return signIn(identityServerId, {
-          //   callbackUrl: `${window.location.href}`,
-          // })
+        // return signIn(identityServerId, {
+        //   callbackUrl: `${window.location.href}`,
+        // })
         default:
           return NotificationService.onGraphQLError({
             graphQLErrors,

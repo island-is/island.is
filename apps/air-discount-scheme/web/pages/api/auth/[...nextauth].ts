@@ -24,7 +24,7 @@ const providers = [
     domain: env.IDS,
     clientSecret: env.identityServerSecret,
     protection: 'pkce',
-  })
+  }),
 ]
 
 const callbacks: CallbacksOptions = {
@@ -42,7 +42,7 @@ async function signIn(
 }
 
 async function jwt(token: JWT, user: AuthUser) {
-  if(token.isRefreshTokenExpired === true) {
+  if (token.isRefreshTokenExpired === true) {
     useLogOut()
   }
   if (user) {

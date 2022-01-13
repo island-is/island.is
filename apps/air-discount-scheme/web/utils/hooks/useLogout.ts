@@ -4,7 +4,6 @@ import { signOutUrl } from '@island.is/air-discount-scheme-web/lib'
 import { AuthSession } from '@island.is/next-ids-auth'
 import { UserContext } from '@island.is/air-discount-scheme-web/context'
 
-
 export const useLogOut = () => {
   const { setUser, setIsAuthenticated } = useContext(UserContext)
   const [session]: AuthSession = useSession()

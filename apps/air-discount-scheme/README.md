@@ -102,8 +102,6 @@ Paste env variables into terminal
 Run `./scripts/run-es-proxy.sh` from island.is root
 You have success if you see `Forwarding from 0.0.0.0:9200 -> 9200` in terminal
 
-
-
 Navigate to [localhost:4200](http://localhost:4200) for the website or
 [localhost:4248/api/swagger/](http://localhost:4248/api/swagger/) for the
 airline api.

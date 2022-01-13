@@ -4,5 +4,5 @@ import proxyConfig from './proxy.config.json'
 bootstrap({
   name: 'air-discount-scheme',
   appDir: 'apps/air-discount-scheme/web',
-  proxyConfig
+  proxyConfig,
 })

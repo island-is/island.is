@@ -8,14 +8,13 @@ import { NationalRegistryModule as ADSNationalRegistryModule } from '../national
 //import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 
-
 @Module({
   imports: [
-    DiscountModule, 
-    FlightModule, 
+    DiscountModule,
+    FlightModule,
     ADSNationalRegistryModule,
     //NationalRegistryClientModule,
-    NationalRegistryXRoadModule
+    NationalRegistryXRoadModule,
   ],
   controllers: [PublicUserController, PrivateUserController],
   providers: [UserService],

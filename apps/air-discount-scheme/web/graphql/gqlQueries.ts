@@ -8,4 +8,5 @@ export const CurrentUserQuery = gql`
       mobile
       role
     }
-  }`
+  }
+`

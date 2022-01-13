@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common'
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common'
 
 import { environment } from '../../../environments'
 import { HttpRequest } from '../../app.types'
@@ -19,20 +24,15 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException()
     }
 
-    if(user.role === 'user') {
-
+    if (user.role === 'user') {
     }
-    if(user.role === 'developer') {
-
+    if (user.role === 'developer') {
     }
-    if(user.role === 'admin'){
-      
+    if (user.role === 'admin') {
     }
 
     return this.hasValidApiKey(request)
   }
-
-
 
   // canActivate(context: ExecutionContext): boolean {
   //   console.log('can activate backend')
@@ -42,7 +42,7 @@ export class AuthGuard implements CanActivate {
   //   if (!user) {
   //     throw new UnauthorizedException()
   //   }
-    
+
   //   return this.hasValidApiKey(request)
   // }
 

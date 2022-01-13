@@ -4,7 +4,7 @@ export const identityServerConfig = {
   id: identityServerId,
   name: 'Loftbru',
   scope:
-  'openid profile @vegagerdin.is/air-discount-scheme-scope offline_access @skra.is/individuals',
+    'openid profile @vegagerdin.is/air-discount-scheme-scope offline_access @skra.is/individuals',
   clientId: '@vegagerdin.is/air-discount-scheme',
 }
 

@@ -7,13 +7,14 @@ import { User } from '@island.is/air-discount-scheme-web/graphql/schema'
 const useUser = () => {
   const [user, setUser] = useState<User>()
   const [session, loading] = useSession()
-  
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(session?.user),
   )
-    
+
   const { data, loading: loadingUser } = useQuery(CurrentUserQuery, {
-    fetchPolicy: 'no-cache', ssr: false
+    fetchPolicy: 'no-cache',
+    ssr: false,
   })
   const loggedInUser = data?.user
 

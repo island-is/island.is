@@ -1,6 +1,4 @@
-import {
-  environment as env
-} from '../../environments'
+import { environment as env } from '../../environments'
 import { AuthUser } from '@island.is/air-discount-scheme/types'
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common'
 import { decode } from 'jsonwebtoken'
@@ -11,9 +9,7 @@ export const getUserFromContext = (
 ): AuthUser => {
   const req = context.switchToHttp().getRequest()
 
-  const sessionToken = req.cookies
-    ? req.cookies[env.idsTokenCookieName]
-    : null
+  const sessionToken = req.cookies ? req.cookies[env.idsTokenCookieName] : null
 
   if (!sessionToken) {
     throw new UnauthorizedException('Invalid user')
@@ -27,6 +23,6 @@ export const getUserFromContext = (
     mobile: decodedToken.mobile,
     role: decodedToken.role,
     meetsADSRequirements: decodedToken.meetsADSRequirements,
-    flightLegs: decodedToken.flightLegs
+    flightLegs: decodedToken.flightLegs,
   }
 }
