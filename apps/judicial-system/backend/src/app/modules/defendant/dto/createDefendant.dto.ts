@@ -7,7 +7,7 @@ import { Gender } from '@island.is/judicial-system/types'
 export class CreateDefendantDto {
   @IsNotEmpty()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly nationalId?: string
 
   @IsOptional()

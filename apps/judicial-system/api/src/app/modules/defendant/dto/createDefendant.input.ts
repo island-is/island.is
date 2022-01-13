@@ -11,7 +11,7 @@ export class CreateDefendantInput implements CreateDefendant {
   readonly caseId!: string
 
   @Allow()
-  @Field()
+  @Field({ nullable: true })
   readonly nationalId?: string
 
   @Allow()

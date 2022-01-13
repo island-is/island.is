@@ -46,10 +46,10 @@ export class Defendant extends Model<Defendant> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   @ApiProperty()
-  nationalId!: string
+  nationalId?: string
 
   @Column({
     type: DataType.STRING,
