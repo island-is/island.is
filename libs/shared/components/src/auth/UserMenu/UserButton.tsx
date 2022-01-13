@@ -48,10 +48,7 @@ export const UserButton = ({ onClick, user: { profile } }: UserButtonProps) => {
                 <div className={styles.actorName}>{profile.actor!.name}</div>
               </>
             ) : (
-              <Inline space={1} alignY="center">
-                <UserAvatar size="small" username={profile.name} />
-                {profile.name}
-              </Inline>
+              profile.name
             )}
           </div>
         </Button>
