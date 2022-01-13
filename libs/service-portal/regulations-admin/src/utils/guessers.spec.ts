@@ -10,47 +10,47 @@ describe('findRegulationType', () => {
     expect(findRegulationType('Reglugerð um jólasveina')).toEqual('base')
   })
 
-  it('detects "amend"ing regulation titles', () => {
+  it('detects "amending" regulation titles', () => {
     expect(
       findRegulationType(
         'Reglugerð um breytingu á reglugerð 123/2022 um jólasveina',
       ),
-    ).toEqual('amend')
+    ).toEqual('amending')
     // Accepts the plural form "breytingar"
     expect(
       findRegulationType(
         'Reglugerð um breytingar á reglugerð 123/2022 um jólasveina',
       ),
-    ).toEqual('amend')
+    ).toEqual('amending')
     // Accepts the plural form "reglugerðum"
     expect(
       findRegulationType(
         'Reglugerð um breytingu á reglugerðum nr. 23/2022 um jólasveina og Byggingareglugerð nr 112/2012',
       ),
-    ).toEqual('amend')
+    ).toEqual('amending')
     // Accepts ordinal number in parenthesis
     expect(
       findRegulationType(
         'Reglugerð um (2.) breytingu á reglugerð 123/2022 um jólasveina',
       ),
-    ).toEqual('amend')
+    ).toEqual('amending')
     expect(
       findRegulationType(
         'Reglugerð um (102.) breytingu á reglugerð 123/2022 um jólasveina',
       ),
-    ).toEqual('amend')
+    ).toEqual('amending')
     // Also accepts parenthesis around the ordinal number being missing
     expect(
       findRegulationType(
         'Reglugerð um 3. breytingu á reglugerð 123/2022 um jólasveina',
       ),
-    ).toEqual('amend')
+    ).toEqual('amending')
     // Accepts ordinal number + plural "breytingar"
     expect(
       findRegulationType(
         'Reglugerð um (4.) breytingar á reglugerð 123/2022 um jólasveina',
       ),
-    ).toEqual('amend')
+    ).toEqual('amending')
     // However, is a stickler about the number being an ordinal
     expect(
       findRegulationType(
@@ -76,11 +76,11 @@ describe('findRegulationType', () => {
       findRegulationType(
         'Reglugerð um breytingar á Byggingareglugerð nr. 112/2012',
       ),
-    ).toEqual('amend')
+    ).toEqual('amending')
     // Very sloppy title, but passes
     expect(
       findRegulationType('Reglugerð um breytingu á einhverri annari reglugerð'),
-    ).toEqual('amend')
+    ).toEqual('amending')
     // Silly title, but (correctly) classified as "base"
     expect(
       findRegulationType('Reglugerð um breytingar á lögum nr. 112/2012'),
@@ -95,7 +95,7 @@ describe('findRegulationType', () => {
       findRegulationType(
         'Reglugerð um breytingu á fjölda jólasveina í takt við ákvæði í ESB reglugerð nr. 1234/2019 um hátíðisdaga',
       ),
-    ).toEqual('amend') // 🙀
+    ).toEqual('amending') // 🙀
     // ...or find a way to subtly re-phrase the beginning of the title, like so:
     expect(
       findRegulationType(
