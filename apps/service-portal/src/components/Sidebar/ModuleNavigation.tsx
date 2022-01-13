@@ -15,17 +15,11 @@ import SubNav from './NavItem/SubNav'
 
 interface Props {
   nav: ServicePortalNavigationItem
-  alwaysExpanded?: boolean
   badge?: boolean
   onItemClick?: () => void
 }
 
-const ModuleNavigation: FC<Props> = ({
-  nav,
-  alwaysExpanded,
-  onItemClick,
-  badge,
-}) => {
+const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   const [expand, setExpand] = useState(false)
   const [hover, setHover] = useState(false)
   const [{ sidebarState }] = useStore()
@@ -108,16 +102,12 @@ const ModuleNavigation: FC<Props> = ({
         onChevronClick={() => {
           setExpand(!expand)
         }}
-        alwaysExpanded={alwaysExpanded}
         badge={badge}
       >
         {formatMessage(nav.name)}
       </NavItem>
       {!collapsed && navArray && nav.enabled !== false && (
-        <AnimateHeight
-          duration={300}
-          height={expand ? 'auto' : alwaysExpanded ? 'auto' : 0}
-        >
+        <AnimateHeight duration={300} height={expand ? 'auto' : 0}>
           <SubNav
             navChildren={navChildren}
             onItemClick={() => onItemClick && onItemClick()}

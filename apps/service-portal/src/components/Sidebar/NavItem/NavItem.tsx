@@ -10,7 +10,6 @@ import cn from 'classnames'
 
 interface ChevronProps {
   expanded?: boolean
-  alwaysExpanded?: boolean
   enabled?: boolean
   active: boolean
   onChevronClick?: () => void
@@ -27,7 +26,6 @@ interface Props {
   external?: boolean
   variant?: 'blue' | 'blueberry'
   hasArray?: boolean
-  alwaysExpanded?: boolean
   onClick?: () => void
   onChevronClick?: () => void
   badge?: boolean
@@ -131,14 +129,13 @@ const NavItemContent: FC<Props> = ({
 
 const Chevron: FC<ChevronProps> = ({
   expanded,
-  alwaysExpanded,
   enabled,
   active,
   onChevronClick,
 }) => {
   const chevronIcon = expanded ? 'chevronUp' : 'chevronDown'
   const [{ sidebarState }] = useStore()
-  const showChevron = !alwaysExpanded && enabled && sidebarState === 'open'
+  const showChevron = enabled && sidebarState === 'open'
 
   return showChevron ? (
     <Box
