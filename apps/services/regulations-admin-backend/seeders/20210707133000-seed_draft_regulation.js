@@ -11,7 +11,6 @@ const draftRegulationSeed = [
   {
     id: 'a1fd62db-18a6-4741-88eb-a7b7a7e05833',
     drafting_status: 'draft',
-    name: '1234-1234',
     title:
       'Reglugerð um styrki vegna sýninga á kvikmyndum á íslensku í kvikmyndahúsum hér á landi.',
     text:
@@ -28,7 +27,6 @@ const draftRegulationSeed = [
   {
     id: '32e191a3-497c-46e4-ae10-8ba579f07f28',
     drafting_status: 'draft',
-    name: '4567-6547',
     title:
       'Reglugerð um gjaldtöku í höfnum vegna losunar, móttöku, meðhöndlunar og förgunar úrgangs og farmleifa frá skipum.',
     text:
@@ -45,7 +43,7 @@ const draftRegulationSeed = [
   {
     id: 'b99f6276-68ff-4ac7-a9f4-b42d522922e8',
     drafting_status: 'shipped',
-    name: '4567-6547',
+    name: '1234-1234',
     title:
       'Reglugerð um eftirlitsstaði erlendra skipa vegna veiða og siglinga í íslenskri fiskveiðilögsögu.',
     text:
@@ -62,7 +60,6 @@ const draftRegulationSeed = [
   {
     id: 'a0bdbe60-2aa3-4036-80d1-8a3d448312d1',
     drafting_status: 'proposal',
-    name: '4321-4321',
     title:
       'Reglugerð um (1.) breytingu á reglugerð nr. 980/2015 um meðferð varnarefna.',
     text:
@@ -79,7 +76,6 @@ const draftRegulationSeed = [
   {
     id: '0cb3a68b-f368-4d01-a594-ba73e0dc396d',
     drafting_status: 'draft',
-    name: '3241-2314',
     title:
       'Reglugerð um breytingu á reglugerð um ákvörðun framlaga úr sveitarsjóði til sjálfstætt rekinna grunnskóla, nr. 1270/2016, ásamt síðari breytingum.',
     text:

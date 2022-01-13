@@ -1,12 +1,8 @@
 import {
-  BelongsTo,
   Column,
-  CreatedAt,
   DataType,
-  ForeignKey,
   Model,
   Table,
-  UpdatedAt,
   HasMany,
   HasOne,
 } from 'sequelize-typescript'
