@@ -10,7 +10,6 @@ import {
   GridRow,
   Stack,
   Text,
-  Divider,
 } from '@island.is/island-ui/core'
 import {
   formatNationalId,
@@ -92,7 +91,6 @@ const FamilyMember: ServicePortalModuleComponent = () => {
           content={person?.displayName || '...'}
           loading={loading}
         />
-        <Divider />
         <UserInfoLine
           label={defineMessage(m.natreg)}
           content={formatNationalId(nationalId)}
@@ -107,7 +105,6 @@ const FamilyMember: ServicePortalModuleComponent = () => {
           }
           loading={loading}
         />
-        <Divider />
         <UserInfoLine
           label={formatMessage({
             id: 'sp.family:birthplace',
@@ -120,7 +117,6 @@ const FamilyMember: ServicePortalModuleComponent = () => {
           }
           loading={loading}
         />
-        <Divider />
         <UserInfoLine
           label={formatMessage({
             id: 'sp.family:parents',

@@ -5,7 +5,6 @@ import { useQuery, gql } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import {
   Box,
-  Divider,
   GridColumn,
   GridRow,
   Stack,
@@ -83,13 +82,11 @@ const FamilyMember: ServicePortalModuleComponent = () => {
           content={person?.spouse?.name || '...'}
           loading={loading}
         />
-        <Divider />
         <UserInfoLine
           label={defineMessage(m.natreg)}
           content={formatNationalId(nationalId)}
           loading={loading}
         />
-        <Divider />
         <UserInfoLine
           label={formatMessage({
             id: 'sp.family:spouseCohab',
@@ -102,7 +99,6 @@ const FamilyMember: ServicePortalModuleComponent = () => {
           }
           loading={loading}
         />
-        <Divider />
       </Stack>
     </>
   )
