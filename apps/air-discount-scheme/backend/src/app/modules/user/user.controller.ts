@@ -72,13 +72,21 @@ export class PrivateUserController {
     console.log('before thjodskra Xroad')
     let ok
     try {
-      ok = await this.thjodskraXroad.getChildrenCustodyInformation(user, '0101303019')
+      ok = await this.thjodskraXroad.getChildrenCustodyInformation(user, user.nationalId)
     } catch (e) {
+      console.log('catch getChildrenCustodyInformation error in controller')
       console.log(e)
     }
     //ok = await this.thjodskraXroad.getNationalRegistryPerson(user, '0101303019')
     console.log(ok)
     console.log('before user service relations')
+    let person
+    try {
+      person = await this.thjodskraXroad.getNationalRegistryPerson(user, user.nationalId)
+    } catch (e) {
+      console.log(e)
+    }
+    console.log(person)
     const relations = await this.userService.getRelations(params.nationalId)
     const users = await Promise.all([
       this.userService.getUserInfoByNationalId(params.nationalId),
