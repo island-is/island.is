@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsString, IsOptional } from 'class-validator'
+import { IsString, IsOptional } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import { Gender } from '@island.is/judicial-system/types'
 
 export class CreateDefendantDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly nationalId?: string
