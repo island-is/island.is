@@ -28,7 +28,9 @@ export class ApplicationLifeCycleService {
     private logger: Logger,
     private applicationService: ApplicationService,
     private awsService: AwsService,
-  ) {}
+  ) {
+    this.logger = logger.child({ context: 'ApplicationLifeCycleService' })
+  }
 
   public async run() {
     this.logger.info(`Starting application pruning...`)
