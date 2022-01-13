@@ -22,8 +22,6 @@ export class ApplicationLifeCycleService {
   private processingApplications: ApplicationPruning[] = []
 
   constructor(
-    @Inject(APPLICATION_CONFIG)
-    private readonly config: ApplicationConfig,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private applicationService: ApplicationService,
