@@ -1,6 +1,8 @@
 import { InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import Soap from 'soap'
 
+import isEmpty from 'lodash/isEmpty'
+import isObject from 'lodash/isObject'
 import type { User } from '@island.is/auth-nest-tools'
 import { logger } from '@island.is/logging'
 import {
@@ -96,6 +98,14 @@ export class NationalRegistryApi {
         Kennitala: nationalId,
       },
     )
+
+    if (isObject(borninMinResponse) && isEmpty(borninMinResponse)) {
+      /**
+       * User with no children will recieve an empty object
+       * Returning an empty array instead.
+       */
+      return []
+    }
 
     if (!borninMinResponse) {
       throw new NotFoundException(
