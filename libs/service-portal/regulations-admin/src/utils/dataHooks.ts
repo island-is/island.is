@@ -115,7 +115,7 @@ export const useRegulationTaskListQuery = (): QueryResult<
     }
   }
   return {
-    data: data.getShippedRegulations as Array<DraftSummary>,
+    data: data.getDraftRegulations as Array<DraftSummary>,
   }
 }
 
