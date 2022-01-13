@@ -45,7 +45,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
-import { FishingLicenseModule } from '../../../../libs/api/domains/fishing-licence/fishing-license.module'
+import { FishingLicenseModule } from '@island.is/api/domains/fishing-licence'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
