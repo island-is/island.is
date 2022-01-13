@@ -12,19 +12,17 @@ import {
   ApiTags,
   ApiExcludeEndpoint,
 } from '@nestjs/swagger'
+
 import { GetUserByDiscountCodeParams, GetUserRelationsParams } from './dto'
 import { UserService } from './user.service'
 import { AirlineUser, User } from './user.model'
 import { DiscountService } from '../discount'
 import { FlightService } from '../flight'
-import { CurrentUser, IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
-import { User as AuthUser } from '@island.is/auth-nest-tools'
+import { AuthGuard } from '../common'
 
 @ApiTags('Users')
 @Controller('api/public')
-//@UseGuards(AuthGuard)
-//@UseGuards(IdsAuthGuard)
+@UseGuards(AuthGuard)
 @ApiBearerAuth()
 export class PublicUserController {
   constructor(
@@ -53,8 +51,7 @@ export class PublicUserController {
     return user
   }
 }
-@UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes('@vegagerdin.is/air-discount-scheme-scope')
+
 @Controller('api/private')
 export class PrivateUserController {
   constructor(
@@ -66,9 +63,7 @@ export class PrivateUserController {
   @ApiExcludeEndpoint()
   async getUserRelations(
     @Param() params: GetUserRelationsParams,
-    @CurrentUser() user: AuthUser,
   ): Promise<User[]> {
-    // this is WIP
     const relations = await this.userService.getRelations(params.nationalId)
     const users = await Promise.all([
       this.userService.getUserInfoByNationalId(params.nationalId),

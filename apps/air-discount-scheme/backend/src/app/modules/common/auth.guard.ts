@@ -15,8 +15,6 @@ const AUTH_TYPE = 'bearer'
 @Injectable()
 export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    console.log('backend custom authguard')
-    console.log(context)
     const user = getUserFromContext(context)
     const request = context.switchToHttp().getRequest<HttpRequest>()
 
@@ -33,18 +31,6 @@ export class AuthGuard implements CanActivate {
 
     return this.hasValidApiKey(request)
   }
-
-  // canActivate(context: ExecutionContext): boolean {
-  //   console.log('can activate backend')
-  //   const user = getUserFromContext(context)
-  //   const request = context.switchToHttp().getRequest<HttpRequest>()
-
-  //   if (!user) {
-  //     throw new UnauthorizedException()
-  //   }
-
-  //   return this.hasValidApiKey(request)
-  // }
 
   getAuthorization(headers: HttpRequest['headers']): string | null {
     const { authorization } = headers

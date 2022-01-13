@@ -22,12 +22,10 @@ export class UserResolver {
 
   @Query(() => User, { nullable: true })
   async user(@CurrentUser() user: AuthUser): Promise<User | undefined> {
-    console.log('user resolver API')
     if (!user) {
       return null
     }
     user.role = getRole(user)
-    console.log(user)
     return user as User
   }
 
@@ -53,11 +51,9 @@ export class UserResolver {
     @CurrentUser() user: AuthUser,
     @Context('dataSources') { backendApi },
   ): Promise<TFlightLeg[]> {
-    console.log('before backend getuserlations')
     const relations: TUser[] = await backendApi.getUserRelations(
       user.nationalId,
     )
-    console.log(relations)
     return relations.reduce(
       (promise: Promise<FlightLeg[]>, relation: TUser) => {
         return promise.then(async (acc) => {

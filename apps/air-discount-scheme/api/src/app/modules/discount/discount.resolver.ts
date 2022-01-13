@@ -36,7 +36,6 @@ export class DiscountResolver {
     const relations: TUser[] = await backendApi.getUserRelations(
       user.nationalId,
     )
-    console.log(relations)
     return relations.reduce(
       (promise: Promise<DiscountWithTUser[]>, relation: TUser) => {
         return promise.then(async (acc) => {

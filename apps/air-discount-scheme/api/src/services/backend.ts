@@ -14,7 +14,6 @@ class BackendAPI extends RESTDataSource {
   baseURL = `${environment.backendUrl}/api/private`
 
   getUserRelations(nationalId: string): Promise<User[]> {
-    console.log('before redir to backend - user relations')
     return this.get(`users/${nationalId}/relations`)
   }
 
