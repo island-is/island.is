@@ -68,6 +68,7 @@ export class DraftRegulationModel extends Model<DraftRegulationModel> {
 
   @Column({
     type: DataType.TEXT,
+    allowNull: false,
   })
   @ApiProperty()
   drafting_notes!: HTMLText
@@ -104,7 +105,6 @@ export class DraftRegulationModel extends Model<DraftRegulationModel> {
 
   @Column({
     type: DataType.ENUM,
-    allowNull: false,
     values: ['base', 'amending'],
   })
   @ApiProperty()
@@ -112,6 +112,7 @@ export class DraftRegulationModel extends Model<DraftRegulationModel> {
 
   @Column({
     type: DataType.ARRAY(DataType.STRING),
+    allowNull: false,
   })
   @ApiProperty()
   authors!: Kennitala[]
