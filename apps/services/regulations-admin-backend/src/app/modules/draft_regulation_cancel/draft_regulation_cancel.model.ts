@@ -1,24 +1,22 @@
 import {
-  BelongsTo,
   Column,
-  CreatedAt,
   DataType,
   ForeignKey,
   Model,
   Table,
-  UpdatedAt,
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { DraftRegulation } from '../draft_regulation'
+import { DraftRegulationModel } from '../draft_regulation'
 
 import { ISODate, RegName } from '@island.is/regulations'
+import { RegulationDraftId } from '@island.is/regulations/admin'
 
 @Table({
   tableName: 'draft_regulation_cancel',
 })
-export class DraftRegulationCancel extends Model<DraftRegulationCancel> {
+export class DraftRegulationCancelModel extends Model<DraftRegulationCancelModel> {
   // @Column({
   //   type: DataType.UUID,
   //   primaryKey: true,
@@ -28,12 +26,12 @@ export class DraftRegulationCancel extends Model<DraftRegulationCancel> {
   // @ApiProperty()
   // id!: string
 
-  @ForeignKey(() => DraftRegulation)
+  @ForeignKey(() => DraftRegulationModel)
   @Column({
     type: DataType.UUID,
   })
   @ApiProperty()
-  changing_id!: string
+  changing_id!: RegulationDraftId
 
   @Column({
     type: DataType.STRING,

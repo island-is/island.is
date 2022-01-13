@@ -13,7 +13,7 @@ module.exports = {
             defaultValue: Sequelize.UUIDV4,
           },
           drafting_status: {
-            type: Sequelize.ENUM('draft', 'proposal', 'shipped'),
+            type: Sequelize.ENUM('draft', 'proposal', 'shipped', 'published'),
           },
           name: {
             type: Sequelize.STRING,
@@ -36,6 +36,9 @@ module.exports = {
           signature_date: {
             type: Sequelize.DATEONLY,
           },
+          signature_text: {
+            type: Sequelize.TEXT,
+          },
           effective_date: {
             type: Sequelize.DATEONLY,
           },
@@ -47,6 +50,9 @@ module.exports = {
           },
           law_chapters: {
             type: Sequelize.ARRAY(Sequelize.STRING),
+          },
+          signed_document_url: {
+            type: Sequelize.STRING,
           },
           created: {
             type: Sequelize.DATE,

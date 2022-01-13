@@ -5,26 +5,40 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { environment } from '../../../environments'
+import { RegulationsService } from '@island.is/clients/regulations'
 import { CreateDraftRegulationDto, UpdateDraftRegulationDto } from './dto'
-import { DraftRegulation } from './draft_regulation.model'
-import { DraftRegulationChange } from '../draft_regulation_change'
-import { DraftRegulationCancel } from '../draft_regulation_cancel'
+import { DraftRegulationModel } from './draft_regulation.model'
+import { DraftRegulationChangeModel } from '../draft_regulation_change'
+import { DraftRegulationCancelModel } from '../draft_regulation_cancel'
 import { Op } from 'sequelize'
 import { DraftRegulationCancelService } from '../draft_regulation_cancel/draft_regulation_cancel.service'
 import { DraftRegulationChangeService } from '../draft_regulation_change/draft_regulation_change.service'
+import {
+  Author,
+  DraftRegulationCancel,
+  DraftRegulationChange,
+  DraftSummary,
+  RegulationDraft,
+} from '@island.is/regulations/admin'
+import { extractAppendixesAndComments } from '@island.is/regulations-tools/textHelpers'
+import { Appendix, Kennitala } from '@island.is/regulations'
+import * as kennitala from 'kennitala'
+import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 
 @Injectable()
 export class DraftRegulationService {
   constructor(
-    @InjectModel(DraftRegulation)
-    private readonly draftRegulationModel: typeof DraftRegulation,
+    @InjectModel(DraftRegulationModel)
+    private readonly draftRegulationModel: typeof DraftRegulationModel,
     private readonly draftRegulationCancelService: DraftRegulationCancelService,
     private readonly draftRegulationChangeService: DraftRegulationChangeService,
+    private readonly regulationsService: RegulationsService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly nationalRegistryApi: NationalRegistryApi,
   ) {}
 
-  getAll(nationalId?: string): Promise<DraftRegulation[]> {
+  async getAll(nationalId?: string): Promise<DraftSummary[]> {
     this.logger.debug(
       'Getting all non shipped DraftRegulations, filtered by national id for non managers',
     )
@@ -32,7 +46,7 @@ export class DraftRegulationService {
       authors: { [Op.contains]: [nationalId] },
     }
 
-    return this.draftRegulationModel.findAll({
+    const draftRegulations = await this.draftRegulationModel.findAll({
       where: {
         drafting_status: { [Op.in]: ['draft', 'proposal'] },
         ...authorsCondition,
@@ -42,35 +56,176 @@ export class DraftRegulationService {
         ['created', 'DESC'],
       ],
     })
+
+    const drafts: DraftSummary[] = []
+    for await (const draft of draftRegulations) {
+      const authors: Author[] = []
+
+      if (draft.authors) {
+        for await (const nationalId of draft.authors) {
+          try {
+            // FIXME: implement author lookup
+            const author = { name: undefined } // await this.regulationsAdminApiService.getAuthorInfo(nationalId)
+
+            authors.push({
+              authorId: nationalId,
+              name: author?.name ?? '',
+            })
+          } catch (e) {
+            // Fallback to nationalId if fetching name fails
+            authors.push({
+              authorId: nationalId,
+              name: nationalId,
+            })
+          }
+        }
+      }
+      drafts.push({
+        id: draft.id,
+        draftingStatus: draft.drafting_status as 'draft' | 'proposal',
+        title: draft.title,
+        idealPublishDate: draft.ideal_publish_date,
+        authors,
+      })
+    }
+
+    return drafts
   }
 
-  getAllShipped(): Promise<DraftRegulation[]> {
+  async getAllShipped(): Promise<DraftSummary[]> {
     this.logger.debug('Getting all shipped/published DraftRegulations')
 
-    return this.draftRegulationModel.findAll({
+    const draftRegulations = await this.draftRegulationModel.findAll({
       where: {
         drafting_status: { [Op.in]: ['shipped', 'published'] },
       },
       order: [['created', 'DESC']],
     })
+
+    const drafts: DraftSummary[] = []
+    for await (const draft of draftRegulations) {
+      drafts.push({
+        id: draft.id,
+        draftingStatus: draft.drafting_status as 'draft' | 'proposal',
+        title: draft.title,
+        idealPublishDate: draft.ideal_publish_date,
+        authors: [],
+      })
+    }
+
+    return drafts
   }
 
-  findById(id: string): Promise<DraftRegulation> {
+  async findById(id: string): Promise<RegulationDraft | null> {
     this.logger.debug(`Finding DraftRegulation ${id}`)
 
-    return this.draftRegulationModel.findOne({
+    const draftRegulation = await this.draftRegulationModel.findOne({
       where: { id },
       include: [
-        { model: DraftRegulationChange },
-        { model: DraftRegulationCancel },
+        { model: DraftRegulationChangeModel },
+        { model: DraftRegulationCancelModel },
       ],
     })
+
+    if (!draftRegulation) {
+      return null
+    }
+
+    const lawChapters =
+      (draftRegulation.law_chapters?.length &&
+        (await this.regulationsService.getRegulationsLawChapters(
+          false,
+          draftRegulation.law_chapters,
+        ))) ||
+      undefined
+
+    const [ministry] =
+      (draftRegulation.ministry_id &&
+        (await this.regulationsService.getRegulationsMinistries([
+          draftRegulation.ministry_id,
+        ]))) ||
+      []
+
+    const authors: Author[] = []
+    draftRegulation?.authors?.forEach(async (nationalId) => {
+      // FIXME: implement author lookup
+      const author = { authorId: nationalId, name: nationalId } // await this.regulationsAdminApiService.getAuthorInfo(nationalId)
+      author && authors.push(author)
+    })
+
+    const impactNames =
+      draftRegulation.changes?.map((change) => change.regulation) ?? []
+    if (draftRegulation.cancel) {
+      impactNames.push(draftRegulation.cancel.regulation)
+    }
+    const impactOptions = await this.regulationsService.getRegulationsOptionsList(
+      impactNames,
+    )
+
+    const impacts: (DraftRegulationCancel | DraftRegulationChange)[] = []
+    draftRegulation.changes?.forEach(async (change) => {
+      const changeTexts = extractAppendixesAndComments(change.text)
+
+      impacts.push({
+        id: change.id as any,
+        type: 'amend',
+        date: change.date,
+        title: change.title,
+        text: changeTexts.text,
+        appendixes: changeTexts.appendixes,
+        comments: changeTexts.comments,
+        // About the impaced stofnreglugerð
+        name: change.regulation, // primary-key reference to the stofnreglugerð
+        regTitle:
+          impactOptions.find((opt) => opt.name === change.regulation)?.title ??
+          '', // helpful for human-readable display in the UI
+      })
+    })
+    if (draftRegulation.cancel) {
+      impacts.push({
+        id: draftRegulation.cancel.id,
+        type: 'repeal',
+        date: draftRegulation.cancel.date,
+        // About the cancelled reglugerð
+        name: draftRegulation.cancel.regulation, // primary-key reference to the reglugerð
+        regTitle:
+          impactOptions.find(
+            (opt) => opt.name === draftRegulation.cancel?.regulation,
+          )?.title ?? '', // helpful for human-readable display in the UI
+      })
+    }
+
+    const { text, appendixes, comments } = extractAppendixesAndComments(
+      draftRegulation.text,
+    )
+
+    return {
+      id: draftRegulation.id,
+      draftingStatus: draftRegulation.drafting_status,
+      title: draftRegulation.title,
+      name: draftRegulation.name,
+      text,
+      lawChapters,
+      ministry,
+      authors,
+      idealPublishDate: draftRegulation.ideal_publish_date as any, // TODO: Exclude original from response.
+      draftingNotes: draftRegulation.drafting_notes, // TODO: Exclude original from response.
+      appendixes: appendixes as Appendix[],
+      comments,
+      impacts,
+      type: draftRegulation.type,
+      effectiveDate: draftRegulation.effective_date,
+      signatureDate: draftRegulation.signature_date,
+      signatureText: draftRegulation.signature_text || '',
+      signedDocumentUrl: draftRegulation.signed_document_url,
+      // fastTrack: ??
+    }
   }
 
   create(
     create: CreateDraftRegulationDto,
     nationalId: string,
-  ): Promise<DraftRegulation> {
+  ): Promise<DraftRegulationModel> {
     this.logger.debug('Creating a new DraftRegulation')
 
     create.authors = [nationalId]
@@ -83,7 +238,7 @@ export class DraftRegulationService {
     nationalId: string,
   ): Promise<{
     numberOfAffectedRows: number
-    updatedDraftRegulation: DraftRegulation
+    updatedDraftRegulation: DraftRegulationModel
   }> {
     this.logger.debug(`Updating DraftRegulation ${id}`)
 
@@ -114,5 +269,22 @@ export class DraftRegulationService {
         id,
       },
     })
+  }
+
+  async getAuthorInfo(kt: string): Promise<Author | null> {
+    if (kennitala.isCompany(kt)) {
+      return null
+    }
+
+    const person = await this.nationalRegistryApi.getUser(kt)
+
+    if (!person) {
+      return null
+    }
+
+    return {
+      name: person.Fulltnafn,
+      authorId: kt as Kennitala,
+    }
   }
 }
