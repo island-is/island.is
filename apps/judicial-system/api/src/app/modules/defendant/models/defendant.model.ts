@@ -19,8 +19,8 @@ export class Defendant implements TDefendant {
   @Field()
   readonly caseId!: string
 
-  @Field()
-  readonly nationalId!: string
+  @Field({ nullable: true })
+  readonly nationalId?: string
 
   @Field({ nullable: true })
   readonly name?: string

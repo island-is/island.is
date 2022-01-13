@@ -9,7 +9,7 @@ export interface Defendant {
   created: string
   modified: string
   caseId: string
-  nationalId: string
+  nationalId?: string
   name?: string
   gender?: Gender
   address?: string
