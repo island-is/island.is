@@ -538,16 +538,17 @@ const Auctions: Screen<AuctionsProps> = ({
         auctionContainsVakaKeyword(auction))
     )
   }
-  const getExtraInfo = (auction: SyslumennAuction) => {
+  const getWhereAuctionTakesPlaceAndExtraInfo = (auction: SyslumennAuction) => {
     if (auctionAtVaka(auction)) {
       return (
         <div>
           <Text paddingBottom={1}>
             {n('auctionTakesPlaceAt', 'Staðsetning uppboðs')}:{' '}
-            {n(
-              'auctionTakesPlaceAtVaka',
-              'Uppboð verður haldið í aðstöðu Vöku hf., Héðinsgötu 1 - 3.',
-            )}
+            {auction.auctionTakesPlaceAt ??
+              n(
+                'auctionTakesPlaceAtVaka',
+                'Uppboð verður haldið í aðstöðu Vöku hf., Héðinsgötu 1 - 3.',
+              )}
           </Text>
           <Text variant="small">
             {n(
@@ -578,6 +579,15 @@ const Auctions: Screen<AuctionsProps> = ({
             'Framhald uppboðs fasteignarinnar verður háð á fasteigninni sjálfri.',
           )}
         </Text>
+      )
+    } else {
+      return (
+        auction.auctionTakesPlaceAt && (
+          <Text paddingBottom={1}>
+            {n('auctionTakesPlaceAt', 'Staðsetning uppboðs')}:{' '}
+            {auction.auctionTakesPlaceAt}
+          </Text>
+        )
       )
     }
   }
@@ -802,11 +812,7 @@ const Auctions: Screen<AuctionsProps> = ({
                   )}
 
                   {/* Auction extra info */}
-                  {getExtraInfo(auction)}
-
-                  {auction.auctionTakesPlaceAt && (
-                    <Text>Uppboðsstaður: {auction.auctionTakesPlaceAt}</Text>
-                  )}
+                  {getWhereAuctionTakesPlaceAndExtraInfo(auction)}
 
                   {/* Respondents */}
                   {auctionRespondents &&
