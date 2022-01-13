@@ -6,6 +6,18 @@ import { Address } from './address.model'
 import { Citizenship } from './citizenship.model'
 
 @ObjectType()
+class Spouse {
+  @Field(() => String, { nullable: true })
+  name?: string
+
+  @Field(() => String, { nullable: true })
+  nationalId?: string
+
+  @Field(() => String, { nullable: true })
+  cohabitant?: string
+}
+
+@ObjectType()
 export class NationalRegistryUser {
   @Field(() => ID)
   nationalId!: string
@@ -43,12 +55,6 @@ export class NationalRegistryUser {
   @Field(() => Address, { nullable: true })
   address?: Address
 
-  @Field(() => String, { nullable: true })
-  spouseName?: string
-
-  @Field(() => String, { nullable: true })
-  spouseNationalId?: string
-
-  @Field(() => String, { nullable: true })
-  spouseCohab?: string
+  @Field(() => Spouse, { nullable: true })
+  spouse?: Spouse
 }

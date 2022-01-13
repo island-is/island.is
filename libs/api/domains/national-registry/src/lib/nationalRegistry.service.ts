@@ -29,9 +29,6 @@ export class NationalRegistryService {
       fullName: user.Fulltnafn,
       gender: this.formatGender(user.Kyn),
       maritalStatus: this.formatMaritalStatus(user.hju),
-      spouseName: user.nafnmaka,
-      spouseNationalId: user.MakiKt,
-      spouseCohab: user.Sambudarmaki,
       religion: user.Trufelag, // TODO: format from user.Tru
       banMarking: {
         banMarked: user.Bannmerking === '1',
@@ -53,6 +50,14 @@ export class NationalRegistryService {
         city: user.Faedingarstadur,
         date: user.Faedingardagur,
       },
+      ...(user.nafnmaka &&
+        user.MakiKt && {
+          spouse: {
+            name: user.nafnmaka,
+            nationalId: user.MakiKt,
+            cohabitant: user.Sambudarmaki,
+          },
+        }),
     }
   }
 
