@@ -63,8 +63,6 @@ export class NationalRegistryApi {
       },
     )
 
-    console.log('Einstaklingur____', response)
-
     if (!response) {
       throw new NotFoundException(
         `user with nationalId ${nationalId} not found in national Registry`,
@@ -98,8 +96,6 @@ export class NationalRegistryApi {
         Kennitala: nationalId,
       },
     )
-
-    console.log('borninMinResponse', borninMinResponse)
 
     if (!borninMinResponse) {
       throw new NotFoundException(

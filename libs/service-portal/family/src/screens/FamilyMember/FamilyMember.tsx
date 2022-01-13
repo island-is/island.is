@@ -66,7 +66,6 @@ const FamilyMember: ServicePortalModuleComponent = () => {
       />
     )
 
-  console.log('person', person)
   return (
     <>
       <Box marginBottom={6}>
