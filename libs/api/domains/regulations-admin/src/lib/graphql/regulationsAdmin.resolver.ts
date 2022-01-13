@@ -57,9 +57,11 @@ export class RegulationsAdminResolver {
       undefined
 
     const [ministry] =
-      (await this.regulationsService.getRegulationsMinistries(
-        draft.ministry_id && [draft.ministry_id],
-      )) || []
+      (draft.ministry_id &&
+        (await this.regulationsService.getRegulationsMinistries([
+          draft.ministry_id,
+        ]))) ||
+      []
 
     const authors: Author[] = []
     draft?.authors?.forEach(async (nationalId) => {
