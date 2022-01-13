@@ -1,71 +1,93 @@
 import { IsArray, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
+import {
+  Appendix,
+  HTMLText,
+  ISODate,
+  Kennitala,
+  LawChapterSlug,
+  MinistrySlug,
+  PlainText,
+  RegName,
+  RegulationType,
+  URLString,
+} from '@island.is/regulations'
+import { DraftingStatus } from '@island.is/regulations/admin'
 
 export class UpdateDraftRegulationDto {
   @IsString()
   @ApiProperty()
-  readonly draftingStatus!: string
+  readonly draftingStatus!: DraftingStatus
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly name?: string
+  readonly name?: RegName
 
   @IsString()
   @ApiProperty()
-  readonly title!: string
+  readonly title!: PlainText
 
   @IsString()
   @ApiProperty()
-  readonly text!: string
-
-  @IsOptional()
-  @IsString()
-  @ApiProperty()
-  readonly appendixes?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiProperty()
-  readonly comments?: string
-
-  @IsString()
-  @ApiProperty()
-  readonly draftingNotes!: string
-
-  @IsOptional()
-  @IsString()
-  @ApiProperty()
-  readonly idealPublishDate?: Date
-
-  @IsOptional()
-  @IsString()
-  @ApiProperty()
-  readonly ministryId?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiProperty()
-  readonly signatureDate?: Date
-
-  @IsOptional()
-  @IsString()
-  @ApiProperty()
-  readonly effectiveDate?: Date
-
-  @IsOptional()
-  @IsString()
-  @ApiProperty()
-  readonly type?: string
+  readonly text!: HTMLText
 
   @IsOptional()
   @IsArray()
   @ApiProperty()
-  authors?: string[]
+  readonly appendixes?: Appendix[]
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly comments?: HTMLText
+
+  @IsString()
+  @ApiProperty()
+  readonly draftingNotes!: HTMLText
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly idealPublishDate?: ISODate
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly ministryId?: MinistrySlug
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly signatureDate?: ISODate
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly signatureText?: HTMLText
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly effectiveDate?: ISODate
+
+  @IsString()
+  @ApiProperty()
+  readonly type!: RegulationType
 
   @IsOptional()
   @IsArray()
   @ApiProperty()
-  readonly lawChapters?: string[]
+  authors?: Kennitala[]
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly signedDocumentUrl?: URLString
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty()
+  readonly lawChapters?: LawChapterSlug[]
 }

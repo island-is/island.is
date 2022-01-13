@@ -446,15 +446,22 @@ export const useDraftingState = (
             id: draft.id,
             body: {
               title: draft.title.value,
-              text: draft.text.value, // (text + appendix + comments)
+              text: draft.text.value,
+              appendixes: draft.appendixes.map((apx) => ({
+                title: apx.title.value,
+                text: apx.text.value,
+              })),
+              comments: draft.comments.value,
               ministryId: draft.ministry.value,
               draftingNotes: draft.draftingNotes.value,
               idealPublishDate: draft.idealPublishDate?.value,
               lawChapters: draft.lawChapters.value,
               signatureDate: draft.signatureDate.value,
+              signatureText: draft.signatureText.value,
               effectiveDate: draft.effectiveDate.value,
               type: draft.type.value,
               draftingStatus: newStatus || draft.draftingStatus,
+              signedDocumentUrl: draft.signedDocumentUrl.value,
             },
           },
         },

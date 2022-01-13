@@ -20,7 +20,10 @@ import {
   DraftSummary,
   RegulationDraft,
 } from '@island.is/regulations/admin'
-import { extractAppendixesAndComments } from '@island.is/regulations-tools/textHelpers'
+import {
+  combineTextAppendixesComments,
+  extractAppendixesAndComments,
+} from '@island.is/regulations-tools/textHelpers'
 import { Appendix, Kennitala } from '@island.is/regulations'
 import * as kennitala from 'kennitala'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
@@ -210,7 +213,7 @@ export class DraftRegulationService {
       authors,
       idealPublishDate: draftRegulation.ideal_publish_date as any, // TODO: Exclude original from response.
       draftingNotes: draftRegulation.drafting_notes, // TODO: Exclude original from response.
-      appendixes: appendixes as Appendix[],
+      appendixes,
       comments,
       impacts,
       type: draftRegulation.type,
@@ -235,7 +238,7 @@ export class DraftRegulationService {
   async update(
     id: string,
     update: UpdateDraftRegulationDto,
-    nationalId: string,
+    nationalId: Kennitala,
   ): Promise<{
     numberOfAffectedRows: number
     updatedDraftRegulation: DraftRegulationModel
@@ -246,10 +249,30 @@ export class DraftRegulationService {
       update.authors.push(nationalId)
     }
 
+    const updateData: Partial<DraftRegulationModel> = {
+      title: update.title,
+      text: combineTextAppendixesComments(
+        update.text,
+        update.appendixes,
+        update.comments,
+      ),
+      ministry_id: update.ministryId,
+      drafting_notes: update.draftingNotes,
+      ideal_publish_date: update.idealPublishDate,
+      law_chapters: update.lawChapters,
+      signature_date: update.signatureDate,
+      signature_text: update.signatureText,
+      effective_date: update.effectiveDate,
+      type: update.type,
+      drafting_status: update.draftingStatus,
+      signed_document_url: update.signedDocumentUrl,
+      authors: update.authors,
+    }
+
     const [
       numberOfAffectedRows,
       [updatedDraftRegulation],
-    ] = await this.draftRegulationModel.update(update, {
+    ] = await this.draftRegulationModel.update(updateData, {
       where: { id },
       returning: true,
     })

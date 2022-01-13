@@ -3,13 +3,12 @@ import { IsString, IsOptional } from 'class-validator'
 
 @InputType()
 export class EditDraftBody {
-  @Field({ nullable: true })
   @IsString()
+  @Field({ nullable: true })
   drafting_status!: string
 
   @IsString()
   @Field({ nullable: true })
-  @IsOptional()
   text!: string
 
   @IsString()
@@ -19,13 +18,11 @@ export class EditDraftBody {
 
   @IsString()
   @Field({ nullable: true })
-  @IsOptional()
-  title?: string
+  title!: string
 
   @IsString()
   @Field({ nullable: true })
-  @IsOptional()
-  drafting_notes?: string
+  drafting_notes!: string
 
   @IsString()
   @Field({ nullable: true })
@@ -45,12 +42,22 @@ export class EditDraftBody {
   @IsString()
   @Field({ nullable: true })
   @IsOptional()
+  signature_text?: string
+
+  @IsString()
+  @Field({ nullable: true })
+  @IsOptional()
   effective_date?: string
 
   @IsString()
   @Field({ nullable: true })
   @IsOptional()
   type?: string
+
+  @IsString()
+  @Field({ nullable: true })
+  @IsOptional()
+  signed_document_url?: string
 
   @Field(() => [String], { nullable: true })
   @IsOptional()
