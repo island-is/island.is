@@ -1,9 +1,8 @@
+import { RegulationDraftId } from '@island.is/regulations/admin'
 import { Field, ObjectType } from '@nestjs/graphql'
-import { IsString } from 'class-validator'
 
 @ObjectType()
 export class DeleteDraftRegulationModel {
-  @Field()
-  @IsString()
-  id!: string
+  @Field(() => String)
+  id!: RegulationDraftId
 }
