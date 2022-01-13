@@ -6,7 +6,9 @@ import { logger } from '@island.is/logging'
 import {
   GetViewISLFjolskyldanDto,
   GetViewISLEinstaklingurDto,
+  GetViewISLBorninMinDto,
   ISLFjolskyldan,
+  ISLBorninMin,
   ISLEinstaklingur,
 } from './dto'
 import { SoapClient } from './soapClient'
@@ -61,6 +63,8 @@ export class NationalRegistryApi {
       },
     )
 
+    console.log('Einstaklingur____', response)
+
     if (!response) {
       throw new NotFoundException(
         `user with nationalId ${nationalId} not found in national Registry`,
@@ -85,6 +89,27 @@ export class NationalRegistryApi {
     return Array.isArray(response.table.diffgram.DocumentElement.ISLFjolskyldan)
       ? response.table.diffgram.DocumentElement.ISLFjolskyldan
       : [response.table.diffgram.DocumentElement.ISLFjolskyldan]
+  }
+
+  public async getMyChildren(nationalId: string): Promise<ISLBorninMin[]> {
+    const borninMinResponse: GetViewISLBorninMinDto = await this.signal(
+      'GetViewISLBorninMin',
+      {
+        Kennitala: nationalId,
+      },
+    )
+
+    console.log('borninMinResponse', borninMinResponse)
+
+    if (!borninMinResponse) {
+      throw new NotFoundException(
+        `children for nationalId ${nationalId} not found`,
+      )
+    }
+
+    const documentData =
+      borninMinResponse.table.diffgram.DocumentElement.ISLBorninMin
+    return Array.isArray(documentData) ? documentData : [documentData]
   }
 
   private async signal(

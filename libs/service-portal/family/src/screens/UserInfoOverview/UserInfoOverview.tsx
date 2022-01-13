@@ -15,12 +15,22 @@ import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/FamilyMemberCardLoader'
 
-const NationalRegistryFamilyQuery = gql`
-  query NationalRegistryFamilyQuery {
-    nationalRegistryFamily {
+const NationalRegistryCurrentUserQuery = gql`
+  query NationalRegistryCurrentUserQuery {
+    nationalRegistryUser {
+      nationalId
+      spouseName
+      spouseNationalId
+      spouseCohab
+    }
+  }
+`
+
+const NationalRegistryChildrenQuery = gql`
+  query NationalRegistryChildrenQuery {
+    nationalRegistryChildren {
       nationalId
       fullName
-      familyRelation
     }
   }
 `
@@ -28,11 +38,24 @@ const NationalRegistryFamilyQuery = gql`
 const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const { data, loading, error, called } = useQuery<Query>(
-    NationalRegistryFamilyQuery,
-  )
-  const { nationalRegistryFamily } = data || {}
 
+  const { data, loading, error, called } = useQuery<Query>(
+    NationalRegistryCurrentUserQuery,
+  )
+  const { nationalRegistryUser } = data || {}
+
+  const {
+    data: childrenData,
+    loading: childrenLoading,
+    error: childrenError,
+    called: childrenCalled,
+  } = useQuery<Query>(NationalRegistryChildrenQuery)
+  const { nationalRegistryChildren } = childrenData || {}
+
+  const spouseData =
+    nationalRegistryUser?.spouseCohab &&
+    nationalRegistryUser.spouseName &&
+    nationalRegistryUser.spouseNationalId
   return (
     <>
       <Box marginBottom={[2, 3, 5]}>
@@ -53,7 +76,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
           </GridColumn>
         </GridRow>
       </Box>
-      {error && (
+      {childrenError && (
         <Box textAlign="center" marginBottom={2}>
           <Text variant="h4" as="h2">
             {formatMessage({
@@ -65,10 +88,10 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
         </Box>
       )}
       <Stack space={2}>
-        {called &&
-          !loading &&
-          !error &&
-          nationalRegistryFamily?.length === 0 && (
+        {childrenCalled &&
+          !childrenLoading &&
+          !childrenError &&
+          nationalRegistryChildren?.length === 0 && (
             <AlertMessage type="info" title={formatMessage(m.noDataPresent)} />
           )}
         <FamilyMemberCard
@@ -76,16 +99,24 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
           nationalId={userInfo.profile.nationalId}
           currentUser
         />
-        {loading &&
+        {spouseData && (
+          <FamilyMemberCard
+            key={nationalRegistryUser?.spouseNationalId}
+            title={nationalRegistryUser?.spouseName || ''}
+            nationalId={nationalRegistryUser?.spouseNationalId || ''}
+            familyRelation="spouse"
+          />
+        )}
+        {childrenLoading &&
           [...Array(3)].map((_key, index) => (
             <FamilyMemberCardLoader key={index} />
           ))}
-        {nationalRegistryFamily?.map((familyMember, index) => (
+        {nationalRegistryChildren?.map((familyMember) => (
           <FamilyMemberCard
-            key={index}
+            key={familyMember.nationalId}
             title={familyMember.fullName}
             nationalId={familyMember.nationalId}
-            familyRelation={familyMember.familyRelation}
+            familyRelation="child"
           />
         ))}
       </Stack>

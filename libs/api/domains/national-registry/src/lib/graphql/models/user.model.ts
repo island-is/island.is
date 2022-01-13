@@ -42,4 +42,13 @@ export class NationalRegistryUser {
 
   @Field(() => Address, { nullable: true })
   address?: Address
+
+  @Field(() => String, { nullable: true })
+  spouseName?: string
+
+  @Field(() => String, { nullable: true })
+  spouseNationalId?: string
+
+  @Field(() => String, { nullable: true })
+  spouseCohab?: string
 }
