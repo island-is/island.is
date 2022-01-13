@@ -594,7 +594,10 @@ const Auctions: Screen<AuctionsProps> = ({
     }
   }
 
-  const renderRespondents = (auction: SyslumennAuction, auctionRespondents) => {
+  const renderRespondents = (
+    auction: SyslumennAuction,
+    auctionRespondents: string[],
+  ) => {
     if (!auctionRespondents) return null
 
     if (auction.lotType === LOT_TYPES.REAL_ESTATE) {
@@ -619,14 +622,7 @@ const Auctions: Screen<AuctionsProps> = ({
       )
     }
 
-    return (
-      <Text paddingTop={2} paddingBottom={1}>
-        {auctionRespondents.length > 1
-          ? n('auctionRespondentsPlural', 'Gerðarþolar')
-          : n('auctionRespondentsSingle', 'Gerðarþoli')}
-        : {auctionRespondents.join(', ')}
-      </Text>
-    )
+    return null
   }
 
   return (
