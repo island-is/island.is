@@ -24,9 +24,6 @@ export const modalButtonWrapper = style({
 export const line = style({
   fontSize: theme.typography.baseFontSize,
   borderBottom: `1px solid ${theme.color.blue100}`,
-  ...themeUtils.responsiveStyle({
-    sm: {},
-  }),
 })
 
 export const button = style({
