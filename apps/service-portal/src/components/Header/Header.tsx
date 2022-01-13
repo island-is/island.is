@@ -33,19 +33,13 @@ export const Header: FC<{}> = () => {
         <Box width="full">
           <Box
             display="flex"
-            justifyContent={[
-              'spaceBetween',
-              'spaceBetween',
-              'spaceBetween',
-              'flexEnd',
-              'flexEnd',
-            ]}
+            justifyContent={['spaceBetween', 'spaceBetween', 'flexEnd']}
             alignItems="center"
             width="full"
             background="white"
             paddingX={[3, 3, 3, 3, 6]}
           >
-            <Hidden above="md">
+            <Hidden above="sm">
               <Link to={ServicePortalPath.MinarSidurRoot}>
                 <FocusableBox component="div">
                   <Logo width={40} iconOnly />
@@ -56,7 +50,7 @@ export const Header: FC<{}> = () => {
             <Box display="flex" alignItems="center" flexWrap="nowrap">
               <UserMenu fullscreen />
               <Hidden above="md">
-                <Box marginLeft={1}>
+                <Box marginLeft={[1, 2]}>
                   <Button
                     variant="utility"
                     icon={mobileMenuState === 'open' ? 'close' : 'menu'}

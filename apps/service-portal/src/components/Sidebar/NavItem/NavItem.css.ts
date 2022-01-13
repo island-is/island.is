@@ -1,6 +1,14 @@
-import { style, styleVariants } from '@vanilla-extract/css'
+import { style, styleVariants, keyframes } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import { NonceProvider } from 'react-select'
+
+const iconEaseIn = keyframes({
+  from: {
+    opacity: 0,
+  },
+  to: {
+    opacity: 1,
+  },
+})
 
 export const dotState = styleVariants({
   active: {},
@@ -16,17 +24,17 @@ export const navItemActive = styleVariants({
     borderLeft: `4px solid ${theme.color.blue400}`,
     color: theme.color.blue400,
     ...themeUtils.responsiveStyle({
-      lg: {
+      md: {
         paddingLeft: theme.spacing[3],
       },
     }),
   },
   inactive: {
     paddingLeft: theme.spacing[2],
-    marginLeft: 4,
+    borderLeft: `4px solid ${theme.color.white}`,
     color: theme.color.blue600,
     ...themeUtils.responsiveStyle({
-      lg: {
+      md: {
         paddingLeft: theme.spacing[3],
       },
     }),
@@ -36,7 +44,7 @@ export const navItemActive = styleVariants({
     border: `1px solid ${theme.color.blue100}`,
     borderRadius: '8px',
     ...themeUtils.responsiveStyle({
-      lg: {
+      md: {
         color: theme.color.blue400,
         border: 'unset',
         paddingLeft: theme.spacing[1],
@@ -45,7 +53,7 @@ export const navItemActive = styleVariants({
   },
   inactiveCollapsed: {
     ...themeUtils.responsiveStyle({
-      lg: {
+      md: {
         color: theme.color.blue600,
         paddingLeft: theme.spacing[1],
       },
@@ -56,14 +64,13 @@ export const navItemActive = styleVariants({
 export const navItemHover = styleVariants({
   hoverActive: {
     color: theme.color.blue400,
-    borderColor: theme.color.blue400,
+    borderLeft: `4px solid ${theme.color.blue400}`,
     textDecoration: 'none',
   },
   hoverInactive: {
     backgroundColor: theme.color.blue100,
     color: theme.color.blue400,
-    border: 'unset',
-    marginLeft: 4,
+    borderLeft: `4px solid ${theme.color.blue100}`,
   },
   hoverCollapsed: {
     ...themeUtils.responsiveStyle({
@@ -83,9 +90,23 @@ export const text = style({
   overflow: 'hidden',
 })
 
+export const iconWrapper = style({
+  position: 'absolute',
+  right: 0,
+  paddingRight: theme.spacing[2],
+  paddingTop: theme.spacing[1],
+  cursor: 'pointer',
+  color: theme.color.blue600,
+  ':hover': {
+    color: theme.color.blue400,
+  },
+})
+
 export const icon = style({
   pointerEvents: 'none',
   height: '26px',
+  animation: `250ms ease-in-out 0s 1 ${iconEaseIn}`,
+  willChange: 'opacity',
 })
 
 export const dot = style({
@@ -147,7 +168,9 @@ export const subLockCollapsed = style({
   marginRight: 5,
   pointerEvents: 'none',
 })
+
 export const link = style({
+  width: '100%',
   ':hover': {
     textDecoration: 'none',
   },
