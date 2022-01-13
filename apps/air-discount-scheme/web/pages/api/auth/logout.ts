@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { env } from '@island.is/air-discount-scheme-web/lib/environments'
+import env from '@island.is/air-discount-scheme-web/lib/environment'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   res.redirect(

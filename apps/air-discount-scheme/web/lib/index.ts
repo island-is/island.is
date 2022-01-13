@@ -1,3 +1,3 @@
 export * from './interfaces'
 export * from './idsConfig'
-export * from './environment'
+export * as env from './environment'

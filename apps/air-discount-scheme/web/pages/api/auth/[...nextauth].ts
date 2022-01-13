@@ -3,7 +3,7 @@ import Providers from 'next-auth/providers'
 import { uuid } from 'uuidv4'
 import { identityServerConfig } from '@island.is/air-discount-scheme-web/lib'
 import { Role } from '@island.is/air-discount-scheme/types'
-import { env } from '@island.is/air-discount-scheme-web/lib/environments'
+import env from '@island.is/air-discount-scheme-web/lib/environment'
 import {
   AuthUser,
   signIn as handleSignIn,
