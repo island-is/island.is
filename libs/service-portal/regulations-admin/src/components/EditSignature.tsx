@@ -309,8 +309,9 @@ export const EditSignature: StepComponent = (props) => {
                 <Input
                   label={t(msg.signatureDate)}
                   value={
-                    draft.signatureDate.value &&
-                    formatDateFns(draft.signatureDate.value, 'dd/MM/yyyy')
+                    (draft.signatureDate.value &&
+                      formatDateFns(draft.signatureDate.value, 'dd/MM/yyyy')) ||
+                    ''
                   }
                   placeholder={t(msg.signatureDatePlaceholder)}
                   name="_signatureDate"
@@ -325,7 +326,7 @@ export const EditSignature: StepComponent = (props) => {
                 {draft.ministry.value ? (
                   <Input
                     label={t(msg.ministry)}
-                    value={ministryName || draft.ministry.value}
+                    value={ministryName || draft.ministry.value || ''}
                     placeholder={t(msg.ministryPlaceholder)}
                     name="_rn"
                     size="sm"
