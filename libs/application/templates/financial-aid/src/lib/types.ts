@@ -3,6 +3,7 @@ import { answersSchema } from './dataSchema'
 
 export enum DataProviderTypes {
   NationalRegistry = 'NationalRegistryProvider',
+  Veita = 'VeitaProvider',
 }
 
 export enum ApproveOptions {
