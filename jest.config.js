@@ -160,6 +160,7 @@ module.exports = {
     '<rootDir>/libs/nest/config',
     '<rootDir>/libs/nest/feature-flags',
     '<rootDir>/libs/nest/problem',
+    '<rootDir>/libs/nest/swagger',
     '<rootDir>/libs/react/feature-flags',
     '<rootDir>/libs/service-portal/applications',
     '<rootDir>/libs/service-portal/assets',

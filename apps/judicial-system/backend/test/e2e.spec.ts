@@ -116,7 +116,7 @@ beforeAll(async () => {
 
   registrar = (
     await request(app.getHttpServer())
-      .get(`/api/user/${registrarNationalId}`)
+      .get(`/api/user/?nationalId=${registrarNationalId}`)
       .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
 
@@ -200,8 +200,6 @@ function remainingJudgeCaseData() {
     ruling: 'Ruling',
     decision: CaseDecision.ACCEPTING,
     validToDate: '2021-09-28T12:00:00.000Z',
-    custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
-    otherRestrictions: 'Other Restrictions',
     isolationToDate: '2021-09-10T12:00:00.000Z',
     conclusion: 'Addition to Conclusion',
     accusedAppealDecision: CaseAppealDecision.APPEAL,
@@ -440,12 +438,6 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.ruling ?? null).toBe(caseTwo.ruling ?? null)
   expect(caseOne.decision ?? null).toBe(caseTwo.decision ?? null)
   expect(caseOne.validToDate ?? null).toBe(caseTwo.validToDate ?? null)
-  expect(caseOne.custodyRestrictions ?? null).toStrictEqual(
-    caseTwo.custodyRestrictions ?? null,
-  )
-  expect(caseOne.otherRestrictions ?? null).toBe(
-    caseTwo.otherRestrictions ?? null,
-  )
   expect(caseOne.isolationToDate ?? null).toBe(caseTwo.isolationToDate ?? null)
   expect(caseOne.conclusion ?? null).toBe(caseTwo.conclusion ?? null)
   expect(caseOne.accusedAppealDecision ?? null).toBe(
@@ -614,11 +606,13 @@ describe('User', () => {
           created: dbUser.created ?? 'FAILURE',
           modified: apiUser.modified,
           nationalId: dbUser.nationalId ?? 'FAILURE',
+          institution: apiUser.institution,
         } as CUser)
 
         // Check the data in the database
         return User.findOne({
           where: { id: apiUser.id },
+          include: [{ model: Institution, as: 'institution' }],
         })
       })
       .then((newValue) => {
@@ -803,6 +797,7 @@ describe('Case', () => {
           modified: apiCase.modified,
           ...judgeCaseData,
           judge,
+          registrar,
         } as CCase)
 
         // Check the data in the database
@@ -849,6 +844,7 @@ describe('Case', () => {
           prosecutor,
           sharedWithProsecutorsOffice,
           judge,
+          registrar,
         })
 
         // Check the data in the database

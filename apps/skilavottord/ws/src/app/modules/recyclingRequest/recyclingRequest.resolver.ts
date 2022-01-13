@@ -103,12 +103,12 @@ export class RecyclingRequestResolver {
     requestType: RecyclingRequestTypes,
     @Args('permno') permno: string,
   ): Promise<typeof RecyclingRequestResponse> {
-    const vehicle = await this.samgongustofaService.getUserVehicle(
-      user.nationalId,
-      permno,
-    )
     if (requestType === 'pendingRecycle' || requestType === 'cancelled') {
-      // Check if user has the vehicle
+      const vehicle = await this.samgongustofaService.getUserVehicle(
+        user.nationalId,
+        permno,
+      )
+      // Check if user owns the vehicle
       if (!vehicle) {
         this.logger.error(
           `User doesn't have right to deregistered the vehicle.`,
@@ -131,7 +131,7 @@ export class RecyclingRequestResolver {
     return this.recyclingRequestService.createRecyclingRequest(
       user,
       requestType,
-      vehicle,
+      permno,
     )
   }
 }

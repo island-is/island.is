@@ -71,5 +71,14 @@ export const courtRecordAccordion = {
           'Notaður sem texti í "Ákvörðun um kæru" hlutanum í þingbókarfellilistanum.',
       },
     }),
+    endOfSessionBookings: defineMessages({
+      title: {
+        id:
+          'judicial.system.core:court_record_accordion.end_of_session_bookings.title',
+        defaultMessage: 'Bókanir í lok þinghalds',
+        description:
+          'Notaður sem titill fyrir "Bókanir í lok þinghalds" hlutann í þingbókarfellilistanum.',
+      },
+    }),
   },
 }

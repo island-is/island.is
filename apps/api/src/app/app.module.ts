@@ -36,15 +36,16 @@ import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { IslykillModule } from '@island.is/api/domains/islykill'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { RskCompanyInfoModule } from '@island.is/api/domains/rsk-company-info'
+import { AssetsClientConfig } from '@island.is/clients/assets'
+import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { AuditModule } from '@island.is/nest/audit'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
-import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
-import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -203,12 +204,7 @@ const autoSchemaFile = environment.production
       xroadBaseUrl: environment.xroad.baseUrl,
       xroadClientId: environment.xroad.clientId,
     }),
-    AssetsModule.register({
-      xRoadBasePathWithEnv: environment.propertiesXRoad.url,
-      xRoadAssetsMemberCode: environment.propertiesXRoad.memberCode,
-      xRoadAssetsApiPath: environment.propertiesXRoad.apiPath,
-      xRoadClientId: environment.propertiesXRoad.clientId,
-    }),
+    AssetsModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({
       xRoadProviderId: environment.paymentDomain.xRoadProviderId,
@@ -264,11 +260,12 @@ const autoSchemaFile = environment.production
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
-        XRoadConfig,
-        NationalRegistryClientConfig,
+        AssetsClientConfig,
         AuthPublicApiClientConfig,
         FeatureFlagConfig,
+        NationalRegistryClientConfig,
         SyslumennClientConfig,
+        XRoadConfig,
       ],
     }),
   ],
