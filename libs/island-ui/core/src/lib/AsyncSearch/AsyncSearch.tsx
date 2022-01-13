@@ -234,13 +234,13 @@ const createFilterFunction = (
 }
 
 const getIconColor = (
-  colorSchemeContext: ColorSchemes,
   whiteColorScheme: boolean,
+  blueberryColorScheme: boolean,
 ) => {
   if (whiteColorScheme) {
     return 'white'
   }
-  if (colorSchemeContext === 'blueberry') {
+  if (blueberryColorScheme) {
     return 'blueberry600'
   }
   return 'blue400'
@@ -284,14 +284,16 @@ export const AsyncSearchInput = forwardRef<
     const { value, inputSize: size } = inputProps
     const showLabel = Boolean(size === 'large' && label)
     const isOpen = hasFocus && !!children && React.Children.count(children) > 0
+
     const whiteColorScheme = skipContext
       ? false
       : colorSchemeContext === 'white' || white
 
-    const iconColor = getIconColor(colorSchemeContext, whiteColorScheme)
     const blueberryColorScheme = skipContext
       ? false
       : colorSchemeContext === 'blueberry'
+
+    const iconColor = getIconColor(whiteColorScheme, blueberryColorScheme)
 
     return (
       <div
@@ -313,7 +315,7 @@ export const AsyncSearchInput = forwardRef<
           <button
             className={cn(styles.icon, styles.iconSizes[size], {
               [styles.transparentBackground]:
-                whiteColorScheme || colorSchemeContext === 'blueberry',
+                whiteColorScheme || blueberryColorScheme,
               [styles.focusable]: value,
             })}
             tabIndex={value ? 0 : -1}
