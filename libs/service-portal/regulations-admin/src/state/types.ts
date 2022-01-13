@@ -49,7 +49,7 @@ export type BodyDraftFields = {
   comments: HtmlDraftField
 }
 
-type DraftImpactFields<
+type DraftImpactBaseFields<
   ImpactType extends DraftRegulationChange | DraftRegulationCancel
 > = Readonly<
   // always prefilled on "create" - non-editable
@@ -57,13 +57,15 @@ type DraftImpactFields<
 > & {
   date: DraftField<Date>
   regTitle: string
-  error?: MessageDescriptor
+  error?: MessageDescriptor | string
 }
 
-export type ChangeDraftFields = DraftImpactFields<DraftRegulationChange> &
+export type DraftChangeForm = DraftImpactBaseFields<DraftRegulationChange> &
   BodyDraftFields
 
-export type CancelDraftFields = DraftImpactFields<DraftRegulationCancel>
+export type DraftCancelForm = DraftImpactBaseFields<DraftRegulationCancel>
+
+export type DraftImpactForm = DraftChangeForm | DraftCancelForm
 
 // ---------------------------------------------------------------------------
 
@@ -82,7 +84,7 @@ export type RegDraftForm = BodyDraftFields & {
   signedDocumentUrl: DraftField<URLString | undefined>
 
   mentioned: Array<RegName>
-  impacts: Array<ChangeDraftFields | CancelDraftFields>
+  impacts: Array<DraftImpactForm>
 
   draftingNotes: HtmlDraftField
   authors: DraftField<Array<Kennitala>>

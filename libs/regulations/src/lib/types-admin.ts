@@ -74,7 +74,7 @@ export type RegulationDraft = Pick<
   signedDocumentUrl?: URLString
   type?: RegulationType
   ministry?: Ministry
-  impacts: ReadonlyArray<DraftRegulationCancel | DraftRegulationChange>
+  impacts: ReadonlyArray<DraftImpact>
 }
 
 // ---------------------------------------------------------------------------
@@ -99,6 +99,12 @@ export type DraftRegulationChange = {
   date: ISODate
   title: PlainText
 } & Pick<Regulation, 'text' | 'appendixes' | 'comments'>
+
+// ---------------------------------------------------------------------------
+
+export type DraftImpactId = DraftRegulationChangeId | DraftRegulationCancelId
+
+export type DraftImpact = DraftRegulationChange | DraftRegulationCancel
 
 // ---------------------------------------------------------------------------
 
