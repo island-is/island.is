@@ -6,7 +6,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
-import { ApiCreatedResponse } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -24,6 +24,7 @@ import { DefendantService } from './defendant.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId/defendant')
+@ApiTags('defendants')
 export class DefendantController {
   constructor(
     private readonly defendantService: DefendantService,
