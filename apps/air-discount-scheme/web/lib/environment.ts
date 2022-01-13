@@ -12,15 +12,12 @@ const devConfig = {
     process.env.IDENTITY_SERVER_DOMAIN ?? 'identity-server.dev01.devland.is',
   identityServerLogoutURL: isLocalhost
     ? 'https://loftbru.dev01.devland.is'
-    : getStaticEnv('LOFTBRU_HOST'),
+    : getStaticEnv('NEXTAUTH_URL'),
   identityServerSecret: process.env.IDENTITY_SERVER_SECRET,
   idsCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
   loftbruHost: isLocalhost
     ? 'http://localhost:4200'
-    : getStaticEnv('LOFTBRU_HOST'),
-  loftbruProtected: isLocalhost
-    ? '/min-rettindi'
-    : getStaticEnv('LOFTBRU_PROTECTED'),
+    : getStaticEnv('NEXTAUTH_URL'),
 }
 
 const prodConfig = {
@@ -28,11 +25,10 @@ const prodConfig = {
   NEXTAUTH_URL: isProd ? getStaticEnv('NEXTAUTH_URL') : '',
   IDS: isProd ? getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL') : '',
   identityServerDomain: isProd ? getStaticEnv('IDENTITY_SERVER_DOMAIN') : '',
-  identityServerLogoutURL: isProd ? getStaticEnv('LOFTBRU_HOST') : '',
+  identityServerLogoutURL: isProd ? getStaticEnv('NEXTAUTH_URL') : '',
   identityServerSecret: process.env.IDENTITY_SERVER_SECRET,
   idsCookieName: isProd ? getStaticEnv('IDS_COOKIE_NAME') : '',
-  loftbruHost: isProd ? getStaticEnv('LOFTBRU_HOST') : '',
-  loftbruProtected: isProd ? getStaticEnv('LOFTBRU_PROTECTED') : '',
+  loftbruHost: isProd ? getStaticEnv('NEXTAUTH_URL') : '',
 }
 
 export default isProd ? prodConfig : devConfig

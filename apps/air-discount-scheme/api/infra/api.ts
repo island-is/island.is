@@ -12,11 +12,6 @@ export const serviceSetup = (services: {
         staging: 'https://innskraning.island.is/?id=ads.staging',
         prod: 'https://innskraning.island.is/?id=ads.prod',
       },
-      AUTH_PUBLIC_API_URL: {
-        dev: 'https://identity-server.dev01.devland.is/api',
-        staging: 'https://identity-server.staging01.devland.is/api',
-        prod: 'https://innskra.island.is/api',
-      },
       AUTH_AUDIENCE: {
         dev: 'loftbru.dev01.devland.is',
         staging: 'loftbru.staging01.devland.is',

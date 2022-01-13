@@ -1,7 +1,6 @@
 import { User } from '../user/models/user.model'
 import { environment } from '../../../environments'
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
-import { AuthenticationError } from 'apollo-server-express'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { decode } from 'jsonwebtoken'
 
@@ -13,7 +12,7 @@ export const CurrentUser = createParamDecorator(
       : null
 
     if (!sessionToken) {
-      throw new AuthenticationError('Invalid user session')
+      return null as User
     }
 
     const decodedToken = decode(sessionToken) as User

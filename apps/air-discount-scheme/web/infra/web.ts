@@ -11,7 +11,6 @@ export const serviceSetup = (services: {
       IDENTITY_SERVER_DOMAIN: 'https://identity-server.dev01.devland.is',
       IDENTITY_SERVER_SECRET:
         '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET',
-      NEXTAUTH_URL_INTERNAL: 'http://10.240.8.16',
       IDS_COOKIE_NAME: 'next-auth.session-token',
       SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -23,7 +22,6 @@ export const serviceSetup = (services: {
         staging: 'https://loftbru.staging01.devland.is',
         prod: 'https://loftbru.island.is',
       },
-      LOFTBRU_PROTECTED: '/min-rettindi',
     })
     .secrets({
       SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN',

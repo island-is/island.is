@@ -2,7 +2,6 @@ air-discount-scheme-api:
   enabled: true
   env:
     AUTH_AUDIENCE: 'loftbru.island.is'
-    AUTH_PUBLIC_API_URL: 'https://innskra.island.is/api'
     BACKEND_URL: 'http://web-air-discount-scheme-backend'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
@@ -128,9 +127,7 @@ air-discount-scheme-web:
     IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
     IDS_COOKIE_NAME: 'next-auth.session-token'
     LOFTBRU_HOST: 'https://loftbru.island.is'
-    LOFTBRU_PROTECTED: '/min-rettindi'
     NEXTAUTH_URL: 'http://localhost:4200'
-    NEXTAUTH_URL_INTERNAL: 'http://10.240.8.16'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   grantNamespaces: []
