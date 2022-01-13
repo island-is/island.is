@@ -108,12 +108,19 @@ export const blueberry = style({
   border: 'none',
   color: theme.color.blueberry600,
   ':focus': {
-    boxShadow: `inset 0 0 0 0px ${theme.color.blueberry600}`,
+    boxShadow: 'none',
+    border: 'none',
   },
   ':hover': {
     boxShadow: `inset 0 0 0 ${2}px ${theme.color.blueberry600}`,
   },
   '::placeholder': {
     color: theme.color.blueberry600,
+  },
+  selectors: {
+    [`&:focus:hover`]: {
+      boxShadow: 'none',
+      border: 'none',
+    },
   },
 })
