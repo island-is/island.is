@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import {
   ServicePortalNavigationItem,
   ServicePortalPath,
@@ -15,17 +15,11 @@ import SubNav from './NavItem/SubNav'
 
 interface Props {
   nav: ServicePortalNavigationItem
-  alwaysExpanded?: boolean
   badge?: boolean
   onItemClick?: () => void
 }
 
-const ModuleNavigation: FC<Props> = ({
-  nav,
-  alwaysExpanded,
-  onItemClick,
-  badge,
-}) => {
+const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   const [expand, setExpand] = useState(false)
   const [hover, setHover] = useState(false)
   const [{ sidebarState }] = useStore()
@@ -41,7 +35,6 @@ const ModuleNavigation: FC<Props> = ({
       pathname.includes(nav.path)) ||
     nav.children?.find((x) => x.path && pathname.includes(x.path)) !==
       undefined ||
-    expand ||
     nav.path === pathname
 
   const handleExpand = () => {
@@ -53,6 +46,10 @@ const ModuleNavigation: FC<Props> = ({
     if (onItemClick) onItemClick()
     if (external) servicePortalOutboundLink()
   }
+
+  useEffect(() => {
+    setExpand(isModuleActive)
+  }, [isModuleActive, setExpand])
 
   return (
     <Box
@@ -102,16 +99,15 @@ const ModuleNavigation: FC<Props> = ({
         onClick={() => {
           !collapsed && handleRootItemClick(nav.external)
         }}
-        alwaysExpanded={alwaysExpanded}
+        onChevronClick={() => {
+          setExpand(!expand)
+        }}
         badge={badge}
       >
         {formatMessage(nav.name)}
       </NavItem>
       {!collapsed && navArray && nav.enabled !== false && (
-        <AnimateHeight
-          duration={300}
-          height={isModuleActive || alwaysExpanded ? 'auto' : 0}
-        >
+        <AnimateHeight duration={300} height={expand ? 'auto' : 0}>
           <SubNav
             navChildren={navChildren}
             onItemClick={() => onItemClick && onItemClick()}
