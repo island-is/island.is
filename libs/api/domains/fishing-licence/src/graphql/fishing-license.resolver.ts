@@ -13,8 +13,7 @@ import { FishingLicenseService } from '../lib/fishing-license.service'
 import { Ship } from './models/ship.model'
 import { FishingLicense } from './models/fishing-license.model'
 
-// @UseGuards(IdsUserGuard, ScopesGuard)
-// @Scopes(ApiScope.internal)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class FishingLicenseResolver {
   constructor(private fishingLicenseService: FishingLicenseService) {}
@@ -23,16 +22,13 @@ export class FishingLicenseResolver {
     name: 'ships',
     nullable: true,
   })
-  // @Audit()
-  async shipQuery(
-    // @CurrentUser() user: User,
-    @Args('nationalId', { type: () => String })
-    nationalId: string,
-  ): Promise<Ship[]> {
-    return await this.fishingLicenseService.getShips(nationalId)
+  @Audit()
+  async shipQuery(@CurrentUser() user: User): Promise<Ship[]> {
+    return await this.fishingLicenseService.getShips(user.nationalId)
   }
 
   @Query(() => [FishingLicense], { name: 'fishingLicenses' })
+  @Audit()
   async fishingLicensesQuery(
     @Args('registrationNumber', { type: () => Number })
     registrationNumber: number,
