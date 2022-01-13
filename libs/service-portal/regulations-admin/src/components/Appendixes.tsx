@@ -19,7 +19,7 @@ import { RegDraftActions } from '../state/useDraftingState'
 
 // ---------------------------------------------------------------------------
 
-type AppendixProps = {
+type AppendixEditingProps = {
   appendix: AppendixDraftForm
   baseAppendix?: Appendix
   idx: number
@@ -27,7 +27,7 @@ type AppendixProps = {
   moveUpable: boolean
 } & Pick<AppendixesProps, 'actions' | 'draftId'>
 
-const Appendix = (props: AppendixProps) => {
+const AppendixEditing = (props: AppendixEditingProps) => {
   const {
     appendix,
     baseAppendix,
@@ -180,7 +180,7 @@ export const Appendixes = (props: AppendixesProps) => {
       {props.appendixes.length > 0 && (
         <Accordion singleExpand={false} dividerOnTop={false}>
           {appendixes.map((appendix, i) => (
-            <Appendix
+            <AppendixEditing
               key={appendix.key}
               idx={i}
               appendix={appendix}

@@ -9,7 +9,7 @@ import { TaskList } from '../components/TaskList'
 import { ShippedRegulations } from '../components/ShippedRegulations'
 import { homeMessages as msg } from '../messages'
 import { useLocale } from '../utils'
-import { useCreateRegulationDraft } from '@island.is/service-portal/graphql'
+import { useCreateRegulationDraft } from '../utils/dataHooks'
 
 const Home = () => {
   useNamespaces('ap.regulations-admin')

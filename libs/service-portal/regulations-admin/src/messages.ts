@@ -444,6 +444,10 @@ export const statusMsgs: Record<
     id: 'ap.regulations-admin:status-shipped',
     defaultMessage: 'Bíður birtingar',
   },
+  published: {
+    id: 'ap.regulations-admin:status-published',
+    defaultMessage: 'Birt',
+  },
 })
 
 export const buttonsMsgs = defineMessages({

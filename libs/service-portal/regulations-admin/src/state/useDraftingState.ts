@@ -38,6 +38,7 @@ import {
 import { buttonsMsgs, errorMsgs } from '../messages'
 import {} from '@island.is/regulations/web'
 import { toast } from '@island.is/island-ui/core'
+import { getEditUrl, getHomeUrl } from '../utils/routing'
 
 export const UPDATE_DRAFT_REGULATION_MUTATION = gql`
   mutation UpdateDraftRegulationMutation($input: EditDraftRegulationInput!) {
@@ -499,12 +500,7 @@ export const useDraftingState = (
 
       goToStep: (stepName: Step) => {
         actions.saveStatus(true)
-        history.push(
-          generatePath(ServicePortalPath.RegulationsAdminEdit, {
-            id: draft.id,
-            step: stepName,
-          }),
-        )
+        history.push(getEditUrl(draft.id, stepName))
       },
       // FIXME: rename to updateProp??
       updateState: <Prop extends RegDraftFormSimpleProps>(
@@ -556,7 +552,7 @@ export const useDraftingState = (
             },
           }).then(() => {
             // TODO: Láta notanda vita að færslu hefur verið eytt út?
-            history.push(ServicePortalPath.RegulationsAdminRoot)
+            history.push(getHomeUrl())
           })
         } catch (e) {
           console.error('Failed to delete regulation draft: ', e)
@@ -586,7 +582,7 @@ export const useDraftingState = (
                 console.error(error)
                 dispatch({ type: 'SAVING_STATUS_DONE', error })
               } else {
-                history.push(ServicePortalPath.RegulationsAdminRoot)
+                history.push(getHomeUrl())
               }
             })
           }

@@ -40,21 +40,26 @@ export type Author = {
 
 // ---------------------------------------------------------------------------
 
-export type DraftSummary = Pick<DB_RegulationDraft, 'id' | 'title'> & {
-  idealPublishDate?: ISODate
-  draftingStatus: Exclude<DraftingStatus, 'shipped'>
-  authors: ReadonlyArray<Author>
+export type DraftSummary = Pick<
+  RegulationDraft,
+  'id' | 'title' | 'idealPublishDate' | 'fastTrack' | 'authors'
+> & {
+  draftingStatus: Extract<DraftingStatus, 'draft' | 'proposal'>
 }
 
-export type ShippedSummary = Required<
-  Pick<DB_RegulationDraft, 'id' | 'title' | 'name'> & {
-    idealPublishDate: ISODate
-  }
->
+export type ShippedSummary = Pick<
+  RegulationDraft,
+  'id' | 'title' | 'name' | 'idealPublishDate'
+> & {
+  draftingStatus: Extract<DraftingStatus, 'shipped' | 'published'>
+}
 
 // ---------------------------------------------------------------------------
 
-export type RegulationDraft = {
+export type RegulationDraft = Pick<
+  Regulation,
+  'text' | 'appendixes' | 'comments'
+> & {
   /** undefined signifies a new regulation draft */
   id: RegulationDraftId
   draftingStatus: DraftingStatus
@@ -72,7 +77,7 @@ export type RegulationDraft = {
   type?: RegulationType
   ministry?: Ministry
   impacts: ReadonlyArray<DraftRegulationCancel | DraftRegulationChange>
-} & Pick<Regulation, 'text' | 'appendixes' | 'comments'>
+}
 
 // ---------------------------------------------------------------------------
 

@@ -18,7 +18,7 @@ import { prettyName } from '@island.is/regulations'
 import { DraftImpactName } from '@island.is/regulations/admin'
 
 import { MessageDescriptor } from '@formatjs/intl'
-import { useRegulationListQuery } from '@island.is/service-portal/graphql'
+import { useRegulationListQuery } from '../utils/dataHooks'
 import { ImpactList } from './ImpactList'
 import { RegDraftForm } from '../state/types'
 

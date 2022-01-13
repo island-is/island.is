@@ -7,15 +7,12 @@ import { isUuid } from 'uuidv4'
 import { Step } from '../types'
 import { steps } from '../state/useDraftingState'
 import EditDraft from '../components/EditDraft'
-import {
-  useMinistriesQuery,
-  useRegulationDraftQuery,
-} from '@island.is/service-portal/graphql'
+import { useMinistriesQuery, useRegulationDraftQuery } from '../utils/dataHooks'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 
 // ---------------------------------------------------------------------------
 
-const ensureStep = (maybeStep?: string): Step => {
+const assertStep = (maybeStep?: string): Step => {
   if (!maybeStep) {
     return 'basics'
   }
@@ -25,7 +22,7 @@ const ensureStep = (maybeStep?: string): Step => {
   throw new Error('Invalid RegulationDraft editing Step')
 }
 
-const ensureDraftId = (maybeId: string): RegulationDraftId => {
+const assertDraftId = (maybeId: string): RegulationDraftId => {
   if (isUuid(maybeId)) {
     return maybeId as RegulationDraftId
   }
@@ -37,8 +34,8 @@ const ensureDraftId = (maybeId: string): RegulationDraftId => {
 const Edit: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('ap.regulations-admin')
   const params = useParams<{ id: string; step?: string }>()
-  const id = ensureDraftId(params.id)
-  const stepName = ensureStep(params.step)
+  const id = assertDraftId(params.id)
+  const stepName = assertStep(params.step)
 
   const draft = useRegulationDraftQuery(id)
   const ministries = useMinistriesQuery()

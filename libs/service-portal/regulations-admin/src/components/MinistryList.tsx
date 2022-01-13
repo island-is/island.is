@@ -8,7 +8,7 @@ import {
 import { ministryMessages as msg } from '../messages'
 import { useLocale } from '../utils'
 import { useHistory } from 'react-router'
-import { useMinistriesQuery } from '@island.is/service-portal/graphql'
+import { useMinistriesQuery } from '../utils/dataHooks'
 
 export const MinistryList = () => {
   const history = useHistory()

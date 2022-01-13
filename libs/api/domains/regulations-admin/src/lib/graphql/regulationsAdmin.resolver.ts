@@ -24,6 +24,8 @@ import {
   DraftRegulationCancel,
   DraftRegulationChange,
   RegulationDraft,
+  DraftSummary,
+  ShippedSummary,
 } from '@island.is/regulations/admin'
 import { extractAppendixesAndComments } from '@island.is/regulations-tools/textHelpers'
 import {
@@ -148,19 +150,30 @@ export class RegulationsAdminResolver {
 
   @Query(() => [DraftRegulationModel])
   async getShippedRegulations(@CurrentUser() { authorization }: User) {
-    return await this.regulationsAdminApiService.getShippedRegulations(
+    const shippedRegs = await this.regulationsAdminApiService.getShippedRegulations(
       authorization,
+    )
+    return shippedRegs.map(
+      (shipped): ShippedSummary => ({
+        id: shipped.id,
+        title: shipped.title,
+        draftingStatus: shipped.drafting_status,
+        name: shipped.name,
+        idealPublishDate: shipped.ideal_publish_date,
+      }),
     )
   }
 
   // @Query(() => [DraftRegulationModel])
   @Query(() => graphqlTypeJson)
-  async getDraftRegulations(@CurrentUser() user: User) {
+  async getDraftRegulations(
+    @CurrentUser() user: User,
+  ): Promise<Array<DraftSummary>> {
     const draftRegulations = await this.regulationsAdminApiService.getDraftRegulations(
       user.authorization,
     )
 
-    const drafts: RegulationDraft[] = []
+    const drafts: DraftSummary[] = []
     for await (const draft of draftRegulations) {
       const authors: Author[] = []
 
@@ -185,27 +198,12 @@ export class RegulationsAdminResolver {
           }
         }
       }
-
       drafts.push({
         id: draft.id,
         draftingStatus: draft.drafting_status,
         title: draft.title,
-        draftingNotes: draft.drafting_notes,
         idealPublishDate: draft.ideal_publish_date,
-        signatureText: draft.signature_text || '',
-        signatureDate: draft.signature_date,
-        signedDocumentUrl: draft.signed_document_url,
-        effectiveDate: draft.effective_date,
-        type: draft.type,
-        name: draft.name,
-        // lawChapters: draft.law_chapters,
-        // ministry: draft.ministry_id,
-        // fastTrack: ???,
-        impacts: [],
         authors,
-        text: '',
-        appendixes: [],
-        comments: '',
       })
     }
 

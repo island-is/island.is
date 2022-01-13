@@ -1,9 +1,8 @@
 import { useMemo, useState } from 'react'
-import { generatePath, useHistory } from 'react-router'
+import { useHistory } from 'react-router'
 import { Query } from '@island.is/api/schema'
 import { gql, useQuery, useMutation, ApolloError } from '@apollo/client'
 import { RegulationDraft } from '@island.is/regulations/admin'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import {
   RegName,
   LawChapter,
@@ -11,6 +10,8 @@ import {
   RegulationOption,
   RegulationOptionList,
 } from '@island.is/regulations'
+import { ShippedSummary, DraftSummary } from '@island.is/regulations/admin'
+import { getEditUrl } from './routing'
 
 // import { APPLICATION_APPLICATIONS } from '../../lib/queries/applicationApplications'
 
@@ -59,6 +60,62 @@ export const useRegulationDraftQuery = (
   }
   return {
     data: data.getDraftRegulation as RegulationDraft,
+  }
+}
+
+// ---------------------------------------------------------------------------
+
+const ShippedRegulationsQuery = gql`
+  query ShippedRegulationsQuery {
+    getShippedRegulations
+  }
+`
+
+export const useShippedRegulationsQuery = (): QueryResult<
+  Array<ShippedSummary>
+> => {
+  const { loading, error, data } = useQuery(ShippedRegulationsQuery, {
+    fetchPolicy: 'no-cache',
+  })
+
+  if (loading) {
+    return { loading }
+  }
+  if (!data) {
+    return {
+      error: error || new Error(`Error fetching shipped regulations list`),
+    }
+  }
+  return {
+    data: data.getShippedRegulations as Array<ShippedSummary>,
+  }
+}
+
+// ---------------------------------------------------------------------------
+
+const RegulationTaskListQuery = gql`
+  query RegulationTaskListQuery {
+    getDraftRegulations
+  }
+`
+
+export const useRegulationTaskListQuery = (): QueryResult<
+  Array<DraftSummary>
+> => {
+  const { loading, error, data } = useQuery(RegulationTaskListQuery, {
+    fetchPolicy: 'no-cache',
+  })
+
+  if (loading) {
+    return { loading }
+  }
+  if (!data) {
+    return {
+      error: error || new Error(`Error fetching shipped regulations list`),
+    }
+  }
+  return {
+    data: data.getShippedRegulations as Array<DraftSummary>,
   }
 }
 
@@ -145,11 +202,7 @@ export const useCreateRegulationDraft = () => {
           }
 
           setStatus({ creating: false })
-          history.push(
-            generatePath(ServicePortalPath.RegulationsAdminEdit, {
-              id: newDraft.id,
-            }),
-          )
+          history.push(getEditUrl(newDraft.id))
         })
         .catch((e) => {
           const error = e instanceof Error ? e : new Error(String(e))
