@@ -47,11 +47,6 @@ export type DraftRegulationChangeId = string & {
 
 // ===========================================================================
 
-declare const _LawChapterId__Brand: unique symbol
-export type LawChapterId = number & { [_LawChapterId__Brand]: true }
-
-// ===========================================================================
-
 declare const _RegulationId__Brand: unique symbol
 /** Id of a Regulation entry in the Reglugerðagrunnur */
 export type RegulationId = number & { [_RegulationId__Brand]: true }
