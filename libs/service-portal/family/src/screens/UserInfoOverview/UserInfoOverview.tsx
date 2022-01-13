@@ -30,7 +30,7 @@ const NationalRegistryChildrenQuery = gql`
   query NationalRegistryChildrenQuery {
     nationalRegistryChildren {
       nationalId
-      fullName
+      displayName
     }
   }
 `
@@ -97,7 +97,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
         {nationalRegistryChildren?.map((familyMember) => (
           <FamilyMemberCard
             key={familyMember.nationalId}
-            title={familyMember.fullName}
+            title={familyMember.displayName || familyMember.fullName}
             nationalId={familyMember.nationalId}
             familyRelation="child"
           />
