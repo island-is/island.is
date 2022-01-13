@@ -14,7 +14,6 @@ import { useLocale } from '@island.is/localization'
 import { UserMenu } from '@island.is/shared/components'
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
-import { BetaTag } from '../Logo/BetaTag'
 import { m } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
@@ -33,22 +32,22 @@ export const Header: FC<{}> = () => {
 
   const closeButton = (userMenu: boolean) => {
     return (
-      <Box
-        borderRadius="circle"
-        color="blue400"
-        background="blue100"
+      <FocusableBox
+        display="flex"
+        alignItems="center"
+        component="button"
         onClick={
           userMenu
             ? () => setUserMenuOpen(false)
             : () => handleMobileMenuTriggerClick()
         }
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        padding={[1, 'p2']}
+        padding={1}
+        borderRadius="circle"
+        background="blue100"
+        className={styles.closeButton}
       >
         <Icon icon="close" color="blue400" />
-      </Box>
+      </FocusableBox>
     )
   }
   return (
@@ -68,11 +67,15 @@ export const Header: FC<{}> = () => {
               <Link to={ServicePortalPath.MinarSidurRoot}>
                 <FocusableBox component="div">
                   <Logo width={40} iconOnly />
-                  <BetaTag />
                 </FocusableBox>
               </Link>
             </Hidden>
-            <Box display="flex" alignItems="center" flexWrap="nowrap">
+            <Box
+              display="flex"
+              alignItems="center"
+              flexWrap="nowrap"
+              marginLeft={1}
+            >
               <UserMenu
                 fullscreen
                 setUserMenuOpen={setUserMenuOpen}
@@ -88,9 +91,9 @@ export const Header: FC<{}> = () => {
                 </Hidden>
               )}
               {!userMenuOpen && (
-                <Hidden above="md">
+                <Hidden above="sm">
                   {mobileMenuState === 'closed' ? (
-                    <Box marginLeft={1}>
+                    <Box marginLeft={[1, 2]}>
                       <Button
                         variant="utility"
                         icon="menu"

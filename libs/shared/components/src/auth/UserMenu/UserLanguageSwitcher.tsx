@@ -43,6 +43,7 @@ export const UserLanguageSwitcher = ({
         name="language-switcher"
         data-testid="language-switcher"
         id="language-switcher"
+        aria-label={'switch language'}
         size="xs"
         value={
           lang === 'en'
@@ -50,7 +51,6 @@ export const UserLanguageSwitcher = ({
             : { label: 'Íslenska', value: 'is' }
         }
         onChange={handleLanguageChange}
-        aria-label={'switch language'}
         label={formatMessage(sharedMessages.language)}
         options={[
           { label: 'Íslenska', value: 'is' },

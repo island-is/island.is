@@ -9,9 +9,11 @@ export const UserMenu = ({
   fullscreen = false,
   showDropdownLanguage = false,
   userMenuOpen,
+  small = false,
   setUserMenuOpen,
 }: {
   fullscreen?: boolean
+  small?: boolean
   showDropdownLanguage?: boolean
   setUserMenuOpen?: (state: boolean) => void
   userMenuOpen?: boolean
@@ -25,11 +27,11 @@ export const UserMenu = ({
     setDropdownState(dropdownState === 'open' ? 'closed' : 'open')
   }
   useEffect(() => {
-    setUserMenuOpen && setUserMenuOpen(dropdownState === 'open' ? true : false)
+    setUserMenuOpen && setUserMenuOpen(dropdownState === 'open')
   }, [dropdownState])
 
   useEffect(() => {
-    if ((dropdownState === 'open') !== userMenuOpen) {
+    if (dropdownState === 'open' && !userMenuOpen) {
       setDropdownState('closed')
     }
   }, [userMenuOpen])
@@ -43,7 +45,7 @@ export const UserMenu = ({
       <Hidden below="lg">
         <UserLanguageSwitcher user={user} />
       </Hidden>
-      <UserButton user={user} onClick={handleClick} />
+      <UserButton user={user} onClick={handleClick} small={small} />
       <UserDropdown
         user={user}
         dropdownState={dropdownState}
