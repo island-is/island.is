@@ -28,7 +28,7 @@ const ContactInfo = ({ field, errors, application }: FAFieldBaseProps) => {
           error={errors?.contactInfo?.email}
           defaultValue={answers?.contactInfo?.email}
           onChange={() => {
-            clearErrors(`${id}.email` || errors?.contactInfo?.email)
+            clearErrors(`${id}.email`)
           }}
         />
       </Box>
