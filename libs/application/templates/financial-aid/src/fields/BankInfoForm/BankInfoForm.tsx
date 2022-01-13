@@ -6,7 +6,7 @@ import { bankInfoForm } from '../../lib/messages'
 import * as styles from '../Shared.css'
 import { InputController } from '@island.is/shared/form-fields'
 
-const BankInfoForm = ({ field, errors, application }: FAFieldBaseProps) => {
+const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
   const { id } = field
   const { formatMessage } = useIntl()
   const { answers } = application
@@ -21,7 +21,7 @@ const BankInfoForm = ({ field, errors, application }: FAFieldBaseProps) => {
           <InputController
             id={`${id}.bankNumber`}
             name={`${id}.bankNumber`}
-            defaultValue={`${answers}.bankNumber`}
+            defaultValue={answers?.bankInfoForm?.bankNumber}
             label={formatMessage(bankInfoForm.inputsLabels.bankNumber)}
             format="####"
             backgroundColor="blue"
@@ -32,7 +32,7 @@ const BankInfoForm = ({ field, errors, application }: FAFieldBaseProps) => {
           <InputController
             id={`${id}.ledger`}
             name={`${id}.ledger`}
-            defaultValue={`${answers}.ledger`}
+            defaultValue={answers?.bankInfoForm?.ledger}
             label={formatMessage(bankInfoForm.inputsLabels.ledger)}
             format="##"
             backgroundColor="blue"
@@ -42,7 +42,7 @@ const BankInfoForm = ({ field, errors, application }: FAFieldBaseProps) => {
           <InputController
             id={`${id}.accountNumber`}
             name={`${id}.accountNumber`}
-            defaultValue={`${answers}.accountNumber`}
+            defaultValue={answers?.bankInfoForm?.accountNumber}
             label={formatMessage(bankInfoForm.inputsLabels.accountNumber)}
             format="######"
             backgroundColor="blue"
