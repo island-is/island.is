@@ -24,9 +24,11 @@ const NationalRegistryCurrentUserQuery = gql`
   query NationalRegistryCurrentUserQuery {
     nationalRegistryUser {
       nationalId
-      spouseName
-      spouseNationalId
-      spouseCohab
+      spouse {
+        name
+        nationalId
+        cohabitant
+      }
     }
   }
 `
@@ -48,7 +50,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
   const { nationalId }: { nationalId: string | undefined } = useParams()
 
   const person =
-    nationalRegistryUser?.spouseNationalId === nationalId
+    nationalRegistryUser?.spouse?.nationalId === nationalId
       ? nationalRegistryUser
       : null
 
@@ -69,7 +71,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
               <Text variant="h3" as="h1">
-                {person?.spouseName || ''}
+                {person?.spouse?.name || ''}
               </Text>
             </Stack>
           </GridColumn>
@@ -78,7 +80,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
       <Stack space={1}>
         <UserInfoLine
           label={defineMessage(m.displayName)}
-          content={person?.spouseName || '...'}
+          content={person?.spouse?.name || '...'}
           loading={loading}
         />
         <Divider />
@@ -89,11 +91,14 @@ const FamilyMember: ServicePortalModuleComponent = () => {
         />
         <Divider />
         <UserInfoLine
-          label="Tengsl"
+          label={formatMessage({
+            id: 'sp.family:spouseCohab',
+            defaultMessage: 'Tengsl',
+          })}
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : person?.spouseCohab || ''
+              : person?.spouse?.cohabitant || ''
           }
           loading={loading}
         />

@@ -19,9 +19,11 @@ const NationalRegistryCurrentUserQuery = gql`
   query NationalRegistryCurrentUserQuery {
     nationalRegistryUser {
       nationalId
-      spouseName
-      spouseNationalId
-      spouseCohab
+      spouse {
+        name
+        nationalId
+        cohabitant
+      }
     }
   }
 `
@@ -49,10 +51,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   )
   const { nationalRegistryChildren } = childrenData || {}
 
-  const spouseData =
-    nationalRegistryUser?.spouseCohab &&
-    nationalRegistryUser.spouseName &&
-    nationalRegistryUser.spouseNationalId
+  const spouseData = nationalRegistryUser?.spouse
   return (
     <>
       <Box marginBottom={[2, 3, 5]}>
@@ -85,9 +84,9 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
         {loading && <FamilyMemberCardLoader />}
         {spouseData && (
           <FamilyMemberCard
-            key={nationalRegistryUser?.spouseNationalId}
-            title={nationalRegistryUser?.spouseName || ''}
-            nationalId={nationalRegistryUser?.spouseNationalId || ''}
+            key={nationalRegistryUser?.spouse?.nationalId}
+            title={nationalRegistryUser?.spouse?.name || ''}
+            nationalId={nationalRegistryUser?.spouse?.nationalId || ''}
             familyRelation="spouse"
           />
         )}

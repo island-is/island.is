@@ -104,7 +104,7 @@ export class NationalRegistryApi {
     }
 
     const documentData =
-      borninMinResponse.table.diffgram.DocumentElement.ISLBorninMin
+      borninMinResponse?.table?.diffgram?.DocumentElement?.ISLBorninMin
     return Array.isArray(documentData) ? documentData : [documentData]
   }
 

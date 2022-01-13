@@ -21,28 +21,28 @@ export interface ISLBorninMin {
   attributes: ISLBorninMinAttributes
   Barn: string
   FulltNafn: string
-  BirtNafn: string
-  Millinafn: string
-  Kenninafn: string
-  Kyn: string
-  Kynheiti: string
-  Faedingardagur: string
-  Foreldri1: string
-  NafnForeldri1: string
-  Foreldri2: string
-  NafnForeldri2: string
-  Forsja1: string
-  NafnForsja1: string
-  Forsjatxt1: string
-  Forsja2: string
-  NafnForsja2: string
-  Forsjatxt2: string
-  Faedingarstadur: string
-  Trufelag: string
-  Rikisfang: string
-  Logheimili: string
-  Sveitarfelag: string
-  Postaritun: string
+  BirtNafn?: string
+  Millinafn?: string
+  Kenninafn?: string
+  Kyn?: string
+  Kynheiti?: string
+  Faedingardagur?: string
+  Foreldri1?: string
+  NafnForeldri1?: string
+  Foreldri2?: string
+  NafnForeldri2?: string
+  Forsja1?: string
+  NafnForsja1?: string
+  Forsjatxt1?: string
+  Forsja2?: string
+  NafnForsja2?: string
+  Forsjatxt2?: string
+  Faedingarstadur?: string
+  Trufelag?: string
+  Rikisfang?: string
+  Logheimili?: string
+  Sveitarfelag?: string
+  Postaritun?: string
 }
 
 interface ISLBorninMinAttributes {

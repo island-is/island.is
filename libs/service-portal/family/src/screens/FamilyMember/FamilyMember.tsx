@@ -103,7 +103,10 @@ const FamilyMember: ServicePortalModuleComponent = () => {
         />
         <Divider />
         <UserInfoLine
-          label="Fæðingarstaður"
+          label={formatMessage({
+            id: 'sp.family:birthplace',
+            defaultMessage: 'Fæðingarstaður',
+          })}
           content={
             error
               ? formatMessage(dataNotFoundMessage)
@@ -113,7 +116,10 @@ const FamilyMember: ServicePortalModuleComponent = () => {
         />
         <Divider />
         <UserInfoLine
-          label="Foreldrar"
+          label={formatMessage({
+            id: 'sp.family:parents',
+            defaultMessage: 'Foreldrar',
+          })}
           renderContent={() =>
             error ? (
               <span>{formatMessage(dataNotFoundMessage)}</span>
