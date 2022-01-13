@@ -32,22 +32,22 @@ export const Header: FC<{}> = () => {
 
   const closeButton = (userMenu: boolean) => {
     return (
-      <Box display="flex" alignItems="center">
-        <FocusableBox
-          component="button"
-          onClick={
-            userMenu
-              ? () => setUserMenuOpen(false)
-              : () => handleMobileMenuTriggerClick()
-          }
-          padding={1}
-          borderRadius="circle"
-          background="blue100"
-          className={styles.closeButton}
-        >
-          <Icon icon="close" color="blue400" />
-        </FocusableBox>
-      </Box>
+      <FocusableBox
+        display="flex"
+        alignItems="center"
+        component="button"
+        onClick={
+          userMenu
+            ? () => setUserMenuOpen(false)
+            : () => handleMobileMenuTriggerClick()
+        }
+        padding={1}
+        borderRadius="circle"
+        background="blue100"
+        className={styles.closeButton}
+      >
+        <Icon icon="close" color="blue400" />
+      </FocusableBox>
     )
   }
   return (
