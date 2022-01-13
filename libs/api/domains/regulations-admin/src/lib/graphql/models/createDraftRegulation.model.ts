@@ -9,7 +9,7 @@ export class CreateDraftRegulationModel {
 
   @Field()
   @IsString()
-  drafting_status!: string
+  draftingStatus!: string
 
   @Field()
   @IsString()
@@ -27,27 +27,27 @@ export class CreateDraftRegulationModel {
   @Field()
   @IsString()
   @IsOptional()
-  drafting_notes?: string
+  draftingNotes?: string
 
   @Field()
   @IsString()
   @IsOptional()
-  ministry_id?: string
+  ministryId?: string
 
   @Field()
   @IsString()
   @IsOptional()
-  ideal_publish_date?: string
+  idealPublishDate?: string
 
   @Field()
   @IsDate()
   @IsOptional()
-  signature_date?: string
+  signatureDate?: string
 
   @Field()
   @IsDate()
   @IsOptional()
-  effective_date?: string
+  effectiveDate?: string
 
   @Field()
   @IsString()

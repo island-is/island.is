@@ -55,12 +55,12 @@ export class DraftRegulationModel {
   @Field({ name: 'draftingStatus', nullable: true })
   // drafting_status!: DraftingStatus
   // @Field()
-  drafting_status!: string
+  draftingStatus!: string
 
   @Field({ name: 'draftingNotes', nullable: true })
   // drafting_notes?: RegulationDraft['draftingNotes']
   // @Field()
-  drafting_notes?: string
+  draftingNotes?: string
 
   // @Field(() => [RegulationAuthor])
   // authors!: RegulationAuthor[]
@@ -91,7 +91,7 @@ export class DraftRegulationModel {
   // law_chapters!: LawChapters[]
 
   @Field(() => [String], { name: 'lawChapters', nullable: true })
-  law_chapters!: string[]
+  lawChapters!: string[]
 
   @Field(() => [String], { nullable: true })
   impacts!: string[] // ?
@@ -101,16 +101,16 @@ export class DraftRegulationModel {
 
   @Field({ name: 'idealPublishDate', nullable: true })
   // @Field()
-  ideal_publish_date?: string
+  idealPublishDate?: string
 
   @Field({ nullable: true })
-  ministry_id?: string
+  ministryId?: string
 
   @Field({ nullable: true })
-  signature_date?: string
+  signatureDate?: string
 
   @Field({ nullable: true })
-  effective_date?: string
+  effectiveDate?: string
 
   @Field({ nullable: true })
   type?: string

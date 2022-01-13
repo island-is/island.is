@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {
-  DB_RegulationDraft,
-  DBx_Regulation,
-  DB_DraftRegulationCancel,
-  DB_DraftRegulationChange,
   DraftingStatus,
+  DraftRegulationCancelId,
+  DraftRegulationChangeId,
   RegulationDraftId,
 } from './types-admin-database'
 import {
@@ -87,16 +85,20 @@ export type DraftRegulationCancel = {
   type: 'repeal'
   name: DraftImpactName
   regTitle: PlainText
-} & Pick<DB_DraftRegulationCancel, 'id' | 'date'>
+  id: DraftRegulationCancelId
+  date: ISODate
+}
 
 // ---------------------------------------------------------------------------
 
 export type DraftRegulationChange = {
+  id: DraftRegulationChangeId
   type: 'amend'
   name: DraftImpactName
   regTitle: PlainText
-} & Pick<DB_DraftRegulationChange, 'id' | 'date' | 'title'> &
-  Pick<Regulation, 'text' | 'appendixes' | 'comments'>
+  date: ISODate
+  title: PlainText
+} & Pick<Regulation, 'text' | 'appendixes' | 'comments'>
 
 // ---------------------------------------------------------------------------
 

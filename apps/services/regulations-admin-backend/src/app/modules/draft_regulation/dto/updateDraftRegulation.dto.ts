@@ -1,52 +1,58 @@
-import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator'
+import { IsArray, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
 export class UpdateDraftRegulationDto {
-  @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly drafting_status?: string
+  readonly draftingStatus!: string
 
   @IsOptional()
   @IsString()
   @ApiProperty()
   readonly name?: string
 
-  @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly title?: string
+  readonly title!: string
+
+  @IsString()
+  @ApiProperty()
+  readonly text!: string
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly text?: string
+  readonly appendixes?: string
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly drafting_notes?: string
+  readonly comments?: string
+
+  @IsString()
+  @ApiProperty()
+  readonly draftingNotes!: string
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly ideal_publish_date?: Date
+  readonly idealPublishDate?: Date
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly ministry_id?: string
+  readonly ministryId?: string
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly signature_date?: Date
+  readonly signatureDate?: Date
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly effective_date?: Date
+  readonly effectiveDate?: Date
 
   @IsOptional()
   @IsString()
@@ -61,5 +67,5 @@ export class UpdateDraftRegulationDto {
   @IsOptional()
   @IsArray()
   @ApiProperty()
-  readonly law_chapters?: string[]
+  readonly lawChapters?: string[]
 }
