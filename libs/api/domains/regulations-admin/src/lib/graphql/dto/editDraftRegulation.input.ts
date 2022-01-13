@@ -1,67 +1,88 @@
-import { Field, InputType, PartialType } from '@nestjs/graphql'
+import {
+  HTMLText,
+  ISODate,
+  LawChapterSlug,
+  MinistrySlug,
+  PlainText,
+  RegName,
+  RegulationType,
+  URLString,
+} from '@island.is/regulations'
+import { DraftingStatus } from '@island.is/regulations/admin'
+import { Field, InputType } from '@nestjs/graphql'
 import { IsString, IsOptional } from 'class-validator'
+import { Appendix } from '../models/draftRegulation.model'
 
 @InputType()
 export class EditDraftBody {
   @IsString()
-  @Field({ nullable: true })
-  drafting_status!: string
+  @Field(() => String, { nullable: true })
+  draftingStatus!: DraftingStatus
 
   @IsString()
-  @Field({ nullable: true })
-  text!: string
+  @Field(() => String, { nullable: true })
+  text!: HTMLText
 
   @IsString()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
-  name?: string
+  comments?: HTMLText
 
-  @IsString()
-  @Field({ nullable: true })
-  title!: string
-
-  @IsString()
-  @Field({ nullable: true })
-  drafting_notes!: string
-
-  @IsString()
-  @Field({ nullable: true })
+  @Field(() => [Appendix], { nullable: true })
   @IsOptional()
-  ministry_id?: string
+  appendixes?: Appendix[]
 
   @IsString()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
-  ideal_publish_date?: string
+  name?: RegName
 
   @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  signature_date?: string
+  @Field(() => String, { nullable: true })
+  title!: PlainText
 
   @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  signature_text?: string
+  @Field(() => String, { nullable: true })
+  draftingNotes!: HTMLText
 
   @IsString()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
-  effective_date?: string
+  ministryId?: MinistrySlug
 
   @IsString()
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   @IsOptional()
-  type?: string
+  idealPublishDate?: ISODate
 
   @IsString()
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   @IsOptional()
-  signed_document_url?: string
+  signatureDate?: ISODate
+
+  @IsString()
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  signatureText?: HTMLText
+
+  @IsString()
+  @Field(() => Date, { nullable: true })
+  @IsOptional()
+  effectiveDate?: ISODate
+
+  @IsString()
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  type?: RegulationType
+
+  @IsString()
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  signedDocumentUrl?: URLString
 
   @Field(() => [String], { nullable: true })
   @IsOptional()
-  law_chapters?: string[]
+  lawChapters?: LawChapterSlug[]
 }
 
 @InputType()
