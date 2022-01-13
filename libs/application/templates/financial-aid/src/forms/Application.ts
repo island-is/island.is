@@ -96,6 +96,21 @@ export const Application: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'taxReturnForm',
+      title: m.taxReturnForm.general.sectionTitle,
+      children: [
+        buildFileUploadField({
+          id: 'taxReturnForm',
+          title: m.taxReturnForm.general.sectionTitle,
+          introduction: m.taxReturnForm.general.description,
+          maxSize: 10000000, // 10 MB
+          uploadHeader: m.files.header,
+          uploadDescription: m.files.description,
+          uploadButtonLabel: m.files.buttonLabel,
+        }),
+      ],
+    }),
+    buildSection({
       id: 'personalTaxCreditForm',
       title: m.personalTaxCreditForm.general.sectionTitle,
       children: [
