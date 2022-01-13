@@ -26,6 +26,7 @@ import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { environment } from '../../../environments'
 import { DraftSummary } from '@island.is/regulations/admin'
+import { Kennitala } from '@island.is/regulations'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulations`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -78,7 +79,7 @@ export class DraftRegulationController {
     } = await this.draftRegulationService.update(
       id,
       draftRegulationToUpdate,
-      user.nationalId,
+      user.nationalId as Kennitala,
     )
 
     if (numberOfAffectedRows === 0) {

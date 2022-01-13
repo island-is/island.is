@@ -231,8 +231,17 @@ export class DraftRegulationService {
   ): Promise<DraftRegulationModel> {
     this.logger.debug('Creating a new DraftRegulation')
 
-    create.authors = [nationalId]
-    return this.draftRegulationModel.create(create)
+    const createData: Partial<DraftRegulationModel> = {
+      drafting_status: 'draft',
+      title: '',
+      text: '',
+      ministry_id: '' as any,
+      drafting_notes: '',
+      authors: [nationalId as Kennitala],
+      type: 'base',
+    }
+
+    return this.draftRegulationModel.create(createData)
   }
 
   async update(

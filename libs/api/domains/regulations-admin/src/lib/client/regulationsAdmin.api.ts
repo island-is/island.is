@@ -80,21 +80,7 @@ export class RegulationsAdminApi extends RESTDataSource {
   }
 
   create(authorization: string): Promise<any> {
-    return this.post(
-      `/draft_regulation`,
-      {
-        id: uuid(),
-        draftingStatus: 'draft',
-        title: '',
-        text: '',
-        draftingNotes: '',
-        ministryId: '',
-        // FIXME: the below fields should be make optional, and empty/null/undefined by default
-        // idealPublishDate: '2022-06-01',
-        type: 'base',
-      },
-      { headers: { authorization } },
-    )
+    return this.post(`/draft_regulation`, {}, { headers: { authorization } })
   }
 
   updateById(
