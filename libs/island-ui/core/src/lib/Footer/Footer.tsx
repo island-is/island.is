@@ -156,7 +156,12 @@ export const Footer = ({
               >
                 <Box paddingX={[0, 0, 1]}>
                   {!!middleLinksTitle && (
-                    <Text variant="eyebrow" color="blue400" paddingBottom={3}>
+                    <Text
+                      as="h2"
+                      variant="eyebrow"
+                      color="blue400"
+                      paddingBottom={3}
+                    >
                       {middleLinksTitle}
                     </Text>
                   )}
@@ -193,7 +198,7 @@ export const Footer = ({
       <Box paddingY={4}>
         <GridContainer>
           <Box paddingBottom={2}>
-            <Text variant="eyebrow" color="blue400">
+            <Text as="h2" variant="eyebrow" color="blue400">
               {bottomLinksTitle}
             </Text>
           </Box>
