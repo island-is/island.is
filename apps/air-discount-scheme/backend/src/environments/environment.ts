@@ -21,16 +21,6 @@ const devConfig = {
         'IS-DEV/GOV/10000/island-is-client',
       memberClass: XRoadMemberClass.GovernmentInstitution,
     },
-    // authMiddlewareOptions: {
-    //   forwardUserInfo: false,
-    //   tokenExchangeOptions: {
-    //     issuer: 'https://identity-server.dev01.devland.is',
-    //     clientId: '@island.is/clients/national-registry',
-    //     clientSecret: process.env.NATIONAL_REGISTRY_IDS_CLIENT_SECRET,
-    //     scope: 'openid @skra.is/individuals @vegagerdin.is',
-    //     requestActorToken: true,
-    //   },
-    // },
   },
   airlineApiKeys: {
     [Airlines.icelandair]: Airlines.icelandair,
@@ -78,16 +68,6 @@ const prodConfig = {
       clientId: process.env.XROAD_TJODSKRA_CLIENT_ID,
       memberClass: XRoadMemberClass.GovernmentInstitution,
     },
-    // authMiddlewareOptions: {
-    //   forwardUserInfo: false,
-    //   tokenExchangeOptions: {
-    //     issuer: 'https://identity-server.dev01.devland.is',
-    //     clientId: '@island.is/clients/national-registry',
-    //     clientSecret: process.env.NATIONAL_REGISTRY_IDS_CLIENT_SECRET,
-    //     scope: 'openid @skra.is/individuals @vegagerdin.is',
-    //     requestActorToken: true,
-    //   },
-    // },
   },
   airlineApiKeys: {
     [Airlines.icelandair]: process.env.ICELANDAIR_API_KEY,
