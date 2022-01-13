@@ -1,5 +1,6 @@
 import {
   asDiv,
+  ensureISODate,
   ensureRegName,
   HTMLText,
   Ministry,
@@ -7,7 +8,6 @@ import {
   RegName,
   RegulationType,
 } from '@island.is/regulations'
-import { set } from 'date-fns/esm'
 
 // ---------------------------------------------------------------------------
 
@@ -85,8 +85,9 @@ export const findSignatureInText = (
       // Capture name of ráðuneyti from start of paragraph
       /^(.+?ráðuneyti)(?:ð|nu)?/,
       /,? /,
+      /(?:þann )?/,
       /(\d{1,2})\.?/,
-      /\s(jan|feb|mar|apr|maí|jún|júl|ágú|sep|okt|nóv|des)(?:\.|[a-záðéíóúýþæö]+)?/,
+      /\s(jan\.?|janúar|feb\.?|febrúar|mar\.?|mars|apr\.?|apríl|maí|jún\.?|júní|júl\.?|júlí|ágú\.?|ágúst|sept?\.?|september|okt\.?|október|nóv\.?|nóvember|des\.?|desember),?/,
       /\s(2\d{3}).?$/,
     ]
       .map((r) => r.source)
@@ -103,10 +104,6 @@ export const findSignatureInText = (
       return false
     }
     match = textContent.trim().replace(/\s+/g, ' ').match(undirskrRe)
-    console.log('FOOBAR BB-2', {
-      cleanText: textContent.trim().replace(/\s+/g, ' '),
-      match,
-    })
     return !!match
   })
 
@@ -116,16 +113,23 @@ export const findSignatureInText = (
   const [
     _,
     ministryName,
-    dayOfMonth,
+    dayOfMonthStr,
     monthName,
-    year,
+    yearStr,
   ] = match as RegExpMatchArray
 
-  const signatureDate = set(new Date(), {
-    date: parseInt(dayOfMonth),
-    month: threeLetterMonths.indexOf(monthName.toLowerCase()),
-    year: parseInt(year),
-  })
+  const month = threeLetterMonths.indexOf(monthName.slice(0, 3).toLowerCase())
+
+  // NOTE: ensureISODate throws out invalid/imaginary dates such as 2022-02-29
+  const foundISODateRaw =
+    yearStr +
+    '-' +
+    ('0' + (month + 1)).slice(-2) +
+    '-' +
+    ('0' + dayOfMonthStr).slice(-2)
+  const foundDate = ensureISODate(foundISODateRaw)
+  const signatureDate = foundDate && new Date(foundDate)
+
   const ministrySlug = ministries.find((m) => ministryName.endsWith(m.name))
     ?.slug
 
