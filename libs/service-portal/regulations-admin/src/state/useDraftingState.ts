@@ -3,15 +3,13 @@ import {
   HTMLText,
   LawChapterSlug,
   PlainText,
-  RegName,
   Appendix,
   MinistryList,
 } from '@island.is/regulations'
 import { useAuth } from '@island.is/auth/react'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import { FC, Reducer, useEffect, useMemo, useReducer } from 'react'
 import { produce, setAutoFreeze, Draft } from 'immer'
-import { useHistory, generatePath } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { Step } from '../types'
 import {
   findAffectedRegulationsInText,
