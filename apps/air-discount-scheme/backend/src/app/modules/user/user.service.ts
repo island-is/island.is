@@ -16,6 +16,7 @@ export class UserService {
   ) {}
 
   async getRelations(nationalId: string): Promise<string[]> {
+    console.log('userservice before getRelations')
     return this.nationalRegistryService.getRelatedChildren(nationalId)
   }
 
@@ -43,7 +44,9 @@ export class UserService {
     nationalId: string,
     model: new (user: NationalRegistryUser, fund: Fund) => T,
   ): Promise<T | null> {
+    console.log('before nat registry get user')
     const user = await this.nationalRegistryService.getUser(nationalId)
+    console.log('backend getuserbynationalid ' + user)
     if (!user) {
       return null
     }

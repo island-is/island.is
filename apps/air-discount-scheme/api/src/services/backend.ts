@@ -1,14 +1,20 @@
 import { Injectable } from '@nestjs/common'
-import { RESTDataSource } from 'apollo-datasource-rest'
+import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 
 import { Discount, User, Flight } from '@island.is/air-discount-scheme/types'
 import { environment } from '../environments'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
+  willSendRequest(req: RequestOptions) {
+    req.headers.set('authorization', this.context.req.headers.authorization)
+    req.headers.set('cookie', this.context.req.headers.cookie)
+  }
+
   baseURL = `${environment.backendUrl}/api/private`
 
   getUserRelations(nationalId: string): Promise<User[]> {
+    console.log('before redir to backend - user relations')
     return this.get(`users/${nationalId}/relations`)
   }
 
