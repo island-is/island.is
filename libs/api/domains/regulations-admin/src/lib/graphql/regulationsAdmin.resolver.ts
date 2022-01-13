@@ -23,8 +23,8 @@ export class RegulationsAdminResolver {
     private regulationsAdminApiService: RegulationsAdminApi,
   ) {}
 
-  // @Query(() => graphqlTypeJson)
-  @Query(() => DraftRegulationModel, { nullable: true })
+  // @Query(() => DraftRegulationModel, { nullable: true })
+  @Query(() => graphqlTypeJson)
   async getDraftRegulation(
     @Args('input') input: GetDraftRegulationInput,
     @CurrentUser() user: User,
@@ -51,16 +51,16 @@ export class RegulationsAdminResolver {
     )
   }
 
-  @Mutation(() => graphqlTypeJson)
   // @Mutation(() => CreateDraftRegulationModel)
+  @Mutation(() => graphqlTypeJson)
   async createDraftRegulation(
     @CurrentUser() { authorization }: User,
   ): Promise<any> {
     return this.regulationsAdminApiService.create(authorization ?? '')
   }
 
-  @Mutation(() => graphqlTypeJson)
   // @Mutation(() => CreateDraftRegulationModel)
+  @Mutation(() => graphqlTypeJson)
   async updateDraftRegulationById(
     @Args('input') input: EditDraftRegulationInput,
     @CurrentUser() { authorization }: User,
