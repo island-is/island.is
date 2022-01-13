@@ -75,7 +75,7 @@ const DefendantForm: React.FC<Props> = (props) => {
     },
   }
 
-  const { updateCase } = useCase()
+  const { updateCase, createDefendant } = useCase()
   const { formatMessage } = useIntl()
   const {
     setField,
@@ -167,17 +167,27 @@ const DefendantForm: React.FC<Props> = (props) => {
                 {formatMessage(m.sections.defendantInfo.heading)}
               </Text>
             </Box>
-            <DefendantInfo
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-            />
+            {workingCase.defendants &&
+              workingCase.defendants.map((defendant, index) => (
+                <Box
+                  marginBottom={
+                    index - 1 === workingCase.defendants?.length ? 0 : 3
+                  }
+                >
+                  <DefendantInfo
+                    defendant={defendant}
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                  />
+                </Box>
+              ))}
             {isCaseTypeWithMultipleDefendantsSupport(workingCase.type) && (
               <Box display="flex" justifyContent="flexEnd" marginTop={3}>
                 <Button
                   variant="ghost"
                   icon="add"
                   onClick={() => {
-                    alert('NOT IMPLEMENTED')
+                    createDefendant(workingCase.id, '000000-0000')
                   }}
                 >
                   {formatMessage(

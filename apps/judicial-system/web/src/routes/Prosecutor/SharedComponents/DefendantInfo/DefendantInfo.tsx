@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
-import { Gender } from '@island.is/judicial-system/types'
+import { Defendant, Gender } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
-import { Box, Icon, Input, RadioButton, Text } from '@island.is/island-ui/core'
+import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   removeTabsValidateAndSet,
@@ -17,12 +17,13 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as styles from './DefendantInfo.css'
 
 interface Props {
+  defendant: Defendant
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
 }
 
 const DefendantInfo: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase } = props
+  const { defendant, workingCase, setWorkingCase } = props
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
 
@@ -58,10 +59,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             id="genderMale"
             label={formatMessage(core.male)}
             value={Gender.MALE}
-            checked={
-              workingCase.defendants &&
-              workingCase.defendants[0].gender === Gender.MALE
-            }
+            checked={defendant.gender === Gender.MALE}
             onChange={() =>
               setAndSendToServer(
                 'accusedGender',
@@ -81,10 +79,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             id="genderFemale"
             label={formatMessage(core.female)}
             value={Gender.FEMALE}
-            checked={
-              workingCase.defendants &&
-              workingCase.defendants[0].gender === Gender.FEMALE
-            }
+            checked={defendant.gender === Gender.FEMALE}
             onChange={() =>
               setAndSendToServer(
                 'accusedGender',
@@ -104,10 +99,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             id="genderOther"
             label={formatMessage(core.otherGender)}
             value={Gender.OTHER}
-            checked={
-              workingCase.defendants &&
-              workingCase.defendants[0].gender === Gender.OTHER
-            }
+            checked={defendant.gender === Gender.OTHER}
             onChange={() =>
               setAndSendToServer(
                 'accusedGender',
@@ -126,10 +118,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
         <InputMask
           mask="999999-9999"
           maskPlaceholder={null}
-          value={
-            (workingCase.defendants && workingCase.defendants[0].nationalId) ??
-            ''
-          }
+          value={defendant.nationalId ?? ''}
           onChange={(event) =>
             removeTabsValidateAndSet(
               'accusedNationalId',
@@ -171,9 +160,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           autoComplete="off"
           label={formatMessage(core.fullName)}
           placeholder={formatMessage(core.fullName)}
-          value={
-            (workingCase.defendants && workingCase.defendants[0].name) ?? ''
-          }
+          value={defendant.name ?? ''}
           errorMessage={accusedNameErrorMessage}
           hasError={accusedNameErrorMessage !== ''}
           onChange={(event) =>
@@ -206,9 +193,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
         autoComplete="off"
         label={formatMessage(core.addressOrResidence)}
         placeholder={formatMessage(core.addressOrResidence)}
-        value={
-          (workingCase.defendants && workingCase.defendants[0].address) ?? ''
-        }
+        value={defendant.address ?? ''}
         errorMessage={accusedAddressErrorMessage}
         hasError={
           Boolean(accusedAddressErrorMessage) &&

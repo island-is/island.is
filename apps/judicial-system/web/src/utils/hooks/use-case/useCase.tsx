@@ -12,6 +12,7 @@ import type {
   CaseTransition,
   RequestSignatureResponse,
   UpdateCase,
+  Defendant,
 } from '@island.is/judicial-system/types'
 
 import { CreateCaseMutation } from './createCaseGql'
@@ -22,6 +23,7 @@ import { TransitionCaseMutation } from './transitionCaseGql'
 import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
 import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
 import { ExtendCaseMutation } from './extendCaseGql'
+import { CreateDefendantMutation } from './createDefendantGql'
 
 type autofillProperties = Pick<
   Case,
@@ -76,6 +78,10 @@ interface ExtendCaseMutationResponse {
   extendCase: Case
 }
 
+interface CreateDefendantMutationResponse {
+  defendant: Defendant
+}
+
 const useCase = () => {
   const [
     createCaseMutation,
@@ -113,6 +119,10 @@ const useCase = () => {
     extendCaseMutation,
     { loading: isExtendingCase },
   ] = useMutation<ExtendCaseMutationResponse>(ExtendCaseMutation)
+  const [
+    createDefendantMutation,
+    { loading: isCreatingDefendant },
+  ] = useMutation<CreateDefendantMutationResponse>(CreateDefendantMutation)
 
   const createCase = useMemo(
     () => async (theCase: Case): Promise<string | undefined> => {
@@ -314,6 +324,17 @@ const useCase = () => {
     [updateCase],
   )
 
+  const createDefendant = useMemo(
+    () => async (caseId: string, nationalId: string) => {
+      const { data } = await createDefendantMutation({
+        variables: { input: { caseId, nationalId } },
+      })
+
+      return data?.defendant
+    },
+    [createDefendantMutation],
+  )
+
   return {
     createCase,
     isCreatingCase,
@@ -332,6 +353,7 @@ const useCase = () => {
     extendCase,
     isExtendingCase,
     autofill,
+    createDefendant,
   }
 }
 
