@@ -173,7 +173,6 @@ export const mockLifecycleOnce = (pruneDate: Date) => {
 }
 
 export const createApplication = async () => {
-  console.log('creating application')
   const response = await server
     .post('/applications')
     .send({
@@ -184,7 +183,6 @@ export const createApplication = async () => {
 }
 
 export const updateApplication = async (applicationId: string) => {
-  console.log('updating application')
   const response = await server
     .put(`/applications/${applicationId}`)
     .send({

@@ -95,13 +95,42 @@ describe('ApplicationLifecycleService Unit tests', () => {
       ApplicationLifeCycleService,
     )
   })
-  it('should prune answers correctly.', async () => {
+
+  it('should prune answers and prune true.', async () => {
     //PREPARE
-    const deleteObjectsSpy = jest
-      .spyOn(awsService, 'deleteObjects')
+    const deleteObjectSpy = jest
+      .spyOn(awsService, 'deleteObject')
       .mockResolvedValue()
+
     const fileExistsSpy = jest
       .spyOn(awsService, 'fileExists')
+      .mockResolvedValueOnce(false)
+      .mockResolvedValueOnce(false)
+
+    //ACT
+    await lifeCycleService.run()
+
+    //ASSERT
+    const result = lifeCycleService.getProcessingApplications()
+    expect(deleteObjectSpy).toHaveBeenCalledTimes(2)
+    expect(fileExistsSpy).toHaveBeenCalledTimes(2)
+
+    expect(result[0].application.attachments).toEqual({})
+    expect(result[0].application.answers).toEqual({})
+    expect(result[0].application.externalData).toEqual({})
+    expect(result[0].pruned).toEqual(true)
+  })
+
+  it('should prune answers leave one attachment on exist true.', async () => {
+    //PREPARE
+    const deleteObjectSpy = jest
+      .spyOn(awsService, 'deleteObject')
+      .mockReset()
+      .mockResolvedValue()
+
+    const fileExistsSpy = jest
+      .spyOn(awsService, 'fileExists')
+      .mockReset()
       .mockResolvedValueOnce(true)
       .mockResolvedValueOnce(false)
 
@@ -110,7 +139,7 @@ describe('ApplicationLifecycleService Unit tests', () => {
 
     //ASSERT
     const result = lifeCycleService.getProcessingApplications()
-    expect(deleteObjectsSpy).toHaveBeenCalled()
+    expect(deleteObjectSpy).toHaveBeenCalledTimes(2)
     expect(fileExistsSpy).toHaveBeenCalledTimes(2)
 
     expect(result[0].application.attachments).toEqual({
@@ -119,5 +148,39 @@ describe('ApplicationLifecycleService Unit tests', () => {
 
     expect(result[0].application.answers).toEqual({})
     expect(result[0].application.externalData).toEqual({})
+    expect(result[0].pruned).toEqual(false)
+  })
+
+  it('should not remove attachments if deleteObject throws Error.', async () => {
+    //PREPARE
+    const deleteObjectSpy = jest
+      .spyOn(awsService, 'deleteObject')
+      .mockReset()
+      .mockImplementation(() => {
+        throw new Error('Error')
+      })
+
+    const fileExistsSpy = jest
+      .spyOn(awsService, 'fileExists')
+      .mockReset()
+      .mockResolvedValueOnce(true)
+      .mockResolvedValueOnce(true)
+
+    //ACT
+    await lifeCycleService.run()
+
+    //ASSERT
+    const result = lifeCycleService.getProcessingApplications()
+    expect(deleteObjectSpy).toHaveBeenCalled()
+    expect(fileExistsSpy).toHaveBeenCalledTimes(0)
+
+    expect(result[0].application.attachments).toEqual({
+      key: 's3://example-bucket/path/to/object',
+      anotherkey: 's3://example-bucket/path/to/object1',
+    })
+
+    expect(result[0].application.answers).toEqual({})
+    expect(result[0].application.externalData).toEqual({})
+    expect(result[0].pruned).toEqual(false)
   })
 })

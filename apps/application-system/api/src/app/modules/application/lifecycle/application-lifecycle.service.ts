@@ -69,33 +69,31 @@ export class ApplicationLifeCycleService {
       }
 
       const attachments = this.attachmentsToKeyArray(applicationAttachments)
-      try {
-        if (attachments) {
-          await this.awsService.deleteObjects(this.getBucketName(), attachments)
-        }
-      } catch (error) {
-        prune.pruned = false
-        this.logger.error(
-          `Failed to delete objects from S3 for application id  ${prune.application.id}`,
-          error,
-        )
-      }
 
-      //Verify if all attachments were deleted
-      for (const [key, value] of Object.entries(applicationAttachments)) {
-        const exists = await this.awsService.fileExists(
-          this.getBucketName(),
-          value,
-        )
-        if (exists) {
-          prune.pruned = false
-          prune.failedAttachments = {
-            ...prune.failedAttachments,
-            [key]: value,
+      if (attachments) {
+        for (const attachment of attachments) {
+          const { key, s3key, bucket, value } = attachment
+          try {
+            await this.awsService.deleteObject(bucket, s3key)
+
+            const exists = await this.awsService.fileExists(bucket, value)
+
+            if (exists) {
+              throw new Error(
+                `Attachment ${key}:${value} still exists in bucket ${bucket}.`,
+              )
+            }
+          } catch (error) {
+            prune.pruned = false
+            prune.failedAttachments = {
+              ...prune.failedAttachments,
+              [key]: value,
+            }
+            this.logger.error(
+              `S3 object delete failed for application Id: ${prune.application.id} and attachment key: ${key}`,
+              error,
+            )
           }
-          this.logger.error(
-            `Attachment ${key}:${value} was not deleted for application id  ${prune.application.id}`,
-          )
         }
       }
     }
@@ -110,7 +108,7 @@ export class ApplicationLifeCycleService {
             attachments: prune.failedAttachments,
             externalData: {},
             answers: {},
-            pruned: true,
+            pruned: prune.pruned,
           },
         )
 
@@ -141,24 +139,22 @@ export class ApplicationLifeCycleService {
   private attachmentsToKeyArray(
     attachments: object,
   ): {
-    Key: string
+    s3key: string
+    key: string
+    bucket: string
+    value: string
   }[] {
-    const keys: { Key: string }[] = []
+    const keys: {
+      s3key: string
+      key: string
+      bucket: string
+      value: string
+    }[] = []
     for (const [key, value] of Object.entries(attachments)) {
-      const { key: sourceKey } = AmazonS3URI(value)
-      keys.push({ Key: sourceKey })
+      const { key: sourceKey, bucket } = AmazonS3URI(value)
+      keys.push({ key, s3key: sourceKey, bucket, value })
     }
 
     return keys
-  }
-
-  private getBucketName() {
-    const bucket = this.config.attachmentBucket
-
-    if (!bucket) {
-      throw new Error('Unable to get bucket name from config.')
-    }
-
-    return bucket
   }
 }

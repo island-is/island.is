@@ -87,7 +87,6 @@ export class ApplicationService {
     Pick<Application, 'id' | 'attachments'>[]
   > {
     return this.applicationModel.findAll({
-      //TODO ONLY RETURN ID AND ATTACHMENTS
       attributes: ['id', 'attachments'],
       where: {
         [Op.and]: {

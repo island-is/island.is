@@ -69,4 +69,13 @@ export class AwsService {
       })
       .promise()
   }
+
+  public async deleteObject(bucket: string, key: string) {
+    await this.s3
+      .deleteObject({
+        Bucket: bucket,
+        Key: key,
+      })
+      .promise()
+  }
 }
