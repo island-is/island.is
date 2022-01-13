@@ -1,4 +1,4 @@
-import { Injectable, HttpService, Inject } from '@nestjs/common'
+import { Injectable, HttpService, Inject, forwardRef } from '@nestjs/common'
 import * as xml2js from 'xml2js'
 
 import type { Logger } from '@island.is/logging'
@@ -10,17 +10,21 @@ import { VehicleInformation } from './samgongustofa.model'
 
 @Injectable()
 export class SamgongustofaService {
-  vehicleInformationList: VehicleInformation[]
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private httpService: HttpService,
+    @Inject(forwardRef(() => RecyclingRequestService))
     private recyclingRequestService: RecyclingRequestService,
   ) {}
 
-  async getVehicleInformation(nationalId: string) {
+  async getUserVehiclesInformation(
+    nationalId: string,
+  ): Promise<VehicleInformation[]> {
     try {
-      this.logger.info('Starting getVehicleInformation call on ${nationalId}')
+      this.logger.info(
+        'Starting getUserVehiclesInformation call on ${nationalId}',
+      )
       const { soapUrl, soapUsername, soapPassword } = environment.samgongustofa
 
       const parser = new xml2js.Parser()
@@ -60,7 +64,7 @@ export class SamgongustofaService {
 
       const loggerReplacement = this.logger
       // Parse xml to Json all Soap and added all vehicles and their information to vehicleInformationList
-      this.vehicleInformationList = await parser
+      const vehicleInformationList: VehicleInformation[] = await parser
         .parseStringPromise(allCarsResponse.data.replace(/(\t\n|\t|\n)/gm, ''))
         .then(function (allCarsResult) {
           // check if SOAP returns 200 status code but with Fault message
@@ -92,22 +96,7 @@ export class SamgongustofaService {
               if (allCars['persidnolookup']['vehicleList'][0] == '') {
                 return []
               }
-              let vehicleArr: VehicleInformation[]
-              vehicleArr = []
-              // TODO: will be fixed
-              vehicleArr.push(
-                new VehicleInformation(
-                  'HX111',
-                  'black',
-                  'vinNumber',
-                  'Nissan',
-                  '01.01.2020',
-                  true,
-                  true,
-                  'inUse',
-                ),
-              )
-              vehicleArr = []
+              const vehicleArr: VehicleInformation[] = []
               allCars['persidnolookup']['vehicleList'][0]['vehicle'].forEach(
                 (car) => {
                   loggerReplacement.info(
@@ -160,7 +149,7 @@ export class SamgongustofaService {
 
       this.logger.info('Finished extracting all vehicles')
 
-      const newVehicleArr = this.vehicleInformationList
+      const newVehicleArr = vehicleInformationList
 
       // ForEach vehicle in vehicleInformationList, check and update vehicle's status
       for (let i = 0; i < newVehicleArr.length; i++) {
@@ -168,7 +157,7 @@ export class SamgongustofaService {
         this.logger.info(
           `Starting extracting details information on ${carObj['permno']}`,
         )
-        if (carObj['status'] == 'inUse' && carObj['isRecyclable']) {
+        if (carObj['status'] === 'inUse' && carObj['isRecyclable']) {
           // Vehicle information's Soap body
           const xmlBasicInfoBodyStr = `<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:usx="https://xml.samgongustofa.is/scripts/WebObjects.dll/XML.woa/1/ws/.USXMLWS">
             <soapenv:Header/>
@@ -188,7 +177,7 @@ export class SamgongustofaService {
           const basicInforesponse = await this.httpService
             .post(soapUrl, xmlBasicInfoBodyStr, { headers: headersRequest })
             .toPromise()
-          if (basicInforesponse.status != 200) {
+          if (basicInforesponse.status !== 200) {
             this.logger.error(basicInforesponse.statusText)
             throw new Error(basicInforesponse.statusText)
           }
@@ -196,7 +185,7 @@ export class SamgongustofaService {
           this.logger.info(
             `Finished basicVehicleInformation Soap request and starting parsing xml to json on ${carObj['permno']}`,
           )
-          this.vehicleInformationList[i] = await parser
+          vehicleInformationList[i] = await parser
             .parseStringPromise(
               basicInforesponse.data.replace(/(\t\n|\t|\n)/gm, ''),
             )
@@ -230,7 +219,7 @@ export class SamgongustofaService {
                   //  If there is any information in updatelocks, stolens, ownerregistrationerrors then we may not deregister it
                   if (
                     typeof basicInfo.vehicle.ownerregistrationerrors[0]
-                      .ownerregistrationerror != 'undefined'
+                      .ownerregistrationerror !== 'undefined'
                   ) {
                     //Handle registrationerror
                     loggerReplacement.info(
@@ -240,7 +229,7 @@ export class SamgongustofaService {
                   }
                   if (
                     //Handle stolen
-                    typeof basicInfo.vehicle.stolens[0].stolen != 'undefined'
+                    typeof basicInfo.vehicle.stolens[0].stolen !== 'undefined'
                   ) {
                     for (const stolenEndDate of basicInfo.vehicle.stolens[0]
                       .stolen) {
@@ -252,7 +241,7 @@ export class SamgongustofaService {
                     }
                   }
                   if (
-                    typeof basicInfo.vehicle.updatelocks[0].updatelock !=
+                    typeof basicInfo.vehicle.updatelocks[0].updatelock !==
                     'undefined'
                   ) {
                     //Handle lock
@@ -291,8 +280,8 @@ export class SamgongustofaService {
         }
       }
 
-      for (let i = 0; i < this.vehicleInformationList.length; i++) {
-        const vehicle = this.vehicleInformationList[i]
+      for (let i = 0; i < vehicleInformationList.length; i++) {
+        const vehicle = vehicleInformationList[i]
         try {
           if (vehicle.isRecyclable) {
             this.logger.info(
@@ -303,7 +292,7 @@ export class SamgongustofaService {
             )
             if (resRequestType.length > 0) {
               const requestType = resRequestType[0]['dataValues']['requestType']
-              this.vehicleInformationList[i]['status'] = requestType
+              vehicleInformationList[i]['status'] = requestType
               this.logger.info(
                 `Got ${requestType} for vehicle ${vehicle['permno']}`,
               )
@@ -317,14 +306,31 @@ export class SamgongustofaService {
       }
 
       this.logger.info(
-        `---- Finished getVehicleInformation call on ${nationalId} ----`,
+        `---- Finished getUserVehiclesInformation call on ${nationalId} ----`,
       )
-      return this.vehicleInformationList
+      return vehicleInformationList ?? []
     } catch (err) {
       this.logger.error(
         `Failed on getting vehicles information from Samgongustofa: ${err}`,
       )
       throw new Error('Failed on getting vehicles information...')
     }
+  }
+
+  async getUserVehicle(
+    nationalId: string,
+    permno: string,
+    requireRecyclable = true,
+  ): Promise<VehicleInformation> {
+    const userVehicles = await this.getUserVehiclesInformation(nationalId)
+    this.logger.info(
+      `Fetched user's vehicle informations from Samgongustofa: ${userVehicles}`,
+    )
+    const car = userVehicles.find((car) => car && car.permno === permno)
+
+    if (requireRecyclable && car) {
+      return car.isRecyclable ? car : null
+    }
+    return car
   }
 }

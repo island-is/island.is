@@ -89,7 +89,9 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         type: ActionType.SWITCH_USER,
       })
       return userManager.signinRedirect({
-        state: getReturnUrl(history, authSettings),
+        state:
+          authSettings.switchUserRedirectUrl ??
+          getReturnUrl(history, authSettings),
         ...args,
       })
       // Nothing more happens here since browser will redirect to IDS.

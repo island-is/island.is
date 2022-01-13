@@ -224,12 +224,8 @@ export class UpdateCaseInput implements UpdateCase {
   readonly validToDate?: string
 
   @Allow()
-  @Field(() => [String], { nullable: true })
-  readonly custodyRestrictions?: CaseCustodyRestrictions[]
-
-  @Allow()
   @Field({ nullable: true })
-  readonly otherRestrictions?: string
+  readonly isCustodyIsolation?: boolean
 
   @Allow()
   @Field({ nullable: true })
@@ -238,6 +234,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly conclusion?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly endOfSessionBookings?: string
 
   @Allow()
   @Field(() => String, { nullable: true })

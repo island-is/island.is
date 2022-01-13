@@ -11,8 +11,6 @@ import {
 import {
   capitalize,
   formatDate,
-  formatCustodyRestrictions,
-  formatAlternativeTravelBanRestrictions,
   formatAccusedByGender,
   lowercase,
   formatAppeal,
@@ -319,68 +317,24 @@ function constructRestrictionRulingPdf(
     doc.text(' ').text(accusedAppeal, { align: 'justify', paragraphGap: 1 })
   }
 
-  if (
-    existingCase.type === CaseType.CUSTODY &&
-    (existingCase.decision === CaseDecision.ACCEPTING ||
-      existingCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
-  ) {
-    const custodyRestrictions = formatCustodyRestrictions(
-      existingCase.accusedGender,
-      existingCase.custodyRestrictions,
-      true,
-    )
-
-    if (custodyRestrictions) {
-      doc.text(' ').text(custodyRestrictions, {
-        align: 'justify',
-        paragraphGap: 1,
-      })
-    }
-
-    doc.text(' ').text(formatMessage(ruling.accusedCustodyDirections), {
+  if (existingCase.endOfSessionBookings) {
+    doc.text(' ').text(existingCase.endOfSessionBookings, {
       align: 'justify',
       paragraphGap: 1,
     })
   }
 
-  if (
-    (existingCase.type === CaseType.CUSTODY &&
-      existingCase.decision ===
-        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) ||
-    (existingCase.type === CaseType.TRAVEL_BAN &&
-      (existingCase.decision === CaseDecision.ACCEPTING ||
-        existingCase.decision === CaseDecision.ACCEPTING_PARTIALLY))
-  ) {
-    const alternativeTravelBanRestrictions = formatAlternativeTravelBanRestrictions(
-      existingCase.accusedGender,
-      existingCase.custodyRestrictions,
-      existingCase.otherRestrictions,
-    )
-
-    if (alternativeTravelBanRestrictions) {
-      doc.text(' ').text(alternativeTravelBanRestrictions, {
+  if (existingCase.registrar) {
+    doc.text(' ').text(
+      formatMessage(ruling.registrarWitness, {
+        registrarNameAndTitle: `${existingCase.registrar.name} ${existingCase.registrar.title}`,
+      }),
+      {
         align: 'justify',
         paragraphGap: 1,
-      })
-    }
-
-    doc.text(' ').text(formatMessage(ruling.accusedTravelBanDirections), {
-      align: 'justify',
-      paragraphGap: 1,
-    })
+      },
+    )
   }
-
-  doc.text(' ').text(
-    formatMessage(ruling.registratWitness, {
-      registrarNameAndTitle: `${existingCase.registrar?.name ?? '?'} ${
-        existingCase.registrar?.title ?? ''
-      }`,
-    }),
-    {
-      align: 'justify',
-      paragraphGap: 1,
-    },
-  )
 
   doc.text(' ').text(
     existingCase.courtEndTime
@@ -639,13 +593,10 @@ function constructInvestigationRulingPdf(
     })
     .text(' ')
     .font('Times-Roman')
-
-  if (existingCase.sessionArrangements !== SessionArrangements.REMOTE_SESSION) {
-    doc.text(' ').text(formatMessage(ruling.rulingTextIntro), {
+    .text(formatMessage(ruling.rulingTextIntro), {
       align: 'justify',
       paragraphGap: 1,
     })
-  }
 
   if (existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
     doc.text(' ').text(formatMessage(ruling.appealDirections), {
@@ -688,12 +639,17 @@ function constructInvestigationRulingPdf(
     doc.text(' ').text(accusedAppeal, { align: 'justify', paragraphGap: 1 })
   }
 
-  if (existingCase.sessionArrangements !== SessionArrangements.REMOTE_SESSION) {
+  if (existingCase.endOfSessionBookings) {
+    doc.text(' ').text(existingCase.endOfSessionBookings, {
+      align: 'justify',
+      paragraphGap: 1,
+    })
+  }
+
+  if (existingCase.registrar) {
     doc.text(' ').text(
-      formatMessage(ruling.registratWitness, {
-        registrarNameAndTitle: `${existingCase.registrar?.name ?? '?'} ${
-          existingCase.registrar?.title ?? ''
-        }`,
+      formatMessage(ruling.registrarWitness, {
+        registrarNameAndTitle: `${existingCase.registrar.name} ${existingCase.registrar.title}`,
       }),
       {
         align: 'justify',
@@ -738,6 +694,27 @@ export async function getRulingPdfAsString(
   const pdf = await new Promise<string>(function (resolve) {
     stream.on('finish', () => {
       resolve(stream.getContentsAsString('binary') as string)
+    })
+  })
+
+  if (!environment.production) {
+    writeFile(`${existingCase.id}-ruling.pdf`, pdf)
+  }
+
+  return pdf
+}
+
+export async function getRulingPdfAsBuffer(
+  existingCase: Case,
+  formatMessage: FormatMessage,
+  shortVersion: boolean,
+): Promise<Buffer> {
+  const stream = constructRulingPdf(existingCase, formatMessage, shortVersion)
+
+  // wait for the writing to finish
+  const pdf = await new Promise<Buffer>(function (resolve) {
+    stream.on('finish', () => {
+      resolve(stream.getContents() as Buffer)
     })
   })
 

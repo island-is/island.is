@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { Button, NavigationItem, Text } from '@island.is/island-ui/core'
+import { NavigationItem } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -28,7 +28,16 @@ interface HomeProps {
   namespace: Query['getNamespace']
 }
 
-const WITH_SEARCH = ['syslumenn', 'sjukratryggingar', 'utlendingastofnun']
+const WITH_SEARCH = [
+  'syslumenn',
+  'district-commissioner',
+
+  'sjukratryggingar',
+  'health-insurance-in-iceland',
+
+  'utlendingastofnun',
+  'directorate-of-immigration',
+]
 
 const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
   const { disableSyslumennPage: disablePage } = publicRuntimeConfig
@@ -53,12 +62,12 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
 
   return (
     <OrganizationWrapper
+      showExternalLinks={true}
       pageTitle={organizationPage.title}
       pageDescription={organizationPage.description}
       organizationPage={organizationPage}
       pageFeaturedImage={organizationPage.featuredImage}
       fullWidthContent={true}
-      namespace={namespace}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
@@ -72,22 +81,20 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
         />
       ))}
       sidebarContent={
-        <>
-          {WITH_SEARCH.includes(organizationPage.slug) && (
-            <SearchBox
-              organizationPage={organizationPage}
-              placeholder={n('searchServices', 'Leitaðu að þjónustu')}
-              noResultsText={n(
-                'noServicesFound',
-                'Engar niðurstöður í þjónustu sýslumanna',
-              )}
-              searchAllText={n(
-                'searchAllServices',
-                'Leita í öllu efni Ísland.is',
-              )}
-            />
-          )}
-        </>
+        WITH_SEARCH.includes(organizationPage.slug) && (
+          <SearchBox
+            organizationPage={organizationPage}
+            placeholder={n('searchServices', 'Leitaðu að þjónustu')}
+            noResultsText={n(
+              'noServicesFound',
+              'Engar niðurstöður í þjónustu sýslumanna',
+            )}
+            searchAllText={n(
+              'searchAllServices',
+              'Leita í öllu efni Ísland.is',
+            )}
+          />
+        )
       }
     >
       {organizationPage.bottomSlices.map((slice) => (

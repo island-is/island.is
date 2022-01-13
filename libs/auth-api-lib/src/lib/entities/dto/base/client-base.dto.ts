@@ -306,5 +306,12 @@ export abstract class ClientBaseDTO {
   @ApiProperty({
     example: true,
   })
+  readonly supportsPersonalRepresentatives!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: true,
+  })
   readonly promptDelegations!: boolean
 }

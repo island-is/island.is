@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
+
 import { UploadFile } from '@island.is/island-ui/core'
 import {
   CreateFileMutation,
@@ -9,29 +10,25 @@ import {
 } from '@island.is/judicial-system-web/graphql'
 import {
   Case,
-  CaseFile,
   PresignedPost,
   UploadPoliceCaseFileResponse,
 } from '@island.is/judicial-system/types'
 
-export const useS3Upload = (
-  workingCase?: Case,
-  setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
-) => {
+export const useS3Upload = (workingCase: Case) => {
   const [files, setFiles] = useState<UploadFile[]>([])
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [allFilesUploaded, setAllFilesUploaded] = useState<boolean>(true)
   const filesRef = useRef<UploadFile[]>(files)
 
   useEffect(() => {
-    const uploadCaseFiles = workingCase?.caseFiles?.map((caseFile) => {
+    const uploadCaseFiles = workingCase.caseFiles?.map((caseFile) => {
       const uploadCaseFile = caseFile as UploadFile
       uploadCaseFile.status = 'done'
       return uploadCaseFile
     })
 
     setFilesRefAndState(uploadCaseFiles ?? [])
-  }, [workingCase?.caseFiles])
+  }, [workingCase.caseFiles])
 
   useMemo(() => {
     setAllFilesUploaded(
@@ -57,7 +54,7 @@ export const useS3Upload = (
     } = await uploadPoliceCaseFileMutation({
       variables: {
         input: {
-          caseId: workingCase?.id,
+          caseId: workingCase.id,
           id: id,
           name: name,
         },
@@ -74,7 +71,7 @@ export const useS3Upload = (
     const { data: presignedPostData } = await createPresignedPostMutation({
       variables: {
         input: {
-          caseId: workingCase?.id,
+          caseId: workingCase.id,
           fileName: filename,
           type,
         },
@@ -201,13 +198,6 @@ export const useS3Upload = (
           file.id = res.data.createFile.id
           file.status = 'done'
           updateFile(file)
-        })
-        .then(() => {
-          setWorkingCase &&
-            setWorkingCase({
-              ...workingCase,
-              caseFiles: [...(workingCase.caseFiles || []), file as CaseFile],
-            })
         })
         .catch((reason) => {
           // TODO: Log to sentry

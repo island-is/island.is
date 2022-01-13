@@ -31,7 +31,6 @@ interface calculationsState {
   amount: number
   income?: number
   personalTaxCreditPercentage?: number
-  tax: number
   secondPersonalTaxCredit: number
   showSecondPersonalTaxCredit: boolean
   hasError: boolean
@@ -75,7 +74,6 @@ const AcceptModal = ({
     amount: aidAmount,
     income: undefined,
     personalTaxCreditPercentage: undefined,
-    tax: calculateTaxOfAmount(aidAmount),
     secondPersonalTaxCredit: 0,
     showSecondPersonalTaxCredit: false,
     deductionFactor: [],
@@ -83,21 +81,21 @@ const AcceptModal = ({
     hasSubmitError: false,
   })
 
-  const sumValues = (deductionFactor: calculationsState['deductionFactor']) =>
-    deductionFactor
-      .map((item) => {
-        return item.amount
-      })
-      .reduce((a, b) => {
-        return a + b
-      }, 0)
+  const sumValues = state.deductionFactor.reduce(
+    (n, { amount }) => n + amount,
+    0,
+  )
 
   const checkingValue = (element?: number) => (element ? element : 0)
 
   const finalAmount = calculateAcceptedAidFinalAmount(
-    aidAmount - checkingValue(state.income) - sumValues(state.deductionFactor),
+    state.amount - checkingValue(state.income) - sumValues,
     checkingValue(state.personalTaxCreditPercentage),
     state.secondPersonalTaxCredit,
+  )
+
+  const taxAmount = calculateTaxOfAmount(
+    (state.amount || 0) - checkingValue(state.income) - sumValues,
   )
 
   const areRequiredFieldsFilled =
@@ -118,7 +116,7 @@ const AcceptModal = ({
       income: state.income,
       personalTaxCredit: state.personalTaxCreditPercentage ?? 0,
       spousePersonalTaxCredit: state.secondPersonalTaxCredit,
-      tax: state.tax,
+      tax: taxAmount,
       finalAmount: finalAmount,
       deductionFactors: state.deductionFactor,
     })
@@ -321,11 +319,7 @@ const AcceptModal = ({
           label="Skattur "
           id="tax"
           name="tax"
-          value={calculateTaxOfAmount(
-            (aidAmount || 0) -
-              checkingValue(state.income) -
-              sumValues(state.deductionFactor),
-          ).toLocaleString('de-DE')}
+          value={taxAmount.toLocaleString('de-DE')}
           readOnly={true}
         />
       </Box>

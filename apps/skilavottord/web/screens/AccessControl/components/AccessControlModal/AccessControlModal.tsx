@@ -21,7 +21,8 @@ interface AccessControlModalProps
   roles: Option[]
   errors: DeepMap<FieldValues, FieldError>
   control: Control<FieldValues>
-  isNationalIdDisabled?: boolean
+  nationalIdDisabled?: boolean
+  partnerIdRequired?: boolean
 }
 
 export const AccessControlModal: FC<AccessControlModalProps> = ({
@@ -32,7 +33,8 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
   onSubmit,
   recyclingPartners,
   roles,
-  isNationalIdDisabled = false,
+  nationalIdDisabled = false,
+  partnerIdRequired = false,
   errors,
   control,
 }) => {
@@ -78,7 +80,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             format="######-####"
             error={errors?.nationalId?.message}
             backgroundColor="blue"
-            disabled={isNationalIdDisabled}
+            disabled={nationalIdDisabled}
           />
           <InputController
             id="name"
@@ -125,6 +127,16 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
           <Controller
             name="partnerId"
             control={control}
+            rules={
+              partnerIdRequired
+                ? {
+                    required: {
+                      value: true,
+                      message: t.modal.inputs.partner.rules?.required,
+                    },
+                  }
+                : {}
+            }
             render={({ onChange, value, name }) => {
               return (
                 <Select
@@ -138,6 +150,8 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
                   backgroundColor="blue"
                   options={recyclingPartners}
                   onChange={onChange}
+                  required={partnerIdRequired}
+                  isCreatable
                 />
               )
             }}
