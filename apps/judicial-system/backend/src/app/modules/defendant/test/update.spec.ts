@@ -1,7 +1,5 @@
 import { uuid } from 'uuidv4'
 
-import { Gender } from '@island.is/judicial-system/types'
-
 import { UpdateDefendantDto } from '../dto/updateDefendant.dto'
 import { Defendant } from '../models/defendant.model'
 import { createTestingDefendantModule } from './createTestingDefendantModule'
@@ -59,7 +57,7 @@ describe('DefendantController - Update', () => {
       await givenWhenThen(caseId, defendantId, defendantToUpdate)
     })
 
-    it('should create a defendant', () => {
+    it('should update the defendant', () => {
       expect(mockDefendantModel.update).toHaveBeenCalledWith(
         defendantToUpdate,
         {
@@ -78,8 +76,8 @@ describe('DefendantController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockDefendantModel.update as jest.Mock
-      mockCreate.mockResolvedValueOnce([1, [updatedDefendant]])
+      const mockUpdate = mockDefendantModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
 
       then = await givenWhenThen(caseId, defendantId, defendantToUpdate)
     })
@@ -89,15 +87,15 @@ describe('DefendantController - Update', () => {
     })
   })
 
-  describe('defendant creation fails', () => {
+  describe('defendant update fails', () => {
     const caseId = uuid()
     const defendantId = uuid()
     const defendantToUpdate = {}
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockDefendantModel.update as jest.Mock
-      mockCreate.mockRejectedValueOnce(new Error('Some error'))
+      const mockUpdate = mockDefendantModel.update as jest.Mock
+      mockUpdate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, defendantId, defendantToUpdate)
     })

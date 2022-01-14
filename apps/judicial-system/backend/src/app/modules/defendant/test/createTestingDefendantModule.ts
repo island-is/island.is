@@ -30,7 +30,7 @@ export const createTestingDefendantModule = async () => {
           findOne: jest.fn(),
           create: jest.fn(),
           update: jest.fn(),
-          delete: jest.fn(),
+          destroy: jest.fn(),
         },
       },
       DefendantService,

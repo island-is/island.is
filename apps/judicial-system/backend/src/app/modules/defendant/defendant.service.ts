@@ -67,4 +67,23 @@ export class DefendantService {
 
     return defendants[0]
   }
+
+  async delete(caseId: string, defendantId: string): Promise<number> {
+    const numberOfAffectedRows = await this.defendantModel.destroy({
+      where: { id: defendantId, caseId },
+    })
+
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting defendant ${defendantId} of case ${caseId}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not delete defendant ${defendantId} of case ${caseId}`,
+      )
+    }
+
+    return numberOfAffectedRows
+  }
 }

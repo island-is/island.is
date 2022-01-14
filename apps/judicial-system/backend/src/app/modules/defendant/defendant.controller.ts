@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Inject,
   Param,
   Post,
@@ -65,5 +66,18 @@ export class DefendantController {
     this.logger.debug(`Updating defendant ${defendantId} of case ${caseId}`)
 
     return this.defendantService.update(caseId, defendantId, defendantToUpdate)
+  }
+
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, DefendantExistsGuard)
+  @RolesRules(prosecutorRule)
+  @Delete(':defendantId')
+  @ApiOkResponse({ description: 'Deletes a defendant' })
+  delete(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+  ): Promise<number> {
+    this.logger.debug(`Deleting defendant ${defendantId} of case ${caseId}`)
+
+    return this.defendantService.delete(caseId, defendantId)
   }
 }
