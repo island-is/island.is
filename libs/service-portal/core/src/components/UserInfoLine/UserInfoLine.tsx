@@ -7,6 +7,7 @@ import {
   GridColumn,
   LoadingDots,
   GridColumnProps,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
@@ -31,6 +32,8 @@ interface Props {
   valueColumnSpan?: GridColumnProps['span']
   editColumnSpan?: GridColumnProps['span']
   editLink?: EditLink
+  title?: string
+  tooltip?: string
 }
 
 export const UserInfoLine: FC<Props> = ({
@@ -42,6 +45,8 @@ export const UserInfoLine: FC<Props> = ({
   editColumnSpan = ['1/1', '3/12'],
   loading,
   editLink,
+  title,
+  tooltip,
 }) => {
   const trackExternalLinkClick = () => {
     servicePortalOutboundLink()
@@ -49,7 +54,12 @@ export const UserInfoLine: FC<Props> = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box position="relative" paddingY={2} paddingRight={4}>
+    <Box position="relative" paddingY={1} paddingRight={4}>
+      {title && (
+        <Text variant="eyebrow" paddingBottom={2}>
+          {title}
+        </Text>
+      )}
       <GridRow align={['flexStart', 'center']}>
         <GridColumn order={1} span={labelColumnSpan}>
           <Box
@@ -59,7 +69,7 @@ export const UserInfoLine: FC<Props> = ({
             overflow="hidden"
           >
             <Text variant="h5" as="span" lineHeight="lg">
-              {formatMessage(label)}
+              {formatMessage(label)} {tooltip && <Tooltip text={tooltip} />}
             </Text>
           </Box>
         </GridColumn>

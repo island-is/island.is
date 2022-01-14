@@ -325,9 +325,22 @@ export const m = defineMessages({
     id: 'service.portal:detail-info',
     defaultMessage: 'Nánari upplýsingar',
   },
+  myRegistration: {
+    id: 'service.portal:my-registration',
+    defaultMessage: 'Mín skráning',
+  },
+  baseInfo: {
+    id: 'service.portal:base-info',
+    defaultMessage: 'Grunnupplýsingar',
+  },
+
   family: {
     id: 'service.portal:family',
     defaultMessage: 'Fjölskyldan',
+  },
+  familyNumber: {
+    id: 'service.portal:family-number',
+    defaultMessage: 'Fjölskyldunúmer',
   },
   endorsements: {
     id: 'service.portal:endorsements',
