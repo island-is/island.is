@@ -72,6 +72,11 @@ export const dataSchema = z.object({
       params: error.validation.inputErrorMessage,
       path: ['custom'],
     }),
+  bankInfoForm: z.object({
+    bankNumber: z.string().optional(),
+    ledger: z.string().optional(),
+    accountNumber: z.string().optional(),
+  }),
   personalTaxCreditForm: z
     .enum([ApproveOptions.Yes, ApproveOptions.No])
     .refine((v) => v, {
