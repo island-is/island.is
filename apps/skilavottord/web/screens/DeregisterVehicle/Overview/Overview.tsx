@@ -1,11 +1,9 @@
-import React, { FC, useContext } from 'react'
+import React, { FC, useContext, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
-import { UserContext } from '@island.is/skilavottord-web/context'
-import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+
 import {
   Box,
   Stack,
@@ -13,27 +11,36 @@ import {
   BreadcrumbsDeprecated as Breadcrumbs,
   Button,
   GridColumn,
+  LoadingDots,
 } from '@island.is/island-ui/core'
+
+import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { UserContext } from '@island.is/skilavottord-web/context'
+import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import {
   Sidenav,
   NotFound,
   PartnerPageLayout,
 } from '@island.is/skilavottord-web/components'
-import { CarsTable } from './components/CarsTable'
 import {
   RecyclingPartner,
   RecyclingRequest,
   Vehicle,
-  VehicleOwner,
-} from '@island.is/skilavottord-web/types'
-import { getDate, getYear } from '@island.is/skilavottord-web/utils/dateUtils'
+  Query,
+  Role,
+} from '@island.is/skilavottord-web/graphql/schema'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
+import { CarsTable } from './components/CarsTable'
 
-export const skilavottordRecyclingPartnerVehiclesQuery = gql`
-  query skilavottordRecyclingPartnerVehiclesQuery($partnerId: String!) {
-    skilavottordRecyclingPartnerVehicles(partnerId: $partnerId) {
-      nationalId
-      vehicles {
+export const SkilavottordRecyclingPartnerVehiclesQuery = gql`
+  query skilavottordRecyclingPartnerVehiclesQuery($after: String!) {
+    skilavottordRecyclingPartnerVehicles(first: 20, after: $after) {
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+      count
+      items {
         vehicleId
         vehicleType
         newregDate
@@ -48,23 +55,6 @@ export const skilavottordRecyclingPartnerVehiclesQuery = gql`
   }
 `
 
-const skilavottordAllRecyclingPartnersQuery = gql`
-  query skilavottordAllRecyclingPartnersQuery {
-    skilavottordAllRecyclingPartners {
-      companyId
-      companyName
-    }
-  }
-`
-
-export interface DeregisteredVehicle {
-  vehicleId: string
-  vehicleType: string
-  modelYear: string
-  nameOfRequestor: string
-  deregistrationDate: string
-}
-
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
   const {
@@ -72,58 +62,59 @@ const Overview: FC = () => {
   } = useI18n()
   const router = useRouter()
 
-  const partnerId = user?.partnerId
-  const { data: vehicleData } = useQuery(
-    skilavottordRecyclingPartnerVehiclesQuery,
+  const { data: vehicleData, loading, fetchMore } = useQuery<Query>(
+    SkilavottordRecyclingPartnerVehiclesQuery,
     {
-      variables: { partnerId },
-      fetchPolicy: 'cache-and-network',
-      skip: !partnerId,
+      notifyOnNetworkStatusChange: true,
+      variables: {
+        after: '',
+      },
     },
   )
 
-  const { data: partnerData } = useQuery(
-    skilavottordAllRecyclingPartnersQuery,
-    {
-      variables: { partnerId },
-    },
-  )
+  const { pageInfo, items: vehicles = [] } =
+    vehicleData?.skilavottordRecyclingPartnerVehicles ?? {}
 
-  const vehicleOwners = vehicleData?.skilavottordRecyclingPartnerVehicles
-  const recyclingPartners = partnerData?.skilavottordAllRecyclingPartners
+  const triggerRef = useRef<HTMLDivElement>(null)
 
-  const activePartner = recyclingPartners?.filter(
-    (partner: RecyclingPartner) => partner.companyId === partnerId,
-  )[0]
-
-  const getDeregisteredCars = () => {
-    const deregisteredVehicles = [] as DeregisteredVehicle[]
-    const owners = vehicleOwners?.map(({ vehicles }: VehicleOwner) =>
-      vehicles.map(
-        ({
-          vehicleId,
-          vehicleType,
-          newregDate,
-          recyclingRequests,
-        }: Vehicle) => {
-          return recyclingRequests.map((request: RecyclingRequest) => {
-            const { requestType, nameOfRequestor, createdAt } = request
-            if (requestType === 'deregistered') {
-              deregisteredVehicles.push({
-                vehicleId,
-                vehicleType,
-                modelYear: getYear(newregDate),
-                nameOfRequestor,
-                deregistrationDate: getDate(createdAt),
-              })
-            }
-            return request
+  useEffect(() => {
+    if (loading) {
+      return
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const { hasNextPage, endCursor } = pageInfo
+        if (entries[0].isIntersecting && hasNextPage) {
+          fetchMore({
+            variables: { after: endCursor },
+            updateQuery: (
+              { skilavottordRecyclingPartnerVehicles },
+              { fetchMoreResult },
+            ) => {
+              const prevResults = skilavottordRecyclingPartnerVehicles
+              const newResults =
+                fetchMoreResult?.skilavottordRecyclingPartnerVehicles
+              return {
+                skilavottordRecyclingPartnerVehicles: {
+                  ...newResults,
+                  items: [...prevResults?.items, ...newResults?.items],
+                },
+              }
+            },
           })
-        },
-      ),
+        }
+      },
+      {
+        root: null,
+        rootMargin: '0px',
+        threshold: 1.0,
+      },
     )
-    return deregisteredVehicles
-  }
+    triggerRef.current && observer.observe(triggerRef.current)
+    return () => {
+      observer.disconnect()
+    }
+  }, [loading])
 
   const handleDeregister = () => {
     router.push(`${routes.deregisterVehicle.select}`)
@@ -135,13 +126,11 @@ const Overview: FC = () => {
     return <NotFound />
   }
 
-  const deregisteredVehicles = getDeregisteredCars()
-
   return (
     <PartnerPageLayout
       side={
         <Sidenav
-          title={activePartner?.companyName || user.name}
+          title={sidenavText.title}
           sections={[
             {
               icon: 'car',
@@ -171,20 +160,25 @@ const Overview: FC = () => {
               <Text variant="h1">{t.title}</Text>
               <Text variant="intro">{t.info}</Text>
             </Stack>
-            <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
+            <Box marginTop={4}>
+              <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
+            </Box>
           </Stack>
         </GridColumn>
-        {deregisteredVehicles?.length > 0 && (
+        {vehicles?.length > 0 && (
           <Box marginX={1}>
             <Stack space={4}>
               <Text variant="h3">{t.subtitles.history}</Text>
-              <CarsTable
-                titles={t.table}
-                deregisteredVehicles={deregisteredVehicles}
-              />
+              <CarsTable titles={t.table} deregisteredVehicles={vehicles} />
             </Stack>
           </Box>
         )}
+        {loading && (
+          <Box display="flex" justifyContent="center">
+            <LoadingDots />
+          </Box>
+        )}
+        <div ref={triggerRef} />
       </Stack>
     </PartnerPageLayout>
   )

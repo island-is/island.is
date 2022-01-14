@@ -66,12 +66,12 @@ export const formatNationalId = (nationalId: string): string => {
 }
 
 export const laws = {
-  _95_1_A: 'a-lið 1. mgr. 95. gr.',
-  _95_1_B: 'b-lið 1. mgr. 95. gr.',
-  _95_1_C: 'c-lið 1. mgr. 95. gr.',
-  _95_1_D: 'd-lið 1. mgr. 95. gr.',
-  _95_2: '2. mgr. 95. gr.',
-  _99_1_B: 'b-lið 1. mgr. 99. gr.',
+  _95_1_A: 'a-lið 1. mgr. 95. gr. sml.',
+  _95_1_B: 'b-lið 1. mgr. 95. gr. sml.',
+  _95_1_C: 'c-lið 1. mgr. 95. gr. sml.',
+  _95_1_D: 'd-lið 1. mgr. 95. gr. sml.',
+  _95_2: '2. mgr. 95. gr. sml.',
+  _99_1_B: 'b-lið 1. mgr. 99. gr. sml.',
   _100_1: '1. mgr. 100. gr. sml.',
 }
 
@@ -89,6 +89,7 @@ export const caseTypes = {
   BODY_SEARCH: 'leit og líkamsrannsókn',
   INTERNET_USAGE: 'upplýsingar um vefnotkun',
   RESTRAINING_ORDER: 'nálgunarbann',
+  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
   OTHER: 'annað',
 }
 
@@ -161,11 +162,11 @@ export function formatAccusedByGender(
   }
 }
 
-// Formats the restrictions set by the judge
+// Formats prefilled restrictions
 // Note that only the predetermined list of restrictions is relevant here
 export function formatCustodyRestrictions(
-  accusedGender?: CaseGender,
-  custodyRestrictions?: CaseCustodyRestrictions[],
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
+  isCustodyIsolation?: boolean,
   isRuling?: boolean,
 ): string {
   const caseCustodyRestrictions = [
@@ -197,7 +198,9 @@ export function formatCustodyRestrictions(
   ]
 
   const relevantCustodyRestrictions = caseCustodyRestrictions
-    ?.filter((restriction) => custodyRestrictions?.includes(restriction.type))
+    .filter((restriction) =>
+      requestedCustodyRestrictions?.includes(restriction.type),
+    )
     .sort((a, b) => {
       return a.id > b.id ? 1 : -1
     })
@@ -206,7 +209,7 @@ export function formatCustodyRestrictions(
     !(relevantCustodyRestrictions && relevantCustodyRestrictions.length > 0)
   ) {
     return !isRuling
-      ? custodyRestrictions?.includes(CaseCustodyRestrictions.ISOLATION)
+      ? isCustodyIsolation
         ? 'Sækjandi tekur fram að gæsluvarðhaldið verði án annarra takmarkana.'
         : 'Sækjandi tekur fram að gæsluvarðhaldið verði án takmarkana.'
       : ''
@@ -243,13 +246,13 @@ export function formatCustodyRestrictions(
     : `Sækjandi tekur fram að gæsluvarðhaldið verði með ${filteredCustodyRestrictionsAsString}skv. 99. gr. laga nr. 88/2008.`
 }
 
-// Fromats the restrictions set by the judge when choosing alternative travle ban
-export const formatAlternativeTravelBanRestrictions = (
+// Fromats the prefilled restrictions for travel ban
+export const formatTravelBanRestrictions = (
   accusedGender?: CaseGender,
-  custodyRestrictions?: CaseCustodyRestrictions[],
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
   otherRestrictions?: string,
 ): string => {
-  const relevantCustodyRestrictions = custodyRestrictions?.filter(
+  const relevantCustodyRestrictions = requestedCustodyRestrictions?.filter(
     (restriction) =>
       [
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,

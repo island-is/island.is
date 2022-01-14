@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
-
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
@@ -23,6 +22,7 @@ import { HealthController } from './health.controller'
 import { getConfig } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
+import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { RSKModule } from '@island.is/api/domains/rsk'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
@@ -32,15 +32,17 @@ import { AssetsModule } from '@island.is/api/domains/assets'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
-import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-voter-registry'
-import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { IslykillModule } from '@island.is/api/domains/islykill'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
+import { AssetsClientConfig } from '@island.is/clients/assets'
+import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { AuditModule } from '@island.is/nest/audit'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
+import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 
@@ -75,9 +77,7 @@ const autoSchemaFile = environment.production
         }),
       ],
     }),
-    AuthDomainModule.register({
-      authPublicApi: environment.authPublicApi,
-    }),
+    AuthDomainModule,
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
     CmsModule,
@@ -181,11 +181,7 @@ const autoSchemaFile = environment.production
     ApiCatalogueModule,
     IdentityModule,
     AuthModule.register(environment.auth),
-    SyslumennModule.register({
-      url: environment.syslumennService.url,
-      username: environment.syslumennService.username,
-      password: environment.syslumennService.password,
-    }),
+    SyslumennModule,
     RSKModule.register({
       password: environment.rskDomain.password,
       url: environment.rskDomain.url,
@@ -197,9 +193,6 @@ const autoSchemaFile = environment.production
     EndorsementSystemModule.register({
       baseApiUrl: environment.endorsementSystem.baseApiUrl,
     }),
-    TemporaryVoterRegistryModule.register({
-      baseApiUrl: environment.temporaryVoterRegistry.baseApiUrl,
-    }),
     RegulationsModule.register({
       url: environment.regulationsDomain.url,
     }),
@@ -210,12 +203,7 @@ const autoSchemaFile = environment.production
       xroadBaseUrl: environment.xroad.baseUrl,
       xroadClientId: environment.xroad.clientId,
     }),
-    AssetsModule.register({
-      xRoadBasePathWithEnv: environment.propertiesXRoad.url,
-      xRoadAssetsMemberCode: environment.propertiesXRoad.memberCode,
-      xRoadAssetsApiPath: environment.propertiesXRoad.apiPath,
-      xRoadClientId: environment.propertiesXRoad.clientId,
-    }),
+    AssetsModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({
       xRoadProviderId: environment.paymentDomain.xRoadProviderId,
@@ -226,9 +214,6 @@ const autoSchemaFile = environment.production
       callbackBaseUrl: environment.paymentDomain.callbackBaseUrl,
       callbackAdditionUrl: environment.paymentDomain.callbackAdditionUrl,
       arkBaseUrl: environment.paymentDomain.arkBaseUrl,
-    }),
-    PartyLetterRegistryModule.register({
-      baseApiUrl: environment.partyLetterRegistry.baseApiUrl,
     }),
     LicenseServiceModule.register({
       xroad: {
@@ -259,9 +244,23 @@ const autoSchemaFile = environment.production
       basePath: environment.islykill.basePath,
     }),
     ProblemModule,
+    CriminalRecordModule.register({
+      clientConfig: {
+        xroadBaseUrl: environment.xroad.baseUrl,
+        xroadClientId: environment.xroad.clientId,
+        xroadPath: environment.criminalRecord.xroadPath,
+      },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [XRoadConfig, NationalRegistryClientConfig],
+      load: [
+        AssetsClientConfig,
+        AuthPublicApiClientConfig,
+        FeatureFlagConfig,
+        NationalRegistryClientConfig,
+        SyslumennClientConfig,
+        XRoadConfig,
+      ],
     }),
   ],
 })

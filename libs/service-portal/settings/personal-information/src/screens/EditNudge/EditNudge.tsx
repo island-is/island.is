@@ -47,7 +47,7 @@ export const EditNudge: ServicePortalModuleComponent = () => {
         variables: {
           input: {
             email: settings?.email,
-            mobile: settings?.mobilePhoneNumber,
+            mobile: settings?.mobile,
             canNudge: formData.nudge,
           },
         },
@@ -67,7 +67,7 @@ export const EditNudge: ServicePortalModuleComponent = () => {
   return (
     <>
       <Box marginBottom={4}>
-        <Text variant="h1" as="h1">
+        <Text variant="h3" as="h1">
           {formatMessage({
             id: 'sp.settings:edit-nudge',
             defaultMessage: 'Breyta hnippi',

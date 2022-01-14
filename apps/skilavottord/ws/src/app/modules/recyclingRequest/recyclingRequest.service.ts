@@ -5,12 +5,15 @@ import format from 'date-fns/format'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { User } from '../auth'
 import { environment } from '../../../environments'
 import { FjarsyslaService } from '../fjarsysla'
 import { RecyclingPartnerService } from '../recyclingPartner'
+import { VehicleInformation } from '../samgongustofa'
 import {
   RecyclingRequestModel,
-  RecyclingRequestUnion,
+  RecyclingRequestTypes,
+  RecyclingRequestResponse,
   RequestErrors,
   RequestStatus,
 } from './recyclingRequest.model'
@@ -109,6 +112,21 @@ export class RecyclingRequestService {
     return res
   }
 
+  async findUserRecyclingRequestWithPermno(
+    vehicle: VehicleInformation,
+  ): Promise<RecyclingRequestModel[]> {
+    this.logger.info(
+      `---- Starting findUserRecyclingRequestWithPermno for ${vehicle.permno} ----`,
+    )
+
+    const userRecyclingRequests = await this.findAllWithPermno(vehicle.permno)
+    if (userRecyclingRequests.length > 0) {
+      return [userRecyclingRequests[0]]
+    }
+
+    return []
+  }
+
   // Find all a vehicle's requests
   async findAllWithPermno(permno: string): Promise<RecyclingRequestModel[]> {
     this.logger.info(
@@ -188,16 +206,18 @@ export class RecyclingRequestService {
   // Create new RecyclingRequest for citizen and recyclingPartner.
   // partnerId could be null, when it's the request is for citizen
   async createRecyclingRequest(
-    requestType: string,
+    user: User,
+    requestType: RecyclingRequestTypes,
     permno: string,
-    nameOfRequestor: string,
-    partnerId: string,
-  ): Promise<typeof RecyclingRequestUnion> {
+  ): Promise<typeof RecyclingRequestResponse> {
+    const nameOfRequestor = user.name
+    const partnerId = user.partnerId
     const errors = new RequestErrors()
     try {
       this.logger.info(
         `---- Starting update requestType for ${permno} to requestType: ${requestType} ----`,
       )
+
       // nameOfRequestor and partnerId are not required arguments
       // But partnerId and partnerId could not both be null at the same time
       if (!nameOfRequestor && !partnerId) {
@@ -210,7 +230,7 @@ export class RecyclingRequestService {
       }
       // If requestType is 'deregistered'
       // partnerId could not be null when create requestType for recyclingPartner.
-      if (requestType == 'deregistered' && !partnerId) {
+      if (requestType === 'deregistered' && !partnerId) {
         this.logger.error(
           `partnerId could not be null when create requestType 'deregistered' for recylcing partner`,
         )
@@ -222,9 +242,9 @@ export class RecyclingRequestService {
       // If requestType is not 'pendingRecycle', 'cancelled' or 'deregistered'
       if (
         !(
-          requestType == 'pendingRecycle' ||
-          requestType == 'cancelled' ||
-          requestType == 'deregistered'
+          requestType === 'pendingRecycle' ||
+          requestType === 'cancelled' ||
+          requestType === 'deregistered'
         )
       ) {
         this.logger.error(
@@ -245,9 +265,7 @@ export class RecyclingRequestService {
       // is partnerId null?
       if (partnerId) {
         newRecyclingRequest.recyclingPartnerId = partnerId
-        const partner = await this.recycllingPartnerService.findByPartnerId(
-          partnerId,
-        )
+        const partner = await this.recycllingPartnerService.findOne(partnerId)
         if (!partner) {
           this.logger.error(
             `Could not find Partner from partnerId: ${partnerId}`,
@@ -269,7 +287,8 @@ export class RecyclingRequestService {
       }
 
       // Here is a bit tricky
-      // 1. Check if lastest vehicle's requestType is 'pendingRecycle'
+      // Only Developer and RecyclingCompany may deregistered vehicle
+      // 1. Check whether lastest vehicle's requestType is 'pendingRecycle' or 'handOver'
       // 2. Set requestType to 'handOver'
       // 3. Then deregistered the vehicle from Samgongustofa
       // 4. Set requestType to 'deregistered'
@@ -278,7 +297,7 @@ export class RecyclingRequestService {
       // If we encounter error then update requestType to 'paymentFailed'
       // If we encounter error with 'partnerId' then there is no request saved
       if (requestType == 'deregistered') {
-        // 1. Check 'pendingRecycle' requestType
+        // 1. Check 'pendingRecycle'/'handOver' requestType
         this.logger.info(`Check "pendingRecycle" status on vehicle: ${permno}`)
         const resRequestType = await this.findAllWithPermno(permno)
         if (!requestType || resRequestType.length == 0) {
@@ -311,7 +330,7 @@ export class RecyclingRequestService {
           const req = new RecyclingRequestModel()
           req.vehicleId = newRecyclingRequest.vehicleId
           req.nameOfRequestor = newRecyclingRequest.nameOfRequestor
-          req.requestType = 'handOver'
+          req.requestType = RecyclingRequestTypes.handOver
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           await req.save()
         } catch (err) {
@@ -339,7 +358,7 @@ export class RecyclingRequestService {
           const req = new RecyclingRequestModel()
           req.vehicleId = newRecyclingRequest.vehicleId
           req.nameOfRequestor = newRecyclingRequest.nameOfRequestor
-          req.requestType = 'pendingRecycle'
+          req.requestType = RecyclingRequestTypes.pendingRecycle
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           await req.save()
           errors.operation = 'deregistered'
@@ -356,7 +375,7 @@ export class RecyclingRequestService {
           const req = new RecyclingRequestModel()
           req.vehicleId = newRecyclingRequest.vehicleId
           req.nameOfRequestor = newRecyclingRequest.nameOfRequestor
-          req.requestType = 'deregistered'
+          req.requestType = RecyclingRequestTypes.deregistered
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           getGuId = await req.save()
         } catch (err) {
@@ -380,7 +399,7 @@ export class RecyclingRequestService {
             const req = new RecyclingRequestModel()
             req.vehicleId = newRecyclingRequest.vehicleId
             req.nameOfRequestor = newRecyclingRequest.nameOfRequestor
-            req.requestType = 'paymentFailed'
+            req.requestType = RecyclingRequestTypes.paymentFailed
             req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
             await req.save()
             errors.operation = 'paymentFailed'
@@ -403,7 +422,7 @@ export class RecyclingRequestService {
           const req = new RecyclingRequestModel()
           req.vehicleId = newRecyclingRequest.vehicleId
           req.nameOfRequestor = newRecyclingRequest.nameOfRequestor
-          req.requestType = 'paymentFailed'
+          req.requestType = RecyclingRequestTypes.paymentFailed
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           await req.save()
           errors.operation = 'paymentFailed'
@@ -419,7 +438,7 @@ export class RecyclingRequestService {
           const req = new RecyclingRequestModel()
           req.vehicleId = newRecyclingRequest.vehicleId
           req.nameOfRequestor = newRecyclingRequest.nameOfRequestor
-          req.requestType = 'paymentInitiated'
+          req.requestType = RecyclingRequestTypes.paymentInitiated
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           await req.save()
         } catch (err) {

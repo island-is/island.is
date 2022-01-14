@@ -34,11 +34,12 @@ const ApplicationInfo = () => {
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
+  const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const nationalRegistryQuery = useAsyncLazyQuery<
     {
-      nationalRegistryUserV2: NationalRegistryData
+      municipalityNationalRegistryUserV2: NationalRegistryData
     },
     { input: { ssn: string } }
   >(NationalRegistryUserQuery)
@@ -55,27 +56,31 @@ const ApplicationInfo = () => {
       return
     }
 
+    setError(false)
     setLoading(true)
 
     const { data } = await nationalRegistryQuery({
       input: { ssn: user?.nationalId },
+    }).catch(() => {
+      return { data: undefined }
     })
 
-    if (!data || !data.nationalRegistryUserV2.address) {
+    if (!data || !data.municipalityNationalRegistryUserV2.address) {
+      setError(true)
       setLoading(false)
       return
     }
 
-    setNationalRegistryData(data.nationalRegistryUserV2)
+    setNationalRegistryData(data.municipalityNationalRegistryUserV2)
 
     await setMunicipalityById(
-      data.nationalRegistryUserV2.address.municipalityCode,
+      data.municipalityNationalRegistryUserV2.address.municipalityCode,
     ).then((municipality) => {
       navigation.nextUrl && municipality && municipality.active
         ? router.push(navigation?.nextUrl)
         : router.push(
             Routes.serviceCenter(
-              data.nationalRegistryUserV2.address.municipalityCode,
+              data.municipalityNationalRegistryUserV2.address.municipalityCode,
             ),
           )
     })
@@ -134,6 +139,12 @@ const ApplicationInfo = () => {
             hasError={hasError}
             errorMessage={'Þú þarft að samþykkja gagnaöflun'}
           />
+
+          {error && (
+            <Text color="red600" fontWeight="semiBold" variant="small">
+              Eitthvað fór úrskeiðis, vinsamlegast reynið aftur síðar
+            </Text>
+          )}
         </Box>
 
         <Box

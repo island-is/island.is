@@ -1,9 +1,14 @@
+import { useContext } from 'react'
+
 import { useMutation } from '@apollo/client'
 import { UpdateStaffMutation } from '../../graphql'
 import { toast } from '@island.is/island-ui/core'
 import { StaffRole } from '@island.is/financial-aid/shared/lib'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 export const useStaff = () => {
+  const { admin, setAdmin } = useContext(AdminContext)
+
   const [updateStaff, { loading: staffActivationLoading }] = useMutation(
     UpdateStaffMutation,
   )
@@ -18,21 +23,23 @@ export const useStaff = () => {
       },
     })
       .then(() => {
-        toast.success('Það tókst að uppfæra notanda')
+        toast.success('Stillingar hafa verið uppfærðar')
       })
       .catch(() => {
         toast.error(
-          'Ekki tókst að uppfæra notanda, vinsamlega reynið aftur síðar',
+          'Ekki tókst að uppfæra stillingar, vinsamlega reynið aftur síðar',
         )
       })
   }
 
   const updateInfo = async (
-    id: string,
-    nationalId: string,
-    roles: StaffRole[],
+    id?: string,
+    nationalId?: string,
+    roles?: StaffRole[],
     nickname?: string,
     email?: string,
+    usePseudoName?: boolean,
+    updateAdmin?: boolean,
   ) => {
     try {
       await updateStaff({
@@ -43,14 +50,19 @@ export const useStaff = () => {
             roles,
             nickname,
             email,
+            usePseudoName,
           },
         },
-      }).then(() => {
-        toast.success('Það tókst að uppfæra notanda')
+      }).then((res) => {
+        if (updateAdmin && res.data?.updateStaff && setAdmin && admin) {
+          setAdmin({ ...admin, staff: res.data?.updateStaff })
+        }
+
+        toast.success('Stillingar hafa verið uppfærðar')
       })
     } catch (e) {
       toast.error(
-        'Ekki tókst að uppfæra notanda, vinsamlega reynið aftur síðar',
+        'Ekki tókst að uppfæra stillingar, vinsamlega reynið aftur síðar',
       )
     }
   }

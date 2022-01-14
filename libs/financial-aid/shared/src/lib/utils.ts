@@ -12,6 +12,12 @@ export const getFileSizeInKilo = (file: { size?: number }) => {
   return Math.floor(file.size ? file.size / 1000 : 0)
 }
 
+export const firstDateOfMonth = () => {
+  const date = new Date()
+
+  return new Date(date.getFullYear(), date.getMonth(), 1)
+}
+
 export const currentMonth = () => {
   return months[new Date().getMonth()].toLowerCase()
 }
@@ -86,10 +92,3 @@ export const scrollToId = (id: string) => {
     behavior: 'smooth',
   })
 }
-
-export const isObjEmpty = (
-  obj: Record<string, { description: string; amount: number }>,
-) =>
-  obj &&
-  Object.keys(obj).length === 0 &&
-  Object.getPrototypeOf(obj) === Object.prototype

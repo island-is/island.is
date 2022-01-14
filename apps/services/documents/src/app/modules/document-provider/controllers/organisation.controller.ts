@@ -1,3 +1,4 @@
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   Body,
   Controller,
@@ -14,7 +15,12 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger'
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
@@ -34,7 +40,8 @@ import { environment } from '../../../../environments'
 
 const namespace = `${environment.audit.defaultNamespace}/organisations`
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.internal)
 @ApiTags('organisations')
 @ApiHeader({
   name: 'authorization',
@@ -115,7 +122,7 @@ export class OrganisationController {
     }
 
     this.auditService.audit({
-      user,
+      auth: user,
       namespace,
       action: 'updateOrganisation',
       resources: id,
@@ -179,7 +186,7 @@ export class OrganisationController {
     }
 
     this.auditService.audit({
-      user,
+      auth: user,
       namespace,
       action: 'updateAdministrativeContact',
       resources: administrativeContactId,
@@ -233,7 +240,7 @@ export class OrganisationController {
     }
 
     this.auditService.audit({
-      user,
+      auth: user,
       namespace,
       action: 'updateTechnicalContact',
       resources: technicalContactId,
@@ -285,7 +292,7 @@ export class OrganisationController {
     }
 
     this.auditService.audit({
-      user,
+      auth: user,
       namespace,
       action: 'updateHelpdesk',
       resources: helpdeskId,

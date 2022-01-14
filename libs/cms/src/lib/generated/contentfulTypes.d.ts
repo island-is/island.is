@@ -1278,40 +1278,6 @@ export interface ILinkUrl extends Entry<ILinkUrlFields> {
   }
 }
 
-export interface ILocationFields {
-  /** Title */
-  title: string
-
-  /** subTitle */
-  subTitle?: string | undefined
-
-  /** Address */
-  address?: string | undefined
-
-  /** Link */
-  link?: ILink | undefined
-
-  /** Background */
-  background: Asset
-}
-
-export interface ILocation extends Entry<ILocationFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'location'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface ILogoListSliceFields {
   /** Title */
   title?: string | undefined
@@ -1828,6 +1794,12 @@ export interface IOrganizationFields {
 
   /** Email */
   email?: string | undefined
+
+  /** Titill á þjónustuvef */
+  serviceWebTitle?: string | undefined
+
+  /** Birta á þjónustuvef */
+  serviceWebEnabled?: boolean | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -1924,6 +1896,9 @@ export interface IOrganizationPageFields {
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
+
+  /** External Links */
+  externalLinks?: ILink[] | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -2147,7 +2122,7 @@ export interface IProjectPageFields {
   sidebar: boolean
 
   /** Sidebar Links */
-  sidebarLinks?: ILink[] | undefined
+  sidebarLinks?: ILinkGroup[] | undefined
 
   /** Subtitle */
   subtitle?: string | undefined
@@ -2210,8 +2185,11 @@ export interface IProjectSubpageFields {
   /** Content */
   content?: Document | undefined
 
+  /** Render slices as tabs */
+  renderSlicesAsTabs?: boolean | undefined
+
   /** Slices */
-  slices?: (IAccordionSlice | IOneColumnText | ITwoColumnText)[] | undefined
+  slices?: IOneColumnText[] | undefined
 }
 
 export interface IProjectSubpage extends Entry<IProjectSubpageFields> {
@@ -2510,6 +2488,9 @@ export interface IStepperFields {
 
   /** Steps */
   steps?: IStep[] | undefined
+
+  /** Config */
+  config?: Record<string, any> | undefined
 }
 
 /** Used for asking users questions and returning an answer. */
@@ -2626,6 +2607,9 @@ export interface ISubArticleFields {
 
   /** Slug(old) */
   slug?: string | undefined
+
+  /** Stepper */
+  stepper?: IStepper | undefined
 }
 
 /** A sub article that's a part of another main article */
@@ -2707,34 +2691,6 @@ export interface ISupportCategory extends Entry<ISupportCategoryFields> {
     contentType: {
       sys: {
         id: 'supportCategory'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface ISupportFormFields {
-  /** Category */
-  category: string
-
-  /** Organization */
-  organization: IOrganization
-
-  /** Form */
-  form?: Record<string, any> | undefined
-}
-
-export interface ISupportForm extends Entry<ISupportFormFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'supportForm'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3435,7 +3391,6 @@ export type CONTENT_TYPE =
   | 'linkGroup'
   | 'linkList'
   | 'linkUrl'
-  | 'location'
   | 'logoListSlice'
   | 'mailingListSignup'
   | 'menu'
@@ -3473,7 +3428,6 @@ export type CONTENT_TYPE =
   | 'subArticle'
   | 'subpageHeader'
   | 'supportCategory'
-  | 'supportForm'
   | 'supportQNA'
   | 'supportSubCategory'
   | 'tabContent'

@@ -69,7 +69,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             name="conclusion"
             label={formatMessage(m.sections.conclusion.label)}
             placeholder={formatMessage(m.sections.conclusion.placeholder)}
-            defaultValue={workingCase.conclusion}
+            value={workingCase.conclusion || ''}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'conclusion',
@@ -252,7 +252,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                 label={formatMessage(
                   m.sections.appealDecision.accusedAnnouncementLabel,
                 )}
-                defaultValue={workingCase.accusedAppealAnnouncement}
+                value={workingCase.accusedAppealAnnouncement || ''}
                 placeholder={formatMessage(
                   m.sections.appealDecision.accusedAnnouncementPlaceholder,
                 )}
@@ -360,11 +360,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                       name="prosecutor-appeal-decision"
                       id="prosecutor-postpone"
                       label={formatMessage(
-                        workingCase.sessionArrangements ===
-                          SessionArrangements.REMOTE_SESSION
-                          ? m.sections.appealDecision
-                              .prosecutorPostponeInRemoteSession
-                          : m.sections.appealDecision.prosecutorPostpone,
+                        m.sections.appealDecision.prosecutorPostpone,
                       )}
                       value={CaseAppealDecision.POSTPONE}
                       checked={
@@ -429,7 +425,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   label={formatMessage(
                     m.sections.appealDecision.prosecutorAnnouncementLabel,
                   )}
-                  defaultValue={workingCase.prosecutorAppealAnnouncement}
+                  value={workingCase.prosecutorAppealAnnouncement || ''}
                   placeholder={formatMessage(
                     m.sections.appealDecision.prosecutorAnnouncementPlaceholder,
                   )}
@@ -456,6 +452,44 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                 />
               </Box>
             </BlueBox>
+          </Box>
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(m.sections.endOfSessionBookings.title)}
+            </Text>
+          </Box>
+          <Box marginBottom={5}>
+            <Input
+              data-testid="endOfSessionBookings"
+              name="endOfSessionBookings"
+              label={formatMessage(m.sections.endOfSessionBookings.label)}
+              value={workingCase.endOfSessionBookings || ''}
+              placeholder={formatMessage(
+                m.sections.endOfSessionBookings.placeholder,
+              )}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'endOfSessionBookings',
+                  event,
+                  [],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'endOfSessionBookings',
+                  event.target.value,
+                  [],
+                  workingCase,
+                  updateCase,
+                )
+              }
+              rows={16}
+              textarea
+            />
           </Box>
         </Box>
         <Box marginBottom={10}>

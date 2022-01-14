@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
 import { gql, useLazyQuery } from '@apollo/client'
+import { User } from 'oidc-client'
 import {
   FinanceStatusOrganizationType,
   FinanceStatusDetailsType,
@@ -18,9 +19,16 @@ const GetFinanceStatusDetailsQuery = gql`
 interface Props {
   organization: FinanceStatusOrganizationType
   chargeType: FinanceStatusOrganizationChargeType
+  downloadURL: string
+  userInfo: User
 }
 
-const FinanceStatusTableRow: FC<Props> = ({ organization, chargeType }) => {
+const FinanceStatusTableRow: FC<Props> = ({
+  organization,
+  chargeType,
+  downloadURL,
+  userInfo,
+}) => {
   const [getDetailsQuery, { loading, error, ...detailsQuery }] = useLazyQuery(
     GetFinanceStatusDetailsQuery,
   )
@@ -52,6 +60,8 @@ const FinanceStatusTableRow: FC<Props> = ({ organization, chargeType }) => {
         <FinanceStatusDetailTable
           organization={organization}
           financeStatusDetails={financeStatusDetails}
+          downloadURL={downloadURL}
+          userInfo={userInfo}
         />
       ) : null}
     </ExpandRow>

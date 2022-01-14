@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { UserProfileController } from './userProfile.controller'
+import { UserTokenController } from './userToken.controller'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { SmsModule } from '@island.is/nova-sms'
@@ -13,6 +14,7 @@ import { UserProfileInfraController } from './userProfileInfra.controller'
 import { SequelizeConfigService } from '../sequelizeConfig.service'
 import { AuditModule } from '@island.is/nest/audit'
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { UserDeviceTokens } from './userDeviceTokens.model'
 
 @Module({
   imports: [
@@ -22,11 +24,16 @@ import { AuthModule } from '@island.is/auth-nest-tools'
       EmailVerification,
       SmsVerification,
       UserProfile,
+      UserDeviceTokens,
     ]),
     EmailModule.register(environment.emailOptions),
     SmsModule.register(environment.smsOptions),
   ],
-  controllers: [UserProfileController, UserProfileInfraController],
+  controllers: [
+    UserProfileController,
+    UserProfileInfraController,
+    UserTokenController,
+  ],
   providers: [UserProfileService, VerificationService, SequelizeConfigService],
   exports: [UserProfileService],
 })

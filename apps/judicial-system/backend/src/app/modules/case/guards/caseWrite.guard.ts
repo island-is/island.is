@@ -2,7 +2,6 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  BadRequestException,
   InternalServerErrorException,
   ForbiddenException,
 } from '@nestjs/common'
@@ -23,7 +22,7 @@ export class CaseWriteGuard implements CanActivate {
     const theCase = request.case
 
     if (!theCase) {
-      throw new BadRequestException('Missing case')
+      throw new InternalServerErrorException('Missing case')
     }
 
     if (isCaseBlockedFromUser(theCase, user, true)) {

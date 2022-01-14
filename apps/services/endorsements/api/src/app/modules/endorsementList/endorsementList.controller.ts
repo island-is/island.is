@@ -324,6 +324,7 @@ export class EndorsementListController {
     @Body() endorsementList: EndorsementListDto,
     @CurrentUser() user: User,
   ): Promise<EndorsementList> {
+    console.log(endorsementList.closedDate)
     return await this.endorsementListService.create({
       ...endorsementList,
       owner: user.nationalId,
@@ -338,7 +339,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @BypassAuth()
   @Get(':listId/ownerInfo')
-  async getOwnerInfo(@Param('listId') listId: string): Promise<String> {
+  async getOwnerInfo(@Param('listId') listId: string): Promise<string> {
     return await this.endorsementListService.getOwnerInfo(listId)
   }
 

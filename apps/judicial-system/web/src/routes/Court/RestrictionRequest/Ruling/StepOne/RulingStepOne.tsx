@@ -6,6 +6,7 @@ import {
   Accordion,
   AccordionItem,
   Box,
+  Checkbox,
   Input,
   Text,
   Tooltip,
@@ -22,26 +23,23 @@ import {
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
 import { isRulingStepOneValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  setCheckboxAndSendToServer,
   newSetAndSendDateToServer,
   removeTabsValidateAndSet,
   validateAndSendToServer,
+  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
-import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
@@ -54,9 +52,9 @@ export const RulingStepOne: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
-  const [, setValidToDateIsValid] = useState<boolean>(true)
-  const [, setIsolationToIsValid] = useState<boolean>(true)
+
   const [
     courtCaseFactsErrorMessage,
     setCourtCaseFactsErrorMessage,
@@ -81,46 +79,32 @@ export const RulingStepOne: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    let theCase = workingCase
+    if (isCaseUpToDate) {
+      const theCase = workingCase
 
-    if (!theCase.custodyRestrictions) {
-      theCase = {
-        ...theCase,
-        custodyRestrictions: theCase.requestedCustodyRestrictions,
+      if (theCase.demands) {
+        autofill('prosecutorDemands', theCase.demands, theCase)
       }
 
-      updateCase(
-        theCase.id,
-        parseArray(
-          'custodyRestrictions',
-          theCase.requestedCustodyRestrictions ?? [],
-        ),
-      )
-    }
+      if (theCase.requestedValidToDate) {
+        autofill('validToDate', theCase.requestedValidToDate, theCase)
+      }
 
-    if (theCase.demands) {
-      autofill('prosecutorDemands', theCase.demands, theCase)
-    }
+      if (theCase.validToDate) {
+        autofill('isolationToDate', theCase.validToDate, theCase)
+      }
 
-    if (theCase.requestedValidToDate) {
-      autofill('validToDate', theCase.requestedValidToDate, theCase)
-    }
+      if (theCase.caseFacts) {
+        autofill('courtCaseFacts', theCase.caseFacts, theCase)
+      }
 
-    if (theCase.validToDate) {
-      autofill('isolationToDate', theCase.validToDate, theCase)
-    }
+      if (theCase.legalArguments) {
+        autofill('courtLegalArguments', theCase.legalArguments, theCase)
+      }
 
-    if (theCase.caseFacts) {
-      autofill('courtCaseFacts', theCase.caseFacts, theCase)
-    }
-
-    if (theCase.legalArguments) {
-      autofill('courtLegalArguments', theCase.legalArguments, theCase)
-    }
-    if (workingCase.id !== '') {
       setWorkingCase(theCase)
     }
-  }, [workingCase.id])
+  }, [autofill, isCaseUpToDate, setWorkingCase, updateCase, workingCase])
 
   return (
     <PageLayout
@@ -153,8 +137,10 @@ export const RulingStepOne: React.FC = () => {
                 caseId={workingCase.id}
                 files={workingCase.caseFiles ?? []}
                 canOpenFiles={
-                  workingCase.judge !== null &&
-                  workingCase.judge?.id === user?.id
+                  (workingCase.judge !== null &&
+                    workingCase.judge?.id === user?.id) ||
+                  (workingCase.registrar !== null &&
+                    workingCase.registrar?.id === user?.id)
                 }
               />
             </AccordionItem>
@@ -170,7 +156,7 @@ export const RulingStepOne: React.FC = () => {
             data-testid="prosecutorDemands"
             name="prosecutorDemands"
             label={formatMessage(m.sections.prosecutorDemands.label)}
-            defaultValue={workingCase.prosecutorDemands}
+            value={workingCase.prosecutorDemands || ''}
             placeholder={formatMessage(
               m.sections.prosecutorDemands.placeholder,
             )}
@@ -216,7 +202,7 @@ export const RulingStepOne: React.FC = () => {
               data-testid="courtCaseFacts"
               name="courtCaseFacts"
               label={formatMessage(m.sections.courtCaseFacts.label)}
-              defaultValue={workingCase.courtCaseFacts}
+              value={workingCase.courtCaseFacts || ''}
               placeholder={formatMessage(m.sections.courtCaseFacts.placeholder)}
               onChange={(event) =>
                 removeTabsValidateAndSet(
@@ -261,7 +247,7 @@ export const RulingStepOne: React.FC = () => {
               data-testid="courtLegalArguments"
               name="courtLegalArguments"
               label={formatMessage(m.sections.courtLegalArguments.label)}
-              defaultValue={workingCase.courtLegalArguments}
+              value={workingCase.courtLegalArguments || ''}
               placeholder={formatMessage(
                 m.sections.courtLegalArguments.placeholder,
               )}
@@ -352,6 +338,7 @@ export const RulingStepOne: React.FC = () => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            isCaseUpToDate={isCaseUpToDate}
             isRequired
           />
         </Box>
@@ -379,11 +366,7 @@ export const RulingStepOne: React.FC = () => {
                     ? 'Gæsluvarðhald til'
                     : 'Farbann til'
                 }
-                selectedDate={
-                  workingCase.validToDate
-                    ? new Date(workingCase.validToDate)
-                    : undefined
-                }
+                selectedDate={workingCase.validToDate}
                 minDate={new Date()}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   newSetAndSendDateToServer(
@@ -392,7 +375,6 @@ export const RulingStepOne: React.FC = () => {
                     valid,
                     workingCase,
                     setWorkingCase,
-                    setValidToDateIsValid,
                     updateCase,
                   )
                 }}
@@ -410,34 +392,32 @@ export const RulingStepOne: React.FC = () => {
               </Box>
               <BlueBox>
                 <Box marginBottom={3}>
-                  <CheckboxList
-                    checkboxes={isolation(workingCase.accusedGender)}
-                    selected={workingCase.custodyRestrictions}
-                    onChange={(id) =>
-                      setCheckboxAndSendToServer(
-                        'custodyRestrictions',
-                        id,
+                  <Checkbox
+                    name="isCustodyIsolation"
+                    label={isolation(workingCase.accusedGender)[0].title}
+                    checked={workingCase.isCustodyIsolation}
+                    onChange={() => {
+                      setAndSendToServer(
+                        'isCustodyIsolation',
+                        !workingCase.isCustodyIsolation,
                         workingCase,
                         setWorkingCase,
                         updateCase,
                       )
-                    }
-                    fullWidth
+                    }}
+                    filled
+                    large
                   />
                 </Box>
                 <DateTime
                   name="isolationToDate"
                   datepickerLabel="Einangrun til"
-                  disabled={
-                    !workingCase.custodyRestrictions?.includes(
-                      CaseCustodyRestrictions.ISOLATION,
-                    )
-                  }
+                  disabled={!workingCase.isCustodyIsolation}
                   selectedDate={
                     workingCase.isolationToDate
-                      ? new Date(workingCase.isolationToDate)
+                      ? workingCase.isolationToDate
                       : workingCase.validToDate
-                      ? new Date(workingCase.validToDate)
+                      ? workingCase.validToDate
                       : undefined
                   }
                   // Isolation can never be set in the past.
@@ -454,17 +434,12 @@ export const RulingStepOne: React.FC = () => {
                       valid,
                       workingCase,
                       setWorkingCase,
-                      setIsolationToIsValid,
                       updateCase,
                     )
                   }}
                   blueBox={false}
                   backgroundColor={
-                    workingCase.custodyRestrictions?.includes(
-                      CaseCustodyRestrictions.ISOLATION,
-                    )
-                      ? 'white'
-                      : 'blue'
+                    workingCase.isCustodyIsolation ? 'white' : 'blue'
                   }
                 />
               </BlueBox>

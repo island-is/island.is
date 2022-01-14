@@ -1,9 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useMemo, useRef, useState } from 'react'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   GetNewsQuery,
+  Link,
+  LinkGroup,
   Query,
   QueryGetNamespaceArgs,
   QueryGetProjectPageArgs,
@@ -25,10 +27,13 @@ import {
   ElectionProjectHeader,
 } from '@island.is/web/components'
 import {
+  Box,
   GridColumn,
   GridContainer,
   GridRow,
+  Hidden,
   Navigation,
+  NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
@@ -37,7 +42,6 @@ import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
-
 const lightThemes = ['traveling-to-iceland', 'election']
 
 interface ProjectWrapperProps {
@@ -91,6 +95,65 @@ interface PageProps {
   namespace: Query['getNamespace']
 }
 
+const convertLinksToNavigationItem = (links: Link[]) =>
+  links.map(({ text, url }) => {
+    return {
+      title: text,
+      href: url,
+      active: false,
+    }
+  })
+
+const convertLinkGroupsToNavigationItems = (
+  linkGroups: LinkGroup[],
+): NavigationItem[] =>
+  linkGroups.map(({ primaryLink, childrenLinks }) => {
+    return {
+      title: primaryLink.text,
+      href: primaryLink.url,
+      active: false,
+      items: convertLinksToNavigationItem(childrenLinks),
+    }
+  })
+
+const getActiveNavigationItemTitle = (
+  navigationItems: NavigationItem[],
+  clientUrl: string,
+) => {
+  for (const item of navigationItems) {
+    if (clientUrl === item.href) {
+      return item.title
+    }
+    for (const childItem of item.items) {
+      if (clientUrl === childItem.href) {
+        return childItem.title
+      }
+    }
+  }
+}
+
+const assignNavigationActive = (
+  items: NavigationItem[],
+  clientUrl: string,
+): NavigationItem[] =>
+  items.map((item) => {
+    let isAnyChildActive = false
+    const childItems = item.items.map((childItem) => {
+      const isChildActive = clientUrl === childItem.href
+      if (isChildActive) isAnyChildActive = isChildActive
+      return {
+        ...childItem,
+        active: isChildActive,
+      }
+    })
+    return {
+      title: item.title,
+      href: item.href,
+      active: clientUrl === item.href || isAnyChildActive,
+      items: childItems,
+    }
+  })
+
 const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
@@ -99,6 +162,18 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
   const subpage = projectPage.projectSubpages.find((x) => {
     return x.slug === router.query.subSlug
   })
+
+  const navigationList = assignNavigationActive(
+    convertLinkGroupsToNavigationItems(projectPage.sidebarLinks),
+    router.asPath,
+  )
+
+  const activeNavigationItemTitle = useMemo(
+    () => getActiveNavigationItemTitle(navigationList, router.asPath),
+    [router.asPath],
+  )
+
+  const navigationTitle = n('navigationTitle', 'Efnisyfirlit')
 
   return (
     <>
@@ -117,12 +192,9 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           <>
             <Navigation
               baseId="pageNav"
-              items={projectPage.sidebarLinks?.map(({ text, url }) => ({
-                title: text,
-                href: url,
-                active: router.asPath === url,
-              }))}
-              title="Efnisyfirlit"
+              items={navigationList}
+              activeItemTitle={activeNavigationItemTitle}
+              title={navigationTitle}
               renderLink={(link, item) => {
                 return item?.href ? (
                   <NextLink href={item?.href}>{link}</NextLink>
@@ -134,6 +206,26 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           </>
         }
       >
+        <Hidden above="sm">
+          <Box>
+            <Box marginY={2}>
+              <Navigation
+                isMenuDialog
+                baseId="pageNav"
+                items={navigationList}
+                activeItemTitle={activeNavigationItemTitle}
+                title={navigationTitle}
+                renderLink={(link, item) => {
+                  return item?.href ? (
+                    <NextLink href={item?.href}>{link}</NextLink>
+                  ) : (
+                    link
+                  )
+                }}
+              />
+            </Box>
+          </Box>
+        </Hidden>
         {!!subpage && (
           <Text as="h1" variant="h1">
             {subpage.title}

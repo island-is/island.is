@@ -1,4 +1,9 @@
-import { Field, ObjectType, createUnionType } from '@nestjs/graphql'
+import {
+  Field,
+  ObjectType,
+  createUnionType,
+  registerEnumType,
+} from '@nestjs/graphql'
 import {
   Column,
   DataType,
@@ -16,6 +21,17 @@ import {
 import { RecyclingPartnerModel } from '../recyclingPartner'
 import { VehicleModel } from '../vehicle'
 
+export enum RecyclingRequestTypes {
+  pendingRecycle = 'pendingRecycle',
+  handOver = 'handOver',
+  deregistered = 'deregistered',
+  cancelled = 'cancelled',
+  paymentInitiated = 'paymentInitiated',
+  paymentFailed = 'paymentFailed',
+}
+
+registerEnumType(RecyclingRequestTypes, { name: 'RecyclingRequestTypes' })
+
 @ObjectType()
 export class RequestErrors {
   @Field()
@@ -31,8 +47,8 @@ export class RequestStatus {
   status: boolean
 }
 
-export const RecyclingRequestUnion = createUnionType({
-  name: 'RecyclingRequest',
+export const RecyclingRequestResponse = createUnionType({
+  name: 'RecyclingRequestResponse',
   types: () => [RequestErrors, RequestStatus],
   resolveType(res) {
     if (res.status) {
@@ -45,7 +61,7 @@ export const RecyclingRequestUnion = createUnionType({
   },
 })
 
-@ObjectType()
+@ObjectType('RecyclingRequest')
 @Table({ tableName: 'recycling_request' })
 export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @Field()
@@ -59,6 +75,7 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @ForeignKey(() => VehicleModel)
   @Column({
     type: DataType.STRING,
+    field: 'vehicle_id',
   })
   vehicleId!: string
 
@@ -77,12 +94,12 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @BelongsTo(() => RecyclingPartnerModel)
   recyclingPartner: RecyclingPartnerModel
 
-  @Field()
+  @Field(() => RecyclingRequestTypes)
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  requestType: string
+  requestType: RecyclingRequestTypes
 
   @Field()
   @Column({
@@ -91,13 +108,17 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   })
   nameOfRequestor: string
 
-  @Field()
+  @Field({ nullable: true })
   @CreatedAt
-  @Column
-  createdAt: Date
+  @Column({
+    field: 'created_at',
+  })
+  createdAt?: Date
 
-  @Field()
+  @Field({ nullable: true })
   @UpdatedAt
-  @Column
-  updatedAt: Date
+  @Column({
+    field: 'updated_at',
+  })
+  updatedAt?: Date
 }

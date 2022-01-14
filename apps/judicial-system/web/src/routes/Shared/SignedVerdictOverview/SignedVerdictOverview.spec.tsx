@@ -26,7 +26,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_2' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -57,7 +57,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_4' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -88,7 +88,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_2' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -121,7 +121,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_2' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -162,7 +162,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_12' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -193,7 +193,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_12' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -224,7 +224,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_12' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -257,7 +257,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_12' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -298,7 +298,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_5' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -326,11 +326,13 @@ describe('Signed Verdict Overview route', () => {
     })
 
     test('should have the correct subtitle', async () => {
-      const date = '2020-09-25T19:50:08.033Z'
+      const validToDate = '2020-09-25T19:50:08.033Z'
+      const rulingDate = '2020-09-20T17:50:08.033Z'
+
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_5' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -354,8 +356,17 @@ describe('Signed Verdict Overview route', () => {
 
       expect(
         await screen.findByText(
-          `Gæsla til ${formatDate(date, 'PPP')} kl. ${formatDate(
-            date,
+          `Úrskurðað ${formatDate(rulingDate, 'PPP')} kl. ${formatDate(
+            rulingDate,
+            TIME_FORMAT,
+          )}`,
+        ),
+      ).toBeInTheDocument()
+
+      expect(
+        await screen.findByText(
+          `Gæsla til ${formatDate(validToDate, 'PPP')} kl. ${formatDate(
+            validToDate,
             TIME_FORMAT,
           )}`,
         ),
@@ -366,7 +377,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -397,7 +408,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -430,7 +441,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -461,7 +472,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -498,7 +509,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -529,7 +540,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -563,7 +574,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id_6' },
-          pathname: '/gaesluvardhald/test_id_2',
+          pathname: '/krafa/test_id_2',
         }))
 
         render(
@@ -592,10 +603,12 @@ describe('Signed Verdict Overview route', () => {
 
       test('should have the correct subtitle', async () => {
         const dateInPast = '2020-09-24T19:50:08.033Z'
+        const rulingDate = '2020-09-20T17:50:08.033Z'
+
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id_6' },
-          pathname: '/gaesluvardhald/test_id_2',
+          pathname: '/krafa/test_id_2',
         }))
 
         render(
@@ -619,6 +632,15 @@ describe('Signed Verdict Overview route', () => {
 
         expect(
           await screen.findByText(
+            `Úrskurðað ${formatDate(rulingDate, 'PPP')} kl. ${formatDate(
+              rulingDate,
+              TIME_FORMAT,
+            )}`,
+          ),
+        ).toBeInTheDocument()
+
+        expect(
+          await screen.findByText(
             `Gæsla rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
               dateInPast,
               TIME_FORMAT,
@@ -627,11 +649,11 @@ describe('Signed Verdict Overview route', () => {
         ).toBeInTheDocument()
       })
 
-      test('should display restriction tags if there are restrictions', async () => {
+      test('should display restriction tags if the prosecutor requested restrictions', async () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id_6' },
-          pathname: '/gaesluvardhald/test_id_2',
+          pathname: '/krafa/test_id_2',
         }))
 
         render(
@@ -662,7 +684,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id' },
-          pathname: '/gaesluvardhald/test_id_2',
+          pathname: '/krafa/test_id_2',
         }))
 
         render(
@@ -697,7 +719,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id_8' },
-          pathname: '/gaesluvardhald/test_id_2',
+          pathname: '/krafa/test_id_2',
         }))
 
         render(
@@ -732,7 +754,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id_7' },
-          pathname: '/gaesluvardhald/test_id_2',
+          pathname: '/krafa/test_id_2',
         }))
 
         render(
@@ -761,7 +783,7 @@ describe('Signed Verdict Overview route', () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
           query: { id: 'test_id' },
-          pathname: '/gaesluvardhald/test_id_2',
+          pathname: '/krafa/test_id_2',
         }))
 
         render(
@@ -786,7 +808,7 @@ describe('Signed Verdict Overview route', () => {
         expect(screen.queryByTestId('requestPDFButton')).not.toBeInTheDocument()
         expect(screen.queryByTestId('rulingPDFButton')).not.toBeInTheDocument()
         expect(
-          await screen.findByTestId('rulingSVPDFButton'),
+          await screen.findByTestId('courtRecordPDFButton'),
         ).toBeInTheDocument()
         expect(
           await screen.findByTestId('custodyNoticePDFButton'),
@@ -800,7 +822,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_7' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -831,9 +853,10 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_7' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
       const date = '2020-09-25T19:50:08.033Z'
+      const rulingDate = '2020-09-20T17:50:08.033Z'
 
       render(
         <MockedProvider
@@ -856,6 +879,15 @@ describe('Signed Verdict Overview route', () => {
 
       expect(
         await screen.findByText(
+          `Úrskurðað ${formatDate(rulingDate, 'PPP')} kl. ${formatDate(
+            rulingDate,
+            TIME_FORMAT,
+          )}`,
+        ),
+      ).toBeInTheDocument()
+
+      expect(
+        await screen.findByText(
           `Farbann til ${formatDate(date, 'PPP')} kl. ${formatDate(
             date,
             TIME_FORMAT,
@@ -868,7 +900,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -901,7 +933,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_7' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -936,7 +968,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_8' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -965,10 +997,11 @@ describe('Signed Verdict Overview route', () => {
 
     test('should have the correct subtitle', async () => {
       const dateInPast = '2020-09-24T19:50:08.033Z'
+      const rulingDate = '2020-09-20T17:50:08.033Z'
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_8' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -992,6 +1025,15 @@ describe('Signed Verdict Overview route', () => {
 
       expect(
         await screen.findByText(
+          `Úrskurðað ${formatDate(rulingDate, 'PPP')} kl. ${formatDate(
+            rulingDate,
+            TIME_FORMAT,
+          )}`,
+        ),
+      ).toBeInTheDocument()
+
+      expect(
+        await screen.findByText(
           `Farbann rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
             dateInPast,
             TIME_FORMAT,
@@ -1004,7 +1046,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
-        pathname: '/gaesluvardhald/test_id_2',
+        pathname: '/krafa/test_id_2',
       }))
 
       render(

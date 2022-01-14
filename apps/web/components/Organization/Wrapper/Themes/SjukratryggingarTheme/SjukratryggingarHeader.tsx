@@ -2,9 +2,7 @@ import { OrganizationPage } from '@island.is/web/graphql/schema'
 import React from 'react'
 import {
   Box,
-  GridColumn,
   GridContainer,
-  GridRow,
   Hidden,
   Link,
   Text,
@@ -24,6 +22,8 @@ export const SjukratryggingarHeader: React.FC<HeaderProps> = ({
 
   return (
     <Box className={styles.headerBg}>
+      <div className={styles.trianglesLeft}></div>
+      <div className={styles.trianglesRight}></div>
       <GridContainer className={styles.headerContainer}>
         <Box className={styles.headerWrapper}>
           <SidebarLayout
@@ -60,17 +60,23 @@ export const SjukratryggingarHeader: React.FC<HeaderProps> = ({
               </Link>
             </Hidden>
             <Box
-              marginTop={[2, 2, 6]}
-              textAlign={['center', 'center', 'right']}
+              marginTop={[2, 2, 0]}
+              textAlign={['center', 'center', 'center']}
             >
               <Link
                 href={
                   linkResolver('organizationpage', [organizationPage.slug]).href
                 }
               >
-                <Text variant="h1" color="white">
-                  {organizationPage.title}
-                </Text>
+                <Hidden below="md">
+                  <div className={styles.trianglesTop}></div>
+                  <div className={styles.titleImage}></div>
+                </Hidden>
+                <Hidden above="sm">
+                  <Text variant="h1" color="white">
+                    {organizationPage.title}
+                  </Text>
+                </Hidden>
               </Link>
             </Box>
           </SidebarLayout>

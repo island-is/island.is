@@ -63,6 +63,7 @@ export class GrantTypeController {
   @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
+  @ApiQuery({ name: 'includeArchived', required: false })
   @ApiOkResponse({
     schema: {
       allOf: [
@@ -88,12 +89,18 @@ export class GrantTypeController {
     @Query('searchString') searchString: string,
     @Query('page') page: number,
     @Query('count') count: number,
+    @Query('includeArchived') includeArchived = false,
   ): Promise<PagedRowsDto<GrantType>> {
     if (searchString) {
-      return this.grantTypeService.find(searchString, page, count)
+      return this.grantTypeService.find(
+        searchString,
+        page,
+        count,
+        includeArchived,
+      )
     }
 
-    return this.grantTypeService.findAndCountAll(page, count)
+    return this.grantTypeService.findAndCountAll(page, count, includeArchived)
   }
 
   /** Gets a grant type by name */
@@ -150,7 +157,7 @@ export class GrantTypeController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'updateGrantType',
         namespace,
         resources: name,
@@ -173,7 +180,7 @@ export class GrantTypeController {
     }
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'deleteGrantType',
         namespace,
         resources: name,

@@ -20,6 +20,8 @@ import { UpdateCaseMutation } from './updateCaseGql'
 import { SendNotificationMutation } from './sendNotificationGql'
 import { TransitionCaseMutation } from './transitionCaseGql'
 import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
+import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
+import { ExtendCaseMutation } from './extendCaseGql'
 
 type autofillProperties = Pick<
   Case,
@@ -33,13 +35,13 @@ type autofillProperties = Pick<
   | 'validToDate'
   | 'isolationToDate'
   | 'prosecutorOnlySessionRequest'
-  | 'otherRestrictions'
   | 'conclusion'
   | 'courtDate'
   | 'courtLocation'
   | 'accusedBookings'
   | 'ruling'
   | 'sessionArrangements'
+  | 'endOfSessionBookings'
 >
 
 interface CreateCaseMutationResponse {
@@ -64,6 +66,14 @@ interface SendNotificationMutationResponse {
 
 interface RequestRulingSignatureMutationResponse {
   requestRulingSignature: RequestSignatureResponse
+}
+
+interface RequestCourtRecordSignatureMutationResponse {
+  requestCourtRecordSignature: RequestSignatureResponse
+}
+
+interface ExtendCaseMutationResponse {
+  extendCase: Case
 }
 
 const useCase = () => {
@@ -93,6 +103,16 @@ const useCase = () => {
   ] = useMutation<RequestRulingSignatureMutationResponse>(
     RequestRulingSignatureMutation,
   )
+  const [
+    requestCourtRecordSignatureMutation,
+    { loading: isRequestingCourtRecordSignature },
+  ] = useMutation<RequestCourtRecordSignatureMutationResponse>(
+    RequestCourtRecordSignatureMutation,
+  )
+  const [
+    extendCaseMutation,
+    { loading: isExtendingCase },
+  ] = useMutation<ExtendCaseMutationResponse>(ExtendCaseMutation)
 
   const createCase = useMemo(
     () => async (theCase: Case): Promise<string | undefined> => {
@@ -257,6 +277,28 @@ const useCase = () => {
     [requestRulingSignatureMutation],
   )
 
+  const requestCourtRecordSignature = useMemo(
+    () => async (id: string) => {
+      const { data } = await requestCourtRecordSignatureMutation({
+        variables: { input: { caseId: id } },
+      })
+
+      return data?.requestCourtRecordSignature
+    },
+    [requestCourtRecordSignatureMutation],
+  )
+
+  const extendCase = useMemo(
+    () => async (id: string) => {
+      const { data } = await extendCaseMutation({
+        variables: { input: { id } },
+      })
+
+      return data?.extendCase
+    },
+    [extendCaseMutation],
+  )
+
   // TODO: find a way for this to work where value is something other then string
   const autofill = useMemo(
     () => (key: keyof autofillProperties, value: string, workingCase: Case) => {
@@ -284,6 +326,10 @@ const useCase = () => {
     isSendingNotification,
     requestRulingSignature,
     isRequestingRulingSignature,
+    requestCourtRecordSignature,
+    isRequestingCourtRecordSignature,
+    extendCase,
+    isExtendingCase,
     autofill,
   }
 }

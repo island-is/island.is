@@ -16,7 +16,7 @@ export enum ServicePortalPath {
 
   SettingsAccessControl = '/stillingar/adgangsstyring',
   SettingsAccessControlGrant = '/stillingar/adgangsstyring/veita',
-  SettingsAccessControlAccess = '/stillingar/adgangsstyring/:nationalId(\\d+)',
+  SettingsAccessControlAccess = '/stillingar/adgangsstyring/:delegationId',
   SettingsPersonalInformation = '/stillingar/personuupplysingar',
   SettingsPersonalInformationEditPhoneNumber = '/stillingar/personuupplysingar/breyta-simanumeri',
   SettingsPersonalInformationEditEmail = '/stillingar/personuupplysingar/breyta-netfangi',
@@ -29,6 +29,7 @@ export enum ServicePortalPath {
   // Family
   FamilyRoot = '/min-gogn/fjolskyldan',
   FamilyMember = '/min-gogn/fjolskyldan/:nationalId',
+  Spouse = '/min-gogn/fjolskyldan/maki/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',

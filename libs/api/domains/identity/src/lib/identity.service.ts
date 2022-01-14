@@ -22,6 +22,11 @@ export class IdentityService {
       user,
       nationalId,
     )
+
+    if (!person) {
+      return null
+    }
+
     return {
       nationalId: person.nationalId,
       name: person.fullName,

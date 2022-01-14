@@ -6,6 +6,7 @@ import {
   NationalRegistryScope,
   EndorsementsScope,
   DocumentsScope,
+  ApiScope,
 } from '@island.is/auth/scopes'
 
 import { environment } from './environments'
@@ -15,12 +16,21 @@ const userMocked = process.env.API_MOCKS === 'true'
 if (userMocked) {
   configureMock({
     profile: { name: 'Mock', locale: 'is', nationalId: '0000000000' },
+    scopes: [
+      ApiScope.assets,
+      ApiScope.education,
+      ApiScope.financeOverview,
+      ApiScope.financeSalary,
+      ApiScope.internal,
+      ApiScope.meDetails,
+    ],
   })
 } else {
   configure({
     baseUrl: `${window.location.origin}/minarsidur`,
     redirectPath: '/signin-oidc',
     redirectPathSilent: '/silent/signin-oidc',
+    switchUserRedirectUrl: '/',
     authority: environment.identityServer.authority,
     client_id: 'island-is-1',
     scope: [
@@ -34,10 +44,15 @@ if (userMocked) {
       AuthScope.readDelegations,
       AuthScope.writeDelegations,
       NationalRegistryScope.individuals,
-      NationalRegistryScope.properties,
       DocumentsScope.main,
       EndorsementsScope.main,
       EndorsementsScope.admin,
+      ApiScope.assets,
+      ApiScope.education,
+      ApiScope.financeOverview,
+      ApiScope.financeSalary,
+      ApiScope.internal,
+      ApiScope.meDetails,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'sp.',
