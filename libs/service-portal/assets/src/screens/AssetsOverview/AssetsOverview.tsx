@@ -8,6 +8,7 @@ import {
   ServicePortalModuleComponent,
   IntroHeader,
   m,
+  EmptyState,
 } from '@island.is/service-portal/core'
 import AssetListCards from '../../components/AssetListCards'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
@@ -52,6 +53,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     },
   )
   const assetData = data?.assetsOverview || {}
+  const assetDataProperties = assetData.properties || []
 
   const paginate = () => {
     const fasteignirArray = assetData?.properties || []
@@ -102,6 +104,12 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         <AssetListCards paginateCallback={paginate} assets={assetData} />
       )}
 
+      {!loading && !error && assetDataProperties.length === 0 && (
+        <Box marginTop={8}>
+          <EmptyState title={m.noDataFound} />
+        </Box>
+      )}
+
       {error && (
         <Box>
           <AlertBanner
@@ -110,7 +118,6 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
           />
         </Box>
       )}
-      <AssetDisclaimer />
     </>
   )
 }
