@@ -31,7 +31,9 @@ const devConfig = {
   },
   baseUrl: process.env.BASE_URL ?? 'http://localhost:4200',
   identityServerAuth: {
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? 'https://identity-server.dev01.devland.is',
+    issuer:
+      process.env.IDENTITY_SERVER_ISSUER_URL ??
+      'https://identity-server.dev01.devland.is',
     audience: '@vegagerdin.is',
   },
   idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
@@ -60,11 +62,13 @@ const prodConfig = {
     [Airlines.norlandair]: process.env.NORLANDAIR_API_KEY,
   },
   redis: {
-    urls: [process.env.REDIS_URL_NODE_01!],
+    urls: [process.env.REDIS_URL_NODE_01],
   },
   baseUrl: process.env.BASE_URL,
   identityServerAuth: {
-    issuer: isProd ? `https://${getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN')}` : '',
+    issuer: isProd
+      ? `https://${getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN')}`
+      : '',
     audience: '@vegagerdin.is',
   },
   idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',

@@ -2,7 +2,6 @@ import { environment as env } from '../../environments'
 import { AuthUser } from '@island.is/air-discount-scheme/types'
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common'
 import { decode } from 'jsonwebtoken'
-import { FlightLeg } from '../modules/flight/flight.model'
 
 export const getUserFromContext = (
   context: ExecutionContext & { contextType?: string },

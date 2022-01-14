@@ -1,9 +1,5 @@
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-import {
-  Base,
-  Client,
-  NationalRegistry,
-} from '../../../../infra/src/dsl/xroad'
+import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { Base, Client, NationalRegistry } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo = {
   passwordSecret: '/k8s/air-discount-scheme/backend/DB_PASSWORD',
@@ -46,11 +42,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         prod: 'innskra.island.is',
       },
     })
-    .xroad(
-      Base,
-      Client,
-      NationalRegistry,
-    )
+    .xroad(Base, Client, NationalRegistry)
     .postgres(postgresInfo)
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],

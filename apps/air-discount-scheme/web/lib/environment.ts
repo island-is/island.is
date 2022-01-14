@@ -6,7 +6,9 @@ const isLocalhost = false
 
 const devConfig = {
   production: false,
-  NEXTAUTH_URL: isLocalhost ? 'http://localhost:4200' : process.env.NEXTAUTH_URL,
+  NEXTAUTH_URL: isLocalhost
+    ? 'http://localhost:4200'
+    : process.env.NEXTAUTH_URL,
   identityServerDomain:
     process.env.IDENTITY_SERVER_DOMAIN ?? 'identity-server.dev01.devland.is',
   identityServerLogoutURL: isLocalhost
@@ -19,7 +21,9 @@ const devConfig = {
 const prodConfig = {
   production: true,
   NEXTAUTH_URL: isProd ? getStaticEnv('SI_PUBLIC_NEXTAUTH_URL') : '',
-  identityServerDomain: isProd ? getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_DOMAIN') : '',
+  identityServerDomain: isProd
+    ? getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_DOMAIN')
+    : '',
   identityServerLogoutURL: isProd ? getStaticEnv('SI_PUBLIC_NEXTAUTH_URL') : '',
   identityServerSecret: process.env.IDENTITY_SERVER_SECRET,
   idsCookieName: 'next-auth.session-token',
