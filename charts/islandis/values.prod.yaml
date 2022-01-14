@@ -60,6 +60,7 @@ air-discount-scheme-backend:
     ENVIRONMENT: 'prod'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN: 'innskra.island.is'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -126,9 +127,9 @@ air-discount-scheme-web:
     IDENTITY_SERVER_DOMAIN: 'https://identity-server.dev01.devland.is'
     IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
     IDS_COOKIE_NAME: 'next-auth.session-token'
-    NEXTAUTH_URL: 'http://localhost:4200'
+    NEXTAUTH_URL: 'https://loftbru.island.is'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'innskra.island.is'
+    SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN: 'innskra.island.is'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
