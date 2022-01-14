@@ -68,7 +68,7 @@ export class DefendantService {
     return defendants[0]
   }
 
-  async delete(caseId: string, defendantId: string): Promise<number> {
+  async delete(caseId: string, defendantId: string): Promise<boolean> {
     const numberOfAffectedRows = await this.defendantModel.destroy({
       where: { id: defendantId, caseId },
     })
@@ -84,6 +84,6 @@ export class DefendantService {
       )
     }
 
-    return numberOfAffectedRows
+    return true
   }
 }

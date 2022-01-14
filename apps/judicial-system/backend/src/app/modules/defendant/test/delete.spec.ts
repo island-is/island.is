@@ -1,10 +1,11 @@
 import { uuid } from 'uuidv4'
 
 import { Defendant } from '../models/defendant.model'
+import { DeleteDefendantResponse } from '../models/delete.response'
 import { createTestingDefendantModule } from './createTestingDefendantModule'
 
 interface Then {
-  result: number
+  result: DeleteDefendantResponse
   error: Error
 }
 
@@ -63,7 +64,7 @@ describe('DefendantController - Delete', () => {
     })
 
     it('should return number of deleted defendants', () => {
-      expect(then.result).toBe(1)
+      expect(then.result).toEqual({ deleted: true })
     })
   })
 

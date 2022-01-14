@@ -23,6 +23,7 @@ import { CaseExistsGuard, CaseWriteGuard } from '../case'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
+import { DeleteDefendantResponse } from './models/delete.response'
 import { Defendant } from './models/defendant.model'
 import { DefendantService } from './defendant.service'
 
@@ -72,12 +73,14 @@ export class DefendantController {
   @RolesRules(prosecutorRule)
   @Delete(':defendantId')
   @ApiOkResponse({ description: 'Deletes a defendant' })
-  delete(
+  async delete(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
-  ): Promise<number> {
+  ): Promise<DeleteDefendantResponse> {
     this.logger.debug(`Deleting defendant ${defendantId} of case ${caseId}`)
 
-    return this.defendantService.delete(caseId, defendantId)
+    const deleted = await this.defendantService.delete(caseId, defendantId)
+
+    return { deleted }
   }
 }
