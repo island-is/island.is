@@ -30,7 +30,6 @@ import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
 import { useLocation } from 'react-router-dom'
 import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
 import { m } from '@island.is/service-portal/core'
-import { useUpdateUnreadDocuments } from '@island.is/service-portal/core'
 import AnimateHeight from 'react-animate-height'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import getOrganizationLogoUrl from '../../utils/getOrganizationLogoUrl'
@@ -66,7 +65,6 @@ const getFilteredDocuments = (
   filterValues: FilterValues,
 ): Document[] => {
   const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
-
   let filteredDocuments = documents.filter((document) => {
     const minDate = dateFrom || new Date('1900-01-01')
     const maxDate = dateTo || startOfTomorrow()
@@ -99,7 +97,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   )
 
   const { formatMessage, lang } = useLocale()
-  const badgeContext = useUpdateUnreadDocuments()
   const [page, setPage] = useState(1)
   const [isDateRangeOpen, setIsDateRangeOpen] = useState(false)
   const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(
@@ -415,10 +412,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 renderLink={(page, className, children) => (
                   <button
                     className={className}
-                    onClick={
-                      (handlePageChange.bind(null, page),
-                      badgeContext.updateUnreadDocumentsCounter())
-                    }
+                    onClick={handlePageChange.bind(null, page)}
                   >
                     {children}
                   </button>

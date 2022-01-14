@@ -7,7 +7,7 @@ import { UseMeasureRef } from 'react-use/lib/useMeasure'
 import { Box } from '../Box/Box'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Inline } from '../Inline/Inline'
-import { Tag } from '../Tag/Tag'
+import { Tag, TagProps } from '../Tag/Tag'
 import { Hyphen } from '../Hyphen/Hyphen'
 import { Text, TextProps } from '../Text/Text'
 
@@ -30,6 +30,7 @@ export type CategoryCardProps = {
   headingVariant?: TextProps['variant']
   text: string
   tags?: Tag[]
+  tagOptions?: Pick<TagProps, 'hyphenate' | 'truncate' | 'textLeft'>
   href?: string
   colorScheme?: 'blue' | 'purple' | 'red'
   /** The heading above is truncated instead of overflowing */
@@ -95,6 +96,7 @@ const Component = forwardRef<
       objectFit = 'contain',
       customImage,
       hyphenate = false,
+      tagOptions,
       autoStack,
     },
     ref,
@@ -109,6 +111,7 @@ const Component = forwardRef<
     return (
       <FocusableBox
         href={href}
+        position="relative"
         display="flex"
         flexDirection="row"
         paddingY={3}
@@ -127,6 +130,7 @@ const Component = forwardRef<
           flexDirection={shouldStack ? 'column' : 'row'}
           justifyContent="center"
           alignItems="center"
+          flexGrow={1}
           height="full"
           width="full"
         >
@@ -152,7 +156,7 @@ const Component = forwardRef<
                       variant={tagVariant}
                       href={tag.href}
                       onClick={tag.onClick}
-                      truncate={true}
+                      {...tagOptions}
                     >
                       {tag.label}
                     </Tag>
@@ -167,18 +171,22 @@ const Component = forwardRef<
             ) : (
               <Box
                 display="flex"
+                position="relative"
                 height="full"
-                width="full"
                 justifyContent="center"
                 alignItems={shouldStack ? 'flexEnd' : 'center'}
                 marginLeft={shouldStack ? 0 : 2}
                 marginTop={shouldStack ? 2 : 0}
-                className={cn(styles.imageContainer, {
-                  [styles.imageContainerStacked]: shouldStack,
+                className={cn({
                   [styles.imageContainerHidden]: !autoStack,
                 })}
               >
-                <img src={src} alt={alt} style={{ objectFit }} />
+                <img
+                  src={src}
+                  alt={alt}
+                  style={{ objectFit }}
+                  className={styles.image}
+                />
               </Box>
             ))}
         </Box>
