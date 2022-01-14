@@ -412,12 +412,23 @@ export const useDraftingState = (
 
   const t = useLocale().formatMessage
 
-  const [state, dispatch] = useReducer(draftingStateReducer, {}, () => ({
-    draft: makeDraftForm(draft),
-    stepName,
-    ministries,
-    isEditor,
-  }))
+  const [state, dispatch] = useReducer(draftingStateReducer, {}, () => {
+    const state: DraftingState = {
+      draft: makeDraftForm(draft),
+      stepName,
+      ministries,
+      isEditor,
+    }
+    // guess all guesssed values on start.
+    Object.entries(specialUpdates).forEach(([prop, updaterFn]) => {
+      updaterFn!(
+        state,
+        // @ts-expect-error  (because reasons)
+        state.draft[prop as RegDraftFormSimpleProps].value,
+      )
+    })
+    return state
+  })
 
   useEffect(() => {
     dispatch({ type: 'CHANGE_STEP', stepName })
