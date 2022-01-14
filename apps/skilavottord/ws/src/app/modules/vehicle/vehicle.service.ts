@@ -5,7 +5,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { paginate } from '@island.is/nest/pagination'
 
-import { RecyclingRequestModel } from '../recyclingRequest'
+import {
+  RecyclingRequestModel,
+  RecyclingRequestTypes,
+} from '../recyclingRequest'
 import { RecyclingPartnerModel } from '../recyclingPartner'
 import { VehicleModel } from './vehicle.model'
 
@@ -18,7 +21,11 @@ export class VehicleService {
     private vehicleModel: VehicleModel,
   ) {}
 
-  async findAllDeregistered(first: number, after: string) {
+  async findAllByFilter(
+    first: number,
+    after: string,
+    filter?: { requestType?: RecyclingRequestTypes; partnerId?: string },
+  ) {
     return paginate<VehicleModel>({
       Model: this.vehicleModel,
       limit: first,
@@ -29,7 +36,12 @@ export class VehicleService {
         {
           model: RecyclingRequestModel,
           where: {
-            requestType: 'deregistered',
+            ...(filter.requestType ? { requestType: filter.requestType } : {}),
+            ...(filter.partnerId
+              ? {
+                  recyclingPartnerId: filter.partnerId,
+                }
+              : {}),
           },
           include: [
             {
