@@ -214,6 +214,7 @@
   - [Nest Feature Flags](libs/nest/feature-flags/README.md)
   - [Nest Sequelize Cursor Pagination](libs/nest/pagination/README.md)
   - [Problem Module](libs/nest/problem/README.md)
+  - [Nest Sequelize](libs/nest/sequelize/README.md)
   - [Nest Swagger](libs/nest/swagger/README.md)
 - [Next Ids Auth Lib](libs/next-ids-auth/README.md)
 - [NOVA SMS](libs/nova-sms/README.md)
