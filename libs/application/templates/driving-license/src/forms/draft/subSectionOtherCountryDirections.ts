@@ -1,9 +1,10 @@
 import { buildCustomField, buildSubSection } from '@island.is/application/core'
+import { m } from '../../lib/messages'
 import { hasYes } from '../../lib/utils'
 
 export const subSectionOtherCountryDirections = buildSubSection({
   id: 'otherCountrySelected',
-  title: 'Leiðbeiningar',
+  title: m.countryDirectionsTitle,
   condition: (answer) => hasYes(answer?.drivingLicenseInOtherCountry),
   children: [
     buildCustomField({
