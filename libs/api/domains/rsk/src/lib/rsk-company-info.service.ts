@@ -30,7 +30,7 @@ export class RskCompanyInfoService {
     return {
       nationalId: company.kennitala,
       name: company.nafn,
-      dateOfRegistration: new Date(company.skrad),
+      dateOfRegistration: company.skrad ? new Date(company.skrad) : undefined,
       status: company.stada,
       companyInfo: {
         formOfOperation:
