@@ -325,12 +325,35 @@ const useCase = () => {
   )
 
   const createDefendant = useMemo(
-    () => async (caseId: string) => {
-      const { data } = await createDefendantMutation({
-        variables: { input: { caseId } },
-      })
+    () => async (
+      caseId: string,
+      workingCase: Case,
+      setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
+    ) => {
+      if (setWorkingCase && workingCase.defendants) {
+        const { data } = await createDefendantMutation({
+          variables: { input: { caseId } },
+        })
 
-      return data?.defendant
+        setWorkingCase({
+          ...workingCase,
+          defendants: [
+            ...workingCase.defendants,
+            {
+              created: '',
+              modified: '',
+              gender: undefined,
+              name: '',
+              nationalId: '',
+              address: '',
+              id: '',
+              caseId: '',
+            },
+          ],
+        })
+
+        return data?.defendant
+      }
     },
     [createDefendantMutation],
   )

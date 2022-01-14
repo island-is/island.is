@@ -167,28 +167,50 @@ const DefendantForm: React.FC<Props> = (props) => {
                 {formatMessage(m.sections.defendantInfo.heading)}
               </Text>
             </Box>
-            {workingCase.defendants &&
-              workingCase.defendants.map((defendant, index) => (
-                <Box
-                  marginBottom={
-                    index - 1 === workingCase.defendants?.length ? 0 : 3
-                  }
-                >
-                  <DefendantInfo
-                    defendant={defendant}
-                    workingCase={workingCase}
-                    setWorkingCase={setWorkingCase}
-                  />
-                </Box>
-              ))}
+            <AnimatePresence>
+              {workingCase.defendants &&
+                workingCase.defendants.map((defendant, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                  >
+                    <Box
+                      marginBottom={
+                        index - 1 === workingCase.defendants?.length ? 0 : 3
+                      }
+                    >
+                      <DefendantInfo
+                        defendant={defendant}
+                        workingCase={workingCase}
+                        setWorkingCase={setWorkingCase}
+                      />
+                    </Box>
+                  </motion.div>
+                ))}
+            </AnimatePresence>
             {isCaseTypeWithMultipleDefendantsSupport(workingCase.type) && (
               <Box display="flex" justifyContent="flexEnd" marginTop={3}>
                 <Button
                   variant="ghost"
                   icon="add"
-                  onClick={() => {
-                    createDefendant(workingCase.id)
+                  onClick={async () => {
+                    await createDefendant(
+                      workingCase.id,
+                      workingCase,
+                      setWorkingCase,
+                    )
+
+                    window.scrollTo(0, document.body.scrollHeight)
                   }}
+                  disabled={workingCase.defendants?.some(
+                    (defendant) =>
+                      !defendant.gender ||
+                      !defendant.name ||
+                      !defendant.address ||
+                      !defendant.nationalId,
+                  )}
                 >
                   {formatMessage(
                     m.sections.defendantInfo.addDefendantButtonText,
