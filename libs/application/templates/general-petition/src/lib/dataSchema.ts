@@ -32,20 +32,20 @@ export const GeneralPetitionSchema = z.object({
         .string()
         .refine(
           (p) => p.trim().length > 0,
-          m.validationMessages.date.defaultMessage as string,
+          m.validationMessages.selectDate.defaultMessage as string,
         ),
       dateTil: z
         .string()
         .refine(
           (p) => p.trim().length > 0,
-          m.validationMessages.date.defaultMessage as string,
+          m.validationMessages.selectDate.defaultMessage as string,
         ),
     })
     .refine(
       ({ dateFrom, dateTil }) =>
-        (!dateFrom && !dateTil) || new Date(dateFrom) <= new Date(dateTil),
+        !dateFrom || !dateTil || new Date(dateFrom) <= new Date(dateTil),
       {
-        message: 'Lokadagsetning má ekki vera á undan upphafsdagsetningu',
+        message: m.validationMessages.tilBeforeFrom.defaultMessage as string,
         path: ['dateTil'],
       },
     ),
