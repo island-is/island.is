@@ -75,9 +75,7 @@ const AppendixEditing = (props: AppendixEditingProps) => {
     <AccordionItem
       id={props.draftId + '-appendix-' + idx}
       label={
-        baseTitle ||
-        appendix.title.value ||
-        t(msg.appendix_legend, { idx: idx + 1 })
+        baseTitle || title.value || t(msg.appendix_legend, { idx: idx + 1 })
       }
       expanded={expanded}
       onToggle={setExpanded}
@@ -92,8 +90,8 @@ const AppendixEditing = (props: AppendixEditingProps) => {
               actions.setAppendixProp(idx, 'title', value)
             }}
             onFocus={handleFocus}
-            required
-            error={title.error && t(title.error)}
+            required={title.required}
+            error={t(title.error)}
           />
           {baseTitle != null && title.value !== baseTitle && (
             <MiniDiff older={baseTitle || ''} newer={title.value} />
@@ -110,6 +108,8 @@ const AppendixEditing = (props: AppendixEditingProps) => {
             }
             draftId={draftId}
             isImpact={isImpact}
+            required={text.required}
+            error={t(text.error)}
           />
         </Box>
 
