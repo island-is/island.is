@@ -26,12 +26,9 @@ import {
   RegulationDraft,
   DraftSummary,
   ShippedSummary,
+  RegulationPdfDownload,
 } from '@island.is/regulations/admin'
 import { extractAppendixesAndComments } from '@island.is/regulations-tools/textHelpers'
-import {
-  RegulationViewTypes,
-  RegulationPdfDownload,
-} from '@island.is/regulations/web'
 import { nameToSlug, PlainText, Appendix } from '@island.is/regulations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -268,12 +265,12 @@ export class RegulationsAdminResolver {
       return null
     }
 
-    const regulation = await this.regulationsAdminApiService.getDraftRegulation(
+    const draftRegulation = await this.regulationsAdminApiService.getDraftRegulation(
       input.regulationId,
       authorization,
     )
 
-    if (!regulation) {
+    if (!draftRegulation) {
       return null
     }
 

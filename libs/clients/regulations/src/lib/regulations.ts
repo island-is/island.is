@@ -23,10 +23,12 @@ import {
   RegulationSearchResults,
   RegulationViewTypes,
   RegulationYears,
+} from '@island.is/regulations/web'
+import {
   RegulationPdf,
   RegulationPdfInput,
   RegulationPdfResponse,
-} from '@island.is/regulations/web'
+} from '@island.is/regulations/admin'
 import pickBy from 'lodash/pickBy'
 import identity from 'lodash/identity'
 

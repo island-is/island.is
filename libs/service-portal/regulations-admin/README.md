@@ -24,9 +24,9 @@ Too be able to download PDF files, also start:
 
 PDFs are downloaded by:
 
-* Requesting a download via `downloadRegulation` with the regulation id as input
-* If the requested regulation is a draft regulation, returns a object with a `download-service` url and a boolean that marks it as a download-service file
-* `download-service` fetches all required data from the admin db and posts to the API server which returns a base64 of the PDF
+- Requesting a download via `downloadRegulation` with the regulation id as input
+- If the requested regulation is a draft regulation, returns a object with a `download-service` url and a boolean that marks it as a download-service file
+- `download-service` fetches all required data from the admin db and posts to the API server which returns a base64 of the PDF
 
 For non-draft regulations, it should go straight to the public API for the PDF, this is not implemented.
 

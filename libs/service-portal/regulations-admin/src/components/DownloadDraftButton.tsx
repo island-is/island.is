@@ -10,8 +10,7 @@ import * as s from './DownloadDraftButton.css'
 
 import { useLocale } from '../utils'
 import { buttonsMsgs } from '../messages'
-import type { RegulationDraftId } from '@island.is/regulations/admin'
-import type { RegulationPdfDownload } from '@island.is/regulations/web'
+import type { RegulationDraftId, RegulationPdfDownload } from '@island.is/regulations/admin'
 
 type Props = {
   regulationDraftId: RegulationDraftId

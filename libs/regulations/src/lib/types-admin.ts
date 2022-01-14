@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {
-  DB_RegulationDraft,
-  DBx_Regulation,
   DB_DraftRegulationCancel,
   DB_DraftRegulationChange,
   DraftingStatus,
@@ -18,6 +16,7 @@ import {
   Regulation,
   LawChapter,
   Ministry,
+  Appendix,
 } from './types'
 
 export type {
@@ -119,3 +118,48 @@ export type RegulationCancellation = {
 export type RegulationHistory = Array<
   RegulationVersion | RegulationCancellation
 >
+
+// ---------------------------------------------------------------------------
+
+/** Input data for regulation PDF generation */
+export type RegulationPdfInput = {
+  title: PlainText
+  text: HTMLText
+  appendixes: Array<Appendix>
+  comments: HTMLText
+  name?: RegName
+  publishedDate?: ISODate
+}
+
+/** API response from regulation API */
+export type RegulationPdfResponse = {
+  /** Filename of generated PDF */
+  fileName: string
+
+  /** base64 of pdf */
+  data: string
+}
+
+/** Info about how to download a PDF regulation */
+export type RegulationPdfDownload = {
+  /** Does the download go through the download service? */
+  downloadService?: boolean
+  url?: string
+}
+
+/** PDF data of a regulation with optional filename */
+export type RegulationPdfData = {
+  buffer: Buffer
+  filename?: string
+}
+
+/** Container for an API request for a PDF, either data or error */
+export type RegulationPdf =
+  | {
+      data: RegulationPdfData
+      error?: never
+    }
+  | {
+      data?: never
+      error: string
+    }

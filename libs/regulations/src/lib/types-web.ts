@@ -1,12 +1,4 @@
-import {
-  Year,
-  ISODate,
-  RegName,
-  PlainText,
-  HTMLText,
-  MinistrySlug,
-  Appendix,
-} from './types'
+import { Year, ISODate, RegName, Ministry } from './types'
 
 // Years
 export type RegulationYears = ReadonlyArray<Year>
@@ -51,48 +43,3 @@ export enum RegulationOriginalDates {
   gqlHack = '0101-01-01',
   api = 'original',
 }
-
-// ---------------------------------------------------------------------------
-
-/** Input data for regulation PDF generation */
-export type RegulationPdfInput = {
-  title: PlainText
-  text: HTMLText
-  appendixes: Array<Appendix>
-  comments: HTMLText
-  name: RegName
-  publishedDate: ISODate
-}
-
-/** API response from regulation API */
-export type RegulationPdfResponse = {
-  /** Filename of generated PDF */
-  fileName: string
-
-  /** base64 of pdf */
-  data: string
-}
-
-/** Info about how to download a PDF regulation */
-export type RegulationPdfDownload = {
-  /** Does the download go through the download service? */
-  downloadService?: boolean
-  url?: string
-}
-
-/** PDF data of a regulation with optional filename */
-export type RegulationPdfData = {
-  buffer: Buffer
-  filename?: string
-}
-
-/** Container for an API request for a PDF, either data or error */
-export type RegulationPdf =
-  | {
-      data: RegulationPdfData
-      error?: never
-    }
-  | {
-      data?: never
-      error: string
-    }

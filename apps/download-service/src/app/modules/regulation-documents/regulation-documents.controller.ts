@@ -21,8 +21,10 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { GetRegulationDraftDocumentDto } from './dto/getRegulationDraftDocument.dto'
-import { RegulationPdfInput } from '@island.is/regulations/web'
-import { RegName, toISODate } from '@island.is/regulations'
+import {
+  RegulationPdfInput,
+  DB_RegulationDraft,
+} from '@island.is/regulations/admin'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
@@ -47,9 +49,9 @@ export class RegulationDocumentsController {
     @Body() resource: GetRegulationDraftDocumentDto,
     @Res() res: Response,
   ) {
-    let regulation
+    let draftRegulation: DB_RegulationDraft | null = null
     try {
-      regulation = await this.regulationsAdminApiService.getDraftRegulation(
+      draftRegulation = await this.regulationsAdminApiService.getDraftRegulation(
         regulationId,
         `Bearer ${resource.__accessToken}`,
       )
@@ -57,35 +59,33 @@ export class RegulationDocumentsController {
       console.error('unable to get draft regulation', e)
     }
 
-    if (!regulation) {
+    if (!draftRegulation) {
       return res.status(500).end('Unable to generate pdf')
     }
 
     const input: RegulationPdfInput = {
-      title: regulation.title,
-      text: regulation.text,
+      title: draftRegulation.title,
+      text: draftRegulation.text,
       appendixes: [], // TODO where do we get these?
       comments: '', // TODO where do we get this?
-      name: regulation.name ?? ('00/0000' as RegName), // TODO how to handle undefined?
-      publishedDate: regulation.ideal_publish_date ?? toISODate(new Date()), // TODO how to handle undefined?
+      name: draftRegulation.name,
+      publishedDate: draftRegulation.ideal_publish_date,
     }
 
     const documentResponse = await this.regulationService.generateDraftRegulationPdf(
       input,
     )
 
-    if (documentResponse.data) {
-      const buffer = Buffer.from(
-        (documentResponse.data.buffer as unknown) as string,
-        'ascii',
-      )
+    if (
+      documentResponse.data &&
+      typeof documentResponse.data.buffer === 'string'
+    ) {
+      const buffer = Buffer.from(documentResponse.data.buffer, 'ascii')
       const filename = documentResponse.data.filename ?? 'draft-regulation.pdf'
 
       res.header('Content-length', buffer.length.toString())
       res.header('Content-Disposition', `inline; filename=${filename}`)
-      res.header('Pragma: no-cache')
       res.header('Cache-Control: no-cache')
-      res.header('Cache-Control: max-age=0')
 
       return res.status(200).end(buffer)
     }

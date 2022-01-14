@@ -1,13 +1,8 @@
-import { IsJWT, IsString, IsOptional } from 'class-validator'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsJWT } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class GetRegulationDraftDocumentDto {
   @IsJWT()
   @ApiProperty()
   readonly __accessToken!: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly annualDoc: string | undefined
 }
