@@ -83,6 +83,7 @@ module.exports = {
     '<rootDir>/libs/api/domains/education',
     '<rootDir>/libs/api/domains/file-upload',
     '<rootDir>/libs/api/domains/finance',
+    '<rootDir>/libs/api/domains/fishing-licence',
     '<rootDir>/libs/api/domains/health-insurance',
     '<rootDir>/libs/api/domains/identity',
     '<rootDir>/libs/api/domains/islykill',
@@ -125,6 +126,7 @@ module.exports = {
     '<rootDir>/libs/clients/document-provider',
     '<rootDir>/libs/clients/documents',
     '<rootDir>/libs/clients/finance',
+    '<rootDir>/libs/clients/fishing-licence',
     '<rootDir>/libs/clients/health-insurance-v2',
     '<rootDir>/libs/clients/middlewares',
     '<rootDir>/libs/clients/mms',
@@ -194,7 +196,5 @@ module.exports = {
     '<rootDir>/libs/testing/containers',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
-    '<rootDir>/libs/api/domains/fishing-licence',
-    '<rootDir>/libs/clients/fishing-licence',
   ],
 }
