@@ -10,7 +10,7 @@ import type { AuditOptions } from './audit.options'
 import { AUDIT_OPTIONS } from './audit.options'
 
 export interface AuditMessage {
-  user: Auth
+  auth: Auth
   action: string
   namespace?: string
   resources?: string | string[]
@@ -18,7 +18,7 @@ export interface AuditMessage {
 }
 
 export type AuditTemplate<ResultType> = {
-  user: Auth
+  auth: Auth
   action: string
   namespace?: string
   resources?: string | string[] | ((result: ResultType) => string | string[])
@@ -81,7 +81,7 @@ export class AuditService {
   }
 
   private formatMessage({
-    user,
+    auth,
     namespace = this.defaultNamespace,
     action,
     resources,
@@ -93,15 +93,15 @@ export class AuditService {
       )
     }
     const message = {
-      subject: user.nationalId,
-      actor: user.actor ? user.actor.nationalId : user.nationalId,
-      client: [user.client],
+      subject: auth.nationalId,
+      actor: auth.actor ? auth.actor.nationalId : auth.nationalId,
+      client: [auth.client],
       action: `${namespace}#${action}`,
       resources:
         resources && (typeof resources === 'string' ? [resources] : resources),
       meta,
-      ip: user.ip,
-      userAgent: user.userAgent,
+      ip: auth.ip,
+      userAgent: auth.userAgent,
     }
 
     return this.useDevLogger ? { message: 'Audit record', ...message } : message
@@ -121,7 +121,7 @@ export class AuditService {
   ): Promise<ResultType> {
     return promise.then((result) => {
       const message: AuditMessage = {
-        user: template.user,
+        auth: template.auth,
         action: template.action,
         namespace: template.namespace,
         resources: this.unwrap(template.resources, result),

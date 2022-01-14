@@ -12,6 +12,7 @@ jest.mock('@island.is/auth-nest-tools', () => ({
   getCurrentAuth: jest.fn(),
 }))
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const context: any = {
   getHandler: jest.fn(),
   getClass: jest.fn(),
@@ -123,12 +124,12 @@ describe('AuditInterceptor', () => {
     }
     context.getClass.mockReturnValue(MyClass)
     context.getHandler.mockReturnValue(MyClass.prototype.handler)
-    const user = 'Test user'
+    const auth = 'Test user'
     const getCurrentAuthMock = (getCurrentAuth as unknown) as MockInstance<
       string,
       unknown[]
     >
-    getCurrentAuthMock.mockReturnValue(user)
+    getCurrentAuthMock.mockReturnValue(auth)
 
     // Act
     const observable = interceptor.intercept(context, next)
@@ -137,7 +138,7 @@ describe('AuditInterceptor', () => {
     // Assert
     expect(auditService.auditPromise).toHaveBeenCalledWith(
       expect.objectContaining({
-        user,
+        auth,
       }),
       expect.anything(),
     )

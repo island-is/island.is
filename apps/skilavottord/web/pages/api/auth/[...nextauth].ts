@@ -46,7 +46,7 @@ const options = {
     Providers.IdentityServer4({
       id: 'identity-server',
       name: 'Skilavottord',
-      scope: 'openid profile @urvinnslusjodur.is/skilavottord',
+      scope: 'openid profile offline_access @urvinnslusjodur.is/skilavottord',
       clientId: '@urvinnslusjodur.is/skilavottord',
       domain: identityProvider.domain,
       clientSecret: identityProvider.clientSecret,
