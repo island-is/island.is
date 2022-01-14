@@ -71,10 +71,6 @@ const AppendixEditing = (props: AppendixEditingProps) => {
     }
   }
 
-  // Let's not allow editing titles of preexisting appendixes —
-  // as it would allow editors to sneak through disallowed "move-up" effects.
-  const titleEditable = !baseAppendix
-
   return (
     <AccordionItem
       id={props.draftId + '-appendix-' + idx}
@@ -87,28 +83,22 @@ const AppendixEditing = (props: AppendixEditingProps) => {
       onToggle={setExpanded}
     >
       <div className={s.appendix}>
-        {titleEditable && (
-          <Box marginBottom={3}>
-            <MagicTextarea
-              label={t(msg.appendix_title)}
-              name="title"
-              value={title.value}
-              onChange={(value) => {
-                actions.setAppendixProp(idx, 'title', value)
-              }}
-              onFocus={handleFocus}
-              required
-              error={title.error && t(title.error)}
-            />
-            {/*
-              Pointless since editing is dis-allowed,
-              but let's leave it in for illustrative purposes..
-            */}
-            {baseTitle != null && title.value !== baseTitle && (
-              <MiniDiff older={baseTitle || ''} newer={title.value} />
-            )}
-          </Box>
-        )}
+        <Box marginBottom={3}>
+          <MagicTextarea
+            label={t(msg.appendix_title)}
+            name="title"
+            value={title.value}
+            onChange={(value) => {
+              actions.setAppendixProp(idx, 'title', value)
+            }}
+            onFocus={handleFocus}
+            required
+            error={title.error && t(title.error)}
+          />
+          {baseTitle != null && title.value !== baseTitle && (
+            <MiniDiff older={baseTitle || ''} newer={title.value} />
+          )}
+        </Box>
 
         <Box marginBottom={4}>
           <EditorInput
