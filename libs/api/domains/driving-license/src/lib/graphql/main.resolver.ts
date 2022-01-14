@@ -34,7 +34,7 @@ export class MainResolver {
     private readonly auditService: AuditService,
   ) {}
 
-  @Query(() => DrivingLicense)
+  @Query(() => DrivingLicense, { nullable: true })
   drivingLicense(@CurrentUser() user: User) {
     return this.auditService.auditPromise(
       {
@@ -107,7 +107,7 @@ export class MainResolver {
     return this.drivingLicenseService.getQualityPhoto(user.nationalId)
   }
 
-  @Query(() => StudentAssessment)
+  @Query(() => StudentAssessment, { nullable: true })
   drivingLicenseStudentAssessment(@CurrentUser() user: User) {
     return this.drivingLicenseService.getDrivingAssessment(user.nationalId)
   }
