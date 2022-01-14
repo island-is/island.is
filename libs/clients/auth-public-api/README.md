@@ -1,4 +1,5 @@
 <!-- gitbook-navigation: "Auth Public API" -->
+
 # Auth Public API Client
 
 ## About

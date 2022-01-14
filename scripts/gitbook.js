@@ -85,7 +85,7 @@ const updateAndReturnTitle = (lines) => {
 
 const updateAndReturnNavigationOverride = (lines) => {
   const navigationRegex = /^<!-- gitbook-navigation: "([^"]+)" -->$/
-  const index = lines.findIndex(line => line.match(navigationRegex))
+  const index = lines.findIndex((line) => line.match(navigationRegex))
   if (index === -1) {
     return null
   }

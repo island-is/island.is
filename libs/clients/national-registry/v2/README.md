@@ -1,4 +1,5 @@
 <!-- gitbook-navigation: "V2" -->
+
 # National Registry V2 Client
 
 This library implements a client to use Þjóðskrá APIs
