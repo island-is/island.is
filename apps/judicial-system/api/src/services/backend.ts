@@ -28,6 +28,7 @@ import type {
   UploadPoliceCaseFile,
   CreateDefendant,
   Defendant,
+  UpdateDefendant,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../environments'
@@ -168,6 +169,14 @@ class BackendAPI extends RESTDataSource {
     createDefendant: CreateDefendant,
   ): Promise<Defendant> {
     return this.post(`case/${caseId}/defendant`, createDefendant)
+  }
+
+  updateDefendant(
+    caseId: string,
+    defendantId: string,
+    updateDefendant: UpdateDefendant,
+  ): Promise<Defendant> {
+    return this.put(`case/${caseId}/defendant/${defendantId}`, updateDefendant)
   }
 }
 
