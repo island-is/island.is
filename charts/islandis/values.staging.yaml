@@ -63,6 +63,15 @@ air-discount-scheme-backend:
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.staging01.devland.is'
+    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -119,10 +128,6 @@ air-discount-scheme-backend:
     NATIONAL_REGISTRY_USERNAME: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME'
     NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY'
     SENTRY_DSN: '/k8s/air-discount-scheme-backend/SENTRY_DSN'
-    XROAD_BASE_PATH_WITH_ENV: '/k8s/air-discount-scheme/XROAD_BASE_PATH_WITH_ENV'
-    XROAD_CLIENT_ID: '/k8s/air-discount-scheme/XROAD_TJODSKRA_CLIENT_ID'
-    XROAD_TJODSKRA_API_PATH: '/k8s/air-discount-scheme/XROAD_TJODSKRA_API_PATH'
-    XROAD_TJODSKRA_MEMBER_CODE: '/k8s/air-discount-scheme/XROAD_TJODSKRA_MEMBER_CODE'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -130,12 +135,10 @@ air-discount-scheme-web:
   enabled: true
   env:
     API_URL: 'http://web-air-discount-scheme-api'
-    IDENTITY_SERVER_DOMAIN: 'https://identity-server.dev01.devland.is'
     IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
-    IDS_COOKIE_NAME: 'next-auth.session-token'
-    NEXTAUTH_URL: 'https://loftbru.staging01.devland.is'
     SERVERSIDE_FEATURES_ON: ''
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.staging01.devland.is'
+    SI_PUBLIC_IDENTITY_SERVER_DOMAIN: 'identity-server.staging01.devland.is'
+    SI_PUBLIC_NEXTAUTH_URL: 'https://loftbru.staging01.devland.is'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:

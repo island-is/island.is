@@ -21,7 +21,7 @@ const providers = [
     name: identityServerConfig.name,
     scope: identityServerConfig.scope,
     clientId: identityServerConfig.clientId,
-    domain: env.IDS,
+    domain: env.identityServerDomain,
     clientSecret: env.identityServerSecret,
     protection: 'pkce',
   }),

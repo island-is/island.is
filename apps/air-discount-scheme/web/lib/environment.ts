@@ -7,24 +7,22 @@ const isLocalhost = false
 const devConfig = {
   production: false,
   NEXTAUTH_URL: isLocalhost ? 'http://localhost:4200' : process.env.NEXTAUTH_URL,
-  IDS: process.env.IDENTITY_SERVER_ISSUER_URL ?? 'identity-server.dev01.devland.is',
   identityServerDomain:
     process.env.IDENTITY_SERVER_DOMAIN ?? 'identity-server.dev01.devland.is',
   identityServerLogoutURL: isLocalhost
-    ? 'https://loftbru.dev01.devland.is'
-    : getStaticEnv('NEXTAUTH_URL'),
+    ? 'http://localhost:4200'
+    : process.env.NEXTAUTH_URL,
   identityServerSecret: process.env.IDENTITY_SERVER_SECRET,
   idsCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
 }
 
 const prodConfig = {
   production: true,
-  NEXTAUTH_URL: isProd ? getStaticEnv('NEXTAUTH_URL') : '',
-  IDS: isProd ? getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL') : '',
-  identityServerDomain: isProd ? getStaticEnv('IDENTITY_SERVER_DOMAIN') : '',
-  identityServerLogoutURL: isProd ? getStaticEnv('NEXTAUTH_URL') : '',
+  NEXTAUTH_URL: isProd ? getStaticEnv('SI_PUBLIC_NEXTAUTH_URL') : '',
+  identityServerDomain: isProd ? getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_DOMAIN') : '',
+  identityServerLogoutURL: isProd ? getStaticEnv('SI_PUBLIC_NEXTAUTH_URL') : '',
   identityServerSecret: process.env.IDENTITY_SERVER_SECRET,
-  idsCookieName: isProd ? getStaticEnv('IDS_COOKIE_NAME') : '',
+  idsCookieName: 'next-auth.session-token',
 }
 
 export default isProd ? prodConfig : devConfig

@@ -1,4 +1,9 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  Base,
+  Client,
+  NationalRegistry,
+} from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo = {
   passwordSecret: '/k8s/air-discount-scheme/backend/DB_PASSWORD',
@@ -20,13 +25,6 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME',
       NATIONAL_REGISTRY_URL:
         '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL',
-      XROAD_BASE_PATH_WITH_ENV:
-        '/k8s/air-discount-scheme/XROAD_BASE_PATH_WITH_ENV',
-      XROAD_TJODSKRA_MEMBER_CODE:
-        '/k8s/air-discount-scheme/XROAD_TJODSKRA_MEMBER_CODE',
-      XROAD_TJODSKRA_API_PATH:
-        '/k8s/air-discount-scheme/XROAD_TJODSKRA_API_PATH',
-      XROAD_CLIENT_ID: '/k8s/air-discount-scheme/XROAD_TJODSKRA_CLIENT_ID',
     })
     .env({
       ENVIRONMENT: {
@@ -48,6 +46,11 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         prod: 'innskra.island.is',
       },
     })
+    .xroad(
+      Base,
+      Client,
+      NationalRegistry,
+    )
     .postgres(postgresInfo)
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],

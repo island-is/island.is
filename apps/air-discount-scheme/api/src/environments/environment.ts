@@ -18,13 +18,6 @@ const devConfig = {
     audience: '@vegagerdin.is',
   },
   auth: {
-    issuer:
-      process.env.IDENTITY_SERVER_ISSUER_URL ??
-      'https://identity-server.dev01.devland.is',
-    domain:
-      process.env.IDENTITY_SERVER_DOMAIN ??
-      'https://identity-server.dev01.devland.is',
-    clientSecret: process.env.AUTH_CLIENT_SECRET,
     samlEntryPoint: 'https://innskraning.island.is/?id=ads.local',
     audience: '@vegagerdin.is',
     jwtSecret: 'securesecret',

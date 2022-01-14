@@ -1,5 +1,7 @@
 import { Airlines } from '@island.is/air-discount-scheme/consts'
-import { XRoadMemberClass } from '@island.is/shared/utils/server'
+import { getStaticEnv } from '@island.is/shared/utils'
+
+const isProd = process.env.NODE_ENV === 'production'
 
 const devConfig = {
   production: false,
@@ -11,16 +13,6 @@ const devConfig = {
     url: process.env.NATIONAL_REGISTRY_URL,
     username: process.env.NATIONAL_REGISTRY_USERNAME,
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
-    xroad: {
-      basePath: process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8081/r1/IS-DEV',
-      memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE ?? '10001',
-      apiPath:
-        process.env.XROAD_TJODSKRA_API_PATH ?? '/SKRA-Protected/Einstaklingar',
-      clientId:
-        process.env.XROAD_TJODSKRA_CLIENT_ID ??
-        'IS-DEV/GOV/10000/island-is-client',
-      memberClass: XRoadMemberClass.GovernmentInstitution,
-    },
   },
   airlineApiKeys: {
     [Airlines.icelandair]: Airlines.icelandair,
@@ -45,7 +37,7 @@ const devConfig = {
   idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
 }
 
-if (process.env.NODE_ENV === 'production') {
+if (isProd) {
   if (!process.env.REDIS_URL_NODE_01) {
     throw new Error('Missing REDIS_URL_NODE_01 environment.')
   }
@@ -61,13 +53,6 @@ const prodConfig = {
     url: process.env.NATIONAL_REGISTRY_URL,
     username: process.env.NATIONAL_REGISTRY_USERNAME,
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
-    xroad: {
-      basePath: process.env.XROAD_BASE_PATH_WITH_ENV,
-      memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE,
-      apiPath: process.env.XROAD_TJODSKRA_API_PATH,
-      clientId: process.env.XROAD_TJODSKRA_CLIENT_ID,
-      memberClass: XRoadMemberClass.GovernmentInstitution,
-    },
   },
   airlineApiKeys: {
     [Airlines.icelandair]: process.env.ICELANDAIR_API_KEY,
@@ -79,10 +64,10 @@ const prodConfig = {
   },
   baseUrl: process.env.BASE_URL,
   identityServerAuth: {
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer: isProd ? `https://${getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN')}` : '',
     audience: '@vegagerdin.is',
   },
   idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
 }
 
-export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
+export default isProd ? prodConfig : devConfig
