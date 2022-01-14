@@ -18,7 +18,7 @@ Once everything is running, open <http://localhost:4200/minarsidur/reglugerdir-a
 
 ## Downloading PDFs
 
-Too be able to download PDF files, also start:
+To be able to download PDF files, also start:
 
 `yarn start download-service`
 
