@@ -453,6 +453,7 @@ export const useDraftingState = (
               ministryId: draft.ministry.value,
               draftingNotes: draft.draftingNotes.value,
               idealPublishDate: draft.idealPublishDate?.value,
+              fastTrack: draft.fastTrack.value,
               lawChapters: draft.lawChapters.value,
               signatureDate: draft.signatureDate.value,
               signatureText: draft.signatureText.value,
