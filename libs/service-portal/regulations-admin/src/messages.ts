@@ -240,12 +240,16 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-labels-type',
     defaultMessage: 'Tegund reglugerðar',
   },
+  typePlaceholder: {
+    id: 'ap.regulations-admin:draft-labels-type',
+    defaultMessage: 'Stýrist af titli reglugerðarinnar',
+  },
   type_base: {
     id: 'ap.regulations-admin:draft-opts-type-base',
     defaultMessage: 'Stofnreglugerð',
   },
-  type_affecting: {
-    id: 'ap.regulations-admin:draft-opts-type-affecting',
+  type_amending: {
+    id: 'ap.regulations-admin:draft-opts-type-amending',
     defaultMessage: 'Breytingareglugerð',
   },
 

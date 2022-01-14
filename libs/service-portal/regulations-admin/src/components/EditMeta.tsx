@@ -5,14 +5,12 @@ import {
   Column,
   Columns,
   DatePicker,
-  Option,
-  Select,
+  Input,
 } from '@island.is/island-ui/core'
 import { StepComponent } from '../state/useDraftingState'
 import { editorMsgs as msg } from '../messages'
-import { findValueOption, useLocale } from '../utils'
-import { regulationTypes } from '../utils/constants'
-import { LawChapterSlug, RegulationType } from '@island.is/regulations'
+import { useLocale } from '../utils'
+import { LawChapterSlug } from '@island.is/regulations'
 import { LawChaptersSelect } from './LawChaptersSelect'
 
 export const EditMeta: StepComponent = (props) => {
@@ -20,30 +18,22 @@ export const EditMeta: StepComponent = (props) => {
   const { draft, actions } = props
   const { updateState, updateLawChapterProp } = actions
 
+  const type = draft.type.value
+  const typeName =
+    type && t(type === 'amending' ? msg.type_amending : msg.type_base)
+
   return (
     <>
       <Columns space={3} collapseBelow="lg">
         <Column>
           <Box marginBottom={3}>
-            <Select
-              name="type-select"
-              placeholder={t(msg.type)}
-              size="sm"
-              isSearchable={false}
+            <Input
               label={t(msg.type)}
-              options={regulationTypes}
-              value={findValueOption(regulationTypes, draft.type.value)}
-              required
-              errorMessage={t(draft.type.error)}
-              hasError={!!draft.type.error}
-              onChange={(typeOption) =>
-                updateState(
-                  'type',
-                  (typeOption as Option).value as RegulationType,
-                  true,
-                )
-              }
-              backgroundColor="blue"
+              value={typeName || ''}
+              placeholder={t(msg.typePlaceholder)}
+              name="_type"
+              size="sm"
+              readOnly
             />
           </Box>
         </Column>

@@ -144,7 +144,6 @@ const makeDraftForm = (
 
     lawChapters: f((draft.lawChapters || []).map((chapter) => chapter.slug)),
     ministry: f(draft.ministry?.slug, true),
-    type: f(draft.type, true),
 
     mentioned: [],
 
@@ -175,6 +174,8 @@ const makeDraftForm = (
     draftingNotes: fHtml(draft.draftingNotes),
     draftingStatus: draft.draftingStatus,
     authors: f(draft.authors.map((author) => author.authorId)),
+
+    type: f(undefined /* draft.type */, true), // NOTE: Regulation type is always a derived value
   }
 
   updateImpacts(form, draft.title, draft.text)
