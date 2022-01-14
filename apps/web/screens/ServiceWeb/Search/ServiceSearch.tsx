@@ -290,6 +290,16 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   const queryString = ServiceWebModifySearchTerms(q)
 
+  // Submit the search query to plausible
+  if (queryString) {
+    window.plausible('Search Query', {
+      props: {
+        query: q,
+        source: 'Service Web',
+      },
+    })
+  }
+
   const [
     organization,
     {

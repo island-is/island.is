@@ -458,6 +458,16 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   const type = single(query.type) || ''
   const page = Number(single(query.page)) || 1
 
+  // Submit the search query to plausible
+  if (queryString) {
+    window.plausible('Search Query', {
+      props: {
+        query: queryString,
+        source: 'Web',
+      },
+    })
+  }
+
   let tags = {}
   let countTag = {}
   if (category) {
