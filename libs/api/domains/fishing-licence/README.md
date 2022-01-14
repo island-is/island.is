@@ -1,4 +1,4 @@
-# api-domains-fishing-licence
+# API Domains Fishing Licence
 
 This library was generated with [Nx](https://nx.dev).
 

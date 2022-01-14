@@ -1,4 +1,4 @@
-# clients-fishing-licence
+# Clients Fishing Licence
 
 This library was generated with [Nx](https://nx.dev).
 
