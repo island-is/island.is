@@ -203,9 +203,9 @@
   - [Types](libs/shared/types/README.md)
   - [Utils](libs/shared/utils/README.md)
 - [Testing](libs/testing/README.md)
-  - [Test Containers](libs/testing/containers/README.md)
-  - [Testing Fixtures](libs/testing/fixtures/README.md)
-  - [Testing Nest](libs/testing/nest/README.md)
+  - [Containers](libs/testing/containers/README.md)
+  - [Fixtures](libs/testing/fixtures/README.md)
+  - [Nest](libs/testing/nest/README.md)
 - [User Monitoring](libs/user-monitoring/README.md)
 
 ## Reference
