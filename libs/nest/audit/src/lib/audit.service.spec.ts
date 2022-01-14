@@ -112,8 +112,8 @@ describe('AuditService against Cloudwatch', () => {
 
     // Act
     service.audit({
-      user: {
-        ...user,
+      auth: {
+        ...auth,
         act: {
           client_id: 'test-client-3',
           act: {
@@ -127,7 +127,7 @@ describe('AuditService against Cloudwatch', () => {
     // Assert
     expect(spy).toHaveBeenCalledWith(
       expect.objectContaining({
-        client: [user.client, 'test-client-2', 'test-client-3'],
+        client: [auth.client, 'test-client-2', 'test-client-3'],
       }),
     )
   })
