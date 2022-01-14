@@ -168,14 +168,13 @@ function GrantAccess() {
                     defaultMessage: 'Aðgangshafi',
                   })}
                   disabled
+                  size="md"
                 />
               )}
               <Box
                 display={name ? 'none' : 'block'}
                 aria-live="assertive"
                 marginBottom={[1, 1, 0]}
-                flexDirection="column"
-                justifyContent="flexEnd"
               >
                 <InputController
                   control={control}
@@ -217,6 +216,7 @@ function GrantAccess() {
                   onChange={(value) => {
                     requestDelegation(value)
                   }}
+                  size="md"
                 />
               </Box>
               {queryLoading ? (
@@ -239,8 +239,8 @@ function GrantAccess() {
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '4/12']}>
             <Button
-              fluid
               size="large"
+              fluid
               type="submit"
               icon="arrowForward"
               disabled={!name || loading}
