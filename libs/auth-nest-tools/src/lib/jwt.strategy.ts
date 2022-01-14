@@ -54,7 +54,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         nationalId: actor.nationalId,
         scope: this.parseScopes(actor.scope),
       },
-      ip: String(request.headers['x-real-ip']) ?? request.ip,
+      ip: String(request.headers['x-forwarded-for'] ?? request.ip),
       userAgent: request.headers['user-agent'],
     }
   }

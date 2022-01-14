@@ -1,9 +1,4 @@
-import {
-  Case,
-  CaseCustodyRestrictions,
-  CaseDecision,
-  CaseType,
-} from '@island.is/judicial-system/types'
+import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
 import { makeCustodyCase } from '@island.is/judicial-system/formatters'
 import { intercept } from '../../../utils'
 
@@ -52,7 +47,7 @@ describe('/domur/urskurdarord/:id', () => {
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.ACCEPTING,
-      custodyRestrictions: [CaseCustodyRestrictions.ISOLATION],
+      isCustodyIsolation: true,
       validToDate: '2020-12-22T11:23:00.000Z',
     }
 
@@ -71,7 +66,7 @@ describe('/domur/urskurdarord/:id', () => {
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.ACCEPTING,
-      custodyRestrictions: [CaseCustodyRestrictions.ISOLATION],
+      isCustodyIsolation: true,
       validToDate: '2020-12-22T11:23:00.000Z',
       isolationToDate: '2020-12-20T15:39:00.000Z',
     }

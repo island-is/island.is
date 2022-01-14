@@ -53,6 +53,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
           defaultValue={organisation?.name || ''}
           render={({ onChange, value, name }) => (
             <Input
+              size="xs"
               name={name}
               label={formatMessage(m.SettingsEditInstitutionName)}
               placeholder={formatMessage(m.SettingsEditInstitutionName)}
@@ -83,6 +84,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
           }}
           render={({ onChange, value, name }) => (
             <Input
+              size="xs"
               name={name}
               label={formatMessage(m.SettingsEditInstitutionNationalId)}
               value={value}
@@ -107,6 +109,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
           }}
           render={({ onChange, value, name }) => (
             <Input
+              size="xs"
               name={name}
               label={formatMessage(m.SettingsEditInstitutionAddress)}
               value={value}
@@ -137,6 +140,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
           }}
           render={({ onChange, value, name }) => (
             <Input
+              size="xs"
               name={name}
               label={formatMessage(m.SettingsEditInstitutionEmail)}
               placeholder={formatMessage(m.SettingsEditInstitutionEmail)}
@@ -167,6 +171,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
           }}
           render={({ onChange, value, name }) => (
             <Input
+              size="xs"
               name={name}
               label={formatMessage(m.SettingsEditInstitutionTel)}
               placeholder={formatMessage(m.SettingsEditInstitutionTel)}
