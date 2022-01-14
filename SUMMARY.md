@@ -128,7 +128,6 @@
     - [API Domains Payment Schedule](libs/api/domains/payment-schedule/README.md)
     - [API Domains Regulations](libs/api/domains/regulations/README.md)
     - [API Domains Rsk](libs/api/domains/rsk/README.md)
-    - [API Domains Rsk Company Info](libs/api/domains/rsk-company-info/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
