@@ -50,6 +50,7 @@ import {
 import { Image } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useLazyQuery } from '@apollo/client'
+import { plausibleCustomEvent } from '@island.is/web/hooks/usePlausible'
 
 const PERPAGE = 10
 
@@ -96,6 +97,14 @@ const Search: Screen<CategoryProps> = ({
     tags: {},
     types: {},
   })
+
+  // Submit the search query to plausible
+  if (q) {
+    plausibleCustomEvent('Search Query', {
+      query: q,
+      source: 'Web',
+    })
+  }
 
   const filters: SearchQueryFilters = {
     category: Router.query.category as string,
@@ -457,16 +466,6 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   const category = single(query.category) || ''
   const type = single(query.type) || ''
   const page = Number(single(query.page)) || 1
-
-  // Submit the search query to plausible
-  if (queryString) {
-    window.plausible('Search Query', {
-      props: {
-        query: queryString,
-        source: 'Web',
-      },
-    })
-  }
 
   let tags = {}
   let countTag = {}
