@@ -16,6 +16,7 @@ import {
   DefaultEvents,
   StaticText,
   FormValue,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { LogreglanLogo } from '../assets'
 import {
@@ -198,8 +199,8 @@ export const application: Form = buildForm({
           title: m.qualityPhotoTitle,
           condition: (_, externalData) => {
             return (
-              (externalData.qualityPhoto as HasQualityPhotoData)?.data
-                ?.hasQualityPhoto === true
+              getValueViaPath<HasQualityPhotoData>(externalData, 'qualityPhoto')
+                ?.data?.hasQualityPhoto ?? false
             )
           },
           children: [

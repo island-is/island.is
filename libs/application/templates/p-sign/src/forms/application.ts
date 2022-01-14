@@ -19,6 +19,7 @@ import {
   buildSubmitField,
   DefaultEvents,
   buildFileUploadField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
@@ -191,8 +192,10 @@ export const getApplication = (): Form => {
             title: m.qualityPhotoTitle,
             condition: (_, externalData) => {
               return (
-                (externalData.qualityPhoto as HasQualityPhotoData)?.data
-                  ?.hasQualityPhoto === true
+                getValueViaPath<HasQualityPhotoData>(
+                  externalData,
+                  'qualityPhoto',
+                )?.data?.hasQualityPhoto ?? false
               )
             },
             children: [
