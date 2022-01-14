@@ -76,8 +76,7 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: async () =>
-                (await import('../forms/application')).application,
+              formLoader: async () => (await import('../forms/draft')).draft,
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
