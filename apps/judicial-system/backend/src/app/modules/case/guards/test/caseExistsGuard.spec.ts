@@ -57,7 +57,6 @@ describe('Case Exists Guard', () => {
 
     it('should query the database', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
-        where: { id: caseId },
         include: [
           { model: Defendant, as: 'defendants' },
           { model: Institution, as: 'court' },
@@ -90,6 +89,8 @@ describe('Case Exists Guard', () => {
           { model: Case, as: 'parentCase' },
           { model: Case, as: 'childCase' },
         ],
+        order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
+        where: { id: caseId },
       })
     })
   })

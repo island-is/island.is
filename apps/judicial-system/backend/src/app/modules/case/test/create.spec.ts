@@ -16,7 +16,7 @@ interface Then {
 
 type GivenWhenThen = (user: TUser, caseToCreate: CreateCaseDto) => Promise<Then>
 
-describe('CaseController - Internal create', () => {
+describe('CaseController - Create', () => {
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
@@ -80,7 +80,6 @@ describe('CaseController - Internal create', () => {
 
     it('should lookup the newly created case', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
-        where: { id: caseId },
         include: [
           { model: Defendant, as: 'defendants' },
           { model: Institution, as: 'court' },
@@ -113,6 +112,8 @@ describe('CaseController - Internal create', () => {
           { model: Case, as: 'parentCase' },
           { model: Case, as: 'childCase' },
         ],
+        order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
+        where: { id: caseId },
       })
     })
   })
