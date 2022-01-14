@@ -70,6 +70,7 @@ export class RegulationDocumentsController {
       appendixes: draftRegulation.appendixes,
       comments: draftRegulation.comments,
       name: draftRegulation.name,
+      // FIXME: Don't include `idealPublishDate` when downloading PDF for signature
       publishedDate: draftRegulation.idealPublishDate,
     }
 
