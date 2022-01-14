@@ -102,18 +102,12 @@ describe('ApplicationLifecycleService Unit tests', () => {
       .spyOn(awsService, 'deleteObject')
       .mockResolvedValue()
 
-    const fileExistsSpy = jest
-      .spyOn(awsService, 'fileExists')
-      .mockResolvedValueOnce(false)
-      .mockResolvedValueOnce(false)
-
     //ACT
     await lifeCycleService.run()
 
     //ASSERT
     const result = lifeCycleService.getProcessingApplications()
     expect(deleteObjectSpy).toHaveBeenCalledTimes(2)
-    expect(fileExistsSpy).toHaveBeenCalledTimes(2)
 
     expect(result[0].application.attachments).toEqual({})
     expect(result[0].application.answers).toEqual({})
@@ -126,13 +120,10 @@ describe('ApplicationLifecycleService Unit tests', () => {
     const deleteObjectSpy = jest
       .spyOn(awsService, 'deleteObject')
       .mockReset()
-      .mockResolvedValue()
-
-    const fileExistsSpy = jest
-      .spyOn(awsService, 'fileExists')
-      .mockReset()
-      .mockResolvedValueOnce(true)
-      .mockResolvedValueOnce(false)
+      .mockImplementationOnce(() => {
+        throw new Error('Error')
+      })
+      .mockResolvedValueOnce()
 
     //ACT
     await lifeCycleService.run()
@@ -140,7 +131,6 @@ describe('ApplicationLifecycleService Unit tests', () => {
     //ASSERT
     const result = lifeCycleService.getProcessingApplications()
     expect(deleteObjectSpy).toHaveBeenCalledTimes(2)
-    expect(fileExistsSpy).toHaveBeenCalledTimes(2)
 
     expect(result[0].application.attachments).toEqual({
       key: 's3://example-bucket/path/to/object',
@@ -160,19 +150,12 @@ describe('ApplicationLifecycleService Unit tests', () => {
         throw new Error('Error')
       })
 
-    const fileExistsSpy = jest
-      .spyOn(awsService, 'fileExists')
-      .mockReset()
-      .mockResolvedValueOnce(true)
-      .mockResolvedValueOnce(true)
-
     //ACT
     await lifeCycleService.run()
 
     //ASSERT
     const result = lifeCycleService.getProcessingApplications()
     expect(deleteObjectSpy).toHaveBeenCalled()
-    expect(fileExistsSpy).toHaveBeenCalledTimes(0)
 
     expect(result[0].application.attachments).toEqual({
       key: 's3://example-bucket/path/to/object',

@@ -73,8 +73,7 @@ beforeAll(async () => {
   )
   awsService = app.get<AwsService>(AwsService)
 
-  jest.spyOn(awsService, 'deleteObjects').mockResolvedValue()
-  jest.spyOn(awsService, 'fileExists').mockResolvedValue(false)
+  jest.spyOn(awsService, 'deleteObject').mockResolvedValue()
   server = request(app.getHttpServer())
 })
 describe('ApplicationLifecycleService', () => {

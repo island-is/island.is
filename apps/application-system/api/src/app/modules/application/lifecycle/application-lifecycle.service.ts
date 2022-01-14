@@ -1,12 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { APPLICATION_CONFIG } from '../application.configuration'
-import type { ApplicationConfig } from '../application.configuration'
 import { Application } from '../application.model'
 import { ApplicationService } from '../application.service'
 import { AwsService } from '../files'
 import AmazonS3URI from 'amazon-s3-uri'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+
+export interface AttachmentMetaData {
+  s3key: string
+  key: string
+  bucket: string
+  value: string
+}
 
 export interface ApplicationPruning {
   pruned: boolean
@@ -50,6 +55,7 @@ export class ApplicationLifeCycleService {
     >[]
 
     this.logger.info(`Found ${applications.length} applications to be pruned.`)
+
     this.processingApplications = applications.map((application) => {
       return {
         pruned: true,
@@ -66,21 +72,15 @@ export class ApplicationLifeCycleService {
         name: string
       }
 
-      const attachments = this.attachmentsToKeyArray(applicationAttachments)
+      const attachments = this.attachmentsToMetaDataArray(
+        applicationAttachments,
+      )
 
       if (attachments) {
         for (const attachment of attachments) {
           const { key, s3key, bucket, value } = attachment
           try {
             await this.awsService.deleteObject(bucket, s3key)
-
-            const exists = await this.awsService.fileExists(bucket, value)
-
-            if (exists) {
-              throw new Error(
-                `Attachment ${key}:${value} still exists in bucket ${bucket}.`,
-              )
-            }
           } catch (error) {
             prune.pruned = false
             prune.failedAttachments = {
@@ -134,20 +134,10 @@ export class ApplicationLifeCycleService {
     this.logger.info(`Failed: ${failed.length}`)
   }
 
-  private attachmentsToKeyArray(
+  private attachmentsToMetaDataArray(
     attachments: object,
-  ): {
-    s3key: string
-    key: string
-    bucket: string
-    value: string
-  }[] {
-    const keys: {
-      s3key: string
-      key: string
-      bucket: string
-      value: string
-    }[] = []
+  ): AttachmentMetaData[] {
+    const keys: AttachmentMetaData[] = []
     for (const [key, value] of Object.entries(attachments)) {
       const { key: sourceKey, bucket } = AmazonS3URI(value)
       keys.push({ key, s3key: sourceKey, bucket, value })
