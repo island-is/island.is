@@ -249,7 +249,7 @@ export const m: MessageDir = {
       description: 'Error message for terms and conditions',
     },
     listName: {
-      id: 'gpt.application:validationmessages.lisnName',
+      id: 'gpt.application:validationmessages.listName',
       defaultMessage: 'Vinsamlegast veldu nafn á listann',
       description: 'Error message if list name is empty',
     },
