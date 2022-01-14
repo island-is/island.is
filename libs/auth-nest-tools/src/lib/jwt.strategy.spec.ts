@@ -84,7 +84,7 @@ describe('JwtStrategy#validate', () => {
         client_id: 'test-client-2',
         act: {
           client_id: 'test-client-3',
-        }
+        },
       },
     }
     const request = ({
