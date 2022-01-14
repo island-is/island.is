@@ -168,11 +168,10 @@ function GrantAccess() {
                     defaultMessage: 'Aðgangshafi',
                   })}
                   disabled
-                  size="xs"
                 />
               )}
               <Box
-                display={name ? 'none' : 'flex'}
+                display={name ? 'none' : 'block'}
                 aria-live="assertive"
                 marginBottom={[1, 1, 0]}
                 flexDirection="column"
@@ -218,7 +217,6 @@ function GrantAccess() {
                   onChange={(value) => {
                     requestDelegation(value)
                   }}
-                  size="xs"
                 />
               </Box>
               {queryLoading ? (
@@ -239,13 +237,10 @@ function GrantAccess() {
               ) : null}
             </div>
           </GridColumn>
-          <GridColumn
-            span={['12/12', '12/12', '4/12']}
-            className={styles.button}
-          >
+          <GridColumn span={['12/12', '12/12', '4/12']}>
             <Button
-              size="small"
               fluid
+              size="large"
               type="submit"
               icon="arrowForward"
               disabled={!name || loading}

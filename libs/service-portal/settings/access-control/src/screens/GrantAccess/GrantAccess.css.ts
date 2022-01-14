@@ -9,8 +9,8 @@ export const inputWrapper = style({
 export const icon = style({
   position: 'absolute',
   lineHeight: 0,
-  top: '66%',
-  right: 16,
+  top: '50%',
+  right: 26,
   transform: 'translateY(-50%)',
 })
 
@@ -26,8 +26,4 @@ export const loadingIcon = style({
   animationDuration: '1.5s',
   animationIterationCount: 'infinite',
   animationTimingFunction: 'linear',
-})
-
-export const button = style({
-  marginTop: 'auto',
 })

@@ -53,10 +53,7 @@ function Accesses(): JSX.Element {
       <GridRow>
         <GridColumn paddingBottom={4} span="12/12">
           <Box display="flex" justifyContent="flexEnd">
-            <Button
-              onClick={() => history.push(`${pathname}/veita`)}
-              size="small"
-            >
+            <Button onClick={() => history.push(`${pathname}/veita`)}>
               {formatMessage({
                 id: 'service.portal.settings.accessControl:home-grant-access',
                 defaultMessage: 'Veita aðgang',
