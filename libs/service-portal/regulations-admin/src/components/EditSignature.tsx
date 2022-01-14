@@ -294,6 +294,8 @@ export const EditSignature: StepComponent = (props) => {
               draftId={draft.id}
               value={draft.signatureText.value}
               onChange={(text) => updateState('signatureText', text)}
+              required={draft.signatureText.required}
+              error={t(draft.signatureText.error)}
             />
           </Box>
 

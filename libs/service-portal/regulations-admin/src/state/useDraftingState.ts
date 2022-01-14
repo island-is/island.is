@@ -132,8 +132,8 @@ const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
 
     effectiveDate: f(draft.effectiveDate && new Date(draft.effectiveDate)),
 
-    signatureText: fHtml(draft.signatureText),
-    signedDocumentUrl: f(draft.signedDocumentUrl),
+    signatureText: fHtml(draft.signatureText, true),
+    signedDocumentUrl: f(draft.signedDocumentUrl, true),
 
     lawChapters: f((draft.lawChapters || []).map((chapter) => chapter.slug)),
 
