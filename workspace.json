@@ -6211,6 +6211,27 @@
         }
       }
     },
+    "nest-sequelize": {
+      "root": "libs/nest/sequelize",
+      "sourceRoot": "libs/nest/sequelize/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/sequelize/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/sequelize"],
+          "options": {
+            "jestConfig": "libs/nest/sequelize/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nest-swagger": {
       "root": "libs/nest/swagger",
       "sourceRoot": "libs/nest/swagger/src",

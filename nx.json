@@ -548,6 +548,9 @@
     "nest-problem": {
       "tags": []
     },
+    "nest-sequelize": {
+      "tags": []
+    },
     "nest-swagger": {
       "tags": []
     },
