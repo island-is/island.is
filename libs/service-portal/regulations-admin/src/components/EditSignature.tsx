@@ -14,43 +14,43 @@ import {
   InputFileUpload,
   fileToObject,
   UploadFile,
-  Option,
-  Select,
   Text,
   Divider,
 } from '@island.is/island-ui/core'
 import { StepComponent } from '../state/useDraftingState'
 import { editorMsgs as msg } from '../messages'
 import { getMinPublishDate, useLocale } from '../utils'
-import { useMinistriesQuery } from '../utils/dataHooks'
 
 import { RegDraftForm } from '../state/types'
 import { EditorInput } from './EditorInput'
-import { MinistrySlug, URLString, useShortState } from '@island.is/regulations'
+import { URLString, useShortState } from '@island.is/regulations'
 import { produce } from 'immer'
 import { downloadUrl } from '../utils/files'
 
 // ---------------------------------------------------------------------------
 
-const useMinistryOptions = (ministrySlug: MinistrySlug | undefined) => {
-  const ministries = useMinistriesQuery().data
-  return useMemo(() => {
-    const ministryOptions = (ministries || []).map((m) => ({
-      label: m.name,
-      value: m.slug,
-    }))
-    const selectedMinistryOption = ministryOptions.find(
-      (m) => m.value === ministrySlug,
-    )
-    const ministryName = selectedMinistryOption?.label
-
-    return {
-      ministryOptions,
-      selectedMinistryOption,
-      ministryName,
-    }
-  }, [ministrySlug, ministries])
-}
+// // DECIDE: Will this ever be ised?
+// import { useMinistriesQuery } from '../utils/dataHooks'
+//
+// const useMinistryOptions = (ministry: string | undefined) => {
+//   const ministries = useMinistriesQuery().data
+//   return useMemo(() => {
+//     const ministryOptions = (ministries || []).map((m) => ({
+//       label: m.name,
+//       value: m.name,
+//     }))
+//     const selectedMinistryOption = ministryOptions.find(
+//       (m) => m.value === ministry,
+//     )
+//     const ministryName = selectedMinistryOption?.label
+//
+//     return {
+//       ministryOptions,
+//       selectedMinistryOption,
+//       ministryName,
+//     }
+//   }, [ministry, ministries])
+// }
 
 // ---------------------------------------------------------------------------
 
@@ -181,12 +181,6 @@ export const EditSignature: StepComponent = (props) => {
   const signedDocumentUrl = draft.signedDocumentUrl.value
 
   const {
-    ministryOptions,
-    selectedMinistryOption,
-    ministryName,
-  } = useMinistryOptions(draft.ministry.value)
-
-  const {
     uploadStatus,
     downloadSignablePDF,
     uploadSignedPDF,
@@ -315,6 +309,8 @@ export const EditSignature: StepComponent = (props) => {
                     ''
                   }
                   placeholder={t(msg.signatureDatePlaceholder)}
+                  hasError={!!draft.signatureDate.error}
+                  errorMessage={t(draft.signatureDate.error)}
                   name="_signatureDate"
                   size="sm"
                   readOnly
@@ -324,37 +320,17 @@ export const EditSignature: StepComponent = (props) => {
 
             <Column>
               <Box marginBottom={3}>
-                {draft.ministry.value ? (
-                  <Input
-                    label={t(msg.ministry)}
-                    value={ministryName || draft.ministry.value || ''}
-                    placeholder={t(msg.ministryPlaceholder)}
-                    name="_rn"
-                    size="sm"
-                    readOnly
-                  />
-                ) : (
-                  <Select
-                    name="type-select"
-                    label={t(msg.ministry)}
-                    placeholder={t(msg.ministryPlaceholder)}
-                    size="sm"
-                    isSearchable={false}
-                    options={ministryOptions}
-                    value={selectedMinistryOption}
-                    required
-                    errorMessage={t(draft.ministry.error)}
-                    hasError={!!draft.ministry.error}
-                    onChange={(typeOption) =>
-                      updateState(
-                        'ministry',
-                        (typeOption as Option).value as MinistrySlug,
-                        true,
-                      )
-                    }
-                    backgroundColor="blue"
-                  />
-                )}
+                {/* Ministry (derived from signatureText) */}
+                <Input
+                  label={t(msg.ministry)}
+                  value={draft.ministry.value || ''}
+                  placeholder={t(msg.ministryPlaceholder)}
+                  hasError={!!draft.ministry.error}
+                  errorMessage={t(draft.ministry.error)}
+                  name="_rn"
+                  size="sm"
+                  readOnly
+                />
               </Box>
             </Column>
           </Columns>

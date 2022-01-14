@@ -3,7 +3,6 @@ import {
   ensureISODate,
   ensureRegName,
   HTMLText,
-  Ministry,
   PlainText,
   RegName,
   RegulationType,
@@ -60,10 +59,7 @@ export const findAffectedRegulationsInText = (
 
 // ---------------------------------------------------------------------------
 
-export const findSignatureInText = (
-  html: HTMLText,
-  ministries: ReadonlyArray<Ministry>,
-) => {
+export const findSignatureInText = (html: HTMLText) => {
   const paragraphs = Array.from(asDiv(html).querySelectorAll('p')).slice(-40)
 
   const threeLetterMonths = [
@@ -112,7 +108,7 @@ export const findSignatureInText = (
   }
   const [
     _,
-    ministryName,
+    ministryNameRaw,
     dayOfMonthStr,
     monthName,
     yearStr,
@@ -130,11 +126,14 @@ export const findSignatureInText = (
   const foundDate = ensureISODate(foundISODateRaw)
   const signatureDate = foundDate && new Date(foundDate)
 
-  const ministrySlug = ministries.find((m) => ministryName.endsWith(m.name))
-    ?.slug
+  const ministryName = ministryNameRaw
+    // normalize declination
+    .replace(/inu$/, 'ið')
+    // Normalize/collapse spaces
+    .replace(/\s+/g, ' ')
 
   return {
-    ministrySlug,
+    ministryName,
     signatureDate,
   }
 }

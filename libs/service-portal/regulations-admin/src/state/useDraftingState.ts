@@ -132,15 +132,10 @@ const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
 
     effectiveDate: f(draft.effectiveDate && new Date(draft.effectiveDate)),
 
-    signatureDate: f(
-      draft.signatureDate && new Date(draft.signatureDate),
-      true,
-    ),
     signatureText: fHtml(draft.signatureText),
     signedDocumentUrl: f(draft.signedDocumentUrl),
 
     lawChapters: f((draft.lawChapters || []).map((chapter) => chapter.slug)),
-    ministry: f(draft.ministry?.slug, true),
 
     mentioned: [], // NOTE: Contains values derived from `text`
 
@@ -173,6 +168,11 @@ const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
     authors: f(draft.authors.map((author) => author.authorId)),
 
     type: f(undefined /* draft.type */, true), // NOTE: Regulation type is always a derived value
+    ministry: f(undefined /* draft.ministry */, true), // NOTE: The ministry is always a derived value
+    signatureDate: f(
+      undefined /* draft.signatureDate && new Date(draft.signatureDate) */,
+      true,
+    ), // NOTE: Signature date is always a derived value
   }
 
   updateImpacts(form, draft.title, draft.text)
@@ -234,7 +234,6 @@ const specialUpdates: {
     const { type, text } = state.draft
     if (!type.value || type.guessed) {
       type.value = findRegulationType(newTitle)
-      type.guessed = true
     }
     updateImpacts(state.draft, newTitle, text.value)
   },
@@ -245,13 +244,27 @@ const specialUpdates: {
   },
 
   signatureText: (state, newValue) => {
-    const { signatureDate, ministry } = state.draft
-    const findResults = findSignatureInText(newValue, state.ministries)
-    if (!ministry.value || ministry.guessed) {
-      ministry.value = findResults.ministrySlug
-      ministry.guessed = true
-    }
-    signatureDate.value = findResults.signatureDate
+    const draft = state.draft
+    const { ministryName, signatureDate } = findSignatureInText(newValue)
+
+    const normalizedValue = ministryName?.toLowerCase().replace(/-/g, '')
+    const knownMinistry = normalizedValue
+      ? state.ministries.find(
+          (m) => m.name.toLowerCase().replace(/-/g, '') === normalizedValue,
+        )
+      : undefined
+
+    // prefer official name over typed name (ignores casing, and punctuation differernces)
+    draft.ministry.value = knownMinistry ? knownMinistry.name : ministryName
+    // Ideally this ought to be flagged as a less-severe error
+    draft.ministry.error =
+      ministryName && !knownMinistry ? errorMsgs.ministryUnknown : undefined
+
+    // TODO: Match the derived ministry up with original draft author's
+    // ministry connnection (i.e. their "place of work")
+    // and issue a WARNING if the two ministry values don't match up.
+
+    draft.signatureDate.value = signatureDate
   },
 }
 
@@ -461,7 +474,10 @@ export const useDraftingState = (
                 text: apx.text.value,
               })),
               comments: draft.comments.value,
-              ministryId: draft.ministry.value,
+              ministryId: draft.ministry.value
+                ? state.ministries.find((m) => m.name === draft.ministry.value)
+                    ?.name
+                : undefined,
               draftingNotes: draft.draftingNotes.value,
               idealPublishDate: draft.idealPublishDate?.value,
               fastTrack: draft.fastTrack.value,

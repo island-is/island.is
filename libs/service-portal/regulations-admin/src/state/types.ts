@@ -74,10 +74,11 @@ export type RegDraftForm = BodyDraftFields & {
   readonly draftingStatus: DraftingStatus // non-editable except via saveStatus or propose actions
 
   idealPublishDate: DraftField<Date | undefined>
-  signatureDate: DraftField<Date | undefined>
   effectiveDate: DraftField<Date | undefined>
   lawChapters: DraftField<Array<LawChapterSlug>>
-  ministry: DraftField<MinistrySlug | undefined>
+
+  signatureDate: DraftField<Date | undefined>
+  ministry: DraftField<string | undefined>
   type: DraftField<RegulationType | undefined>
 
   signatureText: HtmlDraftField
