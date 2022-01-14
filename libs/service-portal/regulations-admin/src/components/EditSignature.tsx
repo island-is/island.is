@@ -306,6 +306,7 @@ export const EditSignature: StepComponent = (props) => {
           <Columns space={3} collapseBelow="lg">
             <Column>
               <Box marginBottom={3}>
+                {/* Signature Date (derived from signatureText) */}
                 <Input
                   label={t(msg.signatureDate)}
                   value={
@@ -360,6 +361,7 @@ export const EditSignature: StepComponent = (props) => {
 
           <Box>
             <Inline space="gutter" alignY="center">
+              {/* idealPublishDate Input */}
               <DatePicker
                 size="sm"
                 label={t(msg.idealPublishDate)}
@@ -376,6 +378,7 @@ export const EditSignature: StepComponent = (props) => {
                 errorMessage={t(draft.idealPublishDate.error)}
                 backgroundColor="blue"
               />
+              {/* Request fastTrack */}
               <Checkbox
                 label={t(msg.applyForFastTrack)}
                 labelVariant="default"
@@ -387,6 +390,7 @@ export const EditSignature: StepComponent = (props) => {
             </Inline>
           </Box>
           <Box marginBottom={3}>
+            {/* Clear idealPublishDate */}
             {!!draft.idealPublishDate.value && (
               <Button
                 size="small"

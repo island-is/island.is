@@ -115,10 +115,7 @@ const makeDraftAppendixForm = (appendix: Appendix, key: string) => ({
   key,
 })
 
-const makeDraftForm = (
-  draft: RegulationDraft,
-  /** Default initial `dirty` state for all fields */
-): RegDraftForm => {
+const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
   const form: RegDraftForm = {
     id: draft.id,
     title: fText(draft.title, true),
@@ -145,7 +142,7 @@ const makeDraftForm = (
     lawChapters: f((draft.lawChapters || []).map((chapter) => chapter.slug)),
     ministry: f(draft.ministry?.slug, true),
 
-    mentioned: [],
+    mentioned: [], // NOTE: Contains values derived from `text`
 
     impacts: draft.impacts.map((impact) => {
       return impact.type === 'amend'

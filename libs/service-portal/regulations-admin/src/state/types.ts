@@ -83,6 +83,12 @@ export type RegDraftForm = BodyDraftFields & {
   signatureText: HtmlDraftField
   signedDocumentUrl: DraftField<URLString | undefined>
 
+  /** A list of likely `RegName`s found in the draft't `text`
+   * that is used to populate a Selectbox for picking impacted
+   * regulations.
+   *
+   * Mentioned is a 100% derived value, not to be saved on the server
+   */
   mentioned: Array<RegName>
   impacts: Array<DraftImpactForm>
 
