@@ -13,13 +13,29 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 const postgresInfo = {
   passwordSecret: '/k8s/application-system/api/DB_PASSWORD',
 }
+
+const namespace = 'application-system'
+const serviceAccount = 'application-system-api'
+export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =>
+  service('application-system-api-worker')
+    .namespace(namespace)
+    .postgres(postgresInfo)
+    .serviceAccount(serviceAccount)
+    .args('main.js', '--job', 'worker')
+    .command('node')
+    .extraAttributes({
+      dev: { schedule: '*/10 * * * *' },
+      staging: { schedule: '0 * * * *' },
+      prod: { schedule: '0 * * * *' },
+    })
+
 export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
-    .namespace('application-system')
-    .serviceAccount('application-system-api')
+    .namespace(namespace)
+    .serviceAccount(serviceAccount)
     .env({
       EMAIL_REGION: 'eu-west-1',
       REDIS_URL_NODE_01: {
