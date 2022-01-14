@@ -750,7 +750,7 @@ namespaces:
     - 'icelandic-names-registry'
     - 'endorsement-system'
     - 'air-discount-scheme'
-    - 'user-notification'
+    # - 'user-notification'
 search-indexer-service:
   enabled: true
   env:
@@ -1126,102 +1126,102 @@ skilavottord-ws:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-user-notification:
-  args:
-    - 'main.js'
-  command:
-    - 'node'
-  enabled: true
-  env:
-    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
-    MAIN_QUEUE_NAME: 'user-notification'
-    SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces:
-    - 'nginx-ingress-internal'
-  grantNamespacesEnabled: true
-  healthCheck:
-    liveness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-    readiness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-  image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-      hosts:
-        - host: 'user-notification-xrd.internal.staging01.devland.is'
-          paths:
-            - '/'
-  namespace: 'user-notification'
-  podSecurityContext:
-    fsGroup: 65534
-  replicaCount:
-    default: 2
-    max: 3
-    min: 2
-  secrets:
-    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-  securityContext:
-    allowPrivilegeEscalation: false
-    privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification'
-    create: true
-    name: 'user-notification'
-user-notification-worker:
-  args:
-    - 'main.js'
-    - '--job=worker'
-  command:
-    - 'node'
-  enabled: true
-  env:
-    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
-    IDENTITY_SERVER_PATH: 'https://identity-server.staging01.devland.is'
-    MAIN_QUEUE_NAME: 'user-notification'
-    SERVERSIDE_FEATURES_ON: ''
-    SERVICE_USER_PROFILE_BASEPATH: 'https://beta.staging01.devland.is/minarsidur'
-  grantNamespaces:
-    - 'nginx-ingress-internal'
-  grantNamespacesEnabled: true
-  healthCheck:
-    liveness:
-      initialDelaySeconds: 3
-      path: '/'
-      timeoutSeconds: 3
-    readiness:
-      initialDelaySeconds: 3
-      path: '/'
-      timeoutSeconds: 3
-  image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
-  namespace: 'user-notification'
-  podSecurityContext:
-    fsGroup: 65534
-  replicaCount:
-    default: 2
-    max: 3
-    min: 2
-  secrets:
-    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    GOOGLE_APPLICATION_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
-    USER_NOTIFICATION_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
-    USER_NOTIFICATION_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
-  securityContext:
-    allowPrivilegeEscalation: false
-    privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification-worker'
-    create: true
-    name: 'user-notification-worker'
+# user-notification:
+#   args:
+#     - 'main.js'
+#   command:
+#     - 'node'
+#   enabled: true
+#   env:
+#     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+#     MAIN_QUEUE_NAME: 'user-notification'
+#     SERVERSIDE_FEATURES_ON: ''
+#   grantNamespaces:
+#     - 'nginx-ingress-internal'
+#   grantNamespacesEnabled: true
+#   healthCheck:
+#     liveness:
+#       initialDelaySeconds: 3
+#       path: '/liveness'
+#       timeoutSeconds: 3
+#     readiness:
+#       initialDelaySeconds: 3
+#       path: '/liveness'
+#       timeoutSeconds: 3
+#   image:
+#     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+#   ingress:
+#     primary-alb:
+#       annotations:
+#         kubernetes.io/ingress.class: 'nginx-internal-alb'
+#       hosts:
+#         - host: 'user-notification-xrd.internal.staging01.devland.is'
+#           paths:
+#             - '/'
+#   namespace: 'user-notification'
+#   podSecurityContext:
+#     fsGroup: 65534
+#   replicaCount:
+#     default: 2
+#     max: 3
+#     min: 2
+#   secrets:
+#     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+#   securityContext:
+#     allowPrivilegeEscalation: false
+#     privileged: false
+#   serviceAccount:
+#     annotations:
+#       eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification'
+#     create: true
+#     name: 'user-notification'
+# user-notification-worker:
+#   args:
+#     - 'main.js'
+#     - '--job=worker'
+#   command:
+#     - 'node'
+#   enabled: true
+#   env:
+#     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+#     IDENTITY_SERVER_PATH: 'https://identity-server.staging01.devland.is'
+#     MAIN_QUEUE_NAME: 'user-notification'
+#     SERVERSIDE_FEATURES_ON: ''
+#     SERVICE_USER_PROFILE_BASEPATH: 'https://beta.staging01.devland.is/minarsidur'
+#   grantNamespaces:
+#     - 'nginx-ingress-internal'
+#   grantNamespacesEnabled: true
+#   healthCheck:
+#     liveness:
+#       initialDelaySeconds: 3
+#       path: '/'
+#       timeoutSeconds: 3
+#     readiness:
+#       initialDelaySeconds: 3
+#       path: '/'
+#       timeoutSeconds: 3
+#   image:
+#     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+#   namespace: 'user-notification'
+#   podSecurityContext:
+#     fsGroup: 65534
+#   replicaCount:
+#     default: 2
+#     max: 3
+#     min: 2
+#   secrets:
+#     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+#     GOOGLE_APPLICATION_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
+#     USER_NOTIFICATION_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
+#     USER_NOTIFICATION_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
+#   securityContext:
+#     allowPrivilegeEscalation: false
+#     privileged: false
+#   serviceAccount:
+#     annotations:
+#       eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification-worker'
+#     create: true
+#     name: 'user-notification-worker'
 web:
   basicAuth: '/k8s/web/basic_auth'
   enabled: true
