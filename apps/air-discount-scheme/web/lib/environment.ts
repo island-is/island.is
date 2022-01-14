@@ -2,7 +2,7 @@ import { getStaticEnv } from '@island.is/shared/utils'
 
 const isProd = process.env.NODE_ENV === 'production'
 // TODO remove isLocalhost flag before release.
-const isLocalhost = true //window.location.origin.includes('localhost')
+const isLocalhost = window?.location.origin.includes('localhost')
 
 const devConfig = {
   production: false,
