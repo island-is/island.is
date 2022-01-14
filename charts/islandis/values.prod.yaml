@@ -126,10 +126,9 @@ air-discount-scheme-web:
     IDENTITY_SERVER_DOMAIN: 'https://identity-server.dev01.devland.is'
     IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
     IDS_COOKIE_NAME: 'next-auth.session-token'
-    LOFTBRU_HOST: 'https://loftbru.island.is'
     NEXTAUTH_URL: 'http://localhost:4200'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'innskra.island.is'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:

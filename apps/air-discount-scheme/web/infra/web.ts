@@ -7,7 +7,7 @@ export const serviceSetup = (services: {
     .namespace('air-discount-scheme')
     .env({
       API_URL: ref((h) => `http://${h.svc(services.adsApi)}`),
-      NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? {
+      NEXTAUTH_URL: {
         dev: 'https://loftbru.dev01.devland.is',
         staging: 'https://loftbru.staging01.devland.is',
         prod: 'https://loftbru.island.is',
@@ -16,15 +16,10 @@ export const serviceSetup = (services: {
       IDENTITY_SERVER_SECRET:
         '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET',
       IDS_COOKIE_NAME: 'next-auth.session-token',
-      SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
-      LOFTBRU_HOST: {
-        dev: 'https://loftbru.dev01.devland.is',
-        staging: 'https://loftbru.staging01.devland.is',
-        prod: 'https://loftbru.island.is',
+      SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN: {
+        dev: 'identity-server.dev01.devland.is',
+        staging: 'identity-server.staging01.devland.is',
+        prod: 'innskra.island.is',
       },
     })
     .secrets({

@@ -132,10 +132,9 @@ air-discount-scheme-web:
     IDENTITY_SERVER_DOMAIN: 'https://identity-server.dev01.devland.is'
     IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
     IDS_COOKIE_NAME: 'next-auth.session-token'
-    LOFTBRU_HOST: 'https://loftbru.staging01.devland.is'
     NEXTAUTH_URL: 'http://localhost:4200'
     SERVERSIDE_FEATURES_ON: ''
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'identity-server.staging01.devland.is'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
