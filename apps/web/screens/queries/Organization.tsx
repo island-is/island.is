@@ -214,6 +214,7 @@ export const GET_SYSLUMENN_AUCTIONS_QUERY = gql`
       auctionTime
       petitioners
       respondent
+      auctionTakesPlaceAt
     }
   }
 `

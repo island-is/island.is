@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { VehicleModel } from '../vehicle'
-import { RecyclingRequestModel } from '../recyclingRequest'
 import { VehicleOwnerModel } from './vehicleOwner.model'
 
 @Injectable()
@@ -12,6 +12,8 @@ export class VehicleOwnerService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @InjectModel(VehicleOwnerModel)
+    private vehicleOwnerModel: VehicleOwnerModel,
   ) {}
 
   async findAll(): Promise<VehicleOwnerModel[]> {
@@ -27,34 +29,6 @@ export class VehicleOwnerService {
       return res
     } catch (error) {
       this.logger.error('error finding all owners:' + error)
-    }
-  }
-
-  async findRecyclingPartnerVehicles(
-    partnerId: string,
-  ): Promise<VehicleOwnerModel[]> {
-    this.logger.info('finding recyclingPartner vehicles...')
-    try {
-      const res = await VehicleOwnerModel.findAll({
-        include: [
-          {
-            model: VehicleModel,
-            right: true,
-            include: [
-              {
-                model: RecyclingRequestModel,
-                where: {
-                  //requestType: 'test',
-                  recyclingPartnerId: partnerId,
-                },
-              },
-            ],
-          },
-        ],
-      })
-      return res
-    } catch (error) {
-      this.logger.error('error finding recyclingPartner vehicles:' + error)
     }
   }
 
