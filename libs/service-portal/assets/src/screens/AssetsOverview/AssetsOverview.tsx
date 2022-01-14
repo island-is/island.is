@@ -53,7 +53,6 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     },
   )
   const assetData = data?.assetsOverview || {}
-  const assetDataProperties = assetData.properties || []
 
   const paginate = () => {
     const fasteignirArray = assetData?.properties || []
@@ -104,11 +103,14 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         <AssetListCards paginateCallback={paginate} assets={assetData} />
       )}
 
-      {!loading && !error && assetDataProperties.length === 0 && (
-        <Box marginTop={8}>
-          <EmptyState title={m.noDataFound} />
-        </Box>
-      )}
+      {!loading &&
+        !error &&
+        assetData?.properties &&
+        assetData?.properties?.length === 0 && (
+          <Box marginTop={8}>
+            <EmptyState title={m.noDataFound} />
+          </Box>
+        )}
 
       {error && (
         <Box>
