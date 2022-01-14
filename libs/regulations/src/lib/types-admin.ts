@@ -171,10 +171,16 @@ export type RegulationPdfInput = {
 /** API response from regulation API */
 export type RegulationPdfResponse = {
   /** Filename of generated PDF */
-  fileName: string
+  fileName?: string
+
+  /** The mime-type of the document in the `data` field
+   *
+   * Generally just `application/pdf`
+   */
+  mimeType?: string
 
   /** base64 of pdf */
-  data: string
+  data?: string
 }
 
 /** Info about how to download a PDF regulation */
@@ -186,8 +192,17 @@ export type RegulationPdfDownload = {
 
 /** PDF data of a regulation with optional filename */
 export type RegulationPdfData = {
-  buffer: Buffer
-  filename?: string
+  /** Filename of generated PDF */
+  fileName: string
+
+  /** The mime-type of the document in the `data` field
+   *
+   * Generally just `application/pdf`
+   */
+  mimeType: string
+
+  /** base64 of pdf */
+  base64?: string
 }
 
 /** Container for an API request for a PDF, either data or error */

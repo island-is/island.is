@@ -153,7 +153,8 @@ export class RegulationsService extends RESTDataSource {
   async generateDraftRegulationPdf(
     regulationBody: RegulationPdfInput,
   ): Promise<RegulationPdf> {
-    const filename = `draft-regulation-${regulationBody.name}.pdf`
+    const defaultFilename = `draft-regulation-${regulationBody.name}.pdf`
+    const defaultMimeType = 'application/pdf'
 
     let response: RegulationPdfResponse | null
 
@@ -164,14 +165,21 @@ export class RegulationsService extends RESTDataSource {
       )
     } catch (e) {
       return {
-        error: '',
+        error: 'unable to download pdf',
+      }
+    }
+
+    if (!response || !response.data) {
+      return {
+        error: 'response does not include data',
       }
     }
 
     return {
       data: {
-        buffer: Buffer.from(response.data, 'base64'),
-        filename,
+        base64: response.data,
+        fileName: response.fileName ?? defaultFilename,
+        mimeType: response.mimeType ?? defaultMimeType,
       },
     }
   }

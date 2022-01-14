@@ -6,7 +6,6 @@ import { GetDraftRegulationInput } from './dto/getDraftRegulation.input'
 import { DownloadRegulationInput } from './dto/downloadRegulation.input'
 import { DeleteDraftRegulationInput } from './dto/deleteDraftRegulation.input'
 import { EditDraftRegulationInput } from './dto/editDraftRegulation.input'
-import { DraftRegulationModel } from './models/draftRegulation.model'
 import { DeleteDraftRegulationModel } from './models/deleteDraftRegulation.model'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -19,17 +18,7 @@ import {
   RegulationsAdminOptions,
   REGULATIONS_ADMIN_OPTIONS,
 } from '../client/regulationsAdmin.api'
-import {
-  Author,
-  DraftRegulationCancel,
-  DraftRegulationChange,
-  RegulationDraft,
-  DraftSummary,
-  ShippedSummary,
-  RegulationPdfDownload,
-} from '@island.is/regulations/admin'
-import { extractAppendixesAndComments } from '@island.is/regulations-tools/textHelpers'
-import { nameToSlug, PlainText, Appendix } from '@island.is/regulations'
+import { RegulationPdfDownload } from '@island.is/regulations/admin'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()

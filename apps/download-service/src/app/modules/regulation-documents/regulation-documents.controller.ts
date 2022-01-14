@@ -22,8 +22,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import { GetRegulationDraftDocumentDto } from './dto/getRegulationDraftDocument.dto'
 import {
+  RegulationDraft,
   RegulationPdfInput,
-  DB_RegulationDraft,
 } from '@island.is/regulations/admin'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -49,7 +49,7 @@ export class RegulationDocumentsController {
     @Body() resource: GetRegulationDraftDocumentDto,
     @Res() res: Response,
   ) {
-    let draftRegulation: DB_RegulationDraft | null = null
+    let draftRegulation: RegulationDraft | null = null
     try {
       draftRegulation = await this.regulationsAdminApiService.getDraftRegulation(
         regulationId,
@@ -69,7 +69,7 @@ export class RegulationDocumentsController {
       appendixes: [], // TODO where do we get these?
       comments: '', // TODO where do we get this?
       name: draftRegulation.name,
-      publishedDate: draftRegulation.ideal_publish_date,
+      publishedDate: draftRegulation.idealPublishDate,
     }
 
     const documentResponse = await this.regulationService.generateDraftRegulationPdf(
@@ -78,11 +78,12 @@ export class RegulationDocumentsController {
 
     if (
       documentResponse.data &&
-      typeof documentResponse.data.buffer === 'string'
+      typeof documentResponse.data.base64 === 'string'
     ) {
-      const buffer = Buffer.from(documentResponse.data.buffer, 'ascii')
-      const filename = documentResponse.data.filename ?? 'draft-regulation.pdf'
+      const buffer = Buffer.from(documentResponse.data.base64, 'base64')
+      const filename = documentResponse.data.fileName
 
+      res.header('Content-Type', documentResponse.data.mimeType)
       res.header('Content-length', buffer.length.toString())
       res.header('Content-Disposition', `inline; filename=${filename}`)
       res.header('Cache-Control: no-cache')

@@ -8,7 +8,6 @@ import {
   RegulationDraft,
   ShippedSummary,
 } from '@island.is/regulations/admin'
-import { uuid } from 'uuidv4'
 
 export const REGULATIONS_ADMIN_OPTIONS = 'REGULATIONS_ADMIN_OPTIONS'
 
@@ -16,7 +15,6 @@ export interface RegulationsAdminOptions {
   baseApiUrl?: string
   regulationsApiUrl: string
   ttl?: number
-  nationalRegistry: NationalRegistryConfig
   downloadServiceUrl?: string
 }
 
