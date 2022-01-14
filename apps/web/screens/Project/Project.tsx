@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { ReactElement, useMemo, useRef, useState } from 'react'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   GetNewsQuery,
@@ -42,7 +42,23 @@ import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
+
 const lightThemes = ['traveling-to-iceland', 'election']
+
+const getThemeConfig = (
+  theme: string,
+): { themeConfig: Partial<LayoutProps> } => {
+  const isLightTheme = lightThemes.includes(theme)
+  if (!isLightTheme) {
+    return {
+      themeConfig: {
+        headerButtonColorScheme: 'negative',
+        headerColorScheme: 'white',
+      },
+    }
+  }
+  return { themeConfig: {} }
+}
 
 interface ProjectWrapperProps {
   withSidebar?: boolean
@@ -324,14 +340,12 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Project page not found')
   }
 
-  const isLightTheme = lightThemes.includes(getProjectPage.theme)
-
   return {
     projectPage: getProjectPage,
     namespace,
     news: getNewsQuery?.data.getNews.items,
     showSearchInHeader: false,
-    ...(isLightTheme ? {} : { darkTheme: true }),
+    ...getThemeConfig(getProjectPage.theme),
   }
 }
 
