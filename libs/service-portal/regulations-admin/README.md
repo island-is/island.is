@@ -28,8 +28,6 @@ PDFs are downloaded by:
 - If the requested regulation is a draft regulation, returns a object with a `download-service` url and a boolean that marks it as a download-service file
 - `download-service` fetches all required data from the admin db and posts to the API server which returns a base64 of the PDF
 
-For non-draft regulations, it should go straight to the public API for the PDF, this is not implemented.
-
 ## Running unit tests
 
 Run `nx test service-portal-regulations-admin` to execute the unit tests via [Jest](https://jestjs.io).
