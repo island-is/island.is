@@ -19,8 +19,7 @@ export const collapsed = style({
 
 export const logoCollapsed = style({
   display: 'flex',
-  justifyContent: 'flex-end',
-  marginRight: -theme.spacing[3],
+  justifyContent: 'center',
 })
 
 export const subnav = style({
@@ -43,7 +42,7 @@ export const subnavCollapsed = style({
 export const navIcon = style({
   position: 'absolute',
   right: -theme.spacing[4],
-  top: theme.spacing[10],
+  top: 43,
   ':hover': {
     cursor: 'pointer',
   },

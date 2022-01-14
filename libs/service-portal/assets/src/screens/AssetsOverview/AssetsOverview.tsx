@@ -93,7 +93,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
           intro={defineMessage({
             id: 'sp.assets:intro',
             defaultMessage:
-              'Hér færðu upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert skráður eigandi að.',
+              'Hér birtast upplýsingar úr fasteignaskrá Þjóðskrár um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
           })}
         />
       </Box>
