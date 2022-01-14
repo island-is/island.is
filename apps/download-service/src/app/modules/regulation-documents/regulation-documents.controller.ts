@@ -66,8 +66,8 @@ export class RegulationDocumentsController {
     const input: RegulationPdfInput = {
       title: draftRegulation.title,
       text: draftRegulation.text,
-      appendixes: [], // TODO where do we get these?
-      comments: '', // TODO where do we get this?
+      appendixes: draftRegulation.appendixes,
+      comments: draftRegulation.comments,
       name: draftRegulation.name,
       publishedDate: draftRegulation.idealPublishDate,
     }
