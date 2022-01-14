@@ -70,8 +70,13 @@ export const core = defineMessages({
     description: 'Notað fyrir orðið sóknaraðili í öllum flæðum.',
   },
   accused: {
-    id: 'judicial.system.core:accused-v2',
-    defaultMessage: 'Varnaraðil{suffix}',
+    id: 'judicial.system.core:accused-v3',
+    defaultMessage: 'kærð{suffix}',
+    description: 'Notað fyrir orðið kærði í öllum flæðum.',
+  },
+  defendant: {
+    id: 'judicial.system.core:defendant',
+    defaultMessage: 'varnaraðil{suffix}',
     description: 'Notað fyrir orðið varnaraðili í öllum flæðum.',
   },
   requestCaseType: {

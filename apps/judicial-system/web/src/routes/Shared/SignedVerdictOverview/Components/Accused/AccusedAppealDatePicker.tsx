@@ -1,17 +1,15 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
+import { useIntl } from 'react-intl'
 
 import { Box, Button } from '@island.is/island-ui/core'
-import {
-  capitalize,
-  formatAccusedByGender,
-  NounCases,
-} from '@island.is/judicial-system/formatters'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
-import { isInvestigationCase } from '@island.is/judicial-system/types'
+import { Gender, isRestrictionCase } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 
 import * as styles from '../AppealSection/AppealSection.css'
+import { core } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -21,6 +19,7 @@ interface Props {
 
 const AccusedAppealDatePicker: React.FC<Props> = (props) => {
   const { workingCase, setAccusedAppealDate, isInitialMount } = props
+  const { formatMessage } = useIntl()
   const [appealDate, setAppealDate] = useState<Date>()
 
   const animateInAndOut = {
@@ -60,14 +59,20 @@ const AccusedAppealDatePicker: React.FC<Props> = (props) => {
             onClick={() => setAccusedAppealDate(appealDate)}
             disabled={!appealDate}
           >
-            {`${capitalize(
-              formatAccusedByGender(
-                // TDOO defendants: handle multiple defendants
-                workingCase.defendants && workingCase.defendants[0].gender,
-                NounCases.NOMINATIVE,
-                isInvestigationCase(workingCase.type),
-              ),
-            )} kærir`}
+            {workingCase.defendants
+              ? `${capitalize(
+                  isRestrictionCase(workingCase.type)
+                    ? formatMessage(core.accused, {
+                        suffix:
+                          workingCase.defendants[0].gender === Gender.MALE
+                            ? 'i'
+                            : 'a',
+                      })
+                    : formatMessage(core.defendant, {
+                        suffix: workingCase.defendants.length > 0 ? 'ar' : 'i',
+                      }),
+                )} ${workingCase.defendants.length > 0 ? 'kæra' : 'kærir'} `
+              : ''}
           </Button>
         </Box>
       </div>
