@@ -23,7 +23,7 @@ const CaseNumbers: React.FC<Props> = ({ workingCase }: Props) => {
         workingCase.prosecutor?.institution?.name
       }`}</Text>
       {workingCase.defendants && (
-        <Text fontWeight="semiBold">{`${formatMessage(core.accused, {
+        <Text fontWeight="semiBold">{`${formatMessage(core.defendant, {
           suffix: workingCase.defendants.length > 0 ? 'ar' : 'i',
         })}:${workingCase.defendants.map(
           (defendant) => ` ${defendant.name}`,

@@ -41,7 +41,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
     >
       <Box marginBottom={2}>
         <Text variant="h4" as="h4">
-          {formatMessage(core.accused, {
+          {formatMessage(core.defendant, {
             suffix: (workingCase.defendants || []).length > 1 ? 'ar' : 'i',
           })}
         </Text>

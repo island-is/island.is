@@ -3,14 +3,17 @@ import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { Defendant } from '@island.is/judicial-system/types'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 
 import * as styles from './InfoCard.css'
 
 interface Props {
   data: Array<{ title: string; value?: string }>
-  defendants: Defendant[]
+  defendants?: Defendant[]
   defender?: {
     name: string
     email?: string
@@ -25,40 +28,44 @@ const InfoCard: React.FC<Props> = (props) => {
 
   return (
     <Box className={styles.infoCardContainer} data-testid="infoCard">
-      <Text variant="h4">
-        {formatMessage(core.accused, {
-          suffix: defendants.length > 0 ? 'ar' : 'i',
-        })}
-      </Text>
-      <Box className={styles.infoCardTitleContainer}>
-        <Box marginBottom={4}>
-          {defendants.map((defendant, index) => (
-            <Text fontWeight="semiBold" key={index}>
-              {defendant.name}
-              <Text as="span">{`, `}</Text>
-              {`kt. ${formatNationalId(defendant.nationalId ?? '')}`}
-              {defendant.address && (
-                <Text as="span">{`, ${defendant.address}`}</Text>
-              )}
-            </Text>
-          ))}
-        </Box>
-        <Box>
+      {defendants && (
+        <>
           <Text variant="h4">
-            {defender?.defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'}
+            {capitalize(
+              formatMessage(core.defendant, {
+                suffix: defendants.length > 0 ? 'ar' : 'i',
+              }),
+            )}
           </Text>
-          {defender?.name ? (
-            <Box display="flex">
-              <Text>
-                {`${defender.name}${
-                  defender.email ? `, ${defender.email}` : ''
-                }${defender.phoneNumber ? `, s. ${defender.phoneNumber}` : ''}`}
+          <Box marginBottom={4}>
+            {defendants.map((defendant, index) => (
+              <Text fontWeight="semiBold" key={index}>
+                {defendant.name}
+                <Text as="span">{`, `}</Text>
+                {`kt. ${formatNationalId(defendant.nationalId ?? '')}`}
+                {defendant.address && (
+                  <Text as="span">{`, ${defendant.address}`}</Text>
+                )}
               </Text>
-            </Box>
-          ) : (
-            <Text>Hefur ekki verið skráður</Text>
-          )}
-        </Box>
+            ))}
+          </Box>
+        </>
+      )}
+      <Box className={styles.infoCardTitleContainer}>
+        <Text variant="h4">
+          {defender?.defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'}
+        </Text>
+        {defender?.name ? (
+          <Box display="flex">
+            <Text>
+              {`${defender.name}${defender.email ? `, ${defender.email}` : ''}${
+                defender.phoneNumber ? `, s. ${defender.phoneNumber}` : ''
+              }`}
+            </Text>
+          </Box>
+        ) : (
+          <Text>Hefur ekki verið skráður</Text>
+        )}
       </Box>
       <Box className={styles.infoCardDataContainer}>
         {data.map((dataItem, index) => (

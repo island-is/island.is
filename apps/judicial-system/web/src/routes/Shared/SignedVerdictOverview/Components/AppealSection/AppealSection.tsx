@@ -7,15 +7,13 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   CaseAppealDecision,
+  Gender,
   InstitutionType,
+  isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
-import {
-  capitalize,
-  formatAccusedByGender,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import type { Case } from '@island.is/judicial-system/types'
@@ -25,6 +23,7 @@ import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'
 import AccusedAppealDatePicker from '../Accused/AccusedAppealDatePicker'
 import ProsecutorAppealDatePicker from '../Prosecutor/ProsecutorAppealDatePicker'
 import * as styles from './AppealSection.css'
+import { core } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -59,7 +58,6 @@ const AppealSection: React.FC<Props> = (props) => {
           Ákvörðun um kæru
         </Text>
       </Box>
-
       {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
         workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) &&
         workingCase.rulingDate &&
@@ -72,39 +70,41 @@ const AppealSection: React.FC<Props> = (props) => {
             </Text>
           </Box>
         )}
-      {workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL && (
-        <div className={styles.appealContainer}>
-          <BlueBox>
-            <InfoBox
-              text={formatMessage(signedVerdictOverview.accusedAppealed, {
-                genderedAccused: capitalize(
-                  formatAccusedByGender(
-                    // TDOO defendants: handle multiple defendants
-                    workingCase.defendants && workingCase.defendants[0].gender,
+      {workingCase.defendants &&
+        workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL && (
+          <div className={styles.appealContainer}>
+            <BlueBox>
+              <InfoBox
+                text={formatMessage(signedVerdictOverview.accusedAppealed, {
+                  genderedAccused: capitalize(
+                    isRestrictionCase(workingCase.type)
+                      ? formatMessage(core.accused, {
+                          suffix:
+                            workingCase.defendants[0].gender === Gender.MALE
+                              ? 'i'
+                              : 'a',
+                        })
+                      : formatMessage(core.defendant, {
+                          suffix:
+                            workingCase.defendants?.length > 0 ? 'ar' : 'i',
+                        }),
                   ),
-                ),
-                courtEndTime: `${formatDate(
-                  workingCase.rulingDate,
-                  'PP',
-                )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
-              })}
-              fluid
-              light
-            />
-          </BlueBox>
-        </div>
-      )}
+                  courtEndTime: `${formatDate(
+                    workingCase.rulingDate,
+                    'PP',
+                  )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
+                })}
+                fluid
+                light
+              />
+            </BlueBox>
+          </div>
+        )}
       {workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL && (
         <div className={styles.appealContainer}>
           <BlueBox>
             <InfoBox
               text={formatMessage(signedVerdictOverview.prosecutorAppealed, {
-                genderedAccused: capitalize(
-                  formatAccusedByGender(
-                    // TDOO defendants: handle multiple defendants
-                    workingCase.defendants && workingCase.defendants[0].gender,
-                  ),
-                ),
                 courtEndTime: `${formatDate(
                   workingCase.courtEndTime,
                   'PP',
