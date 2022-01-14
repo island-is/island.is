@@ -21,14 +21,6 @@ export class AuthGuard implements CanActivate {
     if (!user) {
       throw new UnauthorizedException()
     }
-
-    if (user.role === 'user') {
-    }
-    if (user.role === 'developer') {
-    }
-    if (user.role === 'admin') {
-    }
-
     return this.hasValidApiKey(request)
   }
 

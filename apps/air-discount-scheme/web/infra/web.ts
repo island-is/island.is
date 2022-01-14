@@ -7,7 +7,11 @@ export const serviceSetup = (services: {
     .namespace('air-discount-scheme')
     .env({
       API_URL: ref((h) => `http://${h.svc(services.adsApi)}`),
-      NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? 'http://localhost:4200',
+      NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? {
+        dev: 'https://loftbru.dev01.devland.is',
+        staging: 'https://loftbru.staging01.devland.is',
+        prod: 'https://loftbru.island.is',
+      },
       IDENTITY_SERVER_DOMAIN: 'https://identity-server.dev01.devland.is',
       IDENTITY_SERVER_SECRET:
         '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET',
