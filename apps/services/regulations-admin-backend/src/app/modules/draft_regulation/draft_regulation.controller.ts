@@ -7,16 +7,10 @@ import {
   Post,
   Put,
   Delete,
-  Query,
   UseGuards,
   BadRequestException,
 } from '@nestjs/common'
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiCreatedResponse,
-  ApiHeader,
-} from '@nestjs/swagger'
+import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -26,11 +20,13 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 
 import { CreateDraftRegulationDto, UpdateDraftRegulationDto } from './dto'
-import { DraftRegulation } from './draft_regulation.model'
+import { DraftRegulationModel } from './draft_regulation.model'
 import { DraftRegulationService } from './draft_regulation.service'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { environment } from '../../../environments'
+import { DraftSummary } from '@island.is/regulations/admin'
+import { Kennitala } from '@island.is/regulations'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulations`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -46,17 +42,17 @@ export class DraftRegulationController {
   @Scopes('@island.is/regulations:create')
   @Post('draft_regulation')
   @ApiCreatedResponse({
-    type: DraftRegulation,
+    type: DraftRegulationModel,
     description: 'Creates a new DraftRegulation',
   })
-  @Audit<DraftRegulation>({
+  @Audit<DraftRegulationModel>({
     resources: (DraftRegulation) => DraftRegulation.id,
   })
   async create(
     @Body()
     draftRegulationToCreate: CreateDraftRegulationDto,
     @CurrentUser() user: User,
-  ): Promise<DraftRegulation> {
+  ): Promise<DraftRegulationModel> {
     return await this.draftRegulationService.create(
       draftRegulationToCreate,
       user.nationalId,
@@ -65,25 +61,25 @@ export class DraftRegulationController {
 
   @Scopes('@island.is/regulations:create')
   @Put('draft_regulation/:id')
-  @Audit<DraftRegulation>({
+  @Audit<DraftRegulationModel>({
     resources: (DraftRegulation) => DraftRegulation.id,
   })
   @ApiOkResponse({
-    type: DraftRegulation,
+    type: DraftRegulationModel,
     description: 'Updates an existing DraftRegulation',
   })
   async update(
     @Param('id') id: string,
     @Body() draftRegulationToUpdate: UpdateDraftRegulationDto,
     @CurrentUser() user: User,
-  ): Promise<DraftRegulation> {
+  ): Promise<DraftRegulationModel> {
     const {
       numberOfAffectedRows,
       updatedDraftRegulation,
     } = await this.draftRegulationService.update(
       id,
       draftRegulationToUpdate,
-      user.nationalId,
+      user.nationalId as Kennitala,
     )
 
     if (numberOfAffectedRows === 0) {
@@ -118,11 +114,11 @@ export class DraftRegulationController {
   @Scopes('@island.is/regulations:create')
   @Get('draft_regulations')
   @ApiOkResponse({
-    type: DraftRegulation,
+    type: DraftRegulationModel,
     isArray: true,
     description: 'Gets all DraftRegulations with status draft and proposal',
   })
-  async getAll(@CurrentUser() user: User): Promise<DraftRegulation[]> {
+  async getAll(@CurrentUser() user: User): Promise<DraftSummary[]> {
     const canManage = user.scope.includes('@island.is/regulations:manage')
     return await this.draftRegulationService.getAll(
       !canManage ? user.nationalId : undefined,
@@ -132,11 +128,11 @@ export class DraftRegulationController {
   @Scopes('@island.is/regulations:create')
   @Get('draft_regulations_shipped')
   @ApiOkResponse({
-    type: DraftRegulation,
+    type: DraftRegulationModel,
     isArray: true,
     description: 'Gets all DraftRegulations with status shipped',
   })
-  async getAllShipped(@CurrentUser() user: User): Promise<DraftRegulation[]> {
+  async getAllShipped(@CurrentUser() user: User): Promise<DraftSummary[]> {
     const canManage = user.scope.includes('@island.is/regulations:manage')
     if (!canManage) {
       return []
@@ -147,7 +143,7 @@ export class DraftRegulationController {
   @Scopes('@island.is/regulations:create')
   @Get('draft_regulation/:id')
   @ApiOkResponse({
-    type: DraftRegulation,
+    type: DraftRegulationModel,
     description: 'Gets a DraftRegulation',
   })
   async getById(@Param('id') id: string, @CurrentUser() user: User) {

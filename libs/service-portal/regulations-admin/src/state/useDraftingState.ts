@@ -3,23 +3,20 @@ import {
   HTMLText,
   LawChapterSlug,
   PlainText,
-  RegName,
   Appendix,
   MinistryList,
 } from '@island.is/regulations'
 import { useAuth } from '@island.is/auth/react'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import { FC, Reducer, useEffect, useMemo, useReducer } from 'react'
 import { produce, setAutoFreeze, Draft } from 'immer'
-import { useHistory, generatePath } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { Step } from '../types'
+import { getInputFieldsWithErrors, useLocale } from '../utils'
 import {
   findAffectedRegulationsInText,
   findRegulationType,
   findSignatureInText,
-  getInputFieldsWithErrors,
-  useLocale,
-} from '../utils'
+} from '../utils/guessers'
 import { RegulationsAdminScope } from '@island.is/auth/scopes'
 import { DraftingStatus, RegulationDraft } from '@island.is/regulations/admin'
 import {
@@ -449,15 +446,22 @@ export const useDraftingState = (
             id: draft.id,
             body: {
               title: draft.title.value,
-              text: draft.text.value, // (text + appendix + comments)
-              ministry_id: draft.ministry.value,
-              drafting_notes: draft.draftingNotes.value,
-              ideal_publish_date: draft.idealPublishDate?.value,
-              law_chapters: draft.lawChapters.value,
-              signature_date: draft.signatureDate.value,
-              effective_date: draft.effectiveDate.value,
+              text: draft.text.value,
+              appendixes: draft.appendixes.map((apx) => ({
+                title: apx.title.value,
+                text: apx.text.value,
+              })),
+              comments: draft.comments.value,
+              ministryId: draft.ministry.value,
+              draftingNotes: draft.draftingNotes.value,
+              idealPublishDate: draft.idealPublishDate?.value,
+              lawChapters: draft.lawChapters.value,
+              signatureDate: draft.signatureDate.value,
+              signatureText: draft.signatureText.value,
+              effectiveDate: draft.effectiveDate.value,
               type: draft.type.value,
-              drafting_status: newStatus || draft.draftingStatus,
+              draftingStatus: newStatus || draft.draftingStatus,
+              signedDocumentUrl: draft.signedDocumentUrl.value,
             },
           },
         },

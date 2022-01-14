@@ -19,11 +19,7 @@ const Home = () => {
 
   return (
     <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={msg.title}
-        intro={msg.intro}
-        img="./assets/images/educationLicense.svg"
-      />
+      <IntroHeader title={msg.title} intro={msg.intro} />
 
       <div className={s.newButtonBox}>
         <Button

@@ -3,12 +3,10 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
   NotFoundException,
   Param,
   Post,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common'
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
@@ -25,7 +23,7 @@ import {
   CreateDraftRegulationChangeDto,
   UpdateDraftRegulationChangeDto,
 } from './dto'
-import { DraftRegulationChange } from './draft_regulation_change.model'
+import { DraftRegulationChangeModel } from './draft_regulation_change.model'
 import { DraftRegulationChangeService } from './draft_regulation_change.service'
 
 import { environment } from '../../../environments'
@@ -44,17 +42,17 @@ export class DraftRegulationChangeController {
   @Scopes('@island.is/regulations:create')
   @Post('draft_regulation_change')
   @ApiCreatedResponse({
-    type: DraftRegulationChange,
+    type: DraftRegulationChangeModel,
     description: 'Creates a new DraftRegulationChange',
   })
-  @Audit<DraftRegulationChange>({
+  @Audit<DraftRegulationChangeModel>({
     resources: (DraftRegulationChange) => DraftRegulationChange.id,
   })
   create(
     @Body()
     draftRegulationChangeToCreate: CreateDraftRegulationChangeDto,
     @CurrentUser() user: User,
-  ): Promise<DraftRegulationChange> {
+  ): Promise<DraftRegulationChangeModel> {
     return this.draftRegulationChangeService.create(
       draftRegulationChangeToCreate,
     )
@@ -63,17 +61,17 @@ export class DraftRegulationChangeController {
   @Scopes('@island.is/regulations:create')
   @Put('draft_regulation_change/:id')
   @ApiOkResponse({
-    type: DraftRegulationChange,
+    type: DraftRegulationChangeModel,
     description: 'Updates an existing user',
   })
-  @Audit<DraftRegulationChange>({
+  @Audit<DraftRegulationChangeModel>({
     resources: (DraftRegulationChange) => DraftRegulationChange.id,
   })
   async update(
     @Param('id') id: string,
     @Body() draftRegulationChangeToUpdate: UpdateDraftRegulationChangeDto,
     @CurrentUser() user: User,
-  ): Promise<DraftRegulationChange> {
+  ): Promise<DraftRegulationChangeModel> {
     const {
       numberOfAffectedRows,
       updatedDraftRegulationChange,

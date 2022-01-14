@@ -28,10 +28,8 @@ export const EditBasics: StepComponent = (props) => {
         <MagicTextarea
           label={t(msg.title)}
           name="title"
-          value={draft.title.value}
-          onChange={(value) => {
-            updateState('title', value)
-          }}
+          defaultValue={draft.title.value}
+          onBlur={(value) => updateState('title', value)}
           error={t(draft.title.error)}
           required
         />

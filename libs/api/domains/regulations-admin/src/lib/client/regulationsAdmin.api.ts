@@ -3,19 +3,12 @@ import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import { EditDraftBody } from '../graphql/dto/editDraftRegulation.input'
 import {
-  Author,
-  DB_RegulationDraft,
   DraftingStatus,
+  DraftSummary,
+  RegulationDraft,
+  ShippedSummary,
 } from '@island.is/regulations/admin'
-import * as kennitala from 'kennitala'
 import { uuid } from 'uuidv4'
-
-import {
-  NationalRegistryApi,
-  NationalRegistryConfig,
-} from '@island.is/clients/national-registry-v1'
-import { User } from '@island.is/auth-nest-tools'
-import { Kennitala } from '@island.is/regulations'
 
 export const REGULATIONS_ADMIN_OPTIONS = 'REGULATIONS_ADMIN_OPTIONS'
 
@@ -31,7 +24,6 @@ export class RegulationsAdminApi extends RESTDataSource {
   constructor(
     @Inject(REGULATIONS_ADMIN_OPTIONS)
     private readonly options: RegulationsAdminOptions,
-    private readonly nationalRegistryApi: NationalRegistryApi,
   ) {
     super()
     this.baseURL = `${this.options.baseApiUrl}`
@@ -46,8 +38,8 @@ export class RegulationsAdminApi extends RESTDataSource {
   async getDraftRegulations(authorization: string) {
     return await this.get<
       Array<
-        DB_RegulationDraft & {
-          drafting_status: Extract<DraftingStatus, 'draft' | 'proposal'>
+        DraftSummary & {
+          DraftingStatus: Extract<DraftingStatus, 'draft' | 'proposal'>
         }
       >
     >(
@@ -62,8 +54,8 @@ export class RegulationsAdminApi extends RESTDataSource {
   async getShippedRegulations(authorization: string) {
     return await this.get<
       Array<
-        DB_RegulationDraft & {
-          drafting_status: Extract<DraftingStatus, 'shipped' | 'published'>
+        ShippedSummary & {
+          DraftingStatus: Extract<DraftingStatus, 'shipped' | 'published'>
         }
       >
     >(
@@ -78,8 +70,8 @@ export class RegulationsAdminApi extends RESTDataSource {
   async getDraftRegulation(
     draftId: string,
     authorization: string,
-  ): Promise<DB_RegulationDraft | null> {
-    const response = await this.get<DB_RegulationDraft | null>(
+  ): Promise<RegulationDraft | null> {
+    const response = await this.get<RegulationDraft | null>(
       `/draft_regulation/${draftId}`,
       {},
       {
@@ -90,21 +82,7 @@ export class RegulationsAdminApi extends RESTDataSource {
   }
 
   create(authorization: string): Promise<any> {
-    return this.post(
-      `/draft_regulation`,
-      {
-        id: uuid(),
-        drafting_status: 'draft',
-        title: '',
-        text: '',
-        drafting_notes: '',
-        ministry_id: '',
-        // FIXME: the below fields should be make optional, and empty/null/undefined by default
-        ideal_publish_date: '2022-06-01',
-        type: 'base',
-      },
-      { headers: { authorization } },
-    )
+    return this.post(`/draft_regulation`, {}, { headers: { authorization } })
   }
 
   updateById(
@@ -121,22 +99,5 @@ export class RegulationsAdminApi extends RESTDataSource {
     return this.delete(`/draft_regulation/${draftId}`, undefined, {
       headers: { authorization },
     })
-  }
-
-  async getAuthorInfo(kt: string, user: User): Promise<Author | null> {
-    if (kennitala.isCompany(kt)) {
-      return null
-    }
-
-    const person = await this.nationalRegistryApi.getUser(kt)
-
-    if (!person) {
-      return null
-    }
-
-    return {
-      name: person.Fulltnafn,
-      authorId: kt as Kennitala,
-    }
   }
 }

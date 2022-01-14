@@ -90,7 +90,10 @@ const AppendixEditing = (props: AppendixEditingProps) => {
               required
               error={title.error && t(title.error)}
             />
-            {/* Pointless since editing is dis-allowed, but let's leave it in. */}
+            {/*
+              Pointless since editing is dis-allowed,
+              but let's leave it in for illustrative purposes..
+            */}
             {baseTitle != null && title.value !== baseTitle && (
               <MiniDiff older={baseTitle || ''} newer={title.value} />
             )}

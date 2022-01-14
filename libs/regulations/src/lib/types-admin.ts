@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {
-  DB_DraftRegulationCancel,
-  DB_DraftRegulationChange,
-  DraftingStatus,
-  RegulationDraftId,
-} from './types-admin-database'
-import {
   RegName,
   Kennitala,
   ISODate,
@@ -19,16 +13,49 @@ import {
   Appendix,
 } from './types'
 
-export type {
-  DraftingStatus,
-  RegulationDraftId,
-  DraftRegulationChangeId,
-  DraftRegulationCancelId,
-} from './types-admin-database'
+// ---------------------------------------------------------------------------
+
+/** Regulation drafts have four lifecycle states:
+ *
+ * * `draft` = The regulation is still being drafted. Do NOT edit and/or publish!
+ * * `proposal` = The regulation is ready for a final review/tweaking by an editor.
+ * * `shipped` = The regulation has been sent to Stjórnartíðindi and is awaiting formal publication.
+ * * `published` = The regulation has been accepted and published (or queued for publication at a
+ *   fixed `publishedDate`) and received a `name`. It can now be `POST`ed to the
+ *   "Reglugerðasafn" database — either instantly or on `publishedDate`
+ */
+export type DraftingStatus = 'draft' | 'proposal' | 'shipped' | 'published'
+
+// ===========================================================================
+
+declare const _RegulationDraftId__Brand: unique symbol
+export type RegulationDraftId = string & { [_RegulationDraftId__Brand]: true }
+
+// ===========================================================================
+
+declare const _DraftRegulationCancelId__Brand: unique symbol
+export type DraftRegulationCancelId = string & {
+  [_DraftRegulationCancelId__Brand]: true
+}
+
+// ===========================================================================
+
+declare const _DraftRegulationChangeId__Brand: unique symbol
+export type DraftRegulationChangeId = string & {
+  [_DraftRegulationChangeId__Brand]: true
+}
+
+// ===========================================================================
+
+declare const _RegulationId__Brand: unique symbol
+/** Id of a Regulation entry in the Reglugerðagrunnur */
+export type RegulationId = number & { [_RegulationId__Brand]: true }
 
 declare const _EmailAddress__Brand: unique symbol
 /** Normal email address. Not to be confused with random un-parsed strings. */
 export type EmailAddress = string & { [_EmailAddress__Brand]: true }
+
+// ---------------------------------------------------------------------------
 
 export type Author = {
   authorId: Kennitala
@@ -75,7 +102,7 @@ export type RegulationDraft = Pick<
   signedDocumentUrl?: URLString
   type?: RegulationType
   ministry?: Ministry
-  impacts: ReadonlyArray<DraftRegulationCancel | DraftRegulationChange>
+  impacts: ReadonlyArray<DraftImpact>
 }
 
 // ---------------------------------------------------------------------------
@@ -86,16 +113,26 @@ export type DraftRegulationCancel = {
   type: 'repeal'
   name: DraftImpactName
   regTitle: PlainText
-} & Pick<DB_DraftRegulationCancel, 'id' | 'date'>
+  id: DraftRegulationCancelId
+  date: ISODate
+}
 
 // ---------------------------------------------------------------------------
 
 export type DraftRegulationChange = {
+  id: DraftRegulationChangeId
   type: 'amend'
   name: DraftImpactName
   regTitle: PlainText
-} & Pick<DB_DraftRegulationChange, 'id' | 'date' | 'title'> &
-  Pick<Regulation, 'text' | 'appendixes' | 'comments'>
+  date: ISODate
+  title: PlainText
+} & Pick<Regulation, 'text' | 'appendixes' | 'comments'>
+
+// ---------------------------------------------------------------------------
+
+export type DraftImpactId = DraftRegulationChangeId | DraftRegulationCancelId
+
+export type DraftImpact = DraftRegulationChange | DraftRegulationCancel
 
 // ---------------------------------------------------------------------------
 

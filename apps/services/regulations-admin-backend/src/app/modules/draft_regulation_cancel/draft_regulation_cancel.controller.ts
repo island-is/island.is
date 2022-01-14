@@ -3,12 +3,10 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
   NotFoundException,
   Param,
   Post,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common'
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
@@ -25,7 +23,7 @@ import {
   CreateDraftRegulationCancelDto,
   UpdateDraftRegulationCancelDto,
 } from './dto'
-import { DraftRegulationCancel } from './draft_regulation_cancel.model'
+import { DraftRegulationCancelModel } from './draft_regulation_cancel.model'
 import { DraftRegulationCancelService } from './draft_regulation_cancel.service'
 
 import { environment } from '../../../environments'
@@ -44,17 +42,17 @@ export class DraftRegulationCancelController {
   @Scopes('@island.is/regulations:create')
   @Post('draft_regulation_cancel')
   @ApiCreatedResponse({
-    type: DraftRegulationCancel,
+    type: DraftRegulationCancelModel,
     description: 'Creates a new DraftRegulationCancel',
   })
-  @Audit<DraftRegulationCancel>({
+  @Audit<DraftRegulationCancelModel>({
     resources: (DraftRegulationCancel) => DraftRegulationCancel.id,
   })
   async create(
     @Body()
     draftRegulationCancelToCreate: CreateDraftRegulationCancelDto,
     @CurrentUser() user: User,
-  ): Promise<DraftRegulationCancel> {
+  ): Promise<DraftRegulationCancelModel> {
     return await this.draftRegulationCancelService.create(
       draftRegulationCancelToCreate,
     )
@@ -63,17 +61,17 @@ export class DraftRegulationCancelController {
   @Scopes('@island.is/regulations:create')
   @Put('draft_regulation_cancel/:id')
   @ApiOkResponse({
-    type: DraftRegulationCancel,
+    type: DraftRegulationCancelModel,
     description: 'Updates an existing user',
   })
-  @Audit<DraftRegulationCancel>({
+  @Audit<DraftRegulationCancelModel>({
     resources: (DraftRegulationCancel) => DraftRegulationCancel.id,
   })
   async update(
     @Param('id') id: string,
     @Body() draftRegulationCancelToUpdate: UpdateDraftRegulationCancelDto,
     @CurrentUser() user: User,
-  ): Promise<DraftRegulationCancel> {
+  ): Promise<DraftRegulationCancelModel> {
     const {
       numberOfAffectedRows,
       updatedDraftRegulationCancel,

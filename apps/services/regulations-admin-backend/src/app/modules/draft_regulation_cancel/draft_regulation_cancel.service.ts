@@ -9,20 +9,20 @@ import {
   CreateDraftRegulationCancelDto,
   UpdateDraftRegulationCancelDto,
 } from './dto'
-import { DraftRegulationCancel } from './draft_regulation_cancel.model'
+import { DraftRegulationCancelModel } from './draft_regulation_cancel.model'
 
 @Injectable()
 export class DraftRegulationCancelService {
   constructor(
-    @InjectModel(DraftRegulationCancel)
-    private readonly draftRegulationCancelModel: typeof DraftRegulationCancel,
+    @InjectModel(DraftRegulationCancelModel)
+    private readonly draftRegulationCancelModel: typeof DraftRegulationCancelModel,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
   async create(
     draftRegulationcancelToCreate: CreateDraftRegulationCancelDto,
-  ): Promise<DraftRegulationCancel> {
+  ): Promise<DraftRegulationCancelModel> {
     this.logger.debug('Creating a new DraftRegulationcancel')
 
     return await this.draftRegulationCancelModel.create(
@@ -35,7 +35,7 @@ export class DraftRegulationCancelService {
     update: UpdateDraftRegulationCancelDto,
   ): Promise<{
     numberOfAffectedRows: number
-    updatedDraftRegulationCancel: DraftRegulationCancel
+    updatedDraftRegulationCancel: DraftRegulationCancelModel
   }> {
     this.logger.debug(`Updating DraftRegulationCancel ${id}`)
 

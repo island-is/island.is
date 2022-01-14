@@ -11,7 +11,8 @@ const setAutoHeight = (textarea: HTMLTextAreaElement | null) => {
   const { style } = textarea
   style.opacity = '0'
   style.height = 'auto'
-  style.height = textarea.scrollHeight + 'px'
+  const newHeight = textarea.scrollHeight
+  style.height = newHeight >= 8 ? `${newHeight}px` : ''
   style.opacity = ''
 }
 

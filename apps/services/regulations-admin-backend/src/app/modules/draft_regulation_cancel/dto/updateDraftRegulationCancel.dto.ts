@@ -1,10 +1,4 @@
-import {
-  IsBoolean,
-  IsDate,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator'
+import { IsDate, IsOptional } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 

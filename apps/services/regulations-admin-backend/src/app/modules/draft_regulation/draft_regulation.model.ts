@@ -1,12 +1,8 @@
 import {
-  BelongsTo,
   Column,
-  CreatedAt,
   DataType,
-  ForeignKey,
   Model,
   Table,
-  UpdatedAt,
   HasMany,
   HasOne,
 } from 'sequelize-typescript'
@@ -18,17 +14,20 @@ import {
   MinistrySlug,
   LawChapterSlug,
   Kennitala,
+  URLString,
+  HTMLText,
+  PlainText,
 } from '@island.is/regulations'
-import { DraftingStatus } from '@island.is/regulations/admin'
+import { DraftingStatus, RegulationDraftId } from '@island.is/regulations/admin'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { DraftRegulationChange } from '../draft_regulation_change'
-import { DraftRegulationCancel } from '../draft_regulation_cancel'
+import { DraftRegulationChangeModel } from '../draft_regulation_change'
+import { DraftRegulationCancelModel } from '../draft_regulation_cancel'
 
 @Table({
   tableName: 'draft_regulation',
 })
-export class DraftRegulation extends Model<DraftRegulation> {
+export class DraftRegulationModel extends Model<DraftRegulationModel> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -36,7 +35,7 @@ export class DraftRegulation extends Model<DraftRegulation> {
     defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()
-  id!: string
+  id!: RegulationDraftId
 
   @Column({
     type: DataType.ENUM,
@@ -58,20 +57,21 @@ export class DraftRegulation extends Model<DraftRegulation> {
     allowNull: false,
   })
   @ApiProperty()
-  title?: string
+  title!: PlainText
 
   @Column({
     type: DataType.TEXT,
     allowNull: false,
   })
   @ApiProperty()
-  text?: string
+  text!: HTMLText
 
   @Column({
     type: DataType.TEXT,
+    allowNull: false,
   })
   @ApiProperty()
-  drafting_notes?: string
+  drafting_notes!: HTMLText
 
   @Column({
     type: DataType.DATEONLY,
@@ -92,6 +92,12 @@ export class DraftRegulation extends Model<DraftRegulation> {
   signature_date?: ISODate
 
   @Column({
+    type: DataType.STRING,
+  })
+  @ApiProperty()
+  signature_text?: HTMLText
+
+  @Column({
     type: DataType.DATEONLY,
   })
   @ApiProperty()
@@ -99,7 +105,6 @@ export class DraftRegulation extends Model<DraftRegulation> {
 
   @Column({
     type: DataType.ENUM,
-    allowNull: false,
     values: ['base', 'amending'],
   })
   @ApiProperty()
@@ -107,6 +112,7 @@ export class DraftRegulation extends Model<DraftRegulation> {
 
   @Column({
     type: DataType.ARRAY(DataType.STRING),
+    allowNull: false,
   })
   @ApiProperty()
   authors!: Kennitala[]
@@ -117,11 +123,17 @@ export class DraftRegulation extends Model<DraftRegulation> {
   @ApiProperty()
   law_chapters?: LawChapterSlug[]
 
-  @HasMany(() => DraftRegulationChange)
-  @ApiPropertyOptional({ type: [DraftRegulationChange] })
-  changes?: DraftRegulationChange[]
+  @Column({
+    type: DataType.STRING,
+  })
+  @ApiProperty()
+  signed_document_url?: URLString
 
-  @HasOne(() => DraftRegulationCancel)
-  @ApiPropertyOptional({ type: DraftRegulationCancel })
-  cancel?: DraftRegulationCancel
+  @HasMany(() => DraftRegulationChangeModel)
+  @ApiPropertyOptional({ type: [DraftRegulationChangeModel] })
+  changes?: DraftRegulationChangeModel[]
+
+  @HasOne(() => DraftRegulationCancelModel)
+  @ApiPropertyOptional({ type: DraftRegulationCancelModel })
+  cancel?: DraftRegulationCancelModel
 }

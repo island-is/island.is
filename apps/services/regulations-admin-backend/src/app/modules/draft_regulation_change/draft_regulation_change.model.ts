@@ -11,14 +11,15 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { DraftRegulation } from '../draft_regulation'
+import { DraftRegulationModel } from '../draft_regulation'
 
-import { ISODate, RegName } from '@island.is/regulations'
+import { HTMLText, ISODate, PlainText, RegName } from '@island.is/regulations'
+import { RegulationDraftId } from '@island.is/regulations/admin'
 
 @Table({
   tableName: 'draft_regulation_change',
 })
-export class DraftRegulationChange extends Model<DraftRegulationChange> {
+export class DraftRegulationChangeModel extends Model<DraftRegulationChangeModel> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -28,12 +29,12 @@ export class DraftRegulationChange extends Model<DraftRegulationChange> {
   @ApiProperty()
   id!: string
 
-  @ForeignKey(() => DraftRegulation)
+  @ForeignKey(() => DraftRegulationModel)
   @Column({
     type: DataType.UUID,
   })
   @ApiProperty()
-  changing_id!: string
+  changing_id!: RegulationDraftId
 
   @Column({
     type: DataType.STRING,
@@ -51,11 +52,11 @@ export class DraftRegulationChange extends Model<DraftRegulationChange> {
     type: DataType.STRING,
   })
   @ApiProperty()
-  title!: string
+  title!: PlainText
 
   @Column({
     type: DataType.TEXT,
   })
   @ApiProperty()
-  text!: string
+  text!: HTMLText
 }

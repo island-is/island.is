@@ -1,67 +1,77 @@
-import { Field, InputType, PartialType } from '@nestjs/graphql'
-import { IsString, IsOptional } from 'class-validator'
+import {
+  HTMLText,
+  ISODate,
+  LawChapterSlug,
+  MinistrySlug,
+  PlainText,
+  RegName,
+  RegulationType,
+  URLString,
+} from '@island.is/regulations'
+import { DraftingStatus, RegulationDraftId } from '@island.is/regulations/admin'
+import { Field, InputType } from '@nestjs/graphql'
+
+@InputType()
+export class Appendix {
+  @Field(() => String, { nullable: true })
+  title!: PlainText
+
+  @Field(() => String, { nullable: true })
+  text!: HTMLText
+}
 
 @InputType()
 export class EditDraftBody {
-  @Field({ nullable: true })
-  @IsString()
-  drafting_status!: string
+  @Field(() => String, { nullable: true })
+  draftingStatus!: DraftingStatus
 
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  text!: string
+  @Field(() => String, { nullable: true })
+  text!: HTMLText
 
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  name?: string
+  @Field(() => String, { nullable: true })
+  comments?: HTMLText
 
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  title?: string
+  @Field(() => [Appendix], { nullable: true })
+  appendixes?: Appendix[]
 
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  drafting_notes?: string
+  @Field(() => String, { nullable: true })
+  name?: RegName
 
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  ministry_id?: string
+  @Field(() => String, { nullable: true })
+  title!: PlainText
 
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  ideal_publish_date?: string
+  @Field(() => String, { nullable: true })
+  draftingNotes!: HTMLText
 
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  signature_date?: string
+  @Field(() => String, { nullable: true })
+  ministryId?: MinistrySlug
 
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  effective_date?: string
+  @Field(() => Date, { nullable: true })
+  idealPublishDate?: ISODate
 
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  type?: string
+  @Field(() => Date, { nullable: true })
+  signatureDate?: ISODate
+
+  @Field(() => String, { nullable: true })
+  signatureText?: HTMLText
+
+  @Field(() => Date, { nullable: true })
+  effectiveDate?: ISODate
+
+  @Field(() => String)
+  type!: RegulationType
+
+  @Field(() => String, { nullable: true })
+  signedDocumentUrl?: URLString
 
   @Field(() => [String], { nullable: true })
-  @IsOptional()
-  law_chapters?: string[]
+  lawChapters?: LawChapterSlug[]
 }
 
 @InputType()
 export class EditDraftRegulationInput {
-  @Field()
-  @IsString()
-  id!: string
+  @Field(() => String)
+  id!: RegulationDraftId
 
   @Field()
   body!: EditDraftBody
