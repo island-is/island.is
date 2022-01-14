@@ -61,7 +61,7 @@ Then you can create audit records like this:
 ```typescript
 // uses the default namespace: '@island.is/apiName',
 this.auditService.audit({
-  user,
+  auth: user,
   action: 'findAll',
 })
 ```
@@ -71,7 +71,7 @@ You can set custom namespace, resources and metadata like this:
 ```typescript
 const stuff = await this.stuffService.getStuff()
 this.auditService.audit({
-  user,
+  auth: user,
   namespace: '@island.is/overridden',
   action: 'findAll',
   resources: stuff.map((s) => s.id),
@@ -84,7 +84,7 @@ If you are auditing an async action, you can wrap it like this:
 ```typescript
 return this.auditService.auditPromise(
   {
-    user,
+    auth: user,
     action: 'findAll',
     resources: (stuff) => stuff.map((s) => s.id),
     meta: (stuff) => ({ count: stuff.length }),

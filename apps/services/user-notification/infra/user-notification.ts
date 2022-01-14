@@ -35,7 +35,7 @@ export const userNotificationWorkerSetup = (): ServiceBuilder<'user-notification
     .namespace('user-notification')
     .serviceAccount('user-notification-worker')
     .command('node')
-    .args('main.js', '--job')
+    .args('main.js', '--job=worker')
     .env({
       MAIN_QUEUE_NAME,
       DEAD_LETTER_QUEUE_NAME,
@@ -58,5 +58,3 @@ export const userNotificationWorkerSetup = (): ServiceBuilder<'user-notification
       USER_NOTIFICATION_CLIENT_SECRET:
         '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET',
     })
-    .liveness('/liveness')
-    .readiness('/liveness')

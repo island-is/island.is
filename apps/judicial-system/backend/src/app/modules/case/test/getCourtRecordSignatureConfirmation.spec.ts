@@ -75,10 +75,7 @@ describe('CaseController - Get court record signature confirmation', () => {
             courtRecordSignatoryId: userId,
             courtRecordSignatureDate: expect.any(Date),
           },
-          {
-            where: { id: caseId },
-            returning: true,
-          },
+          { where: { id: caseId } },
         )
       })
     })

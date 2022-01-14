@@ -81,9 +81,15 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       <div
         className={cn(styles.root, 'island-ui-datepicker', {
           [styles.small]: size === 'sm',
+          [styles.extraSmall]: size === 'xs',
         })}
       >
         <ReactDatePicker
+          popperClassName={cn(styles.popper, {
+            [styles.popperSmall]: size === 'sm',
+            [styles.popperSmallWithoutLabel]: size === 'sm' && !label,
+            [styles.popperWithoutLabel]: size === 'md' && !label,
+          })}
           id={id}
           disabled={disabled}
           selected={selected ?? startDate}
