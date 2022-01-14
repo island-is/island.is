@@ -7,7 +7,7 @@ import {
 } from '@island.is/air-discount-scheme/types'
 import { FlightLeg } from '../flightLeg'
 import { CurrentUser } from '../decorators'
-import { AuthUser } from '../auth/types'
+import type { AuthUser } from '../auth/types'
 import { User } from './models'
 import { Inject } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'

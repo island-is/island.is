@@ -10,9 +10,9 @@ import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User as AuthUser,
   Scopes,
 } from '@island.is/auth-nest-tools'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 
 type DiscountWithTUser = Discount & { user: TUser }
