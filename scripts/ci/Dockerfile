@@ -49,8 +49,6 @@ RUN npm install -g \
     sequelize-cli \
     pg \
     @theo.gravity/datadog-apm \
-    # npx
-    # logform \
     dd-trace
 
 USER runner
