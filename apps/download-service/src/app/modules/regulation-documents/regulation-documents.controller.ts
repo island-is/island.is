@@ -65,6 +65,7 @@ export class RegulationDocumentsController {
 
     const input: RegulationPdfInput = {
       title: draftRegulation.title,
+      // FIXME: When downloading PDF for publication, we must also append `draftRegulation.signatureText`
       text: draftRegulation.text,
       appendixes: draftRegulation.appendixes,
       comments: draftRegulation.comments,
