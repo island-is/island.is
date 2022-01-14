@@ -49,16 +49,25 @@ const AppendixEditing = (props: AppendixEditingProps) => {
     () => !appendix.title.value && !appendix.text.value,
   )
 
+  const defaultTitle = `Viðauki ${idx + 1}`
+
   const removeAppendix = () => {
     if (!removable) return
 
-    const appendixEmpty = !title.value && !text.value
+    const appendixEmpty =
+      !text.value && (!title.value || title.value === defaultTitle)
     if (
       appendixEmpty ||
       // eslint-disable-next-line no-restricted-globals
       confirm(t(msg.appendix_remove_confirm, { idx: idx + 1 }))
     ) {
       actions.removeAppendix(idx)
+    }
+  }
+
+  const handleFocus = () => {
+    if (!title.value && !title.dirty) {
+      actions.setAppendixProp(idx, 'title', defaultTitle)
     }
   }
 
@@ -87,6 +96,7 @@ const AppendixEditing = (props: AppendixEditingProps) => {
               onChange={(value) => {
                 actions.setAppendixProp(idx, 'title', value)
               }}
+              onFocus={handleFocus}
               required
               error={title.error && t(title.error)}
             />
