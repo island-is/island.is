@@ -14,7 +14,7 @@ const devConfig = {
     admins: process.env.ADMINS,
   },
   identityServerAuth: {
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? 'https://identity-server.dev01.devland.is',
     audience: '@vegagerdin.is',
   },
   auth: {

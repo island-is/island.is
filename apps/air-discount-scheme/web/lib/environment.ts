@@ -6,8 +6,8 @@ const isLocalhost = true //window.location.origin.includes('localhost')
 
 const devConfig = {
   production: false,
-  NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? 'http://localhost:4200',
-  IDS: 'identity-server.dev01.devland.is',
+  NEXTAUTH_URL: isLocalhost ? 'http://localhost:4200' : process.env.NEXTAUTH_URL,
+  IDS: process.env.IDENTITY_SERVER_ISSUER_URL ?? 'identity-server.dev01.devland.is',
   identityServerDomain:
     process.env.IDENTITY_SERVER_DOMAIN ?? 'identity-server.dev01.devland.is',
   identityServerLogoutURL: isLocalhost

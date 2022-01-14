@@ -12,7 +12,7 @@ const devConfig = {
     username: process.env.NATIONAL_REGISTRY_USERNAME,
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
     xroad: {
-      basePath: 'http://localhost:8081/r1/IS-DEV', // process.env.XROAD_BASE_PATH_WITH_ENV
+      basePath: process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8081/r1/IS-DEV',
       memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE ?? '10001',
       apiPath:
         process.env.XROAD_TJODSKRA_API_PATH ?? '/SKRA-Protected/Einstaklingar',
@@ -39,7 +39,7 @@ const devConfig = {
   },
   baseUrl: process.env.BASE_URL ?? 'http://localhost:4200',
   identityServerAuth: {
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? 'https://identity-server.dev01.devland.is',
     audience: '@vegagerdin.is',
   },
   idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',

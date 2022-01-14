@@ -21,7 +21,6 @@ import { RolesGuard } from '../auth/roles.guard'
 @Scopes('@vegagerdin.is/air-discount-scheme-scope')
 @Resolver(() => FlightLeg)
 export class FlightLegResolver {
-  // TODO AUTHORIZE ADMIN ONLY  @Authorize({ role: 'admin' })
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
   @Query(() => [FlightLeg])
@@ -32,7 +31,6 @@ export class FlightLegResolver {
     return backendApi.getFlightLegs(input)
   }
 
-  //TODO AUTHORIZE ADMIN ONLY@Authorize({ role: 'admin' })
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
   @Mutation(() => [FlightLeg])
