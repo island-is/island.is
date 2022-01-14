@@ -107,6 +107,7 @@ export const blueberry = style({
   boxShadow: `inset 0 0 0 1px ${theme.color.blueberry600}`,
   border: 'none',
   color: theme.color.blueberry600,
+  transition: 'box-shadow .25s',
   ':focus': {
     boxShadow: 'none',
     border: 'none',
