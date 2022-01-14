@@ -85,6 +85,7 @@ export const sizes = styleVariants({
 export const white = style({
   backgroundColor: theme.color.transparent,
   color: theme.color.white,
+  transition: 'box-shadow .25s',
   '::placeholder': {
     color: theme.color.white,
   },
@@ -94,10 +95,12 @@ export const white = style({
   },
   ':hover': {
     borderColor: theme.color.white,
+    boxShadow: `inset 0 0 0 ${1}px ${theme.color.white}`,
   },
   selectors: {
     [`&:focus:hover`]: {
       backgroundColor: theme.color.transparent,
+      boxShadow: 'none',
     },
   },
 })
