@@ -135,10 +135,10 @@ air-discount-scheme-web:
   enabled: true
   env:
     API_URL: 'http://web-air-discount-scheme-api'
+    IDENTITY_SERVER_DOMAIN: '/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN'
     IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
+    NEXTAUTH_URL: '/k8s/air-discount-scheme/NEXTAUTH_URL'
     SERVERSIDE_FEATURES_ON: ''
-    SI_PUBLIC_IDENTITY_SERVER_DOMAIN: 'identity-server.dev01.devland.is'
-    SI_PUBLIC_NEXTAUTH_URL: 'https://loftbru.dev01.devland.is'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
