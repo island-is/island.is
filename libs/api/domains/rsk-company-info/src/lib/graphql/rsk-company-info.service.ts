@@ -8,7 +8,6 @@ import { RskCompanyRelatedParty } from './models/rskCompanyRelatedParty.model'
 import { RskCompanyClassification } from './models/rskCompanyClassification.model'
 import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
 import { decodeBase64, toBase64 } from '../rsk-company-info.utils'
-import { PageResult } from './types/pageResult'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
@@ -106,7 +105,14 @@ export class RskCompanyInfoService {
       !searchResults?.count ||
       searchResults.count < 1
     ) {
-      throw new NotFoundException('No search results found')
+      return {
+        data: [],
+        totalCount: 0,
+        pageInfo: {
+          endCursor: toBase64('0'),
+          hasNextPage: false,
+        },
+      }
     }
 
     const formattedSearchResults = searchResults.items?.map((item) => {
