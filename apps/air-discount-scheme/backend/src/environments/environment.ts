@@ -62,7 +62,7 @@ const prodConfig = {
     [Airlines.norlandair]: process.env.NORLANDAIR_API_KEY,
   },
   redis: {
-    urls: [process.env.REDIS_URL_NODE_01],
+    urls: [process.env.REDIS_URL_NODE_01!],
   },
   baseUrl: process.env.BASE_URL,
   identityServerAuth: {
