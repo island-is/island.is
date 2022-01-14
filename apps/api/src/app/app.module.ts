@@ -43,6 +43,7 @@ import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
+import { FinancialAidModule } from '@island.is/api/domains/financial-aid'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 
@@ -250,6 +251,9 @@ const autoSchemaFile = environment.production
         xroadClientId: environment.xroad.clientId,
         xroadPath: environment.criminalRecord.xroadPath,
       },
+    }),
+    FinancialAidModule.register({
+      baseApiUrl: environment.financialAid.baseApiUrl,
     }),
     ConfigModule.forRoot({
       isGlobal: true,

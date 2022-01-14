@@ -82,6 +82,9 @@
       "@island.is/api/domains/finance": [
         "libs/api/domains/finance/src/index.ts"
       ],
+      "@island.is/api/domains/financial-aid": [
+        "libs/api/domains/financial-aid/src/index.ts"
+      ],
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
       ],

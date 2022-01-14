@@ -71,25 +71,17 @@ export class ApplicationController {
     private readonly auditService: AuditService,
   ) {}
 
-  @UseGuards(RolesGuard)
-  @RolesRules(RolesRule.OSK)
   @Get('nationalId/:nationalId')
   @ApiOkResponse({
+    type: String,
     description: 'Checks if user has a current application for this period',
   })
   async getCurrentApplication(
     @Param('nationalId') nationalId: string,
   ): Promise<string> {
     this.logger.debug('Application controller: Getting current application')
-    const currentApplication = await this.applicationService.getCurrentApplicationId(
-      nationalId,
-    )
 
-    if (currentApplication === null) {
-      throw new NotFoundException(404, 'Current application not found')
-    }
-
-    return currentApplication
+    return await this.applicationService.getCurrentApplicationId(nationalId)
   }
 
   @UseGuards(RolesGuard, StaffGuard)

@@ -10,14 +10,12 @@ export class VeitaProvider extends BasicDataProvider {
   async provide(): Promise<string | undefined> {
     // TODO: We probably need application system id and current Veita id here
     const query = `
-        query CurrentUserQuery {
-            currentUser {
+        query HasUserAppliedForPeriod {
+            hasUserFinancialAidApplicationForCurrentPeriod {
                 currentApplicationId
             }
         }
       `
-
-    console.log('hvað er að gerast')
 
     return this.useGraphqlGateway<string | undefined>(query)
       .then(async (res: Response) => {

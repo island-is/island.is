@@ -118,6 +118,9 @@
     "api-domains-finance": {
       "tags": []
     },
+    "api-domains-financial-aid": {
+      "tags": []
+    },
     "api-domains-health-insurance": {
       "tags": []
     },

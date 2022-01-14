@@ -53,7 +53,7 @@ const devConfig = {
   },
   identityServerAuth: {
     issuer: 'https://identity-server.dev01.devland.is',
-    audience: '@samband.is',
+    audience: '@island.is', // TODO: Figure out how we support both island.is and samband audience
   },
   emailOptions: {
     fromEmail: process.env.SEND_FROM_EMAIL,
