@@ -15,9 +15,6 @@ const devConfig = {
     : getStaticEnv('NEXTAUTH_URL'),
   identityServerSecret: process.env.IDENTITY_SERVER_SECRET,
   idsCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
-  loftbruHost: isLocalhost
-    ? 'http://localhost:4200'
-    : getStaticEnv('NEXTAUTH_URL'),
 }
 
 const prodConfig = {
@@ -28,7 +25,6 @@ const prodConfig = {
   identityServerLogoutURL: isProd ? getStaticEnv('NEXTAUTH_URL') : '',
   identityServerSecret: process.env.IDENTITY_SERVER_SECRET,
   idsCookieName: isProd ? getStaticEnv('IDS_COOKIE_NAME') : '',
-  loftbruHost: isProd ? getStaticEnv('NEXTAUTH_URL') : '',
 }
 
 export default isProd ? prodConfig : devConfig
