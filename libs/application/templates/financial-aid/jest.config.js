@@ -11,3 +11,4 @@ module.exports = {
   coverageDirectory:
     '../../../../coverage/libs/application/templates/financial-aid',
 }
+
