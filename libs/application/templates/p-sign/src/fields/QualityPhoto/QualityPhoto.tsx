@@ -36,12 +36,13 @@ const Photo: FC<QualityPhotoData> = ({
 }
 
 const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
-  const { qualityPhoto, success } = useQualityPhoto(application)
+  const { qualityPhoto, loading, error } = useQualityPhoto(application)
+  // TODO: skeleton load when image is loading
   const { formatMessage } = useLocale()
   const img = Photo({ qualityPhoto, application })
   return (
     <Box marginBottom={3}>
-      {success ? (
+      {qualityPhoto ? (
         <Box marginTop={4} style={{ width: '191px', height: '242px' }}>
           {img}
         </Box>

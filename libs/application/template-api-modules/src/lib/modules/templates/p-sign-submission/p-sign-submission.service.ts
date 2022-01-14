@@ -8,28 +8,22 @@ import {
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
 import { NationalRegistry } from './types'
-import {
-  Application,
-  getValueViaPath,
-  FieldBaseProps,
-} from '@island.is/application/core'
+import { Application, getValueViaPath } from '@island.is/application/core'
 import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 
 export const QUALITY_PHOTO = `
 query HasQualityPhoto {
-  qualityPhoto {
-    success
-    qualityPhoto
+  drivingLicenseQualityPhoto {
+    qualityPhotoDataUri
   }
 }
 `
 
 interface QualityPhotoType {
-  qualityPhoto: {
-    qualityPhoto: string | null
-    success: boolean
+  drivingLicenseQualityPhoto: {
+    qualityPhotoDataUri: string | null
   }
 }
 
@@ -62,7 +56,7 @@ export class PSignSubmissionService {
                 QUALITY_PHOTO,
               )
               .then((response) => response.json())
-          ).data?.qualityPhoto?.qualityPhoto as string)
+          ).data?.drivingLicenseQualityPhoto?.qualityPhotoDataUri as string)
         : await this.getAttachments({
             application,
             auth,

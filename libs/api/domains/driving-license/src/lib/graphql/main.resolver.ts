@@ -27,21 +27,13 @@ const namespace = '@island.is/api/driving-license'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
-@Resolver(QualityPhoto)
+@Resolver()
 export class MainResolver {
   constructor(
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly auditService: AuditService,
   ) {}
 
-  @ResolveField('qualityPhotoDataUri', () => String, { nullable: true })
-  resolveQualityPhotoDataUri(
-    @Parent() qualityPhoto: QualityPhoto,
-  ): Promise<String | null> {
-    return this.drivingLicenseService.getQualityPhotoUri(
-      qualityPhoto.nationalId,
-    )
-  }
   @Query(() => DrivingLicense)
   drivingLicense(@CurrentUser() user: User) {
     return this.auditService.auditPromise(
@@ -108,11 +100,6 @@ export class MainResolver {
   @Query(() => [Juristiction])
   drivingLicenseListOfJuristictions() {
     return this.drivingLicenseService.getListOfJuristictions()
-  }
-
-  @Query(() => QualityPhoto)
-  qualityPhoto(@CurrentUser() user: User) {
-    return this.drivingLicenseService.getQualityPhoto(user.nationalId)
   }
 
   @Query(() => StudentAssessment)

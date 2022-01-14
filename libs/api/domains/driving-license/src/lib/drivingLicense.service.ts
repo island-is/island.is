@@ -243,20 +243,26 @@ export class DrivingLicenseService {
   async getQualityPhoto(
     nationalId: User['nationalId'],
   ): Promise<QualityPhotoResult> {
-    const hasQualityPhoto = await this.drivingLicenseApi.getHasQualityPhoto({
-      nationalId,
-    })
-    if (!hasQualityPhoto) {
+    let hasQualityPhoto
+
+    try {
+      hasQualityPhoto = await this.drivingLicenseApi.getHasQualityPhoto({
+        nationalId,
+      })
+    } catch (e) {
+      if ((e as { status: number })?.status === 404) {
+        return {
+          hasQualityPhoto: false,
+          errorMessage: 'QualityPhoto not available',
+        }
+      }
       return {
-        nationalId: nationalId,
-        success: hasQualityPhoto,
-        hasQualityPhoto,
-        errorMessage: null,
+        hasQualityPhoto: false,
+        errorMessage: 'Something went wrong',
       }
     }
+
     return {
-      nationalId: nationalId,
-      success: hasQualityPhoto,
       hasQualityPhoto,
       errorMessage: null,
     }

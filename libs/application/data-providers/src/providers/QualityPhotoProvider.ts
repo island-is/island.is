@@ -30,7 +30,7 @@ export class QualityPhotoProvider extends BasicDataProvider {
     }
     const query = `
         query HasQualityPhoto {
-          qualityPhoto {
+          drivingLicenseQualityPhoto {
             hasQualityPhoto
           }
         }
@@ -49,7 +49,8 @@ export class QualityPhotoProvider extends BasicDataProvider {
     }
 
     return {
-      hasQualityPhoto: !!response.data.qualityPhoto?.hasQualityPhoto,
+      hasQualityPhoto: !!response.data.drivingLicenseQualityPhoto
+        ?.hasQualityPhoto,
     }
   }
 

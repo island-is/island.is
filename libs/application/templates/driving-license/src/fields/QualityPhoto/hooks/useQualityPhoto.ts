@@ -1,10 +1,11 @@
 import { Application, getValueViaPath } from '@island.is/application/core'
 import { QUALITY_PHOTO } from './queries.graphql'
-import { useQuery } from '@apollo/client'
+import { useQuery, ApolloError } from '@apollo/client'
 
 export interface QualityPhotoType {
   qualityPhoto: string | null
-  success: boolean
+  loading: boolean
+  error: ApolloError | undefined
 }
 
 export type HasQualityPhotoData = {
@@ -19,19 +20,14 @@ export const useQualityPhoto = (application: Application): QualityPhotoType => {
     'qualityPhoto',
   )
 
-  const { data } = useQuery(QUALITY_PHOTO, {
+  const { data, loading, error } = useQuery(QUALITY_PHOTO, {
     skip: !hasQualityPhoto?.data?.hasQualityPhoto,
   })
 
-  if (hasQualityPhoto?.data?.hasQualityPhoto === false) {
-    return {
-      success: false,
-      qualityPhoto: null,
-    }
-  }
   const qualityPhoto: QualityPhotoType = {
-    success: data?.qualityPhoto?.success,
-    qualityPhoto: data?.qualityPhoto?.qualityPhotoDataUri,
+    qualityPhoto: data?.drivingLicenseQualityPhoto?.qualityPhotoDataUri,
+    loading: loading,
+    error: error,
   }
   return qualityPhoto
 }
