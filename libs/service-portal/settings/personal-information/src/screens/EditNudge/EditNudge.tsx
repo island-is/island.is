@@ -95,18 +95,11 @@ export const EditNudge: ServicePortalModuleComponent = () => {
           nudge={!!settings?.canNudge}
           renderBackButton={() => (
             <Link to={ServicePortalPath.SettingsPersonalInformation}>
-              <Button variant="ghost" size="small">
-                {formatMessage(m.goBack)}
-              </Button>
+              <Button variant="ghost">{formatMessage(m.goBack)}</Button>
             </Link>
           )}
           renderSubmitButton={() => (
-            <Button
-              type="submit"
-              variant="primary"
-              icon="arrowForward"
-              size="small"
-            >
+            <Button type="submit" variant="primary" icon="arrowForward">
               {formatMessage({
                 id: 'sp.settings:save-changes',
                 defaultMessage: 'Vista breytingar',

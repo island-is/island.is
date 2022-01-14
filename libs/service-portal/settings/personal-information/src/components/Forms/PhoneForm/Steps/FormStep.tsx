@@ -91,7 +91,6 @@ export const FormStep: FC<Props> = ({
           type="submit"
           icon="arrowForward"
           disabled={loading}
-          size="small"
         >
           {formatMessage(m.confirmCode)}
         </Button>
