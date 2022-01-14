@@ -17,7 +17,6 @@ import {
   IdentityResource,
 } from '@island.is/auth-api-lib'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { ExperimentsController } from './experiments.controller'
 
 @Module({
   imports: [
@@ -37,7 +36,7 @@ import { ExperimentsController } from './experiments.controller'
       IdentityResource,
     ]),
   ],
-  controllers: [ClientsController, OriginsController, ExperimentsController],
+  controllers: [ClientsController, OriginsController],
   providers: [ClientsService],
 })
 export class ClientsModule {}
