@@ -7,7 +7,7 @@ import { RskCompanyAddress } from './models/rskCompanyAddress.model'
 import { RskCompanyRelatedParty } from './models/rskCompanyRelatedParty.model'
 import { RskCompanyClassification } from './models/rskCompanyClassification.model'
 import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
-import { decodeBase64, toBase64 } from '../rsk-company-info.utils'
+import { decodeBase64, toBase64 } from './rsk-company-info.utils'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 

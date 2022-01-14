@@ -35,7 +35,6 @@ import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { IslykillModule } from '@island.is/api/domains/islykill'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
-import { RskCompanyInfoModule } from '@island.is/api/domains/rsk-company-info'
 import { AssetsClientConfig } from '@island.is/clients/assets'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
@@ -187,6 +186,9 @@ const autoSchemaFile = environment.production
       password: environment.rskDomain.password,
       url: environment.rskDomain.url,
       username: environment.rskDomain.username,
+      xRoadProviderId: environment.rskCompanyInfo.xRoadProviderId,
+      xRoadBaseUrl: environment.rskCompanyInfo.xRoadBaseUrl,
+      xRoadClientId: environment.rskCompanyInfo.xRoadClientId,
     }),
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl,
@@ -238,11 +240,6 @@ const autoSchemaFile = environment.production
       xRoadClientId: environment.xroad.clientId,
       password: environment.paymentSchedule.password,
       username: environment.paymentSchedule.username,
-    }),
-    RskCompanyInfoModule.register({
-      xRoadProviderId: environment.rskCompanyInfo.xRoadProviderId,
-      xRoadBaseUrl: environment.rskCompanyInfo.xRoadBaseUrl,
-      xRoadClientId: environment.rskCompanyInfo.xRoadClientId,
     }),
     IslykillModule.register({
       cert: environment.islykill.cert,
