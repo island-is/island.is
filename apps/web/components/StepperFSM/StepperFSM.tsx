@@ -24,11 +24,17 @@ import {
   getStepOptions,
   STEP_TYPES,
   StepOption,
+  getStepBySlug,
+  getStateMeta,
+  StepperMachine,
 } from './StepperFSMUtils'
 import { useRouter } from 'next/router'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import { ValueType } from 'react-select'
+import { State } from 'xstate'
+
+const answerDelimiter = ','
 
 interface StepperProps {
   stepper: Stepper
@@ -44,8 +50,42 @@ interface StepOptionSelectItem {
 }
 
 export const StepperFSM = ({ stepper }: StepperProps) => {
+  const router = useRouter()
+  const { activeLocale } = useI18n()
   const stepperMachine = getStepperMachine(stepper)
-  const [currentState, send] = useMachine(stepperMachine)
+
+  const getInitialState = (stepperMachine: StepperMachine) => {
+    let initialState = stepperMachine.initialState
+
+    const answerString = (router.query?.answers ?? '') as string
+
+    // If the query parameter is not a string then we just skip checking further
+    if (!(typeof answerString === 'string' || answerString instanceof String))
+      return initialState
+
+    const answers = answerString.split(answerDelimiter)
+
+    const states = []
+
+    for (const stateName in stepperMachine.states) {
+      const state = stepperMachine.states[stateName]
+
+      const step = getStepBySlug(stepper, state.config.meta.stepSlug)
+
+      if (step.stepType !== 'Answer') {
+        const options = getStepOptions(step, activeLocale)
+        console.log(options)
+      }
+
+      // console.log(step)
+    }
+
+    return initialState
+  }
+
+  const [currentState, send] = useMachine(stepperMachine, {
+    state: getInitialState(stepperMachine),
+  })
 
   const currentStep = useMemo<Step>(() => {
     return getCurrentStep(stepper, currentState)
@@ -65,9 +105,6 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
   // TODO: Append answer to query parameter when submitting.
   // TODO: Add support for initializing the State Machine using provided answers query parameter.
   // TODO: Currently, if you call the send function with an unavailable transition string, then it silently fails.
-
-  const router = useRouter()
-  const { activeLocale } = useI18n()
 
   const isOnFirstStep = stepperMachine.initialState.value === currentState.value
   const [selectedOption, setSelectedOption] = useState<StepOption | undefined>(
@@ -111,6 +148,25 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
           setHasClickedContinueWithoutSelecting(false)
           setSelectedOption(undefined)
           send(selectedOption.transition)
+
+          const pathnameWithoutQueryParams = router.asPath.split('?')[0]
+
+          const answers = `${
+            router.query?.answers
+              ? router.query.answers.concat(answerDelimiter)
+              : ''
+          }${selectedOption.slug}`
+
+          router.push(
+            {
+              pathname: pathnameWithoutQueryParams,
+              query: {
+                answers: answers,
+              },
+            },
+            undefined,
+            { shallow: true },
+          )
         }}
       >
         {activeLocale === 'is' ? 'Áfram' : 'Continue'}

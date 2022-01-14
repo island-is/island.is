@@ -142,4 +142,10 @@ export {
   resolveStepType,
   getStepOptions,
 }
-export type { StepperConfig, StateMeta, StepperState, StepOption }
+export type {
+  StepperConfig,
+  StateMeta,
+  StepperState,
+  StepOption,
+  StepperMachine,
+}
