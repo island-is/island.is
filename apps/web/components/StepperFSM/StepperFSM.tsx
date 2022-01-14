@@ -54,7 +54,7 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
   const { activeLocale } = useI18n()
   const stepperMachine = getStepperMachine(stepper)
 
-  const getInitialState = (stepperMachine: StepperMachine) => {
+  const getInitialState = () => {
     let initialState = stepperMachine.initialState
 
     const answerString = (router.query?.answers ?? '') as string
@@ -65,26 +65,31 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
 
     const answers = answerString.split(answerDelimiter)
 
-    const states = []
+    // TODO: loop through all the answers and transition onwards
 
-    for (const stateName in stepperMachine.states) {
-      const state = stepperMachine.states[stateName]
+    const state = stepperMachine.states[stepperMachine.config.initial as string]
 
-      const step = getStepBySlug(stepper, state.config.meta.stepSlug)
+    const step = getStepBySlug(stepper, state.config.meta.stepSlug)
 
-      if (step.stepType !== 'Answer') {
-        const options = getStepOptions(step, activeLocale)
-        console.log(options)
-      }
+    if (step.stepType === 'Answer') return initialState
 
-      // console.log(step)
-    }
+    const options = getStepOptions(step, activeLocale)
+
+    const selectedOption = options.find((o) => o.slug === answers[0])
+
+    // console.log(selectedOption)
+    if (!selectedOption) return initialState
+
+    initialState = stepperMachine.transition(
+      initialState,
+      selectedOption.transition,
+    )
 
     return initialState
   }
 
   const [currentState, send] = useMachine(stepperMachine, {
-    state: getInitialState(stepperMachine),
+    state: getInitialState(),
   })
 
   const currentStep = useMemo<Step>(() => {
