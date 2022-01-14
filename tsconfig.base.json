@@ -116,9 +116,6 @@
         "libs/api/domains/regulations/src/index.ts"
       ],
       "@island.is/api/domains/rsk": ["libs/api/domains/rsk/src/index.ts"],
-      "@island.is/api/domains/rsk-company-info": [
-        "libs/api/domains/rsk-company-info/src/index.ts"
-      ],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
       ],

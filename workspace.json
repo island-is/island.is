@@ -1399,35 +1399,6 @@
         }
       }
     },
-    "api-domains-rsk-company-info": {
-      "root": "libs/api/domains/rsk-company-info",
-      "sourceRoot": "libs/api/domains/rsk-company-info/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/api/domains/rsk-company-info/tsconfig.lib.json",
-              "libs/api/domains/rsk-company-info/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api/domains/rsk-company-info/**/*"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/api/domains/rsk-company-info"],
-          "options": {
-            "jestConfig": "libs/api/domains/rsk-company-info/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "api-domains-syslumenn": {
       "root": "libs/api/domains/syslumenn",
       "sourceRoot": "libs/api/domains/syslumenn/src",
