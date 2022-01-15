@@ -2,7 +2,7 @@ import { serviceSetup as apiSetup } from '../../../apps/api/infra/api'
 import { serviceSetup as webSetup } from '../../../apps/web/infra/web'
 import { serviceSetup as searchIndexerSetup } from '../../../apps/services/search-indexer/infra/search-indexer-service'
 
-import { serviceSetup as appSystemApiSetup } from '../../../apps/application-system/api/infra/application-system-api'
+import { serviceSetup as appSystemApiSetup, workerSetup as appSystemApiWorkerSetup } from '../../../apps/application-system/api/infra/application-system-api'
 import { serviceSetup as appSystemFormSetup } from '../../../apps/application-system/form/infra/application-system-form'
 
 import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
@@ -43,6 +43,7 @@ const appSystemApi = appSystemApiSetup({
   documentsService,
   servicesEndorsementApi: endorsement,
 })
+const appSystemApiWorker = appSystemApiWorkerSetup();
 const appSystemForm = appSystemFormSetup({})
 
 const servicePortalApi = servicePortalApiSetup()
@@ -147,6 +148,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     externalContractsTests,
+    appSystemApiWorker
   ],
 }
 
