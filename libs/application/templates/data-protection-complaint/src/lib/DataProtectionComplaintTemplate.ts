@@ -30,7 +30,11 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
         meta: {
           name: application.name.defaultMessage,
           progress: 0.5,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 5 * 60000, //5 minutes
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -55,7 +59,11 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 5 * 60000, //5 minutes
+          },
           onEntry: {
             apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
           },

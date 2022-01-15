@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.sequelize.query(`
       BEGIN;
 
-        CREATE INDEX pruned_and_pruneAt_idx ON application (prune_at, pruned) WHERE (pruned = FALSE AND prune_at IS NOT NULL);
+        CREATE INDEX pruned_and_pruneAt_idx ON application (pruned, prune_at) WHERE (pruned = FALSE AND prune_at IS NOT NULL);
 
       COMMIT;
     `)
