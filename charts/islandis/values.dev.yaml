@@ -480,6 +480,9 @@ application-system-api-worker:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+    SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
+    SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
+    SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
