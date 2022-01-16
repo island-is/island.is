@@ -1,4 +1,6 @@
-# Core
+<!-- gitbook-navigation: "Core" -->
+
+# Application Core
 
 ## About
 
@@ -135,7 +137,7 @@ Each application defines their own [states](https://xstate.js.org/docs/guides/st
 
 > A state is an abstract representation of a system (such as an application) at a specific point in time. As an application is interacted with, events cause it to change state. A finite state machine can be in only one of a finite number of states at any given time.
 
-You can see a simple example from the meta-application [here](https://github.com/island-is/island.is/blob/287e1769d8fa3f0665ff767a9c82933d0c785fdc/libs/application/templates/meta-application/src/lib/ApplicationTemplate.ts#L83-L171), or a more complex example from the Parental Leave [here](https://github.com/island-is/island.is/blob/ed3ac581b75862cd5e45d5ee8a6811d40216ac46/libs/application/templates/parental-leave/src/lib/ParentalLeaveTemplate.ts#L30-L41).
+You can see a simple example from the reference-template [here](https://github.com/island-is/island.is/blob/287e1769d8fa3f0665ff767a9c82933d0c785fdc/libs/application/templates/reference-template/src/lib/ReferenceApplicationTemplate.ts#L60-L152), or a more complex example from the Parental Leave [here](https://github.com/island-is/island.is/blob/ed3ac581b75862cd5e45d5ee8a6811d40216ac46/libs/application/templates/parental-leave/src/lib/ParentalLeaveTemplate.ts#L30-L41).
 
 #### Status
 

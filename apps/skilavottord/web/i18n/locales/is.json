@@ -113,19 +113,30 @@
       "primaryButton": "Endurhlaða síðu"
     }
   },
-  "confirm": {
-    "title": "Samþykkja úrvinnslu ökutækis",
+  "recycle": {
+    "title": "Endurvinna ökutæki",
     "subTitles": {
       "confirm": "Viltu velja þetta ökutæki til úrvinnslu?"
     },
-    "info": "Þegar ökutæki hefur verið samþykkt til úrvinnslu getur þú leitið upplýsinga hjá viðkomandi sveitarfélagi/móttökuaðila um hvert eigi að fara með ökutækið til að farga því. Umsóknin er ekki bindandi, ökutæki verður einungis endurunnið sé því skilað til móttökuaðila.",
+    "info": "Þegar ökutæki hefur verið samþykkt til úrvinnslu getur þú leitað upplýsinga hjá viðkomandi sveitarfélagi/móttökuaðila um hvert eigi að fara með ökutækið til að farga því. Umsóknin er ekki bindandi, ökutæki verður einungis endurunnið sé því skilað til móttökuaðila.",
     "buttons": {
       "cancel": "Hætta við",
-      "continue": "Rafrænt samþykki"
+      "continue": "Halda áfram"
     },
     "checkbox": {
       "label": "Samþykkja",
       "linkLabel": "Skilmála og skilyrði"
+    }
+  },
+  "confirm": {
+    "title": "Staðfesta endurvinnslu",
+    "subTitles": {
+      "confirm": "Ertu viss um að senda þetta ökutæki til úrvinnslu?"
+    },
+    "info": "Með því að samþykkja verður bíllinn þinn skráður sem endurvinnanlegur. Umsóknin er ekki bindandi. Ökutæki verður einungis endurunnið sé því skilað til móttökuaðila.",
+    "buttons": {
+      "cancel": "Til baka",
+      "continue": "Staðfesta"
     }
   },
   "handover": {
@@ -199,10 +210,7 @@
     "outOf": "af",
     "citizen": {
       "title": "Skil á ökutæki",
-      "sections": [
-        "Samþykkja úrvinnslu ökutækis",
-        "Afhenda ökutæki til móttökuaðila"
-      ],
+      "sections": ["Endurvinna bíl", "Staðfesting", "Yfirlit"],
       "completed": "Lokið"
     },
     "company": {
@@ -530,6 +538,7 @@
     "myCars": "/my-cars",
     "recycleVehicle": {
       "baseRoute": "/recycle-vehicle",
+      "recycle": "/recycle-vehicle/[id]/recycle",
       "confirm": "/recycle-vehicle/[id]/confirm",
       "handover": "/recycle-vehicle/[id]/handover",
       "completed": "/recycle-vehicle/[id]/completed"

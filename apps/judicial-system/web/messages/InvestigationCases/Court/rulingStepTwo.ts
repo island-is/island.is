@@ -125,13 +125,6 @@ export const icRulingStepTwo = {
         description:
           'Notaður sem texti við valmöguleika sækjanda um lögbundinn frest radio takkann á úrskurðar og kæru skrefi í rannsóknarheimildum.',
       },
-      prosecutorPostponeInRemoteSession: {
-        id:
-          'judicial.system.investigation_cases:ruling_step_two.appeal_decision.prosecutor_postpone_in_remote_session',
-        defaultMessage: 'Sækjandi fær lögboðinn frest',
-        description:
-          'Notaður sem texti við valmöguleika sækjanda um lögbundinn frest radio takkann á úrskurðar og kæru skrefi í rannsóknarheimildum þegar fyrirtakan er án munnlegs málflutnings.',
-      },
       prosecutorNotApplicable: {
         id:
           'judicial.system.investigation_cases:ruling_step_two.appeal_decision.prosecutor_not_applicable',
@@ -153,6 +146,29 @@ export const icRulingStepTwo = {
           'Hér er hægt að bóka frekar um það sem sækjandi vill taka fram ef við á.',
         description:
           'Notaður sem placeholder í "Yfirlýsing sækjanda" innsláttarsvæði á úrskurðar og kæru skrefi í rannsóknarheimildum.',
+      },
+    }),
+    endOfSessionBookings: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_two.end_of_session_bookings.title',
+        defaultMessage: 'Bókanir í lok þinghalds',
+        description:
+          'Notaður sem titill fyrir "Bókanir í lok þinghalds" hlutann á úrskurðar og kæru skrefi í rannsóknarheimildum.',
+      },
+      label: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_two.end_of_session_bookings.label',
+        defaultMessage: 'Tilhögun gæslu og aðrar bókanir',
+        description:
+          'Notaður sem titill á "Tilhögun gæslu og aðrar bókanir" innsláttarsvæði á úrskurðar og kæru skrefi í rannsóknarheimildum.',
+      },
+      placeholder: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_two.end_of_session.placeholder',
+        defaultMessage: 'Hér er hægt að skrá aðrar bókanir',
+        description:
+          'Notaður sem placeholder fyrir "Tilhögun gæslu og aðrar bókanir" innsláttarsvæði á úrskurðar og kæru skrefi í rannsóknarheimildum.',
       },
     }),
   },

@@ -18,6 +18,7 @@ import {
   Staff,
   FileType,
   getApplicantEmailDataFromEventType,
+  firstDateOfMonth,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -43,12 +44,6 @@ interface Recipient {
 
 const linkToStatusPage = (applicationId: string) => {
   return `${environment.oskBaseUrl}/stada/${applicationId}"`
-}
-
-const firstDateOfMonth = () => {
-  const date = new Date()
-
-  return new Date(date.getFullYear(), date.getMonth(), 1)
 }
 
 @Injectable()
@@ -390,6 +385,7 @@ export class ApplicationService {
       const municipality = await this.municipalityService.findByMunicipalityId(
         updatedApplication.municipalityCode,
       )
+
       const emailData = getApplicantEmailDataFromEventType(
         update.event,
         linkToStatusPage(updatedApplication.id),

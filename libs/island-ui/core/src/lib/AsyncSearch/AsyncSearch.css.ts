@@ -125,7 +125,7 @@ export const loadingIcon = style({
     },
   }),
   animationDuration: '1.5s',
-  animationIterationCount: 'infinate',
+  animationIterationCount: 'infinite',
   animationTimingFunction: 'linear',
 })
 

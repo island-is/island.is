@@ -88,6 +88,7 @@ export const navigation = style({
 
 export const trianglesLeft = style({
   position: 'absolute',
+  pointerEvents: 'none',
   background: 'url("/assets/sjukratryggingar_triangles_left.png")',
   backgroundPosition: 'bottom',
   backgroundRepeat: 'no-repeat',
@@ -104,6 +105,7 @@ export const trianglesLeft = style({
 
 export const trianglesRight = style({
   position: 'absolute',
+  pointerEvents: 'none',
   background: 'url("/assets/sjukratryggingar_triangles_right.png")',
   backgroundPosition: 'bottom',
   backgroundRepeat: 'no-repeat',
@@ -120,6 +122,7 @@ export const trianglesRight = style({
 
 export const trianglesTop = style({
   position: 'absolute',
+  pointerEvents: 'none',
   background: 'url("/assets/sjukratryggingar_triangles_top.png")',
   backgroundPosition: 'top',
   backgroundRepeat: 'no-repeat',

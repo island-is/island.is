@@ -26,7 +26,8 @@
     "pg-native",
     "form-data",
     "bull",
-    "pseudomap"
+    "pseudomap",
+    "configcat-node"
   ],
   "keepNames": true
 }

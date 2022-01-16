@@ -59,6 +59,7 @@ export const DocumentProviderInput: FC<Props> = ({
               placeholder={placeholder}
               hasError={hasError}
               errorMessage={errorMessage}
+              size="xs"
             />
           )}
         />

@@ -44,6 +44,7 @@ export const UserHelpForm: FC<Props> = ({ helpDesk, organisationId }) => {
           }}
           render={({ onChange, name, value }) => (
             <Input
+              size="xs"
               label={formatMessage(m.SettingsEditUserHelpContactEmail)}
               placeholder={formatMessage(m.SettingsEditUserHelpContactEmail)}
               name={name}
@@ -74,6 +75,7 @@ export const UserHelpForm: FC<Props> = ({ helpDesk, organisationId }) => {
           }}
           render={({ onChange, name, value }) => (
             <Input
+              size="xs"
               label={formatMessage(m.SettingsEditUserHelpContactTel)}
               placeholder={formatMessage(m.SettingsEditUserHelpContactTel)}
               name={name}
