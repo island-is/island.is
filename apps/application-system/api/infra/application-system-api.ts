@@ -9,9 +9,12 @@ import {
   CriminalRecord,
 } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { PostgresInfo } from '../../../../infra/src/dsl/types/input-types'
 
-const postgresInfo = {
+const postgresInfo: PostgresInfo = {
   passwordSecret: '/k8s/application-system/api/DB_PASSWORD',
+  name: 'application_system_api',
+  username: 'application_system_api',
 }
 
 const namespace = 'application-system'
