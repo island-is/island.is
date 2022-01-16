@@ -155,7 +155,7 @@ export class ParentalLeaveService {
       ratio: string,
       length: string,
       shouldUseLength: boolean,
-    ) => (shouldUseLength ? `D${length}` : ratio)
+    ) => (shouldUseLength ? `D${length}` : `${ratio}`)
 
     for (const [index, period] of answers.entries()) {
       const isFirstPeriod = index === 0

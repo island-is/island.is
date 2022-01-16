@@ -904,6 +904,11 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Fyrir svona langt tímabil fást greiðslur að hlutfalli af hámarksréttindum þínum: ',
       description: 'For this length of time you will get payments up to',
     },
+    fullyUsedRatio: {
+      id: 'pl.application:duration.ratio.fullyUse',
+      defaultMessage: 'Full nýting (tæp {maxPercentage}%)',
+      description: 'Fully use rights {percentage}',
+    },
   }),
 
   employer: defineMessages({

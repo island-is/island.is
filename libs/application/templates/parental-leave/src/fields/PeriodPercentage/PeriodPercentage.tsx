@@ -114,7 +114,10 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
 
       options.splice(0, 0, {
         value: max,
-        label: `Full nýting (tæp ${maxPercentage}%)`,
+        label: formatMessage(
+          parentalLeaveFormMessages.duration.fullyUsedRatio,
+          { maxPercentage: max },
+        ),
       })
     }
 
