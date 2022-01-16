@@ -19,6 +19,7 @@ const serviceAccount = 'application-system-api'
 export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =>
   service('application-system-api-worker')
     .namespace(namespace)
+    .image('application-system-api')
     .postgres(postgresInfo)
     .serviceAccount(serviceAccount)
     .args('main.js', '--job', 'worker')
