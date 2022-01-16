@@ -453,6 +453,7 @@ application-system-api-worker:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api_worker'
     DB_USER: 'application_system_api_worker'
+    REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'

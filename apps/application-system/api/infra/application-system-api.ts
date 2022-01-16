@@ -22,6 +22,16 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
     .image('application-system-api')
     .postgres(postgresInfo)
     .serviceAccount(serviceAccount)
+    .env({
+      REDIS_URL_NODE_01: {
+        dev:
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        staging:
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        prod:
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+      },
+    })
     .secrets({
       SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
       SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',
