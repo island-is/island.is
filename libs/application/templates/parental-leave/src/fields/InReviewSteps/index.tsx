@@ -112,6 +112,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   const canBeEdited =
     application.state === ApplicationStates.OTHER_PARENT_APPROVAL ||
     application.state === ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN ||
+    application.state === ApplicationStates.EMPLOYER_APPROVAL ||
     application.state === ApplicationStates.APPROVED
 
   return (
