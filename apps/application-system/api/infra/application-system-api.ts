@@ -22,6 +22,11 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
     .image('application-system-api')
     .postgres(postgresInfo)
     .serviceAccount(serviceAccount)
+    .secrets({
+      SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
+      SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',
+      SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD',
+    })
     .args('main.js', '--job', 'worker')
     .command('node')
     .extraAttributes({
