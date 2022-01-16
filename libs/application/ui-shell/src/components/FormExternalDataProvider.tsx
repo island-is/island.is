@@ -56,11 +56,7 @@ const isTranslationObject = (reason?: StaticText) => {
     return false
   }
 
-  const hasId = reason.id !== undefined
-  const hasDescription = reason.description !== undefined
-  const hasDefaultMessage = reason.defaultMessage !== undefined
-
-  return hasId && hasDescription && hasDefaultMessage
+  return reason.id !== undefined
 }
 
 const ProviderItem: FC<{
@@ -89,7 +85,7 @@ const ProviderItem: FC<{
               isTranslationObject(dataProviderResult?.reason)
                 ? formatMessage(dataProviderResult.reason!)
                 : typeof dataProviderResult?.reason === 'string'
-                ? typeof dataProviderResult.reason
+                ? dataProviderResult.reason
                 : formatMessage(coreErrorMessages.failedDataProvider)
             }
           />
