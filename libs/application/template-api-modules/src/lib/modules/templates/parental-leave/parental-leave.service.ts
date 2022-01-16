@@ -26,7 +26,10 @@ import {
   generateApplicationApprovedByEmployerEmail,
   generateApplicationApprovedByEmployerToEmployerEmail,
 } from './emailGenerators'
-import { transformApplicationToParentalLeaveDTO } from './parental-leave.utils'
+import {
+  transformApplicationToParentalLeaveDTO,
+  getRatio,
+} from './parental-leave.utils'
 import { apiConstants } from './constants'
 
 interface VMSTError {
@@ -150,12 +153,6 @@ export class ParentalLeaveService {
     const isActualDateOfBirth =
       firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
     let numberOfDaysAlreadySpent = 0
-
-    const getRatio = (
-      ratio: string,
-      length: string,
-      shouldUseLength: boolean,
-    ) => (shouldUseLength ? `D${length}` : `${ratio}`)
 
     for (const [index, period] of answers.entries()) {
       const isFirstPeriod = index === 0

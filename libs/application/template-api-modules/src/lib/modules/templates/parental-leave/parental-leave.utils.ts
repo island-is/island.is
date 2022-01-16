@@ -264,3 +264,9 @@ export const pathToAsset = (file: string) => {
 
   return join(__dirname, `./parental-leave-assets/${file}`)
 }
+
+export const getRatio = (
+  ratio: string,
+  length: string,
+  shouldUseLength: boolean,
+) => (shouldUseLength ? `D${length}` : `${ratio}`)
