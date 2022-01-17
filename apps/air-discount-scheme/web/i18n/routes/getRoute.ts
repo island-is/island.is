@@ -15,7 +15,9 @@ const getLocaleRoutes = (locale: Locale) => {
   }
 }
 
-export default (locale: Locale, route: keyof Routes): string => {
+const getRoute = (locale: Locale, route: keyof Routes): string => {
   const localeRoutes = getLocaleRoutes(locale)
   return localeRoutes[route]
 }
+
+export default getRoute
