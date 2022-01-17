@@ -20,7 +20,7 @@ import {
 import { writeFile } from './writeFile'
 
 function constructCustodyNoticePdf(
-  existingCase: Case,
+  theCase: Case,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -48,12 +48,12 @@ function constructCustodyNoticePdf(
     .text('Úrskurður um gæsluvarðhald', { align: 'center' })
     .font('Helvetica')
     .text(
-      `Málsnúmer ${existingCase.court?.name?.replace('dómur', 'dóms') ?? '?'} ${
-        existingCase.courtCaseNumber
+      `Málsnúmer ${theCase.court?.name?.replace('dómur', 'dóms') ?? '?'} ${
+        theCase.courtCaseNumber
       }`,
       { align: 'center' },
     )
-    .text(`LÖKE málsnúmer ${existingCase.policeCaseNumber}`, {
+    .text(`LÖKE málsnúmer ${theCase.policeCaseNumber}`, {
       align: 'center',
     })
     .text(' ')
@@ -64,27 +64,27 @@ function constructCustodyNoticePdf(
     .fontSize(baseFontSize)
     // Assume there is at most one defendant
     .text(
-      existingCase.defendants &&
-        existingCase.defendants.length > 0 &&
-        existingCase.defendants[0].name
-        ? existingCase.defendants[0].name
+      theCase.defendants &&
+        theCase.defendants.length > 0 &&
+        theCase.defendants[0].name
+        ? theCase.defendants[0].name
         : 'Nafn ekki skráð',
     )
     .font('Helvetica')
     .text(
       `kt. ${formatNationalId(
-        existingCase.defendants &&
-          existingCase.defendants.length > 0 &&
-          existingCase.defendants[0].nationalId
-          ? existingCase.defendants[0].nationalId
+        theCase.defendants &&
+          theCase.defendants.length > 0 &&
+          theCase.defendants[0].nationalId
+          ? theCase.defendants[0].nationalId
           : 'Kennitala ekki skráð',
       )}`,
     )
     .text(
-      existingCase.defendants &&
-        existingCase.defendants.length > 0 &&
-        existingCase.defendants[0].address
-        ? existingCase.defendants[0].address
+      theCase.defendants &&
+        theCase.defendants.length > 0 &&
+        theCase.defendants[0].address
+        ? theCase.defendants[0].address
         : 'Heimili ekki skráð',
     )
     .text(' ')
@@ -96,24 +96,17 @@ function constructCustodyNoticePdf(
     .font('Helvetica')
     .fontSize(baseFontSize)
     .text(
-      `${existingCase.court?.name}, ${formatDate(
-        existingCase.courtStartDate,
-        'PPP',
-      )}`,
+      `${theCase.court?.name}, ${formatDate(theCase.courtStartDate, 'PPP')}`,
     )
     .text(' ')
     .text(
       `Úrskurður kveðinn upp ${
-        formatDate(existingCase.rulingDate, 'PPPp')?.replace(' kl.', ', kl.') ??
-        '?'
+        formatDate(theCase.rulingDate, 'PPPp')?.replace(' kl.', ', kl.') ?? '?'
       }`,
     )
     .text(
       `Úrskurður rennur út ${
-        formatDate(existingCase.validToDate, 'PPPp')?.replace(
-          ' kl.',
-          ', kl.',
-        ) ?? '?'
+        formatDate(theCase.validToDate, 'PPPp')?.replace(' kl.', ', kl.') ?? '?'
       }`,
     )
     .text(' ')
@@ -122,15 +115,15 @@ function constructCustodyNoticePdf(
       continued: true,
     })
     .font('Helvetica')
-    .text(existingCase.leadInvestigator ?? 'Ekki skráður')
+    .text(theCase.leadInvestigator ?? 'Ekki skráður')
     .font('Helvetica-Bold')
     .text('Ákærandi: ', {
       continued: true,
     })
     .font('Helvetica')
     .text(
-      existingCase.prosecutor
-        ? `${existingCase.prosecutor.name} ${existingCase.prosecutor.title}`
+      theCase.prosecutor
+        ? `${theCase.prosecutor.name} ${theCase.prosecutor.title}`
         : 'Ekki skráður',
     )
     .font('Helvetica-Bold')
@@ -139,23 +132,21 @@ function constructCustodyNoticePdf(
     })
     .font('Helvetica')
     .text(
-      existingCase.defenderName && !existingCase.defenderIsSpokesperson
-        ? `${existingCase.defenderName}${
-            existingCase.defenderPhoneNumber
-              ? `, s. ${existingCase.defenderPhoneNumber}`
+      theCase.defenderName && !theCase.defenderIsSpokesperson
+        ? `${theCase.defenderName}${
+            theCase.defenderPhoneNumber
+              ? `, s. ${theCase.defenderPhoneNumber}`
               : ''
-          }${
-            existingCase.defenderEmail ? `, ${existingCase.defenderEmail}` : ''
-          }`
+          }${theCase.defenderEmail ? `, ${theCase.defenderEmail}` : ''}`
         : 'Ekki skráður',
     )
 
   const custodyRestrictions = formatCustodyRestrictions(
-    existingCase.requestedCustodyRestrictions,
-    existingCase.isCustodyIsolation,
+    theCase.requestedCustodyRestrictions,
+    theCase.isCustodyIsolation,
   )
 
-  if (existingCase.isCustodyIsolation || custodyRestrictions) {
+  if (theCase.isCustodyIsolation || custodyRestrictions) {
     doc
       .text(' ')
       .text(' ')
@@ -165,13 +156,13 @@ function constructCustodyNoticePdf(
       .text('Tilhögun gæsluvarðhalds')
       .font('Helvetica')
       .fontSize(baseFontSize)
-    if (existingCase.isCustodyIsolation) {
+    if (theCase.isCustodyIsolation) {
       doc.text(
         formatCustodyIsolation(
-          existingCase.defendants && existingCase.defendants.length > 0
-            ? existingCase.defendants[0].gender
+          theCase.defendants && theCase.defendants.length > 0
+            ? theCase.defendants[0].gender
             : undefined,
-          existingCase.isolationToDate,
+          theCase.isolationToDate,
         ),
       )
     }
