@@ -107,7 +107,7 @@ export const FamilyMemberCard: FC<Props> = ({
             <Button variant="text" size="small">
               {formatMessage({
                 id: 'sp.family:see-info',
-                defaultMessage: 'Skoða upplýsingar',
+                defaultMessage: 'Skoða nánar',
               })}
             </Button>
           </Link>

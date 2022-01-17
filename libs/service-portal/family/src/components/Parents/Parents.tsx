@@ -7,6 +7,7 @@ import {
   LoadingDots,
   GridColumnProps,
   Tooltip,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
