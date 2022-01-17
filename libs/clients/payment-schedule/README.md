@@ -1,4 +1,6 @@
-# Clients Payment Schedule
+<!-- gitbook-navigation: "Payment Schedule" -->
+
+# Payment Schedule Client
 
 This library was generated with [Nx](https://nx.dev).
 

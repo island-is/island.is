@@ -32,7 +32,7 @@ export class AttachmentS3Service {
         key: string
         name: string
       }>
-
+      if (!answers) continue
       const list = await this.toDocumentDataList(
         answers,
         attachmentAnswerKeys[i],
