@@ -3,7 +3,7 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 const iconEaseIn = keyframes({
   from: {
-    opacity: 0,
+    opacity: 0.8,
   },
   to: {
     opacity: 1,
@@ -105,8 +105,7 @@ export const iconWrapper = style({
 export const icon = style({
   pointerEvents: 'none',
   height: '26px',
-  animation: `250ms ease-in-out 0s 1 ${iconEaseIn}`,
-  willChange: 'opacity',
+  animation: `100ms ease-in-out 0s 1 ${iconEaseIn}`,
 })
 
 export const dot = style({
