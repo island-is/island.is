@@ -7,19 +7,21 @@ import {
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 
-import { FinancialAidService } from './financialAid.service'
+import { MunicipalitiesFinancialAidService } from './municipalitiesFinancialAid.service'
 import { CurrentApplicationResponse } from './dto/currentApplication'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
-export class FinancialAidResolver {
-  constructor(private financialAidService: FinancialAidService) {}
+export class MunicipalitiesFinancialAidResolver {
+  constructor(
+    private municipalitiesFinancialAidService: MunicipalitiesFinancialAidService,
+  ) {}
 
   @Query(() => CurrentApplicationResponse, { nullable: true })
   async hasUserFinancialAidApplicationForCurrentPeriod(
     @CurrentUser() user: User,
   ): Promise<CurrentApplicationResponse> {
-    const currentApplicationId = await this.financialAidService.hasUserApplicationForCurrentPeriod(
+    const currentApplicationId = await this.municipalitiesFinancialAidService.hasUserApplicationForCurrentPeriod(
       user,
       user.nationalId,
     )

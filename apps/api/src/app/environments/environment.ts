@@ -144,9 +144,6 @@ const prodConfig = () => ({
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
-  financialAid: {
-    baseApiUrl: process.env.FINANCIAL_AID_BACKEND_URL,
-  },
 })
 const devConfig = () => ({
   production: false,
@@ -307,10 +304,6 @@ const devConfig = () => ({
     cert: process.env.ISLYKILL_CERT,
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
-  },
-  financialAid: {
-    baseApiUrl:
-      process.env.FINANCIAL_AID_BACKEND_URL ?? 'http://localhost:3344',
   },
 })
 export const getConfig =

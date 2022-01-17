@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('MunicipalitiesFinancialAidCurrentApplication')
 export class CurrentApplicationResponse {
   @Field({ nullable: true })
   currentApplicationId?: string

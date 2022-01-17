@@ -45,6 +45,10 @@ export interface Applicant {
   spouse?: Spouse
 }
 
+export interface CurrentApplication {
+  currentApplicationId?: string
+}
+
 export interface Address {
   streetName: string
   postalCode: string

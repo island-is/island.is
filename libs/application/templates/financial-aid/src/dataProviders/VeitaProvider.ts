@@ -3,28 +3,29 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-import { DataProviderTypes, Applicant } from '../lib/types'
+import { CurrentApplication, DataProviderTypes } from '../lib/types'
 
 export class VeitaProvider extends BasicDataProvider {
   readonly type = DataProviderTypes.NationalRegistry
-  async provide(): Promise<string | undefined> {
+  async provide(): Promise<CurrentApplication> {
     // TODO: We probably need application system id and current Veita id here
     const query = `
         query HasUserAppliedForPeriod {
-            hasUserFinancialAidApplicationForCurrentPeriod {
+          municipalitiesFinancialAidCurrentApplication {
                 currentApplicationId
             }
         }
       `
 
-    return this.useGraphqlGateway<string | undefined>(query)
+    return this.useGraphqlGateway<CurrentApplication>(query)
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
           return this.handleError(response.errors)
         }
-        const returnObject: string | undefined =
-          response.data.currentUser?.currentApplicationId
+        const returnObject =
+          response.data.municipalitiesFinancialAidCurrentApplication
+
         return Promise.resolve(returnObject)
       })
       .catch((error) => {
@@ -42,7 +43,7 @@ export class VeitaProvider extends BasicDataProvider {
       status: 'failure',
     }
   }
-  onProvideSuccess(result: Applicant): SuccessfulDataProviderResult {
+  onProvideSuccess(result: CurrentApplication): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }
