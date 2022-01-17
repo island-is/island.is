@@ -41,6 +41,9 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
+  const [showDropModal, setShowDropModal] = useState<
+    'tel' | 'mail' | 'all' | undefined
+  >()
 
   const [telDirty, setTelDirty] = useState(true)
   const [emailDirty, setEmailDirty] = useState(true)
@@ -76,8 +79,16 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
 
   // Handles a close event directly in the onboarding component
   const dropOnboarding = () => {
-    setToggleCloseModal(true)
-    dropOnboardingSideEffects()
+    const showAll = !email && !tel && 'all'
+    const showEmail = !email && 'mail'
+    const showTel = !tel && 'tel'
+    const showDropModal = showAll || showEmail || showTel || undefined
+    if (showDropModal) {
+      setShowDropModal(showDropModal)
+    } else {
+      setToggleCloseModal(true)
+      dropOnboardingSideEffects()
+    }
   }
 
   const closeModal = () => {
@@ -90,8 +101,6 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
        * TODO:
        * - createIslykillSettings + updateIslykillSettings in islykill.service.ts...
        * ..should check if email + phone is verified before saving in islykill db
-       * - New look for inputs. Rebase w islykill-up.
-       * - Add rule for dropmodal on/off
        * - /minarsidur/stillingar/personuupplysingar/ -> Update look on this page to new look
        * - Language switcher onboarding overlay
        * - Review styling -> Compare with design.
@@ -190,7 +199,14 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
           </GridColumn>
         </GridRow>
       </GridContainer>
-      {false && <DropModal type="all" onClose={closeModal} close={false} />}
+      {showDropModal && (
+        <DropModal
+          type={showDropModal}
+          onDrop={closeModal}
+          onClose={() => setShowDropModal(undefined)}
+          close={false}
+        />
+      )}
     </ModalBase>
   )
 }

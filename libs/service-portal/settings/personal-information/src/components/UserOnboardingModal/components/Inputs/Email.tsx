@@ -9,6 +9,7 @@ import {
   Column,
   Input,
   Icon,
+  Text,
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useVerifyEmail } from '@island.is/service-portal/graphql'
@@ -128,10 +129,16 @@ export const InputEmail: FC<Props> = ({
               placeholder={formatMessage(m.email)}
               error={errors.email?.message}
               defaultValue={email || ''}
+              size="xs"
             />
           </Column>
           <Column width="3/12">
-            <Box display="flex" alignItems="flexEnd" flexDirection="column">
+            <Box
+              display="flex"
+              alignItems="flexEnd"
+              flexDirection="column"
+              paddingTop={2}
+            >
               <button type="submit" disabled={!emailInternal}>
                 <Button variant="text" size="small" disabled={!emailInternal}>
                   {buttonText}
@@ -143,52 +150,69 @@ export const InputEmail: FC<Props> = ({
       </form>
       {emailVerifyCreated && (
         <form onSubmit={handleSubmit(handleConfirmCode)}>
-          <Columns alignY="center">
-            <Column width="9/12">
-              <Controller
-                control={control}
-                name="code"
-                rules={{
-                  required: {
-                    value: true,
-                    message: formatMessage(m.verificationCodeRequired),
-                  },
-                }}
-                defaultValue=""
-                render={({ onChange, value, name }) => (
-                  <Input
-                    label={formatMessage(m.verificationCode)}
-                    placeholder={formatMessage(m.verificationCode)}
-                    name={name}
-                    value={value}
-                    hasError={errors.code}
-                    errorMessage={errors.code?.message}
-                    onChange={(inp) => {
-                      onChange(inp.target.value)
-                      setCodeInternal(inp.target.value)
-                    }}
-                  />
-                )}
-              />
-            </Column>
-            <Column width="3/12">
-              <Box display="flex" alignItems="flexEnd" flexDirection="column">
-                {verificationValid ? (
-                  <Icon icon="checkmarkCircle" color="mint600" type="filled" />
-                ) : (
-                  <button type="submit" disabled={!codeInternal}>
-                    <Button
-                      variant="text"
-                      size="small"
-                      disabled={!codeInternal}
-                    >
-                      {formatMessage(m.confirmCode)}
-                    </Button>
-                  </button>
-                )}
-              </Box>
-            </Column>
-          </Columns>
+          <Box marginTop={3}>
+            <Text variant="medium" marginBottom={2}>
+              Öryggiskóði hefur verið sendur á netfangið þitt. Sláðu hann inn
+              hér að neðan.
+            </Text>
+            <Columns alignY="center">
+              <Column width="5/12">
+                <Controller
+                  control={control}
+                  name="code"
+                  rules={{
+                    required: {
+                      value: true,
+                      message: formatMessage(m.verificationCodeRequired),
+                    },
+                  }}
+                  defaultValue=""
+                  render={({ onChange, value, name }) => (
+                    <Input
+                      label={formatMessage(m.verificationCode)}
+                      placeholder={formatMessage(m.verificationCode)}
+                      name={name}
+                      value={value}
+                      hasError={errors.code}
+                      errorMessage={errors.code?.message}
+                      size="xs"
+                      onChange={(inp) => {
+                        onChange(inp.target.value)
+                        setCodeInternal(inp.target.value)
+                      }}
+                    />
+                  )}
+                />
+              </Column>
+              <Column width="content">
+                <Box
+                  marginLeft={3}
+                  display="flex"
+                  alignItems="flexEnd"
+                  flexDirection="column"
+                  paddingTop={2}
+                >
+                  {verificationValid ? (
+                    <Icon
+                      icon="checkmarkCircle"
+                      color="mint600"
+                      type="filled"
+                    />
+                  ) : (
+                    <button type="submit" disabled={!codeInternal}>
+                      <Button
+                        variant="text"
+                        size="small"
+                        disabled={!codeInternal}
+                      >
+                        {formatMessage(m.confirmCode)}
+                      </Button>
+                    </button>
+                  )}
+                </Box>
+              </Column>
+            </Columns>
+          </Box>
         </form>
       )}
     </Box>
