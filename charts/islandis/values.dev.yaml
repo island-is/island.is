@@ -858,6 +858,7 @@ island-ui-storybook:
     allowPrivilegeEscalation: false
     privileged: false
 namespaces:
+  labels: {}
   namespaces:
     - 'application-system'
     - 'service-portal'
