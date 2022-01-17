@@ -90,8 +90,11 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
        * TODO:
        * - createIslykillSettings + updateIslykillSettings in islykill.service.ts...
        * ..should check if email + phone is verified before saving in islykill db
-       * - New look for inputs
+       * - New look for inputs. Rebase w islykill-up.
+       * - Add rule for dropmodal on/off
        * - /minarsidur/stillingar/personuupplysingar/ -> Update look on this page to new look
+       * - Language switcher onboarding overlay
+       * - Review styling -> Compare with design.
        */
       if (userProfile) {
         await updateUserProfile({
@@ -187,7 +190,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
           </GridColumn>
         </GridRow>
       </GridContainer>
-      {false && <DropModal type="all" onClose={closeModal} close={false} />}
+      {true && <DropModal type="all" onClose={closeModal} close={false} />}
     </ModalBase>
   )
 }
