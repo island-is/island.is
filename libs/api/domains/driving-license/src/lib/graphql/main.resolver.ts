@@ -1,4 +1,4 @@
-import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
@@ -16,7 +16,6 @@ import {
   StudentInformationResult,
   ApplicationEligibility,
   Juristiction,
-  QualityPhoto,
   StudentAssessment,
   ApplicationEligibilityInput,
   Teacher,
@@ -34,11 +33,11 @@ export class MainResolver {
     private readonly auditService: AuditService,
   ) {}
 
-  @Query(() => DrivingLicense)
+  @Query(() => DrivingLicense, { nullable: true })
   drivingLicense(@CurrentUser() user: User) {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'drivingLicense',
         resources: user.nationalId,
@@ -56,7 +55,7 @@ export class MainResolver {
   drivingLicenseTeachingRights(@CurrentUser() user: User) {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'drivingLicenseTeachingRights',
         resources: user.nationalId,
@@ -75,7 +74,7 @@ export class MainResolver {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       namespace,
       action: 'drivingLicenseStudentInformation',
       resources: nationalId,
@@ -102,7 +101,7 @@ export class MainResolver {
     return this.drivingLicenseService.getListOfJuristictions()
   }
 
-  @Query(() => StudentAssessment)
+  @Query(() => StudentAssessment, { nullable: true })
   drivingLicenseStudentAssessment(@CurrentUser() user: User) {
     return this.drivingLicenseService.getDrivingAssessment(user.nationalId)
   }

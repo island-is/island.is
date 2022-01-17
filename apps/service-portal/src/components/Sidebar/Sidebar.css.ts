@@ -9,6 +9,7 @@ export const sidebar = style({
   height: '100%',
   marginBottom: theme.spacing['10'],
   borderRight: `1px solid ${theme.color.blue200}`,
+  background: theme.color.white,
   transition: 'all 250ms ease-in-out',
   width: 252,
 })
@@ -18,15 +19,12 @@ export const collapsed = style({
 
 export const logoCollapsed = style({
   display: 'flex',
-  justifyContent: 'flex-end',
-  marginRight: -theme.spacing[3],
+  justifyContent: 'center',
 })
 
 export const subnav = style({
-  paddingTop: theme.spacing[2],
-  paddingBottom: theme.spacing[2],
   paddingLeft: theme.spacing[3],
-  marginLeft: theme.spacing[8],
+  marginLeft: theme.spacing[7],
   borderLeft: `1px solid ${theme.color.blue200}`,
   ...themeUtils.responsiveStyle({
     md: {
@@ -44,7 +42,7 @@ export const subnavCollapsed = style({
 export const navIcon = style({
   position: 'absolute',
   right: -theme.spacing[4],
-  top: theme.spacing[10],
+  top: 43,
   ':hover': {
     cursor: 'pointer',
   },
