@@ -1,6 +1,12 @@
 import React, { FC, useState } from 'react'
 import { Modal } from '@island.is/service-portal/core'
-import { Text, Button, Box, Columns, Column } from '@island.is/island-ui/core'
+import {
+  Text,
+  Button,
+  Box,
+  GridColumn,
+  GridRow,
+} from '@island.is/island-ui/core'
 
 interface Props {
   onClose: () => void
@@ -41,39 +47,60 @@ export const DropModal: FC<Props> = ({ onClose, onDrop, close, type }) => {
       onCloseModal={onClose}
       toggleClose={closeModal}
     >
-      <Text variant="h4" as="h2" marginBottom={1}>
-        {type === 'tel' && telStrings.title}
-        {type === 'mail' && emailStrings.title}
-        {type === 'all' && anyStrings.title}
-      </Text>
-      <Text>
-        {type === 'tel' && telStrings.text}
-        {type === 'mail' && emailStrings.text}
-        {type === 'all' && anyStrings.text}
-      </Text>
-      <Box marginTop={4}>
-        <Columns>
-          <Column width="content">
-            <Box
-              display="flex"
-              alignItems="flexEnd"
-              flexDirection="column"
-              marginRight={2}
-            >
-              <Button onClick={onCloseSideEffect} size="small">
+      <GridRow align="flexStart" alignItems="flexStart">
+        <GridColumn span="5/8">
+          <Text variant="h4" as="h2" marginBottom={1}>
+            {type === 'tel' && telStrings.title}
+            {type === 'mail' && emailStrings.title}
+            {type === 'all' && anyStrings.title}
+          </Text>
+          <Text>
+            {type === 'tel' && telStrings.text}
+            {type === 'mail' && emailStrings.text}
+            {type === 'all' && anyStrings.text}
+          </Text>
+        </GridColumn>
+        <GridColumn span="3/8">
+          {type === 'all' ? (
+            <img
+              src="assets/images/retirement.svg"
+              alt="Skrautmynd"
+              style={{ float: 'right' }}
+              width="80%"
+            />
+          ) : (
+            <img
+              src="assets/images/jobsGrid.svg"
+              alt="Skrautmynd"
+              width="80%"
+              style={{ float: 'right' }}
+            />
+          )}
+        </GridColumn>
+        <GridColumn span="7/8">
+          <Box marginTop={4} display="flex" flexDirection="row">
+            <Box paddingRight={2}>
+              <Button
+                onClick={onCloseSideEffect}
+                size="small"
+                aria-label="Skrá upplýsingar"
+              >
                 Ég vil skrá upplýsingar
               </Button>
             </Box>
-          </Column>
-          <Column width="content">
-            <Box display="flex" alignItems="flexEnd" flexDirection="column">
-              <Button onClick={onDrop} variant="ghost" size="small">
+            <Box>
+              <Button
+                onClick={onDrop}
+                variant="ghost"
+                size="small"
+                aria-label="Halda áfram"
+              >
                 Ég vil halda áfram
               </Button>
             </Box>
-          </Column>
-        </Columns>
-      </Box>
+          </Box>
+        </GridColumn>
+      </GridRow>
     </Modal>
   )
 }

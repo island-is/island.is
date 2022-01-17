@@ -170,7 +170,7 @@ export const InputPhone: FC<Props> = ({
         <form onSubmit={handleSubmit(handleConfirmCode)}>
           <Box marginTop={3}>
             <Text variant="medium" marginBottom={2}>
-              Öryggiskóði hefur verið sendur á netfangið þitt. Sláðu hann inn
+              Öryggiskóði hefur verið sendur á símanúmerið þitt. Sláðu hann inn
               hér að neðan.
             </Text>
             <Columns alignY="center">

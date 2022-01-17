@@ -20,8 +20,7 @@ import {
   useUpdateUserProfile,
   useUserProfile,
 } from '@island.is/service-portal/graphql'
-import { EmailFormData } from '../Forms/EmailForm/Steps/FormStep'
-import { PhoneFormData } from '../Forms/PhoneForm/Steps/FormStep'
+
 import { parseNumber } from '../../utils/phoneHelper'
 import {
   servicePortalCloseOnBoardingModal,
@@ -149,7 +148,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
             <OnboardingIntro name={userInfo?.profile?.name || ''} />
             <InputSection
               title={formatMessage(m.email)}
-              text="Vinsamlegt settu inn nefangið þitt. Við komum til með að senda á þig staðfestingar og tilkynningar."
+              text="Vinsamlega settu inn netfangið þitt. Við komum til með að senda á þig staðfestingar og tilkynningar."
             >
               <InputEmail
                 onCallback={(emailAddr) => setEmail(emailAddr)}
@@ -163,7 +162,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
             </InputSection>
             <InputSection
               title={formatMessage(m.telNumber)}
-              text="Við komum til með að senda á þig staðfestinar og tilkynningar og því er gott að vera með rétt númer skráð. Endilega skráðu númerið þitt hér fyrir neðan og við sendum þér öryggiskóða til staðfestingar."
+              text="Við komum til með að senda á þig staðfestingar og tilkynningar og því er gott að vera með rétt númer skráð. Endilega skráðu númerið þitt hér fyrir neðan og við sendum þér öryggiskóða til staðfestingar."
             >
               <InputPhone
                 onCallback={(mobile) => setTel(mobile)}
@@ -185,6 +184,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
                 icon="checkmark"
                 disabled={emailDirty || telDirty || (!tel && !email)}
                 onClick={handleFormSubmit}
+                size="small"
               >
                 {formatMessage(m.saveInfo)}
               </Button>

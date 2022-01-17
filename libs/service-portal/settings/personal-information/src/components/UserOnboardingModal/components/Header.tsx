@@ -5,13 +5,20 @@ import {
   FocusableBox,
   Hidden,
   Logo,
+  Text,
 } from '@island.is/island-ui/core'
-
+import { useLocale } from '@island.is/localization'
+import { UserLanguageSwitcher } from '@island.is/shared/components'
+import { useAuth } from '@island.is/auth/react'
 interface OnboardingHeaderProps {
   dropOnboarding: () => void
-}
-
-export const OnboardingHeader = ({ dropOnboarding }: OnboardingHeaderProps) => {
+  export const OnboardingHeader = ({ dropOnboarding }: OnboardingHeaderProps) => {
+    const { formatMessage } = useLocale()
+    const { userInfo: user } = useAuth()
+    const closeWindow = formatMessage({
+      id: 'sp.settings:close-window',
+      defaultMessage: 'Loka glugga',
+    })
   return (
     <Box
       display="flex"
@@ -30,11 +37,28 @@ export const OnboardingHeader = ({ dropOnboarding }: OnboardingHeaderProps) => {
           <Logo width={160} />
         </Hidden>
       </FocusableBox>
-      <div>
-        <Button variant="text" icon="close" onClick={dropOnboarding}>
-          Loka glugga
-        </Button>
-      </div>
+      <Box display="flex" flexDirection="row" alignItems="center">
+        {user && <UserLanguageSwitcher user={user} />}
+        <Box
+          paddingLeft={5}
+          paddingRight={2}
+          onClick={dropOnboarding}
+          cursor="pointer"
+          type="button"
+          aria-label={closeWindow}
+        >
+          <Text variant="medium">
+           {closeWindow}
+          </Text>
+        </Box>
+        <Button
+          colorScheme="light"
+          circle
+          icon="close"
+          onClick={dropOnboarding}
+          aria-label={closeWindow}
+        ></Button>
+      </Box>
     </Box>
   )
 }
