@@ -52,7 +52,7 @@ const AppendixEditing = (props: AppendixEditingProps) => {
 
   const removeAppendix = () => {
     const isDeletable = !baseAppendix
-    if (!isDeletable) {
+    if (isDeletable) {
       const appendixEmpty =
         !text.value && (!title.value || title.value === defaultTitle)
       if (
