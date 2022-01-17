@@ -101,13 +101,11 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
-  const pageTitle = `${n('search', 'Leit')} | ${n(
+  const pageTitle = `${n('search', 'Leit')} - ${n(
     'serviceWeb',
     'Þjónustuvefur',
   )} Ísland.is`
-  const headerTitle = institutionSlug
-    ? organization.serviceWebTitle ?? pageTitle
-    : pageTitle
+  const headerTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
 
   return (
     <ServiceWebWrapper
