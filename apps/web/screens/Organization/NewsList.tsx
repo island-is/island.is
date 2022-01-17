@@ -6,8 +6,8 @@ import { Screen } from '../../types'
 import {
   Select as NativeSelect,
   OrganizationWrapper,
-  lightThemes,
   NewsCard,
+  getThemeConfig,
 } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
@@ -399,8 +399,6 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       }),
   ])
 
-  const lightTheme = lightThemes.includes(organizationPage.theme)
-
   return {
     organizationPage: organizationPage,
     newsList: organizationPage.newsTag ? newsList : [],
@@ -411,7 +409,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
-    ...(lightTheme ? {} : { darkTheme: true }),
+    ...getThemeConfig(organizationPage.theme),
   }
 }
 
