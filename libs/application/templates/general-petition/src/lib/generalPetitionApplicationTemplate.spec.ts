@@ -77,8 +77,7 @@ describe('General petition application template', () => {
         externalData: {},
         answers: {
           aboutList: undefined,
-          dateFrom: undefined,
-          dateTil: undefined,
+          dates: undefined,
           documents: undefined,
           listName: 'listName',
         },

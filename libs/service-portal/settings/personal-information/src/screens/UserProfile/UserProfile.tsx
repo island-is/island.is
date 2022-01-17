@@ -1,5 +1,11 @@
 import React from 'react'
-import { Box, Stack, Text, SkeletonLoader } from '@island.is/island-ui/core'
+import {
+  Box,
+  Stack,
+  Text,
+  SkeletonLoader,
+  Divider,
+} from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
@@ -18,49 +24,43 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
 
   return (
     <>
+      <Box marginBottom={5}>
+        <Text variant="h3" as="h1">
+          {formatMessage(m.personalInformation)}
+        </Text>
+      </Box>
+      <Box marginBottom={[2, 3]}>
+        <FamilyMemberCard title={userInfo.profile.name || ''} />
+      </Box>
       {loading && <SkeletonLoader width="100%" height={100} />}
       {!loading && (
         <Stack space={1}>
-          <Box marginBottom={5}>
-            <Text variant="h1" as="h1">
-              {formatMessage(m.personalInformation)}
-            </Text>
-          </Box>
-          <Box marginBottom={[2, 3]}>
-            <FamilyMemberCard title={userInfo.profile.name || ''} />
-          </Box>
           <UserInfoLine
             label={m.email}
             labelColumnSpan={['8/12', '3/12']}
             editColumnSpan={['1/1', '2/12']}
             valueColumnSpan={['1/1', '7/12']}
-            renderContent={() => (
-              <Box display="flex" alignItems="center">
-                <Box marginRight={2}>{settings?.email || ''}</Box>
-              </Box>
-            )}
+            content={settings?.email ?? ''}
             editLink={{
               url: ServicePortalPath.SettingsPersonalInformationEditEmail,
             }}
           />
+          <Divider />
           <UserInfoLine
             label={m.telNumber}
             labelColumnSpan={['8/12', '3/12']}
             editColumnSpan={['1/1', '2/12']}
             valueColumnSpan={['1/1', '7/12']}
+            content={
+              settings?.mobilePhoneNumber
+                ? parseNumber(settings.mobilePhoneNumber)
+                : ''
+            }
             editLink={{
               url: ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
             }}
-            renderContent={() => (
-              <Box display="flex" alignItems="center">
-                <Box marginRight={2}>
-                  {settings?.mobilePhoneNumber
-                    ? parseNumber(settings.mobilePhoneNumber)
-                    : ''}
-                </Box>
-              </Box>
-            )}
           />
+          <Divider />
           <UserInfoLine
             label={m.nudge}
             labelColumnSpan={['8/12', '3/12']}
@@ -81,13 +81,14 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
               url: ServicePortalPath.SettingsPersonalInformationEditNudge,
             }}
           />
+          <Divider />
           <UserInfoLine
             label={m.language}
             content={
               settings
-                ? settings?.locale === 'is'
+                ? settings.locale === 'is'
                   ? 'Íslenska'
-                  : settings?.locale === 'en'
+                  : settings.locale === 'en'
                   ? 'English'
                   : ''
                 : ''
@@ -99,18 +100,18 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
               url: ServicePortalPath.SettingsPersonalInformationEditLanguage,
             }}
           />
-          {settings && (
-            <UserInfoLine
-              label={m.bankAccountInfo}
-              labelColumnSpan={['8/12', '3/12']}
-              editColumnSpan={['1/1', '2/12']}
-              valueColumnSpan={['1/1', '7/12']}
-              content={settings?.bankInfo ?? ''}
-              editLink={{
-                url: ServicePortalPath.SettingsPersonalInformationEditBankInfo,
-              }}
-            />
-          )}
+          <Divider />
+          <UserInfoLine
+            label={m.bankAccountInfo}
+            labelColumnSpan={['8/12', '3/12']}
+            editColumnSpan={['1/1', '2/12']}
+            valueColumnSpan={['1/1', '7/12']}
+            content={settings?.bankInfo ?? ''}
+            editLink={{
+              url: ServicePortalPath.SettingsPersonalInformationEditBankInfo,
+            }}
+          />
+          <Divider />
         </Stack>
       )}
     </>

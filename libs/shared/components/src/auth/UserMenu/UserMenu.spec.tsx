@@ -69,7 +69,7 @@ const wrapper: FC = ({ children }) => (
 async function openMenu() {
   // Open user dropdown and wait for a few promise updates.
   await act(async () => {
-    fireEvent.click(screen.getByRole('button', { name: /útskráning/i }))
+    fireEvent.click(screen.getAllByRole('button', { name: /útskráning/i })[0])
   })
   return screen.getByRole('dialog', { name: /útskráning/i })
 }
@@ -115,7 +115,7 @@ describe('UserMenu', () => {
     })
 
     // Assert
-    const button = screen.getByRole('button', { name: /útskráning/i })
+    const button = screen.getAllByRole('button', { name: /útskráning/i })[0]
     expect(button).toHaveTextContent('John')
   })
 
@@ -131,9 +131,9 @@ describe('UserMenu', () => {
     })
 
     // Assert
-    const button = screen.getByRole('button', { name: /útskráning/i })
-    expect(button).toHaveTextContent('Anna')
-    expect(button).toHaveTextContent('John')
+    const button = screen.getAllByRole('button', { name: /útskráning/i })
+    expect(button[0]).toHaveTextContent('John')
+    expect(button[1]).toHaveTextContent('Anna')
   })
 
   it('can open and close user menu', async () => {
@@ -166,11 +166,11 @@ describe('UserMenu', () => {
     expect(signOut).toHaveBeenCalled()
   })
 
-  it('can switch languages', async () => {
+  it('can switch languages using selectbox', async () => {
     // Arrange
     renderAuthenticated(
       <>
-        <UserMenu />
+        <UserMenu showDropdownLanguage />
         <LocaleContext.Consumer>
           {({ lang }) => <span>Current: {lang}</span>}
         </LocaleContext.Consumer>
@@ -188,6 +188,27 @@ describe('UserMenu', () => {
       { button: 1 },
     )
     fireEvent.click(screen.getByText('English'))
+
+    // Assert
+    expect(screen.getByText(/Current/)).toHaveTextContent('Current: en')
+  })
+
+  it('can switch languages using button', async () => {
+    // Arrange
+    renderAuthenticated(
+      <>
+        <UserMenu fullscreen />
+        <LocaleContext.Consumer>
+          {({ lang }) => <span>Current: {lang}</span>}
+        </LocaleContext.Consumer>
+      </>,
+      { user: {} },
+    )
+    const languageSelector = screen.getByTestId('language-switcher-button')
+    expect(languageSelector).not.toBeNull()
+    expect(screen.getByText(/Current/)).toHaveTextContent('Current: is')
+    // Act
+    fireEvent.click(screen.getByText('EN'))
 
     // Assert
     expect(screen.getByText(/Current/)).toHaveTextContent('Current: en')

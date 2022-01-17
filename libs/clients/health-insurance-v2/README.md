@@ -1,4 +1,6 @@
-# Clients Health Insurance V2
+<!-- gitbook-navigation: "Health Insurance" -->
+
+# Health Insurance Client
 
 This library was generated with [Nx](https://nx.dev).
 

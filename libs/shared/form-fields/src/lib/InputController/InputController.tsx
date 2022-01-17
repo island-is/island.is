@@ -27,6 +27,7 @@ interface Props {
   format?: string | FormatInputValueFunction
   required?: boolean
   maxLength?: number
+  size?: 'xs' | 'sm' | 'md'
 }
 
 interface ChildParams {
@@ -58,6 +59,7 @@ export const InputController: FC<Props> = ({
   rows,
   required,
   maxLength,
+  size = 'md',
 }) => {
   function renderChildInput(c: ChildParams) {
     const { value, onChange, ...props } = c
@@ -78,7 +80,9 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
-          onChange={(e) => {
+          onChange={(
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => {
             if (onInputChange) {
               onInputChange(e)
             }
@@ -95,6 +99,7 @@ export const InputController: FC<Props> = ({
     } else if (type === 'number' && suffix) {
       return (
         <NumberFormat
+          size={size}
           customInput={Input}
           id={id}
           icon={icon}
@@ -106,7 +111,9 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
-          onChange={(e) => {
+          onChange={(
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => {
             if (onInputChange) {
               onInputChange(e)
             }
@@ -123,6 +130,7 @@ export const InputController: FC<Props> = ({
     } else if (format && ['text', 'tel'].includes(type)) {
       return (
         <NumberFormat
+          size={size}
           customInput={Input}
           icon={icon}
           id={id}
@@ -134,7 +142,9 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
-          onChange={(e) => {
+          onChange={(
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => {
             if (onInputChange) {
               onInputChange(e)
             }
@@ -172,6 +182,7 @@ export const InputController: FC<Props> = ({
             }
           }}
           rows={rows}
+          size={size}
           {...props}
         />
       )

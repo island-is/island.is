@@ -137,7 +137,7 @@ export class UserProfileController {
 
     const userProfile = await this.userProfileService.create(userProfileDto)
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'create',
       resources: userProfileDto.nationalId,
       meta: { fields: Object.keys(userProfileDto) },
@@ -207,7 +207,7 @@ export class UserProfileController {
       )
     }
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'update',
       resources: updatedUserProfile.nationalId,
       meta: { fields: updatedFields },
@@ -297,7 +297,7 @@ export class UserProfileController {
 
     return await this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'confirmEmail',
         resources: profile.nationalId,
       },
@@ -331,7 +331,7 @@ export class UserProfileController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'confirmSms',
         resources: nationalId,
       },

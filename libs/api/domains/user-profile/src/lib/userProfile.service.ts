@@ -9,7 +9,7 @@ import {
   UserProfileApi,
   UserProfileControllerCreateRequest,
   UserProfileControllerUpdateRequest,
-} from '../../gen/fetch'
+} from '@island.is/clients/user-profile'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
@@ -51,14 +51,22 @@ export class UserProfileService {
         user.nationalId,
       )
 
+      const feature = await this.featureFlagService.getValue(
+        Features.personalInformation,
+        false,
+        user,
+      )
+
       return {
         ...profile,
 
         // Temporary solution while we still run the old user profile service.
-        mobilePhoneNumber: islyklarData?.mobile,
-        email: islyklarData?.email,
-        canNudge: islyklarData?.canNudge,
-        bankInfo: islyklarData?.bankInfo,
+        ...(feature && {
+          mobilePhoneNumber: islyklarData?.mobile,
+          email: islyklarData?.email,
+          canNudge: islyklarData?.canNudge,
+          bankInfo: islyklarData?.bankInfo,
+        }),
       }
     } catch (error) {
       if (error.status === 404) return null

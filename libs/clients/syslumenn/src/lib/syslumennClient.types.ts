@@ -10,9 +10,11 @@ export interface SyslumennAuction {
   auctionTime: string
   petitioners: string
   respondent: string
+  auctionTakesPlaceAt: string
 }
 
 export interface DataUploadResponse {
+  success: boolean
   message?: string
   id?: string
   caseNumber?: string
@@ -56,11 +58,11 @@ export interface CertificateInfoResponse {
   releaseDate?: string
 }
 
-export interface DistrictCommissionersAgenciesResponse {
-  name?: string
-  place?: string
-  address?: string
-  id?: string
+export interface DistrictCommissionerAgencies {
+  name: string
+  place: string
+  address: string
+  id: string
 }
 
 export interface Person {

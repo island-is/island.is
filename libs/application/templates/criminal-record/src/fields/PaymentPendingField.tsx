@@ -10,6 +10,7 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { Company } from '../assets'
 
 const QUERY = gql`
   query status($applicationId: String!) {
@@ -126,10 +127,7 @@ export const PaymentPendingField: FC<Props> = ({
           {formatText(m.paymentPendingDescription, application, formatMessage)}
         </Text>
         <Box marginTop={4}>
-          <img
-            src="/assets/images/company.svg"
-            alt={formatText(m.paymentImage, application, formatMessage)}
-          />
+          <Company />
         </Box>
       </Box>
     </>

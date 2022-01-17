@@ -45,6 +45,7 @@ export const BankInfoForm: FC<Props> = ({
           label="Reikningsupplýsingar"
           error={errors.bankInfo?.message}
           required={true}
+          size="xs"
           rules={{
             required: {
               value: true,

@@ -190,7 +190,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
           </GridColumn>
         </GridRow>
       </GridContainer>
-      {true && <DropModal type="all" onClose={closeModal} close={false} />}
+      {false && <DropModal type="all" onClose={closeModal} close={false} />}
     </ModalBase>
   )
 }
