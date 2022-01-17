@@ -16,7 +16,6 @@ import {
   StudentInformationResult,
   ApplicationEligibility,
   Juristiction,
-  QualityPhoto,
   StudentAssessment,
   ApplicationEligibilityInput,
   Teacher,
@@ -100,11 +99,6 @@ export class MainResolver {
   @Query(() => [Juristiction])
   drivingLicenseListOfJuristictions() {
     return this.drivingLicenseService.getListOfJuristictions()
-  }
-
-  @Query(() => QualityPhoto)
-  qualityPhoto(@CurrentUser() user: User) {
-    return this.drivingLicenseService.getQualityPhoto(user.nationalId)
   }
 
   @Query(() => StudentAssessment, { nullable: true })
