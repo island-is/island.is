@@ -1,5 +1,4 @@
 import React, { useContext, useEffect } from 'react'
-import { useQuery } from '@apollo/client'
 import { Header as IslandUIHeader } from '@island.is/island-ui/core'
 import { UserContext } from '../../context'
 import { useI18n } from '../../i18n'
@@ -12,7 +11,6 @@ interface PropTypes {
 }
 
 function Header({ routeKey, localeKey }: PropTypes) {
-  //const { setUser, isAuthenticated } = useContext(UserContext)
   const { isAuthenticated, user } = useContext(UserContext)
   const { toRoute, activeLocale, switchLanguage } = useI18n()
 
