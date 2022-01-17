@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { RskCompany } from './models/rskCompany.model'
-import { CompanyApi } from '@island.is/clients/rsk-company-info'
+import { CompanyApi } from '@island.is/clients/rsk/company-registry'
 import { RskCompanyFormOfOperation } from './models/rskCompanyFormOfOperation.model'
 import { RskCompanyVat } from './models/rskCompanyVat.model'
 import { RskCompanyAddress } from './models/rskCompanyAddress.model'

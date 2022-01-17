@@ -1,6 +1,6 @@
 module.exports = {
-  displayName: 'clients-rsk-company-info',
-  preset: '../../../jest.preset.js',
+  displayName: 'clients-rsk-company-registry',
+  preset: '../../../../jest.preset.js',
   globals: {
     'ts-jest': {
       tsConfig: '<rootDir>/tsconfig.spec.json',
@@ -10,5 +10,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/clients/rsk-company-info',
+  coverageDirectory: '../../../../coverage/libs/clients/rsk/company-registry',
 }
