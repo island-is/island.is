@@ -52,6 +52,18 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-appendix-legend',
     defaultMessage: 'Viðauki {idx}',
   },
+  appendix_legend_revoked: {
+    id: 'ap.regulations-admin:draft-appendix-legend-revoked',
+    defaultMessage: 'Fjarlægður viðauki',
+  },
+  appendix_revoked_message: {
+    id: 'ap.regulations-admin:draft-appendix-revoked-message',
+    defaultMessage: 'Eldri viðauki felldur burt.',
+  },
+  appendix_revoked_undo: {
+    id: 'ap.regulations-admin:draft-appendix-revoked-undo',
+    defaultMessage: 'Afturkalla',
+  },
   appendix_title: {
     id: 'ap.regulations-admin:draft-labels-appendix-title',
     defaultMessage: 'Heiti viðauka',

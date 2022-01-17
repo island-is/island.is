@@ -14,7 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 import { MagicTextarea } from './MagicTextarea'
 import { useLocale } from '../utils'
-import { AppendixDraftForm, RegDraftForm } from '../state/types'
+import { AppendixDraftForm } from '../state/types'
 import { RegDraftActions } from '../state/useDraftingState'
 
 // ---------------------------------------------------------------------------
@@ -23,8 +23,8 @@ type AppendixEditingProps = {
   appendix: AppendixDraftForm
   baseAppendix?: Appendix
   idx: number
-  removable: boolean
   moveUpable: boolean
+  isImpact: boolean
 } & Pick<AppendixesProps, 'actions' | 'draftId'>
 
 const AppendixEditing = (props: AppendixEditingProps) => {
@@ -32,16 +32,15 @@ const AppendixEditing = (props: AppendixEditingProps) => {
     appendix,
     baseAppendix,
     moveUpable,
-    removable,
     idx,
     actions,
     draftId,
+    isImpact,
   } = props
-  const { title, text } = appendix
+  const { title, text, revoked } = appendix
 
   const t = useLocale().formatMessage
 
-  const isImpact = !!baseAppendix
   const baseTitle = baseAppendix?.title
   const baseText = baseAppendix?.text
 
@@ -52,17 +51,24 @@ const AppendixEditing = (props: AppendixEditingProps) => {
   const defaultTitle = `Viðauki ${idx + 1}`
 
   const removeAppendix = () => {
-    if (!removable) return
-
-    const appendixEmpty =
-      !text.value && (!title.value || title.value === defaultTitle)
-    if (
-      appendixEmpty ||
-      // eslint-disable-next-line no-restricted-globals
-      confirm(t(msg.appendix_remove_confirm, { idx: idx + 1 }))
-    ) {
-      actions.removeAppendix(idx)
+    const isDeletable = !baseAppendix
+    if (!isDeletable) {
+      const appendixEmpty =
+        !text.value && (!title.value || title.value === defaultTitle)
+      if (
+        appendixEmpty ||
+        // eslint-disable-next-line no-restricted-globals
+        confirm(t(msg.appendix_remove_confirm, { idx: idx + 1 }))
+      ) {
+        actions.deleteAppendix(idx)
+      }
+    } else {
+      actions.revokeAppendix(idx, true)
     }
+  }
+  const undoRevoke = () => {
+    if (!revoked) return
+    actions.revokeAppendix(idx, false)
   }
 
   const handleFocus = () => {
@@ -75,45 +81,52 @@ const AppendixEditing = (props: AppendixEditingProps) => {
     <AccordionItem
       id={props.draftId + '-appendix-' + idx}
       label={
-        baseTitle || title.value || t(msg.appendix_legend, { idx: idx + 1 })
+        revoked
+          ? t(msg.appendix_legend_revoked)
+          : baseTitle || title.value || t(msg.appendix_legend, { idx: idx + 1 })
       }
       expanded={expanded}
       onToggle={setExpanded}
     >
-      <div className={s.appendix}>
+      {revoked ? (
         <Box marginBottom={3}>
-          <MagicTextarea
-            label={t(msg.appendix_title)}
-            name="title"
-            value={title.value}
-            onChange={(value) => {
-              actions.setAppendixProp(idx, 'title', value)
-            }}
-            onFocus={handleFocus}
-            required={title.required}
-            error={t(title.error)}
-          />
-          {baseTitle != null && title.value !== baseTitle && (
-            <MiniDiff older={baseTitle || ''} newer={title.value} />
-          )}
+          {t(msg.appendix_revoked_message)}{' '}
+          <Button onClick={undoRevoke} variant="text" as="button" icon="reload">
+            {t(msg.appendix_revoked_undo)}
+          </Button>
         </Box>
-
-        <Box marginBottom={4}>
-          <EditorInput
-            label={t(msg.appendix_text)}
-            baseText={baseText}
-            value={text.value}
-            onChange={(newValue) =>
-              actions.setAppendixProp(idx, 'text', newValue)
-            }
-            draftId={draftId}
-            isImpact={isImpact}
-            required={text.required}
-            error={t(text.error)}
-          />
-        </Box>
-
-        {(moveUpable || removable) && (
+      ) : (
+        <div className={s.appendix}>
+          <Box marginBottom={3}>
+            <MagicTextarea
+              label={t(msg.appendix_title)}
+              name="title"
+              value={title.value}
+              onChange={(value) => {
+                actions.setAppendixProp(idx, 'title', value)
+              }}
+              onFocus={handleFocus}
+              required={title.required}
+              error={t(title.error)}
+            />
+            {baseTitle != null && title.value !== baseTitle && (
+              <MiniDiff older={baseTitle || ''} newer={title.value} />
+            )}
+          </Box>
+          <Box marginBottom={4}>
+            <EditorInput
+              label={t(msg.appendix_text)}
+              baseText={baseText}
+              value={text.value}
+              onChange={(newValue) =>
+                actions.setAppendixProp(idx, 'text', newValue)
+              }
+              draftId={draftId}
+              isImpact={isImpact}
+              required={text.required}
+              error={t(text.error)}
+            />
+          </Box>
           <div className={s.appendixTools}>
             {moveUpable && (
               <Button
@@ -129,23 +142,21 @@ const AppendixEditing = (props: AppendixEditingProps) => {
                 {t(msg.appendix_shiftup_short)}
               </Button>
             )}{' '}
-            {removable && (
-              <Button
-                size="small"
-                variant="text"
-                preTextIcon="trash"
-                // circle
-                // variant="ghost"
-                // icon="trash"
-                onClick={removeAppendix}
-                title={t(msg.appendix_remove, { idx: idx + 1 })}
-              >
-                {t(msg.appendix_remove_short)}
-              </Button>
-            )}
+            <Button
+              size="small"
+              variant="text"
+              preTextIcon="trash"
+              // circle
+              // variant="ghost"
+              // icon="trash"
+              onClick={removeAppendix}
+              title={t(msg.appendix_remove, { idx: idx + 1 })}
+            >
+              {t(msg.appendix_remove_short)}
+            </Button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </AccordionItem>
   )
 }
@@ -165,16 +176,21 @@ export type AppendixStateItem = {
 
 type AppendixesProps = {
   draftId: RegulationDraft['id']
-  appendixes: RegDraftForm['appendixes']
+  appendixes: Array<AppendixDraftForm>
   baseAppendixes?: ReadonlyArray<Appendix>
   actions: Pick<
     RegDraftActions,
-    'setAppendixProp' | 'addAppendix' | 'removeAppendix' | 'moveAppendixUp'
+    | 'setAppendixProp'
+    | 'addAppendix'
+    | 'deleteAppendix'
+    | 'revokeAppendix'
+    | 'moveAppendixUp'
   >
 }
 
 export const Appendixes = (props: AppendixesProps) => {
   const { draftId, appendixes, baseAppendixes = [], actions } = props
+  const isImpact = !props.baseAppendixes
 
   const t = useLocale().formatMessage
 
@@ -182,18 +198,29 @@ export const Appendixes = (props: AppendixesProps) => {
     <>
       {props.appendixes.length > 0 && (
         <Accordion singleExpand={false} dividerOnTop={false}>
-          {appendixes.map((appendix, i) => (
-            <AppendixEditing
-              key={appendix.key}
-              idx={i}
-              appendix={appendix}
-              baseAppendix={baseAppendixes[i]}
-              actions={actions}
-              draftId={draftId}
-              removable={!baseAppendixes[i]}
-              moveUpable={i > 0 && !baseAppendixes[i - 1]}
-            />
-          ))}
+          {appendixes.map((appendix, i) => {
+            const baseAppendix = baseAppendixes[i]
+            if (baseAppendix && !baseAppendix.title) {
+              // Skip displaying appendixes that have been "revoked" (emptied)
+              // by an earlier impact.
+              // Such revocations are final, and only revertable by
+              // adding a new appendix at the end of the list.
+              // (Else we end up with crazy complicated states.)
+              return null
+            }
+            return (
+              <AppendixEditing
+                key={appendix.key}
+                idx={i}
+                appendix={appendix}
+                baseAppendix={baseAppendix}
+                actions={actions}
+                draftId={draftId}
+                moveUpable={i > 0 && !baseAppendixes[i - 1]}
+                isImpact={isImpact}
+              />
+            )
+          })}
         </Accordion>
       )}{' '}
       <Box marginTop={2}>

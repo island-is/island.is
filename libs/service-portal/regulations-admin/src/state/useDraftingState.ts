@@ -345,10 +345,18 @@ const actionHandlers: {
     }
   },
 
-  APPENDIX_REMOVE: (state, { idx }) => {
+  APPENDIX_DELETE: (state, { idx }) => {
     const { appendixes } = state.draft
     if (appendixes[idx]) {
       appendixes.splice(idx, 1)
+    }
+  },
+
+  APPENDIX_REVOKE: (state, { idx, revoked }) => {
+    const { appendixes } = state.draft
+    const appendix = appendixes[idx]
+    if (appendix) {
+      appendix.revoked = revoked
     }
   },
 
@@ -548,8 +556,11 @@ export const useDraftingState = (
         dispatch({ type: 'APPENDIX_SET_PROP', idx, name, value })
       },
 
-      removeAppendix: (idx: number) => {
-        dispatch({ type: 'APPENDIX_REMOVE', idx })
+      deleteAppendix: (idx: number) => {
+        dispatch({ type: 'APPENDIX_DELETE', idx })
+      },
+      revokeAppendix: (idx: number, revoked: boolean) => {
+        dispatch({ type: 'APPENDIX_REVOKE', idx, revoked })
       },
       moveAppendixUp: (idx: number) => {
         dispatch({ type: 'APPENDIX_MOVE_UP', idx })

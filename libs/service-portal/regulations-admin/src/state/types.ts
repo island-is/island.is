@@ -39,6 +39,24 @@ export type HtmlDraftField = DraftField<HTMLText>
 export type AppendixDraftForm = {
   title: DraftField<PlainText>
   text: HtmlDraftField
+
+  /**
+   * Appendixes may be revoked by `RegulationChange`s.
+   *
+   * Instead of being deleted, they're only emptied,
+   * to guarantee sane diffing between arbitrary
+   * historic versions of the regulation.
+   *
+   * The rules is that appendixes can neither be deleted
+   * nor re-ordered by `RegulationChange`s.
+   *
+   * `RegulationChange`s may only add new appendixes,
+   * or "revoke" (i.e. "empty") existing ones.
+   *
+   * However, to make the Regulation (or RegulationDiff) nicer to
+   * consume, we filter out those empty appendixes on the API server.
+   */
+  revoked?: boolean
   key: string
 }
 
@@ -184,8 +202,13 @@ export type Action =
       idx: number
     }
   | {
-      type: 'APPENDIX_REMOVE'
+      type: 'APPENDIX_DELETE'
       idx: number
+    }
+  | {
+      type: 'APPENDIX_REVOKE'
+      idx: number
+      revoked: boolean
     }
   | {
       type: 'SHIP'
