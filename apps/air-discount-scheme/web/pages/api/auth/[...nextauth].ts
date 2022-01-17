@@ -13,7 +13,6 @@ import {
 } from '@island.is/next-ids-auth'
 import { NextApiRequest, NextApiResponse } from 'next-auth/internals/utils'
 import { JWT } from 'next-auth/jwt'
-import { useLogOut } from '@island.is/air-discount-scheme-web/utils/hooks/useLogout'
 
 const providers = [
   Providers.IdentityServer4({
