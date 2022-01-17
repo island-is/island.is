@@ -9,6 +9,7 @@ import {
   QueryGetOrganizationArgs,
   QueryGetSupportCategoriesInOrganizationArgs,
   QueryGetSupportQnAsArgs,
+  SupportCategory,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -35,6 +36,7 @@ import {
 import { useNamespace, LinkResolverResponse } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import { getSlugPart } from '../utils'
+import sortAlpha from '@island.is/web/utils/sortAlpha'
 
 import * as styles from './Home.css'
 
@@ -61,6 +63,8 @@ const Home: Screen<HomeProps> = ({
   const pageTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
 
   const hasContent = !!supportCategories?.length
+
+  const sortedSupportCategories = sortSupportCategories(supportCategories)
 
   return (
     <ServiceWebWrapper
@@ -93,7 +97,7 @@ const Home: Screen<HomeProps> = ({
                   itemWidth={280}
                   span={['12/12', '6/12', '6/12', '4/12']}
                 >
-                  {supportCategories.map(
+                  {sortedSupportCategories.map(
                     ({ title, slug, description, organization }, index) => {
                       return (
                         <Card
@@ -207,6 +211,13 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     supportCategories: processedCategories,
   }
 }
+
+const sortSupportCategories = (items: SupportCategory[]) =>
+  items
+    .sort(sortAlpha('title'))
+    .sort((a, b) =>
+      a.importance > b.importance ? -1 : a.importance === b.importance ? 0 : 1,
+    )
 
 export default withMainLayout(Home, {
   showHeader: false,
