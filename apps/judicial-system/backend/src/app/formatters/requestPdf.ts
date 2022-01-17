@@ -81,34 +81,27 @@ function constructRestrictionRequestPdf(
     .font('Helvetica')
     .fontSize(baseFontSize)
     .lineGap(4)
-    // Assume there is at most one defendant
-    .text(
-      `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
-        theCase.defendants &&
-          theCase.defendants.length > 0 &&
-          theCase.defendants[0].nationalId
-          ? theCase.defendants[0].nationalId
-          : '',
-      )}`,
-    )
-    .text(
-      `${formatMessage(m.baseInfo.fullName)} ${
-        theCase.defendants &&
-        theCase.defendants.length > 0 &&
-        theCase.defendants[0].name
-          ? theCase.defendants[0].name
-          : ''
-      }`,
-    )
-    .text(
-      `${formatMessage(m.baseInfo.address)} ${
-        theCase.defendants &&
-        theCase.defendants.length > 0 &&
-        theCase.defendants[0].address
-          ? theCase.defendants[0].address
-          : ''
-      }`,
-    )
+
+  theCase.defendants?.forEach((defendant, index) => {
+    if (index > 0) {
+      doc.text(' ')
+    }
+
+    doc
+      .text(
+        `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
+          defendant.nationalId ?? '',
+        )}`,
+      )
+      .text(`${formatMessage(m.baseInfo.fullName)} ${defendant.name ?? ''}`)
+      .text(`${formatMessage(m.baseInfo.address)} ${defendant.address ?? ''}`)
+  })
+
+  if (theCase.defendants && theCase.defendants.length > 1) {
+    doc.text(' ')
+  }
+
+  doc
     .text(
       formatMessage(m.baseInfo.defender, {
         defenderName:
@@ -251,6 +244,7 @@ function constructInvestigationRequestPdf(
     if (index > 0) {
       doc.text(' ')
     }
+
     doc
       .text(
         `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
