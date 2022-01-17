@@ -50,8 +50,8 @@ export const variants = styleVariants({
     backgroundColor: theme.color.red100,
   },
   mint: {
-    color: theme.color.mint600,
-    backgroundColor: theme.color.mint100,
+    color: theme.color.mint800,
+    backgroundColor: theme.color.mint200,
   },
   rose: {
     color: theme.color.roseTinted400,

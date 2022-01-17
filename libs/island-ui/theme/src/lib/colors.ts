@@ -38,6 +38,7 @@ export const roseTinted200 = '#ebcce3'
 export const roseTinted100 = '#faf2f8'
 
 // Attention colors
+export const mint800 = '#005B52'
 export const mint600 = '#00b39e'
 export const mint400 = '#00e4ca'
 export const mint200 = '#ccfaf4'
