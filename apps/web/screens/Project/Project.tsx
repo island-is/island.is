@@ -1,11 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { ReactElement, useMemo, useRef, useState } from 'react'
+import React, { ReactElement, useMemo, useRef, useState, useEffect } from 'react'
 import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   GetNewsQuery,
   Link,
   LinkGroup,
+  OneColumnText,
   Query,
   QueryGetNamespaceArgs,
   QueryGetProjectPageArgs,
@@ -34,6 +35,7 @@ import {
   Hidden,
   Navigation,
   NavigationItem,
+  TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
@@ -179,17 +181,37 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
     return x.slug === router.query.subSlug
   })
 
-  const navigationList = assignNavigationActive(
-    convertLinkGroupsToNavigationItems(projectPage.sidebarLinks),
-    router.asPath,
+  const navigationList = useMemo(
+    () =>
+      assignNavigationActive(
+        convertLinkGroupsToNavigationItems(projectPage.sidebarLinks),
+        router.asPath,
+      ),
+    [router.asPath, projectPage.sidebarLinks],
   )
 
   const activeNavigationItemTitle = useMemo(
     () => getActiveNavigationItemTitle(navigationList, router.asPath),
-    [router.asPath],
+    [router.asPath, navigationList],
   )
 
   const navigationTitle = n('navigationTitle', 'Efnisyfirlit')
+
+  const renderSlicesAsTabs = subpage?.renderSlicesAsTabs ?? false
+
+  const [selectedSliceTab, setSelectedSliceTab] = useState<
+    OneColumnText | undefined
+  >(undefined)
+
+  let content: SliceType[] = []
+  if (!!subpage && renderSlicesAsTabs)
+    content = selectedSliceTab?.content as SliceType[]
+  if (!subpage) content = projectPage?.content as SliceType[]
+
+  useEffect(() => {
+    if (renderSlicesAsTabs && !!subpage && subpage?.slices?.length > 0)
+      setSelectedSliceTab(subpage.slices[0] as OneColumnText)
+  }, [router.asPath])
 
   return (
     <>
@@ -205,21 +227,19 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
       <ProjectWrapper
         withSidebar={projectPage.sidebar}
         sidebarContent={
-          <>
-            <Navigation
-              baseId="pageNav"
-              items={navigationList}
-              activeItemTitle={activeNavigationItemTitle}
-              title={navigationTitle}
-              renderLink={(link, item) => {
-                return item?.href ? (
-                  <NextLink href={item?.href}>{link}</NextLink>
-                ) : (
-                  link
-                )
-              }}
-            />
-          </>
+          <Navigation
+            baseId="pageNav"
+            items={navigationList}
+            activeItemTitle={activeNavigationItemTitle}
+            title={navigationTitle}
+            renderLink={(link, item) => {
+              return item?.href ? (
+                <NextLink href={item?.href}>{link}</NextLink>
+              ) : (
+                link
+              )
+            }}
+          />
         }
       >
         <Hidden above="sm">
@@ -243,11 +263,34 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           </Box>
         </Hidden>
         {!!subpage && (
-          <Text as="h1" variant="h1">
-            {subpage.title}
+          <>
+            <Text as="h1" variant="h1">
+              {subpage.title}
+            </Text>
+            {subpage.content && richText(subpage.content as SliceType[])}
+          </>
+        )}
+        {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
+          <TableOfContents
+            tableOfContentsTitle="Undirkaflar"
+            headings={subpage.slices.map((slice) => ({
+              headingId: slice.id,
+              headingTitle: (slice as OneColumnText).title,
+            }))}
+            selectedHeadingId={selectedSliceTab?.id}
+            onClick={(id) =>
+              setSelectedSliceTab(
+                subpage.slices.find((s) => s.id === id) as OneColumnText,
+              )
+            }
+          />
+        )}
+        {renderSlicesAsTabs && selectedSliceTab && (
+          <Text paddingTop={4} as="h2" variant="h2">
+            {selectedSliceTab.title}
           </Text>
         )}
-        {richText((subpage ?? projectPage).content as SliceType[])}
+        {content && richText(content)}
         {!subpage && projectPage.stepper && (
           <Stepper
             stepper={projectPage.stepper}
@@ -256,15 +299,16 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
             backLabel={n('stepperBack', 'Til baka')}
           />
         )}
-        {(subpage ?? projectPage).slices.map((slice) => (
-          <OrganizationSlice
-            key={slice.id}
-            slice={slice}
-            namespace={namespace}
-            fullWidth={true}
-            organizationPageSlug={projectPage.slug}
-          />
-        ))}
+        {!renderSlicesAsTabs &&
+          (subpage ?? projectPage).slices.map((slice) => (
+            <OrganizationSlice
+              key={slice.id}
+              slice={slice}
+              namespace={namespace}
+              fullWidth={true}
+              organizationPageSlug={projectPage.slug}
+            />
+          ))}
       </ProjectWrapper>
       {!subpage && !!projectPage.newsTag && (
         <div style={{ overflow: 'hidden' }}>

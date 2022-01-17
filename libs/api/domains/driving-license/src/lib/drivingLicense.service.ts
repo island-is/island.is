@@ -26,23 +26,40 @@ import {
 } from './util/constants'
 import sortTeachers from './util/sortTeachers'
 import { StudentAssessment } from '..'
+import { FetchError } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class DrivingLicenseService {
   constructor(private readonly drivingLicenseApi: DrivingLicenseApi) {}
 
-  getDrivingLicense(
+  async getDrivingLicense(
     nationalId: User['nationalId'],
   ): Promise<DriversLicense | null> {
-    return this.drivingLicenseApi.getCurrentLicense({ nationalId })
+    try {
+      return await this.drivingLicenseApi.getCurrentLicense({ nationalId })
+    } catch (e) {
+      return this.handleGetLicenseError(e)
+    }
+  }
+
+  private handleGetLicenseError(e: unknown) {
+    // The goal of this is to basically normalize the known semi-error responses
+    // so both those who are not found and those who have invalid/expired licenses will return nothing
+    if (e instanceof Error && e.name === 'FetchError') {
+      const err = (e as unknown) as FetchError
+
+      if ([400, 404].includes(err.status)) {
+        return null
+      }
+    }
+
+    throw e
   }
 
   async getStudentInformation(
     nationalId: string,
   ): Promise<StudentInformation | null> {
-    const drivingLicense = await this.drivingLicenseApi.getCurrentLicense({
-      nationalId,
-    })
+    const drivingLicense = await this.getDrivingLicense(nationalId)
 
     if (!drivingLicense) {
       return null

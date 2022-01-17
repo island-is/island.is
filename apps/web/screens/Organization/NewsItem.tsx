@@ -63,6 +63,14 @@ const NewsItem: Screen<NewsItemProps> = ({
     ? currentNavItem.primaryLink.text
     : n('newsTitle', 'Fréttir og tilkynningar')
 
+  const isNewsletter = newsItem?.genericTags?.some(
+    (x) => x.slug === 'frettabref',
+  )
+
+  const newsletterTitle = newsItem?.genericTags?.find(
+    (x) => x.slug === 'frettabref',
+  )?.title
+
   const breadCrumbs: BreadCrumbItem[] = [
     {
       title: 'Ísland.is',
@@ -77,10 +85,23 @@ const NewsItem: Screen<NewsItemProps> = ({
     ...(isOrganizationNews
       ? [
           {
+            isTag: true,
             title: newsOverviewTitle,
             href: linkResolver('organizationnewsoverview', [
               organizationPage.slug,
             ]).href,
+            typename: 'organizationnewsoverview',
+          },
+        ]
+      : []),
+    ...(isNewsletter
+      ? [
+          {
+            isTag: true,
+            title: newsletterTitle,
+            href:
+              linkResolver('organizationnewsoverview', [organizationPage.slug])
+                .href + '?tag=frettabref',
             typename: 'organizationnewsoverview',
           },
         ]
