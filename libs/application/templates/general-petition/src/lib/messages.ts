@@ -249,18 +249,23 @@ export const m: MessageDir = {
       description: 'Error message for terms and conditions',
     },
     listName: {
-      id: 'gpt.application:validationmessages.party.name',
+      id: 'gpt.application:validationmessages.listName',
       defaultMessage: 'Vinsamlegast veldu nafn á listann',
       description: 'Error message if list name is empty',
     },
     aboutList: {
-      id: 'gpt.application:validationmessages.party.name',
+      id: 'gpt.application:validationmessages.aboutList',
       defaultMessage: 'Vinsamlegast veldu lýsingu á listann',
       description: 'Error message if list decription is empty',
     },
-    date: {
-      id: 'gpt.application:validationmessages.party.name',
+    selectDate: {
+      id: 'gpt.application:validationmessages.selectDate',
       defaultMessage: 'Vinsamlegast veldu dagsetningu',
+      description: 'Error message if date is empty',
+    },
+    tilBeforeFrom: {
+      id: 'gpt.application:validationmessages.tilBeforeFrom',
+      defaultMessage: 'Lokadagsetning má ekki vera á undan upphafsdagsetningu',
       description: 'Error message if date is empty',
     },
   }),
