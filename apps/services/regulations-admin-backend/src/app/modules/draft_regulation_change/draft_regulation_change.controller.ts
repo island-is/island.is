@@ -100,7 +100,7 @@ export class DraftRegulationChangeController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'delete',
         namespace,
         resources: id,
