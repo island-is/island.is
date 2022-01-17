@@ -15,7 +15,8 @@ const worker = async () => {
   const app = await NestFactory.createApplicationContext(AppModule)
   app.enableShutdownHooks()
   await app.get(ApplicationLifeCycleService).run()
-  app.close()
+  await app.close()
+  process.exit(0)
 }
 
 const { argv } = yargs(process.argv.slice(2))

@@ -130,8 +130,7 @@ export class ApplicationLifeCycleService {
       (application) => application.pruned,
     )
 
-    this.logger.info(`Successful: ${success.length}`)
-    this.logger.info(`Failed: ${failed.length}`)
+    this.logger.info(`Successful: ${success.length}, Failed: ${failed.length}`)
   }
 
   private attachmentsToMetaDataArray(
