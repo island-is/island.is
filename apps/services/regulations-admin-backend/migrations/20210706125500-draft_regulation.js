@@ -54,6 +54,9 @@ module.exports = {
           signed_document_url: {
             type: Sequelize.STRING,
           },
+          fast_track: {
+            type: Sequelize.BOOLEAN,
+          },
           created: {
             type: Sequelize.DATE,
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
