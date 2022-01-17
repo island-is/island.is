@@ -23,10 +23,23 @@ export const summaryForm = {
       description: 'Summary form description subtitle',
     },
     description: {
-      id: 'fa.application:section.summaryForm.general.description#markup',
+      id: 'fa.application:section.summaryForm.general.description',
       defaultMessage:
-        'Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og **gerir ekki ráð fyrir tekjum eða gögnum úr skattframtali** sem geta haft áhrif á þína aðstoð. Þú færð skilaboð þegar frekari útreikningur liggur fyrir.',
+        'Athugaðu að þessi útreikningur er eingöngu til viðmiðunar. Þú færð skilaboð þegar frekari útreikningur liggur fyrir.',
       description: 'Summary form description',
+    },
+    calculationsOverview: {
+      id: 'fa.application:section.summaryForm.general.calculationsOverview',
+      defaultMessage:
+        'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp. ',
+      description: 'Summary form asking applicant to go over calculations',
+    },
+  }),
+  overview: defineMessages({
+    homeCircumstancesTitle: {
+      id: 'fa.application:section.summaryForm.overview.homeCircumstancesTitle',
+      defaultMessage: 'Búseta',
+      description: 'Summary form homecircumstances title',
     },
   }),
 }
