@@ -595,9 +595,7 @@ export const withMainLayout = <T,>(
     ])
 
     const themeConfig: Partial<LayoutProps> =
-      'darkTheme' in componentProps
-        ? { headerColorScheme: 'white', headerButtonColorScheme: 'negative' }
-        : {}
+      'themeConfig' in componentProps ? componentProps['themeConfig'] : {}
 
     return {
       layoutProps: { ...layoutProps, ...layoutConfig, ...themeConfig },

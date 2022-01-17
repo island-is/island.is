@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # API Domains Finance
 
 This library was generated with [Nx](https://nx.dev).

@@ -1,3 +1,5 @@
+<!-- gitbook-navigation: "Components" -->
+
 # Shared Components
 
 This library contains Island.is components that can be shared between multiple projects and interfaces.
