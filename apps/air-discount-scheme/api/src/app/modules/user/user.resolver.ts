@@ -6,39 +6,46 @@ import {
   FlightLeg as TFlightLeg,
 } from '@island.is/air-discount-scheme/types'
 import { FlightLeg } from '../flightLeg'
-import { Authorize, CurrentUser, AuthService, AuthUser } from '../auth'
+import { CurrentUser } from '../decorators'
+import type { AuthUser } from '../auth/types'
 import { User } from './models'
+import { Inject } from '@nestjs/common'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { UseGuards } from '@nestjs/common'
+import { getRole } from '../auth/roles'
 
 @Resolver(() => User)
 export class UserResolver {
-  constructor(private authService: AuthService) {}
+  constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
 
-  @Authorize({ throwOnUnAuthorized: false })
   @Query(() => User, { nullable: true })
-  user(@CurrentUser() user: AuthUser): User {
+  async user(@CurrentUser() user: AuthUser): Promise<User | undefined> {
     if (!user) {
-      return null
+      return undefined
     }
-
+    user.role = getRole(user)
     return user as User
   }
 
-  @Authorize({ throwOnUnAuthorized: false })
   @ResolveField('role')
   resolveRole(@CurrentUser() user: AuthUser): string {
-    return this.authService.getRole(user)
+    return getRole(user)
   }
 
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes('@vegagerdin.is/air-discount-scheme-scope')
   @ResolveField('meetsADSRequirements')
   resolveMeetsADSRequirements(@Parent() user: TUser): boolean {
     if (user.fund) {
       return user.fund.credit === user.fund.total - user.fund.used
     }
-
     return false
   }
 
-  @Authorize()
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes('@vegagerdin.is/air-discount-scheme-scope')
   @ResolveField('flightLegs', () => [FlightLeg])
   async resolveFlights(
     @CurrentUser() user: AuthUser,
