@@ -15,8 +15,8 @@
 #       with:
 #         path: node_modules
 #         key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
-#     - name: Check cache status
-#       run: '[[ "${{ steps.node-modules.outputs.status }}" != "failure" ]] || exit 1'
+#     - name: Check cache success
+#       run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 #
 name: 'Cache'
 description: 'Cache with retry'
@@ -29,8 +29,8 @@ inputs:
     required: false
     default: 2
 outputs:
-  status:
-    value: ${{ steps.computed_outputs.outputs.status }}
+  success:
+    value: ${{ steps.computed_outputs.outputs.success }}
   cache-hit:
     value: ${{ steps.computed_outputs.outputs.cache-hit }}
 runs:
@@ -38,23 +38,23 @@ runs:
   steps:
     - name: Cache try number one
       id: cache_try_number_one
-      uses: island-is/cache@v0.1
+      uses: island-is/cache@v0.2
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
 
     - name: Cache try number two
       id: cache_try_number_two
-      if: always() && inputs.retry > 0 && steps.cache_try_number_one.outputs.cache-hit == ''
-      uses: island-is/cache@v0.1
+      if: always() && inputs.retry > 0 && steps.cache_try_number_one.outputs.success != 'true'
+      uses: island-is/cache@v0.2
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
 
     - name: Cache try number three
       id: cache_try_number_three
-      if: always() && inputs.retry > 1 && steps.cache_try_number_one.outputs.cache-hit == '' && steps.cache_try_number_two.outputs.cache-hit == ''
-      uses: island-is/cache@v0.1
+      if: always() && inputs.retry > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true'
+      uses: island-is/cache@v0.2
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
@@ -64,13 +64,13 @@ runs:
       if: always()
       shell: bash
       run: |
-        if [[ "${{ steps.cache_try_number_one.outputs.cache-hit }}" != "" ]] || \
-           [[ "${{ steps.cache_try_number_two.outputs.cache-hit }}" != "" ]] || \
-           [[ "${{ steps.cache_try_number_three.outputs.cache-hit }}" != "" ]]
+        if [[ "${{ steps.cache_try_number_one.outputs.success }}" == "true" ]] || \
+           [[ "${{ steps.cache_try_number_two.outputs.success }}" == "true" ]] || \
+           [[ "${{ steps.cache_try_number_three.outputs.success }}" == "true" ]]
         then
-          echo "::set-output name=status::success"
+          echo "::set-output name=success::true"
         else
-          echo "::set-output name=status::failure"
+          echo "::set-output name=success::false"
         fi
 
         if [[ "${{ steps.cache_try_number_one.outputs.cache-hit }}" == "true" ]] || \
