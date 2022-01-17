@@ -26,6 +26,7 @@ import {
   StepOption,
   getStepBySlug,
   StepperMachine,
+  getStepQuestion,
 } from './StepperFSMUtils'
 import { NextRouter, useRouter } from 'next/router'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
@@ -66,6 +67,7 @@ const getInitialStateByQueryParams = (
     const stateNode = stepperMachine.states[initialState.value as string]
     const step = getStepBySlug(stepper, stateNode.config.meta.stepSlug)
 
+    // TODO: remove the hardcode check and use a constant instead
     if (step.stepType === 'Answer') return initialState
 
     const options = getStepOptions(step, activeLocale)
@@ -78,6 +80,51 @@ const getInitialStateByQueryParams = (
   }
 
   return initialState
+}
+
+const getQuestionsAndAnswers = (
+  stepper: Stepper,
+  stepperMachine: StepperMachine,
+  router: NextRouter,
+  activeLocale: string,
+) => {
+  const result = []
+
+  const answerString = (router.query?.answers ?? '') as string
+
+  // If the query parameter is not a string then we just skip checking further
+  if (typeof answerString !== 'string') return result
+
+  const answers = answerString.split(answerDelimiter)
+
+  let initialState = stepperMachine.initialState
+
+  for (const answer of answers) {
+    const stateNode = stepperMachine.states[initialState.value as string]
+    const step = getStepBySlug(stepper, stateNode.config.meta.stepSlug)
+
+    // TODO: remove the hardcode check and use a constant instead
+    if (step.stepType === 'Answer') return result
+
+    const options = getStepOptions(step, activeLocale)
+    const selectedOption = options.find((o) => o.slug === answer)
+    if (!selectedOption) return result
+    initialState = stepperMachine.transition(
+      initialState,
+      selectedOption.transition,
+    )
+
+    const stepQuestion = getStepQuestion(step)
+
+    if (stepQuestion) {
+      result.push({
+        question: stepQuestion,
+        answer: selectedOption.label,
+      })
+    }
+  }
+
+  return result
 }
 
 export const StepperFSM = ({ stepper }: StepperProps) => {
@@ -125,10 +172,12 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
     [activeLocale, currentStep, currentStepType],
   )
 
-  const stepperQnA = [
-    { question: 'Frá hvaða landi kemur þú?', answer: 'Ísland' },
-    { question: 'Ertu viss um að hafa valið rétt land?', answer: 'Nei' },
-  ]
+  const stepperQnA = getQuestionsAndAnswers(
+    stepper,
+    stepperMachine,
+    router,
+    activeLocale,
+  )
 
   const [
     hasClickedContinueWithoutSelecting,

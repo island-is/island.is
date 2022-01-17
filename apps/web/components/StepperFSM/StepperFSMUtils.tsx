@@ -133,6 +133,24 @@ const getStepOptions = (step: Step, lang = 'en'): StepOption[] => {
   })
 }
 
+const stepContainsQuestion = (step: Step) => {
+  return (
+    step.subtitle &&
+    step.subtitle.length > 0 &&
+    step.subtitle[0].__typename === 'Html' &&
+    step.subtitle[0].document.content.length > 0 &&
+    step.subtitle[0].document.content[0].content &&
+    step.subtitle[0].document.content[0].content.length > 0
+  )
+}
+
+const getStepQuestion = (step: Step) => {
+  if (stepContainsQuestion(step)) {
+    return step.subtitle[0].document.content[0].content[0].value
+  }
+  return ''
+}
+
 export { STEP_TYPES }
 export {
   getStepBySlug,
@@ -141,6 +159,7 @@ export {
   getStepperMachine,
   resolveStepType,
   getStepOptions,
+  getStepQuestion,
 }
 export type {
   StepperConfig,
