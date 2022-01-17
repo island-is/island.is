@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { ReactElement, useMemo, useRef, useState, useEffect } from 'react'
+import React, { ReactElement, useMemo, useState, useEffect } from 'react'
 import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
