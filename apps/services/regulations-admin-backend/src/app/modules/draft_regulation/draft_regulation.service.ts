@@ -68,11 +68,11 @@ export class DraftRegulationService {
         for await (const nationalId of draft.authors) {
           try {
             // FIXME: implement author lookup
-            const author = { name: undefined } // await this.regulationsAdminApiService.getAuthorInfo(nationalId)
+            const author = await this.nationalRegistryApi.getUser(nationalId)
 
             authors.push({
               authorId: nationalId,
-              name: author?.name ?? '',
+              name: author?.Fulltnafn ?? '',
             })
           } catch (e) {
             // Fallback to nationalId if fetching name fails
