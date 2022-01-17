@@ -15,7 +15,7 @@ export class Step {
   @Field()
   slug?: string
 
-  @Field()
+  @Field({ nullable: true })
   stepType?: string
 
   @Field(() => [SliceUnion], { nullable: true })

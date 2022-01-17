@@ -48,10 +48,12 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
         })}
       </BulletList>
       <Text variant="h4">Step</Text>
-      <Text>Title: {currentStep.title}</Text>
-      <Text>Slug: {currentStep.slug}</Text>
+      <Text>Title: {currentStep?.title}</Text>
+      <Text>Slug: {currentStep?.slug}</Text>
       <Text>Type: {resolveStepType(currentStep)}</Text>
-      <ArrowLink href={getContentfulLink(currentStep)}>Contentful</ArrowLink>
+      {currentStep && (
+        <ArrowLink href={getContentfulLink(currentStep)}>Contentful</ArrowLink>
+      )}
       <Text variant="h5">Options</Text>
       ...
       <Text variant="h2" marginTop={2}>
