@@ -179,6 +179,7 @@
   - [Clients Islykill](libs/clients/islykill/README.md)
   - [Client Middlewares](libs/clients/middlewares/README.md)
   - [Clients Mms](libs/clients/mms/README.md)
+  - [Clients Municipalities Financial Aid](libs/clients/municipalities-financial-aid/README.md)
   - [National Registry Clients](libs/clients/national-registry/README.md)
     - [Clients National Registry V1](libs/clients/national-registry/v1/README.md)
     - [Clients National Registry V2](libs/clients/national-registry/v2/README.md)
