@@ -1,24 +1,38 @@
 import React from 'react'
-import { Text, Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
-import { aboutForm } from '../../lib/messages'
+import { Text, Box } from '@island.is/island-ui/core'
+import { summaryForm } from '../../lib/messages'
 import { useIntl } from 'react-intl'
-
-import { currentMonth } from '@island.is/financial-aid/shared/lib'
-import { DescriptionText } from '..'
+import DescriptionText from '../DescriptionText/DescriptionText'
 
 const SummaryForm = () => {
   const { formatMessage } = useIntl()
 
   return (
     <>
-      <Text variant="h3" fontWeight="light" marginBottom={3}>
-        Áætluð aðstoð (til útgreiðslu í byrjun júní)
-      </Text>
-      <Text>
-        Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og gerir ekki
-        ráð fyrir tekjum eða gögnum úr skattframtali sem geta haft áhrif á þína
-        aðstoð. Þú færð skilaboð þegar frekari útreikningur liggur fyrir.
-      </Text>
+      <Box
+        display="flex"
+        alignItems="center"
+        flexWrap="wrap"
+        marginTop={[2, 2, 4]}
+      >
+        <Box marginRight={1}>
+          <Text as="h3" variant="h3">
+            {formatMessage(summaryForm.general.descriptionTitle)}
+          </Text>
+        </Box>
+
+        <Text variant="small">
+          {formatMessage(summaryForm.general.descriptionSubtitle)}
+        </Text>
+      </Box>
+
+      <Box marginTop={2}>
+        <DescriptionText text={summaryForm.general.description} />
+      </Box>
+
+      <Box marginTop={2}>
+        <DescriptionText text={summaryForm.general.description} />
+      </Box>
     </>
   )
 }
