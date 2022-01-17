@@ -1,4 +1,6 @@
-# Rsk
+<!-- gitbook-navigation: "V1" -->
+
+# RSK V1 Client
 
 This library serves as a client for endpoints accessible to us from RSK
 

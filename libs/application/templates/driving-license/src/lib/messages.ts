@@ -710,4 +710,10 @@ export const m = defineMessages({
     defaultMessage: 'Ríkislögreglustjóri',
     description: 'National Commissioner of Police',
   },
+  countryDirectionsTitle: {
+    id: 'dl.application:countryDirectionsTitle',
+    defaultMessage: 'Leiðbeiningar',
+    description:
+      'Title of the section that explains the next steps when they have a driving license in a different country',
+  },
 })
