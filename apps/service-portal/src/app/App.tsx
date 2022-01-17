@@ -3,10 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { Authenticator } from '@island.is/auth/react'
 import { ApolloProvider } from '@apollo/client'
 import { client } from '@island.is/service-portal/graphql'
-import {
-  BadgeProvider,
-  ServicePortalPath,
-} from '@island.is/service-portal/core'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 import { LocaleProvider } from '@island.is/localization'
 import { defaultLanguage } from '@island.is/shared/constants'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
@@ -36,19 +33,17 @@ export const App = () => {
                 <Authenticator>
                   <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
                     <UserProfileLocale />
-                    <BadgeProvider>
-                      <Layout>
-                        <Switch>
-                          <Route exact path={ServicePortalPath.MinarSidurRoot}>
-                            <Dashboard />
-                          </Route>
-                          <Route>
-                            <Modules />
-                          </Route>
-                        </Switch>
-                        <GlobalModules />
-                      </Layout>
-                    </BadgeProvider>
+                    <Layout>
+                      <Switch>
+                        <Route exact path={ServicePortalPath.MinarSidurRoot}>
+                          <Dashboard />
+                        </Route>
+                        <Route>
+                          <Modules />
+                        </Route>
+                      </Switch>
+                      <GlobalModules />
+                    </Layout>
                   </FeatureFlagProvider>
                 </Authenticator>
               </Router>

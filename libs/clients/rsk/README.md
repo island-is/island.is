@@ -1,6 +1,6 @@
-<!-- gitbook-navigation: "National Registry" -->
+<!-- gitbook-navigation: "RSK" -->
 
-# National Registry Clients
+# RSK Clients
 
 V1 is soap service from national registry
 V2 is x road connected service from national registry
