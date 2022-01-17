@@ -1,5 +1,4 @@
-import React, { useMemo, useState } from 'react'
-import { useMachine } from '@xstate/react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import {
   Box,
@@ -12,14 +11,13 @@ import {
   GridContainer,
 } from '@island.is/island-ui/core'
 
-import { Step, Stepper } from '@island.is/api/schema'
+import { Stepper } from '@island.is/api/schema'
 
 import * as styles from './StepperFSM.css'
 import { StepperHelper } from './StepperFSMHelper'
 
 import {
   getStepperMachine,
-  getCurrentStep,
   resolveStepType,
   getStepOptions,
   STEP_TYPES,
@@ -27,13 +25,15 @@ import {
   getStepBySlug,
   StepperMachine,
   getStepQuestion,
+  getCurrentStepAndStepType,
 } from './StepperFSMUtils'
-import { NextRouter, useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import { ValueType } from 'react-select'
+import { ParsedUrlQuery } from 'querystring'
 
-const answerDelimiter = ','
+const ANSWER_DELIMITER = ','
 
 interface StepperProps {
   stepper: Stepper
@@ -48,106 +48,77 @@ interface StepOptionSelectItem {
   transition: string
 }
 
-const getInitialStateByQueryParams = (
+const getInitialStateAndAnswersByQueryParams = (
   stepper: Stepper,
   stepperMachine: StepperMachine,
-  router: NextRouter,
+  query: ParsedUrlQuery,
   activeLocale: string,
 ) => {
   let initialState = stepperMachine.initialState
+  const questionsAndAnswers: { question: string; answer: string }[] = []
 
-  const answerString = (router.query?.answers ?? '') as string
+  const answerString = (query?.answers ?? '') as string
 
   // If the query parameter is not a string then we just skip checking further
-  if (typeof answerString !== 'string') return initialState
+  if (typeof answerString !== 'string')
+    return { initialState, questionsAndAnswers }
 
-  const answers = answerString.split(answerDelimiter)
+  const answers = answerString.split(ANSWER_DELIMITER)
 
   for (const answer of answers) {
     const stateNode = stepperMachine.states[initialState.value as string]
     const step = getStepBySlug(stepper, stateNode.config.meta.stepSlug)
+    const stepType = resolveStepType(step)
 
-    // TODO: remove the hardcode check and use a constant instead
-    if (step.stepType === 'Answer') return initialState
-
-    const options = getStepOptions(step, activeLocale)
-    const selectedOption = options.find((o) => o.slug === answer)
-    if (!selectedOption) return initialState
-    initialState = stepperMachine.transition(
-      initialState,
-      selectedOption.transition,
-    )
-  }
-
-  return initialState
-}
-
-const getQuestionsAndAnswers = (
-  stepper: Stepper,
-  stepperMachine: StepperMachine,
-  router: NextRouter,
-  activeLocale: string,
-) => {
-  const result = []
-
-  const answerString = (router.query?.answers ?? '') as string
-
-  // If the query parameter is not a string then we just skip checking further
-  if (typeof answerString !== 'string') return result
-
-  const answers = answerString.split(answerDelimiter)
-
-  let initialState = stepperMachine.initialState
-
-  for (const answer of answers) {
-    const stateNode = stepperMachine.states[initialState.value as string]
-    const step = getStepBySlug(stepper, stateNode.config.meta.stepSlug)
-
-    // TODO: remove the hardcode check and use a constant instead
-    if (step.stepType === 'Answer') return result
+    if (stepType === STEP_TYPES.ANSWER) break
 
     const options = getStepOptions(step, activeLocale)
     const selectedOption = options.find((o) => o.slug === answer)
-    if (!selectedOption) return result
+    if (!selectedOption) break
+
     initialState = stepperMachine.transition(
       initialState,
       selectedOption.transition,
     )
 
     const stepQuestion = getStepQuestion(step)
-
     if (stepQuestion) {
-      result.push({
+      questionsAndAnswers.push({
         question: stepQuestion,
         answer: selectedOption.label,
       })
     }
   }
 
-  return result
+  return { initialState, questionsAndAnswers }
 }
 
 export const StepperFSM = ({ stepper }: StepperProps) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
-  const stepperMachine = getStepperMachine(stepper)
 
-  const [currentState, send] = useMachine(stepperMachine, {
-    state: getInitialStateByQueryParams(
+  const stepperMachine = useMemo(() => getStepperMachine(stepper), [stepper])
+
+  const { initialState, questionsAndAnswers } = useMemo(() => {
+    return getInitialStateAndAnswersByQueryParams(
       stepper,
       stepperMachine,
-      router,
+      router.query,
       activeLocale,
-    ),
-  })
+    )
+  }, [activeLocale, router.query, stepper, stepperMachine])
 
-  const currentStep = useMemo<Step>(() => {
-    return getCurrentStep(stepper, currentState)
-  }, [stepper, currentState])
+  const [currentState, setCurrentState] = useState(initialState)
 
-  const currentStepType = useMemo<string>(() => {
-    return resolveStepType(currentStep)
-  }, [currentStep])
+  useEffect(() => {
+    setCurrentState(initialState)
+  }, [initialState])
+
+  // Since this gets it's value from useMemo then it can be undefined on the first pass, so be vary of that
+  const { currentStep, currentStepType } = useMemo(
+    () => getCurrentStepAndStepType(stepper, currentState),
+    [stepper, currentState],
+  )
 
   // TODO: Read showStepperConfigHelper from environment feature flag.
   // TODO: Add triple-click to show helper.
@@ -164,19 +135,12 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
   const [selectedOption, setSelectedOption] = useState<StepOption | undefined>(
     undefined,
   )
-  const stepOptions = useMemo(
+  const stepOptions = useMemo<StepOption[]>(
     () =>
       currentStepType !== STEP_TYPES.ANSWER
         ? getStepOptions(currentStep, activeLocale)
         : [],
     [activeLocale, currentStep, currentStepType],
-  )
-
-  const stepperQnA = getQuestionsAndAnswers(
-    stepper,
-    stepperMachine,
-    router,
-    activeLocale,
   )
 
   const [
@@ -203,13 +167,16 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
           }
           setHasClickedContinueWithoutSelecting(false)
           setSelectedOption(undefined)
-          send(selectedOption.transition)
+
+          setCurrentState(
+            stepperMachine.transition(currentState, selectedOption.transition),
+          )
 
           const pathnameWithoutQueryParams = router.asPath.split('?')[0]
 
           const answers = `${
             router.query?.answers && typeof router.query?.answers === 'string'
-              ? router.query.answers.concat(answerDelimiter)
+              ? router.query.answers.concat(ANSWER_DELIMITER)
               : ''
           }${selectedOption.slug}`
 
@@ -232,7 +199,7 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
 
   return (
     <Box className={styles.container}>
-      {richText(currentStep.subtitle as SliceType[])}
+      {currentStep && richText(currentStep.subtitle as SliceType[])}
 
       {currentStepType === STEP_TYPES.QUESTION_RADIO && (
         <>
@@ -294,16 +261,13 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
           <Text variant="h3" marginBottom={2}>
             {activeLocale === 'is' ? 'Svörin þín' : 'Your answers'}
           </Text>
-          {/* TODO: change this to transition the machine to the initial state insted of reloading the page */}
           <Box disabled={true} marginBottom={3}>
             <Button
               variant="text"
               onClick={() => {
-                router
-                  .push(router.asPath.split('?')[0], undefined, {
-                    shallow: true,
-                  })
-                  .then(router.reload)
+                router.push(router.asPath.split('?')[0], undefined, {
+                  shallow: true,
+                })
               }}
             >
               {activeLocale === 'is' ? 'Byrja aftur' : 'Start again'}
@@ -311,7 +275,7 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
           </Box>
           <GridContainer>
             <GridColumn>
-              {stepperQnA.map(({ question, answer }, i) => (
+              {questionsAndAnswers.map(({ question, answer }, i) => (
                 <GridRow key={i} alignItems="center">
                   <Box marginRight={2}>
                     <Text variant="h4">{question}</Text>

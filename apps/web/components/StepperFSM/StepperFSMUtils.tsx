@@ -87,6 +87,17 @@ const getCurrentStep = (stepper: Stepper, currentState: StepperState): Step => {
   return getStepBySlug(stepper, getStateMeta(currentState).stepSlug)
 }
 
+const getCurrentStepAndStepType = (
+  stepper: Stepper,
+  currentState: StepperState,
+) => {
+  const currentStep = getCurrentStep(stepper, currentState)
+  return {
+    currentStep: currentStep,
+    currentStepType: resolveStepType(currentStep),
+  }
+}
+
 const getStepperMachine = (stepper: Stepper): StepperMachine => {
   const stepperConfig: StepperConfig = JSON.parse(
     stepper.config,
@@ -101,6 +112,8 @@ const STEP_TYPES = {
 }
 
 const resolveStepType = (step: Step): string => {
+  if (!step) return null
+
   if (
     step.stepType &&
     step.stepType.toLowerCase().includes('question') &&
@@ -122,6 +135,8 @@ const resolveStepType = (step: Step): string => {
 }
 
 const getStepOptions = (step: Step, lang = 'en'): StepOption[] => {
+  if (!step) return []
+
   const stepConfig: StepConfig = JSON.parse(step.config) as StepConfig
   return stepConfig.options.map((o) => {
     const label = lang === 'is' ? o.label_is : o.label_en
@@ -160,6 +175,7 @@ export {
   resolveStepType,
   getStepOptions,
   getStepQuestion,
+  getCurrentStepAndStepType,
 }
 export type {
   StepperConfig,
