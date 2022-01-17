@@ -23,7 +23,7 @@ export class UserResolver {
   @Query(() => User, { nullable: true })
   async user(@CurrentUser() user: AuthUser): Promise<User | undefined> {
     if (!user) {
-      return null as User
+      return undefined
     }
     user.role = getRole(user)
     return user as User
