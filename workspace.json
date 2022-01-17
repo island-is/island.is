@@ -1102,6 +1102,27 @@
         }
       }
     },
+    "api-domains-fishing-licence": {
+      "root": "libs/api/domains/fishing-licence",
+      "sourceRoot": "libs/api/domains/fishing-licence/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/fishing-licence/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/fishing-licence"],
+          "options": {
+            "jestConfig": "libs/api/domains/fishing-licence/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-health-insurance": {
       "root": "libs/api/domains/health-insurance",
       "sourceRoot": "libs/api/domains/health-insurance/src",
@@ -3214,6 +3235,27 @@
           "outputs": ["coverage/libs/clients/finance"],
           "options": {
             "jestConfig": "libs/clients/finance/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-fishing-licence": {
+      "root": "libs/clients/fishing-licence",
+      "sourceRoot": "libs/clients/fishing-licence/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/fishing-licence/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/fishing-licence"],
+          "options": {
+            "jestConfig": "libs/clients/fishing-licence/jest.config.js",
             "passWithNoTests": true
           }
         }
