@@ -19,7 +19,7 @@ export class QualityPhotoResolver {
   constructor(private readonly drivingLicenseService: DrivingLicenseService) {}
 
   @ResolveField('dataUri', () => String, { nullable: true })
-  resolvedataUri(
+  resolveDataUri(
     @Parent() { hasQualityPhoto }: QualityPhoto,
     @CurrentUser() user: User,
   ): Promise<String | null> {

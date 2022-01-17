@@ -256,15 +256,9 @@ export class DrivingLicenseService {
   async getQualityPhoto(
     nationalId: User['nationalId'],
   ): Promise<QualityPhotoResult> {
-    let hasQualityPhoto
-
-    try {
-      hasQualityPhoto = await this.drivingLicenseApi.getHasQualityPhoto({
-        nationalId,
-      })
-    } catch (e) {
-      throw e
-    }
+    const hasQualityPhoto = await this.drivingLicenseApi.getHasQualityPhoto({
+      nationalId,
+    })
 
     return {
       hasQualityPhoto,
