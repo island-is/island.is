@@ -24,7 +24,7 @@ import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
-import { RSKModule } from '@island.is/api/domains/company-registry'
+import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { FinanceModule } from '@island.is/api/domains/finance'
@@ -182,7 +182,7 @@ const autoSchemaFile = environment.production
     IdentityModule,
     AuthModule.register(environment.auth),
     SyslumennModule,
-    RSKModule.register({
+    CompanyRegistryModule.register({
       password: environment.rskDomain.password,
       url: environment.rskDomain.url,
       username: environment.rskDomain.username,

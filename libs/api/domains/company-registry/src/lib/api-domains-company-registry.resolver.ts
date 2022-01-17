@@ -23,8 +23,8 @@ import { RskCompanyInfoSearchInput } from './dto/RskCompanyInfoSearch.input'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Resolver(() => RskCompany)
-@Audit({ namespace: '@island.is/api/rsk' })
-export class RSKResolver {
+@Audit({ namespace: '@island.is/api/company-registry' })
+export class CompanyRegistryResolver {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
@@ -39,7 +39,7 @@ export class RSKResolver {
   }
 
   @Query(() => RskCompany, {
-    name: 'rskCompany',
+    name: 'companyRegistryCompany',
     nullable: true,
   })
   async companyInformation(
@@ -58,7 +58,7 @@ export class RSKResolver {
   }
 
   @Query(() => RskCompanySearchItems, {
-    name: 'rskCompanies',
+    name: 'companyRegistryCompanies',
   })
   async companyInformationSearch(
     @Args('input', { type: () => RskCompanyInfoSearchInput })
