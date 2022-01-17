@@ -42,9 +42,6 @@ async function signIn(
 }
 
 async function jwt(token: JWT, user: AuthUser) {
-  if (token.isRefreshTokenExpired === true) {
-    useLogOut()
-  }
   if (user) {
     token = {
       nationalId: user.nationalId,
