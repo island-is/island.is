@@ -165,3 +165,8 @@ infra/                                                                          
 /libs/auth-nest-tools/                                                                        @island-is/fuglar @island-is/aranja
 
 /apps/services/personal-representative/                                                       @island-is/programm
+
+/libs/application/templates/criminal-record/                                                  @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission   @island-is/origo
+/libs/api/domains/criminal-record/                                                            @island-is/origo
+/libs/clients/criminal-record/                                                                @island-is/origo

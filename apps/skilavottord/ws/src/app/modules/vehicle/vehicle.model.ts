@@ -12,6 +12,7 @@ import {
   AllowNull,
 } from 'sequelize-typescript'
 
+import { PageInfo } from '../../graphql'
 import { RecyclingRequestModel } from '../recyclingRequest'
 import { VehicleOwnerModel } from '../vehicleOwner'
 
@@ -60,8 +61,7 @@ export class VehicleModel extends Model<VehicleModel> {
   })
   vinNumber: string
 
-  @Field()
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   @CreatedAt
   @Column
   createdAt?: Date
@@ -74,21 +74,6 @@ export class VehicleModel extends Model<VehicleModel> {
   @Field(() => [RecyclingRequestModel], { nullable: true })
   @HasMany(() => RecyclingRequestModel)
   recyclingRequests!: RecyclingRequestModel[]
-}
-
-@ObjectType()
-export class PageInfo {
-  @Field()
-  hasNextPage!: boolean
-
-  @Field()
-  hasPreviousPage!: boolean
-
-  @Field({ nullable: true })
-  startCursor!: string
-
-  @Field({ nullable: true })
-  endCursor!: string
 }
 
 @ObjectType()

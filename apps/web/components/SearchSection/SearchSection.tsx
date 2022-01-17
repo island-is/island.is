@@ -73,7 +73,7 @@ export const SearchSection = ({
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <Box display="flex" height="full" alignItems="center">
               <Stack space={[3, 3, 5]}>
-                <Text variant="h1" id={headingId}>
+                <Text as="h1" variant="h1" id={headingId}>
                   {heading ?? ''}
                 </Text>
                 <SearchInput

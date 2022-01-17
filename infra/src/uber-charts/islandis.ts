@@ -124,8 +124,6 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
-    userNotificationService,
-    userNotificationWorkerService,
   ],
   dev: [
     appSystemApi,
