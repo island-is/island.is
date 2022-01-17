@@ -1035,21 +1035,20 @@ describe('formatPrisonRevokedEmailNotification', () => {
   })
 })
 
-// TDOO defendants: handle multiple defendants
 describe('formatDefenderRevokedEmailNotification', () => {
   test('should format revoked notification', () => {
     // Arrange
     const type = CaseType.CUSTODY
-    const accusedNationalId = '0000001111'
-    const accusedName = 'Gaui Glæpon'
+    const defendantNationalId = '0000001111'
+    const defendantName = 'Gaui Glæpon'
     const court = 'Héraðsdómur Þingvalla'
     const courtDate = new Date('2021-01-24T08:15')
 
     // Act
     const res = formatDefenderRevokedEmailNotification(
       type,
-      accusedNationalId,
-      accusedName,
+      defendantNationalId,
+      defendantName,
       court,
       courtDate,
     )
@@ -1060,20 +1059,19 @@ describe('formatDefenderRevokedEmailNotification', () => {
     )
   })
 
-  // TDOO defendants: handle multiple defendants
   test('should format revoked notification for travel ban', () => {
     // Arrange
     const type = CaseType.TRAVEL_BAN
-    const accusedNationalId = '1111001111'
-    const accusedName = 'Gaui Glæpon'
+    const defendantNationalId = '1111001111'
+    const defendantName = 'Gaui Glæpon'
     const court = 'Héraðsdómur Þingvalla'
     const courtDate = new Date('2021-01-24T08:15')
 
     // Act
     const res = formatDefenderRevokedEmailNotification(
       type,
-      accusedNationalId,
-      accusedName,
+      defendantNationalId,
+      defendantName,
       court,
       courtDate,
     )
@@ -1081,6 +1079,29 @@ describe('formatDefenderRevokedEmailNotification', () => {
     // Assert
     expect(res).toBe(
       'Farbannskrafa sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+    )
+  })
+
+  test('should format revoked notification for investigation', () => {
+    // Arrange
+    const type = CaseType.BANKING_SECRECY_WAIVER
+    const defendantNationalId = '1111001111'
+    const defendantName = 'Gaui Glæpon'
+    const court = 'Héraðsdómur Þingvalla'
+    const courtDate = new Date('2021-01-24T08:15')
+
+    // Act
+    const res = formatDefenderRevokedEmailNotification(
+      type,
+      defendantNationalId,
+      defendantName,
+      court,
+      courtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Krafa um rannsóknarheimild sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
     )
   })
 })

@@ -62,7 +62,7 @@ function constructCustodyNoticePdf(
     .lineGap(8)
     .text('Sakborningur')
     .fontSize(baseFontSize)
-    // TODO: Assume there is at most one defendant
+    // Assume there is at most one defendant
     .text(
       existingCase.defendants &&
         existingCase.defendants.length > 0 &&
