@@ -66,9 +66,13 @@ export const generateYamlForEnv = (
   return renderValueFile(uberChart, ...services)
 }
 
-export const dumpYaml = (valueFile: ValueFile) => {
+export const dumpYaml = (ch: UberChart, valueFile: ValueFile) => {
   const { namespaces, services } = valueFile
-  return dump({ namespaces: { namespaces }, ...services }, dumpOpts)
+  const namespaceLabels = ch.env.feature ? { namespaceType: 'feature' } : {}
+  return dump(
+    { namespaces: { namespaces, labels: namespaceLabels }, ...services },
+    dumpOpts,
+  )
 }
 
 export const dumpJobYaml = (job: FeatureKubeJob) => dump(job, dumpOpts)
