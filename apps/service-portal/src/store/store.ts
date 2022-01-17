@@ -11,6 +11,7 @@ export interface StoreState {
   modulesPending: boolean
   navigationState: AsyncActionState
   notificationMenuState: MenuState
+  sidebarState: MenuState
   mobileMenuState: MenuState
   userMenuState: MenuState
   routes: ServicePortalRoute[]
@@ -20,6 +21,7 @@ export const initialState: StoreState = {
   modules,
   modulesPending: true,
   navigationState: 'passive',
+  sidebarState: 'open',
   notificationMenuState: 'closed',
   mobileMenuState: 'closed',
   userMenuState: 'closed',
@@ -59,6 +61,11 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
         ...state,
         modules: action.payload,
         modulesPending: false,
+      }
+    case ActionType.SetSidebarMenuState:
+      return {
+        ...state,
+        sidebarState: action.payload,
       }
     default:
       return state

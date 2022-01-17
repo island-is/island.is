@@ -45,7 +45,6 @@ if (userMocked) {
       AuthScope.readDelegations,
       AuthScope.writeDelegations,
       NationalRegistryScope.individuals,
-      NationalRegistryScope.properties,
       DocumentsScope.main,
       EndorsementsScope.main,
       EndorsementsScope.admin,

@@ -302,7 +302,7 @@ export const m: MessageDir = {
     agreeTermsLabel: {
       id: 'gpt.application:endorsement.form.agree.label',
       defaultMessage:
-        'Ég hef kynnt mér ofangreint málefni og samþykki uppflettingu úr Þjóðskrá',
+        'Ég hef kynnt mér ofangreint málefni og samþykki uppflettingu í Þjóðskrá',
       description: 'Label for terms and conditions',
     },
     allowNameLabel: {

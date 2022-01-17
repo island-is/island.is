@@ -109,12 +109,6 @@ const prodConfig = () => ({
   endorsementSystem: {
     baseApiUrl: process.env.ENDORSEMENT_SYSTEM_BASE_API_URL,
   },
-  propertiesXRoad: {
-    url: process.env.XROAD_BASE_PATH_WITH_ENV,
-    memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE,
-    apiPath: process.env.XROAD_PROPERTIES_API_PATH,
-    clientId: process.env.XROAD_CLIENT_ID,
-  },
   paymentDomain: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     xRoadProviderId: process.env.XROAD_PAYMENT_PROVIDER_ID,
@@ -283,15 +277,6 @@ const devConfig = () => ({
   },
   endorsementSystem: {
     baseApiUrl: 'http://localhost:4246',
-  },
-  propertiesXRoad: {
-    url:
-      process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8081/r1/IS-DEV',
-    memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE ?? '10001',
-    apiPath:
-      process.env.XROAD_PROPERTIES_API_PATH ?? '/SKRA-Protected/Fasteignir-v1',
-    clientId:
-      process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
   },
   paymentDomain: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH,

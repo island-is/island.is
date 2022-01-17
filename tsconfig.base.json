@@ -189,6 +189,12 @@
       "@island.is/application/templates/login-service": [
         "libs/application/templates/login-service/src/index.ts"
       ],
+      "@island.is/application/templates/meta-application": [
+        "libs/application/templates/meta-application/src/index.ts"
+      ],
+      "@island.is/application/templates/p-sign": [
+        "libs/application/templates/p-sign/src/index.ts"
+      ],
       "@island.is/application/templates/parental-leave": [
         "libs/application/templates/parental-leave/src/index.ts"
       ],
@@ -354,6 +360,7 @@
       "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
+      "@island.is/nest/swagger": ["libs/nest/swagger/src/index.ts"],
       "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
       "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],

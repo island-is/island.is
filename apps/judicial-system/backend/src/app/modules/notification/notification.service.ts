@@ -239,39 +239,46 @@ export class NotificationService {
     }
   }
 
-  private createICalAttachment(existingCase: Case): Attachment {
-    const courtDate = existingCase.courtDate?.toString().split('.')[0] || ''
-    const courtEnd = existingCase.courtDate
-    courtEnd?.setMinutes(courtEnd.getMinutes() + 30)
+  private createICalAttachment(existingCase: Case): Attachment | undefined {
+    if (existingCase.courtDate) {
+      const eventOrganizer = {
+        name: existingCase.registrar
+          ? existingCase.registrar.name
+          : existingCase.judge
+          ? existingCase.judge.name
+          : '',
+        email: existingCase.registrar
+          ? existingCase.registrar.email
+          : existingCase.judge
+          ? existingCase.judge.email
+          : '',
+      }
 
-    const icalendar = new ICalendar({
-      title: `Fyrirtaka í máli ${existingCase.policeCaseNumber}`,
-      location: `${existingCase.court?.name}. ${
-        existingCase.courtRoom
-          ? `Dómsalur: ${existingCase.courtRoom}`
-          : 'Dómsalur hefur ekki verið skráður.'
-      }`,
-      start: new Date(courtDate),
-      end: new Date(courtEnd ?? ''),
-      attendees: [
-        {
-          name: existingCase.registrar
-            ? existingCase.registrar.name
-            : existingCase.judge
-            ? existingCase.judge.name
-            : '',
-          email: existingCase.registrar
-            ? existingCase.registrar.email
-            : existingCase.judge
-            ? existingCase.judge.email
-            : '',
-        },
-      ],
-    })
+      const courtDate = new Date(
+        existingCase.courtDate.toString().split('.')[0],
+      )
+      const courtEnd = new Date(existingCase.courtDate.getTime() + 30 * 60000)
 
-    return {
-      filename: 'court-date.ics',
-      content: icalendar.render(),
+      const icalendar = new ICalendar({
+        title: `Fyrirtaka í máli ${existingCase.courtCaseNumber} - ${existingCase.prosecutor?.institution?.name} gegn X`,
+        location: `${existingCase.court?.name} - ${
+          existingCase.courtRoom
+            ? `Dómsalur ${existingCase.courtRoom}`
+            : 'Dómsalur hefur ekki verið skráður.'
+        }`,
+        start: courtDate,
+        end: courtEnd,
+      })
+
+      return {
+        filename: 'court-date.ics',
+        content: icalendar
+          .addProperty(
+            `ORGANIZER;CN=${eventOrganizer.name}`,
+            `MAILTO:${eventOrganizer.email}`,
+          )
+          .render(),
+      }
     }
   }
 
@@ -444,13 +451,14 @@ export class NotificationService {
       theCase.defenderIsSpokesperson,
       theCase.sessionArrangements,
     )
+    const calendarInvite = this.createICalAttachment(theCase)
 
     return this.sendEmail(
       subject,
       html,
       theCase.prosecutor?.name,
       theCase.prosecutor?.email,
-      [this.createICalAttachment(theCase)],
+      calendarInvite ? [calendarInvite] : undefined,
     )
   }
 
@@ -496,8 +504,8 @@ export class NotificationService {
       theCase.prosecutor?.name,
       theCase.prosecutor?.institution?.name,
     )
-
-    const attachments: Attachment[] = [this.createICalAttachment(theCase)]
+    const calendarInvite = this.createICalAttachment(theCase)
+    const attachments: Attachment[] = calendarInvite ? [calendarInvite] : []
 
     if (theCase.sendRequestToDefender) {
       const pdf = await getRequestPdfAsString(theCase, this.formatMessage)

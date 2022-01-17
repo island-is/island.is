@@ -116,9 +116,9 @@ export interface PaginateInput {
   Model: any
   primaryKeyField: string
   orderOption: any
-  where: any
+  where?: any
   after: string
-  before: string
+  before?: string
   limit: number
   [key: string]: any
 }
@@ -130,18 +130,18 @@ export interface PageInfo {
   endCursor: string
 }
 
-export async function paginate({
+export async function paginate<T = any>({
   Model,
   primaryKeyField,
   orderOption,
-  where,
+  where = {},
   after,
   before,
   limit,
   ...queryArgs
 }: PaginateInput): Promise<{
   totalCount: number
-  data: any[]
+  data: T[]
   pageInfo: PageInfo
 }> {
   let order = normalizeOrder(orderOption, primaryKeyField)
