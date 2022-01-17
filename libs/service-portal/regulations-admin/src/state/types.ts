@@ -205,11 +205,12 @@ export type Action =
       type: 'APPENDIX_DELETE'
       idx: number
     }
-  | {
-      type: 'APPENDIX_REVOKE'
-      idx: number
-      revoked: boolean
-    }
+  // // TODO: Adapt for impact appendixes
+  // | {
+  //     type: 'APPENDIX_REVOKE'
+  //     idx: number
+  //     revoked: boolean
+  //   }
   | {
       type: 'SHIP'
     }

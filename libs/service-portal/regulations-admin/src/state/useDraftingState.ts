@@ -352,13 +352,14 @@ const actionHandlers: {
     }
   },
 
-  APPENDIX_REVOKE: (state, { idx, revoked }) => {
-    const { appendixes } = state.draft
-    const appendix = appendixes[idx]
-    if (appendix) {
-      appendix.revoked = revoked
-    }
-  },
+  // // TODO: Adapt for impact appendixes
+  // APPENDIX_REVOKE: (state, { idx, revoked }) => {
+  //   const { appendixes } = state.draft
+  //   const appendix = appendixes[idx]
+  //   if (appendix) {
+  //     appendix.revoked = revoked
+  //   }
+  // },
 
   APPENDIX_MOVE_UP: (state, { idx }) => {
     const prevIdx = idx - 1
@@ -559,9 +560,14 @@ export const useDraftingState = (
       deleteAppendix: (idx: number) => {
         dispatch({ type: 'APPENDIX_DELETE', idx })
       },
-      revokeAppendix: (idx: number, revoked: boolean) => {
-        dispatch({ type: 'APPENDIX_REVOKE', idx, revoked })
-      },
+
+      /**
+       * No-op for op-level draft appendixes.
+       * Only implemented for action-interface compatilility with
+       * impact appendix editing
+       */
+      revokeAppendix: (idx: number, revoked: boolean) => undefined,
+
       moveAppendixUp: (idx: number) => {
         dispatch({ type: 'APPENDIX_MOVE_UP', idx })
       },
