@@ -26,4 +26,5 @@ export const dialog = style({
 export const endGrid = style({
   display: 'flex',
   justifyContent: 'center',
+  alignItems: 'flex-start',
 })

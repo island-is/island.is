@@ -11,88 +11,89 @@ import {
   Icon,
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
-import { useVerifyEmail } from '@island.is/service-portal/graphql'
+import { useVerifySms } from '@island.is/service-portal/graphql'
+import { sharedMessages } from '@island.is/shared/translations'
 
 interface Props {
   buttonText: string
-  email?: string
-  onCallback: (email: string) => void
-  emailDirty: (isDirty: boolean) => void
+  mobile?: string
+  onCallback: (mobile: string) => void
+  telDirty: (isDirty: boolean) => void
 }
 
 interface FormErrors {
-  email: boolean
+  mobile: boolean
   code: boolean
 }
 
-export const InputEmail: FC<Props> = ({
+export const InputPhone: FC<Props> = ({
   buttonText,
-  email,
+  mobile,
   onCallback,
-  emailDirty,
+  telDirty,
 }) => {
   const { handleSubmit, control, errors, getValues } = useForm()
   const { formatMessage } = useLocale()
   const {
-    confirmEmailVerification,
-    createEmailVerification,
-    loading,
-    error,
-  } = useVerifyEmail()
-  const [emailInternal, setEmailInternal] = useState(email || '')
-  const [emailToVerify, setEmailToVerify] = useState(email || '')
+    confirmSmsVerification,
+    createSmsVerification,
+    createError,
+    createLoading,
+  } = useVerifySms()
+  const [telInternal, setTelInternal] = useState(mobile || '')
+  const [telToVerify, setTelToVerify] = useState(mobile || '')
 
   const [codeInternal, setCodeInternal] = useState('')
 
-  const [emailVerifyCreated, setEmailVerifyCreated] = useState(false)
+  const [telVerifyCreated, setTelVerifyCreated] = useState(false)
   const [verificationValid, setVerificationValid] = useState(false)
 
   const [formErrors, setErrors] = useState<FormErrors>({
-    email: false,
+    mobile: false,
     code: false,
   })
 
   useEffect(() => {
-    if (email === emailInternal) {
-      emailDirty(false)
-    } else if (emailInternal === emailToVerify) {
-      emailDirty(false)
+    if (mobile === telInternal) {
+      telDirty(false)
+    } else if (telInternal === telToVerify) {
+      telDirty(false)
     } else {
-      emailDirty(true)
+      telDirty(true)
     }
-  }, [emailInternal])
+  }, [telInternal])
 
-  const handleSendEmailVerification = async (data: { email: string }) => {
+  const handleSendTellVerification = async (data: { tel: string }) => {
     try {
-      const response = await createEmailVerification({
-        email: data?.email,
+      const response = await createSmsVerification({
+        mobilePhoneNumber: data?.tel,
       })
 
-      if (response.data?.createEmailVerification?.created) {
-        setEmailVerifyCreated(true)
-        setEmailToVerify(data?.email)
+      if (response.data?.createSmsVerification?.created) {
+        setTelVerifyCreated(true)
+        setTelToVerify(data?.tel)
         setVerificationValid(false)
-        setErrors({ ...formErrors, email: false })
+        setErrors({ ...formErrors, mobile: false })
       } else {
-        setErrors({ ...formErrors, email: true })
+        setErrors({ ...formErrors, mobile: true })
       }
     } catch (err) {
-      setErrors({ ...formErrors, email: true })
+      setErrors({ ...formErrors, mobile: true })
     }
   }
 
   const handleConfirmCode = async (data: { code: string }) => {
     try {
-      const response = await confirmEmailVerification({
-        hash: data?.code,
+      const response = await confirmSmsVerification({
+        code: data?.code,
       })
-      if (response.data?.confirmEmailVerification?.confirmed) {
+      if (response.data?.confirmSmsVerification?.confirmed) {
         const formValues = getValues()
-        const emailValue = formValues?.email
-        if (emailValue === emailToVerify) {
+        const telValue = formValues?.tel
+        if (telValue === telToVerify) {
           setVerificationValid(true)
-          emailDirty(false)
-          onCallback(emailValue)
+          telDirty(false)
+          onCallback(telValue)
         }
         setErrors({ ...formErrors, code: false })
       } else {
@@ -105,35 +106,52 @@ export const InputEmail: FC<Props> = ({
 
   return (
     <Box>
-      <form onSubmit={handleSubmit(handleSendEmailVerification)}>
+      <form onSubmit={handleSubmit(handleSendTellVerification)}>
         <Columns alignY="center">
           <Column width="9/12">
             <InputController
               control={control}
-              id="email"
-              name="email"
+              id="tel"
+              name="tel"
+              type="tel"
+              format="### ####"
               required={false}
-              type="email"
+              defaultValue={telInternal || ''}
               rules={{
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                minLength: {
+                  value: 7,
                   message: formatMessage({
-                    id: 'sp.settings:email-wrong-format-message',
-                    defaultMessage: 'Netfangið er ekki á réttu formi',
+                    id: 'sp.settings:tel-required-length-msg',
+                    defaultMessage:
+                      'Símanúmer þarf að vera 7 tölustafir á lengd',
+                  }),
+                },
+                maxLength: {
+                  value: 7,
+                  message: formatMessage({
+                    id: 'sp.settings:tel-required-length-msg',
+                    defaultMessage:
+                      'Símanúmer þarf að vera 7 tölustafir á lengd',
+                  }),
+                },
+                pattern: {
+                  value: /^\d+$/,
+                  message: formatMessage({
+                    id: 'sp.settings:only-numbers-allowed',
+                    defaultMessage: 'Eingöngu tölustafir eru leyfðir',
                   }),
                 },
               }}
-              label={formatMessage(m.email)}
-              onChange={(inp) => setEmailInternal(inp.target.value)}
-              placeholder={formatMessage(m.email)}
-              error={errors.email?.message}
-              defaultValue={email || ''}
+              label={formatMessage(sharedMessages.phoneNumber)}
+              placeholder={formatMessage(sharedMessages.phoneNumber)}
+              onChange={(inp) => setTelInternal(inp.target.value)}
+              error={errors.tel?.message}
             />
           </Column>
           <Column width="3/12">
             <Box display="flex" alignItems="flexEnd" flexDirection="column">
-              <button type="submit" disabled={!emailInternal}>
-                <Button variant="text" size="small" disabled={!emailInternal}>
+              <button type="submit" disabled={!telInternal}>
+                <Button variant="text" disabled={!telInternal} size="small">
                   {buttonText}
                 </Button>
               </button>
@@ -141,7 +159,7 @@ export const InputEmail: FC<Props> = ({
           </Column>
         </Columns>
       </form>
-      {emailVerifyCreated && (
+      {telVerifyCreated && (
         <form onSubmit={handleSubmit(handleConfirmCode)}>
           <Columns alignY="center">
             <Column width="9/12">

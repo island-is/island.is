@@ -505,7 +505,7 @@ export const m = defineMessages({
   },
   confirmCode: {
     id: 'service.portal:confirm-code',
-    defaultMessage: 'Senda staðfestingarkóða',
+    defaultMessage: 'Staðfesta kóða',
   },
   telNumber: {
     id: 'service.portal:tel',
@@ -580,5 +580,9 @@ export const m = defineMessages({
   islykill: {
     id: 'service.portal:islykill',
     defaultMessage: 'Íslykill',
+  },
+  saveInfo: {
+    id: 'service.portal:saveInfo',
+    defaultMessage: 'Vista upplýsingar',
   },
 })

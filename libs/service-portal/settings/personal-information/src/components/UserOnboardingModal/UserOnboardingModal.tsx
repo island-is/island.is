@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { toast } from '@island.is/island-ui/core'
-import { useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
-import { defaultLanguage } from '@island.is/shared/constants'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import { m } from '@island.is/service-portal/core'
+import {
+  ServicePortalModuleComponent,
+  Modal,
+} from '@island.is/service-portal/core'
 import {
   ModalBase,
   Box,
@@ -17,7 +20,6 @@ import {
   useUpdateUserProfile,
   useUserProfile,
 } from '@island.is/service-portal/graphql'
-import { LanguageFormData, LanguageFormOption } from '../Forms/LanguageForm'
 import { EmailFormData } from '../Forms/EmailForm/Steps/FormStep'
 import { PhoneFormData } from '../Forms/PhoneForm/Steps/FormStep'
 import { parseNumber } from '../../utils/phoneHelper'
@@ -30,30 +32,20 @@ import { OnboardingHeader } from './components/Header'
 import { OnboardingIntro } from './components/Intro'
 import { InputSection } from './components/InputSection'
 import { InputEmail } from './components/Inputs/Email'
+import { InputPhone } from './components/Inputs/Phone'
+import { DropModal } from './components/DropModal'
 import * as styles from './UserOnboardingModal.css'
-
-export type OnboardingStep =
-  | 'intro'
-  | 'language-form'
-  | 'tel-form'
-  | 'email-form'
-  | 'submit-form'
-  | 'form-submitted'
-  | '00'
-
-const defaultLanguageOption: LanguageFormOption = {
-  value: 'is',
-  label: 'Íslenska',
-}
 
 const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const [toggleCloseModal, setToggleCloseModal] = useState(false)
-  const [step, setStep] = useState<OnboardingStep>('00')
+
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
-  const [language, setLanguage] = useState<LanguageFormOption | null>(
-    defaultLanguageOption,
-  )
+
+  const [telDirty, setTelDirty] = useState(true)
+  const [emailDirty, setEmailDirty] = useState(true)
+
+  const { formatMessage } = useLocale()
 
   const { data: userProfile } = useUserProfile()
 
@@ -62,18 +54,11 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       if (userProfile.mobilePhoneNumber) {
         const parsedNumber = parseNumber(userProfile.mobilePhoneNumber)
         setTel(parsedNumber)
+        setTelDirty(false)
       }
       if (userProfile.email) {
         setEmail(userProfile.email)
-      }
-      if (userProfile.locale) {
-        const enOption: LanguageFormOption = {
-          value: 'en',
-          label: 'English',
-        }
-        const lang =
-          userProfile.locale === 'en' ? enOption : defaultLanguageOption
-        setLanguage(lang)
+        setEmailDirty(false)
       }
     }
   }, [userProfile])
@@ -81,10 +66,8 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const { createUserProfile } = useCreateUserProfile()
   const { updateUserProfile } = useUpdateUserProfile()
 
-  const { changeLanguage } = useNamespaces()
   const { pathname } = useLocation()
 
-  // On close side effects
   const dropOnboardingSideEffects = () => {
     toast.info('Notendaupplýsingum er hægt að breyta í stillingum')
     servicePortalCloseOnBoardingModal(pathname)
@@ -101,58 +84,39 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
     setToggleCloseModal(true)
   }
 
-  const gotoStep = (step: OnboardingStep) => {
-    setStep(step)
-  }
-
-  const submitFormData = async (
-    email: string,
-    mobilePhoneNumber: string,
-    locale: Locale,
-  ) => {
-    gotoStep('submit-form')
-
+  const submitFormData = async (email: string, mobilePhoneNumber: string) => {
     try {
+      /**
+       * TODO:
+       * - createIslykillSettings + updateIslykillSettings in islykill.service.ts...
+       * ..should check if email + phone is verified before saving in islykill db
+       * - New look for inputs
+       * - /minarsidur/stillingar/personuupplysingar/ -> Update look on this page to new look
+       */
       if (userProfile) {
         await updateUserProfile({
-          locale,
           email,
           mobilePhoneNumber: `+354-${mobilePhoneNumber}`,
         })
       } else {
         await createUserProfile({
-          locale,
           email,
           mobilePhoneNumber: `+354-${mobilePhoneNumber}`,
         })
       }
-      gotoStep('form-submitted')
       if (pathname) {
         servicePortalSubmitOnBoardingModal(pathname)
       }
     } catch (err) {
-      gotoStep('email-form')
       toast.error(
         'Eitthvað fór úrskeiðis, ekki tókst að uppfæra notendaupplýsingar þínar',
       )
     }
   }
 
-  const handleLanguageStepSubmit = (data: LanguageFormData) => {
-    if (data.language === null) return
-    setLanguage(data.language)
-    changeLanguage(data.language.value)
-    gotoStep('tel-form')
-  }
-
-  const handlePhoneStepSubmit = (data: PhoneFormData) => {
-    setTel(data.tel)
-    gotoStep('email-form')
-  }
-
-  const handleEmailStepSubmit = (data: EmailFormData) => {
-    setEmail(data.email)
-    submitFormData(data.email, tel, language?.value || defaultLanguage)
+  const handleFormSubmit = () => {
+    submitFormData(email, tel)
+    closeModal()
   }
 
   return (
@@ -172,17 +136,33 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
           <GridColumn span={['12/12', '5/12']}>
             <OnboardingIntro name={userInfo?.profile?.name || ''} />
             <InputSection
-              title={'Tölvupóstur'}
+              title={formatMessage(m.email)}
               text="Vinsamlegt settu inn nefangið þitt. Við komum til með að senda á þig staðfestingar og tilkynningar."
             >
-              <InputEmail buttonText="Vista netfang" />
+              <InputEmail
+                onCallback={(emailAddr) => setEmail(emailAddr)}
+                emailDirty={(isDirty) => setEmailDirty(isDirty)}
+                buttonText={formatMessage({
+                  id: 'sp.settings:save-email',
+                  defaultMessage: 'Vista netfang',
+                })}
+                email={email}
+              />
             </InputSection>
-            {/* <InputSection
-              title={'Símanúmer'}
+            <InputSection
+              title={formatMessage(m.telNumber)}
               text="Við komum til með að senda á þig staðfestinar og tilkynningar og því er gott að vera með rétt númer skráð. Endilega skráðu númerið þitt hér fyrir neðan og við sendum þér öryggiskóða til staðfestingar."
             >
-              <InputEmail buttonText="Vista símanúmer" />
-            </InputSection> */}
+              <InputPhone
+                onCallback={(mobile) => setTel(mobile)}
+                telDirty={(isDirty) => setTelDirty(isDirty)}
+                buttonText={formatMessage({
+                  id: 'sp.settings:save-tel',
+                  defaultMessage: 'Vista símanúmer',
+                })}
+                mobile={tel}
+              />
+            </InputSection>
             <Box
               paddingTop={4}
               display="flex"
@@ -191,10 +171,10 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
             >
               <Button
                 icon="checkmark"
-                disabled
-                onClick={() => console.log('save email')}
+                disabled={emailDirty || telDirty || (!tel && !email)}
+                onClick={handleFormSubmit}
               >
-                Vista upplýsingar
+                {formatMessage(m.saveInfo)}
               </Button>
             </Box>
           </GridColumn>
@@ -207,6 +187,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
           </GridColumn>
         </GridRow>
       </GridContainer>
+      {false && <DropModal type="all" onClose={closeModal} close={false} />}
     </ModalBase>
   )
 }
