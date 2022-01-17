@@ -221,7 +221,7 @@ export class DraftRegulationService {
       signatureDate: draftRegulation.signature_date,
       signatureText: draftRegulation.signature_text || '',
       signedDocumentUrl: draftRegulation.signed_document_url,
-      // fastTrack: ??
+      fastTrack: draftRegulation.fast_track,
     }
   }
 
@@ -274,6 +274,7 @@ export class DraftRegulationService {
       drafting_status: update.draftingStatus,
       signed_document_url: update.signedDocumentUrl,
       authors: update.authors,
+      fast_track: update.fastTrack,
     }
 
     const [

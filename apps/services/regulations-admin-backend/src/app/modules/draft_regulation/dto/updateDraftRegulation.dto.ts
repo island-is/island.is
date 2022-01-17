@@ -1,4 +1,4 @@
-import { IsArray, IsOptional, IsString } from 'class-validator'
+import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 import {
@@ -90,4 +90,9 @@ export class UpdateDraftRegulationDto {
   @IsArray()
   @ApiProperty()
   readonly lawChapters?: LawChapterSlug[]
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty()
+  readonly fastTrack?: boolean
 }

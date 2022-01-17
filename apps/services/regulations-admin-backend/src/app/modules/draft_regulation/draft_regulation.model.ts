@@ -129,6 +129,12 @@ export class DraftRegulationModel extends Model<DraftRegulationModel> {
   @ApiProperty()
   signed_document_url?: URLString
 
+  @Column({
+    type: DataType.BOOLEAN,
+  })
+  @ApiProperty()
+  fast_track?: boolean
+
   @HasMany(() => DraftRegulationChangeModel)
   @ApiPropertyOptional({ type: [DraftRegulationChangeModel] })
   changes?: DraftRegulationChangeModel[]
