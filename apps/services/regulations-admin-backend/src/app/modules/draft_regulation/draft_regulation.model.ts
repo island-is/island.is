@@ -11,7 +11,6 @@ import {
   RegulationType,
   ISODate,
   RegName,
-  MinistrySlug,
   LawChapterSlug,
   Kennitala,
   URLString,

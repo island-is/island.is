@@ -7,7 +7,6 @@ import {
   ISODate,
   Kennitala,
   LawChapterSlug,
-  MinistrySlug,
   PlainText,
   RegName,
   RegulationType,

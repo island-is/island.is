@@ -2,7 +2,6 @@ import {
   HTMLText,
   ISODate,
   LawChapterSlug,
-  MinistrySlug,
   PlainText,
   RegName,
   RegulationType,
