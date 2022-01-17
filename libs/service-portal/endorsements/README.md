@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # Service Portal Endorsements
 
 This module displays what endorsements are assigned to you, and allows you to un-register your endorsements or register new endorsements

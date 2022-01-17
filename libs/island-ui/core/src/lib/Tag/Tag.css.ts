@@ -9,10 +9,23 @@ export const container = style({
   alignItems: 'center',
   height: 32,
   padding: '0 8px',
-  whiteSpace: 'nowrap',
   textDecoration: 'none',
   maxWidth: '100%',
   border: '1px solid transparent',
+})
+
+export const truncate = style({
+  whiteSpace: 'nowrap',
+})
+
+export const hyphenate = style({
+  padding: '4px 8px',
+  minHeight: 32,
+  height: 'auto',
+})
+
+export const textLeft = style({
+  textAlign: 'left',
 })
 
 export const variants = styleVariants({
