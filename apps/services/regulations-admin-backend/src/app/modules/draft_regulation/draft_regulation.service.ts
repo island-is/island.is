@@ -27,6 +27,7 @@ import {
 import { Appendix, Kennitala } from '@island.is/regulations'
 import * as kennitala from 'kennitala'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
+import type { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class DraftRegulationService {
@@ -41,12 +42,12 @@ export class DraftRegulationService {
     private readonly nationalRegistryApi: NationalRegistryApi,
   ) {}
 
-  async getAll(nationalId?: string): Promise<DraftSummary[]> {
+  async getAll(user?: User): Promise<DraftSummary[]> {
     this.logger.debug(
       'Getting all non shipped DraftRegulations, filtered by national id for non managers',
     )
-    const authorsCondition = nationalId && {
-      authors: { [Op.contains]: [nationalId] },
+    const authorsCondition = user?.nationalId && {
+      authors: { [Op.contains]: [user.nationalId] },
     }
 
     const draftRegulations = await this.draftRegulationModel.findAll({
@@ -67,13 +68,9 @@ export class DraftRegulationService {
       if (draft.authors) {
         for await (const nationalId of draft.authors) {
           try {
-            // FIXME: implement author lookup
-            const author = await this.nationalRegistryApi.getUser(nationalId)
+            const author = await this.getAuthorInfo(nationalId)
 
-            authors.push({
-              authorId: nationalId,
-              name: author?.Fulltnafn ?? '',
-            })
+            author && authors.push(author)
           } catch (e) {
             // Fallback to nationalId if fetching name fails
             authors.push({
@@ -144,9 +141,17 @@ export class DraftRegulationService {
 
     const authors: Author[] = []
     draftRegulation?.authors?.forEach(async (nationalId) => {
-      // FIXME: implement author lookup
-      const author = { authorId: nationalId, name: nationalId } // await this.regulationsAdminApiService.getAuthorInfo(nationalId)
-      author && authors.push(author)
+      try {
+        const author = await this.getAuthorInfo(nationalId)
+
+        author && authors.push(author)
+      } catch (e) {
+        // Fallback to nationalId if fetching name fails
+        authors.push({
+          authorId: nationalId,
+          name: nationalId,
+        })
+      }
     })
 
     const impactNames =
@@ -220,7 +225,7 @@ export class DraftRegulationService {
 
   create(
     create: CreateDraftRegulationDto,
-    nationalId: string,
+    user?: User,
   ): Promise<DraftRegulationModel> {
     this.logger.debug('Creating a new DraftRegulation')
 
@@ -229,7 +234,7 @@ export class DraftRegulationService {
       title: '',
       text: '',
       drafting_notes: '',
-      authors: [nationalId as Kennitala],
+      authors: [user?.nationalId as Kennitala],
     }
 
     return this.draftRegulationModel.create(createData)
@@ -238,12 +243,14 @@ export class DraftRegulationService {
   async update(
     id: string,
     update: UpdateDraftRegulationDto,
-    nationalId: Kennitala,
+    user?: User,
   ): Promise<{
     numberOfAffectedRows: number
     updatedDraftRegulation: DraftRegulationModel
   }> {
     this.logger.debug(`Updating DraftRegulation ${id}`)
+
+    const nationalId = user?.nationalId as Kennitala
 
     if (update.authors && !update.authors.includes(nationalId)) {
       update.authors.push(nationalId)

@@ -55,7 +55,7 @@ export class DraftRegulationController {
   ): Promise<DraftRegulationModel> {
     return await this.draftRegulationService.create(
       draftRegulationToCreate,
-      user.nationalId,
+      user,
     )
   }
 
@@ -79,7 +79,7 @@ export class DraftRegulationController {
     } = await this.draftRegulationService.update(
       id,
       draftRegulationToUpdate,
-      user.nationalId as Kennitala,
+      user,
     )
 
     if (numberOfAffectedRows === 0) {
@@ -121,7 +121,7 @@ export class DraftRegulationController {
   async getAll(@CurrentUser() user: User): Promise<DraftSummary[]> {
     const canManage = user.scope.includes('@island.is/regulations:manage')
     return await this.draftRegulationService.getAll(
-      !canManage ? user.nationalId : undefined,
+      !canManage ? user : undefined,
     )
   }
 

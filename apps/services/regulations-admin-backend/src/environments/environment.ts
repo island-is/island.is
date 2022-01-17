@@ -16,7 +16,7 @@ export default {
     audience: '@island.is',
   },
   nationalRegistry: {
-    baseSoapUrl: process.env.SOFFIA_SOAP_URL ?? '',
+    baseSoapUrl: process.env.SOFFIA_SOAP_URL ?? 'https://localhost:8443',
     user: process.env.SOFFIA_USER ?? '',
     password: process.env.SOFFIA_PASS ?? '',
     host: process.env.SOFFIA_HOST_URL ?? 'soffiaprufa.skra.is',
