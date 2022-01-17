@@ -11,9 +11,7 @@ export class VeitaProvider extends BasicDataProvider {
     // TODO: We probably need application system id and current Veita id here
     const query = `
         query HasUserAppliedForPeriod {
-          municipalitiesFinancialAidCurrentApplication {
-                currentApplicationId
-            }
+          hasUserFinancialAidApplicationForCurrentPeriod
         }
       `
 
@@ -24,9 +22,11 @@ export class VeitaProvider extends BasicDataProvider {
           return this.handleError(response.errors)
         }
         const returnObject =
-          response.data.municipalitiesFinancialAidCurrentApplication
+          response.data.hasUserFinancialAidApplicationForCurrentPeriod
 
-        return Promise.resolve(returnObject)
+        console.log('returnObj', returnObject)
+
+        return Promise.resolve({ currentApplicationId: returnObject })
       })
       .catch((error) => {
         return this.handleError(error)
@@ -34,7 +34,7 @@ export class VeitaProvider extends BasicDataProvider {
   }
   handleError(error: Error | unknown) {
     console.error('Provider.FinancialAid.VeitaProvider:', error)
-    return Promise.reject('Failed to fetch from national registry')
+    return Promise.reject('Failed to fetch data from Veita')
   }
   onProvideError(result: { message: string }): FailedDataProviderResult {
     return {

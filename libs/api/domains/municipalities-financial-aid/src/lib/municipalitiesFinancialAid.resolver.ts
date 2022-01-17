@@ -8,7 +8,6 @@ import {
 import { UseGuards } from '@nestjs/common'
 
 import { MunicipalitiesFinancialAidService } from './municipalitiesFinancialAid.service'
-import { CurrentApplicationResponse } from './dto/currentApplication'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -17,14 +16,14 @@ export class MunicipalitiesFinancialAidResolver {
     private municipalitiesFinancialAidService: MunicipalitiesFinancialAidService,
   ) {}
 
-  @Query(() => CurrentApplicationResponse, { nullable: true })
+  @Query(() => String, { nullable: true })
   async hasUserFinancialAidApplicationForCurrentPeriod(
     @CurrentUser() user: User,
-  ): Promise<CurrentApplicationResponse> {
-    const currentApplicationId = await this.municipalitiesFinancialAidService.hasUserApplicationForCurrentPeriod(
+  ): Promise<string | null> {
+    const currentApplication = await this.municipalitiesFinancialAidService.municipalitiesFinancialAidCurrentApplication(
       user,
       user.nationalId,
     )
-    return { currentApplicationId }
+    return currentApplication.currentApplicationId
   }
 }
