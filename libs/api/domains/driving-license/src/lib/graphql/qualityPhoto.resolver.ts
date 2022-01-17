@@ -18,11 +18,14 @@ import { QualityPhoto } from './models'
 export class QualityPhotoResolver {
   constructor(private readonly drivingLicenseService: DrivingLicenseService) {}
 
-  @ResolveField('qualityPhotoDataUri', () => String, { nullable: true })
-  resolveQualityPhotoDataUri(
+  @ResolveField('dataUri', () => String, { nullable: true })
+  resolvedataUri(
+    @Parent() { hasQualityPhoto }: QualityPhoto,
     @CurrentUser() user: User,
   ): Promise<String | null> {
-    return this.drivingLicenseService.getQualityPhotoUri(user.nationalId)
+    return hasQualityPhoto
+      ? this.drivingLicenseService.getQualityPhotoUri(user.nationalId)
+      : Promise.resolve(null)
   }
 
   @Query(() => QualityPhoto)

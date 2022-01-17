@@ -222,20 +222,16 @@ export class DrivingLicenseService {
   async getQualityPhotoUri(
     nationalId: User['nationalId'],
   ): Promise<string | null> {
-    const hasQualityPhoto = await this.drivingLicenseApi.getHasQualityPhoto({
-      nationalId,
-    })
-    if (!hasQualityPhoto) {
-      return null
-    }
-
     const image = await this.drivingLicenseApi.getQualityPhoto({
       nationalId,
     })
-
-    const qualityPhoto = image
-      ? `data:image/jpeg;base64,${image?.data.substr(1, image.data.length - 2)}`
-      : null
+    const qualityPhoto =
+      image?.data && image?.data.length > 0
+        ? `data:image/jpeg;base64,${image?.data.substr(
+            1,
+            image.data.length - 2,
+          )}`
+        : null
 
     return qualityPhoto
   }
@@ -250,21 +246,11 @@ export class DrivingLicenseService {
         nationalId,
       })
     } catch (e) {
-      if ((e as { status: number })?.status === 404) {
-        return {
-          hasQualityPhoto: false,
-          errorMessage: 'QualityPhoto not available',
-        }
-      }
-      return {
-        hasQualityPhoto: false,
-        errorMessage: 'Something went wrong',
-      }
+      throw e
     }
 
     return {
       hasQualityPhoto,
-      errorMessage: null,
     }
   }
 

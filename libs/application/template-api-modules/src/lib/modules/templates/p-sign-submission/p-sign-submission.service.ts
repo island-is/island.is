@@ -16,14 +16,14 @@ import { SharedTemplateApiService } from '../../shared'
 export const QUALITY_PHOTO = `
 query HasQualityPhoto {
   drivingLicenseQualityPhoto {
-    qualityPhotoDataUri
+    dataUri
   }
 }
 `
 
 interface QualityPhotoType {
   drivingLicenseQualityPhoto: {
-    qualityPhotoDataUri: string | null
+    dataUri: string | null
   }
 }
 
@@ -56,7 +56,7 @@ export class PSignSubmissionService {
                 QUALITY_PHOTO,
               )
               .then((response) => response.json())
-          ).data?.drivingLicenseQualityPhoto?.qualityPhotoDataUri as string)
+          ).data?.drivingLicenseQualityPhoto?.dataUri as string)
         : await this.getAttachments({
             application,
             auth,

@@ -79,7 +79,6 @@ export enum NeedsQualityPhoto {
 }
 export interface QualityPhotoResult {
   hasQualityPhoto: boolean
-  errorMessage: string | null
 }
 
 export interface StudentAssessment {

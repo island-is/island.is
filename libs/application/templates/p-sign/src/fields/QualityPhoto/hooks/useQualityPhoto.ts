@@ -24,7 +24,7 @@ export const useQualityPhoto = (application: Application): QualityPhotoType => {
   })
 
   const qualityPhoto: QualityPhotoType = {
-    qualityPhoto: data?.drivingLicenseQualityPhoto?.qualityPhotoDataUri,
+    qualityPhoto: data?.drivingLicenseQualityPhoto?.dataUri,
     loading: loading,
     error: error,
   }
