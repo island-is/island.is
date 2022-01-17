@@ -113,6 +113,7 @@
 ## Libs
 
 - [API](libs/api/README.md)
+    - [API Domains Regulations Admin](libs/api/domains/regulations-admin/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
@@ -191,6 +192,7 @@
 - [Regulations](libs/regulations/README.md)
 - [Service Portal](libs/service-portal/README.md)
   - [Core](libs/service-portal/core/README.md)
+  - [Service Portal Regulations Admin](libs/service-portal/regulations-admin/README.md)
 - [Shared](libs/shared/README.md)
   - [Babel](libs/shared/babel/README.md)
   - [Components](libs/shared/components/README.md)
