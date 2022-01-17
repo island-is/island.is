@@ -5,7 +5,7 @@ import {
   RSK_OPTIONS,
 } from '@island.is/clients/rsk/v1'
 import { RSKResolver } from './api-domains-rsk.resolver'
-import { RskCompanyInfoClientModule } from '@island.is/clients/rsk/company-registry'
+import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { RskCompanyInfoService } from './rsk-company-info.service'
 
 @Module({})
@@ -23,7 +23,7 @@ export class RSKModule {
         RSKService,
       ],
       imports: [
-        RskCompanyInfoClientModule.register({
+        CompanyRegistryClientModule.register({
           xRoadBaseUrl: config.xRoadBaseUrl,
           xRoadProviderId: config.xRoadProviderId,
           xRoadClientId: config.xRoadClientId,

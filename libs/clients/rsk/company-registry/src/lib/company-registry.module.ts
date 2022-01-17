@@ -5,7 +5,7 @@ import { DefaultApi as CompanyApi, Configuration } from './gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { RskCompanyInfoServiceOptions } from './types/service-options.type'
 
-export class RskCompanyInfoClientModule {
+export class CompanyRegistryClientModule {
   static register(config: RskCompanyInfoServiceOptions): DynamicModule {
     if (!config.xRoadProviderId) {
       logger.error('RskCompanyInfoModule XROAD_PROVIDER_ID not provided')
@@ -37,7 +37,7 @@ export class RskCompanyInfoClientModule {
     })
 
     return {
-      module: RskCompanyInfoClientModule,
+      module: CompanyRegistryClientModule,
       providers: [
         {
           provide: CompanyApi,
