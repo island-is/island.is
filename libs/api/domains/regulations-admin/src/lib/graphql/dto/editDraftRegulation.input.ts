@@ -60,6 +60,9 @@ export class EditDraftBody {
   @Field(() => String)
   type!: RegulationType
 
+  @Field()
+  fastTrack?: boolean
+
   @Field(() => String, { nullable: true })
   signedDocumentUrl?: URLString
 
