@@ -29,20 +29,12 @@ class MyDocument extends Document<Props> {
       <Html lang={String(lang)}>
         <Head>
           {Boolean(domain) && (
-            <>
-              <script
-                async
-                defer
-                data-domain={domain}
-                src="https://plausible.io/js/plausible.js"
-              ></script>
-              <script>
-                window.plausible = window.plausible || function(){' '}
-                {(window.plausible.q = window.plausible.q || []).push(
-                  arguments,
-                )}
-              </script>
-            </>
+            <script
+              async
+              defer
+              data-domain={domain}
+              src="https://plausible.io/js/plausible.js"
+            ></script>
           )}
         </Head>
         <body>
