@@ -48,7 +48,7 @@ export class HealthInsuranceResolver {
 
       this.healthInsuranceService.isHealthInsured(
         user.nationalId,
-        input.date?.getTime(),
+        input?.date?.getTime(),
       ),
     )
   }
