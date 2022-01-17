@@ -37,11 +37,6 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         prod:
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
       },
-      SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN: {
-        dev: 'identity-server.dev01.devland.is',
-        staging: 'identity-server.staging01.devland.is',
-        prod: 'innskra.island.is',
-      },
     })
     .xroad(Base, Client, NationalRegistry)
     .postgres(postgresInfo)

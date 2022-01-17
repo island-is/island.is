@@ -66,8 +66,8 @@ const prodConfig = {
   },
   baseUrl: process.env.BASE_URL,
   identityServerAuth: {
-    issuer: isProd
-      ? `https://${getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN')}`
+    issuer: process.env.IDENTITY_SERVER_DOMAIN
+      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
       : '',
     audience: '@vegagerdin.is',
   },

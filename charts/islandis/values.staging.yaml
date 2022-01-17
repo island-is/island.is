@@ -63,7 +63,6 @@ air-discount-scheme-backend:
     ENVIRONMENT: 'staging'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.staging01.devland.is'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
