@@ -5,7 +5,7 @@ export const plausibleCustomEvent = (eventName: string, params: Object) => {
     const maybeWindow = process.browser ? window : undefined
 
     if (maybeWindow?.plausible) {
-      maybeWindow.plausible(eventName, { props: { params } })
+      maybeWindow.plausible(eventName, { props: params })
     }
   }, [])
 }
