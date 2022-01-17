@@ -1,4 +1,4 @@
-# Clients Rsk Company Info
+# Clients RSK Company Info
 
 This library was generated with [Nx](https://nx.dev).
 
