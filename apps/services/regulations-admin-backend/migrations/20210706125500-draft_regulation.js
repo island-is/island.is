@@ -30,7 +30,7 @@ module.exports = {
           ideal_publish_date: {
             type: Sequelize.DATEONLY,
           },
-          ministry_id: {
+          ministry: {
             type: Sequelize.STRING,
           },
           signature_date: {

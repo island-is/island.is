@@ -142,13 +142,6 @@ export class DraftRegulationService {
         ))) ||
       undefined
 
-    const [ministry] =
-      (draftRegulation.ministry_id &&
-        (await this.regulationsService.getRegulationsMinistries([
-          draftRegulation.ministry_id,
-        ]))) ||
-      []
-
     const authors: Author[] = []
     draftRegulation?.authors?.forEach(async (nationalId) => {
       // FIXME: implement author lookup
@@ -209,7 +202,7 @@ export class DraftRegulationService {
       name: draftRegulation.name,
       text,
       lawChapters,
-      ministry,
+      ministry: draftRegulation.ministry,
       authors,
       idealPublishDate: draftRegulation.ideal_publish_date as any, // TODO: Exclude original from response.
       draftingNotes: draftRegulation.drafting_notes, // TODO: Exclude original from response.
@@ -263,7 +256,7 @@ export class DraftRegulationService {
         update.appendixes,
         update.comments,
       ),
-      ministry_id: update.ministryId,
+      ministry: update.ministry,
       drafting_notes: update.draftingNotes,
       ideal_publish_date: update.idealPublishDate,
       law_chapters: update.lawChapters,

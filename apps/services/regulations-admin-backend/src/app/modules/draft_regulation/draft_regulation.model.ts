@@ -83,7 +83,7 @@ export class DraftRegulationModel extends Model<DraftRegulationModel> {
     type: DataType.STRING,
   })
   @ApiProperty()
-  ministry_id?: MinistrySlug
+  ministry?: string
 
   @Column({
     type: DataType.DATEONLY,

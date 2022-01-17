@@ -474,7 +474,7 @@ export const useDraftingState = (
                 text: apx.text.value,
               })),
               comments: draft.comments.value,
-              ministryId: draft.ministry.value
+              ministry: draft.ministry.value
                 ? state.ministries.find((m) => m.name === draft.ministry.value)
                     ?.name
                 : undefined,

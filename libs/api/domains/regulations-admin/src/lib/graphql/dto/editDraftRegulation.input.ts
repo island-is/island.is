@@ -44,7 +44,7 @@ export class EditDraftBody {
   draftingNotes!: HTMLText
 
   @Field(() => String, { nullable: true })
-  ministryId?: MinistrySlug
+  ministry?: string
 
   @Field(() => Date, { nullable: true })
   idealPublishDate?: ISODate
