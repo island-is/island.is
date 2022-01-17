@@ -784,6 +784,36 @@
         }
       }
     },
+    "api-domains-company-registry": {
+      "root": "libs/api/domains/company-registry",
+      "sourceRoot": "libs/api/domains/company-registry/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/company-registry/tsconfig.lib.json",
+              "libs/api/domains/company-registry/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/company-registry/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/company-registry/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/company-registry"]
+        }
+      }
+    },
     "api-domains-content-search": {
       "root": "libs/api/domains/content-search",
       "sourceRoot": "libs/api/domains/content-search/src",
@@ -1369,33 +1399,6 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/api/domains/regulations"]
-        }
-      }
-    },
-    "api-domains-rsk": {
-      "root": "libs/api/domains/rsk",
-      "sourceRoot": "libs/api/domains/rsk/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/api/domains/rsk/tsconfig.lib.json",
-              "libs/api/domains/rsk/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/api/domains/rsk/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/api/domains/rsk/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/api/domains/rsk"]
         }
       }
     },

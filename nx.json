@@ -88,6 +88,9 @@
     "api-domains-communications": {
       "tags": []
     },
+    "api-domains-company-registry": {
+      "tags": []
+    },
     "api-domains-content-search": {
       "tags": []
     },
@@ -146,9 +149,6 @@
       "tags": []
     },
     "api-domains-regulations": {
-      "tags": []
-    },
-    "api-domains-rsk": {
       "tags": []
     },
     "api-domains-syslumenn": {

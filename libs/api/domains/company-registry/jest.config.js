@@ -9,6 +9,6 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../../coverage/libs/api/domains/rsk',
-  displayName: 'api-domains-rsk',
+  coverageDirectory: '../../../../coverage/libs/api/domains/company-registry',
+  displayName: 'api-domains-company-registry',
 }

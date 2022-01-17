@@ -52,6 +52,9 @@
       "@island.is/api/domains/communications": [
         "libs/api/domains/communications/src/index.ts"
       ],
+      "@island.is/api/domains/company-registry": [
+        "libs/api/domains/company-registry/src/index.ts"
+      ],
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
       ],
@@ -115,7 +118,6 @@
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
-      "@island.is/api/domains/rsk": ["libs/api/domains/rsk/src/index.ts"],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
       ],
