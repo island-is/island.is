@@ -33,7 +33,7 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { lightThemes, OrganizationWrapper } from '@island.is/web/components'
+import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
@@ -329,8 +329,6 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     }
   }
 
-  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
-
   return {
     organizationPage: getOrganizationPage,
     services: getArticles,
@@ -339,7 +337,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     groups,
     sort: (query.sort as string) ?? 'popular',
     showSearchInHeader: false,
-    ...(lightTheme ? {} : { darkTheme: true }),
+    ...getThemeConfig(getOrganizationPage.theme),
   }
 }
 

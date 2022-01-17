@@ -80,6 +80,17 @@ export class AuditService {
     }
   }
 
+  private getClients(auth: Auth) {
+    const clients: string[] = []
+    let act = auth.act
+    while (act) {
+      clients.unshift(act.client_id)
+      act = act.act
+    }
+    clients.unshift(auth.client)
+    return clients
+  }
+
   private formatMessage({
     auth,
     namespace = this.defaultNamespace,
@@ -95,7 +106,7 @@ export class AuditService {
     const message = {
       subject: auth.nationalId,
       actor: auth.actor ? auth.actor.nationalId : auth.nationalId,
-      client: [auth.client],
+      client: this.getClients(auth),
       action: `${namespace}#${action}`,
       resources:
         resources && (typeof resources === 'string' ? [resources] : resources),

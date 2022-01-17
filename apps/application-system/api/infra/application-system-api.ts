@@ -7,6 +7,7 @@ import {
   Payment,
   PaymentSchedule,
   CriminalRecord,
+  DataProtectionComplaint,
 } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
@@ -107,6 +108,7 @@ export const serviceSetup = (services: {
       DrivingLicense,
       PaymentSchedule,
       CriminalRecord,
+      DataProtectionComplaint,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',

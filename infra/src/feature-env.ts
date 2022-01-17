@@ -101,7 +101,7 @@ yargs(hideBin(process.argv))
         habitat,
         ...affectedServices,
       )
-      await writeToOutput(dumpYaml(featureYaml), argv.output)
+      await writeToOutput(dumpYaml(ch, featureYaml), argv.output)
     },
   )
   .command(

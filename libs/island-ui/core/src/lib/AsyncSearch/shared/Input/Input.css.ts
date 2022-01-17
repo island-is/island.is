@@ -85,6 +85,7 @@ export const sizes = styleVariants({
 export const white = style({
   backgroundColor: theme.color.transparent,
   color: theme.color.white,
+  transition: 'box-shadow .25s',
   '::placeholder': {
     color: theme.color.white,
   },
@@ -94,10 +95,36 @@ export const white = style({
   },
   ':hover': {
     borderColor: theme.color.white,
+    boxShadow: `inset 0 0 0 ${1}px ${theme.color.white}`,
   },
   selectors: {
     [`&:focus:hover`]: {
       backgroundColor: theme.color.transparent,
+      boxShadow: 'none',
+    },
+  },
+})
+
+export const blueberry = style({
+  backgroundColor: theme.color.transparent,
+  boxShadow: `inset 0 0 0 1px ${theme.color.blueberry600}`,
+  border: 'none',
+  color: theme.color.blueberry600,
+  transition: 'box-shadow .25s',
+  ':focus': {
+    boxShadow: 'none',
+    border: 'none',
+  },
+  ':hover': {
+    boxShadow: `inset 0 0 0 ${2}px ${theme.color.blueberry600}`,
+  },
+  '::placeholder': {
+    color: theme.color.blueberry600,
+  },
+  selectors: {
+    [`&:focus:hover`]: {
+      boxShadow: 'none',
+      border: 'none',
     },
   },
 })

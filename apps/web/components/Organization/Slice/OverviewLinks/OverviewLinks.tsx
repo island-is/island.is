@@ -59,7 +59,7 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
                         height="full"
                       >
                         <Box>
-                          <Text variant="h2" marginBottom={2}>
+                          <Text as="h2" variant="h2" marginBottom={2}>
                             {title}
                           </Text>
                           {Boolean(intro) && (
