@@ -1,5 +1,4 @@
 import { Airlines } from '@island.is/air-discount-scheme/consts'
-import { getStaticEnv } from '@island.is/shared/utils'
 
 const isProd = process.env.NODE_ENV === 'production'
 

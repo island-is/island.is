@@ -1,5 +1,4 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-import { Base, Client, NationalRegistry } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo = {
   passwordSecret: '/k8s/air-discount-scheme/backend/DB_PASSWORD',
@@ -38,7 +37,6 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
       },
     })
-    .xroad(Base, Client, NationalRegistry)
     .postgres(postgresInfo)
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
