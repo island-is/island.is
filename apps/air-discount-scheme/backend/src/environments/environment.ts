@@ -31,9 +31,9 @@ const devConfig = {
   },
   baseUrl: process.env.BASE_URL ?? 'http://localhost:4200',
   identityServerAuth: {
-    issuer:
-      process.env.IDENTITY_SERVER_DOMAIN ? `https://${process.env.IDENTITY_SERVER_DOMAIN}` :
-      'https://identity-server.dev01.devland.is',
+    issuer: process.env.IDENTITY_SERVER_DOMAIN
+      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
+      : 'https://identity-server.dev01.devland.is',
     audience: '@vegagerdin.is',
   },
   idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',

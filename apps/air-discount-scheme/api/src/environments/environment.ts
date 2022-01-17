@@ -14,9 +14,9 @@ const devConfig = {
     admins: process.env.ADMINS,
   },
   identityServerAuth: {
-    issuer:
-      process.env.IDENTITY_SERVER_DOMAIN ? `https://${process.env.IDENTITY_SERVER_DOMAIN}` :
-      'https://identity-server.dev01.devland.is',
+    issuer: process.env.IDENTITY_SERVER_DOMAIN
+      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
+      : 'https://identity-server.dev01.devland.is',
     audience: '@vegagerdin.is',
   },
   auth: {
@@ -38,7 +38,9 @@ const prodConfig = {
     admins: process.env.ADMINS,
   },
   identityServerAuth: {
-    issuer: process.env.IDENTITY_SERVER_DOMAIN ? `https://${process.env.IDENTITY_SERVER_DOMAIN}` : '',
+    issuer: process.env.IDENTITY_SERVER_DOMAIN
+      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
+      : '',
     audience: '@vegagerdin.is',
   },
   auth: {
