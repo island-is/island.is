@@ -21,6 +21,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME',
       NATIONAL_REGISTRY_URL:
         '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL',
+      IDENTITY_SERVER_DOMAIN: `/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN`,
     })
     .env({
       ENVIRONMENT: {

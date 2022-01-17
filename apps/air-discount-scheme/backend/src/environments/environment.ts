@@ -32,7 +32,7 @@ const devConfig = {
   baseUrl: process.env.BASE_URL ?? 'http://localhost:4200',
   identityServerAuth: {
     issuer:
-      process.env.IDENTITY_SERVER_ISSUER_URL ??
+      process.env.IDENTITY_SERVER_DOMAIN ? `https://${process.env.IDENTITY_SERVER_DOMAIN}` :
       'https://identity-server.dev01.devland.is',
     audience: '@vegagerdin.is',
   },
