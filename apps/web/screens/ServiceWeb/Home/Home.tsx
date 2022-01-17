@@ -59,16 +59,13 @@ const Home: Screen<HomeProps> = ({
   const logoUrl = organization?.logo?.url ?? ''
   const searchTitle = n('canWeAssist', 'Getum við aðstoðað?')
   const pageTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
-  const headerTitle = institutionSlug
-    ? organization.serviceWebTitle ?? pageTitle
-    : pageTitle
 
   const hasContent = !!supportCategories?.length
 
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
-      headerTitle={headerTitle}
+      headerTitle={pageTitle}
       institutionSlug={institutionSlug}
       logoUrl={logoUrl}
       organization={organization}
