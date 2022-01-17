@@ -267,3 +267,19 @@ export const RskCompanyInfo = new XroadConf({
     },
   },
 })
+
+export const DataProtectionComplaint = new XroadConf({
+  env: {
+    DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10026/kvortun/index',
+      staging: 'IS-TEST/GOV/5608002820/kvortun/index',
+      prod: 'IS/GOV/5608002820/kvortun/index',
+    },
+  },
+  secrets: {
+    DATA_PROTECTION_COMPLAINT_API_USERNAME:
+      '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_USERNAME',
+    DATA_PROTECTION_COMPLAINT_API_PASSWORD:
+      '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_PASSWORD',
+  },
+})
