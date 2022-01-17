@@ -24,8 +24,6 @@ export class VeitaProvider extends BasicDataProvider {
         const returnObject =
           response.data.hasUserFinancialAidApplicationForCurrentPeriod
 
-        console.log('returnObj', returnObject)
-
         return Promise.resolve({ currentApplicationId: returnObject })
       })
       .catch((error) => {
