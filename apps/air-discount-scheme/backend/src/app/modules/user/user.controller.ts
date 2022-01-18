@@ -19,7 +19,12 @@ import { AirlineUser, User } from './user.model'
 import { DiscountService } from '../discount'
 import { FlightService } from '../flight'
 import { AuthGuard } from '../common'
-import { CurrentUser, IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import { User as AuthUser } from '@island.is/auth-nest-tools'
 
@@ -71,8 +76,11 @@ export class PrivateUserController {
     @Param() params: GetUserRelationsParams,
     @CurrentUser() user: AuthUser,
   ): Promise<User[]> {
-    const relations = await this.thjodskraXroad.getChildrenForsja(user, params.nationalId)
-    if(relations === undefined) {
+    const relations = await this.thjodskraXroad.getChildrenForsja(
+      user,
+      params.nationalId,
+    )
+    if (relations === undefined) {
       return [] as User[]
     }
     const users = await Promise.all([

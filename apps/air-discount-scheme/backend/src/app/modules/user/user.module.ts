@@ -6,9 +6,13 @@ import { FlightModule } from '../flight'
 import { NationalRegistryModule as ADSNationalRegistryModule } from '../nationalRegistry'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 
-
 @Module({
-  imports: [DiscountModule, FlightModule, ADSNationalRegistryModule, NationalRegistryXRoadModule],
+  imports: [
+    DiscountModule,
+    FlightModule,
+    ADSNationalRegistryModule,
+    NationalRegistryXRoadModule,
+  ],
   controllers: [PublicUserController, PrivateUserController],
   providers: [UserService],
 })

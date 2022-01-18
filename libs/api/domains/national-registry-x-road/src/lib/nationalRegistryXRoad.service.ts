@@ -88,7 +88,6 @@ export class NationalRegistryXRoadService {
       .catch(this.handle404)
     return childrenNationalIds
   }
-  
 
   async getChildrenCustodyInformation(
     user: User,
