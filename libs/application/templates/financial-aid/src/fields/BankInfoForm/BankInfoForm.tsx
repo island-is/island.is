@@ -10,7 +10,7 @@ const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
   const { id } = field
   const { formatMessage } = useIntl()
   const { answers } = application
-
+  //TODO nota grid componenta!
   return (
     <>
       <Text marginTop={2} marginBottom={[2, 2, 4]}>

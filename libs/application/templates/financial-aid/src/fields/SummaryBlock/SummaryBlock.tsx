@@ -4,10 +4,10 @@ import { Text, Box, Button } from '@island.is/island-ui/core'
 interface Props {
   sectionTitle: string
   answer?: string
-  url?: string
+  editAction?(): void
 }
 
-const SummaryBlock = ({ sectionTitle, answer, url }: Props) => {
+const SummaryBlock = ({ sectionTitle, answer, editAction }: Props) => {
   return (
     <Box
       display="flex"
@@ -25,9 +25,7 @@ const SummaryBlock = ({ sectionTitle, answer, url }: Props) => {
         icon="pencil"
         iconType="filled"
         variant="utility"
-        onClick={() => {
-          console.log('well hello')
-        }}
+        onClick={editAction}
       >
         Breyta
       </Button>

@@ -35,6 +35,23 @@ export const summaryForm = {
       description: 'Summary form asking applicant to go over calculations',
     },
   }),
+  userInfo: defineMessages({
+    name: {
+      id: 'fa.application:section.summaryForm.userInfo.name',
+      defaultMessage: 'Nafn',
+      description: 'Summary form users information title of name ',
+    },
+    address: {
+      id: 'fa.application:section.summaryForm.userInfo.address',
+      defaultMessage: 'Heimili',
+      description: 'Summary form users information title of address ',
+    },
+    nationalId: {
+      id: 'fa.application:section.summaryForm.userInfo.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'Summary form users information title of national id ',
+    },
+  }),
   overview: defineMessages({
     homeCircumstancesTitle: {
       id: 'fa.application:section.summaryForm.overview.homeCircumstancesTitle',

@@ -61,45 +61,45 @@ export const Application: Form = buildForm({
       title: m.employmentForm.general.sectionTitle,
       children: [
         buildCustomField({
-          id: 'employmentForm',
+          id: 'employment',
           title: m.employmentForm.general.pageTitle,
           component: 'EmploymentForm',
         }),
       ],
     }),
-    // buildSection({
-    //   id: 'incomeForm',
-    //   title: m.incomeForm.general.sectionTitle,
-    //   children: [
-    //     buildCustomField({
-    //       id: 'income',
-    //       title: m.incomeForm.general.pageTitle,
-    //       component: 'IncomeForm',
-    //     }),
-    //   ],
-    // }),
-    // buildSection({
-    //   id: 'personalTaxCreditForm',
-    //   title: m.personalTaxCreditForm.general.sectionTitle,
-    //   children: [
-    //     buildCustomField({
-    //       id: 'personalTaxCreditForm',
-    //       title: m.personalTaxCreditForm.general.pageTitle,
-    //       component: 'PersonalTaxCreditForm',
-    //     }),
-    //   ],
-    // }),
-    // buildSection({
-    //   id: 'bankInfoForm',
-    //   title: m.bankInfoForm.general.sectionTitle,
-    //   children: [
-    //     buildCustomField({
-    //       id: 'bankInfoForm',
-    //       title: m.bankInfoForm.general.pageTitle,
-    //       component: 'BankInfoForm',
-    //     }),
-    //   ],
-    // }),
+    buildSection({
+      id: 'incomeForm',
+      title: m.incomeForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'income',
+          title: m.incomeForm.general.pageTitle,
+          component: 'IncomeForm',
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'personalTaxCreditForm',
+      title: m.personalTaxCreditForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'personalTaxCredit',
+          title: m.personalTaxCreditForm.general.pageTitle,
+          component: 'PersonalTaxCreditForm',
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'bankInfoForm',
+      title: m.bankInfoForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'bankInfo',
+          title: m.bankInfoForm.general.pageTitle,
+          component: 'BankInfoForm',
+        }),
+      ],
+    }),
     buildSection({
       id: 'summaryForm',
       title: m.summaryForm.general.sectionTitle,
