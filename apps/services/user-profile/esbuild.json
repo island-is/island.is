@@ -36,6 +36,6 @@
     "@protobufjs/path",
     "@protobufjs/pool",
     "@protobufjs/utf8"
-    ],
+  ],
   "keepNames": true
 }
