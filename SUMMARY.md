@@ -152,7 +152,7 @@
   - [Payment Schedule](libs/clients/payment-schedule/README.md)
   - [Regulations](libs/clients/regulations/README.md)
   - [RSK](libs/clients/rsk/README.md)
-    - [Clients RSK Company Info](libs/clients/rsk/company-registry/README.md)
+    - [Clients Company Registry](libs/clients/rsk/company-registry/README.md)
     - [V1](libs/clients/rsk/v1/README.md)
     - [V2](libs/clients/rsk/v2/README.md)
   - [Syslumenn](libs/clients/syslumenn/README.md)
