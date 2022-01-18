@@ -71,7 +71,6 @@ describe('AuditService against Cloudwatch', () => {
   // Cleanup
   afterEach(() => {
     jest.restoreAllMocks()
-    //spy.mockReset()
   })
 
   it('should be defined', () => {
