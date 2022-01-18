@@ -24,12 +24,12 @@ export const dataSchema = z.object({
       isStudent: z
         .enum([ApproveOptions.Yes, ApproveOptions.No])
         .refine((v) => v, {
-          params: error.validation.approveSpouse,
+          params: error.validation.radioErrorMessage,
         }),
       custom: z.string().optional(),
     })
     .refine((v) => (v.isStudent === ApproveOptions.Yes ? v.custom : true), {
-      params: error.validation.approveSpouse,
+      params: error.validation.inputErrorMessage,
     }),
   homeCircumstances: z
     .object({
@@ -51,6 +51,9 @@ export const dataSchema = z.object({
       params: error.validation.inputErrorMessage,
       path: ['custom'],
     }),
+  income: z.enum([ApproveOptions.Yes, ApproveOptions.No]).refine((v) => v, {
+    params: error.validation.radioErrorMessage,
+  }),
   employment: z
     .object({
       type: z
@@ -68,6 +71,16 @@ export const dataSchema = z.object({
     .refine((v) => (v.type === Employment.OTHER ? v.custom : true), {
       params: error.validation.inputErrorMessage,
       path: ['custom'],
+    }),
+  bankInfoForm: z.object({
+    bankNumber: z.string().optional(),
+    ledger: z.string().optional(),
+    accountNumber: z.string().optional(),
+  }),
+  personalTaxCreditForm: z
+    .enum([ApproveOptions.Yes, ApproveOptions.No])
+    .refine((v) => v, {
+      params: error.validation.radioErrorMessage,
     }),
 })
 

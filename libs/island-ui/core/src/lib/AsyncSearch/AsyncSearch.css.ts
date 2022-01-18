@@ -72,7 +72,7 @@ export const icon = style({
   },
 })
 
-export const iconWhite = style({
+export const transparentBackground = style({
   '::before': {
     backgroundColor: 'transparent',
   },

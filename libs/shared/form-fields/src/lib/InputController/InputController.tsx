@@ -99,6 +99,7 @@ export const InputController: FC<Props> = ({
     } else if (type === 'number' && suffix) {
       return (
         <NumberFormat
+          size={size}
           customInput={Input}
           id={id}
           icon={icon}
@@ -129,6 +130,7 @@ export const InputController: FC<Props> = ({
     } else if (format && ['text', 'tel'].includes(type)) {
       return (
         <NumberFormat
+          size={size}
           customInput={Input}
           icon={icon}
           id={id}

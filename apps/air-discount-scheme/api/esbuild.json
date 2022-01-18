@@ -25,7 +25,17 @@
     "logform",
     "pg-native",
     "form-data",
-    "@island.is/login"
+    "@island.is/login",
+    "@protobufjs/aspromise",
+    "@protobufjs/base64",
+    "@protobufjs/codegen",
+    "@protobufjs/eventemitter",
+    "@protobufjs/fetch",
+    "@protobufjs/float",
+    "@protobufjs/inquire",
+    "@protobufjs/path",
+    "@protobufjs/pool",
+    "@protobufjs/utf8"
   ],
   "keepNames": true
 }

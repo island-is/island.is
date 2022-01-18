@@ -21,6 +21,19 @@ export const section = defineMessages({
   },
 })
 
+export const approveOptions = defineMessages({
+  no: {
+    id: 'fa.application:section.approveOptions.no',
+    defaultMessage: 'Nei',
+    description: 'Applicant selected no as his answer',
+  },
+  yes: {
+    id: 'fa.application:section.approveOptions.yes',
+    defaultMessage: 'Já',
+    description: 'Applicant selected yes as his answer',
+  },
+})
+
 export const input = defineMessages({
   label: {
     id: 'fa.application:section.input.label',

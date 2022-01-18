@@ -13,19 +13,6 @@ export const studentForm = {
       description: 'Student form page title',
     },
   }),
-  form: defineMessages({
-    no: {
-      id: 'fa.application:section.studentForm.form.no',
-      defaultMessage: 'Nei',
-      description:
-        'Student form radio selection when applicant is not a student',
-    },
-    yes: {
-      id: 'fa.application:section.studentForm.form.yes',
-      defaultMessage: 'Já',
-      description: 'Student form radio selection when applicant is a student',
-    },
-  }),
   input: defineMessages({
     label: {
       id: 'fa.application:section.studentForm.input.label',

@@ -43,7 +43,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(request: Request, payload: JwtPayload): Promise<Auth> {
-    const actor = payload.actor ?? payload.act
+    const actor = payload.actor
 
     return {
       nationalId: payload.nationalId,
@@ -54,6 +54,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         nationalId: actor.nationalId,
         scope: this.parseScopes(actor.scope),
       },
+      act: payload.act,
       ip: String(request.headers['x-forwarded-for'] ?? request.ip),
       userAgent: request.headers['user-agent'],
     }

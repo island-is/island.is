@@ -41,13 +41,13 @@ export const getForm = ({
         children: [],
       }),
       buildSection({
-        id: 'photo',
-        title: m.qualityPhotoTitle,
+        id: 'payment',
+        title: m.overviewPaymentCharge,
         children: [],
       }),
       buildSection({
         id: 'confim',
-        title: m.overviewSectionTitle,
+        title: m.overviewDone,
         children: [],
       }),
     ],
