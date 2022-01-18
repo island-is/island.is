@@ -291,7 +291,7 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
         )}
         {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
           <TableOfContents
-            tableOfContentsTitle="Undirkaflar"
+            tableOfContentsTitle={n('tableOfContentsTitle', 'Undirkaflar')}
             headings={subpage.slices.map((slice) => ({
               headingId: slice.id,
               headingTitle: (slice as OneColumnText).title,
