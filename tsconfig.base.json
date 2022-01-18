@@ -52,6 +52,9 @@
       "@island.is/api/domains/communications": [
         "libs/api/domains/communications/src/index.ts"
       ],
+      "@island.is/api/domains/company-registry": [
+        "libs/api/domains/company-registry/src/index.ts"
+      ],
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
       ],
@@ -115,7 +118,6 @@
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
-      "@island.is/api/domains/rsk": ["libs/api/domains/rsk/src/index.ts"],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
       ],
@@ -263,6 +265,9 @@
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],
+      "@island.is/clients/rsk/company-registry": [
+        "libs/clients/rsk/company-registry/src/index.ts"
+      ],
       "@island.is/clients/rsk/v1": ["libs/clients/rsk/v1/src/index.ts"],
       "@island.is/clients/rsk/v2": ["libs/clients/rsk/v2/src/index.ts"],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
@@ -360,6 +365,7 @@
       "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
+      "@island.is/nest/swagger": ["libs/nest/swagger/src/index.ts"],
       "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
       "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],

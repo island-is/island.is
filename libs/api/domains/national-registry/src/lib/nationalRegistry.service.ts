@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 
 import {
   FamilyMember,
+  FamilyChild,
   User,
   Gender,
   MaritalStatus,
@@ -49,6 +50,14 @@ export class NationalRegistryService {
         city: user.Faedingarstadur,
         date: user.Faedingardagur,
       },
+      ...(user.nafnmaka &&
+        user.MakiKt && {
+          spouse: {
+            name: user.nafnmaka,
+            nationalId: user.MakiKt,
+            cohabitant: user.Sambudarmaki,
+          },
+        }),
     }
   }
 
@@ -69,6 +78,48 @@ export class NationalRegistryService {
             familyRelation: this.getFamilyRelation(familyMember),
           } as FamilyMember),
       )
+      .sort((a, b) => {
+        return (
+          kennitala.info(b.nationalId).age - kennitala.info(a.nationalId).age
+        )
+      })
+
+    return members
+  }
+
+  async getChildren(nationalId: User['nationalId']): Promise<FamilyChild[]> {
+    const myChildren = await this.nationalRegistryApi.getMyChildren(nationalId)
+
+    const members = myChildren
+      .filter((familyChild) => {
+        return familyChild.Barn !== nationalId
+      })
+      .map((familyChild) => ({
+        fullName: familyChild.FulltNafn,
+        nationalId: familyChild.Barn,
+        gender: familyChild.Kyn,
+        displayName: familyChild.BirtNafn,
+        middleName: familyChild.Millinafn,
+        surname: familyChild.Kenninafn,
+        genderDisplay: familyChild.Kynheiti,
+        birthday: familyChild.Faedingardagur,
+        parent1: familyChild.Foreldri1,
+        nameParent1: familyChild.NafnForeldri1,
+        parent2: familyChild.Foreldri2,
+        nameParent2: familyChild.NafnForeldri2,
+        custody1: familyChild.Forsja1,
+        nameCustody1: familyChild.NafnForsja1,
+        custodyText1: familyChild.Forsjatxt1,
+        custody2: familyChild.Forsja2,
+        nameCustody2: familyChild.NafnForsja2,
+        custodyText2: familyChild.Forsjatxt2,
+        birthplace: familyChild.Faedingarstadur,
+        religion: familyChild.Trufelag,
+        nationality: familyChild.Rikisfang,
+        homeAddress: familyChild.Logheimili,
+        municipality: familyChild.Sveitarfelag,
+        postal: familyChild.Postaritun,
+      }))
       .sort((a, b) => {
         return (
           kennitala.info(b.nationalId).age - kennitala.info(a.nationalId).age

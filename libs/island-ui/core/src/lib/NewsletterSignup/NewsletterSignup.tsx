@@ -60,7 +60,7 @@ export const NewsletterSignup: React.FC<Props> = ({
 }) => {
   return (
     <Box className={styles.variants[variant]}>
-      <Text variant="h3" as="h3" color="blue400" paddingBottom={1}>
+      <Text variant="h3" as="h2" color="blue400" paddingBottom={1}>
         {heading}
       </Text>
       {state === 'success' ? (

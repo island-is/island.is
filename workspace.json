@@ -784,6 +784,36 @@
         }
       }
     },
+    "api-domains-company-registry": {
+      "root": "libs/api/domains/company-registry",
+      "sourceRoot": "libs/api/domains/company-registry/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/company-registry/tsconfig.lib.json",
+              "libs/api/domains/company-registry/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/company-registry/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/company-registry/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/company-registry"]
+        }
+      }
+    },
     "api-domains-content-search": {
       "root": "libs/api/domains/content-search",
       "sourceRoot": "libs/api/domains/content-search/src",
@@ -1369,33 +1399,6 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/api/domains/regulations"]
-        }
-      }
-    },
-    "api-domains-rsk": {
-      "root": "libs/api/domains/rsk",
-      "sourceRoot": "libs/api/domains/rsk/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/api/domains/rsk/tsconfig.lib.json",
-              "libs/api/domains/rsk/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/api/domains/rsk/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/api/domains/rsk/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/api/domains/rsk"]
         }
       }
     },
@@ -3467,6 +3470,41 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/clients/regulations"]
+        }
+      }
+    },
+    "clients-rsk-company-registry": {
+      "root": "libs/clients/rsk/company-registry",
+      "sourceRoot": "libs/clients/rsk/company-registry/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/clients/rsk/company-registry/tsconfig.lib.json",
+              "libs/clients/rsk/company-registry/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/clients/rsk/company-registry/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/rsk/company-registry"],
+          "options": {
+            "jestConfig": "libs/clients/rsk/company-registry/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/rsk/company-registry/src/lib/gen/fetch -i libs/clients/rsk/company-registry/src/openapi.yml"
+          }
         }
       }
     },
@@ -6233,6 +6271,27 @@
         }
       }
     },
+    "nest-swagger": {
+      "root": "libs/nest/swagger",
+      "sourceRoot": "libs/nest/swagger/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/swagger/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/swagger"],
+          "options": {
+            "jestConfig": "libs/nest/swagger/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nest-validators": {
       "root": "libs/nest/validators",
       "sourceRoot": "libs/nest/validators/src",
@@ -8116,6 +8175,12 @@
       "projectType": "application",
       "prefix": "services-user-notification",
       "architect": {
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/services/user-notification/src/messages.ts'"
+          }
+        },
         "build": {
           "builder": "@irdnis/esbuildnx:build",
           "outputs": ["{options.outputPath}"],

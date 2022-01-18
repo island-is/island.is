@@ -1,4 +1,4 @@
-import { IsISO8601, IsString, IsUUID, Length } from 'class-validator'
+import { IsString, IsUUID, Length } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class GetFlightParams {

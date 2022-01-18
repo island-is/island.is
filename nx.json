@@ -88,6 +88,9 @@
     "api-domains-communications": {
       "tags": []
     },
+    "api-domains-company-registry": {
+      "tags": []
+    },
     "api-domains-content-search": {
       "tags": []
     },
@@ -146,9 +149,6 @@
       "tags": []
     },
     "api-domains-regulations": {
-      "tags": []
-    },
-    "api-domains-rsk": {
       "tags": []
     },
     "api-domains-syslumenn": {
@@ -329,6 +329,9 @@
       "tags": []
     },
     "clients-regulations": {
+      "tags": []
+    },
+    "clients-rsk-company-registry": {
       "tags": []
     },
     "clients-rsk-v1": {
@@ -549,6 +552,9 @@
       "tags": []
     },
     "nest-problem": {
+      "tags": []
+    },
+    "nest-swagger": {
       "tags": []
     },
     "nest-validators": {
