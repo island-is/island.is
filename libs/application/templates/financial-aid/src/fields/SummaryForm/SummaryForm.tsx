@@ -5,6 +5,7 @@ import {
   GridColumn,
   GridRow,
   Button,
+  Icon,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import DescriptionText from '../DescriptionText/DescriptionText'
@@ -86,48 +87,56 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         sectionTitle={formatMessage(
           m.homeCircumstancesForm.general.sectionTitle,
         )}
-        answer={
-          answers?.homeCircumstances?.type === HomeCircumstances.OTHER
+        editAction={() => goToScreen?.('homeCircumstances')}
+      >
+        <Text>
+          {answers?.homeCircumstances?.type === HomeCircumstances.OTHER
             ? answers?.homeCircumstances?.custom
             : formatMessage(
                 getMessageHomeCircumstances[answers?.homeCircumstances?.type],
-              )
-        }
-        editAction={() => goToScreen?.('homeCircumstances')}
-      />
+              )}
+        </Text>
+      </SummaryBlock>
 
       <SummaryBlock
         sectionTitle={formatMessage(m.incomeForm.general.sectionTitle)}
-        answer={formatMessage(getMessageApproveOptions[answers.income])}
         editAction={() => goToScreen?.('income')}
-      />
+      >
+        <Text>{formatMessage(getMessageApproveOptions[answers.income])}</Text>
+      </SummaryBlock>
 
       <SummaryBlock
         sectionTitle={formatMessage(m.employmentForm.general.sectionTitle)}
-        answer={
-          answers?.employment?.type === Employment.OTHER
+        editAction={() => goToScreen?.('employment')}
+      >
+        <Text>
+          {answers?.employment?.type === Employment.OTHER
             ? answers?.homeCircumstances?.custom
             : formatMessage(
                 getMessageEmploymentStatus[answers?.employment?.type],
-              )
-        }
-        editAction={() => goToScreen?.('employment')}
-      />
+              )}
+        </Text>
+      </SummaryBlock>
 
       <SummaryBlock
         sectionTitle={formatMessage(
           m.personalTaxCreditForm.general.sectionTitle,
         )}
-        answer={formatMessage(
-          getMessageApproveOptions[answers.personalTaxCreditForm],
-        )}
         editAction={() => goToScreen?.('personalTaxCredit')}
-      />
+      >
+        <Text>
+          {formatMessage(
+            getMessageApproveOptions[answers.personalTaxCreditForm],
+          )}
+        </Text>
+      </SummaryBlock>
 
       <SummaryBlock
         sectionTitle={formatMessage(m.bankInfoForm.general.sectionTitle)}
-        answer={
-          answers.bankInfoForm.bankNumber &&
+        editAction={() => goToScreen?.('bankInfo')}
+      >
+        <Text>
+          {answers.bankInfoForm.bankNumber &&
           answers.bankInfoForm.ledger &&
           answers.bankInfoForm.accountNumber
             ? answers.bankInfoForm.bankNumber +
@@ -135,10 +144,9 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
               answers.bankInfoForm.ledger +
               '-' +
               answers.bankInfoForm.accountNumber
-            : ''
-        }
-        editAction={() => goToScreen?.('bankInfo')}
-      />
+            : ''}
+        </Text>
+      </SummaryBlock>
 
       <Box paddingY={[4, 4, 5]} borderTopWidth="standard" borderColor="blue300">
         <GridRow marginBottom={3}>
@@ -169,7 +177,20 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         </GridRow>
       </Box>
 
-      <Text as="h3" variant="h3" marginTop={[3, 3, 5]}>
+      <SummaryBlock
+        sectionTitle="Gögn"
+        editAction={() => goToScreen?.('bankInfo')}
+      >
+        <Box display="flex">
+          <Box marginRight={1} display="flex" alignItems="center">
+            <Icon color="blue400" icon="document" size="small" type="outline" />
+          </Box>
+
+          <Text>nafn a file</Text>
+        </Box>
+      </SummaryBlock>
+
+      <Text as="h3" variant="h3">
         Annað sem þú vilt koma á framfæri?{' '}
       </Text>
     </>

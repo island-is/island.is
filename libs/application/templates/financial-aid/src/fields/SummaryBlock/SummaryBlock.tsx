@@ -1,13 +1,14 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { Text, Box, Button } from '@island.is/island-ui/core'
 
 interface Props {
   sectionTitle: string
   answer?: string
   editAction?(): void
+  children: ReactNode
 }
 
-const SummaryBlock = ({ sectionTitle, answer, editAction }: Props) => {
+const SummaryBlock = ({ sectionTitle, children, editAction }: Props) => {
   return (
     <Box
       display="flex"
@@ -19,7 +20,7 @@ const SummaryBlock = ({ sectionTitle, answer, editAction }: Props) => {
     >
       <Box>
         <Text fontWeight="semiBold">{sectionTitle}</Text>
-        <Text>{answer}</Text>
+        {children}
       </Box>
       <Button
         icon="pencil"
