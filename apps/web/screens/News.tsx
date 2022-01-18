@@ -52,6 +52,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 import { CustomNextError } from '../units/errors'
+import useContentfulId from '../hooks/useContentfulId'
 
 const PERPAGE = 10
 
@@ -85,6 +86,7 @@ const NewsListNew: Screen<NewsListProps> = ({
   const { linkResolver } = useLinkResolver()
   const { format, getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
+  useContentfulId(newsItem?.id)
 
   const years = Object.keys(datesMap)
     .map((x) => parseInt(x, 10))
