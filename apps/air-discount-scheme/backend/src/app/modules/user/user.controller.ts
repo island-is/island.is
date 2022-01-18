@@ -71,17 +71,29 @@ export class PrivateUserController {
     @Param() params: GetUserRelationsParams,
     @CurrentUser() user: AuthUser,
   ): Promise<User[]> {
-    let person
+    // let person
+    // try {
+    //   person = await this.thjodskraXroad.getNationalRegistryPerson(user, user.nationalId)
+    // } catch (e) {
+    //   console.log(e)
+    // }
+    // console.log(person)
+    let children
     try {
-      person = await this.thjodskraXroad.getNationalRegistryPerson(user, user.nationalId)
+      children = await this.thjodskraXroad.getChildrenForsja(user, user.nationalId)
     } catch (e) {
       console.log(e)
     }
-    console.log(person)
+    console.log(children)
 
+    const relations = await this.thjodskraXroad.getChildrenForsja(user, params.nationalId)
 
-
-    const relations = await this.userService.getRelations(params.nationalId)
+    if(relations === undefined) {
+      return [] as User[]
+    }
+    console.log(relations)
+    console.log(relations[0])
+    //const relations = await this.userService.getRelations(params.nationalId)
     const users = await Promise.all([
       this.userService.getUserInfoByNationalId(params.nationalId),
       ...relations.map((nationalId) =>
