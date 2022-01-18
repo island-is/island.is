@@ -1,6 +1,6 @@
-# Clients RSK Company Info
+# Clients Company Registry
 
-This library was generated with [Nx](https://nx.dev).
+This is a client for Company Registry, providing access to endpoints for fetching Company information by nationalId as well as Company information search.
 
 ## Running unit tests
 
