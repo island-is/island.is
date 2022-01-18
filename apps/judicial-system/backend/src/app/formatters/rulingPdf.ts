@@ -3,13 +3,13 @@ import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
 import {
+  Gender,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
   capitalize,
   formatDate,
-  formatAccusedByGender,
   lowercase,
   formatAppeal,
   formatRequestCaseType,
@@ -298,14 +298,17 @@ function constructRestrictionRulingPdf(
   }
 
   // TODO defendants: handle multiple defendants
+  const accusedGender =
+    existingCase.defendants && existingCase.defendants[0].gender
+
   let accusedAppeal = formatAppeal(
     existingCase.accusedAppealDecision,
     capitalize(
-      formatAccusedByGender(
-        existingCase.defendants && existingCase.defendants[0].gender,
-      ),
+      formatMessage(core.accused, {
+        suffix: accusedGender === Gender.MALE ? 'i' : 'a ',
+      }),
     ),
-    existingCase.defendants && existingCase.defendants[0].gender,
+    accusedGender,
   )
 
   if (accusedAppeal) {
