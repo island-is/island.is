@@ -2243,6 +2243,15 @@
               "!libs/application/templates/financial-aid/**/*"
             ]
           }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/application/templates/financial-aid"
+          ],
+          "options": {
+            "jestConfig": "libs/application/templates/financial-aid/jest.config.js"
+          }
         }
       }
     },
