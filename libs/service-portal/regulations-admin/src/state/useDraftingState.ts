@@ -232,9 +232,7 @@ const specialUpdates: {
 } = {
   title: (state: DraftingState, newTitle) => {
     const { type, text } = state.draft
-    if (!type.value || type.guessed) {
-      type.value = findRegulationType(newTitle)
-    }
+    type.value = findRegulationType(newTitle)
     updateImpacts(state.draft, newTitle, text.value)
   },
 
