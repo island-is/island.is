@@ -6,24 +6,12 @@ import DescriptionText from '../DescriptionText/DescriptionText'
 import * as m from '../../lib/messages'
 import SummaryBlock from '../SummaryBlock/SummaryBlock'
 import { FAFieldBaseProps } from '../../lib/types'
-import {
-  getEmploymentStatus,
-  getHomeCircumstances,
-  HomeCircumstances,
-  KeyMapping,
-} from '@island.is/financial-aid/shared/lib'
+import { getEmploymentStatus } from '@island.is/financial-aid/shared/lib'
+import { getMessageHomeCircumstances } from '../../lib/formatters'
 
 const SummaryForm = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { answers } = application
-  console.log(application)
-
-  // const getHomeCircumstances: KeyMapping<
-  //   HomeCircumstances,
-  //   MessageDescriptor
-  // > = {
-  //   WithParents: m.homeCircumstancesForm.circumstances.withParents,
-  // }
 
   return (
     <>
@@ -63,7 +51,7 @@ const SummaryForm = ({ application }: FAFieldBaseProps) => {
         answer={
           answers?.homeCircumstances?.custom
             ? answers?.homeCircumstances?.custom
-            : getHomeCircumstances[answers?.homeCircumstances?.type]
+            : getMessageHomeCircumstances[answers?.homeCircumstances?.type]
         }
       />
 
