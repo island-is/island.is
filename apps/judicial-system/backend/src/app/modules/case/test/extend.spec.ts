@@ -1,17 +1,20 @@
 import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize/types'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
   CaseType,
   Gender,
-  User,
+  User as TUser,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from './createTestingCaseModule'
 import { DefendantService } from '../../defendant/defendant.service'
 import { Defendant } from '../../defendant/models/defendant.model'
+import { User } from '../../user'
+import { Institution } from '../../institution'
 import { Case } from '../models'
 
 interface Then {
@@ -21,7 +24,7 @@ interface Then {
 
 type GivenWhenThen = (
   caseId: string,
-  user: User,
+  user: TUser,
   theCase: Case,
 ) => Promise<Then>
 
@@ -47,7 +50,7 @@ describe('CaseController - Extend', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
-    givenWhenThen = async (caseId: string, user: User, theCase: Case) => {
+    givenWhenThen = async (caseId: string, user: TUser, theCase: Case) => {
       const then = {} as Then
 
       try {
@@ -62,7 +65,7 @@ describe('CaseController - Extend', () => {
 
   describe('case extended', () => {
     const userId = uuid()
-    const user = { id: userId } as User
+    const user = { id: userId } as TUser
     const caseId = uuid()
     const type = CaseType.CUSTODY
     const description = 'Some details'
@@ -140,7 +143,7 @@ describe('CaseController - Extend', () => {
 
   describe('extended case extended', () => {
     const userId = uuid()
-    const user = { id: userId } as User
+    const user = { id: userId } as TUser
     const caseId = uuid()
     const type = CaseType.CUSTODY
     const description = 'Some details'
@@ -217,7 +220,7 @@ describe('CaseController - Extend', () => {
   })
 
   describe('copy defendants', () => {
-    const user = {} as User
+    const user = {} as TUser
     const caseId = uuid()
     const defendantOne = {
       nationalId: '0000000000',
@@ -235,10 +238,12 @@ describe('CaseController - Extend', () => {
       id: caseId,
       defendants: [defendantOne, defendantTwo],
     } as Case
+    const extendedCaseId = uuid()
+    const extendedCase = { id: extendedCaseId }
 
     beforeEach(async () => {
       const mockCreate = mockCaseModel.create as jest.Mock
-      mockCreate.mockResolvedValueOnce({ id: caseId })
+      mockCreate.mockResolvedValueOnce(extendedCase)
 
       await givenWhenThen(caseId, user, theCase)
     })
@@ -246,15 +251,157 @@ describe('CaseController - Extend', () => {
     it('should copy defendants', () => {
       expect(mockDefendantService.create).toHaveBeenCalledTimes(2)
       expect(mockDefendantService.create).toHaveBeenCalledWith(
-        caseId,
+        extendedCaseId,
         defendantOne,
         transaction,
       )
       expect(mockDefendantService.create).toHaveBeenCalledWith(
-        caseId,
+        extendedCaseId,
         defendantTwo,
         transaction,
       )
+    })
+  })
+
+  describe('case lookup', () => {
+    const user = {} as TUser
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    const extendedCaseId = uuid()
+    const extendedCase = { id: extendedCaseId }
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseModel.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(extendedCase)
+
+      await givenWhenThen(caseId, user, theCase)
+    })
+
+    it('should lookup the newly extended case', () => {
+      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+        include: [
+          { model: Defendant, as: 'defendants' },
+          { model: Institution, as: 'court' },
+          {
+            model: User,
+            as: 'creatingProsecutor',
+            include: [{ model: Institution, as: 'institution' }],
+          },
+          {
+            model: User,
+            as: 'prosecutor',
+            include: [{ model: Institution, as: 'institution' }],
+          },
+          { model: Institution, as: 'sharedWithProsecutorsOffice' },
+          {
+            model: User,
+            as: 'judge',
+            include: [{ model: Institution, as: 'institution' }],
+          },
+          {
+            model: User,
+            as: 'registrar',
+            include: [{ model: Institution, as: 'institution' }],
+          },
+          {
+            model: User,
+            as: 'courtRecordSignatory',
+            include: [{ model: Institution, as: 'institution' }],
+          },
+          { model: Case, as: 'parentCase' },
+          { model: Case, as: 'childCase' },
+        ],
+        order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
+        where: { id: extendedCaseId },
+      })
+    })
+  })
+
+  describe('case returned', () => {
+    const user = {} as TUser
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    const extendedCaseId = uuid()
+    const extendedCase = { id: extendedCaseId }
+    const returnedCase = {} as Case
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseModel.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(extendedCase)
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(returnedCase)
+
+      then = await givenWhenThen(caseId, user, theCase)
+    })
+
+    it('should return case', () => {
+      expect(then.result).toBe(returnedCase)
+    })
+  })
+
+  describe('case creation fails', () => {
+    const user = {} as TUser
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseModel.create as jest.Mock
+      mockCreate.mockRejectedValueOnce(new Error('Some error'))
+
+      then = await givenWhenThen(caseId, user, theCase)
+    })
+
+    it('should throw Error', () => {
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toBe('Some error')
+    })
+  })
+
+  describe('defendant creation fails', () => {
+    const user = {} as TUser
+    const caseId = uuid()
+    const theCase = { id: caseId, defendants: [{}] } as Case
+    const extendedCaseId = uuid()
+    const extendedCase = { id: extendedCaseId }
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseModel.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(extendedCase)
+      const mockDefendantCreate = mockDefendantService.create as jest.Mock
+      mockDefendantCreate.mockRejectedValueOnce(new Error('Some error'))
+
+      then = await givenWhenThen(caseId, user, theCase)
+    })
+
+    it('should throw Error', () => {
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toBe('Some error')
+    })
+  })
+
+  describe('case lookup fails', () => {
+    const user = {} as TUser
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    const extendedCaseId = uuid()
+    const extendedCase = { id: extendedCaseId }
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseModel.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(extendedCase)
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockRejectedValueOnce(new Error('Some error'))
+
+      then = await givenWhenThen(caseId, user, theCase)
+    })
+
+    it('should throw Error', () => {
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toBe('Some error')
     })
   })
 })
