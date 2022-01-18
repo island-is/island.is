@@ -15,9 +15,7 @@ import {
 const SummaryForm = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { answers } = application
-  console.log(
-    getHomeCircumstances[answers?.homeCircumstances?.type as HomeCircumstances],
-  )
+  console.log(application)
 
   return (
     <>
