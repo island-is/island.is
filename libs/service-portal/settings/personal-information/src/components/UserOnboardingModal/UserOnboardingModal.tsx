@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { toast } from '@island.is/island-ui/core'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import {
   ModalBase,
@@ -20,7 +19,6 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const { pathname } = useLocation()
 
   const dropOnboardingSideEffects = () => {
-    toast.info('Notendaupplýsingum er hægt að breyta í stillingum')
     servicePortalCloseOnBoardingModal(pathname)
     // TODO: Save in db date for reminder to finish in 3 months.
   }
