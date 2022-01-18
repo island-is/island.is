@@ -177,22 +177,32 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
   const router = useRouter()
   useContentfulId(projectPage.id)
 
-  const subpage = projectPage.projectSubpages.find((x) => {
-    return x.slug === router.query.subSlug
-  })
+  const subpage = useMemo(
+    () =>
+      projectPage.projectSubpages.find((x) => {
+        return x.slug === router.query.subSlug
+      }),
+    [router.query.subSlug, projectPage.projectSubpages],
+  )
+
+  const routerPathWithoutQueryParams = router.asPath.split('?')[0]
 
   const navigationList = useMemo(
     () =>
       assignNavigationActive(
         convertLinkGroupsToNavigationItems(projectPage.sidebarLinks),
-        router.asPath,
+        routerPathWithoutQueryParams,
       ),
-    [router.asPath, projectPage.sidebarLinks],
+    [routerPathWithoutQueryParams, projectPage.sidebarLinks],
   )
 
   const activeNavigationItemTitle = useMemo(
-    () => getActiveNavigationItemTitle(navigationList, router.asPath),
-    [router.asPath, navigationList],
+    () =>
+      getActiveNavigationItemTitle(
+        navigationList,
+        routerPathWithoutQueryParams,
+      ),
+    [routerPathWithoutQueryParams, navigationList],
   )
 
   const navigationTitle = n('navigationTitle', 'Efnisyfirlit')
@@ -209,9 +219,18 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
   if (!subpage) content = projectPage?.content as SliceType[]
 
   useEffect(() => {
-    if (renderSlicesAsTabs && !!subpage && subpage?.slices?.length > 0)
-      setSelectedSliceTab(subpage.slices[0] as OneColumnText)
-  }, [router.asPath])
+    if (renderSlicesAsTabs && !!subpage && subpage?.slices?.length > 0) {
+      let index = 0
+
+      if (router.query?.selectedTabIndex !== undefined) {
+        index = Number(router.query?.selectedTabIndex)
+        if (isNaN(index) || index < 0 || index >= subpage.slices.length)
+          index = 0
+      }
+
+      setSelectedSliceTab(subpage.slices[index] as OneColumnText)
+    }
+  }, [renderSlicesAsTabs, router.query?.selectedTabIndex, subpage])
 
   return (
     <>
@@ -278,11 +297,20 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
               headingTitle: (slice as OneColumnText).title,
             }))}
             selectedHeadingId={selectedSliceTab?.id}
-            onClick={(id) =>
-              setSelectedSliceTab(
-                subpage.slices.find((s) => s.id === id) as OneColumnText,
+            onClick={(id) => {
+              const slice = subpage.slices.find(
+                (s) => s.id === id,
+              ) as OneColumnText
+              router.push(
+                {
+                  pathname: routerPathWithoutQueryParams,
+                  query: { selectedTabIndex: subpage.slices.indexOf(slice) },
+                },
+                undefined,
+                { shallow: true },
               )
-            }
+              setSelectedSliceTab(slice)
+            }}
           />
         )}
         {renderSlicesAsTabs && selectedSliceTab && (
