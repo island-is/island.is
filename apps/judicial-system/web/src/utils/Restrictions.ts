@@ -1,9 +1,4 @@
-import {
-  capitalize,
-  formatAccusedByGender,
-} from '@island.is/judicial-system/formatters'
 import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
-import type { Gender } from '@island.is/judicial-system/types'
 import { restrictions as m } from '@island.is/judicial-system-web/messages'
 
 export const restrictions = [
@@ -47,21 +42,3 @@ export const alternativeTravelBanRestrictions = [
     info: m[CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT],
   },
 ]
-
-const isolationRestrictions = [
-  {
-    title: 'B - Einangrun',
-    id: CaseCustodyRestrictions.ISOLATION,
-    info: m[CaseCustodyRestrictions.ISOLATION],
-  },
-]
-
-export const isolation = (accusedGender?: Gender) =>
-  isolationRestrictions.map((provision) => {
-    return {
-      ...provision,
-      title: `${capitalize(
-        formatAccusedByGender(accusedGender),
-      )} skal sæta einangrun`,
-    }
-  })

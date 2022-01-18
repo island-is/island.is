@@ -25,6 +25,7 @@ import {
 import {
   CaseDecision,
   CaseType,
+  Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -39,12 +40,15 @@ import {
   validateAndSendToServer,
   setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { rcRulingStepOne as m } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  rcRulingStepOne as m,
+} from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { capitalize } from '@island.is/judicial-system/formatters'
 
 export const RulingStepOne: React.FC = () => {
   const {
@@ -383,6 +387,7 @@ export const RulingStepOne: React.FC = () => {
             </Box>
           )}
         {workingCase.type === CaseType.CUSTODY &&
+          workingCase.defendants &&
           isAcceptingCaseDecision(workingCase.decision) && (
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
@@ -394,13 +399,16 @@ export const RulingStepOne: React.FC = () => {
                 <Box marginBottom={3}>
                   <Checkbox
                     name="isCustodyIsolation"
-                    // TODO defendants: handle multiple defendants
-                    label={
-                      isolation(
-                        workingCase.defendants &&
-                          workingCase.defendants[0].gender,
-                      )[0].title
-                    }
+                    label={capitalize(
+                      formatMessage(m.sections.custodyRestrictions.isolation, {
+                        genderedAccused: formatMessage(core.accused, {
+                          suffix:
+                            workingCase.defendants[0].gender === Gender.MALE
+                              ? 'i'
+                              : 'a',
+                        }),
+                      }),
+                    )}
                     checked={workingCase.isCustodyIsolation}
                     onChange={() => {
                       setAndSendToServer(

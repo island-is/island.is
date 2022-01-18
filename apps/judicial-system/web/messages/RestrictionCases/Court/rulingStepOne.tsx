@@ -154,6 +154,13 @@ export const rcRulingStepOne = {
         description:
           'Notaður sem titill fyrir "Takmarkanir á gæslu" hlutann á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      isolation: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.custody_restrictions.isolation',
+        defaultMessage: '{genderedAccused} skal sæta einangrun',
+        description:
+          'Notaður sem texti sem segir til um einangrun á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
     }),
   },
 }
