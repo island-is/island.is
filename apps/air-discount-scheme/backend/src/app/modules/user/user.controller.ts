@@ -26,7 +26,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
-import { User as AuthUser } from '@island.is/auth-nest-tools'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 
 @ApiTags('Users')
 @Controller('api/public')
