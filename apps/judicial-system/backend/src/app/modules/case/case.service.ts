@@ -1,4 +1,5 @@
 import { Includeable, OrderItem } from 'sequelize/types'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadRequestException,
@@ -7,7 +8,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -98,6 +99,7 @@ export class CaseService {
   }
 
   constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     private readonly defendantService: DefendantService,
     private readonly userService: UserService,
@@ -650,33 +652,61 @@ export class CaseService {
   }
 
   async extend(theCase: Case, user: TUser): Promise<Case> {
-    const extendedCase = await this.caseModel.create({
-      type: theCase.type,
-      policeCaseNumber: theCase.policeCaseNumber,
-      description: theCase.description,
-      defenderName: theCase.defenderName,
-      defenderEmail: theCase.defenderEmail,
-      defenderPhoneNumber: theCase.defenderPhoneNumber,
-      leadInvestigator: theCase.leadInvestigator,
-      courtId: theCase.courtId,
-      translator: theCase.translator,
-      lawsBroken: theCase.lawsBroken,
-      legalBasis: theCase.legalBasis,
-      legalProvisions: theCase.legalProvisions,
-      requestedCustodyRestrictions: theCase.requestedCustodyRestrictions,
-      caseFacts: theCase.caseFacts,
-      legalArguments: theCase.legalArguments,
-      requestProsecutorOnlySession: theCase.requestProsecutorOnlySession,
-      prosecutorOnlySessionRequest: theCase.prosecutorOnlySessionRequest,
-      creatingProsecutorId: user.id,
-      prosecutorId: user.id,
-      parentCaseId: theCase.id,
-      initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
-    })
+    return this.sequelize
+      .transaction((transaction) =>
+        this.caseModel
+          .create(
+            {
+              type: theCase.type,
+              policeCaseNumber: theCase.policeCaseNumber,
+              description: theCase.description,
+              defenderName: theCase.defenderName,
+              defenderEmail: theCase.defenderEmail,
+              defenderPhoneNumber: theCase.defenderPhoneNumber,
+              leadInvestigator: theCase.leadInvestigator,
+              courtId: theCase.courtId,
+              translator: theCase.translator,
+              lawsBroken: theCase.lawsBroken,
+              legalBasis: theCase.legalBasis,
+              legalProvisions: theCase.legalProvisions,
+              requestedCustodyRestrictions:
+                theCase.requestedCustodyRestrictions,
+              caseFacts: theCase.caseFacts,
+              legalArguments: theCase.legalArguments,
+              requestProsecutorOnlySession:
+                theCase.requestProsecutorOnlySession,
+              prosecutorOnlySessionRequest:
+                theCase.prosecutorOnlySessionRequest,
+              creatingProsecutorId: user.id,
+              prosecutorId: user.id,
+              parentCaseId: theCase.id,
+              initialRulingDate:
+                theCase.initialRulingDate ?? theCase.rulingDate,
+            },
+            { transaction },
+          )
+          .then(async (extendedCase) => {
+            if (theCase.defendants && theCase.defendants?.length > 0) {
+              await Promise.all(
+                theCase.defendants?.map((defendant) =>
+                  this.defendantService.create(
+                    extendedCase.id,
+                    {
+                      nationalId: defendant.nationalId,
+                      name: defendant.name,
+                      gender: defendant.gender,
+                      address: defendant.address,
+                    },
+                    transaction,
+                  ),
+                ),
+              )
+            }
 
-    // TODO defendants: copy defendants to extended case
-
-    return this.findById(extendedCase.id)
+            return extendedCase.id
+          }),
+      )
+      .then((caseId) => this.findById(caseId))
   }
 
   async uploadRequestPdfToCourt(theCase: Case): Promise<void> {
