@@ -1,5 +1,5 @@
 import { bootstrap } from '@island.is/infra-next-server'
-import proxyConfig from './proxy.conf.json'
+import proxyConfig from './proxy.config.json'
 
 bootstrap({
   name: 'air-discount-scheme',

@@ -88,6 +88,9 @@
     "api-domains-communications": {
       "tags": []
     },
+    "api-domains-company-registry": {
+      "tags": []
+    },
     "api-domains-content-search": {
       "tags": []
     },
@@ -133,6 +136,9 @@
     "api-domains-license-service": {
       "tags": []
     },
+    "api-domains-municipalities-financial-aid": {
+      "tags": []
+    },
     "api-domains-national-registry": {
       "tags": []
     },
@@ -146,9 +152,6 @@
       "tags": []
     },
     "api-domains-regulations": {
-      "tags": []
-    },
-    "api-domains-rsk": {
       "tags": []
     },
     "api-domains-syslumenn": {
@@ -316,6 +319,9 @@
     "clients-mms": {
       "tags": []
     },
+    "clients-municipalities-financial-aid": {
+      "tags": []
+    },
     "clients-national-registry-v1": {
       "tags": []
     },
@@ -329,6 +335,9 @@
       "tags": []
     },
     "clients-regulations": {
+      "tags": []
+    },
+    "clients-rsk-company-registry": {
       "tags": []
     },
     "clients-rsk-v1": {
@@ -549,6 +558,9 @@
       "tags": []
     },
     "nest-problem": {
+      "tags": []
+    },
+    "nest-swagger": {
       "tags": []
     },
     "nest-validators": {

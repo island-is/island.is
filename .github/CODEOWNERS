@@ -20,6 +20,7 @@
 /handbook/                                                                                    @island-is/core
 /libs/api/domains/identity/                                                                   @island-is/core
 /libs/testing/                                                                                @island-is/core @island-is/vice-versa
+/libs/nest/swagger/                                                                           @island-is/core @island-is/vice-versa
 
 /apps/services/endorsements/                                                                  @island-is/kosmos-kaos
 /apps/icelandic-names-registry*/                                                              @island-is/kosmos-kaos
@@ -78,6 +79,8 @@
 /libs/financial-aid/                                                                          @island-is/kolibri-robin-hood
 /libs/next-ids-auth/                                                                          @island-is/kolibri-robin-hood
 /libs/application/templates/financial-aid/                                                    @island-is/kolibri-robin-hood
+/libs/api/domains/municipalities-financial-aid                                                @island-is/kolibri-robin-hood
+/libs/clients/municipalities-financial-aid                                                    @island-is/kolibri-robin-hood
 
 /apps/download-service/                                                                       @island-is/hugsmidjan
 /apps/service-portal*/                                                                        @island-is/hugsmidjan
@@ -114,6 +117,8 @@
 /libs/application/template-api-modules/src/lib/modules/templates/public-debt-payment-plan     @island-is/sendiradid
 /libs/api/domains/health-insurance/                                                           @island-is/sendiradid
 /libs/application/templates/health-insurance/                                                 @island-is/sendiradid
+/libs/clients/rsk/company-registry                                                            @island-is/sendiradid
+/libs/api/domains/company-registry                                                            @island-is/sendiradid
 /libs/clients/health-insurance-v2/                                                            @island-is/sendiradid
 /libs/clients/data-protection-complaint/                                                      @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/   @island-is/sendiradid
@@ -164,3 +169,8 @@ infra/                                                                          
 /libs/auth-nest-tools/                                                                        @island-is/fuglar @island-is/aranja
 
 /apps/services/personal-representative/                                                       @island-is/programm
+
+/libs/application/templates/criminal-record/                                                  @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission   @island-is/origo
+/libs/api/domains/criminal-record/                                                            @island-is/origo
+/libs/clients/criminal-record/                                                                @island-is/origo

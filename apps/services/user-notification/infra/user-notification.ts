@@ -39,4 +39,22 @@ export const userNotificationWorkerSetup = (): ServiceBuilder<'user-notification
     .env({
       MAIN_QUEUE_NAME,
       DEAD_LETTER_QUEUE_NAME,
+      IDENTITY_SERVER_PATH: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
+      SERVICE_USER_PROFILE_BASEPATH: {
+        dev: 'https://beta.dev01.devland.is/minarsidur',
+        staging: 'https://beta.staging01.devland.is/minarsidur',
+        prod: 'https://island.is/minarsidur',
+      },
+    })
+    .secrets({
+      GOOGLE_APPLICATION_CREDENTIALS:
+        '/k8s/user-notification/firestore-credentials',
+      USER_NOTIFICATION_CLIENT_ID:
+        '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID',
+      USER_NOTIFICATION_CLIENT_SECRET:
+        '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET',
     })

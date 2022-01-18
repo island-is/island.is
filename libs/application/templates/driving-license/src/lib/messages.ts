@@ -27,12 +27,6 @@ export const m = defineMessages({
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
     description: 'The following data will be retrieved electronically',
   },
-  eligibilitySummaryTitle: {
-    id: 'dl.application:eligibility.title',
-    defaultMessage:
-      'Skilyrði sem umsækjandi um fullnaðarskírteini þarf að uppfylla',
-    description: 'Headline showing up above the list of requirements',
-  },
   yes: {
     id: 'dl.application:shared.yes',
     defaultMessage: 'Já',
@@ -82,18 +76,6 @@ export const m = defineMessages({
     description:
       'In order to apply for this application we need your email and phone number',
   },
-  penaltyPointsTitle: {
-    id: 'dl.application:penaltyPoints.title',
-    defaultMessage: 'Punktastaða úr Ökuskírteinaskrá',
-    description: 'Penalty points from Ökuskírteinaskrá',
-  },
-  penaltyPointsSubTitle: {
-    id: 'dl.application:penaltyPoints.subTitle',
-    defaultMessage:
-      'Til þess að tryggja að notandi hafi heimild til þess að sækja um ökuskírteini út frá punktastöðu',
-    description:
-      "In order to ensure the user's penalty points do not prohibit him from applying for a driving license",
-  },
   residenceTitle: {
     id: 'dl.application:residence.title',
     defaultMessage: 'Búseta',
@@ -105,51 +87,6 @@ export const m = defineMessages({
       'Ég hef fasta búsetu hér á landi eins og hún er skilgreind í VIII. viðauka reglugerðar um ökuskírteini eða tel mig fullnægja skilyrðum um búsetu hér á landi til að fá gefið út ökuskírteini.',
     description:
       "I've lived in Iceland according to VIII and here by confirm that I meet the conditions to apply for a driving license",
-  },
-  typeFieldMultiFieldTitle: {
-    id: 'dl.application:typeField.multiFieldTitle',
-    defaultMessage: 'Ég er að sækja um:',
-    description: "I'm applying for:",
-  },
-  typeFieldCheckbox: {
-    id: 'dl.application:typeField.checkbox',
-    defaultMessage: 'Tegund ökutækja',
-    description: 'Type of vehicle',
-  },
-  typeFieldCar: {
-    id: 'dl.application:typeField.car',
-    defaultMessage: 'Almenn ökuréttindi',
-    description: 'General driving license',
-  },
-  typeFieldMotorcycle: {
-    id: 'dl.application:typeField.motorcycle',
-    defaultMessage: 'Bifhjólaréttindi',
-    description: 'Motorcycle license',
-  },
-  typeFieldTrailer: {
-    id: 'dl.application:typeField.trailer',
-    defaultMessage: 'Kerrur og eftirvagnar',
-    description: 'Trailers',
-  },
-  subTypeFieldTitle: {
-    id: 'dl.application:subTypeField.subtitle',
-    defaultMessage: 'Tegund',
-    description: 'Type',
-  },
-  subTypeFieldMultiFieldTitle: {
-    id: 'dl.application:subTypeField.multiFieldTitle',
-    defaultMessage: 'Ég er að sækja um:',
-    description: "I'm applying for:",
-  },
-  subTypeFieldCar: {
-    id: 'dl.application:subTypeField.car',
-    defaultMessage: 'Fólksbílaflokkar:',
-    description: 'Passenger car categories',
-  },
-  subTypeFieldMotorcycle: {
-    id: 'dl.application:subTypeField.motorcycle',
-    defaultMessage: 'Bifhjólaflokkar:',
-    description: 'Motorcycle categories',
   },
   informationSectionTitle: {
     id: 'dl.application:informationSection.title',
@@ -165,11 +102,6 @@ export const m = defineMessages({
     id: 'dl.application:information.applicant',
     defaultMessage: 'Umsækjandi',
     description: 'Applicant',
-  },
-  informationTeacher: {
-    id: 'dl.application:information.teacher',
-    defaultMessage: 'Ökukennari',
-    description: 'Teacher',
   },
   healthDeclarationSectionTitle: {
     id: 'dl.application:healthDeclarationSection.title',
@@ -312,11 +244,6 @@ export const m = defineMessages({
     defaultMessage: 'Ökukennari',
     description: 'Teacher',
   },
-  overviewBringData: {
-    id: 'dl.application:overview.bringData',
-    defaultMessage: 'Gögn höfð meðferðis til Sýslumanns',
-    description: 'Will bring along data to the sheriff',
-  },
   applicationQualityPhotoTitle: {
     id: 'dl.application:applicationQualityPhotoTitle',
     defaultMessage: 'Ljósmynd',
@@ -420,11 +347,6 @@ export const m = defineMessages({
     defaultMessage: 'Ég kem með vottorð frá lækni meðferðis',
     description: `I'll bring a certificate from a doctor`,
   },
-  overviewSubmit: {
-    id: 'dl.application:overview.submit',
-    defaultMessage: 'Smelltu hér til að senda inn umsókn',
-    description: 'Click here to submit an application',
-  },
   overviewDone: {
     id: 'dl.application:overview.done',
     defaultMessage: 'Umsókn móttekin',
@@ -498,11 +420,6 @@ export const m = defineMessages({
     id: 'dl.application:example.waitingForPaymentError',
     defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
     description: 'An error came up while getting payment information',
-  },
-  examplePaymentPendingDescription: {
-    id: 'dl.application:example.waitingDescription',
-    defaultMessage: 'Texti um hvað er að gerast',
-    description: 'Text about current payment proceedures.',
   },
   orderDrivingLicense: {
     id: 'dl.application:order.drivingLicense',
@@ -792,5 +709,11 @@ export const m = defineMessages({
     id: 'dl.application:nationalCommissionerOfPolice',
     defaultMessage: 'Ríkislögreglustjóri',
     description: 'National Commissioner of Police',
+  },
+  countryDirectionsTitle: {
+    id: 'dl.application:countryDirectionsTitle',
+    defaultMessage: 'Leiðbeiningar',
+    description:
+      'Title of the section that explains the next steps when they have a driving license in a different country',
   },
 })

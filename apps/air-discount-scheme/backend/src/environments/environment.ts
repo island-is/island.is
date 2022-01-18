@@ -1,5 +1,7 @@
 import { Airlines } from '@island.is/air-discount-scheme/consts'
 
+const isProd = process.env.NODE_ENV === 'production'
+
 const devConfig = {
   production: false,
   environment: 'local',
@@ -26,9 +28,17 @@ const devConfig = {
       'localhost:7005',
     ],
   },
+  baseUrl: process.env.BASE_URL ?? 'http://localhost:4200',
+  identityServerAuth: {
+    issuer: process.env.IDENTITY_SERVER_DOMAIN
+      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
+      : 'https://identity-server.dev01.devland.is',
+    audience: '@vegagerdin.is',
+  },
+  idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
 }
 
-if (process.env.NODE_ENV === 'production') {
+if (isProd) {
   if (!process.env.REDIS_URL_NODE_01) {
     throw new Error('Missing REDIS_URL_NODE_01 environment.')
   }
@@ -53,6 +63,14 @@ const prodConfig = {
   redis: {
     urls: [process.env.REDIS_URL_NODE_01!],
   },
+  baseUrl: process.env.BASE_URL,
+  identityServerAuth: {
+    issuer: process.env.IDENTITY_SERVER_DOMAIN
+      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
+      : '',
+    audience: '@vegagerdin.is',
+  },
+  idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
 }
 
-export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
+export default isProd ? prodConfig : devConfig

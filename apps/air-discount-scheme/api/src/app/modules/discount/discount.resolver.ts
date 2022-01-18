@@ -4,19 +4,25 @@ import {
   Discount as TDiscount,
   User as TUser,
 } from '@island.is/air-discount-scheme/types'
-import { Authorize, CurrentUser, AuthService, AuthUser } from '../auth'
 import { Discount } from './discount.model'
 import { User } from '../user'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  CurrentUser,
+  Scopes,
+} from '@island.is/auth-nest-tools'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
+import { UseGuards } from '@nestjs/common'
 
 type DiscountWithTUser = Discount & { user: TUser }
 
 const TWO_HOURS = 7200 // seconds
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes('@vegagerdin.is/air-discount-scheme-scope')
 @Resolver(() => Discount)
 export class DiscountResolver {
-  constructor(private readonly authService: AuthService) {}
-
-  @Authorize()
   @Query(() => [Discount], { nullable: true })
   async discounts(
     @CurrentUser() user: AuthUser,

@@ -1,4 +1,4 @@
-# Client Middlewares
+# Enhanced Fetch
 
 Includes middleware logic for our API clients. Including:
 
