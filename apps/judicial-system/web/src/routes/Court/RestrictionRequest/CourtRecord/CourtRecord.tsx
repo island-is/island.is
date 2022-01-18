@@ -13,11 +13,7 @@ import {
   DateTime,
   HideableText,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  caseTypes,
-  formatAccusedByGender,
-  NounCases,
-} from '@island.is/judicial-system/formatters'
+import { caseTypes } from '@island.is/judicial-system/formatters'
 import { CaseType } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
@@ -34,6 +30,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   rcCourtRecord as m,
   closedCourt,
+  core,
 } from '@island.is/judicial-system-web/messages'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
@@ -74,16 +71,13 @@ export const CourtRecord: React.FC = () => {
         if (wc.prosecutor && wc.defendants && wc.defendants[0].name) {
           attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
             wc.defendants[0].name
-          } ${formatAccusedByGender(wc.defendants[0].gender)}`
+          } ${formatMessage(core.accused, { suffix: 'i' })}`
         }
 
         if (wc.defenderName) {
           attendees += `\n${
             wc.defenderName
-          } skipaður verjandi ${formatAccusedByGender(
-            wc.defendants && wc.defendants[0].gender,
-            NounCases.GENITIVE,
-          )}`
+          } skipaður verjandi ${formatMessage(core.accused, { suffix: 'a' })}`
         }
 
         if (wc.translator) {
@@ -118,15 +112,15 @@ export const CourtRecord: React.FC = () => {
       if (theCase.type === CaseType.CUSTODY) {
         autofill(
           'litigationPresentations',
-          `Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi ${formatAccusedByGender(
-            theCase.defendants && theCase.defendants[0].gender,
-            NounCases.GENITIVE,
-          )} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að ${formatAccusedByGender(
-            theCase.defendants && theCase.defendants[0].gender,
-            NounCases.DATIVE,
-          )} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að ${formatAccusedByGender(
-            theCase.defendants && theCase.defendants[0].gender,
-            NounCases.DATIVE,
+          `Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi ${formatMessage(
+            core.accused,
+            { suffix: 'a' },
+          )} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að ${formatMessage(
+            core.accused,
+            { suffix: 'a' },
+          )} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að ${formatMessage(
+            core.accused,
+            { suffix: 'a' },
           )} verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.`,
           theCase,
         )
@@ -306,10 +300,7 @@ export const CourtRecord: React.FC = () => {
             <Text as="h3" variant="h3">
               {`${formatMessage(m.sections.accusedBookings.title, {
                 // TODO defendants: handle multiple defendants
-                genderedAccused: formatAccusedByGender(
-                  workingCase.defendants && workingCase.defendants[0].gender,
-                  NounCases.GENITIVE,
-                ),
+                genderedAccused: formatMessage(core.accused, { suffix: 'a' }),
               })} `}
               <Tooltip
                 text={formatMessage(m.sections.accusedBookings.tooltip)}
@@ -321,10 +312,7 @@ export const CourtRecord: React.FC = () => {
             name="accusedBookings"
             label={formatMessage(m.sections.accusedBookings.label, {
               // TODO defendants: handle multiple defendants
-              genderedAccused: formatAccusedByGender(
-                workingCase.defendants && workingCase.defendants[0].gender,
-                NounCases.GENITIVE,
-              ),
+              genderedAccused: formatMessage(core.accused, { suffix: 'a' }),
             })}
             value={workingCase.accusedBookings || ''}
             placeholder={formatMessage(m.sections.accusedBookings.placeholder)}

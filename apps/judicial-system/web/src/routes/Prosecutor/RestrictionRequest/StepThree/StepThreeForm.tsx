@@ -2,11 +2,7 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
-import {
-  formatAccusedByGender,
-  formatDate,
-  NounCases,
-} from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   CaseType,
@@ -35,6 +31,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
+import { core } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -141,10 +138,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
             data-testid="lawsBroken"
             name="lawsBroken"
             label={formatMessage(rcDemands.sections.lawsBroken.label, {
-              defendant: formatAccusedByGender(
-                workingCase?.defendants && workingCase.defendants[0].gender,
-                NounCases.GENITIVE,
-              ),
+              defendant: formatMessage(core.accused, { suffix: 'a' }),
             })}
             placeholder={formatMessage(
               rcDemands.sections.lawsBroken.placeholder,

@@ -300,7 +300,8 @@ export const RulingStepTwo: React.FC = () => {
                   {formatMessage(m.sections.appealDecision.accusedTitle, {
                     // TODO defendants: handle multiple defendants
                     accused: formatAccusedByGender(
-                      workingCase.defendants && theCase.defendants[0].gender,
+                      workingCase.defendants &&
+                        workingCase.defendants[0].gender,
                       NounCases.GENITIVE,
                     ),
                   })}{' '}
@@ -322,7 +323,7 @@ export const RulingStepTwo: React.FC = () => {
                           accused: capitalize(
                             formatAccusedByGender(
                               workingCase.defendants &&
-                                theCase.defendants[0].gender,
+                                workingCase.defendants[0].gender,
                             ),
                           ),
                         },
@@ -361,7 +362,7 @@ export const RulingStepTwo: React.FC = () => {
                           accused: capitalize(
                             formatAccusedByGender(
                               workingCase.defendants &&
-                                theCase.defendants[0].gender,
+                                workingCase.defendants[0].gender,
                             ),
                           ),
                         },
@@ -404,7 +405,7 @@ export const RulingStepTwo: React.FC = () => {
                           accused: capitalize(
                             formatAccusedByGender(
                               workingCase.defendants &&
-                                theCase.defendants[0].gender,
+                                workingCase.defendants[0].gender,
                             ),
                           ),
                         },
@@ -473,7 +474,8 @@ export const RulingStepTwo: React.FC = () => {
                   {
                     // TODO defendants: handle multiple defendants
                     accused: formatAccusedByGender(
-                      workingCase.defendants && theCase.defendants[0].gender,
+                      workingCase.defendants &&
+                        workingCase.defendants[0].gender,
                       NounCases.GENITIVE,
                     ),
                   },
@@ -484,7 +486,8 @@ export const RulingStepTwo: React.FC = () => {
                   {
                     // TODO defendants: handle multiple defendants
                     accused: formatAccusedByGender(
-                      workingCase.defendants && theCase.defendants[0].gender,
+                      workingCase.defendants &&
+                        workingCase.defendants[0].gender,
                     ),
                   },
                 )}

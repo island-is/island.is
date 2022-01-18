@@ -1,12 +1,11 @@
 import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
 
 import {
   capitalize,
-  formatAccusedByGender,
   formatAppeal,
   formatDate,
-  NounCases,
   TIME_FORMAT,
   formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
@@ -14,11 +13,11 @@ import {
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
-import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { closedCourt, core } from '@island.is/judicial-system-web/messages'
-import { useIntl } from 'react-intl'
 import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
+import type { Case } from '@island.is/judicial-system/types'
+
+import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 
 interface Props {
   workingCase: Case
@@ -32,20 +31,22 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
     'Sækjandi',
   )
 
-  // TODO defendants: handle multiple defendants
-  const accusedAppeal = formatAppeal(
-    workingCase.accusedAppealDecision,
-    isRestrictionCase(workingCase.type)
-      ? capitalize(
-          formatAccusedByGender(
-            workingCase.defendants && workingCase.defendants[0].gender,
-          ),
-        )
-      : 'Varnaraðili',
-    isRestrictionCase(workingCase.type)
-      ? workingCase.defendants && workingCase.defendants[0].gender
-      : undefined,
-  )
+  const accusedAppeal = workingCase.defendants
+    ? formatAppeal(
+        workingCase.accusedAppealDecision,
+        capitalize(
+          isRestrictionCase(workingCase.type)
+            ? formatMessage(core.accused, { suffix: 'i' })
+            : formatMessage(core.defendant, {
+                suffix: workingCase.defendants?.length > 1 ? 'ar' : 'i',
+              }),
+        ),
+        isRestrictionCase(workingCase.type)
+          ? workingCase.defendants && workingCase.defendants[0].gender
+          : undefined,
+      )
+    : ''
+
   return (
     <AccordionItem
       id="courtRecordAccordionItem"
@@ -113,13 +114,14 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
       {workingCase.accusedBookings?.trim() && (
         <AccordionListItem
           title={formatMessage(m.sections.accusedBookings.title, {
-            accusedType: isRestrictionCase(workingCase.type)
-              ? // TODO defendants: handle multiple defendants
-                formatAccusedByGender(
-                  workingCase.defendants && workingCase.defendants[0].gender,
-                  NounCases.ACCUSATIVE,
-                )
-              : 'varnaraðila',
+            accusedType: formatMessage(
+              isRestrictionCase(workingCase.type)
+                ? core.accused
+                : core.defendant,
+              {
+                suffix: 'a',
+              },
+            ),
           })}
           breakSpaces
         >
