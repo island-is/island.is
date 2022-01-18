@@ -13,15 +13,9 @@ import {
 } from '@nestjs/common'
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
-import { Audit, AuditService } from '@island.is/nest/audit'
+import { Audit } from '@island.is/nest/audit'
 import { environment } from '../../../environments'
-import {
-  Auth,
-  CurrentAuth,
-  IdsAuthGuard,
-  Scopes,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representatives`
 
@@ -35,7 +29,6 @@ export class PersonalRepresentativesController {
   constructor(
     @Inject(PersonalRepresentativeService)
     private readonly prService: PersonalRepresentativeService,
-    private readonly auditService: AuditService,
   ) {}
 
   /** Gets a personal representative rights by nationalId of personal representative */

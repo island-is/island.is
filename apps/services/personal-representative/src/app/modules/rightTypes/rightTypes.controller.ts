@@ -140,9 +140,6 @@ export class RightTypesController {
     summary: 'Create a right type',
     response: { status: 201, type: PersonalRepresentativeRightType },
   })
-  @Audit<PersonalRepresentativeRightType>({
-    resources: (type) => type.code,
-  })
   async create(
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
     @CurrentAuth() user: Auth,
@@ -174,9 +171,6 @@ export class RightTypesController {
         },
       },
     },
-  })
-  @Audit<PersonalRepresentativeRightType>({
-    resources: (type) => type.code,
   })
   async update(
     @Param('code') code: string,
