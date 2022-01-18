@@ -19,7 +19,6 @@ import {
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
-  formatCustodyIsolation,
   formatCourtResubmittedToCourtSmsNotification,
 } from './formatters'
 
@@ -1116,21 +1115,5 @@ describe('stripHtmlTags', () => {
 
     // Assert
     expect(res).toBe('blablabla\n\nblabla')
-  })
-})
-
-describe('formatCustodyIsolation', () => {
-  test('should format custody isolation', () => {
-    // Arrange
-    const gender = Gender.OTHER
-    const isolationToDate = new Date('2021-12-31T16:00')
-
-    //Act
-    const res = formatCustodyIsolation(gender, isolationToDate)
-
-    // Assert
-    expect(res).toBe(
-      'Kærða skal sæta einangrun til föstudagsins 31. desember 2021, kl. 16:00.',
-    )
   })
 })
