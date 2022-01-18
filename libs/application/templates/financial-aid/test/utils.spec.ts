@@ -25,53 +25,45 @@ describe('Utilts test', () => {
   })
   describe('is email valid test', () => {
     test('should return that email is valid', () => {
-      const notValidEmail = isValidEmail('test@is.is')
+      const validEmail = isValidEmail('test@is.is')
 
-      expect(notValidEmail).toEqual(true)
-    })
-  })
-
-  describe('is email valid test', () => {
-    test('should return that email is valid', () => {
-      const notValidEmail = isValidEmail('test@is.is')
-
-      expect(notValidEmail).toEqual(true)
+      expect(validEmail).toEqual(true)
     })
   })
 
   describe('is phone valid test', () => {
     test('should return that phone is not valid', () => {
-      const notValidEmail = isValidPhone('test')
+      const notValidPhone = isValidPhone('test')
 
-      expect(notValidEmail).toEqual(false)
+      expect(notValidPhone).toEqual(false)
     })
   })
 
   describe('is phone valid test', () => {
     test('should return that phone is not valid', () => {
-      const notValidEmail = isValidPhone('+0001111')
+      const notValidPhone = isValidPhone('+0001111')
 
-      expect(notValidEmail).toEqual(false)
+      expect(notValidPhone).toEqual(false)
     })
   })
 
   describe('is phone valid test', () => {
     test('should return that phone is not valid', () => {
-      const notValidEmail = isValidPhone('+354 000 1111')
-      expect(notValidEmail).toEqual(false)
+      const notValidPhone = isValidPhone('+354 000 1111')
+      expect(notValidPhone).toEqual(false)
     })
   })
   describe('is phone valid test', () => {
     test('should return that phone is valid', () => {
-      const notValidEmail = isValidPhone('0000000')
-      expect(notValidEmail).toEqual(false)
+      const notValidPhone = isValidPhone('0000000')
+      expect(notValidPhone).toEqual(false)
     })
   })
 
   describe('is phone valid test', () => {
     test('should return that phone is valid', () => {
-      const notValidEmail = isValidPhone('5677977')
-      expect(notValidEmail).toEqual(true)
+      const validPhone = isValidPhone('5677977')
+      expect(validPhone).toEqual(true)
     })
   })
 })
