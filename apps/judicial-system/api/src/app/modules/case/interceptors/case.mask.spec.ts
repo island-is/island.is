@@ -183,7 +183,10 @@ function maskedCase(theCase: Case) {
     type: theCase.type,
     state: theCase.state,
     policeCaseNumber: theCase.policeCaseNumber,
-    defendants: [{ nationalId: '0000000000', name: 'T' }],
+    defendants: theCase.defendants?.map((defendant) => ({
+      nationalId: defendant && defendant.nationalId,
+      name: defendant && defendant.name,
+    })),
     defenderName: theCase.defenderName,
     defenderEmail: theCase.defenderEmail,
     defenderPhoneNumber: theCase.defenderPhoneNumber,
@@ -364,31 +367,5 @@ describe('Mask Case by User', () => {
 
       expect(res).toStrictEqual(maskedCase(theCase))
     })
-  })
-})
-
-describe('Full name', () => {
-  each`
-    type
-    ${CaseType.SEARCH_WARRANT}
-    ${CaseType.BANKING_SECRECY_WAIVER}
-    ${CaseType.PHONE_TAPPING}
-    ${CaseType.TELECOMMUNICATIONS}
-    ${CaseType.TRACKING_EQUIPMENT}
-    ${CaseType.PSYCHIATRIC_EXAMINATION}
-    ${CaseType.SOUND_RECORDING_EQUIPMENT}
-    ${CaseType.AUTOPSY}
-    ${CaseType.BODY_SEARCH}
-    ${CaseType.INTERNET_USAGE}
-    ${CaseType.RESTRAINING_ORDER}
-    ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
-    ${CaseType.OTHER}
-  `.it('should mask the name', ({ type }) => {
-    const res = maskCase({
-      type,
-      defendants: [{ name: 'Jón Jónsson' }],
-    } as Case)
-
-    expect(res.defendants && res.defendants[0].name).toBe('LU')
   })
 })
