@@ -57,7 +57,6 @@ import { StaffGuard } from '../../guards/staff.guard'
 import { CurrentApplication } from '../../decorators/application.decorator'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import { AuditService } from '@island.is/nest/audit'
-import { CurrentApplicationResponse } from './models/currentApplication.response'
 
 @UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/application`)
@@ -74,18 +73,22 @@ export class ApplicationController {
 
   @Get('nationalId/:nationalId')
   @ApiOkResponse({
-    type: CurrentApplicationResponse,
+    type: String,
     description: 'Checks if user has a current application for this period',
   })
   async getCurrentApplication(
     @Param('nationalId') nationalId: string,
-  ): Promise<CurrentApplicationResponse> {
+  ): Promise<string> {
     this.logger.debug('Application controller: Getting current application')
     const currentApplicationId = await this.applicationService.getCurrentApplicationId(
       nationalId,
     )
 
-    return { currentApplicationId }
+    if (currentApplicationId === null) {
+      throw new NotFoundException(404, 'Current application not found')
+    }
+
+    return currentApplicationId
   }
 
   @UseGuards(RolesGuard, StaffGuard)

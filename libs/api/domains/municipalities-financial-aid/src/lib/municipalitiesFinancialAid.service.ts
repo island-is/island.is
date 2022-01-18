@@ -15,10 +15,18 @@ export class MunicipalitiesFinancialAidService {
     auth: Auth,
     nationalId: string,
   ) {
-    return await this.applicationApiWithAuth(
-      auth,
-    ).applicationControllerGetCurrentApplication({
-      nationalId,
-    })
+    return await this.applicationApiWithAuth(auth)
+      .applicationControllerGetCurrentApplication({
+        nationalId,
+      })
+      .then((res) => {
+        return res
+      })
+      .catch((error) => {
+        if (error.status === 404) {
+          return null
+        }
+        throw error
+      })
   }
 }

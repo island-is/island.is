@@ -6,7 +6,7 @@ import {
   ApplicationApi,
   Configuration,
 } from '@island.is/clients/municipalities-financial-aid'
-import { MunicipalitiesFinancialAidConfig } from './municipalitiesFInancialAid.config'
+import { MunicipalitiesFinancialAidConfig } from './municipalitiesFinancialAid.config'
 
 export const ApplicationApiProvider: Provider<ApplicationApi> = {
   provide: ApplicationApi,

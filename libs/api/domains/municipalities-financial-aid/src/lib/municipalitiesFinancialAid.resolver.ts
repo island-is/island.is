@@ -20,10 +20,9 @@ export class MunicipalitiesFinancialAidResolver {
   async hasUserFinancialAidApplicationForCurrentPeriod(
     @CurrentUser() user: User,
   ): Promise<string | null> {
-    const currentApplication = await this.municipalitiesFinancialAidService.municipalitiesFinancialAidCurrentApplication(
+    return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidCurrentApplication(
       user,
       user.nationalId,
     )
-    return currentApplication.currentApplicationId
   }
 }
