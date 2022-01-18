@@ -132,19 +132,16 @@ const AppealSection: React.FC<Props> = (props) => {
                   )}
               </AnimatePresence>
               <AnimatePresence>
-                {workingCase.accusedPostponedAppealDate &&
-                  // TDOO defendants: handle multiple defendants
-                  workingCase.defendants &&
-                  workingCase.defendants[0].gender && (
-                    <AccusedAppealInfo
-                      workingCase={workingCase}
-                      withdrawAccusedAppealDate={
-                        workingCase.isAppealGracePeriodExpired || isHighCourt
-                          ? undefined
-                          : withdrawAccusedAppealDate
-                      }
-                    />
-                  )}
+                {workingCase.accusedPostponedAppealDate && (
+                  <AccusedAppealInfo
+                    workingCase={workingCase}
+                    withdrawAccusedAppealDate={
+                      workingCase.isAppealGracePeriodExpired || isHighCourt
+                        ? undefined
+                        : withdrawAccusedAppealDate
+                    }
+                  />
+                )}
               </AnimatePresence>
             </BlueBox>
           </div>

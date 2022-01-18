@@ -94,6 +94,14 @@ yarn start air-discount-scheme-api
 yarn start air-discount-scheme-backend
 ```
 
+6. Check Contentful and AWS
+
+Login here https://island-is.awsapps.com/start#/ (Contact devops if you need access)
+Copy env variables as instructed [here](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting) (image arrows 1,2,3)
+Paste env variables into terminal
+Run `./scripts/run-es-proxy.sh` from island.is root
+You have success if you see `Forwarding from 0.0.0.0:9200 -> 9200` in terminal
+
 Navigate to [localhost:4200](http://localhost:4200) for the website or
 [localhost:4248/api/swagger/](http://localhost:4248/api/swagger/) for the
 airline api.

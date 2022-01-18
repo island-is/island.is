@@ -350,15 +350,22 @@ export function formatGender(gender?: Gender): string {
   }
 }
 
-export function formatGenderPronouns(gender?: Gender): string {
-  switch (gender) {
-    case Gender.MALE:
-      return 'hann'
-    case Gender.FEMALE:
-      return 'hún'
-    case Gender.OTHER:
-    default:
-      return 'hán'
+export function formatGenderPronouns(
+  gender?: Gender,
+  isGroup?: boolean,
+): string {
+  if (isGroup) {
+    return 'þau'
+  } else {
+    switch (gender) {
+      case Gender.MALE:
+        return 'hann'
+      case Gender.FEMALE:
+        return 'hún'
+      case Gender.OTHER:
+      default:
+        return 'hán'
+    }
   }
 }
 
@@ -367,15 +374,23 @@ export function formatAppeal(
   stakeholder: string,
   stakeholderGender: Gender = Gender.MALE,
 ): string {
-  const stakeholderGenderText = formatGenderPronouns(stakeholderGender)
+  const isMultipleDefendants = stakeholder.slice(-2) === 'ar'
+  const stakeholderGenderText = formatGenderPronouns(
+    stakeholderGender,
+    isMultipleDefendants,
+  )
 
   switch (appealDecision) {
     case CaseAppealDecision.APPEAL:
-      return `${stakeholder} lýsir því yfir að ${stakeholderGenderText} kæri úrskurðinn til Landsréttar.`
+      return `${stakeholder} ${
+        isMultipleDefendants ? 'lýsa' : 'lýsir'
+      } því yfir að ${stakeholderGenderText} kæri úrskurðinn til Landsréttar.`
     case CaseAppealDecision.ACCEPT:
       return `${stakeholder} unir úrskurðinum.`
     case CaseAppealDecision.POSTPONE:
-      return `${stakeholder} lýsir því yfir að ${stakeholderGenderText} taki sér lögbundinn kærufrest.`
+      return `${stakeholder} ${
+        isMultipleDefendants ? 'lýsa' : 'lýsir'
+      } því yfir að ${stakeholderGenderText} taki sér lögbundinn kærufrest.`
     default:
       return ''
   }
