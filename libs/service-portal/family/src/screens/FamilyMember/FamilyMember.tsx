@@ -64,7 +64,6 @@ const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
   const [modalOpen, setModalOpen] = useState(false)
   const { formatMessage } = useLocale()
-  console.log(userInfo)
 
   const { data, loading, error, called } = useQuery<Query>(
     NationalRegistryChildrenQuery,

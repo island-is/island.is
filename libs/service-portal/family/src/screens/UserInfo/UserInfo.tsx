@@ -31,6 +31,9 @@ const NationalRegistryUserQuery = gql`
       religion
       legalResidence
       birthPlace
+      banMarking {
+        banMarked
+      }
       gender
       citizenship {
         code
@@ -50,7 +53,6 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
   const { data, loading, error } = useQuery<Query>(NationalRegistryUserQuery)
   const { nationalRegistryUser } = data || {}
-
   return (
     <>
       <Box marginBottom={5}>
@@ -71,8 +73,9 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Stack space={1}>
+      <Stack space={2}>
         <UserInfoLine
+          title={formatMessage(m.myRegistration)}
           label={m.displayName}
           content={userInfo.profile.name}
           editLink={{
@@ -111,8 +114,9 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           }}
         />
         <Divider />
-
+        <Box marginY={3} />
         <UserInfoLine
+          title={formatMessage(m.baseInfo)}
           label={m.birthPlace}
           content={
             error
@@ -122,35 +126,6 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           loading={loading}
         />
         <Divider />
-
-        <UserInfoLine
-          label={m.citizenship}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.citizenship?.name || ''
-          }
-          loading={loading}
-        />
-        <Divider />
-
-        <UserInfoLine
-          label={m.gender}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.gender
-              ? formatMessage(
-                  natRegGenderMessageDescriptorRecord[
-                    nationalRegistryUser.gender
-                  ],
-                )
-              : ''
-          }
-          loading={loading}
-        />
-        <Divider />
-
         <UserInfoLine
           label={m.maritalStatus}
           content={
@@ -166,8 +141,8 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           }
           loading={loading}
         />
-        <Divider />
 
+        <Divider />
         <UserInfoLine
           label={defineMessage(m.religion)}
           content={
@@ -185,6 +160,55 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             url:
               'https://www.skra.is/umsoknir/rafraen-skil/tru-og-lifsskodunarfelag',
           }}
+        />
+        <Divider />
+        <UserInfoLine
+          label={m.banMarking}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : nationalRegistryUser?.banMarking?.banMarked
+              ? formatMessage({
+                  id: 'sp.family:yes',
+                  defaultMessage: 'Já',
+                })
+              : formatMessage({
+                  id: 'sp.family:no',
+                  defaultMessage: 'Nei',
+                })
+          }
+          tooltip={formatMessage({
+            id: 'sp.family:ban-marking-tooltip',
+            defaultMessage:
+              'Bannmerktir einstaklingar koma t.d. ekki fram á úrtakslistum úr þjóðskrá og öðrum úrtökum í markaðssetningarskyni.',
+          })}
+          loading={loading}
+        />
+        <Divider />
+        <UserInfoLine
+          label={m.gender}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : nationalRegistryUser?.gender
+              ? formatMessage(
+                  natRegGenderMessageDescriptorRecord[
+                    nationalRegistryUser.gender
+                  ],
+                )
+              : ''
+          }
+          loading={loading}
+        />
+        <Divider />
+        <UserInfoLine
+          label={m.citizenship}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : nationalRegistryUser?.citizenship?.name || ''
+          }
+          loading={loading}
         />
         <Divider />
       </Stack>
