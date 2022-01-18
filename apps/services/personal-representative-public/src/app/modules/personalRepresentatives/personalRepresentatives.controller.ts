@@ -62,7 +62,6 @@ export class PersonalRepresentativesController {
   })
   async getByPersonalRepresentative(
     @Query('prId') prId: string,
-    @CurrentAuth() user: Auth,
   ): Promise<PersonalRepresentativePublicDTO[]> {
     if (!prId) {
       throw new BadRequestException(
@@ -70,14 +69,9 @@ export class PersonalRepresentativesController {
       )
     }
 
-    const personalReps = await this.auditService.auditPromise(
-      {
-        auth: user,
-        action: 'getPersonalRepresentativePermissions',
-        namespace,
-        resources: prId,
-      },
-      this.prService.getByPersonalRepresentative(prId, false),
+    const personalReps = await this.prService.getByPersonalRepresentative(
+      prId,
+      false,
     )
 
     return personalReps.map((pr) => PersonalRepresentativePublicDTO.fromDTO(pr))
