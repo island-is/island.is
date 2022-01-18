@@ -88,4 +88,16 @@ export const colorSchemes = styleVariants({
       },
     },
   },
+  blueberry: {
+    '@media': {
+      [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+        ':hover': {
+          borderColor: theme.color.blueberry600,
+        },
+        ':focus': {
+          borderColor: 'transparent',
+        },
+      },
+    },
+  },
 })

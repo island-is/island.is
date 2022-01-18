@@ -17,6 +17,7 @@ export enum CaseType {
   BODY_SEARCH = 'BODY_SEARCH',
   INTERNET_USAGE = 'INTERNET_USAGE',
   RESTRAINING_ORDER = 'RESTRAINING_ORDER',
+  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION = 'ELECTRONIC_DATA_DISCOVERY_INVESTIGATION',
   OTHER = 'OTHER',
 }
 
@@ -89,7 +90,6 @@ export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
   PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
-  REMOTE_SESSION = 'REMOTE_SESSION',
 }
 
 export interface Case {
@@ -150,10 +150,10 @@ export interface Case {
   decision?: CaseDecision
   validToDate?: string
   isValidToDateInThePast?: boolean
-  custodyRestrictions?: CaseCustodyRestrictions[]
-  otherRestrictions?: string
+  isCustodyIsolation?: boolean
   isolationToDate?: string
   conclusion?: string
+  endOfSessionBookings?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
@@ -242,10 +242,10 @@ export interface UpdateCase {
   ruling?: string
   decision?: CaseDecision
   validToDate?: string
-  custodyRestrictions?: CaseCustodyRestrictions[]
-  otherRestrictions?: string
+  isCustodyIsolation?: boolean
   isolationToDate?: string
   conclusion?: string
+  endOfSessionBookings?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
@@ -292,6 +292,7 @@ export const investigationCases = [
   CaseType.BODY_SEARCH,
   CaseType.INTERNET_USAGE,
   CaseType.RESTRAINING_ORDER,
+  CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
   CaseType.OTHER,
 ]
 

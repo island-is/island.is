@@ -1,1 +1,2 @@
-export default Boolean(process.browser)
+const isBrowser = Boolean(process.browser)
+export default isBrowser

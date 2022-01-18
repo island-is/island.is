@@ -72,10 +72,10 @@ function createCase(type: CaseType): Case {
     decision: CaseDecision.DISMISSING,
     validToDate: '-',
     isValidToDateInThePast: true,
-    custodyRestrictions: [],
-    otherRestrictions: '-',
+    isCustodyIsolation: true,
     isolationToDate: '-',
     conclusion: '-',
+    endOfSessionBookings: '-',
     accusedAppealDecision: CaseAppealDecision.ACCEPT,
     accusedAppealAnnouncement: '-',
     prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
@@ -176,8 +176,8 @@ function maskedCase(theCase: Case) {
     type: theCase.type,
     state: theCase.state,
     policeCaseNumber: theCase.policeCaseNumber,
-    accusedNationalId: '0000000000',
-    accusedName: 'T',
+    accusedNationalId: theCase.accusedNationalId,
+    accusedName: theCase.accusedName,
     defenderName: theCase.defenderName,
     defenderEmail: theCase.defenderEmail,
     defenderPhoneNumber: theCase.defenderPhoneNumber,
@@ -211,8 +211,8 @@ function maskedCase(theCase: Case) {
       type: theCase.parentCase.type,
       state: theCase.parentCase.state,
       policeCaseNumber: theCase.parentCase.policeCaseNumber,
-      accusedNationalId: '0000000000',
-      accusedName: 'T',
+      accusedNationalId: theCase.parentCase.accusedNationalId,
+      accusedName: theCase.parentCase.accusedName,
       defenderName: theCase.parentCase.defenderName,
       defenderEmail: theCase.parentCase.defenderEmail,
       defenderPhoneNumber: theCase.parentCase.defenderPhoneNumber,
@@ -271,6 +271,7 @@ describe('Mask Case', () => {
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.OTHER}
   `.it('should mask $type cases', ({ type }) => {
     const theCase = createCase(type)
@@ -314,6 +315,7 @@ describe('Mask Case by User', () => {
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.OTHER}
   `.describe('given a $type case', ({ type }) => {
     each`
@@ -358,27 +360,5 @@ describe('Mask Case by User', () => {
 
       expect(res).toStrictEqual(maskedCase(theCase))
     })
-  })
-})
-
-describe('Full name', () => {
-  each`
-    type
-    ${CaseType.SEARCH_WARRANT}
-    ${CaseType.BANKING_SECRECY_WAIVER}
-    ${CaseType.PHONE_TAPPING}
-    ${CaseType.TELECOMMUNICATIONS}
-    ${CaseType.TRACKING_EQUIPMENT}
-    ${CaseType.PSYCHIATRIC_EXAMINATION}
-    ${CaseType.SOUND_RECORDING_EQUIPMENT}
-    ${CaseType.AUTOPSY}
-    ${CaseType.BODY_SEARCH}
-    ${CaseType.INTERNET_USAGE}
-    ${CaseType.RESTRAINING_ORDER}
-    ${CaseType.OTHER}
-  `.it('should mask the name', ({ type }) => {
-    const res = maskCase({ type, accusedName: 'Jón Jónsson' } as Case)
-
-    expect(res.accusedName).toBe('LU')
   })
 })

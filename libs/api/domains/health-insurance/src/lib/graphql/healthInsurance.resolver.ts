@@ -37,18 +37,18 @@ export class HealthInsuranceResolver {
   })
   healthInsuranceIsHealthInsured(
     @CurrentUser() user: AuthUser,
-    @Args('input') input: IsHealthInsuredInput,
+    @Args('input', { nullable: true }) input: IsHealthInsuredInput,
   ): Promise<boolean> {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'healthInsuranceIsHealthInsured',
       },
 
       this.healthInsuranceService.isHealthInsured(
         user.nationalId,
-        input.date?.getTime(),
+        input?.date?.getTime(),
       ),
     )
   }
@@ -61,7 +61,7 @@ export class HealthInsuranceResolver {
   ): Promise<number[]> {
     return this.auditService.auditPromise<number[]>(
       {
-        user,
+        auth: user,
         namespace,
         action: 'healthInsuranceGetPendingApplication',
         resources: (results) => results.map(String),

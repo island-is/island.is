@@ -20,9 +20,9 @@ import {
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
-export async function getCustodyNoticePdfAsString(
+function constructCustodyNoticePdf(
   existingCase: Case,
-): Promise<string> {
+): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -131,16 +131,11 @@ export async function getCustodyNoticePdfAsString(
     )
 
   const custodyRestrictions = formatCustodyRestrictions(
-    existingCase.accusedGender,
-    existingCase.custodyRestrictions,
+    existingCase.requestedCustodyRestrictions,
+    existingCase.isCustodyIsolation,
   )
 
-  if (
-    existingCase.custodyRestrictions?.includes(
-      CaseCustodyRestrictions.ISOLATION,
-    ) ||
-    custodyRestrictions
-  ) {
+  if (existingCase.isCustodyIsolation || custodyRestrictions) {
     doc
       .text(' ')
       .text(' ')
@@ -150,11 +145,7 @@ export async function getCustodyNoticePdfAsString(
       .text('Tilhögun gæsluvarðhalds')
       .font('Helvetica')
       .fontSize(baseFontSize)
-    if (
-      existingCase.custodyRestrictions?.includes(
-        CaseCustodyRestrictions.ISOLATION,
-      )
-    ) {
+    if (existingCase.isCustodyIsolation) {
       doc.text(
         formatCustodyIsolation(
           existingCase.accusedGender,
@@ -174,11 +165,37 @@ export async function getCustodyNoticePdfAsString(
 
   doc.end()
 
-  // wait for the writing to finish
+  return stream
+}
 
+export async function getCustodyNoticePdfAsString(
+  existingCase: Case,
+): Promise<string> {
+  const stream = constructCustodyNoticePdf(existingCase)
+
+  // wait for the writing to finish
   const pdf = await new Promise<string>(function (resolve) {
     stream.on('finish', () => {
       resolve(stream.getContentsAsString('binary') as string)
+    })
+  })
+
+  if (!environment.production) {
+    writeFile(`${existingCase.id}-custody-notice.pdf`, pdf)
+  }
+
+  return pdf
+}
+
+export async function getCustodyNoticePdfAsBuffer(
+  existingCase: Case,
+): Promise<Buffer> {
+  const stream = constructCustodyNoticePdf(existingCase)
+
+  // wait for the writing to finish
+  const pdf = await new Promise<Buffer>(function (resolve) {
+    stream.on('finish', () => {
+      resolve(stream.getContents() as Buffer)
     })
   })
 

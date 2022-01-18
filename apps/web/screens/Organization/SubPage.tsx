@@ -28,7 +28,7 @@ import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
-  lightThemes,
+  getThemeConfig,
   OrganizationSlice,
   OrganizationWrapper,
   SliceDropdown,
@@ -61,21 +61,21 @@ const SubPage: Screen<SubPageProps> = ({
   const { linkResolver } = useLinkResolver()
   useContentfulId(organizationPage.id)
 
-  const pageUrl = `/s/${organizationPage.slug}/${subpage.slug}`
-  const parentSubpageUrl = `/s/${organizationPage.slug}/${subpage.parentSubpage}`
+  const pageUrl = `${organizationPage.slug}/${subpage.slug}`
+  const parentSubpageUrl = `${organizationPage.slug}/${subpage.parentSubpage}`
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
       active:
-        primaryLink.url === pageUrl ||
-        childrenLinks.some((link) => link.url === pageUrl) ||
-        childrenLinks.some((link) => link.url === parentSubpageUrl),
+        primaryLink.url.includes(pageUrl) ||
+        childrenLinks.some((link) => link.url.includes(pageUrl)) ||
+        childrenLinks.some((link) => link.url.includes(parentSubpageUrl)),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url === pageUrl || url === parentSubpageUrl,
+        active: url.includes(pageUrl) || url.includes(parentSubpageUrl),
       })),
     }),
   )
@@ -117,7 +117,7 @@ const SubPage: Screen<SubPageProps> = ({
                     ]}
                   >
                     <Box marginBottom={2}>
-                      <Text variant="h1" as="h2">
+                      <Text variant="h1" as="h1">
                         {subpage.title}
                       </Text>
                     </Box>
@@ -238,14 +238,12 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Organization subpage not found')
   }
 
-  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
-
   return {
     organizationPage: getOrganizationPage,
     subpage: getOrganizationSubpage,
     namespace,
     showSearchInHeader: false,
-    ...(lightTheme ? {} : { darkTheme: true }),
+    ...getThemeConfig(getOrganizationPage.theme),
   }
 }
 

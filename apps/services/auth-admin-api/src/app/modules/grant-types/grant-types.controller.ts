@@ -157,7 +157,7 @@ export class GrantTypeController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'updateGrantType',
         namespace,
         resources: name,
@@ -180,7 +180,7 @@ export class GrantTypeController {
     }
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'deleteGrantType',
         namespace,
         resources: name,

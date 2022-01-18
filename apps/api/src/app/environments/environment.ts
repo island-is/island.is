@@ -22,6 +22,9 @@ const prodConfig = () => ({
         : process.env.XROAD_DRIVING_LICENSE_V2_PATH,
     },
   },
+  criminalRecord: {
+    xroadPath: process.env.XROAD_CRIMINAL_RECORD_PATH,
+  },
   education: {
     xroadLicenseServiceId: process.env.XROAD_MMS_LICENSE_SERVICE_ID,
     xroadGradeServiceId: process.env.XROAD_MMS_GRADE_SERVICE_ID,
@@ -93,6 +96,13 @@ const prodConfig = () => ({
     password: process.env.RSK_API_PASSWORD,
     url: process.env.RSK_API_URL,
   },
+  rskCompanyInfo: {
+    xRoadBaseUrl: 'http://localhost:8080',
+    xRoadProviderId:
+      process.env.COMPANY_REGISTRY_XROAD_PROVIDER_ID ??
+      'IS-DEV/GOV/10006/Skatturinn-Public/ftskra-v1',
+    xRoadClientId: 'IS-DEV/GOV/10000/island-is-client',
+  },
   icelandicNamesRegistry: {
     backendUrl: process.env.ICELANDIC_NAMES_REGISTRY_BACKEND_URL,
   },
@@ -101,12 +111,6 @@ const prodConfig = () => ({
   },
   endorsementSystem: {
     baseApiUrl: process.env.ENDORSEMENT_SYSTEM_BASE_API_URL,
-  },
-  propertiesXRoad: {
-    url: process.env.XROAD_BASE_PATH_WITH_ENV,
-    memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE,
-    apiPath: process.env.XROAD_PROPERTIES_API_PATH,
-    clientId: process.env.XROAD_CLIENT_ID,
   },
   paymentDomain: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH,
@@ -117,12 +121,6 @@ const prodConfig = () => ({
     callbackBaseUrl: process.env.XROAD_PAYMENT_BASE_CALLBACK_URL,
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
-  },
-  temporaryVoterRegistry: {
-    baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_BASE_API_URL,
-  },
-  partyLetterRegistry: {
-    baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
   },
   fjarmalDomain: {
     xroadApiPath: process.env.XROAD_FINANCES_PATH,
@@ -175,6 +173,11 @@ const devConfig = () => ({
         process.env.XROAD_DRIVING_LICENSE_V2_PATH ??
         'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
     },
+  },
+  criminalRecord: {
+    xroadPath:
+      process.env.XROAD_CRIMINAL_RECORD_PATH ??
+      'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
   },
   education: {
     xroadLicenseServiceId: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
@@ -254,6 +257,12 @@ const devConfig = () => ({
     url: 'https://thjonusta-s.rsk.is/api',
     password: process.env.RSK_API_PASSWORD,
   },
+  rskCompanyInfo: {
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadProviderId: process.env.COMPANY_REGISTRY_XROAD_PROVIDER_ID,
+    xRoadClientId: process.env.XROAD_CLIENT_ID,
+    apiPath: process.env.COMPANY_REGISTRY_XROAD_API_PATH,
+  },
   icelandicNamesRegistry: {
     backendUrl: 'http://localhost:4239',
   },
@@ -271,15 +280,6 @@ const devConfig = () => ({
   endorsementSystem: {
     baseApiUrl: 'http://localhost:4246',
   },
-  propertiesXRoad: {
-    url:
-      process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8081/r1/IS-DEV',
-    memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE ?? '10001',
-    apiPath:
-      process.env.XROAD_PROPERTIES_API_PATH ?? '/SKRA-Protected/Fasteignir-v1',
-    clientId:
-      process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
-  },
   paymentDomain: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     xRoadProviderId:
@@ -290,12 +290,6 @@ const devConfig = () => ({
     callbackBaseUrl: process.env.XROAD_PAYMENT_BASE_CALLBACK_URL,
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
-  },
-  temporaryVoterRegistry: {
-    baseApiUrl: 'http://localhost:4248',
-  },
-  partyLetterRegistry: {
-    baseApiUrl: 'http://localhost:4251',
   },
   pkpass: {
     apiKey: process.env.PKPASS_API_KEY,

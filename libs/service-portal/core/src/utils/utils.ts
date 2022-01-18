@@ -21,3 +21,8 @@ export const formatNationalId = (nationalId: string): string => {
     return nationalId
   }
 }
+
+export const tableStyles = {
+  paddingTop: '16px',
+  paddingBottom: '16px',
+}

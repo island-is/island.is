@@ -15,6 +15,15 @@ export const Default = () => (
   />
 )
 
+export const SmallHeading = () => (
+  <ActionCard
+    headingVariant="h4"
+    heading="Small Heading"
+    text="This is the text"
+    cta={{ label: 'Click me' }}
+  />
+)
+
 export const Unavailable = () => (
   <ActionCard
     heading="Default"
@@ -111,7 +120,7 @@ export const ApplicationCardCompletedVariant = () => (
     heading="Parental Leave"
     tag={{
       label: 'Completed',
-      variant: 'mint',
+      variant: 'blue',
       outlined: false,
     }}
     text="Your application is in progress. Waiting for VMST approval."
@@ -124,7 +133,20 @@ export const ApplicationCardCompletedVariant = () => (
     progressMeter={{
       active: true,
       progress: 1,
-      variant: 'mint',
+      variant: 'blue',
+    }}
+  />
+)
+
+export const Avatar = () => (
+  <ActionCard
+    avatar
+    heading="Jón Jónsson"
+    text="Kennitala: 010100-0100"
+    cta={{
+      label: 'Skoða upplýsingar',
+      variant: 'text',
+      size: 'small',
     }}
   />
 )

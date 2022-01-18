@@ -47,6 +47,7 @@ import {
   ServiceWebModifySearchTerms,
 } from '@island.is/web/components'
 import { getSlugPart } from '../utils'
+import { plausibleCustomEvent } from '@island.is/web/hooks/usePlausible'
 
 const PERPAGE = 10
 
@@ -89,16 +90,22 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
     }),
   )
 
+  // Submit the search query to plausible
+  if (q) {
+    plausibleCustomEvent('Search Query', {
+      query: q,
+      source: 'Service Web',
+    })
+  }
+
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
-  const pageTitle = `${n('search', 'Leit')} | ${n(
+  const pageTitle = `${n('search', 'Leit')} - ${n(
     'serviceWeb',
     'Þjónustuvefur',
   )} Ísland.is`
-  const headerTitle = institutionSlug
-    ? organization.serviceWebTitle ?? pageTitle
-    : pageTitle
+  const headerTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
 
   return (
     <ServiceWebWrapper

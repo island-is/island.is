@@ -414,5 +414,9 @@ export async function getRequestPdfAsBuffer(
     })
   })
 
+  if (!environment.production) {
+    writeFile(`${existingCase.id}-request.pdf`, pdf)
+  }
+
   return pdf
 }

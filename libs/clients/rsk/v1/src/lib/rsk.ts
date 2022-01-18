@@ -10,6 +10,9 @@ export interface RSKServiceOptions {
   username: string
   password: string
   ttl?: number
+  xRoadBaseUrl: string
+  xRoadProviderId: string
+  xRoadClientId: string
 }
 
 export interface RSKCompaniesResponse {

@@ -65,10 +65,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
     it('should set the ruling date', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
         { rulingDate: expect.any(Date) },
-        {
-          where: { id: caseId },
-          returning: true,
-        },
+        { where: { id: caseId } },
       )
     })
   })

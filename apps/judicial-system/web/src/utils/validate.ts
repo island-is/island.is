@@ -93,7 +93,9 @@ export const isDefendantStepValidIC = (workingCase: Case) => {
     validate(workingCase.accusedNationalId, 'empty').isValid &&
     validate(workingCase.accusedNationalId, 'national-id').isValid &&
     validate(workingCase.accusedName || '', 'empty').isValid &&
-    validate(workingCase.accusedAddress || '', 'empty').isValid
+    validate(workingCase.accusedAddress || '', 'empty').isValid &&
+    validate(workingCase.defenderEmail || '', 'email-format').isValid &&
+    validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid
   )
 }
 
@@ -162,15 +164,13 @@ export const isCourtHearingArrangemenstStepValidRC = (workingCase: Case) => {
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid &&
     validate(workingCase.courtDate || '', 'date-format').isValid &&
-    workingCase.judge &&
-    workingCase.registrar
+    workingCase.judge
   )
 }
 
 export const isCourtHearingArrangementsStepValidIC = (workingCase: Case) => {
   return (
     workingCase.judge &&
-    workingCase.registrar &&
     workingCase.sessionArrangements &&
     validate(workingCase.courtDate || '', 'date-format').isValid
   )
