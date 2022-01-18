@@ -1,3 +1,5 @@
+import { Transaction } from 'sequelize/types'
+
 import {
   Inject,
   Injectable,
@@ -37,8 +39,13 @@ export class DefendantService {
   async create(
     caseId: string,
     defendantToCreate: CreateDefendantDto,
+    transaction?: Transaction,
   ): Promise<Defendant> {
-    return this.defendantModel.create({ ...defendantToCreate, caseId })
+    this.logger.debug('!!!!', { defendantToCreate })
+    return this.defendantModel.create(
+      { ...defendantToCreate, caseId },
+      { transaction },
+    )
   }
 
   async update(
