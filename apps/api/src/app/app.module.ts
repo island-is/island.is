@@ -43,6 +43,8 @@ import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
+import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
+import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 
@@ -254,6 +256,7 @@ const autoSchemaFile = environment.production
         xroadPath: environment.criminalRecord.xroadPath,
       },
     }),
+    MunicipalitiesFinancialAidModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -263,6 +266,7 @@ const autoSchemaFile = environment.production
         NationalRegistryClientConfig,
         SyslumennClientConfig,
         XRoadConfig,
+        MunicipalitiesFinancialAidConfig,
       ],
     }),
   ],

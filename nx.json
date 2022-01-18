@@ -136,6 +136,9 @@
     "api-domains-license-service": {
       "tags": []
     },
+    "api-domains-municipalities-financial-aid": {
+      "tags": []
+    },
     "api-domains-national-registry": {
       "tags": []
     },
@@ -314,6 +317,9 @@
       "tags": []
     },
     "clients-mms": {
+      "tags": []
+    },
+    "clients-municipalities-financial-aid": {
       "tags": []
     },
     "clients-national-registry-v1": {

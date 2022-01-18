@@ -36,6 +36,12 @@ export const Prerequisites: Form = buildForm({
               title: m.externalData.applicant.title,
               subTitle: m.externalData.applicant.subTitle,
             }),
+            buildDataProviderItem({
+              id: 'veita',
+              type: DataProviderTypes.Veita,
+              title: '',
+              subTitle: undefined,
+            }),
           ],
         }),
       ],

@@ -103,6 +103,9 @@
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
       ],
+      "@island.is/api/domains/municipalities-financial-aid": [
+        "libs/api/domains/municipalities-financial-aid/src/index.ts"
+      ],
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
       ],
@@ -252,6 +255,9 @@
         "libs/clients/middlewares/src/index.ts"
       ],
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
+      "@island.is/clients/municipalities-financial-aid": [
+        "libs/clients/municipalities-financial-aid/src/index.ts"
+      ],
       "@island.is/clients/national-registry-v1": [
         "libs/clients/national-registry/v1/src/index.ts"
       ],
