@@ -72,12 +72,11 @@ type UploadResults =
   | { location: URLString; error?: never }
   | { location?: never; error: string }
 
-const uploadPDF = (draft: RegDraftForm) =>
+const uploadPDF = (file: File, draft: RegDraftForm) =>
   new Promise<UploadResults>((resolve) => {
-    const fileName = draft.title.value + '.pdf'
     setTimeout(() => {
       resolve({
-        location: `https://files.reglugerd.is/admin-drafts/${draft.id}/${fileName}` as URLString,
+        location: `https://files.reglugerd.is/admin-drafts/${draft.id}/${file.name}` as URLString,
       })
     }, 500)
   })
@@ -116,7 +115,7 @@ const useSignedUploader = (
 
     setUploadStatus({ uploading: true })
 
-    uploadPDF(draft).then(({ location, error }) => {
+    uploadPDF(newFile, draft).then(({ location, error }) => {
       if (!uploadStatus.uploading) {
         location && setUrl(location)
         setUploadStatus({ uploading: false, error })
