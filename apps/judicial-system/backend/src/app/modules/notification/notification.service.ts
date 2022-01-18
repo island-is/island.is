@@ -572,7 +572,10 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
     const html = formatPrisonRulingEmailNotification(theCase.rulingDate)
-    const custodyNoticePdf = await getCustodyNoticePdfAsString(theCase)
+    const custodyNoticePdf = await getCustodyNoticePdfAsString(
+      theCase,
+      this.formatMessage,
+    )
 
     const attachments = [
       {

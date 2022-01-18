@@ -515,7 +515,7 @@ export class CaseService {
   }
 
   async getCustodyPdf(theCase: Case): Promise<Buffer> {
-    return getCustodyNoticePdfAsBuffer(theCase)
+    return getCustodyNoticePdfAsBuffer(theCase, this.formatMessage)
   }
 
   async requestCourtRecordSignature(

@@ -4,8 +4,6 @@ import {
   laws,
   formatGender,
   caseTypes,
-  capitalize,
-  formatAccusedByGender,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseLegalProvisions,
@@ -333,15 +331,4 @@ export function formatDefenderRevokedEmailNotification(
 
 export function stripHtmlTags(html: string): string {
   return html.replace(/(?:<br \/>)/g, '\n').replace(/(?:<\/?strong>)/g, '')
-}
-
-export function formatCustodyIsolation(
-  gender?: Gender,
-  isolationToDate?: Date,
-) {
-  return `${capitalize(
-    formatAccusedByGender(gender),
-  )} skal sæta einangrun til ${formatDate(isolationToDate, 'PPPPp')
-    ?.replace('dagur,', 'dagsins')
-    ?.replace(' kl.', ', kl.')}.`
 }
