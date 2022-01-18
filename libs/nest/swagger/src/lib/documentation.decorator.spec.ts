@@ -150,6 +150,27 @@ describe('Documentation decorator', () => {
     )
   })
 
+  it('should apply ApiOperation decorator for summary', () => {
+    // Arrange
+    const options: Options = {
+      response: {
+        status: 200,
+      },
+      isAuthorized: false,
+      summary: 'summary',
+    }
+
+    // Act
+    Documentation(options)
+
+    // Assert
+    expect(applyDecorators).toHaveBeenCalledWith(
+      ...getDefaultDecorators(options.response.status),
+      ApiOkResponse,
+      ApiOperation,
+    )
+  })
+
   it('should apply x ApiQuery decorator for x request.query', () => {
     // Arrange
     const options: Options = {

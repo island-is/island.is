@@ -93,7 +93,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   // Submit the search query to plausible
   if (q) {
     plausibleCustomEvent('Search Query', {
-      query: q,
+      query: q.toLowerCase(),
       source: 'Service Web',
     })
   }
