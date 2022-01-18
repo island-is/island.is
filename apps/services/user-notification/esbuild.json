@@ -24,7 +24,8 @@
     "atob",
     "logform",
     "pg-native",
-    "form-data"
+    "form-data",
+    "firebase-admin"
   ],
   "keepNames": true
 }
