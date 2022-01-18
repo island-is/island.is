@@ -1,5 +1,4 @@
-import { withLocale } from '../i18n'
-import { Subsidy } from '../screens'
-import { withAuth } from '../auth'
+import { withLocale } from '@island.is/air-discount-scheme-web/i18n'
+import { Subsidy } from '@island.is/air-discount-scheme-web/screens'
 
-export default withLocale('is', 'myBenefits')(withAuth(Subsidy))
+export default withLocale('is', 'myBenefits')(Subsidy)
