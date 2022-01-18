@@ -47,6 +47,7 @@ import {
   ServiceWebModifySearchTerms,
 } from '@island.is/web/components'
 import { getSlugPart } from '../utils'
+import { plausibleCustomEvent } from '@island.is/web/hooks/usePlausible'
 
 const PERPAGE = 10
 
@@ -88,6 +89,14 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       labels: [item.category.title],
     }),
   )
+
+  // Submit the search query to plausible
+  if (q) {
+    plausibleCustomEvent('Search Query', {
+      query: q.toLowerCase(),
+      source: 'Service Web',
+    })
+  }
 
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)

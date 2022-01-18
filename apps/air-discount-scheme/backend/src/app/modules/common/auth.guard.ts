@@ -2,14 +2,13 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
 
 import { environment } from '../../../environments'
 import { HttpRequest } from '../../app.types'
-
 const { airlineApiKeys } = environment
 
 const AUTH_TYPE = 'bearer'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<HttpRequest>()
     return this.hasValidApiKey(request)
   }
