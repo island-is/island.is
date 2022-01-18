@@ -805,55 +805,6 @@ describe('Case', () => {
         expect(response.body.length).toBeGreaterThanOrEqual(2)
       })
   })
-
-  it('POST /api/case/:id/extend should extend case', async () => {
-    let dbCase: CCase
-
-    await Case.create(getCaseData(true, true, true, true))
-      .then((value) => {
-        dbCase = caseToCCase(value)
-
-        return request(app.getHttpServer())
-          .post(`/api/case/${dbCase.id}/extend`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
-          .expect(201)
-      })
-      .then(async (response) => {
-        // Check the response
-        const apiCase = response.body
-
-        // Check the response
-        expectCasesToMatch(apiCase, {
-          id: apiCase.id ?? 'FAILURE',
-          created: apiCase.created ?? 'FAILURE',
-          modified: apiCase.modified ?? 'FAILURE',
-          type: dbCase.type,
-          description: dbCase.description,
-          state: CaseState.NEW,
-          policeCaseNumber: dbCase.policeCaseNumber,
-          defenderName: dbCase.defenderName,
-          defenderEmail: dbCase.defenderEmail,
-          defenderPhoneNumber: dbCase.defenderPhoneNumber,
-          leadInvestigator: dbCase.leadInvestigator,
-          courtId: dbCase.courtId,
-          court,
-          translator: dbCase.translator,
-          lawsBroken: dbCase.lawsBroken,
-          legalBasis: dbCase.legalBasis,
-          legalProvisions: dbCase.legalProvisions,
-          requestedCustodyRestrictions: dbCase.requestedCustodyRestrictions,
-          caseFacts: dbCase.caseFacts,
-          legalArguments: dbCase.legalArguments,
-          requestProsecutorOnlySession: dbCase.requestProsecutorOnlySession,
-          prosecutorOnlySessionRequest: dbCase.prosecutorOnlySessionRequest,
-          prosecutorId: prosecutor.id,
-          prosecutor,
-          parentCaseId: dbCase.id,
-          parentCase: dbCase,
-          initialRulingDate: dbCase.initialRulingDate ?? dbCase.rulingDate,
-        } as CCase)
-      })
-  })
 })
 
 function dbNotificationToNotification(dbNotification: Notification) {

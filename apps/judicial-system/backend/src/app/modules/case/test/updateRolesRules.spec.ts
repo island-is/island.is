@@ -13,7 +13,7 @@ describe('CaseController - Update rules', () => {
     rules = Reflect.getMetadata('roles-rules', CaseController.prototype.update)
   })
 
-  it('should give permission to four roles', () => {
+  it('should give permission to three roles', () => {
     expect(rules).toHaveLength(3)
   })
 

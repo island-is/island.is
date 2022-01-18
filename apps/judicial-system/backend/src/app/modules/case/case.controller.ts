@@ -544,7 +544,7 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
-  ): Promise<Case | null> {
+  ): Promise<Case> {
     this.logger.debug(`Extending case ${caseId}`)
 
     if (theCase.childCase) {

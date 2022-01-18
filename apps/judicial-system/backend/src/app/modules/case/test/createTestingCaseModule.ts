@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
@@ -59,6 +61,7 @@ export const createTestingCaseModule = async () => {
           error: jest.fn(),
         } as unknown) as Logger,
       },
+      { provide: Sequelize, useValue: { transaction: jest.fn() } },
       {
         provide: getModelToken(Case),
         useValue: {
@@ -73,11 +76,11 @@ export const createTestingCaseModule = async () => {
 
   const logger = caseModule.get<Logger>(LOGGER_PROVIDER)
 
-  const userService = await caseModule.resolve<UserService>(UserService)
+  const userService = caseModule.get<UserService>(UserService)
 
-  const defendantService = await caseModule.resolve<DefendantService>(
-    DefendantService,
-  )
+  const defendantService = caseModule.get<DefendantService>(DefendantService)
+
+  const sequelize = caseModule.get<Sequelize>(Sequelize)
 
   const caseModel = await caseModule.resolve<typeof Case>(getModelToken(Case))
 
@@ -89,6 +92,7 @@ export const createTestingCaseModule = async () => {
     logger,
     userService,
     defendantService,
+    sequelize,
     caseModel,
     caseService,
     caseController,

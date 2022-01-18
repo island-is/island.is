@@ -653,59 +653,53 @@ export class CaseService {
 
   async extend(theCase: Case, user: TUser): Promise<Case> {
     return this.sequelize
-      .transaction((transaction) =>
-        this.caseModel
-          .create(
-            {
-              type: theCase.type,
-              policeCaseNumber: theCase.policeCaseNumber,
-              description: theCase.description,
-              defenderName: theCase.defenderName,
-              defenderEmail: theCase.defenderEmail,
-              defenderPhoneNumber: theCase.defenderPhoneNumber,
-              leadInvestigator: theCase.leadInvestigator,
-              courtId: theCase.courtId,
-              translator: theCase.translator,
-              lawsBroken: theCase.lawsBroken,
-              legalBasis: theCase.legalBasis,
-              legalProvisions: theCase.legalProvisions,
-              requestedCustodyRestrictions:
-                theCase.requestedCustodyRestrictions,
-              caseFacts: theCase.caseFacts,
-              legalArguments: theCase.legalArguments,
-              requestProsecutorOnlySession:
-                theCase.requestProsecutorOnlySession,
-              prosecutorOnlySessionRequest:
-                theCase.prosecutorOnlySessionRequest,
-              creatingProsecutorId: user.id,
-              prosecutorId: user.id,
-              parentCaseId: theCase.id,
-              initialRulingDate:
-                theCase.initialRulingDate ?? theCase.rulingDate,
-            },
-            { transaction },
-          )
-          .then(async (extendedCase) => {
-            if (theCase.defendants && theCase.defendants?.length > 0) {
-              await Promise.all(
-                theCase.defendants?.map((defendant) =>
-                  this.defendantService.create(
-                    extendedCase.id,
-                    {
-                      nationalId: defendant.nationalId,
-                      name: defendant.name,
-                      gender: defendant.gender,
-                      address: defendant.address,
-                    },
-                    transaction,
-                  ),
-                ),
-              )
-            }
+      .transaction(async (transaction) => {
+        const extendedCase = await this.caseModel.create(
+          {
+            type: theCase.type,
+            description: theCase.description,
+            policeCaseNumber: theCase.policeCaseNumber,
+            defenderName: theCase.defenderName,
+            defenderEmail: theCase.defenderEmail,
+            defenderPhoneNumber: theCase.defenderPhoneNumber,
+            leadInvestigator: theCase.leadInvestigator,
+            courtId: theCase.courtId,
+            translator: theCase.translator,
+            lawsBroken: theCase.lawsBroken,
+            legalBasis: theCase.legalBasis,
+            legalProvisions: theCase.legalProvisions,
+            requestedCustodyRestrictions: theCase.requestedCustodyRestrictions,
+            caseFacts: theCase.caseFacts,
+            legalArguments: theCase.legalArguments,
+            requestProsecutorOnlySession: theCase.requestProsecutorOnlySession,
+            prosecutorOnlySessionRequest: theCase.prosecutorOnlySessionRequest,
+            creatingProsecutorId: user.id,
+            prosecutorId: user.id,
+            parentCaseId: theCase.id,
+            initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
+          },
+          { transaction },
+        )
 
-            return extendedCase.id
-          }),
-      )
+        if (theCase.defendants && theCase.defendants?.length > 0) {
+          await Promise.all(
+            theCase.defendants?.map((defendant) =>
+              this.defendantService.create(
+                extendedCase.id,
+                {
+                  nationalId: defendant.nationalId,
+                  name: defendant.name,
+                  gender: defendant.gender,
+                  address: defendant.address,
+                },
+                transaction,
+              ),
+            ),
+          )
+        }
+
+        return extendedCase.id
+      })
       .then((caseId) => this.findById(caseId))
   }
 

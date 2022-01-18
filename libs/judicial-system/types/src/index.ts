@@ -34,7 +34,7 @@ export type {
 } from './lib/file'
 
 export { UserRole, courtRoles } from './lib/user'
-export type { User, CreateUser, UpdateUser } from './lib/user'
+export type { User as User, CreateUser, UpdateUser } from './lib/user'
 
 export {
   CaseType,
