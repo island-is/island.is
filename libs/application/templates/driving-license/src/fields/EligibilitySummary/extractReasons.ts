@@ -44,6 +44,12 @@ const requirementKeyToStep = (key: string, isRequirementMet: boolean): Step => {
         title: m.requirementUnmetLocalResidencyTitle,
         description: m.requirementUnmetLocalResidencyDescription,
       }
+    case RequirementKey.NoTempLicense:
+      return {
+        ...step,
+        title: m.requirementUnmetDeniedByServiceTitle,
+        description: m.requirementUnmetNoTempLicenseDescription,
+      }
     default:
       throw new Error('Unknown requirement reason - should not happen')
   }

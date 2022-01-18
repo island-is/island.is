@@ -395,6 +395,12 @@ export const m = defineMessages({
       'Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: 'requirement unmet api returned false',
   },
+  requirementUnmetNoTempLicenseDescription: {
+    id: 'dl.application:requirementunmet.notemplicensedescription',
+    defaultMessage:
+      'Bráðabirgðaskírteini er ekki til staðar. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: 'requirement unmet api returned NO_TEMP_LICENSE',
+  },
   requirementUnmetLocalResidencyTitle: {
     id: 'dl.application:requirementunmet.localResidencyTitle',
     defaultMessage: 'Búseta á Íslandi',
