@@ -8,18 +8,28 @@ import {
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
 import { NationalRegistry } from './types'
-import {
-  Application,
-  getValueViaPath,
-  FieldBaseProps,
-} from '@island.is/application/core'
+import { Application, getValueViaPath } from '@island.is/application/core'
 import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
+import { SharedTemplateApiService } from '../../shared'
 
-interface QualityPhotoData extends FieldBaseProps {
+export const QUALITY_PHOTO = `
+query HasQualityPhoto {
+  drivingLicenseQualityPhoto {
+    dataUri
+  }
+}
+`
+
+interface QualityPhotoType {
+  drivingLicenseQualityPhoto: {
+    dataUri: string | null
+  }
+}
+
+type HasQualityPhotoData = {
   data: {
-    qualityPhoto: string
-    success: boolean
+    hasQualityPhoto: boolean
   }
 }
 
@@ -27,15 +37,26 @@ const YES = 'yes'
 @Injectable()
 export class PSignSubmissionService {
   s3: S3
-  constructor(private readonly syslumennService: SyslumennService) {
+  constructor(
+    private readonly syslumennService: SyslumennService,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
+  ) {
     this.s3 = new S3()
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const content: string =
-      application.answers.qualityPhoto === YES
-        ? ((application.externalData
-            .qualityPhoto as unknown) as QualityPhotoData).data.qualityPhoto
+      application.answers.qualityPhoto === YES &&
+      (application.externalData.qualityPhoto as HasQualityPhotoData)?.data
+        ?.hasQualityPhoto
+        ? ((
+            await this.sharedTemplateAPIService
+              .makeGraphqlQuery<QualityPhotoType>(
+                auth.authorization,
+                QUALITY_PHOTO,
+              )
+              .then((response) => response.json())
+          ).data?.drivingLicenseQualityPhoto?.dataUri as string)
         : await this.getAttachments({
             application,
             auth,

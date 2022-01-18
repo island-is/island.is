@@ -28,33 +28,6 @@ describe('ApplicationController - guards', () => {
   })
 })
 
-describe('ApplicationController - Checks if user has a current application for this period guards', () => {
-  let guards: any[]
-
-  beforeEach(() => {
-    guards = Reflect.getMetadata(
-      '__guards__',
-      ApplicationController.prototype.getCurrentApplication,
-    )
-  })
-
-  it('should have one guard', () => {
-    expect(guards).toHaveLength(1)
-  })
-
-  describe('RolesGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[0]()
-    })
-
-    it('should have RolesGuard as quard 0', () => {
-      expect(guard).toBeInstanceOf(RolesGuard)
-    })
-  })
-})
-
 describe('ApplicationController - Searches for application by nationalId guards', () => {
   let guards: any[]
 

@@ -3,6 +3,7 @@ import { answersSchema } from './dataSchema'
 
 export enum DataProviderTypes {
   NationalRegistry = 'NationalRegistryProvider',
+  Veita = 'VeitaProvider',
 }
 
 export enum ApproveOptions {
@@ -42,6 +43,10 @@ export interface Applicant {
   fullName: string
   address: Address
   spouse?: Spouse
+}
+
+export interface CurrentApplication {
+  currentApplicationId?: string
 }
 
 export interface Address {
