@@ -11,7 +11,7 @@ import {
   Inject,
   Query,
 } from '@nestjs/common'
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger'
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments'
@@ -39,14 +39,12 @@ export class PersonalRepresentativesController {
   ) {}
 
   /** Gets a personal representative rights by nationalId of personal representative */
-  @ApiOperation({
-    summary:
-      'Gets personal representative rights by nationalId of personal representative',
-    description: 'A personal representative can represent more than one person',
-  })
   @Get()
   @Documentation({
-    description: 'Personal representative connections with rights',
+    summary:
+      'Gets personal representative rights by nationalId of personal representative',
+    description:
+      'Personal representative connections with rights. A personal representative can represent more than one person',
     response: { status: 200, type: [PersonalRepresentativePublicDTO] },
     request: {
       query: {

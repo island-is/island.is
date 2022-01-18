@@ -19,7 +19,7 @@ import {
   Inject,
   Query,
 } from '@nestjs/common'
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger'
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { isNationalIdValid } from '@island.is/financial-aid/shared/lib'
 import {
@@ -48,9 +48,9 @@ export class PersonalRepresentativesController {
   ) {}
 
   /** Gets a list of personal representatives */
-  @ApiOperation({ summary: 'Gets all personal representatives' })
   @Get()
   @Documentation({
+    summary: 'Gets all personal representatives',
     description: 'Personal representative connections with rights',
     response: { status: 200, type: [PaginatedPersonalRepresentativeDto] },
   })
@@ -66,9 +66,9 @@ export class PersonalRepresentativesController {
   }
 
   /** Gets a personal representative rights by it's id */
-  @ApiOperation({ summary: 'Gets a personal representative rights by id' })
   @Get(':id')
   @Documentation({
+    summary: 'Gets a personal representative rights by id',
     description: 'Personal representative connection with rights',
     response: { status: 200, type: PersonalRepresentativeDTO },
     request: {
@@ -99,11 +99,9 @@ export class PersonalRepresentativesController {
     return personalRepresentative
   }
   /** Removes a personal representative by it's id */
-  @ApiOperation({
-    summary: 'Delete a personal representative connection by id',
-  })
   @Delete(':id')
   @Documentation({
+    summary: 'Delete a personal representative connection by id',
     response: { status: 204 },
     request: {
       params: {
@@ -134,14 +132,11 @@ export class PersonalRepresentativesController {
   }
 
   /** Creates a personal representative */
-  @ApiOperation({
-    summary: 'Create a new personal representative connection',
-    description:
-      'All other connections between nationalIds are removed, right list must be supplied',
-  })
   @Post()
   @Documentation({
-    description: 'Created personal representative connections with rights',
+    summary: 'Create a new personal representative connection',
+    description:
+      'Created personal representative connections with rights. All other connections between nationalIds are removed, right list must be supplied',
     response: { status: 201, type: PersonalRepresentativeDTO },
   })
   @Audit<PersonalRepresentativeDTO>({

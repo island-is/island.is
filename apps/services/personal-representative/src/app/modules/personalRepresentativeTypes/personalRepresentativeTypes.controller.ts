@@ -48,12 +48,10 @@ export class PersonalRepresentativeTypesController {
   ) {}
 
   /** Gets all right types */
-  @ApiOperation({
-    summary:
-      'Get a list of all personal representative types for personal representatives',
-  })
   @Get()
   @Documentation({
+    summary:
+      'Get a list of all personal representative types for personal representatives',
     response: { status: 200, type: PaginatedPersonalRepresentativeTypeDto },
   })
   @Audit<PaginatedPersonalRepresentativeTypeDto>({
@@ -66,11 +64,9 @@ export class PersonalRepresentativeTypesController {
   }
 
   /** Gets a right type by it's key */
-  @ApiOperation({
-    summary: 'Get a single personal representative type by code',
-  })
   @Get(':code')
   @Documentation({
+    summary: 'Get a single personal representative type by code',
     response: { status: 200, type: PersonalRepresentativeType },
     request: {
       params: {

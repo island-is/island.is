@@ -14,7 +14,7 @@ import {
   Inject,
   Query,
 } from '@nestjs/common'
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger'
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { Audit } from '@island.is/nest/audit'
 import { PaginationDto } from '@island.is/nest/pagination'
@@ -35,11 +35,9 @@ export class RightsController {
   ) {}
 
   /** Gets all right types */
-  @ApiOperation({
-    summary: 'Get a list of all right types for personal representatives',
-  })
   @Get()
   @Documentation({
+    summary: 'Get a list of all right types for personal representatives',
     response: {
       status: 200,
       type: PaginatedPersonalRepresentativeRightTypeDto,
@@ -55,11 +53,9 @@ export class RightsController {
   }
 
   /** Gets a right type by it's key */
-  @ApiOperation({
-    summary: 'Get a single right type by code',
-  })
   @Get(':code')
   @Documentation({
+    summary: 'Get a single right type by code',
     response: {
       status: 200,
       type: PersonalRepresentativeRightType,

@@ -26,11 +26,9 @@ export class AccessLogsController {
   ) {}
 
   /** Gets all access logs  */
-  @ApiOperation({
-    summary: 'Get a list of all logged accesses',
-  })
   @Get()
   @Documentation({
+    summary: 'Get a list of all logged accesses',
     response: {
       status: 200,
       type: PaginatedPersonalRepresentativeAccessDto,

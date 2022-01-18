@@ -25,9 +25,8 @@ import {
   Put,
   Inject,
   Query,
-  HttpCode,
 } from '@nestjs/common'
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger'
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { environment } from '../../../environments'
 import { AuditService, Audit } from '@island.is/nest/audit'
@@ -49,11 +48,9 @@ export class RightTypesController {
   ) {}
 
   /** Gets all right types */
-  @ApiOperation({
-    summary: 'Get a list of all right types for personal representatives',
-  })
   @Get()
   @Documentation({
+    summary: 'Get a list of all right types for personal representatives',
     response: {
       status: 200,
       type: PaginatedPersonalRepresentativeRightTypeDto,
@@ -69,11 +66,9 @@ export class RightTypesController {
   }
 
   /** Gets a right type by it's key */
-  @ApiOperation({
-    summary: 'Get a single right type by code',
-  })
   @Get(':code')
   @Documentation({
+    summary: 'Get a single right type by code',
     response: { status: 200, type: PersonalRepresentativeRightType },
     request: {
       params: {
@@ -106,11 +101,9 @@ export class RightTypesController {
     return rightType
   }
   /** Removes a right type by it's code, by making it invalid */
-  @ApiOperation({
-    summary: 'Delete a single right type by code',
-  })
   @Delete(':code')
   @Documentation({
+    summary: 'Delete a single right type by code',
     response: { status: 204 },
     request: {
       params: {
@@ -142,11 +135,9 @@ export class RightTypesController {
   }
 
   /** Creates a right type */
-  @ApiOperation({
-    summary: 'Create a right type',
-  })
   @Post()
   @Documentation({
+    summary: 'Create a right type',
     response: { status: 201, type: PersonalRepresentativeRightType },
   })
   @Audit<PersonalRepresentativeRightType>({
@@ -170,11 +161,9 @@ export class RightTypesController {
   }
 
   /** Updates a right type */
-  @ApiOperation({
-    summary: 'Update a right type by code',
-  })
   @Put(':code')
   @Documentation({
+    summary: 'Update a right type by code',
     response: { status: 200, type: PersonalRepresentativeRightType },
     request: {
       params: {
