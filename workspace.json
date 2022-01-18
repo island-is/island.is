@@ -1256,8 +1256,8 @@
       }
     },
     "api-domains-municipalities-financial-aid": {
-      "root": "libs/api/domains/financial-aid",
-      "sourceRoot": "libs/api/domains/financial-aid/src ",
+      "root": "libs/api/domains/municipalities-financial-aid",
+      "sourceRoot": "libs/api/domains/municipalities-financial-aid/src ",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -1271,7 +1271,7 @@
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/api/domains/financial-aid/**/*"
+              "!libs/api/domains/municipalities-financial-aid/**/*"
             ]
           }
         },
