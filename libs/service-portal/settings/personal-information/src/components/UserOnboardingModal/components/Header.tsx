@@ -20,7 +20,7 @@ export const OnboardingHeader = ({ dropOnboarding }: OnboardingHeaderProps) => {
       height="full"
       background="white"
       paddingX={[2, 2, 4, 4, 6]}
-      paddingBottom={[2, 7]}
+      paddingBottom={[2, 4]}
     >
       <FocusableBox component="div">
         <Hidden above="md">
