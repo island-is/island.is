@@ -1,2 +1,2 @@
-export { UserProfileProvider } from '@island.is/application/data-providers'
+export { VeitaProvider } from './VeitaProvider'
 export { NationalRegistryProvider } from './NationalRegistryProvider'

@@ -44,7 +44,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                 ),
               write: {
                 answers: ['approveExternalData'],
-                externalData: ['nationalRegistry'],
+                externalData: ['nationalRegistry', 'veita'],
               },
             },
           ],
