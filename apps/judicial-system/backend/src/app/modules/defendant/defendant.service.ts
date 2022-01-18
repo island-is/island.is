@@ -41,7 +41,6 @@ export class DefendantService {
     defendantToCreate: CreateDefendantDto,
     transaction?: Transaction,
   ): Promise<Defendant> {
-    this.logger.debug('!!!!', { defendantToCreate })
     return this.defendantModel.create(
       { ...defendantToCreate, caseId },
       { transaction },
