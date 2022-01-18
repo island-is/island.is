@@ -44,16 +44,18 @@ const SummaryForm = ({ application }: FAFieldBaseProps) => {
         <Divider />
       </Box> */}
 
-      <SummaryBlock
+      {/* <SummaryBlock
         sectionTitle={formatMessage(
           m.homeCircumstancesForm.general.sectionTitle,
         )}
         answer={
           answers?.homeCircumstances?.custom
             ? answers?.homeCircumstances?.custom
-            : getMessageHomeCircumstances[answers?.homeCircumstances?.type]
+            : formatMessage(
+                getMessageHomeCircumstances[answers?.homeCircumstances?.type],
+              )
         }
-      />
+      /> */}
 
       <SummaryBlock
         sectionTitle={formatMessage(m.incomeForm.general.sectionTitle)}
