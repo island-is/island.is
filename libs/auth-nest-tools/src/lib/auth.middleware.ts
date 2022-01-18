@@ -37,15 +37,26 @@ export interface TokenExchangeOptions {
 export class AuthMiddleware implements Middleware {
   constructor(
     private auth: Auth,
+    // private options: AuthMiddlewareOptions = {
+    //   forwardUserInfo: true,
+    // },
     private options: AuthMiddlewareOptions = {
-      forwardUserInfo: true,
-    },
+      forwardUserInfo: false,
+      tokenExchangeOptions: {
+        issuer: 'https://identity-server.dev01.devland.is',
+        clientId: '@vegagerdin.is/air-discount-scheme',
+        clientSecret: '',
+        scope: 'openid profile @vegagerdin.is/air-discount-scheme-scope offline_access @skra.is/individuals api_resource.scope', // TODO: remove api_resource.scope
+        requestActorToken: true,
+      },
+    }
   ) {}
-
   async pre(context: RequestContext) {
+    console.log('inside pre, new middleware - here comes accessToken')
     let bearerToken = this.auth.authorization
-
+    console.log(bearerToken)
     if (this.options.tokenExchangeOptions) {
+      console.log('this logs if options.tokenExchangeOptions is available')
       const accessToken = await this.exchangeToken(
         bearerToken.replace('Bearer ', ''),
         context,
@@ -67,12 +78,15 @@ export class AuthMiddleware implements Middleware {
         'X-Forwarded-For': this.auth.ip,
       })
     }
+    console.log('this is the end of pre, middleware. Will log context init headers')
+    console.log(context.init.headers)
   }
 
   private async exchangeToken(
     accessToken: string,
     context: RequestContext,
   ): Promise<string> {
+    console.log('exchange token middleware function.')
     if (!this.options.tokenExchangeOptions) {
       throw new Error(
         `Token exchange failed for ${context.url}. No token exchange options specified`,
@@ -80,7 +94,8 @@ export class AuthMiddleware implements Middleware {
     }
 
     const options = this.options.tokenExchangeOptions
-
+    console.log('here comes exchangeToken options, followed by response on /connect/token')
+    console.log(options)
     const response = await fetch(`${options.issuer}/connect/token`, {
       method: 'POST',
       headers: {
@@ -98,7 +113,7 @@ export class AuthMiddleware implements Middleware {
           : 'urn:ietf:params:oauth:token-type:access_token',
       }),
     })
-
+    console.log(response)
     if (!response.ok) {
       throw new Error(
         `Token exchange failed for ${context.url}, ${await response.text()}`,
@@ -106,7 +121,8 @@ export class AuthMiddleware implements Middleware {
     }
 
     const result = await response.json()
-
+    console.log('logs the result of tokenExchange')
+    console.log(result)
     if (
       result.issued_token_type !=
       'urn:ietf:params:oauth:token-type:access_token'

@@ -19,6 +19,9 @@ import { AirlineUser, User } from './user.model'
 import { DiscountService } from '../discount'
 import { FlightService } from '../flight'
 import { AuthGuard } from '../common'
+import { CurrentUser, IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { User as AuthUser } from '@island.is/auth-nest-tools'
 
 @ApiTags('Users')
 @Controller('api/public')
@@ -52,18 +55,32 @@ export class PublicUserController {
   }
 }
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes('@vegagerdin.is/air-discount-scheme-scope')
 @Controller('api/private')
 export class PrivateUserController {
   constructor(
     private readonly flightService: FlightService,
     private readonly userService: UserService,
+    private thjodskraXroad: NationalRegistryXRoadService,
   ) {}
 
   @Get('users/:nationalId/relations')
   @ApiExcludeEndpoint()
   async getUserRelations(
     @Param() params: GetUserRelationsParams,
+    @CurrentUser() user: AuthUser,
   ): Promise<User[]> {
+    let person
+    try {
+      person = await this.thjodskraXroad.getNationalRegistryPerson(user, user.nationalId)
+    } catch (e) {
+      console.log(e)
+    }
+    console.log(person)
+
+
+
     const relations = await this.userService.getRelations(params.nationalId)
     const users = await Promise.all([
       this.userService.getUserInfoByNationalId(params.nationalId),

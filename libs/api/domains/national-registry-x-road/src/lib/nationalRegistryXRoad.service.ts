@@ -18,6 +18,8 @@ export class NationalRegistryXRoadService {
   ) {}
 
   nationalRegistryApiWithAuth(auth: Auth) {
+    console.log('will return natRegApi with middleware - logging auth obj')
+    console.log(auth)
     return this.nationalRegistryApi.withMiddleware(new AuthMiddleware(auth))
   }
 
@@ -54,6 +56,7 @@ export class NationalRegistryXRoadService {
     user: User,
     nationalId: string,
   ): Promise<NationalRegistryPerson | undefined> {
+    console.log('entered nationalRegistryXroadService')
     const person:
       | NationalRegistryClientPerson
       | undefined = await this.nationalRegistryApiWithAuth(user)
