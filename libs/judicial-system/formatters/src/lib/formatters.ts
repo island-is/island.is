@@ -135,33 +135,6 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
   }
 }
 
-export enum NounCases {
-  NOMINATIVE, // Nefnifall
-  ACCUSATIVE, // Þolfall
-  DATIVE, // Þágufall
-  GENITIVE, // Eignarfall
-}
-
-export function formatAccusedByGender(
-  accusedGender?: Gender,
-  nounCase: NounCases = NounCases.NOMINATIVE,
-  isInvestigationCase?: boolean,
-) {
-  if (isInvestigationCase) {
-    return nounCase === NounCases.NOMINATIVE ? 'varnaraðili' : 'varnaraðila'
-  } else {
-    switch (accusedGender) {
-      case Gender.MALE:
-        return nounCase === NounCases.NOMINATIVE ? 'kærði' : 'kærða'
-      case Gender.FEMALE:
-        return nounCase === NounCases.NOMINATIVE ? 'kærða' : 'kærðu'
-      case Gender.OTHER:
-      default:
-        return 'kærða'
-    }
-  }
-}
-
 // Formats prefilled restrictions
 // Note that only the predetermined list of restrictions is relevant here
 export function formatCustodyRestrictions(
@@ -270,10 +243,7 @@ export const formatTravelBanRestrictions = (
     return ''
   }
 
-  const accusedGenderText = formatAccusedByGender(
-    accusedGender,
-    NounCases.DATIVE,
-  )
+  const accusedGenderText = accusedGender === Gender.MALE ? 'kærða' : 'kærðu'
 
   const travelBanRestrictionsText = hasTravelBanRestrictions
     ? `Sækjandi tekur fram að farbannið verði með takmörkunum.${
