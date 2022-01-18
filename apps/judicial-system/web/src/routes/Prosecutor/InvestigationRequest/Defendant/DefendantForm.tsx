@@ -31,6 +31,7 @@ import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
+import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 
 interface Props {
   workingCase: Case
@@ -75,7 +76,8 @@ const DefendantForm: React.FC<Props> = (props) => {
     },
   }
 
-  const { updateCase, createDefendant } = useCase()
+  const { updateCase } = useCase()
+  const { createDefendant, deleteDefendant } = useDefendants()
   const { formatMessage } = useIntl()
   const {
     setField,
@@ -185,6 +187,29 @@ const DefendantForm: React.FC<Props> = (props) => {
                         defendant={defendant}
                         workingCase={workingCase}
                         setWorkingCase={setWorkingCase}
+                        onDelete={
+                          workingCase.defendants &&
+                          workingCase.defendants?.length > 1
+                            ? async () => {
+                                const { data } = await deleteDefendant(
+                                  workingCase.id,
+                                  defendant.id,
+                                )
+
+                                if (
+                                  data?.deleteDefendant.deleted &&
+                                  workingCase.defendants
+                                ) {
+                                  setWorkingCase({
+                                    ...workingCase,
+                                    defendants: [
+                                      ...workingCase.defendants,
+                                    ].filter((d) => d.id !== defendant.id),
+                                  })
+                                }
+                              }
+                            : undefined
+                        }
                       />
                     </Box>
                   </motion.div>
@@ -196,13 +221,28 @@ const DefendantForm: React.FC<Props> = (props) => {
                   variant="ghost"
                   icon="add"
                   onClick={async () => {
-                    await createDefendant(
-                      workingCase.id,
-                      workingCase,
-                      setWorkingCase,
-                    )
+                    const { data } = await createDefendant(workingCase.id)
 
-                    window.scrollTo(0, document.body.scrollHeight)
+                    if (workingCase.defendants && data) {
+                      setWorkingCase({
+                        ...workingCase,
+                        defendants: [
+                          ...workingCase.defendants,
+                          {
+                            created: '',
+                            modified: '',
+                            gender: undefined,
+                            name: '',
+                            nationalId: '',
+                            address: '',
+                            id: data.createDefendant.id,
+                            caseId: '',
+                          },
+                        ],
+                      })
+
+                      window.scrollTo(0, document.body.scrollHeight)
+                    }
                   }}
                   disabled={workingCase.defendants?.some(
                     (defendant) =>

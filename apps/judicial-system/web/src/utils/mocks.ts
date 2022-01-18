@@ -17,7 +17,7 @@ import {
   InstitutionsQuery,
   UsersQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
-import { UpdateCaseMutation } from '@island.is/judicial-system-web/src/utils/hooks/use-case/updateCaseGql'
+import { UpdateCaseMutation } from '@island.is/judicial-system-web/src/utils/hooks/useCase/updateCaseGql'
 
 export const mockCourt = {
   id: 'court_id',

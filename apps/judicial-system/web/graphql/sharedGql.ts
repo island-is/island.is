@@ -11,6 +11,7 @@ export const CaseQuery = gql`
       state
       policeCaseNumber
       defendants {
+        id
         nationalId
         name
         gender

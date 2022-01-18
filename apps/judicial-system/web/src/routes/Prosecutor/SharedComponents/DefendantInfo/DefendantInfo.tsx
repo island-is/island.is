@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import { Defendant, Gender } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
-import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
+import { Box, Icon, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   removeTabsValidateAndSet,
@@ -20,10 +20,11 @@ interface Props {
   defendant: Defendant
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  onDelete?: () => void
 }
 
 const DefendantInfo: React.FC<Props> = (props) => {
-  const { defendant, workingCase, setWorkingCase } = props
+  const { defendant, workingCase, setWorkingCase, onDelete } = props
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
 
@@ -44,13 +45,18 @@ const DefendantInfo: React.FC<Props> = (props) => {
   return (
     // TDOO defendants: handle multiple defendants
     <BlueBox>
-      <Box marginBottom={2}>
+      <Box marginBottom={2} display="flex" justifyContent="spaceBetween">
         <Text as="h4" variant="h4">
           {formatMessage(core.gender)}{' '}
           <Text as="span" color="red600" fontWeight="semiBold">
             *
           </Text>
         </Text>
+        {onDelete && (
+          <button onClick={onDelete} aria-label="Remove defendant">
+            <Icon icon="close" color="blue400" />
+          </button>
+        )}
       </Box>
       <Box marginBottom={2} className={styles.genderContainer}>
         <Box className={styles.genderColumn}>

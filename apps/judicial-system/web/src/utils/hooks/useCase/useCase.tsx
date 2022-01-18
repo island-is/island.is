@@ -23,7 +23,6 @@ import { TransitionCaseMutation } from './transitionCaseGql'
 import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
 import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
 import { ExtendCaseMutation } from './extendCaseGql'
-import { CreateDefendantMutation } from './createDefendantGql'
 
 type autofillProperties = Pick<
   Case,
@@ -119,10 +118,6 @@ const useCase = () => {
     extendCaseMutation,
     { loading: isExtendingCase },
   ] = useMutation<ExtendCaseMutationResponse>(ExtendCaseMutation)
-  const [
-    createDefendantMutation,
-    { loading: isCreatingDefendant },
-  ] = useMutation<CreateDefendantMutationResponse>(CreateDefendantMutation)
 
   const createCase = useMemo(
     () => async (theCase: Case): Promise<string | undefined> => {
@@ -324,40 +319,6 @@ const useCase = () => {
     [updateCase],
   )
 
-  const createDefendant = useMemo(
-    () => async (
-      caseId: string,
-      workingCase: Case,
-      setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
-    ) => {
-      if (setWorkingCase && workingCase.defendants) {
-        const { data } = await createDefendantMutation({
-          variables: { input: { caseId } },
-        })
-
-        setWorkingCase({
-          ...workingCase,
-          defendants: [
-            ...workingCase.defendants,
-            {
-              created: '',
-              modified: '',
-              gender: undefined,
-              name: '',
-              nationalId: '',
-              address: '',
-              id: '',
-              caseId: '',
-            },
-          ],
-        })
-
-        return data?.defendant
-      }
-    },
-    [createDefendantMutation],
-  )
-
   return {
     createCase,
     isCreatingCase,
@@ -376,7 +337,6 @@ const useCase = () => {
     extendCase,
     isExtendingCase,
     autofill,
-    createDefendant,
   }
 }
 
