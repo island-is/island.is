@@ -320,8 +320,7 @@
       "tags": []
     },
     "clients-municipalities-financial-aid": {
-      "tags": [],
-      "implicitDependencies": ["financial-aid-backend"]
+      "tags": []
     },
     "clients-national-registry-v1": {
       "tags": []
