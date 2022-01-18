@@ -393,6 +393,10 @@ export const m = defineMessages({
     id: 'service.portal:regulations-admin',
     defaultMessage: 'Reglugerðir - vinnslusvæði',
   },
+  regulationAdminEdit: {
+    id: 'service.portal:regulations-edit',
+    defaultMessage: 'Skráning',
+  },
   regulationAdminMinistries: {
     id: 'service.portal:regulations-ministries',
     defaultMessage: 'Ráðuneyti',

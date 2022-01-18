@@ -188,6 +188,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       {
         name: m.regulationAdmin,
         path: ServicePortalPath.RegulationsAdminRoot,
+        navHide: true,
         icon: {
           type: 'outline',
           icon: 'settings',
@@ -196,6 +197,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.regulationAdminMinistries,
             path: ServicePortalPath.RegulationsAdminMinistries,
+          },
+          {
+            name: m.regulationAdminEdit,
+            path: ServicePortalPath.RegulationsAdminEdit,
           },
         ],
       },
