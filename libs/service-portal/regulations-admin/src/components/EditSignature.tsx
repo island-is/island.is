@@ -1,6 +1,6 @@
 import * as s from '../utils/styles.css'
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   AlertMessage,
   Box,
@@ -23,7 +23,7 @@ import { getMinPublishDate, useLocale } from '../utils'
 
 import { RegDraftForm } from '../state/types'
 import { EditorInput } from './EditorInput'
-import { URLString, useShortState } from '@island.is/regulations'
+import { HTMLText, URLString, useShortState } from '@island.is/regulations'
 import { produce } from 'immer'
 import { downloadUrl } from '../utils/files'
 
@@ -170,6 +170,24 @@ const useSignedUploader = (
   }
 }
 
+// ---------------------------------------------------------------------------
+
+const defaultSignatureText = `
+  <p class="Dags" align="center"><em>⸻ráðuneytinu, {dags}.</em></p>
+  <p class="FHUndirskr" align="center">f.h.r.</p>
+  <p class="Undirritun" align="center"><strong>—NAFN—</strong><br/>⸻ráðherra.</p>
+  <p class="Undirritun" align="right"><em>—NAFN—.</em></p>
+` as HTMLText
+
+const getDefaultSignatureText = (
+  formatDateFns: (date: Date, str?: string) => string,
+) => {
+  return defaultSignatureText.replace(
+    '{dags}',
+    formatDateFns(new Date(), 'dd. MMMM yyyy'),
+  ) as HTMLText
+}
+
 // ===========================================================================
 
 export const EditSignature: StepComponent = (props) => {
@@ -291,7 +309,10 @@ export const EditSignature: StepComponent = (props) => {
               label={t(msg.signatureText)}
               hiddenLabel
               draftId={draft.id}
-              value={draft.signatureText.value}
+              value={
+                draft.signatureText.value ||
+                getDefaultSignatureText(formatDateFns)
+              }
               onChange={(text) => updateState('signatureText', text)}
               required={draft.signatureText.required}
               error={t(draft.signatureText.error)}
