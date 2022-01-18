@@ -67,48 +67,48 @@ export const Application: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'incomeForm',
-      title: m.incomeForm.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'income',
-          title: m.incomeForm.general.pageTitle,
-          component: 'IncomeForm',
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'personalTaxCreditForm',
-      title: m.personalTaxCreditForm.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'personalTaxCreditForm',
-          title: m.personalTaxCreditForm.general.pageTitle,
-          component: 'PersonalTaxCreditForm',
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'bankInfoForm',
-      title: m.bankInfoForm.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'bankInfoForm',
-          title: m.bankInfoForm.general.pageTitle,
-          component: 'BankInfoForm',
-        }),
-      ],
-    }),
+    // buildSection({
+    //   id: 'incomeForm',
+    //   title: m.incomeForm.general.sectionTitle,
+    //   children: [
+    //     buildCustomField({
+    //       id: 'income',
+    //       title: m.incomeForm.general.pageTitle,
+    //       component: 'IncomeForm',
+    //     }),
+    //   ],
+    // }),
+    // buildSection({
+    //   id: 'personalTaxCreditForm',
+    //   title: m.personalTaxCreditForm.general.sectionTitle,
+    //   children: [
+    //     buildCustomField({
+    //       id: 'personalTaxCreditForm',
+    //       title: m.personalTaxCreditForm.general.pageTitle,
+    //       component: 'PersonalTaxCreditForm',
+    //     }),
+    //   ],
+    // }),
+    // buildSection({
+    //   id: 'bankInfoForm',
+    //   title: m.bankInfoForm.general.sectionTitle,
+    //   children: [
+    //     buildCustomField({
+    //       id: 'bankInfoForm',
+    //       title: m.bankInfoForm.general.pageTitle,
+    //       component: 'BankInfoForm',
+    //     }),
+    //   ],
+    // }),
     // This is here to be able to show submit button on former screen :( :( :(
     buildSection({
-      id: '',
-      title: '',
+      id: 'confirmation',
+      title: m.confirmation.general.sectionTitle,
       children: [
         buildCustomField({
-          id: '',
-          title: '',
-          component: '',
+          id: 'confirmation',
+          title: m.confirmation.general.pageTitle,
+          component: 'Confirmation',
         }),
       ],
     }),
