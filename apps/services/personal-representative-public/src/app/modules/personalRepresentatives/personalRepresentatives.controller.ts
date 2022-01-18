@@ -56,6 +56,10 @@ export class PersonalRepresentativesController {
       },
     },
   })
+  @Audit<PersonalRepresentativePublicDTO>({
+    resources: (pr) =>
+      `${pr.nationalIdPersonalRepresentative}-${pr.nationalIdRepresentedPerson}`,
+  })
   async getByPersonalRepresentative(
     @Query('prId') prId: string,
     @CurrentAuth() user: Auth,

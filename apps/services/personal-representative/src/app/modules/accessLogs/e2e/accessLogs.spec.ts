@@ -44,9 +44,6 @@ describe('AccessLogsController - Without Scope and Auth', () => {
   it.each`
     method   | endpoint
     ${'GET'} | ${'/v1/access-logs'}
-    ${'GET'} | ${'/v1/access-logs?personalRepresentativeId=1122334455'}
-    ${'GET'} | ${'/v1/access-logs?representedPersonId=1122334455'}
-    ${'GET'} | ${'/v1/access-logs?representedPersonId=1122334455&personalRepresentativeId=1122334455'}
   `(
     '$method $endpoint should return 403 when user is without scope',
     async ({ method, endpoint }: TestEndpointOptions) => {
@@ -73,9 +70,6 @@ describe('AccessLogsController - Without Scope and Auth', () => {
   it.each`
     method   | endpoint
     ${'GET'} | ${'/v1/access-logs'}
-    ${'GET'} | ${'/v1/access-logs?personalRepresentativeId=1122334455'}
-    ${'GET'} | ${'/v1/access-logs?representedPersonId=1122334455'}
-    ${'GET'} | ${'/v1/access-logs?representedPersonId=1122334455&personalRepresentativeId=1122334455'}
   `(
     '$method $endpoint should return 401 when user is unauthorized',
     async ({ method, endpoint }: TestEndpointOptions) => {

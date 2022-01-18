@@ -49,9 +49,6 @@ describe('PersonalRepresentativeController - Without Scope and Auth', () => {
     method      | endpoint
     ${'GET'}    | ${'/v1/personal-representatives'}
     ${'GET'}    | ${'/v1/personal-representatives/1234'}
-    ${'GET'}    | ${'/v1/personal-representatives?personalRepresentativeId=1122334455'}
-    ${'GET'}    | ${'/v1/personal-representatives?representedPersonId=1122334455'}
-    ${'GET'}    | ${'/v1/personal-representatives?representedPersonId=1122334455&personalRepresentativeId=1122334455'}
     ${'POST'}   | ${'/v1/personal-representatives'}
     ${'DELETE'} | ${'/v1/personal-representatives/1234'}
   `(
@@ -81,9 +78,6 @@ describe('PersonalRepresentativeController - Without Scope and Auth', () => {
     method      | endpoint
     ${'GET'}    | ${'/v1/personal-representatives'}
     ${'GET'}    | ${'/v1/personal-representatives/1234'}
-    ${'GET'}    | ${'/v1/personal-representatives?personalRepresentativeId=1122334455'}
-    ${'GET'}    | ${'/v1/personal-representatives?representedPersonId=1122334455'}
-    ${'GET'}    | ${'/v1/personal-representatives?representedPersonId=1122334455&personalRepresentativeId=1122334455'}
     ${'POST'}   | ${'/v1/personal-representatives'}
     ${'DELETE'} | ${'/v1/personal-representatives/1234'}
   `(

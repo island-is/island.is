@@ -75,7 +75,7 @@ export class PersonalRepresentativeTypeService {
       throw new BadRequestException('Code must be provided')
     }
 
-    return await this.personalRepresentativeTypeModel.findByPk(code)
+    return this.personalRepresentativeTypeModel.findByPk(code)
   }
 
   /** Create a new personal repreasentative type */
@@ -118,7 +118,7 @@ export class PersonalRepresentativeTypeService {
       },
     )
 
-    return await this.personalRepresentativeTypeModel.findByPk(
+    return this.personalRepresentativeTypeModel.findByPk(
       personalRepresentativeType.code,
     )
   }

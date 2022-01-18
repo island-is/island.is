@@ -60,9 +60,7 @@ export class PersonalRepresentativesController {
   async getAll(
     @Query() query: PaginationWithNationalIdsDto,
   ): Promise<PaginatedPersonalRepresentativeDto> {
-    const personalRepresentatives = await this.prService.getMany(true, query)
-
-    return personalRepresentatives
+    return this.prService.getMany(true, query)
   }
 
   /** Gets a personal representative rights by it's id */
