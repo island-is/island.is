@@ -90,14 +90,11 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
   const pageTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
-  const headerTitle = institutionSlug
-    ? organization.serviceWebTitle ?? pageTitle
-    : pageTitle
 
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
-      headerTitle={headerTitle}
+      headerTitle={pageTitle}
       institutionSlug={institutionSlug}
       organization={organization}
       organizationTitle={organizationTitle}

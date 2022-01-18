@@ -1,4 +1,6 @@
-# Clients Driving License V1 / V2
+<!-- gitbook-navigation: "Driving License" -->
+
+# Driving License Client
 
 ## About
 

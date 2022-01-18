@@ -44,6 +44,7 @@ air-discount-scheme-api:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/air-discount-scheme/api/CONTENTFUL_ACCESS_TOKEN'
     DEVELOPERS: '/k8s/air-discount-scheme/api/DEVELOPERS'
+    IDENTITY_SERVER_DOMAIN: '/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN'
     SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN'
   securityContext:
     allowPrivilegeEscalation: false
@@ -113,6 +114,7 @@ air-discount-scheme-backend:
     DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
     ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY'
     ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY'
+    IDENTITY_SERVER_DOMAIN: '/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN'
     NATIONAL_REGISTRY_PASSWORD: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD'
     NATIONAL_REGISTRY_URL: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL'
     NATIONAL_REGISTRY_USERNAME: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME'
@@ -125,6 +127,9 @@ air-discount-scheme-web:
   enabled: true
   env:
     API_URL: 'http://web-air-discount-scheme-api'
+    IDENTITY_SERVER_DOMAIN: '/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN'
+    IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
+    NEXTAUTH_URL: '/k8s/air-discount-scheme/NEXTAUTH_URL'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -172,6 +177,7 @@ api:
   env:
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
     AUTH_PUBLIC_API_URL: 'https://identity-server.dev01.devland.is/api'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     CONTACT_US_EMAIL: 's@kogk.is'
     CONTENTFUL_HOST: 'preview.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.dev01.devland.is'
@@ -319,6 +325,7 @@ application-system-api:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-dev-storage-application-system'
     CLIENT_LOCATION_ORIGIN: 'https://beta.dev01.devland.is/umsoknir'
     CONTENTFUL_HOST: 'preview.contentful.com'
+    DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10026/kvortun/index'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
     DB_USER: 'application_system_api'
@@ -410,6 +417,8 @@ application-system-api:
     AUTH_JWT_SECRET: '/k8s/application-system/api/AUTH_JWT_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+    DATA_PROTECTION_COMPLAINT_API_PASSWORD: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_PASSWORD'
+    DATA_PROTECTION_COMPLAINT_API_USERNAME: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_USERNAME'
     DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
     DOCUMENT_PROVIDER_ONBOARDING_REVIEWER: '/k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER'
     DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
@@ -841,6 +850,7 @@ island-ui-storybook:
     allowPrivilegeEscalation: false
     privileged: false
 namespaces:
+  labels: {}
   namespaces:
     - 'application-system'
     - 'service-portal'
@@ -1290,8 +1300,10 @@ user-notification-worker:
   enabled: true
   env:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    IDENTITY_SERVER_PATH: 'https://identity-server.dev01.devland.is'
     MAIN_QUEUE_NAME: 'user-notification'
     SERVERSIDE_FEATURES_ON: ''
+    SERVICE_USER_PROFILE_BASEPATH: 'https://beta.dev01.devland.is/minarsidur'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
@@ -1315,6 +1327,9 @@ user-notification-worker:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    GOOGLE_APPLICATION_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
+    USER_NOTIFICATION_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
+    USER_NOTIFICATION_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

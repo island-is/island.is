@@ -133,10 +133,12 @@ export const requestHandlers = [
   ),
 
   rest.get(url('/v2/api/okuskirteini/:nationalId'), (req, res, ctx) => {
-    const response =
-      req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
-        ? ExpiredLicense
-        : ValidLicense
-    return res(ctx.status(200), ctx.json(response))
+    const isExpired = req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
+    return res(
+      ctx.status(isExpired ? 400 : 200),
+      ctx.json(
+        isExpired ? { message: 'Ökuskírteini er ekki í gildi' } : ValidLicense,
+      ),
+    )
   }),
 ]

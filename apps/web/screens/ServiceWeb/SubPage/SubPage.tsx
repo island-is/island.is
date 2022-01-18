@@ -73,9 +73,6 @@ const SubPage: Screen<SubPageProps> = ({
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
   const pageTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
-  const headerTitle = institutionSlug
-    ? organization.serviceWebTitle ?? pageTitle
-    : pageTitle
 
   const mobileBackButtonText = questionSlug
     ? `${organizationTitle}: ${categoryTitle}`
@@ -88,7 +85,7 @@ const SubPage: Screen<SubPageProps> = ({
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
-      headerTitle={headerTitle}
+      headerTitle={pageTitle}
       institutionSlug={institutionSlug}
       organization={organization}
       organizationTitle={organizationTitle}

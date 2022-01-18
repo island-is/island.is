@@ -44,6 +44,7 @@ air-discount-scheme-api:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/air-discount-scheme/api/CONTENTFUL_ACCESS_TOKEN'
     DEVELOPERS: '/k8s/air-discount-scheme/api/DEVELOPERS'
+    IDENTITY_SERVER_DOMAIN: '/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN'
     SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN'
   securityContext:
     allowPrivilegeEscalation: false
@@ -113,6 +114,7 @@ air-discount-scheme-backend:
     DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
     ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY'
     ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY'
+    IDENTITY_SERVER_DOMAIN: '/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN'
     NATIONAL_REGISTRY_PASSWORD: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD'
     NATIONAL_REGISTRY_URL: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL'
     NATIONAL_REGISTRY_USERNAME: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME'
@@ -125,6 +127,9 @@ air-discount-scheme-web:
   enabled: true
   env:
     API_URL: 'http://web-air-discount-scheme-api'
+    IDENTITY_SERVER_DOMAIN: '/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN'
+    IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
+    NEXTAUTH_URL: '/k8s/air-discount-scheme/NEXTAUTH_URL'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -172,6 +177,7 @@ api:
   env:
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
     AUTH_PUBLIC_API_URL: 'https://identity-server.staging01.devland.is/api'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
     CONTACT_US_EMAIL: 'island@island.is'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.staging01.devland.is'
@@ -317,6 +323,7 @@ application-system-api:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-staging-storage-application-system'
     CLIENT_LOCATION_ORIGIN: 'https://beta.staging01.devland.is/umsoknir'
     CONTENTFUL_HOST: 'cdn.contentful.com'
+    DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5608002820/kvortun/index'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
     DB_USER: 'application_system_api'
@@ -408,6 +415,8 @@ application-system-api:
     AUTH_JWT_SECRET: '/k8s/application-system/api/AUTH_JWT_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+    DATA_PROTECTION_COMPLAINT_API_PASSWORD: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_PASSWORD'
+    DATA_PROTECTION_COMPLAINT_API_USERNAME: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_USERNAME'
     DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
     DOCUMENT_PROVIDER_ONBOARDING_REVIEWER: '/k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER'
     DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
@@ -736,6 +745,7 @@ island-ui-storybook:
     allowPrivilegeEscalation: false
     privileged: false
 namespaces:
+  labels: {}
   namespaces:
     - 'application-system'
     - 'service-portal'
@@ -750,7 +760,6 @@ namespaces:
     - 'icelandic-names-registry'
     - 'endorsement-system'
     - 'air-discount-scheme'
-    - 'user-notification'
 search-indexer-service:
   enabled: true
   env:
@@ -1126,97 +1135,6 @@ skilavottord-ws:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-user-notification:
-  args:
-    - 'main.js'
-  command:
-    - 'node'
-  enabled: true
-  env:
-    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
-    MAIN_QUEUE_NAME: 'user-notification'
-    SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces:
-    - 'nginx-ingress-internal'
-  grantNamespacesEnabled: true
-  healthCheck:
-    liveness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-    readiness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-  image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-      hosts:
-        - host: 'user-notification-xrd.internal.staging01.devland.is'
-          paths:
-            - '/'
-  namespace: 'user-notification'
-  podSecurityContext:
-    fsGroup: 65534
-  replicaCount:
-    default: 2
-    max: 3
-    min: 2
-  secrets:
-    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-  securityContext:
-    allowPrivilegeEscalation: false
-    privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification'
-    create: true
-    name: 'user-notification'
-user-notification-worker:
-  args:
-    - 'main.js'
-    - '--job=worker'
-  command:
-    - 'node'
-  enabled: true
-  env:
-    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
-    MAIN_QUEUE_NAME: 'user-notification'
-    SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces:
-    - 'nginx-ingress-internal'
-  grantNamespacesEnabled: true
-  healthCheck:
-    liveness:
-      initialDelaySeconds: 3
-      path: '/'
-      timeoutSeconds: 3
-    readiness:
-      initialDelaySeconds: 3
-      path: '/'
-      timeoutSeconds: 3
-  image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
-  namespace: 'user-notification'
-  podSecurityContext:
-    fsGroup: 65534
-  replicaCount:
-    default: 2
-    max: 3
-    min: 2
-  secrets:
-    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-  securityContext:
-    allowPrivilegeEscalation: false
-    privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification-worker'
-    create: true
-    name: 'user-notification-worker'
 web:
   basicAuth: '/k8s/web/basic_auth'
   enabled: true

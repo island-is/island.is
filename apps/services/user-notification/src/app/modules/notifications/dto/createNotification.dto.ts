@@ -1,10 +1,7 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNationalId } from '@island.is/nest/validators'
-
-export enum MessageTypes {
-  NewDocumentMessage = 'newDocumentMessage',
-}
+import { MessageTypes } from '../types'
 
 export class TypeValidator {
   @IsEnum(MessageTypes)

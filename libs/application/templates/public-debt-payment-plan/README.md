@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # Application Templates Public Debt Payment Plan
 
 This library was generated with [Nx](https://nx.dev).
