@@ -9,6 +9,7 @@ import {
   GridRow,
   GridColumn,
   GridContainer,
+  Link,
 } from '@island.is/island-ui/core'
 
 import { Stepper } from '@island.is/api/schema'
@@ -48,6 +49,12 @@ interface StepOptionSelectItem {
   transition: string
 }
 
+interface QuestionAndAnswer {
+  question: string
+  answer: string
+  slug: string
+}
+
 const getInitialStateAndAnswersByQueryParams = (
   stepper: Stepper,
   stepperMachine: StepperMachine,
@@ -55,7 +62,7 @@ const getInitialStateAndAnswersByQueryParams = (
   activeLocale: string,
 ) => {
   let initialState = stepperMachine.initialState
-  const questionsAndAnswers: { question: string; answer: string }[] = []
+  const questionsAndAnswers: QuestionAndAnswer[] = []
 
   const answerString = (query?.answers ?? '') as string
 
@@ -86,11 +93,52 @@ const getInitialStateAndAnswersByQueryParams = (
       questionsAndAnswers.push({
         question: stepQuestion,
         answer: selectedOption.label,
+        slug: selectedOption.slug,
       })
     }
   }
 
   return { initialState, questionsAndAnswers }
+}
+
+const renderQuestionsAndAnswers = (
+  questionsAndAnswers: QuestionAndAnswer[],
+  urlWithoutQueryParams: string,
+  activeLocale: string,
+) => {
+  const accumulatedAnswers = []
+
+  return questionsAndAnswers.map(({ question, answer, slug }, i) => {
+    const previouslyAccumulatedAnswers = [...accumulatedAnswers]
+    accumulatedAnswers.push(slug)
+    const query = {
+      answers: `${previouslyAccumulatedAnswers.join(ANSWER_DELIMITER)}`,
+      previousAnswer: slug,
+    }
+
+    return (
+      <GridRow key={i} alignItems="center">
+        <Box marginRight={2}>
+          <Text variant="h4">{question}</Text>
+        </Box>
+        <Box marginRight={2}>
+          <Text>{answer}</Text>
+        </Box>
+        <Box>
+          <Link
+            href={{
+              pathname: urlWithoutQueryParams,
+              query: query,
+            }}
+            color="blue400"
+            underline="small"
+          >
+            {activeLocale === 'is' ? 'Breyta' : 'Change'}
+          </Link>
+        </Box>
+      </GridRow>
+    )
+  })
 }
 
 export const StepperFSM = ({ stepper }: StepperProps) => {
@@ -124,17 +172,11 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
   // TODO: Add triple-click to show helper.
   const showStepperConfigHelper = true
 
-  // TODO: Render Step options instead of raw transitions from machine.
   // TODO: Add support for rendering OptionsFromSource from Step definition.
-  // TODO: Add compoment for showing previous answers.
-  // TODO: Append answer to query parameter when submitting.
-  // TODO: Add support for initializing the State Machine using provided answers query parameter.
   // TODO: Currently, if you call the send function with an unavailable transition string, then it silently fails.
 
   const isOnFirstStep = stepperMachine.initialState.value === currentState.value
-  const [selectedOption, setSelectedOption] = useState<StepOption | undefined>(
-    undefined,
-  )
+  const [selectedOption, setSelectedOption] = useState<StepOption | null>(null)
   const stepOptions = useMemo<StepOption[]>(
     () =>
       currentStepType !== STEP_TYPES.ANSWER
@@ -148,48 +190,75 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
     setHasClickedContinueWithoutSelecting,
   ] = useState<boolean>(false)
 
-  // Select the first item by default if we have a dropdown
-  if (
-    currentStepType === STEP_TYPES.QUESTION_DROPDOWN &&
-    selectedOption === undefined &&
-    stepOptions.length > 0
-  ) {
-    setSelectedOption(stepOptions[0])
-  }
+  useEffect(() => {
+    let previousAnswerIsValid = false
+
+    // Select the option that was previously selected if we want to change an answer
+    if (router.query.previousAnswer && selectedOption === null) {
+      const option =
+        stepOptions.find((o) => o.slug === router.query.previousAnswer) ?? null
+      setSelectedOption(option)
+      previousAnswerIsValid = option !== null
+    }
+
+    // Select the first item by default if we have a dropdown
+    if (
+      currentStepType === STEP_TYPES.QUESTION_DROPDOWN &&
+      selectedOption === null &&
+      stepOptions.length > 0 &&
+      !previousAnswerIsValid
+    ) {
+      setSelectedOption(stepOptions[0])
+    }
+  }, [router.query, currentStepType, selectedOption, stepOptions])
 
   const ContinueButton = () => (
     <Box marginTop={3}>
       <Button
         onClick={() => {
-          if (selectedOption === undefined) {
+          if (selectedOption === null) {
             setHasClickedContinueWithoutSelecting(true)
             return
           }
           setHasClickedContinueWithoutSelecting(false)
-          setSelectedOption(undefined)
 
-          setCurrentState(
-            stepperMachine.transition(currentState, selectedOption.transition),
-          )
+          setCurrentState((prevState) => {
+            const newState = stepperMachine.transition(
+              currentState,
+              selectedOption.transition,
+            )
 
-          const pathnameWithoutQueryParams = router.asPath.split('?')[0]
+            const transitionWorked = newState.value !== prevState.value
+            const onTheInitialStep =
+              prevState.value === stepperMachine.initialState.value
 
-          const answers = `${
-            router.query?.answers && typeof router.query?.answers === 'string'
-              ? router.query.answers.concat(ANSWER_DELIMITER)
-              : ''
-          }${selectedOption.slug}`
+            const pathnameWithoutQueryParams = router.asPath.split('?')[0]
+            const previousAnswers =
+              router.query?.answers &&
+              typeof router.query?.answers === 'string' &&
+              !onTheInitialStep
+                ? router.query.answers.concat(ANSWER_DELIMITER)
+                : ''
 
-          router.push(
-            {
-              pathname: pathnameWithoutQueryParams,
-              query: {
-                answers: answers,
+            router.push(
+              {
+                pathname: pathnameWithoutQueryParams,
+                query: {
+                  answers: `${previousAnswers}${selectedOption.slug}`,
+                },
               },
-            },
-            undefined,
-            { shallow: true },
-          )
+              undefined,
+              { shallow: true },
+            )
+
+            if (!transitionWorked) {
+              // TODO: show that it didn't work
+            }
+
+            if (transitionWorked) setSelectedOption(null)
+
+            return newState
+          })
         }}
       >
         {activeLocale === 'is' ? 'Áfram' : 'Continue'}
@@ -211,8 +280,7 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
                 name={key}
                 large={true}
                 hasError={
-                  hasClickedContinueWithoutSelecting &&
-                  selectedOption === undefined
+                  hasClickedContinueWithoutSelecting && selectedOption === null
                 }
                 label={option.label}
                 checked={option.slug === selectedOption?.slug}
@@ -261,7 +329,7 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
           <Text variant="h3" marginBottom={2}>
             {activeLocale === 'is' ? 'Svörin þín' : 'Your answers'}
           </Text>
-          <Box disabled={true} marginBottom={3}>
+          <Box marginBottom={3}>
             <Button
               variant="text"
               onClick={() => {
@@ -275,16 +343,11 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
           </Box>
           <GridContainer>
             <GridColumn>
-              {questionsAndAnswers.map(({ question, answer }, i) => (
-                <GridRow key={i} alignItems="center">
-                  <Box marginRight={2}>
-                    <Text variant="h4">{question}</Text>
-                  </Box>
-                  <Box>
-                    <Text>{answer}</Text>
-                  </Box>
-                </GridRow>
-              ))}
+              {renderQuestionsAndAnswers(
+                questionsAndAnswers,
+                router.asPath.split('?')[0],
+                activeLocale,
+              )}
             </GridColumn>
           </GridContainer>
         </Box>
