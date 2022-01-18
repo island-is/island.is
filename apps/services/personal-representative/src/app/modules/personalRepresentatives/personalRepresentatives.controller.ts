@@ -137,9 +137,6 @@ export class PersonalRepresentativesController {
       'Created personal representative connections with rights. All other connections between nationalIds are removed, right list must be supplied',
     response: { status: 201, type: PersonalRepresentativeDTO },
   })
-  @Audit<PersonalRepresentativeDTO>({
-    resources: (pr) => pr.id ?? '',
-  })
   async create(
     @Body() personalRepresentative: PersonalRepresentativeCreateDTO,
     @CurrentAuth() user: Auth,
@@ -185,7 +182,7 @@ export class PersonalRepresentativesController {
         auth: user,
         action: 'createPersonalRepresentative',
         namespace,
-        resources: personalRepresentative.nationalIdRepresentedPerson,
+        resources: (pr) => pr?.id ?? '',
         meta: { fields: Object.keys(personalRepresentative) },
       },
       this.prService.create(personalRepresentative),
