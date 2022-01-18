@@ -101,7 +101,7 @@ const Search: Screen<CategoryProps> = ({
   // Submit the search query to plausible
   if (q) {
     plausibleCustomEvent('Search Query', {
-      query: q,
+      query: q.toLowerCase(),
       source: 'Web',
     })
   }
