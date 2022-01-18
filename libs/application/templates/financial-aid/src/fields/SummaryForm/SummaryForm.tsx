@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
+import { MessageDescriptor, useIntl } from 'react-intl'
 import DescriptionText from '../DescriptionText/DescriptionText'
 
 import * as m from '../../lib/messages'
@@ -10,12 +10,20 @@ import {
   getEmploymentStatus,
   getHomeCircumstances,
   HomeCircumstances,
+  KeyMapping,
 } from '@island.is/financial-aid/shared/lib'
 
 const SummaryForm = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { answers } = application
   console.log(application)
+
+  // const getHomeCircumstances: KeyMapping<
+  //   HomeCircumstances,
+  //   MessageDescriptor
+  // > = {
+  //   WithParents: m.homeCircumstancesForm.circumstances.withParents,
+  // }
 
   return (
     <>
