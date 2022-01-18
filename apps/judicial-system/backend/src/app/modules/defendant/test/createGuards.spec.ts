@@ -14,7 +14,7 @@ describe('DefendantController - Create guards', () => {
     )
   })
 
-  it('should have four guards', () => {
+  it('should have two guards', () => {
     expect(guards).toHaveLength(2)
   })
 
@@ -25,7 +25,7 @@ describe('DefendantController - Create guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have CaseExistsGuard as quard 2', () => {
+    it('should have CaseExistsGuard as quard 1', () => {
       expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })

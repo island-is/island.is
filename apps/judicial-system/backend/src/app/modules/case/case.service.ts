@@ -1,4 +1,4 @@
-import { Includeable } from 'sequelize/types'
+import { Includeable, OrderItem } from 'sequelize/types'
 
 import {
   BadRequestException,
@@ -52,7 +52,7 @@ interface Recipient {
   address: string
 }
 
-const standardIncludes: Includeable[] = [
+const includes: Includeable[] = [
   { model: Defendant, as: 'defendants' },
   { model: Institution, as: 'court' },
   {
@@ -83,6 +83,12 @@ const standardIncludes: Includeable[] = [
   },
   { model: Case, as: 'parentCase' },
   { model: Case, as: 'childCase' },
+]
+
+const defendantsOrder: OrderItem = [
+  { model: Defendant, as: 'defendants' },
+  'created',
+  'ASC',
 ]
 
 @Injectable()
@@ -360,8 +366,9 @@ export class CaseService {
 
   async findById(caseId: string): Promise<Case> {
     const theCase = await this.caseModel.findOne({
+      include: includes,
+      order: [defendantsOrder],
       where: { id: caseId },
-      include: standardIncludes,
     })
 
     if (!theCase) {
@@ -393,9 +400,9 @@ export class CaseService {
 
   async getAll(user: TUser): Promise<Case[]> {
     return this.caseModel.findAll({
-      order: [['created', 'DESC']],
+      include: includes,
+      order: [['created', 'DESC'], defendantsOrder],
       where: getCasesQueryFilter(user),
-      include: standardIncludes,
     })
   }
 

@@ -84,8 +84,8 @@ export class FileService {
     )
   }
 
-  async findById(fileId: string, caseId: string): Promise<CaseFile | null> {
-    const caseFile = this.fileModel.findOne({
+  async findById(fileId: string, caseId: string): Promise<CaseFile> {
+    const caseFile = await this.fileModel.findOne({
       where: {
         id: fileId,
         caseId,

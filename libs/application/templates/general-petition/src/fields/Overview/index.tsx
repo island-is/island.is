@@ -10,6 +10,7 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { externalData } = application
   const answers = application.answers
+  const dates = answers.dates as any
 
   return (
     <>
@@ -37,11 +38,11 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
       <Box marginBottom={3}>
         <Text variant="h4">{formatMessage(m.overview.listPeriod)}</Text>
         <Text variant="default">
-          {format(new Date(answers.dateFrom as string), 'dd. MMMM yyyy', {
+          {format(new Date(dates.dateFrom as string), 'dd. MMMM yyyy', {
             locale: is,
           }) +
             ' - ' +
-            format(new Date(answers.dateTil as string), 'dd. MMMM yyyy', {
+            format(new Date(dates.dateTil as string), 'dd. MMMM yyyy', {
               locale: is,
             })}
         </Text>

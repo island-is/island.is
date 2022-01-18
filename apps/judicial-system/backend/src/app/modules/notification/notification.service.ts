@@ -698,10 +698,16 @@ export class NotificationService {
         ? 'Gæsluvarðhaldskrafa'
         : 'Farbannskrafa'
     } afturkölluð`
+
+    // Assume there is at most one defendant
     const html = formatDefenderRevokedEmailNotification(
       theCase.type,
-      (theCase.defendants && theCase.defendants[0].nationalId) ?? '',
-      theCase.defendants && theCase.defendants[0].name,
+      theCase.defendants && theCase.defendants.length > 0
+        ? theCase.defendants[0].nationalId
+        : undefined,
+      theCase.defendants && theCase.defendants.length > 0
+        ? theCase.defendants[0].name
+        : undefined,
       theCase.court?.name,
       theCase.courtDate,
     )

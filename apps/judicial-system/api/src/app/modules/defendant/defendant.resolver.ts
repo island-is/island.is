@@ -16,6 +16,9 @@ import { User } from '@island.is/judicial-system/types'
 
 import { BackendAPI } from '../../../services'
 import { CreateDefendantInput } from './dto/createDefendant.input'
+import { UpdateDefendantInput } from './dto/updateDefendant.input'
+import { DeleteDefendantInput } from './dto/deleteDefendant.input'
+import { DeleteDefendantResponse } from './models/delete.response'
 import { Defendant } from './models/defendant.model'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -41,6 +44,42 @@ export class DefendantResolver {
       user.id,
       AuditedAction.CREATE_DEFENDANT,
       backendApi.createDefendant(caseId, createDefendant),
+      (theDefendant) => theDefendant.id,
+    )
+  }
+
+  @Mutation(() => Defendant, { nullable: true })
+  updateDefendant(
+    @Args('input', { type: () => UpdateDefendantInput })
+    input: UpdateDefendantInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Defendant> {
+    const { caseId, defendantId, ...updateDefendant } = input
+    this.logger.debug(`Updating defendant ${defendantId} for case ${caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.UPDATE_DEFENDANT,
+      backendApi.updateDefendant(caseId, defendantId, updateDefendant),
+      (theDefendant) => theDefendant.id,
+    )
+  }
+
+  @Mutation(() => DeleteDefendantResponse, { nullable: true })
+  deleteDefendant(
+    @Args('input', { type: () => DeleteDefendantInput })
+    input: DeleteDefendantInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<DeleteDefendantResponse> {
+    const { caseId, defendantId } = input
+    this.logger.debug(`Deleting defendant ${defendantId} for case ${caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.UPDATE_DEFENDANT,
+      backendApi.deleteDefendant(caseId, defendantId),
       (theDefendant) => theDefendant.id,
     )
   }

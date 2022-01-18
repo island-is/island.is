@@ -5,6 +5,7 @@ export type {
   Defendant,
   CreateDefendant,
   UpdateDefendant,
+  DeleteDefendantResponse,
 } from './lib/defendant'
 
 export { InstitutionType } from './lib/institution'

@@ -28,3 +28,7 @@ export interface UpdateDefendant {
   gender?: Gender
   address?: string
 }
+
+export interface DeleteDefendantResponse {
+  deleted: boolean
+}

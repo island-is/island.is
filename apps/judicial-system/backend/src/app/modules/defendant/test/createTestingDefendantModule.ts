@@ -27,9 +27,10 @@ export const createTestingDefendantModule = async () => {
       {
         provide: getModelToken(Defendant),
         useValue: {
+          findOne: jest.fn(),
           create: jest.fn(),
           update: jest.fn(),
-          delete: jest.fn(),
+          destroy: jest.fn(),
         },
       },
       DefendantService,

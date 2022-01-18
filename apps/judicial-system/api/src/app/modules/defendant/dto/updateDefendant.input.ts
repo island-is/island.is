@@ -7,6 +7,14 @@ import type { Gender, UpdateDefendant } from '@island.is/judicial-system/types'
 @InputType()
 export class UpdateDefendantInput implements UpdateDefendant {
   @Allow()
+  @Field()
+  readonly caseId!: string
+
+  @Allow()
+  @Field()
+  readonly defendantId!: string
+
+  @Allow()
   @Field({ nullable: true })
   readonly nationalId?: string
 
