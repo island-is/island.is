@@ -6,16 +6,13 @@ import {
   Button,
   RadioButton,
   Select,
-  GridRow,
-  GridColumn,
-  GridContainer,
   Link,
 } from '@island.is/island-ui/core'
 
 import { Stepper } from '@island.is/api/schema'
 
-import * as styles from './StepperFSM.css'
 import { StepperHelper } from './StepperFSMHelper'
+import * as styles from './StepperFSM.css'
 
 import {
   getStepperMachine,
@@ -101,46 +98,6 @@ const getInitialStateAndAnswersByQueryParams = (
   return { initialState, questionsAndAnswers }
 }
 
-const renderQuestionsAndAnswers = (
-  questionsAndAnswers: QuestionAndAnswer[],
-  urlWithoutQueryParams: string,
-  activeLocale: string,
-) => {
-  const accumulatedAnswers = []
-
-  return questionsAndAnswers.map(({ question, answer, slug }, i) => {
-    const previouslyAccumulatedAnswers = [...accumulatedAnswers]
-    accumulatedAnswers.push(slug)
-    const query = {
-      answers: `${previouslyAccumulatedAnswers.join(ANSWER_DELIMITER)}`,
-      previousAnswer: slug,
-    }
-
-    return (
-      <GridRow key={i} alignItems="center">
-        <Box marginRight={2}>
-          <Text variant="h4">{question}</Text>
-        </Box>
-        <Box marginRight={2}>
-          <Text>{answer}</Text>
-        </Box>
-        <Box>
-          <Link
-            href={{
-              pathname: urlWithoutQueryParams,
-              query: query,
-            }}
-            color="blue400"
-            underline="small"
-          >
-            {activeLocale === 'is' ? 'Breyta' : 'Change'}
-          </Link>
-        </Box>
-      </GridRow>
-    )
-  })
-}
-
 export const StepperFSM = ({ stepper }: StepperProps) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
@@ -191,12 +148,16 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
   ] = useState<boolean>(false)
 
   useEffect(() => {
+    setSelectedOption(null)
+  }, [router.asPath])
+
+  useEffect(() => {
     let previousAnswerIsValid = false
+    const { previousAnswer } = router.query
 
     // Select the option that was previously selected if we want to change an answer
-    if (router.query.previousAnswer && selectedOption === null) {
-      const option =
-        stepOptions.find((o) => o.slug === router.query.previousAnswer) ?? null
+    if (previousAnswer && selectedOption === null) {
+      const option = stepOptions.find((o) => o.slug === previousAnswer) ?? null
       setSelectedOption(option)
       previousAnswerIsValid = option !== null
     }
@@ -210,7 +171,60 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
     ) {
       setSelectedOption(stepOptions[0])
     }
-  }, [router.query, currentStepType, selectedOption, stepOptions])
+  }, [
+    router.query,
+    currentStepType,
+    selectedOption,
+    stepOptions,
+    router.asPath,
+  ])
+
+  const renderQuestionsAndAnswers = (
+    questionsAndAnswers: QuestionAndAnswer[],
+    urlWithoutQueryParams: string,
+    activeLocale: string,
+  ) => {
+    const accumulatedAnswers = []
+
+    return questionsAndAnswers.map(({ question, answer, slug }, i) => {
+      const previouslyAccumulatedAnswers = [...accumulatedAnswers]
+      accumulatedAnswers.push(slug)
+      const query = {
+        answers: `${previouslyAccumulatedAnswers.join(ANSWER_DELIMITER)}`,
+        previousAnswer: slug,
+      }
+      return (
+        <Box
+          key={i}
+          paddingBottom={2}
+          marginTop={2}
+          marginBottom={2}
+          className={styles.answerRowContainer}
+        >
+          <Box marginRight={2}>
+            <Text variant="h4">{question}</Text>
+          </Box>
+          <Box marginRight={2}>
+            <Text>{answer}</Text>
+          </Box>
+          <Box>
+            <Link
+              underline="small"
+              underlineVisibility="always"
+              color="blue400"
+              shallow={true}
+              href={{
+                pathname: urlWithoutQueryParams,
+                query: query,
+              }}
+            >
+              {activeLocale === 'is' ? 'Breyta' : 'Change'}
+            </Link>
+          </Box>
+        </Box>
+      )
+    })
+  }
 
   const ContinueButton = () => (
     <Box marginTop={3}>
@@ -240,22 +254,16 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
                 ? router.query.answers.concat(ANSWER_DELIMITER)
                 : ''
 
-            router.push(
-              {
-                pathname: pathnameWithoutQueryParams,
-                query: {
-                  answers: `${previousAnswers}${selectedOption.slug}`,
-                },
+            router.push({
+              pathname: pathnameWithoutQueryParams,
+              query: {
+                answers: `${previousAnswers}${selectedOption.slug}`,
               },
-              undefined,
-              { shallow: true },
-            )
+            })
 
             if (!transitionWorked) {
               // TODO: show that it didn't work
             }
-
-            if (transitionWorked) setSelectedOption(null)
 
             return newState
           })
@@ -330,26 +338,22 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
             {activeLocale === 'is' ? 'Svörin þín' : 'Your answers'}
           </Text>
           <Box marginBottom={3}>
-            <Button
-              variant="text"
-              onClick={() => {
-                router.push(router.asPath.split('?')[0], undefined, {
-                  shallow: true,
-                })
-              }}
+            <Link
+              shallow={true}
+              underline="small"
+              underlineVisibility="always"
+              color="blue400"
+              href={router.asPath.split('?')[0]}
             >
               {activeLocale === 'is' ? 'Byrja aftur' : 'Start again'}
-            </Button>
+            </Link>
           </Box>
-          <GridContainer>
-            <GridColumn>
-              {renderQuestionsAndAnswers(
-                questionsAndAnswers,
-                router.asPath.split('?')[0],
-                activeLocale,
-              )}
-            </GridColumn>
-          </GridContainer>
+
+          {renderQuestionsAndAnswers(
+            questionsAndAnswers,
+            router.asPath.split('?')[0],
+            activeLocale,
+          )}
         </Box>
       )}
 
