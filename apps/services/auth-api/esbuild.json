@@ -26,7 +26,21 @@
     "pg-native",
     "form-data",
     "configcat-node",
-    "sequelize"
+    "sequelize",
+    "@theo.gravity/datadog-apm",
+    "@datadog/native-metrics",
+    "@datadog/pprof",
+    "@datadog/sketches-js",
+    "@protobufjs/aspromise",
+    "@protobufjs/base64",
+    "@protobufjs/codegen",
+    "@protobufjs/eventemitter",
+    "@protobufjs/fetch",
+    "@protobufjs/float",
+    "@protobufjs/inquire",
+    "@protobufjs/path",
+    "@protobufjs/pool",
+    "@protobufjs/utf8"
   ],
   "keepNames": true
 }
