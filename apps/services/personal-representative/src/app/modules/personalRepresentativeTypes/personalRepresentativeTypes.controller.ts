@@ -19,7 +19,7 @@ import {
   Inject,
   Query,
 } from '@nestjs/common'
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger'
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import {
   CurrentAuth,
@@ -96,11 +96,9 @@ export class PersonalRepresentativeTypesController {
     return personalRepresentativeType
   }
   /** Removes a right type by it's code, by making it invalid */
-  @ApiOperation({
-    summary: 'Delete a single personal representative type by code',
-  })
   @Delete(':code')
   @Documentation({
+    summary: 'Delete a single personal representative type by code',
     response: { status: 204 },
     request: {
       params: {
@@ -129,11 +127,9 @@ export class PersonalRepresentativeTypesController {
   }
 
   /** Creates a right type */
-  @ApiOperation({
-    summary: 'Create a personal representative type',
-  })
   @Post()
   @Documentation({
+    summary: 'Create a personal representative type',
     response: { status: 201, type: PersonalRepresentativeType },
   })
   async create(
@@ -154,11 +150,9 @@ export class PersonalRepresentativeTypesController {
   }
 
   /** Updates a right type */
-  @ApiOperation({
-    summary: 'Update a personal representative type by code',
-  })
   @Put(':code')
   @Documentation({
+    summary: 'Update a personal representative type by code',
     response: { status: 200, type: PersonalRepresentativeType },
     request: {
       params: {
