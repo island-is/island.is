@@ -35,6 +35,7 @@
     "@protobufjs/path",
     "@protobufjs/pool",
     "@protobufjs/utf8"
+    "firebase-admin"
   ],
   "keepNames": true
 }
