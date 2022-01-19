@@ -4,7 +4,7 @@ import React from 'react'
 import { buttonsMsgs as msg } from '../messages'
 import { useLocale } from '../utils'
 import { RegDraftForm } from '../state/types'
-import { RegDraftActions } from '../state/useDraftingState'
+import { useDraftingState } from '../state/useDraftingState'
 
 const isDraftEmpty = (draft: RegDraftForm): boolean => {
   const someContent =
@@ -18,11 +18,7 @@ const isDraftEmpty = (draft: RegDraftForm): boolean => {
 
 // ===========================================================================
 
-export type SaveDeleteButtonsProps = {
-  draft: RegDraftForm
-  saving?: boolean
-  actions: Pick<RegDraftActions, 'saveStatus' | 'deleteDraft' | 'propose'>
-} & (
+export type SaveDeleteButtonsProps =
   | { wrap: true; classes?: undefined }
   | {
       wrap?: false
@@ -32,11 +28,12 @@ export type SaveDeleteButtonsProps = {
         propose: string
       }
     }
-)
 
 export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
-  const { draft, actions, saving, wrap, classes = s } = props
+  const { wrap, classes = s } = props
+
   const t = useLocale().formatMessage
+  const { draft, saving, actions } = useDraftingState()
   const { saveStatus, deleteDraft, propose } = actions
 
   const handleDeleteClick = () => {

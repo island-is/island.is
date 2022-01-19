@@ -11,7 +11,7 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import { StepComponent } from '../state/useDraftingState'
+import { useDraftingState } from '../state/useDraftingState'
 import { editorMsgs as msg } from '../messages'
 import { useLocale } from '../utils'
 import { prettyName } from '@island.is/regulations'
@@ -74,9 +74,9 @@ const useAffectedRegulations = (
 
 // ---------------------------------------------------------------------------
 
-export const EditImpacts: StepComponent = (props) => {
-  const { draft, actions } = props
+export const EditImpacts = () => {
   const t = useLocale().formatMessage
+  const { draft, actions } = useDraftingState()
 
   const { goToStep } = actions
 

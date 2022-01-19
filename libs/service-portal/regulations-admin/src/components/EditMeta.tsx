@@ -7,15 +7,15 @@ import {
   DatePicker,
   Input,
 } from '@island.is/island-ui/core'
-import { StepComponent } from '../state/useDraftingState'
 import { editorMsgs as msg } from '../messages'
 import { useLocale } from '../utils'
 import { LawChapterSlug } from '@island.is/regulations'
 import { LawChaptersSelect } from './LawChaptersSelect'
+import { useDraftingState } from '../state/useDraftingState'
 
-export const EditMeta: StepComponent = (props) => {
+export const EditMeta = () => {
   const { formatMessage: t } = useLocale()
-  const { draft, actions } = props
+  const { draft, actions } = useDraftingState()
   const { updateState, updateLawChapterProp } = actions
 
   const type = draft.type.value

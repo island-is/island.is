@@ -1,28 +1,22 @@
 import React, { useState } from 'react'
-import { HTMLText } from '@island.is/regulations-tools/types'
 import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
-import { RegDraftForm } from '../state/types'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
 import { useLocale } from '../utils'
+import { useDraftingState } from '../state/useDraftingState'
 
-export type DraftingNotesProps = {
-  draft: RegDraftForm
-  onChange: (notes: HTMLText) => void
-}
-
-export const DraftingNotes = (props: DraftingNotesProps) => {
-  const { draft, onChange } = props
-
+export const DraftingNotes = () => {
   const t = useLocale().formatMessage
+  const { draft, actions } = useDraftingState()
 
-  const [expanded, setExpanded] = useState(!!draft.draftingNotes.value)
+  const { id, draftingNotes } = draft
+  const [expanded, setExpanded] = useState(!!draftingNotes.value)
 
   return (
     <Box marginTop={[6, 6, 8]}>
       <Accordion>
         <AccordionItem
-          id={draft.id + '-notes'}
+          id={id + '-notes'}
           label={t(msg.draftingNotes)}
           expanded={expanded}
           onToggle={setExpanded}
@@ -32,9 +26,11 @@ export const DraftingNotes = (props: DraftingNotesProps) => {
               <EditorInput
                 label={t(msg.draftingNotes)}
                 hiddenLabel
-                draftId={draft.id}
-                value={draft.draftingNotes.value}
-                onChange={onChange}
+                draftId={id}
+                value={draftingNotes.value}
+                onChange={(newValue) =>
+                  actions.updateState('draftingNotes', newValue)
+                }
               />
               <Text as="p" variant="small" marginTop={2}>
                 {t(msg.draftingNotes_descr)}

@@ -1,3 +1,13 @@
+import React from 'react'
+import {
+  Reducer,
+  useEffect,
+  useMemo,
+  useReducer,
+  createContext,
+  useContext,
+  ReactNode,
+} from 'react'
 import { useMutation, gql } from '@apollo/client'
 import {
   HTMLText,
@@ -7,7 +17,6 @@ import {
   MinistryList,
 } from '@island.is/regulations'
 import { useAuth } from '@island.is/auth/react'
-import { FC, Reducer, useEffect, useMemo, useReducer } from 'react'
 import { produce, setAutoFreeze, Draft } from 'immer'
 import { useHistory } from 'react-router-dom'
 import { Step } from '../types'
@@ -280,7 +289,7 @@ const actionHandlers: {
       state.error = new Error('Must be an editor')
       return
     }
-    state.stepName = stepName
+    state.step = steps[stepName]
   },
 
   SAVING_STATUS: (state) => {
@@ -399,6 +408,12 @@ const actionHandlers: {
 }
 /* eslint-enable @typescript-eslint/naming-convention */
 
+type StateInputs = {
+  draft: RegulationDraft
+  ministries: MinistryList
+  stepName: Step
+}
+
 const draftingStateReducer: Reducer<DraftingState, Action> = (
   state,
   action,
@@ -415,14 +430,9 @@ const draftingStateReducer: Reducer<DraftingState, Action> = (
   return newState
 }
 
-// ---------------------------------------------------------------------------
+const useEditDraftReducer = (inputs: StateInputs) => {
+  const { draft, ministries, stepName } = inputs
 
-export const useDraftingState = (
-  draft: RegulationDraft,
-  ministries: MinistryList,
-  stepName: Step,
-) => {
-  const history = useHistory()
   const isEditor =
     useAuth().userInfo?.scopes?.includes(RegulationsAdminScope.manage) || false
 
@@ -430,12 +440,10 @@ export const useDraftingState = (
     throw new Error()
   }
 
-  const t = useLocale().formatMessage
-
-  const [state, dispatch] = useReducer(draftingStateReducer, {}, () => {
+  return useReducer(draftingStateReducer, {}, () => {
     const state: DraftingState = {
       draft: makeDraftForm(draft),
-      stepName,
+      step: steps[stepName],
       ministries,
       isEditor,
     }
@@ -449,10 +457,22 @@ export const useDraftingState = (
     })
     return state
   })
+}
 
-  useEffect(() => {
-    dispatch({ type: 'CHANGE_STEP', stepName })
-  }, [stepName])
+// ---------------------------------------------------------------------------
+
+export const useMakeDraftingState = (inputs: StateInputs) => {
+  const history = useHistory()
+  const t = useLocale().formatMessage
+
+  const [state, dispatch] = useEditDraftReducer(inputs)
+  const stepName = state.step.name
+
+  useEffect(
+    () => dispatch({ type: 'CHANGE_STEP', stepName }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [stepName],
+  )
 
   const [deleteDraftRegulationMutation] = useMutation(
     DELETE_DRAFT_REGULATION_MUTATION,
@@ -461,12 +481,10 @@ export const useDraftingState = (
     UPDATE_DRAFT_REGULATION_MUTATION,
   )
 
-  const stepNav = steps[stepName]
-  const nextStep = stepNav.next
-  const prevStep = stepNav.prev
-
-  const actions = useMemo(() => {
-    const draft = state.draft
+  return useMemo(() => {
+    const { draft, step } = state
+    const nextStep = step.next
+    const prevStep = step.prev
 
     const _saveStatus = (newStatus?: DraftingStatus) =>
       updateDraftRegulationById({
@@ -506,14 +524,14 @@ export const useDraftingState = (
           return { success: false, error: error as Error }
         })
 
-    return {
+    const actions = {
       goBack: prevStep ? () => actions.goToStep(prevStep) : undefined,
 
       goForward:
-        nextStep && (isEditor || nextStep !== 'review')
+        nextStep && (state.isEditor || nextStep !== 'review')
           ? () => {
               // BASICS
-              if (stepNav.name === 'basics') {
+              if (step.name === 'basics') {
                 const errorFields = getInputFieldsWithErrors(
                   ['title', 'text'],
                   draft,
@@ -615,7 +633,7 @@ export const useDraftingState = (
         })
       },
 
-      propose: !isEditor
+      propose: !state.isEditor
         ? () => {
             dispatch({ type: 'SAVING_STATUS' })
             _saveStatus('proposal').then(({ success, error }) => {
@@ -630,32 +648,41 @@ export const useDraftingState = (
           }
         : undefined,
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return { ...state, actions }
+    // // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    stepNav,
-    // TODO: Review the use of draft here, and remove if possible.
-    draft,
-    isEditor,
     state,
 
+    dispatch, // NOTE Should be immutable
     history, // NOTE: Should be immutable
     updateDraftRegulationById, // NOTE: Should be immutable
     deleteDraftRegulationMutation, // NOTE: Should be immutable
-    t,
+    t, // NOTE: Should be immutable,
   ])
-
-  return {
-    state,
-    stepNav,
-    actions,
-  }
 }
 
-export type RegDraftActions = ReturnType<typeof useDraftingState>['actions']
+export type RegDraftActions = ReturnType<typeof useMakeDraftingState>['actions']
 
 // ===========================================================================
 
-export type StepComponent = (props: {
-  draft: RegDraftForm
-  actions: ReturnType<typeof useDraftingState>['actions'] // FIXME: Ick! Ack!
-}) => ReturnType<FC>
+const RegDraftingContext = createContext(
+  {} as DraftingState & { actions: RegDraftActions },
+)
+
+type RegDraftingProviderProps = {
+  draft: RegulationDraft
+  stepName: Step
+  ministries: MinistryList
+  children: ReactNode
+}
+
+export const RegDraftingProvider = (props: RegDraftingProviderProps) => {
+  const { draft, ministries, stepName, children } = props
+
+  return React.createElement(RegDraftingContext.Provider, {
+    value: useMakeDraftingState({ draft, ministries, stepName }),
+    children: children,
+  })
+}
+
+export const useDraftingState = () => useContext(RegDraftingContext)

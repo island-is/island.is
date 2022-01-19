@@ -119,7 +119,7 @@ export type RegDraftForm = BodyDraftFields & {
 
 export type DraftingState = {
   isEditor: boolean
-  stepName: Step
+  step: StepNav
   draft: RegDraftForm
   ministries: MinistryList
   saving?: boolean

@@ -17,7 +17,7 @@ import {
   Text,
   Divider,
 } from '@island.is/island-ui/core'
-import { StepComponent } from '../state/useDraftingState'
+import { useDraftingState } from '../state/useDraftingState'
 import { editorMsgs as msg } from '../messages'
 import { getMinPublishDate, useLocale } from '../utils'
 
@@ -190,9 +190,9 @@ const getDefaultSignatureText = (
 
 // ===========================================================================
 
-export const EditSignature: StepComponent = (props) => {
+export const EditSignature = () => {
   const { formatMessage: t, formatDateFns } = useLocale()
-  const { draft, actions } = props
+  const { draft, actions } = useDraftingState()
   const { updateState } = actions
 
   const signedDocumentUrl = draft.signedDocumentUrl.value
