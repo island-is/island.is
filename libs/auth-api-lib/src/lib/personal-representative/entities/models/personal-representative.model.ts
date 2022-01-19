@@ -80,12 +80,12 @@ export class PersonalRepresentative extends Model<PersonalRepresentative> {
   @ApiPropertyOptional()
   readonly modified?: Date
 
-  @ApiProperty({ type: () => [PersonalRepresentativeRight], required: false })
+  @ApiProperty({ type: () => [PersonalRepresentativeRight] })
   @HasMany(() => PersonalRepresentativeRight)
   @ApiProperty()
   rights!: PersonalRepresentativeRight[]
 
-  @ApiProperty({ type: () => PersonalRepresentativeType, required: false })
+  @ApiProperty({ type: () => PersonalRepresentativeType })
   @ApiProperty()
   type!: PersonalRepresentativeType
 

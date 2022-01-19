@@ -54,7 +54,7 @@ export class PersonalRepresentativeRightType extends Model<PersonalRepresentativ
   @ApiPropertyOptional()
   readonly modified?: Date
 
-  @ApiProperty({ type: () => [PersonalRepresentativeRight], required: false })
+  @ApiPropertyOptional({ type: () => [PersonalRepresentativeRight] })
   @HasMany(() => PersonalRepresentativeRight)
   rights?: PersonalRepresentativeRight[]
 
