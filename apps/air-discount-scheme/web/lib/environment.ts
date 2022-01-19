@@ -7,7 +7,8 @@ const devConfig = {
     process.env.IDENTITY_SERVER_DOMAIN ?? 'identity-server.dev01.devland.is',
   identityServerLogoutURL: process.env.NEXTAUTH_URL ?? 'http://localhost:4200',
   identityServerSecret: process.env.IDENTITY_SERVER_SECRET,
-  idsCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
+  idsCookieName: 'next-auth.session-token',
+  csrfCookieName: 'next-auth.csrf-token',
 }
 
 const prodConfig = {
@@ -16,7 +17,8 @@ const prodConfig = {
   identityServerDomain: process.env.IDENTITY_SERVER_DOMAIN,
   identityServerLogoutURL: process.env.NEXTAUTH_URL,
   identityServerSecret: process.env.IDENTITY_SERVER_SECRET,
-  idsCookieName: 'next-auth.session-token',
+  idsCookieName: '__Secure-next-auth.session-token',
+  csrfCookieName: '__Host-next-auth.csrf-token',
 }
 
 export default isProd ? prodConfig : devConfig
