@@ -52,11 +52,21 @@ export const summaryForm = {
       description: 'Summary form users information title of national id ',
     },
   }),
-  overview: defineMessages({
-    homeCircumstancesTitle: {
-      id: 'fa.application:section.summaryForm.overview.homeCircumstancesTitle',
-      defaultMessage: 'Búseta',
-      description: 'Summary form homecircumstances title',
+  formInfo: defineMessages({
+    personalTaxCreditTitle: {
+      id: 'fa.application:section.summaryForm.formInfo.personalTaxCreditTitle',
+      defaultMessage: 'Nýta persónuafslátt?',
+      description: 'Summary form personalTaxCredit title',
+    },
+    formCommentTitle: {
+      id: 'fa.application:section.summaryForm.formInfo.formCommentTitle',
+      defaultMessage: 'Athugasemd',
+      description: 'Summary form input label for form comment',
+    },
+    formCommentPlaceholder: {
+      id: 'fa.application:section.summaryForm.formInfo.formCommentPlaceholder',
+      defaultMessage: 'Skrifaðu hér',
+      description: 'Summary form placeholder for input for form comment',
     },
   }),
 }

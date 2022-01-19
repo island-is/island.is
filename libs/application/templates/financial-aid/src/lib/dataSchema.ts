@@ -82,6 +82,7 @@ export const dataSchema = z.object({
     .refine((v) => v, {
       params: error.validation.radioErrorMessage,
     }),
+  formComment: z.string().optional(),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>

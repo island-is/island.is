@@ -6,10 +6,11 @@ import {
   GridRow,
   Button,
   Icon,
+  Input,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import DescriptionText from '../DescriptionText/DescriptionText'
-
+import { Controller, useFormContext } from 'react-hook-form'
 import * as m from '../../lib/messages'
 import SummaryBlock from '../SummaryBlock/SummaryBlock'
 import { FAFieldBaseProps } from '../../lib/types'
@@ -26,6 +27,10 @@ import {
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { answers, externalData } = application
+
+  console.log(answers)
+
+  const { setValue } = useFormContext()
 
   return (
     <>
@@ -84,6 +89,13 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       </Box>
 
       <SummaryBlock
+        sectionTitle={formatMessage(m.inRelationship.general.sectionTitle)}
+        editAction={() => goToScreen?.('inRelationship')}
+      >
+        <Text>TODO</Text>
+      </SummaryBlock>
+
+      <SummaryBlock
         sectionTitle={formatMessage(
           m.homeCircumstancesForm.general.sectionTitle,
         )}
@@ -120,7 +132,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <SummaryBlock
         sectionTitle={formatMessage(
-          m.personalTaxCreditForm.general.sectionTitle,
+          m.summaryForm.formInfo.personalTaxCreditTitle,
         )}
         editAction={() => goToScreen?.('personalTaxCredit')}
       >
@@ -136,29 +148,29 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         editAction={() => goToScreen?.('bankInfo')}
       >
         <Text>
-          {answers.bankInfoForm.bankNumber &&
-          answers.bankInfoForm.ledger &&
-          answers.bankInfoForm.accountNumber
-            ? answers.bankInfoForm.bankNumber +
+          {answers?.bankInfo?.bankNumber &&
+          answers?.bankInfo?.ledger &&
+          answers?.bankInfo?.accountNumber
+            ? answers?.bankInfo?.bankNumber +
               '-' +
-              answers.bankInfoForm.ledger +
+              answers?.bankInfo?.ledger +
               '-' +
-              answers.bankInfoForm.accountNumber
+              answers?.bankInfo?.accountNumber
             : ''}
         </Text>
       </SummaryBlock>
 
       <Box paddingY={[4, 4, 5]} borderTopWidth="standard" borderColor="blue300">
-        <GridRow marginBottom={3}>
+        <GridRow>
           <GridColumn span={['6/12', '6/12', '6/12', '10/12']}>
-            <GridRow marginBottom={3}>
+            <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
                 <Text fontWeight="semiBold">Netfang </Text>
-                <Text>{externalData?.nationalRegistry?.data?.fullName}</Text>
+                <Text marginBottom={[3, 3, 3, 0]}>todo@todo.com</Text>
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
                 <Text fontWeight="semiBold">Símanúmer</Text>
-                <Text>{externalData?.nationalRegistry?.data?.fullName}</Text>
+                <Text>TODO</Text>
               </GridColumn>
             </GridRow>
           </GridColumn>
@@ -186,13 +198,40 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
             <Icon color="blue400" icon="document" size="small" type="outline" />
           </Box>
 
-          <Text>nafn a file</Text>
+          <Text>filename todo</Text>
         </Box>
       </SummaryBlock>
 
       <Text as="h3" variant="h3">
         Annað sem þú vilt koma á framfæri?{' '}
       </Text>
+
+      <Box marginTop={[3, 3, 4]}>
+        <Controller
+          name="formComment"
+          defaultValue={answers?.formComment}
+          render={({ value, onChange }) => {
+            return (
+              <Input
+                id="formComment"
+                name="formComment"
+                label={formatMessage(m.summaryForm.formInfo.formCommentTitle)}
+                placeholder={formatMessage(
+                  m.summaryForm.formInfo.formCommentPlaceholder,
+                )}
+                value={value}
+                textarea={true}
+                rows={8}
+                backgroundColor="blue"
+                onChange={(e) => {
+                  onChange(e.target.value)
+                  setValue('formComment', e.target.value)
+                }}
+              />
+            )
+          }}
+        />
+      </Box>
     </>
   )
 }
