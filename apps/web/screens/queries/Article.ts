@@ -90,6 +90,7 @@ export const GET_ARTICLE_QUERY = gql`
         }
         showTableOfContents
         stepper {
+          id
           title
           steps {
             id
