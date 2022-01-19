@@ -142,9 +142,12 @@ export const findSignatureInText = (html: HTMLText) => {
 // NOTE: Let's not rabbit-hole into guessing the effectiveDate
 //
 
-export const findRegulationType = (title: PlainText): RegulationType =>
-  /^Reglugerð um (?:\(?\d+\.\)? )?breyting(?:u|ar) á .*reglugerð(?:um)?(?: |$)/i.test(
-    title,
-  )
-    ? 'amending'
-    : 'base'
+export const findRegulationType = (
+  title: PlainText,
+): RegulationType | undefined => {
+  if (!title || !/reglugerð/i.test(title)) {
+    return
+  }
+  const amendingTitleRe = /^Reglugerð um (?:\(?\d+\.\)? )?breyting(?:u|ar) á .*reglugerð(?:um)?(?: |$)/i
+  return amendingTitleRe.test(title) ? 'amending' : 'base'
+}
