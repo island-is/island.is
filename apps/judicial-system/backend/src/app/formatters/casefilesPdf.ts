@@ -12,7 +12,7 @@ import {
 import { writeFile } from './writeFile'
 
 function constructCasefilesPdf(
-  existingCase: Case,
+  theCase: Case,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -26,7 +26,7 @@ function constructCasefilesPdf(
   })
 
   if (doc.info) {
-    doc.info['Title'] = `Rannsóknargögn ${existingCase.courtCaseNumber}`
+    doc.info['Title'] = `Rannsóknargögn ${theCase.courtCaseNumber}`
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
@@ -40,12 +40,12 @@ function constructCasefilesPdf(
     .fontSize(largeFontSize)
     .lineGap(40)
     .text(
-      `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
+      `Mál nr. ${theCase.courtCaseNumber} - LÖKE nr. ${theCase.policeCaseNumber}`,
       { align: 'center' },
     )
     .lineGap(8)
     .fontSize(baseFontSize)
-    .list(existingCase.caseFiles?.map((file) => file.name) ?? [], {
+    .list(theCase.caseFiles?.map((file) => file.name) ?? [], {
       listType: 'numbered',
     })
 
@@ -56,10 +56,8 @@ function constructCasefilesPdf(
   return stream
 }
 
-export async function getCasefilesPdfAsString(
-  existingCase: Case,
-): Promise<string> {
-  const stream = constructCasefilesPdf(existingCase)
+export async function getCasefilesPdfAsString(theCase: Case): Promise<string> {
+  const stream = constructCasefilesPdf(theCase)
 
   // wait for the writing to finish
   const pdf = await new Promise<string>(function (resolve) {
@@ -69,16 +67,14 @@ export async function getCasefilesPdfAsString(
   })
 
   if (!environment.production) {
-    writeFile(`${existingCase.id}-case-files.pdf`, pdf)
+    writeFile(`${theCase.id}-case-files.pdf`, pdf)
   }
 
   return pdf
 }
 
-export async function getCasefilesPdfAsBuffer(
-  existingCase: Case,
-): Promise<Buffer> {
-  const stream = constructCasefilesPdf(existingCase)
+export async function getCasefilesPdfAsBuffer(theCase: Case): Promise<Buffer> {
+  const stream = constructCasefilesPdf(theCase)
 
   // wait for the writing to finish
   const pdf = await new Promise<Buffer>(function (resolve) {
@@ -88,7 +84,7 @@ export async function getCasefilesPdfAsBuffer(
   })
 
   if (!environment.production) {
-    writeFile(`${existingCase.id}-case-files.pdf`, pdf)
+    writeFile(`${theCase.id}-case-files.pdf`, pdf)
   }
 
   return pdf

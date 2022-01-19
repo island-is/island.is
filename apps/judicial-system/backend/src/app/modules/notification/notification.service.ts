@@ -239,31 +239,29 @@ export class NotificationService {
     }
   }
 
-  private createICalAttachment(existingCase: Case): Attachment | undefined {
-    if (existingCase.courtDate) {
+  private createICalAttachment(theCase: Case): Attachment | undefined {
+    if (theCase.courtDate) {
       const eventOrganizer = {
-        name: existingCase.registrar
-          ? existingCase.registrar.name
-          : existingCase.judge
-          ? existingCase.judge.name
+        name: theCase.registrar
+          ? theCase.registrar.name
+          : theCase.judge
+          ? theCase.judge.name
           : '',
-        email: existingCase.registrar
-          ? existingCase.registrar.email
-          : existingCase.judge
-          ? existingCase.judge.email
+        email: theCase.registrar
+          ? theCase.registrar.email
+          : theCase.judge
+          ? theCase.judge.email
           : '',
       }
 
-      const courtDate = new Date(
-        existingCase.courtDate.toString().split('.')[0],
-      )
-      const courtEnd = new Date(existingCase.courtDate.getTime() + 30 * 60000)
+      const courtDate = new Date(theCase.courtDate.toString().split('.')[0])
+      const courtEnd = new Date(theCase.courtDate.getTime() + 30 * 60000)
 
       const icalendar = new ICalendar({
-        title: `Fyrirtaka í máli ${existingCase.courtCaseNumber} - ${existingCase.prosecutor?.institution?.name} gegn X`,
-        location: `${existingCase.court?.name} - ${
-          existingCase.courtRoom
-            ? `Dómsalur ${existingCase.courtRoom}`
+        title: `Fyrirtaka í máli ${theCase.courtCaseNumber} - ${theCase.prosecutor?.institution?.name} gegn X`,
+        location: `${theCase.court?.name} - ${
+          theCase.courtRoom
+            ? `Dómsalur ${theCase.courtRoom}`
             : 'Dómsalur hefur ekki verið skráður.'
         }`,
         start: courtDate,
@@ -462,17 +460,21 @@ export class NotificationService {
     )
   }
 
-  // TODO defendants: handle multiple defendants
   private sendCourtDateEmailNotificationToPrison(
     theCase: Case,
   ): Promise<Recipient> {
     const subject = 'Krafa um gæsluvarðhald í vinnslu' // Always custody
+    // Assume there is at most one defendant
     const html = formatPrisonCourtDateEmailNotification(
       theCase.creatingProsecutor?.institution?.name,
       theCase.court?.name,
       theCase.courtDate,
-      theCase.defendants && theCase.defendants[0].name,
-      theCase.defendants && theCase.defendants[0].gender,
+      theCase.defendants && theCase.defendants.length > 0
+        ? theCase.defendants[0].name
+        : undefined,
+      theCase.defendants && theCase.defendants.length > 0
+        ? theCase.defendants[0].gender
+        : undefined,
       theCase.requestedValidToDate,
       theCase.requestedCustodyRestrictions?.includes(
         CaseCustodyRestrictions.ISOLATION,
@@ -670,16 +672,18 @@ export class NotificationService {
     return this.sendSms(smsText, this.getCourtMobileNumber(theCase.courtId))
   }
 
-  // TODO defendants: handle multiple defendants
   private sendRevokedEmailNotificationToPrison(
     theCase: Case,
   ): Promise<Recipient> {
     const subject = 'Gæsluvarðhaldskrafa afturkölluð' // Always custody
+    // Assume there is at most one defendant
     const html = formatPrisonRevokedEmailNotification(
       theCase.creatingProsecutor?.institution?.name,
       theCase.court?.name,
       theCase.courtDate,
-      theCase.defendants && theCase.defendants[0].name,
+      theCase.defendants && theCase.defendants.length > 0
+        ? theCase.defendants[0].name
+        : undefined,
       theCase.defenderName,
       Boolean(theCase.parentCase),
     )
@@ -692,15 +696,17 @@ export class NotificationService {
     )
   }
 
-  // TDOO defendants: handle multiple defendants
   private sendRevokedEmailNotificationToDefender(
     theCase: Case,
   ): Promise<Recipient> {
-    const subject = `${
+    const caseType =
       theCase.type === CaseType.CUSTODY
-        ? 'Gæsluvarðhaldskrafa'
-        : 'Farbannskrafa'
-    } afturkölluð`
+        ? this.formatMessage(core.caseType.custody)
+        : theCase.type === CaseType.TRAVEL_BAN
+        ? this.formatMessage(core.caseType.travelBan)
+        : this.formatMessage(core.caseType.investigate)
+
+    const subject = `Krafa um ${caseType} afturkölluð`
 
     // Assume there is at most one defendant
     const html = formatDefenderRevokedEmailNotification(
@@ -774,9 +780,9 @@ export class NotificationService {
 
   /* API */
 
-  async getAllCaseNotifications(existingCase: Case): Promise<Notification[]> {
+  async getAllCaseNotifications(theCase: Case): Promise<Notification[]> {
     return this.notificationModel.findAll({
-      where: { caseId: existingCase.id },
+      where: { caseId: theCase.id },
       order: [['created', 'DESC']],
     })
   }

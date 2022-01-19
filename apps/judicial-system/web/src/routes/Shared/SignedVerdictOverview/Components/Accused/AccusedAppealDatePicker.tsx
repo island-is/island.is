@@ -69,9 +69,9 @@ const AccusedAppealDatePicker: React.FC<Props> = (props) => {
                             : 'a',
                       })
                     : formatMessage(core.defendant, {
-                        suffix: workingCase.defendants.length > 0 ? 'ar' : 'i',
+                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
                       }),
-                )} ${workingCase.defendants.length > 0 ? 'kæra' : 'kærir'} `
+                )} ${workingCase.defendants.length > 1 ? 'kæra' : 'kærir'} `
               : ''}
           </Button>
         </Box>

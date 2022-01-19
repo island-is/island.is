@@ -31,21 +31,17 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
     'Sækjandi',
   )
 
-  const accusedAppeal = workingCase.defendants
-    ? formatAppeal(
-        workingCase.accusedAppealDecision,
-        capitalize(
-          isRestrictionCase(workingCase.type)
-            ? formatMessage(core.accused, { suffix: 'i' })
-            : formatMessage(core.defendant, {
-                suffix: workingCase.defendants?.length > 1 ? 'ar' : 'i',
-              }),
-        ),
-        isRestrictionCase(workingCase.type)
-          ? workingCase.defendants && workingCase.defendants[0].gender
-          : undefined,
-      )
-    : ''
+  const accusedAppeal =
+    workingCase.defendants && workingCase.defendants?.length > 0
+      ? formatAppeal(
+          workingCase.accusedAppealDecision,
+          capitalize(
+            formatMessage(core.defendant, {
+              suffix: workingCase.defendants?.length > 1 ? 'ar' : 'i',
+            }),
+          ),
+        )
+      : ''
 
   return (
     <AccordionItem

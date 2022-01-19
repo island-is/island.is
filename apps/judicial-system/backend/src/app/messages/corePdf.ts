@@ -7,6 +7,11 @@ export const core = {
     defaultMessage: 'kærð{suffix}',
     description: 'Notað fyrir orðið kærði/a.',
   }),
+  defendant: defineMessage({
+    id: 'judicial.system.backend:pdf.core.defendant',
+    defaultMessage: 'varnaraðil{suffix}',
+    description: 'Notað fyrir orðið varnaraðili.',
+  }),
   missing: defineMessages({
     court: {
       id: 'judicial.system.backend:pdf.core.missing.court',

@@ -380,19 +380,19 @@ function constructInvestigationRequestPdf(
 }
 
 function constructRequestPdf(
-  existingCase: Case,
+  theCase: Case,
   formatMessage: FormatMessage,
 ): streamBuffers.WritableStreamBuffer {
-  return isRestrictionCase(existingCase.type)
-    ? constructRestrictionRequestPdf(existingCase, formatMessage)
-    : constructInvestigationRequestPdf(existingCase, formatMessage)
+  return isRestrictionCase(theCase.type)
+    ? constructRestrictionRequestPdf(theCase, formatMessage)
+    : constructInvestigationRequestPdf(theCase, formatMessage)
 }
 
 export async function getRequestPdfAsString(
-  existingCase: Case,
+  theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<string> {
-  const stream = constructRequestPdf(existingCase, formatMessage)
+  const stream = constructRequestPdf(theCase, formatMessage)
 
   // wait for the writing to finish
   const pdf = await new Promise<string>(function (resolve) {
@@ -402,17 +402,17 @@ export async function getRequestPdfAsString(
   })
 
   if (!environment.production) {
-    writeFile(`${existingCase.id}-request.pdf`, pdf)
+    writeFile(`${theCase.id}-request.pdf`, pdf)
   }
 
   return pdf
 }
 
 export async function getRequestPdfAsBuffer(
-  existingCase: Case,
+  theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<Buffer> {
-  const stream = constructRequestPdf(existingCase, formatMessage)
+  const stream = constructRequestPdf(theCase, formatMessage)
 
   // wait for the writing to finish
   const pdf = await new Promise<Buffer>(function (resolve) {
@@ -422,7 +422,7 @@ export async function getRequestPdfAsBuffer(
   })
 
   if (!environment.production) {
-    writeFile(`${existingCase.id}-request.pdf`, pdf)
+    writeFile(`${theCase.id}-request.pdf`, pdf)
   }
 
   return pdf
