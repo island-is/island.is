@@ -1,4 +1,6 @@
-# Zendesk Service
+<!-- gitbook-navigation: "Zendesk" -->
+
+# Zendesk Client
 
 ## About
 
