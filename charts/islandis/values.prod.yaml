@@ -27,7 +27,7 @@ air-discount-scheme-api:
       hosts:
         - host: 'loftbru.island.is'
           paths:
-            - '/api'
+            - '/api/graphql'
   namespace: 'air-discount-scheme'
   podSecurityContext:
     fsGroup: 65534

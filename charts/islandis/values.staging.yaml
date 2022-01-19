@@ -26,10 +26,10 @@ air-discount-scheme-api:
       hosts:
         - host: 'loftbru.staging01.devland.is'
           paths:
-            - '/api'
+            - '/api/graphql'
         - host: 'loftbru-cf.staging01.devland.is'
           paths:
-            - '/api'
+            - '/api/graphql'
   namespace: 'air-discount-scheme'
   podSecurityContext:
     fsGroup: 65534
