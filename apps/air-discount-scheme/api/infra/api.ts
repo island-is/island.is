@@ -51,7 +51,7 @@ export const serviceSetup = (services: {
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
         },
-        paths: ['/api'],
+        paths: ['/api/graphql'],
         public: true,
       },
     })
