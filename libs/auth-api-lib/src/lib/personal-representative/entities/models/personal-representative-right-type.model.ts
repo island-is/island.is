@@ -10,6 +10,7 @@ import {
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { PersonalRepresentativeRight } from './personal-representative-right.model'
+import { PersonalRepresentativeRightTypeDTO } from '../dto/personal-representative-right-type.dto'
 
 @Table({
   tableName: 'personal_representative_right_type',
@@ -35,14 +36,14 @@ export class PersonalRepresentativeRightType extends Model<PersonalRepresentativ
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   validFrom?: Date
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   validTo?: Date
 
   @CreatedAt
@@ -50,10 +51,19 @@ export class PersonalRepresentativeRightType extends Model<PersonalRepresentativ
   readonly created!: Date
 
   @UpdatedAt
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly modified?: Date
 
-  @ApiProperty({ type: () => [PersonalRepresentativeRight], required: false })
+  @ApiPropertyOptional({ type: () => [PersonalRepresentativeRight] })
   @HasMany(() => PersonalRepresentativeRight)
   rights?: PersonalRepresentativeRight[]
+
+  toDTO(): PersonalRepresentativeRightTypeDTO {
+    return {
+      code: this.code,
+      description: this.description,
+      validFrom: this.validFrom,
+      validTo: this.validTo,
+    }
+  }
 }
