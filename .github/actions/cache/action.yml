@@ -38,7 +38,7 @@ runs:
   steps:
     - name: Cache try number one
       id: cache_try_number_one
-      uses: island-is/cache@v0.2
+      uses: island-is/cache@v0.3
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
@@ -46,7 +46,7 @@ runs:
     - name: Cache try number two
       id: cache_try_number_two
       if: always() && inputs.retry > 0 && steps.cache_try_number_one.outputs.success != 'true'
-      uses: island-is/cache@v0.2
+      uses: island-is/cache@v0.3
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
@@ -54,7 +54,7 @@ runs:
     - name: Cache try number three
       id: cache_try_number_three
       if: always() && inputs.retry > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true'
-      uses: island-is/cache@v0.2
+      uses: island-is/cache@v0.3
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}

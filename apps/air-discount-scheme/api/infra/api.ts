@@ -39,6 +39,7 @@ export const serviceSetup = (services: {
         '/k8s/air-discount-scheme/api/CONTENTFUL_ACCESS_TOKEN',
       DEVELOPERS: '/k8s/air-discount-scheme/api/DEVELOPERS',
       ADMINS: '/k8s/air-discount-scheme/api/ADMINS',
+      IDENTITY_SERVER_DOMAIN: `/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN`,
     })
 
     .ingress({
