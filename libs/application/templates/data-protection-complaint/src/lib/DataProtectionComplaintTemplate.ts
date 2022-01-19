@@ -23,6 +23,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
   name: application.name,
   institution: application.institutionName,
   dataSchema: DataProtectionComplaintSchema,
+  readyForProduction: true,
   stateMachineConfig: {
     initial: 'draft',
     states: {

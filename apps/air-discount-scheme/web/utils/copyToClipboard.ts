@@ -1,4 +1,5 @@
-export default (str: string) => {
+import React from 'react'
+const copyToClipboard = (str: string) => {
   const el = document.createElement('textarea')
   el.value = str
   el.setAttribute('readonly', '')
@@ -9,3 +10,4 @@ export default (str: string) => {
   document.execCommand('copy')
   document.body.removeChild(el)
 }
+export default copyToClipboard

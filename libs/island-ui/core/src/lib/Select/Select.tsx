@@ -109,6 +109,7 @@ export const Select = ({
     >
       <CreatableReactSelect
         instanceId={id}
+        aria-labelledby={id}
         noOptionsMessage={() => noOptionsMessage || null}
         id={id}
         name={name}
@@ -163,6 +164,7 @@ export const Select = ({
     >
       <ReactSelect
         instanceId={id}
+        aria-labelledby={id}
         noOptionsMessage={() => noOptionsMessage || null}
         id={id}
         name={name}

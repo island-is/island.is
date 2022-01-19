@@ -19,6 +19,7 @@ import {
   buildSubmitField,
   DefaultEvents,
   buildFileUploadField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
@@ -31,6 +32,7 @@ import {
 import { m } from '../lib/messages'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
+import { HasQualityPhotoData } from '../fields/QualityPhoto/hooks/useQualityPhoto'
 
 export const getApplication = (): Form => {
   return buildForm({
@@ -190,8 +192,10 @@ export const getApplication = (): Form => {
             title: m.qualityPhotoTitle,
             condition: (_, externalData) => {
               return (
-                (externalData.qualityPhoto as QualityPhotoData)?.data
-                  ?.success === true
+                getValueViaPath<HasQualityPhotoData>(
+                  externalData,
+                  'qualityPhoto',
+                )?.data?.hasQualityPhoto ?? false
               )
             },
             children: [
@@ -239,8 +243,8 @@ export const getApplication = (): Form => {
             title: m.qualityPhotoTitle,
             condition: (_, externalData) => {
               return (
-                (externalData.qualityPhoto as QualityPhotoData)?.data
-                  ?.success === false
+                (externalData.qualityPhoto as HasQualityPhotoData)?.data
+                  ?.hasQualityPhoto === false
               )
             },
             children: [

@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # Institution Collaboration
 
 This application helps institutions to request Stafrænt Ísland to collaborate on a new application.

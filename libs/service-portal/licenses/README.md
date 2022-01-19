@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # Service Portal Licenses
 
 This library was generated with [Nx](https://nx.dev).

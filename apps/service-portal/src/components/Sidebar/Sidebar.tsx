@@ -1,17 +1,16 @@
 import React, { FC, useEffect, useState } from 'react'
-import { Box, Stack, Logo, FocusableBox, Icon } from '@island.is/island-ui/core'
-import { BetaTag } from '../Logo/BetaTag'
+import { Box, Stack, Logo, Icon } from '@island.is/island-ui/core'
 import { ActionType } from '../../store/actions'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 import { useStore } from '../../store/stateProvider'
 import ModuleNavigation from './ModuleNavigation'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
-import { useUpdateUnreadDocuments } from '@island.is/service-portal/core'
 import * as styles from './Sidebar.css'
 import cn from 'classnames'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { useListDocuments } from '@island.is/service-portal/graphql'
 
 export const Sidebar: FC<{}> = () => {
   const navigation = useNavigation()
@@ -20,7 +19,7 @@ export const Sidebar: FC<{}> = () => {
   const { width } = useWindowSize()
   const isTablet = width < theme.breakpoints.lg && width >= theme.breakpoints.md
   const isMobile = width < theme.breakpoints.md
-  const badgeContext = useUpdateUnreadDocuments()
+  const { unreadCounter } = useListDocuments('')
 
   useEffect(() => {
     if (isTablet) {
@@ -58,18 +57,15 @@ export const Sidebar: FC<{}> = () => {
           className={collapsed && styles.logoCollapsed}
           paddingBottom={8}
           paddingTop={3}
-          paddingLeft={4}
+          height="full"
+          paddingLeft={collapsed ? 0 : 4}
         >
           <Link to={ServicePortalPath.MinarSidurRoot}>
-            <FocusableBox component="div">
-              <Logo
-                width={collapsed ? 24 : 136}
-                height={31}
-                iconOnly={collapsed}
-                id="sidebar"
-              />
-              <BetaTag />
-            </FocusableBox>
+            {collapsed ? (
+              <Logo width={24} height={22} iconOnly id="sidebar-collapsed" />
+            ) : (
+              <Logo width={136} height={22} id="sidebar" />
+            )}
           </Link>
         </Box>
         <Box>
@@ -107,8 +103,7 @@ export const Sidebar: FC<{}> = () => {
                     key={index}
                     nav={navRoot}
                     badge={
-                      navRoot.subscribesTo === 'documents' &&
-                      badgeContext.unreadDocumentsCounter > 0
+                      navRoot.subscribesTo === 'documents' && unreadCounter > 0
                     }
                   />
                 ),
