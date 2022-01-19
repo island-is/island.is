@@ -12,7 +12,9 @@ import {
 import { ICaseTypes } from '@island.is/judicial-system/consts'
 import {
   CaseType,
+  Defendant,
   isCaseTypeWithMultipleDefendantsSupport,
+  UpdateDefendant,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -77,13 +79,48 @@ const DefendantForm: React.FC<Props> = (props) => {
   }
 
   const { updateCase } = useCase()
-  const { createDefendant, deleteDefendant } = useDefendants()
+  const { createDefendant, deleteDefendant, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
   const {
     setField,
     validateAndSendToServer,
     setAndSendToServer,
   } = useCaseFormHelper(workingCase, setWorkingCase, validations)
+
+  const updateDefendantState = (
+    defendantId: string,
+    update: UpdateDefendant,
+  ) => {
+    if (workingCase.defendants) {
+      const indexOfDefendantToUpdate = workingCase.defendants.findIndex(
+        (defendant) => defendant.id === defendantId,
+      )
+
+      const newDefendants = [...workingCase.defendants]
+
+      newDefendants[indexOfDefendantToUpdate] = {
+        ...newDefendants[indexOfDefendantToUpdate],
+        ...update,
+      }
+
+      setWorkingCase({ ...workingCase, defendants: newDefendants })
+    }
+  }
+
+  const handleUpdateDefendant = async (
+    defendantId: string,
+    updatedDefendant: UpdateDefendant,
+  ) => {
+    const { data } = await updateDefendant(
+      workingCase.id,
+      defendantId,
+      updatedDefendant,
+    )
+
+    if (data) {
+      updateDefendantState(data.updateDefendant.id, updatedDefendant)
+    }
+  }
 
   return (
     <>
@@ -210,6 +247,8 @@ const DefendantForm: React.FC<Props> = (props) => {
                               }
                             : undefined
                         }
+                        onChange={handleUpdateDefendant}
+                        updateDefendantState={updateDefendantState}
                       />
                     </Box>
                   </motion.div>
@@ -229,15 +268,12 @@ const DefendantForm: React.FC<Props> = (props) => {
                         defendants: [
                           ...workingCase.defendants,
                           {
-                            created: '',
-                            modified: '',
                             gender: undefined,
                             name: '',
                             nationalId: '',
                             address: '',
                             id: data.createDefendant.id,
-                            caseId: '',
-                          },
+                          } as Defendant,
                         ],
                       })
 

@@ -1,7 +1,11 @@
 import { useMutation } from '@apollo/client'
+import { Gender } from 'libs/judicial-system/types/src/lib/defendant'
+import { UpdateDefendant } from 'libs/judicial-system/types/src/lib/defendant'
+import { Defendant } from 'libs/judicial-system/types/src/lib/defendant'
 
 import { CreateDefendantMutation } from './createDefendantGql'
 import { DeleteDefendantMutation } from './deleteDefendantGql'
+import { UpdateDefendantMutation } from './updateDefendantGql'
 
 interface CreateDefendantMutationResponse {
   createDefendant: {
@@ -15,6 +19,12 @@ interface DeleteDefendantMutationResponse {
   }
 }
 
+export interface UpdateDefendantMutationResponse {
+  updateDefendant: {
+    id: string
+  }
+}
+
 const useDefendants = () => {
   const [
     createDefendantMutation,
@@ -22,6 +32,9 @@ const useDefendants = () => {
   const [
     deleteDefendantMutation,
   ] = useMutation<DeleteDefendantMutationResponse>(DeleteDefendantMutation)
+  const [
+    updateDefendantMutation,
+  ] = useMutation<UpdateDefendantMutationResponse>(UpdateDefendantMutation)
 
   const createDefendant = async (caseId: string) => {
     return createDefendantMutation({
@@ -35,9 +48,20 @@ const useDefendants = () => {
     })
   }
 
+  const updateDefendant = async (
+    caseId: string,
+    defendantId: string,
+    updateDefendant: UpdateDefendant,
+  ) => {
+    return updateDefendantMutation({
+      variables: { input: { caseId, defendantId, ...updateDefendant } },
+    })
+  }
+
   return {
     createDefendant,
     deleteDefendant,
+    updateDefendant,
   }
 }
 
