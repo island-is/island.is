@@ -3,7 +3,6 @@ import { Text, Box, Button } from '@island.is/island-ui/core'
 
 interface Props {
   sectionTitle: string
-  answer?: string
   editAction?(): void
   children: ReactNode
 }

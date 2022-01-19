@@ -15,7 +15,6 @@ import * as m from '../../lib/messages'
 import SummaryBlock from '../SummaryBlock/SummaryBlock'
 import { ApproveOptions, FAFieldBaseProps } from '../../lib/types'
 import {
-  currentMonth,
   Employment,
   getNextPeriod,
   HomeCircumstances,
@@ -32,6 +31,8 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { answers, externalData } = application
 
   const { setValue } = useFormContext()
+
+  const formCommentId = 'formComment'
 
   return (
     <>
@@ -199,7 +200,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
                 icon="pencil"
                 iconType="filled"
                 variant="utility"
-                onClick={() => console.log('bla')}
+                // onClick={() => TODO }
               >
                 Breyta
               </Button>
@@ -223,18 +224,18 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       </SummaryBlock>
 
       <Text as="h3" variant="h3">
-        Annað sem þú vilt koma á framfæri?{' '}
+        Annað sem þú vilt koma á framfæri?
       </Text>
 
       <Box marginTop={[3, 3, 4]}>
         <Controller
-          name="formComment"
+          name={formCommentId}
           defaultValue={answers?.formComment}
           render={({ value, onChange }) => {
             return (
               <Input
-                id="formComment"
-                name="formComment"
+                id={formCommentId}
+                name={formCommentId}
                 label={formatMessage(m.summaryForm.formInfo.formCommentTitle)}
                 placeholder={formatMessage(
                   m.summaryForm.formInfo.formCommentPlaceholder,
@@ -245,7 +246,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
                 backgroundColor="blue"
                 onChange={(e) => {
                   onChange(e.target.value)
-                  setValue('formComment', e.target.value)
+                  setValue(formCommentId, e.target.value)
                 }}
               />
             )
