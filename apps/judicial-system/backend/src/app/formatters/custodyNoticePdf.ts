@@ -160,9 +160,15 @@ function constructCustodyNoticePdf(
       .text('Tilhögun gæsluvarðhalds')
       .font('Helvetica')
       .fontSize(baseFontSize)
-    if (theCase.isCustodyIsolation && theCase.defendants) {
+
+    if (theCase.isCustodyIsolation) {
       const genderedAccused = formatMessage(core.accused, {
-        suffix: theCase.defendants[0].gender === Gender.MALE ? 'i' : 'a',
+        suffix:
+          !theCase.defendants ||
+          theCase.defendants.length < 1 ||
+          theCase.defendants[0].gender === Gender.MALE
+            ? 'i'
+            : 'a',
       })
       const isolationPeriod = formatDate(theCase.isolationToDate, 'PPPPp')
         ?.replace('dagur,', 'dagsins')
@@ -177,6 +183,7 @@ function constructCustodyNoticePdf(
         ),
       )
     }
+
     if (custodyRestrictions) {
       doc.text(custodyRestrictions, {
         lineGap: 6,
