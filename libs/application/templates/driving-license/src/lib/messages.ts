@@ -362,56 +362,6 @@ export const m = defineMessages({
     defaultMessage: 'Greiðsla',
     description: 'Cost',
   },
-  requirementUnmetDrivingAssessmentTitle: {
-    id: 'dl.application:requirementunmet.drivingassessmenttitle',
-    defaultMessage: 'Akstursmat',
-    description: 'requirement unmet assessment',
-  },
-  requirementUnmetDrivingAssessmentDescription: {
-    id: 'dl.application:requirementunmet.drivingassessmentdescription',
-    defaultMessage:
-      'Ef þú ert búinn að fara í akstursmat hjá ökukennara biddu hann um að staðfesta það rafrænt.',
-    description: 'requirement unmet assessment',
-  },
-  requirementUnmetDrivingSchoolTitle: {
-    id: 'dl.application:requirementunmet.drivingschooltitle',
-    defaultMessage: 'Ökuskóli 3',
-    description: 'requirement unmet driving school',
-  },
-  requirementUnmetDrivingSchoolDescription: {
-    id: 'dl.application:requirementunmet.drivingschooldescription',
-    defaultMessage:
-      'Umsækjandi þarf að hafa klárað Ökuskóla 3 til að fá fullnaðarskírteini.',
-    description: 'requirement unmet driving school',
-  },
-  requirementUnmetDeniedByServiceTitle: {
-    id: 'dl.application:requirementunmet.deniedbyservicetitle',
-    defaultMessage: 'Ökuskírteinaskrá',
-    description: 'requirement unmet api returned false',
-  },
-  requirementUnmetDeniedByServiceDescription: {
-    id: 'dl.application:requirementunmet.deniedbyservicedescription',
-    defaultMessage:
-      'Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
-    description: 'requirement unmet api returned false',
-  },
-  requirementUnmetNoTempLicenseDescription: {
-    id: 'dl.application:requirementunmet.notemplicensedescription',
-    defaultMessage:
-      'Bráðabirgðaskírteini er ekki til staðar. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
-    description: 'requirement unmet api returned NO_TEMP_LICENSE',
-  },
-  requirementUnmetLocalResidencyTitle: {
-    id: 'dl.application:requirementunmet.localResidencyTitle',
-    defaultMessage: 'Búseta á Íslandi',
-    description: 'requirement unmet api returned false',
-  },
-  requirementUnmetLocalResidencyDescription: {
-    id: 'dl.application:requirementunmet.localResidencyDescription',
-    defaultMessage:
-      'Þú þarft að hafa búið að minnsta kosti 180 daga af síðustu 365 dögum á Íslandi til að geta sótt um ökuskírteini.',
-    description: 'requirement unmet api returned false',
-  },
   errorDataProvider: {
     id: 'dl.application:error.dataProvider',
     defaultMessage: 'Reyndu aftur síðar',
@@ -721,5 +671,71 @@ export const m = defineMessages({
     defaultMessage: 'Leiðbeiningar',
     description:
       'Title of the section that explains the next steps when they have a driving license in a different country',
+  },
+})
+
+export const requirementsMessages = defineMessages({
+  rlsAcceptedDescription: {
+    id: 'dl.application:requirementunmet.accepted',
+    defaultMessage: 'Þú uppfyllir þær kröfur sem gerðar eru',
+    description: 'RLS / driving license api approves of the applicant',
+  },
+  rlsDefaultDeniedDescription: {
+    id: 'dl.application:requirementunmet.deniedbyservicedescription',
+    defaultMessage:
+      'Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description:
+      'requirement unmet api returned false for an unspecified reason',
+  },
+  invalidLicense: {
+    id: 'dl.application:requirementunmet.invalidlicense',
+    defaultMessage:
+      'Bráðabirgðaskírteini er ekki til staðar. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description:
+      'requirement unmet api returned NO_TEMP_LICENSE / NO_LICENSE_FOUND',
+  },
+  hasPointsOrDeprivation: {
+    id: 'dl.application:requirementunmet.haspointsordeprivation',
+    defaultMessage:
+      'Þú ert með punkta eða sviptingu. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: 'requirement unmet api returned HAS_DEPRIVATION / HAS_POINTS',
+  },
+  drivingAssessmentTitle: {
+    id: 'dl.application:requirementunmet.drivingassessmenttitle',
+    defaultMessage: 'Akstursmat',
+    description: 'requirement unmet assessment',
+  },
+  drivingAssessmentDescription: {
+    id: 'dl.application:requirementunmet.drivingassessmentdescription',
+    defaultMessage:
+      'Ef þú ert búinn að fara í akstursmat hjá ökukennara biddu hann um að staðfesta það rafrænt.',
+    description: 'requirement unmet assessment',
+  },
+  drivingSchoolTitle: {
+    id: 'dl.application:requirementunmet.drivingschooltitle',
+    defaultMessage: 'Ökuskóli 3',
+    description: 'requirement unmet driving school',
+  },
+  drivingSchoolDescription: {
+    id: 'dl.application:requirementunmet.drivingschooldescription',
+    defaultMessage:
+      'Umsækjandi þarf að hafa klárað Ökuskóla 3 til að fá fullnaðarskírteini.',
+    description: 'requirement unmet driving school',
+  },
+  rlsTitle: {
+    id: 'dl.application:requirementunmet.deniedbyservicetitle',
+    defaultMessage: 'Ökuskírteinaskrá',
+    description: 'requirement unmet api returned false',
+  },
+  localResidencyTitle: {
+    id: 'dl.application:requirementunmet.localResidencyTitle',
+    defaultMessage: 'Búseta á Íslandi',
+    description: 'requirement unmet api returned false',
+  },
+  localResidencyDescription: {
+    id: 'dl.application:requirementunmet.localResidencyDescription',
+    defaultMessage:
+      'Þú þarft að hafa búið að minnsta kosti 180 daga af síðustu 365 dögum á Íslandi til að geta sótt um ökuskírteini.',
+    description: 'requirement unmet api returned false',
   },
 })
