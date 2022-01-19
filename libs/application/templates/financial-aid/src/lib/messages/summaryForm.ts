@@ -19,7 +19,7 @@ export const summaryForm = {
     },
     descriptionSubtitle: {
       id: 'fa.application:section.summaryForm.general.descriptionSubtitle',
-      defaultMessage: '(til útgreiðslu í byrjun júní)',
+      defaultMessage: '(til útgreiðslu í byrjun {nextMonth})',
       description: 'Summary form description subtitle',
     },
     description: {

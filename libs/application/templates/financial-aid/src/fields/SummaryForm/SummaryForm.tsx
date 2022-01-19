@@ -13,22 +13,23 @@ import DescriptionText from '../DescriptionText/DescriptionText'
 import { Controller, useFormContext } from 'react-hook-form'
 import * as m from '../../lib/messages'
 import SummaryBlock from '../SummaryBlock/SummaryBlock'
-import { FAFieldBaseProps } from '../../lib/types'
+import { ApproveOptions, FAFieldBaseProps } from '../../lib/types'
 import {
+  currentMonth,
   Employment,
+  getNextPeriod,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
 import {
   getMessageHomeCircumstances,
   getMessageEmploymentStatus,
   getMessageApproveOptions,
+  getMessageApproveOptionsForIncome,
 } from '../../lib/formatters'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { answers, externalData } = application
-
-  console.log(answers)
 
   const { setValue } = useFormContext()
 
@@ -47,14 +48,16 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         </Box>
 
         <Text variant="small">
-          {formatMessage(m.summaryForm.general.descriptionSubtitle)}
+          {formatMessage(m.summaryForm.general.descriptionSubtitle, {
+            nextMonth: getNextPeriod.month,
+          })}
         </Text>
       </Box>
 
       <Box marginTop={2}>
         <DescriptionText text={m.summaryForm.general.description} />
       </Box>
-
+      {/* TODO estimated aid */}
       <Box marginTop={2}>
         <DescriptionText text={m.summaryForm.general.calculationsOverview} />
       </Box>
@@ -92,6 +95,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         sectionTitle={formatMessage(m.inRelationship.general.sectionTitle)}
         editAction={() => goToScreen?.('inRelationship')}
       >
+        {/* TODO */}
         <Text>TODO</Text>
       </SummaryBlock>
 
@@ -111,10 +115,16 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       </SummaryBlock>
 
       <SummaryBlock
-        sectionTitle={formatMessage(m.incomeForm.general.sectionTitle)}
-        editAction={() => goToScreen?.('income')}
+        sectionTitle={formatMessage(m.studentForm.general.sectionTitle)}
+        editAction={() => goToScreen?.('student')}
       >
-        <Text>{formatMessage(getMessageApproveOptions[answers.income])}</Text>
+        <Text>
+          {formatMessage(getMessageApproveOptions[answers?.student?.isStudent])}
+        </Text>
+
+        {answers?.student?.isStudent === ApproveOptions.Yes && (
+          <Text marginTop={2}>{answers?.student?.custom}</Text>
+        )}
       </SummaryBlock>
 
       <SummaryBlock
@@ -131,15 +141,22 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       </SummaryBlock>
 
       <SummaryBlock
+        sectionTitle={formatMessage(m.incomeForm.general.sectionTitle)}
+        editAction={() => goToScreen?.('income')}
+      >
+        <Text>
+          {formatMessage(getMessageApproveOptionsForIncome[answers?.income])}
+        </Text>
+      </SummaryBlock>
+
+      <SummaryBlock
         sectionTitle={formatMessage(
           m.summaryForm.formInfo.personalTaxCreditTitle,
         )}
         editAction={() => goToScreen?.('personalTaxCredit')}
       >
         <Text>
-          {formatMessage(
-            getMessageApproveOptions[answers.personalTaxCreditForm],
-          )}
+          {formatMessage(getMessageApproveOptions[answers?.personalTaxCredit])}
         </Text>
       </SummaryBlock>
 
@@ -166,11 +183,13 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
             <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
                 <Text fontWeight="semiBold">Netfang </Text>
-                <Text marginBottom={[3, 3, 3, 0]}>todo@todo.com</Text>
+                <Text marginBottom={[3, 3, 3, 0]}>
+                  {answers?.contactInfo?.email}
+                </Text>
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
                 <Text fontWeight="semiBold">Símanúmer</Text>
-                <Text>TODO</Text>
+                <Text>{answers?.contactInfo?.phone}</Text>
               </GridColumn>
             </GridRow>
           </GridColumn>
@@ -193,6 +212,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         sectionTitle="Gögn"
         editAction={() => goToScreen?.('bankInfo')}
       >
+        {/* TODO */}
         <Box display="flex">
           <Box marginRight={1} display="flex" alignItems="center">
             <Icon color="blue400" icon="document" size="small" type="outline" />

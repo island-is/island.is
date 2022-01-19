@@ -39,3 +39,11 @@ export const getMessageApproveOptions: KeyMapping<
   Yes: m.approveOptions.yes,
   No: m.approveOptions.no,
 }
+
+export const getMessageApproveOptionsForIncome: KeyMapping<
+  ApproveOptions,
+  MessageDescriptor
+> = {
+  Yes: m.incomeForm.summary.yes,
+  No: m.incomeForm.summary.no,
+}
