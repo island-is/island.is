@@ -4,7 +4,7 @@ import {
   Employment,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
-import { isValidEmail } from './utils'
+import { isValidEmail, isValidPhone } from './utils'
 import { ApproveOptions } from './types'
 
 export const dataSchema = z.object({
@@ -83,6 +83,14 @@ export const dataSchema = z.object({
       params: error.validation.radioErrorMessage,
     }),
   formComment: z.string().optional(),
+  contactInfo: z.object({
+    email: z.string().refine((v) => isValidEmail(v), {
+      params: error.validation.email,
+    }),
+    phone: z.string().refine((v) => isValidPhone(v), {
+      params: error.validation.phone,
+    }),
+  }),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>
