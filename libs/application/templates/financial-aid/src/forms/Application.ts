@@ -90,6 +90,17 @@ export const Application: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'contactInfo',
+      title: m.contactInfo.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'contactInfo',
+          title: m.contactInfo.general.pageTitle,
+          component: 'ContactInfo',
+        }),
+      ],
+    }),
+    buildSection({
       id: 'bankInfoForm',
       title: m.bankInfoForm.general.sectionTitle,
       children: [
