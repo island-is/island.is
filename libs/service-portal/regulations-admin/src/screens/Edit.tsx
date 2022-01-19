@@ -82,15 +82,15 @@ const EditApp = () => {
   const id = assertDraftId(params.id)
   const stepName = assertStep(params.step)
 
-  const draft = useRegulationDraftQuery(id)
+  const regulationDraft = useRegulationDraftQuery(id)
   const ministries = useMinistriesQuery()
   const t = useLocale().formatMessage
 
-  if (draft.loading || ministries.loading) {
+  if (regulationDraft.loading || ministries.loading) {
     return <p>Loading...</p>
   }
 
-  if (draft.error) {
+  if (regulationDraft.error) {
     throw new Error(`Regulation ${id} not found`)
   }
   if (ministries.error) {
@@ -101,7 +101,7 @@ const EditApp = () => {
 
   return (
     <RegDraftingProvider
-      draft={draft.data}
+      regulationDraft={regulationDraft.data}
       stepName={stepName}
       ministries={ministries.data}
     >
@@ -119,7 +119,7 @@ const EditApp = () => {
 
         <SaveDeleteButtons wrap />
 
-        {draft ? (
+        {regulationDraft ? (
           <step.Component />
         ) : (
           <SkeletonLoader height={120} repeat={2} space={3} />

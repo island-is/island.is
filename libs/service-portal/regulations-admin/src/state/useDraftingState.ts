@@ -408,12 +408,6 @@ const actionHandlers: {
 }
 /* eslint-enable @typescript-eslint/naming-convention */
 
-type StateInputs = {
-  draft: RegulationDraft
-  ministries: MinistryList
-  stepName: Step
-}
-
 const draftingStateReducer: Reducer<DraftingState, Action> = (
   state,
   action,
@@ -430,8 +424,14 @@ const draftingStateReducer: Reducer<DraftingState, Action> = (
   return newState
 }
 
+type StateInputs = {
+  regulationDraft: RegulationDraft
+  ministries: MinistryList
+  stepName: Step
+}
+
 const useEditDraftReducer = (inputs: StateInputs) => {
-  const { draft, ministries, stepName } = inputs
+  const { regulationDraft, ministries, stepName } = inputs
 
   const isEditor =
     useAuth().userInfo?.scopes?.includes(RegulationsAdminScope.manage) || false
@@ -442,7 +442,7 @@ const useEditDraftReducer = (inputs: StateInputs) => {
 
   return useReducer(draftingStateReducer, {}, () => {
     const state: DraftingState = {
-      draft: makeDraftForm(draft),
+      draft: makeDraftForm(regulationDraft),
       step: steps[stepName],
       ministries,
       isEditor,
@@ -671,17 +671,21 @@ const RegDraftingContext = createContext(
 )
 
 type RegDraftingProviderProps = {
-  draft: RegulationDraft
+  regulationDraft: RegulationDraft
   stepName: Step
   ministries: MinistryList
   children: ReactNode
 }
 
 export const RegDraftingProvider = (props: RegDraftingProviderProps) => {
-  const { draft, ministries, stepName, children } = props
+  const { regulationDraft, ministries, stepName, children } = props
 
   return React.createElement(RegDraftingContext.Provider, {
-    value: useMakeDraftingState({ draft, ministries, stepName }),
+    value: useMakeDraftingState({
+      regulationDraft,
+      ministries,
+      stepName,
+    }),
     children: children,
   })
 }
