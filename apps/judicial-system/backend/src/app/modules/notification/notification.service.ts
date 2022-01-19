@@ -239,31 +239,29 @@ export class NotificationService {
     }
   }
 
-  private createICalAttachment(existingCase: Case): Attachment | undefined {
-    if (existingCase.courtDate) {
+  private createICalAttachment(theCase: Case): Attachment | undefined {
+    if (theCase.courtDate) {
       const eventOrganizer = {
-        name: existingCase.registrar
-          ? existingCase.registrar.name
-          : existingCase.judge
-          ? existingCase.judge.name
+        name: theCase.registrar
+          ? theCase.registrar.name
+          : theCase.judge
+          ? theCase.judge.name
           : '',
-        email: existingCase.registrar
-          ? existingCase.registrar.email
-          : existingCase.judge
-          ? existingCase.judge.email
+        email: theCase.registrar
+          ? theCase.registrar.email
+          : theCase.judge
+          ? theCase.judge.email
           : '',
       }
 
-      const courtDate = new Date(
-        existingCase.courtDate.toString().split('.')[0],
-      )
-      const courtEnd = new Date(existingCase.courtDate.getTime() + 30 * 60000)
+      const courtDate = new Date(theCase.courtDate.toString().split('.')[0])
+      const courtEnd = new Date(theCase.courtDate.getTime() + 30 * 60000)
 
       const icalendar = new ICalendar({
-        title: `Fyrirtaka í máli ${existingCase.courtCaseNumber} - ${existingCase.prosecutor?.institution?.name} gegn X`,
-        location: `${existingCase.court?.name} - ${
-          existingCase.courtRoom
-            ? `Dómsalur ${existingCase.courtRoom}`
+        title: `Fyrirtaka í máli ${theCase.courtCaseNumber} - ${theCase.prosecutor?.institution?.name} gegn X`,
+        location: `${theCase.court?.name} - ${
+          theCase.courtRoom
+            ? `Dómsalur ${theCase.courtRoom}`
             : 'Dómsalur hefur ekki verið skráður.'
         }`,
         start: courtDate,
@@ -782,9 +780,9 @@ export class NotificationService {
 
   /* API */
 
-  async getAllCaseNotifications(existingCase: Case): Promise<Notification[]> {
+  async getAllCaseNotifications(theCase: Case): Promise<Notification[]> {
     return this.notificationModel.findAll({
-      where: { caseId: existingCase.id },
+      where: { caseId: theCase.id },
       order: [['created', 'DESC']],
     })
   }

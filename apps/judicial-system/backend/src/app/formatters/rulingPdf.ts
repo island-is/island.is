@@ -666,21 +666,21 @@ function constructInvestigationRulingPdf(
 }
 
 function constructRulingPdf(
-  existingCase: Case,
+  theCase: Case,
   formatMessage: FormatMessage,
   shortVersion: boolean,
 ): streamBuffers.WritableStreamBuffer {
-  return isRestrictionCase(existingCase.type)
-    ? constructRestrictionRulingPdf(existingCase, formatMessage, shortVersion)
-    : constructInvestigationRulingPdf(existingCase, formatMessage, shortVersion)
+  return isRestrictionCase(theCase.type)
+    ? constructRestrictionRulingPdf(theCase, formatMessage, shortVersion)
+    : constructInvestigationRulingPdf(theCase, formatMessage, shortVersion)
 }
 
 export async function getRulingPdfAsString(
-  existingCase: Case,
+  theCase: Case,
   formatMessage: FormatMessage,
   shortVersion: boolean,
 ): Promise<string> {
-  const stream = constructRulingPdf(existingCase, formatMessage, shortVersion)
+  const stream = constructRulingPdf(theCase, formatMessage, shortVersion)
 
   // wait for the writing to finish
   const pdf = await new Promise<string>(function (resolve) {
@@ -690,18 +690,18 @@ export async function getRulingPdfAsString(
   })
 
   if (!environment.production) {
-    writeFile(`${existingCase.id}-ruling.pdf`, pdf)
+    writeFile(`${theCase.id}-ruling.pdf`, pdf)
   }
 
   return pdf
 }
 
 export async function getRulingPdfAsBuffer(
-  existingCase: Case,
+  theCase: Case,
   formatMessage: FormatMessage,
   shortVersion: boolean,
 ): Promise<Buffer> {
-  const stream = constructRulingPdf(existingCase, formatMessage, shortVersion)
+  const stream = constructRulingPdf(theCase, formatMessage, shortVersion)
 
   // wait for the writing to finish
   const pdf = await new Promise<Buffer>(function (resolve) {
@@ -711,7 +711,7 @@ export async function getRulingPdfAsBuffer(
   })
 
   if (!environment.production) {
-    writeFile(`${existingCase.id}-ruling.pdf`, pdf)
+    writeFile(`${theCase.id}-ruling.pdf`, pdf)
   }
 
   return pdf

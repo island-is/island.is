@@ -200,10 +200,10 @@ function constructCustodyNoticePdf(
 }
 
 export async function getCustodyNoticePdfAsString(
-  existingCase: Case,
+  theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<string> {
-  const stream = constructCustodyNoticePdf(existingCase, formatMessage)
+  const stream = constructCustodyNoticePdf(theCase, formatMessage)
 
   // wait for the writing to finish
   const pdf = await new Promise<string>(function (resolve) {
@@ -213,17 +213,17 @@ export async function getCustodyNoticePdfAsString(
   })
 
   if (!environment.production) {
-    writeFile(`${existingCase.id}-custody-notice.pdf`, pdf)
+    writeFile(`${theCase.id}-custody-notice.pdf`, pdf)
   }
 
   return pdf
 }
 
 export async function getCustodyNoticePdfAsBuffer(
-  existingCase: Case,
+  theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<Buffer> {
-  const stream = constructCustodyNoticePdf(existingCase, formatMessage)
+  const stream = constructCustodyNoticePdf(theCase, formatMessage)
 
   // wait for the writing to finish
   const pdf = await new Promise<Buffer>(function (resolve) {
@@ -233,7 +233,7 @@ export async function getCustodyNoticePdfAsBuffer(
   })
 
   if (!environment.production) {
-    writeFile(`${existingCase.id}-custody-notice.pdf`, pdf)
+    writeFile(`${theCase.id}-custody-notice.pdf`, pdf)
   }
 
   return pdf

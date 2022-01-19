@@ -217,7 +217,7 @@ export class CaseController {
   ): Promise<Case | null> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
-    // Use existingCase.modified when client is ready to send last modified timestamp with all updates
+    // Use theCase.modified when client is ready to send last modified timestamp with all updates
     const state = transitionCase(transition.transition, theCase.state)
 
     // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
