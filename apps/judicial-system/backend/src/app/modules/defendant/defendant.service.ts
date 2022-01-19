@@ -41,10 +41,12 @@ export class DefendantService {
     defendantToCreate: CreateDefendantDto,
     transaction?: Transaction,
   ): Promise<Defendant> {
-    return this.defendantModel.create(
-      { ...defendantToCreate, caseId },
-      // { transaction },
-    )
+    return transaction
+      ? this.defendantModel.create(
+          { ...defendantToCreate, caseId },
+          { transaction },
+        )
+      : this.defendantModel.create({ ...defendantToCreate, caseId })
   }
 
   async update(

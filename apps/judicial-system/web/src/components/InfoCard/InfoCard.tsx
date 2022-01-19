@@ -33,7 +33,7 @@ const InfoCard: React.FC<Props> = (props) => {
           <Text variant="h4">
             {capitalize(
               formatMessage(core.defendant, {
-                suffix: defendants.length > 0 ? 'ar' : 'i',
+                suffix: defendants.length > 1 ? 'ar' : 'i',
               }),
             )}
           </Text>

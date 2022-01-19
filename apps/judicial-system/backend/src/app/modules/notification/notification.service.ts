@@ -471,10 +471,10 @@ export class NotificationService {
       theCase.creatingProsecutor?.institution?.name,
       theCase.court?.name,
       theCase.courtDate,
-      theCase.defendants && theCase.defendants.length > 1
+      theCase.defendants && theCase.defendants.length > 0
         ? theCase.defendants[0].name
         : undefined,
-      theCase.defendants && theCase.defendants.length > 1
+      theCase.defendants && theCase.defendants.length > 0
         ? theCase.defendants[0].gender
         : undefined,
       theCase.requestedValidToDate,
@@ -674,16 +674,18 @@ export class NotificationService {
     return this.sendSms(smsText, this.getCourtMobileNumber(theCase.courtId))
   }
 
-  // TODO defendants: handle multiple defendants
   private sendRevokedEmailNotificationToPrison(
     theCase: Case,
   ): Promise<Recipient> {
     const subject = 'Gæsluvarðhaldskrafa afturkölluð' // Always custody
+    // Assume there is at most one defendant
     const html = formatPrisonRevokedEmailNotification(
       theCase.creatingProsecutor?.institution?.name,
       theCase.court?.name,
       theCase.courtDate,
-      theCase.defendants && theCase.defendants[0].name,
+      theCase.defendants && theCase.defendants.length > 0
+        ? theCase.defendants[0].name
+        : undefined,
       theCase.defenderName,
       Boolean(theCase.parentCase),
     )

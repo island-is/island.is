@@ -218,11 +218,13 @@ const ActiveRequests: React.FC<Props> = (props) => {
                     <Text>
                       <Text as="span" variant="small" color="dark400">
                         {`kt. ${
-                          insertAt(
-                            c.defendants[0].nationalId.replace('-', ''),
-                            '-',
-                            6,
-                          ) || '-'
+                          c.defendants[0].nationalId
+                            ? insertAt(
+                                c.defendants[0].nationalId.replace('-', ''),
+                                '-',
+                                6,
+                              )
+                            : '-'
                         }`}
                       </Text>
                     </Text>

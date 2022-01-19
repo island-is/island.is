@@ -24,7 +24,7 @@ const CaseNumbers: React.FC<Props> = ({ workingCase }: Props) => {
       }`}</Text>
       {workingCase.defendants && (
         <Text fontWeight="semiBold">{`${formatMessage(core.defendant, {
-          suffix: workingCase.defendants.length > 0 ? 'ar' : 'i',
+          suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
         })}:${workingCase.defendants.map(
           (defendant) => ` ${defendant.name}`,
         )}`}</Text>

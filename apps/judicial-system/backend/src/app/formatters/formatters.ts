@@ -294,16 +294,19 @@ export function formatPrisonRevokedEmailNotification(
   defenderName?: string,
   isExtension?: boolean,
 ): string {
-  const courtText = court?.replace('dómur', 'dóms')
-  const courtDateText = formatDate(courtDate, 'PPPPp')
-    ?.replace('dagur,', 'daginn')
-    ?.replace(' kl.', ', kl.')
-  const accusedNameText = `Nafn sakbornings: ${accusedName}.`
+  const courtText = court?.replace('dómur', 'dóms') ?? 'ótilgreinds dómstóls'
+  const courtDateText =
+    formatDate(courtDate, 'PPPPp')
+      ?.replace('dagur,', 'daginn')
+      ?.replace(' kl.', ', kl.') ?? 'á ótilgreindum tíma'
+  const accusedNameText = `Nafn sakbornings: ${accusedName ?? 'Ekki skráð'}.`
   const defenderText = defenderName
     ? `Verjandi sakbornings: ${defenderName}`
     : 'Verjandi sakbornings hefur ekki verið skráður'
 
-  return `${prosecutorOffice} hefur afturkallað kröfu um ${
+  return `${
+    prosecutorOffice ?? 'Ótilgreindur sækjandi'
+  } hefur afturkallað kröfu um ${
     isExtension ? 'áframhaldandi ' : ''
   }gæsluvarðhald sem send var til ${courtText} og taka átti fyrir ${courtDateText}.<br /><br />${accusedNameText}<br /><br />${defenderText}.`
 }
