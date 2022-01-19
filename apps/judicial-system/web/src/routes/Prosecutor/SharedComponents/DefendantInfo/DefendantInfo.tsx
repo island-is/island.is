@@ -2,29 +2,48 @@ import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
-import { Defendant, Gender } from '@island.is/judicial-system/types'
+import {
+  Defendant,
+  Gender,
+  UpdateDefendant,
+} from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import { Box, Icon, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   removeTabsValidateAndSet,
-  setAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './DefendantInfo.css'
+import {
+  validate,
+  Validation,
+} from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   defendant: Defendant
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  onChange: (
+    defendantId: string,
+    updatedDefendant: UpdateDefendant,
+  ) => Promise<void>
+  updateDefendantState: (defendantId: string, update: UpdateDefendant) => void
   onDelete?: () => void
 }
 
 const DefendantInfo: React.FC<Props> = (props) => {
-  const { defendant, workingCase, setWorkingCase, onDelete } = props
+  const {
+    defendant,
+    workingCase,
+    setWorkingCase,
+    onDelete,
+    onChange,
+    updateDefendantState,
+  } = props
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
 
@@ -61,60 +80,48 @@ const DefendantInfo: React.FC<Props> = (props) => {
       <Box marginBottom={2} className={styles.genderContainer}>
         <Box className={styles.genderColumn}>
           <RadioButton
-            name="accusedGender"
-            id="genderMale"
+            name={`accusedGender${defendant.id}`}
+            id={`genderMale${defendant.id}`}
             label={formatMessage(core.male)}
             value={Gender.MALE}
             checked={defendant.gender === Gender.MALE}
-            onChange={() =>
-              setAndSendToServer(
-                'accusedGender',
-                Gender.MALE,
-                workingCase,
-                setWorkingCase,
-                updateCase,
-              )
-            }
+            onChange={() => {
+              onChange(defendant.id, {
+                gender: Gender.MALE,
+              })
+            }}
             large
             backgroundColor="white"
           />
         </Box>
         <Box className={styles.genderColumn}>
           <RadioButton
-            name="accusedGender"
-            id="genderFemale"
+            name={`accusedGender${defendant.id}`}
+            id={`genderFemale${defendant.id}`}
             label={formatMessage(core.female)}
             value={Gender.FEMALE}
             checked={defendant.gender === Gender.FEMALE}
-            onChange={() =>
-              setAndSendToServer(
-                'accusedGender',
-                Gender.FEMALE,
-                workingCase,
-                setWorkingCase,
-                updateCase,
-              )
-            }
+            onChange={async () => {
+              onChange(defendant.id, {
+                gender: Gender.FEMALE,
+              })
+            }}
             large
             backgroundColor="white"
           />
         </Box>
         <Box className={styles.genderColumn}>
           <RadioButton
-            name="accusedGender"
-            id="genderOther"
+            name={`accusedGender${defendant.id}`}
+            id={`genderOther${defendant.id}`}
             label={formatMessage(core.otherGender)}
             value={Gender.OTHER}
             checked={defendant.gender === Gender.OTHER}
-            onChange={() =>
-              setAndSendToServer(
-                'accusedGender',
-                Gender.OTHER,
-                workingCase,
-                setWorkingCase,
-                updateCase,
-              )
-            }
+            onChange={async () => {
+              onChange(defendant.id, {
+                gender: Gender.OTHER,
+              })
+            }}
             large
             backgroundColor="white"
           />
@@ -125,27 +132,35 @@ const DefendantInfo: React.FC<Props> = (props) => {
           mask="999999-9999"
           maskPlaceholder={null}
           value={defendant.nationalId ?? ''}
-          onChange={(event) =>
-            removeTabsValidateAndSet(
-              'accusedNationalId',
-              event,
-              ['empty', 'national-id'],
-              workingCase,
-              setWorkingCase,
-              nationalIdErrorMessage,
-              setNationalIdErrorMessage,
+          onChange={(evt) => {
+            // Validate
+            const isValid = (['empty', 'national-id'] as Validation[]).some(
+              (validation) =>
+                validate(evt.target.value, validation).isValid === false,
             )
-          }
-          onBlur={(event) =>
-            validateAndSendToServer(
-              'accusedNationalId',
-              event.target.value,
-              ['empty', 'national-id'],
-              workingCase,
-              updateCase,
-              setNationalIdErrorMessage,
-            )
-          }
+
+            // Set errormessage if invalid and remove error message if not
+            if (nationalIdErrorMessage !== '' && isValid) {
+              setNationalIdErrorMessage('')
+            }
+
+            // Set state
+            updateDefendantState(defendant.id, {
+              nationalId: evt.target.value,
+            })
+          }}
+          onBlur={(evt) => {
+            const error = (['empty', 'national-id'] as Validation[])
+              .map((v) => validate(evt.target.value, v))
+              .find((v) => v.isValid === false)
+
+            if (error && setNationalIdErrorMessage) {
+              setNationalIdErrorMessage(error.errorMessage)
+              return
+            }
+
+            onChange(defendant.id, { nationalId: evt.target.value })
+          }}
         >
           <Input
             data-testid="nationalId"
