@@ -7,11 +7,6 @@ export const serviceSetup = (services: {
     .namespace('air-discount-scheme')
     .serviceAccount()
     .env({
-      SAML_ENTRY_POINT: {
-        dev: 'https://innskraning.island.is/?id=ads.dev',
-        staging: 'https://innskraning.island.is/?id=ads.staging',
-        prod: 'https://innskraning.island.is/?id=ads.prod',
-      },
       AUTH_AUDIENCE: {
         dev: 'loftbru.dev01.devland.is',
         staging: 'loftbru.staging01.devland.is',
