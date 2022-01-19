@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { FC, useContext, useRef, useEffect } from 'react'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
 import NextLink from 'next/link'
@@ -9,6 +9,7 @@ import {
   Breadcrumbs,
   GridColumn,
   GridRow,
+  LoadingDots,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -21,16 +22,23 @@ import { Query, Role } from '@island.is/skilavottord-web/graphql/schema'
 import { CarsTable, RecyclingCompanyImage } from './components'
 
 export const SkilavottordVehiclesQuery = gql`
-  query skilavottordVehiclesQuery {
-    skilavottordAllDeregisteredVehicles {
-      vehicleId
-      vehicleType
-      newregDate
-      createdAt
-      recyclingRequests {
-        id
-        nameOfRequestor
+  query skilavottordVehiclesQuery($after: String!) {
+    skilavottordAllDeregisteredVehicles(first: 20, after: $after) {
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+      count
+      items {
+        vehicleId
+        vehicleType
+        newregDate
         createdAt
+        recyclingRequests {
+          id
+          nameOfRequestor
+          createdAt
+        }
       }
     }
   }
@@ -41,9 +49,54 @@ const Overview: FC = () => {
   const {
     t: { recyclingFundOverview: t, recyclingFundSidenav: sidenavText, routes },
   } = useI18n()
+  const { data, loading, fetchMore } = useQuery<Query>(
+    SkilavottordVehiclesQuery,
+    {
+      notifyOnNetworkStatusChange: true,
+      variables: { after: '' },
+    },
+  )
+  const { pageInfo, items: vehicles } =
+    data?.skilavottordAllDeregisteredVehicles ?? {}
 
-  const { data } = useQuery<Query>(SkilavottordVehiclesQuery)
-  const vehicles = data?.skilavottordAllDeregisteredVehicles ?? []
+  const triggerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (loading) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const { hasNextPage, endCursor } = pageInfo
+        if (entries[0].isIntersecting && hasNextPage) {
+          fetchMore({
+            variables: { after: endCursor },
+            updateQuery: (
+              { skilavottordAllDeregisteredVehicles },
+              { fetchMoreResult },
+            ) => {
+              const prevResults = skilavottordAllDeregisteredVehicles
+              const newResults =
+                fetchMoreResult?.skilavottordAllDeregisteredVehicles
+              return {
+                skilavottordAllDeregisteredVehicles: {
+                  ...newResults,
+                  items: [...prevResults?.items, ...newResults?.items],
+                },
+              }
+            },
+          })
+        }
+      },
+      {
+        root: null,
+        rootMargin: '0px',
+        threshold: 1.0,
+      },
+    )
+    triggerRef.current && observer.observe(triggerRef.current)
+    return () => {
+      observer.disconnect()
+    }
+  }, [loading])
 
   if (!user) {
     return null
@@ -122,11 +175,24 @@ const Overview: FC = () => {
         </Box>
         <Stack space={3}>
           <Text variant="h3">{t.subtitles.deregistered}</Text>
-          {vehicles.length > 0 ? (
-            <CarsTable titles={t.table} vehicles={vehicles} />
+          {vehicles?.length > 0 ? (
+            <>
+              <CarsTable titles={t.table} vehicles={vehicles} />
+
+              {loading && (
+                <Box display="flex" justifyContent="center" marginTop={4}>
+                  <LoadingDots />
+                </Box>
+              )}
+            </>
+          ) : loading ? (
+            <Box display="flex" justifyContent="center" marginTop={4}>
+              <LoadingDots />
+            </Box>
           ) : (
             <Text>{t.info}</Text>
           )}
+          <div ref={triggerRef} />
         </Stack>
       </Stack>
     </PartnerPageLayout>

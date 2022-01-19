@@ -88,6 +88,9 @@
     "api-domains-communications": {
       "tags": []
     },
+    "api-domains-company-registry": {
+      "tags": []
+    },
     "api-domains-content-search": {
       "tags": []
     },
@@ -146,9 +149,6 @@
       "tags": []
     },
     "api-domains-regulations": {
-      "tags": []
-    },
-    "api-domains-rsk": {
       "tags": []
     },
     "api-domains-syslumenn": {
@@ -230,10 +230,10 @@
     "application-templates-institution-collaboration": {
       "tags": []
     },
-    "application-templates-joint-custody-agreement": {
+    "application-templates-login-service": {
       "tags": []
     },
-    "application-templates-login-service": {
+    "application-templates-p-sign": {
       "tags": []
     },
     "application-templates-parental-leave": {
@@ -331,6 +331,9 @@
     "clients-regulations": {
       "tags": []
     },
+    "clients-rsk-company-registry": {
+      "tags": []
+    },
     "clients-rsk-v1": {
       "tags": []
     },
@@ -387,6 +390,9 @@
       "tags": []
     },
     "email-service": {
+      "tags": []
+    },
+    "external-contracts-tests": {
       "tags": []
     },
     "feature-flags": {
@@ -546,6 +552,9 @@
       "tags": []
     },
     "nest-problem": {
+      "tags": []
+    },
+    "nest-swagger": {
       "tags": []
     },
     "nest-validators": {

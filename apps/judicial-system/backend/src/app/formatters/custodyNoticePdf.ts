@@ -131,16 +131,11 @@ function constructCustodyNoticePdf(
     )
 
   const custodyRestrictions = formatCustodyRestrictions(
-    existingCase.accusedGender,
-    existingCase.custodyRestrictions,
+    existingCase.requestedCustodyRestrictions,
+    existingCase.isCustodyIsolation,
   )
 
-  if (
-    existingCase.custodyRestrictions?.includes(
-      CaseCustodyRestrictions.ISOLATION,
-    ) ||
-    custodyRestrictions
-  ) {
+  if (existingCase.isCustodyIsolation || custodyRestrictions) {
     doc
       .text(' ')
       .text(' ')
@@ -150,11 +145,7 @@ function constructCustodyNoticePdf(
       .text('Tilhögun gæsluvarðhalds')
       .font('Helvetica')
       .fontSize(baseFontSize)
-    if (
-      existingCase.custodyRestrictions?.includes(
-        CaseCustodyRestrictions.ISOLATION,
-      )
-    ) {
+    if (existingCase.isCustodyIsolation) {
       doc.text(
         formatCustodyIsolation(
           existingCase.accusedGender,

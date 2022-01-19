@@ -71,7 +71,7 @@ export function formatCourtHeadsUpSmsNotification(
   requestedCourtDate?: Date,
 ): string {
   // Prosecutor
-  const prosecutorText = ` Ákærandi: ${prosecutorName ?? 'Ekki skráður'}.`
+  const prosecutorText = ` Sækjandi: ${prosecutorName ?? 'Ekki skráður'}.`
 
   // Arrest date
   const arrestDateText = arrestDate
@@ -115,7 +115,7 @@ export function formatCourtReadyForCourtSmsNotification(
       : type === CaseType.OTHER
       ? 'Krafa um rannsóknarheimild'
       : `Krafa um rannsóknarheimild (${caseTypes[type]})`
-  const prosecutorText = ` Ákærandi: ${prosecutorName ?? 'Ekki skráður'}.`
+  const prosecutorText = ` Sækjandi: ${prosecutorName ?? 'Ekki skráður'}.`
   const courtText = ` Dómstóll: ${court ?? 'Ekki skráður'}.`
 
   return `${submittedCaseText} tilbúin til afgreiðslu.${prosecutorText}${courtText}`
@@ -124,7 +124,7 @@ export function formatCourtReadyForCourtSmsNotification(
 export function formatCourtResubmittedToCourtSmsNotification(
   courtCaseNumber?: string,
 ) {
-  return `Ákærandi í máli ${courtCaseNumber} hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði.`
+  return `Sækjandi í máli ${courtCaseNumber} hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði.`
 }
 
 export function formatProsecutorReceivedByCourtSmsNotification(
@@ -267,7 +267,7 @@ export function formatCourtRevokedSmsNotification(
   courtDate?: Date,
 ) {
   // Prosecutor
-  const prosecutorText = ` Ákærandi: ${prosecutorName ?? 'Ekki skráður'}.`
+  const prosecutorText = ` Sækjandi: ${prosecutorName ?? 'Ekki skráður'}.`
 
   // Court date
   const courtDateText = courtDate

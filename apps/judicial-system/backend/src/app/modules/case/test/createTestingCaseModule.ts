@@ -19,7 +19,6 @@ import { CaseController } from '../case.controller'
 
 jest.mock('@island.is/dokobit-signing')
 jest.mock('@island.is/email-service')
-jest.mock('@island.is/cms-translations')
 jest.mock('../../court/court.service.ts')
 jest.mock('../../event/event.service.ts')
 jest.mock('../../user/user.service.ts')
@@ -44,7 +43,12 @@ export const createTestingCaseModule = async () => {
       EventService,
       SigningService,
       EmailService,
-      IntlService,
+      {
+        provide: IntlService,
+        useValue: {
+          useIntl: async () => ({}),
+        },
+      },
       {
         provide: getModelToken(Case),
         useValue: {

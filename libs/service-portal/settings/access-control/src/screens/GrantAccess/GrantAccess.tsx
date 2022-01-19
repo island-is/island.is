@@ -155,7 +155,7 @@ function GrantAccess() {
               })}
             </Text>
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '8/12']} paddingBottom={4}>
+          <GridColumn span={['12/12', '12/12', '8/12']}>
             <div className={styles.inputWrapper}>
               {name && (
                 <Input
@@ -168,9 +168,14 @@ function GrantAccess() {
                     defaultMessage: 'Aðgangshafi',
                   })}
                   disabled
+                  size="md"
                 />
               )}
-              <Box display={name ? 'none' : 'block'} aria-live="assertive">
+              <Box
+                display={name ? 'none' : 'block'}
+                aria-live="assertive"
+                marginBottom={[1, 1, 0]}
+              >
                 <InputController
                   control={control}
                   id="toNationalId"
@@ -211,6 +216,7 @@ function GrantAccess() {
                   onChange={(value) => {
                     requestDelegation(value)
                   }}
+                  size="md"
                 />
               </Box>
               {queryLoading ? (

@@ -7,8 +7,12 @@ const AssetDisclaimer = () => {
   const { formatMessage } = useLocale()
   return (
     <Box>
-      <Text paddingTop={4}>{formatMessage(messages.disclaimerA)}</Text>
-      <Text paddingTop={3}>{formatMessage(messages.disclaimerB)}</Text>
+      <Text variant="small" paddingTop={4}>
+        {formatMessage(messages.disclaimerA)}
+      </Text>
+      <Text variant="small" paddingTop={3}>
+        {formatMessage(messages.disclaimerB)}
+      </Text>
     </Box>
   )
 }

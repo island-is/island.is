@@ -72,6 +72,24 @@ export const calculatePersonalTaxAllowanceUsed = (
   return Math.min(personalTaxAllowanceUsed, tax)
 }
 
+export const calculatePersonalTaxAllowanceFromAmount = (
+  personalTaxCreditPercentage = 0,
+  spousedPersonalTaxCreditPercentage = 0,
+): number => {
+  const taxInfoYear: TaxInfoYear = taxInfoNumbers
+  const taxInfo = taxInfoYear[currentYear]
+
+  const personalTaxAllowance = Math.floor(
+    taxInfo.personalTaxAllowance * (personalTaxCreditPercentage / 100),
+  )
+
+  const spouseTaxAllowance = Math.floor(
+    taxInfo.personalTaxAllowance * (spousedPersonalTaxCreditPercentage / 100),
+  )
+
+  return Math.floor(personalTaxAllowance + spouseTaxAllowance)
+}
+
 export const calculateAcceptedAidFinalAmount = (
   amount: number,
   personalTaxCreditPercentage: number,
@@ -96,7 +114,6 @@ export const calculateAcceptedAidFinalAmount = (
     tax - personalTaxAllowance + spouseTaxAllowance,
     0,
   )
-
   return amount - finalTaxAmount
 }
 
@@ -143,6 +160,12 @@ export const acceptedAmountBreakDown = (amount?: Amount): Calculations[] => {
     return []
   }
 
+  const isPos =
+    calculatePersonalTaxAllowanceFromAmount(
+      amount.personalTaxCredit,
+      amount.spousePersonalTaxCredit,
+    ) > 0
+
   const deductionFactors =
     amount?.deductionFactors?.map((deductionFactor) => {
       return {
@@ -162,7 +185,7 @@ export const acceptedAmountBreakDown = (amount?: Amount): Calculations[] => {
       title: 'Tekjur',
       calculation: amount?.income
         ? `- ${amount?.income.toLocaleString('de-DE')} kr.`
-        : '0',
+        : '0 kr.',
     },
     ...deductionFactors,
     {
@@ -171,7 +194,12 @@ export const acceptedAmountBreakDown = (amount?: Amount): Calculations[] => {
     },
     {
       title: 'Persónuafsláttur',
-      calculation: `${amount?.personalTaxCredit.toLocaleString('de-DE')} kr. `,
+      calculation: `${
+        isPos ? '+' : ''
+      } ${calculatePersonalTaxAllowanceFromAmount(
+        amount.personalTaxCredit,
+        amount.spousePersonalTaxCredit,
+      ).toLocaleString('de-DE')} kr.`,
     },
     {
       title: 'Aðstoð',

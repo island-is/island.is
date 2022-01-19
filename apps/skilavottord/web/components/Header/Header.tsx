@@ -93,7 +93,7 @@ export const Header: FC = () => {
       language={activeLocale}
       switchLanguage={() => switchLanguage(nextLanguage)}
       userName={loading ? '' : user?.name ?? session?.user.name ?? ''}
-      authenticated={true || isAuthenticated}
+      authenticated={isAuthenticated}
       onLogout={logout}
     />
   )

@@ -47,7 +47,7 @@ export const StatisticsSearch = () => {
           <AsyncSearch
             options={options}
             filter={(option) => option.label.includes(searchTerm)}
-            size={'large'}
+            size="large"
             placeholder={formatMessage(m.StatisticsSearchPlaceholder)}
             inputValue={searchTerm}
             onInputValueChange={setSearchTerm}
@@ -59,7 +59,7 @@ export const StatisticsSearch = () => {
       <GridRow>
         <GridColumn span="6/12">
           <Select
-            name={'select-left'}
+            name="select-left"
             placeholder={formatMessage(
               m.DashBoardStatisticsCategoryPlaceHolder,
             )}
@@ -69,11 +69,12 @@ export const StatisticsSearch = () => {
               { label: 'Fjármál', value: 'fjarmal' },
               { label: 'Annað', value: 'annad' },
             ]}
+            size="xs"
           />
         </GridColumn>
         <GridColumn span="6/12">
           <Select
-            name={'select-right'}
+            name="select-right"
             onChange={(...args) => {
               console.log(args)
             }}
@@ -86,6 +87,7 @@ export const StatisticsSearch = () => {
               { label: 'Fjármál', value: 'fjarmal' },
               { label: 'Annað', value: 'annad' },
             ]}
+            size="xs"
           />
         </GridColumn>
       </GridRow>

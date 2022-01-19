@@ -14,7 +14,7 @@ import {
 import { unitsArray } from '../../utils/createUnits'
 import { GET_UNITS_OF_USE_QUERY } from '../../lib/queries'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
-
+import { tableStyles } from '@island.is/service-portal/core'
 interface Props {
   units: UnitsOfUseModel
   locationData?: PropertyLocation | null
@@ -85,11 +85,11 @@ const AssetGrid: FC<Props> = ({ title, units, assetId, locationData }) => {
         >
           <T.Head>
             <T.Row>
-              <T.HeadData colSpan={4}>
-                <Text variant="eyebrow" as="span">
+              <T.HeadData colSpan={4} style={tableStyles}>
+                <Text variant="medium" fontWeight="semiBold" as="span">
                   {table?.header?.title}
                 </Text>{' '}
-                <Text variant="small" as="span">
+                <Text variant="medium" as="span">
                   {table.header.value}
                 </Text>
               </T.HeadData>
@@ -99,19 +99,24 @@ const AssetGrid: FC<Props> = ({ title, units, assetId, locationData }) => {
             {table.rows.map((row, ii) => (
               <T.Row key={`row-${ii}`}>
                 {row.map((rowitem, iii) => (
-                  <T.Data key={`rowitem-${iii}`} colSpan={2}>
+                  <T.Data
+                    key={`rowitem-${iii}`}
+                    colSpan={2}
+                    style={tableStyles}
+                  >
                     <Columns collapseBelow="md" space={2}>
                       <Column>
                         <Text
                           title={rowitem.detail}
-                          variant="eyebrow"
+                          variant="medium"
+                          fontWeight="semiBold"
                           as="span"
                         >
                           {rowitem.title}
                         </Text>
                       </Column>
                       <Column>
-                        <Text variant="small" title={rowitem.detail}>
+                        <Text variant="medium" title={rowitem.detail}>
                           {rowitem.value}
                         </Text>
                       </Column>
@@ -130,7 +135,7 @@ const AssetGrid: FC<Props> = ({ title, units, assetId, locationData }) => {
           justifyContent="center"
           display="flex"
         >
-          <Button size="small" variant="text" onClick={paginate}>
+          <Button variant="text" onClick={paginate}>
             {formatMessage(m.fetchMore)}
           </Button>
         </Box>

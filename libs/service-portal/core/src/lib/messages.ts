@@ -381,6 +381,10 @@ export const m = defineMessages({
     id: 'service.portal:finance-local-tax',
     defaultMessage: 'Útsvar',
   },
+  searchLabel: {
+    id: 'service.portal:search-label',
+    defaultMessage: 'Leit',
+  },
   searchPlaceholder: {
     id: 'service.portal:search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
@@ -439,6 +443,15 @@ export const m = defineMessages({
     id: 'service.portal:accessControlAccess',
     defaultMessage: 'Aðgangur',
   },
+  accessDenied: {
+    id: 'service.portal:accessDenied',
+    defaultMessage: 'Ekki með aðgang',
+  },
+  accessDeniedText: {
+    id: 'service.portal:accessDeniedText',
+    defaultMessage:
+      'Þú hefur því miður ekki aðgang af þessu svæði. Það verður að óska eftir aðgangi hjá viðeigandi aðila. Það gæti verið einhver innan UT deildar fyrirtækis, eigandi eða annar aðili sem sér um þessi mál. ',
+  },
   educationStudentAssessment: {
     id: 'service.portal:educationStudentAssessment',
     defaultMessage: 'Samræmd könnunarpróf',
@@ -454,6 +467,10 @@ export const m = defineMessages({
   displayName: {
     id: 'service.portal:display-name',
     defaultMessage: 'Birtingarnafn',
+  },
+  fullName: {
+    id: 'service.portal:full-name',
+    defaultMessage: 'Fullt nafn',
   },
   gender: {
     id: 'service.portal:gender',
@@ -577,8 +594,20 @@ export const m = defineMessages({
     id: 'service.portal:endpoint',
     defaultMessage: 'Endapunktur',
   },
+  openFinanceDetail: {
+    id: 'service.portal:open-finance-detail',
+    defaultMessage: 'Skoða sundurliðun',
+  },
+  closeFinanceDetail: {
+    id: 'service.portal:close-finance-detail',
+    defaultMessage: 'Loka sundurliðun',
+  },
   islykill: {
     id: 'service.portal:islykill',
     defaultMessage: 'Íslykill',
+  },
+  altText: {
+    id: 'service.portal:alt-text',
+    defaultMessage: 'Skrautmynd fyrir',
   },
 })

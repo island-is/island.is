@@ -100,21 +100,6 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
       !ownersQuery?.data?.assetsPropertyOwners?.paging)
   return (
     <>
-      <Box marginBottom={[3, 4, 5]}>
-        <IntroHeader
-          title={defineMessage({
-            id: 'sp.assets:title',
-            defaultMessage: 'Fasteignir',
-          })}
-          intro={defineMessage({
-            id: 'sp.assets:intro',
-            defaultMessage:
-              'Hér færðu upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert skráður eigandi að.',
-          })}
-          img="./assets/images/sofa.svg"
-          hideImgPrint
-        />
-      </Box>
       <DetailHeader
         title={`${assetData?.defaultAddress?.displayShort} - ${assetData?.propertyNumber}`}
       />

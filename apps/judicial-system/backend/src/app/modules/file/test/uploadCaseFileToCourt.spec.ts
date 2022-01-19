@@ -260,6 +260,8 @@ describe('FileController - Upload case file to court', () => {
       mockGetObject.mockResolvedValueOnce(content)
       const mockUpdate = mockFileModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1])
+      const mockDeleteObject = mockAwsS3Service.deleteObject as jest.Mock
+      mockDeleteObject.mockResolvedValueOnce(true)
 
       then = await givenWhenThen(caseId, fileId, theCase, caseFile)
     })

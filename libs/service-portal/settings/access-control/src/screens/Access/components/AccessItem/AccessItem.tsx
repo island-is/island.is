@@ -12,6 +12,7 @@ import { useLocale } from '@island.is/localization'
 
 import type { Scope } from '../../Access'
 import * as styles from './AccessItem.css'
+import { tableStyles } from '@island.is/service-portal/core'
 
 type TableDataProps = React.ComponentProps<typeof T.Data>
 
@@ -121,7 +122,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
               <CheckboxController
                 id={`${item.model}.name`}
                 spacing={0}
-                labelVariant={isFirstItem ? 'default' : 'small'}
+                labelVariant={isFirstItem ? 'default' : 'medium'}
                 defaultValue={existingScope ? [existingScope.name] : []}
                 options={[
                   {
@@ -133,7 +134,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
               />
             </T.Data>
             <T.Data box={tdStyling}>
-              <Text variant={isFirstItem ? 'default' : 'small'}>
+              <Text variant={isFirstItem ? 'default' : 'medium'}>
                 {item.description}
               </Text>
             </T.Data>

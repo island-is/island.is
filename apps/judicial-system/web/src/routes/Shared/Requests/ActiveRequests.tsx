@@ -1,4 +1,5 @@
 import React, { useContext, useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import localeIS from 'date-fns/locale/is'
 import format from 'date-fns/format'
@@ -13,6 +14,7 @@ import {
   SortConfig,
 } from '@island.is/judicial-system-web/src/types'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import { core, requests } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 
 import { mapCaseStateToTagVariant } from './utils'
@@ -28,6 +30,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
   const { cases, onRowClick, onDeleteCase } = props
 
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isCourtRole =
     user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
@@ -84,7 +87,9 @@ const ActiveRequests: React.FC<Props> = (props) => {
         <tr>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              Málsnr.
+              {formatMessage(
+                requests.sections.activeRequests.table.headers.caseNumber,
+              )}
             </Text>
           </th>
           <th className={cn(styles.th, styles.largeColumn)}>
@@ -96,7 +101,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
               onClick={() => requestSort('accusedName')}
               data-testid="accusedNameSortButton"
             >
-              <Text fontWeight="regular">Sakborningur</Text>
+              <Text fontWeight="regular">{formatMessage(core.accused)}</Text>
               <Box
                 className={cn(styles.sortIcon, {
                   [styles.sortAccusedNameAsc]:
@@ -115,12 +120,16 @@ const ActiveRequests: React.FC<Props> = (props) => {
           </th>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              Tegund
+              {formatMessage(
+                requests.sections.activeRequests.table.headers.type,
+              )}
             </Text>
           </th>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              Staða
+              {formatMessage(
+                requests.sections.activeRequests.table.headers.state,
+              )}
             </Text>
           </th>
           <th className={styles.th}>
@@ -131,7 +140,11 @@ const ActiveRequests: React.FC<Props> = (props) => {
               className={styles.thButton}
               onClick={() => requestSort('created')}
             >
-              <Text fontWeight="regular">Krafa stofnuð</Text>
+              <Text fontWeight="regular">
+                {formatMessage(
+                  requests.sections.activeRequests.table.headers.created,
+                )}
+              </Text>
               <Box
                 className={cn(styles.sortIcon, {
                   [styles.sortCreatedAsc]:

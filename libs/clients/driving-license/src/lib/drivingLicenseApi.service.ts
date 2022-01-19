@@ -5,7 +5,6 @@ import { ApiV2, DRIVING_LICENSE_API_VERSION_V2, Rettindi } from '../v2'
 import { DriversLicense, Teacher } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
 
-// empty string === successful license posted!?!
 const DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE = ''
 
 @Injectable()

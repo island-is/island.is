@@ -21,10 +21,6 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import {
   closedCourt,
   icCourtRecord as m,
   core,
