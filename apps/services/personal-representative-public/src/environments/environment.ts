@@ -21,8 +21,8 @@ const prodConfig = {
   },
   port: 3338,
   auth: {
-    audience: '@island.is',
-    issuer: process.env.IDS_ISSUER ?? '',
+    audience: '@island.is/auth',
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',
   },
 }
 
