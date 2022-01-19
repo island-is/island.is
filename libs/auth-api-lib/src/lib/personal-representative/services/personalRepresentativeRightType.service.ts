@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -21,13 +26,13 @@ export class PersonalRepresentativeRightTypeService {
   async getMany(
     query: PaginationDto,
   ): Promise<PaginatedPersonalRepresentativeRightTypeDto> {
-    return await paginate({
+    return paginate({
       Model: this.personalRepresentativeRightTypeModel,
       limit: query.limit || 10,
       after: query.after ?? '',
       before: query.before ?? '',
       primaryKeyField: 'code',
-      orderOption: [['code', 'DESC']],
+      orderOption: [['code', 'ASC']],
       where: {},
     })
   }
@@ -37,13 +42,13 @@ export class PersonalRepresentativeRightTypeService {
     searchString: string,
     query: PaginationDto,
   ): Promise<PaginatedPersonalRepresentativeRightTypeDto> {
-    return await paginate({
+    return paginate({
       Model: this.personalRepresentativeRightTypeModel,
       limit: query.limit || 10,
       after: query.after ?? '',
       before: query.before ?? '',
       primaryKeyField: 'code',
-      orderOption: [['code', 'DESC']],
+      orderOption: [['code', 'ASC']],
       where: {
         $or: [
           {
@@ -94,9 +99,17 @@ export class PersonalRepresentativeRightTypeService {
       'Updating personalRepresentativeRightType with code ',
       code,
     )
-
     if (!code) {
       throw new BadRequestException('code must be provided')
+    }
+    if (code !== personalRepresentativeRightType.code) {
+      throw new BadRequestException('data descreptancy')
+    }
+    const currentData = await this.personalRepresentativeRightTypeModel.findByPk(
+      code,
+    )
+    if (!currentData) {
+      throw new NotFoundException()
     }
 
     await this.personalRepresentativeRightTypeModel.update(
