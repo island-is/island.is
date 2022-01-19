@@ -1,6 +1,5 @@
 import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize/types'
-import { Sequelize } from 'sequelize-typescript'
 
 import {
   CaseCustodyRestrictions,
