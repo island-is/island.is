@@ -44,6 +44,7 @@ import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
+import slugify from '@sindresorhus/slugify'
 
 const lightThemes = ['traveling-to-iceland', 'election']
 
@@ -185,24 +186,20 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
     [router.query.subSlug, projectPage.projectSubpages],
   )
 
-  const routerPathWithoutQueryParams = router.asPath.split('?')[0]
+  const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
 
   const navigationList = useMemo(
     () =>
       assignNavigationActive(
         convertLinkGroupsToNavigationItems(projectPage.sidebarLinks),
-        routerPathWithoutQueryParams,
+        baseRouterPath,
       ),
-    [routerPathWithoutQueryParams, projectPage.sidebarLinks],
+    [baseRouterPath, projectPage.sidebarLinks],
   )
 
   const activeNavigationItemTitle = useMemo(
-    () =>
-      getActiveNavigationItemTitle(
-        navigationList,
-        routerPathWithoutQueryParams,
-      ),
-    [routerPathWithoutQueryParams, navigationList],
+    () => getActiveNavigationItemTitle(navigationList, baseRouterPath),
+    [baseRouterPath, navigationList],
   )
 
   const navigationTitle = n('navigationTitle', 'Efnisyfirlit')
@@ -220,17 +217,21 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
 
   useEffect(() => {
     if (renderSlicesAsTabs && !!subpage && subpage?.slices?.length > 0) {
-      let index = 0
+      const [, anchorSlug] = router.asPath.split('#')
+      const slices = subpage.slices as OneColumnText[]
 
-      if (router.query?.selectedTabIndex !== undefined) {
-        index = Number(router.query?.selectedTabIndex)
-        if (isNaN(index) || index < 0 || index >= subpage.slices.length)
-          index = 0
+      let slice = slices[0]
+
+      if (anchorSlug) {
+        const anchorSlice = slices.find((s) => anchorSlug === slugify(s.title))
+        if (anchorSlice) {
+          slice = anchorSlice
+        }
       }
 
-      setSelectedSliceTab(subpage.slices[index] as OneColumnText)
+      setSelectedSliceTab(slice)
     }
-  }, [renderSlicesAsTabs, router.query?.selectedTabIndex, subpage])
+  }, [renderSlicesAsTabs, subpage, router.asPath])
 
   return (
     <>
@@ -302,10 +303,7 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
                 (s) => s.id === id,
               ) as OneColumnText
               router.push(
-                {
-                  pathname: routerPathWithoutQueryParams,
-                  query: { selectedTabIndex: subpage.slices.indexOf(slice) },
-                },
+                `${baseRouterPath}#${slugify(slice.title)}`,
                 undefined,
                 { shallow: true },
               )
