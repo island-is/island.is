@@ -22,6 +22,10 @@ export const EditBasics: StepComponent = (props) => {
   const startTextExpanded =
     !text.value || appendixes.length === 0 || !!text.error
 
+  const regType =
+    draft.type.value &&
+    t(draft.type.value === 'amending' ? msg.type_amending : msg.type_base)
+
   return (
     <>
       <Box marginBottom={3}>
@@ -33,9 +37,14 @@ export const EditBasics: StepComponent = (props) => {
           error={t(draft.title.error)}
           required
         />
+        <Box marginTop={1} marginLeft={1}>
+          <Text variant="small" color="dark200">
+            {regType ? `(${regType})` : ' '}
+          </Text>
+        </Box>
       </Box>
 
-      <Box marginTop={6} marginBottom={[6, 6, 8]}>
+      <Box marginBottom={[6, 6, 8]}>
         <Accordion>
           <AccordionItem
             id={draft.id}
