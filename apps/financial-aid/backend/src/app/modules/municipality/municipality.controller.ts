@@ -42,7 +42,7 @@ export class MunicipalityController {
     const municipality = await this.municipalityService.findByMunicipalityId(id)
 
     if (!municipality) {
-      throw new NotFoundException(`municipality ${id} not found`)
+      throw new NotFoundException(404, `municipality ${id} not found`)
     }
 
     return municipality
