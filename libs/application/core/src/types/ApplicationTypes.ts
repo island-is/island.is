@@ -88,6 +88,7 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: {
     slug: 'veidileyfi',
     translation: 'gfl.application',
+  },
   [ApplicationTypes.P_SIGN]: {
     slug: 'p-merki',
     translation: 'ps.application',
