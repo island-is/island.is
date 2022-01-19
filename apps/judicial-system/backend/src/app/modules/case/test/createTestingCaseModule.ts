@@ -58,6 +58,7 @@ export const createTestingCaseModule = async () => {
         provide: LOGGER_PROVIDER,
         useValue: ({
           debug: jest.fn(),
+          info: jest.fn(),
           error: jest.fn(),
         } as unknown) as Logger,
       },
@@ -74,22 +75,19 @@ export const createTestingCaseModule = async () => {
     ],
   }).compile()
 
-  const logger = caseModule.get<Logger>(LOGGER_PROVIDER)
-
   const userService = caseModule.get<UserService>(UserService)
 
   const defendantService = caseModule.get<DefendantService>(DefendantService)
 
   const sequelize = caseModule.get<Sequelize>(Sequelize)
 
-  const caseModel = await caseModule.resolve<typeof Case>(getModelToken(Case))
+  const caseModel = await caseModule.get<typeof Case>(getModelToken(Case))
 
   const caseService = caseModule.get<CaseService>(CaseService)
 
   const caseController = caseModule.get<CaseController>(CaseController)
 
   return {
-    logger,
     userService,
     defendantService,
     sequelize,

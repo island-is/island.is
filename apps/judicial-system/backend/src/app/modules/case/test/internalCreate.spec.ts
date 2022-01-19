@@ -3,7 +3,6 @@ import { Transaction } from 'sequelize/types'
 
 import { BadRequestException } from '@nestjs/common'
 
-import type { Logger } from '@island.is/logging'
 import { Gender, CaseType, UserRole } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from './createTestingCaseModule'
@@ -22,7 +21,6 @@ interface Then {
 type GivenWhenThen = (caseToCreate: InternalCreateCaseDto) => Promise<Then>
 
 describe('CaseController - Internal create', () => {
-  let mockLogger: Logger
   let mockUserService: UserService
   let mockDefendantService: DefendantService
   let mockCaseModel: typeof Case
@@ -31,7 +29,6 @@ describe('CaseController - Internal create', () => {
 
   beforeEach(async () => {
     const {
-      logger,
       userService,
       defendantService,
       sequelize,
@@ -39,7 +36,6 @@ describe('CaseController - Internal create', () => {
       caseController,
     } = await createTestingCaseModule()
 
-    mockLogger = logger
     mockUserService = userService
     mockDefendantService = defendantService
     mockCaseModel = caseModel

@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing'
 
-import { LoggingModule } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
@@ -15,14 +16,25 @@ jest.mock('../../case/case.service.ts')
 export const createTestingPoliceModule = async () => {
   const policeModule = await Test.createTestingModule({
     imports: [
-      LoggingModule,
       SharedAuthModule.register({
         jwtSecret: environment.auth.jwtSecret,
         secretToken: environment.auth.secretToken,
       }),
     ],
     controllers: [PoliceController],
-    providers: [AwsS3Service, CaseService, PoliceService],
+    providers: [
+      AwsS3Service,
+      CaseService,
+      PoliceService,
+      {
+        provide: LOGGER_PROVIDER,
+        useValue: ({
+          debug: jest.fn(),
+          info: jest.fn(),
+          error: jest.fn(),
+        } as unknown) as Logger,
+      },
+    ],
   }).compile()
 
   const awsS3Service = policeModule.get<AwsS3Service>(AwsS3Service)

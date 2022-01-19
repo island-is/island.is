@@ -1,7 +1,8 @@
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
-import { LoggingModule } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
@@ -19,7 +20,6 @@ jest.mock('../../case/case.service.ts')
 export const createTestingFileModule = async () => {
   const fileModule = await Test.createTestingModule({
     imports: [
-      LoggingModule,
       SharedAuthModule.register({
         jwtSecret: environment.auth.jwtSecret,
         secretToken: environment.auth.secretToken,
@@ -30,6 +30,14 @@ export const createTestingFileModule = async () => {
       CaseService,
       CourtService,
       AwsS3Service,
+      {
+        provide: LOGGER_PROVIDER,
+        useValue: ({
+          debug: jest.fn(),
+          info: jest.fn(),
+          error: jest.fn(),
+        } as unknown) as Logger,
+      },
       {
         provide: getModelToken(CaseFile),
         useValue: {
