@@ -1,13 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useHistory } from 'react-router'
 import { Query } from '@island.is/api/schema'
 import { gql, useQuery, useMutation, ApolloError } from '@apollo/client'
 import { RegulationDraft } from '@island.is/regulations/admin'
 import {
-  RegName,
   LawChapter,
   MinistryList,
-  RegulationOption,
+  RegName,
   RegulationOptionList,
 } from '@island.is/regulations'
 import { ShippedSummary, DraftSummary } from '@island.is/regulations/admin'
@@ -214,72 +213,19 @@ export const useCreateRegulationDraft = () => {
 
 // ---------------------------------------------------------------------------
 
-// const RegulationListQuery = gql`
-//   query RegulationListQuery {
-//     getRegulationList
-//   }
-// `
-
-const useMockRegulationListQuery = (maybeNames: ReadonlyArray<string>) => {
-  const mockData: Array<Omit<RegulationOption, 'name'>> = [
-    {
-      title: 'Reglugerð fyrir hafnir Hafnasjóðs Dalvíkurbyggðar.',
-      migrated: true,
-    },
-    {
-      title: 'Reglugerð um (1.) breytingu á reglugerð nr. 101/2021.',
-      repealed: true,
-      migrated: true,
-    },
-    {
-      title: 'Reglugerð um eitthvað gamalt og gott.',
-      migrated: false,
-    },
-    {
-      title:
-        'Reglugerð um ákvörðun framlaga úr sveitarsjóði til sjálfstætt rekinna grunnskóla.',
-      migrated: true,
-    },
-    {
-      title: 'Reglugerð um jólasveina',
-      migrated: true,
-    },
-  ]
-
-  const getRegulationList = useMemo(
-    () =>
-      // Here we mix the incoming `RegName`s into the mock data
-      maybeNames
-        // Skip over (ignore) one of the incoming names
-        // to emulate a false-positive in the name-detection algoritm,
-        // which the API just ignored.
-        .filter((_, i) => i !== 1)
-        .map(
-          (name, i): RegulationOption => {
-            return {
-              name: name as RegName,
-              ...(mockData[i] || mockData[0]),
-            }
-          },
-        ),
-    [maybeNames],
-  )
-
-  return {
-    data: { getRegulationList },
-    loading: false,
-    error: undefined,
+const RegulationOptionListQuery = gql`
+  query RegulationOptionList($input: GetRegulationOptionListInput!) {
+    getRegulationOptionList(input: $input)
   }
-}
+`
 
 export const useRegulationListQuery = (
-  maybeNames: ReadonlyArray<string>,
+  names: ReadonlyArray<RegName>,
 ): QueryResult<RegulationOptionList> => {
-  // const { loading, error, data } = useQuery<Query>(RegulationListQuery, {
-  //   variables: { input: { names: maybeNames } },
-  //   fetchPolicy: 'no-cache',
-  // })
-  const { loading, error, data } = useMockRegulationListQuery(maybeNames)
+  const { loading, error, data } = useQuery<Query>(RegulationOptionListQuery, {
+    variables: { input: { names } },
+    fetchPolicy: 'no-cache',
+  })
 
   if (loading) {
     return { loading }
@@ -290,6 +236,6 @@ export const useRegulationListQuery = (
     }
   }
   return {
-    data: data.getRegulationList as RegulationOptionList,
+    data: data.getRegulationOptionList as RegulationOptionList,
   }
 }
