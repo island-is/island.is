@@ -297,18 +297,16 @@ function constructRestrictionRulingPdf(
     doc.text(' ').text(prosecutorAppeal, { align: 'justify', paragraphGap: 1 })
   }
 
-  // TODO defendants: handle multiple defendants
-  const accusedGender =
-    existingCase.defendants && existingCase.defendants[0].gender
-
   let accusedAppeal = formatAppeal(
     existingCase.accusedAppealDecision,
     capitalize(
-      formatMessage(core.accused, {
-        suffix: accusedGender === Gender.MALE ? 'i' : 'a ',
+      formatMessage(core.defendant, {
+        suffix:
+          existingCase.defendants && existingCase.defendants?.length > 1
+            ? 'ar'
+            : 'i',
       }),
     ),
-    accusedGender,
   )
 
   if (accusedAppeal) {
@@ -630,7 +628,14 @@ function constructInvestigationRulingPdf(
 
   let accusedAppeal = formatAppeal(
     existingCase.accusedAppealDecision,
-    'Varnaraðili',
+    capitalize(
+      formatMessage(core.defendant, {
+        suffix:
+          existingCase.defendants && existingCase.defendants?.length > 1
+            ? 'ar'
+            : 'i',
+      }),
+    ),
   )
 
   if (accusedAppeal) {
