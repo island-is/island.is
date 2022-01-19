@@ -1,8 +1,8 @@
-# Personal Representative
+# Personal Representative Public
 
 ## About
 
-A service that is responsible for storing and maintaining personal representatives and their rights to act on behalf of the represented person
+A service that is responsible for giving third party service providers information about personal representatives and threir rights
 
 ### Initial setup
 
@@ -22,7 +22,7 @@ yarn nx run services-auth-api:migrate
 You can serve this service locally by running:
 
 ```bash
-yarn start services-personal-representative
+yarn start services-personal-representative-public
 ```
 
 Api open api specs will now be accessible at
@@ -36,13 +36,13 @@ http://localhost:3378/swagger/#/default
 You can run tests for this service locally by running:
 
 ```bash
-yarn test services-personal-representative
+yarn test services-personal-representative-public
 ```
 
 ## Getting started
 
 ```bash
-yarn start services-personal-representative
+yarn start services-personal-representative- public
 ```
 
 ## Code owners and maintainers
