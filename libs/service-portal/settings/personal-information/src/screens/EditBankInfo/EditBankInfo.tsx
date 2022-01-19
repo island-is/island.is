@@ -8,6 +8,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { Link, Redirect } from 'react-router-dom'
+import { Locale } from '@island.is/shared/types'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
@@ -49,7 +50,6 @@ export const EditBankInfo: ServicePortalModuleComponent = () => {
     if (status !== 'passive') setStatus('passive')
 
     try {
-      // Update the profile if it exists, otherwise create one
       const formattedBankInfo = formData.bankInfo.replace(
         /^(.{4})(.{2})/,
         '$1-$2-',
@@ -57,6 +57,10 @@ export const EditBankInfo: ServicePortalModuleComponent = () => {
       if (settings) {
         await updateUserProfile({
           bankInfo: formattedBankInfo,
+          email: settings.email ?? undefined,
+          locale: (settings.locale as Locale) ?? undefined,
+          canNudge: settings.canNudge ?? undefined,
+          mobilePhoneNumber: settings.mobilePhoneNumber ?? undefined,
         })
       }
       setStatus('success')

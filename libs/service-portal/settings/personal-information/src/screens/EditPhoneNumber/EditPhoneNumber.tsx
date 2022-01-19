@@ -14,6 +14,7 @@ import {
   useCreateUserProfile,
   useUpdateUserProfile,
 } from '@island.is/service-portal/graphql'
+import { Locale } from '@island.is/shared/types'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
@@ -55,6 +56,10 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
       if (settings) {
         await updateUserProfile({
           mobilePhoneNumber: `+${parsePhoneNumber?.countryCallingCode}-${parsePhoneNumber?.nationalNumber}`,
+          email: settings.email ?? undefined,
+          locale: (settings.locale as Locale) ?? undefined,
+          canNudge: settings.canNudge ?? undefined,
+          bankInfo: settings.bankInfo ?? undefined,
         })
       } else {
         await createUserProfile({

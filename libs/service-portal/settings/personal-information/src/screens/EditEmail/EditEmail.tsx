@@ -12,6 +12,7 @@ import {
   useCreateUserProfile,
   useUpdateUserProfile,
 } from '@island.is/service-portal/graphql'
+import { Locale } from '@island.is/shared/types'
 import { Link, Redirect } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -47,6 +48,10 @@ export const EditEmail: ServicePortalModuleComponent = () => {
       if (settings) {
         await updateUserProfile({
           email: formData.email,
+          locale: (settings.locale as Locale) ?? undefined,
+          canNudge: settings.canNudge ?? undefined,
+          mobilePhoneNumber: settings.mobilePhoneNumber ?? undefined,
+          bankInfo: settings.bankInfo ?? undefined,
         })
       } else {
         await createUserProfile({

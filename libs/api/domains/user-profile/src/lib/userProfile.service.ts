@@ -96,17 +96,17 @@ export class UserProfileService {
       user,
     )
 
-    if (!feature) {
-      handleError({ status: 'User profile create is feature flagged for user' })
+    if (feature) {
+      await this.islyklarService
+        .createIslykillSettings(user.nationalId, {
+          email: input.email,
+          mobile: input.mobilePhoneNumber,
+          canNudge: input.canNudge,
+        }) // Current version does not return the newly created user in the response.
+        .catch(handleError)
+    } else {
+      logger.error('User profile create is feature flagged for user')
     }
-
-    await this.islyklarService
-      .createIslykillSettings(user.nationalId, {
-        email: input.email,
-        mobile: input.mobilePhoneNumber,
-        canNudge: input.canNudge,
-      }) // Current version does not return the newly created user in the response.
-      .catch(handleError)
 
     const userProfileResponse = await this.userProfileApiWithAuth(user)
       .userProfileControllerCreate(request)
@@ -138,23 +138,23 @@ export class UserProfileService {
       user,
     )
 
-    if (!feature) {
-      handleError({ status: 'User profile update is feature flagged for user' })
+    if (feature) {
+      const islyklarData = await this.islyklarService.getIslykillSettings(
+        user.nationalId,
+      )
+
+      // if email exists and *only* mobile is updated, email will become undefined. And vice-versa.
+      await this.islyklarService
+        .updateIslykillSettings(user.nationalId, {
+          email: input.email || islyklarData.email,
+          mobile: input.mobilePhoneNumber || islyklarData.mobile,
+          canNudge: input.canNudge || islyklarData.canNudge,
+          bankInfo: input.bankInfo || islyklarData.bankInfo,
+        }) // Current version does not return the updated user in the response.
+        .catch(handleError)
+    } else {
+      logger.error('User profile update is feature flagged for user')
     }
-
-    const islyklarData = await this.islyklarService.getIslykillSettings(
-      user.nationalId,
-    )
-
-    // if email exists and *only* mobile is updated, email will become undefined. And vice-versa.
-    await this.islyklarService
-      .updateIslykillSettings(user.nationalId, {
-        email: input.email || islyklarData.email,
-        mobile: input.mobilePhoneNumber || islyklarData.mobile,
-        canNudge: input.canNudge,
-        bankInfo: input.bankInfo,
-      }) // Current version does not return the updated user in the response.
-      .catch(handleError)
 
     return await this.userProfileApiWithAuth(user)
       .userProfileControllerUpdate(request)
