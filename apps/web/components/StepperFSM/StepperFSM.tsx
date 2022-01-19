@@ -35,9 +35,9 @@ const ANSWER_DELIMITER = ','
 
 interface StepperProps {
   stepper: Stepper
-  startAgainLabel: string
-  answerLabel: string
-  backLabel: string
+  startAgainLabel?: string
+  answerLabel?: string
+  backLabel?: string
 }
 
 interface StepOptionSelectItem {
