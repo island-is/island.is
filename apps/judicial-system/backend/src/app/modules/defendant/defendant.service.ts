@@ -43,7 +43,7 @@ export class DefendantService {
   ): Promise<Defendant> {
     return this.defendantModel.create(
       { ...defendantToCreate, caseId },
-      { transaction },
+      // { transaction },
     )
   }
 

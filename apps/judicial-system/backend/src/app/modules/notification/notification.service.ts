@@ -462,17 +462,21 @@ export class NotificationService {
     )
   }
 
-  // TODO defendants: handle multiple defendants
   private sendCourtDateEmailNotificationToPrison(
     theCase: Case,
   ): Promise<Recipient> {
     const subject = 'Krafa um gæsluvarðhald í vinnslu' // Always custody
+    // Assume there is at most one defendant
     const html = formatPrisonCourtDateEmailNotification(
       theCase.creatingProsecutor?.institution?.name,
       theCase.court?.name,
       theCase.courtDate,
-      theCase.defendants && theCase.defendants[0].name,
-      theCase.defendants && theCase.defendants[0].gender,
+      theCase.defendants && theCase.defendants.length > 1
+        ? theCase.defendants[0].name
+        : undefined,
+      theCase.defendants && theCase.defendants.length > 1
+        ? theCase.defendants[0].gender
+        : undefined,
       theCase.requestedValidToDate,
       theCase.requestedCustodyRestrictions?.includes(
         CaseCustodyRestrictions.ISOLATION,
