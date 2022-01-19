@@ -324,7 +324,7 @@ application-system-api:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-dev-storage-application-system'
     CLIENT_LOCATION_ORIGIN: 'https://beta.dev01.devland.is/umsoknir'
     CONTENTFUL_HOST: 'preview.contentful.com'
-    DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10026/kvortun/index'
+    DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10026/gopro/kvortun-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
     DB_USER: 'application_system_api'
