@@ -77,7 +77,7 @@ export class PersonalRepresentative extends Model<PersonalRepresentative> {
   readonly created!: Date
 
   @UpdatedAt
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly modified?: Date
 
   @ApiProperty({ type: () => [PersonalRepresentativeRight], required: false })
