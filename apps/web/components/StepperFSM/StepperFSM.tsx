@@ -30,8 +30,10 @@ import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import { ValueType } from 'react-select'
 import { ParsedUrlQuery } from 'querystring'
+import { environment } from '../../environments'
 
 const ANSWER_DELIMITER = ','
+const STEPPER_HELPER_ENABLED = 'show-stepper-config-helper'
 
 interface StepperProps {
   stepper: Stepper
@@ -125,9 +127,15 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
     [stepper, currentState],
   )
 
-  // TODO: Read showStepperConfigHelper from environment feature flag.
-  // TODO: Add triple-click to show helper.
-  const showStepperConfigHelper = true
+  const [showStepperConfigHelper, setShowStepperConfigHelper] = useState(false)
+
+  // TODO: Verify that the environment production flag is correct
+  useEffect(() => {
+    const hasSeenHelperBefore = JSON.parse(
+      localStorage.getItem(STEPPER_HELPER_ENABLED) ?? 'false',
+    )
+    setShowStepperConfigHelper(!environment.production && hasSeenHelperBefore)
+  }, [])
 
   // TODO: Add support for rendering OptionsFromSource from Step definition.
   // TODO: Currently, if you call the send function with an unavailable transition string, then it silently fails.
@@ -274,9 +282,23 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
     </Box>
   )
 
+  const QuestionTitle = () => (
+    <Box
+      onClick={(ev) => {
+        // If the user triple clicks on the question title, we enable the helper if we're not in production
+        if (ev.detail === 3) {
+          localStorage.setItem(STEPPER_HELPER_ENABLED, JSON.stringify(true))
+          setShowStepperConfigHelper(!environment.production)
+        }
+      }}
+    >
+      {richText(currentStep.subtitle as SliceType[])}
+    </Box>
+  )
+
   return (
     <Box className={styles.container}>
-      {currentStep && richText(currentStep.subtitle as SliceType[])}
+      {currentStep && <QuestionTitle />}
 
       {currentStepType === STEP_TYPES.QUESTION_RADIO && (
         <>
