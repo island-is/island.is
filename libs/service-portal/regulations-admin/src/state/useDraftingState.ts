@@ -466,12 +466,13 @@ export const useMakeDraftingState = (inputs: StateInputs) => {
   const t = useLocale().formatMessage
 
   const [state, dispatch] = useEditDraftReducer(inputs)
-  const stepName = state.step.name
+
+  // NOTE: we assume that both input.draft nad input.ministries don't change
 
   useEffect(
-    () => dispatch({ type: 'CHANGE_STEP', stepName }),
+    () => dispatch({ type: 'CHANGE_STEP', stepName: inputs.stepName }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [stepName],
+    [inputs.stepName],
   )
 
   const [deleteDraftRegulationMutation] = useMutation(
