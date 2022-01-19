@@ -159,7 +159,7 @@ export class DraftRegulationService {
     if (draftRegulation.cancel) {
       impactNames.push(draftRegulation.cancel.regulation)
     }
-    const impactOptions = await this.regulationsService.getRegulationsOptionsList(
+    const impactOptions = await this.regulationsService.getRegulationOptionList(
       impactNames,
     )
 

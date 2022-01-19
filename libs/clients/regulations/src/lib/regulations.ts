@@ -90,7 +90,7 @@ export class RegulationsService extends RESTDataSource {
     return response
   }
 
-  async getRegulationsOptionsList(
+  async getRegulationOptionList(
     names: Array<RegName>,
   ): Promise<RegulationOptionList> {
     const response =
