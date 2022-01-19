@@ -135,8 +135,7 @@ const resolveStepType = (step: Step): string => {
 }
 
 const getStepOptions = (step: Step, lang = 'en'): StepOption[] => {
-  if (!step) return []
-
+  if (!step || step.config === '') return []
   const stepConfig: StepConfig = JSON.parse(step.config) as StepConfig
   return stepConfig.options.map((o) => {
     const label = lang === 'is' ? o.label_is : o.label_en

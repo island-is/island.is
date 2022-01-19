@@ -11,7 +11,12 @@ import {
 
 import { Step, Stepper } from '@island.is/api/schema'
 
-import { StepperState, resolveStepType } from './StepperFSMUtils'
+import {
+  StepperState,
+  resolveStepType,
+  getStepOptions,
+} from './StepperFSMUtils'
+import { useI18n } from '@island.is/web/i18n'
 
 interface StepperHelperProps {
   stepper: Stepper
@@ -28,6 +33,8 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
   const getContentfulLink = (step: Step) => {
     return `https://app.contentful.com/spaces/${contentfulSpace}/entries/${step.id}`
   }
+
+  const { activeLocale } = useI18n()
 
   return (
     <>
@@ -47,15 +54,28 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
           return <Bullet key={i}>{nextEvent}</Bullet>
         })}
       </BulletList>
-      <Text variant="h4">Step</Text>
+      <Text variant="h4">Current Step</Text>
       <Text>Title: {currentStep?.title}</Text>
       <Text>Slug: {currentStep?.slug}</Text>
       <Text>Type: {resolveStepType(currentStep)}</Text>
       {currentStep && (
         <ArrowLink href={getContentfulLink(currentStep)}>Contentful</ArrowLink>
       )}
-      <Text variant="h5">Options</Text>
-      ...
+      <Text variant="h5">Step options</Text>
+      {getStepOptions(currentStep, activeLocale).map((o) => {
+        const optionTransitionIsValid = currentState.nextEvents.some(
+          (t) => t === o.transition,
+        )
+        return (
+          <Box marginBottom={2} key={o.slug}>
+            <Text>Label: {o.label}</Text>
+            <Text>Slug: {o.slug}</Text>
+            <Text>
+              Transition: {o.transition} {optionTransitionIsValid ? '✅' : '❌'}
+            </Text>
+          </Box>
+        )
+      })}
       <Text variant="h2" marginTop={2}>
         Available Steps
       </Text>
