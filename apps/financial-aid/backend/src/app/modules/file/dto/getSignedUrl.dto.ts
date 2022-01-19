@@ -8,4 +8,8 @@ export class GetSignedUrlDto implements GetSignedUrl {
   @IsString()
   @ApiProperty()
   readonly fileName: string
+
+  @IsString()
+  @ApiProperty()
+  readonly folder: string
 }

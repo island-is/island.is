@@ -16,18 +16,19 @@ import { MunicipalityModel } from './models'
 
 import { apiBasePath, StaffRole } from '@island.is/financial-aid/shared/lib'
 import type { Staff } from '@island.is/financial-aid/shared/lib'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
-import { CurrentStaff, CurrentUser } from '../../decorators'
+import { CurrentStaff } from '../../decorators/staff.decorator'
 import {
   MunicipalityActivityDto,
   UpdateMunicipalityDto,
   CreateMunicipalityDto,
 } from './dto'
 import { CreateStaffDto } from '../staff/dto'
+import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Controller(`${apiBasePath}/municipality`)
 @ApiTags('municipality')
 export class MunicipalityController {
@@ -50,13 +51,14 @@ export class MunicipalityController {
 
   @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.SUPERADMIN)
+  @Scopes(MunicipalitiesFinancialAidScope.employee)
   @Post('')
   @ApiCreatedResponse({
     type: MunicipalityModel,
     description: 'Creates a new municipality',
   })
   create(
-    @CurrentUser() staff: Staff,
+    @CurrentStaff() staff: Staff,
     @Body()
     input: {
       municipalityInput: CreateMunicipalityDto
@@ -72,6 +74,7 @@ export class MunicipalityController {
 
   @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.SUPERADMIN)
+  @Scopes(MunicipalitiesFinancialAidScope.employee)
   @Get('')
   @ApiOkResponse({
     type: [MunicipalityModel],
@@ -84,6 +87,7 @@ export class MunicipalityController {
   @Put('')
   @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.ADMIN)
+  @Scopes(MunicipalitiesFinancialAidScope.employee)
   @ApiOkResponse({
     type: MunicipalityModel,
     description: 'Updates municipality',
@@ -101,6 +105,7 @@ export class MunicipalityController {
   @Put('activity/:id')
   @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.SUPERADMIN)
+  @Scopes(MunicipalitiesFinancialAidScope.employee)
   @ApiOkResponse({
     type: MunicipalityModel,
     description: 'Updates activity for municipality',

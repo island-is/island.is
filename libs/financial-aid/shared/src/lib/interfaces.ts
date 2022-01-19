@@ -4,7 +4,6 @@ import {
   FileType,
   Employment,
   ApplicationEventType,
-  RolesRule,
   StaffRole,
   ApplicationStateUrl,
   FamilyStatus,
@@ -93,8 +92,6 @@ export interface User {
   nationalId: string
   name: string
   phoneNumber?: string
-  folder: string
-  service: RolesRule
   currentApplicationId?: string
   spouse?: Spouse
   staff?: Staff

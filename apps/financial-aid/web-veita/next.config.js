@@ -2,7 +2,7 @@ const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 
 const {
-  API_URL = 'http://localhost:3333',
+  API_URL = 'http://localhost:3339',
   WEB_PUBLIC_URL = 'http://localhost:4200',
 } = process.env
 

@@ -11,9 +11,7 @@ import {
   ApplicationFilters,
   ApplicationState,
   ApplicationStateUrl,
-  getEventTypesFromService,
   getStateFromUrl,
-  RolesRule,
   User,
   Staff,
   FileType,
@@ -157,7 +155,7 @@ export class ApplicationService {
 
   async findById(
     id: string,
-    service: RolesRule,
+    isEmployee: boolean,
   ): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
@@ -169,7 +167,9 @@ export class ApplicationService {
           separate: true,
           where: {
             eventType: {
-              [Op.in]: getEventTypesFromService[service],
+              [Op.in]: isEmployee
+                ? Object.values(ApplicationEventType)
+                : [ApplicationEventType.DATANEEDED],
             },
           },
           order: [['created', 'DESC']],
@@ -233,10 +233,7 @@ export class ApplicationService {
     }
   }
 
-  async create(
-    application: CreateApplicationDto,
-    user: User,
-  ): Promise<ApplicationModel> {
+  async create(application: CreateApplicationDto): Promise<ApplicationModel> {
     const appModel = await this.applicationModel.create(application)
 
     await this.applicationEventService.create({
@@ -258,7 +255,7 @@ export class ApplicationService {
       await Promise.all(promises)
     }
 
-    await this.createApplicationEmails(application, appModel, user)
+    await this.createApplicationEmails(application, appModel)
 
     return appModel
   }
@@ -266,7 +263,6 @@ export class ApplicationService {
   private async createApplicationEmails(
     application: CreateApplicationDto,
     appModel: ApplicationModel,
-    user: User,
   ) {
     const municipality = await this.municipalityService.findByMunicipalityId(
       application.municipalityCode,
@@ -285,7 +281,7 @@ export class ApplicationService {
     emailPromises.push(
       this.sendEmail(
         {
-          name: user.name,
+          name: application.name,
           address: appModel.email,
         },
         emailData.subject,
