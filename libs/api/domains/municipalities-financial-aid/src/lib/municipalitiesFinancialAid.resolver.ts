@@ -6,8 +6,6 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import type { MunicipalityControllerGetByIdRequest } from '@island.is/clients/municipalities-financial-aid'
-import type { Municipality } from '@island.is/financial-aid/shared/lib'
 
 import { MunicipalitiesFinancialAidService } from './municipalitiesFinancialAid.service'
 import { MunicipalityModel } from './models/municipality.model'
@@ -35,7 +33,7 @@ export class MunicipalitiesFinancialAidResolver {
     @Args('input', { type: () => MunicipalityQueryInput })
     input: MunicipalityQueryInput,
     @CurrentUser() user: User,
-  ): Promise<MunicipalityModel> {
+  ): Promise<MunicipalityModel | null> {
     return await this.municipalitiesFinancialAidService.municipalityInfoForFinancialAId(
       user,
       input,
