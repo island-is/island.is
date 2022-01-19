@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { toast } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import {
   Box,
@@ -41,6 +41,7 @@ export const ProfileForm: FC<Props> = ({
   title,
   showDetails,
 }) => {
+  useNamespaces('sp.settings')
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
   const [nudge, setNudge] = useState(false)
@@ -111,10 +112,7 @@ export const ProfileForm: FC<Props> = ({
        * ..should check if email + phone is verified before saving in islykill db
        * - BankInfo Validation.
        * - Setja form utan um allt. Nested react-form-hook. nota trigger validation í email og síma: https://codesandbox.io/s/react-hook-form-trigger-validation-utih0?file=/src/index.js
-       * - Fix hardcoded strings.
        * - Country code mobile input
-       * - Input styling
-       * - Cleanup
        */
       if (userProfile) {
         await updateUserProfile({

@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   Box,
   Button,
@@ -32,6 +32,7 @@ export const InputEmail: FC<Props> = ({
   onCallback,
   emailDirty,
 }) => {
+  useNamespaces('sp.settings')
   const { handleSubmit, control, errors, getValues, reset } = useForm()
   const { formatMessage } = useLocale()
   const {
@@ -161,8 +162,11 @@ export const InputEmail: FC<Props> = ({
         <form onSubmit={handleSubmit(handleConfirmCode)}>
           <Box marginTop={3}>
             <Text variant="medium" marginBottom={2}>
-              Öryggiskóði hefur verið sendur á netfangið þitt. Sláðu hann inn
-              hér að neðan.
+              {formatMessage({
+                id: 'sp.settings:email-verify-code-sent',
+                defaultMessage: `Öryggiskóði hefur verið sendur á netfangið þitt. Sláðu hann inn
+                  hér að neðan.`,
+              })}
             </Text>
             <Columns alignY="center">
               <Column width="5/12">

@@ -1,4 +1,5 @@
 import React, { FC, useState } from 'react'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { Modal } from '@island.is/service-portal/core'
 import {
   Text,
@@ -17,6 +18,8 @@ interface Props {
 
 export const DropModal: FC<Props> = ({ onClose, onDrop, close, type }) => {
   const [closeModal, setCloseModal] = useState(close)
+  const { formatMessage } = useLocale()
+  useNamespaces('sp.settings')
 
   const onCloseSideEffect = () => {
     onClose()
@@ -80,22 +83,19 @@ export const DropModal: FC<Props> = ({ onClose, onDrop, close, type }) => {
         <GridColumn span="7/8">
           <Box marginTop={4} display="flex" flexDirection="row">
             <Box paddingRight={2}>
-              <Button
-                onClick={onCloseSideEffect}
-                size="small"
-                aria-label="Skrá upplýsingar"
-              >
-                Ég vil skrá upplýsingar
+              <Button onClick={onCloseSideEffect} size="small">
+                {formatMessage({
+                  id: 'sp.settings:register-info-button',
+                  defaultMessage: 'Ég vil skrá upplýsingar',
+                })}
               </Button>
             </Box>
             <Box>
-              <Button
-                onClick={onDrop}
-                variant="ghost"
-                size="small"
-                aria-label="Halda áfram"
-              >
-                Ég vil halda áfram
+              <Button onClick={onDrop} variant="ghost" size="small">
+                {formatMessage({
+                  id: 'sp.settings:register-close-overlay-button',
+                  defaultMessage: 'Ég vil halda áfram',
+                })}
               </Button>
             </Box>
           </Box>

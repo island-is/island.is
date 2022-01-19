@@ -7,7 +7,7 @@ import {
   Logo,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { UserLanguageSwitcher } from '@island.is/shared/components'
 import { useAuth } from '@island.is/auth/react'
 interface OnboardingHeaderProps {
@@ -15,6 +15,7 @@ interface OnboardingHeaderProps {
 }
 
 export const OnboardingHeader = ({ dropOnboarding }: OnboardingHeaderProps) => {
+  useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
   const { userInfo: user } = useAuth()
   const closeWindow = formatMessage({

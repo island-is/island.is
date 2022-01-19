@@ -1,5 +1,5 @@
-import { Box, Select } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { Select } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { m } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
@@ -19,6 +19,7 @@ interface Props {
 }
 
 export const LanguageForm: FC<Props> = ({ language, onValueChange }) => {
+  useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
 
   return (

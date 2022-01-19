@@ -1,9 +1,7 @@
 import React, { FC, useEffect } from 'react'
-import { Box } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
-import { useForm, Controller } from 'react-hook-form'
-import { useLocale } from '@island.is/localization'
-import { sharedMessages } from '@island.is/shared/translations'
+import { useForm } from 'react-hook-form'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 export interface BankInfoFormData {
   bankInfo: string
@@ -14,6 +12,7 @@ interface Props {
 }
 
 export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
+  useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
   const { control, errors, reset } = useForm()
 
