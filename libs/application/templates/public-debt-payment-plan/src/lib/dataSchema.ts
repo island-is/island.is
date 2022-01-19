@@ -29,13 +29,12 @@ export const PublicDebtPaymentPlanSchema = z.object({
   }),
   employer: z.object({
     isCorrectInfo: z.enum([YES, NO]),
-    correctedNationalId: z
-      .object({
-        id: z
-          .string()
-          .refine((x) => x && x.length !== 0 && kennitala.isValid(x)),
-      })
-      .optional(),
+  }),
+  correctedNationalId: z.object({
+    id: z.string().refine((x) => x && x.length !== 0 && kennitala.isValid(x), {
+      params: error.nationalId,
+    }),
+    name: z.string().min(1),
   }),
   paymentPlanContext: z.object({
     isFulfilled: z.boolean().refine((x) => x),
