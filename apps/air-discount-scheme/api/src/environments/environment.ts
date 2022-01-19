@@ -20,7 +20,6 @@ const devConfig = {
     audience: '@vegagerdin.is',
   },
   auth: {
-    samlEntryPoint: 'https://innskraning.island.is/?id=ads.local',
     audience: '@vegagerdin.is',
     jwtSecret: 'securesecret',
   },
@@ -44,7 +43,6 @@ const prodConfig = {
     audience: '@vegagerdin.is',
   },
   auth: {
-    samlEntryPoint: process.env.SAML_ENTRY_POINT,
     audience: process.env.AUTH_AUDIENCE,
     jwtSecret: process.env.AUTH_JWT_SECRET,
   },
