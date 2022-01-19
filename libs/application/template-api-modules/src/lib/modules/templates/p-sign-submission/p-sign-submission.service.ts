@@ -144,6 +144,6 @@ export class PSignSubmissionService {
       })
       .promise()
     const fileContent = file.Body as Buffer
-    return fileContent?.toString('base64')|| ''
+    return fileContent?.toString('base64') || ''
   }
 }
