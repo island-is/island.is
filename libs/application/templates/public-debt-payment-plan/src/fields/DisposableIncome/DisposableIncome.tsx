@@ -47,8 +47,8 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
   const [updateCurrentEmployer] = useMutation(updateCurrentEmployerMutation)
   const externalData = application.externalData as PaymentPlanExternalData
   const correctedNationalId =
-    (application.answers as PublicDebtPaymentPlan)?.employer
-      ?.correctedNationalId?.id || ''
+    (application.answers as PublicDebtPaymentPlan)?.correctedNationalId?.id ||
+    ''
   const conditions =
     externalData.paymentPlanPrerequisites?.data?.conditions || null
   const debts = externalData.paymentPlanPrerequisites?.data?.debts || null
