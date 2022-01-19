@@ -74,7 +74,7 @@ export const TaskList = () => {
               key={id}
               date={getReqDate(idealPublishDate, fastTrack)}
               backgroundColor={fastTrack ? 'blue' : undefined}
-              heading={title ?? ''}
+              heading={title || t(msg.taskList_draftTitleMissing)}
               tag={{
                 label: t(statusMsgs[draftingStatus]),
                 outlined: false,
