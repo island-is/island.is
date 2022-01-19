@@ -106,14 +106,6 @@ export const ProfileForm: FC<Props> = ({
 
   const submitFormData = async (email: string, mobilePhoneNumber: string) => {
     try {
-      /**
-       * TODO:
-       * - createIslykillSettings + updateIslykillSettings in islykill.service.ts...
-       * ..should check if email + phone is verified before saving in islykill db
-       * - BankInfo Validation.
-       * - Setja form utan um allt. Nested react-form-hook. nota trigger validation í email og síma: https://codesandbox.io/s/react-hook-form-trigger-validation-utih0?file=/src/index.js
-       * - Country code mobile input
-       */
       if (userProfile) {
         await updateUserProfile({
           email,

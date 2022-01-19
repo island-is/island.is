@@ -14,6 +14,7 @@ import {
 import { InputController } from '@island.is/shared/form-fields'
 import { useVerifySms } from '@island.is/service-portal/graphql'
 import { sharedMessages } from '@island.is/shared/translations'
+import * as styles from './Phone.css'
 
 interface Props {
   buttonText: string
@@ -120,45 +121,61 @@ export const InputPhone: FC<Props> = ({
       <form onSubmit={handleSubmit(handleSendTellVerification)}>
         <Columns alignY="center">
           <Column width="9/12">
-            <InputController
-              control={control}
-              id="tel"
-              name="tel"
-              type="tel"
-              format="### ####"
-              required={false}
-              defaultValue={telInternal || ''}
-              size="xs"
-              rules={{
-                minLength: {
-                  value: 7,
-                  message: formatMessage({
-                    id: 'sp.settings:tel-required-length-msg',
-                    defaultMessage:
-                      'Símanúmer þarf að vera 7 tölustafir á lengd',
-                  }),
-                },
-                maxLength: {
-                  value: 7,
-                  message: formatMessage({
-                    id: 'sp.settings:tel-required-length-msg',
-                    defaultMessage:
-                      'Símanúmer þarf að vera 7 tölustafir á lengd',
-                  }),
-                },
-                pattern: {
-                  value: /^\d+$/,
-                  message: formatMessage({
-                    id: 'sp.settings:only-numbers-allowed',
-                    defaultMessage: 'Eingöngu tölustafir eru leyfðir',
-                  }),
-                },
-              }}
-              label={formatMessage(sharedMessages.phoneNumber)}
-              placeholder={formatMessage(sharedMessages.phoneNumber)}
-              onChange={(inp) => setTelInternal(inp.target.value)}
-              error={errors.tel?.message}
-            />
+            <Columns>
+              <Column width="content">
+                <Box className={styles.countryCodeInput}>
+                  <Input
+                    label="Landsnúmer"
+                    name="country-code"
+                    size="xs"
+                    readOnly
+                    value="+354"
+                    disabled
+                  />
+                </Box>
+              </Column>
+              <Column>
+                <InputController
+                  control={control}
+                  id="tel"
+                  name="tel"
+                  type="tel"
+                  format="### ####"
+                  required={false}
+                  defaultValue={telInternal || ''}
+                  size="xs"
+                  rules={{
+                    minLength: {
+                      value: 7,
+                      message: formatMessage({
+                        id: 'sp.settings:tel-required-length-msg',
+                        defaultMessage:
+                          'Símanúmer þarf að vera 7 tölustafir á lengd',
+                      }),
+                    },
+                    maxLength: {
+                      value: 7,
+                      message: formatMessage({
+                        id: 'sp.settings:tel-required-length-msg',
+                        defaultMessage:
+                          'Símanúmer þarf að vera 7 tölustafir á lengd',
+                      }),
+                    },
+                    pattern: {
+                      value: /^\d+$/,
+                      message: formatMessage({
+                        id: 'sp.settings:only-numbers-allowed',
+                        defaultMessage: 'Eingöngu tölustafir eru leyfðir',
+                      }),
+                    },
+                  }}
+                  label={formatMessage(sharedMessages.phoneNumber)}
+                  placeholder={formatMessage(sharedMessages.phoneNumber)}
+                  onChange={(inp) => setTelInternal(inp.target.value)}
+                  error={errors.tel?.message}
+                />
+              </Column>
+            </Columns>
           </Column>
           <Column width="3/12">
             <Box
