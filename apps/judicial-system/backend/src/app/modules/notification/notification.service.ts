@@ -698,15 +698,17 @@ export class NotificationService {
     )
   }
 
-  // TDOO defendants: handle multiple defendants
   private sendRevokedEmailNotificationToDefender(
     theCase: Case,
   ): Promise<Recipient> {
-    const subject = `${
+    const caseType =
       theCase.type === CaseType.CUSTODY
-        ? 'Gæsluvarðhaldskrafa'
-        : 'Farbannskrafa'
-    } afturkölluð`
+        ? this.formatMessage(core.caseType.custody)
+        : theCase.type === CaseType.TRAVEL_BAN
+        ? this.formatMessage(core.caseType.travelBan)
+        : this.formatMessage(core.caseType.investigate)
+
+    const subject = `Krafa um ${caseType} afturkölluð`
 
     // Assume there is at most one defendant
     const html = formatDefenderRevokedEmailNotification(
