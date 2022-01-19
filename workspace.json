@@ -150,7 +150,8 @@
             "outputPath": "dist/apps/air-discount-scheme/backend",
             "main": "apps/air-discount-scheme/backend/src/main.ts",
             "tsConfig": "apps/air-discount-scheme/backend/tsconfig.app.json",
-            "assets": [{
+            "assets": [
+              {
                 "glob": "*sequelize*",
                 "input": "apps/air-discount-scheme/backend",
                 "output": "./"
@@ -1256,8 +1257,8 @@
       }
     },
     "api-domains-municipalities-financial-aid": {
-      "root": "libs/api/domains/financial-aid",
-      "sourceRoot": "libs/api/domains/financial-aid/src ",
+      "root": "libs/api/domains/municipalities-financial-aid",
+      "sourceRoot": "libs/api/domains/municipalities-financial-aid/src ",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -1271,7 +1272,7 @@
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/api/domains/financial-aid/**/*"
+              "!libs/api/domains/municipalities-financial-aid/**/*"
             ]
           }
         },
@@ -1646,7 +1647,8 @@
             "outputPath": "dist/apps/application-system/api",
             "main": "apps/application-system/api/src/main.ts",
             "tsConfig": "apps/application-system/api/tsconfig.app.json",
-            "assets": [{
+            "assets": [
+              {
                 "glob": "*",
                 "input": "apps/application-system/api/migrations",
                 "output": "./migrations"
@@ -1799,11 +1801,13 @@
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
-              "budgets": [{
-                "type": "initial",
-                "maximumWarning": "2mb",
-                "maximumError": "6mb"
-              }]
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "6mb"
+                }
+              ]
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -4285,7 +4289,8 @@
             "outputPath": "dist/apps/financial-aid/backend",
             "main": "apps/financial-aid/backend/src/main.ts",
             "tsConfig": "apps/financial-aid/backend/tsconfig.app.json",
-            "assets": [{
+            "assets": [
+              {
                 "glob": "*",
                 "input": "apps/financial-aid/backend/migrations",
                 "output": "./migrations"
@@ -4434,10 +4439,12 @@
           },
           "configurations": {
             "production": {
-              "fileReplacements": [{
-                "replace": "apps/financial-aid/web-osk/src/environments/environment.ts",
-                "with": "apps/financial-aid/web-osk/src/environments/environment.prod.ts"
-              }]
+              "fileReplacements": [
+                {
+                  "replace": "apps/financial-aid/web-osk/src/environments/environment.ts",
+                  "with": "apps/financial-aid/web-osk/src/environments/environment.prod.ts"
+                }
+              ]
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -4565,10 +4572,12 @@
           },
           "configurations": {
             "production": {
-              "fileReplacements": [{
-                "replace": "apps/financial-aid/web-veita/src/environments/environment.ts",
-                "with": "apps/financial-aid/web-veita/src/environments/environment.prod.ts"
-              }]
+              "fileReplacements": [
+                {
+                  "replace": "apps/financial-aid/web-veita/src/environments/environment.ts",
+                  "with": "apps/financial-aid/web-veita/src/environments/environment.prod.ts"
+                }
+              ]
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -4746,7 +4755,8 @@
             "outputPath": "dist/apps/gjafakort/application",
             "main": "apps/gjafakort/application/src/main.ts",
             "tsConfig": "apps/gjafakort/application/tsconfig.app.json",
-            "assets": [{
+            "assets": [
+              {
                 "glob": "*sequelize*",
                 "input": "apps/gjafakort/application",
                 "output": "./"
@@ -5101,7 +5111,8 @@
             "main": "apps/icelandic-names-registry/backend/src/main.ts",
             "tsConfig": "apps/icelandic-names-registry/backend/tsconfig.app.json",
             "webpackConfig": "apps/icelandic-names-registry/backend/webpack.config.js",
-            "assets": [{
+            "assets": [
+              {
                 "glob": "*sequelize*",
                 "input": "apps/icelandic-names-registry/backend",
                 "output": "./"
@@ -5711,7 +5722,8 @@
             "outputPath": "dist/apps/judicial-system/backend",
             "main": "apps/judicial-system/backend/src/main.ts",
             "tsConfig": "apps/judicial-system/backend/tsconfig.app.json",
-            "assets": [{
+            "assets": [
+              {
                 "glob": "*",
                 "input": "apps/judicial-system/backend/migrations",
                 "output": "./migrations"
@@ -6477,7 +6489,8 @@
             "outputPath": "dist/apps/reference-backend",
             "main": "apps/reference-backend/src/main.ts",
             "tsConfig": "apps/reference-backend/tsconfig.app.json",
-            "assets": [{
+            "assets": [
+              {
                 "glob": "*",
                 "input": "apps/reference-backend/migrations",
                 "output": "./migrations"
@@ -6703,11 +6716,13 @@
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
-              "budgets": [{
-                "type": "initial",
-                "maximumWarning": "2mb",
-                "maximumError": "5mb"
-              }]
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -7943,7 +7958,8 @@
             "outputPath": "dist/apps/services/endorsements/api",
             "main": "apps/services/endorsements/api/src/main.ts",
             "tsConfig": "apps/services/endorsements/api/tsconfig.app.json",
-            "assets": [{
+            "assets": [
+              {
                 "glob": "*",
                 "input": "apps/services/endorsements/api/migrations",
                 "output": "./migrations"
@@ -8086,10 +8102,12 @@
               "optimization": true,
               "extractLicenses": true,
               "inspect": false,
-              "fileReplacements": [{
-                "replace": "apps/services/personal-representative/src/environments/environment.ts",
-                "with": "apps/services/personal-representative/src/environments/environment.prod.ts"
-              }]
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/personal-representative/src/environments/environment.ts",
+                  "with": "apps/services/personal-representative/src/environments/environment.prod.ts"
+                }
+              ]
             }
           }
         },
@@ -8137,7 +8155,8 @@
             "outputPath": "dist/apps/services/search-indexer",
             "main": "apps/services/search-indexer/src/main.ts",
             "tsConfig": "apps/services/search-indexer/tsconfig.app.json",
-            "assets": [{
+            "assets": [
+              {
                 "glob": "config/**",
                 "input": "apps/services/search-indexer",
                 "output": "./"
@@ -8235,10 +8254,12 @@
               "optimization": true,
               "extractLicenses": true,
               "inspect": false,
-              "fileReplacements": [{
-                "replace": "apps/services/user-notification/src/environments/environment.ts",
-                "with": "apps/services/user-notification/src/environments/environment.prod.ts"
-              }]
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/user-notification/src/environments/environment.ts",
+                  "with": "apps/services/user-notification/src/environments/environment.prod.ts"
+                }
+              ]
             }
           }
         },
