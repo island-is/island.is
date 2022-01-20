@@ -100,7 +100,7 @@
   - [Documents](apps/services/documents/README.md)
     - [Endorsements API](apps/services/endorsements/api/README.md)
   - [Personal Representative](apps/services/personal-representative/README.md)
-  - [Personal Representative Public ](apps/services/personal-representative-public/README.md)
+  - [Personal Representative Public](apps/services/personal-representative-public/README.md)
   - [Search Indexer](apps/services/search-indexer/README.md)
     - [Elasticsearch Search Dev Server](apps/services/search-indexer/dev-services/README.md)
       - [Search Indexer Migration](apps/services/search-indexer/src/migrate/README.md)
