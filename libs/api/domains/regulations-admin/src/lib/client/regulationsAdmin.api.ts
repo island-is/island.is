@@ -37,7 +37,7 @@ export class RegulationsAdminApi extends RESTDataSource {
     return await this.get<
       Array<
         DraftSummary & {
-          DraftingStatus: Extract<DraftingStatus, 'draft' | 'proposal'>
+          draftingStatus: Extract<DraftingStatus, 'draft' | 'proposal'>
         }
       >
     >(
@@ -53,7 +53,7 @@ export class RegulationsAdminApi extends RESTDataSource {
     return await this.get<
       Array<
         ShippedSummary & {
-          DraftingStatus: Extract<DraftingStatus, 'shipped' | 'published'>
+          draftingStatus: Extract<DraftingStatus, 'shipped' | 'published'>
         }
       >
     >(
