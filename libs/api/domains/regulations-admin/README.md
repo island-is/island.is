@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # API Domains Regulations Admin
 
 This library was generated with [Nx](https://nx.dev).
