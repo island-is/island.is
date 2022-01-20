@@ -27,7 +27,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger'
 import {
-  Application as BaseApplication,
+  ApplicationModel as BaseApplication,
   callDataProviders,
   ApplicationTypes,
   FormValue,

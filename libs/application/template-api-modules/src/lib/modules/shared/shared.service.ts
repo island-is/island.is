@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 import {
-  Application,
+  ApplicationModel as Application,
   GraphqlGatewayResponse,
 } from '@island.is/application/core'
 import {

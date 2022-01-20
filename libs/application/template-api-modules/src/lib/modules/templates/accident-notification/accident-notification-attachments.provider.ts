@@ -1,4 +1,4 @@
-import { Application, getValueViaPath } from '@island.is/application/core'
+import { ApplicationModel as Application, getValueViaPath } from '@island.is/application/core'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
