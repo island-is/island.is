@@ -1,8 +1,4 @@
-import {
-  findRegulationType,
-  findSignatureInText,
-  findAffectedRegulationsInText,
-} from './guessers'
+import { findRegulationType } from './guessers'
 
 describe('findRegulationType', () => {
   it('defaults to returning undefined for empty or non-sensical titles', () => {
