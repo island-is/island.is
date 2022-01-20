@@ -4,7 +4,6 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
 import { SigningService } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
@@ -56,11 +55,11 @@ export const createTestingCaseModule = async () => {
       },
       {
         provide: LOGGER_PROVIDER,
-        useValue: ({
+        useValue: {
           debug: jest.fn(),
           info: jest.fn(),
           error: jest.fn(),
-        } as unknown) as Logger,
+        },
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
       {

@@ -2,7 +2,6 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
@@ -32,11 +31,11 @@ export const createTestingFileModule = async () => {
       AwsS3Service,
       {
         provide: LOGGER_PROVIDER,
-        useValue: ({
+        useValue: {
           debug: jest.fn(),
           info: jest.fn(),
           error: jest.fn(),
-        } as unknown) as Logger,
+        },
       },
       {
         provide: getModelToken(CaseFile),
