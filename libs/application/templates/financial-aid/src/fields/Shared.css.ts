@@ -9,3 +9,7 @@ export const inputContainer = style({
 export const inputAppear = style({
   maxHeight: '300px',
 })
+
+export const formAppear = style({
+  maxHeight: '400px',
+})

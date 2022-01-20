@@ -16,13 +16,16 @@ export const Application: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      condition: (_, externalData) =>
-        ((externalData as unknown) as ExternalData).nationalRegistry?.data
-          ?.spouse !== undefined,
+      // condition: (_, externalData) =>
+      //   ((externalData as unknown) as ExternalData).nationalRegistry?.data
+      //     ?.spouse !== undefined,
       id: 'personalInterest',
       title: m.section.personalInterest,
       children: [
         buildSubSection({
+          condition: (_, externalData) =>
+            ((externalData as unknown) as ExternalData).nationalRegistry?.data
+              ?.spouse !== undefined,
           title: m.inRelationship.general.sectionTitle,
           children: [
             buildCustomField({
@@ -32,60 +35,90 @@ export const Application: Form = buildForm({
             }),
           ],
         }),
-      ],
-    }),
-    buildSection({
-      id: 'homeCircumstancesForm',
-      title: m.homeCircumstancesForm.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'homeCircumstances',
-          title: m.homeCircumstancesForm.general.pageTitle,
-          component: 'HomeCircumstancesForm',
+        buildSubSection({
+          condition: (_, externalData) =>
+            ((externalData as unknown) as ExternalData).nationalRegistry?.data
+              ?.spouse === undefined,
+          title: m.unknownRelationship.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'UnknownRelationship',
+              title: m.unknownRelationship.general.pageTitle,
+              component: 'UnknownRelationshipForm',
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'homeCircumstancesForm',
+          title: m.homeCircumstancesForm.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'homeCircumstances',
+              title: m.homeCircumstancesForm.general.pageTitle,
+              component: 'HomeCircumstancesForm',
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'studentForm',
+          title: m.studentForm.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'student',
+              title: m.studentForm.general.pageTitle,
+              component: 'StudentForm',
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'employmentForm',
+          title: m.employmentForm.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'employment',
+              title: m.employmentForm.general.pageTitle,
+              component: 'EmploymentForm',
+            }),
+          ],
         }),
       ],
     }),
     buildSection({
-      id: 'studentForm',
-      title: m.studentForm.general.sectionTitle,
+      id: 'finances',
+      title: m.section.finances,
       children: [
-        buildCustomField({
-          id: 'student',
-          title: m.studentForm.general.pageTitle,
-          component: 'StudentForm',
+        buildSubSection({
+          id: 'incomeForm',
+          title: m.incomeForm.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'income',
+              title: m.incomeForm.general.pageTitle,
+              component: 'IncomeForm',
+            }),
+          ],
         }),
-      ],
-    }),
-    buildSection({
-      id: 'employmentForm',
-      title: m.employmentForm.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'employment',
-          title: m.employmentForm.general.pageTitle,
-          component: 'EmploymentForm',
+        buildSubSection({
+          id: 'personalTaxCreditForm',
+          title: m.personalTaxCreditForm.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'personalTaxCredit',
+              title: m.personalTaxCreditForm.general.pageTitle,
+              component: 'PersonalTaxCreditForm',
+            }),
+          ],
         }),
-      ],
-    }),
-    buildSection({
-      id: 'incomeForm',
-      title: m.incomeForm.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'income',
-          title: m.incomeForm.general.pageTitle,
-          component: 'IncomeForm',
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'personalTaxCreditForm',
-      title: m.personalTaxCreditForm.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'personalTaxCredit',
-          title: m.personalTaxCreditForm.general.pageTitle,
-          component: 'PersonalTaxCreditForm',
+        buildSubSection({
+          id: 'bankInfoForm',
+          title: m.bankInfoForm.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'bankInfo',
+              title: m.bankInfoForm.general.pageTitle,
+              component: 'BankInfoForm',
+            }),
+          ],
         }),
       ],
     }),
@@ -97,17 +130,6 @@ export const Application: Form = buildForm({
           id: 'contactInfo',
           title: m.contactInfo.general.pageTitle,
           component: 'ContactInfo',
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'bankInfoForm',
-      title: m.bankInfoForm.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'bankInfo',
-          title: m.bankInfoForm.general.pageTitle,
-          component: 'BankInfoForm',
         }),
       ],
     }),

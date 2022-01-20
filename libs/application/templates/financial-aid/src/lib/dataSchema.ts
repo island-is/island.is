@@ -4,13 +4,13 @@ import {
   Employment,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
-import { isValidEmail, isValidPhone } from './utils'
+import { isValidEmail, isValidNationalId, isValidPhone } from './utils'
 import { ApproveOptions } from './types'
 
 export const dataSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v, {
-    params: error.validation.dataGathering,
-  }),
+  // approveExternalData: z.boolean().refine((v) => v, {
+  //   params: error.validation.dataGathering,
+  // }),
   spouse: z.object({
     email: z.string().refine((v) => isValidEmail(v), {
       params: error.validation.email,
@@ -19,6 +19,35 @@ export const dataSchema = z.object({
       params: error.validation.approveSpouse,
     }),
   }),
+  relationshipStatus: z
+    .object({
+      unregisteredCohabitation: z
+        .enum([ApproveOptions.Yes, ApproveOptions.No])
+        .refine((v) => v, {
+          params: error.validation.radioErrorMessage,
+        }),
+      spouse: z
+        .object({
+          email: z.string().refine((v) => isValidEmail(v), {
+            params: error.validation.email,
+          }),
+          nationalId: z.string().refine((v) => isValidNationalId(v), {
+            params: error.validation.nationlId,
+          }),
+          approveTerms: z.array(z.string()).refine((v) => v && v.length === 1, {
+            params: error.validation.approveSpouse,
+          }),
+        })
+        .optional(),
+    })
+    .refine(
+      (v) =>
+        v.unregisteredCohabitation === ApproveOptions.Yes ? v.spouse : true,
+      {
+        params: error.validation.inputErrorMessage,
+        // path: ['spouse.email'],
+      },
+    ),
   student: z
     .object({
       isStudent: z

@@ -10,3 +10,4 @@ export { default as PersonalTaxCreditForm } from './PersonalTaxCreditForm/Person
 export { default as SummaryForm } from './SummaryForm/SummaryForm'
 export { default as SummaryBlock } from './SummaryBlock/SummaryBlock'
 export { default as ContactInfo } from './ContactInfo/ContactInfo'
+export { default as UnknownRelationshipForm } from './UnknownRelationshipForm/UnknownRelationshipForm'

@@ -27,6 +27,11 @@ export const error = {
       defaultMessage: 'Athugaðu hvort símanúmer sé rétt slegið inn',
       description: 'Error message when phone is invalid or not present',
     },
+    nationlId: {
+      id: 'fa.application:error.nationlId',
+      defaultMessage: 'Athugaðu hvort kennitala sé rétt slegin inn',
+      description: 'Error message when national id is invalid or not present',
+    },
     approveSpouse: {
       id: 'fa.application:error.approveSpouse',
       defaultMessage: 'Þú þarft að samþykkja',
