@@ -51,7 +51,7 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
 
   const correctedNationalId = getValueViaPath(
     application.answers,
-    'correctedEmployer.id',
+    'correctedEmployer.nationalId',
     '',
   ) as string
   const conditions = getValueViaPath(

@@ -13,7 +13,7 @@ export const EmployerInfo = ({ application }: FieldBaseProps) => {
 
   const correctedNationalId = getValueViaPath(
     application.answers,
-    'correctedEmployer.id',
+    'correctedEmployer.nationalId',
     undefined,
   )
   const correctedName = getValueViaPath(
