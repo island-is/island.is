@@ -32,11 +32,11 @@ export const createTestingFileModule = async () => {
       AwsS3Service,
       {
         provide: LOGGER_PROVIDER,
-        useValue: ({
+        useValue: {
           debug: jest.fn(),
           info: jest.fn(),
           error: jest.fn(),
-        } as unknown) as Logger,
+        },
       },
       {
         provide: getModelToken(CaseFile),

@@ -56,11 +56,11 @@ export const createTestingCaseModule = async () => {
       },
       {
         provide: LOGGER_PROVIDER,
-        useValue: ({
+        useValue: {
           debug: jest.fn(),
           info: jest.fn(),
           error: jest.fn(),
-        } as unknown) as Logger,
+        },
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
       {
