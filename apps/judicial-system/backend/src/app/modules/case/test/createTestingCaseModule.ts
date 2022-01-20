@@ -4,7 +4,6 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
 import { SigningService } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'

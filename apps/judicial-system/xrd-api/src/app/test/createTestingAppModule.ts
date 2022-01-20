@@ -1,7 +1,6 @@
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER, LoggingModule } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
 
 import { environment } from '../../environments'

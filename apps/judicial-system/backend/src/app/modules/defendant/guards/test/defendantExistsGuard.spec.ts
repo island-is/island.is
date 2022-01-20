@@ -1,5 +1,4 @@
 import { uuid } from 'uuidv4'
-import { Op } from 'sequelize'
 
 import {
   BadRequestException,

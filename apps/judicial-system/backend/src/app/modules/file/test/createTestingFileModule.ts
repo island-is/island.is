@@ -2,7 +2,6 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
