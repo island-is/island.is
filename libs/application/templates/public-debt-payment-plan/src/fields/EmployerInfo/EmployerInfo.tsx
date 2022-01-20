@@ -1,26 +1,17 @@
 import { PaymentScheduleEmployer } from '@island.is/api/schema'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import * as Sentry from '@sentry/react'
 import { format as formatKennitala } from 'kennitala'
 import React from 'react'
+import { PaymentPlanExternalData, PublicDebtPaymentPlan } from '../../types'
 
 export const EmployerInfo = ({ application }: FieldBaseProps) => {
-  const employerInfo = getValueViaPath(
-    application.externalData,
-    'paymentPlanPrerequisites.data.employer',
-  ) as PaymentScheduleEmployer
+  const employerInfo = (application.externalData as PaymentPlanExternalData)
+    .paymentPlanPrerequisites?.data?.employer as PaymentScheduleEmployer
 
-  const correctedNationalId = getValueViaPath(
-    application.answers,
-    'correctedNationalId.id',
-    undefined,
-  )
-  const correctedNationalIdName = getValueViaPath(
-    application.answers,
-    'correctedNationalId.name',
-    undefined,
-  )
+  const correctedNationalId = (application.answers as PublicDebtPaymentPlan)
+    ?.employer?.correctedNationalId?.id
 
   if (!employerInfo) {
     Sentry.captureException(
@@ -31,7 +22,7 @@ export const EmployerInfo = ({ application }: FieldBaseProps) => {
 
   return (
     <Box marginTop={5} marginBottom={3}>
-      {<Text variant="h2">{correctedNationalIdName || employerInfo.name}</Text>}
+      {!correctedNationalId && <Text variant="h2">{employerInfo.name}</Text>}
       <Text variant="eyebrow" color="blue400">
         {`kt. ${formatKennitala(
           correctedNationalId || employerInfo.nationalId,
