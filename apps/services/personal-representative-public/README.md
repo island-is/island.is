@@ -1,4 +1,4 @@
-# Personal Representative Public 
+# Personal Representative Public
 
 ## About
 
@@ -42,7 +42,7 @@ yarn test services-personal-representative-public
 ## Getting started
 
 ```bash
-yarn start services-personal-representative- public
+yarn start services-personal-representative-public
 ```
 
 ## Code owners and maintainers
