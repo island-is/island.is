@@ -1,7 +1,5 @@
 import { useMutation } from '@apollo/client'
-import { Gender } from 'libs/judicial-system/types/src/lib/defendant'
-import { UpdateDefendant } from 'libs/judicial-system/types/src/lib/defendant'
-import { Defendant } from 'libs/judicial-system/types/src/lib/defendant'
+import { UpdateDefendant } from '@island.is/judicial-system/types'
 
 import { CreateDefendantMutation } from './createDefendantGql'
 import { DeleteDefendantMutation } from './deleteDefendantGql'
