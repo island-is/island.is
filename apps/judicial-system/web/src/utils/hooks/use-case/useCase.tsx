@@ -12,6 +12,7 @@ import type {
   CaseTransition,
   RequestSignatureResponse,
   UpdateCase,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 import { CreateCaseMutation } from './createCaseGql'
@@ -40,9 +41,12 @@ type autofillProperties = Pick<
   | 'courtLocation'
   | 'accusedBookings'
   | 'ruling'
-  | 'sessionArrangements'
   | 'endOfSessionBookings'
 >
+
+type autofillSessionArrangementProperties = Pick<Case, 'sessionArrangements'>
+
+type autofillBooleanProperties = Pick<Case, 'isCustodyIsolation'>
 
 interface CreateCaseMutationResponse {
   createCase: Case
@@ -299,7 +303,6 @@ const useCase = () => {
     [extendCaseMutation],
   )
 
-  // TODO: find a way for this to work where value is something other then string
   const autofill = useMemo(
     () => (key: keyof autofillProperties, value: string, workingCase: Case) => {
       if (!workingCase[key]) {
@@ -308,6 +311,38 @@ const useCase = () => {
         if (workingCase[key]) {
           updateCase(workingCase.id, parseString(key, value))
         }
+      }
+    },
+    [updateCase],
+  )
+
+  const autofillSessionArrangements = useMemo(
+    () => (
+      key: keyof autofillSessionArrangementProperties,
+      value: SessionArrangements,
+      workingCase: Case,
+    ) => {
+      if (!workingCase[key]) {
+        workingCase[key] = value
+
+        if (workingCase[key]) {
+          updateCase(workingCase.id, parseString(key, value))
+        }
+      }
+    },
+    [updateCase],
+  )
+
+  const autofillBoolean = useMemo(
+    () => (
+      key: keyof autofillBooleanProperties,
+      value: boolean,
+      workingCase: Case,
+    ) => {
+      if (workingCase[key] === undefined || workingCase[key] === null) {
+        workingCase[key] = value
+
+        updateCase(workingCase.id, parseString(key, value))
       }
     },
     [updateCase],
@@ -331,6 +366,8 @@ const useCase = () => {
     extendCase,
     isExtendingCase,
     autofill,
+    autofillSessionArrangements,
+    autofillBoolean,
   }
 }
 
