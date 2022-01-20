@@ -5,8 +5,12 @@ import {
 } from './guessers'
 
 describe('findRegulationType', () => {
-  it('defaults to returning "base" whenever in doubt', () => {
+  it('defaults to returning undefined for empty or non-sensical titles', () => {
     expect(findRegulationType('')).toEqual(undefined)
+    expect(findRegulationType('Lög um partístuð')).toEqual(undefined)
+    expect(findRegulationType('Relugerð um partístuð')).toEqual(undefined)
+  })
+  it('returns "base" when it finds the word Reglugerð whenever in doubt', () => {
     expect(findRegulationType('Reglugerð um jólasveina')).toEqual('base')
   })
 
@@ -15,6 +19,10 @@ describe('findRegulationType', () => {
       findRegulationType(
         'Reglugerð um breytingu á reglugerð 123/2022 um jólasveina',
       ),
+    ).toEqual('amending')
+    // Regulation number (123/2022) is not required
+    expect(
+      findRegulationType('Reglugerð um breytingu á reglugerð um jólasveina'),
     ).toEqual('amending')
     // Accepts the plural form "breytingar"
     expect(
