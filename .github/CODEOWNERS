@@ -56,6 +56,7 @@
 /apps/air-discount-scheme/                                                                    @island-is/kosmos-kaos
 /libs/air-discount-scheme/                                                                    @island-is/kosmos-kaos
 /libs/application/templates/p-sign/                                                           @island-is/kosmos-kaos
+/libs/application/template-api-modules/src/lib/modules/templates/p-sign-submission            @island-is/kosmos-kaos
 
 /libs/clients/auth-public-api/                                                                @island-is/aranja
 /libs/clients/middlewares/                                                                    @island-is/aranja
@@ -166,6 +167,7 @@ infra/                                                                          
 /libs/auth-nest-tools/                                                                        @island-is/fuglar @island-is/aranja
 
 /apps/services/personal-representative/                                                       @island-is/programm
+/apps/services/personal-representative-public/                                                @island-is/programm
 
 /libs/application/templates/criminal-record/                                                  @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission   @island-is/origo

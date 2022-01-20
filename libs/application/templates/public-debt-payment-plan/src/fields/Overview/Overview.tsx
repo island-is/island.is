@@ -17,7 +17,6 @@ import { useLocale } from '@island.is/localization'
 import React, { useEffect, useState } from 'react'
 import { overview } from '../../lib/messages'
 import { formatIsk } from '../../lib/paymentPlanUtils'
-import { YES } from '../../shared/constants'
 import { PaymentPlanExternalData, PublicDebtPaymentPlan } from '../../types'
 import { DistributionTable } from './DistributionTabel'
 import * as styles from './Overview.css'
@@ -51,7 +50,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
 
   // Employer
   const employerInfo = paymentPrerequisites?.employer as PaymentScheduleEmployer
-  const employer = answers?.employer
+  const correctedNationalId = answers?.correctedNationalId || {}
 
   const editAction = (screen: string) => {
     if (goToScreen) {
@@ -150,32 +149,26 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </ReviewGroup>
-      {employer?.isCorrectInfo === YES && employerInfo?.nationalId && (
+      {employerInfo?.nationalId && (
         <ReviewGroup
           isEditable
           editAction={() => editAction('employerMultiField')}
         >
           <GridRow>
-            {employer?.isCorrectInfo === YES && (
-              <GridColumn span={['6/12', '5/12']}>
-                <Box>
-                  <Label>{formatMessage(overview.employer)}</Label>
-                  <Text>{employerInfo.name}</Text>
-                </Box>
-              </GridColumn>
-            )}
-            {employerInfo?.nationalId && (
-              <GridColumn span={['6/12', '5/12']}>
-                <Box>
-                  <Label>{formatMessage(overview.employerSsn)}</Label>
-                  <Text>
-                    {employer?.isCorrectInfo === YES
-                      ? employerInfo?.nationalId
-                      : employer?.correctedNationalId}
-                  </Text>
-                </Box>
-              </GridColumn>
-            )}
+            <GridColumn span={['6/12', '5/12']}>
+              <Box>
+                <Label>{formatMessage(overview.employer)}</Label>
+                <Text>{correctedNationalId?.name || employerInfo.name}</Text>
+              </Box>
+            </GridColumn>
+            <GridColumn span={['6/12', '5/12']}>
+              <Box>
+                <Label>{formatMessage(overview.employerSsn)}</Label>
+                <Text>
+                  {correctedNationalId?.id || employerInfo?.nationalId}
+                </Text>
+              </Box>
+            </GridColumn>
           </GridRow>
         </ReviewGroup>
       )}
