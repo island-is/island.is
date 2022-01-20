@@ -1,13 +1,6 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-import {
-  ArrowLink,
-  Box,
-  Bullet,
-  BulletList,
-  Divider,
-  Text,
-} from '@island.is/island-ui/core'
+import { ArrowLink, Box, Divider, Text } from '@island.is/island-ui/core'
 
 import { Step, Stepper } from '@island.is/api/schema'
 
@@ -15,80 +8,283 @@ import {
   StepperState,
   resolveStepType,
   getStepOptions,
+  getStepBySlug,
+  getStateMeta,
+  StepperMachine,
 } from './StepperFSMUtils'
 import { useI18n } from '@island.is/web/i18n'
+import * as styles from './StepperFSMHelper.css'
+
+const SUCCESS_SYMBOL = '✔️'
+const WARNING_SYMBOL = '⚠️'
+const ERROR_SYMBOL = '❌'
+
+const getContentfulLink = (value: Step | Stepper) => {
+  const contentfulSpace = process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj'
+  return `https://app.contentful.com/spaces/${contentfulSpace}/entries/${value.id}`
+}
+
+interface FieldProps {
+  name?: string
+  value?: string
+  symbol?: string
+  ariaLabel?: string
+  symbolHoverText?: string
+  symbolOnRight?: boolean
+}
+
+const Field: FC<FieldProps> = ({
+  name,
+  value,
+  symbol,
+  ariaLabel = 'symbol',
+  symbolHoverText,
+  symbolOnRight = true,
+}) => {
+  const symbolComponent = (
+    <span title={symbolHoverText} role="img" aria-label={ariaLabel}>
+      {symbolOnRight && ' '}
+      {symbol}
+      {!symbolOnRight && ' '}
+    </span>
+  )
+  return (
+    <Box>
+      {symbol && !symbolOnRight && symbolComponent}
+      {name && <span className={styles.bold}>{name}:</span>}
+      {value && (
+        <span>
+          {name && ' '}
+          {value}
+        </span>
+      )}
+      {symbol && symbolOnRight && symbolComponent}
+    </Box>
+  )
+}
+
+const getAllStateStepSlugs = (stepperMachine: StepperMachine) => {
+  const allStateStepSlugs: string[] = []
+  for (const stateName in stepperMachine.states) {
+    const state = stepperMachine.states[stateName]
+    const slug = state?.meta.stepSlug
+    if (slug) allStateStepSlugs.push(slug)
+  }
+  return allStateStepSlugs
+}
 
 interface StepperHelperProps {
   stepper: Stepper
   currentState: StepperState
   currentStep: Step
+  stepperMachine: StepperMachine
 }
 
 export const StepperHelper: React.FC<StepperHelperProps> = ({
   stepper,
   currentState,
+  stepperMachine,
   currentStep,
 }) => {
-  const contentfulSpace = process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj'
-  const getContentfulLink = (step: Step) => {
-    return `https://app.contentful.com/spaces/${contentfulSpace}/entries/${step.id}`
-  }
-
   const { activeLocale } = useI18n()
+  const stepOptions = getStepOptions(currentStep, activeLocale)
+  const currentStateStepSlug = getStateMeta(currentState)?.stepSlug
+  const allStateStepSlugs = getAllStateStepSlugs(stepperMachine)
 
   return (
     <>
       <Box marginTop={15}></Box>
       <Divider />
-      <Text variant="h1" marginTop={5}>
+      <Text variant="h1" marginTop={5} marginBottom={2}>
         Helper
       </Text>
-      <Text variant="h2" marginTop={2}>
-        Current State
-      </Text>
-      <Text variant="h5">State name</Text>
-      <Text>{currentState.value}</Text>
-      <Text variant="h5">State transitions</Text>
-      <BulletList type="ul">
-        {currentState.nextEvents.map(function (nextEvent, i) {
-          return <Bullet key={i}>{nextEvent}</Bullet>
-        })}
-      </BulletList>
-      <Text variant="h4">Current Step</Text>
-      <Text>Title: {currentStep?.title}</Text>
-      <Text>Slug: {currentStep?.slug}</Text>
-      <Text>Type: {resolveStepType(currentStep)}</Text>
-      {currentStep && (
-        <ArrowLink href={getContentfulLink(currentStep)}>Contentful</ArrowLink>
-      )}
-      <Text variant="h5">Step options</Text>
-      {getStepOptions(currentStep, activeLocale).map((o) => {
-        const optionTransitionIsValid = currentState.nextEvents.some(
-          (t) => t === o.transition,
-        )
-        return (
-          <Box marginBottom={2} key={o.slug}>
-            <Text>Label: {o.label}</Text>
-            <Text>Slug: {o.slug}</Text>
-            <Text>
-              Transition: {o.transition} {optionTransitionIsValid ? '✅' : '❌'}
-            </Text>
-          </Box>
-        )
-      })}
-      <Text variant="h2" marginTop={2}>
-        Available Steps
-      </Text>
-      <BulletList type="ul">
-        {stepper.steps.map(function (step, i) {
+
+      <Text variant="h3">Stepper</Text>
+      <Box className={styles.border} marginBottom={2}>
+        <ArrowLink href={getContentfulLink(stepper)}>Contentful</ArrowLink>
+        <Field name="Current state name" value={currentState.value as string} />
+        <Field
+          name="Current state step slug"
+          value={currentStateStepSlug}
+          symbol={
+            getStepBySlug(stepper, currentStateStepSlug)
+              ? SUCCESS_SYMBOL
+              : ERROR_SYMBOL
+          }
+          symbolHoverText={
+            getStepBySlug(stepper, currentStateStepSlug)
+              ? 'There is a step with this slug'
+              : currentStateStepSlug
+              ? 'No step has this slug'
+              : 'The slug is missing'
+          }
+        />
+        <Field name="Current state transitions" />
+        <Box marginLeft={4} marginTop={1}>
+          {currentState.nextEvents.map((nextEvent, i) => {
+            const transitionIsUsedSomewhere = stepOptions.some(
+              (o) => o.transition === nextEvent,
+            )
+            const symbolHoverText = transitionIsUsedSomewhere
+              ? 'The current step has an option that uses this transition'
+              : 'The current step does not have an option that uses this transition'
+            const ariaLabel = transitionIsUsedSomewhere
+              ? 'success-symbol'
+              : 'warning-symbol'
+            const symbol = transitionIsUsedSomewhere
+              ? SUCCESS_SYMBOL
+              : ERROR_SYMBOL
+            return (
+              <Box className={styles.fitBorder} marginBottom={1}>
+                <Field
+                  key={i}
+                  value={nextEvent}
+                  ariaLabel={ariaLabel}
+                  symbol={symbol}
+                  symbolHoverText={symbolHoverText}
+                />
+              </Box>
+            )
+          })}
+        </Box>
+      </Box>
+
+      <Text variant="h3">Current Step</Text>
+      <Box className={styles.border}>
+        {currentStep && (
+          <ArrowLink href={getContentfulLink(currentStep)}>
+            Contentful
+          </ArrowLink>
+        )}
+        <Field name="Title" value={currentStep?.title} />
+        <Field
+          name="Slug"
+          value={currentStep?.slug}
+          symbol={
+            currentStateStepSlug && currentStateStepSlug === currentStep?.slug
+              ? SUCCESS_SYMBOL
+              : ERROR_SYMBOL
+          }
+          symbolHoverText={
+            currentStateStepSlug && currentStateStepSlug === currentStep?.slug
+              ? 'The state step slug has the same value as this slug'
+              : 'The state step slug is different from this slug'
+          }
+        />
+        <Field name="Type" value={resolveStepType(currentStep)} />
+        <Box marginBottom={1}>
+          <Field name="Step options" />
+        </Box>
+        {stepOptions.map((o) => {
+          const optionTransitionIsValid = currentState.nextEvents.some(
+            (t) => t === o.transition,
+          )
+          const transitionSymbol = optionTransitionIsValid
+            ? SUCCESS_SYMBOL
+            : ERROR_SYMBOL
+          const symbolHoverText = optionTransitionIsValid
+            ? 'There is a state with this transaction'
+            : 'There is no state with this transaction'
+
           return (
-            <Bullet key={i}>
-              {step.slug}
-              <Bullet>{step.title}</Bullet>
-            </Bullet>
+            <Box
+              className={styles.fitBorder}
+              marginLeft={4}
+              marginBottom={1}
+              key={o.slug}
+            >
+              <Field name="Label" value={o.label} />
+              <Field name="Slug" value={o.slug} />
+              <Field
+                name="Transition"
+                value={o.transition}
+                symbol={transitionSymbol}
+                symbolHoverText={symbolHoverText}
+              />
+            </Box>
           )
         })}
-      </BulletList>
+      </Box>
+
+      <Text variant="h3" marginTop={2}>
+        All States
+      </Text>
+      <Box className={styles.border}>
+        {Object.keys(stepperMachine.states).map((stateName, i) => {
+          const state = stepperMachine.states[stateName]
+          const stepSlug = state.meta?.stepSlug ?? ''
+          return (
+            <Box
+              marginLeft={4}
+              className={styles.fitBorder}
+              marginBottom={1}
+              key={i}
+              marginTop={i === 0 ? 1 : 0}
+            >
+              <Field
+                name="State step slug"
+                value={stepSlug}
+                symbol={
+                  getStepBySlug(stepper, stepSlug)
+                    ? SUCCESS_SYMBOL
+                    : ERROR_SYMBOL
+                }
+                symbolHoverText={
+                  getStepBySlug(stepper, stepSlug)
+                    ? 'There is a step with this slug'
+                    : stepSlug
+                    ? 'No step has this slug'
+                    : 'The slug is missing'
+                }
+              />
+              <Field name="State transitions" />
+              <Box marginLeft={4} marginTop={1}>
+                {Object.keys(state.config?.on ?? {}).map((nextEvent, i) => {
+                  return (
+                    <Box className={styles.fitBorder} marginBottom={1}>
+                      <Field key={i} value={nextEvent} />
+                    </Box>
+                  )
+                })}
+              </Box>
+            </Box>
+          )
+        })}
+      </Box>
+      <Text variant="h3" marginTop={2}>
+        All Steps
+      </Text>
+      <Box className={styles.border}>
+        {stepper.steps.map((step, i) => {
+          return (
+            <Box
+              marginLeft={4}
+              className={styles.fitBorder}
+              marginBottom={1}
+              key={i}
+              marginTop={i === 0 ? 1 : 0}
+            >
+              <ArrowLink href={getContentfulLink(step)}>Contentful</ArrowLink>
+              <Field name="Title" value={step.title} />
+              <Field
+                name="Slug"
+                value={step.slug}
+                symbol={
+                  allStateStepSlugs.includes(step.slug)
+                    ? SUCCESS_SYMBOL
+                    : ERROR_SYMBOL
+                }
+                symbolHoverText={
+                  allStateStepSlugs.includes(step.slug)
+                    ? 'There is state with this slug'
+                    : 'No state has this slug'
+                }
+              />
+              <Field name="Type" value={resolveStepType(step)} />
+            </Box>
+          )
+        })}
+      </Box>
     </>
   )
 }

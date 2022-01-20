@@ -384,6 +384,7 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
           stepper={stepper}
           currentState={currentState}
           currentStep={currentStep}
+          stepperMachine={stepperMachine}
         />
       )}
     </Box>
