@@ -55,15 +55,10 @@ describe('DrivingLicenseService', () => {
       })
     })
 
-    it('should return an expired license', async () => {
+    it('should not return an expired license', async () => {
       const response = await service.getDrivingLicense(MOCK_NATIONAL_ID_EXPIRED)
 
-      expect(response).toMatchObject({
-        name: 'Expired Halldórsson',
-        expires: new Date('1997-05-25T06:43:15.327Z'),
-      })
-
-      expect(response?.expires?.getTime()).toBeLessThan(Date.now())
+      expect(response).toBeNull()
     })
   })
 
@@ -76,14 +71,12 @@ describe('DrivingLicenseService', () => {
       })
     })
 
-    it("should return a student's license despite expiry", async () => {
+    it("should not return a student's license when expired", async () => {
       const response = await service.getStudentInformation(
         MOCK_NATIONAL_ID_EXPIRED,
       )
 
-      expect(response).toMatchObject({
-        name: 'Expired Halldórsson',
-      })
+      expect(response).toBeNull()
     })
   })
 

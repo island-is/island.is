@@ -31,9 +31,6 @@ const ListSubmited: FC<FieldBaseProps> = ({ application }) => {
           buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
         />
       </Box>
-      <Text marginBottom={2} variant="h3">
-        {formatMessage(m.listSubmitted.bulletListTitle)}
-      </Text>
       <Box height="full" marginTop={8} marginBottom={10}>
         <School />
       </Box>

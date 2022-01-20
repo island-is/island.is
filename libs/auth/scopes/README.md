@@ -1,3 +1,5 @@
+<!-- gitbook-navigation: "Scopes" -->
+
 # Auth Scopes
 
 This library was generated to contain scope definitions in one central place for the repo.
