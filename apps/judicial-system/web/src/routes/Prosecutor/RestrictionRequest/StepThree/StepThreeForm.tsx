@@ -6,6 +6,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   CaseType,
+  Gender,
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
@@ -128,50 +129,57 @@ const StepThreeForm: React.FC<Props> = (props) => {
             )}
           </BlueBox>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(rcDemands.sections.lawsBroken.heading)}
-            </Text>
+        {workingCase.defendants && (
+          <Box component="section" marginBottom={7}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                {formatMessage(rcDemands.sections.lawsBroken.heading)}
+              </Text>
+            </Box>
+            <Input
+              data-testid="lawsBroken"
+              name="lawsBroken"
+              label={formatMessage(rcDemands.sections.lawsBroken.label, {
+                defendant: formatMessage(core.accused, {
+                  suffix:
+                    workingCase.defendants[0].gender === Gender.FEMALE
+                      ? 'u'
+                      : 'a',
+                }),
+              })}
+              placeholder={formatMessage(
+                rcDemands.sections.lawsBroken.placeholder,
+              )}
+              value={workingCase.lawsBroken || ''}
+              errorMessage={lawsBrokenErrorMessage}
+              hasError={lawsBrokenErrorMessage !== ''}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'lawsBroken',
+                  event,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  lawsBrokenErrorMessage,
+                  setLawsBrokenErrorMessage,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'lawsBroken',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setLawsBrokenErrorMessage,
+                )
+              }
+              required
+              textarea
+              rows={7}
+            />
           </Box>
-          <Input
-            data-testid="lawsBroken"
-            name="lawsBroken"
-            label={formatMessage(rcDemands.sections.lawsBroken.label, {
-              defendant: formatMessage(core.accused, { suffix: 'a' }),
-            })}
-            placeholder={formatMessage(
-              rcDemands.sections.lawsBroken.placeholder,
-            )}
-            value={workingCase.lawsBroken || ''}
-            errorMessage={lawsBrokenErrorMessage}
-            hasError={lawsBrokenErrorMessage !== ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'lawsBroken',
-                event,
-                ['empty'],
-                workingCase,
-                setWorkingCase,
-                lawsBrokenErrorMessage,
-                setLawsBrokenErrorMessage,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'lawsBroken',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setLawsBrokenErrorMessage,
-              )
-            }
-            required
-            textarea
-            rows={7}
-          />
-        </Box>
+        )}
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">

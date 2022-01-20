@@ -10,6 +10,7 @@ import {
   formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
+  Gender,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
@@ -107,17 +108,17 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           })}
         </Text>
       </AccordionListItem>
-      {workingCase.accusedBookings?.trim() && (
+      {workingCase.defendants && workingCase.accusedBookings?.trim() && (
         <AccordionListItem
           title={formatMessage(m.sections.accusedBookings.title, {
-            accusedType: formatMessage(
-              isRestrictionCase(workingCase.type)
-                ? core.accused
-                : core.defendant,
-              {
-                suffix: 'a',
-              },
-            ),
+            accusedType: isRestrictionCase(workingCase.type)
+              ? formatMessage(core.accused, {
+                  suffix:
+                    workingCase.defendants[0].gender === Gender.FEMALE
+                      ? 'u'
+                      : 'a',
+                })
+              : formatMessage(core.defendant, { suffix: 'a' }),
           })}
           breakSpaces
         >

@@ -308,7 +308,10 @@ export const RulingStepTwo: React.FC = () => {
                   <Text as="h4" variant="h4">
                     {formatMessage(m.sections.appealDecision.accusedTitle, {
                       accused: formatMessage(core.accused, {
-                        suffix: 'a',
+                        suffix:
+                          workingCase.defendants[0].gender === Gender.FEMALE
+                            ? 'u'
+                            : 'a',
                       }),
                     })}{' '}
                     <Text as="span" color="red600" fontWeight="semiBold">
@@ -485,7 +488,10 @@ export const RulingStepTwo: React.FC = () => {
                     m.sections.appealDecision.accusedAnnouncementLabel,
                     {
                       accused: formatMessage(core.accused, {
-                        suffix: 'a',
+                        suffix:
+                          workingCase.defendants[0].gender === Gender.FEMALE
+                            ? 'u'
+                            : 'a',
                       }),
                     },
                   )}

@@ -14,7 +14,7 @@ import {
   HideableText,
 } from '@island.is/judicial-system-web/src/components'
 import { caseTypes } from '@island.is/judicial-system/formatters'
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType, Gender } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   JudgeSubsections,
@@ -71,13 +71,18 @@ export const CourtRecord: React.FC = () => {
         if (wc.prosecutor && wc.defendants && wc.defendants[0].name) {
           attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
             wc.defendants[0].name
-          } ${formatMessage(core.accused, { suffix: 'i' })}`
+          } ${formatMessage(core.accused, {
+            suffix: wc.defendants[0].gender === Gender.MALE ? 'i' : 'a',
+          })}`
         }
 
-        if (wc.defenderName) {
-          attendees += `\n${
-            wc.defenderName
-          } skipaður verjandi ${formatMessage(core.accused, { suffix: 'a' })}`
+        if (wc.defendants && wc.defenderName) {
+          attendees += `\n${wc.defenderName} skipaður verjandi ${formatMessage(
+            core.accused,
+            {
+              suffix: wc.defendants[0].gender === Gender.FEMALE ? 'u' : 'a',
+            },
+          )}`
         }
 
         if (wc.translator) {
@@ -117,7 +122,7 @@ export const CourtRecord: React.FC = () => {
             { suffix: 'a' },
           )} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að ${formatMessage(
             core.accused,
-            { suffix: 'a' },
+            { suffix: 'i' },
           )} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að ${formatMessage(
             core.accused,
             { suffix: 'a' },
@@ -295,49 +300,61 @@ export const CourtRecord: React.FC = () => {
             workingCase={workingCase}
           />
         </Box>
-        <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.accusedBookings.title, {
-                // TODO defendants: handle multiple defendants
-                genderedAccused: formatMessage(core.accused, { suffix: 'a' }),
-              })} `}
-              <Tooltip
-                text={formatMessage(m.sections.accusedBookings.tooltip)}
-              />
-            </Text>
+        {workingCase.defendants && (
+          <Box component="section" marginBottom={8}>
+            <Box marginBottom={2}>
+              <Text as="h3" variant="h3">
+                {`${formatMessage(m.sections.accusedBookings.title, {
+                  genderedAccused: formatMessage(core.accused, {
+                    suffix:
+                      workingCase.defendants[0].gender === Gender.FEMALE
+                        ? 'u'
+                        : 'a',
+                  }),
+                })} `}
+                <Tooltip
+                  text={formatMessage(m.sections.accusedBookings.tooltip)}
+                />
+              </Text>
+            </Box>
+            <Input
+              data-testid="accusedBookings"
+              name="accusedBookings"
+              label={formatMessage(m.sections.accusedBookings.label, {
+                genderedAccused: formatMessage(core.accused, {
+                  suffix:
+                    workingCase.defendants[0].gender === Gender.FEMALE
+                      ? 'u'
+                      : 'a',
+                }),
+              })}
+              value={workingCase.accusedBookings || ''}
+              placeholder={formatMessage(
+                m.sections.accusedBookings.placeholder,
+              )}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'accusedBookings',
+                  event,
+                  [],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'accusedBookings',
+                  event.target.value,
+                  [],
+                  workingCase,
+                  updateCase,
+                )
+              }
+              textarea
+              rows={16}
+            />
           </Box>
-          <Input
-            data-testid="accusedBookings"
-            name="accusedBookings"
-            label={formatMessage(m.sections.accusedBookings.label, {
-              // TODO defendants: handle multiple defendants
-              genderedAccused: formatMessage(core.accused, { suffix: 'a' }),
-            })}
-            value={workingCase.accusedBookings || ''}
-            placeholder={formatMessage(m.sections.accusedBookings.placeholder)}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'accusedBookings',
-                event,
-                [],
-                workingCase,
-                setWorkingCase,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'accusedBookings',
-                event.target.value,
-                [],
-                workingCase,
-                updateCase,
-              )
-            }
-            textarea
-            rows={16}
-          />
-        </Box>
+        )}
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
