@@ -6,7 +6,7 @@ export interface UseSubmitApplication {
   (params: {
     application: Application
     refetch: (() => void) | undefined
-    event: DefaultEvents
+    event?: DefaultEvents
   }): MutationTuple<
     void,
     {
@@ -22,7 +22,7 @@ export interface UseSubmitApplication {
 export const useSubmitApplication: UseSubmitApplication = ({
   application,
   refetch,
-  event,
+  event = DefaultEvents.SUBMIT,
 }) => {
   return useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
