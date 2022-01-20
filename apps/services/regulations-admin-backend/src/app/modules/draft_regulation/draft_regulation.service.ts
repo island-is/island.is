@@ -15,10 +15,13 @@ import { DraftRegulationCancelService } from '../draft_regulation_cancel/draft_r
 import { DraftRegulationChangeService } from '../draft_regulation_change/draft_regulation_change.service'
 import {
   Author,
+  DraftingStatus,
   DraftRegulationCancel,
   DraftRegulationChange,
+  DraftRegulationChangeId,
   DraftSummary,
   RegulationDraft,
+  RegulationDraftId,
 } from '@island.is/regulations/admin'
 import {
   combineTextAppendixesComments,
@@ -81,7 +84,7 @@ export class DraftRegulationService {
         }
       }
       drafts.push({
-        id: draft.id,
+        id: draft.id as RegulationDraftId,
         draftingStatus: draft.drafting_status as 'draft' | 'proposal',
         title: draft.title,
         idealPublishDate: draft.ideal_publish_date,
@@ -105,7 +108,7 @@ export class DraftRegulationService {
     const drafts: DraftSummary[] = []
     for await (const draft of draftRegulations) {
       drafts.push({
-        id: draft.id,
+        id: draft.id as RegulationDraftId,
         draftingStatus: draft.drafting_status as 'draft' | 'proposal',
         title: draft.title,
         idealPublishDate: draft.ideal_publish_date,
@@ -168,7 +171,7 @@ export class DraftRegulationService {
       const changeTexts = extractAppendixesAndComments(change.text)
 
       impacts.push({
-        id: change.id as any,
+        id: change.id as DraftRegulationChangeId,
         type: 'amend',
         date: change.date,
         title: change.title,
@@ -201,8 +204,8 @@ export class DraftRegulationService {
     )
 
     return {
-      id: draftRegulation.id,
-      draftingStatus: draftRegulation.drafting_status,
+      id: draftRegulation.id as RegulationDraftId,
+      draftingStatus: draftRegulation.drafting_status as DraftingStatus,
       title: draftRegulation.title,
       name: draftRegulation.name,
       text,
