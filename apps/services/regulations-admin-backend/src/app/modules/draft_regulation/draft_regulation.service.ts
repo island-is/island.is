@@ -212,7 +212,7 @@ export class DraftRegulationService {
       lawChapters,
       ministry: draftRegulation.ministry,
       authors,
-      idealPublishDate: draftRegulation.ideal_publish_date as any, // TODO: Exclude original from response.
+      idealPublishDate: draftRegulation.ideal_publish_date, // TODO: Exclude original from response.
       draftingNotes: draftRegulation.drafting_notes, // TODO: Exclude original from response.
       appendixes,
       comments,
