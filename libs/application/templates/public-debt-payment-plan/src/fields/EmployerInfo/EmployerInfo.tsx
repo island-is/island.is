@@ -13,12 +13,12 @@ export const EmployerInfo = ({ application }: FieldBaseProps) => {
 
   const correctedNationalId = getValueViaPath(
     application.answers,
-    'correctedNationalId.id',
+    'correctedEmployer.id',
     undefined,
   )
-  const correctedNationalIdName = getValueViaPath(
+  const correctedName = getValueViaPath(
     application.answers,
-    'correctedNationalId.name',
+    'correctedEmployer.name',
     undefined,
   )
 
@@ -31,7 +31,7 @@ export const EmployerInfo = ({ application }: FieldBaseProps) => {
 
   return (
     <Box marginTop={5} marginBottom={3}>
-      {<Text variant="h2">{correctedNationalIdName || employerInfo.name}</Text>}
+      {<Text variant="h2">{correctedName || employerInfo.name}</Text>}
       <Text variant="eyebrow" color="blue400">
         {`kt. ${formatKennitala(
           correctedNationalId || employerInfo.nationalId,
