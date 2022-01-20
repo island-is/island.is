@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-
 import { AirlineUser, User } from './user.model'
 import { Fund } from '@island.is/air-discount-scheme/types'
 import { FlightService } from '../flight'
@@ -7,16 +6,45 @@ import {
   NationalRegistryService,
   NationalRegistryUser,
 } from '../nationalRegistry'
+import {
+  AuthMiddleware,
+  AuthMiddlewareOptions,
+  User as AuthUser,
+} from '@island.is/auth-nest-tools'
+import {
+  EinstaklingarApi,
+  EinstaklingarGetForsjaRequest,
+} from '@island.is/clients/national-registry-v2'
+import environment from '../../../environments/environment'
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly flightService: FlightService,
     private readonly nationalRegistryService: NationalRegistryService,
+    private readonly nationalRegistryIndividualsApi: EinstaklingarApi,
   ) {}
 
-  async getRelations(nationalId: string): Promise<string[]> {
-    return this.nationalRegistryService.getRelatedChildren(nationalId)
+  async getRelations(
+    nationalId: string,
+    authUser: AuthUser,
+  ): Promise<string[]> {
+    console.log(
+      environment.nationalRegistry.authMiddlewareOptions.tokenExchangeOptions
+        .issuer,
+    )
+    const relations = await this.nationalRegistryIndividualsApi
+      .withMiddleware(
+        new AuthMiddleware(
+          authUser,
+          environment.nationalRegistry
+            .authMiddlewareOptions as AuthMiddlewareOptions,
+        ),
+      )
+      .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{ id: nationalId })
+    console.log('user service')
+    console.log(relations)
+    return relations
   }
 
   private async getFund(user: NationalRegistryUser): Promise<Fund> {

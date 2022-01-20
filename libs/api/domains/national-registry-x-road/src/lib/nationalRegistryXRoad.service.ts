@@ -75,20 +75,6 @@ export class NationalRegistryXRoadService {
     )
   }
 
-  // Returns array representation of nationalIds of individuals children.
-  async getChildrenForsja(
-    user: User,
-    parentNationalId: string,
-  ): Promise<string[] | undefined> {
-    const nationalRegistryApi = this.nationalRegistryApiWithAuth(user)
-    const childrenNationalIds = await nationalRegistryApi
-      .einstaklingarGetForsja({
-        id: parentNationalId,
-      })
-      .catch(this.handle404)
-    return childrenNationalIds
-  }
-
   async getChildrenCustodyInformation(
     user: User,
     parentNationalId: string,

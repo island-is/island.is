@@ -4,14 +4,14 @@ import { UserService } from './user.service'
 import { DiscountModule } from '../discount'
 import { FlightModule } from '../flight'
 import { NationalRegistryModule as ADSNationalRegistryModule } from '../nationalRegistry'
-import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
+import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 
 @Module({
   imports: [
     DiscountModule,
     FlightModule,
     ADSNationalRegistryModule,
-    NationalRegistryXRoadModule,
+    NationalRegistryClientModule,
   ],
   controllers: [PublicUserController, PrivateUserController],
   providers: [UserService],

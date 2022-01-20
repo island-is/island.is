@@ -25,7 +25,6 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 
 @ApiTags('Users')
@@ -67,22 +66,18 @@ export class PrivateUserController {
   constructor(
     private readonly flightService: FlightService,
     private readonly userService: UserService,
-    private thjodskraXroad: NationalRegistryXRoadService,
   ) {}
 
   @Get('users/:nationalId/relations')
   @ApiExcludeEndpoint()
   async getUserRelations(
     @Param() params: GetUserRelationsParams,
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() authUser: AuthUser,
   ): Promise<User[]> {
-    const relations = await this.thjodskraXroad.getChildrenForsja(
-      user,
+    const relations = await this.userService.getRelations(
       params.nationalId,
+      authUser,
     )
-    if (relations === undefined) {
-      return [] as User[]
-    }
     const users = await Promise.all([
       this.userService.getUserInfoByNationalId(params.nationalId),
       ...relations.map((nationalId) =>
