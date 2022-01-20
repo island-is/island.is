@@ -8225,7 +8225,8 @@
             "outputPath": "apps/services/personal-representative/src/openapi.yaml",
             "command": "yarn ts-node -P apps/services/personal-representative/tsconfig.app.json apps/services/personal-representative/src/buildOpenApi.ts"
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "services-personal-representative-public": {
@@ -8287,7 +8288,8 @@
             "outputPath": "apps/services/personal-representative-public/src/openapi.yaml",
             "command": "yarn ts-node -P apps/services/personal-representative-public/tsconfig.app.json apps/services/personal-representative-public/src/buildOpenApi.ts"
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "services-search-indexer": {
