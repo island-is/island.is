@@ -96,6 +96,11 @@ const prodConfig = () => ({
     password: process.env.RSK_API_PASSWORD,
     url: process.env.RSK_API_URL,
   },
+  rskCompanyInfo: {
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadProviderId: process.env.COMPANY_REGISTRY_XROAD_PROVIDER_ID,
+    xRoadClientId: process.env.XROAD_CLIENT_ID,
+  },
   icelandicNamesRegistry: {
     backendUrl: process.env.ICELANDIC_NAMES_REGISTRY_BACKEND_URL,
   },
@@ -253,6 +258,12 @@ const devConfig = () => ({
     username: 'rf_api_island.is',
     url: 'https://thjonusta-s.rsk.is/api',
     password: process.env.RSK_API_PASSWORD,
+  },
+  rskCompanyInfo: {
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadProviderId: process.env.COMPANY_REGISTRY_XROAD_PROVIDER_ID,
+    xRoadClientId: process.env.XROAD_CLIENT_ID,
+    apiPath: process.env.COMPANY_REGISTRY_XROAD_API_PATH,
   },
   icelandicNamesRegistry: {
     backendUrl: 'http://localhost:4239',

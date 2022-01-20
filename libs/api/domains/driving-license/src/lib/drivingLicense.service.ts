@@ -236,22 +236,32 @@ export class DrivingLicenseService {
     }
   }
 
+  async getQualityPhotoUri(
+    nationalId: User['nationalId'],
+  ): Promise<string | null> {
+    const image = await this.drivingLicenseApi.getQualityPhoto({
+      nationalId,
+    })
+    const qualityPhoto =
+      image?.data && image?.data.length > 0
+        ? `data:image/jpeg;base64,${image?.data.substr(
+            1,
+            image.data.length - 2,
+          )}`
+        : null
+
+    return qualityPhoto
+  }
+
   async getQualityPhoto(
     nationalId: User['nationalId'],
   ): Promise<QualityPhotoResult> {
     const hasQualityPhoto = await this.drivingLicenseApi.getHasQualityPhoto({
       nationalId,
     })
-    const image = hasQualityPhoto
-      ? await this.drivingLicenseApi.getQualityPhoto({
-          nationalId,
-        })
-      : null
 
     return {
-      success: hasQualityPhoto,
-      qualityPhoto: image?.data ?? null,
-      errorMessage: null,
+      hasQualityPhoto,
     }
   }
 

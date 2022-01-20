@@ -262,5 +262,6 @@ judicial-system-xrd-api:
     create: true
     name: 'judicial-system-xrd-api'
 namespaces:
+  labels: {}
   namespaces:
     - 'judicial-system'
