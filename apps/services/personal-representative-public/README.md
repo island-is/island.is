@@ -2,7 +2,7 @@
 
 ## About
 
-A service that is responsible for giving third party service providers information about personal representatives and threir rights
+A service that is responsible for giving third party service providers information about personal representatives and their rights
 
 ### Initial setup
 
@@ -28,7 +28,7 @@ yarn start services-personal-representative-public
 Api open api specs will now be accessible at
 
 ```bash
-http://localhost:3378/swagger/#/default
+http://localhost:3378/swagger
 ```
 
 ## Testing
