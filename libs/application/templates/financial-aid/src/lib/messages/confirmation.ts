@@ -25,6 +25,12 @@ export const confirmation = {
         '* Vinnsluaðili sveitarfélagsins vinnur úr umsókninni. Umsóknin verður afgreidd eins fljótt og auðið er. \n* Ef umsóknin er samþykkt getur þú reiknað með útgreiðslu í byrjun október. \n* Ef þörf er á frekari upplýsingum eða gögnum til að vinna úr umsókninni mun vinnsluaðili sveitarfélagsins hafa samband.',
       description: 'Confirmation next steps',
     },
+    contentWithSpouse: {
+      id: 'fa.application:section.confirmation.nextSteps.content#markup',
+      defaultMessage:
+        '* Þú og maki þinn hlaðið upp nauðsynlegum gögnum sem þarf til úrvinnslu umsóknar. \n* Vinnsluaðili sveitarfélagsins vinnur úr umsókninni. Umsóknin verður afgreidd eins fljótt og auðið er. \n* Ef umsóknin er samþykkt getur þú reiknað með útgreiðslu í byrjun október. \n* Ef þörf er á frekari upplýsingum eða gögnum til að vinna úr umsókninni mun vinnsluaðili sveitarfélagsins hafa samband.',
+      description: 'Confirmation next steps',
+    },
   }),
   links: defineMessages({
     title: {
@@ -37,7 +43,7 @@ export const confirmation = {
       defaultMessage: 'Sjá stöðu umsóknar',
       description: 'Confirmation link to status page',
     },
-    muncipalityInfoPage: {
+    municipalityInfoPage: {
       id: 'fa.application:section.confirmation.links.muncipalityInfoPage',
       defaultMessage: 'Upplýsingar um fjárhagsaðstoð hjá sveitarfélaginu',
       description: 'Confirmation link to status page',

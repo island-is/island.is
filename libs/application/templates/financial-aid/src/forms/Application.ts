@@ -111,7 +111,6 @@ export const Application: Form = buildForm({
         }),
       ],
     }),
-    // This is here to be able to show submit button on former screen :( :( :(
     buildSection({
       id: 'confirmation',
       title: m.confirmation.general.sectionTitle,

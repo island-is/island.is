@@ -9,11 +9,6 @@ export const application = defineMessages({
 })
 
 export const copyUrl = defineMessages({
-  title: {
-    id: 'crc.application:copyUrl.title',
-    defaultMessage: 'Deila hlekk',
-    description: 'Copy url title',
-  },
   inputLabel: {
     id: 'crc.application:copyUrl.inputLabel',
     defaultMessage: 'Hlekkur á umsóknina',

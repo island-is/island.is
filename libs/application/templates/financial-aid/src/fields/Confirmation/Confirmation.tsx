@@ -56,7 +56,7 @@ const Confirmation = ({}: FAFieldBaseProps) => {
           icon="open"
           colorScheme="default"
           iconType="outline"
-          // onClick={() => router.push(Routes.statusPage(applicationId as string))}
+          // onClick={() => TODO link for status page}
           preTextIconType="filled"
           size="small"
           type="button"
@@ -70,13 +70,13 @@ const Confirmation = ({}: FAFieldBaseProps) => {
           icon="open"
           colorScheme="default"
           iconType="outline"
-          // onClick={() => router.push(Routes.statusPage(applicationId as string))}
+          // onClick={() => TODO link to municipality page}
           preTextIconType="filled"
           size="small"
           type="button"
           variant="text"
         >
-          {formatMessage(confirmation.links.muncipalityInfoPage)}
+          {formatMessage(confirmation.links.municipalityInfoPage)}
         </Button>
       </Box>
       <Box marginTop={[4, 4, 5]}>
