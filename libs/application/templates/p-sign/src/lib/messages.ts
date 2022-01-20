@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   applicationTitle: {
     id: 'ps.application:applicationTitle',
-    defaultMessage: 'Umsókn um P-Merki',
+    defaultMessage: 'Umsókn um Stæðiskort',
     description: 'Application for P-Sign',
   },
   /* Data Collection Section */
@@ -289,12 +289,12 @@ export const m = defineMessages({
   },
   overviewSelfPickupText: {
     id: 'ps.application:overviewSelfPickupText',
-    defaultMessage: 'Þú hefur valið að sækja P-merkið sjálf/ur/t á: ',
+    defaultMessage: 'Þú hefur valið að sækja stæðiskortið sjálf/ur/t á: ',
     description: 'Text for delivery info',
   },
   overviewDeliveryText: {
     id: 'ps.application:overviewDeliveryText',
-    defaultMessage: 'Þú hefur valið að fá P-merkið sent heim í pósti',
+    defaultMessage: 'Þú hefur valið að fá stæðiskortið sent heim í pósti',
     description: 'Text for delivery info',
   },
 
@@ -302,7 +302,7 @@ export const m = defineMessages({
   congratulationsTitleSuccess: {
     id: 'ps.application:congratulationsTitleSuccess',
     defaultMessage:
-      'Umsókn þín um P-Merki hefur verið móttekin. Þú færð P-Merkið afhent á uppgefið heimilisfang/afhendingarstað eftir 3-5 virka daga.',
+      'Umsókn þín um stæðiskort hefur verið móttekin. Þú færð stæðiskortið afhent á uppgefið heimilisfang/afhendingarstað eftir 3-5 virka daga.',
     description: 'Your application for P-sign was successful.',
   },
   congratulationsTitle: {
