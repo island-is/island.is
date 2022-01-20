@@ -8,7 +8,10 @@ import {
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
 import { NationalRegistry } from './types'
-import { ApplicationModel as Application, getValueViaPath } from '@island.is/application/core'
+import {
+  ApplicationModel as Application,
+  getValueViaPath,
+} from '@island.is/application/core'
 import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
