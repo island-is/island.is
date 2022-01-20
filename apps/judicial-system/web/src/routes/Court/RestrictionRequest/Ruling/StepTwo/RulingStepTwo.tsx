@@ -179,7 +179,6 @@ export const RulingStepTwo: React.FC = () => {
         )
       }
 
-      // TODO defendants: handle multiple defendants
       if (
         theCase.type === CaseType.CUSTODY &&
         (isAcceptingCaseDecision(theCase.decision) ||

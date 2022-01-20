@@ -62,7 +62,6 @@ export const CourtRecord: React.FC = () => {
     document.title = 'Þingbók - Réttarvörslugátt'
   }, [])
 
-  // TODO defendants: handle multiple defendants
   useEffect(() => {
     if (isCaseUpToDate) {
       const defaultCourtAttendees = (wc: Case): string => {
