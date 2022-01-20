@@ -67,7 +67,7 @@ const prodConfig = {
     username: process.env.NATIONAL_REGISTRY_USERNAME,
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
     authMiddlewareOptions: {
-      forwardUserInfo: true,
+      forwardUserInfo: false,
       tokenExchangeOptions: {
         issuer: process.env.IDENTITY_SERVER_DOMAIN
           ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
@@ -75,7 +75,7 @@ const prodConfig = {
         clientId: '@vegagerdin.is/clients/national-registry',
         clientSecret: process.env.VEGAGERDIN_THJODSKRA_IDS_CLIENT_SECRET,
         scope: 'openid profile @skra.is/individuals',
-        requestActorToken: true,
+        requestActorToken: false,
       },
     },
   },
