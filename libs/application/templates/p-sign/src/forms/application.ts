@@ -415,7 +415,7 @@ export const getApplication = (): Form => {
                   const district = (data as DistrictCommissionerAgencies[]).find(
                     (d) => d.id === answers.district,
                   )
-                  return `Þú hefur valið að sækja P-merkið sjálf/ur/t hjá: ${district?.name}, ${district?.place}`
+                  return `Þú hefur valið að sækja stæðiskortið sjálf/ur/t hjá: ${district?.name}, ${district?.place}`
                 },
                 condition: (answers) => answers.deliveryMethod === 'pickUp',
               }),

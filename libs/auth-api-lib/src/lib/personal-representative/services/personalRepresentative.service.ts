@@ -8,8 +8,11 @@ import { PersonalRepresentative } from '../entities/models/personal-representati
 import { PersonalRepresentativeRight } from '../entities/models/personal-representative-right.model'
 import { PersonalRepresentativeRightType } from '../entities/models/personal-representative-right-type.model'
 import { PersonalRepresentativeDTO } from '../entities/dto/personal-representative.dto'
+import { PersonalRepresentativeCreateDTO } from '../entities/dto/personal-representative-create.dto'
 import { PaginatedPersonalRepresentativeDto } from '../entities/dto/paginated-personal-representative.dto'
-import { paginate, PaginationDto } from '@island.is/nest/pagination'
+import { PaginationWithNationalIdsDto } from '../entities/dto/pagination-with-national-ids.dto'
+import { paginate } from '@island.is/nest/pagination'
+import { PersonalRepresentativeType } from '../entities/models/personal-representative-type.model'
 
 @Injectable()
 export class PersonalRepresentativeService {
@@ -26,12 +29,14 @@ export class PersonalRepresentativeService {
   /** Get's all personal repreasentatives  */
   async getMany(
     includeInvalid: boolean,
-    query: PaginationDto,
+    query: PaginationWithNationalIdsDto,
   ): Promise<PaginatedPersonalRepresentativeDto> {
-    const validToClause = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const validToClause: any = {
       [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
     }
-    const validFromClause = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const validFromClause: any = {
       [Op.or]: { [Op.eq]: null, [Op.lt]: new Date() },
     }
     const whereClause: WhereOptions = {}
@@ -42,13 +47,21 @@ export class PersonalRepresentativeService {
       whereClauseRights['validTo'] = validToClause
     }
 
+    if (query.personalRepresentativeId) {
+      whereClause['nationalIdPersonalRepresentative'] =
+        query.personalRepresentativeId
+    }
+    if (query.representedPersonId) {
+      whereClause['nationalIdRepresentedPerson'] = query.representedPersonId
+    }
+
     const result = await paginate({
       Model: this.personalRepresentativeModel,
       limit: query.limit || 10,
       after: query.after ?? '',
       before: query.before ?? '',
       primaryKeyField: 'id',
-      orderOption: [['id', 'DESC']],
+      orderOption: [['id', 'ASC']],
       where: whereClause,
     })
 
@@ -75,10 +88,12 @@ export class PersonalRepresentativeService {
     nationalIdPersonalRepresentative: string,
     includeInvalid: boolean,
   ): Promise<PersonalRepresentativeDTO[]> {
-    const validToClause = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const validToClause: any = {
       [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
     }
-    const validFromClause = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const validFromClause: any = {
       [Op.or]: { [Op.eq]: null, [Op.lt]: new Date() },
     }
     const whereClause: WhereOptions = {
@@ -116,10 +131,12 @@ export class PersonalRepresentativeService {
     nationalIdRepresentedPerson: string,
     includeInvalid: boolean,
   ): Promise<PersonalRepresentativeDTO | null> {
-    const validToClause = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const validToClause: any = {
       [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
     }
-    const validFromClause = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const validFromClause: any = {
       [Op.or]: { [Op.eq]: null, [Op.lt]: new Date() },
     }
     const whereClause: WhereOptions = {
@@ -177,6 +194,7 @@ export class PersonalRepresentativeService {
           {
             model: PersonalRepresentativeRight,
             required: true,
+            include: [PersonalRepresentativeRightType],
           },
         ],
       },
@@ -186,7 +204,7 @@ export class PersonalRepresentativeService {
 
   /** Create a new personal repreasentative */
   async create(
-    personalRepresentative: PersonalRepresentativeDTO,
+    personalRepresentative: PersonalRepresentativeCreateDTO,
   ): Promise<PersonalRepresentativeDTO | null> {
     // Create new personal representative connection
     let prId = ''
@@ -217,9 +235,11 @@ export class PersonalRepresentativeService {
           {
             model: PersonalRepresentativeRight,
             required: true,
+            include: [PersonalRepresentativeRightType],
           },
         ],
       })
+
       return result ? result.toDTO() : null
     } catch (err) {
       throw new BadRequestException(
