@@ -79,12 +79,12 @@ export const findSignatureInText = (html: HTMLText) => {
   const undirskrRe = new RegExp(
     [
       // Capture name of ráðuneyti from start of paragraph
-      /^(.+?ráðuneyti)(?:ð|nu)?/,
-      /,? /,
-      /(?:þann )?/,
+      /^(?:Í\s+)?(.+?ráðuneyti)(?:ð|nu)?/,
+      /,?\s+/,
+      /(?:þann\s+)?/,
       /(\d{1,2})\.?/,
-      /\s(jan\.?|janúar|feb\.?|febrúar|mar\.?|mars|apr\.?|apríl|maí|jún\.?|júní|júl\.?|júlí|ágú\.?|ágúst|sept?\.?|september|okt\.?|október|nóv\.?|nóvember|des\.?|desember),?/,
-      /\s(2\d{3}).?$/,
+      /\s(jan\.?|janúar|feb\.?|febrúar|mar\.?|mars|apr\.?|apríl|maí.?|jún\.?|júní|júl\.?|júlí|ágú\.?|ágúst|sept?\.?|september|okt\.?|október|nóv\.?|nóvember|des\.?|desember),?/,
+      /\s+(20[2-9]\d).?$/, // NOTE: this will fail in the year 2100. Sorry, not sorry.
     ]
       .map((r) => r.source)
       .join(''),
@@ -104,7 +104,10 @@ export const findSignatureInText = (html: HTMLText) => {
   })
 
   if (!match) {
-    return {}
+    return {
+      ministryName: undefined,
+      signatureDate: undefined,
+    }
   }
   const [
     _,
@@ -123,8 +126,7 @@ export const findSignatureInText = (html: HTMLText) => {
     ('0' + (month + 1)).slice(-2) +
     '-' +
     ('0' + dayOfMonthStr).slice(-2)
-  const foundDate = ensureISODate(foundISODateRaw)
-  const signatureDate = foundDate && new Date(foundDate)
+  const signatureDate = ensureISODate(foundISODateRaw)
 
   const ministryName = ministryNameRaw
     // normalize declination

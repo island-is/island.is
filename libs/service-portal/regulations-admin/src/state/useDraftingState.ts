@@ -271,7 +271,7 @@ const specialUpdates: {
     // ministry connnection (i.e. their "place of work")
     // and issue a WARNING if the two ministry values don't match up.
 
-    draft.signatureDate.value = signatureDate
+    draft.signatureDate.value = signatureDate && new Date(signatureDate)
   },
 }
 
