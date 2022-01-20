@@ -1,7 +1,6 @@
 import { Application, getValueViaPath } from '@island.is/application/core'
 import { QUALITY_PHOTO } from './queries.graphql'
 import { useQuery, ApolloError } from '@apollo/client'
-import { YES } from '../../../lib/constants'
 
 export interface QualityPhotoType {
   qualityPhoto: string | null
@@ -15,7 +14,15 @@ export type HasQualityPhotoData = {
   }
 }
 
-export const useQualityPhoto = (application: Application): QualityPhotoType => {
+const FAKE_QUALITY_PHOTO = {
+  qualityPhoto: `data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAQEBAQEBAQEBAQGBgUGBggHBwcHCAwJCQkJCQwTDA4MDA4MExEUEA8QFBEeFxUVFx4iHRsdIiolJSo0MjRERFwBBAQEBAQEBAQEBAYGBQYGCAcHBwcIDAkJCQkJDBMMDgwMDgwTERQQDxAUER4XFRUXHiIdGx0iKiUlKjQyNEREXP/CABEIAAIAAgMBIgACEQEDEQH/xAAUAAEAAAAAAAAAAAAAAAAAAAAH/9oACAEBAAAAAHP/xAAUAQEAAAAAAAAAAAAAAAAAAAAH/9oACAECEAAAADv/xAAUAQEAAAAAAAAAAAAAAAAAAAAG/9oACAEDEAAAAHn/xAAZEAABBQAAAAAAAAAAAAAAAAAAAgMTU5H/2gAIAQEAAT8AjbrTh//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Af//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Af//Z`,
+  loading: false,
+  error: undefined,
+}
+
+const YES = 'yes'
+
+const hasFakeQualityPhoto = (application: Application): boolean => {
   // If running locally or on dev allow for fake data
   const useFakeData = getValueViaPath<'yes' | 'no'>(
     application.answers,
@@ -27,17 +34,12 @@ export const useQualityPhoto = (application: Application): QualityPhotoType => {
       application.answers,
       'fakeData.qualityPhoto',
     )
-    const qualityPhoto: QualityPhotoType = {
-      qualityPhoto:
-        fakeQualityPhoto === YES
-          ? `data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAQEBAQEBAQEBAQGBgUGBggHBwcHCAwJCQkJCQwTDA4MDA4MExEUEA8QFBEeFxUVFx4iHRsdIiolJSo0MjRERFwBBAQEBAQEBAQEBAYGBQYGCAcHBwcIDAkJCQkJDBMMDgwMDgwTERQQDxAUER4XFRUXHiIdGx0iKiUlKjQyNEREXP/CABEIAAIAAgMBIgACEQEDEQH/xAAUAAEAAAAAAAAAAAAAAAAAAAAH/9oACAEBAAAAAHP/xAAUAQEAAAAAAAAAAAAAAAAAAAAH/9oACAECEAAAADv/xAAUAQEAAAAAAAAAAAAAAAAAAAAG/9oACAEDEAAAAHn/xAAZEAABBQAAAAAAAAAAAAAAAAAAAgMTU5H/2gAIAQEAAT8AjbrTh//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Af//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Af//Z`
-          : null,
-      loading: false,
-      error: undefined,
-    }
-    return qualityPhoto
+    return fakeQualityPhoto === YES
   }
+  return false
+}
 
+export const useQualityPhoto = (application: Application): QualityPhotoType => {
   const hasQualityPhoto = getValueViaPath<HasQualityPhotoData>(
     application.externalData,
     'qualityPhoto',
@@ -52,5 +54,7 @@ export const useQualityPhoto = (application: Application): QualityPhotoType => {
     loading: loading,
     error: error,
   }
-  return qualityPhoto
+  const useFake = hasFakeQualityPhoto(application)
+
+  return useFake ? FAKE_QUALITY_PHOTO : qualityPhoto
 }

@@ -21,10 +21,10 @@ import {
 export const subSectionQualityPhoto = buildSubSection({
   id: 'photoStep',
   title: m.applicationQualityPhotoTitle,
-  condition: isVisible(
-    isApplicationForCondition(B_FULL),
-    hasNoDrivingLicenseInOtherCountry,
-  ),
+  // condition: isVisible(
+  //   isApplicationForCondition(B_FULL),
+  //   hasNoDrivingLicenseInOtherCountry,
+  // ),
   children: [
     buildMultiField({
       id: 'info',
