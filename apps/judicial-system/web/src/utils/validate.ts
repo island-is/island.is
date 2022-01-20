@@ -67,14 +67,16 @@ export const getRegexByValidation = (validation: Validation) => {
 
 export const isAccusedStepValidRC = (workingCase: Case) => {
   return (
+    workingCase.defendants &&
     validate(workingCase.policeCaseNumber, 'empty').isValid &&
     validate(workingCase.policeCaseNumber, 'police-casenumber-format')
       .isValid &&
-    workingCase.defendants &&
     workingCase.defendants[0].gender &&
-    validate(workingCase.defendants[0].nationalId, 'empty').isValid &&
-    validate(workingCase.defendants[0].nationalId, 'national-id').isValid &&
+    validate(workingCase.defendants[0].nationalId || '', 'empty').isValid &&
+    validate(workingCase.defendants[0].nationalId || '', 'national-id')
+      .isValid &&
     validate(workingCase.defendants[0].name || '', 'empty').isValid &&
+    validate(workingCase.defendants[0].address || '', 'empty').isValid &&
     (workingCase.type === CaseType.CUSTODY
       ? validate(workingCase.defenderEmail || '', 'email-format').isValid &&
         validate(workingCase.defenderPhoneNumber || '', 'phonenumber')
