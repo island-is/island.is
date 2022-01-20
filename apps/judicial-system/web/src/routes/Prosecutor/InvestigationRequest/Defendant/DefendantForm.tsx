@@ -19,15 +19,11 @@ import {
 import type { Case } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import { setAndSendToServer as setSelectAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { defendant as m } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -50,42 +46,9 @@ const DefendantForm: React.FC<Props> = (props) => {
     isLoading,
   } = props
 
-  // TDOO defendants: handle multiple defendants in validation
-  const validations: FormSettings = {
-    policeCaseNumber: {
-      validations: ['empty', 'police-casenumber-format'],
-    },
-    type: {
-      validations: ['empty'],
-    },
-    accusedGender: {
-      validations: ['empty'],
-    },
-    accusedNationalId: {
-      validations: ['empty', 'national-id'],
-    },
-    accusedName: {
-      validations: ['empty'],
-    },
-    accusedAddress: {
-      validations: ['empty'],
-    },
-    defenderEmail: {
-      validations: ['email-format'],
-    },
-    defenderPhoneNumber: {
-      validations: ['phonenumber'],
-    },
-  }
-
   const { updateCase } = useCase()
   const { createDefendant, deleteDefendant, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
-  const {
-    setField,
-    validateAndSendToServer,
-    setAndSendToServer,
-  } = useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   const updateDefendantState = (
     defendantId: string,
@@ -153,7 +116,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                     m.sections.investigationType.type.placeholder,
                   )}
                   onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                    setSelectAndSendToServer(
+                    setAndSendToServer(
                       'type',
                       (selectedOption as ReactSelectOption).value as string,
                       workingCase,
@@ -193,10 +156,21 @@ const DefendantForm: React.FC<Props> = (props) => {
                 )}
                 value={workingCase.description || ''}
                 autoComplete="off"
-                onChange={(event) => {
-                  setField(event.target)
+                onChange={(evt) => {
+                  setWorkingCase({
+                    ...workingCase,
+                    description: evt.target.value,
+                  })
                 }}
-                onBlur={(event) => validateAndSendToServer(event.target)}
+                onBlur={(evt) =>
+                  setAndSendToServer(
+                    'description',
+                    evt.target.value,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
               />
             </BlueBox>
           </Box>
@@ -307,7 +281,6 @@ const DefendantForm: React.FC<Props> = (props) => {
                 <DefenderInfo
                   workingCase={workingCase}
                   setWorkingCase={setWorkingCase}
-                  setAndSendToServer={setAndSendToServer}
                 />
               </motion.section>
             )}

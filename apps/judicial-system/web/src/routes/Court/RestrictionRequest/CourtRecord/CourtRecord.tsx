@@ -62,7 +62,6 @@ export const CourtRecord: React.FC = () => {
     document.title = 'Þingbók - Réttarvörslugátt'
   }, [])
 
-  // TODO defendants: handle multiple defendants
   useEffect(() => {
     if (isCaseUpToDate) {
       const defaultCourtAttendees = (wc: Case): string => {
@@ -300,7 +299,7 @@ export const CourtRecord: React.FC = () => {
             workingCase={workingCase}
           />
         </Box>
-        {workingCase.defendants && (
+        {workingCase.defendants && workingCase.defendants.length > 0 && (
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">

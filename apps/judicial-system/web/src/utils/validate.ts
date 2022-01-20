@@ -1,5 +1,4 @@
 // TODO: Add tests
-
 import { Case, CaseType } from '@island.is/judicial-system/types'
 
 export type Validation =
@@ -67,14 +66,16 @@ export const getRegexByValidation = (validation: Validation) => {
 
 export const isAccusedStepValidRC = (workingCase: Case) => {
   return (
+    workingCase.defendants &&
     validate(workingCase.policeCaseNumber, 'empty').isValid &&
     validate(workingCase.policeCaseNumber, 'police-casenumber-format')
       .isValid &&
-    workingCase.defendants &&
     workingCase.defendants[0].gender &&
-    validate(workingCase.defendants[0].nationalId, 'empty').isValid &&
-    validate(workingCase.defendants[0].nationalId, 'national-id').isValid &&
+    validate(workingCase.defendants[0].nationalId || '', 'empty').isValid &&
+    validate(workingCase.defendants[0].nationalId || '', 'national-id')
+      .isValid &&
     validate(workingCase.defendants[0].name || '', 'empty').isValid &&
+    validate(workingCase.defendants[0].address || '', 'empty').isValid &&
     (workingCase.type === CaseType.CUSTODY
       ? validate(workingCase.defenderEmail || '', 'email-format').isValid &&
         validate(workingCase.defenderPhoneNumber || '', 'phonenumber')
@@ -85,17 +86,24 @@ export const isAccusedStepValidRC = (workingCase: Case) => {
 }
 
 export const isDefendantStepValidIC = (workingCase: Case) => {
+  const someDefendantIsInvalid =
+    workingCase.defendants &&
+    workingCase.defendants.some(
+      (defendant) =>
+        !defendant.gender ||
+        !validate(defendant.nationalId || '', 'empty').isValid ||
+        !validate(defendant.nationalId || '', 'national-id').isValid ||
+        !validate(defendant.name || '', 'empty').isValid ||
+        !validate(defendant.address || '', 'empty').isValid,
+    )
+
   return (
     validate(workingCase.policeCaseNumber, 'empty').isValid &&
     validate(workingCase.policeCaseNumber, 'police-casenumber-format')
       .isValid &&
     workingCase.type &&
     workingCase.defendants &&
-    workingCase.defendants[0].gender &&
-    validate(workingCase.defendants[0].nationalId, 'empty').isValid &&
-    validate(workingCase.defendants[0].nationalId, 'national-id').isValid &&
-    validate(workingCase.defendants[0].name || '', 'empty').isValid &&
-    validate(workingCase.defendants[0].address || '', 'empty').isValid &&
+    !someDefendantIsInvalid &&
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid
   )
