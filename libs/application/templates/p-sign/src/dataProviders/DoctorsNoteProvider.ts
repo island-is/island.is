@@ -19,7 +19,6 @@ export class DoctorsNoteProvider extends BasicDataProvider {
         }
       }
     `
-
     const res = await this.useGraphqlGateway(query)
     if (!res.ok) {
       console.error('[DoctorsNoteProvider]', await res.json())

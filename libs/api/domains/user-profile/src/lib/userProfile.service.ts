@@ -122,6 +122,7 @@ export class UserProfileService {
     const updateUserDto: UpdateUserProfileDto = {
       //temporary as schemas where not working properly
       locale: input.locale as string,
+      documentNotifications: input.documentNotifications,
 
       /* Mobile and email will be within islykill service */
       // mobilePhoneNumber: input.mobilePhoneNumber,

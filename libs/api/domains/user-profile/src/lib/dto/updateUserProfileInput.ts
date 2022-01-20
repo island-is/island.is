@@ -25,6 +25,11 @@ export class UpdateUserProfileInput {
   @IsEmail()
   email?: string
 
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  documentNotifications?: boolean
+
   // Temporary merge with islyklar service
   @Field(() => Boolean, { nullable: true })
   @IsOptional()

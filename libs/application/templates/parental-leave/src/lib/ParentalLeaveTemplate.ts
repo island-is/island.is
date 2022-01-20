@@ -102,6 +102,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        entry: 'clearAssignees',
         exit: 'setOtherParentIdIfSelectedSpouse',
         meta: {
           name: States.DRAFT,
@@ -199,6 +200,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
           ],
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
           [DefaultEvents.REJECT]: { target: States.OTHER_PARENT_ACTION },
         },
       },
@@ -317,6 +319,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           ],
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.EMPLOYER_ACTION]: {
