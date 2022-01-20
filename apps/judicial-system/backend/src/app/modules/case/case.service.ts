@@ -1,4 +1,4 @@
-import { Includeable, OrderItem } from 'sequelize/types'
+import { Includeable, OrderItem, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -356,12 +356,22 @@ export class CaseService {
   private async createCase(
     caseToCreate: CreateCaseDto,
     prosecutorId?: string,
+    transaction?: Transaction,
   ): Promise<string> {
-    const theCase = await this.caseModel.create({
-      ...caseToCreate,
-      creatingProsecutorId: prosecutorId,
-      prosecutorId,
-    })
+    const theCase = await (transaction
+      ? this.caseModel.create(
+          {
+            ...caseToCreate,
+            creatingProsecutorId: prosecutorId,
+            prosecutorId,
+          },
+          { transaction },
+        )
+      : this.caseModel.create({
+          ...caseToCreate,
+          creatingProsecutorId: prosecutorId,
+          prosecutorId,
+        }))
 
     return theCase.id
   }
@@ -409,7 +419,7 @@ export class CaseService {
   }
 
   async internalCreate(caseToCreate: InternalCreateCaseDto): Promise<Case> {
-    let prosecutorId = undefined
+    let prosecutorId: string | undefined
 
     if (caseToCreate.prosecutorNationalId) {
       const prosecutor = await this.userService.findByNationalId(
@@ -418,30 +428,35 @@ export class CaseService {
 
       if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
         throw new BadRequestException(
-          `Person with national id ${caseToCreate.prosecutorNationalId} is not registered as a prosecutor`,
+          `User ${prosecutor.id} is not registered as a prosecutor`,
         )
       }
 
       prosecutorId = prosecutor.id
     }
 
-    const caseId = await this.createCase(caseToCreate, prosecutorId)
+    return this.sequelize
+      .transaction(async (transaction) => {
+        const caseId = await this.createCase(
+          caseToCreate,
+          prosecutorId,
+          transaction,
+        )
 
-    try {
-      await this.defendantService.create(caseId, {
-        nationalId: caseToCreate.accusedNationalId,
-        name: caseToCreate.accusedName,
-        gender: caseToCreate.accusedGender,
-        address: caseToCreate.accusedAddress,
-      })
-    } catch (error) {
-      // Tolerate failure, but log the error
-      this.logger.error(`Failed to create a defendant for case ${caseId}`, {
-        error,
-      })
-    }
+        await this.defendantService.create(
+          caseId,
+          {
+            nationalId: caseToCreate.accusedNationalId,
+            name: caseToCreate.accusedName,
+            gender: caseToCreate.accusedGender,
+            address: caseToCreate.accusedAddress,
+          },
+          transaction,
+        )
 
-    return this.findById(caseId)
+        return caseId
+      })
+      .then((caseId) => this.findById(caseId))
   }
 
   async create(
@@ -654,7 +669,7 @@ export class CaseService {
   async extend(theCase: Case, user: TUser): Promise<Case> {
     return this.sequelize
       .transaction(async (transaction) => {
-        const extendedCase = await this.caseModel.create(
+        const caseId = await this.createCase(
           {
             type: theCase.type,
             description: theCase.description,
@@ -673,19 +688,18 @@ export class CaseService {
             legalArguments: theCase.legalArguments,
             requestProsecutorOnlySession: theCase.requestProsecutorOnlySession,
             prosecutorOnlySessionRequest: theCase.prosecutorOnlySessionRequest,
-            creatingProsecutorId: user.id,
-            prosecutorId: user.id,
             parentCaseId: theCase.id,
             initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
-          },
-          { transaction },
+          } as CreateCaseDto,
+          user.id,
+          transaction,
         )
 
         if (theCase.defendants && theCase.defendants?.length > 0) {
           await Promise.all(
             theCase.defendants?.map((defendant) =>
               this.defendantService.create(
-                extendedCase.id,
+                caseId,
                 {
                   nationalId: defendant.nationalId,
                   name: defendant.name,
@@ -698,7 +712,7 @@ export class CaseService {
           )
         }
 
-        return extendedCase.id
+        return caseId
       })
       .then((caseId) => this.findById(caseId))
   }
