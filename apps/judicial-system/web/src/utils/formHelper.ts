@@ -41,6 +41,36 @@ export const removeTabsValidateAndSet = (
   )
 }
 
+export const removeErrorMessageIfValid = (
+  validations: Validation[],
+  value: string,
+  errorMessage?: string,
+  errorMessageSetter?: (value: React.SetStateAction<string>) => void,
+) => {
+  const isValid = !validations.some(
+    (validation) => validate(value, validation).isValid === false,
+  )
+
+  if (errorMessage !== '' && errorMessageSetter && isValid) {
+    errorMessageSetter('')
+  }
+}
+
+export const validateAndSetErrorMessage = (
+  validations: Validation[],
+  value: string,
+  errorMessageSetter?: (value: React.SetStateAction<string>) => void,
+) => {
+  const error = validations
+    .map((v) => validate(value, v))
+    .find((v) => v.isValid === false)
+
+  if (error && errorMessageSetter) {
+    errorMessageSetter(error.errorMessage)
+    return
+  }
+}
+
 export const validateAndSet = (
   field: string,
   value: string,
@@ -50,13 +80,7 @@ export const validateAndSet = (
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
-  const isValid = !validations.some(
-    (validation) => validate(value, validation).isValid === false,
-  )
-
-  if (errorMessage !== '' && setErrorMessage && isValid) {
-    setErrorMessage('')
-  }
+  removeErrorMessageIfValid(validations, value, errorMessage, setErrorMessage)
 
   setCase({
     ...theCase,
@@ -182,14 +206,7 @@ export const validateAndSendToServer = (
   updateCase: (id: string, updateCase: UpdateCase) => void,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
-  const error = validations
-    .map((v) => validate(value, v))
-    .find((v) => v.isValid === false)
-
-  if (error && setErrorMessage) {
-    setErrorMessage(error.errorMessage)
-    return
-  }
+  validateAndSetErrorMessage(validations, value, setErrorMessage)
 
   if (theCase.id !== '') {
     updateCase(theCase.id, parseString(field, value))

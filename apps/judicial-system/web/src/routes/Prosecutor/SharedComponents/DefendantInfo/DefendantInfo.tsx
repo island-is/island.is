@@ -7,26 +7,20 @@ import {
   Gender,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import { Box, Icon, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
+
+import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
+  removeErrorMessageIfValid,
+  validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './DefendantInfo.css'
-import {
-  validate,
-  Validation,
-} from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   defendant: Defendant
-  workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   onChange: (
     defendantId: string,
     updatedDefendant: UpdateDefendant,
@@ -36,15 +30,7 @@ interface Props {
 }
 
 const DefendantInfo: React.FC<Props> = (props) => {
-  const {
-    defendant,
-    workingCase,
-    setWorkingCase,
-    onDelete,
-    onChange,
-    updateDefendantState,
-  } = props
-  const { updateCase } = useCase()
+  const { defendant, onDelete, onChange, updateDefendantState } = props
   const { formatMessage } = useIntl()
 
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>(
@@ -62,7 +48,6 @@ const DefendantInfo: React.FC<Props> = (props) => {
   ] = useState<string>('')
 
   return (
-    // TDOO defendants: handle multiple defendants
     <BlueBox>
       <Box marginBottom={2} display="flex" justifyContent="spaceBetween">
         <Text as="h4" variant="h4">
@@ -101,7 +86,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             label={formatMessage(core.female)}
             value={Gender.FEMALE}
             checked={defendant.gender === Gender.FEMALE}
-            onChange={async () => {
+            onChange={() => {
               onChange(defendant.id, {
                 gender: Gender.FEMALE,
               })
@@ -117,7 +102,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             label={formatMessage(core.otherGender)}
             value={Gender.OTHER}
             checked={defendant.gender === Gender.OTHER}
-            onChange={async () => {
+            onChange={() => {
               onChange(defendant.id, {
                 gender: Gender.OTHER,
               })
@@ -133,31 +118,23 @@ const DefendantInfo: React.FC<Props> = (props) => {
           maskPlaceholder={null}
           value={defendant.nationalId ?? ''}
           onChange={(evt) => {
-            // Validate
-            const isValid = (['empty', 'national-id'] as Validation[]).some(
-              (validation) =>
-                validate(evt.target.value, validation).isValid === false,
+            removeErrorMessageIfValid(
+              ['empty', 'national-id'] as Validation[],
+              evt.target.value,
+              nationalIdErrorMessage,
+              setNationalIdErrorMessage,
             )
 
-            // Set errormessage if invalid and remove error message if not
-            if (nationalIdErrorMessage !== '' && isValid) {
-              setNationalIdErrorMessage('')
-            }
-
-            // Set state
             updateDefendantState(defendant.id, {
               nationalId: evt.target.value,
             })
           }}
           onBlur={(evt) => {
-            const error = (['empty', 'national-id'] as Validation[])
-              .map((v) => validate(evt.target.value, v))
-              .find((v) => v.isValid === false)
-
-            if (error && setNationalIdErrorMessage) {
-              setNationalIdErrorMessage(error.errorMessage)
-              return
-            }
+            validateAndSetErrorMessage(
+              ['empty', 'national-id'],
+              evt.target.value,
+              setNationalIdErrorMessage,
+            )
 
             onChange(defendant.id, { nationalId: evt.target.value })
           }}
@@ -184,27 +161,27 @@ const DefendantInfo: React.FC<Props> = (props) => {
           value={defendant.name ?? ''}
           errorMessage={accusedNameErrorMessage}
           hasError={accusedNameErrorMessage !== ''}
-          onChange={(event) =>
-            removeTabsValidateAndSet(
-              'accusedName',
-              event,
-              ['empty'],
-              workingCase,
-              setWorkingCase,
+          onChange={(evt) => {
+            removeErrorMessageIfValid(
+              ['empty'] as Validation[],
+              evt.target.value,
               accusedNameErrorMessage,
               setAccusedNameErrorMessage,
             )
-          }
-          onBlur={(event) =>
-            validateAndSendToServer(
-              'accusedName',
-              event.target.value,
-              ['empty'],
-              workingCase,
-              updateCase,
+
+            updateDefendantState(defendant.id, {
+              name: evt.target.value,
+            })
+          }}
+          onBlur={(evt) => {
+            validateAndSetErrorMessage(
+              ['empty'] as Validation[],
+              evt.target.value,
               setAccusedNameErrorMessage,
             )
-          }
+
+            onChange(defendant.id, { name: evt.target.value })
+          }}
           required
         />
       </Box>
@@ -220,27 +197,27 @@ const DefendantInfo: React.FC<Props> = (props) => {
           Boolean(accusedAddressErrorMessage) &&
           accusedAddressErrorMessage !== ''
         }
-        onChange={(event) =>
-          removeTabsValidateAndSet(
-            'accusedAddress',
-            event,
-            ['empty'],
-            workingCase,
-            setWorkingCase,
+        onChange={(evt) => {
+          removeErrorMessageIfValid(
+            ['empty'] as Validation[],
+            evt.target.value,
             accusedAddressErrorMessage,
             setAccusedAddressErrorMessage,
           )
-        }
-        onBlur={(event) =>
-          validateAndSendToServer(
-            'accusedAddress',
-            event.target.value,
-            ['empty'],
-            workingCase,
-            updateCase,
+
+          updateDefendantState(defendant.id, {
+            address: evt.target.value,
+          })
+        }}
+        onBlur={(evt) => {
+          validateAndSetErrorMessage(
+            ['empty'] as Validation[],
+            evt.target.value,
             setAccusedAddressErrorMessage,
           )
-        }
+
+          onChange(defendant.id, { address: evt.target.value })
+        }}
         required
       />
     </BlueBox>
