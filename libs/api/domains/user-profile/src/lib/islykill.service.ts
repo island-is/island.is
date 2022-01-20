@@ -2,8 +2,8 @@ import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
 import { Injectable, BadRequestException } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 
-import { IslykillSettings } from './graphql/models/islykillSettings.model'
-import { UpdateIslykillSettings } from './graphql/models/updateIslykillSettings.model'
+import { IslykillSettings } from './models/islykillSettings.model'
+import { UpdateIslykillSettings } from './models/updateIslykillSettings.model'
 
 @Injectable()
 export class IslykillService {

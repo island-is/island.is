@@ -17,7 +17,7 @@ import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
 import { UserProfile } from './userProfile.model'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { IslykillService } from '@island.is/api/domains/islykill'
+import { IslykillService } from './islykill.service'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 
 // eslint-disable-next-line
@@ -146,10 +146,10 @@ export class UserProfileService {
       // if email exists and *only* mobile is updated, email will become undefined. And vice-versa.
       await this.islyklarService
         .updateIslykillSettings(user.nationalId, {
-          email: input.email || islyklarData.email,
-          mobile: input.mobilePhoneNumber || islyklarData.mobile,
-          canNudge: input.canNudge || islyklarData.canNudge,
-          bankInfo: input.bankInfo || islyklarData.bankInfo,
+          email: input.email ?? islyklarData.email,
+          mobile: input.mobilePhoneNumber ?? islyklarData.mobile,
+          canNudge: input.canNudge ?? islyklarData.canNudge,
+          bankInfo: input.bankInfo ?? islyklarData.bankInfo,
         }) // Current version does not return the updated user in the response.
         .catch(handleError)
     } else {
