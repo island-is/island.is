@@ -299,7 +299,7 @@ export const CourtRecord: React.FC = () => {
             workingCase={workingCase}
           />
         </Box>
-        {workingCase.defendants && (
+        {workingCase.defendants && workingCase.defendants.length > 0 && (
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
