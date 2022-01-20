@@ -1,1 +1,2 @@
-export default (n) => !isNaN(Number(n))
+const isNumber = (n) => !isNaN(Number(n))
+export default isNumber

@@ -1,4 +1,6 @@
-# Core
+<!-- gitbook-navigation: "Core" -->
+
+# Application Core
 
 ## About
 

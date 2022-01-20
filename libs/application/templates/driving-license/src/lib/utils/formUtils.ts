@@ -11,7 +11,7 @@ import {
   B_FULL,
   B_TEMP,
 } from '../../shared/constants'
-import { hasYes } from '../utils'
+import { hasYes } from './hasYes'
 
 export const allowFakeCondition = (result = YES) => (answers: FormValue) =>
   getValueViaPath(answers, 'fakeData.useFakeData') === result
@@ -22,16 +22,16 @@ export const needsHealthCertificateCondition = (result = YES) => (
   return Object.values(answers?.healthDeclaration || {}).includes(result)
 }
 
-export const isVisible = (...fns: ConditionFn[]) => (answers: FormValue) =>
-  fns.reduce((s, fn) => (!s ? false : fn(answers)), true)
+export const isVisible = (...fns: ConditionFn[]) => (answers: FormValue) => {
+  return fns.reduce((s, fn) => (!s ? false : fn(answers)), true)
+}
 
 export const isApplicationForCondition = (
   result: DrivingLicenseApplicationFor,
 ) => (answers: FormValue) => {
-  const [applicationFor] =
-    getValueViaPath<DrivingLicenseApplicationFor[]>(answers, 'applicationFor', [
-      B_FULL,
-    ]) ?? []
+  const applicationFor =
+    getValueViaPath<DrivingLicenseApplicationFor>(answers, 'applicationFor') ??
+    B_FULL
 
   return applicationFor === result
 }

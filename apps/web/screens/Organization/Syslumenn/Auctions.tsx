@@ -520,7 +520,7 @@ const Auctions: Screen<AuctionsProps> = ({
   const capitalAreaOffice = n(
     'auctionCapitalAreaOffice',
     'Sýslumaðurinn á höfuðborgarsvæðinu',
-  )
+  ) as string
   const auctionContainsVakaKeyword = (auction: SyslumennAuction) => {
     return vakaAuctionKeywords.some((keyword) => {
       return (
@@ -538,16 +538,19 @@ const Auctions: Screen<AuctionsProps> = ({
         auctionContainsVakaKeyword(auction))
     )
   }
-  const getAuctionTakesPlaceAtAndExtraInfo = (auction: SyslumennAuction) => {
+  const renderWhereAuctionTakesPlaceAndExtraInfo = (
+    auction: SyslumennAuction,
+  ) => {
     if (auctionAtVaka(auction)) {
       return (
         <div>
           <Text paddingBottom={1}>
             {n('auctionTakesPlaceAt', 'Staðsetning uppboðs')}:{' '}
-            {n(
-              'auctionTakesPlaceAtVaka',
-              'Uppboð verður haldið í aðstöðu Vöku hf., Héðinsgötu 1 - 3.',
-            )}
+            {auction.auctionTakesPlaceAt ??
+              n(
+                'auctionTakesPlaceAtVaka',
+                'Uppboð verður haldið í aðstöðu Vöku hf., Héðinsgötu 1 - 3.',
+              )}
           </Text>
           <Text variant="small">
             {n(
@@ -579,7 +582,47 @@ const Auctions: Screen<AuctionsProps> = ({
           )}
         </Text>
       )
+    } else {
+      return (
+        auction.auctionTakesPlaceAt && (
+          <Text paddingBottom={1}>
+            {n('auctionTakesPlaceAt', 'Staðsetning uppboðs')}:{' '}
+            {auction.auctionTakesPlaceAt}
+          </Text>
+        )
+      )
     }
+  }
+
+  const renderRespondents = (
+    auction: SyslumennAuction,
+    auctionRespondents: string[],
+  ) => {
+    if (!auctionRespondents) return null
+
+    if (auction.lotType === LOT_TYPES.REAL_ESTATE) {
+      return (
+        <Text paddingTop={2} paddingBottom={1}>
+          {auctionRespondents.length > 1
+            ? n('auctionRealEstateRespondentsPlural', 'Þinglýstir eigendur')
+            : n('auctionRealEstateRespondentsSingle', 'Þinglýstur eigandi')}
+          : {auctionRespondents.join(', ')}
+        </Text>
+      )
+    }
+
+    if (auction.lotType === LOT_TYPES.SHIP) {
+      return (
+        <Text paddingTop={2} paddingBottom={1}>
+          {auctionRespondents.length > 1
+            ? n('auctionShipRespondentsPlural', 'Gerðarþolar')
+            : n('auctionShipRespondentsSingle', 'Gerðarþoli')}
+          : {auctionRespondents.join(', ')}
+        </Text>
+      )
+    }
+
+    return null
   }
 
   return (
@@ -801,23 +844,16 @@ const Auctions: Screen<AuctionsProps> = ({
                     />
                   )}
 
-                  {/* Auction takes place at & auction extra info */}
-                  {getAuctionTakesPlaceAtAndExtraInfo(auction)}
+                  {/* Auction extra info */}
+                  {renderWhereAuctionTakesPlaceAndExtraInfo(auction)}
 
                   {/* Respondents */}
-                  {auctionRespondents &&
-                    auction.lotType === LOT_TYPES.REAL_ESTATE && (
-                      <Text paddingTop={2} paddingBottom={1}>
-                        {auctionRespondents.length > 1
-                          ? n('auctionRespondentsPlural', 'Þinglýstir eigendur')
-                          : n('auctionRespondentsSingle', 'Þinglýstur eigandi')}
-                        : {auctionRespondents.join(', ')}
-                      </Text>
-                    )}
+                  {renderRespondents(auction, auctionRespondents)}
 
                   {/* Petitioners */}
                   {auctionPetitioners &&
-                    auction.lotType === LOT_TYPES.REAL_ESTATE && (
+                    (auction.lotType === LOT_TYPES.REAL_ESTATE ||
+                      auction.lotType === LOT_TYPES.SHIP) && (
                       <Text paddingBottom={1}>
                         {auctionPetitioners.length > 1
                           ? n('auctionPetitionersPlural', 'Gerðarbeiðendur')

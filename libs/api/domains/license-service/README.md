@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # API Domains License Service
 
 ## Licenses

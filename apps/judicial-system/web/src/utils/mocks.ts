@@ -9,7 +9,6 @@ import {
   CaseType,
   InstitutionType,
   UserRole,
-  Case,
 } from '@island.is/judicial-system/types'
 import type { UpdateCase, User } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'

@@ -109,6 +109,17 @@ export const delegationsList = style({
   margin: '-3px',
 })
 
+export const smallAvatar = style({
+  ...themeUtils.responsiveStyle({
+    xs: {
+      marginRight: -theme.spacing.gutter,
+    },
+    sm: {
+      marginRight: 'unset',
+    },
+  }),
+})
+
 export const resetButtonPadding = style({
   marginTop: '-16px',
   marginBottom: '-16px',

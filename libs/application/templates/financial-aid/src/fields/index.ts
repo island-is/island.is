@@ -10,3 +10,4 @@ export { default as PersonalTaxCreditForm } from './PersonalTaxCreditForm/Person
 export { default as Confirmation } from './Confirmation/Confirmation'
 export { default as ConfirmationSectionImage } from './ConfirmationSectionImage/ConfirmationSectionImage'
 export { default as CopyUrl } from './CopyUrl/CopyUrl'
+export { default as ContactInfo } from './ContactInfo/ContactInfo'
