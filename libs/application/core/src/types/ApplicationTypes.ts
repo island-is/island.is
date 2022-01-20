@@ -69,7 +69,7 @@ export const ApplicationConfigurations = {
     translation: 'affgp.application',
   },
   [ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN]: {
-    slug: 'greidsluaaetlun',
+    slug: 'greidsludreifing-skulda',
     translation: 'pdpp.application',
   },
   [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]: {

@@ -11,9 +11,4 @@ export const error = defineMessages({
     defaultMessage: 'Kennitala þarf að vera gild',
     description: 'National ID error message',
   },
-  nationalIdIsNotCompany: {
-    id: `pdpp.application:application.error.nationalIdIsNotCompany`,
-    defaultMessage: 'Ekkert fyrirtæki fannst á kennitölu',
-    description: 'National ID is not a company error message',
-  },
 })
