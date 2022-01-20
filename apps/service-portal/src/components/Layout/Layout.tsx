@@ -42,7 +42,7 @@ const Layout: FC = ({ children }) => {
         </Hidden>
       </RemoveScroll>
       <Hidden below="md">
-        {/* <Sidebar /> */}
+        <Sidebar />
       </Hidden>
       <Box overflow="hidden" className={styles.layoutWrapper} paddingBottom={7}>
         <Box as="main">

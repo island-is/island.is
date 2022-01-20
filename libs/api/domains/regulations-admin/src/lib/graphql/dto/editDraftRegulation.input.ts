@@ -7,6 +7,7 @@ import {
   RegulationType,
   URLString,
 } from '@island.is/regulations'
+// FIXME: causes build error in github runner (error: No matching export in "libs/regulations/src/sub/admin.ts" for import "RegulationDraftId")
 import { DraftingStatus, RegulationDraftId } from '@island.is/regulations/admin'
 import { Field, InputType } from '@nestjs/graphql'
 
@@ -22,7 +23,8 @@ export class Appendix {
 @InputType()
 export class EditDraftBody {
   @Field(() => String, { nullable: true })
-  draftingStatus!: DraftingStatus
+  draftingStatus!: string
+  // draftingStatus!: DraftingStatus
 
   @Field(() => String, { nullable: true })
   text!: HTMLText
@@ -73,7 +75,8 @@ export class EditDraftBody {
 @InputType()
 export class EditDraftRegulationInput {
   @Field(() => String)
-  id!: RegulationDraftId
+  id!: string
+  // id!: RegulationDraftId
 
   @Field()
   body!: EditDraftBody

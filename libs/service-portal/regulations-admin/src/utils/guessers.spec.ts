@@ -6,7 +6,7 @@ import {
 
 describe('findRegulationType', () => {
   it('defaults to returning "base" whenever in doubt', () => {
-    expect(findRegulationType('')).toEqual('base')
+    expect(findRegulationType('')).toEqual(undefined)
     expect(findRegulationType('Reglugerð um jólasveina')).toEqual('base')
   })
 
