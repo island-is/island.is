@@ -83,6 +83,7 @@
 
 /apps/download-service/                                                                       @island-is/hugsmidjan
 /apps/service-portal*/                                                                        @island-is/hugsmidjan
+/apps/services/regulations-admin-backend/                                                     @island-is/hugsmidjan
 /apps/services/user-profile/                                                                  @island-is/hugsmidjan @island-is/kosmos-kaos
 /apps/web/screens/Regulations/                                                                @island-is/hugsmidjan
 /apps/web/components/Regulations/                                                             @island-is/hugsmidjan
