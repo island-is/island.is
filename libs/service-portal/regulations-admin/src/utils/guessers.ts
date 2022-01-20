@@ -145,6 +145,7 @@ export const findSignatureInText = (html: HTMLText) => {
 export const findRegulationType = (
   title: PlainText,
 ): RegulationType | undefined => {
+  title = title.trim().replace(/\s+/g, ' ')
   if (!title || !/reglugerð/i.test(title)) {
     return
   }

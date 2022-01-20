@@ -76,6 +76,12 @@ describe('findRegulationType', () => {
         'Reglugerð um breytingu reglugerðar 123/2022 um jólasveina',
       ),
     ).toEqual('base')
+    // Not affacted by weird spacing
+    expect(
+      findRegulationType(
+        '\t Reglugerð  um   (2.)\tbreytingu\n á reglugerð \n\n\t\n123/2022  um jólasveina.',
+      ),
+    ).toEqual('amending')
   })
 
   it('amending regulation titles must contain the word reglugerð as a subject', () => {
