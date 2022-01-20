@@ -1,7 +1,6 @@
 import React, { FC, useEffect } from 'react'
 import {
   CustomField,
-  DefaultEvents,
   FieldBaseProps,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -26,7 +25,6 @@ export const PaymentPending: FC<Props> = (props) => {
   const [submitBack, { error: backError }] = useSubmitApplication({
     application,
     refetch,
-    event: DefaultEvents.ABORT,
   })
 
   const fromRedirect = isComingFromRedirect()
@@ -78,7 +76,6 @@ const PollingForPayment: FC<Props> = ({ error, application, refetch }) => {
   const [submitApplication, { error: submitError }] = useSubmitApplication({
     application,
     refetch,
-    event: DefaultEvents.SUBMIT,
   })
 
   // automatically go to done state if payment has been fulfilled
