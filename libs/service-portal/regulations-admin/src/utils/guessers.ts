@@ -32,13 +32,13 @@ export const findAffectedRegulationsInText = (
     [
       // not obviously referring to laws, which have the same name-pattern.
       // (See: "Negative lookbehind assertion" https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Assertions#other_assertions)
-      /(?<!(?:lög|lögum|laga)\s+(?:nr.|númer)\s*)/,
+      /(?<!(?:lög|lögum|laga)(?:\s+(?:nr.|númer))?\s*?)/,
       // preceeded by either whitespace or parenthesis.
-      /[\s(]?/,
+      /[\s(]/,
       // Capture 1 one to four digits
       /(\d{1,4})/, // $1
       // sigle dash or " árið " or " frá árinu"
-      /(?:\/|,?\s+(?:árið|frá\s+árinu)\s+)/,
+      /\s*(?:\/\s*|,?\s+(?:árið|frá\s+árinu)\s+)/,
       // A year-ish string ("19XX" or "20XX")
       /((?:19|20)\d{2})/, // $2
       // followed by either whitespace, parenthesis, or basic punctuation.
