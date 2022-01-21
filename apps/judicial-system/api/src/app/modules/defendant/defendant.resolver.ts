@@ -12,7 +12,7 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
-import { User } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { BackendAPI } from '../../../services'
 import { CreateDefendantInput } from './dto/createDefendant.input'

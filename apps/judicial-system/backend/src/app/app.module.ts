@@ -5,6 +5,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../environments'
+import { DefendantModule } from './modules/defendant/defendant.module'
 import {
   CaseModule,
   CourtModule,
@@ -17,7 +18,6 @@ import {
   AwsS3Module,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
-import { DefendantModule } from './modules/defendant/defendant.module';
 
 @Module({
   imports: [

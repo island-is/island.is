@@ -8,6 +8,7 @@ import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
 
 import { environment } from '../environments'
 import { BackendAPI } from '../services'
+import { DefendantModule } from './modules/defendant/defendant.module'
 import {
   AuthModule,
   UserModule,
@@ -18,7 +19,6 @@ import {
   FeatureModule,
   PoliceModule,
 } from './modules/'
-import { DefendantModule } from './modules/defendant/defendant.module';
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
