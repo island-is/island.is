@@ -84,7 +84,7 @@ describe('CaseController - Create', () => {
     })
   })
 
-  describe('case defendant', () => {
+  describe('defendant created', () => {
     const userId = uuid()
     const user = { id: userId } as TUser
     const caseToCreate = {} as CreateCaseDto

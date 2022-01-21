@@ -81,7 +81,7 @@ function constructCustodyNoticePdf(
           theCase.defendants.length > 0 &&
           theCase.defendants[0].nationalId
           ? theCase.defendants[0].nationalId
-          : 'Kennitala ekki skráð',
+          : 'ekki skráð',
       )}`,
     )
     .text(
