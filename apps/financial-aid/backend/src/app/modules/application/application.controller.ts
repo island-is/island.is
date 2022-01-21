@@ -42,12 +42,8 @@ import type {
   Application,
 } from '@island.is/financial-aid/shared/lib'
 
-import {
-  Scopes,
-  ScopesGuard,
-  User as IdsAuthUser,
-  User,
-} from '@island.is/auth-nest-tools'
+import { Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 
 import {
   ApplicationFilters,
@@ -108,7 +104,7 @@ export class ApplicationController {
   async findApplication(
     @Param('nationalId') nationalId: string,
     @CurrentStaff() staff: Staff,
-    @CurrentUser() user: IdsAuthUser,
+    @CurrentUser() user: User,
   ): Promise<ApplicationModel[]> {
     this.logger.debug('Search for application')
 
@@ -169,7 +165,7 @@ export class ApplicationController {
   async getById(
     @Param('id') id: string,
     @CurrentApplication() application: Application,
-    @CurrentUser() user: IdsAuthUser,
+    @CurrentUser() user: User,
   ) {
     this.logger.debug(`Application controller: Getting application by id ${id}`)
 

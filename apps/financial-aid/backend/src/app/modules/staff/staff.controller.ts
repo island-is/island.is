@@ -21,7 +21,8 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 import type { Staff } from '@island.is/financial-aid/shared/lib'
-import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { RolesGuard } from '../../guards/roles.guard'
 import { CurrentStaff, RolesRules } from '../../decorators'
 import { StaffGuard } from '../../guards/staff.guard'
