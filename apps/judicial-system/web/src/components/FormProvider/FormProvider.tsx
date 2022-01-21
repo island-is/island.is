@@ -2,7 +2,12 @@ import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseState,
+  CaseType,
+  Defendant,
+} from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 
 import { CaseData } from '../../types'
@@ -34,7 +39,7 @@ const initialState: Case = {
   type: CaseType.CUSTODY,
   state: CaseState.NEW,
   policeCaseNumber: '',
-  defendants: [],
+  defendants: [{ id: '' } as Defendant],
 }
 
 export const FormContext = createContext<FormProvider>({

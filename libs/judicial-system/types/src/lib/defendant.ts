@@ -23,6 +23,7 @@ export interface CreateDefendant {
 }
 
 export interface UpdateDefendant {
+  id?: string
   nationalId?: string
   name?: string
   gender?: Gender

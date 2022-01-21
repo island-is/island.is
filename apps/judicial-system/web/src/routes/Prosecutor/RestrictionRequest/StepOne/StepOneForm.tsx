@@ -37,10 +37,17 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   loading: boolean
   handleNextButtonClick: (theCase: Case) => void
+  updateDefendantState: (defendantId: string, update: UpdateDefendant) => void
 }
 
 export const StepOneForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, loading, handleNextButtonClick } = props
+  const {
+    workingCase,
+    setWorkingCase,
+    loading,
+    handleNextButtonClick,
+    updateDefendantState,
+  } = props
 
   const { formatMessage } = useIntl()
 
@@ -52,38 +59,14 @@ export const StepOneForm: React.FC<Props> = (props) => {
   const { updateDefendant } = useDefendants()
   const { updateCase } = useCase()
 
-  const updateDefendantState = (
-    defendantId: string,
-    update: UpdateDefendant,
-  ) => {
-    if (workingCase.defendants) {
-      const indexOfDefendantToUpdate = workingCase.defendants.findIndex(
-        (defendant) => defendant.id === defendantId,
-      )
-
-      const newDefendants = [...workingCase.defendants]
-
-      newDefendants[indexOfDefendantToUpdate] = {
-        ...newDefendants[indexOfDefendantToUpdate],
-        ...update,
-      }
-
-      setWorkingCase({ ...workingCase, defendants: newDefendants })
-    }
-  }
-
   const handleUpdateDefendant = async (
     defendantId: string,
     updatedDefendant: UpdateDefendant,
   ) => {
-    const { data } = await updateDefendant(
-      workingCase.id,
-      defendantId,
-      updatedDefendant,
-    )
+    updateDefendantState(defendantId, updatedDefendant)
 
-    if (data) {
-      updateDefendantState(data.updateDefendant.id, updatedDefendant)
+    if (defendantId) {
+      updateDefendant(workingCase.id, defendantId, updatedDefendant)
     }
   }
 

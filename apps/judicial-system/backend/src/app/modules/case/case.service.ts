@@ -463,19 +463,9 @@ export class CaseService {
     caseToCreate: CreateCaseDto,
     prosecutorId?: string,
   ): Promise<Case> {
-    return this.sequelize
-      .transaction(async (transaction) => {
-        const caseId = await this.createCase(
-          caseToCreate,
-          prosecutorId,
-          transaction,
-        )
+    const caseId = await this.createCase(caseToCreate, prosecutorId)
 
-        await this.defendantService.create(caseId, {}, transaction)
-
-        return caseId
-      })
-      .then((caseId) => this.findById(caseId))
+    return this.findById(caseId)
   }
 
   async update(
