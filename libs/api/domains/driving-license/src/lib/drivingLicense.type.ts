@@ -52,6 +52,14 @@ export enum RequirementKey {
   drivingSchoolMissing = 'DrivingSchoolMissing',
   deniedByService = 'DeniedByService',
   localResidency = 'LocalResidency',
+  noTempLicense = 'NoTempLicense',
+  noLicenseFound = 'NoLicenseFound',
+  personNot17YearsOld = 'PersonNot17YearsOld',
+  hasNoPhoto = 'HasNoPhoto',
+  hasNoSignature = 'HasNoSignature',
+  personNotFoundInNationalRegistry = 'PersonNotFoundInNationalRegistry',
+  hasDeprivation = 'HasDeprivation',
+  hasPoints = 'HasPoints',
 }
 
 export interface ApplicationEligibilityRequirement {
