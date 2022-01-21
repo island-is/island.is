@@ -59,6 +59,7 @@ import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../hooks/useScrollPosition'
 import { scrollTo } from '../hooks/useScrollSpy'
 import { StepperFSM } from '../components/StepperFSM/StepperFSM'
+import { getStepOptionsSourceNamespace } from '../components/StepperFSM/StepperFSMUtils'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -285,9 +286,14 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
 export interface ArticleProps {
   article: Article
   namespace: GetNamespaceQuery['getNamespace']
+  subArticleStepOptions: { data: []; slug: string }[]
 }
 
-const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
+const ArticleScreen: Screen<ArticleProps> = ({
+  article,
+  namespace,
+  subArticleStepOptions,
+}) => {
   const { activeLocale } = useI18n()
   const portalRef = useRef()
   const processEntryRef = useRef(null)
@@ -512,7 +518,10 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               activeLocale,
             )}
             {subArticle && subArticle.stepper && (
-              <StepperFSM stepper={subArticle.stepper} />
+              <StepperFSM
+                stepper={subArticle.stepper}
+                optionsFromNamespace={subArticleStepOptions}
+              />
             )}
             <AppendedArticleComponents article={article} />
           </Box>
@@ -626,9 +635,42 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
     throw new CustomNextError(404, 'Article not found')
   }
 
+  const subArticleStepOptions: { data: []; slug: string }[] = []
+
+  if (subArticle && subArticle.stepper) {
+    const queries = subArticle.stepper.steps.map((step) => {
+      const sourceKey = getStepOptionsSourceNamespace(step)
+      if (!sourceKey) return null
+      return apolloClient
+        .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+          query: GET_NAMESPACE_QUERY,
+          variables: {
+            input: {
+              namespace: sourceKey,
+              lang: 'is',
+            },
+          },
+        })
+        .then((content) => {
+          // map data here to reduce data processing in component
+          return JSON.parse(content.data.getNamespace.fields)
+        })
+    })
+
+    const dataArray = await Promise.all(queries)
+
+    for (let i = 0; i < dataArray.length; i += 1) {
+      subArticleStepOptions.push({
+        slug: subArticle.stepper.steps[i].slug,
+        data: dataArray[i],
+      })
+    }
+  }
+
   return {
     article,
     namespace,
+    subArticleStepOptions,
   }
 }
 
