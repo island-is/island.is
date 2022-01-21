@@ -34,7 +34,7 @@ export const EmployerIdField = ({
   const { register } = useFormContext()
   const correctedNationalId = getValueViaPath(
     application.answers,
-    'correctedNationalId.id',
+    'correctedEmployer.nationalId',
     '',
   )
   const [nationalId, setNationalId] = useState<string>(
@@ -57,8 +57,8 @@ export const EmployerIdField = ({
 
   let error
 
-  if (errors?.correctedNationalId?.id) {
-    error = errors?.correctedNationalId?.id
+  if (errors?.correctedEmployer?.nationalId) {
+    error = errors?.correctedEmployer?.nationalId
   } else if (data) {
     error = undefined
   } else if (companyError && validNationalId.length !== 0) {
@@ -68,7 +68,7 @@ export const EmployerIdField = ({
   return (
     <Box marginTop={5}>
       <InputController
-        id="correctedNationalId.id"
+        id="correctedEmployer.nationalId"
         label={formatText(
           employer.labels.employerNationalId,
           application,
@@ -103,7 +103,7 @@ export const EmployerIdField = ({
         type="hidden"
         value={data ? data.companyRegistryCompany?.name : ''}
         ref={register({ required: true })}
-        name="correctedNationalId.name"
+        name="correctedEmployer.name"
       />
     </Box>
   )
