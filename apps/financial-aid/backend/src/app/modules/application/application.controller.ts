@@ -194,6 +194,7 @@ export class ApplicationController {
     return this.applicationService.getAllFilters(staff.id, staff.municipalityId)
   }
 
+  @UseGuards(ApplicationGuard)
   @Put('id/:id')
   @ApiOkResponse({
     type: ApplicationModel,

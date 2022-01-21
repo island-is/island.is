@@ -9,9 +9,10 @@ import { CreateFilesModel, SignedUrlModel } from './models'
 import { FileService } from './file.service'
 import { RolesGuard } from '../../guards/roles.guard'
 import { CurrentUser, RolesRules } from '../../decorators'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Controller(`${apiBasePath}/file`)
 @ApiTags('files')
 export class FileController {
@@ -20,6 +21,7 @@ export class FileController {
   @Post('url')
   @UseGuards(RolesGuard)
   @RolesRules(RolesRule.OSK)
+  @Scopes(MunicipalitiesFinancialAidScope.write)
   @ApiCreatedResponse({
     type: SignedUrlModel,
     description: 'Creates a new signed url',
@@ -34,6 +36,7 @@ export class FileController {
   @Get('url/:id')
   @UseGuards(RolesGuard)
   @RolesRules(RolesRule.VEITA)
+  @Scopes(MunicipalitiesFinancialAidScope.read)
   @ApiCreatedResponse({
     type: SignedUrlModel,
     description: 'Creates a new signed url',
@@ -45,6 +48,7 @@ export class FileController {
   @Post('')
   @UseGuards(RolesGuard)
   @RolesRules(RolesRule.OSK)
+  @Scopes(MunicipalitiesFinancialAidScope.write)
   @ApiCreatedResponse({
     type: CreateFilesModel,
     description: 'Uploads files',
