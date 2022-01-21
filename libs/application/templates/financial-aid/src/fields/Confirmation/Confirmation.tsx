@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import { confirmation, copyUrl } from '../../lib/messages'
 import { DescriptionText, ConfirmationSectionImage, CopyUrl } from '..'
 
-const Confirmation = ({}: FAFieldBaseProps) => {
+const Confirmation = () => {
   const { formatMessage } = useIntl()
 
   return (
@@ -52,11 +52,11 @@ const Confirmation = ({}: FAFieldBaseProps) => {
       </Text>
 
       <Box marginTop={2}>
+        {/* TODO link for status page */}
         <Button
           icon="open"
           colorScheme="default"
           iconType="outline"
-          // onClick={() => TODO link for status page}
           preTextIconType="filled"
           size="small"
           type="button"
@@ -66,11 +66,11 @@ const Confirmation = ({}: FAFieldBaseProps) => {
         </Button>
       </Box>
       <Box marginTop={2}>
+        {/* TODO link to municipality page */}
         <Button
           icon="open"
           colorScheme="default"
           iconType="outline"
-          // onClick={() => TODO link to municipality page}
           preTextIconType="filled"
           size="small"
           type="button"
