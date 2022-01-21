@@ -120,7 +120,7 @@ const useCase = () => {
   ] = useMutation<ExtendCaseMutationResponse>(ExtendCaseMutation)
 
   const createCase = useMemo(
-    () => async (theCase: Case): Promise<string | undefined> => {
+    () => async (theCase: Case): Promise<Case | undefined> => {
       if (isCreatingCase === false) {
         const { data } = await createCaseMutation({
           variables: {
@@ -139,7 +139,7 @@ const useCase = () => {
         })
 
         if (data) {
-          return data.createCase?.id
+          return data.createCase
         }
       }
     },

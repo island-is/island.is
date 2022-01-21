@@ -27,26 +27,30 @@ export const StepOne: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const { createCase, isCreatingCase } = useCase()
-  const { createDefendant, updateDefendant } = useDefendants()
+  const { updateDefendant } = useDefendants()
   const { loading: institutionLoading } = useInstitution()
 
   const handleNextButtonClick = async (theCase: Case) => {
-    const caseId = theCase.id === '' ? await createCase(theCase) : theCase.id
+    if (!theCase.id) {
+      const createdCase = await createCase(theCase)
 
-    if (theCase.defendants && !theCase.defendants[0].id) {
-      const { data } = await createDefendant(caseId)
-
-      if (data) {
-        updateDefendant(caseId, data.createDefendant.id, {
+      if (
+        createdCase &&
+        createdCase.defendants &&
+        createdCase.defendants.length > 0 &&
+        theCase.defendants &&
+        theCase.defendants.length > 0
+      ) {
+        await updateDefendant(createdCase.id, createdCase.defendants[0].id, {
           gender: theCase.defendants[0].gender,
           name: theCase.defendants[0].name,
           address: theCase.defendants[0].address,
           nationalId: theCase.defendants[0].nationalId,
         })
       }
-    }
 
-    router.push(`${Constants.STEP_TWO_ROUTE}/${caseId}`)
+      router.push(`${Constants.STEP_TWO_ROUTE}/${createdCase.id}`)
+    }
   }
 
   const updateDefendantState = (

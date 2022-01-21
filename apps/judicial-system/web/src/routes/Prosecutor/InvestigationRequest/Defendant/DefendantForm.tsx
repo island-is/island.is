@@ -2,6 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
 import { AnimatePresence, motion } from 'framer-motion'
+import { uuid } from 'uuidv4'
 
 import { Box, Button, Input, Select, Text } from '@island.is/island-ui/core'
 import {
@@ -74,14 +75,28 @@ const DefendantForm: React.FC<Props> = (props) => {
     defendantId: string,
     updatedDefendant: UpdateDefendant,
   ) => {
-    const { data } = await updateDefendant(
-      workingCase.id,
-      defendantId,
-      updatedDefendant,
-    )
+    updateDefendantState(defendantId, updatedDefendant)
 
-    if (data) {
-      updateDefendantState(data.updateDefendant.id, updatedDefendant)
+    if (workingCase.id) {
+      updateDefendant(workingCase.id, defendantId, updatedDefendant)
+    }
+  }
+
+  const createEmptyDefendant = (defendantId?: string) => {
+    if (workingCase.defendants) {
+      setWorkingCase({
+        ...workingCase,
+        defendants: [
+          ...workingCase.defendants,
+          {
+            gender: undefined,
+            name: '',
+            nationalId: '',
+            address: '',
+            id: defendantId || uuid(),
+          } as Defendant,
+        ],
+      })
     }
   }
 
@@ -232,25 +247,19 @@ const DefendantForm: React.FC<Props> = (props) => {
                   variant="ghost"
                   icon="add"
                   onClick={async () => {
-                    const { data } = await createDefendant(workingCase.id)
-
-                    if (workingCase.defendants && data) {
-                      setWorkingCase({
-                        ...workingCase,
-                        defendants: [
-                          ...workingCase.defendants,
-                          {
-                            gender: undefined,
-                            name: '',
-                            nationalId: '',
-                            address: '',
-                            id: data.createDefendant.id,
-                          } as Defendant,
-                        ],
+                    if (workingCase.id) {
+                      const { data } = await createDefendant(workingCase.id, {
+                        gender: undefined,
+                        name: '',
+                        address: '',
+                        nationalId: '',
                       })
-
-                      window.scrollTo(0, document.body.scrollHeight)
+                      createEmptyDefendant(data?.createDefendant.id)
+                    } else {
+                      createEmptyDefendant()
                     }
+
+                    window.scrollTo(0, document.body.scrollHeight)
                   }}
                   disabled={workingCase.defendants?.some(
                     (defendant) =>
