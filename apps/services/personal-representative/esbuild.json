@@ -6,6 +6,7 @@
     "class-transformer",
     "cache-manager",
     "@nestjs/websockets/socket-module",
+    "@island.is/auth-nest-tools",
     "class-validator",
     "class-transformer",
     "@nestjs/microservices/microservices-module",
