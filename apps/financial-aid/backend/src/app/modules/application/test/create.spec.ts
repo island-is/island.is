@@ -71,7 +71,6 @@ describe.only('ApplicationController - Create', () => {
 
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      nationalId: '0000000000',
       name: 'Tester',
       phoneNumber: '',
       email: 'Some mail',
@@ -113,7 +112,10 @@ describe.only('ApplicationController - Create', () => {
     })
 
     it('should call create on model with application', () => {
-      expect(mockCreate).toHaveBeenCalledWith(application)
+      expect(mockCreate).toHaveBeenCalledWith({
+        nationalId: user.nationalId,
+        ...application,
+      })
     })
   })
 
@@ -124,7 +126,6 @@ describe.only('ApplicationController - Create', () => {
 
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      nationalId: '0000000000',
       name: 'Tester',
       phoneNumber: '',
       email: 'Some mail',
@@ -232,7 +233,6 @@ describe.only('ApplicationController - Create', () => {
 
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      nationalId: '0000000000',
       name: 'Tester',
       phoneNumber: '',
       email: 'Some mail',
@@ -334,7 +334,6 @@ describe.only('ApplicationController - Create', () => {
 
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      nationalId: '0000000000',
       name: 'Tester',
       phoneNumber: '',
       email: 'Some mail',
@@ -408,7 +407,6 @@ describe.only('ApplicationController - Create', () => {
 
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      nationalId: '0000000000',
       name: 'Tester',
       phoneNumber: '',
       email: 'Some mail',
