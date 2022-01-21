@@ -13,7 +13,7 @@ const devConfig = {
     username: process.env.NATIONAL_REGISTRY_USERNAME,
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
     authMiddlewareOptions: {
-      forwardUserInfo: true,
+      forwardUserInfo: false,
       tokenExchangeOptions: {
         issuer: process.env.IDENTITY_SERVER_DOMAIN
           ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
