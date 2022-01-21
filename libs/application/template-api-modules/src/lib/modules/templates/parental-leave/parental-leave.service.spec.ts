@@ -4,7 +4,7 @@ import get from 'lodash/get'
 import set from 'lodash/set'
 
 import {
-  Application,
+  ApplicationModel as Application,
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'

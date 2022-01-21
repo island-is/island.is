@@ -1,7 +1,7 @@
 import set from 'lodash/set'
 
 import {
-  Application,
+  ApplicationModel as Application,
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'
