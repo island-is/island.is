@@ -41,7 +41,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
     >
       <Box marginBottom={2}>
         <Text variant="h4" as="h4">
-          Grunnupplýsingar
+          {formatMessage(core.accused)}
         </Text>
       </Box>
       <Box marginBottom={1}>

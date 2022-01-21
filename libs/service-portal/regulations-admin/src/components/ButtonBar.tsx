@@ -3,24 +3,12 @@ import * as s from './ButtonBar.css'
 import React from 'react'
 import { Box, Button } from '@island.is/island-ui/core'
 import { buttonsMsgs as msg } from '../messages'
-import { StepNav } from '../state/types'
 import { useLocale } from '../utils'
+import { useDraftingState } from '../state/useDraftingState'
 // import { SaveDeleteButtons } from './SaveDeleteButtons'
 
-export type ButtonBarProps = {
-  stepNav: StepNav
-  id: string | undefined
-  actions: {
-    saveStatus: () => void
-    deleteDraft: () => void
-    goBack?: () => void
-    goForward?: () => void
-    propose?: () => void
-  }
-}
-
-export const ButtonBar = (props: ButtonBarProps) => {
-  const { stepNav, actions } = props
+export const ButtonBar = () => {
+  const { step, actions } = useDraftingState()
   const t = useLocale().formatMessage
 
   return (
@@ -32,7 +20,7 @@ export const ButtonBar = (props: ButtonBarProps) => {
             icon="arrowForward"
             iconType="outline"
           >
-            {t(stepNav.next === 'review' ? msg.prepShipping : msg.continue)}
+            {t(step.next === 'review' ? msg.prepShipping : msg.continue)}
           </Button>
         </Box>
       )}
@@ -49,10 +37,6 @@ export const ButtonBar = (props: ButtonBarProps) => {
           </Button>
         </Box>
       )}
-
-      {/*
-      <SaveDeleteButtons id={props.id} actions={actions} classes={s} />
-      */}
 
       {actions.propose && (
         <Box className={s.propose}>

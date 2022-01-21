@@ -212,14 +212,28 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <Box display="flex" flexDirection="column">
+            {workingCase.isCustodyIsolation && (
+              <Box marginBottom={1}>
+                <Tag
+                  variant={getRestrictionTagVariant(
+                    CaseCustodyRestrictions.ISOLATION,
+                  )}
+                  outlined
+                  disabled
+                >
+                  {getShortRestrictionByValue(
+                    CaseCustodyRestrictions.ISOLATION,
+                  )}
+                </Tag>
+              </Box>
+            )}
             {
               // Custody restrictions
               isAcceptingCaseDecision(workingCase.decision) &&
                 workingCase.type === CaseType.CUSTODY &&
-                workingCase.custodyRestrictions
+                workingCase.requestedCustodyRestrictions
                   ?.filter((restriction) =>
                     [
-                      CaseCustodyRestrictions.ISOLATION,
                       CaseCustodyRestrictions.VISITAION,
                       CaseCustodyRestrictions.COMMUNICATION,
                       CaseCustodyRestrictions.MEDIA,
@@ -240,14 +254,11 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   ))
             }
             {
-              // Alternative travel ban restrictions
-              (workingCase.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-                (workingCase.type === CaseType.TRAVEL_BAN &&
-                  (workingCase.decision === CaseDecision.ACCEPTING ||
-                    workingCase.decision ===
-                      CaseDecision.ACCEPTING_PARTIALLY))) &&
-                workingCase.custodyRestrictions
+              // Travel ban restrictions
+              workingCase.type === CaseType.TRAVEL_BAN &&
+                (workingCase.decision === CaseDecision.ACCEPTING ||
+                  workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
+                workingCase.requestedCustodyRestrictions
                   ?.filter((restriction) =>
                     [
                       CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,

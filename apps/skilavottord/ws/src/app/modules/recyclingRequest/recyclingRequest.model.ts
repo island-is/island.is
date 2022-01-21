@@ -108,17 +108,17 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   })
   nameOfRequestor: string
 
-  @Field()
+  @Field({ nullable: true })
   @CreatedAt
   @Column({
     field: 'created_at',
   })
-  createdAt: Date
+  createdAt?: Date
 
-  @Field()
+  @Field({ nullable: true })
   @UpdatedAt
   @Column({
     field: 'updated_at',
   })
-  updatedAt: Date
+  updatedAt?: Date
 }

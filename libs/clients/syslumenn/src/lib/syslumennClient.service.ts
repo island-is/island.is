@@ -3,7 +3,7 @@ import {
   Homestay,
   OperatingLicense,
   CertificateInfoResponse,
-  DistrictCommissionersAgenciesResponse,
+  DistrictCommissionerAgencies,
   DataUploadResponse,
   Person,
   Attachment,
@@ -23,6 +23,8 @@ import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+
+const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
 @Injectable()
 export class SyslumennService {
@@ -128,25 +130,40 @@ export class SyslumennService {
       uploadDataName,
       uploadDataId,
     )
-
     const response = await api.syslMottakaGognPost(payload)
+    const success = response.skilabod === UPLOAD_DATA_SUCCESS
+    if (!success) {
+      throw new Error(`POST uploadData was not successful`)
+    }
+
     return mapDataUploadResponse(response)
   }
 
   async getCertificateInfo(
     nationalId: string,
-  ): Promise<CertificateInfoResponse> {
+  ): Promise<CertificateInfoResponse | null> {
     const { id, api } = await this.createApi()
-    const certificate = await api.faVottordUpplysingarGet({
-      audkenni: id,
-      kennitala: nationalId,
-    })
+    const certificate = await api
+      .faVottordUpplysingarGet({
+        audkenni: id,
+        kennitala: nationalId,
+      })
+      .catch((e) => {
+        if ((e as { status: number })?.status === 404) {
+          return null
+        }
 
+        throw e
+      })
+
+    if (!certificate) {
+      return null
+    }
     return mapCertificateInfo(certificate)
   }
 
   async getDistrictCommissionersAgencies(): Promise<
-    DistrictCommissionersAgenciesResponse[]
+    DistrictCommissionerAgencies[]
   > {
     const { api } = await this.createApi()
     const response = await api.embaettiOgStarfsstodvarGetEmbaetti()

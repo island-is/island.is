@@ -39,6 +39,24 @@ export type HtmlDraftField = DraftField<HTMLText>
 export type AppendixDraftForm = {
   title: DraftField<PlainText>
   text: HtmlDraftField
+
+  /**
+   * Appendixes may be revoked by `RegulationChange`s.
+   *
+   * Instead of being deleted, they're only emptied,
+   * to guarantee sane diffing between arbitrary
+   * historic versions of the regulation.
+   *
+   * The rules is that appendixes can neither be deleted
+   * nor re-ordered by `RegulationChange`s.
+   *
+   * `RegulationChange`s may only add new appendixes,
+   * or "revoke" (i.e. "empty") existing ones.
+   *
+   * However, to make the Regulation (or RegulationDiff) nicer to
+   * consume, we filter out those empty appendixes on the API server.
+   */
+  revoked?: boolean
   key: string
 }
 
@@ -74,15 +92,22 @@ export type RegDraftForm = BodyDraftFields & {
   readonly draftingStatus: DraftingStatus // non-editable except via saveStatus or propose actions
 
   idealPublishDate: DraftField<Date | undefined>
-  signatureDate: DraftField<Date | undefined>
   effectiveDate: DraftField<Date | undefined>
   lawChapters: DraftField<Array<LawChapterSlug>>
-  ministry: DraftField<MinistrySlug | undefined>
+
+  signatureDate: DraftField<Date | undefined>
+  ministry: DraftField<string | undefined>
   type: DraftField<RegulationType | undefined>
 
   signatureText: HtmlDraftField
   signedDocumentUrl: DraftField<URLString | undefined>
 
+  /** A list of likely `RegName`s found in the draft't `text`
+   * that is used to populate a Selectbox for picking impacted
+   * regulations.
+   *
+   * Mentioned is a 100% derived value, not to be saved on the server
+   */
   mentioned: Array<RegName>
   impacts: Array<DraftImpactForm>
 
@@ -94,7 +119,7 @@ export type RegDraftForm = BodyDraftFields & {
 
 export type DraftingState = {
   isEditor: boolean
-  stepName: Step
+  step: StepNav
   draft: RegDraftForm
   ministries: MinistryList
   saving?: boolean
@@ -177,9 +202,15 @@ export type Action =
       idx: number
     }
   | {
-      type: 'APPENDIX_REMOVE'
+      type: 'APPENDIX_DELETE'
       idx: number
     }
+  // // TODO: Adapt for impact appendixes
+  // | {
+  //     type: 'APPENDIX_REVOKE'
+  //     idx: number
+  //     revoked: boolean
+  //   }
   | {
       type: 'SHIP'
     }

@@ -92,9 +92,6 @@ export class DraftRegulationModel {
   idealPublishDate?: string
 
   @Field(() => Date, { nullable: true })
-  ministryId?: MinistrySlug
-
-  @Field(() => Date, { nullable: true })
   signatureDate?: ISODate
 
   @Field(() => Date, { nullable: true })

@@ -41,7 +41,7 @@ export const FormStep: FC<Props> = ({
           id="tel"
           name="tel"
           required={true}
-          type={'tel'}
+          type="tel"
           format="### ####"
           rules={{
             required: {
@@ -75,6 +75,7 @@ export const FormStep: FC<Props> = ({
           }}
           label={formatMessage(sharedMessages.phoneNumber)}
           error={errors.tel?.message}
+          size="xs"
         />
       </Box>
       <Box

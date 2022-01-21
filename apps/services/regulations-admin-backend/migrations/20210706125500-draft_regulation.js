@@ -30,7 +30,7 @@ module.exports = {
           ideal_publish_date: {
             type: Sequelize.DATEONLY,
           },
-          ministry_id: {
+          ministry: {
             type: Sequelize.STRING,
           },
           signature_date: {
@@ -53,6 +53,9 @@ module.exports = {
           },
           signed_document_url: {
             type: Sequelize.STRING,
+          },
+          fast_track: {
+            type: Sequelize.BOOLEAN,
           },
           created: {
             type: Sequelize.DATE,

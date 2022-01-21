@@ -23,6 +23,7 @@ export type MagicTextareaProps = {
   value?: PlainText
   defaultValue?: PlainText
   name?: string
+  onFocus?: () => void
   onBlur?: (value: PlainText) => void
   onChange?: (value: PlainText) => void
   error?: string
@@ -36,6 +37,7 @@ export const MagicTextarea = (props: MagicTextareaProps) => {
     name,
     value,
     defaultValue,
+    onFocus,
     onBlur,
     onChange,
     error,
@@ -57,7 +59,10 @@ export const MagicTextarea = (props: MagicTextareaProps) => {
       name={name || ''}
       defaultValue={defaultValue}
       value={value}
-      onFocus={() => setAutoHeight(elmRef.current)}
+      onFocus={() => {
+        onFocus && onFocus()
+        setAutoHeight(elmRef.current)
+      }}
       onBlur={onBlur && ((e) => onBlur(e.currentTarget.value))}
       onChange={(e) => {
         onChange && onChange(e.currentTarget.value)

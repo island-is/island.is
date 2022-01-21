@@ -66,6 +66,7 @@ export const EmailForm: FC<Props> = ({
                 hasError={errors.email}
                 errorMessage={errors.email?.message}
                 onChange={onChange}
+                size="xs"
               />
               {value === email && email.length > 0 && onResendEmail && (
                 <Box

@@ -10,6 +10,10 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 // Here you import your module service
 import { DataProtectionComplaintService } from './data-protection-complaint.service'
 import { ClientsDataProtectionComplaintModule } from '@island.is/clients/data-protection-complaint'
+import { FileStorageModule } from '@island.is/file-storage'
+import { ApplicationAttachmentProvider } from './attachments/providers/applicationAttachmentProvider'
+import { PdfFileProvider } from './attachments/providers/pdfFileProvider'
+import { AttachmentS3Service } from './attachments/attachment-s3.service'
 
 export class DataProtectionComplaintModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -17,11 +21,17 @@ export class DataProtectionComplaintModule {
       module: DataProtectionComplaintModule,
       imports: [
         SharedTemplateAPIModule.register(config),
+        FileStorageModule.register({}),
         ClientsDataProtectionComplaintModule.register(
           config.dataProtectionComplaint,
         ),
       ],
-      providers: [DataProtectionComplaintService],
+      providers: [
+        ApplicationAttachmentProvider,
+        PdfFileProvider,
+        AttachmentS3Service,
+        DataProtectionComplaintService,
+      ],
       exports: [DataProtectionComplaintService],
     }
   }

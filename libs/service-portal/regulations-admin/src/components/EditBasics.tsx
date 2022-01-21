@@ -4,23 +4,28 @@ import {
   Accordion,
   AccordionItem,
   Divider,
+  Text,
 } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
-import { StepComponent } from '../state/useDraftingState'
 import { useLocale } from '../utils'
 import { Appendixes } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
+import { useDraftingState } from '../state/useDraftingState'
 
-export const EditBasics: StepComponent = (props) => {
-  const { draft, actions } = props
-  const { updateState } = actions
-  const { text, appendixes } = draft
-
+export const EditBasics = () => {
   const t = useLocale().formatMessage
+  const { draft, actions } = useDraftingState()
+
+  const { text, appendixes } = draft
+  const { updateState } = actions
 
   const startTextExpanded =
     !text.value || appendixes.length === 0 || !!text.error
+
+  const regType =
+    draft.type.value &&
+    t(draft.type.value === 'amending' ? msg.type_amending : msg.type_base)
 
   return (
     <>
@@ -33,9 +38,14 @@ export const EditBasics: StepComponent = (props) => {
           error={t(draft.title.error)}
           required
         />
+        <Box marginTop={1} marginLeft={1}>
+          <Text variant="small" color="dark200">
+            {regType ? `(${regType})` : ' '}
+          </Text>
+        </Box>
       </Box>
 
-      <Box marginTop={6} marginBottom={[6, 6, 8]}>
+      <Box marginBottom={[6, 6, 8]}>
         <Accordion>
           <AccordionItem
             id={draft.id}

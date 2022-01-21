@@ -1,6 +1,8 @@
 import React, { FC, forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
+
 import { Text } from '../Text/Text'
+import { Hyphen } from '../Hyphen/Hyphen'
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
 import * as styles from './Tag.css'
@@ -15,6 +17,7 @@ export type TagVariant =
   | 'rose'
   | 'blueberry'
   | 'dark'
+  | 'mint'
 
 export interface TagProps {
   onClick?: () => void
@@ -28,6 +31,8 @@ export interface TagProps {
   attention?: boolean
   children: string | ReactNode
   truncate?: boolean
+  hyphenate?: boolean
+  textLeft?: boolean
   CustomLink?: FC
   /** Renders a small "x" icon to indicate that invoking the
    * `onClick` handler will (likely) remove/delete  the tag.
@@ -50,6 +55,8 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       outlined,
       attention,
       truncate,
+      hyphenate,
+      textLeft,
       CustomLink,
       ...props
     }: TagProps,
@@ -60,6 +67,9 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       [styles.outlined]: outlined,
       [styles.attention]: attention,
       [styles.focusable]: !disabled,
+      [styles.truncate]: truncate,
+      [styles.hyphenate]: hyphenate,
+      [styles.textLeft]: textLeft,
     })
 
     const isExternal = href && shouldLinkOpenInNewWindow(href)
@@ -73,11 +83,14 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       ref,
     }
 
+    const hyphenated = hyphenate && typeof children === 'string' && (
+      <Hyphen>{children}</Hyphen>
+    )
     const renderCloseIcon = removable && !!onClick && !href
 
     const content = (
       <Text variant="eyebrow" as="span" truncate={truncate}>
-        {children}
+        {!truncate && hyphenate ? hyphenated : children}
         {renderCloseIcon && <Icon icon="close" className={styles.closeIcon} />}
       </Text>
     )

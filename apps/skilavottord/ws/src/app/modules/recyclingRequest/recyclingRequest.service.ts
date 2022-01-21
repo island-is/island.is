@@ -208,11 +208,10 @@ export class RecyclingRequestService {
   async createRecyclingRequest(
     user: User,
     requestType: RecyclingRequestTypes,
-    vehicle: VehicleInformation,
+    permno: string,
   ): Promise<typeof RecyclingRequestResponse> {
     const nameOfRequestor = user.name
     const partnerId = user.partnerId
-    const permno = vehicle.permno
     const errors = new RequestErrors()
     try {
       this.logger.info(

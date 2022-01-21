@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # Application Templates Login Service
 
 This library was generated with [Nx](https://nx.dev).

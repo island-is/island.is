@@ -3,7 +3,6 @@ import {
   ensureISODate,
   ensureRegName,
   HTMLText,
-  Ministry,
   PlainText,
   RegName,
   RegulationType,
@@ -33,13 +32,13 @@ export const findAffectedRegulationsInText = (
     [
       // not obviously referring to laws, which have the same name-pattern.
       // (See: "Negative lookbehind assertion" https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Assertions#other_assertions)
-      /(?<!(?:lög|lögum|laga)\s+(?:nr.|númer)\s*)/,
+      /(?<!(?:lög|lögum|laga)(?:\s+(?:nr.|númer))?\s*?)/,
       // preceeded by either whitespace or parenthesis.
-      /[\s(]?/,
+      /[\s(]/,
       // Capture 1 one to four digits
       /(\d{1,4})/, // $1
       // sigle dash or " árið " or " frá árinu"
-      /(?:\/|,?\s+(?:árið|frá\s+árinu)\s+)/,
+      /\s*(?:\/\s*|,?\s+(?:árið|frá\s+árinu)\s+)/,
       // A year-ish string ("19XX" or "20XX")
       /((?:19|20)\d{2})/, // $2
       // followed by either whitespace, parenthesis, or basic punctuation.
@@ -60,10 +59,7 @@ export const findAffectedRegulationsInText = (
 
 // ---------------------------------------------------------------------------
 
-export const findSignatureInText = (
-  html: HTMLText,
-  ministries: ReadonlyArray<Ministry>,
-) => {
+export const findSignatureInText = (html: HTMLText) => {
   const paragraphs = Array.from(asDiv(html).querySelectorAll('p')).slice(-40)
 
   const threeLetterMonths = [
@@ -83,12 +79,12 @@ export const findSignatureInText = (
   const undirskrRe = new RegExp(
     [
       // Capture name of ráðuneyti from start of paragraph
-      /^(.+?ráðuneyti)(?:ð|nu)?/,
-      /,? /,
-      /(?:þann )?/,
+      /^(?:Í\s+)?(.+?ráðuneyti)(?:ð|nu)?/,
+      /,?\s+/,
+      /(?:þann\s+)?/,
       /(\d{1,2})\.?/,
-      /\s(jan\.?|janúar|feb\.?|febrúar|mar\.?|mars|apr\.?|apríl|maí|jún\.?|júní|júl\.?|júlí|ágú\.?|ágúst|sept?\.?|september|okt\.?|október|nóv\.?|nóvember|des\.?|desember),?/,
-      /\s(2\d{3}).?$/,
+      /\s(jan\.?|janúar|feb\.?|febrúar|mar\.?|mars|apr\.?|apríl|maí.?|jún\.?|júní|júl\.?|júlí|ágú\.?|ágúst|sept?\.?|september|okt\.?|október|nóv\.?|nóvember|des\.?|desember),?/,
+      /\s+(20[2-9]\d).?$/, // NOTE: this will fail in the year 2100. Sorry, not sorry.
     ]
       .map((r) => r.source)
       .join(''),
@@ -108,11 +104,14 @@ export const findSignatureInText = (
   })
 
   if (!match) {
-    return {}
+    return {
+      ministryName: undefined,
+      signatureDate: undefined,
+    }
   }
   const [
     _,
-    ministryName,
+    ministryNameRaw,
     dayOfMonthStr,
     monthName,
     yearStr,
@@ -127,14 +126,16 @@ export const findSignatureInText = (
     ('0' + (month + 1)).slice(-2) +
     '-' +
     ('0' + dayOfMonthStr).slice(-2)
-  const foundDate = ensureISODate(foundISODateRaw)
-  const signatureDate = foundDate && new Date(foundDate)
+  const signatureDate = ensureISODate(foundISODateRaw)
 
-  const ministrySlug = ministries.find((m) => ministryName.endsWith(m.name))
-    ?.slug
+  const ministryName = ministryNameRaw
+    // normalize declination
+    .replace(/inu$/, 'ið')
+    // Normalize/collapse spaces
+    .replace(/\s+/g, ' ')
 
   return {
-    ministrySlug,
+    ministryName,
     signatureDate,
   }
 }
@@ -143,9 +144,13 @@ export const findSignatureInText = (
 // NOTE: Let's not rabbit-hole into guessing the effectiveDate
 //
 
-export const findRegulationType = (title: PlainText): RegulationType =>
-  /^Reglugerð um (?:\(?\d+\.\)? )?breyting(?:u|ar) á .*reglugerð(?:um)?(?: |$)/i.test(
-    title,
-  )
-    ? 'amending'
-    : 'base'
+export const findRegulationType = (
+  title: PlainText,
+): RegulationType | undefined => {
+  title = title.trim().replace(/\s+/g, ' ')
+  if (!title || !/reglugerð/i.test(title)) {
+    return
+  }
+  const amendingTitleRe = /^Reglugerð um (?:\(?\d+\.\)? )?breyting(?:u|ar) á .*reglugerð(?:um)?(?: |$)/i
+  return amendingTitleRe.test(title) ? 'amending' : 'base'
+}

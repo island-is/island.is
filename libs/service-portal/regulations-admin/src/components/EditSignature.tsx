@@ -1,6 +1,6 @@
 import * as s from '../utils/styles.css'
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   AlertMessage,
   Box,
@@ -14,43 +14,43 @@ import {
   InputFileUpload,
   fileToObject,
   UploadFile,
-  Option,
-  Select,
   Text,
   Divider,
 } from '@island.is/island-ui/core'
-import { StepComponent } from '../state/useDraftingState'
+import { useDraftingState } from '../state/useDraftingState'
 import { editorMsgs as msg } from '../messages'
 import { getMinPublishDate, useLocale } from '../utils'
-import { useMinistriesQuery } from '../utils/dataHooks'
 
 import { RegDraftForm } from '../state/types'
 import { EditorInput } from './EditorInput'
-import { MinistrySlug, URLString, useShortState } from '@island.is/regulations'
+import { HTMLText, URLString, useShortState } from '@island.is/regulations'
 import { produce } from 'immer'
 import { downloadUrl } from '../utils/files'
 
 // ---------------------------------------------------------------------------
 
-const useMinistryOptions = (ministrySlug: MinistrySlug | undefined) => {
-  const ministries = useMinistriesQuery().data
-  return useMemo(() => {
-    const ministryOptions = (ministries || []).map((m) => ({
-      label: m.name,
-      value: m.slug,
-    }))
-    const selectedMinistryOption = ministryOptions.find(
-      (m) => m.value === ministrySlug,
-    )
-    const ministryName = selectedMinistryOption?.label
-
-    return {
-      ministryOptions,
-      selectedMinistryOption,
-      ministryName,
-    }
-  }, [ministrySlug, ministries])
-}
+// // DECIDE: Will this ever be ised?
+// import { useMinistriesQuery } from '../utils/dataHooks'
+//
+// const useMinistryOptions = (ministry: string | undefined) => {
+//   const ministries = useMinistriesQuery().data
+//   return useMemo(() => {
+//     const ministryOptions = (ministries || []).map((m) => ({
+//       label: m.name,
+//       value: m.name,
+//     }))
+//     const selectedMinistryOption = ministryOptions.find(
+//       (m) => m.value === ministry,
+//     )
+//     const ministryName = selectedMinistryOption?.label
+//
+//     return {
+//       ministryOptions,
+//       selectedMinistryOption,
+//       ministryName,
+//     }
+//   }, [ministry, ministries])
+// }
 
 // ---------------------------------------------------------------------------
 
@@ -72,12 +72,11 @@ type UploadResults =
   | { location: URLString; error?: never }
   | { location?: never; error: string }
 
-const uploadPDF = (draft: RegDraftForm) =>
+const uploadPDF = (file: File, draft: RegDraftForm) =>
   new Promise<UploadResults>((resolve) => {
-    const fileName = draft.title.value + '.pdf'
     setTimeout(() => {
       resolve({
-        location: `https://files.reglugerd.is/admin-drafts/${draft.id}/${fileName}` as URLString,
+        location: `https://files.reglugerd.is/admin-drafts/${draft.id}/${file.name}` as URLString,
       })
     }, 500)
   })
@@ -116,7 +115,7 @@ const useSignedUploader = (
 
     setUploadStatus({ uploading: true })
 
-    uploadPDF(draft).then(({ location, error }) => {
+    uploadPDF(newFile, draft).then(({ location, error }) => {
       if (!uploadStatus.uploading) {
         location && setUrl(location)
         setUploadStatus({ uploading: false, error })
@@ -171,20 +170,32 @@ const useSignedUploader = (
   }
 }
 
+// ---------------------------------------------------------------------------
+
+const defaultSignatureText = `
+  <p class="Dags" align="center"><em>⸻ráðuneytinu, {dags}.</em></p>
+  <p class="FHUndirskr" align="center">f.h.r.</p>
+  <p class="Undirritun" align="center"><strong>—NAFN—</strong><br/>⸻ráðherra.</p>
+  <p class="Undirritun" align="right"><em>—NAFN—.</em></p>
+` as HTMLText
+
+const getDefaultSignatureText = (
+  formatDateFns: (date: Date, str?: string) => string,
+) => {
+  return defaultSignatureText.replace(
+    '{dags}',
+    formatDateFns(new Date(), 'dd. MMMM yyyy'),
+  ) as HTMLText
+}
+
 // ===========================================================================
 
-export const EditSignature: StepComponent = (props) => {
+export const EditSignature = () => {
   const { formatMessage: t, formatDateFns } = useLocale()
-  const { draft, actions } = props
+  const { draft, actions } = useDraftingState()
   const { updateState } = actions
 
   const signedDocumentUrl = draft.signedDocumentUrl.value
-
-  const {
-    ministryOptions,
-    selectedMinistryOption,
-    ministryName,
-  } = useMinistryOptions(draft.ministry.value)
 
   const {
     uploadStatus,
@@ -298,14 +309,20 @@ export const EditSignature: StepComponent = (props) => {
               label={t(msg.signatureText)}
               hiddenLabel
               draftId={draft.id}
-              value={draft.signatureText.value}
+              value={
+                draft.signatureText.value ||
+                getDefaultSignatureText(formatDateFns)
+              }
               onChange={(text) => updateState('signatureText', text)}
+              required={draft.signatureText.required}
+              error={t(draft.signatureText.error)}
             />
           </Box>
 
           <Columns space={3} collapseBelow="lg">
             <Column>
               <Box marginBottom={3}>
+                {/* Signature Date (derived from signatureText) */}
                 <Input
                   label={t(msg.signatureDate)}
                   value={
@@ -314,6 +331,8 @@ export const EditSignature: StepComponent = (props) => {
                     ''
                   }
                   placeholder={t(msg.signatureDatePlaceholder)}
+                  hasError={!!draft.signatureDate.error}
+                  errorMessage={t(draft.signatureDate.error)}
                   name="_signatureDate"
                   size="sm"
                   readOnly
@@ -323,43 +342,24 @@ export const EditSignature: StepComponent = (props) => {
 
             <Column>
               <Box marginBottom={3}>
-                {draft.ministry.value ? (
-                  <Input
-                    label={t(msg.ministry)}
-                    value={ministryName || draft.ministry.value || ''}
-                    placeholder={t(msg.ministryPlaceholder)}
-                    name="_rn"
-                    size="sm"
-                    readOnly
-                  />
-                ) : (
-                  <Select
-                    name="type-select"
-                    label={t(msg.ministry)}
-                    placeholder={t(msg.ministryPlaceholder)}
-                    size="sm"
-                    isSearchable={false}
-                    options={ministryOptions}
-                    value={selectedMinistryOption}
-                    required
-                    errorMessage={t(draft.ministry.error)}
-                    hasError={!!draft.ministry.error}
-                    onChange={(typeOption) =>
-                      updateState(
-                        'ministry',
-                        (typeOption as Option).value as MinistrySlug,
-                        true,
-                      )
-                    }
-                    backgroundColor="blue"
-                  />
-                )}
+                {/* Ministry (derived from signatureText) */}
+                <Input
+                  label={t(msg.ministry)}
+                  value={draft.ministry.value || ''}
+                  placeholder={t(msg.ministryPlaceholder)}
+                  hasError={!!draft.ministry.error}
+                  errorMessage={t(draft.ministry.error)}
+                  name="_rn"
+                  size="sm"
+                  readOnly
+                />
               </Box>
             </Column>
           </Columns>
 
           <Box>
             <Inline space="gutter" alignY="center">
+              {/* idealPublishDate Input */}
               <DatePicker
                 size="sm"
                 label={t(msg.idealPublishDate)}
@@ -376,6 +376,7 @@ export const EditSignature: StepComponent = (props) => {
                 errorMessage={t(draft.idealPublishDate.error)}
                 backgroundColor="blue"
               />
+              {/* Request fastTrack */}
               <Checkbox
                 label={t(msg.applyForFastTrack)}
                 labelVariant="default"
@@ -387,6 +388,7 @@ export const EditSignature: StepComponent = (props) => {
             </Inline>
           </Box>
           <Box marginBottom={3}>
+            {/* Clear idealPublishDate */}
             {!!draft.idealPublishDate.value && (
               <Button
                 size="small"

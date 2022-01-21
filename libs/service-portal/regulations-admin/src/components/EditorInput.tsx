@@ -18,6 +18,7 @@ type EditorInputProps = Omit<
   value: HTMLText
   label: string
   hiddenLabel?: boolean
+  required?: boolean
   // make EditorProps more strict with branded types
   error?: string
   draftId: RegulationDraftId
@@ -33,6 +34,7 @@ export const EditorInput = (props: EditorInputProps) => {
     draftId,
     onChange,
     value,
+    required,
     ...editorProps
   } = props
   const valueRef = useRef(() => value)
@@ -56,7 +58,7 @@ export const EditorInput = (props: EditorInputProps) => {
       >
         <h4 className={cn(s.label + srOnlyClass)} id={labelId}>
           {label}
-          <span className={s.isRequiredStar}> *</span>
+          {required && <span className={s.isRequiredStar}> *</span>}
         </h4>
         <RegulationsEditor
           {...editorProps}

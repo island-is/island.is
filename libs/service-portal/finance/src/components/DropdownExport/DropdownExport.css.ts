@@ -15,7 +15,7 @@ export const disabledItem = style({
   paddingTop: theme.spacing[2],
   paddingBottom: theme.spacing[2],
   width: 'full',
-  fontSize: 14,
+  fontSize: 16,
   lineHeight: 1.5,
   fontWeight: 600,
   color: theme.color.blue300,

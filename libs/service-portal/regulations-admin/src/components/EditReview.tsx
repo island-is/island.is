@@ -1,15 +1,16 @@
 import React from 'react'
 import { Box, Button, Inline, Text } from '@island.is/island-ui/core'
-import { StepComponent } from '../state/useDraftingState'
 import { buttonsMsgs as msg } from '../messages'
 import { useLocale } from '../utils'
+import { useDraftingState } from '../state/useDraftingState'
 
 // ---------------------------------------------------------------------------
 
-export const EditReview: StepComponent = (props) => {
-  const { draft, actions } = props
-  // const { ... } = actions
+export const EditReview = () => {
   const t = useLocale().formatMessage
+  const { draft, actions } = useDraftingState()
+
+  // const { ... } = actions
 
   return (
     <Box marginY={[4, 4, 8]}>

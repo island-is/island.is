@@ -12,6 +12,7 @@ import { PublicDebtPaymentPlanTemplateModule } from './public-debt-payment-plan/
 import { GeneralPetitionModule } from './general-petition/general-petition.module'
 import { CriminalRecordSubmissionModule } from './criminal-record-submission/criminal-record-submission.module'
 import { DataProtectionComplaintModule } from './data-protection-complaint/data-protection-complaint.module'
+import { PSignSubmissionModule } from './p-sign-submission/p-sign-submission.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -28,6 +29,7 @@ export const modules = [
   GeneralPetitionModule,
   CriminalRecordSubmissionModule,
   DataProtectionComplaintModule,
+  PSignSubmissionModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -44,3 +46,4 @@ export { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan
 export { GeneralPetitionService } from './general-petition/general-petition.service'
 export { CriminalRecordSubmissionService } from './criminal-record-submission/criminal-record-submission.service'
 export { DataProtectionComplaintService } from './data-protection-complaint/data-protection-complaint.service'
+export { PSignSubmissionService } from './p-sign-submission/p-sign-submission.service'

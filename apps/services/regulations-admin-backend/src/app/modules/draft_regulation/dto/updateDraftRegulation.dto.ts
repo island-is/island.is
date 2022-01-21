@@ -1,4 +1,4 @@
-import { IsArray, IsOptional, IsString } from 'class-validator'
+import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 import {
@@ -7,18 +7,19 @@ import {
   ISODate,
   Kennitala,
   LawChapterSlug,
-  MinistrySlug,
   PlainText,
   RegName,
   RegulationType,
   URLString,
 } from '@island.is/regulations'
+// FIXME: causes build error in github runner (error: No matching export in "libs/regulations/src/sub/admin.ts" for import "RegulationDraftId")
 import { DraftingStatus } from '@island.is/regulations/admin'
 
 export class UpdateDraftRegulationDto {
   @IsString()
   @ApiProperty()
-  readonly draftingStatus!: DraftingStatus
+  readonly draftingStatus!: string
+  // readonly draftingStatus!: DraftingStatus
 
   @IsOptional()
   @IsString()
@@ -55,7 +56,7 @@ export class UpdateDraftRegulationDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly ministryId?: MinistrySlug
+  readonly ministry?: string
 
   @IsOptional()
   @IsString()
@@ -90,4 +91,9 @@ export class UpdateDraftRegulationDto {
   @IsArray()
   @ApiProperty()
   readonly lawChapters?: LawChapterSlug[]
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty()
+  readonly fastTrack?: boolean
 }

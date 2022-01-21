@@ -1,3 +1,13 @@
+import React from 'react'
+import {
+  Reducer,
+  useEffect,
+  useMemo,
+  useReducer,
+  createContext,
+  useContext,
+  ReactNode,
+} from 'react'
 import { useMutation, gql } from '@apollo/client'
 import {
   HTMLText,
@@ -7,7 +17,6 @@ import {
   MinistryList,
 } from '@island.is/regulations'
 import { useAuth } from '@island.is/auth/react'
-import { FC, Reducer, useEffect, useMemo, useReducer } from 'react'
 import { produce, setAutoFreeze, Draft } from 'immer'
 import { useHistory } from 'react-router-dom'
 import { Step } from '../types'
@@ -115,10 +124,7 @@ const makeDraftAppendixForm = (appendix: Appendix, key: string) => ({
   key,
 })
 
-const makeDraftForm = (
-  draft: RegulationDraft,
-  /** Default initial `dirty` state for all fields */
-): RegDraftForm => {
+const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
   const form: RegDraftForm = {
     id: draft.id,
     title: fText(draft.title, true),
@@ -135,18 +141,12 @@ const makeDraftForm = (
 
     effectiveDate: f(draft.effectiveDate && new Date(draft.effectiveDate)),
 
-    signatureDate: f(
-      draft.signatureDate && new Date(draft.signatureDate),
-      true,
-    ),
-    signatureText: fHtml(draft.signatureText),
-    signedDocumentUrl: f(draft.signedDocumentUrl),
+    signatureText: fHtml(draft.signatureText, true),
+    signedDocumentUrl: f(draft.signedDocumentUrl, true),
 
     lawChapters: f((draft.lawChapters || []).map((chapter) => chapter.slug)),
-    ministry: f(draft.ministry?.slug, true),
-    type: f(draft.type, true),
 
-    mentioned: [],
+    mentioned: [], // NOTE: Contains values derived from `text`
 
     impacts: draft.impacts.map((impact) => {
       return impact.type === 'amend'
@@ -175,6 +175,13 @@ const makeDraftForm = (
     draftingNotes: fHtml(draft.draftingNotes),
     draftingStatus: draft.draftingStatus,
     authors: f(draft.authors.map((author) => author.authorId)),
+
+    type: f(undefined /* draft.type */, true), // NOTE: Regulation type is always a derived value
+    ministry: f(undefined /* draft.ministry */, true), // NOTE: The ministry is always a derived value
+    signatureDate: f(
+      undefined /* draft.signatureDate && new Date(draft.signatureDate) */,
+      true,
+    ), // NOTE: Signature date is always a derived value
   }
 
   updateImpacts(form, draft.title, draft.text)
@@ -234,10 +241,7 @@ const specialUpdates: {
 } = {
   title: (state: DraftingState, newTitle) => {
     const { type, text } = state.draft
-    if (!type.value || type.guessed) {
-      type.value = findRegulationType(newTitle)
-      type.guessed = true
-    }
+    type.value = findRegulationType(newTitle)
     updateImpacts(state.draft, newTitle, text.value)
   },
 
@@ -247,13 +251,27 @@ const specialUpdates: {
   },
 
   signatureText: (state, newValue) => {
-    const { signatureDate, ministry } = state.draft
-    const findResults = findSignatureInText(newValue, state.ministries)
-    if (!ministry.value || ministry.guessed) {
-      ministry.value = findResults.ministrySlug
-      ministry.guessed = true
-    }
-    signatureDate.value = findResults.signatureDate
+    const draft = state.draft
+    const { ministryName, signatureDate } = findSignatureInText(newValue)
+
+    const normalizedValue = ministryName?.toLowerCase().replace(/-/g, '')
+    const knownMinistry = normalizedValue
+      ? state.ministries.find(
+          (m) => m.name.toLowerCase().replace(/-/g, '') === normalizedValue,
+        )
+      : undefined
+
+    // prefer official name over typed name (ignores casing, and punctuation differernces)
+    draft.ministry.value = knownMinistry ? knownMinistry.name : ministryName
+    // Ideally this ought to be flagged as a less-severe error
+    draft.ministry.error =
+      ministryName && !knownMinistry ? errorMsgs.ministryUnknown : undefined
+
+    // TODO: Match the derived ministry up with original draft author's
+    // ministry connnection (i.e. their "place of work")
+    // and issue a WARNING if the two ministry values don't match up.
+
+    draft.signatureDate.value = signatureDate && new Date(signatureDate)
   },
 }
 
@@ -271,7 +289,7 @@ const actionHandlers: {
       state.error = new Error('Must be an editor')
       return
     }
-    state.stepName = stepName
+    state.step = steps[stepName]
   },
 
   SAVING_STATUS: (state) => {
@@ -334,12 +352,21 @@ const actionHandlers: {
     }
   },
 
-  APPENDIX_REMOVE: (state, { idx }) => {
+  APPENDIX_DELETE: (state, { idx }) => {
     const { appendixes } = state.draft
     if (appendixes[idx]) {
       appendixes.splice(idx, 1)
     }
   },
+
+  // // TODO: Adapt for impact appendixes
+  // APPENDIX_REVOKE: (state, { idx, revoked }) => {
+  //   const { appendixes } = state.draft
+  //   const appendix = appendixes[idx]
+  //   if (appendix) {
+  //     appendix.revoked = revoked
+  //   }
+  // },
 
   APPENDIX_MOVE_UP: (state, { idx }) => {
     const prevIdx = idx - 1
@@ -397,14 +424,15 @@ const draftingStateReducer: Reducer<DraftingState, Action> = (
   return newState
 }
 
-// ---------------------------------------------------------------------------
+type StateInputs = {
+  regulationDraft: RegulationDraft
+  ministries: MinistryList
+  stepName: Step
+}
 
-export const useDraftingState = (
-  draft: RegulationDraft,
-  ministries: MinistryList,
-  stepName: Step,
-) => {
-  const history = useHistory()
+const useEditDraftReducer = (inputs: StateInputs) => {
+  const { regulationDraft, ministries, stepName } = inputs
+
   const isEditor =
     useAuth().userInfo?.scopes?.includes(RegulationsAdminScope.manage) || false
 
@@ -412,18 +440,40 @@ export const useDraftingState = (
     throw new Error()
   }
 
+  return useReducer(draftingStateReducer, {}, () => {
+    const state: DraftingState = {
+      draft: makeDraftForm(regulationDraft),
+      step: steps[stepName],
+      ministries,
+      isEditor,
+    }
+    // guess all guesssed values on start.
+    Object.entries(specialUpdates).forEach(([prop, updaterFn]) => {
+      updaterFn!(
+        state,
+        // @ts-expect-error  (because reasons)
+        state.draft[prop as RegDraftFormSimpleProps].value,
+      )
+    })
+    return state
+  })
+}
+
+// ---------------------------------------------------------------------------
+
+export const useMakeDraftingState = (inputs: StateInputs) => {
+  const history = useHistory()
   const t = useLocale().formatMessage
 
-  const [state, dispatch] = useReducer(draftingStateReducer, {}, () => ({
-    draft: makeDraftForm(draft),
-    stepName,
-    ministries,
-    isEditor,
-  }))
+  const [state, dispatch] = useEditDraftReducer(inputs)
 
-  useEffect(() => {
-    dispatch({ type: 'CHANGE_STEP', stepName })
-  }, [stepName])
+  // NOTE: we assume that both input.draft nad input.ministries don't change
+
+  useEffect(
+    () => dispatch({ type: 'CHANGE_STEP', stepName: inputs.stepName }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [inputs.stepName],
+  )
 
   const [deleteDraftRegulationMutation] = useMutation(
     DELETE_DRAFT_REGULATION_MUTATION,
@@ -432,12 +482,10 @@ export const useDraftingState = (
     UPDATE_DRAFT_REGULATION_MUTATION,
   )
 
-  const stepNav = steps[stepName]
-  const nextStep = stepNav.next
-  const prevStep = stepNav.prev
-
-  const actions = useMemo(() => {
-    const draft = state.draft
+  return useMemo(() => {
+    const { draft, step } = state
+    const nextStep = step.next
+    const prevStep = step.prev
 
     const _saveStatus = (newStatus?: DraftingStatus) =>
       updateDraftRegulationById({
@@ -452,9 +500,10 @@ export const useDraftingState = (
                 text: apx.text.value,
               })),
               comments: draft.comments.value,
-              ministryId: draft.ministry.value,
+              ministry: draft.ministry.value,
               draftingNotes: draft.draftingNotes.value,
               idealPublishDate: draft.idealPublishDate?.value,
+              fastTrack: draft.fastTrack.value,
               lawChapters: draft.lawChapters.value,
               signatureDate: draft.signatureDate.value,
               signatureText: draft.signatureText.value,
@@ -476,14 +525,14 @@ export const useDraftingState = (
           return { success: false, error: error as Error }
         })
 
-    return {
+    const actions = {
       goBack: prevStep ? () => actions.goToStep(prevStep) : undefined,
 
       goForward:
-        nextStep && (isEditor || nextStep !== 'review')
+        nextStep && (state.isEditor || nextStep !== 'review')
           ? () => {
               // BASICS
-              if (stepNav.name === 'basics') {
+              if (step.name === 'basics') {
                 const errorFields = getInputFieldsWithErrors(
                   ['title', 'text'],
                   draft,
@@ -525,9 +574,17 @@ export const useDraftingState = (
         dispatch({ type: 'APPENDIX_SET_PROP', idx, name, value })
       },
 
-      removeAppendix: (idx: number) => {
-        dispatch({ type: 'APPENDIX_REMOVE', idx })
+      deleteAppendix: (idx: number) => {
+        dispatch({ type: 'APPENDIX_DELETE', idx })
       },
+
+      /**
+       * No-op for op-level draft appendixes.
+       * Only implemented for action-interface compatilility with
+       * impact appendix editing
+       */
+      revokeAppendix: (idx: number, revoked: boolean) => undefined,
+
       moveAppendixUp: (idx: number) => {
         dispatch({ type: 'APPENDIX_MOVE_UP', idx })
       },
@@ -577,7 +634,7 @@ export const useDraftingState = (
         })
       },
 
-      propose: !isEditor
+      propose: !state.isEditor
         ? () => {
             dispatch({ type: 'SAVING_STATUS' })
             _saveStatus('proposal').then(({ success, error }) => {
@@ -592,32 +649,45 @@ export const useDraftingState = (
           }
         : undefined,
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return { ...state, actions }
+    // // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    stepNav,
-    // TODO: Review the use of draft here, and remove if possible.
-    draft,
-    isEditor,
     state,
 
+    dispatch, // NOTE Should be immutable
     history, // NOTE: Should be immutable
     updateDraftRegulationById, // NOTE: Should be immutable
     deleteDraftRegulationMutation, // NOTE: Should be immutable
-    t,
+    t, // NOTE: Should be immutable,
   ])
-
-  return {
-    state,
-    stepNav,
-    actions,
-  }
 }
 
-export type RegDraftActions = ReturnType<typeof useDraftingState>['actions']
+export type RegDraftActions = ReturnType<typeof useMakeDraftingState>['actions']
 
 // ===========================================================================
 
-export type StepComponent = (props: {
-  draft: RegDraftForm
-  actions: ReturnType<typeof useDraftingState>['actions'] // FIXME: Ick! Ack!
-}) => ReturnType<FC>
+const RegDraftingContext = createContext(
+  {} as DraftingState & { actions: RegDraftActions },
+)
+
+type RegDraftingProviderProps = {
+  regulationDraft: RegulationDraft
+  stepName: Step
+  ministries: MinistryList
+  children: ReactNode
+}
+
+export const RegDraftingProvider = (props: RegDraftingProviderProps) => {
+  const { regulationDraft, ministries, stepName, children } = props
+
+  return React.createElement(RegDraftingContext.Provider, {
+    value: useMakeDraftingState({
+      regulationDraft,
+      ministries,
+      stepName,
+    }),
+    children: children,
+  })
+}
+
+export const useDraftingState = () => useContext(RegDraftingContext)

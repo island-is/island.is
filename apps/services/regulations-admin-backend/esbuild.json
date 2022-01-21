@@ -4,6 +4,7 @@
     "fsevents",
     "@nestjs/microservices",
     "class-transformer",
+    "canvas",
     "cache-manager",
     "@nestjs/websockets/socket-module",
     "class-validator",

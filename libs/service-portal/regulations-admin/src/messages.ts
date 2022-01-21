@@ -52,6 +52,18 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-appendix-legend',
     defaultMessage: 'Viðauki {idx}',
   },
+  appendix_legend_revoked: {
+    id: 'ap.regulations-admin:draft-appendix-legend-revoked',
+    defaultMessage: 'Fjarlægður viðauki',
+  },
+  appendix_revoked_message: {
+    id: 'ap.regulations-admin:draft-appendix-revoked-message',
+    defaultMessage: 'Eldri viðauki felldur burt.',
+  },
+  appendix_revoked_undo: {
+    id: 'ap.regulations-admin:draft-appendix-revoked-undo',
+    defaultMessage: 'Afturkalla',
+  },
   appendix_title: {
     id: 'ap.regulations-admin:draft-labels-appendix-title',
     defaultMessage: 'Heiti viðauka',
@@ -240,12 +252,16 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-labels-type',
     defaultMessage: 'Tegund reglugerðar',
   },
+  typePlaceholder: {
+    id: 'ap.regulations-admin:draft-labels-type',
+    defaultMessage: 'Stýrist af titli reglugerðarinnar',
+  },
   type_base: {
     id: 'ap.regulations-admin:draft-opts-type-base',
     defaultMessage: 'Stofnreglugerð',
   },
-  type_affecting: {
-    id: 'ap.regulations-admin:draft-opts-type-affecting',
+  type_amending: {
+    id: 'ap.regulations-admin:draft-opts-type-amending',
     defaultMessage: 'Breytingareglugerð',
   },
 
@@ -364,6 +380,10 @@ export const errorMsgs = defineMessages({
     id: 'ap.regulations-admin:error-field-required',
     defaultMessage: 'Þessi reitur má ekki vera tómur',
   },
+  ministryUnknown: {
+    id: 'ap.regulations-admin:error-ministry-unknown',
+    defaultMessage: 'Nafn ráðuneytis er óþekkt',
+  },
   impactMissing: {
     id: 'ap.regulations-admin:error-impactmissing',
     defaultMessage:
@@ -398,6 +418,10 @@ export const homeMessages = defineMessages({
   createRegulation: {
     id: 'ap.regulations-admin:create-regulation-cta',
     defaultMessage: 'Skrá nýja reglugerð',
+  },
+  taskList_draftTitleMissing: {
+    id: 'ap.regulations-admin:tasklist-draft-title-missing',
+    defaultMessage: '— ónefnd drög —',
   },
 
   cta: {

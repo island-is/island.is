@@ -1,5 +1,3 @@
-import assert from 'assert'
-
 let env = process.env
 
 if (!env.NODE_ENV || env.NODE_ENV === 'development') {
@@ -14,13 +12,17 @@ if (!env.NODE_ENV || env.NODE_ENV === 'development') {
   }
 }
 
-const required = (name: string): string => {
-  const v = env[name]
-  assert(v, `missing required environment variable: ${name}`)
-  return v
-}
+const required = (name: string): string => env[name] ?? ''
+
+// required by firebase-admin
+required('GOOGLE_APPLICATION_CREDENTIALS')
 
 export const environment = {
+  identityServerPath: required('IDENTITY_SERVER_PATH'),
+  userProfileServiceBasePath: required('SERVICE_USER_PROFILE_BASEPATH'),
+  notificationsClientId: required('USER_NOTIFICATION_CLIENT_ID'),
+  notificationsClientSecret: required('USER_NOTIFICATION_CLIENT_SECRET'),
+
   mainQueueName: required('MAIN_QUEUE_NAME'),
   deadLetterQueueName: env.DEAD_LETTER_QUEUE_NAME,
 

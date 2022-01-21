@@ -88,7 +88,7 @@ export const OPERATING_LICENSE_SERVICE_RES = [
 ] as any[]
 
 export const DATA_UPLOAD: Skilabod = {
-  skilabod: 'string',
+  skilabod: 'Gögn móttekin',
   audkenni: 'string',
   malsnumer: 'string',
 }

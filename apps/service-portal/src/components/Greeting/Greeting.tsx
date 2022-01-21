@@ -13,8 +13,6 @@ import { useQuery, gql } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { m } from '@island.is/service-portal/core'
 
-import * as styles from './Greeting.css'
-
 const NationalRegistryUserQuery = gql`
   query NationalRegistryUserQuery {
     nationalRegistryUser {
@@ -74,8 +72,17 @@ const Greeting: FC<{}> = () => {
           </Text>
           <Text marginBottom={2}>{formatMessage(m.greetingIntro)}</Text>
           <div>
-            <a href={LEGACY_MY_PAGES_URL} target="_blank">
-              <Button variant="text" icon="open" iconType="outline">
+            <a
+              href={LEGACY_MY_PAGES_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                variant="text"
+                icon="open"
+                iconType="outline"
+                size="small"
+              >
                 {formatMessage(m.olderVersion)}
               </Button>
             </a>
@@ -83,7 +90,13 @@ const Greeting: FC<{}> = () => {
         </Box>
       </GridColumn>
       <GridColumn span={['12/12', '5/12']}>
-        <Box className={styles.figure} />
+        <img
+          src="./assets/images/school.svg"
+          alt={`${formatMessage(m.altText)} ${formatMessage({
+            defaultMessage: 'upphafssíðu',
+            id: 'service.portal:start-page',
+          })}`}
+        />
       </GridColumn>
     </GridRow>
   )

@@ -101,7 +101,7 @@ export type RegulationDraft = Pick<
   signatureText: HTMLText
   signedDocumentUrl?: URLString
   type?: RegulationType
-  ministry?: Ministry
+  ministry?: string
   impacts: ReadonlyArray<DraftImpact>
 }
 

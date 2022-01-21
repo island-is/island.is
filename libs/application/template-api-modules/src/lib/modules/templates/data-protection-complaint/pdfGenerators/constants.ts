@@ -1,0 +1,16 @@
+export const PdfConstants = {
+  BOLD_FONT: 'Helvetica-Bold',
+  NORMAL_FONT: 'Helvetica',
+  PERMANENT: 'permanent',
+  HEADER_FONT_SIZE: 26,
+  SUB_HEADER_FONT_SIZE: 14,
+  VALUE_FONT_SIZE: 12,
+  LARGE_LINE_GAP: 24,
+  NORMAL_LINE_GAP: 8,
+  NO_LINE_GAP: 0,
+  HORIZONTAL_MARGIN: 48,
+  VERTICAL_MARGIN: 48,
+  IMAGE_WIDTH: 126,
+  IMAGE_HEIGHT: 40,
+  PAGE_SIZE: 'A4',
+}

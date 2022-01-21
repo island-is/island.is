@@ -113,7 +113,7 @@ export class IcelandicNameController {
     }
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'updateNameById',
       resources: `${id}`,
       meta: { fields: Object.keys(body) },
@@ -142,7 +142,7 @@ export class IcelandicNameController {
   ): Promise<IcelandicName> {
     return this.auditService.auditPromise<IcelandicName>(
       {
-        user,
+        auth: user,
         action: 'createName',
         resources: (name) => `${name.id}`,
       },
@@ -173,7 +173,7 @@ export class IcelandicNameController {
     }
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'deleteById',
       resources: `${id}`,
     })
