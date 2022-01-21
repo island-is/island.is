@@ -26,26 +26,34 @@ export const dataSchema = z.object({
         .refine((v) => v, {
           params: error.validation.radioErrorMessage,
         }),
-      spouse: z
-        .object({
-          email: z.string().refine((v) => isValidEmail(v), {
-            params: error.validation.email,
-          }),
-          nationalId: z.string().refine((v) => isValidNationalId(v), {
-            params: error.validation.nationlId,
-          }),
-          approveTerms: z.array(z.string()).refine((v) => v && v.length === 1, {
-            params: error.validation.approveSpouse,
-          }),
+      spouseEmail: z
+        .string()
+        .refine((v) => v, {
+          params: error.validation.email,
         })
         .optional(),
+      spouseNationalId: z
+        .string()
+        .refine((v) => isValidNationalId(v || ''), {
+          params: error.validation.nationlId,
+        })
+        .optional(),
+      spouseApproveTerms: z
+        .array(z.string())
+        .optional()
+        .refine((v) => v && v.length === 1, {
+          params: error.validation.approveSpouse,
+        }),
     })
     .refine(
       (v) =>
-        v.unregisteredCohabitation === ApproveOptions.Yes ? v.spouse : true,
+        v.unregisteredCohabitation === ApproveOptions.Yes
+          ? isValidEmail(v?.spouseEmail || '') ||
+            v.spouseNationalId ||
+            v.spouseApproveTerms
+          : true,
       {
-        params: error.validation.inputErrorMessage,
-        // path: ['spouse.email'],
+        params: error.validation.approveSpouse,
       },
     ),
   student: z

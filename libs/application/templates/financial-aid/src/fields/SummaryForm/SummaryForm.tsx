@@ -16,6 +16,7 @@ import SummaryBlock from '../SummaryBlock/SummaryBlock'
 import { ApproveOptions, FAFieldBaseProps } from '../../lib/types'
 import {
   Employment,
+  estimatedBreakDown,
   getNextPeriod,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
@@ -25,6 +26,7 @@ import {
   getMessageApproveOptions,
   getMessageApproveOptionsForIncome,
 } from '../../lib/formatters'
+import { Breakdown } from '@island.is/financial-aid/shared/components'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -58,7 +60,9 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       <Box marginTop={2}>
         <DescriptionText text={m.summaryForm.general.description} />
       </Box>
-      {/* TODO estimated aid */}
+
+      <Box>{/* TODO estimated aid */}</Box>
+
       <Box marginTop={2}>
         <DescriptionText text={m.summaryForm.general.calculationsOverview} />
       </Box>

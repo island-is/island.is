@@ -25,19 +25,19 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
   }
 
   const spouseEmail = {
-    id: 'relationshipStatus.spouse.email',
-    error: errors?.relationshipStatus?.spouse?.email,
+    id: 'relationshipStatus.spouseEmail',
+    error: errors?.relationshipStatus?.spouseEmail,
   }
   const spouseNationlId = {
-    id: 'relationshipStatus.spouse.nationalId',
-    error: errors?.relationshipStatus?.spouse?.nationalId,
+    id: 'relationshipStatus.spouseNationalId',
+    error: errors?.relationshipStatus?.spouseNationalId,
   }
   const spouseApproveTerms = {
-    id: 'relationshipStatus.spouse.approveTerms',
-    error: errors?.relationshipStatus?.spouse?.approveTerms,
+    id: 'relationshipStatus.spouseApproveTerms',
+    error: errors?.relationshipStatus?.spouseApproveTerms,
   }
 
-  console.log(errors)
+  console.log(errors.relationshipStatus)
 
   return (
     <>
@@ -82,13 +82,12 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
             id={spouseNationlId.id}
             name={spouseNationlId.id}
             backgroundColor="blue"
-            type="email"
             placeholder={formatMessage(
               unknownRelationship.inputs.spouseNationlIdPlaceholder,
             )}
             label={formatMessage(unknownRelationship.inputs.spouseNationlId)}
             error={spouseNationlId.error}
-            defaultValue={answers?.relationshipStatus?.spouse?.email || ''}
+            defaultValue={''}
             onChange={() => {
               clearErrors(spouseNationlId.id)
             }}
@@ -105,7 +104,7 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
             )}
             label={formatMessage(unknownRelationship.inputs.spouseEmail)}
             error={spouseEmail.error}
-            defaultValue={answers?.relationshipStatus?.spouse?.email || ''}
+            defaultValue={''}
             onChange={() => {
               clearErrors(spouseEmail.id)
             }}
