@@ -127,11 +127,6 @@ const useCase = () => {
             input: {
               type: theCase.type,
               policeCaseNumber: theCase.policeCaseNumber,
-              // TODO defendants: Move to a separate defendant mutation
-              // accusedNationalId: theCase.accusedNationalId.replace('-', ''),
-              // accusedName: theCase.accusedName,
-              // accusedAddress: theCase.accusedAddress,
-              // accusedGender: theCase.accusedGender,
               defenderName: theCase.defenderName,
               defenderEmail: theCase.defenderEmail,
               defenderPhoneNumber: theCase.defenderPhoneNumber,
