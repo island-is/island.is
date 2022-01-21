@@ -283,33 +283,35 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           </Box>
         </Hidden>
         {!!subpage && (
-          <>
+          <Box marginBottom={1}>
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
             {subpage.content && richText(subpage.content as SliceType[])}
-          </>
+          </Box>
         )}
         {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
-          <TableOfContents
-            tableOfContentsTitle={n('tableOfContentsTitle', 'Undirkaflar')}
-            headings={subpage.slices.map((slice) => ({
-              headingId: slice.id,
-              headingTitle: (slice as OneColumnText).title,
-            }))}
-            selectedHeadingId={selectedSliceTab?.id}
-            onClick={(id) => {
-              const slice = subpage.slices.find(
-                (s) => s.id === id,
-              ) as OneColumnText
-              router.push(
-                `${baseRouterPath}#${slugify(slice.title)}`,
-                undefined,
-                { shallow: true },
-              )
-              setSelectedSliceTab(slice)
-            }}
-          />
+          <Box marginBottom={2}>
+            <TableOfContents
+              tableOfContentsTitle={n('tableOfContentsTitle', 'Undirkaflar')}
+              headings={subpage.slices.map((slice) => ({
+                headingId: slice.id,
+                headingTitle: (slice as OneColumnText).title,
+              }))}
+              selectedHeadingId={selectedSliceTab?.id}
+              onClick={(id) => {
+                const slice = subpage.slices.find(
+                  (s) => s.id === id,
+                ) as OneColumnText
+                router.push(
+                  `${baseRouterPath}#${slugify(slice.title)}`,
+                  undefined,
+                  { shallow: true },
+                )
+                setSelectedSliceTab(slice)
+              }}
+            />
+          </Box>
         )}
         {renderSlicesAsTabs && selectedSliceTab && (
           <Text paddingTop={4} as="h2" variant="h2">

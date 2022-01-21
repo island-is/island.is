@@ -12,12 +12,7 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
   return (
     <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
       <GridContainer>
-        <Box
-          borderTopWidth="standard"
-          borderColor="standard"
-          paddingTop={[4, 4, 6]}
-          paddingBottom={[4, 5, 10]}
-        >
+        <Box>
           <Text
             variant="h2"
             as="h2"
