@@ -33,8 +33,22 @@ interface StepOptionCMS {
   option_slug: string
 }
 
+interface StepOptionsFromSourceTransitionCMS {
+  criteria: Record<string, boolean>
+  transition: string
+}
+
+interface StepOptionsFromSourceCMS {
+  source_namespace: string
+  label_is_field: string
+  label_en_field: string
+  option_slug_field: string
+  transitions: StepOptionsFromSourceTransitionCMS[]
+}
+
 interface StepConfig {
   options: StepOptionCMS[]
+  options_from_source?: StepOptionsFromSourceCMS
 }
 
 interface StepOption {
@@ -134,9 +148,51 @@ const resolveStepType = (step: Step): string => {
   return null
 }
 
-const getStepOptions = (step: Step, lang = 'en'): StepOption[] => {
+const getStepOptions = (
+  step: Step,
+  lang = 'en',
+  optionsFromNamespace: { slug: string; data: [] }[] = null,
+): StepOption[] => {
   if (!step || step.config === '') return []
   const stepConfig: StepConfig = JSON.parse(step.config) as StepConfig
+
+  if (stepConfig.options_from_source && optionsFromNamespace) {
+    const stepOptions = optionsFromNamespace.find(
+      (value) => value.slug === step.slug,
+    )
+    if (!stepOptions) return []
+    return stepOptions.data.map((o) => {
+      const {
+        label_en_field,
+        label_is_field,
+        option_slug_field,
+        transitions,
+      } = stepConfig.options_from_source
+      const label = lang === 'is' ? o[label_is_field] : o[label_en_field]
+      let stepTransition = ''
+
+      for (const { criteria, transition } of transitions) {
+        if (Object.keys(criteria).every((key) => o[key] === criteria[key])) {
+          if (stepTransition !== '') {
+            // TODO: there are two or more possible transitions, maybe do something here or leave it to the helper
+          }
+          stepTransition = transition
+          break
+        }
+      }
+
+      if (stepTransition === '') {
+        // TODO: There is no transition, maybe do something here or leave it to the helper
+      }
+
+      return {
+        label: label,
+        transition: stepTransition,
+        slug: o[option_slug_field],
+      }
+    })
+  }
+
   return stepConfig.options.map((o) => {
     const label = lang === 'is' ? o.label_is : o.label_en
     return {
@@ -145,6 +201,14 @@ const getStepOptions = (step: Step, lang = 'en'): StepOption[] => {
       slug: o.option_slug,
     }
   })
+}
+
+const getStepOptionsSourceNamespace = (step: Step): string => {
+  if (!step || step.config === '') return ''
+  const stepConfig: StepConfig = JSON.parse(step.config) as StepConfig
+  if (stepConfig.options_from_source)
+    return stepConfig.options_from_source.source_namespace
+  return ''
 }
 
 const stepContainsQuestion = (step: Step) => {
@@ -174,6 +238,7 @@ export {
   resolveStepType,
   getStepOptions,
   getStepQuestion,
+  getStepOptionsSourceNamespace,
   getCurrentStepAndStepType,
 }
 export type {

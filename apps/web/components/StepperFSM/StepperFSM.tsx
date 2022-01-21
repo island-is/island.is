@@ -40,6 +40,7 @@ interface StepperProps {
   startAgainLabel?: string
   answerLabel?: string
   backLabel?: string
+  optionsFromNamespace: { slug: string; data: [] }[]
 }
 
 interface StepOptionSelectItem {
@@ -59,6 +60,7 @@ const getInitialStateAndAnswersByQueryParams = (
   stepperMachine: StepperMachine,
   query: ParsedUrlQuery,
   activeLocale: string,
+  optionsFromNamespace: StepperProps['optionsFromNamespace'],
 ) => {
   let initialState = stepperMachine.initialState
   const questionsAndAnswers: QuestionAndAnswer[] = []
@@ -78,7 +80,7 @@ const getInitialStateAndAnswersByQueryParams = (
 
     if (stepType === STEP_TYPES.ANSWER) break
 
-    const options = getStepOptions(step, activeLocale)
+    const options = getStepOptions(step, activeLocale, optionsFromNamespace)
     const selectedOption = options.find((o) => o.slug === answer)
     if (!selectedOption) break
 
@@ -100,7 +102,7 @@ const getInitialStateAndAnswersByQueryParams = (
   return { initialState, questionsAndAnswers }
 }
 
-export const StepperFSM = ({ stepper }: StepperProps) => {
+export const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
 
@@ -112,8 +114,15 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
       stepperMachine,
       router.query,
       activeLocale,
+      optionsFromNamespace,
     )
-  }, [activeLocale, router.query, stepper, stepperMachine])
+  }, [
+    activeLocale,
+    router.query,
+    stepper,
+    stepperMachine,
+    optionsFromNamespace,
+  ])
 
   const [currentState, setCurrentState] = useState(initialState)
 
@@ -145,9 +154,9 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
   const stepOptions = useMemo<StepOption[]>(
     () =>
       currentStepType !== STEP_TYPES.ANSWER
-        ? getStepOptions(currentStep, activeLocale)
+        ? getStepOptions(currentStep, activeLocale, optionsFromNamespace)
         : [],
-    [activeLocale, currentStep, currentStepType],
+    [activeLocale, currentStep, currentStepType, optionsFromNamespace],
   )
 
   const [
@@ -385,6 +394,7 @@ export const StepperFSM = ({ stepper }: StepperProps) => {
           currentState={currentState}
           currentStep={currentStep}
           stepperMachine={stepperMachine}
+          optionsFromNamespace={optionsFromNamespace}
         />
       )}
     </Box>
