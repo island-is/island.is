@@ -6,10 +6,11 @@ import {
   coreErrorMessages,
   getValueViaPath,
 } from '@island.is/application/core'
+import { HasQualityPhotoProvider } from '@island.is/application/data-providers'
 
 const YES = 'yes'
 
-export class QualityPhotoProvider extends BasicDataProvider {
+export class QualityPhotoProvider extends HasQualityPhotoProvider {
   type = 'QualityPhotoProvider'
 
   async provide(application: Application) {
@@ -28,30 +29,8 @@ export class QualityPhotoProvider extends BasicDataProvider {
         hasQualityPhoto: hasQualityPhoto === YES,
       }
     }
-    const query = `
-        query HasQualityPhoto {
-          drivingLicenseQualityPhoto {
-            hasQualityPhoto
-          }
-        }
-      `
 
-    const res = await this.useGraphqlGateway(query)
-    if (!res.ok) {
-      return Promise.reject({
-        reason: 'Náði ekki sambandi við vefþjónustu',
-      })
-    }
-
-    const response = await res.json()
-    if (response.errors) {
-      return Promise.reject({ error: response.errors })
-    }
-
-    return {
-      hasQualityPhoto: !!response.data.drivingLicenseQualityPhoto
-        ?.hasQualityPhoto,
-    }
+    return await this.getHasQualityPhoto()
   }
 
   onProvideError(): FailedDataProviderResult {
