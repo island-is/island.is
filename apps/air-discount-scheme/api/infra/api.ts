@@ -12,6 +12,11 @@ export const serviceSetup = (services: {
         staging: 'loftbru.staging01.devland.is',
         prod: 'loftbru.island.is',
       },
+      SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
       ELASTIC_NODE: {
         dev:
           'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com',

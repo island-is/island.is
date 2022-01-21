@@ -20,7 +20,6 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME',
       NATIONAL_REGISTRY_URL:
         '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL',
-      IDENTITY_SERVER_DOMAIN: `/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN`,
     })
     .env({
       ENVIRONMENT: {
@@ -35,6 +34,11 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
         prod:
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+      },
+      SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
       },
     })
     .postgres(postgresInfo)

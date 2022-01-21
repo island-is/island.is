@@ -1,4 +1,5 @@
 import { Airlines } from '@island.is/air-discount-scheme/consts'
+import { getStaticEnv } from '@island.is/shared/utils'
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -15,9 +16,7 @@ const devConfig = {
     authMiddlewareOptions: {
       forwardUserInfo: false,
       tokenExchangeOptions: {
-        issuer: process.env.IDENTITY_SERVER_DOMAIN
-          ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
-          : '',
+        issuer: 'https://identity-server.dev01.devland.is',
         clientId: '@vegagerdin.is/clients/national-registry',
         clientSecret: process.env.VEGAGERDIN_THJODSKRA_IDS_CLIENT_SECRET,
         scope: 'openid profile @skra.is/individuals',
@@ -42,9 +41,7 @@ const devConfig = {
   },
   baseUrl: process.env.BASE_URL ?? 'http://localhost:4200',
   identityServerAuth: {
-    issuer: process.env.IDENTITY_SERVER_DOMAIN
-      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
-      : 'https://identity-server.dev01.devland.is',
+    issuer: 'https://identity-server.dev01.devland.is',
     audience: '@vegagerdin.is',
   },
   idsTokenCookieName: 'next-auth.session-token',
@@ -69,9 +66,7 @@ const prodConfig = {
     authMiddlewareOptions: {
       forwardUserInfo: false,
       tokenExchangeOptions: {
-        issuer: process.env.IDENTITY_SERVER_DOMAIN
-          ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
-          : '',
+        issuer: isProd ? getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN') : '',
         clientId: '@vegagerdin.is/clients/national-registry',
         clientSecret: process.env.VEGAGERDIN_THJODSKRA_IDS_CLIENT_SECRET,
         scope: 'openid profile @skra.is/individuals',
@@ -89,9 +84,7 @@ const prodConfig = {
   },
   baseUrl: process.env.BASE_URL,
   identityServerAuth: {
-    issuer: process.env.IDENTITY_SERVER_DOMAIN
-      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
-      : '',
+    issuer: isProd ? getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN') : '',
     audience: '@vegagerdin.is',
   },
   idsTokenCookieName: '__Secure-next-auth.session-token',
