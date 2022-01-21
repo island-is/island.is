@@ -26,13 +26,8 @@ export class UserService {
   ) {}
 
   async getRelations(
-    nationalId: string,
     authUser: AuthUser,
   ): Promise<string[]> {
-    console.log(
-      environment.nationalRegistry.authMiddlewareOptions.tokenExchangeOptions
-        .issuer,
-    )
     const relations = await this.nationalRegistryIndividualsApi
       .withMiddleware(
         new AuthMiddleware(
@@ -41,9 +36,7 @@ export class UserService {
             .authMiddlewareOptions as AuthMiddlewareOptions,
         ),
       )
-      .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{ id: nationalId })
-    console.log('user service')
-    console.log(relations)
+      .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{ id: authUser.nationalId })
     return relations
   }
 

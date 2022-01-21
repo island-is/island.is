@@ -74,12 +74,14 @@ export class PrivateUserController {
     @Param() params: GetUserRelationsParams,
     @CurrentUser() authUser: AuthUser,
   ): Promise<User[]> {
+    if(params.nationalId !== authUser.nationalId) {
+      throw new BadRequestException('[/relations] Request parameters do not correspond with user authentication.')
+    }
     const relations = await this.userService.getRelations(
-      params.nationalId,
       authUser,
     )
     const users = await Promise.all([
-      this.userService.getUserInfoByNationalId(params.nationalId),
+      this.userService.getUserInfoByNationalId(authUser.nationalId),
       ...relations.map((nationalId) =>
         this.userService.getUserInfoByNationalId(nationalId),
       ),
