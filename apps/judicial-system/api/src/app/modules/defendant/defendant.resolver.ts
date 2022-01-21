@@ -62,7 +62,7 @@ export class DefendantResolver {
       user.id,
       AuditedAction.UPDATE_DEFENDANT,
       backendApi.updateDefendant(caseId, defendantId, updateDefendant),
-      (theDefendant) => theDefendant.id,
+      defendantId,
     )
   }
 
@@ -80,7 +80,7 @@ export class DefendantResolver {
       user.id,
       AuditedAction.UPDATE_DEFENDANT,
       backendApi.deleteDefendant(caseId, defendantId),
-      (theDefendant) => theDefendant.id,
+      defendantId,
     )
   }
 }
