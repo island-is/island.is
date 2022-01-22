@@ -6,14 +6,21 @@ import { Box } from '@island.is/island-ui/core'
 import {
   Editor as RegulationsEditor,
   EditorProps,
+  EditorFileUploader,
+  EditorUploadSuccess,
 } from '@island.is/regulations-tools/Editor'
 import cn from 'classnames'
 import { HTMLText, useDomid } from '@island.is/regulations'
 import { RegulationDraftId } from '@island.is/regulations/admin'
 
-type EditorInputProps = Omit<
+const fileUploader: EditorFileUploader = (formData, draftId) => {
+  // TODO: Implement uploader
+  return Promise.reject('TODO: Implement uploader')
+}
+
+export type EditorInputProps = Omit<
   EditorProps,
-  'name' | 'valueRef' | 'onBlur' | 'onFocus' | 'onChange'
+  'name' | 'valueRef' | 'onBlur' | 'onFocus' | 'onChange' | 'fileUploader'
 > & {
   value: HTMLText
   label: string
@@ -64,7 +71,8 @@ export const EditorInput = (props: EditorInputProps) => {
           {...editorProps}
           valueRef={valueRef}
           classes={classes}
-          name={'draft-' + draftId}
+          fileUploader={fileUploader}
+          name={draftId}
           onFocus={() => {
             setHasFocus(true)
           }}
