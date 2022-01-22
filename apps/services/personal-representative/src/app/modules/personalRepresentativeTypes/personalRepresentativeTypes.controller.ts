@@ -21,7 +21,7 @@ import {
 } from '@nestjs/common'
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
-import { Auth } from '@island.is/auth-nest-tools'
+import type { Auth } from '@island.is/auth-nest-tools'
 import {
   CurrentAuth,
   IdsAuthGuard,
