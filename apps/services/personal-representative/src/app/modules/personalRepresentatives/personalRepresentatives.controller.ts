@@ -22,7 +22,7 @@ import {
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { isNationalIdValid } from '@island.is/financial-aid/shared/lib'
-import { Auth } from '@island.is/auth-nest-tools'
+import type { Auth } from '@island.is/auth-nest-tools'
 import {
   CurrentAuth,
   IdsAuthGuard,
