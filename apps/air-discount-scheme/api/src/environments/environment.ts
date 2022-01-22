@@ -39,7 +39,9 @@ const prodConfig = {
     admins: process.env.ADMINS,
   },
   identityServerAuth: {
-    issuer: isProd ? getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN') : '',
+    issuer: isProd
+      ? getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN')
+      : '',
     audience: '@vegagerdin.is',
   },
   auth: {
