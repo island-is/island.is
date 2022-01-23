@@ -1,7 +1,8 @@
 import React, { FC, useState, useEffect } from 'react'
-import { useForm, Controller } from 'react-hook-form'
+import { Controller } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { FieldValues, UseFormMethods } from 'react-hook-form/dist/types/form'
 import {
   Box,
   Button,
@@ -10,6 +11,7 @@ import {
   Input,
   Icon,
   Text,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useVerifyEmail } from '@island.is/service-portal/graphql'
@@ -17,31 +19,25 @@ import { useVerifyEmail } from '@island.is/service-portal/graphql'
 interface Props {
   buttonText: string
   email?: string
-  onCallback: (email: string) => void
-  emailDirty: (isDirty: boolean) => void
+  hookFormData: UseFormMethods<FieldValues>
 }
 
 interface FormErrors {
-  email: boolean
-  code: boolean
+  email: string | undefined
+  code: string | undefined
 }
 
-export const InputEmail: FC<Props> = ({
-  buttonText,
-  email,
-  onCallback,
-  emailDirty,
-}) => {
+export const InputEmail: FC<Props> = ({ buttonText, email, hookFormData }) => {
   useNamespaces('sp.settings')
-  const { handleSubmit, control, errors, getValues, reset } = useForm()
+  const { control, errors, getValues, trigger } = hookFormData
   const { formatMessage } = useLocale()
   const {
     confirmEmailVerification,
     createEmailVerification,
-    loading,
-    error,
+    loading: codeLoading,
+    createLoading,
   } = useVerifyEmail()
-  const [emailInternal, setEmailInternal] = useState(email || '')
+  const [emailInternal, setEmailInternal] = useState(email)
   const [emailToVerify, setEmailToVerify] = useState(email || '')
 
   const [codeInternal, setCodeInternal] = useState('')
@@ -50,183 +46,202 @@ export const InputEmail: FC<Props> = ({
   const [verificationValid, setVerificationValid] = useState(false)
 
   const [formErrors, setErrors] = useState<FormErrors>({
-    email: false,
-    code: false,
+    email: undefined,
+    code: undefined,
   })
 
   useEffect(() => {
-    if (email === emailInternal) {
-      emailDirty(false)
-    } else if (emailInternal === emailToVerify) {
-      emailDirty(false)
-    } else {
-      emailDirty(true)
-    }
-  }, [emailInternal])
-
-  useEffect(() => {
     if (email && email.length > 0) {
-      reset({
-        email,
-      })
       setEmailInternal(email)
     }
   }, [email])
 
-  const handleSendEmailVerification = async (data: { email: string }) => {
+  const handleSendEmailVerification = async (isValid: boolean) => {
+    if (!isValid) {
+      return
+    }
+
+    const emailError = formatMessage({
+      id: 'sp.settings:email-service-error',
+      defaultMessage:
+        'Vandamál með tölvupóstþjónustu. Vinsamlegast reynið aftur síðar.',
+    })
+
     try {
+      const formValues = getValues()
+      const emailValue = formValues?.email
+
       const response = await createEmailVerification({
-        email: data?.email,
+        email: emailValue,
       })
 
       if (response.data?.createEmailVerification?.created) {
         setEmailVerifyCreated(true)
-        setEmailToVerify(data?.email)
+        setEmailToVerify(emailValue)
         setVerificationValid(false)
-        setErrors({ ...formErrors, email: false })
+        setErrors({ ...formErrors, email: undefined })
       } else {
-        setErrors({ ...formErrors, email: true })
+        setErrors({ ...formErrors, email: emailError })
       }
     } catch (err) {
-      setErrors({ ...formErrors, email: true })
+      setErrors({ ...formErrors, email: emailError })
     }
   }
 
-  const handleConfirmCode = async (data: { code: string }) => {
+  const handleConfirmCode = async (isValid: boolean) => {
+    if (!isValid) {
+      return
+    }
+
+    const codeError = formatMessage({
+      id: 'sp.settings:code-service-error',
+      defaultMessage:
+        'Vandamál með tölvupóstþjónustu. Vinsamlegast reynið aftur síðar.',
+    })
+
     try {
+      const formValues = getValues()
+      const codeValue = formValues?.code
+
       const response = await confirmEmailVerification({
-        hash: data?.code,
+        hash: codeValue,
       })
+
       if (response.data?.confirmEmailVerification?.confirmed) {
         const formValues = getValues()
         const emailValue = formValues?.email
         if (emailValue === emailToVerify) {
           setVerificationValid(true)
-          emailDirty(false)
-          onCallback(emailValue)
         }
-        setErrors({ ...formErrors, code: false })
+        setErrors({ ...formErrors, code: undefined })
       } else {
-        setErrors({ ...formErrors, code: true })
+        setErrors({ ...formErrors, code: codeError })
       }
     } catch (err) {
-      setErrors({ ...formErrors, code: true })
+      setErrors({ ...formErrors, code: codeError })
     }
   }
 
   return (
     <Box>
-      <form onSubmit={handleSubmit(handleSendEmailVerification)}>
-        <Columns alignY="center">
-          <Column width="9/12">
-            <InputController
-              control={control}
-              id="email"
-              name="email"
-              required={false}
-              type="email"
-              rules={{
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: formatMessage({
-                    id: 'sp.settings:email-wrong-format-message',
-                    defaultMessage: 'Netfangið er ekki á réttu formi',
-                  }),
-                },
-              }}
-              label={formatMessage(m.email)}
-              onChange={(inp) => setEmailInternal(inp.target.value)}
-              placeholder={formatMessage(m.email)}
-              error={errors.email?.message}
-              defaultValue={emailInternal || ''}
-              size="xs"
-            />
-          </Column>
-          <Column width="3/12">
-            <Box
-              display="flex"
-              alignItems="flexEnd"
-              flexDirection="column"
-              paddingTop={2}
-            >
-              <button type="submit" disabled={!emailInternal}>
-                <Button variant="text" size="small" disabled={!emailInternal}>
-                  {buttonText}
-                </Button>
-              </button>
-            </Box>
-          </Column>
-        </Columns>
-      </form>
+      <Columns alignY="center">
+        <Column width="9/12">
+          <InputController
+            control={control}
+            id="email"
+            name="email"
+            required={false}
+            type="email"
+            rules={{
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: formatMessage({
+                  id: 'sp.settings:email-wrong-format-message',
+                  defaultMessage: 'Netfangið er ekki á réttu formi',
+                }),
+              },
+            }}
+            label={formatMessage(m.email)}
+            onChange={(inp) => setEmailInternal(inp.target.value)}
+            placeholder={formatMessage(m.email)}
+            error={errors.email?.message || formErrors.email}
+            size="xs"
+            defaultValue=""
+          />
+        </Column>
+        <Column width="3/12">
+          <Box
+            display="flex"
+            alignItems="flexEnd"
+            flexDirection="column"
+            paddingTop={2}
+          >
+            {!createLoading && (
+              <Button
+                variant="text"
+                size="small"
+                disabled={!emailInternal}
+                onClick={() => {
+                  trigger('email').then((ok) => handleSendEmailVerification(ok))
+                }}
+              >
+                {buttonText}
+              </Button>
+            )}
+            {createLoading && <LoadingDots />}
+          </Box>
+        </Column>
+      </Columns>
       {emailVerifyCreated && (
-        <form onSubmit={handleSubmit(handleConfirmCode)}>
-          <Box marginTop={3}>
-            <Text variant="medium" marginBottom={2}>
-              {formatMessage({
-                id: 'sp.settings:email-verify-code-sent',
-                defaultMessage: `Öryggiskóði hefur verið sendur á netfangið þitt. Sláðu hann inn
+        <Box marginTop={3}>
+          <Text variant="medium" marginBottom={2}>
+            {formatMessage({
+              id: 'sp.settings:email-verify-code-sent',
+              defaultMessage: `Öryggiskóði hefur verið sendur á netfangið þitt. Sláðu hann inn
                   hér að neðan.`,
-              })}
-            </Text>
-            <Columns alignY="center">
-              <Column width="5/12">
-                <Controller
-                  control={control}
-                  name="code"
-                  rules={{
-                    required: {
-                      value: true,
-                      message: formatMessage(m.verificationCodeRequired),
-                    },
-                  }}
-                  defaultValue=""
-                  render={({ onChange, value, name }) => (
-                    <Input
-                      label={formatMessage(m.verificationCode)}
-                      placeholder={formatMessage(m.verificationCode)}
-                      name={name}
-                      value={value}
-                      hasError={errors.code}
-                      errorMessage={errors.code?.message}
-                      size="xs"
-                      onChange={(inp) => {
-                        onChange(inp.target.value)
-                        setCodeInternal(inp.target.value)
-                      }}
-                    />
-                  )}
-                />
-              </Column>
-              <Column width="content">
-                <Box
-                  marginLeft={3}
-                  display="flex"
-                  alignItems="flexEnd"
-                  flexDirection="column"
-                  paddingTop={2}
-                >
-                  {verificationValid ? (
+            })}
+          </Text>
+          <Columns alignY="center">
+            <Column width="5/12">
+              <Controller
+                control={control}
+                name="code"
+                rules={{
+                  required: {
+                    value: true,
+                    message: formatMessage(m.verificationCodeRequired),
+                  },
+                }}
+                defaultValue=""
+                render={({ onChange, value, name }) => (
+                  <Input
+                    label={formatMessage(m.verificationCode)}
+                    placeholder={formatMessage(m.verificationCode)}
+                    name={name}
+                    value={value}
+                    hasError={errors.code || !!formErrors.code}
+                    errorMessage={errors.code?.message || formErrors.code}
+                    size="xs"
+                    onChange={(inp) => {
+                      onChange(inp.target.value)
+                      setCodeInternal(inp.target.value)
+                    }}
+                  />
+                )}
+              />
+            </Column>
+            <Column width="content">
+              <Box
+                marginLeft={3}
+                display="flex"
+                alignItems="flexEnd"
+                flexDirection="column"
+                paddingTop={2}
+              >
+                {!codeLoading &&
+                  (verificationValid ? (
                     <Icon
                       icon="checkmarkCircle"
                       color="mint600"
                       type="filled"
                     />
                   ) : (
-                    <button type="submit" disabled={!codeInternal}>
-                      <Button
-                        variant="text"
-                        size="small"
-                        disabled={!codeInternal}
-                      >
-                        {formatMessage(m.confirmCode)}
-                      </Button>
-                    </button>
-                  )}
-                </Box>
-              </Column>
-            </Columns>
-          </Box>
-        </form>
+                    <Button
+                      variant="text"
+                      size="small"
+                      disabled={!codeInternal}
+                      onClick={() => {
+                        trigger('code').then((ok) => handleConfirmCode(ok))
+                      }}
+                    >
+                      {formatMessage(m.confirmCode)}
+                    </Button>
+                  ))}
+                {codeLoading && <LoadingDots />}
+              </Box>
+            </Column>
+          </Columns>
+        </Box>
       )}
     </Box>
   )

@@ -1,27 +1,17 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { InputController } from '@island.is/shared/form-fields'
-import { useForm } from 'react-hook-form'
+import { FieldValues, UseFormMethods } from 'react-hook-form/dist/types/form'
 import { useLocale, useNamespaces } from '@island.is/localization'
-
-export interface BankInfoFormData {
-  bankInfo: string
-}
 
 interface Props {
   bankInfo: string
+  hookFormData: UseFormMethods<FieldValues>
 }
 
-export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
+export const BankInfoForm: FC<Props> = ({ hookFormData }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { control, errors, reset } = useForm()
-
-  useEffect(() => {
-    if (bankInfo.length > 0)
-      reset({
-        bankInfo,
-      })
-  }, [bankInfo])
+  const { control, errors } = hookFormData
 
   return (
     <InputController
@@ -30,7 +20,6 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
       name="bankInfo"
       format="####-##-######"
       placeholder="0000-00-000000"
-      defaultValue={bankInfo}
       label="Reikningsupplýsingar"
       error={errors.bankInfo?.message}
       required={false}

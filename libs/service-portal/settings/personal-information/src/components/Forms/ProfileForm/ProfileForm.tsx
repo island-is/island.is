@@ -9,7 +9,6 @@ import {
   GridColumn,
   GridContainer,
   Button,
-  Checkbox,
 } from '@island.is/island-ui/core'
 import {
   useCreateUserProfile,
@@ -18,6 +17,7 @@ import {
 } from '@island.is/service-portal/graphql'
 import { Locale } from '@island.is/shared/types'
 import { parseNumber } from '../../../utils/phoneHelper'
+import { formatBankInfo } from '../../../utils/bankInfoHelper'
 import { servicePortalSubmitOnBoardingModal } from '@island.is/plausible'
 import { OnboardingIntro } from './components/Intro'
 import { InputSection } from './components/InputSection'
@@ -26,6 +26,8 @@ import { InputPhone } from './components/Inputs/Phone'
 import { DropModal } from './components/DropModal'
 import { LanguageForm, LanguageFormOption } from '../LanguageForm'
 import { BankInfoForm } from '../BankInfoForm'
+import { Nudge } from './components/Inputs/Nudge'
+import { useForm } from 'react-hook-form'
 import * as styles from './ProfileForm.css'
 
 interface Props {
@@ -48,8 +50,23 @@ export const ProfileForm: FC<Props> = ({
   const [language, setLanguage] = useState<LanguageFormOption | null>(null)
   const [bankInfo, setBankInfo] = useState('')
 
-  const [telDirty, setTelDirty] = useState(true)
-  const [emailDirty, setEmailDirty] = useState(true)
+  const { data: userProfile, loading: userLoading } = useUserProfile()
+
+  const hookFormData = useForm()
+
+  const { handleSubmit, getValues, formState, reset } = hookFormData
+
+  useEffect(() => {
+    reset({
+      email: userProfile?.email || '',
+      tel: parseNumber(userProfile?.mobilePhoneNumber || ''),
+      ...(showDetails && {
+        bankInfo: userProfile?.bankInfo || '',
+        nudge: !!userProfile?.canNudge,
+        language: userProfile?.locale,
+      }),
+    })
+  }, [userProfile])
 
   const [showDropModal, setShowDropModal] = useState<
     'tel' | 'mail' | 'all' | undefined
@@ -57,18 +74,14 @@ export const ProfileForm: FC<Props> = ({
 
   const { formatMessage } = useLocale()
 
-  const { data: userProfile } = useUserProfile()
-
   useEffect(() => {
     if (userProfile) {
       if (userProfile.mobilePhoneNumber) {
         const parsedNumber = parseNumber(userProfile.mobilePhoneNumber)
         setTel(parsedNumber)
-        setTelDirty(false)
       }
       if (userProfile.email) {
         setEmail(userProfile.email)
-        setEmailDirty(false)
       }
       if (userProfile.locale) {
         setLanguage({
@@ -112,6 +125,7 @@ export const ProfileForm: FC<Props> = ({
           mobilePhoneNumber: `+354-${mobilePhoneNumber}`,
           locale: language?.value,
           canNudge: nudge,
+          bankInfo: formatBankInfo(bankInfo),
         })
       } else {
         await createUserProfile({
@@ -130,105 +144,102 @@ export const ProfileForm: FC<Props> = ({
     }
   }
 
-  const handleFormSubmit = () => {
-    submitFormData(email, tel)
+  const onSubmit = async (data: any) => {
+    submitFormData(data.email, data.tel)
   }
+  const { dirtyFields } = formState
 
   return (
     <GridContainer>
       <GridRow marginBottom={10}>
         <GridColumn span={['12/12', '7/12']}>
           <OnboardingIntro name={title || ''} />
-          {showDetails && (
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {showDetails && (
+              <InputSection
+                title={formatMessage(m.language)}
+                text="Hér getur þú gert breytingar á því tungumáli sem þú vilt nota í kerfum island.is"
+                loading={userLoading}
+              >
+                <LanguageForm hookFormData={hookFormData} />
+              </InputSection>
+            )}
             <InputSection
-              title={formatMessage(m.language)}
-              text="Hér getur þú gert breytingar á því tungumáli sem þú vilt nota í kerfum island.is"
+              title={formatMessage(m.email)}
+              text="Vinsamlega settu inn netfangið þitt. Við komum til með að senda á þig staðfestingar og tilkynningar."
+              loading={userLoading}
             >
-              <LanguageForm
-                language={language}
-                onValueChange={(val) => setLanguage(val.language)}
+              <InputEmail
+                buttonText={formatMessage({
+                  id: 'sp.settings:save-email',
+                  defaultMessage: 'Vista netfang',
+                })}
+                email={email}
+                hookFormData={hookFormData}
               />
             </InputSection>
-          )}
-          <InputSection
-            title={formatMessage(m.email)}
-            text="Vinsamlega settu inn netfangið þitt. Við komum til með að senda á þig staðfestingar og tilkynningar."
-          >
-            <InputEmail
-              onCallback={(emailAddr) => setEmail(emailAddr)}
-              emailDirty={(isDirty) => setEmailDirty(isDirty)}
-              buttonText={formatMessage({
-                id: 'sp.settings:save-email',
-                defaultMessage: 'Vista netfang',
-              })}
-              email={email}
-            />
-          </InputSection>
-          <InputSection
-            title={formatMessage(m.telNumber)}
-            text="Við komum til með að senda á þig staðfestingar og tilkynningar og því er gott að vera með rétt númer skráð. Endilega skráðu númerið þitt hér fyrir neðan og við sendum þér öryggiskóða til staðfestingar."
-          >
-            <InputPhone
-              onCallback={(mobile) => setTel(mobile)}
-              telDirty={(isDirty) => setTelDirty(isDirty)}
-              buttonText={formatMessage({
-                id: 'sp.settings:save-tel',
-                defaultMessage: 'Vista símanúmer',
-              })}
-              mobile={tel}
-            />
-          </InputSection>
-          {showDetails && (
             <InputSection
-              title={formatMessage(m.bankAccountInfo)}
-              text={formatMessage({
-                id: 'sp.settings:edit-bankInfo-description',
-                defaultMessage: `
+              title={formatMessage(m.telNumber)}
+              text="Við komum til með að senda á þig staðfestingar og tilkynningar og því er gott að vera með rétt númer skráð. Endilega skráðu númerið þitt hér fyrir neðan og við sendum þér öryggiskóða til staðfestingar."
+              loading={userLoading}
+            >
+              <InputPhone
+                buttonText={formatMessage({
+                  id: 'sp.settings:save-tel',
+                  defaultMessage: 'Vista símanúmer',
+                })}
+                mobile={tel}
+                hookFormData={hookFormData}
+              />
+            </InputSection>
+            {showDetails && (
+              <InputSection
+                title={formatMessage(m.bankAccountInfo)}
+                text={formatMessage({
+                  id: 'sp.settings:edit-bankInfo-description',
+                  defaultMessage: `
                   Hér getur þú gert breytingar á þeim bankareikningi
                   sem þú vilt nota í kerfum island.is.
                 `,
-              })}
-            >
-              <BankInfoForm bankInfo={bankInfo} />
-            </InputSection>
-          )}
-          {showDetails && (
-            <InputSection
-              title={formatMessage(m.nudge)}
-              text={formatMessage({
-                id: 'sp.settings:edit-nudge-description',
-                defaultMessage: `
+                })}
+                loading={userLoading}
+              >
+                <BankInfoForm bankInfo={bankInfo} hookFormData={hookFormData} />
+              </InputSection>
+            )}
+            {showDetails && (
+              <InputSection
+                title={formatMessage(m.nudge)}
+                loading={userLoading}
+                text={formatMessage({
+                  id: 'sp.settings:edit-nudge-description',
+                  defaultMessage: `
                     Hér getur þú gert breytingar á hnipp möguleikum. 
                     Hnipp stillingar segja til um hvort þú viljir að Island.is láti 
                     þig vita þegar eitthvað markvert gerist.
                   `,
-              })}
-            >
-              <Checkbox
-                label={formatMessage({
-                  id: 'sp.settings:nudge-checkbox-label',
-                  defaultMessage: 'Virkja hnipp',
                 })}
-                onChange={(e) => setNudge(e.target.checked)}
-                name="can-nudge"
-                checked={nudge}
-              />
-            </InputSection>
-          )}
-          <Box
-            paddingTop={4}
-            display="flex"
-            alignItems="flexEnd"
-            flexDirection="column"
-          >
-            <Button
-              icon="checkmark"
-              disabled={emailDirty || telDirty || (!tel && !email)}
-              onClick={handleFormSubmit}
+              >
+                <Nudge hookFormData={hookFormData} />
+              </InputSection>
+            )}
+            <Box
+              paddingTop={4}
+              display="flex"
+              alignItems="flexEnd"
+              flexDirection="column"
             >
-              {formatMessage(m.saveInfo)}
-            </Button>
-          </Box>
+              <Button
+                icon="checkmark"
+                disabled={
+                  dirtyFields.email || dirtyFields.tel || (!tel && !email)
+                }
+                type="submit"
+              >
+                {formatMessage(m.saveInfo)}
+              </Button>
+            </Box>
+          </form>
         </GridColumn>
         <GridColumn className={styles.endGrid} span={['12/12', '5/12']}>
           <img

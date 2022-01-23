@@ -1,42 +1,48 @@
-import { Select } from '@island.is/island-ui/core'
+import React, { FC } from 'react'
+import { Select, Option } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { Controller } from 'react-hook-form'
+import { FieldValues, UseFormMethods } from 'react-hook-form/dist/types/form'
 import { Locale } from '@island.is/shared/types'
 import { m } from '@island.is/service-portal/core'
-import React, { FC } from 'react'
 
 export type LanguageFormOption = {
   label: 'Íslenska' | 'English'
   value: Locale
 }
 
-export interface LanguageFormData {
-  language: LanguageFormOption | null
-}
-
 interface Props {
-  language: LanguageFormOption | null
-  onValueChange: (data: LanguageFormData) => void
+  hookFormData: UseFormMethods<FieldValues>
 }
 
-export const LanguageForm: FC<Props> = ({ language, onValueChange }) => {
+const languageOptions = [
+  { label: 'Íslenska', value: 'is' },
+  { label: 'English', value: 'en' },
+]
+
+export const LanguageForm: FC<Props> = ({ hookFormData }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
+  const { control } = hookFormData
 
   return (
-    <Select
-      name="language-select"
-      size="xs"
-      value={language}
-      onChange={(value) => {
-        onValueChange({
-          language: value as LanguageFormOption,
-        })
+    <Controller
+      name="language"
+      control={control}
+      render={({ onChange, value }) => {
+        return (
+          <Select
+            name="language"
+            size="xs"
+            value={languageOptions.find((option) => option.value === value)}
+            onChange={(newVal) => {
+              onChange((newVal as Option).value)
+            }}
+            label={formatMessage(m.language)}
+            options={languageOptions}
+          />
+        )
       }}
-      label={formatMessage(m.language)}
-      options={[
-        { label: 'Íslenska', value: 'is' },
-        { label: 'English', value: 'en' },
-      ]}
     />
   )
 }

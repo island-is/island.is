@@ -46,10 +46,10 @@ export const personalInformationModule: ServicePortalModule = {
 
       // If the user profile is empty, we render the onboarding modal
       if (
-        true
-        // process.env.NODE_ENV !== 'development' &&
-        // res.data?.getUserProfile === null &&
-        // userInfo.scopes.includes(UserProfileScope.write)
+        // true
+        process.env.NODE_ENV !== 'development' &&
+        res.data?.getUserProfile === null &&
+        userInfo.scopes.includes(UserProfileScope.write)
       )
         routes.push({
           render: () =>
