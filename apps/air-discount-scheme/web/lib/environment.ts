@@ -10,7 +10,6 @@ const devConfig = {
   csrfCookieName: 'next-auth.csrf-token',
 }
 
-
 const prodConfig = {
   production: true,
   NEXTAUTH_URL: process.env.SI_PUBLIC_NEXTAUTH_URL,
