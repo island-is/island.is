@@ -6,7 +6,7 @@ air-discount-scheme-api:
     CONTENTFUL_HOST: 'preview.contentful.com'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     SERVERSIDE_FEATURES_ON: ''
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN: 'https://identity-server.dev01.devland.is'
+    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -44,7 +44,6 @@ air-discount-scheme-api:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/air-discount-scheme/api/CONTENTFUL_ACCESS_TOKEN'
     DEVELOPERS: '/k8s/air-discount-scheme/api/DEVELOPERS'
-    IDENTITY_SERVER_DOMAIN: '/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN'
     SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN'
   securityContext:
     allowPrivilegeEscalation: false
@@ -63,7 +62,7 @@ air-discount-scheme-backend:
     ENVIRONMENT: 'dev'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN: 'https://identity-server.dev01.devland.is'
+    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:

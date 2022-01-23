@@ -35,7 +35,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         prod:
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
       },
-      SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN: {
+      SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',

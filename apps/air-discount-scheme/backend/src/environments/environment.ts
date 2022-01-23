@@ -67,7 +67,7 @@ const prodConfig = {
       forwardUserInfo: false,
       tokenExchangeOptions: {
         issuer: isProd
-          ? getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN')
+          ? getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL')
           : '',
         clientId: '@vegagerdin.is/clients/national-registry',
         clientSecret: process.env.VEGAGERDIN_THJODSKRA_IDS_CLIENT_SECRET,
@@ -86,9 +86,7 @@ const prodConfig = {
   },
   baseUrl: process.env.BASE_URL,
   identityServerAuth: {
-    issuer: isProd
-      ? getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN')
-      : '',
+    issuer: isProd ? getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL') : '',
     audience: '@vegagerdin.is',
   },
   idsTokenCookieName: '__Secure-next-auth.session-token',

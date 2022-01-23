@@ -12,7 +12,7 @@ export const serviceSetup = (services: {
         staging: 'loftbru.staging01.devland.is',
         prod: 'loftbru.island.is',
       },
-      SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN: {
+      SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
@@ -39,7 +39,6 @@ export const serviceSetup = (services: {
         '/k8s/air-discount-scheme/api/CONTENTFUL_ACCESS_TOKEN',
       DEVELOPERS: '/k8s/air-discount-scheme/api/DEVELOPERS',
       ADMINS: '/k8s/air-discount-scheme/api/ADMINS',
-      IDENTITY_SERVER_DOMAIN: `/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN`,
     })
 
     .ingress({
