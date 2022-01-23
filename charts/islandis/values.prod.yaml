@@ -121,9 +121,9 @@ air-discount-scheme-web:
   enabled: true
   env:
     API_URL: 'http://web-air-discount-scheme-api'
-    NEXT_PUBLIC_IDENTITY_SERVER_DOMAIN: 'innskra.island.is'
-    NEXT_PUBLIC_NEXTAUTH_URL: 'https://loftbru.island.is'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN: 'innskra.island.is'
+    SI_PUBLIC_NEXTAUTH_URL: 'https://loftbru.island.is'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
