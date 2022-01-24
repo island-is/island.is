@@ -15,7 +15,6 @@ import {
   useUpdateUserProfile,
   useUserProfile,
 } from '@island.is/service-portal/graphql'
-import { Locale } from '@island.is/shared/types'
 import { parseNumber } from '../../../utils/phoneHelper'
 import { formatBankInfo } from '../../../utils/bankInfoHelper'
 import { servicePortalSubmitOnBoardingModal } from '@island.is/plausible'
@@ -24,7 +23,7 @@ import { InputSection } from './components/InputSection'
 import { InputEmail } from './components/Inputs/Email'
 import { InputPhone } from './components/Inputs/Phone'
 import { DropModal } from './components/DropModal'
-import { LanguageForm, LanguageFormOption } from '../LanguageForm'
+import { LanguageForm } from '../LanguageForm'
 import { BankInfoForm } from '../BankInfoForm'
 import { Nudge } from './components/Inputs/Nudge'
 import { useForm } from 'react-hook-form'
@@ -46,15 +45,13 @@ export const ProfileForm: FC<Props> = ({
   useNamespaces('sp.settings')
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
-  const [nudge, setNudge] = useState(false)
-  const [language, setLanguage] = useState<LanguageFormOption | null>(null)
   const [bankInfo, setBankInfo] = useState('')
 
   const { data: userProfile, loading: userLoading } = useUserProfile()
 
   const hookFormData = useForm()
 
-  const { handleSubmit, getValues, formState, reset } = hookFormData
+  const { handleSubmit, formState, reset } = hookFormData
 
   useEffect(() => {
     reset({
@@ -83,15 +80,6 @@ export const ProfileForm: FC<Props> = ({
       if (userProfile.email) {
         setEmail(userProfile.email)
       }
-      if (userProfile.locale) {
-        setLanguage({
-          value: userProfile.locale as Locale,
-          label: userProfile.locale === 'is' ? 'Íslenska' : 'English',
-        })
-      }
-      if (userProfile.canNudge) {
-        setNudge(true)
-      }
       if (userProfile.bankInfo) {
         setBankInfo(userProfile.bankInfo)
       }
@@ -117,21 +105,22 @@ export const ProfileForm: FC<Props> = ({
 
   const { pathname } = useLocation()
 
-  const submitFormData = async (email: string, mobilePhoneNumber: string) => {
+  const submitFormData = async (data: any) => {
     try {
       if (userProfile) {
         await updateUserProfile({
-          email,
-          mobilePhoneNumber: `+354-${mobilePhoneNumber}`,
-          locale: language?.value,
-          canNudge: nudge,
-          bankInfo: formatBankInfo(bankInfo),
+          email: data.email,
+          mobilePhoneNumber: `+354-${data.tel}`,
+          locale: data?.language,
+          canNudge: data?.nudge,
+          bankInfo: formatBankInfo(data?.bankInfo || ''),
         })
+        // TODO: Need something in the UI onComplete to notify user of success.
       } else {
         await createUserProfile({
           email,
-          mobilePhoneNumber: `+354-${mobilePhoneNumber}`,
-          locale: language?.value,
+          mobilePhoneNumber: `+354-${data.tel}`,
+          locale: data?.language,
         })
       }
       if (pathname) {
@@ -144,9 +133,6 @@ export const ProfileForm: FC<Props> = ({
     }
   }
 
-  const onSubmit = async (data: any) => {
-    submitFormData(data.email, data.tel)
-  }
   const { dirtyFields } = formState
 
   return (
@@ -154,7 +140,7 @@ export const ProfileForm: FC<Props> = ({
       <GridRow marginBottom={10}>
         <GridColumn span={['12/12', '7/12']}>
           <OnboardingIntro name={title || ''} />
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(submitFormData)}>
             {showDetails && (
               <InputSection
                 title={formatMessage(m.language)}
