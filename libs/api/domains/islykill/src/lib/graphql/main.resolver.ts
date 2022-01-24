@@ -10,6 +10,11 @@ import {
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { IslykillService } from '../islykill.service'
+import {
+  FeatureFlagGuard,
+  FeatureFlag,
+  Features,
+} from '@island.is/nest/feature-flags'
 
 import { IslykillSettings } from './models/islykillSettings.model'
 import { UpdateIslykillSettings } from './models/updateIslykillSettings.model'
@@ -18,7 +23,7 @@ import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UpdateIslykillSettingsInput } from './dto/updateIslykillSettings.input'
 import { CreateIslykillSettingsInput } from './dto/createIslykillSettings.input'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/islykill' })
 export class MainResolver {
@@ -27,6 +32,7 @@ export class MainResolver {
   @Scopes(UserProfileScope.read)
   @Query(() => IslykillSettings)
   @Audit()
+  @FeatureFlag(Features.personalInformation)
   async getIslykillSettings(
     @CurrentUser() user: User,
   ): Promise<IslykillSettings> {
@@ -36,6 +42,7 @@ export class MainResolver {
   @Scopes(UserProfileScope.write)
   @Mutation(() => UpdateIslykillSettings)
   @Audit()
+  @FeatureFlag(Features.personalInformation)
   async updateIslykillSettings(
     @CurrentUser() user: User,
     @Args('input') input: UpdateIslykillSettingsInput,
@@ -50,6 +57,7 @@ export class MainResolver {
   @Scopes(UserProfileScope.write)
   @Mutation(() => CreateIslykillSettings)
   @Audit()
+  @FeatureFlag(Features.personalInformation)
   async createIslykillSettings(
     @CurrentUser() user: User,
     @Args('input') input: CreateIslykillSettingsInput,
@@ -63,6 +71,7 @@ export class MainResolver {
   @Scopes(UserProfileScope.write)
   @Mutation(() => DeleteIslykillSettings)
   @Audit()
+  @FeatureFlag(Features.personalInformation)
   async deleteIslykillSettings(@CurrentUser() user: User) {
     return this.islykillService.deleteIslykillSettings(user.nationalId)
   }

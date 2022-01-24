@@ -5,6 +5,7 @@ export type Events =
   | { type: DefaultEvents.PAYMENT }
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }
+  | { type: DefaultEvents.ABORT }
 
 export enum Roles {
   APPLICANT = 'applicant',

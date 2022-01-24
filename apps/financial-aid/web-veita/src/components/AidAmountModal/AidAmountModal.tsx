@@ -3,6 +3,8 @@ import { ModalBase, Text, Box, Button } from '@island.is/island-ui/core'
 
 import * as styles from './AidAmountModal.css'
 
+import * as modalStyles from '../StateModal/StateModal.css'
+
 import { Calculations } from '@island.is/financial-aid/shared/lib'
 
 import { Breakdown } from '@island.is/financial-aid/shared/components'
@@ -33,9 +35,14 @@ const AidAmountModal = ({
           onVisibilityChange(visibility)
         }
       }}
-      className={styles.modalBase}
+      className={modalStyles.modalBase}
     >
-      <Box onClick={closeModal} className={styles.modalContainer}>
+      <Box
+        className={modalStyles.closeModalBackground}
+        onClick={closeModal}
+      ></Box>
+
+      <Box className={modalStyles.modalContainer}>
         <Box
           position="relative"
           borderRadius="large"
@@ -49,13 +56,8 @@ const AidAmountModal = ({
 
           <Breakdown calculations={calculations} />
 
-          <Box
-            display="flex"
-            justifyContent="flexEnd"
-            onClick={closeModal}
-            marginTop={4}
-          >
-            <Button>Loka</Button>
+          <Box display="flex" justifyContent="flexEnd" marginTop={4}>
+            <Button onClick={closeModal}>Loka</Button>
           </Box>
         </Box>
       </Box>

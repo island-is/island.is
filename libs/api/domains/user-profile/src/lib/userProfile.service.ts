@@ -4,11 +4,9 @@ import { ApolloError } from 'apollo-server-express'
 import {
   ConfirmationDtoResponse,
   CreateUserProfileDto,
-  UpdateUserProfileDto,
   UserProfileApi,
   UserProfileControllerCreateRequest,
-  UserProfileControllerUpdateRequest,
-} from '../../gen/fetch'
+} from '@island.is/clients/user-profile'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
@@ -101,18 +99,11 @@ export class UserProfileService {
     input: UpdateUserProfileInput,
     user: User,
   ): Promise<UserProfile> {
-    const updateUserDto: UpdateUserProfileDto = {
-      //temporary as schemas where not working properly
-      locale: input.locale as string,
-      mobilePhoneNumber: input.mobilePhoneNumber,
-      email: input.email,
-    }
-    const request: UserProfileControllerUpdateRequest = {
-      nationalId: user.nationalId,
-      updateUserProfileDto: updateUserDto,
-    }
     return await this.userProfileApiWithAuth(user)
-      .userProfileControllerUpdate(request)
+      .userProfileControllerUpdate({
+        nationalId: user.nationalId,
+        updateUserProfileDto: input,
+      })
       .catch(handleError)
   }
 

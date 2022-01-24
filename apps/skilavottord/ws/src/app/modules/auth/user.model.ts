@@ -19,4 +19,6 @@ export class User {
 
   @Field(() => Role)
   role!: Role
+
+  partnerId?: string
 }

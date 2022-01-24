@@ -9,7 +9,6 @@ import { AuthSession } from '@island.is/next-ids-auth'
 
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { api } from '@island.is/skilavottord-web/services'
 import { Locale } from '@island.is/shared/types'
 import { getRoutefromLocale } from '@island.is/skilavottord-web/utils/routesMapper'
 import { Query, Role } from '@island.is/skilavottord-web/graphql/schema'
@@ -94,7 +93,7 @@ export const Header: FC = () => {
       language={activeLocale}
       switchLanguage={() => switchLanguage(nextLanguage)}
       userName={loading ? '' : user?.name ?? session?.user.name ?? ''}
-      authenticated={true || isAuthenticated}
+      authenticated={isAuthenticated}
       onLogout={logout}
     />
   )

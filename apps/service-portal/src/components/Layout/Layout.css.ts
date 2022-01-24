@@ -6,6 +6,10 @@ export const layoutWrapper = style({
   minHeight: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_LG}px)`,
 })
 
+export const layoutGrid = style({
+  transition: 'margin 150ms ease-in-out, flex-basis 150ms ease-in-out',
+  willChange: 'margin, flex-basis',
+})
 export const mainWrapper = style({
   width: '100%',
   maxWidth: theme.contentWidth.large,

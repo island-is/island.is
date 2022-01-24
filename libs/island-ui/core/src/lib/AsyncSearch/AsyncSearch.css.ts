@@ -72,7 +72,7 @@ export const icon = style({
   },
 })
 
-export const iconWhite = style({
+export const transparentBackground = style({
   '::before': {
     backgroundColor: 'transparent',
   },
@@ -125,7 +125,7 @@ export const loadingIcon = style({
     },
   }),
   animationDuration: '1.5s',
-  animationIterationCount: 'infinate',
+  animationIterationCount: 'infinite',
   animationTimingFunction: 'linear',
 })
 

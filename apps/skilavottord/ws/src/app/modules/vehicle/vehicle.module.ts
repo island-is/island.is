@@ -1,12 +1,16 @@
-import { Module } from '@nestjs/common'
+import { Module, forwardRef } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { VehicleModel } from './vehicle.model'
 import { VehicleService } from './vehicle.service'
 import { VehicleResolver } from './vehicle.resolver'
+import { SamgongustofaModule } from '../samgongustofa/samgongustofa.module'
 
 @Module({
-  imports: [SequelizeModule.forFeature([VehicleModel])],
+  imports: [
+    SequelizeModule.forFeature([VehicleModel]),
+    forwardRef(() => SamgongustofaModule),
+  ],
   providers: [VehicleResolver, VehicleService],
   exports: [VehicleService],
 })

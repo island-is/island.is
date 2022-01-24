@@ -14,7 +14,7 @@ export class UserDeviceTokensDto {
   @IsString()
   id!: string
 
-  @ApiProperty({ required: true, example: '1305775399' })
+  @ApiProperty({ required: true })
   @IsString()
   @IsNationalId()
   nationalId!: string

@@ -7,11 +7,6 @@ export const serviceSetup = (services: {
     .namespace('air-discount-scheme')
     .serviceAccount()
     .env({
-      SAML_ENTRY_POINT: {
-        dev: 'https://innskraning.island.is/?id=ads.dev',
-        staging: 'https://innskraning.island.is/?id=ads.staging',
-        prod: 'https://innskraning.island.is/?id=ads.prod',
-      },
       AUTH_AUDIENCE: {
         dev: 'loftbru.dev01.devland.is',
         staging: 'loftbru.staging01.devland.is',
@@ -39,6 +34,7 @@ export const serviceSetup = (services: {
         '/k8s/air-discount-scheme/api/CONTENTFUL_ACCESS_TOKEN',
       DEVELOPERS: '/k8s/air-discount-scheme/api/DEVELOPERS',
       ADMINS: '/k8s/air-discount-scheme/api/ADMINS',
+      IDENTITY_SERVER_DOMAIN: `/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN`,
     })
 
     .ingress({
@@ -55,7 +51,7 @@ export const serviceSetup = (services: {
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
         },
-        paths: ['/api'],
+        paths: ['/api/graphql'],
         public: true,
       },
     })

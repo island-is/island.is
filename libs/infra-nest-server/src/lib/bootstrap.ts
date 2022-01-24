@@ -146,6 +146,7 @@ export const bootstrap = async (options: RunServerOptions) => {
 
     if (argv.generateSchema) {
       generateSchema(argv.generateSchema, document)
+      await app.close()
       return
     }
   }

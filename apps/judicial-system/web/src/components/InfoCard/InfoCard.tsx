@@ -1,6 +1,10 @@
+import React, { PropsWithChildren } from 'react'
+import { useIntl } from 'react-intl'
+
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
-import React, { PropsWithChildren } from 'react'
+import { core } from '@island.is/judicial-system-web/messages'
+
 import * as styles from './InfoCard.css'
 
 interface Props {
@@ -14,15 +18,14 @@ interface Props {
     phoneNumber?: string
     defenderIsSpokesperson?: boolean
   }
-  isInvestigationCase?: boolean
 }
 
 const InfoCard: React.FC<Props> = (props: PropsWithChildren<Props>) => {
+  const { formatMessage } = useIntl()
+
   return (
     <Box className={styles.infoCardContainer} data-testid="infoCard">
-      <Text variant="h4">
-        {props.isInvestigationCase ? 'Varnaraðili' : 'Sakborningur'}
-      </Text>
+      <Text variant="h4">{formatMessage(core.accused)}</Text>
       <Box className={styles.infoCardTitleContainer}>
         <Box marginBottom={4}>
           <Text fontWeight="semiBold">

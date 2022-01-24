@@ -1,4 +1,5 @@
 import React, { useContext, useMemo } from 'react'
+import { useIntl } from 'react-intl'
 import parseISO from 'date-fns/parseISO'
 
 import { Box, Text, Tag } from '@island.is/island-ui/core'
@@ -19,6 +20,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { Table } from '@island.is/judicial-system-web/src/components'
 import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
+import { core, requests } from '@island.is/judicial-system-web/messages'
 
 import { getAppealDate, mapCaseStateToTagVariant } from './utils'
 import * as styles from './Requests.css'
@@ -31,13 +33,18 @@ interface Props {
 
 const PastRequests: React.FC<Props> = (props) => {
   const { cases, onRowClick, isHighCourtUser } = props
+
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
+
   const sortableColumnIds = ['courtCaseNumber', 'accusedName', 'type']
   const isCourtRole =
     user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
   const prColumns = [
     {
-      Header: 'Málsnr. ',
+      Header: formatMessage(
+        requests.sections.pastRequests.table.headers.caseNumber,
+      ),
       accessor: 'courtCaseNumber' as keyof Case,
       Cell: (row: {
         row: {
@@ -57,7 +64,7 @@ const PastRequests: React.FC<Props> = (props) => {
       },
     },
     {
-      Header: 'Sakborningur',
+      Header: formatMessage(core.accused),
       accessor: 'accusedName' as keyof Case,
       Cell: (row: {
         row: { original: { accusedName: string; accusedNationalId: string } }
@@ -80,7 +87,7 @@ const PastRequests: React.FC<Props> = (props) => {
     },
 
     {
-      Header: 'Tegund',
+      Header: formatMessage(requests.sections.pastRequests.table.headers.type),
       accessor: 'type' as keyof Case,
       Cell: (row: {
         row: {
@@ -112,7 +119,7 @@ const PastRequests: React.FC<Props> = (props) => {
     },
 
     {
-      Header: 'Staða',
+      Header: formatMessage(requests.sections.pastRequests.table.headers.state),
       accessor: 'state' as keyof Case,
       disableSortBy: true,
       Cell: (row: {
@@ -139,7 +146,9 @@ const PastRequests: React.FC<Props> = (props) => {
       },
     },
     {
-      Header: 'Gildistími',
+      Header: formatMessage(
+        requests.sections.pastRequests.table.headers.duration,
+      ),
       accessor: 'rulingDate' as keyof Case,
       disableSortBy: true,
       Cell: (row: {

@@ -1,6 +1,16 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { UserRole, NotificationType } from '@island.is/judicial-system/types'
 import {
   JwtAuthGuard,
@@ -65,6 +75,7 @@ export class NotificationController {
   constructor(
     private readonly caseService: CaseService,
     private readonly notificationService: NotificationService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @UseGuards(CaseWriteGuard)
@@ -79,10 +90,14 @@ export class NotificationController {
     description: 'Sends a new notification for an existing case',
   })
   async sendCaseNotification(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Body() notification: SendNotificationDto,
   ): Promise<SendNotificationResponse> {
+    this.logger.debug(
+      `Sending ${notification.type} notification for case ${caseId}`,
+    )
+
     return this.notificationService.sendCaseNotification(notification, theCase)
   }
 
@@ -95,9 +110,11 @@ export class NotificationController {
     description: 'Gets all existing notifications for an existing case',
   })
   async getAllCaseNotifications(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
   ): Promise<Notification[]> {
+    this.logger.debug(`Getting all notifications for case ${caseId}`)
+
     return this.notificationService.getAllCaseNotifications(theCase)
   }
 }

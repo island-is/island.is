@@ -6,7 +6,7 @@ export const margin = style({
   paddingLeft: '130px',
 
   '@media': {
-    [`screen and min-width(${theme.breakpoints.sm}px)`]: {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
       paddingLeft: '90px',
     },
     [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {

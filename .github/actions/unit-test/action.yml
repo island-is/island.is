@@ -7,31 +7,11 @@ inputs:
     required: true
   docker-registry:
     required: true
-  node-modules-hash:
-    required: true
-  generated-files-cache-key:
-    required: true
   codecov-token:
     required: true
 runs:
   using: 'composite'
   steps:
-    - name: Cache for NodeJS dependencies - host OS
-      uses: island-is/cache@v0.1
-      with:
-        path: node_modules
-        key: ${{ inputs.node-modules-hash }}-yarn
-
-    - name: Cache for generated files
-      uses: island-is/cache@v0.1
-      with:
-        path: generated_files.tar.gz
-        key: ${{ inputs.generated-files-cache-key }}
-
-    - name: Untar generated files
-      run: tar zxvf generated_files.tar.gz
-      shell: bash
-
     - name: Docker login to ECR repo
       run: ./scripts/ci/docker-login-ecr.sh
       shell: bash

@@ -6,7 +6,7 @@ import { AuthSession } from '@island.is/next-ids-auth'
 import { Page, GridContainer } from '@island.is/island-ui/core'
 
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { User } from '@island.is/skilavottord-web/graphql/schema'
+import { SkilavottordUser } from '@island.is/skilavottord-web/graphql/schema'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 import { Header } from '../../components'
@@ -16,7 +16,7 @@ interface LayoutProps {
 }
 
 export const AppLayout: FC<LayoutProps> = ({ children }) => {
-  const [user, setUser] = useState<User>()
+  const [user, setUser] = useState<SkilavottordUser>()
   const [session]: AuthSession = useSession()
 
   return (

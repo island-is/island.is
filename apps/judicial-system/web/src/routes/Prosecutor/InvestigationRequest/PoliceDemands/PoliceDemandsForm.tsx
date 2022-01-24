@@ -186,8 +186,8 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <Input
-            data-testid="legal-basis"
-            name="legal-basis"
+            data-testid="legalBasis"
+            name="legalBasis"
             label={formatMessage(icDemands.sections.legalBasis.label)}
             placeholder={formatMessage(
               icDemands.sections.legalBasis.placeholder,

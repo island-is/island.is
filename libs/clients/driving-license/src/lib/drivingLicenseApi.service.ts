@@ -1,10 +1,20 @@
 import { Injectable } from '@nestjs/common'
-import { DrivingAssessment, Juristiction, QualityPhoto } from '..'
+import {
+  CanApplyErrorCodeBFull,
+  CanApplyForCategoryResult,
+  DrivingAssessment,
+  Juristiction,
+  QualityPhoto,
+} from '..'
 import { ApiV1, EmbaettiDto } from '../v1'
 import { ApiV2, DRIVING_LICENSE_API_VERSION_V2, Rettindi } from '../v2'
-import { DriversLicense, Teacher } from './drivingLicenseApi.types'
+import {
+  CanApplyErrorCodeBTemporary,
+  DriversLicense,
+  Teacher,
+} from './drivingLicenseApi.types'
+import { handleCreateResponse } from './utils/handleCreateResponse'
 
-// empty string === successful license posted!?!
 const DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE = ''
 
 @Injectable()
@@ -116,8 +126,8 @@ export class DrivingLicenseApi {
   public async getCanApplyForCategoryFull(params: {
     category: string
     nationalId: string
-  }) {
-    const canApplyResult = await this.v2.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
+  }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBFull>> {
+    const response = await this.v2.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
       {
         apiVersion: DRIVING_LICENSE_API_VERSION_V2,
         kennitala: params.nationalId,
@@ -125,18 +135,29 @@ export class DrivingLicenseApi {
       },
     )
 
-    // TODO: Use error codes from v2 api
-    return !!canApplyResult.result
+    return {
+      result: !!response.result,
+      errorCode: response.errorCode
+        ? (response.errorCode as CanApplyErrorCodeBFull)
+        : undefined,
+    }
   }
 
-  public async getCanApplyForCategoryTemporary(params: { nationalId: string }) {
-    const canApplyResult = await this.v1.apiOkuskirteiniKennitalaCanapplyforTemporaryGet(
+  public async getCanApplyForCategoryTemporary(params: {
+    nationalId: string
+  }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBTemporary>> {
+    const response = await this.v1.apiOkuskirteiniKennitalaCanapplyforTemporaryGet(
       {
         kennitala: params.nationalId,
       },
     )
 
-    return !!canApplyResult.result
+    return {
+      result: !!response.result,
+      errorCode: response.errorCode
+        ? (response.errorCode as CanApplyErrorCodeBTemporary)
+        : undefined,
+    }
   }
 
   public async postCreateDrivingAssessment(params: {
@@ -209,17 +230,15 @@ export class DrivingLicenseApi {
       apiVersion: DRIVING_LICENSE_API_VERSION_V2,
     })
 
-    // Service returns empty string on success (actually different but the generated
-    // client forces it to)
-    const success = '' + response === DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE
+    const handledResponse = handleCreateResponse(response)
 
-    if (!success) {
+    if (!handledResponse.success) {
       throw new Error(
-        `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${response}`,
+        `POST apiOkuskirteiniApplicationsNewCategoryPost was not successful, response was: ${handledResponse.error}`,
       )
     }
 
-    return success
+    return handledResponse.success
   }
 
   async getHasQualityPhoto(params: { nationalId: string }): Promise<boolean> {

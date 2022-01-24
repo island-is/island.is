@@ -17,18 +17,19 @@ import {
   Person,
   Attachment,
   CertificateInfoResponse,
-  DistrictCommissionersAgenciesResponse,
+  DistrictCommissionerAgencies,
   PersonType,
 } from './syslumennClient.types'
+const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
 export const mapDistrictCommissionersAgenciesResponse = (
   response: EmbaettiOgStarfsstodvar,
-): DistrictCommissionersAgenciesResponse => {
+): DistrictCommissionerAgencies => {
   return {
-    id: response.starfsstodID,
-    name: response.nafn,
-    place: response.stadur,
-    address: response.adsetur,
+    id: response.starfsstodID ?? '',
+    name: response.nafn ?? '',
+    place: response.stadur ?? '',
+    address: response.adsetur ?? '',
   }
 }
 
@@ -45,6 +46,7 @@ export const mapDataUploadResponse = (
   response: Skilabod,
 ): DataUploadResponse => {
   return {
+    success: response.skilabod === UPLOAD_DATA_SUCCESS,
     message: response.skilabod,
     id: response.audkenni,
     caseNumber: response.malsnumer,
@@ -70,7 +72,7 @@ export const mapSyslumennAuction = (auction: Uppbod): SyslumennAuction => ({
   office: auction.embaetti ?? '',
   location: auction.starfsstod ?? '',
   auctionType: auction.tegund ?? '',
-  lotType: auction.andlag ?? '',
+  lotType: auction?.andlag?.trim() ?? '',
   lotName: auction.andlagHeiti ?? '',
   lotId: auction.fastanumer ?? '',
   lotItems: auction.lausafjarmunir ?? '',
@@ -78,6 +80,7 @@ export const mapSyslumennAuction = (auction: Uppbod): SyslumennAuction => ({
   auctionTime: auction.klukkan ?? '',
   petitioners: auction.gerdarbeidendur ?? '',
   respondent: auction.gerdartholar ?? '',
+  auctionTakesPlaceAt: auction.uppbodStadur ?? '',
 })
 
 export const mapOperatingLicense = (

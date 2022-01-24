@@ -454,6 +454,44 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             </BlueBox>
           </Box>
         </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(m.sections.endOfSessionBookings.title)}
+            </Text>
+          </Box>
+          <Box marginBottom={5}>
+            <Input
+              data-testid="endOfSessionBookings"
+              name="endOfSessionBookings"
+              label={formatMessage(m.sections.endOfSessionBookings.label)}
+              value={workingCase.endOfSessionBookings || ''}
+              placeholder={formatMessage(
+                m.sections.endOfSessionBookings.placeholder,
+              )}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'endOfSessionBookings',
+                  event,
+                  [],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'endOfSessionBookings',
+                  event.target.value,
+                  [],
+                  workingCase,
+                  updateCase,
+                )
+              }
+              rows={16}
+              textarea
+            />
+          </Box>
+        </Box>
         <Box marginBottom={10}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">

@@ -237,7 +237,10 @@ export class ApplicationService {
     application: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationModel> {
-    const appModel = await this.applicationModel.create(application)
+    const appModel = await this.applicationModel.create({
+      nationalId: user.nationalId,
+      ...application,
+    })
 
     await this.applicationEventService.create({
       applicationId: appModel.id,
@@ -385,6 +388,7 @@ export class ApplicationService {
       const municipality = await this.municipalityService.findByMunicipalityId(
         updatedApplication.municipalityCode,
       )
+
       const emailData = getApplicantEmailDataFromEventType(
         update.event,
         linkToStatusPage(updatedApplication.id),

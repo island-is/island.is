@@ -17,9 +17,8 @@ function EducationLicense(): JSX.Element {
         intro={defineMessage({
           id: 'sp.education-license:education-license-intro',
           defaultMessage:
-            'Hér getur þú fundið yfirlit yfir leyfisbréf og vottorð til starfsréttinda.',
+            'Hér er markmiðið að þú getir fundið yfirlit yfir leyfisbréf og vottorð til starfsréttinda. Unnið er að því að koma öllum leyfisbréfum og vottorðum um starfsréttindi á einn stað. Núna birtast leyfisbréf kennara sem hafa verið útskrifaðir frá 1988 sem sótt eru til Menntamálastofnunar.',
         })}
-        img="./assets/images/educationLicense.svg"
       />
       <LicenseCards />
     </Box>

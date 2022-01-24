@@ -48,6 +48,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
               defaultValue=""
               render={({ onChange, value, name }) => (
                 <Input
+                  size="xs"
                   name={name}
                   value={value}
                   onChange={onChange}
@@ -80,6 +81,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
                     { label: 'Fjármál', value: 'fjarmal' },
                     { label: 'Annað', value: 'annad' },
                   ]}
+                  size="xs"
                 />
               )}
             />
@@ -103,6 +105,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
                     { label: 'Greiðsluseðill', value: 'greidslusedill' },
                     { label: 'Tilkynning', value: 'tilkynning' },
                   ]}
+                  size="xs"
                 />
               )}
             />
@@ -124,6 +127,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
                   selected={value}
                   locale="is"
                   handleChange={onChange}
+                  size="xs"
                 />
               )}
             />
@@ -142,6 +146,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
                   selected={value}
                   locale="is"
                   handleChange={onChange}
+                  size="xs"
                 />
               )}
             />

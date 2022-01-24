@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { NextComponentType } from 'next'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
 
-import { SkeletonLoader } from '@island.is/island-ui/core'
+import { SkeletonLoader, Stack } from '@island.is/island-ui/core'
 import { PageLayout, GDPR } from '@island.is/skilavottord-web/components'
 import { Query } from '@island.is/skilavottord-web/graphql/schema'
+import { UserContext } from '@island.is/skilavottord-web/context'
 
 export const SkilavottordGdprQuery = gql`
   query skilavottordGdprQuery {
@@ -18,17 +19,20 @@ export const SkilavottordGdprQuery = gql`
 
 export const withGDPR = (WrappedComponent: NextComponentType) => () => {
   const { data, loading } = useQuery<Query>(SkilavottordGdprQuery)
+  const { isAuthenticated } = useContext(UserContext)
 
-  if (loading) {
+  if (loading || !isAuthenticated) {
     return (
       <PageLayout>
-        <SkeletonLoader space={2} repeat={4} />
+        <Stack space={6}>
+          <SkeletonLoader repeat={1} />
+          <SkeletonLoader space={3} repeat={2} height="100px" />
+        </Stack>
       </PageLayout>
     )
   } else if (data?.skilavottordGdpr?.gdprStatus === 'true') {
     return <WrappedComponent />
   }
-
   return <GDPR />
 }
 

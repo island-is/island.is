@@ -643,27 +643,15 @@ export class Case extends Model<Case> {
   validToDate?: Date
 
   /**********
-   * Restrictions imposed by the judge - from a predetermined list - example: ISOLATION -
-   * only used for custody and travel ban cases - optional
+   * Indicates whether the judge imposes isolation - prefilled from
+   * requestedCustodyRestrictions - only used for custody cases
    **********/
   @Column({
-    type: DataType.ARRAY(DataType.ENUM),
-    allowNull: true,
-    values: Object.values(CaseCustodyRestrictions),
-  })
-  @ApiProperty({ enum: CaseCustodyRestrictions, isArray: true })
-  custodyRestrictions?: CaseCustodyRestrictions[]
-
-  /**********
-   * Additional restrictions imposed by the judge - prefilled from requestedOtherRestrictions -
-   * only used for travel ban cases - optional
-   **********/
-  @Column({
-    type: DataType.TEXT,
+    type: DataType.BOOLEAN,
     allowNull: true,
   })
   @ApiProperty()
-  otherRestrictions?: string
+  isCustodyIsolation?: boolean
 
   /**********
    * Expiration date and time for isolation - prefilled from requestedValidToDate - only used
@@ -686,6 +674,17 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   conclusion?: string
+
+  /**********
+   * Bookings at the end of the court session - prefilled from requestedCustodyRestrictions
+   * in custody and travel ban cases - optional
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  endOfSessionBookings?: string
 
   /**********
    * The accused's appeal decision - example: APPEAL

@@ -20,6 +20,5 @@ if (argv.job === 'worker') {
     appModule: AppModule,
     name: 'services-user-notifications',
     openApi,
-    swaggerPath: '',
   })
 }

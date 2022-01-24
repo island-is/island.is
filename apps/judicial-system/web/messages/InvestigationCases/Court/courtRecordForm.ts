@@ -90,16 +90,6 @@ export const icCourtRecord = {
           'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
-    litigationPresentations: defineMessages({
-      autofill: {
-        id:
-          'judicial.system.investigation_cases:court_record.litigation_presentations.autofill',
-        defaultMessage:
-          'Málflutningur var skriflegur og gögn send dómara rafrænt.',
-        description:
-          'Notaður sem sjálfgefinn texti í "Málflutningur" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
-      },
-    }),
     courtLocation: defineMessages({
       label: {
         id:

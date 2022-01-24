@@ -76,6 +76,7 @@ const Update = () => {
           setEmail(e.currentTarget.value)
         }}
         value={email}
+        size="xs"
       />
       <Button onClick={onClick}>Uppfæra netfang</Button>
       {loading && <SkeletonLoader width="100%" height={158} />}
@@ -125,6 +126,7 @@ const Create = () => {
           setEmail(e.currentTarget.value)
         }}
         value={email}
+        size="xs"
       />
       <Button onClick={onClick}>Búa til stillingar með netfangi</Button>
       {loading && <SkeletonLoader width="100%" height={158} />}
@@ -262,7 +264,7 @@ export default function Islykill() {
   return (
     <Box>
       <IntroHeader
-        title={'Íslykill'}
+        title="Íslykill"
         intro={defineMessage({
           id: 'service.portal.settings.islykill:intro',
           defaultMessage: 'Stillingar á Íslykil.',

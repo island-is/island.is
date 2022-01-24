@@ -47,7 +47,7 @@ export const ConfirmationStep: FC<Props> = ({
               message: formatMessage(m.verificationCodeRequired),
             },
           }}
-          defaultValue={''}
+          defaultValue=""
           render={({ onChange, value, name }) => (
             <Input
               label={formatMessage(m.verificationCode)}
@@ -57,6 +57,7 @@ export const ConfirmationStep: FC<Props> = ({
               hasError={errors.code}
               errorMessage={errors.code?.message}
               onChange={onChange}
+              size="xs"
             />
           )}
         />

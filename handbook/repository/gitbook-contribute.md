@@ -41,5 +41,11 @@ The script will also format the README.md's title to follow the [APA style conve
 After your commit get merged into `main`, it will take a few minutes before your changes appears on [docs.devland.is](https://docs.devland.is).
 
 {% hint style="info" %}
+If you want to have a different title in the navigation than on the page itself, you can do so by adding a html comment like this to the top of your README.md:
+
+`<!-- gitbook-navigation: "Navigation Title" -->`
+{% endhint %}
+
+{% hint style="info" %}
 For some reason, if you don't want your markdown file to be part of the `SUMMARY.md` file and included inside the GitBook, you can add the following html comment `<!-- gitbook-ignore -->` as the first line of the file.
 {% endhint %}

@@ -26,6 +26,18 @@ export const spmm = {
       id: 'sp.family:gender-unknown',
       defaultMessage: 'Ekki vitað',
     },
+    child: {
+      id: 'sp.family:child',
+      defaultMessage: 'Barn',
+    },
+    parent: {
+      id: 'sp.family:parent',
+      defaultMessage: 'Foreldri',
+    },
+    spouse: {
+      id: 'sp.family:spouse',
+      defaultMessage: 'Maki',
+    },
     maritalStatusDivorced: {
       id: 'sp.family:marital-status-divorced',
       defaultMessage: 'Skilin(n) að lögum',
