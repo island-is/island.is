@@ -17,3 +17,10 @@ export const fitBorder = style({
   padding: '.2rem',
   width: 'fit-content',
 })
+
+export const error = style({
+  cursor: 'pointer',
+  ':hover': {
+    opacity: 0.8,
+  },
+})
