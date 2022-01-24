@@ -69,7 +69,11 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (isCaseUpToDate) {
-      if (workingCase && workingCase.defendants) {
+      if (
+        workingCase &&
+        workingCase.defendants &&
+        workingCase.defendants.length > 0
+      ) {
         const courtClaim = courtClaimPrefill[workingCase.type]
         const courtClaimText = courtClaim
           ? formatMessage(courtClaim.text, {
