@@ -31,6 +31,7 @@ import * as styles from './ProfileForm.css'
 
 interface Props {
   onCloseOverlay?: () => void
+  onCloseDropModal?: () => void
   canDrop?: boolean
   title: string
   showDetails?: boolean
@@ -38,6 +39,7 @@ interface Props {
 
 export const ProfileForm: FC<Props> = ({
   onCloseOverlay,
+  onCloseDropModal,
   canDrop,
   title,
   showDetails,
@@ -245,8 +247,10 @@ export const ProfileForm: FC<Props> = ({
             <DropModal
               type={showDropModal}
               onDrop={onCloseOverlay}
-              onClose={() => setShowDropModal(undefined)}
-              close={false}
+              onClose={() => {
+                onCloseDropModal && onCloseDropModal()
+                setShowDropModal(undefined)
+              }}
             />
           )}
         </GridColumn>

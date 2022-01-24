@@ -48,6 +48,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
             <ProfileForm
               title={userInfo?.profile?.name || ''}
               onCloseOverlay={closeModal}
+              onCloseDropModal={() => setCanDropOverlay(false)}
               canDrop={canDropOverlay}
             />
           </GridColumn>

@@ -12,12 +12,11 @@ import {
 interface Props {
   onClose: () => void
   onDrop: () => void
-  close?: boolean
   type: 'tel' | 'mail' | 'all'
 }
 
-export const DropModal: FC<Props> = ({ onClose, onDrop, close, type }) => {
-  const [closeModal, setCloseModal] = useState(close)
+export const DropModal: FC<Props> = ({ onClose, onDrop, type }) => {
+  const [closeModal, setCloseModal] = useState(false)
   const { formatMessage } = useLocale()
   useNamespaces('sp.settings')
 
