@@ -47,19 +47,27 @@ const ActiveRequests: React.FC<Props> = (props) => {
       sortedCases.sort((a: Case, b: Case) => {
         // Credit: https://stackoverflow.com/a/51169
         return sortConfig.direction === 'ascending'
-          ? (sortConfig.column === 'defendant' && a.defendants
+          ? (sortConfig.column === 'defendant' &&
+            a.defendants &&
+            a.defendants.length > 0
               ? a.defendants[0].name || ''
               : '' + a['created']
             ).localeCompare(
-              sortConfig.column === 'defendant' && b.defendants
+              sortConfig.column === 'defendant' &&
+                b.defendants &&
+                b.defendants.length > 0
                 ? b.defendants[0].name || ''
                 : '' + b['created'],
             )
-          : (sortConfig.column === 'defendant' && b.defendants
+          : (sortConfig.column === 'defendant' &&
+            b.defendants &&
+            b.defendants.length > 0
               ? b.defendants[0].name || ''
               : '' + b['created']
             ).localeCompare(
-              sortConfig.column === 'defendant' && a.defendants
+              sortConfig.column === 'defendant' &&
+                a.defendants &&
+                a.defendants.length > 0
                 ? a.defendants[0].name || ''
                 : '' + a['created'],
             )
