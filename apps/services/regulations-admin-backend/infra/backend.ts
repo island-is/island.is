@@ -7,7 +7,7 @@ const postgresInfo = {
 export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
   service('regulations-admin-backend')
     .image('regulations-admin-backend')
-    .namespace('regulations-admin-backend')
+    .namespace('regulations-admin')
     .postgres(postgresInfo)
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
