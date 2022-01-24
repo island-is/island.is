@@ -28,7 +28,6 @@ export type DraftField<Type> = {
   value: Type
   required?: boolean
   dirty?: boolean
-  guessed?: boolean
   error?: MessageDescriptor
   type?: InputType
 }

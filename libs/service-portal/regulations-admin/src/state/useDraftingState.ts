@@ -318,7 +318,6 @@ const actionHandlers: {
     if (value !== field.value || explicit === true) {
       field.value = value
       field.dirty = true
-      field.guessed = false
     }
     field.error =
       field.required && !value && field.dirty
@@ -343,7 +342,6 @@ const actionHandlers: {
       if (value !== field.value) {
         field.value = value
         field.dirty = true
-        field.guessed = false
       }
       field.error =
         field.required && !value && field.dirty
