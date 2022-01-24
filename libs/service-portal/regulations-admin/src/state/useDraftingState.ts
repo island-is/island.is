@@ -39,12 +39,14 @@ import {
   ActionName,
   AppendixFormSimpleProps,
   AppendixDraftForm,
-  InputType,
+  DraftChangeForm,
 } from './types'
 import { buttonsMsgs, errorMsgs } from '../messages'
 import {} from '@island.is/regulations/web'
 import { toast } from '@island.is/island-ui/core'
 import { getEditUrl, getHomeUrl } from '../utils/routing'
+import { makeHighAngstWarnings } from '@island.is/regulations-tools/useTextWarnings'
+import { forEach } from 'lodash'
 
 export const UPDATE_DRAFT_REGULATION_MUTATION = gql`
   mutation UpdateDraftRegulationMutation($input: EditDraftRegulationInput!) {
@@ -98,16 +100,19 @@ const tidyUp = {
 
 // ---------------------------------------------------------------------------
 
-const f = <T>(
-  value: T,
+const f = <V, T extends string | undefined>(
+  value: V,
   required?: true,
-  type?: Exclude<InputType, 'html' | 'text'>,
-): DraftField<T> => ({
+  type?: T,
+): DraftField<V, T extends string ? T : ''> => ({
   value,
   required,
-  type,
+  type: (type || '') as T extends string ? T : '',
 })
-const fText = <T extends string>(value: T, required?: true): DraftField<T> => ({
+const fText = <T extends string>(
+  value: T,
+  required?: true,
+): DraftField<T, 'text'> => ({
   value,
   required,
   type: 'text',
@@ -116,6 +121,7 @@ const fHtml = (value: HTMLText, required?: true): HtmlDraftField => ({
   value,
   required,
   type: 'html',
+  warnings: [],
 })
 
 const makeDraftAppendixForm = (appendix: Appendix, key: string) => ({
@@ -318,6 +324,10 @@ const actionHandlers: {
     if (value !== field.value || explicit === true) {
       field.value = value
       field.dirty = true
+
+      if (field.type === 'html') {
+        field.warnings = makeHighAngstWarnings(field.value, true)
+      }
     }
     field.error =
       field.required && !value && field.dirty
@@ -342,6 +352,9 @@ const actionHandlers: {
       if (value !== field.value) {
         field.value = value
         field.dirty = true
+        if (field.type === 'html') {
+          field.warnings = makeHighAngstWarnings(value, true)
+        }
       }
       field.error =
         field.required && !value && field.dirty
@@ -439,8 +452,9 @@ const useEditDraftReducer = (inputs: StateInputs) => {
   }
 
   return useReducer(draftingStateReducer, {}, () => {
+    const draft = makeDraftForm(regulationDraft)
     const state: DraftingState = {
-      draft: makeDraftForm(regulationDraft),
+      draft,
       step: steps[stepName],
       ministries,
       isEditor,
@@ -450,9 +464,29 @@ const useEditDraftReducer = (inputs: StateInputs) => {
       updaterFn!(
         state,
         // @ts-expect-error  (because reasons)
-        state.draft[prop as RegDraftFormSimpleProps].value,
+        draft[prop as RegDraftFormSimpleProps].value,
       )
     })
+    const [makeWarnings, makeImpactWarnings] = [false, true].map(
+      (isImpact) => (field: HtmlDraftField) => {
+        if (field.value) {
+          field.warnings = makeHighAngstWarnings(field.value, isImpact)
+        }
+      },
+    )
+
+    makeWarnings(draft.text)
+    draft.appendixes.map((a) => a.text).forEach(makeWarnings)
+    makeWarnings(draft.comments)
+    draft.impacts
+      .filter((i): i is DraftChangeForm => i.type === 'amend')
+      .forEach((impact) => {
+        makeImpactWarnings(impact.text)
+        impact.appendixes.map((a) => a.text).forEach(makeImpactWarnings)
+        makeImpactWarnings(impact.comments)
+      })
+    makeWarnings(draft.draftingNotes)
+
     return state
   })
 }
