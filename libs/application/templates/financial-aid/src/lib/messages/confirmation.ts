@@ -42,17 +42,7 @@ export const confirmation = {
       id: 'fa.application:section.confirmation.links.content#markup',
       defaultMessage:
         '[Sjá stöðu umsóknar]({statusPage}) \n \n [Upplýsingar um fjárhagsaðstoð hjá sveitarfélaginu]({homePage})',
-      description: 'Confirmation links title',
-    },
-    statusPage: {
-      id: 'fa.application:section.confirmation.links.statusPage',
-      defaultMessage: 'Sjá stöðu umsóknar',
-      description: 'Confirmation link to status page',
-    },
-    municipalityInfoPage: {
-      id: 'fa.application:section.confirmation.links.muncipalityInfoPage',
-      defaultMessage: 'Upplýsingar um fjárhagsaðstoð hjá sveitarfélaginu',
-      description: 'Confirmation link to status page',
+      description: 'Confirmation links',
     },
   }),
   alertMessages: defineMessages({
