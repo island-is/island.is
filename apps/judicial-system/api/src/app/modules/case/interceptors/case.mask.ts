@@ -6,7 +6,7 @@ import {
 
 import { Case } from '../models'
 
-export function maskCase(theCase: Case): Case {
+function maskCase(theCase: Case): Case {
   if (isInvestigationCase(theCase.type)) {
     return {
       id: theCase.id,

@@ -32,23 +32,26 @@ const AccusedAppealInfo: React.FC<Props> = (props) => {
     >
       <InfoBox
         text={
-          (workingCase.defendants &&
-            `${capitalize(
-              isRestrictionCase(workingCase.type)
-                ? formatMessage(core.accused, {
-                    suffix:
-                      workingCase.defendants[0].gender === Gender.MALE
-                        ? 'i'
-                        : 'a',
-                  })
-                : formatMessage(core.defendant, {
-                    suffix: workingCase.defendants?.length > 0 ? 'ar' : 'i',
-                  }),
-            )} hefur kært úrskurðinn ${formatDate(
-              workingCase.accusedPostponedAppealDate,
-              'PPPp',
-            )}`) ||
-          ''
+          `${capitalize(
+            isRestrictionCase(workingCase.type)
+              ? formatMessage(core.accused, {
+                  suffix:
+                    workingCase.defendants &&
+                    workingCase.defendants.length > 0 &&
+                    workingCase.defendants[0].gender === Gender.MALE
+                      ? 'i'
+                      : 'a',
+                })
+              : formatMessage(core.defendant, {
+                  suffix:
+                    workingCase.defendants && workingCase.defendants?.length > 1
+                      ? 'ar'
+                      : 'i',
+                }),
+          )} hefur kært úrskurðinn ${formatDate(
+            workingCase.accusedPostponedAppealDate,
+            'PPPp',
+          )}` || ''
         }
         onDismiss={withdrawAccusedAppealDate}
         fluid
