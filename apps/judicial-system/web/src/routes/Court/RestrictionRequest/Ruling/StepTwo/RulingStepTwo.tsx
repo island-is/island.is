@@ -192,7 +192,9 @@ export const RulingStepTwo: React.FC = () => {
                   true,
                 )
               : formatTravelBanRestrictions(
-                  theCase.defendants && theCase.defendants[0].gender,
+                  theCase.defendants && theCase.defendants.length > 0
+                    ? theCase.defendants[0].gender
+                    : undefined,
                   [
                     CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
                     CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
@@ -211,7 +213,9 @@ export const RulingStepTwo: React.FC = () => {
         isAcceptingCaseDecision(theCase.decision)
       ) {
         const travelBanRestrictions = formatTravelBanRestrictions(
-          theCase.defendants && theCase.defendants[0].gender,
+          theCase.defendants && theCase.defendants.length > 0
+            ? theCase.defendants[0].gender
+            : undefined,
           theCase.requestedCustodyRestrictions,
           theCase.requestedOtherRestrictions,
         )
@@ -298,7 +302,7 @@ export const RulingStepTwo: React.FC = () => {
               {formatMessage(m.sections.appealDecision.disclaimer)}
             </Text>
           </Box>
-          {workingCase.defendants && (
+          {workingCase.defendants && workingCase.defendants.length > 0 && (
             <Box marginBottom={3}>
               <BlueBox>
                 <Box marginBottom={2}>
