@@ -12,20 +12,26 @@ const Logo = ({ className }: LogoProps) => {
   const { municipality } = useContext(AppContext)
 
   return (
-    <a
-      href={
-        municipality?.homepage
-          ? municipality.homepage
-          : 'https://www.samband.is/'
-      }
-      target="_blank"
-      className={cn({ [`${className}`]: true })}
-      rel="noreferrer noopener"
-    >
-      <LogoSvg
-        name={logoKeyFromMunicipalityCode[municipality?.municipalityId ?? '']}
-      />
-    </a>
+    <>
+      {municipality?.id && (
+        <a
+          href={
+            municipality?.homepage
+              ? municipality.homepage
+              : 'https://www.samband.is/'
+          }
+          target="_blank"
+          className={cn({ [`${className}`]: true })}
+          rel="noreferrer noopener"
+        >
+          <LogoSvg
+            name={
+              logoKeyFromMunicipalityCode[municipality?.municipalityId ?? '']
+            }
+          />
+        </a>
+      )}
+    </>
   )
 }
 
