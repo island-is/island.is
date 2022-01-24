@@ -8,6 +8,7 @@ import {
   Bullet,
   Link,
   TextProps,
+  Icon,
 } from '@island.is/island-ui/core'
 import * as styles from './DescriptionText.css'
 
@@ -80,7 +81,6 @@ const DescriptionText = ({ text, format, textProps }: Props) => {
           h3: headingOverride,
           h4: headingOverride,
           a: { component: LinkComponent },
-          //TODO button markdown
           ul: {
             component: Bulletlist,
           },
