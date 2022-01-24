@@ -1,13 +1,15 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import { settings } from '../../../../infra/src/dsl/settings'
 
+const postgresInfo = {}
 export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
   service('regulations-admin-backend')
     .image('regulations-admin-backend')
     .namespace('regulations-admin')
-    .postgres()
+    .postgres(postgresInfo)
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
+      postgres: postgresInfo,
     })
     .secrets({
       REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL',
