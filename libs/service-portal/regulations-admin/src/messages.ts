@@ -421,7 +421,7 @@ export const homeMessages = defineMessages({
   },
   taskList_draftTitleMissing: {
     id: 'ap.regulations-admin:tasklist-draft-title-missing',
-    defaultMessage: '— ónefnd drög —',
+    defaultMessage: '—  ónefnd drög  —',
   },
 
   cta: {

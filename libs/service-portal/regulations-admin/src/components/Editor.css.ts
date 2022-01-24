@@ -238,20 +238,33 @@ export const classes: EditorClasses = {
   // ---------------------------------------------------------------------------
 
   warnings: style({
-    marginTop: spacing[1],
-    marginBottom: spacing[2],
+    // marginTop: spacing[1],
+    // marginBottom: spacing[2],
+    marginLeft: 1,
+    marginRight: 1,
     paddingTop: spacing[1],
     paddingBottom: spacing[1],
     paddingLeft: spacing[2],
     paddingRight: spacing[2],
 
-    border: '1px solid',
+    border: '0 solid',
     borderColor: color.yellow400,
+    borderBottomWidth: 1,
 
     backgroundColor: color.yellow100,
+
+    selectors: {
+      '&:last-child': {
+        marginBottom: -spacing[1],
+        borderBottomWidth: 0,
+        borderTopWidth: 1,
+      },
+    },
   }),
 
   warnings__legend: style({
+    fontSize: typography.baseFontSize,
+    lineHeight: typography.baseLineHeight,
     fontWeight: typography.semiBold,
   }),
 
