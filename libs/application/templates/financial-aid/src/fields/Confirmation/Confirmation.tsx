@@ -57,7 +57,7 @@ const Confirmation = ({ application }: FAFieldBaseProps) => {
       </Box>
 
       <Box marginTop={2}>
-        {/* TODO link for status page */}
+        {/* TODO link for status page, re-render */}
         <Button
           icon="open"
           colorScheme="default"

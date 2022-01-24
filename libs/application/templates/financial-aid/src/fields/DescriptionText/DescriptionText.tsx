@@ -80,6 +80,7 @@ const DescriptionText = ({ text, format, textProps }: Props) => {
           h3: headingOverride,
           h4: headingOverride,
           a: { component: LinkComponent },
+          //TODO button markdown
           ul: {
             component: Bulletlist,
           },
