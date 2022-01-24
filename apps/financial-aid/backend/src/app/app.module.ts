@@ -4,10 +4,9 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments'
 import { AuditModule } from '@island.is/nest/audit'
 
-import { ApplicationModule } from './modules/application/application.module'
-import { FileModule } from './modules/file/file.module'
-
 import {
+  ApplicationModule,
+  FileModule,
   StaffModule,
   MunicipalityModule,
   ApplicationEventModule,

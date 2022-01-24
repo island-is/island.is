@@ -4,14 +4,13 @@ import { uuid } from 'uuidv4'
 import { createTestingStaffModule } from './createTestingStaffModule'
 import { StaffRole } from '@island.is/financial-aid/shared/lib'
 import { ForbiddenException } from '@nestjs/common'
-import { User } from '@island.is/auth-nest-tools'
 
 interface Then {
   result: StaffModel
   error: Error
 }
 
-type GivenWhenThen = (user: User) => Promise<Then>
+type GivenWhenThen = (user: StaffModel) => Promise<Then>
 
 describe('StaffController - Get staff by national id', () => {
   let mockStaffModel: typeof StaffModel
@@ -22,7 +21,7 @@ describe('StaffController - Get staff by national id', () => {
 
     mockStaffModel = staffModel
 
-    givenWhenThen = async (user: User): Promise<Then> => {
+    givenWhenThen = async (user: StaffModel): Promise<Then> => {
       const then = {} as Then
 
       await staffController
@@ -35,7 +34,7 @@ describe('StaffController - Get staff by national id', () => {
   })
 
   describe('database query', () => {
-    const user = { nationalId: '0000000000' } as User
+    const user = { nationalId: '0000000000' } as StaffModel
     let mockFindByNationalId: jest.Mock
 
     beforeEach(async () => {
@@ -54,7 +53,7 @@ describe('StaffController - Get staff by national id', () => {
   })
 
   describe('staff not active', () => {
-    const user = { nationalId: '0000000000' } as User
+    const user = { nationalId: '0000000000' } as StaffModel
     const staff = {
       id: uuid(),
       name: 'Staff Tester',
@@ -79,7 +78,7 @@ describe('StaffController - Get staff by national id', () => {
   })
 
   describe('staff not found', () => {
-    const user = { nationalId: '0000000000' } as User
+    const user = { nationalId: '0000000000' } as StaffModel
     const staff = null
     let then: Then
 
@@ -96,7 +95,7 @@ describe('StaffController - Get staff by national id', () => {
   })
 
   describe('staff found', () => {
-    const user = { nationalId: '0000000000' } as User
+    const user = { nationalId: '0000000000' } as StaffModel
     const staff = {
       id: uuid(),
       name: 'Staff Tester',
@@ -121,7 +120,7 @@ describe('StaffController - Get staff by national id', () => {
   })
 
   describe('database query fails', () => {
-    const user = { nationalId: '0000000000' } as User
+    const user = { nationalId: '0000000000' } as StaffModel
     let then: Then
 
     beforeEach(async () => {

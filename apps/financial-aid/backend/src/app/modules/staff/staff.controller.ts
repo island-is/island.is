@@ -21,8 +21,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 import type { Staff } from '@island.is/financial-aid/shared/lib'
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { RolesGuard } from '../../guards/roles.guard'
 import { CurrentStaff, RolesRules } from '../../decorators'
 import { StaffGuard } from '../../guards/staff.guard'
@@ -36,13 +35,14 @@ import { UpdateStaffDto, CreateStaffDto } from './dto'
 export class StaffController {
   constructor(private readonly staffService: StaffService) {}
 
-  @Get('nationalId/:nationalId')
+  @Get('nationalId')
   @ApiOkResponse({
     type: StaffModel,
     description: 'Gets staff by nationalId',
   })
-  async getStaffByNationalId(@CurrentUser() user: User): Promise<StaffModel> {
-    const staff = await this.staffService.findByNationalId(user.nationalId)
+  async getStaffByNationalId(
+    @CurrentStaff() staff: StaffModel,
+  ): Promise<StaffModel> {
     if (staff === null || staff.active === false) {
       throw new ForbiddenException('Staff not found or is not active')
     }
