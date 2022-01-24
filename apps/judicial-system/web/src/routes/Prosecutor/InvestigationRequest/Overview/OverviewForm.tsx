@@ -62,8 +62,8 @@ const OverviewForm: React.FC<Props> = (props) => {
                   ]
                 : []),
               {
-                title: 'Krafa stofnuð',
-                value: formatDate(workingCase.created, 'P'),
+                title: 'Dómstóll',
+                value: workingCase.court?.name,
               },
               {
                 title: 'Embætti',
