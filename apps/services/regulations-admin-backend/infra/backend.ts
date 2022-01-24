@@ -18,5 +18,9 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
       SOFFIA_USER: settings.SOFFIA_USER,
       SOFFIA_PASS: settings.SOFFIA_PASS,
     })
+    .resources({
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '100m', memory: '256Mi' },
+    })
     .readiness('/liveness')
     .liveness('/liveness')

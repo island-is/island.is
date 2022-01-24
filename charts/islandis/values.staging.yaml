@@ -767,6 +767,7 @@ regulations-admin-backend:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'regulations_admin_backend'
     DB_USER: 'regulations_admin_backend'
+    NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -796,6 +797,10 @@ regulations-admin-backend:
     secrets:
       DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
   namespace: 'regulations-admin'
+  replicaCount:
+    default: 2
+    max: 3
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -803,10 +808,6 @@ regulations-admin-backend:
     requests:
       cpu: '100m'
       memory: '256Mi'
-  replicaCount:
-    default: 2
-    max: 3
-    min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
