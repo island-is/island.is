@@ -121,7 +121,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
               data-testid="accusedNameSortButton"
             >
               <Text fontWeight="regular">
-                {formatMessage(core.defendant, { suffix: 'i' })}
+                {capitalize(formatMessage(core.defendant, { suffix: 'i' }))}
               </Text>
               <Box
                 className={cn(styles.sortIcon, {

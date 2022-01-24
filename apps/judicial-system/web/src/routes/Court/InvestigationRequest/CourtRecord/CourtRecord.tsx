@@ -8,7 +8,10 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { icCourtRecord as m } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  icCourtRecord as m,
+} from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
@@ -39,26 +42,26 @@ const CourtRecord = () => {
         }
 
         if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-          if (
-            wc.defendants &&
-            wc.defendants.length > 0 &&
-            wc.defendants[0].name
-          ) {
-            attendees += `${wc.defendants[0].name} varnaraðili`
+          if (wc.defendants && wc.defendants.length > 0) {
+            wc.defendants.forEach((defendant) => {
+              attendees += `${defendant.name} ${formatMessage(core.defendant, {
+                suffix: 'i',
+              })}\n`
+            })
           }
         } else {
-          attendees += formatMessage(
+          attendees += `${formatMessage(
             m.sections.courtAttendees.defendantNotPresentAutofill,
-          )
+          )}\n`
         }
 
         if (
           wc.defenderName &&
           wc.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
         ) {
-          attendees += `\n${wc.defenderName} skipaður ${
+          attendees += `${wc.defenderName} skipaður ${
             wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-          } varnaraðila`
+          } ${formatMessage(core.defendant, { suffix: 'a' })}`
         }
 
         if (wc.translator) {

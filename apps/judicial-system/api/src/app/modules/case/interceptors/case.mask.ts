@@ -16,6 +16,9 @@ export function maskCase(theCase: Case): Case {
       state: theCase.state,
       policeCaseNumber: theCase.policeCaseNumber,
       defendants: theCase.defendants?.map((defendant) => ({
+        id: theCase.id,
+        created: theCase.created,
+        modified: theCase.modified,
         nationalId: defendant.nationalId,
         name: defendant.name,
       })),
