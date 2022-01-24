@@ -70,7 +70,7 @@ export const confirmation = {
   alertMessagesInRelationship: defineMessages({
     success: {
       id:
-        'fa.application:section.confirmation.alertMessagesInRelationship.alertMessages',
+        'fa.application:section.confirmation.alertMessagesInRelationship.success',
       defaultMessage: 'Þinn hluti umsóknar um fjárhagsaðstoð er móttekinn',
       description:
         'Alert message when application has successfully sent his side of application',
