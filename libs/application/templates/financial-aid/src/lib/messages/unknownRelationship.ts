@@ -40,14 +40,14 @@ export const unknownRelationship = {
         'fa.application:section.personalInterest.unknownRelationship.form.radioButtonNo',
       defaultMessage: 'Nei, ég er ekki í sambúð',
       description:
-        'Relationship unknown form radio button if applicant answers no',
+        'Relationship unknown form radio button if applicant answers no about being in a unregistered cohabitation',
     },
     radioButtonYes: {
       id:
         'fa.application:section.personalInterest.unknownRelationship.form.radioButtonYes',
       defaultMessage: 'Já, ég er í óstaðfestri sambúð',
       description:
-        'Relationship unknown form radio button if applicant answers yes',
+        'Relationship unknown form radio button if applicant answers yes about being in a unregistered cohabitation',
     },
   }),
   inputs: defineMessages({
@@ -80,7 +80,7 @@ export const unknownRelationship = {
         'fa.application:section.personalInterest.inRelationship.inputs.checkboxLabel',
       defaultMessage:
         'Ég skil að maki minn þarf líka að skila inn umsókn áður en úrvinnsla hefst',
-      description: 'Spouse checkbox label',
+      description: 'Spouse checkbox label about agreeing with terms',
     },
   }),
 }

@@ -8,9 +8,9 @@ import { isValidEmail, isValidNationalId, isValidPhone } from './utils'
 import { ApproveOptions } from './types'
 
 export const dataSchema = z.object({
-  // approveExternalData: z.boolean().refine((v) => v, {
-  //   params: error.validation.dataGathering,
-  // }),
+  approveExternalData: z.boolean().refine((v) => v, {
+    params: error.validation.dataGathering,
+  }),
   spouse: z.object({
     email: z.string().refine((v) => isValidEmail(v), {
       params: error.validation.email,
@@ -26,34 +26,19 @@ export const dataSchema = z.object({
         .refine((v) => v, {
           params: error.validation.radioErrorMessage,
         }),
-      spouseEmail: z
-        .string()
-        .refine((v) => v, {
-          params: error.validation.email,
-        })
-        .optional(),
-      spouseNationalId: z
-        .string()
-        .refine((v) => isValidNationalId(v || ''), {
-          params: error.validation.nationlId,
-        })
-        .optional(),
-      spouseApproveTerms: z
-        .array(z.string())
-        .optional()
-        .refine((v) => v && v.length === 1, {
-          params: error.validation.approveSpouse,
-        }),
+      spouseEmail: z.string().optional(),
+      spouseNationalId: z.string().optional(),
+      spouseApproveTerms: z.array(z.string()).optional(),
     })
     .refine(
       (v) =>
         v.unregisteredCohabitation === ApproveOptions.Yes
-          ? isValidEmail(v?.spouseEmail || '') ||
-            v.spouseNationalId ||
-            v.spouseApproveTerms
+          ? isValidEmail(v.spouseEmail || '') ||
+            isValidNationalId(v.spouseNationalId || '') ||
+            (v.spouseApproveTerms && v.spouseApproveTerms.length === 1)
           : true,
       {
-        params: error.validation.approveSpouse,
+        params: error.validation.email,
       },
     ),
   student: z

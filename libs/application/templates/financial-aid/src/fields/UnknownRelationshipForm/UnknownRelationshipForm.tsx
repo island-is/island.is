@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { ApproveOptions, FAFieldBaseProps } from '../../lib/types'
 import { useIntl } from 'react-intl'
-import { unknownRelationship } from '../../lib/messages'
+import { unknownRelationship, error } from '../../lib/messages'
 import DescriptionText from '../DescriptionText/DescriptionText'
 import { useFormContext } from 'react-hook-form'
 import {
@@ -13,6 +13,7 @@ import {
 
 import * as styles from '../Shared.css'
 import cn from 'classnames'
+import { isValidEmail, isValidNationalId } from '../../lib/utils'
 
 const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -26,18 +27,28 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
 
   const spouseEmail = {
     id: 'relationshipStatus.spouseEmail',
-    error: errors?.relationshipStatus?.spouseEmail,
+    error:
+      errors.relationshipStatus !== undefined &&
+      !isValidEmail(getValues('relationshipStatus.spouseEmail'))
+        ? formatMessage(error.validation.email)
+        : undefined,
   }
   const spouseNationlId = {
     id: 'relationshipStatus.spouseNationalId',
-    error: errors?.relationshipStatus?.spouseNationalId,
+    error:
+      errors.relationshipStatus !== undefined &&
+      !isValidNationalId(getValues('relationshipStatus.spouseNationalId'))
+        ? formatMessage(error.validation.nationlId)
+        : undefined,
   }
   const spouseApproveTerms = {
     id: 'relationshipStatus.spouseApproveTerms',
-    error: errors?.relationshipStatus?.spouseApproveTerms,
+    error:
+      errors.relationshipStatus !== undefined &&
+      getValues('relationshipStatus.spouseApproveTerms')?.length !== 1
+        ? formatMessage(error.validation.approveSpouse)
+        : undefined,
   }
-
-  console.log(errors.relationshipStatus)
 
   return (
     <>
@@ -87,7 +98,7 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
             )}
             label={formatMessage(unknownRelationship.inputs.spouseNationlId)}
             error={spouseNationlId.error}
-            defaultValue={''}
+            defaultValue={getValues(spouseNationlId.id)}
             onChange={() => {
               clearErrors(spouseNationlId.id)
             }}
@@ -104,7 +115,7 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
             )}
             label={formatMessage(unknownRelationship.inputs.spouseEmail)}
             error={spouseEmail.error}
-            defaultValue={''}
+            defaultValue={getValues(spouseEmail.id)}
             onChange={() => {
               clearErrors(spouseEmail.id)
             }}
@@ -115,7 +126,7 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
           name={spouseApproveTerms.id}
           backgroundColor="blue"
           large={true}
-          defaultValue={[]}
+          defaultValue={getValues(spouseApproveTerms.id)}
           error={spouseApproveTerms.error}
           options={[
             {
