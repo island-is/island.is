@@ -34,6 +34,8 @@ import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-sche
 
 import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
 
+import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/backend'
+
 import { EnvironmentServices } from '.././dsl/types/charts'
 
 const endorsement = endorsementServiceSetup({})
@@ -76,6 +78,8 @@ const adsApi = adsApiSetup({ adsBackend })
 const adsWeb = adsWebSetup({ adsApi })
 const githubActionsCache = githubActionsCacheSetup()
 
+const rabBackend = rabBackendSetup()
+
 const externalContractsTests = externalContractsTestsSetup()
 
 export const Services: EnvironmentServices = {
@@ -99,6 +103,7 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
+    rabBackend,
   ],
   staging: [
     appSystemApi,
@@ -120,6 +125,7 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
+    rabBackend,
   ],
   dev: [
     appSystemApi,
@@ -145,6 +151,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     externalContractsTests,
+    rabBackend,
   ],
 }
 
