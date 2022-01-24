@@ -39,7 +39,11 @@ const CourtRecord = () => {
         }
 
         if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-          if (wc.defendants && wc.defendants[0].name) {
+          if (
+            wc.defendants &&
+            wc.defendants.length > 0 &&
+            wc.defendants[0].name
+          ) {
             attendees += `${wc.defendants[0].name} varnaraðili`
           }
         } else {
