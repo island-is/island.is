@@ -58,7 +58,7 @@ export const StepFour: React.FC = () => {
     if (isCaseUpToDate) {
       const theCase: Case = workingCase
 
-      if (theCase.defendants) {
+      if (theCase.defendants && theCase.defendants.length > 0) {
         autofill(
           'demands',
           `${formatMessage(rcReportForm.sections.demands.autofill, {
