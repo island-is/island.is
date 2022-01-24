@@ -30,7 +30,8 @@
     "pg-native",
     "form-data",
     "sequelize-replace-enum-postgres",
-    "sequelize"
+    "sequelize",
+    "@protobufjs/aspromise"
   ],
   "keepNames": true
 }

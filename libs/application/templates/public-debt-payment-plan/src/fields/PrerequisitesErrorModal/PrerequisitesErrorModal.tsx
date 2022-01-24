@@ -7,6 +7,7 @@ import {
   ApplicationConfigurations,
   DefaultEvents,
   FieldBaseProps,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import {
@@ -23,7 +24,6 @@ import * as Sentry from '@sentry/react'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { errorModal } from '../../lib/messages'
-import { PaymentPlanExternalData } from '../../types'
 import * as styles from './PrerequisitesErrorModal.css'
 
 interface ErrorMessageProps {
@@ -97,11 +97,15 @@ export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
     }
   }
 
-  const prerequisites = (application.externalData as PaymentPlanExternalData)
-    .paymentPlanPrerequisites?.data?.conditions as PaymentScheduleConditions
+  const prerequisites = getValueViaPath(
+    application.externalData,
+    'paymentPlanPrerequisites.data.conditions',
+  ) as PaymentScheduleConditions
 
-  const debts = (application.externalData as PaymentPlanExternalData)
-    .paymentPlanPrerequisites?.data?.debts as PaymentScheduleDebts[]
+  const debts = getValueViaPath(
+    application.externalData,
+    'paymentPlanPrerequisites.data.debts',
+  ) as PaymentScheduleDebts[]
 
   const ShowErrorMessage = () => {
     if (prerequisites.maxDebt)

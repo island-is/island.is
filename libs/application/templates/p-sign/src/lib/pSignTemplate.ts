@@ -19,7 +19,7 @@ const PSignTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.P_SIGN,
-  name: 'P-Merki',
+  name: 'Stæðiskort',
   dataSchema: dataSchema,
   readyForProduction: true,
   stateMachineConfig: {
