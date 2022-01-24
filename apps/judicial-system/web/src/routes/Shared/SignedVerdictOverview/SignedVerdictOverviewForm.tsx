@@ -314,7 +314,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                 ]
               : []),
           ]}
-          defendants={workingCase.defendants}
+          defendants={workingCase.defendants ?? []}
           defender={{
             name: workingCase.defenderName ?? '',
             email: workingCase.defenderEmail,
