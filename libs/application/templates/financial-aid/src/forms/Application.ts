@@ -9,6 +9,8 @@ import {
 import { ExternalData } from '../lib/types'
 
 import * as m from '../lib/messages'
+import { routes } from '../lib/constants'
+import { route } from 'next/dist/next-server/server/router'
 
 export const Application: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -26,7 +28,7 @@ export const Application: Form = buildForm({
           title: m.inRelationship.general.sectionTitle,
           children: [
             buildCustomField({
-              id: 'inRelationship',
+              id: routes.INRELATIONSHIP,
               title: m.inRelationship.general.pageTitle,
               component: 'InRelationshipForm',
             }),
@@ -50,7 +52,7 @@ export const Application: Form = buildForm({
           title: m.homeCircumstancesForm.general.sectionTitle,
           children: [
             buildCustomField({
-              id: 'homeCircumstances',
+              id: routes.HOMECIRCUMSTANCES,
               title: m.homeCircumstancesForm.general.pageTitle,
               component: 'HomeCircumstancesForm',
             }),
@@ -61,7 +63,7 @@ export const Application: Form = buildForm({
           title: m.studentForm.general.sectionTitle,
           children: [
             buildCustomField({
-              id: 'student',
+              id: routes.STUDENT,
               title: m.studentForm.general.pageTitle,
               component: 'StudentForm',
             }),
@@ -72,7 +74,7 @@ export const Application: Form = buildForm({
           title: m.employmentForm.general.sectionTitle,
           children: [
             buildCustomField({
-              id: 'employment',
+              id: routes.EMPLOYMENT,
               title: m.employmentForm.general.pageTitle,
               component: 'EmploymentForm',
             }),
@@ -85,7 +87,7 @@ export const Application: Form = buildForm({
       title: m.section.finances,
       children: [
         buildSubSection({
-          id: 'incomeForm',
+          id: routes.INCOME,
           title: m.incomeForm.general.sectionTitle,
           children: [
             buildCustomField({
@@ -100,7 +102,7 @@ export const Application: Form = buildForm({
           title: m.personalTaxCreditForm.general.sectionTitle,
           children: [
             buildCustomField({
-              id: 'personalTaxCredit',
+              id: routes.PERSONALTAXCREDIT,
               title: m.personalTaxCreditForm.general.pageTitle,
               component: 'PersonalTaxCreditForm',
             }),
@@ -111,7 +113,7 @@ export const Application: Form = buildForm({
           title: m.bankInfoForm.general.sectionTitle,
           children: [
             buildCustomField({
-              id: 'bankInfo',
+              id: routes.BANKINFO,
               title: m.bankInfoForm.general.pageTitle,
               component: 'BankInfoForm',
             }),
@@ -120,11 +122,11 @@ export const Application: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'contactInfo',
+      id: 'contactInfoForm',
       title: m.contactInfo.general.sectionTitle,
       children: [
         buildCustomField({
-          id: 'contactInfo',
+          id: routes.CONTACTINFO,
           title: m.contactInfo.general.pageTitle,
           component: 'ContactInfo',
         }),

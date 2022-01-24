@@ -27,7 +27,7 @@ import {
   getMessageApproveOptionsForIncome,
   formatAddress,
 } from '../../lib/formatters'
-import { Breakdown } from '@island.is/financial-aid/shared/components'
+// import { Breakdown } from '@island.is/financial-aid/shared/components'
 import { routes } from '../../lib/constants'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
@@ -63,7 +63,9 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         <DescriptionText text={m.summaryForm.general.description} />
       </Box>
 
-      <Box>{/* TODO estimated aid */}</Box>
+      <Box>
+        {/* TODO skoða með Rikka, fæ filelist villu, <Breakdown calculations={[]} /> */}
+      </Box>
 
       <Box marginTop={2}>
         <DescriptionText text={m.summaryForm.general.calculationsOverview} />
@@ -182,6 +184,27 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
               answers?.bankInfo?.accountNumber
             : ''}
         </Text>
+      </SummaryBlock>
+
+      <SummaryBlock
+        sectionTitle={'Netfang'}
+        editAction={() => goToScreen?.(routes.CONTACTINFO)}
+      >
+        {' '}
+        <GridColumn span={['6/12', '6/12', '6/12', '10/12']}>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <Text fontWeight="semiBold">Netfang </Text>
+              <Text marginBottom={[3, 3, 3, 0]}>
+                {answers?.contactInfo?.email}
+              </Text>
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <Text fontWeight="semiBold">Símanúmer</Text>
+              <Text>{answers?.contactInfo?.phone}</Text>
+            </GridColumn>
+          </GridRow>
+        </GridColumn>
       </SummaryBlock>
 
       <Box paddingY={[4, 4, 5]} borderTopWidth="standard" borderColor="blue300">

@@ -18,4 +18,5 @@ export enum routes {
   INCOME = 'income',
   PERSONALTAXCREDIT = 'personalTaxCredit',
   BANKINFO = 'bankInfo',
+  CONTACTINFO = 'contactInfo',
 }
