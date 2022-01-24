@@ -323,7 +323,7 @@ application-system-api:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-staging-storage-application-system'
     CLIENT_LOCATION_ORIGIN: 'https://beta.staging01.devland.is/umsoknir'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5608002820/kvortun/index'
+    DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5608002820/gopro/kvortun-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
     DB_USER: 'application_system_api'

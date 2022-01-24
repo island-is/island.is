@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
+import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import {
   ProsecutorSubsections,
   Sections,
@@ -15,6 +16,7 @@ import DefendantForm from './DefendantForm'
 
 const Defendant = () => {
   const router = useRouter()
+  const { updateDefendant, createDefendant } = useDefendants()
 
   const {
     workingCase,
@@ -29,13 +31,30 @@ const Defendant = () => {
   }, [])
 
   const handleNextButtonClick = async (theCase: Case) => {
-    const caseId = theCase.id === '' ? await createCase(theCase) : theCase.id
+    if (!theCase.id) {
+      const createdCase = await createCase(theCase)
 
-    if (caseId) {
-      router.push(`${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${caseId}`)
+      workingCase.defendants?.forEach(async (defendant, index) => {
+        if (index === 0) {
+          await updateDefendant(createdCase.id, createdCase.defendants[0].id, {
+            gender: defendant.gender,
+            name: defendant.name,
+            address: defendant.address,
+            nationalId: defendant.nationalId,
+          })
+        } else {
+          await createDefendant(createdCase.id, {
+            gender: defendant.gender,
+            name: defendant.name,
+            address: defendant.address,
+            nationalId: defendant.nationalId,
+          })
+        }
+      })
+      router.push(`${constants.STEP_TWO_ROUTE}/${createdCase.id}`)
+    } else {
+      router.push(`${constants.STEP_TWO_ROUTE}/${theCase.id}`)
     }
-
-    // TODO: Handle creation error
   }
 
   return (
