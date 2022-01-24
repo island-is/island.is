@@ -309,61 +309,62 @@ export const CourtRecord: React.FC = () => {
             workingCase={workingCase}
           />
         </Box>
-        {workingCase.defendants && workingCase.defendants.length > 0 && (
-          <Box component="section" marginBottom={8}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                {`${formatMessage(m.sections.accusedBookings.title, {
-                  genderedAccused: formatMessage(core.accused, {
-                    suffix:
-                      workingCase.defendants[0].gender === Gender.FEMALE
-                        ? 'u'
-                        : 'a',
-                  }),
-                })} `}
-                <Tooltip
-                  text={formatMessage(m.sections.accusedBookings.tooltip)}
-                />
-              </Text>
-            </Box>
-            <Input
-              data-testid="accusedBookings"
-              name="accusedBookings"
-              label={formatMessage(m.sections.accusedBookings.label, {
+
+        <Box component="section" marginBottom={8}>
+          <Box marginBottom={2}>
+            <Text as="h3" variant="h3">
+              {`${formatMessage(m.sections.accusedBookings.title, {
                 genderedAccused: formatMessage(core.accused, {
                   suffix:
+                    workingCase.defendants &&
+                    workingCase.defendants.length > 0 &&
                     workingCase.defendants[0].gender === Gender.FEMALE
                       ? 'u'
                       : 'a',
                 }),
-              })}
-              value={workingCase.accusedBookings || ''}
-              placeholder={formatMessage(
-                m.sections.accusedBookings.placeholder,
-              )}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'accusedBookings',
-                  event,
-                  [],
-                  workingCase,
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'accusedBookings',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  updateCase,
-                )
-              }
-              textarea
-              rows={16}
-            />
+              })} `}
+              <Tooltip
+                text={formatMessage(m.sections.accusedBookings.tooltip)}
+              />
+            </Text>
           </Box>
-        )}
+          <Input
+            data-testid="accusedBookings"
+            name="accusedBookings"
+            label={formatMessage(m.sections.accusedBookings.label, {
+              genderedAccused: formatMessage(core.accused, {
+                suffix:
+                  workingCase.defendants &&
+                  workingCase.defendants.length > 0 &&
+                  workingCase.defendants[0].gender === Gender.FEMALE
+                    ? 'u'
+                    : 'a',
+              }),
+            })}
+            value={workingCase.accusedBookings || ''}
+            placeholder={formatMessage(m.sections.accusedBookings.placeholder)}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'accusedBookings',
+                event,
+                [],
+                workingCase,
+                setWorkingCase,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'accusedBookings',
+                event.target.value,
+                [],
+                workingCase,
+                updateCase,
+              )
+            }
+            textarea
+            rows={16}
+          />
+        </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
