@@ -46,7 +46,6 @@ import {} from '@island.is/regulations/web'
 import { toast } from '@island.is/island-ui/core'
 import { getEditUrl, getHomeUrl } from '../utils/routing'
 import { makeHighAngstWarnings } from '@island.is/regulations-tools/useTextWarnings'
-import { forEach } from 'lodash'
 
 export const UPDATE_DRAFT_REGULATION_MUTATION = gql`
   mutation UpdateDraftRegulationMutation($input: EditDraftRegulationInput!) {
