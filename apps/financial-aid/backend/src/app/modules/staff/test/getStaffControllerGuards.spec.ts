@@ -4,8 +4,6 @@ import { RolesGuard } from '../../../guards/roles.guard'
 
 import { StaffController } from '../staff.controller'
 
-jest.mock('../staff.service')
-
 describe('StaffController - Get guards', () => {
   let guards: any[]
 
