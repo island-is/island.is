@@ -5,10 +5,10 @@ import { FileController } from './file.controller'
 import { FileService } from './file.service'
 import { CloudFrontService } from './cloudFront.service'
 import { ApplicationFileModel } from './models'
-import { StaffService } from '../staff'
+import { StaffModule } from '../staff/staff.module'
 
 @Module({
-  imports: [SequelizeModule.forFeature([ApplicationFileModel]), StaffService],
+  imports: [StaffModule, SequelizeModule.forFeature([ApplicationFileModel])],
   controllers: [FileController],
   providers: [FileService, CloudFrontService],
   exports: [FileService],
