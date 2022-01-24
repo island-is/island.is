@@ -760,7 +760,7 @@ namespaces:
     - 'icelandic-names-registry'
     - 'endorsement-system'
     - 'air-discount-scheme'
-    - 'regulations-admin-backend'
+    - 'regulations-admin'
 regulations-admin-backend:
   enabled: true
   env:
@@ -789,13 +789,9 @@ regulations-admin-backend:
         command:
           - 'npx'
     env:
-      DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'regulations_admin_backend'
-      DB_USER: 'regulations_admin_backend'
       SERVERSIDE_FEATURES_ON: ''
-    secrets:
-      DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
-  namespace: 'regulations-admin-backend'
+    secrets: {}
+  namespace: 'regulations-admin'
   replicaCount:
     default: 2
     max: 3
