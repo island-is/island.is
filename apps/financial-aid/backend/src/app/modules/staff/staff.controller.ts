@@ -29,7 +29,7 @@ import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import { UpdateStaffDto, CreateStaffDto } from './dto'
 
-@UseGuards(IdsUserGuard, RolesGuard)
+@UseGuards(IdsUserGuard, RolesGuard, StaffGuard)
 @RolesRules(RolesRule.VEITA)
 @Controller(`${apiBasePath}/staff`)
 @ApiTags('staff')
@@ -62,7 +62,6 @@ export class StaffController {
     return staff
   }
 
-  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.ADMIN)
   @Get('municipality')
   @ApiOkResponse({
@@ -96,7 +95,6 @@ export class StaffController {
     return updatedStaff
   }
 
-  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.ADMIN)
   @Post('')
   @ApiOkResponse({
@@ -119,7 +117,6 @@ export class StaffController {
     )
   }
 
-  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.SUPERADMIN)
   @Get('municipality/:municipalityId')
   @ApiOkResponse({
@@ -132,7 +129,6 @@ export class StaffController {
     return await this.staffService.numberOfUsersForMunicipality(municipalityId)
   }
 
-  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.SUPERADMIN)
   @Get('users/:municipalityId')
   @ApiOkResponse({
@@ -145,7 +141,6 @@ export class StaffController {
     return this.staffService.getUsers(municipalityId)
   }
 
-  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.SUPERADMIN)
   @Get('supervisors')
   @ApiOkResponse({
