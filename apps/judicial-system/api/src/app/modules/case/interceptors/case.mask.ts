@@ -6,7 +6,7 @@ import {
 
 import { Case } from '../models'
 
-export function maskCase(theCase: Case): Case {
+function maskCase(theCase: Case): Case {
   if (isInvestigationCase(theCase.type)) {
     return {
       id: theCase.id,
@@ -16,6 +16,9 @@ export function maskCase(theCase: Case): Case {
       state: theCase.state,
       policeCaseNumber: theCase.policeCaseNumber,
       defendants: theCase.defendants?.map((defendant) => ({
+        id: theCase.id,
+        created: theCase.created,
+        modified: theCase.modified,
         nationalId: defendant.nationalId,
         name: defendant.name,
       })),
