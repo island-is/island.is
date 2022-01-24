@@ -12,6 +12,8 @@ import cn from 'classnames'
 import { HTMLText, useDomid } from '@island.is/regulations'
 import { RegulationDraftId } from '@island.is/regulations/admin'
 
+const KB = 1024
+
 const _fileUploader = (draftId: RegulationDraftId): EditorFileUploader => (
   blobInfo,
   success,
@@ -63,6 +65,14 @@ export const EditorInput = (props: EditorInputProps) => {
     props.draftId,
   ])
 
+  // add warnings at the top of the editor for longer content.
+  const warningsAbove = props.warningsAbove ?? value.length > 1 * KB
+  console.log({
+    warningsAbove,
+    prop: props.warningsAbove,
+    length: value.length,
+  })
+
   return (
     <>
       <Box
@@ -91,6 +101,7 @@ export const EditorInput = (props: EditorInputProps) => {
           }}
           aria-labelledBy={labelId}
           aria-describedBy={errorId}
+          warningsAbove={warningsAbove}
         />
       </Box>
       {hasError && (
