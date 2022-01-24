@@ -70,36 +70,40 @@ const AppealSection: React.FC<Props> = (props) => {
             </Text>
           </Box>
         )}
-      {workingCase.defendants &&
-        workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL && (
-          <div className={styles.appealContainer}>
-            <BlueBox>
-              <InfoBox
-                text={formatMessage(signedVerdictOverview.accusedAppealed, {
-                  genderedAccused: capitalize(
-                    isRestrictionCase(workingCase.type)
-                      ? formatMessage(core.accused, {
-                          suffix:
-                            workingCase.defendants[0].gender === Gender.MALE
-                              ? 'i'
-                              : 'a',
-                        })
-                      : formatMessage(core.defendant, {
-                          suffix:
-                            workingCase.defendants?.length > 0 ? 'ar' : 'i',
-                        }),
-                  ),
-                  courtEndTime: `${formatDate(
-                    workingCase.rulingDate,
-                    'PP',
-                  )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
-                })}
-                fluid
-                light
-              />
-            </BlueBox>
-          </div>
-        )}
+      {workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL && (
+        <div className={styles.appealContainer}>
+          <BlueBox>
+            <InfoBox
+              text={formatMessage(signedVerdictOverview.accusedAppealed, {
+                genderedAccused: capitalize(
+                  isRestrictionCase(workingCase.type)
+                    ? formatMessage(core.accused, {
+                        suffix:
+                          workingCase.defendants &&
+                          workingCase.defendants.length > 0 &&
+                          workingCase.defendants[0].gender === Gender.MALE
+                            ? 'i'
+                            : 'a',
+                      })
+                    : formatMessage(core.defendant, {
+                        suffix:
+                          workingCase.defendants &&
+                          workingCase.defendants?.length > 1
+                            ? 'ar'
+                            : 'i',
+                      }),
+                ),
+                courtEndTime: `${formatDate(
+                  workingCase.rulingDate,
+                  'PP',
+                )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
+              })}
+              fluid
+              light
+            />
+          </BlueBox>
+        </div>
+      )}
       {workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL && (
         <div className={styles.appealContainer}>
           <BlueBox>
