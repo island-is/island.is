@@ -194,13 +194,14 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         children: [
           {
-            name: m.regulationAdminMinistries,
-            path: ServicePortalPath.RegulationsAdminMinistries,
-          },
-          {
             name: m.regulationAdminEdit,
             path: ServicePortalPath.RegulationsAdminEdit,
           },
+          // // Laterz...
+          // {
+          //   name: m.regulationAdminMinistries,
+          //   path: ServicePortalPath.RegulationsAdminMinistries,
+          // },
         ],
       },
 
