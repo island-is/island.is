@@ -5,7 +5,7 @@ import {
   PaginationWithNationalIdsDto,
 } from '@island.is/auth-api-lib/personal-representative'
 import { Controller, UseGuards, Get, Inject, Query } from '@nestjs/common'
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger'
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
