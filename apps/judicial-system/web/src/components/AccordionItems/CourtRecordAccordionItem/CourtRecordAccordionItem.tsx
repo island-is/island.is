@@ -32,17 +32,17 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
     'Sækjandi',
   )
 
-  const accusedAppeal =
-    workingCase.defendants && workingCase.defendants?.length > 0
-      ? formatAppeal(
-          workingCase.accusedAppealDecision,
-          capitalize(
-            formatMessage(core.defendant, {
-              suffix: workingCase.defendants?.length > 1 ? 'ar' : 'i',
-            }),
-          ),
-        )
-      : ''
+  const accusedAppeal = formatAppeal(
+    workingCase.accusedAppealDecision,
+    capitalize(
+      formatMessage(core.defendant, {
+        suffix:
+          workingCase.defendants && workingCase.defendants?.length > 1
+            ? 'ar'
+            : 'i',
+      }),
+    ),
+  )
 
   return (
     <AccordionItem
@@ -108,12 +108,14 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           })}
         </Text>
       </AccordionListItem>
-      {workingCase.defendants && workingCase.accusedBookings?.trim() && (
+      {workingCase.accusedBookings?.trim() && (
         <AccordionListItem
           title={formatMessage(m.sections.accusedBookings.title, {
             accusedType: isRestrictionCase(workingCase.type)
               ? formatMessage(core.accused, {
                   suffix:
+                    workingCase.defendants &&
+                    workingCase.defendants.length > 0 &&
                     workingCase.defendants[0].gender === Gender.FEMALE
                       ? 'u'
                       : 'a',
