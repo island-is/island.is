@@ -637,16 +637,17 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
 
   const subArticleStepOptions: { data: []; slug: string }[] = []
 
+  // The stepper in the subarticle can have steps that need data from a namespace
   if (subArticle && subArticle.stepper) {
     const queries = subArticle.stepper.steps.map((step) => {
-      const sourceKey = getStepOptionsSourceNamespace(step)
-      if (!sourceKey) return null
+      const stepOptionsNameSpace = getStepOptionsSourceNamespace(step)
+      if (!stepOptionsNameSpace) return null
       return apolloClient
         .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
           query: GET_NAMESPACE_QUERY,
           variables: {
             input: {
-              namespace: sourceKey,
+              namespace: stepOptionsNameSpace,
               lang: 'is',
             },
           },

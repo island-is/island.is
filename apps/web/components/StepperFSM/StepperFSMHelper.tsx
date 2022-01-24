@@ -1,6 +1,12 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 
-import { AccordionItem, ArrowLink, Box } from '@island.is/island-ui/core'
+import {
+  AccordionItem,
+  ArrowLink,
+  Box,
+  TableOfContents,
+  Text,
+} from '@island.is/island-ui/core'
 
 import { Step, Stepper } from '@island.is/api/schema'
 
@@ -12,15 +18,37 @@ import {
   getStateMeta,
   StepperMachine,
 } from './StepperFSMUtils'
+
 import { useI18n } from '@island.is/web/i18n'
 import * as styles from './StepperFSMHelper.css'
+import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 
 const SUCCESS_SYMBOL = '✔️'
 const ERROR_SYMBOL = '❌'
 
-const getContentfulLink = (value: Step | Stepper) => {
+// Be careful when editing this, if you remove an object then the indexing will go out of bounds
+const headings = [
+  {
+    headingId: 'stepper',
+    headingTitle: 'Stepper',
+  },
+  {
+    headingId: 'current-step',
+    headingTitle: 'Current step',
+  },
+  {
+    headingId: 'all-states',
+    headingTitle: 'All states',
+  },
+  {
+    headingId: 'all-steps',
+    headingTitle: 'All steps',
+  },
+]
+
+const getContentfulLink = ({ id }: Step | Stepper) => {
   const contentfulSpace = process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj'
-  return `https://app.contentful.com/spaces/${contentfulSpace}/entries/${value.id}`
+  return `https://app.contentful.com/spaces/${contentfulSpace}/entries/${id}`
 }
 
 interface FieldProps {
@@ -72,6 +100,41 @@ const getAllStateStepSlugs = (stepperMachine: StepperMachine) => {
   return allStateStepSlugs
 }
 
+interface ErrorField {
+  sectionId: string
+  sectionName: string
+  message: string
+  labelName?: string
+  labelValue?: string
+  messageId?: string
+}
+
+const renderErrors = (errors: ErrorField[]) => {
+  return (
+    <Box>
+      <Field
+        value={`${errors.length} error${errors.length !== 1 ? 's' : ''} found`}
+        symbol={errors.length > 0 ? ERROR_SYMBOL : SUCCESS_SYMBOL}
+      />
+      <Box marginLeft={4}>
+        {errors.map((error) => (
+          <div
+            className={`${styles.error} ${styles.fitBorder}`}
+            onClick={() =>
+              scrollTo(error.messageId ?? error.sectionId, {
+                smooth: true,
+              })
+            }
+          >
+            <Field name={error.labelName} value={error.labelValue} />
+            <Field value={error.message} symbol={ERROR_SYMBOL} />
+          </div>
+        ))}
+      </Box>
+    </Box>
+  )
+}
+
 interface StepperHelperProps {
   stepper: Stepper
   currentState: StepperState
@@ -88,7 +151,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
   optionsFromNamespace,
 }) => {
   const { activeLocale } = useI18n()
-  const stepOptions = getStepOptions(
+  const currentStepOptions = getStepOptions(
     currentStep,
     activeLocale,
     optionsFromNamespace,
@@ -96,67 +159,88 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
   const currentStateStepSlug = getStateMeta(currentState)?.stepSlug
   const allStateStepSlugs = getAllStateStepSlugs(stepperMachine)
 
-  return (
-    <Box marginTop={15}>
-      <AccordionItem id="stepper-helper" label="Helper">
-        <Box marginTop={2}>
-          <AccordionItem id="stepper" label="Stepper">
-            <Box className={styles.border} marginBottom={2}>
-              <ArrowLink href={getContentfulLink(stepper)}>
-                Contentful
-              </ArrowLink>
-              <Field
-                name="Current state name"
-                value={currentState.value as string}
-              />
-              <Field
-                name="Current state step slug"
-                value={currentStateStepSlug}
-                symbol={
-                  getStepBySlug(stepper, currentStateStepSlug)
-                    ? SUCCESS_SYMBOL
-                    : ERROR_SYMBOL
-                }
-                symbolHoverText={
-                  getStepBySlug(stepper, currentStateStepSlug)
-                    ? 'There is a step with this slug'
-                    : currentStateStepSlug
-                    ? 'No step has this slug'
-                    : 'The slug is missing'
-                }
-              />
-              <Field name="Current state transitions" />
-              <Box marginLeft={4} marginTop={1}>
-                {currentState.nextEvents.map((nextEvent, i) => {
-                  const transitionIsUsedSomewhere = stepOptions.some(
-                    (o) => o.transition === nextEvent,
-                  )
-                  const symbolHoverText = transitionIsUsedSomewhere
-                    ? 'The current step has an option that uses this transition'
-                    : 'The current step does not have an option that uses this transition'
-                  const ariaLabel = transitionIsUsedSomewhere
-                    ? 'success-symbol'
-                    : 'warning-symbol'
-                  const symbol = transitionIsUsedSomewhere
-                    ? SUCCESS_SYMBOL
-                    : ERROR_SYMBOL
-                  return (
-                    <Box className={styles.fitBorder} marginBottom={1}>
-                      <Field
-                        key={i}
-                        value={nextEvent}
-                        ariaLabel={ariaLabel}
-                        symbol={symbol}
-                        symbolHoverText={symbolHoverText}
-                      />
-                    </Box>
-                  )
-                })}
-              </Box>
-            </Box>
-          </AccordionItem>
+  const currentStateStepSlugSymbol = getStepBySlug(
+    stepper,
+    currentStateStepSlug,
+  )
+    ? SUCCESS_SYMBOL
+    : ERROR_SYMBOL
 
-          <AccordionItem id="current-step" label="Current Step">
+  const currentStateStepSlugSymbolText = getStepBySlug(
+    stepper,
+    currentStateStepSlug,
+  )
+    ? 'There is a step with this slug'
+    : currentStateStepSlug
+    ? 'No step has this slug'
+    : 'The slug is missing'
+
+  const [errors, setErrors] = useState<ErrorField[]>([])
+
+  return (
+    <Box
+      marginTop={15}
+      borderTopWidth="standard"
+      borderColor="standard"
+      paddingTop={1}
+    >
+      <AccordionItem id="stepper-helper" label="Helper">
+        {renderErrors(errors)}
+
+        <Box marginTop={4} marginBottom={4}>
+          <TableOfContents
+            tableOfContentsTitle="Table of contents"
+            headings={headings}
+            onClick={(id) => scrollTo(id, { smooth: true })}
+          />
+        </Box>
+
+        <Box id={headings[0].headingId}>
+          <Text variant="h4">{headings[0].headingTitle}</Text>
+          <Box className={styles.border} marginBottom={2}>
+            <ArrowLink href={getContentfulLink(stepper)}>Contentful</ArrowLink>
+            <Field
+              name="Current state name"
+              value={currentState.value as string}
+            />
+            <Field
+              name="Current state step slug"
+              value={currentStateStepSlug}
+              symbol={currentStateStepSlugSymbol}
+              symbolHoverText={currentStateStepSlugSymbolText}
+            />
+            <Field name="Current state transitions" />
+            <Box marginLeft={4} marginTop={1}>
+              {currentState.nextEvents.map((nextEvent, i) => {
+                const transitionIsUsedSomewhere = currentStepOptions.some(
+                  (o) => o.transition === nextEvent,
+                )
+                const symbolHoverText = transitionIsUsedSomewhere
+                  ? 'The current step has an option that uses this transition'
+                  : 'The current step does not have an option that uses this transition'
+                const ariaLabel = transitionIsUsedSomewhere
+                  ? 'success-symbol'
+                  : 'warning-symbol'
+                const symbol = transitionIsUsedSomewhere
+                  ? SUCCESS_SYMBOL
+                  : ERROR_SYMBOL
+                return (
+                  <Box className={styles.fitBorder} marginBottom={1}>
+                    <Field
+                      key={i}
+                      value={nextEvent}
+                      ariaLabel={ariaLabel}
+                      symbol={symbol}
+                      symbolHoverText={symbolHoverText}
+                    />
+                  </Box>
+                )
+              })}
+            </Box>
+          </Box>
+
+          <Box id={headings[1].headingId}>
+            <Text variant="h4">{headings[1].headingTitle}</Text>
             <Box className={styles.border}>
               {currentStep && (
                 <ArrowLink href={getContentfulLink(currentStep)}>
@@ -184,7 +268,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
               <Box marginBottom={1}>
                 <Field name="Step options" />
               </Box>
-              {stepOptions.map((o) => {
+              {currentStepOptions.map((o) => {
                 const optionTransitionIsValid = currentState.nextEvents.some(
                   (t) => t === o.transition,
                 )
@@ -214,13 +298,42 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                 )
               })}
             </Box>
-          </AccordionItem>
+          </Box>
 
-          <AccordionItem id="all-states" label="All states">
+          <Box id={headings[2].headingId}>
+            <Text variant="h4">{headings[2].headingTitle}</Text>
             <Box className={styles.border}>
               {Object.keys(stepperMachine.states).map((stateName, i) => {
                 const state = stepperMachine.states[stateName]
                 const stepSlug = state.meta?.stepSlug ?? ''
+                const step = getStepBySlug(stepper, stepSlug)
+
+                const id = `${headings[2].headingId}-${i}-slug`
+
+                const stateSaysWeHaveAnError =
+                  errors.find((e) => e.messageId === id) !== undefined
+
+                const hasSlugError = !step
+
+                if (hasSlugError && !stateSaysWeHaveAnError) {
+                  setErrors((errors) =>
+                    errors.concat({
+                      message: 'stepSlug error',
+                      labelName: `State name`,
+                      labelValue: stateName,
+                      messageId: id,
+                      sectionId: headings[2].headingId,
+                      sectionName: headings[2].headingTitle,
+                    }),
+                  )
+                }
+
+                if (!hasSlugError && stateSaysWeHaveAnError) {
+                  setErrors((errors) =>
+                    errors.filter((e) => e.messageId !== id),
+                  )
+                }
+
                 return (
                   <Box
                     marginLeft={4}
@@ -228,17 +341,15 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                     marginBottom={1}
                     key={i}
                     marginTop={i === 0 ? 1 : 0}
+                    id={id}
                   >
+                    <Field name="State name" value={stateName} />
                     <Field
                       name="State step slug"
                       value={stepSlug}
-                      symbol={
-                        getStepBySlug(stepper, stepSlug)
-                          ? SUCCESS_SYMBOL
-                          : ERROR_SYMBOL
-                      }
+                      symbol={!hasSlugError ? SUCCESS_SYMBOL : ERROR_SYMBOL}
                       symbolHoverText={
-                        getStepBySlug(stepper, stepSlug)
+                        step
                           ? 'There is a step with this slug'
                           : stepSlug
                           ? 'No step has this slug'
@@ -248,29 +359,67 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                     <Field name="State transitions" />
                     <Box marginLeft={4} marginTop={1}>
                       {Object.keys(state.config?.on ?? {}).map(
-                        (nextEvent, i) => {
-                          const transitionExists = stepper.steps.some((step) =>
-                            getStepOptions(
-                              step,
-                              activeLocale,
-                              optionsFromNamespace,
-                            ).some((o) => o.transition === nextEvent),
+                        (nextEvent, j) => {
+                          const stepWithSameSlug = stepper.steps.find(
+                            (s) => s.slug === stepSlug,
                           )
+                          const transitionExists = getStepOptions(
+                            stepWithSameSlug,
+                            activeLocale,
+                            optionsFromNamespace,
+                          ).some((o) => o.transition === nextEvent)
+
+                          const symbolHoverText = stepWithSameSlug
+                            ? transitionExists
+                              ? 'The step with the same slug has this transition'
+                              : 'No step has this transition'
+                            : 'No step has the same slug'
+
+                          const id = `${headings[2].headingId}-${i}-${j}-transition`
+
+                          const stateSaysWeHaveAnError =
+                            errors.find((e) => e.messageId === id) !== undefined
+
+                          const hasTransitionError = !transitionExists
+
+                          if (hasTransitionError && !stateSaysWeHaveAnError) {
+                            setErrors((errors) =>
+                              errors.concat({
+                                message: 'transition error',
+                                labelName: `State name`,
+                                labelValue: stateName,
+                                messageId: id,
+                                sectionId: headings[2].headingId,
+                                sectionName: headings[2].headingTitle,
+                              }),
+                            )
+                          }
+
+                          if (!hasTransitionError && stateSaysWeHaveAnError) {
+                            setErrors((errors) =>
+                              errors.filter((e) => e.messageId !== id),
+                            )
+                          }
+
                           return (
-                            <Box className={styles.fitBorder} marginBottom={1}>
+                            <Box
+                              className={styles.fitBorder}
+                              marginBottom={1}
+                              id={id}
+                            >
                               <Field
-                                key={i}
+                                key={j}
                                 value={nextEvent}
                                 symbol={
-                                  transitionExists ? undefined : ERROR_SYMBOL
-                                }
-                                symbolHoverText={
                                   transitionExists
-                                    ? undefined
-                                    : 'No step has this transition'
+                                    ? SUCCESS_SYMBOL
+                                    : ERROR_SYMBOL
                                 }
+                                symbolHoverText={symbolHoverText}
                                 ariaLabel={
-                                  transitionExists ? undefined : 'error-symbol'
+                                  transitionExists
+                                    ? 'success-symbol'
+                                    : 'error-symbol'
                                 }
                               />
                             </Box>
@@ -282,17 +431,44 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                 )
               })}
             </Box>
-          </AccordionItem>
+          </Box>
 
-          <AccordionItem id="all-steps" label="All steps">
+          <Box id={headings[3].headingId}>
+            <Text variant="h4">{headings[3].headingTitle}</Text>
             <Box className={styles.border}>
               {stepper.steps.map((step, i) => {
+                const hasSlugError = !allStateStepSlugs.includes(step.slug)
+                const id = `${headings[3].headingId}-${i}-slug`
+
+                const stateSaysWeHaveAnError =
+                  errors.find((e) => e.messageId === id) !== undefined
+
+                if (hasSlugError && !stateSaysWeHaveAnError) {
+                  setErrors((errors) =>
+                    errors.concat({
+                      message: 'slug error',
+                      messageId: id,
+                      labelName: 'Step Title',
+                      labelValue: step.title,
+                      sectionId: headings[3].headingId,
+                      sectionName: headings[3].headingTitle,
+                    }),
+                  )
+                }
+
+                if (!hasSlugError && stateSaysWeHaveAnError) {
+                  setErrors((errors) =>
+                    errors.filter((e) => e.messageId !== id),
+                  )
+                }
+
                 return (
                   <Box
                     marginLeft={4}
                     className={styles.fitBorder}
                     marginBottom={1}
                     key={i}
+                    id={id}
                     marginTop={i === 0 ? 1 : 0}
                   >
                     <ArrowLink href={getContentfulLink(step)}>
@@ -302,13 +478,9 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                     <Field
                       name="Slug"
                       value={step.slug}
-                      symbol={
-                        allStateStepSlugs.includes(step.slug)
-                          ? SUCCESS_SYMBOL
-                          : ERROR_SYMBOL
-                      }
+                      symbol={!hasSlugError ? SUCCESS_SYMBOL : ERROR_SYMBOL}
                       symbolHoverText={
-                        allStateStepSlugs.includes(step.slug)
+                        !hasSlugError
                           ? 'There is a state with this slug'
                           : 'No state has this slug'
                       }
@@ -319,21 +491,61 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                       step,
                       activeLocale,
                       optionsFromNamespace,
-                    ).map((o) => {
-                      const optionTransitionIsValid = Object.keys(
+                    ).map((o, j) => {
+                      const nameOfStateWithSameSlug = Object.keys(
                         stepperMachine.states,
-                      ).some((stateName) =>
-                        Object.keys(
-                          stepperMachine.states[stateName]?.config?.on ?? {},
-                        ).some((transition) => transition === o.transition),
-                      )
+                      ).find((stateName) => {
+                        const state = stepperMachine.states[stateName]
+                        return (state.meta?.stepSlug ?? '') === step.slug
+                      })
+
+                      const stateWithSameSlug = nameOfStateWithSameSlug
+                        ? stepperMachine.states[nameOfStateWithSameSlug]
+                        : null
+
+                      const optionTransitionIsValid = Object.keys(
+                        stateWithSameSlug?.on ?? {},
+                      ).some((transition) => transition === o.transition)
 
                       const transitionSymbol = optionTransitionIsValid
-                        ? ''
+                        ? SUCCESS_SYMBOL
                         : ERROR_SYMBOL
-                      const symbolHoverText = optionTransitionIsValid
-                        ? undefined
-                        : 'There is no state with this transaction'
+
+                      const transitionSymbolHoverText = stateWithSameSlug
+                        ? optionTransitionIsValid
+                          ? 'The state with the same slug has this transition'
+                          : 'The state with the same slug does not have this transaction'
+                        : 'There is no state with the same slug'
+
+                      const hasError =
+                        !stateWithSameSlug || !optionTransitionIsValid
+                      const id = `${headings[3].headingId}-${i}-option-${j}`
+
+                      const stateSaysWeHaveAnError =
+                        errors.find((e) => e.messageId === id) !== undefined
+
+                      if (hasError && !stateSaysWeHaveAnError) {
+                        setErrors((errors) =>
+                          errors.concat({
+                            message: `${!stateWithSameSlug ? 'slug' : ''}${
+                              !optionTransitionIsValid
+                                ? `${!stateWithSameSlug ? ' ' : ''}transition`
+                                : ''
+                            } error`,
+                            messageId: id,
+                            labelName: 'Step Title',
+                            labelValue: step.title,
+                            sectionId: headings[3].headingId,
+                            sectionName: headings[3].headingTitle,
+                          }),
+                        )
+                      }
+
+                      if (!hasError && stateSaysWeHaveAnError) {
+                        setErrors((errors) =>
+                          errors.filter((e) => e.messageId !== id),
+                        )
+                      }
 
                       return (
                         <Box
@@ -341,14 +553,21 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                           marginLeft={4}
                           marginBottom={1}
                           key={o.slug}
+                          id={id}
                         >
                           <Field name="Label" value={o.label} />
-                          <Field name="Slug" value={o.slug} />
+                          <Field
+                            name="Slug"
+                            value={o.slug}
+                            symbol={
+                              stateWithSameSlug ? SUCCESS_SYMBOL : ERROR_SYMBOL
+                            }
+                          />
                           <Field
                             name="Transition"
                             value={o.transition}
                             symbol={transitionSymbol}
-                            symbolHoverText={symbolHoverText}
+                            symbolHoverText={transitionSymbolHoverText}
                           />
                         </Box>
                       )
@@ -357,7 +576,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                 )
               })}
             </Box>
-          </AccordionItem>
+          </Box>
         </Box>
       </AccordionItem>
     </Box>
