@@ -70,7 +70,8 @@ const PastRequests: React.FC<Props> = (props) => {
       Cell: (row: {
         row: { original: { accusedName: string; defendants: Defendant[] } }
       }) => {
-        return (
+        return row.row.original.defendants &&
+          row.row.original.defendants.length > 0 ? (
           <>
             <Box component="span" display="block">
               {row.row.original.defendants[0].name}
@@ -78,11 +79,18 @@ const PastRequests: React.FC<Props> = (props) => {
             {row.row.original.defendants.length === 1 ? (
               <Text>
                 <Text as="span" variant="small" color="dark400">
-                  {`kt. ${insertAt(
-                    row.row.original.defendants[0].nationalId.replace('-', ''),
-                    '-',
-                    6,
-                  )}`}
+                  {`kt. ${
+                    row.row.original.defendants[0].nationalId
+                      ? insertAt(
+                          row.row.original.defendants[0].nationalId.replace(
+                            '-',
+                            '',
+                          ),
+                          '-',
+                          6,
+                        )
+                      : '-'
+                  }`}
                 </Text>
               </Text>
             ) : (
@@ -91,6 +99,8 @@ const PastRequests: React.FC<Props> = (props) => {
               </Text>
             )}
           </>
+        ) : (
+          <Text>-</Text>
         )
       },
     },
