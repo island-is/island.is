@@ -25,7 +25,7 @@ import {
 import { writeFile } from './writeFile'
 
 function constructRestrictionRequestPdf(
-  existingCase: Case,
+  theCase: Case,
   formatMessage: FormatMessage,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
@@ -41,7 +41,7 @@ function constructRestrictionRequestPdf(
 
   const title = formatMessage(m.heading, {
     caseType:
-      existingCase.type === CaseType.CUSTODY
+      theCase.type === CaseType.CUSTODY
         ? formatMessage(core.caseType.custody)
         : formatMessage(core.caseType.travelBan),
   })
@@ -60,18 +60,18 @@ function constructRestrictionRequestPdf(
     .font('Helvetica')
     .fontSize(largeFontSize)
     .text(
-      existingCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
+      theCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
       { align: 'center' },
     )
     .fontSize(mediumPlusFontSize)
     .text(
-      `${formatDate(existingCase.created, 'PPP')} - Mál nr. ${
-        existingCase.policeCaseNumber
+      `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
+        theCase.policeCaseNumber
       }`,
       { align: 'center' },
     )
     .lineGap(40)
-    .text(`${formatMessage(m.baseInfo.court)} ${existingCase.court?.name}`, {
+    .text(`${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`, {
       align: 'center',
     })
     .font('Helvetica-Bold')
@@ -81,18 +81,32 @@ function constructRestrictionRequestPdf(
     .font('Helvetica')
     .fontSize(baseFontSize)
     .lineGap(4)
-    .text(
-      `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
-        existingCase.accusedNationalId,
-      )}`,
-    )
-    .text(`${formatMessage(m.baseInfo.fullName)} ${existingCase.accusedName}`)
-    .text(`${formatMessage(m.baseInfo.address)} ${existingCase.accusedAddress}`)
+
+  theCase.defendants?.forEach((defendant, index) => {
+    if (index > 0) {
+      doc.text(' ')
+    }
+
+    doc
+      .text(
+        `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
+          defendant.nationalId ?? '',
+        )}`,
+      )
+      .text(`${formatMessage(m.baseInfo.fullName)} ${defendant.name ?? ''}`)
+      .text(`${formatMessage(m.baseInfo.address)} ${defendant.address ?? ''}`)
+  })
+
+  if (theCase.defendants && theCase.defendants.length > 1) {
+    doc.text(' ')
+  }
+
+  doc
     .text(
       formatMessage(m.baseInfo.defender, {
         defenderName:
-          existingCase.defenderName && !existingCase.defenderIsSpokesperson
-            ? existingCase.defenderName
+          theCase.defenderName && !theCase.defenderIsSpokesperson
+            ? theCase.defenderName
             : formatMessage(m.baseInfo.noDefender),
       }),
     )
@@ -103,7 +117,7 @@ function constructRestrictionRequestPdf(
     .text(formatMessage(m.demands.heading))
     .font('Helvetica')
     .fontSize(baseFontSize)
-    .text(existingCase.demands ?? formatMessage(m.demands.noDemands), {
+    .text(theCase.demands ?? formatMessage(m.demands.noDemands), {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -114,7 +128,7 @@ function constructRestrictionRequestPdf(
     .text(formatMessage(m.lawsBroken.heading))
     .font('Helvetica')
     .fontSize(baseFontSize)
-    .text(existingCase.lawsBroken ?? formatMessage(m.lawsBroken.noLawsBroken), {
+    .text(theCase.lawsBroken ?? formatMessage(m.lawsBroken.noLawsBroken), {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -125,16 +139,10 @@ function constructRestrictionRequestPdf(
     .text(formatMessage(m.legalBasis.heading))
     .font('Helvetica')
     .fontSize(baseFontSize)
-    .text(
-      formatLegalProvisions(
-        existingCase.legalProvisions,
-        existingCase.legalBasis,
-      ),
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
+    .text(formatLegalProvisions(theCase.legalProvisions, theCase.legalBasis), {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(largeFontSize)
@@ -144,13 +152,10 @@ function constructRestrictionRequestPdf(
     .text(formatMessage(m.factsAndArguments.facts))
     .font('Helvetica')
     .fontSize(baseFontSize)
-    .text(
-      existingCase.caseFacts ?? formatMessage(m.factsAndArguments.noFacts),
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
+    .text(theCase.caseFacts ?? formatMessage(m.factsAndArguments.noFacts), {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(mediumFontSize)
@@ -159,8 +164,7 @@ function constructRestrictionRequestPdf(
     .font('Helvetica')
     .fontSize(baseFontSize)
     .text(
-      existingCase.legalArguments ??
-        formatMessage(m.factsAndArguments.noArguments),
+      theCase.legalArguments ?? formatMessage(m.factsAndArguments.noArguments),
       {
         lineGap: 6,
         paragraphGap: 0,
@@ -170,9 +174,8 @@ function constructRestrictionRequestPdf(
     .font('Helvetica-Bold')
     .text(
       `${
-        existingCase.prosecutor?.name ??
-        formatMessage(m.prosecutor.noProsecutor)
-      } ${existingCase.prosecutor?.title ?? ''}`,
+        theCase.prosecutor?.name ?? formatMessage(m.prosecutor.noProsecutor)
+      } ${theCase.prosecutor?.title ?? ''}`,
     )
 
   setPageNumbers(doc)
@@ -183,7 +186,7 @@ function constructRestrictionRequestPdf(
 }
 
 function constructInvestigationRequestPdf(
-  existingCase: Case,
+  theCase: Case,
   formatMessage: FormatMessage,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
@@ -215,18 +218,18 @@ function constructInvestigationRequestPdf(
     .font('Helvetica')
     .fontSize(largeFontSize)
     .text(
-      existingCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
+      theCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
       { align: 'center' },
     )
     .fontSize(mediumPlusFontSize)
     .text(
-      `${formatDate(existingCase.created, 'PPP')} - Mál nr. ${
-        existingCase.policeCaseNumber
+      `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
+        theCase.policeCaseNumber
       }`,
       { align: 'center' },
     )
     .lineGap(40)
-    .text(`${formatMessage(m.baseInfo.court)} ${existingCase.court?.name}`, {
+    .text(`${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`, {
       align: 'center',
     })
     .font('Helvetica-Bold')
@@ -236,18 +239,30 @@ function constructInvestigationRequestPdf(
     .font('Helvetica')
     .fontSize(baseFontSize)
     .lineGap(4)
-    .text(
-      `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
-        existingCase.accusedNationalId,
-      )}`,
-    )
-    .text(`${formatMessage(m.baseInfo.fullName)} ${existingCase.accusedName}`)
-    .text(`${formatMessage(m.baseInfo.address)} ${existingCase.accusedAddress}`)
 
-  if (existingCase.defenderName && !existingCase.defenderIsSpokesperson) {
+  theCase.defendants?.forEach((defendant, index) => {
+    if (index > 0) {
+      doc.text(' ')
+    }
+
+    doc
+      .text(
+        `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
+          defendant.nationalId ?? '',
+        )}`,
+      )
+      .text(`${formatMessage(m.baseInfo.fullName)} ${defendant.name ?? ''}`)
+      .text(`${formatMessage(m.baseInfo.address)} ${defendant.address ?? ''}`)
+  })
+
+  if (theCase.defenderName && !theCase.defenderIsSpokesperson) {
+    if (theCase.defendants && theCase.defendants.length > 1) {
+      doc.text(' ')
+    }
+
     doc.text(
       formatMessage(m.baseInfo.defender, {
-        defenderName: existingCase.defenderName,
+        defenderName: theCase.defenderName,
       }),
     )
   }
@@ -263,18 +278,15 @@ function constructInvestigationRequestPdf(
     .lineGap(4)
     .text(
       capitalize(
-        existingCase.type === CaseType.OTHER
+        theCase.type === CaseType.OTHER
           ? formatMessage(core.caseType.investigate)
-          : caseTypes[existingCase.type],
+          : caseTypes[theCase.type],
       ),
     )
-    .text(
-      existingCase.description ?? formatMessage(m.description.noDescription),
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
+    .text(theCase.description ?? formatMessage(m.description.noDescription), {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(mediumFontSize)
@@ -282,7 +294,7 @@ function constructInvestigationRequestPdf(
     .text(formatMessage(m.demands.heading))
     .font('Helvetica')
     .fontSize(baseFontSize)
-    .text(existingCase.demands ?? formatMessage(m.demands.noDemands), {
+    .text(theCase.demands ?? formatMessage(m.demands.noDemands), {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -293,7 +305,7 @@ function constructInvestigationRequestPdf(
     .text(formatMessage(m.lawsBroken.heading))
     .font('Helvetica')
     .fontSize(baseFontSize)
-    .text(existingCase.lawsBroken ?? formatMessage(m.lawsBroken.noLawsBroken), {
+    .text(theCase.lawsBroken ?? formatMessage(m.lawsBroken.noLawsBroken), {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -304,7 +316,7 @@ function constructInvestigationRequestPdf(
     .text(formatMessage(m.legalBasis.heading))
     .font('Helvetica')
     .fontSize(baseFontSize)
-    .text(existingCase.legalBasis ?? formatMessage(m.legalBasis.noLegalBasis), {
+    .text(theCase.legalBasis ?? formatMessage(m.legalBasis.noLegalBasis), {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -317,13 +329,10 @@ function constructInvestigationRequestPdf(
     .text(formatMessage(m.factsAndArguments.facts))
     .font('Helvetica')
     .fontSize(baseFontSize)
-    .text(
-      existingCase.caseFacts ?? formatMessage(m.factsAndArguments.noFacts),
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
+    .text(theCase.caseFacts ?? formatMessage(m.factsAndArguments.noFacts), {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(mediumFontSize)
@@ -332,8 +341,7 @@ function constructInvestigationRequestPdf(
     .font('Helvetica')
     .fontSize(baseFontSize)
     .text(
-      existingCase.legalArguments ??
-        formatMessage(m.factsAndArguments.noArguments),
+      theCase.legalArguments ?? formatMessage(m.factsAndArguments.noArguments),
       {
         lineGap: 6,
         paragraphGap: 0,
@@ -341,7 +349,7 @@ function constructInvestigationRequestPdf(
     )
     .text(' ')
 
-  if (existingCase.requestProsecutorOnlySession) {
+  if (theCase.requestProsecutorOnlySession) {
     doc
       .font('Helvetica-Bold')
       .fontSize(mediumFontSize)
@@ -349,7 +357,7 @@ function constructInvestigationRequestPdf(
       .text(formatMessage(m.requestProsecutorOnlySession))
       .font('Helvetica')
       .fontSize(baseFontSize)
-      .text(existingCase.prosecutorOnlySessionRequest ?? '', {
+      .text(theCase.prosecutorOnlySessionRequest ?? '', {
         lineGap: 6,
         paragraphGap: 0,
       })
@@ -360,9 +368,8 @@ function constructInvestigationRequestPdf(
     .font('Helvetica-Bold')
     .text(
       `${
-        existingCase.prosecutor?.name ??
-        formatMessage(m.prosecutor.noProsecutor)
-      } ${existingCase.prosecutor?.title ?? ''}`,
+        theCase.prosecutor?.name ?? formatMessage(m.prosecutor.noProsecutor)
+      } ${theCase.prosecutor?.title ?? ''}`,
     )
 
   setPageNumbers(doc)
@@ -373,19 +380,19 @@ function constructInvestigationRequestPdf(
 }
 
 function constructRequestPdf(
-  existingCase: Case,
+  theCase: Case,
   formatMessage: FormatMessage,
 ): streamBuffers.WritableStreamBuffer {
-  return isRestrictionCase(existingCase.type)
-    ? constructRestrictionRequestPdf(existingCase, formatMessage)
-    : constructInvestigationRequestPdf(existingCase, formatMessage)
+  return isRestrictionCase(theCase.type)
+    ? constructRestrictionRequestPdf(theCase, formatMessage)
+    : constructInvestigationRequestPdf(theCase, formatMessage)
 }
 
 export async function getRequestPdfAsString(
-  existingCase: Case,
+  theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<string> {
-  const stream = constructRequestPdf(existingCase, formatMessage)
+  const stream = constructRequestPdf(theCase, formatMessage)
 
   // wait for the writing to finish
   const pdf = await new Promise<string>(function (resolve) {
@@ -395,17 +402,17 @@ export async function getRequestPdfAsString(
   })
 
   if (!environment.production) {
-    writeFile(`${existingCase.id}-request.pdf`, pdf)
+    writeFile(`${theCase.id}-request.pdf`, pdf)
   }
 
   return pdf
 }
 
 export async function getRequestPdfAsBuffer(
-  existingCase: Case,
+  theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<Buffer> {
-  const stream = constructRequestPdf(existingCase, formatMessage)
+  const stream = constructRequestPdf(theCase, formatMessage)
 
   // wait for the writing to finish
   const pdf = await new Promise<Buffer>(function (resolve) {
@@ -415,7 +422,7 @@ export async function getRequestPdfAsBuffer(
   })
 
   if (!environment.production) {
-    writeFile(`${existingCase.id}-request.pdf`, pdf)
+    writeFile(`${theCase.id}-request.pdf`, pdf)
   }
 
   return pdf
