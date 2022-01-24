@@ -3,6 +3,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import type { Case } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import React from 'react'
+import { capitalize } from '@island.is/judicial-system/formatters'
 
 interface Props {
   workingCase: Case
@@ -23,11 +24,14 @@ const CaseNumbers: React.FC<Props> = ({ workingCase }: Props) => {
         workingCase.prosecutor?.institution?.name
       }`}</Text>
       {workingCase.defendants && (
-        <Text fontWeight="semiBold">{`${formatMessage(core.defendant, {
-          suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
-        })}:${workingCase.defendants.map(
-          (defendant) => ` ${defendant.name}`,
-        )}`}</Text>
+        <Text fontWeight="semiBold">{`${capitalize(
+          formatMessage(core.defendant, {
+            suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
+          }),
+        )}:${workingCase.defendants
+          .map((defendant) => ` ${defendant.name}`)
+          .toString()
+          .replace(/,\s*$/, '')}`}</Text>
       )}
     </>
   )
