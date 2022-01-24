@@ -23,6 +23,7 @@ import {
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
   Gender,
@@ -75,7 +76,7 @@ export const RulingStepOne: React.FC = () => {
   const id = router.query.id
 
   const { user } = useContext(UserContext)
-  const { updateCase, autofill } = useCase()
+  const { updateCase, autofill, autofillBoolean } = useCase()
   const { formatMessage } = useIntl()
 
   useEffect(() => {
@@ -94,6 +95,19 @@ export const RulingStepOne: React.FC = () => {
         autofill('validToDate', theCase.requestedValidToDate, theCase)
       }
 
+      if (theCase.type === CaseType.CUSTODY) {
+        autofillBoolean(
+          'isCustodyIsolation',
+          theCase.requestedCustodyRestrictions &&
+            theCase.requestedCustodyRestrictions.includes(
+              CaseCustodyRestrictions.ISOLATION,
+            )
+            ? true
+            : false,
+          theCase,
+        )
+      }
+
       if (theCase.validToDate) {
         autofill('isolationToDate', theCase.validToDate, theCase)
       }
@@ -108,7 +122,14 @@ export const RulingStepOne: React.FC = () => {
 
       setWorkingCase(theCase)
     }
-  }, [autofill, isCaseUpToDate, setWorkingCase, updateCase, workingCase])
+  }, [
+    autofill,
+    autofillBoolean,
+    isCaseUpToDate,
+    setWorkingCase,
+    updateCase,
+    workingCase,
+  ])
 
   return (
     <PageLayout
