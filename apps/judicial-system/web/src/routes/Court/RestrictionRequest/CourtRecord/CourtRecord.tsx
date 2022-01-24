@@ -67,19 +67,29 @@ export const CourtRecord: React.FC = () => {
       const defaultCourtAttendees = (wc: Case): string => {
         let attendees = ''
 
-        if (wc.prosecutor && wc.defendants && wc.defendants[0].name) {
-          attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
-            wc.defendants[0].name
-          } ${formatMessage(core.accused, {
-            suffix: wc.defendants[0].gender === Gender.MALE ? 'i' : 'a',
-          })}`
+        if (wc.prosecutor) {
+          attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}`
         }
 
-        if (wc.defendants && wc.defenderName) {
+        if (wc.defendants && wc.defendants.length > 0) {
+          attendees += `\n${wc.defendants[0].name} ${formatMessage(
+            core.accused,
+            {
+              suffix: wc.defendants[0].gender === Gender.MALE ? 'i' : 'a',
+            },
+          )}`
+        }
+
+        if (wc.defenderName) {
           attendees += `\n${wc.defenderName} skipaður verjandi ${formatMessage(
             core.accused,
             {
-              suffix: wc.defendants[0].gender === Gender.FEMALE ? 'u' : 'a',
+              suffix:
+                wc.defendants &&
+                wc.defendants.length > 0 &&
+                wc.defendants[0].gender === Gender.FEMALE
+                  ? 'u'
+                  : 'a',
             },
           )}`
         }
