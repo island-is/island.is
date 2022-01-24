@@ -49,7 +49,15 @@ export const ProfileForm: FC<Props> = ({
 
   const { data: userProfile, loading: userLoading } = useUserProfile()
 
-  const hookFormData = useForm()
+  const hookFormData = useForm({
+    defaultValues: {
+      email: '',
+      tel: '',
+      bankInfo: '',
+      nudge: false,
+      language: '',
+    },
+  })
 
   const { handleSubmit, formState, reset } = hookFormData
 
@@ -60,7 +68,7 @@ export const ProfileForm: FC<Props> = ({
       ...(showDetails && {
         bankInfo: userProfile?.bankInfo || '',
         nudge: !!userProfile?.canNudge,
-        language: userProfile?.locale,
+        language: userProfile?.locale || '',
       }),
     })
   }, [userProfile])

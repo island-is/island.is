@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
 import { Controller } from 'react-hook-form'
-import { FieldValues, UseFormMethods } from 'react-hook-form/dist/types/form'
 import { m } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -17,12 +16,13 @@ import { InputController } from '@island.is/shared/form-fields'
 import { useVerifySms } from '@island.is/service-portal/graphql'
 import { sharedMessages } from '@island.is/shared/translations'
 import { parseNumber } from '../../../../../utils/phoneHelper'
+import { HookFormType } from '../../types/form'
 import * as styles from './Phone.css'
 
 interface Props {
   buttonText: string
   mobile?: string
-  hookFormData: UseFormMethods<FieldValues>
+  hookFormData: HookFormType
 }
 
 interface FormErrors {
@@ -180,7 +180,6 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, hookFormData }) => {
                 placeholder={formatMessage(sharedMessages.phoneNumber)}
                 onChange={(inp) => setTelInternal(inp.target.value)}
                 error={errors.tel?.message || formErrors.mobile}
-                defaultValue=""
               />
             </Column>
           </Columns>

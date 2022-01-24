@@ -1,11 +1,11 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC } from 'react'
 import { InputController } from '@island.is/shared/form-fields'
-import { FieldValues, UseFormMethods } from 'react-hook-form/dist/types/form'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { HookFormType } from '../Forms/ProfileForm/types/form'
 
 interface Props {
   bankInfo: string
-  hookFormData: UseFormMethods<FieldValues>
+  hookFormData: HookFormType
 }
 
 export const BankInfoForm: FC<Props> = ({ hookFormData }) => {

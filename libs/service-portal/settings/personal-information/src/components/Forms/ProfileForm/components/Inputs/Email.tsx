@@ -2,7 +2,6 @@ import React, { FC, useState, useEffect } from 'react'
 import { Controller } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { FieldValues, UseFormMethods } from 'react-hook-form/dist/types/form'
 import {
   Box,
   Button,
@@ -15,11 +14,12 @@ import {
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useVerifyEmail } from '@island.is/service-portal/graphql'
+import { HookFormType } from '../../types/form'
 
 interface Props {
   buttonText: string
   email?: string
-  hookFormData: UseFormMethods<FieldValues>
+  hookFormData: HookFormType
 }
 
 interface FormErrors {
@@ -192,7 +192,6 @@ export const InputEmail: FC<Props> = ({ buttonText, email, hookFormData }) => {
                     message: formatMessage(m.verificationCodeRequired),
                   },
                 }}
-                defaultValue=""
                 render={({ onChange, value, name }) => (
                   <Input
                     label={formatMessage(m.verificationCode)}

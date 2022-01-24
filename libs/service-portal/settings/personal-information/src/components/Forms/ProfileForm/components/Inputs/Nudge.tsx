@@ -1,11 +1,11 @@
+import React, { FC } from 'react'
 import { Checkbox } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Controller } from 'react-hook-form'
-import { FieldValues, UseFormMethods } from 'react-hook-form/dist/types/form'
-import React, { FC } from 'react'
+import { HookFormType } from '../../types/form'
 
 interface Props {
-  hookFormData: UseFormMethods<FieldValues>
+  hookFormData: HookFormType
 }
 
 export const Nudge: FC<Props> = ({ hookFormData }) => {

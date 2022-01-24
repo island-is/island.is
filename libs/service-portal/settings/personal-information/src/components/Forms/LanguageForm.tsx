@@ -2,8 +2,8 @@ import React, { FC } from 'react'
 import { Select, Option } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Controller } from 'react-hook-form'
-import { FieldValues, UseFormMethods } from 'react-hook-form/dist/types/form'
 import { Locale } from '@island.is/shared/types'
+import { HookFormType } from '../Forms/ProfileForm/types/form'
 import { m } from '@island.is/service-portal/core'
 
 export type LanguageFormOption = {
@@ -12,7 +12,7 @@ export type LanguageFormOption = {
 }
 
 interface Props {
-  hookFormData: UseFormMethods<FieldValues>
+  hookFormData: HookFormType
 }
 
 const languageOptions = [
