@@ -12,6 +12,7 @@ import type {
   CaseTransition,
   RequestSignatureResponse,
   UpdateCase,
+  Defendant,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
@@ -80,6 +81,10 @@ interface ExtendCaseMutationResponse {
   extendCase: Case
 }
 
+interface CreateDefendantMutationResponse {
+  defendant: Defendant
+}
+
 const useCase = () => {
   const [
     createCaseMutation,
@@ -119,17 +124,13 @@ const useCase = () => {
   ] = useMutation<ExtendCaseMutationResponse>(ExtendCaseMutation)
 
   const createCase = useMemo(
-    () => async (theCase: Case): Promise<string | undefined> => {
+    () => async (theCase: Case): Promise<Case | undefined> => {
       if (isCreatingCase === false) {
         const { data } = await createCaseMutation({
           variables: {
             input: {
               type: theCase.type,
               policeCaseNumber: theCase.policeCaseNumber,
-              accusedNationalId: theCase.accusedNationalId.replace('-', ''),
-              accusedName: theCase.accusedName,
-              accusedAddress: theCase.accusedAddress,
-              accusedGender: theCase.accusedGender,
               defenderName: theCase.defenderName,
               defenderEmail: theCase.defenderEmail,
               defenderPhoneNumber: theCase.defenderPhoneNumber,
@@ -142,7 +143,7 @@ const useCase = () => {
         })
 
         if (data) {
-          return data.createCase?.id
+          return data.createCase
         }
       }
     },
