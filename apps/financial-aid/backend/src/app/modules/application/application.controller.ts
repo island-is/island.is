@@ -42,7 +42,8 @@ import type {
   Application,
 } from '@island.is/financial-aid/shared/lib'
 
-import type { User as IdsAuthUser } from '@island.is/auth-nest-tools'
+import { Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 
 import {
   ApplicationFilters,
@@ -57,6 +58,7 @@ import { StaffGuard } from '../../guards/staff.guard'
 import { CurrentApplication } from '../../decorators/application.decorator'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import { AuditService } from '@island.is/nest/audit'
+import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/application`)
@@ -73,16 +75,14 @@ export class ApplicationController {
 
   @UseGuards(RolesGuard)
   @RolesRules(RolesRule.OSK)
-  @Get('nationalId/:nationalId')
+  @Get('nationalId')
   @ApiOkResponse({
     description: 'Checks if user has a current application for this period',
   })
-  async getCurrentApplication(
-    @Param('nationalId') nationalId: string,
-  ): Promise<string> {
+  async getCurrentApplication(@CurrentUser() user: User): Promise<string> {
     this.logger.debug('Application controller: Getting current application')
     const currentApplication = await this.applicationService.getCurrentApplicationId(
-      nationalId,
+      user.nationalId,
     )
 
     if (currentApplication === null) {
@@ -104,7 +104,7 @@ export class ApplicationController {
   async findApplication(
     @Param('nationalId') nationalId: string,
     @CurrentStaff() staff: Staff,
-    @CurrentUser() user: IdsAuthUser,
+    @CurrentUser() user: User,
   ): Promise<ApplicationModel[]> {
     this.logger.debug('Search for application')
 
@@ -129,12 +129,10 @@ export class ApplicationController {
     type: SpouseResponse,
     description: 'Checking if user is spouse',
   })
-  async spouse(
-    @Param('spouseNationalId') spouseNationalId: string,
-  ): Promise<SpouseResponse> {
+  async spouse(@CurrentUser() user: User): Promise<SpouseResponse> {
     this.logger.debug('Application controller: Checking if user is spouse')
 
-    return await this.applicationService.getSpouseInfo(spouseNationalId)
+    return await this.applicationService.getSpouseInfo(user.nationalId)
   }
 
   @UseGuards(RolesGuard, StaffGuard)
@@ -167,7 +165,7 @@ export class ApplicationController {
   async getById(
     @Param('id') id: string,
     @CurrentApplication() application: Application,
-    @CurrentUser() user: IdsAuthUser,
+    @CurrentUser() user: User,
   ) {
     this.logger.debug(`Application controller: Getting application by id ${id}`)
 
@@ -194,6 +192,7 @@ export class ApplicationController {
     return this.applicationService.getAllFilters(staff.id, staff.municipalityId)
   }
 
+  @UseGuards(ApplicationGuard)
   @Put('id/:id')
   @ApiOkResponse({
     type: ApplicationModel,
@@ -272,6 +271,8 @@ export class ApplicationController {
     return this.applicationService.create(application, user)
   }
 
+  @UseGuards(ScopesGuard, ApplicationGuard)
+  @Scopes(MunicipalitiesFinancialAidScope.write)
   @Post('event')
   @ApiCreatedResponse({
     type: ApplicationEventModel,
