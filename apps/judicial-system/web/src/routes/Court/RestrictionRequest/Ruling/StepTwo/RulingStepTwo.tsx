@@ -85,7 +85,7 @@ export const RulingStepTwo: React.FC = () => {
         theCase.isolationToDate &&
         new Date(theCase.validToDate) > new Date(theCase.isolationToDate)
 
-      if (theCase.defendants) {
+      if (theCase.defendants && theCase.defendants.length > 0) {
         const accusedSuffix =
           theCase.defendants[0].gender === Gender.MALE ? 'i' : 'a'
 
@@ -96,7 +96,7 @@ export const RulingStepTwo: React.FC = () => {
                 genderedAccused: formatMessage(core.accused, {
                   suffix: accusedSuffix,
                 }),
-                accusedName: theCase.defendants && theCase.defendants[0].name,
+                accusedName: theCase.defendants[0].name,
                 extensionSuffix:
                   theCase.parentCase &&
                   isAcceptingCaseDecision(theCase.parentCase.decision)
@@ -112,10 +112,9 @@ export const RulingStepTwo: React.FC = () => {
                 genderedAccused: formatMessage(core.accused, {
                   suffix: accusedSuffix,
                 }),
-                accusedName: theCase.defendants && theCase.defendants[0].name,
+                accusedName: theCase.defendants[0].name,
                 accusedNationalId: formatNationalId(
-                  (theCase.defendants && theCase.defendants[0].nationalId) ??
-                    '',
+                  theCase.defendants[0].nationalId ?? '',
                 ),
                 extensionSuffix:
                   theCase.parentCase &&
@@ -133,10 +132,9 @@ export const RulingStepTwo: React.FC = () => {
                     suffix: accusedSuffix,
                   }),
                 ),
-                accusedName: theCase.defendants && theCase.defendants[0].name,
+                accusedName: theCase.defendants[0].name,
                 accusedNationalId: formatNationalId(
-                  (theCase.defendants && theCase.defendants[0].nationalId) ??
-                    '',
+                  theCase.defendants[0].nationalId ?? '',
                 ),
                 caseTypeAndExtensionSuffix:
                   theCase.decision === CaseDecision.ACCEPTING ||
