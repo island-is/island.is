@@ -16,7 +16,7 @@ export const confirmation = {
   nextSteps: defineMessages({
     title: {
       id: 'fa.application:section.confirmation.nextSteps.title',
-      defaultMessage: '   Hér eru næstu skref',
+      defaultMessage: 'Hér eru næstu skref',
       description: 'Confirmation next step title',
     },
     content: {
@@ -51,7 +51,7 @@ export const confirmation = {
   }),
   alertMessages: defineMessages({
     success: {
-      id: 'fa.application:section.confirmation.alertMessages.alertMessages',
+      id: 'fa.application:section.confirmation.alertMessages.success',
       defaultMessage: 'Umsókn þín um fjárhagsaðstoð er móttekin',
       description: 'Alert message when application has successfully been sent',
     },

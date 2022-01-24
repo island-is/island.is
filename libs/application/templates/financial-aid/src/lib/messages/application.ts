@@ -10,17 +10,17 @@ export const application = defineMessages({
 
 export const copyUrl = defineMessages({
   inputLabel: {
-    id: 'crc.application:copyUrl.inputLabel',
+    id: 'fa.application:copyUrl.inputLabel',
     defaultMessage: 'Hlekkur á umsóknina',
     description: 'Copy url input label',
   },
   buttonLabel: {
-    id: 'crc.application:copyUrl.buttonLabel',
+    id: 'fa.application:copyUrl.buttonLabel',
     defaultMessage: 'Afrita hlekk',
     description: 'Copy url button text',
   },
   successMessage: {
-    id: 'crc.application:copyUrl.successMessage',
+    id: 'fa.application:copyUrl.successMessage',
     defaultMessage: 'Hlekkur afritaður',
     description: 'Copy url success text',
   },

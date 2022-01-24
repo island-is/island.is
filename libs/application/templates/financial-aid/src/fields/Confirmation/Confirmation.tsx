@@ -5,8 +5,9 @@ import { useIntl } from 'react-intl'
 import { confirmation, copyUrl } from '../../lib/messages'
 import { DescriptionText, ConfirmationSectionImage, CopyUrl } from '..'
 
-const Confirmation = () => {
+const Confirmation = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
+  const { externalData } = application
 
   return (
     <>
@@ -52,6 +53,10 @@ const Confirmation = () => {
       </Text>
 
       <Box marginTop={2}>
+        <DescriptionText text={confirmation.nextSteps.content} />
+      </Box>
+
+      <Box marginTop={2}>
         {/* TODO link for status page */}
         <Button
           icon="open"
@@ -75,6 +80,9 @@ const Confirmation = () => {
           size="small"
           type="button"
           variant="text"
+          onClick={() => {
+            // window.open(externalData., '_ blank')
+          }}
         >
           {formatMessage(confirmation.links.municipalityInfoPage)}
         </Button>
