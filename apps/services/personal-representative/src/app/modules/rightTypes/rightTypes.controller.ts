@@ -5,12 +5,12 @@ import {
   PersonalRepresentativeRightTypeDTO,
   PersonalRepresentativeRightTypeService,
 } from '@island.is/auth-api-lib/personal-representative'
+import type { Auth } from '@island.is/auth-nest-tools'
 import {
   CurrentAuth,
   IdsAuthGuard,
   Scopes,
   ScopesGuard,
-  Auth,
 } from '@island.is/auth-nest-tools'
 import {
   BadRequestException,
