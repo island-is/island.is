@@ -129,7 +129,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
             )}
           </BlueBox>
         </Box>
-        {workingCase.defendants && (
+        {workingCase.defendants && workingCase.defendants.length > 0 && (
           <Box component="section" marginBottom={7}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
