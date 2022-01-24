@@ -387,7 +387,6 @@ export const RulingStepOne: React.FC = () => {
             </Box>
           )}
         {workingCase.type === CaseType.CUSTODY &&
-          workingCase.defendants &&
           isAcceptingCaseDecision(workingCase.decision) && (
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
@@ -403,6 +402,8 @@ export const RulingStepOne: React.FC = () => {
                       formatMessage(m.sections.custodyRestrictions.isolation, {
                         genderedAccused: formatMessage(core.accused, {
                           suffix:
+                            workingCase.defendants &&
+                            workingCase.defendants.length > 0 &&
                             workingCase.defendants[0].gender === Gender.MALE
                               ? 'i'
                               : 'a',
