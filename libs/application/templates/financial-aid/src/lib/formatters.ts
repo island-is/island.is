@@ -7,7 +7,7 @@ import {
 import { MessageDescriptor } from 'react-intl'
 
 import * as m from './messages'
-import { ApproveOptions } from './types'
+import { Applicant, ApproveOptions } from './types'
 
 export const getMessageHomeCircumstances: KeyMapping<
   HomeCircumstances,
@@ -47,3 +47,8 @@ export const getMessageApproveOptionsForIncome: KeyMapping<
   Yes: m.incomeForm.summary.yes,
   No: m.incomeForm.summary.no,
 }
+
+export const formatAddress = (applicant?: Applicant) =>
+  applicant
+    ? `${applicant.address.streetName}, ${applicant.address.postalCode} ${applicant.address.city}`
+    : undefined

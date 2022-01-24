@@ -69,4 +69,12 @@ export const summaryForm = {
       description: 'Summary form placeholder for input for form comment',
     },
   }),
+  block: defineMessages({
+    buttonLabel: {
+      id: 'fa.application:section.summaryForm.block.buttonLabel',
+      defaultMessage: 'Breyta',
+      description:
+        'Summary block, button label when applicant wants to change his answer',
+    },
+  }),
 }

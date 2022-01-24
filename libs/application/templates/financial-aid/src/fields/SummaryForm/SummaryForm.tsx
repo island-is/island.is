@@ -25,8 +25,10 @@ import {
   getMessageEmploymentStatus,
   getMessageApproveOptions,
   getMessageApproveOptionsForIncome,
+  formatAddress,
 } from '../../lib/formatters'
 import { Breakdown } from '@island.is/financial-aid/shared/components'
+import { routes } from '../../lib/constants'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -90,7 +92,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
               <Text fontWeight="semiBold">
                 {formatMessage(m.summaryForm.userInfo.address)}
               </Text>
-              <Text>{externalData?.nationalRegistry?.data?.address}</Text>
+              <Text>{formatAddress(externalData?.nationalRegistry?.data)}</Text>
             </Box>
           </GridColumn>
         </GridRow>
@@ -98,9 +100,9 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <SummaryBlock
         sectionTitle={formatMessage(m.inRelationship.general.sectionTitle)}
-        editAction={() => goToScreen?.('inRelationship')}
+        editAction={() => goToScreen?.(routes.INRELATIONSHIP)}
       >
-        {/* TODO */}
+        {/* TODO  relationship status  */}
         <Text>TODO</Text>
       </SummaryBlock>
 
@@ -108,7 +110,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         sectionTitle={formatMessage(
           m.homeCircumstancesForm.general.sectionTitle,
         )}
-        editAction={() => goToScreen?.('homeCircumstances')}
+        editAction={() => goToScreen?.(routes.HOMECIRCUMSTANCES)}
       >
         <Text>
           {answers?.homeCircumstances?.type === HomeCircumstances.OTHER
@@ -121,7 +123,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <SummaryBlock
         sectionTitle={formatMessage(m.studentForm.general.sectionTitle)}
-        editAction={() => goToScreen?.('student')}
+        editAction={() => goToScreen?.(routes.STUDENT)}
       >
         <Text>
           {formatMessage(getMessageApproveOptions[answers?.student?.isStudent])}
@@ -134,7 +136,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <SummaryBlock
         sectionTitle={formatMessage(m.employmentForm.general.sectionTitle)}
-        editAction={() => goToScreen?.('employment')}
+        editAction={() => goToScreen?.(routes.EMPLOYMENT)}
       >
         <Text>
           {answers?.employment?.type === Employment.OTHER
@@ -147,7 +149,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <SummaryBlock
         sectionTitle={formatMessage(m.incomeForm.general.sectionTitle)}
-        editAction={() => goToScreen?.('income')}
+        editAction={() => goToScreen?.(routes.INCOME)}
       >
         <Text>
           {formatMessage(getMessageApproveOptionsForIncome[answers?.income])}
@@ -158,7 +160,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         sectionTitle={formatMessage(
           m.summaryForm.formInfo.personalTaxCreditTitle,
         )}
-        editAction={() => goToScreen?.('personalTaxCredit')}
+        editAction={() => goToScreen?.(routes.PERSONALTAXCREDIT)}
       >
         <Text>
           {formatMessage(getMessageApproveOptions[answers?.personalTaxCredit])}
@@ -167,7 +169,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <SummaryBlock
         sectionTitle={formatMessage(m.bankInfoForm.general.sectionTitle)}
-        editAction={() => goToScreen?.('bankInfo')}
+        editAction={() => goToScreen?.(routes.BANKINFO)}
       >
         <Text>
           {answers?.bankInfo?.bankNumber &&
@@ -215,9 +217,9 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <SummaryBlock
         sectionTitle="Gögn"
-        editAction={() => goToScreen?.('bankInfo')}
+        editAction={() => goToScreen?.(routes.INCOME)}
       >
-        {/* TODO */}
+        {/* TODO files pages */}
         <Box display="flex">
           <Box marginRight={1} display="flex" alignItems="center">
             <Icon color="blue400" icon="document" size="small" type="outline" />

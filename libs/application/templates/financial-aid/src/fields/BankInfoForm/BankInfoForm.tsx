@@ -11,6 +11,10 @@ const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { answers } = application
 
+  const bankNumberId = `${id}.bankNumber`
+  const ledgerId = `${id}.ledger`
+  const accountNumberId = `${id}.accountNumber`
+
   return (
     <>
       <Text marginTop={2} marginBottom={[2, 2, 4]}>
@@ -20,8 +24,8 @@ const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
         <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
           <Box marginBottom={[2, 2, 4]}>
             <InputController
-              id={`${id}.bankNumber`}
-              name={`${id}.bankNumber`}
+              id={bankNumberId}
+              name={bankNumberId}
               defaultValue={answers?.bankInfoForm?.bankNumber}
               label={formatMessage(bankInfoForm.inputsLabels.bankNumber)}
               format="####"
@@ -33,8 +37,8 @@ const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
         <GridColumn span={['12/12', '12/12', '12/12', '2/12']}>
           <Box marginBottom={[2, 2, 4]}>
             <InputController
-              id={`${id}.ledger`}
-              name={`${id}.ledger`}
+              id={ledgerId}
+              name={ledgerId}
               defaultValue={answers?.bankInfoForm?.ledger}
               label={formatMessage(bankInfoForm.inputsLabels.ledger)}
               format="##"
@@ -45,8 +49,8 @@ const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Box marginBottom={[2, 2, 4]}>
             <InputController
-              id={`${id}.accountNumber`}
-              name={`${id}.accountNumber`}
+              id={accountNumberId}
+              name={accountNumberId}
               defaultValue={answers?.bankInfoForm?.accountNumber}
               label={formatMessage(bankInfoForm.inputsLabels.accountNumber)}
               format="######"

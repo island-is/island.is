@@ -1,5 +1,8 @@
 import React, { ReactNode } from 'react'
 import { Text, Box, Button } from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
+
+import { summaryForm } from '../../lib/messages'
 
 interface Props {
   sectionTitle: string
@@ -8,6 +11,8 @@ interface Props {
 }
 
 const SummaryBlock = ({ sectionTitle, children, editAction }: Props) => {
+  const { formatMessage } = useIntl()
+
   return (
     <Box
       display="flex"
@@ -27,7 +32,7 @@ const SummaryBlock = ({ sectionTitle, children, editAction }: Props) => {
         variant="utility"
         onClick={editAction}
       >
-        Breyta
+        {formatMessage(summaryForm.block.buttonLabel)}
       </Button>
     </Box>
   )
