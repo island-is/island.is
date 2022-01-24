@@ -317,7 +317,7 @@ application-system-api:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-prod-storage-application-system'
     CLIENT_LOCATION_ORIGIN: 'https://island.is/umsoknir'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS/GOV/5608002820/kvortun/index'
+    DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS/GOV/5608002820/gopro/kvortun-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
     DB_USER: 'application_system_api'
@@ -871,6 +871,7 @@ service-portal:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'islandis'
+    - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -918,6 +919,7 @@ service-portal-api:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'islandis'
+    - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
