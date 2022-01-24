@@ -271,7 +271,7 @@ export class ApplicationController {
     return this.applicationService.create(application, user)
   }
 
-  @UseGuards(ScopesGuard)
+  @UseGuards(ScopesGuard, ApplicationGuard)
   @Scopes(MunicipalitiesFinancialAidScope.write)
   @Post('event')
   @ApiCreatedResponse({

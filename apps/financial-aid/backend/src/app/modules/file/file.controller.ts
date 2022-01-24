@@ -11,6 +11,7 @@ import { RolesGuard } from '../../guards/roles.guard'
 import { CurrentUser, RolesRules } from '../../decorators'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
+import { StaffGuard } from '../../guards/staff.guard'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller(`${apiBasePath}/file`)
@@ -34,7 +35,7 @@ export class FileController {
   }
 
   @Get('url/:id')
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, StaffGuard)
   @RolesRules(RolesRule.VEITA)
   @Scopes(MunicipalitiesFinancialAidScope.read)
   @ApiCreatedResponse({

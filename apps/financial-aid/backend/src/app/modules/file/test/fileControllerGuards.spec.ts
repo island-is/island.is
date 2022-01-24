@@ -50,7 +50,7 @@ describe('FileController - Creates a new signed url guards', () => {
     )
   })
 
-  it('should have two guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 
@@ -61,7 +61,7 @@ describe('FileController - Creates a new signed url guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 0', () => {
+    it('should have RolesGuard as guard 0', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -88,7 +88,7 @@ describe('FileController - Creates a new signed url guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 0', () => {
+    it('should have RolesGuard as guard 0', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -115,7 +115,7 @@ describe('FileController - Creates a new signed url guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 0', () => {
+    it('should have RolesGuard as guard 0', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
