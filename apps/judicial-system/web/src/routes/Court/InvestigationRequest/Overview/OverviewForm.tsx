@@ -113,10 +113,6 @@ const OverviewForm: React.FC<Props> = (props) => {
                 value: workingCase.policeCaseNumber,
               },
               {
-                title: 'Krafa stofnuð',
-                value: formatDate(workingCase.created, 'P'),
-              },
-              {
                 title: 'Embætti',
                 value: `${
                   workingCase.creatingProsecutor?.institution?.name ??
