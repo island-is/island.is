@@ -6,6 +6,6 @@ export const container = style({
 
 export const answerRowContainer = style({
   display: 'grid',
-  gridTemplateColumns: '7fr 2fr 1fr',
+  gridTemplateColumns: '5.3fr 3.7fr 1fr',
   borderBottom: '1px solid lightgrey',
 })
