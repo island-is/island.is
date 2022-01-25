@@ -105,7 +105,7 @@ export class UserProfileService {
         }) // Current version does not return the newly created user in the response.
         .catch(handleError)
     } else {
-      logger.error('User profile create is feature flagged for user')
+      logger.info('User profile create is feature flagged for user')
     }
 
     const userProfileResponse = await this.userProfileApiWithAuth(user)
@@ -154,7 +154,7 @@ export class UserProfileService {
         }) // Current version does not return the updated user in the response.
         .catch(handleError)
     } else {
-      logger.error('User profile update is feature flagged for user')
+      logger.info('User profile update is feature flagged for user')
     }
 
     return await this.userProfileApiWithAuth(user)
