@@ -24,7 +24,7 @@ export class MessageProcessorService {
   ): Promise<Notification> {
     const t = await this.intlService.useIntl(
       ['user-notification.messages'],
-      profile.locale,
+      profile.locale ?? 'is',
     )
 
     const { title, body } = messages.notifications[message.type]

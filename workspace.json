@@ -7961,10 +7961,10 @@
       "root": "apps/services/personal-representative",
       "sourceRoot": "apps/services/personal-representative/src",
       "projectType": "application",
-      "prefix": "services-personal-representative",
+      "prefix": "personal-representative",
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/personal-representative",
@@ -7976,13 +7976,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/personal-representative/src/environments/environment.ts",
-                  "with": "apps/services/personal-representative/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           }
         },
@@ -8022,10 +8016,10 @@
       "root": "apps/services/personal-representative-public",
       "sourceRoot": "apps/services/personal-representative-public/src",
       "projectType": "application",
-      "prefix": "services-personal-representative-public",
+      "prefix": "personal-representative-public",
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/personal-representative-public",
@@ -8039,13 +8033,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/personal-representative-public/src/environments/environment.ts",
-                  "with": "apps/services/personal-representative-public/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           }
         },

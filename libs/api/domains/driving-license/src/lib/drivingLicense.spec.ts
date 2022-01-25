@@ -10,6 +10,8 @@ import {
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
 import { createLogger } from 'winston'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Logger } from '@nestjs/common'
 
 startMocking(requestHandlers)
 
@@ -32,7 +34,16 @@ describe('DrivingLicenseService', () => {
           },
         }),
       ],
-      providers: [DrivingLicenseService, { provide: 'CONFIG', useValue: {} }],
+      providers: [
+        DrivingLicenseService,
+        { provide: 'CONFIG', useValue: {} },
+        {
+          provide: LOGGER_PROVIDER,
+          useValue: {
+            warn: () => undefined,
+          },
+        },
+      ],
     }).compile()
 
     service = module.get(DrivingLicenseService)
