@@ -328,15 +328,19 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           />
         )}
         {!renderSlicesAsTabs &&
-          (subpage ?? projectPage).slices.map((slice) => (
-            <OrganizationSlice
-              key={slice.id}
-              slice={slice}
-              namespace={namespace}
-              fullWidth={true}
-              organizationPageSlug={projectPage.slug}
-            />
-          ))}
+          (subpage ?? projectPage).slices.map((slice) =>
+            slice.__typename === 'OneColumnText' ? (
+              <p>yes</p>
+            ) : (
+              <OrganizationSlice
+                key={slice.id}
+                slice={slice}
+                namespace={namespace}
+                fullWidth={true}
+                organizationPageSlug={projectPage.slug}
+              />
+            ),
+          )}
       </ProjectWrapper>
       {!subpage && !!projectPage.newsTag && (
         <div style={{ overflow: 'hidden' }}>
