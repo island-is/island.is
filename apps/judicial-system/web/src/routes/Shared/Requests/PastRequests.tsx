@@ -65,7 +65,7 @@ const PastRequests: React.FC<Props> = (props) => {
       },
     },
     {
-      Header: formatMessage(core.defendant, { suffix: 'i' }),
+      Header: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
       accessor: 'accusedName' as keyof Case,
       Cell: (row: {
         row: { original: { accusedName: string; defendants: Defendant[] } }
