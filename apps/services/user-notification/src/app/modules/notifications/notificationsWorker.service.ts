@@ -28,9 +28,9 @@ export class NotificationsWorkerService {
   ) {}
 
   async run() {
-    await this.worker.run(
-      async (message: Message): Promise<void> => {
-        this.logger.debug('Got message', message)
+    await this.worker.run<Message>(
+      async (message, job): Promise<void> => {
+        this.logger.debug(`Got message id=${job.id}`, message)
 
         const profile = await this.userProfileApi
           .userTokenControllerFindOneByNationalId({
