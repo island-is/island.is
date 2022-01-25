@@ -45,6 +45,7 @@ import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -56,6 +57,8 @@ export const HearingArrangements: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
+
   const [modalVisible, setModalVisible] = useState(false)
 
   const router = useRouter()
@@ -185,7 +188,7 @@ export const HearingArrangements: React.FC = () => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseNumbers workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
