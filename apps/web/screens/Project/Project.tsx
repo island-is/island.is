@@ -331,9 +331,7 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
         {!renderSlicesAsTabs &&
           (subpage ?? projectPage).slices.map((slice) =>
             slice.__typename === 'OneColumnText' ? (
-              <Box marginTop={8}>
-                <OneColumnTextSlice slice={slice} />
-              </Box>
+              <OneColumnTextSlice slice={slice} boxProps={{ marginTop: 8 }} />
             ) : (
               <OrganizationSlice
                 key={slice.id}
