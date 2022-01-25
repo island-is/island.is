@@ -173,8 +173,8 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
   useEffect(() => {
     const value = localStorage.getItem(STEPPER_HELPER_ENABLED)
     if (value) {
-      console.log(value)
-      setIsHidden(!JSON.parse(value))
+      const shouldBeHidden = !JSON.parse(value)
+      if (shouldBeHidden !== isHidden) setIsHidden(shouldBeHidden)
     }
   })
 
