@@ -14,6 +14,9 @@ export const userNotificationServiceSetup = (): ServiceBuilder<'user-notificatio
       MAIN_QUEUE_NAME,
       DEAD_LETTER_QUEUE_NAME,
     })
+    .secrets({
+      FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials',
+    })
     .liveness('/liveness')
     .readiness('/liveness')
     .ingress({
@@ -51,8 +54,7 @@ export const userNotificationWorkerSetup = (): ServiceBuilder<'user-notification
       },
     })
     .secrets({
-      GOOGLE_APPLICATION_CREDENTIALS:
-        '/k8s/user-notification/firestore-credentials',
+      FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials',
       USER_NOTIFICATION_CLIENT_ID:
         '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID',
       USER_NOTIFICATION_CLIENT_SECRET:

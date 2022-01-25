@@ -1,5 +1,3 @@
-import { Locale } from '@island.is/shared/types'
-
 export enum MessageTypes {
   NewDocumentMessage = 'newDocumentMessage',
 }
