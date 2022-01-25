@@ -6,11 +6,43 @@ import {
   findRegulationType,
   findSignatureInText,
 } from '../utils/guessers'
-import { DraftingState, RegDraftForm, RegDraftFormSimpleProps } from './types'
+import {
+  DraftField,
+  DraftingState,
+  HtmlDraftField,
+  RegDraftForm,
+  RegDraftFormSimpleProps,
+} from './types'
 
 // ---------------------------------------------------------------------------
 
-const tidyUp = {
+const isHTMLField = (
+  field: DraftField<unknown, string>,
+): field is HtmlDraftField => field.type === 'html'
+
+// -------
+
+export const updateFieldValue = <T extends DraftField<unknown, string>>(
+  field: T,
+  newValue: T['value'],
+  explicit?: boolean,
+) => {
+  if (newValue !== field.value || explicit === true) {
+    field.value = newValue
+    field.dirty = true
+
+    if (isHTMLField(field)) {
+      field.warnings = makeHTMLWarnings(field.value, true)
+    }
+    field.error =
+      field.required && !field.value ? errorMsgs.fieldRequired : undefined
+    field.hideError = !field.dirty
+  }
+}
+
+// ---------------------------------------------------------------------------
+
+export const tidyUp = {
   text: (value: string) => value.trimLeft() as PlainText,
   html: (value: HTMLText) => value.trimLeft() as HTMLText,
   _: <T extends unknown>(value: T) => value,
@@ -70,7 +102,8 @@ export const derivedUpdates: {
    */
   title: (state: DraftingState, newTitle) => {
     const { type, text } = state.draft
-    type.value = findRegulationType(newTitle)
+    const derivedType = findRegulationType(newTitle)
+    updateFieldValue(type, derivedType)
     updateImpacts(state.draft, newTitle, text.value)
   },
 
@@ -92,24 +125,29 @@ export const derivedUpdates: {
     const draft = state.draft
     const { ministryName, signatureDate } = findSignatureInText(newValue)
 
-    const normalizedValue = ministryName?.toLowerCase().replace(/-/g, '')
-    const knownMinistry = normalizedValue
+    updateFieldValue(
+      draft.signatureDate,
+      signatureDate && new Date(signatureDate),
+    )
+
+    const ministryNameNormalized = ministryName?.toLowerCase().replace(/-/g, '')
+    const knownMinistry = ministryNameNormalized
       ? state.ministries.find(
-          (m) => m.name.toLowerCase().replace(/-/g, '') === normalizedValue,
+          (m) =>
+            m.name.toLowerCase().replace(/-/g, '') === ministryNameNormalized,
         )
       : undefined
-
     // prefer official name over typed name (ignores casing, and punctuation differernces)
-    draft.ministry.value = knownMinistry ? knownMinistry.name : ministryName
-    // Ideally this ought to be flagged as a less-severe error
-    draft.ministry.error =
-      ministryName && !knownMinistry ? errorMsgs.ministryUnknown : undefined
+    const newMinistryName = knownMinistry ? knownMinistry.name : ministryName
+    updateFieldValue(draft.ministry, newMinistryName)
 
-    // TODO: Match the derived ministry up with original draft author's
+    // TODO: Also match the derived ministry up with original draft author's
     // ministry connnection (i.e. their "place of work")
     // and issue a WARNING if the two ministry values don't match up.
-
-    draft.signatureDate.value = signatureDate && new Date(signatureDate)
+    const unknownMinistryError =
+      ministryName && !knownMinistry ? errorMsgs.ministryUnknown : undefined
+    draft.ministry.error = unknownMinistryError || draft.ministry.error
+    draft.ministry.hideError = !unknownMinistryError
   },
 }
 

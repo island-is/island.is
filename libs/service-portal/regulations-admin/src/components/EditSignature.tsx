@@ -323,7 +323,7 @@ export const EditSignature = () => {
                 )
               }
               onChange={(text) => updateState('signatureText', text)}
-              required={draft.signatureText.required}
+              required={!!draft.signatureText.required}
               error={t(draft.signatureText.error)}
             />
           </Box>
@@ -356,7 +356,7 @@ export const EditSignature = () => {
                   label={t(msg.ministry)}
                   value={draft.ministry.value || ''}
                   placeholder={t(msg.ministryPlaceholder)}
-                  hasError={!!draft.ministry.error}
+                  hasError={!!draft.ministry.error && !draft.ministry.hideError}
                   errorMessage={t(draft.ministry.error)}
                   name="_rn"
                   size="sm"

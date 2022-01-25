@@ -2,6 +2,8 @@ import { Appendix, HTMLText } from '@island.is/regulations'
 import { RegulationDraft } from '@island.is/regulations/admin'
 import { Step } from '../types'
 import { DraftField, HtmlDraftField, RegDraftForm, StepNav } from './types'
+import { errorMsgs } from '../messages'
+import { MessageDescriptor } from 'react-intl'
 
 // ---------------------------------------------------------------------------
 
@@ -35,7 +37,7 @@ export const steps: Record<Step, StepNav> = {
 
 const f = <V, T extends string | undefined>(
   value: V,
-  required?: true,
+  required?: true | MessageDescriptor,
   type?: T,
 ): DraftField<V, T extends string ? T : ''> => ({
   value,
@@ -44,24 +46,31 @@ const f = <V, T extends string | undefined>(
 })
 const fText = <T extends string>(
   value: T,
-  required?: true,
+  required?: true | MessageDescriptor,
 ): DraftField<T, 'text'> => ({
   value,
   required,
   type: 'text',
 })
-const fHtml = (value: HTMLText, required?: true): HtmlDraftField => ({
+const fHtml = (
+  value: HTMLText,
+  required?: true | MessageDescriptor,
+): HtmlDraftField => ({
   value,
   required,
   type: 'html',
   warnings: [],
 })
 
+// ---------------------------------------------------------------------------
+
 export const makeDraftAppendixForm = (appendix: Appendix, key: string) => ({
   title: fText(appendix.title, true),
   text: fHtml(appendix.text, true),
   key,
 })
+
+// ===========================================================================
 
 export const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
   const form: RegDraftForm = {
@@ -115,7 +124,7 @@ export const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
     draftingStatus: draft.draftingStatus,
     authors: f(draft.authors.map((author) => author.authorId)),
 
-    type: f(undefined /* draft.type */, true), // NOTE: Regulation type is always a derived value
+    type: f(undefined /* draft.type */, errorMsgs.typeRequired), // NOTE: Regulation type is always a derived value
     ministry: f(undefined /* draft.ministry */, true), // NOTE: The ministry is always a derived value
     signatureDate: f(
       undefined /* draft.signatureDate && new Date(draft.signatureDate) */,

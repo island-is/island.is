@@ -1,9 +1,8 @@
 import {} from '@island.is/regulations-tools/useTextWarnings'
 import { makeDraftAppendixForm, steps } from './makeFields'
 import { Action, ActionName, DraftingState } from './types'
-import { derivedUpdates, makeHTMLWarnings } from './validations'
+import { derivedUpdates, tidyUp, updateFieldValue } from './validations'
 import { Draft } from 'immer'
-import { errorMsgs } from '../messages'
 
 /* eslint-disable @typescript-eslint/naming-convention */
 export const actionHandlers: {
@@ -43,18 +42,7 @@ export const actionHandlers: {
         value,
       )
     }
-    if (value !== field.value || explicit === true) {
-      field.value = value
-      field.dirty = true
-
-      if (field.type === 'html') {
-        field.warnings = makeHTMLWarnings(field.value, true)
-      }
-    }
-    field.error =
-      field.required && !value && field.dirty
-        ? errorMsgs.fieldRequired
-        : undefined
+    updateFieldValue(field, value, explicit)
   },
 
   APPENDIX_ADD: (state) => {
@@ -71,17 +59,7 @@ export const actionHandlers: {
       // @ts-expect-error  (Fuu ... VSCode says no error, but if you remove this line, the build will fail. FML)
       value = tidyUp[field.type || '_'](value)
 
-      if (value !== field.value) {
-        field.value = value
-        field.dirty = true
-        if (field.type === 'html') {
-          field.warnings = makeHTMLWarnings(value, true)
-        }
-      }
-      field.error =
-        field.required && !value && field.dirty
-          ? errorMsgs.fieldRequired
-          : undefined
+      updateFieldValue(field, value)
     }
   },
 

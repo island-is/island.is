@@ -7,7 +7,6 @@ import {
 import {
   HTMLText,
   LawChapterSlug,
-  MinistrySlug,
   PlainText,
   RegName,
   URLString,
@@ -27,9 +26,10 @@ export type StepNav = {
 
 export type DraftField<Type, InputType extends string = ''> = {
   value: Type
-  required?: boolean
+  required?: boolean | MessageDescriptor
   dirty?: boolean
   error?: MessageDescriptor
+  hideError?: boolean
   type?: InputType
 }
 

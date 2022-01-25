@@ -3,7 +3,7 @@ import * as s from './Appendixes.css'
 import { EditorInput } from './EditorInput'
 import React, { MutableRefObject, useState } from 'react'
 import { MiniDiff } from './MiniDiff'
-import { editorMsgs as msg, errorMsgs } from '../messages'
+import { editorMsgs as msg } from '../messages'
 import { HTMLText, PlainText, Appendix } from '@island.is/regulations'
 import { RegulationDraft } from '@island.is/regulations/admin'
 import {
@@ -106,7 +106,7 @@ const AppendixEditing = (props: AppendixEditingProps) => {
                 actions.setAppendixProp(idx, 'title', value)
               }}
               onFocus={handleFocus}
-              required={title.required}
+              required={!!title.required}
               error={t(title.error)}
             />
             {baseTitle != null && title.value !== baseTitle && (
@@ -123,7 +123,7 @@ const AppendixEditing = (props: AppendixEditingProps) => {
               }
               draftId={draftId}
               isImpact={isImpact}
-              required={text.required}
+              required={!!text.required}
               error={t(text.error)}
             />
           </Box>
