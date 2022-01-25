@@ -6,6 +6,7 @@ import { CaseState } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
+  CaseInfo,
   FormContentContainer,
   FormFooter,
   InfoCard,
@@ -45,6 +46,13 @@ const OverviewForm: React.FC<Props> = (props) => {
           <Text as="h1" variant="h1">
             {formatMessage(icOverview.heading)}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <InfoCard
