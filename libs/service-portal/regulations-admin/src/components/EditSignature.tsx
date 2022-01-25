@@ -23,7 +23,12 @@ import { getMinPublishDate, useLocale } from '../utils'
 
 import { RegDraftForm } from '../state/types'
 import { EditorInput } from './EditorInput'
-import { HTMLText, URLString, useShortState } from '@island.is/regulations'
+import {
+  HTMLText,
+  PlainText,
+  URLString,
+  useShortState,
+} from '@island.is/regulations'
 import { produce } from 'immer'
 import { downloadUrl } from '../utils/files'
 
@@ -173,19 +178,21 @@ const useSignedUploader = (
 // ---------------------------------------------------------------------------
 
 const defaultSignatureText = `
-  <p class="Dags" align="center"><em>⸻ráðuneytinu, {dags}.</em></p>
+  <p class="Dags" align="center"><em>{ministry}nu, {dags}.</em></p>
   <p class="FHUndirskr" align="center">f.h.r.</p>
   <p class="Undirritun" align="center"><strong>—NAFN—</strong><br/>⸻ráðherra.</p>
   <p class="Undirritun" align="right"><em>—NAFN—.</em></p>
 ` as HTMLText
 
 const getDefaultSignatureText = (
-  formatDateFns: (date: Date, str?: string) => string,
+  dateFormatter: (date: Date, str?: string) => string,
+  /** The ministry of the author-type user that created the RegulationDraft */
+  authorMinistry?: PlainText,
 ) => {
-  return defaultSignatureText.replace(
-    '{dags}',
-    formatDateFns(new Date(), 'dd. MMMM yyyy'),
-  ) as HTMLText
+  const defaultMinistry = '⸻ráðuneyti'
+  return defaultSignatureText
+    .replace('{dags}', dateFormatter(new Date(), 'dd. MMMM yyyy'))
+    .replace('{ministry}', authorMinistry || defaultMinistry) as HTMLText
 }
 
 // ===========================================================================
@@ -311,7 +318,9 @@ export const EditSignature = () => {
               draftId={draft.id}
               value={
                 draft.signatureText.value ||
-                getDefaultSignatureText(formatDateFns)
+                getDefaultSignatureText(
+                  formatDateFns /*, authorNotEditorMinistry */,
+                )
               }
               onChange={(text) => updateState('signatureText', text)}
               required={draft.signatureText.required}
