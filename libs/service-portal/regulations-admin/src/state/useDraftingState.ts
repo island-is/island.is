@@ -208,6 +208,12 @@ const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
 //   return
 // }
 
+/**
+ * Checks title and text for possible "mentions" of other regulations.
+ *
+ * If mentions have changed, then loop through the list of registered
+ * impacts and revalidate if they affect regulations that are actually mentioned
+ */
 const updateImpacts = (
   draft: RegDraftForm,
   title: PlainText,
@@ -238,23 +244,40 @@ const updateImpacts = (
 
 // ---------------------------------------------------------------------------
 
-const specialUpdates: {
+/**
+ * Collection of "guessing" logic — setting/updating values/fields that
+ * are 100% dependant on other values.
+ */
+const derivedUpdates: {
   [Prop in RegDraftFormSimpleProps]?: (
     state: DraftingState,
     newValue: RegDraftForm[Prop]['value'],
   ) => RegDraftForm[Prop]['value'] | null | void
 } = {
+  /**
+   * Derive regulation `type` from wording of title.
+   * Re-validate impacts (search for "mentions" of regulation names)
+   */
   title: (state: DraftingState, newTitle) => {
     const { type, text } = state.draft
     type.value = findRegulationType(newTitle)
     updateImpacts(state.draft, newTitle, text.value)
   },
 
+  /**
+   * Re-validate impacts (search for "mentions" of regulation names)
+   */
   text: (state, newValue) => {
     const { title } = state.draft
     updateImpacts(state.draft, title.value, newValue)
   },
 
+  /**
+   * Parse the signature block and read the ministry name and signature date.
+   *
+   * This should effectively enforce conventional/standardized wording
+   * of beginning of the signature block.
+   */
   signatureText: (state, newValue) => {
     const draft = state.draft
     const { ministryName, signatureDate } = findSignatureInText(newValue)
@@ -311,7 +334,7 @@ const actionHandlers: {
     value = tidyUp[field.type || '_'](value)
 
     if (value !== field.value) {
-      specialUpdates[name]?.(
+      derivedUpdates[name]?.(
         state,
         // @ts-expect-error  (Pretty sure I'm holding this correctly,
         // and TS is in the weird here.
@@ -459,14 +482,15 @@ const useEditDraftReducer = (inputs: StateInputs) => {
       isEditor,
     }
     // guess all guesssed values on start.
-    Object.entries(specialUpdates).forEach(([prop, updaterFn]) => {
+    Object.entries(derivedUpdates).forEach(([prop, updaterFn]) => {
       updaterFn!(
         state,
         // @ts-expect-error  (because reasons)
         draft[prop as RegDraftFormSimpleProps].value,
       )
     })
-    const [makeWarnings, makeImpactWarnings] = [false, true].map(
+
+    const [validateHTML, validateImpactHTML] = [false, true].map(
       (isImpact) => (field: HtmlDraftField) => {
         if (field.value) {
           field.warnings = makeHighAngstWarnings(field.value, isImpact)
@@ -474,17 +498,17 @@ const useEditDraftReducer = (inputs: StateInputs) => {
       },
     )
 
-    makeWarnings(draft.text)
-    draft.appendixes.map((a) => a.text).forEach(makeWarnings)
-    makeWarnings(draft.comments)
+    validateHTML(draft.text)
+    draft.appendixes.map((a) => a.text).forEach(validateHTML)
+    validateHTML(draft.comments)
     draft.impacts
       .filter((i): i is DraftChangeForm => i.type === 'amend')
       .forEach((impact) => {
-        makeImpactWarnings(impact.text)
-        impact.appendixes.map((a) => a.text).forEach(makeImpactWarnings)
-        makeImpactWarnings(impact.comments)
+        validateImpactHTML(impact.text)
+        impact.appendixes.map((a) => a.text).forEach(validateImpactHTML)
+        validateImpactHTML(impact.comments)
       })
-    makeWarnings(draft.draftingNotes)
+    validateHTML(draft.draftingNotes)
 
     return state
   })
