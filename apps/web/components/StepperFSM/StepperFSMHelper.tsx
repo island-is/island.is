@@ -1,9 +1,10 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 
 import {
   AccordionItem,
   ArrowLink,
   Box,
+  Button,
   TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
@@ -22,6 +23,7 @@ import {
 import { useI18n } from '@island.is/web/i18n'
 import * as styles from './StepperFSMHelper.css'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
+import { STEPPER_HELPER_ENABLED } from './StepperFSM'
 
 const SUCCESS_SYMBOL = '✔️'
 const ERROR_SYMBOL = '❌'
@@ -166,6 +168,16 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
   currentStep,
   optionsFromNamespace,
 }) => {
+  const [isHidden, setIsHidden] = useState(false)
+
+  useEffect(() => {
+    const value = localStorage.getItem(STEPPER_HELPER_ENABLED)
+    if (value) {
+      console.log(value)
+      setIsHidden(!JSON.parse(value))
+    }
+  })
+
   const { activeLocale } = useI18n()
   const currentStepOptions = getStepOptions(
     currentStep,
@@ -193,6 +205,8 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
 
   const [errors, setErrors] = useState<ErrorField[]>([])
 
+  if (isHidden) return null
+
   return (
     <Box
       marginTop={15}
@@ -201,6 +215,19 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
       paddingTop={1}
     >
       <AccordionItem id="stepper-helper" label="Helper">
+        <Box marginBottom={2}>
+          <Button
+            onClick={() => {
+              localStorage.setItem(STEPPER_HELPER_ENABLED, 'false')
+              setIsHidden(true)
+            }}
+            variant="text"
+            size="small"
+          >
+            Hide helper
+          </Button>
+        </Box>
+
         {renderErrors(errors)}
 
         <Box marginTop={4} marginBottom={4}>
