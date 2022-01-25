@@ -20,6 +20,7 @@ interface Props {
   buttonText: string
   email?: string
   hookFormData: HookFormType
+  onValid: (val: boolean) => void
 }
 
 interface FormErrors {
@@ -27,7 +28,12 @@ interface FormErrors {
   code: string | undefined
 }
 
-export const InputEmail: FC<Props> = ({ buttonText, email, hookFormData }) => {
+export const InputEmail: FC<Props> = ({
+  buttonText,
+  email,
+  hookFormData,
+  onValid,
+}) => {
   useNamespaces('sp.settings')
   const { control, errors, getValues, trigger } = hookFormData
   const { formatMessage } = useLocale()
@@ -79,6 +85,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, hookFormData }) => {
         setEmailVerifyCreated(true)
         setEmailToVerify(emailValue)
         setVerificationValid(false)
+        onValid(false)
         setErrors({ ...formErrors, email: undefined })
       } else {
         setErrors({ ...formErrors, email: emailError })
@@ -112,6 +119,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, hookFormData }) => {
         const emailValue = formValues?.email
         if (emailValue === emailToVerify) {
           setVerificationValid(true)
+          onValid(true)
         }
         setErrors({ ...formErrors, code: undefined })
       } else {
@@ -186,6 +194,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, hookFormData }) => {
               <Controller
                 control={control}
                 name="code"
+                defaultValue=""
                 rules={{
                   required: {
                     value: true,

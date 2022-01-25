@@ -48,6 +48,8 @@ export const ProfileForm: FC<Props> = ({
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
   const [bankInfo, setBankInfo] = useState('')
+  const [confirmedEmail, setConfirmedEmail] = useState(false)
+  const [confirmedPhone, setConfirmedPhone] = useState(false)
 
   const { data: userProfile, loading: userLoading } = useUserProfile()
 
@@ -172,6 +174,7 @@ export const ProfileForm: FC<Props> = ({
                 })}
                 email={email}
                 hookFormData={hookFormData}
+                onValid={(val) => setConfirmedEmail(val)}
               />
             </InputSection>
             <InputSection
@@ -186,6 +189,7 @@ export const ProfileForm: FC<Props> = ({
                 })}
                 mobile={tel}
                 hookFormData={hookFormData}
+                onValid={(val) => setConfirmedPhone(val)}
               />
             </InputSection>
             {showDetails && (
@@ -228,7 +232,9 @@ export const ProfileForm: FC<Props> = ({
               <Button
                 icon="checkmark"
                 disabled={
-                  dirtyFields.email || dirtyFields.tel || (!tel && !email)
+                  (dirtyFields.email && !confirmedEmail) ||
+                  (dirtyFields.tel && !confirmedPhone) ||
+                  (!tel && !email)
                 }
                 type="submit"
               >

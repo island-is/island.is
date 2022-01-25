@@ -23,6 +23,7 @@ interface Props {
   buttonText: string
   mobile?: string
   hookFormData: HookFormType
+  onValid: (val: boolean) => void
 }
 
 interface FormErrors {
@@ -30,7 +31,12 @@ interface FormErrors {
   code: string | undefined
 }
 
-export const InputPhone: FC<Props> = ({ buttonText, mobile, hookFormData }) => {
+export const InputPhone: FC<Props> = ({
+  buttonText,
+  mobile,
+  hookFormData,
+  onValid,
+}) => {
   useNamespaces('sp.settings')
   const { control, errors, getValues, trigger } = hookFormData
   const { formatMessage } = useLocale()
@@ -82,6 +88,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, hookFormData }) => {
         setTelVerifyCreated(true)
         setTelToVerify(telValue)
         setVerificationValid(false)
+        onValid(false)
         setErrors({ ...formErrors, mobile: undefined })
       } else {
         setErrors({ ...formErrors, mobile: telError })
@@ -115,6 +122,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, hookFormData }) => {
         const telValue = formValues?.tel
         if (telValue === telToVerify) {
           setVerificationValid(true)
+          onValid(true)
         }
         setErrors({ ...formErrors, code: undefined })
       } else {

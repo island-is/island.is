@@ -21,19 +21,17 @@ export const SMS_VERIFICATION_MAX_AGE = 5 * 60 * 1000
 export const SMS_VERIFICATION_MAX_TRIES = 5
 
 /**
-  *- Email verification procedure
-    *- New User
-      *- Create User
-      *- Create Email verification
-      *- Send Email verification
-    *- Update User
-      *- Is email being Updated
-      *- Create Email Verification
-      *- Send Email verification
-    *- Confirmation
-      *- Does hash match
-      *- Remove Email verifation from db
-      *- Mark email as confirmed in UserProfile
+  *- email verification procedure
+    *- New user
+      *- User confirms before User profile Creation
+      *- Create email confirmation
+      *- Confirm Directly with emailCode
+      *- On profile creation check for confirmation and mark email as verified
+    *- Update user
+      *- Create email confirmation
+      *- Confirm Directly with code
+      *- update email check db for confirmation save email as verified
+
 
   *- SMS verification procedure
     *- New user
@@ -68,17 +66,16 @@ export class VerificationService {
     const emailCode = randomInt(0, 999999).toString().padStart(6, '0')
 
     const [record] = await this.emailVerificationModel.upsert(
-      { nationalId, email, hash: emailCode },
+      { nationalId, email, hash: emailCode, created: new Date() },
       {
         returning: true,
       },
     )
 
-    console.log('verification.hash', record.hash)
-    // TODO: COMMENT BACK IN.. REMOVED WHILE DEVELOPING
-    // if (record) {
-    //   this.sendConfirmationEmail(record)
-    // }
+    // console.log('verification.hash', record.hash)
+    if (record) {
+      this.sendConfirmationEmail(record)
+    }
 
     return record
   }
@@ -121,18 +118,32 @@ export class VerificationService {
       }
     }
 
+    const expiration = addMilliseconds(
+      verification.created,
+      SMS_VERIFICATION_MAX_AGE,
+    )
+    if (expiration < new Date()) {
+      return {
+        message: 'Email verification is expired',
+        confirmed: false,
+      }
+    }
+
     if (confirmEmailDto.hash !== verification.hash) {
+      // TODO: Add tries?
       return {
         message: `Email verification with hash ${confirmEmailDto.hash} does not exist`,
         confirmed: false,
       }
     }
 
-    await this.userProfileService.update(nationalId, {
-      emailVerified: true,
-    })
-
-    await this.removeEmailVerification(nationalId)
+    await this.emailVerificationModel.update(
+      { confirmed: true },
+      {
+        where: { nationalId },
+        returning: true,
+      },
+    )
 
     return {
       message: 'Email confirmed',
@@ -261,5 +272,16 @@ export class VerificationService {
       verification.confirmed &&
       verification.mobilePhoneNumber === mobilePhoneNumber
     )
+  }
+
+  async isEmailVerified(
+    createUserProfileDto: CreateUserProfileDto,
+  ): Promise<boolean> {
+    const { nationalId, email } = createUserProfileDto
+    const verification = await this.emailVerificationModel.findOne({
+      where: { nationalId },
+    })
+    if (!verification) return false
+    return verification.confirmed && verification.email === email
   }
 }

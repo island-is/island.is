@@ -114,10 +114,18 @@ export class UserProfileController {
     }
 
     if (userProfileDto.email) {
-      await this.verificationService.createEmailVerification(
-        userProfileDto.nationalId,
-        userProfileDto.email,
+      const phoneVerified = await this.verificationService.isEmailVerified(
+        userProfileDto,
       )
+      userProfileDto = {
+        ...userProfileDto,
+        emailVerified: phoneVerified,
+      }
+      if (phoneVerified) {
+        await this.verificationService.removeEmailVerification(
+          userProfileDto.nationalId,
+        )
+      }
     }
 
     if (userProfileDto.mobilePhoneNumber) {
@@ -186,15 +194,17 @@ export class UserProfileController {
       }
     }
 
-    if (
-      userProfileToUpdate.email &&
-      userProfileToUpdate.email !== profile.email
-    ) {
-      await this.verificationService.createEmailVerification(
+    if (userProfileToUpdate.email) {
+      const { email } = userProfileToUpdate
+      const mailVerified = await this.verificationService.isEmailVerified({
         nationalId,
-        userProfileToUpdate.email,
-      )
-      userProfileToUpdate = { ...userProfileToUpdate, emailVerified: false }
+        email,
+      })
+
+      userProfileToUpdate = {
+        ...userProfileToUpdate,
+        emailVerified: mailVerified,
+      }
     }
 
     const {

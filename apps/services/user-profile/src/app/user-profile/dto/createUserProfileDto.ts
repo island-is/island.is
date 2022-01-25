@@ -34,4 +34,8 @@ export class CreateUserProfileDto {
   @IsOptional()
   @IsBoolean()
   readonly mobilePhoneNumberVerified?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  readonly emailVerified?: boolean
 }
