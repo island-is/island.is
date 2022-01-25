@@ -84,8 +84,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                       `${defendant.name} kt. ${defendant.nationalId}`,
                   )
                   .toString()
-                  .replace(/,/g, ', ')
-                  .slice(0, -1),
+                  .replace(/,/g, ', '),
               }),
               ...(courtClaim.format?.address && {
                 address: workingCase.defendants[0].address,
