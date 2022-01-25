@@ -9,6 +9,9 @@ import {
   RolesRule,
   User,
 } from '@island.is/financial-aid/shared/lib'
+import { ForbiddenException } from '@nestjs/common'
+import { firstDateOfMonth } from '@island.is/financial-aid/shared/lib'
+import { Op } from 'sequelize'
 import { uuid } from 'uuidv4'
 import { ApplicationEventService } from '../../applicationEvent'
 import { FileService } from '../../file/file.service'
@@ -68,6 +71,7 @@ describe.only('ApplicationController - Create', () => {
 
   describe('database query', () => {
     let mockCreate: jest.Mock
+    let mockFindOne: jest.Mock
 
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
@@ -107,6 +111,9 @@ describe.only('ApplicationController - Create', () => {
 
     beforeEach(async () => {
       mockCreate = mockApplicationModel.create as jest.Mock
+      mockFindOne = mockApplicationModel.findOne as jest.Mock
+      const mockFindApplication = mockApplicationModel.findOne as jest.Mock
+      mockFindApplication.mockReturnValueOnce(null)
 
       await givenWhenThen(user, application)
     })
@@ -115,6 +122,22 @@ describe.only('ApplicationController - Create', () => {
       expect(mockCreate).toHaveBeenCalledWith({
         nationalId: user.nationalId,
         ...application,
+      })
+    })
+
+    it('should call find one on model with applicant national id', () => {
+      expect(mockFindOne).toHaveBeenCalledWith({
+        where: {
+          [Op.or]: [
+            {
+              nationalId: user.nationalId,
+            },
+            {
+              spouseNationalId: user.nationalId,
+            },
+          ],
+          created: { [Op.gte]: firstDateOfMonth() },
+        },
       })
     })
   })
@@ -183,6 +206,8 @@ describe.only('ApplicationController - Create', () => {
       mockCreate.mockReturnValueOnce(appModel)
       const findByMunicipalityId = mockMunicipalityService.findByMunicipalityId as jest.Mock
       findByMunicipalityId.mockReturnValueOnce(Promise.resolve(municipality))
+      const mockFindApplication = mockApplicationModel.findOne as jest.Mock
+      mockFindApplication.mockReturnValueOnce(null)
 
       then = await givenWhenThen(user, application)
     })
@@ -292,6 +317,8 @@ describe.only('ApplicationController - Create', () => {
       mockCreate.mockReturnValueOnce(appModel)
       const findByMunicipalityId = mockMunicipalityService.findByMunicipalityId as jest.Mock
       findByMunicipalityId.mockReturnValueOnce(Promise.resolve(municipality))
+      const mockFindApplication = mockApplicationModel.findOne as jest.Mock
+      mockFindApplication.mockReturnValueOnce(null)
 
       then = await givenWhenThen(user, application)
     })
@@ -382,6 +409,9 @@ describe.only('ApplicationController - Create', () => {
       const mockCreate = mockApplicationModel.create as jest.Mock
       mockCreate.mockReturnValueOnce(appModel)
 
+      const mockFindApplication = mockApplicationModel.findOne as jest.Mock
+      mockFindApplication.mockReturnValueOnce(null)
+
       then = await givenWhenThen(user, application)
     })
 
@@ -399,6 +429,69 @@ describe.only('ApplicationController - Create', () => {
 
     it('should call file service twice', () => {
       expect(mockFileService.createFile).toBeCalledTimes(2)
+    })
+  })
+
+  describe('applicant has applied for period', () => {
+    let then: Then
+
+    const id = uuid()
+
+    const application: CreateApplicationDto = {
+      state: ApplicationState.NEW,
+      name: 'Tester',
+      phoneNumber: '',
+      email: 'Some mail',
+      homeCircumstances: HomeCircumstances.UNKNOWN,
+      employment: Employment.WORKING,
+      student: false,
+      studentCustom: '',
+      usePersonalTaxCredit: false,
+      bankNumber: '',
+      ledger: '',
+      accountNumber: '',
+      interview: false,
+      hasIncome: false,
+      formComment: '',
+      files: [
+        { name: 'name', key: 'key', size: 10, type: FileType.INCOME },
+        { name: 'name2', key: 'key2', size: 14, type: FileType.TAXRETURN },
+      ],
+      amount: 0,
+      spouseName: undefined,
+      spouseNationalId: undefined,
+      spouseEmail: undefined,
+      familyStatus: FamilyStatus.COHABITATION,
+      city: '',
+      postalCode: '',
+      municipalityCode: '3',
+      streetName: '',
+      homeCircumstancesCustom: '',
+      employmentCustom: '',
+    }
+    const user: User = {
+      nationalId: '0000000000',
+      name: 'The User',
+      folder: uuid(),
+      service: RolesRule.OSK,
+    }
+
+    const appModel = {
+      id,
+      state: application.state,
+      created: new Date(),
+      email: application.email,
+    }
+
+    beforeEach(async () => {
+      const mockFindApplication = mockApplicationModel.findOne as jest.Mock
+      mockFindApplication.mockReturnValueOnce({ id: '10' } as ApplicationModel)
+
+      then = await givenWhenThen(user, application)
+    })
+
+    it('should throw forbidden exception', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
     })
   })
 
