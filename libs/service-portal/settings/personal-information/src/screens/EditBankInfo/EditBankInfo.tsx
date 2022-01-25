@@ -8,47 +8,41 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { Link, Redirect } from 'react-router-dom'
-import { useLocale, useNamespaces } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
 import {
-  useCreateUserProfile,
   useUpdateUserProfile,
   useUserProfile,
 } from '@island.is/service-portal/graphql'
 import React, { useEffect, useState } from 'react'
 import {
-  LanguageForm,
-  LanguageFormData,
-  LanguageFormOption,
-} from '../../components/Forms/LanguageForm'
+  BankInfoForm,
+  BankInfoFormData,
+} from '../../components/Forms/BankInfoForm'
 
-export const EditLanguage: ServicePortalModuleComponent = () => {
+export const EditBankInfo: ServicePortalModuleComponent = () => {
   useNamespaces('sp.settings')
-  const [language, setLanguage] = useState<LanguageFormOption | null>(null)
-  const { data: settings } = useUserProfile()
+  const [bankInfo, setBankInfo] = useState('')
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
     'passive',
   )
-  const { formatMessage } = useLocale()
-  const { createUserProfile } = useCreateUserProfile()
+
+  const { data: settings } = useUserProfile()
   const { updateUserProfile } = useUpdateUserProfile()
 
+  const { formatMessage } = useLocale()
+
   useEffect(() => {
-    if (!settings || !settings.locale) return
-    if (settings.locale.length > 0)
-      setLanguage({
-        value: settings.locale as Locale,
-        label: settings.locale === 'is' ? 'Íslenska' : 'English',
-      })
+    if (settings?.bankInfo) setBankInfo(settings.bankInfo)
   }, [settings])
 
-  const submitFormData = async (formData: LanguageFormData) => {
-    if (formData.language === null) {
+  const submitFormData = async (formData: BankInfoFormData) => {
+    if (formData.bankInfo === null) {
       setStatus('error')
       return
     }
@@ -56,42 +50,38 @@ export const EditLanguage: ServicePortalModuleComponent = () => {
     if (status !== 'passive') setStatus('passive')
 
     try {
-      // Update the profile if it exists, otherwise create one
+      const formattedBankInfo = formData.bankInfo.replace(
+        /^(.{4})(.{2})/,
+        '$1-$2-',
+      )
       if (settings) {
         await updateUserProfile({
-          locale: formData.language.value,
+          bankInfo: formattedBankInfo,
+          email: settings.email ?? undefined,
+          locale: (settings.locale as Locale) ?? undefined,
           canNudge: settings.canNudge ?? undefined,
           mobilePhoneNumber: settings.mobilePhoneNumber ?? undefined,
-          email: settings.email ?? undefined,
-          bankInfo: settings.bankInfo ?? undefined,
-        })
-      } else {
-        await createUserProfile({
-          locale: formData.language.value,
         })
       }
       setStatus('success')
       toast.success(
-        formData.language.value === 'is'
-          ? 'Nýtt tungumál hefur verið vistað'
-          : 'New language setting has been saved',
+        formatMessage({
+          id: 'sp.settings:bankInfo-confirmed-saved',
+          defaultMessage: 'Bankaupplýsingar vistaðar',
+        }),
       )
     } catch (err) {
       setStatus('error')
     }
   }
 
-  const handleSubmit = (data: LanguageFormData) => {
-    submitFormData(data)
-  }
-
   return (
     <>
       <Box marginBottom={4}>
-        <Text variant="h3" as="h1">
+        <Text variant="h1" as="h1">
           {formatMessage({
-            id: 'sp.settings:edit-language',
-            defaultMessage: 'Breyta tungumáli',
+            id: 'sp.settings:edit-bankInfo',
+            defaultMessage: 'Breyta reikningsupplýsingum',
           })}
         </Text>
       </Box>
@@ -100,9 +90,9 @@ export const EditLanguage: ServicePortalModuleComponent = () => {
           <GridColumn span={['1/1', '6/8']}>
             <Text>
               {formatMessage({
-                id: 'sp.settings:edit-language-description',
+                id: 'sp.settings:edit-bankInfo-description',
                 defaultMessage: `
-                  Hér getur þú gert breytingar á því tungumáli
+                  Hér getur þú gert breytingar á þeim bankareikningi
                   sem þú vilt nota í kerfum island.is.
                 `,
               })}
@@ -110,8 +100,8 @@ export const EditLanguage: ServicePortalModuleComponent = () => {
           </GridColumn>
         </GridRow>
       </Box>
-      <LanguageForm
-        language={language}
+      <BankInfoForm
+        bankInfo={bankInfo}
         renderBackButton={() => (
           <Link to={ServicePortalPath.SettingsPersonalInformation}>
             <Button variant="ghost">{formatMessage(m.goBack)}</Button>
@@ -125,7 +115,7 @@ export const EditLanguage: ServicePortalModuleComponent = () => {
             })}
           </Button>
         )}
-        onSubmit={handleSubmit}
+        onSubmit={submitFormData}
       />
       {status !== 'passive' && (
         <Box marginTop={[5, 7, 15]}>
@@ -133,11 +123,11 @@ export const EditLanguage: ServicePortalModuleComponent = () => {
             <AlertMessage
               type="error"
               title={formatMessage({
-                id: 'sp.settings:language-confirmed-error-title',
-                defaultMessage: 'Tókst ekki að vista tungumál',
+                id: 'sp.settings:bankInfo-confirmed-error-title',
+                defaultMessage: 'Tókst ekki að vista reikningsupplýsingar',
               })}
               message={formatMessage({
-                id: 'sp.settings:language-confirmed-error-subtext',
+                id: 'sp.settings:bankInfo-confirmed-error-subtext',
                 defaultMessage:
                   'Eitthvað hefur farið úrskeiðis, vinsamlegast reyndu aftur síðar',
               })}
@@ -152,4 +142,4 @@ export const EditLanguage: ServicePortalModuleComponent = () => {
   )
 }
 
-export default EditLanguage
+export default EditBankInfo
