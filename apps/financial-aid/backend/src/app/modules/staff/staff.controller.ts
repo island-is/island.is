@@ -35,16 +35,15 @@ import { UpdateStaffDto, CreateStaffDto } from './dto'
 export class StaffController {
   constructor(private readonly staffService: StaffService) {}
 
-  @Get('nationalId/:nationalId')
+  @Get('nationalId')
   @ApiOkResponse({
     type: StaffModel,
     description: 'Gets staff by nationalId',
   })
   async getStaffByNationalId(
-    @Param('nationalId') nationalId: string,
+    @CurrentStaff() staff: StaffModel,
   ): Promise<StaffModel> {
-    const staff = await this.staffService.findByNationalId(nationalId)
-    if (staff === null || staff.active === false) {
+    if (!staff || staff.active === false) {
       throw new ForbiddenException('Staff not found or is not active')
     }
     return staff

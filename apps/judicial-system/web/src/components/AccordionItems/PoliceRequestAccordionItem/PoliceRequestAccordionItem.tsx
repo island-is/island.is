@@ -41,9 +41,11 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
     >
       <Box marginBottom={2}>
         <Text variant="h4" as="h4">
-          {formatMessage(core.defendant, {
-            suffix: (workingCase.defendants ?? []).length > 1 ? 'ar' : 'i',
-          })}
+          {capitalize(
+            formatMessage(core.defendant, {
+              suffix: (workingCase.defendants ?? []).length > 1 ? 'ar' : 'i',
+            }),
+          )}
         </Text>
       </Box>
       {workingCase.defendants &&
