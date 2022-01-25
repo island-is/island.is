@@ -30,7 +30,7 @@ type GivenWhenThen = (
   application: CreateApplicationDto,
 ) => Promise<Then>
 
-describe.only('ApplicationController - Create', () => {
+describe('ApplicationController - Create', () => {
   let givenWhenThen: GivenWhenThen
   let mockApplicationModel: typeof ApplicationModel
   let mockApplicationEventService: ApplicationEventService

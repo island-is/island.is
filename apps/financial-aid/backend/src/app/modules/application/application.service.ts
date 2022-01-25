@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common'
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { ApplicationModel, SpouseResponse } from './models'
@@ -331,10 +335,7 @@ export class ApplicationService {
     id: string,
     update: UpdateApplicationDto,
     staff?: Staff,
-  ): Promise<{
-    numberOfAffectedRows: number
-    updatedApplication: ApplicationModel
-  }> {
+  ): Promise<ApplicationModel> {
     if (update.state && update.state === ApplicationState.NEW) {
       update.staffId = null
     }
@@ -346,6 +347,10 @@ export class ApplicationService {
       where: { id },
       returning: true,
     })
+
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`Application ${id} does not exist`)
+    }
 
     await this.applicationEventService.create({
       applicationId: id,
@@ -381,7 +386,7 @@ export class ApplicationService {
       this.sendApplicationUpdateEmail(update, updatedApplication),
     ])
 
-    return { numberOfAffectedRows, updatedApplication }
+    return updatedApplication
   }
 
   private async sendApplicationUpdateEmail(

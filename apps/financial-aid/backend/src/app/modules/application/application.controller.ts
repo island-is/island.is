@@ -8,6 +8,7 @@ import {
   Put,
   NotFoundException,
   Inject,
+  ForbiddenException,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 import { ApplicationService } from './application.service'
@@ -32,6 +33,7 @@ import {
 
 import {
   apiBasePath,
+  ApplicationEventType,
   ApplicationStateUrl,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
@@ -209,18 +211,41 @@ export class ApplicationController {
 
     let staff = undefined
 
+    const staffUpdateEvents = [
+      ApplicationEventType.REJECTED,
+      ApplicationEventType.APPROVED,
+      ApplicationEventType.STAFFCOMMENT,
+      ApplicationEventType.INPROGRESS,
+      ApplicationEventType.ASSIGNCASE,
+      ApplicationEventType.NEW,
+    ]
+
+    const applicantUpdateEvents = [
+      ApplicationEventType.USERCOMMENT,
+      ApplicationEventType.SPOUSEFILEUPLOAD,
+      ApplicationEventType.FILEUPLOAD,
+    ]
+
+    if (
+      (user.service === RolesRule.OSK &&
+        staffUpdateEvents.includes(applicationToUpdate.event)) ||
+      (user.service === RolesRule.VEITA &&
+        applicantUpdateEvents.includes(applicationToUpdate.event))
+    ) {
+      throw new ForbiddenException(
+        'User not allowed to make this change to application',
+      )
+    }
+
     if (user.service === RolesRule.VEITA) {
       staff = await this.staffService.findByNationalId(user.nationalId)
     }
 
-    const {
-      numberOfAffectedRows,
-      updatedApplication,
-    } = await this.applicationService.update(id, applicationToUpdate, staff)
-
-    if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(`Application ${id} does not exist`)
-    }
+    const updatedApplication = await this.applicationService.update(
+      id,
+      applicationToUpdate,
+      staff,
+    )
 
     updatedApplication?.setDataValue('staff', staff)
 
