@@ -11,7 +11,11 @@ import {
   FormFooter,
   HideableText,
 } from '@island.is/judicial-system-web/src/components'
-import { Case, SessionArrangements } from '@island.is/judicial-system/types'
+import {
+  Case,
+  SessionArrangements,
+  User,
+} from '@island.is/judicial-system/types'
 import {
   newSetAndSendDateToServer,
   removeTabsValidateAndSet,
@@ -33,10 +37,11 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  user?: User
 }
 
 const CourtRecordForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
+  const { workingCase, setWorkingCase, isLoading, user } = props
   const [courtLocationEM, setCourtLocationEM] = useState('')
   const [
     litigationPresentationsErrorMessage,
@@ -62,7 +67,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseNumbers workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={3}>
           <BlueBox>

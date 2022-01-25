@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import {
   CaseAppealDecision,
   SessionArrangements,
+  User,
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
@@ -39,10 +40,11 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  user?: User
 }
 
 const RulingStepTwoForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
+  const { workingCase, setWorkingCase, isLoading, user } = props
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
   const [courtDocumentEndEM, setCourtDocumentEndEM] = useState<string>('')
@@ -56,7 +58,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseNumbers workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>

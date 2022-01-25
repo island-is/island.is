@@ -55,7 +55,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseNumbers workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Accordion>

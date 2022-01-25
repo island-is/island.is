@@ -12,6 +12,7 @@ import {
   FormContentContainer,
   FormFooter,
   BlueBox,
+  CaseNumbers,
 } from '@island.is/judicial-system-web/src/components'
 import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
 import { useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
@@ -61,6 +62,9 @@ const StepTwoForm: React.FC<Props> = (props) => {
           <Text as="h1" variant="h1">
             {formatMessage(rcRequestedHearingArrangements.heading)}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseNumbers workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={5}>
           <BlueBox>
