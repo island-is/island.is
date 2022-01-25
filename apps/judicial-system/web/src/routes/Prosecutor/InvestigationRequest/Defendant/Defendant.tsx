@@ -51,9 +51,11 @@ const Defendant = () => {
           })
         }
       })
-      router.push(`${constants.STEP_TWO_ROUTE}/${createdCase.id}`)
+      router.push(
+        `${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
+      )
     } else {
-      router.push(`${constants.STEP_TWO_ROUTE}/${theCase.id}`)
+      router.push(`${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`)
     }
   }
 
