@@ -6,14 +6,15 @@ import {
   ResponsiveSpace,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { OneColumnText } from '@island.is/web/graphql/schema'
 import Link from 'next/link'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 interface SliceProps {
   slice: OneColumnText
-  borderTopWidth?: 'large' | 'standard'
-  borderColor?: 'standard'
+  borderTopWidth?: 'large' | 'standard' | 'xl'
+  borderColor?: keyof typeof theme.border.color
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
 }

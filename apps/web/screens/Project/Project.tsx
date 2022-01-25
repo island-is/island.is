@@ -26,6 +26,7 @@ import {
   EntryProjectHeader,
   HeadWithSocialSharing,
   ElectionProjectHeader,
+  OneColumnTextSlice,
 } from '@island.is/web/components'
 import {
   Box,
@@ -330,7 +331,9 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
         {!renderSlicesAsTabs &&
           (subpage ?? projectPage).slices.map((slice) =>
             slice.__typename === 'OneColumnText' ? (
-              <p>yes</p>
+              <Box marginTop={8}>
+                <OneColumnTextSlice slice={slice} />
+              </Box>
             ) : (
               <OrganizationSlice
                 key={slice.id}
