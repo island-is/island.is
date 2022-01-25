@@ -5,7 +5,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { RegulationDraftId } from '@island.is/regulations/admin'
 import { isUuid } from 'uuidv4'
 import { Step } from '../types'
-import { RegDraftingProvider, steps } from '../state/useDraftingState'
+import { RegDraftingProvider } from '../state/useDraftingState'
 import { useMinistriesQuery, useRegulationDraftQuery } from '../utils/dataHooks'
 import { MessageDescriptor } from '@formatjs/intl'
 import { editorMsgs } from '../messages'
@@ -18,6 +18,7 @@ import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { SaveDeleteButtons } from '../components/SaveDeleteButtons'
 import { DraftingNotes } from '../components/DraftingNotes'
 import { ButtonBar } from '../components/ButtonBar'
+import { steps } from '../state/makeFields'
 
 // ---------------------------------------------------------------------------
 
