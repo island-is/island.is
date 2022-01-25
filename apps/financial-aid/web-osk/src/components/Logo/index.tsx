@@ -13,21 +13,15 @@ const Logo = ({ className }: LogoProps) => {
 
   return (
     <>
-      {municipality?.id && (
+      {municipality && (
         <a
-          href={
-            municipality?.homepage
-              ? municipality.homepage
-              : 'https://www.samband.is/'
-          }
+          href={municipality.homepage}
           target="_blank"
           className={cn({ [`${className}`]: true })}
           rel="noreferrer noopener"
         >
           <LogoSvg
-            name={
-              logoKeyFromMunicipalityCode[municipality?.municipalityId ?? '']
-            }
+            name={logoKeyFromMunicipalityCode[municipality.municipalityId]}
           />
         </a>
       )}
