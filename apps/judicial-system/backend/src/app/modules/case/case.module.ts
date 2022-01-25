@@ -6,6 +6,7 @@ import { EmailModule } from '@island.is/email-service'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 import { environment } from '../../../environments'
+import { DefendantModule } from '../defendant/defendant.module'
 import { UserModule } from '../user'
 import { FileModule } from '../file'
 import { AwsS3Module } from '../aws-s3'
@@ -19,6 +20,7 @@ import { CaseService } from './case.service'
   imports: [
     SigningModule.register(environment.signingOptions),
     EmailModule.register(environment.emailOptions),
+    forwardRef(() => DefendantModule),
     UserModule,
     forwardRef(() => FileModule),
     AwsS3Module,

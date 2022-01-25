@@ -35,7 +35,9 @@
     "@protobufjs/path",
     "@protobufjs/pool",
     "@protobufjs/utf8",
-    "firebase-admin"
+    "firebase-admin",
+    "lru-cache",
+    "pseudomap"
   ],
   "keepNames": true
 }
