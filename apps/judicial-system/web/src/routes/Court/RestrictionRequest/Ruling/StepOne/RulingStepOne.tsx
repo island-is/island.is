@@ -16,7 +16,7 @@ import {
   PageLayout,
   PoliceRequestAccordionItem,
   BlueBox,
-  CaseNumbers,
+  CaseInfo,
   FormContentContainer,
   CaseFileList,
   Decision,
@@ -148,7 +148,7 @@ export const RulingStepOne: React.FC = () => {
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
-          <CaseNumbers workingCase={workingCase} userRole={user?.role} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Accordion>

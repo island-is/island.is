@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import {
   CaseFileList,
-  CaseNumbers,
+  CaseInfo,
   Decision,
   FormContentContainer,
   FormFooter,
@@ -55,7 +55,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
-          <CaseNumbers workingCase={workingCase} userRole={user?.role} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Accordion>

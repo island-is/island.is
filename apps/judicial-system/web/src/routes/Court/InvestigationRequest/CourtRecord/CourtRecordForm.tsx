@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
-  CaseNumbers,
+  CaseInfo,
   CourtDocuments,
   DateTime,
   FormContentContainer,
@@ -67,7 +67,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} userRole={user?.role} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={3}>
           <BlueBox>

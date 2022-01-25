@@ -16,7 +16,7 @@ import {
 import {
   FormFooter,
   PageLayout,
-  CaseNumbers,
+  CaseInfo,
   BlueBox,
   FormContentContainer,
   Modal,
@@ -188,7 +188,7 @@ export const HearingArrangements: React.FC = () => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} userRole={user?.role} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>

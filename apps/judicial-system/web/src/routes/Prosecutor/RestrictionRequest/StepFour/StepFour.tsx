@@ -12,7 +12,7 @@ import {
   FormFooter,
   PageLayout,
   FormContentContainer,
-  CaseNumbers,
+  CaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
   ProsecutorSubsections,
@@ -116,7 +116,7 @@ export const StepFour: React.FC = () => {
           </Text>
         </Box>
         <Box marginBottom={7}>
-          <CaseNumbers
+          <CaseInfo
             workingCase={workingCase}
             userRole={user?.role}
             showAdditionalInfo

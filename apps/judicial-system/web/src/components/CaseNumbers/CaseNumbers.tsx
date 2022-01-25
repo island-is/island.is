@@ -12,7 +12,7 @@ interface Props {
   showAdditionalInfo?: boolean
 }
 
-const CaseNumbers: React.FC<Props> = ({
+const CaseInfo: React.FC<Props> = ({
   workingCase,
   userRole,
   showAdditionalInfo,
@@ -65,4 +65,4 @@ const CaseNumbers: React.FC<Props> = ({
   )
 }
 
-export default CaseNumbers
+export default CaseInfo

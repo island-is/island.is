@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
-  CaseNumbers,
+  CaseInfo,
   CourtRecordAccordionItem,
   FormContentContainer,
   FormFooter,
@@ -54,7 +54,7 @@ const Confirmation: React.FC<Props> = (props) => {
           )}`}</Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} />
         </Box>
         <Box marginBottom={9}>
           <Accordion>

@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { Box, Checkbox, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
-  CaseNumbers,
+  CaseInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
@@ -58,7 +58,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers
+          <CaseInfo
             workingCase={workingCase}
             userRole={user?.role}
             showAdditionalInfo

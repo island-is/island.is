@@ -4,7 +4,7 @@ import { ValueType } from 'react-select'
 
 import {
   BlueBox,
-  CaseNumbers,
+  CaseInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
@@ -82,7 +82,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} userRole={user.role} />
+          <CaseInfo workingCase={workingCase} userRole={user.role} />
         </Box>
         {prosecutors && (
           <Box component="section" marginBottom={5}>

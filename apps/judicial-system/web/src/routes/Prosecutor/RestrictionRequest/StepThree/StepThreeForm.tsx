@@ -11,7 +11,7 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
-  CaseNumbers,
+  CaseInfo,
   DateTime,
   FormContentContainer,
   FormFooter,
@@ -62,7 +62,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box marginBottom={7}>
-          <CaseNumbers
+          <CaseInfo
             workingCase={workingCase}
             userRole={user?.role}
             showAdditionalInfo

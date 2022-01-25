@@ -11,7 +11,7 @@ import {
   FormContentContainer,
   FormFooter,
   TimeInputField,
-  CaseNumbers,
+  CaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Box,
@@ -58,7 +58,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} userRole={user?.role} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>

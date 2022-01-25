@@ -7,7 +7,7 @@ import {
   FormFooter,
   CourtDocuments,
   PageLayout,
-  CaseNumbers,
+  CaseInfo,
   BlueBox,
   FormContentContainer,
   DateTime,
@@ -192,7 +192,7 @@ export const CourtRecord: React.FC = () => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} userRole={user?.role} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={3}>
           <BlueBox>

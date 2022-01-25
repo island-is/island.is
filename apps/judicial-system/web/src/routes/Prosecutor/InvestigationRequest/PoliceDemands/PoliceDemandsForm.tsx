@@ -3,7 +3,7 @@ import { MessageDescriptor, useIntl } from 'react-intl'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import {
-  CaseNumbers,
+  CaseInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
@@ -109,7 +109,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers
+          <CaseInfo
             workingCase={workingCase}
             userRole={user?.role}
             showAdditionalInfo

@@ -21,7 +21,7 @@ import {
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  CaseNumbers,
+  CaseInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
@@ -166,7 +166,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers
+          <CaseInfo
             workingCase={workingCase}
             userRole={user?.role}
             showAdditionalInfo

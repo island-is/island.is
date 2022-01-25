@@ -26,7 +26,7 @@ import {
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  CaseNumbers,
+  CaseInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
@@ -168,7 +168,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box marginBottom={7}>
-          <CaseNumbers
+          <CaseInfo
             workingCase={workingCase}
             userRole={user?.role}
             showAdditionalInfo

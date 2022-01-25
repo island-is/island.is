@@ -7,7 +7,7 @@ import {
   PoliceRequestAccordionItem,
   CourtRecordAccordionItem,
   PdfButton,
-  CaseNumbers,
+  CaseInfo,
   PageLayout,
   FormContentContainer,
   RulingAccordionItem,
@@ -110,7 +110,7 @@ export const Confirmation: React.FC = () => {
           )}`}</Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} />
         </Box>
         <Box marginBottom={9}>
           <Accordion>
