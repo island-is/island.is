@@ -19,6 +19,7 @@
     "express",
     "http-errors",
     "graphql",
+    "jsdom",
     "pg",
     "winston",
     "source-map-resolve",
