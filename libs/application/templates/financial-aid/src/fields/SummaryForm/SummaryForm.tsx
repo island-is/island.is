@@ -8,27 +8,22 @@ import {
   Input,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-import DescriptionText from '../DescriptionText/DescriptionText'
 import { Controller, useFormContext } from 'react-hook-form'
 import * as m from '../../lib/messages'
-import SummaryBlock from '../SummaryBlock/SummaryBlock'
 import { ApproveOptions, FAFieldBaseProps } from '../../lib/types'
+import { getNextPeriod } from '@island.is/financial-aid/shared/lib'
 import {
-  Employment,
-  estimatedBreakDown,
-  getNextPeriod,
-  HomeCircumstances,
-} from '@island.is/financial-aid/shared/lib'
-import {
-  getMessageHomeCircumstances,
-  getMessageEmploymentStatus,
   getMessageApproveOptions,
   getMessageApproveOptionsForIncome,
   formatAddress,
+  formatHomeCircumstances,
+  formatEmployment,
+  formatBankInfo,
 } from '../../lib/formatters'
 
 // import { Breakdown } from '@island.is/financial-aid/shared/components'
 import { routes } from '../../lib/constants'
+import { SummaryBlock, DescriptionText } from '../index'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -114,13 +109,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
           {formatMessage(m.homeCircumstancesForm.general.sectionTitle)}
         </Text>
 
-        <Text>
-          {answers?.homeCircumstances?.type === HomeCircumstances.OTHER
-            ? answers?.homeCircumstances?.custom
-            : formatMessage(
-                getMessageHomeCircumstances[answers?.homeCircumstances?.type],
-              )}
-        </Text>
+        <Text>{formatHomeCircumstances(answers?.homeCircumstances)}</Text>
       </SummaryBlock>
 
       <SummaryBlock editAction={() => goToScreen?.(routes.STUDENT)}>
@@ -142,13 +131,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
           {formatMessage(m.employmentForm.general.sectionTitle)}
         </Text>
 
-        <Text>
-          {answers?.employment?.type === Employment.OTHER
-            ? answers?.homeCircumstances?.custom
-            : formatMessage(
-                getMessageEmploymentStatus[answers?.employment?.type],
-              )}
-        </Text>
+        <Text>{formatEmployment(answers?.employment)}</Text>
       </SummaryBlock>
 
       <SummaryBlock editAction={() => goToScreen?.(routes.INCOME)}>
@@ -175,17 +158,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
           {formatMessage(m.bankInfoForm.general.sectionTitle)}
         </Text>
 
-        <Text>
-          {answers?.bankInfo?.bankNumber &&
-          answers?.bankInfo?.ledger &&
-          answers?.bankInfo?.accountNumber
-            ? answers?.bankInfo?.bankNumber +
-              '-' +
-              answers?.bankInfo?.ledger +
-              '-' +
-              answers?.bankInfo?.accountNumber
-            : ''}
-        </Text>
+        <Text>{formatBankInfo(answers?.bankInfo)}</Text>
       </SummaryBlock>
 
       <SummaryBlock editAction={() => goToScreen?.(routes.CONTACTINFO)}>
