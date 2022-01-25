@@ -15,11 +15,11 @@ import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @Post('url')
   @Scopes(
     MunicipalitiesFinancialAidScope.write,
     MunicipalitiesFinancialAidScope.applicant,
   )
+  @Post('url')
   @ApiCreatedResponse({
     type: SignedUrlModel,
     description: 'Creates a new signed url',
@@ -31,11 +31,11 @@ export class FileController {
     )
   }
 
-  @Get('url/:id')
   @Scopes(
     MunicipalitiesFinancialAidScope.read,
     MunicipalitiesFinancialAidScope.employee,
   )
+  @Get('url/:id')
   @ApiCreatedResponse({
     type: SignedUrlModel,
     description: 'Creates a new signed url',
@@ -44,11 +44,11 @@ export class FileController {
     return this.fileService.createSignedUrlForFileId(id)
   }
 
-  @Post('')
   @Scopes(
     MunicipalitiesFinancialAidScope.applicant,
     MunicipalitiesFinancialAidScope.write,
   )
+  @Post('')
   @ApiCreatedResponse({
     type: CreateFilesModel,
     description: 'Uploads files',

@@ -41,29 +41,26 @@ export class UserResolver {
 
   @ResolveField('spouse', () => SpouseModel)
   async spouse(
-    @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<SpouseModel> {
-    return await backendApi.getSpouse(user.nationalId)
+    return await backendApi.getSpouse()
   }
 
   @ResolveField('currentApplicationId', () => String)
   async currentApplicationId(
-    @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<string | undefined> {
     this.logger.debug('Getting current application for nationalId')
     return await this.handleNotFoundException(() =>
-      backendApi.getCurrentApplicationId(user.nationalId),
+      backendApi.getCurrentApplicationId(),
     )
   }
 
   @ResolveField('staff', () => StaffModel, { name: 'staff', nullable: true })
   async staff(
-    @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Staff | undefined> {
     this.logger.debug('Getting staff for nationalId')
-    return await backendApi.getStaff(user.nationalId)
+    return await backendApi.getStaff()
   }
 }

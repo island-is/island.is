@@ -3,43 +3,102 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
+import { Municipality } from '@island.is/financial-aid/shared/lib'
 import { DataProviderTypes, Applicant } from '../lib/types'
+
+const nationalRegistryQuery = `
+query NationalRegistryUserQuery {
+  nationalRegistryUserV2 {
+    nationalId
+    fullName
+    address {
+      streetName
+      postalCode
+      city
+      municipalityCode
+    }
+    spouse {
+      nationalId
+      maritalStatus
+      name
+    }
+  }
+}
+`
+
+const municipalityQuery = `
+  query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
+    municipalityInfoForFinancialAid(input: $input) {
+      id
+      name
+      homepage
+      active
+      municipalityId
+      email
+      rulesHomepage
+      individualAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
+      cohabitationAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
+    }
+  }
+`
 
 export class NationalRegistryProvider extends BasicDataProvider {
   readonly type = DataProviderTypes.NationalRegistry
-  async provide(): Promise<Applicant> {
-    const query = `
-      query NationalRegistryUserQuery {
-        nationalRegistryUserV2 {
-          nationalId
-          fullName
-          address {
-            streetName
-            postalCode
-            city
-            municipalityCode
-          }
-          spouse {
-            nationalId
-            maritalStatus
-            name
-          }
-        }
-      }
-    `
 
-    return this.useGraphqlGateway<Applicant>(query)
+  async runQuery<T>(
+    query: string,
+    key: string,
+    variables?: Record<string, { id: string }>,
+  ): Promise<T> {
+    return await this.useGraphqlGateway(query, variables)
       .then(async (res: Response) => {
         const response = await res.json()
+
         if (response.errors) {
           return this.handleError(response.errors)
         }
-        const returnObject: Applicant = response.data.nationalRegistryUserV2
-        return Promise.resolve(returnObject)
+
+        return Promise.resolve(response.data[key])
       })
       .catch((error) => {
         return this.handleError(error)
       })
+  }
+
+  async provide(): Promise<{
+    applicant: Applicant
+    municipality: Municipality
+  }> {
+    const applicant = await this.runQuery<Applicant>(
+      nationalRegistryQuery,
+      'nationalRegistryUserV2',
+    )
+
+    const municipality = await this.runQuery<Municipality>(
+      municipalityQuery,
+      'municipalityInfoForFinancialAid',
+      {
+        input: { id: applicant.address.municipalityCode },
+      },
+    )
+
+    return { applicant, municipality }
   }
   handleError(error: Error | unknown) {
     console.error('Provider.FinancialAid.NationalRegistry:', error)

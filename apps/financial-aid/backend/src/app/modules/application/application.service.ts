@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { ApplicationModel, SpouseResponse } from './models'
@@ -233,8 +237,22 @@ export class ApplicationService {
     }
   }
 
-  async create(application: CreateApplicationDto): Promise<ApplicationModel> {
-    const appModel = await this.applicationModel.create(application)
+  async create(
+    application: CreateApplicationDto,
+    user: User,
+  ): Promise<ApplicationModel> {
+    const hasAppliedForPeriod = await this.getCurrentApplicationId(
+      user.nationalId,
+    )
+
+    if (hasAppliedForPeriod) {
+      throw new ForbiddenException('User or spouse has applied for period')
+    }
+
+    const appModel = await this.applicationModel.create({
+      nationalId: user.nationalId,
+      ...application,
+    })
 
     await this.applicationEventService.create({
       applicationId: appModel.id,
@@ -316,10 +334,7 @@ export class ApplicationService {
     id: string,
     update: UpdateApplicationDto,
     staff?: Staff,
-  ): Promise<{
-    numberOfAffectedRows: number
-    updatedApplication: ApplicationModel
-  }> {
+  ): Promise<ApplicationModel> {
     if (update.state && update.state === ApplicationState.NEW) {
       update.staffId = null
     }
@@ -331,6 +346,10 @@ export class ApplicationService {
       where: { id },
       returning: true,
     })
+
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`Application ${id} does not exist`)
+    }
 
     await this.applicationEventService.create({
       applicationId: id,
@@ -366,7 +385,7 @@ export class ApplicationService {
       this.sendApplicationUpdateEmail(update, updatedApplication),
     ])
 
-    return { numberOfAffectedRows, updatedApplication }
+    return updatedApplication
   }
 
   private async sendApplicationUpdateEmail(

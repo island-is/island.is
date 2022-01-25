@@ -8,6 +8,7 @@ import {
   Put,
   NotFoundException,
   Inject,
+  ForbiddenException,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 import { ApplicationService } from './application.service'
@@ -32,18 +33,20 @@ import {
 
 import {
   apiBasePath,
+  ApplicationEventType,
   ApplicationStateUrl,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
 
-import type { Staff, Application } from '@island.is/financial-aid/shared/lib'
+import type {
+  User as FinancialAidUser,
+  Staff,
+  Application,
+} from '@island.is/financial-aid/shared/lib'
 
-import {
-  Scopes,
-  ScopesGuard,
-  User,
-  CurrentUser,
-} from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+
+import { Scopes, ScopesGuard, CurrentUser } from '@island.is/auth-nest-tools'
 
 import { ApplicationFilters } from '@island.is/financial-aid/shared/lib'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
@@ -73,17 +76,15 @@ export class ApplicationController {
     MunicipalitiesFinancialAidScope.read,
     MunicipalitiesFinancialAidScope.applicant,
   )
-  @Get('nationalId/:nationalId')
+  @Get('nationalId')
   @ApiOkResponse({
     type: String,
     description: 'Checks if user has a current application for this period',
   })
-  async getCurrentApplication(
-    @Param('nationalId') nationalId: string,
-  ): Promise<string> {
+  async getCurrentApplication(@CurrentUser() user: User): Promise<string> {
     this.logger.debug('Application controller: Getting current application')
     const currentApplicationId = await this.applicationService.getCurrentApplicationId(
-      nationalId,
+      user.nationalId,
     )
 
     if (currentApplicationId === null) {
@@ -130,17 +131,15 @@ export class ApplicationController {
     MunicipalitiesFinancialAidScope.read,
     MunicipalitiesFinancialAidScope.applicant,
   )
-  @Get('spouse/:spouseNationalId')
+  @Get('spouse')
   @ApiOkResponse({
     type: SpouseResponse,
     description: 'Checking if user is spouse',
   })
-  async spouse(
-    @Param('spouseNationalId') spouseNationalId: string,
-  ): Promise<SpouseResponse> {
+  async spouse(@CurrentUser() user: User): Promise<SpouseResponse> {
     this.logger.debug('Application controller: Checking if user is spouse')
 
-    return await this.applicationService.getSpouseInfo(spouseNationalId)
+    return await this.applicationService.getSpouseInfo(user.nationalId)
   }
 
   @Scopes(
@@ -208,6 +207,7 @@ export class ApplicationController {
   }
 
   @Scopes(MunicipalitiesFinancialAidScope.write)
+  @UseGuards(ApplicationGuard)
   @Put('id/:id')
   @ApiOkResponse({
     type: ApplicationModel,
@@ -224,18 +224,41 @@ export class ApplicationController {
 
     let staff = undefined
 
+    const staffUpdateEvents = [
+      ApplicationEventType.REJECTED,
+      ApplicationEventType.APPROVED,
+      ApplicationEventType.STAFFCOMMENT,
+      ApplicationEventType.INPROGRESS,
+      ApplicationEventType.ASSIGNCASE,
+      ApplicationEventType.NEW,
+    ]
+
+    const applicantUpdateEvents = [
+      ApplicationEventType.USERCOMMENT,
+      ApplicationEventType.SPOUSEFILEUPLOAD,
+      ApplicationEventType.FILEUPLOAD,
+    ]
+
+    if (
+      (user.scope.includes(MunicipalitiesFinancialAidScope.applicant) &&
+        staffUpdateEvents.includes(applicationToUpdate.event)) ||
+      (user.scope.includes(MunicipalitiesFinancialAidScope.employee) &&
+        applicantUpdateEvents.includes(applicationToUpdate.event))
+    ) {
+      throw new ForbiddenException(
+        'User not allowed to make this change to application',
+      )
+    }
+
     if (user.scope.includes(MunicipalitiesFinancialAidScope.employee)) {
       staff = await this.staffService.findByNationalId(user.nationalId)
     }
 
-    const {
-      numberOfAffectedRows,
-      updatedApplication,
-    } = await this.applicationService.update(id, applicationToUpdate, staff)
-
-    if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(`Application ${id} does not exist`)
-    }
+    const updatedApplication = await this.applicationService.update(
+      id,
+      applicationToUpdate,
+      staff,
+    )
 
     updatedApplication?.setDataValue('staff', staff)
 
@@ -283,11 +306,15 @@ export class ApplicationController {
     type: ApplicationModel,
     description: 'Creates a new application',
   })
-  create(@Body() application: CreateApplicationDto): Promise<ApplicationModel> {
+  create(
+    @CurrentUser() user: FinancialAidUser,
+    @Body() application: CreateApplicationDto,
+  ): Promise<ApplicationModel> {
     this.logger.debug('Application controller: Creating application')
-    return this.applicationService.create(application)
+    return this.applicationService.create(application, user)
   }
 
+  @UseGuards(ApplicationGuard)
   @Scopes(MunicipalitiesFinancialAidScope.write)
   @Post('event')
   @ApiCreatedResponse({
@@ -299,13 +326,10 @@ export class ApplicationController {
     @CurrentUser() user: User,
   ): Promise<ApplicationModel> {
     await this.applicationEventService.create(applicationEvent)
-    const isEmployee = user.scope.includes(
-      MunicipalitiesFinancialAidScope.employee,
-    )
 
     const application = await this.applicationService.findById(
       applicationEvent.applicationId,
-      isEmployee,
+      user.scope.includes(MunicipalitiesFinancialAidScope.employee),
     )
 
     if (!application) {

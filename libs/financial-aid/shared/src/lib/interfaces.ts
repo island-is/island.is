@@ -183,7 +183,6 @@ export interface CreateApplicationFile {
 }
 
 export interface CreateApplication {
-  nationalId: string
   name: string
   phoneNumber?: string
   email: string

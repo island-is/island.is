@@ -34,6 +34,8 @@ import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 export class MunicipalityController {
   constructor(private readonly municipalityService: MunicipalityService) {}
 
+  @UseGuards(ScopesGuard)
+  @Scopes(MunicipalitiesFinancialAidScope.read)
   @Get(':id')
   @ApiOkResponse({
     type: MunicipalityModel,
@@ -43,7 +45,7 @@ export class MunicipalityController {
     const municipality = await this.municipalityService.findByMunicipalityId(id)
 
     if (!municipality) {
-      throw new NotFoundException(`municipality ${id} not found`)
+      throw new NotFoundException(404, `municipality ${id} not found`)
     }
 
     return municipality
