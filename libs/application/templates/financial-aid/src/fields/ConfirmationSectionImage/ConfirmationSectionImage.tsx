@@ -8,7 +8,7 @@ const ConfirmationSectionImage = () => {
     <Box className={confirmationIllustration}>
       <img
         src={
-          'https://images.ctfassets.net/8k0h54kbe6bj/6UGl8bkfOwUDKYveXfKkh0/c09265b9301b0be52c678a7197a64154/crc-application-submitted.svg'
+          'https://images.ctfassets.net/8k0h54kbe6bj/76vWi6FRQd37hITKClZzvy/bb961452776ed1051a748b1e508c1576/fa-application-submitted.svg'
         }
         alt=""
       />
