@@ -1285,6 +1285,7 @@ user-notification:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1329,7 +1330,7 @@ user-notification-worker:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    GOOGLE_APPLICATION_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
+    FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
     USER_NOTIFICATION_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
     USER_NOTIFICATION_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
   securityContext:

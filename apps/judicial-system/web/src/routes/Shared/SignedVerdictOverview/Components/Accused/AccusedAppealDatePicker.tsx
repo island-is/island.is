@@ -59,8 +59,7 @@ const AccusedAppealDatePicker: React.FC<Props> = (props) => {
             onClick={() => setAccusedAppealDate(appealDate)}
             disabled={!appealDate}
           >
-            `$
-            {capitalize(
+            {`${capitalize(
               isRestrictionCase(workingCase.type)
                 ? formatMessage(core.accused, {
                     suffix:
@@ -77,12 +76,11 @@ const AccusedAppealDatePicker: React.FC<Props> = (props) => {
                         ? 'ar'
                         : 'i',
                   }),
-            )}{' '}
-            $
-            {workingCase.defendants && workingCase.defendants.length > 1
-              ? 'kæra'
-              : 'kærir'}{' '}
-            `
+            )} ${
+              workingCase.defendants && workingCase.defendants.length > 1
+                ? 'kæra'
+                : 'kærir'
+            }`}
           </Button>
         </Box>
       </div>
