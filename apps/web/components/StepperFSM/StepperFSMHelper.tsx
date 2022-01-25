@@ -94,22 +94,20 @@ const getAllStateStepSlugs = (stepperMachine: StepperMachine) => {
   const allStateStepSlugs: string[] = []
   for (const stateName in stepperMachine.states) {
     const state = stepperMachine.states[stateName]
-    const slug = state?.meta.stepSlug
+    const slug = state?.meta?.stepSlug
     if (slug) allStateStepSlugs.push(slug)
   }
   return allStateStepSlugs
 }
 
 interface ErrorField {
-  sectionId: string
-  sectionName: string
   message: string
-  labelName?: string
-  labelValue?: string
+  fieldName?: string
+  fieldValue?: string
   messageId?: string
 }
 
-const renderErrors = (errors: ErrorField[]) => {
+export const renderErrors = (errors: ErrorField[]) => {
   return (
     <Box>
       <Field
@@ -119,14 +117,17 @@ const renderErrors = (errors: ErrorField[]) => {
       <Box marginLeft={4}>
         {errors.map((error) => (
           <div
-            className={`${styles.error} ${styles.fitBorder}`}
-            onClick={() =>
-              scrollTo(error.messageId ?? error.sectionId, {
+            className={`${error.messageId ? styles.error : ''} ${
+              styles.fitBorder
+            }`}
+            onClick={() => {
+              if (!error.messageId) return
+              scrollTo(error.messageId, {
                 smooth: true,
               })
-            }
+            }}
           >
-            <Field name={error.labelName} value={error.labelValue} />
+            <Field name={error.fieldName} value={error.fieldValue} />
             <Field value={error.message} symbol={ERROR_SYMBOL} />
           </div>
         ))}
@@ -135,11 +136,26 @@ const renderErrors = (errors: ErrorField[]) => {
   )
 }
 
+export const renderStepperConfigErrors = (
+  stepper: Stepper,
+  configErrors: Set<string>,
+) => {
+  return (
+    <Box marginTop={15}>
+      <AccordionItem label="Helper" startExpanded={true} id="stepper-helper">
+        <Text variant="h4">Stepper config errors:</Text>
+        <ArrowLink href={getContentfulLink(stepper)}>Contentful</ArrowLink>
+        {renderErrors(Array.from(configErrors).map((e) => ({ message: e })))}
+      </AccordionItem>
+    </Box>
+  )
+}
+
 interface StepperHelperProps {
   stepper: Stepper
-  currentState: StepperState
-  currentStep: Step
-  stepperMachine: StepperMachine
+  currentState?: StepperState
+  currentStep?: Step
+  stepperMachine?: StepperMachine
   optionsFromNamespace: { slug: string; data: [] }[]
 }
 
@@ -204,7 +220,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
               value={currentState.value as string}
             />
             <Field
-              name="Current state step slug"
+              name="Current state stepSlug"
               value={currentStateStepSlug}
               symbol={currentStateStepSlugSymbol}
               symbolHoverText={currentStateStepSlugSymbolText}
@@ -260,8 +276,8 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                 symbolHoverText={
                   currentStateStepSlug &&
                   currentStateStepSlug === currentStep?.slug
-                    ? 'The state step slug has the same value as this slug'
-                    : 'The state step slug is different from this slug'
+                    ? 'The current state stepSlug has the same value as this slug'
+                    : 'The current state stepSlug is different from this slug'
                 }
               />
               <Field name="Type" value={resolveStepType(currentStep)} />
@@ -318,12 +334,10 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                 if (hasSlugError && !stateSaysWeHaveAnError) {
                   setErrors((errors) =>
                     errors.concat({
-                      message: 'stepSlug error',
-                      labelName: `State name`,
-                      labelValue: stateName,
+                      message: 'has a stepSlug error',
+                      fieldName: `State with name`,
+                      fieldValue: stateName,
                       messageId: id,
-                      sectionId: headings[2].headingId,
-                      sectionName: headings[2].headingTitle,
                     }),
                   )
                 }
@@ -345,7 +359,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                   >
                     <Field name="State name" value={stateName} />
                     <Field
-                      name="State step slug"
+                      name="State stepSlug"
                       value={stepSlug}
                       symbol={!hasSlugError ? SUCCESS_SYMBOL : ERROR_SYMBOL}
                       symbolHoverText={
@@ -385,12 +399,10 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                           if (hasTransitionError && !stateSaysWeHaveAnError) {
                             setErrors((errors) =>
                               errors.concat({
-                                message: 'transition error',
-                                labelName: `State name`,
-                                labelValue: stateName,
+                                message: 'has a transition error',
+                                fieldName: `State with name`,
+                                fieldValue: stateName,
                                 messageId: id,
-                                sectionId: headings[2].headingId,
-                                sectionName: headings[2].headingTitle,
                               }),
                             )
                           }
@@ -446,12 +458,10 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                 if (hasSlugError && !stateSaysWeHaveAnError) {
                   setErrors((errors) =>
                     errors.concat({
-                      message: 'slug error',
+                      message: 'has a slug error',
                       messageId: id,
-                      labelName: 'Step Title',
-                      labelValue: step.title,
-                      sectionId: headings[3].headingId,
-                      sectionName: headings[3].headingTitle,
+                      fieldName: 'Step with title',
+                      fieldValue: step.title,
                     }),
                   )
                 }
@@ -527,16 +537,18 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                       if (hasError && !stateSaysWeHaveAnError) {
                         setErrors((errors) =>
                           errors.concat({
-                            message: `${!stateWithSameSlug ? 'slug' : ''}${
+                            message: `has a ${
+                              !stateWithSameSlug ? 'slug' : ''
+                            }${
                               !optionTransitionIsValid
-                                ? `${!stateWithSameSlug ? ' ' : ''}transition`
+                                ? `${
+                                    !stateWithSameSlug ? ' and ' : ''
+                                  }transition`
                                 : ''
                             } error`,
                             messageId: id,
-                            labelName: 'Step Title',
-                            labelValue: step.title,
-                            sectionId: headings[3].headingId,
-                            sectionName: headings[3].headingTitle,
+                            fieldName: 'Step with title',
+                            fieldValue: step.title,
                           }),
                         )
                       }
