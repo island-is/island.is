@@ -8,7 +8,6 @@ import {
   Bullet,
   Link,
   TextProps,
-  Icon,
 } from '@island.is/island-ui/core'
 import * as styles from './DescriptionText.css'
 
