@@ -54,7 +54,7 @@ const Confirmation: React.FC<Props> = (props) => {
           )}`}</Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user.role} />
         </Box>
         <Box marginBottom={9}>
           <Accordion>

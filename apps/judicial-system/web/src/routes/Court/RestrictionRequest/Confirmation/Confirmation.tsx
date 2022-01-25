@@ -97,7 +97,7 @@ export const Confirmation: React.FC = () => {
             Yfirlit úrskurðar
           </Text>
         </Box>
-        <Box display="flex" marginBottom={10}>
+        <Box display="flex" marginBottom={7}>
           <Box marginRight={2}>
             <Text variant="small">{`Krafa stofnuð: ${formatDate(
               workingCase.created,
@@ -110,7 +110,7 @@ export const Confirmation: React.FC = () => {
           )}`}</Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box marginBottom={9}>
           <Accordion>
