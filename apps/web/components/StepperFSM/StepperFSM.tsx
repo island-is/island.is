@@ -11,7 +11,7 @@ import {
 
 import { Stepper } from '@island.is/api/schema'
 
-import { StepperHelper } from './StepperFSMHelper'
+import { renderStepperConfigErrors, StepperHelper } from './StepperFSMHelper'
 import * as styles from './StepperFSM.css'
 
 import {
@@ -24,6 +24,7 @@ import {
   StepperMachine,
   getStepQuestion,
   getCurrentStepAndStepType,
+  validateStepperConfig,
 } from './StepperFSMUtils'
 import { useRouter } from 'next/router'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
@@ -102,7 +103,27 @@ const getInitialStateAndAnswersByQueryParams = (
   return { initialState, questionsAndAnswers }
 }
 
-export const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
+const StepperFSMWrapper = (
+  StepperFSMComponent: React.ComponentType<StepperProps>,
+) => {
+  const Component = (props: StepperProps) => {
+    const configErrors = validateStepperConfig(props.stepper)
+
+    const showStepperConfigHelper = true
+
+    if (configErrors.size > 0) {
+      return showStepperConfigHelper
+        ? renderStepperConfigErrors(props.stepper, configErrors)
+        : null
+    }
+
+    return <StepperFSMComponent {...props} />
+  }
+
+  return Component
+}
+
+const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
 
@@ -400,3 +421,5 @@ export const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
     </Box>
   )
 }
+
+export default StepperFSMWrapper(StepperFSM)

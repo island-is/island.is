@@ -112,6 +112,57 @@ const getCurrentStepAndStepType = (
   }
 }
 
+const validateStepperConfig = (stepper: Stepper) => {
+  const errors: Set<string> = new Set<string>()
+
+  if (!stepper?.config) {
+    errors.add('Missing config')
+    return errors
+  }
+
+  let stepperConfig: StepperConfig
+
+  try {
+    stepperConfig = JSON.parse(stepper?.config) as StepperConfig
+  } catch (error) {
+    errors.add('Config could not be parsed')
+    return errors
+  }
+
+  if (!stepperConfig?.xStateFSM) {
+    errors.add('XStateFSM missing from config')
+    return errors
+  }
+
+  let machine: StepperMachine
+
+  try {
+    machine = getStepperMachine(stepper)
+  } catch (error) {
+    errors.add('State machine could not be created')
+    return errors
+  }
+
+  const stateNames = Object.keys(machine.states)
+
+  for (const stateName of stateNames) {
+    const state = machine.states[stateName]
+    for (const transition of Object.keys(state?.config?.on ?? '{}')) {
+      let transitionStateName
+      try {
+        transitionStateName = state.config.on[transition]
+      } catch (error) {
+        continue
+      }
+      if (!stateNames.includes(transitionStateName)) {
+        errors.add(`State with name: "${transitionStateName}" does not exist`)
+      }
+    }
+  }
+
+  return errors
+}
+
 const getStepperMachine = (stepper: Stepper): StepperMachine => {
   const stepperConfig: StepperConfig = JSON.parse(
     stepper.config,
@@ -240,6 +291,7 @@ export {
   getStepQuestion,
   getStepOptionsSourceNamespace,
   getCurrentStepAndStepType,
+  validateStepperConfig,
 }
 export type {
   StepperConfig,

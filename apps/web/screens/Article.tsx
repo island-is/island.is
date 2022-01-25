@@ -58,7 +58,7 @@ import {
 import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../hooks/useScrollPosition'
 import { scrollTo } from '../hooks/useScrollSpy'
-import { StepperFSM } from '../components/StepperFSM/StepperFSM'
+import StepperFSM from '../components/StepperFSM/StepperFSM'
 import { getStepOptionsSourceNamespace } from '../components/StepperFSM/StepperFSMUtils'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
