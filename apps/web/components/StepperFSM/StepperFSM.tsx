@@ -34,7 +34,7 @@ import { ParsedUrlQuery } from 'querystring'
 import { environment } from '../../environments'
 
 const ANSWER_DELIMITER = ','
-const STEPPER_HELPER_ENABLED = 'show-stepper-config-helper'
+export const STEPPER_HELPER_ENABLED = 'show-stepper-config-helper'
 
 interface StepperProps {
   stepper: Stepper
@@ -126,6 +126,8 @@ const StepperFSMWrapper = (
 const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
+
+  const [counter, setCounter] = useState(0)
 
   const stepperMachine = useMemo(() => getStepperMachine(stepper), [stepper])
 
@@ -319,6 +321,7 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
         if (ev.detail === 3) {
           localStorage.setItem(STEPPER_HELPER_ENABLED, JSON.stringify(true))
           setShowStepperConfigHelper(!environment.production)
+          setCounter((c) => c + 1)
         }
       }}
     >
