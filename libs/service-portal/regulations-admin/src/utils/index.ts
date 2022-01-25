@@ -42,6 +42,8 @@ export const useLocale = () => {
   return { ...data, formatMessage }
 }
 
+export type MessageFormatter = ReturnType<typeof useLocale>['formatMessage']
+
 // ---------------------------------------------------------------------------
 
 type IsHolidayMap = Record<string, true | undefined>
