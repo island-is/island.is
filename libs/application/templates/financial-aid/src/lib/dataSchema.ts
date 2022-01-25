@@ -38,6 +38,7 @@ export const dataSchema = z.object({
             (v.spouseApproveTerms && v.spouseApproveTerms.length === 1)
           : true,
       {
+        //More detailed error messages are in the UnknownRelationshipForm componenet
         params: error.validation.email,
       },
     ),
