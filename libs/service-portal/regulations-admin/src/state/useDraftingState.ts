@@ -23,6 +23,17 @@ import {} from '@island.is/regulations/web'
 import { toast } from '@island.is/island-ui/core'
 import { getEditUrl, getHomeUrl } from '../utils/routing'
 import { useEditDraftReducer, StateInputs } from './reducer'
+import { steps } from './makeFields'
+
+// ---------------------------------------------------------------------------
+
+export const ensureStepName = (cand: unknown) => {
+  if (typeof cand === 'string' && cand in steps) {
+    return cand as Step
+  }
+}
+
+// ---------------------------------------------------------------------------
 
 const UPDATE_DRAFT_REGULATION_MUTATION = gql`
   mutation UpdateDraftRegulationMutation($input: EditDraftRegulationInput!) {
