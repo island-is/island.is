@@ -9,7 +9,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { ApplicationWithAttachments } from '../../application/models/application.model'
+import { ApplicationModel } from '../../application/models/application.model'
 
 import {
   ApplicationEventType,
@@ -37,7 +37,7 @@ export class ApplicationEventModel extends Model<ApplicationEvent> {
   @ApiProperty()
   created: Date
 
-  @ForeignKey(() => ApplicationWithAttachments)
+  @ForeignKey(() => ApplicationModel)
   @Column({
     type: DataType.UUID,
     allowNull: false,

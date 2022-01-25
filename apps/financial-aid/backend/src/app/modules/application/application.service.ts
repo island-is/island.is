@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { ApplicationWithAttachments, SpouseResponse } from './models'
+import { ApplicationModel, SpouseResponse } from './models'
 
 import { Op } from 'sequelize'
 
@@ -49,8 +49,8 @@ const linkToStatusPage = (applicationId: string) => {
 @Injectable()
 export class ApplicationService {
   constructor(
-    @InjectModel(ApplicationWithAttachments)
-    private readonly applicationModel: typeof ApplicationWithAttachments,
+    @InjectModel(ApplicationModel)
+    private readonly applicationModel: typeof ApplicationModel,
     private readonly fileService: FileService,
     private readonly amountService: AmountService,
     private readonly applicationEventService: ApplicationEventService,
@@ -85,7 +85,7 @@ export class ApplicationService {
   async findByNationalId(
     nationalId: string,
     municipalityCode: string,
-  ): Promise<ApplicationWithAttachments[]> {
+  ): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
       where: {
         [Op.or]: [
@@ -137,7 +137,7 @@ export class ApplicationService {
     stateUrl: ApplicationStateUrl,
     staffId: string,
     municipalityCode: string,
-  ): Promise<ApplicationWithAttachments[]> {
+  ): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
       where:
         stateUrl === ApplicationStateUrl.MYCASES
@@ -158,7 +158,7 @@ export class ApplicationService {
   async findById(
     id: string,
     service: RolesRule,
-  ): Promise<ApplicationWithAttachments | null> {
+  ): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
       include: [
@@ -236,7 +236,7 @@ export class ApplicationService {
   async create(
     application: CreateApplicationDto,
     user: User,
-  ): Promise<ApplicationWithAttachments> {
+  ): Promise<ApplicationModel> {
     const appModel = await this.applicationModel.create(application)
 
     await this.applicationEventService.create({
@@ -265,7 +265,7 @@ export class ApplicationService {
 
   private async createApplicationEmails(
     application: CreateApplicationDto,
-    appModel: ApplicationWithAttachments,
+    appModel: ApplicationModel,
     user: User,
   ) {
     const municipality = await this.municipalityService.findByMunicipalityId(
@@ -322,7 +322,7 @@ export class ApplicationService {
     staff?: Staff,
   ): Promise<{
     numberOfAffectedRows: number
-    updatedApplication: ApplicationWithAttachments
+    updatedApplication: ApplicationModel
   }> {
     if (update.state && update.state === ApplicationState.NEW) {
       update.staffId = null
@@ -375,7 +375,7 @@ export class ApplicationService {
 
   private async sendApplicationUpdateEmail(
     update: UpdateApplicationDto,
-    updatedApplication: ApplicationWithAttachments,
+    updatedApplication: ApplicationModel,
   ) {
     if (
       update.event === ApplicationEventType.DATANEEDED ||

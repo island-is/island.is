@@ -12,7 +12,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { CreateChargeResult } from './payment.type'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import { Application as ApplicationWithAttachments } from '../application/application.model'
+import { Application as ApplicationModel } from '../application/application.model'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -118,8 +118,8 @@ export class PaymentService {
     applicationId: string,
     nationalId: string,
     applicationType: string,
-  ): Promise<ApplicationWithAttachments> {
-    const application = await ApplicationWithAttachments.findAll({
+  ): Promise<ApplicationModel> {
+    const application = await ApplicationModel.findAll({
       where: {
         id: applicationId,
         typeId: applicationType,
@@ -132,6 +132,6 @@ export class PaymentService {
     if (!application) {
       Promise.reject('Failed to find application').catch()
     }
-    return application[0] as ApplicationWithAttachments
+    return application[0] as ApplicationModel
   }
 }

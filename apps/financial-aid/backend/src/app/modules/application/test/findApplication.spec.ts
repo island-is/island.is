@@ -1,12 +1,12 @@
 import { Staff } from '@island.is/financial-aid/shared/lib'
 import { Op } from 'sequelize'
-import { ApplicationWithAttachments } from '../models/application.model'
+import { ApplicationModel } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
 import type { User } from '@island.is/auth-nest-tools'
 import { ApplicationFileModel } from '../../file/models/file.model'
 
 interface Then {
-  result: ApplicationWithAttachments[]
+  result: ApplicationModel[]
   error: Error
 }
 
@@ -18,7 +18,7 @@ type GivenWhenThen = (
 
 describe('ApplicationController - find application', () => {
   let givenWhenThen: GivenWhenThen
-  let mockApplicationWithAttachments: typeof ApplicationWithAttachments
+  let mockApplicationModel: typeof ApplicationModel
 
   beforeEach(async () => {
     const {
@@ -26,7 +26,7 @@ describe('ApplicationController - find application', () => {
       applicationModel,
     } = await createTestingApplicationModule()
 
-    mockApplicationWithAttachments = applicationModel
+    mockApplicationModel = applicationModel
 
     givenWhenThen = async (
       nationalId: string,
@@ -52,7 +52,7 @@ describe('ApplicationController - find application', () => {
     let mockFindApplication: jest.Mock
 
     beforeEach(async () => {
-      mockFindApplication = mockApplicationWithAttachments.findAll as jest.Mock
+      mockFindApplication = mockApplicationModel.findAll as jest.Mock
 
       await givenWhenThen(nationalId, staff, user)
     })
@@ -93,7 +93,7 @@ describe('ApplicationController - find application', () => {
     const expected = []
 
     beforeEach(async () => {
-      const mockFindApplication = mockApplicationWithAttachments.findAll as jest.Mock
+      const mockFindApplication = mockApplicationModel.findAll as jest.Mock
       mockFindApplication.mockReturnValueOnce(expected)
 
       then = await givenWhenThen(nationalId, staff, user)
@@ -115,12 +115,12 @@ describe('ApplicationController - find application', () => {
     const staff = { municipalityId: municipalityCode } as Staff
     const user = {} as User
     const expected = [
-      { id: '1' } as ApplicationWithAttachments,
-      { id: '2' } as ApplicationWithAttachments,
+      { id: '1' } as ApplicationModel,
+      { id: '2' } as ApplicationModel,
     ]
 
     beforeEach(async () => {
-      const mockFindApplication = mockApplicationWithAttachments.findAll as jest.Mock
+      const mockFindApplication = mockApplicationModel.findAll as jest.Mock
       mockFindApplication.mockReturnValueOnce(expected)
 
       then = await givenWhenThen(nationalId, staff, user)
@@ -143,7 +143,7 @@ describe('ApplicationController - find application', () => {
     const user = {} as User
 
     beforeEach(async () => {
-      const mockFindApplication = mockApplicationWithAttachments.findAll as jest.Mock
+      const mockFindApplication = mockApplicationModel.findAll as jest.Mock
       mockFindApplication.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(nationalId, staff, user)

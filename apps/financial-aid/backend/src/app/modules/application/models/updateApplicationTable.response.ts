@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 import { ApplicationFilterResponse } from './applicationFilters.response'
-import { ApplicationWithAttachments } from './application.model'
+import { ApplicationModel } from './application.model'
 
 export class UpdateApplicationTableResponse {
   @ApiProperty()
-  applications: ApplicationWithAttachments[]
+  applications: ApplicationModel[]
 
   @ApiProperty()
   filters: ApplicationFilterResponse

@@ -7,7 +7,7 @@ import {
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
 import { uuid } from 'uuidv4'
-import { ApplicationWithAttachments } from '../models/application.model'
+import { ApplicationModel } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
 
 interface Then {
@@ -23,7 +23,7 @@ type GivenWhenThen = (
 
 describe('ApplicationController - Get by id', () => {
   let givenWhenThen: GivenWhenThen
-  let mockApplicationWithAttachments: typeof ApplicationWithAttachments
+  let mockApplicationModel: typeof ApplicationModel
 
   beforeEach(async () => {
     const {
@@ -31,7 +31,7 @@ describe('ApplicationController - Get by id', () => {
       applicationModel,
     } = await createTestingApplicationModule()
 
-    mockApplicationWithAttachments = applicationModel
+    mockApplicationModel = applicationModel
 
     givenWhenThen = async (
       id: string,

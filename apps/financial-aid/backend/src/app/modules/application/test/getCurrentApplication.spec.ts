@@ -2,7 +2,7 @@ import { firstDateOfMonth } from '@island.is/financial-aid/shared/lib'
 import { NotFoundException } from '@nestjs/common'
 import { Op } from 'sequelize'
 import { uuid } from 'uuidv4'
-import { ApplicationWithAttachments } from '../models/application.model'
+import { ApplicationModel } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
 
 interface Then {
@@ -14,7 +14,7 @@ type GivenWhenThen = (nationalId: string) => Promise<Then>
 
 describe('ApplicationController - Get current application', () => {
   let givenWhenThen: GivenWhenThen
-  let mockApplicationWithAttachments: typeof ApplicationWithAttachments
+  let mockApplicationModel: typeof ApplicationModel
 
   beforeEach(async () => {
     const {
@@ -22,7 +22,7 @@ describe('ApplicationController - Get current application', () => {
       applicationModel,
     } = await createTestingApplicationModule()
 
-    mockApplicationWithAttachments = applicationModel
+    mockApplicationModel = applicationModel
 
     givenWhenThen = async (nationalId: string): Promise<Then> => {
       const then = {} as Then
@@ -41,7 +41,7 @@ describe('ApplicationController - Get current application', () => {
     let mockGetCurrentApplication: jest.Mock
 
     beforeEach(async () => {
-      mockGetCurrentApplication = mockApplicationWithAttachments.findOne as jest.Mock
+      mockGetCurrentApplication = mockApplicationModel.findOne as jest.Mock
 
       await givenWhenThen(nationalId)
     })
@@ -68,7 +68,7 @@ describe('ApplicationController - Get current application', () => {
     const nationalId = '0000000000'
 
     beforeEach(async () => {
-      const mockFindById = mockApplicationWithAttachments.findOne as jest.Mock
+      const mockFindById = mockApplicationModel.findOne as jest.Mock
       mockFindById.mockReturnValueOnce(null)
 
       then = await givenWhenThen(nationalId)
@@ -83,10 +83,10 @@ describe('ApplicationController - Get current application', () => {
     let then: Then
     const nationalId = '0000000000'
     const applicationId = uuid()
-    const application = { id: applicationId } as ApplicationWithAttachments
+    const application = { id: applicationId } as ApplicationModel
 
     beforeEach(async () => {
-      const mockFindById = mockApplicationWithAttachments.findOne as jest.Mock
+      const mockFindById = mockApplicationModel.findOne as jest.Mock
       mockFindById.mockReturnValueOnce(application)
 
       then = await givenWhenThen(nationalId)
@@ -102,7 +102,7 @@ describe('ApplicationController - Get current application', () => {
     const nationalId = '0000000000'
 
     beforeEach(async () => {
-      const mockFindById = mockApplicationWithAttachments.findOne as jest.Mock
+      const mockFindById = mockApplicationModel.findOne as jest.Mock
       mockFindById.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(nationalId)

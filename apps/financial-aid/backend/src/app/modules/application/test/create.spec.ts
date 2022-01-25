@@ -14,11 +14,11 @@ import { ApplicationEventService } from '../../applicationEvent'
 import { FileService } from '../../file/file.service'
 import { MunicipalityService } from '../../municipality/municipality.service'
 import { CreateApplicationDto } from '../dto'
-import { ApplicationWithAttachments } from '../models/application.model'
+import { ApplicationModel } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
 
 interface Then {
-  result: ApplicationWithAttachments
+  result: ApplicationModel
   error: Error
 }
 
@@ -29,7 +29,7 @@ type GivenWhenThen = (
 
 describe.only('ApplicationController - Create', () => {
   let givenWhenThen: GivenWhenThen
-  let mockApplicationWithAttachments: typeof ApplicationWithAttachments
+  let mockApplicationModel: typeof ApplicationModel
   let mockApplicationEventService: ApplicationEventService
   let mockFileService: FileService
   let mockEmailService: EmailService
@@ -45,7 +45,7 @@ describe.only('ApplicationController - Create', () => {
       municipalityService,
     } = await createTestingApplicationModule()
 
-    mockApplicationWithAttachments = applicationModel
+    mockApplicationModel = applicationModel
     mockApplicationEventService = applicationEventService
     mockFileService = fileService
     mockEmailService = emailService
@@ -107,7 +107,7 @@ describe.only('ApplicationController - Create', () => {
     }
 
     beforeEach(async () => {
-      mockCreate = mockApplicationWithAttachments.create as jest.Mock
+      mockCreate = mockApplicationModel.create as jest.Mock
 
       await givenWhenThen(user, application)
     })
@@ -178,7 +178,7 @@ describe.only('ApplicationController - Create', () => {
     }
 
     beforeEach(async () => {
-      const mockCreate = mockApplicationWithAttachments.create as jest.Mock
+      const mockCreate = mockApplicationModel.create as jest.Mock
       mockCreate.mockReturnValueOnce(appModel)
       const findByMunicipalityId = mockMunicipalityService.findByMunicipalityId as jest.Mock
       findByMunicipalityId.mockReturnValueOnce(Promise.resolve(municipality))
@@ -288,7 +288,7 @@ describe.only('ApplicationController - Create', () => {
     }
 
     beforeEach(async () => {
-      const mockCreate = mockApplicationWithAttachments.create as jest.Mock
+      const mockCreate = mockApplicationModel.create as jest.Mock
       mockCreate.mockReturnValueOnce(appModel)
       const findByMunicipalityId = mockMunicipalityService.findByMunicipalityId as jest.Mock
       findByMunicipalityId.mockReturnValueOnce(Promise.resolve(municipality))
@@ -380,7 +380,7 @@ describe.only('ApplicationController - Create', () => {
     }
 
     beforeEach(async () => {
-      const mockCreate = mockApplicationWithAttachments.create as jest.Mock
+      const mockCreate = mockApplicationModel.create as jest.Mock
       mockCreate.mockReturnValueOnce(appModel)
 
       then = await givenWhenThen(user, application)
@@ -444,7 +444,7 @@ describe.only('ApplicationController - Create', () => {
     }
 
     beforeEach(async () => {
-      const mockCreate = mockApplicationWithAttachments.create as jest.Mock
+      const mockCreate = mockApplicationModel.create as jest.Mock
       mockCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(user, application)

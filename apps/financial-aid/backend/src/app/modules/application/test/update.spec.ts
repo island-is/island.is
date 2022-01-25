@@ -17,11 +17,11 @@ import { FileService } from '../../file/file.service'
 import { MunicipalityService } from '../../municipality'
 import { StaffService } from '../../staff/staff.service'
 import { UpdateApplicationDto } from '../dto'
-import { ApplicationWithAttachments } from '../models/application.model'
+import { ApplicationModel } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
 
 interface Then {
-  result: ApplicationWithAttachments
+  result: ApplicationModel
   error: Error
 }
 
@@ -33,7 +33,7 @@ type GivenWhenThen = (
 
 describe.only('ApplicationController - Update', () => {
   let givenWhenThen: GivenWhenThen
-  let mockApplicationWithAttachments: typeof ApplicationWithAttachments
+  let mockApplicationModel: typeof ApplicationModel
   let mockStaffService: StaffService
   let mockFileService: FileService
   let mockAmountService: AmountService
@@ -53,7 +53,7 @@ describe.only('ApplicationController - Update', () => {
       emailService,
     } = await createTestingApplicationModule()
 
-    mockApplicationWithAttachments = applicationModel
+    mockApplicationModel = applicationModel
     mockStaffService = staffService
     mockFileService = fileService
     mockAmountService = amountService
@@ -93,7 +93,7 @@ describe.only('ApplicationController - Update', () => {
     }
 
     beforeEach(async () => {
-      mockUpdate = mockApplicationWithAttachments.update as jest.Mock
+      mockUpdate = mockApplicationModel.update as jest.Mock
       const eventFindById = mockApplicationEventService.findById as jest.Mock
       eventFindById.mockReturnValueOnce(new Promise(() => []))
       const getApplicationFiles = mockFileService.getAllApplicationFiles as jest.Mock
@@ -141,7 +141,7 @@ describe.only('ApplicationController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockUpdate = mockApplicationWithAttachments.update as jest.Mock
+      const mockUpdate = mockApplicationModel.update as jest.Mock
       mockUpdate.mockReturnValueOnce([1, [application]])
       const eventFindById = mockApplicationEventService.findById as jest.Mock
       eventFindById.mockReturnValueOnce(Promise.resolve([]))
@@ -207,7 +207,7 @@ describe.only('ApplicationController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockUpdate = mockApplicationWithAttachments.update as jest.Mock
+      const mockUpdate = mockApplicationModel.update as jest.Mock
       mockUpdate.mockReturnValueOnce([0, [undefined]])
 
       then = await givenWhenThen(id, applicationUpdate, user)
@@ -266,7 +266,7 @@ describe.only('ApplicationController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockUpdate = mockApplicationWithAttachments.update as jest.Mock
+      const mockUpdate = mockApplicationModel.update as jest.Mock
       mockUpdate.mockReturnValueOnce([1, [application]])
       const eventFindById = mockApplicationEventService.findById as jest.Mock
       eventFindById.mockReturnValueOnce(Promise.resolve([]))
@@ -349,7 +349,7 @@ describe.only('ApplicationController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockUpdate = mockApplicationWithAttachments.update as jest.Mock
+      const mockUpdate = mockApplicationModel.update as jest.Mock
       mockUpdate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(id, applicationUpdate, user)
