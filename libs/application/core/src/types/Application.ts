@@ -28,7 +28,7 @@ export interface ActionCardMetaData {
   }
 }
 
-export interface ApplicationWithAttachments {
+export interface Application {
   id: string
   state: string
   actionCard?: ActionCardMetaData
@@ -37,7 +37,6 @@ export interface ApplicationWithAttachments {
   typeId: ApplicationTypes
   modified: Date
   created: Date
-  attachments: object
   answers: FormValue
   externalData: ExternalData
   name?: string
@@ -46,4 +45,6 @@ export interface ApplicationWithAttachments {
   status: ApplicationStatus
 }
 
-export type Application = Omit<ApplicationWithAttachments, 'attachments'>
+export interface ApplicationWithAttachments extends Application {
+  attachments: object
+}
