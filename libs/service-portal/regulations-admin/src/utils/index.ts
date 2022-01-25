@@ -14,17 +14,12 @@ type FormatMessageValues = Parameters<
 >[1]
 
 export const useLocale = () => {
-  const data = _useLocale() as Omit<
-    ReturnType<typeof _useLocale>,
-    'formatMessage'
-  > & {
-    formatMessage: typeof formatMessage
-  }
+  const data = _useLocale()
 
-  const _formatDateFns = data.formatDateFns
-  data.formatDateFns = (date, format = 'PP') => _formatDateFns(date, format)
+  const oldFormatDateFns = data.formatDateFns
+  data.formatDateFns = (date, format = 'PP') => oldFormatDateFns(date, format)
 
-  const _formatMessage = data.formatMessage
+  const oldFormatMessage = data.formatMessage
 
   function formatMessage(descriptor: undefined): undefined
   function formatMessage(
@@ -41,26 +36,27 @@ export const useLocale = () => {
     values?: FormatMessageValues,
   ): string | undefined {
     if (!descriptor) return descriptor
-    return _formatMessage(descriptor, values)
+    return oldFormatMessage(descriptor, values)
   }
-  data.formatMessage = formatMessage
 
-  return data
+  return { ...data, formatMessage }
 }
+
+export type MessageFormatter = ReturnType<typeof useLocale>['formatMessage']
 
 // ---------------------------------------------------------------------------
 
 type IsHolidayMap = Record<string, true | undefined>
-const _holidayCache: Record<number, IsHolidayMap | undefined> = {}
+const holidayCache: Record<number, IsHolidayMap | undefined> = {}
 
 const getHolidayMap = (year: number): IsHolidayMap => {
-  let yearHolidays = _holidayCache[year]
+  let yearHolidays = holidayCache[year]
   if (!yearHolidays) {
     const holidayMap: IsHolidayMap = {}
     getHolidays(year).forEach((holiday) => {
       holidayMap[toISODate(holiday.date)] = true
     })
-    yearHolidays = _holidayCache[year] = holidayMap
+    yearHolidays = holidayCache[year] = holidayMap
   }
   return yearHolidays
 }

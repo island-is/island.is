@@ -41,18 +41,22 @@ const CourtRecord = () => {
           attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n`
         }
 
-        if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-          if (wc.defendants && wc.defendants.length > 0) {
+        if (wc.defendants && wc.defendants.length > 0) {
+          if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
             wc.defendants.forEach((defendant) => {
               attendees += `${defendant.name} ${formatMessage(core.defendant, {
                 suffix: 'i',
               })}\n`
             })
+          } else {
+            attendees += `${formatMessage(
+              m.sections.courtAttendees.defendantNotPresentAutofill,
+              {
+                defendantSuffix: wc.defendants.length > 1 ? 'ar' : 'i',
+                areSuffix: wc.defendants.length > 1 ? 'u' : '',
+              },
+            )}\n`
           }
-        } else {
-          attendees += `${formatMessage(
-            m.sections.courtAttendees.defendantNotPresentAutofill,
-          )}\n`
         }
 
         if (

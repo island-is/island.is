@@ -77,7 +77,14 @@ function constructRestrictionRequestPdf(
     .font('Helvetica-Bold')
     .fontSize(mediumFontSize)
     .lineGap(8)
-    .text(formatMessage(m.baseInfo.heading))
+    .text(
+      capitalize(
+        formatMessage(core.defendant, {
+          suffix:
+            theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
+        }),
+      ),
+    )
     .font('Helvetica')
     .fontSize(baseFontSize)
     .lineGap(4)
@@ -235,7 +242,14 @@ function constructInvestigationRequestPdf(
     .font('Helvetica-Bold')
     .fontSize(largeFontSize)
     .lineGap(8)
-    .text(formatMessage(m.baseInfo.heading))
+    .text(
+      capitalize(
+        formatMessage(core.defendant, {
+          suffix:
+            theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
+        }),
+      ),
+    )
     .font('Helvetica')
     .fontSize(baseFontSize)
     .lineGap(4)

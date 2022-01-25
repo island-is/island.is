@@ -34,7 +34,12 @@ import * as userProfile from '@island.is/clients/user-profile'
     MessageProcessorService,
     {
       provide: FIREBASE_PROVIDER,
-      useFactory: () => firebaseAdmin.initializeApp(),
+      useFactory: () =>
+        firebaseAdmin.initializeApp({
+          credential: firebaseAdmin.credential.cert(
+            JSON.parse(environment.firebaseCredentials),
+          ),
+        }),
     },
     {
       provide: userProfile.UserProfileApi,
