@@ -8,7 +8,10 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { icCourtRecord as m } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  icCourtRecord as m,
+} from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
@@ -38,23 +41,33 @@ const CourtRecord = () => {
           attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n`
         }
 
-        if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-          if (wc.accusedName) {
-            attendees += `${wc.accusedName} varnaraðili`
+        if (wc.defendants && wc.defendants.length > 0) {
+          if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+            wc.defendants.forEach((defendant) => {
+              attendees += `${defendant.name} ${formatMessage(core.defendant, {
+                suffix: 'i',
+              })}\n`
+            })
+          } else {
+            if (wc.defendants.length > 1) {
+              attendees += `${formatMessage(
+                m.sections.courtAttendees.multipleDefendantNotPresentAutofill,
+              )}\n`
+            } else {
+              attendees += `${formatMessage(
+                m.sections.courtAttendees.defendantNotPresentAutofill,
+              )}\n`
+            }
           }
-        } else {
-          attendees += formatMessage(
-            m.sections.courtAttendees.defendantNotPresentAutofill,
-          )
         }
 
         if (
           wc.defenderName &&
           wc.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
         ) {
-          attendees += `\n${wc.defenderName} skipaður ${
+          attendees += `${wc.defenderName} skipaður ${
             wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-          } varnaraðila`
+          } ${formatMessage(core.defendant, { suffix: 'a' })}`
         }
 
         if (wc.translator) {

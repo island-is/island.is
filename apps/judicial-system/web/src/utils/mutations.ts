@@ -20,8 +20,11 @@ export const CasesQuery = gql`
       type
       state
       policeCaseNumber
-      accusedNationalId
-      accusedName
+      defendants {
+        id
+        nationalId
+        name
+      }
       validToDate
       decision
       isValidToDateInThePast

@@ -16,6 +16,7 @@ import {
   PoliceModule,
   AwsS3Module,
 } from './modules'
+import { DefendantModule } from './modules/defendant/defendant.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
 @Module({
@@ -37,6 +38,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     PoliceModule,
     AwsS3Module,
     ProblemModule.forRoot({ logAllErrors: true }),
+    DefendantModule,
   ],
 })
 export class AppModule {}

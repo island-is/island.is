@@ -21,12 +21,12 @@ import {
 } from '@nestjs/common'
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
+import type { Auth } from '@island.is/auth-nest-tools'
 import {
   CurrentAuth,
   IdsAuthGuard,
   Scopes,
   ScopesGuard,
-  Auth,
 } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
 import { Audit, AuditService } from '@island.is/nest/audit'
