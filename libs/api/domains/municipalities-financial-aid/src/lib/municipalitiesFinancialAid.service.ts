@@ -22,14 +22,9 @@ export class MunicipalitiesFinancialAidService {
     return this.municipalityApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async municipalitiesFinancialAidCurrentApplication(
-    auth: Auth,
-    nationalId: string,
-  ) {
+  async municipalitiesFinancialAidCurrentApplication(auth: Auth) {
     return await this.applicationApiWithAuth(auth)
-      .applicationControllerGetCurrentApplication({
-        nationalId,
-      })
+      .applicationControllerGetCurrentApplication()
       .then((res) => {
         return res
       })

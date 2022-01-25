@@ -24,7 +24,6 @@ export class MunicipalitiesFinancialAidResolver {
   ): Promise<string | null> {
     return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidCurrentApplication(
       user,
-      user.nationalId,
     )
   }
 
