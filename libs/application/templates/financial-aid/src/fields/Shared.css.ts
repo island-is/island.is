@@ -23,3 +23,19 @@ export const summaryBlockChild = style({
     },
   },
 })
+
+export const confirmationIllustration = style({
+  marginTop: theme.spacing[5],
+  display: 'none',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      display: 'block',
+    },
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      display: 'none',
+    },
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      display: 'block',
+    },
+  },
+})

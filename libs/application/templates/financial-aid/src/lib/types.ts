@@ -1,4 +1,5 @@
 import { Application, FieldBaseProps } from '@island.is/application/core'
+import { Municipality } from '@island.is/financial-aid/shared/lib'
 import { answersSchema } from './dataSchema'
 
 export enum DataProviderTypes {
@@ -17,7 +18,14 @@ type ErrorSchema = NestedType<answersSchema>
 
 export interface ExternalData {
   nationalRegistry: {
-    data: Applicant
+    data: {
+      applicant: Applicant
+      municipality: Municipality
+    }
+    date: string
+  }
+  veita: {
+    data: CurrentApplication
     date: string
   }
 }

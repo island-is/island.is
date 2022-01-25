@@ -8,6 +8,24 @@ export const application = defineMessages({
   },
 })
 
+export const copyUrl = defineMessages({
+  inputLabel: {
+    id: 'fa.application:copyUrl.inputLabel',
+    defaultMessage: 'Hlekkur á umsóknina',
+    description: 'Copy url input label',
+  },
+  buttonLabel: {
+    id: 'fa.application:copyUrl.buttonLabel',
+    defaultMessage: 'Afrita hlekk',
+    description: 'Copy url button text',
+  },
+  successMessage: {
+    id: 'fa.application:copyUrl.successMessage',
+    defaultMessage: 'Hlekkur afritaður',
+    description: 'Copy url success text',
+  },
+})
+
 export const section = defineMessages({
   dataGathering: {
     id: 'fa.application:section.dataGathering',
