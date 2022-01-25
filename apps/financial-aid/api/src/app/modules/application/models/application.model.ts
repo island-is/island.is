@@ -14,7 +14,7 @@ import { ApplicationEventModel, ApplicationFiltersModel } from './index'
 import { AmountModel } from '../../amount'
 
 @ObjectType()
-export class ApplicationModel implements Application {
+export class ApplicationWithAttachments implements Application {
   @Field(() => ID)
   readonly id!: string
 

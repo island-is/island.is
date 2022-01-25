@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing'
 
 import { LoggingModule } from '@island.is/logging'
 
-import { ApplicationModel } from '../models/application.model'
+import { ApplicationWithAttachments } from '../models/application.model'
 import { ApplicationService } from '../application.service'
 import { ApplicationController } from '../application.controller'
 import { EmailService } from '@island.is/email-service'
@@ -36,7 +36,7 @@ export const createTestingApplicationModule = async () => {
       AmountService,
       AuditService,
       {
-        provide: getModelToken(ApplicationModel),
+        provide: getModelToken(ApplicationWithAttachments),
         useValue: {
           findOne: jest.fn(),
           count: jest.fn(),
@@ -50,8 +50,8 @@ export const createTestingApplicationModule = async () => {
   }).compile()
 
   const applicationModel = await applicationModule.resolve<
-    typeof ApplicationModel
-  >(getModelToken(ApplicationModel))
+    typeof ApplicationWithAttachments
+  >(getModelToken(ApplicationWithAttachments))
 
   const applicationService = applicationModule.get<ApplicationService>(
     ApplicationService,

@@ -28,7 +28,7 @@ export interface ActionCardMetaData {
   }
 }
 
-export interface ApplicationModel {
+export interface ApplicationWithAttachments {
   id: string
   state: string
   actionCard?: ActionCardMetaData
@@ -46,4 +46,4 @@ export interface ApplicationModel {
   status: ApplicationStatus
 }
 
-export type Application = Omit<ApplicationModel, 'attachments'>
+export type Application = Omit<ApplicationWithAttachments, 'attachments'>

@@ -5,7 +5,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { Op } from 'sequelize'
 import { uuid } from 'uuidv4'
-import { ApplicationModel } from '../models/application.model'
+import { ApplicationWithAttachments } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
 
 interface Then {
@@ -17,7 +17,7 @@ type GivenWhenThen = (staff: Staff) => Promise<Then>
 
 describe('ApplicationController - Get all filters', () => {
   let givenWhenThen: GivenWhenThen
-  let mockApplicationModel: typeof ApplicationModel
+  let mockApplicationWithAttachments: typeof ApplicationWithAttachments
 
   beforeEach(async () => {
     const {
@@ -25,7 +25,7 @@ describe('ApplicationController - Get all filters', () => {
       applicationModel,
     } = await createTestingApplicationModule()
 
-    mockApplicationModel = applicationModel
+    mockApplicationWithAttachments = applicationModel
 
     givenWhenThen = async (staff: Staff): Promise<Then> => {
       const then = {} as Then
@@ -44,7 +44,7 @@ describe('ApplicationController - Get all filters', () => {
     let mockGetAllFilters: jest.Mock
 
     beforeEach(async () => {
-      mockGetAllFilters = mockApplicationModel.count as jest.Mock
+      mockGetAllFilters = mockApplicationWithAttachments.count as jest.Mock
 
       await givenWhenThen(staff)
     })
@@ -113,7 +113,7 @@ describe('ApplicationController - Get all filters', () => {
     const staff = { id: uuid(), municipalityId: '10' } as Staff
 
     beforeEach(async () => {
-      const mockFindById = mockApplicationModel.count as jest.Mock
+      const mockFindById = mockApplicationWithAttachments.count as jest.Mock
       mockFindById.mockReturnValue(expectedValue)
 
       then = await givenWhenThen(staff)
@@ -160,7 +160,7 @@ describe('ApplicationController - Get all filters', () => {
     const staff = { id: uuid(), municipalityId: '10' } as Staff
 
     beforeEach(async () => {
-      const mockGetAllFilters = mockApplicationModel.count as jest.Mock
+      const mockGetAllFilters = mockApplicationWithAttachments.count as jest.Mock
       mockGetAllFilters.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(staff)

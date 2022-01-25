@@ -3,7 +3,7 @@ import { Op } from 'sequelize'
 import { uuid } from 'uuidv4'
 import { FileService } from '../../file'
 import { ApplicationFileModel } from '../../file/models/file.model'
-import { ApplicationModel } from '../models/application.model'
+import { ApplicationWithAttachments } from '../models/application.model'
 import { SpouseResponse } from '../models/spouse.response'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
 
@@ -16,7 +16,7 @@ type GivenWhenThen = (spouseNationalId: string) => Promise<Then>
 
 describe('ApplicationController - Spouse', () => {
   let givenWhenThen: GivenWhenThen
-  let mockApplicationModel: typeof ApplicationModel
+  let mockApplicationWithAttachments: typeof ApplicationWithAttachments
   let mockFileService: FileService
 
   beforeEach(async () => {
@@ -26,7 +26,7 @@ describe('ApplicationController - Spouse', () => {
       fileService,
     } = await createTestingApplicationModule()
 
-    mockApplicationModel = applicationModel
+    mockApplicationWithAttachments = applicationModel
     mockFileService = fileService
 
     givenWhenThen = async (spouseNationalId: string): Promise<Then> => {
@@ -46,7 +46,7 @@ describe('ApplicationController - Spouse', () => {
     let mockSpouse: jest.Mock
 
     beforeEach(async () => {
-      mockSpouse = mockApplicationModel.findOne as jest.Mock
+      mockSpouse = mockApplicationWithAttachments.findOne as jest.Mock
 
       await givenWhenThen(spouseNationalId)
     })
@@ -71,7 +71,7 @@ describe('ApplicationController - Spouse', () => {
     }
 
     beforeEach(async () => {
-      const mockSpouse = mockApplicationModel.findOne as jest.Mock
+      const mockSpouse = mockApplicationWithAttachments.findOne as jest.Mock
       mockSpouse.mockReturnValueOnce(null)
 
       then = await givenWhenThen(spouseNationalId)
@@ -92,11 +92,11 @@ describe('ApplicationController - Spouse', () => {
     }
 
     beforeEach(async () => {
-      const mockSpouse = mockApplicationModel.findOne as jest.Mock
+      const mockSpouse = mockApplicationWithAttachments.findOne as jest.Mock
       mockSpouse.mockReturnValueOnce({
         id: uuid(),
         name: spouse.spouseName,
-      } as ApplicationModel)
+      } as ApplicationWithAttachments)
       const mockFiles = mockFileService.getApplicationFilesByType as jest.Mock
       mockFiles.mockReturnValueOnce({} as ApplicationFileModel)
 
@@ -118,11 +118,11 @@ describe('ApplicationController - Spouse', () => {
     }
 
     beforeEach(async () => {
-      const mockSpouse = mockApplicationModel.findOne as jest.Mock
+      const mockSpouse = mockApplicationWithAttachments.findOne as jest.Mock
       mockSpouse.mockReturnValueOnce({
         id: uuid(),
         name: spouse.spouseName,
-      } as ApplicationModel)
+      } as ApplicationWithAttachments)
       const mockFiles = mockFileService.getApplicationFilesByType as jest.Mock
       mockFiles.mockReturnValueOnce(undefined)
 
@@ -139,7 +139,7 @@ describe('ApplicationController - Spouse', () => {
     const spouseNationalId = '0000000000'
 
     beforeEach(async () => {
-      const mockSpouse = mockApplicationModel.findOne as jest.Mock
+      const mockSpouse = mockApplicationWithAttachments.findOne as jest.Mock
       mockSpouse.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(spouseNationalId)

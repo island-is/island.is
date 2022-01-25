@@ -1,5 +1,5 @@
 import {
-  ApplicationModel as Application,
+  ApplicationWithAttachments as Application,
   getValueViaPath,
 } from '@island.is/application/core'
 import { S3 } from 'aws-sdk'

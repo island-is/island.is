@@ -11,7 +11,7 @@ import type { FundingGovernmentProjectsConfig } from './config/fundingFovernment
 import { FUNDING_GOVERNMENT_PROJECTS_CONFIG } from './config/fundingFovernmentProjectsConfig'
 import { FileStorageService } from '@island.is/file-storage'
 import {
-  ApplicationModel as Application,
+  ApplicationWithAttachments as Application,
   getValueViaPath,
 } from '@island.is/application/core'
 import { FundingAttachment } from './types'

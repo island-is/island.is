@@ -1,5 +1,5 @@
 import {
-  ApplicationModel as Application,
+  ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'

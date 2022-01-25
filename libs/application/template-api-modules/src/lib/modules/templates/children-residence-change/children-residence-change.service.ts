@@ -20,7 +20,7 @@ import {
   generateSyslumennNotificationEmail,
   transferRequestedEmail,
 } from './emailGenerators'
-import { ApplicationModel as Application } from '@island.is/application/core'
+import { ApplicationWithAttachments as Application } from '@island.is/application/core'
 import { SmsService } from '@island.is/nova-sms'
 import { syslumennDataFromPostalCode } from './utils'
 import { applicationRejectedEmail } from './emailGenerators/applicationRejected'

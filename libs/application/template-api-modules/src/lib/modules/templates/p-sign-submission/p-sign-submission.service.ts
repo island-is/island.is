@@ -9,7 +9,7 @@ import {
 } from '@island.is/clients/syslumenn'
 import { NationalRegistry } from './types'
 import {
-  ApplicationModel as Application,
+  ApplicationWithAttachments as Application,
   getValueViaPath,
 } from '@island.is/application/core'
 import AmazonS3URI from 'amazon-s3-uri'

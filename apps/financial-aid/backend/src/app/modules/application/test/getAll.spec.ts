@@ -10,11 +10,11 @@ import {
 import { Op } from 'sequelize'
 import { uuid } from 'uuidv4'
 import { StaffModel } from '../../staff/models/staff.model'
-import { ApplicationModel } from '../models/application.model'
+import { ApplicationWithAttachments } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
 
 interface Then {
-  result: ApplicationModel[]
+  result: ApplicationWithAttachments[]
   error: Error
 }
 
@@ -25,7 +25,7 @@ type GivenWhenThen = (
 
 describe('ApplicationController - Get all', () => {
   let givenWhenThen: GivenWhenThen
-  let mockApplicationModel: typeof ApplicationModel
+  let mockApplicationWithAttachments: typeof ApplicationWithAttachments
 
   beforeEach(async () => {
     const {
@@ -33,7 +33,7 @@ describe('ApplicationController - Get all', () => {
       applicationModel,
     } = await createTestingApplicationModule()
 
-    mockApplicationModel = applicationModel
+    mockApplicationWithAttachments = applicationModel
 
     givenWhenThen = async (
       stateUrl: ApplicationStateUrl,
@@ -57,7 +57,7 @@ describe('ApplicationController - Get all', () => {
     let mockGetAll: jest.Mock
 
     beforeEach(async () => {
-      mockGetAll = mockApplicationModel.findAll as jest.Mock
+      mockGetAll = mockApplicationWithAttachments.findAll as jest.Mock
 
       await givenWhenThen(stateUrl, staff)
     })
@@ -82,7 +82,7 @@ describe('ApplicationController - Get all', () => {
     let mockGetAll: jest.Mock
 
     beforeEach(async () => {
-      mockGetAll = mockApplicationModel.findAll as jest.Mock
+      mockGetAll = mockApplicationWithAttachments.findAll as jest.Mock
 
       await givenWhenThen(stateUrl, staff)
     })
@@ -107,7 +107,7 @@ describe('ApplicationController - Get all', () => {
     const expected = []
 
     beforeEach(async () => {
-      const mockGetAll = mockApplicationModel.findAll as jest.Mock
+      const mockGetAll = mockApplicationWithAttachments.findAll as jest.Mock
       mockGetAll.mockReturnValueOnce(expected)
 
       then = await givenWhenThen(stateUrl, staff)
@@ -152,11 +152,11 @@ describe('ApplicationController - Get all', () => {
       streetName: 'that street',
       postalCode: '1',
       municipalityCode: '10',
-    } as ApplicationModel
+    } as ApplicationWithAttachments
     const expected = [application, application, application]
 
     beforeEach(async () => {
-      const mockGetAll = mockApplicationModel.findAll as jest.Mock
+      const mockGetAll = mockApplicationWithAttachments.findAll as jest.Mock
       mockGetAll.mockReturnValueOnce(expected)
 
       then = await givenWhenThen(stateUrl, staff)
@@ -177,7 +177,7 @@ describe('ApplicationController - Get all', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockGetAll = mockApplicationModel.findAll as jest.Mock
+      const mockGetAll = mockApplicationWithAttachments.findAll as jest.Mock
       mockGetAll.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(stateUrl, staff)

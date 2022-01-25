@@ -12,11 +12,11 @@ import { NotFoundException } from '@nestjs/common'
 import { uuid } from 'uuidv4'
 import { ApplicationEventService } from '../../applicationEvent'
 import { CreateApplicationEventDto } from '../dto'
-import { ApplicationModel } from '../models/application.model'
+import { ApplicationWithAttachments } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
 
 interface Then {
-  result: ApplicationModel
+  result: ApplicationWithAttachments
   error: Error
 }
 
@@ -28,7 +28,7 @@ type GivenWhenThen = (
 describe('ApplicationController - Create event', () => {
   let givenWhenThen: GivenWhenThen
   let mockApplicationEventService: ApplicationEventService
-  let mockApplicationModel: typeof ApplicationModel
+  let mockApplicationWithAttachments: typeof ApplicationWithAttachments
 
   beforeEach(async () => {
     const {
@@ -38,7 +38,7 @@ describe('ApplicationController - Create event', () => {
     } = await createTestingApplicationModule()
 
     mockApplicationEventService = applicationEventService
-    mockApplicationModel = applicationModel
+    mockApplicationWithAttachments = applicationModel
 
     givenWhenThen = async (
       applicationEvent: CreateApplicationEventDto,
@@ -82,7 +82,7 @@ describe('ApplicationController - Create event', () => {
     beforeEach(async () => {
       const createApplicationEvent = mockApplicationEventService.create as jest.Mock
       createApplicationEvent.mockReturnValueOnce(Promise.resolve())
-      const findApplicationById = mockApplicationModel.findOne as jest.Mock
+      const findApplicationById = mockApplicationWithAttachments.findOne as jest.Mock
       findApplicationById.mockReturnValueOnce(application)
 
       then = await givenWhenThen(applicationEvent, user)
@@ -112,7 +112,7 @@ describe('ApplicationController - Create event', () => {
     beforeEach(async () => {
       const createApplicationEvent = mockApplicationEventService.create as jest.Mock
       createApplicationEvent.mockReturnValueOnce(Promise.resolve())
-      const findApplicationById = mockApplicationModel.findOne as jest.Mock
+      const findApplicationById = mockApplicationWithAttachments.findOne as jest.Mock
       findApplicationById.mockReturnValueOnce(application)
 
       then = await givenWhenThen(applicationEvent, user)

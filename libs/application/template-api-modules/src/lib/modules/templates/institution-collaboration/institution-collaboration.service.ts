@@ -11,7 +11,7 @@ import type { InstitutionCollaborationConfig } from './config/institutionApplica
 import { INSTITUTION_COLLABORATION_CONFIG } from './config/institutionApplicationServiceConfig'
 import { FileStorageService } from '@island.is/file-storage'
 import {
-  ApplicationModel as Application,
+  ApplicationWithAttachments as Application,
   getValueViaPath,
 } from '@island.is/application/core'
 import { InstitutionAttachment } from './types'

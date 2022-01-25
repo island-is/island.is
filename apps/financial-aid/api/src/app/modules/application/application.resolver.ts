@@ -6,7 +6,7 @@ import { BackendAPI } from '../../../services'
 
 import {
   ApplicationFiltersModel,
-  ApplicationModel,
+  ApplicationWithAttachments,
   UpdateApplicationTableResponse,
 } from './models'
 import {
@@ -26,14 +26,14 @@ import {
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsUserGuard)
-@Resolver(() => ApplicationModel)
+@Resolver(() => ApplicationWithAttachments)
 export class ApplicationResolver {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
-  @Query(() => [ApplicationModel], { nullable: false })
+  @Query(() => [ApplicationWithAttachments], { nullable: false })
   applications(
     @Args('input', { type: () => AllApplicationInput })
     input: AllApplicationInput,
@@ -44,7 +44,7 @@ export class ApplicationResolver {
     return backendApi.getApplications(input.stateUrl)
   }
 
-  @Query(() => ApplicationModel, { nullable: false })
+  @Query(() => ApplicationWithAttachments, { nullable: false })
   application(
     @Args('input', { type: () => ApplicationInput })
     input: ApplicationInput,
@@ -55,7 +55,7 @@ export class ApplicationResolver {
     return backendApi.getApplication(input.id)
   }
 
-  @Query(() => [ApplicationModel], { nullable: false })
+  @Query(() => [ApplicationWithAttachments], { nullable: false })
   applicationSearch(
     @Args('input', { type: () => ApplicationSearchInput })
     input: ApplicationSearchInput,
@@ -66,7 +66,7 @@ export class ApplicationResolver {
     return backendApi.searchForApplication(input.nationalId)
   }
 
-  @Mutation(() => ApplicationModel, { nullable: true })
+  @Mutation(() => ApplicationWithAttachments, { nullable: true })
   createApplication(
     @Args('input', { type: () => CreateApplicationInput })
     input: CreateApplicationInput,
@@ -76,7 +76,7 @@ export class ApplicationResolver {
     return backendApi.createApplication(input)
   }
 
-  @Mutation(() => ApplicationModel, { nullable: true })
+  @Mutation(() => ApplicationWithAttachments, { nullable: true })
   updateApplication(
     @Args('input', { type: () => UpdateApplicationInput })
     input: UpdateApplicationInput,
@@ -108,7 +108,7 @@ export class ApplicationResolver {
     return backendApi.getApplicationFilters()
   }
 
-  @Mutation(() => ApplicationModel, { nullable: true })
+  @Mutation(() => ApplicationWithAttachments, { nullable: true })
   async createApplicationEvent(
     @Args('input', { type: () => CreateApplicationEventInput })
     input: CreateApplicationEventInput,

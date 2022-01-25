@@ -9,7 +9,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { ApplicationModel } from '../../application/models/application.model'
+import { ApplicationWithAttachments } from '../../application/models/application.model'
 import { FileType, ApplicationFile } from '@island.is/financial-aid/shared/lib'
 
 @Table({
@@ -33,7 +33,7 @@ export class ApplicationFileModel extends Model<ApplicationFile> {
   @ApiProperty()
   created: Date
 
-  @ForeignKey(() => ApplicationModel)
+  @ForeignKey(() => ApplicationWithAttachments)
   @Column({
     type: DataType.UUID,
     allowNull: false,

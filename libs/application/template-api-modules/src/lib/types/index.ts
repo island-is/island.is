@@ -1,4 +1,4 @@
-import { ApplicationModel as Application } from '@island.is/application/core'
+import { ApplicationWithAttachments as Application } from '@island.is/application/core'
 import { Config as DrivingLicenseApiConfig } from '@island.is/api/domains/driving-license'
 import { Config as CriminalRecordConfig } from '@island.is/api/domains/criminal-record'
 import { PaymentServiceOptions } from '@island.is/clients/payment'
