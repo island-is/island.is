@@ -1,16 +1,16 @@
 import React, { ReactNode } from 'react'
 import { Text, Box, Button } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
 
 import { summaryForm } from '../../lib/messages'
+import { useIntl } from 'react-intl'
+import * as styles from '../Shared.css'
 
 interface Props {
-  sectionTitle: string
   editAction?(): void
   children: ReactNode
 }
 
-const SummaryBlock = ({ sectionTitle, children, editAction }: Props) => {
+const SummaryBlock = ({ children, editAction }: Props) => {
   const { formatMessage } = useIntl()
 
   return (
@@ -22,10 +22,7 @@ const SummaryBlock = ({ sectionTitle, children, editAction }: Props) => {
       borderTopWidth="standard"
       borderColor="blue300"
     >
-      <Box>
-        <Text fontWeight="semiBold">{sectionTitle}</Text>
-        {children}
-      </Box>
+      <Box className={styles.summaryBlockChild}>{children}</Box>
       <Button
         icon="pencil"
         iconType="filled"

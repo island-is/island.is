@@ -68,6 +68,11 @@ export const summaryForm = {
       defaultMessage: 'Skrifaðu hér',
       description: 'Summary form placeholder for input for form comment',
     },
+    formCommentLabel: {
+      id: 'fa.application:section.summaryForm.formInfo.formCommentLabel',
+      defaultMessage: 'Annað sem þú vilt koma á framfæri?',
+      description: 'Summary form label above the form comment section',
+    },
   }),
   block: defineMessages({
     buttonLabel: {

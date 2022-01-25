@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css'
+import { theme } from '@island.is/island-ui/theme'
 
 export const inputContainer = style({
   maxHeight: '0',
@@ -12,4 +13,13 @@ export const inputAppear = style({
 
 export const formAppear = style({
   maxHeight: '400px',
+})
+
+export const summaryBlockChild = style({
+  minWidth: '50%',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      minWidth: '83%',
+    },
+  },
 })
