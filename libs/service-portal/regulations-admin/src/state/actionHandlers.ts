@@ -68,7 +68,7 @@ export const actionHandlers: {
     const appendix = state.draft.appendixes[idx]
     if (appendix) {
       const field = appendix[name]
-      // @ts-expect-error  (Fuu)
+      // @ts-expect-error  (Fuu ... VSCode says no error, but if you remove this line, the build will fail. FML)
       value = tidyUp[field.type || '_'](value)
 
       if (value !== field.value) {
