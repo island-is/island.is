@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { ApplicationWithAttachments } from './models/application.model'
+import { ApplicationModel } from './models/application.model'
 import { ApplicationEventModule } from '../applicationEvent'
 import { EmailModule } from '@island.is/email-service'
 import { ApplicationController } from './application.controller'
@@ -20,7 +20,7 @@ import { AmountModule } from '../amount'
     ApplicationEventModule,
     MunicipalityModule,
     AmountModule,
-    SequelizeModule.forFeature([ApplicationWithAttachments]),
+    SequelizeModule.forFeature([ApplicationModel]),
   ],
   providers: [ApplicationService],
   controllers: [ApplicationController],

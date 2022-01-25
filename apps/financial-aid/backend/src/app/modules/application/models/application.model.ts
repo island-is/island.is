@@ -30,7 +30,7 @@ import { AmountModel } from '../../amount/models/amount.model'
   tableName: 'applications',
   timestamps: true,
 })
-export class ApplicationWithAttachments extends Model<Application> {
+export class ApplicationModel extends Model<Application> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

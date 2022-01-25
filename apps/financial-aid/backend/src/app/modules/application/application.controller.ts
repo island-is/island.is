@@ -14,7 +14,7 @@ import { ApplicationService } from './application.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  ApplicationWithAttachments,
+  ApplicationModel,
   UpdateApplicationTableResponse,
   SpouseResponse,
 } from './models'
@@ -97,7 +97,7 @@ export class ApplicationController {
   @StaffRolesRules(StaffRole.EMPLOYEE)
   @Get('find/:nationalId')
   @ApiOkResponse({
-    type: ApplicationWithAttachments,
+    type: ApplicationModel,
     isArray: true,
     description: 'Searches for application by nationalId',
   })
@@ -105,7 +105,7 @@ export class ApplicationController {
     @Param('nationalId') nationalId: string,
     @CurrentStaff() staff: Staff,
     @CurrentUser() user: IdsAuthUser,
-  ): Promise<ApplicationWithAttachments[]> {
+  ): Promise<ApplicationModel[]> {
     this.logger.debug('Search for application')
 
     const applications = await this.applicationService.findByNationalId(
@@ -142,14 +142,14 @@ export class ApplicationController {
   @StaffRolesRules(StaffRole.EMPLOYEE)
   @Get('state/:stateUrl')
   @ApiOkResponse({
-    type: ApplicationWithAttachments,
+    type: ApplicationModel,
     isArray: true,
     description: 'Gets all existing applications',
   })
   async getAll(
     @Param('stateUrl') stateUrl: ApplicationStateUrl,
     @CurrentStaff() staff: Staff,
-  ): Promise<ApplicationWithAttachments[]> {
+  ): Promise<ApplicationModel[]> {
     this.logger.debug('Application controller: Getting all applications')
     return this.applicationService.getAll(
       stateUrl,
@@ -161,7 +161,7 @@ export class ApplicationController {
   @UseGuards(ApplicationGuard)
   @Get('id/:id')
   @ApiOkResponse({
-    type: ApplicationWithAttachments,
+    type: ApplicationModel,
     description: 'Get application',
   })
   async getById(
@@ -196,14 +196,14 @@ export class ApplicationController {
 
   @Put('id/:id')
   @ApiOkResponse({
-    type: ApplicationWithAttachments,
+    type: ApplicationModel,
     description: 'Updates an existing application',
   })
   async update(
     @Param('id') id: string,
     @Body() applicationToUpdate: UpdateApplicationDto,
     @CurrentUser() user: FinancialAidUser,
-  ): Promise<ApplicationWithAttachments> {
+  ): Promise<ApplicationModel> {
     this.logger.debug(
       `Application controller: Updating application with id ${id}`,
     )
@@ -261,13 +261,13 @@ export class ApplicationController {
   @RolesRules(RolesRule.OSK)
   @Post('')
   @ApiCreatedResponse({
-    type: ApplicationWithAttachments,
+    type: ApplicationModel,
     description: 'Creates a new application',
   })
   create(
     @CurrentUser() user: FinancialAidUser,
     @Body() application: CreateApplicationDto,
-  ): Promise<ApplicationWithAttachments> {
+  ): Promise<ApplicationModel> {
     this.logger.debug('Application controller: Creating application')
     return this.applicationService.create(application, user)
   }
@@ -280,7 +280,7 @@ export class ApplicationController {
   async createEvent(
     @Body() applicationEvent: CreateApplicationEventDto,
     @CurrentUser() user: FinancialAidUser,
-  ): Promise<ApplicationWithAttachments> {
+  ): Promise<ApplicationModel> {
     await this.applicationEventService.create(applicationEvent)
 
     const application = await this.applicationService.findById(
