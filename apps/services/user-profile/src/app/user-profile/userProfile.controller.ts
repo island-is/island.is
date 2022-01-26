@@ -35,7 +35,9 @@ import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
-import { CreateEmailVerificationDto } from './dto/CreateEmailVerificationDto'
+// import { CreateEmailVerificationDto } from './dto/CreateEmailVerificationDto'
+import { IsNotEmpty, IsString, IsEmail } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { DeleteTokenResponseDto } from './dto/deleteTokenResponseDto'
 import { DeviceTokenDto } from './dto/deviceToken.dto'
@@ -44,6 +46,19 @@ import { UserDeviceTokensDto } from './dto/userDeviceTokens.dto'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
+
+// TODO: Remove this DTO & use import.
+export class CreateEmailVerificationDto {
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  readonly nationalId!: string
+
+  @IsNotEmpty()
+  @IsEmail()
+  @ApiProperty()
+  readonly email!: string
+}
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('User Profile')
