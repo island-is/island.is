@@ -82,6 +82,33 @@ const DefendantForm: React.FC<Props> = (props) => {
     }
   }
 
+  const handleDeleteDefendant = async (defendant: Defendant) => {
+    if (workingCase.defendants && workingCase.defendants.length > 1) {
+      if (workingCase.id) {
+        const { data } = await deleteDefendant(workingCase.id, defendant.id)
+
+        if (data?.deleteDefendant.deleted && workingCase.defendants) {
+          removeDefendantFromState(defendant)
+        } else {
+          // TODO: handle error
+        }
+      } else {
+        removeDefendantFromState(defendant)
+      }
+    }
+  }
+
+  const removeDefendantFromState = (defendant: Defendant) => {
+    if (workingCase.defendants && workingCase.defendants?.length > 1) {
+      setWorkingCase({
+        ...workingCase,
+        defendants: [...workingCase.defendants].filter(
+          (d) => d.id !== defendant.id,
+        ),
+      })
+    }
+  }
+
   const createEmptyDefendant = (defendantId?: string) => {
     if (workingCase.defendants) {
       setWorkingCase({
@@ -211,29 +238,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                     >
                       <DefendantInfo
                         defendant={defendant}
-                        onDelete={
-                          workingCase.defendants &&
-                          workingCase.defendants?.length > 1
-                            ? async () => {
-                                const { data } = await deleteDefendant(
-                                  workingCase.id,
-                                  defendant.id,
-                                )
-
-                                if (
-                                  data?.deleteDefendant.deleted &&
-                                  workingCase.defendants
-                                ) {
-                                  setWorkingCase({
-                                    ...workingCase,
-                                    defendants: [
-                                      ...workingCase.defendants,
-                                    ].filter((d) => d.id !== defendant.id),
-                                  })
-                                }
-                              }
-                            : undefined
-                        }
+                        onDelete={index > 0 ? handleDeleteDefendant : undefined}
                         onChange={handleUpdateDefendant}
                         updateDefendantState={updateDefendantState}
                       />

@@ -15,7 +15,7 @@ import {
   FormFooter,
   PageLayout,
   BlueBox,
-  CaseNumbers,
+  CaseInfo,
   FormContentContainer,
   TimeInputField,
 } from '@island.is/judicial-system-web/src/components'
@@ -49,6 +49,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingStepTwoValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   core,
   rcRulingStepTwo as m,
@@ -65,6 +66,8 @@ export const RulingStepTwo: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
+
   const [
     courtDocumentEndErrorMessage,
     setCourtDocumentEndErrorMessage,
@@ -246,13 +249,13 @@ export const RulingStepTwo: React.FC = () => {
       notFound={caseNotFound}
     >
       <FormContentContainer>
-        <Box marginBottom={10}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={6}>
