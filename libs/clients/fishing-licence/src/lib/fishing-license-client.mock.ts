@@ -18,7 +18,7 @@ export class FishingLicenceApiClientMock implements FishingLicenseClient {
         grossTons: 33,
         length: 240,
         homePort: 'Grindavík',
-        seaworthiness: { validTo: new Date() },
+        seaworthiness: { validTo: new Date('21 Aug 2022 00:12:00 GMT') },
         deprivations: [],
         features: '',
         fishingLicences: ['Aflamark'],
@@ -29,7 +29,7 @@ export class FishingLicenceApiClientMock implements FishingLicenseClient {
         grossTons: 33,
         length: 240,
         homePort: 'Hafnafjörður',
-        seaworthiness: { validTo: new Date() },
+        seaworthiness: { validTo: new Date('23 Jan 2021 00:12:00 GMT') },
         deprivations: [],
         features: '',
         fishingLicences: ['Krókaflamark', 'Sérleyfi 123'],
@@ -40,7 +40,7 @@ export class FishingLicenceApiClientMock implements FishingLicenseClient {
         grossTons: 1,
         length: 10,
         homePort: 'Hafnarfjörður',
-        seaworthiness: { validTo: new Date() },
+        seaworthiness: { validTo: new Date('23 Feb 2022 00:12:00 GMT') },
         deprivations: [],
         features: '',
         fishingLicences: [],
@@ -53,12 +53,23 @@ export class FishingLicenceApiClientMock implements FishingLicenseClient {
       {
         answer: true,
         name: 'aflamark',
-        reasons: [{ description: 'test', directions: 'fulla ferð áfram' }],
+        reasons: [
+          {
+            description: 'Veiðileyfi með aflamarki',
+            directions: 'Einungis er heimilt að nýta ...',
+          },
+        ],
       },
       {
         answer: true,
         name: 'krókaflamark',
-        reasons: [{ description: 'test', directions: 'fulla ferð áfram' }],
+        reasons: [
+          {
+            description: 'Veiðileyfi með krókaaflamarki',
+            directions:
+              'Einungis er heimilt að nýta handfæri og línu með krókaveiðifærum. Báturinn þarf að vera 15 brúttótonn eða minna.',
+          },
+        ],
       },
       {
         answer: true,

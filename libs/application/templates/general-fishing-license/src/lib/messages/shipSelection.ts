@@ -39,6 +39,11 @@ export const shipSelection = {
       defaultMessage: 'Lengd',
       description: 'Ship length label',
     },
+    meters: {
+      id: 'gfl.application:shipSelection.labels.meters',
+      defaultMessage: 'metrar',
+      description: 'Ship length meters label',
+    },
     homePort: {
       id: 'gfl.application:shipSelection.labels.homePort',
       defaultMessage: 'Heimahöfn',

@@ -19,7 +19,7 @@ export const externalDataSection = buildSection({
       dataProviders: [
         buildDataProviderItem({
           id: 'directoryOfFisheries',
-          type: '',
+          type: 'GeneralFishingLicenseProvider',
           title: externalData.directoryOfFisheries.title,
           subTitle: externalData.directoryOfFisheries.description,
         }),

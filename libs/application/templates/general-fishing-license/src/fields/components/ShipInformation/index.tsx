@@ -5,10 +5,11 @@ import { shipSelection } from '../../../lib/messages'
 import { ValueLine } from './ValueLine'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import { ShipInformationType } from '../../../types'
+import { Ship } from '@island.is/api/schema'
+import parseISO from 'date-fns/parseISO'
 
 interface ShipInformationProps {
-  ship: ShipInformationType
+  ship: Ship
   seaworthinessHasColor?: boolean
   isExpired?: boolean
 }
@@ -19,9 +20,9 @@ export const ShipInformation: FC<ShipInformationProps> = ({
   isExpired = false,
 }) => {
   const {
-    shipName,
-    shipNumber,
-    grossTonn,
+    name,
+    registrationNumber,
+    grossTons,
     length,
     homePort,
     seaworthiness,
@@ -30,7 +31,13 @@ export const ShipInformation: FC<ShipInformationProps> = ({
 
   // If seaworhtiness date is before today it will get "expired" label and appear red
   // If today or later it will get "valid until" label and appear green
-  const seaworthinessDate = format(seaworthiness, 'dd.MM.yy', { locale: is })
+  const seaworthinessDate = format(
+    parseISO(seaworthiness.validTo),
+    'dd.MM.yy',
+    {
+      locale: is,
+    },
+  )
   const seaworthinessColor = seaworthinessHasColor
     ? isExpired
       ? 'red'
@@ -47,20 +54,20 @@ export const ShipInformation: FC<ShipInformationProps> = ({
         marginBottom="smallGutter"
         color={isExpired ? 'dark300' : 'dark400'}
       >
-        {shipName}
+        {name}
       </Text>
-      {shipNumber && (
+      {registrationNumber && (
         <ValueLine
           label={formatMessage(shipSelection.labels.shipNumber)}
-          value={shipNumber}
+          value={registrationNumber.toString()}
           disabled={isExpired}
           color={isExpired ? 'grey' : 'black'}
         />
       )}
-      {grossTonn && (
+      {grossTons && (
         <ValueLine
           label={formatMessage(shipSelection.labels.grossTonn)}
-          value={grossTonn}
+          value={grossTons.toString()}
           disabled={isExpired}
           color={isExpired ? 'grey' : 'black'}
         />
@@ -68,7 +75,9 @@ export const ShipInformation: FC<ShipInformationProps> = ({
       {length && (
         <ValueLine
           label={formatMessage(shipSelection.labels.length)}
-          value={length}
+          value={`${length.toString()} ${formatMessage(
+            shipSelection.labels.meters,
+          )}`}
           disabled={isExpired}
           color={isExpired ? 'grey' : 'black'}
         />

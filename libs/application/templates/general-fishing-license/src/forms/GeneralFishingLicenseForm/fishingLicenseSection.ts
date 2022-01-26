@@ -4,6 +4,7 @@ import {
   buildRadioField,
   buildSection,
 } from '@island.is/application/core'
+import { getFishingLicenseOptions } from '../../../utils'
 
 import { fishingLicense } from '../../lib/messages'
 import { FishingLicenseEnum } from '../../types'
@@ -27,18 +28,8 @@ export const fishingLicenseSection = buildSection({
           id: 'fishingLicense',
           title: fishingLicense.labels.radioButtonTitle,
           largeButtons: true,
-          options: [
-            {
-              value: FishingLicenseEnum.HOOKCATCHLIMIT,
-              label: fishingLicense.labels.hookCatchLimit,
-              tooltip: fishingLicense.labels.hookCatchLimitTooltip,
-            },
-            {
-              value: FishingLicenseEnum.CATCHLIMIT,
-              label: fishingLicense.labels.catchLimit,
-              tooltip: fishingLicense.labels.catchLimitTooltip,
-            },
-          ],
+          options: (application) =>
+            getFishingLicenseOptions(application.answers),
         }),
       ],
     }),
