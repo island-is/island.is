@@ -448,8 +448,12 @@ jobs:
         uses: docker/setup-buildx-action@v1
 
       - name: Building Docker images
-        if: steps.gather.outcome == 'success'
-        run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
+        uses: Wandalen/wretry.action@v1.0.11 # https://github.com/marketplace/actions/retry-action
+        with:
+          if: steps.gather.outcome == 'success'
+          run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
+          attempt_limit: 2
+          attempt_delay: 1000
 
   helm-docker-build:
     needs:
