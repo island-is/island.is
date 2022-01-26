@@ -12,6 +12,7 @@ import {
   lowercase,
   formatAppeal,
   formatRequestCaseType,
+  formatNationalId,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -117,6 +118,36 @@ function constructRestrictionRulingPdf(
       paragraphGap: 1,
     })
   }
+
+  doc
+    .text(' ')
+    .text(
+      `${formatMessage(ruling.prosecutorIs)} ${
+        theCase.prosecutor?.institution?.name ?? ruling.noDistrict
+      }.`,
+    )
+    .text(
+      `${formatMessage(ruling.defendantIs, {
+        suffix:
+          theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
+        isSuffix:
+          theCase.defendants && theCase.defendants.length > 1 ? 'u' : '',
+      })}${
+        theCase.defendants?.reduce(
+          (acc, defendant, index) =>
+            `${acc}${
+              index === 0
+                ? ''
+                : index + 1 === theCase.defendants?.length
+                ? ', og'
+                : ','
+            } ${defendant.name ?? '-'}, kt. ${formatNationalId(
+              defendant.nationalId ?? '-',
+            )}`,
+          '',
+        ) ?? ` ${ruling.noDefendants}`
+      }.`,
+    )
 
   if (theCase.courtAttendees?.trim()) {
     doc
@@ -436,6 +467,36 @@ function constructInvestigationRulingPdf(
       paragraphGap: 1,
     })
   }
+
+  doc
+    .text(' ')
+    .text(
+      `${formatMessage(ruling.prosecutorIs)} ${
+        theCase.prosecutor?.institution?.name ?? ruling.noDistrict
+      }.`,
+    )
+    .text(
+      `${formatMessage(ruling.defendantIs, {
+        suffix:
+          theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
+        isSuffix:
+          theCase.defendants && theCase.defendants.length > 1 ? 'u' : '',
+      })}${
+        theCase.defendants?.reduce(
+          (acc, defendant, index) =>
+            `${acc}${
+              index === 0
+                ? ''
+                : index + 1 === theCase.defendants?.length
+                ? ', og'
+                : ','
+            } ${defendant.name ?? '-'}, kt. ${formatNationalId(
+              defendant.nationalId ?? '-',
+            )}`,
+          '',
+        ) ?? ` ${ruling.noDefendants}`
+      }.`,
+    )
 
   if (theCase.courtAttendees?.trim()) {
     doc

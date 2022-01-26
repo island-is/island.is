@@ -8,6 +8,7 @@ import {
   Put,
   NotFoundException,
   Inject,
+  ForbiddenException,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 import { ApplicationService } from './application.service'
@@ -32,6 +33,7 @@ import {
 
 import {
   apiBasePath,
+  ApplicationEventType,
   ApplicationStateUrl,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
@@ -124,7 +126,7 @@ export class ApplicationController {
 
   @UseGuards(RolesGuard)
   @RolesRules(RolesRule.OSK)
-  @Get('spouse/:spouseNationalId')
+  @Get('spouse')
   @ApiOkResponse({
     type: SpouseResponse,
     description: 'Checking if user is spouse',
@@ -209,18 +211,44 @@ export class ApplicationController {
 
     let staff = undefined
 
+    const staffUpdateEvents = [
+      ApplicationEventType.REJECTED,
+      ApplicationEventType.APPROVED,
+      ApplicationEventType.STAFFCOMMENT,
+      ApplicationEventType.INPROGRESS,
+      ApplicationEventType.ASSIGNCASE,
+      ApplicationEventType.NEW,
+    ]
+
+    const applicantUpdateEvents = [
+      ApplicationEventType.USERCOMMENT,
+      ApplicationEventType.SPOUSEFILEUPLOAD,
+      ApplicationEventType.FILEUPLOAD,
+    ]
+
     if (user.service === RolesRule.VEITA) {
       staff = await this.staffService.findByNationalId(user.nationalId)
+      if (!staff) {
+        throw new ForbiddenException('Staff not found')
+      }
     }
 
-    const {
-      numberOfAffectedRows,
-      updatedApplication,
-    } = await this.applicationService.update(id, applicationToUpdate, staff)
-
-    if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(`Application ${id} does not exist`)
+    if (
+      (user.service === RolesRule.OSK &&
+        staffUpdateEvents.includes(applicationToUpdate.event)) ||
+      (user.service === RolesRule.VEITA &&
+        applicantUpdateEvents.includes(applicationToUpdate.event))
+    ) {
+      throw new ForbiddenException(
+        'User not allowed to make this change to application',
+      )
     }
+
+    const updatedApplication = await this.applicationService.update(
+      id,
+      applicationToUpdate,
+      staff,
+    )
 
     updatedApplication?.setDataValue('staff', staff)
 

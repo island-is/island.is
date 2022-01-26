@@ -29,4 +29,15 @@ export class UpdateUserProfileInput {
   @IsOptional()
   @IsBoolean()
   documentNotifications?: boolean
+
+  // Temporary merge with islyklar service
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  canNudge?: boolean
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  bankInfo?: string
 }
