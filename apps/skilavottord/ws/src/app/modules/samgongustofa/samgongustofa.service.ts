@@ -22,9 +22,6 @@ export class SamgongustofaService {
     nationalId: string,
   ): Promise<VehicleInformation[]> {
     try {
-      this.logger.info(
-        'Starting getUserVehiclesInformation call on ${nationalId}',
-      )
       const { soapUrl, soapUsername, soapPassword } = environment.samgongustofa
 
       const parser = new xml2js.Parser()
@@ -50,19 +47,15 @@ export class SamgongustofaService {
         'Content-Type': 'application/xml',
       }
 
-      this.logger.info('Start allVehiclesForPersidno Soap request.')
       const allCarsResponse = await this.httpService
         .post(soapUrl, xmlAllCarsBodyStr, { headers: headersRequest })
         .toPromise()
       if (allCarsResponse.status != 200) {
-        this.logger.error(allCarsResponse.statusText)
-        throw new Error(allCarsResponse.statusText)
+        throw new Error(
+          `Failed on getUserVehiclesInformation request with status: ${allCarsResponse.statusText}`,
+        )
       }
-      this.logger.info(
-        'allVehiclesForPersidno Soap request successed and start parsing xml to json',
-      )
 
-      const loggerReplacement = this.logger
       // Parse xml to Json all Soap and added all vehicles and their information to vehicleInformationList
       const vehicleInformationList: VehicleInformation[] = await parser
         .parseStringPromise(allCarsResponse.data.replace(/(\t\n|\t|\n)/gm, ''))
@@ -74,11 +67,6 @@ export class SamgongustofaService {
               'soapenv:Fault',
             )
           ) {
-            loggerReplacement.error(
-              allCarsResult['soapenv:Envelope']['soapenv:Body'][0][
-                'soapenv:Fault'
-              ][0]['faultstring'][0],
-            )
             throw new Error(
               allCarsResult['soapenv:Envelope']['soapenv:Body'][0][
                 'soapenv:Fault'
@@ -99,9 +87,6 @@ export class SamgongustofaService {
               const vehicleArr: VehicleInformation[] = []
               allCars['persidnolookup']['vehicleList'][0]['vehicle'].forEach(
                 (car) => {
-                  loggerReplacement.info(
-                    `getting information for ${car['permno'][0]}`,
-                  )
                   let carIsRecyclable = true
                   let carStatus = 'inUse'
                   // If vehicle status is 'Afskráð' then the vehicle is 'deregistered'
@@ -134,29 +119,22 @@ export class SamgongustofaService {
               return vehicleArr
             })
             .catch(function (err) {
-              loggerReplacement.error(
-                `Getting error while parsing second xml to json on allVehiclesForPersidno request: ${err}`,
+              throw new Error(
+                `Failed while parsing xml to json on getUserVehiclesInformation request with error: ${err}`,
               )
-              throw new Error('Getting Error while parsing xml to json...')
             })
         })
         .catch(function (err) {
-          loggerReplacement.error(
-            `Getting error while parsing first xml to json on allVehiclesForPersidno request: ${err}`,
+          throw new Error(
+            `Failed while parsing xml to json on allVehiclesForPersidno request with error: ${err}`,
           )
-          throw new Error('Getting Error while parsing xml to json...')
         })
-
-      this.logger.info('Finished extracting all vehicles')
 
       const newVehicleArr = vehicleInformationList
 
       // ForEach vehicle in vehicleInformationList, check and update vehicle's status
       for (let i = 0; i < newVehicleArr.length; i++) {
         const carObj = newVehicleArr[i]
-        this.logger.info(
-          `Starting extracting details information on ${carObj['permno']}`,
-        )
         if (carObj['status'] === 'inUse' && carObj['isRecyclable']) {
           // Vehicle information's Soap body
           const xmlBasicInfoBodyStr = `<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:usx="https://xml.samgongustofa.is/scripts/WebObjects.dll/XML.woa/1/ws/.USXMLWS">
@@ -178,13 +156,11 @@ export class SamgongustofaService {
             .post(soapUrl, xmlBasicInfoBodyStr, { headers: headersRequest })
             .toPromise()
           if (basicInforesponse.status !== 200) {
-            this.logger.error(basicInforesponse.statusText)
-            throw new Error(basicInforesponse.statusText)
+            throw new Error(
+              `Failed on basicInforesponse request with status: ${basicInforesponse.statusText}`,
+            )
           }
           // parse xml to Json all Soap
-          this.logger.info(
-            `Finished basicVehicleInformation Soap request and starting parsing xml to json on ${carObj['permno']}`,
-          )
           vehicleInformationList[i] = await parser
             .parseStringPromise(
               basicInforesponse.data.replace(/(\t\n|\t|\n)/gm, ''),
@@ -197,11 +173,6 @@ export class SamgongustofaService {
                   'soapenv:Fault',
                 )
               ) {
-                loggerReplacement.error(
-                  basicResult['soapenv:Envelope']['soapenv:Body'][0][
-                    'soapenv:Fault'
-                  ][0]['faultstring'][0],
-                )
                 throw new Error(
                   basicResult['soapenv:Envelope']['soapenv:Body'][0][
                     'soapenv:Fault'
@@ -222,9 +193,6 @@ export class SamgongustofaService {
                       .ownerregistrationerror !== 'undefined'
                   ) {
                     //Handle registrationerror
-                    loggerReplacement.info(
-                      'vehicle has ownerregistrationerrors',
-                    )
                     newVehicleArr[i].isRecyclable = false
                   }
                   if (
@@ -234,7 +202,6 @@ export class SamgongustofaService {
                     for (const stolenEndDate of basicInfo.vehicle.stolens[0]
                       .stolen) {
                       if (!stolenEndDate.enddate[0].trim()) {
-                        loggerReplacement.info('vehicle is stolen')
                         newVehicleArr[i].isRecyclable = false
                         break
                       }
@@ -248,34 +215,23 @@ export class SamgongustofaService {
                     for (const lockEndDate of basicInfo.vehicle.updatelocks[0]
                       .updatelock) {
                       if (!lockEndDate.enddate[0].trim()) {
-                        loggerReplacement.info('vehicle is locked')
                         newVehicleArr[i].isRecyclable = false
                         break
                       }
                     }
                   }
-                  if (newVehicleArr[i].isRecyclable) {
-                    loggerReplacement.info(
-                      'vehicle is clean. not stolen, not locked, no registrationerror',
-                    )
-                  }
-                  loggerReplacement.info(
-                    'isRecycleble=' + newVehicleArr[i].isRecyclable,
-                  )
                   return newVehicleArr[i]
                 })
                 .catch(function (err) {
-                  loggerReplacement.error(
-                    `Getting error while parsing second xml to json on basicVehicleInformation request: ${err}`,
+                  throw new Error(
+                    `Failed while parsing xml to json on basicVehicleInformation with error: ${err}`,
                   )
-                  throw new Error('Getting Error while parsing xml to json...')
                 })
             })
             .catch(function (err) {
-              loggerReplacement.error(
-                `Getting error while parsing first xml to json on basicVehicleInformation request: ${err}`,
+              throw new Error(
+                `Failed while parsing xml to json on basicVehicleInformation with error: ${err}`,
               )
-              throw new Error('Getting Error while parsing xml to json...')
             })
         }
       }
@@ -284,36 +240,25 @@ export class SamgongustofaService {
         const vehicle = vehicleInformationList[i]
         try {
           if (vehicle.isRecyclable) {
-            this.logger.info(
-              `Start getting requestType from DB for vehicle ${vehicle['permno']}`,
-            )
             const resRequestType = await this.recyclingRequestService.findAllWithPermno(
               vehicle['permno'],
             )
             if (resRequestType.length > 0) {
               const requestType = resRequestType[0]['dataValues']['requestType']
               vehicleInformationList[i]['status'] = requestType
-              this.logger.info(
-                `Got ${requestType} for vehicle ${vehicle['permno']}`,
-              )
             }
           }
         } catch (err) {
-          this.logger.error(
-            `Error while checking requestType in DB for vehicle ${vehicle['permno']} with error: ${err}`,
+          this.logger.warn(
+            `Error while checking requestType in DB for vehicle ${vehicle['permno']} with error: ${err} but continue on next vehicle`,
           )
         }
       }
-
-      this.logger.info(
-        `---- Finished getUserVehiclesInformation call on ${nationalId} ----`,
-      )
       return vehicleInformationList ?? []
     } catch (err) {
-      this.logger.error(
-        `Failed on getting vehicles information from Samgongustofa: ${err}`,
+      throw new Error(
+        `Failed on getting vehicles information from Samgongustofa with error: ${err}`,
       )
-      throw new Error('Failed on getting vehicles information...')
     }
   }
 
@@ -323,9 +268,6 @@ export class SamgongustofaService {
     requireRecyclable = true,
   ): Promise<VehicleInformation> {
     const userVehicles = await this.getUserVehiclesInformation(nationalId)
-    this.logger.info(
-      `Fetched user's vehicle informations from Samgongustofa: ${userVehicles}`,
-    )
     const car = userVehicles.find((car) => car && car.permno === permno)
 
     if (requireRecyclable && car) {

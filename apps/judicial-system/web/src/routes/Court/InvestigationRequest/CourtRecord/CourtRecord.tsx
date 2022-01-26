@@ -51,13 +51,15 @@ const CourtRecord = () => {
               })}\n`
             })
           } else {
-            attendees += `${formatMessage(
-              m.sections.courtAttendees.defendantNotPresentAutofill,
-              {
-                defendantSuffix: wc.defendants.length > 1 ? 'ar' : 'i',
-                areSuffix: wc.defendants.length > 1 ? 'u' : '',
-              },
-            )}\n`
+            if (wc.defendants.length > 1) {
+              attendees += `${formatMessage(
+                m.sections.courtAttendees.multipleDefendantNotPresentAutofill,
+              )}\n`
+            } else {
+              attendees += `${formatMessage(
+                m.sections.courtAttendees.defendantNotPresentAutofill,
+              )}\n`
+            }
           }
         }
 

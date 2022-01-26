@@ -131,7 +131,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               },
               {
                 title: 'Ákærandi',
-                value: `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`,
+                value: workingCase.prosecutor?.name,
               },
               {
                 title: 'Tegund kröfu',

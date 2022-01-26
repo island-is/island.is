@@ -159,7 +159,7 @@ export const Overview: React.FC = () => {
                 ? [
                     {
                       title: 'Dómari',
-                      value: `${workingCase.judge.name}, ${workingCase.judge.title}`,
+                      value: workingCase.judge.name,
                     },
                   ]
                 : []),
@@ -177,7 +177,7 @@ export const Overview: React.FC = () => {
                 ? [
                     {
                       title: 'Dómritari',
-                      value: `${workingCase.registrar.name}, ${workingCase.registrar.title}`,
+                      value: workingCase.registrar.name,
                     },
                   ]
                 : []),
