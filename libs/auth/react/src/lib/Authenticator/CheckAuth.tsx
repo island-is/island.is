@@ -2,6 +2,7 @@ import React, { FC, useEffect } from 'react'
 
 import { useAuth } from './AuthContext'
 import AuthenticatorLoadingScreen from './AuthenticatorLoadingScreen'
+import { CheckIdpSession } from './CheckIdpSession'
 
 interface Props {
   autoLogin: boolean
@@ -19,5 +20,12 @@ export const CheckAuth: FC<Props> = ({ autoLogin, checkLogin, children }) => {
   }, [])
 
   const renderChildren = !autoLogin || userInfo
-  return renderChildren ? <>{children}</> : <AuthenticatorLoadingScreen />
+  return renderChildren ? (
+    <>
+      <CheckIdpSession />
+      {children}
+    </>
+  ) : (
+    <AuthenticatorLoadingScreen />
+  )
 }
