@@ -50,6 +50,8 @@ export const StepOne: React.FC = () => {
       }
 
       router.push(`${Constants.STEP_TWO_ROUTE}/${createdCase.id}`)
+    } else {
+      router.push(`${Constants.STEP_TWO_ROUTE}/${theCase.id}`)
     }
   }
 
