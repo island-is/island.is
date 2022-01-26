@@ -2,14 +2,11 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
-import {
-  formatAccusedByGender,
-  formatDate,
-  NounCases,
-} from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   CaseType,
+  Gender,
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
@@ -35,6 +32,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
+import { core } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -131,53 +129,57 @@ const StepThreeForm: React.FC<Props> = (props) => {
             )}
           </BlueBox>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(rcDemands.sections.lawsBroken.heading)}
-            </Text>
+        {workingCase.defendants && workingCase.defendants.length > 0 && (
+          <Box component="section" marginBottom={7}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                {formatMessage(rcDemands.sections.lawsBroken.heading)}
+              </Text>
+            </Box>
+            <Input
+              data-testid="lawsBroken"
+              name="lawsBroken"
+              label={formatMessage(rcDemands.sections.lawsBroken.label, {
+                defendant: formatMessage(core.accused, {
+                  suffix:
+                    workingCase.defendants[0].gender === Gender.FEMALE
+                      ? 'u'
+                      : 'a',
+                }),
+              })}
+              placeholder={formatMessage(
+                rcDemands.sections.lawsBroken.placeholder,
+              )}
+              value={workingCase.lawsBroken || ''}
+              errorMessage={lawsBrokenErrorMessage}
+              hasError={lawsBrokenErrorMessage !== ''}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'lawsBroken',
+                  event,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  lawsBrokenErrorMessage,
+                  setLawsBrokenErrorMessage,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'lawsBroken',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setLawsBrokenErrorMessage,
+                )
+              }
+              required
+              textarea
+              rows={7}
+            />
           </Box>
-          <Input
-            data-testid="lawsBroken"
-            name="lawsBroken"
-            label={formatMessage(rcDemands.sections.lawsBroken.label, {
-              defendant: formatAccusedByGender(
-                workingCase?.accusedGender,
-                NounCases.GENITIVE,
-              ),
-            })}
-            placeholder={formatMessage(
-              rcDemands.sections.lawsBroken.placeholder,
-            )}
-            value={workingCase.lawsBroken || ''}
-            errorMessage={lawsBrokenErrorMessage}
-            hasError={lawsBrokenErrorMessage !== ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'lawsBroken',
-                event,
-                ['empty'],
-                workingCase,
-                setWorkingCase,
-                lawsBrokenErrorMessage,
-                setLawsBrokenErrorMessage,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'lawsBroken',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setLawsBrokenErrorMessage,
-              )
-            }
-            required
-            textarea
-            rows={7}
-          />
-        </Box>
+        )}
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">

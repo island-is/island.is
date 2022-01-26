@@ -37,11 +37,11 @@ const Layout: FC = ({ children }) => {
       <Header />
       {/* // counter intuitive, the scroll blocks all scrolling aside from the component that is wrapped */}
       <RemoveScroll enabled={mobileMenuState === 'open'}>
-        <Hidden above="md">
+        <Hidden above="sm">
           <MobileMenu />
         </Hidden>
       </RemoveScroll>
-      <Hidden below="lg">
+      <Hidden below="md">
         <Sidebar />
       </Hidden>
       <Box overflow="hidden" className={styles.layoutWrapper} paddingBottom={7}>

@@ -1,11 +1,13 @@
 import {
-  PaginatedPersonalRepresentativeRightTypeDto,
-  PersonalRepresentativeRightType,
-  PersonalRepresentativeRightTypeService,
   PersonalRepresentativeScopePermission,
   PersonalRepresentativeScopePermissionDTO,
   PersonalRepresentativeScopePermissionService,
 } from '@island.is/auth-api-lib'
+import {
+  PaginatedPersonalRepresentativeRightTypeDto,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeRightTypeService,
+} from '@island.is/auth-api-lib/personal-representative'
 import {
   BadRequestException,
   Body,
@@ -114,7 +116,7 @@ export class PersonalRepresentativeController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'deleteScopePermission',
         namespace,
         resources: id,

@@ -1,5 +1,3 @@
-export {
-  AssetsClientModule,
-  ModuleConfig as AssetsModuleConfig,
-} from './lib/assets.module'
+export { AssetsClientModule } from './lib/assets.module'
+export { AssetsClientConfig } from './lib/assets.config'
 export * from '../gen/fetch'

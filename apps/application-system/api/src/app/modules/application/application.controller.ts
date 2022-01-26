@@ -282,7 +282,7 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'create',
       resources: updatedApplication.id,
       meta: { type: application.typeId },
@@ -425,7 +425,7 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'update',
       resources: updatedApplication.id,
       meta: { fields: Object.keys(newAnswers) },
@@ -492,7 +492,7 @@ export class ApplicationController {
     }
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'updateExternalData',
       resources: updatedApplication.id,
       meta: { providers: externalDataDto },
@@ -574,7 +574,7 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'submitApplication',
       resources: existingApplication.id,
       meta: {
@@ -812,7 +812,7 @@ export class ApplicationController {
     })
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'addAttachment',
       resources: updatedApplication.id,
       meta: {
@@ -853,7 +853,7 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'deleteAttachment',
       resources: updatedApplication.id,
       meta: {
@@ -889,7 +889,7 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'generatePdf',
       resources: existingApplication.id,
       meta: { type: input.type },
@@ -927,7 +927,7 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'requestFileSignature',
       resources: existingApplication.id,
       meta: { type: input.type },
@@ -963,7 +963,7 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'uploadSignedFile',
       resources: existingApplication.id,
       meta: { type: input.type },
@@ -999,7 +999,7 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'getPresignedUrl',
       resources: existingApplication.id,
       meta: { type },

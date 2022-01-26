@@ -122,7 +122,7 @@ export class OrganisationController {
     }
 
     this.auditService.audit({
-      user,
+      auth: user,
       namespace,
       action: 'updateOrganisation',
       resources: id,
@@ -186,7 +186,7 @@ export class OrganisationController {
     }
 
     this.auditService.audit({
-      user,
+      auth: user,
       namespace,
       action: 'updateAdministrativeContact',
       resources: administrativeContactId,
@@ -240,7 +240,7 @@ export class OrganisationController {
     }
 
     this.auditService.audit({
-      user,
+      auth: user,
       namespace,
       action: 'updateTechnicalContact',
       resources: technicalContactId,
@@ -292,7 +292,7 @@ export class OrganisationController {
     }
 
     this.auditService.audit({
-      user,
+      auth: user,
       namespace,
       action: 'updateHelpdesk',
       resources: helpdeskId,

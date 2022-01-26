@@ -24,7 +24,7 @@ import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
-import { RSKModule } from '@island.is/api/domains/rsk'
+import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { FinanceModule } from '@island.is/api/domains/finance'
@@ -33,17 +33,17 @@ import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-syst
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
-import { IslykillModule } from '@island.is/api/domains/islykill'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
+import { AssetsClientConfig } from '@island.is/clients/assets'
+import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { AuditModule } from '@island.is/nest/audit'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
-import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
-import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -181,10 +181,13 @@ const autoSchemaFile = environment.production
     IdentityModule,
     AuthModule.register(environment.auth),
     SyslumennModule,
-    RSKModule.register({
+    CompanyRegistryModule.register({
       password: environment.rskDomain.password,
       url: environment.rskDomain.url,
       username: environment.rskDomain.username,
+      xRoadProviderId: environment.rskCompanyInfo.xRoadProviderId,
+      xRoadBaseUrl: environment.rskCompanyInfo.xRoadBaseUrl,
+      xRoadClientId: environment.rskCompanyInfo.xRoadClientId,
     }),
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl,
@@ -202,12 +205,7 @@ const autoSchemaFile = environment.production
       xroadBaseUrl: environment.xroad.baseUrl,
       xroadClientId: environment.xroad.clientId,
     }),
-    AssetsModule.register({
-      xRoadBasePathWithEnv: environment.propertiesXRoad.url,
-      xRoadAssetsMemberCode: environment.propertiesXRoad.memberCode,
-      xRoadAssetsApiPath: environment.propertiesXRoad.apiPath,
-      xRoadClientId: environment.propertiesXRoad.clientId,
-    }),
+    AssetsModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({
       xRoadProviderId: environment.paymentDomain.xRoadProviderId,
@@ -242,11 +240,6 @@ const autoSchemaFile = environment.production
       password: environment.paymentSchedule.password,
       username: environment.paymentSchedule.username,
     }),
-    IslykillModule.register({
-      cert: environment.islykill.cert,
-      passphrase: environment.islykill.passphrase,
-      basePath: environment.islykill.basePath,
-    }),
     ProblemModule,
     CriminalRecordModule.register({
       clientConfig: {
@@ -258,11 +251,13 @@ const autoSchemaFile = environment.production
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
-        XRoadConfig,
-        NationalRegistryClientConfig,
+        AssetsClientConfig,
         AuthPublicApiClientConfig,
         FeatureFlagConfig,
+        NationalRegistryClientConfig,
         SyslumennClientConfig,
+        FeatureFlagConfig,
+        XRoadConfig,
       ],
     }),
   ],

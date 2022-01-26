@@ -31,3 +31,9 @@ export const placeholder = style({
     },
   },
 })
+
+export const closeButton = style({
+  ':hover': {
+    backgroundColor: theme.color.blue200,
+  },
+})

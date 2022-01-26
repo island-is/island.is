@@ -12,7 +12,6 @@ import {
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
-  CaseGender,
   CaseDecision,
   CaseType,
   SessionArrangements,
@@ -33,26 +32,6 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly policeCaseNumber?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedNationalId?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedName?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedAddress?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ enum: CaseGender })
-  readonly accusedGender?: CaseGender
 
   @IsOptional()
   @IsString()
@@ -275,14 +254,9 @@ export class UpdateCaseDto {
   readonly validToDate?: Date
 
   @IsOptional()
-  @IsEnum(CaseCustodyRestrictions, { each: true })
-  @ApiPropertyOptional({ enum: CaseCustodyRestrictions, isArray: true })
-  readonly custodyRestrictions?: CaseCustodyRestrictions[]
-
-  @IsOptional()
-  @IsString()
+  @IsBoolean()
   @ApiPropertyOptional()
-  readonly otherRestrictions?: string
+  readonly isCustodyIsolation?: boolean
 
   @IsOptional()
   @IsString()
@@ -293,6 +267,11 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly conclusion?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly endOfSessionBookings?: string
 
   @IsOptional()
   @IsEnum(CaseAppealDecision)

@@ -1,4 +1,6 @@
-# Documents (Pósthólf)
+<!-- gitbook-navigation: "Documents" -->
+
+# Documents Client (Pósthólf)
 
 ## About
 

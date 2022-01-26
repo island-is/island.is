@@ -1,6 +1,5 @@
 import {
   BypassAuth,
-  CurrentAuth,
   CurrentUser,
   Scopes,
   ScopesGuard,
@@ -200,7 +199,7 @@ export class EndorsementController {
   ): Promise<undefined> {
     // we pass audit manually since we need to use the request parameter since we don't return the endorsement list
     this.auditService.audit({
-      user,
+      auth: user,
       resources: endorsementList.id,
       namespace: auditNamespace,
       action: 'delete',
