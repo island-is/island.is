@@ -23,8 +23,8 @@ import {
   requestCourtDate,
   icOverview,
 } from '@island.is/judicial-system-web/messages'
-
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 import * as styles from './Overview.css'
 
 interface Props {

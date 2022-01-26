@@ -1,5 +1,5 @@
 import { ApplicantEmailData } from '@island.is/financial-aid/shared/lib'
-import { fonts, header, sambandIcon } from './shared'
+import { fonts, header } from './shared'
 
 export const ApplicantEmailTemplate = (emailData: ApplicantEmailData) => {
   return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -74,7 +74,6 @@ export const ApplicantEmailTemplate = (emailData: ApplicantEmailData) => {
             <table class="es-wrapper" width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;padding:0;Margin:0;width:100%;height:100%;background-repeat:repeat;background-position:center top"> 
             <tr> 
              <td valign="top" style="padding:0;Margin:0"> 
-            ${sambandIcon}
            <table class="es-content" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%"> 
              <tr> 
               <td align="center" style="padding:0;Margin:0"> 
