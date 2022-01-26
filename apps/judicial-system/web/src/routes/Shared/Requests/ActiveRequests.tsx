@@ -7,14 +7,17 @@ import parseISO from 'date-fns/parseISO'
 
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 import { CaseState, UserRole } from '@island.is/judicial-system/types'
-import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   directionType,
   sortableTableColumn,
   SortConfig,
 } from '@island.is/judicial-system-web/src/types'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  caseTypes,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import { core, requests } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 
@@ -227,11 +230,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
                       <Text as="span" variant="small" color="dark400">
                         {`kt. ${
                           c.defendants[0].nationalId
-                            ? insertAt(
-                                c.defendants[0].nationalId.replace('-', ''),
-                                '-',
-                                6,
-                              )
+                            ? formatNationalId(c.defendants[0].nationalId)
                             : '-'
                         }`}
                       </Text>

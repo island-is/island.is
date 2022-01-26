@@ -84,4 +84,9 @@ export const core = defineMessages({
     defaultMessage: 'Krafa um {caseType}',
     description: 'Notað sem titill fyrir Krafa um í öllum flæðum',
   },
+  court: {
+    id: 'judicial.system.core:court',
+    defaultMessage: 'Dómstóll',
+    description: 'Notað fyrir orðið Dómstóll í öllum flæðum.',
+  },
 })

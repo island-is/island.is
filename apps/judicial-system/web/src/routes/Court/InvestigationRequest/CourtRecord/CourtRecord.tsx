@@ -14,6 +14,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 import CourtRecordForm from './CourtRecordForm'
 
@@ -27,6 +28,7 @@ const CourtRecord = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
 
   useEffect(() => {
     document.title = 'Þingbók - Réttarvörslugátt'
@@ -49,13 +51,15 @@ const CourtRecord = () => {
               })}\n`
             })
           } else {
-            attendees += `${formatMessage(
-              m.sections.courtAttendees.defendantNotPresentAutofill,
-              {
-                defendantSuffix: wc.defendants.length > 1 ? 'ar' : 'i',
-                areSuffix: wc.defendants.length > 1 ? 'u' : '',
-              },
-            )}\n`
+            if (wc.defendants.length > 1) {
+              attendees += `${formatMessage(
+                m.sections.courtAttendees.multipleDefendantNotPresentAutofill,
+              )}\n`
+            } else {
+              attendees += `${formatMessage(
+                m.sections.courtAttendees.defendantNotPresentAutofill,
+              )}\n`
+            }
           }
         }
 
@@ -164,6 +168,7 @@ const CourtRecord = () => {
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         isLoading={isLoadingWorkingCase}
+        user={user}
       />
     </PageLayout>
   )

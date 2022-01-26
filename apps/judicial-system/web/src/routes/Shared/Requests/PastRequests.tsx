@@ -18,9 +18,9 @@ import {
   capitalize,
   caseTypes,
   formatDate,
+  formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { Table } from '@island.is/judicial-system-web/src/components'
-import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
 import { core, requests } from '@island.is/judicial-system-web/messages'
 
 import { getAppealDate, mapCaseStateToTagVariant } from './utils'
@@ -65,7 +65,7 @@ const PastRequests: React.FC<Props> = (props) => {
       },
     },
     {
-      Header: formatMessage(core.defendant, { suffix: 'i' }),
+      Header: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
       accessor: 'accusedName' as keyof Case,
       Cell: (row: {
         row: { original: { accusedName: string; defendants: Defendant[] } }
@@ -81,13 +81,8 @@ const PastRequests: React.FC<Props> = (props) => {
                 <Text as="span" variant="small" color="dark400">
                   {`kt. ${
                     row.row.original.defendants[0].nationalId
-                      ? insertAt(
-                          row.row.original.defendants[0].nationalId.replace(
-                            '-',
-                            '',
-                          ),
-                          '-',
-                          6,
+                      ? formatNationalId(
+                          row.row.original.defendants[0].nationalId,
                         )
                       : '-'
                   }`}

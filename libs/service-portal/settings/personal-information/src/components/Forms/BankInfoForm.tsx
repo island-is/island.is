@@ -1,23 +1,23 @@
 import React, { FC, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { InputController } from '@island.is/shared/form-fields'
 import { Box } from '@island.is/island-ui/core'
+import { InputController } from '@island.is/shared/form-fields'
+import { useForm, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { sharedMessages } from '@island.is/shared/translations'
 
-export interface PhoneFormData {
-  tel: string
+export interface BankInfoFormData {
+  bankInfo: string
 }
 
 interface Props {
-  tel: string
+  bankInfo: string
   renderBackButton?: () => JSX.Element
   renderSubmitButton?: () => JSX.Element
-  onSubmit: (data: PhoneFormData) => void
+  onSubmit: (data: BankInfoFormData) => void
 }
 
-export const SimplePhoneForm: FC<Props> = ({
-  tel,
+export const BankInfoForm: FC<Props> = ({
+  bankInfo,
   renderBackButton,
   renderSubmitButton,
   onSubmit,
@@ -26,42 +26,40 @@ export const SimplePhoneForm: FC<Props> = ({
   const { handleSubmit, control, errors, reset } = useForm()
 
   useEffect(() => {
-    if (tel.length > 0)
+    if (bankInfo.length > 0)
       reset({
-        tel,
+        bankInfo,
       })
-  }, [tel])
+  }, [bankInfo])
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box>
         <InputController
           control={control}
-          id="tel"
-          name="tel"
+          id="bankInfo"
+          name="bankInfo"
+          format="####-##-######"
+          placeholder="0000-00-000000"
+          defaultValue={bankInfo}
+          label="Reikningsupplýsingar"
+          error={errors.bankInfo?.message}
           required={true}
-          type="tel"
-          format="### ####"
+          size="xs"
           rules={{
             required: {
               value: true,
               message: formatMessage({
-                id: 'sp.settings:tel-required-msg',
-                defaultMessage: 'Skylda er að fylla út símanúmer',
+                id: 'sp.settings:bankInfo-required-msg',
+                defaultMessage: 'Reikningsupplýsingar geta ekki verið tómar',
               }),
             },
             minLength: {
-              value: 7,
+              value: 12,
               message: formatMessage({
-                id: 'sp.settings:tel-required-length-msg',
-                defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
-              }),
-            },
-            maxLength: {
-              value: 7,
-              message: formatMessage({
-                id: 'sp.settings:tel-required-length-msg',
-                defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
+                id: 'sp.settings:bankInfo-required-length-msg',
+                defaultMessage: `Reikningsupplýsingar eru 12 tölustafir á lengd.
+                  Banki 4 stafir, höfuðbók 2 stafir, reikningsnúmer 6 stafir.`,
               }),
             },
             pattern: {
@@ -72,9 +70,6 @@ export const SimplePhoneForm: FC<Props> = ({
               }),
             },
           }}
-          label={formatMessage(sharedMessages.phoneNumber)}
-          error={errors.tel?.message}
-          size="xs"
         />
       </Box>
       {(renderBackButton || renderSubmitButton) && (
