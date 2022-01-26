@@ -44,7 +44,7 @@ const useDefendants = () => {
           caseId,
           name: defendant.name,
           address: defendant.address,
-          nationalId: defendant.nationalId,
+          nationalId: defendant.nationalId?.replace('-', ''),
           gender: defendant.gender,
         },
       },
