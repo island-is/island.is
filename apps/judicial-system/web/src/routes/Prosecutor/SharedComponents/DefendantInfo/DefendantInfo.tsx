@@ -26,7 +26,7 @@ interface Props {
     updatedDefendant: UpdateDefendant,
   ) => Promise<void>
   updateDefendantState: (defendantId: string, update: UpdateDefendant) => void
-  onDelete?: () => void
+  onDelete?: (defendant: Defendant) => Promise<void>
 }
 
 const DefendantInfo: React.FC<Props> = (props) => {
@@ -57,7 +57,10 @@ const DefendantInfo: React.FC<Props> = (props) => {
           </Text>
         </Text>
         {onDelete && (
-          <button onClick={onDelete} aria-label="Remove defendant">
+          <button
+            onClick={() => onDelete(defendant)}
+            aria-label="Remove defendant"
+          >
             <Icon icon="close" color="blue400" />
           </button>
         )}

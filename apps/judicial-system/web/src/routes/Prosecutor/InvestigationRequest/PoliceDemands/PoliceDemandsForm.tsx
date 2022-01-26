@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import {
+  CaseInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
@@ -16,6 +17,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { icDemands } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 const courtClaimPrefill: Partial<
   Record<
@@ -62,6 +64,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
 
   const { formatMessage } = useIntl()
   const { updateCase, autofill } = useCase()
+  const { user } = useContext(UserContext)
 
   const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
@@ -104,6 +107,13 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
           <Text as="h1" variant="h1">
             {formatMessage(icDemands.heading)}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
