@@ -297,10 +297,16 @@ function constructInvestigationRequestPdf(
           : caseTypes[theCase.type],
       ),
     )
-    .text(theCase.description ?? formatMessage(m.description.noDescription), {
-      lineGap: 6,
-      paragraphGap: 0,
-    })
+
+  if (theCase.description && theCase.description.trim()) {
+    doc
+      .font('Helvetica')
+      .fontSize(baseFontSize)
+      .lineGap(4)
+      .text(theCase.description)
+  }
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(mediumFontSize)
