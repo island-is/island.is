@@ -449,15 +449,7 @@ jobs:
 
       - name: Building Docker images
         if: steps.gather.outcome == 'success'
-<<<<<<< HEAD
-        uses: Wandalen/wretry.action@v1.0.11 # https://github.com/marketplace/actions/retry-action
-        with:
-          run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
-          attempt_limit: 2
-          attempt_delay: 1000
-=======
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
->>>>>>> parent of 30da07bf8 (adding wretry from marketplace. Lets give it a go (#6390))
 
   helm-docker-build:
     needs:
