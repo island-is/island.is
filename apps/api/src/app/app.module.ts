@@ -34,7 +34,6 @@ import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-syst
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
-import { IslykillModule } from '@island.is/api/domains/islykill'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { AssetsClientConfig } from '@island.is/clients/assets'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
@@ -246,11 +245,6 @@ const autoSchemaFile = environment.production
       password: environment.paymentSchedule.password,
       username: environment.paymentSchedule.username,
     }),
-    IslykillModule.register({
-      cert: environment.islykill.cert,
-      passphrase: environment.islykill.passphrase,
-      basePath: environment.islykill.basePath,
-    }),
     ProblemModule,
     CriminalRecordModule.register({
       clientConfig: {
@@ -267,6 +261,7 @@ const autoSchemaFile = environment.production
         FeatureFlagConfig,
         NationalRegistryClientConfig,
         SyslumennClientConfig,
+        FeatureFlagConfig,
         XRoadConfig,
       ],
     }),

@@ -17,7 +17,6 @@ import { applicationsModule } from '@island.is/service-portal/applications'
 import { regulationsAdminModule } from '@island.is/service-portal/regulations-admin'
 import { licensesModule } from '@island.is/service-portal/licenses'
 import { wipModule } from '@island.is/service-portal/wip'
-import { islykillModule } from '@island.is/service-portal/settings/islykill'
 
 /**
  * NOTE:
@@ -47,7 +46,6 @@ export type ModuleKeys =
   | 'regulationsAdmin'
   | 'licenses'
   | 'wip'
-  | 'islykill'
   | 'petitions'
 
 export const featureFlaggedModules: ModuleKeys[] = [
@@ -56,7 +54,6 @@ export const featureFlaggedModules: ModuleKeys[] = [
   'icelandicNamesRegistry',
   'personalInformation',
   'licenses',
-  'islykill',
   'petitions',
 ]
 
@@ -78,5 +75,4 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   regulationsAdmin: regulationsAdminModule,
   licenses: licensesModule,
   wip: wipModule,
-  islykill: islykillModule,
 }
