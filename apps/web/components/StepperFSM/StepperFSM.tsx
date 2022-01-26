@@ -31,10 +31,11 @@ import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import { ValueType } from 'react-select'
 import { ParsedUrlQuery } from 'querystring'
-import { environment } from '../../environments'
 
 const ANSWER_DELIMITER = ','
 export const STEPPER_HELPER_ENABLED = 'show-stepper-config-helper'
+// TODO: Configure feature flag for helper.
+const FEATURE_FLAG_STEPPER_HELPER_ENABLED = true
 
 interface StepperProps {
   stepper: Stepper
@@ -161,12 +162,11 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
 
   const [showStepperConfigHelper, setShowStepperConfigHelper] = useState(false)
 
-  // TODO: Verify that the environment production flag is correct
   useEffect(() => {
     const hasSeenHelperBefore = JSON.parse(
       localStorage.getItem(STEPPER_HELPER_ENABLED) ?? 'false',
     )
-    setShowStepperConfigHelper(!environment.production && hasSeenHelperBefore)
+    setShowStepperConfigHelper(FEATURE_FLAG_STEPPER_HELPER_ENABLED && hasSeenHelperBefore)
   }, [])
 
   const isOnFirstStep = stepperMachine.initialState.value === currentState.value
@@ -323,9 +323,10 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
     <Box
       onClick={(ev) => {
         // If the user triple clicks on the question title, we enable the helper if we're not in production
+        // TODO: Consider using quintuple click instead of triple click.
         if (ev.detail === 3) {
           localStorage.setItem(STEPPER_HELPER_ENABLED, JSON.stringify(true))
-          setShowStepperConfigHelper(!environment.production)
+          setShowStepperConfigHelper(FEATURE_FLAG_STEPPER_HELPER_ENABLED)
           setCounter((c) => c + 1)
         }
       }}
