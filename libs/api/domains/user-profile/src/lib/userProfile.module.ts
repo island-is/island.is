@@ -2,7 +2,7 @@ import { DynamicModule } from '@nestjs/common'
 import { Configuration, UserProfileApi } from '@island.is/clients/user-profile'
 import { UserProfileResolver } from './userProfile.resolver'
 import { UserProfileService } from './userProfile.service'
-import { IslykillService } from '@island.is/api/domains/islykill'
+import { IslykillService } from './islykill.service'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import {
   IslykillApiModule,

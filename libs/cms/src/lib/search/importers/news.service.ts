@@ -18,6 +18,7 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
       (entry: Entry<any>): entry is INews =>
         entry.sys.contentType.sys.id === 'news' &&
         !!entry.fields.title &&
+        !!entry.fields.date &&
         !isCircular(entry),
     )
   }
@@ -49,7 +50,7 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
                 value: tag.title,
               })),
             ],
-            dateCreated: mapped.date || entry.sys.createdAt,
+            dateCreated: mapped.date,
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {

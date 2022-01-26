@@ -108,7 +108,7 @@ export const restrictionRequest = {
         'Notaður sem texti þegar engin lagaákvæði eru skráðar í kröfu PDF',
     },
   }),
-  legalBasis: defineMessage({
+  legalBasis: defineMessages({
     heading: {
       id: 'judicial.system.backend:pdf.restriction_request.legal_basis.heading',
       defaultMessage: 'Lagaákvæði sem krafan er byggð á',

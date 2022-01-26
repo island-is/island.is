@@ -69,15 +69,25 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (isCaseUpToDate) {
-      if (workingCase) {
+      if (
+        workingCase &&
+        workingCase.defendants &&
+        workingCase.defendants.length > 0
+      ) {
         const courtClaim = courtClaimPrefill[workingCase.type]
         const courtClaimText = courtClaim
           ? formatMessage(courtClaim.text, {
               ...(courtClaim.format?.accusedName && {
-                accusedName: workingCase.accusedName,
+                accusedName: workingCase.defendants
+                  .map(
+                    (defendant) =>
+                      `${defendant.name} kt. ${defendant.nationalId}`,
+                  )
+                  .toString()
+                  .replace(/,/g, ', '),
               }),
               ...(courtClaim.format?.address && {
-                address: workingCase.accusedAddress,
+                address: workingCase.defendants[0].address,
               }),
             })
           : ''

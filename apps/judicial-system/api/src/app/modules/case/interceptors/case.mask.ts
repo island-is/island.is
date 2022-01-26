@@ -6,38 +6,7 @@ import {
 
 import { Case } from '../models'
 
-function maskPart(part: string): string {
-  let sum = 0
-
-  for (let i = 0; i < part.length; i++) {
-    sum += part.charCodeAt(i)
-  }
-  return String.fromCharCode(65 + (sum % 26))
-}
-
-function maskName(name?: string): string | undefined {
-  if (!name) {
-    return name
-  }
-
-  const parts = name.split(' ')
-
-  if (parts.length < 1) {
-    return name
-  }
-
-  const firstLetter = maskPart(parts[0])
-
-  if (parts.length < 2) {
-    return firstLetter
-  }
-
-  const secondLetter = maskPart(parts[1])
-
-  return `${firstLetter}${secondLetter}`
-}
-
-export function maskCase(theCase: Case): Case {
+function maskCase(theCase: Case): Case {
   if (isInvestigationCase(theCase.type)) {
     return {
       id: theCase.id,
@@ -46,8 +15,13 @@ export function maskCase(theCase: Case): Case {
       type: theCase.type,
       state: theCase.state,
       policeCaseNumber: theCase.policeCaseNumber,
-      accusedNationalId: '0000000000',
-      accusedName: maskName(theCase.accusedName),
+      defendants: theCase.defendants?.map((defendant) => ({
+        id: defendant.id,
+        created: defendant.created,
+        modified: defendant.modified,
+        nationalId: defendant.nationalId,
+        name: defendant.name,
+      })),
       defenderName: theCase.defenderName,
       defenderEmail: theCase.defenderEmail,
       defenderPhoneNumber: theCase.defenderPhoneNumber,
@@ -81,8 +55,6 @@ export function maskCase(theCase: Case): Case {
         type: theCase.parentCase.type,
         state: theCase.parentCase.state,
         policeCaseNumber: theCase.parentCase.policeCaseNumber,
-        accusedNationalId: '0000000000',
-        accusedName: maskName(theCase.parentCase.accusedName),
         defenderName: theCase.parentCase.defenderName,
         defenderEmail: theCase.parentCase.defenderEmail,
         defenderPhoneNumber: theCase.parentCase.defenderPhoneNumber,

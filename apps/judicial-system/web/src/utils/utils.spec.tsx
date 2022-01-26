@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { CaseTransition, CaseGender } from '@island.is/judicial-system/types'
+import { CaseTransition, Gender } from '@island.is/judicial-system/types'
 import { getShortGender, isDirty } from './stepHelper'
 import { validate } from './validate'
 
@@ -448,9 +448,9 @@ describe('Step helper', () => {
   describe('getShortGender', () => {
     test('should return short genders given a valid gender', () => {
       // Arrange
-      const male = CaseGender.MALE
-      const female = CaseGender.FEMALE
-      const other = CaseGender.OTHER
+      const male = Gender.MALE
+      const female = Gender.FEMALE
+      const other = Gender.OTHER
 
       // Act
       const resultM = getShortGender(male)

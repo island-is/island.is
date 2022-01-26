@@ -5,9 +5,10 @@ import {
   buildRadioField,
   FormValue,
   buildSubSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { QualityPhotoData } from '../../lib/types'
+import { HasQualityPhotoData } from '../../lib/types'
 import { NO, YES } from '../../lib/constants'
 import { B_FULL } from '../../shared/constants'
 import {
@@ -30,8 +31,8 @@ export const subSectionQualityPhoto = buildSubSection({
       title: m.qualityPhotoTitle,
       condition: (_, externalData) => {
         return (
-          (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
-          true
+          getValueViaPath<HasQualityPhotoData>(externalData, 'qualityPhoto')
+            ?.data?.hasQualityPhoto === true
         )
       },
       children: [
@@ -60,10 +61,10 @@ export const subSectionQualityPhoto = buildSubSection({
     buildMultiField({
       id: 'info',
       title: m.qualityPhotoTitle,
-      condition: (answers: FormValue, externalData) => {
+      condition: (_, externalData) => {
         return (
-          (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
-          false
+          getValueViaPath<HasQualityPhotoData>(externalData, 'qualityPhoto')
+            ?.data?.hasQualityPhoto === false
         )
       },
       children: [

@@ -34,7 +34,7 @@ export const useCreateUserProfile = () => {
     if (data.email) input.email = data.email
     if (data.locale) input.locale = data.locale
     if (data.mobilePhoneNumber) input.mobilePhoneNumber = data.mobilePhoneNumber
-    if (data.canNudge) input.canNudge = data.canNudge
+    if (data.canNudge !== undefined) input.canNudge = data.canNudge
 
     return createUserProfileMutation({
       variables: {
