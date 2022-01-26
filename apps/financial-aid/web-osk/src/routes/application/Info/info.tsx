@@ -59,25 +59,11 @@ const ApplicationInfo = () => {
     setError(false)
     setLoading(true)
 
-    // const { data } = await nationalRegistryQuery({
-    //   input: { ssn: user?.nationalId },
-    // }).catch(() => {
-    //   return { data: undefined }
-    // })
-
-    const data = {
-      municipalityNationalRegistryUserV2: {
-        nationalId: '1010100000',
-        fullName: 'blabl',
-        address: {
-          streetName: 'bablab',
-          postalCode: '100',
-          city: 'blaba',
-          municipalityCode: '1000',
-        },
-        spouse: undefined,
-      },
-    }
+    const { data } = await nationalRegistryQuery({
+      input: { ssn: user?.nationalId },
+    }).catch(() => {
+      return { data: undefined }
+    })
 
     if (!data || !data.municipalityNationalRegistryUserV2.address) {
       setError(true)
