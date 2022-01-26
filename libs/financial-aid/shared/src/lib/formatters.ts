@@ -7,7 +7,6 @@ import {
   ApplicationEventType,
   ApplicationStateUrl,
   FileType,
-  RolesRule,
   FamilyStatus,
   MartialStatusType,
 } from './enums'
@@ -55,14 +54,6 @@ export const getStateFromUrl: KeyMapping<
   InProgress: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
   MyCases: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
   Processed: [ApplicationState.REJECTED, ApplicationState.APPROVED],
-}
-
-export const getEventTypesFromService: KeyMapping<
-  RolesRule,
-  ApplicationEventType[]
-> = {
-  osk: [ApplicationEventType.DATANEEDED],
-  veita: Object.values(ApplicationEventType),
 }
 
 export const getStateUrlFromRoute: KeyMapping<string, ApplicationStateUrl> = {
