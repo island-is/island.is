@@ -32,7 +32,9 @@ export const ShippedRegulations = () => {
             shipped.draftingStatus === 'published'
               ? t(statusMsgs.published) +
                 ' ' +
-                (publishedDate ? formatDateFns(publishedDate) : '??dags??')
+                (publishedDate
+                  ? formatDateFns(publishedDate, 'dd. MMM yyyy')
+                  : '??dags??')
               : t(statusMsgs.shipped)
 
           return (

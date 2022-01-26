@@ -16,9 +16,6 @@ type FormatMessageValues = Parameters<
 export const useLocale = () => {
   const data = _useLocale()
 
-  const oldFormatDateFns = data.formatDateFns
-  data.formatDateFns = (date, format = 'PP') => oldFormatDateFns(date, format)
-
   const oldFormatMessage = data.formatMessage
 
   function formatMessage(descriptor: undefined): undefined

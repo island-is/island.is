@@ -319,7 +319,8 @@ export const EditSignature = () => {
               value={
                 draft.signatureText.value ||
                 getDefaultSignatureText(
-                  formatDateFns /*, authorNotEditorMinistry */,
+                  formatDateFns,
+                  /* authorNotEditorMinistry */
                 )
               }
               onChange={(text) => updateState('signatureText', text)}
