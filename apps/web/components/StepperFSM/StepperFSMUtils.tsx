@@ -34,7 +34,9 @@ interface StepOptionCMS {
 }
 
 interface StepOptionsFromSourceTransitionCMS {
-  criteria: Record<string, boolean>
+  criteria: Record<string, string | boolean | number>
+  criteriaExclude?: Record<string, string | boolean | number>
+  priority?: number
   transition: string
 }
 
@@ -222,8 +224,23 @@ const getStepOptions = (
       const label = lang === 'is' ? o[labelFieldIS] : o[labelFieldEN]
       let stepTransition = ''
 
-      for (const { criteria, transition } of transitions) {
-        if (Object.keys(criteria).every((key) => o[key] === criteria[key])) {
+      transitions.sort((a, b) => {
+        if (!a.priority || !b.priority) return 0
+        if (a.priority < b.priority) return -1
+        return 1
+      })
+
+      for (const { criteria, transition, criteriaExclude } of transitions) {
+        const everyCriteriaMatches = Object.keys(criteria).every(
+          (key) => o[key] === criteria[key],
+        )
+        const everyExclusionCriteriaMatches =
+          !criteriaExclude ||
+          Object.keys(criteriaExclude).every(
+            (key) => o[key] !== criteriaExclude[key],
+          )
+
+        if (everyCriteriaMatches && everyExclusionCriteriaMatches) {
           if (stepTransition !== '') {
             // TODO: there are two or more possible transitions, maybe do something here or leave it to the helper
           }
