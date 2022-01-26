@@ -331,6 +331,9 @@
     "clients-rsk-company-registry": {
       "tags": []
     },
+    "clients-rsk-personal-tax-returns": {
+      "tags": []
+    },
     "clients-rsk-v1": {
       "tags": []
     },
