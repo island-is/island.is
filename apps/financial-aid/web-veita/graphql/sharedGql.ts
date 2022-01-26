@@ -274,6 +274,7 @@ export const UpdateApplicationMutation = gql`
         income
         personalTaxCredit
         spousePersonalTaxCredit
+        spouseNationalId
         tax
         finalAmount
         deductionFactors {
