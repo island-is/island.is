@@ -169,9 +169,6 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
     setShowStepperConfigHelper(!environment.production && hasSeenHelperBefore)
   }, [])
 
-  // TODO: Add support for rendering OptionsFromSource from Step definition.
-  // TODO: Currently, if you call the send function with an unavailable transition string, then it silently fails.
-
   const isOnFirstStep = stepperMachine.initialState.value === currentState.value
   const [selectedOption, setSelectedOption] = useState<StepOption | null>(null)
   const stepOptions = useMemo<StepOption[]>(
@@ -186,6 +183,8 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
     hasClickedContinueWithoutSelecting,
     setHasClickedContinueWithoutSelecting,
   ] = useState<boolean>(false)
+
+  const [transitionErrorMessage, setTransitionErrorMessage] = useState('')
 
   useEffect(() => {
     setSelectedOption(null)
@@ -302,7 +301,13 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
             })
 
             if (!transitionWorked) {
-              // TODO: show that it didn't work
+              setTransitionErrorMessage(
+                activeLocale === 'is'
+                  ? 'Því miður gekk ekki að hlaða niður næsta skrefi'
+                  : 'Sadly, the next step could not be loaded',
+              )
+            } else {
+              setTransitionErrorMessage('')
             }
 
             return newState
@@ -351,6 +356,11 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
               />
             )
           })}
+          {transitionErrorMessage && (
+            <Text marginBottom={2} marginTop={2} color="red400">
+              {transitionErrorMessage}
+            </Text>
+          )}
           <ContinueButton />
         </>
       )}
@@ -381,6 +391,11 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
               transition: option.transition,
             }))}
           />
+          {transitionErrorMessage && (
+            <Text marginBottom={2} marginTop={2} color="red400">
+              {transitionErrorMessage}
+            </Text>
+          )}
           <ContinueButton />
         </>
       )}
