@@ -22,7 +22,7 @@ import { ButtonBar } from '../components/ButtonBar'
 // ---------------------------------------------------------------------------
 
 const assertStep = (maybeStep?: string): Step => {
-  const stepName = ensureStepName(maybeStep)
+  const stepName = ensureStepName(maybeStep || 'basics')
   if (stepName) {
     return stepName
   }
@@ -78,7 +78,7 @@ const EditApp = () => {
 
   const params = useParams<{ id: string; step?: string }>()
   const id = assertDraftId(params.id)
-  const stepName = assertStep(params.step) || 'basics'
+  const stepName = assertStep(params.step)
 
   const regulationDraft = useRegulationDraftQuery(id)
   const ministries = useMinistriesQuery()
