@@ -166,7 +166,9 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
     const hasSeenHelperBefore = JSON.parse(
       localStorage.getItem(STEPPER_HELPER_ENABLED) ?? 'false',
     )
-    setShowStepperConfigHelper(FEATURE_FLAG_STEPPER_HELPER_ENABLED && hasSeenHelperBefore)
+    setShowStepperConfigHelper(
+      FEATURE_FLAG_STEPPER_HELPER_ENABLED && hasSeenHelperBefore,
+    )
   }, [])
 
   const isOnFirstStep = stepperMachine.initialState.value === currentState.value

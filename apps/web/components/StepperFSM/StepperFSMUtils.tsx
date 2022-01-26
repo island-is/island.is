@@ -27,10 +27,10 @@ type StepperMachine = StateMachine<
 >
 
 interface StepOptionCMS {
-  label_is: string
-  label_en: string
+  labelIS: string
+  labelEN: string
   transition: string
-  option_slug: string
+  optionSlug: string
 }
 
 interface StepOptionsFromSourceTransitionCMS {
@@ -39,16 +39,16 @@ interface StepOptionsFromSourceTransitionCMS {
 }
 
 interface StepOptionsFromSourceCMS {
-  source_namespace: string
-  label_is_field: string
-  label_en_field: string
-  option_slug_field: string
+  sourceNamespace: string
+  labelFieldIS: string
+  labelFieldEN: string
+  optionSlugField: string
   transitions: StepOptionsFromSourceTransitionCMS[]
 }
 
 interface StepConfig {
   options: StepOptionCMS[]
-  options_from_source?: StepOptionsFromSourceCMS
+  optionsFromSource?: StepOptionsFromSourceCMS
 }
 
 interface StepOption {
@@ -207,19 +207,19 @@ const getStepOptions = (
   if (!step || step.config === '') return []
   const stepConfig: StepConfig = JSON.parse(step.config) as StepConfig
 
-  if (stepConfig.options_from_source && optionsFromNamespace) {
+  if (stepConfig.optionsFromSource && optionsFromNamespace) {
     const stepOptions = optionsFromNamespace.find(
       (value) => value.slug === step.slug,
     )
     if (!stepOptions) return []
     return stepOptions.data.map((o) => {
       const {
-        label_en_field,
-        label_is_field,
-        option_slug_field,
+        labelFieldEN,
+        labelFieldIS,
+        optionSlugField,
         transitions,
-      } = stepConfig.options_from_source
-      const label = lang === 'is' ? o[label_is_field] : o[label_en_field]
+      } = stepConfig.optionsFromSource
+      const label = lang === 'is' ? o[labelFieldIS] : o[labelFieldEN]
       let stepTransition = ''
 
       for (const { criteria, transition } of transitions) {
@@ -239,17 +239,17 @@ const getStepOptions = (
       return {
         label: label,
         transition: stepTransition,
-        slug: o[option_slug_field],
+        slug: o[optionSlugField],
       }
     })
   }
 
   return stepConfig.options.map((o) => {
-    const label = lang === 'is' ? o.label_is : o.label_en
+    const label = lang === 'is' ? o.labelIS : o.labelEN
     return {
       label: label,
       transition: o.transition,
-      slug: o.option_slug,
+      slug: o.optionSlug,
     }
   })
 }
@@ -257,8 +257,8 @@ const getStepOptions = (
 const getStepOptionsSourceNamespace = (step: Step): string => {
   if (!step || step.config === '') return ''
   const stepConfig: StepConfig = JSON.parse(step.config) as StepConfig
-  if (stepConfig.options_from_source)
-    return stepConfig.options_from_source.source_namespace
+  if (stepConfig.optionsFromSource)
+    return stepConfig.optionsFromSource.sourceNamespace
   return ''
 }
 
