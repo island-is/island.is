@@ -378,6 +378,8 @@ export const ComplaintForm: Form = buildForm({
                       const splitNumber = phoneNumber.split('-')
                       if (splitNumber.length === 3) {
                         return `${splitNumber[1]}${splitNumber[2]}`
+                      } else if (splitNumber.length === 2) {
+                        return `${splitNumber[1]}`
                       }
                     }
                     return phoneNumber
