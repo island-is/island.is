@@ -8,6 +8,7 @@ import { CreateFilesModel, SignedUrlModel } from './models'
 import { FileService } from './file.service'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
+import { StaffGuard } from '../../guards/staff.guard'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller(`${apiBasePath}/file`)
@@ -35,6 +36,7 @@ export class FileController {
     MunicipalitiesFinancialAidScope.read,
     MunicipalitiesFinancialAidScope.employee,
   )
+  @UseGuards(StaffGuard)
   @Get('url/:id')
   @ApiCreatedResponse({
     type: SignedUrlModel,

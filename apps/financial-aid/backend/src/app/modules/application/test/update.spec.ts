@@ -19,6 +19,7 @@ import { UpdateApplicationDto } from '../dto'
 import { ApplicationModel } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
 import type { User } from '@island.is/auth-nest-tools'
+import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 
 interface Then {
   result: ApplicationModel
@@ -87,6 +88,7 @@ describe('ApplicationController - Update', () => {
     }
     const user = {
       nationalId: '0000000000',
+      scope: [MunicipalitiesFinancialAidScope.applicant],
     } as User
 
     beforeEach(async () => {
@@ -119,6 +121,7 @@ describe('ApplicationController - Update', () => {
 
     const user: User = {
       nationalId: '0000000000',
+      scope: [MunicipalitiesFinancialAidScope.applicant],
     } as User
 
     const application = {
@@ -198,6 +201,7 @@ describe('ApplicationController - Update', () => {
     }
     const user = {
       nationalId: '0000000000',
+      scope: [MunicipalitiesFinancialAidScope.applicant],
     } as User
 
     beforeEach(async () => {
@@ -221,6 +225,7 @@ describe('ApplicationController - Update', () => {
 
     const user = {
       nationalId: '0000000000',
+      scope: [MunicipalitiesFinancialAidScope.applicant],
     } as User
 
     const application = {
@@ -305,6 +310,7 @@ describe('ApplicationController - Update', () => {
 
     const staff: User = {
       nationalId: '0000000000',
+      scope: [MunicipalitiesFinancialAidScope.employee],
     } as User
 
     const application = {
@@ -413,6 +419,7 @@ describe('ApplicationController - Update', () => {
     }
     const staff: User = {
       nationalId: '0000000000',
+      scope: [MunicipalitiesFinancialAidScope.employee],
     } as User
 
     const application = {
@@ -520,6 +527,7 @@ describe('ApplicationController - Update', () => {
     }
     const user: User = {
       nationalId: '0000000000',
+      scope: [MunicipalitiesFinancialAidScope.applicant],
     } as User
 
     beforeEach(async () => {
