@@ -56,6 +56,8 @@
 /apps/air-discount-scheme/                                                                    @island-is/kosmos-kaos
 /libs/air-discount-scheme/                                                                    @island-is/kosmos-kaos
 /libs/application/templates/p-sign/                                                           @island-is/kosmos-kaos
+/libs/application/template-api-modules/src/lib/modules/templates/p-sign-submission            @island-is/kosmos-kaos
+/libs/message-queue/                                                                          @island-is/kosmos-kaos
 
 /libs/clients/auth-public-api/                                                                @island-is/aranja
 /libs/clients/middlewares/                                                                    @island-is/aranja
@@ -81,7 +83,7 @@
 
 /apps/download-service/                                                                       @island-is/hugsmidjan
 /apps/service-portal*/                                                                        @island-is/hugsmidjan
-/apps/services/user-profile/                                                                  @island-is/hugsmidjan
+/apps/services/user-profile/                                                                  @island-is/hugsmidjan @island-is/kosmos-kaos
 /apps/web/screens/Regulations/                                                                @island-is/hugsmidjan
 /apps/web/components/Regulations/                                                             @island-is/hugsmidjan
 /libs/api/domains/documents/                                                                  @island-is/hugsmidjan
@@ -89,6 +91,7 @@
 /libs/api/domains/assets/                                                                     @island-is/hugsmidjan
 /libs/api/domains/license-service/                                                            @island-is/hugsmidjan
 /libs/api/domains/national-registry/                                                          @island-is/hugsmidjan
+/libs/api/domains/user-profile/                                                               @island-is/hugsmidjan @island-is/kosmos-kaos
 /libs/clients/finance/                                                                        @island-is/hugsmidjan
 /libs/clients/national-registry/v1/                                                           @island-is/hugsmidjan
 /libs/clients/regulations/                                                                    @island-is/hugsmidjan
@@ -167,6 +170,7 @@ infra/                                                                          
 /libs/auth-nest-tools/                                                                        @island-is/fuglar @island-is/aranja
 
 /apps/services/personal-representative/                                                       @island-is/programm
+/apps/services/personal-representative-public/                                                @island-is/programm
 
 /libs/application/templates/criminal-record/                                                  @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission   @island-is/origo

@@ -34,6 +34,7 @@ export interface Options {
   }
   isAuthorized?: boolean
   description?: string
+  summary?: string
 }
 
 const getResponseDecorators = (
@@ -79,6 +80,7 @@ const getRequestDecorators = ({
 const getExtraDecorators = ({
   isAuthorized = true,
   description,
+  summary,
 }: Omit<Options, 'response' | 'request'>): MethodDecorator[] => {
   let decorators: MethodDecorator[] = []
   if (isAuthorized) {
@@ -89,8 +91,8 @@ const getExtraDecorators = ({
     ]
   }
 
-  if (description) {
-    decorators = [...decorators, ApiOperation({ description })]
+  if (description || summary) {
+    decorators = [...decorators, ApiOperation({ description, summary })]
   }
 
   return decorators

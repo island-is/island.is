@@ -5,7 +5,6 @@ air-discount-scheme-api:
     BACKEND_URL: 'http://web-air-discount-scheme-backend'
     CONTENTFUL_HOST: 'preview.contentful.com'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
-    SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=ads.dev'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -27,10 +26,10 @@ air-discount-scheme-api:
       hosts:
         - host: 'loftbru.dev01.devland.is'
           paths:
-            - '/api'
+            - '/api/graphql'
         - host: 'loftbru-cf.dev01.devland.is'
           paths:
-            - '/api'
+            - '/api/graphql'
   namespace: 'air-discount-scheme'
   podSecurityContext:
     fsGroup: 65534
@@ -127,9 +126,6 @@ air-discount-scheme-web:
   enabled: true
   env:
     API_URL: 'http://web-air-discount-scheme-api'
-    IDENTITY_SERVER_DOMAIN: '/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN'
-    IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
-    NEXTAUTH_URL: '/k8s/air-discount-scheme/NEXTAUTH_URL'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -163,6 +159,9 @@ air-discount-scheme-web:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    IDENTITY_SERVER_DOMAIN: '/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN'
+    IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
+    NEXTAUTH_URL: '/k8s/air-discount-scheme/NEXTAUTH_URL'
     SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN'
   securityContext:
     allowPrivilegeEscalation: false
@@ -213,6 +212,7 @@ api:
     XROAD_PAYMENT_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1'
     XROAD_PROPERTIES_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Fasteignir-v1'
+    XROAD_PROPERTIES_TIMEOUT: '20000'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
@@ -325,7 +325,7 @@ application-system-api:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-dev-storage-application-system'
     CLIENT_LOCATION_ORIGIN: 'https://beta.dev01.devland.is/umsoknir'
     CONTENTFUL_HOST: 'preview.contentful.com'
-    DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10026/kvortun/index'
+    DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10026/gopro/kvortun-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
     DB_USER: 'application_system_api'
@@ -1037,6 +1037,7 @@ service-portal:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'islandis'
+    - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1081,6 +1082,7 @@ service-portal-api:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'islandis'
+    - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1334,6 +1336,7 @@ user-notification:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1378,7 +1381,7 @@ user-notification-worker:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    GOOGLE_APPLICATION_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
+    FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
     USER_NOTIFICATION_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
     USER_NOTIFICATION_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
   securityContext:

@@ -3,7 +3,7 @@ import each from 'jest-each'
 import {
   CaseAppealDecision,
   CaseDecision,
-  CaseGender,
+  Gender,
   CaseState,
   CaseType,
   InstitutionType,
@@ -13,7 +13,7 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../models'
-import { maskCase, maskCaseByUser } from './case.mask'
+import { maskCaseByUser } from './case.mask'
 
 function createCase(type: CaseType): Case {
   const baseCase: Case = {
@@ -24,10 +24,7 @@ function createCase(type: CaseType): Case {
     description: '-',
     state: CaseState.SUBMITTED,
     policeCaseNumber: '-',
-    accusedNationalId: '-',
-    accusedName: '-',
-    accusedAddress: '-',
-    accusedGender: CaseGender.FEMALE,
+    defendants: undefined,
     defenderName: '-',
     defenderEmail: '-',
     defenderPhoneNumber: '-',
@@ -98,6 +95,18 @@ function createCase(type: CaseType): Case {
 
   return {
     ...baseCase,
+    defendants: [
+      {
+        id: '-',
+        created: '-',
+        modified: '-',
+        caseId: '-',
+        nationalId: '-',
+        name: '-',
+        address: '-',
+        gender: Gender.FEMALE,
+      },
+    ],
     court: {
       id: '-',
       created: '-',
@@ -162,8 +171,6 @@ function createCase(type: CaseType): Case {
     },
     parentCase: baseCase,
     childCase: baseCase,
-    notifications: [],
-    caseFiles: [],
     isMasked: false,
   }
 }
@@ -176,8 +183,13 @@ function maskedCase(theCase: Case) {
     type: theCase.type,
     state: theCase.state,
     policeCaseNumber: theCase.policeCaseNumber,
-    accusedNationalId: theCase.accusedNationalId,
-    accusedName: theCase.accusedName,
+    defendants: theCase.defendants?.map((defendant) => ({
+      id: defendant.id,
+      created: defendant.created,
+      modified: defendant.modified,
+      nationalId: defendant.nationalId,
+      name: defendant.name,
+    })),
     defenderName: theCase.defenderName,
     defenderEmail: theCase.defenderEmail,
     defenderPhoneNumber: theCase.defenderPhoneNumber,
@@ -211,8 +223,6 @@ function maskedCase(theCase: Case) {
       type: theCase.parentCase.type,
       state: theCase.parentCase.state,
       policeCaseNumber: theCase.parentCase.policeCaseNumber,
-      accusedNationalId: theCase.parentCase.accusedNationalId,
-      accusedName: theCase.parentCase.accusedName,
       defenderName: theCase.parentCase.defenderName,
       defenderEmail: theCase.parentCase.defenderEmail,
       defenderPhoneNumber: theCase.parentCase.defenderPhoneNumber,
@@ -244,43 +254,6 @@ function maskedCase(theCase: Case) {
     isMasked: true,
   }
 }
-
-describe('Mask Case', () => {
-  each`
-    type
-    ${CaseType.CUSTODY}
-    ${CaseType.TRAVEL_BAN}
-  `.it('should not mask $type cases', ({ type }) => {
-    const theCase = createCase(type)
-
-    const res = maskCase(theCase)
-
-    expect(res).toBe(theCase)
-  })
-
-  each`
-    type
-    ${CaseType.SEARCH_WARRANT}
-    ${CaseType.BANKING_SECRECY_WAIVER}
-    ${CaseType.PHONE_TAPPING}
-    ${CaseType.TELECOMMUNICATIONS}
-    ${CaseType.TRACKING_EQUIPMENT}
-    ${CaseType.PSYCHIATRIC_EXAMINATION}
-    ${CaseType.SOUND_RECORDING_EQUIPMENT}
-    ${CaseType.AUTOPSY}
-    ${CaseType.BODY_SEARCH}
-    ${CaseType.INTERNET_USAGE}
-    ${CaseType.RESTRAINING_ORDER}
-    ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
-    ${CaseType.OTHER}
-  `.it('should mask $type cases', ({ type }) => {
-    const theCase = createCase(type)
-
-    const res = maskCase(theCase)
-
-    expect(res).toStrictEqual(maskedCase(theCase))
-  })
-})
 
 describe('Mask Case by User', () => {
   each`
