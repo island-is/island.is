@@ -35,6 +35,12 @@ module.exports = {
           text: {
             type: Sequelize.TEXT,
           },
+          comments: {
+            type: Sequelize.STRING,
+          },
+          appendixes: {
+            type: Sequelize.ARRAY(Sequelize.JSONB),
+          },
           created: {
             type: Sequelize.DATE,
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),

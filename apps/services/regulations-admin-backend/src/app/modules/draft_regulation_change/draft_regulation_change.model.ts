@@ -13,7 +13,13 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { DraftRegulationModel } from '../draft_regulation'
 
-import { HTMLText, ISODate, PlainText, RegName } from '@island.is/regulations'
+import {
+  Appendix,
+  HTMLText,
+  ISODate,
+  PlainText,
+  RegName,
+} from '@island.is/regulations'
 // FIXME: causes build error in github runner (error: No matching export in "libs/regulations/src/sub/admin.ts" for import "RegulationDraftId")
 import { RegulationDraftId } from '@island.is/regulations/admin'
 
@@ -61,4 +67,16 @@ export class DraftRegulationChangeModel extends Model<DraftRegulationChangeModel
   })
   @ApiProperty()
   text!: HTMLText
+
+  @Column({
+    type: DataType.ARRAY(DataType.JSONB),
+  })
+  @ApiProperty()
+  appendixes?: Appendix[]
+
+  @Column({
+    type: DataType.TEXT,
+  })
+  @ApiProperty()
+  comments?: HTMLText
 }

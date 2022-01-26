@@ -16,6 +16,7 @@ import {
   URLString,
   HTMLText,
   PlainText,
+  Appendix,
 } from '@island.is/regulations'
 // FIXME: causes build error in github runner (error: No matching export in "libs/regulations/src/sub/admin.ts" for import "RegulationDraftId")
 import { DraftingStatus, RegulationDraftId } from '@island.is/regulations/admin'
@@ -67,6 +68,18 @@ export class DraftRegulationModel extends Model<DraftRegulationModel> {
   })
   @ApiProperty()
   text!: HTMLText
+
+  @Column({
+    type: DataType.ARRAY(DataType.JSONB),
+  })
+  @ApiProperty()
+  appendixes?: Appendix[]
+
+  @Column({
+    type: DataType.TEXT,
+  })
+  @ApiProperty()
+  comments?: HTMLText
 
   @Column({
     type: DataType.TEXT,
