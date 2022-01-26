@@ -25,6 +25,8 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
     error: errors?.relationshipStatus?.unregisteredCohabitation,
   }
 
+  const errorIdForSpouse = 'relationshipStatus'
+
   const spouseEmail = {
     id: 'relationshipStatus.spouseEmail',
     error:
@@ -100,7 +102,7 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
             error={spouseNationlId.error}
             defaultValue={getValues(spouseNationlId.id)}
             onChange={() => {
-              clearErrors(spouseNationlId.id)
+              clearErrors(errorIdForSpouse)
             }}
           />
         </Box>
@@ -117,7 +119,7 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
             error={spouseEmail.error}
             defaultValue={getValues(spouseEmail.id)}
             onChange={() => {
-              clearErrors(spouseEmail.id)
+              clearErrors(errorIdForSpouse)
             }}
           />
         </Box>

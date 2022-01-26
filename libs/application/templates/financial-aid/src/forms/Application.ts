@@ -10,7 +10,6 @@ import { ExternalData } from '../lib/types'
 
 import * as m from '../lib/messages'
 import { routes } from '../lib/constants'
-import { route } from 'next/dist/next-server/server/router'
 
 export const Application: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -24,7 +23,7 @@ export const Application: Form = buildForm({
         buildSubSection({
           condition: (_, externalData) =>
             ((externalData as unknown) as ExternalData).nationalRegistry?.data
-              ?.spouse !== undefined,
+              ?.applicant?.spouse !== undefined,
           title: m.inRelationship.general.sectionTitle,
           children: [
             buildCustomField({
@@ -37,7 +36,7 @@ export const Application: Form = buildForm({
         buildSubSection({
           condition: (_, externalData) =>
             ((externalData as unknown) as ExternalData).nationalRegistry?.data
-              ?.spouse === undefined,
+              ?.applicant?.spouse === undefined,
           title: m.unknownRelationship.general.sectionTitle,
           children: [
             buildCustomField({
@@ -91,7 +90,7 @@ export const Application: Form = buildForm({
           title: m.incomeForm.general.sectionTitle,
           children: [
             buildCustomField({
-              id: 'income',
+              id: routes.INCOME,
               title: m.incomeForm.general.pageTitle,
               component: 'IncomeForm',
             }),
