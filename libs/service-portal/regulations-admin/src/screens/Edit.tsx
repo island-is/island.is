@@ -105,7 +105,6 @@ const EditApp: ServicePortalModuleComponent = ({ userInfo }) => {
       regulationDraft={regulationDraft.data}
       stepName={stepName}
       ministries={ministries.data}
-      userInfo={userInfo}
     >
       <Fragment key={id}>
         <Box marginBottom={[2, 2, 4]}>
@@ -118,6 +117,11 @@ const EditApp: ServicePortalModuleComponent = ({ userInfo }) => {
             </Text>
           )}
         </Box>
+
+        <DownloadDraftButton
+          userInfo={userInfo}
+          regulationDraftId={regulationDraft.data.id}
+        />
 
         <SaveDeleteButtons wrap />
 

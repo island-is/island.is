@@ -3,7 +3,7 @@ import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import { RegulationsService } from '@island.is/clients/regulations'
 import { GetDraftRegulationInput } from './dto/getDraftRegulation.input'
-import { DownloadRegulationInput } from './dto/downloadRegulation.input'
+import { GetDraftRegulationPdfDownloadInput } from './dto/downloadRegulation.input'
 import { DeleteDraftRegulationInput } from './dto/deleteDraftRegulation.input'
 import { EditDraftRegulationInput } from './dto/editDraftRegulation.input'
 import { GetRegulationOptionListInput } from './dto/getRegulationOptionList.input'
@@ -20,6 +20,7 @@ import {
   REGULATIONS_ADMIN_OPTIONS,
 } from '../client/regulationsAdmin.api'
 import { RegulationPdfDownload } from '@island.is/regulations/admin'
+import { DraftRegulationPdfDownload } from './models/draftRegulationPdfDownload.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -114,11 +115,11 @@ export class RegulationsAdminResolver {
     return await this.regulationsService.getRegulationsLawChapters(false)
   }
 
-  @Query(() => graphqlTypeJson)
-  async downloadRegulation(
-    @Args('input') input: DownloadRegulationInput,
+  @Query(() => DraftRegulationPdfDownload)
+  async getDraftRegulationPdfDownload(
+    @Args('input') input: GetDraftRegulationPdfDownloadInput,
     @CurrentUser() { authorization }: User,
-  ): Promise<RegulationPdfDownload | null> {
+  ): Promise<DraftRegulationPdfDownload | null> {
     // This is open to be extended with downloading published regulations as well
 
     if (!this.options.downloadServiceUrl) {
@@ -126,8 +127,9 @@ export class RegulationsAdminResolver {
       return null
     }
 
+    // FIXME: Find out a more lightweight way of checking if a `draftId` is valid.
     const draftRegulation = await this.regulationsAdminApiService.getDraftRegulation(
-      input.regulationId,
+      input.draftId,
       authorization,
     )
 
@@ -137,7 +139,7 @@ export class RegulationsAdminResolver {
 
     return {
       downloadService: true,
-      url: `${this.options.downloadServiceUrl}/download/v1/regulation/draft/${input.regulationId}`,
+      url: `${this.options.downloadServiceUrl}/download/v1/regulation/draft/${input.draftId}`,
     }
   }
 }

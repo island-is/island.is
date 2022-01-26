@@ -34,14 +34,6 @@ import { AuthModule } from '@island.is/auth-nest-tools'
     RegulationsAdminModule.register({
       baseApiUrl: environment.regulationsAdmin.baseApiUrl,
       regulationsApiUrl: environment.regulationsAdmin.regulationsApiUrl,
-
-      // TODO don't want to instanciate this
-      nationalRegistry: {
-        baseSoapUrl: '',
-        user: '',
-        password: '',
-        host: '',
-      },
     }),
   ],
   providers: [],
