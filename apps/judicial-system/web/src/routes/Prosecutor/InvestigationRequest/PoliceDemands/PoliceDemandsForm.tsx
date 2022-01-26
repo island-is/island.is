@@ -9,6 +9,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseType } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -84,7 +85,9 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 accusedName: workingCase.defendants
                   .map(
                     (defendant) =>
-                      `${defendant.name} kt. ${defendant.nationalId}`,
+                      `${defendant.name} kt. ${formatNationalId(
+                        defendant.nationalId ?? '',
+                      )}`,
                   )
                   .toString()
                   .replace(/,/g, ', '),
