@@ -18,7 +18,7 @@ export const Application: Form = buildForm({
     buildSection({
       condition: (_, externalData) =>
         ((externalData as unknown) as ExternalData).nationalRegistry?.data
-          ?.spouse !== undefined,
+          .applicant?.spouse !== undefined,
       id: 'personalInterest',
       title: m.section.personalInterest,
       children: [
