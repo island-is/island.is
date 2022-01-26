@@ -6,6 +6,7 @@ interface SequelizeConfig {
   database: string
   host: string
   dialect: Dialect
+  port?: number
 }
 
 declare namespace SequelizeConfig {
