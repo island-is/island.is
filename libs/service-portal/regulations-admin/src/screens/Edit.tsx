@@ -5,7 +5,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { RegulationDraftId } from '@island.is/regulations/admin'
 import { isUuid } from 'uuidv4'
 import { Step } from '../types'
-import { RegDraftingProvider, steps } from '../state/useDraftingState'
+import { RegDraftingProvider, ensureStepName } from '../state/useDraftingState'
 import { useMinistriesQuery, useRegulationDraftQuery } from '../utils/dataHooks'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { MessageDescriptor } from '@formatjs/intl'
@@ -23,11 +23,9 @@ import { ButtonBar } from '../components/ButtonBar'
 // ---------------------------------------------------------------------------
 
 const assertStep = (maybeStep?: string): Step => {
-  if (!maybeStep) {
-    return 'basics'
-  }
-  if (maybeStep in steps) {
-    return maybeStep as Step
+  const stepName = ensureStepName(maybeStep || 'basics')
+  if (stepName) {
+    return stepName
   }
   throw new Error('Invalid RegulationDraft editing Step')
 }

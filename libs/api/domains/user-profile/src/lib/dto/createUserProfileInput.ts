@@ -26,4 +26,9 @@ export class CreateUserProfileInput {
   @IsOptional()
   @IsBoolean()
   documentNotifications?: boolean
+
+  // Temporary merge with islyklar service
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  canNudge?: boolean
 }

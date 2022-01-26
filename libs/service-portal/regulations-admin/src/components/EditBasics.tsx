@@ -36,7 +36,7 @@ export const EditBasics = () => {
           defaultValue={draft.title.value}
           onBlur={(value) => updateState('title', value)}
           error={t(draft.title.error)}
-          required
+          required={!!draft.title.required}
         />
         <Box marginTop={1} marginLeft={1}>
           <Text variant="small" color="dark200">

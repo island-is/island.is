@@ -1,9 +1,6 @@
 import { Inject, NotFoundException, forwardRef } from '@nestjs/common'
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-
 import { Authorize, Role, CurrentUser, User } from '../auth'
 import { VehicleModel } from '../vehicle'
 import {
@@ -19,8 +16,6 @@ import { SamgongustofaService } from '../samgongustofa'
 export class RecyclingRequestResolver {
   constructor(
     private recyclingRequestService: RecyclingRequestService,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
     @Inject(forwardRef(() => SamgongustofaService))
     private samgongustofaService: SamgongustofaService,
   ) {}
@@ -29,10 +24,6 @@ export class RecyclingRequestResolver {
   @Query(() => [RecyclingRequestModel])
   async skilavottordAllRecyclingRequests(): Promise<RecyclingRequestModel[]> {
     const recyclingRequests = await this.recyclingRequestService.findAll()
-    this.logger.info(
-      'skilavottordAllRecyclingRequests response:' +
-        JSON.stringify(recyclingRequests, null, 2),
-    )
     return recyclingRequests
   }
 
@@ -55,10 +46,6 @@ export class RecyclingRequestResolver {
     const userLastRecyclingRequest = await this.recyclingRequestService.findUserRecyclingRequestWithPermno(
       vehicle,
     )
-    this.logger.info(
-      'skilavottordUserRecyclingRequest responce:' +
-        JSON.stringify(userLastRecyclingRequest, null, 2),
-    )
     return userLastRecyclingRequest
   }
 
@@ -71,10 +58,6 @@ export class RecyclingRequestResolver {
   ): Promise<RecyclingRequestModel[]> {
     const recyclingRequests = await this.recyclingRequestService.findAllWithPermno(
       perm,
-    )
-    this.logger.info(
-      'skilavottordRecyclingRequest responce:' +
-        JSON.stringify(recyclingRequests, null, 2),
     )
     return recyclingRequests
   }
@@ -110,9 +93,6 @@ export class RecyclingRequestResolver {
       )
       // Check if user owns the vehicle
       if (!vehicle) {
-        this.logger.error(
-          `User doesn't have right to deregistered the vehicle.`,
-        )
         throw new NotFoundException(
           `User doesn't have right to deregistered the vehicle`,
         )
@@ -122,7 +102,6 @@ export class RecyclingRequestResolver {
       user.role,
     )
     if (requestType === 'deregistered' && !hasPermission) {
-      this.logger.error(`User doesn't have right to deregistered the vehicle.`)
       throw new NotFoundException(
         `User doesn't have right to deregistered the vehicle`,
       )

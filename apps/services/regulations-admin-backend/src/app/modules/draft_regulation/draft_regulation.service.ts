@@ -23,11 +23,7 @@ import {
   RegulationDraft,
   RegulationDraftId,
 } from '@island.is/regulations/admin'
-import {
-  combineTextAppendixesComments,
-  extractAppendixesAndComments,
-} from '@island.is/regulations-tools/textHelpers'
-import { Appendix, Kennitala } from '@island.is/regulations'
+import { Kennitala } from '@island.is/regulations'
 import * as kennitala from 'kennitala'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import type { User } from '@island.is/auth-nest-tools'
@@ -168,16 +164,14 @@ export class DraftRegulationService {
 
     const impacts: (DraftRegulationCancel | DraftRegulationChange)[] = []
     draftRegulation.changes?.forEach(async (change) => {
-      const changeTexts = extractAppendixesAndComments(change.text)
-
       impacts.push({
         id: change.id as DraftRegulationChangeId,
         type: 'amend',
         date: change.date,
         title: change.title,
-        text: changeTexts.text,
-        appendixes: changeTexts.appendixes,
-        comments: changeTexts.comments,
+        text: change.text,
+        appendixes: change.appendixes || [],
+        comments: change.comments || '',
         // About the impaced stofnreglugerð
         name: change.regulation, // primary-key reference to the stofnreglugerð
         regTitle:
@@ -199,23 +193,19 @@ export class DraftRegulationService {
       })
     }
 
-    const { text, appendixes, comments } = extractAppendixesAndComments(
-      draftRegulation.text,
-    )
-
     return {
       id: draftRegulation.id as RegulationDraftId,
       draftingStatus: draftRegulation.drafting_status as DraftingStatus,
       title: draftRegulation.title,
       name: draftRegulation.name,
-      text,
+      text: draftRegulation.text,
+      appendixes: draftRegulation.appendixes || [],
+      comments: draftRegulation.comments || '',
       lawChapters,
       ministry: draftRegulation.ministry,
       authors,
       idealPublishDate: draftRegulation.ideal_publish_date, // TODO: Exclude original from response.
       draftingNotes: draftRegulation.drafting_notes, // TODO: Exclude original from response.
-      appendixes,
-      comments,
       impacts,
       type: draftRegulation.type,
       effectiveDate: draftRegulation.effective_date,
@@ -261,11 +251,9 @@ export class DraftRegulationService {
 
     const updateData: Partial<DraftRegulationModel> = {
       title: update.title,
-      text: combineTextAppendixesComments(
-        update.text,
-        update.appendixes,
-        update.comments,
-      ),
+      text: update.text,
+      appendixes: update.appendixes,
+      comments: update.comments,
       ministry: update.ministry,
       drafting_notes: update.draftingNotes,
       ideal_publish_date: update.idealPublishDate,

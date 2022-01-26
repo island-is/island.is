@@ -376,6 +376,10 @@ export const editorMsgs = defineMessages({
 })
 
 export const errorMsgs = defineMessages({
+  typeRequired: {
+    id: 'ap.regulations-admin:error-typefield-required',
+    defaultMessage: 'Ekki hægt að greina tegund reglugerðar út frá titli',
+  },
   fieldRequired: {
     id: 'ap.regulations-admin:error-field-required',
     defaultMessage: 'Þessi reitur má ekki vera tómur',
@@ -421,7 +425,7 @@ export const homeMessages = defineMessages({
   },
   taskList_draftTitleMissing: {
     id: 'ap.regulations-admin:tasklist-draft-title-missing',
-    defaultMessage: '— ónefnd drög —',
+    defaultMessage: '—  ónefnd drög  —',
   },
 
   cta: {

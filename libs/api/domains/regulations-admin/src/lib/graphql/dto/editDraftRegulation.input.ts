@@ -59,8 +59,8 @@ export class EditDraftBody {
   @Field(() => Date, { nullable: true })
   effectiveDate?: ISODate
 
-  @Field(() => String)
-  type!: RegulationType
+  @Field(() => String, { nullable: true })
+  type?: RegulationType
 
   @Field()
   fastTrack?: boolean

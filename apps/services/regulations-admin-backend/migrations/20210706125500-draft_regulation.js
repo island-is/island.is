@@ -24,6 +24,12 @@ module.exports = {
           text: {
             type: Sequelize.TEXT,
           },
+          comments: {
+            type: Sequelize.STRING,
+          },
+          appendixes: {
+            type: Sequelize.ARRAY(Sequelize.JSONB),
+          },
           drafting_notes: {
             type: Sequelize.TEXT,
           },

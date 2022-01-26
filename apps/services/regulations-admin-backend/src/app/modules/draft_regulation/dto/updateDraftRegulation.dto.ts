@@ -73,9 +73,10 @@ export class UpdateDraftRegulationDto {
   @ApiProperty()
   readonly effectiveDate?: ISODate
 
+  @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly type!: RegulationType
+  readonly type?: RegulationType
 
   @IsOptional()
   @IsArray()

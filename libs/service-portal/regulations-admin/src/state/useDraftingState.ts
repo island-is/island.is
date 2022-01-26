@@ -1,58 +1,46 @@
-import React from 'react'
-import {
-  Reducer,
+import React, {
   useEffect,
   useMemo,
-  useReducer,
   createContext,
   useContext,
   ReactNode,
 } from 'react'
 import { useMutation, gql } from '@apollo/client'
-import {
-  HTMLText,
-  LawChapterSlug,
-  PlainText,
-  Appendix,
-  MinistryList,
-} from '@island.is/regulations'
-import { useAuth } from '@island.is/auth/react'
-import { produce, setAutoFreeze, Draft } from 'immer'
+import { LawChapterSlug, MinistryList } from '@island.is/regulations'
 import { useHistory } from 'react-router-dom'
 import { Step } from '../types'
 import { getInputFieldsWithErrors, useLocale } from '../utils'
-import {
-  findAffectedRegulationsInText,
-  findRegulationType,
-  findSignatureInText,
-} from '../utils/guessers'
-import { RegulationsAdminScope } from '@island.is/auth/scopes'
 import { DraftingStatus, RegulationDraft } from '@island.is/regulations/admin'
 import {
-  StepNav,
-  DraftField,
-  HtmlDraftField,
   RegDraftForm,
   DraftingState,
   RegDraftFormSimpleProps,
-  Action,
-  ActionName,
   AppendixFormSimpleProps,
   AppendixDraftForm,
-  InputType,
 } from './types'
-import { buttonsMsgs, errorMsgs } from '../messages'
+import { buttonsMsgs } from '../messages'
 import {} from '@island.is/regulations/web'
 import { toast } from '@island.is/island-ui/core'
 import { getEditUrl, getHomeUrl } from '../utils/routing'
+import { useEditDraftReducer, StateInputs } from './reducer'
+import { steps } from './makeFields'
 
-export const UPDATE_DRAFT_REGULATION_MUTATION = gql`
+// ---------------------------------------------------------------------------
+
+export const ensureStepName = (cand: unknown) => {
+  if (typeof cand === 'string' && cand in steps) {
+    return cand as Step
+  }
+}
+
+// ---------------------------------------------------------------------------
+
+const UPDATE_DRAFT_REGULATION_MUTATION = gql`
   mutation UpdateDraftRegulationMutation($input: EditDraftRegulationInput!) {
     updateDraftRegulationById(input: $input)
   }
 `
-
-export const DELETE_DRAFT_REGULATION_MUTATION = gql`
+const DELETE_DRAFT_REGULATION_MUTATION = gql`
   mutation DeleteDraftRegulationMutation($input: DeleteDraftRegulationInput!) {
     deleteDraftRegulation(input: $input) {
       id
@@ -62,406 +50,7 @@ export const DELETE_DRAFT_REGULATION_MUTATION = gql`
 
 // ---------------------------------------------------------------------------
 
-export const steps: Record<Step, StepNav> = {
-  basics: {
-    name: 'basics',
-    next: 'meta',
-  },
-  meta: {
-    name: 'meta',
-    prev: 'basics',
-    next: 'signature',
-  },
-  signature: {
-    name: 'signature',
-    prev: 'meta',
-    next: 'impacts',
-  },
-  impacts: {
-    name: 'impacts',
-    prev: 'signature',
-    next: 'review',
-  },
-  review: {
-    name: 'review',
-    prev: 'impacts',
-  },
-}
-
-// ---------------------------------------------------------------------------
-
-const tidyUp = {
-  text: (value: string) => value.trimLeft() as PlainText,
-  html: (value: HTMLText) => value.trimLeft() as HTMLText,
-  _: <T extends unknown>(value: T) => value,
-} as const
-
-// ---------------------------------------------------------------------------
-
-const f = <T>(
-  value: T,
-  required?: true,
-  type?: Exclude<InputType, 'html' | 'text'>,
-): DraftField<T> => ({
-  value,
-  required,
-  type,
-})
-const fText = <T extends string>(value: T, required?: true): DraftField<T> => ({
-  value,
-  required,
-  type: 'text',
-})
-const fHtml = (value: HTMLText, required?: true): HtmlDraftField => ({
-  value,
-  required,
-  type: 'html',
-})
-
-const makeDraftAppendixForm = (appendix: Appendix, key: string) => ({
-  title: fText(appendix.title, true),
-  text: fHtml(appendix.text, true),
-  key,
-})
-
-const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
-  const form: RegDraftForm = {
-    id: draft.id,
-    title: fText(draft.title, true),
-    text: fHtml(draft.text, true),
-    appendixes: draft.appendixes.map((a, i) =>
-      makeDraftAppendixForm(a, String(i)),
-    ),
-    comments: fHtml(draft.comments),
-
-    idealPublishDate: f(
-      draft.idealPublishDate && new Date(draft.idealPublishDate),
-    ),
-    fastTrack: f(draft.fastTrack || false),
-
-    effectiveDate: f(draft.effectiveDate && new Date(draft.effectiveDate)),
-
-    signatureText: fHtml(draft.signatureText, true),
-    signedDocumentUrl: f(draft.signedDocumentUrl, true),
-
-    lawChapters: f((draft.lawChapters || []).map((chapter) => chapter.slug)),
-
-    mentioned: [], // NOTE: Contains values derived from `text`
-
-    impacts: draft.impacts.map((impact) => {
-      return impact.type === 'amend'
-        ? {
-            type: impact.type,
-            id: impact.id,
-            name: impact.name,
-            regTitle: impact.regTitle,
-            date: f(new Date(impact.date), true),
-            title: fText(impact.title, true),
-            text: fHtml(impact.text, true),
-            appendixes: impact.appendixes.map((a, i) =>
-              makeDraftAppendixForm(a, String(i)),
-            ),
-            comments: fHtml(impact.comments),
-          }
-        : {
-            type: impact.type,
-            id: impact.id,
-            name: impact.name,
-            regTitle: impact.regTitle,
-            date: f(new Date(impact.date), true),
-          }
-    }),
-
-    draftingNotes: fHtml(draft.draftingNotes),
-    draftingStatus: draft.draftingStatus,
-    authors: f(draft.authors.map((author) => author.authorId)),
-
-    type: f(undefined /* draft.type */, true), // NOTE: Regulation type is always a derived value
-    ministry: f(undefined /* draft.ministry */, true), // NOTE: The ministry is always a derived value
-    signatureDate: f(
-      undefined /* draft.signatureDate && new Date(draft.signatureDate) */,
-      true,
-    ), // NOTE: Signature date is always a derived value
-  }
-
-  updateImpacts(form, draft.title, draft.text)
-
-  return form
-}
-
-// ---------------------------------------------------------------------------
-
-// const validate = (state: DraftingState) => {
-//   return
-// }
-
-// const validateSingle = <Field extends keyof RegulationDraft>(
-//   state: DraftingState,
-//   name: Field,
-//   value: RegulationDraft[Field],
-// ) => {
-//   return
-// }
-
-const updateImpacts = (
-  draft: RegDraftForm,
-  title: PlainText,
-  text: HTMLText,
-) => {
-  const { impacts, mentioned, type } = draft
-
-  const checkedTitle = type.value === 'amending' ? title : ''
-  const newMentions = findAffectedRegulationsInText(checkedTitle, text)
-
-  const mentionsChanged =
-    newMentions.length !== mentioned.length ||
-    mentioned.some((name, i) => name !== newMentions[i])
-
-  if (mentionsChanged) {
-    draft.mentioned = newMentions
-    impacts.forEach((impact) => {
-      if (impact.name === 'self') return
-
-      if (newMentions.includes(impact.name)) {
-        delete impact.error
-      } else {
-        impact.error = errorMsgs.impactingUnMentioned
-      }
-    })
-  }
-}
-
-// ---------------------------------------------------------------------------
-
-const specialUpdates: {
-  [Prop in RegDraftFormSimpleProps]?: (
-    state: DraftingState,
-    newValue: RegDraftForm[Prop]['value'],
-  ) => RegDraftForm[Prop]['value'] | null | void
-} = {
-  title: (state: DraftingState, newTitle) => {
-    const { type, text } = state.draft
-    type.value = findRegulationType(newTitle)
-    updateImpacts(state.draft, newTitle, text.value)
-  },
-
-  text: (state, newValue) => {
-    const { title } = state.draft
-    updateImpacts(state.draft, title.value, newValue)
-  },
-
-  signatureText: (state, newValue) => {
-    const draft = state.draft
-    const { ministryName, signatureDate } = findSignatureInText(newValue)
-
-    const normalizedValue = ministryName?.toLowerCase().replace(/-/g, '')
-    const knownMinistry = normalizedValue
-      ? state.ministries.find(
-          (m) => m.name.toLowerCase().replace(/-/g, '') === normalizedValue,
-        )
-      : undefined
-
-    // prefer official name over typed name (ignores casing, and punctuation differernces)
-    draft.ministry.value = knownMinistry ? knownMinistry.name : ministryName
-    // Ideally this ought to be flagged as a less-severe error
-    draft.ministry.error =
-      ministryName && !knownMinistry ? errorMsgs.ministryUnknown : undefined
-
-    // TODO: Match the derived ministry up with original draft author's
-    // ministry connnection (i.e. their "place of work")
-    // and issue a WARNING if the two ministry values don't match up.
-
-    draft.signatureDate.value = signatureDate && new Date(signatureDate)
-  },
-}
-
-// ---------------------------------------------------------------------------
-
-/* eslint-disable @typescript-eslint/naming-convention */
-const actionHandlers: {
-  [Type in ActionName]: (
-    state: Draft<DraftingState>,
-    action: Omit<Extract<Action, { type: Type }>, 'type'>,
-  ) => Draft<DraftingState> | void
-} = {
-  CHANGE_STEP: (state, { stepName }) => {
-    if (stepName === 'review' && !state.isEditor) {
-      state.error = new Error('Must be an editor')
-      return
-    }
-    state.step = steps[stepName]
-  },
-
-  SAVING_STATUS: (state) => {
-    state.saving = true
-  },
-  SAVING_STATUS_DONE: (state, { error }) => {
-    state.error = error
-    state.saving = false
-  },
-
-  UPDATE_PROP: (state, { name, value, explicit }) => {
-    const field = state.draft[name]
-    // @ts-expect-error  (Fuu)
-    value = tidyUp[field.type || '_'](value)
-
-    if (value !== field.value) {
-      specialUpdates[name]?.(
-        state,
-        // @ts-expect-error  (Pretty sure I'm holding this correctly,
-        // and TS is in the weird here.
-        // Name and value are intrinsically linked both in this action's
-        // arguments and in the `specialUpdaters` signature.)
-        value,
-      )
-    }
-    if (value !== field.value || explicit === true) {
-      field.value = value
-      field.dirty = true
-      field.guessed = false
-    }
-    field.error =
-      field.required && !value && field.dirty
-        ? errorMsgs.fieldRequired
-        : undefined
-  },
-
-  APPENDIX_ADD: (state) => {
-    const { appendixes } = state.draft
-    appendixes.push(
-      makeDraftAppendixForm({ title: '', text: '' }, String(appendixes.length)),
-    )
-  },
-
-  APPENDIX_SET_PROP: (state, { idx, name, value }) => {
-    const appendix = state.draft.appendixes[idx]
-    if (appendix) {
-      const field = appendix[name]
-      // @ts-expect-error  (Fuu)
-      value = tidyUp[field.type || '_'](value)
-
-      if (value !== field.value) {
-        field.value = value
-        field.dirty = true
-        field.guessed = false
-      }
-      field.error =
-        field.required && !value && field.dirty
-          ? errorMsgs.fieldRequired
-          : undefined
-    }
-  },
-
-  APPENDIX_DELETE: (state, { idx }) => {
-    const { appendixes } = state.draft
-    if (appendixes[idx]) {
-      appendixes.splice(idx, 1)
-    }
-  },
-
-  // // TODO: Adapt for impact appendixes
-  // APPENDIX_REVOKE: (state, { idx, revoked }) => {
-  //   const { appendixes } = state.draft
-  //   const appendix = appendixes[idx]
-  //   if (appendix) {
-  //     appendix.revoked = revoked
-  //   }
-  // },
-
-  APPENDIX_MOVE_UP: (state, { idx }) => {
-    const prevIdx = idx - 1
-    const { appendixes } = state.draft
-    const appendix = appendixes[idx]
-    const prevAppendix = appendixes[prevIdx]
-    if (appendix && prevAppendix) {
-      appendixes[prevIdx] = appendix
-      appendixes[idx] = prevAppendix
-    }
-  },
-
-  UPDATE_MULTIPLE_PROPS: (state, { multiData }) => {
-    Object.assign(state.draft, multiData)
-  },
-
-  UPDATE_LAWCHAPTER_PROP: (state, { action, value }) => {
-    const lawChaptersField = state.draft.lawChapters
-    const lawChapters = lawChaptersField.value
-    const includesValue = lawChapters.includes(value)
-    if (action === 'add') {
-      if (!includesValue) {
-        lawChaptersField.value = lawChapters.concat(value).sort()
-      }
-    } else {
-      if (includesValue) {
-        lawChaptersField.value = lawChapters.filter((slug) => slug !== value)
-      }
-    }
-  },
-
-  SHIP: (state) => {
-    if (!state.isEditor) {
-      state.error = new Error('Must be an editor')
-    } else {
-      state.shipping = true
-    }
-  },
-}
-/* eslint-enable @typescript-eslint/naming-convention */
-
-const draftingStateReducer: Reducer<DraftingState, Action> = (
-  state,
-  action,
-) => {
-  setAutoFreeze(false)
-  const newState = produce(state, (sDraft) =>
-    actionHandlers[action.type](
-      sDraft,
-      // @ts-expect-error  (Can't get this to work. FML)
-      action,
-    ),
-  )
-  setAutoFreeze(true)
-  return newState
-}
-
-type StateInputs = {
-  regulationDraft: RegulationDraft
-  ministries: MinistryList
-  stepName: Step
-}
-
-const useEditDraftReducer = (inputs: StateInputs) => {
-  const { regulationDraft, ministries, stepName } = inputs
-
-  const isEditor =
-    useAuth().userInfo?.scopes?.includes(RegulationsAdminScope.manage) || false
-
-  if (stepName === 'review' && !isEditor) {
-    throw new Error()
-  }
-
-  return useReducer(draftingStateReducer, {}, () => {
-    const state: DraftingState = {
-      draft: makeDraftForm(regulationDraft),
-      step: steps[stepName],
-      ministries,
-      isEditor,
-    }
-    // guess all guesssed values on start.
-    Object.entries(specialUpdates).forEach(([prop, updaterFn]) => {
-      updaterFn!(
-        state,
-        // @ts-expect-error  (because reasons)
-        state.draft[prop as RegDraftFormSimpleProps].value,
-      )
-    })
-    return state
-  })
-}
-
-// ---------------------------------------------------------------------------
-
-export const useMakeDraftingState = (inputs: StateInputs) => {
+const useMakeDraftingState = (inputs: StateInputs) => {
   const history = useHistory()
   const t = useLocale().formatMessage
 
@@ -487,7 +76,7 @@ export const useMakeDraftingState = (inputs: StateInputs) => {
     const nextStep = step.next
     const prevStep = step.prev
 
-    const _saveStatus = (newStatus?: DraftingStatus) =>
+    const saveDraftStatus = (newStatus?: DraftingStatus) =>
       updateDraftRegulationById({
         variables: {
           input: {
@@ -555,6 +144,7 @@ export const useMakeDraftingState = (inputs: StateInputs) => {
         actions.saveStatus(true)
         history.push(getEditUrl(draft.id, stepName))
       },
+
       // FIXME: rename to updateProp??
       updateState: <Prop extends RegDraftFormSimpleProps>(
         name: Prop,
@@ -583,6 +173,7 @@ export const useMakeDraftingState = (inputs: StateInputs) => {
        * Only implemented for action-interface compatilility with
        * impact appendix editing
        */
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       revokeAppendix: (idx: number, revoked: boolean) => undefined,
 
       moveAppendixUp: (idx: number) => {
@@ -623,7 +214,7 @@ export const useMakeDraftingState = (inputs: StateInputs) => {
 
       saveStatus: (silent?: boolean) => {
         dispatch({ type: 'SAVING_STATUS' })
-        _saveStatus().then(({ success, error }) => {
+        saveDraftStatus().then(({ success, error }) => {
           if (error) {
             toast.error(t(buttonsMsgs.saveFailure))
             console.error(error)
@@ -637,7 +228,7 @@ export const useMakeDraftingState = (inputs: StateInputs) => {
       propose: !state.isEditor
         ? () => {
             dispatch({ type: 'SAVING_STATUS' })
-            _saveStatus('proposal').then(({ success, error }) => {
+            saveDraftStatus('proposal').then(({ success, error }) => {
               if (error) {
                 toast.error(t(buttonsMsgs.saveFailure))
                 console.error(error)
@@ -663,6 +254,8 @@ export const useMakeDraftingState = (inputs: StateInputs) => {
 }
 
 export type RegDraftActions = ReturnType<typeof useMakeDraftingState>['actions']
+
+// ===========================================================================
 
 // ===========================================================================
 

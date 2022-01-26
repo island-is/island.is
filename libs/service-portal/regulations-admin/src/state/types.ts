@@ -7,7 +7,6 @@ import {
 import {
   HTMLText,
   LawChapterSlug,
-  MinistrySlug,
   PlainText,
   RegName,
   URLString,
@@ -15,6 +14,7 @@ import {
 import { Kennitala, RegulationType, MinistryList } from '@island.is/regulations'
 import { Step } from '../types'
 import { MessageDescriptor } from 'react-intl'
+import { WarningList } from '@island.is/regulations-tools/useTextWarnings'
 
 export type StepNav = {
   name: Step
@@ -22,22 +22,24 @@ export type StepNav = {
   next?: Step
 }
 
-export type InputType = 'text' | 'html'
+// export type InputType = 'text' | 'html'
 
-export type DraftField<Type> = {
+export type DraftField<Type, InputType extends string = ''> = {
   value: Type
-  required?: boolean
+  required?: boolean | MessageDescriptor
   dirty?: boolean
-  guessed?: boolean
   error?: MessageDescriptor
+  hideError?: boolean
   type?: InputType
 }
 
 // TODO: Figure out how the Editor components lazy valueRef.current() getter fits into this
-export type HtmlDraftField = DraftField<HTMLText>
+export type HtmlDraftField = DraftField<HTMLText, 'html'> & {
+  warnings: WarningList
+}
 
 export type AppendixDraftForm = {
-  title: DraftField<PlainText>
+  title: DraftField<PlainText, 'text'>
   text: HtmlDraftField
 
   /**
@@ -61,7 +63,7 @@ export type AppendixDraftForm = {
 }
 
 export type BodyDraftFields = {
-  title: DraftField<PlainText>
+  title: DraftField<PlainText, 'text'>
   text: HtmlDraftField
   appendixes: Array<AppendixDraftForm>
   comments: HtmlDraftField
@@ -96,7 +98,7 @@ export type RegDraftForm = BodyDraftFields & {
   lawChapters: DraftField<Array<LawChapterSlug>>
 
   signatureDate: DraftField<Date | undefined>
-  ministry: DraftField<string | undefined>
+  ministry: DraftField<PlainText | undefined, 'text'>
   type: DraftField<RegulationType | undefined>
 
   signatureText: HtmlDraftField
