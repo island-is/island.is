@@ -53,6 +53,7 @@ export const SignedVerdictOverview: React.FC = () => {
     title: string
     text: ReactNode
   }>()
+  const [isAlteringDates, setIsAlteringDates] = useState<boolean>(false)
   const [
     selectedSharingInstitutionId,
     setSelectedSharingInstitutionId,
@@ -323,6 +324,10 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
+  const handleDateAltering = () => {
+    setIsAlteringDates(!isAlteringDates)
+  }
+
   /**
    * We assume that the signed verdict page is only opened for
    * cases in state REJECTED or ACCEPTED.
@@ -361,6 +366,7 @@ export const SignedVerdictOverview: React.FC = () => {
         setSelectedSharingInstitutionId={setSelectedSharingInstitutionId}
         isRequestingCourtRecordSignature={isRequestingCourtRecordSignature}
         handleRequestCourtRecordSignature={handleRequestCourtRecordSignature}
+        handleDateAltering={handleDateAltering}
       />
       <FormContentContainer isFooter>
         <FormFooter
@@ -392,6 +398,16 @@ export const SignedVerdictOverview: React.FC = () => {
           text={shareCaseModal.text}
           primaryButtonText="Loka glugga"
           handlePrimaryButtonClick={() => setSharedCaseModal(undefined)}
+        />
+      )}
+      {isAlteringDates && (
+        <Modal
+          title="Breyting á lengd gæsluvarðhalds"
+          text="Hafi gæsluvarðhaldi eða einangrun verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd gæsluvarðhalds. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu."
+          primaryButtonText="Staðfesta"
+          handlePrimaryButtonClick={() => alert('NOT IMPLEMENTED')}
+          secondaryButtonText="Hætta við"
+          handleSecondaryButtonClick={() => setIsAlteringDates(false)}
         />
       )}
       {requestCourtRecordSignatureResponse && (

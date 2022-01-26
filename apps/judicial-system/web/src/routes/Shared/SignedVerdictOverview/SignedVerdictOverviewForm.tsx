@@ -54,6 +54,7 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import AppealSection from './Components/AppealSection/AppealSection'
 import { SignedDocument } from './Components/SignedDocument'
+import CaseDates from './Components/CaseDates/CaseDates'
 
 interface Props {
   workingCase: Case
@@ -71,6 +72,7 @@ interface Props {
   >
   isRequestingCourtRecordSignature: boolean
   handleRequestCourtRecordSignature: () => void
+  handleDateAltering: () => void
 }
 
 const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
@@ -86,6 +88,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     setSelectedSharingInstitutionId,
     isRequestingCourtRecordSignature,
     handleRequestCourtRecordSignature,
+    handleDateAltering,
   } = props
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -207,9 +210,6 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                 {titleForCase(workingCase)}
               </Text>
             </Box>
-            <Text as="h5" variant="h5">
-              {subtitleForCase(workingCase)}
-            </Text>
           </Box>
           <Box display="flex" flexDirection="column">
             {workingCase.isCustodyIsolation && (
@@ -279,6 +279,14 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             }
           </Box>
         </Box>
+        <CaseDates
+          workingCase={workingCase}
+          button={{
+            label: 'Uppfæra',
+            onClick: handleDateAltering,
+            icon: 'pencil',
+          }}
+        />
       </Box>
       <Box marginBottom={workingCase.isMasked ? 15 : 6}>
         <InfoCard
