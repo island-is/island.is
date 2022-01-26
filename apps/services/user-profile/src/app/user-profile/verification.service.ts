@@ -72,7 +72,6 @@ export class VerificationService {
       },
     )
 
-    // console.log('verification.hash', record.hash)
     if (record) {
       this.sendConfirmationEmail(record)
     }
