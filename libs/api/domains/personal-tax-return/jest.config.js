@@ -1,5 +1,4 @@
 module.exports = {
-  displayName: 'clients-rsk-personal-tax-returns',
   preset: '../../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -11,5 +10,6 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../coverage/libs/clients/rsk/personal-tax-returns',
+    '../../../../coverage/libs/api/domains/personal-tax-return',
+  displayName: 'api-domains-personal-tax-return',
 }

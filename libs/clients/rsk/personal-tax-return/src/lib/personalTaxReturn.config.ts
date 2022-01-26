@@ -7,8 +7,8 @@ const schema = z.object({
   url: z.string(),
 })
 
-export const PersonalTaxReturnsConfig = defineConfig({
-  name: 'PersonalTaxReturnsConfig',
+export const PersonalTaxReturnConfig = defineConfig({
+  name: 'PersonalTaxReturnConfig',
   schema,
   load(env) {
     return {

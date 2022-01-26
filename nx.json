@@ -148,6 +148,9 @@
     "api-domains-payment-schedule": {
       "tags": []
     },
+    "api-domains-personal-tax-return": {
+      "tags": []
+    },
     "api-domains-regulations": {
       "tags": []
     },
@@ -331,7 +334,7 @@
     "clients-rsk-company-registry": {
       "tags": []
     },
-    "clients-rsk-personal-tax-returns": {
+    "clients-rsk-personal-tax-return": {
       "tags": []
     },
     "clients-rsk-v1": {

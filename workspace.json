@@ -1371,6 +1371,27 @@
         }
       }
     },
+    "api-domains-personal-tax-return": {
+      "root": "libs/api/domains/personal-tax-return",
+      "sourceRoot": "libs/api/domains/personal-tax-return/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/personal-tax-return/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/personal-tax-return"],
+          "options": {
+            "jestConfig": "libs/api/domains/personal-tax-return/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-regulations": {
       "root": "libs/api/domains/regulations",
       "sourceRoot": "libs/api/domains/regulations/src",
@@ -3482,22 +3503,22 @@
         }
       }
     },
-    "clients-rsk-personal-tax-returns": {
-      "root": "libs/clients/rsk/personal-tax-returns",
-      "sourceRoot": "libs/clients/rsk/personal-tax-returns/src",
+    "clients-rsk-personal-tax-return": {
+      "root": "libs/clients/rsk/personal-tax-return",
+      "sourceRoot": "libs/clients/rsk/personal-tax-return/src",
       "projectType": "library",
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/clients/rsk/personal-tax-returns/**/*.ts"]
+            "lintFilePatterns": ["libs/clients/rsk/personal-tax-return/**/*.ts"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/clients/rsk/personal-tax-returns"],
+          "outputs": ["coverage/libs/clients/rsk/personal-tax-return"],
           "options": {
-            "jestConfig": "libs/clients/rsk/personal-tax-returns/jest.config.js",
+            "jestConfig": "libs/clients/rsk/personal-tax-return/jest.config.js",
             "passWithNoTests": true
           }
         }

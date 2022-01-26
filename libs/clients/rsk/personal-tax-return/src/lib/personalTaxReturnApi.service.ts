@@ -1,18 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-import { PersonalTaxReturnsConfig } from './personalTaxReturns.config'
+import { PersonalTaxReturnConfig } from './personalTaxReturn.config'
 import { pdfRequest } from './requests/pdf'
 
 @Injectable()
-export class PersonalTaxReturnsService {
+export class PersonalTaxReturnApi {
   constructor(
-    @Inject(PersonalTaxReturnsConfig.KEY)
-    private config: ConfigType<typeof PersonalTaxReturnsConfig>,
+    @Inject(PersonalTaxReturnConfig.KEY)
+    private config: ConfigType<typeof PersonalTaxReturnConfig>,
   ) {}
 
-  async personalTaxReturnsInPdf(
-    year: string,
+  async personalTaxReturnInPdf(
     nationalId: string,
+    year: string,
   ): Promise<string> {
     const response = await fetch(this.config.url, {
       body: pdfRequest(
