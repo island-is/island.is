@@ -76,7 +76,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                 ? [
                     {
                       title: 'Dómari',
-                      value: `${workingCase.judge.name}, ${workingCase.judge.title}`,
+                      value: workingCase.judge.name,
                     },
                   ]
                 : []),
@@ -94,13 +94,13 @@ const OverviewForm: React.FC<Props> = (props) => {
                 ? [
                     {
                       title: 'Dómritari',
-                      value: `${workingCase.registrar.name}, ${workingCase.registrar.title}`,
+                      value: workingCase.registrar.name,
                     },
                   ]
                 : []),
               {
                 title: 'Ákærandi',
-                value: `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`,
+                value: workingCase.prosecutor?.name,
               },
               {
                 title: 'Tegund kröfu',
