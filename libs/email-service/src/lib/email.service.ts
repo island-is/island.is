@@ -6,7 +6,7 @@ import { Inject } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Message } from '../types'
+import { Message, Template } from '../types'
 import { AdapterService } from '../tools/adapter.service'
 
 export const EMAIL_OPTIONS = 'EMAIL_OPTIONS'
@@ -73,6 +73,14 @@ export class EmailService {
     return {
       SES: new SES(cfg),
     }
+  }
+
+  async renderBody(template: Template): Promise<string> {
+    const { html, attachments } = await this.adapterService.buildCustomTemplate(
+      template,
+    )
+
+    return html
   }
 
   async sendEmail(message: Message): Promise<string> {

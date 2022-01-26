@@ -92,7 +92,7 @@ export class AdapterService {
 
             item.context = {
               ...item.context,
-              src: `cid:${filename}`,
+              src: `data:image/jpeg;base64,${base64}`,
             }
           }
 

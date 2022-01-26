@@ -1,45 +1,110 @@
 import { join } from 'path'
+import fs from 'fs'
+import util from 'util'
 import { Test } from '@nestjs/testing'
-
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-
-import { Message } from '../types'
+import { Template } from '../types'
 import { AdapterService } from '../tools/adapter.service'
 import { EmailService, EMAIL_OPTIONS } from './email.service'
 
-const testAccount = {
-  smtp: {
-    host: 'Test Host',
-    port: 'Test Port',
-    secure: 'Test Secure',
+const writeFile = util.promisify(fs.writeFile)
+
+const body: Template['body'] = [
+  {
+    component: 'Heading',
+    context: {
+      copy: 'This is the heading',
+      align: 'left',
+      eyebrow: 'This is the eyebrow',
+    },
   },
-  user: 'Test User',
-  pass: 'Test Pass',
-}
-
-const testMessageId = 'Test Message Id'
-
-const mockSendMail = jest.fn(() => ({
-  messageId: testMessageId,
-}))
-
-const mockCreateTransport = jest.fn((
-  account, // eslint-disable-line @typescript-eslint/no-unused-vars
-) => ({
-  sendMail: mockSendMail,
-}))
-
-jest.mock('nodemailer', () => ({
-  createTestAccount: () => {
-    return testAccount
+  {
+    component: 'Image',
+    context: {
+      alt: 'Image alt text',
+      src: join(__dirname, `./notification.jpg`),
+    },
   },
-  createTransport: jest.fn((account) => {
-    return mockCreateTransport(account)
-  }),
-  getTestMessageUrl: () => {
-    return 'Test Url'
+  {
+    component: 'Heading',
+    context: {
+      copy: 'This is a small heading with no eyebrow and aligned to the right',
+      align: 'right',
+      small: true,
+    },
   },
-}))
+  {
+    component: 'Heading',
+    context: {
+      copy: 'This is a heading that is centered',
+      align: 'center',
+    },
+  },
+  {
+    component: 'List',
+    context: {
+      items: [
+        'Here is an item in the list',
+        'Here is another item in the list',
+        'And a third',
+      ],
+    },
+  },
+  {
+    component: 'Subtitle',
+    context: {
+      application: 'application',
+      copy: 'This is a subtitle',
+    },
+  },
+  {
+    component: 'Button',
+    context: {
+      copy: 'Here is a button',
+      href: 'https://visir.is',
+    },
+  },
+  {
+    component: 'Copy',
+    context: {
+      align: 'left',
+      copy:
+        'Komið er upp hópsmit í fangelsinu að Litla Hrauni. Fangar eru afar ósáttir við þær sóttvarnaaðgerðir sem verið er að grípa til og sætta sig illa við einangrun.',
+    },
+  },
+  {
+    component: 'Copy',
+    context: {
+      align: 'left',
+      style: 'bold',
+      copy:
+        'Þetta er samkvæmt heimildum Vísis en staðan í fangelsinu í morgun var sú að föngum var ekki hleypt út úr klefum sínum í morgun. Og fylgdir það sögunni að þeir hafi ekki fengið morgunmat á þeim tíma sem þeir eru vanir.',
+    },
+  },
+  {
+    component: 'Copy',
+    context: {
+      style: 'italic',
+      copy:
+        'Komið er upp hópsmit í fangelsinu að Litla Hrauni. Fangar eru afar ósáttir við þær sóttvarnaaðgerðir sem verið er að grípa til og sætta sig illa við einangrun.',
+    },
+  },
+  {
+    component: 'Copy',
+    context: {
+      small: true,
+      copy:
+        'Þetta er samkvæmt heimildum Vísis en staðan í fangelsinu í morgun var sú að föngum var ekki hleypt út úr klefum sínum í morgun. Og fylgdir það sögunni að þeir hafi ekki fengið morgunmat á þeim tíma sem þeir eru vanir.',
+    },
+  },
+  {
+    component: 'Image',
+    context: {
+      alt: 'Image alt text',
+      src: join(__dirname, `./notification.jpg`),
+    },
+  },
+]
 
 describe('EmailService', () => {
   let emailService: EmailService
@@ -65,89 +130,14 @@ describe('EmailService', () => {
     emailService = module.get(EmailService)
   })
 
-  it('it should send email', async () => {
-    const testMessage = { to: 'Test To' }
-    const messageId = await emailService.sendEmail(testMessage)
-
-    expect(messageId).toBe(testMessageId)
-
-    expect(mockCreateTransport).toHaveBeenCalledWith({
-      host: testAccount.smtp.host,
-      port: testAccount.smtp.port,
-      secure: testAccount.smtp.secure,
-      auth: {
-        user: testAccount.user,
-        pass: testAccount.pass,
-      },
+  it('should make a file...', async () => {
+    const rendered = await emailService.renderBody({
+      title: 'bla',
+      body,
     })
 
-    expect(mockSendMail).toHaveBeenCalledWith(testMessage)
-  })
+    await writeFile(join('./bla.html'), rendered, { encoding: 'utf-8' })
 
-  it('should send an email with a design template', async () => {
-    const title = 'Email main heading'
-
-    const message = {
-      to: 'recipient@island.is',
-      template: {
-        title,
-        body: [
-          {
-            component: 'Image',
-            context: {
-              src: join(
-                __dirname,
-                '../../../application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets/logo.jpg',
-              ),
-            },
-          },
-          {
-            component: 'Image',
-            context: {
-              src: join(
-                __dirname,
-                '../../../application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets/child.jpg',
-              ),
-            },
-          },
-          {
-            component: 'Heading',
-            context: {
-              copy: title,
-            },
-          },
-          {
-            component: 'Copy',
-            context: {
-              copy: 'Hi ${user}',
-            },
-          },
-          {
-            component: 'Copy',
-            context: {
-              copy: 'Your application has been successfully approved.',
-            },
-          },
-          { component: 'Copy', context: { copy: 'Best regards,' } },
-          { component: 'Copy', context: { copy: 'Parental Leave Fund' } },
-        ],
-      },
-    } as Message
-
-    const messageId = await emailService.sendEmail(message)
-
-    expect(messageId).toBe(testMessageId)
-
-    expect(mockCreateTransport).toHaveBeenCalledWith({
-      host: testAccount.smtp.host,
-      port: testAccount.smtp.port,
-      secure: testAccount.smtp.secure,
-      auth: {
-        user: testAccount.user,
-        pass: testAccount.pass,
-      },
-    })
-
-    expect(mockSendMail).toHaveBeenCalledWith(message)
+    expect(true).toBe(true)
   })
 })
