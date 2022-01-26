@@ -1,4 +1,5 @@
-import { Includeable } from 'sequelize/types'
+import { Includeable, OrderItem, Transaction } from 'sequelize/types'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadRequestException,
@@ -7,7 +8,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -37,6 +38,8 @@ import {
 } from '../../formatters'
 import { notificationMessages as m } from '../../messages'
 import { FileService } from '../file/file.service'
+import { DefendantService } from '../defendant/defendant.service'
+import { Defendant } from '../defendant/models/defendant.model'
 import { Institution } from '../institution'
 import { User, UserService } from '../user'
 import { AwsS3Service } from '../aws-s3'
@@ -50,11 +53,9 @@ interface Recipient {
   address: string
 }
 
-const standardIncludes: Includeable[] = [
-  {
-    model: Institution,
-    as: 'court',
-  },
+const includes: Includeable[] = [
+  { model: Defendant, as: 'defendants' },
+  { model: Institution, as: 'court' },
   {
     model: User,
     as: 'creatingProsecutor',
@@ -85,6 +86,12 @@ const standardIncludes: Includeable[] = [
   { model: Case, as: 'childCase' },
 ]
 
+const defendantsOrder: OrderItem = [
+  { model: Defendant, as: 'defendants' },
+  'created',
+  'ASC',
+]
+
 @Injectable()
 export class CaseService {
   private formatMessage: FormatMessage = () => {
@@ -92,7 +99,9 @@ export class CaseService {
   }
 
   constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly defendantService: DefendantService,
     private readonly userService: UserService,
     private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
@@ -344,10 +353,34 @@ export class CaseService {
     await Promise.all(emailPromises)
   }
 
+  private async createCase(
+    caseToCreate: CreateCaseDto,
+    prosecutorId?: string,
+    transaction?: Transaction,
+  ): Promise<string> {
+    const theCase = await (transaction
+      ? this.caseModel.create(
+          {
+            ...caseToCreate,
+            creatingProsecutorId: prosecutorId,
+            prosecutorId,
+          },
+          { transaction },
+        )
+      : this.caseModel.create({
+          ...caseToCreate,
+          creatingProsecutorId: prosecutorId,
+          prosecutorId,
+        }))
+
+    return theCase.id
+  }
+
   async findById(caseId: string): Promise<Case> {
     const theCase = await this.caseModel.findOne({
+      include: includes,
+      order: [defendantsOrder],
       where: { id: caseId },
-      include: standardIncludes,
     })
 
     if (!theCase) {
@@ -379,41 +412,70 @@ export class CaseService {
 
   async getAll(user: TUser): Promise<Case[]> {
     return this.caseModel.findAll({
-      order: [['created', 'DESC']],
+      include: includes,
+      order: [['created', 'DESC'], defendantsOrder],
       where: getCasesQueryFilter(user),
-      include: standardIncludes,
     })
   }
 
   async internalCreate(caseToCreate: InternalCreateCaseDto): Promise<Case> {
-    if (!caseToCreate.prosecutorNationalId) {
-      return this.create(caseToCreate)
-    }
+    let prosecutorId: string | undefined
 
-    const prosecutor = await this.userService.findByNationalId(
-      caseToCreate.prosecutorNationalId,
-    )
-
-    if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
-      throw new BadRequestException(
-        `Person with national id ${caseToCreate.prosecutorNationalId} is not registered as a prosecutor`,
+    if (caseToCreate.prosecutorNationalId) {
+      const prosecutor = await this.userService.findByNationalId(
+        caseToCreate.prosecutorNationalId,
       )
+
+      if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
+        throw new BadRequestException(
+          `User ${prosecutor.id} is not registered as a prosecutor`,
+        )
+      }
+
+      prosecutorId = prosecutor.id
     }
 
-    return this.create(caseToCreate, prosecutor.id)
+    return this.sequelize
+      .transaction(async (transaction) => {
+        const caseId = await this.createCase(
+          caseToCreate,
+          prosecutorId,
+          transaction,
+        )
+
+        await this.defendantService.create(
+          caseId,
+          {
+            nationalId: caseToCreate.accusedNationalId,
+            name: caseToCreate.accusedName,
+            gender: caseToCreate.accusedGender,
+            address: caseToCreate.accusedAddress,
+          },
+          transaction,
+        )
+
+        return caseId
+      })
+      .then((caseId) => this.findById(caseId))
   }
 
   async create(
     caseToCreate: CreateCaseDto,
     prosecutorId?: string,
   ): Promise<Case> {
-    const theCase = await this.caseModel.create({
-      ...caseToCreate,
-      creatingProsecutorId: prosecutorId,
-      prosecutorId,
-    })
+    return this.sequelize
+      .transaction(async (transaction) => {
+        const caseId = await this.createCase(
+          caseToCreate,
+          prosecutorId,
+          transaction,
+        )
 
-    return this.findById(theCase.id)
+        await this.defendantService.create(caseId, {}, transaction)
+
+        return caseId
+      })
+      .then((caseId) => this.findById(caseId))
   }
 
   async update(
@@ -480,7 +542,7 @@ export class CaseService {
   }
 
   async getCustodyPdf(theCase: Case): Promise<Buffer> {
-    return getCustodyNoticePdfAsBuffer(theCase)
+    return getCustodyNoticePdfAsBuffer(theCase, this.formatMessage)
   }
 
   async requestCourtRecordSignature(
@@ -615,35 +677,54 @@ export class CaseService {
   }
 
   async extend(theCase: Case, user: TUser): Promise<Case> {
-    const extendedCase = await this.caseModel.create({
-      type: theCase.type,
-      policeCaseNumber: theCase.policeCaseNumber,
-      description: theCase.description,
-      accusedNationalId: theCase.accusedNationalId,
-      accusedName: theCase.accusedName,
-      accusedAddress: theCase.accusedAddress,
-      accusedGender: theCase.accusedGender,
-      defenderName: theCase.defenderName,
-      defenderEmail: theCase.defenderEmail,
-      defenderPhoneNumber: theCase.defenderPhoneNumber,
-      leadInvestigator: theCase.leadInvestigator,
-      courtId: theCase.courtId,
-      translator: theCase.translator,
-      lawsBroken: theCase.lawsBroken,
-      legalBasis: theCase.legalBasis,
-      legalProvisions: theCase.legalProvisions,
-      requestedCustodyRestrictions: theCase.requestedCustodyRestrictions,
-      caseFacts: theCase.caseFacts,
-      legalArguments: theCase.legalArguments,
-      requestProsecutorOnlySession: theCase.requestProsecutorOnlySession,
-      prosecutorOnlySessionRequest: theCase.prosecutorOnlySessionRequest,
-      creatingProsecutorId: user.id,
-      prosecutorId: user.id,
-      parentCaseId: theCase.id,
-      initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
-    })
+    return this.sequelize
+      .transaction(async (transaction) => {
+        const caseId = await this.createCase(
+          {
+            type: theCase.type,
+            description: theCase.description,
+            policeCaseNumber: theCase.policeCaseNumber,
+            defenderName: theCase.defenderName,
+            defenderEmail: theCase.defenderEmail,
+            defenderPhoneNumber: theCase.defenderPhoneNumber,
+            leadInvestigator: theCase.leadInvestigator,
+            courtId: theCase.courtId,
+            translator: theCase.translator,
+            lawsBroken: theCase.lawsBroken,
+            legalBasis: theCase.legalBasis,
+            legalProvisions: theCase.legalProvisions,
+            requestedCustodyRestrictions: theCase.requestedCustodyRestrictions,
+            caseFacts: theCase.caseFacts,
+            legalArguments: theCase.legalArguments,
+            requestProsecutorOnlySession: theCase.requestProsecutorOnlySession,
+            prosecutorOnlySessionRequest: theCase.prosecutorOnlySessionRequest,
+            parentCaseId: theCase.id,
+            initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
+          } as CreateCaseDto,
+          user.id,
+          transaction,
+        )
 
-    return this.findById(extendedCase.id)
+        if (theCase.defendants && theCase.defendants?.length > 0) {
+          await Promise.all(
+            theCase.defendants?.map((defendant) =>
+              this.defendantService.create(
+                caseId,
+                {
+                  nationalId: defendant.nationalId,
+                  name: defendant.name,
+                  gender: defendant.gender,
+                  address: defendant.address,
+                },
+                transaction,
+              ),
+            ),
+          )
+        }
+
+        return caseId
+      })
+      .then((caseId) => this.findById(caseId))
   }
 
   async uploadRequestPdfToCourt(theCase: Case): Promise<void> {

@@ -23,8 +23,8 @@ import {
   requestCourtDate,
   icOverview,
 } from '@island.is/judicial-system-web/messages'
-
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 import * as styles from './Overview.css'
 
 interface Props {
@@ -53,9 +53,17 @@ const OverviewForm: React.FC<Props> = (props) => {
                 title: 'LÖKE málsnúmer',
                 value: workingCase.policeCaseNumber,
               },
+              ...(workingCase.courtCaseNumber
+                ? [
+                    {
+                      title: 'Málsnúmer héraðsdóms',
+                      value: workingCase.courtCaseNumber,
+                    },
+                  ]
+                : []),
               {
-                title: 'Krafa stofnuð',
-                value: formatDate(workingCase.created, 'P'),
+                title: 'Dómstóll',
+                value: workingCase.court?.name,
               },
               {
                 title: 'Embætti',
@@ -64,6 +72,14 @@ const OverviewForm: React.FC<Props> = (props) => {
                   'Ekki skráð'
                 }`,
               },
+              ...(workingCase.judge
+                ? [
+                    {
+                      title: 'Dómari',
+                      value: `${workingCase.judge.name}, ${workingCase.judge.title}`,
+                    },
+                  ]
+                : []),
               {
                 title: formatMessage(requestCourtDate.heading),
                 value: `${capitalize(
@@ -74,6 +90,14 @@ const OverviewForm: React.FC<Props> = (props) => {
                   TIME_FORMAT,
                 )}`,
               },
+              ...(workingCase.registrar
+                ? [
+                    {
+                      title: 'Dómritari',
+                      value: `${workingCase.registrar.name}, ${workingCase.registrar.title}`,
+                    },
+                  ]
+                : []),
               {
                 title: 'Ákærandi',
                 value: `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`,
@@ -82,10 +106,18 @@ const OverviewForm: React.FC<Props> = (props) => {
                 title: 'Tegund kröfu',
                 value: capitalize(caseTypes[workingCase.type]),
               },
+              ...(workingCase.courtDate
+                ? [
+                    {
+                      title: 'Staðfestur fyrirtökutími',
+                      value: `${capitalize(
+                        formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
+                      )} kl. ${formatDate(workingCase.courtDate, TIME_FORMAT)}`,
+                    },
+                  ]
+                : []),
             ]}
-            accusedName={workingCase.accusedName}
-            accusedNationalId={workingCase.accusedNationalId}
-            accusedAddress={workingCase.accusedAddress}
+            defendants={workingCase.defendants ?? []}
             defender={{
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,

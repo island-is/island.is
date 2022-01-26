@@ -1235,27 +1235,6 @@
         }
       }
     },
-    "api-domains-islykill": {
-      "root": "libs/api/domains/islykill",
-      "sourceRoot": "libs/api/domains/islykill/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/api/domains/islykill/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/api/domains/islykill"],
-          "options": {
-            "jestConfig": "libs/api/domains/islykill/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "api-domains-license-service": {
       "root": "libs/api/domains/license-service",
       "sourceRoot": "libs/api/domains/license-service/src",
@@ -7505,29 +7484,6 @@
         }
       }
     },
-    "service-portal-settings-islykill": {
-      "root": "libs/service-portal/settings/islykill",
-      "sourceRoot": "libs/service-portal/settings/islykill/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/service-portal/settings/islykill/**/*.{ts,tsx,js,jsx}"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/service-portal/settings/islykill"],
-          "options": {
-            "jestConfig": "libs/service-portal/settings/islykill/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "service-portal-settings-personal-information": {
       "root": "libs/service-portal/settings/personal-information",
       "sourceRoot": "libs/service-portal/settings/personal-information/src",
@@ -8069,10 +8025,10 @@
       "root": "apps/services/personal-representative",
       "sourceRoot": "apps/services/personal-representative/src",
       "projectType": "application",
-      "prefix": "services-personal-representative",
+      "prefix": "personal-representative",
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/personal-representative",
@@ -8084,13 +8040,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/personal-representative/src/environments/environment.ts",
-                  "with": "apps/services/personal-representative/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           }
         },
@@ -8130,10 +8080,10 @@
       "root": "apps/services/personal-representative-public",
       "sourceRoot": "apps/services/personal-representative-public/src",
       "projectType": "application",
-      "prefix": "services-personal-representative-public",
+      "prefix": "personal-representative-public",
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/personal-representative-public",
@@ -8147,13 +8097,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/personal-representative-public/src/environments/environment.ts",
-                  "with": "apps/services/personal-representative-public/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           }
         },

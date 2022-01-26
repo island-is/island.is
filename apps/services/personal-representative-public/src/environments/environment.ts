@@ -19,7 +19,7 @@ const prodConfig = {
     groupName: process.env.AUDIT_GROUP_NAME,
     serviceName: 'services-personal-representative-public',
   },
-  port: 3338,
+  port: 3333,
   auth: {
     audience: '@island.is/auth',
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',

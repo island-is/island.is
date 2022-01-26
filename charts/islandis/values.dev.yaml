@@ -212,6 +212,7 @@ api:
     XROAD_PAYMENT_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1'
     XROAD_PROPERTIES_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Fasteignir-v1'
+    XROAD_PROPERTIES_TIMEOUT: '20000'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
@@ -324,7 +325,7 @@ application-system-api:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-dev-storage-application-system'
     CLIENT_LOCATION_ORIGIN: 'https://beta.dev01.devland.is/umsoknir'
     CONTENTFUL_HOST: 'preview.contentful.com'
-    DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10026/kvortun/index'
+    DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10026/gopro/kvortun-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
     DB_USER: 'application_system_api'
@@ -985,6 +986,7 @@ service-portal:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'islandis'
+    - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1029,6 +1031,7 @@ service-portal-api:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'islandis'
+    - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1282,6 +1285,7 @@ user-notification:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1326,7 +1330,7 @@ user-notification-worker:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    GOOGLE_APPLICATION_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
+    FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
     USER_NOTIFICATION_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
     USER_NOTIFICATION_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
   securityContext:

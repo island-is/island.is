@@ -271,9 +271,9 @@ export const RskCompanyInfo = new XroadConf({
 export const DataProtectionComplaint = new XroadConf({
   env: {
     DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: {
-      dev: 'IS-DEV/GOV/10026/kvortun/index',
-      staging: 'IS-TEST/GOV/5608002820/kvortun/index',
-      prod: 'IS/GOV/5608002820/kvortun/index',
+      dev: 'IS-DEV/GOV/10026/gopro/kvortun-v1',
+      staging: 'IS-TEST/GOV/5608002820/gopro/kvortun-v1',
+      prod: 'IS/GOV/5608002820/gopro/kvortun-v1',
     },
   },
   secrets: {

@@ -128,6 +128,14 @@ export const Overview: React.FC = () => {
                 title: 'LÖKE málsnúmer',
                 value: workingCase.policeCaseNumber,
               },
+              ...(workingCase.courtCaseNumber
+                ? [
+                    {
+                      title: 'Málsnúmer héraðsdóms',
+                      value: workingCase.courtCaseNumber,
+                    },
+                  ]
+                : []),
               {
                 title: 'Dómstóll',
                 value: workingCase.court?.name,
@@ -139,6 +147,14 @@ export const Overview: React.FC = () => {
                   'Ekki skráð'
                 }`,
               },
+              ...(workingCase.judge
+                ? [
+                    {
+                      title: 'Dómari',
+                      value: `${workingCase.judge.name}, ${workingCase.judge.title}`,
+                    },
+                  ]
+                : []),
               {
                 title: formatMessage(requestCourtDate.heading),
                 value: `${capitalize(
@@ -149,6 +165,14 @@ export const Overview: React.FC = () => {
                   TIME_FORMAT,
                 )}`,
               },
+              ...(workingCase.registrar
+                ? [
+                    {
+                      title: 'Dómritari',
+                      value: `${workingCase.registrar.name}, ${workingCase.registrar.title}`,
+                    },
+                  ]
+                : []),
               { title: 'Ákærandi', value: workingCase.prosecutor?.name },
               {
                 title: workingCase.parentCase
@@ -175,10 +199,18 @@ export const Overview: React.FC = () => {
                     )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
                   : 'Var ekki skráður',
               },
+              ...(workingCase.courtDate
+                ? [
+                    {
+                      title: 'Staðfestur fyrirtökutími',
+                      value: `${capitalize(
+                        formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
+                      )} kl. ${formatDate(workingCase.courtDate, TIME_FORMAT)}`,
+                    },
+                  ]
+                : []),
             ]}
-            accusedName={workingCase.accusedName}
-            accusedNationalId={workingCase.accusedNationalId}
-            accusedAddress={workingCase.accusedAddress}
+            defendants={workingCase.defendants ?? []}
             defender={{
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
