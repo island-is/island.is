@@ -1,5 +1,6 @@
 import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import { CanActivate } from '@nestjs/common'
+import { ApplicationGuard } from '../../../guards/application.guard'
 import { StaffGuard } from '../../../guards/staff.guard'
 
 import { ApplicationController } from '../application.controller'
@@ -50,8 +51,20 @@ describe('ApplicationController - Gets all existing applications guards', () => 
     )
   })
 
-  it('should have two guards', () => {
-    expect(guards).toHaveLength(2)
+  it('should have one guard', () => {
+    expect(guards).toHaveLength(1)
+  })
+
+  describe('StaffGuard', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = new guards[0]()
+    })
+
+    it('should have StaffGuard as guard 0', () => {
+      expect(guard).toBeInstanceOf(StaffGuard)
+    })
   })
 })
 
@@ -69,15 +82,15 @@ describe('ApplicationController - Get application guards', () => {
     expect(guards).toHaveLength(1)
   })
 
-  describe('StaffGuard', () => {
+  describe('ApplicationGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[0]()
     })
 
-    it('should have StaffGuard as guard 0', () => {
-      expect(guard).toBeInstanceOf(StaffGuard)
+    it('should have ApplicationGuard as guard 0', () => {
+      expect(guard).toBeInstanceOf(ApplicationGuard)
     })
   })
 })
@@ -119,7 +132,7 @@ describe('ApplicationController - Updates an existing application and returns ap
     )
   })
 
-  it('should have one guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 
