@@ -16,7 +16,14 @@ type FormatMessageValues = Parameters<
 export const useLocale = () => {
   const data = _useLocale()
 
-  const oldFormatMessage = data.formatMessage
+  /*
+   * Improve/correct the type signature of `useLocale`'s `.formatMessage` function.
+   *
+   * This removes the "any" type on the `values` parameter, and expliclty allows
+   * undefined to be passed (and returned) — as opposed to relying the side-effects
+   * of TypeScript's `strict:false` mode, like the original function does.
+   */
+  const dodgyFormatMessage = data.formatMessage
 
   function formatMessage(descriptor: undefined): undefined
   function formatMessage(
@@ -33,7 +40,7 @@ export const useLocale = () => {
     values?: FormatMessageValues,
   ): string | undefined {
     if (!descriptor) return descriptor
-    return oldFormatMessage(descriptor, values)
+    return dodgyFormatMessage(descriptor, values)
   }
 
   return { ...data, formatMessage }
