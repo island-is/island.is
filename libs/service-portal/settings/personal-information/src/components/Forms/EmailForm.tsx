@@ -41,7 +41,7 @@ export const EmailForm: FC<Props> = ({
           name="email"
           rules={{
             required: {
-              value: true,
+              value: false,
               message: formatMessage({
                 id: 'sp.settings:email-required-message',
                 defaultMessage: 'Skylda er að fylla út netfang',
@@ -66,7 +66,6 @@ export const EmailForm: FC<Props> = ({
                 hasError={errors.email}
                 errorMessage={errors.email?.message}
                 onChange={onChange}
-                size="xs"
               />
               {value === email && email.length > 0 && onResendEmail && (
                 <Box

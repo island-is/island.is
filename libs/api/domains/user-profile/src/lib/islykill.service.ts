@@ -2,8 +2,8 @@ import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
 import { Injectable, BadRequestException } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 
-import { IslykillSettings } from './graphql/models/islykillSettings.model'
-import { UpdateIslykillSettings } from './graphql/models/updateIslykillSettings.model'
+import { IslykillSettings } from './models/islykillSettings.model'
+import { UpdateIslykillSettings } from './models/updateIslykillSettings.model'
 
 @Injectable()
 export class IslykillService {
@@ -15,12 +15,19 @@ export class IslykillService {
       email,
       mobile,
       canNudge,
-    }: { email: string; mobile: string; canNudge?: boolean },
+      bankInfo,
+    }: {
+      email?: string
+      mobile?: string
+      canNudge?: boolean
+      bankInfo?: string
+    },
   ): Promise<UpdateIslykillSettings> {
     const inputUserData: PublicUser = {
       ssn: nationalId,
       email,
       mobile,
+      bankInfo,
       ...(canNudge !== undefined && { canNudge }),
     }
     const errorMsg = 'Unable to update islykill settings for user'
@@ -76,12 +83,17 @@ export class IslykillService {
 
   async createIslykillSettings(
     nationalId: User['nationalId'],
-    { email, mobile }: { email: string; mobile?: string },
+    {
+      email,
+      mobile,
+      canNudge,
+    }: { email?: string; mobile?: string; canNudge?: boolean },
   ) {
     const inputUserData: PublicUser = {
       ssn: nationalId,
       email,
       mobile,
+      canNudge,
     }
 
     const errorMsg = 'Unable to create islykill settings for user'
