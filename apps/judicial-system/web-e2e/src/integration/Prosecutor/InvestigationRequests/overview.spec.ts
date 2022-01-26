@@ -48,7 +48,7 @@ describe('/krafa/rannsoknarheimild/stadfesta/:id', () => {
     cy.getByTestid('infoCard').contains(
       'Sunnud. 20. september 2020 eftir kl. 19:50',
     ) // Requested court date
-    cy.getByTestid('infoCard').contains('Áki Ákærandi aðstoðarsaksóknari') // Prosecutor
+    cy.getByTestid('infoCard').contains('Áki Ákærandi') // Prosecutor
     cy.getByTestid('infoCard').contains('Upplýsingar um vefnotkun') // Type
   })
 

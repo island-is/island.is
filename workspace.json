@@ -1214,27 +1214,6 @@
         }
       }
     },
-    "api-domains-islykill": {
-      "root": "libs/api/domains/islykill",
-      "sourceRoot": "libs/api/domains/islykill/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/api/domains/islykill/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/api/domains/islykill"],
-          "options": {
-            "jestConfig": "libs/api/domains/islykill/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "api-domains-license-service": {
       "root": "libs/api/domains/license-service",
       "sourceRoot": "libs/api/domains/license-service/src",
@@ -7436,29 +7415,6 @@
           "outputs": ["coverage/libs/service-portal/settings/access-control"],
           "options": {
             "jestConfig": "libs/service-portal/settings/access-control/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "service-portal-settings-islykill": {
-      "root": "libs/service-portal/settings/islykill",
-      "sourceRoot": "libs/service-portal/settings/islykill/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/service-portal/settings/islykill/**/*.{ts,tsx,js,jsx}"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/service-portal/settings/islykill"],
-          "options": {
-            "jestConfig": "libs/service-portal/settings/islykill/jest.config.js",
             "passWithNoTests": true
           }
         }

@@ -7,9 +7,11 @@ import {
   CaseCustodyRestrictions,
   CaseType,
   Gender,
+  User,
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
+  CaseInfo,
   DateTime,
   FormContentContainer,
   FormFooter,
@@ -39,10 +41,11 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  user?: User
 }
 
 const StepThreeForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase } = props
+  const { workingCase, setWorkingCase, user } = props
   const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
     '',
   )
@@ -57,6 +60,13 @@ const StepThreeForm: React.FC<Props> = (props) => {
           <Text as="h1" variant="h1">
             {formatMessage(rcDemands.heading)}
           </Text>
+        </Box>
+        <Box marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>

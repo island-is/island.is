@@ -34,26 +34,39 @@ const Defendant = () => {
     if (!theCase.id) {
       const createdCase = await createCase(theCase)
 
-      workingCase.defendants?.forEach(async (defendant, index) => {
-        if (index === 0) {
-          await updateDefendant(createdCase.id, createdCase.defendants[0].id, {
-            gender: defendant.gender,
-            name: defendant.name,
-            address: defendant.address,
-            nationalId: defendant.nationalId,
-          })
-        } else {
-          await createDefendant(createdCase.id, {
-            gender: defendant.gender,
-            name: defendant.name,
-            address: defendant.address,
-            nationalId: defendant.nationalId,
-          })
-        }
-      })
-      router.push(
-        `${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
-      )
+      if (createdCase) {
+        workingCase.defendants?.forEach(async (defendant, index) => {
+          if (
+            index === 0 &&
+            createdCase.defendants &&
+            createdCase.defendants.length > 0
+          ) {
+            await updateDefendant(
+              createdCase.id,
+              createdCase.defendants[0].id,
+              {
+                gender: defendant.gender,
+                name: defendant.name,
+                address: defendant.address,
+                nationalId: defendant.nationalId,
+              },
+            )
+          } else {
+            await createDefendant(createdCase.id, {
+              gender: defendant.gender,
+              name: defendant.name,
+              address: defendant.address,
+              nationalId: defendant.nationalId,
+            })
+          }
+        })
+        router.push(
+          `${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
+        )
+      } else {
+        // TODO handle error
+        return
+      }
     } else {
       router.push(`${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`)
     }
