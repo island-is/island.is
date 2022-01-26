@@ -8,6 +8,7 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  Defendant,
   isInvestigationCase,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -64,24 +65,42 @@ const PastRequests: React.FC<Props> = (props) => {
       },
     },
     {
-      Header: formatMessage(core.accused),
+      Header: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
       accessor: 'accusedName' as keyof Case,
       Cell: (row: {
-        row: { original: { accusedName: string; accusedNationalId: string } }
+        row: { original: { accusedName: string; defendants: Defendant[] } }
       }) => {
-        return (
+        return row.row.original.defendants &&
+          row.row.original.defendants.length > 0 ? (
           <>
             <Box component="span" display="block">
-              {row.row.original.accusedName}
+              {row.row.original.defendants[0].name}
             </Box>
-            <Text as="span" variant="small">
-              {`kt. ${insertAt(
-                row.row.original.accusedNationalId.replace('-', ''),
-                '-',
-                6,
-              )}`}
-            </Text>
+            {row.row.original.defendants.length === 1 ? (
+              <Text>
+                <Text as="span" variant="small" color="dark400">
+                  {`kt. ${
+                    row.row.original.defendants[0].nationalId
+                      ? insertAt(
+                          row.row.original.defendants[0].nationalId.replace(
+                            '-',
+                            '',
+                          ),
+                          '-',
+                          6,
+                        )
+                      : '-'
+                  }`}
+                </Text>
+              </Text>
+            ) : (
+              <Text as="span" variant="small" color="dark400">
+                {`+ ${row.row.original.defendants.length - 1}`}
+              </Text>
+            )}
           </>
+        ) : (
+          <Text>-</Text>
         )
       },
     },

@@ -125,16 +125,16 @@ class BackendAPI extends RESTDataSource {
     return this.post('file', createApplicationFiles)
   }
 
-  getCurrentApplicationId(nationalId: string): Promise<string | undefined> {
-    return this.get(`application/nationalId/${nationalId}`)
+  getCurrentApplicationId(): Promise<string | undefined> {
+    return this.get('application/nationalId')
   }
 
-  getSpouse(spouseNationalId: string): Promise<SpouseModel> {
-    return this.get(`application/spouse/${spouseNationalId}`)
+  getSpouse(): Promise<SpouseModel> {
+    return this.get('application/spouse')
   }
 
-  getStaff(nationalId: string): Promise<Staff> {
-    return this.get(`staff/nationalId/${nationalId}`)
+  getStaff(): Promise<Staff> {
+    return this.get('staff/nationalId')
   }
 
   getStaffById(id: string): Promise<Staff> {
