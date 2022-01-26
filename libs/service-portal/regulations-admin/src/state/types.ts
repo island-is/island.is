@@ -6,6 +6,7 @@ import {
 } from '@island.is/regulations/admin'
 import {
   HTMLText,
+  IntPositive,
   LawChapterSlug,
   PlainText,
   RegName,
@@ -66,6 +67,8 @@ export type BodyDraftFields = {
   title: DraftField<PlainText, 'text'>
   text: HtmlDraftField
   appendixes: Array<AppendixDraftForm>
+  // Actually never used for new regulatios, but left in for consistency and good luck.
+  // Comments could only possibly be inserted for impacts and even that would be a massive red flag.
   comments: HtmlDraftField
 }
 
@@ -131,6 +134,25 @@ export type DraftingState = {
 
 // -----------------------------
 
+export type RegDraftFormSimpleProps = Extract<
+  keyof RegDraftForm,
+  | 'title'
+  | 'text'
+  | 'comments'
+  | 'idealPublishDate' // This prop needs its own action that checks for working days and updates the `fastTrack` flag accordingly
+  | 'fastTrack'
+  | 'effectiveDate' // Need to be checked and must never be **before** `idealPublishDate`
+  | 'signatureDate' // Need to be checked and must never be **after* `idealPublishDate`
+  | 'signatureText'
+  | 'signedDocumentUrl'
+  | 'lawChapters'
+  | 'ministry'
+  | 'type'
+  | 'draftingNotes'
+  | 'authors'
+>
+// -----------------------------
+
 export type AppendixFieldNameValuePair = {
   [Key in AppendixFormSimpleProps]: {
     name: Key
@@ -149,23 +171,6 @@ export type FieldNameValuePair = {
     value: RegDraftForm[Key]['value']
   }
 }[RegDraftFormSimpleProps]
-
-export type RegDraftFormSimpleProps = Extract<
-  keyof RegDraftForm,
-  | 'title'
-  | 'text'
-  | 'idealPublishDate' // This prop needs its own action that checks for working days and updates the `fastTrack` flag accordingly
-  | 'fastTrack'
-  | 'effectiveDate' // Need to be checked and must never be **before** `idealPublishDate`
-  | 'signatureDate' // Need to be checked and must never be **after* `idealPublishDate`
-  | 'signatureText'
-  | 'signedDocumentUrl'
-  // | 'lawChapters'
-  | 'ministry'
-  | 'type'
-  | 'draftingNotes'
-  | 'authors'
->
 
 export type Action =
   | {

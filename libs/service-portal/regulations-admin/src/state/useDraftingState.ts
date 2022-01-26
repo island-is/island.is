@@ -24,6 +24,7 @@ import { toast } from '@island.is/island-ui/core'
 import { getEditUrl, getHomeUrl } from '../utils/routing'
 import { useEditDraftReducer, StateInputs } from './reducer'
 import { steps } from './makeFields'
+import { isDraftErrorFree } from './validations'
 
 // ---------------------------------------------------------------------------
 
@@ -229,6 +230,21 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         ? () => {
             dispatch({ type: 'SAVING_STATUS' })
             saveDraftStatus('proposal').then(({ success, error }) => {
+              if (error) {
+                toast.error(t(buttonsMsgs.saveFailure))
+                console.error(error)
+                dispatch({ type: 'SAVING_STATUS_DONE', error })
+              } else {
+                history.push(getHomeUrl())
+              }
+            })
+          }
+        : undefined,
+
+      publish: !state.isEditor
+        ? () => {
+            if (!isDraftErrorFree(state)) return false
+            saveDraftStatus('shipped').then(({ success, error }) => {
               if (error) {
                 toast.error(t(buttonsMsgs.saveFailure))
                 console.error(error)

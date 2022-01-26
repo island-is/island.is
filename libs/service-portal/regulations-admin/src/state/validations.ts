@@ -12,7 +12,52 @@ import {
   HtmlDraftField,
   RegDraftForm,
   RegDraftFormSimpleProps,
+  AppendixDraftForm,
 } from './types'
+
+const propMap: Record<RegDraftFormSimpleProps, true> = {
+  title: true,
+  text: true,
+  comments: true,
+  idealPublishDate: true,
+  fastTrack: true,
+  effectiveDate: true,
+  signatureDate: true,
+  signatureText: true,
+  signedDocumentUrl: true,
+  lawChapters: true,
+  ministry: true,
+  type: true,
+  draftingNotes: true,
+  authors: true,
+}
+const draftRootProps = Object.keys(
+  propMap,
+) as ReadonlyArray<RegDraftFormSimpleProps>
+
+// ---------------------------------------------------------------------------
+
+export const isDraftErrorFree = (state: DraftingState): boolean => {
+  const { draft } = state
+
+  return (
+    !state.error &&
+    draftRootProps.every((key) => !draft[key].error) &&
+    draft.appendixes.every(({ title, text }) => !title.error && !text.error) &&
+    draft.impacts.every((impact) => {
+      if (impact.error || impact.date.error) return false
+      if (impact.type === 'repeal') return true
+
+      const { title, text, appendixes, comments } = impact
+      return (
+        !title.error &&
+        !text.error &&
+        appendixes.every(({ title, text }) => !title.error && !text.error) &&
+        !comments.error
+      )
+    })
+  )
+}
 
 // ---------------------------------------------------------------------------
 
@@ -31,12 +76,14 @@ export const updateFieldValue = <T extends DraftField<unknown, string>>(
     field.value = newValue
     field.dirty = true
 
-    if (isHTMLField(field)) {
-      field.warnings = makeHTMLWarnings(field.value, true)
-    }
     field.error =
       field.required && !field.value ? errorMsgs.fieldRequired : undefined
     field.hideError = !field.dirty
+
+    if (isHTMLField(field)) {
+      field.warnings = makeHTMLWarnings(field.value, true)
+      field.error = field.warnings ? errorMsgs.htmlWarnings : field.error
+    }
   }
 }
 

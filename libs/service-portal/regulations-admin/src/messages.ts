@@ -520,3 +520,10 @@ export const buttonsMsgs = defineMessages({
     defaultMessage: 'Þessu uppkasti að reglugerð verður eytt varanlega!',
   },
 })
+
+export const reviewMessagse = defineMessages({
+  confirmBeforePublish: {
+    id: 'ap.regulations-admin:btn-continue',
+    defaultMessage: 'Ég hef yfirfarið að reglugerðin sé rétt skráð',
+  },
+})
