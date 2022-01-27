@@ -1,5 +1,4 @@
 import { Airlines } from '@island.is/air-discount-scheme/consts'
-import { getStaticEnv } from '@island.is/shared/utils'
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -17,8 +16,8 @@ const devConfig = {
       forwardUserInfo: false,
       tokenExchangeOptions: {
         issuer: 'https://identity-server.dev01.devland.is',
-        clientId: '@vegagerdin.is/clients/national-registry',
-        clientSecret: process.env.VEGAGERDIN_THJODSKRA_IDS_CLIENT_SECRET,
+        clientId: '@vegagerdin.is/clients/air-discount-scheme',
+        clientSecret: process.env.VEGAGERDIN_IDS_CLIENTS_SECRET,
         scope: 'openid profile @skra.is/individuals',
         requestActorToken: false,
       },
@@ -67,8 +66,8 @@ const prodConfig = {
       forwardUserInfo: false,
       tokenExchangeOptions: {
         issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-        clientId: '@vegagerdin.is/clients/national-registry',
-        clientSecret: process.env.VEGAGERDIN_THJODSKRA_IDS_CLIENT_SECRET,
+        clientId: '@vegagerdin.is/clients/air-discount-scheme',
+        clientSecret: process.env.VEGAGERDIN_IDS_CLIENTS_SECRET,
         scope: 'openid profile @skra.is/individuals',
         requestActorToken: false,
       },
@@ -84,7 +83,7 @@ const prodConfig = {
   },
   baseUrl: process.env.BASE_URL,
   identityServerAuth: {
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL as string,
     audience: '@vegagerdin.is',
   },
   idsTokenCookieName: '__Secure-next-auth.session-token',
