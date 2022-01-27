@@ -34,6 +34,7 @@ const useAffectedRegulations = (
   mentioned: RegDraftForm['mentioned'],
   notFoundText: string,
   selfAffectingText: string,
+  repealedText: string,
 ) => {
   const { data, loading } = useRegulationListQuery(mentioned)
 
@@ -46,8 +47,13 @@ const useAffectedRegulations = (
         const reg = data.find((r) => r.name === name)
         if (reg) {
           return {
+            disabled: !!reg.repealed,
             value: name,
-            label: prettyName(name) + ' – ' + reg.title,
+            label:
+              prettyName(name) +
+              ' – ' +
+              reg.title +
+              (reg.repealed ? ` (${repealedText})` : undefined),
           }
         }
         return {
@@ -64,7 +70,7 @@ const useAffectedRegulations = (
     })
 
     return options
-  }, [mentioned, data, loading, notFoundText, selfAffectingText])
+  }, [mentioned, data, loading, notFoundText, selfAffectingText, repealedText])
 
   return {
     loading,
@@ -84,6 +90,7 @@ export const EditImpacts = () => {
     draft.mentioned,
     t(msg.impactRegSelect_mentionedNotFound),
     t(msg.impactSelfAffecting),
+    t(msg.impactRegSelect_mentionedRepealed),
   )
 
   const [selRegOption, setSelRegOption] = useState<SelRegOption | undefined>()

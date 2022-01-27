@@ -292,6 +292,10 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-opts-mentionednotfound',
     defaultMessage: 'er ekki reglugerð',
   },
+  impactRegSelect_mentionedRepealed: {
+    id: 'ap.regulations-admin:draft-opts-mentionedrepealed',
+    defaultMessage: 'brottfallin',
+  },
   impactRegSelect_placeholder: {
     id: 'ap.regulations-admin:draft-opts-impactedreg_placeholder',
     defaultMessage: 'Veldu reglugerð',
