@@ -18,6 +18,7 @@ import {
   PdfButton,
   FormContentContainer,
   CaseFileList,
+  CaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
   TIME_FORMAT,
@@ -110,7 +111,7 @@ export const Overview: React.FC = () => {
       notFound={caseNotFound}
     >
       <FormContentContainer>
-        <Box marginBottom={10}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(rcOverview.heading, {
               caseType: `${workingCase.parentCase ? 'framlengingu á ' : ''}${
@@ -120,6 +121,13 @@ export const Overview: React.FC = () => {
               }${workingCase.parentCase ? 'i' : ''}`,
             })}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <InfoCard
@@ -151,7 +159,7 @@ export const Overview: React.FC = () => {
                 ? [
                     {
                       title: 'Dómari',
-                      value: `${workingCase.judge.name}, ${workingCase.judge.title}`,
+                      value: workingCase.judge.name,
                     },
                   ]
                 : []),
@@ -169,7 +177,7 @@ export const Overview: React.FC = () => {
                 ? [
                     {
                       title: 'Dómritari',
-                      value: `${workingCase.registrar.name}, ${workingCase.registrar.title}`,
+                      value: workingCase.registrar.name,
                     },
                   ]
                 : []),
