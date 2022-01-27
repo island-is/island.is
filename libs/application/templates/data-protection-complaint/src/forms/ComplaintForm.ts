@@ -67,11 +67,11 @@ export const ComplaintForm: Form = buildForm({
     }),
     buildSection({
       id: 'delimitation',
-      title: section.delimitation.defaultMessage,
+      title: section.delimitation,
       children: [
         buildSubSection({
           id: 'authoritiesSection',
-          title: section.authorities.defaultMessage,
+          title: section.authorities,
           children: [
             buildMultiField({
               id: 'inCourtProceedingsFields',
@@ -109,7 +109,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'mediaSection',
-          title: section.media.defaultMessage,
+          title: section.media,
           children: [
             buildMultiField({
               id: 'concernsMediaCoverageFields',
@@ -153,7 +153,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'banMarkingSection',
-          title: section.banMarking.defaultMessage,
+          title: section.banMarking,
           children: [
             buildMultiField({
               id: 'concernsBanMarkingFields',
@@ -196,7 +196,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'libelSection',
-          title: section.libel.defaultMessage,
+          title: section.libel,
           children: [
             buildMultiField({
               id: 'concernsLibelFields',
@@ -288,7 +288,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'applicant',
-          title: section.applicant.defaultMessage,
+          title: section.applicant,
           condition: (formValue) => {
             const onBehalf = (formValue.info as FormValue)?.onBehalf
             return (
@@ -391,7 +391,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'organizationOrInstitution',
-          title: section.organizationOrInstitution.defaultMessage,
+          title: section.organizationOrInstitution,
           condition: (formValue) =>
             (formValue.info as FormValue)?.onBehalf ===
             OnBehalf.ORGANIZATION_OR_INSTITUTION,
@@ -458,7 +458,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'commissions',
-          title: section.commissions.defaultMessage,
+          title: section.commissions,
           condition: (formValue) => {
             const onBehalf = (formValue.info as FormValue)?.onBehalf
             return (
@@ -501,7 +501,7 @@ export const ComplaintForm: Form = buildForm({
     }),
     buildSection({
       id: 'complaint',
-      title: section.complaint.defaultMessage,
+      title: section.complaint,
       children: [
         buildCustomField({
           id: 'complainees',
