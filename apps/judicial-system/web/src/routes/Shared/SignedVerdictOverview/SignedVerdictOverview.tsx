@@ -22,6 +22,7 @@ import {
   FormContentContainer,
   Modal,
   DateTime,
+  BlueBox,
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
@@ -33,7 +34,7 @@ import {
   CaseData,
   ReactSelectOption,
 } from '@island.is/judicial-system-web/src/types'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Input, Text } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
@@ -41,8 +42,15 @@ import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messa
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
-import { setAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  removeTabsValidateAndSet,
+  setAndSendDateToServer,
+  validateAndSendToServer,
+  validateAndSet,
+  validateAndSetErrorMessage,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
+import { empty } from 'apollo-link'
 
 export const SignedVerdictOverview: React.FC = () => {
   const {
@@ -71,6 +79,10 @@ export const SignedVerdictOverview: React.FC = () => {
     courtRecordSignatureConfirmationResponse,
     setCourtRecordSignatureConfirmationResponse,
   ] = useState<SignatureConfirmationResponse>()
+  const [
+    caseModifiedExplinationErrorMessage,
+    setCaseModifiedExplinationErrorMessage,
+  ] = useState<string>('')
 
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -449,47 +461,91 @@ export const SignedVerdictOverview: React.FC = () => {
             setIsAlteringDates(false)
           }}
         >
-          <Box marginBottom={6}>
-            <DateTime
-              name="alteredValidToDate"
-              size="sm"
-              datepickerLabel={formatMessage(
-                m.sections.alterDatesModal.alteredValidToDateLabel,
+          <Box marginBottom={5}>
+            <Box marginBottom={3}>
+              <Text variant="h3" as="h2">
+                {formatMessage(m.sections.alterDatesModal.reasonForChangeTitle)}
+              </Text>
+            </Box>
+            <Input
+              name="reason"
+              label={formatMessage(
+                m.sections.alterDatesModal.reasonForChangeLabel,
               )}
-              selectedDate={alteredValidToDate ?? workingCase.validToDate}
-              onChange={(value, valid) => {
-                if (!valid || !value) {
-                  return
-                }
-
-                setAlteredValidToDate(value)
-              }}
-              minDate={alteredIsolationToDate}
-              blueBox={false}
+              placeholder={formatMessage(
+                m.sections.alterDatesModal.reasonForChangePlaceholder,
+              )}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'caseModifiedExplanation',
+                  event,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  caseModifiedExplinationErrorMessage,
+                  setCaseModifiedExplinationErrorMessage,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'caseModifiedExplanation',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setCaseModifiedExplinationErrorMessage,
+                )
+              }
+              hasError={caseModifiedExplinationErrorMessage !== ''}
+              errorMessage={caseModifiedExplinationErrorMessage}
+              textarea
+              rows={9}
+              required
             />
-            {workingCase.isCustodyIsolation && (
-              <Box marginTop={2}>
-                <DateTime
-                  name="alteredIsolationToDate"
-                  size="sm"
-                  datepickerLabel={formatMessage(
-                    m.sections.alterDatesModal.alteredIsolationToDateLabel,
-                  )}
-                  selectedDate={
-                    alteredIsolationToDate ?? workingCase.isolationToDate
+          </Box>
+          <Box marginBottom={6}>
+            <BlueBox>
+              <DateTime
+                name="alteredValidToDate"
+                size="sm"
+                datepickerLabel={formatMessage(
+                  m.sections.alterDatesModal.alteredValidToDateLabel,
+                )}
+                selectedDate={alteredValidToDate ?? workingCase.validToDate}
+                onChange={(value, valid) => {
+                  if (!valid || !value) {
+                    return
                   }
-                  onChange={(value, valid) => {
-                    if (!valid || !value) {
-                      return
-                    }
 
-                    setAlteredIsolationToDate(value)
-                  }}
-                  maxDate={alteredValidToDate}
-                  blueBox={false}
-                />
-              </Box>
-            )}
+                  setAlteredValidToDate(value)
+                }}
+                minDate={alteredIsolationToDate}
+                blueBox={false}
+              />
+              {workingCase.isCustodyIsolation && (
+                <Box marginTop={2}>
+                  <DateTime
+                    name="alteredIsolationToDate"
+                    size="sm"
+                    datepickerLabel={formatMessage(
+                      m.sections.alterDatesModal.alteredIsolationToDateLabel,
+                    )}
+                    selectedDate={
+                      alteredIsolationToDate ?? workingCase.isolationToDate
+                    }
+                    onChange={(value, valid) => {
+                      if (!valid || !value) {
+                        return
+                      }
+
+                      setAlteredIsolationToDate(value)
+                    }}
+                    maxDate={alteredValidToDate}
+                    blueBox={false}
+                  />
+                </Box>
+              )}
+            </BlueBox>
           </Box>
         </Modal>
       )}

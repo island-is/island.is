@@ -72,6 +72,7 @@ const courtFields = [
   'prosecutorPostponedAppealDate',
   'judgeId',
   'registrarId',
+  'caseModifiedExplanation',
 ]
 
 // Allows judges to update a specific set of fields

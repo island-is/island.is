@@ -164,6 +164,28 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem titill í "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
       },
+      reasonForChangeTitle: {
+        id:
+          'judicial.system.core:signed_verdict_overview.alter_dates_modal.reason_for_change_title',
+        defaultMessage: 'Ástæða breytingar',
+        description:
+          'Notaður sem titill fyrir "Ástæða breytingar" hlutann í "Breyting á lengd gæsluvarðhalds" glugga.',
+      },
+      reasonForChangeLabel: {
+        id:
+          'judicial.system.core:signed_verdict_overview.alter_dates_modal.reason_for_change_label',
+        defaultMessage: 'Ástæða breytingar',
+        description:
+          'Notaður sem titill í "Ástæða breytingar" textaboxi í "Breyting á lengd gæsluvarðhalds" glugga.',
+      },
+      reasonForChangePlaceholder: {
+        id:
+          'judicial.system.core:signed_verdict_overview.alter_dates_modal.reason_for_change_placeholder',
+        defaultMessage:
+          'Bóka þarf ástæðu fyrir breytingu á skráðri lengd gæsluvarðhalds.',
+        description:
+          'Notaður sem skýritexti í "Ástæða breytingar" textaboxi í "Breyting á lengd gæsluvarðhalds" glugga.',
+      },
       text: {
         id:
           'judicial.system.core:signed_verdict_overview.alter_dates_modal.text',
