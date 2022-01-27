@@ -1,9 +1,4 @@
-import {
-  judgeRule,
-  prosecutorRule,
-  registrarRule,
-  staffRule,
-} from '../../../guards'
+import { judgeRule, prosecutorRule, registrarRule } from '../../../guards'
 import { CaseController } from '../case.controller'
 
 describe('CaseController - Get request pdf rules', () => {
