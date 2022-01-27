@@ -53,7 +53,6 @@ export const CheckIdpSession = () => {
   )
 
   const onLoadHandler = (event: SyntheticEvent<HTMLIFrameElement>) => {
-    console.log('***** iFrame loaded', event)
     event?.currentTarget?.contentWindow?.postMessage(
       {},
       authSettings.authority ?? '',
@@ -62,6 +61,7 @@ export const CheckIdpSession = () => {
 
   const checkIdpSessionIframe = (
     <iframe
+      // We use the key attribute to trigger new reload of the iframe
       key={iframeChecksum}
       title="Check IDP session"
       id="check-idp-session"
@@ -93,10 +93,7 @@ export const CheckIdpSession = () => {
         }
 
         if (!sessionTimeout) {
-          console.log(`**** Set timeout to check again in ${timeout} ms`)
-
           sessionTimeout = setTimeout(() => {
-            console.log('Checking again if session is still valid')
             sessionTimeout = null
             window.removeEventListener(messageEventName, messageHandler)
             setIframeChecksum(iframeChecksum + 1)
