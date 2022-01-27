@@ -1,11 +1,17 @@
 import React, { useState } from 'react'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import {
   ModalBase,
   GridRow,
   GridColumn,
   GridContainer,
+  Button,
+  Box,
+  Columns,
+  Column,
 } from '@island.is/island-ui/core'
+import { m } from '@island.is/service-portal/core'
 import { servicePortalCloseOnBoardingModal } from '@island.is/plausible'
 import { useLocation } from 'react-router-dom'
 import { OnboardingHeader } from './components/Header'
@@ -13,8 +19,10 @@ import ProfileForm from '../Forms/ProfileForm/ProfileForm'
 import * as styles from './UserOnboardingModal.css'
 
 const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
+  useNamespaces('sp.settings')
   const [toggleCloseModal, setToggleCloseModal] = useState(false)
   const [canDropOverlay, setCanDropOverlay] = useState(false)
+  const { formatMessage } = useLocale()
 
   const { pathname } = useLocation()
 
@@ -51,6 +59,24 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
               onCloseDropModal={() => setCanDropOverlay(false)}
               canDrop={canDropOverlay}
             />
+            <Columns>
+              <Column width="9/12">
+                <Box
+                  display="flex"
+                  alignItems="flexEnd"
+                  flexDirection="column"
+                  paddingTop={2}
+                >
+                  <Button
+                    icon="checkmark"
+                    type="submit"
+                    onClick={() => setCanDropOverlay(true)}
+                  >
+                    {formatMessage(m.continue)}
+                  </Button>
+                </Box>
+              </Column>
+            </Columns>
           </GridColumn>
         </GridRow>
       </GridContainer>

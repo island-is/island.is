@@ -129,14 +129,14 @@ export class UserProfileController {
     }
 
     if (userProfileDto.email) {
-      const phoneVerified = await this.verificationService.isEmailVerified(
+      const emailVerified = await this.verificationService.isEmailVerified(
         userProfileDto,
       )
       userProfileDto = {
         ...userProfileDto,
-        emailVerified: phoneVerified,
+        emailVerified: emailVerified,
       }
-      if (phoneVerified) {
+      if (emailVerified) {
         await this.verificationService.removeEmailVerification(
           userProfileDto.nationalId,
         )
