@@ -434,11 +434,15 @@ export const SignedVerdictOverview: React.FC = () => {
       )}
       {isAlteringDates && (
         <Modal
-          title="Breyting á lengd gæsluvarðhalds"
-          text="Hafi gæsluvarðhaldi eða einangrun verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd gæsluvarðhalds. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu."
-          primaryButtonText="Staðfesta"
+          title={formatMessage(m.sections.alterDatesModal.title)}
+          text={formatMessage(m.sections.alterDatesModal.text)}
+          primaryButtonText={formatMessage(
+            m.sections.alterDatesModal.primaryButtonText,
+          )}
           handlePrimaryButtonClick={handleDateAltering}
-          secondaryButtonText="Hætta við"
+          secondaryButtonText={formatMessage(
+            m.sections.alterDatesModal.secondaryButtonText,
+          )}
           handleSecondaryButtonClick={() => {
             setAlteredValidToDate(undefined)
             setAlteredIsolationToDate(undefined)
@@ -449,7 +453,9 @@ export const SignedVerdictOverview: React.FC = () => {
             <DateTime
               name="alteredValidToDate"
               size="sm"
-              datepickerLabel="Gæsluvarðhald til"
+              datepickerLabel={formatMessage(
+                m.sections.alterDatesModal.alteredValidToDateLabel,
+              )}
               selectedDate={alteredValidToDate ?? workingCase.validToDate}
               onChange={(value, valid) => {
                 if (!valid || !value) {
@@ -466,7 +472,9 @@ export const SignedVerdictOverview: React.FC = () => {
                 <DateTime
                   name="alteredIsolationToDate"
                   size="sm"
-                  datepickerLabel="Einangrun til"
+                  datepickerLabel={formatMessage(
+                    m.sections.alterDatesModal.alteredIsolationToDateLabel,
+                  )}
                   selectedDate={
                     alteredIsolationToDate ?? workingCase.isolationToDate
                   }

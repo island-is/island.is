@@ -134,63 +134,6 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
       : 'Gæsluvarðhald virkt'
   }
 
-  const subtitleForCase = (theCase: Case) => {
-    const isTravelBan =
-      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-      theCase.type === CaseType.TRAVEL_BAN
-
-    if (
-      theCase.decision === CaseDecision.REJECTING ||
-      theCase.decision === CaseDecision.DISMISSING ||
-      isInvestigationCase(theCase.type)
-    ) {
-      return `Úrskurðað ${formatDate(
-        theCase.courtEndTime,
-        'PPP',
-      )} kl. ${formatDate(theCase.courtEndTime, TIME_FORMAT)}`
-    }
-
-    if (theCase.isValidToDateInThePast) {
-      return (
-        <>
-          <Box component="span" display="block">
-            {`Úrskurðað ${formatDate(
-              theCase.rulingDate,
-              'PPP',
-            )} kl. ${formatDate(theCase.rulingDate, TIME_FORMAT)}`}
-          </Box>
-          <Box component="span">
-            {`${
-              isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
-            } rann út ${formatDate(
-              theCase.validToDate,
-              'PPP',
-            )} kl. ${formatDate(theCase.validToDate, TIME_FORMAT)}`}
-          </Box>
-        </>
-      )
-    }
-
-    return (
-      <>
-        <Box component="span" display="block">
-          {`Úrskurðað ${formatDate(theCase.rulingDate, 'PPP')} kl. ${formatDate(
-            theCase.rulingDate,
-            TIME_FORMAT,
-          )}`}
-        </Box>
-        <Box component="span">
-          {`${
-            isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
-          } til ${formatDate(theCase.validToDate, 'PPP')} kl. ${formatDate(
-            theCase.validToDate,
-            TIME_FORMAT,
-          )}`}
-        </Box>
-      </>
-    )
-  }
-
   return (
     <FormContentContainer>
       <Box marginBottom={5}>
@@ -282,7 +225,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         <CaseDates
           workingCase={workingCase}
           button={{
-            label: 'Uppfæra',
+            label: formatMessage(core.update),
             onClick: handleOpenDateAlteringModal,
             icon: 'pencil',
           }}

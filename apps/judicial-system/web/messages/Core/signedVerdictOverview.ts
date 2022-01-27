@@ -156,5 +156,50 @@ export const signedVerdictOverview = {
           'Notaður sem texti fyrir "loka hnappi" í "undirritun þingbókar" skrefi á yfirlitsskjá afgreiddra mála.',
       },
     }),
+    alterDatesModal: defineMessages({
+      title: {
+        id:
+          'judicial.system.core:signed_verdict_overview.alter_dates_modal.title',
+        defaultMessage: 'Breyting á lengd gæsluvarðhalds',
+        description:
+          'Notaður sem titill í "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      text: {
+        id:
+          'judicial.system.core:signed_verdict_overview.alter_dates_modal.text',
+        defaultMessage:
+          'Hafi gæsluvarðhaldi eða einangrun verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd gæsluvarðhalds. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu.',
+        description:
+          'Notaður sem texti í "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      primaryButtonText: {
+        id:
+          'judicial.system.core:signed_verdict_overview.alter_dates_modal.primary_button_text',
+        defaultMessage: 'Staðfesta',
+        description:
+          'Notaður sem texti í staðfesta takka í "Breyta lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      secondaryButtonText: {
+        id:
+          'judicial.system.core:signed_verdict_overview.alter_dates_modal.secondary_button_text',
+        defaultMessage: 'Hætta við',
+        description:
+          'Notaður sem texti í hætta við takka í "Breyta lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      alteredValidToDateLabel: {
+        id:
+          'judicial.system.core:signed_verdict_overview.alter_dates_modal.altered_valid_to_date_label',
+        defaultMessage: 'Gæsluvarðhald til',
+        description:
+          'Notaður sem texti í "Gæsluvarðhald til" í  "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      alteredIsolationToDateLabel: {
+        id:
+          'judicial.system.core:signed_verdict_overview.alter_dates_modal.altered_isolation_to_date_label',
+        defaultMessage: 'Einangrun til',
+        description:
+          'Notaður sem texti í "Einangrun til" í  "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+    }),
   },
 }
