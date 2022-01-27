@@ -172,14 +172,6 @@ export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
   Approved: 'Approved',
 }
 
-export const isSpouseDataNeeded: KeyMapping<FamilyStatus, boolean> = {
-  NotCohabitation: false,
-  Cohabitation: true,
-  UnregisteredCohabitation: false,
-  Married: true,
-  MarriedNotLivingTogether: true,
-}
-
 export const showSpouseData: KeyMapping<FamilyStatus, boolean> = {
   Cohabitation: true,
   UnregisteredCohabitation: true,
