@@ -1,6 +1,6 @@
 # Sequelize
 
-This library was generated with [Nx](https://nx.dev).
+This library includes reusable settings for sequelize.
 
 ## Running unit tests
 
