@@ -9,13 +9,14 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
-import { formatBankInfo } from '../../utils/bankInfoHelper'
+import { stringifyBankData } from '../../utils/bankInfoHelper'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { BankInfoTypes } from './ProfileForm/types/form'
 
 interface Props {
-  bankInfo?: string
+  bankInfo?: BankInfoTypes
 }
 
 export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
@@ -27,12 +28,18 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
 
   const { updateOrCreateUserProfile, loading } = useUpdateOrCreateUserProfile()
 
-  const submitFormData = async (data: { bankInfo: string }) => {
+  const submitFormData = async (data: BankInfoTypes) => {
     try {
       setSubmitError(undefined)
-      await updateOrCreateUserProfile({
-        bankInfo: formatBankInfo(data.bankInfo),
-      }).then(() => setInputSuccess(true))
+
+      const bankData = stringifyBankData(data)
+      if (bankData) {
+        await updateOrCreateUserProfile({
+          bankInfo: bankData,
+        }).then(() => setInputSuccess(true))
+      } else {
+        setSubmitError(formatMessage(m.somethingWrong))
+      }
     } catch (err) {
       setSubmitError(formatMessage(m.somethingWrong))
     }
@@ -41,39 +48,110 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
   return (
     <form onSubmit={handleSubmit(submitFormData)}>
       <Columns alignY="center">
-        <Column width="8/12">
-          <InputController
-            control={control}
-            id="bankInfo"
-            name="bankInfo"
-            format="####-##-######"
-            placeholder="0000-00-000000"
-            label="Reikningsupplýsingar"
-            defaultValue={bankInfo}
-            error={errors.bankInfo?.message || submitError}
-            required={false}
-            disabled={inputSuccess}
-            size="xs"
-            rules={{
-              minLength: {
-                value: 12,
-                message: formatMessage({
-                  id: 'sp.settings:bankInfo-required-length-msg',
-                  defaultMessage: `Reikningsupplýsingar eru 12 tölustafir á lengd.
-                  Banki 4 stafir, höfuðbók 2 stafir, reikningsnúmer 6 stafir.`,
-                }),
-              },
-              pattern: {
-                value: /^\d+$/,
-                message: formatMessage({
-                  id: 'sp.settings:only-numbers-allowed',
-                  defaultMessage: 'Eingöngu tölustafir eru leyfðir',
-                }),
-              },
-            }}
-          />
+        <Column width="9/12">
+          <Columns alignY="center">
+            <Column width="content">
+              <Box style={{ maxWidth: 120 }} marginRight={1}>
+                <InputController
+                  control={control}
+                  id="bank"
+                  name="bank"
+                  maxLength={4}
+                  placeholder="0000"
+                  label="Banki"
+                  defaultValue={bankInfo?.bank || ''}
+                  error={errors.bank?.message || submitError}
+                  required={false}
+                  disabled={inputSuccess}
+                  size="xs"
+                  rules={{
+                    maxLength: {
+                      value: 4,
+                      message: formatMessage({
+                        id: 'sp.settings:bankInfo-required-length-msg',
+                        defaultMessage: `Númer banka er í mesta lagi 4 stafir`,
+                      }),
+                    },
+                    pattern: {
+                      value: /^\d+$/,
+                      message: formatMessage({
+                        id: 'sp.settings:only-numbers-allowed',
+                        defaultMessage: 'Eingöngu tölustafir eru leyfðir',
+                      }),
+                    },
+                  }}
+                />
+              </Box>
+            </Column>
+            <Column width="content">
+              <Box style={{ maxWidth: 90 }} marginRight={1}>
+                <InputController
+                  control={control}
+                  id="l"
+                  name="l"
+                  maxLength={2}
+                  placeholder="00"
+                  label="Hb."
+                  defaultValue={bankInfo?.l || ''}
+                  error={errors.l?.message || submitError}
+                  required={false}
+                  disabled={inputSuccess}
+                  size="xs"
+                  rules={{
+                    maxLength: {
+                      value: 2,
+                      message: formatMessage({
+                        id: 'sp.settings:bankInfo-hb-required-length-msg',
+                        defaultMessage: `Höfuðbók er í mesta lagi 2 stafir`,
+                      }),
+                    },
+                    pattern: {
+                      value: /^\d+$/,
+                      message: formatMessage({
+                        id: 'sp.settings:only-numbers-allowed',
+                        defaultMessage: 'Eingöngu tölustafir eru leyfðir',
+                      }),
+                    },
+                  }}
+                />
+              </Box>
+            </Column>
+            <Column>
+              <Box marginRight={1}>
+                <InputController
+                  control={control}
+                  id="account"
+                  name="account"
+                  maxLength={6}
+                  placeholder="000000"
+                  label="Reikningsnúmer"
+                  defaultValue={bankInfo?.account || ''}
+                  error={errors.account?.message || submitError}
+                  required={false}
+                  disabled={inputSuccess}
+                  size="xs"
+                  rules={{
+                    maxLength: {
+                      value: 6,
+                      message: formatMessage({
+                        id: 'sp.settings:bankInfo-account-required-length-msg',
+                        defaultMessage: `Reikningsnúmer er í mesta lagi 6 stafir.`,
+                      }),
+                    },
+                    pattern: {
+                      value: /^\d+$/,
+                      message: formatMessage({
+                        id: 'sp.settings:only-numbers-allowed',
+                        defaultMessage: 'Eingöngu tölustafir eru leyfðir',
+                      }),
+                    },
+                  }}
+                />
+              </Box>
+            </Column>
+          </Columns>
         </Column>
-        <Column width="4/12">
+        <Column width="3/12">
           <Box
             display="flex"
             alignItems="flexEnd"

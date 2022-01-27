@@ -11,9 +11,23 @@ export const formatBankInfo = (bankInfo: string) => {
   return ''
 }
 
-export const stripBankInfo = (bankInfo: string) => {
-  if (bankInfo) {
-    return bankInfo.replace(/-/g, '')
+export const stringifyBankData = (obj: any) => {
+  const bank = obj.bank.padStart(4, '0')
+  const account = obj.account.padStart(6, '0')
+  const stringifyBankInfo = `${bank}-${obj.l}-${account}`
+  const formatted = formatBankInfo(stringifyBankInfo)
+  return formatted
+}
+
+export const bankInfoObject = (bankInfo: string) => {
+  const bankInfoString = formatBankInfo(bankInfo)
+  const bankArray = bankInfoString.split('-')
+  if (bankInfoString) {
+    return {
+      bank: bankArray[0],
+      l: bankArray[1],
+      account: bankArray[2],
+    }
   }
-  return ''
+  return undefined
 }
