@@ -8,14 +8,11 @@ import {
   RegulationDraft,
   ShippedSummary,
 } from '@island.is/regulations/admin'
-import { uuid } from 'uuidv4'
 
 export const REGULATIONS_ADMIN_OPTIONS = 'REGULATIONS_ADMIN_OPTIONS'
-
+const API_URL = 'http://localhost:3333/api'
 export interface RegulationsAdminOptions {
-  baseApiUrl?: string
   regulationsApiUrl: string
-  ttl?: number
 }
 
 export class RegulationsAdminApi extends RESTDataSource {
@@ -24,7 +21,7 @@ export class RegulationsAdminApi extends RESTDataSource {
     private readonly options: RegulationsAdminOptions,
   ) {
     super()
-    this.baseURL = `${this.options.baseApiUrl}`
+    this.baseURL = API_URL
     this.initialize({} as DataSourceConfig<any>)
   }
 
