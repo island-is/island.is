@@ -17,7 +17,7 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 import {
-  newSetAndSendDateToServer,
+  setAndSendDateToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
   validateAndSendToServer,
@@ -79,7 +79,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  newSetAndSendDateToServer(
+                  setAndSendDateToServer(
                     'courtStartDate',
                     date,
                     valid,

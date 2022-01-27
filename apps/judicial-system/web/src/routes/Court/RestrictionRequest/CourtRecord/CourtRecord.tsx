@@ -24,7 +24,7 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
-  newSetAndSendDateToServer,
+  setAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -204,7 +204,7 @@ export const CourtRecord: React.FC = () => {
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  newSetAndSendDateToServer(
+                  setAndSendDateToServer(
                     'courtStartDate',
                     date,
                     valid,

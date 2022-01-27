@@ -38,7 +38,7 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
-  newSetAndSendDateToServer,
+  setAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
@@ -248,7 +248,7 @@ export const HearingArrangements: React.FC = () => {
                   selectedDate={workingCase.courtDate}
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    newSetAndSendDateToServer(
+                    setAndSendDateToServer(
                       'courtDate',
                       date,
                       valid,

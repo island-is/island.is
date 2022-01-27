@@ -41,7 +41,7 @@ import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messa
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
-import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { setAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const SignedVerdictOverview: React.FC = () => {
@@ -335,6 +335,29 @@ export const SignedVerdictOverview: React.FC = () => {
 
   const handleDateAltering = async () => {
     setIsAlteringDates(!isAlteringDates)
+
+    const formattedValidToDate = alteredValidToDate
+      ? formatISO(alteredValidToDate, { representation: 'complete' })
+      : undefined
+
+    const formattedIsolationToDate = alteredIsolationToDate
+      ? formatISO(alteredIsolationToDate, { representation: 'complete' })
+      : undefined
+
+    if (formattedValidToDate || formattedIsolationToDate) {
+      setWorkingCase({
+        ...workingCase,
+        validToDate: formattedValidToDate || workingCase.validToDate,
+        isolationToDate:
+          formattedIsolationToDate || workingCase.isolationToDate,
+      })
+
+      updateCase(workingCase.id, {
+        validToDate: formattedValidToDate || workingCase.validToDate,
+        isolationToDate:
+          formattedIsolationToDate || workingCase.isolationToDate,
+      })
+    }
   }
 
   /**

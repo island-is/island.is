@@ -31,7 +31,7 @@ import {
   UserData,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  newSetAndSendDateToServer,
+  setAndSendDateToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
   validateAndSendToServer,
@@ -287,7 +287,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   selectedDate={workingCase.courtDate}
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    newSetAndSendDateToServer(
+                    setAndSendDateToServer(
                       'courtDate',
                       date,
                       valid,
