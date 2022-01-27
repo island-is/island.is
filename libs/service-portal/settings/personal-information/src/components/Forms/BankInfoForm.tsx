@@ -1,87 +1,112 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import {
   Box,
   Button,
   Columns,
   Column,
-  // Icon,
-  // Text,
-  // LoadingDots,
+  Icon,
+  LoadingDots,
 } from '@island.is/island-ui/core'
+import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
+import { formatBankInfo } from '../../utils/bankInfoHelper'
 import { InputController } from '@island.is/shared/form-fields'
+import { useForm } from 'react-hook-form'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { HookFormType } from '../Forms/ProfileForm/types/form'
 
 interface Props {
-  bankInfo: string
-  hookFormData: HookFormType
-  onSave: (val: string) => void
+  bankInfo?: string
 }
 
-export const BankInfoForm: FC<Props> = ({ hookFormData, onSave }) => {
+export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { control, errors, trigger, getValues } = hookFormData
+  const { control, handleSubmit, errors } = useForm()
+  const [inputSuccess, setInputSuccess] = useState<boolean>(false)
 
-  const saveBankInfo = (isValid: boolean) => {
-    if (!isValid) {
-      return
+  const { updateOrCreateUserProfile, loading } = useUpdateOrCreateUserProfile()
+
+  const submitFormData = async (data: { bankInfo: string }) => {
+    try {
+      await updateOrCreateUserProfile({
+        bankInfo: formatBankInfo(data.bankInfo),
+      })
+      setInputSuccess(true)
+    } catch (err) {
+      // TODO: PUT FORM ERROR.
     }
-    const bankInfoValue = getValues()?.bankInfo ?? ''
-    onSave(bankInfoValue)
   }
 
   return (
-    <Columns alignY="center">
-      <Column width="8/12">
-        <InputController
-          control={control}
-          id="bankInfo"
-          name="bankInfo"
-          format="####-##-######"
-          placeholder="0000-00-000000"
-          label="Reikningsupplýsingar"
-          error={errors.bankInfo?.message}
-          required={false}
-          size="xs"
-          rules={{
-            minLength: {
-              value: 12,
-              message: formatMessage({
-                id: 'sp.settings:bankInfo-required-length-msg',
-                defaultMessage: `Reikningsupplýsingar eru 12 tölustafir á lengd.
+    <form onSubmit={handleSubmit(submitFormData)}>
+      <Columns alignY="center">
+        <Column width="8/12">
+          <InputController
+            control={control}
+            id="bankInfo"
+            name="bankInfo"
+            format="####-##-######"
+            placeholder="0000-00-000000"
+            label="Reikningsupplýsingar"
+            defaultValue={bankInfo}
+            error={errors.bankInfo?.message}
+            required={false}
+            disabled={inputSuccess}
+            size="xs"
+            rules={{
+              minLength: {
+                value: 12,
+                message: formatMessage({
+                  id: 'sp.settings:bankInfo-required-length-msg',
+                  defaultMessage: `Reikningsupplýsingar eru 12 tölustafir á lengd.
                   Banki 4 stafir, höfuðbók 2 stafir, reikningsnúmer 6 stafir.`,
-              }),
-            },
-            pattern: {
-              value: /^\d+$/,
-              message: formatMessage({
-                id: 'sp.settings:only-numbers-allowed',
-                defaultMessage: 'Eingöngu tölustafir eru leyfðir',
-              }),
-            },
-          }}
-        />
-      </Column>
-      <Column width="4/12">
-        <Box
-          display="flex"
-          alignItems="flexEnd"
-          flexDirection="column"
-          paddingTop={2}
-        >
-          <Button
-            variant="text"
-            size="small"
-            onClick={() => {
-              trigger('bankInfo').then((valid) => saveBankInfo(valid))
+                }),
+              },
+              pattern: {
+                value: /^\d+$/,
+                message: formatMessage({
+                  id: 'sp.settings:only-numbers-allowed',
+                  defaultMessage: 'Eingöngu tölustafir eru leyfðir',
+                }),
+              },
             }}
+          />
+        </Column>
+        <Column width="4/12">
+          <Box
+            display="flex"
+            alignItems="flexEnd"
+            flexDirection="column"
+            paddingTop={2}
           >
-            Vista reikningsnúmer
-          </Button>
-          {/* {createLoading && <LoadingDots />} */}
-        </Box>
-      </Column>
-    </Columns>
+            {!loading && !inputSuccess && (
+              <button type="submit">
+                <Button variant="text" size="small">
+                  Vista reikningsnúmer
+                </Button>
+              </button>
+            )}
+            {loading && <LoadingDots />}
+            {inputSuccess && (
+              <Icon icon="checkmarkCircle" color="mint600" type="filled" />
+            )}
+          </Box>
+        </Column>
+      </Columns>
+      {inputSuccess && (
+        <Columns alignY="center">
+          <Column>
+            <Box paddingTop={1}>
+              <Button
+                onClick={() => setInputSuccess(false)}
+                variant="text"
+                size="small"
+              >
+                Breyta
+              </Button>
+            </Box>
+          </Column>
+        </Columns>
+      )}
+    </form>
   )
 }

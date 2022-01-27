@@ -39,17 +39,11 @@ export const useUpdateUserProfile = () => {
     // API only accepts the values as optional and not as null fields
     // so we have to build the object dynamically
     const input: UpdateUserProfileInput = {}
-    if (data.email ?? userProfile.email)
-      input.email = data.email ?? userProfile.email
-    if (data.locale ?? userProfile.locale)
-      input.locale = data.locale ?? userProfile.locale
-    if (data.mobilePhoneNumber ?? userProfile.mobilePhoneNumber)
-      input.mobilePhoneNumber =
-        data.mobilePhoneNumber ?? userProfile.mobilePhoneNumber
-    if (data.canNudge !== undefined ?? userProfile.canNudge !== undefined)
-      input.canNudge = data.canNudge ?? userProfile.canNudge
-    if (data.bankInfo ?? userProfile.bankInfo)
-      input.bankInfo = data.bankInfo ?? userProfile.bankInfo
+    if (data.email) input.email = data.email
+    if (data.locale) input.locale = data.locale
+    if (data.mobilePhoneNumber) input.mobilePhoneNumber = data.mobilePhoneNumber
+    if (data.canNudge !== undefined) input.canNudge = data.canNudge
+    if (data.bankInfo) input.bankInfo = data.bankInfo
 
     return updateUserProfileMutation({
       variables: {
