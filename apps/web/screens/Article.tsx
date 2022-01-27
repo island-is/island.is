@@ -20,7 +20,6 @@ import {
   TableOfContents,
   Button,
   Tag,
-  LinkContext,
 } from '@island.is/island-ui/core'
 import {
   HeadWithSocialSharing,
@@ -366,6 +365,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
   const organizationTitle = article.organization[0]?.title
   const organizationShortTitle = article.organization[0]?.shortTitle
 
+  // TODO: remove this console log, this was only put here to double check what the API was returning
   console.log(article)
 
   return (
@@ -468,7 +468,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
           )}
         </Box>
         <Box>
-          <Text color="blue400" variant="h1" as="h1">
+          <Text variant="h1" as="h1">
             <span id={slugify(article.title)} className="rs_read">
               {article.title}
             </span>
