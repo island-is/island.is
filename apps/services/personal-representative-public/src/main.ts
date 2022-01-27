@@ -7,5 +7,6 @@ bootstrap({
   appModule: AppModule,
   name: 'personal-representative-public',
   openApi,
+  swaggerPath: '',
   port: environment.port,
 })
