@@ -181,6 +181,7 @@ export const ComplaintForm: Form = buildForm({
                       {
                         title: delimitation.links.concernsBanMarkingFirstTitle,
                         url: delimitation.links.concernsBanMarkingFirstUrl,
+                        isExternal: true,
                       },
                       {
                         title: delimitation.links.concernsBanMarkingSecondTitle,
@@ -369,9 +370,20 @@ export const ComplaintForm: Form = buildForm({
                   width: 'half',
                   variant: 'tel',
                   backgroundColor: 'blue',
-                  defaultValue: (application: DataProtectionComplaint) =>
-                    application.externalData?.userProfile?.data
-                      ?.mobilePhoneNumber,
+                  defaultValue: (application: DataProtectionComplaint) => {
+                    const phoneNumber =
+                      application.externalData?.userProfile?.data
+                        ?.mobilePhoneNumber
+                    if (phoneNumber?.startsWith('+')) {
+                      const splitNumber = phoneNumber.split('-')
+                      if (splitNumber.length === 3) {
+                        return `${splitNumber[1]}${splitNumber[2]}`
+                      } else if (splitNumber.length === 2) {
+                        return `${splitNumber[1]}`
+                      }
+                    }
+                    return phoneNumber
+                  },
                 }),
               ],
             }),

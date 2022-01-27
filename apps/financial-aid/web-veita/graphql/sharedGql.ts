@@ -255,6 +255,7 @@ export const UpdateApplicationMutation = gql`
       state
       formComment
       studentCustom
+      spouseNationalId
       rejection
       applicationEvents {
         id
@@ -274,7 +275,6 @@ export const UpdateApplicationMutation = gql`
         income
         personalTaxCredit
         spousePersonalTaxCredit
-        spouseNationalId
         tax
         finalAmount
         deductionFactors {
