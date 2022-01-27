@@ -140,7 +140,8 @@ const DateTime: React.FC<Props> = (props) => {
 
   const sendToParent = (date: Date | undefined, time: string | undefined) => {
     const isValid = isValidDateTime(date, time, required)
-
+    console.log('isValid', isValid)
+    console.log('date', date)
     if (isValid && date && time) {
       const dateToSend = new Date(date.getTime())
 

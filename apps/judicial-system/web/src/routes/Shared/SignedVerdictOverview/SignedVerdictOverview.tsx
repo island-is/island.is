@@ -21,6 +21,7 @@ import {
   PageLayout,
   FormContentContainer,
   Modal,
+  DateTime,
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
@@ -40,6 +41,8 @@ import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messa
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
+import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const SignedVerdictOverview: React.FC = () => {
   const {
@@ -54,6 +57,8 @@ export const SignedVerdictOverview: React.FC = () => {
     text: ReactNode
   }>()
   const [isAlteringDates, setIsAlteringDates] = useState<boolean>(false)
+  const [alteredValidToDate, setAlteredValidToDate] = useState<Date>()
+  const [alteredIsolationToDate, setAlteredIsolationToDate] = useState<Date>()
   const [
     selectedSharingInstitutionId,
     setSelectedSharingInstitutionId,
@@ -324,7 +329,11 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const handleDateAltering = () => {
+  const openDateAlteringModal = () => {
+    setIsAlteringDates(!isAlteringDates)
+  }
+
+  const handleDateAltering = async () => {
     setIsAlteringDates(!isAlteringDates)
   }
 
@@ -366,7 +375,7 @@ export const SignedVerdictOverview: React.FC = () => {
         setSelectedSharingInstitutionId={setSelectedSharingInstitutionId}
         isRequestingCourtRecordSignature={isRequestingCourtRecordSignature}
         handleRequestCourtRecordSignature={handleRequestCourtRecordSignature}
-        handleDateAltering={handleDateAltering}
+        handleOpenDateAlteringModal={openDateAlteringModal}
       />
       <FormContentContainer isFooter>
         <FormFooter
@@ -405,10 +414,53 @@ export const SignedVerdictOverview: React.FC = () => {
           title="Breyting á lengd gæsluvarðhalds"
           text="Hafi gæsluvarðhaldi eða einangrun verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd gæsluvarðhalds. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu."
           primaryButtonText="Staðfesta"
-          handlePrimaryButtonClick={() => alert('NOT IMPLEMENTED')}
+          handlePrimaryButtonClick={handleDateAltering}
           secondaryButtonText="Hætta við"
-          handleSecondaryButtonClick={() => setIsAlteringDates(false)}
-        />
+          handleSecondaryButtonClick={() => {
+            setAlteredValidToDate(undefined)
+            setAlteredIsolationToDate(undefined)
+            setIsAlteringDates(false)
+          }}
+        >
+          <Box marginBottom={6}>
+            <DateTime
+              name="alteredValidToDate"
+              size="sm"
+              datepickerLabel="Gæsluvarðhald til"
+              selectedDate={alteredValidToDate ?? workingCase.validToDate}
+              onChange={(value, valid) => {
+                if (!valid || !value) {
+                  return
+                }
+
+                setAlteredValidToDate(value)
+              }}
+              minDate={alteredIsolationToDate}
+              blueBox={false}
+            />
+            {workingCase.isCustodyIsolation && (
+              <Box marginTop={2}>
+                <DateTime
+                  name="alteredIsolationToDate"
+                  size="sm"
+                  datepickerLabel="Einangrun til"
+                  selectedDate={
+                    alteredIsolationToDate ?? workingCase.isolationToDate
+                  }
+                  onChange={(value, valid) => {
+                    if (!valid || !value) {
+                      return
+                    }
+
+                    setAlteredIsolationToDate(value)
+                  }}
+                  maxDate={alteredValidToDate}
+                  blueBox={false}
+                />
+              </Box>
+            )}
+          </Box>
+        </Modal>
       )}
       {requestCourtRecordSignatureResponse && (
         <Modal

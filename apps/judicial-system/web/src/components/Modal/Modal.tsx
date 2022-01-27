@@ -1,5 +1,5 @@
 import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
-import React, { ReactNode } from 'react'
+import React, { PropsWithChildren, ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 import { motion } from 'framer-motion'
 
@@ -14,6 +14,7 @@ interface ModalProps {
   handleSecondaryButtonClick?: () => void
   handlePrimaryButtonClick?: () => void
   isPrimaryButtonLoading?: boolean
+  children?: ReactNode
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -25,6 +26,7 @@ const Modal: React.FC<ModalProps> = ({
   handleSecondaryButtonClick,
   handlePrimaryButtonClick,
   isPrimaryButtonLoading,
+  children,
 }: ModalProps) => {
   const modalVariants = {
     open: {
@@ -69,6 +71,7 @@ const Modal: React.FC<ModalProps> = ({
             React.isValidElement(text) ? text : <Text>{text}</Text>
           }
         </Box>
+        {children}
         <Box display="flex">
           {secondaryButtonText && (
             <Box marginRight={3}>
@@ -105,6 +108,7 @@ const ModalPortal = ({
   handleSecondaryButtonClick,
   handlePrimaryButtonClick,
   isPrimaryButtonLoading,
+  children,
 }: ModalProps) => {
   const modalRoot =
     document.getElementById('modal') ?? document.createElement('div')
@@ -119,6 +123,7 @@ const ModalPortal = ({
       handleSecondaryButtonClick={handleSecondaryButtonClick}
       handlePrimaryButtonClick={handlePrimaryButtonClick}
       isPrimaryButtonLoading={isPrimaryButtonLoading}
+      children={children}
     />,
     modalRoot,
   )

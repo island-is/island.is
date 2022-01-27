@@ -72,7 +72,7 @@ interface Props {
   >
   isRequestingCourtRecordSignature: boolean
   handleRequestCourtRecordSignature: () => void
-  handleDateAltering: () => void
+  handleOpenDateAlteringModal: () => void
 }
 
 const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
@@ -88,7 +88,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     setSelectedSharingInstitutionId,
     isRequestingCourtRecordSignature,
     handleRequestCourtRecordSignature,
-    handleDateAltering,
+    handleOpenDateAlteringModal,
   } = props
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -283,7 +283,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           workingCase={workingCase}
           button={{
             label: 'Uppfæra',
-            onClick: handleDateAltering,
+            onClick: handleOpenDateAlteringModal,
             icon: 'pencil',
           }}
         />
