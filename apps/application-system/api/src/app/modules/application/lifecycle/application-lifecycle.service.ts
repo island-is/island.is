@@ -80,7 +80,7 @@ export class ApplicationLifeCycleService {
         for (const attachment of attachments) {
           const { key, s3key, bucket, value } = attachment
           try {
-            this.logger.debug(
+            this.logger.info(
               `Deleting attachment ${s3key} from bucket ${bucket}`,
             )
             await this.awsService.deleteObject(bucket, s3key)
@@ -103,7 +103,7 @@ export class ApplicationLifeCycleService {
   private async pruneApplicationData() {
     for (const prune of this.processingApplications) {
       try {
-        this.logger.debug(
+        this.logger.info(
           `updating application with failed attachments: ${prune.failedAttachments}.`,
         )
         const { updatedApplication } = await this.applicationService.update(
