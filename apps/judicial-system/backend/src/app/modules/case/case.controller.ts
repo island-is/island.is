@@ -49,6 +49,7 @@ import {
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
 import {
+  CaseCourtRestrictionGuard,
   CaseExistsGuard,
   CaseReadGuard,
   CaseWriteGuard,
@@ -264,7 +265,13 @@ export class CaseController {
     return theCase
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    CaseReadGuard,
+    CaseCourtRestrictionGuard,
+  )
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:caseId/request')
   @Header('Content-Type', 'application/pdf')
@@ -282,22 +289,18 @@ export class CaseController {
       `Getting the request for case ${caseId} as a pdf document`,
     )
 
-    if (
-      isInvestigationCase(theCase.type) &&
-      ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
-        (user.role === UserRole.REGISTRAR && user.id !== theCase.registrar?.id))
-    ) {
-      throw new ForbiddenException(
-        'Only the assigned judge and registrar can get the request pdf for investigation cases',
-      )
-    }
-
     const pdf = await this.caseService.getRequestPdf(theCase)
 
     return res.end(pdf)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    CaseReadGuard,
+    CaseCourtRestrictionGuard,
+  )
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:caseId/courtRecord')
   @Header('Content-Type', 'application/pdf')
@@ -315,22 +318,18 @@ export class CaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    if (
-      isInvestigationCase(theCase.type) &&
-      ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
-        (user.role === UserRole.REGISTRAR && user.id !== theCase.registrar?.id))
-    ) {
-      throw new ForbiddenException(
-        'Only the assigned judge and registrar can get the court record pdf for investigation cases',
-      )
-    }
-
     const pdf = await this.caseService.getCourtRecordPdf(theCase)
 
     return res.end(pdf)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    CaseReadGuard,
+    CaseCourtRestrictionGuard,
+  )
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:caseId/ruling')
   @Header('Content-Type', 'application/pdf')
@@ -345,16 +344,6 @@ export class CaseController {
     @Res() res: Response,
   ): Promise<void> {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
-
-    if (
-      isInvestigationCase(theCase.type) &&
-      ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
-        (user.role === UserRole.REGISTRAR && user.id !== theCase.registrar?.id))
-    ) {
-      throw new ForbiddenException(
-        'Only the assigned judge and registrar can get the ruling pdf for investigation cases',
-      )
-    }
 
     const pdf = await this.caseService.getRulingPdf(theCase)
 
