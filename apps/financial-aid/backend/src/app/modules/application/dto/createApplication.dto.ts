@@ -21,11 +21,6 @@ export class CreateApplicationDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly nationalId: string
-
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
   readonly name: string
 
   @IsOptional()
