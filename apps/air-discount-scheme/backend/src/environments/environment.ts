@@ -35,7 +35,7 @@ const devConfig = {
       : 'https://identity-server.dev01.devland.is',
     audience: '@vegagerdin.is',
   },
-  idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
+  idsTokenCookieName: 'next-auth.session-token',
 }
 
 if (isProd) {
@@ -70,7 +70,7 @@ const prodConfig = {
       : '',
     audience: '@vegagerdin.is',
   },
-  idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
+  idsTokenCookieName: '__Secure-next-auth.session-token',
 }
 
 export default isProd ? prodConfig : devConfig

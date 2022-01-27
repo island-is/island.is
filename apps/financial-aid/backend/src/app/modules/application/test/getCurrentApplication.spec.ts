@@ -1,3 +1,4 @@
+import { User } from '@island.is/auth-nest-tools'
 import { firstDateOfMonth } from '@island.is/financial-aid/shared/lib'
 import { NotFoundException } from '@nestjs/common'
 import { Op } from 'sequelize'
@@ -10,7 +11,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (nationalId: string) => Promise<Then>
+type GivenWhenThen = (user: User) => Promise<Then>
 
 describe('ApplicationController - Get current application', () => {
   let givenWhenThen: GivenWhenThen
@@ -24,11 +25,11 @@ describe('ApplicationController - Get current application', () => {
 
     mockApplicationModel = applicationModel
 
-    givenWhenThen = async (nationalId: string): Promise<Then> => {
+    givenWhenThen = async (user: User): Promise<Then> => {
       const then = {} as Then
 
       await applicationController
-        .getCurrentApplication(nationalId)
+        .getCurrentApplication(user)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -37,13 +38,13 @@ describe('ApplicationController - Get current application', () => {
   })
 
   describe('database query', () => {
-    const nationalId = '0000000000'
+    const user = { nationalId: '0000000000' } as User
     let mockGetCurrentApplication: jest.Mock
 
     beforeEach(async () => {
       mockGetCurrentApplication = mockApplicationModel.findOne as jest.Mock
 
-      await givenWhenThen(nationalId)
+      await givenWhenThen(user)
     })
 
     it('should request staff by national id from the database', () => {
@@ -51,10 +52,10 @@ describe('ApplicationController - Get current application', () => {
         where: {
           [Op.or]: [
             {
-              nationalId,
+              nationalId: user.nationalId,
             },
             {
-              spouseNationalId: nationalId,
+              spouseNationalId: user.nationalId,
             },
           ],
           created: { [Op.gte]: firstDateOfMonth() },
@@ -65,13 +66,13 @@ describe('ApplicationController - Get current application', () => {
 
   describe('no application found', () => {
     let then: Then
-    const nationalId = '0000000000'
+    const user = { nationalId: '0000000000' } as User
 
     beforeEach(async () => {
       const mockFindById = mockApplicationModel.findOne as jest.Mock
       mockFindById.mockReturnValueOnce(null)
 
-      then = await givenWhenThen(nationalId)
+      then = await givenWhenThen(user)
     })
 
     it('should throw NotFoundException', () => {
@@ -81,7 +82,7 @@ describe('ApplicationController - Get current application', () => {
 
   describe('application found', () => {
     let then: Then
-    const nationalId = '0000000000'
+    const user = { nationalId: '0000000000' } as User
     const applicationId = uuid()
     const application = { id: applicationId } as ApplicationModel
 
@@ -89,7 +90,7 @@ describe('ApplicationController - Get current application', () => {
       const mockFindById = mockApplicationModel.findOne as jest.Mock
       mockFindById.mockReturnValueOnce(application)
 
-      then = await givenWhenThen(nationalId)
+      then = await givenWhenThen(user)
     })
 
     it('should return application id', () => {
@@ -99,13 +100,13 @@ describe('ApplicationController - Get current application', () => {
 
   describe('database query fails', () => {
     let then: Then
-    const nationalId = '0000000000'
+    const user = { nationalId: '0000000000' } as User
 
     beforeEach(async () => {
       const mockFindById = mockApplicationModel.findOne as jest.Mock
       mockFindById.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(nationalId)
+      then = await givenWhenThen(user)
     })
 
     it('should throw error', () => {

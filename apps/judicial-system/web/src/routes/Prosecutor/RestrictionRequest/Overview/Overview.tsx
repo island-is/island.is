@@ -18,6 +18,7 @@ import {
   PdfButton,
   FormContentContainer,
   CaseFileList,
+  CaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
   TIME_FORMAT,
@@ -110,7 +111,7 @@ export const Overview: React.FC = () => {
       notFound={caseNotFound}
     >
       <FormContentContainer>
-        <Box marginBottom={10}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(rcOverview.heading, {
               caseType: `${workingCase.parentCase ? 'framlengingu á ' : ''}${
@@ -121,6 +122,13 @@ export const Overview: React.FC = () => {
             })}
           </Text>
         </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
+        </Box>
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
@@ -128,6 +136,14 @@ export const Overview: React.FC = () => {
                 title: 'LÖKE málsnúmer',
                 value: workingCase.policeCaseNumber,
               },
+              ...(workingCase.courtCaseNumber
+                ? [
+                    {
+                      title: 'Málsnúmer héraðsdóms',
+                      value: workingCase.courtCaseNumber,
+                    },
+                  ]
+                : []),
               {
                 title: 'Dómstóll',
                 value: workingCase.court?.name,
@@ -139,6 +155,14 @@ export const Overview: React.FC = () => {
                   'Ekki skráð'
                 }`,
               },
+              ...(workingCase.judge
+                ? [
+                    {
+                      title: 'Dómari',
+                      value: workingCase.judge.name,
+                    },
+                  ]
+                : []),
               {
                 title: formatMessage(requestCourtDate.heading),
                 value: `${capitalize(
@@ -149,6 +173,14 @@ export const Overview: React.FC = () => {
                   TIME_FORMAT,
                 )}`,
               },
+              ...(workingCase.registrar
+                ? [
+                    {
+                      title: 'Dómritari',
+                      value: workingCase.registrar.name,
+                    },
+                  ]
+                : []),
               { title: 'Ákærandi', value: workingCase.prosecutor?.name },
               {
                 title: workingCase.parentCase
@@ -175,10 +207,18 @@ export const Overview: React.FC = () => {
                     )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
                   : 'Var ekki skráður',
               },
+              ...(workingCase.courtDate
+                ? [
+                    {
+                      title: 'Staðfestur fyrirtökutími',
+                      value: `${capitalize(
+                        formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
+                      )} kl. ${formatDate(workingCase.courtDate, TIME_FORMAT)}`,
+                    },
+                  ]
+                : []),
             ]}
-            accusedName={workingCase.accusedName}
-            accusedNationalId={workingCase.accusedNationalId}
-            accusedAddress={workingCase.accusedAddress}
+            defendants={workingCase.defendants ?? []}
             defender={{
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,

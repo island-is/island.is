@@ -255,6 +255,7 @@ export const UpdateApplicationMutation = gql`
       state
       formComment
       studentCustom
+      spouseNationalId
       rejection
       applicationEvents {
         id
