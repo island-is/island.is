@@ -337,5 +337,9 @@ export function formatDefenderRevokedEmailNotification(
 }
 
 export function stripHtmlTags(html: string): string {
-  return html.replace(/(?:<br \/>)/g, '\n').replace(/(?:<\/?strong>)/g, '')
+  return html
+    .replace(/(?:<br \/>)/g, '\n')
+    .replace(/(?:<\/?strong>)/g, '')
+    .replace(/(?:<a href=".*">)/g, '')
+    .replace(/(?:<\/a>)/g, '')
 }
