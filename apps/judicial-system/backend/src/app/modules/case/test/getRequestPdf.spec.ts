@@ -39,12 +39,13 @@ describe('CaseController - Get request pdf', () => {
   describe('pdf generated', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
+    const res = {} as Response
 
     beforeEach(async () => {
       const getMock = getRequestPdfAsBuffer as jest.Mock
       getMock
 
-      await givenWhenThen(caseId, theCase, {} as Response)
+      await givenWhenThen(caseId, theCase, res)
     })
 
     it('should generate pdf', () => {
@@ -52,6 +53,43 @@ describe('CaseController - Get request pdf', () => {
         theCase,
         undefined, // TODO Mock IntlService
       )
+    })
+  })
+
+  describe('pdf returned', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    const res = ({ end: jest.fn() } as unknown) as Response
+    const pdf = {}
+
+    beforeEach(async () => {
+      const getMock = getRequestPdfAsBuffer as jest.Mock
+      getMock.mockResolvedValueOnce(pdf)
+
+      await givenWhenThen(caseId, theCase, res)
+    })
+
+    it('should generate pdf', () => {
+      expect(res.end).toHaveBeenCalledWith(pdf)
+    })
+  })
+
+  describe('pdf generation fails', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    let then: Then
+    const res = {} as Response
+
+    beforeEach(async () => {
+      const getMock = getRequestPdfAsBuffer as jest.Mock
+      getMock.mockRejectedValueOnce(new Error('Some error'))
+
+      then = await givenWhenThen(caseId, theCase, res)
+    })
+
+    it('should throw Error', () => {
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toBe('Some error')
     })
   })
 })
