@@ -1,5 +1,6 @@
 import React, { FC, useEffect } from 'react'
 
+import { getAuthSettings } from '../userManager'
 import { useAuth } from './AuthContext'
 import AuthenticatorLoadingScreen from './AuthenticatorLoadingScreen'
 import { CheckIdpSession } from './CheckIdpSession'
@@ -11,6 +12,7 @@ interface Props {
 
 export const CheckAuth: FC<Props> = ({ autoLogin, checkLogin, children }) => {
   const { userInfo } = useAuth()
+  const authSettings = getAuthSettings()
 
   // Find existing authentication or start login flow.
   useEffect(() => {
@@ -22,7 +24,7 @@ export const CheckAuth: FC<Props> = ({ autoLogin, checkLogin, children }) => {
   const renderChildren = !autoLogin || userInfo
   return renderChildren ? (
     <>
-      <CheckIdpSession />
+      {!authSettings.scope?.includes('offline_access') && <CheckIdpSession />}
       {children}
     </>
   ) : (
