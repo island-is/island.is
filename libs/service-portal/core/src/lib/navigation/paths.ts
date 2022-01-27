@@ -22,6 +22,7 @@ export enum ServicePortalPath {
   SettingsPersonalInformationEditEmail = '/stillingar/personuupplysingar/breyta-netfangi',
   SettingsPersonalInformationEditLanguage = '/stillingar/personuupplysingar/breyta-tungumali',
   SettingsPersonalInformationEditNudge = '/stillingar/personuupplysingar/breyta-hnippi',
+  SettingsPersonalInformationEditBankInfo = '/stillingar/personuupplysingar/reikningsnumer',
   SettingsPersonalInformationEmailConfirmation = '/stillingar/personuupplysingar/stadfesta-netfang/:hash',
   SettingsExternal = 'https://minarsidur.island.is/minar-sidur/minn-adgangur/stillingar/',
   SettingsIslykill = '/stillingar/islykill',

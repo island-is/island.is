@@ -3,8 +3,8 @@ import { IsDate, IsOptional } from 'class-validator'
 
 @InputType()
 export class IsHealthInsuredInput {
-  @Field()
+  @Field({ nullable: true })
   @IsDate()
   @IsOptional()
-  date?: Date
+  date?: Date | null
 }

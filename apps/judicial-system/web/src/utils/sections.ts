@@ -1,5 +1,6 @@
 import { Case, CaseType, User } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 import {
   isAccusedStepValidRC,
   isCourtHearingArrangemenstStepValidRC,
@@ -202,8 +203,7 @@ export const getInvestigationCaseCourtSections = (
         name: 'Fyrirtökutími',
         href:
           (activeSubSection && activeSubSection > 1) ||
-          (hasCourtPermission(workingCase, user) &&
-            isOverviewStepValidIC(workingCase))
+          isOverviewStepValidIC(workingCase)
             ? `${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`
             : undefined,
       },
@@ -280,8 +280,7 @@ export const getCourtSections = (
         name: 'Fyrirtökutími',
         href:
           (activeSubSection && activeSubSection > 1) ||
-          (hasCourtPermission(workingCase, user) &&
-            isOverviewStepValidRC(workingCase))
+          isOverviewStepValidRC(workingCase)
             ? `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`
             : undefined,
       },

@@ -12,29 +12,42 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
 import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
+  CaseState,
+  CaseType,
+  UpdateDefendant,
+} from '@island.is/judicial-system/types'
 import { isAccusedStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { accused as m } from '@island.is/judicial-system-web/messages'
+import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
+import {
+  validateAndSendToServer,
+  validateAndSet,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   loading: boolean
   handleNextButtonClick: (theCase: Case) => void
+  updateDefendantState: (defendantId: string, update: UpdateDefendant) => void
 }
 
 export const StepOneForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, loading, handleNextButtonClick } = props
+  const {
+    workingCase,
+    setWorkingCase,
+    loading,
+    handleNextButtonClick,
+    updateDefendantState,
+  } = props
 
   const { formatMessage } = useIntl()
 
@@ -43,41 +56,19 @@ export const StepOneForm: React.FC<Props> = (props) => {
     setLeadInvestigatorErrorMessage,
   ] = useState<string>('')
 
-  const validations: FormSettings = {
-    policeCaseNumber: {
-      validations: ['empty', 'police-casenumber-format'],
-    },
-    accusedGender: {
-      validations: ['empty'],
-    },
-    accusedNationalId: {
-      validations: ['empty', 'national-id'],
-    },
-    accusedName: {
-      validations: ['empty'],
-    },
-    accusedAddress: {
-      validations: ['empty'],
-    },
-    defenderEmail: {
-      validations: ['email-format'],
-    },
-    defenderPhoneNumber: {
-      validations: ['phonenumber'],
-    },
-    sendRequestToDefender: {},
-    leadInvestigator: {
-      validations: workingCase.type === CaseType.CUSTODY ? ['empty'] : [],
-      errorMessage: leadInvestigatorErrorMessage,
-      setErrorMessage: setLeadInvestigatorErrorMessage,
-    },
-  }
+  const { updateDefendant } = useDefendants()
+  const { updateCase } = useCase()
 
-  const {
-    setField,
-    validateAndSendToServer,
-    setAndSendToServer,
-  } = useCaseFormHelper(workingCase, setWorkingCase, validations)
+  const handleUpdateDefendant = async (
+    defendantId: string,
+    updatedDefendant: UpdateDefendant,
+  ) => {
+    updateDefendantState(defendantId, updatedDefendant)
+
+    if (defendantId) {
+      updateDefendant(workingCase.id, defendantId, updatedDefendant)
+    }
+  }
 
   return (
     <>
@@ -102,22 +93,24 @@ export const StepOneForm: React.FC<Props> = (props) => {
             setWorkingCase={setWorkingCase}
           />
         </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.accusedInfo.heading)}
-            </Text>
+        {workingCase.defendants && (
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={2}>
+              <Text as="h3" variant="h3">
+                {formatMessage(m.sections.accusedInfo.heading)}
+              </Text>
+            </Box>
+            <DefendantInfo
+              defendant={workingCase.defendants[0]}
+              onChange={handleUpdateDefendant}
+              updateDefendantState={updateDefendantState}
+            />
           </Box>
-          <DefendantInfo
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-          />
-        </Box>
+        )}
         <Box component="section" marginBottom={7}>
           <DefenderInfo
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            setAndSendToServer={setAndSendToServer}
           />
         </Box>
         {workingCase.type === CaseType.CUSTODY && (
@@ -147,8 +140,27 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 value={workingCase.leadInvestigator || ''}
                 errorMessage={leadInvestigatorErrorMessage}
                 hasError={leadInvestigatorErrorMessage !== ''}
-                onChange={(event) => setField(event.target)}
-                onBlur={(event) => validateAndSendToServer(event.target)}
+                onChange={(evt) => {
+                  validateAndSet(
+                    'leadInvestigator',
+                    evt.target.value,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    leadInvestigatorErrorMessage,
+                    setLeadInvestigatorErrorMessage,
+                  )
+                }}
+                onBlur={(evt) =>
+                  validateAndSendToServer(
+                    'leadInvestigator',
+                    evt.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setLeadInvestigatorErrorMessage,
+                  )
+                }
                 required
               />
             </Box>

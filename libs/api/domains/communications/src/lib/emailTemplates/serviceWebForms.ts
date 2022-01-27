@@ -242,7 +242,7 @@ export const getTemplate = (
 
   return {
     from: {
-      name: 'Island.is communications',
+      name: input.name,
       address: environment.emailOptions.sendFrom,
     },
     replyTo: {
@@ -255,7 +255,7 @@ export const getTemplate = (
         address: toAddress,
       },
     ],
-    subject: `Fyrirspurn af þjónustuvef frá: "${input.name}"`,
+    subject: input.subject,
     text: input.message,
   }
 }

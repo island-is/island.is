@@ -150,6 +150,7 @@
     "express": "4.17.1",
     "express-validator": "6.4.1",
     "faker": "5.5.3",
+    "firebase-admin": "10.0.0",
     "folder-hash": "4.0.0",
     "font-awesome": "4.7.0",
     "form-data": "3.0.0",
