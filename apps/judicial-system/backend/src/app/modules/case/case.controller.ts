@@ -25,12 +25,7 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { IntegratedCourts } from '@island.is/judicial-system/consts'
-import {
-  CaseState,
-  CaseType,
-  isInvestigationCase,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
@@ -281,7 +276,6 @@ export class CaseController {
   })
   async getRequestPdf(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
@@ -291,7 +285,7 @@ export class CaseController {
 
     const pdf = await this.caseService.getRequestPdf(theCase)
 
-    return res.end(pdf)
+    res.end(pdf)
   }
 
   @UseGuards(
@@ -310,7 +304,6 @@ export class CaseController {
   })
   async getCourtRecordPdf(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
@@ -320,7 +313,7 @@ export class CaseController {
 
     const pdf = await this.caseService.getCourtRecordPdf(theCase)
 
-    return res.end(pdf)
+    res.end(pdf)
   }
 
   @UseGuards(
@@ -339,7 +332,6 @@ export class CaseController {
   })
   async getRulingPdf(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
@@ -347,7 +339,7 @@ export class CaseController {
 
     const pdf = await this.caseService.getRulingPdf(theCase)
 
-    return res.end(pdf)
+    res.end(pdf)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
@@ -382,7 +374,7 @@ export class CaseController {
 
     const pdf = await this.caseService.getCustodyPdf(theCase)
 
-    return res.end(pdf)
+    res.end(pdf)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)

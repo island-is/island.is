@@ -80,7 +80,7 @@ export const createTestingCaseModule = async () => {
 
   const sequelize = caseModule.get<Sequelize>(Sequelize)
 
-  const caseModel = await caseModule.get<typeof Case>(getModelToken(Case))
+  const caseModel = caseModule.get<typeof Case>(getModelToken(Case))
 
   const caseService = caseModule.get<CaseService>(CaseService)
 

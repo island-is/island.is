@@ -2,7 +2,11 @@ import { CanActivate } from '@nestjs/common'
 
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
-import { CaseExistsGuard, CaseReadGuard } from '../guards'
+import {
+  CaseCourtRestrictionGuard,
+  CaseExistsGuard,
+  CaseReadGuard,
+} from '../guards'
 import { CaseController } from '../case.controller'
 
 describe('CaseController - Get request pdf guards', () => {
@@ -16,8 +20,8 @@ describe('CaseController - Get request pdf guards', () => {
     )
   })
 
-  it('should have four guards', () => {
-    expect(guards).toHaveLength(4)
+  it('should have five guards', () => {
+    expect(guards).toHaveLength(5)
   })
 
   describe('JwtAuthGuard', () => {
@@ -65,6 +69,18 @@ describe('CaseController - Get request pdf guards', () => {
 
     it('should have CaseReadGuard as quard 4', () => {
       expect(guard).toBeInstanceOf(CaseReadGuard)
+    })
+  })
+
+  describe('CaseCourtRestrictionGuard', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = new guards[4]()
+    })
+
+    it('should have CaseCourtRestrictionGuard as quard 5', () => {
+      expect(guard).toBeInstanceOf(CaseCourtRestrictionGuard)
     })
   })
 })
