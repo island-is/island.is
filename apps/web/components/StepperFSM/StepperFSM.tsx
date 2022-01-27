@@ -407,7 +407,7 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
       {/* {currentStepType === STEP_TYPES.ANSWER && <Text>Render Answer...</Text>} */}
 
       {!isOnFirstStep && (
-        <Box marginTop={6}>
+        <Box marginTop={10}>
           <Text variant="h3" marginBottom={2}>
             {activeLocale === 'is' ? 'Svörin þín' : 'Your answers'}
           </Text>
