@@ -37,6 +37,9 @@ export const ButtonBar = () => {
           </Button>
         </Box>
       )}
+      {/*
+      // This button has been moved into the small
+      // Save/Delete button-bar at the top
 
       {actions.propose && (
         <Box className={s.propose}>
@@ -49,6 +52,7 @@ export const ButtonBar = () => {
           </Button>
         </Box>
       )}
+      */}
     </Box>
   )
 }
