@@ -23,9 +23,9 @@ import { InputSection } from './components/InputSection'
 import { InputEmail } from './components/Inputs/Email'
 import { InputPhone } from './components/Inputs/Phone'
 import { DropModal } from './components/DropModal'
-import { LanguageForm } from '../LanguageForm'
 import { BankInfoForm } from '../BankInfoForm'
 import { Nudge } from './components/Inputs/Nudge'
+import { FormValues } from './types/form'
 import { useForm } from 'react-hook-form'
 import * as styles from './ProfileForm.css'
 
@@ -48,8 +48,6 @@ export const ProfileForm: FC<Props> = ({
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
   const [bankInfo, setBankInfo] = useState('')
-  const [confirmedEmail, setConfirmedEmail] = useState(false)
-  const [confirmedPhone, setConfirmedPhone] = useState(false)
 
   const { data: userProfile, loading: userLoading } = useUserProfile()
 
@@ -59,11 +57,10 @@ export const ProfileForm: FC<Props> = ({
       tel: '',
       bankInfo: '',
       nudge: false,
-      language: '',
     },
   })
 
-  const { handleSubmit, formState, reset } = hookFormData
+  const { handleSubmit, getValues, reset } = hookFormData
 
   useEffect(() => {
     reset({
@@ -72,7 +69,6 @@ export const ProfileForm: FC<Props> = ({
       ...(showDetails && {
         bankInfo: userProfile?.bankInfo || '',
         nudge: !!userProfile?.canNudge,
-        language: userProfile?.locale || '',
       }),
     })
   }, [userProfile])
@@ -117,35 +113,32 @@ export const ProfileForm: FC<Props> = ({
 
   const { pathname } = useLocation()
 
-  const submitFormData = async (data: any) => {
+  const submitFormData = async (data: FormValues) => {
     try {
       if (userProfile) {
         await updateUserProfile({
-          email: data.email,
-          mobilePhoneNumber: `+354-${data.tel}`,
-          locale: data?.language,
-          canNudge: data?.nudge,
-          bankInfo: formatBankInfo(data?.bankInfo || ''),
+          ...data,
         })
-        // TODO: Need something in the UI onComplete to notify user of success.
       } else {
         await createUserProfile({
-          email,
-          mobilePhoneNumber: `+354-${data.tel}`,
-          locale: data?.language,
+          ...data,
         })
       }
-      if (pathname) {
+      if (pathname && !showDetails) {
         servicePortalSubmitOnBoardingModal(pathname)
       }
     } catch (err) {
+      // TODO: REMOVE TOAST. PUT FORM ERROR INSTEAD.
       toast.error(
         'Eitthvað fór úrskeiðis, ekki tókst að uppfæra notendaupplýsingar þínar',
       )
     }
   }
 
-  const { dirtyFields } = formState
+  console.log(
+    'userProfileuserProfileuserProfileuserProfileuserProfile',
+    userProfile,
+  )
 
   return (
     <GridContainer>
@@ -153,15 +146,6 @@ export const ProfileForm: FC<Props> = ({
         <GridColumn span={['12/12', '7/12']}>
           <OnboardingIntro name={title || ''} />
           <form onSubmit={handleSubmit(submitFormData)}>
-            {showDetails && (
-              <InputSection
-                title={formatMessage(m.language)}
-                text="Hér getur þú gert breytingar á því tungumáli sem þú vilt nota í kerfum island.is"
-                loading={userLoading}
-              >
-                <LanguageForm hookFormData={hookFormData} />
-              </InputSection>
-            )}
             <InputSection
               title={formatMessage(m.email)}
               text="Vinsamlega settu inn netfangið þitt. Við komum til með að senda á þig staðfestingar og tilkynningar."
@@ -174,7 +158,10 @@ export const ProfileForm: FC<Props> = ({
                 })}
                 email={email}
                 hookFormData={hookFormData}
-                onValid={(val) => setConfirmedEmail(val)}
+                onValid={(val) => {
+                  submitFormData({ email: val })
+                  setEmail(val)
+                }}
               />
             </InputSection>
             <InputSection
@@ -189,7 +176,10 @@ export const ProfileForm: FC<Props> = ({
                 })}
                 mobile={tel}
                 hookFormData={hookFormData}
-                onValid={(val) => setConfirmedPhone(val)}
+                onValid={(val) => {
+                  submitFormData({ tel: val })
+                  setTel(val)
+                }}
               />
             </InputSection>
             {showDetails && (
@@ -204,7 +194,11 @@ export const ProfileForm: FC<Props> = ({
                 })}
                 loading={userLoading}
               >
-                <BankInfoForm bankInfo={bankInfo} hookFormData={hookFormData} />
+                <BankInfoForm
+                  onSave={(val) => submitFormData({ bankInfo: val })}
+                  bankInfo={bankInfo}
+                  hookFormData={hookFormData}
+                />
               </InputSection>
             )}
             {showDetails && (
@@ -220,27 +214,12 @@ export const ProfileForm: FC<Props> = ({
                   `,
                 })}
               >
-                <Nudge hookFormData={hookFormData} />
+                <Nudge
+                  onSave={(val) => submitFormData({ canNudge: val })}
+                  hookFormData={hookFormData}
+                />
               </InputSection>
             )}
-            <Box
-              paddingTop={4}
-              display="flex"
-              alignItems="flexEnd"
-              flexDirection="column"
-            >
-              <Button
-                icon="checkmark"
-                disabled={
-                  (dirtyFields.email && !confirmedEmail) ||
-                  (dirtyFields.tel && !confirmedPhone) ||
-                  (!tel && !email)
-                }
-                type="submit"
-              >
-                {formatMessage(m.saveInfo)}
-              </Button>
-            </Box>
           </form>
         </GridColumn>
         <GridColumn className={styles.endGrid} span={['12/12', '5/12']}>

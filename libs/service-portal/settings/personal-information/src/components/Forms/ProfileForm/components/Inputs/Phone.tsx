@@ -23,7 +23,7 @@ interface Props {
   buttonText: string
   mobile?: string
   hookFormData: HookFormType
-  onValid: (val: boolean) => void
+  onValid: (val: string) => void
 }
 
 interface FormErrors {
@@ -78,7 +78,7 @@ export const InputPhone: FC<Props> = ({
 
     try {
       const formValues = getValues()
-      const telValue = formValues?.tel
+      const telValue = formValues?.tel ?? ''
 
       const response = await createSmsVerification({
         mobilePhoneNumber: parseNumber(telValue),
@@ -88,7 +88,6 @@ export const InputPhone: FC<Props> = ({
         setTelVerifyCreated(true)
         setTelToVerify(telValue)
         setVerificationValid(false)
-        onValid(false)
         setErrors({ ...formErrors, mobile: undefined })
       } else {
         setErrors({ ...formErrors, mobile: telError })
@@ -122,7 +121,7 @@ export const InputPhone: FC<Props> = ({
         const telValue = formValues?.tel
         if (telValue === telToVerify) {
           setVerificationValid(true)
-          onValid(true)
+          onValid(telToVerify)
         }
         setErrors({ ...formErrors, code: undefined })
       } else {

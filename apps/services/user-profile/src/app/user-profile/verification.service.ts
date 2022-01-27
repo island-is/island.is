@@ -72,6 +72,7 @@ export class VerificationService {
       },
     )
 
+    // console.log('emailCode', emailCode)
     if (record) {
       this.sendConfirmationEmail(record)
     }

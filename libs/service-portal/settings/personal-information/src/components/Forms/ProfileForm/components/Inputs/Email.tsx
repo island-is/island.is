@@ -13,14 +13,17 @@ import {
   LoadingDots,
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
-import { useVerifyEmail } from '@island.is/service-portal/graphql'
+import {
+  useVerifyEmail,
+  useResendEmailVerification,
+} from '@island.is/service-portal/graphql'
 import { HookFormType } from '../../types/form'
 
 interface Props {
   buttonText: string
   email?: string
   hookFormData: HookFormType
-  onValid: (val: boolean) => void
+  onValid: (val: string) => void
 }
 
 interface FormErrors {
@@ -43,6 +46,7 @@ export const InputEmail: FC<Props> = ({
     loading: codeLoading,
     createLoading,
   } = useVerifyEmail()
+  const { resendEmailVerification } = useResendEmailVerification()
   const [emailInternal, setEmailInternal] = useState(email)
   const [emailToVerify, setEmailToVerify] = useState(email || '')
 
@@ -75,7 +79,7 @@ export const InputEmail: FC<Props> = ({
 
     try {
       const formValues = getValues()
-      const emailValue = formValues?.email
+      const emailValue = formValues?.email ?? ''
 
       const response = await createEmailVerification({
         email: emailValue,
@@ -85,7 +89,6 @@ export const InputEmail: FC<Props> = ({
         setEmailVerifyCreated(true)
         setEmailToVerify(emailValue)
         setVerificationValid(false)
-        onValid(false)
         setErrors({ ...formErrors, email: undefined })
       } else {
         setErrors({ ...formErrors, email: emailError })
@@ -119,7 +122,7 @@ export const InputEmail: FC<Props> = ({
         const emailValue = formValues?.email
         if (emailValue === emailToVerify) {
           setVerificationValid(true)
-          onValid(true)
+          onValid(emailToVerify)
         }
         setErrors({ ...formErrors, code: undefined })
       } else {
@@ -246,6 +249,34 @@ export const InputEmail: FC<Props> = ({
                     </Button>
                   ))}
                 {codeLoading && <LoadingDots />}
+              </Box>
+            </Column>
+          </Columns>
+          <Columns>
+            <Column width="9/12">
+              <Box display="flex" alignItems="center" marginTop={1}>
+                <Box marginRight={1}>
+                  <Text variant="medium">
+                    {formatMessage({
+                      id: 'sp.settings:did-you-not-receive-an-email',
+                      defaultMessage: 'Fékkstu ekki staðfestingarpóst?',
+                    })}
+                  </Text>
+                </Box>
+                <Button
+                  variant="text"
+                  size="small"
+                  onClick={() => {
+                    trigger('email').then((ok) =>
+                      handleSendEmailVerification(ok),
+                    )
+                  }}
+                >
+                  {formatMessage({
+                    id: 'sp.settings:resend',
+                    defaultMessage: 'Endursenda',
+                  })}
+                </Button>
               </Box>
             </Column>
           </Columns>
