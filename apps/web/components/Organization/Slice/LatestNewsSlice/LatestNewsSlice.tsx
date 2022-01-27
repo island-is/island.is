@@ -1,10 +1,6 @@
 import React from 'react'
 import { LatestNewsSlice as LatestNewsSliceSchema } from '@island.is/web/graphql/schema'
-import {
-  LatestNewsSection,
-  NewsItems,
-  Section,
-} from '@island.is/web/components'
+import { NewsItems } from '@island.is/web/components'
 import { Box } from '@island.is/island-ui/core'
 
 interface SliceProps {
@@ -19,6 +15,7 @@ export const LatestNewsSlice: React.FC<SliceProps> = ({
   return (
     <Box
       component="section"
+      background="purple100"
       paddingTop={[5, 5, 8]}
       paddingBottom={[2, 2, 5]}
       aria-labelledby="categories-title"
