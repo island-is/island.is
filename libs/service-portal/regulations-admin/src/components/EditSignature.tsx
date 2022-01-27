@@ -357,7 +357,7 @@ export const EditSignature = () => {
                   label={t(msg.ministry)}
                   value={draft.ministry.value || ''}
                   placeholder={t(msg.ministryPlaceholder)}
-                  hasError={!!draft.ministry.error && draft.ministry.showError}
+                  hasError={!!draft.ministry.error && !draft.ministry.hideError}
                   errorMessage={t(draft.ministry.error)}
                   name="_rn"
                   size="sm"
