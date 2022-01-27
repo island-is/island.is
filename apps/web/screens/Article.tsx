@@ -366,6 +366,8 @@ const ArticleScreen: Screen<ArticleProps> = ({
   const organizationTitle = article.organization[0]?.title
   const organizationShortTitle = article.organization[0]?.shortTitle
 
+  console.log(article)
+
   return (
     <>
       <HeadWithSocialSharing
@@ -466,7 +468,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
           )}
         </Box>
         <Box>
-          <Text variant="h1" as="h1">
+          <Text color="blue400" variant="h1" as="h1">
             <span id={slugify(article.title)} className="rs_read">
               {article.title}
             </span>
@@ -502,15 +504,24 @@ const ArticleScreen: Screen<ArticleProps> = ({
               </GridColumn>
             </GridRow>
           )}
-          {subArticle && (
+          {subArticle && !subArticle.stepper && (
             <Text variant="h2" as="h2" paddingTop={7}>
               <span id={slugify(subArticle.title)} className="rs_read">
                 {subArticle.title}
               </span>
             </Text>
           )}
+          {subArticle && subArticle.stepper && (
+            <Text color="dark300" variant="h3" as="h3" paddingTop={7}>
+              <span id={slugify(subArticle.title)} className="rs_read">
+                {subArticle.title}
+              </span>
+            </Text>
+          )}
         </Box>
-        <Box paddingTop={subArticle ? 2 : 4}>
+        <Box
+          paddingTop={subArticle && subArticle.stepper ? 0 : subArticle ? 2 : 4}
+        >
           <Box className="rs_read">
             {richText(
               (subArticle ?? article).body as SliceType[],

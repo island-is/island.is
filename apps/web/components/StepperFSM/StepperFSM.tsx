@@ -323,6 +323,7 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
 
   const QuestionTitle = () => (
     <Box
+      marginBottom={3}
       onClick={(ev) => {
         // If the user triple clicks on the question title, we enable the helper if we're not in production
         // TODO: Consider using quintuple click instead of triple click.
@@ -406,7 +407,7 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
       {/* {currentStepType === STEP_TYPES.ANSWER && <Text>Render Answer...</Text>} */}
 
       {!isOnFirstStep && (
-        <Box marginTop={3}>
+        <Box marginTop={6}>
           <Text variant="h3" marginBottom={2}>
             {activeLocale === 'is' ? 'Svörin þín' : 'Your answers'}
           </Text>
