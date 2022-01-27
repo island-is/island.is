@@ -7,6 +7,12 @@ export interface FormValues {
   canNudge?: boolean
 }
 
+export interface BankInfoTypes {
+  bank: string
+  l: string
+  account: string
+}
+
 export type DropModalType = 'tel' | 'mail' | 'all' | undefined
 export type DataLoadingType = 'EMAIL' | 'TEL' | 'BANKINFO' | 'NUDGE' | undefined
 
