@@ -1,5 +1,3 @@
-import { getStaticEnv } from '@island.is/shared/utils'
-
 const isProd = process.env.NODE_ENV === 'production'
 
 if (isProd) {
@@ -39,7 +37,7 @@ const prodConfig = {
     admins: process.env.ADMINS,
   },
   identityServerAuth: {
-    issuer: isProd ? getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL') : '',
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '@vegagerdin.is',
   },
   auth: {

@@ -12,9 +12,9 @@ const devConfig = {
 
 const prodConfig = {
   production: true,
-  NEXTAUTH_URL: process.env.SI_PUBLIC_NEXTAUTH_URL,
-  identityServerLogoutURL: process.env.SI_PUBLIC_NEXTAUTH_URL,
-  identityServerDomain: process.env.SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN,
+  NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+  identityServerLogoutURL: process.env.NEXTAUTH_URL,
+  identityServerDomain: process.env.IDENTITY_SERVER_ISSUER_DOMAIN,
   identityServerSecret: process.env.IDENTITY_SERVER_SECRET,
   idsTokenCookieName: '__Secure-next-auth.session-token',
   csrfCookieName: '__Host-next-auth.csrf-token',

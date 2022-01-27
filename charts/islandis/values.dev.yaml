@@ -5,8 +5,8 @@ air-discount-scheme-api:
     BACKEND_URL: 'http://web-air-discount-scheme-backend'
     CONTENTFUL_HOST: 'preview.contentful.com'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     SERVERSIDE_FEATURES_ON: ''
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -60,9 +60,9 @@ air-discount-scheme-backend:
     DB_NAME: 'air_discount_scheme_backend'
     DB_USER: 'air_discount_scheme_backend'
     ENVIRONMENT: 'dev'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -126,9 +126,9 @@ air-discount-scheme-web:
   enabled: true
   env:
     API_URL: 'http://web-air-discount-scheme-api'
+    IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
+    NEXTAUTH_URL: 'https://loftbru.dev01.devland.is'
     SERVERSIDE_FEATURES_ON: ''
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
-    SI_PUBLIC_NEXTAUTH_URL: 'https://loftbru.dev01.devland.is'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
