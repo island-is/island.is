@@ -15,9 +15,11 @@ export const bg = style({
 
 export const illustration = style({
   position: 'relative',
-  opacity: 0.05,
-  width: 1300,
+  opacity: 0.15,
+  width: 1344,
+  height: 561,
   left: '-30%',
+  top: 150,
   ...themeUtils.responsiveStyle({
     md: {
       left: 'initial',
@@ -26,5 +28,5 @@ export const illustration = style({
 })
 
 export const small = style({
-  top: 250,
+  top: 400,
 })

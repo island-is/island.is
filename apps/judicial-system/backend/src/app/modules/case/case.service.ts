@@ -35,6 +35,7 @@ import {
   writeFile,
   getRulingPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
+  stripHtmlTags,
 } from '../../formatters'
 import { notificationMessages as m } from '../../messages'
 import { FileService } from '../file/file.service'
@@ -227,7 +228,7 @@ export class CaseService {
         subject: formatMessage(m.signedRuling.subject, {
           courtCaseNumber,
         }),
-        text: body,
+        text: stripHtmlTags(body),
         html: body,
         attachments: signedRulingPdf
           ? [
@@ -289,10 +290,14 @@ export class CaseService {
           ? this.formatMessage(m.signedRuling.prosecutorBodyS3, {
               courtCaseNumber: theCase.courtCaseNumber,
               courtName: theCase.court?.name?.replace('dómur', 'dómi'),
+              linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+              linkEnd: '</a>',
             })
           : this.formatMessage(m.signedRuling.prosecutorBodyAttachment, {
               courtName: theCase.court?.name,
               courtCaseNumber: theCase.courtCaseNumber,
+              linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+              linkEnd: '</a>',
             }),
         this.formatMessage,
         theCase.courtCaseNumber,
