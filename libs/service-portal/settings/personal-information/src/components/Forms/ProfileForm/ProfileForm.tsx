@@ -12,6 +12,7 @@ import { DropModal } from './components/DropModal'
 import { BankInfoForm } from '../BankInfoForm'
 import { Nudge } from './components/Inputs/Nudge'
 import { DropModalType } from './types/form'
+import { stripBankInfo } from '../../../utils/bankInfoHelper'
 
 interface Props {
   onCloseOverlay?: () => void
@@ -101,7 +102,9 @@ export const ProfileForm: FC<Props> = ({
               loading={userLoading}
             >
               {!userLoading && (
-                <BankInfoForm bankInfo={userProfile?.bankInfo || ''} />
+                <BankInfoForm
+                  bankInfo={stripBankInfo(userProfile?.bankInfo || '')}
+                />
               )}
             </InputSection>
           )}

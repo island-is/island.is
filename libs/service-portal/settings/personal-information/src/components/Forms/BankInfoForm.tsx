@@ -7,6 +7,7 @@ import {
   Icon,
   LoadingDots,
 } from '@island.is/island-ui/core'
+import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
 import { formatBankInfo } from '../../utils/bankInfoHelper'
 import { InputController } from '@island.is/shared/form-fields'
@@ -22,17 +23,18 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
   const { formatMessage } = useLocale()
   const { control, handleSubmit, errors } = useForm()
   const [inputSuccess, setInputSuccess] = useState<boolean>(false)
+  const [submitError, setSubmitError] = useState<string>()
 
   const { updateOrCreateUserProfile, loading } = useUpdateOrCreateUserProfile()
 
   const submitFormData = async (data: { bankInfo: string }) => {
     try {
+      setSubmitError(undefined)
       await updateOrCreateUserProfile({
         bankInfo: formatBankInfo(data.bankInfo),
-      })
-      setInputSuccess(true)
+      }).then(() => setInputSuccess(true))
     } catch (err) {
-      // TODO: PUT FORM ERROR.
+      setSubmitError(formatMessage(m.somethingWrong))
     }
   }
 
@@ -48,7 +50,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
             placeholder="0000-00-000000"
             label="Reikningsupplýsingar"
             defaultValue={bankInfo}
-            error={errors.bankInfo?.message}
+            error={errors.bankInfo?.message || submitError}
             required={false}
             disabled={inputSuccess}
             size="xs"

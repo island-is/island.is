@@ -10,3 +10,10 @@ export const formatBankInfo = (bankInfo: string) => {
 
   return ''
 }
+
+export const stripBankInfo = (bankInfo: string) => {
+  if (bankInfo) {
+    return bankInfo.replace(/-/g, '')
+  }
+  return ''
+}

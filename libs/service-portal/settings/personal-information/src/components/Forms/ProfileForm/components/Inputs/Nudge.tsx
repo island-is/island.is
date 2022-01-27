@@ -10,6 +10,7 @@ import {
   LoadingDots,
   Checkbox,
 } from '@island.is/island-ui/core'
+import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Controller, useForm } from 'react-hook-form'
@@ -23,17 +24,18 @@ export const Nudge: FC<Props> = ({ canNudge }) => {
   const { formatMessage } = useLocale()
   const { control, handleSubmit } = useForm()
   const [inputSuccess, setInputSuccess] = useState<boolean>(false)
+  const [submitError, setSubmitError] = useState<string>()
 
   const { updateOrCreateUserProfile, loading } = useUpdateOrCreateUserProfile()
 
   const submitFormData = async (data: { canNudge: boolean }) => {
     try {
+      setSubmitError(undefined)
       await updateOrCreateUserProfile({
         canNudge: data.canNudge,
-      })
-      setInputSuccess(true)
+      }).then(() => setInputSuccess(true))
     } catch (err) {
-      // TODO: PUT FORM ERROR.
+      setSubmitError(formatMessage(m.somethingWrong))
     }
   }
 
