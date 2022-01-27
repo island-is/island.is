@@ -388,6 +388,10 @@ export const errorMsgs = defineMessages({
     id: 'ap.regulations-admin:error-field-required',
     defaultMessage: 'Þessi reitur má ekki vera tómur',
   },
+  htmlWarnings: {
+    id: 'ap.regulations-admin:error-html-warnings',
+    defaultMessage: 'Villur í uppsetningu/innihaldi texta',
+  },
   ministryUnknown: {
     id: 'ap.regulations-admin:error-ministry-unknown',
     defaultMessage: 'Nafn ráðuneytis er óþekkt',

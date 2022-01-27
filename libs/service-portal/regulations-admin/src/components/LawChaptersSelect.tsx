@@ -48,6 +48,7 @@ type LawChaptersSelectProps = {
   activeChapters: ReadonlyArray<LawChapterSlug>
   addChapter: (slug: LawChapterSlug) => void
   removeChapter: (slug: LawChapterSlug) => void
+  error?: string
 }
 
 export const LawChaptersSelect = (props: LawChaptersSelectProps) => {

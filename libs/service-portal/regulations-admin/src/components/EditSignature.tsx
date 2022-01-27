@@ -357,7 +357,7 @@ export const EditSignature = () => {
                   label={t(msg.ministry)}
                   value={draft.ministry.value || ''}
                   placeholder={t(msg.ministryPlaceholder)}
-                  hasError={!!draft.ministry.error && !draft.ministry.hideError}
+                  hasError={!!draft.ministry.error && draft.ministry.showError}
                   errorMessage={t(draft.ministry.error)}
                   name="_rn"
                   size="sm"
@@ -380,7 +380,7 @@ export const EditSignature = () => {
                 )}
                 selected={draft.idealPublishDate.value}
                 handleChange={(date: Date) =>
-                  updateState('idealPublishDate', date, true)
+                  updateState('idealPublishDate', date)
                 }
                 hasError={!!draft.idealPublishDate.error}
                 errorMessage={t(draft.idealPublishDate.error)}
