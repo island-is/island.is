@@ -143,7 +143,7 @@ export const ProfileForm: FC<Props> = ({
   return (
     <GridContainer>
       <GridRow marginBottom={10}>
-        <GridColumn span={['12/12', '7/12']}>
+        <GridColumn span={['12/12', '9/12']}>
           <OnboardingIntro name={title || ''} />
           <form onSubmit={handleSubmit(submitFormData)}>
             <InputSection
@@ -221,13 +221,6 @@ export const ProfileForm: FC<Props> = ({
               </InputSection>
             )}
           </form>
-        </GridColumn>
-        <GridColumn className={styles.endGrid} span={['12/12', '5/12']}>
-          <img
-            src="assets/images/digitalServices.svg"
-            width="80%"
-            alt="Skrautmynd"
-          />
           {showDropModal && onCloseOverlay && (
             <DropModal
               type={showDropModal}
