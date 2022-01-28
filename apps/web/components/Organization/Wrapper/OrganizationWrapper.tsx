@@ -45,6 +45,8 @@ import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 import { useRouter } from 'next/router'
 import * as styles from './OrganizationWrapper.css'
 import { LayoutProps } from '@island.is/web/layouts/main'
+import { AlertBanner as AlertBannerSchema } from '@island.is/web/graphql/schema'
+import { OrganizationAlert } from '../OrganizationAlert/OrganizationAlert'
 
 interface NavigationData {
   title: string
@@ -66,6 +68,7 @@ interface WrapperProps {
   minimal?: boolean
   showSecondaryMenu?: boolean
   showExternalLinks?: boolean
+  alertBanner?: AlertBannerSchema
 }
 
 interface HeaderProps {
@@ -278,6 +281,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   minimal = false,
   showSecondaryMenu = true,
   showExternalLinks = false,
+  alertBanner,
 }) => {
   const router = useRouter()
 
@@ -310,6 +314,13 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
       />
       <OrganizationHeader organizationPage={organizationPage} />
       <Main>
+        {alertBanner && (
+          <OrganizationAlert
+            alertBanner={alertBanner}
+            centered={true}
+            marginTop={10}
+          />
+        )}
         {!minimal && (
           <SidebarLayout
             paddingTop={[2, 2, 9]}

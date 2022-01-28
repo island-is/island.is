@@ -5,9 +5,11 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   Query,
+  QueryGetAlertBannerArgs,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
+import { GET_ALERT_BANNER_QUERY } from '../queries/AlertBanner'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
@@ -17,6 +19,7 @@ import {
   OrganizationWrapper,
   SearchBox,
 } from '@island.is/web/components'
+import { AlertBanner as AlertBannerSchema } from '@island.is/web/graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -26,6 +29,7 @@ const { publicRuntimeConfig } = getConfig()
 interface HomeProps {
   organizationPage: Query['getOrganizationPage']
   namespace: Query['getNamespace']
+  alertBanner?: AlertBannerSchema
 }
 
 const WITH_SEARCH = [
@@ -39,7 +43,11 @@ const WITH_SEARCH = [
   'directorate-of-immigration',
 ]
 
-const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
+const Home: Screen<HomeProps> = ({
+  organizationPage,
+  namespace,
+  alertBanner,
+}) => {
   const { disableSyslumennPage: disablePage } = publicRuntimeConfig
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
@@ -62,6 +70,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
 
   return (
     <OrganizationWrapper
+      alertBanner={alertBanner}
       showExternalLinks={true}
       pageTitle={organizationPage.title}
       pageDescription={organizationPage.description}
@@ -116,6 +125,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
       data: { getOrganizationPage },
     },
     namespace,
+    alertBanner,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
@@ -141,6 +151,17 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
+    apolloClient
+      .query<Query, QueryGetAlertBannerArgs>({
+        query: GET_ALERT_BANNER_QUERY,
+        variables: {
+          input: {
+            id: '32AIDOteYkmQ14MKwoD6z8',
+            lang: locale,
+          },
+        },
+      })
+      .then((res) => res.data.getAlertBanner),
   ])
 
   if (!getOrganizationPage) {
@@ -150,6 +171,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   return {
     organizationPage: getOrganizationPage,
     namespace,
+    alertBanner,
     showSearchInHeader: false,
     ...getThemeConfig(getOrganizationPage.theme),
   }

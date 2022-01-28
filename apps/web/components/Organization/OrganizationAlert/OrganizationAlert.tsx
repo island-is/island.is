@@ -1,23 +1,52 @@
-import React from 'react'
-import { AlertBanner, AlertBannerVariants } from '@island.is/island-ui/core'
+import React, { useState } from 'react'
 import {
-  AlertBanner as AlertBannerSchema,
-  OrganizationPage,
-} from '@island.is/web/graphql/schema'
+  AlertBanner,
+  AlertBannerVariants,
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  ResponsiveSpace,
+} from '@island.is/island-ui/core'
+import { AlertBanner as AlertBannerSchema } from '@island.is/web/graphql/schema'
 import { linkResolver, LinkType } from '@island.is/web/hooks'
 import { stringHash } from '@island.is/web/utils/stringHash'
 import Cookies from 'js-cookie'
 
 interface OrganizationAlertProps {
   alertBanner: AlertBannerSchema
-  organizationPage: OrganizationPage
+  centered?: boolean
+  marginTop?: ResponsiveSpace
 }
 
-export const OrganizationAlert = ({ alertBanner }: OrganizationAlertProps) => {
-  const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
+interface CenterContainerProps {
+  marginTop?: ResponsiveSpace
+}
 
-  const shouldShowAlert =
-    !Cookies.get(alertBannerId) && alertBanner.showAlertBanner
+const CenterContainer: React.FC<CenterContainerProps> = ({
+  children,
+  marginTop,
+}) => {
+  return (
+    <GridContainer>
+      <GridRow marginTop={marginTop}>
+        <GridColumn span={['12/12', '12/12', '12/12', '12/12', '11/12']}>
+          {children}
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
+  )
+}
+
+export const OrganizationAlert = ({
+  alertBanner,
+  centered,
+  marginTop,
+}: OrganizationAlertProps) => {
+  const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
+  const [shouldShowAlert, setShouldShowAlert] = useState(
+    !Cookies.get(alertBannerId) && alertBanner.showAlertBanner,
+  )
 
   if (!shouldShowAlert) return null
 
@@ -36,9 +65,10 @@ export const OrganizationAlert = ({ alertBanner }: OrganizationAlertProps) => {
     Cookies.set(alertBannerId, 'hide', {
       expires: alertBanner.dismissedForDays,
     })
+    setShouldShowAlert(false)
   }
 
-  return (
+  const bannerComponent = (
     <AlertBanner
       title={alertBanner.title}
       description={alertBanner.description}
@@ -47,5 +77,11 @@ export const OrganizationAlert = ({ alertBanner }: OrganizationAlertProps) => {
       dismissable={alertBanner.isDismissable}
       onDismiss={handleDismiss}
     />
+  )
+
+  return centered ? (
+    <CenterContainer marginTop={marginTop}>{bannerComponent}</CenterContainer>
+  ) : (
+    <Box marginTop={marginTop}>{bannerComponent}</Box>
   )
 }
