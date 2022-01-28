@@ -123,6 +123,7 @@ export const UploadedImage = ({
   return (
     <Box
       ref={ref}
+      marginBottom={2}
       borderWidth="standard"
       background={statusColor(file.status)}
       borderColor={statusColorDarker(file.status)}
@@ -152,9 +153,9 @@ export const UploadedImage = ({
             borderRadius="standard"
             background={statusColorDarker(file.status)}
           >
-            {file.status === 'done' && (
+            {presignedUrl && file.status === 'done' && (
               <img
-                src={presignedUrl?.getAttachmentPresignedURL?.url}
+                src={presignedUrl.getAttachmentPresignedURL?.url}
                 alt="mynd"
                 className={styles.image}
               />
