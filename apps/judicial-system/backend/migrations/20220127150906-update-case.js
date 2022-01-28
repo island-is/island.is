@@ -7,7 +7,7 @@ module.exports = {
         'case',
         'case_modified_explanation',
         {
-          type: Sequelize.STRING,
+          type: Sequelize.TEXT,
           allowNull: true,
         },
         { transaction: t },

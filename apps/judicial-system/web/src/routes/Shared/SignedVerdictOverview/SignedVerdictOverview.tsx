@@ -37,14 +37,11 @@ import {
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
   capitalize,
   formatDate,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
@@ -79,6 +76,10 @@ export const SignedVerdictOverview: React.FC = () => {
     courtRecordSignatureConfirmationResponse,
     setCourtRecordSignatureConfirmationResponse,
   ] = useState<SignatureConfirmationResponse>()
+  const [
+    caseModifiedExplination,
+    setCaseModifiedExplination,
+  ] = useState<string>('')
   const [
     caseModifiedExplinationErrorMessage,
     setCaseModifiedExplinationErrorMessage,
@@ -356,7 +357,11 @@ export const SignedVerdictOverview: React.FC = () => {
       ? formatISO(alteredIsolationToDate, { representation: 'complete' })
       : undefined
 
-    if (formattedValidToDate || formattedIsolationToDate) {
+    if (
+      formattedValidToDate ||
+      formattedIsolationToDate ||
+      caseModifiedExplination
+    ) {
       setWorkingCase({
         ...workingCase,
         validToDate: formattedValidToDate || workingCase.validToDate,
@@ -368,6 +373,11 @@ export const SignedVerdictOverview: React.FC = () => {
         validToDate: formattedValidToDate || workingCase.validToDate,
         isolationToDate:
           formattedIsolationToDate || workingCase.isolationToDate,
+        caseModifiedExplanation: `${
+          workingCase.caseModifiedExplanation
+            ? workingCase.caseModifiedExplanation
+            : ''
+        }${createCaseModifiedExplanation(caseModifiedExplination)}`,
       })
     }
   }
@@ -375,10 +385,30 @@ export const SignedVerdictOverview: React.FC = () => {
   const createCaseModifiedExplanation = (reason: string) => {
     const now = new Date()
 
-    return `${capitalize(formatDate(now, 'PPPP', true) || '')} kl. ${formatDate(
+    return `${
+      workingCase.caseModifiedExplanation ? '<br/><br/>' : ''
+    }${capitalize(formatDate(now, 'PPPP', true) || '')} kl. ${formatDate(
       now,
       TIME_FORMAT,
-    )} - ${user?.name}\n\nÁstæða: ${reason}`
+    )} - ${user?.name}<br/>Ástæða: ${reason}`
+  }
+
+  const handleCaseModifiedExplanationChange = (reason: string) => {
+    const { isValid } = validate(reason, 'empty')
+
+    if (isValid) {
+      setCaseModifiedExplinationErrorMessage('')
+    }
+  }
+
+  const handleCaseModifiedExplanationBlur = (reason: string) => {
+    const { isValid, errorMessage } = validate(reason, 'empty')
+
+    if (isValid) {
+      setCaseModifiedExplination(reason)
+    } else {
+      setCaseModifiedExplinationErrorMessage(errorMessage)
+    }
   }
 
   /**
@@ -484,26 +514,11 @@ export const SignedVerdictOverview: React.FC = () => {
               placeholder={formatMessage(
                 m.sections.alterDatesModal.reasonForChangePlaceholder,
               )}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'caseModifiedExplanation',
-                  createCaseModifiedExplanation(event.target.value),
-                  ['empty'],
-                  workingCase,
-                  setWorkingCase,
-                  caseModifiedExplinationErrorMessage,
-                  setCaseModifiedExplinationErrorMessage,
-                )
-              }
+              onChange={(event) => {
+                handleCaseModifiedExplanationChange(event.target.value)
+              }}
               onBlur={(event) =>
-                validateAndSendToServer(
-                  'caseModifiedExplanation',
-                  createCaseModifiedExplanation(event.target.value),
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCaseModifiedExplinationErrorMessage,
-                )
+                handleCaseModifiedExplanationBlur(event.target.value)
               }
               hasError={caseModifiedExplinationErrorMessage !== ''}
               errorMessage={caseModifiedExplinationErrorMessage}
