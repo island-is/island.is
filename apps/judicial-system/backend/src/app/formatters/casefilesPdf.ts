@@ -7,6 +7,7 @@ import {
   addHugeHeading,
   addLargeHeading,
   baseFontSize,
+  setLineGap,
   setPageNumbers,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
@@ -31,16 +32,16 @@ function constructCasefilesPdf(
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
-  doc.lineGap(8)
+  setLineGap(doc, 8)
   addHugeHeading(doc, 'Helvetica-Bold', 'Rannsóknargögn')
-  doc.lineGap(40)
+  setLineGap(doc, 40)
   addLargeHeading(
     doc,
     'Helvetica',
     `Mál nr. ${theCase.courtCaseNumber} - LÖKE nr. ${theCase.policeCaseNumber}`,
   )
+  setLineGap(doc, 8)
   doc
-    .lineGap(8)
     .fontSize(baseFontSize)
     .list(theCase.caseFiles?.map((file) => file.name) ?? [], {
       listType: 'numbered',

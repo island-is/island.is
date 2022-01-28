@@ -16,6 +16,7 @@ import {
   addLargeHeading,
   baseFontSize,
   mediumFontSize,
+  setLineGap,
   setPageNumbers,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
@@ -43,7 +44,7 @@ function constructCustodyNoticePdf(
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
-  doc.lineGap(8)
+  setLineGap(doc, 8)
   addHugeHeading(doc, 'Helvetica-Bold', 'Vistunarseðill')
   addLargeHeading(doc, 'Helvetica-Bold', 'Úrskurður um gæsluvarðhald')
   addLargeHeading(
@@ -58,11 +59,9 @@ function constructCustodyNoticePdf(
     'Helvetica',
     `LÖKE málsnúmer ${theCase.policeCaseNumber}`,
   )
+  doc.text(' ').font('Helvetica-Bold').fontSize(mediumFontSize)
+  setLineGap(doc, 8)
   doc
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(mediumFontSize)
-    .lineGap(8)
     .text('Sakborningur')
     .fontSize(baseFontSize)
     // Assume there is at most one defendant
@@ -94,7 +93,8 @@ function constructCustodyNoticePdf(
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(mediumFontSize)
-    .lineGap(8)
+  setLineGap(doc, 8)
+  doc
     .text('Úrskurður um gæsluvarðhald')
     .font('Helvetica')
     .fontSize(baseFontSize)
@@ -150,15 +150,9 @@ function constructCustodyNoticePdf(
   )
 
   if (theCase.isCustodyIsolation || custodyRestrictions) {
-    doc
-      .text(' ')
-      .text(' ')
-      .font('Helvetica-Bold')
-      .fontSize(mediumFontSize)
-      .lineGap(8)
-      .text('Tilhögun gæsluvarðhalds')
-      .font('Helvetica')
-      .fontSize(baseFontSize)
+    doc.text(' ').text(' ').font('Helvetica-Bold').fontSize(mediumFontSize)
+    setLineGap(doc, 8)
+    doc.text('Tilhögun gæsluvarðhalds').font('Helvetica').fontSize(baseFontSize)
 
     if (theCase.isCustodyIsolation) {
       const genderedAccused = formatMessage(core.accused, {
@@ -184,8 +178,8 @@ function constructCustodyNoticePdf(
     }
 
     if (custodyRestrictions) {
+      setLineGap(doc, 6)
       doc.text(custodyRestrictions, {
-        lineGap: 6,
         paragraphGap: 0,
       })
     }

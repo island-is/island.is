@@ -24,6 +24,7 @@ import {
   addCoatOfArms,
   addLargeHeading,
   addMediumHeading,
+  setLineGap,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
@@ -50,13 +51,14 @@ function constructRestrictionRulingPdf(
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
   addCoatOfArms(doc)
-  doc.text(' ').text(' ').text(' ').text(' ').text(' ').lineGap(4)
+  doc.text(' ').text(' ').text(' ').text(' ').text(' ')
+  setLineGap(doc, 4)
   addLargeHeading(
     doc,
     'Times-Roman',
     theCase.court?.name ?? formatMessage(core.missing.court),
   )
-  doc.lineGap(2)
+  setLineGap(doc, 2)
   addMediumHeading(
     doc,
     'Times-Roman',
@@ -66,7 +68,7 @@ function constructRestrictionRulingPdf(
         : ruling.proceedingsHeading,
     ),
   )
-  doc.lineGap(30)
+  setLineGap(doc, 30)
   addMediumHeading(
     doc,
     'Times-Roman',
@@ -74,31 +76,30 @@ function constructRestrictionRulingPdf(
       caseNumber: theCase.courtCaseNumber,
     }),
   )
-  doc
-    .fontSize(baseFontSize)
-    .lineGap(1)
-    .text(
-      formatMessage(ruling.intro, {
-        courtDate: formatDate(theCase.courtStartDate, 'PPP'),
-        judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${
-          theCase.judge?.title ?? '?'
-        }`,
-        courtLocation: theCase.courtLocation
-          ? ` ${lowercase(
-              theCase.courtLocation?.slice(theCase.courtLocation.length - 1) ===
-                '.'
-                ? theCase.courtLocation?.slice(0, -1)
-                : theCase.courtLocation,
-            )}`
-          : '',
-        caseNumber: theCase.courtCaseNumber,
-        startTime: formatDate(theCase.courtStartDate, 'p'),
-      }),
-      {
-        align: 'justify',
-        paragraphGap: 1,
-      },
-    )
+  doc.fontSize(baseFontSize)
+  setLineGap(doc, 1)
+  doc.text(
+    formatMessage(ruling.intro, {
+      courtDate: formatDate(theCase.courtStartDate, 'PPP'),
+      judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${
+        theCase.judge?.title ?? '?'
+      }`,
+      courtLocation: theCase.courtLocation
+        ? ` ${lowercase(
+            theCase.courtLocation?.slice(theCase.courtLocation.length - 1) ===
+              '.'
+              ? theCase.courtLocation?.slice(0, -1)
+              : theCase.courtLocation,
+          )}`
+        : '',
+      caseNumber: theCase.courtCaseNumber,
+      startTime: formatDate(theCase.courtStartDate, 'p'),
+    }),
+    {
+      align: 'justify',
+      paragraphGap: 1,
+    },
+  )
 
   if (!theCase.isClosedCourtHidden) {
     doc.text(' ').text(formatMessage(ruling.closedCourtAnnouncement), {
@@ -200,23 +201,21 @@ function constructRestrictionRulingPdf(
         paragraphGap: 1,
       },
     )
-    .lineGap(3)
-    .text(' ')
-    .text(' ')
-    .lineGap(16)
+  setLineGap(doc, 3)
+  doc.text(' ').text(' ')
+  setLineGap(doc, 16)
   addMediumHeading(doc, 'Times-Roman', formatMessage(ruling.rulingHeading))
 
   if (shortVersion) {
-    doc
-      .fontSize(baseFontSize)
-      .lineGap(1)
-      .text(formatMessage(ruling.rulingShortVersionPlaceholder), {
-        align: 'center',
-      })
+    doc.fontSize(baseFontSize)
+    setLineGap(doc, 1)
+    doc.text(formatMessage(ruling.rulingShortVersionPlaceholder), {
+      align: 'center',
+    })
   } else {
+    doc.fontSize(baseFontSize)
+    setLineGap(doc, 1)
     doc
-      .fontSize(baseFontSize)
-      .lineGap(1)
       .font('Times-Bold')
       .text(formatMessage(ruling.courtDemandsHeading))
       .text(' ')
@@ -258,11 +257,13 @@ function constructRestrictionRulingPdf(
       })
   }
 
-  doc.lineGap(3).text(' ').text(' ').lineGap(16)
+  setLineGap(doc, 3)
+  doc.text(' ').text(' ')
+  setLineGap(doc, 16)
   addMediumHeading(doc, 'Times-Roman', formatMessage(ruling.rulingTextHeading))
+  doc.fontSize(baseFontSize)
+  setLineGap(doc, 1)
   doc
-    .fontSize(baseFontSize)
-    .lineGap(1)
     .text(theCase.conclusion ?? formatMessage(core.missing.rulingText), {
       align: 'justify',
       paragraphGap: 1,
@@ -382,13 +383,14 @@ function constructInvestigationRulingPdf(
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
   addCoatOfArms(doc)
-  doc.text(' ').text(' ').text(' ').text(' ').text(' ').lineGap(4)
+  doc.text(' ').text(' ').text(' ').text(' ').text(' ')
+  setLineGap(doc, 4)
   addLargeHeading(
     doc,
     'Times-Roman',
     theCase.court?.name ?? formatMessage(core.missing.court),
   )
-  doc.lineGap(2)
+  setLineGap(doc, 2)
   addMediumHeading(
     doc,
     'Times-Roman',
@@ -398,7 +400,7 @@ function constructInvestigationRulingPdf(
         : ruling.proceedingsHeading,
     ),
   )
-  doc.lineGap(30)
+  setLineGap(doc, 30)
   addMediumHeading(
     doc,
     'Times-Roman',
@@ -406,31 +408,30 @@ function constructInvestigationRulingPdf(
       caseNumber: theCase.courtCaseNumber,
     }),
   )
-  doc
-    .fontSize(baseFontSize)
-    .lineGap(1)
-    .text(
-      formatMessage(ruling.intro, {
-        courtDate: formatDate(theCase.courtStartDate, 'PPP'),
-        judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${
-          theCase.judge?.title ?? '?'
-        }`,
-        courtLocation: theCase.courtLocation
-          ? ` ${lowercase(
-              theCase.courtLocation?.slice(theCase.courtLocation.length - 1) ===
-                '.'
-                ? theCase.courtLocation?.slice(0, -1)
-                : theCase.courtLocation,
-            )}`
-          : '',
-        caseNumber: theCase.courtCaseNumber,
-        startTime: formatDate(theCase.courtStartDate, 'p'),
-      }),
-      {
-        align: 'justify',
-        paragraphGap: 1,
-      },
-    )
+  doc.fontSize(baseFontSize)
+  setLineGap(doc, 1)
+  doc.text(
+    formatMessage(ruling.intro, {
+      courtDate: formatDate(theCase.courtStartDate, 'PPP'),
+      judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${
+        theCase.judge?.title ?? '?'
+      }`,
+      courtLocation: theCase.courtLocation
+        ? ` ${lowercase(
+            theCase.courtLocation?.slice(theCase.courtLocation.length - 1) ===
+              '.'
+              ? theCase.courtLocation?.slice(0, -1)
+              : theCase.courtLocation,
+          )}`
+        : '',
+      caseNumber: theCase.courtCaseNumber,
+      startTime: formatDate(theCase.courtStartDate, 'p'),
+    }),
+    {
+      align: 'justify',
+      paragraphGap: 1,
+    },
+  )
 
   if (!theCase.isClosedCourtHidden) {
     doc.text(' ').text(formatMessage(ruling.closedCourtAnnouncement), {
@@ -532,23 +533,21 @@ function constructInvestigationRulingPdf(
         paragraphGap: 1,
       },
     )
-    .lineGap(3)
-    .text(' ')
-    .text(' ')
-    .lineGap(16)
+  setLineGap(doc, 3)
+  doc.text(' ').text(' ')
+  setLineGap(doc, 16)
   addMediumHeading(doc, 'Times-Roman', formatMessage(ruling.rulingHeading))
 
   if (shortVersion) {
-    doc
-      .fontSize(baseFontSize)
-      .lineGap(1)
-      .text(formatMessage(ruling.rulingShortVersionPlaceholder), {
-        align: 'center',
-      })
+    doc.fontSize(baseFontSize)
+    setLineGap(doc, 1)
+    doc.text(formatMessage(ruling.rulingShortVersionPlaceholder), {
+      align: 'center',
+    })
   } else {
+    doc.fontSize(baseFontSize)
+    setLineGap(doc, 1)
     doc
-      .fontSize(baseFontSize)
-      .lineGap(1)
       .font('Times-Bold')
       .text(formatMessage(ruling.courtDemandsHeading))
       .text(' ')
@@ -590,11 +589,13 @@ function constructInvestigationRulingPdf(
       })
   }
 
-  doc.lineGap(3).text(' ').text(' ').lineGap(16)
+  setLineGap(doc, 3)
+  doc.text(' ').text(' ')
+  setLineGap(doc, 16)
   addMediumHeading(doc, 'Times-Roman', formatMessage(ruling.rulingTextHeading))
+  doc.fontSize(baseFontSize)
+  setLineGap(doc, 1)
   doc
-    .fontSize(baseFontSize)
-    .lineGap(1)
     .text(theCase.conclusion ?? formatMessage(core.missing.rulingText), {
       align: 'justify',
       paragraphGap: 1,

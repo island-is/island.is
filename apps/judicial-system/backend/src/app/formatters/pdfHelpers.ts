@@ -31,6 +31,10 @@ export function addCoatOfArms(doc: PDFKit.PDFDocument) {
   doc.fillColor('black').scale(2).translate(-270, -70)
 }
 
+export function setLineGap(doc: PDFKit.PDFDocument, lineGap: number) {
+  doc.lineGap(lineGap)
+}
+
 function addHeading(
   doc: PDFKit.PDFDocument,
   font: string,
