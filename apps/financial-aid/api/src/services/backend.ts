@@ -20,18 +20,13 @@ import {
   Staff,
   CreateStaff,
   CreateMunicipality,
-  Amount,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 import { CreateStaffInput } from '../app/modules/staff'
 import { SpouseModel } from '../app/modules/user'
-import {
-  CreateMunicipalityInput,
-  UpdateMunicipalityInput,
-} from '../app/modules/municipality/dto'
-import { CreateAmountInput } from '../app/modules/amount/dto'
+import { UpdateMunicipalityInput } from '../app/modules/municipality/dto'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -130,16 +125,16 @@ class BackendAPI extends RESTDataSource {
     return this.post('file', createApplicationFiles)
   }
 
-  getCurrentApplicationId(nationalId: string): Promise<string | undefined> {
-    return this.get(`application/nationalId/${nationalId}`)
+  getCurrentApplicationId(): Promise<string | undefined> {
+    return this.get('application/nationalId')
   }
 
-  getSpouse(spouseNationalId: string): Promise<SpouseModel> {
-    return this.get(`application/spouse/${spouseNationalId}`)
+  getSpouse(): Promise<SpouseModel> {
+    return this.get('application/spouse')
   }
 
-  getStaff(nationalId: string): Promise<Staff> {
-    return this.get(`staff/nationalId/${nationalId}`)
+  getStaff(): Promise<Staff> {
+    return this.get('staff/nationalId')
   }
 
   getStaffById(id: string): Promise<Staff> {

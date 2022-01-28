@@ -1,5 +1,5 @@
 import { ApplicantEmailData } from '@island.is/financial-aid/shared/lib'
-import { fonts, header, sambandIcon } from './shared'
+import { fonts, header } from './shared'
 
 export const ApplicantEmailTemplate = (emailData: ApplicantEmailData) => {
   return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -74,7 +74,6 @@ export const ApplicantEmailTemplate = (emailData: ApplicantEmailData) => {
             <table class="es-wrapper" width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;padding:0;Margin:0;width:100%;height:100%;background-repeat:repeat;background-position:center top"> 
             <tr> 
              <td valign="top" style="padding:0;Margin:0"> 
-            ${sambandIcon}
            <table class="es-content" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%"> 
              <tr> 
               <td align="center" style="padding:0;Margin:0"> 
@@ -151,18 +150,16 @@ export const ApplicantEmailTemplate = (emailData: ApplicantEmailData) => {
                          <tr> 
                           <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><span class="es-button-border" style="border-style:solid;border-color:#2cb543;background:#2CB543;border-width:0px;display:inline-block;border-radius:30px;width:auto;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff"><a href="${
                             emailData.municipality.homepage
-                          }" class="es-button es-button-1637596853650" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#0061ff;font-size:14px;border-style:solid;border-color:#ffffff;border-width:0px;display:inline-block;background:#31CB4B;border-radius:30px;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-weight:normal;font-style:normal;line-height:17px;width:auto;text-align:center;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff"><strong><u>Heimasíða ${
-    emailData.municipality.name
-  } (netspjall)</u></strong>
+                          }" class="es-button es-button-1637596853650" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#0061ff;font-size:14px;border-style:solid;border-color:#ffffff;border-width:0px;display:inline-block;background:#31CB4B;border-radius:30px;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-weight:normal;font-style:normal;line-height:17px;width:auto;text-align:center;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff"><strong><u>${
+    emailData.municipality.homepage
+  }</u></strong>
                              <!--[if !mso]><!-- --><img src="https://orohoy.stripocdn.email/content/guids/CABINET_da4781bc309fc9253f69ae53878fabb3/images/open.png" alt="icon" align="absmiddle" style="display:inline-block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;vertical-align:middle;margin-left:4px" width="16"> 
                              <!--<![endif]--></a></span></td> 
                          </tr> 
                          <tr> 
                           <td align="left" style="padding:0;Margin:0;padding-bottom:20px"><span class="es-button-border" style="border-style:solid;border-color:#2cb543;background:#2CB543;border-width:0px;display:inline-block;border-radius:30px;width:auto;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff"><a href="${
                             emailData.municipality.rulesHomepage
-                          }" class="es-button es-button-1637597003739" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#0061ff;font-size:14px;border-style:solid;border-color:#ffffff;border-width:0px;display:inline-block;background:#31CB4B;border-radius:30px;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-weight:normal;font-style:normal;line-height:17px;width:auto;text-align:center;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff"><strong><u>Reglur um fjárhagsaðstoð hjá ${
-    emailData.municipality.name
-  }</u></strong>
+                          }" class="es-button es-button-1637597003739" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#0061ff;font-size:14px;border-style:solid;border-color:#ffffff;border-width:0px;display:inline-block;background:#31CB4B;border-radius:30px;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-weight:normal;font-style:normal;line-height:17px;width:auto;text-align:center;border-top-left-radius:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;border-bottom-left-radius:0px;background-color:#ffffff"><strong><u>Reglur um fjárhagsaðstoð</u></strong>
                              <!--[if !mso]><!-- --><img src="https://orohoy.stripocdn.email/content/guids/CABINET_da4781bc309fc9253f69ae53878fabb3/images/open.png" alt="icon" align="absmiddle" style="display:inline-block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;vertical-align:middle;margin-left:4px" width="16"> 
                              <!--<![endif]--></a></span></td> 
                          </tr> 

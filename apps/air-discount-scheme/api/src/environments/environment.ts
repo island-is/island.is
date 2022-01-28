@@ -20,11 +20,10 @@ const devConfig = {
     audience: '@vegagerdin.is',
   },
   auth: {
-    samlEntryPoint: 'https://innskraning.island.is/?id=ads.local',
     audience: '@vegagerdin.is',
     jwtSecret: 'securesecret',
   },
-  idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
+  idsTokenCookieName: 'next-auth.session-token',
   backendUrl: 'http://localhost:4248',
 }
 
@@ -44,11 +43,10 @@ const prodConfig = {
     audience: '@vegagerdin.is',
   },
   auth: {
-    samlEntryPoint: process.env.SAML_ENTRY_POINT,
     audience: process.env.AUTH_AUDIENCE,
     jwtSecret: process.env.AUTH_JWT_SECRET,
   },
-  idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
+  idsTokenCookieName: '__Secure-next-auth.session-token',
   backendUrl: process.env.BACKEND_URL ?? 'http://localhost:4248',
 }
 

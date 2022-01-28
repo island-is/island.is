@@ -99,8 +99,9 @@ export const serviceSetup = (services: {
       ENDORSEMENT_SYSTEM_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
-      XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
+      XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
+      XROAD_PROPERTIES_TIMEOUT: '20000',
     })
 
     .secrets({
