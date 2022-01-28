@@ -127,8 +127,6 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
 
       const response = await uploadFileToS3(file, dispatch, url, fields)
 
-      console.log(response,fields)
-      
       // 3. Add Attachment Data
       await addAttachment({
         variables: {
@@ -227,7 +225,9 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
     setUploadError(undefined)
   }
 
-  const FileUploadComponent = forImageUpload ? InputImageUpload : InputFileUpload
+  const FileUploadComponent = forImageUpload
+    ? InputImageUpload
+    : InputFileUpload
 
   return (
     <Controller
@@ -235,6 +235,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
       defaultValue={initialUploadFiles}
       render={() =>
         <FileUploadComponent
+          applicationId={application.id}
           fileList={state}
           header={header}
           description={description}

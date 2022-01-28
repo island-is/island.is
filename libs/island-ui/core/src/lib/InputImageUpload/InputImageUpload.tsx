@@ -12,7 +12,8 @@ import { theme, Colors } from '@island.is/island-ui/theme'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconTypes } from '../IconRC/iconMap'
 import { ProgressMeter } from '../..'
-import { image } from './mockImage'
+import { useQuery } from '@apollo/client'
+import gql from 'graphql-tag'
 
 export type UploadImageStatus = 'error' | 'done' | 'uploading'
 
@@ -42,6 +43,7 @@ export const imageToObject = (
 }
 
 interface UploadedImageProps {
+  applicationId: string
   file: UploadImage
   showFileSize: boolean
   onRemoveClick: (file: UploadImage) => void
@@ -52,7 +54,16 @@ interface UploadedImageProps {
   hideIcons?: boolean
 }
 
+export const PresignedUrlQuery = gql`
+  query getAttachmentPresignedURL($input: GetAttachmentPresignedUrlInput!) {
+    getAttachmentPresignedURL(input: $input) {
+      url
+    }
+  }
+`
+
 export const UploadedImage = ({
+  applicationId,
   file,
   showFileSize,
   defaultBackgroundColor,
@@ -60,6 +71,15 @@ export const UploadedImage = ({
   onRetryClick,
   onOpenFile,
 }: UploadedImageProps) => {
+  const { data: presignedUrl } = useQuery(PresignedUrlQuery, {
+    variables: {
+      input: {
+        id: applicationId,
+        s3key: file.key,
+      },
+    },
+  })
+
   const [ref, { width }] = useMeasure()
 
   const statusColor = (status?: UploadImageStatus): Colors => {
@@ -133,7 +153,11 @@ export const UploadedImage = ({
             background={statusColorDarker(file.status)}
           >
             {file.status === 'done' && (
-              <img src={image} alt="mynd" className={styles.image} />
+              <img
+                src={presignedUrl?.getAttachmentPresignedURL?.url}
+                alt="mynd"
+                className={styles.image}
+              />
             )}
           </Box>
           <Text truncate fontWeight="semiBold">
@@ -190,6 +214,7 @@ export const UploadedImage = ({
 }
 
 export interface InputImageUploadProps {
+  applicationId: string
   name?: string
   showFileSize?: boolean
   id?: string
@@ -211,6 +236,7 @@ export interface InputImageUploadProps {
 }
 
 export const InputImageUpload = ({
+  applicationId,
   name,
   showFileSize = false,
   id,
@@ -286,6 +312,7 @@ export const InputImageUpload = ({
         {fileList.map((file, index) => {
           return (
             <UploadedImage
+              applicationId={applicationId}
               key={index}
               file={file}
               showFileSize={showFileSize}
