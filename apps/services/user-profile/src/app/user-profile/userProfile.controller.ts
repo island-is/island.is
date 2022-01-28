@@ -218,7 +218,7 @@ export class UserProfileController {
       userProfileToUpdate = {
         ...userProfileToUpdate,
         mobilePhoneNumberVerified: phoneVerified,
-        mobilePhoneNumber: undefined,
+        // mobilePhoneNumber: undefined,
       }
 
       if (phoneVerified) {
@@ -239,7 +239,7 @@ export class UserProfileController {
       userProfileToUpdate = {
         ...userProfileToUpdate,
         emailVerified: mailVerified,
-        email: undefined,
+        // email: undefined,
       }
 
       if (mailVerified) {
