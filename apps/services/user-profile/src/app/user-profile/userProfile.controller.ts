@@ -46,6 +46,7 @@ import { UserDeviceTokensDto } from './dto/userDeviceTokens.dto'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
+import { DataStatus } from './types/dataStatusTypes'
 
 // TODO: Remove this DTO & use import.
 export class CreateEmailVerificationDto {
@@ -135,11 +136,16 @@ export class UserProfileController {
       userProfileDto = {
         ...userProfileDto,
         emailVerified: emailVerified,
+        email: undefined,
       }
       if (emailVerified) {
         await this.verificationService.removeEmailVerification(
           userProfileDto.nationalId,
         )
+        userProfileDto = {
+          ...userProfileDto,
+          emailStatus: DataStatus.VERIFIED,
+        }
       }
     }
 
@@ -150,11 +156,17 @@ export class UserProfileController {
       userProfileDto = {
         ...userProfileDto,
         mobilePhoneNumberVerified: phoneVerified,
+        mobilePhoneNumber: undefined,
       }
       if (phoneVerified) {
         await this.verificationService.removeSmsVerification(
           userProfileDto.nationalId,
         )
+
+        userProfileDto = {
+          ...userProfileDto,
+          emailStatus: DataStatus.VERIFIED,
+        }
       }
     }
 
@@ -206,6 +218,14 @@ export class UserProfileController {
       userProfileToUpdate = {
         ...userProfileToUpdate,
         mobilePhoneNumberVerified: phoneVerified,
+        mobilePhoneNumber: undefined,
+      }
+
+      if (phoneVerified) {
+        userProfileToUpdate = {
+          ...userProfileToUpdate,
+          mobileStatus: DataStatus.VERIFIED,
+        }
       }
     }
 
@@ -219,6 +239,14 @@ export class UserProfileController {
       userProfileToUpdate = {
         ...userProfileToUpdate,
         emailVerified: mailVerified,
+        email: undefined,
+      }
+
+      if (mailVerified) {
+        userProfileToUpdate = {
+          ...userProfileToUpdate,
+          emailStatus: DataStatus.VERIFIED,
+        }
       }
     }
 

@@ -9,6 +9,8 @@ type UpdateUserProfileData = {
   mobilePhoneNumber?: string
   canNudge?: boolean
   bankInfo?: string
+  emailStatus?: string
+  mobileStatus?: string
 }
 
 export const useUpdateOrCreateUserProfile = () => {
@@ -40,6 +42,9 @@ export const useUpdateOrCreateUserProfile = () => {
       canNudge:
         data.canNudge === undefined ? userProfile.canNudge : data.canNudge,
       bankInfo: data.bankInfo || userProfile.bankInfo || '',
+      emailStatus: data?.emailStatus || userProfile?.emailStatus || undefined,
+      mobileStatus:
+        data?.mobileStatus || userProfile?.mobileStatus || undefined,
     }
 
     console.log('input', input)

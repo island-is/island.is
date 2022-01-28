@@ -3,7 +3,10 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { GridRow, GridColumn, GridContainer } from '@island.is/island-ui/core'
 import { parseNumber } from '../../../utils/phoneHelper'
-import { useUserProfile } from '@island.is/service-portal/graphql'
+import {
+  useUserProfile,
+  useUpdateOrCreateUserProfile,
+} from '@island.is/service-portal/graphql'
 import { OnboardingIntro } from './components/Intro'
 import { InputSection } from './components/InputSection'
 import { InputEmail } from './components/Inputs/Email'
@@ -33,6 +36,7 @@ export const ProfileForm: FC<Props> = ({
   const [telDirty, setTelDirty] = useState(true)
   const [emailDirty, setEmailDirty] = useState(true)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
+  const { updateOrCreateUserProfile } = useUpdateOrCreateUserProfile()
 
   const { data: userProfile, loading: userLoading } = useUserProfile()
 
@@ -47,11 +51,35 @@ export const ProfileForm: FC<Props> = ({
       if (showDropModal) {
         setShowDropModal(showDropModal)
       } else {
-        onCloseOverlay()
+        if (emailDirty || telDirty) {
+          // TODO: Check for alternative to isDirty here. Should be on VERIFIED?
+          submitEmptyStatus({ email: emailDirty, tel: telDirty }).then(() =>
+            onCloseOverlay(),
+          )
+        } else {
+          onCloseOverlay()
+        }
       }
     }
   }, [canDrop])
 
+  const submitEmptyStatus = async (emptyStatus: {
+    email: boolean
+    tel: boolean
+  }) => {
+    if (emptyStatus.email || emptyStatus.tel) {
+      try {
+        await updateOrCreateUserProfile({
+          ...(emptyStatus.email && { emailStatus: 'EMPTY' }),
+          ...(emptyStatus.tel && { mobileStatus: 'EMPTY' }),
+        })
+      } catch {
+        // do nothing
+      }
+    }
+  }
+
+  console.log('userProfileuserProfileuserProfile', userProfile)
   return (
     <GridContainer>
       <GridRow marginBottom={10}>

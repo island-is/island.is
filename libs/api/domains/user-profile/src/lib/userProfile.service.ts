@@ -83,9 +83,13 @@ export class UserProfileService {
       //temporary as schemas where not working properly
       locale: input.locale as string,
 
-      /* Mobile and email will be within islykill service */
-      // mobilePhoneNumber: input.mobilePhoneNumber,
-      // email: input.email,
+      /**
+       *  Mobile and email will be within islykill service
+       *  Only here for verification purposes in userProfile.controller.
+       *  Will be removed in controller before saving to db
+       */
+      mobilePhoneNumber: input.mobilePhoneNumber,
+      email: input.email,
     }
     const request: UserProfileControllerCreateRequest = {
       createUserProfileDto: createUserDto,
@@ -125,9 +129,13 @@ export class UserProfileService {
       locale: input.locale as string,
       documentNotifications: input.documentNotifications,
 
-      /* Mobile and email will be within islykill service */
-      // mobilePhoneNumber: input.mobilePhoneNumber,
-      // email: input.email,
+      /**
+       *  Mobile and email will be within islykill service
+       *  Only here for verification purposes in userProfile.controller.
+       *  Will be removed in controller before saving to db
+       */
+      mobilePhoneNumber: input.mobilePhoneNumber,
+      email: input.email,
     }
     const request: UserProfileControllerUpdateRequest = {
       nationalId: user.nationalId,

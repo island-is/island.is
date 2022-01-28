@@ -28,7 +28,6 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const dropOnboardingSideEffects = () => {
     servicePortalCloseOnBoardingModal(pathname)
-    // TODO: Save in db date for reminder to finish in 3 months.
   }
 
   const closeModal = () => {
@@ -69,7 +68,6 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
                 >
                   <Button
                     icon="checkmark"
-                    type="submit"
                     onClick={() => setCanDropOverlay(true)}
                   >
                     {formatMessage(m.continue)}
