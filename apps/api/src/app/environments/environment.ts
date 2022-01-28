@@ -67,9 +67,6 @@ const prodConfig = () => ({
     clientSecret: process.env.POSTHOLF_CLIENT_SECRET ?? '',
     tokenUrl: process.env.POSTHOLF_TOKEN_URL ?? '',
   },
-  downloadService: {
-    baseUrl: process.env.DOWNLOAD_SERVICE_BASE_PATH,
-  },
   documentProviderService: {
     test: {
       basePath: process.env.DOCUMENT_PROVIDER_BASE_PATH_TEST,
@@ -121,10 +118,6 @@ const prodConfig = () => ({
     callbackBaseUrl: process.env.XROAD_PAYMENT_BASE_CALLBACK_URL,
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
-  },
-  fjarmalDomain: {
-    xroadApiPath: process.env.XROAD_FINANCES_PATH,
-    ttl: parseInt(process.env.FJARMAL_TTL, 10) || 600,
   },
   pkpass: {
     apiKey: process.env.PKPASS_API_KEY,
@@ -226,9 +219,6 @@ const devConfig = () => ({
     clientSecret: process.env.POSTHOLF_CLIENT_SECRET ?? '',
     tokenUrl: process.env.POSTHOLF_TOKEN_URL ?? '',
   },
-  downloadService: {
-    baseUrl: 'http://localhost:3377',
-  },
   documentProviderService: {
     documentsServiceBasePath: 'http://localhost:3369',
     documentProviderAdmins: process.env.DOCUMENT_PROVIDER_ADMINS ?? '',
@@ -270,12 +260,6 @@ const devConfig = () => ({
     url:
       process.env.REGULATIONS_API_URL ??
       'https://reglugerdir-api.herokuapp.com/api/v1',
-  },
-  fjarmalDomain: {
-    xroadApiPath:
-      process.env.XROAD_FINANCES_PATH ??
-      'IS-DEV/GOV/10021/FJS-Public/financeIsland',
-    ttl: parseInt(process.env.FJARMAL_TTL, 10) || 600,
   },
   endorsementSystem: {
     baseApiUrl: 'http://localhost:4246',

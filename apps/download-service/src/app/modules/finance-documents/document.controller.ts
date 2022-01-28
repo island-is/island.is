@@ -46,12 +46,12 @@ export class FinanceDocumentController {
       ? await this.financeService.getAnnualStatusDocument(
           user.nationalId,
           pdfId,
-          resource.__accessToken,
+          user,
         )
       : await this.financeService.getFinanceDocument(
           user.nationalId,
           pdfId,
-          resource.__accessToken,
+          user,
         )
 
     const documentBase64 = documentResponse?.docment?.document

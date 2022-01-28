@@ -100,6 +100,7 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
+      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
     })
 
     .secrets({
@@ -146,6 +147,7 @@ export const serviceSetup = (services: {
       RSK_API_URL: '/k8s/shared/api/RSK_API_URL',
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
+      IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
     })
     .xroad(
       Base,
