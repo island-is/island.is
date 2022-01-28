@@ -58,6 +58,12 @@ export function setLineGap(doc: PDFKit.PDFDocument, lineGap: number) {
   doc.lineGap(lineGap)
 }
 
+export function addEmptyLines(doc: PDFKit.PDFDocument, lines = 1) {
+  for (let i = 0; i < lines; i++) {
+    doc.text(' ')
+  }
+}
+
 export function addHugeHeading(
   doc: PDFKit.PDFDocument,
   heading: string,

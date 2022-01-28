@@ -12,6 +12,7 @@ import { FormatMessage } from '@island.is/cms-translations'
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
 import {
+  addEmptyLines,
   addHugeHeading,
   addLargeHeading,
   baseFontSize,
@@ -53,7 +54,8 @@ function constructCustodyNoticePdf(
     'Helvetica',
   )
   addLargeHeading(doc, `LÖKE málsnúmer ${theCase.policeCaseNumber}`)
-  doc.text(' ').font('Helvetica-Bold').fontSize(mediumFontSize)
+  addEmptyLines(doc)
+  doc.font('Helvetica-Bold').fontSize(mediumFontSize)
   setLineGap(doc, 8)
   doc
     .text('Sakborningur')
@@ -83,10 +85,8 @@ function constructCustodyNoticePdf(
         ? theCase.defendants[0].address
         : 'Heimili ekki skráð',
     )
-    .text(' ')
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(mediumFontSize)
+  addEmptyLines(doc, 2)
+  doc.font('Helvetica-Bold').fontSize(mediumFontSize)
   setLineGap(doc, 8)
   doc
     .text('Úrskurður um gæsluvarðhald')
@@ -95,7 +95,8 @@ function constructCustodyNoticePdf(
     .text(
       `${theCase.court?.name}, ${formatDate(theCase.courtStartDate, 'PPP')}`,
     )
-    .text(' ')
+  addEmptyLines(doc)
+  doc
     .text(
       `Úrskurður kveðinn upp ${
         formatDate(theCase.rulingDate, 'PPPp')?.replace(' kl.', ', kl.') ?? '?'
@@ -106,7 +107,8 @@ function constructCustodyNoticePdf(
         formatDate(theCase.validToDate, 'PPPp')?.replace(' kl.', ', kl.') ?? '?'
       }`,
     )
-    .text(' ')
+  addEmptyLines(doc)
+  doc
     .font('Helvetica-Bold')
     .text('Stjórnandi rannsóknar: ', {
       continued: true,
@@ -144,7 +146,8 @@ function constructCustodyNoticePdf(
   )
 
   if (theCase.isCustodyIsolation || custodyRestrictions) {
-    doc.text(' ').text(' ').font('Helvetica-Bold').fontSize(mediumFontSize)
+    addEmptyLines(doc, 2)
+    doc.font('Helvetica-Bold').fontSize(mediumFontSize)
     setLineGap(doc, 8)
     doc.text('Tilhögun gæsluvarðhalds').font('Helvetica').fontSize(baseFontSize)
 

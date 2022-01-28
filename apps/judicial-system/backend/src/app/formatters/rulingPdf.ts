@@ -26,6 +26,7 @@ import {
   addMediumHeading,
   setLineGap,
   setTitle,
+  addEmptyLines,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
@@ -49,7 +50,7 @@ function constructRestrictionRulingPdf(
 
   setTitle(doc, shortVersion ? 'Þingbók' : 'Úrskurður')
   addCoatOfArms(doc)
-  doc.text(' ').text(' ').text(' ').text(' ').text(' ')
+  addEmptyLines(doc, 5)
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
@@ -98,14 +99,15 @@ function constructRestrictionRulingPdf(
   )
 
   if (!theCase.isClosedCourtHidden) {
-    doc.text(' ').text(formatMessage(ruling.closedCourtAnnouncement), {
+    addEmptyLines(doc)
+    doc.text(formatMessage(ruling.closedCourtAnnouncement), {
       align: 'justify',
       paragraphGap: 1,
     })
   }
 
+  addEmptyLines(doc)
   doc
-    .text(' ')
     .text(
       `${formatMessage(ruling.prosecutorIs)} ${
         theCase.prosecutor?.institution?.name ?? ruling.noDistrict
@@ -135,23 +137,19 @@ function constructRestrictionRulingPdf(
     )
 
   if (theCase.courtAttendees?.trim()) {
-    doc
-      .text(' ')
-      .font('Times-Bold')
-      .text(formatMessage(ruling.attendeesHeading))
-      .text(' ')
-      .font('Times-Roman')
-      .text(theCase.courtAttendees, {
-        align: 'justify',
-        paragraphGap: 1,
-      })
+    addEmptyLines(doc)
+    doc.font('Times-Bold').text(formatMessage(ruling.attendeesHeading))
+    addEmptyLines(doc)
+    doc.font('Times-Roman').text(theCase.courtAttendees, {
+      align: 'justify',
+      paragraphGap: 1,
+    })
   }
 
+  addEmptyLines(doc)
+  doc.font('Times-Bold').text(formatMessage(ruling.courtDocuments.heading))
+  addEmptyLines(doc)
   doc
-    .text(' ')
-    .font('Times-Bold')
-    .text(formatMessage(ruling.courtDocuments.heading))
-    .text(' ')
     .font('Times-Roman')
     .text(
       formatMessage(ruling.courtDocuments.request, {
@@ -181,24 +179,24 @@ function constructRestrictionRulingPdf(
   )
 
   if (theCase.accusedBookings) {
-    doc.text(' ').text(theCase.accusedBookings, {
+    addEmptyLines(doc)
+    doc.text(theCase.accusedBookings, {
       align: 'justify',
       paragraphGap: 1,
     })
   }
 
-  doc
-    .text(' ')
-    .text(
-      theCase.litigationPresentations ??
-        formatMessage(core.missing.litigationPresentations),
-      {
-        align: 'justify',
-        paragraphGap: 1,
-      },
-    )
+  addEmptyLines(doc)
+  doc.text(
+    theCase.litigationPresentations ??
+      formatMessage(core.missing.litigationPresentations),
+    {
+      align: 'justify',
+      paragraphGap: 1,
+    },
+  )
   setLineGap(doc, 3)
-  doc.text(' ').text(' ')
+  addEmptyLines(doc, 2)
   setLineGap(doc, 16)
   addMediumHeading(doc, formatMessage(ruling.rulingHeading))
 
@@ -211,28 +209,29 @@ function constructRestrictionRulingPdf(
   } else {
     doc.fontSize(baseFontSize)
     setLineGap(doc, 1)
+    doc.font('Times-Bold').text(formatMessage(ruling.courtDemandsHeading))
+    addEmptyLines(doc)
     doc
-      .font('Times-Bold')
-      .text(formatMessage(ruling.courtDemandsHeading))
-      .text(' ')
       .font('Times-Roman')
       .text(theCase.prosecutorDemands ?? formatMessage(core.missing.demands), {
         align: 'justify',
         paragraphGap: 1,
       })
-      .text(' ')
-      .font('Times-Bold')
-      .text(formatMessage(ruling.courtCaseFactsHeading))
-      .text(' ')
+    addEmptyLines(doc)
+    doc.font('Times-Bold').text(formatMessage(ruling.courtCaseFactsHeading))
+    addEmptyLines(doc)
+    doc
       .font('Times-Roman')
       .text(theCase.courtCaseFacts ?? formatMessage(core.missing.caseFacts), {
         align: 'justify',
         paragraphGap: 1,
       })
-      .text(' ')
+    addEmptyLines(doc)
+    doc
       .font('Times-Bold')
       .text(formatMessage(ruling.courtLegalArgumentsHeading))
-      .text(' ')
+    addEmptyLines(doc)
+    doc
       .font('Times-Roman')
       .text(
         theCase.courtLegalArguments ??
@@ -242,10 +241,10 @@ function constructRestrictionRulingPdf(
           paragraphGap: 1,
         },
       )
-      .text(' ')
-      .font('Times-Bold')
-      .text(formatMessage(ruling.conclusionHeading))
-      .text(' ')
+    addEmptyLines(doc)
+    doc.font('Times-Bold').text(formatMessage(ruling.conclusionHeading))
+    addEmptyLines(doc)
+    doc
       .font('Times-Roman')
       .text(theCase.ruling ?? formatMessage(core.missing.conclusion), {
         align: 'justify',
@@ -254,34 +253,32 @@ function constructRestrictionRulingPdf(
   }
 
   setLineGap(doc, 3)
-  doc.text(' ').text(' ')
+  addEmptyLines(doc, 2)
   setLineGap(doc, 16)
   addMediumHeading(doc, formatMessage(ruling.rulingTextHeading))
   doc.fontSize(baseFontSize)
   setLineGap(doc, 1)
+  doc.text(theCase.conclusion ?? formatMessage(core.missing.rulingText), {
+    align: 'justify',
+    paragraphGap: 1,
+  })
+  addEmptyLines(doc)
   doc
-    .text(theCase.conclusion ?? formatMessage(core.missing.rulingText), {
-      align: 'justify',
-      paragraphGap: 1,
-    })
-    .text(' ')
     .font('Times-Bold')
     .text(theCase.judge?.name ?? formatMessage(core.missing.judge), {
       align: 'center',
       paragraphGap: 1,
     })
-    .text(' ')
-    .text(' ')
-    .font('Times-Roman')
-    .text(formatMessage(ruling.rulingTextIntro), {
-      align: 'justify',
-      paragraphGap: 1,
-    })
-    .text(' ')
-    .text(formatMessage(ruling.appealDirections), {
-      align: 'justify',
-      paragraphGap: 1,
-    })
+  addEmptyLines(doc, 2)
+  doc.font('Times-Roman').text(formatMessage(ruling.rulingTextIntro), {
+    align: 'justify',
+    paragraphGap: 1,
+  })
+  addEmptyLines(doc)
+  doc.text(formatMessage(ruling.appealDirections), {
+    align: 'justify',
+    paragraphGap: 1,
+  })
 
   let prosecutorAppeal = formatAppeal(
     theCase.prosecutorAppealDecision,
@@ -297,7 +294,8 @@ function constructRestrictionRulingPdf(
   }
 
   if (prosecutorAppeal) {
-    doc.text(' ').text(prosecutorAppeal, { align: 'justify', paragraphGap: 1 })
+    addEmptyLines(doc)
+    doc.text(prosecutorAppeal, { align: 'justify', paragraphGap: 1 })
   }
 
   let accusedAppeal = formatAppeal(
@@ -319,18 +317,21 @@ function constructRestrictionRulingPdf(
   }
 
   if (accusedAppeal) {
-    doc.text(' ').text(accusedAppeal, { align: 'justify', paragraphGap: 1 })
+    addEmptyLines(doc)
+    doc.text(accusedAppeal, { align: 'justify', paragraphGap: 1 })
   }
 
   if (theCase.endOfSessionBookings) {
-    doc.text(' ').text(theCase.endOfSessionBookings, {
+    addEmptyLines(doc)
+    doc.text(theCase.endOfSessionBookings, {
       align: 'justify',
       paragraphGap: 1,
     })
   }
 
   if (theCase.registrar) {
-    doc.text(' ').text(
+    addEmptyLines(doc)
+    doc.text(
       formatMessage(ruling.registrarWitness, {
         registrarNameAndTitle: `${theCase.registrar.name} ${theCase.registrar.title}`,
       }),
@@ -341,7 +342,8 @@ function constructRestrictionRulingPdf(
     )
   }
 
-  doc.text(' ').text(
+  addEmptyLines(doc)
+  doc.text(
     theCase.courtEndTime
       ? formatMessage(ruling.signOff, {
           endTime: formatDate(theCase.courtEndTime, 'p'),
@@ -376,7 +378,7 @@ function constructInvestigationRulingPdf(
 
   setTitle(doc, shortVersion ? 'Þingbók' : 'Úrskurður')
   addCoatOfArms(doc)
-  doc.text(' ').text(' ').text(' ').text(' ').text(' ')
+  addEmptyLines(doc, 5)
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
@@ -425,14 +427,15 @@ function constructInvestigationRulingPdf(
   )
 
   if (!theCase.isClosedCourtHidden) {
-    doc.text(' ').text(formatMessage(ruling.closedCourtAnnouncement), {
+    addEmptyLines(doc)
+    doc.text(formatMessage(ruling.closedCourtAnnouncement), {
       align: 'justify',
       paragraphGap: 1,
     })
   }
 
+  addEmptyLines(doc)
   doc
-    .text(' ')
     .text(
       `${formatMessage(ruling.prosecutorIs)} ${
         theCase.prosecutor?.institution?.name ?? ruling.noDistrict
@@ -462,23 +465,19 @@ function constructInvestigationRulingPdf(
     )
 
   if (theCase.courtAttendees?.trim()) {
-    doc
-      .text(' ')
-      .font('Times-Bold')
-      .text(formatMessage(ruling.attendeesHeading))
-      .text(' ')
-      .font('Times-Roman')
-      .text(theCase.courtAttendees, {
-        align: 'justify',
-        paragraphGap: 1,
-      })
+    addEmptyLines(doc)
+    doc.font('Times-Bold').text(formatMessage(ruling.attendeesHeading))
+    addEmptyLines(doc)
+    doc.font('Times-Roman').text(theCase.courtAttendees, {
+      align: 'justify',
+      paragraphGap: 1,
+    })
   }
 
+  addEmptyLines(doc)
+  doc.font('Times-Bold').text(formatMessage(ruling.courtDocuments.heading))
+  addEmptyLines(doc)
   doc
-    .text(' ')
-    .font('Times-Bold')
-    .text(formatMessage(ruling.courtDocuments.heading))
-    .text(' ')
     .font('Times-Roman')
     .text(
       formatMessage(ruling.courtDocuments.request, {
@@ -508,24 +507,24 @@ function constructInvestigationRulingPdf(
   )
 
   if (theCase.accusedBookings) {
-    doc.text(' ').text(theCase.accusedBookings, {
+    addEmptyLines(doc)
+    doc.text(theCase.accusedBookings, {
       align: 'justify',
       paragraphGap: 1,
     })
   }
 
-  doc
-    .text(' ')
-    .text(
-      theCase.litigationPresentations ??
-        formatMessage(core.missing.litigationPresentations),
-      {
-        align: 'justify',
-        paragraphGap: 1,
-      },
-    )
+  addEmptyLines(doc)
+  doc.text(
+    theCase.litigationPresentations ??
+      formatMessage(core.missing.litigationPresentations),
+    {
+      align: 'justify',
+      paragraphGap: 1,
+    },
+  )
   setLineGap(doc, 3)
-  doc.text(' ').text(' ')
+  addEmptyLines(doc, 2)
   setLineGap(doc, 16)
   addMediumHeading(doc, formatMessage(ruling.rulingHeading))
 
@@ -538,28 +537,29 @@ function constructInvestigationRulingPdf(
   } else {
     doc.fontSize(baseFontSize)
     setLineGap(doc, 1)
+    doc.font('Times-Bold').text(formatMessage(ruling.courtDemandsHeading))
+    addEmptyLines(doc)
     doc
-      .font('Times-Bold')
-      .text(formatMessage(ruling.courtDemandsHeading))
-      .text(' ')
       .font('Times-Roman')
       .text(theCase.prosecutorDemands ?? formatMessage(core.missing.demands), {
         align: 'justify',
         paragraphGap: 1,
       })
-      .text(' ')
-      .font('Times-Bold')
-      .text(formatMessage(ruling.courtCaseFactsHeading))
-      .text(' ')
+    addEmptyLines(doc)
+    doc.font('Times-Bold').text(formatMessage(ruling.courtCaseFactsHeading))
+    addEmptyLines(doc)
+    doc
       .font('Times-Roman')
       .text(theCase.courtCaseFacts ?? formatMessage(core.missing.caseFacts), {
         align: 'justify',
         paragraphGap: 1,
       })
-      .text(' ')
+    addEmptyLines(doc)
+    doc
       .font('Times-Bold')
       .text(formatMessage(ruling.courtLegalArgumentsHeading))
-      .text(' ')
+    addEmptyLines(doc)
+    doc
       .font('Times-Roman')
       .text(
         theCase.courtLegalArguments ??
@@ -569,10 +569,10 @@ function constructInvestigationRulingPdf(
           paragraphGap: 1,
         },
       )
-      .text(' ')
-      .font('Times-Bold')
-      .text(formatMessage(ruling.conclusionHeading))
-      .text(' ')
+    addEmptyLines(doc)
+    doc.font('Times-Bold').text(formatMessage(ruling.conclusionHeading))
+    addEmptyLines(doc)
+    doc
       .font('Times-Roman')
       .text(theCase.ruling ?? formatMessage(core.missing.conclusion), {
         align: 'justify',
@@ -581,31 +581,31 @@ function constructInvestigationRulingPdf(
   }
 
   setLineGap(doc, 3)
-  doc.text(' ').text(' ')
+  addEmptyLines(doc, 2)
   setLineGap(doc, 16)
   addMediumHeading(doc, formatMessage(ruling.rulingTextHeading))
   doc.fontSize(baseFontSize)
   setLineGap(doc, 1)
+  doc.text(theCase.conclusion ?? formatMessage(core.missing.rulingText), {
+    align: 'justify',
+    paragraphGap: 1,
+  })
+  addEmptyLines(doc)
   doc
-    .text(theCase.conclusion ?? formatMessage(core.missing.rulingText), {
-      align: 'justify',
-      paragraphGap: 1,
-    })
-    .text(' ')
     .font('Times-Bold')
     .text(theCase.judge?.name ?? formatMessage(core.missing.judge), {
       align: 'center',
       paragraphGap: 1,
     })
-    .text(' ')
-    .font('Times-Roman')
-    .text(formatMessage(ruling.rulingTextIntro), {
-      align: 'justify',
-      paragraphGap: 1,
-    })
+  addEmptyLines(doc)
+  doc.font('Times-Roman').text(formatMessage(ruling.rulingTextIntro), {
+    align: 'justify',
+    paragraphGap: 1,
+  })
 
   if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-    doc.text(' ').text(formatMessage(ruling.appealDirections), {
+    addEmptyLines(doc)
+    doc.text(formatMessage(ruling.appealDirections), {
       align: 'justify',
       paragraphGap: 1,
     })
@@ -625,7 +625,8 @@ function constructInvestigationRulingPdf(
   }
 
   if (prosecutorAppeal) {
-    doc.text(' ').text(prosecutorAppeal, { align: 'justify', paragraphGap: 1 })
+    addEmptyLines(doc)
+    doc.text(prosecutorAppeal, { align: 'justify', paragraphGap: 1 })
   }
 
   let accusedAppeal = formatAppeal(
@@ -647,18 +648,21 @@ function constructInvestigationRulingPdf(
   }
 
   if (accusedAppeal) {
-    doc.text(' ').text(accusedAppeal, { align: 'justify', paragraphGap: 1 })
+    addEmptyLines(doc)
+    doc.text(accusedAppeal, { align: 'justify', paragraphGap: 1 })
   }
 
   if (theCase.endOfSessionBookings) {
-    doc.text(' ').text(theCase.endOfSessionBookings, {
+    addEmptyLines(doc)
+    doc.text(theCase.endOfSessionBookings, {
       align: 'justify',
       paragraphGap: 1,
     })
   }
 
   if (theCase.registrar) {
-    doc.text(' ').text(
+    addEmptyLines(doc)
+    doc.text(
       formatMessage(ruling.registrarWitness, {
         registrarNameAndTitle: `${theCase.registrar.name} ${theCase.registrar.title}`,
       }),
@@ -669,7 +673,8 @@ function constructInvestigationRulingPdf(
     )
   }
 
-  doc.text(' ').text(
+  addEmptyLines(doc)
+  doc.text(
     theCase.courtEndTime
       ? formatMessage(ruling.signOff, {
           endTime: formatDate(theCase.courtEndTime, 'p'),

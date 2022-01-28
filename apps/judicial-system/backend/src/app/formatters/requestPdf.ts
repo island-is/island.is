@@ -15,6 +15,7 @@ import { restrictionRequest as m, core } from '../messages'
 import { Case } from '../modules/case/models'
 import { formatLegalProvisions } from './formatters'
 import {
+  addEmptyLines,
   addHugeHeading,
   addLargeHeading,
   addMediumPlusHeading,
@@ -87,7 +88,7 @@ function constructRestrictionRequestPdf(
 
   theCase.defendants?.forEach((defendant, index) => {
     if (index > 0) {
-      doc.text(' ')
+      addEmptyLines(doc)
     }
 
     doc
@@ -101,60 +102,52 @@ function constructRestrictionRequestPdf(
   })
 
   if (theCase.defendants && theCase.defendants.length > 1) {
-    doc.text(' ')
+    addEmptyLines(doc)
   }
 
-  doc
-    .text(
-      formatMessage(m.baseInfo.defender, {
-        defenderName:
-          theCase.defenderName && !theCase.defenderIsSpokesperson
-            ? theCase.defenderName
-            : formatMessage(m.baseInfo.noDefender),
-      }),
-    )
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(mediumFontSize)
+  doc.text(
+    formatMessage(m.baseInfo.defender, {
+      defenderName:
+        theCase.defenderName && !theCase.defenderIsSpokesperson
+          ? theCase.defenderName
+          : formatMessage(m.baseInfo.noDefender),
+    }),
+  )
+  addEmptyLines(doc)
+  doc.font('Helvetica-Bold').fontSize(mediumFontSize)
   setLineGap(doc, 8)
   doc
     .text(formatMessage(m.demands.heading))
     .font('Helvetica')
     .fontSize(baseFontSize)
   setLineGap(doc, 6)
-  doc
-    .text(theCase.demands ?? formatMessage(m.demands.noDemands), {
-      paragraphGap: 0,
-    })
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(mediumFontSize)
+  doc.text(theCase.demands ?? formatMessage(m.demands.noDemands), {
+    paragraphGap: 0,
+  })
+  addEmptyLines(doc)
+  doc.font('Helvetica-Bold').fontSize(mediumFontSize)
   setLineGap(doc, 8)
   doc
     .text(formatMessage(m.lawsBroken.heading))
     .font('Helvetica')
     .fontSize(baseFontSize)
   setLineGap(doc, 6)
-  doc
-    .text(theCase.lawsBroken ?? formatMessage(m.lawsBroken.noLawsBroken), {
-      paragraphGap: 0,
-    })
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(mediumFontSize)
+  doc.text(theCase.lawsBroken ?? formatMessage(m.lawsBroken.noLawsBroken), {
+    paragraphGap: 0,
+  })
+  addEmptyLines(doc)
+  doc.font('Helvetica-Bold').fontSize(mediumFontSize)
   setLineGap(doc, 8)
   doc
     .text(formatMessage(m.legalBasis.heading))
     .font('Helvetica')
     .fontSize(baseFontSize)
   setLineGap(doc, 6)
-  doc
-    .text(formatLegalProvisions(theCase.legalProvisions, theCase.legalBasis), {
-      paragraphGap: 0,
-    })
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(largeFontSize)
+  doc.text(formatLegalProvisions(theCase.legalProvisions, theCase.legalBasis), {
+    paragraphGap: 0,
+  })
+  addEmptyLines(doc)
+  doc.font('Helvetica-Bold').fontSize(largeFontSize)
   setLineGap(doc, 8)
   doc
     .text(formatMessage(m.factsAndArguments.heading))
@@ -163,27 +156,25 @@ function constructRestrictionRequestPdf(
     .font('Helvetica')
     .fontSize(baseFontSize)
   setLineGap(doc, 6)
-  doc
-    .text(theCase.caseFacts ?? formatMessage(m.factsAndArguments.noFacts), {
-      paragraphGap: 0,
-    })
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(mediumFontSize)
+  doc.text(theCase.caseFacts ?? formatMessage(m.factsAndArguments.noFacts), {
+    paragraphGap: 0,
+  })
+  addEmptyLines(doc)
+  doc.font('Helvetica-Bold').fontSize(mediumFontSize)
   setLineGap(doc, 8)
   doc
     .text(formatMessage(m.factsAndArguments.arguments))
     .font('Helvetica')
     .fontSize(baseFontSize)
   setLineGap(doc, 6)
+  doc.text(
+    theCase.legalArguments ?? formatMessage(m.factsAndArguments.noArguments),
+    {
+      paragraphGap: 0,
+    },
+  )
+  addEmptyLines(doc)
   doc
-    .text(
-      theCase.legalArguments ?? formatMessage(m.factsAndArguments.noArguments),
-      {
-        paragraphGap: 0,
-      },
-    )
-    .text(' ')
     .font('Helvetica-Bold')
     .text(
       `${
@@ -255,7 +246,7 @@ function constructInvestigationRequestPdf(
 
   theCase.defendants?.forEach((defendant, index) => {
     if (index > 0) {
-      doc.text(' ')
+      addEmptyLines(doc)
     }
 
     doc
@@ -270,7 +261,7 @@ function constructInvestigationRequestPdf(
 
   if (theCase.defenderName && !theCase.defenderIsSpokesperson) {
     if (theCase.defendants && theCase.defendants.length > 1) {
-      doc.text(' ')
+      addEmptyLines(doc)
     }
 
     doc.text(
@@ -280,7 +271,8 @@ function constructInvestigationRequestPdf(
     )
   }
 
-  doc.text(' ').font('Helvetica-Bold').fontSize(mediumFontSize)
+  addEmptyLines(doc)
+  doc.font('Helvetica-Bold').fontSize(mediumFontSize)
   setLineGap(doc, 8)
   doc
     .text(formatMessage(m.description.heading))
@@ -301,46 +293,41 @@ function constructInvestigationRequestPdf(
     doc.text(theCase.description)
   }
 
-  doc.text(' ').font('Helvetica-Bold').fontSize(mediumFontSize)
+  addEmptyLines(doc)
+  doc.font('Helvetica-Bold').fontSize(mediumFontSize)
   setLineGap(doc, 8)
   doc
     .text(formatMessage(m.demands.heading))
     .font('Helvetica')
     .fontSize(baseFontSize)
   setLineGap(doc, 6)
-  doc
-    .text(theCase.demands ?? formatMessage(m.demands.noDemands), {
-      paragraphGap: 0,
-    })
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(mediumFontSize)
+  doc.text(theCase.demands ?? formatMessage(m.demands.noDemands), {
+    paragraphGap: 0,
+  })
+  addEmptyLines(doc)
+  doc.font('Helvetica-Bold').fontSize(mediumFontSize)
   setLineGap(doc, 8)
   doc
     .text(formatMessage(m.lawsBroken.heading))
     .font('Helvetica')
     .fontSize(baseFontSize)
   setLineGap(doc, 6)
-  doc
-    .text(theCase.lawsBroken ?? formatMessage(m.lawsBroken.noLawsBroken), {
-      paragraphGap: 0,
-    })
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(mediumFontSize)
+  doc.text(theCase.lawsBroken ?? formatMessage(m.lawsBroken.noLawsBroken), {
+    paragraphGap: 0,
+  })
+  addEmptyLines(doc)
+  doc.font('Helvetica-Bold').fontSize(mediumFontSize)
   setLineGap(doc, 8)
   doc
     .text(formatMessage(m.legalBasis.heading))
     .font('Helvetica')
     .fontSize(baseFontSize)
   setLineGap(doc, 6)
-  doc
-    .text(theCase.legalBasis ?? formatMessage(m.legalBasis.noLegalBasis), {
-      paragraphGap: 0,
-    })
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(largeFontSize)
+  doc.text(theCase.legalBasis ?? formatMessage(m.legalBasis.noLegalBasis), {
+    paragraphGap: 0,
+  })
+  addEmptyLines(doc)
+  doc.font('Helvetica-Bold').fontSize(largeFontSize)
   setLineGap(doc, 8)
   doc
     .text(formatMessage(m.factsAndArguments.heading))
@@ -349,27 +336,24 @@ function constructInvestigationRequestPdf(
     .font('Helvetica')
     .fontSize(baseFontSize)
   setLineGap(doc, 6)
-  doc
-    .text(theCase.caseFacts ?? formatMessage(m.factsAndArguments.noFacts), {
-      paragraphGap: 0,
-    })
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(mediumFontSize)
+  doc.text(theCase.caseFacts ?? formatMessage(m.factsAndArguments.noFacts), {
+    paragraphGap: 0,
+  })
+  addEmptyLines(doc)
+  doc.font('Helvetica-Bold').fontSize(mediumFontSize)
   setLineGap(doc, 8)
   doc
     .text(formatMessage(m.factsAndArguments.arguments))
     .font('Helvetica')
     .fontSize(baseFontSize)
   setLineGap(doc, 6)
-  doc
-    .text(
-      theCase.legalArguments ?? formatMessage(m.factsAndArguments.noArguments),
-      {
-        paragraphGap: 0,
-      },
-    )
-    .text(' ')
+  doc.text(
+    theCase.legalArguments ?? formatMessage(m.factsAndArguments.noArguments),
+    {
+      paragraphGap: 0,
+    },
+  )
+  addEmptyLines(doc)
 
   if (theCase.requestProsecutorOnlySession) {
     doc.font('Helvetica-Bold').fontSize(mediumFontSize)
@@ -379,11 +363,10 @@ function constructInvestigationRequestPdf(
       .font('Helvetica')
       .fontSize(baseFontSize)
     setLineGap(doc, 6)
-    doc
-      .text(theCase.prosecutorOnlySessionRequest ?? '', {
-        paragraphGap: 0,
-      })
-      .text(' ')
+    doc.text(theCase.prosecutorOnlySessionRequest ?? '', {
+      paragraphGap: 0,
+    })
+    addEmptyLines(doc)
   }
 
   doc
