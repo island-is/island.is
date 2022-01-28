@@ -39,7 +39,7 @@ import {
   CustomTemplateFindQuery,
 } from '@island.is/application/core'
 import type { Unwrap, Locale } from '@island.is/shared/types'
-import type { User } from '@island.is/auth-nest-tools'
+import { BypassAuth, User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
@@ -96,17 +96,18 @@ import {
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from './application.model'
+import AmazonS3URI from 'amazon-s3-uri'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
-@ApiHeader({
-  name: 'authorization',
-  description: 'Bearer token authorization',
-})
-@ApiHeader({
-  name: 'locale',
-  description: 'Front-end language selected',
-})
+// @ApiHeader({
+//   name: 'authorization',
+//   description: 'Bearer token authorization',
+// })
+// @ApiHeader({
+//   name: 'locale',
+//   description: 'Front-end language selected',
+// })
 @Controller()
 export class ApplicationController {
   constructor(
@@ -118,7 +119,89 @@ export class ApplicationController {
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
     private intlService: IntlService,
   ) {}
+  
+    // @Scopes(ApplicationScope.read)
+    @BypassAuth()
+    @Get('applications/:id/attachments/:key/presigned-url')
+    // @ApiParam({
+    //   name: 'id',
+    //   type: String,
+    //   required: true,
+    //   description: 'The id of the application which the file was created for.',
+    //   allowEmptyValue: false,
+    // })
+    // @ApiParam({
+    //   name: 'key',
+    //   type: String,
+    //   required: true,
+    //   description: 'key',
+    //   allowEmptyValue: false,
+    // })
+    @ApiOkResponse({ type: PresignedUrlResponseDto })
+    async getAttachmentPresignedURL(
+      // @Param('id', new ParseUUIDPipe()) id: string,
+      // @Param('key') key: string,
+      // @CurrentUser() user: User,
+    ): Promise<PresignedUrlResponseDto> {
+      
+      // DEMO USER DATA
+      const id = "1f3e2f11-fba0-4281-ab22-1213209a2060"
+      const nationalId = "0101303019"
+      const s3key = "1b1e33a7-c4a5-41ff-bdcc-d81b8990d342_1-f-6-c-0986-d-58-d-4-ef-2-91-b-9-90-d-91-c-43-cd-3-f-placeholder-1.png"
 
+      const fixed = "https://island-is-dev-storage-application-system.s3-eu-west-1.amazonaws.com/1f3e2f11-fba0-4281-ab22-1213209a2060/18e6843a-7c3a-4623-9b7c-5a66cb87d5d8_placeholder.png"
+      const { region, bucket, key } = AmazonS3URI(fixed)
+      return await this.fileService.getAttachmentPresignedURL(bucket,key)
+
+      // // check user for application
+      // const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      //   id,
+      //   nationalId,
+      // )
+      // return existingApplication 
+
+      // // VS getting it DYNAMIC PROPERTIES AND DTO ?  JSON OBJECTS IN DB GREAT ....
+      // // return await this.applicationService.findApplicationAttachments(
+      // //   id,
+      // //   nationalId,
+      // //   s3key
+      // // )
+      
+      // // check for attachment key in application - ACCESS ATTACHEMNT IN ANOHTER WAY
+      // if(existingApplication.attachments){
+      //   if(existingApplication.attachments.hasOwnProperty(s3key)){
+      //     for (const [k, filename] of Object.entries(existingApplication.attachments)) {
+      //       console.log(`${k}: ${filename}`);
+      //       if(k==s3key){
+      //         const { region, bucket, key } = AmazonS3URI(filename)
+      //         return await this.fileService.getAttachmentPresignedURL(bucket,key)
+      //       }
+      //     }      
+      //     // const { region, bucket, key } = AmazonS3URI(existingApplication.attachments[s3key])
+      //     // console.log(region, bucket, key)
+      //     // return await this.fileService.getAttachmentPresignedURL(bucket,key)
+      //   } else {
+      //     console.log("attachment key not found")
+      //     throw new NotFoundException()
+      //   }
+      // } else {
+      //   console.log("attachments not found")
+      //   throw new NotFoundException()
+      // }
+      // // return url
+      // // this.auditService.audit({
+      // //   auth: user,
+      // //   action: 'getPresignedUrl',
+      // //   resources: existingApplication.id,
+      // //   meta: { type },
+      // // })
+
+      // // COMMANDS
+      // // yarn nx schemas/build-openapi application-system-api --skip-nx-cache
+      // // yarn nx schemas/openapi-generator api-domains-application --skip-nx-cache
+
+    }
+  
   @Scopes(ApplicationScope.read)
   @Get('applications/:id')
   @ApiOkResponse({ type: ApplicationResponseDto })

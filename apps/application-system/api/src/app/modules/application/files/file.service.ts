@@ -197,4 +197,9 @@ export class FileService {
 
     return bucket
   }
+
+  async getAttachmentPresignedURL(bucket: string,key: string){
+    const url = await this.awsService.getPresignedUrl(bucket, key)
+    return { url }
+  }
 }

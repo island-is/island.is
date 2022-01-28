@@ -169,4 +169,19 @@ export class ApplicationService {
   async delete(id: string) {
     return this.applicationModel.destroy({ where: { id } })
   }
+
+  async findApplicationAttachments(
+    id: string,
+    nationalId: string,
+    s3key: string,
+  ): Promise<Application[]> {
+    console.log(id,nationalId,s3key)
+    return this.applicationModel.findAll({
+      where: {
+        id,
+        applicant: nationalId,
+        attachments: { [Op.contains]: s3key }
+      },
+    })
+  }
 }

@@ -127,6 +127,8 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
 
       const response = await uploadFileToS3(file, dispatch, url, fields)
 
+      console.log(response,fields)
+      
       // 3. Add Attachment Data
       await addAttachment({
         variables: {
