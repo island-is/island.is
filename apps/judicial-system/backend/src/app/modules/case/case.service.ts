@@ -526,18 +526,15 @@ export class CaseService {
   }
 
   async getRulingPdf(theCase: Case): Promise<Buffer> {
-    const pdf = await this.awsS3Service
-      .getObject(`generated/${theCase.id}/ruling.pdf`)
-      .catch((reason) => {
-        this.logger.info(
-          `The ruling for case ${theCase.id} was not found in AWS S3`,
-          { reason },
-        )
-        return undefined
-      })
-
-    if (pdf) {
-      return pdf
+    try {
+      return await this.awsS3Service.getObject(
+        `generated/${theCase.id}/ruling.pdf`,
+      )
+    } catch (error) {
+      this.logger.info(
+        `The ruling for case ${theCase.id} was not found in AWS S3`,
+        { error },
+      )
     }
 
     return getRulingPdfAsBuffer(theCase, this.formatMessage, false)
