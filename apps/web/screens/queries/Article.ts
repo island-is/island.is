@@ -89,6 +89,26 @@ export const GET_ARTICLE_QUERY = gql`
           ...AllSlices
         }
         showTableOfContents
+        stepper {
+          id
+          title
+          steps {
+            id
+            title
+            slug
+            stepType
+            subtitle {
+              ...HtmlFields
+            }
+            text {
+              ...HtmlFields
+            }
+            isAnswer
+            options
+            config
+          }
+          config
+        }
       }
       featuredImage {
         url
