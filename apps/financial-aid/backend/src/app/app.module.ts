@@ -6,10 +6,10 @@ import { AuditModule } from '@island.is/nest/audit'
 
 import {
   ApplicationModule,
-  MunicipalityModule,
-  ApplicationEventModule,
   FileModule,
   StaffModule,
+  MunicipalityModule,
+  ApplicationEventModule,
   AidModule,
   AmountModule,
   DeductionFactorsModule,

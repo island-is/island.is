@@ -72,13 +72,6 @@ export const restrictionRequest = {
       defaultMessage: 'Efni kröfu',
       description: 'Notaður sem texti fyrir titil fyrir efni kröfu í kröfu PDF',
     },
-    noDescription: {
-      id:
-        'judicial.system.backend:pdf.restriction_request.description.no_description',
-      defaultMessage: 'Efni kröfu ekki skráð',
-      description:
-        'Notaður sem texti þegar efni kröfu eru ekki skráðar í kröfu PDF',
-    },
   }),
   demands: defineMessages({
     heading: {
@@ -108,7 +101,7 @@ export const restrictionRequest = {
         'Notaður sem texti þegar engin lagaákvæði eru skráðar í kröfu PDF',
     },
   }),
-  legalBasis: defineMessage({
+  legalBasis: defineMessages({
     heading: {
       id: 'judicial.system.backend:pdf.restriction_request.legal_basis.heading',
       defaultMessage: 'Lagaákvæði sem krafan er byggð á',

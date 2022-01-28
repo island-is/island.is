@@ -10,6 +10,7 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 import { StepFiveForm } from './StepFiveForm'
 
@@ -27,6 +28,7 @@ export const StepFive: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
   const router = useRouter()
@@ -82,6 +84,7 @@ export const StepFive: React.FC = () => {
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         policeCaseFiles={policeCaseFiles}
+        user={user}
       />
     </PageLayout>
   )

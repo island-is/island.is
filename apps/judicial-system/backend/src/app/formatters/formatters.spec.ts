@@ -1,7 +1,7 @@
 import { makeProsecutor } from '@island.is/judicial-system/formatters'
 import {
   CaseLegalProvisions,
-  CaseGender,
+  Gender,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
@@ -19,7 +19,6 @@ import {
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
-  formatCustodyIsolation,
   formatCourtResubmittedToCourtSmsNotification,
 } from './formatters'
 
@@ -639,7 +638,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
     const accusedName = 'Maggi Murder'
-    const accusedGender = CaseGender.FEMALE
+    const accusedGender = Gender.FEMALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = true
     const defenderName = 'Varði Varnari'
@@ -671,7 +670,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
     const accusedName = 'Maggi Murder'
-    const accusedGender = CaseGender.OTHER
+    const accusedGender = Gender.OTHER
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = true
     const defenderName = 'Vala Verja'
@@ -704,7 +703,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
     const accusedName = 'Maggi Murder'
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
     const defenderName = 'Vala Verja'
@@ -737,7 +736,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
     const accusedName = 'Maggi Murder'
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
     const isExtension = false
@@ -768,7 +767,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-11T12:02')
     const accusedName = 'Maggi Murder'
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
     const defenderIsSpokesperson = true
@@ -1039,16 +1038,16 @@ describe('formatDefenderRevokedEmailNotification', () => {
   test('should format revoked notification', () => {
     // Arrange
     const type = CaseType.CUSTODY
-    const accusedNationalId = '0000001111'
-    const accusedName = 'Gaui Glæpon'
+    const defendantNationalId = '0000001111'
+    const defendantName = 'Gaui Glæpon'
     const court = 'Héraðsdómur Þingvalla'
     const courtDate = new Date('2021-01-24T08:15')
 
     // Act
     const res = formatDefenderRevokedEmailNotification(
       type,
-      accusedNationalId,
-      accusedName,
+      defendantNationalId,
+      defendantName,
       court,
       courtDate,
     )
@@ -1062,16 +1061,16 @@ describe('formatDefenderRevokedEmailNotification', () => {
   test('should format revoked notification for travel ban', () => {
     // Arrange
     const type = CaseType.TRAVEL_BAN
-    const accusedNationalId = '1111001111'
-    const accusedName = 'Gaui Glæpon'
+    const defendantNationalId = '1111001111'
+    const defendantName = 'Gaui Glæpon'
     const court = 'Héraðsdómur Þingvalla'
     const courtDate = new Date('2021-01-24T08:15')
 
     // Act
     const res = formatDefenderRevokedEmailNotification(
       type,
-      accusedNationalId,
-      accusedName,
+      defendantNationalId,
+      defendantName,
       court,
       courtDate,
     )
@@ -1081,33 +1080,41 @@ describe('formatDefenderRevokedEmailNotification', () => {
       'Farbannskrafa sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
     )
   })
+
+  test('should format revoked notification for investigation', () => {
+    // Arrange
+    const type = CaseType.BANKING_SECRECY_WAIVER
+    const defendantNationalId = '1111001111'
+    const defendantName = 'Gaui Glæpon'
+    const court = 'Héraðsdómur Þingvalla'
+    const courtDate = new Date('2021-01-24T08:15')
+
+    // Act
+    const res = formatDefenderRevokedEmailNotification(
+      type,
+      defendantNationalId,
+      defendantName,
+      court,
+      courtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Krafa um rannsóknarheimild sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+    )
+  })
 })
 
 describe('stripHtmlTags', () => {
   test('should strip html tags', () => {
     // Arrange
-    const html = 'bla<strong>blab</strong>la<br /><br />blabla'
+    const html =
+      'bla<strong>blab</strong>la<br /><br />blabla<a href="blablabla">blabla</a>'
 
     // Act
     const res = stripHtmlTags(html)
 
     // Assert
-    expect(res).toBe('blablabla\n\nblabla')
-  })
-})
-
-describe('formatCustodyIsolation', () => {
-  test('should format custody isolation', () => {
-    // Arrange
-    const gender = CaseGender.OTHER
-    const isolationToDate = new Date('2021-12-31T16:00')
-
-    //Act
-    const res = formatCustodyIsolation(gender, isolationToDate)
-
-    // Assert
-    expect(res).toBe(
-      'Kærða skal sæta einangrun til föstudagsins 31. desember 2021, kl. 16:00.',
-    )
+    expect(res).toBe('blablabla\n\nblablablabla')
   })
 })

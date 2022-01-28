@@ -6,7 +6,7 @@ import {
 
 import { Case } from '../models'
 
-export function maskCase(theCase: Case): Case {
+function maskCase(theCase: Case): Case {
   if (isInvestigationCase(theCase.type)) {
     return {
       id: theCase.id,
@@ -15,8 +15,13 @@ export function maskCase(theCase: Case): Case {
       type: theCase.type,
       state: theCase.state,
       policeCaseNumber: theCase.policeCaseNumber,
-      accusedNationalId: theCase.accusedNationalId,
-      accusedName: theCase.accusedName,
+      defendants: theCase.defendants?.map((defendant) => ({
+        id: defendant.id,
+        created: defendant.created,
+        modified: defendant.modified,
+        nationalId: defendant.nationalId,
+        name: defendant.name,
+      })),
       defenderName: theCase.defenderName,
       defenderEmail: theCase.defenderEmail,
       defenderPhoneNumber: theCase.defenderPhoneNumber,
@@ -50,8 +55,6 @@ export function maskCase(theCase: Case): Case {
         type: theCase.parentCase.type,
         state: theCase.parentCase.state,
         policeCaseNumber: theCase.parentCase.policeCaseNumber,
-        accusedNationalId: theCase.parentCase.accusedNationalId,
-        accusedName: theCase.parentCase.accusedName,
         defenderName: theCase.parentCase.defenderName,
         defenderEmail: theCase.parentCase.defenderEmail,
         defenderPhoneNumber: theCase.parentCase.defenderPhoneNumber,
