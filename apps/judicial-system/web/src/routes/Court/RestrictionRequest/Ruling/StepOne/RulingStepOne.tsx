@@ -188,7 +188,7 @@ export const RulingStepOne: React.FC = () => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'prosecutorDemands',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -232,7 +232,7 @@ export const RulingStepOne: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtCaseFacts',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -279,7 +279,7 @@ export const RulingStepOne: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtLegalArguments',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,

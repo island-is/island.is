@@ -36,21 +36,21 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import {
+  removeTabsValidateAndSet,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  capitalize,
+  formatDate,
+  TIME_FORMAT,
+} from '@island.is/judicial-system/formatters'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
-import {
-  removeTabsValidateAndSet,
-  setAndSendDateToServer,
-  validateAndSendToServer,
-  validateAndSet,
-  validateAndSetErrorMessage,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { empty } from 'apollo-link'
 
 export const SignedVerdictOverview: React.FC = () => {
   const {
@@ -372,6 +372,15 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
+  const createCaseModifiedExplanation = (reason: string) => {
+    const now = new Date()
+
+    return `${capitalize(formatDate(now, 'PPPP', true) || '')} kl. ${formatDate(
+      now,
+      TIME_FORMAT,
+    )} - ${user?.name}\n\nÁstæða: ${reason}`
+  }
+
   /**
    * We assume that the signed verdict page is only opened for
    * cases in state REJECTED or ACCEPTED.
@@ -478,7 +487,7 @@ export const SignedVerdictOverview: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'caseModifiedExplanation',
-                  event,
+                  createCaseModifiedExplanation(event.target.value),
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -489,7 +498,7 @@ export const SignedVerdictOverview: React.FC = () => {
               onBlur={(event) =>
                 validateAndSendToServer(
                   'caseModifiedExplanation',
-                  event.target.value,
+                  createCaseModifiedExplanation(event.target.value),
                   ['empty'],
                   workingCase,
                   updateCase,

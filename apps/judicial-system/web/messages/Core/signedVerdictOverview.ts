@@ -223,5 +223,14 @@ export const signedVerdictOverview = {
           'Notaður sem texti í "Einangrun til" í  "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
       },
     }),
+    alterDatesInfo: defineMessages({
+      title: {
+        id:
+          'judicial.system.core:signed_verdict_overview.alter_dates_info.title',
+        defaultMessage: 'Lengd gæslu uppfærð',
+        description:
+          'Notaður sem titill í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá afgreiddra mála.',
+      },
+    }),
   },
 }

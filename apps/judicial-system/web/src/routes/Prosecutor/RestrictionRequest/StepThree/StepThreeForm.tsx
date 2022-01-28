@@ -166,7 +166,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'lawsBroken',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -232,7 +232,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'legalBasis',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -337,7 +337,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'requestedOtherRestrictions',
-                    event,
+                    event.target.value,
                     [],
                     workingCase,
                     setWorkingCase,

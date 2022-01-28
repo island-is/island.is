@@ -227,7 +227,7 @@ export const CourtRecord: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtLocation',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -278,7 +278,7 @@ export const CourtRecord: React.FC = () => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'courtAttendees',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -349,7 +349,7 @@ export const CourtRecord: React.FC = () => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'accusedBookings',
-                event,
+                event.target.value,
                 [],
                 workingCase,
                 setWorkingCase,
@@ -384,7 +384,7 @@ export const CourtRecord: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'litigationPresentations',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,

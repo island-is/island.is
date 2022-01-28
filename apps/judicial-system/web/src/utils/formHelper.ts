@@ -14,20 +14,15 @@ import { validate, Validation } from './validate'
 
 export const removeTabsValidateAndSet = (
   field: string,
-  evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  value: string,
   validations: Validation[],
   theCase: Case,
   setCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
-  let value: string
-
-  if (evt.target.value.includes('\t')) {
-    value = replaceTabs(evt.target.value)
-    evt.target.value = value
-  } else {
-    value = evt.target.value
+  if (value.includes('\t')) {
+    value = replaceTabs(value)
   }
 
   validateAndSet(

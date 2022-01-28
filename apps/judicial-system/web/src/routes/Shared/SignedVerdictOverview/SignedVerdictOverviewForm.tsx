@@ -13,6 +13,7 @@ import {
   Tooltip,
   Stack,
   Divider,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -40,9 +41,7 @@ import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/uti
 import {
   capitalize,
   caseTypes,
-  formatDate,
   getShortRestrictionByValue,
-  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -55,6 +54,7 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import AppealSection from './Components/AppealSection/AppealSection'
 import { SignedDocument } from './Components/SignedDocument'
 import CaseDates from './Components/CaseDates/CaseDates'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 
 interface Props {
   workingCase: Case
@@ -231,6 +231,20 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           }}
         />
       </Box>
+      {workingCase.caseModifiedExplanation && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="info"
+            title={formatMessage(m.sections.alterDatesInfo.title)}
+            message={
+              <MarkdownWrapper
+                text={workingCase.caseModifiedExplanation}
+                textProps={{ variant: 'small' }}
+              />
+            }
+          />
+        </Box>
+      )}
       <Box marginBottom={workingCase.isMasked ? 15 : 6}>
         <InfoCard
           data={[
