@@ -52,6 +52,22 @@ export interface OperatingLicense {
   alcoholWeekendOutdoorLicense?: string
 }
 
+export interface PaginationInfo {
+  pageSize?: number
+  pageNumber?: number
+  totalCount?: number
+  totalPages?: number
+  currentPage?: number
+  hasNext?: boolean
+  hasPrevious?: boolean
+}
+
+export interface PaginatedOperatingLicenses {
+  searchQuery: string
+  paginationInfo: PaginationInfo
+  results: OperatingLicense[]
+}
+
 export interface CertificateInfoResponse {
   nationalId?: string
   expirationDate?: string

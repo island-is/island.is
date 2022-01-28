@@ -14,6 +14,8 @@ import {
   DataUploadResponse,
   Homestay,
   OperatingLicense,
+  PaginatedOperatingLicenses,
+  PaginationInfo,
   Person,
   Attachment,
   CertificateInfoResponse,
@@ -106,6 +108,46 @@ export const mapOperatingLicense = (
     operatingLicense.afgrAfgengisVirkirdagarUtiveitingar,
   alcoholWeekendOutdoorLicense:
     operatingLicense.afgrAfgengisAdfaranottFridagaUtiveitingar,
+})
+
+export const mapPaginationInfo = (
+  paginationInfoHeaderJSON: string,
+): PaginationInfo => {
+  /**
+   * The Syslumenn API provides pagination information in a custom header as a
+   * JSON string. This interface is used to parse the
+   */
+  interface HeaderPaginationInfo {
+    PageSize?: number
+    PageNumber?: number
+    TotalCount?: number
+    TotalPages?: number
+    CurrentPage?: number
+    HasNext?: boolean
+    HasPrevious?: boolean
+  }
+  const paginationInfoFromHeader: HeaderPaginationInfo = JSON.parse(
+    paginationInfoHeaderJSON,
+  )
+  return {
+    pageSize: paginationInfoFromHeader.PageSize,
+    pageNumber: paginationInfoFromHeader.PageNumber,
+    totalCount: paginationInfoFromHeader.TotalCount,
+    totalPages: paginationInfoFromHeader.TotalPages,
+    currentPage: paginationInfoFromHeader.CurrentPage,
+    hasNext: paginationInfoFromHeader.HasNext,
+    hasPrevious: paginationInfoFromHeader.HasPrevious,
+  }
+}
+
+export const mapPaginatedOperatingLicenses = (
+  searchQuery: string,
+  paginationInfoHeaderJSON: string,
+  results: VirkLeyfi[],
+): PaginatedOperatingLicenses => ({
+  paginationInfo: mapPaginationInfo(paginationInfoHeaderJSON),
+  searchQuery: searchQuery,
+  results: (results ?? []).map(mapOperatingLicense),
 })
 
 export function constructUploadDataObject(
