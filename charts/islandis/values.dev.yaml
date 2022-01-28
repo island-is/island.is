@@ -498,9 +498,9 @@ application-system-api-worker:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/application-system-api'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/application-system-api-worker'
     create: true
-    name: 'application-system-api'
+    name: 'application-system-api-worker'
 application-system-form:
   enabled: true
   env:
