@@ -23,9 +23,9 @@ import {
   mediumFontSize,
   largeFontSize,
   setPageNumbers,
+  addCoatOfArms,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
-import { skjaldarmerki } from './skjaldarmerki'
 
 function constructRestrictionRulingPdf(
   theCase: Case,
@@ -49,27 +49,18 @@ function constructRestrictionRulingPdf(
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
-  doc.translate(270, 70).scale(0.5)
+  addCoatOfArms(doc)
 
-  skjaldarmerki(doc)
+  doc.text(' ').text(' ').text(' ').text(' ').text(' ')
 
-  doc
-    .fillColor('black')
-    .scale(2)
-    .translate(-270, -70)
-    .text(' ')
-    .text(' ')
-    .text(' ')
-    .text(' ')
-    .text(' ')
-
+  doc.lineGap(4)
   doc
     .font('Times-Roman')
     .fontSize(largeFontSize)
-    .lineGap(4)
     .text(theCase.court?.name ?? formatMessage(core.missing.court), {
       align: 'center',
     })
+  doc
     .fontSize(mediumFontSize)
     .lineGap(2)
     .text(
@@ -398,27 +389,18 @@ function constructInvestigationRulingPdf(
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
-  doc.translate(270, 70).scale(0.5)
+  addCoatOfArms(doc)
 
-  skjaldarmerki(doc)
+  doc.text(' ').text(' ').text(' ').text(' ').text(' ')
 
-  doc
-    .fillColor('black')
-    .scale(2)
-    .translate(-270, -70)
-    .text(' ')
-    .text(' ')
-    .text(' ')
-    .text(' ')
-    .text(' ')
-
+  doc.lineGap(4)
   doc
     .font('Times-Roman')
     .fontSize(largeFontSize)
-    .lineGap(4)
     .text(theCase.court?.name ?? formatMessage(core.missing.court), {
       align: 'center',
     })
+  doc
     .fontSize(mediumFontSize)
     .lineGap(2)
     .text(

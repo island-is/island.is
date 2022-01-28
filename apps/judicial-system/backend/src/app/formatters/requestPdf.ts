@@ -15,6 +15,7 @@ import { restrictionRequest as m, core } from '../messages'
 import { Case } from '../modules/case/models'
 import { formatLegalProvisions } from './formatters'
 import {
+  addHugeFont,
   baseFontSize,
   hugeFontSize,
   largeFontSize,
@@ -52,11 +53,9 @@ function constructRestrictionRequestPdf(
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
+  doc.lineGap(8)
+  addHugeFont(doc, 'Helvetica-Bold', title)
   doc
-    .font('Helvetica-Bold')
-    .fontSize(hugeFontSize)
-    .lineGap(8)
-    .text(title, { align: 'center' })
     .font('Helvetica')
     .fontSize(largeFontSize)
     .text(
@@ -217,11 +216,9 @@ function constructInvestigationRequestPdf(
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
+  doc.lineGap(8)
+  addHugeFont(doc, 'Helvetica-Bold', title)
   doc
-    .font('Helvetica-Bold')
-    .fontSize(hugeFontSize)
-    .lineGap(8)
-    .text(title, { align: 'center' })
     .font('Helvetica')
     .fontSize(largeFontSize)
     .text(

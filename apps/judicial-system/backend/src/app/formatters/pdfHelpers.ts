@@ -1,3 +1,5 @@
+import { coatOfArms } from './coatOfArms'
+
 export const baseFontSize = 11
 export const mediumFontSize = 14
 export const mediumPlusFontSize = 16
@@ -19,4 +21,20 @@ export function setPageNumbers(doc: PDFKit.PDFDocument) {
     // Reset margins
     doc.page.margins = oldMargins
   }
+}
+
+export function addCoatOfArms(doc: PDFKit.PDFDocument) {
+  doc.translate(270, 70).scale(0.5)
+
+  coatOfArms(doc)
+
+  doc.fillColor('black').scale(2).translate(-270, -70)
+}
+
+export function addHugeFont(
+  doc: PDFKit.PDFDocument,
+  font: string,
+  title: string,
+) {
+  doc.font(font).fontSize(hugeFontSize).text(title, { align: 'center' })
 }
