@@ -6,6 +6,12 @@ export const mediumPlusFontSize = 16
 export const largeFontSize = 18
 export const hugeFontSize = 26
 
+export function setTitle(doc: PDFKit.PDFDocument, title: string) {
+  if (doc.info) {
+    doc.info['Title'] = title
+  }
+}
+
 export function setPageNumbers(doc: PDFKit.PDFDocument) {
   const pages = doc.bufferedPageRange()
   for (let i = 0; i < pages.count; i++) {

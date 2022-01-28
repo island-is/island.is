@@ -25,6 +25,7 @@ import {
   addLargeHeading,
   addMediumHeading,
   setLineGap,
+  setTitle,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
@@ -44,9 +45,7 @@ function constructRestrictionRulingPdf(
     bufferPages: true,
   })
 
-  if (doc.info) {
-    doc.info['Title'] = shortVersion ? 'Þingbók' : 'Úrskurður'
-  }
+  setTitle(doc, shortVersion ? 'Þingbók' : 'Úrskurður')
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
@@ -376,9 +375,7 @@ function constructInvestigationRulingPdf(
     bufferPages: true,
   })
 
-  if (doc.info) {
-    doc.info['Title'] = shortVersion ? 'Þingbók' : 'Úrskurður'
-  }
+  setTitle(doc, shortVersion ? 'Þingbók' : 'Úrskurður')
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 

@@ -23,6 +23,7 @@ import {
   mediumFontSize,
   setLineGap,
   setPageNumbers,
+  setTitle,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
@@ -48,9 +49,7 @@ function constructRestrictionRequestPdf(
         : formatMessage(core.caseType.travelBan),
   })
 
-  if (doc.info) {
-    doc.info['Title'] = title
-  }
+  setTitle(doc, title)
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
@@ -221,9 +220,7 @@ function constructInvestigationRequestPdf(
     caseType: formatMessage(core.caseType.investigate),
   })
 
-  if (doc.info) {
-    doc.info['Title'] = title
-  }
+  setTitle(doc, title)
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 

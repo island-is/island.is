@@ -18,6 +18,7 @@ import {
   mediumFontSize,
   setLineGap,
   setPageNumbers,
+  setTitle,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 import { core, custodyNotice } from '../messages'
@@ -38,9 +39,7 @@ function constructCustodyNoticePdf(
     bufferPages: true,
   })
 
-  if (doc.info) {
-    doc.info['Title'] = 'Vistunarseðill'
-  }
+  setTitle(doc, 'Vistunarseðill')
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 

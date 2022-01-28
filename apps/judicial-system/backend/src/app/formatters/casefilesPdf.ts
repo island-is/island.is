@@ -9,6 +9,7 @@ import {
   baseFontSize,
   setLineGap,
   setPageNumbers,
+  setTitle,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
@@ -26,9 +27,7 @@ function constructCasefilesPdf(
     bufferPages: true,
   })
 
-  if (doc.info) {
-    doc.info['Title'] = `Rannsóknargögn ${theCase.courtCaseNumber}`
-  }
+  setTitle(doc, `Rannsóknargögn ${theCase.courtCaseNumber}`)
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
