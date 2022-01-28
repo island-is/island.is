@@ -1,3 +1,4 @@
+import yargs from 'yargs'
 let env = process.env
 
 if (!env.NODE_ENV || env.NODE_ENV === 'development') {
@@ -14,11 +15,17 @@ if (!env.NODE_ENV || env.NODE_ENV === 'development') {
 
 const required = (name: string): string => env[name] ?? ''
 
+const {
+  argv: { job },
+} = yargs(process.argv.slice(2))
+
 export const environment = {
   identityServerPath: required('IDENTITY_SERVER_PATH'),
   userProfileServiceBasePath: required('SERVICE_USER_PROFILE_BASEPATH'),
   notificationsClientId: required('USER_NOTIFICATION_CLIENT_ID'),
   notificationsClientSecret: required('USER_NOTIFICATION_CLIENT_SECRET'),
+
+  isWorker: job === 'worker',
 
   firebaseCredentials: required('FIREBASE_CREDENTIALS'),
 
