@@ -100,14 +100,14 @@ import AmazonS3URI from 'amazon-s3-uri'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
-// @ApiHeader({
-//   name: 'authorization',
-//   description: 'Bearer token authorization',
-// })
-// @ApiHeader({
-//   name: 'locale',
-//   description: 'Front-end language selected',
-// })
+@ApiHeader({
+  name: 'authorization',
+  description: 'Bearer token authorization',
+})
+@ApiHeader({
+  name: 'locale',
+  description: 'Front-end language selected',
+})
 @Controller()
 export class ApplicationController {
   constructor(
@@ -120,44 +120,44 @@ export class ApplicationController {
     private intlService: IntlService,
   ) {}
   
-    // @Scopes(ApplicationScope.read)
-    @BypassAuth()
-    @Get('applications/:id/attachments/:key/presigned-url')
-    // @ApiParam({
-    //   name: 'id',
-    //   type: String,
-    //   required: true,
-    //   description: 'The id of the application which the file was created for.',
-    //   allowEmptyValue: false,
-    // })
-    // @ApiParam({
-    //   name: 'key',
-    //   type: String,
-    //   required: true,
-    //   description: 'key',
-    //   allowEmptyValue: false,
-    // })
+    @Scopes(ApplicationScope.read)
+    // @BypassAuth()
+    @Get('applications/:id/attachments/:s3key/presigned-url')
+    @ApiParam({
+      name: 'id',
+      type: String,
+      required: true,
+      description: 'The id of the application which the file was created for.',
+      allowEmptyValue: false,
+    })
+    @ApiParam({
+      name: 's3key',
+      type: String,
+      required: true,
+      description: 'key',
+      allowEmptyValue: false,
+    })
     @ApiOkResponse({ type: PresignedUrlResponseDto })
     async getAttachmentPresignedURL(
-      // @Param('id', new ParseUUIDPipe()) id: string,
-      // @Param('key') key: string,
-      // @CurrentUser() user: User,
+      @Param('id', new ParseUUIDPipe()) id: string,
+      @Param('s3key') s3key: string,
+      @CurrentUser() user: User,
     ): Promise<PresignedUrlResponseDto> {
       
       // DEMO USER DATA
-      const id = "1f3e2f11-fba0-4281-ab22-1213209a2060"
-      const nationalId = "0101303019"
-      const s3key = "1b1e33a7-c4a5-41ff-bdcc-d81b8990d342_1-f-6-c-0986-d-58-d-4-ef-2-91-b-9-90-d-91-c-43-cd-3-f-placeholder-1.png"
+      // const id = "1f3e2f11-fba0-4281-ab22-1213209a2060"
+      // const nationalId = "0101303019"
+      s3key = "1b1e33a7-c4a5-41ff-bdcc-d81b8990d342_1-f-6-c-0986-d-58-d-4-ef-2-91-b-9-90-d-91-c-43-cd-3-f-placeholder-1.png"
 
+      
+      // check user for application
+      const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+        id,
+        user.nationalId,
+      )
       const fixed = "https://island-is-dev-storage-application-system.s3-eu-west-1.amazonaws.com/1f3e2f11-fba0-4281-ab22-1213209a2060/18e6843a-7c3a-4623-9b7c-5a66cb87d5d8_placeholder.png"
       const { region, bucket, key } = AmazonS3URI(fixed)
       return await this.fileService.getAttachmentPresignedURL(bucket,key)
-
-      // // check user for application
-      // const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
-      //   id,
-      //   nationalId,
-      // )
       // return existingApplication 
 
       // // VS getting it DYNAMIC PROPERTIES AND DTO ?  JSON OBJECTS IN DB GREAT ....

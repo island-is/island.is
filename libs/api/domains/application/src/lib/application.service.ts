@@ -19,6 +19,7 @@ import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import { ApplicationPayment } from './application.model'
+import { GetAttachmentPresignedUrlInput } from './dto/getAttachmentPresignedUrl.input'
 
 @Injectable()
 export class ApplicationService {
@@ -196,4 +197,17 @@ export class ApplicationService {
       pdfType: type,
     })
   }
+
+  async getAttachmentPresignedURL(input: GetAttachmentPresignedUrlInput, auth: Auth) {
+    const { id, s3key } = input
+
+    return await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerGetAttachmentPresignedURL({
+      id,
+      s3key,
+    })
+  }
+
+  
 }
