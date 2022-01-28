@@ -15,9 +15,9 @@ import { restrictionRequest as m, core } from '../messages'
 import { Case } from '../modules/case/models'
 import { formatLegalProvisions } from './formatters'
 import {
-  addHugeFont,
+  addHugeHeading,
+  addLargeHeading,
   baseFontSize,
-  hugeFontSize,
   largeFontSize,
   mediumFontSize,
   mediumPlusFontSize,
@@ -54,14 +54,13 @@ function constructRestrictionRequestPdf(
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
   doc.lineGap(8)
-  addHugeFont(doc, 'Helvetica-Bold', title)
+  addHugeHeading(doc, 'Helvetica-Bold', title)
+  addLargeHeading(
+    doc,
+    'Helvetica',
+    theCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
+  )
   doc
-    .font('Helvetica')
-    .fontSize(largeFontSize)
-    .text(
-      theCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
-      { align: 'center' },
-    )
     .fontSize(mediumPlusFontSize)
     .text(
       `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
@@ -217,14 +216,13 @@ function constructInvestigationRequestPdf(
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
   doc.lineGap(8)
-  addHugeFont(doc, 'Helvetica-Bold', title)
+  addHugeHeading(doc, 'Helvetica-Bold', title)
+  addLargeHeading(
+    doc,
+    'Helvetica',
+    theCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
+  )
   doc
-    .font('Helvetica')
-    .fontSize(largeFontSize)
-    .text(
-      theCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
-      { align: 'center' },
-    )
     .fontSize(mediumPlusFontSize)
     .text(
       `${formatDate(theCase.created, 'PPP')} - Mál nr. ${

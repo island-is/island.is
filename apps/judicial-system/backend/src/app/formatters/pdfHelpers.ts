@@ -31,10 +31,18 @@ export function addCoatOfArms(doc: PDFKit.PDFDocument) {
   doc.fillColor('black').scale(2).translate(-270, -70)
 }
 
-export function addHugeFont(
+export function addHugeHeading(
   doc: PDFKit.PDFDocument,
   font: string,
-  title: string,
+  heading: string,
 ) {
-  doc.font(font).fontSize(hugeFontSize).text(title, { align: 'center' })
+  doc.font(font).fontSize(hugeFontSize).text(heading, { align: 'center' })
+}
+
+export function addLargeHeading(
+  doc: PDFKit.PDFDocument,
+  font: string,
+  heading: string,
+) {
+  doc.font(font).fontSize(largeFontSize).text(heading, { align: 'center' })
 }

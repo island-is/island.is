@@ -21,9 +21,9 @@ import { core, ruling } from '../messages'
 import {
   baseFontSize,
   mediumFontSize,
-  largeFontSize,
   setPageNumbers,
   addCoatOfArms,
+  addLargeHeading,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
@@ -54,12 +54,11 @@ function constructRestrictionRulingPdf(
   doc.text(' ').text(' ').text(' ').text(' ').text(' ')
 
   doc.lineGap(4)
-  doc
-    .font('Times-Roman')
-    .fontSize(largeFontSize)
-    .text(theCase.court?.name ?? formatMessage(core.missing.court), {
-      align: 'center',
-    })
+  addLargeHeading(
+    doc,
+    'Times-Roman',
+    theCase.court?.name ?? formatMessage(core.missing.court),
+  )
   doc
     .fontSize(mediumFontSize)
     .lineGap(2)
@@ -394,12 +393,11 @@ function constructInvestigationRulingPdf(
   doc.text(' ').text(' ').text(' ').text(' ').text(' ')
 
   doc.lineGap(4)
-  doc
-    .font('Times-Roman')
-    .fontSize(largeFontSize)
-    .text(theCase.court?.name ?? formatMessage(core.missing.court), {
-      align: 'center',
-    })
+  addLargeHeading(
+    doc,
+    'Times-Roman',
+    theCase.court?.name ?? formatMessage(core.missing.court),
+  )
   doc
     .fontSize(mediumFontSize)
     .lineGap(2)
