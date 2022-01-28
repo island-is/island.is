@@ -138,6 +138,13 @@ export const createEnhancedFetch = (
     builder.wrap(withTimeout, { timeout })
   }
 
+  builder.wrap(withErrors, {
+    name,
+    logger,
+    treat400ResponsesAsErrors,
+    logErrorResponseBody,
+  })
+
   if (autoAuth) {
     builder.wrap(withAutoAuth, {
       name,
@@ -149,13 +156,6 @@ export const createEnhancedFetch = (
   }
 
   builder.wrap(withAuth, { forwardAuthUserAgent })
-
-  builder.wrap(withErrors, {
-    name,
-    logger,
-    treat400ResponsesAsErrors,
-    logErrorResponseBody,
-  })
 
   if (options.circuitBreaker !== false) {
     const opossum =
