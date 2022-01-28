@@ -63,3 +63,11 @@ export function addMediumHeading(
 ) {
   addHeading(doc, font, mediumFontSize, heading)
 }
+
+export function addMediumPlusHeading(
+  doc: PDFKit.PDFDocument,
+  font: string,
+  heading: string,
+) {
+  addHeading(doc, font, mediumPlusFontSize, heading)
+}

@@ -46,17 +46,19 @@ function constructCustodyNoticePdf(
   doc.lineGap(8)
   addHugeHeading(doc, 'Helvetica-Bold', 'Vistunarseðill')
   addLargeHeading(doc, 'Helvetica-Bold', 'Úrskurður um gæsluvarðhald')
+  addLargeHeading(
+    doc,
+    'Helvetica',
+    `Málsnúmer ${theCase.court?.name?.replace('dómur', 'dóms') ?? '?'} ${
+      theCase.courtCaseNumber
+    }`,
+  )
+  addLargeHeading(
+    doc,
+    'Helvetica',
+    `LÖKE málsnúmer ${theCase.policeCaseNumber}`,
+  )
   doc
-    .font('Helvetica')
-    .text(
-      `Málsnúmer ${theCase.court?.name?.replace('dómur', 'dóms') ?? '?'} ${
-        theCase.courtCaseNumber
-      }`,
-      { align: 'center' },
-    )
-    .text(`LÖKE málsnúmer ${theCase.policeCaseNumber}`, {
-      align: 'center',
-    })
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(mediumFontSize)

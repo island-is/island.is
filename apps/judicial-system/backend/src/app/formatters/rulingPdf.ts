@@ -66,14 +66,15 @@ function constructRestrictionRulingPdf(
         : ruling.proceedingsHeading,
     ),
   )
+  doc.lineGap(30)
+  addMediumHeading(
+    doc,
+    'Times-Roman',
+    formatMessage(ruling.caseNumber, {
+      caseNumber: theCase.courtCaseNumber,
+    }),
+  )
   doc
-    .lineGap(30)
-    .text(
-      formatMessage(ruling.caseNumber, {
-        caseNumber: theCase.courtCaseNumber,
-      }),
-      { align: 'center' },
-    )
     .fontSize(baseFontSize)
     .lineGap(1)
     .text(
@@ -397,14 +398,15 @@ function constructInvestigationRulingPdf(
         : ruling.proceedingsHeading,
     ),
   )
+  doc.lineGap(30)
+  addMediumHeading(
+    doc,
+    'Times-Roman',
+    formatMessage(ruling.caseNumber, {
+      caseNumber: theCase.courtCaseNumber,
+    }),
+  )
   doc
-    .lineGap(30)
-    .text(
-      formatMessage(ruling.caseNumber, {
-        caseNumber: theCase.courtCaseNumber,
-      }),
-      { align: 'center' },
-    )
     .fontSize(baseFontSize)
     .lineGap(1)
     .text(

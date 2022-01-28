@@ -17,10 +17,10 @@ import { formatLegalProvisions } from './formatters'
 import {
   addHugeHeading,
   addLargeHeading,
+  addMediumPlusHeading,
   baseFontSize,
   largeFontSize,
   mediumFontSize,
-  mediumPlusFontSize,
   setPageNumbers,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
@@ -60,18 +60,20 @@ function constructRestrictionRequestPdf(
     'Helvetica',
     theCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
   )
+  addMediumPlusHeading(
+    doc,
+    'Helvetica',
+    `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
+      theCase.policeCaseNumber
+    }`,
+  )
+  doc.lineGap(40)
+  addMediumPlusHeading(
+    doc,
+    'Helvetica',
+    `${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`,
+  )
   doc
-    .fontSize(mediumPlusFontSize)
-    .text(
-      `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
-        theCase.policeCaseNumber
-      }`,
-      { align: 'center' },
-    )
-    .lineGap(40)
-    .text(`${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`, {
-      align: 'center',
-    })
     .font('Helvetica-Bold')
     .fontSize(mediumFontSize)
     .lineGap(8)
@@ -222,18 +224,20 @@ function constructInvestigationRequestPdf(
     'Helvetica',
     theCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
   )
+  addMediumPlusHeading(
+    doc,
+    'Helvetica',
+    `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
+      theCase.policeCaseNumber
+    }`,
+  )
+  doc.lineGap(40)
+  addMediumPlusHeading(
+    doc,
+    'Helvetica',
+    `${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`,
+  )
   doc
-    .fontSize(mediumPlusFontSize)
-    .text(
-      `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
-        theCase.policeCaseNumber
-      }`,
-      { align: 'center' },
-    )
-    .lineGap(40)
-    .text(`${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`, {
-      align: 'center',
-    })
     .font('Helvetica-Bold')
     .fontSize(largeFontSize)
     .lineGap(8)
