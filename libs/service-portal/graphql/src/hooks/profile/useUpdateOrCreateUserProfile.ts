@@ -47,7 +47,6 @@ export const useUpdateOrCreateUserProfile = () => {
         data?.mobileStatus || userProfile?.mobileStatus || undefined,
     }
 
-    console.log('input', input)
     if (userProfile) {
       await updateUserProfile(input)
     } else {
