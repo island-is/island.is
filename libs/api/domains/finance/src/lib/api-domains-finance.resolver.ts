@@ -12,7 +12,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import { FinanceClientService } from '@island.is/clients/finance'
 import { Audit } from '@island.is/nest/audit'
-import { ConfigType, DownloadServiceConfig } from '@island.is/nest/config'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 
 import { GetFinancialOverviewInput } from './dto/getOverview.input'
 import { GetCustomerRecordsInput } from './dto/getCustomerRecords.input'

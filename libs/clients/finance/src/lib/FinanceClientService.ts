@@ -14,11 +14,8 @@ import {
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
 import { Auth } from '@island.is/auth-nest-tools'
-import {
-  ConfigType,
-  IdsClientConfig,
-  XRoadConfig,
-} from '@island.is/nest/config'
+import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 import { FinanceClientConfig } from './FinanceClientConfig'
 
 export class FinanceClientService {

@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
-import { FinanceService } from '@island.is/api/domains/finance'
+import { FinanceClientService } from '@island.is/clients/finance'
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -26,8 +26,8 @@ import { GetFinanceDocumentDto } from './dto/getFinanceDocument.dto'
 @Controller('finance')
 export class FinanceDocumentController {
   constructor(
-    @Inject(FinanceService)
-    private readonly financeService: FinanceService,
+    @Inject(FinanceClientService)
+    private readonly financeService: FinanceClientService,
   ) {}
 
   @Post('/:pdfId')

@@ -33,6 +33,7 @@ import { environment } from '../environments'
     }),
     FinanceClientModule,
     ConfigModule.forRoot({
+      isGlobal: true,
       load: [FinanceClientConfig, IdsClientConfig, XRoadConfig],
     }),
   ],

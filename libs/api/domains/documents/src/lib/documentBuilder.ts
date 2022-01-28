@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 
 import { DocumentInfoDTO } from '@island.is/clients/documents'
-import { ConfigType, DownloadServiceConfig } from '@island.is/nest/config'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 
 import { Document } from './models/document.model'
 import { DocumentTypeFilter, FileType } from './types'
