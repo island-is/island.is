@@ -138,7 +138,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
   return (
     <Box>
       <form onSubmit={handleSubmit(handleSendEmailVerification)}>
-        <Columns alignY="center">
+        <Columns collapseBelow="sm" alignY="center">
           <Column width="9/12">
             <InputController
               control={control}

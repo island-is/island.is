@@ -9,11 +9,12 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
-import { stringifyBankData } from '../../utils/bankInfoHelper'
+import { stringifyBankData } from '../../../../../utils/bankInfoHelper'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { BankInfoTypes } from './ProfileForm/types/form'
+import { BankInfoTypes } from '../../../ProfileForm/types/form'
+import * as styles from './BankInfo.css'
 
 interface Props {
   bankInfo?: BankInfoTypes
@@ -47,11 +48,11 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
 
   return (
     <form onSubmit={handleSubmit(submitFormData)}>
-      <Columns alignY="center">
+      <Columns collapseBelow="sm" alignY="center">
         <Column width="9/12">
           <Columns alignY="center">
             <Column width="content">
-              <Box style={{ maxWidth: 120 }} marginRight={1}>
+              <Box className={styles.bank}>
                 <InputController
                   control={control}
                   id="bank"
@@ -84,7 +85,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
               </Box>
             </Column>
             <Column width="content">
-              <Box style={{ maxWidth: 90 }} marginRight={1}>
+              <Box className={styles.hb}>
                 <InputController
                   control={control}
                   id="l"
@@ -117,7 +118,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
               </Box>
             </Column>
             <Column>
-              <Box marginRight={1}>
+              <Box className={styles.account}>
                 <InputController
                   control={control}
                   id="account"

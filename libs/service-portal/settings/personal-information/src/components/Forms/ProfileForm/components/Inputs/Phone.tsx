@@ -141,7 +141,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
   return (
     <Box>
       <form onSubmit={handleSubmit(handleSendTelVerification)}>
-        <Columns alignY="center">
+        <Columns collapseBelow="sm" alignY="center">
           <Column width="9/12">
             <Columns>
               <Column width="content">

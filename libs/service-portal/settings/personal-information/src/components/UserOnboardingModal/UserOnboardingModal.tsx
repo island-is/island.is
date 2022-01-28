@@ -50,8 +50,8 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn span="3/12" />
-          <GridColumn span="9/12">
+          <GridColumn span={['12/12', '12/12', '12/12', '3/12']} />
+          <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
             <ProfileForm
               title={userInfo?.profile?.name || ''}
               onCloseOverlay={closeModal}

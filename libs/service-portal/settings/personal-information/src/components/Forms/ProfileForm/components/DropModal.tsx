@@ -7,6 +7,7 @@ import {
   Box,
   GridColumn,
   GridRow,
+  Hidden,
 } from '@island.is/island-ui/core'
 
 interface Props {
@@ -50,7 +51,7 @@ export const DropModal: FC<Props> = ({ onClose, onDrop, type }) => {
       toggleClose={closeModal}
     >
       <GridRow align="flexStart" alignItems="flexStart">
-        <GridColumn span="5/8">
+        <GridColumn span={['7/8', '5/8']}>
           <Text variant="h4" as="h2" marginBottom={1}>
             {type === 'tel' && telStrings.title}
             {type === 'mail' && emailStrings.title}
@@ -62,21 +63,25 @@ export const DropModal: FC<Props> = ({ onClose, onDrop, type }) => {
             {type === 'all' && anyStrings.text}
           </Text>
         </GridColumn>
-        <GridColumn span="3/8">
-          {type === 'all' ? (
-            <img
-              src="assets/images/retirement.svg"
-              alt="Skrautmynd"
-              style={{ float: 'right' }}
-              width="80%"
-            />
+        <GridColumn span={['1/8', '3/8']}>
+          {type === 'tel' ? (
+            <Hidden below="sm">
+              <img
+                src="assets/images/retirement.svg"
+                alt="Skrautmynd"
+                style={{ float: 'right' }}
+                width="80%"
+              />
+            </Hidden>
           ) : (
-            <img
-              src="assets/images/jobsGrid.svg"
-              alt="Skrautmynd"
-              width="80%"
-              style={{ float: 'right' }}
-            />
+            <Hidden below="sm">
+              <img
+                src="assets/images/jobsGrid.svg"
+                alt="Skrautmynd"
+                width="80%"
+                style={{ float: 'right' }}
+              />
+            </Hidden>
           )}
         </GridColumn>
         <GridColumn span="7/8">

@@ -12,7 +12,7 @@ import { InputSection } from './components/InputSection'
 import { InputEmail } from './components/Inputs/Email'
 import { InputPhone } from './components/Inputs/Phone'
 import { DropModal } from './components/DropModal'
-import { BankInfoForm } from '../BankInfoForm'
+import { BankInfoForm } from './components/Inputs/BankInfoForm'
 import { Nudge } from './components/Inputs/Nudge'
 import { DropModalType } from './types/form'
 import { bankInfoObject } from '../../../utils/bankInfoHelper'
@@ -52,7 +52,6 @@ export const ProfileForm: FC<Props> = ({
         setShowDropModal(showDropModal)
       } else {
         if (emailDirty || telDirty) {
-          // TODO: Check for alternative to isDirty here. Should be on VERIFIED?
           submitEmptyStatus({ email: emailDirty, tel: telDirty }).then(() =>
             onCloseOverlay(),
           )
@@ -83,7 +82,7 @@ export const ProfileForm: FC<Props> = ({
   return (
     <GridContainer>
       <GridRow marginBottom={10}>
-        <GridColumn span={['12/12', '9/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
           <OnboardingIntro name={title || ''} />
           <InputSection
             title={formatMessage(m.email)}
