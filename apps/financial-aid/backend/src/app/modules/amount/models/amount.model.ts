@@ -32,6 +32,7 @@ export class AmountModel extends Model<Amount> {
   @Column({
     type: DataType.UUID,
     allowNull: false,
+    // unique: true,
   })
   @ApiProperty()
   applicationId: string

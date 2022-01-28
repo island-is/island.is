@@ -40,6 +40,7 @@ import { MunicipalityService } from '../municipality'
 import { logger } from '@island.is/logging'
 import { AmountModel, AmountService } from '../amount'
 import { DeductionFactorsModel } from '../deductionFactors'
+import { Sequelize } from 'sequelize-typescript'
 
 interface Recipient {
   name: string
@@ -188,6 +189,12 @@ export class ApplicationService {
           model: AmountModel,
           as: 'amount',
           include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
+          order: [['id', 'DESC']],
+
+          // order: ['created'],
+          // attributes: [sequelize.fn('MAX', sequelize.col('modified'))],
+          // order: [Sequelize.fn('min', Sequelize.col('created'))],
+          // order: [sequelize.fn('max', sequelize.col('created'))],
         },
       ],
     })
