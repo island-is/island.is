@@ -59,7 +59,15 @@ export class DrivingLicenseService {
   async getStudentInformation(
     nationalId: string,
   ): Promise<StudentInformation | null> {
-    const drivingLicense = await this.getDrivingLicense(nationalId)
+    let licenses
+    try {
+      licenses = await this.drivingLicenseApi.getAllLicenses({ nationalId })
+    } catch (e) {
+      console.error(e)
+      return this.handleGetLicenseError(e)
+    }
+
+    const [drivingLicense] = licenses
 
     if (!drivingLicense) {
       return null

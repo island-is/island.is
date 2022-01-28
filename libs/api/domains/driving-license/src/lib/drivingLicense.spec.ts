@@ -71,12 +71,17 @@ describe('DrivingLicenseService', () => {
       })
     })
 
-    it("should not return a student's license when expired", async () => {
+    it("_should_ return a student's license when expired", async () => {
+      // Reason:
+      // It is allowed to look up stundents and mark them as having finished
+      // the driving assessment even though their license is expired.
       const response = await service.getStudentInformation(
         MOCK_NATIONAL_ID_EXPIRED,
       )
 
-      expect(response).toBeNull()
+      expect(response).toStrictEqual({
+        name: 'Expired Halldórsson',
+      })
     })
   })
 
