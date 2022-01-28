@@ -37,22 +37,6 @@ export const ButtonBar = () => {
           </Button>
         </Box>
       )}
-      {/*
-      // This button has been moved into the small
-      // Save/Delete button-bar at the top
-
-      {actions.propose && (
-        <Box className={s.propose}>
-          <Button
-            onClick={actions.propose}
-            preTextIcon="share"
-            preTextIconType="outline"
-          >
-            {t(msg.propose)}
-          </Button>
-        </Box>
-      )}
-      */}
     </Box>
   )
 }
