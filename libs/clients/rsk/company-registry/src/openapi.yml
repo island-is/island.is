@@ -7,7 +7,7 @@ servers:
   - url: https://juno.skattur.is/ords/stg
     description: Ríkisskattstjóri - Company Registry v1.00
 paths:
-  /v1/fyrirtaekjaskra/search/{search_string}:
+  /v1/ft/search/{search_string}:
     get:
       description: >-
         Search Company Registry with search string. If left null then shows 100
@@ -54,7 +54,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-  /v1/fyrirtaekjaskra/{ssid}:
+  /v1/ft/{ssid}:
     get:
       description: Information about company
       parameters:
@@ -84,7 +84,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-  /v1/fyrirtaekjaskra/:
+  /v1/ft/:
     get:
       description: Service Information.
       responses:
