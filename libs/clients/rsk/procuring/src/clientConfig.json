@@ -1,0 +1,417 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "1.0.0",
+    "title": "Prókúra",
+    "description": "Vefþjónusta prókúruskrár fyrir XROAD samskiptalag.",
+    "contact": {
+      "name": "XROAD Þjónustur - Skatturinn",
+      "url": "https://api.skattur.is/xroad",
+      "email": "xroad@skattur.is"
+    },
+    "x-category": [
+      "personal",
+      "official"
+    ],
+    "x-pricing": [
+      "free"
+    ],
+    "x-links": [
+      [
+        "documentation",
+        "https://api.skattur.is/prokura/xroad/docs"
+      ],
+      [
+        "responsibleParty",
+        "mailto:xroad@skattur.is"
+      ],
+      [
+        "bugReport",
+        "https://api.skattur.is/prokura/bugs"
+      ],
+      [
+        "featureRequest",
+        "https://api.skattur.is/prokura/features"
+      ]
+    ]
+  },
+  "servers": [
+    {
+      "url": "https://straumur.skattur.is/r1/IS/GOV/5402696029/Skatturinn/prokura-v1",
+      "description": "XROAD - Production server (uses live data)"
+    },
+    {
+      "url": "https://straumur-test.skattur.is/r1/IS-TEST/GOV/5402696029/Skatturinn/prokura-v1",
+      "description": "XROAD - Test server (uses live data)"
+    },
+    {
+      "url": "https://straumur-dev.skattur.is/r1/IS-DEV/GOV/10006/Skatturinn-Public/prokura-v1",
+      "description": "XROAD - Dev server (uses development data)"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Service Information",
+        "description": "Information about service.",
+        "operationId": "responseInfo",
+        "tags": [
+          "Service Information"
+        ],
+        "responses": {
+          "200": {
+            "description": "Version and contact information for API",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseInfo"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "summary": "Openapi 3.0.1",
+        "description": "Openapi 3.0.1 service description",
+        "operationId": "openapi",
+        "tags": [
+          "Service Information"
+        ],
+        "responses": {
+          "200": {
+            "description": "Version and contact information for API",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{nationalId}": {
+      "get": {
+        "summary": "Simple repsonse",
+        "description": "Information about relationship between a person and legal entities from company registry",
+        "operationId": "simple",
+        "tags": [
+          "Get Simple"
+        ],
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "National ID in Iceland for person",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{10}$",
+              "maximum": 10,
+              "default": "string",
+              "example": 101303019
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Simple repsonse",
+            "headers": {
+              "guaranteed": {
+                "description": "Header indicates if the result is cached or a guaranteed answer from service.  Use 0 for the cached reply and 1 for guaranteed reply.  Guaranteed replies are rate limited to 60 calls pr. min pr. IP.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseSimple"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/detailed/{nationalId}": {
+      "get": {
+        "summary": "Detailed response",
+        "description": "Detailed information about relationship between a person and legal entities from company registry",
+        "operationId": "detailed",
+        "tags": [
+          "Get Detailed"
+        ],
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "National ID in Iceland for person",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{10}$",
+              "maximum": 10,
+              "default": "string",
+              "example": 101303019
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "personDetailed repsonse",
+            "headers": {
+              "guaranteed": {
+                "description": "Header indicates if the result is cached or a guaranteed answer from service.  Use 0 for the cached reply and 1 for guaranteed reply.  Guaranteed replies are rate limited to 60 calls pr. min pr. IP.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseDetailed"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "categoryInfo": {
+        "type": "object",
+        "required": [
+          "gerd",
+          "flokkunarkerfi",
+          "numer",
+          "heiti"
+        ],
+        "properties": {
+          "gerd": {
+            "type": "string"
+          },
+          "flokkarkerfi": {
+            "type": "string"
+          },
+          "numer": {
+            "type": "integer"
+          },
+          "heiti": {
+            "type": "string"
+          }
+        }
+      },
+      "companySimple": {
+        "type": "object",
+        "required": [
+          "kennitala",
+          "heiti"
+        ],
+        "properties": {
+          "kennitala": {
+            "type": "string",
+            "pattern": "^\\d{10}$"
+          },
+          "heiti": {
+            "type": "string"
+          }
+        }
+      },
+      "companyDetailed": {
+        "type": "object",
+        "required": [
+          "kennitala",
+          "heiti"
+        ],
+        "properties": {
+          "kennitala": {
+            "type": "string",
+            "pattern": "^\\d{10}$"
+          },
+          "heiti": {
+            "type": "string"
+          },
+          "categoryInfo": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/categoryInfo"
+            }
+          }
+        }
+      },
+      "personSimple": {
+        "type": "object",
+        "required": [
+          "kennitala",
+          "nafn"
+        ],
+        "properties": {
+          "kennitala": {
+            "type": "string",
+            "pattern": "^\\d{10}$"
+          },
+          "nafn": {
+            "type": "string"
+          },
+          "prokura": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/companySimple"
+            }
+          }
+        }
+      },
+      "personDetailed": {
+        "type": "object",
+        "required": [
+          "kennitala",
+          "nafn"
+        ],
+        "properties": {
+          "kennitala": {
+            "type": "string",
+            "pattern": "^\\d{10}$"
+          },
+          "nafn": {
+            "type": "string"
+          },
+          "categoryInfo": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/categoryInfo"
+            }
+          },
+          "prokura": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/companyDetailed"
+            }
+          }
+        }
+      },
+      "responseInfo": {
+        "type": "object",
+        "required": [
+          "service",
+          "version",
+          "environment",
+          "publisher",
+          "publisher_website"
+        ],
+        "properties": {
+          "service": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "publisher": {
+            "type": "string"
+          },
+          "publisher_website": {
+            "type": "string"
+          },
+          "publisher_email": {
+            "type": "string"
+          }
+        }
+      },
+      "responseSimple": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/personSimple"
+            }
+          }
+        }
+      },
+      "responseDetailed": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/personDetailed"
+            }
+          }
+        }
+      },
+      "error": {
+        "type": "object",
+        "required": [
+          "error_code",
+          "error_message",
+          "error_ui_message"
+        ],
+        "properties": {
+          "error_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "error_message": {
+            "type": "string"
+          },
+          "error_ui_message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

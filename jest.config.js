@@ -137,6 +137,7 @@ module.exports = {
     '<rootDir>/libs/clients/vmst',
     '<rootDir>/libs/clients/zendesk',
     '<rootDir>/libs/clients/zendesk',
+    '<rootDir>/libs/clients/rsk/procuring',
     '<rootDir>/libs/clients/rsk/v1',
     '<rootDir>/libs/clients/rsk/v2',
     '<rootDir>/libs/content-search-indexer/types',
