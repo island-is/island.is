@@ -20,10 +20,10 @@ import { Case } from '../modules/case/models'
 import { core, ruling } from '../messages'
 import {
   baseFontSize,
-  mediumFontSize,
   setPageNumbers,
   addCoatOfArms,
   addLargeHeading,
+  addMediumHeading,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
@@ -56,17 +56,17 @@ function constructRestrictionRulingPdf(
     'Times-Roman',
     theCase.court?.name ?? formatMessage(core.missing.court),
   )
+  doc.lineGap(2)
+  addMediumHeading(
+    doc,
+    'Times-Roman',
+    formatMessage(
+      shortVersion
+        ? ruling.proceedingsHeadingShortVersion
+        : ruling.proceedingsHeading,
+    ),
+  )
   doc
-    .fontSize(mediumFontSize)
-    .lineGap(2)
-    .text(
-      formatMessage(
-        shortVersion
-          ? ruling.proceedingsHeadingShortVersion
-          : ruling.proceedingsHeading,
-      ),
-      { align: 'center' },
-    )
     .lineGap(30)
     .text(
       formatMessage(ruling.caseNumber, {
@@ -202,9 +202,8 @@ function constructRestrictionRulingPdf(
     .lineGap(3)
     .text(' ')
     .text(' ')
-    .fontSize(mediumFontSize)
     .lineGap(16)
-    .text(formatMessage(ruling.rulingHeading), { align: 'center' })
+  addMediumHeading(doc, 'Times-Roman', formatMessage(ruling.rulingHeading))
 
   if (shortVersion) {
     doc
@@ -258,13 +257,9 @@ function constructRestrictionRulingPdf(
       })
   }
 
+  doc.lineGap(3).text(' ').text(' ').lineGap(16)
+  addMediumHeading(doc, 'Times-Roman', formatMessage(ruling.rulingTextHeading))
   doc
-    .lineGap(3)
-    .text(' ')
-    .text(' ')
-    .fontSize(mediumFontSize)
-    .lineGap(16)
-    .text(formatMessage(ruling.rulingTextHeading), { align: 'center' })
     .fontSize(baseFontSize)
     .lineGap(1)
     .text(theCase.conclusion ?? formatMessage(core.missing.rulingText), {
@@ -392,17 +387,17 @@ function constructInvestigationRulingPdf(
     'Times-Roman',
     theCase.court?.name ?? formatMessage(core.missing.court),
   )
+  doc.lineGap(2)
+  addMediumHeading(
+    doc,
+    'Times-Roman',
+    formatMessage(
+      shortVersion
+        ? ruling.proceedingsHeadingShortVersion
+        : ruling.proceedingsHeading,
+    ),
+  )
   doc
-    .fontSize(mediumFontSize)
-    .lineGap(2)
-    .text(
-      formatMessage(
-        shortVersion
-          ? ruling.proceedingsHeadingShortVersion
-          : ruling.proceedingsHeading,
-      ),
-      { align: 'center' },
-    )
     .lineGap(30)
     .text(
       formatMessage(ruling.caseNumber, {
@@ -538,9 +533,8 @@ function constructInvestigationRulingPdf(
     .lineGap(3)
     .text(' ')
     .text(' ')
-    .fontSize(mediumFontSize)
     .lineGap(16)
-    .text(formatMessage(ruling.rulingHeading), { align: 'center' })
+  addMediumHeading(doc, 'Times-Roman', formatMessage(ruling.rulingHeading))
 
   if (shortVersion) {
     doc
@@ -594,13 +588,9 @@ function constructInvestigationRulingPdf(
       })
   }
 
+  doc.lineGap(3).text(' ').text(' ').lineGap(16)
+  addMediumHeading(doc, 'Times-Roman', formatMessage(ruling.rulingTextHeading))
   doc
-    .lineGap(3)
-    .text(' ')
-    .text(' ')
-    .fontSize(mediumFontSize)
-    .lineGap(16)
-    .text(formatMessage(ruling.rulingTextHeading), { align: 'center' })
     .fontSize(baseFontSize)
     .lineGap(1)
     .text(theCase.conclusion ?? formatMessage(core.missing.rulingText), {
