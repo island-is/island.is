@@ -49,20 +49,18 @@ function constructRestrictionRequestPdf(
         : formatMessage(core.caseType.travelBan),
   })
 
-  setTitle(doc, title)
-
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
+  setTitle(doc, title)
   setLineGap(doc, 8)
-  addHugeHeading(doc, 'Helvetica-Bold', title)
+  addHugeHeading(doc, title, 'Helvetica-Bold')
   addLargeHeading(
     doc,
-    'Helvetica',
     theCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
+    'Helvetica',
   )
   addMediumPlusHeading(
     doc,
-    'Helvetica',
     `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
       theCase.policeCaseNumber
     }`,
@@ -70,7 +68,6 @@ function constructRestrictionRequestPdf(
   setLineGap(doc, 40)
   addMediumPlusHeading(
     doc,
-    'Helvetica',
     `${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`,
   )
   doc.font('Helvetica-Bold').fontSize(mediumFontSize)
@@ -220,20 +217,18 @@ function constructInvestigationRequestPdf(
     caseType: formatMessage(core.caseType.investigate),
   })
 
-  setTitle(doc, title)
-
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
+  setTitle(doc, title)
   setLineGap(doc, 8)
-  addHugeHeading(doc, 'Helvetica-Bold', title)
+  addHugeHeading(doc, title, 'Helvetica-Bold')
   addLargeHeading(
     doc,
-    'Helvetica',
     theCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
+    'Helvetica',
   )
   addMediumPlusHeading(
     doc,
-    'Helvetica',
     `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
       theCase.policeCaseNumber
     }`,
@@ -241,7 +236,6 @@ function constructInvestigationRequestPdf(
   setLineGap(doc, 40)
   addMediumPlusHeading(
     doc,
-    'Helvetica',
     `${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`,
   )
   doc.font('Helvetica-Bold').fontSize(largeFontSize)

@@ -45,22 +45,20 @@ function constructRestrictionRulingPdf(
     bufferPages: true,
   })
 
-  setTitle(doc, shortVersion ? 'Þingbók' : 'Úrskurður')
-
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
+  setTitle(doc, shortVersion ? 'Þingbók' : 'Úrskurður')
   addCoatOfArms(doc)
   doc.text(' ').text(' ').text(' ').text(' ').text(' ')
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    'Times-Roman',
     theCase.court?.name ?? formatMessage(core.missing.court),
+    'Times-Roman',
   )
   setLineGap(doc, 2)
   addMediumHeading(
     doc,
-    'Times-Roman',
     formatMessage(
       shortVersion
         ? ruling.proceedingsHeadingShortVersion
@@ -70,7 +68,6 @@ function constructRestrictionRulingPdf(
   setLineGap(doc, 30)
   addMediumHeading(
     doc,
-    'Times-Roman',
     formatMessage(ruling.caseNumber, {
       caseNumber: theCase.courtCaseNumber,
     }),
@@ -203,7 +200,7 @@ function constructRestrictionRulingPdf(
   setLineGap(doc, 3)
   doc.text(' ').text(' ')
   setLineGap(doc, 16)
-  addMediumHeading(doc, 'Times-Roman', formatMessage(ruling.rulingHeading))
+  addMediumHeading(doc, formatMessage(ruling.rulingHeading))
 
   if (shortVersion) {
     doc.fontSize(baseFontSize)
@@ -259,7 +256,7 @@ function constructRestrictionRulingPdf(
   setLineGap(doc, 3)
   doc.text(' ').text(' ')
   setLineGap(doc, 16)
-  addMediumHeading(doc, 'Times-Roman', formatMessage(ruling.rulingTextHeading))
+  addMediumHeading(doc, formatMessage(ruling.rulingTextHeading))
   doc.fontSize(baseFontSize)
   setLineGap(doc, 1)
   doc
@@ -375,22 +372,20 @@ function constructInvestigationRulingPdf(
     bufferPages: true,
   })
 
-  setTitle(doc, shortVersion ? 'Þingbók' : 'Úrskurður')
-
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
+  setTitle(doc, shortVersion ? 'Þingbók' : 'Úrskurður')
   addCoatOfArms(doc)
   doc.text(' ').text(' ').text(' ').text(' ').text(' ')
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    'Times-Roman',
     theCase.court?.name ?? formatMessage(core.missing.court),
+    'Times-Roman',
   )
   setLineGap(doc, 2)
   addMediumHeading(
     doc,
-    'Times-Roman',
     formatMessage(
       shortVersion
         ? ruling.proceedingsHeadingShortVersion
@@ -400,7 +395,6 @@ function constructInvestigationRulingPdf(
   setLineGap(doc, 30)
   addMediumHeading(
     doc,
-    'Times-Roman',
     formatMessage(ruling.caseNumber, {
       caseNumber: theCase.courtCaseNumber,
     }),
@@ -533,7 +527,7 @@ function constructInvestigationRulingPdf(
   setLineGap(doc, 3)
   doc.text(' ').text(' ')
   setLineGap(doc, 16)
-  addMediumHeading(doc, 'Times-Roman', formatMessage(ruling.rulingHeading))
+  addMediumHeading(doc, formatMessage(ruling.rulingHeading))
 
   if (shortVersion) {
     doc.fontSize(baseFontSize)
@@ -589,7 +583,7 @@ function constructInvestigationRulingPdf(
   setLineGap(doc, 3)
   doc.text(' ').text(' ')
   setLineGap(doc, 16)
-  addMediumHeading(doc, 'Times-Roman', formatMessage(ruling.rulingTextHeading))
+  addMediumHeading(doc, formatMessage(ruling.rulingTextHeading))
   doc.fontSize(baseFontSize)
   setLineGap(doc, 1)
   doc

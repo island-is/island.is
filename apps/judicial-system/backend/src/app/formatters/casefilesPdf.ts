@@ -6,7 +6,7 @@ import { Case } from '../modules/case/models'
 import {
   addHugeHeading,
   addLargeHeading,
-  baseFontSize,
+  addNumberedList,
   setLineGap,
   setPageNumbers,
   setTitle,
@@ -27,25 +27,19 @@ function constructCasefilesPdf(
     bufferPages: true,
   })
 
-  setTitle(doc, `Rannsóknargögn ${theCase.courtCaseNumber}`)
-
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
+  setTitle(doc, `Rannsóknargögn ${theCase.courtCaseNumber}`)
   setLineGap(doc, 8)
-  addHugeHeading(doc, 'Helvetica-Bold', 'Rannsóknargögn')
+  addHugeHeading(doc, 'Rannsóknargögn', 'Helvetica-Bold')
   setLineGap(doc, 40)
   addLargeHeading(
     doc,
-    'Helvetica',
     `Mál nr. ${theCase.courtCaseNumber} - LÖKE nr. ${theCase.policeCaseNumber}`,
+    'Helvetica',
   )
   setLineGap(doc, 8)
-  doc
-    .fontSize(baseFontSize)
-    .list(theCase.caseFiles?.map((file) => file.name) ?? [], {
-      listType: 'numbered',
-    })
-
+  addNumberedList(doc, theCase.caseFiles?.map((file) => file.name) ?? [])
   setPageNumbers(doc)
 
   doc.end()

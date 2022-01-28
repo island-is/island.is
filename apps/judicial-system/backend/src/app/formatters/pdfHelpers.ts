@@ -6,6 +6,23 @@ export const mediumPlusFontSize = 16
 export const largeFontSize = 18
 export const hugeFontSize = 26
 
+function setFont(doc: PDFKit.PDFDocument, font?: string) {
+  if (font) {
+    doc.font(font)
+  }
+}
+
+function addHeading(
+  doc: PDFKit.PDFDocument,
+  fontSise: number,
+  heading: string,
+  font?: string,
+) {
+  setFont(doc, font)
+
+  doc.fontSize(fontSise).text(heading, { align: 'center' })
+}
+
 export function setTitle(doc: PDFKit.PDFDocument, title: string) {
   if (doc.info) {
     doc.info['Title'] = title
@@ -41,43 +58,46 @@ export function setLineGap(doc: PDFKit.PDFDocument, lineGap: number) {
   doc.lineGap(lineGap)
 }
 
-function addHeading(
-  doc: PDFKit.PDFDocument,
-  font: string,
-  fontSise: number,
-  heading: string,
-) {
-  doc.font(font).fontSize(fontSise).text(heading, { align: 'center' })
-}
-
 export function addHugeHeading(
   doc: PDFKit.PDFDocument,
-  font: string,
   heading: string,
+  font?: string,
 ) {
-  addHeading(doc, font, hugeFontSize, heading)
+  addHeading(doc, hugeFontSize, heading, font)
 }
 
 export function addLargeHeading(
   doc: PDFKit.PDFDocument,
-  font: string,
   heading: string,
+  font?: string,
 ) {
-  addHeading(doc, font, largeFontSize, heading)
-}
-
-export function addMediumHeading(
-  doc: PDFKit.PDFDocument,
-  font: string,
-  heading: string,
-) {
-  addHeading(doc, font, mediumFontSize, heading)
+  addHeading(doc, largeFontSize, heading, font)
 }
 
 export function addMediumPlusHeading(
   doc: PDFKit.PDFDocument,
-  font: string,
   heading: string,
+  font?: string,
 ) {
-  addHeading(doc, font, mediumPlusFontSize, heading)
+  addHeading(doc, mediumPlusFontSize, heading, font)
+}
+
+export function addMediumHeading(
+  doc: PDFKit.PDFDocument,
+  heading: string,
+  font?: string,
+) {
+  addHeading(doc, mediumFontSize, heading, font)
+}
+
+export function addNumberedList(
+  doc: PDFKit.PDFDocument,
+  list: string[],
+  font?: string,
+) {
+  setFont(doc, font)
+
+  doc.fontSize(baseFontSize).list(list, {
+    listType: 'numbered',
+  })
 }

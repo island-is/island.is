@@ -39,25 +39,20 @@ function constructCustodyNoticePdf(
     bufferPages: true,
   })
 
-  setTitle(doc, 'Vistunarseðill')
-
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
+  setTitle(doc, 'Vistunarseðill')
   setLineGap(doc, 8)
-  addHugeHeading(doc, 'Helvetica-Bold', 'Vistunarseðill')
-  addLargeHeading(doc, 'Helvetica-Bold', 'Úrskurður um gæsluvarðhald')
+  addHugeHeading(doc, 'Vistunarseðill', 'Helvetica-Bold')
+  addLargeHeading(doc, 'Úrskurður um gæsluvarðhald')
   addLargeHeading(
     doc,
-    'Helvetica',
     `Málsnúmer ${theCase.court?.name?.replace('dómur', 'dóms') ?? '?'} ${
       theCase.courtCaseNumber
     }`,
-  )
-  addLargeHeading(
-    doc,
     'Helvetica',
-    `LÖKE málsnúmer ${theCase.policeCaseNumber}`,
   )
+  addLargeHeading(doc, `LÖKE málsnúmer ${theCase.policeCaseNumber}`)
   doc.text(' ').font('Helvetica-Bold').fontSize(mediumFontSize)
   setLineGap(doc, 8)
   doc
