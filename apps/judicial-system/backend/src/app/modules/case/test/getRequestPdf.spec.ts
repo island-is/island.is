@@ -42,9 +42,6 @@ describe('CaseController - Get request pdf', () => {
     const res = {} as Response
 
     beforeEach(async () => {
-      const getMock = getRequestPdfAsBuffer as jest.Mock
-      getMock
-
       await givenWhenThen(caseId, theCase, res)
     })
 
