@@ -50,10 +50,7 @@ function constructRestrictionRulingPdf(
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
   addCoatOfArms(doc)
-
-  doc.text(' ').text(' ').text(' ').text(' ').text(' ')
-
-  doc.lineGap(4)
+  doc.text(' ').text(' ').text(' ').text(' ').text(' ').lineGap(4)
   addLargeHeading(
     doc,
     'Times-Roman',
@@ -389,10 +386,7 @@ function constructInvestigationRulingPdf(
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
   addCoatOfArms(doc)
-
-  doc.text(' ').text(' ').text(' ').text(' ').text(' ')
-
-  doc.lineGap(4)
+  doc.text(' ').text(' ').text(' ').text(' ').text(' ').lineGap(4)
   addLargeHeading(
     doc,
     'Times-Roman',

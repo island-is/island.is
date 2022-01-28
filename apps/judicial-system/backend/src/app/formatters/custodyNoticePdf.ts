@@ -12,9 +12,9 @@ import { FormatMessage } from '@island.is/cms-translations'
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
 import {
+  addHugeHeading,
+  addLargeHeading,
   baseFontSize,
-  hugeFontSize,
-  largeFontSize,
   mediumFontSize,
   setPageNumbers,
 } from './pdfHelpers'
@@ -43,13 +43,10 @@ function constructCustodyNoticePdf(
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
+  doc.lineGap(8)
+  addHugeHeading(doc, 'Helvetica-Bold', 'Vistunarseðill')
+  addLargeHeading(doc, 'Helvetica-Bold', 'Úrskurður um gæsluvarðhald')
   doc
-    .font('Helvetica-Bold')
-    .fontSize(hugeFontSize)
-    .lineGap(8)
-    .text('Vistunarseðill', { align: 'center' })
-    .fontSize(largeFontSize)
-    .text('Úrskurður um gæsluvarðhald', { align: 'center' })
     .font('Helvetica')
     .text(
       `Málsnúmer ${theCase.court?.name?.replace('dómur', 'dóms') ?? '?'} ${

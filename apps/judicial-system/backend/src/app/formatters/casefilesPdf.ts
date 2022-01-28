@@ -4,9 +4,9 @@ import streamBuffers from 'stream-buffers'
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
 import {
+  addHugeHeading,
+  addLargeHeading,
   baseFontSize,
-  hugeFontSize,
-  largeFontSize,
   setPageNumbers,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
@@ -31,18 +31,15 @@ function constructCasefilesPdf(
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
+  doc.lineGap(8)
+  addHugeHeading(doc, 'Helvetica-Bold', 'Rannsóknargögn')
+  doc.lineGap(40)
+  addLargeHeading(
+    doc,
+    'Helvetica',
+    `Mál nr. ${theCase.courtCaseNumber} - LÖKE nr. ${theCase.policeCaseNumber}`,
+  )
   doc
-    .font('Helvetica-Bold')
-    .fontSize(hugeFontSize)
-    .lineGap(8)
-    .text('Rannsóknargögn', { align: 'center' })
-    .font('Helvetica')
-    .fontSize(largeFontSize)
-    .lineGap(40)
-    .text(
-      `Mál nr. ${theCase.courtCaseNumber} - LÖKE nr. ${theCase.policeCaseNumber}`,
-      { align: 'center' },
-    )
     .lineGap(8)
     .fontSize(baseFontSize)
     .list(theCase.caseFiles?.map((file) => file.name) ?? [], {
