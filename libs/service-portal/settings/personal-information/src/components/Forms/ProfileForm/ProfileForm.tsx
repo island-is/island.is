@@ -78,7 +78,6 @@ export const ProfileForm: FC<Props> = ({
     }
   }
 
-  console.log('userProfileuserProfileuserProfile', userProfile)
   return (
     <GridContainer>
       <GridRow marginBottom={10}>
