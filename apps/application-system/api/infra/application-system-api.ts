@@ -25,7 +25,7 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
     .namespace(namespace)
     .image('application-system-api')
     .postgres(postgresInfo)
-    .serviceAccount(serviceAccount)
+    .serviceAccount('application-system-api-worker')
     .env({
       REDIS_URL_NODE_01: {
         dev:
