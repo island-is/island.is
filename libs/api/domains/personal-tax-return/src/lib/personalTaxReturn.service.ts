@@ -7,9 +7,12 @@ export class PersonalTaxReturnService {
   constructor(private personalTaxReturnApi: PersonalTaxReturnApi) {}
 
   async personalTaxReturnPdf(nationalId: string, year: string) {
-    return await this.personalTaxReturnApi.personalTaxReturnInPdf(
+    console.log('personal tax return service')
+    const taxReturn = await this.personalTaxReturnApi.personalTaxReturnInPdf(
       nationalId,
       year,
     )
+
+    return taxReturn.content
   }
 }

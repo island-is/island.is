@@ -19,7 +19,10 @@ import {
   useAsyncLazyQuery,
 } from '@island.is/financial-aid/shared/lib'
 
-import { NationalRegistryUserQuery } from '@island.is/financial-aid-web/osk/graphql'
+import {
+  NationalRegistryUserQuery,
+  PersonalTaxReturnQuery,
+} from '@island.is/financial-aid-web/osk/graphql'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
@@ -44,6 +47,10 @@ const ApplicationInfo = () => {
     { input: { ssn: string } }
   >(NationalRegistryUserQuery)
 
+  const personalTaxReturnQuery = useAsyncLazyQuery<{
+    personalTaxReturnForYearPdf: { personalTaxReturn: string }
+  }>(PersonalTaxReturnQuery)
+
   const logOut = useLogOut()
 
   const navigation: NavigationProps = useFormNavigation(
@@ -59,31 +66,35 @@ const ApplicationInfo = () => {
     setError(false)
     setLoading(true)
 
-    const { data } = await nationalRegistryQuery({
-      input: { ssn: user?.nationalId },
-    }).catch(() => {
-      return { data: undefined }
-    })
+    const { data } = await personalTaxReturnQuery({})
 
-    if (!data || !data.municipalityNationalRegistryUserV2.address) {
-      setError(true)
-      setLoading(false)
-      return
-    }
+    console.log('her', data)
 
-    setNationalRegistryData(data.municipalityNationalRegistryUserV2)
+    // const { data } = await nationalRegistryQuery({
+    //   input: { ssn: user?.nationalId },
+    // }).catch(() => {
+    //   return { data: undefined }
+    // })
 
-    await setMunicipalityById(
-      data.municipalityNationalRegistryUserV2.address.municipalityCode,
-    ).then((municipality) => {
-      navigation.nextUrl && municipality && municipality.active
-        ? router.push(navigation?.nextUrl)
-        : router.push(
-            Routes.serviceCenter(
-              data.municipalityNationalRegistryUserV2.address.municipalityCode,
-            ),
-          )
-    })
+    // if (!data || !data.municipalityNationalRegistryUserV2.address) {
+    //   setError(true)
+    //   setLoading(false)
+    //   return
+    // }
+
+    // setNationalRegistryData(data.municipalityNationalRegistryUserV2)
+
+    // await setMunicipalityById(
+    //   data.municipalityNationalRegistryUserV2.address.municipalityCode,
+    // ).then((municipality) => {
+    //   navigation.nextUrl && municipality && municipality.active
+    //     ? router.push(navigation?.nextUrl)
+    //     : router.push(
+    //         Routes.serviceCenter(
+    //           data.municipalityNationalRegistryUserV2.address.municipalityCode,
+    //         ),
+    //       )
+    // })
   }
 
   return (

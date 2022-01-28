@@ -15,6 +15,7 @@ import {
 } from './modules/'
 import { MunicipalityNationalRegistryModule } from './modules/municpalityNationalRegistryModule'
 import { PersonalTaxReturnConfig } from '@island.is/clients/rsk/personal-tax-return'
+import { PersonalTaxReturnModule } from '@island.is/api/domains/personal-tax-return'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -41,6 +42,7 @@ const autoSchemaFile = environment.production
     FileModule,
     MunicipalityNationalRegistryModule,
     StaffModule,
+    PersonalTaxReturnModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
