@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { Configuration, GetDetailedApi, GetSimpleApi } from '../../gen/fetch'
 import { RskProcuringClientConfig } from './RskProcuringClientConfig'
-import { ConfigType, XRoadConfig } from '@island.is/nest/config'
+import { XRoadConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 import {
   buildCacheControl,
   createEnhancedFetch,

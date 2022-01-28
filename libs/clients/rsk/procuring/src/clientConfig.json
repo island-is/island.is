@@ -9,30 +9,13 @@
       "url": "https://api.skattur.is/xroad",
       "email": "xroad@skattur.is"
     },
-    "x-category": [
-      "personal",
-      "official"
-    ],
-    "x-pricing": [
-      "free"
-    ],
+    "x-category": ["personal", "official"],
+    "x-pricing": ["free"],
     "x-links": [
-      [
-        "documentation",
-        "https://api.skattur.is/prokura/xroad/docs"
-      ],
-      [
-        "responsibleParty",
-        "mailto:xroad@skattur.is"
-      ],
-      [
-        "bugReport",
-        "https://api.skattur.is/prokura/bugs"
-      ],
-      [
-        "featureRequest",
-        "https://api.skattur.is/prokura/features"
-      ]
+      ["documentation", "https://api.skattur.is/prokura/xroad/docs"],
+      ["responsibleParty", "mailto:xroad@skattur.is"],
+      ["bugReport", "https://api.skattur.is/prokura/bugs"],
+      ["featureRequest", "https://api.skattur.is/prokura/features"]
     ]
   },
   "servers": [
@@ -55,9 +38,7 @@
         "summary": "Service Information",
         "description": "Information about service.",
         "operationId": "responseInfo",
-        "tags": [
-          "Service Information"
-        ],
+        "tags": ["Service Information"],
         "responses": {
           "200": {
             "description": "Version and contact information for API",
@@ -87,9 +68,7 @@
         "summary": "Openapi 3.0.1",
         "description": "Openapi 3.0.1 service description",
         "operationId": "openapi",
-        "tags": [
-          "Service Information"
-        ],
+        "tags": ["Service Information"],
         "responses": {
           "200": {
             "description": "Version and contact information for API",
@@ -119,9 +98,7 @@
         "summary": "Simple repsonse",
         "description": "Information about relationship between a person and legal entities from company registry",
         "operationId": "simple",
-        "tags": [
-          "Get Simple"
-        ],
+        "tags": ["Get Simple"],
         "parameters": [
           {
             "name": "nationalId",
@@ -175,9 +152,7 @@
         "summary": "Detailed response",
         "description": "Detailed information about relationship between a person and legal entities from company registry",
         "operationId": "detailed",
-        "tags": [
-          "Get Detailed"
-        ],
+        "tags": ["Get Detailed"],
         "parameters": [
           {
             "name": "nationalId",
@@ -231,12 +206,7 @@
     "schemas": {
       "categoryInfo": {
         "type": "object",
-        "required": [
-          "gerd",
-          "flokkunarkerfi",
-          "numer",
-          "heiti"
-        ],
+        "required": ["gerd", "flokkunarkerfi", "numer", "heiti"],
         "properties": {
           "gerd": {
             "type": "string"
@@ -254,10 +224,7 @@
       },
       "companySimple": {
         "type": "object",
-        "required": [
-          "kennitala",
-          "heiti"
-        ],
+        "required": ["kennitala", "heiti"],
         "properties": {
           "kennitala": {
             "type": "string",
@@ -270,10 +237,7 @@
       },
       "companyDetailed": {
         "type": "object",
-        "required": [
-          "kennitala",
-          "heiti"
-        ],
+        "required": ["kennitala", "heiti"],
         "properties": {
           "kennitala": {
             "type": "string",
@@ -292,10 +256,7 @@
       },
       "personSimple": {
         "type": "object",
-        "required": [
-          "kennitala",
-          "nafn"
-        ],
+        "required": ["kennitala", "nafn"],
         "properties": {
           "kennitala": {
             "type": "string",
@@ -314,10 +275,7 @@
       },
       "personDetailed": {
         "type": "object",
-        "required": [
-          "kennitala",
-          "nafn"
-        ],
+        "required": ["kennitala", "nafn"],
         "properties": {
           "kennitala": {
             "type": "string",
@@ -394,11 +352,7 @@
       },
       "error": {
         "type": "object",
-        "required": [
-          "error_code",
-          "error_message",
-          "error_ui_message"
-        ],
+        "required": ["error_code", "error_message", "error_ui_message"],
         "properties": {
           "error_code": {
             "type": "integer",
