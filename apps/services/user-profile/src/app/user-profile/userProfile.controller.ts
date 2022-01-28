@@ -136,7 +136,7 @@ export class UserProfileController {
       userProfileDto = {
         ...userProfileDto,
         emailVerified: emailVerified,
-        email: undefined,
+        // email: undefined,
       }
       if (emailVerified) {
         await this.verificationService.removeEmailVerification(
@@ -156,7 +156,7 @@ export class UserProfileController {
       userProfileDto = {
         ...userProfileDto,
         mobilePhoneNumberVerified: phoneVerified,
-        mobilePhoneNumber: undefined,
+        // mobilePhoneNumber: undefined,
       }
       if (phoneVerified) {
         await this.verificationService.removeSmsVerification(
