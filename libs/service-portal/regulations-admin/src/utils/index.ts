@@ -134,9 +134,10 @@ export const getRSValue = (option: ValueType<OptionTypeBase>) => {
   return opt ? opt.value : undefined
 }
 
-export const emptyOption = (label?: string): Option => ({
+export const emptyOption = (label?: string, disabled?: boolean): Option => ({
   value: '',
   label: label ? `– ${label} –` : '—',
+  disabled,
 })
 
 /** Looks through a list of `Option`s for one with a matching
@@ -161,28 +162,4 @@ export const findValueOption = (
     }) ||
     null
   )
-}
-
-// ---------------------------------------------------------------------------
-
-export const getInputFieldsWithErrors = (
-  inputs: RegDraftFormSimpleProps[],
-  draft: RegDraftForm | undefined,
-) => {
-  if (draft) {
-    const emptyFields = inputs.filter((x) => !draft[x].value)
-    if (emptyFields.length > 0) {
-      return emptyFields.reduce<
-        Partial<Pick<RegDraftForm, RegDraftFormSimpleProps>>
-      >((updates, fieldName) => {
-        updates[fieldName] = {
-          ...draft[fieldName],
-          // @ts-expect-error  (No idea why?!)
-          error: errorMsgs.fieldRequired,
-        }
-        return updates
-      }, {})
-    }
-  }
-  return undefined
 }

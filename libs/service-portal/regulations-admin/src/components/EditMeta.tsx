@@ -18,9 +18,10 @@ export const EditMeta = () => {
   const { draft, actions } = useDraftingState()
   const { updateState, updateLawChapterProp } = actions
 
-  const type = draft.type.value
+  const type = draft.type
   const typeName =
-    type && t(type === 'amending' ? msg.type_amending : msg.type_base)
+    type.value &&
+    t(type.value === 'amending' ? msg.type_amending : msg.type_base)
 
   return (
     <>
@@ -34,6 +35,8 @@ export const EditMeta = () => {
               name="_type"
               size="sm"
               readOnly
+              hasError={type.showError && !!type.error}
+              errorMessage={t(type.error)}
             />
           </Box>
         </Column>
@@ -46,10 +49,10 @@ export const EditMeta = () => {
               placeholderText={t(msg.effectiveDate_default)}
               minDate={draft.idealPublishDate.value || null}
               selected={draft.effectiveDate.value}
-              handleChange={(date: Date) =>
-                updateState('effectiveDate', date, true)
+              handleChange={(date: Date) => updateState('effectiveDate', date)}
+              hasError={
+                draft.effectiveDate.showError && !!draft.effectiveDate.error
               }
-              hasError={!!draft.effectiveDate.error}
               errorMessage={t(draft.effectiveDate.error)}
               backgroundColor="blue"
             />
@@ -72,6 +75,7 @@ export const EditMeta = () => {
       <Box>
         <LawChaptersSelect
           activeChapters={draft.lawChapters.value}
+          error={draft.lawChapters.showError && t(draft.lawChapters.error)}
           addChapter={(slug: LawChapterSlug) =>
             updateLawChapterProp('add', slug)
           }

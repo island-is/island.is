@@ -1,11 +1,15 @@
-import React, { FC, Fragment } from 'react'
+import React, { FC, Fragment, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { RegulationDraftId } from '@island.is/regulations/admin'
 import { isUuid } from 'uuidv4'
 import { Step } from '../types'
-import { RegDraftingProvider, ensureStepName } from '../state/useDraftingState'
+import {
+  RegDraftingProvider,
+  ensureStepName,
+  useDraftingState,
+} from '../state/useDraftingState'
 import { useMinistriesQuery, useRegulationDraftQuery } from '../utils/dataHooks'
 import { MessageDescriptor } from '@formatjs/intl'
 import { editorMsgs } from '../messages'
@@ -14,7 +18,7 @@ import { EditMeta } from '../components/EditMeta'
 import { EditSignature } from '../components/EditSignature'
 import { EditImpacts } from '../components/EditImpacts'
 import { EditReview } from '../components/EditReview'
-import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, Text, toast } from '@island.is/island-ui/core'
 import { SaveDeleteButtons } from '../components/SaveDeleteButtons'
 import { DraftingNotes } from '../components/DraftingNotes'
 import { ButtonBar } from '../components/ButtonBar'
@@ -71,6 +75,40 @@ const stepData: Record<
   },
 }
 
+const EditScren = () => {
+  const t = useLocale().formatMessage
+  const state = useDraftingState()
+  const step = stepData[state.step.name]
+
+  useEffect(() => {
+    if (state.error) {
+      const { message, error } = state.error
+      console.error(error || message)
+      toast.error(t(message))
+    }
+  }, [state.error, t])
+
+  return (
+    <>
+      <Box marginBottom={[2, 2, 4]}>
+        <Text as="h1" variant="h1">
+          {t(step.title)}
+        </Text>
+        {step.intro && (
+          <Text as="p" marginTop={1}>
+            {t(step.intro)}
+          </Text>
+        )}
+      </Box>
+
+      <SaveDeleteButtons wrap />
+      <step.Component />
+      <DraftingNotes />
+      <ButtonBar />
+    </>
+  )
+}
+
 // ---------------------------------------------------------------------------
 
 const EditApp = () => {
@@ -82,7 +120,6 @@ const EditApp = () => {
 
   const regulationDraft = useRegulationDraftQuery(id)
   const ministries = useMinistriesQuery()
-  const t = useLocale().formatMessage
 
   if (regulationDraft.loading || ministries.loading) {
     return <p>Loading...</p>
@@ -95,36 +132,13 @@ const EditApp = () => {
     throw ministries.error
   }
 
-  const step = stepData[stepName]
-
   return (
     <RegDraftingProvider
       regulationDraft={regulationDraft.data}
       stepName={stepName}
       ministries={ministries.data}
     >
-      <Fragment key={id}>
-        <Box marginBottom={[2, 2, 4]}>
-          <Text as="h1" variant="h1">
-            {t(step.title)}
-          </Text>
-          {step.intro && (
-            <Text as="p" marginTop={1}>
-              {t(step.intro)}
-            </Text>
-          )}
-        </Box>
-
-        <SaveDeleteButtons wrap />
-
-        {regulationDraft ? (
-          <step.Component />
-        ) : (
-          <SkeletonLoader height={120} repeat={2} space={3} />
-        )}
-        <DraftingNotes />
-        <ButtonBar />
-      </Fragment>
+      <EditScren key={id} />
     </RegDraftingProvider>
   )
 }

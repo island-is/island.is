@@ -18,7 +18,7 @@ export const EditReview = () => {
   return (
     <Box marginY={[4, 4, 8]}>
       <EditReviewWarnings messages={messages} />
-      <EditReviewOverview draft={draft} hasWarnings={!messages.length} />
+      <EditReviewOverview draft={draft} hasWarnings={!!messages} />
 
       {propose ? (
         <Box>

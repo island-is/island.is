@@ -1,7 +1,12 @@
 import {} from '@island.is/regulations-tools/useTextWarnings'
 import { makeDraftAppendixForm, steps } from './makeFields'
 import { Action, ActionName, DraftingState } from './types'
-import { derivedUpdates, tidyUp, updateFieldValue } from './validations'
+import {
+  derivedUpdates,
+  tidyUp,
+  updateFieldValue,
+  isDraftLocked,
+} from './validations'
 import { Draft } from 'immer'
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -12,9 +17,8 @@ export const actionHandlers: {
   ) => Draft<DraftingState> | void
 } = {
   CHANGE_STEP: (state, { stepName }) => {
-    if (stepName === 'review' && !state.isEditor) {
-      state.error = new Error('Must be an editor')
-      return
+    if (isDraftLocked(state.draft) && stepName !== 'review') {
+      state.step = steps.review
     }
     state.step = steps[stepName]
   },
@@ -27,7 +31,7 @@ export const actionHandlers: {
     state.saving = false
   },
 
-  UPDATE_PROP: (state, { name, value, explicit }) => {
+  UPDATE_PROP: (state, { name, value }) => {
     const field = state.draft[name]
     // @ts-expect-error  (Fuu)
     value = tidyUp[field.type || '_'](value)
@@ -42,7 +46,7 @@ export const actionHandlers: {
         value,
       )
     }
-    updateFieldValue(field, value, explicit)
+    updateFieldValue(field, value)
   },
 
   APPENDIX_ADD: (state) => {
@@ -90,30 +94,22 @@ export const actionHandlers: {
     }
   },
 
-  UPDATE_MULTIPLE_PROPS: (state, { multiData }) => {
-    Object.assign(state.draft, multiData)
-  },
-
   UPDATE_LAWCHAPTER_PROP: (state, { action, value }) => {
     const lawChaptersField = state.draft.lawChapters
     const lawChapters = lawChaptersField.value
     const includesValue = lawChapters.includes(value)
+
     if (action === 'add') {
       if (!includesValue) {
-        lawChaptersField.value = lawChapters.concat(value).sort()
+        updateFieldValue(lawChaptersField, lawChapters.concat(value).sort())
       }
     } else {
       if (includesValue) {
-        lawChaptersField.value = lawChapters.filter((slug) => slug !== value)
+        updateFieldValue(
+          lawChaptersField,
+          lawChapters.filter((slug) => slug !== value),
+        )
       }
-    }
-  },
-
-  SHIP: (state) => {
-    if (!state.isEditor) {
-      state.error = new Error('Must be an editor')
-    } else {
-      state.shipping = true
     }
   },
 }

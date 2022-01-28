@@ -53,7 +53,7 @@ const useAffectedRegulations = (
               prettyName(name) +
               ' – ' +
               reg.title +
-              (reg.repealed ? ` (${repealedText})` : undefined),
+              (reg.repealed ? ` (${repealedText})` : ''),
           }
         }
         return {
@@ -70,7 +70,7 @@ const useAffectedRegulations = (
     })
 
     return options
-  }, [mentioned, data, loading, notFoundText, selfAffectingText, repealedText])
+  }, [mentioned, data, notFoundText, selfAffectingText, repealedText])
 
   return {
     loading,

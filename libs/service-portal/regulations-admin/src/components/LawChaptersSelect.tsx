@@ -24,7 +24,7 @@ const useLawChapters = (
 
   const lawChaptersOptions = useMemo(
     () => [
-      emptyOption(placeholder),
+      emptyOption(placeholder, true),
       ...(lawChapters || []).map(
         (ch): Option => ({
           value: ch.slug,
@@ -64,7 +64,7 @@ export const LawChaptersSelect = (props: LawChaptersSelectProps) => {
     <>
       <Select
         size="sm"
-        label={t(msg.lawChapter)}
+        label={t(msg.lawChapters)}
         name="addLawChapter"
         isSearchable
         value={lawChaptersOptions[0]}
@@ -74,6 +74,8 @@ export const LawChaptersSelect = (props: LawChaptersSelectProps) => {
           addChapter((option as Option).value as LawChapterSlug)
         }
         backgroundColor="blue"
+        hasError={!!props.error}
+        errorMessage={props.error}
       />
 
       {activeChapters.length > 0 && (

@@ -1,12 +1,14 @@
 import { MessageFormatter } from '@island.is/application/core'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Text, Button, AlertMessage } from '@island.is/island-ui/core'
 import React, { useMemo } from 'react'
 import { useHistory } from 'react-router'
-import { editorMsgs } from '../messages'
+import { editorMsgs, reviewMessagse } from '../messages'
 import { DraftingState } from '../state/types'
 import { isDraftErrorFree } from '../state/validations'
 import { Step } from '../types'
+import { useLocale } from '../utils'
 import { getEditUrl } from '../utils/routing'
+import { appendix } from './Appendixes.css'
 
 type ReviewMessage = {
   label: string
@@ -17,20 +19,140 @@ type ReviewMessage = {
 export const useCollectMessages = (
   state: DraftingState,
   t: MessageFormatter,
-): Array<ReviewMessage> =>
+): Array<ReviewMessage> | undefined =>
   useMemo(() => {
     if (isDraftErrorFree(state)) {
-      return []
+      return
     }
-    const { title, type } = state.draft
+    const {
+      title,
+      type,
+      text,
+      appendixes,
+      effectiveDate,
+      idealPublishDate,
+      signedDocumentUrl,
+      signatureDate,
+      signatureText,
+      ministry,
+      lawChapters,
+      impacts,
+      authors,
+      draftingNotes,
+      draftingStatus,
+      fastTrack,
+      id,
+      mentioned,
+      name,
+    } = state.draft
     const messages: Array<ReviewMessage> = []
 
     const titleError = title.error || type.error // …because "type" field errors are caused by weirdly shaped titles
+
+    let step: Step = 'basics'
+
     if (titleError) {
       messages.push({
         label: t(editorMsgs.title),
         error: t(titleError),
-        step: 'basics',
+        step,
+      })
+    }
+    if (text.error) {
+      messages.push({
+        label: t(editorMsgs.text),
+        error: t(text.error),
+        step,
+      })
+    }
+    appendixes.forEach(({ title, text }, idx) => {
+      const idxSuffix = ' ' + (idx + 1)
+      if (title.error) {
+        messages.push({
+          label: t(editorMsgs.appendix_title) + idxSuffix,
+          error: t(title.error),
+          step,
+        })
+      }
+      if (text.error) {
+        messages.push({
+          label: t(editorMsgs.appendix_text) + idxSuffix,
+          error: t(text.error),
+          step,
+        })
+      }
+    })
+
+    step = 'meta'
+
+    if (effectiveDate.error) {
+      messages.push({
+        label: t(editorMsgs.effectiveDate),
+        error: t(effectiveDate.error),
+        step,
+      })
+    }
+    if (lawChapters.error) {
+      messages.push({
+        label: t(editorMsgs.lawChapters),
+        error: t(lawChapters.error),
+        step,
+      })
+    }
+
+    step = 'signature'
+
+    if (signedDocumentUrl.error) {
+      messages.push({
+        label: t(editorMsgs.signedDocumentUpload),
+        error: t(signedDocumentUrl.error),
+        step,
+      })
+    }
+    if (signatureText.error) {
+      messages.push({
+        label: t(editorMsgs.signatureText),
+        error: t(signatureText.error),
+        step,
+      })
+    } else {
+      // Wrapping these fields in an else block is just to reduce noise.
+      // We hide these if signedDocumentUrl has error because
+      // when signedDocumentUrl is missing, then these fields are
+      // almost always in error too
+
+      if (signatureDate.error) {
+        messages.push({
+          label: t(editorMsgs.signatureDate),
+          error: t(signatureDate.error),
+          step,
+        })
+      }
+      if (ministry.error) {
+        messages.push({
+          label: t(editorMsgs.ministry),
+          error: t(ministry.error),
+          step,
+        })
+      }
+    }
+    if (idealPublishDate.error) {
+      messages.push({
+        label: t(editorMsgs.idealPublishDate),
+        error: t(idealPublishDate.error),
+        step,
+      })
+    }
+
+    impacts.forEach((impact) => {
+      // TODO: Return errors for impacts
+    })
+
+    if (name.error) {
+      messages.push({
+        label: t(editorMsgs.name),
+        error: t(name.error),
+        step,
       })
     }
 
@@ -42,23 +164,47 @@ export const useCollectMessages = (
 // ---------------------------------------------------------------------------
 
 export type EditReviewWarningsProps = {
-  messages: Array<ReviewMessage>
+  messages?: Array<ReviewMessage>
 }
 
 export const EditReviewWarnings = (props: EditReviewWarningsProps) => {
+  const t = useLocale().formatMessage
   const history = useHistory()
 
   if (!props.messages) {
     return null
   }
 
+  const jumpLabel = t(reviewMessagse.jumpToStepButton)
+
   return (
     <Box marginBottom={4}>
+      <Text variant="h2" as="h2" marginBottom={3}>
+        {t(reviewMessagse.warningsTitle)}
+      </Text>
       {props.messages.map((m, i) => (
-        <div key={i}>
-          {m.label}: {m.error}
-          <button onClick={() => history.push(getEditUrl(m.step))}></button>
-        </div>
+        <Box marginBottom={2}>
+          <AlertMessage
+            key={i}
+            type="error"
+            title={m.label}
+            message={
+              <>
+                <div style={{ float: 'right', marginTop: '-2em' }}>
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={() => history.push(getEditUrl(m.step))}
+                    aria-label={jumpLabel + ': ' + m.label}
+                  >
+                    {jumpLabel}
+                  </Button>
+                </div>
+                {m.error}
+              </>
+            }
+          />
+        </Box>
       ))}
     </Box>
   )

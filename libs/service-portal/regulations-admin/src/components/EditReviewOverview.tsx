@@ -19,17 +19,22 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
     return null
   }
 
+  const typeName = t(
+    draft.type.value === 'amending'
+      ? editorMsgs.type_amending
+      : editorMsgs.type_base,
+  )
+
   return (
     <Box marginBottom={4}>
       <Box marginBottom={2}>
-        {t(editorMsgs.title)}: {draft.title.value}{' '}
-        {draft.type.value &&
-          ` (${t(
-            draft.type.value === 'amending'
-              ? editorMsgs.type_amending
-              : editorMsgs.type_base,
-          )})`}
+        <strong>{t(editorMsgs.title)}:</strong> {draft.title.value} ({typeName})
       </Box>
+      {draft.impacts.length ? (
+        'TODO: Birta yfirlit yfir skráðar áhrifafræslur'
+      ) : (
+        <Box marginBottom={2}>Engar áhrifafærslur skráðar</Box>
+      )}
     </Box>
   )
 }

@@ -1,7 +1,19 @@
 import { Appendix, HTMLText } from '@island.is/regulations'
-import { RegulationDraft } from '@island.is/regulations/admin'
+import {
+  DraftRegulationCancel,
+  DraftRegulationChange,
+  RegulationDraft,
+} from '@island.is/regulations/admin'
 import { Step } from '../types'
-import { DraftField, HtmlDraftField, RegDraftForm, StepNav } from './types'
+import {
+  AppendixDraftForm,
+  DraftCancelForm,
+  DraftChangeForm,
+  DraftField,
+  HtmlDraftField,
+  RegDraftForm,
+  StepNav,
+} from './types'
 import { errorMsgs } from '../messages'
 import { MessageDescriptor } from 'react-intl'
 
@@ -64,7 +76,38 @@ const fHtml = (
 
 // ---------------------------------------------------------------------------
 
-export const makeDraftAppendixForm = (appendix: Appendix, key: string) => ({
+export const makeDraftCancellationForm = (
+  cancellation: DraftRegulationCancel,
+): DraftCancelForm => ({
+  id: cancellation.id,
+  type: 'repeal',
+  name: cancellation.name,
+  regTitle: cancellation.regTitle,
+  date: f(cancellation.date && new Date(cancellation.date)),
+})
+
+export const makeDraftChangeForm = (
+  change: DraftRegulationChange,
+): DraftChangeForm => ({
+  id: change.id,
+  type: 'amend',
+  name: change.name,
+  regTitle: change.regTitle,
+  date: f(change.date && new Date(change.date)),
+  title: fText(change.title, true),
+  text: fHtml(change.text, true),
+  appendixes: change.appendixes.map((a, i) =>
+    makeDraftAppendixForm(a, String(i)),
+  ),
+  comments: fHtml(change.comments),
+})
+
+// ---------------------------------------------------------------------------
+
+export const makeDraftAppendixForm = (
+  appendix: Appendix,
+  key: string,
+): AppendixDraftForm => ({
   title: fText(appendix.title, true),
   text: fHtml(appendix.text, true),
   key,
@@ -80,7 +123,6 @@ export const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
     appendixes: draft.appendixes.map((a, i) =>
       makeDraftAppendixForm(a, String(i)),
     ),
-    comments: fHtml(draft.comments),
 
     idealPublishDate: f(
       draft.idealPublishDate && new Date(draft.idealPublishDate),
@@ -90,7 +132,10 @@ export const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
     effectiveDate: f(draft.effectiveDate && new Date(draft.effectiveDate)),
 
     signatureText: fHtml(draft.signatureText, true),
-    signedDocumentUrl: f(draft.signedDocumentUrl, true),
+    signedDocumentUrl: f(
+      draft.signedDocumentUrl,
+      errorMsgs.signedDocumentUrlRequired,
+    ),
 
     lawChapters: f((draft.lawChapters || []).map((chapter) => chapter.slug)),
 
@@ -98,26 +143,8 @@ export const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
 
     impacts: draft.impacts.map((impact) => {
       return impact.type === 'amend'
-        ? {
-            type: impact.type,
-            id: impact.id,
-            name: impact.name,
-            regTitle: impact.regTitle,
-            date: f(new Date(impact.date), true),
-            title: fText(impact.title, true),
-            text: fHtml(impact.text, true),
-            appendixes: impact.appendixes.map((a, i) =>
-              makeDraftAppendixForm(a, String(i)),
-            ),
-            comments: fHtml(impact.comments),
-          }
-        : {
-            type: impact.type,
-            id: impact.id,
-            name: impact.name,
-            regTitle: impact.regTitle,
-            date: f(new Date(impact.date), true),
-          }
+        ? makeDraftChangeForm(impact)
+        : makeDraftCancellationForm(impact)
     }),
 
     draftingNotes: fHtml(draft.draftingNotes),
@@ -130,6 +157,8 @@ export const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
       undefined /* draft.signatureDate && new Date(draft.signatureDate) */,
       true,
     ), // NOTE: Signature date is always a derived value
+
+    name: f(draft.name),
   }
 
   return form

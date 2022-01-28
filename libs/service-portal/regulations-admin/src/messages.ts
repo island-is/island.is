@@ -30,12 +30,12 @@ export const editorMsgs = defineMessages({
   },
   stepReviewHeadline: {
     id: 'ap.regulations-admin:draft-step_review-headline',
-    defaultMessage: 'Staðfesting fyrir útgáfu í Stjórnartíðindum',
+    defaultMessage: 'Staðfesting fyrir útgáfu',
   },
   stepReviewIntro: {
     id: 'ap.regulations-admin:draft-step_review-intro',
     defaultMessage:
-      'Vinsamlega yfirfarið að allar skráðar upplýsingar séu réttar',
+      'Áður en reglugerð er gefin út í Stjórnartíðindum, og birt í reglugerðasafninu á vefnum, þarf að yfirfara að allar skráðar upplýsingar séu réttar',
   },
 
   title: {
@@ -171,7 +171,7 @@ export const editorMsgs = defineMessages({
     defaultMessage: 'Lesið úr undirritun reglugerðar',
   },
 
-  lawChapter: {
+  lawChapters: {
     id: 'ap.regulations-admin:draft-labels-lawchapter',
     defaultMessage: 'Kaflar í lagasasfni',
   },
@@ -384,6 +384,10 @@ export const errorMsgs = defineMessages({
     id: 'ap.regulations-admin:error-typefield-required',
     defaultMessage: 'Ekki hægt að greina tegund reglugerðar út frá titli',
   },
+  signedDocumentUrlRequired: {
+    id: 'ap.regulations-admin:error-signeddocurl-required',
+    defaultMessage: 'Það verður að hlaðaupp undirrituðu eintaki',
+  },
   fieldRequired: {
     id: 'ap.regulations-admin:error-field-required',
     defaultMessage: 'Þessi reitur má ekki vera tómur',
@@ -513,7 +517,7 @@ export const buttonsMsgs = defineMessages({
   },
   prepShipping: {
     id: 'ap.regulations-admin:btn-prepshipping',
-    defaultMessage: 'Hefja útgáfuferli',
+    defaultMessage: 'Undirbúa útgáfuferli',
   },
   publish: {
     id: 'ap.regulations-admin:btn-publish',
@@ -531,7 +535,15 @@ export const buttonsMsgs = defineMessages({
 
 export const reviewMessagse = defineMessages({
   confirmBeforePublish: {
-    id: 'ap.regulations-admin:btn-continue',
+    id: 'ap.regulations-admin:review-confirmmessage',
     defaultMessage: 'Ég hef yfirfarið að reglugerðin sé rétt skráð',
+  },
+  warningsTitle: {
+    id: 'ap.regulations-admin:review-warnings-title',
+    defaultMessage: 'Eftirfarandi atriði þarf að laga:',
+  },
+  jumpToStepButton: {
+    id: 'ap.regulations-admin:review-jump-to-fix',
+    defaultMessage: 'Skoða',
   },
 })
