@@ -247,9 +247,9 @@ export class ApplicationModel extends Model<Application> {
   @ApiProperty({ type: ApplicationEventModel, isArray: true })
   applicationEvents?: ApplicationEventModel[]
 
-  @HasOne(() => AmountModel, 'applicationId')
-  @ApiProperty({ type: AmountModel })
-  amount?: AmountModel
+  @HasMany(() => AmountModel, 'applicationId')
+  @ApiProperty({ type: AmountModel, isArray: true })
+  amount?: AmountModel[]
 
   @Column({
     type: DataType.STRING,

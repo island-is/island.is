@@ -199,7 +199,7 @@ export const getAidAmountModalInfo = (
   type: AmountModal,
   aidAmount = 0,
   usePersonalTaxCredit = false,
-  finalAmount?: Amount,
+  finalAmount?: Amount[],
 ): { headline: string; calculations: Calculations[] } => {
   switch (type) {
     case AmountModal.ESTIMATED:
@@ -210,7 +210,7 @@ export const getAidAmountModalInfo = (
     case AmountModal.PROVIDED:
       return {
         headline: 'Veitt aðstoð',
-        calculations: acceptedAmountBreakDown(finalAmount),
+        calculations: acceptedAmountBreakDown(finalAmount || []),
       }
   }
 }

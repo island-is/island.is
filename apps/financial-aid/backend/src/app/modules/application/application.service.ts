@@ -189,8 +189,7 @@ export class ApplicationService {
           model: AmountModel,
           as: 'amount',
           include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
-          order: [['id', 'DESC']],
-
+          order: [['created', 'DESC']],
           // order: ['created'],
           // attributes: [sequelize.fn('MAX', sequelize.col('modified'))],
           // order: [Sequelize.fn('min', Sequelize.col('created'))],
@@ -363,17 +362,18 @@ export class ApplicationService {
       applicationId: id,
       eventType: update.event,
       comment:
-        update?.rejection ||
-        update?.amount?.finalAmount.toLocaleString('de-DE') ||
-        update?.comment,
+        update?.rejection || ` Samþykkt upphæð: kr. .-` || update?.comment,
       staffName: staff?.name,
       staffNationalId: staff?.nationalId,
     })
 
     if (update.amount) {
-      const amount = await this.amountService.create(update.amount)
-      updatedApplication?.setDataValue('amount', amount)
+      await this.amountService.create(update.amount)
     }
+
+    const amount = this.amountService.findById(id).then((amountResolved) => {
+      updatedApplication?.setDataValue('amount', amountResolved)
+    })
 
     const events = this.applicationEventService
       .findById(id)
@@ -390,6 +390,7 @@ export class ApplicationService {
     await Promise.all([
       events,
       files,
+      amount,
       this.sendApplicationUpdateEmail(update, updatedApplication),
     ])
 

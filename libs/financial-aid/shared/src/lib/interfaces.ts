@@ -264,7 +264,7 @@ export interface Application {
   rejection?: string
   staff?: Staff
   applicationEvents?: ApplicationEvent[]
-  amount?: Amount
+  amount?: Amount[]
   spouseNationalId?: string
   spouseEmail?: string
   spousePhoneNumber?: string

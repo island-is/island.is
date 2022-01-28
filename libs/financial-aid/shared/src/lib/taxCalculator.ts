@@ -155,15 +155,13 @@ export const estimatedBreakDown = (
   ]
 }
 
-export const acceptedAmountBreakDown = (amount?: Amount): Calculations[] => {
-  if (!amount) {
-    return []
-  }
+export const acceptedAmountBreakDown = (amounts: Amount[]): Calculations[] => {
+  const amount = amounts[0]
 
   const isPos =
     calculatePersonalTaxAllowanceFromAmount(
-      amount.personalTaxCredit,
-      amount.spousePersonalTaxCredit,
+      amount?.personalTaxCredit,
+      amount?.spousePersonalTaxCredit,
     ) > 0
 
   const deductionFactors =

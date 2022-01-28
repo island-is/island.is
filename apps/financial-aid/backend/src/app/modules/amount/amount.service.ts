@@ -36,4 +36,13 @@ export class AmountService {
         })
     })
   }
+
+  async findById(id: string): Promise<AmountModel[]> {
+    return this.amountModel.findAll({
+      where: {
+        applicationId: id,
+      },
+      order: [['created', 'DESC']],
+    })
+  }
 }

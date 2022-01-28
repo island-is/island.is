@@ -99,10 +99,16 @@ const ApplicationProfile = ({
         },
   ]
 
-  if (application.state === ApplicationState.APPROVED) {
+  if (
+    application.state === ApplicationState.APPROVED &&
+    application?.amount &&
+    application?.amount.length > 0
+  ) {
+    const acceptedAmount = application?.amount[0].finalAmount
+
     applicationInfo.push({
       title: 'Veitt',
-      content: `${application.amount?.finalAmount.toLocaleString('de-DE')} kr.`,
+      content: ` ${acceptedAmount.toLocaleString('de-DE')} kr.`,
       onclick: () => {
         setCalculationsModal({ visible: true, type: AmountModal.PROVIDED })
       },

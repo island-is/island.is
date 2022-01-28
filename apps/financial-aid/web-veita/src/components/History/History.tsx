@@ -11,7 +11,7 @@ import {
 
 import {
   ChatElement,
-  StaffComment,
+  TimeLineComment,
   TimeLineContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 
@@ -58,8 +58,11 @@ const History = ({
               applicantName={applicantName}
               spouseName={spouseName}
             >
-              <StaffComment
-                isVisable={item.eventType === ApplicationEventType.STAFFCOMMENT}
+              <TimeLineComment
+                isVisable={
+                  item.eventType === ApplicationEventType.STAFFCOMMENT ||
+                  item.eventType === ApplicationEventType.APPROVED
+                }
                 comment={item.comment}
               />
 
