@@ -6,7 +6,11 @@ import React, {
   ReactNode,
 } from 'react'
 import { useMutation, gql } from '@apollo/client'
-import { LawChapterSlug, MinistryList } from '@island.is/regulations'
+import {
+  LawChapter,
+  LawChapterSlug,
+  MinistryList,
+} from '@island.is/regulations'
 import { useHistory } from 'react-router-dom'
 import { Step } from '../types'
 import { useLocale } from '../utils'
@@ -261,7 +265,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         : undefined,
 
       ship:
-        !state.isEditor &&
+        state.isEditor &&
         // only offer shipping from "review" step
         state.step.name === 'review'
           ? () => {
@@ -283,7 +287,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
           : undefined,
 
       publish:
-        !state.isEditor &&
+        state.isEditor &&
         // only offer publish from "review" step
         state.step.name === 'review'
           ? () => {
@@ -330,16 +334,18 @@ type RegDraftingProviderProps = {
   regulationDraft: RegulationDraft
   stepName: Step
   ministries: MinistryList
+  lawChapters: Array<LawChapter>
   children: ReactNode
 }
 
 export const RegDraftingProvider = (props: RegDraftingProviderProps) => {
-  const { regulationDraft, ministries, stepName, children } = props
+  const { regulationDraft, ministries, lawChapters, stepName, children } = props
 
   return React.createElement(RegDraftingContext.Provider, {
     value: useMakeDraftingState({
       regulationDraft,
       ministries,
+      lawChapters,
       stepName,
     }),
     children: children,

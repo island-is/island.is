@@ -38,6 +38,11 @@ export const editorMsgs = defineMessages({
       'Áður en reglugerð er gefin út í Stjórnartíðindum, og birt í reglugerðasafninu á vefnum, þarf að yfirfara að allar skráðar upplýsingar séu réttar',
   },
 
+  name: {
+    id: 'ap.regulations-admin:draft-labels-name',
+    defaultMessage: 'Útgáfunúmer í Stjórnartíðindum',
+  },
+
   title: {
     id: 'ap.regulations-admin:draft-labels-title',
     defaultMessage: 'Titill reglugerðar',
@@ -48,6 +53,10 @@ export const editorMsgs = defineMessages({
     defaultMessage: 'Texti reglugerðar',
   },
 
+  appendixes: {
+    id: 'ap.regulations-admin:draft-appendixes-legend',
+    defaultMessage: 'Viðaukar',
+  },
   appendix_legend: {
     id: 'ap.regulations-admin:draft-appendix-legend',
     defaultMessage: 'Viðauki {idx}',
@@ -159,7 +168,7 @@ export const editorMsgs = defineMessages({
   },
   applyForFastTrack: {
     id: 'ap.regulations-admin:apply-for-fasttrack',
-    defaultMessage: 'Sækja um flýtimeðferð',
+    defaultMessage: 'Þarf flýtimeðferð',
   },
 
   ministry: {
@@ -236,7 +245,7 @@ export const editorMsgs = defineMessages({
   },
   signedDocumentLinkLong: {
     id: 'ap.regulations-admin:draft-labels-signeddocument-viewlong',
-    defaultMessage: 'Skoða undirritað skjal',
+    defaultMessage: 'Sækja undirritað skjal',
   },
 
   effectiveDate: {
@@ -545,5 +554,13 @@ export const reviewMessagse = defineMessages({
   jumpToStepButton: {
     id: 'ap.regulations-admin:review-jump-to-fix',
     defaultMessage: 'Skoða',
+  },
+  downloadSignedDocument: {
+    id: 'ap.regulations-admin:review-download-signeddocument',
+    defaultMessage: 'Sækja undirritaða útgáfu',
+  },
+  downloadPDFVersion: {
+    id: 'ap.regulations-admin:review-download-signeddocument',
+    defaultMessage: 'Sækja PDF til birtingar',
   },
 })

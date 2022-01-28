@@ -9,14 +9,12 @@ import {
 } from '@island.is/island-ui/core'
 import { editorMsgs as msg } from '../messages'
 import { useLocale } from '../utils'
-import { LawChapterSlug } from '@island.is/regulations'
 import { LawChaptersSelect } from './LawChaptersSelect'
 import { useDraftingState } from '../state/useDraftingState'
 
 export const EditMeta = () => {
   const { formatMessage: t } = useLocale()
   const { draft, actions } = useDraftingState()
-  const { updateState, updateLawChapterProp } = actions
 
   const type = draft.type
   const typeName =
@@ -49,7 +47,9 @@ export const EditMeta = () => {
               placeholderText={t(msg.effectiveDate_default)}
               minDate={draft.idealPublishDate.value || null}
               selected={draft.effectiveDate.value}
-              handleChange={(date: Date) => updateState('effectiveDate', date)}
+              handleChange={(date: Date) =>
+                actions.updateState('effectiveDate', date)
+              }
               hasError={
                 draft.effectiveDate.showError && !!draft.effectiveDate.error
               }
@@ -62,7 +62,7 @@ export const EditMeta = () => {
                 variant="text"
                 preTextIcon="close"
                 onClick={() => {
-                  updateState('effectiveDate', undefined)
+                  actions.updateState('effectiveDate', undefined)
                 }}
               >
                 {t(msg.effectiveDate_default)}
@@ -72,18 +72,7 @@ export const EditMeta = () => {
         </Column>
       </Columns>
 
-      <Box>
-        <LawChaptersSelect
-          activeChapters={draft.lawChapters.value}
-          error={draft.lawChapters.showError && t(draft.lawChapters.error)}
-          addChapter={(slug: LawChapterSlug) =>
-            updateLawChapterProp('add', slug)
-          }
-          removeChapter={(slug: LawChapterSlug) =>
-            updateLawChapterProp('delete', slug)
-          }
-        />
-      </Box>
+      <LawChaptersSelect />
     </>
   )
 }

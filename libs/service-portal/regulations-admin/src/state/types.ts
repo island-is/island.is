@@ -7,7 +7,7 @@ import {
 } from '@island.is/regulations/admin'
 import {
   HTMLText,
-  IntPositive,
+  LawChapter,
   LawChapterSlug,
   PlainText,
   RegName,
@@ -136,7 +136,13 @@ export type DraftingState = {
   draft: RegDraftForm
   /** Static list of ministries, loaded on init */
   ministries: MinistryList
+  /** Static list of law chapters, loaded on init */
+  lawChapters: {
+    list: Array<LawChapter>
+    bySlug: Record<string, string>
+  }
   /** true while saving the draft */
+
   saving?: boolean
   /** "Toastable" errror that occur during loading/saving/etc. */
   error?: { message: MessageDescriptor | string; error?: Error }

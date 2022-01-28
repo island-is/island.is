@@ -59,7 +59,7 @@ import { downloadUrl } from '../utils/files'
 
 // ---------------------------------------------------------------------------
 
-const fetchPDF = (pdfUrl: URLString, draft: RegDraftForm) => {
+const fetchPDF = (draft: RegDraftForm) => {
   new Promise<{ success: boolean }>((resolve) => {
     const fileName = draft.title.value + '.pdf'
     // import { downloadUrl } from '../utils/files'
@@ -99,9 +99,6 @@ const useSignedUploader = (
   const [uploadStatus, setUploadStatus] = useState<UploadingState>({
     uploading: false,
   })
-  const downloadSignablePDF = signedDocumentUrl
-    ? () => fetchPDF(signedDocumentUrl, draft)
-    : () => undefined
 
   let reader: FileReader | undefined
 
@@ -164,7 +161,6 @@ const useSignedUploader = (
 
   return {
     uploadStatus,
-    downloadSignablePDF,
     uploadSignedPDF,
     cancelUpload,
     retryUpload,
@@ -180,8 +176,8 @@ const useSignedUploader = (
 const defaultSignatureText = `
   <p class="Dags" align="center"><em>{ministry}nu, {dags}.</em></p>
   <p class="FHUndirskr" align="center">f.h.r.</p>
-  <p class="Undirritun" align="center"><strong>—NAFN—</strong><br/>⸻ráðherra.</p>
-  <p class="Undirritun" align="right"><em>—NAFN—.</em></p>
+  <p class="Undirritun" align="center"><strong>NAFN</strong><br/>{minister}.</p>
+  <p class="Undirritun" align="right"><em>NAFN.</em></p>
 ` as HTMLText
 
 const getDefaultSignatureText = (
@@ -189,10 +185,15 @@ const getDefaultSignatureText = (
   /** The ministry of the author-type user that created the RegulationDraft */
   authorMinistry?: PlainText,
 ) => {
+  const authorMinister =
+    authorMinistry && authorMinistry.replace(/uneyti$/i, '') + 'herra'
   const defaultMinistry = '⸻ráðuneyti'
+  const defaultMinister = '⸻ráðherra'
+
   return defaultSignatureText
     .replace('{dags}', dateFormatter(new Date(), 'dd. MMMM yyyy'))
-    .replace('{ministry}', authorMinistry || defaultMinistry) as HTMLText
+    .replace('{ministry}', authorMinistry || defaultMinistry)
+    .replace('{minister}', authorMinister || defaultMinister) as HTMLText
 }
 
 // ===========================================================================
@@ -206,7 +207,6 @@ export const EditSignature = () => {
 
   const {
     uploadStatus,
-    downloadSignablePDF,
     uploadSignedPDF,
     cancelUpload,
     retryUpload,
@@ -221,7 +221,11 @@ export const EditSignature = () => {
   return (
     <Box marginBottom={6}>
       <Box marginBottom={4}>
-        <Button onClick={downloadSignablePDF} icon="download">
+        <Button
+          onClick={() => fetchPDF(draft)}
+          icon="download"
+          // iconType="outline"
+        >
           {t(msg.signedDocumentDownloadFresh)}
         </Button>
       </Box>
@@ -282,8 +286,8 @@ export const EditSignature = () => {
                 as="button"
                 iconType="outline"
                 icon="download"
-                title={t(msg.signedDocumentLink)}
-                aria-label={t(msg.signedDocumentLink)}
+                title={t(msg.signedDocumentLinkLong)}
+                aria-label={t(msg.signedDocumentLinkLong)}
               >
                 {t(msg.signedDocumentLink)}
               </Button>
@@ -325,7 +329,9 @@ export const EditSignature = () => {
               }
               onChange={(text) => updateState('signatureText', text)}
               required={!!draft.signatureText.required}
-              error={t(draft.signatureText.error)}
+              error={
+                draft.signatureText.showError && t(draft.signatureText.error)
+              }
             />
           </Box>
 
@@ -341,7 +347,9 @@ export const EditSignature = () => {
                     ''
                   }
                   placeholder={t(msg.signatureDatePlaceholder)}
-                  hasError={!!draft.signatureDate.error}
+                  hasError={
+                    draft.signatureDate.showError && !!draft.signatureDate.error
+                  }
                   errorMessage={t(draft.signatureDate.error)}
                   name="_signatureDate"
                   size="sm"
@@ -357,7 +365,7 @@ export const EditSignature = () => {
                   label={t(msg.ministry)}
                   value={draft.ministry.value || ''}
                   placeholder={t(msg.ministryPlaceholder)}
-                  hasError={!!draft.ministry.error && !draft.ministry.showError}
+                  hasError={!!draft.ministry.error && draft.ministry.showError}
                   errorMessage={t(draft.ministry.error)}
                   name="_rn"
                   size="sm"
@@ -382,7 +390,10 @@ export const EditSignature = () => {
                 handleChange={(date: Date) =>
                   updateState('idealPublishDate', date)
                 }
-                hasError={!!draft.idealPublishDate.error}
+                hasError={
+                  draft.idealPublishDate.showError &&
+                  !!draft.idealPublishDate.error
+                }
                 errorMessage={t(draft.idealPublishDate.error)}
                 backgroundColor="blue"
               />

@@ -1,6 +1,6 @@
 import { Reducer, useReducer } from 'react'
 import { Step } from '../types'
-import { MinistryList } from '@island.is/regulations'
+import { LawChapter, MinistryList } from '@island.is/regulations'
 import { Action, DraftingState } from './types'
 import { produce, setAutoFreeze } from 'immer'
 import { RegulationDraft } from '@island.is/regulations/admin'
@@ -31,11 +31,12 @@ const draftingStateReducer: Reducer<DraftingState, Action> = (
 export type StateInputs = {
   regulationDraft: RegulationDraft
   ministries: MinistryList
+  lawChapters: Array<LawChapter>
   stepName: Step
 }
 
 export const useEditDraftReducer = (inputs: StateInputs) => {
-  const { regulationDraft, ministries, stepName } = inputs
+  const { regulationDraft, ministries, lawChapters, stepName } = inputs
 
   const isEditor =
     useAuth().userInfo?.scopes?.includes(RegulationsAdminScope.manage) || false
@@ -46,6 +47,13 @@ export const useEditDraftReducer = (inputs: StateInputs) => {
       draft,
       step: steps[stepName],
       ministries,
+      lawChapters: {
+        list: lawChapters,
+        bySlug: lawChapters.reduce<Record<string, string>>((map, ch) => {
+          map[ch.slug] = ch.name
+          return map
+        }, {}),
+      },
       isEditor,
     }
 

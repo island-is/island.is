@@ -161,6 +161,27 @@ export const useCollectMessages = (
 
 // ---------------------------------------------------------------------------
 
+export const JumpToStep = (props: { step: Step; label: string }) => {
+  const t = useLocale().formatMessage
+  const history = useHistory()
+  const jumpLabel = t(reviewMessagse.jumpToStepButton)
+
+  return (
+    <div style={{ float: 'right', marginTop: '-2em' }}>
+      <Button
+        variant="text"
+        size="small"
+        onClick={() => history.push(getEditUrl(props.step))}
+        aria-label={jumpLabel + ': ' + props.label}
+      >
+        {jumpLabel}
+      </Button>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+
 // ---------------------------------------------------------------------------
 
 export type EditReviewWarningsProps = {
@@ -169,13 +190,10 @@ export type EditReviewWarningsProps = {
 
 export const EditReviewWarnings = (props: EditReviewWarningsProps) => {
   const t = useLocale().formatMessage
-  const history = useHistory()
 
   if (!props.messages) {
     return null
   }
-
-  const jumpLabel = t(reviewMessagse.jumpToStepButton)
 
   return (
     <Box marginBottom={4}>
@@ -190,16 +208,7 @@ export const EditReviewWarnings = (props: EditReviewWarningsProps) => {
             title={m.label}
             message={
               <>
-                <div style={{ float: 'right', marginTop: '-2em' }}>
-                  <Button
-                    variant="text"
-                    size="small"
-                    onClick={() => history.push(getEditUrl(m.step))}
-                    aria-label={jumpLabel + ': ' + m.label}
-                  >
-                    {jumpLabel}
-                  </Button>
-                </div>
+                <JumpToStep step={m.step} label={m.label} />
                 {m.error}
               </>
             }

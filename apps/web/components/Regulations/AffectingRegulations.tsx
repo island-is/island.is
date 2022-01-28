@@ -59,11 +59,7 @@ export const AffectingRegulations = memo((props: AffectingRegulationsProps) => {
       {interpolate(affectingLinksPrefix, { dates }) + ' '}
       {affectingRegulations.map(({ name, title }, i) => {
         const separator =
-          i === 0
-            ? undefined
-            : i === affectingRegulations.length - 1
-            ? ' og '
-            : ', '
+          i === 0 ? '' : i === affectingRegulations.length - 1 ? ' og ' : ', '
         return (
           <Fragment key={i}>
             {separator}

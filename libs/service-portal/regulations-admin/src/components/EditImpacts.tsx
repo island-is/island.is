@@ -142,7 +142,7 @@ export const EditImpacts = () => {
       {selRegOption && (
         <Box marginBottom={[4, 4, 8]}>
           <Box marginBottom={2}>
-            <Divider weight="regular" />
+            <Divider />
             {' '}
           </Box>
           <Text variant="h4" as="h4" marginBottom={[2, 2, 3, 4]}>

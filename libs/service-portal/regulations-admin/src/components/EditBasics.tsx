@@ -62,7 +62,7 @@ export const EditBasics = () => {
               />
             </Box>
             <Box>
-              <Divider weight="regular" />
+              <Divider />
               {' '}
             </Box>
             <Box marginBottom={[4, 4, 6]}>

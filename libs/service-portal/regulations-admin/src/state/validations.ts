@@ -146,7 +146,6 @@ export const updateFieldValue = <T extends DraftField<unknown, string>>(
   // if (newValue !== field.value) {
   field.value = newValue
   field.dirty = true
-  console.log({ dirty: field.dirty, showError: field.showError })
 
   validateFieldValue(field, isImpact)
   // }

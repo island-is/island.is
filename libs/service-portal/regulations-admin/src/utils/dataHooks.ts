@@ -5,6 +5,7 @@ import { gql, useQuery, useMutation, ApolloError } from '@apollo/client'
 import { RegulationDraft } from '@island.is/regulations/admin'
 import {
   LawChapter,
+  LawChapterSlug,
   MinistryList,
   RegName,
   RegulationOptionList,

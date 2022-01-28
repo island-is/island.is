@@ -10,7 +10,11 @@ import {
   ensureStepName,
   useDraftingState,
 } from '../state/useDraftingState'
-import { useMinistriesQuery, useRegulationDraftQuery } from '../utils/dataHooks'
+import {
+  useLawChaptersQuery,
+  useMinistriesQuery,
+  useRegulationDraftQuery,
+} from '../utils/dataHooks'
 import { MessageDescriptor } from '@formatjs/intl'
 import { editorMsgs } from '../messages'
 import { EditBasics } from '../components/EditBasics'
@@ -120,8 +124,9 @@ const EditApp = () => {
 
   const regulationDraft = useRegulationDraftQuery(id)
   const ministries = useMinistriesQuery()
+  const lawChapters = useLawChaptersQuery()
 
-  if (regulationDraft.loading || ministries.loading) {
+  if (regulationDraft.loading || ministries.loading || lawChapters.loading) {
     return <p>Loading...</p>
   }
 
@@ -131,12 +136,16 @@ const EditApp = () => {
   if (ministries.error) {
     throw ministries.error
   }
+  if (lawChapters.error) {
+    throw lawChapters.error
+  }
 
   return (
     <RegDraftingProvider
       regulationDraft={regulationDraft.data}
       stepName={stepName}
       ministries={ministries.data}
+      lawChapters={lawChapters.data}
     >
       <EditScren key={id} />
     </RegDraftingProvider>

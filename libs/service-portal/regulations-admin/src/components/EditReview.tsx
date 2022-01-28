@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Button, Checkbox } from '@island.is/island-ui/core'
+import { Box, Button, Checkbox, Divider } from '@island.is/island-ui/core'
 import { buttonsMsgs, reviewMessagse } from '../messages'
 import { useLocale } from '../utils'
 import { useDraftingState } from '../state/useDraftingState'
@@ -9,7 +9,7 @@ import { EditReviewOverview } from './EditReviewOverview'
 export const EditReview = () => {
   const t = useLocale().formatMessage
   const state = useDraftingState()
-  const { draft, actions } = state
+  const { actions } = state
   const { publish, propose } = actions
 
   const messages = useCollectMessages(state, t)
@@ -18,7 +18,7 @@ export const EditReview = () => {
   return (
     <Box marginY={[4, 4, 8]}>
       <EditReviewWarnings messages={messages} />
-      <EditReviewOverview draft={draft} hasWarnings={!!messages} />
+      <EditReviewOverview hasWarnings={!!messages} />
 
       {propose ? (
         <Box>
@@ -30,22 +30,27 @@ export const EditReview = () => {
         publish &&
         !messages && (
           <Box>
-            <Checkbox
-              label={t(reviewMessagse.confirmBeforePublish)}
-              labelVariant="default"
-              checked={confirmed}
-              onChange={() => setConfirmed(!confirmed)}
-            />
+            <Box marginBottom={[0, 0, 2]}>
+              <Divider />
+              {' '}
+            </Box>
 
-            {publish && (
-              <Button
-                icon="document"
-                disabled={confirmed}
-                onClick={() => publish()}
-              >
-                {t(buttonsMsgs.publish)}
-              </Button>
-            )}
+            <Box marginBottom={[2, 2, 4]}>
+              <Checkbox
+                label={t(reviewMessagse.confirmBeforePublish)}
+                labelVariant="default"
+                checked={confirmed}
+                onChange={() => setConfirmed(!confirmed)}
+              />
+            </Box>
+
+            <Button
+              icon="document"
+              disabled={confirmed}
+              onClick={() => publish()}
+            >
+              {t(buttonsMsgs.publish)}
+            </Button>
           </Box>
         )
       )}
