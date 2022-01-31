@@ -226,6 +226,13 @@ export class ApplicationController {
       ApplicationEventType.FILEUPLOAD,
     ]
 
+    if (user.service === RolesRule.VEITA) {
+      staff = await this.staffService.findByNationalId(user.nationalId)
+      if (!staff) {
+        throw new ForbiddenException('Staff not found')
+      }
+    }
+
     if (
       (user.service === RolesRule.OSK &&
         staffUpdateEvents.includes(applicationToUpdate.event)) ||
@@ -235,10 +242,6 @@ export class ApplicationController {
       throw new ForbiddenException(
         'User not allowed to make this change to application',
       )
-    }
-
-    if (user.service === RolesRule.VEITA) {
-      staff = await this.staffService.findByNationalId(user.nationalId)
     }
 
     const updatedApplication = await this.applicationService.update(

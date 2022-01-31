@@ -5,6 +5,7 @@ air-discount-scheme-api:
     BACKEND_URL: 'http://web-air-discount-scheme-backend'
     CONTENTFUL_HOST: 'preview.contentful.com'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -43,7 +44,6 @@ air-discount-scheme-api:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/air-discount-scheme/api/CONTENTFUL_ACCESS_TOKEN'
     DEVELOPERS: '/k8s/air-discount-scheme/api/DEVELOPERS'
-    IDENTITY_SERVER_DOMAIN: '/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN'
     SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN'
   securityContext:
     allowPrivilegeEscalation: false
@@ -60,8 +60,18 @@ air-discount-scheme-backend:
     DB_NAME: 'air_discount_scheme_backend'
     DB_USER: 'air_discount_scheme_backend'
     ENVIRONMENT: 'dev'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
+    XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
+    XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_MEMBER_CODE: '10001'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -113,12 +123,12 @@ air-discount-scheme-backend:
     DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
     ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY'
     ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY'
-    IDENTITY_SERVER_DOMAIN: '/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN'
     NATIONAL_REGISTRY_PASSWORD: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD'
     NATIONAL_REGISTRY_URL: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL'
     NATIONAL_REGISTRY_USERNAME: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME'
     NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY'
     SENTRY_DSN: '/k8s/air-discount-scheme-backend/SENTRY_DSN'
+    VEGAGERDIN_IDS_CLIENTS_SECRET: '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -126,6 +136,8 @@ air-discount-scheme-web:
   enabled: true
   env:
     API_URL: 'http://web-air-discount-scheme-api'
+    IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
+    NEXTAUTH_URL: 'https://loftbru.dev01.devland.is'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -159,9 +171,7 @@ air-discount-scheme-web:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    IDENTITY_SERVER_DOMAIN: '/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN'
     IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
-    NEXTAUTH_URL: '/k8s/air-discount-scheme/NEXTAUTH_URL'
     SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN'
   securityContext:
     allowPrivilegeEscalation: false
@@ -1306,18 +1316,18 @@ user-notification-worker:
     IDENTITY_SERVER_PATH: 'https://identity-server.dev01.devland.is'
     MAIN_QUEUE_NAME: 'user-notification'
     SERVERSIDE_FEATURES_ON: ''
-    SERVICE_USER_PROFILE_BASEPATH: 'https://beta.dev01.devland.is/minarsidur'
+    SERVICE_USER_PROFILE_BASEPATH: 'http://web-service-portal-api.service-portal.svc.cluster.local'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: '/'
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/'
+      path: '/liveness'
       timeoutSeconds: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
