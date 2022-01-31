@@ -1,38 +1,51 @@
-import { addFormField, addHeader, addSubHeader, addText } from '../pdfUtils'
-import { ComplaintDto } from '../../models'
-import { generatePdf, PdfConstants } from '..'
+import { ComplaintPDF } from '../../models'
+
 import { Application } from '@island.is/application/core'
 import { transformApplicationToComplaintDto } from '../../data-protection-utils'
+import { generatePdf } from '../pdfGenerator'
+import { addHeader, addSubheader, addValue, formatSsn } from '../pdfUtils'
+import { PdfConstants } from '../constants'
 
 export async function generateComplaintPdf(
-  complaint: ComplaintDto,
+  complaint: ComplaintPDF,
 ): Promise<Buffer> {
-  return await generatePdf<ComplaintDto>(complaint, dpcApplicationPdf)
+  return await generatePdf<ComplaintPDF>(complaint, dpcApplicationPdf)
 }
 
 export async function generateComplaintPdfApplication(
   application: Application,
 ): Promise<Buffer> {
   const dto = transformApplicationToComplaintDto(application)
-  return await generatePdf<ComplaintDto>(dto, dpcApplicationPdf)
+  return await generatePdf<ComplaintPDF>(dto, dpcApplicationPdf)
 }
 
 function dpcApplicationPdf(
-  complaint: ComplaintDto,
+  complaint: ComplaintPDF,
   doc: PDFKit.PDFDocument,
 ): void {
-  addHeader(doc, 'Kvörtun')
-  addSubHeader(doc, 'Tengiliður')
-  addFormField(doc, 'Nafn', `${complaint.contactInfo.name}`)
-  addFormField(doc, 'Kennitala', ` ${complaint.contactInfo.nationalId}`)
-  addFormField(doc, 'Sími', ` ${complaint.contactInfo.phone}`)
-  addFormField(doc, 'Tölvupóstur', `${complaint.contactInfo.email}`)
-  addFormField(
+  addHeader('Kvörtun til Persónuverndar', doc)
+  addSubheader('Tengiliður', doc)
+
+  addValue(
+    `${complaint.contactInfo.name}, ${formatSsn(
+      complaint.contactInfo.nationalId,
+    )}`,
     doc,
-    'Heimilisfang',
-    `${complaint.contactInfo.address}, ${complaint.contactInfo.postalCode} ${complaint.contactInfo.city}`,
   )
-  addFormField(
+
+  addValue(
+    `${complaint.contactInfo.address}, ${complaint.contactInfo.postalCode} ${complaint.contactInfo.city}`,
+    doc,
+  )
+
+  addValue(
+    `${complaint.contactInfo.phone}, ${complaint.contactInfo.email}`,
+    doc,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.LARGE_LINE_GAP,
+  )
+
+  /*addFormField(
     doc,
     'Umboð',
     `${complaint.onBehalf}`,
@@ -51,8 +64,8 @@ function dpcApplicationPdf(
         PdfConstants.NORMAL_LINE_GAP,
       )
     })
-  }
-
+  }*/
+  /*
   addSubHeader(doc, 'Aðilar sem er kvartað yfir')
 
   complaint.targetsOfComplaint.map((target, i) => {
@@ -87,8 +100,8 @@ function dpcApplicationPdf(
       `${target.countryOfOperation}`,
       PdfConstants.NORMAL_LINE_GAP,
     )
-  })
-
+  })*/
+  /*
   addSubHeader(doc, 'Flokkun á atburði')
   complaint.complaintCategories.map((category, i) => {
     complaint.complaintCategories.length > i + 1
@@ -98,6 +111,6 @@ function dpcApplicationPdf(
 
   addSubHeader(doc, 'Lýsing á atburði')
   addText(doc, complaint.description)
-
+*/
   doc.end()
 }

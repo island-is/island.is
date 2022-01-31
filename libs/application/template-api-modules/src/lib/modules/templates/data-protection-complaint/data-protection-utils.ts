@@ -1,7 +1,7 @@
 import get from 'lodash/get'
 import {
   Agency,
-  ComplaintDto,
+  ComplaintPDF,
   ContactInfo,
   ContactRole,
   TargetOfComplaint,
@@ -188,7 +188,7 @@ export const toRequestMetadata = (
 
 export const transformApplicationToComplaintDto = (
   application: Application,
-): ComplaintDto => {
+): ComplaintPDF => {
   const answers = application.answers as DataProtectionComplaint
   return {
     applicantInfo: {
@@ -206,6 +206,7 @@ export const transformApplicationToComplaintDto = (
     attachments: [],
     description: extractAnswer(application.answers, 'complaint.description'),
     applicationPdf: '',
+    submitDate: application.externalData.sendApplication.date,
   }
 }
 

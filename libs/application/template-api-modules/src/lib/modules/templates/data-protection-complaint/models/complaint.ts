@@ -3,7 +3,7 @@ import {
   YES,
 } from '@island.is/application/templates/data-protection-complaint'
 
-export interface ComplaintDto {
+export interface ComplaintPDF {
   applicantInfo: {
     name: string
     nationalId: string
@@ -19,6 +19,7 @@ export interface ComplaintDto {
   description: string
   attachments: []
   applicationPdf: string
+  submitDate: Date
 }
 
 export interface ContactInfo {
