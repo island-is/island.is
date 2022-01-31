@@ -1,7 +1,8 @@
-import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
-import React, { PropsWithChildren, ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 import { motion } from 'framer-motion'
+
+import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Modal.css'
 
@@ -14,6 +15,7 @@ interface ModalProps {
   handleSecondaryButtonClick?: () => void
   handlePrimaryButtonClick?: () => void
   isPrimaryButtonLoading?: boolean
+  isPrimaryButtonDisabled?: boolean
   children?: ReactNode
 }
 
@@ -26,6 +28,7 @@ const Modal: React.FC<ModalProps> = ({
   handleSecondaryButtonClick,
   handlePrimaryButtonClick,
   isPrimaryButtonLoading,
+  isPrimaryButtonDisabled,
   children,
 }: ModalProps) => {
   const modalVariants = {
@@ -91,6 +94,7 @@ const Modal: React.FC<ModalProps> = ({
               data-testid="modalPrimaryButton"
               onClick={handlePrimaryButtonClick}
               loading={isPrimaryButtonLoading}
+              disabled={isPrimaryButtonDisabled}
             >
               {primaryButtonText}
             </Button>
@@ -110,6 +114,7 @@ const ModalPortal = ({
   handleSecondaryButtonClick,
   handlePrimaryButtonClick,
   isPrimaryButtonLoading,
+  isPrimaryButtonDisabled,
   children,
 }: ModalProps) => {
   const modalRoot =
@@ -125,6 +130,7 @@ const ModalPortal = ({
       handleSecondaryButtonClick={handleSecondaryButtonClick}
       handlePrimaryButtonClick={handlePrimaryButtonClick}
       isPrimaryButtonLoading={isPrimaryButtonLoading}
+      isPrimaryButtonDisabled={isPrimaryButtonDisabled}
       children={children}
     />,
     modalRoot,
