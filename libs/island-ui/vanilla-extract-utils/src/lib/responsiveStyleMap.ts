@@ -4,7 +4,7 @@ import * as CSS from 'csstype'
 
 import { theme } from '@island.is/island-ui/theme'
 
-type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
 type ResponsiveProps<T> = {
   [Type in Breakpoint]?: T
 }

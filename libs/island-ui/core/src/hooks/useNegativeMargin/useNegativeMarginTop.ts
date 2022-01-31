@@ -17,6 +17,7 @@ export const useNegativeMarginTop = (space: ResponsiveProp<any>) => {
     styles.md,
     styles.lg,
     styles.xl,
+    styles.xxl,
   )
   return classnames(styles.base, negativeMarginTop)
 }

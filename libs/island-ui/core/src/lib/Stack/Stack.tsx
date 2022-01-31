@@ -48,7 +48,7 @@ const extractHiddenPropsFromChild = (child: ReactNode) =>
 
 const resolveHiddenProps = ({ screen, above, below }: HiddenProps) =>
   screen
-    ? ([true, true, true, true, true] as const)
+    ? ([true, true, true, true, true, true] as const)
     : resolveResponsiveRangeProps({
         above,
         below,
@@ -56,9 +56,14 @@ const resolveHiddenProps = ({ screen, above, below }: HiddenProps) =>
 
 const calculateHiddenStackItemProps = (
   stackItemProps: ReturnType<typeof useStackItem>,
-  [hiddenOnXs, hiddenOnSm, hiddenOnMd, hiddenOnLg, hiddenOnXl]: Readonly<
-    [boolean, boolean, boolean, boolean, boolean]
-  >,
+  [
+    hiddenOnXs,
+    hiddenOnSm,
+    hiddenOnMd,
+    hiddenOnLg,
+    hiddenOnXl,
+    hiddenOnXxl,
+  ]: Readonly<[boolean, boolean, boolean, boolean, boolean, boolean]>,
 ) => {
   const [
     displayXs,
@@ -66,6 +71,7 @@ const calculateHiddenStackItemProps = (
     displayMd,
     displayLg,
     displayXl,
+    displayXxl,
   ] = normaliseResponsiveProp(stackItemProps?.display || 'block')
 
   return {
@@ -76,6 +82,7 @@ const calculateHiddenStackItemProps = (
       hiddenOnMd ? 'none' : displayMd,
       hiddenOnLg ? 'none' : displayLg,
       hiddenOnXl ? 'none' : displayXl,
+      hiddenOnXxl ? 'none' : displayXxl,
     ] as ResponsiveProp<'block' | 'flex' | 'none' | 'inline' | 'inlineBlock'>,
   }
 }
@@ -114,6 +121,7 @@ export const Stack = ({
   let firstItemOnMd: number | null = null
   let firstItemOnLg: number | null = null
   let firstItemOnXl: number | null = null
+  let firstItemOnXxl: number | null = null
 
   return (
     <Box component={component} className={negativeMarginTop}>
@@ -132,13 +140,14 @@ export const Stack = ({
         const hiddenProps = extractHiddenPropsFromChild(child)
         const hidden = hiddenProps
           ? resolveHiddenProps(hiddenProps)
-          : ([false, false, false, false, false] as const)
+          : ([false, false, false, false, false, false] as const)
         const [
           hiddenOnXs,
           hiddenOnSm,
           hiddenOnMd,
           hiddenOnLg,
           hiddenOnXl,
+          hiddenOnXxl,
         ] = hidden
 
         if (firstItemOnXs === null && !hiddenOnXs) {
@@ -161,6 +170,10 @@ export const Stack = ({
           firstItemOnXl = index
         }
 
+        if (firstItemOnXxl === null && !hiddenOnXxl) {
+          firstItemOnXxl = index
+        }
+
         return (
           <Box
             component={stackItemComponent}
@@ -173,7 +186,8 @@ export const Stack = ({
             hiddenOnSm ||
             hiddenOnMd ||
             hiddenOnLg ||
-            hiddenOnXl
+            hiddenOnXl ||
+            hiddenOnXxl
               ? calculateHiddenStackItemProps(stackItemProps, hidden)
               : stackItemProps)}
           >
@@ -187,6 +201,7 @@ export const Stack = ({
                   index === firstItemOnMd ? 'none' : 'block',
                   index === firstItemOnLg ? 'none' : 'block',
                   index === firstItemOnXl ? 'none' : 'block',
+                  index === firstItemOnXxl ? 'none' : 'block',
                 ]}
               >
                 {typeof dividers === 'string' ? (

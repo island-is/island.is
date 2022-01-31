@@ -37,6 +37,7 @@ export const Tiles = ({
     mdColumns,
     lgColumns,
     xlColumns,
+    xxlColumns,
   ] = normaliseResponsiveProp(columns)
 
   const negativeMarginTop = useNegativeMarginTop(responsiveSpace)
@@ -55,6 +56,7 @@ export const Tiles = ({
               styles.columnsMd,
               styles.columnsLg,
               styles.columnsXl,
+              styles.columnsXxl,
             )}
           >
             <Box
@@ -72,6 +74,7 @@ export const Tiles = ({
                     mdColumns === 1 ? 'block' : 'none',
                     lgColumns === 1 ? 'block' : 'none',
                     xlColumns === 1 ? 'block' : 'none',
+                    xxlColumns === 1 ? 'block' : 'none',
                   ]}
                 >
                   {typeof dividers === 'string' ? (

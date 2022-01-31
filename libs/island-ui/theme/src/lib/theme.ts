@@ -121,6 +121,7 @@ interface ResponsiveStyle {
   md?: StyleWithoutMediaQueries
   lg?: StyleWithoutMediaQueries
   xl?: StyleWithoutMediaQueries
+  xxl?: StyleWithoutMediaQueries
 }
 
 export const makeThemeUtils = (tokens: RequiredTokens) => {
@@ -138,6 +139,7 @@ export const makeThemeUtils = (tokens: RequiredTokens) => {
     md: makeMediaQuery('md'),
     lg: makeMediaQuery('lg'),
     xl: makeMediaQuery('xl'),
+    xxl: makeMediaQuery('xxl'),
   }
 
   const responsiveStyle = ({
@@ -146,6 +148,7 @@ export const makeThemeUtils = (tokens: RequiredTokens) => {
     md,
     lg,
     xl,
+    xxl,
   }: ResponsiveStyle): StyleRule => {
     const xsStyles = omit(xs, '@media')
     const smStyles = !sm || isEqual(sm, xsStyles) ? null : sm
@@ -156,8 +159,14 @@ export const makeThemeUtils = (tokens: RequiredTokens) => {
       !xl || isEqual(xl, xsStyles || smStyles || mdStyles || lgStyles)
         ? null
         : xl
+    const xxlStyles =
+      !xxl ||
+      isEqual(xxl, xsStyles || smStyles || mdStyles || lgStyles || xlStyles)
+        ? null
+        : xxl
 
-    const hasMediaQueries = smStyles || mdStyles || lgStyles || xlStyles
+    const hasMediaQueries =
+      smStyles || mdStyles || lgStyles || xlStyles || xxlStyles
 
     return {
       ...xsStyles,
@@ -168,6 +177,7 @@ export const makeThemeUtils = (tokens: RequiredTokens) => {
               ...(mdStyles ? mediaQuery.md(mdStyles) : {}),
               ...(lgStyles ? mediaQuery.lg(lgStyles) : {}),
               ...(xlStyles ? mediaQuery.xl(xlStyles) : {}),
+              ...(xxlStyles ? mediaQuery.xl(xxlStyles) : {}),
             },
           }
         : {}),

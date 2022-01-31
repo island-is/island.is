@@ -155,6 +155,7 @@ export const useBoxStyles = ({
         styles.backgroundMd,
         styles.backgroundLg,
         styles.backgroundXl,
+        styles.backgroundXxl,
       ),
     styles.backgroundPattern[backgroundPattern!],
     styles.border[border!],
@@ -190,6 +191,7 @@ export const useBoxStyles = ({
         styles.marginMd.top,
         styles.marginLg.top,
         styles.marginXl.top,
+        styles.marginXxl.top,
       ),
     resolvedMarginBottom !== undefined &&
       resolveResponsiveProp(
@@ -199,6 +201,7 @@ export const useBoxStyles = ({
         styles.marginMd.bottom,
         styles.marginLg.bottom,
         styles.marginXl.bottom,
+        styles.marginXxl.bottom,
       ),
     resolvedMarginLeft !== undefined &&
       resolveResponsiveProp(
@@ -208,6 +211,7 @@ export const useBoxStyles = ({
         styles.marginMd.left,
         styles.marginLg.left,
         styles.marginXl.left,
+        styles.marginXxl.left,
       ),
     resolvedMarginRight !== undefined &&
       resolveResponsiveProp(
@@ -217,6 +221,7 @@ export const useBoxStyles = ({
         styles.marginMd.right,
         styles.marginLg.right,
         styles.marginXl.right,
+        styles.marginXxl.right,
       ),
     resolvedPaddingTop !== undefined &&
       resolveResponsiveProp(
@@ -226,6 +231,7 @@ export const useBoxStyles = ({
         styles.paddingMd.top,
         styles.paddingLg.top,
         styles.paddingXl.top,
+        styles.paddingXxl.top,
       ),
     resolvedPaddingBottom !== undefined &&
       resolveResponsiveProp(
@@ -235,6 +241,7 @@ export const useBoxStyles = ({
         styles.paddingMd.bottom,
         styles.paddingLg.bottom,
         styles.paddingXl.bottom,
+        styles.paddingXxl.bottom,
       ),
     resolvedPaddingLeft !== undefined &&
       resolveResponsiveProp(
@@ -244,6 +251,7 @@ export const useBoxStyles = ({
         styles.paddingMd.left,
         styles.paddingLg.left,
         styles.paddingXl.left,
+        styles.paddingXxl.left,
       ),
     resolvedPaddingRight !== undefined &&
       resolveResponsiveProp(
@@ -253,6 +261,7 @@ export const useBoxStyles = ({
         styles.paddingMd.right,
         styles.paddingLg.right,
         styles.paddingXl.right,
+        styles.paddingXxl.right,
       ),
     display !== undefined &&
       resolveResponsiveProp(
@@ -262,6 +271,7 @@ export const useBoxStyles = ({
         styles.displayMd,
         styles.displayLg,
         styles.displayXl,
+        styles.displayXxl,
       ),
     flexDirection !== undefined &&
       resolveResponsiveProp(
@@ -271,6 +281,7 @@ export const useBoxStyles = ({
         styles.flexDirectionMd,
         styles.flexDirectionLg,
         styles.flexDirectionXl,
+        styles.flexDirectionXxl,
       ),
     flexWrap !== undefined &&
       resolveResponsiveProp(
@@ -280,6 +291,7 @@ export const useBoxStyles = ({
         styles.flexWrapMd,
         styles.flexWrapLg,
         styles.flexWrapXl,
+        styles.flexWrapXxl,
       ),
     styles.flexShrink[flexShrink!],
     styles.flexGrow[flexGrow!],
@@ -291,6 +303,7 @@ export const useBoxStyles = ({
         styles.alignItemsMd,
         styles.alignItemsLg,
         styles.alignItemsXl,
+        styles.alignItemsXxl,
       ),
     justifyContent !== undefined &&
       resolveResponsiveProp(
@@ -300,6 +313,7 @@ export const useBoxStyles = ({
         styles.justifyContentMd,
         styles.justifyContentLg,
         styles.justifyContentXl,
+        styles.justifyContentXxl,
       ),
     textAlign !== undefined &&
       resolveResponsiveProp(
@@ -309,6 +323,7 @@ export const useBoxStyles = ({
         styles.textAlignMd,
         styles.textAlignLg,
         styles.textAlignXl,
+        styles.textAlignXxl,
       ),
     styles.userSelect[userSelect!],
     styles.outline[outline!],

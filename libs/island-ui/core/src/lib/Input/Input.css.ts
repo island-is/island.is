@@ -60,6 +60,7 @@ export const inputBackgroundSm = makeInputBackground('sm')
 export const inputBackgroundMd = makeInputBackground('md')
 export const inputBackgroundLg = makeInputBackground('lg')
 export const inputBackgroundXl = makeInputBackground('xl')
+export const inputBackgroundXxl = makeInputBackground('xxl')
 
 export const textarea = style({
   ...mixins.textarea,

@@ -18,6 +18,7 @@ export const useNegativeMarginLeft = (space: ResponsiveProp<any>) => {
       styles.md,
       styles.lg,
       styles.xl,
+      styles.xxl,
     ),
   )
 }

@@ -35,3 +35,8 @@ export const xl = styleVariants(
     themeUtils.responsiveStyle({ xl: negativeMarginLeft(1, rows) }),
   ),
 )
+export const xxl = styleVariants(
+  mapToStyleProperty({ ...spacing }, 'marginLeft', (rows) =>
+    themeUtils.responsiveStyle({ xxl: negativeMarginLeft(1, rows) }),
+  ),
+)

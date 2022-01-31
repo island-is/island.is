@@ -67,6 +67,12 @@ export const marginXl = {
   left: styleVariants(spaceMapToCss(theme, 'marginLeft', 'xl')),
   right: styleVariants(spaceMapToCss(theme, 'marginRight', 'xl')),
 }
+export const marginXxl = {
+  top: styleVariants(spaceMapToCss(theme, 'marginTop', 'xxl')),
+  bottom: styleVariants(spaceMapToCss(theme, 'marginBottom', 'xxl')),
+  left: styleVariants(spaceMapToCss(theme, 'marginLeft', 'xxl')),
+  right: styleVariants(spaceMapToCss(theme, 'marginRight', 'xxl')),
+}
 
 export const padding = {
   top: styleVariants(spaceMapToCss(theme, 'paddingTop', 'xs')),
@@ -97,6 +103,12 @@ export const paddingXl = {
   bottom: styleVariants(spaceMapToCss(theme, 'paddingBottom', 'xl')),
   left: styleVariants(spaceMapToCss(theme, 'paddingLeft', 'xl')),
   right: styleVariants(spaceMapToCss(theme, 'paddingRight', 'xl')),
+}
+export const paddingXxl = {
+  top: styleVariants(spaceMapToCss(theme, 'paddingTop', 'xxl')),
+  bottom: styleVariants(spaceMapToCss(theme, 'paddingBottom', 'xxl')),
+  left: styleVariants(spaceMapToCss(theme, 'paddingLeft', 'xxl')),
+  right: styleVariants(spaceMapToCss(theme, 'paddingRight', 'xxl')),
 }
 
 export const transform = {
@@ -247,6 +259,13 @@ export const displayXl = styleVariants(
     }),
   ),
 )
+export const displayXxl = styleVariants(
+  mapToStyleProperty(displayRules, 'display', (value, propertyName) =>
+    themeUtils.responsiveStyle({
+      xxl: { [propertyName]: value },
+    }),
+  ),
+)
 
 const alignItemsRules = {
   flexStart: 'flex-start',
@@ -283,6 +302,13 @@ export const alignItemsXl = styleVariants(
   mapToStyleProperty(alignItemsRules, 'alignItems', (value, propertyName) =>
     themeUtils.responsiveStyle({
       xl: { [propertyName]: value },
+    }),
+  ),
+)
+export const alignItemsXxl = styleVariants(
+  mapToStyleProperty(alignItemsRules, 'alignItems', (value, propertyName) =>
+    themeUtils.responsiveStyle({
+      xxl: { [propertyName]: value },
     }),
   ),
 )
@@ -337,6 +363,16 @@ export const justifyContentXl = styleVariants(
       }),
   ),
 )
+export const justifyContentXxl = styleVariants(
+  mapToStyleProperty(
+    justifyContentRules,
+    'justifyContent',
+    (value, propertyName) =>
+      themeUtils.responsiveStyle({
+        xxl: { [propertyName]: value },
+      }),
+  ),
+)
 
 const flexDirectionRules = {
   row: 'row',
@@ -387,6 +423,16 @@ export const flexDirectionXl = styleVariants(
       }),
   ),
 )
+export const flexDirectionXxl = styleVariants(
+  mapToStyleProperty(
+    flexDirectionRules,
+    'flexDirection',
+    (value, propertyName) =>
+      themeUtils.responsiveStyle({
+        xxl: { [propertyName]: value },
+      }),
+  ),
+)
 
 const flexWrapRules = {
   wrap: 'wrap',
@@ -420,6 +466,13 @@ export const flexWrapXl = styleVariants(
   mapToStyleProperty(flexWrapRules, 'flexWrap', (value, propertyName) =>
     themeUtils.responsiveStyle({
       xl: { [propertyName]: value },
+    }),
+  ),
+)
+export const flexWrapXxl = styleVariants(
+  mapToStyleProperty(flexWrapRules, 'flexWrap', (value, propertyName) =>
+    themeUtils.responsiveStyle({
+      xxl: { [propertyName]: value },
     }),
   ),
 )
@@ -478,6 +531,13 @@ export const backgroundXl = styleVariants(
   mapToStyleProperty(theme.color, 'background', (value, propertyName) =>
     themeUtils.responsiveStyle({
       xl: { [propertyName]: value },
+    }),
+  ),
+)
+export const backgroundXxl = styleVariants(
+  mapToStyleProperty(theme.color, 'background', (value, propertyName) =>
+    themeUtils.responsiveStyle({
+      xxl: { [propertyName]: value },
     }),
   ),
 )
@@ -540,6 +600,13 @@ export const textAlignXl = styleVariants(
   mapToStyleProperty(textAlignRules, 'textAlign', (value, propertyName) =>
     themeUtils.responsiveStyle({
       xl: { [propertyName]: value },
+    }),
+  ),
+)
+export const textAlignXxl = styleVariants(
+  mapToStyleProperty(textAlignRules, 'textAlign', (value, propertyName) =>
+    themeUtils.responsiveStyle({
+      xxl: { [propertyName]: value },
     }),
   ),
 )

@@ -174,6 +174,7 @@ export const Input = forwardRef(
                   styles.inputBackgroundMd,
                   styles.inputBackgroundLg,
                   styles.inputBackgroundXl,
+                  styles.inputBackgroundXxl,
                 ),
                 styles.inputSize[size],
                 {

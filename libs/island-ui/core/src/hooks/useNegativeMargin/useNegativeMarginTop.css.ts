@@ -41,3 +41,8 @@ export const xl = styleVariants(
     themeUtils.responsiveStyle({ xl: negativeMarginTop(1, rows) }),
   ),
 )
+export const xxl = styleVariants(
+  mapToStyleProperty({ ...spacing }, 'marginTop', (rows) =>
+    themeUtils.responsiveStyle({ xxl: negativeMarginTop(1, rows) }),
+  ),
+)
