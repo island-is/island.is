@@ -381,6 +381,16 @@ const LOT_TYPES_OPTIONS: LotTypeOption[] = [
   },
 ]
 
+const sameDay = (d1: Date, d2: Date) => {
+  if (!d1 && !d2) return true
+  if (!d1 || !d2) return false
+  return (
+    d1.getDate() === d2.getDate() &&
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth()
+  )
+}
+
 const Auctions: Screen<AuctionsProps> = ({
   organizationPage,
   syslumennAuctions,
@@ -468,6 +478,9 @@ const Auctions: Screen<AuctionsProps> = ({
   }, [Router, setOfficeLocation])
 
   const filteredAuctions = syslumennAuctions.filter((auction) => {
+    const auctionDate = auction.auctionDate
+      ? new Date(auction.auctionDate)
+      : null
     return (
       // Filter by office
       (officeLocation.office
@@ -491,9 +504,7 @@ const Auctions: Screen<AuctionsProps> = ({
         ? auction.auctionType !== lotTypeOption.excludeAuctionType
         : true) &&
       // Filter by Date
-      (date
-        ? auction.auctionDate.startsWith(format(date, 'yyyy-MM-dd'))
-        : true) &&
+      (date ? sameDay(date, auctionDate) : true) &&
       // Filter by search query
       (auction.lotName?.toLowerCase().includes(query) ||
         auction.lotId?.toLowerCase().includes(query) ||
