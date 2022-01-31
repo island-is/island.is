@@ -2,7 +2,6 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
-  ApplicationRole,
   ApplicationStateSchema,
   Application,
   DefaultEvents,
@@ -80,13 +79,7 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
                   Promise.resolve(val.EndorsementForm),
                 ),
               read: {
-                answers: [
-                  'documents',
-                  'listName',
-                  'aboutList',
-                  'dateTil',
-                  'dateFrom',
-                ],
+                answers: ['documents', 'listName', 'aboutList', 'dates'],
                 externalData: ['createEndorsementList'],
               },
             },

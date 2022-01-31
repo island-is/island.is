@@ -9,6 +9,7 @@ import {
   EndorsementListTagsEnum,
 } from './gen/fetch/endorsements'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
+import { getValueViaPath } from '@island.is/application/core'
 
 const CREATE_ENDORSEMENT_LIST_QUERY = `
   mutation EndorsementSystemCreateEndorsementList($input: CreateEndorsementListDto!) {
@@ -42,6 +43,10 @@ export class GeneralPetitionService {
     application,
     auth,
   }: TemplateApiModuleActionProps) {
+    const { dateFrom, dateTil } = getValueViaPath(
+      application.answers,
+      'dates',
+    ) as { dateFrom: string; dateTil: string }
     const endorsementListResponse = await this.sharedTemplateAPIService
       .makeGraphqlQuery<EndorsementListData>(
         auth.authorization,
@@ -59,8 +64,8 @@ export class GeneralPetitionService {
               applicationTypeId: application.typeId,
               applicationId: application.id,
             },
-            closedDate: application.answers.dateTil,
-            openedDate: application.answers.dateFrom,
+            closedDate: dateTil,
+            openedDate: dateFrom,
             adminLock: false,
           },
         },

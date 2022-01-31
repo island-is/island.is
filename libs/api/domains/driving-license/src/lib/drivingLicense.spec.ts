@@ -10,6 +10,8 @@ import {
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
 import { createLogger } from 'winston'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Logger } from '@nestjs/common'
 
 startMocking(requestHandlers)
 
@@ -32,7 +34,16 @@ describe('DrivingLicenseService', () => {
           },
         }),
       ],
-      providers: [DrivingLicenseService, { provide: 'CONFIG', useValue: {} }],
+      providers: [
+        DrivingLicenseService,
+        { provide: 'CONFIG', useValue: {} },
+        {
+          provide: LOGGER_PROVIDER,
+          useValue: {
+            warn: () => undefined,
+          },
+        },
+      ],
     }).compile()
 
     service = module.get(DrivingLicenseService)
@@ -55,15 +66,10 @@ describe('DrivingLicenseService', () => {
       })
     })
 
-    it('should return an expired license', async () => {
+    it('should not return an expired license', async () => {
       const response = await service.getDrivingLicense(MOCK_NATIONAL_ID_EXPIRED)
 
-      expect(response).toMatchObject({
-        name: 'Expired Halldórsson',
-        expires: new Date('1997-05-25T06:43:15.327Z'),
-      })
-
-      expect(response?.expires?.getTime()).toBeLessThan(Date.now())
+      expect(response).toBeNull()
     })
   })
 
@@ -76,12 +82,15 @@ describe('DrivingLicenseService', () => {
       })
     })
 
-    it("should return a student's license despite expiry", async () => {
+    it("_should_ return a student's license when expired", async () => {
+      // Reason:
+      // It is allowed to look up stundents and mark them as having finished
+      // the driving assessment even though their license is expired.
       const response = await service.getStudentInformation(
         MOCK_NATIONAL_ID_EXPIRED,
       )
 
-      expect(response).toMatchObject({
+      expect(response).toStrictEqual({
         name: 'Expired Halldórsson',
       })
     })

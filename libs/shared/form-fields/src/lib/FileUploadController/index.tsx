@@ -233,7 +233,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
     <Controller
       name={id}
       defaultValue={initialUploadFiles}
-      render={() =>
+      render={() => (
         <FileUploadComponent
           applicationId={application.id}
           fileList={state}
@@ -247,7 +247,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
           accept={accept}
           maxSize={maxSize}
         />
-      }
+      )}
     />
   )
 }

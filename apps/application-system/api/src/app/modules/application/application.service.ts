@@ -12,7 +12,6 @@ import { CreateApplicationDto } from './dto/createApplication.dto'
 
 import { ApplicationLifecycle } from './types'
 
-
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
     {
@@ -169,5 +168,4 @@ export class ApplicationService {
   async delete(id: string) {
     return this.applicationModel.destroy({ where: { id } })
   }
-
 }

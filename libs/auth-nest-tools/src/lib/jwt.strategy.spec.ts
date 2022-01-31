@@ -25,7 +25,7 @@ describe('JwtStrategy#validate', () => {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
       client_id: 'test-client',
-      act: {
+      actor: {
         nationalId: '1234564321',
         scope: ['test-scope-2'],
       },
@@ -37,8 +37,8 @@ describe('JwtStrategy#validate', () => {
     const payload = {
       ...fakePayload,
       scope: ['scope1', 'scope2'],
-      act: {
-        ...fakePayload.act!,
+      actor: {
+        ...fakePayload.actor!,
         scope: ['act1', 'act2'],
       },
     }
@@ -56,8 +56,8 @@ describe('JwtStrategy#validate', () => {
     const payload = {
       ...fakePayload,
       scope: 'scope1 scope2',
-      act: {
-        ...fakePayload.act!,
+      actor: {
+        ...fakePayload.actor!,
         scope: 'act1 act2',
       },
     }
@@ -76,9 +76,15 @@ describe('JwtStrategy#validate', () => {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
       client_id: 'test-client',
-      act: {
+      actor: {
         nationalId: '1234565555',
         scope: ['test-scope-2'],
+      },
+      act: {
+        client_id: 'test-client-2',
+        act: {
+          client_id: 'test-client-3',
+        },
       },
     }
     const request = ({
@@ -100,8 +106,9 @@ describe('JwtStrategy#validate', () => {
     expect(user.authorization).toEqual(request.headers.authorization)
     expect(user.ip).toEqual(request.headers['x-forwarded-for'])
     expect(user.userAgent).toEqual(request.headers['user-agent'])
-    expect(user.actor!.nationalId).toEqual(payload.act!.nationalId)
-    expect(user.actor!.scope).toEqual(payload.act!.scope)
+    expect(user.actor!.nationalId).toEqual(payload.actor!.nationalId)
+    expect(user.actor!.scope).toEqual(payload.actor!.scope)
+    expect(user.act).toEqual(payload.act)
   })
 
   it('supports actor claim', async () => {

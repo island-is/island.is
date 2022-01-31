@@ -31,4 +31,9 @@ export interface User {
     city: string
     date: string
   }
+  spouse?: {
+    name?: string
+    nationalId?: string
+    cohabitant?: string
+  }
 }

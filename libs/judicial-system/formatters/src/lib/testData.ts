@@ -1,6 +1,6 @@
 import {
   Case,
-  CaseGender,
+  Gender,
   CaseState,
   CaseType,
   Institution,
@@ -21,16 +21,25 @@ export const makeCustodyCase = (): Case => {
     state: CaseState.DRAFT,
     type: CaseType.CUSTODY,
     policeCaseNumber: '007-2021-202000',
-    accusedNationalId: '000000-0000',
-    accusedName: 'Donald Duck',
-    accusedGender: CaseGender.MALE,
-    accusedAddress: 'Batcave 1337',
+    defendants: [
+      {
+        id: 'test_defendant_id',
+        created: '2020-09-16T19:50:08.033Z',
+        modified: '2020-09-16T19:51:39.466Z',
+        caseId: 'test_id',
+        nationalId: '000000-0000',
+        name: 'Donald Duck',
+        gender: Gender.MALE,
+        address: 'Batcave 1337',
+      },
+    ],
   }
 }
 
 export const makeInvestigationCase = (): Case => {
+  const caseId = faker.datatype.uuid()
   return {
-    id: faker.datatype.uuid(),
+    id: caseId,
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:50:08.033Z',
     state: CaseState.DRAFT,
@@ -43,10 +52,18 @@ export const makeInvestigationCase = (): Case => {
       name: 'Héraðsdómur Reykjavíkur',
     },
     policeCaseNumber: '007-2021-202000',
-    accusedNationalId: '000000-0000',
-    accusedName: investigationCaseAccusedName,
-    accusedGender: CaseGender.MALE,
-    accusedAddress: investigationCaseAccusedAddress,
+    defendants: [
+      {
+        id: 'test_defendant_id',
+        created: '2020-09-16T19:50:08.033Z',
+        modified: '2020-09-16T19:51:39.466Z',
+        caseId,
+        nationalId: '000000-0000',
+        name: investigationCaseAccusedName,
+        gender: Gender.MALE,
+        address: investigationCaseAccusedAddress,
+      },
+    ],
   }
 }
 

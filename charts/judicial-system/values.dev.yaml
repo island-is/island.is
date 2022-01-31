@@ -81,6 +81,7 @@ judicial-system-api:
 judicial-system-backend:
   enabled: true
   env:
+    COMPLETED_CASE_OVERVIEW_URL: 'https://judicial-system.dev01.devland.is/krafa/yfirlit/'
     CONTENTFUL_HOST: 'preview.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'judicial_system'
@@ -262,5 +263,6 @@ judicial-system-xrd-api:
     create: true
     name: 'judicial-system-xrd-api'
 namespaces:
+  labels: {}
   namespaces:
     - 'judicial-system'

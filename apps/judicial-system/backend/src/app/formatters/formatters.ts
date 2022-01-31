@@ -4,8 +4,6 @@ import {
   laws,
   formatGender,
   caseTypes,
-  capitalize,
-  formatAccusedByGender,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseLegalProvisions,
@@ -13,7 +11,7 @@ import {
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import type { CaseGender } from '@island.is/judicial-system/types'
+import type { Gender } from '@island.is/judicial-system/types'
 
 function legalProvisionsOrder(p: CaseLegalProvisions) {
   switch (p) {
@@ -71,7 +69,7 @@ export function formatCourtHeadsUpSmsNotification(
   requestedCourtDate?: Date,
 ): string {
   // Prosecutor
-  const prosecutorText = ` Ákærandi: ${prosecutorName ?? 'Ekki skráður'}.`
+  const prosecutorText = ` Sækjandi: ${prosecutorName ?? 'Ekki skráður'}.`
 
   // Arrest date
   const arrestDateText = arrestDate
@@ -115,7 +113,7 @@ export function formatCourtReadyForCourtSmsNotification(
       : type === CaseType.OTHER
       ? 'Krafa um rannsóknarheimild'
       : `Krafa um rannsóknarheimild (${caseTypes[type]})`
-  const prosecutorText = ` Ákærandi: ${prosecutorName ?? 'Ekki skráður'}.`
+  const prosecutorText = ` Sækjandi: ${prosecutorName ?? 'Ekki skráður'}.`
   const courtText = ` Dómstóll: ${court ?? 'Ekki skráður'}.`
 
   return `${submittedCaseText} tilbúin til afgreiðslu.${prosecutorText}${courtText}`
@@ -124,7 +122,7 @@ export function formatCourtReadyForCourtSmsNotification(
 export function formatCourtResubmittedToCourtSmsNotification(
   courtCaseNumber?: string,
 ) {
-  return `Ákærandi í máli ${courtCaseNumber} hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði.`
+  return `Sækjandi í máli ${courtCaseNumber} hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði.`
 }
 
 export function formatProsecutorReceivedByCourtSmsNotification(
@@ -189,21 +187,25 @@ export function formatPrisonCourtDateEmailNotification(
   court?: string,
   courtDate?: Date,
   accusedName?: string,
-  accusedGender?: CaseGender,
+  accusedGender?: Gender,
   requestedValidToDate?: Date,
   isolation?: boolean,
   defenderName?: string,
   defenderIsSpokesperson?: boolean,
   isExtension?: boolean,
 ): string {
-  const courtText = court?.replace('dómur', 'dóms')
-  const courtDateText = formatDate(courtDate, 'PPPPp')
-    ?.replace('dagur,', 'daginn')
-    ?.replace(' kl.', ', kl.')
-  const requestedValidToDateText = formatDate(requestedValidToDate, 'PPPPp')
-    ?.replace('dagur,', 'dagsins')
-    ?.replace(' kl.', ', kl.')
-  const requestText = `Nafn sakbornings: ${accusedName}.<br /><br />Kyn sakbornings: ${formatGender(
+  const courtText = court?.replace('dómur', 'dóms') ?? 'ótilgreinds dómstóls'
+  const courtDateText =
+    formatDate(courtDate, 'PPPPp')
+      ?.replace('dagur,', 'daginn')
+      ?.replace(' kl.', ', kl.') ?? 'á ótilgreindum tíma'
+  const requestedValidToDateText =
+    formatDate(requestedValidToDate, 'PPPPp')
+      ?.replace('dagur,', 'dagsins')
+      ?.replace(' kl.', ', kl.') ?? 'ótilgreinds tíma'
+  const requestText = `Nafn sakbornings: ${
+    accusedName ?? 'Ekki skráð'
+  }.<br /><br />Kyn sakbornings: ${formatGender(
     accusedGender,
   )}.<br /><br />Krafist er gæsluvarðhalds til ${requestedValidToDateText}.`
   const isolationText = isolation
@@ -217,7 +219,7 @@ export function formatPrisonCourtDateEmailNotification(
         defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
       } sakbornings hefur ekki verið skráður`
 
-  return `${prosecutorOffice} hefur sent kröfu um ${
+  return `${prosecutorOffice ?? 'Ótilgreindur sækjandi'} hefur sent kröfu um ${
     isExtension ? 'áframhaldandi ' : ''
   }gæsluvarðhald til ${courtText} og verður málið tekið fyrir ${courtDateText}.<br /><br />${requestText}<br /><br />${isolationText}<br /><br />${defenderText}.`
 }
@@ -267,7 +269,7 @@ export function formatCourtRevokedSmsNotification(
   courtDate?: Date,
 ) {
   // Prosecutor
-  const prosecutorText = ` Ákærandi: ${prosecutorName ?? 'Ekki skráður'}.`
+  const prosecutorText = ` Sækjandi: ${prosecutorName ?? 'Ekki skráður'}.`
 
   // Court date
   const courtDateText = courtDate
@@ -292,24 +294,27 @@ export function formatPrisonRevokedEmailNotification(
   defenderName?: string,
   isExtension?: boolean,
 ): string {
-  const courtText = court?.replace('dómur', 'dóms')
-  const courtDateText = formatDate(courtDate, 'PPPPp')
-    ?.replace('dagur,', 'daginn')
-    ?.replace(' kl.', ', kl.')
-  const accusedNameText = `Nafn sakbornings: ${accusedName}.`
+  const courtText = court?.replace('dómur', 'dóms') ?? 'ótilgreinds dómstóls'
+  const courtDateText =
+    formatDate(courtDate, 'PPPPp')
+      ?.replace('dagur,', 'daginn')
+      ?.replace(' kl.', ', kl.') ?? 'á ótilgreindum tíma'
+  const accusedNameText = `Nafn sakbornings: ${accusedName ?? 'Ekki skráð'}.`
   const defenderText = defenderName
     ? `Verjandi sakbornings: ${defenderName}`
     : 'Verjandi sakbornings hefur ekki verið skráður'
 
-  return `${prosecutorOffice} hefur afturkallað kröfu um ${
+  return `${
+    prosecutorOffice ?? 'Ótilgreindur sækjandi'
+  } hefur afturkallað kröfu um ${
     isExtension ? 'áframhaldandi ' : ''
   }gæsluvarðhald sem send var til ${courtText} og taka átti fyrir ${courtDateText}.<br /><br />${accusedNameText}<br /><br />${defenderText}.`
 }
 
 export function formatDefenderRevokedEmailNotification(
   type: CaseType,
-  accusedNationalId: string,
-  accusedName?: string,
+  defendantNationalId?: string,
+  defendantName?: string,
   court?: string,
   courtDate?: Date,
 ): string {
@@ -319,23 +324,22 @@ export function formatDefenderRevokedEmailNotification(
     ?.replace(' kl.', ', kl.')
 
   return `${
-    type === CaseType.CUSTODY ? 'Gæsluvarðhaldskrafa' : 'Farbannskrafa'
-  } sem taka átti fyrir hjá ${courtText} ${courtDateText}, hefur verið afturkölluð.<br /><br />Sakborningur: ${accusedName}, kt. ${formatNationalId(
-    accusedNationalId,
+    type === CaseType.CUSTODY
+      ? 'Gæsluvarðhaldskrafa'
+      : type === CaseType.TRAVEL_BAN
+      ? 'Farbannskrafa'
+      : 'Krafa um rannsóknarheimild'
+  } sem taka átti fyrir hjá ${courtText} ${courtDateText}, hefur verið afturkölluð.<br /><br />Sakborningur: ${
+    defendantName ?? 'Nafn ekki skráð'
+  }, kt. ${formatNationalId(
+    defendantNationalId ?? 'ekki skráð',
   )}.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.`
 }
 
 export function stripHtmlTags(html: string): string {
-  return html.replace(/(?:<br \/>)/g, '\n').replace(/(?:<\/?strong>)/g, '')
-}
-
-export function formatCustodyIsolation(
-  gender?: CaseGender,
-  isolationToDate?: Date,
-) {
-  return `${capitalize(
-    formatAccusedByGender(gender),
-  )} skal sæta einangrun til ${formatDate(isolationToDate, 'PPPPp')
-    ?.replace('dagur,', 'dagsins')
-    ?.replace(' kl.', ', kl.')}.`
+  return html
+    .replace(/(?:<br \/>)/g, '\n')
+    .replace(/(?:<\/?strong>)/g, '')
+    .replace(/(?:<a href=".*">)/g, '')
+    .replace(/(?:<\/a>)/g, '')
 }
