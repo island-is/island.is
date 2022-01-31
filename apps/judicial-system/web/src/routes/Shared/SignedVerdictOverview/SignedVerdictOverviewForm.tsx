@@ -134,6 +134,12 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
       : 'Gæsluvarðhald virkt'
   }
 
+  const canModifyCaseDates = () => {
+    return (
+      user?.role === UserRole.JUDGE && workingCase.type === CaseType.CUSTODY
+    )
+  }
+
   return (
     <FormContentContainer>
       <Box marginBottom={5}>
@@ -224,11 +230,15 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         </Box>
         <CaseDates
           workingCase={workingCase}
-          button={{
-            label: formatMessage(core.update),
-            onClick: handleOpenDateAlteringModal,
-            icon: 'pencil',
-          }}
+          button={
+            canModifyCaseDates()
+              ? {
+                  label: formatMessage(core.update),
+                  onClick: handleOpenDateAlteringModal,
+                  icon: 'pencil',
+                }
+              : undefined
+          }
         />
       </Box>
       {workingCase.caseModifiedExplanation && (

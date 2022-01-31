@@ -84,12 +84,12 @@ export const SignedVerdictOverview: React.FC = () => {
     setCourtRecordSignatureConfirmationResponse,
   ] = useState<SignatureConfirmationResponse>()
   const [
-    caseModifiedExplination,
-    setCaseModifiedExplination,
+    caseModifiedExplanation,
+    setCaseModifiedExplanation,
   ] = useState<string>()
   const [
-    caseModifiedExplinationErrorMessage,
-    setCaseModifiedExplinationErrorMessage,
+    caseModifiedExplanationErrorMessage,
+    setCaseModifiedExplanationErrorMessage,
   ] = useState<string>('')
   const [
     isCaseModificationConfirmed,
@@ -372,13 +372,13 @@ export const SignedVerdictOverview: React.FC = () => {
         workingCase.caseModifiedExplanation
           ? workingCase.caseModifiedExplanation
           : ''
-      }${createCaseModifiedExplanation(caseModifiedExplination)}`,
+      }${createCaseModifiedExplanation(caseModifiedExplanation)}`,
     }
 
     if (
       formattedValidToDate ||
       formattedIsolationToDate ||
-      caseModifiedExplination
+      caseModifiedExplanation
     ) {
       setWorkingCase({
         ...workingCase,
@@ -404,10 +404,10 @@ export const SignedVerdictOverview: React.FC = () => {
   const handleCaseModifiedExplanationChange = (reason: string) => {
     const { isValid } = validate(reason, 'empty')
 
-    setCaseModifiedExplination(reason)
+    setCaseModifiedExplanation(reason)
 
     if (isValid) {
-      setCaseModifiedExplinationErrorMessage('')
+      setCaseModifiedExplanationErrorMessage('')
     }
   }
 
@@ -415,16 +415,16 @@ export const SignedVerdictOverview: React.FC = () => {
     const { isValid, errorMessage } = validate(reason, 'empty')
 
     if (isValid) {
-      setCaseModifiedExplination(reason)
+      setCaseModifiedExplanation(reason)
     } else {
-      setCaseModifiedExplinationErrorMessage(errorMessage)
+      setCaseModifiedExplanationErrorMessage(errorMessage)
     }
   }
 
   const isCaseModificationInvalid = () => {
     return (
-      !caseModifiedExplination ||
-      !caseModifiedExplination.trim() ||
+      !caseModifiedExplanation ||
+      !caseModifiedExplanation.trim() ||
       !alteredValidToDate?.isValid ||
       !alteredIsolationToDate?.isValid
     )
@@ -539,7 +539,7 @@ export const SignedVerdictOverview: React.FC = () => {
                   m.sections.alterDatesModal.secondaryButtonText,
                 )}
                 handleSecondaryButtonClick={() => {
-                  setCaseModifiedExplination(undefined)
+                  setCaseModifiedExplanation(undefined)
 
                   if (workingCase.validToDate) {
                     setAlteredValidToDate({
@@ -579,8 +579,8 @@ export const SignedVerdictOverview: React.FC = () => {
                     onBlur={(event) =>
                       handleCaseModifiedExplanationBlur(event.target.value)
                     }
-                    hasError={caseModifiedExplinationErrorMessage !== ''}
-                    errorMessage={caseModifiedExplinationErrorMessage}
+                    hasError={caseModifiedExplanationErrorMessage !== ''}
+                    errorMessage={caseModifiedExplanationErrorMessage}
                     textarea
                     rows={9}
                     required
