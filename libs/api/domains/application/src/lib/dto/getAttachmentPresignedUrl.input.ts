@@ -8,5 +8,5 @@ export class GetAttachmentPresignedUrlInput {
 
   @Field(() => String)
   @IsString()
-  s3key!: string
+  s3Key!: string
 }

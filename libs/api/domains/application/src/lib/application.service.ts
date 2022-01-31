@@ -199,13 +199,13 @@ export class ApplicationService {
   }
 
   async getAttachmentPresignedURL(input: GetAttachmentPresignedUrlInput, auth: Auth) {
-    const { id, s3key } = input
+    const { id, s3Key } = input
 
     return await this.applicationApiWithAuth(
       auth,
     ).applicationControllerGetAttachmentPresignedURL({
       id,
-      s3key,
+      s3Key,
     })
   }
 

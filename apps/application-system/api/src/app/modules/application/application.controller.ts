@@ -120,46 +120,7 @@ export class ApplicationController {
     private intlService: IntlService,
   ) {}
   
-    @Scopes(ApplicationScope.read)
-    @Get('applications/:id/attachments/:s3key/presigned-url')
-    @ApiParam({
-      name: 'id',
-      type: String,
-      required: true,
-      description: 'The id of the application which the file was created for.',
-      allowEmptyValue: false,
-    })
-    @ApiParam({
-      name: 's3key',
-      type: String,
-      required: true,
-      description: 'key',
-      allowEmptyValue: false,
-    })
-    @ApiOkResponse({ type: PresignedUrlResponseDto })
-    async getAttachmentPresignedURL(
-      @Param('id', new ParseUUIDPipe()) id: string,
-      @Param('s3key') s3key: string,
-      @CurrentUser() user: User,
-    ): Promise<PresignedUrlResponseDto> {
-      const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
-        id,
-        user.nationalId,
-      )
-      
-      if (!existingApplication.attachments) {
-        throw new NotFoundException("Attachments not found")
-      }
-
-      try {
-        const str = s3key as keyof typeof existingApplication.attachments
-        const filename = existingApplication.attachments[str]
-        const { bucket, key } = AmazonS3URI(filename)
-        return await this.fileService.getAttachmentPresignedURL(bucket,key)
-      } catch (error) {
-        throw new NotFoundException("Attachment not found")
-      }
-    }
+    
   
   @Scopes(ApplicationScope.read)
   @Get('applications/:id')
@@ -1049,4 +1010,45 @@ export class ApplicationController {
 
     return { url }
   }
+
+  @Scopes(ApplicationScope.read)
+    @Get('applications/:id/attachments/:s3Key/presigned-url')
+    @ApiParam({
+      name: 'id',
+      type: String,
+      required: true,
+      description: 'The id of the application which the file was created for.',
+      allowEmptyValue: false,
+    })
+    @ApiParam({
+      name: 's3Key',
+      type: String,
+      required: true,
+      description: 's3Key',
+      allowEmptyValue: false,
+    })
+    @ApiOkResponse({ type: PresignedUrlResponseDto })
+    async getAttachmentPresignedURL(
+      @Param('id', new ParseUUIDPipe()) id: string,
+      @Param('s3Key') s3Key: string,
+      @CurrentUser() user: User,
+    ): Promise<PresignedUrlResponseDto> {
+      const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+        id,
+        user.nationalId,
+      )
+      
+      if (!existingApplication.attachments) {
+        throw new NotFoundException("Attachments not found")
+      }
+
+      try {
+        const str = s3Key as keyof typeof existingApplication.attachments
+        const fileName = existingApplication.attachments[str]
+        const { bucket, key } = AmazonS3URI(fileName)
+        return await this.fileService.getAttachmentPresignedURL(bucket,key)
+      } catch (error) {
+        throw new NotFoundException("Attachment not found")
+      }
+    }
 }
