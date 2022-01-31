@@ -16,6 +16,7 @@ import {
   OperatingLicense,
   PaginatedOperatingLicenses,
   PaginationInfo,
+  SyslumennApiPaginationInfo,
   Person,
   Attachment,
   CertificateInfoResponse,
@@ -113,20 +114,7 @@ export const mapOperatingLicense = (
 export const mapPaginationInfo = (
   paginationInfoHeaderJSON: string,
 ): PaginationInfo => {
-  /**
-   * The Syslumenn API provides pagination information in a custom header as a
-   * JSON string. This interface is used to parse the
-   */
-  interface HeaderPaginationInfo {
-    PageSize?: number
-    PageNumber?: number
-    TotalCount?: number
-    TotalPages?: number
-    CurrentPage?: number
-    HasNext?: boolean
-    HasPrevious?: boolean
-  }
-  const paginationInfoFromHeader: HeaderPaginationInfo = JSON.parse(
+  const paginationInfoFromHeader: SyslumennApiPaginationInfo = JSON.parse(
     paginationInfoHeaderJSON,
   )
   return {

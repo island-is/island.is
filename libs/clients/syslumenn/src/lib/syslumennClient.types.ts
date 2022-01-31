@@ -52,6 +52,21 @@ export interface OperatingLicense {
   alcoholWeekendOutdoorLicense?: string
 }
 
+/**
+ * The Syslumenn API provides pagination information in a custom header as a
+ * JSON string. The OpenAPI specification currently does not define this object,
+ * therefore we define it here.
+ */
+export interface SyslumennApiPaginationInfo {
+  PageSize?: number
+  PageNumber?: number
+  TotalCount?: number
+  TotalPages?: number
+  CurrentPage?: number
+  HasNext?: boolean
+  HasPrevious?: boolean
+}
+
 export interface PaginationInfo {
   pageSize?: number
   pageNumber?: number
