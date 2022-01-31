@@ -38,10 +38,10 @@ export class DataProtectionComplaintService {
         application,
         attachments,
       )
-
+      /*
       const newCase = await this.caseApiWithAuth.createCase({
         requestData: caseRequest,
-      })
+      })*/
     } catch (error) {
       this.logger.error('Error submitting', error)
 

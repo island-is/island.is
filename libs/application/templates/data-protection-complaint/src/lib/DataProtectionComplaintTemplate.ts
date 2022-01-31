@@ -64,8 +64,8 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ComplaintForm').then((module) =>
-                  Promise.resolve(module.ComplaintForm),
+                import('../forms/ComplaintFormInReview').then((module) =>
+                  Promise.resolve(module.ComplaintFormInReview),
                 ),
               write: 'all',
             },

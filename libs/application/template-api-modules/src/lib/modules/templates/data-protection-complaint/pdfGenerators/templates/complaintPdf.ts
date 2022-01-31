@@ -1,11 +1,20 @@
 import { addFormField, addHeader, addSubHeader, addText } from '../pdfUtils'
 import { ComplaintDto } from '../../models'
 import { generatePdf, PdfConstants } from '..'
+import { Application } from '@island.is/application/core'
+import { transformApplicationToComplaintDto } from '../../data-protection-utils'
 
 export async function generateComplaintPdf(
   complaint: ComplaintDto,
 ): Promise<Buffer> {
   return await generatePdf<ComplaintDto>(complaint, dpcApplicationPdf)
+}
+
+export async function generateComplaintPdfApplication(
+  application: Application,
+): Promise<Buffer> {
+  const dto = transformApplicationToComplaintDto(application)
+  return await generatePdf<ComplaintDto>(dto, dpcApplicationPdf)
 }
 
 function dpcApplicationPdf(

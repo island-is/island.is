@@ -5,6 +5,7 @@ import {
   BadRequestException,
   RequestTimeoutException,
   InternalServerErrorException,
+  NotImplementedException,
 } from '@nestjs/common'
 import { PdfTypes } from '@island.is/application/core'
 import { Application } from './../application.model'
@@ -20,6 +21,8 @@ import { CRCApplication } from '@island.is/application/templates/children-reside
 import type { ApplicationConfig } from '../application.configuration'
 import { APPLICATION_CONFIG } from '../application.configuration'
 import { generateResidenceChangePdf } from './pdfGenerators'
+import { generateComplaintPdfApplication } from '@island.is/application/template-api-modules'
+import { Application as ApplicationType } from '@island.is/application/core'
 
 @Injectable()
 export class FileService {
@@ -116,6 +119,11 @@ export class FileService {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
         return await generateResidenceChangePdf(application as CRCApplication)
       }
+      case PdfTypes.DATA_PROTECTION_COMPLAINT: {
+        return await generateComplaintPdfApplication(
+          application as ApplicationType,
+        )
+      }
     }
   }
 
@@ -174,6 +182,9 @@ export class FileService {
           title: 'Lögheimilisbreyting barns',
           name,
         }
+      }
+      case PdfTypes.DATA_PROTECTION_COMPLAINT: {
+        throw new NotImplementedException()
       }
     }
   }
