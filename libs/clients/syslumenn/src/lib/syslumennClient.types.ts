@@ -42,8 +42,10 @@ export interface OperatingLicense {
   street?: string
   postalCode?: string
   type?: string
+  validFrom?: string
   validUntil?: string
   licenseHolder?: string
+  licenseResponsible?: string
   category?: string
   outdoorLicense?: string
   alcoholWeekdayLicense?: string

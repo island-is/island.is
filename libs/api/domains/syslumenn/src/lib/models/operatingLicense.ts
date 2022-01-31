@@ -26,10 +26,16 @@ export class OperatingLicense {
   type?: string
 
   @Field({ nullable: true })
+  validFrom?: string
+
+  @Field({ nullable: true })
   validUntil?: string
 
   @Field({ nullable: true })
   licenseHolder?: string
+
+  @Field({ nullable: true })
+  licenseResponsible?: string
 
   @Field({ nullable: true })
   category?: string

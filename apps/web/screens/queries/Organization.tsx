@@ -254,11 +254,13 @@ export const GET_OPERATING_LICENSES_QUERY = gql`
         name
         street
         postalCode
+        validFrom
         validUntil
         type
         category
         issuedBy
         licenseHolder
+        licenseResponsible
         licenseNumber
       }
     }

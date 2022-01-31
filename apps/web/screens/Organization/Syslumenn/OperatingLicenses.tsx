@@ -352,6 +352,15 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
                 {operatingLicense.postalCode && (
                   <Text>Póstnúmer: {operatingLicense.postalCode}</Text>
                 )}
+                {operatingLicense.validFrom && (
+                  <Text>
+                    Gildir frá{' '}
+                    {format(
+                      new Date(operatingLicense.validFrom),
+                      'd. MMMM yyyy',
+                    )}
+                  </Text>
+                )}
                 {operatingLicense.validUntil && (
                   <Text>
                     Gildir til{' '}
@@ -365,6 +374,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
                 <Text>{operatingLicense.category}</Text>
                 <Text>Útgefandi: {operatingLicense.issuedBy}</Text>
                 <Text>Leyfishafi: {operatingLicense.licenseHolder}</Text>
+                <Text>Ábyrgðarmaður: {operatingLicense.licenseResponsible}</Text>
               </GridColumn>
             </GridRow>
           </Box>
