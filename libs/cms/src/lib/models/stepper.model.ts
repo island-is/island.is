@@ -14,6 +14,9 @@ export class Stepper {
 
   @Field(() => [Step], { nullable: true })
   steps?: Array<Step>
+
+  @Field({ nullable: true })
+  config?: string
 }
 
 export const mapStepper = ({
@@ -24,4 +27,5 @@ export const mapStepper = ({
   id: sys.id,
   title: fields.title ?? '',
   steps: (fields.steps ?? []).map(mapStep),
+  config: fields.config ? JSON.stringify(fields.config) : '',
 })
