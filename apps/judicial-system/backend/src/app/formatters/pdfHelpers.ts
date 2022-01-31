@@ -23,6 +23,18 @@ function addHeading(
   doc.fontSize(fontSise).text(heading, { align: 'center' })
 }
 
+function addText(
+  doc: PDFKit.PDFDocument,
+  fontSise: number,
+  text: string,
+  font?: string,
+  continued = false,
+) {
+  setFont(doc, font)
+
+  doc.fontSize(fontSise).text(text, { continued })
+}
+
 export function setTitle(doc: PDFKit.PDFDocument, title: string) {
   if (doc.info) {
     doc.info['Title'] = title
@@ -94,6 +106,23 @@ export function addMediumHeading(
   font?: string,
 ) {
   addHeading(doc, mediumFontSize, heading, font)
+}
+
+export function addMediumText(
+  doc: PDFKit.PDFDocument,
+  text: string,
+  font?: string,
+) {
+  addText(doc, mediumFontSize, text, font)
+}
+
+export function addNormalText(
+  doc: PDFKit.PDFDocument,
+  text: string,
+  font?: string,
+  continued?: boolean,
+) {
+  addText(doc, baseFontSize, text, font, continued)
 }
 
 export function addNumberedList(

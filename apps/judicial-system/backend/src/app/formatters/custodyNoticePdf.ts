@@ -15,8 +15,8 @@ import {
   addEmptyLines,
   addHugeHeading,
   addLargeHeading,
-  baseFontSize,
-  mediumFontSize,
+  addMediumText,
+  addNormalText,
   setLineGap,
   setPageNumbers,
   setTitle,
@@ -55,90 +55,79 @@ function constructCustodyNoticePdf(
   )
   addLargeHeading(doc, `LÖKE málsnúmer ${theCase.policeCaseNumber}`)
   addEmptyLines(doc)
-  doc.font('Helvetica-Bold').fontSize(mediumFontSize)
   setLineGap(doc, 8)
-  doc
-    .text('Sakborningur')
-    .fontSize(baseFontSize)
-    // Assume there is at most one defendant
-    .text(
+  addMediumText(doc, 'Sakborningur', 'Helvetica-Bold')
+  addNormalText(
+    doc,
+    theCase.defendants &&
+      theCase.defendants.length > 0 &&
+      theCase.defendants[0].name
+      ? theCase.defendants[0].name
+      : 'Nafn ekki skráð',
+  )
+  addNormalText(
+    doc,
+    `kt. ${formatNationalId(
       theCase.defendants &&
         theCase.defendants.length > 0 &&
-        theCase.defendants[0].name
-        ? theCase.defendants[0].name
-        : 'Nafn ekki skráð',
-    )
-    .font('Helvetica')
-    .text(
-      `kt. ${formatNationalId(
-        theCase.defendants &&
-          theCase.defendants.length > 0 &&
-          theCase.defendants[0].nationalId
-          ? theCase.defendants[0].nationalId
-          : 'ekki skráð',
-      )}`,
-    )
-    .text(
-      theCase.defendants &&
-        theCase.defendants.length > 0 &&
-        theCase.defendants[0].address
-        ? theCase.defendants[0].address
-        : 'Heimili ekki skráð',
-    )
+        theCase.defendants[0].nationalId
+        ? theCase.defendants[0].nationalId
+        : 'ekki skráð',
+    )}`,
+    'Helvetica',
+  )
+  addNormalText(
+    doc,
+    theCase.defendants &&
+      theCase.defendants.length > 0 &&
+      theCase.defendants[0].address
+      ? theCase.defendants[0].address
+      : 'Heimili ekki skráð',
+  )
   addEmptyLines(doc, 2)
-  doc.font('Helvetica-Bold').fontSize(mediumFontSize)
   setLineGap(doc, 8)
-  doc
-    .text('Úrskurður um gæsluvarðhald')
-    .font('Helvetica')
-    .fontSize(baseFontSize)
-    .text(
-      `${theCase.court?.name}, ${formatDate(theCase.courtStartDate, 'PPP')}`,
-    )
+  addMediumText(doc, 'Úrskurður um gæsluvarðhald', 'Helvetica-Bold')
+  addNormalText(
+    doc,
+    `${theCase.court?.name}, ${formatDate(theCase.courtStartDate, 'PPP')}`,
+    'Helvetica',
+  )
   addEmptyLines(doc)
-  doc
-    .text(
-      `Úrskurður kveðinn upp ${
-        formatDate(theCase.rulingDate, 'PPPp')?.replace(' kl.', ', kl.') ?? '?'
-      }`,
-    )
-    .text(
-      `Úrskurður rennur út ${
-        formatDate(theCase.validToDate, 'PPPp')?.replace(' kl.', ', kl.') ?? '?'
-      }`,
-    )
+  addNormalText(
+    doc,
+    `Úrskurður kveðinn upp ${
+      formatDate(theCase.rulingDate, 'PPPp')?.replace(' kl.', ', kl.') ?? '?'
+    }`,
+  )
+  addNormalText(
+    doc,
+    `Úrskurður rennur út ${
+      formatDate(theCase.validToDate, 'PPPp')?.replace(' kl.', ', kl.') ?? '?'
+    }`,
+  )
   addEmptyLines(doc)
-  doc
-    .font('Helvetica-Bold')
-    .text('Stjórnandi rannsóknar: ', {
-      continued: true,
-    })
-    .font('Helvetica')
-    .text(theCase.leadInvestigator ?? 'Ekki skráður')
-    .font('Helvetica-Bold')
-    .text('Ákærandi: ', {
-      continued: true,
-    })
-    .font('Helvetica')
-    .text(
-      theCase.prosecutor
-        ? `${theCase.prosecutor.name} ${theCase.prosecutor.title}`
-        : 'Ekki skráður',
-    )
-    .font('Helvetica-Bold')
-    .text('Verjandi: ', {
-      continued: true,
-    })
-    .font('Helvetica')
-    .text(
-      theCase.defenderName && !theCase.defenderIsSpokesperson
-        ? `${theCase.defenderName}${
-            theCase.defenderPhoneNumber
-              ? `, s. ${theCase.defenderPhoneNumber}`
-              : ''
-          }${theCase.defenderEmail ? `, ${theCase.defenderEmail}` : ''}`
-        : 'Ekki skráður',
-    )
+  addNormalText(doc, 'Stjórnandi rannsóknar: ', 'Helvetica-Bold', true)
+  addNormalText(doc, theCase.leadInvestigator ?? 'Ekki skráður', 'Helvetica')
+  addNormalText(doc, 'Ákærandi: ', 'Helvetica-Bold', true)
+  addNormalText(
+    doc,
+    theCase.prosecutor
+      ? `${theCase.prosecutor.name} ${theCase.prosecutor.title}`
+      : 'Ekki skráður',
+    'Helvetica',
+  )
+  addNormalText(doc, 'Verjandi: ', 'Helvetica-Bold', true)
+  addNormalText(
+    doc,
+    theCase.defenderName && !theCase.defenderIsSpokesperson
+      ? `${theCase.defenderName}${
+          theCase.defenderPhoneNumber
+            ? `, s. ${theCase.defenderPhoneNumber}`
+            : ''
+        }${theCase.defenderEmail ? `, ${theCase.defenderEmail}` : ''}`
+      : 'Ekki skráður',
+    'Helvetica',
+  )
 
   const custodyRestrictions = formatCustodyRestrictions(
     theCase.requestedCustodyRestrictions,
@@ -147,9 +136,8 @@ function constructCustodyNoticePdf(
 
   if (theCase.isCustodyIsolation || custodyRestrictions) {
     addEmptyLines(doc, 2)
-    doc.font('Helvetica-Bold').fontSize(mediumFontSize)
     setLineGap(doc, 8)
-    doc.text('Tilhögun gæsluvarðhalds').font('Helvetica').fontSize(baseFontSize)
+    addMediumText(doc, 'Tilhögun gæsluvarðhalds', 'Helvetica-Bold')
 
     if (theCase.isCustodyIsolation) {
       const genderedAccused = formatMessage(core.accused, {
@@ -164,21 +152,20 @@ function constructCustodyNoticePdf(
         ?.replace('dagur,', 'dagsins')
         ?.replace(' kl.', ', kl.')
 
-      doc.text(
+      addNormalText(
+        doc,
         capitalize(
           formatMessage(custodyNotice.isolationDisclaimer, {
             genderedAccused,
             isolationPeriod,
           }),
         ),
+        'Helvetica',
       )
     }
 
     if (custodyRestrictions) {
-      setLineGap(doc, 6)
-      doc.text(custodyRestrictions, {
-        paragraphGap: 0,
-      })
+      addNormalText(doc, custodyRestrictions, 'Helvetica')
     }
   }
 
