@@ -28,7 +28,7 @@ yarn start services-personal-representative-public
 Api open api specs will now be accessible at
 
 ```bash
-http://localhost:3378/swagger
+http://localhost:3378
 ```
 
 ## Testing
