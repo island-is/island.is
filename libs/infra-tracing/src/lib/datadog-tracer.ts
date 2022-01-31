@@ -1,6 +1,6 @@
 import { maskNationalId } from '@island.is/shared/pii'
 
-import { init, tracer } from '@theo.gravity/datadog-apm'
+import tracer from 'dd-trace'
 import { isPerson } from 'kennitala'
 import { Span } from 'opentracing'
 
@@ -23,7 +23,7 @@ export const maskSpan = (
 }
 
 if (process.env.NODE_ENV !== 'development') {
-  init({ logInjection: true }) // initialized in a different file to avoid hoisting.
+  tracer.init({ logInjection: true }) // initialized in a different file to avoid hoisting.
   tracer.use('express', {
     blacklist: ['/liveness', '/readiness', '/metrics'],
     hooks: {

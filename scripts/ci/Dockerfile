@@ -47,9 +47,7 @@ FROM output-base as output-base-with-pg
 RUN npm install -g \
     sequelize \
     sequelize-cli \
-    pg \
-    @theo.gravity/datadog-apm \
-    dd-trace
+    pg
 
 USER runner
 
