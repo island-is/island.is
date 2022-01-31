@@ -8,12 +8,20 @@
   },
   "host": "api.syslumenn.is",
   "basePath": "/Test",
-  "schemes": ["https"],
-  "produces": ["text/plain", "application/json", "text/json"],
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "text/plain",
+    "application/json",
+    "text/json"
+  ],
   "paths": {
     "/v1/Innskraning": {
       "post": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "Innskraning_Post",
         "consumes": [
           "application/json-patch+json",
@@ -50,7 +58,9 @@
     },
     "/v1/Postnumer": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "Postnumer_GetPostnumerAll",
         "responses": {
           "200": {
@@ -73,7 +83,9 @@
     },
     "/v1/Postnumer/{id}": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "Postnumer_GetPostnumer",
         "parameters": [
           {
@@ -117,7 +129,9 @@
     },
     "/v1/AdfarabeidnirHeimildaflokkur": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "AdfarabeidnirHeimildaflokkur_GetAdfarabeidnirHeimildaflokkurAll",
         "responses": {
           "200": {
@@ -140,7 +154,9 @@
     },
     "/v1/AdfarabeidnirHeimildaflokkur/{id}": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "AdfarabeidnirHeimildaflokkur_GetAdfarabeidnirHeimildaflokkur",
         "parameters": [
           {
@@ -184,7 +200,9 @@
     },
     "/v1/Embaetti": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "Embaetti_GetEmbaettiAll",
         "responses": {
           "200": {
@@ -207,7 +225,9 @@
     },
     "/v1/Embaetti/{id}": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "Embaetti_GetEmbaetti",
         "parameters": [
           {
@@ -250,7 +270,9 @@
     },
     "/v1/EmbaettiOgStarfsstodvar": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "EmbaettiOgStarfsstodvar_GetEmbaetti",
         "responses": {
           "200": {
@@ -273,7 +295,9 @@
     },
     "/api/Uppbod/{audkenni}": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "Uppbod_Get",
         "parameters": [
           {
@@ -319,7 +343,9 @@
     },
     "/v1/IdngreinarMeistara": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "IdngreinarMeistara_Get",
         "responses": {
           "200": {
@@ -345,7 +371,9 @@
     },
     "/api/VirkLeyfi/{audkenni}": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "VirkLeyfi_Get",
         "parameters": [
           {
@@ -411,7 +439,9 @@
     },
     "/v1/VirkarHeimagistingar/{audkenni}": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "VirkarHeimagistingar_GetAll",
         "parameters": [
           {
@@ -457,7 +487,9 @@
     },
     "/v1/VirkarHeimagistingar/{audkenni}/{ar}": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "VirkarHeimagistingar_Get",
         "parameters": [
           {
@@ -510,7 +542,9 @@
     },
     "/v1/ArangurslausFraDags": {
       "post": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "ArangurslausFraDags_Post",
         "consumes": [
           "application/json-patch+json",
@@ -554,7 +588,9 @@
     },
     "/v1/Fullnustusvid/Naudungarsala/UppbodFaFasteignir": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "UppbodFaFasteignir_Get",
         "responses": {
           "200": {
@@ -577,7 +613,9 @@
     },
     "/v1/ArangurslausFraTilDags": {
       "post": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "ArangurslausFraTilDags_Post",
         "consumes": [
           "application/json-patch+json",
@@ -621,7 +659,9 @@
     },
     "/v1/Danarbu/YfirlitUmFramvinduSkipta": {
       "post": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "YfirlitUmFramvinduSkipta_Post",
         "consumes": [
           "application/json-patch+json",
@@ -668,7 +708,9 @@
     },
     "/api/AlmennFyrirspurn/{audkenni}/{eining}/{adgerd}": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "AlmennFyrirspurn_Get",
         "parameters": [
           {
@@ -725,7 +767,9 @@
     },
     "/api/FaVottordUpplysingar/{audkenni}/{kennitala}": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "FaVottordUpplysingar_Get",
         "parameters": [
           {
@@ -761,7 +805,9 @@
     },
     "/api/Innsiglun": {
       "post": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "Innsiglun_Post",
         "consumes": [
           "application/json-patch+json",
@@ -798,7 +844,9 @@
     },
     "/v1/Almennt/MottakaRafraentSkjal": {
       "post": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "summary": "Aðgerðin móttekur rafræn undirrituð sköl sem færast sjálfkrafa inn í starfskerfi sýslumanna á þann málaflokk sem við á. ",
         "operationId": "MottakaRafraentSkjal_Post",
         "consumes": [
@@ -846,7 +894,9 @@
     },
     "/v1/Ping": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "summary": "Þessi aðgerð skila \"OK\" ef allar þjónustur eru í lagi, ef ekki skilar þjónustan \"ERR={ErrorCode}",
         "operationId": "Ping_Get",
         "responses": {
@@ -868,7 +918,9 @@
         ]
       },
       "post": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "summary": "Þessi aðgerð tekur við POST með auðkenningu og skilar til baka stöðu og hvort auðkenning sé í lagi.",
         "operationId": "Ping_Post",
         "consumes": [
@@ -916,7 +968,9 @@
     },
     "/api/v1/SyslMottakaGogn": {
       "post": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "SyslMottakaGogn_Post",
         "consumes": [
           "application/json-patch+json",
@@ -953,7 +1007,9 @@
     },
     "/api/SyslSaekjaSkra": {
       "post": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "operationId": "SyslSaekjaSkra_Post",
         "consumes": [
           "application/json-patch+json",
@@ -998,9 +1054,57 @@
         ]
       }
     },
+    "/v1/Vedbandayfirlit": {
+      "post": {
+        "tags": [
+          "Syslumenn"
+        ],
+        "operationId": "Vedbandayfirlit_Post",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "skilabod",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSvarSkeyti"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "NotFound",
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSvarSkeyti"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/Version": {
       "get": {
-        "tags": ["Syslumenn"],
+        "tags": [
+          "Syslumenn"
+        ],
         "summary": "Þetta er einföld aðgerð án auðkenningar sem skilar útgáfunúmeri þjónustu ",
         "operationId": "Version_Get",
         "responses": {
@@ -1053,7 +1157,9 @@
     },
     "Postnumer": {
       "type": "object",
-      "required": ["oid"],
+      "required": [
+        "oid"
+      ],
       "properties": {
         "oid": {
           "type": "integer",
@@ -1102,7 +1208,9 @@
     },
     "AdfarabeidnirHeimildaflokkur": {
       "type": "object",
-      "required": ["numer"],
+      "required": [
+        "numer"
+      ],
       "properties": {
         "numer": {
           "type": "integer",
@@ -1115,7 +1223,9 @@
     },
     "Embaetti": {
       "type": "object",
-      "required": ["numer"],
+      "required": [
+        "numer"
+      ],
       "properties": {
         "numer": {
           "type": "integer",
@@ -1193,7 +1303,9 @@
     },
     "VirkLeyfi": {
       "type": "object",
-      "required": ["rowNum"],
+      "required": [
+        "rowNum"
+      ],
       "properties": {
         "rowNum": {
           "type": "integer",
@@ -1218,6 +1330,12 @@
           "type": "string"
         },
         "tegund": {
+          "type": "string"
+        },
+        "tegund2": {
+          "type": "string"
+        },
+        "tegundVeitingastadar": {
           "type": "string"
         },
         "gildirFra": {
@@ -1251,6 +1369,14 @@
         },
         "afgr_Afgengis_Adfaranott_Fridaga_Utiveitingar": {
           "type": "string"
+        },
+        "hamarksfjoldiGesta": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "fjoldiGestaIVeitingum": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -1296,7 +1422,9 @@
     },
     "AranuslausSvar": {
       "type": "object",
-      "required": ["fraDags"],
+      "required": [
+        "fraDags"
+      ],
       "properties": {
         "fraDags": {
           "type": "string",
@@ -1315,7 +1443,10 @@
     },
     "AranguslausFjarnamMal": {
       "type": "object",
-      "required": ["dags", "upphaedKrofu"],
+      "required": [
+        "dags",
+        "upphaedKrofu"
+      ],
       "properties": {
         "malsnumer": {
           "type": "string"
@@ -1347,7 +1478,9 @@
     },
     "AranuslausFyrirspurn": {
       "type": "object",
-      "required": ["fraDags"],
+      "required": [
+        "fraDags"
+      ],
       "properties": {
         "fraDags": {
           "type": "string",
@@ -1360,7 +1493,9 @@
     },
     "UppbodFasteignir": {
       "type": "object",
-      "required": ["dagsUppbods"],
+      "required": [
+        "dagsUppbods"
+      ],
       "properties": {
         "lysing": {
           "type": "string"
@@ -1379,7 +1514,10 @@
     },
     "AranuslausFraTilSvar": {
       "type": "object",
-      "required": ["fraDags", "tilDags"],
+      "required": [
+        "fraDags",
+        "tilDags"
+      ],
       "properties": {
         "fraDags": {
           "type": "string",
@@ -1402,7 +1540,10 @@
     },
     "AranuslausFratilFyrirspurn": {
       "type": "object",
-      "required": ["fraDags", "tilDags"],
+      "required": [
+        "fraDags",
+        "tilDags"
+      ],
       "properties": {
         "fraDags": {
           "type": "string",
@@ -1472,7 +1613,9 @@
     },
     "WebhookEventPayload": {
       "type": "object",
-      "required": ["id"],
+      "required": [
+        "id"
+      ],
       "properties": {
         "id": {
           "type": "string",
@@ -1488,7 +1631,9 @@
     },
     "SignedDocumentEventData": {
       "type": "object",
-      "required": ["eventType"],
+      "required": [
+        "eventType"
+      ],
       "properties": {
         "flowKey": {
           "type": "string"
@@ -1524,7 +1669,9 @@
     },
     "Signee": {
       "type": "object",
-      "required": ["signed"],
+      "required": [
+        "signed"
+      ],
       "properties": {
         "name": {
           "type": "string"
@@ -1576,13 +1723,20 @@
     },
     "EventType": {
       "type": "integer",
-      "description": "",
-      "x-enumNames": ["AllSigned"],
-      "enum": [0]
+      "description": "0 = AllSigned",
+      "x-enumNames": [
+        "AllSigned"
+      ],
+      "enum": [
+        0
+      ]
     },
     "EventSignature": {
       "type": "object",
-      "required": ["timeStamp", "guid"],
+      "required": [
+        "timeStamp",
+        "guid"
+      ],
       "properties": {
         "timeStamp": {
           "type": "integer",
@@ -1653,7 +1807,10 @@
     },
     "Adili": {
       "type": "object",
-      "required": ["undirritad", "tegund"],
+      "required": [
+        "undirritad",
+        "tegund"
+      ],
       "properties": {
         "id": {
           "type": "string"
@@ -1689,9 +1846,17 @@
     },
     "AdiliTegund": {
       "type": "integer",
-      "description": "",
-      "x-enumNames": ["Malshefjandi", "Gagnadili", "Barn"],
-      "enum": [0, 1, 2]
+      "description": "0 = Malshefjandi\n1 = Gagnadili\n2 = Barn",
+      "x-enumNames": [
+        "Malshefjandi",
+        "Gagnadili",
+        "Barn"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
     },
     "VidhengiSkra": {
       "type": "object",
@@ -1720,6 +1885,55 @@
           "type": "string"
         }
       }
+    },
+    "VedbandayfirlitSvarSkeyti": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "skilabod": {
+          "type": "string"
+        },
+        "vedbandayfirlitPDFSkra": {
+          "type": "string"
+        }
+      }
+    },
+    "VedbandayfirlitSkeyti": {
+      "type": "object",
+      "required": [
+        "tegundAndlags"
+      ],
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "fastanumer": {
+          "type": "string"
+        },
+        "tegundAndlags": {
+          "$ref": "#/definitions/TegundAndlags"
+        }
+      }
+    },
+    "TegundAndlags": {
+      "type": "integer",
+      "description": "0 = Fasteign\n1 = Okutaeki\n2 = Skip\n3 = Lausafe\n4 = Loftfar",
+      "x-enumNames": [
+        "Fasteign",
+        "Okutaeki",
+        "Skip",
+        "Lausafe",
+        "Loftfar"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
     }
   },
   "securityDefinitions": {
