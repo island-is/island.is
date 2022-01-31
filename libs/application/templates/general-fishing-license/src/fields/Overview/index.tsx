@@ -1,7 +1,6 @@
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-import { mockShips } from '../../mocks'
 import { ShipInformation } from '../components'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import { ValueLine } from './ValueLine'
@@ -13,12 +12,21 @@ import {
   overview,
 } from '../../lib/messages'
 import { formatIsk, formatPhonenumber } from '../../utils'
+import { Ship } from '@island.is/api/schema'
 
 export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
   const answers = application.answers as GeneralFishingLicense
 
-  const shipIndex = getValueViaPath(answers, 'shipSelection', '0') as string
-  const ship = mockShips[parseInt(shipIndex)]
+  const ships = getValueViaPath(
+    application.externalData,
+    'directoryOfFisheries.data.ships',
+  ) as Ship[]
+  const shipIndex = getValueViaPath(
+    answers,
+    'shipSelection.ship',
+    '0',
+  ) as string
+  const ship = ships[parseInt(shipIndex)]
 
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)
@@ -107,7 +115,7 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
           <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
             <ValueLine
               label={overview.labels.amount}
-              value={formatIsk(ship.price)}
+              value={formatIsk(22490)}
               color="blue400"
               isPrice
             />

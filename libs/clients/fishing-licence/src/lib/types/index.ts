@@ -23,12 +23,22 @@ export type Ship = {
 }
 
 export type FishingLicence = {
-  name: string
-  answer: true //todo should this be named answer
+  fishingLicenseInfo: FishingLicenseInfo
+  answer: boolean //todo should this be named answer
   reasons: FishingLicenceReason[]
 }
 
 export type FishingLicenceReason = {
   description: string
   directions: string // leidbeiningar?
+}
+
+export type FishingLicenseInfo = {
+  code: FishingLicenseCodeType
+  name: string
+}
+
+export enum FishingLicenseCodeType {
+  hookCatchLimit = '1',
+  catchMark = '32',
 }

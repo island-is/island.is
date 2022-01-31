@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { FishingLicence, Ship } from './types'
+import { FishingLicence, FishingLicenseCodeType, Ship } from './types'
 
 export interface FishingLicenseClient {
   getShips: (nationalId: string) => Ship[]
@@ -18,7 +18,7 @@ export class FishingLicenceApiClientMock implements FishingLicenseClient {
         grossTons: 33,
         length: 240,
         homePort: 'Grindavík',
-        seaworthiness: { validTo: new Date() },
+        seaworthiness: { validTo: new Date('21 Aug 2022 00:12:00 GMT') },
         deprivations: [],
         features: '',
         fishingLicences: ['Aflamark'],
@@ -29,7 +29,7 @@ export class FishingLicenceApiClientMock implements FishingLicenseClient {
         grossTons: 33,
         length: 240,
         homePort: 'Hafnafjörður',
-        seaworthiness: { validTo: new Date() },
+        seaworthiness: { validTo: new Date('23 Jan 2021 00:12:00 GMT') },
         deprivations: [],
         features: '',
         fishingLicences: ['Krókaflamark', 'Sérleyfi 123'],
@@ -40,7 +40,7 @@ export class FishingLicenceApiClientMock implements FishingLicenseClient {
         grossTons: 1,
         length: 10,
         homePort: 'Hafnarfjörður',
-        seaworthiness: { validTo: new Date() },
+        seaworthiness: { validTo: new Date('23 Feb 2022 00:12:00 GMT') },
         deprivations: [],
         features: '',
         fishingLicences: [],
@@ -52,18 +52,30 @@ export class FishingLicenceApiClientMock implements FishingLicenseClient {
     return [
       {
         answer: true,
-        name: 'aflamark',
-        reasons: [{ description: 'test', directions: 'fulla ferð áfram' }],
+        fishingLicenseInfo: {
+          code: FishingLicenseCodeType.catchMark,
+          name: 'aflamark',
+        },
+        reasons: [
+          {
+            description: 'Some reason what not',
+            directions: 'Einungis er heimilt að nýta ...',
+          },
+        ],
       },
       {
         answer: true,
-        name: 'krókaflamark',
-        reasons: [{ description: 'test', directions: 'fulla ferð áfram' }],
-      },
-      {
-        answer: true,
-        name: 'sérleyfi 1',
-        reasons: [{ description: 'test', directions: 'fulla ferð áfram' }],
+        fishingLicenseInfo: {
+          code: FishingLicenseCodeType.hookCatchLimit,
+          name: 'krókaflamark',
+        },
+        reasons: [
+          {
+            description: 'Other reason what not you know',
+            directions:
+              'Einungis er heimilt að nýta handfæri og línu með krókaveiðifærum. Báturinn þarf að vera 15 brúttótonn eða minna.',
+          },
+        ],
       },
     ]
   }

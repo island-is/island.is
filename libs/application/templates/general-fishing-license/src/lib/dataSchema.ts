@@ -48,7 +48,10 @@ export const GeneralFishingLicenseSchema = z.object({
     email: z.string().email(),
     phoneNumber: z.string().optional(),
   }),
-  shipSelection: z.enum(['0', '1', '2', '3', '4', '5']),
+  shipSelection: z.object({
+    ship: z.enum(['0', '1', '2', '3', '4', '5']),
+    registrationNumber: z.string(),
+  }),
   fishingLicense: z.enum([
     FishingLicenseEnum.HOOKCATCHLIMIT,
     FishingLicenseEnum.CATCHLIMIT,

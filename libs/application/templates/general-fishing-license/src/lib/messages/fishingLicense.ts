@@ -30,19 +30,21 @@ export const fishingLicense = {
       defaultMessage: 'Veiðileyfi með krókaaflamarki',
       description: 'Fiching license radio button with hook catch limit',
     },
-    catchLimit: {
-      id: 'gfl.application:fishingLicense.labels.catchLimit',
+    catchMark: {
+      id: 'gfl.application:fishingLicense.labels.catchMark',
       defaultMessage: 'Veiðileyfi með aflamarki',
-      description: 'Fiching license radio button with catch limit',
+      description: 'Fiching license radio button with catch mark',
     },
-    hookCatchLimitTooltip: {
-      id: 'gfl.application:fishingLicense.labels.hookCatchLimitTooltip',
+  }),
+  tooltips: defineMessages({
+    hookCatchLimit: {
+      id: 'gfl.application:fishingLicense.tooltips.hookCatchLimit',
       defaultMessage:
         'Einungis er heimilt að nýta handfæri og línu með krókaveiðifærum. Báturinn þarf að vera 15 brúttótonn eða minna.',
       description: 'Fiching license radio button tooltip with hook catch limit',
     },
-    catchLimitTooltip: {
-      id: 'gfl.application:fishingLicense.labels.catchLimitTooltip',
+    catchMark: {
+      id: 'gfl.application:fishingLicense.tooltips.catchMark',
       defaultMessage: 'Einungis er heimilt að nýta ...',
       description: 'Fiching license radio button tooltip with catch limit',
     },

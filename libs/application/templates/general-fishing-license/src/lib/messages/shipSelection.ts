@@ -39,6 +39,11 @@ export const shipSelection = {
       defaultMessage: 'Lengd',
       description: 'Ship length label',
     },
+    meters: {
+      id: 'gfl.application:shipSelection.labels.meters',
+      defaultMessage: 'metrar',
+      description: 'Ship length meters label',
+    },
     homePort: {
       id: 'gfl.application:shipSelection.labels.homePort',
       defaultMessage: 'Heimahöfn',
@@ -58,6 +63,13 @@ export const shipSelection = {
       id: 'gfl.application:shipSelection.labels.expired',
       defaultMessage: 'Útrunnið {date}',
       description: 'Expired label',
+    },
+  }),
+  tags: defineMessages({
+    noFishingLicensesFound: {
+      id: 'gfl.application:shipSelection.tags.noFishingLicensesFound',
+      defaultMessage: 'Engin gild veiðileyfi fundust',
+      description: 'No fishing license found tag',
     },
   }),
 }

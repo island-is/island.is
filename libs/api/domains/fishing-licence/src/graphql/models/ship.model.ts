@@ -16,10 +16,10 @@ export class Ship {
   length!: number
   @Field(() => String)
   homePort!: string
-  @Field(() => [Seaworthiness])
+  @Field(() => Seaworthiness)
   seaworthiness!: Seaworthiness
   @Field(() => [Deprivation])
   deprivations!: Deprivation[]
-  @Field(() => String)
+  @Field(() => [String])
   fishingLicences!: string[]
 }
