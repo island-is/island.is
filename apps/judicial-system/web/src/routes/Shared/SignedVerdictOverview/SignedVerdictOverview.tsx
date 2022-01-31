@@ -48,6 +48,7 @@ import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messa
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
+import { AnimatePresence, motion } from 'framer-motion'
 
 export const SignedVerdictOverview: React.FC = () => {
   const {
@@ -84,6 +85,10 @@ export const SignedVerdictOverview: React.FC = () => {
     caseModifiedExplinationErrorMessage,
     setCaseModifiedExplinationErrorMessage,
   ] = useState<string>('')
+  const [
+    isCaseModificationConfirmed,
+    setIsCaseModificationConfirmed,
+  ] = useState<boolean>(false)
 
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -483,96 +488,131 @@ export const SignedVerdictOverview: React.FC = () => {
           handlePrimaryButtonClick={() => setSharedCaseModal(undefined)}
         />
       )}
-      {isAlteringDates && (
-        <Modal
-          title={formatMessage(m.sections.alterDatesModal.title)}
-          text={formatMessage(m.sections.alterDatesModal.text)}
-          primaryButtonText={formatMessage(
-            m.sections.alterDatesModal.primaryButtonText,
-          )}
-          handlePrimaryButtonClick={handleDateAltering}
-          secondaryButtonText={formatMessage(
-            m.sections.alterDatesModal.secondaryButtonText,
-          )}
-          handleSecondaryButtonClick={() => {
-            setAlteredValidToDate(undefined)
-            setAlteredIsolationToDate(undefined)
-            setIsAlteringDates(false)
-          }}
-        >
-          <Box marginBottom={5}>
-            <Box marginBottom={3}>
-              <Text variant="h3" as="h2">
-                {formatMessage(m.sections.alterDatesModal.reasonForChangeTitle)}
-              </Text>
-            </Box>
-            <Input
-              name="reason"
-              label={formatMessage(
-                m.sections.alterDatesModal.reasonForChangeLabel,
-              )}
-              placeholder={formatMessage(
-                m.sections.alterDatesModal.reasonForChangePlaceholder,
-              )}
-              onChange={(event) => {
-                handleCaseModifiedExplanationChange(event.target.value)
-              }}
-              onBlur={(event) =>
-                handleCaseModifiedExplanationBlur(event.target.value)
-              }
-              hasError={caseModifiedExplinationErrorMessage !== ''}
-              errorMessage={caseModifiedExplinationErrorMessage}
-              textarea
-              rows={9}
-              required
-            />
-          </Box>
-          <Box marginBottom={6}>
-            <BlueBox>
-              <DateTime
-                name="alteredValidToDate"
-                size="sm"
-                datepickerLabel={formatMessage(
-                  m.sections.alterDatesModal.alteredValidToDateLabel,
+      <AnimatePresence exitBeforeEnter>
+        {isAlteringDates &&
+          (!isCaseModificationConfirmed ? (
+            <motion.div
+              key="dateAlteringModal"
+              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Modal
+                title={formatMessage(m.sections.alterDatesModal.title)}
+                text={formatMessage(m.sections.alterDatesModal.text)}
+                primaryButtonText={formatMessage(
+                  m.sections.alterDatesModal.primaryButtonText,
                 )}
-                selectedDate={alteredValidToDate ?? workingCase.validToDate}
-                onChange={(value, valid) => {
-                  if (!valid || !value) {
-                    return
-                  }
-
-                  setAlteredValidToDate(value)
+                handlePrimaryButtonClick={() =>
+                  setIsCaseModificationConfirmed(true)
+                } // {handleDateAltering}
+                secondaryButtonText={formatMessage(
+                  m.sections.alterDatesModal.secondaryButtonText,
+                )}
+                handleSecondaryButtonClick={() => {
+                  setAlteredValidToDate(undefined)
+                  setAlteredIsolationToDate(undefined)
+                  setIsAlteringDates(false)
                 }}
-                minDate={alteredIsolationToDate}
-                blueBox={false}
-              />
-              {workingCase.isCustodyIsolation && (
-                <Box marginTop={2}>
-                  <DateTime
-                    name="alteredIsolationToDate"
-                    size="sm"
-                    datepickerLabel={formatMessage(
-                      m.sections.alterDatesModal.alteredIsolationToDateLabel,
+              >
+                <Box marginBottom={5}>
+                  <Box marginBottom={3}>
+                    <Text variant="h3" as="h2">
+                      {formatMessage(
+                        m.sections.alterDatesModal.reasonForChangeTitle,
+                      )}
+                    </Text>
+                  </Box>
+                  <Input
+                    name="reason"
+                    label={formatMessage(
+                      m.sections.alterDatesModal.reasonForChangeLabel,
                     )}
-                    selectedDate={
-                      alteredIsolationToDate ?? workingCase.isolationToDate
-                    }
-                    onChange={(value, valid) => {
-                      if (!valid || !value) {
-                        return
-                      }
-
-                      setAlteredIsolationToDate(value)
+                    placeholder={formatMessage(
+                      m.sections.alterDatesModal.reasonForChangePlaceholder,
+                    )}
+                    onChange={(event) => {
+                      handleCaseModifiedExplanationChange(event.target.value)
                     }}
-                    maxDate={alteredValidToDate}
-                    blueBox={false}
+                    onBlur={(event) =>
+                      handleCaseModifiedExplanationBlur(event.target.value)
+                    }
+                    hasError={caseModifiedExplinationErrorMessage !== ''}
+                    errorMessage={caseModifiedExplinationErrorMessage}
+                    textarea
+                    rows={9}
+                    required
                   />
                 </Box>
-              )}
-            </BlueBox>
-          </Box>
-        </Modal>
-      )}
+                <Box marginBottom={6}>
+                  <BlueBox>
+                    <DateTime
+                      name="alteredValidToDate"
+                      size="sm"
+                      datepickerLabel={formatMessage(
+                        m.sections.alterDatesModal.alteredValidToDateLabel,
+                      )}
+                      selectedDate={
+                        alteredValidToDate ?? workingCase.validToDate
+                      }
+                      onChange={(value, valid) => {
+                        if (!valid || !value) {
+                          return
+                        }
+
+                        setAlteredValidToDate(value)
+                      }}
+                      minDate={alteredIsolationToDate}
+                      blueBox={false}
+                    />
+                    {workingCase.isCustodyIsolation && (
+                      <Box marginTop={2}>
+                        <DateTime
+                          name="alteredIsolationToDate"
+                          size="sm"
+                          datepickerLabel={formatMessage(
+                            m.sections.alterDatesModal
+                              .alteredIsolationToDateLabel,
+                          )}
+                          selectedDate={
+                            alteredIsolationToDate ??
+                            workingCase.isolationToDate
+                          }
+                          onChange={(value, valid) => {
+                            if (!valid || !value) {
+                              return
+                            }
+
+                            setAlteredIsolationToDate(value)
+                          }}
+                          maxDate={alteredValidToDate}
+                          blueBox={false}
+                        />
+                      </Box>
+                    )}
+                  </BlueBox>
+                </Box>
+              </Modal>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="dateAlteringModalSuccess"
+              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Modal
+                title={formatMessage(m.sections.alterDatesModal.successTitle)}
+                text={formatMessage(m.sections.alterDatesModal.successText)}
+                primaryButtonText={formatMessage(
+                  m.sections.alterDatesModal.primaryButtonText,
+                )}
+              />
+            </motion.div>
+          ))}
+      </AnimatePresence>
       {requestCourtRecordSignatureResponse && (
         <Modal
           title={

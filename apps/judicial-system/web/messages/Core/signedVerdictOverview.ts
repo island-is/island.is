@@ -164,6 +164,13 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem titill í "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
       },
+      successTitle: {
+        id:
+          'judicial.system.core:signed_verdict_overview.alter_dates_modal.success_title',
+        defaultMessage: 'Lengd gæsluvarðhalds breytt',
+        description:
+          'Notaður sem titill í "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála þegar breyting á lengd gæsluvarðhalds hefur verið geymd.',
+      },
       reasonForChangeTitle: {
         id:
           'judicial.system.core:signed_verdict_overview.alter_dates_modal.reason_for_change_title',
@@ -193,6 +200,14 @@ export const signedVerdictOverview = {
           'Hafi gæsluvarðhaldi eða einangrun verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd gæsluvarðhalds. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu.',
         description:
           'Notaður sem texti í "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      successText: {
+        id:
+          'judicial.system.core:signed_verdict_overview.alter_dates_modal.success_text',
+        defaultMessage:
+          'Gæsluvarðhald og einangrun til 10. desember 2021 kl 16:00. Tilkynning verður send á ábyrgðaraðila málsins hjá sækjanda. Ef gæsluvarðhaldsfangelsi hefur ekki verið upplýst og þörf er á því, þarf að gera það eftir hefðbundinni boðleið.',
+        description:
+          'Notaður sem texti í "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
       },
       primaryButtonText: {
         id:
