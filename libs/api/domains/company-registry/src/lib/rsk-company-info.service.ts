@@ -38,15 +38,14 @@ export class RskCompanyInfoService {
       status: company.stada,
       companyInfo: {
         formOfOperation:
-          company.rekstrarform?.map((item) => {
+          company.companyType?.map((item) => {
             return {
               type: item.tegund,
               name: item.heiti,
-              suffix: item.vidskeyti,
             } as RskCompanyFormOfOperation
           }) ?? [],
         address:
-          company.heimilisfang?.map((item) => {
+          company.responseAddress?.map((item) => {
             return {
               streetAddress: item.heimilisfang1,
               streetAddress2: item.heimilisfang2,
@@ -73,7 +72,7 @@ export class RskCompanyInfoService {
               dateOfDeregistration: item.afskraning
                 ? new Date(item.afskraning)
                 : undefined,
-              classification: item.flokkun?.map(
+              classification: item.categoryInfo?.map(
                 (classification) =>
                   ({
                     type: classification.gerd,
