@@ -1,6 +1,10 @@
+import { SearchableTags } from '@island.is/api/schema'
 import { TagAggregationInput } from '../types'
 
-export const tagAggregationQueryFragment = (tagType: string, size = 20) => ({
+export const tagAggregationQueryFragment = (
+  tagTypes: SearchableTags[],
+  size = 20,
+) => ({
   aggs: {
     group: {
       nested: {
@@ -10,7 +14,7 @@ export const tagAggregationQueryFragment = (tagType: string, size = 20) => ({
         filtered: {
           filter: {
             terms: {
-              ['tags.type']: ['category', 'processentry'],
+              ['tags.type']: tagTypes,
             },
           },
           aggs: {
@@ -37,10 +41,9 @@ export const tagAggregationQueryFragment = (tagType: string, size = 20) => ({
 
 export const tagAggregationQuery = ({
   documentTypes,
-  tagType,
+  tagTypes,
   size,
 }: TagAggregationInput) => {
-  console.log('tagType', tagType)
   const query = {
     query: {
       bool: {
@@ -51,8 +54,7 @@ export const tagAggregationQuery = ({
         },
       },
     },
-    ...tagAggregationQueryFragment('category', size),
-    ...tagAggregationQueryFragment('processentry', size),
+    ...tagAggregationQueryFragment(tagTypes, size),
   }
 
   return query

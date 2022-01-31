@@ -10,7 +10,7 @@ export const searchQuery = ({
   page = 1,
   types = [],
   tags = [],
-  countTag = '',
+  countTag = [],
   countTypes = false,
   countProcessEntry = false,
 }: SearchInput) => {
@@ -54,11 +54,7 @@ export const searchQuery = ({
 
   if (countTag) {
     // set the tag aggregation as the only aggregation
-    aggregation.aggs = {
-      ...aggregation.aggs,
-      ...tagAggregationQueryFragment('category').aggs,
-      ...tagAggregationQueryFragment('processentry').aggs,
-    }
+    aggregation.aggs = tagAggregationQueryFragment(countTag).aggs
   }
 
   if (countTypes) {

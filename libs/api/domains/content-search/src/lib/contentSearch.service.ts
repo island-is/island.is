@@ -42,14 +42,13 @@ export class ContentSearchService {
     if (!aggregations?.group) {
       return null
     }
-    console.log('hmmm', aggregations.group.filtered)
     return aggregations.group.filtered.count.buckets.map<TagCount>(
       (tagObject) => {
-        console.log('tagObject', tagObject)
         return {
           key: tagObject.key,
           count: tagObject.doc_count.toString(),
           value: tagObject.value.buckets?.[0]?.key ?? '', // value of tag is always the first value here we provide default value since value is optional
+          type: 'ok',
         }
       },
     )

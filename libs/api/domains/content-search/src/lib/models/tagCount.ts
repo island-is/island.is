@@ -10,4 +10,7 @@ export class TagCount {
 
   @Field(() => Int)
   count: string
+
+  @Field()
+  type: string
 }
