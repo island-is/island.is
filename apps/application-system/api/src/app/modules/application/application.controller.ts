@@ -39,7 +39,7 @@ import {
   CustomTemplateFindQuery,
 } from '@island.is/application/core'
 import type { Unwrap, Locale } from '@island.is/shared/types'
-import { User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
