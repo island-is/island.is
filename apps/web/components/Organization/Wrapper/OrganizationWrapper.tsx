@@ -68,7 +68,6 @@ interface WrapperProps {
   minimal?: boolean
   showSecondaryMenu?: boolean
   showExternalLinks?: boolean
-  alertBanner?: AlertBannerSchema
 }
 
 interface HeaderProps {
@@ -281,7 +280,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   minimal = false,
   showSecondaryMenu = true,
   showExternalLinks = false,
-  alertBanner,
 }) => {
   const router = useRouter()
 
@@ -314,9 +312,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
       />
       <OrganizationHeader organizationPage={organizationPage} />
       <Main>
-        {alertBanner && (
+        {organizationPage.alertBanner && (
           <OrganizationAlert
-            alertBanner={alertBanner}
+            alertBanner={organizationPage.alertBanner}
             centered={true}
             marginTop={10}
           />

@@ -44,7 +44,7 @@ export const OrganizationAlert = ({
   marginTop,
 }: OrganizationAlertProps) => {
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
-  const [shouldShowAlert, setShouldShowAlert] = useState(
+  const [shouldShowAlert, setShouldShowAlert] = useState<boolean>(
     !Cookies.get(alertBannerId) && alertBanner.showAlertBanner,
   )
 

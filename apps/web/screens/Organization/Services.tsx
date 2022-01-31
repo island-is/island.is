@@ -40,8 +40,6 @@ import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import getConfig from 'next/config'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { AlertBanner as AlertBannerSchema } from '@island.is/web/graphql/schema'
-import { GET_ALERT_BANNER_QUERY } from '../queries/AlertBanner'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -52,7 +50,6 @@ interface ServicesPageProps {
   groups: FilterItem[]
   sort: string
   namespace: Query['getNamespace']
-  alertBanner?: AlertBannerSchema
 }
 
 type FilterItem = {
@@ -67,7 +64,6 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   groups,
   sort,
   namespace,
-  alertBanner,
 }) => {
   const { disableSyslumennPage: disablePage } = publicRuntimeConfig
   if (disablePage === 'true') {
@@ -136,7 +132,6 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 
   return (
     <OrganizationWrapper
-      alertBanner={alertBanner}
       pageTitle={n('services', 'Þjónusta')}
       organizationPage={organizationPage}
       pageFeaturedImage={organizationPage.featuredImage}
@@ -272,7 +267,6 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       data: { getArticles },
     },
     namespace,
-    alertBanner,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
@@ -309,17 +303,6 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
-    apolloClient
-      .query<Query, QueryGetAlertBannerArgs>({
-        query: GET_ALERT_BANNER_QUERY,
-        variables: {
-          input: {
-            id: '32AIDOteYkmQ14MKwoD6z8',
-            lang: locale,
-          },
-        },
-      })
-      .then((res) => res.data.getAlertBanner),
   ])
 
   if (!getArticles) {
@@ -352,7 +335,6 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     services: getArticles,
     namespace,
     categories,
-    alertBanner,
     groups,
     sort: (query.sort as string) ?? 'popular',
     showSearchInHeader: false,
