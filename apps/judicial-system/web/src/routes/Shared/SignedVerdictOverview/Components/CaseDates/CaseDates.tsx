@@ -55,25 +55,40 @@ const CaseDates: React.FC<Props> = (props) => {
             </Box>
           </>
         ) : (
-          <>
-            <Box component="span" display="block">
-              {`Úrskurðað ${formatDate(
-                workingCase.rulingDate,
-                'PPP',
-              )} kl. ${formatDate(workingCase.rulingDate, TIME_FORMAT)}`}
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="flexEnd"
+          >
+            <Box>
+              <Box>
+                {`Úrskurðað ${formatDate(
+                  workingCase.rulingDate,
+                  'PPP',
+                )} kl. ${formatDate(workingCase.rulingDate, TIME_FORMAT)}`}
+              </Box>
+              <Box>
+                {`${
+                  isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
+                } til ${formatDate(
+                  workingCase.validToDate,
+                  'PPP',
+                )} kl. ${formatDate(workingCase.validToDate, TIME_FORMAT)}`}
+              </Box>
+              {workingCase.isCustodyIsolation &&
+                workingCase.isolationToDate && (
+                  <Box>
+                    {`Einangrun til ${formatDate(
+                      workingCase.isolationToDate,
+                      'PPP',
+                    )} kl. ${formatDate(
+                      workingCase.isolationToDate,
+                      TIME_FORMAT,
+                    )}`}
+                  </Box>
+                )}
             </Box>
-            <Box
-              component="span"
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-            >
-              {`${
-                isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
-              } til ${formatDate(
-                workingCase.validToDate,
-                'PPP',
-              )} kl. ${formatDate(workingCase.validToDate, TIME_FORMAT)}`}
+            <Box>
               {button && (
                 <Button
                   size="small"
@@ -85,7 +100,7 @@ const CaseDates: React.FC<Props> = (props) => {
                 </Button>
               )}
             </Box>
-          </>
+          </Box>
         )}
       </div>
     </Text>

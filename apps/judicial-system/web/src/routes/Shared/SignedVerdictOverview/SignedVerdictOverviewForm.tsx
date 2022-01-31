@@ -146,7 +146,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             Til baka
           </Button>
         </Box>
-        <Box display="flex" justifyContent="spaceBetween">
+        <Box display="flex" justifyContent="spaceBetween" marginBottom={5}>
           <Box>
             <Box marginBottom={1}>
               <Text as="h1" variant="h1">
@@ -232,7 +232,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         />
       </Box>
       {workingCase.caseModifiedExplanation && (
-        <Box marginBottom={3}>
+        <Box marginBottom={5}>
           <AlertMessage
             type="info"
             title={formatMessage(m.sections.alterDatesInfo.title)}
