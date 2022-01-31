@@ -1,13 +1,10 @@
 import {
   buildCustomField,
   buildMultiField,
-  buildRadioField,
   buildSection,
 } from '@island.is/application/core'
-import { getFishingLicenseOptions } from '../../../utils'
 
 import { fishingLicense } from '../../lib/messages'
-import { FishingLicenseEnum } from '../../types'
 
 export const fishingLicenseSection = buildSection({
   id: 'fishingLicenseSection',
@@ -19,17 +16,10 @@ export const fishingLicenseSection = buildSection({
       description: fishingLicense.general.description,
       children: [
         buildCustomField({
-          id: 'fishingLicenseCustomField',
+          id: 'fishingLicense',
           title: '',
           doesNotRequireAnswer: true,
           component: 'FishingLicense',
-        }),
-        buildRadioField({
-          id: 'fishingLicense',
-          title: fishingLicense.labels.radioButtonTitle,
-          largeButtons: true,
-          options: (application) =>
-            getFishingLicenseOptions(application.answers),
         }),
       ],
     }),

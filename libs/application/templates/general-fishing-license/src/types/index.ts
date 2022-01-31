@@ -5,5 +5,5 @@ export enum DataProviderTypes {
 
 export enum FishingLicenseEnum {
   HOOKCATCHLIMIT = 'hookCatchLimit',
-  CATCHLIMIT = 'catchLimit',
+  CATCHLIMIT = 'catchMark',
 }

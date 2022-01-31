@@ -65,4 +65,11 @@ export const shipSelection = {
       description: 'Expired label',
     },
   }),
+  tags: defineMessages({
+    noFishingLicensesFound: {
+      id: 'gfl.application:shipSelection.tags.noFishingLicensesFound',
+      defaultMessage: 'Engin gild veiðileyfi fundust',
+      description: 'No fishing license found tag',
+    },
+  }),
 }

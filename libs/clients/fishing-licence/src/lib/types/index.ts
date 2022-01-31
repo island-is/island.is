@@ -24,7 +24,7 @@ export type Ship = {
 
 export type FishingLicence = {
   fishingLicenseInfo: FishingLicenseInfo
-  answer: true //todo should this be named answer
+  answer: boolean //todo should this be named answer
   reasons: FishingLicenceReason[]
 }
 

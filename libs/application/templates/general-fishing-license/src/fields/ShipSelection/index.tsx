@@ -5,7 +5,7 @@ import React, { FC, useState } from 'react'
 import { ShipInformation, Tag } from '../components'
 import { RadioController } from '@island.is/shared/form-fields'
 import format from 'date-fns/format'
-import { shipSelection } from '../../lib/messages'
+import { shipSelection, error as errorMessage } from '../../lib/messages'
 import is from 'date-fns/locale/is'
 import { Ship } from '@island.is/api/schema'
 import parseISO from 'date-fns/parseISO'
@@ -28,14 +28,13 @@ export const ShipSelection: FC<FieldBaseProps> = ({ application, field }) => {
   const [registrationNumber, setRegistrationNumber] = useState<string>(
     registrationNumberValue || '',
   )
-  console.log(application)
-  console.log(registrationNumber)
+
   const ships = getValueViaPath(
     application.externalData,
     'directoryOfFisheries.data.ships',
   ) as Ship[]
 
-  const shipOptions = () => {
+  const shipOptions = (ships: Ship[]) => {
     const options = [] as Option[]
     for (const [index, ship] of ships.entries()) {
       if (ship.fishingLicences.length !== 0) {
@@ -62,7 +61,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({ application, field }) => {
               />
               <Box>
                 <Tag variant="purple" disabled={isExpired}>
-                  Engin gild veiðileyfi fundust
+                  {formatMessage(shipSelection.tags.noFishingLicensesFound)}
                 </Tag>
               </Box>
             </Box>
@@ -85,7 +84,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({ application, field }) => {
     return options
   }
 
-  console.log(ships)
   return (
     <Box marginBottom={2}>
       <RadioController
@@ -98,11 +96,10 @@ export const ShipSelection: FC<FieldBaseProps> = ({ application, field }) => {
           undefined
         }
         onSelect={(value) => {
-          console.log(value)
           const ship = ships[parseInt(value)]
           setRegistrationNumber(ship.registrationNumber.toString())
         }}
-        options={shipOptions()}
+        options={shipOptions(ships)}
       />
       <Text variant="h4" paddingY={3}>
         {formatMessage(shipSelection.labels.withFishingLicenseTitle)}

@@ -9,8 +9,12 @@ import {
 import { useQuery } from '@apollo/client'
 import { queryFishingLicense } from '../../graphql/queries'
 import { RadioController } from '@island.is/shared/form-fields'
+import { fishingLicense, shipSelection } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 export const FishingLicense: FC<FieldBaseProps> = ({ application, field }) => {
+  const { formatMessage } = useLocale()
+
   const ships = getValueViaPath(
     application.externalData,
     'directoryOfFisheries.data.ships',
@@ -24,16 +28,12 @@ export const FishingLicense: FC<FieldBaseProps> = ({ application, field }) => {
     application.answers,
     'shipSelection.registrationNumber',
   ) as string
-  console.log(application.answers)
-  console.log(registrationNumber)
 
   const { data, loading } = useQuery(queryFishingLicense, {
     variables: {
       registrationNumber: parseInt(registrationNumber),
     },
   })
-
-  console.log(data?.fishingLicenses)
 
   const ship = ships[parseInt(shipIndex)]
   return (
@@ -49,13 +49,15 @@ export const FishingLicense: FC<FieldBaseProps> = ({ application, field }) => {
         >
           <ShipInformation ship={ship} seaworthinessHasColor />
           <Box>
-            <Tag variant="purple">Engin gild veiðileyfi fundust</Tag>
+            <Tag variant="purple">
+              {formatMessage(shipSelection.tags.noFishingLicensesFound)}
+            </Tag>
           </Box>
         </Box>
       </Box>
       <Box>
         <Text variant="h4" marginBottom={3}>
-          Veiðileyfi í boði
+          {formatMessage(fishingLicense.labels.radioButtonTitle)}
         </Text>
         {loading ? (
           <LoadingDots large color="gradient" />
@@ -65,16 +67,17 @@ export const FishingLicense: FC<FieldBaseProps> = ({ application, field }) => {
             largeButtons
             backgroundColor="blue"
             options={data?.fishingLicenses?.map(
-              ({
-                fishingLicenseInfo,
-                answer,
-                reasons,
-              }: FishingLicenseSchema) => {
-                console.log('hello')
-                console.log(fishingLicenseInfo, answer, reasons)
+              ({ fishingLicenseInfo, answer }: FishingLicenseSchema) => {
                 return {
-                  value: fishingLicenseInfo.name,
-                  label: fishingLicenseInfo.name,
+                  value: fishingLicenseInfo.code,
+                  label:
+                    formatMessage(
+                      fishingLicense.labels[fishingLicenseInfo.code],
+                    ) || fishingLicenseInfo.name,
+                  tooltip: formatMessage(
+                    fishingLicense.tooltips[fishingLicenseInfo.code],
+                  ),
+                  disabled: !answer,
                 }
               },
             )}
