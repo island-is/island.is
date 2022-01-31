@@ -1,4 +1,5 @@
 import React, { ReactNode, useContext, useEffect, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import formatISO from 'date-fns/formatISO'
@@ -48,7 +49,6 @@ import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messa
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
-import { AnimatePresence, motion } from 'framer-motion'
 
 export const SignedVerdictOverview: React.FC = () => {
   const {
@@ -361,6 +361,7 @@ export const SignedVerdictOverview: React.FC = () => {
     const formattedIsolationToDate = modifiedIsolationToDate?.value
       ? formatISO(modifiedIsolationToDate.value, { representation: 'complete' })
       : undefined
+
     const update = {
       validToDate: formattedValidToDate,
       isolationToDate: formattedIsolationToDate,
@@ -417,12 +418,12 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const isCaseModificationInvalid = () => {
+  const isCaseModificationValid = () => {
     return (
-      !caseModifiedExplanation ||
-      !caseModifiedExplanation.trim() ||
-      !modifiedValidToDate?.isValid ||
-      !modifiedIsolationToDate?.isValid
+      caseModifiedExplanation &&
+      caseModifiedExplanation.trim() &&
+      modifiedValidToDate?.isValid &&
+      modifiedIsolationToDate?.isValid
     )
   }
 
@@ -531,7 +532,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 primaryButtonText={formatMessage(
                   m.sections.modifyDatesModal.primaryButtonText,
                 )}
-                isPrimaryButtonDisabled={isCaseModificationInvalid()}
+                isPrimaryButtonDisabled={!isCaseModificationValid()}
                 handlePrimaryButtonClick={() => handleDateModification()}
                 secondaryButtonText={formatMessage(
                   m.sections.modifyDatesModal.secondaryButtonText,
