@@ -109,6 +109,9 @@
     "api-domains-driving-license": {
       "tags": []
     },
+    "api-domains-driving-license-book": {
+      "tags": []
+    },
     "api-domains-education": {
       "tags": []
     },

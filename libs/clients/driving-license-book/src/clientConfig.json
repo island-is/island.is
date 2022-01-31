@@ -3295,7 +3295,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": {}
+        "additionalProperties": false
       },
       "SchoolTestResult": {
         "type": "object",
