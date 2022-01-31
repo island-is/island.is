@@ -108,6 +108,14 @@ export function addMediumHeading(
   addHeading(doc, mediumFontSize, heading, font)
 }
 
+export function addLargeText(
+  doc: PDFKit.PDFDocument,
+  text: string,
+  font?: string,
+) {
+  addText(doc, largeFontSize, text, font)
+}
+
 export function addMediumText(
   doc: PDFKit.PDFDocument,
   text: string,
