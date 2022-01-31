@@ -49,7 +49,6 @@ export class ApplicationService {
               ],
             }
           : {}),
-        ...applicationIsNotSetToBePruned(),
       },
     })
   }
@@ -83,6 +82,27 @@ export class ApplicationService {
     })
   }
 
+  async findAllDueToBePruned(): Promise<
+    Pick<Application, 'id' | 'attachments'>[]
+  > {
+    return this.applicationModel.findAll({
+      attributes: ['id', 'attachments'],
+      where: {
+        [Op.and]: {
+          pruneAt: {
+            [Op.and]: {
+              [Op.not]: null,
+              [Op.lt]: new Date(),
+            },
+          },
+          pruned: {
+            [Op.eq]: false,
+          },
+        },
+      },
+    })
+  }
+
   /**
    * A function to pass to data providers / template api modules to be able to
    * query applications of their respective type in order to infer some data to
@@ -112,7 +132,9 @@ export class ApplicationService {
 
   async update(
     id: string,
-    application: Partial<Pick<Application, 'attachments' | 'answers'>>,
+    application: Partial<
+      Pick<Application, 'attachments' | 'answers' | 'externalData' | 'pruned'>
+    >,
   ) {
     const [
       numberOfAffectedRows,
@@ -121,7 +143,6 @@ export class ApplicationService {
       where: { id },
       returning: true,
     })
-
     return { numberOfAffectedRows, updatedApplication }
   }
 
