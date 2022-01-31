@@ -14,14 +14,7 @@ export const UtgerdirApiProvider: Provider<UtgerdirApi> = {
   useFactory: (
     xRoadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof FishingLicenseClientConfig>,
-  ) =>
-    new UtgerdirApi(
-      FishingLicenseApiFactoryConfig(
-        config.xRoadServicePath,
-        xRoadConfig.xRoadBasePath,
-        xRoadConfig.xRoadClient,
-      ),
-    ),
+  ) => new UtgerdirApi(FishingLicenseApiFactoryConfig(xRoadConfig, config)),
 
   inject: [XRoadConfig.KEY, FishingLicenseClientConfig.KEY],
 }

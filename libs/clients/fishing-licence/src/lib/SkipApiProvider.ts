@@ -14,14 +14,7 @@ export const SkipApiProvider: Provider<SkipApi> = {
   useFactory: (
     xRoadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof FishingLicenseClientConfig>,
-  ) =>
-    new SkipApi(
-      FishingLicenseApiFactoryConfig(
-        config.xRoadServicePath,
-        xRoadConfig.xRoadBasePath,
-        xRoadConfig.xRoadClient,
-      ),
-    ),
+  ) => new SkipApi(FishingLicenseApiFactoryConfig(xRoadConfig, config)),
 
   inject: [XRoadConfig.KEY, FishingLicenseClientConfig.KEY],
 }
