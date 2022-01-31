@@ -1,3 +1,4 @@
+import type { Defendant } from './defendant'
 import type { Institution } from './institution'
 import type { Notification } from './notification'
 import type { CaseFile } from './file'
@@ -20,6 +21,14 @@ export enum CaseType {
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION = 'ELECTRONIC_DATA_DISCOVERY_INVESTIGATION',
   OTHER = 'OTHER',
 }
+
+export const caseTypesWithMultipleDefendants = [
+  CaseType.SEARCH_WARRANT,
+  CaseType.BANKING_SECRECY_WAIVER,
+  CaseType.SOUND_RECORDING_EQUIPMENT,
+  CaseType.PHONE_TAPPING,
+  CaseType.TRACKING_EQUIPMENT,
+]
 
 export enum CaseState {
   NEW = 'NEW',
@@ -72,12 +81,6 @@ export enum CaseAppealDecision {
   NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
 
-export enum CaseGender {
-  MALE = 'MALE',
-  FEMALE = 'FEMALE',
-  OTHER = 'OTHER',
-}
-
 export enum CaseDecision {
   ACCEPTING = 'ACCEPTING',
   REJECTING = 'REJECTING',
@@ -100,10 +103,7 @@ export interface Case {
   description?: string
   state: CaseState
   policeCaseNumber: string
-  accusedNationalId: string
-  accusedName?: string
-  accusedAddress?: string
-  accusedGender?: CaseGender
+  defendants?: Defendant[]
   defenderName?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
@@ -179,10 +179,6 @@ export interface CreateCase {
   type: CaseType
   description?: string
   policeCaseNumber: string
-  accusedNationalId: string
-  accusedName?: string
-  accusedAddress?: string
-  accusedGender?: CaseGender
   defenderName?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
@@ -195,10 +191,6 @@ export interface UpdateCase {
   type?: string
   description?: string
   policeCaseNumber?: string
-  accusedNationalId?: string
-  accusedName?: string
-  accusedAddress?: string
-  accusedGender?: CaseGender
   defenderName?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
@@ -306,6 +298,10 @@ export function isInvestigationCase(type?: CaseType): boolean {
 
 export function isAcceptingCaseDecision(decision?: CaseDecision): boolean {
   return Boolean(decision && acceptedCaseDecisions.includes(decision))
+}
+
+export function isCaseTypeWithMultipleDefendantsSupport(caseType: CaseType) {
+  return caseTypesWithMultipleDefendants.includes(caseType)
 }
 
 export const completedCaseStates = [

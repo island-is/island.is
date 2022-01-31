@@ -48,7 +48,6 @@ export const LanguageForm: FC<Props> = ({
           defaultValue={language || { label: 'Íslenska', value: 'is' }}
           render={({ onChange, value, name }) => (
             <Select
-              size="xs"
               name={name}
               value={value}
               onChange={(value, actionMeta) => {
