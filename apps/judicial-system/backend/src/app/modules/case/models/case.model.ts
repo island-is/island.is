@@ -837,7 +837,7 @@ export class Case extends Model<Case> {
    * The explanation given for a modification of a case's validTo or isolationTo dates
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
