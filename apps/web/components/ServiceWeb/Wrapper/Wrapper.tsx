@@ -68,7 +68,7 @@ export const Wrapper: FC<WrapperProps> = ({
     <>
       <Head>
         <title>{pageTitle}</title>
-        <meta name="robots" content="noindex,nofollow" />
+        <meta name="robots" content="noindex, nofollow" />
       </Head>
       <ServiceWebContext.Provider value={{ textMode, institutionSlug }}>
         <ServiceWebHeader
