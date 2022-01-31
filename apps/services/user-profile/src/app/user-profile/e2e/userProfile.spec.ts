@@ -77,36 +77,39 @@ describe('User profile API', () => {
       expect(response.body.id).toBeTruthy()
     })
 
-    // it('POST /userProfile should register userProfile and create verification', async () => {
-    //   // Act
-    //   // const spy = jest
-    //   //   .spyOn(emailService, 'sendEmail')
-    //   //   .mockImplementation(() => Promise.resolve('user'))
-    //   const response = await request(app.getHttpServer())
-    //     .post('/userProfile')
-    //     .send(mockProfile)
-    //     .expect(201)
-    //   // expect(spy).toHaveBeenCalled()
-    //   expect(response.body.id).toBeTruthy()
+    it('POST /userProfile should register userProfile and create verification', async () => {
+      // Act
+      await request(app.getHttpServer())
+        .post('/emailVerification/')
+        .send({
+          nationalId: mockProfile.nationalId,
+          email: mockProfile.email,
+        })
+        .expect(204)
 
-    //   // CCCCC
-    //   console.log('response emailStatus', response.body)
-    //   const verification = await EmailVerification.findOne({
-    //     where: { nationalId: response.body.nationalId },
-    //   })
-    //   // NAH, THIS SHOULD GET DATASTATUS VERIFIED INSTEAD
-    //   // console.log('verification______', verification)
+      const spy = jest
+        .spyOn(emailService, 'sendEmail')
+        .mockImplementation(() => Promise.resolve('user'))
+      const response = await request(app.getHttpServer())
+        .post('/userProfile')
+        .send(mockProfile)
+        .expect(201)
+      expect(spy).toHaveBeenCalled()
+      expect(response.body.id).toBeTruthy()
 
-    //   // Assert
-    //   // expect(response.body.emailStatus).toEqual('VERIFIED')
-    //   expect(verification.nationalId).toEqual(mockProfile.nationalId)
-    //   expect(response.body).toEqual(
-    //     expect.objectContaining({ nationalId: verification.nationalId }),
-    //   )
-    //   expect(response.body).toEqual(
-    //     expect.objectContaining({ email: verification.email }),
-    //   )
-    // })
+      const verification = await EmailVerification.findOne({
+        where: { nationalId: response.body.nationalId },
+      })
+
+      // Assert
+      expect(verification.nationalId).toEqual(mockProfile.nationalId)
+      expect(response.body).toEqual(
+        expect.objectContaining({ nationalId: verification.nationalId }),
+      )
+      expect(response.body).toEqual(
+        expect.objectContaining({ email: verification.email }),
+      )
+    })
 
     it('POST /userProfile should return conflict on existing nationalId', async () => {
       // Act
@@ -254,38 +257,6 @@ describe('User profile API', () => {
         }),
       )
     })
-
-    // it('PUT /userProfile with email should create verification', async () => {
-    //   // Arrange
-    //   const spy = jest
-    //     .spyOn(emailService, 'sendEmail')
-    //     .mockImplementation(() => Promise.resolve('user'))
-    //   await request(app.getHttpServer())
-    //     .post('/userProfile')
-    //     .send({
-    //       nationalId: mockProfile.nationalId,
-    //       locale: mockProfile.locale,
-    //       mobilePhoneNumber: mockProfile.mobilePhoneNumber,
-    //     })
-    //     .expect(201)
-
-    //   //Act
-    //   const response = await request(app.getHttpServer())
-    //     .put(`/userProfile/${mockProfile.nationalId}`)
-    //     .send({
-    //       email: mockProfile.email,
-    //     })
-    //     .expect(200)
-    //   expect(spy).toHaveBeenCalled()
-    //   expect(response.body.id).toBeTruthy()
-
-    //   const verification = await EmailVerification.findOne({
-    //     where: { nationalId: response.body.nationalId },
-    //   })
-
-    //   expect(verification.email).toEqual(mockProfile.email)
-    //   expect(verification.nationalId).toEqual(mockProfile.nationalId)
-    // })
 
     it('PUT /userProfile/ should return 403 forbidden on invalid authentication', async () => {
       // Arrange
