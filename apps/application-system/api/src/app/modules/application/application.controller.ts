@@ -152,9 +152,9 @@ export class ApplicationController {
       }
 
       try {
-        let str = s3key as keyof typeof existingApplication.attachments
+        const str = s3key as keyof typeof existingApplication.attachments
         const filename = existingApplication.attachments[str]
-        const { region, bucket, key } = AmazonS3URI(filename)
+        const { bucket, key } = AmazonS3URI(filename)
         return await this.fileService.getAttachmentPresignedURL(bucket,key)
       } catch (error) {
         throw new NotFoundException("Attachment not found")

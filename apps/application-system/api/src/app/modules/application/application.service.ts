@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op, WhereOptions } from 'sequelize'
 import {
@@ -9,11 +9,9 @@ import {
 
 import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
-import { UpdateApplicationDto } from './dto/updateApplication.dto'
 
 import { ApplicationLifecycle } from './types'
-import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
-import AmazonS3URI from 'amazon-s3-uri'
+
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
