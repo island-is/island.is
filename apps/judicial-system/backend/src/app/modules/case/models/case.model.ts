@@ -834,7 +834,7 @@ export class Case extends Model<Case> {
   caseFiles?: CaseFile[]
 
   /**********
-   * The reason given for modification of the case's validTo and isolationTo dates
+   * The explanation given for a modification of a case's validTo or isolationTo dates
    **********/
   @Column({
     type: DataType.STRING,
