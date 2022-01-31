@@ -70,16 +70,17 @@ export const UploadedImage = ({
   onRemoveClick,
   onRetryClick,
   onOpenFile,
-}: UploadedImageProps) => {
+}: UploadedImageProps) => {  
   const { data: presignedUrl } = useQuery(PresignedUrlQuery, {
     variables: {
       input: {
         id: applicationId,
-        s3key: file.key,
+        s3Key: file.key,
       },
     },
+    skip: !file.key
   })
-
+  
   const [ref, { width }] = useMeasure()
 
   const statusColor = (status?: UploadImageStatus): Colors => {
@@ -208,7 +209,7 @@ export const UploadedImage = ({
         </Box>
       </Box>
       {file.status !== 'error' && (
-        <ProgressMeter progress={file.status !== 'done' ? 0.01 : 1} />
+        <ProgressMeter progress={file.status !== 'done' ? 0.15 : 1} />
       )}
     </Box>
   )

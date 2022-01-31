@@ -23,3 +23,5 @@ export interface PSignFakeData {
 export enum ApiActions {
   submitApplication = 'submitApplication',
 }
+
+export const UPLOAD_ACCEPT = '.jpg, .jpeg, .png'
