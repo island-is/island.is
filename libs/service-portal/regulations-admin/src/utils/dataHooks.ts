@@ -1,17 +1,19 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
 import { Query } from '@island.is/api/schema'
 import { gql, useQuery, useMutation, ApolloError } from '@apollo/client'
-import { RegulationDraft } from '@island.is/regulations/admin'
+import { DraftImpactName, RegulationDraft } from '@island.is/regulations/admin'
 import {
   LawChapter,
   LawChapterSlug,
   MinistryList,
+  PlainText,
   RegName,
   RegulationOptionList,
 } from '@island.is/regulations'
 import { ShippedSummary, DraftSummary } from '@island.is/regulations/admin'
 import { getEditUrl } from './routing'
+import { DraftImpactForm } from '../state/types'
 
 // import { APPLICATION_APPLICATIONS } from '../../lib/queries/applicationApplications'
 
@@ -240,3 +242,37 @@ export const useRegulationListQuery = (
     data: data.getRegulationOptionList as RegulationOptionList,
   }
 }
+
+// ---------------------------------------------------------------------------
+
+type ByTarget = Record<
+  string,
+  {
+    name: DraftImpactName
+    regTitle: PlainText
+    impacts: Array<DraftImpactForm>
+  }
+>
+
+export const useImpactsByTarget = (
+  impacts: Array<DraftImpactForm>,
+): Array<ByTarget[string]> =>
+  useMemo(() => {
+    const byTarget: ByTarget = {}
+    impacts
+      .slice(0)
+      .sort((a, b) => (a.date > b.date ? 1 : -1))
+      .forEach((impact) => {
+        const { name, regTitle } = impact
+        let data = byTarget[name]
+        if (!byTarget[name]) {
+          data = byTarget[name] = {
+            name,
+            regTitle,
+            impacts: [],
+          }
+        }
+        data.impacts.push(impact)
+      })
+    return Object.values(byTarget)
+  }, [impacts])

@@ -49,8 +49,13 @@ export const validateImpact = (
   validateFieldValue(impact.title, true)
   validateFieldValue(impact.text, true)
   impact.appendixes.forEach((appendix) => {
-    validateFieldValue(appendix.title, true)
-    validateFieldValue(appendix.text, true)
+    if (appendix.revoked) {
+      appendix.text.error = undefined
+      appendix.title.error = undefined
+    } else {
+      validateFieldValue(appendix.title, true)
+      validateFieldValue(appendix.text, true)
+    }
   })
   validateFieldValue(impact.comments, true)
 }

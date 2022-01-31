@@ -20,39 +20,30 @@ export const EditReview = () => {
       <EditReviewWarnings messages={messages} />
       <EditReviewOverview hasWarnings={!!messages} />
 
-      {propose ? (
+      {!messages && publish && (
         <Box>
-          <Button icon="open" disabled={confirmed} onClick={() => propose()}>
-            {t(buttonsMsgs.propose)}
+          <Box marginBottom={[0, 0, 2]}>
+            <Divider />
+            {' '}
+          </Box>
+
+          <Box marginBottom={[2, 2, 4]}>
+            <Checkbox
+              label={t(reviewMessagse.confirmBeforePublish)}
+              labelVariant="default"
+              checked={confirmed}
+              onChange={() => setConfirmed(!confirmed)}
+            />
+          </Box>
+
+          <Button
+            icon="document"
+            disabled={confirmed}
+            onClick={() => publish()}
+          >
+            {t(buttonsMsgs.publish)}
           </Button>
         </Box>
-      ) : (
-        publish &&
-        !messages && (
-          <Box>
-            <Box marginBottom={[0, 0, 2]}>
-              <Divider />
-              {' '}
-            </Box>
-
-            <Box marginBottom={[2, 2, 4]}>
-              <Checkbox
-                label={t(reviewMessagse.confirmBeforePublish)}
-                labelVariant="default"
-                checked={confirmed}
-                onChange={() => setConfirmed(!confirmed)}
-              />
-            </Box>
-
-            <Button
-              icon="document"
-              disabled={confirmed}
-              onClick={() => publish()}
-            >
-              {t(buttonsMsgs.publish)}
-            </Button>
-          </Box>
-        )
       )}
     </Box>
   )

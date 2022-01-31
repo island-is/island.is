@@ -25,6 +25,18 @@ export const ButtonBar = () => {
         </Box>
       )}
 
+      {step.name === 'review' && actions.propose && (
+        <Box className={s.propose}>
+          <Button
+            onClick={actions.propose}
+            preTextIcon="share"
+            preTextIconType="outline"
+          >
+            {t(msg.propose)}
+          </Button>
+        </Box>
+      )}
+
       {actions.goBack && (
         <Box className={s.back}>
           <Button

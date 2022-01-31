@@ -11,20 +11,20 @@ export const editorMsgs = defineMessages({
     defaultMessage: 'Skráning lýsigagna',
   },
   stepSignatureHeadline: {
-    id: 'ap.regulations-admin:draft-step_impact-headline',
+    id: 'ap.regulations-admin:draft-step_signature-headline',
     defaultMessage: 'Undirritun ráðherra',
   },
   stepSignatureIntro: {
-    id: 'ap.regulations-admin:draft-step3-intro',
+    id: 'ap.regulations-admin:draft-step_signature-intro',
     defaultMessage:
       'Hér hlaða upp eintaki af reglugerðinni með undirritun ráðherra. Það skjal verður að lokum framsent til Stjórnartíðinda.',
   },
   stepImpactHeadline: {
-    id: 'ap.regulations-admin:draft-step_impact-headline',
+    id: 'ap.regulations-admin:draft-step_impacts-headline',
     defaultMessage: 'Áhrif á aðrar reglugerðir',
   },
   stepImpactIntro: {
-    id: 'ap.regulations-admin:draft-step3-intro',
+    id: 'ap.regulations-admin:draft-step_impacts-intro',
     defaultMessage:
       'Hér er skráð hvaða reglugerðir falla brott og hvaða stofnreglugerðir taka efnislegum breytingum og texti þeirra uppfærður.',
   },
@@ -381,7 +381,6 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-legend-changedtitle',
     defaultMessage: 'Uppfærður texti reglugerðar',
   },
-
   impactSelfAffecting: {
     id: 'ap.regulations-admin:draft-label-impact-selfaffecting',
     defaultMessage: 'Hefur áhrif á sjálfa sig',
@@ -530,7 +529,7 @@ export const buttonsMsgs = defineMessages({
   },
   publish: {
     id: 'ap.regulations-admin:btn-publish',
-    defaultMessage: 'Senda til útgáfu í stjórnartíðindum',
+    defaultMessage: 'Búið að senda til birtingar í stjórnartíðindum',
   },
   delete: {
     id: 'ap.regulations-admin:btn-delete',
@@ -560,7 +559,28 @@ export const reviewMessagse = defineMessages({
     defaultMessage: 'Sækja undirritaða útgáfu',
   },
   downloadPDFVersion: {
-    id: 'ap.regulations-admin:review-download-signeddocument',
+    id: 'ap.regulations-admin:review-download-pdfversion',
     defaultMessage: 'Sækja PDF til birtingar',
+  },
+  copyTitle: {
+    id: 'ap.regulations-admin:review-copy-title',
+    defaultMessage: 'Afrita titil reglugerðarinnar',
+  },
+  copyHtml: {
+    id: 'ap.regulations-admin:review-copy-html',
+    defaultMessage: 'Afrita HTML reglugerðarinnar',
+  },
+  copySignatureDate: {
+    id: 'ap.regulations-admin:review-copy-signaturedate',
+    defaultMessage: 'Afrita undirritunardag',
+  },
+  copyIdealPublishDate: {
+    id: 'ap.regulations-admin:review-copy-idealpublishdate',
+    defaultMessage: 'Afrita óska útgáfudag',
+  },
+
+  impactsTitle: {
+    id: 'ap.regulations-admin:review-impacts-title',
+    defaultMessage: 'Áhrif á aðrar reglugerðir',
   },
 })
