@@ -156,38 +156,38 @@ export const signedVerdictOverview = {
           'Notaður sem texti fyrir "loka hnappi" í "undirritun þingbókar" skrefi á yfirlitsskjá afgreiddra mála.',
       },
     }),
-    alterDatesModal: defineMessages({
+    modifyDatesModal: defineMessages({
       title: {
         id:
-          'judicial.system.core:signed_verdict_overview.alter_dates_modal.title',
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.title',
         defaultMessage: 'Breyting á lengd gæsluvarðhalds',
         description:
           'Notaður sem titill í "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
       },
       successTitle: {
         id:
-          'judicial.system.core:signed_verdict_overview.alter_dates_modal.success_title',
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_title',
         defaultMessage: 'Lengd gæsluvarðhalds breytt',
         description:
           'Notaður sem titill í "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála þegar breyting á lengd gæsluvarðhalds hefur verið geymd.',
       },
       reasonForChangeTitle: {
         id:
-          'judicial.system.core:signed_verdict_overview.alter_dates_modal.reason_for_change_title',
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.reason_for_change_title',
         defaultMessage: 'Ástæða breytingar',
         description:
           'Notaður sem titill fyrir "Ástæða breytingar" hlutann í "Breyting á lengd gæsluvarðhalds" glugga.',
       },
       reasonForChangeLabel: {
         id:
-          'judicial.system.core:signed_verdict_overview.alter_dates_modal.reason_for_change_label',
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.reason_for_change_label',
         defaultMessage: 'Ástæða breytingar',
         description:
           'Notaður sem titill í "Ástæða breytingar" textaboxi í "Breyting á lengd gæsluvarðhalds" glugga.',
       },
       reasonForChangePlaceholder: {
         id:
-          'judicial.system.core:signed_verdict_overview.alter_dates_modal.reason_for_change_placeholder',
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.reason_for_change_placeholder',
         defaultMessage:
           'Bóka þarf ástæðu fyrir breytingu á skráðri lengd gæsluvarðhalds.',
         description:
@@ -195,7 +195,7 @@ export const signedVerdictOverview = {
       },
       text: {
         id:
-          'judicial.system.core:signed_verdict_overview.alter_dates_modal.text',
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.text',
         defaultMessage:
           'Hafi gæsluvarðhaldi eða einangrun verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd gæsluvarðhalds. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu.',
         description:
@@ -203,7 +203,7 @@ export const signedVerdictOverview = {
       },
       successText: {
         id:
-          'judicial.system.core:signed_verdict_overview.alter_dates_modal.success_text',
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_text',
         defaultMessage:
           'Gæsluvarðhald og einangrun til 10. desember 2021 kl 16:00. Tilkynning verður send á ábyrgðaraðila málsins hjá sækjanda. Ef gæsluvarðhaldsfangelsi hefur ekki verið upplýst og þörf er á því, þarf að gera það eftir hefðbundinni boðleið.',
         description:
@@ -211,37 +211,37 @@ export const signedVerdictOverview = {
       },
       primaryButtonText: {
         id:
-          'judicial.system.core:signed_verdict_overview.alter_dates_modal.primary_button_text',
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.primary_button_text',
         defaultMessage: 'Staðfesta',
         description:
           'Notaður sem texti í staðfesta takka í "Breyta lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
       },
       secondaryButtonText: {
         id:
-          'judicial.system.core:signed_verdict_overview.alter_dates_modal.secondary_button_text',
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.secondary_button_text',
         defaultMessage: 'Hætta við',
         description:
           'Notaður sem texti í hætta við takka í "Breyta lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
       },
-      alteredValidToDateLabel: {
+      modifiedValidToDateLabel: {
         id:
-          'judicial.system.core:signed_verdict_overview.alter_dates_modal.altered_valid_to_date_label',
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.modified_valid_to_date_label',
         defaultMessage: 'Gæsluvarðhald til',
         description:
           'Notaður sem texti í "Gæsluvarðhald til" í  "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
       },
-      alteredIsolationToDateLabel: {
+      modifiedIsolationToDateLabel: {
         id:
-          'judicial.system.core:signed_verdict_overview.alter_dates_modal.altered_isolation_to_date_label',
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.modified_isolation_to_date_label',
         defaultMessage: 'Einangrun til',
         description:
           'Notaður sem texti í "Einangrun til" í  "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
       },
     }),
-    alterDatesInfo: defineMessages({
+    modifyDatesInfo: defineMessages({
       title: {
         id:
-          'judicial.system.core:signed_verdict_overview.alter_dates_info.title',
+          'judicial.system.core:signed_verdict_overview.modify_dates_info.title',
         defaultMessage: 'Lengd gæslu uppfærð',
         description:
           'Notaður sem titill í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá afgreiddra mála.',

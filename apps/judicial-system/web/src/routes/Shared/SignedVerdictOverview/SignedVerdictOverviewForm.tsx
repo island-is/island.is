@@ -72,7 +72,7 @@ interface Props {
   >
   isRequestingCourtRecordSignature: boolean
   handleRequestCourtRecordSignature: () => void
-  handleOpenDateAlteringModal: () => void
+  handleOpenDateModificationModal: () => void
 }
 
 const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
@@ -88,7 +88,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     setSelectedSharingInstitutionId,
     isRequestingCourtRecordSignature,
     handleRequestCourtRecordSignature,
-    handleOpenDateAlteringModal,
+    handleOpenDateModificationModal,
   } = props
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -234,7 +234,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             canModifyCaseDates()
               ? {
                   label: formatMessage(core.update),
-                  onClick: handleOpenDateAlteringModal,
+                  onClick: handleOpenDateModificationModal,
                   icon: 'pencil',
                 }
               : undefined
@@ -245,7 +245,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         <Box marginBottom={5}>
           <AlertMessage
             type="info"
-            title={formatMessage(m.sections.alterDatesInfo.title)}
+            title={formatMessage(m.sections.modifyDatesInfo.title)}
             message={
               <MarkdownWrapper
                 text={workingCase.caseModifiedExplanation}
