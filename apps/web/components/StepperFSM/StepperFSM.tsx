@@ -295,12 +295,14 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
                 ? router.query.answers.concat(ANSWER_DELIMITER)
                 : ''
 
-            router.push({
-              pathname: pathnameWithoutQueryParams,
-              query: {
-                answers: `${previousAnswers}${selectedOption.slug}`,
-              },
-            })
+            router
+              .push({
+                pathname: pathnameWithoutQueryParams,
+                query: {
+                  answers: `${previousAnswers}${selectedOption.slug}`,
+                },
+              })
+              .then(() => window.scrollTo(0, 0))
 
             if (!transitionWorked) {
               setTransitionErrorMessage(

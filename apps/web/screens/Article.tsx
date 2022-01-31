@@ -365,9 +365,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
   const organizationTitle = article.organization[0]?.title
   const organizationShortTitle = article.organization[0]?.shortTitle
 
-  // TODO: remove this console log, this was only put here to double check what the API was returning
-  console.log(article)
-
   return (
     <>
       <HeadWithSocialSharing
