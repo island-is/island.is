@@ -185,7 +185,7 @@ const useSubmit = (locale: Locale, onRouting?: () => void) => {
     (item: SubmitType) => {
       Router.push({
         ...(item.type === 'query' && {
-          pathname: linkResolver('search').href,
+          pathname: linkResolver('search2').href,
           query: { q: item.string },
         }),
         ...(item.type === 'link' && {

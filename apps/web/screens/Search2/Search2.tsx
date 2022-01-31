@@ -68,19 +68,6 @@ interface CategoryProps {
   namespace: GetNamespaceQuery['getNamespace']
 }
 
-interface SidebarTagMap {
-  [key: string]: {
-    title: string
-    total: number
-  }
-}
-
-interface SidebarData {
-  totalTagCount: number
-  tags: SidebarTagMap
-  types: SidebarTagMap
-}
-
 type TagsList = {
   title: string
   count: number
@@ -123,11 +110,6 @@ const Search2: Screen<CategoryProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const [activeSearchType, setActiveSearchType] = useState<string>('')
-  const [sidebarData, setSidebarData] = useState<SidebarData>({
-    totalTagCount: 0,
-    tags: {},
-    types: {},
-  })
 
   // Submit the search query to plausible
   if (q) {
@@ -136,10 +118,6 @@ const Search2: Screen<CategoryProps> = ({
       source: 'Web',
     })
   }
-
-  // console.log(searchResults, countResults)
-  // console.log('searchResults', searchResults)
-  // console.log('countResults', countResults)
 
   const filters: SearchQueryFilters = {
     category: query.category as string,
@@ -223,7 +201,7 @@ const Search2: Screen<CategoryProps> = ({
     () => ({
       webArticle: n('webArticle', 'Greinar'),
       webSubArticle: n('webSubArticle', 'Undirgreinar'),
-      webAdgerdirPage: n('webAdgerdirPage', 'Viðspyrna'),
+      // webAdgerdirPage: n('webAdgerdirPage', 'Viðspyrna'),
       webLink: n('webLink', 'Tenglar'),
       webNews: n('webNews', 'Fréttir og tilkynningar'),
       webQNA: n('webQNA', 'Spurt og svarað'),
@@ -272,54 +250,6 @@ const Search2: Screen<CategoryProps> = ({
     ]
   }, [countResults.typesCount, getArticleCount, tagTitles])
 
-  useEffect(() => {
-    // we get the tag count manually since the total includes uncategorised data and the type count
-    let totalTagCount = 0
-    // create a map of sidebar tag data for easier lookup later
-    const tagCountResults = countResults.tagCounts.reduce(
-      (tagList: SidebarTagMap, { key, count: total, value: title }) => {
-        // in some rare cases a tag might be empty we skip counting and rendering it
-        if (key && title) {
-          totalTagCount = totalTagCount + total
-
-          tagList[key] = {
-            title,
-            total,
-          }
-        }
-
-        return tagList
-      },
-      {},
-    )
-
-    // create a map of sidebar type data for easier lookup later
-    const typeNames = {
-      webNews: n('newsTitle'),
-      webOrganizationSubpage: n('organizationsTitle', 'Opinberir aðilar'),
-    }
-
-    const typeCountResults = countResults.typesCount.reduce(
-      (typeList: SidebarTagMap, { key, count: total }) => {
-        if (Object.keys(typeNames).includes(key)) {
-          typeList[key] = {
-            title: typeNames[key],
-            total,
-          }
-        }
-        return typeList
-      },
-      {},
-    )
-
-    setSidebarData({
-      totalTagCount,
-      tags: tagCountResults,
-      types: typeCountResults,
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [countResults])
-
   const checkForProcessEntries = (item: SearchType) => {
     if (item.__typename === 'Article') {
       const hasMainProcessEntry =
@@ -352,11 +282,17 @@ const Search2: Screen<CategoryProps> = ({
   )
 
   useEffect(() => {
+    if (!activeSearchType) {
+      return false
+    }
+
     let searchTypes = ''
 
     if (Object.keys(connectedTypes).includes(activeSearchType)) {
       searchTypes = connectedTypes[activeSearchType].map(firstLower).join()
     }
+
+    console.log('here')
 
     replace({
       pathname,
@@ -370,7 +306,7 @@ const Search2: Screen<CategoryProps> = ({
     }).then(() => {
       window.scrollTo(0, 0)
     })
-  }, [activeSearchType, pathname, q, replace])
+  }, [activeSearchType, pathname, q])
 
   const noUncategorized = (item) => {
     if (!item.category && filters.category === 'uncategorized') {
@@ -384,35 +320,6 @@ const Search2: Screen<CategoryProps> = ({
   const nothingFound = filteredItems.length === 0
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
-  const sidebarDataTypes = Object.entries(sidebarData.types)
-  const sidebarDataTags = Object.entries(sidebarData.tags)
-
-  const serviceCategoryItems = (sidebarDataTags ?? []).reduce(
-    (all, [key, { title, total }]) => {
-      const active = key === filters.category
-      const text = `${title} (${total})`
-
-      if (key === 'uncategorized') {
-        return all
-      }
-
-      all.push({
-        title: text,
-        href: `${linkResolver('search2').href}?q=${q}&category=${key}`,
-        active,
-      })
-
-      return all
-    },
-    [],
-  )
-
-  const hasFilters = sidebarDataTypes.length || serviceCategoryItems.length
-
-  const selectedTitle =
-    sidebarData.tags[filters.category]?.title ??
-    sidebarData.types[filters.type]?.title ??
-    n('allCategories', 'Allir flokkar')
 
   const searchResultsText =
     totalSearchResults === 1
@@ -457,40 +364,42 @@ const Search2: Screen<CategoryProps> = ({
                 initialInputValue={q}
               />
               <Box width="full">
-                <Inline space={1}>
-                  {countResults.total > 0 && (
-                    <Tag
-                      variant="blue"
-                      active={!activeSearchType}
-                      onClick={() => setActiveSearchType('')}
-                    >
-                      Allar tegundir
-                    </Tag>
-                  )}
-                  {tagsList
-                    .filter((x) => x.count > 0)
-                    .map(({ title, count, key }, index) => (
+                <Inline justifyContent="spaceBetween" space={1}>
+                  <Inline space={1}>
+                    {countResults.total > 0 && (
                       <Tag
-                        key={index}
                         variant="blue"
-                        active={activeSearchType === key}
-                        onClick={() => setActiveSearchType(key)}
+                        active={!activeSearchType}
+                        onClick={() => setActiveSearchType('')}
                       >
-                        {title} ({count})
+                        Sýna allt
                       </Tag>
-                    ))}
-                  {countResults.processEntryCount > 0 && (
-                    <Tag
-                      variant="blue"
-                      active={activeSearchType === 'ArticlesWithProcessEntry'}
-                      onClick={() =>
-                        setActiveSearchType('ArticlesWithProcessEntry')
-                      }
-                    >
-                      {n('processEntry', 'Umsókn')} (
-                      {countResults.processEntryCount})
-                    </Tag>
-                  )}
+                    )}
+                    {tagsList
+                      .filter((x) => x.count > 0)
+                      .map(({ title, key }, index) => (
+                        <Tag
+                          key={index}
+                          variant="blue"
+                          active={activeSearchType === key}
+                          onClick={() => setActiveSearchType(key)}
+                        >
+                          {title}
+                        </Tag>
+                      ))}
+                    {countResults.processEntryCount > 0 && (
+                      <Tag
+                        variant="blue"
+                        active={activeSearchType === 'ArticlesWithProcessEntry'}
+                        onClick={() =>
+                          setActiveSearchType('ArticlesWithProcessEntry')
+                        }
+                      >
+                        {n('processEntry', 'Umsókn')}
+                      </Tag>
+                    )}
+                  </Inline>
+                  <div>filter here</div>
                 </Inline>
               </Box>
 
@@ -621,6 +530,8 @@ Search2.getInitialProps = async ({ apolloClient, locale, query }) => {
     types = allTypes
   }
 
+  console.log('searching for type', types)
+
   const [
     {
       data: { searchResults },
@@ -636,7 +547,7 @@ Search2.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          types: allTypes,
+          types,
           ...tags,
           ...countTag,
           countTypes: true,
