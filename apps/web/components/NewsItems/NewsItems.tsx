@@ -17,6 +17,9 @@ interface NewsItemsProps {
   headingTitle: string
   seeMoreText: string
   items: GetNewsQuery['getNews']['items']
+  linkType?: LinkType
+  overview?: LinkType
+  parameters?: Array<string>
 }
 
 export const NewsItems = ({
@@ -24,6 +27,9 @@ export const NewsItems = ({
   headingTitle,
   seeMoreText,
   items = [],
+  linkType,
+  overview = 'newsoverview',
+  parameters = [],
 }: NewsItemsProps) => {
   const { linkResolver } = useLinkResolver()
 
@@ -35,7 +41,7 @@ export const NewsItems = ({
             {heading}
           </Text>
           <Box display={['none', 'none', 'block']}>
-            <Link {...linkResolver('newsoverview', [])} skipTab>
+            <Link {...linkResolver(overview, parameters)} skipTab>
               <Button
                 icon="arrowForward"
                 iconType="filled"
@@ -68,12 +74,20 @@ export const NewsItems = ({
                 date={date}
                 heading={title}
                 text={intro}
-                href={linkResolver(tn as LinkType, [slug]).href}
+                href={
+                  linkResolver(linkType ?? (tn as LinkType), [
+                    ...parameters,
+                    slug,
+                  ]).href
+                }
                 image={image}
                 tags={genericTags.map(({ slug, title, __typename: tn }) => {
                   return {
                     label: title,
-                    href: linkResolver(tn as LinkType, [slug]).href,
+                    href: linkResolver(linkType ?? (tn as LinkType), [
+                      ...parameters,
+                      slug,
+                    ]).href,
                   }
                 })}
               />
