@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { FishingLicence, Ship } from './types'
+import { FishingLicence, FishingLicenseCodeType, Ship } from './types'
 
 export interface FishingLicenseClient {
   getShips: (nationalId: string) => Ship[]
@@ -52,29 +52,30 @@ export class FishingLicenceApiClientMock implements FishingLicenseClient {
     return [
       {
         answer: true,
-        name: 'aflamark',
+        fishingLicenseInfo: {
+          code: FishingLicenseCodeType.catchMark,
+          name: 'aflamark',
+        },
         reasons: [
           {
-            description: 'Veiðileyfi með aflamarki',
+            description: 'Some reason what not',
             directions: 'Einungis er heimilt að nýta ...',
           },
         ],
       },
       {
         answer: true,
-        name: 'krókaflamark',
+        fishingLicenseInfo: {
+          code: FishingLicenseCodeType.hookCatchLimit,
+          name: 'krókaflamark',
+        },
         reasons: [
           {
-            description: 'Veiðileyfi með krókaaflamarki',
+            description: 'Other reason what not you know',
             directions:
               'Einungis er heimilt að nýta handfæri og línu með krókaveiðifærum. Báturinn þarf að vera 15 brúttótonn eða minna.',
           },
         ],
-      },
-      {
-        answer: true,
-        name: 'sérleyfi 1',
-        reasons: [{ description: 'test', directions: 'fulla ferð áfram' }],
       },
     ]
   }

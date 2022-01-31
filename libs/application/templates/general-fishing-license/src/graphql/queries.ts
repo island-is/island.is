@@ -25,7 +25,10 @@ export const queryShips = `
 export const queryFishingLicense = gql`
   query FishingLicenseQuery($registrationNumber: Float!) {
     fishingLicenses(registrationNumber: $registrationNumber) {
-      name
+      fishingLicenseInfo {
+        code
+        name
+      }
       answer
       reasons {
         description

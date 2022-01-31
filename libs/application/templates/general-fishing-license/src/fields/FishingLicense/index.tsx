@@ -24,6 +24,8 @@ export const FishingLicense: FC<FieldBaseProps> = ({ application, field }) => {
     application.answers,
     'shipSelection.registrationNumber',
   ) as string
+  console.log(application.answers)
+  console.log(registrationNumber)
 
   const { data, loading } = useQuery(queryFishingLicense, {
     variables: {
@@ -52,7 +54,9 @@ export const FishingLicense: FC<FieldBaseProps> = ({ application, field }) => {
         </Box>
       </Box>
       <Box>
-        <Text variant="h4">Veiðileyfi í boði</Text>
+        <Text variant="h4" marginBottom={3}>
+          Veiðileyfi í boði
+        </Text>
         {loading ? (
           <LoadingDots large color="gradient" />
         ) : (
@@ -61,12 +65,16 @@ export const FishingLicense: FC<FieldBaseProps> = ({ application, field }) => {
             largeButtons
             backgroundColor="blue"
             options={data?.fishingLicenses?.map(
-              ({ name, answer, reasons }: FishingLicenseSchema) => {
+              ({
+                fishingLicenseInfo,
+                answer,
+                reasons,
+              }: FishingLicenseSchema) => {
                 console.log('hello')
-                console.log(name, answer, reasons)
+                console.log(fishingLicenseInfo, answer, reasons)
                 return {
-                  value: name,
-                  label: 'hello',
+                  value: fishingLicenseInfo.name,
+                  label: fishingLicenseInfo.name,
                 }
               },
             )}

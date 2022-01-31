@@ -21,7 +21,11 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
     application.externalData,
     'directoryOfFisheries.data.ships',
   ) as Ship[]
-  const shipIndex = getValueViaPath(answers, 'shipSelection', '0') as string
+  const shipIndex = getValueViaPath(
+    answers,
+    'shipSelection.ship',
+    '0',
+  ) as string
   const ship = ships[parseInt(shipIndex)]
 
   const changeScreens = (screen: string) => {
