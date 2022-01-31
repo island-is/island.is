@@ -69,7 +69,9 @@ const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 const downloadService = downloadServiceSetup()
 
 const userNotificationService = userNotificationServiceSetup()
-const userNotificationWorkerService = userNotificationWorkerSetup()
+const userNotificationWorkerService = userNotificationWorkerSetup({
+  userProfileApi: servicePortalApi,
+})
 
 const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })
