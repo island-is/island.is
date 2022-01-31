@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op, WhereOptions } from 'sequelize'
 import {
@@ -12,6 +12,8 @@ import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 
 import { ApplicationLifecycle } from './types'
+import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
+import AmazonS3URI from 'amazon-s3-uri'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -170,18 +172,4 @@ export class ApplicationService {
     return this.applicationModel.destroy({ where: { id } })
   }
 
-  async findApplicationAttachments(
-    id: string,
-    nationalId: string,
-    s3key: string,
-  ): Promise<Application[]> {
-    console.log(id,nationalId,s3key)
-    return this.applicationModel.findAll({
-      where: {
-        id,
-        applicant: nationalId,
-        attachments: { [Op.contains]: s3key }
-      },
-    })
-  }
 }

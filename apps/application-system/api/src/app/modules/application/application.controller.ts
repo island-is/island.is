@@ -39,7 +39,7 @@ import {
   CustomTemplateFindQuery,
 } from '@island.is/application/core'
 import type { Unwrap, Locale } from '@island.is/shared/types'
-import { BypassAuth, User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
@@ -121,7 +121,6 @@ export class ApplicationController {
   ) {}
   
     @Scopes(ApplicationScope.read)
-    // @BypassAuth()
     @Get('applications/:id/attachments/:s3key/presigned-url')
     @ApiParam({
       name: 'id',
@@ -143,63 +142,23 @@ export class ApplicationController {
       @Param('s3key') s3key: string,
       @CurrentUser() user: User,
     ): Promise<PresignedUrlResponseDto> {
-      
-      // DEMO USER DATA
-      // const id = "1f3e2f11-fba0-4281-ab22-1213209a2060"
-      // const nationalId = "0101303019"
-      s3key = "1b1e33a7-c4a5-41ff-bdcc-d81b8990d342_1-f-6-c-0986-d-58-d-4-ef-2-91-b-9-90-d-91-c-43-cd-3-f-placeholder-1.png"
-
-      
-      // check user for application
       const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
         id,
         user.nationalId,
       )
-      const fixed = "https://island-is-dev-storage-application-system.s3-eu-west-1.amazonaws.com/1f3e2f11-fba0-4281-ab22-1213209a2060/18e6843a-7c3a-4623-9b7c-5a66cb87d5d8_placeholder.png"
-      const { region, bucket, key } = AmazonS3URI(fixed)
-      return await this.fileService.getAttachmentPresignedURL(bucket,key)
-      // return existingApplication 
-
-      // // VS getting it DYNAMIC PROPERTIES AND DTO ?  JSON OBJECTS IN DB GREAT ....
-      // // return await this.applicationService.findApplicationAttachments(
-      // //   id,
-      // //   nationalId,
-      // //   s3key
-      // // )
       
-      // // check for attachment key in application - ACCESS ATTACHEMNT IN ANOHTER WAY
-      // if(existingApplication.attachments){
-      //   if(existingApplication.attachments.hasOwnProperty(s3key)){
-      //     for (const [k, filename] of Object.entries(existingApplication.attachments)) {
-      //       console.log(`${k}: ${filename}`);
-      //       if(k==s3key){
-      //         const { region, bucket, key } = AmazonS3URI(filename)
-      //         return await this.fileService.getAttachmentPresignedURL(bucket,key)
-      //       }
-      //     }      
-      //     // const { region, bucket, key } = AmazonS3URI(existingApplication.attachments[s3key])
-      //     // console.log(region, bucket, key)
-      //     // return await this.fileService.getAttachmentPresignedURL(bucket,key)
-      //   } else {
-      //     console.log("attachment key not found")
-      //     throw new NotFoundException()
-      //   }
-      // } else {
-      //   console.log("attachments not found")
-      //   throw new NotFoundException()
-      // }
-      // // return url
-      // // this.auditService.audit({
-      // //   auth: user,
-      // //   action: 'getPresignedUrl',
-      // //   resources: existingApplication.id,
-      // //   meta: { type },
-      // // })
+      if (!existingApplication.attachments) {
+        throw new NotFoundException("Attachments not found")
+      }
 
-      // // COMMANDS
-      // // yarn nx schemas/build-openapi application-system-api --skip-nx-cache
-      // // yarn nx schemas/openapi-generator api-domains-application --skip-nx-cache
-
+      try {
+        let str = s3key as keyof typeof existingApplication.attachments
+        const filename = existingApplication.attachments[str]
+        const { region, bucket, key } = AmazonS3URI(filename)
+        return await this.fileService.getAttachmentPresignedURL(bucket,key)
+      } catch (error) {
+        throw new NotFoundException("Attachment not found")
+      }
     }
   
   @Scopes(ApplicationScope.read)
