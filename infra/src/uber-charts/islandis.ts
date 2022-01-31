@@ -150,4 +150,11 @@ export const Services: EnvironmentServices = {
   ],
 }
 
+// Services that are not included in any environment above but should be used in feature deployments
 export const FeatureDeploymentServices = []
+
+// Services that are included in some environment above but should be excluded from feature deployments
+export const ExcludedFeatureDeploymentServices = [
+  userNotificationService,
+  userNotificationWorkerService,
+]
