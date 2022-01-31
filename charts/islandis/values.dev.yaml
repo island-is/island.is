@@ -486,7 +486,7 @@ application-system-api-worker:
     default: 2
     max: 3
     min: 2
-  schedule: '*/10 * * * *'
+  schedule: '*/30 * * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
