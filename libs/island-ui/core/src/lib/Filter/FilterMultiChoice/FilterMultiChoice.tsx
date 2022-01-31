@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { FC, ReactNode, useContext, ChangeEvent } from 'react'
 import { Accordion } from '../../Accordion/Accordion'
 import {
   AccordionCard,
@@ -7,6 +7,8 @@ import {
 import { Box } from '../../Box/Box'
 import { Button } from '../../Button/Button'
 import { Checkbox } from '../../Checkbox/Checkbox'
+import { RadioButton } from '../../RadioButton/RadioButton'
+import { Inline } from '../../Inline/Inline'
 import { Stack } from '../../Stack/Stack'
 import { FilterContext } from '../Filter'
 
@@ -14,16 +16,20 @@ type FilterCategory = {
   /** Id for the category. */
   id: string
   /** The category label to display on screen. */
-  label: string
+  label: string | ReactNode
   /** The array of currently selected active filters. */
   selected: Array<string>
   /** Array of available filters in this category. */
   filters: Array<FilterItem>
+  /** Display checkboxes inline */
+  inline?: boolean
+  /** Allow only one option at a time */
+  singleOption?: boolean
 }
 
 type FilterItem = {
   value: string
-  label: string
+  label: string | ReactNode
 }
 
 type FilterMultiChoiceChangeEvent = {
@@ -46,7 +52,7 @@ export interface FilterMultiChoiceProps {
   onClear: (categoryId: string) => void
 }
 
-export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
+export const FilterMultiChoice: FC<FilterMultiChoiceProps> = ({
   labelClear,
   categories,
   singleExpand,
@@ -56,11 +62,14 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
   const { variant } = useContext(FilterContext)
 
   const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement>,
     category: FilterCategory,
+    singleOption = false,
   ) => {
     if (event.target.checked) {
-      category.selected.push(event.target.value)
+      singleOption
+        ? (category.selected = [event.target.value])
+        : category.selected.push(event.target.value)
     } else {
       category.selected.splice(category.selected.indexOf(event.target.value), 1)
     }
@@ -70,6 +79,29 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
       selected: category.selected,
     })
   }
+
+  const renderCategoryFilters = (category: FilterCategory) =>
+    category.filters.map((filter) =>
+      category.singleOption ? (
+        <RadioButton
+          key={`${category.id}-${filter.value}`}
+          name={`${category.id}-${filter.value}`}
+          label={filter.label}
+          value={filter.value}
+          checked={category.selected.includes(filter.value)}
+          onChange={(event) => handleChange(event, category, true)}
+        />
+      ) : (
+        <Checkbox
+          key={`${category.id}-${filter.value}`}
+          name={`${category.id}-${filter.value}`}
+          label={filter.label}
+          value={filter.value}
+          checked={category.selected.includes(filter.value)}
+          onChange={(event) => handleChange(event, category)}
+        />
+      ),
+    )
 
   return variant === 'dialog' ? (
     <Stack space={2}>
@@ -81,17 +113,9 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
           iconVariant="small"
         >
           <Stack space={2}>
-            {category.filters.map((filter) => (
-              <Checkbox
-                key={`${category.id}-${filter.value}`}
-                name={`${category.id}-${filter.value}`}
-                label={filter.label}
-                value={filter.value}
-                checked={category.selected.includes(filter.value)}
-                onChange={(event) => handleChange(event, category)}
-              />
-            ))}
-
+            <CheckboxWrapper inline={category.inline}>
+              {renderCategoryFilters(category)}
+            </CheckboxWrapper>
             {category.selected.length > 0 && (
               <Box textAlign="right">
                 <Button
@@ -129,17 +153,9 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
             iconVariant="small"
           >
             <Stack space={2}>
-              {category.filters.map((filter) => (
-                <Checkbox
-                  key={`${category.id}-${filter.value}`}
-                  name={`${category.id}-${filter.value}`}
-                  label={filter.label}
-                  value={filter.value}
-                  checked={category.selected.includes(filter.value)}
-                  onChange={(event) => handleChange(event, category)}
-                />
-              ))}
-
+              <CheckboxWrapper inline={category.inline}>
+                {renderCategoryFilters(category)}
+              </CheckboxWrapper>
               {category.selected.length > 0 && (
                 <Box textAlign="right">
                   <Button
@@ -159,3 +175,17 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
     </Box>
   )
 }
+
+interface CheckboxWrapperProps {
+  inline?: boolean
+  children: ReactNode
+}
+
+const CheckboxWrapper = ({ inline = false, children }: CheckboxWrapperProps) =>
+  inline ? (
+    <Inline space={1} justifyContent="spaceBetween">
+      {children}
+    </Inline>
+  ) : (
+    <Stack space={2}>{children}</Stack>
+  )
