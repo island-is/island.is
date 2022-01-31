@@ -260,10 +260,10 @@ export class CaseResolver {
 
   @ResolveField(() => [Notification])
   async notifications(
-    @Parent() existingCase: Case,
+    @Parent() theCase: Case,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Notification[]> {
-    const { id } = existingCase
+    const { id } = theCase
 
     return backendApi
       .getCaseNotifications(id)
@@ -272,10 +272,10 @@ export class CaseResolver {
 
   @ResolveField(() => [CaseFile])
   async caseFiles(
-    @Parent() existingCase: Case,
+    @Parent() theCase: Case,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<CaseFile[]> {
-    const { id } = existingCase
+    const { id } = theCase
 
     return backendApi.getCaseFiles(id).catch(() => [] as TCaseFile[])
   }

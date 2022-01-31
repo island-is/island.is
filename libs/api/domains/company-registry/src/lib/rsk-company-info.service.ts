@@ -23,7 +23,7 @@ export class RskCompanyInfoService {
     nationalId: string,
   ): Promise<RskCompany> {
     this.logger.debug(`Service getting company by nationalId ${nationalId}`)
-    const company = await this.rskCompanyInfoApi.v1FyrirtaekjaskraSsidGet({
+    const company = await this.rskCompanyInfoApi.v1FtSsidGet({
       ssid: nationalId,
     })
     this.logger.debug(`Company in service ${company.toString()}`)
@@ -93,7 +93,7 @@ export class RskCompanyInfoService {
     cursor?: string,
   ): Promise<RskCompanySearchItems | null> {
     const offset = cursor ? decodeBase64(cursor) : '0'
-    const searchResults = await this.rskCompanyInfoApi.v1FyrirtaekjaskraSearchSearchStringGet(
+    const searchResults = await this.rskCompanyInfoApi.v1FtSearchSearchStringGet(
       {
         searchString: searchTerm,
         limit: limit.toString(),
