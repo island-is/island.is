@@ -282,82 +282,109 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-btn-change-add',
     defaultMessage: 'Ný texta-/ákvæðabreyting',
   },
+})
 
-  impactRegExplainer: {
+export const impactMsgs = defineMessages({
+  impactListTitle: {
+    id: 'ap.regulations-admin:impacts-list-title',
+    defaultMessage: 'Skráðar áhrifafærslur',
+  },
+  impactListTitleEmpty: {
+    id: 'ap.regulations-admin:impacts-list-title',
+    defaultMessage: 'Engar áhrifafærslur skráðar',
+  },
+  typeChange: {
+    id: 'ap.regulations-admin:impacts-type-change',
+    defaultMessage: 'Textabreyting',
+  },
+  typeCancellation: {
+    id: 'ap.regulations-admin:impacts-type-cancellation',
+    defaultMessage: 'Brottfelling',
+  },
+
+  impactListEditButton: {
+    id: 'ap.regulations-admin:impacts-list-editbutton',
+    defaultMessage: 'Skoða / breyta',
+  },
+
+  selfAffecting: {
+    id: 'ap.regulations-admin:draft-label-impact-selfaffecting',
+    defaultMessage: 'Hefur áhrif á sjálfa sig',
+  },
+
+  // ---------------------------------------------------------------------------
+
+  regExplainer: {
     id: 'ap.regulations-admin:draft-impactedreg-explainer',
     defaultMessage:
       'ATH: Einungis er hægt að breyta reglugerðum sem minnst er á með skýrum hætti í texta reglugerðarinnar.',
   },
-  impactRegExplainer_editLink: {
+  regExplainer_editLink: {
     id: 'ap.regulations-admin:draft-impactedreg-editlink',
     defaultMessage: 'Endurskoða textann',
   },
 
-  impactRegSelect: {
+  regSelect: {
     id: 'ap.regulations-admin:draft-label-impactedreg',
     defaultMessage: 'Reglugerð sem breytist',
   },
-  impactRegSelect_mentionedNotFound: {
+  regSelect_mentionedNotFound: {
     id: 'ap.regulations-admin:draft-opts-mentionednotfound',
     defaultMessage: 'er ekki reglugerð',
   },
-  impactRegSelect_mentionedRepealed: {
+  regSelect_mentionedRepealed: {
     id: 'ap.regulations-admin:draft-opts-mentionedrepealed',
     defaultMessage: 'brottfallin',
   },
-  impactRegSelect_placeholder: {
+  regSelect_placeholder: {
     id: 'ap.regulations-admin:draft-opts-impactedreg_placeholder',
     defaultMessage: 'Veldu reglugerð',
   },
-  impactEffectiveDate: {
+  effectiveDate: {
     id: 'ap.regulations-admin:draft-labels-impacteffectivedate',
     defaultMessage: 'Gildistaka breytinga',
   },
-  impactEffectiveDate_default: {
+  effectiveDate_default: {
     id: 'ap.regulations-admin:draft-opts-impacteffectivedate-default',
     defaultMessage: 'Tekur þegar gildi', // 'Á útgáfudegi'
   },
-  impactEffectiveDate_toosoon: {
+  effectiveDate_toosoon: {
     id: 'ap.regulations-admin:draft-opts-impacteffectivedate-toosoon',
     defaultMessage: 'Breytingar geta ekki tekið gildi á undan reglugerðinni', // 'Á útgáfudegi'
   },
 
-  chooseImpactType: {
+  chooseType: {
     id: 'ap.regulations-admin:draft-legend-impacttype',
     defaultMessage: 'Hvað viltu gera við reglugerðina?',
   },
-  chooseImpactType_cancel: {
+  chooseType_cancel: {
     id: 'ap.regulations-admin:draft-legend-impacttype-cancel',
     defaultMessage: 'Fella hana brott',
   },
-  chooseImpactType_change: {
+  chooseType_change: {
     id: 'ap.regulations-admin:draft-legend-impacttype-change',
     defaultMessage: 'Gera textabreytingar',
   },
-  chooseImpactType_or: {
+  chooseType_or: {
     id: 'ap.regulations-admin:draft-legend-impacttype-or',
     defaultMessage: 'eða',
   },
 
-  cancallation_save: {
+  saveButtonCancallation: {
     id: 'ap.regulations-admin:draft-btn-cancallation-save',
     defaultMessage: 'Vista brottfellingu',
   },
-  change_save: {
+  saveButtonChange: {
     id: 'ap.regulations-admin:draft-btn-change-save',
     defaultMessage: 'Vista brottfellingu',
   },
-  impact_cancel: {
+  cancelButton: {
     id: 'ap.regulations-admin:draft-btn-impact-cancel',
     defaultMessage: 'Hætta við',
   },
-  impact_remove: {
+  deleteButton: {
     id: 'ap.regulations-admin:draft-btn-impact-remove',
     defaultMessage: 'Eyða áhrifafærslu',
-  },
-  change_edit: {
-    id: 'ap.regulations-admin:draft-btn-change-edit',
-    defaultMessage: 'Breyta breytingafærslu',
   },
 
   cancelledRegulation: {
@@ -368,10 +395,6 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-label-changedregulation',
     defaultMessage: 'Stofnreglugerð sem breytist',
   },
-  impactDate: {
-    id: 'ap.regulations-admin:draft-label-impactdate',
-    defaultMessage: 'Gildistökudagur',
-  },
 
   changedTitle: {
     id: 'ap.regulations-admin:draft-label-changedtitle',
@@ -380,10 +403,6 @@ export const editorMsgs = defineMessages({
   changedText: {
     id: 'ap.regulations-admin:draft-legend-changedtitle',
     defaultMessage: 'Uppfærður texti reglugerðar',
-  },
-  impactSelfAffecting: {
-    id: 'ap.regulations-admin:draft-label-impact-selfaffecting',
-    defaultMessage: 'Hefur áhrif á sjálfa sig',
   },
 })
 

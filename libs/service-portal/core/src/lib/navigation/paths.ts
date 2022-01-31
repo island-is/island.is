@@ -108,6 +108,6 @@ export enum ServicePortalPath {
   // DocumentProviderStatistics = '/skjalaveita/tolfraedi',
 
   RegulationsAdminRoot = '/reglugerdir-admin',
-  RegulationsAdminEdit = '/reglugerdir-admin/edit/:id(.{36})/:step?',
+  RegulationsAdminEdit = '/reglugerdir-admin/edit/:draftId(.{36})/:stepName?',
   RegulationsAdminMinistries = '/reglugerdir-admin/raduneyti',
 }

@@ -3,7 +3,7 @@ import { Step } from '../types'
 import { LawChapter, MinistryList } from '@island.is/regulations'
 import { Action, DraftingState } from './types'
 import { produce, setAutoFreeze } from 'immer'
-import { RegulationDraft } from '@island.is/regulations/admin'
+import { DraftImpactId, RegulationDraft } from '@island.is/regulations/admin'
 import { useAuth } from '@island.is/auth/react'
 import { RegulationsAdminScope } from '@island.is/auth/scopes'
 import { derivedUpdates, validateState } from './validations'
@@ -30,6 +30,7 @@ const draftingStateReducer: Reducer<DraftingState, Action> = (
 
 export type StateInputs = {
   regulationDraft: RegulationDraft
+  activeImpact?: DraftImpactId
   ministries: MinistryList
   lawChapters: Array<LawChapter>
   stepName: Step

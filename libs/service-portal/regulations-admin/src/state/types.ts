@@ -35,9 +35,14 @@ export type DraftField<Type, InputType extends string = ''> = {
   type?: InputType
 }
 
-// TODO: Figure out how the Editor components lazy valueRef.current() getter fits into this
 export type HtmlDraftField = DraftField<HTMLText, 'html'> & {
+  // list of warnings from useHighAngstWarnings
   warnings: WarningList
+}
+
+export type DateDraftField = DraftField<Date | undefined, 'date'> & {
+  min?: Date
+  max?: Date
 }
 
 export type AppendixDraftForm = {
@@ -76,7 +81,7 @@ type DraftImpactBaseFields<
   // always prefilled on "create" - non-editable
   Pick<ImpactType, 'id' | 'type' | 'name'>
 > & {
-  date: DraftField<Date | undefined>
+  date: DateDraftField
   regTitle: string
   error?: MessageDescriptor | string
 }
@@ -97,11 +102,11 @@ export type RegDraftForm = BodyDraftFields & {
   id: RegulationDraftId
   readonly draftingStatus: DraftingStatus // non-editable except via saveStatus or propose actions
 
-  idealPublishDate: DraftField<Date | undefined>
-  effectiveDate: DraftField<Date | undefined>
+  idealPublishDate: DateDraftField
+  effectiveDate: DateDraftField
   lawChapters: DraftField<Array<LawChapterSlug>>
 
-  signatureDate: DraftField<Date | undefined>
+  signatureDate: DateDraftField
   ministry: DraftField<PlainText | undefined, 'text'>
   type: DraftField<RegulationType | undefined>
 
@@ -141,8 +146,8 @@ export type DraftingState = {
     list: Array<LawChapter>
     bySlug: Record<string, string>
   }
-  /** true while saving the draft */
 
+  /** true while saving the draft */
   saving?: boolean
   /** "Toastable" errror that occur during loading/saving/etc. */
   error?: { message: MessageDescriptor | string; error?: Error }
@@ -226,12 +231,18 @@ export type Action =
       type: 'APPENDIX_DELETE'
       idx: number
     }
-// // TODO: Adapt for impact appendixes
-// | {
-//     type: 'APPENDIX_REVOKE'
-//     idx: number
-//     revoked: boolean
-//   }
+
+  // TODO: Implement appendix actions for DraftChanges
+  // TODO: Also Implement revocation action for DraftChange appendixes
+  // | {
+  //     type: 'APPENDIX_REVOKE'
+  //     idx: number
+  //     revoked: boolean
+  //   }
+  | {
+      type: 'SET_IMPACT'
+      impactId: DraftImpactId | undefined
+    }
 
 export type ActionName = Action['type']
 

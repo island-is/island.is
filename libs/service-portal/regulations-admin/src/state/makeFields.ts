@@ -7,6 +7,7 @@ import {
 import { Step } from '../types'
 import {
   AppendixDraftForm,
+  DateDraftField,
   DraftCancelForm,
   DraftChangeForm,
   DraftField,
@@ -73,6 +74,17 @@ const fHtml = (
   type: 'html',
   warnings: [],
 })
+const fDate = (
+  value: Date | undefined,
+  required?: true | MessageDescriptor,
+  opts: { min?: Date; max?: Date } = {},
+): DateDraftField => ({
+  value,
+  required,
+  type: 'date',
+  max: opts.max,
+  min: opts.min,
+})
 
 // ---------------------------------------------------------------------------
 
@@ -83,7 +95,7 @@ export const makeDraftCancellationForm = (
   type: 'repeal',
   name: cancellation.name,
   regTitle: cancellation.regTitle,
-  date: f(cancellation.date && new Date(cancellation.date)),
+  date: fDate(cancellation.date && new Date(cancellation.date)),
 })
 
 export const makeDraftChangeForm = (
@@ -93,7 +105,7 @@ export const makeDraftChangeForm = (
   type: 'amend',
   name: change.name,
   regTitle: change.regTitle,
-  date: f(change.date && new Date(change.date)),
+  date: fDate(change.date && new Date(change.date)),
   title: fText(change.title, true),
   text: fHtml(change.text, true),
   appendixes: change.appendixes.map((a, i) =>
@@ -124,12 +136,12 @@ export const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
       makeDraftAppendixForm(a, String(i)),
     ),
 
-    idealPublishDate: f(
+    idealPublishDate: fDate(
       draft.idealPublishDate && new Date(draft.idealPublishDate),
     ),
     fastTrack: f(draft.fastTrack || false),
 
-    effectiveDate: f(draft.effectiveDate && new Date(draft.effectiveDate)),
+    effectiveDate: fDate(draft.effectiveDate && new Date(draft.effectiveDate)),
 
     signatureText: fHtml(draft.signatureText, true),
     signedDocumentUrl: f(
@@ -153,7 +165,7 @@ export const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
 
     type: f(undefined /* draft.type */, errorMsgs.typeRequired), // NOTE: Regulation type is always a derived value
     ministry: f(undefined /* draft.ministry */, true), // NOTE: The ministry is always a derived value
-    signatureDate: f(
+    signatureDate: fDate(
       undefined /* draft.signatureDate && new Date(draft.signatureDate) */,
       true,
     ), // NOTE: Signature date is always a derived value

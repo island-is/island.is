@@ -10,7 +10,6 @@ import {
   RegulationType,
   Regulation,
   LawChapter,
-  Ministry,
 } from './types'
 
 // ---------------------------------------------------------------------------

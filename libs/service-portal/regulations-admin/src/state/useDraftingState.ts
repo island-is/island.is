@@ -14,7 +14,11 @@ import {
 import { useHistory } from 'react-router-dom'
 import { Step } from '../types'
 import { useLocale } from '../utils'
-import { DraftingStatus, RegulationDraft } from '@island.is/regulations/admin'
+import {
+  DraftImpactId,
+  DraftingStatus,
+  RegulationDraft,
+} from '@island.is/regulations/admin'
 import {
   RegDraftForm,
   DraftingState,
@@ -80,6 +84,13 @@ const useMakeDraftingState = (inputs: StateInputs) => {
     inputs.stepName,
     draftIsLocked,
     history, // NOTE: Should be immutable
+    dispatch, // NOTE: Should be immutable
+  ])
+
+  useEffect(() => {
+    dispatch({ type: 'SET_IMPACT', impactId: inputs.activeImpact })
+  }, [
+    inputs.activeImpact,
     dispatch, // NOTE: Should be immutable
   ])
 
@@ -330,20 +341,24 @@ const RegDraftingContext = createContext(
   {} as DraftingState & { actions: RegDraftActions },
 )
 
-type RegDraftingProviderProps = {
-  regulationDraft: RegulationDraft
-  stepName: Step
-  ministries: MinistryList
-  lawChapters: Array<LawChapter>
+type RegDraftingProviderProps = StateInputs & {
   children: ReactNode
 }
 
 export const RegDraftingProvider = (props: RegDraftingProviderProps) => {
-  const { regulationDraft, ministries, lawChapters, stepName, children } = props
+  const {
+    regulationDraft,
+    activeImpact,
+    ministries,
+    lawChapters,
+    stepName,
+    children,
+  } = props
 
   return React.createElement(RegDraftingContext.Provider, {
     value: useMakeDraftingState({
       regulationDraft,
+      activeImpact,
       ministries,
       lawChapters,
       stepName,

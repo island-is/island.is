@@ -179,6 +179,9 @@ const updateImpacts = (
 ) => {
   const { impacts, mentioned, type } = draft
 
+  // Title should only be considered for "breytingareglugerðir" (type: `amending`)
+  // because we assume that Stofnreglugerð *title* will never mention another
+  // regulation that its changing. Prove us wrong!
   const checkedTitle = type.value === 'amending' ? title : ''
   const newMentions = findAffectedRegulationsInText(checkedTitle, text)
 
@@ -269,6 +272,10 @@ export const derivedUpdates: {
       : undefined
     draft.ministry.error = ministryError || draft.ministry.error
     draft.ministry.showError = hasMinistryError || draft.ministry.showError
+  },
+
+  idealPublishDate: (state, newValue) => {
+    // FIXME: TODO: lower-boundry-check explicitly set impact dates.
   },
 }
 

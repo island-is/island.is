@@ -1,4 +1,4 @@
-import { RegulationDraftId } from '@island.is/regulations/admin'
+import { DraftImpactId, RegulationDraftId } from '@island.is/regulations/admin'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { generatePath } from 'react-router'
 import { isUuid } from 'uuidv4'
@@ -19,8 +19,8 @@ export const getEditUrl: GetEditUrlFn = (
 ) => {
   if (isUuid(draftIdOrStepName)) {
     return generatePath(RegulationsAdminEdit, {
-      id: draftIdOrStepName,
-      step: stepName,
+      draftId: draftIdOrStepName,
+      stepName,
     })
   }
   return draftIdOrStepName || '.'
@@ -29,3 +29,12 @@ export const getEditUrl: GetEditUrlFn = (
 // ---------------------------------------------------------------------------
 
 export const getHomeUrl = () => ServicePortalPath.RegulationsAdminRoot
+
+// ---------------------------------------------------------------------------
+
+export const getImpactUrl = (
+  impactId: DraftImpactId,
+  draftId?: RegulationDraftId,
+) =>
+  (draftId ? generatePath(RegulationsAdminEdit, { draftId }) : '') +
+  `impacts?impact=${encodeURI(impactId)}`

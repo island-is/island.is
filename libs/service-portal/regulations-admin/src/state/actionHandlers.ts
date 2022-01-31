@@ -112,5 +112,13 @@ export const actionHandlers: {
       }
     }
   },
+
+  SET_IMPACT: (state, { impactId }) => {
+    if (impactId && state.draft.impacts.find((c) => c.id === impactId)) {
+      state.activeImpact = impactId
+    }
+    // ignore invalid/uknown `impactId`s
+    state.activeImpact = undefined
+  },
 }
 /* eslint-enable @typescript-eslint/naming-convention */

@@ -1,6 +1,6 @@
 import React, { ReactNode, useState } from 'react'
 import { Box, Button, Inline, Text, Divider } from '@island.is/island-ui/core'
-import { editorMsgs, reviewMessagse } from '../messages'
+import { editorMsgs, impactMsgs, reviewMessagse } from '../messages'
 import { useDraftingState } from '../state/useDraftingState'
 import { useLocale } from '../utils'
 import { downloadUrl } from '../utils/files'
@@ -170,7 +170,7 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
           {impactsByTarget.map(({ name, regTitle, impacts }) => {
             const label =
               name === 'self'
-                ? t(editorMsgs.impactSelfAffecting)
+                ? t(impactMsgs.selfAffecting)
                 : `${prettyName(name)} – ${regTitle}`
 
             return (

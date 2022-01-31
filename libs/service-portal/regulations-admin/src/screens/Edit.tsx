@@ -2,7 +2,7 @@ import React, { FC, Fragment, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { RegulationDraftId } from '@island.is/regulations/admin'
+import { DraftImpactId, RegulationDraftId } from '@island.is/regulations/admin'
 import { isUuid } from 'uuidv4'
 import { Step } from '../types'
 import {
@@ -29,7 +29,7 @@ import { ButtonBar } from '../components/ButtonBar'
 
 // ---------------------------------------------------------------------------
 
-const assertStep = (maybeStep?: string): Step => {
+const assertStep = (maybeStep: string | undefined): Step => {
   const stepName = ensureStepName(maybeStep || 'basics')
   if (stepName) {
     return stepName
@@ -37,11 +37,18 @@ const assertStep = (maybeStep?: string): Step => {
   throw new Error('Invalid RegulationDraft editing Step')
 }
 
-const assertDraftId = (maybeId: string): RegulationDraftId => {
-  if (isUuid(maybeId)) {
+const assertDraftId = (maybeId: string | undefined): RegulationDraftId => {
+  if (typeof maybeId === 'string' && isUuid(maybeId)) {
     return maybeId as RegulationDraftId
   }
   throw new Error('Invalid RegulationDraft editing Id')
+}
+
+const assertImpactId = (maybeId: string | undefined): DraftImpactId => {
+  if (typeof maybeId === 'string' && maybeId && isUuid(maybeId)) {
+    return maybeId as DraftImpactId
+  }
+  throw new Error('Invalid DraftImpactId')
 }
 
 // ---------------------------------------------------------------------------
@@ -118,11 +125,15 @@ const EditScren = () => {
 const EditApp = () => {
   useNamespaces('ap.regulations-admin')
 
-  const params = useParams<{ id: string; step?: string }>()
-  const id = assertDraftId(params.id)
-  const stepName = assertStep(params.step)
+  const params = useParams<Record<string, string | undefined>>()
+  const draftId = assertDraftId(params.draftId)
+  const stepName = assertStep(params.stepName)
+  const impactId =
+    stepName === 'impacts' && params.impact
+      ? assertImpactId(params.impact)
+      : undefined
 
-  const regulationDraft = useRegulationDraftQuery(id)
+  const regulationDraft = useRegulationDraftQuery(draftId)
   const ministries = useMinistriesQuery()
   const lawChapters = useLawChaptersQuery()
 
@@ -131,7 +142,7 @@ const EditApp = () => {
   }
 
   if (regulationDraft.error) {
-    throw new Error(`Regulation ${id} not found`)
+    throw new Error(`Regulation ${draftId} not found`)
   }
   if (ministries.error) {
     throw ministries.error
@@ -143,11 +154,12 @@ const EditApp = () => {
   return (
     <RegDraftingProvider
       regulationDraft={regulationDraft.data}
+      activeImpact={impactId}
       stepName={stepName}
       ministries={ministries.data}
       lawChapters={lawChapters.data}
     >
-      <EditScren key={id} />
+      <EditScren key={draftId} />
     </RegDraftingProvider>
   )
 }
