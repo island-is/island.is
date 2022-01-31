@@ -12,7 +12,7 @@ function setFont(doc: PDFKit.PDFDocument, font?: string) {
   }
 }
 
-function addHeading(
+function addCenteredText(
   doc: PDFKit.PDFDocument,
   fontSise: number,
   heading: string,
@@ -20,7 +20,7 @@ function addHeading(
 ) {
   setFont(doc, font)
 
-  doc.fontSize(fontSise).text(heading, { align: 'center' })
+  doc.fontSize(fontSise).text(heading, { align: 'center', paragraphGap: 1 })
 }
 
 function addText(
@@ -32,7 +32,18 @@ function addText(
 ) {
   setFont(doc, font)
 
-  doc.fontSize(fontSise).text(text, { continued })
+  doc.fontSize(fontSise).text(text, { continued, paragraphGap: 1 })
+}
+
+function addJustifiedText(
+  doc: PDFKit.PDFDocument,
+  fontSise: number,
+  text: string,
+  font?: string,
+) {
+  setFont(doc, font)
+
+  doc.fontSize(fontSise).text(text, { align: 'justify', paragraphGap: 1 })
 }
 
 export function setTitle(doc: PDFKit.PDFDocument, title: string) {
@@ -81,7 +92,7 @@ export function addHugeHeading(
   heading: string,
   font?: string,
 ) {
-  addHeading(doc, hugeFontSize, heading, font)
+  addCenteredText(doc, hugeFontSize, heading, font)
 }
 
 export function addLargeHeading(
@@ -89,7 +100,7 @@ export function addLargeHeading(
   heading: string,
   font?: string,
 ) {
-  addHeading(doc, largeFontSize, heading, font)
+  addCenteredText(doc, largeFontSize, heading, font)
 }
 
 export function addMediumPlusHeading(
@@ -97,7 +108,7 @@ export function addMediumPlusHeading(
   heading: string,
   font?: string,
 ) {
-  addHeading(doc, mediumPlusFontSize, heading, font)
+  addCenteredText(doc, mediumPlusFontSize, heading, font)
 }
 
 export function addMediumHeading(
@@ -105,7 +116,7 @@ export function addMediumHeading(
   heading: string,
   font?: string,
 ) {
-  addHeading(doc, mediumFontSize, heading, font)
+  addCenteredText(doc, mediumFontSize, heading, font)
 }
 
 export function addLargeText(
@@ -131,6 +142,22 @@ export function addNormalText(
   continued?: boolean,
 ) {
   addText(doc, baseFontSize, text, font, continued)
+}
+
+export function addNormalJustifiedText(
+  doc: PDFKit.PDFDocument,
+  text: string,
+  font?: string,
+) {
+  addJustifiedText(doc, baseFontSize, text, font)
+}
+
+export function addNormalCenteredText(
+  doc: PDFKit.PDFDocument,
+  text: string,
+  font?: string,
+) {
+  addCenteredText(doc, baseFontSize, text, font)
 }
 
 export function addNumberedList(
