@@ -19,13 +19,14 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
 import {
   DefaultProjectHeader,
-  LatestNewsSectionSlider,
   OrganizationSlice,
   Section,
   Stepper,
   EntryProjectHeader,
   HeadWithSocialSharing,
   ElectionProjectHeader,
+  OneColumnTextSlice,
+  NewsItems,
 } from '@island.is/web/components'
 import {
   Box,
@@ -283,33 +284,35 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           </Box>
         </Hidden>
         {!!subpage && (
-          <>
+          <Box marginBottom={1}>
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
             {subpage.content && richText(subpage.content as SliceType[])}
-          </>
+          </Box>
         )}
         {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
-          <TableOfContents
-            tableOfContentsTitle={n('tableOfContentsTitle', 'Undirkaflar')}
-            headings={subpage.slices.map((slice) => ({
-              headingId: slice.id,
-              headingTitle: (slice as OneColumnText).title,
-            }))}
-            selectedHeadingId={selectedSliceTab?.id}
-            onClick={(id) => {
-              const slice = subpage.slices.find(
-                (s) => s.id === id,
-              ) as OneColumnText
-              router.push(
-                `${baseRouterPath}#${slugify(slice.title)}`,
-                undefined,
-                { shallow: true },
-              )
-              setSelectedSliceTab(slice)
-            }}
-          />
+          <Box marginBottom={2}>
+            <TableOfContents
+              tableOfContentsTitle={n('tableOfContentsTitle', 'Undirkaflar')}
+              headings={subpage.slices.map((slice) => ({
+                headingId: slice.id,
+                headingTitle: (slice as OneColumnText).title,
+              }))}
+              selectedHeadingId={selectedSliceTab?.id}
+              onClick={(id) => {
+                const slice = subpage.slices.find(
+                  (s) => s.id === id,
+                ) as OneColumnText
+                router.push(
+                  `${baseRouterPath}#${slugify(slice.title)}`,
+                  undefined,
+                  { shallow: true },
+                )
+                setSelectedSliceTab(slice)
+              }}
+            />
+          </Box>
         )}
         {renderSlicesAsTabs && selectedSliceTab && (
           <Text paddingTop={4} as="h2" variant="h2">
@@ -326,15 +329,19 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           />
         )}
         {!renderSlicesAsTabs &&
-          (subpage ?? projectPage).slices.map((slice) => (
-            <OrganizationSlice
-              key={slice.id}
-              slice={slice}
-              namespace={namespace}
-              fullWidth={true}
-              organizationPageSlug={projectPage.slug}
-            />
-          ))}
+          (subpage ?? projectPage).slices.map((slice) =>
+            slice.__typename === 'OneColumnText' ? (
+              <OneColumnTextSlice slice={slice} boxProps={{ marginTop: 8 }} />
+            ) : (
+              <OrganizationSlice
+                key={slice.id}
+                slice={slice}
+                namespace={namespace}
+                fullWidth={true}
+                organizationPageSlug={projectPage.slug}
+              />
+            ),
+          )}
       </ProjectWrapper>
       {!subpage && !!projectPage.newsTag && (
         <div style={{ overflow: 'hidden' }}>
@@ -344,9 +351,10 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
             background="purple100"
             aria-labelledby="latestNewsTitle"
           >
-            <LatestNewsSectionSlider
-              label={n('newsAndAnnouncements')}
-              readMoreText={n('seeMore')}
+            <NewsItems
+              heading={n('newsAndAnnouncements')}
+              headingTitle="news-items-title"
+              seeMoreText={n('seeMore')}
               items={news}
             />
           </Section>

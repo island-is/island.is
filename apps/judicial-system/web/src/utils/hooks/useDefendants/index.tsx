@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client'
-import { Defendant, UpdateDefendant } from '@island.is/judicial-system/types'
+import { UpdateDefendant } from '@island.is/judicial-system/types'
 
 import { CreateDefendantMutation } from './createDefendantGql'
 import { DeleteDefendantMutation } from './deleteDefendantGql'
@@ -44,7 +44,7 @@ const useDefendants = () => {
           caseId,
           name: defendant.name,
           address: defendant.address,
-          nationalId: defendant.nationalId,
+          nationalId: defendant.nationalId?.replace('-', ''),
           gender: defendant.gender,
         },
       },
@@ -63,7 +63,16 @@ const useDefendants = () => {
     updateDefendant: UpdateDefendant,
   ) => {
     return updateDefendantMutation({
-      variables: { input: { caseId, defendantId, ...updateDefendant } },
+      variables: {
+        input: {
+          caseId,
+          defendantId,
+          name: updateDefendant.name,
+          address: updateDefendant.address,
+          nationalId: updateDefendant.nationalId?.replace('-', ''),
+          gender: updateDefendant.gender,
+        },
+      },
     })
   }
 

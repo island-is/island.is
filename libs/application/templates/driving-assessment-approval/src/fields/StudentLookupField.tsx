@@ -10,6 +10,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import * as kennitala from 'kennitala'
 import { m } from '../lib/messages'
+import { StudentInformationResult } from '@island.is/api/schema'
 
 const QUERY = gql`
   query studentInfo($nationalId: String!) {
@@ -40,7 +41,9 @@ export const StudentLookupField: FC<Props> = ({ error, application }) => {
 
   const { formatMessage } = useLocale()
 
-  const { data = {}, error: queryError, loading } = useQuery(QUERY, {
+  const { data, error: queryError, loading } = useQuery<{
+    drivingLicenseStudentInformation: StudentInformationResult
+  }>(QUERY, {
     skip:
       !studentNationalId || !kennitala.isPerson(studentNationalId as string),
     variables: {
@@ -62,22 +65,18 @@ export const StudentLookupField: FC<Props> = ({ error, application }) => {
 
   const result = data.drivingLicenseStudentInformation
 
-  return (
-    <>
-      {error && { error }}
-
-      {result.student ? (
-        <Box marginBottom={2}>
-          <Text variant="h4">
-            {formatText(m.student, application, formatMessage)}
-          </Text>
-          <Text>{result.student.name}</Text>
-        </Box>
-      ) : (
-        <Box color="red400" padding={2}>
-          <Text color="red400">{m.errorOrNoTemporaryLicense}</Text>
-        </Box>
-      )}
-    </>
+  return result.student ? (
+    <Box marginBottom={2}>
+      <Text variant="h4">
+        {formatText(m.student, application, formatMessage)}
+      </Text>
+      <Text>{result?.student.name}</Text>
+    </Box>
+  ) : (
+    <Box color="red400" padding={2}>
+      <Text color="red400">
+        {formatText(m.errorOrNoTemporaryLicense, application, formatMessage)}
+      </Text>
+    </Box>
   )
 }
