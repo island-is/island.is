@@ -54,7 +54,11 @@ export const searchQuery = ({
 
   if (countTag) {
     // set the tag aggregation as the only aggregation
-    aggregation.aggs = tagAggregationQueryFragment(countTag).aggs
+    aggregation.aggs = {
+      ...aggregation.aggs,
+      ...tagAggregationQueryFragment('category').aggs,
+      ...tagAggregationQueryFragment('processentry').aggs,
+    }
   }
 
   if (countTypes) {

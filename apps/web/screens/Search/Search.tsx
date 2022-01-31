@@ -138,9 +138,9 @@ const Search: Screen<CategoryProps> = ({
     })
   }
 
-  console.log(searchResults, countResults)
-  console.log('searchResults', searchResults)
-  console.log('countResults', countResults)
+  // console.log(searchResults, countResults)
+  // console.log('searchResults', searchResults)
+  // console.log('countResults', countResults)
 
   const filters: SearchQueryFilters = {
     category: query.category as string,

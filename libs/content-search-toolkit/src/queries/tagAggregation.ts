@@ -9,8 +9,8 @@ export const tagAggregationQueryFragment = (tagType: string, size = 20) => ({
       aggs: {
         filtered: {
           filter: {
-            term: {
-              'tags.type': tagType, // we only count tags of this value and return the keys and values
+            terms: {
+              ['tags.type']: ['category', 'processentry'],
             },
           },
           aggs: {
@@ -40,6 +40,7 @@ export const tagAggregationQuery = ({
   tagType,
   size,
 }: TagAggregationInput) => {
+  console.log('tagType', tagType)
   const query = {
     query: {
       bool: {
@@ -50,7 +51,8 @@ export const tagAggregationQuery = ({
         },
       },
     },
-    ...tagAggregationQueryFragment(tagType, size),
+    ...tagAggregationQueryFragment('category', size),
+    ...tagAggregationQueryFragment('processentry', size),
   }
 
   return query

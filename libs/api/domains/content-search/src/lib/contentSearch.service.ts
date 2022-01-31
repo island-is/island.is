@@ -42,8 +42,10 @@ export class ContentSearchService {
     if (!aggregations?.group) {
       return null
     }
+    console.log('hmmm', aggregations.group.filtered)
     return aggregations.group.filtered.count.buckets.map<TagCount>(
       (tagObject) => {
+        console.log('tagObject', tagObject)
         return {
           key: tagObject.key,
           count: tagObject.doc_count.toString(),
@@ -64,6 +66,7 @@ export class ContentSearchService {
   }
 
   async find(query: SearcherInput): Promise<SearchResult> {
+    console.log('query', query)
     const { body } = await this.elasticService.search(
       this.getIndex(query.language),
       query,
