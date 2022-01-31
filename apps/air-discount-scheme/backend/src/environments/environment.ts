@@ -12,6 +12,16 @@ const devConfig = {
     url: process.env.NATIONAL_REGISTRY_URL,
     username: process.env.NATIONAL_REGISTRY_USERNAME,
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
+    authMiddlewareOptions: {
+      forwardUserInfo: false,
+      tokenExchangeOptions: {
+        issuer: 'https://identity-server.dev01.devland.is',
+        clientId: '@vegagerdin.is/clients/air-discount-scheme',
+        clientSecret: process.env.VEGAGERDIN_IDS_CLIENTS_SECRET,
+        scope: 'openid profile @skra.is/individuals',
+        requestActorToken: false,
+      },
+    },
   },
   airlineApiKeys: {
     [Airlines.icelandair]: Airlines.icelandair,
@@ -30,12 +40,10 @@ const devConfig = {
   },
   baseUrl: process.env.BASE_URL ?? 'http://localhost:4200',
   identityServerAuth: {
-    issuer: process.env.IDENTITY_SERVER_DOMAIN
-      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
-      : 'https://identity-server.dev01.devland.is',
+    issuer: 'https://identity-server.dev01.devland.is',
     audience: '@vegagerdin.is',
   },
-  idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
+  idsTokenCookieName: 'next-auth.session-token',
 }
 
 if (isProd) {
@@ -54,6 +62,16 @@ const prodConfig = {
     url: process.env.NATIONAL_REGISTRY_URL,
     username: process.env.NATIONAL_REGISTRY_USERNAME,
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
+    authMiddlewareOptions: {
+      forwardUserInfo: false,
+      tokenExchangeOptions: {
+        issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+        clientId: '@vegagerdin.is/clients/air-discount-scheme',
+        clientSecret: process.env.VEGAGERDIN_IDS_CLIENTS_SECRET,
+        scope: 'openid profile @skra.is/individuals',
+        requestActorToken: false,
+      },
+    },
   },
   airlineApiKeys: {
     [Airlines.icelandair]: process.env.ICELANDAIR_API_KEY,
@@ -65,12 +83,10 @@ const prodConfig = {
   },
   baseUrl: process.env.BASE_URL,
   identityServerAuth: {
-    issuer: process.env.IDENTITY_SERVER_DOMAIN
-      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
-      : '',
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL as string,
     audience: '@vegagerdin.is',
   },
-  idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
+  idsTokenCookieName: '__Secure-next-auth.session-token',
 }
 
 export default isProd ? prodConfig : devConfig

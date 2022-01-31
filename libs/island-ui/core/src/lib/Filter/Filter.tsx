@@ -3,6 +3,7 @@ import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
 import { usePopoverState, Popover, PopoverDisclosure } from 'reakit/Popover'
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
+import { Inline } from '../Inline/Inline'
 import { Stack } from '../Stack/Stack'
 import { Text } from '../Text/Text'
 import * as styles from './Filter.css'
@@ -40,6 +41,9 @@ export interface FilterProps {
 
   /** Event handler for clear filter event. */
   onFilterClear: () => void
+
+  /** Swap input and filter button locations */
+  reverse?: boolean
 }
 
 /**
@@ -67,6 +71,7 @@ export const Filter: FC<FilterProps> = ({
   variant = 'default',
   filterInput,
   onFilterClear,
+  reverse,
   children,
 }) => {
   const dialog = useDialogState()
@@ -87,21 +92,22 @@ export const Filter: FC<FilterProps> = ({
             width="full"
             justifyContent={align === 'right' ? 'flexEnd' : 'flexStart'}
           >
-            <Box
-              component={PopoverDisclosure}
-              background="white"
-              display="inlineBlock"
-              borderRadius="large"
-              tabIndex={-1}
-              marginRight={hasFilterInput ? 2 : 0}
-              {...popover}
-            >
-              <Button as="span" variant="utility" icon="filter">
-                {labelOpen}
-              </Button>
-            </Box>
+            <Inline space={2} reverse={reverse}>
+              <Box
+                component={PopoverDisclosure}
+                background="white"
+                display="inlineBlock"
+                borderRadius="large"
+                tabIndex={-1}
+                {...popover}
+              >
+                <Button as="span" variant="utility" icon="filter" fluid>
+                  {labelOpen}
+                </Button>
+              </Box>
 
-            {hasFilterInput && filterInput}
+              {hasFilterInput && filterInput}
+            </Inline>
           </Box>
 
           <Box

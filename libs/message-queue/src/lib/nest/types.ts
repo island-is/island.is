@@ -31,3 +31,7 @@ export interface Config {
   client: SQSClientConfig
   queue: Queue
 }
+
+export interface Job {
+  id: string
+}
