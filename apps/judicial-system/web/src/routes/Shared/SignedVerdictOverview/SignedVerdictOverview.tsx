@@ -141,6 +141,26 @@ export const SignedVerdictOverview: React.FC = () => {
     },
   })
 
+  useEffect(() => {
+    document.title = 'Yfirlit staðfestrar kröfu - Réttarvörslugátt'
+  }, [])
+
+  useEffect(() => {
+    if (workingCase.validToDate) {
+      setModifiedValidToDate({
+        value: new Date(workingCase.validToDate),
+        isValid: true,
+      })
+    }
+
+    if (workingCase.isolationToDate) {
+      setModifiedIsolationToDate({
+        value: new Date(workingCase.isolationToDate),
+        isValid: true,
+      })
+    }
+  }, [workingCase.validToDate, workingCase.isolationToDate])
+
   const handleRequestCourtRecordSignature = async () => {
     if (!workingCase) {
       return
@@ -166,10 +186,6 @@ export const SignedVerdictOverview: React.FC = () => {
         console.log(reason)
       })
   }
-
-  useEffect(() => {
-    document.title = 'Yfirlit staðfestrar kröfu - Réttarvörslugátt'
-  }, [])
 
   const handleNextButtonClick = async () => {
     if (workingCase) {
@@ -426,22 +442,6 @@ export const SignedVerdictOverview: React.FC = () => {
       modifiedIsolationToDate?.isValid
     )
   }
-
-  useEffect(() => {
-    if (workingCase.validToDate) {
-      setModifiedValidToDate({
-        value: new Date(workingCase.validToDate),
-        isValid: true,
-      })
-    }
-
-    if (workingCase.isolationToDate) {
-      setModifiedIsolationToDate({
-        value: new Date(workingCase.isolationToDate),
-        isValid: true,
-      })
-    }
-  }, [workingCase.validToDate, workingCase.isolationToDate])
 
   /**
    * We assume that the signed verdict page is only opened for
