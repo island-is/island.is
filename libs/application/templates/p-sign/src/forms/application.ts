@@ -23,7 +23,6 @@ import {
 } from '@island.is/application/core'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
-import { QualityPhotoData } from '../types'
 import {
   NationalRegistryUser,
   UserProfile,
@@ -32,11 +31,8 @@ import {
 import { m } from '../lib/messages'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-<<<<<<< HEAD
 import { HasQualityPhotoData } from '../fields/QualityPhoto/hooks/useQualityPhoto'
-=======
 import { UPLOAD_ACCEPT } from '../lib/constants'
->>>>>>> 8a7995ab1362c75b46a618904d925f185d3f967f
 
 export const getApplication = (): Form => {
   return buildForm({
