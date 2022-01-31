@@ -45,6 +45,7 @@ import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-licence'
+import { FishingLicenseClientConfig } from '@island.is/clients/fishing-licence'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -260,6 +261,7 @@ const autoSchemaFile = environment.production
         SyslumennClientConfig,
         FeatureFlagConfig,
         XRoadConfig,
+        FishingLicenseClientConfig,
       ],
     }),
   ],
