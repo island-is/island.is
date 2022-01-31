@@ -186,7 +186,4 @@ export class ApplicationResolver {
   ): Promise<PresignedUrlResponse> {
     return this.applicationService.getAttachmentPresignedURL(input, user)
   }
-
-
-  
 }

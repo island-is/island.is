@@ -37,9 +37,11 @@ const UploadedPhoto = ({ application }: UploadedPhotoProps) => {
   const src = presignedUrl?.getAttachmentPresignedURL.url
 
   return (
-    <Box style={{ width: '191px', height: '242px'}}>
+    <Box style={{ width: '191px', height: '242px' }}>
       <img
-        alt={formatText(m.qualityPhotoAltText, application, formatMessage) || ''}
+        alt={
+          formatText(m.qualityPhotoAltText, application, formatMessage) || ''
+        }
         src={src}
         id="uploadedimage"
       />

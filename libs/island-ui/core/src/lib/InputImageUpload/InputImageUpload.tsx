@@ -70,7 +70,7 @@ export const UploadedImage = ({
   onRemoveClick,
   onRetryClick,
   onOpenFile,
-}: UploadedImageProps) => {  
+}: UploadedImageProps) => {
   const { data: presignedUrl } = useQuery(PresignedUrlQuery, {
     variables: {
       input: {
@@ -78,9 +78,9 @@ export const UploadedImage = ({
         s3Key: file.key,
       },
     },
-    skip: !file.key
+    skip: !file.key,
   })
-  
+
   const [ref, { width }] = useMeasure()
 
   const statusColor = (status?: UploadImageStatus): Colors => {
