@@ -1678,6 +1678,13 @@
           },
           "outputs": ["coverage/apps/application-system/api"]
         },
+        "worker": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "application-system-api:build",
+            "args": ["--job", "worker"]
+          }
+        },
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
